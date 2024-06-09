@@ -41,6 +41,15 @@ export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
 						}, {}),
 						method: stringToHttpRequestMethod(req.method),
 						pathname: req.url,
+						cookies: (req.headers.get("cookies")?.split(";") ?? []).reduce<
+							Record<string, string>
+						>((acc, cookie) => {
+							const [key, value] = cookie.split("=");
+							if (key && value) {
+								acc[key.trim()] = value.trim();
+							}
+							return acc;
+						}, {}),
 					};
 
 					for (const handler of httpHandlers) {

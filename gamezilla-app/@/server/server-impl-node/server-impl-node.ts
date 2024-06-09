@@ -44,13 +44,16 @@ export const ServerNode = (input: { logger: ILogger }) => {
 															: "GET",
 					pathname: removeDuplicateSlashes(req.url ?? "/"),
 					headers: req.headers as Record<string, string>,
-					cookies: req.headers.cookie?.split(";").reduce<Record<string, string>>((acc, cookie) => {
-						const [key, value] = cookie.split("=");
-						if(key && value) {
-							acc[key.trim()] = value.trim();
-						}
-						return acc;
-					}, {}) ?? {},
+					cookies:
+						req.headers.cookie
+							?.split(";")
+							.reduce<Record<string, string>>((acc, cookie) => {
+								const [key, value] = cookie.split("=");
+								if (key && value) {
+									acc[key.trim()] = value.trim();
+								}
+								return acc;
+							}, {}) ?? {},
 					body:
 						req.method === "POST" ||
 						req.method === "PUT" ||

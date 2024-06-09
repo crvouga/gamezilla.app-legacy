@@ -3,12 +3,14 @@ import { SessionId, type ClientId } from "gamezilla-app/app/@/data";
 import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
 import { Server } from "socket.io";
 import {
+	ORIGINS,
 	SESSION_ID_COOKIE_NAME,
 	toSetSessionCookie,
 	type MsgClientToMsgServer,
 	type MsgServerToMsgClient,
 } from "../transport.core";
 import { initServerTransport, type IServerTransport } from "./transport-server";
+import { HttpResponse } from "gamezilla-app/@/server";
 
 export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 	server,
@@ -38,20 +40,42 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 		if (request.pathname !== "/set-session-cookie") {
 			return null;
 		}
-		const origin = request.headers.origin ?? "*";
+		const origin = Array.isArray(ORIGINS)
+			? ORIGINS.join(", ")
+			: request.headers.origin ?? "*";
 		const maybeSessionId = request.cookies[SESSION_ID_COOKIE_NAME];
-		const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate();
-		return {
+		const sessionId = SessionId.is(maybeSessionId)
+			? maybeSessionId
+			: SessionId.generate();
+
+		const headersBase = {
+			"Access-Control-Allow-Origin": origin,
+			"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+			"Access-Control-Allow-Headers": "Content-Type",
+			"Access-Control-Allow-Credentials": "true",
+			"Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+			"Content-Security-Policy": "default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none';",
+		};
+
+		if (sessionId === maybeSessionId) {
+			const res: HttpResponse = {
+				status: 200,
+				headers: headersBase,
+				body: "OK",
+			};
+			return res;
+		}
+
+		const res: HttpResponse = {
 			status: 200,
 			headers: {
+				...headersBase,
 				"Set-Cookie": toSetSessionCookie(sessionId),
-				"Access-Control-Allow-Origin": origin, // Dynamically set the origin
-				"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-				"Access-Control-Allow-Headers": "Content-Type",
-				"Access-Control-Allow-Credentials": "true",
 			},
 			body: "OK",
 		};
+
+		return res;
 	});
 
 	io.on("connection", (socket) => {
