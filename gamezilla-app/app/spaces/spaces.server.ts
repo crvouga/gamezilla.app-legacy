@@ -8,8 +8,8 @@ import {
 import { JoinSpaceServer } from "./join-space/join-space.server";
 import { ListSpacesServer } from "./list-spaces/list-spaces.server";
 import { ProfileCache } from "./profile-cache";
-import { GameDb } from "./space-game/space-game-db";
-import { SpaceGameServer } from "./space-game/space-game.server";
+import { GameDb } from "./space/space-game-db";
+import { SpaceGameServer } from "./space/space-game.server";
 import { SpaceCoreDb } from "./spaces-core/space-core-db";
 import * as SpacesCoreServer from "./spaces-core/spaces-core.server";
 import type { ServerModule } from "./spaces.types";

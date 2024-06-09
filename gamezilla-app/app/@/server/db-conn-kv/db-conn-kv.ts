@@ -1,4 +1,4 @@
-import { type Task } from "gamezilla-app/@/core";
+import type { Task } from "gamezilla-app/@/core";
 import type { Parser } from "gamezilla-app/@/core/parser/parser";
 
 export type IDbConnKv = {

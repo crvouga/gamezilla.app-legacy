@@ -13,7 +13,7 @@ import { JoinSpaceClient } from "./join-space/join-space.client";
 import { LeaveSpaceClient } from "./leave-space/leave-space.client";
 import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { Modals } from "./modals/modals";
-import { SpaceGameClient } from "./space-game/space-game.client";
+import { SpaceGameClient } from "./space/space-game.client";
 import { SpaceClient } from "./space/space.client";
 import * as SpacesCoreClient from "./spaces-core/spaces-core.client";
 import type { ClientModule, ModelClient } from "./spaces.types";

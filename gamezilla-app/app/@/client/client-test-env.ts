@@ -4,6 +4,7 @@ import { TestRender } from "gamezilla-app/@/vdom/test-render";
 import { UserId } from "../data";
 import type { ClientCtx } from "./client-ctx";
 import { Translator } from "./translator";
+import { VDOM_IMPL_TEST } from "public-config";
 
 export const AppClientFixture = async (input?: { currentRoute?: Route }) => {
 	const currentUserId = UserId.generate();
@@ -20,9 +21,7 @@ export const AppClientFixture = async (input?: { currentRoute?: Route }) => {
 		t: Translator("en"),
 	};
 
-	const render = await TestRender({
-		t: "react",
-	});
+	const render = await TestRender(VDOM_IMPL_TEST);
 
 	return {
 		ctx,

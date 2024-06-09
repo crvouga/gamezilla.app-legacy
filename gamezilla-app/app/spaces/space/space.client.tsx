@@ -9,7 +9,7 @@ import { Feed } from "../feed/feed";
 import { JoinSpaceClient } from "../join-space/join-space.client";
 import { LeaveSpaceClient } from "../leave-space/leave-space.client";
 import { Modals } from "../modals/modals";
-import { SpaceGameClient } from "../space-game/space-game.client";
+import { SpaceGameClient } from "./space-game.client";
 import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { ModelClient, MsgClient } from "../spaces.types";
 

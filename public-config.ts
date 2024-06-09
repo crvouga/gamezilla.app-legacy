@@ -13,6 +13,8 @@ export const IS_PROD = process.env.NODE_ENV === "production";
 
 export const IS_INTEGRATION_TEST = process.env.IS_INTEGRATION_TEST === "true";
 
+export const IS_TEST = process.env.NODE_ENV === "test";
+
 //
 //
 //
@@ -22,7 +24,11 @@ export const IS_INTEGRATION_TEST = process.env.IS_INTEGRATION_TEST === "true";
 //
 
 // NOTE: pasting sms auth codes into input while using react bugs out. so we're using inferno for now
-export const VDOM_IMPL: VDomImpl = "inferno" as VDomImpl;
+export const VDOM_IMPL: VDomImpl = "react" as VDomImpl;
+
+export const VDOM_IMPL_TEST: VDomImpl = "react" as VDomImpl;
+
+export const VDOM_IMPL_CURRENT = IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL;
 
 //
 //

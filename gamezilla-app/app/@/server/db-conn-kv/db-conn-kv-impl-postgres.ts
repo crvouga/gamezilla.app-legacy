@@ -88,7 +88,9 @@ export const DbConnKvPostgres = async ({
 					return queried;
 				}
 
-				const rows = queried.value.flatMap((row) => {
+				const rows: p.Infer<typeof parser>[] = [];
+
+				for (const row of queried.value) {
 					const json = JSON.parse(row.value);
 
 					const parsed = parser.parse(json);
@@ -98,11 +100,11 @@ export const DbConnKvPostgres = async ({
 
 						logger.error(`get: not a value: ${row.key} ${errorStr}`);
 
-						return [];
+						continue;
 					}
 
-					return parsed.value;
-				});
+					rows.push(parsed.value);
+				}
 
 				return Ok(rows);
 			} catch (e) {

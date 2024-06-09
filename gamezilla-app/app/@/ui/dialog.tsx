@@ -1,6 +1,7 @@
 import type { VDomChildren } from "gamezilla-app/@/vdom";
 import { cn } from "./ui";
 import { TimeSpan } from "gamezilla-app/@/core";
+import { styles } from "gamezilla-app/@/vdom/style";
 
 export const Dialog = (props: {
 	children: VDomChildren;
@@ -9,16 +10,18 @@ export const Dialog = (props: {
 	delay?: TimeSpan;
 }) => {
 	const delayMs = props.delay ? TimeSpan.toMilliseconds(props.delay) : null;
+	const delayClassName = delayMs ? `delay-[${delayMs}]` : null;
 	return (
 		<div
 			role="dialog"
-			style={{
+			style={styles({
 				"transition-delay": props.open && delayMs ? `${delayMs}ms` : undefined,
-			}}
+			})}
 			className={cn(
 				"absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out",
+				delayClassName,
 				props.open
-					? `scale-100 opacity-100`
+					? "scale-100 opacity-100"
 					: "pointer-events-none scale-0 opacity-0",
 			)}
 			onClick={(e) => {
@@ -54,12 +57,13 @@ export const DialogSurface = (props: { children: VDomChildren }) => {
 
 export const DialogHeader = (props: { title: string }) => {
 	return (
-		<p
+		<h1
 			role="heading"
+			aria-level={1}
 			title={props.title}
 			className="text-center text-xl font-semibold"
 		>
 			{props.title}
-		</p>
+		</h1>
 	);
 };

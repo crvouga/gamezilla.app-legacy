@@ -12,12 +12,12 @@ import type { ServerCmd, ServerCtx, ServerEvent } from "../@/server";
 import type { WithEventId, WithEventMeta } from "./@/event";
 import type * as Game from "./game/game.types";
 import type { IProfileCache } from "./profile-cache";
-import type { IGameDb } from "./space-game/space-game-db";
+import type { IGameDb } from "./space/space-game-db";
 import type * as Space from "./spaces-core/space-core";
 import type { ISpaceCoreDb } from "./spaces-core/space-core-db";
 import type { SpaceCoreEvent } from "./spaces-core/space-core-event";
 import type * as Spaces from "./spaces-core/spaces-core.client";
-import { GameServer } from "./game/game.server";
+import type { GameServer } from "./game/game.server";
 
 //
 //

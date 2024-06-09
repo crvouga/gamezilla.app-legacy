@@ -9,7 +9,7 @@ import { AppServerFixture } from "gamezilla-app/app/@/server/server-test-env";
 import { smsNoop } from "gamezilla-app/app/@/server/sms";
 import { GameServer } from "../../game/game.server";
 import { ProfileCache } from "../../profile-cache";
-import { GameDb } from "../../space-game/space-game-db";
+import { GameDb } from "../../space/space-game-db";
 import type { SpaceCore } from "../../spaces-core";
 import { SpaceCoreDb } from "../../spaces-core/space-core-db";
 import * as SpacesServer from "../../spaces.server";
