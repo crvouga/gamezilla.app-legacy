@@ -1,3 +1,6 @@
+import { IS_PROD } from "public-config";
+import type { SessionId } from "../@/data";
+
 export type MsgServerToMsgClient<MsgToClient> = {
 	m: MsgToClient[];
 	v: string;
@@ -6,4 +9,16 @@ export type MsgServerToMsgClient<MsgToClient> = {
 export type MsgClientToMsgServer<MsgToServer> = {
 	m: MsgToServer[];
 	v: string;
+};
+
+export const SESSION_ID_COOKIE_NAME = "gamezilla-app-session-id";
+const MAX_AGE = 31536000;
+export const toSetSessionCookie = (sessionId: SessionId) => {
+	const baseCookie = `${SESSION_ID_COOKIE_NAME}=${sessionId}; HttpOnly; Path=/; Max-Age=${MAX_AGE}; SameSite=Lax;`;
+
+	if (IS_PROD) {
+		return `${baseCookie} Secure; Domain=.gamezilla.app;`;
+	}
+
+	return baseCookie;
 };

@@ -1,12 +1,13 @@
 import type { Server, ServerWebSocket, WebSocketHandler } from "bun";
-import { ClientId, SessionId } from "gamezilla-app/app/@/data";
 import type { ServerBun } from "gamezilla-app/@/server/server-impl-bun/server-impl-bun";
-import type {
-	MsgClientToMsgServer,
-	MsgServerToMsgClient,
+import { ClientId, SessionId } from "gamezilla-app/app/@/data";
+import {
+	SESSION_ID_COOKIE_NAME,
+	toSetSessionCookie,
+	type MsgClientToMsgServer,
+	type MsgServerToMsgClient,
 } from "../transport.core";
-import { type IServerTransport, initServerTransport } from "./transport-server";
-import { COOKIE_DOMAIN } from "public-config";
+import { initServerTransport, type IServerTransport } from "./transport-server";
 
 type ServerWebSocketData = {
 	clientId: ClientId;
@@ -84,8 +85,11 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 		switch (url.pathname) {
 			case "/ws": {
 				const maybeSessionIdCookie = req.headers
-					.get("cookie")
-					?.match(/gamezilla-app-session-id=([^;]+)/);
+					?.get("cookie")
+					?.split(";")
+					?.map((cookie) => cookie.trim())
+					?.find((cookie) => cookie.startsWith(`${SESSION_ID_COOKIE_NAME}=`))
+					?.split("=");
 
 				const maybeSessionId = maybeSessionIdCookie
 					? maybeSessionIdCookie[1]
@@ -102,22 +106,13 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 					sessionId,
 				};
 
-				const headers: Record<string, string> = maybeSessionId
-					? {}
-					: {
-							"Set-Cookie": `gamezilla-app-session-id=${sessionId}; SameSite=None; Domain=${COOKIE_DOMAIN}; Secure; HttpOnly; Path=/; Max-Age=31536000;`,
-						};
-
-				const didUpgrade = server.upgrade(req, {
-					headers,
+				server.upgrade(req, {
+					headers: {
+						"Set-Cookie": toSetSessionCookie(sessionId),
+					},
 					data,
 				});
-
-				if (didUpgrade) {
-					return new Response("Upgrade successful");
-				}
-
-				return new Response("Upgrade failed", { status: 500 });
+				return;
 			}
 
 			default: {
@@ -233,6 +228,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
 	transport.toClient.sub((toClient) => {
 		for (const clientId in toClient) {
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			const toClientSingle = toClient[clientId as ClientId]!;
 			const client = clients.get(clientId as ClientId);
 

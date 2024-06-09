@@ -1,14 +1,12 @@
 import type { ServerNode } from "gamezilla-app/@/server/server-impl-node/server-impl-node";
 import { SessionId, type ClientId } from "gamezilla-app/app/@/data";
 import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
-import { COOKIE_DOMAIN } from "public-config";
 import { Server } from "socket.io";
 import type {
 	MsgClientToMsgServer,
 	MsgServerToMsgClient,
 } from "../transport.core";
 import { initServerTransport, type IServerTransport } from "./transport-server";
-
 
 export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 	server,
@@ -25,7 +23,6 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 > => {
 	const transport = initServerTransport<MsgToServer, MsgToClient>();
 
-
 	const io = new Server(server.httpServer, {
 		cors: {
 			origin: "*",
@@ -38,26 +35,34 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 	});
 
 	io.engine.on("initial_headers", (headers) => {
-		const maybeSessionId = headers.cookie?.split(";").find((cookie: string) => {
-			return cookie.trim().startsWith("gamezilla-app-session-id=");
-		}).split("=")[1];
+		const maybeSessionId = headers.cookie
+			?.split(";")
+			.find((cookie: string) => {
+				return cookie.trim().startsWith("gamezilla-app-session-id=");
+			})
+			.split("=")[1];
 
-		const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate();
+		const sessionId = SessionId.is(maybeSessionId)
+			? maybeSessionId
+			: SessionId.generate();
 
-		if (!maybeSessionId) {			
-			headers["set-cookie"] = `gamezilla-app-session-id=${sessionId}; Domain=${COOKIE_DOMAIN}; Path=/; HttpOnly; Secure; SameSite=None`;
+		if (!maybeSessionId) {
+			headers["set-cookie"] =
+				`gamezilla-app-session-id=${sessionId}; Path=/; HttpOnly; SameSite=None`;
 		}
 	});
 
 	io.on("connection", (socket) => {
-		const cookies = (socket.handshake.headers.cookie ?? "").split(";").reduce<Record<string, string>>((acc, cookie) => {
-			const [name, value] = cookie.trim().split("=");
-			if (!name || !value) return acc;
-			acc[name] = value;
-			return acc;
-		}, {})
+		const cookies = (socket.handshake.headers.cookie ?? "")
+			.split(";")
+			.reduce<Record<string, string>>((acc, cookie) => {
+				const [name, value] = cookie.trim().split("=");
+				if (!name || !value) return acc;
+				acc[name] = value;
+				return acc;
+			}, {});
 
-		const probablySessionId = cookies["gamezilla-app-session-id"]
+		const probablySessionId = cookies["gamezilla-app-session-id"];
 
 		const sessionId = SessionId.is(probablySessionId)
 			? probablySessionId
