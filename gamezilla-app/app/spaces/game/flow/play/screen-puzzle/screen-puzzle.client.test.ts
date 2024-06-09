@@ -126,12 +126,12 @@ describe(import.meta.file, () => {
 		).toBeTruthy();
 	});
 
-	it("should emit msg after clicking next puzzle button", async () => {
+	it("should dispatch msg after clicking next puzzle button", async () => {
 		const f = await Fixture();
-		const rendered = f.render(f.initial);
-		const nextButton = rendered.getByRole("button", f.ctx.t("app.next"));
+		const r = f.render(f.initial);
+		const nextButton = r.getByRole("button", f.ctx.t("app.next"));
 		nextButton?.click();
-		const msg = await rendered.msgs.once();
+		const msg = await r.msgs.once();
 		expect(msg.t).toBe("user-clicked-next-puzzle-button");
 	});
 
@@ -236,8 +236,9 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		const r = f.render(output);
-		const nextButton = r.getByRole("button", f.ctx.t("app.next"));
+		const nextButton = f
+			.render(output)
+			.getByRole("button", f.ctx.t("app.next"));
 		expect(nextButton?.disabled).toBe(true);
 	});
 
