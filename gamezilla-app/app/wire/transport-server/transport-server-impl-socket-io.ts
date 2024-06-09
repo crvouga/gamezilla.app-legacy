@@ -1,13 +1,14 @@
-import { type ClientId, SessionId } from "gamezilla-app/app/@/data";
-import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
 import type { ServerNode } from "gamezilla-app/@/server/server-impl-node/server-impl-node";
+import { SessionId, type ClientId } from "gamezilla-app/app/@/data";
+import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
+import { COOKIE_DOMAIN } from "public-config";
 import { Server } from "socket.io";
 import type {
 	MsgClientToMsgServer,
 	MsgServerToMsgClient,
 } from "../transport.core";
-import { type IServerTransport, initServerTransport } from "./transport-server";
-import { COOKIE_DOMAIN } from "public-config";
+import { initServerTransport, type IServerTransport } from "./transport-server";
+
 
 export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 	server,
@@ -24,31 +25,42 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 > => {
 	const transport = initServerTransport<MsgToServer, MsgToClient>();
 
+
 	const io = new Server(server.httpServer, {
 		cors: {
 			origin: "*",
 			methods: ["GET", "POST"],
+			credentials: true,
 		},
 		transports: ["websocket"],
 		allowUpgrades: true,
-		cookie: {
-			name: "gamezilla-app-session-id",
-			domain: COOKIE_DOMAIN,
-			httpOnly: true,
-			sameSite: "none",
-			secure: true,
-			path: "/",
-		},
+		cookie: true,
+	});
+
+	io.engine.on("initial_headers", (headers) => {
+		const maybeSessionId = headers.cookie?.split(";").find((cookie: string) => {
+			return cookie.trim().startsWith("gamezilla-app-session-id=");
+		}).split("=")[1];
+
+		const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate();
+
+		if (!maybeSessionId) {			
+			headers["set-cookie"] = `gamezilla-app-session-id=${sessionId}; Domain=${COOKIE_DOMAIN}; Path=/; HttpOnly; Secure; SameSite=None`;
+		}
 	});
 
 	io.on("connection", (socket) => {
-		const maybeSessionId = socket.handshake.headers.cookie
-			?.split(";")
-			.find((c) => c.trim().startsWith("gamezilla-app-session-id="))
-			?.split("=")[1];
+		const cookies = (socket.handshake.headers.cookie ?? "").split(";").reduce<Record<string, string>>((acc, cookie) => {
+			const [name, value] = cookie.trim().split("=");
+			if (!name || !value) return acc;
+			acc[name] = value;
+			return acc;
+		}, {})
 
-		const sessionId = SessionId.is(maybeSessionId)
-			? maybeSessionId
+		const probablySessionId = cookies["gamezilla-app-session-id"]
+
+		const sessionId = SessionId.is(probablySessionId)
+			? probablySessionId
 			: SessionId.generate();
 
 		const clientId = socket.id as ClientId;

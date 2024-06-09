@@ -27,6 +27,7 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
 	const start = async () => {
 		const socket = io(impl.serverUrl, {
 			transports: ["websocket"],
+			withCredentials: true,
 		});
 
 		socket.on("connect", () => {

@@ -155,7 +155,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 						sessionId: ws.data.sessionId,
 						msgs: msg.m,
 					});
-					break
+					break;
 				}
 				default: {
 					transport.wire.pub({
@@ -165,7 +165,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 						sessionId: ws.data.sessionId,
 						msgs: msg.m,
 					});
-					break
+					break;
 				}
 			}
 		},
@@ -240,7 +240,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 				continue;
 			}
 
-			send(client, {	
+			send(client, {
 				m: toClientSingle.msgs,
 				v: codebaseVersionId,
 			});
