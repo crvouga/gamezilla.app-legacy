@@ -6,6 +6,7 @@ import type {
 	MsgServerToMsgClient,
 } from "../transport.core";
 import { type IServerTransport, initServerTransport } from "./transport-server";
+import { COOKIE_DOMAIN } from "public-config";
 
 type ServerWebSocketData = {
 	clientId: ClientId;
@@ -82,7 +83,13 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
 		switch (url.pathname) {
 			case "/ws": {
-				const maybeSessionId = url.searchParams.get("session-id");
+				const maybeSessionIdCookie = req.headers
+					.get("cookie")
+					?.match(/gamezilla-app-session-id=([^;]+)/);
+				
+				const maybeSessionId = maybeSessionIdCookie
+					? maybeSessionIdCookie[1]
+					: null;
 
 				const sessionId = SessionId.is(maybeSessionId)
 					? maybeSessionId
@@ -95,17 +102,22 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 					sessionId,
 				};
 
+				const headers: Record<string, string> = maybeSessionId
+					? {}
+					: {
+							"Set-Cookie": `gamezilla-app-session-id=${sessionId}; SameSite=None; Domain=${COOKIE_DOMAIN}; Secure; HttpOnly; Path=/; Max-Age=31536000;`,
+						};
+
 				const didUpgrade = server.upgrade(req, {
-					headers: {
-						"Set-Cookie": `session-id=${sessionId}; SameSite=None; Secure`,
-					},
+					headers,
 					data,
 				});
 
 				if (didUpgrade) {
-					return;
+					return new Response("Upgrade successful");
 				}
-				return new Response("Upgrade failed :(", { status: 500 });
+
+				return new Response("Upgrade failed", { status: 500 });
 			}
 
 			default: {
@@ -117,11 +129,6 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 	const websocket: WebSocketHandler<ServerWebSocketData> = {
 		open(ws: ServerWebSocket<ServerWebSocketData>) {
 			addClient(ws);
-			send(ws, {
-				t: "session-id",
-				codebaseVersionId,
-				sessionId: ws.data.sessionId,
-			});
 			transport.wire.pub({
 				t: "client-connected",
 				clientId: ws.data.clientId,

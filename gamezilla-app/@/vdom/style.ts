@@ -7,28 +7,30 @@ export type StylesObjectCamel = React.CSSProperties;
 export type StylesObject = StylesObjectKehab | StylesObjectCamel;
 
 export const camelStringToKehabString = (camelString: string): string => {
-    return camelString.replace(/([A-Z])/g, "-$1").toLowerCase();
-}
+	return camelString.replace(/([A-Z])/g, "-$1").toLowerCase();
+};
 
 export const kehabStringToCamelString = (kehabString: string): string => {
-    return kehabString.replace(/-([a-z])/g, (g) => g[1]!.toUpperCase());
-}
+	return kehabString.replace(/-([a-z])/g, (g) => g[1]!.toUpperCase());
+};
 
-const kehabObjectToCamelObject = (kehabObject: StylesObjectKehab): StylesObjectCamel => {
-    const camelObject: StylesObjectCamel = {};
-    
-    if (typeof kehabObject !== "object") {
-        return camelObject;
-    }
+const kehabObjectToCamelObject = (
+	kehabObject: StylesObjectKehab,
+): StylesObjectCamel => {
+	const camelObject: StylesObjectCamel = {};
 
-    for (const kehabKey in kehabObject) {
-        const kehabValue =
-            // @ts-ignore
-            kehabObject[kehabKey]
-        const camelKey = kehabStringToCamelString(kehabKey);
-        // @ts-ignore
-        camelObject[camelKey] = kehabValue;
-    }
+	if (typeof kehabObject !== "object") {
+		return camelObject;
+	}
+
+	for (const kehabKey in kehabObject) {
+		const kehabValue =
+			// @ts-ignore
+			kehabObject[kehabKey];
+		const camelKey = kehabStringToCamelString(kehabKey);
+		// @ts-ignore
+		camelObject[camelKey] = kehabValue;
+	}
 
 	return camelObject;
 };

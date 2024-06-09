@@ -24,7 +24,7 @@ export const IS_TEST = process.env.NODE_ENV === "test";
 //
 
 // NOTE: pasting sms auth codes into input while using react bugs out. so we're using inferno for now
-export const VDOM_IMPL: VDomImpl = "react" as VDomImpl;
+export const VDOM_IMPL: VDomImpl = "preact" as VDomImpl;
 
 export const VDOM_IMPL_TEST: VDomImpl = "react" as VDomImpl;
 
@@ -87,3 +87,6 @@ export const SERVER_PORT = Number(process.env?.PORT ?? SERVER_PORT_LOCAL);
 //
 
 export const CODEBASE_VERSION_ID = config.codebase_version_id;
+
+
+export const COOKIE_DOMAIN = ".gamezilla.app";
