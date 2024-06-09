@@ -6,6 +6,18 @@ import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import { type FixtureUpdateInput, FlowPlayClientFixture } from "../@/testing";
 
+const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
+	FlowVariantUIPlay.toSolutionMsgs({
+		flow: puzzle.flow,
+	}).map(
+		(c): FixtureUpdateInput => ({
+			msgCore: withEventMeta({
+				t: "got-puzzle-screen-flow-play-msg",
+				c,
+			}),
+		}),
+	);
+
 const Fixture = async () => {
 	const f = await FlowPlayClientFixture();
 	const puzzle = await FlowPuzzle.random();
@@ -51,19 +63,21 @@ const Fixture = async () => {
 	const lastPuzzle = nextPuzzle;
 	const lastPuzzleIndex = 2;
 
-	const completePuzzleMsgs = FlowVariantUIPlay.toSolutionMsgs({
-		flow: puzzle.flow,
-	}).map(
-		(c): FixtureUpdateInput => ({
+	const completePuzzleMsgs = toCompletePuzzleMsgs(puzzle);
+	const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
+		{
 			msgCore: withEventMeta({
-				t: "got-puzzle-screen-flow-play-msg",
-				c,
-			}),
-		}),
-	);
+				t: 'user-clicked-next-puzzle-button',
+				nextPuzzleIndex: lastPuzzleIndex,
+				nextPuzzle: lastPuzzle,
+			})
+		},
+		...toCompletePuzzleMsgs(lastPuzzle)];
+
 
 	return {
 		...f,
+		completeLastPuzzleMsgs,
 		completePuzzleMsgs,
 		initial,
 		pack,
@@ -271,29 +285,34 @@ describe(import.meta.file, () => {
 	it("should render select next pack button in completion dialog after completing last puzzle", async () => {
 		const f = await Fixture();
 		const before = f.render(f.initial);
-		const output = f.update(f.initial, [
-			{
-				msgCore: withEventMeta({
-					t: "user-clicked-next-puzzle-button",
-					nextPuzzle: f.lastPuzzle,
-					nextPuzzleIndex: f.lastPuzzleIndex,
-				}),
-			},
-			...f.completePuzzleMsgs,
-		]);
+		const output = f.update(f.initial, f.completeLastPuzzleMsgs);
 		const after = f.render(output);
 		expect(
 			before
 				.getByRole("dialog")
 				?.getByRole("button", f.ctx.t("flow.select-next-pack")),
 		).toBeFalsy();
-
 		expect(
 			after
 				.getByRole("dialog")
 				?.getByRole("button", f.ctx.t("flow.select-next-pack")),
 		).toBeTruthy();
 	});
+
+	it("should dispatch correct msg after clicking select next pack button", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, f.completeLastPuzzleMsgs);
+		const r = f.render(output);
+		const button = r
+			.getByRole("dialog")
+			?.getByRole("button", f.ctx.t("flow.select-next-pack"));
+		button?.click();
+		expect(button).toBeTruthy();
+		const msg = await r.msgs.once();
+		expect(msg.t).toBe("user-clicked-select-next-pack-button");
+	});
+
+	it("should output correct msg after clicking select name pacl button", async () => {});
 
 	it("should play sound after completing a puzzle", async () => {
 		const f = await Fixture();
