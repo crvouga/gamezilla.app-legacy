@@ -188,7 +188,7 @@ const View: ClientModule["View"] = (input) => {
 					<ViewBottomButtonBarActionExit
 						ctx={input.ctx}
 						onClick={() =>
-							input.dispatch({ t: "user-clicked-select-next-pack-button" })
+							input.dispatch({ t: "user-clicked-exit-puzzle-button" })
 						}
 					/>
 					<ViewBottomButtonBarActionPrev

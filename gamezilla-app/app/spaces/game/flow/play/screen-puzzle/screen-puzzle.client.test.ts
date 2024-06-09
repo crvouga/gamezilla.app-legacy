@@ -67,13 +67,13 @@ const Fixture = async () => {
 	const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
 		{
 			msgCore: withEventMeta({
-				t: 'user-clicked-next-puzzle-button',
+				t: "user-clicked-next-puzzle-button",
 				nextPuzzleIndex: lastPuzzleIndex,
 				nextPuzzle: lastPuzzle,
-			})
+			}),
 		},
-		...toCompletePuzzleMsgs(lastPuzzle)];
-
+		...toCompletePuzzleMsgs(lastPuzzle),
+	];
 
 	return {
 		...f,
