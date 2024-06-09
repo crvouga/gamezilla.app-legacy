@@ -53,8 +53,10 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 			"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 			"Access-Control-Allow-Headers": "Content-Type",
 			"Access-Control-Allow-Credentials": "true",
-			"Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-			"Content-Security-Policy": "default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none';",
+			"Strict-Transport-Security":
+				"max-age=31536000; includeSubDomains; preload",
+			"Content-Security-Policy":
+				"default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none';",
 		};
 
 		if (sessionId === maybeSessionId) {
@@ -101,21 +103,26 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 		socket.on(
 			"to-server",
 			(msg: MsgClientToMsgServer<MsgToServer>, acknowledge: () => void) => {
-				if (msg.v !== codebaseVersionId) {
-					transport.wire.pub({
-						t: "got-bad-msgs",
-						clientId,
-						msgs: msg.m,
-						reason: "codebase-version-id-mismatch",
-						sessionId,
-					});
+				switch (msg.v) {
+					case codebaseVersionId: {
+						transport.toServer.pub({
+							msgs: msg.m,
+							clientId: clientId,
+							sessionId: sessionId,
+						});
+						break
+					}
+					default: {
+						transport.wire.pub({
+							t: "got-bad-msgs",
+							clientId,
+							msgs: msg.m,
+							reason: "codebase-version-id-mismatch",
+							sessionId,
+						});
+						break;
+					}
 				}
-
-				transport.toServer.pub({
-					msgs: msg.m,
-					clientId: clientId,
-					sessionId: sessionId,
-				});
 
 				acknowledge();
 			},
