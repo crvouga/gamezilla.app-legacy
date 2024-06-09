@@ -52,7 +52,7 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
 					}
 					return createTestNode(element);
 				} catch {
-					throw new Error(`No element with role ${role}`);
+					return null;
 				}
 			},
 			getAttribute(attribute) {

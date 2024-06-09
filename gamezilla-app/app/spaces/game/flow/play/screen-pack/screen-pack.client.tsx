@@ -43,7 +43,7 @@ const View: ClientModule["View"] = (input) => {
 	}
 	return (
 		<>
-			<FlowPackPuzzlesGridClient.View
+			<FlowPackPuzzlesGridClient.ViewObserver
 				dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
 			/>
 			<div className="flex h-full w-full flex-1 flex-col">

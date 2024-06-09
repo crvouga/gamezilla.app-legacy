@@ -56,6 +56,8 @@ export const translations: Text = {
 	"flow.play": "遊ぶ",
 	"flow.builder": "ビルダー",
 	"flow.puzzle-completed": "パズルが完了しました",
+	"flow.select-next-pack": "次のパックを選択",
+	"flow.next-puzzle": "次のパズル",
 	"lang.language": "言語",
 	"lang.choose-language": "言語を選択",
 	"lang.done": "完了",

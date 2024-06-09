@@ -56,6 +56,8 @@ export const translations: Text = {
 	"flow.play": "놀이",
 	"flow.builder": "빌더",
 	"flow.puzzle-completed": "퍼즐 완료",
+	"flow.select-next-pack": "다음 팩 선택",
+	"flow.next-puzzle": "다음 퍼즐",
 	"lang.language": "언어",
 	"lang.choose-language": "언어 선택",
 	"lang.done": "완료",

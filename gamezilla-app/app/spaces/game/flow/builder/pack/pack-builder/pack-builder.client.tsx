@@ -643,7 +643,7 @@ export const PackBuilderClient: Pick<
 	View(input) {
 		return (
 			<div className="w-full h-full flex flex-col">
-				<FlowPackPuzzlesGridClient.View
+				<FlowPackPuzzlesGridClient.ViewObserver
 					dispatch={(c) =>
 						input.dispatch({ t: "pack-builder.flow-pack-grid", c })
 					}

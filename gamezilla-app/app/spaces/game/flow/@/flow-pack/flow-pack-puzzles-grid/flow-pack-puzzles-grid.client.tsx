@@ -144,7 +144,7 @@ const update: ClientModule["update"] = (input) => {
 	);
 };
 
-const View = (input: { dispatch: (msg: MsgClient) => void }) => {
+const ViewObserver = (input: { dispatch: (msg: MsgClient) => void }) => {
 	return (
 		<IntersectionObserverEmitter
 			id="flow-pack-grid"
@@ -160,6 +160,6 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 export const FlowPackPuzzlesGridClient = {
 	initClient,
 	update,
-	View,
+	ViewObserver,
 	subscriptions,
 };

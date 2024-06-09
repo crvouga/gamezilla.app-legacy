@@ -55,6 +55,8 @@ export const translations: Text = {
 	"flow.play": "玩",
 	"flow.builder": "建造者",
 	"flow.puzzle-completed": "拼图完成",
+	"flow.select-next-pack": "选择下一个包",
+	"flow.next-puzzle": "下一个拼图",
 	"lang.language": "语言",
 	"lang.choose-language": "选择语言",
 	"lang.done": "完成",

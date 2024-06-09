@@ -258,6 +258,42 @@ describe(import.meta.file, () => {
 		).toBeTruthy();
 	});
 
+	it("should render next puzzle button in completion dialog", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, f.completePuzzleMsgs);
+		const r = f.render(output);
+		expect(
+			r.getByRole("dialog")?.getByRole("button", f.ctx.t("flow.next-puzzle")),
+		).toBeTruthy();
+	});
+
+	it("should render select next pack button in completion dialog after completing last puzzle", async () => {
+		const f = await Fixture();
+		const before = f.render(f.initial);
+		const output = f.update(f.initial, [
+			{
+				msgCore: withEventMeta({
+					t: "user-clicked-next-puzzle-button",
+					nextPuzzle: f.lastPuzzle,
+					nextPuzzleIndex: f.lastPuzzleIndex,
+				}),
+			},
+			...f.completePuzzleMsgs,
+		]);
+		const after = f.render(output);
+		expect(
+			before
+				.getByRole("dialog")
+				?.getByRole("button", f.ctx.t("flow.select-next-pack")),
+		).toBeFalsy();
+
+		expect(
+			after
+				.getByRole("dialog")
+				?.getByRole("button", f.ctx.t("flow.select-next-pack")),
+		).toBeTruthy();
+	});
+
 	it("should play sound after completing a puzzle", async () => {
 		const f = await Fixture();
 		const output = f.update(f.initial, f.completePuzzleMsgs);

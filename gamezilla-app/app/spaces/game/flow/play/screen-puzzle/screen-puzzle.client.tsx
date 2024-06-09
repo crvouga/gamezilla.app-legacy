@@ -113,9 +113,13 @@ const View: ClientModule["View"] = (input) => {
 		? input.model.flowPuzzles[nextPuzzleId]
 		: null;
 
+	const isLastPuzzle =
+		input.modelCore.screen.puzzleIndex >=
+		input.modelCore.screen.flowPack.puzzleIds.length - 1;
+
 	return (
 		<>
-			<FlowPackPuzzlesGridClient.View
+			<FlowPackPuzzlesGridClient.ViewObserver
 				dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
 			/>
 			<div
@@ -155,7 +159,7 @@ const View: ClientModule["View"] = (input) => {
 							<DialogHeader title={input.ctx.t("flow.puzzle-completed")} />
 							{nextPuzzle && (
 								<Button
-									text="Next puzzle"
+									text={input.ctx.t("flow.next-puzzle")}
 									onClick={() =>
 										nextPuzzle &&
 										input.dispatch({
@@ -163,6 +167,15 @@ const View: ClientModule["View"] = (input) => {
 											nextPuzzle,
 											nextPuzzleIndex,
 										})
+									}
+								/>
+							)}
+
+							{isLastPuzzle && (
+								<Button
+									text={input.ctx.t("flow.select-next-pack")}
+									onClick={() =>
+										input.dispatch({ t: "user-clicked-exit-puzzle-button" })
 									}
 								/>
 							)}
