@@ -299,6 +299,18 @@ describe(import.meta.file, () => {
 		).toBeTruthy();
 	});
 
+	it.todo("should render congrats message after completing last puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, f.completeLastPuzzleMsgs);
+
+		expect(
+			f
+				.render(output)
+				.getByRole("dialog")
+				?.getByRole("heading", f.ctx.t("app.congratulations")),
+		).toBeTruthy();
+	});
+
 	it("should dispatch correct msg after clicking select next pack button", async () => {
 		const f = await Fixture();
 		const output = f.update(f.initial, f.completeLastPuzzleMsgs);
