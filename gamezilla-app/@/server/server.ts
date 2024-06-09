@@ -11,7 +11,8 @@ export type HttpRequestMethod =
 
 export type HttpRequest = {
 	method: HttpRequestMethod;
-	url: string;
+	cookies: Record<string, string>;
+	pathname: string;
 	headers: Record<string, string>;
 	body: string | null;
 };

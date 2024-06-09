@@ -4,6 +4,9 @@ import * as path from "node:path";
 import type { HttpHandler, HttpRequest, IServer } from "../server";
 import type { ILogger } from "gamezilla-app/app/@/server/logger";
 
+const removeDuplicateSlashes = (input: string) => {
+	return input.replace(/\/{2,}/g, "/");
+};
 export const ServerNode = (input: { logger: ILogger }) => {
 	const httpServer = new http.Server();
 	const handlers: HttpHandler[] = [];
@@ -39,8 +42,15 @@ export const ServerNode = (input: { logger: ILogger }) => {
 														: req.method === "TRACE"
 															? "TRACE"
 															: "GET",
-					url: req.url ?? "",
+					pathname: removeDuplicateSlashes(req.url ?? "/"),
 					headers: req.headers as Record<string, string>,
+					cookies: req.headers.cookie?.split(";").reduce<Record<string, string>>((acc, cookie) => {
+						const [key, value] = cookie.split("=");
+						if(key && value) {
+							acc[key.trim()] = value.trim();
+						}
+						return acc;
+					}, {}) ?? {},
 					body:
 						req.method === "POST" ||
 						req.method === "PUT" ||

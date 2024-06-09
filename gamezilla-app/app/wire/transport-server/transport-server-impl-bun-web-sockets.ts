@@ -106,10 +106,14 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 					sessionId,
 				};
 
+				const headers: Record<string, string> = maybeSessionId
+					? {}
+					: {
+							"Set-Cookie": toSetSessionCookie(sessionId),
+						};
+
 				server.upgrade(req, {
-					headers: {
-						"Set-Cookie": toSetSessionCookie(sessionId),
-					},
+					headers,
 					data,
 				});
 				return;

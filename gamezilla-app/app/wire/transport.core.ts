@@ -14,7 +14,7 @@ export type MsgClientToMsgServer<MsgToServer> = {
 export const SESSION_ID_COOKIE_NAME = "gamezilla-app-session-id";
 const MAX_AGE = 31536000;
 export const toSetSessionCookie = (sessionId: SessionId) => {
-	const baseCookie = `${SESSION_ID_COOKIE_NAME}=${sessionId}; HttpOnly; Path=/; Max-Age=${MAX_AGE}; SameSite=Lax;`;
+	const baseCookie = `${SESSION_ID_COOKIE_NAME}=${sessionId}; HttpOnly; Max-Age=${MAX_AGE}; SameSite=Lax;`;
 
 	if (IS_PROD) {
 		return `${baseCookie} Secure; Domain=.gamezilla.app;`;

@@ -40,7 +40,7 @@ export const VDOM_IMPL_CURRENT = IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL;
 
 export type ServerImpl = "bun" | "node";
 
-export const SERVER_IMPL = "bun" as ServerImpl;
+export const SERVER_IMPL = "node" as ServerImpl;
 
 //
 //
@@ -64,9 +64,9 @@ export const TRANSPORT_IMPL =
 //
 
 const SERVER_PORT_LOCAL = 5002;
-const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}/`;
-const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/";
-const SERVER_URL_PROD = "https://server.gamezilla.app/";
+const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}`;
+const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io";
+const SERVER_URL_PROD = "https://server.gamezilla.app";
 
 const USE_NGROK = false;
 

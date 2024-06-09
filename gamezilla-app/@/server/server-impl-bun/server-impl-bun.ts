@@ -40,7 +40,7 @@ export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
 							return acc;
 						}, {}),
 						method: stringToHttpRequestMethod(req.method),
-						url: req.url,
+						pathname: req.url,
 					};
 
 					for (const handler of httpHandlers) {

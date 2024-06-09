@@ -2,9 +2,11 @@ import type { ServerNode } from "gamezilla-app/@/server/server-impl-node/server-
 import { SessionId, type ClientId } from "gamezilla-app/app/@/data";
 import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
 import { Server } from "socket.io";
-import type {
-	MsgClientToMsgServer,
-	MsgServerToMsgClient,
+import {
+	SESSION_ID_COOKIE_NAME,
+	toSetSessionCookie,
+	type MsgClientToMsgServer,
+	type MsgServerToMsgClient,
 } from "../transport.core";
 import { initServerTransport, type IServerTransport } from "./transport-server";
 
@@ -26,30 +28,30 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 	const io = new Server(server.httpServer, {
 		cors: {
 			origin: "*",
-			methods: ["GET", "POST"],
 			credentials: true,
 		},
 		transports: ["websocket"],
 		allowUpgrades: true,
-		cookie: true,
 	});
 
-	io.engine.on("initial_headers", (headers) => {
-		const maybeSessionId = headers.cookie
-			?.split(";")
-			.find((cookie: string) => {
-				return cookie.trim().startsWith("gamezilla-app-session-id=");
-			})
-			.split("=")[1];
-
-		const sessionId = SessionId.is(maybeSessionId)
-			? maybeSessionId
-			: SessionId.generate();
-
-		if (!maybeSessionId) {
-			headers["set-cookie"] =
-				`gamezilla-app-session-id=${sessionId}; Path=/; HttpOnly; SameSite=None`;
+	server.registerHandler(async (request) => {
+		if (request.pathname !== "/set-session-cookie") {
+			return null;
 		}
+		const origin = request.headers.origin ?? "*";
+		const maybeSessionId = request.cookies[SESSION_ID_COOKIE_NAME];
+		const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate();
+		return {
+			status: 200,
+			headers: {
+				"Set-Cookie": toSetSessionCookie(sessionId),
+				"Access-Control-Allow-Origin": origin, // Dynamically set the origin
+				"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+				"Access-Control-Allow-Headers": "Content-Type",
+				"Access-Control-Allow-Credentials": "true",
+			},
+			body: "OK",
+		};
 	});
 
 	io.on("connection", (socket) => {
@@ -62,7 +64,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 				return acc;
 			}, {});
 
-		const probablySessionId = cookies["gamezilla-app-session-id"];
+		const probablySessionId = cookies[SESSION_ID_COOKIE_NAME];
 
 		const sessionId = SessionId.is(probablySessionId)
 			? probablySessionId
