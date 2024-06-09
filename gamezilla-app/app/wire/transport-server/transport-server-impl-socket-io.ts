@@ -7,6 +7,7 @@ import type {
 	MsgServerToMsgClient,
 } from "../transport.core";
 import { type IServerTransport, initServerTransport } from "./transport-server";
+import { COOKIE_DOMAIN } from "public-config";
 
 export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 	server,
@@ -30,21 +31,25 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 		},
 		transports: ["websocket"],
 		allowUpgrades: true,
+		cookie: {
+			name: "gamezilla-app-session-id",
+			domain: COOKIE_DOMAIN,
+			httpOnly: true,
+			sameSite: "none",
+			secure: true,
+			path: "/",
+		},
 	});
 
 	io.on("connection", (socket) => {
-		const maybeSessionId = socket.handshake.auth.sessionId;
+		const maybeSessionId = socket.handshake.headers.cookie
+			?.split(";")
+			.find((c) => c.trim().startsWith("gamezilla-app-session-id="))
+			?.split("=")[1];
 
 		const sessionId = SessionId.is(maybeSessionId)
 			? maybeSessionId
 			: SessionId.generate();
-
-		const toClient: MsgServerToMsgClient<MsgToClient> = {
-			t: "session-id",
-			codebaseVersionId,
-			sessionId,
-		};
-		socket.emit("to-client", toClient);
 
 		const clientId = socket.id as ClientId;
 
@@ -53,18 +58,18 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 		socket.on(
 			"to-server",
 			(msg: MsgClientToMsgServer<MsgToServer>, acknowledge: () => void) => {
-				if (msg.codebaseVersionId !== codebaseVersionId) {
+				if (msg.v !== codebaseVersionId) {
 					transport.wire.pub({
 						t: "got-bad-msgs",
 						clientId,
-						msgs: msg.msgs,
+						msgs: msg.m,
 						reason: "codebase-version-id-mismatch",
 						sessionId,
 					});
 				}
 
 				transport.toServer.pub({
-					msgs: msg.msgs,
+					msgs: msg.m,
 					clientId: clientId,
 					sessionId: sessionId,
 				});
@@ -81,9 +86,8 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 			}
 
 			const toClient: MsgServerToMsgClient<MsgToClient> = {
-				t: "to-client",
-				codebaseVersionId,
-				msgs: msgs.msgs,
+				v: codebaseVersionId,
+				m: msgs.msgs,
 			};
 
 			socket.emit("to-client", toClient);
@@ -102,9 +106,8 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 
 	transport.toClientBroadcast.sub((msgs) => {
 		const toClient: MsgServerToMsgClient<MsgToClient> = {
-			t: "to-client",
-			codebaseVersionId,
-			msgs: msgs,
+			v: codebaseVersionId,
+			m: msgs,
 		};
 
 		io.emit("to-client", toClient);

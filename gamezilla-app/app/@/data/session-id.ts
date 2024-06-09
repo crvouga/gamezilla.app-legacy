@@ -41,7 +41,7 @@ const generateId = (length: number): string => {
 };
 
 export const generate = (): SessionId => {
-	const id = `${generateId(5)}`;
+	const id = generateId(8);
 	const sessionId = `${namespace}${separator}${id}`;
 
 	if (is(sessionId)) {

@@ -156,7 +156,6 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 				msgCmd: [
 					sendToClient([msgEvt.clientId], {
 						t: "client-unauthenticated",
-						sessionId: msgEvt.sessionId,
 					}),
 				],
 			};

@@ -10,7 +10,6 @@ import {
 	initClientTransport,
 } from "./transport-client";
 
-const SESSION_ID_KEY = "gamezilla-session-id";
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 6; // Adjust as needed
 
@@ -138,24 +137,14 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 			isConnected = true;
 			const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>; // leap of faith
 
-			switch (msg.t) {
-				case "session-id": {
-					localStorage.setItem(SESSION_ID_KEY, msg.sessionId);
-					return;
-				}
-
-				case "to-client": {
-					if (msg.codebaseVersionId !== codebaseVersionId) {
-						transport.msgEvt.pub({
-							t: "got-bad-msgs",
-							reason: "codebase-version-mismatch",
-						});
-						return;
-					}
-					transport.toClient.pub(msg.msgs);
-					return;
-				}
+			if (msg.v !== codebaseVersionId) {
+				transport.msgEvt.pub({
+					t: "got-bad-msgs",
+					reason: "codebase-version-mismatch",
+				});
+				return;
 			}
+			transport.toClient.pub(msg.m);
 		};
 	};
 
@@ -189,9 +178,8 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 
 	transport.toServer.sub((msgs) => {
 		send({
-			t: "to-server",
-			msgs,
-			codebaseVersionId,
+			m: msgs,
+			v: codebaseVersionId,
 		});
 	});
 
@@ -211,17 +199,11 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 	};
 };
 
-function toWebsocketServerUrl(baseServerUrl: string) {
+const toWebsocketServerUrl = (baseServerUrl: string) => {
 	const baseServerUrlObj = new URL(baseServerUrl);
 
 	if (typeof window === "undefined") {
 		return baseServerUrlObj.toString();
-	}
-
-	const sessionId = localStorage.getItem(SESSION_ID_KEY);
-
-	if (sessionId) {
-		baseServerUrlObj.searchParams.append("session-id", sessionId);
 	}
 
 	if (baseServerUrlObj.protocol === "https:") {
@@ -235,4 +217,4 @@ function toWebsocketServerUrl(baseServerUrl: string) {
 	baseServerUrlObj.pathname = "/ws";
 
 	return baseServerUrlObj.toString();
-}
+};

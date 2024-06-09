@@ -111,5 +111,5 @@ export type MsgToClient =
 	| ContinueAsGuest.MsgToClient
 	| Logout.MsgToClient
 	| { t: "client-authenticated"; account: UserAccount; loggedIn: boolean }
-	| { t: "client-unauthenticated" }
+	| { t: "client-unauthenticated"; sessionId?: never }
 	| { t: "sms"; c: AuthSMS.MsgToClient };

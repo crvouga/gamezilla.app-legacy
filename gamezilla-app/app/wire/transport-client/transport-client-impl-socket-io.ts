@@ -8,8 +8,6 @@ import {
 	initClientTransport,
 } from "./transport-client";
 
-const SESSION_ID_KEY = "gamezilla-session-id";
-
 export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
 	codebaseVersionId,
 	impl,
@@ -28,9 +26,6 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
 
 	const start = async () => {
 		const socket = io(impl.serverUrl, {
-			auth: {
-				sessionId: localStorage.getItem(SESSION_ID_KEY) ?? null,
-			},
 			transports: ["websocket"],
 		});
 
@@ -48,9 +43,8 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
 
 		const sendToServer = (msgs: MsgToServer[]) => {
 			const toServer: MsgClientToMsgServer<MsgToServer> = {
-				t: "to-server",
-				msgs,
-				codebaseVersionId,
+				m: msgs,
+				v: codebaseVersionId,
 			};
 
 			socket.emit("to-server", toServer, (err: unknown) => {
@@ -66,21 +60,10 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
 		});
 
 		socket.on("to-client", (msg: MsgServerToMsgClient<MsgToClient>) => {
-			if (msg.codebaseVersionId !== codebaseVersionId) {
+			if (msg.v !== codebaseVersionId) {
 				console.warn("Codebase version mismatch");
 			}
-
-			switch (msg.t) {
-				case "session-id": {
-					localStorage.setItem(SESSION_ID_KEY, msg.sessionId);
-					break;
-				}
-
-				case "to-client": {
-					transport.toClient.pub(msg.msgs);
-					break;
-				}
-			}
+			transport.toClient.pub(msg.m);
 		});
 
 		transport.msgCmd.sub((msgCmd) => {

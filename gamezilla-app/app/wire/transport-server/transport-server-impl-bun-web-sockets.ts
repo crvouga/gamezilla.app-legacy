@@ -86,7 +86,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 				const maybeSessionIdCookie = req.headers
 					.get("cookie")
 					?.match(/gamezilla-app-session-id=([^;]+)/);
-				
+
 				const maybeSessionId = maybeSessionIdCookie
 					? maybeSessionIdCookie[1]
 					: null;
@@ -148,39 +148,24 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 				message.toString(),
 			) as MsgClientToMsgServer<MsgToServer>; // leap of faith
 
-			switch (msg.codebaseVersionId) {
+			switch (msg.v) {
 				case codebaseVersionId: {
-					switch (msg.t) {
-						case "to-server": {
-							transport.toServer.pub({
-								clientId: ws.data.clientId,
-								sessionId: ws.data.sessionId,
-								msgs: msg.msgs,
-							});
-							return;
-						}
-						default: {
-							transport.wire.pub({
-								t: "got-bad-msgs",
-								reason: "unknown-msg-type",
-								clientId: ws.data.clientId,
-								sessionId: ws.data.sessionId,
-								msgs: msg.msgs,
-							});
-							return;
-						}
-					}
+					transport.toServer.pub({
+						clientId: ws.data.clientId,
+						sessionId: ws.data.sessionId,
+						msgs: msg.m,
+					});
+					break
 				}
-
 				default: {
 					transport.wire.pub({
 						t: "got-bad-msgs",
 						reason: "codebase-version-id-mismatch",
 						clientId: ws.data.clientId,
 						sessionId: ws.data.sessionId,
-						msgs: msg.msgs,
+						msgs: msg.m,
 					});
-					return;
+					break
 				}
 			}
 		},
@@ -242,7 +227,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
 	transport.toClientBroadcast.sub((msgs) => {
 		for (const client of clients.values()) {
-			send(client, { t: "to-client", msgs, codebaseVersionId });
+			send(client, { m: msgs, v: codebaseVersionId });
 		}
 	});
 
@@ -255,10 +240,9 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 				continue;
 			}
 
-			send(client, {
-				t: "to-client",
-				msgs: toClientSingle.msgs,
-				codebaseVersionId,
+			send(client, {	
+				m: toClientSingle.msgs,
+				v: codebaseVersionId,
 			});
 		}
 	});

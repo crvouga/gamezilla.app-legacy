@@ -1,19 +1,9 @@
-import type { SessionId } from "gamezilla-app/app/@/data";
-
-export type MsgServerToMsgClient<MsgToClient> =
-	| {
-			t: "to-client";
-			msgs: MsgToClient[];
-			codebaseVersionId: string;
-	  }
-	| {
-			t: "session-id";
-			sessionId: SessionId;
-			codebaseVersionId: string;
-	  };
+export type MsgServerToMsgClient<MsgToClient> = {
+	m: MsgToClient[];
+	v: string;
+};
 
 export type MsgClientToMsgServer<MsgToServer> = {
-	t: "to-server";
-	msgs: MsgToServer[];
-	codebaseVersionId: string;
+	m: MsgToServer[];
+	v: string;
 };
