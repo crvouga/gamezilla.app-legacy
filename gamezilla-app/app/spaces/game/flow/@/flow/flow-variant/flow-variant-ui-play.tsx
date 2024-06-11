@@ -371,7 +371,21 @@ const updateDragging = ({
 		}
 
 		case "left": {
-			return { model: { ...model, status: { t: "idle" } } };
+			const current = deriveFlow({ model, flow });
+			const isSolved = Flow.isSolved(current);
+			return {
+				model: {
+					...model,
+					status: {
+						t: "idle",
+					},
+				},
+				event: isSolved
+					? {
+							t: "solved",
+						}
+					: undefined,
+			};
 		}
 	}
 };

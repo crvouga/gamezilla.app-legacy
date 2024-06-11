@@ -118,6 +118,52 @@ describe(import.meta.file, () => {
 		expect(output.event?.t).toBe("solved");
 	});
 
+	it("should output solved event even after dragging left the board", () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", "B", " "],
+			["a", " ", "A"],
+		]);
+		const f = Fixture({ flow });
+
+		const msgs: FlowVariantPlay.Msg[] = [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
+			{ t: "left" },
+		];
+
+		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
+			(output, msg) =>
+				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
+			{ model: f.init },
+		);
+
+		expect(output.event?.t).toBe("solved");
+	});
+
+	it("should not output solved event after dragging left the board if not connected", () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", "B", " "],
+			["a", " ", "A"],
+		]);
+		const f = Fixture({ flow });
+
+		const msgs: FlowVariantPlay.Msg[] = [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
+			{ t: "left" },
+		];
+
+		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
+			(output, msg) =>
+				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
+			{ model: f.init },
+		);
+		expect(output.event).toBeUndefined();
+	});
+
 	it("should not output solved if not pressed up on terminal", () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
