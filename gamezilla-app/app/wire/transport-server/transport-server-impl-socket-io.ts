@@ -110,7 +110,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 							clientId: clientId,
 							sessionId: sessionId,
 						});
-						break
+						break;
 					}
 					default: {
 						transport.wire.pub({

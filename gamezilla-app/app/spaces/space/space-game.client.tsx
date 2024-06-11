@@ -180,7 +180,12 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 	});
 
 	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
-		(e): WithEventId<SpaceCoreEvent> => ({ ...e, spaceId, t: "game", c: e }),
+		(c): WithEventId<SpaceCoreEvent> => {
+			const eventId = c.eventId;
+			// @ts-ignore
+			c.eventId = undefined;
+			return { eventId, spaceId, t: "game", c };
+		},
 	);
 
 	return {

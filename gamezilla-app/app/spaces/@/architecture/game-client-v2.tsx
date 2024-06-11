@@ -273,10 +273,11 @@ const tagOutput = <
 		eff: Eff.tag(tag, output.eff),
 		msgEvt: output.msgEvt,
 		msgCore: output.msgCore?.map((c) => {
-			const child = { ...c };
+			const eventId = c.eventId;
+			c.eventId = undefined;
 			return {
-				eventId: c.eventId,
-				c: child,
+				eventId,
+				c,
 				t: tag,
 			};
 		}),
