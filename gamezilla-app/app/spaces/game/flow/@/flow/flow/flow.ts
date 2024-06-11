@@ -822,6 +822,27 @@ export const isConnectedWithPipes = (
 	return isConnectedWithPipes(model, edge.targetId, targetId);
 };
 
+const hasOutPipe = (model: Model, nodeId: NodeId): boolean => {
+	return nodeId in model.pipesBySourceId;
+};
+
+const hasInPipe = (model: Model, nodeId: NodeId): boolean => {
+	for (const pipe of yieldPipes(model)) {
+		if (pipe.edge.targetId === nodeId) {
+			return true;
+		}
+	}
+	return false;
+};
+
+export const isProbablyConnectedWithPipes = (
+	model: Model,
+	sourceId: NodeId,
+	targetId: NodeId,
+): boolean => {
+	return hasOutPipe(model, sourceId) && hasInPipe(model, targetId);
+};
+
 export const isSolved = (model: Model): boolean => {
 	for (const terminal of yieldTerminals(model)) {
 		if (!terminal.endId) {

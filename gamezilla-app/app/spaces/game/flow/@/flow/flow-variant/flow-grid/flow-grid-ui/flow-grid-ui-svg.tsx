@@ -52,6 +52,7 @@ const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 			// @ts-ignore
 			onTouchMove={onTouchMove}
 			onMouseLeave={left}
+			onMouseUp={left}
 		>
 			<ViewGrid {...props} />
 
@@ -234,7 +235,8 @@ const ViewClickableNode = (
 				}
 				props.onPressDown?.(props.node.nodeId);
 			}}
-			onMouseUp={() => {
+			onMouseUp={(event) => {
+				event.stopPropagation();
 				props.onPressUp?.(props.node.nodeId);
 			}}
 			onMouseEnter={() => {
