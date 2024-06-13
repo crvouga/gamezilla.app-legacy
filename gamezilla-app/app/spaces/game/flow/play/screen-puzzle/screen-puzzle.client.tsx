@@ -55,14 +55,14 @@ const updateMain: ClientModule["update"] = (input) => {
 		case "user-clicked-next-puzzle-button": {
 			return {
 				model: input.model,
-				msgCmd: [playSound(APP_SOUND.tap)],
+				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
 
 		case "user-clicked-prev-puzzle-button": {
 			return {
 				model: input.model,
-				msgCmd: [playSound(APP_SOUND.tap)],
+				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
 
