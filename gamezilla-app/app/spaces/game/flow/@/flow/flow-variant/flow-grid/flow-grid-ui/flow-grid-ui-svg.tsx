@@ -49,11 +49,11 @@ const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 				e.preventDefault();
 			}}
 			viewBox={`${0} ${0} ${props.model.width} ${props.model.height}`}
-			// @ts-ignore
 			onTouchMove={onTouchMove}
 			onMouseLeave={left}
 			onMouseUp={left}
 		>
+			<title>Flow Grid</title>
 			<ViewGrid {...props} />
 
 			<ViewPipelines {...props} />
@@ -62,7 +62,7 @@ const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 
 			<ViewCoordinates {...props} />
 
-			{!Boolean(props.disabled) && (
+			{!props.disabled && (
 				<ViewClickable {...props} draggedOver={draggedOver} />
 			)}
 		</svg>
