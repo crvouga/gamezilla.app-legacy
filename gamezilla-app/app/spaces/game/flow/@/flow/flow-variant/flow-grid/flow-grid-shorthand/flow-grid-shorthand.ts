@@ -27,6 +27,18 @@ export type Element = Empty | Terminal | Pipe | TerminalWithPipe;
 
 export type Model = NonEmpty<NonEmpty<Element>>;
 
+export const transpose = (model: Model): Model => {
+	return model[0].map((_, i) => model.map((row) => row[i])) as Model;
+};
+
+export const rotateClockwise = (model: Model): Model => {
+	return transpose(model).map((row) => row.reverse()) as Model;
+};
+
+export const reflectHorizontally = (model: Model): Model => {
+	return model.map((row) => row.reverse()) as Model;
+};
+
 export const isModel = (maybeModel: Element[][]): maybeModel is Model =>
 	NonEmpty.is(maybeModel) &&
 	maybeModel.every(

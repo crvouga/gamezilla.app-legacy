@@ -187,7 +187,7 @@ describe(import.meta.file, () => {
 		expect(output.event?.t).not.toBe("solved");
 	});
 
-	it('should not output solved event if terminals are not connected', () => {
+	it("should not output solved event if terminals are not connected", () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
@@ -208,5 +208,5 @@ describe(import.meta.file, () => {
 		);
 
 		expect(output.event?.t).not.toBe("solved");
-	})
+	});
 });

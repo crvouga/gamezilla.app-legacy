@@ -112,10 +112,9 @@ export const toSolutionMsgs = ({
 }: {
 	flow: FlowVariant.Model;
 }): Msg[] => {
-	const solutions = FlowAlgoSolve.solve(
-		flow,
-		{ distance: FlowVariant.distance(flow) },
-	);
+	const solutions = FlowAlgoSolve.solve(flow, {
+		distance: FlowVariant.distance(flow),
+	});
 
 	const solution = first(solutions);
 
@@ -334,7 +333,7 @@ const updateDragging = ({
 		case "pressed-up": {
 			const current = deriveFlow({ model, flow });
 			const modelNew: Model = { ...model, status: { t: "idle" } };
-			
+
 			const activeGroupTerminal = Flow.toTerminalByGroupId(
 				current,
 				modelStatus.activeGroupId,

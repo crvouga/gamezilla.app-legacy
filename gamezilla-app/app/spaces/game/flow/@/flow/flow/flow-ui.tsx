@@ -153,6 +153,7 @@ export type FlowViewProps<TModel> = {
 	className?: string;
 	model: TModel;
 	isDragging?: boolean;
+	disableHighlight?: boolean;
 	autocompleteEdge?: (Edge & { groupId: GroupId }) | null;
 	showCoordinates?: boolean;
 	onPressDown?: (nodeId: NodeId) => void;

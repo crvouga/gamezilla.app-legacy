@@ -1,5 +1,5 @@
 import { cn } from "gamezilla-app/app/@/ui";
-import { type Flow, FlowUI } from "../../../flow";
+import { FlowUI, type Flow } from "../../../flow";
 import * as FlowGrid from "../flow-grid";
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
@@ -106,17 +106,21 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 
 				return (
 					<g key={terminal.groupId} id={terminal.groupId}>
-						<path
-							d={
-								props.isGroupActive?.(terminal.groupId) ? "" : pipelinePathData
-							}
-							stroke={groupColor}
-							fill="none"
-							strokeLinejoin="inherit"
-							strokeLinecap="square"
-							strokeWidth="1"
-							strokeOpacity="0.2"
-						/>
+						{!props.disableHighlight && (
+							<path
+								d={
+									props.isGroupActive?.(terminal.groupId)
+										? ""
+										: pipelinePathData
+								}
+								stroke={groupColor}
+								fill="none"
+								strokeLinejoin="inherit"
+								strokeLinecap="square"
+								strokeWidth="1"
+								strokeOpacity="0.2"
+							/>
+						)}
 
 						<path
 							d={pipelinePathData}
