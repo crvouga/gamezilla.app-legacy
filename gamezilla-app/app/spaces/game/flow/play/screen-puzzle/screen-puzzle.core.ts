@@ -2,9 +2,21 @@ import { FlowVariantUIPlay } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule } from "../play.types";
+import { LastPuzzleCore } from "./last-puzzle/last-puzzle.core";
 import type { ModelCore } from "./screen-puzzle.types";
 
-const updateCore: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
+const updateCore: CoreModule["updateCore"] = (input) => {
+	return [
+		updateCoreMain,
+		LastPuzzleCore.updateCore,
+		//
+	].reduce(
+		(acc, update) => update({ ...input, modelCore: acc }),
+		input.modelCore,
+	);
+};
+
+const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "user-clicked-exit-puzzle-button": {
 			switch (modelCore.screen.t) {

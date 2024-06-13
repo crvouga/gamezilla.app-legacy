@@ -20,6 +20,7 @@ import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
 import type { ClientModule } from "../play.types";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
+import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen({ model: input.model }, (model) =>
@@ -33,6 +34,7 @@ const updateMain: ClientModule["update"] = (input) => {
 		case "user-clicked-exit-puzzle-button":
 		case "user-clicked-next-puzzle-button":
 		case "user-clicked-prev-puzzle-button":
+		case "user-clicked-select-next-pack-button":
 		case "got-puzzle-screen-flow-play-msg": {
 			return {
 				model: input.model,
@@ -117,6 +119,12 @@ const View: ClientModule["View"] = (input) => {
 		input.modelCore.screen.puzzleIndex >=
 		input.modelCore.screen.flowPack.puzzleIds.length - 1;
 
+	const isSolvedPuzzleDialogOpen =
+		input.modelCore.screen.state.t === "solved" &&
+		input.modelCore.screen.opened === "puzzle-complete";
+
+	const checkmarkDuration = TimeSpan.seconds(1);
+
 	return (
 		<>
 			<FlowPackPuzzlesGridClient.ViewObserver
@@ -138,51 +146,43 @@ const View: ClientModule["View"] = (input) => {
 					/>
 
 					<CheckmarkAnimation
-						open={
-							input.modelCore.screen.state.t === "solved" &&
-							input.modelCore.screen.opened === "puzzle-complete"
-						}
-						duration={TimeSpan.seconds(1)}
+						open={isSolvedPuzzleDialogOpen}
+						duration={checkmarkDuration}
 					/>
 
-					<Dialog
-						delay={TimeSpan.seconds(1)}
-						open={
-							input.modelCore.screen.state.t === "solved" &&
-							input.modelCore.screen.opened === "puzzle-complete"
-						}
-						onClose={() =>
-							input.dispatch({ t: "user-closed-puzzle-complete-dialog" })
-						}
-					>
-						<DialogSurface>
-							<DialogHeader title={input.ctx.t("flow.puzzle-completed")} />
-							{nextPuzzle && (
-								<Button
-									text={input.ctx.t("flow.next-puzzle")}
-									onClick={() =>
-										nextPuzzle &&
-										input.dispatch({
-											t: "user-clicked-next-puzzle-button",
-											nextPuzzle,
-											nextPuzzleIndex,
-										})
-									}
-								/>
-							)}
-
-							{isLastPuzzle && (
-								<Button
-									text={input.ctx.t("flow.select-next-pack")}
-									onClick={() =>
-										input.dispatch({
-											t: "user-clicked-select-next-pack-button",
-										})
-									}
-								/>
-							)}
-						</DialogSurface>
-					</Dialog>
+					{isLastPuzzle ? (
+						<LastPuzzleClient.View
+							delay={checkmarkDuration}
+							open={isSolvedPuzzleDialogOpen}
+							ctx={input.ctx}
+							dispatch={(c) => input.dispatch(c)}
+						/>
+					) : (
+						<Dialog
+							delay={checkmarkDuration}
+							open={isSolvedPuzzleDialogOpen}
+							onClose={() =>
+								input.dispatch({ t: "user-closed-puzzle-complete-dialog" })
+							}
+						>
+							<DialogSurface>
+								<DialogHeader title={input.ctx.t("flow.puzzle-completed")} />
+								{nextPuzzle && (
+									<Button
+										text={input.ctx.t("flow.next-puzzle")}
+										onClick={() =>
+											nextPuzzle &&
+											input.dispatch({
+												t: "user-clicked-next-puzzle-button",
+												nextPuzzle,
+												nextPuzzleIndex,
+											})
+										}
+									/>
+								)}
+							</DialogSurface>
+						</Dialog>
+					)}
 				</div>
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarActionExit

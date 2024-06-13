@@ -1,97 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import { didPlaySound } from "gamezilla-app/app/@/client";
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
-import { Flow, FlowVariantUIPlay } from "../../@/flow";
-import { FlowPack } from "../../@/flow-pack";
-import { FlowPuzzle } from "../../@/flow-puzzle";
-import { type FixtureUpdateInput, FlowPlayClientFixture } from "../@/testing";
-
-const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
-	FlowVariantUIPlay.toSolutionMsgs({
-		flow: puzzle.flow,
-	}).map(
-		(c): FixtureUpdateInput => ({
-			msgCore: withEventMeta({
-				t: "got-puzzle-screen-flow-play-msg",
-				c,
-			}),
-		}),
-	);
+import { Flow } from "../../@/flow";
+import { ScreenPuzzleClientFixture } from "./@/testing.client";
 
 const Fixture = async () => {
-	const f = await FlowPlayClientFixture();
-	const puzzle = await FlowPuzzle.random();
-	const nextPuzzle = await FlowPuzzle.random();
-	const prevPuzzle = await FlowPuzzle.random();
-	const pack = await FlowPack.random({
-		puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
-	});
-	const puzzleIndex = 1;
-	const prevPuzzleIndex = 0;
-	const nextPuzzleIndex = 2;
-
-	f.initial.model = {
-		...f.initial.model,
-		flowPuzzles: {
-			[puzzle.id]: puzzle,
-			[nextPuzzle.id]: nextPuzzle,
-			[prevPuzzle.id]: prevPuzzle,
-		},
-		flowPacks: {
-			[pack.id]: pack,
-		},
-	};
-
-	const initial = f.update(f.initial, [
-		{
-			msg: {
-				t: "user-clicked-open-pack-list-item",
-				pack,
-			},
-		},
-		{
-			msg: {
-				t: "user-clicked-open-puzzle-grid-item",
-				flowPuzzle: puzzle,
-				puzzleIndex,
-			},
-		},
-	]);
-
-	const firstPuzzle = prevPuzzle;
-	const firstPuzzleIndex = 0;
-	const lastPuzzle = nextPuzzle;
-	const lastPuzzleIndex = 2;
-
-	const completePuzzleMsgs = toCompletePuzzleMsgs(puzzle);
-	const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
-		{
-			msgCore: withEventMeta({
-				t: "user-clicked-next-puzzle-button",
-				nextPuzzleIndex: lastPuzzleIndex,
-				nextPuzzle: lastPuzzle,
-			}),
-		},
-		...toCompletePuzzleMsgs(lastPuzzle),
-	];
-
+	const f = await ScreenPuzzleClientFixture();
 	return {
 		...f,
-		completeLastPuzzleMsgs,
-		completePuzzleMsgs,
-		initial,
-		pack,
-		puzzle,
-		puzzleIndex,
-		firstPuzzle,
-		firstPuzzleIndex,
-		lastPuzzle,
-		lastPuzzleIndex,
-		//
-		nextPuzzle,
-		nextPuzzleIndex,
-		prevPuzzle,
-		prevPuzzleIndex,
 	};
 };
 
@@ -281,53 +197,6 @@ describe(import.meta.file, () => {
 			r.getByRole("dialog")?.getByRole("button", f.ctx.t("flow.next-puzzle")),
 		).toBeTruthy();
 	});
-
-	it("should render select next pack button in completion dialog after completing last puzzle", async () => {
-		const f = await Fixture();
-		const before = f.render(f.initial);
-		const output = f.update(f.initial, f.completeLastPuzzleMsgs);
-		const after = f.render(output);
-		expect(
-			before
-				.getByRole("dialog")
-				?.getByRole("button", f.ctx.t("flow.select-next-pack")),
-		).toBeFalsy();
-		expect(
-			after
-				.getByRole("dialog")
-				?.getByRole("button", f.ctx.t("flow.select-next-pack")),
-		).toBeTruthy();
-	});
-
-	it.todo(
-		"should render congrats message after completing last puzzle",
-		async () => {
-			const f = await Fixture();
-			const output = f.update(f.initial, f.completeLastPuzzleMsgs);
-
-			expect(
-				f
-					.render(output)
-					.getByRole("dialog")
-					?.getByRole("heading", f.ctx.t("app.congratulations")),
-			).toBeTruthy();
-		},
-	);
-
-	it("should dispatch correct msg after clicking select next pack button", async () => {
-		const f = await Fixture();
-		const output = f.update(f.initial, f.completeLastPuzzleMsgs);
-		const r = f.render(output);
-		const button = r
-			.getByRole("dialog")
-			?.getByRole("button", f.ctx.t("flow.select-next-pack"));
-		button?.click();
-		expect(button).toBeTruthy();
-		const msg = await r.msgs.once();
-		expect(msg.t).toBe("user-clicked-select-next-pack-button");
-	});
-
-	it("should output correct msg after clicking select name pacl button", async () => {});
 
 	it("should play sound after completing a puzzle", async () => {
 		const f = await Fixture();
