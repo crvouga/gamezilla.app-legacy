@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
 		];
 
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
 		];
 
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -92,7 +92,7 @@ describe(import.meta.file, () => {
 		];
 
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -157,7 +157,7 @@ describe(import.meta.file, () => {
 		];
 
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -178,7 +178,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 		expect(
 			some(actual, (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
@@ -200,7 +200,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 		expect(
 			some(actual, (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
@@ -228,7 +228,7 @@ describe(import.meta.file, () => {
 		];
 
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -259,7 +259,7 @@ describe(import.meta.file, () => {
 		];
 
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -291,7 +291,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -324,7 +324,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -359,7 +359,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -398,7 +398,7 @@ describe(import.meta.file, () => {
 
 		const config = { distance: FlowGrid.distance(grid) };
 		expect(
-			some(FlowAlgoSolve.solve(config, grid), (actual) =>
+			some(FlowAlgoSolve.solve(grid, config), (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
 			),
 		).toBe(true);
@@ -437,7 +437,7 @@ describe(import.meta.file, () => {
 		const config = { distance: FlowGrid.distance(grid) };
 
 		expect(
-			some(FlowAlgoSolve.solve(config, grid), (actual) =>
+			some(FlowAlgoSolve.solve(grid, config), (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
 			),
 		).toBe(true);
@@ -475,7 +475,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -518,7 +518,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>
@@ -563,7 +563,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 		const config = { distance: FlowGrid.distance(grid) };
-		const actual = FlowAlgoSolve.solve(config, grid);
+		const actual = FlowAlgoSolve.solve(grid, config);
 
 		expect(
 			some(actual, (actual) =>

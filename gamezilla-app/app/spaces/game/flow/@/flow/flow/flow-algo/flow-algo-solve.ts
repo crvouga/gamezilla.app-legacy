@@ -188,8 +188,8 @@ const solveStep = function* (
 };
 
 export const solve = function* (
-	config: Config,
 	model: Flow.Model,
+	config: Config,
 ): Iterable<Flow.Model> {
 	const terminals = Flow.toTerminals(model);
 

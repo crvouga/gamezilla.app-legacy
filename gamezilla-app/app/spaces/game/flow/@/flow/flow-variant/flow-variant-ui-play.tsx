@@ -113,8 +113,8 @@ export const toSolutionMsgs = ({
 	flow: FlowVariant.Model;
 }): Msg[] => {
 	const solutions = FlowAlgoSolve.solve(
-		{ distance: FlowVariant.distance(flow) },
 		flow,
+		{ distance: FlowVariant.distance(flow) },
 	);
 
 	const solution = first(solutions);
