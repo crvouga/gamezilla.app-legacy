@@ -28,27 +28,27 @@ const update: ClientModule["update"] = (input) => {
 		(model) => ScreenPuzzleClient.update({ ...input, model }),
 		(model) => ScreenSelectPackClient.update({ ...input, model }),
 		(model) => ScreenPackClient.update({ ...input, model }),
-		model => updateInit({ ...input, model }),
+		(model) => updateInit({ ...input, model }),
 	);
 };
 
 const updateInit: ClientModule["update"] = (input) => {
 	switch (input.msgEvt?.t) {
 		// @ts-ignore
-		case '': {
+		case "": {
 			return {
 				model: input.model,
-				msgCmd: []
+				msgCmd: [],
 				// msgCmd: [
 				// 	FlowPackListClient.msgServer({ t: 'flow-pack-list', c: { t: 'get-all' } }),
 				// ],
-			}
+			};
 		}
 	}
 	return {
 		model: input.model,
-	}
-}
+	};
+};
 
 const updateFlowPackList: ClientModule["update"] = (input) => {
 	const updated = FlowPackListClient.update({

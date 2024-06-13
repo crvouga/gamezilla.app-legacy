@@ -55,9 +55,7 @@ const updateMain: ClientModule["update"] = (input) => {
 		case "user-clicked-next-puzzle-button": {
 			return {
 				model: input.model,
-				msgCmd: [
-					playSound(APP_SOUND.navForwardMin),
-				],
+				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
 
