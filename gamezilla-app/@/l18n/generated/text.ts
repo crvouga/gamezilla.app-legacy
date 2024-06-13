@@ -2,21 +2,21 @@
 import type { Text as Text0 } from "../../../app/auth/auth.$l18n";
 import type { Text as Text1 } from "../../../app/auth/auth-sms/verify-sms/verify-sms.$l18n";
 import type { Text as Text2 } from "../../../app/auth/auth-sms/auth-sms.$l18n";
-import type { Text as Text3 } from "../../../app/spaces/@/spaces.$l18n";
-import type { Text as Text4 } from "../../../app/spaces/modals/modals.$l18n";
-import type { Text as Text5 } from "../../../app/spaces/game/@/game/chips.$l18n";
-import type { Text as Text6 } from "../../../app/spaces/game/flow/@/flow.$l18n";
+import type { Text as Text3 } from "../../../app/spaces/modals/modals.$l18n";
+import type { Text as Text4 } from "../../../app/spaces/game/@/game/chips.$l18n";
+import type { Text as Text5 } from "../../../app/spaces/game/flow/@/flow.$l18n";
+import type { Text as Text6 } from "../../../app/spaces/@/spaces.$l18n";
 import type { Text as Text7 } from "../../../app/lang/lang.$l18n";
 import type { Text as Text8 } from "../../../app/@/app.$l18n";
 import type { Text as Text9 } from "../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n";
 
 export type Text = Text0 &
-	Text1 &
-	Text2 &
-	Text3 &
-	Text4 &
-	Text5 &
-	Text6 &
-	Text7 &
-	Text8 &
-	Text9;
+  Text1 &
+  Text2 &
+  Text3 &
+  Text4 &
+  Text5 &
+  Text6 &
+  Text7 &
+  Text8 &
+  Text9;
