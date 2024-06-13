@@ -1,9 +1,9 @@
 import { p } from "gamezilla-app/@/core/parser";
+import { APP_SOUND } from "gamezilla-app/app/@/client";
 import * as Flow from "../flow/flow";
 import { FlowAlgoDrawPipes, FlowAlgoSolve } from "../flow/flow-algo";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
-import { APP_SOUND } from "gamezilla-app/app/@/client";
 
 //
 //
@@ -230,7 +230,7 @@ export const update = ({
 } => {
 	switch (model.status.t) {
 		case "dragging": {
-			return updateDragging({ flow, msg, model, modelCore: model.status });
+			return updateDragging({ flow, msg, model, modelStatus: model.status });
 		}
 
 		case "idle": {
@@ -289,13 +289,13 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 
 const updateDragging = ({
 	msg,
-	modelCore,
+	modelStatus,
 	model,
 	flow,
 }: {
 	msg: Msg;
 	model: Model;
-	modelCore: Dragging;
+	modelStatus: Dragging;
 	flow: FlowVariant.Model;
 }): {
 	model: Model;
@@ -314,7 +314,7 @@ const updateDragging = ({
 			const extended = FlowAlgoDrawPipes.drawPipes(
 				FlowVariant.distance(current),
 				current,
-				modelCore.activeGroupId,
+				modelStatus.activeGroupId,
 				nodeId,
 			);
 
@@ -333,19 +333,11 @@ const updateDragging = ({
 
 		case "pressed-up": {
 			const current = deriveFlow({ model, flow });
-			const isSolved = Flow.isSolved(current);
 			const modelNew: Model = { ...model, status: { t: "idle" } };
-			if (isSolved) {
-				return {
-					model: modelNew,
-					event: {
-						t: "solved",
-					},
-				};
-			}
+			
 			const activeGroupTerminal = Flow.toTerminalByGroupId(
 				current,
-				modelCore.activeGroupId,
+				modelStatus.activeGroupId,
 			);
 
 			if (!activeGroupTerminal) {
@@ -357,6 +349,17 @@ const updateDragging = ({
 				activeGroupTerminal.startId,
 				activeGroupTerminal.endId,
 			);
+
+			const isSolved = Flow.isSolved(current);
+
+			if (isSolved && isConnected) {
+				return {
+					model: modelNew,
+					event: {
+						t: "solved",
+					},
+				};
+			}
 
 			if (isConnected) {
 				return {

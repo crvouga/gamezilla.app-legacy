@@ -1,9 +1,9 @@
 import { describe, expect, it, test } from "bun:test";
-import { type FlowVariant, FlowVariantUIPlay } from ".";
+import { FlowVariantUIPlay, type FlowVariant } from ".";
 import { Flow } from "../flow";
+import { FlowGrid } from "./flow-grid";
 import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
 import * as FlowVariantPlay from "./flow-variant-ui-play";
-import { FlowGrid } from "./flow-grid";
 
 const Fixture = ({ flow }: { flow: FlowVariant.Model }) => {
 	const init = FlowVariantPlay.init({ flow });
@@ -186,4 +186,27 @@ describe(import.meta.file, () => {
 
 		expect(output.event?.t).not.toBe("solved");
 	});
+
+	it('should not output solved event if terminals are not connected', () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", "B", " "],
+			["a", "a", "A"],
+		]);
+		const f = Fixture({ flow });
+
+		const msgs: FlowVariantPlay.Msg[] = [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 1, y: 1 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 0 }) },
+			{ t: "pressed-up", nodeId: FlowGrid.toNodeId({ x: 1, y: 0 }) },
+		];
+
+		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
+			(output, msg) =>
+				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
+			{ model: f.init },
+		);
+
+		expect(output.event?.t).not.toBe("solved");
+	})
 });
