@@ -2,7 +2,7 @@
 import type { Text as Text0 } from "../../../app/auth/auth.$l18n";
 import type { Text as Text1 } from "../../../app/auth/auth-sms/verify-sms/verify-sms.$l18n";
 import type { Text as Text2 } from "../../../app/auth/auth-sms/auth-sms.$l18n";
-import type { Text as Text3 } from "../../../app/spaces/spaces.$l18n";
+import type { Text as Text3 } from "../../../app/spaces/@/spaces.$l18n";
 import type { Text as Text4 } from "../../../app/spaces/modals/modals.$l18n";
 import type { Text as Text5 } from "../../../app/spaces/game/@/game/chips.$l18n";
 import type { Text as Text6 } from "../../../app/spaces/game/flow/@/flow.$l18n";
