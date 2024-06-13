@@ -15,10 +15,10 @@ import { IntersectionObserverEmitter } from "gamezilla-app/app/@/ui/intersection
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { FlowPack } from "../flow-pack";
 import {
-	type ModelClient,
 	initClient,
 	type ClientModule,
-} from "./flow-pack-list.core";
+	type ModelClient,
+} from "./flow-pack-list.types";
 
 const init = (input: {
 	ctx: SpaceClientCtx;

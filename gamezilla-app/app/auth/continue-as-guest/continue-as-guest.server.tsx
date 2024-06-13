@@ -1,7 +1,7 @@
-import { Ok, type Posix, Result, type Task, isErr } from "gamezilla-app/@/core";
-import { type SessionId, UserId } from "gamezilla-app/app/@/data";
+import { Ok, Result, isErr, type Posix, type Task } from "gamezilla-app/@/core";
+import { UserId, type SessionId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
-import { sendBack } from "gamezilla-app/app/@/server";
+import { sendToClient } from "gamezilla-app/app/@/server";
 import type { ServerDeps, ServerModule } from "../auth.types";
 import type { ModelServer } from "./continue-as-guest.types";
 
@@ -82,7 +82,7 @@ const update: ServerModule["update"] = async ({
 				return {
 					model,
 					msgCmd: [
-						sendBack(msgClient, {
+						sendToClient(msgClient, {
 							t: "guest.continue-as-guest-result",
 							result: result,
 						}),
@@ -93,7 +93,7 @@ const update: ServerModule["update"] = async ({
 			return {
 				model,
 				msgCmd: [
-					sendBack(msgClient, {
+					sendToClient(msgClient, {
 						t: "guest.continue-as-guest-result",
 						result: Ok(result.value.userId),
 					}),

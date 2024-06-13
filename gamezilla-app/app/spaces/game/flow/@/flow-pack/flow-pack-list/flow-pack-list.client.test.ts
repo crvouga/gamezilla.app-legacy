@@ -12,7 +12,7 @@ import { testFlowClientCtx } from "../../../builder/@/testing/client";
 import type { FlowClientCtx } from "../../flow-ctx";
 import { FlowPack } from "../flow-pack";
 import { FlowPackListClient } from "./flow-pack-list.client";
-import { initClient, type ModelClient } from "./flow-pack-list.core";
+import { initClient, type ModelClient } from "./flow-pack-list.types";
 
 const initial = {
 	model: initClient,

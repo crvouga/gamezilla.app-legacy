@@ -44,13 +44,6 @@ export type WireCmd<MsgToClient> = {
 
 export type ServerCmd<TMsgToClient> = WireCmd<TMsgToClient>;
 
-export const sendBack = <MsgToClient>(
-	ctx: { clientId: ClientId },
-	msg: MsgToClient,
-): ServerCmd<MsgToClient> => {
-	return sendToClient([ctx.clientId], msg);
-};
-
 export const topicPublish = <MsgToClient>(
 	topics: string[],
 	msg: MsgToClient,

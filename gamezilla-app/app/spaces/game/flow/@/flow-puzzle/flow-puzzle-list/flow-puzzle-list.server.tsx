@@ -1,5 +1,5 @@
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
-import { sendBack } from "gamezilla-app/app/@/server";
+import { sendToClient } from "gamezilla-app/app/@/server";
 import type { ServerModule } from "./flow-puzzle-list.core";
 
 const update: ServerModule["update"] = async (input) => {
@@ -20,7 +20,10 @@ const updateListPuzzles: ServerModule["update"] = async (input) => {
 			return {
 				model: input.model,
 				msgCmd: [
-					sendBack(msgClient, { t: "flow-puzzle-list.listed-puzzle", listed }),
+					sendToClient(msgClient, {
+						t: "flow-puzzle-list.listed-puzzle",
+						listed,
+					}),
 				],
 			};
 		}

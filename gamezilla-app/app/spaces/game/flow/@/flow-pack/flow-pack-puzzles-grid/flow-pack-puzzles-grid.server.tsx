@@ -1,5 +1,5 @@
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
-import { sendBack } from "gamezilla-app/app/@/server";
+import { sendToClient } from "gamezilla-app/app/@/server";
 import type {
 	SpaceServerCtx,
 	SpaceServerEvent,
@@ -51,7 +51,7 @@ const ListPuzzlesById: Pick<ServerModule, "update"> = {
 				return {
 					model: input.model,
 					msgCmd: [
-						sendBack(input.msgClient, {
+						sendToClient(input.msgClient, {
 							t: "listed-puzzles-by-id",
 							listed,
 						}),

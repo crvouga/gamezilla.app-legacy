@@ -1,5 +1,5 @@
+import { sendToClient } from "gamezilla-app/app/@/server";
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
-import { sendBack } from "gamezilla-app/app/@/server";
 import type { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPackId } from "../../../@/flow-pack/flow-pack-id";
 import { FlowPackName } from "../../../@/flow-pack/flow-pack-name";
@@ -43,7 +43,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 					...model,
 				},
 				msgCmd: [
-					sendBack(msgClient, {
+					sendToClient(msgClient, {
 						t: "pack-create-new.created-pack",
 						created: put,
 					}),

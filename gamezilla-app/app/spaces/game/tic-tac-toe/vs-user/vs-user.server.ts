@@ -1,6 +1,6 @@
 import { Sub, Time, isErr } from "gamezilla-app/@/core";
 import { TimeSpan } from "gamezilla-app/@/core/time-span";
-import { sendBack } from "gamezilla-app/app/@/server";
+import { sendToClient } from "gamezilla-app/app/@/server";
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
@@ -108,7 +108,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, ["InputPlayer_Done", result])],
+					msgCmd: [sendToClient(ctx, ["InputPlayer_Done", result])],
 				};
 			}
 
@@ -126,7 +126,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, ["StopPlaying_Done", result])],
+					msgCmd: [sendToClient(ctx, ["StopPlaying_Done", result])],
 				};
 			}
 
@@ -143,7 +143,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, ["StartGame_Done", result])],
+					msgCmd: [sendToClient(ctx, ["StartGame_Done", result])],
 				};
 			}
 
@@ -160,7 +160,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, ["resign_Done", result])],
+					msgCmd: [sendToClient(ctx, ["resign_Done", result])],
 				};
 			}
 
@@ -177,7 +177,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, ["input-move-done", result])],
+					msgCmd: [sendToClient(ctx, ["input-move-done", result])],
 				};
 			}
 
@@ -194,7 +194,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, ["NewGame_Done", result])],
+					msgCmd: [sendToClient(ctx, ["NewGame_Done", result])],
 				};
 			}
 
@@ -212,7 +212,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, ["InputBestOutOf_Done", result])],
+					msgCmd: [sendToClient(ctx, ["InputBestOutOf_Done", result])],
 				};
 			}
 
@@ -235,7 +235,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, res)],
+					msgCmd: [sendToClient(ctx, res)],
 				};
 			}
 
@@ -252,7 +252,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, res)],
+					msgCmd: [sendToClient(ctx, res)],
 				};
 			}
 
@@ -269,7 +269,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, res)],
+					msgCmd: [sendToClient(ctx, res)],
 				};
 			}
 
@@ -286,7 +286,7 @@ export const updateFromClient = (
 			if (isErr(result)) {
 				return {
 					model,
-					msgCmd: [sendBack(ctx, res)],
+					msgCmd: [sendToClient(ctx, res)],
 				};
 			}
 

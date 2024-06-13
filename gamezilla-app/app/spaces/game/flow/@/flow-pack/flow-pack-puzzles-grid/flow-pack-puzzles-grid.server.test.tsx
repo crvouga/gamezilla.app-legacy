@@ -3,8 +3,8 @@ import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { didSendToClient } from "gamezilla-app/app/@/server";
 import type { SpaceServerCtx } from "gamezilla-app/app/spaces/@/space";
 import {
-	type AuthenticatedClient,
 	randomAuthenticatedClient,
+	type AuthenticatedClient,
 } from "gamezilla-app/app/spaces/@/testing/server";
 import { SpaceGameFixtureServer } from "gamezilla-app/app/spaces/game/@/testing/server";
 import { FlowPack, FlowPackDb } from "..";

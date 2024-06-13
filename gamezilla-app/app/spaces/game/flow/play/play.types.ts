@@ -8,9 +8,9 @@ import type {
 import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import type { FlowVariant, FlowVariantUIPlay } from "../@/flow";
 import type { FlowClientCtx } from "../@/flow-ctx";
-import { FlowPack, type FlowPackList } from "../@/flow-pack";
-import type { FlowPackGrid } from "../@/flow-pack/flow-pack-puzzles-grid";
+import { FlowPack, type FlowPackListTypes } from "../@/flow-pack";
 import type { FlowPackId } from "../@/flow-pack/flow-pack-id";
+import type { FlowPackPuzzlesGridTypes } from "../@/flow-pack/flow-pack-puzzles-grid";
 import { FlowPuzzle } from "../@/flow-puzzle";
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { ScreenPuzzleTypes } from "./screen-puzzle";
@@ -27,8 +27,8 @@ export type ModelClient = {
 	flowUIPlay: FlowVariantUIPlay.Model;
 	flowPuzzles: { [flowPuzzleId: FlowPuzzleId]: FlowPuzzle };
 	flowPacks: { [flowPackId: FlowPackId]: FlowPack };
-	flowPackGrid: FlowPackGrid.ModelClient;
-	flowPackList: FlowPackList.ModelClient;
+	flowPackGrid: FlowPackPuzzlesGridTypes.ModelClient;
+	flowPackList: FlowPackListTypes.ModelClient;
 };
 
 export const ModelServer = p.obj({});
@@ -45,41 +45,41 @@ export type MsgClient =
 	| MsgCore
 	| {
 			t: "flow-pack-list";
-			c: FlowPackList.MsgClient;
+			c: FlowPackListTypes.MsgClient;
 	  }
 	| {
 			t: "flow-pack-grid";
-			c: FlowPackGrid.MsgClient;
+			c: FlowPackPuzzlesGridTypes.MsgClient;
 	  };
 
 export type MsgServer =
 	| {
 			t: "flow-pack-list";
-			c: FlowPackList.MsgServer;
+			c: FlowPackListTypes.MsgServer;
 	  }
 	| {
 			t: "flow-pack-grid";
-			c: FlowPackGrid.MsgServer;
+			c: FlowPackPuzzlesGridTypes.MsgServer;
 	  };
 
 export type MsgToServer =
 	| {
 			t: "flow-pack-list";
-			c: FlowPackList.MsgToServer;
+			c: FlowPackListTypes.MsgToServer;
 	  }
 	| {
 			t: "flow-pack-grid";
-			c: FlowPackGrid.MsgToServer;
+			c: FlowPackPuzzlesGridTypes.MsgToServer;
 	  };
 
 export type MsgToClient =
 	| {
 			t: "flow-pack-list";
-			c: FlowPackList.MsgToClient;
+			c: FlowPackListTypes.MsgToClient;
 	  }
 	| {
 			t: "flow-pack-grid";
-			c: FlowPackGrid.MsgToClient;
+			c: FlowPackPuzzlesGridTypes.MsgToClient;
 	  };
 
 export const MsgCore = p.or(

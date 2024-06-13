@@ -3,7 +3,7 @@ import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
 import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { FlowPackGrid } from "../../../@/flow-pack/flow-pack-puzzles-grid";
+import { FlowPackPuzzlesGridTypes } from "../../../@/flow-pack/flow-pack-puzzles-grid";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { EditPackNameTypes } from "./edit-pack-name";
 
@@ -15,13 +15,13 @@ import { EditPackNameTypes } from "./edit-pack-name";
 
 export type ModelClient = {
 	packBuilder: {
-		flowPackPuzzleGrid: FlowPackGrid.ModelClient;
+		flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient;
 	};
 };
 
 export const initClient: ModelClient = {
 	packBuilder: {
-		flowPackPuzzleGrid: FlowPackGrid.initClient,
+		flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.initClient,
 	},
 };
 
@@ -38,22 +38,22 @@ export type MsgClient =
 	| MsgCore
 	| {
 			t: "pack-builder.flow-pack-grid";
-			c: FlowPackGrid.MsgClient;
+			c: FlowPackPuzzlesGridTypes.MsgClient;
 	  };
 
 export type MsgServer = {
 	t: "pack-builder.flow-pack-grid";
-	c: FlowPackGrid.MsgServer;
+	c: FlowPackPuzzlesGridTypes.MsgServer;
 };
 
 export type MsgToServer = {
 	t: "pack-builder.flow-pack-grid";
-	c: FlowPackGrid.MsgToServer;
+	c: FlowPackPuzzlesGridTypes.MsgToServer;
 };
 
 export type MsgToClient = {
 	t: "pack-builder.flow-pack-grid";
-	c: FlowPackGrid.MsgToClient;
+	c: FlowPackPuzzlesGridTypes.MsgToClient;
 };
 
 //

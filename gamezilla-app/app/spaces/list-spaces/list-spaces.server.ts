@@ -1,8 +1,8 @@
-import { sendBack } from "gamezilla-app/app/@/server";
+import { Result } from "gamezilla-app/@/core";
+import { sendToClient } from "gamezilla-app/app/@/server";
 import type { SpaceServerModule } from "../architecture/space-server";
 import * as Space from "../spaces-core/space-core";
 import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
-import { Result } from "gamezilla-app/@/core";
 
 //
 //
@@ -36,7 +36,7 @@ const update: SpaceServerModule["update"] = async (input) => {
 			return {
 				model,
 				msgCmd: [
-					sendBack(msgClient, {
+					sendToClient(msgClient, {
 						t: "listed-spaces",
 						spaces: started,
 						causedBy: msgClient.t,

@@ -12,7 +12,7 @@ import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd
 import type { FlowClientCtx } from "../@/flow-ctx";
 import type { FlowPack } from "../@/flow-pack/flow-pack";
 import type { IFlowPackDb } from "../@/flow-pack/flow-pack-db";
-import { FlowPackList } from "../@/flow-pack/flow-pack-list";
+import { FlowPackListTypes } from "../@/flow-pack/flow-pack-list";
 import type { FlowPuzzle } from "../@/flow-puzzle/flow-puzzle";
 import type { IFlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db/flow-puzzle-db";
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
@@ -76,7 +76,7 @@ type BaseModelClient = {
 		[packId: string]: FlowPack;
 	};
 	flowPuzzleList: FlowPuzzleList.ModelClient;
-	flowPackList: FlowPackList.ModelClient;
+	flowPackList: FlowPackListTypes.ModelClient;
 	puzzleBuilderOpened?:
 		| "more"
 		| "edit-name"
@@ -93,18 +93,18 @@ export const initClient: ClientModule["init"] = {
 	...PackTypes.initClient(),
 	...PuzzleTypes.initClient(),
 	flowPuzzleList: FlowPuzzleList.initClient,
-	flowPackList: FlowPackList.initClient,
+	flowPackList: FlowPackListTypes.initClient,
 	packs: {},
 	puzzles: {},
 };
 
 export const ModelServer = p.obj({
-	flowPackList: FlowPackList.ModelServer,
+	flowPackList: FlowPackListTypes.ModelServer,
 });
 export type ModelServer = p.Infer<typeof ModelServer>;
 
 export const initServer: ServerModule["init"] = {
-	flowPackList: FlowPackList.initServer,
+	flowPackList: FlowPackListTypes.initServer,
 };
 
 //
@@ -120,7 +120,7 @@ type BaseMsgClient = { t: "time-passed" };
 //
 
 export type MsgClient =
-	| { t: "flow-pack-list"; c: FlowPackList.MsgClient }
+	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgClient }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgClient }
 	| BaseMsgClient
 	| ListTabs.MsgClient
@@ -128,19 +128,19 @@ export type MsgClient =
 	| PackTypes.MsgClient;
 
 export type MsgServer =
-	| { t: "flow-pack-list"; c: FlowPackList.MsgServer }
+	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgServer }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgServer }
 	| PuzzleTypes.MsgServer
 	| PackTypes.MsgServer;
 
 export type MsgToServer =
-	| { t: "flow-pack-list"; c: FlowPackList.MsgToServer }
+	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgToServer }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToServer }
 	| PuzzleTypes.MsgToServer
 	| PackTypes.MsgToServer;
 
 export type MsgToClient =
-	| { t: "flow-pack-list"; c: FlowPackList.MsgToClient }
+	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgToClient }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToClient }
 	| PuzzleTypes.MsgToClient
 	| PackTypes.MsgToClient;
