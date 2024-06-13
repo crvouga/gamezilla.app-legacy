@@ -138,6 +138,10 @@ export const updateCore = ({
 						c: VsUser.initCore(ctx),
 					};
 				}
+
+				default: {
+					return modelCore;
+				}
 			}
 		}
 
