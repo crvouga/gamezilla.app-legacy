@@ -1,5 +1,9 @@
 import { TimeSpan } from "gamezilla-app/@/core";
-import type { ClientCtx } from "gamezilla-app/app/@/client";
+import {
+	APP_SOUND,
+	playSound,
+	type ClientCtx,
+} from "gamezilla-app/app/@/client";
 import {
 	Button,
 	Dialog,
@@ -23,6 +27,12 @@ const update: ClientModule["update"] = (input) => {
 		case "user-closed-puzzle-complete-dialog": {
 			return {
 				model: input.model,
+			};
+		}
+		case "user-clicked-select-next-pack-button": {
+			return {
+				model: input.model,
+				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
 	}

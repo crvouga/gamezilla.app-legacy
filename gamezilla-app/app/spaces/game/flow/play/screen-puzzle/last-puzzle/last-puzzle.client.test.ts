@@ -1,5 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { ScreenPuzzleClientFixture } from "../@/testing.client";
+import { didPlaySound } from "gamezilla-app/app/@/client";
+import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
 
 const Fixture = async () => {
 	const f = await ScreenPuzzleClientFixture();
@@ -80,5 +82,16 @@ describe(import.meta.file, () => {
 		expect(msg.t).toBe("user-clicked-select-next-pack-button");
 	});
 
-	it("should output correct msg after clicking select name pack button", async () => {});
+	it("should play sound after clicking select next pack button", async () => {
+		const f = await Fixture();
+		const initial = f.update(f.initial, f.completeLastPuzzleMsgs);
+		const output = f.update(initial, [
+			{
+				msgCore: withEventMeta({
+					t: "user-clicked-select-next-pack-button",
+				}),
+			},
+		]);
+		expect(didPlaySound(output)).toBe(true);
+	});
 });

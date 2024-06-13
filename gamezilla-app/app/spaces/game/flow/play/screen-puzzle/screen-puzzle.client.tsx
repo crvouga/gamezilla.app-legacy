@@ -23,8 +23,10 @@ import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-g
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
 
 const update: ClientModule["update"] = (input) => {
-	return GameClientModule.andThen({ model: input.model }, (model) =>
-		updateMain({ ...input, model }),
+	return GameClientModule.andThen(
+		{ model: input.model },
+		(model) => updateMain({ ...input, model }),
+		(model) => LastPuzzleClient.update({ ...input, model }),
 	);
 };
 
