@@ -24,12 +24,31 @@ const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => updateFlowPackList({ ...input, model }),
-		(model) => updateFlowPackGrid({ ...input, model }),
+		(model) => updateFlowPackPuzzlesGrid({ ...input, model }),
 		(model) => ScreenPuzzleClient.update({ ...input, model }),
 		(model) => ScreenSelectPackClient.update({ ...input, model }),
 		(model) => ScreenPackClient.update({ ...input, model }),
+		model => updateInit({ ...input, model }),
 	);
 };
+
+const updateInit: ClientModule["update"] = (input) => {
+	switch (input.msgEvt?.t) {
+		// @ts-ignore
+		case '': {
+			return {
+				model: input.model,
+				msgCmd: []
+				// msgCmd: [
+				// 	FlowPackListClient.msgServer({ t: 'flow-pack-list', c: { t: 'get-all' } }),
+				// ],
+			}
+		}
+	}
+	return {
+		model: input.model,
+	}
+}
 
 const updateFlowPackList: ClientModule["update"] = (input) => {
 	const updated = FlowPackListClient.update({
@@ -55,7 +74,7 @@ const updateFlowPackList: ClientModule["update"] = (input) => {
 	};
 };
 
-const updateFlowPackGrid: ClientModule["update"] = (input) => {
+const updateFlowPackPuzzlesGrid: ClientModule["update"] = (input) => {
 	const pack =
 		"flowPack" in input.modelCore.screen
 			? input.modelCore.screen.flowPack

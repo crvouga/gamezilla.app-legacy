@@ -6,13 +6,13 @@ import type {
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import { Chess } from "../@/chess";
 import {
+	botMoved,
+	initServer,
+	isBotTurn,
 	type ModelServer,
 	type MsgServer,
 	type MsgToClient,
 	type MsgToServer,
-	botMoved,
-	initServer,
-	isBotTurn,
 } from "./vs-bot.types";
 
 //
@@ -120,7 +120,7 @@ export const updateFromEvent = ({
 	msgCmd?: SpaceServerCmd<MsgToClient>[];
 	eff?: Eff;
 } => {
-	if (msg.t === "user-left") {
+	if (msg.t === "space/user-left-space") {
 		if (model.userId === msg.userId) {
 			const modelNew: Model = {
 				type: "setup",

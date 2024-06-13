@@ -18,8 +18,8 @@ import {
 } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
-import type { ClientModule } from "../play.types";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
+import type { ClientModule } from "../play.types";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
 
 const update: ClientModule["update"] = (input) => {
@@ -55,7 +55,9 @@ const updateMain: ClientModule["update"] = (input) => {
 		case "user-clicked-next-puzzle-button": {
 			return {
 				model: input.model,
-				msgCmd: [playSound(APP_SOUND.navForwardMin)],
+				msgCmd: [
+					playSound(APP_SOUND.navForwardMin),
+				],
 			};
 		}
 

@@ -7,18 +7,13 @@ import type {
 } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import {
-	type PlayerType,
 	toOpposite,
 	toTurn,
+	type PlayerType,
 } from "../@/tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
 import {
-	type ModelServer,
-	type MsgServer,
-	type MsgToClient,
-	type MsgToServer,
 	NewGame,
-	type Res,
 	initCoreModel,
 	inputBestOutOf,
 	inputMove,
@@ -32,6 +27,11 @@ import {
 	roundCountDown,
 	startGame,
 	stopPlaying,
+	type ModelServer,
+	type MsgServer,
+	type MsgToClient,
+	type MsgToServer,
+	type Res,
 } from "./vs-user.types";
 
 //
@@ -308,7 +308,7 @@ export const updateFromEvent = ({
 	model: Model;
 	msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
-	if (msg.t === "user-left") {
+	if (msg.t === "space/user-left-space") {
 		const { userId } = msg;
 
 		const player: PlayerType | "none" =

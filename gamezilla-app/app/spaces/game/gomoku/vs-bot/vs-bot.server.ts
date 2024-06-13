@@ -1,14 +1,14 @@
+import { Eff, Sub, andThen, pipe } from "gamezilla-app/@/core";
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
 } from "gamezilla-app/app/spaces/@/space";
-import { Eff, Sub, andThen, pipe } from "gamezilla-app/@/core";
 import {
+	handleBotMove,
+	initShared,
 	type ModelServer,
 	type MsgServer,
 	type MsgToServer,
-	handleBotMove,
-	initShared,
 } from "./vs-bot.types";
 
 //
@@ -103,7 +103,7 @@ export const updateFromEvent = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "user-joined") {
+	if (msg.t === "space/user-joined-space") {
 		return {
 			model: init({ userId: model.userId }),
 		};

@@ -1,13 +1,13 @@
+import { p } from "gamezilla-app/@/core/parser";
 import type { ClientCtx, ClientEvent } from "gamezilla-app/app/@/client";
 import {
+	SpaceId,
+	UserId,
 	type ClientId,
 	type Profile,
 	type SessionId,
-	SpaceId,
-	UserId,
 } from "gamezilla-app/app/@/data";
 import type { ServerCtx, ServerEvent } from "gamezilla-app/app/@/server";
-import { p } from "gamezilla-app/@/core/parser";
 
 //
 //
@@ -28,8 +28,8 @@ export const Space = p.obj({
 export type Space = p.Infer<typeof Space>;
 
 type SpaceEvent =
-	| { t: "user-left"; userId: UserId }
-	| { t: "user-joined"; userId: UserId };
+	| { t: "space/user-left-space"; spaceId: SpaceId; userId: UserId }
+	| { t: "space/user-joined-space"; spaceId: SpaceId;  userId: UserId };
 
 /**
  * @description

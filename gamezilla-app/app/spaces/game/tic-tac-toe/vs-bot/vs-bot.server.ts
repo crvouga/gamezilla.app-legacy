@@ -1,4 +1,4 @@
-import { type Eff, Err, Ok, Sub, andThen, pipe } from "gamezilla-app/@/core";
+import { Err, Ok, Sub, andThen, pipe, type Eff } from "gamezilla-app/@/core";
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
@@ -6,12 +6,12 @@ import type {
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import { TicTacToe } from "../@/tic-tic-toe";
 import {
+	initCoreModel,
+	isBotTurn,
 	type ModelServer,
 	type MsgServer,
 	type MsgToClient,
 	type MsgToServer,
-	initCoreModel,
-	isBotTurn,
 } from "./vs-bot.types";
 
 //
@@ -162,7 +162,7 @@ export const updateFromEvent = ({
 	model: Model;
 	msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
-	if (msg.t === "user-left") {
+	if (msg.t === "space/user-left-space") {
 		if (model.player !== msg.userId) {
 			return { model };
 		}

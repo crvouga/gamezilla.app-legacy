@@ -1,14 +1,14 @@
-import { type Eff, Sub, Time } from "gamezilla-app/@/core";
+import { Sub, Time, type Eff } from "gamezilla-app/@/core";
 import { TimeSpan } from "gamezilla-app/@/core/time-span";
 import type { SpaceServerEvent } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import * as Board from "../@/chess/chess-core";
 import {
+	initCore,
 	type ModelServer,
 	type MsgServer,
 	type MsgToClient,
 	type MsgToServer,
-	initCore,
 } from "./vs-user.types";
 
 //
@@ -58,7 +58,7 @@ export const updateFromEvent = ({
 	eff?: Eff<MsgServer>;
 	msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
-	if (msg.t === "user-left") {
+	if (msg.t === "space/user-left-space") {
 		switch (model.type) {
 			case "setup": {
 				const { userId } = msg;

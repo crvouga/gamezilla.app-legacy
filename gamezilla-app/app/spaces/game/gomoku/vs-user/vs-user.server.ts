@@ -1,13 +1,13 @@
+import { Sub, type Eff } from "gamezilla-app/@/core";
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
 } from "gamezilla-app/app/spaces/@/space";
-import { type Eff, Sub } from "gamezilla-app/@/core";
 import {
+	initShared,
 	type ModelServer,
 	type MsgServer,
 	type MsgToServer,
-	initShared,
 } from "./vs-user.types";
 
 //
@@ -67,7 +67,7 @@ export const updateFromEvent = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "user-left") {
+	if (msg.t === "space/user-left-space") {
 		return { model: init(model) };
 	}
 
