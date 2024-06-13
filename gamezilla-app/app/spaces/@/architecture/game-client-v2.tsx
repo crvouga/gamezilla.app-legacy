@@ -65,6 +65,7 @@ export type GameClientModuleTypes = {
 	 */
 	ViewEmit?: EmitInputTypes;
 };
+export type GameClientModuleTypesConfig<T extends GameClientModuleTypes> = T;
 
 // Define a more flexible structure for slots and emits
 type SlotInputTypes = {
@@ -172,7 +173,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 	update: (input: Input<T>) => Output<T>;
 
 	/**
-	 * `subscriptions` is dispatchs msgs specific to the module
+	 * `subscriptions` is emits msgs specific to the module
 	 */
 	subscriptions: (input: {
 		ctx: T["Ctx"];
@@ -202,6 +203,41 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 		dispatch: (msg: T["Msg"]) => void;
 	}) => VDom;
 };
+
+export type InferOutput<T extends GameClientModule<any>> =
+	T extends GameClientModule<infer U> ? Output<U> : never;
+
+export type InferInput<T extends GameClientModule<any>> =
+	T extends GameClientModule<infer U> ? Input<U> : never;
+
+export type IUpdate<T extends GameClientModuleTypes> = (
+	input: Input<T>,
+) => Output<T>;
+
+export type IUpdateLoop<T extends GameClientModuleTypes> = (
+	input: Input<T>,
+	acc: Output<T>,
+) => Output<T>;
+
+export type ISubscriptions<T extends GameClientModuleTypes> = (input: {
+	ctx: T["Ctx"];
+	model: T["Model"];
+}) => Sub<T["Msg"]>;
+
+export type IView<T extends GameClientModuleTypes> = (input: {
+	ctx: T["Ctx"];
+	modelCore: T["ModelCore"];
+	model: T["Model"];
+	dispatch: (msg: T["Msg"]) => void;
+	slots?: SlotRenderFunctions<T["ViewSlot"]>;
+	emits?: EmitFunctions<T["ViewEmit"]>;
+}) => VDom;
+
+export type IViewFeedItem<T extends GameClientModuleTypes> = (input: {
+	ctx: T["Ctx"];
+	msgCore: T["MsgCore"];
+	dispatch: (msg: T["Msg"]) => void;
+}) => VDom;
 
 //
 //

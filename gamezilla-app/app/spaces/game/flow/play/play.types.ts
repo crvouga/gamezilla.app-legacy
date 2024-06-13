@@ -1,5 +1,8 @@
 import { p } from "gamezilla-app/@/core/parser";
-import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import type {
+	GameClientModule,
+	GameClientModuleTypesConfig,
+} from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type {
 	SpaceClientEvent,
@@ -123,7 +126,7 @@ export type ModelCore = p.Infer<typeof ModelCore>;
 //
 //
 
-export type ClientModule = GameClientModule<{
+export type FlowPlayClientModuleTypes = GameClientModuleTypesConfig<{
 	Model: ModelClient;
 	Msg: MsgClient;
 	MsgToClient: MsgToClient;
@@ -134,6 +137,25 @@ export type ClientModule = GameClientModule<{
 	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	MsgEvtIn: SpaceClientEvent;
 }>;
+
+export type FlowPlayClientModule = GameClientModule<FlowPlayClientModuleTypes>;
+
+export type ClientModuleTypes = GameClientModuleTypesConfig<{
+	Model: ModelClient;
+	Msg: MsgClient;
+	MsgToClient: MsgToClient;
+	MsgToServer: MsgToServer;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
+	Ctx: FlowClientCtx;
+	MsgEvtIn: SpaceClientEvent;
+	MsgCmdOut:
+		| SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
+		| FlowPackPuzzlesGridTypes.MsgInCmdClient;
+	MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient;
+}>;
+
+export type ClientModule = GameClientModule<ClientModuleTypes>;
 
 export type CoreModule = GameCoreModule<{
 	Ctx: SpaceCtx;

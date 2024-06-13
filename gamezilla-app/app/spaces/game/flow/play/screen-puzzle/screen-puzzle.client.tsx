@@ -45,6 +45,11 @@ const updateMain: ClientModule["update"] = (input) => {
 		}
 	}
 	switch (input.msgCore?.t) {
+		case "user-clicked-open-pack-list-item": {
+			return {
+				model: input.model,
+			};
+		}
 		case "user-clicked-exit-puzzle-button": {
 			return {
 				model: input.model,

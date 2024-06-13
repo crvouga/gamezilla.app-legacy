@@ -87,7 +87,7 @@ const updateChild: ClientModule["update"] = (input) => {
 				model: {
 					...(input.model.t === "play" ? input.model.c : PlayClient.init),
 				},
-				msgCmd: input.msgCmd,
+				msgCmd: null,
 				msgEvt: input.msgEvt,
 				msgServer: input.msgServer?.t === "play" ? input.msgServer.c : null,
 				msgCore:
@@ -127,7 +127,7 @@ const updateChild: ClientModule["update"] = (input) => {
 					packs: input.model.flowPacks,
 					puzzles: input.model.flowPuzzles,
 				},
-				msgCmd: input.msgCmd,
+				msgCmd: null,
 				msgEvt: input.msgEvt,
 				msgServer: input.msgServer?.t === "builder" ? input.msgServer.c : null,
 				msgCore:

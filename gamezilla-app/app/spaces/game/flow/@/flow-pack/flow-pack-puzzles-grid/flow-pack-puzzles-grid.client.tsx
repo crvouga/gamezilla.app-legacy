@@ -12,6 +12,7 @@ import {
 	initClient,
 	type ModelClient,
 	type MsgClient,
+	type MsgInCmdClient,
 	type MsgToClient,
 	type MsgToServer,
 } from "./flow-pack-puzzles-grid.types";
@@ -36,6 +37,7 @@ type ClientModule = AppClientModule<{
 			request: RequestResponse<string, null>;
 		};
 	};
+	MsgCmdIn: MsgInCmdClient | null;
 }>;
 
 const updateFetchMissingPuzzles = (input: {
@@ -129,6 +131,28 @@ const updateRequest: ClientModule["update"] = (input) => {
 	};
 };
 
+const updateFromCmd: ClientModule["update"] = (input) => {
+	switch (input.msgCmd?.c.t) {
+		case "load": {
+			return {
+				model: {
+					...input.model,
+					puzzles: {},
+				},
+				msgCmd: [
+					sendToServer({
+						t: "list-puzzles-by-id",
+						puzzleIds: input.msgCmd.c.pack.puzzleIds,
+					}),
+				],
+			};
+		}
+		default: {
+			return { model: input.model };
+		}
+	}
+};
+
 const subscriptionsRequest: ClientModule["subscriptions"] = (input) => {
 	return RequestResponse.subscriptions(input.model.request, () => ({
 		t: "elapsed",
@@ -141,6 +165,7 @@ const update: ClientModule["update"] = (input) => {
 		(model) => updateServerListedPuzzles({ ...input, model }),
 		(model) => updateFetchMissingPuzzles({ ...input, model }),
 		(model) => updateRequest({ ...input, model }),
+		(model) => updateFromCmd({ ...input, model }),
 	);
 };
 
@@ -157,8 +182,19 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 	return subscriptionsRequest(input);
 };
 
+const load = (pack: FlowPack): MsgInCmdClient => {
+	return {
+		t: "flow-pack-puzzles-grid",
+		c: {
+			t: "load",
+			pack,
+		},
+	};
+};
+
 export const FlowPackPuzzlesGridClient = {
 	initClient,
+	load,
 	update,
 	ViewObserver,
 	subscriptions,

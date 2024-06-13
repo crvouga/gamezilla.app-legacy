@@ -22,8 +22,8 @@ import { FlowPackPuzzlesGridUI } from "../../../@/flow-pack/flow-pack-puzzles-gr
 import { FlowPackPuzzlesGridClient } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
 import type { ClientModule } from "../../builder.types";
-import { PackBuilderCore } from "./pack-builder.core";
 import { EditPackNameClient } from "./edit-pack-name/edit-pack-name.client";
+import { PackBuilderCore } from "./pack-builder.core";
 
 //
 //

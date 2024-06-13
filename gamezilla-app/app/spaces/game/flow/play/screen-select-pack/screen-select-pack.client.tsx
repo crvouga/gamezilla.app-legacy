@@ -1,10 +1,10 @@
+import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewBottomBarExitButton } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowPackListClient } from "../../@/flow-pack";
 import type { ClientModule } from "../play.types";
-import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(

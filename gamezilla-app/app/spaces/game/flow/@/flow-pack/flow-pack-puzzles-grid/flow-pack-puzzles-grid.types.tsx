@@ -1,8 +1,9 @@
+import { NotAsked } from "gamezilla-app/@/core";
 import type { RequestResponse } from "gamezilla-app/@/core/request-response";
 import type { ListPuzzlesOutput } from "../../flow-puzzle";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
-import { NotAsked } from "gamezilla-app/@/core";
+import { FlowPack } from "../flow-pack";
 
 export type ModelClient = {
 	request: RequestResponse<string, null>;
@@ -38,4 +39,12 @@ export type MsgToClient = {
 export type MsgToServer = {
 	t: "list-puzzles-by-id";
 	puzzleIds: FlowPuzzleId[];
+};
+
+export type MsgInCmdClient = {
+	t: "flow-pack-puzzles-grid";
+	c: {
+		t: "load";
+		pack: FlowPack;
+	};
 };

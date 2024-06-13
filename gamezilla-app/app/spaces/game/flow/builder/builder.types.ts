@@ -13,6 +13,7 @@ import type { FlowClientCtx } from "../@/flow-ctx";
 import type { FlowPack } from "../@/flow-pack/flow-pack";
 import type { IFlowPackDb } from "../@/flow-pack/flow-pack-db";
 import { FlowPackListTypes } from "../@/flow-pack/flow-pack-list";
+import { FlowPackPuzzlesGridTypes } from "../@/flow-pack/flow-pack-puzzles-grid";
 import type { FlowPuzzle } from "../@/flow-puzzle/flow-puzzle";
 import type { IFlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db/flow-puzzle-db";
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
@@ -40,6 +41,7 @@ export type ClientModule = GameClientModule<{
 	Ctx: FlowClientCtx;
 	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	MsgEvtIn: SpaceClientEvent;
+	MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient;
 }>;
 
 export type ServerModule = GameServerModule<{

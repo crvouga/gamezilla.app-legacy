@@ -1,11 +1,23 @@
 import { Eff, Sub } from "gamezilla-app/@/core";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { Msg } from "gamezilla-app/@/core/msg";
+import {
+	GameClientModule,
+	IUpdate,
+	IUpdateLoop,
+	IView,
+	IViewFeedItem,
+} from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import { FlowVariantUIPlay } from "../@/flow";
 import { FlowPackListClient } from "../@/flow-pack";
 import { FlowPackPuzzlesGridClient } from "../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
-import type { ClientModule } from "./play.types";
+import type {
+	ClientModule,
+	ClientModuleTypes,
+	FlowPlayClientModule,
+	FlowPlayClientModuleTypes,
+} from "./play.types";
 import { ScreenPackClient } from "./screen-pack/screen-pack.client";
 import { ScreenPuzzleClient } from "./screen-puzzle/screen-puzzle.client";
 import { ScreenSelectPackClient } from "./screen-select-pack/screen-select-pack.client";
@@ -20,7 +32,45 @@ const init: ClientModule["init"] = {
 	flowPuzzles: {},
 };
 
-const update: ClientModule["update"] = (input) => {
+const update: IUpdate<FlowPlayClientModuleTypes> = (input) => {
+	const updatedChild = updateChild({ ...input, msgCmd: null });
+
+	const updated = updateLoop({ ...input, msgCmd: null }, updatedChild);
+
+	const msgCmd = updated.msgCmd?.flatMap((msgCmd) =>
+		msgCmd.t === "flow-pack-puzzles-grid" ? [] : [msgCmd],
+	);
+
+	return {
+		...updated,
+		msgCmd,
+	};
+};
+
+const updateLoop: IUpdateLoop<ClientModuleTypes> = (input, acc) => {
+	const [cmd, ...rest] = (acc.msgCmd ?? []).flatMap((cmd) =>
+		cmd.t === "flow-pack-puzzles-grid" ? [cmd] : [],
+	);
+
+	if (cmd) {
+		const updated = updateChild({
+			...input,
+			model: acc.model,
+			msgCmd: cmd,
+		});
+		return updateLoop(input, {
+			model: updated.model,
+			msgCmd: Msg.batch(rest, updated.msgCmd),
+			eff: Eff.batch([acc.eff, updated.eff]),
+			msgCore: Msg.batch(input.msgCore, updated.msgCore),
+			msgEvt: Msg.batch(input.msgEvt, updated.msgEvt),
+		});
+	}
+
+	return acc;
+};
+
+const updateChild: IUpdate<ClientModuleTypes> = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => updateFlowPackList({ ...input, model }),
@@ -28,29 +78,10 @@ const update: ClientModule["update"] = (input) => {
 		(model) => ScreenPuzzleClient.update({ ...input, model }),
 		(model) => ScreenSelectPackClient.update({ ...input, model }),
 		(model) => ScreenPackClient.update({ ...input, model }),
-		(model) => updateInit({ ...input, model }),
 	);
 };
 
-const updateInit: ClientModule["update"] = (input) => {
-	switch (input.msgEvt?.t) {
-		// @ts-ignore
-		case "": {
-			return {
-				model: input.model,
-				msgCmd: [],
-				// msgCmd: [
-				// 	FlowPackListClient.msgServer({ t: 'flow-pack-list', c: { t: 'get-all' } }),
-				// ],
-			};
-		}
-	}
-	return {
-		model: input.model,
-	};
-};
-
-const updateFlowPackList: ClientModule["update"] = (input) => {
+const updateFlowPackList: IUpdate<ClientModuleTypes> = (input) => {
 	const updated = FlowPackListClient.update({
 		ctx: input.ctx,
 		model: { ...input.model.flowPackList, packs: input.model.flowPacks },
@@ -74,7 +105,7 @@ const updateFlowPackList: ClientModule["update"] = (input) => {
 	};
 };
 
-const updateFlowPackPuzzlesGrid: ClientModule["update"] = (input) => {
+const updateFlowPackPuzzlesGrid: IUpdate<ClientModuleTypes> = (input) => {
 	const pack =
 		"flowPack" in input.modelCore.screen
 			? input.modelCore.screen.flowPack
@@ -130,15 +161,15 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 	}
 };
 
-const View: ClientModule["View"] = (input) => {
+const View: IView<ClientModuleTypes> = (input) => {
 	return (
-		<div className="w-full flex flex-col h-full">
+		<div className="flex h-full w-full flex-col">
 			<ViewScreen {...input} />
 		</div>
 	);
 };
 
-const ViewScreen: ClientModule["View"] = (input) => {
+const ViewScreen: IView<ClientModuleTypes> = (input) => {
 	switch (input.modelCore.screen.t) {
 		case "screen-pack": {
 			return <ScreenPackClient.View {...input} />;
@@ -158,11 +189,11 @@ const ViewScreen: ClientModule["View"] = (input) => {
 	}
 };
 
-export const ViewFeedItem: ClientModule["ViewFeedItem"] = (_input) => {
+const ViewFeedItem: IViewFeedItem<ClientModuleTypes> = (_input) => {
 	return null;
 };
 
-export const PlayClient: ClientModule = {
+export const PlayClient: FlowPlayClientModule = {
 	init,
 	update,
 	subscriptions,
