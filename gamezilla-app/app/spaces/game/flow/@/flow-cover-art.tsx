@@ -1,7 +1,7 @@
 import { pipe } from "gamezilla-app/@/core";
 import { FlowGridShorthand, FlowGridUI } from "./flow/flow-variant/flow-grid";
 
-const grid = pipe(
+const grid1 = pipe(
 	FlowGridShorthand.init([
 		["B", "a", "a", "A", "D"],
 		["b", "a", "c", "C", "d"],
@@ -12,15 +12,28 @@ const grid = pipe(
 	FlowGridShorthand.toGrid,
 );
 
+const grid2 = pipe(
+	FlowGridShorthand.init([
+		["d", "d", "d", "A", "a"],
+		["d", "C", "D", "B", "a"],
+		["d", "c", "C", "b", "a"],
+		["d", "b", "b", "b", "a"],
+		["D", "B", "A", "a", "a"],
+	]),
+	FlowGridShorthand.toGrid,
+);
+
+const grid = false ? grid2 : grid1;
+
+const gridView = (
+	<FlowGridUI.View
+		model={grid}
+		disabled
+		disableHighlight
+		className="bg-black"
+	/>
+);
+
 export const CoverArt = (props: { className?: string }) => {
-	return (
-		<div {...props}>
-			<FlowGridUI.View
-				model={grid}
-				disabled
-				disableHighlight
-				className={"bg-black"}
-			/>
-		</div>
-	);
+	return <div {...props}>{gridView}</div>;
 };
