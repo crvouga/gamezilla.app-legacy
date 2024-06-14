@@ -159,10 +159,12 @@ const mapOk = <TError, A, B>(
 	result: ResultPrivate<TError, A>,
 	mapper: (a: A) => B,
 ): ResultPrivate<TError, B> => {
-	if (result.t === "ok") {
-		return Ok(mapper(result.value));
+	switch (result.t) {
+		case "err":
+			return result;
+		case "ok":
+			return Ok(mapper(result.value));
 	}
-	return result;
 };
 
 export const ResultPrivate = {
