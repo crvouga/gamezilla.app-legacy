@@ -7,6 +7,12 @@ export const NOTES = ["C", "D", "E", "F", "G", "A", "B"] as const;
 export type Note = (typeof NOTES)[number];
 
 export type NoteWithOctave = `${Note}${Octave}`;
+export const NODES_WITH_OCTAVE: NoteWithOctave[] = [];
+for (const octave of OCTAVES) {
+	for (const note of NOTES) {
+		NODES_WITH_OCTAVE.push(`${note}${octave}` as NoteWithOctave);
+	}
+}
 
 export const MARIMBA_SOUND = {
 	"marimba-a3-80": "./marimba/marimba a3 80.m4a",

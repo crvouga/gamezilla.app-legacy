@@ -445,11 +445,12 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
 };
 
 export const toIndexEdgesOut = (model: Model) => {
-	let indexEdgesOut: { [sourceId: NodeId]: { [targetId: NodeId]: EdgeId } } =
+	const indexEdgesOut: { [sourceId: NodeId]: { [targetId: NodeId]: EdgeId } } =
 		{};
 
 	for (const edge of yieldEdges(model)) {
 		indexEdgesOut[edge.sourceId] = indexEdgesOut[edge.sourceId] ?? {};
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		indexEdgesOut[edge.sourceId]![edge.targetId] = toEdgeId(edge);
 	}
 
@@ -853,4 +854,17 @@ export const isSolved = (model: Model): boolean => {
 		}
 	}
 	return true;
+};
+
+export const countConnectedPipes = (model: Model): number => {
+	let count = 0;
+	for (const terminal of yieldTerminals(model)) {
+		if (!terminal.endId) {
+			continue;
+		}
+		if (isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
+			count++;
+		}
+	}
+	return count;
 };
