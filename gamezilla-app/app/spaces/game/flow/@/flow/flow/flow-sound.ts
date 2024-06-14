@@ -1,5 +1,5 @@
-import { GroupId } from "./flow";
-import * as Marimba from "./marimba";
+import type { GroupId } from "./flow";
+import type * as Marimba from "./marimba";
 
 export const groupIdToNote = (groupId: GroupId): Marimba.NoteWithOctave => {
 	switch (groupId) {
