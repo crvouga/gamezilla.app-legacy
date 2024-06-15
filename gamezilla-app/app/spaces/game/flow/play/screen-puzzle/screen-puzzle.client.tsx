@@ -27,7 +27,7 @@ const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => updateFromMsgCore({ ...input, model }),
-		model => updateFromMsg({ ...input, model }),
+		(model) => updateFromMsg({ ...input, model }),
 		(model) => LastPuzzleClient.update({ ...input, model }),
 	);
 };
@@ -35,8 +35,8 @@ const update: ClientModule["update"] = (input) => {
 const updateFromMsg: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
 		case undefined:
-		case 'flow-pack-grid':
-		case 'flow-pack-list': {
+		case "flow-pack-grid":
+		case "flow-pack-list": {
 			return { model: input.model };
 		}
 		default: {
@@ -46,7 +46,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 			};
 		}
 	}
-}
+};
 
 const updateFromMsgCore: ClientModule["update"] = (input) => {
 	switch (input.msgCore?.t) {
@@ -55,6 +55,14 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				model: input.model,
 			};
 		}
+
+		case "user-clicked-reset-puzzle-button": {
+			return {
+				model: input.model,
+				msgCmd: [playSound(APP_SOUND.navTransitionLeft)],
+			};
+		}
+
 		case "user-clicked-exit-puzzle-button": {
 			return {
 				model: input.model,
@@ -135,7 +143,7 @@ const View: ClientModule["View"] = (input) => {
 		input.modelCore.screen.state.t === "solved" &&
 		input.modelCore.screen.opened === "puzzle-complete";
 
-	const checkmarkDuration = TimeSpan.seconds(1);
+	const checkmarkDuration = TimeSpan.seconds(1 / 2);
 
 	return (
 		<>
@@ -203,29 +211,31 @@ const View: ClientModule["View"] = (input) => {
 							input.dispatch({ t: "user-clicked-exit-puzzle-button" })
 						}
 					/>
-					<ViewBottomButtonBarActionPrev
-						ctx={input.ctx}
-						disabled={puzzleIndex <= 0}
-						onClick={() =>
-							prevPuzzle
-								? input.dispatch({
-										t: "user-clicked-prev-puzzle-button",
-										prevPuzzle,
-										prevPuzzleIndex,
-									})
-								: null
-						}
-					/>
+
 					<ViewBottomButtonBarActionReset
 						ctx={input.ctx}
 						onClick={() =>
-							nextPuzzle
-								? input.dispatch({
-										t: "user-clicked-reset-puzzle-button",
-									})
-								: null
+							input.dispatch({
+								t: "user-clicked-reset-puzzle-button",
+							})
 						}
 					/>
+					<div className="hidden">
+						<ViewBottomButtonBarActionPrev
+							ctx={input.ctx}
+							disabled={puzzleIndex <= 0}
+							onClick={() =>
+								prevPuzzle
+									? input.dispatch({
+											t: "user-clicked-prev-puzzle-button",
+											prevPuzzle,
+											prevPuzzleIndex,
+										})
+									: null
+							}
+						/>
+					</div>
+
 					<div className="hidden">
 						<ViewBottomButtonBarActionNext
 							ctx={input.ctx}

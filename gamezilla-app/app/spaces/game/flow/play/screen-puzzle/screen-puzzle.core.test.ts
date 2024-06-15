@@ -240,4 +240,11 @@ describe(import.meta.file, () => {
 		if (before.screen.t === "screen-puzzle")
 			expect(before.screen.flowPlay).toEqual(FlowVariantUIPlay.init(f.puzzle));
 	});
+
+	it.todo('should render hint button', async () => {
+		// const f = await Fixture();
+		// const after = f.update(f.init, [
+		// 	{t: 'user-clicked-show-hint-button'}
+		// ])
+	})
 });

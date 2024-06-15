@@ -248,4 +248,16 @@ describe(import.meta.file, () => {
 		const msg = await r.msgs.once();
 		expect(msg.t).toBe("user-clicked-reset-puzzle-button");
 	});
+
+	test("reset button sound", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			{
+				msgCore: withEventMeta({
+					t: "user-clicked-reset-puzzle-button",
+				}),
+			},
+		]);
+		expect(didPlaySound(output)).toBe(true);
+	});
 });
