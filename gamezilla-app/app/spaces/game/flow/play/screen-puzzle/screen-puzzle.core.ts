@@ -124,6 +124,10 @@ const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 							flowPlay: FlowVariantUIPlay.init({
 								flow: msgCore.prevPuzzle.flow,
 							}),
+							opened:
+								modelCore.screen.opened === "puzzle-complete"
+									? null
+									: modelCore.screen.opened,
 							flowPuzzle: msgCore.prevPuzzle,
 							puzzleIndex: msgCore.prevPuzzleIndex,
 						},
