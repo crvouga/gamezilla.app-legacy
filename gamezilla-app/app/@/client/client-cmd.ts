@@ -1,7 +1,6 @@
 import { TimeSpan, type UnitInterval, eq } from "gamezilla-app/@/core";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import type { Profile, UserId } from "../data";
-import { MARIMBA_SOUND } from "gamezilla-app/app/spaces/game/flow/@/flow/flow/marimba";
 
 //
 //
@@ -11,10 +10,8 @@ import { MARIMBA_SOUND } from "gamezilla-app/app/spaces/game/flow/@/flow/flow/ma
 //
 
 export type ClientCmdTypes = {
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	MsgClient: any;
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	MsgToServer: any;
+	MsgClient: unknown;
+	MsgToServer: unknown;
 };
 
 export type ClientCmd<T extends ClientCmdTypes> =
@@ -232,6 +229,7 @@ export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
 				"t" in cmd &&
 				cmd.t === "wire" &&
 				cmd.c.t === "send-to-server" &&
+				cmd.c.msg &&
 				predicate(cmd.c.msg),
 		) ?? false
 	);
@@ -607,7 +605,10 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 					};
 				}
 				default: {
-					return msgCmd;
+					return msgCmd as ClientCmd<{
+						MsgClient: { t: Tag; c: T["MsgClient"] };
+						MsgToServer: { t: Tag; c: T["MsgToServer"] };
+					}>;
 				}
 			}
 		}
@@ -628,7 +629,10 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 				}
 
 				default: {
-					return msgCmd;
+					return msgCmd as ClientCmd<{
+						MsgClient: { t: Tag; c: T["MsgClient"] };
+						MsgToServer: { t: Tag; c: T["MsgToServer"] };
+					}>;
 				}
 			}
 		}

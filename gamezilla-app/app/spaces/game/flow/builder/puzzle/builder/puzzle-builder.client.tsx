@@ -47,17 +47,11 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 	const { model, msg, ctx } = input;
 
 	switch (msg?.t) {
+		case "puzzle-builder.flow-ui-play":
 		case "puzzle-builder.flow-ui-edit": {
 			return {
 				model,
-				msgCore: [withId({ t: "puzzle-builder.flow-ui-edit", c: msg.c })],
-			};
-		}
-
-		case "puzzle-builder.flow-ui-play": {
-			return {
-				model,
-				msgCore: [withId({ t: "puzzle-builder.flow-ui-play", c: msg.c })],
+				msgCore: [withId(msg)],
 			};
 		}
 
