@@ -260,4 +260,8 @@ describe(import.meta.file, () => {
 		]);
 		expect(didPlaySound(output)).toBe(true);
 	});
+
+	test.todo("hint button render");
+	test.todo("hint button click");
+	test.todo("hint button sound");
 });
