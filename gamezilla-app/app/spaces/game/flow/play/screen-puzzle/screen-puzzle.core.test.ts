@@ -227,4 +227,17 @@ describe(import.meta.file, () => {
 			after.screen.t === "screen-puzzle" && after.screen.opened === null,
 		).toBe(true);
 	});
+
+	it("should clear puzzle after clicking reset button", async () => {
+		const f = await Fixture();
+		const before = f.update(f.init, [
+			...f.completePuzzleMsgs,
+			{
+				t: "user-clicked-reset-puzzle-button",
+			},
+		]);
+		expect(before.screen.t).toBe("screen-puzzle");
+		if (before.screen.t === "screen-puzzle")
+			expect(before.screen.flowPlay).toEqual(FlowVariantUIPlay.init(f.puzzle));
+	});
 });

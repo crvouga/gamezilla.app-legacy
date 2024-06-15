@@ -64,6 +64,7 @@ export const translations: Text = {
 	"app.exit": "Exit",
 	"app.next": "Next",
 	"app.prev": "Prev",
+	"app.reset": "Reset",
 	"app.congratulations": "Congratulations",
 	en: "English",
 	es: "Spanish",

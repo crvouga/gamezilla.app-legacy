@@ -66,6 +66,7 @@ export const translations: Text = {
 	"app.next": "下一个",
 	"app.prev": "以前",
 	"app.congratulations": "祝贺",
+	"app.reset": "重启",
 	en: "英语",
 	es: "西班牙语",
 	ar: "阿拉伯语",

@@ -62,6 +62,7 @@ export const translations: Text = {
 	"app.exit": "Beenden",
 	"app.next": "Nächster",
 	"app.prev": "Vorheriger",
+	"app.reset": "Zurücksetzen",
 	"app.congratulations": "Herzlichen Glückwunsch",
 	en: "Englisch",
 	es: "Spanisch",

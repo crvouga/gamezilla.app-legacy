@@ -15,6 +15,7 @@ import {
 	ViewBottomButtonBarActionExit,
 	ViewBottomButtonBarActionNext,
 	ViewBottomButtonBarActionPrev,
+	ViewBottomButtonBarActionReset,
 } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
@@ -25,25 +26,29 @@ import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
-		(model) => updateMain({ ...input, model }),
+		(model) => updateFromMsgCore({ ...input, model }),
+		model => updateFromMsg({ ...input, model }),
 		(model) => LastPuzzleClient.update({ ...input, model }),
 	);
 };
 
-const updateMain: ClientModule["update"] = (input) => {
+const updateFromMsg: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
-		case "user-closed-puzzle-complete-dialog":
-		case "user-clicked-exit-puzzle-button":
-		case "user-clicked-next-puzzle-button":
-		case "user-clicked-prev-puzzle-button":
-		case "user-clicked-select-next-pack-button":
-		case "got-puzzle-screen-flow-play-msg": {
+		case undefined:
+		case 'flow-pack-grid':
+		case 'flow-pack-list': {
+			return { model: input.model };
+		}
+		default: {
 			return {
 				model: input.model,
 				msgCore: [withId(input.msg)],
 			};
 		}
 	}
+}
+
+const updateFromMsgCore: ClientModule["update"] = (input) => {
 	switch (input.msgCore?.t) {
 		case "user-clicked-open-pack-list-item": {
 			return {
@@ -211,22 +216,34 @@ const View: ClientModule["View"] = (input) => {
 								: null
 						}
 					/>
-					<ViewBottomButtonBarActionNext
+					<ViewBottomButtonBarActionReset
 						ctx={input.ctx}
-						disabled={
-							puzzleIndex >=
-							input.modelCore.screen.flowPack.puzzleIds.length - 1
-						}
 						onClick={() =>
 							nextPuzzle
 								? input.dispatch({
-										t: "user-clicked-next-puzzle-button",
-										nextPuzzle,
-										nextPuzzleIndex,
+										t: "user-clicked-reset-puzzle-button",
 									})
 								: null
 						}
 					/>
+					<div className="hidden">
+						<ViewBottomButtonBarActionNext
+							ctx={input.ctx}
+							disabled={
+								puzzleIndex >=
+								input.modelCore.screen.flowPack.puzzleIds.length - 1
+							}
+							onClick={() =>
+								nextPuzzle
+									? input.dispatch({
+											t: "user-clicked-next-puzzle-button",
+											nextPuzzle,
+											nextPuzzleIndex,
+										})
+									: null
+							}
+						/>
+					</div>
 				</ViewBottomButtonBar>
 			</div>
 		</>

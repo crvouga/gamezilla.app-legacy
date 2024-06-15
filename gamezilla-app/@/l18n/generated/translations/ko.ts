@@ -67,6 +67,7 @@ export const translations: Text = {
 	"app.next": "다음",
 	"app.prev": "이전",
 	"app.congratulations": "축하합니다",
+	"app.reset": "재설정",
 	en: "영어",
 	es: "스페인어",
 	ar: "아랍어",

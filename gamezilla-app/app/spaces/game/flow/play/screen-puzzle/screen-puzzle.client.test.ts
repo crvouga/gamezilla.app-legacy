@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, test } from "bun:test";
 import { didPlaySound } from "gamezilla-app/app/@/client";
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
 import { Flow } from "../../@/flow";
@@ -231,5 +231,21 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const output = f.update(f.initial, f.completePuzzleMsgs);
 		expect(didPlaySound(output)).toBe(true);
+	});
+
+	test("reset button render", async () => {
+		const f = await Fixture();
+		expect(
+			f.render(f.initial).getByRole("button", f.ctx.t("app.reset")),
+		).toBeTruthy();
+	});
+
+	test("reset button msg dispatch", async () => {
+		const f = await Fixture();
+		const r = f.render(f.initial);
+		const btn = r.getByRole("button", f.ctx.t("app.reset"));
+		btn?.click();
+		const msg = await r.msgs.once();
+		expect(msg.t).toBe("user-clicked-reset-puzzle-button");
 	});
 });

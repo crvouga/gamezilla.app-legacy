@@ -64,6 +64,7 @@ export const translations: Text = {
 	"app.next": "Próximo",
 	"app.prev": "Anterior",
 	"app.congratulations": "Parabéns",
+	"app.reset": "Redefinir",
 	en: "Inglês",
 	es: "Espanhol",
 	ar: "Árabe",

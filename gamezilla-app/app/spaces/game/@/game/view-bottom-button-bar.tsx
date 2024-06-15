@@ -1,12 +1,13 @@
 import {
 	IconArrowLeftOnRect,
+	IconArrowRotateLeft,
 	IconChevronLeft,
 	IconChevronRight,
 	Spinner,
 	cn,
 } from "gamezilla-app/app/@/ui";
 import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
-import { Translator } from "gamezilla-app/@/l18n/generated";
+import type { Translator } from "gamezilla-app/@/l18n/generated";
 
 type BottomBarButtonAction = {
 	label: string;
@@ -37,6 +38,7 @@ export const ViewBottomButtonBarAction = (props: BottomBarButtonAction) => {
 	const isDisabled = props.disabled || props.loading;
 	return (
 		<button
+			type="button"
 			role="button"
 			disabled={isDisabled}
 			key={props.label}
@@ -107,6 +109,17 @@ export const ViewBottomButtonBarActionNext = (
 	);
 };
 
+export const ViewBottomButtonBarActionReset = (
+	props: BottomBarButtonActionPrebuilt,
+) => {
+	return (
+		<ViewBottomButtonBarAction
+			{...props}
+			icon={(props) => <IconArrowRotateLeft {...props} />}
+			label={props.ctx.t("app.reset")}
+		/>
+	);
+};
 export const ViewBottomButtonBarActionPrev = (
 	props: BottomBarButtonActionPrebuilt,
 ) => {
