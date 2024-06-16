@@ -107,6 +107,10 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 	return msgs;
 };
 
+export const isShowingHint = (_model: Model): boolean => {
+	return false
+}
+
 export const toSolutionMsgs = ({
 	flow,
 }: {

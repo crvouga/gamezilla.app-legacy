@@ -13,6 +13,7 @@ import { withId } from "gamezilla-app/app/spaces/@/event";
 import {
 	ViewBottomButtonBar,
 	ViewBottomButtonBarActionExit,
+	ViewBottomButtonBarActionHint,
 	ViewBottomButtonBarActionNext,
 	ViewBottomButtonBarActionPrev,
 	ViewBottomButtonBarActionReset,
@@ -81,6 +82,13 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+			};
+		}
+			
+		case 'user-clicked-hint-button': {
+			return {
+				model: input.model,
+				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
 
@@ -212,6 +220,15 @@ const View: ClientModule["View"] = (input) => {
 						}
 					/>
 
+					<ViewBottomButtonBarActionHint
+						ctx={input.ctx}
+						onClick={() =>
+							input.dispatch({
+								t: "user-clicked-hint-button",
+							})
+						}
+
+					/>
 					<ViewBottomButtonBarActionReset
 						ctx={input.ctx}
 						onClick={() =>
@@ -220,6 +237,7 @@ const View: ClientModule["View"] = (input) => {
 							})
 						}
 					/>
+
 					<div className="hidden">
 						<ViewBottomButtonBarActionPrev
 							ctx={input.ctx}

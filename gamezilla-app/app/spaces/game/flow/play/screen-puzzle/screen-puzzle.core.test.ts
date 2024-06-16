@@ -241,10 +241,14 @@ describe(import.meta.file, () => {
 			expect(before.screen.flowPlay).toEqual(FlowVariantUIPlay.init(f.puzzle));
 	});
 
-	it.todo('should show hint after clicking show hint button', async () => {
-		// const f = await Fixture();
-		// const after = f.update(f.init, [
-		// 	{t: 'user-clicked-show-hint-button'}
-		// ])
-	})
+	it("should show hint after clicking show hint button", async () => {
+		const f = await Fixture();
+		const after = f.update(f.init, [
+			{t: 'user-clicked-hint-button'}
+		])
+		expect(after.screen.t).toBe('screen-puzzle')
+		if(after.screen.t === 'screen-puzzle') {
+			expect(FlowVariantUIPlay.isShowingHint(after.screen.flowPlay)).toBe(true)
+		}
+	});
 });

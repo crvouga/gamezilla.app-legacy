@@ -261,7 +261,29 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	test.todo("hint button render");
-	test.todo("hint button click");
-	test.todo("hint button sound");
+	test("hint button render", async () => {
+		const f = await Fixture();
+		expect(
+			f.render(f.initial).getByRole("button", f.ctx.t("game.hint")),
+		).toBeTruthy();
+	});
+	test("hint button click", async () => {
+			const f = await Fixture();
+		const r = f.render(f.initial);
+		const btn = r.getByRole("button", f.ctx.t("game.hint"));
+		btn?.click();
+		const msg = await r.msgs.once();
+		expect(msg.t).toBe("user-clicked-hint-button");
+	});
+	test("hint button sound", async () => {
+const f = await Fixture();
+		const output = f.update(f.initial, [
+			{
+				msgCore: withEventMeta({
+					t: "user-clicked-hint-button",
+				}),
+			},
+		]);
+		expect(didPlaySound(output)).toBe(true);		
+	});
 });

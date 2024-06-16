@@ -3,6 +3,7 @@ import {
 	IconArrowRotateLeft,
 	IconChevronLeft,
 	IconChevronRight,
+	IconLightbulb,
 	Spinner,
 	cn,
 } from "gamezilla-app/app/@/ui";
@@ -128,6 +129,17 @@ export const ViewBottomButtonBarActionPrev = (
 			{...props}
 			icon={(props) => <IconChevronLeft {...props} />}
 			label={props.ctx.t("app.prev")}
+		/>
+	);
+};
+export const ViewBottomButtonBarActionHint = (
+	props: BottomBarButtonActionPrebuilt,
+) => {
+	return (
+		<ViewBottomButtonBarAction
+			{...props}
+			icon={(props) => <IconLightbulb {...props} />}
+			label={props.ctx.t("game.hint")}
 		/>
 	);
 };
