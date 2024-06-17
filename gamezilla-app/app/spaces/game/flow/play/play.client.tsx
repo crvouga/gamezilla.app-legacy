@@ -18,9 +18,9 @@ import type {
 	FlowPlayClientModule,
 	FlowPlayClientModuleTypes,
 } from "./play.types";
-import { ScreenPackClient } from "./screen-pack/screen-pack.client";
-import { ScreenPuzzleClient } from "./screen-puzzle/screen-puzzle.client";
+import { ScreenPuzzleClient } from "./screen-play-puzzle/screen-play-puzzle.client";
 import { ScreenSelectPackClient } from "./screen-select-pack/screen-select-pack.client";
+import { ScreenSelectPuzzleClient } from "./screen-select-puzzle/select-puzzle.client";
 
 const flow = samples["8x8"][0];
 const init: ClientModule["init"] = {
@@ -77,7 +77,7 @@ const updateChild: IUpdate<ClientModuleTypes> = (input) => {
 		(model) => updateFlowPackPuzzlesGrid({ ...input, model }),
 		(model) => ScreenPuzzleClient.update({ ...input, model }),
 		(model) => ScreenSelectPackClient.update({ ...input, model }),
-		(model) => ScreenPackClient.update({ ...input, model }),
+		(model) => ScreenSelectPuzzleClient.update({ ...input, model }),
 	);
 };
 
@@ -142,8 +142,8 @@ const updateFlowPackPuzzlesGrid: IUpdate<ClientModuleTypes> = (input) => {
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {
 	switch (input.modelCore.screen.t) {
-		case "screen-pack":
-		case "screen-puzzle":
+		case "screen-select-puzzle":
+		case "screen-play-puzzle":
 			return Sub.tag(
 				"flow-pack-grid",
 				FlowPackPuzzlesGridClient.subscriptions({
@@ -171,15 +171,15 @@ const View: IView<ClientModuleTypes> = (input) => {
 
 const ViewScreen: IView<ClientModuleTypes> = (input) => {
 	switch (input.modelCore.screen.t) {
-		case "screen-pack": {
-			return <ScreenPackClient.View {...input} />;
+		case "screen-select-puzzle": {
+			return <ScreenSelectPuzzleClient.View {...input} />;
 		}
 
 		case "screen-select-pack": {
 			return <ScreenSelectPackClient.View {...input} />;
 		}
 
-		case "screen-puzzle": {
+		case "screen-play-puzzle": {
 			return <ScreenPuzzleClient.View {...input} />;
 		}
 

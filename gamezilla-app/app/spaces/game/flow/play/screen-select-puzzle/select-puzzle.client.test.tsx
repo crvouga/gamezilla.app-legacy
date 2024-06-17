@@ -87,8 +87,8 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		expect(output.modelCore.screen.t).toBe("screen-puzzle");
-		if (output.modelCore.screen.t === "screen-puzzle") {
+		expect(output.modelCore.screen.t).toBe("screen-play-puzzle");
+		if (output.modelCore.screen.t === "screen-play-puzzle") {
 			expect(output.modelCore.screen.flowPuzzle).toEqual(f.puzzle);
 		}
 	});

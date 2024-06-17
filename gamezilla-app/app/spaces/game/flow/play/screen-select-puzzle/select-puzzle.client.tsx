@@ -3,8 +3,8 @@ import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewBottomBarExitButton } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
-import type { ClientModule } from "../play.types";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
+import type { ClientModule } from "../play.types";
 
 const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
@@ -38,7 +38,7 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-	if (input.modelCore.screen.t !== "screen-pack") {
+	if (input.modelCore.screen.t !== "screen-select-puzzle") {
 		return null;
 	}
 	return (
@@ -86,7 +86,7 @@ const View: ClientModule["View"] = (input) => {
 	);
 };
 
-export const ScreenPackClient = {
+export const ScreenSelectPuzzleClient = {
 	update,
 	View,
 };

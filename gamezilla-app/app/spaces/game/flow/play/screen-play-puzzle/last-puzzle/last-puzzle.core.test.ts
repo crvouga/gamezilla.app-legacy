@@ -18,7 +18,7 @@ describe(import.meta.file, () => {
 				t: "user-clicked-select-next-pack-button",
 			},
 		]);
-		expect(before.screen.t).toBe("screen-puzzle");
+		expect(before.screen.t).toBe("screen-play-puzzle");
 		expect(after.screen.t).toBe("screen-select-pack");
 	});
 });

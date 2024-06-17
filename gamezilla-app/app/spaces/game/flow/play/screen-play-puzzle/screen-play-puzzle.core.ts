@@ -3,7 +3,7 @@ import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule } from "../play.types";
 import { LastPuzzleCore } from "./last-puzzle/last-puzzle.core";
-import type { ModelCore } from "./screen-puzzle.types";
+import type { ModelCore } from "./screen-play-puzzle.types";
 
 const updateCore: CoreModule["updateCore"] = (input) => {
 	return [
@@ -20,11 +20,11 @@ const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "user-clicked-exit-puzzle-button": {
 			switch (modelCore.screen.t) {
-				case "screen-puzzle": {
+				case "screen-play-puzzle": {
 					return {
 						...modelCore,
 						screen: {
-							t: "screen-pack",
+							t: "screen-select-puzzle",
 							flowPack: modelCore.screen.flowPack,
 						},
 					};
@@ -36,7 +36,7 @@ const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 		}
 		case "got-puzzle-screen-flow-play-msg": {
 			switch (modelCore.screen.t) {
-				case "screen-puzzle": {
+				case "screen-play-puzzle": {
 					const flowPlayNew = FlowVariantUIPlay.update({
 						msg: msgCore.c,
 						model: modelCore.screen.flowPlay,
@@ -75,7 +75,7 @@ const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 		}
 		case "user-closed-puzzle-complete-dialog": {
 			if (
-				modelCore.screen.t === "screen-puzzle" &&
+				modelCore.screen.t === "screen-play-puzzle" &&
 				modelCore.screen.state.t === "solved" &&
 				modelCore.screen.opened === "puzzle-complete"
 			) {
@@ -92,7 +92,7 @@ const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 		}
 		case "user-clicked-next-puzzle-button": {
 			switch (modelCore.screen.t) {
-				case "screen-puzzle": {
+				case "screen-play-puzzle": {
 					return {
 						...modelCore,
 						screen: {
@@ -116,7 +116,7 @@ const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 		}
 		case "user-clicked-prev-puzzle-button": {
 			switch (modelCore.screen.t) {
-				case "screen-puzzle": {
+				case "screen-play-puzzle": {
 					return {
 						...modelCore,
 						screen: {
@@ -154,7 +154,7 @@ const initCore = (input: {
 			t: "solving",
 		},
 		opened: null,
-		t: "screen-puzzle",
+		t: "screen-play-puzzle",
 	};
 };
 

@@ -1,7 +1,7 @@
 import { FlowVariantUIPlay } from "../@/flow";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import type { CoreModule } from "./play.types";
-import { ScreenPuzzleCore } from "./screen-puzzle/screen-puzzle.core";
+import { ScreenPuzzleCore } from "./screen-play-puzzle/screen-play-puzzle.core";
 
 const initCore: CoreModule["initCore"] = () => {
 	const flow = samples["8x8"][1];
@@ -22,7 +22,7 @@ const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 			return {
 				...modelCore,
 				screen: {
-					t: "screen-pack",
+					t: "screen-select-puzzle",
 					flowPack: msgCore.pack,
 				},
 			};
@@ -37,7 +37,7 @@ const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 		}
 		case "user-clicked-open-puzzle-grid-item": {
 			switch (modelCore.screen.t) {
-				case "screen-pack": {
+				case "screen-select-puzzle": {
 					return {
 						...modelCore,
 						screen: ScreenPuzzleCore.initCore({

@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		expect(updated.modelCore.screen.t).toBe("screen-pack");
+		expect(updated.modelCore.screen.t).toBe("screen-select-puzzle");
 	});
 
 	it("should render next puzzle button", async () => {

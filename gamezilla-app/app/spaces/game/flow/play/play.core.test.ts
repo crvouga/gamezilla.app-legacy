@@ -15,7 +15,7 @@ describe(import.meta.file, () => {
 		]);
 
 		expect(before.screen.t).toEqual("screen-select-pack");
-		expect(after.screen.t).toEqual("screen-pack");
+		expect(after.screen.t).toEqual("screen-select-puzzle");
 	});
 
 	it("should exit to select pack screen after clicking exit button", async () => {
@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
 				t: "user-clicked-exit-pack-button",
 			},
 		]);
-		expect(before.screen.t).toEqual("screen-pack");
+		expect(before.screen.t).toEqual("screen-select-puzzle");
 		expect(after.screen.t).toEqual("screen-select-pack");
 	});
 
@@ -56,9 +56,9 @@ describe(import.meta.file, () => {
 				puzzleIndex: 0,
 			},
 		]);
-		expect(before.screen.t).toEqual("screen-pack");
-		expect(after.screen.t).toEqual("screen-puzzle");
-		if (after.screen.t === "screen-puzzle") {
+		expect(before.screen.t).toEqual("screen-select-puzzle");
+		expect(after.screen.t).toEqual("screen-play-puzzle");
+		if (after.screen.t === "screen-play-puzzle") {
 			expect(after.screen.flowPuzzle.id).toEqual(puzzle.id);
 		}
 	});

@@ -16,7 +16,7 @@ import type { FlowPackId } from "../@/flow-pack/flow-pack-id";
 import type { FlowPackPuzzlesGridTypes } from "../@/flow-pack/flow-pack-puzzles-grid";
 import { FlowPuzzle } from "../@/flow-puzzle";
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
-import { ScreenPuzzleTypes } from "./screen-puzzle";
+import { ScreenPuzzleTypes } from "./screen-play-puzzle";
 
 //
 //
@@ -108,7 +108,7 @@ const Screen = p.or(
 		t: p.l("screen-select-pack"),
 	}),
 	p.obj({
-		t: p.l("screen-pack"),
+		t: p.l("screen-select-puzzle"),
 		flowPack: FlowPack,
 	}),
 	ScreenPuzzleTypes.ModelCore,

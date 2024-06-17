@@ -3,7 +3,7 @@ import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import { CoreFixture } from "../../@/testing";
-import type { MsgCore } from "../screen-puzzle.types";
+import type { MsgCore } from "../screen-play-puzzle.types";
 
 export const ScreenPuzzleCoreFixture = async () => {
 	const f = await CoreFixture();

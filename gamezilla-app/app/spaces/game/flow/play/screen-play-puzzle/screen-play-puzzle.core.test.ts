@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Flow, FlowVariantUIPlay } from "../../@/flow";
 import { ScreenPuzzleCoreFixture } from "./@/testing.core";
-import type { MsgCore } from "./screen-puzzle.types";
+import type { MsgCore } from "./screen-play-puzzle.types";
 
 const Fixture = async () => {
 	const f = await ScreenPuzzleCoreFixture();
@@ -19,8 +19,8 @@ describe(import.meta.file, () => {
 				t: "user-clicked-exit-puzzle-button",
 			},
 		]);
-		expect(f.init.screen.t).toEqual("screen-puzzle");
-		expect(after.screen.t).toEqual("screen-pack");
+		expect(f.init.screen.t).toEqual("screen-play-puzzle");
+		expect(after.screen.t).toEqual("screen-select-puzzle");
 	});
 
 	it("should update puzzle screen flow play ui", async () => {
@@ -38,8 +38,8 @@ describe(import.meta.file, () => {
 		);
 
 		if (
-			f.init.screen.t === "screen-puzzle" &&
-			after.screen.t === "screen-puzzle"
+			f.init.screen.t === "screen-play-puzzle" &&
+			after.screen.t === "screen-play-puzzle"
 		) {
 			expect(f.init.screen.flowPlay).not.toEqual(after.screen.flowPlay);
 		}
@@ -56,10 +56,10 @@ describe(import.meta.file, () => {
 		]);
 
 		expect(
-			f.init.screen.t === "screen-puzzle" ? f.init.screen.puzzleIndex : -1,
+			f.init.screen.t === "screen-play-puzzle" ? f.init.screen.puzzleIndex : -1,
 		).toEqual(0);
 		expect(
-			after.screen.t === "screen-puzzle" ? after.screen.puzzleIndex : -1,
+			after.screen.t === "screen-play-puzzle" ? after.screen.puzzleIndex : -1,
 		).toEqual(1);
 	});
 
@@ -80,10 +80,10 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			before.screen.t === "screen-puzzle" ? before.screen.puzzleIndex : -1,
+			before.screen.t === "screen-play-puzzle" ? before.screen.puzzleIndex : -1,
 		).toEqual(1);
 		expect(
-			after.screen.t === "screen-puzzle" ? after.screen.puzzleIndex : -1,
+			after.screen.t === "screen-play-puzzle" ? after.screen.puzzleIndex : -1,
 		).toEqual(0);
 	});
 
@@ -109,8 +109,8 @@ describe(import.meta.file, () => {
 		]);
 
 		if (
-			before.screen.t === "screen-puzzle" &&
-			after.screen.t === "screen-puzzle"
+			before.screen.t === "screen-play-puzzle" &&
+			after.screen.t === "screen-play-puzzle"
 		) {
 			expect(before.screen.flowPlay).not.toEqual(after.screen.flowPlay);
 			expect(after.screen.flowPlay).toEqual(
@@ -123,12 +123,12 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const before = f.init;
 		const after = f.update(before, f.completePuzzleMsgs);
-		expect(before.screen.t).toBe("screen-puzzle");
-		if (before.screen.t === "screen-puzzle") {
+		expect(before.screen.t).toBe("screen-play-puzzle");
+		if (before.screen.t === "screen-play-puzzle") {
 			expect(before.screen.state.t).toBe("solving");
 		}
-		expect(after.screen.t).toBe("screen-puzzle");
-		if (after.screen.t === "screen-puzzle") {
+		expect(after.screen.t).toBe("screen-play-puzzle");
+		if (after.screen.t === "screen-play-puzzle") {
 			expect(after.screen.state.t).toBe("solved");
 			const flow = FlowVariantUIPlay.deriveFlow({
 				flow: f.puzzle.flow,
@@ -144,7 +144,7 @@ describe(import.meta.file, () => {
 		const after = f.update(f.init, f.completePuzzleMsgs);
 
 		expect(
-			after.screen.t === "screen-puzzle" &&
+			after.screen.t === "screen-play-puzzle" &&
 				after.screen.state.t === "solved" &&
 				after.screen.opened === "puzzle-complete",
 		).toBe(true);
@@ -159,7 +159,7 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			after.screen.t === "screen-puzzle" &&
+			after.screen.t === "screen-play-puzzle" &&
 				after.screen.state.t === "solved" &&
 				after.screen.opened === null,
 		).toBe(true);
@@ -176,7 +176,7 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			after.screen.t === "screen-puzzle" && after.screen.opened === null,
+			after.screen.t === "screen-play-puzzle" && after.screen.opened === null,
 		).toBe(true);
 	});
 
@@ -202,10 +202,10 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			before.screen.t === "screen-puzzle" && before.screen.opened === null,
+			before.screen.t === "screen-play-puzzle" && before.screen.opened === null,
 		).toBe(true);
 		expect(
-			after.screen.t === "screen-puzzle" && after.screen.opened === null,
+			after.screen.t === "screen-play-puzzle" && after.screen.opened === null,
 		).toBe(true);
 	});
 });

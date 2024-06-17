@@ -42,7 +42,7 @@ export const State = p.or(
 export type State = p.Infer<typeof State>;
 
 export const ModelCore = p.obj({
-	t: p.l("screen-puzzle"),
+	t: p.l("screen-play-puzzle"),
 	flowPack: FlowPack,
 	flowPuzzle: FlowPuzzle,
 	flowPlay: FlowVariantUIPlay.Model,

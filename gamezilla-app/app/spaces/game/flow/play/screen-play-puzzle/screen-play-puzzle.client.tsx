@@ -72,7 +72,7 @@ const updateMain: ClientModule["update"] = (input) => {
 		}
 
 		case "got-puzzle-screen-flow-play-msg": {
-			if (input.modelCore.screen.t !== "screen-puzzle") {
+			if (input.modelCore.screen.t !== "screen-play-puzzle") {
 				return { model: input.model };
 			}
 
@@ -100,7 +100,7 @@ const updateMain: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-	if (input.modelCore.screen.t !== "screen-puzzle") {
+	if (input.modelCore.screen.t !== "screen-play-puzzle") {
 		return null;
 	}
 	const flowPuzzle = input.modelCore.screen.flowPuzzle;
