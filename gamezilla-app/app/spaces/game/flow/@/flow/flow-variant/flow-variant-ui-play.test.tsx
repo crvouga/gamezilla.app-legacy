@@ -210,5 +210,5 @@ describe(import.meta.file, () => {
 		expect(output.event?.t).not.toBe("solved");
 	});
 
-	// it("should show hint")
+	test.todo("should show hint");
 });
