@@ -1,7 +1,7 @@
 import { Err, Ok, PhoneNumber, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import type { ILogger } from "gamezilla-app/app/@/server/logger";
-import { IVerifySMS } from "../../verify-sms";
+import type { IVerifySMS } from "../../verify-sms";
 
 export type Deps = {
 	logger: ILogger;

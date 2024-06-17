@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Ok, TimeSpan, Uuid } from "gamezilla-app/@/core";
+import { Ok, Result, TimeSpan, Uuid } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { Logger } from "../logger";
 import { AppServerTestEnv } from "../server-test-env";
@@ -88,13 +88,24 @@ const implementations: Implementation[] = [
 	},
 ];
 
-export const Item = p.obj({ id: p.str });
-export type Item = p.Infer<typeof Item>;
+const Item = p.obj({ id: p.str });
+
+type Item = p.Infer<typeof Item>;
 
 const randomItem = (): Item => {
 	return {
 		id: Uuid.generate(),
 	};
+};
+
+const normalizeItemArray = (items: Item[]): Item[] => {
+	return items.sort((a, b) => a.id.localeCompare(b.id));
+};
+
+const normalizeItemArrayResult = <T>(
+	result: Result<T, Item[]>,
+): Result<T, Item[]> => {
+	return Result.mapOk(result, normalizeItemArray);
 };
 
 for (const { name, Fixture } of implementations) {
@@ -130,7 +141,9 @@ for (const { name, Fixture } of implementations) {
 			);
 
 			expect(before).toEqual(Ok([]));
-			expect(after).toEqual(Ok(items));
+			expect(normalizeItemArrayResult(after)).toEqual(
+				normalizeItemArrayResult(Ok(items)),
+			);
 		});
 
 		it("should get correctly", async () => {

@@ -27,6 +27,12 @@ export const MsgCore = p.or(
 	p.obj({
 		t: p.l("user-clicked-select-next-pack-button"),
 	}),
+	p.obj({
+		t: p.l("user-clicked-reset-puzzle-button"),
+	}),
+	p.obj({
+		t: p.l('user-clicked-hint-button'),
+	})
 );
 
 export type MsgCore = p.Infer<typeof MsgCore>;

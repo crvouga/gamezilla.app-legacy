@@ -57,10 +57,10 @@ describe(import.meta.file, () => {
 
 		expect(
 			f.init.screen.t === "screen-play-puzzle" ? f.init.screen.puzzleIndex : -1,
-		).toEqual(0);
+		).toEqual(f.puzzleIndex);
 		expect(
 			after.screen.t === "screen-play-puzzle" ? after.screen.puzzleIndex : -1,
-		).toEqual(1);
+		).toEqual(f.puzzleIndex + 1);
 	});
 
 	it("should go to prev puzzle after the user clicks the prev button", async () => {
@@ -81,10 +81,10 @@ describe(import.meta.file, () => {
 		]);
 		expect(
 			before.screen.t === "screen-play-puzzle" ? before.screen.puzzleIndex : -1,
-		).toEqual(1);
+		).toEqual(f.puzzleIndex + 1);
 		expect(
 			after.screen.t === "screen-play-puzzle" ? after.screen.puzzleIndex : -1,
-		).toEqual(0);
+		).toEqual(f.puzzleIndex);
 	});
 
 	it("should start with empty puzzle after going to next puzzle", async () => {
@@ -165,7 +165,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it("should close puzzle complete dialog after clicking next puzzle", async () => {
+	it("should close puzzle complete dialog after clicking next puzzle button", async () => {
 		const f = await Fixture();
 		const before = f.update(f.init, f.completePuzzleMsgs);
 		const after = f.update(before, [
@@ -207,5 +207,48 @@ describe(import.meta.file, () => {
 		expect(
 			after.screen.t === "screen-play-puzzle" && after.screen.opened === null,
 		).toBe(true);
+	});
+
+	it("should close puzzle complete dialog after clicking prev puzzle button", async () => {
+		const f = await Fixture();
+		const before = f.update(f.init, f.completePuzzleMsgs);
+		const after = f.update(before, [
+			{
+				t: "user-clicked-prev-puzzle-button",
+				prevPuzzle: f.prevPuzzle,
+				prevPuzzleIndex: f.prevPuzzleIndex,
+			},
+		]);
+		expect(
+			before.screen.t === "screen-play-puzzle" &&
+				before.screen.opened === "puzzle-complete",
+		).toBe(true);
+		expect(
+			after.screen.t === "screen-play-puzzle" && after.screen.opened === null,
+		).toBe(true);
+	});
+
+	it("should clear puzzle after clicking reset button", async () => {
+		const f = await Fixture();
+		const before = f.update(f.init, [
+			...f.completePuzzleMsgs,
+			{
+				t: "user-clicked-reset-puzzle-button",
+			},
+		]);
+		expect(before.screen.t).toBe("screen-play-puzzle");
+		if (before.screen.t === "screen-play-puzzle")
+			expect(before.screen.flowPlay).toEqual(FlowVariantUIPlay.init(f.puzzle));
+	});
+
+	it("should show hint after clicking show hint button", async () => {
+		const f = await Fixture();
+		const after = f.update(f.init, [
+			{t: 'user-clicked-hint-button'}
+		])
+		expect(after.screen.t).toBe('screen-play-puzzle')
+		if(after.screen.t === 'screen-play-puzzle') {
+			expect(FlowVariantUIPlay.isShowingHint(after.screen.flowPlay)).toBe(true)
+		}
 	});
 });

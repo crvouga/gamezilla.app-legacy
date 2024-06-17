@@ -40,10 +40,7 @@ type ClientModule = AppClientModule<{
 	MsgCmdIn: MsgInCmdClient | null;
 }>;
 
-const updateFetchMissingPuzzles = (input: {
-	ctx: FlowPackGridClientCtx;
-	model: ModelClient;
-}) => {
+const updateFetchMissingPuzzles: ClientModule["update"] = (input) => {
 	if (!input.ctx.pack) {
 		return { model: input.model };
 	}

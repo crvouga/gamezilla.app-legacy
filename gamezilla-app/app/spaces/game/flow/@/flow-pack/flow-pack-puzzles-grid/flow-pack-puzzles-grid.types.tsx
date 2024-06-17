@@ -3,7 +3,7 @@ import type { RequestResponse } from "gamezilla-app/@/core/request-response";
 import type { ListPuzzlesOutput } from "../../flow-puzzle";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
-import { FlowPack } from "../flow-pack";
+import type { FlowPack } from "../flow-pack";
 
 export type ModelClient = {
 	request: RequestResponse<string, null>;
@@ -17,7 +17,7 @@ export const initClient: ModelClient = {
 	puzzles: {},
 };
 
-export type ModelServer = {};
+export type ModelServer = Record<string, unknown>;
 
 export type MsgClient =
 	| {

@@ -79,7 +79,7 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 
 	const edges: Flow.Edge[] = [];
 
-	let currentNodeId: Flow.NodeId = terminal.startId;
+	const currentNodeId: Flow.NodeId = terminal.startId;
 
 	for (let i = 0; i < Math.random() * 10; i++) {
 		const edge = Flow.randomOutEdge(flow, currentNodeId);
@@ -105,6 +105,10 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 	];
 
 	return msgs;
+};
+
+export const isShowingHint = (_model: Model): boolean => {
+	return false;
 };
 
 export const toSolutionMsgs = ({
@@ -194,6 +198,7 @@ export type Event =
 	  }
 	| {
 			t: "connected-terminals";
+			connectedTerminalCount: number;
 	  }
 	| {
 			t: "solved";
@@ -202,6 +207,7 @@ export type Event =
 export const eventToSoundSrc = (event: Event): string => {
 	switch (event.t) {
 		case "connected-terminals": {
+			// return nthConnectedTerminal(event.connectedTerminalCount);
 			return APP_SOUND.tap;
 		}
 
@@ -365,6 +371,7 @@ const updateDragging = ({
 					model: modelNew,
 					event: {
 						t: "connected-terminals",
+						connectedTerminalCount: Flow.countConnectedPipes(current),
 					},
 				};
 			}

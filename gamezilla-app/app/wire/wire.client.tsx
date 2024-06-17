@@ -37,7 +37,10 @@ export const init = (_input: {
 //
 //
 
-export const update = <TMsgToClient, TMsgToServer>({
+export const update = <
+	TMsgToClient extends Record<string, unknown>,
+	TMsgToServer extends Record<string, unknown>,
+>({
 	msg,
 	msgServer,
 	msgCmd,

@@ -463,7 +463,6 @@ const ViewSendCode: Module["View"] = (input) => {
 				)}
 
 				<TextField
-					value={input.model.inputtedPhoneNumber}
 					id="phoneNumberInput"
 					label={input.ctx.t("auth-sms.phone-number")}
 					type="tel"
@@ -528,7 +527,6 @@ const ViewVerifyCode: Module["View"] = (input) => {
 
 			<div className="flex w-full flex-col gap-6 p-4 py-6">
 				<TextField
-					value={input.model.inputtedCode}
 					id={CODE_INPUT_VIEW_ID}
 					label={input.ctx.t("auth-sms.code")}
 					error={typeof input.model.inputtedCodeError === "string"}

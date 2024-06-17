@@ -75,7 +75,10 @@ export const update = (
 		case "stop-playing":
 		case "start-game":
 		case "NewGame": {
-			return { model, msgCmd: [sendToServer(msg)] };
+			return {
+				model,
+				msgCmd: [sendToServer(msg)],
+			};
 		}
 
 		default: {

@@ -24,7 +24,7 @@ export const IS_TEST = process.env.NODE_ENV === "test";
 //
 
 // NOTE: pasting sms auth codes into input while using react bugs out. so we're using inferno for now
-export const VDOM_IMPL: VDomImpl = "inferno" as VDomImpl;
+export const VDOM_IMPL: VDomImpl = "react" as VDomImpl;
 
 export const VDOM_IMPL_TEST: VDomImpl = "react" as VDomImpl;
 

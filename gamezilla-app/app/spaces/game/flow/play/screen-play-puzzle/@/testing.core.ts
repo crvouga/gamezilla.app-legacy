@@ -8,11 +8,13 @@ import type { MsgCore } from "../screen-play-puzzle.types";
 export const ScreenPuzzleCoreFixture = async () => {
 	const f = await CoreFixture();
 	const puzzle = await FlowPuzzle.random();
-	const puzzleIndex = 0;
+	const puzzleIndex = 1;
+	const prevPuzzle = await FlowPuzzle.random();
+	const prevPuzzleIndex = 0;
 	const nextPuzzle = await FlowPuzzle.random();
-	const nextPuzzleIndex = 1;
+	const nextPuzzleIndex = 2;
 	const pack = await FlowPack.random({
-		puzzleIds: [puzzle.id, nextPuzzle.id],
+		puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
 	});
 
 	const init = f.update(f.init, [
@@ -40,6 +42,8 @@ export const ScreenPuzzleCoreFixture = async () => {
 		puzzleIndex,
 		nextPuzzle,
 		nextPuzzleIndex,
+		prevPuzzle,
+		prevPuzzleIndex,
 		pack,
 		init,
 	};
