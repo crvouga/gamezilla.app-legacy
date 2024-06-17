@@ -19,8 +19,8 @@ const updateCore: CoreModule["updateCore"] = (input) => {
 
 const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	switch (input.modelCore.screen.t) {
-		case "screen-puzzle": {
-			const screenPuzzle = updatePuzzleSreenChild(
+		case "screen-play-puzzle": {
+			const screenPuzzle = updateChild(
 				input.modelCore.screen,
 				input.msgCore,
 			);
@@ -35,7 +35,7 @@ const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	}
 };
 
-const updatePuzzleSreenChild = (
+const updateChild = (
 	modelCore: ModelCore,
 	msgCore: MsgCore,
 ): ModelCore => {
@@ -68,7 +68,7 @@ const updatePuzzleSreenChild = (
 		}
 		case "user-closed-puzzle-complete-dialog": {
 			if (
-				modelCore.t === "screen-puzzle" &&
+				modelCore.t === "screen-play-puzzle" &&
 				modelCore.state.t === "solved" &&
 				modelCore.opened === "puzzle-complete"
 			) {
@@ -133,7 +133,7 @@ const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 					return {
 						...modelCore,
 						screen: {
-							t: "screen-pack",
+							t: "screen-select-puzzle",
 							flowPack: modelCore.screen.flowPack,
 						},
 					};
