@@ -1,11 +1,11 @@
 import type { Server, WebSocketHandler } from "bun";
+import type { ILogger } from "gamezilla-app/app/@/server/logger";
 import {
+	stringToHttpRequestMethod,
 	type HttpHandler,
 	type HttpRequest,
 	type IServer,
-	stringToHttpRequestMethod,
 } from "../server";
-import type { ILogger } from "gamezilla-app/app/@/server/logger";
 
 type FetchHandler = (
 	req: Request,
