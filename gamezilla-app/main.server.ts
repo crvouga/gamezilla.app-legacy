@@ -30,11 +30,6 @@ const main = async () => {
 	});
 
 	await server.start(SERVER_PORT);
-
-	server.serveSinglePageApp({
-		directory: "dist",
-		file: "index.html",
-	})
 };
 
 main();
