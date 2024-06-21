@@ -260,48 +260,34 @@ const MyAudioContext = (): typeof window.AudioContext => {
 	);
 };
 
-let _audioContext: AudioContext;
-
-const getAudioContext = () => {
-	if (!_audioContext) {
-		_audioContext = new (MyAudioContext())();
-	}
-	return _audioContext;
-};
-
-let hasResumed = false;
-export const resumedPromise = async () => {
-	if (hasResumed) {
-		return;
-	}
+const nextUserGesture = async () => {
 	await new Promise((resolve) => {
-		const handler = async (): Promise<null> => {
-			const audioContext = getAudioContext();
-
-			switch (audioContext.state) {
-				case "closed":
-				case "running": {
-					resolve(null);
-					document.body.removeEventListener("click", handler);
-					document.body.removeEventListener("touchstart", handler);
-					return null;
-				}
-
-				case "suspended": {
-					await audioContext.resume();
-					resolve(null);
-					document.body.removeEventListener("click", handler);
-					document.body.removeEventListener("touchstart", handler);
-					return null;
-				}
-			}
+		const handler = async () => {
+			resolve(null);
+			document.body.removeEventListener("click", handler);
+			document.body.removeEventListener("touchstart", handler);
 		};
 
 		document.body.addEventListener("click", handler);
 		document.body.addEventListener("touchstart", handler);
 	});
-	hasResumed = true;
 };
+
+let _audioContext: AudioContext;
+let _didUserGesture = false;
+const getAudioContext = async () => {
+	if (!_didUserGesture) {
+		await nextUserGesture();
+		_didUserGesture = true;
+	}
+
+	if (!_audioContext) {
+		_audioContext = new (MyAudioContext())();
+	}
+
+	return _audioContext;
+};
+
 const audioBuffers = new Map<string, AudioBuffer>();
 
 async function preloadSounds(src: string[]) {
@@ -312,7 +298,7 @@ async function preloadSounds(src: string[]) {
 async function preloadSound(src: string) {
 	const response = await fetch(src);
 	const arrayBuffer = await response.arrayBuffer();
-	const audioContext = getAudioContext();
+	const audioContext = await getAudioContext();
 	const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 	audioBuffers.set(src, audioBuffer);
 	return Ok(null);
@@ -327,7 +313,7 @@ async function playSoundEff(
 	if (!audioBuffer) {
 		return Err(`Sound not loaded. src: ${src}`);
 	}
-	const audioContext = getAudioContext();
+	const audioContext = await getAudioContext();
 	const sourceNode = audioContext.createBufferSource();
 	sourceNode.buffer = audioBuffer;
 	const gainNode = audioContext.createGain();
