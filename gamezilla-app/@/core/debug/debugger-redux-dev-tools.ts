@@ -464,7 +464,6 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (
 	const connection = getBrowserExtensionConnection<any, any>(window);
 
 	if (!connection) {
-		console.warn("No Redux DevTools extension found");
 		return function updateDebugger(_model: any, _msg: any) {
 			return;
 		};
