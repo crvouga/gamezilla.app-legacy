@@ -1,9 +1,10 @@
-import { VDomImpl } from "../vdom-impl";
+import type { VDomImpl } from "../vdom-impl";
 import type { ITestRender } from "./test-render";
 import { TestRenderReact } from "./test-render-impl-react";
 
 export const TestRender = async (vDomImpl: VDomImpl): Promise<ITestRender> => {
 	switch (vDomImpl) {
+		case "react-with-compiler":
 		case "react": {
 			return TestRenderReact;
 		}

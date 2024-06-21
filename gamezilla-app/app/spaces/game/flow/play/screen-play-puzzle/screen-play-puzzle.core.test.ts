@@ -243,12 +243,10 @@ describe(import.meta.file, () => {
 
 	it("should show hint after clicking show hint button", async () => {
 		const f = await Fixture();
-		const after = f.update(f.init, [
-			{t: 'user-clicked-hint-button'}
-		])
-		expect(after.screen.t).toBe('screen-play-puzzle')
-		if(after.screen.t === 'screen-play-puzzle') {
-			expect(FlowVariantUIPlay.isShowingHint(after.screen.flowPlay)).toBe(true)
+		const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
+		expect(after.screen.t).toBe("screen-play-puzzle");
+		if (after.screen.t === "screen-play-puzzle") {
+			expect(FlowVariantUIPlay.isShowingHint(after.screen.flowPlay)).toBe(true);
 		}
 	});
 });

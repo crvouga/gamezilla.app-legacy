@@ -20,10 +20,7 @@ const updateCore: CoreModule["updateCore"] = (input) => {
 const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	switch (input.modelCore.screen.t) {
 		case "screen-play-puzzle": {
-			const screenPuzzle = updateChild(
-				input.modelCore.screen,
-				input.msgCore,
-			);
+			const screenPuzzle = updateChild(input.modelCore.screen, input.msgCore);
 			return {
 				...input.modelCore,
 				screen: screenPuzzle,
@@ -35,10 +32,7 @@ const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	}
 };
 
-const updateChild = (
-	modelCore: ModelCore,
-	msgCore: MsgCore,
-): ModelCore => {
+const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 	switch (msgCore.t) {
 		case "got-puzzle-screen-flow-play-msg": {
 			const flowPlayNew = FlowVariantUIPlay.update({

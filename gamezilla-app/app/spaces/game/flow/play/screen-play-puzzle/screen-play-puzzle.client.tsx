@@ -84,8 +84,8 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
-			
-		case 'user-clicked-hint-button': {
+
+		case "user-clicked-hint-button": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -227,7 +227,6 @@ const View: ClientModule["View"] = (input) => {
 								t: "user-clicked-hint-button",
 							})
 						}
-
 					/>
 					<ViewBottomButtonBarActionReset
 						ctx={input.ctx}

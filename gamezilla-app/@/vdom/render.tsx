@@ -20,6 +20,7 @@ export const Render = async (
 			};
 		}
 
+		case "react-with-compiler":
 		case "react": {
 			const [ReactDOMClient, ReactDOM, React] = await Promise.all([
 				import("react-dom/client"),

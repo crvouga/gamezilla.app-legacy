@@ -268,7 +268,7 @@ describe(import.meta.file, () => {
 		).toBeTruthy();
 	});
 	test("hint button click", async () => {
-			const f = await Fixture();
+		const f = await Fixture();
 		const r = f.render(f.initial);
 		const btn = r.getByRole("button", f.ctx.t("game.hint"));
 		btn?.click();
@@ -276,7 +276,7 @@ describe(import.meta.file, () => {
 		expect(msg.t).toBe("user-clicked-hint-button");
 	});
 	test("hint button sound", async () => {
-const f = await Fixture();
+		const f = await Fixture();
 		const output = f.update(f.initial, [
 			{
 				msgCore: withEventMeta({
@@ -284,6 +284,6 @@ const f = await Fixture();
 				}),
 			},
 		]);
-		expect(didPlaySound(output)).toBe(true);		
+		expect(didPlaySound(output)).toBe(true);
 	});
 });
