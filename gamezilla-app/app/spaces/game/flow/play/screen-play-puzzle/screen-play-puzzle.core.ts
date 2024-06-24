@@ -116,7 +116,7 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-hint-button": {
 			const nextHintGroupId = toNextHintGroupId(modelCore.flowPuzzle.flow);
 			if (!nextHintGroupId) {
-				return modelCore
+				return modelCore;
 			}
 			return {
 				...modelCore,
@@ -178,9 +178,7 @@ const initCore = (input: {
 
 const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
 	for (const groupId of Flow.GROUP_ID_ORDER) {
-		if (
-			!Flow.isTerminalConnectedWithPipes(model, groupId)
-		) {
+		if (!Flow.isTerminalConnectedWithPipes(model, groupId)) {
 			return groupId;
 		}
 	}

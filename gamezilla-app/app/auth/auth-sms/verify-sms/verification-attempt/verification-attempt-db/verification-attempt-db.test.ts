@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { randomVerificationAttempt } from "../verification-attempt";
+import { VerificationAttempt } from "../verification-attempt";
 import { VerificationAttemptDb } from "./verification-attempt-db-impl";
 import { unwrap } from "gamezilla-app/@/core";
 import { VerificationId } from "../../verification/verification-id";
@@ -30,14 +30,14 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
 	it("should be ok after inserting", async () => {
 		const f = await Fixture();
-		const verificationAttempt = await randomVerificationAttempt();
+		const verificationAttempt = await VerificationAttempt.random();
 		const result = await f.verificationAttemptDb.insert(verificationAttempt);
 		expect(result.t).toBe("ok");
 	});
 
 	it("should insert correctly", async () => {
 		const f = await Fixture();
-		const verificationAttempt = await randomVerificationAttempt();
+		const verificationAttempt = await VerificationAttempt.random();
 		const before = await f.verificationAttemptDb.find({
 			where: {
 				verificationId: {
@@ -59,7 +59,7 @@ describe(import.meta.file, () => {
 
 	it("should find correctly", async () => {
 		const f = await Fixture();
-		const verificationAttempt = await randomVerificationAttempt();
+		const verificationAttempt = await VerificationAttempt.random();
 		await f.verificationAttemptDb.insert(verificationAttempt);
 		const result = await f.verificationAttemptDb.find({
 			where: {
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
 
 	it("should not find when verificationId is not equal", async () => {
 		const f = await Fixture();
-		const verificationAttempt = await randomVerificationAttempt();
+		const verificationAttempt = await VerificationAttempt.random();
 		await f.verificationAttemptDb.insert(verificationAttempt);
 		const result = await f.verificationAttemptDb.find({
 			where: {

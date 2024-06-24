@@ -7,11 +7,29 @@ export type Deps = {
 	logger: ILogger;
 };
 
+const TWILLIO_ACCOUNT_SID = process.env.TWILLIO_ACCOUNT_SID;
+
+if (!TWILLIO_ACCOUNT_SID) {
+	throw new Error("TWILLIO_ACCOUNT_SID is required");
+}
+
+const TWILLIO_AUTH_TOKEN = process.env.TWILLIO_AUTH_TOKEN;
+
+if (!TWILLIO_AUTH_TOKEN) {
+	throw new Error("TWILLIO_AUTH_TOKEN is required");
+}
+
+const TWILLIO_MESSAGING_SERVICE_SID = process.env.TWILLIO_MESSAGING_SERVICE_SID;
+
+if (!TWILLIO_MESSAGING_SERVICE_SID) {
+	throw new Error("TWILLIO_MESSAGING_SERVICE_SID is required");
+}
+
+const AUTHORIZATION = `Basic ${btoa(
+	`${TWILLIO_ACCOUNT_SID}:${TWILLIO_AUTH_TOKEN}`,
+)}`;
+
 export const VerifySMS = (deps: Deps): IVerifySMS => {
-	const accountSid = "ACd7936c09aaa6aeb6e89a8a2374f0dbc8";
-	const authToken = "70a3da99b8052fd3b4fbef13af0cb987";
-	const serviceId = "VAab78c66ef530c74ed41228fa4d33e4d3";
-	const authorization = `Basic ${btoa(`${accountSid}:${authToken}`)}`;
 	return {
 		async sendCode(input) {
 			try {
@@ -19,11 +37,11 @@ export const VerifySMS = (deps: Deps): IVerifySMS => {
 				deps.logger.info(`Sending code to ${to}`);
 
 				await fetch(
-					`https://verify.twilio.com/v2/Services/${serviceId}/Verifications`,
+					`https://verify.twilio.com/v2/Services/${TWILLIO_MESSAGING_SERVICE_SID}/Verifications`,
 					{
 						method: "POST",
 						headers: {
-							Authorization: authorization,
+							Authorization: AUTHORIZATION,
 							"Content-Type": "application/x-www-form-urlencoded",
 						},
 						body: new URLSearchParams({
@@ -63,11 +81,11 @@ export const VerifySMS = (deps: Deps): IVerifySMS => {
 				deps.logger.info(`Verifying code for ${to}`);
 
 				const response = await fetch(
-					`https://verify.twilio.com/v2/Services/${serviceId}/VerificationCheck`,
+					`https://verify.twilio.com/v2/Services/${TWILLIO_MESSAGING_SERVICE_SID}/VerificationCheck`,
 					{
 						method: "POST",
 						headers: {
-							Authorization: authorization,
+							Authorization: AUTHORIZATION,
 							"Content-Type": "application/x-www-form-urlencoded",
 						},
 						body: new URLSearchParams({
