@@ -91,12 +91,12 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
-			
-		case 'user-closed-puzzle-complete-dialog': {
+
+		case "user-closed-puzzle-complete-dialog": {
 			return {
 				model: input.model,
-				msgCmd: [playSound(APP_SOUND.navBackwardMin)]
-			}
+				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+			};
 		}
 
 		case "got-puzzle-screen-flow-play-msg": {

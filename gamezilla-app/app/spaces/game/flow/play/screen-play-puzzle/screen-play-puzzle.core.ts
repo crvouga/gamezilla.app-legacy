@@ -1,4 +1,4 @@
-import { FlowVariantUIPlay } from "../../@/flow";
+import { Flow, FlowVariantUIPlay } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule, MsgCore } from "../play.types";
@@ -113,6 +113,20 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			};
 		}
 
+		case "user-clicked-hint-button": {
+			const nextHintGroupId = toNextHintGroupId(modelCore.flowPuzzle.flow);
+			if (!nextHintGroupId) {
+				return modelCore
+			}
+			return {
+				...modelCore,
+				hints: {
+					...modelCore.hints,
+					[nextHintGroupId]: nextHintGroupId,
+				},
+			};
+		}
+
 		default: {
 			return modelCore;
 		}
@@ -158,10 +172,27 @@ const initCore = (input: {
 		},
 		opened: null,
 		t: "screen-play-puzzle",
+		hints: {},
 	};
+};
+
+const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
+	for (const groupId of Flow.GROUP_ID_ORDER) {
+		if (
+			!Flow.isTerminalConnectedWithPipes(model, groupId)
+		) {
+			return groupId;
+		}
+	}
+	return null;
+};
+
+const isAnyShowingHint = (modelCore: ModelCore): boolean => {
+	return Object.keys(modelCore.hints).length > 0;
 };
 
 export const ScreenPuzzleCore = {
 	updateCore,
+	isAnyShowingHint,
 	initCore,
 };

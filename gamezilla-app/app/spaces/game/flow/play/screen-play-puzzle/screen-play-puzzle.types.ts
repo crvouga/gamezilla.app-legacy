@@ -1,5 +1,5 @@
 import { p } from "gamezilla-app/@/core/parser";
-import { FlowVariantUIPlay } from "../../@/flow";
+import { Flow, FlowVariantUIPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 
@@ -55,6 +55,7 @@ export const ModelCore = p.obj({
 	puzzleIndex: p.num,
 	state: State,
 	opened: p.or(p.l("puzzle-complete"), p.l(null)),
+	hints: p.partialDict(Flow.GroupId, Flow.GroupId),
 });
 
 export type ModelCore = p.Infer<typeof ModelCore>;

@@ -267,7 +267,7 @@ describe(import.meta.file, () => {
 			f.render(f.initial).getByRole("button", f.ctx.t("game.hint")),
 		).toBeTruthy();
 	});
-	
+
 	test("hint button click", async () => {
 		const f = await Fixture();
 		const r = f.render(f.initial);

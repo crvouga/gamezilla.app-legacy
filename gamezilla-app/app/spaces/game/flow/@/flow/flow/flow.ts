@@ -868,3 +868,14 @@ export const countConnectedPipes = (model: Model): number => {
 	}
 	return count;
 };
+
+export const isTerminalConnectedWithPipes = (
+	model: Model,
+	groupId: GroupId,
+): boolean => {
+	const terminal = toTerminalByGroupId(model, groupId);
+	if (!terminal) {
+		return false;
+	}
+	return isConnectedWithPipes(model, terminal.startId, terminal.startId);
+};
