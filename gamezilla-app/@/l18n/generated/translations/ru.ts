@@ -39,6 +39,8 @@ export const translations: Text = {
 	"auth-sms.code": "Код",
 	"auth-sms.verify-code": "Проверить",
 	"auth-sms.invalid-phone-number": "Неверный номер телефона",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043A\u043E\u0434, \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043D\u044B\u0439 \u043D\u0430 ${formattedPhoneNumber}`,
 	"spaces.see-profile": "Посмотреть профиль",
 	"game.hint": "Подсказка",
 	host: "Хост",

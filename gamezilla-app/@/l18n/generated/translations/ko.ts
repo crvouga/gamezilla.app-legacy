@@ -37,6 +37,8 @@ export const translations: Text = {
 	"auth-sms.code": "코드",
 	"auth-sms.verify-code": "확인",
 	"auth-sms.invalid-phone-number": "유효하지 않은 전화 번호",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`${formattedPhoneNumber}\uB85C \uC804\uC1A1\uB41C \uCF54\uB4DC\uB97C \uC785\uB825\uD558\uC2ED\uC2DC\uC624`,
 	"spaces.see-profile": "프로필 보기",
 	"game.hint": "힌트",
 	host: "호스트",

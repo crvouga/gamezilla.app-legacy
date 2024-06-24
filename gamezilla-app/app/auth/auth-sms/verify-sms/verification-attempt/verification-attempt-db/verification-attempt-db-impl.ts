@@ -17,7 +17,7 @@ export const VerificationAttemptDb = (impl: Impl): IVerificationAttemptDb => {
 		case "hash-map": {
 			return VerificationAttemptDbHashMap();
 		}
-			
+
 		case "postgres": {
 			return VerificationAttemptDbPostgres(impl);
 		}

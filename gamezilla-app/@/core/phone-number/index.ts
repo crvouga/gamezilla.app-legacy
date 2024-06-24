@@ -13,9 +13,75 @@ export type PhoneNumber = p.Infer<typeof parser>;
 
 type Problem = "invalid_phone_number";
 
-const fromString = (phoneNumber: unknown): Result<Problem, PhoneNumber> => {
+const fromStringDeriveCountry = (
+	phoneNumber: string,
+): Result<Problem, PhoneNumber> => {
+	let countryCode: Iso3166Alpha2Code | undefined;
+
+	for (const countryCodeCandiate of Iso3166Alpha2Code.all) {
+		const result = phone(phoneNumber, {
+			country: countryCodeCandiate,
+		});
+
+		if (!result.isValid) {
+			continue;
+		}
+		countryCode = countryCodeCandiate;
+	}
+
+	const result = phone(phoneNumber, {
+		country: countryCode,
+	});
+
+	if (!result.isValid) {
+		return Result.Err("invalid_phone_number");
+	}
+
+	const country = Iso3166Alpha2Code.is(result.countryCode)
+		? result.countryCode
+		: Iso3166Alpha2Code.is(result.countryIso2)
+			? result.countryIso2
+			: Iso3166Alpha2Code.is(result.countryIso3)
+				? result.countryIso3
+				: null;
+
+	if (!country) {
+		return Result.Err("invalid_phone_number");
+	}
+
+	return Result.Ok({
+		_opaque: "PhoneNumber",
+		_validPhoneNumber: result.phoneNumber,
+		_country: country,
+	});
+};
+
+const fromString = (
+	phoneNumber: unknown,
+	maybeCountryCode?: Iso3166Alpha2Code,
+): Result<Problem, PhoneNumber> => {
 	if (typeof phoneNumber !== "string") {
 		return Result.Err("invalid_phone_number");
+	}
+
+	if (maybeCountryCode) {
+		const result = phone(phoneNumber, {
+			country: maybeCountryCode,
+		});
+
+		if (!result.isValid) {
+			return Result.Err("invalid_phone_number");
+		}
+
+		return Result.Ok({
+			_opaque: "PhoneNumber",
+			_validPhoneNumber: result.phoneNumber,
+			_country: maybeCountryCode,
+		});
+	}
+
+	if (!phoneNumber.startsWith("+")) {
+		return fromStringDeriveCountry(phoneNumber);
 	}
 
 	const result = phone(phoneNumber);

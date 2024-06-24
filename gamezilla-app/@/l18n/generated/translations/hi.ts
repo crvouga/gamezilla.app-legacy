@@ -37,6 +37,8 @@ export const translations: Text = {
 	"auth-sms.code": "कोड",
 	"auth-sms.verify-code": "सत्यापित करें",
 	"auth-sms.invalid-phone-number": "अमान्य फोन नंबर",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`\u0915\u094B\u0921 ${formattedPhoneNumber} \u092A\u0930 \u092D\u0947\u091C\u093E \u0917\u092F\u093E \u0939\u0948`,
 	"spaces.see-profile": "प्रोफ़ाइल देखें",
 	"game.hint": "संकेत",
 	host: "मेज़बान",

@@ -33,6 +33,7 @@ import {
 	Button,
 	IconMobilePhone,
 	Select,
+	Text,
 	TextField,
 	TopBar,
 	TopBarBackButton,
@@ -86,8 +87,7 @@ const init: Module["init"] = () => {
 			inputtedCodeError: null,
 			//
 			inputtedPhoneNumber: "",
-			countryCodeInput:
-				Iso3166Alpha2Code.getNavigatorCountry() ?? Iso3166Alpha2Code.of("US"),
+			countryCodeInput: Iso3166Alpha2Code.of("US"),
 			phoneNumberError: null,
 			//
 
@@ -125,7 +125,37 @@ const update: Module["update"] = (input) => {
 		{ model: input.model },
 		(model) => updateFromMsg({ ...input, model }),
 		(model) => updateFromServer({ ...input, model }),
+		(model) => updateAutoFocus({ ...input, model }),
 	);
+};
+
+const updateAutoFocus: Module["update"] = (input) => {
+	switch (input.msgEvt?.t) {
+		case "routing/route-changed": {
+			switch (input.msgEvt.route.t) {
+				case "login-sms-request": {
+					return {
+						model: input.model,
+						msgCmd: [focusView(PHONE_NUMBER_INPUT_VIEW_ID)],
+					};
+				}
+
+				case "login-sms-verify": {
+					return {
+						model: input.model,
+						msgCmd: [focusView(CODE_INPUT_VIEW_ID)],
+					};
+				}
+
+				default: {
+					return { model: input.model };
+				}
+			}
+		}
+		default: {
+			return { model: input.model };
+		}
+	}
 };
 
 const updateFromMsg: Module["update"] = (input) => {
@@ -183,7 +213,10 @@ const updateFromMsg: Module["update"] = (input) => {
 		}
 
 		case "user-clicked-send-code-button": {
-			const phoneNumber = PhoneNumber.fromString(model.inputtedPhoneNumber);
+			const phoneNumber = PhoneNumber.fromString(
+				model.inputtedPhoneNumber,
+				model.countryCodeInput,
+			);
 
 			if (isErr(phoneNumber)) {
 				return {
@@ -443,7 +476,7 @@ const ViewSendCode: Module["View"] = (input) => {
 			/>
 
 			<div className="flex w-full flex-col gap-6 p-4 py-6">
-				{false && (
+				{true && (
 					<Select
 						id="countryCode"
 						label={input.ctx.t("auth-sms.country")}
@@ -526,6 +559,14 @@ const ViewVerifyCode: Module["View"] = (input) => {
 			/>
 
 			<div className="flex w-full flex-col gap-6 p-4 py-6">
+				<Text
+					role="status"
+					className="text-lg"
+					value={input.ctx.t(
+						"auth-sms.enter-code-sent-to",
+						PhoneNumber.format(phoneNumber),
+					)}
+				/>
 				<TextField
 					id={CODE_INPUT_VIEW_ID}
 					label={input.ctx.t("auth-sms.code")}

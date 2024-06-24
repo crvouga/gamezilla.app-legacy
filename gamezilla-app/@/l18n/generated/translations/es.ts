@@ -39,6 +39,8 @@ export const translations: Text = {
 	"auth-sms.code": "Código",
 	"auth-sms.verify-code": "Verificar código",
 	"auth-sms.invalid-phone-number": "Número de teléfono no válido",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`Introduce el c\xF3digo enviado a ${formattedPhoneNumber}`,
 	"spaces.see-profile": "Ver perfil",
 	"game.hint": "Sugerencia",
 	host: "Anfitrión",

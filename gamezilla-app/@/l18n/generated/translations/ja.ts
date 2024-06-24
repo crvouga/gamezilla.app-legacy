@@ -37,6 +37,8 @@ export const translations: Text = {
 	"auth-sms.code": "コード",
 	"auth-sms.verify-code": "確認",
 	"auth-sms.invalid-phone-number": "無効な電話番号",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`${formattedPhoneNumber} \u306B\u9001\u4FE1\u3055\u308C\u305F\u30B3\u30FC\u30C9\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044`,
 	"spaces.see-profile": "プロフィールを見る",
 	"game.hint": "ヒント",
 	host: "ホスト",

@@ -36,6 +36,8 @@ export const translations: Text = {
 	"auth-sms.code": "代码",
 	"auth-sms.verify-code": "验证",
 	"auth-sms.invalid-phone-number": "无效的电话号码",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`\u8F93\u5165\u53D1\u9001\u5230 ${formattedPhoneNumber} \u7684\u4EE3\u7801`,
 	"spaces.see-profile": "查看个人资料",
 	"game.hint": "提示",
 	host: "主持人",

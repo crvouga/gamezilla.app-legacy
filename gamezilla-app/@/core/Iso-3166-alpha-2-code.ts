@@ -335,8 +335,10 @@ const getNavigatorCountry = (): Iso3166Alpha2Code | undefined => {
 
 	const countryCode = locale.split("-")[1];
 
-	if (countryCode && Iso3166Alpha2Code.is(countryCode.toUpperCase())) {
-		return countryCode.toUpperCase() as Iso3166Alpha2Code;
+	const countryCodeUpper = countryCode?.toUpperCase();
+
+	if (countryCodeUpper && Iso3166Alpha2Code.is(countryCodeUpper)) {
+		return countryCodeUpper;
 	}
 
 	return undefined;

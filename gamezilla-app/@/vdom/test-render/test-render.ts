@@ -1,5 +1,5 @@
 import type { VDom } from "../vdom";
-import type { AriaRole } from "./aria-role";
+import type { AriaRole } from "../aria-role";
 
 export type TestNode = {
 	click: () => void;

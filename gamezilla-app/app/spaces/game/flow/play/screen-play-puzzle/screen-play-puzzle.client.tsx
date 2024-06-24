@@ -166,11 +166,11 @@ const View: ClientModule["View"] = (input) => {
 				dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
 			/>
 			<div
-				className="flex w-full flex-1 flex-col overflow-scroll"
+				className="flex w-full flex-1 flex-col overflow-y-scroll"
 				data-puzzle-id={flowPuzzle.id}
 			>
 				<ViewScreenTitle title={`Level ${puzzleIndex + 1}`} />
-				<div className="relative flex flex-1 flex-col items-center justify-center overflow-y-scroll">
+				<div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
 					<FlowVariantUIPlay.View
 						key={flowPuzzle.id}
 						flow={flowPuzzle.flow}

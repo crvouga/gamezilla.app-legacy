@@ -37,6 +37,8 @@ export const translations: Text = {
 	"auth-sms.code": "الرمز",
 	"auth-sms.verify-code": "التحقق من الرمز",
 	"auth-sms.invalid-phone-number": "رقم الهاتف غير صالح",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`\u0623\u062F\u062E\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0631\u0633\u0644 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
 	"spaces.see-profile": "مشاهدة الملف الشخصي",
 	"game.hint": "ملحوظة",
 	host: "المضيف",

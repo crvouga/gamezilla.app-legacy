@@ -134,4 +134,22 @@ describe(import.meta.file, () => {
 		);
 		expect(alertError).toBeTruthy();
 	});
+
+	it("should render code sent to phone number message", async () => {
+		const phoneNumber = PhoneNumber.random();
+
+		const f = await Fixture({
+			currentRoute: {
+				n: "auth-login",
+				t: "login-sms-verify",
+				phoneNumber,
+			},
+		});
+		const r = f.render(f.init);
+		const p = r.getByRole(
+			"status",
+			f.ctx.t("auth-sms.enter-code-sent-to", PhoneNumber.format(phoneNumber)),
+		);
+		expect(p).toBeTruthy();
+	});
 });

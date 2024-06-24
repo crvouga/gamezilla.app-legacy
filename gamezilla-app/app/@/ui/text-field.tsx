@@ -13,7 +13,6 @@ export const TextField = ({
 	error,
 	helperText,
 	autoFocus,
-	startIcon,
 	min,
 	max,
 	step,
@@ -39,46 +38,44 @@ export const TextField = ({
 				{label}
 			</label>
 
-			<div
+			<input
+				id={id}
+				autoFocus={autoFocus}
+				type={type}
+				value={value}
+				min={min}
+				max={max}
+				auto-complete="off"
+				auto-capitalize="off"
+				auto-correct="off"
+				auto-save="off"
+				step={step}
+				onInput={(e) => {
+					e.preventDefault();
+					onChange(e.currentTarget.value);
+				}}
 				className={cn(
 					"flex appearance-none items-center gap-2 rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none",
 					error && "border border-red-500 text-red-500",
 					!error && " ring-blue-600 focus-within:ring-2",
 				)}
-			>
-				{startIcon}
-				<input
-					id={id}
-					autoFocus={autoFocus}
-					type={type}
-					value={value}
-					min={min}
-					max={max}
-					auto-complete="off"
-					auto-capitalize="off"
-					auto-correct="off"
-					auto-save="off"
-					step={step}
-					onInput={(e) => {
+				style={{
+					background: "transparent !important",
+				}}
+			/>
+			{onClear && value && value?.toString().length > 0 && (
+				<button
+					className="rounded-md outline-none ring-blue-600 focus:ring-2"
+					aria-label="Clear input"
+					onClick={(e) => {
 						e.preventDefault();
-						onChange(e.currentTarget.value);
+						document.getElementById(id)?.focus();
+						onClear();
 					}}
-					className="w-auto flex-1 bg-transparent outline-none"
-				/>
-				{onClear && value && value?.toString().length > 0 && (
-					<button
-						className="rounded-md outline-none ring-blue-600 focus:ring-2"
-						aria-label="Clear input"
-						onClick={(e) => {
-							e.preventDefault();
-							document.getElementById(id)?.focus();
-							onClear();
-						}}
-					>
-						<IconXMark className="h-6 w-6" />
-					</button>
-				)}
-			</div>
+				>
+					<IconXMark className="h-6 w-6" />
+				</button>
+			)}
 
 			{helperText && (
 				<div className={cn("text-sm", error && "text-red-500")}>
