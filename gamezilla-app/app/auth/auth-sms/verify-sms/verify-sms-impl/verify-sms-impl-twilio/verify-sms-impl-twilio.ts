@@ -9,19 +9,19 @@ export type Deps = {
 
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 
-if (!TWILIO_ACCOUNT_SID) {
+if (typeof TWILIO_ACCOUNT_SID !== "string") {
 	throw new Error("TWILIO_ACCOUNT_SID is required");
 }
 
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 
-if (!TWILIO_AUTH_TOKEN) {
+if (typeof TWILIO_AUTH_TOKEN !== "string") {
 	throw new Error("TWILIO_AUTH_TOKEN is required");
 }
 
 const TWILIO_MESSAGING_SERVICE_SID = process.env.TWILIO_MESSAGING_SERVICE_SID;
 
-if (!TWILIO_MESSAGING_SERVICE_SID) {
+if (typeof TWILIO_MESSAGING_SERVICE_SID !== "string") {
 	throw new Error("TWILIO_MESSAGING_SERVICE_SID is required");
 }
 
