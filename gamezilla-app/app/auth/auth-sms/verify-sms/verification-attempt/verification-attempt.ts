@@ -10,18 +10,19 @@ export type VerificationAttempt = {
 	createdAt: Posix;
 };
 
-const random = async (): Promise<VerificationAttempt> => {
-	return {
-		verificationAttemptId: VerificationAttemptId.generate(),
-		verificationId: VerificationId.generate(),
-		codeHash: await Hashing({ t: "noop" }).hash({
-			algo: { t: "sha256" },
-			password: "123",
-		}),
-		createdAt: Posix.now(),
+const random =
+	async (): Promise<VerificationAttempt> => {
+		return {
+			verificationAttemptId: VerificationAttemptId.generate(),
+			verificationId: VerificationId.generate(),
+			codeHash: await Hashing({ t: "noop" }).hash({
+				algo: { t: "sha256" },
+				password: "123",
+			}),
+			createdAt: Posix.now(),
+		};
 	};
-};
 
 export const VerificationAttempt = {
-	random,
-};
+		random,
+	}
