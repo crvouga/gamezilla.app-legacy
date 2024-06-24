@@ -10,16 +10,16 @@ export const Dialog = (props: {
 	delay?: TimeSpan;
 }) => {
 	const delayMs = props.delay ? TimeSpan.toMilliseconds(props.delay) : null;
-	const delayClassName = delayMs ? `delay-[${delayMs}]` : null;
+	const style = styles({
+		"transition-delay": props.open && delayMs ? `${delayMs}ms` : undefined,
+	});
+	console.log(style)
 	return (
 		<div
 			role="dialog"
-			style={styles({
-				"transition-delay": props.open && delayMs ? `${delayMs}ms` : undefined,
-			})}
+			style={style}
 			className={cn(
 				"absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out",
-				delayClassName,
 				props.open
 					? "scale-100 opacity-100"
 					: "pointer-events-none scale-0 opacity-0",

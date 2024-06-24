@@ -38,15 +38,16 @@ const kehabObjectToCamelObject = (
 export const styles = (
 	stylesObject: StylesObjectKehab,
 	vdomImpl: VDomImpl = VDOM_IMPL_CURRENT,
-): any => {
+): Record<string, unknown> => {
 	switch (vdomImpl) {
 		case "inferno":
 		case "preact":
 		case "solid": {
-			return stylesObject;
+			return stylesObject as Record<string, unknown>;
 		}
+		case 'react-with-compiler':
 		case "react": {
-			return kehabObjectToCamelObject(stylesObject);
+			return kehabObjectToCamelObject(stylesObject) as Record<string, unknown>;
 		}
 	}
 };
