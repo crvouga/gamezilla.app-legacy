@@ -13,7 +13,6 @@ export const Dialog = (props: {
 	const style = styles({
 		"transition-delay": props.open && delayMs ? `${delayMs}ms` : undefined,
 	});
-	console.log(style)
 	return (
 		<div
 			role="dialog"
