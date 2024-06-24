@@ -45,7 +45,7 @@ export const styles = (
 		case "solid": {
 			return stylesObject as Record<string, unknown>;
 		}
-		case 'react-with-compiler':
+		case "react-with-compiler":
 		case "react": {
 			return kehabObjectToCamelObject(stylesObject) as Record<string, unknown>;
 		}

@@ -267,6 +267,7 @@ describe(import.meta.file, () => {
 			f.render(f.initial).getByRole("button", f.ctx.t("game.hint")),
 		).toBeTruthy();
 	});
+	
 	test("hint button click", async () => {
 		const f = await Fixture();
 		const r = f.render(f.initial);
@@ -275,6 +276,7 @@ describe(import.meta.file, () => {
 		const msg = await r.msgs.once();
 		expect(msg.t).toBe("user-clicked-hint-button");
 	});
+
 	test("hint button sound", async () => {
 		const f = await Fixture();
 		const output = f.update(f.initial, [
@@ -283,6 +285,15 @@ describe(import.meta.file, () => {
 					t: "user-clicked-hint-button",
 				}),
 			},
+		]);
+		expect(didPlaySound(output)).toBe(true);
+	});
+
+	test("close puzzle complete dialog sound", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			...f.completePuzzleMsgs,
+			{ msgCore: withEventMeta({ t: "user-closed-puzzle-complete-dialog" }) },
 		]);
 		expect(didPlaySound(output)).toBe(true);
 	});
