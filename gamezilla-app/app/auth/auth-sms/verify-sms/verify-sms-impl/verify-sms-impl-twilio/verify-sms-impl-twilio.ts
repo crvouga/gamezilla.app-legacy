@@ -7,26 +7,26 @@ export type Deps = {
 	logger: ILogger;
 };
 
-const TWILLIO_ACCOUNT_SID = process.env.TWILLIO_ACCOUNT_SID;
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 
-if (!TWILLIO_ACCOUNT_SID) {
-	throw new Error("TWILLIO_ACCOUNT_SID is required");
+if (!TWILIO_ACCOUNT_SID) {
+	throw new Error("TWILIO_ACCOUNT_SID is required");
 }
 
-const TWILLIO_AUTH_TOKEN = process.env.TWILLIO_AUTH_TOKEN;
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 
-if (!TWILLIO_AUTH_TOKEN) {
-	throw new Error("TWILLIO_AUTH_TOKEN is required");
+if (!TWILIO_AUTH_TOKEN) {
+	throw new Error("TWILIO_AUTH_TOKEN is required");
 }
 
-const TWILLIO_MESSAGING_SERVICE_SID = process.env.TWILLIO_MESSAGING_SERVICE_SID;
+const TWILIO_MESSAGING_SERVICE_SID = process.env.TWILIO_MESSAGING_SERVICE_SID;
 
-if (!TWILLIO_MESSAGING_SERVICE_SID) {
-	throw new Error("TWILLIO_MESSAGING_SERVICE_SID is required");
+if (!TWILIO_MESSAGING_SERVICE_SID) {
+	throw new Error("TWILIO_MESSAGING_SERVICE_SID is required");
 }
 
 const AUTHORIZATION = `Basic ${btoa(
-	`${TWILLIO_ACCOUNT_SID}:${TWILLIO_AUTH_TOKEN}`,
+	`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`,
 )}`;
 
 export const VerifySMS = (deps: Deps): IVerifySMS => {
@@ -37,7 +37,7 @@ export const VerifySMS = (deps: Deps): IVerifySMS => {
 				deps.logger.info(`Sending code to ${to}`);
 
 				await fetch(
-					`https://verify.twilio.com/v2/Services/${TWILLIO_MESSAGING_SERVICE_SID}/Verifications`,
+					`https://verify.twilio.com/v2/Services/${TWILIO_MESSAGING_SERVICE_SID}/Verifications`,
 					{
 						method: "POST",
 						headers: {
@@ -81,7 +81,7 @@ export const VerifySMS = (deps: Deps): IVerifySMS => {
 				deps.logger.info(`Verifying code for ${to}`);
 
 				const response = await fetch(
-					`https://verify.twilio.com/v2/Services/${TWILLIO_MESSAGING_SERVICE_SID}/VerificationCheck`,
+					`https://verify.twilio.com/v2/Services/${TWILIO_MESSAGING_SERVICE_SID}/VerificationCheck`,
 					{
 						method: "POST",
 						headers: {
