@@ -164,9 +164,7 @@ const initCore = (input: {
 }): ModelCore => {
 	return {
 		...input,
-		flowPlay: FlowVariantUIPlay.init({
-			flow: input.flowPuzzle.flow,
-		}),
+		flowPlay: FlowVariantUIPlay.init(input.flowPuzzle),
 		state: {
 			t: "solving",
 		},
@@ -189,8 +187,13 @@ const isAnyShowingHint = (modelCore: ModelCore): boolean => {
 	return Object.keys(modelCore.hints).length > 0;
 };
 
+const toShowingHintGroupIds = (modelCore: ModelCore): Flow.GroupId[] => {
+	return Object.keys(modelCore.hints).map((k) => k as Flow.GroupId);
+};
+
 export const ScreenPuzzleCore = {
 	updateCore,
 	isAnyShowingHint,
 	initCore,
+	toShowingHintGroupIds,
 };
