@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { PhoneNumber, isErr, unwrap } from "gamezilla-app/@/core";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { VerifySMS } from "./verify-sms-impl";
-import { VerifySMSInHouseFixture } from "./verify-sms-impl/verify-sms-impl-in-house/verify-sms-impl-in-house.test-fixture";
+import { VerifySMSInHouseFixture } from "./verify-sms-impl/verify-sms-impl-in-house/@/fixture";
 
 const SHOULD_TEST_TWILIO = false;
 

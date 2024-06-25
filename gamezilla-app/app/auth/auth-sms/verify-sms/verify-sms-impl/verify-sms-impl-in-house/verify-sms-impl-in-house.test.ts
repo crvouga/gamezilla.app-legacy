@@ -11,7 +11,7 @@ import {
 import { Hashing } from "gamezilla-app/@/hashing";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { VerificationDb } from "../../verification/verification-db";
-import { VerifySMSInHouseFixture } from "./verify-sms-impl-in-house.test-fixture";
+import { VerifySMSInHouseFixture } from "./@/fixture";
 
 const Fixture = VerifySMSInHouseFixture;
 

@@ -1,5 +1,5 @@
 import type { IVerifySMS } from "../../verify-sms";
-import { Deps } from "./shared";
+import type { Deps } from "./shared";
 import { SendCode } from "./verify-sms-impl-in-house-send-code";
 import { VerifyCode } from "./verify-sms-impl-in-house-verify-code";
 

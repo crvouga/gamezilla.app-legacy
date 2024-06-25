@@ -4,16 +4,16 @@ import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { VerificationAttemptDb } from "../../verification-attempt";
+import { VerificationAttemptDb } from "../../../verification-attempt";
 import {
 	type IVerificationCodeGenerator,
 	VerificationCodeGenerator,
-} from "../../verification-code-generator";
+} from "../../../verification-code-generator";
 import {
 	type IVerificationDb,
 	VerificationDb,
-} from "../../verification/verification-db";
-import { VerifySMS } from "../verify-sms-impl";
+} from "../../../verification/verification-db";
+import { VerifySMS } from "../verify-sms-impl-in-house";
 
 export const VerifySMSInHouseFixture = async (input?: {
 	verifyCodeMaxAttempts?: number;
@@ -38,7 +38,6 @@ export const VerifySMSInHouseFixture = async (input?: {
 	const hashing = input?.hashing ?? Hashing({ t: "noop" });
 
 	const verifySMS = VerifySMS({
-		t: "in-house",
 		logger,
 		verificationDb,
 		verificationAttemptDb,
