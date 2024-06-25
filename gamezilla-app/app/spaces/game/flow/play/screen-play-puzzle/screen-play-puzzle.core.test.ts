@@ -227,20 +227,17 @@ describe(import.meta.file, () => {
 		expect(ScreenPuzzleCore.isAnyShowingHint(after)).toBe(true);
 	});
 
-	it.todo(
-		"should add pipes to flow playe model after showing hint",
-		async () => {
-			const f = await Fixture();
-			const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
-			expect(after.t).toBe("screen-play-puzzle");
+	it("should add pipes to flow play model after showing hint", async () => {
+		const f = await Fixture();
+		const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
+		expect(after.t).toBe("screen-play-puzzle");
 
-			for (const groupId of ScreenPuzzleCore.toShowingHintGroupIds(after)) {
-				const flow = FlowVariantUIPlay.deriveFlow({
-					flow: f.puzzle.flow,
-					model: after.flowPlay,
-				});
-				expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true);
-			}
-		},
-	);
+		for (const groupId of ScreenPuzzleCore.toShowingHintGroupIds(after)) {
+			const flow = FlowVariantUIPlay.deriveFlow({
+				flow: f.puzzle.flow,
+				model: after.flowPlay,
+			});
+			expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true);
+		}
+	});
 });

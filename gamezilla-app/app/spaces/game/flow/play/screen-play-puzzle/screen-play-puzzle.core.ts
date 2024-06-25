@@ -1,4 +1,9 @@
-import { Flow, FlowVariantUIPlay } from "../../@/flow";
+import {
+	Flow,
+	FlowAlgoSolve,
+	FlowVariant,
+	FlowVariantUIPlay,
+} from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule, MsgCore } from "../play.types";
@@ -118,6 +123,19 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			if (!nextHintGroupId) {
 				return modelCore;
 			}
+			const flow = FlowVariantUIPlay.deriveFlow({
+				model: modelCore.flowPlay,
+				flow: modelCore.flowPuzzle.flow,
+			});
+			const solutions = FlowAlgoSolve.solve(flow, {
+				distance: FlowVariant.distance(flow),
+			});
+			const solution = next(solutions);
+			if (!solution) {
+				return modelCore;
+			}
+			Flow.toPipelineByGroupId(solution, nextHintGroupId);
+
 			return {
 				...modelCore,
 				hints: {
@@ -131,6 +149,12 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			return modelCore;
 		}
 	}
+};
+const next = <T>(iter: Iterable<T>): T | null => {
+	for (const t of iter) {
+		return t;
+	}
+	return null;
 };
 
 const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
