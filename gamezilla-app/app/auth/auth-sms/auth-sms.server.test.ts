@@ -1,16 +1,16 @@
 import { describe, expect, it } from "bun:test";
 import { Ok, PhoneNumber, Result } from "gamezilla-app/@/core";
-import { ClientId, SessionId } from "gamezilla-app/app/@/data";
+import type { ClientId, SessionId } from "gamezilla-app/app/@/data";
 import { randomNormalUserAccount } from "gamezilla-app/app/@/data/account";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import {
 	AppServerFixture,
 	randomClient,
 } from "gamezilla-app/app/@/server/server-test-env";
-import { AuthSMSTypes } from ".";
+import type { AuthSMSTypes } from ".";
 import { UserAccountDb } from "../@/server/user-account-db";
 import { AuthSMSServer } from "./auth-sms.server";
-import { IVerifySMS } from "./verify-sms/verify-sms";
+import type { IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl/verify-sms-impl";
 
 type InputMsg =

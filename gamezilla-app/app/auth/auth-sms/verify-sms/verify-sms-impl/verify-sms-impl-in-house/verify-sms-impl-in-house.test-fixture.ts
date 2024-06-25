@@ -6,12 +6,12 @@ import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
 import { VerificationAttemptDb } from "../../verification-attempt";
 import {
-	VerificationCodeGenerator,
 	type IVerificationCodeGenerator,
+	VerificationCodeGenerator,
 } from "../../verification-code-generator";
 import {
-	VerificationDb,
 	type IVerificationDb,
+	VerificationDb,
 } from "../../verification/verification-db";
 import { VerifySMS } from "../verify-sms-impl";
 

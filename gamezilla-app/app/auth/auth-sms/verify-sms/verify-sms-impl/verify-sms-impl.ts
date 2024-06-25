@@ -1,4 +1,4 @@
-import { Ok, PhoneNumber } from "gamezilla-app/@/core";
+import { Ok, type PhoneNumber } from "gamezilla-app/@/core";
 import type { IVerifySMS } from "../verify-sms";
 import * as ImplFake from "./verify-sms-impl-fake";
 import * as ImplInHouse from "./verify-sms-impl-in-house";
