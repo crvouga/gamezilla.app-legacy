@@ -1,5 +1,5 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@/flow";
+import { FlowVarianEdit, FlowVariantPlay } from "../../../@/flow";
 import type { ModelCore, MsgCore } from "../../builder.types";
 
 const updateCore = ({
@@ -17,11 +17,11 @@ const updateCore = ({
 				return modelCore;
 			}
 
-			const currentFlow = FlowVariantUIEdit.toCurrentFlow({
+			const currentFlow = FlowVarianEdit.toCurrentFlow({
 				model: modelCore.puzzleBuilder.edit,
 			});
 
-			const updated = FlowVariantUIPlay.update({
+			const updated = FlowVariantPlay.update({
 				model: modelCore.puzzleBuilder.play,
 				msg: msgCore.c,
 				flow: currentFlow,
@@ -41,7 +41,7 @@ const updateCore = ({
 				return modelCore;
 			}
 
-			const updated = FlowVariantUIEdit.update({
+			const updated = FlowVarianEdit.update({
 				model: modelCore.puzzleBuilder.edit,
 				msg: msgCore.c,
 				flow: modelCore.puzzleBuilder.puzzle.flow,
@@ -78,8 +78,8 @@ const updateCore = ({
 			if (!modelCore.puzzleBuilder) {
 				return modelCore;
 			}
-			const initial = FlowVariantUIPlay.init({
-				flow: FlowVariantUIEdit.toCurrentFlow({
+			const initial = FlowVariantPlay.init({
+				flow: FlowVarianEdit.toCurrentFlow({
 					model: modelCore.puzzleBuilder.edit,
 				}),
 			});

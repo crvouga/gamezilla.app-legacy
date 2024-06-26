@@ -17,7 +17,7 @@ import {
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
 } from "../../../../@/game";
-import { FlowVariantUIPlay } from "../../../@/flow";
+import { FlowVariantPlay } from "../../../@/flow";
 import { FlowPackPuzzlesGridUI } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
 import { FlowPackPuzzlesGridClient } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
@@ -437,7 +437,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 					<p className="text-xs text-neutral-300">{screen.puzzle.name}</p>
 				</div>
 
-				<FlowVariantUIPlay.View
+				<FlowVariantPlay.View
 					dispatch={(c) =>
 						input.dispatch({ t: "pack-builder.flow-play-ui", c })
 					}

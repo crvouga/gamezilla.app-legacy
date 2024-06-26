@@ -1,9 +1,8 @@
 import { describe, expect, it, test } from "bun:test";
-import { FlowVariantUIPlay, type FlowVariant } from ".";
+import { FlowVariantPlay, type FlowVariant } from ".";
 import { Flow } from "../flow";
 import { FlowGrid } from "./flow-grid";
 import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
-import * as FlowVariantPlay from "./flow-variant-ui-play";
 
 const Fixture = ({ flow }: { flow: FlowVariant.Model }) => {
 	const init = FlowVariantPlay.init({ flow });
@@ -34,12 +33,12 @@ describe(import.meta.file, () => {
 
 		const msgs = FlowVariantPlay.toSolutionMsgs({ flow });
 
-		const before = FlowVariantUIPlay.deriveFlow({
+		const before = FlowVariantPlay.deriveFlow({
 			flow,
 			model: f.init,
 		});
 
-		const after = FlowVariantUIPlay.deriveFlow({
+		const after = FlowVariantPlay.deriveFlow({
 			flow,
 			model: f.update(f.init, msgs).model,
 		});

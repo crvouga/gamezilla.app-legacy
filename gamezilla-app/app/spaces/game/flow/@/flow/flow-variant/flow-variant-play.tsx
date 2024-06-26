@@ -188,6 +188,9 @@ export const Msg = p.or(
 	p.obj({
 		t: p.l("left"),
 	}),
+	p.obj({
+		t: p.l("clicked-hint-button"),
+	}),
 );
 
 export type Msg = p.Infer<typeof Msg>;
@@ -278,15 +281,7 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 			};
 		}
 
-		case "dragged-over": {
-			return { model };
-		}
-
-		case "pressed-up": {
-			return { model };
-		}
-
-		case "left": {
+		default: {
 			return { model };
 		}
 	}
@@ -330,10 +325,6 @@ const updateDragging = ({
 			};
 
 			return { model: modelNew };
-		}
-
-		case "pressed-down": {
-			return { model };
 		}
 
 		case "pressed-up": {
@@ -395,6 +386,10 @@ const updateDragging = ({
 						}
 					: undefined,
 			};
+		}
+
+		default: {
+			return { model };
 		}
 	}
 };

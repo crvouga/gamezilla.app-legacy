@@ -1,5 +1,5 @@
 import { pipe } from "gamezilla-app/@/core";
-import { FlowVariantUIPlay, type FlowVariant } from "../../../@/flow";
+import { FlowVariantPlay, type FlowVariant } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import { CoreFixture } from "../../@/testing";
@@ -32,7 +32,7 @@ export const ScreenPuzzleCoreFixture = async (input?: {
 	]);
 
 	const completePuzzleMsgs = pipe(
-		FlowVariantUIPlay.toSolutionMsgs({ flow: puzzle.flow }),
+		FlowVariantPlay.toSolutionMsgs({ flow: puzzle.flow }),
 		(msgs) =>
 			msgs.map((c): MsgCore => ({ t: "got-puzzle-screen-flow-play-msg", c })),
 	);

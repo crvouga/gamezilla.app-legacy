@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from "bun:test";
-import { Flow, type FlowVariant, FlowVariantUIPlay } from "../../@/flow";
+import { Flow, type FlowVariant, FlowVariantPlay } from "../../@/flow";
 import { FlowGridShorthand } from "../../@/flow/flow-variant/flow-grid";
 import { ScreenPuzzleCoreFixture } from "./@/testing.core";
 import { ScreenPuzzleCore } from "./screen-play-puzzle.core";
@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const after = f.update(
 			f.init,
-			FlowVariantUIPlay.randomMsgs(f.puzzle).map(
+			FlowVariantPlay.randomMsgs(f.puzzle).map(
 				(c): MsgCore => ({
 					t: "got-puzzle-screen-flow-play-msg",
 					c,
@@ -95,7 +95,7 @@ describe(import.meta.file, () => {
 	it("should start with empty puzzle after going to next puzzle", async () => {
 		const f = await Fixture();
 
-		const msgs = FlowVariantUIPlay.randomMsgs({
+		const msgs = FlowVariantPlay.randomMsgs({
 			flow: f.puzzle.flow,
 		}).map(
 			(c): MsgCore => ({
@@ -115,7 +115,7 @@ describe(import.meta.file, () => {
 
 		expect(before.flowPlay).not.toEqual(after.flowPlay);
 		expect(after.flowPlay).toEqual(
-			FlowVariantUIPlay.init({ flow: f.nextPuzzle.flow }),
+			FlowVariantPlay.init({ flow: f.nextPuzzle.flow }),
 		);
 	});
 
@@ -123,7 +123,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const before = f.init;
 		const after = f.update(before, f.completePuzzleMsgs);
-		const afterFlow = FlowVariantUIPlay.deriveFlow({
+		const afterFlow = FlowVariantPlay.deriveFlow({
 			flow: f.puzzle.flow,
 			model: after.flowPlay,
 		});
@@ -214,7 +214,7 @@ describe(import.meta.file, () => {
 				t: "user-clicked-reset-puzzle-button",
 			},
 		]);
-		expect(before.flowPlay).toEqual(FlowVariantUIPlay.init(f.puzzle));
+		expect(before.flowPlay).toEqual(FlowVariantPlay.init(f.puzzle));
 	});
 
 	it("should show hint after clicking show hint button", async () => {

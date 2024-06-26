@@ -19,7 +19,7 @@ import {
 	ViewBottomButtonBarActionReset,
 } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
-import { FlowVariantUIPlay } from "../../@/flow";
+import { FlowVariantPlay } from "../../@/flow";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import type { ClientModule } from "../play.types";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
@@ -104,7 +104,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				return { model: input.model };
 			}
 
-			const output = FlowVariantUIPlay.update({
+			const output = FlowVariantPlay.update({
 				msg: input.msgCore.c,
 				model: input.modelCore.screen.flowPlay,
 				flow: input.modelCore.screen.flowPuzzle.flow,
@@ -114,7 +114,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				return { model: input.model };
 			}
 
-			const soundSrc = FlowVariantUIPlay.eventToSoundSrc(output.event);
+			const soundSrc = FlowVariantPlay.eventToSoundSrc(output.event);
 
 			return {
 				model: input.model,
@@ -171,7 +171,7 @@ const View: ClientModule["View"] = (input) => {
 			>
 				<ViewScreenTitle title={`Level ${puzzleIndex + 1}`} />
 				<div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
-					<FlowVariantUIPlay.View
+					<FlowVariantPlay.View
 						key={flowPuzzle.id}
 						flow={flowPuzzle.flow}
 						dispatch={(c) =>

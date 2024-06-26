@@ -2,7 +2,7 @@ import {
 	Flow,
 	FlowAlgoSolve,
 	FlowVariant,
-	FlowVariantUIPlay,
+	FlowVariantPlay,
 } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
@@ -40,7 +40,7 @@ const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 	switch (msgCore.t) {
 		case "got-puzzle-screen-flow-play-msg": {
-			const flowPlayNew = FlowVariantUIPlay.update({
+			const flowPlayNew = FlowVariantPlay.update({
 				msg: msgCore.c,
 				model: modelCore.flowPlay,
 				flow: modelCore.flowPuzzle.flow,
@@ -83,7 +83,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-next-puzzle-button": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantUIPlay.init({
+				flowPlay: FlowVariantPlay.init({
 					flow: msgCore.nextPuzzle.flow,
 				}),
 				opened:
@@ -96,7 +96,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-prev-puzzle-button": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantUIPlay.init({
+				flowPlay: FlowVariantPlay.init({
 					flow: msgCore.prevPuzzle.flow,
 				}),
 				opened:
@@ -109,7 +109,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-reset-puzzle-button": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantUIPlay.init({
+				flowPlay: FlowVariantPlay.init({
 					flow: modelCore.flowPuzzle.flow,
 				}),
 				state: {
@@ -119,7 +119,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		}
 
 		case "user-clicked-hint-button": {
-			const flow = FlowVariantUIPlay.deriveFlow({
+			const flow = FlowVariantPlay.deriveFlow({
 				model: modelCore.flowPlay,
 				flow: modelCore.flowPuzzle.flow,
 			});
@@ -139,7 +139,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
 			const pipesBySourceId = Flow.pipelineToPipsBySourceId(flow, pipeline);
 
-			const playNew: FlowVariantUIPlay.Model = {
+			const playNew: FlowVariantPlay.Model = {
 				...modelCore.flowPlay,
 				pipesBySourceId: {
 					...modelCore.flowPlay.pipesBySourceId,
@@ -200,7 +200,7 @@ const initCore = (input: {
 }): ModelCore => {
 	return {
 		...input,
-		flowPlay: FlowVariantUIPlay.init(input.flowPuzzle),
+		flowPlay: FlowVariantPlay.init(input.flowPuzzle),
 		state: {
 			t: "solving",
 		},
@@ -228,7 +228,7 @@ const isAnyShowingHint = (modelCore: ModelCore): boolean => {
 };
 
 const deriveFlow = (modelCore: ModelCore): Flow.Model => {
-	return FlowVariantUIPlay.deriveFlow({
+	return FlowVariantPlay.deriveFlow({
 		flow: modelCore.flowPuzzle.flow,
 		model: modelCore.flowPlay,
 	});
