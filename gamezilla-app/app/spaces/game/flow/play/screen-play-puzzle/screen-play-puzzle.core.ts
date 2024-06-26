@@ -129,14 +129,19 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			if (!nextHintGroupId) {
 				return modelCore;
 			}
+
 			const solutions = FlowAlgoSolve.solve(flow, {
 				distance: FlowVariant.distance(flow),
 			});
+
 			const solution = next(solutions);
+
 			if (!solution) {
 				return modelCore;
 			}
+
 			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
+			
 			const pipesBySourceId = Flow.pipelineToPipsBySourceId(flow, pipeline);
 
 			const playNew: FlowVariantPlay.Model = {

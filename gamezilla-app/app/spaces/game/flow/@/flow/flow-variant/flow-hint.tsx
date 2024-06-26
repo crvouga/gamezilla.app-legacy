@@ -5,7 +5,7 @@ import { ViewBottomButtonBarActionHint } from "gamezilla-app/app/spaces/game/@/g
 import { ClientCtx } from "gamezilla-app/app/@/client";
 
 export const Model = p.obj({
-	pipesBySourceId: p.partialDict(Flow.NodeId, Flow.Pipe),
+	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
 	hints: p.partialDict(Flow.GroupId, Flow.GroupId),
 });
 export type Model = p.Infer<typeof Model>;
@@ -20,42 +20,46 @@ export const init: Model = {
 	hints: {},
 };
 
-export const update = <TModel extends Model,>({
-	msg,
-	model,
-	flow,
-}: {
-	msg: Msg;
+export type Event =
+	| {
+			t: "solved";
+	};
+	  
+export const update = <TModel extends Model, TMsg extends {t: string & {}}>(input: {
+	msg: Msg | TMsg;
 	model: TModel;
 	flow: FlowVariant.Model;
 }): {
 	model: TModel;
+	event?: Event
 } => {
-	switch (msg.t) {
+	switch (input.msg.t) {
 		case "user-clicked-hint-button": {
+			const flow= deriveFlow(input);
+
 			const nextHintGroupId = toNextHintGroupId(flow);
 
 			if (!nextHintGroupId) {
-				return { model };
+				return { model: input.model };
 			}
 			const solutions = FlowAlgoSolve.solve(flow, {
 				distance: FlowVariant.distance(flow),
 			});
 			const solution = next(solutions);
 			if (!solution) {
-				return { model };
+				return { model: input.model };
 			}
 			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
 			const pipesBySourceId = Flow.pipelineToPipsBySourceId(flow, pipeline);
 
 			const modelNew: TModel = {
-				...model,
+				...input.model,
 				pipesBySourceId: {
-					...model.pipesBySourceId,
+					...input.model.pipesBySourceId,
 					...pipesBySourceId,
 				},
 				hints: {
-					...model.hints,
+					...input.model.hints,
 					[nextHintGroupId]: nextHintGroupId,
 				},
 			};
@@ -64,12 +68,12 @@ export const update = <TModel extends Model,>({
 			};
 		}
 		default: {
-			return { model };
+			return { model: input.model };
 		}
 	}
 };
 
-const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
+export const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
 	for (const groupId of Flow.GROUP_ID_ORDER) {
 		if (!Flow.isTerminalConnectedWithPipes(model, groupId)) {
 			return groupId;
@@ -78,7 +82,7 @@ const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
 	return null;
 };
 
-const toShowingHintGroupIds = (model: Model): Flow.GroupId[] => {
+export const toShowingHintGroupIds = (model: Model): Flow.GroupId[] => {
 	return Object.keys(model.hints).map((k) => k as Flow.GroupId);
 };
 
@@ -93,6 +97,13 @@ const next = <T,>(iter: Iterable<T>): T | null => {
 	return null;
 };
 
+
+export const deriveFlow = (input: {model: Model, flow: FlowVariant.Model}): FlowVariant.Model => {
+	return {
+		...input.flow,
+		pipesBySourceId: input.model.pipesBySourceId,
+	};
+}
 export const ViewBottomButtonBarAction = (input: {
 	model: Model;
 	dispatch: (msg: Msg) => void;

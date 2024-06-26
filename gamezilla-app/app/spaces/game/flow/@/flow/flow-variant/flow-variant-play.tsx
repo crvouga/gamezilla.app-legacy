@@ -4,6 +4,7 @@ import * as Flow from "../flow/flow";
 import { FlowAlgoDrawPipes, FlowAlgoSolve } from "../flow/flow-algo";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
+import * as FlowHint from "./flow-hint";
 
 //
 //
@@ -26,15 +27,19 @@ type Dragging = p.Infer<typeof Dragging>;
 const Status = p.or(Idle, Dragging);
 type Status = p.Infer<typeof Status>;
 
-export const Model = p.obj({
-	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
-	terminalsByGroupId: p.partialDict(Flow.GroupId, Flow.Terminal),
-	status: Status,
-});
+export const Model = p.and(
+	FlowHint.Model,
+	p.obj({
+		pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
+		terminalsByGroupId: p.partialDict(Flow.GroupId, Flow.Terminal),
+		status: Status,
+	})
+);
 export type Model = p.Infer<typeof Model>;
 
 export const init = ({ flow }: { flow: Flow.Model }): Model => {
 	return {
+		...FlowHint.init,
 		pipesBySourceId: { ...flow.pipesBySourceId },
 		terminalsByGroupId: { ...flow.terminalsByGroupId },
 		status: { t: "idle" },
@@ -173,6 +178,7 @@ const first = <T,>(iterable: Iterable<T>): T | null => {
 //
 
 export const Msg = p.or(
+	FlowHint.Msg,
 	p.obj({
 		t: p.l("pressed-down"),
 		nodeId: Flow.NodeId,
@@ -187,9 +193,6 @@ export const Msg = p.or(
 	}),
 	p.obj({
 		t: p.l("left"),
-	}),
-	p.obj({
-		t: p.l("clicked-hint-button"),
 	}),
 );
 
@@ -236,6 +239,16 @@ export const update = ({
 	model: Model;
 	event?: Event;
 } => {
+	const updated = updateMain({ msg, model, flow });
+	const updatedHint = FlowHint.update({ flow, model: updated.model, msg });	
+	return {
+		...updated,
+		event: updatedHint.event ?? updated.event,
+		model: updatedHint.model,		
+	}
+};
+
+const updateMain: typeof update = ({model, flow,msg}) => {
 	switch (model.status.t) {
 		case "dragging": {
 			return updateDragging({ flow, msg, model, modelStatus: model.status });
@@ -267,6 +280,7 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 
 			return {
 				model: {
+					...model,
 					terminalsByGroupId: started.terminalsByGroupId,
 					pipesBySourceId: started.pipesBySourceId,
 					status: {
@@ -319,6 +333,7 @@ const updateDragging = ({
 			);
 
 			const modelNew: Model = {
+				...model,
 				status: model.status,
 				terminalsByGroupId: extended.terminalsByGroupId,
 				pipesBySourceId: extended.pipesBySourceId,
@@ -416,6 +431,8 @@ export const deriveFlow = ({
 //
 //
 
+
+
 export const View = ({
 	model,
 	dispatch,
@@ -455,3 +472,6 @@ export const View = ({
 		/>
 	);
 };
+
+
+export const ViewHintAction = FlowHint.ViewBottomButtonBarAction;
