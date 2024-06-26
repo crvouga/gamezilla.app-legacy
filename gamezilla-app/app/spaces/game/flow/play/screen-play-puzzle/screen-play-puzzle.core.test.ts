@@ -1,23 +1,19 @@
-import { describe, expect, it } from "bun:test";
-import { Flow, FlowVariantUIPlay } from "../../@/flow";
+import { describe, expect, it, test } from "bun:test";
+import { Flow, type FlowVariant, FlowVariantUIPlay } from "../../@/flow";
+import { FlowGridShorthand } from "../../@/flow/flow-variant/flow-grid";
 import { ScreenPuzzleCoreFixture } from "./@/testing.core";
-import type { ModelCore, MsgCore } from "./screen-play-puzzle.types";
 import { ScreenPuzzleCore } from "./screen-play-puzzle.core";
+import type { ModelCore, MsgCore } from "./screen-play-puzzle.types";
 
-const Fixture = async () => {
-	const f = await ScreenPuzzleCoreFixture();
+const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
+	const f = await ScreenPuzzleCoreFixture(input);
 
-	const update = (model: ModelCore, msgs: MsgCore[]): ModelCore => {
-		const updated = f.update(
-			{
-				screen: model,
-			},
-			msgs,
-		);
-		if (updated.screen.t !== "screen-play-puzzle") {
-			throw new Error("screen is not screen-play-puzzle");
+	const update = (init: ModelCore, msgs: MsgCore[]): ModelCore => {
+		let model: ModelCore = init;
+		for (const msg of msgs) {
+			model = ScreenPuzzleCore.updateScreen(model, msg);
 		}
-		return updated.screen;
+		return model;
 	};
 
 	const init: ModelCore = ScreenPuzzleCore.initCore({
@@ -228,16 +224,28 @@ describe(import.meta.file, () => {
 		expect(ScreenPuzzleCore.isAnyShowingHint(after)).toBe(true);
 	});
 
-	it.todo("should add pipes to flow play model after showing hint", async () => {
+	test("hint", async () => {
 		const f = await Fixture();
 		const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
-		expect(after.t).toBe("screen-play-puzzle");
-		const flow = FlowVariantUIPlay.deriveFlow({
-			flow: f.puzzle.flow,
-			model: after.flowPlay,
-		});
+		const flow = ScreenPuzzleCore.deriveFlow(after);
 		for (const groupId of ScreenPuzzleCore.toShowingHintGroupIds(after)) {
 			expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true);
 		}
+	});
+
+	test("hint multiple terminals", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				["A", "B"],
+				[" ", " "],
+				["A", "B"],
+			]),
+		});
+		const output = f.update(f.init, [
+			{ t: "user-clicked-hint-button" },
+			{ t: "user-clicked-hint-button" },
+		]);
+		const flow = ScreenPuzzleCore.deriveFlow(output);
+		expect(Flow.isSolved(flow)).toBe(true);
 	});
 });

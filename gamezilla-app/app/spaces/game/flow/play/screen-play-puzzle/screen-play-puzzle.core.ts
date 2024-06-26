@@ -25,7 +25,7 @@ const updateCore: CoreModule["updateCore"] = (input) => {
 const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	switch (input.modelCore.screen.t) {
 		case "screen-play-puzzle": {
-			const screenPuzzle = updateChild(input.modelCore.screen, input.msgCore);
+			const screenPuzzle = updateScreen(input.modelCore.screen, input.msgCore);
 			return {
 				...input.modelCore,
 				screen: screenPuzzle,
@@ -37,7 +37,7 @@ const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	}
 };
 
-const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
+const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 	switch (msgCore.t) {
 		case "got-puzzle-screen-flow-play-msg": {
 			const flowPlayNew = FlowVariantUIPlay.update({
@@ -119,14 +119,16 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		}
 
 		case "user-clicked-hint-button": {
-			const nextHintGroupId = toNextHintGroupId(modelCore.flowPuzzle.flow);
-			if (!nextHintGroupId) {
-				return modelCore;
-			}
 			const flow = FlowVariantUIPlay.deriveFlow({
 				model: modelCore.flowPlay,
 				flow: modelCore.flowPuzzle.flow,
 			});
+
+			const nextHintGroupId = toNextHintGroupId(flow);
+
+			if (!nextHintGroupId) {
+				return modelCore;
+			}
 			const solutions = FlowAlgoSolve.solve(flow, {
 				distance: FlowVariant.distance(flow),
 			});
@@ -225,9 +227,18 @@ const isAnyShowingHint = (modelCore: ModelCore): boolean => {
 	return toShowingHintGroupIds(modelCore).length > 0;
 };
 
+const deriveFlow = (modelCore: ModelCore): Flow.Model => {
+	return FlowVariantUIPlay.deriveFlow({
+		flow: modelCore.flowPuzzle.flow,
+		model: modelCore.flowPlay,
+	});
+};
+
 export const ScreenPuzzleCore = {
 	updateCore,
 	isAnyShowingHint,
 	initCore,
 	toShowingHintGroupIds,
+	deriveFlow,
+	updateScreen,
 };

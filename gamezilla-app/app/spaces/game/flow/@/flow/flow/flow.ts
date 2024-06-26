@@ -899,5 +899,5 @@ export const isTerminalConnectedWithPipes = (
 	if (!terminal) {
 		return false;
 	}
-	return isConnectedWithPipes(model, terminal.startId, terminal.startId);
+	return isConnectedWithPipes(model, terminal.startId, terminal.endId);
 };

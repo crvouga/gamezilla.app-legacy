@@ -36,6 +36,7 @@ const create = async (input: {
 };
 
 const random = async (input?: {
+	flow?: FlowVariant.Model;
 	createdBy?: UserId;
 	createdAt?: Posix;
 }): Promise<FlowPuzzle> => {
@@ -50,10 +51,12 @@ const random = async (input?: {
 		lastUpdatedAt: Posix.now(),
 		lastUpdatedBy: createdBy,
 		id: FlowPuzzleId.generate(),
-		flow: FlowGridShorthand.toGrid([
-			["A", " "],
-			[" ", "A"],
-		]),
+		flow:
+			input?.flow ??
+			FlowGridShorthand.toGrid([
+				["A", " "],
+				[" ", "A"],
+			]),
 	};
 };
 

@@ -7,13 +7,12 @@ import * as FlowVariantPlay from "./flow-variant-ui-play";
 
 const Fixture = ({ flow }: { flow: FlowVariant.Model }) => {
 	const init = FlowVariantPlay.init({ flow });
-	const update = (
-		init: FlowVariantPlay.Model,
-		msgs: FlowVariantPlay.Msg[],
-	): FlowVariantPlay.Model => {
-		return msgs.reduce(
-			(model, msg) => FlowVariantPlay.update({ flow, model, msg }).model,
-			init,
+
+	const update = (init: FlowVariantPlay.Model, msgs: FlowVariantPlay.Msg[]) => {
+		return msgs.reduce<ReturnType<typeof FlowVariantPlay.update>>(
+			(output, msg) =>
+				FlowVariantPlay.update({ flow, model: output.model, msg }),
+			{ model: init },
 		);
 	};
 
@@ -42,7 +41,7 @@ describe(import.meta.file, () => {
 
 		const after = FlowVariantUIPlay.deriveFlow({
 			flow,
-			model: f.update(f.init, msgs),
+			model: f.update(f.init, msgs).model,
 		});
 
 		expect(Flow.isSolved(before)).toBe(false);
@@ -57,18 +56,12 @@ describe(import.meta.file, () => {
 		]);
 		const f = Fixture({ flow });
 
-		const msgs: FlowVariantPlay.Msg[] = [
+		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
 			{ t: "pressed-up", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
-		];
-
-		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
-			(output, msg) =>
-				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
-			{ model: f.init },
-		);
+		]);
 
 		expect(output.event?.t).toBe("connected-terminals");
 	});
@@ -81,15 +74,9 @@ describe(import.meta.file, () => {
 		]);
 		const f = Fixture({ flow });
 
-		const msgs: FlowVariantPlay.Msg[] = [
+		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
-		];
-
-		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
-			(output, msg) =>
-				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
-			{ model: f.init },
-		);
+		]);
 
 		expect(output.event?.t).toBe("started-dragging");
 	});
@@ -102,18 +89,12 @@ describe(import.meta.file, () => {
 		]);
 		const f = Fixture({ flow });
 
-		const msgs: FlowVariantPlay.Msg[] = [
+		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
 			{ t: "pressed-up", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
-		];
-
-		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
-			(output, msg) =>
-				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
-			{ model: f.init },
-		);
+		]);
 
 		expect(output.event?.t).toBe("solved");
 	});
@@ -126,19 +107,12 @@ describe(import.meta.file, () => {
 		]);
 		const f = Fixture({ flow });
 
-		const msgs: FlowVariantPlay.Msg[] = [
+		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
 			{ t: "left" },
-		];
-
-		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
-			(output, msg) =>
-				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
-			{ model: f.init },
-		);
-
+		]);
 		expect(output.event?.t).toBe("solved");
 	});
 
@@ -150,17 +124,11 @@ describe(import.meta.file, () => {
 		]);
 		const f = Fixture({ flow });
 
-		const msgs: FlowVariantPlay.Msg[] = [
+		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
 			{ t: "left" },
-		];
-
-		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
-			(output, msg) =>
-				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
-			{ model: f.init },
-		);
+		]);
 		expect(output.event).toBeUndefined();
 	});
 
@@ -172,17 +140,11 @@ describe(import.meta.file, () => {
 		]);
 		const f = Fixture({ flow });
 
-		const msgs: FlowVariantPlay.Msg[] = [
+		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
-		];
-
-		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
-			(output, msg) =>
-				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
-			{ model: f.init },
-		);
+		]);
 
 		expect(output.event?.t).not.toBe("solved");
 	});
@@ -193,6 +155,23 @@ describe(import.meta.file, () => {
 			["a", "B", " "],
 			["a", "a", "A"],
 		]);
+
+		const f = Fixture({ flow });
+
+		const output = f.update(f.init, [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 1, y: 1 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 0 }) },
+			{ t: "pressed-up", nodeId: FlowGrid.toNodeId({ x: 1, y: 0 }) },
+		]);
+
+		expect(output.event?.t).not.toBe("solved");
+	});
+
+	test("hint", async () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " "],
+			[" ", "A"],
+		]);
 		const f = Fixture({ flow });
 
 		const msgs: FlowVariantPlay.Msg[] = [
@@ -201,11 +180,7 @@ describe(import.meta.file, () => {
 			{ t: "pressed-up", nodeId: FlowGrid.toNodeId({ x: 1, y: 0 }) },
 		];
 
-		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
-			(output, msg) =>
-				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
-			{ model: f.init },
-		);
+		const output = f.update(f.init, msgs);
 
 		expect(output.event?.t).not.toBe("solved");
 	});
