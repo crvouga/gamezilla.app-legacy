@@ -4,14 +4,17 @@ import { FlowGridShorthand } from "./flow-grid";
 import { FlowVariant } from ".";
 import { Flow } from "../flow";
 
-
-
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
-	const flow = input?.flow ?? FlowGridShorthand.toGrid([
-		["A", " "],
-		[" ", "A"]		
-	]);
-	const update = (init: FlowHint.Model, msgs: FlowHint.Msg[]): ReturnType<typeof FlowHint.update> => {
+	const flow =
+		input?.flow ??
+		FlowGridShorthand.toGrid([
+			["A", " "],
+			[" ", "A"],
+		]);
+	const update = (
+		init: FlowHint.Model,
+		msgs: FlowHint.Msg[],
+	): ReturnType<typeof FlowHint.update> => {
 		let output: ReturnType<typeof FlowHint.update> = { model: init };
 		for (const msg of msgs) {
 			output = FlowHint.update({

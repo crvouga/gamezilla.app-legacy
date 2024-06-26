@@ -9,10 +9,7 @@ const Fixture = async () => {
 	const init = FlowVarianEdit.init({
 		flow,
 	});
-	const update = (
-		init: FlowVarianEdit.Model,
-		msgs: FlowVarianEdit.Msg[],
-	) => {
+	const update = (init: FlowVarianEdit.Model, msgs: FlowVarianEdit.Msg[]) => {
 		let updated: ReturnType<typeof FlowVarianEdit.update> = {
 			model: init,
 		};

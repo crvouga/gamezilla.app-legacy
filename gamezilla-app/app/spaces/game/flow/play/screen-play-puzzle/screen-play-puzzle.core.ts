@@ -141,7 +141,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			}
 
 			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
-			
+
 			const pipesBySourceId = Flow.pipelineToPipsBySourceId(flow, pipeline);
 
 			const playNew: FlowVariantPlay.Model = {

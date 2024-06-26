@@ -33,7 +33,7 @@ export const Model = p.and(
 		pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
 		terminalsByGroupId: p.partialDict(Flow.GroupId, Flow.Terminal),
 		status: Status,
-	})
+	}),
 );
 export type Model = p.Infer<typeof Model>;
 
@@ -240,15 +240,15 @@ export const update = ({
 	event?: Event;
 } => {
 	const updated = updateMain({ msg, model, flow });
-	const updatedHint = FlowHint.update({ flow, model: updated.model, msg });	
+	const updatedHint = FlowHint.update({ flow, model: updated.model, msg });
 	return {
 		...updated,
 		event: updatedHint.event ?? updated.event,
-		model: updatedHint.model,		
-	}
+		model: updatedHint.model,
+	};
 };
 
-const updateMain: typeof update = ({model, flow,msg}) => {
+const updateMain: typeof update = ({ model, flow, msg }) => {
 	switch (model.status.t) {
 		case "dragging": {
 			return updateDragging({ flow, msg, model, modelStatus: model.status });
@@ -431,8 +431,6 @@ export const deriveFlow = ({
 //
 //
 
-
-
 export const View = ({
 	model,
 	dispatch,
@@ -472,6 +470,5 @@ export const View = ({
 		/>
 	);
 };
-
 
 export const ViewHintAction = FlowHint.ViewBottomButtonBarAction;

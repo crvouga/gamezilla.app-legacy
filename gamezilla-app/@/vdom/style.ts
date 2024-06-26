@@ -42,7 +42,7 @@ export const styles = (
 	switch (vdomImpl) {
 		case "inferno":
 		case "preact":
-		case 'vue':
+		case "vue":
 		case "solid": {
 			return stylesObject as Record<string, unknown>;
 		}

@@ -30,6 +30,7 @@ export const Render = async (
 			const reactRoot = ReactDOMClient.createRoot(root);
 			createPortal = ReactDOM.createPortal;
 			return (vDom) => {
+				// @ts-ignore
 				reactRoot.render(<React.StrictMode>{vDom}</React.StrictMode>);
 			};
 		}
@@ -56,13 +57,42 @@ export const Render = async (
 				dispose = Solid.render(() => vDom, root);
 			};
 		}
-			
-		case 'vue': {
-			const Vue = await import('vue');
-			// createPortal = Vue;
+
+		case "vue": {
+			const Vue = await import("vue");
+			// createPortal = Vue
+			const vDomRef = Vue.ref(null);
+			const app = Vue.createApp({
+				render() {
+					return vDomRef.value;
+				},
+			});
+			app.mount(root);
 			return (vDom) => {
-				Vue.createApp(vDom).mount(root);
+				vDomRef.value = transformClassName(vDom);
+				console.log(vDomRef.value);
 			};
 		}
 	}
+};
+
+// @ts-ignore
+const transformClassName = (vDom) => {
+	if (Array.isArray(vDom)) {
+		return vDom.map(transformClassName);
+	} else if (vDom && typeof vDom === "object") {
+		const { className, ...restProps } = vDom.props || {};
+		const newProps = className ? { class: className, ...restProps } : restProps;
+		// @ts-ignore
+		const children = vDom.children
+			? transformClassName(vDom.children)
+			: vDom.children;
+
+		return {
+			...vDom,
+			props: newProps,
+			children: children,
+		};
+	}
+	return vDom;
 };

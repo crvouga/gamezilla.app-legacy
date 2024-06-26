@@ -1,10 +1,10 @@
 import preact from "@preact/preset-vite";
 import react from "@vitejs/plugin-react";
+import vueJsx from "@vitejs/plugin-vue-jsx";
 import { defineConfig } from "vite";
 import inferno from "vite-plugin-inferno";
 import solid from "vite-plugin-solid";
 import tsconfigPaths from "vite-tsconfig-paths";
-import path from "node:path";
 // @ts-ignore
 import { VDOM_IMPL } from "./public-config";
 
@@ -34,6 +34,14 @@ const vDomPlugin = () => {
 
 		case "solid": {
 			return solid();
+		}
+
+		case 'vue': {
+			return vueJsx({
+				isCustomElement(tag) {
+					return tag.includes("-")
+				},
+			});
 		}
 	}
 };

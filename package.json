@@ -65,6 +65,8 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vitejs/plugin-vue-jsx": "^4.0.0",
     "autoprefixer": "^10.4.14",
     "babel-plugin-inferno": "^6.7.1",
     "babel-plugin-react-compiler": "^0.0.0-experimental-938cd9a-20240601",

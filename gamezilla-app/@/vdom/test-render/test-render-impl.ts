@@ -8,7 +8,7 @@ export const TestRender = async (vDomImpl: VDomImpl): Promise<ITestRender> => {
 		case "react": {
 			return TestRenderReact;
 		}
-		case 'vue':
+		case "vue":
 		case "inferno":
 		case "preact":
 		case "solid": {
