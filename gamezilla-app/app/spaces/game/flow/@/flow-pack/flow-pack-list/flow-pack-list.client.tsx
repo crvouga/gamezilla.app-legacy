@@ -86,10 +86,10 @@ const updateList: ClientModule["update"] = (input) => {
 			const puzzles =
 				msgServer.listed.t === "ok" ? msgServer.listed.value.items : [];
 
-			const packsNew = puzzles.reduce(
-				(acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
-				model.packs,
-			);
+			const packsNew = puzzles.reduce((acc, puzzle) => {
+				acc[puzzle.id] = puzzle;
+				return acc;
+			}, model.packs);
 
 			return {
 				model: {
