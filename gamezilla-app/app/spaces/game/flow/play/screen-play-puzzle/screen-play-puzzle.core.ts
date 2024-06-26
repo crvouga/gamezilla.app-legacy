@@ -134,10 +134,20 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			if (!solution) {
 				return modelCore;
 			}
-			Flow.toPipelineByGroupId(solution, nextHintGroupId);
+			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
+			const pipesBySourceId = Flow.pipelineToPipsBySourceId(flow, pipeline);
+
+			const playNew: FlowVariantUIPlay.Model = {
+				...modelCore.flowPlay,
+				pipesBySourceId: {
+					...modelCore.flowPlay.pipesBySourceId,
+					...pipesBySourceId,
+				},
+			};
 
 			return {
 				...modelCore,
+				flowPlay: playNew,
 				hints: {
 					...modelCore.hints,
 					[nextHintGroupId]: nextHintGroupId,
@@ -207,12 +217,12 @@ const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
 	return null;
 };
 
-const isAnyShowingHint = (modelCore: ModelCore): boolean => {
-	return Object.keys(modelCore.hints).length > 0;
-};
-
 const toShowingHintGroupIds = (modelCore: ModelCore): Flow.GroupId[] => {
 	return Object.keys(modelCore.hints).map((k) => k as Flow.GroupId);
+};
+
+const isAnyShowingHint = (modelCore: ModelCore): boolean => {
+	return toShowingHintGroupIds(modelCore).length > 0;
 };
 
 export const ScreenPuzzleCore = {
