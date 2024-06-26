@@ -56,5 +56,13 @@ export const Render = async (
 				dispose = Solid.render(() => vDom, root);
 			};
 		}
+			
+		case 'vue': {
+			const Vue = await import('vue');
+			// createPortal = Vue;
+			return (vDom) => {
+				Vue.createApp(vDom).mount(root);
+			};
+		}
 	}
 };

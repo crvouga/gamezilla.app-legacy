@@ -3,4 +3,5 @@ export type VDomImpl =
 	| "preact"
 	| "react"
 	| "solid"
+	| "vue"
 	| "react-with-compiler";
