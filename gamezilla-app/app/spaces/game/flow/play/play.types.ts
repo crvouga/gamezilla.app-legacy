@@ -9,7 +9,7 @@ import type {
 	SpaceCtx,
 } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import type { FlowVariant, FlowVariantUIPlay } from "../@/flow";
+import type { FlowVariant, FlowVariantPlay } from "../@/flow";
 import type { FlowClientCtx } from "../@/flow-ctx";
 import { FlowPack, type FlowPackListTypes } from "../@/flow-pack";
 import type { FlowPackId } from "../@/flow-pack/flow-pack-id";
@@ -27,7 +27,7 @@ import { ScreenPuzzleTypes } from "./screen-play-puzzle";
 
 export type ModelClient = {
 	flow: FlowVariant.Model;
-	flowUIPlay: FlowVariantUIPlay.Model;
+	flowUIPlay: FlowVariantPlay.Model;
 	flowPuzzles: { [flowPuzzleId: FlowPuzzleId]: FlowPuzzle };
 	flowPacks: { [flowPackId: FlowPackId]: FlowPack };
 	flowPackGrid: FlowPackPuzzlesGridTypes.ModelClient;

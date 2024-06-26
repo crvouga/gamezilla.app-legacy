@@ -589,6 +589,23 @@ export const toPipelineByGroupId = (model: Model, groupId: GroupId): Pipe[] => {
 	return toPipeline(model, terminal.startId);
 };
 
+export const pipelineToPipsBySourceId = (
+	model: Model,
+	pipeline: Pipeline,
+): { [sourceId: NodeId]: Pipe } => {
+	const pipsBySourceId: { [sourceId: NodeId]: Pipe } = {};
+
+	for (const pipe of pipeline) {
+		const edge = toEdge(model, pipe.edgeId);
+		if (!edge) {
+			continue;
+		}
+		pipsBySourceId[edge.sourceId] = pipe;
+	}
+
+	return pipsBySourceId;
+};
+
 export const yieldPipeline = (
 	model: Model,
 	startingNodeId: NodeId,
@@ -812,14 +829,19 @@ export const isConnectedWithPipes = (
 	if (sourceId === targetId) {
 		return true;
 	}
+
 	const pipe = toPipeBySourceId(model, sourceId);
+
 	if (!pipe) {
 		return false;
 	}
+
 	const edge = toEdge(model, pipe.edgeId);
+
 	if (!edge) {
 		return false;
 	}
+
 	return isConnectedWithPipes(model, edge.targetId, targetId);
 };
 
@@ -877,5 +899,5 @@ export const isTerminalConnectedWithPipes = (
 	if (!terminal) {
 		return false;
 	}
-	return isConnectedWithPipes(model, terminal.startId, terminal.startId);
+	return isConnectedWithPipes(model, terminal.startId, terminal.endId);
 };

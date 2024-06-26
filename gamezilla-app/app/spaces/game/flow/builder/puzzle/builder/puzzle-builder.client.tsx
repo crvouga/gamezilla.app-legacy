@@ -16,8 +16,8 @@ import {
 import type { VDom } from "gamezilla-app/@/vdom";
 import {
 	FlowVariantUI,
-	FlowVariantUIEdit,
-	FlowVariantUIPlay,
+	FlowVarianEdit,
+	FlowVariantPlay,
 } from "../../../@/flow";
 import { ViewProfileCard } from "../../../../@/game/view-profile-card";
 import type { ClientModule } from "../../builder.types";
@@ -108,7 +108,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 			if (modelCore.puzzleBuilder.mode.t !== "edit") {
 				return { model };
 			}
-			const updated = FlowVariantUIEdit.update({
+			const updated = FlowVarianEdit.update({
 				model: modelCore.puzzleBuilder.edit,
 				msg: msgCore.c,
 				flow: modelCore.puzzleBuilder.puzzle.flow,
@@ -192,7 +192,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 					/>
 
 					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
-						<FlowVariantUIEdit.View
+						<FlowVarianEdit.View
 							model={puzzleBuilder.edit}
 							dispatch={(c) =>
 								dispatch({
@@ -237,7 +237,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 					/>
 
 					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
-						<FlowVariantUIPlay.View
+						<FlowVariantPlay.View
 							model={puzzleBuilder.play}
 							flow={toCurrentFlow(puzzleBuilder)}
 							dispatch={(c) =>

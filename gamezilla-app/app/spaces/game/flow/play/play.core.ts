@@ -1,4 +1,4 @@
-import { FlowVariantUIPlay } from "../@/flow";
+import { FlowVariantPlay } from "../@/flow";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import type { CoreModule } from "./play.types";
 import { ScreenPuzzleCore } from "./screen-play-puzzle/screen-play-puzzle.core";
@@ -6,7 +6,7 @@ import { ScreenPuzzleCore } from "./screen-play-puzzle/screen-play-puzzle.core";
 const initCore: CoreModule["initCore"] = () => {
 	const flow = samples["8x8"][1];
 	return {
-		play: FlowVariantUIPlay.init({
+		play: FlowVariantPlay.init({
 			flow,
 		}),
 		flow,

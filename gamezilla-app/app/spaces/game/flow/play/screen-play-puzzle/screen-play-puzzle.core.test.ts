@@ -1,26 +1,45 @@
-import { describe, expect, it } from "bun:test";
-import { Flow, FlowVariantUIPlay } from "../../@/flow";
+import { describe, expect, it, test } from "bun:test";
+import { Flow, type FlowVariant, FlowVariantPlay } from "../../@/flow";
+import { FlowGridShorthand } from "../../@/flow/flow-variant/flow-grid";
 import { ScreenPuzzleCoreFixture } from "./@/testing.core";
-import type { MsgCore } from "./screen-play-puzzle.types";
 import { ScreenPuzzleCore } from "./screen-play-puzzle.core";
+import type { ModelCore, MsgCore } from "./screen-play-puzzle.types";
 
-const Fixture = async () => {
-	const f = await ScreenPuzzleCoreFixture();
+const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
+	const f = await ScreenPuzzleCoreFixture(input);
+
+	const update = (init: ModelCore, msgs: MsgCore[]): ModelCore => {
+		let model: ModelCore = init;
+		for (const msg of msgs) {
+			model = ScreenPuzzleCore.updateScreen(model, msg);
+		}
+		return model;
+	};
+
+	const init: ModelCore = ScreenPuzzleCore.initCore({
+		flowPack: f.pack,
+		flowPuzzle: f.puzzle,
+		puzzleIndex: f.puzzleIndex,
+	});
 
 	return {
 		...f,
+		initParent: f.init,
+		updateParent: f.update,
+		update,
+		init,
 	};
 };
 
 describe(import.meta.file, () => {
 	it("should close puzzle after clicking exit puzzle button", async () => {
 		const f = await Fixture();
-		const after = f.update(f.init, [
+		const after = f.updateParent(f.initParent, [
 			{
 				t: "user-clicked-exit-puzzle-button",
 			},
 		]);
-		expect(f.init.screen.t).toEqual("screen-play-puzzle");
+		expect(f.initParent.screen.t).toEqual("screen-play-puzzle");
 		expect(after.screen.t).toEqual("screen-select-puzzle");
 	});
 
@@ -28,9 +47,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const after = f.update(
 			f.init,
-			FlowVariantUIPlay.randomMsgs({
-				flow: f.puzzle.flow,
-			}).map(
+			FlowVariantPlay.randomMsgs(f.puzzle).map(
 				(c): MsgCore => ({
 					t: "got-puzzle-screen-flow-play-msg",
 					c,
@@ -38,12 +55,7 @@ describe(import.meta.file, () => {
 			),
 		);
 
-		if (
-			f.init.screen.t === "screen-play-puzzle" &&
-			after.screen.t === "screen-play-puzzle"
-		) {
-			expect(f.init.screen.flowPlay).not.toEqual(after.screen.flowPlay);
-		}
+		expect(f.init.flowPlay).not.toEqual(after.flowPlay);
 	});
 
 	it("should go to next puzzle after the user clicks the next button", async () => {
@@ -56,12 +68,8 @@ describe(import.meta.file, () => {
 			},
 		]);
 
-		expect(
-			f.init.screen.t === "screen-play-puzzle" ? f.init.screen.puzzleIndex : -1,
-		).toEqual(f.puzzleIndex);
-		expect(
-			after.screen.t === "screen-play-puzzle" ? after.screen.puzzleIndex : -1,
-		).toEqual(f.puzzleIndex + 1);
+		expect(f.init.puzzleIndex).toEqual(f.puzzleIndex);
+		expect(after.puzzleIndex).toEqual(f.puzzleIndex + 1);
 	});
 
 	it("should go to prev puzzle after the user clicks the prev button", async () => {
@@ -80,18 +88,14 @@ describe(import.meta.file, () => {
 				prevPuzzleIndex: f.puzzleIndex,
 			},
 		]);
-		expect(
-			before.screen.t === "screen-play-puzzle" ? before.screen.puzzleIndex : -1,
-		).toEqual(f.puzzleIndex + 1);
-		expect(
-			after.screen.t === "screen-play-puzzle" ? after.screen.puzzleIndex : -1,
-		).toEqual(f.puzzleIndex);
+		expect(before.puzzleIndex).toEqual(f.puzzleIndex + 1);
+		expect(after.puzzleIndex).toEqual(f.puzzleIndex);
 	});
 
 	it("should start with empty puzzle after going to next puzzle", async () => {
 		const f = await Fixture();
 
-		const msgs = FlowVariantUIPlay.randomMsgs({
+		const msgs = FlowVariantPlay.randomMsgs({
 			flow: f.puzzle.flow,
 		}).map(
 			(c): MsgCore => ({
@@ -109,34 +113,24 @@ describe(import.meta.file, () => {
 			},
 		]);
 
-		if (
-			before.screen.t === "screen-play-puzzle" &&
-			after.screen.t === "screen-play-puzzle"
-		) {
-			expect(before.screen.flowPlay).not.toEqual(after.screen.flowPlay);
-			expect(after.screen.flowPlay).toEqual(
-				FlowVariantUIPlay.init({ flow: f.nextPuzzle.flow }),
-			);
-		}
+		expect(before.flowPlay).not.toEqual(after.flowPlay);
+		expect(after.flowPlay).toEqual(
+			FlowVariantPlay.init({ flow: f.nextPuzzle.flow }),
+		);
 	});
 
 	it("should go into puzzle solved state after solving", async () => {
 		const f = await Fixture();
 		const before = f.init;
 		const after = f.update(before, f.completePuzzleMsgs);
-		expect(before.screen.t).toBe("screen-play-puzzle");
-		if (before.screen.t === "screen-play-puzzle") {
-			expect(before.screen.state.t).toBe("solving");
-		}
-		expect(after.screen.t).toBe("screen-play-puzzle");
-		if (after.screen.t === "screen-play-puzzle") {
-			expect(after.screen.state.t).toBe("solved");
-			const flow = FlowVariantUIPlay.deriveFlow({
-				flow: f.puzzle.flow,
-				model: after.screen.flowPlay,
-			});
-			expect(Flow.isSolved(flow)).toBe(true);
-		}
+		const afterFlow = FlowVariantPlay.deriveFlow({
+			flow: f.puzzle.flow,
+			model: after.flowPlay,
+		});
+
+		expect(before.state.t).toBe("solving");
+		expect(after.state.t).toBe("solved");
+		expect(Flow.isSolved(afterFlow)).toBe(true);
 	});
 
 	it("should open puzzle complete dialog after solving", async () => {
@@ -145,9 +139,7 @@ describe(import.meta.file, () => {
 		const after = f.update(f.init, f.completePuzzleMsgs);
 
 		expect(
-			after.screen.t === "screen-play-puzzle" &&
-				after.screen.state.t === "solved" &&
-				after.screen.opened === "puzzle-complete",
+			after.state.t === "solved" && after.opened === "puzzle-complete",
 		).toBe(true);
 	});
 
@@ -159,11 +151,7 @@ describe(import.meta.file, () => {
 				t: "user-closed-puzzle-complete-dialog",
 			},
 		]);
-		expect(
-			after.screen.t === "screen-play-puzzle" &&
-				after.screen.state.t === "solved" &&
-				after.screen.opened === null,
-		).toBe(true);
+		expect(after.state.t === "solved" && after.opened === null).toBe(true);
 	});
 
 	it("should close puzzle complete dialog after clicking next puzzle button", async () => {
@@ -176,9 +164,7 @@ describe(import.meta.file, () => {
 				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
 		]);
-		expect(
-			after.screen.t === "screen-play-puzzle" && after.screen.opened === null,
-		).toBe(true);
+		expect(after.opened === null).toBe(true);
 	});
 
 	it("should only open puzzle complete dialog when transitions to solved state", async () => {
@@ -202,12 +188,8 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		expect(
-			before.screen.t === "screen-play-puzzle" && before.screen.opened === null,
-		).toBe(true);
-		expect(
-			after.screen.t === "screen-play-puzzle" && after.screen.opened === null,
-		).toBe(true);
+		expect(before.opened === null).toBe(true);
+		expect(after.opened === null).toBe(true);
 	});
 
 	it("should close puzzle complete dialog after clicking prev puzzle button", async () => {
@@ -220,13 +202,8 @@ describe(import.meta.file, () => {
 				prevPuzzleIndex: f.prevPuzzleIndex,
 			},
 		]);
-		expect(
-			before.screen.t === "screen-play-puzzle" &&
-				before.screen.opened === "puzzle-complete",
-		).toBe(true);
-		expect(
-			after.screen.t === "screen-play-puzzle" && after.screen.opened === null,
-		).toBe(true);
+		expect(before.opened === "puzzle-complete").toBe(true);
+		expect(after.opened === null).toBe(true);
 	});
 
 	it("should clear puzzle after clicking reset button", async () => {
@@ -237,17 +214,38 @@ describe(import.meta.file, () => {
 				t: "user-clicked-reset-puzzle-button",
 			},
 		]);
-		expect(before.screen.t).toBe("screen-play-puzzle");
-		if (before.screen.t === "screen-play-puzzle")
-			expect(before.screen.flowPlay).toEqual(FlowVariantUIPlay.init(f.puzzle));
+		expect(before.flowPlay).toEqual(FlowVariantPlay.init(f.puzzle));
 	});
 
 	it("should show hint after clicking show hint button", async () => {
 		const f = await Fixture();
+
 		const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
-		expect(after.screen.t).toBe("screen-play-puzzle");
-		if (after.screen.t === "screen-play-puzzle") {
-			expect(ScreenPuzzleCore.isAnyShowingHint(after.screen)).toBe(true);
+		expect(ScreenPuzzleCore.isAnyShowingHint(after)).toBe(true);
+	});
+
+	test("hint", async () => {
+		const f = await Fixture();
+		const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
+		const flow = ScreenPuzzleCore.deriveFlow(after);
+		for (const groupId of ScreenPuzzleCore.toShowingHintGroupIds(after)) {
+			expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true);
 		}
+	});
+
+	test("hint multiple terminals", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				["A", "B"],
+				[" ", " "],
+				["A", "B"],
+			]),
+		});
+		const output = f.update(f.init, [
+			{ t: "user-clicked-hint-button" },
+			{ t: "user-clicked-hint-button" },
+		]);
+		const flow = ScreenPuzzleCore.deriveFlow(output);
+		expect(Flow.isSolved(flow)).toBe(true);
 	});
 });

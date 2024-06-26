@@ -14,7 +14,7 @@ import {
 	IconFloppyDisk,
 } from "gamezilla-app/app/@/ui";
 import { Result, isErr, isOk, Loading } from "gamezilla-app/@/core";
-import { FlowVariantUIEdit } from "../../../@/flow";
+import { FlowVarianEdit } from "../../../@/flow";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type {
 	ModelClient,
@@ -75,7 +75,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 			}
 
 			if (
-				FlowVariantUIEdit.isUnsavedChanges(
+				FlowVarianEdit.isUnsavedChanges(
 					modelCore.puzzleBuilder.edit,
 					modelCore.puzzleBuilder.puzzle.flow,
 				)
@@ -191,7 +191,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
 
 	const puzzleNew: FlowPuzzle = {
 		...puzzleBuilder.puzzle,
-		flow: FlowVariantUIEdit.toCurrentFlow({
+		flow: FlowVarianEdit.toCurrentFlow({
 			model: puzzleBuilder.edit,
 		}),
 	};

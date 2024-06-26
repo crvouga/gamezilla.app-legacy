@@ -1,8 +1,8 @@
 import { UserId } from "gamezilla-app/app/@/data";
 import {
 	type FlowVariant,
-	FlowVariantUIEdit,
-	FlowVariantUIPlay,
+	FlowVarianEdit,
+	FlowVariantPlay,
 } from "../../../@/flow";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { p } from "gamezilla-app/@/core/parser";
@@ -16,8 +16,8 @@ export type ModelServer = null;
 export type MsgServer = { t: "noop" };
 
 export type MsgClient =
-	| { t: "puzzle-builder.flow-ui-edit"; c: FlowVariantUIEdit.Msg }
-	| { t: "puzzle-builder.flow-ui-play"; c: FlowVariantUIPlay.Msg }
+	| { t: "puzzle-builder.flow-ui-edit"; c: FlowVarianEdit.Msg }
+	| { t: "puzzle-builder.flow-ui-play"; c: FlowVariantPlay.Msg }
 	| { t: "puzzle-builder.user-clicked-more-button" }
 	| { t: "puzzle-builder.user-closed-more-drawer" }
 	| { t: "puzzle-builder.user-clicked-exit-button" }
@@ -42,22 +42,22 @@ export const ModelCore = p.obj({
 	t: p.l("puzzle-builder"),
 	puzzle: FlowPuzzle,
 	mode: Mode,
-	play: FlowVariantUIPlay.Model,
-	edit: FlowVariantUIEdit.Model,
+	play: FlowVariantPlay.Model,
+	edit: FlowVarianEdit.Model,
 });
 export type ModelCore = p.Infer<typeof ModelCore>;
 
 export const toCurrentFlow = (modelCore: ModelCore): FlowVariant.Model => {
 	switch (modelCore.mode.t) {
 		case "edit": {
-			return FlowVariantUIEdit.toCurrentFlow({
+			return FlowVarianEdit.toCurrentFlow({
 				model: modelCore.edit,
 			});
 		}
 
 		case "play": {
-			return FlowVariantUIPlay.deriveFlow({
-				flow: FlowVariantUIEdit.toCurrentFlow({
+			return FlowVariantPlay.deriveFlow({
+				flow: FlowVarianEdit.toCurrentFlow({
 					model: modelCore.edit,
 				}),
 				model: modelCore.play,
@@ -67,8 +67,8 @@ export const toCurrentFlow = (modelCore: ModelCore): FlowVariant.Model => {
 };
 
 export const MsgCore = p.or(
-	p.obj({ t: p.l("puzzle-builder.flow-ui-play"), c: FlowVariantUIPlay.Msg }),
-	p.obj({ t: p.l("puzzle-builder.flow-ui-edit"), c: FlowVariantUIEdit.Msg }),
+	p.obj({ t: p.l("puzzle-builder.flow-ui-play"), c: FlowVariantPlay.Msg }),
+	p.obj({ t: p.l("puzzle-builder.flow-ui-edit"), c: FlowVarianEdit.Msg }),
 	p.obj({
 		t: p.l("puzzle-builder.user-clicked-edit-mode-button"),
 		userId: UserId,

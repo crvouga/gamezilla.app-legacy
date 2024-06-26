@@ -86,10 +86,10 @@ const updateList: ClientModule["update"] = (input) => {
 			const puzzles =
 				msgServer.listed.t === "ok" ? msgServer.listed.value.items : [];
 
-			const packsNew = puzzles.reduce(
-				(acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
-				model.packs,
-			);
+			const packsNew = puzzles.reduce((acc, puzzle) => {
+				acc[puzzle.id] = puzzle;
+				return acc;
+			}, model.packs);
 
 			return {
 				model: {
@@ -177,10 +177,11 @@ const FlowPackListItem = ({
 }) => {
 	return (
 		<button
+			type="button"
 			className="flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden border-b border-b-neutral-800 px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50"
 			onClick={onClick}
 		>
-			<IconBox className="h-9 w-9 shrink-0" />
+			{false && <IconBox className="h-9 w-9 shrink-0" />}
 			<div className="flex flex-1 flex-col overflow-hidden">
 				<p className="overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold">
 					{pack.name}

@@ -1,12 +1,12 @@
 import { p } from "gamezilla-app/@/core/parser";
-import { Flow, FlowVariantUIPlay } from "../../@/flow";
+import { Flow, FlowVariantPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 
 export const MsgCore = p.or(
 	p.obj({
 		t: p.l("got-puzzle-screen-flow-play-msg"),
-		c: FlowVariantUIPlay.Msg,
+		c: FlowVariantPlay.Msg,
 	}),
 	p.obj({
 		t: p.l("user-clicked-exit-puzzle-button"),
@@ -51,7 +51,7 @@ export const ModelCore = p.obj({
 	t: p.l("screen-play-puzzle"),
 	flowPack: FlowPack,
 	flowPuzzle: FlowPuzzle,
-	flowPlay: FlowVariantUIPlay.Model,
+	flowPlay: FlowVariantPlay.Model,
 	puzzleIndex: p.num,
 	state: State,
 	opened: p.or(p.l("puzzle-complete"), p.l(null)),

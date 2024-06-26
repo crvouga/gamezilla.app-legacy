@@ -1,4 +1,9 @@
-import { Flow, FlowVariantUIPlay } from "../../@/flow";
+import {
+	Flow,
+	FlowAlgoSolve,
+	FlowVariant,
+	FlowVariantPlay,
+} from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule, MsgCore } from "../play.types";
@@ -20,7 +25,7 @@ const updateCore: CoreModule["updateCore"] = (input) => {
 const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	switch (input.modelCore.screen.t) {
 		case "screen-play-puzzle": {
-			const screenPuzzle = updateChild(input.modelCore.screen, input.msgCore);
+			const screenPuzzle = updateScreen(input.modelCore.screen, input.msgCore);
 			return {
 				...input.modelCore,
 				screen: screenPuzzle,
@@ -32,10 +37,10 @@ const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	}
 };
 
-const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
+const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 	switch (msgCore.t) {
 		case "got-puzzle-screen-flow-play-msg": {
-			const flowPlayNew = FlowVariantUIPlay.update({
+			const flowPlayNew = FlowVariantPlay.update({
 				msg: msgCore.c,
 				model: modelCore.flowPlay,
 				flow: modelCore.flowPuzzle.flow,
@@ -78,7 +83,7 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-next-puzzle-button": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantUIPlay.init({
+				flowPlay: FlowVariantPlay.init({
 					flow: msgCore.nextPuzzle.flow,
 				}),
 				opened:
@@ -91,7 +96,7 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-prev-puzzle-button": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantUIPlay.init({
+				flowPlay: FlowVariantPlay.init({
 					flow: msgCore.prevPuzzle.flow,
 				}),
 				opened:
@@ -104,7 +109,7 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-reset-puzzle-button": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantUIPlay.init({
+				flowPlay: FlowVariantPlay.init({
 					flow: modelCore.flowPuzzle.flow,
 				}),
 				state: {
@@ -114,12 +119,42 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		}
 
 		case "user-clicked-hint-button": {
-			const nextHintGroupId = toNextHintGroupId(modelCore.flowPuzzle.flow);
+			const flow = FlowVariantPlay.deriveFlow({
+				model: modelCore.flowPlay,
+				flow: modelCore.flowPuzzle.flow,
+			});
+
+			const nextHintGroupId = toNextHintGroupId(flow);
+
 			if (!nextHintGroupId) {
 				return modelCore;
 			}
+
+			const solutions = FlowAlgoSolve.solve(flow, {
+				distance: FlowVariant.distance(flow),
+			});
+
+			const solution = next(solutions);
+
+			if (!solution) {
+				return modelCore;
+			}
+
+			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
+			
+			const pipesBySourceId = Flow.pipelineToPipsBySourceId(flow, pipeline);
+
+			const playNew: FlowVariantPlay.Model = {
+				...modelCore.flowPlay,
+				pipesBySourceId: {
+					...modelCore.flowPlay.pipesBySourceId,
+					...pipesBySourceId,
+				},
+			};
+
 			return {
 				...modelCore,
+				flowPlay: playNew,
 				hints: {
 					...modelCore.hints,
 					[nextHintGroupId]: nextHintGroupId,
@@ -131,6 +166,12 @@ const updateChild = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			return modelCore;
 		}
 	}
+};
+const next = <T>(iter: Iterable<T>): T | null => {
+	for (const t of iter) {
+		return t;
+	}
+	return null;
 };
 
 const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
@@ -164,9 +205,7 @@ const initCore = (input: {
 }): ModelCore => {
 	return {
 		...input,
-		flowPlay: FlowVariantUIPlay.init({
-			flow: input.flowPuzzle.flow,
-		}),
+		flowPlay: FlowVariantPlay.init(input.flowPuzzle),
 		state: {
 			t: "solving",
 		},
@@ -185,12 +224,26 @@ const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
 	return null;
 };
 
+const toShowingHintGroupIds = (modelCore: ModelCore): Flow.GroupId[] => {
+	return Object.keys(modelCore.hints).map((k) => k as Flow.GroupId);
+};
+
 const isAnyShowingHint = (modelCore: ModelCore): boolean => {
-	return Object.keys(modelCore.hints).length > 0;
+	return toShowingHintGroupIds(modelCore).length > 0;
+};
+
+const deriveFlow = (modelCore: ModelCore): Flow.Model => {
+	return FlowVariantPlay.deriveFlow({
+		flow: modelCore.flowPuzzle.flow,
+		model: modelCore.flowPlay,
+	});
 };
 
 export const ScreenPuzzleCore = {
 	updateCore,
 	isAnyShowingHint,
 	initCore,
+	toShowingHintGroupIds,
+	deriveFlow,
+	updateScreen,
 };
