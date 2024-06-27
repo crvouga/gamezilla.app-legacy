@@ -101,70 +101,77 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 	return (
 		<g transform="translate(0.5, 0.5)">
 			{map(FlowGrid.yieldTerminals(props.model), (terminal) => {
-				const groupColor = FlowUI.Color.groupIdToHex(terminal.groupId);
-				const pipeline = FlowGrid.toPipeline(props.model, terminal.startId);
-				const pipelinePathData = pipelineToSvgPathData(pipeline);
-				const didUseHint = Boolean(props.usedHints?.[terminal.groupId]);
-				const isConnectedWithPipes = Flow.isTerminalConnectedWithPipes(
-					props.model,
-					terminal.groupId,
-				);
-				const shouldShowUsedHint = isConnectedWithPipes && didUseHint;
-
 				return (
-					<g key={terminal.groupId} id={terminal.groupId}>
-						{!props.disableHighlight && (
-							<path
-								d={
-									props.isGroupActive?.(terminal.groupId)
-										? ""
-										: pipelinePathData
-								}
-								stroke={groupColor}
-								fill="none"
-								strokeLinejoin="inherit"
-								strokeLinecap="square"
-								strokeWidth="1"
-								strokeOpacity="0.2"
-							/>
-						)}
-
-						<path
-							d={pipelinePathData}
-							stroke={groupColor}
-							fill="none"
-							strokeLinejoin="round"
-							strokeLinecap="round"
-							strokeWidth={EDGE_STROKE_WIDTH}
-						/>
-
-						<circle
-							cx={terminal.start.x}
-							cy={terminal.start.y}
-							r={TERMINAL_NODE_RADIUS}
-							fill={groupColor}
-						/>
-
-						{shouldShowUsedHint && (
-							<HintCheckmark x={terminal.start.x} y={terminal.start.y} />
-						)}
-
-						{terminal.end && (
-							<>
-								<circle
-									cx={terminal.end.x}
-									cy={terminal.end.y}
-									r={TERMINAL_NODE_RADIUS}
-									fill={groupColor}
-								/>
-								{shouldShowUsedHint && (
-									<HintCheckmark x={terminal.end.x} y={terminal.end.y} />
-								)}
-							</>
-						)}
-					</g>
+					<ViewPipeline key={terminal.groupId} {...props} terminal={terminal} />
 				);
 			})}
+		</g>
+	);
+};
+
+const ViewPipeline = (
+	props: FlowUI.FlowViewProps<FlowGrid.Model> & {
+		terminal: FlowGrid.Terminal;
+	},
+) => {
+	const terminal = props.terminal;
+	const groupColor = FlowUI.Color.groupIdToHex(terminal.groupId);
+	const pipeline = FlowGrid.toPipeline(props.model, terminal.startId);
+	const pipelinePathData = pipelineToSvgPathData(pipeline);
+	const didUseHint = Boolean(props.usedHints?.[terminal.groupId]);
+	const isConnectedWithPipes = Flow.isTerminalConnectedWithPipes(
+		props.model,
+		terminal.groupId,
+	);
+	const shouldShowUsedHint = isConnectedWithPipes && didUseHint;
+
+	return (
+		<g key={terminal.groupId} id={terminal.groupId}>
+			{!props.disableHighlight && (
+				<path
+					d={props.isGroupActive?.(terminal.groupId) ? "" : pipelinePathData}
+					stroke={groupColor}
+					fill="none"
+					strokeLinejoin="inherit"
+					strokeLinecap="square"
+					strokeWidth="1"
+					strokeOpacity="0.2"
+				/>
+			)}
+
+			<path
+				d={pipelinePathData}
+				stroke={groupColor}
+				fill="none"
+				strokeLinejoin="round"
+				strokeLinecap="round"
+				strokeWidth={EDGE_STROKE_WIDTH}
+			/>
+
+			<circle
+				cx={terminal.start.x}
+				cy={terminal.start.y}
+				r={TERMINAL_NODE_RADIUS}
+				fill={groupColor}
+			/>
+
+			{shouldShowUsedHint && (
+				<HintCheckmark x={terminal.start.x} y={terminal.start.y} />
+			)}
+
+			{terminal.end && (
+				<>
+					<circle
+						cx={terminal.end.x}
+						cy={terminal.end.y}
+						r={TERMINAL_NODE_RADIUS}
+						fill={groupColor}
+					/>
+					{shouldShowUsedHint && (
+						<HintCheckmark x={terminal.end.x} y={terminal.end.y} />
+					)}
+				</>
+			)}
 		</g>
 	);
 };
