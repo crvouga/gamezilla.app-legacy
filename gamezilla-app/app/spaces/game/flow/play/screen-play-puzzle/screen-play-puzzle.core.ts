@@ -1,6 +1,4 @@
-import {
-	FlowVariantPlay
-} from "../../@/flow";
+import { FlowVariantPlay } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule, MsgCore } from "../play.types";
@@ -121,7 +119,6 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 	}
 };
 
-
 const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "user-clicked-exit-puzzle-button": {
@@ -162,7 +159,6 @@ const initCore = (input: {
 		hints: {},
 	};
 };
-
 
 export const ScreenPuzzleCore = {
 	updateCore,

@@ -6,7 +6,7 @@ import type { ClientCtx } from "gamezilla-app/app/@/client";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
-	hints: p.partialDict(Flow.GroupId, Flow.GroupId),
+	usedHints: p.partialDict(Flow.GroupId, Flow.GroupId),
 });
 export type Model = p.Infer<typeof Model>;
 
@@ -17,7 +17,7 @@ export type Msg = p.Infer<typeof Msg>;
 
 export const init: Model = {
 	pipesBySourceId: {},
-	hints: {},
+	usedHints: {},
 };
 
 export type Event =
@@ -64,8 +64,8 @@ export const update = <
 					...input.model.pipesBySourceId,
 					...pipesBySourceId,
 				},
-				hints: {
-					...input.model.hints,
+				usedHints: {
+					...input.model.usedHints,
 					[nextHintGroupId]: nextHintGroupId,
 				},
 			};
@@ -104,7 +104,7 @@ export const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
 };
 
 export const toShowingHintGroupIds = (model: Model): Flow.GroupId[] => {
-	return Object.keys(model.hints).map((k) => k as Flow.GroupId);
+	return Object.keys(model.usedHints).map((k) => k as Flow.GroupId);
 };
 
 export const isAnyShowingHint = (model: Model): boolean => {

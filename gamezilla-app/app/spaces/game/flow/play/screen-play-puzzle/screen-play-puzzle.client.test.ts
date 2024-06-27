@@ -49,16 +49,20 @@ describe(import.meta.file, () => {
 		expect(updated.modelCore.screen.t).toBe("screen-select-puzzle");
 	});
 
-	it("should render next puzzle button", async () => {
+	it("should render next puzzle button only when puzzle is completed", async () => {
 		const f = await Fixture();
-		expect(
-			f.render(f.initial).getByRole("button", f.ctx.t("app.next")),
-		).toBeTruthy();
+		const output = f.update(f.initial, [...f.completePuzzleMsgs]);
+		const before = f.render(f.initial).getByRole("button", f.ctx.t("app.next"));
+		const after = f.render(output).getByRole("button", f.ctx.t("app.next"));
+
+		expect(before).toBeFalsy();
+		expect(after).toBeTruthy();
 	});
 
 	it("should dispatch msg after clicking next puzzle button", async () => {
 		const f = await Fixture();
-		const r = f.render(f.initial);
+		const output = f.update(f.initial, [...f.completePuzzleMsgs]);
+		const r = f.render(output);
 		const nextButton = r.getByRole("button", f.ctx.t("app.next"));
 		nextButton?.click();
 		const msg = await r.msgs.once();
@@ -165,6 +169,7 @@ describe(import.meta.file, () => {
 					nextPuzzleIndex: f.nextPuzzleIndex,
 				},
 			},
+			...f.completePuzzleMsgs,
 		]);
 		const nextButton = f
 			.render(output)
@@ -287,6 +292,14 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(didPlaySound(output)).toBe(true);
+	});
+
+	test("not render hint button when puzzle is solved", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [...f.completePuzzleMsgs]);
+		const r = f.render(output);
+		const btn = r.getByRole("button", f.ctx.t("game.hint"));
+		expect(btn).toBeFalsy();
 	});
 
 	test("close puzzle complete dialog sound", async () => {

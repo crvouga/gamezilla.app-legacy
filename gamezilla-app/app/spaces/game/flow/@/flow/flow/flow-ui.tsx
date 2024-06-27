@@ -161,4 +161,7 @@ export type FlowViewProps<TModel> = {
 	onLeave?: () => void;
 	onDraggedOver?: (nodeId: NodeId) => void;
 	isGroupActive?: (groupId: GroupId) => boolean;
+	usedHints?: {
+		[groupId in GroupId]?: GroupId;
+	};
 };

@@ -58,6 +58,13 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
 			getAttribute(attribute) {
 				return getAttributeDeep(baseElement, attribute);
 			},
+			getByTestId(testId) {
+				const element = within(baseElement).getByTestId(testId);
+				if (!element) {
+					return null;
+				}
+				return createTestNode(element as HTMLElement);
+			},
 		};
 	};
 

@@ -13,13 +13,12 @@ import { withId } from "gamezilla-app/app/spaces/@/event";
 import {
 	ViewBottomButtonBar,
 	ViewBottomButtonBarActionExit,
-	ViewBottomButtonBarActionHint,
 	ViewBottomButtonBarActionNext,
 	ViewBottomButtonBarActionPrev,
 	ViewBottomButtonBarActionReset,
 } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
-import { FlowVariantPlay } from "../../@/flow";
+import { Flow, FlowVariantPlay } from "../../@/flow";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import type { ClientModule } from "../play.types";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
@@ -133,6 +132,11 @@ const View: ClientModule["View"] = (input) => {
 	}
 	const flowPuzzle = input.modelCore.screen.flowPuzzle;
 	const flowPlay = input.modelCore.screen.flowPlay;
+	const flow = FlowVariantPlay.deriveFlow({
+		flow: flowPuzzle.flow,
+		model: flowPlay,
+	});
+	const isSolved = Flow.isSolved(flow);
 	const puzzleIndex = input.modelCore.screen.puzzleIndex;
 
 	const prevPuzzleIndex = puzzleIndex - 1;
@@ -226,7 +230,7 @@ const View: ClientModule["View"] = (input) => {
 							input.dispatch({ t: "user-clicked-exit-puzzle-button" })
 						}
 					/>
-					{true && (
+					{!isSolved && (
 						<FlowVariantPlay.ViewHintAction
 							ctx={input.ctx}
 							model={flowPlay}
@@ -238,13 +242,21 @@ const View: ClientModule["View"] = (input) => {
 							}
 						/>
 					)}
-					{false && (
-						<ViewBottomButtonBarActionHint
+					{isSolved && (
+						<ViewBottomButtonBarActionNext
 							ctx={input.ctx}
+							disabled={
+								puzzleIndex >=
+								input.modelCore.screen.flowPack.puzzleIds.length - 1
+							}
 							onClick={() =>
-								input.dispatch({
-									t: "user-clicked-hint-button",
-								})
+								nextPuzzle
+									? input.dispatch({
+											t: "user-clicked-next-puzzle-button",
+											nextPuzzle,
+											nextPuzzleIndex,
+										})
+									: null
 							}
 						/>
 					)}
@@ -267,25 +279,6 @@ const View: ClientModule["View"] = (input) => {
 											t: "user-clicked-prev-puzzle-button",
 											prevPuzzle,
 											prevPuzzleIndex,
-										})
-									: null
-							}
-						/>
-					</div>
-
-					<div className="hidden">
-						<ViewBottomButtonBarActionNext
-							ctx={input.ctx}
-							disabled={
-								puzzleIndex >=
-								input.modelCore.screen.flowPack.puzzleIds.length - 1
-							}
-							onClick={() =>
-								nextPuzzle
-									? input.dispatch({
-											t: "user-clicked-next-puzzle-button",
-											nextPuzzle,
-											nextPuzzleIndex,
 										})
 									: null
 							}

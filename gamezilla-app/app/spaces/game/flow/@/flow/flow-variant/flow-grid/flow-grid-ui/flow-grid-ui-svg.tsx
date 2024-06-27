@@ -1,6 +1,7 @@
-import { cn } from "gamezilla-app/app/@/ui";
-import { FlowUI, type Flow } from "../../../flow";
+import { IconCheckmark, cn } from "gamezilla-app/app/@/ui";
+import { Flow, FlowUI } from "../../../flow";
 import * as FlowGrid from "../flow-grid";
+import type { VDom } from "gamezilla-app/@/vdom";
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33;
@@ -103,6 +104,12 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 				const groupColor = FlowUI.Color.groupIdToHex(terminal.groupId);
 				const pipeline = FlowGrid.toPipeline(props.model, terminal.startId);
 				const pipelinePathData = pipelineToSvgPathData(pipeline);
+				const didUseHint = Boolean(props.usedHints?.[terminal.groupId]);
+				const isConnectedWithPipes = Flow.isTerminalConnectedWithPipes(
+					props.model,
+					terminal.groupId,
+				);
+				const shouldShowUsedHint = isConnectedWithPipes&& didUseHint;
 
 				return (
 					<g key={terminal.groupId} id={terminal.groupId}>
@@ -138,19 +145,70 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 							fill={groupColor}
 						/>
 
-						{terminal.end && (
-							<circle
-								cx={terminal.end.x}
-								cy={terminal.end.y}
-								r={TERMINAL_NODE_RADIUS}
-								fill={groupColor}
+						{shouldShowUsedHint && (
+							<WithPadding
+								x={terminal.start.x - 0.5}
+								y={terminal.start.y - 0.5}
+								width={1}
+								height={1}
+								padding={0.25}
+								render={(props) => <IconCheckmark {...props} />}
 							/>
+						)}
+
+						{terminal.end && (
+							<>
+								<circle
+									cx={terminal.end.x}
+									cy={terminal.end.y}
+									r={TERMINAL_NODE_RADIUS}
+									fill={groupColor}
+								/>
+								{shouldShowUsedHint && (
+									<WithPadding
+										x={terminal.end.x - 0.5}
+										y={terminal.end.y - 0.5}
+										width={1}
+										height={1}
+										padding={0.25}
+										render={(props) => <IconCheckmark {...props} />}
+									/>
+								)}
+							</>
 						)}
 					</g>
 				);
 			})}
 		</g>
 	);
+};
+
+const WithPadding = (props: {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	padding: number;
+	render: (props: {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	}) => VDom;
+}) => {
+	const { x, y, width, height, padding, render } = props;
+
+	const paddedWidth = Math.max(0, width - padding * 2);
+	const paddedHeight = Math.max(0, height - padding * 2);
+	const paddedX = x + padding;
+	const paddedY = y + padding;
+
+	return render({
+		x: paddedX,
+		y: paddedY,
+		width: paddedWidth,
+		height: paddedHeight,
+	});
 };
 
 const ViewAutocompleteEdge = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {

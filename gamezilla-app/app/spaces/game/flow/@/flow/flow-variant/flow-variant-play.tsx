@@ -472,6 +472,7 @@ export const View = ({
 			isGroupActive={(groupId) =>
 				model.status.t === "dragging" && model.status.activeGroupId === groupId
 			}
+			usedHints={model.usedHints}
 		/>
 	);
 };
