@@ -1,17 +1,20 @@
 import { describe, expect, test } from "bun:test";
 import * as FlowHint from "./flow-hint";
 import { FlowGridShorthand } from "./flow-grid";
-import { FlowVariant } from ".";
+import type * as FlowVariant from "./flow-variant";
 import { Flow } from "../flow";
 
-
-
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
-	const flow = input?.flow ?? FlowGridShorthand.toGrid([
-		["A", " "],
-		[" ", "A"]		
-	]);
-	const update = (init: FlowHint.Model, msgs: FlowHint.Msg[]): ReturnType<typeof FlowHint.update> => {
+	const flow =
+		input?.flow ??
+		FlowGridShorthand.toGrid([
+			["A", " "],
+			[" ", "A"],
+		]);
+	const update = (
+		init: FlowHint.Model,
+		msgs: FlowHint.Msg[],
+	): ReturnType<typeof FlowHint.update> => {
 		let output: ReturnType<typeof FlowHint.update> = { model: init };
 		for (const msg of msgs) {
 			output = FlowHint.update({

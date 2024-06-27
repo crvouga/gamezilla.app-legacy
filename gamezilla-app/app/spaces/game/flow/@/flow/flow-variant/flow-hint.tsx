@@ -1,8 +1,8 @@
 import { p } from "gamezilla-app/@/core/parser";
 import { Flow, FlowAlgoSolve } from "../flow";
-import { FlowVariant } from ".";
+import * as FlowVariant from "./flow-variant";
 import { ViewBottomButtonBarActionHint } from "gamezilla-app/app/spaces/game/@/game";
-import { ClientCtx } from "gamezilla-app/app/@/client";
+import type { ClientCtx } from "gamezilla-app/app/@/client";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
@@ -20,22 +20,24 @@ export const init: Model = {
 	hints: {},
 };
 
-export type Event =
-	| {
-			t: "solved";
-	};
-	  
-export const update = <TModel extends Model, TMsg extends {t: string & {}}>(input: {
+export type Event = {
+	t: "solved";
+};
+
+export const update = <
+	TModel extends Model,
+	TMsg extends { t: string & {} },
+>(input: {
 	msg: Msg | TMsg;
 	model: TModel;
 	flow: FlowVariant.Model;
 }): {
 	model: TModel;
-	event?: Event
+	event?: Event;
 } => {
 	switch (input.msg.t) {
 		case "user-clicked-hint-button": {
-			const flow= deriveFlow(input);
+			const flow = deriveFlow(input);
 
 			const nextHintGroupId = toNextHintGroupId(flow);
 
@@ -97,13 +99,15 @@ const next = <T,>(iter: Iterable<T>): T | null => {
 	return null;
 };
 
-
-export const deriveFlow = (input: {model: Model, flow: FlowVariant.Model}): FlowVariant.Model => {
+export const deriveFlow = (input: {
+	model: Model;
+	flow: FlowVariant.Model;
+}): FlowVariant.Model => {
 	return {
 		...input.flow,
 		pipesBySourceId: input.model.pipesBySourceId,
 	};
-}
+};
 export const ViewBottomButtonBarAction = (input: {
 	model: Model;
 	dispatch: (msg: Msg) => void;
