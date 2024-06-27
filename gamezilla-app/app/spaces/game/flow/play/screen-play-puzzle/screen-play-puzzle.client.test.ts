@@ -274,7 +274,7 @@ describe(import.meta.file, () => {
 		const btn = r.getByRole("button", f.ctx.t("game.hint"));
 		btn?.click();
 		const msg = await r.msgs.once();
-		expect(msg.t).toBe("user-clicked-hint-button");
+		expect(msg.t).toBe("got-puzzle-screen-flow-play-msg");
 	});
 
 	test("hint button sound", async () => {

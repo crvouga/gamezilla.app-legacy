@@ -66,4 +66,32 @@ describe(import.meta.file, () => {
 		});
 		expect(Flow.isSolved(flow)).toBe(true);
 	});
+
+	test("output use hint event", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				["A", "B"],
+				[" ", " "],
+				["A", "B"],
+			]),
+		});
+		const output = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
+		expect(output.event?.t).toBe("used-hint");
+	});
+
+	test("output solved event", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				["A", "B", "C"],
+				[" ", " ", " "],
+				["A", "B", "C"],
+			]),
+		});
+		const output = f.update(f.init, [
+			{ t: "user-clicked-hint-button" },
+			{ t: "user-clicked-hint-button" },
+			{ t: "user-clicked-hint-button" },
+		]);
+		expect(output.event?.t).toBe("solved");
+	});
 });

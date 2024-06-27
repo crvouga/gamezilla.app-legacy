@@ -20,9 +20,13 @@ export const init: Model = {
 	hints: {},
 };
 
-export type Event = {
-	t: "solved";
-};
+export type Event =
+	| {
+			t: "solved";
+	  }
+	| {
+			t: "used-hint";
+	  };
 
 export const update = <
 	TModel extends Model,
@@ -65,8 +69,23 @@ export const update = <
 					[nextHintGroupId]: nextHintGroupId,
 				},
 			};
+
+			const flowNew = deriveFlow({ flow, model: modelNew });
+
+			if (Flow.isSolved(flowNew)) {
+				return {
+					model: modelNew,
+					event: {
+						t: "solved",
+					},
+				};
+			}
+
 			return {
 				model: modelNew,
+				event: {
+					t: "used-hint",
+				},
 			};
 		}
 		default: {

@@ -1,6 +1,5 @@
-import { describe, expect, it, test } from "bun:test";
-import { Flow, type FlowVariant, FlowVariantPlay } from "../../@/flow";
-import { FlowGridShorthand } from "../../@/flow/flow-variant/flow-grid";
+import { describe, expect, it } from "bun:test";
+import { Flow, FlowVariantPlay, type FlowVariant } from "../../@/flow";
 import { ScreenPuzzleCoreFixture } from "./@/testing.core";
 import { ScreenPuzzleCore } from "./screen-play-puzzle.core";
 import type { ModelCore, MsgCore } from "./screen-play-puzzle.types";
@@ -217,35 +216,35 @@ describe(import.meta.file, () => {
 		expect(before.flowPlay).toEqual(FlowVariantPlay.init(f.puzzle));
 	});
 
-	it("should show hint after clicking show hint button", async () => {
-		const f = await Fixture();
+	// it("should show hint after clicking show hint button", async () => {
+	// 	const f = await Fixture();
 
-		const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
-		expect(ScreenPuzzleCore.isAnyShowingHint(after)).toBe(true);
-	});
+	// 	const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
+	// 	expect(ScreenPuzzleCore.isAnyShowingHint(after)).toBe(true);
+	// });
 
-	test("hint", async () => {
-		const f = await Fixture();
-		const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
-		const flow = ScreenPuzzleCore.deriveFlow(after);
-		for (const groupId of ScreenPuzzleCore.toShowingHintGroupIds(after)) {
-			expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true);
-		}
-	});
+	// test("hint", async () => {
+	// 	const f = await Fixture();
+	// 	const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
+	// 	const flow = ScreenPuzzleCore.deriveFlow(after);
+	// 	for (const groupId of ScreenPuzzleCore.toShowingHintGroupIds(after)) {
+	// 		expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true);
+	// 	}
+	// });
 
-	test("hint multiple terminals", async () => {
-		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
-				["A", "B"],
-				[" ", " "],
-				["A", "B"],
-			]),
-		});
-		const output = f.update(f.init, [
-			{ t: "user-clicked-hint-button" },
-			{ t: "user-clicked-hint-button" },
-		]);
-		const flow = ScreenPuzzleCore.deriveFlow(output);
-		expect(Flow.isSolved(flow)).toBe(true);
-	});
+	// test("hint multiple terminals", async () => {
+	// 	const f = await Fixture({
+	// 		flow: FlowGridShorthand.toGrid([
+	// 			["A", "B"],
+	// 			[" ", " "],
+	// 			["A", "B"],
+	// 		]),
+	// 	});
+	// 	const output = f.update(f.init, [
+	// 		{ t: "user-clicked-hint-button" },
+	// 		{ t: "user-clicked-hint-button" },
+	// 	]);
+	// 	const flow = ScreenPuzzleCore.deriveFlow(output);
+	// 	expect(Flow.isSolved(flow)).toBe(true);
+	// });
 });

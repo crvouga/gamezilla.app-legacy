@@ -226,7 +226,7 @@ const View: ClientModule["View"] = (input) => {
 							input.dispatch({ t: "user-clicked-exit-puzzle-button" })
 						}
 					/>
-					{false && (
+					{true && (
 						<FlowVariantPlay.ViewHintAction
 							ctx={input.ctx}
 							model={flowPlay}
@@ -238,14 +238,16 @@ const View: ClientModule["View"] = (input) => {
 							}
 						/>
 					)}
-					<ViewBottomButtonBarActionHint
-						ctx={input.ctx}
-						onClick={() =>
-							input.dispatch({
-								t: "user-clicked-hint-button",
-							})
-						}
-					/>
+					{false && (
+						<ViewBottomButtonBarActionHint
+							ctx={input.ctx}
+							onClick={() =>
+								input.dispatch({
+									t: "user-clicked-hint-button",
+								})
+							}
+						/>
+					)}
 					<ViewBottomButtonBarActionReset
 						ctx={input.ctx}
 						onClick={() =>

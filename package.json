@@ -23,7 +23,7 @@
     "client:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla-app/main.client.tsx",
     "server:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla-app/main.server.ts",
     "preview": "bun client:build && bun client:serve",
-    "client": "vite --open",
+    "client": "vite",
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
     "check-imports": "bun scripts/check-imports.ts",

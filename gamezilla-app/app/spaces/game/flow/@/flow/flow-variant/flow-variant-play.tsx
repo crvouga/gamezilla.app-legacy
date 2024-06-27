@@ -199,6 +199,7 @@ export const Msg = p.or(
 export type Msg = p.Infer<typeof Msg>;
 
 export type Event =
+	| FlowHint.Event
 	| {
 			t: "started-dragging";
 	  }
@@ -223,6 +224,10 @@ export const eventToSoundSrc = (event: Event): string => {
 
 		case "started-dragging": {
 			return APP_SOUND.tap;
+		}
+
+		case "used-hint": {
+			return APP_SOUND.navForwardMin;
 		}
 	}
 };
