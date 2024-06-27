@@ -369,13 +369,13 @@ export const mergeOne = ({
 	model: Model;
 	space: Space.Model;
 }): Model => {
-	const spaceState = Space.toSpaceStarted(space);
+	const spaceId = Space.toSpaceId(space);
 
-	if (!spaceState) {
+	if (!spaceId) {
 		return model;
 	}
 
-	const currentSpace = model.spaces[spaceState.spaceId];
+	const currentSpace = model.spaces[spaceId];
 
 	if (!currentSpace) {
 		const spaceIdByUserIdNew = updateSpaceIdByUserIdFromSpaceState(
@@ -387,7 +387,7 @@ export const mergeOne = ({
 			...model,
 			spaces: {
 				...model.spaces,
-				[spaceState.spaceId]: space,
+				[spaceId]: space,
 			},
 			spaceIdByUserId: spaceIdByUserIdNew,
 		};
@@ -404,7 +404,7 @@ export const mergeOne = ({
 		...model,
 		spaces: {
 			...model.spaces,
-			[spaceState.spaceId]: spaceNew,
+			[spaceId]: spaceNew,
 		},
 		spaceIdByUserId: spaceIdByUserIdNew,
 	};

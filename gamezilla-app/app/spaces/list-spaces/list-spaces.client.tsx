@@ -37,7 +37,7 @@ const sendListSpacesRequest: SpaceClientModule["update"] = ({ model, ctx }) => {
 //
 
 const init: SpaceClientModule["init"] = ({ model, ctx }) => {
-	if (ctx.currentRoute.t === "space-list") {
+	if (ctx.currentRoute.t === 'space-list') {
 		return sendListSpacesRequest({ model, ctx });
 	}
 	return {
@@ -48,7 +48,7 @@ const init: SpaceClientModule["init"] = ({ model, ctx }) => {
 //
 //
 //
-// Update
+//
 //
 //
 //
