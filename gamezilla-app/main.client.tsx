@@ -26,8 +26,6 @@ const main = async () => {
 
 	const render = await Render(VDOM_IMPL, root);
 
-	await deps.transport.start();
-
 	await Program.run({
 		ctx: AppClient.ctx,
 
@@ -43,6 +41,8 @@ const main = async () => {
 
 		debugger: DebuggerReduxDevTools,
 	});
+
+	await deps.transport.start();
 
 	console.log({ IS_PROD, TRANSPORT_IMPL, VDOM_IMPL });
 };
