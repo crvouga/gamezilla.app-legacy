@@ -18,7 +18,7 @@ import {
 	ViewBottomButtonBarActionReset,
 } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
-import { Flow, FlowVariantPlay } from "../../@/flow";
+import { FlowVariantPlay } from "../../@/flow";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import type { ClientModule } from "../play.types";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
@@ -132,11 +132,7 @@ const View: ClientModule["View"] = (input) => {
 	}
 	const flowPuzzle = input.modelCore.screen.flowPuzzle;
 	const flowPlay = input.modelCore.screen.flowPlay;
-	const flow = FlowVariantPlay.deriveFlow({
-		flow: flowPuzzle.flow,
-		model: flowPlay,
-	});
-	const isSolved = Flow.isSolved(flow);
+	const isSolved = input.modelCore.screen.state.t === 'solved'
 	const puzzleIndex = input.modelCore.screen.puzzleIndex;
 
 	const prevPuzzleIndex = puzzleIndex - 1;
