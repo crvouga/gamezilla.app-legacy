@@ -132,7 +132,7 @@ const View: ClientModule["View"] = (input) => {
 	}
 	const flowPuzzle = input.modelCore.screen.flowPuzzle;
 	const flowPlay = input.modelCore.screen.flowPlay;
-	const isSolved = input.modelCore.screen.state.t === 'solved'
+	const isSolved = input.modelCore.screen.state.t === "solved";
 	const puzzleIndex = input.modelCore.screen.puzzleIndex;
 
 	const prevPuzzleIndex = puzzleIndex - 1;

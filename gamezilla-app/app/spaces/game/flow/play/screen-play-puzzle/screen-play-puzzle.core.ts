@@ -62,7 +62,6 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		}
 		case "user-closed-puzzle-complete-dialog": {
 			if (
-				modelCore.t === "screen-play-puzzle" &&
 				modelCore.state.t === "solved" &&
 				modelCore.opened === "puzzle-complete"
 			) {
@@ -85,6 +84,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.nextPuzzle,
 				puzzleIndex: msgCore.nextPuzzleIndex,
+				state: modelCore.state.t === 'solved' ? { t: 'solving' } : modelCore.state,
 			};
 		}
 
@@ -98,6 +98,8 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.prevPuzzle,
 				puzzleIndex: msgCore.prevPuzzleIndex,
+				state: modelCore.state.t === 'solved' ? { t: 'solving' } : modelCore.state,
+
 			};
 		}
 

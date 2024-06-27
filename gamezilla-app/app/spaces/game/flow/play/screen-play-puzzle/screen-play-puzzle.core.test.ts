@@ -216,35 +216,29 @@ describe(import.meta.file, () => {
 		expect(before.flowPlay).toEqual(FlowVariantPlay.init(f.puzzle));
 	});
 
-	// it("should show hint after clicking show hint button", async () => {
-	// 	const f = await Fixture();
+	it("should be in a solving state after going to the next puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.init, [
+			...f.completePuzzleMsgs,
+			{
+				t: "user-clicked-next-puzzle-button",
+				nextPuzzle: f.nextPuzzle,
+				nextPuzzleIndex: f.nextPuzzleIndex,
+			},
+		]);
+		expect(output.state.t).toBe("solving");
+	});
 
-	// 	const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
-	// 	expect(ScreenPuzzleCore.isAnyShowingHint(after)).toBe(true);
-	// });
-
-	// test("hint", async () => {
-	// 	const f = await Fixture();
-	// 	const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
-	// 	const flow = ScreenPuzzleCore.deriveFlow(after);
-	// 	for (const groupId of ScreenPuzzleCore.toShowingHintGroupIds(after)) {
-	// 		expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true);
-	// 	}
-	// });
-
-	// test("hint multiple terminals", async () => {
-	// 	const f = await Fixture({
-	// 		flow: FlowGridShorthand.toGrid([
-	// 			["A", "B"],
-	// 			[" ", " "],
-	// 			["A", "B"],
-	// 		]),
-	// 	});
-	// 	const output = f.update(f.init, [
-	// 		{ t: "user-clicked-hint-button" },
-	// 		{ t: "user-clicked-hint-button" },
-	// 	]);
-	// 	const flow = ScreenPuzzleCore.deriveFlow(output);
-	// 	expect(Flow.isSolved(flow)).toBe(true);
-	// });
+	it("should be in a solving state after going to the prev puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.init, [
+			...f.completePuzzleMsgs,
+			{
+				t: "user-clicked-prev-puzzle-button",
+				prevPuzzle: f.prevPuzzle,
+				prevPuzzleIndex: f.prevPuzzleIndex,
+			},
+		]);
+		expect(output.state.t).toBe("solving");
+	});
 });
