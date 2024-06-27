@@ -109,7 +109,7 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 					props.model,
 					terminal.groupId,
 				);
-				const shouldShowUsedHint = isConnectedWithPipes&& didUseHint;
+				const shouldShowUsedHint = isConnectedWithPipes && didUseHint;
 
 				return (
 					<g key={terminal.groupId} id={terminal.groupId}>
@@ -146,14 +146,7 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 						/>
 
 						{shouldShowUsedHint && (
-							<WithPadding
-								x={terminal.start.x - 0.5}
-								y={terminal.start.y - 0.5}
-								width={1}
-								height={1}
-								padding={0.25}
-								render={(props) => <IconCheckmark {...props} />}
-							/>
+							<HintCheckmark x={terminal.start.x} y={terminal.start.y} />
 						)}
 
 						{terminal.end && (
@@ -165,14 +158,7 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 									fill={groupColor}
 								/>
 								{shouldShowUsedHint && (
-									<WithPadding
-										x={terminal.end.x - 0.5}
-										y={terminal.end.y - 0.5}
-										width={1}
-										height={1}
-										padding={0.25}
-										render={(props) => <IconCheckmark {...props} />}
-									/>
+									<HintCheckmark x={terminal.end.x} y={terminal.end.y} />
 								)}
 							</>
 						)}
@@ -180,6 +166,19 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 				);
 			})}
 		</g>
+	);
+};
+
+const HintCheckmark = (input: { x: number; y: number }) => {
+	return (
+		<WithPadding
+			x={input.x - 0.5}
+			y={input.y - 0.5}
+			width={1}
+			height={1}
+			padding={0.25}
+			render={(props) => <IconCheckmark {...props} />}
+		/>
 	);
 };
 
