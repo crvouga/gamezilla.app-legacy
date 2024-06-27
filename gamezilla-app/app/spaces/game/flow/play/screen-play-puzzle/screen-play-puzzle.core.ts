@@ -105,7 +105,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 
 		case "user-clicked-reset-puzzle-button": {
 			return {
-				...modelCore,
+				...modelCore,				
 				flowPlay: FlowVariantPlay.init({
 					flow: modelCore.flowPuzzle.flow,
 				}),
