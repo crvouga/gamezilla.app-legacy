@@ -55,8 +55,9 @@
 		"noEmit": true,
 		"allowImportingTsExtensions": true,
 		"moduleDetection": "force",
-		"types": ["bun-types", "vite/client", "inferno", "preact", "react"],
+		"types": ["bun-types", "vite/client", "inferno", "preact", "react", "vue"],
 		"jsx": "preserve",
+		"jsxImportSource": "vue",
 
 		"allowJs": false,
 		//
