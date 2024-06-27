@@ -103,27 +103,20 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 		socket.on(
 			"to-server",
 			(msg: MsgClientToMsgServer<MsgToServer>, acknowledge: () => void) => {
-				switch (msg.v) {
-					case codebaseVersionId: {
-						transport.toServer.pub({
-							msgs: msg.m,
-							clientId: clientId,
-							sessionId: sessionId,
-						});
-						break;
-					}
-					default: {
-						transport.wire.pub({
-							t: "got-bad-msgs",
-							clientId,
-							msgs: msg.m,
-							reason: "codebase-version-id-mismatch",
-							sessionId,
-						});
-						break;
-					}
+				if (msg.v !== codebaseVersionId) {
+					transport.wire.pub({
+						t: "got-bad-msgs",
+						clientId,
+						msgs: msg.m,
+						reason: "codebase-version-id-mismatch",
+						sessionId,
+					});
 				}
-
+				transport.toServer.pub({
+					msgs: msg.m,
+					clientId: clientId,
+					sessionId: sessionId,
+				});
 				acknowledge();
 			},
 		);

@@ -142,7 +142,6 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 					t: "got-bad-msgs",
 					reason: "codebase-version-mismatch",
 				});
-				return;
 			}
 			transport.toClient.pub(msg.m);
 		};

@@ -147,26 +147,21 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 				message.toString(),
 			) as MsgClientToMsgServer<MsgToServer>; // leap of faith
 
-			switch (msg.v) {
-				case codebaseVersionId: {
-					transport.toServer.pub({
-						clientId: ws.data.clientId,
-						sessionId: ws.data.sessionId,
-						msgs: msg.m,
-					});
-					break;
-				}
-				default: {
-					transport.wire.pub({
-						t: "got-bad-msgs",
-						reason: "codebase-version-id-mismatch",
-						clientId: ws.data.clientId,
-						sessionId: ws.data.sessionId,
-						msgs: msg.m,
-					});
-					break;
-				}
+			if (msg.v !== codebaseVersionId) {
+				transport.wire.pub({
+					t: "got-bad-msgs",
+					reason: "codebase-version-id-mismatch",
+					clientId: ws.data.clientId,
+					sessionId: ws.data.sessionId,
+					msgs: msg.m,
+				});
 			}
+
+			transport.toServer.pub({
+				clientId: ws.data.clientId,
+				sessionId: ws.data.sessionId,
+				msgs: msg.m,
+			});
 		},
 	};
 
