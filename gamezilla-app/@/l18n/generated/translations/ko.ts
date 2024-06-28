@@ -73,6 +73,7 @@ export const translations: Text = {
 	"app.congratulations": "축하합니다",
 	"app.reset": "재설정",
 	"app.more": "더",
+	"app.copied-to-clipboard": "클립 보드에 복사됨",
 	en: "영어",
 	es: "스페인어",
 	ar: "아랍어",

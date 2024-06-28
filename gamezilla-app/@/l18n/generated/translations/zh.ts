@@ -72,6 +72,7 @@ export const translations: Text = {
 	"app.congratulations": "祝贺",
 	"app.reset": "重启",
 	"app.more": "更多",
+	"app.copied-to-clipboard": "已复制到剪贴板",
 	en: "英语",
 	es: "西班牙语",
 	ar: "阿拉伯语",

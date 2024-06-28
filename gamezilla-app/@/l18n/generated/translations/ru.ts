@@ -75,6 +75,7 @@ export const translations: Text = {
 	"app.congratulations": "Поздравляем",
 	"app.reset": "Сброс",
 	"app.more": "Больше",
+	"app.copied-to-clipboard": "Скопировано в буфер обмена",
 	en: "Английский",
 	es: "Испанский",
 	ar: "Арабский",

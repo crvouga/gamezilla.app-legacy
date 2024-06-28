@@ -73,6 +73,7 @@ export const translations: Text = {
 	"app.congratulations": "बधाई हो",
 	"app.reset": "रीसेट",
 	"app.more": "अधिक",
+	"app.copied-to-clipboard": "क्लिपबोर्ड पर कॉपी किया गया",
 	en: "अंग्रेज़ी",
 	es: "स्पेनिश",
 	ar: "अरबी",

@@ -71,6 +71,7 @@ export const translations: Text = {
 	"app.reset": "Réinitialiser",
 	"app.congratulations": "Félicitations",
 	"app.more": "Plus",
+	"app.copied-to-clipboard": "Copié dans le presse-papiers",
 	en: "Anglais",
 	es: "Espagnol",
 	ar: "Arabe",

@@ -1,18 +1,33 @@
 import {
 	APP_SOUND,
-	type ClientCtx,
+	copyToClipboard,
 	playSound,
+	showToast,
+	type ClientCtx,
 } from "gamezilla-app/app/@/client";
 import { IconCopy } from "gamezilla-app/app/@/ui";
 import type { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
+import { FlowVariantPlay } from "../../../@/flow";
 import type { ClientModule, MsgClient } from "../../play.types";
 
 export const update: ClientModule["update"] = (input) => {
 	switch (input.msgCore?.t) {
 		case "user-clicked-copy-to-clipboard": {
+			if (input.modelCore.screen.t !== 'screen-play-puzzle') {
+				return {model: input.model};
+			}
+			FlowVariantPlay.deriveFlow({
+				flow: input.modelCore.screen.flowPuzzle.flow,
+				model: input.modelCore.screen.flowPlay,
+			})
+			// const shorthand = FlowVariantPlay.toShorthand({flow});
 			return {
 				model: input.model,
-				msgCmd: [playSound(APP_SOUND.navForwardMin)],
+				msgCmd: [
+					playSound(APP_SOUND.navForwardMin),
+					showToast(input.ctx.t('app.copied-to-clipboard')),
+					copyToClipboard("Todo"),
+				],
 			};
 		}
 	}

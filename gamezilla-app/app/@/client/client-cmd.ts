@@ -147,6 +147,10 @@ export type PlatformCmd<Msg> = {
 		| {
 				t: "cancel-timeout";
 				timeoutId: string | number;
+		  }
+		| {
+				t: "copy-to-clipboard";
+				text: string;
 		  };
 };
 
@@ -183,6 +187,18 @@ export const cancelTimeout = <T extends ClientCmdTypes>(
 		},
 	};
 };
+
+export const copyToClipboard = <T extends ClientCmdTypes>(
+	text: string,
+): ClientCmd<T> => {
+	return {
+		t: "platform",
+		c: {
+			t: "copy-to-clipboard",
+			text,
+		},
+	};
+}
 
 //
 //
