@@ -23,6 +23,7 @@ const update: ClientModule["update"] = (input) => {
 		{ model: input.model },
 		(model) => updateFromMsgCore({ ...input, model }),
 		(model) => updateFromMsg({ ...input, model }),
+		(model) => CopyPuzzleClient.update({ ...input, model }),
 		(model) => LastPuzzleClient.update({ ...input, model }),
 	);
 };
@@ -92,8 +93,8 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
-			
-		case 'user-toggled-action-buttons-drawer': {
+
+		case "user-toggled-action-buttons-drawer": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.tap)],
@@ -176,9 +177,7 @@ const View: ClientModule["View"] = (input) => {
 					<FlowVariantPlay.View
 						key={flowPuzzle.id}
 						flow={flowPuzzle.flow}
-						dispatch={(c) =>
-							input.dispatch({ t: "flow-variant-play", c })
-						}
+						dispatch={(c) => input.dispatch({ t: "flow-variant-play", c })}
 						model={flowPlay}
 					/>
 
@@ -227,12 +226,11 @@ const View: ClientModule["View"] = (input) => {
 					onToggle={() =>
 						input.dispatch({ t: "user-toggled-action-buttons-drawer" })
 					}
-					open={input.modelCore.screen.opened === 'action-drawer'}
+					open={input.modelCore.screen.opened === "action-drawer"}
 					buttons={[
 						ButtionActions.exit({
 							...input,
-							onClick: () =>
-								input.dispatch({ t: "user-clicked-exit-puzzle" }),
+							onClick: () => input.dispatch({ t: "user-clicked-exit-puzzle" }),
 						}),
 
 						ButtionActions.prev({
@@ -273,16 +271,12 @@ const View: ClientModule["View"] = (input) => {
 										}),
 								}),
 
-							
-
 						ButtionActions.reset({
 							...input,
-							onClick: () =>
-								input.dispatch({ t: "user-clicked-reset-puzzle" }),
+							onClick: () => input.dispatch({ t: "user-clicked-reset-puzzle" }),
 						}),
 
 						CopyPuzzleClient.viewButtonAction(input),
-					
 					]}
 				/>
 			</div>

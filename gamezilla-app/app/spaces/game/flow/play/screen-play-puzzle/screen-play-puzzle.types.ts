@@ -2,8 +2,8 @@ import { p } from "gamezilla-app/@/core/parser";
 import { Flow, FlowVariantPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
-import { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
-import { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
+import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import { CopyPuzzleTypes } from "./copy-puzzle";
 
 export const MsgCore = p.or(
@@ -54,8 +54,6 @@ export const State = p.or(
 );
 export type State = p.Infer<typeof State>;
 
-
-
 export const ModelCore = p.obj({
 	t: p.l("screen-play-puzzle"),
 	flowPack: FlowPack,
@@ -69,9 +67,8 @@ export const ModelCore = p.obj({
 
 export type ModelCore = p.Infer<typeof ModelCore>;
 
-
 export type CoreModule = GameCoreModule<{
 	Ctx: SpaceCtx;
 	ModelCore: ModelCore;
 	MsgCore: MsgCore;
-}>
+}>;

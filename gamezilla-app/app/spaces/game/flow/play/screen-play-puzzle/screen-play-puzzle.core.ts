@@ -2,6 +2,7 @@ import { FlowVariantPlay } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule, MsgCore } from "../play.types";
+import { CopyPuzzleCore } from "./copy-puzzle";
 import { LastPuzzleCore } from "./last-puzzle/last-puzzle.core";
 import type { ModelCore } from "./screen-play-puzzle.types";
 
@@ -10,6 +11,7 @@ const updateCore: CoreModule["updateCore"] = (input) => {
 		updatePuzzleScreen,
 		updateCoreMain,
 		LastPuzzleCore.updateCore,
+		CopyPuzzleCore.updateCore,
 		//
 	].reduce(
 		(acc, update) => update({ ...input, modelCore: acc }),
@@ -115,12 +117,12 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 				},
 			};
 		}
-			
-		case 'user-toggled-action-buttons-drawer': {
+
+		case "user-toggled-action-buttons-drawer": {
 			return {
 				...modelCore,
 				opened: modelCore.opened === "action-drawer" ? null : "action-drawer",
-			}
+			};
 		}
 
 		default: {

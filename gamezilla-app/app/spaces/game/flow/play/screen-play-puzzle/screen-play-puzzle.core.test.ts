@@ -1,32 +1,13 @@
 import { describe, expect, it, test } from "bun:test";
 import { Flow, FlowVariantPlay, type FlowVariant } from "../../@/flow";
-import { ScreenPuzzleCoreFixture } from "./@/testing.core";
-import { ScreenPuzzleCore } from "./screen-play-puzzle.core";
-import type { ModelCore, MsgCore } from "./screen-play-puzzle.types";
+import { ScreenPuzzlePlayCoreChildFixture } from "./@/testing.core";
+import type { MsgCore } from "./screen-play-puzzle.types";
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
-	const f = await ScreenPuzzleCoreFixture(input);
-
-	const update = (init: ModelCore, msgs: MsgCore[]): ModelCore => {
-		let model: ModelCore = init;
-		for (const msg of msgs) {
-			model = ScreenPuzzleCore.updateScreen(model, msg);
-		}
-		return model;
-	};
-
-	const init: ModelCore = ScreenPuzzleCore.initCore({
-		flowPack: f.pack,
-		flowPuzzle: f.puzzle,
-		puzzleIndex: f.puzzleIndex,
-	});
+	const f = await ScreenPuzzlePlayCoreChildFixture(input);
 
 	return {
 		...f,
-		initParent: f.init,
-		updateParent: f.update,
-		update,
-		init,
 	};
 };
 
@@ -242,7 +223,7 @@ describe(import.meta.file, () => {
 		expect(output.state.t).toBe("solving");
 	});
 
-	test('open action drawer', async () => {
+	test("open action drawer", async () => {
 		const f = await Fixture();
 		const output = f.update(f.init, [
 			{
@@ -250,7 +231,7 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(output.opened).toBe("action-drawer");
-	})
+	});
 
 	test("close action drawer", async () => {
 		const f = await Fixture();
@@ -263,5 +244,5 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(output.opened).toBe(null);
-	})
+	});
 });

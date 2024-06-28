@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { ScreenPuzzleCoreFixture } from "../@/testing.core";
+import { ScreenPuzzlePlayCoreFixture } from "../@/testing.core";
 
 const Fixture = async () => {
-	const f = await ScreenPuzzleCoreFixture();
+	const f = await ScreenPuzzlePlayCoreFixture();
 
 	return {
 		...f,

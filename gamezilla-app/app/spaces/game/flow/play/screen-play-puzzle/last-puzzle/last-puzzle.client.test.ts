@@ -51,9 +51,7 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			output.msgCore?.some(
-				(m) => m.t === "user-clicked-select-next-pack",
-			),
+			output.msgCore?.some((m) => m.t === "user-clicked-select-next-pack"),
 		).toBe(true);
 	});
 

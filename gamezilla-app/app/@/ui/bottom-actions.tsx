@@ -36,15 +36,15 @@ const View = ({
 	ctx,
 	buttons,
 	open,
-    onToggle,
-    limit = 4,
+	onToggle,
+	limit = 4,
 }: {
 	id: string;
 	ctx: Ctx;
 	buttons: ButtonActionProps[];
 	open: boolean;
-        onToggle: () => void;
-    limit?: number;
+	onToggle: () => void;
+	limit?: number;
 }) => {
 	const firstButtons = buttons.slice(0, limit);
 	const lastButtons = buttons.slice(limit);
@@ -191,9 +191,7 @@ export const ViewBottomButtonBarActionReset = (
 	);
 };
 
-const reset = (
-	input: BottomBarButtonActionPrebuilt,
-): ButtonActionProps => ({
+const reset = (input: BottomBarButtonActionPrebuilt): ButtonActionProps => ({
 	...input,
 	icon: (props) => <IconArrowRotateLeft {...props} />,
 	label: input.ctx.t("app.reset"),

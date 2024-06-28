@@ -317,5 +317,5 @@ describe(import.meta.file, () => {
 			{ msgCore: withEventMeta({ t: "user-toggled-action-buttons-drawer" }) },
 		]);
 		expect(didPlaySound(output)).toBe(true);
-	})
+	});
 });

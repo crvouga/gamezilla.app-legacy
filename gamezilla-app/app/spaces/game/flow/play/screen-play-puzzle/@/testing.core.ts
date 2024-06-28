@@ -3,9 +3,10 @@ import { FlowVariantPlay, type FlowVariant } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import { CoreFixture } from "../../@/testing";
-import type { MsgCore } from "../screen-play-puzzle.types";
+import type { ModelCore, MsgCore } from "../screen-play-puzzle.types";
+import { ScreenPuzzleCore } from "../screen-play-puzzle.core";
 
-export const ScreenPuzzleCoreFixture = async (input?: {
+export const ScreenPuzzlePlayCoreFixture = async (input?: {
 	flow?: FlowVariant.Model;
 }) => {
 	const f = await CoreFixture();
@@ -33,8 +34,7 @@ export const ScreenPuzzleCoreFixture = async (input?: {
 
 	const completePuzzleMsgs = pipe(
 		FlowVariantPlay.toSolutionMsgs({ flow: puzzle.flow }),
-		(msgs) =>
-			msgs.map((c): MsgCore => ({ t: "flow-variant-play", c })),
+		(msgs) => msgs.map((c): MsgCore => ({ t: "flow-variant-play", c })),
 	);
 
 	return {
@@ -47,6 +47,34 @@ export const ScreenPuzzleCoreFixture = async (input?: {
 		prevPuzzle,
 		prevPuzzleIndex,
 		pack,
+		init,
+	};
+};
+
+export const ScreenPuzzlePlayCoreChildFixture = async (input?: {
+	flow?: FlowVariant.Model;
+}) => {
+	const f = await ScreenPuzzlePlayCoreFixture(input);
+
+	const update = (init: ModelCore, msgs: MsgCore[]): ModelCore => {
+		let model: ModelCore = init;
+		for (const msg of msgs) {
+			model = ScreenPuzzleCore.updateScreen(model, msg);
+		}
+		return model;
+	};
+
+	const init: ModelCore = ScreenPuzzleCore.initCore({
+		flowPack: f.pack,
+		flowPuzzle: f.puzzle,
+		puzzleIndex: f.puzzleIndex,
+	});
+
+	return {
+		...f,
+		initParent: f.init,
+		updateParent: f.update,
+		update,
 		init,
 	};
 };

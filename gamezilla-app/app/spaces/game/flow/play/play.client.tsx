@@ -2,10 +2,10 @@ import { Eff, Sub } from "gamezilla-app/@/core";
 import { Msg } from "gamezilla-app/@/core/msg";
 import {
 	GameClientModule,
-	IUpdate,
-	IUpdateLoop,
-	IView,
-	IViewFeedItem,
+	type IUpdate,
+	type IUpdateLoop,
+	type IView,
+	type IViewFeedItem,
 } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import { FlowVariantPlay } from "../@/flow";

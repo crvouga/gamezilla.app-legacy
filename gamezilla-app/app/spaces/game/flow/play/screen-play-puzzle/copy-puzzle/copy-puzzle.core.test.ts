@@ -1,13 +1,20 @@
-import { describe, test } from "bun:test";
-// import { ScreenPlayPuzzleClientFixture } from "../@/testing.client";
+import { describe, expect, test } from "bun:test";
+import { ScreenPuzzlePlayCoreChildFixture } from "../@/testing.core";
 
-// const Fixture = async () => {
-//     const f = ScreenPlayPuzzleClientFixture()
-//     return {
-//         ...f,
-//     }
-// }
+const Fixture = async () => {
+	const f = ScreenPuzzlePlayCoreChildFixture();
+	return {
+		...f,
+	};
+};
 
 describe(import.meta.file, () => {
-    test.todo("close action drawer", async () => {} )
-})
+	test.todo("close action drawer", async () => {
+		const f = await Fixture();
+		const output = f.update(f.init, [
+			{ t: "user-toggled-action-buttons-drawer" },
+			{ t: "user-clicked-copy-to-clipboard" },
+		]);
+		expect(output.opened).toBe(null);
+	});
+});
