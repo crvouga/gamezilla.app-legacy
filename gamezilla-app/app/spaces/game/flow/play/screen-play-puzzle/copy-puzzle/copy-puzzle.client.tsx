@@ -1,10 +1,10 @@
 import {
 	APP_SOUND,
-	playSound,
 	type ClientCtx,
+	playSound,
 } from "gamezilla-app/app/@/client";
 import { IconCopy } from "gamezilla-app/app/@/ui";
-import { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
+import type { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
 import type { ClientModule, MsgClient } from "../../play.types";
 
 export const update: ClientModule["update"] = (input) => {
