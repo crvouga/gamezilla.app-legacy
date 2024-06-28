@@ -21,6 +21,8 @@ export const ListItemButton = ({
 			type="button"
 			role="button"
 			onClick={onClick}
+			aria-label={label}
+			name={label}
 			className={cn(
 				className,
 				"flex w-full items-center p-4 text-lg font-bold",

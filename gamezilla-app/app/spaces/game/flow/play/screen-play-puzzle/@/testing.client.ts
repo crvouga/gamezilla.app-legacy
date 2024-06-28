@@ -13,13 +13,13 @@ const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
 	}).map(
 		(c): FixtureUpdateInput => ({
 			msgCore: withEventMeta({
-				t: "got-puzzle-screen-flow-play-msg",
+				t: "flow-variant-play",
 				c,
 			}),
 		}),
 	);
 
-export const ScreenPuzzleClientFixture = async () => {
+export const ScreenPlayPuzzleClientFixture = async () => {
 	const f = await FlowPlayClientFixture();
 	const puzzle = await FlowPuzzle.random();
 	const nextPuzzle = await FlowPuzzle.random();
@@ -68,7 +68,7 @@ export const ScreenPuzzleClientFixture = async () => {
 	const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
 		{
 			msgCore: withEventMeta({
-				t: "user-clicked-next-puzzle-button",
+				t: "user-clicked-next-puzzle",
 				nextPuzzleIndex: lastPuzzleIndex,
 				nextPuzzle: lastPuzzle,
 			}),

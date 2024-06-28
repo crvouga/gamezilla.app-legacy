@@ -11,7 +11,7 @@ export const Model = p.obj({
 export type Model = p.Infer<typeof Model>;
 
 export const Msg = p.obj({
-	t: p.l("user-clicked-hint-button"),
+	t: p.l("user-clicked-hint"),
 });
 export type Msg = p.Infer<typeof Msg>;
 
@@ -40,7 +40,7 @@ export const update = <
 	event?: Event;
 } => {
 	switch (input.msg.t) {
-		case "user-clicked-hint-button": {
+		case "user-clicked-hint": {
 			const flow = deriveFlow(input);
 
 			const nextHintGroupId = toNextHintGroupId(flow);
@@ -137,7 +137,7 @@ export const ViewBottomButtonBarAction = (input: {
 			ctx={input.ctx}
 			onClick={() =>
 				input.dispatch({
-					t: "user-clicked-hint-button",
+					t: "user-clicked-hint",
 				})
 			}
 		/>

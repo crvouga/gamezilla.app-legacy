@@ -38,7 +38,7 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 describe(import.meta.file, () => {
 	test("hint", async () => {
 		const f = await Fixture();
-		const after = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
+		const after = f.update(f.init, [{ t: "user-clicked-hint" }]);
 		const flow = FlowHint.deriveFlow({
 			flow: f.flow,
 			model: after.model,
@@ -57,8 +57,8 @@ describe(import.meta.file, () => {
 			]),
 		});
 		const output = f.update(f.init, [
-			{ t: "user-clicked-hint-button" },
-			{ t: "user-clicked-hint-button" },
+			{ t: "user-clicked-hint" },
+			{ t: "user-clicked-hint" },
 		]);
 		const flow = FlowHint.deriveFlow({
 			flow: f.flow,
@@ -75,7 +75,7 @@ describe(import.meta.file, () => {
 				["A", "B"],
 			]),
 		});
-		const output = f.update(f.init, [{ t: "user-clicked-hint-button" }]);
+		const output = f.update(f.init, [{ t: "user-clicked-hint" }]);
 		expect(output.event?.t).toBe("used-hint");
 	});
 
@@ -88,9 +88,9 @@ describe(import.meta.file, () => {
 			]),
 		});
 		const output = f.update(f.init, [
-			{ t: "user-clicked-hint-button" },
-			{ t: "user-clicked-hint-button" },
-			{ t: "user-clicked-hint-button" },
+			{ t: "user-clicked-hint" },
+			{ t: "user-clicked-hint" },
+			{ t: "user-clicked-hint" },
 		]);
 		expect(output.event?.t).toBe("solved");
 	});

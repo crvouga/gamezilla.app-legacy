@@ -15,7 +15,8 @@ import { FlowVariantPlay } from "../../@/flow";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import type { ClientModule } from "../play.types";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
-import { BottomBarActions } from "gamezilla-app/app/@/ui/bottom-actions";
+import { ButtionActions } from "gamezilla-app/app/@/ui/bottom-actions";
+import { CopyPuzzleClient } from "./copy-puzzle";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
@@ -50,35 +51,35 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 			};
 		}
 
-		case "user-clicked-reset-puzzle-button": {
+		case "user-clicked-reset-puzzle": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navTransitionLeft)],
 			};
 		}
 
-		case "user-clicked-exit-puzzle-button": {
+		case "user-clicked-exit-puzzle": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
 
-		case "user-clicked-next-puzzle-button": {
+		case "user-clicked-next-puzzle": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
 
-		case "user-clicked-prev-puzzle-button": {
+		case "user-clicked-prev-puzzle": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
 
-		case "user-clicked-hint-button": {
+		case "user-clicked-hint": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -91,8 +92,15 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
+			
+		case 'user-toggled-action-buttons-drawer': {
+			return {
+				model: input.model,
+				msgCmd: [playSound(APP_SOUND.tap)],
+			};
+		}
 
-		case "got-puzzle-screen-flow-play-msg": {
+		case "flow-variant-play": {
 			if (input.modelCore.screen.t !== "screen-play-puzzle") {
 				return { model: input.model };
 			}
@@ -169,7 +177,7 @@ const View: ClientModule["View"] = (input) => {
 						key={flowPuzzle.id}
 						flow={flowPuzzle.flow}
 						dispatch={(c) =>
-							input.dispatch({ t: "got-puzzle-screen-flow-play-msg", c })
+							input.dispatch({ t: "flow-variant-play", c })
 						}
 						model={flowPlay}
 					/>
@@ -202,7 +210,7 @@ const View: ClientModule["View"] = (input) => {
 										onClick={() =>
 											nextPuzzle &&
 											input.dispatch({
-												t: "user-clicked-next-puzzle-button",
+												t: "user-clicked-next-puzzle",
 												nextPuzzle,
 												nextPuzzleIndex,
 											})
@@ -213,28 +221,28 @@ const View: ClientModule["View"] = (input) => {
 						</Dialog>
 					)}
 				</div>
-				<BottomBarActions.View
+				<ButtionActions.View
 					id="screen-play-puzzle-bottom-bar"
 					ctx={input.ctx}
 					onToggle={() =>
-						input.dispatch({ t: "user-clicked-toggled-action-drawer-button" })
+						input.dispatch({ t: "user-toggled-action-buttons-drawer" })
 					}
 					open={input.modelCore.screen.opened === 'action-drawer'}
 					buttons={[
-						BottomBarActions.exit({
+						ButtionActions.exit({
 							...input,
 							onClick: () =>
-								input.dispatch({ t: "user-clicked-exit-puzzle-button" }),
+								input.dispatch({ t: "user-clicked-exit-puzzle" }),
 						}),
 
-						BottomBarActions.prev({
+						ButtionActions.prev({
 							...input,
 							hidden: true,
 							disabled: puzzleIndex === 0,
 							onClick: () =>
 								prevPuzzle
 									? input.dispatch({
-											t: "user-clicked-prev-puzzle-button",
+											t: "user-clicked-prev-puzzle",
 											prevPuzzle,
 											prevPuzzleIndex,
 										})
@@ -242,7 +250,7 @@ const View: ClientModule["View"] = (input) => {
 						}),
 
 						isSolved
-							? BottomBarActions.next({
+							? ButtionActions.next({
 									...input,
 									disabled:
 										puzzleIndex >=
@@ -250,26 +258,31 @@ const View: ClientModule["View"] = (input) => {
 									onClick: () =>
 										nextPuzzle
 											? input.dispatch({
-													t: "user-clicked-next-puzzle-button",
+													t: "user-clicked-next-puzzle",
 													nextPuzzle,
 													nextPuzzleIndex,
 												})
 											: null,
 								})
-							: BottomBarActions.hint({
+							: ButtionActions.hint({
 									...input,
 									onClick: () =>
 										input.dispatch({
-											t: "got-puzzle-screen-flow-play-msg",
-											c: { t: "user-clicked-hint-button" },
+											t: "flow-variant-play",
+											c: { t: "user-clicked-hint" },
 										}),
 								}),
 
-						BottomBarActions.reset({
+							
+
+						ButtionActions.reset({
 							...input,
 							onClick: () =>
-								input.dispatch({ t: "user-clicked-reset-puzzle-button" }),
+								input.dispatch({ t: "user-clicked-reset-puzzle" }),
 						}),
+
+						CopyPuzzleClient.viewButtonAction(input),
+					
 					]}
 				/>
 			</div>

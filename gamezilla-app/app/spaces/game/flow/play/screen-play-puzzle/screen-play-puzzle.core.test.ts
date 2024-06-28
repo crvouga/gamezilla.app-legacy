@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const after = f.updateParent(f.initParent, [
 			{
-				t: "user-clicked-exit-puzzle-button",
+				t: "user-clicked-exit-puzzle",
 			},
 		]);
 		expect(f.initParent.screen.t).toEqual("screen-play-puzzle");
@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
 			f.init,
 			FlowVariantPlay.randomMsgs(f.puzzle).map(
 				(c): MsgCore => ({
-					t: "got-puzzle-screen-flow-play-msg",
+					t: "flow-variant-play",
 					c,
 				}),
 			),
@@ -61,7 +61,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const after = f.update(f.init, [
 			{
-				t: "user-clicked-next-puzzle-button",
+				t: "user-clicked-next-puzzle",
 				nextPuzzle: f.nextPuzzle,
 				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
@@ -75,14 +75,14 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const before = f.update(f.init, [
 			{
-				t: "user-clicked-next-puzzle-button",
+				t: "user-clicked-next-puzzle",
 				nextPuzzle: f.nextPuzzle,
 				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
 		]);
 		const after = f.update(before, [
 			{
-				t: "user-clicked-prev-puzzle-button",
+				t: "user-clicked-prev-puzzle",
 				prevPuzzle: f.puzzle,
 				prevPuzzleIndex: f.puzzleIndex,
 			},
@@ -98,7 +98,7 @@ describe(import.meta.file, () => {
 			flow: f.puzzle.flow,
 		}).map(
 			(c): MsgCore => ({
-				t: "got-puzzle-screen-flow-play-msg",
+				t: "flow-variant-play",
 				c,
 			}),
 		);
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
 		const before = f.update(f.init, msgs);
 		const after = f.update(f.init, [
 			{
-				t: "user-clicked-next-puzzle-button",
+				t: "user-clicked-next-puzzle",
 				nextPuzzle: f.nextPuzzle,
 				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
@@ -158,7 +158,7 @@ describe(import.meta.file, () => {
 		const before = f.update(f.init, f.completePuzzleMsgs);
 		const after = f.update(before, [
 			{
-				t: "user-clicked-next-puzzle-button",
+				t: "user-clicked-next-puzzle",
 				nextPuzzle: f.nextPuzzle,
 				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
@@ -180,7 +180,7 @@ describe(import.meta.file, () => {
 		]);
 		const after = f.update(before, [
 			{
-				t: "got-puzzle-screen-flow-play-msg",
+				t: "flow-variant-play",
 				c: {
 					t: "pressed-up",
 					nodeId: endId,
@@ -196,7 +196,7 @@ describe(import.meta.file, () => {
 		const before = f.update(f.init, f.completePuzzleMsgs);
 		const after = f.update(before, [
 			{
-				t: "user-clicked-prev-puzzle-button",
+				t: "user-clicked-prev-puzzle",
 				prevPuzzle: f.prevPuzzle,
 				prevPuzzleIndex: f.prevPuzzleIndex,
 			},
@@ -210,7 +210,7 @@ describe(import.meta.file, () => {
 		const before = f.update(f.init, [
 			...f.completePuzzleMsgs,
 			{
-				t: "user-clicked-reset-puzzle-button",
+				t: "user-clicked-reset-puzzle",
 			},
 		]);
 		expect(before.flowPlay).toEqual(FlowVariantPlay.init(f.puzzle));
@@ -221,7 +221,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.init, [
 			...f.completePuzzleMsgs,
 			{
-				t: "user-clicked-next-puzzle-button",
+				t: "user-clicked-next-puzzle",
 				nextPuzzle: f.nextPuzzle,
 				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
@@ -234,7 +234,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.init, [
 			...f.completePuzzleMsgs,
 			{
-				t: "user-clicked-prev-puzzle-button",
+				t: "user-clicked-prev-puzzle",
 				prevPuzzle: f.prevPuzzle,
 				prevPuzzleIndex: f.prevPuzzleIndex,
 			},
@@ -246,7 +246,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const output = f.update(f.init, [
 			{
-				t: "user-clicked-toggled-action-drawer-button",
+				t: "user-toggled-action-buttons-drawer",
 			},
 		]);
 		expect(output.opened).toBe("action-drawer");
@@ -256,10 +256,10 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const output = f.update(f.init, [
 			{
-				t: "user-clicked-toggled-action-drawer-button",
+				t: "user-toggled-action-buttons-drawer",
 			},
 			{
-				t: "user-clicked-toggled-action-drawer-button",
+				t: "user-toggled-action-buttons-drawer",
 			},
 		]);
 		expect(output.opened).toBe(null);

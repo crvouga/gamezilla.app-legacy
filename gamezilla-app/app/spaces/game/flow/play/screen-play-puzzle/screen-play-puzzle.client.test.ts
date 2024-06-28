@@ -2,10 +2,10 @@ import { describe, expect, it, test } from "bun:test";
 import { didPlaySound } from "gamezilla-app/app/@/client";
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
 import { Flow } from "../../@/flow";
-import { ScreenPuzzleClientFixture } from "./@/testing.client";
+import { ScreenPlayPuzzleClientFixture } from "./@/testing.client";
 
 const Fixture = async () => {
-	const f = await ScreenPuzzleClientFixture();
+	const f = await ScreenPlayPuzzleClientFixture();
 	return {
 		...f,
 	};
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
 		const updated = f.update(f.initial, [
 			{
 				msgCore: withEventMeta({
-					t: "user-clicked-exit-puzzle-button",
+					t: "user-clicked-exit-puzzle",
 				}),
 			},
 		]);
@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
 		const updated = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-exit-puzzle-button",
+					t: "user-clicked-exit-puzzle",
 				},
 			},
 		]);
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
 		const nextButton = r.getByRole("button", f.ctx.t("app.next"));
 		nextButton?.click();
 		const msg = await r.msgs.once();
-		expect(msg.t).toBe("user-clicked-next-puzzle-button");
+		expect(msg.t).toBe("user-clicked-next-puzzle");
 	});
 
 	it("should render next puzzle after clicking next puzzle button", async () => {
@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
 		const updated = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-next-puzzle-button",
+					t: "user-clicked-next-puzzle",
 					nextPuzzle: f.nextPuzzle,
 					nextPuzzleIndex: f.nextPuzzleIndex,
 				},
@@ -89,7 +89,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msgCore: withEventMeta({
-					t: "user-clicked-next-puzzle-button",
+					t: "user-clicked-next-puzzle",
 					nextPuzzle: f.nextPuzzle,
 					nextPuzzleIndex: f.nextPuzzleIndex,
 				}),
@@ -110,7 +110,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msgCore: withEventMeta({
-					t: "user-clicked-prev-puzzle-button",
+					t: "user-clicked-prev-puzzle",
 					prevPuzzle: f.prevPuzzle,
 					prevPuzzleIndex: f.prevPuzzleIndex,
 				}),
@@ -124,7 +124,7 @@ describe(import.meta.file, () => {
 		const updated = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-prev-puzzle-button",
+					t: "user-clicked-prev-puzzle",
 					prevPuzzle: f.prevPuzzle,
 					prevPuzzleIndex: f.prevPuzzleIndex,
 				},
@@ -140,7 +140,7 @@ describe(import.meta.file, () => {
 		const prevButton = rendered.getByRole("button", f.ctx.t("app.prev"));
 		prevButton?.click();
 		const msg = await rendered.msgs.once();
-		expect(msg.t).toBe("user-clicked-prev-puzzle-button");
+		expect(msg.t).toBe("user-clicked-prev-puzzle");
 	});
 
 	it("should disable prev puzzle button when on first puzzle", async () => {
@@ -148,7 +148,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-prev-puzzle-button",
+					t: "user-clicked-prev-puzzle",
 					prevPuzzle: f.prevPuzzle,
 					prevPuzzleIndex: f.prevPuzzleIndex,
 				},
@@ -164,7 +164,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-next-puzzle-button",
+					t: "user-clicked-next-puzzle",
 					nextPuzzle: f.nextPuzzle,
 					nextPuzzleIndex: f.nextPuzzleIndex,
 				},
@@ -221,7 +221,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msgCore: withEventMeta({
-					t: "got-puzzle-screen-flow-play-msg",
+					t: "flow-variant-play",
 					c: {
 						t: "pressed-down",
 						nodeId: terminal.startId,
@@ -251,7 +251,7 @@ describe(import.meta.file, () => {
 		const btn = r.getByRole("button", f.ctx.t("app.reset"));
 		btn?.click();
 		const msg = await r.msgs.once();
-		expect(msg.t).toBe("user-clicked-reset-puzzle-button");
+		expect(msg.t).toBe("user-clicked-reset-puzzle");
 	});
 
 	test("reset button sound", async () => {
@@ -259,7 +259,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msgCore: withEventMeta({
-					t: "user-clicked-reset-puzzle-button",
+					t: "user-clicked-reset-puzzle",
 				}),
 			},
 		]);
@@ -279,7 +279,7 @@ describe(import.meta.file, () => {
 		const btn = r.getByRole("button", f.ctx.t("game.hint"));
 		btn?.click();
 		const msg = await r.msgs.once();
-		expect(msg.t).toBe("got-puzzle-screen-flow-play-msg");
+		expect(msg.t).toBe("flow-variant-play");
 	});
 
 	test("hint button sound", async () => {
@@ -287,7 +287,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msgCore: withEventMeta({
-					t: "user-clicked-hint-button",
+					t: "user-clicked-hint",
 				}),
 			},
 		]);
@@ -310,4 +310,12 @@ describe(import.meta.file, () => {
 		]);
 		expect(didPlaySound(output)).toBe(true);
 	});
+
+	test("toggle action drawer sound", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			{ msgCore: withEventMeta({ t: "user-toggled-action-buttons-drawer" }) },
+		]);
+		expect(didPlaySound(output)).toBe(true);
+	})
 });

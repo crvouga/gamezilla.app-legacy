@@ -34,7 +34,7 @@ const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 
 const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 	switch (msgCore.t) {
-		case "got-puzzle-screen-flow-play-msg": {
+		case "flow-variant-play": {
 			const flowPlayNew = FlowVariantPlay.update({
 				msg: msgCore.c,
 				model: modelCore.flowPlay,
@@ -74,7 +74,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			return modelCore;
 		}
 
-		case "user-clicked-next-puzzle-button": {
+		case "user-clicked-next-puzzle": {
 			return {
 				...modelCore,
 				flowPlay: FlowVariantPlay.init({
@@ -89,7 +89,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			};
 		}
 
-		case "user-clicked-prev-puzzle-button": {
+		case "user-clicked-prev-puzzle": {
 			return {
 				...modelCore,
 				flowPlay: FlowVariantPlay.init({
@@ -104,7 +104,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			};
 		}
 
-		case "user-clicked-reset-puzzle-button": {
+		case "user-clicked-reset-puzzle": {
 			return {
 				...modelCore,
 				flowPlay: FlowVariantPlay.init({
@@ -116,7 +116,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			};
 		}
 			
-		case 'user-clicked-toggled-action-drawer-button': {
+		case 'user-toggled-action-buttons-drawer': {
 			return {
 				...modelCore,
 				opened: modelCore.opened === "action-drawer" ? null : "action-drawer",
@@ -131,7 +131,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 
 const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
-		case "user-clicked-exit-puzzle-button": {
+		case "user-clicked-exit-puzzle": {
 			switch (modelCore.screen.t) {
 				case "screen-play-puzzle": {
 					return {

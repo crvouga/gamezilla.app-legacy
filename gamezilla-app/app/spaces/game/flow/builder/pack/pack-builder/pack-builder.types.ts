@@ -134,11 +134,11 @@ export const MsgCore = p.or(
 		c: FlowVariantPlay.Msg,
 	}),
 	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-exit-puzzle-button"),
+		t: p.l("pack-builder.puzzle-screen.user-clicked-exit-puzzle"),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-next-puzzle-button"),
+		t: p.l("pack-builder.puzzle-screen.user-clicked-next-puzzle"),
 		userId: UserId,
 		nextPuzzle: FlowPuzzle,
 	}),

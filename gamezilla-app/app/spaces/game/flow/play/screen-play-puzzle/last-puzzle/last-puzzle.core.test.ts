@@ -15,7 +15,7 @@ describe(import.meta.file, () => {
 		const before = f.update(f.init, f.completePuzzleMsgs);
 		const after = f.update(before, [
 			{
-				t: "user-clicked-select-next-pack-button",
+				t: "user-clicked-select-next-pack",
 			},
 		]);
 		expect(before.screen.t).toBe("screen-play-puzzle");

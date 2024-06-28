@@ -34,7 +34,7 @@ export const ScreenPuzzleCoreFixture = async (input?: {
 	const completePuzzleMsgs = pipe(
 		FlowVariantPlay.toSolutionMsgs({ flow: puzzle.flow }),
 		(msgs) =>
-			msgs.map((c): MsgCore => ({ t: "got-puzzle-screen-flow-play-msg", c })),
+			msgs.map((c): MsgCore => ({ t: "flow-variant-play", c })),
 	);
 
 	return {

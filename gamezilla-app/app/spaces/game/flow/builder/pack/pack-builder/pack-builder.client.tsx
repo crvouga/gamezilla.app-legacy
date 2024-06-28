@@ -362,7 +362,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 		const { model, msg } = input;
 
 		switch (msg?.t) {
-			case "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button": {
+			case "pack-builder.puzzle-screen.user-clicked-exit-puzzle": {
 				return {
 					model,
 					msgCore: [withId(msg)],
@@ -385,7 +385,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 				};
 			}
 
-			case "pack-builder.puzzle-screen.user-clicked-next-puzzle-button": {
+			case "pack-builder.puzzle-screen.user-clicked-next-puzzle": {
 				return {
 					model,
 					msgCore: [withId(msg)],
@@ -453,7 +453,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 						label="Exit"
 						onClick={() =>
 							input.dispatch({
-								t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
+								t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle",
 								userId: input.ctx.currentUserId,
 							})
 						}
@@ -481,7 +481,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 						onClick={() => {
 							if (nextPuzzle) {
 								input.dispatch({
-									t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
+									t: "pack-builder.puzzle-screen.user-clicked-next-puzzle",
 									userId: input.ctx.currentUserId,
 									nextPuzzle,
 								});

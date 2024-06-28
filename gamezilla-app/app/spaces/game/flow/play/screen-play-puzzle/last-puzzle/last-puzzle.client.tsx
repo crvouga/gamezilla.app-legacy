@@ -16,7 +16,7 @@ import type { ClientModule, MsgClient } from "../../play.types";
 const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
 		case "user-closed-puzzle-complete-dialog":
-		case "user-clicked-select-next-pack-button": {
+		case "user-clicked-select-next-pack": {
 			return {
 				model: input.model,
 				msgCore: [withId(input.msg)],
@@ -29,7 +29,7 @@ const update: ClientModule["update"] = (input) => {
 				model: input.model,
 			};
 		}
-		case "user-clicked-select-next-pack-button": {
+		case "user-clicked-select-next-pack": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -62,7 +62,7 @@ const View = (input: {
 					text={input.ctx.t("flow.select-next-pack")}
 					onClick={() =>
 						input.dispatch({
-							t: "user-clicked-select-next-pack-button",
+							t: "user-clicked-select-next-pack",
 						})
 					}
 				/>

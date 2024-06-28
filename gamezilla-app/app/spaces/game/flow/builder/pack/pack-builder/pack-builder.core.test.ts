@@ -90,7 +90,7 @@ describe(import.meta.file, () => {
 
 		const modelCore = f.updateModelCore([
 			{
-				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle",
 				userId: f.currentUserId,
 			},
 		]);
@@ -173,7 +173,7 @@ describe(import.meta.file, () => {
 				puzzleIndex: 0,
 			},
 			{
-				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle",
 				userId: f.currentUserId,
 				nextPuzzle: f.puzzles[1],
 			},
@@ -193,7 +193,7 @@ describe(import.meta.file, () => {
 				puzzleIndex: 0,
 			},
 			{
-				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle",
 				userId: f.currentUserId,
 				nextPuzzle: await FlowPuzzle.random({ createdBy: f.currentUserId }),
 			},
@@ -254,7 +254,7 @@ describe(import.meta.file, () => {
 				puzzleIndex: 1,
 			},
 			{
-				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle",
 				userId: f.currentUserId,
 			},
 		]);
@@ -317,7 +317,7 @@ describe(import.meta.file, () => {
 				puzzleIndex: f.puzzles.length - 1,
 			},
 			{
-				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle",
 				userId: f.currentUserId,
 			},
 		]);

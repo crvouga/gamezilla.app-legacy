@@ -157,7 +157,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
-		case "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button": {
+		case "pack-builder.puzzle-screen.user-clicked-exit-puzzle": {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -256,7 +256,7 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 
 	switch (msgCore.t) {
-		case "pack-builder.puzzle-screen.user-clicked-next-puzzle-button": {
+		case "pack-builder.puzzle-screen.user-clicked-next-puzzle": {
 			const indexOfNextPuzzle = modelCore.packBuilder.pack.puzzleIds.indexOf(
 				msgCore.nextPuzzle.id,
 			);

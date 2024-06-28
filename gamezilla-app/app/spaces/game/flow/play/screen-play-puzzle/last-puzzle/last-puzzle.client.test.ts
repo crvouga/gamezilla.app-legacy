@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { ScreenPuzzleClientFixture } from "../@/testing.client";
+import { ScreenPlayPuzzleClientFixture } from "../@/testing.client";
 import { didPlaySound } from "gamezilla-app/app/@/client";
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
 
 const Fixture = async () => {
-	const f = await ScreenPuzzleClientFixture();
+	const f = await ScreenPlayPuzzleClientFixture();
 	return {
 		...f,
 	};
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
 			?.getByRole("button", f.ctx.t("flow.select-next-pack"));
 		button?.click();
 		const msg = await rendered.msgs.once();
-		expect(msg.t).toBe("user-clicked-select-next-pack-button");
+		expect(msg.t).toBe("user-clicked-select-next-pack");
 	});
 
 	it("should output select next pack event", async () => {
@@ -46,13 +46,13 @@ describe(import.meta.file, () => {
 		const output = f.update(initial, [
 			{
 				msg: {
-					t: "user-clicked-select-next-pack-button",
+					t: "user-clicked-select-next-pack",
 				},
 			},
 		]);
 		expect(
 			output.msgCore?.some(
-				(m) => m.t === "user-clicked-select-next-pack-button",
+				(m) => m.t === "user-clicked-select-next-pack",
 			),
 		).toBe(true);
 	});
@@ -79,7 +79,7 @@ describe(import.meta.file, () => {
 		button?.click();
 		expect(button).toBeTruthy();
 		const msg = await r.msgs.once();
-		expect(msg.t).toBe("user-clicked-select-next-pack-button");
+		expect(msg.t).toBe("user-clicked-select-next-pack");
 	});
 
 	it("should play sound after clicking select next pack button", async () => {
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
 		const output = f.update(initial, [
 			{
 				msgCore: withEventMeta({
-					t: "user-clicked-select-next-pack-button",
+					t: "user-clicked-select-next-pack",
 				}),
 			},
 		]);

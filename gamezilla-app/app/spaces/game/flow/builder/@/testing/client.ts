@@ -218,7 +218,7 @@ export const clickedExitPuzzleButton =
 		return BuilderClient.update({
 			model,
 			msg: {
-				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle",
 				userId: ctx.currentUserId,
 			},
 			ctx,
