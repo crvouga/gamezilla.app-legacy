@@ -71,6 +71,7 @@ export const translations: Text = {
   "app.prev": "以前",
   "app.congratulations": "祝贺",
   "app.reset": "重启",
+  "app.more": "更多",
   en: "英语",
   es: "西班牙语",
   ar: "阿拉伯语",

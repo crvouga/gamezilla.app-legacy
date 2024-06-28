@@ -33,6 +33,9 @@ export const MsgCore = p.or(
 	p.obj({
 		t: p.l("user-clicked-hint-button"),
 	}),
+	p.obj({
+		t: p.l("user-clicked-toggled-action-drawer-button"),
+	}),
 );
 
 export type MsgCore = p.Infer<typeof MsgCore>;
@@ -54,7 +57,7 @@ export const ModelCore = p.obj({
 	flowPlay: FlowVariantPlay.Model,
 	puzzleIndex: p.num,
 	state: State,
-	opened: p.or(p.l("puzzle-complete"), p.l(null)),
+	opened: p.or(p.l("puzzle-complete"), p.l("action-drawer"), p.l(null)),
 	hints: p.partialDict(Flow.GroupId, Flow.GroupId),
 });
 

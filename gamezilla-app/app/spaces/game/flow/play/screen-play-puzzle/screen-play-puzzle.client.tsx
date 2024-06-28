@@ -10,18 +10,12 @@ import {
 } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import {
-	ViewBottomButtonBar,
-	ViewBottomButtonBarActionExit,
-	ViewBottomButtonBarActionNext,
-	ViewBottomButtonBarActionPrev,
-	ViewBottomButtonBarActionReset,
-} from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantPlay } from "../../@/flow";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import type { ClientModule } from "../play.types";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
+import { BottomBarActions } from "gamezilla-app/app/@/ui/bottom-actions";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
@@ -219,68 +213,65 @@ const View: ClientModule["View"] = (input) => {
 						</Dialog>
 					)}
 				</div>
-				<ViewBottomButtonBar>
-					<ViewBottomButtonBarActionExit
-						ctx={input.ctx}
-						onClick={() =>
-							input.dispatch({ t: "user-clicked-exit-puzzle-button" })
-						}
-					/>
-					{!isSolved && (
-						<FlowVariantPlay.ViewHintAction
-							ctx={input.ctx}
-							model={flowPlay}
-							dispatch={(c) =>
-								input.dispatch({
-									t: "got-puzzle-screen-flow-play-msg",
-									c,
-								})
-							}
-						/>
-					)}
-					{isSolved && (
-						<ViewBottomButtonBarActionNext
-							ctx={input.ctx}
-							disabled={
-								puzzleIndex >=
-								input.modelCore.screen.flowPack.puzzleIds.length - 1
-							}
-							onClick={() =>
-								nextPuzzle
-									? input.dispatch({
-											t: "user-clicked-next-puzzle-button",
-											nextPuzzle,
-											nextPuzzleIndex,
-										})
-									: null
-							}
-						/>
-					)}
-					<ViewBottomButtonBarActionReset
-						ctx={input.ctx}
-						onClick={() =>
-							input.dispatch({
-								t: "user-clicked-reset-puzzle-button",
-							})
-						}
-					/>
+				<BottomBarActions.View
+					id="screen-play-puzzle-bottom-bar"
+					ctx={input.ctx}
+					onToggle={() =>
+						input.dispatch({ t: "user-clicked-toggled-action-drawer-button" })
+					}
+					open={input.modelCore.screen.opened === 'action-drawer'}
+					buttons={[
+						BottomBarActions.exit({
+							...input,
+							onClick: () =>
+								input.dispatch({ t: "user-clicked-exit-puzzle-button" }),
+						}),
 
-					<div className="hidden">
-						<ViewBottomButtonBarActionPrev
-							ctx={input.ctx}
-							disabled={puzzleIndex <= 0}
-							onClick={() =>
+						BottomBarActions.prev({
+							...input,
+							hidden: true,
+							disabled: puzzleIndex === 0,
+							onClick: () =>
 								prevPuzzle
 									? input.dispatch({
 											t: "user-clicked-prev-puzzle-button",
 											prevPuzzle,
 											prevPuzzleIndex,
 										})
-									: null
-							}
-						/>
-					</div>
-				</ViewBottomButtonBar>
+									: null,
+						}),
+
+						isSolved
+							? BottomBarActions.next({
+									...input,
+									disabled:
+										puzzleIndex >=
+										input.modelCore.screen.flowPack.puzzleIds.length - 1,
+									onClick: () =>
+										nextPuzzle
+											? input.dispatch({
+													t: "user-clicked-next-puzzle-button",
+													nextPuzzle,
+													nextPuzzleIndex,
+												})
+											: null,
+								})
+							: BottomBarActions.hint({
+									...input,
+									onClick: () =>
+										input.dispatch({
+											t: "got-puzzle-screen-flow-play-msg",
+											c: { t: "user-clicked-hint-button" },
+										}),
+								}),
+
+						BottomBarActions.reset({
+							...input,
+							onClick: () =>
+								input.dispatch({ t: "user-clicked-reset-puzzle-button" }),
+						}),
+					]}
+				/>
 			</div>
 		</>
 	);

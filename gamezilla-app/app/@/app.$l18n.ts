@@ -7,6 +7,7 @@ export type Text = {
 	"app.prev": string;
 	"app.reset": string;
 	"app.congratulations": string;
+	"app.more": string;
 };
 
 export const translations: Translations<Text> = {
@@ -17,6 +18,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "Prev",
 		"app.reset": "Reset",
 		"app.congratulations": "Congratulations",
+		"app.more": "More",
 	},
 	ar: {
 		"app.something-went-wrong": "حدث خطأ ما",
@@ -25,6 +27,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "سابق",
 		"app.reset": "إعادة تعيين",
 		"app.congratulations": "تهانينا",
+		"app.more": "أكثر",
 	},
 	de: {
 		"app.something-went-wrong": "Etwas ist schief gelaufen",
@@ -33,6 +36,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "Vorheriger",
 		"app.reset": "Zurücksetzen",
 		"app.congratulations": "Herzlichen Glückwunsch",
+		"app.more": "Mehr",
 	},
 	es: {
 		"app.something-went-wrong": "Algo salió mal",
@@ -41,6 +45,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "Anterior",
 		"app.reset": "Reiniciar",
 		"app.congratulations": "Felicidades",
+		"app.more": "Más",
 	},
 	fr: {
 		"app.something-went-wrong": "Quelque chose s'est mal passé",
@@ -49,6 +54,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "Précédent",
 		"app.reset": "Réinitialiser",
 		"app.congratulations": "Félicitations",
+		"app.more": "Plus",
 	},
 	it: {
 		"app.something-went-wrong": "Qualcosa è andato storto",
@@ -57,6 +63,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "Precedente",
 		"app.congratulations": "Congratulazioni",
 		"app.reset": "Ripristina",
+		"app.more": "Di più",
 	},
 	ja: {
 		"app.something-went-wrong": "何かがうまくいかなかった",
@@ -65,6 +72,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "前",
 		"app.congratulations": "おめでとう",
 		"app.reset": "リセット",
+		"app.more": "もっと",
 	},
 	ko: {
 		"app.something-went-wrong": "문제가 발생했습니다",
@@ -73,6 +81,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "이전",
 		"app.congratulations": "축하합니다",
 		"app.reset": "재설정",
+		"app.more": "더",
 	},
 	pt: {
 		"app.something-went-wrong": "Algo deu errado",
@@ -81,6 +90,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "Anterior",
 		"app.congratulations": "Parabéns",
 		"app.reset": "Redefinir",
+		"app.more": "Mais",
 	},
 	ru: {
 		"app.something-went-wrong": "Что-то пошло не так",
@@ -89,6 +99,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "Предыдущий",
 		"app.congratulations": "Поздравляем",
 		"app.reset": "Сброс",
+		"app.more": "Больше",
 	},
 	zh: {
 		"app.something-went-wrong": "出了点问题",
@@ -97,6 +108,7 @@ export const translations: Translations<Text> = {
 		"app.prev": "以前",
 		"app.congratulations": "祝贺",
 		"app.reset": "重启",
+		"app.more": "更多",
 	},
 	hi: {
 		"app.something-went-wrong": "कुछ गलत हो गया",
@@ -105,5 +117,6 @@ export const translations: Translations<Text> = {
 		"app.prev": "पिछला",
 		"app.congratulations": "बधाई हो",
 		"app.reset": "रीसेट",
+		"app.more": "अधिक",
 	},
 };

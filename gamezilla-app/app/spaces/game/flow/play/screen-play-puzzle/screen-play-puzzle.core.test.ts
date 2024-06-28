@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, test } from "bun:test";
 import { Flow, FlowVariantPlay, type FlowVariant } from "../../@/flow";
 import { ScreenPuzzleCoreFixture } from "./@/testing.core";
 import { ScreenPuzzleCore } from "./screen-play-puzzle.core";
@@ -241,4 +241,27 @@ describe(import.meta.file, () => {
 		]);
 		expect(output.state.t).toBe("solving");
 	});
+
+	test('open action drawer', async () => {
+		const f = await Fixture();
+		const output = f.update(f.init, [
+			{
+				t: "user-clicked-toggled-action-drawer-button",
+			},
+		]);
+		expect(output.opened).toBe("action-drawer");
+	})
+
+	test("close action drawer", async () => {
+		const f = await Fixture();
+		const output = f.update(f.init, [
+			{
+				t: "user-clicked-toggled-action-drawer-button",
+			},
+			{
+				t: "user-clicked-toggled-action-drawer-button",
+			},
+		]);
+		expect(output.opened).toBe(null);
+	})
 });

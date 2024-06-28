@@ -115,6 +115,13 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 				},
 			};
 		}
+			
+		case 'user-clicked-toggled-action-drawer-button': {
+			return {
+				...modelCore,
+				opened: modelCore.opened === "action-drawer" ? null : "action-drawer",
+			}
+		}
 
 		default: {
 			return modelCore;

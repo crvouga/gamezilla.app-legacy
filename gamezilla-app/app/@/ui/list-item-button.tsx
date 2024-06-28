@@ -14,10 +14,12 @@ export const ListItemButton = ({
 	end?: () => VDom;
 	label: string;
 	onClick?: () => void;
-	color?: "default" | "danger" | "warning";
+	color?: "default" | "danger" | "warning" | "success" | "inherit";
 }) => {
 	return (
 		<button
+			type="button"
+			role="button"
 			onClick={onClick}
 			className={cn(
 				className,

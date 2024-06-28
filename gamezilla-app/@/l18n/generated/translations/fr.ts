@@ -70,6 +70,7 @@ export const translations: Text = {
   "app.prev": "Précédent",
   "app.reset": "Réinitialiser",
   "app.congratulations": "Félicitations",
+  "app.more": "Plus",
   en: "Anglais",
   es: "Espagnol",
   ar: "Arabe",

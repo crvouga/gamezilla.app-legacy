@@ -72,6 +72,7 @@ export const translations: Text = {
   "app.prev": "前",
   "app.congratulations": "おめでとう",
   "app.reset": "リセット",
+  "app.more": "もっと",
   en: "英語",
   es: "スペイン語",
   ar: "アラビア語",
