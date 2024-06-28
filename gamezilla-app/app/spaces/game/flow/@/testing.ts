@@ -1,5 +1,5 @@
 import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
-import { FlowClientCtx } from "./flow-ctx";
+import type { FlowClientCtx } from "./flow-ctx";
 
 export const FlowClientFixture = async () => {
 	const f = await SpaceClientFixture();

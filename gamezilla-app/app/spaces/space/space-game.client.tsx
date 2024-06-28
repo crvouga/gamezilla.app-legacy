@@ -1,5 +1,9 @@
 import { Eff, Sub } from "gamezilla-app/@/core";
-import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
+import {
+	APP_SOUND,
+	type ClientCtx,
+	playSound,
+} from "gamezilla-app/app/@/client";
 import { Button } from "gamezilla-app/app/@/ui";
 import { type WithEventId, withId } from "../@/event";
 import { SpaceClientCmd } from "../@/space-client-cmd";
@@ -137,7 +141,7 @@ const inputToSpaceId = (input: Parameters<SpaceClientModule["update"]>[0]) => {
 };
 
 const updateGame: SpaceClientModule["update"] = (input) => {
-	if (!input.ctx.currentUserId) {
+	if (!input.ctx.currentUserId || !input.ctx.currentUserRole) {
 		return { model: input.model };
 	}
 
@@ -166,6 +170,7 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 			...input.ctx,
 			space: spaceState,
 			currentUserId: input.ctx.currentUserId,
+			currentUserRole: input.ctx.currentUserRole,
 		},
 		model: modelGame,
 		msgCore:
@@ -223,15 +228,20 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
 	ctx,
 	model,
 }) => {
-	const { currentUserId } = ctx;
-
-	if (!currentUserId) {
+	if (!ctx.currentUserId || !ctx.currentUserRole) {
 		return Sub.None;
 	}
 
-	const clientCtx = { ...ctx, currentUserId };
+	const clientCtx: ClientCtx = {
+		...ctx,
+		currentUserId: ctx.currentUserId,
+		currentUserRole: ctx.currentUserRole,
+	};
 
-	const spaceId = SpacesCoreClient.toSpaceIdByUserId(model, currentUserId);
+	const spaceId = SpacesCoreClient.toSpaceIdByUserId(
+		model,
+		clientCtx.currentUserId,
+	);
 
 	if (!spaceId) {
 		return Sub.None;
@@ -279,11 +289,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
 const View: SpaceClientModule["View"] = (input) => {
 	const { model, ctx, dispatch } = input;
 
-	if (!ctx.space) {
-		return null;
-	}
-
-	if (!ctx.currentUserId) {
+	if (!ctx.space || !ctx.currentUserId || !ctx.currentUserRole) {
 		return null;
 	}
 
@@ -297,7 +303,12 @@ const View: SpaceClientModule["View"] = (input) => {
 		return (
 			<GameClient.View
 				modelCore={space.game}
-				ctx={{ ...ctx, space: space, currentUserId: ctx.currentUserId }}
+				ctx={{
+					...ctx,
+					space,
+					currentUserId: ctx.currentUserId,
+					currentUserRole: ctx.currentUserRole,
+				}}
 				dispatch={(c) => dispatch({ t: "game", spaceId: space.spaceId, c })}
 				model={model.games[ctx.space.spaceId] ?? GameClient.init(space.game.t)}
 			/>
@@ -308,12 +319,11 @@ const View: SpaceClientModule["View"] = (input) => {
 };
 
 const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
-	const { space, currentUserId } = ctx;
-	if (!space || !currentUserId) {
+	if (!ctx.space || !ctx.currentUserId || !ctx.currentUserRole) {
 		return null;
 	}
 
-	if (space.hostId !== ctx.currentUserId) {
+	if (ctx.space.hostId !== ctx.currentUserId) {
 		return (
 			<div className="flex h-full w-full flex-1 flex-col">
 				<ViewGameHeader />
@@ -325,8 +335,9 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
 						}
 						ctx={{
 							...ctx,
-							space,
-							currentUserId,
+							space: ctx.space,
+							currentUserId: ctx.currentUserId,
+							currentUserRole: ctx.currentUserRole,
 						}}
 					/>
 				</div>

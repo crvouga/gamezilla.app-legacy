@@ -34,6 +34,7 @@ export const Ctx = (): ClientCtx => {
 		now: Posix.now(),
 		profiles: {},
 		currentUserId: UserId.generate(),
+		currentUserRole: "normal",
 	};
 };
 
@@ -46,6 +47,7 @@ export const SoaceClientFixture = async () => {
 		now: Posix.now(),
 		profiles: {},
 		currentUserId: UserId.generate(),
+		currentUserRole: "normal",
 	};
 
 	type Msg =
@@ -155,6 +157,7 @@ export const SpaceClientFixture = async () => {
 		t: Translator("en"),
 		currentRoute: { n: "spaces", t: "space-list" },
 		currentUserId: currentUser.userId,
+		currentUserRole: "normal",
 		documentVisibilityState: "visible",
 		now: Posix.now(),
 		profiles: {

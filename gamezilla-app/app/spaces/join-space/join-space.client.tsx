@@ -108,7 +108,11 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 };
 
 const View: SpaceClientModule["View"] = (input) => {
-	if (!input.ctx.space || !input.ctx.currentUserId) {
+	if (
+		!input.ctx.space ||
+		!input.ctx.currentUserId ||
+		!input.ctx.currentUserRole
+	) {
 		return null;
 	}
 
@@ -141,6 +145,7 @@ const View: SpaceClientModule["View"] = (input) => {
 					ctx={{
 						...input.ctx,
 						currentUserId: input.ctx.currentUserId,
+						currentUserRole: input.ctx.currentUserRole,
 						space: input.ctx.space,
 					}}
 					onOpenUserDetails={(userId) =>

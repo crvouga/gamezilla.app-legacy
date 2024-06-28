@@ -1,4 +1,4 @@
-import type { UserId, Username } from "gamezilla-app/app/@/data";
+import type { UserId, UserRole, Username } from "gamezilla-app/app/@/data";
 import type { Posix } from "gamezilla-app/@/core";
 import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
@@ -16,6 +16,7 @@ export type BaseClientCtx = {
 	currentRoute: Route;
 	now: Posix;
 	currentUserId?: UserId | null;
+	currentUserRole?: UserRole;
 	profiles: { [userId: UserId]: Profile };
 	documentVisibilityState: DocumentVisibilityState;
 };
@@ -30,4 +31,5 @@ export const isAnonymous = (ctx: BaseClientCtx): ctx is AnonymousClientCtx => {
 
 export type ClientCtx = BaseClientCtx & {
 	currentUserId: UserId;
+	currentUserRole: UserRole;
 };

@@ -22,6 +22,7 @@ export async function testSpaceClientCtx(): Promise<SpaceClientCtx> {
 			spaceId: currentSpaceId,
 		},
 		currentUserId,
+		currentUserRole: "normal",
 		documentVisibilityState: "visible",
 		now: Posix.now(),
 		profiles: {

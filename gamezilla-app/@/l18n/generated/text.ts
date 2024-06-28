@@ -5,20 +5,22 @@ import type { Text as Text2 } from "../../../app/auth/auth-sms/auth-sms.$l18n";
 import type { Text as Text3 } from "../../../app/spaces/modals/modals.$l18n";
 import type { Text as Text4 } from "../../../app/spaces/game/@/game.$l18n";
 import type { Text as Text5 } from "../../../app/spaces/game/@/game/chips.$l18n";
-import type { Text as Text6 } from "../../../app/spaces/game/flow/@/flow.$l18n";
-import type { Text as Text7 } from "../../../app/spaces/@/spaces.$l18n";
-import type { Text as Text8 } from "../../../app/lang/lang.$l18n";
-import type { Text as Text9 } from "../../../app/@/app.$l18n";
-import type { Text as Text10 } from "../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n";
+import type { Text as Text6 } from "../../../app/spaces/game/flow/play/screen-play-puzzle/copy-puzzle/copy-puzzle.$l18n";
+import type { Text as Text7 } from "../../../app/spaces/game/flow/@/flow.$l18n";
+import type { Text as Text8 } from "../../../app/spaces/@/spaces.$l18n";
+import type { Text as Text9 } from "../../../app/lang/lang.$l18n";
+import type { Text as Text10 } from "../../../app/@/app.$l18n";
+import type { Text as Text11 } from "../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n";
 
 export type Text = Text0 &
-	Text1 &
-	Text2 &
-	Text3 &
-	Text4 &
-	Text5 &
-	Text6 &
-	Text7 &
-	Text8 &
-	Text9 &
-	Text10;
+  Text1 &
+  Text2 &
+  Text3 &
+  Text4 &
+  Text5 &
+  Text6 &
+  Text7 &
+  Text8 &
+  Text9 &
+  Text10 &
+  Text11;

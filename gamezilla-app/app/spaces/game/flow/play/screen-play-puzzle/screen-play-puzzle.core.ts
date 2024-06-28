@@ -84,7 +84,8 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.nextPuzzle,
 				puzzleIndex: msgCore.nextPuzzleIndex,
-				state: modelCore.state.t === 'solved' ? { t: 'solving' } : modelCore.state,
+				state:
+					modelCore.state.t === "solved" ? { t: "solving" } : modelCore.state,
 			};
 		}
 
@@ -98,14 +99,14 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.prevPuzzle,
 				puzzleIndex: msgCore.prevPuzzleIndex,
-				state: modelCore.state.t === 'solved' ? { t: 'solving' } : modelCore.state,
-
+				state:
+					modelCore.state.t === "solved" ? { t: "solving" } : modelCore.state,
 			};
 		}
 
 		case "user-clicked-reset-puzzle-button": {
 			return {
-				...modelCore,				
+				...modelCore,
 				flowPlay: FlowVariantPlay.init({
 					flow: modelCore.flowPuzzle.flow,
 				}),

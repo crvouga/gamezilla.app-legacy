@@ -95,13 +95,18 @@ const updateFromEvent: SpaceClientModule["update"] = ({ msgEvt, model }) => {
 };
 
 const View: SpaceClientModule["View"] = (props) => {
-	if (!props.ctx.space || !props.ctx.currentUserId) {
+	if (
+		!props.ctx.space ||
+		!props.ctx.currentUserId ||
+		!props.ctx.currentUserRole
+	) {
 		return null;
 	}
 
 	const spaceCtx: SpaceClientCtx = {
 		...props.ctx,
 		currentUserId: props.ctx.currentUserId,
+		currentUserRole: props.ctx.currentUserRole,
 		space: props.ctx.space,
 	};
 	return (

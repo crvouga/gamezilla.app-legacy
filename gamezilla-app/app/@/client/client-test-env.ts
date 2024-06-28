@@ -14,6 +14,7 @@ export const AppClientFixture = async (input?: { currentRoute?: Route }) => {
 			t: "login",
 		},
 		currentUserId,
+		currentUserRole: "normal",
 		documentVisibilityState: "visible",
 		navigatorLanguage: "en",
 		now: Posix.now(),
