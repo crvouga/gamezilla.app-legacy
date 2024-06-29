@@ -1,10 +1,17 @@
+import {
+	Err,
+	Ok,
+	TimeSpan,
+	UnitInterval,
+	type Result,
+} from "gamezilla-app/@/core";
 import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
+	BaseClientCtx,
+	playSound,
 	type ClientEvent,
 	type SoundCmd,
-	playSound,
-	BaseClientCtx,
 } from "gamezilla-app/app/@/client";
 import {
 	IconVolumeHigh,
@@ -12,13 +19,6 @@ import {
 	ListItemButton,
 	ToggleButton,
 } from "gamezilla-app/app/@/ui";
-import {
-	Err,
-	Ok,
-	type Result,
-	TimeSpan,
-	UnitInterval,
-} from "gamezilla-app/@/core";
 
 //
 //
@@ -164,7 +164,7 @@ export const updateFromCmd: Module["update"] = ({ model, msgCmd, ctx }) => {
 			return {
 				model,
 				eff: async (dispatch) => {
-					const preloaded = await preloadSounds(soundCmd.src);
+					const preloaded = await preloadSoundsEffect(soundCmd.src);
 					dispatch({
 						t: "preloaded-sounds",
 						src: soundCmd.src,
@@ -177,12 +177,10 @@ export const updateFromCmd: Module["update"] = ({ model, msgCmd, ctx }) => {
 			if (model.muted) {
 				return { model };
 			}
-			
-			if (ctx.documentVisibilityState === 'hidden') {
-				return {model}
-			}
 
-			
+			if (ctx.documentVisibilityState === "hidden") {
+				return { model };
+			}
 
 			return {
 				model,
@@ -194,8 +192,7 @@ export const updateFromCmd: Module["update"] = ({ model, msgCmd, ctx }) => {
 							setTimeout(r, TimeSpan.toMilliseconds(delay)),
 						);
 					}
-
-					const played = await playSoundEff(
+					const played = await playSoundEffect(
 						soundCmd.src,
 						soundCmd.volume ?? UnitInterval.init(1),
 					);
@@ -297,24 +294,24 @@ const getAudioContext = async () => {
 
 const audioBuffers = new Map<string, AudioBuffer>();
 
-async function preloadSounds(src: string[]) {
-	await Promise.allSettled(src.map((s) => preloadSound(s)));
+const preloadSoundsEffect = async (src: string[]) => {
+	await Promise.allSettled(src.map((s) => preloadSoundEffect(s)));
 	return Ok(null);
-}
+};
 
-async function preloadSound(src: string) {
+const preloadSoundEffect = async (src: string) => {
 	const response = await fetch(src);
 	const arrayBuffer = await response.arrayBuffer();
 	const audioContext = await getAudioContext();
 	const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 	audioBuffers.set(src, audioBuffer);
 	return Ok(null);
-}
+};
 
-async function playSoundEff(
+const playSoundEffect = async (
 	src: string,
 	volume: number,
-): Promise<Result<string, null>> {
+): Promise<Result<string, null>> => {
 	const audioBuffer = audioBuffers.get(src);
 
 	if (!audioBuffer) {
@@ -332,4 +329,4 @@ async function playSoundEff(
 	sourceNode.start(0);
 
 	return Ok(null);
-}
+};

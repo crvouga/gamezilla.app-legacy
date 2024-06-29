@@ -11,6 +11,13 @@ declare global {
 	var pgPoolClient: pg.PoolClient;
 }
 
+const connect = async (databaseUrl: string) => {
+	globalThis.pgPool ??= new pg.Pool({
+		connectionString: databaseUrl,
+	});
+	globalThis.pgPoolClient ??= await globalThis.pgPool.connect();
+};
+
 export const DbConnPostgres = async ({
 	databaseUrl,
 	logger,
@@ -18,11 +25,7 @@ export const DbConnPostgres = async ({
 	databaseUrl: string;
 	logger: ILogger;
 }): Promise<IDbConnSql> => {
-	globalThis.pgPool ??= new pg.Pool({
-		connectionString: databaseUrl,
-	});
-
-	globalThis.pgPoolClient ??= await globalThis.pgPool.connect();
+	await connect(databaseUrl);
 
 	return {
 		async query(rowParser, rawSql, params) {
@@ -30,7 +33,15 @@ export const DbConnPostgres = async ({
 			try {
 				const start = Date.now();
 
-				const queried = await pgPool.query(sql);
+				let queried: pg.QueryResult<any>;
+				try {
+					queried = await pgPool.query(sql);
+				} catch (error) {
+					logger.error(`Errored while querying\nerror=${error}\nsql=${rawSql}`);
+					logger.info("Reconnecting to database to retry query");
+					await connect(databaseUrl);
+					queried = await pgPool.query(sql);
+				}
 
 				const end = Date.now();
 

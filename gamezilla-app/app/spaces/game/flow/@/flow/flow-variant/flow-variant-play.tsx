@@ -263,7 +263,12 @@ export const update = ({
 const updateMain: typeof update = ({ model, flowPuzzle, msg }) => {
 	switch (model.status.t) {
 		case "dragging": {
-			return updateDragging({ flow: flowPuzzle.flow, msg, model, modelStatus: model.status });
+			return updateDragging({
+				flow: flowPuzzle.flow,
+				msg,
+				model,
+				modelStatus: model.status,
+			});
 		}
 
 		case "idle": {
