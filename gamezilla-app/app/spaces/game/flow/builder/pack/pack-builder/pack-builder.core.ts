@@ -225,7 +225,7 @@ updates.push(({ modelCore, msgCore }) => {
 			const screen = modelCore.packBuilder.screen;
 
 			const updated = FlowVariantPlay.update({
-				flow: screen.puzzle.flow,
+				flowPuzzle: screen.puzzle,
 				model: screen.playUI,
 				msg: msgCore.c,
 			});

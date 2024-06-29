@@ -1,10 +1,9 @@
-import { Eff } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import { ViewBottomButtonBarActionHint } from "gamezilla-app/app/spaces/game/@/game";
+import type { FlowPuzzle } from "../../flow-puzzle";
 import { Flow } from "../flow";
 import * as FlowVariant from "./flow-variant";
-import { FlowAlgoSolveAsync } from "./flow-variant-aglo/flow-algo-solve-async";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
@@ -42,29 +41,17 @@ export const update = <
 >(input: {
 	msg: Msg | TMsg;
 	model: TModel;
-	flow: FlowVariant.Model;
+	flowPuzzle: FlowPuzzle;
 }): {
 	model: TModel;
 	event?: Event;
-	eff?: Eff<Msg>;
 } => {
 	switch (input.msg.t) {
 		case "user-clicked-hint": {
-			const flow = deriveFlow(input);
-
-			return {
+			const flow = deriveFlow({
+				flow: input.flowPuzzle.flow,
 				model: input.model,
-				async eff(dispatch) {
-					dispatch({
-						t: "found-solution",
-						model: await FlowAlgoSolveAsync.solve(flow),
-					});
-				},
-			};
-		}
-
-		case "found-solution": {
-			const flow = deriveFlow(input);
+			});
 
 			const nextHintGroupId = toNextHintGroupId(flow);
 
@@ -72,15 +59,12 @@ export const update = <
 				return { model: input.model };
 			}
 
-			const solution =
-				input.msg.t === "found-solution"
-					? // @ts-ignore
-						input.msg.model
-					: null;
+			const solution = input.flowPuzzle.flowSolutions[0];
 
 			if (!solution) {
 				return { model: input.model };
 			}
+
 			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
 			const pipesBySourceId = Flow.pipelineToPipsBySourceId(flow, pipeline);
 

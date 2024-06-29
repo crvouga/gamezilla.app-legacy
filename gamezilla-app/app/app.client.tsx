@@ -7,6 +7,7 @@ import {
 	eq,
 	toMsgType,
 } from "gamezilla-app/@/core";
+import { Msg } from "gamezilla-app/@/core/msg";
 import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import type { VDom } from "gamezilla-app/@/vdom";
@@ -45,10 +46,6 @@ import {
 	type IClientTransport,
 } from "./wire/transport-client";
 import * as Wire from "./wire/wire.client";
-
-export type Model = ModelClient;
-
-export type Msg = MsgClient;
 
 //
 //
@@ -194,7 +191,7 @@ export const init = (input: {
 	});
 
 	const sound = Sound.init({
-		ctx: null,
+		ctx,
 		stored: input.deps.stored,
 	});
 
@@ -344,15 +341,7 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
 	return acc;
 };
 
-const updateChild = ({
-	ctx,
-	model,
-	msg,
-	msgServer,
-	msgEvt,
-	msgCmd,
-	deps,
-}: {
+const updateChild = (input: {
 	deps: Deps;
 	ctx: Ctx;
 	model: ModelClient;
@@ -361,84 +350,82 @@ const updateChild = ({
 	msgEvt?: ClientEvent;
 	msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 }): Output => {
-	const clientClient = toClientCtx({ model, ctx });
+	const clientCtx = toClientCtx(input);
 
 	const space = SpaceClient.update({
-		ctx: clientClient,
-		model: model.spaces,
-		msg: msg?.t === "spaces" ? msg.c : null,
-		msgServer: msgServer?.t === "spaces" ? msgServer.c : null,
-		msgEvt: msgEvt,
+		ctx: clientCtx,
+		model: input.model.spaces,
+		msg: input.msg?.t === "spaces" ? input.msg.c : null,
+		msgServer: input.msgServer?.t === "spaces" ? input.msgServer.c : null,
+		msgEvt: input.msgEvt,
 		msgCmd: null,
 	});
 
 	const profile = ProfileClient.update({
-		ctx: clientClient,
-		model: model.profile,
-		msg: msg?.t === "profile" ? msg.c : null,
-		msgServer: msgServer?.t === "profile" ? msgServer.c : null,
-		msgEvt: msgEvt,
-		msgCmd: msgCmd?.t === "profile" ? msgCmd : null,
+		ctx: clientCtx,
+		model: input.model.profile,
+		msg: input.msg?.t === "profile" ? input.msg.c : null,
+		msgServer: input.msgServer?.t === "profile" ? input.msgServer.c : null,
+		msgEvt: input.msgEvt,
+		msgCmd: input.msgCmd?.t === "profile" ? input.msgCmd : null,
 	});
 
 	const auth = AuthClient.update({
-		ctx: clientClient,
-		model: model.auth,
-		msg: msg?.t === "auth" ? msg.c : null,
-		msgServer: msgServer?.t === "auth" ? msgServer.c : null,
-		msgEvt: msgEvt,
-		msgCmd: msgCmd?.t === "auth" ? msgCmd : null,
+		ctx: clientCtx,
+		model: input.model.auth,
+		msg: input.msg?.t === "auth" ? input.msg.c : null,
+		msgServer: input.msgServer?.t === "auth" ? input.msgServer.c : null,
+		msgEvt: input.msgEvt,
+		msgCmd: input.msgCmd?.t === "auth" ? input.msgCmd : null,
 	});
 
 	const routing = Routing.update({
-		model: model.routing,
-		msg: msg?.t === "routing" ? msg.c : null,
-		msgCmd: msgCmd?.t === "routing" ? msgCmd : null,
+		model: input.model.routing,
+		msg: input.msg?.t === "routing" ? input.msg.c : null,
+		msgCmd: input.msgCmd?.t === "routing" ? input.msgCmd : null,
 	});
 
 	const wire = Wire.update({
-		model: model.wire,
-		msg: msg?.t === "wire" ? msg.c : null,
-		msgServer: msgServer?.t === "wire" ? msgServer.c : null,
-		msgCmd: msgCmd?.t === "wire" ? msgCmd : null,
-		transport: deps.transport,
+		model: input.model.wire,
+		msg: input.msg?.t === "wire" ? input.msg.c : null,
+		msgServer: input.msgServer?.t === "wire" ? input.msgServer.c : null,
+		msgCmd: input.msgCmd?.t === "wire" ? input.msgCmd : null,
+		transport: input.deps.transport,
 	});
 
 	const sound = Sound.update({
-		model: model.sound,
-		msg: msg?.t === "sound" ? msg.c : null,
-		msgCmd: msgCmd?.t === "sound" ? msgCmd : null,
-		ctx: null,
+		model: input.model.sound,
+		msg: input.msg?.t === "sound" ? input.msg.c : null,
+		msgCmd: input.msgCmd?.t === "sound" ? input.msgCmd : null,
+		ctx: clientCtx,
 	});
 
 	const platform = Platform.update({
-		model: model.platform,
-		msg: msg?.t === "platform" ? msg.c : null,
-		msgCmd: msgCmd?.t === "platform" ? msgCmd : null,
+		model: input.model.platform,
+		msg: input.msg?.t === "platform" ? input.msg.c : null,
+		msgCmd: input.msgCmd?.t === "platform" ? input.msgCmd : null,
 	});
 
 	const statusBar = StatusBar.update({
-		model: model.statusBar,
-		msg: msg?.t === "status-bar" ? msg.c : null,
-		msgCmd: msgCmd?.t === "status-bar" ? msgCmd : null,
+		model: input.model.statusBar,
+		msg: input.msg?.t === "status-bar" ? input.msg.c : null,
+		msgCmd: input.msgCmd?.t === "status-bar" ? input.msgCmd : null,
 	});
 
 	const toast = Toast.update({
-		model: model.toast,
-		msg: msg?.t === "toast" ? msg.c : null,
-		msgCmd: msgCmd?.t === "toast" ? msgCmd : null,
-		ctx,
-		msgEvt: null,
-		msgServer: null,
+		model: input.model.toast,
+		msg: input.msg?.t === "toast" ? input.msg.c : null,
+		msgCmd: input.msgCmd?.t === "toast" ? input.msgCmd : null,
+		ctx: input.ctx,
 	});
 
 	const lang = LangClient.update({
-		model: model.lang,
-		msg: msg?.t === "lang" ? msg.c : null,
+		model: input.model.lang,
+		msg: input.msg?.t === "lang" ? input.msg.c : null,
 		msgCmd: null,
-		msgServer: msgServer?.t === "lang" ? msgServer.c : null,
-		msgEvt: msgEvt,
-		ctx: clientClient,
+		msgServer: input.msgServer?.t === "lang" ? input.msgServer.c : null,
+		msgEvt: input.msgEvt,
+		ctx: clientCtx,
 	});
 
 	return {
@@ -468,7 +455,7 @@ const updateChild = ({
 			Eff.tag("lang", lang.eff),
 		]),
 
-		msgEvt: batchMsgs<ClientEvent>(
+		msgEvt: Msg.batch<ClientEvent>(
 			auth.msgEvt,
 			profile.msgEvt,
 			routing.msgEvt,
@@ -479,7 +466,7 @@ const updateChild = ({
 			lang.msgEvt,
 		),
 
-		msgCmd: batchMsgs<
+		msgCmd: Msg.batch<
 			ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
 		>(
 			ClientCmd.tag("auth", auth.msgCmd),
@@ -556,12 +543,12 @@ export const subscriptions = (input: {
 //
 //
 
-export const View = (props: {
+export const View = (input: {
 	ctx: Ctx;
 	model: ModelClient;
 	dispatch: (msg: MsgClient) => void;
 }) => {
-	const clientCtx = () => toClientCtx(props);
+	const clientCtx = () => toClientCtx(input);
 
 	return (
 		<div
@@ -570,55 +557,55 @@ export const View = (props: {
 		>
 			<div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-700">
 				<ViewStatusBar
-					model={props.model}
-					dispatch={props.dispatch}
-					ctx={props.ctx}
+					model={input.model}
+					dispatch={input.dispatch}
+					ctx={input.ctx}
 				/>
 
 				<div className="relative flex w-full flex-1 flex-col overflow-hidden">
 					<ViewRoute
-						model={props.model}
-						dispatch={props.dispatch}
+						model={input.model}
+						dispatch={input.dispatch}
 						ctx={clientCtx()}
 					/>
 				</div>
 
 				<AuthClient.ViewModals
 					ctx={clientCtx()}
-					dispatch={(c) => props.dispatch({ t: "auth", c })}
-					model={props.model.auth}
+					dispatch={(c) => input.dispatch({ t: "auth", c })}
+					model={input.model.auth}
 				/>
 
 				<Portal.Exit portalId="modals" />
 
 				<Toast.View
-					ctx={props.ctx}
-					model={props.model.toast}
-					dispatch={(c) => props.dispatch({ t: "toast", c })}
+					ctx={input.ctx}
+					model={input.model.toast}
+					dispatch={(c) => input.dispatch({ t: "toast", c })}
 				/>
 			</div>
 		</div>
 	);
 };
 
-const ViewRoute = (props: {
+const ViewRoute = (input: {
 	ctx: ClientCtx | AnonymousClientCtx;
 	model: ModelClient;
 	dispatch: (m: MsgClient) => void;
 }) => {
-	switch (props.model.routing.currentRoute.n) {
+	switch (input.model.routing.currentRoute.n) {
 		case "lang": {
 			return (
 				<LangClient.View
-					ctx={props.ctx}
-					dispatch={(c) => props.dispatch({ t: "lang", c })}
-					model={props.model.lang}
+					ctx={input.ctx}
+					dispatch={(c) => input.dispatch({ t: "lang", c })}
+					model={input.model.lang}
 				/>
 			);
 		}
 
 		default: {
-			switch (props.model.auth.currentUser.t) {
+			switch (input.model.auth.currentUser.t) {
 				case "loading": {
 					return <LoadingState />;
 				}
@@ -626,9 +613,9 @@ const ViewRoute = (props: {
 				case "logged-in": {
 					return (
 						<ViewRouteLoggedIn
-							model={props.model}
-							dispatch={props.dispatch}
-							ctx={props.ctx}
+							model={input.model}
+							dispatch={input.dispatch}
+							ctx={input.ctx}
 						/>
 					);
 				}
@@ -636,9 +623,9 @@ const ViewRoute = (props: {
 				case "logged-out": {
 					return (
 						<ViewRouteLoggedOut
-							model={props.model}
-							dispatch={props.dispatch}
-							ctx={props.ctx}
+							model={input.model}
+							dispatch={input.dispatch}
+							ctx={input.ctx}
 						/>
 					);
 				}
@@ -647,14 +634,14 @@ const ViewRoute = (props: {
 	}
 };
 
-const ViewRouteLoggedOut: typeof ViewRoute = (props) => {
-	switch (props.ctx.currentRoute.n) {
+const ViewRouteLoggedOut: typeof ViewRoute = (input) => {
+	switch (input.ctx.currentRoute.n) {
 		case "auth-login": {
 			return (
 				<AuthClient.View
-					model={props.model.auth}
-					ctx={props.ctx}
-					dispatch={(c) => props.dispatch({ t: "auth", c })}
+					model={input.model.auth}
+					ctx={input.ctx}
+					dispatch={(c) => input.dispatch({ t: "auth", c })}
 				/>
 			);
 		}
@@ -663,7 +650,7 @@ const ViewRouteLoggedOut: typeof ViewRoute = (props) => {
 		case "lang": {
 			return (
 				<ViewRedirect
-					dispatch={props.dispatch}
+					dispatch={input.dispatch}
 					route={{ n: "auth-login", t: "login" }}
 				/>
 			);
@@ -671,20 +658,20 @@ const ViewRouteLoggedOut: typeof ViewRoute = (props) => {
 	}
 };
 
-const ViewRouteLoggedIn: typeof ViewRoute = (props) => {
-	switch (props.ctx.currentRoute.n) {
+const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
+	switch (input.ctx.currentRoute.n) {
 		case "profile": {
 			return (
 				<ProfileClient.View
-					dispatch={(m) => props.dispatch({ t: "profile", c: m })}
-					model={props.model.profile}
-					ctx={props.ctx}
+					dispatch={(m) => input.dispatch({ t: "profile", c: m })}
+					model={input.model.profile}
+					ctx={input.ctx}
 					slots={{
 						bottomBar: () => (
 							<ViewBottomNavBar
-								model={props.model}
-								dispatch={props.dispatch}
-								ctx={props.ctx}
+								model={input.model}
+								dispatch={input.dispatch}
+								ctx={input.ctx}
 							/>
 						),
 					}}
@@ -695,15 +682,15 @@ const ViewRouteLoggedIn: typeof ViewRoute = (props) => {
 		case "spaces": {
 			return (
 				<SpaceClient.View
-					dispatch={(m) => props.dispatch({ t: "spaces", c: m })}
-					model={props.model.spaces}
-					ctx={props.ctx}
+					dispatch={(m) => input.dispatch({ t: "spaces", c: m })}
+					model={input.model.spaces}
+					ctx={input.ctx}
 					slots={{
 						bottomBar: () => (
 							<ViewBottomNavBar
-								model={props.model}
-								dispatch={props.dispatch}
-								ctx={props.ctx}
+								model={input.model}
+								dispatch={input.dispatch}
+								ctx={input.ctx}
 							/>
 						),
 					}}
@@ -715,7 +702,7 @@ const ViewRouteLoggedIn: typeof ViewRoute = (props) => {
 		case "auth-login": {
 			return (
 				<ViewRedirect
-					dispatch={props.dispatch}
+					dispatch={input.dispatch}
 					route={{ n: "spaces", t: "space-list" }}
 				/>
 			);
@@ -784,12 +771,12 @@ const ViewStatusBar: typeof View = (input) => {
 	);
 };
 
-const ViewBottomNavBar = (props: {
+const ViewBottomNavBar = (input: {
 	ctx: ClientCtx | AnonymousClientCtx;
 	model: ModelClient;
 	dispatch: (m: MsgClient) => void;
 }) => {
-	if (isAnonymous(props.ctx)) {
+	if (isAnonymous(input.ctx)) {
 		return null;
 	}
 	const items: {
@@ -809,7 +796,7 @@ const ViewBottomNavBar = (props: {
 			route: {
 				n: "profile",
 				t: "profile",
-				userId: props.ctx.currentUserId,
+				userId: input.ctx.currentUserId,
 			},
 			label: "Profile",
 			icon: <IconUserCircle className="h-6 w-6" />,
@@ -819,19 +806,19 @@ const ViewBottomNavBar = (props: {
 	return (
 		<div className="flex w-full shrink-0 flex-col items-center justify-center">
 			<SpaceClient.ViewCurrentSpaceBar
-				ctx={props.ctx}
-				model={props.model.spaces}
-				dispatch={(c) => props.dispatch({ t: "spaces", c })}
+				ctx={input.ctx}
+				model={input.model.spaces}
+				dispatch={(c) => input.dispatch({ t: "spaces", c })}
 			/>
 			<div className="flex w-full items-center justify-center border-t border-neutral-700">
 				{items.map((item, index) => {
-					const isSelected = eq(item.route, props.model.routing.currentRoute);
+					const isSelected = eq(item.route, input.model.routing.currentRoute);
 					return (
 						<button
 							type="button"
 							key={item.route.n}
 							onClick={() =>
-								props.dispatch({
+								input.dispatch({
 									t: "routing",
 									c: { t: "clicked-link", route: item.route },
 								})

@@ -4,6 +4,7 @@ import {
 	type ClientEvent,
 	type SoundCmd,
 	playSound,
+	BaseClientCtx,
 } from "gamezilla-app/app/@/client";
 import {
 	IconVolumeHigh,
@@ -28,7 +29,7 @@ import {
 //
 
 type Module = AppClientModule<{
-	Ctx: null;
+	Ctx: BaseClientCtx;
 	MsgCmdIn: SoundCmd;
 	MsgEvtIn: ClientEvent;
 	Model: Model;
@@ -151,7 +152,7 @@ const updateFromEvent: Module["update"] = ({ model, msgEvt }) => {
 	}
 };
 
-export const updateFromCmd: Module["update"] = ({ model, msgCmd }) => {
+export const updateFromCmd: Module["update"] = ({ model, msgCmd, ctx }) => {
 	if (!msgCmd) {
 		return { model };
 	}
@@ -176,6 +177,12 @@ export const updateFromCmd: Module["update"] = ({ model, msgCmd }) => {
 			if (model.muted) {
 				return { model };
 			}
+			
+			if (ctx.documentVisibilityState === 'hidden') {
+				return {model}
+			}
+
+			
 
 			return {
 				model,

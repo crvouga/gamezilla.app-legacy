@@ -3,14 +3,16 @@ import { FlowVariantPlay, type FlowVariant } from ".";
 import { Flow } from "../flow";
 import { FlowGrid } from "./flow-grid";
 import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
+import { FlowPuzzle } from "../../flow-puzzle";
 
-const Fixture = ({ flow }: { flow: FlowVariant.Model }) => {
+const Fixture = async ({ flow }: { flow: FlowVariant.Model }) => {
 	const init = FlowVariantPlay.init({ flow });
+	const flowPuzzle = await FlowPuzzle.random({ flow });
 
 	const update = (init: FlowVariantPlay.Model, msgs: FlowVariantPlay.Msg[]) => {
 		return msgs.reduce<ReturnType<typeof FlowVariantPlay.update>>(
 			(output, msg) =>
-				FlowVariantPlay.update({ flow, model: output.model, msg }),
+				FlowVariantPlay.update({ flowPuzzle, model: output.model, msg }),
 			{ model: init },
 		);
 	};
@@ -22,14 +24,14 @@ const Fixture = ({ flow }: { flow: FlowVariant.Model }) => {
 };
 
 describe(import.meta.file, () => {
-	test("to solution msgs", () => {
+	test("to solution msgs", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			[" ", "B", " "],
 			[" ", " ", "A"],
 		]);
 
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const msgs = FlowVariantPlay.toSolutionMsgs({ flow });
 
@@ -47,13 +49,13 @@ describe(import.meta.file, () => {
 		expect(Flow.isSolved(after)).toBe(true);
 	});
 
-	it("should output connected terminals event", () => {
+	it("should output connected terminals event", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", "B"],
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
@@ -65,13 +67,13 @@ describe(import.meta.file, () => {
 		expect(output.event?.t).toBe("connected-terminals");
 	});
 
-	it("should output started dragging event", () => {
+	it("should output started dragging event", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
@@ -80,13 +82,13 @@ describe(import.meta.file, () => {
 		expect(output.event?.t).toBe("started-dragging");
 	});
 
-	it("should output solved event", () => {
+	it("should output solved event", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
@@ -98,13 +100,13 @@ describe(import.meta.file, () => {
 		expect(output.event?.t).toBe("solved");
 	});
 
-	it("should output solved event even after dragging left the board", () => {
+	it("should output solved event even after dragging left the board", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
@@ -115,13 +117,13 @@ describe(import.meta.file, () => {
 		expect(output.event?.t).toBe("solved");
 	});
 
-	it("should not output solved event after dragging left the board if not connected", () => {
+	it("should not output solved event after dragging left the board if not connected", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
@@ -131,13 +133,13 @@ describe(import.meta.file, () => {
 		expect(output.event).toBeUndefined();
 	});
 
-	it("should not output solved if not pressed up on terminal", () => {
+	it("should not output solved if not pressed up on terminal", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
@@ -148,14 +150,14 @@ describe(import.meta.file, () => {
 		expect(output.event?.t).not.toBe("solved");
 	});
 
-	it("should not output solved event if terminals are not connected", () => {
+	it("should not output solved event if terminals are not connected", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
 			["a", "a", "A"],
 		]);
 
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const output = f.update(f.init, [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 1, y: 1 }) },
@@ -171,7 +173,7 @@ describe(import.meta.file, () => {
 			["A", " "],
 			[" ", "A"],
 		]);
-		const f = Fixture({ flow });
+		const f = await Fixture({ flow });
 
 		const msgs: FlowVariantPlay.Msg[] = [
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 1, y: 1 }) },

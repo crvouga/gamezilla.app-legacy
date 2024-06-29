@@ -191,7 +191,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
 
 	const puzzleNew: FlowPuzzle = {
 		...puzzleBuilder.puzzle,
-		flow: FlowVarianEdit.toCurrentFlow({
+		flow: FlowVarianEdit.deriveFlowMemoized({
 			model: puzzleBuilder.edit,
 		}),
 	};

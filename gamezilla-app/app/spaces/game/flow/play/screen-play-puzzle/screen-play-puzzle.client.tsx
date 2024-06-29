@@ -109,7 +109,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 			const output = FlowVariantPlay.update({
 				msg: input.msgCore.c,
 				model: input.modelCore.screen.flowPlay,
-				flow: input.modelCore.screen.flowPuzzle.flow,
+				flowPuzzle: input.modelCore.screen.flowPuzzle,
 			});
 
 			if (!output.event) {

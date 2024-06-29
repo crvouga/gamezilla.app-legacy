@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
+import { FlowPuzzle } from "../../flow-puzzle";
 import { Flow } from "../flow";
 import { FlowGridShorthand } from "./flow-grid";
 import * as FlowHint from "./flow-hint";
 import type * as FlowVariant from "./flow-variant";
-import { FlowAlgoSolveAsync } from "./flow-variant-aglo/flow-algo-solve-async";
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 	const flow =
@@ -12,6 +12,10 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 			["A", " "],
 			[" ", "A"],
 		]);
+
+	const flowPuzzle = await FlowPuzzle.random({
+		flow,
+	});
 	const update = (
 		init: FlowHint.Model,
 		msgs: FlowHint.Msg[],
@@ -19,9 +23,9 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 		let output: ReturnType<typeof FlowHint.update> = { model: init };
 		for (const msg of msgs) {
 			output = FlowHint.update({
-				flow: flow,
-				model: output.model,
 				msg,
+				flowPuzzle,
+				model: output.model,
 			});
 		}
 		return output;
@@ -57,13 +61,10 @@ describe(import.meta.file, () => {
 				["A", "B"],
 			]),
 		});
-		const solution = await FlowAlgoSolveAsync.solve(f.flow);
-
-		if (!solution) throw new Error("solution not found");
 
 		const output = f.update(f.init, [
-			{ t: "found-solution", model: solution },
-			{ t: "found-solution", model: solution },
+			{ t: "user-clicked-hint" },
+			{ t: "user-clicked-hint" },
 		]);
 		const flow = FlowHint.deriveFlow({
 			flow: f.flow,
@@ -80,10 +81,8 @@ describe(import.meta.file, () => {
 				["A", "B"],
 			]),
 		});
-		const solution = await FlowAlgoSolveAsync.solve(f.flow);
-		if (!solution) throw new Error("solution not found");
 
-		const output = f.update(f.init, [{ t: "found-solution", model: solution }]);
+		const output = f.update(f.init, [{ t: "user-clicked-hint" }]);
 		expect(output.event?.t).toBe("used-hint");
 	});
 
@@ -96,13 +95,10 @@ describe(import.meta.file, () => {
 			]),
 		});
 
-		const solution = await FlowAlgoSolveAsync.solve(f.flow);
-		if (!solution) throw new Error("solution not found");
-
 		const output = f.update(f.init, [
-			{ t: "found-solution", model: solution },
-			{ t: "found-solution", model: solution },
-			{ t: "found-solution", model: solution },
+			{ t: "user-clicked-hint" },
+			{ t: "user-clicked-hint" },
+			{ t: "user-clicked-hint" },
 		]);
 		expect(output.event?.t).toBe("solved");
 	});

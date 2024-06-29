@@ -40,7 +40,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			const flowPlayNew = FlowVariantPlay.update({
 				msg: msgCore.c,
 				model: modelCore.flowPlay,
-				flow: modelCore.flowPuzzle.flow,
+				flowPuzzle: modelCore.flowPuzzle,
 			});
 
 			if (flowPlayNew.event?.t === "solved") {

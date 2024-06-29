@@ -6,6 +6,7 @@ import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
 import * as FlowHint from "./flow-hint";
 import { Eff } from "gamezilla-app/@/core";
+import { FlowPuzzle } from "../../flow-puzzle";
 
 //
 //
@@ -236,42 +237,45 @@ export const eventToSoundSrc = (event: Event): string => {
 export const update = ({
 	msg,
 	model,
-	flow,
+	flowPuzzle,
 }: {
 	msg: Msg;
 	model: Model;
-	flow: FlowVariant.Model;
+	flowPuzzle: FlowPuzzle;
 }): {
 	model: Model;
 	event?: Event;
 	eff?: Eff<Msg>;
 } => {
-	const updated = updateMain({ msg, model, flow });
-	const updatedHint = FlowHint.update({ flow, model: updated.model, msg });
+	const updated = updateMain({ msg, model, flowPuzzle });
+	const updatedHint = FlowHint.update({
+		model: updated.model,
+		msg,
+		flowPuzzle,
+	});
 	return {
 		...updated,
 		event: updatedHint.event ?? updated.event,
 		model: updatedHint.model,
-		eff: updatedHint.eff,
 	};
 };
 
-const updateMain: typeof update = ({ model, flow, msg }) => {
+const updateMain: typeof update = ({ model, flowPuzzle, msg }) => {
 	switch (model.status.t) {
 		case "dragging": {
-			return updateDragging({ flow, msg, model, modelStatus: model.status });
+			return updateDragging({ flow: flowPuzzle.flow, msg, model, modelStatus: model.status });
 		}
 
 		case "idle": {
-			return updateIdle({ flow, msg, model });
+			return updateIdle({ flowPuzzle, msg, model });
 		}
 	}
 };
 
-const updateIdle: typeof update = ({ msg, model, flow }) => {
+const updateIdle: typeof update = ({ msg, model, flowPuzzle }) => {
 	switch (msg.t) {
 		case "pressed-down": {
-			const current = deriveFlow({ model, flow });
+			const current = deriveFlow({ model, flow: flowPuzzle.flow });
 
 			const groupId = Flow.toGroupId(current, msg.nodeId);
 
