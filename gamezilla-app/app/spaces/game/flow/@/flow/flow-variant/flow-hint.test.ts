@@ -1,8 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import * as FlowHint from "./flow-hint";
-import { FlowGridShorthand } from "./flow-grid";
-import type * as FlowVariant from "./flow-variant";
 import { Flow } from "../flow";
+import { FlowGridShorthand } from "./flow-grid";
+import * as FlowHint from "./flow-hint";
+import type * as FlowVariant from "./flow-variant";
+import { FlowAlgoSolveAsync } from "./flow-variant-aglo/flow-algo-solve-async";
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 	const flow =
@@ -56,9 +57,13 @@ describe(import.meta.file, () => {
 				["A", "B"],
 			]),
 		});
+		const solution = await FlowAlgoSolveAsync.solve(f.flow);
+
+		if (!solution) throw new Error("solution not found");
+
 		const output = f.update(f.init, [
-			{ t: "user-clicked-hint" },
-			{ t: "user-clicked-hint" },
+			{ t: "found-solution", model: solution },
+			{ t: "found-solution", model: solution },
 		]);
 		const flow = FlowHint.deriveFlow({
 			flow: f.flow,
@@ -75,7 +80,10 @@ describe(import.meta.file, () => {
 				["A", "B"],
 			]),
 		});
-		const output = f.update(f.init, [{ t: "user-clicked-hint" }]);
+		const solution = await FlowAlgoSolveAsync.solve(f.flow);
+		if (!solution) throw new Error("solution not found");
+
+		const output = f.update(f.init, [{ t: "found-solution", model: solution }]);
 		expect(output.event?.t).toBe("used-hint");
 	});
 
@@ -87,10 +95,14 @@ describe(import.meta.file, () => {
 				["A", "B", "C"],
 			]),
 		});
+
+		const solution = await FlowAlgoSolveAsync.solve(f.flow);
+		if (!solution) throw new Error("solution not found");
+
 		const output = f.update(f.init, [
-			{ t: "user-clicked-hint" },
-			{ t: "user-clicked-hint" },
-			{ t: "user-clicked-hint" },
+			{ t: "found-solution", model: solution },
+			{ t: "found-solution", model: solution },
+			{ t: "found-solution", model: solution },
 		]);
 		expect(output.event?.t).toBe("solved");
 	});

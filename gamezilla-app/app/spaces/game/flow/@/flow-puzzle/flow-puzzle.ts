@@ -1,7 +1,7 @@
 import { Posix } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
-import { FlowVariant } from "../flow";
+import { Flow, FlowAlgoSolve, FlowVariant } from "../flow";
 import { FlowGridShorthand } from "../flow/flow-variant/flow-grid/flow-grid-shorthand";
 import { FlowPuzzleId } from "./flow-puzzle-id";
 import { FlowPuzzleName } from "./flow-puzzle-name";
@@ -14,6 +14,7 @@ const parser = p.obj({
 	lastUpdatedAt: Posix,
 	lastUpdatedBy: UserId,
 	flow: FlowVariant.Model,
+	flowSolutions: p.arr(Flow.Model),
 });
 
 export type FlowPuzzle = p.Infer<typeof parser>;
@@ -24,6 +25,10 @@ const create = async (input: {
 	createdAt: Posix;
 	createdBy: UserId;
 }): Promise<FlowPuzzle> => {
+	const solutions = FlowAlgoSolve.solve(input.flow, {
+		distance: FlowVariant.distance(input.flow),
+	});
+	const solution = first(solutions);
 	return {
 		flow: input.flow,
 		name: await FlowPuzzleName.generate({ count: input.count }),
@@ -32,7 +37,15 @@ const create = async (input: {
 		createdBy: input.createdBy,
 		lastUpdatedAt: input.createdAt,
 		lastUpdatedBy: input.createdBy,
+		flowSolutions: solution ? [solution] : [],
 	};
+};
+
+const first = <T>(iter: Iterable<T>): T | null => {
+	for (const value of iter) {
+		return value;
+	}
+	return null;
 };
 
 const random = async (input?: {
@@ -42,6 +55,16 @@ const random = async (input?: {
 }): Promise<FlowPuzzle> => {
 	const createdBy = input?.createdBy ?? UserId.generate();
 	const createdAt = input?.createdAt ?? Posix.now();
+	const flow =
+		input?.flow ??
+		FlowGridShorthand.toGrid([
+			["A", " "],
+			[" ", "A"],
+		]);
+	const solutions = FlowAlgoSolve.solve(flow, {
+		distance: FlowVariant.distance(flow),
+	});
+	const solution = first(solutions);
 	return {
 		createdAt,
 		createdBy,
@@ -51,12 +74,8 @@ const random = async (input?: {
 		lastUpdatedAt: Posix.now(),
 		lastUpdatedBy: createdBy,
 		id: FlowPuzzleId.generate(),
-		flow:
-			input?.flow ??
-			FlowGridShorthand.toGrid([
-				["A", " "],
-				[" ", "A"],
-			]),
+		flowSolutions: solution ? [solution] : [],
+		flow,
 	};
 };
 

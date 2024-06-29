@@ -1,8 +1,10 @@
+import { Eff } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { Flow, FlowAlgoSolve } from "../flow";
-import * as FlowVariant from "./flow-variant";
-import { ViewBottomButtonBarActionHint } from "gamezilla-app/app/spaces/game/@/game";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
+import { ViewBottomButtonBarActionHint } from "gamezilla-app/app/spaces/game/@/game";
+import { Flow } from "../flow";
+import * as FlowVariant from "./flow-variant";
+import { FlowAlgoSolveAsync } from "./flow-variant-aglo/flow-algo-solve-async";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
@@ -10,9 +12,15 @@ export const Model = p.obj({
 });
 export type Model = p.Infer<typeof Model>;
 
-export const Msg = p.obj({
-	t: p.l("user-clicked-hint"),
-});
+export const Msg = p.or(
+	p.obj({
+		t: p.l("user-clicked-hint"),
+	}),
+	p.obj({
+		t: p.l("found-solution"),
+		model: p.maybe(FlowVariant.Model),
+	}),
+);
 export type Msg = p.Infer<typeof Msg>;
 
 export const init: Model = {
@@ -38,9 +46,24 @@ export const update = <
 }): {
 	model: TModel;
 	event?: Event;
+	eff?: Eff<Msg>;
 } => {
 	switch (input.msg.t) {
 		case "user-clicked-hint": {
+			const flow = deriveFlow(input);
+
+			return {
+				model: input.model,
+				async eff(dispatch) {
+					dispatch({
+						t: "found-solution",
+						model: await FlowAlgoSolveAsync.solve(flow),
+					});
+				},
+			};
+		}
+
+		case "found-solution": {
 			const flow = deriveFlow(input);
 
 			const nextHintGroupId = toNextHintGroupId(flow);
@@ -48,10 +71,13 @@ export const update = <
 			if (!nextHintGroupId) {
 				return { model: input.model };
 			}
-			const solutions = FlowAlgoSolve.solve(flow, {
-				distance: FlowVariant.distance(flow),
-			});
-			const solution = next(solutions);
+
+			const solution =
+				input.msg.t === "found-solution"
+					? // @ts-ignore
+						input.msg.model
+					: null;
+
 			if (!solution) {
 				return { model: input.model };
 			}
@@ -88,6 +114,7 @@ export const update = <
 				},
 			};
 		}
+
 		default: {
 			return { model: input.model };
 		}
@@ -109,13 +136,6 @@ export const toShowingHintGroupIds = (model: Model): Flow.GroupId[] => {
 
 export const isAnyShowingHint = (model: Model): boolean => {
 	return toShowingHintGroupIds(model).length > 0;
-};
-
-const next = <T,>(iter: Iterable<T>): T | null => {
-	for (const t of iter) {
-		return t;
-	}
-	return null;
 };
 
 export const deriveFlow = (input: {

@@ -2,7 +2,7 @@ import { FlowVariantPlay } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule, MsgCore } from "../play.types";
-import { CopyPuzzleCore } from "./copy-puzzle";
+import * as CopyPuzzleCore from "./copy-puzzle/copy-puzzle.core";
 import { LastPuzzleCore } from "./last-puzzle/last-puzzle.core";
 import type { ModelCore } from "./screen-play-puzzle.types";
 

@@ -1,5 +1,5 @@
 import { FlowVariant } from "../../../flow-variant";
-import * as FlowAlgoSolve from "../flow-algo-solve";
+import { FlowAlgoSolve } from "../../../flow/flow-algo";
 import { MsgToWorker } from "./flow-algo-solve-async.types";
 
 declare let self: Worker;
@@ -7,6 +7,10 @@ declare let self: Worker;
 self.onmessage = (event: MessageEvent<unknown>) => {
 	const parsed = MsgToWorker.parse(event.data);
 	if (parsed.t === "err") {
+		self.postMessage({
+			t: "found-solution",
+			model: null,
+		});
 		return;
 	}
 	switch (parsed.value.t) {
@@ -19,7 +23,13 @@ self.onmessage = (event: MessageEvent<unknown>) => {
 					t: "found-solution",
 					model: solution,
 				});
+				return;
 			}
+			self.postMessage({
+				t: "found-solution",
+				model: null,
+			});
+			return;
 		}
 	}
 };

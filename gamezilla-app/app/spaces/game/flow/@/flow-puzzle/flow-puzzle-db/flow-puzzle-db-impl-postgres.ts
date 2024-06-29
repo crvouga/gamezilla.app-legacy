@@ -2,7 +2,7 @@ import { type Pagination, UserId } from "gamezilla-app/app/@/data";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { Ok, Posix, Result, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { FlowVariant } from "../../flow";
+import { FlowAlgoSolve, FlowVariant } from "../../flow";
 import type { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleId } from "../flow-puzzle-id";
 import { FlowPuzzleName } from "../flow-puzzle-name";
@@ -44,6 +44,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 	const lastUpdatedBy = UserId.is(row.last_updated_by_user_id)
 		? row.last_updated_by_user_id
 		: null;
+
 	if (
 		flowPuzzleId &&
 		flowPuzzleName &&
@@ -53,6 +54,10 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 		lastUpdatedAt &&
 		lastUpdatedBy
 	) {
+		const solutions = FlowAlgoSolve.solve(flow, {
+			distance: FlowVariant.distance(flow),
+		});
+		const solution = first(solutions);
 		return {
 			id: flowPuzzleId,
 			name: flowPuzzleName,
@@ -61,6 +66,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 			createdBy,
 			lastUpdatedAt,
 			lastUpdatedBy,
+			flowSolutions: solution ? [solution] : [],
 		};
 	}
 	console.error(
@@ -73,6 +79,12 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 	return null;
 };
 
+const first = <T>(iterable: Iterable<T>): T | null => {
+	for (const item of iterable) {
+		return item;
+	}
+	return null;
+};
 //
 //
 //

@@ -5,6 +5,7 @@ import { FlowAlgoDrawPipes, FlowAlgoSolve } from "../flow/flow-algo";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
 import * as FlowHint from "./flow-hint";
+import { Eff } from "gamezilla-app/@/core";
 
 //
 //
@@ -243,6 +244,7 @@ export const update = ({
 }): {
 	model: Model;
 	event?: Event;
+	eff?: Eff<Msg>;
 } => {
 	const updated = updateMain({ msg, model, flow });
 	const updatedHint = FlowHint.update({ flow, model: updated.model, msg });
@@ -250,6 +252,7 @@ export const update = ({
 		...updated,
 		event: updatedHint.event ?? updated.event,
 		model: updatedHint.model,
+		eff: updatedHint.eff,
 	};
 };
 
