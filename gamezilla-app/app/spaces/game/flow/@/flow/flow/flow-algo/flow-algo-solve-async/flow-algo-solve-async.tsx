@@ -1,7 +1,9 @@
 import { FlowVariant } from "../../../flow-variant";
 import { MsgToMaster, MsgToWorker } from "./flow-algo-solve-async.types";
 
-export const solve = async (model: FlowVariant.Model): Promise<FlowVariant.Model | null> => {
+export const solve = async (
+	model: FlowVariant.Model,
+): Promise<FlowVariant.Model | null> => {
 	const worker = new Worker("./flow-algo-solve-async.worker.ts");
 
 	const solutionPromise = new Promise<FlowVariant.Model | null>((resolve) => {
