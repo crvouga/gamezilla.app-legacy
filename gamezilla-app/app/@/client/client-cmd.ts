@@ -198,7 +198,7 @@ export const copyToClipboard = <T extends ClientCmdTypes>(
 			text,
 		},
 	};
-}
+};
 
 //
 //
