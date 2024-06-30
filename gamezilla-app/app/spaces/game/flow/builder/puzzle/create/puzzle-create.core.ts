@@ -18,7 +18,7 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 					t: "puzzle-builder",
 					mode: { t: "edit" },
 					edit: FlowVarianEdit.init({ flow: puzzleNew.flow }),
-					play: FlowVariantPlay.init({ flow: puzzleNew.flow }),
+					play: FlowVariantPlay.init({ flowPuzzle: puzzleNew }),
 					puzzle: puzzleNew,
 				},
 			};

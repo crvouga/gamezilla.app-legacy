@@ -792,7 +792,12 @@ export const findGroupIdByNodeId = (
 /**
  * Flips the start and end nodes of the inputted terminal.
  */
-export const flipTerminal = (model: Model, terminal: Terminal): Model => {
+export const flipTerminal = (model: Model, terminal: Terminal | null): Model => {
+
+	if (!terminal) {
+		return model;
+	}
+	
 	if (!terminal.endId) {
 		return model;
 	}
@@ -929,7 +934,6 @@ export const isTerminalConnectedWithPipes = (
 	return isConnectedWithPipes(model, terminal.startId, terminal.endId);
 };
 
-
 export const hasInwardPipe = (model: Model, nodeId: NodeId): boolean => {
 	for (const pipe of yieldPipes(model)) {
 		if (pipe.edge.targetId === nodeId) {
@@ -937,7 +941,7 @@ export const hasInwardPipe = (model: Model, nodeId: NodeId): boolean => {
 		}
 	}
 	return false;
-}
+};
 
 export const hasOutwardPipe = (model: Model, nodeId: NodeId): boolean => {
 	for (const pipe of yieldPipes(model)) {
@@ -946,59 +950,68 @@ export const hasOutwardPipe = (model: Model, nodeId: NodeId): boolean => {
 		}
 	}
 	return false;
-}
+};
 
 export const hasBranchingPipelines = (model: Model): boolean => {
 	for (const terminal of yieldTerminals(model)) {
-		const isStartBranching = hasInwardPipe(model, terminal.startId) && hasOutwardPipe(model, terminal.startId)
+		const isStartBranching =
+			hasInwardPipe(model, terminal.startId) &&
+			hasOutwardPipe(model, terminal.startId);
 		if (isStartBranching) {
-			return true
+			return true;
 		}
-		const isEndBranching = terminal.endId ? hasInwardPipe(model, terminal.endId) && hasOutwardPipe(model, terminal.endId) : false
+		const isEndBranching = terminal.endId
+			? hasInwardPipe(model, terminal.endId) &&
+				hasOutwardPipe(model, terminal.endId)
+			: false;
 		if (isEndBranching) {
 			return true;
 		}
 
-		const isBothInward = terminal.endId ? hasInwardPipe(model, terminal.startId) && hasInwardPipe(model, terminal.endId) : false
-		
+		const isBothInward = terminal.endId
+			? hasInwardPipe(model, terminal.startId) &&
+				hasInwardPipe(model, terminal.endId)
+			: false;
+
 		if (isBothInward) {
 			return true;
 		}
 
-		const isBothOutward = terminal.endId ? hasOutwardPipe(model, terminal.startId) && hasOutwardPipe(model, terminal.endId) : false
+		const isBothOutward = terminal.endId
+			? hasOutwardPipe(model, terminal.startId) &&
+				hasOutwardPipe(model, terminal.endId)
+			: false;
 
 		if (isBothOutward) {
 			return true;
 		}
 	}
 	return false;
-}
+};
 
 export const hasMultipleDeadEndPipelines = (model: Model): boolean => {
 	const targetFrequencies: { [nodeId: string]: number } = {};
 	const sourceFrequencies: { [nodeId: string]: number } = {};
-	for(const pipe of yieldPipes(model)) {
-		targetFrequencies[pipe.edge.targetId] = (targetFrequencies[pipe.edge.targetId] ?? 0) + 1;
-		if((targetFrequencies[pipe.edge.targetId] ?? 0) > 1) {
+	for (const pipe of yieldPipes(model)) {
+		targetFrequencies[pipe.edge.targetId] =
+			(targetFrequencies[pipe.edge.targetId] ?? 0) + 1;
+		if ((targetFrequencies[pipe.edge.targetId] ?? 0) > 1) {
 			return true;
 		}
 
-		sourceFrequencies[pipe.edge.sourceId] = (sourceFrequencies[pipe.edge.sourceId] ?? 0) + 1;
-		if((sourceFrequencies[pipe.edge.sourceId] ?? 0) > 1) {
+		sourceFrequencies[pipe.edge.sourceId] =
+			(sourceFrequencies[pipe.edge.sourceId] ?? 0) + 1;
+		if ((sourceFrequencies[pipe.edge.sourceId] ?? 0) > 1) {
 			return true;
 		}
 	}
-	return false
-}
-
+	return false;
+};
 
 /**
  * Removes all pipes that are part of the pipeline with the inputted group id
  */
-export const removePipeline = (
-	model: Model,
-	groupId: GroupId,
-): Model => {
+export const removePipeline = (model: Model, groupId: GroupId): Model => {
 	const pipesBySourceId: Model["pipesBySourceId"] = {};
 
 	for (const pipe of yieldPipes(model)) {
@@ -1015,4 +1028,38 @@ export const removePipeline = (
 		...model,
 		pipesBySourceId,
 	};
+};
+
+/**
+ * Adds all pipes that are part of the pipeline with the inputted group id
+ */
+export const addPipeline = (
+	model: Model,
+	groupId: GroupId,
+	pipeline: Pipeline,
+): Model => {
+	const modelNew: Model = { ...model };
+
+	for (let i = 0; i < pipeline.length - 1; i++) {
+		const pipe = pipeline[i];
+
+		if (!pipe) {
+			continue;
+		}
+
+		const edge = toEdge(model, pipe.edgeId);
+
+		if (!edge) {
+			continue;
+		}
+
+		const pipeNew: Pipe = {
+			edgeId: toEdgeId(edge),
+			groupId: groupId,
+		};
+
+		modelNew.pipesBySourceId[edge.sourceId] = pipeNew;
+	}
+
+	return modelNew;
 };

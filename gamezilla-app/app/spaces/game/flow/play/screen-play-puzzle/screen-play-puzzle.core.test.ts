@@ -95,7 +95,7 @@ describe(import.meta.file, () => {
 
 		expect(before.flowPlay).not.toEqual(after.flowPlay);
 		expect(after.flowPlay).toEqual(
-			FlowVariantPlay.init({ flow: f.nextPuzzle.flow }),
+			FlowVariantPlay.init({ flowPuzzle: f.nextPuzzle }),
 		);
 	});
 
@@ -194,7 +194,9 @@ describe(import.meta.file, () => {
 				t: "user-clicked-reset-puzzle",
 			},
 		]);
-		expect(before.flowPlay).toEqual(FlowVariantPlay.init(f.puzzle));
+		expect(before.flowPlay).toEqual(
+			FlowVariantPlay.init({ flowPuzzle: f.puzzle }),
+		);
 	});
 
 	it("should be in a solving state after going to the next puzzle", async () => {

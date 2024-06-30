@@ -146,9 +146,9 @@ describe(import.meta.file, () => {
 			},
 		};
 
-		const actual = Flow.hasBranchingPipelines(grid)
+		const actual = Flow.hasBranchingPipelines(grid);
 		expect(actual).toBe(true);
-	})
+	});
 
 	test("branching pipelines false postives", async () => {
 		const grid = FlowGridShorthand.toGrid([
@@ -157,37 +157,37 @@ describe(import.meta.file, () => {
 			[" ", " ", "A"],
 		]);
 		expect(Flow.hasBranchingPipelines(grid)).toBe(false);
-	})
+	});
 
 	test("multiple dead ends detection", async () => {
 		const grid = FlowGridShorthand.toGrid([
-				["A", "a", "a", " "],
-				[" ", " ", "a", " "],
-				["a", "a", "a", " "],
-				[" ", " ", " ", "A"],
+			["A", "a", "a", " "],
+			[" ", " ", "a", " "],
+			["a", "a", "a", " "],
+			[" ", " ", " ", "A"],
 		]);
 		const solution = FlowGridShorthand.toGrid([
-				["A", " ", " ", " "],
-				["a", " ", " ", " "],
-				["a", " ", " ", " "],
-				["a", "a", "a", "A"],
+			["A", " ", " ", " "],
+			["a", " ", " ", " "],
+			["a", " ", " ", " "],
+			["a", "a", "a", "A"],
 		]);
 		const multipleDeadEnds: FlowGrid.Model = {
 			...grid,
 			pipesBySourceId: {
 				...grid.pipesBySourceId,
-				...solution.pipesBySourceId,				
+				...solution.pipesBySourceId,
 			},
 		};
 		expect(Flow.hasMultipleDeadEndPipelines(multipleDeadEnds)).toBe(true);
-	})
+	});
 
 	test("multiple dead ends false positive", async () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", " ", " "],
 			["a", " ", "A"],
-		])		
+		]);
 		expect(Flow.hasMultipleDeadEndPipelines(grid)).toBe(false);
-	})
+	});
 });

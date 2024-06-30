@@ -8,10 +8,8 @@ import {
 	type IViewFeedItem,
 } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import { FlowVariantPlay } from "../@/flow";
 import { FlowPackListClient } from "../@/flow-pack";
 import { FlowPackPuzzlesGridClient } from "../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
-import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import type {
 	ClientModule,
 	ClientModuleTypes,
@@ -22,10 +20,7 @@ import { ScreenPuzzleClient } from "./screen-play-puzzle/screen-play-puzzle.clie
 import { ScreenSelectPackClient } from "./screen-select-pack/screen-select-pack.client";
 import { ScreenSelectPuzzleClient } from "./screen-select-puzzle/select-puzzle.client";
 
-const flow = samples["8x8"][0];
 const init: ClientModule["init"] = {
-	flowUIPlay: FlowVariantPlay.init({ flow }),
-	flow,
 	flowPackList: FlowPackListClient.initClient,
 	flowPackGrid: FlowPackPuzzlesGridClient.initClient,
 	flowPacks: {},

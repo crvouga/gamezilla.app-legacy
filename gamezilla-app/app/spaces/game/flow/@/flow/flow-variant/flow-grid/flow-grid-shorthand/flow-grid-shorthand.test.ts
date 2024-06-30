@@ -717,7 +717,6 @@ describe(import.meta.file, () => {
 		expect(actual).toEqual(expected);
 	});
 
-
 	test.todo("from grid 2x3", () => {
 		const shorthand = FlowGridShorthand.init([
 			["A", " "],
@@ -726,7 +725,7 @@ describe(import.meta.file, () => {
 		]);
 
 		const actual = FlowGridShorthand.toGrid(shorthand);
-		
+
 		const expected = FlowGrid.init({
 			dimensions: FlowGridShorthand.toDimensions(shorthand),
 			terminalsByGroupId: actual.terminalsByGroupId,
@@ -737,12 +736,10 @@ describe(import.meta.file, () => {
 						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 					}),
 					groupId: "A",
-				},	
-			}
+				},
+			},
 		});
 
 		expect(Flow.isSame(actual, expected)).toEqual(true);
 	});
-
 });
-

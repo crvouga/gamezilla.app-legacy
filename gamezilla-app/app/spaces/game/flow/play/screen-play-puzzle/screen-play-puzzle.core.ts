@@ -66,9 +66,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-next-puzzle": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantPlay.init({
-					flow: msgCore.nextPuzzle.flow,
-				}),
+				flowPlay: FlowVariantPlay.init({ flowPuzzle: msgCore.nextPuzzle }),
 				opened:
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.nextPuzzle,
@@ -82,7 +80,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			return {
 				...modelCore,
 				flowPlay: FlowVariantPlay.init({
-					flow: msgCore.prevPuzzle.flow,
+					flowPuzzle: msgCore.prevPuzzle,
 				}),
 				opened:
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
@@ -97,7 +95,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			return {
 				...modelCore,
 				flowPlay: FlowVariantPlay.init({
-					flow: modelCore.flowPuzzle.flow,
+					flowPuzzle: modelCore.flowPuzzle,
 				}),
 				state: {
 					t: "solving",
@@ -149,7 +147,7 @@ const initCore = (input: {
 }): ModelCore => {
 	return {
 		...input,
-		flowPlay: FlowVariantPlay.init(input.flowPuzzle),
+		flowPlay: FlowVariantPlay.init({ flowPuzzle: input.flowPuzzle }),
 		state: {
 			t: "solving",
 		},

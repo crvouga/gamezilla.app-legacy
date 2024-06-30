@@ -404,7 +404,6 @@ const toPipesBySourceIdList_ = (input: {
 			continue;
 		}
 
-
 		const pipesBySourceIdForTerminal = toPipesBySourceIdForTerminalList({
 			grid: input.grid,
 			model: input.model,

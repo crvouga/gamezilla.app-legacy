@@ -7,6 +7,7 @@ import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
+	terminalsByGroupId: p.partialDict(Flow.GroupId, Flow.Terminal),
 	usedHints: p.partialDict(Flow.GroupId, Flow.GroupId),
 });
 export type Model = p.Infer<typeof Model>;
@@ -22,9 +23,12 @@ export const Msg = p.or(
 );
 export type Msg = p.Infer<typeof Msg>;
 
-export const init: Model = {
-	pipesBySourceId: {},
-	usedHints: {},
+export const init = (input: { flowPuzzle: FlowPuzzle }): Model => {
+	return {
+		pipesBySourceId: {},
+		usedHints: {},
+		terminalsByGroupId: input.flowPuzzle.flow.terminalsByGroupId,
+	};
 };
 
 export type Event =
@@ -66,17 +70,22 @@ export const update = <
 			}
 
 			const removed = Flow.removePipeline(flow, nextHintGroupId);
-			
-			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
-			
-			const pipesBySourceId = Flow.pipelineToPipesBySourceId(removed, pipeline);
 
+			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
+
+			const pipesBySourceId = Flow.pipelineToPipesBySourceId(removed, pipeline);
 			
+			const terminal = Flow.toTerminalByGroupId(solution, nextHintGroupId);
+
 			const modelNew: TModel = {
 				...input.model,
 				pipesBySourceId: {
 					...removed.pipesBySourceId,
 					...pipesBySourceId,
+				},
+				terminalsByGroupId: {
+					...input.model.terminalsByGroupId,
+					[nextHintGroupId]: terminal ?? input.model.terminalsByGroupId[nextHintGroupId],
 				},
 				usedHints: {
 					...input.model.usedHints,
@@ -133,6 +142,7 @@ export const deriveFlow = (input: {
 	return {
 		...input.flow,
 		pipesBySourceId: input.model.pipesBySourceId,
+		terminalsByGroupId: input.model.terminalsByGroupId,
 	};
 };
 export const ViewBottomButtonBarAction = (input: {

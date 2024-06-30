@@ -15,7 +15,7 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 						flow: msgCore.puzzle.flow,
 					}),
 					play: FlowVariantPlay.init({
-						flow: msgCore.puzzle.flow,
+						flowPuzzle: msgCore.puzzle,
 					}),
 					mode: { t: "edit" },
 					puzzle: msgCore.puzzle,

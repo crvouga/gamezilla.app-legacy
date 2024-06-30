@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, it, test } from "bun:test";
 import { Flow } from "../flow";
 import { FlowGridShorthand } from "./flow-grid";
 import * as FlowHint from "./flow-hint";
@@ -16,29 +16,38 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 	const flowPuzzle = await FlowPuzzle.random({
 		flow,
 	});
+
+	type Input = {
+		msg: FlowHint.Msg;
+		flowPuzzle?: FlowPuzzle;
+	};
+
 	const update = (
 		init: FlowHint.Model,
-		msgs: FlowHint.Msg[],
+		inputs: Input[],
 	): ReturnType<typeof FlowHint.update> => {
 		let output: ReturnType<typeof FlowHint.update> = { model: init };
-		for (const msg of msgs) {
+		for (const input of inputs) {
 			output = FlowHint.update({
-				msg,
-				flowPuzzle,
+				flowPuzzle: input.flowPuzzle ?? flowPuzzle,
 				model: output.model,
+				msg: input.msg,
 			});
 		}
 		return output;
 	};
 
 	const init: FlowHint.Model = {
-		...FlowHint.init,
+		...FlowHint.init({
+			flowPuzzle,
+		}),
 		pipesBySourceId: {
 			...flow.pipesBySourceId,
-		}
+		},
 	};
 
 	return {
+		flowPuzzle,
 		flow,
 		update,
 		init,
@@ -48,7 +57,7 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 describe(import.meta.file, () => {
 	test("hint", async () => {
 		const f = await Fixture();
-		const after = f.update(f.init, [{ t: "user-clicked-hint" }]);
+		const after = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
 		const flow = FlowHint.deriveFlow({
 			flow: f.flow,
 			model: after.model,
@@ -68,8 +77,8 @@ describe(import.meta.file, () => {
 		});
 
 		const output = f.update(f.init, [
-			{ t: "user-clicked-hint" },
-			{ t: "user-clicked-hint" },
+			{ msg: { t: "user-clicked-hint" } },
+			{ msg: { t: "user-clicked-hint" } },
 		]);
 		const flow = FlowHint.deriveFlow({
 			flow: f.flow,
@@ -87,7 +96,7 @@ describe(import.meta.file, () => {
 			]),
 		});
 
-		const output = f.update(f.init, [{ t: "user-clicked-hint" }]);
+		const output = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
 		expect(output.event?.t).toBe("used-hint");
 	});
 
@@ -101,14 +110,14 @@ describe(import.meta.file, () => {
 		});
 
 		const output = f.update(f.init, [
-			{ t: "user-clicked-hint" },
-			{ t: "user-clicked-hint" },
-			{ t: "user-clicked-hint" },
+			{ msg: { t: "user-clicked-hint" } },
+			{ msg: { t: "user-clicked-hint" } },
+			{ msg: { t: "user-clicked-hint" } },
 		]);
 		expect(output.event?.t).toBe("solved");
 	});
 
-	test("should not create branching in pipes after using a hint", async () => {
+	it("should not create branching in pipes after using a hint", async () => {
 		const f = await Fixture({
 			flow: FlowGridShorthand.toGrid([
 				["A", "a", "a", " "],
@@ -118,9 +127,7 @@ describe(import.meta.file, () => {
 			]),
 		});
 
-		const output = f.update(f.init, [
-			{ t: "user-clicked-hint" },
-		]);
+		const output = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
 
 		const derived = FlowHint.deriveFlow({
 			flow: f.flow,
@@ -128,5 +135,39 @@ describe(import.meta.file, () => {
 		});
 
 		expect(Flow.hasMultipleDeadEndPipelines(derived)).toBe(false);
-	})
+	});
+
+	it("should work even with flipped terminal", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				["A", " ", " "],
+				[" ", " ", " "],
+				["A", " ", " "],
+			]),
+		});
+
+		const terminal = Flow.toTerminalByGroupId(f.flow, "A");
+		const flipped = Flow.flipTerminal(f.flow, terminal);
+
+		const output = f.update(
+			{
+				...f.init,
+				terminalsByGroupId: { ...flipped.terminalsByGroupId }
+			},
+			[
+				{
+					msg: { t: "user-clicked-hint" },
+				},
+			],
+		);
+
+		const derived = FlowHint.deriveFlow({
+			flow: f.flow,
+			model: output.model,
+		});
+
+		const pipeline = Flow.toPipelineByGroupId(derived, "A");
+
+		expect(pipeline.length > 0).toBe(true);
+	});
 });

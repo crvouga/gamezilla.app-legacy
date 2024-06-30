@@ -6,8 +6,8 @@ import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
 import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 
 const Fixture = async ({ flow }: { flow: FlowVariant.Model }) => {
-	const init = FlowVariantPlay.init({ flow });
 	const flowPuzzle = await FlowPuzzle.random({ flow });
+	const init = FlowVariantPlay.init({ flowPuzzle });
 
 	const update = (init: FlowVariantPlay.Model, msgs: FlowVariantPlay.Msg[]) => {
 		return msgs.reduce<ReturnType<typeof FlowVariantPlay.update>>(

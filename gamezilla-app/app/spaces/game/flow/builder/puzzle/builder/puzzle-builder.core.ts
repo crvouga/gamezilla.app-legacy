@@ -79,9 +79,12 @@ const updateCore = ({
 				return modelCore;
 			}
 			const initial = FlowVariantPlay.init({
-				flow: FlowVarianEdit.deriveFlowMemoized({
-					model: modelCore.puzzleBuilder.edit,
-				}),
+				flowPuzzle: {
+					...modelCore.puzzleBuilder.puzzle,
+					flow: FlowVarianEdit.deriveFlowMemoized({
+						model: modelCore.puzzleBuilder.edit,
+					}),
+				},
 			});
 			return {
 				...modelCore,

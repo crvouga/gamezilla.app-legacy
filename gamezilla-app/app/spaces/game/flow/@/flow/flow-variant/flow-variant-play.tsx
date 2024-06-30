@@ -39,25 +39,25 @@ export const Model = p.and(
 );
 export type Model = p.Infer<typeof Model>;
 
-export const init = ({ flow }: { flow: Flow.Model }): Model => {
+export const init = (input: { flowPuzzle: FlowPuzzle }): Model => {
 	return {
-		...FlowHint.init,
-		pipesBySourceId: { ...flow.pipesBySourceId },
-		terminalsByGroupId: { ...flow.terminalsByGroupId },
+		...FlowHint.init(input),
+		pipesBySourceId: { ...input.flowPuzzle.flow.pipesBySourceId },
+		terminalsByGroupId: { ...input.flowPuzzle.flow.terminalsByGroupId },
 		status: { t: "idle" },
 	};
 };
 
-export const random = ({ flow }: { flow: Flow.Model }): Model => {
-	const initial = init({ flow });
+export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
+	const initial = init(input);
 
-	const terminal = Flow.randomTerminal(flow);
+	const terminal = Flow.randomTerminal(input.flowPuzzle.flow);
 
 	if (!terminal) {
 		return initial;
 	}
 
-	const edge = Flow.randomOutEdge(flow, terminal.startId);
+	const edge = Flow.randomOutEdge(input.flowPuzzle.flow, terminal.startId);
 
 	if (!edge) {
 		return initial;

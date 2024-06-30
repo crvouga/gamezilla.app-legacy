@@ -142,7 +142,7 @@ updates.push(({ modelCore, msgCore }) => {
 						puzzleIndex: msgCore.puzzleIndex,
 						puzzle: msgCore.puzzle,
 						playUI: FlowVariantPlay.init({
-							flow: msgCore.puzzle.flow,
+							flowPuzzle: msgCore.puzzle,
 						}),
 					},
 				},
@@ -276,7 +276,7 @@ updates.push(({ modelCore, msgCore }) => {
 							modelCore.packBuilder.pack.puzzleIds.length - 1,
 						),
 						playUI: FlowVariantPlay.init({
-							flow: msgCore.nextPuzzle.flow,
+							flowPuzzle: msgCore.nextPuzzle,
 						}),
 						puzzle: msgCore.nextPuzzle,
 					},
@@ -315,7 +315,7 @@ updates.push(({ modelCore, msgCore }) => {
 							modelCore.packBuilder.pack.puzzleIds.length - 1,
 						),
 						playUI: FlowVariantPlay.init({
-							flow: msgCore.previousPuzzle.flow,
+							flowPuzzle: msgCore.previousPuzzle,
 						}),
 						puzzle: msgCore.previousPuzzle,
 					},
