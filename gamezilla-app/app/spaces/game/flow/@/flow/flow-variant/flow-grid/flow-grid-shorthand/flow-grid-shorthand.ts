@@ -381,7 +381,6 @@ const toPipesBySourceIdForTerminalList = (input: {
 
 		visitedNodeIds.delete(currentNodeId);
 	};
-
 	findPaths(input.terminal.startId, {});
 	return allPaths;
 };
@@ -404,6 +403,7 @@ const toPipesBySourceIdList_ = (input: {
 		if (!terminal) {
 			continue;
 		}
+
 
 		const pipesBySourceIdForTerminal = toPipesBySourceIdForTerminalList({
 			grid: input.grid,

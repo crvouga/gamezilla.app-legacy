@@ -93,7 +93,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.only("isConnectedWithPipes should not fail in case of cycles", () => {
+	test("isConnectedWithPipes should not fail in case of cycles", () => {
 		const grid = FlowGridShorthand.toGrid([["A", "a", "A"]]);
 
 		const node1 = FlowGrid.toNodeId({ x: 0, y: 0 });
@@ -125,4 +125,69 @@ describe(import.meta.file, () => {
 
 		expect(isConnected).toBe(true);
 	});
+
+	test("branching pipelines dectection", async () => {
+		const gridA = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", " ", " "],
+			[" ", " ", "A"],
+		]);
+		const gridB = FlowGridShorthand.toGrid([
+			[" ", " ", " "],
+			[" ", " ", "a"],
+			[" ", " ", "A"],
+		]);
+
+		const grid: FlowGrid.Model = {
+			...gridA,
+			pipesBySourceId: {
+				...gridA.pipesBySourceId,
+				...gridB.pipesBySourceId,
+			},
+		};
+
+		const actual = Flow.hasBranchingPipelines(grid)
+		expect(actual).toBe(true);
+	})
+
+	test("branching pipelines false postives", async () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", " ", " "],
+			[" ", " ", "A"],
+		]);
+		expect(Flow.hasBranchingPipelines(grid)).toBe(false);
+	})
+
+	test("multiple dead ends detection", async () => {
+		const grid = FlowGridShorthand.toGrid([
+				["A", "a", "a", " "],
+				[" ", " ", "a", " "],
+				["a", "a", "a", " "],
+				[" ", " ", " ", "A"],
+		]);
+		const solution = FlowGridShorthand.toGrid([
+				["A", " ", " ", " "],
+				["a", " ", " ", " "],
+				["a", " ", " ", " "],
+				["a", "a", "a", "A"],
+		]);
+		const multipleDeadEnds: FlowGrid.Model = {
+			...grid,
+			pipesBySourceId: {
+				...grid.pipesBySourceId,
+				...solution.pipesBySourceId,				
+			},
+		};
+		expect(Flow.hasMultipleDeadEndPipelines(multipleDeadEnds)).toBe(true);
+	})
+
+	test("multiple dead ends false positive", async () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", " ", " "],
+			["a", " ", "A"],
+		])		
+		expect(Flow.hasMultipleDeadEndPipelines(grid)).toBe(false);
+	})
 });

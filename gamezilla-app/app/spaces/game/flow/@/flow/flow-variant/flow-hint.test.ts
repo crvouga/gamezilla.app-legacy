@@ -31,7 +31,12 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 		return output;
 	};
 
-	const init = FlowHint.init;
+	const init: FlowHint.Model = {
+		...FlowHint.init,
+		pipesBySourceId: {
+			...flow.pipesBySourceId,
+		}
+	};
 
 	return {
 		flow,
@@ -102,4 +107,26 @@ describe(import.meta.file, () => {
 		]);
 		expect(output.event?.t).toBe("solved");
 	});
+
+	test("should not create branching in pipes after using a hint", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				["A", "a", "a", " "],
+				[" ", " ", "a", " "],
+				["a", "a", "a", " "],
+				[" ", " ", " ", "A"],
+			]),
+		});
+
+		const output = f.update(f.init, [
+			{ t: "user-clicked-hint" },
+		]);
+
+		const derived = FlowHint.deriveFlow({
+			flow: f.flow,
+			model: output.model,
+		});
+
+		expect(Flow.hasMultipleDeadEndPipelines(derived)).toBe(false);
+	})
 });

@@ -101,7 +101,7 @@ export const drawPipes = (
 	);
 
 	const added = addPipeline(
-		removePipeline(model, groupId),
+		Flow.removePipeline(model, groupId),
 		terminal,
 		pipelineNew,
 	);
@@ -198,31 +198,6 @@ const findPipeline = (
 	}
 
 	return pipeline;
-};
-
-/**
- * Removes all pipes that are part of the pipeline with the inputted group id
- */
-const removePipeline = (
-	model: Flow.Model,
-	groupId: Flow.GroupId,
-): Flow.Model => {
-	const pipesBySourceId: Flow.Model["pipesBySourceId"] = {};
-
-	for (const pipe of Flow.yieldPipes(model)) {
-		if (pipe.groupId === groupId) {
-			continue;
-		}
-		pipesBySourceId[pipe.edge.sourceId] = {
-			edgeId: pipe.edgeId,
-			groupId: pipe.groupId,
-		};
-	}
-
-	return {
-		...model,
-		pipesBySourceId,
-	};
 };
 
 /**

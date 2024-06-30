@@ -589,7 +589,7 @@ export const toPipelineByGroupId = (model: Model, groupId: GroupId): Pipe[] => {
 	return toPipeline(model, terminal.startId);
 };
 
-export const pipelineToPipsBySourceId = (
+export const pipelineToPipesBySourceId = (
 	model: Model,
 	pipeline: Pipeline,
 ): { [sourceId: NodeId]: Pipe } => {
@@ -927,4 +927,92 @@ export const isTerminalConnectedWithPipes = (
 		return false;
 	}
 	return isConnectedWithPipes(model, terminal.startId, terminal.endId);
+};
+
+
+export const hasInwardPipe = (model: Model, nodeId: NodeId): boolean => {
+	for (const pipe of yieldPipes(model)) {
+		if (pipe.edge.targetId === nodeId) {
+			return true;
+		}
+	}
+	return false;
+}
+
+export const hasOutwardPipe = (model: Model, nodeId: NodeId): boolean => {
+	for (const pipe of yieldPipes(model)) {
+		if (pipe.edge.sourceId === nodeId) {
+			return true;
+		}
+	}
+	return false;
+}
+
+export const hasBranchingPipelines = (model: Model): boolean => {
+	for (const terminal of yieldTerminals(model)) {
+		const isStartBranching = hasInwardPipe(model, terminal.startId) && hasOutwardPipe(model, terminal.startId)
+		if (isStartBranching) {
+			return true
+		}
+		const isEndBranching = terminal.endId ? hasInwardPipe(model, terminal.endId) && hasOutwardPipe(model, terminal.endId) : false
+		if (isEndBranching) {
+			return true;
+		}
+
+		const isBothInward = terminal.endId ? hasInwardPipe(model, terminal.startId) && hasInwardPipe(model, terminal.endId) : false
+		
+		if (isBothInward) {
+			return true;
+		}
+
+		const isBothOutward = terminal.endId ? hasOutwardPipe(model, terminal.startId) && hasOutwardPipe(model, terminal.endId) : false
+
+		if (isBothOutward) {
+			return true;
+		}
+	}
+	return false;
+}
+
+export const hasMultipleDeadEndPipelines = (model: Model): boolean => {
+	const targetFrequencies: { [nodeId: string]: number } = {};
+	const sourceFrequencies: { [nodeId: string]: number } = {};
+	for(const pipe of yieldPipes(model)) {
+		targetFrequencies[pipe.edge.targetId] = (targetFrequencies[pipe.edge.targetId] ?? 0) + 1;
+		if((targetFrequencies[pipe.edge.targetId] ?? 0) > 1) {
+			return true;
+		}
+
+		sourceFrequencies[pipe.edge.sourceId] = (sourceFrequencies[pipe.edge.sourceId] ?? 0) + 1;
+		if((sourceFrequencies[pipe.edge.sourceId] ?? 0) > 1) {
+			return true;
+		}
+	}
+	return false
+}
+
+
+/**
+ * Removes all pipes that are part of the pipeline with the inputted group id
+ */
+export const removePipeline = (
+	model: Model,
+	groupId: GroupId,
+): Model => {
+	const pipesBySourceId: Model["pipesBySourceId"] = {};
+
+	for (const pipe of yieldPipes(model)) {
+		if (pipe.groupId === groupId) {
+			continue;
+		}
+		pipesBySourceId[pipe.edge.sourceId] = {
+			edgeId: pipe.edgeId,
+			groupId: pipe.groupId,
+		};
+	}
+
+	return {
+		...model,
+		pipesBySourceId,
+	};
 };

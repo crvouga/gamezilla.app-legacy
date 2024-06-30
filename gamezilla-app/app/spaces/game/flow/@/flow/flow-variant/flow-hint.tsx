@@ -65,13 +65,17 @@ export const update = <
 				return { model: input.model };
 			}
 
+			const removed = Flow.removePipeline(flow, nextHintGroupId);
+			
 			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
-			const pipesBySourceId = Flow.pipelineToPipsBySourceId(flow, pipeline);
+			
+			const pipesBySourceId = Flow.pipelineToPipesBySourceId(removed, pipeline);
 
+			
 			const modelNew: TModel = {
 				...input.model,
 				pipesBySourceId: {
-					...input.model.pipesBySourceId,
+					...removed.pipesBySourceId,
 					...pipesBySourceId,
 				},
 				usedHints: {

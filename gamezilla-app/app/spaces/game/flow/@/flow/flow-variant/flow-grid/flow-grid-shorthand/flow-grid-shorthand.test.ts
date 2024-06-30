@@ -716,4 +716,33 @@ describe(import.meta.file, () => {
 
 		expect(actual).toEqual(expected);
 	});
+
+
+	test.todo("from grid 2x3", () => {
+		const shorthand = FlowGridShorthand.init([
+			["A", " "],
+			[" ", "a"],
+			[" ", "A"],
+		]);
+
+		const actual = FlowGridShorthand.toGrid(shorthand);
+		
+		const expected = FlowGrid.init({
+			dimensions: FlowGridShorthand.toDimensions(shorthand),
+			terminalsByGroupId: actual.terminalsByGroupId,
+			pipesBySourceId: {
+				[FlowGrid.toNodeId({ x: 1, y: 2 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 1, y: 2 }),
+						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
+					}),
+					groupId: "A",
+				},	
+			}
+		});
+
+		expect(Flow.isSame(actual, expected)).toEqual(true);
+	});
+
 });
+
