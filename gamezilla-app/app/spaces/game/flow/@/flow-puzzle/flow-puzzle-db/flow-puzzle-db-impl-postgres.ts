@@ -1,14 +1,14 @@
-import { type Pagination, UserId } from "gamezilla-app/app/@/data";
-import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { Ok, Posix, Result, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
+import { Sql } from "gamezilla-app/@/sql";
+import { UserId, type Pagination } from "gamezilla-app/app/@/data";
+import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
+import { FlowVariant } from "../../flow/flow-variant";
+import { FlowAlgoSolveAsync } from "../../flow/flow-variant/flow-variant-aglo/flow-algo-solve-async";
 import type { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleId } from "../flow-puzzle-id";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import type { IFlowPuzzleDb, OrderClause, WhereClause } from "./flow-puzzle-db";
-import { Sql } from "gamezilla-app/@/sql";
-import { FlowAlgoSolve } from "../../flow/flow";
-import { FlowVariant } from "../../flow/flow-variant";
 
 export const Row = p.obj({
 	flow_puzzle_id: p.str,
@@ -55,10 +55,6 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 		lastUpdatedAt &&
 		lastUpdatedBy
 	) {
-		const solutions = FlowAlgoSolve.solve(flow, {
-			distance: FlowVariant.distance(flow),
-		});
-		const solution = first(solutions);
 		return {
 			id: flowPuzzleId,
 			name: flowPuzzleName,
@@ -67,7 +63,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 			createdBy,
 			lastUpdatedAt,
 			lastUpdatedBy,
-			flowSolutions: solution ? [solution] : [],
+			flowSolutions: [],
 		};
 	}
 	console.error(
@@ -80,12 +76,18 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 	return null;
 };
 
-const first = <T>(iterable: Iterable<T>): T | null => {
-	for (const item of iterable) {
-		return item;
-	}
-	return null;
+const assocFlowSolution = async (
+	flowPuzzle: FlowPuzzle,
+): Promise<FlowPuzzle> => {
+	const solution = await FlowAlgoSolveAsync.solve(flowPuzzle.flow);
+
+	return {
+		...flowPuzzle,
+		flowSolutions: solution ? [solution] : [],
+	};
 };
+
+
 //
 //
 //
@@ -179,10 +181,27 @@ export const FlowPuzzleDbPostgres = ({
 					flow_puzzle_id: flowPuzzleId,
 				},
 			);
-			return Result.mapOk(
-				queried,
-				(rows) => rows.map(rowToFlowPuzzle)[0] ?? null,
+
+			if (isErr(queried)) {
+				return queried;
+			}
+
+			const queriedFlowPuzzle = queried.value.map(
+				async (row): Promise<FlowPuzzle[]> => {
+					const flowPuzzle = rowToFlowPuzzle(row);
+					if (!flowPuzzle) {
+						return [];
+					}
+					const withSolutions = await assocFlowSolution(flowPuzzle);
+					return [withSolutions];
+				},
 			);
+
+			const awaited = await Promise.all(queriedFlowPuzzle);
+
+			const flowPuzzles = awaited.flat();
+
+			return Ok(flowPuzzles[0] ?? null);
 		},
 
 		async count(input) {
@@ -248,15 +267,25 @@ export const FlowPuzzleDbPostgres = ({
 				return queriedCount;
 			}
 
-			const items = queried.value.flatMap((row) => {
-				const parsed = rowToFlowPuzzle(row);
-				return parsed ? [parsed] : [];
-			});
+			const queriedFlowPuzzle = queried.value.map(
+				async (row): Promise<FlowPuzzle[]> => {
+					const flowPuzzle = rowToFlowPuzzle(row);
+					if (!flowPuzzle) {
+						return [];
+					}
+					const withSolutions = await assocFlowSolution(flowPuzzle);
+					return [withSolutions];
+				},
+			);
+
+			const awaited = await Promise.all(queriedFlowPuzzle);
+
+			const flowPuzzles = awaited.flat();
 
 			const total = Number.parseFloat(queriedCount.value[0]?.count ?? "0") ?? 0;
 
 			return Ok({
-				items: items,
+				items: flowPuzzles,
 				total: total,
 				limit: input.pagination.limit,
 				offset: input.pagination.offset,

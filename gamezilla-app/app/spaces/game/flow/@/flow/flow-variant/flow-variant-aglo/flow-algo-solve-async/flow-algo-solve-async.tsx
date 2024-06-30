@@ -30,7 +30,17 @@ export const solve = async (
 
 	worker.postMessage(toWorker);
 
-	const solution = await solutionPromise;
+	const solution = await Promise.race([
+		solutionPromise,
+		new Promise<FlowVariant.Model | null>((resolve) => {
+			setTimeout(
+				() => {
+					resolve(null);
+				},
+				1000 * 60 * 10,
+			);
+		}),
+	]);
 
 	worker.terminate();
 
