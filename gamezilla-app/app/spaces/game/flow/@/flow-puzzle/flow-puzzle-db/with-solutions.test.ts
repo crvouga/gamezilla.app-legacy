@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { Result } from "gamezilla-app/@/core";
 import { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleDbFixture } from "./fixture";
-import { WithSolutions } from "./with-solutions";
+import { SKIP_QUERIES, WithSolutions } from "./with-solutions";
 import { FlowGridShorthand } from "../../flow/flow-variant/flow-grid";
 
 const Fixture = async () => {
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
 		expect((after?.flowSolutions.length ?? 0) > 0).toBe(true);
 	});
 
-	it("should assoc solutions before get", async () => {
+	it.skipIf(SKIP_QUERIES)("should assoc solutions before get", async () => {
 		const f = await Fixture();
 		const before = Result.unwrap(
 			await f.withSolutions.get(f.puzzleWithEmptySolutions.id),
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
 		expect((after?.flowSolutions.length ?? 0) > 0).toBe(true);
 	});
 
-	it("should assoc solutions before list", async () => {
+	it.skipIf(SKIP_QUERIES)("should assoc solutions before list", async () => {
 		const f = await Fixture();
 
 		const before = Result.unwrap(

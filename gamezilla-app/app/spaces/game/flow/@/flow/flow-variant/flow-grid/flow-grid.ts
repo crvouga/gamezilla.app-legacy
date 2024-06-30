@@ -44,7 +44,7 @@ export const distance =
 			return Number.POSITIVE_INFINITY;
 		}
 
-		return Position.distance(positionA, positionB);
+		return Position.manhattanDistance(positionA, positionB);
 	};
 
 //

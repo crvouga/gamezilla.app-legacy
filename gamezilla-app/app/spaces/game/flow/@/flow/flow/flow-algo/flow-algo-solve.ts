@@ -157,17 +157,45 @@ const drawPipeline = (
 	};
 };
 
+const isSolvable = (config: Config, model: Flow.Model, disconnectedTerminals: Flow.Terminal[]): boolean => {
+	const totalCells = Object.keys(model.nodes).length;
+	const filledCells = Object.keys(model.pipesBySourceId).length;
+	const openCells = totalCells - filledCells;
+
+	// Calculate the required cells for connecting all terminals
+	const requiredCells = disconnectedTerminals.reduce((sum, terminal) => {
+		if (terminal.endId) {
+			const dist = config.distance(terminal.startId, terminal.endId);
+			return sum + dist;
+		}
+		return sum;
+	}, 0);
+
+	return openCells >= requiredCells;
+};
+
+
 const solveStep = function* (
 	config: Config,
 	model: Flow.Model,
-	terminals: Flow.Terminal[],
+	disconnectedTerminals: Flow.Terminal[],
+	depth: number = 0,
+	maxDepth: number = 100
 ): Iterable<Flow.Model> {
+	if (depth > maxDepth) {
+		return;
+	}
+
+	if (!isSolvable(config, model, disconnectedTerminals)) {
+		return;
+	}
+
 	if (Flow.isSolved(model)) {
 		yield model;
 		return;
 	}
 
-	const terminal = terminals[0];
+	const terminal = disconnectedTerminals[0];
 
 	if (!terminal || !terminal.endId) {
 		return;
@@ -183,7 +211,7 @@ const solveStep = function* (
 
 	for (const possiblePipeline of possiblePipelines) {
 		const drew = drawPipeline(model, terminal, possiblePipeline);
-		yield* solveStep(config, drew, terminals.slice(1));
+		yield* solveStep(config, drew, disconnectedTerminals.slice(1), depth + 1, maxDepth)	
 	}
 };
 
@@ -191,6 +219,7 @@ export const solve = function* (
 	model: Flow.Model,
 	config: Config,
 ): Iterable<Flow.Model> {
+	
 	const terminals = Flow.toTerminals(model);
 
 	terminals.sort((a, b) => {
@@ -200,7 +229,7 @@ export const solve = function* (
 				config.distance(b.startId, b.endId)
 			);
 		}
-		return 0;
+		return Infinity;
 	});
 
 	yield* solveStep(config, model, terminals);

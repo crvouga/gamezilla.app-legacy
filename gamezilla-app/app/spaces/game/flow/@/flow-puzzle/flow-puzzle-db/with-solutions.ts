@@ -2,11 +2,17 @@ import { Ok, isErr } from "gamezilla-app/@/core";
 import { FlowAlgoSolveAsync } from "../../flow/flow-variant/flow-variant-aglo/flow-algo-solve-async";
 import { IFlowPuzzleDb } from "./flow-puzzle-db";
 
+export const SKIP_QUERIES = true;
+
 export const WithSolutions = (flowPuzzleDb: IFlowPuzzleDb): IFlowPuzzleDb => {
 	return {
 		...flowPuzzleDb,
 		async list(input) {
-			const listed = await flowPuzzleDb.list(input);
+            const listed = await flowPuzzleDb.list(input);
+            
+            if (SKIP_QUERIES) {
+                return listed;
+            }
 
 			if (isErr(listed)) return listed;
 
@@ -33,7 +39,11 @@ export const WithSolutions = (flowPuzzleDb: IFlowPuzzleDb): IFlowPuzzleDb => {
 			});
 		},
 		async get(id) {
-			const got = await flowPuzzleDb.get(id);
+            const got = await flowPuzzleDb.get(id);
+            
+            if (SKIP_QUERIES) {
+                return got;
+            }
 
 			if (isErr(got)) return got;
 

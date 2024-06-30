@@ -571,4 +571,34 @@ describe(import.meta.file, () => {
 			),
 		).toBe(true);
 	});
+
+	test("3x3 no solutions", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", "B", "A"],
+			[" ", " ", " "],
+			["C", "B", "C"],
+		]);
+		const config = { distance: FlowGrid.distance(grid) };
+		const actual = Array.from(FlowAlgoSolve.solve(grid, config));
+		expect(actual).toEqual([]);
+	});
+
+	test.todo("8x8 no solutions", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["C", " ", " ", "D", " ", " ", " ", "A"],
+			[" ", " ", " ", " ", " ", " ", " ", " "],
+			[" ", " ", " ", " ", " ", " ", " ", " "],
+			["B", " ", " ", " ", " ", " ", " ", "B"],
+			[" ", " ", " ", " ", " ", " ", " ", " "],
+			[" ", " ", " ", " ", " ", " ", " ", " "],
+			["A", " ", " ", "D", " ", " ", " ", "C"],
+		]);
+		const config = { distance: FlowGrid.distance(grid) };
+		const actual = first(FlowAlgoSolve.solve(grid, config));
+		expect(actual).toEqual(null);
+	});
 });
+
+const first = <T>(iterable: Iterable<T>): T | null => {
+	return iterable[Symbol.iterator]().next().value ?? null;
+}

@@ -11,7 +11,12 @@ const distance = (a: Position, b: Position) => {
 	return (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
 };
 
+const manhattanDistance = (a: Position, b: Position) => {
+	return Math.abs(b.x - a.x) + Math.abs(b.y - a.y);
+}
+
 export const Position = {
+	manhattanDistance,
 	distance,
 	parser,
 };

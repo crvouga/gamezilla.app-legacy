@@ -4,6 +4,7 @@ import { FlowPuzzleDbHashMap } from "./flow-puzzle-db-impl-hash-map";
 import { FlowPuzzleDbPostgres } from "./flow-puzzle-db-impl-postgres";
 import { ILogger } from "gamezilla-app/app/@/server/logger";
 import { WithSolutions } from "./with-solutions";
+import { pipe } from "gamezilla-app/@/core";
 
 export type FlowPuzzleDbImpl =
 	| { t: "hash-map" }
@@ -21,5 +22,5 @@ const FlowPuzzleDbBase = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
 };
 
 export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
-	return  WithSolutions(FlowPuzzleDbBase(impl));
+	return pipe(FlowPuzzleDbBase(impl), WithSolutions);
 };
