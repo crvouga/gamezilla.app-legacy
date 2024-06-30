@@ -37,7 +37,8 @@ export type Event =
 	  }
 	| {
 			t: "used-hint";
-	  };
+	};
+	  
 
 export const update = <
 	TModel extends Model,

@@ -152,7 +152,7 @@ describe(import.meta.file, () => {
 		const output = f.update(
 			{
 				...f.init,
-				terminalsByGroupId: { ...flipped.terminalsByGroupId }
+				terminalsByGroupId: { ...flipped.terminalsByGroupId },
 			},
 			[
 				{
@@ -169,5 +169,11 @@ describe(import.meta.file, () => {
 		const pipeline = Flow.toPipelineByGroupId(derived, "A");
 
 		expect(pipeline.length > 0).toBe(true);
+	});
+
+	test("record used hints", async () => {
+		const f = await Fixture();
+		const after = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
+		expect(Object.keys(after.model.usedHints)).toEqual(["A"]);
 	});
 });

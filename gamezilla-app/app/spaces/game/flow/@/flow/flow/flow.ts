@@ -792,12 +792,14 @@ export const findGroupIdByNodeId = (
 /**
  * Flips the start and end nodes of the inputted terminal.
  */
-export const flipTerminal = (model: Model, terminal: Terminal | null): Model => {
-
+export const flipTerminal = (
+	model: Model,
+	terminal: Terminal | null,
+): Model => {
 	if (!terminal) {
 		return model;
 	}
-	
+
 	if (!terminal.endId) {
 		return model;
 	}
