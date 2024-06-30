@@ -9,6 +9,7 @@ import type { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleId } from "../flow-puzzle-id";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import type { IFlowPuzzleDb, OrderClause, WhereClause } from "./flow-puzzle-db";
+import { ILogger } from "gamezilla-app/app/@/server/logger";
 
 export const Row = p.obj({
 	flow_puzzle_id: p.str,
@@ -78,8 +79,9 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 
 const assocFlowSolution = async (
 	flowPuzzle: FlowPuzzle,
+	logger: ILogger,
 ): Promise<FlowPuzzle> => {
-	const solution = await FlowAlgoSolveAsync.solve(flowPuzzle.flow);
+	const solution = await FlowAlgoSolveAsync.solve(flowPuzzle.flow, logger);
 
 	return {
 		...flowPuzzle,
@@ -160,7 +162,9 @@ const toSqlPagination = (input: { pagination: Pagination }) => {
 
 export const FlowPuzzleDbPostgres = ({
 	dbConnSql,
+	logger,
 }: {
+	logger: ILogger;
 	dbConnSql: IDbConnSql;
 }): IFlowPuzzleDb => {
 	return {
@@ -192,7 +196,7 @@ export const FlowPuzzleDbPostgres = ({
 					if (!flowPuzzle) {
 						return [];
 					}
-					const withSolutions = await assocFlowSolution(flowPuzzle);
+					const withSolutions = await assocFlowSolution(flowPuzzle, logger);
 					return [withSolutions];
 				},
 			);
@@ -273,7 +277,7 @@ export const FlowPuzzleDbPostgres = ({
 					if (!flowPuzzle) {
 						return [];
 					}
-					const withSolutions = await assocFlowSolution(flowPuzzle);
+					const withSolutions = await assocFlowSolution(flowPuzzle, logger);
 					return [withSolutions];
 				},
 			);

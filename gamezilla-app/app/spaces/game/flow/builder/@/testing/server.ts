@@ -4,6 +4,7 @@ import { FlowPackDb } from "../../../@/flow-pack/flow-pack-db";
 import { FlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
 import { initServer, type FlowServerDeps } from "../../builder.types";
 import { BuilderCore } from "../../builder.core";
+import { Logger } from "gamezilla-app/app/@/server/logger";
 
 export const initial = {
 	model: initServer,
@@ -21,6 +22,7 @@ export const getDeps = async (): Promise<FlowServerDeps> => {
 				flowPuzzleDb: FlowPuzzleDb({
 					t: "db-conn-sql",
 					dbConnSql: testEnv.dbConnSql,
+					logger: Logger({ t: "noop" })
 				}),
 			};
 		}

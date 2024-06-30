@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { FlowGridShorthand } from "../../../flow-variant/flow-grid";
 import * as FlowAlgoSolveAsync from "./flow-algo-solve-async";
 import { Flow } from "../../../flow";
+import { Logger } from "gamezilla-app/app/@/server/logger";
 
 describe(import.meta.file, () => {
 	test("solve flow", async () => {
@@ -11,7 +12,7 @@ describe(import.meta.file, () => {
 			["A", "B", "C"],
 		]);
 
-		const solution = await FlowAlgoSolveAsync.solve(flow);
+		const solution = await FlowAlgoSolveAsync.solve(flow, Logger({t: "noop"}));
 
 		const expected = FlowGridShorthand.toGrid([
 			["A", "B", "C"],

@@ -8,12 +8,14 @@ import { FlowPuzzleListServer } from "../@/flow-puzzle/flow-puzzle-list";
 import { initServer, type ServerModule } from "./builder.types";
 import { PackServer } from "./pack/pack.server";
 import { PuzzleServer } from "./puzzle/puzzle.server";
+import { Logger } from "gamezilla-app/app/@/server/logger";
 
 const deps: ServerModule["deps"] = async (input) => {
 	return {
 		flowPuzzleDb: FlowPuzzleDb({
 			t: "db-conn-sql",
 			dbConnSql: input.ctx.dbConnSql,
+			logger: Logger({ t: "noop" })
 		}),
 		flowPackDb: FlowPackDb({
 			t: "db-conn-sql",

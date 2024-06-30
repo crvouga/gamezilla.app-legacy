@@ -1,4 +1,5 @@
 import { Eff, Sub } from "gamezilla-app/@/core";
+import { ILogger } from "gamezilla-app/app/@/server/logger";
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import type {
 	SpaceServerCtx,
@@ -6,6 +7,8 @@ import type {
 } from "gamezilla-app/app/spaces/@/space";
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import { FlowPackDb, FlowPackListServer, IFlowPackDb } from "../@/flow-pack";
+import { FlowPackPuzzlesGridServer } from "../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server";
+import { FlowPuzzleDb, IFlowPuzzleDb } from "../@/flow-puzzle";
 import type {
 	ModelCore,
 	ModelServer,
@@ -14,8 +17,6 @@ import type {
 	MsgToClient,
 	MsgToServer,
 } from "./play.types";
-import { FlowPackPuzzlesGridServer } from "../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server";
-import { FlowPuzzleDb, IFlowPuzzleDb } from "../@/flow-puzzle";
 
 type ServerModule = GameServerModule<{
 	Model: ModelServer;
@@ -109,6 +110,7 @@ export const PlayServer: ServerModule = {
 			flowPuzzleDb: FlowPuzzleDb({
 				t: "db-conn-sql",
 				dbConnSql: input.ctx.dbConnSql,
+				logger: ILogger.prefix("flow-puzzle-db", input.ctx.logger)
 			}),
 		};
 	},

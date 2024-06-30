@@ -1,9 +1,13 @@
+import { ILogger } from "gamezilla-app/app/@/server/logger";
 import type { FlowVariant } from "../../../flow-variant";
 import { MsgToMaster, type MsgToWorker } from "./flow-algo-solve-async.types";
 
 export const solve = async (
 	model: FlowVariant.Model,
+	logger: ILogger,
 ): Promise<FlowVariant.Model | null> => {
+	logger.info(`Solving puzzle with worker`);
+
 	const url = new URL("flow-algo-solve-async.worker.ts", import.meta.url).href;
 
 	const worker = new Worker(url);
@@ -28,7 +32,11 @@ export const solve = async (
 		model,
 	};
 
+	logger.info("Sending solve request to worker");
+
 	worker.postMessage(toWorker);
+
+	logger.info("Waiting for solution");
 
 	const solution = await Promise.race([
 		solutionPromise,
@@ -42,7 +50,13 @@ export const solve = async (
 		}),
 	]);
 
+	logger.info(`Solution: ${solution ? "found" : "not found"}`);
+
+	logger.info("Terminating worker");
+	
 	worker.terminate();
+
+	logger.info("Worker terminated");
 
 	return solution;
 };

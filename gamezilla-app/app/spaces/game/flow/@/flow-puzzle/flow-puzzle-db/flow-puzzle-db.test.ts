@@ -6,6 +6,7 @@ import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import { FlowPuzzleDb } from "./flow-puzzle-db-impl";
+import { Logger } from "gamezilla-app/app/@/server/logger";
 
 const Fixture = async () => {
 	const testEnv = await AppServerTestEnv();
@@ -14,6 +15,7 @@ const Fixture = async () => {
 			const flowPuzzleDb = FlowPuzzleDb({
 				t: "db-conn-sql",
 				dbConnSql: testEnv.dbConnSql,
+				logger: Logger({ t: "noop" })
 			});
 
 			return {
