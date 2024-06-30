@@ -245,4 +245,13 @@ describe(import.meta.file, () => {
 		]);
 		expect(output.opened).toBe(null);
 	});
+
+	test("close action drawer", async () => {
+		const f = await Fixture();
+		const output = f.updates(f.init, [
+			{ t: "user-toggled-action-buttons-drawer" },
+			{ t: "user-clicked-copy-to-clipboard" },
+		]);
+		expect(output[0].opened).toBe(null);
+	});
 });

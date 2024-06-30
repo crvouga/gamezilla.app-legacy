@@ -11,9 +11,9 @@ import {
 	descend,
 	isErr,
 } from "gamezilla-app/@/core";
-import { FlowVariantUI } from "../../flow";
 import type { FlowPuzzle } from "../flow-puzzle";
 import type { ClientModule } from "./flow-puzzle-list.core";
+import { FlowVariantUI } from "../../flow/flow-variant";
 
 const update: ClientModule["update"] = (input) => {
 	return AppClientModule.andThen(

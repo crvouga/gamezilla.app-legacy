@@ -1,10 +1,10 @@
-import { pipe } from "gamezilla-app/@/core";
+import { NonEmpty, pipe } from "gamezilla-app/@/core";
 import { FlowVariantPlay, type FlowVariant } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import { CoreFixture } from "../../@/testing";
-import type { ModelCore, MsgCore } from "../screen-play-puzzle.types";
 import { ScreenPuzzleCore } from "../screen-play-puzzle.core";
+import type { ModelCore, MsgCore } from "../screen-play-puzzle.types";
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: {
 	flow?: FlowVariant.Model;
@@ -56,12 +56,19 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: {
 }) => {
 	const f = await ScreenPuzzlePlayCoreFixture(input);
 
-	const update = (init: ModelCore, msgs: MsgCore[]): ModelCore => {
-		let model: ModelCore = init;
+	const updates = (init: ModelCore, msgs: MsgCore[]): NonEmpty<ModelCore> => {
+		const models: NonEmpty<ModelCore> = [init];
 		for (const msg of msgs) {
-			model = ScreenPuzzleCore.updateScreen(model, msg);
+			const last = NonEmpty.last(models);
+			const latest = ScreenPuzzleCore.updateScreen(last, msg);
+			models.push(latest);
 		}
-		return model;
+		return models;
+	};
+
+	const update = (init: ModelCore, msgs: MsgCore[]): ModelCore => {
+		const outputs = updates(init, msgs);
+		return NonEmpty.last(outputs);
 	};
 
 	const init: ModelCore = ScreenPuzzleCore.initCore({
@@ -72,6 +79,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: {
 
 	return {
 		...f,
+		updates,
 		initParent: f.init,
 		updateParent: f.update,
 		update,

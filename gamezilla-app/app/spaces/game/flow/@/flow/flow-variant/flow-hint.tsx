@@ -1,9 +1,9 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import { ViewBottomButtonBarActionHint } from "gamezilla-app/app/spaces/game/@/game";
-import type { FlowPuzzle } from "../../flow-puzzle";
 import { Flow } from "../flow";
 import * as FlowVariant from "./flow-variant";
+import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),

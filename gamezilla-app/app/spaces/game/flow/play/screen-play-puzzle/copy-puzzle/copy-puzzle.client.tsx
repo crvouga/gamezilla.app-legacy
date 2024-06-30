@@ -8,6 +8,7 @@ import {
 import { IconCopy } from "gamezilla-app/app/@/ui";
 import type { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
 import { FlowVariantPlay } from "../../../@/flow";
+import { FlowGridShorthand } from "../../../@/flow/flow-variant/flow-grid";
 import type { ClientModule, MsgClient } from "../../play.types";
 
 export const update: ClientModule["update"] = (input) => {
@@ -16,17 +17,26 @@ export const update: ClientModule["update"] = (input) => {
 			if (input.modelCore.screen.t !== "screen-play-puzzle") {
 				return { model: input.model };
 			}
-			FlowVariantPlay.deriveFlow({
+
+			const flow = FlowVariantPlay.deriveFlow({
 				flow: input.modelCore.screen.flowPuzzle.flow,
 				model: input.modelCore.screen.flowPlay,
 			});
-			// const shorthand = FlowVariantPlay.toShorthand({flow});
+
+			if (flow.t !== "flow-grid") {
+				return { model: input.model };
+			}
+
+			const shorthand = FlowGridShorthand.fromGrid(flow);
+
+			const encoded = JSON.stringify(shorthand);
+
 			return {
 				model: input.model,
 				msgCmd: [
-					playSound(APP_SOUND.navForwardMin),
+					playSound(APP_SOUND.refreshFeed),
 					showToast(input.ctx.t("app.copied-to-clipboard")),
-					copyToClipboard("Todo"),
+					copyToClipboard(encoded),
 				],
 			};
 		}
@@ -39,10 +49,18 @@ export const update: ClientModule["update"] = (input) => {
 export const viewButtonAction = ({
 	ctx,
 	dispatch,
-}: { ctx: ClientCtx; dispatch: (m: MsgClient) => void }): ButtonActionProps => {
-	return {
-		icon: (props) => <IconCopy {...props} />,
-		label: ctx.t("flow.copy-puzzle-to-clipboard"),
-		onClick: () => dispatch({ t: "user-clicked-copy-to-clipboard" }),
-	};
+}: {
+	ctx: ClientCtx;
+	dispatch: (m: MsgClient) => void;
+}): ButtonActionProps[] => {
+	if (ctx.currentUserRole !== "super") {
+		return [];
+	}
+	return [
+		{
+			icon: (props) => <IconCopy {...props} />,
+			label: ctx.t("flow.copy-puzzle-to-clipboard"),
+			onClick: () => dispatch({ t: "user-clicked-copy-to-clipboard" }),
+		},
+	];
 };

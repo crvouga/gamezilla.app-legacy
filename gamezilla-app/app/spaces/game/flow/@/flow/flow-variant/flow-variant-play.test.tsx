@@ -3,7 +3,7 @@ import { FlowVariantPlay, type FlowVariant } from ".";
 import { Flow } from "../flow";
 import { FlowGrid } from "./flow-grid";
 import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
-import { FlowPuzzle } from "../../flow-puzzle";
+import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 
 const Fixture = async ({ flow }: { flow: FlowVariant.Model }) => {
 	const init = FlowVariantPlay.init({ flow });

@@ -28,6 +28,7 @@ export const init = (_input: {
 export type Msg =
 	| { t: "document-became-hidden" }
 	| { t: "document-became-visible" }
+	| { t: "copied-to-clipboard"; text: string }
 	| { t: "element-focused"; id: string };
 
 export const update = <TMsgClient>({
@@ -72,6 +73,12 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
 		}
 
 		case "element-focused": {
+			return {
+				model,
+			};
+		}
+
+		case "copied-to-clipboard": {
 			return {
 				model,
 			};
@@ -143,6 +150,15 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 			};
 		}
 
+		case "copy-to-clipboard": {
+			return {
+				model,
+				eff: async (dispatch) => {
+					await navigator.clipboard.writeText(platformCmd.text);
+					dispatch({ t: "copied-to-clipboard", text: platformCmd.text });
+				},
+			};
+		}
 		default: {
 			return {
 				model,

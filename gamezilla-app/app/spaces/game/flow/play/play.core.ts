@@ -1,15 +1,8 @@
-import { FlowVariantPlay } from "../@/flow";
-import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import type { CoreModule } from "./play.types";
 import { ScreenPuzzleCore } from "./screen-play-puzzle/screen-play-puzzle.core";
 
 const initCore: CoreModule["initCore"] = () => {
-	const flow = samples["8x8"][1];
 	return {
-		play: FlowVariantPlay.init({
-			flow,
-		}),
-		flow,
 		screen: {
 			t: "screen-select-pack",
 		},

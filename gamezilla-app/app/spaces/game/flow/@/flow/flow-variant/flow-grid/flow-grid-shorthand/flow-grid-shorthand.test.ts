@@ -646,4 +646,60 @@ describe(import.meta.file, () => {
 
 		expect(isSame).toBe(true);
 	});
+
+	test("from grid 3x3", () => {
+		const expected = FlowGridShorthand.init([
+			["A", " ", " "],
+			[" ", " ", " "],
+			["A", " ", " "],
+		]);
+
+		const grid = FlowGridShorthand.toGrid(expected);
+
+		const actual = FlowGridShorthand.fromGrid(grid);
+
+		expect(actual).toEqual(expected);
+	});
+
+	test("from grid 3x3 with pipes", () => {
+		const expected = FlowGridShorthand.init([
+			["A", " ", " "],
+			["a", " ", " "],
+			["A", " ", " "],
+		]);
+
+		const grid = FlowGridShorthand.toGrid(expected);
+
+		const actual = FlowGridShorthand.fromGrid(grid);
+
+		expect(actual).toEqual(expected);
+	});
+
+	test("from grid 2x2 with pipes and adjacent terminals", () => {
+		const expected = FlowGridShorthand.init([
+			["Aa", "A"],
+			[" ", " "],
+		]);
+
+		const grid = FlowGridShorthand.toGrid(expected);
+
+		const actual = FlowGridShorthand.fromGrid(grid);
+
+		expect(actual).toEqual(expected);
+	});
+
+	test("from grid 2x2 with pipes and right side adjacent terminals", () => {
+		const expected = FlowGridShorthand.init([
+			["A", "Aa"],
+			[" ", " "],
+		]);
+
+		const expectedGrid = FlowGridShorthand.toGrid(expected);
+
+		const actual = FlowGridShorthand.fromGrid(expectedGrid);
+
+		const actualGrid = FlowGridShorthand.toGrid(actual);
+
+		expect(Flow.isSame(actualGrid, expectedGrid)).toBe(true)
+	});
 });

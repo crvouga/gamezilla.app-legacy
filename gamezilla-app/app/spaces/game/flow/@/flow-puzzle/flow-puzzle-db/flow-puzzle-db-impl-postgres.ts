@@ -2,12 +2,13 @@ import { type Pagination, UserId } from "gamezilla-app/app/@/data";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { Ok, Posix, Result, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { FlowAlgoSolve, FlowVariant } from "../../flow";
 import type { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleId } from "../flow-puzzle-id";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import type { IFlowPuzzleDb, OrderClause, WhereClause } from "./flow-puzzle-db";
 import { Sql } from "gamezilla-app/@/sql";
+import { FlowAlgoSolve } from "../../flow/flow";
+import { FlowVariant } from "../../flow/flow-variant";
 
 export const Row = p.obj({
 	flow_puzzle_id: p.str,

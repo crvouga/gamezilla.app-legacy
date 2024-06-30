@@ -76,6 +76,21 @@ const pipeToGroupId = (pipe: Pipe): Flow.GroupId => {
 	}
 	return "A";
 };
+const groupIdToPipe = (groupId: Flow.GroupId): Pipe => {
+	const lowercase = groupId.toLowerCase();
+	if (isPipe(lowercase)) {
+		return lowercase;
+	}
+	return "a";
+};
+
+const groupIdToTerminalWithPipe = (groupId: Flow.GroupId): TerminalWithPipe => {
+	const terminalWithPipe = `${groupId.toUpperCase()}${groupId.toLowerCase()}`;
+	if (isTerminalWithPipe(terminalWithPipe)) {
+		return terminalWithPipe;
+	}
+	return "Aa";
+};
 
 const terminalWithPipeToGroupId = (
 	terminalWithPipe: TerminalWithPipe,
@@ -550,4 +565,86 @@ export const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
 		},
 	);
 	return grids;
+};
+
+const isValid = (maybeModel: Element[][]): maybeModel is Model => {
+	return NonEmpty.is(maybeModel) && maybeModel.every((row) => NonEmpty.is(row));
+};
+
+export const fromGrid = (grid: FlowGrid.Model): Model => {
+	const shorthand: Element[][] = [];
+
+	for (let y = 0; y < grid.height; y++) {
+		const row: Element[] = [];
+		for (let x = 0; x < grid.height; x++) {
+			row.push(" ");
+		}
+		shorthand.push(row);
+	}
+
+	for (const terminal of Flow.toTerminals(grid)) {
+		const start = grid.positions[terminal.startId];
+		if (start) {
+			const row = shorthand[start.y];
+			if (row) {
+				row[start.x] = terminal.groupId;
+			}
+		}
+
+		const end = terminal.endId ? grid.positions[terminal.endId] : null;
+
+		if (end) {
+			const row = shorthand[end.y];
+			if (row) {
+				row[end.x] = terminal.groupId;
+			}
+		}
+	}
+
+	for (const pipelines of Flow.yieldPipelines(grid)) {
+		for (const pipe of pipelines) {
+			const edge = grid.edges[pipe.edgeId];
+
+			if (!edge) {
+				continue;
+			}
+
+			const groupId = Flow.toGroupId(grid, edge.sourceId);
+			const terminal = groupId ? Flow.toTerminalByGroupId(grid, groupId) : null;
+			const isSourceTerminal =
+				terminal?.startId === edge.sourceId ||
+				terminal?.endId === edge.sourceId;
+			const isTargetTerminal =
+				terminal?.startId === edge.targetId ||
+				terminal?.endId === edge.targetId;
+
+			const sourcePosition = grid.positions[edge.sourceId];
+
+			if (!sourcePosition) {
+				continue;
+			}
+
+			const row = shorthand[sourcePosition.y];
+
+			if (!row) {
+				continue;
+			}
+
+			if (isSourceTerminal && isTargetTerminal) {
+				row[sourcePosition.x] = groupIdToTerminalWithPipe(pipe.groupId);
+				continue;
+			}
+
+			if (!isSourceTerminal) {
+				row[sourcePosition.x] = groupIdToPipe(pipe.groupId);
+				continue;
+			}
+		}
+	}
+
+	if (isValid(shorthand)) {
+		return shorthand;
+	}
+
+	return [[" "]];
 };

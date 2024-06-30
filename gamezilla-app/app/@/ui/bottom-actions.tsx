@@ -233,7 +233,7 @@ const hint = (input: BottomBarButtonActionPrebuilt): ButtonActionProps => ({
 	label: input.ctx.t("game.hint"),
 });
 
-export const ButtionActions = {
+export const ButtonActions = {
 	exit,
 	next,
 	reset,

@@ -200,6 +200,27 @@ export const copyToClipboard = <T extends ClientCmdTypes>(
 	};
 };
 
+export const didCopyToClipboard = <T extends ClientCmdTypes, TCmd>(
+	{
+		msgCmd,
+	}: {
+		msgCmd?: (PlatformCmd<T["MsgClient"]> | TCmd)[];
+	},
+	isValidText?: (text: string) => boolean,
+): boolean => {
+	return (
+		msgCmd?.some(
+			(cmd) =>
+				typeof cmd === "object" &&
+				cmd &&
+				"t" in cmd &&
+				cmd.t === "platform" &&
+				cmd.c.t === "copy-to-clipboard" &&
+				(typeof isValidText === "function" ? isValidText(cmd.c.text) : true),
+		) ?? false
+	);
+};
+
 //
 //
 //

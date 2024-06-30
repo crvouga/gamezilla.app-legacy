@@ -6,19 +6,6 @@ import * as CopyPuzzleCore from "./copy-puzzle/copy-puzzle.core";
 import { LastPuzzleCore } from "./last-puzzle/last-puzzle.core";
 import type { ModelCore } from "./screen-play-puzzle.types";
 
-const updateCore: CoreModule["updateCore"] = (input) => {
-	return [
-		updatePuzzleScreen,
-		updateCoreMain,
-		LastPuzzleCore.updateCore,
-		CopyPuzzleCore.updateCore,
-		//
-	].reduce(
-		(acc, update) => update({ ...input, modelCore: acc }),
-		input.modelCore,
-	);
-};
-
 const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 	switch (input.modelCore.screen.t) {
 		case "screen-play-puzzle": {
@@ -170,6 +157,20 @@ const initCore = (input: {
 		t: "screen-play-puzzle",
 		hints: {},
 	};
+};
+
+const updates = [
+	updatePuzzleScreen,
+	updateCoreMain,
+	LastPuzzleCore.updateCore,
+	CopyPuzzleCore.updateCore,
+	//
+];
+const updateCore: CoreModule["updateCore"] = (input) => {
+	return updates.reduce(
+		(acc, update) => update({ ...input, modelCore: acc }),
+		input.modelCore,
+	);
 };
 
 export const ScreenPuzzleCore = {

@@ -6,7 +6,7 @@ import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
 import * as FlowHint from "./flow-hint";
 import { Eff } from "gamezilla-app/@/core";
-import { FlowPuzzle } from "../../flow-puzzle";
+import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 
 //
 //

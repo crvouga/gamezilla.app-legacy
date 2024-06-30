@@ -12,7 +12,7 @@ const getExit = (portalId: string): HTMLElement | null => {
 const Entrance = (props: { portalId: string; children: VDomChildren }) => {
 	const element = getExit(props.portalId);
 	if (!element) {
-		return null;
+		return props.children;
 	}
 	return (
 		<div data-portal-entrance data-portal-id={props.portalId}>

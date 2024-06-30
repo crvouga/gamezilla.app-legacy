@@ -1,8 +1,9 @@
 import { Posix } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
-import { Flow, FlowAlgoSolve, FlowVariant } from "../flow";
+import { Flow, FlowAlgoSolve } from "../flow/flow";
 import { FlowGridShorthand } from "../flow/flow-variant/flow-grid/flow-grid-shorthand";
+import * as FlowVariant from "../flow/flow-variant/flow-variant";
 import { FlowPuzzleId } from "./flow-puzzle-id";
 import { FlowPuzzleName } from "./flow-puzzle-name";
 

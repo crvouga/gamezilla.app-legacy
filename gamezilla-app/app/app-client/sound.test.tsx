@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import {
-    APP_SOUND,
-    ClientCtx,
-    ClientEvent,
-    SoundCmd,
-    playSound,
+	APP_SOUND,
+	ClientCtx,
+	ClientEvent,
+	SoundCmd,
+	playSound,
 } from "../@/client";
 import { AppClientFixture } from "../@/client/client-test-env";
 import * as Sound from "./sound";

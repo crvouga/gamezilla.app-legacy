@@ -8,7 +8,7 @@ import {
 	IconCheckmark,
 	Transition,
 } from "gamezilla-app/app/@/ui";
-import { ButtionActions } from "gamezilla-app/app/@/ui/bottom-actions";
+import { ButtonActions } from "gamezilla-app/app/@/ui/bottom-actions";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
@@ -220,7 +220,7 @@ const View: ClientModule["View"] = (input) => {
 						</Dialog>
 					)}
 				</div>
-				<ButtionActions.View
+				<ButtonActions.View
 					id="screen-play-puzzle-bottom-bar"
 					ctx={input.ctx}
 					onToggle={() =>
@@ -228,12 +228,12 @@ const View: ClientModule["View"] = (input) => {
 					}
 					open={input.modelCore.screen.opened === "action-drawer"}
 					buttons={[
-						ButtionActions.exit({
+						ButtonActions.exit({
 							...input,
 							onClick: () => input.dispatch({ t: "user-clicked-exit-puzzle" }),
 						}),
 
-						ButtionActions.prev({
+						ButtonActions.prev({
 							...input,
 							hidden: true,
 							disabled: puzzleIndex === 0,
@@ -248,7 +248,7 @@ const View: ClientModule["View"] = (input) => {
 						}),
 
 						isSolved
-							? ButtionActions.next({
+							? ButtonActions.next({
 									...input,
 									disabled:
 										puzzleIndex >=
@@ -262,7 +262,7 @@ const View: ClientModule["View"] = (input) => {
 												})
 											: null,
 								})
-							: ButtionActions.hint({
+							: ButtonActions.hint({
 									...input,
 									onClick: () =>
 										input.dispatch({
@@ -271,12 +271,12 @@ const View: ClientModule["View"] = (input) => {
 										}),
 								}),
 
-						ButtionActions.reset({
+						ButtonActions.reset({
 							...input,
 							onClick: () => input.dispatch({ t: "user-clicked-reset-puzzle" }),
 						}),
 
-						CopyPuzzleClient.viewButtonAction(input),
+						...CopyPuzzleClient.viewButtonAction(input),
 					]}
 				/>
 			</div>
