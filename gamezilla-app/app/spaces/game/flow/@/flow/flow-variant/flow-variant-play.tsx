@@ -433,9 +433,12 @@ export const deriveFlow = ({
 	flow: FlowVariant.Model;
 	model: Model;
 }): FlowVariant.Model => {
+	const derived = FlowHint.deriveFlow({
+		flow,
+		model,
+	});
 	return {
-		...flow,
-		pipesBySourceId: model.pipesBySourceId,
+		...derived,
 		terminalsByGroupId: model.terminalsByGroupId,
 	};
 };
@@ -457,11 +460,7 @@ export const View = (input: {
 	return (
 		<FlowVariantUI.View
 			disabled={input.disabled}
-			model={{
-				...input.flow,
-				pipesBySourceId: input.model.pipesBySourceId,
-				terminalsByGroupId: input.model.terminalsByGroupId,
-			}}
+			model={deriveFlow(input)}
 			showCoordinates={false}
 			isDragging={input.model.status.t === "dragging"}
 			onDraggedOver={(nodeId) => input.dispatch({ t: "dragged-over", nodeId })}

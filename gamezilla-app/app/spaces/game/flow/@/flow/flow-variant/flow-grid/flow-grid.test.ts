@@ -68,6 +68,4 @@ describe(import.meta.file, () => {
 		const actual = Flow.toReversedPipesBySourceId(grid);
 		expect(eq(actual, expected)).toBe(true);
 	});
-
-	
 });

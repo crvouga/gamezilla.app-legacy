@@ -702,4 +702,18 @@ describe(import.meta.file, () => {
 
 		expect(Flow.isSame(actualGrid, expectedGrid)).toBe(true);
 	});
+
+	test("from grid 2x3", () => {
+		const expected = FlowGridShorthand.init([
+			["A", " "],
+			[" ", " "],
+			[" ", "A"],
+		]);
+
+		const grid = FlowGridShorthand.toGrid(expected);
+
+		const actual = FlowGridShorthand.fromGrid(grid);
+
+		expect(actual).toEqual(expected);
+	});
 });

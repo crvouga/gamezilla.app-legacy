@@ -185,4 +185,18 @@ describe(import.meta.file, () => {
 
 		expect(output.event?.t).not.toBe("solved");
 	});
+
+	test("derive flow with hints", async () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " "],
+			[" ", "A"],
+		]);
+		const f = await Fixture({ flow });
+
+		const model = f.update(f.init, [{ t: "user-clicked-hint" }]).model;
+
+		const flowNew = FlowVariantPlay.deriveFlow({ flow, model });
+
+		expect(Flow.isSolved(flowNew)).toBe(true);
+	});
 });

@@ -576,7 +576,7 @@ export const fromGrid = (grid: FlowGrid.Model): Model => {
 
 	for (let y = 0; y < grid.height; y++) {
 		const row: Element[] = [];
-		for (let x = 0; x < grid.height; x++) {
+		for (let x = 0; x < grid.width; x++) {
 			row.push(" ");
 		}
 		shorthand.push(row);

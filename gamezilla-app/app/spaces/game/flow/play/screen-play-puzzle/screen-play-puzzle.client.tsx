@@ -177,8 +177,8 @@ const View: ClientModule["View"] = (input) => {
 					<FlowVariantPlay.View
 						key={flowPuzzle.id}
 						flow={flowPuzzle.flow}
-						dispatch={(c) => input.dispatch({ t: "flow-variant-play", c })}
 						model={flowPlay}
+						dispatch={(c) => input.dispatch({ t: "flow-variant-play", c })}
 					/>
 
 					<CheckmarkAnimation

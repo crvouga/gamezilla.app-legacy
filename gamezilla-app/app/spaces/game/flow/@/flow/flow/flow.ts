@@ -821,28 +821,55 @@ function djb2Hash(str: string) {
 	return hash;
 }
 
-export const isConnectedWithPipes = (
+const isConnectedWithPipeOneWay = (
 	model: Model,
 	sourceId: NodeId,
-	targetId?: NodeId | null,
+	targetId: NodeId,
 ): boolean => {
-	if (sourceId === targetId) {
-		return true;
+	const visited = new Set<NodeId>();
+
+	let currentId = sourceId;
+
+	while (true) {
+		if (visited.has(currentId)) {
+			return false;
+		}
+
+		visited.add(currentId);
+
+		if (currentId === targetId) {
+			return true;
+		}
+
+		const pipe = toPipeBySourceId(model, currentId);
+
+		if (!pipe) {
+			return false;
+		}
+
+		const edge = toEdge(model, pipe.edgeId);
+
+		if (!edge) {
+			return false;
+		}
+
+		currentId = edge.targetId;
 	}
+};
 
-	const pipe = toPipeBySourceId(model, sourceId);
-
-	if (!pipe) {
+export const isConnectedWithPipes = (
+	model: Model,
+	nodeA: NodeId,
+	nodeB?: NodeId | null,
+): boolean => {
+	if (!nodeB) {
 		return false;
 	}
 
-	const edge = toEdge(model, pipe.edgeId);
-
-	if (!edge) {
-		return false;
-	}
-
-	return isConnectedWithPipes(model, edge.targetId, targetId);
+	return (
+		isConnectedWithPipeOneWay(model, nodeA, nodeB) ||
+		isConnectedWithPipeOneWay(model, nodeB, nodeA)
+	);
 };
 
 const hasOutPipe = (model: Model, nodeId: NodeId): boolean => {
