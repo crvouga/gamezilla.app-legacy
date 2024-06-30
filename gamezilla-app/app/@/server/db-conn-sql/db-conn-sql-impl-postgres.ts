@@ -78,7 +78,7 @@ export const DbConnPostgres = async ({
 
 				return Ok(output);
 			} catch (error) {
-				console.error(sql, error)
+				console.error(sql, error);
 				logger.error(`${error} sql=${rawSql}`);
 				return Err(String(error));
 			}

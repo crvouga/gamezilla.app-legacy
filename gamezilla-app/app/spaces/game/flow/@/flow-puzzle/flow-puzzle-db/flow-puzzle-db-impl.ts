@@ -3,12 +3,13 @@ import type { IFlowPuzzleDb } from "./flow-puzzle-db";
 import { FlowPuzzleDbHashMap } from "./flow-puzzle-db-impl-hash-map";
 import { FlowPuzzleDbPostgres } from "./flow-puzzle-db-impl-postgres";
 import { ILogger } from "gamezilla-app/app/@/server/logger";
+import { WithSolutions } from "./with-solutions";
 
 export type FlowPuzzleDbImpl =
 	| { t: "hash-map" }
 	| { t: "db-conn-sql"; dbConnSql: IDbConnSql; logger: ILogger };
 
-export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
+const FlowPuzzleDbBase = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
 	switch (impl.t) {
 		case "hash-map": {
 			return FlowPuzzleDbHashMap();
@@ -17,4 +18,8 @@ export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
 			return FlowPuzzleDbPostgres(impl);
 		}
 	}
+};
+
+export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
+	return  WithSolutions(FlowPuzzleDbBase(impl));
 };

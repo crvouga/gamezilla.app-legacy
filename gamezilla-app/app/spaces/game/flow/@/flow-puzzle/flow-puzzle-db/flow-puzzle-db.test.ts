@@ -6,10 +6,10 @@ import { FlowPuzzleName } from "../flow-puzzle-name";
 import { FlowPuzzleDbFixture } from "./fixture";
 
 const Fixture = async () => {
-	const f = await FlowPuzzleDbFixture()
+	const f = await FlowPuzzleDbFixture();
 	return {
-		...f
-	}
+		...f,
+	};
 };
 
 describe(import.meta.file, () => {
@@ -17,7 +17,6 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const puzzle = await FlowPuzzle.random();
 		const inserted = await f.flowPuzzleDb.put(puzzle);
-		console.log(inserted)
 		expect(inserted.t).toBe("ok");
 	});
 
