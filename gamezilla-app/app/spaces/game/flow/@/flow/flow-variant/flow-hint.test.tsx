@@ -4,8 +4,10 @@ import { FlowGridShorthand } from "./flow-grid";
 import * as FlowHint from "./flow-hint";
 import type * as FlowVariant from "./flow-variant";
 import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
+import { FlowClientFixture } from "../../testing";
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
+	const f = await FlowClientFixture();
 	const flow =
 		input?.flow ??
 		FlowGridShorthand.toGrid([
@@ -47,6 +49,7 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 	};
 
 	return {
+		...f,
 		flowPuzzle,
 		flow,
 		update,
@@ -175,5 +178,16 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const after = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
 		expect(Object.keys(after.model.usedHints)).toEqual(["A"]);
+	});
+
+	it.todo("should disable hint button if no hints are available", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				["A", " ", "B"],
+				[" ", " ", " "],
+				["B", " ", "A"],
+			]),
+		});
+		f;
 	});
 });

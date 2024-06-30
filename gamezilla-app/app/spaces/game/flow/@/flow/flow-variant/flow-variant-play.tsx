@@ -485,4 +485,4 @@ export const View = (input: {
 	);
 };
 
-export const ViewHintAction = FlowHint.ViewBottomButtonBarAction;
+export const viewHintButtonAction = FlowHint.viewHintButtonAction;

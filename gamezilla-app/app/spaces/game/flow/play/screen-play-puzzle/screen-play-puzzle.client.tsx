@@ -262,13 +262,12 @@ const View: ClientModule["View"] = (input) => {
 												})
 											: null,
 								})
-							: ButtonActions.hint({
-									...input,
-									onClick: () =>
-										input.dispatch({
-											t: "flow-variant-play",
-											c: { t: "user-clicked-hint" },
-										}),
+							: FlowVariantPlay.viewHintButtonAction({
+									model: flowPlay,
+									ctx: input.ctx,
+									flowPuzzle,
+									dispatch: (c) =>
+										input.dispatch({ t: "flow-variant-play", c }),
 								}),
 
 						ButtonActions.reset({

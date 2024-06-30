@@ -1,9 +1,10 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
-import { ViewBottomButtonBarActionHint } from "gamezilla-app/app/spaces/game/@/game";
+import { IconLightbulb } from "gamezilla-app/app/@/ui";
+import { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
+import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { Flow } from "../flow";
 import * as FlowVariant from "./flow-variant";
-import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
@@ -37,8 +38,7 @@ export type Event =
 	  }
 	| {
 			t: "used-hint";
-	};
-	  
+	  };
 
 export const update = <
 	TModel extends Model,
@@ -75,7 +75,7 @@ export const update = <
 			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
 
 			const pipesBySourceId = Flow.pipelineToPipesBySourceId(removed, pipeline);
-			
+
 			const terminal = Flow.toTerminalByGroupId(solution, nextHintGroupId);
 
 			const modelNew: TModel = {
@@ -86,7 +86,8 @@ export const update = <
 				},
 				terminalsByGroupId: {
 					...input.model.terminalsByGroupId,
-					[nextHintGroupId]: terminal ?? input.model.terminalsByGroupId[nextHintGroupId],
+					[nextHintGroupId]:
+						terminal ?? input.model.terminalsByGroupId[nextHintGroupId],
 				},
 				usedHints: {
 					...input.model.usedHints,
@@ -146,19 +147,16 @@ export const deriveFlow = (input: {
 		terminalsByGroupId: input.model.terminalsByGroupId,
 	};
 };
-export const ViewBottomButtonBarAction = (input: {
+export const viewHintButtonAction = (input: {
+	flowPuzzle: FlowPuzzle;
 	model: Model;
 	dispatch: (msg: Msg) => void;
 	ctx: ClientCtx;
-}) => {
-	return (
-		<ViewBottomButtonBarActionHint
-			ctx={input.ctx}
-			onClick={() =>
-				input.dispatch({
-					t: "user-clicked-hint",
-				})
-			}
-		/>
-	);
+}): ButtonActionProps => {
+	return {
+		icon: (props) => <IconLightbulb {...props} />,
+		label: input.ctx.t("game.hint"),
+		onClick: () => input.dispatch({ t: "user-clicked-hint" }),
+		disabled: input.flowPuzzle.flowSolutions.length === 0,
+	};
 };
