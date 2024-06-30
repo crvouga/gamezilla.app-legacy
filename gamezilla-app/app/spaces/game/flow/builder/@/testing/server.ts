@@ -22,7 +22,7 @@ export const getDeps = async (): Promise<FlowServerDeps> => {
 				flowPuzzleDb: FlowPuzzleDb({
 					t: "db-conn-sql",
 					dbConnSql: testEnv.dbConnSql,
-					logger: Logger({ t: "noop" })
+					logger: Logger({ t: "noop" }),
 				}),
 			};
 		}

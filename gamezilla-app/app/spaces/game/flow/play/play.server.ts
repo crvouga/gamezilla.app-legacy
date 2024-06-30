@@ -110,7 +110,7 @@ export const PlayServer: ServerModule = {
 			flowPuzzleDb: FlowPuzzleDb({
 				t: "db-conn-sql",
 				dbConnSql: input.ctx.dbConnSql,
-				logger: ILogger.prefix("flow-puzzle-db", input.ctx.logger)
+				logger: ILogger.prefix("flow-puzzle-db", input.ctx.logger),
 			}),
 		};
 	},

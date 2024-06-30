@@ -1,35 +1,14 @@
 import { describe, expect, it } from "bun:test";
 import { Ok, Posix, Result, TimeSpan, ascend } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
-import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-
 import { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleName } from "../flow-puzzle-name";
-import { FlowPuzzleDb } from "./flow-puzzle-db-impl";
-import { Logger } from "gamezilla-app/app/@/server/logger";
+import { FlowPuzzleDbFixture } from "./fixture";
 
 const Fixture = async () => {
-	const testEnv = await AppServerTestEnv();
-	switch (testEnv.t) {
-		case "integration": {
-			const flowPuzzleDb = FlowPuzzleDb({
-				t: "db-conn-sql",
-				dbConnSql: testEnv.dbConnSql,
-				logger: Logger({ t: "noop" })
-			});
-
-			return {
-				flowPuzzleDb,
-			};
-		}
-		case "unit": {
-			const flowPuzzleDb = FlowPuzzleDb({
-				t: "hash-map",
-			});
-			return {
-				flowPuzzleDb,
-			};
-		}
+	const f = await FlowPuzzleDbFixture()
+	return {
+		...f
 	}
 };
 
@@ -38,6 +17,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const puzzle = await FlowPuzzle.random();
 		const inserted = await f.flowPuzzleDb.put(puzzle);
+		console.log(inserted)
 		expect(inserted.t).toBe("ok");
 	});
 
@@ -150,11 +130,7 @@ describe(import.meta.file, () => {
 				},
 			},
 		});
-
-		expect(counted.t).toBe("ok");
-		if (counted.t === "ok") {
-			expect(counted.value).toBe(EXPECTED_COUNT);
-		}
+		expect(Result.unwrap(counted)).toBe(EXPECTED_COUNT);
 	});
 
 	it("should paginate correctly", async () => {
@@ -166,7 +142,7 @@ describe(import.meta.file, () => {
 			const puzzle = await FlowPuzzle.random({ createdBy, createdAt });
 			createdAt = Posix.future(createdAt, TimeSpan.seconds(1));
 			puzzles.push(puzzle);
-			await f.flowPuzzleDb.put(puzzle);
+			Result.unwrap(await f.flowPuzzleDb.put(puzzle));
 		}
 		puzzles.sort(ascend((p) => p.createdAt));
 		for (let limit = 0; limit < puzzles.length; limit++) {

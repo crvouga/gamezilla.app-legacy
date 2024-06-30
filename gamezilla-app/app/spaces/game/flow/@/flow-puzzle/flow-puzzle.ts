@@ -6,6 +6,7 @@ import { FlowGridShorthand } from "../flow/flow-variant/flow-grid/flow-grid-shor
 import * as FlowVariant from "../flow/flow-variant/flow-variant";
 import { FlowPuzzleId } from "./flow-puzzle-id";
 import { FlowPuzzleName } from "./flow-puzzle-name";
+import { FlowAlgoSolveAsync } from "../flow/flow-variant/flow-variant-aglo/flow-algo-solve-async";
 
 const parser = p.obj({
 	id: FlowPuzzleId,
@@ -26,10 +27,7 @@ const create = async (input: {
 	createdAt: Posix;
 	createdBy: UserId;
 }): Promise<FlowPuzzle> => {
-	const solutions = FlowAlgoSolve.solve(input.flow, {
-		distance: FlowVariant.distance(input.flow),
-	});
-	const solution = first(solutions);
+	const solution = await FlowAlgoSolveAsync.solve(input.flow);
 	return {
 		flow: input.flow,
 		name: await FlowPuzzleName.generate({ count: input.count }),

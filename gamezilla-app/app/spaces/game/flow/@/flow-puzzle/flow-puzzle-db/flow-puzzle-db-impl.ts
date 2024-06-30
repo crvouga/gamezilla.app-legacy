@@ -6,7 +6,7 @@ import { ILogger } from "gamezilla-app/app/@/server/logger";
 
 export type FlowPuzzleDbImpl =
 	| { t: "hash-map" }
-	| { t: "db-conn-sql"; dbConnSql: IDbConnSql, logger: ILogger };
+	| { t: "db-conn-sql"; dbConnSql: IDbConnSql; logger: ILogger };
 
 export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
 	switch (impl.t) {

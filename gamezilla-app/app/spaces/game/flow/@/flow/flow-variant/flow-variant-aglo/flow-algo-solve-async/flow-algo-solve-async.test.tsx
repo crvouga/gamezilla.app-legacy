@@ -12,7 +12,10 @@ describe(import.meta.file, () => {
 			["A", "B", "C"],
 		]);
 
-		const solution = await FlowAlgoSolveAsync.solve(flow, Logger({t: "noop"}));
+		const solution = await FlowAlgoSolveAsync.solve(
+			flow,
+			Logger({ t: "noop" }),
+		);
 
 		const expected = FlowGridShorthand.toGrid([
 			["A", "B", "C"],

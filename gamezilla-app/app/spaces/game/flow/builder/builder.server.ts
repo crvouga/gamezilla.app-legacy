@@ -15,7 +15,7 @@ const deps: ServerModule["deps"] = async (input) => {
 		flowPuzzleDb: FlowPuzzleDb({
 			t: "db-conn-sql",
 			dbConnSql: input.ctx.dbConnSql,
-			logger: Logger({ t: "noop" })
+			logger: Logger({ t: "noop" }),
 		}),
 		flowPackDb: FlowPackDb({
 			t: "db-conn-sql",
