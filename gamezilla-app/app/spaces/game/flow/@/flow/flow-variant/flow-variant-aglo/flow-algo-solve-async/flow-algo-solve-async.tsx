@@ -37,7 +37,7 @@ export const solve = async (
 				() => {
 					resolve(null);
 				},
-				1000 * 60 * 10,
+				1000 * 60 * 2,
 			);
 		}),
 	]);
