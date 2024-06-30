@@ -448,12 +448,7 @@ export const deriveFlow = ({
 //
 //
 
-export const View = ({
-	model,
-	dispatch,
-	disabled,
-	flow,
-}: {
+export const View = (input: {
 	flow: FlowVariant.Model;
 	model: Model;
 	dispatch: (m: Msg) => void;
@@ -461,30 +456,32 @@ export const View = ({
 }) => {
 	return (
 		<FlowVariantUI.View
-			disabled={disabled}
+			disabled={input.disabled}
 			model={{
-				...flow,
-				pipesBySourceId: model.pipesBySourceId,
-				terminalsByGroupId: model.terminalsByGroupId,
+				...input.flow,
+				pipesBySourceId: input.model.pipesBySourceId,
+				terminalsByGroupId: input.model.terminalsByGroupId,
 			}}
 			showCoordinates={false}
-			isDragging={model.status.t === "dragging"}
-			onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
-			onPressDown={(nodeId) => dispatch({ t: "pressed-down", nodeId })}
-			onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
-			onLeave={() => dispatch({ t: "left" })}
+			isDragging={input.model.status.t === "dragging"}
+			onDraggedOver={(nodeId) => input.dispatch({ t: "dragged-over", nodeId })}
+			onPressDown={(nodeId) => input.dispatch({ t: "pressed-down", nodeId })}
+			onPressUp={(nodeId) => input.dispatch({ t: "pressed-up", nodeId })}
+			onLeave={() => input.dispatch({ t: "left" })}
 			autocompleteEdge={
-				model.status.t === "dragging" && model.status.autocompleteEdge
+				input.model.status.t === "dragging" &&
+				input.model.status.autocompleteEdge
 					? {
-							...model.status.autocompleteEdge,
-							groupId: model.status.activeGroupId,
+							...input.model.status.autocompleteEdge,
+							groupId: input.model.status.activeGroupId,
 						}
 					: null
 			}
 			isGroupActive={(groupId) =>
-				model.status.t === "dragging" && model.status.activeGroupId === groupId
+				input.model.status.t === "dragging" &&
+				input.model.status.activeGroupId === groupId
 			}
-			usedHints={model.usedHints}
+			usedHints={input.model.usedHints}
 		/>
 	);
 };

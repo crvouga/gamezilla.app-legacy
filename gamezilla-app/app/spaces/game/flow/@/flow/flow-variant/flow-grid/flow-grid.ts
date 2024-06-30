@@ -336,13 +336,19 @@ export const toPipeline = (
 	const pipeline: PipeJoined[] = [];
 
 	let currentNodeId = startingNodeId;
+	const visited = new Set<Flow.NodeId>();
 
 	while (true) {
+		if (visited.has(currentNodeId)) {
+			return pipeline;
+		}
+		visited.add(currentNodeId);
 		const pipe = Flow.toPipeBySourceId(model, currentNodeId);
 
 		if (!pipe) {
 			return pipeline;
 		}
+
 		const source = toNode(model, pipe.edge.sourceId);
 
 		if (!source) {

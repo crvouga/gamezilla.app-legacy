@@ -700,6 +700,6 @@ describe(import.meta.file, () => {
 
 		const actualGrid = FlowGridShorthand.toGrid(actual);
 
-		expect(Flow.isSame(actualGrid, expectedGrid)).toBe(true)
+		expect(Flow.isSame(actualGrid, expectedGrid)).toBe(true);
 	});
 });
