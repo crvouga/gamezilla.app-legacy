@@ -1,4 +1,4 @@
-import { NotAsked, RequestResponse } from "gamezilla-app/@/core";
+import { NotAsked, type RequestResponse } from "gamezilla-app/@/core";
 import type { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import type { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import type {

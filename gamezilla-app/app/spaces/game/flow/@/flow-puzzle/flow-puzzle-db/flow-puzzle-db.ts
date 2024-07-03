@@ -26,7 +26,9 @@ export type ListPuzzlesInput = {
 export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 
 export type IFlowPuzzleDb = {
-	count: (input: { where: WhereClause }) => Task<string, number>;
+	count: (
+		input: Omit<ListPuzzlesInput, "pagination" | "order">,
+	) => Task<string, number>;
 	list: (input: ListPuzzlesInput) => Task<string, Paginated<FlowPuzzle>>;
 	get: (id: FlowPuzzleId) => Task<string, FlowPuzzle | null>;
 	put: (input: FlowPuzzle) => Task<string, null>;
