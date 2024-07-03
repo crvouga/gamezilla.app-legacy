@@ -3,7 +3,7 @@ import { p } from "gamezilla-app/@/core/parser";
 import { Sql } from "gamezilla-app/@/sql";
 import { UserId, type Pagination } from "gamezilla-app/app/@/data";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import { ILogger } from "gamezilla-app/app/@/server/logger";
+import type { ILogger } from "gamezilla-app/app/@/server/logger";
 import { Flow } from "../../flow/flow";
 import { FlowVariant } from "../../flow/flow-variant";
 import type { FlowPuzzle } from "../flow-puzzle";
@@ -98,7 +98,7 @@ const toSqlWhere = (input: { where: WhereClause }) => {
 
 	if (input.where.createdBy?.equals) {
 		where.push("created_by_user_id = :created_by_user_id");
-		variables["created_by_user_id"] = input.where.createdBy?.equals;
+		variables.created_by_user_id = input.where.createdBy?.equals;
 	}
 
 	if (input.where.puzzleId?.in) {
