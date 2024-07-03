@@ -1,12 +1,12 @@
+import type { Eff } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { APP_SOUND } from "gamezilla-app/app/@/client";
+import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import * as Flow from "../flow/flow";
 import { FlowAlgoDrawPipes, FlowAlgoSolve } from "../flow/flow-algo";
+import * as FlowHint from "./flow-hint";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
-import * as FlowHint from "./flow-hint";
-import { Eff } from "gamezilla-app/@/core";
-import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 
 //
 //
