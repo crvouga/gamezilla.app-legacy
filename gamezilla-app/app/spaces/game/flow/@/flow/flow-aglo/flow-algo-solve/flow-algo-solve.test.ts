@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -89,7 +89,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -153,7 +153,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -173,7 +173,7 @@ describe(import.meta.file, () => {
 				[" ", " "],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 		expect(
 			some(actual, (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
@@ -194,7 +194,7 @@ describe(import.meta.file, () => {
 				["Bb", "B", "A"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 		expect(
 			some(actual, (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
@@ -221,7 +221,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -251,7 +251,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -282,7 +282,7 @@ describe(import.meta.file, () => {
 				["c", "c", "c", "c", "c", "i", "I"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -314,7 +314,7 @@ describe(import.meta.file, () => {
 				["c", "c", "c", "c", "c", "i", "i", "I"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -348,7 +348,7 @@ describe(import.meta.file, () => {
 				["J", "j", "j", "j", "j", "j", "j", "j", "j"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -386,7 +386,7 @@ describe(import.meta.file, () => {
 		];
 
 		expect(
-			some(FlowAlgoSolve.solve(grid), (actual) =>
+			some(FlowAlgoSolve.solutions(grid), (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
 			),
 		).toBe(true);
@@ -423,7 +423,7 @@ describe(import.meta.file, () => {
 		];
 
 		expect(
-			some(FlowAlgoSolve.solve(grid), (actual) =>
+			some(FlowAlgoSolve.solutions(grid), (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
 			),
 		).toBe(true);
@@ -460,7 +460,7 @@ describe(import.meta.file, () => {
 				["M", "m", "m", "m", "m", "m", "m", "m", "m", "m", "m", "m"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -502,7 +502,7 @@ describe(import.meta.file, () => {
 				["N", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -546,7 +546,7 @@ describe(import.meta.file, () => {
 				["O", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solutions(grid);
 
 		expect(
 			some(actual, (actual) =>
@@ -561,7 +561,7 @@ describe(import.meta.file, () => {
 			[" ", " ", " "],
 			["C", "B", "C"],
 		]);
-		const actual = Array.from(FlowAlgoSolve.solve(grid));
+		const actual = Array.from(FlowAlgoSolve.solutions(grid));
 		expect(actual).toEqual([]);
 	});
 
@@ -575,7 +575,7 @@ describe(import.meta.file, () => {
 			[" ", " ", " ", " ", " ", " ", " ", " "],
 			["A", " ", " ", "D", " ", " ", " ", "C"],
 		]);
-		const actual = first(FlowAlgoSolve.solve(grid));
+		const actual = first(FlowAlgoSolve.solutions(grid));
 		expect(actual).toEqual(null);
 	});
 });

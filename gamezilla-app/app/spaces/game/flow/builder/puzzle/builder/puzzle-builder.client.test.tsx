@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, test } from "bun:test";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import {
 	clickedExitPuzzleBuilderButton,
@@ -77,4 +77,8 @@ describe(import.meta.file, () => {
 				output.model.puzzleBuilderOpened === "unsaved-changes",
 		).toBe(true);
 	});
+
+	test("render hint button", async () => {
+		// const f = await Fixture();
+	})
 });

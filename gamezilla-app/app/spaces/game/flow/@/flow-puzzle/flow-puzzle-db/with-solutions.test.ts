@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import { Result } from "gamezilla-app/@/core";
+import { FlowGridShorthand } from "../../flow/flow-variant/flow-grid";
 import { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleDbFixture } from "./fixture";
-import { SKIP_QUERIES, WithSolutions } from "./with-solutions";
-import { FlowGridShorthand } from "../../flow/flow-variant/flow-grid";
+import { WithSolutions } from "./with-solutions";
 
 const Fixture = async () => {
 	const f = await FlowPuzzleDbFixture();

@@ -54,7 +54,7 @@ const random = async (input?: {
 			["A", " "],
 			[" ", "A"],
 		]);
-	const solutions = FlowAlgoSolve.solve(flow);
+	const solutions = FlowAlgoSolve.solutions(flow);
 	const solution = next(solutions);
 	return {
 		createdAt,
@@ -75,7 +75,7 @@ const next = <T>(iter: Iterable<T>): T | undefined => {
 		return item;
 	}
 	return undefined;
-}
+};
 
 export const FlowPuzzle = {
 	...parser,

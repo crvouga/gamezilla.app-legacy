@@ -473,7 +473,7 @@ export const deriveFlowMemoized = memoize({
 //
 //
 
-export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
+export const  View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
 	const { model, dispatch } = input;
 	return (
 		<div className="flex h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto">

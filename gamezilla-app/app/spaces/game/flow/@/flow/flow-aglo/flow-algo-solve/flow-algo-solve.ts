@@ -230,7 +230,7 @@ const solveStep = function* (
 	}
 };
 
-export const solve = function* (
+export const solutions = function* (
 	model: FlowVariant.Model,
 ): Iterable<Flow.Model> {
 	const terminals = Flow.toTerminals(model);
@@ -246,4 +246,11 @@ export const solve = function* (
 	});
 
 	yield* solveStep(model, terminals);
+};
+
+export const solve = (model: FlowVariant.Model): Flow.Model | null => {
+	for (const solution of solutions(model)) {
+		return solution;
+	}
+	return null;
 };

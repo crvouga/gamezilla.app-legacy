@@ -124,7 +124,7 @@ export const toSolutionMsgs = ({
 }: {
 	flow: FlowVariant.Model;
 }): Msg[] => {
-	const solutions = FlowAlgoSolve.solve(flow);
+	const solutions = FlowAlgoSolve.solutions(flow);
 
 	const solution = first(solutions);
 

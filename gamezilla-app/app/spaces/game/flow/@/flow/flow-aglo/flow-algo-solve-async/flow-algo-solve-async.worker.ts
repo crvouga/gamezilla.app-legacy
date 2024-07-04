@@ -15,19 +15,11 @@ self.onmessage = (event: MessageEvent<unknown>) => {
 	switch (parsed.value.t) {
 		case "find-solution": {
 			const model = parsed.value.model;
-			const solutions = FlowAlgoSolve.solve(model);
-			for (const solution of solutions) {
-				self.postMessage({
-					t: "found-solution",
-					model: solution,
-				});
-				return;
-			}
+			const solution = FlowAlgoSolve.solve(model);
 			self.postMessage({
 				t: "found-solution",
-				model: null,
+				model: solution,
 			});
-			return;
 		}
 	}
 };

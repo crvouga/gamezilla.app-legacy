@@ -3,7 +3,6 @@ import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import { Flow } from "../../../flow";
 import { FlowVariant } from "../..";
 
-
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
  */
@@ -31,7 +30,7 @@ export const startDrawPipes = (
 		return drew;
 	}
 
-	const drew = drawPipes( model, groupId, newNodeId);
+	const drew = drawPipes(model, groupId, newNodeId);
 
 	return drew;
 };
@@ -459,7 +458,6 @@ const reconstructPath = (
 
 	return totalPath.reverse();
 };
-
 
 /**
  * Utility function that takes items from the inputted array until the predicate returns false
