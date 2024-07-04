@@ -24,8 +24,10 @@ export const init = (input: {
 	};
 };
 
-export const distance =
-	(_model: Model) =>
-	(_a: Flow.NodeId, _b: Flow.NodeId): number => {
-		return 0;
-	};
+export const distance = (
+	_model: Model,
+	_a: Flow.NodeId,
+	_b: Flow.NodeId,
+): number => {
+	return 0;
+};

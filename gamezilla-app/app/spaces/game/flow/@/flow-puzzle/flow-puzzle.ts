@@ -1,12 +1,13 @@
 import { Posix } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
-import { Flow, FlowAlgoSolve } from "../flow/flow";
+import { Flow } from "../flow/flow";
 import { FlowGridShorthand } from "../flow/flow-variant/flow-grid/flow-grid-shorthand";
 import * as FlowVariant from "../flow/flow-variant/flow-variant";
 import { FlowPuzzleId } from "./flow-puzzle-id";
 import { FlowPuzzleName } from "./flow-puzzle-name";
-import { FlowAlgoSolveAsync } from "../flow/flow-variant/flow-variant-aglo/flow-algo-solve-async";
+import { FlowAlgoSolveAsync } from "../flow/flow-aglo/flow-algo-solve-async";
+import { FlowAlgoSolve } from "../flow/flow-aglo/flow-algo-solve";
 
 const parser = p.obj({
 	id: FlowPuzzleId,
@@ -40,13 +41,6 @@ const create = async (input: {
 	};
 };
 
-const first = <T>(iter: Iterable<T>): T | null => {
-	for (const value of iter) {
-		return value;
-	}
-	return null;
-};
-
 const random = async (input?: {
 	flow?: FlowVariant.Model;
 	createdBy?: UserId;
@@ -60,10 +54,8 @@ const random = async (input?: {
 			["A", " "],
 			[" ", "A"],
 		]);
-	const solutions = FlowAlgoSolve.solve(flow, {
-		distance: FlowVariant.distance(flow),
-	});
-	const solution = first(solutions);
+	const solutions = FlowAlgoSolve.solve(flow);
+	const solution = next(solutions);
 	return {
 		createdAt,
 		createdBy,
@@ -77,6 +69,13 @@ const random = async (input?: {
 		flow,
 	};
 };
+
+const next = <T>(iter: Iterable<T>): T | undefined => {
+	for (const item of iter) {
+		return item;
+	}
+	return undefined;
+}
 
 export const FlowPuzzle = {
 	...parser,

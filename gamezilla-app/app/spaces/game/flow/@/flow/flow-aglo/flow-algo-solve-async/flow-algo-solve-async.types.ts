@@ -1,5 +1,5 @@
 import { p } from "gamezilla-app/@/core/parser";
-import { FlowVariant } from "../../../flow-variant";
+import { FlowVariant } from "../../flow-variant";
 
 export const MsgToWorker = p.or(
 	p.obj({ t: p.l("find-solution"), model: FlowVariant.Model }),

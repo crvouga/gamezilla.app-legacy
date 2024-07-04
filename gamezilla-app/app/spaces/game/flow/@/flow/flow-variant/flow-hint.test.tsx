@@ -180,8 +180,7 @@ describe(import.meta.file, () => {
 		expect(Object.keys(after.model.usedHints)).toEqual(["A"]);
 	});
 
-	it.todo("should cut pipes when using a hint", async () => {
-	})
+	it.todo("should cut pipes when using a hint", async () => {});
 
 	it.todo("should disable hint button if no hints are available", async () => {
 		const f = await Fixture({

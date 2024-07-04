@@ -1,20 +1,17 @@
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
-import * as Flow from "../flow";
-
-export type Config = {
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
-};
+import { Flow } from "../../../flow";
+import { FlowVariant } from "../..";
 
 const calculateDirection = (
-	config: Config,
+	model: FlowVariant.Model,
 	sourceId: Flow.NodeId,
 	targetId: Flow.NodeId,
 ): string => {
-	const distance = config.distance(sourceId, targetId);
+	const distance = FlowVariant.distance(model, sourceId, targetId);
 	return `${sourceId}${targetId}${distance}`;
 };
 
-const countTurns = (config: Config, path: Flow.Edge[]): number => {
+const countTurns = (model: FlowVariant.Model, path: Flow.Edge[]): number => {
 	let turns = 0;
 	for (let i = 1; i < path.length; i++) {
 		const prev = path[i - 1];
@@ -22,7 +19,7 @@ const countTurns = (config: Config, path: Flow.Edge[]): number => {
 			continue;
 		}
 		const prevDirection = calculateDirection(
-			config,
+			model,
 			prev.sourceId,
 			prev.targetId,
 		);
@@ -31,7 +28,7 @@ const countTurns = (config: Config, path: Flow.Edge[]): number => {
 			continue;
 		}
 		const currDirection = calculateDirection(
-			config,
+			model,
 			curr.sourceId,
 			curr.targetId,
 		);
@@ -43,13 +40,13 @@ const countTurns = (config: Config, path: Flow.Edge[]): number => {
 };
 
 const calculateHeuristic = (
-	config: Config,
+	model: FlowVariant.Model,
 	currentNode: Flow.NodeId,
 	endNode: Flow.NodeId,
 	path: Flow.Edge[],
 ): number => {
-	const distanceHeuristic = config.distance(currentNode, endNode);
-	const turnsHeuristic = countTurns(config, path);
+	const distanceHeuristic = FlowVariant.distance(model, currentNode, endNode);
+	const turnsHeuristic = countTurns(model, path);
 	const heuristic = distanceHeuristic + turnsHeuristic * 1.5;
 	return heuristic;
 };
@@ -62,8 +59,7 @@ const normalizePath = (path: Flow.Edge[]): string => {
 };
 
 const toPossiblePipelines = function* (input: {
-	config: Config;
-	model: Flow.Model;
+	model: FlowVariant.Model;
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
@@ -84,7 +80,7 @@ const toPossiblePipelines = function* (input: {
 		currentNode: input.startId,
 		visited: new Set([input.startId]),
 		cost: 0,
-		heuristic: input.config.distance(input.startId, input.endId),
+		heuristic: FlowVariant.distance(input.model, input.startId, input.endId),
 	});
 
 	while (!minHeap.isEmpty()) {
@@ -120,7 +116,7 @@ const toPossiblePipelines = function* (input: {
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
 			const heuristic = calculateHeuristic(
-				input.config,
+				input.model,
 				edgeOut.targetId,
 				input.endId,
 				newPath,
@@ -138,10 +134,10 @@ const toPossiblePipelines = function* (input: {
 };
 
 const drawPipeline = (
-	model: Flow.Model,
+	model: FlowVariant.Model,
 	terminal: Flow.Terminal,
 	path: Flow.Edge[],
-): Flow.Model => {
+): FlowVariant.Model => {
 	const pipesBySourceId = { ...model.pipesBySourceId };
 
 	for (const edge of path) {
@@ -157,7 +153,10 @@ const drawPipeline = (
 	};
 };
 
-const isSolvable = (config: Config, model: Flow.Model, disconnectedTerminals: Flow.Terminal[]): boolean => {
+const isSolvable = (
+	model: FlowVariant.Model,
+	disconnectedTerminals: Flow.Terminal[],
+): boolean => {
 	const totalCells = Object.keys(model.nodes).length;
 	const filledCells = Object.keys(model.pipesBySourceId).length;
 	const openCells = totalCells - filledCells;
@@ -165,7 +164,11 @@ const isSolvable = (config: Config, model: Flow.Model, disconnectedTerminals: Fl
 	// Calculate the required cells for connecting all terminals
 	const requiredCells = disconnectedTerminals.reduce((sum, terminal) => {
 		if (terminal.endId) {
-			const dist = config.distance(terminal.startId, terminal.endId);
+			const dist = FlowVariant.distance(
+				model,
+				terminal.startId,
+				terminal.endId,
+			);
 			return sum + dist;
 		}
 		return sum;
@@ -174,19 +177,32 @@ const isSolvable = (config: Config, model: Flow.Model, disconnectedTerminals: Fl
 	return openCells >= requiredCells;
 };
 
+// const isBoundaryNode = (config: Config, model: Flow.Model, nodeId: Flow.NodeId): boolean => {
+// 	Flow.yieldEdgesOut(model, nodeId)
+// 	Flow.yieldEdgesIn(model, nodeId)
+// 	config.distance(nodeId, nodeId)
+// 	return false;
+// }
+
+// const isUnsolvable = (config: Config, model: Flow.Model, disconnectedTerminals: Flow.Terminal[]): boolean => {
+// 	for (const terminal of Flow.yieldTerminals(model)) {
+// 		if(!terminal.endId) {
+// 			continue;
+// 		}
+// 	}
+// }
 
 const solveStep = function* (
-	config: Config,
-	model: Flow.Model,
+	model: FlowVariant.Model,
 	disconnectedTerminals: Flow.Terminal[],
 	depth: number = 0,
-	maxDepth: number = 100
+	maxDepth: number = 100,
 ): Iterable<Flow.Model> {
 	if (depth > maxDepth) {
 		return;
 	}
 
-	if (!isSolvable(config, model, disconnectedTerminals)) {
+	if (!isSolvable(model, disconnectedTerminals)) {
 		return;
 	}
 
@@ -202,7 +218,6 @@ const solveStep = function* (
 	}
 
 	const possiblePipelines = toPossiblePipelines({
-		config,
 		model,
 		endId: terminal.endId,
 		groupId: terminal.groupId,
@@ -211,26 +226,24 @@ const solveStep = function* (
 
 	for (const possiblePipeline of possiblePipelines) {
 		const drew = drawPipeline(model, terminal, possiblePipeline);
-		yield* solveStep(config, drew, disconnectedTerminals.slice(1), depth + 1, maxDepth)	
+		yield* solveStep(drew, disconnectedTerminals.slice(1), depth + 1, maxDepth);
 	}
 };
 
 export const solve = function* (
-	model: Flow.Model,
-	config: Config,
+	model: FlowVariant.Model,
 ): Iterable<Flow.Model> {
-	
 	const terminals = Flow.toTerminals(model);
 
 	terminals.sort((a, b) => {
 		if (a.endId && b.endId) {
 			return (
-				config.distance(a.startId, a.endId) -
-				config.distance(b.startId, b.endId)
+				FlowVariant.distance(model, a.startId, a.endId) -
+				FlowVariant.distance(model, b.startId, b.endId)
 			);
 		}
 		return Infinity;
 	});
 
-	yield* solveStep(config, model, terminals);
+	yield* solveStep(model, terminals);
 };

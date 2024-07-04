@@ -29,23 +29,25 @@ export const toNodeId = (position: Position): Flow.NodeId => {
 	return _toNodeId(position.x, position.y);
 };
 
-export const distance =
-	(model: Model) =>
-	(a: Flow.NodeId, b: Flow.NodeId): number => {
-		const positionA = model.positions[a];
+export const distance = (
+	model: Model,
+	a: Flow.NodeId,
+	b: Flow.NodeId,
+): number => {
+	const positionA = model.positions[a];
 
-		if (!positionA) {
-			return Number.POSITIVE_INFINITY;
-		}
+	if (!positionA) {
+		return Number.POSITIVE_INFINITY;
+	}
 
-		const positionB = model.positions[b];
+	const positionB = model.positions[b];
 
-		if (!positionB) {
-			return Number.POSITIVE_INFINITY;
-		}
+	if (!positionB) {
+		return Number.POSITIVE_INFINITY;
+	}
 
-		return Position.manhattanDistance(positionA, positionB);
-	};
+	return Position.manhattanDistance(positionA, positionB);
+};
 
 //
 //

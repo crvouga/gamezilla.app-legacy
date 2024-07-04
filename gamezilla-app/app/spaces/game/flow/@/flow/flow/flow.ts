@@ -170,23 +170,13 @@ export const isSamePipesBySourceId = (
 };
 
 export const isSame = (left: Model, right: Model): boolean => {
-	const nodesLeft = left.nodes;
-	const nodesRight = right.nodes;
-	const isSameNodes = eq(nodesLeft, nodesRight);
-
-	const edgesLeft = left.edges;
-	const edgesRight = right.edges;
-	const isSameEdges = eq(edgesLeft, edgesRight);
-
-	const terminalsByGroupIdLeft = left.terminalsByGroupId;
-	const terminalsByGroupIdRight = right.terminalsByGroupId;
+	const isSameNodes = eq(left.nodes, right.nodes);
+	const isSameEdges = eq(left.edges, right.edges);
 	const isSameTerminals = isSameTerminalsByGroupId(
-		terminalsByGroupIdLeft,
-		terminalsByGroupIdRight,
+		left.terminalsByGroupId,
+		right.terminalsByGroupId,
 	);
-
 	const isSamePipes = isSamePipesBySourceId(left, right);
-
 	return isSamePipes && isSameNodes && isSameEdges && isSameTerminals;
 };
 
@@ -792,10 +782,10 @@ export const findGroupIdByNodeId = (
 /**
  * Flips the start and end nodes of the inputted terminal.
  */
-export const flipTerminal = (
-	model: Model,
+export const flipTerminal = <TModel extends Model>(
+	model: TModel,
 	terminal: Terminal | null,
-): Model => {
+): TModel => {
 	if (!terminal) {
 		return model;
 	}

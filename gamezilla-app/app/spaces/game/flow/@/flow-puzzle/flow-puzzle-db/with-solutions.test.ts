@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
 		expect((after?.flowSolutions.length ?? 0) > 0).toBe(true);
 	});
 
-	it.skipIf(SKIP_QUERIES)("should assoc solutions before get", async () => {
+	it.todo("should assoc solutions before get", async () => {
 		const f = await Fixture();
 		const before = Result.unwrap(
 			await f.withSolutions.get(f.puzzleWithEmptySolutions.id),
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
 		expect((after?.flowSolutions.length ?? 0) > 0).toBe(true);
 	});
 
-	it.skipIf(SKIP_QUERIES)("should assoc solutions before list", async () => {
+	it.todo("should assoc solutions before list", async () => {
 		const f = await Fixture();
 
 		const before = Result.unwrap(

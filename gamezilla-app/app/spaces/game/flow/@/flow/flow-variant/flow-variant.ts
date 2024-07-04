@@ -10,18 +10,20 @@ export type Model = p.Infer<typeof Model>;
 
 export const distance = (
 	flow: Model,
-): ((a: Flow.NodeId, b: Flow.NodeId) => number) => {
+	a: Flow.NodeId,
+	b: Flow.NodeId,
+): number => {
 	switch (flow.t) {
 		case "flow-grid": {
-			return FlowGrid.distance(flow);
+			return FlowGrid.distance(flow, a, b);
 		}
 
 		case "flow-hex": {
-			return FlowHex.distance(flow);
+			return FlowHex.distance(flow, a, b);
 		}
 
 		case "flow-tri": {
-			return FlowTri.distance(flow);
+			return FlowTri.distance(flow, a, b);
 		}
 	}
 };

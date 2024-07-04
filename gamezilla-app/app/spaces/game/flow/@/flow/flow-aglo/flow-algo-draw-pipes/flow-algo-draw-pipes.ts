@@ -1,7 +1,8 @@
 import { pipe } from "gamezilla-app/@/core";
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
-import * as Flow from "../flow";
-import { takeWhile } from "./utils";
+import { Flow } from "../../../flow";
+import { FlowVariant } from "../..";
+
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -12,8 +13,7 @@ type Pipeline = Flow.NodeId[];
  * Starts
  */
 export const startDrawPipes = (
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
-	model: Flow.Model,
+	model: FlowVariant.Model,
 	groupId: Flow.GroupId,
 	newNodeId: Flow.NodeId,
 ): Flow.Model => {
@@ -26,12 +26,12 @@ export const startDrawPipes = (
 	if (terminal.endId === newNodeId) {
 		const reversed = Flow.flipTerminal(model, terminal);
 
-		const drew = drawPipes(distance, reversed, groupId, newNodeId);
+		const drew = drawPipes(reversed, groupId, newNodeId);
 
 		return drew;
 	}
 
-	const drew = drawPipes(distance, model, groupId, newNodeId);
+	const drew = drawPipes( model, groupId, newNodeId);
 
 	return drew;
 };
@@ -40,8 +40,7 @@ export const startDrawPipes = (
  * Algorithm that draws pipes from the inputted group id to the inputted node id
  */
 export const drawPipes = (
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
-	model: Flow.Model,
+	model: FlowVariant.Model,
 	groupId: Flow.GroupId,
 	nodeIdNew: Flow.NodeId,
 ): Flow.Model => {
@@ -88,7 +87,7 @@ export const drawPipes = (
 			}
 
 			const shortest = findShortestEmptyPipelineAStar(
-				(nodeId) => 1 - 1 / distance(nodeId, nodeIdNew),
+				(nodeId) => 1 - 1 / FlowVariant.distance(model, nodeId, nodeIdNew),
 				model,
 				startNodeId,
 				nodeIdNew,
@@ -459,4 +458,46 @@ const reconstructPath = (
 	}
 
 	return totalPath.reverse();
+};
+
+
+/**
+ * Utility function that takes items from the inputted array until the predicate returns false
+ */
+export const takeWhile = <T>(
+	arr: Iterable<T>,
+	predicate: (item: T) => boolean,
+): T[] => {
+	const results: T[] = [];
+	for (const item of arr) {
+		if (!predicate(item)) {
+			break;
+		}
+		results.push(item);
+	}
+	return results;
+};
+
+export const uniqueWith = <T>(
+	arr: T[],
+	fn: (left: T, right: T) => boolean,
+): T[] => {
+	const unique: T[] = [];
+	for (const left of arr) {
+		if (!unique.some((right) => fn(left, right))) {
+			unique.push(left);
+		}
+	}
+	return unique;
+};
+
+export const minAllBy = <T>(arr: T[], fn: (item: T) => number): T[] => {
+	let min = Infinity;
+	for (const item of arr) {
+		const value = fn(item);
+		if (value < min) {
+			min = value;
+		}
+	}
+	return arr.filter((item) => fn(item) === min);
 };

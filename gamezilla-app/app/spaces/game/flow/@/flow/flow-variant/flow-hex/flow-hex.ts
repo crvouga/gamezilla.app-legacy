@@ -33,23 +33,25 @@ export const init = (input: {
 	};
 };
 
-export const distance =
-	(model: Model) =>
-	(a: Flow.NodeId, b: Flow.NodeId): number => {
-		const positionA = model.positions[a];
+export const distance = (
+	model: Model,
+	a: Flow.NodeId,
+	b: Flow.NodeId,
+): number => {
+	const positionA = model.positions[a];
 
-		if (!positionA) {
-			return Number.POSITIVE_INFINITY;
-		}
+	if (!positionA) {
+		return Number.POSITIVE_INFINITY;
+	}
 
-		const positionB = model.positions[b];
+	const positionB = model.positions[b];
 
-		if (!positionB) {
-			return Number.POSITIVE_INFINITY;
-		}
+	if (!positionB) {
+		return Number.POSITIVE_INFINITY;
+	}
 
-		return hexDistance(positionA, positionB);
-	};
+	return hexDistance(positionA, positionB);
+};
 
 const hexDistance = (a: HexPosition, b: HexPosition): number => {
 	return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2;

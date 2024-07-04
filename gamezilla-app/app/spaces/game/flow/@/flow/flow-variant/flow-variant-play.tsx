@@ -2,8 +2,9 @@ import type { Eff } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { APP_SOUND } from "gamezilla-app/app/@/client";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
+import { FlowAlgoDrawPipes } from "../flow-aglo/flow-algo-draw-pipes";
+import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
 import * as Flow from "../flow/flow";
-import { FlowAlgoDrawPipes, FlowAlgoSolve } from "../flow/flow-algo";
 import * as FlowHint from "./flow-hint";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
@@ -123,9 +124,7 @@ export const toSolutionMsgs = ({
 }: {
 	flow: FlowVariant.Model;
 }): Msg[] => {
-	const solutions = FlowAlgoSolve.solve(flow, {
-		distance: FlowVariant.distance(flow),
-	});
+	const solutions = FlowAlgoSolve.solve(flow);
 
 	const solution = first(solutions);
 
@@ -289,7 +288,6 @@ const updateIdle: typeof update = ({ msg, model, flowPuzzle }) => {
 			}
 
 			const started = FlowAlgoDrawPipes.startDrawPipes(
-				FlowVariant.distance(current),
 				current,
 				groupId,
 				msg.nodeId,
@@ -343,7 +341,6 @@ const updateDragging = ({
 			};
 
 			const extended = FlowAlgoDrawPipes.drawPipes(
-				FlowVariant.distance(current),
 				current,
 				modelStatus.activeGroupId,
 				nodeId,
