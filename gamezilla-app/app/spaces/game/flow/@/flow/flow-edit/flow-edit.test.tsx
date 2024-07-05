@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { FlowVariantDimensions, FlowVarianEdit } from ".";
+import { FlowVariantDimensions, FlowVarianEdit } from "../flow-variant";
 import { FlowPuzzle } from "../../flow-puzzle";
 
 const Fixture = async () => {

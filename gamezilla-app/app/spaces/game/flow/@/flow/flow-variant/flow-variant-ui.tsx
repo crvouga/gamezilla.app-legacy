@@ -1,4 +1,4 @@
-import type { FlowViewProps } from "../flow/flow-ui";
+import type { FlowViewProps } from "../flow-ui/flow-ui";
 import { FlowGridUI } from "./flow-grid";
 import { FlowHexUI } from "./flow-hex";
 import { FlowTriUI } from "./flow-tri";

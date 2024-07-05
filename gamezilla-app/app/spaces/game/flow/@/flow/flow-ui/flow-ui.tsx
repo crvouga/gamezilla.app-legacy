@@ -1,4 +1,4 @@
-import type { Edge, GroupId, NodeId } from "./flow";
+import type { Edge, GroupId, NodeId } from "../flow/flow";
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const COLOR_TO_HEX = {

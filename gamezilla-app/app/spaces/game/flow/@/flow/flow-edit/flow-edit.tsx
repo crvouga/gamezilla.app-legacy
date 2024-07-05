@@ -15,10 +15,10 @@ import {
 	ViewBottomButtonBarAction,
 } from "../../../../@/game";
 import * as Flow from "../flow/flow";
-import * as FlowUI from "../flow/flow-ui";
-import * as FlowVariant from "./flow-variant";
-import * as FlowVariantDimensions from "./flow-variant-dimensions";
-import * as FlowVariantUI from "./flow-variant-ui";
+import * as FlowUI from "../flow-ui/flow-ui";
+import * as FlowVariant from "../flow-variant/flow-variant";
+import * as FlowVariantDimensions from "../flow-variant/flow-variant-dimensions";
+import * as FlowVariantUI from "../flow-variant/flow-variant-ui";
 import { p } from "gamezilla-app/@/core/parser";
 
 //
@@ -473,7 +473,7 @@ export const deriveFlowMemoized = memoize({
 //
 //
 
-export const  View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
+export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
 	const { model, dispatch } = input;
 	return (
 		<div className="flex h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto">

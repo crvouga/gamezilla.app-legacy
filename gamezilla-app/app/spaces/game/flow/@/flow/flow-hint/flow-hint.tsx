@@ -1,10 +1,10 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import { IconLightbulb } from "gamezilla-app/app/@/ui";
-import { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
-import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
+import type { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
+import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { Flow } from "../flow";
-import * as FlowVariant from "./flow-variant";
+import { FlowVariant } from "..";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),

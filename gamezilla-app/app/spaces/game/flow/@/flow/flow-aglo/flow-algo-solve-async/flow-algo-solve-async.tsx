@@ -1,4 +1,4 @@
-import { ILogger } from "gamezilla-app/app/@/server/logger";
+import type { ILogger } from "gamezilla-app/app/@/server/logger";
 import { loggerNoop } from "gamezilla-app/app/@/server/logger/logger-impl-noop";
 import type { FlowVariant } from "../../flow-variant";
 import { MsgToMaster, type MsgToWorker } from "./flow-algo-solve-async.types";
@@ -7,7 +7,7 @@ export const solve = async (
 	model: FlowVariant.Model,
 	logger: ILogger = loggerNoop,
 ): Promise<FlowVariant.Model | null> => {
-	logger.info(`Solving puzzle with worker`);
+	logger.info("Solving puzzle with worker");
 
 	const url = new URL("flow-algo-solve-async.worker.ts", import.meta.url).href;
 

@@ -4,10 +4,10 @@ import { APP_SOUND } from "gamezilla-app/app/@/client";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { FlowAlgoDrawPipes } from "../flow-aglo/flow-algo-draw-pipes";
 import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
+import { FlowHint } from "../flow-hint";
+import type { FlowVariant } from "../flow-variant";
 import * as Flow from "../flow/flow";
-import * as FlowHint from "./flow-hint";
-import * as FlowVariant from "./flow-variant";
-import * as FlowVariantUI from "./flow-variant-ui";
+import * as FlowVariantUI from "../flow-variant/flow-variant-ui";
 
 //
 //

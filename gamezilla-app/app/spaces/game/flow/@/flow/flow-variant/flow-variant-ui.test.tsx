@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
-import type { FlowViewProps } from "../flow/flow-ui";
+import type { FlowViewProps } from "../flow-ui/flow-ui";
 import { FlowGridShorthand } from "./flow-grid";
 import type * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";

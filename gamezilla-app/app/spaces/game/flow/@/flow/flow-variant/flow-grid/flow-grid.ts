@@ -22,7 +22,7 @@ export const Model = p.and(
 export type Model = p.Infer<typeof Model>;
 
 const _toNodeId = (x: number, y: number): Flow.NodeId => {
-	return Flow.createNodeId(x + "," + y);
+	return Flow.createNodeId(`${x},${y}`);
 };
 
 export const toNodeId = (position: Position): Flow.NodeId => {
@@ -134,7 +134,11 @@ export const init = (input: {
 	//
 
 	for (const groupId in input.terminalsByGroupId) {
-		const terminal = input.terminalsByGroupId[groupId as Flow.GroupId]!;
+		const terminal = input.terminalsByGroupId[groupId as Flow.GroupId];
+
+		if (!terminal) {
+			continue;
+		}
 
 		const start = model.nodes[terminal.startId];
 
