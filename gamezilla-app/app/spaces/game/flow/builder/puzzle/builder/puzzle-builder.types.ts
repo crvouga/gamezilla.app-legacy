@@ -56,7 +56,7 @@ export const toCurrentFlow = (modelCore: ModelCore): FlowVariant.Model => {
 		}
 
 		case "play": {
-			return FlowVariantPlay.deriveFlow({
+			return FlowVariantPlay.toFlow({
 				flow: FlowVarianEdit.deriveFlowMemoized({
 					model: modelCore.edit,
 				}),

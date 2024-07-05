@@ -157,7 +157,7 @@ const updateCore: CoreModule["updateCore"] = (input) => {
 };
 
 const toStatus = (modelCore: ModelCore): "solved" | "solving" => {
-	const flow = FlowVariantPlay.deriveFlow({
+	const flow = FlowVariantPlay.toFlow({
 		flow: modelCore.flowPuzzle.flow,
 		model: modelCore.flowPlay,
 	});

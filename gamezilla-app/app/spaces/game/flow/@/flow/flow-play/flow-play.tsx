@@ -279,7 +279,7 @@ const updateMain: typeof update = ({ model, flowPuzzle, msg }) => {
 const updateIdle: typeof update = ({ msg, model, flowPuzzle }) => {
 	switch (msg.t) {
 		case "pressed-down": {
-			const current = deriveFlow({ model, flow: flowPuzzle.flow });
+			const current = toFlow({ model, flow: flowPuzzle.flow });
 
 			const groupId = Flow.toGroupId(current, msg.nodeId);
 
@@ -357,7 +357,7 @@ const updateDragging = ({
 		}
 
 		case "pressed-up": {
-			const current = deriveFlow({ model, flow });
+			const current = toFlow({ model, flow });
 			const modelNew: Model = { ...model, status: { t: "idle" } };
 
 			const activeGroupTerminal = Flow.toTerminalByGroupId(
@@ -400,7 +400,7 @@ const updateDragging = ({
 		}
 
 		case "left": {
-			const current = deriveFlow({ model, flow });
+			const current = toFlow({ model, flow });
 			const isSolved = Flow.isSolved(current);
 			return {
 				model: {
@@ -423,7 +423,7 @@ const updateDragging = ({
 	}
 };
 
-export const deriveFlow = ({
+export const toFlow = ({
 	model,
 	flow,
 }: {
@@ -457,7 +457,7 @@ export const View = (input: {
 	return (
 		<FlowVariantUI.View
 			disabled={input.disabled}
-			model={deriveFlow(input)}
+			model={toFlow(input)}
 			showCoordinates={false}
 			isDragging={input.model.status.t === "dragging"}
 			onDraggedOver={(nodeId) => input.dispatch({ t: "dragged-over", nodeId })}

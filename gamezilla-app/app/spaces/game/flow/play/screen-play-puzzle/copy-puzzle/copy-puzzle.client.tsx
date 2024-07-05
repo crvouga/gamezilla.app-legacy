@@ -18,7 +18,7 @@ export const update: ClientModule["update"] = (input) => {
 				return { model: input.model };
 			}
 
-			const flow = FlowVariantPlay.deriveFlow({
+			const flow = FlowVariantPlay.toFlow({
 				flow: input.modelCore.screen.flowPuzzle.flow,
 				model: input.modelCore.screen.flowPlay,
 			});

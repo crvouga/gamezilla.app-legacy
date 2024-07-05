@@ -35,12 +35,12 @@ describe(import.meta.file, () => {
 
 		const msgs = FlowVariantPlay.toSolutionMsgs({ flow });
 
-		const before = FlowVariantPlay.deriveFlow({
+		const before = FlowVariantPlay.toFlow({
 			flow,
 			model: f.init,
 		});
 
-		const after = FlowVariantPlay.deriveFlow({
+		const after = FlowVariantPlay.toFlow({
 			flow,
 			model: f.update(f.init, msgs).model,
 		});
@@ -195,8 +195,29 @@ describe(import.meta.file, () => {
 
 		const model = f.update(f.init, [{ t: "user-clicked-hint" }]).model;
 
-		const flowNew = FlowVariantPlay.deriveFlow({ flow, model });
+		const flowNew = FlowVariantPlay.toFlow({ flow, model });
 
 		expect(Flow.isSolved(flowNew)).toBe(true);
 	});
+
+	it("should not output solved event when drawing from incomplete terminal", async () => {
+		const flow = FlowGridShorthand.toGrid([
+			["B", " ", "A"],
+			[" ", " ", "a"],
+			[" ", " ", "A"],
+
+		]);
+		const f = await Fixture({ flow });
+
+		const msgs: FlowVariantPlay.Msg[] = [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 0 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 0, y: 1 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
+			{ t: "left", },
+		];
+
+		const output = f.update(f.init, msgs);
+
+		expect(output.event?.t).not.toBe("solved");
+	})
 });

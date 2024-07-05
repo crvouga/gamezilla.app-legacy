@@ -108,7 +108,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const before = f.init;
 		const after = f.update(before, f.completePuzzleMsgs);
-		const afterFlow = FlowVariantPlay.deriveFlow({
+		const afterFlow = FlowVariantPlay.toFlow({
 			flow: f.puzzle.flow,
 			model: after.flowPlay,
 		});
