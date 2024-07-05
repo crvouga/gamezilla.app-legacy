@@ -17,6 +17,7 @@ import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-g
 import type { ClientModule } from "../play.types";
 import * as CopyPuzzleClient from "./copy-puzzle/copy-puzzle.client";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
+import { ScreenPlayPuzzleCore } from "./screen-play-puzzle.core";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
@@ -135,7 +136,8 @@ const View: ClientModule["View"] = (input) => {
 	}
 	const flowPuzzle = input.modelCore.screen.flowPuzzle;
 	const flowPlay = input.modelCore.screen.flowPlay;
-	const isSolved = input.modelCore.screen.state.t === "solved";
+	const isSolved =
+		ScreenPlayPuzzleCore.toStatus(input.modelCore.screen) === "solved";
 	const puzzleIndex = input.modelCore.screen.puzzleIndex;
 
 	const prevPuzzleIndex = puzzleIndex - 1;
@@ -158,8 +160,7 @@ const View: ClientModule["View"] = (input) => {
 		input.modelCore.screen.flowPack.puzzleIds.length - 1;
 
 	const isSolvedPuzzleDialogOpen =
-		input.modelCore.screen.state.t === "solved" &&
-		input.modelCore.screen.opened === "puzzle-complete";
+		isSolved && input.modelCore.screen.opened === "puzzle-complete";
 
 	const checkmarkDuration = TimeSpan.seconds(1 / 2);
 

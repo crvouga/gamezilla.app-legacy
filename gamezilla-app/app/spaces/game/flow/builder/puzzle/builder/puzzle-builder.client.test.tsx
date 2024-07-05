@@ -80,5 +80,5 @@ describe(import.meta.file, () => {
 
 	test("render hint button", async () => {
 		// const f = await Fixture();
-	})
+	});
 });

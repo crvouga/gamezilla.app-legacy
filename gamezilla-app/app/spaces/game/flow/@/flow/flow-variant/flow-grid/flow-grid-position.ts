@@ -16,9 +16,9 @@ const manhattanDistance = (a: Position, b: Position) => {
 };
 
 export const Position = {
+	parser,
 	manhattanDistance,
 	distance,
-	parser,
 };
 
 export const DELTAS: Position[] = [

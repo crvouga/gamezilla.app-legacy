@@ -153,30 +153,6 @@ const drawPipeline = (
 	};
 };
 
-const isSolvable = (
-	model: FlowVariant.Model,
-	disconnectedTerminals: Flow.Terminal[],
-): boolean => {
-	const totalCells = Object.keys(model.nodes).length;
-	const filledCells = Object.keys(model.pipesBySourceId).length;
-	const openCells = totalCells - filledCells;
-
-	// Calculate the required cells for connecting all terminals
-	const requiredCells = disconnectedTerminals.reduce((sum, terminal) => {
-		if (terminal.endId) {
-			const dist = FlowVariant.distance(
-				model,
-				terminal.startId,
-				terminal.endId,
-			);
-			return sum + dist;
-		}
-		return sum;
-	}, 0);
-
-	return openCells >= requiredCells;
-};
-
 // const isBoundaryNode = (config: Config, model: Flow.Model, nodeId: Flow.NodeId): boolean => {
 // 	Flow.yieldEdgesOut(model, nodeId)
 // 	Flow.yieldEdgesIn(model, nodeId)
@@ -199,10 +175,6 @@ const solveStep = function* (
 	maxDepth: number = 100,
 ): Iterable<Flow.Model> {
 	if (depth > maxDepth) {
-		return;
-	}
-
-	if (!isSolvable(model, disconnectedTerminals)) {
 		return;
 	}
 

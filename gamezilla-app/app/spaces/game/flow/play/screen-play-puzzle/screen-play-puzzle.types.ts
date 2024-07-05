@@ -44,15 +44,15 @@ export const MsgCore = p.or(
 
 export type MsgCore = p.Infer<typeof MsgCore>;
 
-export const State = p.or(
-	p.obj({
-		t: p.l("solving"),
-	}),
-	p.obj({
-		t: p.l("solved"),
-	}),
-);
-export type State = p.Infer<typeof State>;
+// export const State = p.or(
+// 	p.obj({
+// 		t: p.l("solving"),
+// 	}),
+// 	p.obj({
+// 		t: p.l("solved"),
+// 	}),
+// );
+// export type State = p.Infer<typeof State>;
 
 export const ModelCore = p.obj({
 	t: p.l("screen-play-puzzle"),
@@ -60,7 +60,7 @@ export const ModelCore = p.obj({
 	flowPuzzle: FlowPuzzle,
 	flowPlay: FlowVariantPlay.Model,
 	puzzleIndex: p.num,
-	state: State,
+	// state: State,
 	opened: p.or(p.l("puzzle-complete"), p.l("action-drawer"), p.l(null)),
 	hints: p.partialDict(Flow.GroupId, Flow.GroupId),
 });

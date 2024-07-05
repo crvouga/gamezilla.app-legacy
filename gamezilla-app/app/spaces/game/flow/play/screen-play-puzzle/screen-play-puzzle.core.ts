@@ -1,4 +1,4 @@
-import { FlowVariantPlay } from "../../@/flow";
+import { Flow, FlowVariantPlay } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule, MsgCore } from "../play.types";
@@ -35,23 +35,17 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 					...modelCore,
 					flowPlay: flowPlayNew.model,
 					opened: "puzzle-complete",
-					state: {
-						t: "solved",
-					},
 				};
 			}
 
 			return {
 				...modelCore,
 				flowPlay: flowPlayNew.model,
-				state: {
-					t: "solving",
-				},
 			};
 		}
 		case "user-closed-puzzle-complete-dialog": {
 			if (
-				modelCore.state.t === "solved" &&
+				toStatus(modelCore) === "solved" &&
 				modelCore.opened === "puzzle-complete"
 			) {
 				return {
@@ -71,8 +65,6 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.nextPuzzle,
 				puzzleIndex: msgCore.nextPuzzleIndex,
-				state:
-					modelCore.state.t === "solved" ? { t: "solving" } : modelCore.state,
 			};
 		}
 
@@ -86,8 +78,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.prevPuzzle,
 				puzzleIndex: msgCore.prevPuzzleIndex,
-				state:
-					modelCore.state.t === "solved" ? { t: "solving" } : modelCore.state,
+				
 			};
 		}
 
@@ -97,9 +88,6 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 				flowPlay: FlowVariantPlay.init({
 					flowPuzzle: modelCore.flowPuzzle,
 				}),
-				state: {
-					t: "solving",
-				},
 			};
 		}
 
@@ -148,9 +136,6 @@ const initCore = (input: {
 	return {
 		...input,
 		flowPlay: FlowVariantPlay.init({ flowPuzzle: input.flowPuzzle }),
-		state: {
-			t: "solving",
-		},
 		opened: null,
 		t: "screen-play-puzzle",
 		hints: {},
@@ -171,8 +156,20 @@ const updateCore: CoreModule["updateCore"] = (input) => {
 	);
 };
 
-export const ScreenPuzzleCore = {
+const toStatus = (modelCore: ModelCore): "solved" | "solving" => {
+	const flow = FlowVariantPlay.deriveFlow({
+		flow: modelCore.flowPuzzle.flow,
+		model: modelCore.flowPlay,
+	});
+	if (Flow.isSolved(flow)) {
+		return "solved";
+	}
+	return "solving";
+};
+
+export const ScreenPlayPuzzleCore = {
 	updateCore,
 	initCore,
 	updateScreen,
+	toStatus,
 };

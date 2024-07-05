@@ -3,7 +3,7 @@ import { FlowVariantPlay, type FlowVariant } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import { CoreFixture } from "../../@/testing";
-import { ScreenPuzzleCore } from "../screen-play-puzzle.core";
+import { ScreenPlayPuzzleCore } from "../screen-play-puzzle.core";
 import type { ModelCore, MsgCore } from "../screen-play-puzzle.types";
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: {
@@ -60,7 +60,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: {
 		const models: NonEmpty<ModelCore> = [init];
 		for (const msg of msgs) {
 			const last = NonEmpty.last(models);
-			const latest = ScreenPuzzleCore.updateScreen(last, msg);
+			const latest = ScreenPlayPuzzleCore.updateScreen(last, msg);
 			models.push(latest);
 		}
 		return models;
@@ -71,7 +71,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: {
 		return NonEmpty.last(outputs);
 	};
 
-	const init: ModelCore = ScreenPuzzleCore.initCore({
+	const init: ModelCore = ScreenPlayPuzzleCore.initCore({
 		flowPack: f.pack,
 		flowPuzzle: f.puzzle,
 		puzzleIndex: f.puzzleIndex,

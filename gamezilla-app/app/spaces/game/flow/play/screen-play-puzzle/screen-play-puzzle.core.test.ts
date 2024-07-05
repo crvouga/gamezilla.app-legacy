@@ -2,6 +2,11 @@ import { describe, expect, it, test } from "bun:test";
 import { Flow, FlowVariantPlay, type FlowVariant } from "../../@/flow";
 import { ScreenPuzzlePlayCoreChildFixture } from "./@/testing.core";
 import type { MsgCore } from "./screen-play-puzzle.types";
+import { ScreenPlayPuzzleCore } from "./screen-play-puzzle.core";
+import {
+	FlowGrid,
+	FlowGridShorthand,
+} from "../../@/flow/flow-variant/flow-grid";
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 	const f = await ScreenPuzzlePlayCoreChildFixture(input);
@@ -108,8 +113,8 @@ describe(import.meta.file, () => {
 			model: after.flowPlay,
 		});
 
-		expect(before.state.t).toBe("solving");
-		expect(after.state.t).toBe("solved");
+		expect(ScreenPlayPuzzleCore.toStatus(before)).toBe("solving");
+		expect(ScreenPlayPuzzleCore.toStatus(after)).toBe("solved");
 		expect(Flow.isSolved(afterFlow)).toBe(true);
 	});
 
@@ -119,8 +124,32 @@ describe(import.meta.file, () => {
 		const after = f.update(f.init, f.completePuzzleMsgs);
 
 		expect(
-			after.state.t === "solved" && after.opened === "puzzle-complete",
+			ScreenPlayPuzzleCore.toStatus(after) === "solved" &&
+				after.opened === "puzzle-complete",
 		).toBe(true);
+	});
+
+	test("still in solved state after pressing solved board", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				[" ", " ", "A"],
+				[" ", " ", " "],
+				[" ", " ", "A"],
+			]),
+		});
+		const before = f.update(f.init, f.completePuzzleMsgs);
+		const nodeId = FlowGrid.toNodeId({ x: 0, y: 0 });
+		if (!nodeId) throw new Error("nodeId not found");
+		const after = f.update(before, [
+			{
+				t: "flow-variant-play",
+				c: {
+					t: "pressed-down",
+					nodeId,
+				},
+			},
+		]);
+		expect(ScreenPlayPuzzleCore.toStatus(after) === "solved").toBe(true);
 	});
 
 	it("should be able to close the puzzle complete dialog", async () => {
@@ -131,7 +160,10 @@ describe(import.meta.file, () => {
 				t: "user-closed-puzzle-complete-dialog",
 			},
 		]);
-		expect(after.state.t === "solved" && after.opened === null).toBe(true);
+		expect(
+			ScreenPlayPuzzleCore.toStatus(after) === "solved" &&
+				after.opened === null,
+		).toBe(true);
 	});
 
 	it("should close puzzle complete dialog after clicking next puzzle button", async () => {
@@ -209,7 +241,7 @@ describe(import.meta.file, () => {
 				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
 		]);
-		expect(output.state.t).toBe("solving");
+		expect(ScreenPlayPuzzleCore.toStatus(output)).toBe("solving");
 	});
 
 	it("should be in a solving state after going to the prev puzzle", async () => {
@@ -222,7 +254,7 @@ describe(import.meta.file, () => {
 				prevPuzzleIndex: f.prevPuzzleIndex,
 			},
 		]);
-		expect(output.state.t).toBe("solving");
+		expect(ScreenPlayPuzzleCore.toStatus(output)).toBe("solving");
 	});
 
 	test("open action drawer", async () => {

@@ -693,6 +693,16 @@ export const randomNode = (model: Model): Node | null => {
 	return nodes[Math.floor(Math.random() * nodes.length)] ?? null;
 };
 
+export const randomEmptyNode = (model: Model): Node | null => {
+	for (let i = 0; i < 100; i++) {
+		const node = randomNode(model);
+		if (node && !toGroupId(model, node.nodeId)) {
+			return node;
+		}
+	}
+	return null;
+};
+
 export const randomTerminal = (model: Model): Terminal | null => {
 	const terminals = Object.values(model.terminalsByGroupId);
 

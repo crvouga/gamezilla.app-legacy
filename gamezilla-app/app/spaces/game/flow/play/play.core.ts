@@ -1,5 +1,5 @@
 import type { CoreModule } from "./play.types";
-import { ScreenPuzzleCore } from "./screen-play-puzzle/screen-play-puzzle.core";
+import { ScreenPlayPuzzleCore } from "./screen-play-puzzle/screen-play-puzzle.core";
 
 const initCore: CoreModule["initCore"] = () => {
 	return {
@@ -33,7 +33,7 @@ const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 				case "screen-select-puzzle": {
 					return {
 						...modelCore,
-						screen: ScreenPuzzleCore.initCore({
+						screen: ScreenPlayPuzzleCore.initCore({
 							flowPack: modelCore.screen.flowPack,
 							puzzleIndex: msgCore.puzzleIndex,
 							flowPuzzle: msgCore.flowPuzzle,
@@ -51,7 +51,7 @@ const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	}
 };
 
-const updates = [update, ScreenPuzzleCore.updateCore];
+const updates = [update, ScreenPlayPuzzleCore.updateCore];
 const updateCore: CoreModule["updateCore"] = ({ modelCore, msgCore, ctx }) => {
 	return updates.reduce(
 		(acc, update) => update({ modelCore: acc, msgCore, ctx }),
