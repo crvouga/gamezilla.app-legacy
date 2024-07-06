@@ -78,7 +78,6 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.prevPuzzle,
 				puzzleIndex: msgCore.prevPuzzleIndex,
-				
 			};
 		}
 

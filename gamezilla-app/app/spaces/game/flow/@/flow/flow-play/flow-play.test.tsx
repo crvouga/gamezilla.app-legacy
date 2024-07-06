@@ -200,12 +200,11 @@ describe(import.meta.file, () => {
 		expect(Flow.isSolved(flowNew)).toBe(true);
 	});
 
-	it("should not output solved event when drawing from incomplete terminal", async () => {
+	it("should not output solved event when drawing from incomplete terminal and then leave drawing", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["B", " ", "A"],
 			[" ", " ", "a"],
 			[" ", " ", "A"],
-
 		]);
 		const f = await Fixture({ flow });
 
@@ -213,11 +212,11 @@ describe(import.meta.file, () => {
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 0 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 0, y: 1 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
-			{ t: "left", },
+			{ t: "left" },
 		];
 
 		const output = f.update(f.init, msgs);
 
 		expect(output.event?.t).not.toBe("solved");
-	})
+	});
 });

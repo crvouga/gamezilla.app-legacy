@@ -402,6 +402,23 @@ const updateDragging = ({
 		case "left": {
 			const current = toFlow({ model, flow });
 			const isSolved = Flow.isSolved(current);
+
+			const terminal = Flow.toTerminalByGroupId(
+				current,
+				modelStatus.activeGroupId,
+			);
+
+			if (!terminal?.endId) {
+				return {
+					model: {
+						...model,
+						status: {
+							t: "idle",
+						},
+					},
+				};
+			}
+
 			return {
 				model: {
 					...model,
