@@ -578,7 +578,22 @@ describe(import.meta.file, () => {
 		const actual = first(FlowAlgoSolve.solutions(grid));
 		expect(actual).toEqual(null);
 	});
+
+	test("disregard existing pipes", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " ", "B"],
+			["a", "a", "A"],
+			[" ", "B", " "],
+			[" ", " ", " "],
+		]);
+		const solutions = FlowAlgoSolve.solutions(grid);
+		expect(isEmpty(solutions)).toBe(false);
+	});
 });
+
+const isEmpty = <T>(iterable: Iterable<T>): boolean => {
+	return first(iterable) === null;
+};
 
 const first = <T>(iterable: Iterable<T>): T | null => {
 	return iterable[Symbol.iterator]().next().value ?? null;

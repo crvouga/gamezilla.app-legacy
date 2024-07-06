@@ -2,7 +2,7 @@ import { describe, expect, it, test } from "bun:test";
 import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { FlowClientFixture } from "../../testing";
 import { Flow } from "../flow";
-import type { FlowVariant } from "../flow-variant";
+import { FlowVariant } from "../flow-variant";
 import { FlowGridShorthand } from "../flow-variant/flow-grid";
 import * as FlowHint from "./flow-hint";
 
@@ -61,7 +61,7 @@ describe(import.meta.file, () => {
 	test("hint", async () => {
 		const f = await Fixture();
 		const after = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
-		const flow = FlowHint.deriveFlow({
+		const flow = FlowHint.toFlow({
 			flow: f.flow,
 			model: after.model,
 		});
@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
 			{ msg: { t: "user-clicked-hint" } },
 			{ msg: { t: "user-clicked-hint" } },
 		]);
-		const flow = FlowHint.deriveFlow({
+		const flow = FlowHint.toFlow({
 			flow: f.flow,
 			model: output.model,
 		});
@@ -132,7 +132,7 @@ describe(import.meta.file, () => {
 
 		const output = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
 
-		const derived = FlowHint.deriveFlow({
+		const derived = FlowHint.toFlow({
 			flow: f.flow,
 			model: output.model,
 		});
@@ -164,7 +164,7 @@ describe(import.meta.file, () => {
 			],
 		);
 
-		const derived = FlowHint.deriveFlow({
+		const derived = FlowHint.toFlow({
 			flow: f.flow,
 			model: output.model,
 		});
@@ -180,7 +180,24 @@ describe(import.meta.file, () => {
 		expect(Object.keys(after.model.usedHints)).toEqual(["A"]);
 	});
 
-	it.todo("should cut pipes when using a hint", async () => {});
+	test("cut pipes after using a hint", async () => {
+		const before = FlowGridShorthand.toGrid([
+			["A", " ", "B"],
+			["a", "a", "A"],
+			[" ", "B", " "],
+			[" ", " ", " "],
+		]);
+		const f = await Fixture({ flow: before });
+		const updated = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
+		const after = FlowHint.toFlow({
+			flow: f.flow,
+			model: updated.model,
+		});
+		const pipelineBefore = Flow.toPipelineByGroupId(before, "A");
+		const pipelineAfter = Flow.toPipelineByGroupId(after, "A");
+		expect(pipelineBefore.length).toEqual(3);
+		expect(pipelineAfter.length).toEqual(1);
+	});
 
 	it.todo("should disable hint button if no hints are available", async () => {
 		const f = await Fixture({

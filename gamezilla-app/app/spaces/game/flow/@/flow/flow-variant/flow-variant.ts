@@ -8,6 +8,18 @@ import type * as FlowVariantDimensions from "./flow-variant-dimensions";
 export const Model = p.or(FlowGrid.Model, FlowHex.Model, FlowTri.Model);
 export type Model = p.Infer<typeof Model>;
 
+export const isGrid = (flow: Model): flow is FlowGrid.Model => {
+	return flow.t === "flow-grid";
+};
+
+export const isHex = (flow: Model): flow is FlowHex.Model => {
+	return flow.t === "flow-hex";
+};
+
+export const isTri = (flow: Model): flow is FlowTri.Model => {
+	return flow.t === "flow-tri";
+};
+
 export const distance = (
 	flow: Model,
 	a: Flow.NodeId,

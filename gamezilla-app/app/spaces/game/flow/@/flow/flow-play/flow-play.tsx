@@ -447,7 +447,7 @@ export const toFlow = ({
 	flow: FlowVariant.Model;
 	model: Model;
 }): FlowVariant.Model => {
-	const derived = FlowHint.deriveFlow({
+	const derived = FlowHint.toFlow({
 		flow,
 		model,
 	});

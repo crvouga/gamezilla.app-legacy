@@ -559,14 +559,28 @@ export const pipelineToGroupId = (pipeline: Iterable<Pipe>): GroupId | null => {
 
 export type Pipeline = Pipe[];
 
-export const toPipeline = (model: Model, sourceNodeId: NodeId): Pipe[] => {
+export const toPipeline = (
+	model: Model,
+	sourceNodeId: NodeId,
+	groupId?: GroupId,
+): Pipe[] => {
 	const pipe = toPipeBySourceId(model, sourceNodeId);
 
 	if (!pipe) {
 		return [];
 	}
 
-	return [pipe, ...toPipeline(model, pipe.edge.targetId)];
+	if (groupId && pipe.groupId !== groupId) {
+		return [];
+	}
+
+	const targetNodeGroupId = toGroupId(model, pipe.edge.targetId);
+
+	if (groupId && targetNodeGroupId !== groupId) {
+		return [];
+	}
+
+	return [pipe, ...toPipeline(model, pipe.edge.targetId, pipe.groupId)];
 };
 
 export const toPipelineByGroupId = (model: Model, groupId: GroupId): Pipe[] => {
@@ -577,23 +591,6 @@ export const toPipelineByGroupId = (model: Model, groupId: GroupId): Pipe[] => {
 	}
 
 	return toPipeline(model, terminal.startId);
-};
-
-export const pipelineToPipesBySourceId = (
-	model: Model,
-	pipeline: Pipeline,
-): { [sourceId: NodeId]: Pipe } => {
-	const pipsBySourceId: { [sourceId: NodeId]: Pipe } = {};
-
-	for (const pipe of pipeline) {
-		const edge = toEdge(model, pipe.edgeId);
-		if (!edge) {
-			continue;
-		}
-		pipsBySourceId[edge.sourceId] = pipe;
-	}
-
-	return pipsBySourceId;
 };
 
 export const yieldPipeline = (
@@ -1032,36 +1029,84 @@ export const removePipeline = (model: Model, groupId: GroupId): Model => {
 	};
 };
 
-/**
- * Adds all pipes that are part of the pipeline with the inputted group id
- */
-export const addPipeline = (
+const pipelineToPipesBySourceId = (
 	model: Model,
-	groupId: GroupId,
 	pipeline: Pipeline,
-): Model => {
-	const modelNew: Model = { ...model };
+): { [sourceId: NodeId]: Pipe } => {
+	const pipsBySourceId: { [sourceId: NodeId]: Pipe } = {};
 
-	for (let i = 0; i < pipeline.length - 1; i++) {
-		const pipe = pipeline[i];
-
-		if (!pipe) {
-			continue;
-		}
-
+	for (const pipe of pipeline) {
 		const edge = toEdge(model, pipe.edgeId);
-
 		if (!edge) {
 			continue;
 		}
-
-		const pipeNew: Pipe = {
-			edgeId: toEdgeId(edge),
-			groupId: groupId,
-		};
-
-		modelNew.pipesBySourceId[edge.sourceId] = pipeNew;
+		pipsBySourceId[edge.sourceId] = pipe;
 	}
 
+	return pipsBySourceId;
+};
+
+const arePipesOverlapping = (
+	model: Model,
+	pipeA: Pipe,
+	pipeB: Pipe,
+): boolean => {
+	const edgePipeA = toEdge(model, pipeB.edgeId);
+	const edgePipeB = toEdge(model, pipeA.edgeId);
+	if (!edgePipeA || !edgePipeB) {
+		return false;
+	}
+	return (
+		edgePipeA.sourceId === edgePipeB.sourceId ||
+		edgePipeA.targetId === edgePipeB.targetId
+	);
+};
+
+const removeOverlappingPipes = (model: Model, newPipeline: Pipeline): Model => {
+	const pipesBySourceIdNew: Model["pipesBySourceId"] = {};
+
+	for (const existingPipe of Object.values(model.pipesBySourceId)) {
+		const existingPipeEdge = toEdge(model, existingPipe.edgeId);
+
+		if (!existingPipeEdge) {
+			continue;
+		}
+
+		const isExistingOverlappingNew = newPipeline.some((newPipe) =>
+			arePipesOverlapping(model, existingPipe, newPipe),
+		);
+		
+		if (isExistingOverlappingNew) {
+			continue;
+		}
+
+		pipesBySourceIdNew[existingPipeEdge.sourceId] = existingPipe;
+	}
+
+	return { ...model, pipesBySourceId: pipesBySourceIdNew };
+};
+
+/**
+ * Adds all pipes that are part of the pipeline with the inputted group id
+ */
+export const addPipeline = (model: Model, newPipeline: Pipeline): Model => {
+	const removedInvalidPipes = removeOverlappingPipes(model, newPipeline);
+	const pipesBySourceIdNew = pipelineToPipesBySourceId(model, newPipeline);
+	const modelNew: Model = {
+		...removedInvalidPipes,
+		pipesBySourceId: {
+			...removedInvalidPipes.pipesBySourceId,
+			...pipesBySourceIdNew,
+		},
+	};
 	return modelNew;
+};
+
+export const removeAllPipelines = <TModel extends Model>(
+	model: TModel,
+): TModel => {
+	return {
+		...model,
+		pipesBySourceId: {},
+	};
 };

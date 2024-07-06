@@ -171,8 +171,8 @@ const drawPipeline = (
 const solveStep = function* (
 	model: FlowVariant.Model,
 	disconnectedTerminals: Flow.Terminal[],
-	depth: number = 0,
-	maxDepth: number = 100,
+	depth = 0,
+	maxDepth = 100,
 ): Iterable<Flow.Model> {
 	if (depth > maxDepth) {
 		return;
@@ -205,19 +205,21 @@ const solveStep = function* (
 export const solutions = function* (
 	model: FlowVariant.Model,
 ): Iterable<Flow.Model> {
-	const terminals = Flow.toTerminals(model);
+	const cleared = Flow.removeAllPipelines(model);
+
+	const terminals = Flow.toTerminals(cleared);
 
 	terminals.sort((a, b) => {
 		if (a.endId && b.endId) {
 			return (
-				FlowVariant.distance(model, a.startId, a.endId) -
-				FlowVariant.distance(model, b.startId, b.endId)
+				FlowVariant.distance(cleared, a.startId, a.endId) -
+				FlowVariant.distance(cleared, b.startId, b.endId)
 			);
 		}
-		return Infinity;
+		return Number.POSITIVE_INFINITY;
 	});
 
-	yield* solveStep(model, terminals);
+	yield* solveStep(cleared, terminals);
 };
 
 export const solve = (model: FlowVariant.Model): Flow.Model | null => {

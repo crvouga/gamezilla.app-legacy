@@ -17,10 +17,6 @@ export const Msg = p.or(
 	p.obj({
 		t: p.l("user-clicked-hint"),
 	}),
-	p.obj({
-		t: p.l("found-solution"),
-		model: p.maybe(FlowVariant.Model),
-	}),
 );
 export type Msg = p.Infer<typeof Msg>;
 
@@ -53,7 +49,7 @@ export const update = <
 } => {
 	switch (input.msg.t) {
 		case "user-clicked-hint": {
-			const flow = deriveFlow({
+			const flow = toFlow({
 				flow: input.flowPuzzle.flow,
 				model: input.model,
 			});
@@ -70,24 +66,19 @@ export const update = <
 				return { model: input.model };
 			}
 
-			const removed = Flow.removePipeline(flow, nextHintGroupId);
+			const solutionPipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
 
-			const pipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
+			const solutionTerminal = Flow.toTerminalByGroupId(solution, nextHintGroupId);
 
-			const pipesBySourceId = Flow.pipelineToPipesBySourceId(removed, pipeline);
-
-			const terminal = Flow.toTerminalByGroupId(solution, nextHintGroupId);
+			const addedSolution = Flow.addPipeline(flow, solutionPipeline);
 
 			const modelNew: TModel = {
 				...input.model,
-				pipesBySourceId: {
-					...removed.pipesBySourceId,
-					...pipesBySourceId,
-				},
+				pipesBySourceId: addedSolution.pipesBySourceId,
 				terminalsByGroupId: {
 					...input.model.terminalsByGroupId,
 					[nextHintGroupId]:
-						terminal ?? input.model.terminalsByGroupId[nextHintGroupId],
+						solutionTerminal ?? input.model.terminalsByGroupId[nextHintGroupId],
 				},
 				usedHints: {
 					...input.model.usedHints,
@@ -95,7 +86,7 @@ export const update = <
 				},
 			};
 
-			const flowNew = deriveFlow({ flow, model: modelNew });
+			const flowNew = toFlow({ flow, model: modelNew });
 
 			if (Flow.isSolved(flowNew)) {
 				return {
@@ -137,7 +128,7 @@ export const isAnyShowingHint = (model: Model): boolean => {
 	return toShowingHintGroupIds(model).length > 0;
 };
 
-export const deriveFlow = (input: {
+export const toFlow = (input: {
 	model: Model;
 	flow: FlowVariant.Model;
 }): FlowVariant.Model => {

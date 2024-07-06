@@ -335,10 +335,40 @@ export const yieldPipelines = function* (
 	}
 };
 
+const pipeToPipeJoined = (model: Model, pipe: Flow.Pipe): PipeJoined[] => {
+	const edge = Flow.toEdge(model, pipe.edgeId);
+
+	if (!edge) {
+		return [];
+	}
+
+	const source = toNode(model, edge.sourceId);
+
+	if (!source) {
+		return [];
+	}
+
+	const target = toNode(model, edge.targetId);
+
+	if (!target) {
+		return [];
+	}
+
+	return [{ ...pipe, source, target, edge }];
+};
+
 export const toPipeline = (
 	model: Model,
 	startingNodeId: Flow.NodeId,
 ): PipeJoined[] => {
+	const USE_V2 = true;
+	if (USE_V2) {
+		const pipeline = Flow.toPipeline(model, startingNodeId);
+		const pipelineJoined = pipeline.flatMap((pipe) =>
+			pipeToPipeJoined(model, pipe),
+		);
+		return pipelineJoined;
+	}
 	const pipeline: PipeJoined[] = [];
 
 	let currentNodeId = startingNodeId;
