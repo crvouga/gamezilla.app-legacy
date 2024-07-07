@@ -1,7 +1,7 @@
 import type { UpdateCore } from "../builder.types";
-import { PackCreateNewCore } from "./pack-create-new/pack-create-new.core";
-import { PackListCore } from "./pack-list/pack-list.core";
-import { PackBuilderCore } from "./pack-builder/pack-builder.core";
+import { PackCreateNewCore } from "./create-new-pack/pack-create-new.core";
+import { PackListCore } from "./screen-open-pack/screen-open-pack.core";
+import { PackBuilderCore } from "./screen-pack-builder/pack-builder.core";
 import type { ModelCore } from "./pack.types";
 
 const initCore: ModelCore = {

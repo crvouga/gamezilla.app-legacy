@@ -1,6 +1,6 @@
-import { PackCreateNew } from "./pack-create-new";
-import { PackList } from "./pack-list";
-import { PackBuilder } from "./pack-builder";
+import { PackCreateNew } from "./create-new-pack";
+import { ScreenOpenPackTypes } from "./screen-open-pack";
+import { PackBuilder } from "./screen-pack-builder";
 import { p } from "gamezilla-app/@/core/parser";
 
 //
@@ -13,13 +13,13 @@ import { p } from "gamezilla-app/@/core/parser";
 
 export type ModelClient = PackCreateNew.ModelClient &
 	PackBuilder.ModelClient &
-	PackList.ModelClient;
+	ScreenOpenPackTypes.ModelClient;
 
 export const initClient = (): ModelClient => {
 	return {
 		...PackBuilder.initClient,
 		...PackCreateNew.initClient,
-		...PackList.initClient,
+		...ScreenOpenPackTypes.initClient,
 	};
 };
 
@@ -34,7 +34,7 @@ export const initClient = (): ModelClient => {
 export type MsgClient =
 	| PackCreateNew.MsgClient
 	| PackBuilder.MsgClient
-	| PackList.MsgClient;
+	| ScreenOpenPackTypes.MsgClient;
 
 export type MsgServer = PackCreateNew.MsgServer | PackBuilder.MsgServer;
 
@@ -51,7 +51,7 @@ export type MsgToClient = PackCreateNew.MsgToClient | PackBuilder.MsgToClient;
 //
 
 export const ModelCore = p.obj({
-	packBuilder: p.or(PackBuilder.ModelCore, p.l(null)),
+	packBuilder: p.maybe(PackBuilder.ModelCore),
 });
 
 export type ModelCore = p.Infer<typeof ModelCore>;
@@ -59,6 +59,6 @@ export type ModelCore = p.Infer<typeof ModelCore>;
 export const MsgCore = p.or(
 	PackCreateNew.MsgCore,
 	PackBuilder.MsgCore,
-	PackList.MsgCore,
+	ScreenOpenPackTypes.MsgCore,
 );
 export type MsgCore = p.Infer<typeof MsgCore>;

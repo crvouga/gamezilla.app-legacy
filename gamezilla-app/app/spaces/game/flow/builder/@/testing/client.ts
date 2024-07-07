@@ -1,11 +1,8 @@
-import { Ok } from "gamezilla-app/@/core";
+import { NonEmpty, Ok } from "gamezilla-app/@/core";
 import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import { EventId } from "gamezilla-app/app/spaces/@/event";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import {
-	SpaceGameFixtureClient,
-	testSpaceClientCtx,
-} from "../../../../@/testing/client";
+import { testSpaceClientCtx } from "../../../../@/testing/client";
 import { Flow } from "../../../@/flow";
 import type { FlowClientCtx } from "../../../@/flow-ctx";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
@@ -13,16 +10,69 @@ import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
 import { samples } from "../../../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { BuilderClient } from "../../builder.client";
-import {
-	initClient,
-	type ModelClient,
-	type ModelCore,
-} from "../../builder.types";
 import { BuilderCore } from "../../builder.core";
+import * as BuilderTypes from "../../builder.types";
 
-export const FlowCreateFixtureClient = async () => {
-	const f = await SpaceGameFixtureClient();
-	const model = initClient;
+import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
+
+type Input = {
+	ctx?: FlowClientCtx;
+	msg: BuilderTypes.MsgClient;
+};
+type Output = ReturnType<typeof BuilderClient.update>;
+
+const toModelCore = (
+	ctx: FlowClientCtx,
+	outputs: Output[],
+): BuilderTypes.ModelCore => {
+	return outputs
+		.flatMap((output) => output.msgCore ?? [])
+		.reduce(
+			(modelCore, msgCore) =>
+				BuilderCore.updateCore({
+					ctx,
+					modelCore,
+					msgCore,
+				}),
+			BuilderCore.initCore({
+				ctx,
+			}),
+		);
+};
+
+const updates = (
+	init: { model: BuilderTypes.ModelClient; ctx: FlowClientCtx },
+	inputs: Input[],
+): NonEmpty<Output> => {
+	const outputs: NonEmpty<Output> = [
+		{
+			model: init.model,
+		},
+	];
+	for (const input of inputs) {
+		const ctx = input.ctx ?? init.ctx;
+		const modelCore = toModelCore(ctx, outputs);
+		const output = BuilderClient.update({
+			model: NonEmpty.last(outputs).model,
+			modelCore,
+			ctx,
+			...input,
+		});
+		outputs.push(output);
+	}
+	return outputs;
+};
+const update = (
+	init: { model: BuilderTypes.ModelClient; ctx: FlowClientCtx },
+	inputs: Input[],
+): Output => {
+	const outputs = updates(init, inputs);
+	return NonEmpty.last(outputs);
+};
+
+export const FlowBuilderFixtureClient = async () => {
+	const f = await SpaceClientFixture();
+	const model = BuilderTypes.initClient;
 	const modelCore = BuilderCore.initCore({ ctx: f.ctx });
 	const ctx: FlowClientCtx = {
 		...f.ctx,
@@ -30,16 +80,24 @@ export const FlowCreateFixtureClient = async () => {
 		flowPuzzles: {},
 		flowPacks: {},
 	};
+	const init = {
+		ctx,
+		model,
+	};
+
 	return {
 		...f,
+		init,
 		ctx,
 		model,
 		modelCore,
+		update,
+		updates,
 	};
 };
 
 export const initial = {
-	model: initClient,
+	model: BuilderTypes.initClient,
 };
 
 export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
@@ -52,7 +110,7 @@ export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
 };
 
 export const clickedPackCreateNewButton =
-	(ctx: FlowClientCtx) => (model: ModelClient) => {
+	(ctx: FlowClientCtx) => (model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			ctx: ctx,
@@ -62,7 +120,7 @@ export const clickedPackCreateNewButton =
 	};
 
 export const userCreatedPack =
-	(ctx: FlowClientCtx, pack: FlowPack) => (model: ModelClient) => {
+	(ctx: FlowClientCtx, pack: FlowPack) => (model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			ctx: ctx,
@@ -78,7 +136,7 @@ export const userCreatedPack =
 	};
 
 export const clickedPackItem =
-	(ctx: FlowClientCtx, pack: FlowPack) => (model: ModelClient) => {
+	(ctx: FlowClientCtx, pack: FlowPack) => (model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			ctx: ctx,
@@ -88,8 +146,11 @@ export const clickedPackItem =
 	};
 
 export const clickedOpenPuzzlePickerButton =
-	(ctx: FlowClientCtx, modelCore: ModelCore = BuilderCore.initCore({ ctx })) =>
-	(model: ModelClient) => {
+	(
+		ctx: FlowClientCtx,
+		modelCore: BuilderTypes.ModelCore = BuilderCore.initCore({ ctx }),
+	) =>
+	(model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			msg: {
@@ -102,7 +163,7 @@ export const clickedOpenPuzzlePickerButton =
 	};
 
 export const closedPuzzlePickerDrawer =
-	(ctx: FlowClientCtx) => (model: ModelClient) => {
+	(ctx: FlowClientCtx) => (model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			msg: { t: "pack-builder.user-closed-add-puzzle-screen" },
@@ -112,7 +173,8 @@ export const closedPuzzlePickerDrawer =
 	};
 
 export const clickedPuzzleListItem =
-	(ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
+	(ctx: FlowClientCtx, puzzle: FlowPuzzle) =>
+	(model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			msg: {
@@ -125,18 +187,22 @@ export const clickedPuzzleListItem =
 	};
 
 export const clickedExitPuzzleBuilderButton =
-	(ctx: FlowClientCtx, modelCore: ModelCore = BuilderCore.initCore({ ctx })) =>
-	(model: ModelClient) => {
+	(
+		ctx: FlowClientCtx,
+		modelCore: BuilderTypes.ModelCore = BuilderCore.initCore({ ctx }),
+	) =>
+	(model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
-			msg: { t: "puzzle-builder.user-clicked-exit-button" },
+			msg: { t: "screen-puzzle-builder.user-clicked-exit-button" },
 			ctx,
 			modelCore: modelCore,
 		});
 	};
 
 export const serverListedPuzzlesOk =
-	(ctx: FlowClientCtx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
+	(ctx: FlowClientCtx, puzzles: FlowPuzzle[]) =>
+	(model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			ctx: ctx,
 			model,
@@ -157,7 +223,8 @@ export const serverListedPuzzlesOk =
 	};
 
 export const puzzleBuilderPressDownRandomNode =
-	(ctx: FlowClientCtx, modelCore: ModelCore) => (model: ModelClient) => {
+	(ctx: FlowClientCtx, modelCore: BuilderTypes.ModelCore) =>
+	(model: BuilderTypes.ModelClient) => {
 		const puzzleBuilder = modelCore.puzzleBuilder;
 
 		if (!puzzleBuilder) {
@@ -175,7 +242,7 @@ export const puzzleBuilderPressDownRandomNode =
 		return BuilderClient.update({
 			model,
 			msg: {
-				t: "puzzle-builder.flow-ui-edit",
+				t: "screen-puzzle-builder.flow-ui-edit",
 				c: { t: "pressed-down-node", nodeId: randomNode.nodeId },
 			},
 			ctx,
@@ -184,11 +251,12 @@ export const puzzleBuilderPressDownRandomNode =
 	};
 
 export const puzzleBuilderUserSavedChanges =
-	(ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
+	(ctx: FlowClientCtx, puzzle: FlowPuzzle) =>
+	(model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			msgCore: {
-				t: "puzzle-builder.saved-puzzle",
+				t: "screen-puzzle-builder.saved-puzzle",
 				eventId: EventId.generate(),
 				happenedAt: LamportTimestamp.fromNumber(0),
 				saved: Ok(puzzle),
@@ -200,7 +268,8 @@ export const puzzleBuilderUserSavedChanges =
 	};
 
 export const clickedPuzzlePickerItem =
-	(ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
+	(ctx: FlowClientCtx, puzzle: FlowPuzzle) =>
+	(model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			msg: {
@@ -214,7 +283,7 @@ export const clickedPuzzlePickerItem =
 	};
 
 export const clickedExitPuzzleButton =
-	(ctx: FlowClientCtx) => (model: ModelClient) => {
+	(ctx: FlowClientCtx) => (model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			msg: {
@@ -228,7 +297,7 @@ export const clickedExitPuzzleButton =
 
 export const clickedPuzzleGridItem =
 	(ctx: FlowClientCtx, puzzle: FlowPuzzle, puzzleIndex: number) =>
-	(model: ModelClient) => {
+	(model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			msg: { t: "pack-builder.user-clicked-pack-item", puzzle, puzzleIndex },
@@ -238,7 +307,7 @@ export const clickedPuzzleGridItem =
 	};
 
 export const serverCreatedPack =
-	(ctx: FlowClientCtx, pack: FlowPack) => (model: ModelClient) => {
+	(ctx: FlowClientCtx, pack: FlowPack) => (model: BuilderTypes.ModelClient) => {
 		return BuilderClient.update({
 			model,
 			ctx: ctx,

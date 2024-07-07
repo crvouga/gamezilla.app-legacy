@@ -45,10 +45,3 @@ export async function testSpaceClientCtx(): Promise<SpaceClientCtx> {
 		},
 	};
 }
-
-export const SpaceGameFixtureClient = async () => {
-	const ctx = await testSpaceClientCtx();
-	return {
-		ctx,
-	};
-};

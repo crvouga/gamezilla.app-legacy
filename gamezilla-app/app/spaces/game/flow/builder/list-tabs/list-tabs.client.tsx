@@ -9,8 +9,8 @@ import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-c
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewSpaceHostChip } from "../../../@/game";
 import type { ClientModule } from "../builder.types";
-import { PackListClient } from "../pack/pack-list/pack-list.client";
-import { PuzzleListClient } from "../puzzle/list/puzzle-list.client";
+import { PackListClient } from "../pack/screen-open-pack/screen-open-pack.client";
+import { ScreenOpenPuzzleClient } from "../screen-open-puzzle/screen-open-puzzle.client";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 
 const update: ClientModule["update"] = (input) => {
@@ -101,7 +101,9 @@ const View: ClientModule["View"] = (input) => {
 				selected={modelCore.listTab}
 			/>
 
-			{modelCore.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
+			{modelCore.listTab === "puzzles" && (
+				<ScreenOpenPuzzleClient.View {...input} />
+			)}
 
 			{modelCore.listTab === "packs" && <PackListClient.View {...input} />}
 

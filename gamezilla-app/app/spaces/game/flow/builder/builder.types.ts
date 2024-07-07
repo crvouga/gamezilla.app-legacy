@@ -20,7 +20,8 @@ import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { FlowPuzzleList } from "../@/flow-puzzle/flow-puzzle-list";
 import { ListTabs } from "./list-tabs";
 import { PackTypes } from "./pack";
-import { PuzzleTypes } from "./puzzle";
+import { ScreenOpenPuzzleTypes } from "./screen-open-puzzle";
+import { ScreenPuzzleBuilderTypes } from "./screen-puzzle-builder";
 
 //
 //
@@ -88,12 +89,14 @@ type BaseModelClient = {
 };
 
 export type ModelClient = BaseModelClient &
-	PuzzleTypes.ModelClient &
+	ScreenOpenPuzzleTypes.ModelClient &
+	ScreenPuzzleBuilderTypes.ModelClient &
 	PackTypes.ModelClient;
 
 export const initClient: ClientModule["init"] = {
 	...PackTypes.initClient(),
-	...PuzzleTypes.initClient(),
+	...ScreenOpenPuzzleTypes.initClient,
+	...ScreenPuzzleBuilderTypes.initClient,
 	flowPuzzleList: FlowPuzzleList.initClient,
 	flowPackList: FlowPackListTypes.initClient,
 	packs: {},
@@ -125,27 +128,31 @@ export type MsgClient =
 	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgClient }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgClient }
 	| BaseMsgClient
+	| ScreenOpenPuzzleTypes.MsgClient
+	| ScreenPuzzleBuilderTypes.MsgClient
 	| ListTabs.MsgClient
-	| PuzzleTypes.MsgClient
 	| PackTypes.MsgClient;
 
 export type MsgServer =
 	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgServer }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgServer }
-	| PuzzleTypes.MsgServer
+	| ScreenOpenPuzzleTypes.MsgServer
+	| ScreenPuzzleBuilderTypes.MsgServer
 	| PackTypes.MsgServer;
 
 export type MsgToServer =
 	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgToServer }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToServer }
-	| PuzzleTypes.MsgToServer
+	| ScreenPuzzleBuilderTypes.MsgToServer
+	| ScreenOpenPuzzleTypes.MsgToServer
 	| PackTypes.MsgToServer;
 
 export type MsgToClient =
 	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgToClient }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToClient }
-	| PuzzleTypes.MsgToClient
-	| PackTypes.MsgToClient;
+	| PackTypes.MsgToClient
+	| ScreenPuzzleBuilderTypes.MsgToClient
+	| ScreenOpenPuzzleTypes.MsgToClient;
 
 //
 //
@@ -157,7 +164,8 @@ export type MsgToClient =
 
 export const MsgCore = p.or(
 	ListTabs.MsgCore,
-	PuzzleTypes.MsgCore,
+	ScreenPuzzleBuilderTypes.MsgCore,
+	ScreenOpenPuzzleTypes.MsgCore,
 	PackTypes.MsgCore,
 );
 export type MsgCore = p.Infer<typeof MsgCore>;
@@ -171,12 +179,13 @@ type Open = p.Infer<typeof Open>;
 
 export const BaseModelCore = p.obj({
 	opened: Open,
+	puzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
+	openPuzzle: p.maybe(ScreenOpenPuzzleTypes.ModelCore),
 });
 type BaseModelCore = p.Infer<typeof BaseModelCore>;
 
 export const ModelCore = p.and(
 	BaseModelCore,
-	PuzzleTypes.ModelCore,
 	PackTypes.ModelCore,
 	ListTabs.ModelCore,
 );

@@ -2,7 +2,8 @@ import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { ModelCore, UpdateCore } from "./builder.types";
 import { ListTabsCore } from "./list-tabs/list-tabs.core";
 import { PackCore } from "./pack/pack.core";
-import { PuzzleCore } from "./puzzle/puzzle.core";
+import { ScreenOpenPuzzleCore } from "./screen-open-puzzle/screen-open-puzzle.core";
+import { ScreenPuzzleBuilderCore } from "./screen-puzzle-builder/screen-puzzle-builder.core";
 
 const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
 	return {
@@ -10,12 +11,14 @@ const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
 		...PackCore.initCore,
 		opened: { t: "list" },
 		packBuilder: null,
+		openPuzzle: null,
 		puzzleBuilder: null,
 	};
 };
 
 const updates: UpdateCore[] = [
-	PuzzleCore.updateCore,
+	ScreenPuzzleBuilderCore.updateCore,
+	ScreenOpenPuzzleCore.updateCore,
 	PackCore.updateCore,
 	ListTabsCore.updateCore,
 ];

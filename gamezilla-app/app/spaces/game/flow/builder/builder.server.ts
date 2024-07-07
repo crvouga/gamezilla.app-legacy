@@ -1,4 +1,5 @@
 import { Sub } from "gamezilla-app/@/core";
+import { Logger } from "gamezilla-app/app/@/server/logger";
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import { FlowPackDb } from "../@/flow-pack/flow-pack-db";
@@ -7,8 +8,8 @@ import { FlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db";
 import { FlowPuzzleListServer } from "../@/flow-puzzle/flow-puzzle-list";
 import { initServer, type ServerModule } from "./builder.types";
 import { PackServer } from "./pack/pack.server";
-import { PuzzleServer } from "./puzzle/puzzle.server";
-import { Logger } from "gamezilla-app/app/@/server/logger";
+import { ScreenOpenPuzzleServer } from "./screen-open-puzzle/screen-open-puzzle.server";
+import { ScreenPuzzleBuilderServer } from "./screen-puzzle-builder/screen-puzzle-builder.server";
 
 const deps: ServerModule["deps"] = async (input) => {
 	return {
@@ -27,7 +28,8 @@ const deps: ServerModule["deps"] = async (input) => {
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen(
 		{ model: input.model },
-		(model) => PuzzleServer.update({ ...input, model }),
+		(model) => ScreenPuzzleBuilderServer.update({ ...input, model }),
+		(model) => ScreenOpenPuzzleServer.update({ ...input, model }),
 		(model) => PackServer.update({ ...input, model }),
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => updateFlowPuzzleList({ ...input, model }),
