@@ -717,7 +717,7 @@ describe(import.meta.file, () => {
 		expect(actual).toEqual(expected);
 	});
 
-	test.only("creating pipes", () => {
+	test("creating pipes", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			[" ", " ", " "],

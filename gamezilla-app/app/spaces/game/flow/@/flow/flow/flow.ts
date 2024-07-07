@@ -1,4 +1,4 @@
-import { eq, memoize } from "gamezilla-app/@/core";
+import { eq, memoize, pipe } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { FlowEdgeId } from "./flow-edge-id";
 import { FlowGroupId } from "./flow-group-id";
@@ -28,7 +28,6 @@ export const isSameTerminalsByGroupId = (
 	return true;
 };
 
-
 export const toFlowEdgeId = (edge: Edge): FlowEdgeId => {
 	return FlowEdgeId.init(edge.sourceId, edge.targetId);
 };
@@ -39,7 +38,6 @@ export const hasFlowEdgeId = (
 ): edgeId is FlowEdgeId => {
 	return edgeId in model.edges;
 };
-
 
 export const toReversedPipesBySourceId = (
 	model: Pick<Model, "pipesBySourceId" | "edges">,
@@ -717,6 +715,24 @@ export const findGroupIdByFlowNodeId = (
 };
 
 /**
+ * Flips the start and end nodes of all terminals.
+ */
+export const flipAllTerminals = <TModel extends Model>(
+	model: TModel,
+): TModel => {
+	const terminalsByGroupId: TModel["terminalsByGroupId"] = {};
+
+	for (const terminal of yieldTerminals(model)) {
+		terminalsByGroupId[terminal.groupId] = FlowTerminal.flip(terminal);
+	}
+
+	return {
+		...model,
+		terminalsByGroupId,
+	};
+};
+
+/**
  * Flips the start and end nodes of the inputted terminal.
  */
 export const flipTerminal = <TModel extends Model>(
@@ -727,21 +743,13 @@ export const flipTerminal = <TModel extends Model>(
 		return model;
 	}
 
-	if (!terminal.endId) {
-		return model;
-	}
-
-	const terminalNew: FlowTerminal = {
-		...terminal,
-		startId: terminal.endId,
-		endId: terminal.startId,
-	};
+	const flipped = FlowTerminal.flip(terminal);
 
 	return {
 		...model,
 		terminalsByGroupId: {
 			...model.terminalsByGroupId,
-			[terminal.groupId]: terminalNew,
+			[terminal.groupId]: flipped,
 		},
 	};
 };
@@ -940,7 +948,10 @@ export const hasMultipleDeadEndPipelines = (model: Model): boolean => {
 /**
  * Removes all pipes that are part of the pipeline with the inputted group id
  */
-export const removePipeline = (model: Model, groupId: FlowGroupId): Model => {
+export const removePipeline = (
+	model: Model,
+	groupId?: FlowGroupId | null,
+): Model => {
 	const pipesBySourceId: Model["pipesBySourceId"] = {};
 
 	for (const pipe of yieldPipes(model)) {
@@ -1020,7 +1031,11 @@ const removeOverlappingPipes = (model: Model, newPipeline: Pipeline): Model => {
  * Adds all pipes that are part of the pipeline with the inputted group id
  */
 export const addPipeline = (model: Model, newPipeline: Pipeline): Model => {
-	const removedInvalidPipes = removeOverlappingPipes(model, newPipeline);
+	const removedInvalidPipes = pipe(
+		model,
+		(model) => removePipeline(model, pipelineToGroupId(newPipeline)),
+		(model) => removeOverlappingPipes(model, newPipeline),
+	);
 	const pipesBySourceIdNew = pipelineToPipesBySourceId(model, newPipeline);
 	const modelNew: Model = {
 		...removedInvalidPipes,

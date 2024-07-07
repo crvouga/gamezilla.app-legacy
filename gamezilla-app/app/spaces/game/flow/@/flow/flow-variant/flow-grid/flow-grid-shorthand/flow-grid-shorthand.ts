@@ -1,10 +1,10 @@
 import { NonEmpty } from "gamezilla-app/@/core";
 import { Flow } from "../../../flow";
-import * as FlowGrid from "../flow-grid";
-import * as FlowGridDimensions from "../flow-grid-dimensions";
 import { FlowGroupId } from "../../../flow/flow-group-id";
 import { FlowNodeId } from "../../../flow/flow-node-id";
 import { FlowTerminal } from "../../../flow/flow-terminal";
+import * as FlowGrid from "../flow-grid";
+import * as FlowGridDimensions from "../flow-grid-dimensions";
 
 //
 //
@@ -392,33 +392,25 @@ const toPipesBySourceIdForTerminalList = (input: {
  * Returns a list of all possible pipes for a grid.
  * It will return solutions with the longest pipelines.
  */
-const toPipesBySourceIdList_ = (input: {
-	model: Model;
-	grid: FlowGrid.Model;
-}): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
+const toPipesBySourceIdList = (
+	model: Model,
+	grid: FlowGrid.Model,
+): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
 	const pipesBySourceIdListByGroupId: {
 		[groupId in FlowGroupId]?: FlowGrid.Model["pipesBySourceId"][];
 	} = {};
-
-	for (const groupId in input.grid.terminalsByGroupId) {
-		const terminal = input.grid.terminalsByGroupId[groupId as FlowGroupId];
+	for (const groupId in grid.terminalsByGroupId) {
+		const terminal = grid.terminalsByGroupId[groupId as FlowGroupId];
 
 		if (!terminal) {
 			continue;
 		}
 
 		const pipesBySourceIdForTerminal = toPipesBySourceIdForTerminalList({
-			grid: input.grid,
-			model: input.model,
+			grid,
+			model,
 			terminal,
 		});
-
-		if (
-			pipesBySourceIdForTerminal.length <= 1 &&
-			pipesBySourceIdForTerminal.every((p) => Object.keys(p).length === 0)
-		) {
-			// const flipped = FlowTerminal.flip(terminal);
-		}
 
 		pipesBySourceIdListByGroupId[terminal.groupId] = [
 			...(pipesBySourceIdListByGroupId[terminal.groupId] ?? []),
@@ -437,39 +429,6 @@ const toPipesBySourceIdList_ = (input: {
 	}
 
 	return [{}];
-};
-
-const toPipesBySourceIdList = (input: {
-	model: Model;
-	grid: FlowGrid.Model;
-}): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
-	const solutions = toPipesBySourceIdList_(input);
-
-	const maxSolutions = maxAllBy(solutions, (pipesBySourceId) =>
-		toTotalPipelineLength({
-			...input.grid,
-			pipesBySourceId,
-		}),
-	);
-
-	const uniqueSolutions = uniqueWith(maxSolutions, (left, right) =>
-		Flow.isSame(
-			{
-				...input.grid,
-				pipesBySourceId: left,
-			},
-			{
-				...input.grid,
-				pipesBySourceId: right,
-			},
-		),
-	);
-
-	if (NonEmpty.is(uniqueSolutions)) {
-		return uniqueSolutions;
-	}
-
-	return solutions;
 };
 
 const toTotalPipelineLength = (model: Flow.Model): number => {
@@ -560,20 +519,34 @@ export const toGrid = (model: Model): FlowGrid.Model => {
  * 	]);
  */
 export const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
-	const terminalsByGroupId = toTerminalsByGroupId(model);
 	const dimensions = toDimensions(model);
-	const grid = FlowGrid.init({ dimensions, terminalsByGroupId });
-	const pipesBySourceIdList = toPipesBySourceIdList({ grid, model });
-	const grids = NonEmpty.map(
-		pipesBySourceIdList,
-		(pipesBySourceId): FlowGrid.Model => {
-			return {
-				...grid,
-				pipesBySourceId,
-			};
-		},
+	const grid = FlowGrid.init({
+		dimensions,
+		terminalsByGroupId: toTerminalsByGroupId(model),
+	});
+	const solutions = NonEmpty.map(
+		toPipesBySourceIdList(model, grid),
+		(pipesBySourceId): FlowGrid.Model => ({
+			...grid,
+			pipesBySourceId,
+		}),
 	);
-	return grids;
+
+	const flippedGrid = Flow.flipAllTerminals(grid);
+	const flippedSolutions = NonEmpty.map(
+		toPipesBySourceIdList(model, flippedGrid),
+		(pipesBySourceId): FlowGrid.Model => ({ ...flippedGrid, pipesBySourceId }),
+	);
+
+	const allGrid = NonEmpty.concat(solutions, flippedSolutions);
+
+	const maxGrids = maxAllBy(allGrid, toTotalPipelineLength);
+	const deduplicated = uniqueWith(maxGrids, Flow.isSame);
+
+	if (NonEmpty.is(deduplicated)) {
+		return deduplicated;
+	}
+	return solutions;
 };
 
 const isValid = (maybeModel: Element[][]): maybeModel is Model => {

@@ -2,9 +2,8 @@ import { p } from "gamezilla-app/@/core/parser";
 import { FlowGroupId } from "./flow-group-id";
 import { FlowNodeId } from "./flow-node-id";
 
-
 const parser = p.obj({
-    groupId: FlowGroupId,
+	groupId: FlowGroupId,
 	startId: FlowNodeId,
 	endId: p.maybe(FlowNodeId),
 });
@@ -27,7 +26,19 @@ const isSame = (a: FlowTerminal, b: FlowTerminal): boolean => {
 	return isSame;
 };
 
+const flip = (terminal: FlowTerminal): FlowTerminal => {
+	if (!terminal.endId) {
+		return terminal;
+	}
+	return {
+		groupId: terminal.groupId,
+		startId: terminal.endId,
+		endId: terminal.startId,
+	};
+};
+
 export const FlowTerminal = {
-    ...parser,
-    isSame,
-}
+	...parser,
+	flip,
+	isSame,
+};

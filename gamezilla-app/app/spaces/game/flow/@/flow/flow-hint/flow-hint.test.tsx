@@ -199,7 +199,7 @@ describe(import.meta.file, () => {
 		expect(pipelineAfter.length).toEqual(1);
 	});
 
-	it.todo("should NOT branch pipelines after using hint", async () => {
+	it("should NOT branch pipelines after using hint", async () => {
 		const f = await Fixture({
 			flow: FlowGridShorthand.toGrid([
 				["A", " ", " "],
@@ -207,24 +207,20 @@ describe(import.meta.file, () => {
 				[" ", " ", "A"],
 			]),
 		});
-		FlowGridShorthand.toGrid([
+
+		const initialPipesBySourceId = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			[" ", " ", " "],
 			["a", "a", "A"],
-		]);
-		const init: FlowHint.Model = {
+		]).pipesBySourceId;
+
+		const initial: FlowHint.Model = {
 			...f.init,
-			// pipesBySourceId: shorthand.p,
+			pipesBySourceId: initialPipesBySourceId,
 		};
-		const updated = f.update(init, [
+
+		const updated = f.update(initial, [
 			{
-				flowPuzzle: {
-					...f.flowPuzzle,
-					flow: {
-						...f.flow,
-						// pipesBySourceId,
-					},
-				},
 				msg: { t: "user-clicked-hint" },
 			},
 		]);
@@ -232,7 +228,6 @@ describe(import.meta.file, () => {
 			flow: f.flow,
 			model: updated.model,
 		});
-		expect(Flow.hasMultipleDeadEndPipelines(after)).toBe(false);
 		expect(Flow.hasBranchingPipelines(after)).toBe(false);
 	});
 

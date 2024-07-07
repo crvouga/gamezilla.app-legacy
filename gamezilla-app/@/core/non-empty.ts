@@ -20,7 +20,14 @@ const map = <T, U>(xs: NonEmpty<T>, f: (x: T) => U): NonEmpty<U> => {
 	return [f(xs[0]), ...xs.slice(1).map(f)];
 };
 
+const concat = <T>(...arrays: NonEmpty<NonEmpty<T>>): NonEmpty<T> => {
+	const empty: T[] = [];
+	const concatenated = empty.concat(...arrays);
+	return concatenated as NonEmpty<T>;
+};
+
 export const NonEmpty = {
+	concat,
 	is,
 	last,
 	map,
