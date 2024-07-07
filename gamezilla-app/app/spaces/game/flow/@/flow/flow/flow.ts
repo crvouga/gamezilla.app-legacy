@@ -1,5 +1,6 @@
 import { eq, memoize } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
+import { FlowGroupId } from "./flow-group-id";
 
 //
 //
@@ -19,40 +20,6 @@ export const createNodeId = (nodeId: string): NodeId => {
 export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
 	return nodeId in model.nodes;
 };
-
-//
-//
-//
-//
-//
-
-export const GROUP_ID_ORDER = [
-	"A",
-	"B",
-	"C",
-	"D",
-	"E",
-	"F",
-	"G",
-	"H",
-	"I",
-	"J",
-	"K",
-	"L",
-	"M",
-	"N",
-	"O",
-	"P",
-	"Q",
-] as const;
-
-export const isGroupId = (groupId: unknown): groupId is GroupId => {
-	return GROUP_ID_ORDER.includes(groupId as GroupId);
-};
-
-export const GroupId = p.enumeration(GROUP_ID_ORDER);
-
-export type GroupId = p.Infer<typeof GroupId>;
 
 //
 //
@@ -92,7 +59,7 @@ export const isEdgeId = (edgeId: unknown): edgeId is EdgeId => {
  */
 
 export const Terminal = p.obj({
-	groupId: GroupId,
+	groupId: FlowGroupId,
 	startId: NodeId,
 	endId: p.maybe(NodeId),
 });
@@ -119,11 +86,11 @@ export const isSameTerminalsByGroupId = (
 		return false;
 	}
 	for (const groupId in a) {
-		const terminalA = a[groupId as GroupId];
+		const terminalA = a[groupId as FlowGroupId];
 		if (!terminalA) {
 			return false;
 		}
-		const terminalB = b[groupId as GroupId];
+		const terminalB = b[groupId as FlowGroupId];
 		if (!terminalB) {
 			return false;
 		}
@@ -198,7 +165,7 @@ export type Edge = p.Infer<typeof Edge>;
  * These are the lines the user draws in the puzzle.
  */
 export const Pipe = p.obj({
-	groupId: GroupId,
+	groupId: FlowGroupId,
 	edgeId: EdgeId,
 });
 export type Pipe = p.Infer<typeof Pipe>;
@@ -243,9 +210,9 @@ export const Model = p.obj({
 	edges: p.dict(EdgeId, Edge),
 
 	/**
-	 * Represents the start and end nodes for each group.
+	 * Represents the start and end nodes for each pipeline.
 	 */
-	terminalsByGroupId: p.partialDict(GroupId, Terminal),
+	terminalsByGroupId: p.partialDict(FlowGroupId, Terminal),
 
 	/**
 	 * Represents the pipes that are connected to each node.
@@ -254,8 +221,14 @@ export const Model = p.obj({
 	 */
 	pipesBySourceId: p.dict(NodeId, Pipe),
 
+	/**
+	 * A hash of the edges in the puzzle. Used for memoization.
+	 */
 	edgeHash: p.maybe(p.or(p.str, p.num)),
 
+	/**
+	 * A hash of the nodes in the puzzle. Used for memoization.
+	 */
 	nodeHash: p.maybe(p.or(p.str, p.num)),
 });
 
@@ -370,7 +343,7 @@ export const addTerminal = (model: Model, terminal: Terminal): Model => {
 	};
 };
 
-export const removeTerminal = (model: Model, groupId: GroupId): Model => {
+export const removeTerminal = (model: Model, groupId: FlowGroupId): Model => {
 	const terminalsByGroupIdNew = { ...model.terminalsByGroupId };
 	delete terminalsByGroupIdNew[groupId];
 	return {
@@ -528,7 +501,7 @@ export const yieldEdgesIn = function* (
  */
 export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
 	for (const groupId in model.terminalsByGroupId) {
-		const terminal = model.terminalsByGroupId[groupId as GroupId];
+		const terminal = model.terminalsByGroupId[groupId as FlowGroupId];
 
 		if (!terminal) {
 			continue;
@@ -550,7 +523,7 @@ export const yieldPipelines = function* (
 	}
 };
 
-export const pipelineToGroupId = (pipeline: Iterable<Pipe>): GroupId | null => {
+export const pipelineToGroupId = (pipeline: Iterable<Pipe>): FlowGroupId | null => {
 	for (const pipe of pipeline) {
 		return pipe.groupId;
 	}
@@ -559,10 +532,13 @@ export const pipelineToGroupId = (pipeline: Iterable<Pipe>): GroupId | null => {
 
 export type Pipeline = Pipe[];
 
+/**
+ * Returns the list of pipes starting from the inputted node
+ */
 export const toPipeline = (
 	model: Model,
 	sourceNodeId: NodeId,
-	groupId?: GroupId,
+	groupId?: FlowGroupId,
 ): Pipe[] => {
 	const pipe = toPipeBySourceId(model, sourceNodeId);
 
@@ -583,7 +559,7 @@ export const toPipeline = (
 	return [pipe, ...toPipeline(model, pipe.edge.targetId, pipe.groupId)];
 };
 
-export const toPipelineByGroupId = (model: Model, groupId: GroupId): Pipe[] => {
+export const toPipelineFromGroupId = (model: Model, groupId: FlowGroupId): Pipe[] => {
 	const terminal = toTerminalByGroupId(model, groupId);
 
 	if (!terminal) {
@@ -617,7 +593,7 @@ export const yieldPipeline = (
 /**
  *
  */
-export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
+export const toGroupId = (model: Model, nodeId: NodeId): FlowGroupId | null => {
 	for (const pipe of yieldPipes(model)) {
 		if (pipe.edge.sourceId === nodeId) {
 			return pipe.groupId;
@@ -670,7 +646,7 @@ export const hasEdge = (
  */
 export const toTerminalByGroupId = (
 	model: Model,
-	groupId: GroupId,
+	groupId: FlowGroupId,
 ): Terminal | null => {
 	return model.terminalsByGroupId[groupId] ?? null;
 };
@@ -770,7 +746,7 @@ export const addPipe = (model: Model, pipe: Pipe): Model | null => {
 export const findGroupIdByNodeId = (
 	model: Model,
 	nodeId: NodeId,
-): GroupId | null => {
+): FlowGroupId | null => {
 	const terminal = findTerminalByNodeId(model, nodeId);
 
 	if (terminal) {
@@ -785,6 +761,7 @@ export const findGroupIdByNodeId = (
 
 	return null;
 };
+
 
 /**
  * Flips the start and end nodes of the inputted terminal.
@@ -924,7 +901,7 @@ export const countConnectedPipes = (model: Model): number => {
 
 export const isTerminalConnectedWithPipes = (
 	model: Model,
-	groupId: GroupId,
+	groupId: FlowGroupId,
 ): boolean => {
 	const terminal = toTerminalByGroupId(model, groupId);
 	if (!terminal) {
@@ -1010,7 +987,7 @@ export const hasMultipleDeadEndPipelines = (model: Model): boolean => {
 /**
  * Removes all pipes that are part of the pipeline with the inputted group id
  */
-export const removePipeline = (model: Model, groupId: GroupId): Model => {
+export const removePipeline = (model: Model, groupId: FlowGroupId): Model => {
 	const pipesBySourceId: Model["pipesBySourceId"] = {};
 
 	for (const pipe of yieldPipes(model)) {

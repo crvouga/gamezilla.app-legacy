@@ -1,4 +1,5 @@
-import type { Edge, GroupId, NodeId } from "../flow/flow";
+import type { Edge,  NodeId } from "../flow/flow";
+import { FlowGroupId } from "../flow/flow-group-id";
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const COLOR_TO_HEX = {
@@ -21,7 +22,7 @@ const COLOR_TO_HEX = {
 	rose: "#e11d48",
 } as const;
 
-export const GROUP_ID_TO_COLOR: { [groupId in GroupId]: Color } = {
+export const GROUP_ID_TO_COLOR: { [groupId in FlowGroupId]: Color } = {
 	A: "red",
 	B: "blue",
 	C: "yellow",
@@ -143,7 +144,7 @@ export const Color = {
 	all: ALL_COLORS,
 	toHex: colorToHex,
 	groupIdToColor: GROUP_ID_TO_COLOR,
-	groupIdToHex: (groupId: GroupId): string => {
+	groupIdToHex: (groupId: FlowGroupId): string => {
 		return colorToHex(GROUP_ID_TO_COLOR[groupId]);
 	},
 };
@@ -154,14 +155,14 @@ export type FlowViewProps<TModel> = {
 	model: TModel;
 	isDragging?: boolean;
 	disableHighlight?: boolean;
-	autocompleteEdge?: (Edge & { groupId: GroupId }) | null;
+	autocompleteEdge?: (Edge & { groupId: FlowGroupId }) | null;
 	showCoordinates?: boolean;
 	onPressDown?: (nodeId: NodeId) => void;
 	onPressUp?: (nodeId: NodeId) => void;
 	onLeave?: () => void;
 	onDraggedOver?: (nodeId: NodeId) => void;
-	isGroupActive?: (groupId: GroupId) => boolean;
+	isGroupActive?: (groupId: FlowGroupId) => boolean;
 	usedHints?: {
-		[groupId in GroupId]?: GroupId;
+		[groupId in FlowGroupId]?: FlowGroupId;
 	};
 };

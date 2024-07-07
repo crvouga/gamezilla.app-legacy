@@ -5,11 +5,12 @@ import type { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { Flow } from "../flow";
 import { FlowVariant } from "..";
+import { FlowGroupId } from "../flow/flow-group-id";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
-	terminalsByGroupId: p.partialDict(Flow.GroupId, Flow.Terminal),
-	usedHints: p.partialDict(Flow.GroupId, Flow.GroupId),
+	terminalsByGroupId: p.partialDict(FlowGroupId, Flow.Terminal),
+	usedHints: p.partialDict(FlowGroupId, FlowGroupId),
 });
 export type Model = p.Infer<typeof Model>;
 
@@ -66,7 +67,7 @@ export const update = <
 				return { model: input.model };
 			}
 
-			const solutionPipeline = Flow.toPipelineByGroupId(
+			const solutionPipeline = Flow.toPipelineFromGroupId(
 				solution,
 				nextHintGroupId,
 			);
@@ -117,8 +118,8 @@ export const update = <
 	}
 };
 
-export const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
-	for (const groupId of Flow.GROUP_ID_ORDER) {
+export const toNextHintGroupId = (model: Flow.Model): FlowGroupId | null => {
+	for (const groupId of FlowGroupId.ORDER) {
 		if (!Flow.isTerminalConnectedWithPipes(model, groupId)) {
 			return groupId;
 		}
@@ -126,8 +127,8 @@ export const toNextHintGroupId = (model: Flow.Model): Flow.GroupId | null => {
 	return null;
 };
 
-export const toShowingHintGroupIds = (model: Model): Flow.GroupId[] => {
-	return Object.keys(model.usedHints).map((k) => k as Flow.GroupId);
+export const toShowingHintGroupIds = (model: Model): FlowGroupId[] => {
+	return Object.keys(model.usedHints).map((k) => k as FlowGroupId);
 };
 
 export const isAnyShowingHint = (model: Model): boolean => {

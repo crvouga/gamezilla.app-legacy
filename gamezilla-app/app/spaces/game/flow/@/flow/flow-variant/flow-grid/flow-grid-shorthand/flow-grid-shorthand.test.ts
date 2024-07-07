@@ -717,6 +717,17 @@ describe(import.meta.file, () => {
 		expect(actual).toEqual(expected);
 	});
 
+	test.only("creating pipes", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			[" ", " ", " "],
+			["a", "a", "A"],
+		]);
+
+		const pipeline = Flow.toPipelineFromGroupId(grid, "A");
+		expect(pipeline.length).toEqual(2);
+	});
+
 	test.todo("from grid 2x3", () => {
 		const shorthand = FlowGridShorthand.init([
 			["A", " "],

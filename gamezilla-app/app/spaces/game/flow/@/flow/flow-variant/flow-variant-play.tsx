@@ -8,6 +8,7 @@ import { FlowHint } from "../flow-hint";
 import type { FlowVariant } from "../flow-variant";
 import * as Flow from "../flow/flow";
 import * as FlowVariantUI from "./flow-variant-ui";
+import { FlowGroupId } from "../flow/flow-group-id";
 
 //
 //
@@ -22,7 +23,7 @@ type Idle = p.Infer<typeof Idle>;
 
 const Dragging = p.obj({
 	t: p.l("dragging"),
-	activeGroupId: Flow.GroupId,
+	activeGroupId: FlowGroupId,
 	autocompleteEdge: p.maybe(Flow.Edge),
 });
 type Dragging = p.Infer<typeof Dragging>;
@@ -34,7 +35,7 @@ export const Model = p.and(
 	FlowHint.Model,
 	p.obj({
 		pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
-		terminalsByGroupId: p.partialDict(Flow.GroupId, Flow.Terminal),
+		terminalsByGroupId: p.partialDict(FlowGroupId, Flow.Terminal),
 		status: Status,
 	}),
 );

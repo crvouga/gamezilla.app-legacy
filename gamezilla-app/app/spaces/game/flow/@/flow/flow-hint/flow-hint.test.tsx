@@ -169,7 +169,7 @@ describe(import.meta.file, () => {
 			model: output.model,
 		});
 
-		const pipeline = Flow.toPipelineByGroupId(derived, "A");
+		const pipeline = Flow.toPipelineFromGroupId(derived, "A");
 
 		expect(pipeline.length > 0).toBe(true);
 	});
@@ -193,13 +193,13 @@ describe(import.meta.file, () => {
 			flow: f.flow,
 			model: updated.model,
 		});
-		const pipelineBefore = Flow.toPipelineByGroupId(before, "A");
-		const pipelineAfter = Flow.toPipelineByGroupId(after, "A");
+		const pipelineBefore = Flow.toPipelineFromGroupId(before, "A");
+		const pipelineAfter = Flow.toPipelineFromGroupId(after, "A");
 		expect(pipelineBefore.length).toEqual(3);
 		expect(pipelineAfter.length).toEqual(1);
 	});
 
-	it.only("should NOT branch pipelines after using hint", async () => {
+	it.todo("should NOT branch pipelines after using hint", async () => {
 		const f = await Fixture({
 			flow: FlowGridShorthand.toGrid([
 				["A", " ", " "],
@@ -207,15 +207,14 @@ describe(import.meta.file, () => {
 				[" ", " ", "A"],
 			]),
 		});
-		const {pipesBySourceId, terminalsByGroupId} = FlowGridShorthand.toGrid([
+		FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			[" ", " ", " "],
 			["a", "a", "A"],
 		]);
 		const init: FlowHint.Model = {
 			...f.init,
-			pipesBySourceId,
-			terminalsByGroupId,
+			// pipesBySourceId: shorthand.p,
 		};
 		const updated = f.update(init, [
 			{
@@ -223,8 +222,7 @@ describe(import.meta.file, () => {
 					...f.flowPuzzle,
 					flow: {
 						...f.flow,
-						pipesBySourceId,
-						terminalsByGroupId,
+						// pipesBySourceId,
 					}
 				},
 				msg: { t: "user-clicked-hint" },

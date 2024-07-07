@@ -1,9 +1,10 @@
 import { p } from "gamezilla-app/@/core/parser";
-import { Flow, FlowVariantPlay } from "../../@/flow";
-import { FlowPack } from "../../@/flow-pack";
-import { FlowPuzzle } from "../../@/flow-puzzle";
 import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
+import { FlowVariantPlay } from "../../@/flow";
+import { FlowPack } from "../../@/flow-pack";
+import { FlowPuzzle } from "../../@/flow-puzzle";
+import { FlowGroupId } from "../../@/flow/flow/flow-group-id";
 import { CopyPuzzleTypes } from "./copy-puzzle";
 
 export const MsgCore = p.or(
@@ -62,7 +63,7 @@ export const ModelCore = p.obj({
 	puzzleIndex: p.num,
 	// state: State,
 	opened: p.or(p.l("puzzle-complete"), p.l("action-drawer"), p.l(null)),
-	hints: p.partialDict(Flow.GroupId, Flow.GroupId),
+	hints: p.partialDict(FlowGroupId, FlowGroupId),
 });
 
 export type ModelCore = p.Infer<typeof ModelCore>;

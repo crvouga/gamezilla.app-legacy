@@ -2,6 +2,7 @@ import { pipe } from "gamezilla-app/@/core";
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import { Flow } from "../../../flow";
 import { FlowVariant } from "../..";
+import { FlowGroupId } from "../../flow/flow-group-id";
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -13,7 +14,7 @@ type Pipeline = Flow.NodeId[];
  */
 export const startDrawPipes = (
 	model: FlowVariant.Model,
-	groupId: Flow.GroupId,
+	groupId: FlowGroupId,
 	newNodeId: Flow.NodeId,
 ): Flow.Model => {
 	const terminal = Flow.toTerminalByGroupId(model, groupId);
@@ -40,7 +41,7 @@ export const startDrawPipes = (
  */
 export const drawPipes = (
 	model: FlowVariant.Model,
-	groupId: Flow.GroupId,
+	groupId: FlowGroupId,
 	nodeIdNew: Flow.NodeId,
 ): Flow.Model => {
 	const newNodeGroupId = Flow.findGroupIdByNodeId(model, nodeIdNew);
@@ -173,7 +174,7 @@ const isTerminalConnected = (
  */
 const findPipeline = (
 	model: Flow.Model,
-	groupId: Flow.GroupId,
+	groupId: FlowGroupId,
 	initial: Flow.NodeId,
 ): Pipeline => {
 	const pipeline: Pipeline = [];

@@ -2,6 +2,7 @@ import { NonEmpty } from "gamezilla-app/@/core";
 import { Flow } from "../../../flow";
 import * as FlowGrid from "../flow-grid";
 import * as FlowGridDimensions from "../flow-grid-dimensions";
+import { FlowGroupId } from "../../../flow/flow-group-id";
 
 //
 //
@@ -11,15 +12,15 @@ import * as FlowGridDimensions from "../flow-grid-dimensions";
 //
 //
 
-type Terminal = Flow.GroupId;
+type Terminal = FlowGroupId;
 
-type Pipe = Lowercase<Flow.GroupId>;
+type Pipe = Lowercase<FlowGroupId>;
 
 type AppendLowercase<T extends string> = T extends `${infer U}${infer _L}`
 	? `${U}${Lowercase<U>}`
 	: never;
 
-type TerminalWithPipe = AppendLowercase<Flow.GroupId>;
+type TerminalWithPipe = AppendLowercase<FlowGroupId>;
 
 type Empty = " ";
 
@@ -57,10 +58,10 @@ const isLowercase = (string: string): boolean =>
 	string === string.toLowerCase();
 
 const isTerminal = (element: string): element is Terminal =>
-	Flow.isGroupId(element);
+	FlowGroupId.is(element);
 
 const isPipe = (element: string): element is Pipe =>
-	isLowercase(element) && Flow.isGroupId(element.toUpperCase());
+	isLowercase(element) && FlowGroupId.is(element.toUpperCase());
 
 const isTerminalWithPipe = (element: string): element is TerminalWithPipe =>
 	Boolean(
@@ -69,14 +70,14 @@ const isTerminalWithPipe = (element: string): element is TerminalWithPipe =>
 
 export const isEmpty = (element: string): element is Empty => element === " ";
 
-const pipeToGroupId = (pipe: Pipe): Flow.GroupId => {
+const pipeToGroupId = (pipe: Pipe): FlowGroupId => {
 	const uppercase = pipe.toUpperCase();
-	if (Flow.isGroupId(uppercase)) {
+	if (FlowGroupId.is(uppercase)) {
 		return uppercase;
 	}
 	return "A";
 };
-const groupIdToPipe = (groupId: Flow.GroupId): Pipe => {
+const groupIdToPipe = (groupId: FlowGroupId): Pipe => {
 	const lowercase = groupId.toLowerCase();
 	if (isPipe(lowercase)) {
 		return lowercase;
@@ -84,7 +85,7 @@ const groupIdToPipe = (groupId: Flow.GroupId): Pipe => {
 	return "a";
 };
 
-const groupIdToTerminalWithPipe = (groupId: Flow.GroupId): TerminalWithPipe => {
+const groupIdToTerminalWithPipe = (groupId: FlowGroupId): TerminalWithPipe => {
 	const terminalWithPipe = `${groupId.toUpperCase()}${groupId.toLowerCase()}`;
 	if (isTerminalWithPipe(terminalWithPipe)) {
 		return terminalWithPipe;
@@ -94,15 +95,15 @@ const groupIdToTerminalWithPipe = (groupId: Flow.GroupId): TerminalWithPipe => {
 
 const terminalWithPipeToGroupId = (
 	terminalWithPipe: TerminalWithPipe,
-): Flow.GroupId => {
+): FlowGroupId => {
 	const groupId = terminalWithPipe[0];
-	if (Flow.isGroupId(groupId)) {
+	if (FlowGroupId.is(groupId)) {
 		return groupId;
 	}
 	return "A";
 };
 
-const elementToGroupId = (element: Element): Flow.GroupId | null => {
+const elementToGroupId = (element: Element): FlowGroupId | null => {
 	if (isPipe(element)) {
 		return pipeToGroupId(element);
 	}
@@ -139,7 +140,7 @@ export const init = (model: Model): Model => {
 //
 
 type DraftTerminal = {
-	groupId: Flow.GroupId;
+	groupId: FlowGroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId | null;
 };
@@ -394,11 +395,11 @@ const toPipesBySourceIdList_ = (input: {
 	grid: FlowGrid.Model;
 }): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
 	const pipesBySourceIdListByGroupId: {
-		[groupId in Flow.GroupId]?: FlowGrid.Model["pipesBySourceId"][];
+		[groupId in FlowGroupId]?: FlowGrid.Model["pipesBySourceId"][];
 	} = {};
 
 	for (const groupId in input.grid.terminalsByGroupId) {
-		const terminal = input.grid.terminalsByGroupId[groupId as Flow.GroupId];
+		const terminal = input.grid.terminalsByGroupId[groupId as FlowGroupId];
 
 		if (!terminal) {
 			continue;
@@ -409,6 +410,10 @@ const toPipesBySourceIdList_ = (input: {
 			model: input.model,
 			terminal,
 		});
+
+		if (pipesBySourceIdForTerminal.length <= 1 && pipesBySourceIdForTerminal.every(p => Object.keys(p).length === 0)) {
+			// const flipped = FlowTerminal.flip(terminal);
+		}
 
 		pipesBySourceIdListByGroupId[terminal.groupId] = [
 			...(pipesBySourceIdListByGroupId[terminal.groupId] ?? []),

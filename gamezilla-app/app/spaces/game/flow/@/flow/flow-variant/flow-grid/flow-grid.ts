@@ -1,5 +1,6 @@
 import { p } from "gamezilla-app/@/core/parser";
 import { Flow } from "../../flow";
+import { FlowGroupId } from "../../flow/flow-group-id";
 import * as FlowGridDimensions from "./flow-grid-dimensions";
 import { Position } from "./flow-grid-position";
 
@@ -134,7 +135,7 @@ export const init = (input: {
 	//
 
 	for (const groupId in input.terminalsByGroupId) {
-		const terminal = input.terminalsByGroupId[groupId as Flow.GroupId];
+		const terminal = input.terminalsByGroupId[groupId as FlowGroupId];
 
 		if (!terminal) {
 			continue;

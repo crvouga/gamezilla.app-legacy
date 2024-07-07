@@ -1,6 +1,7 @@
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import { Flow } from "../../../flow";
 import { FlowVariant } from "../..";
+import { FlowGroupId } from "../../flow/flow-group-id";
 
 const calculateDirection = (
 	model: FlowVariant.Model,
@@ -60,7 +61,7 @@ const normalizePath = (path: Flow.Edge[]): string => {
 
 const toPossiblePipelines = function* (input: {
 	model: FlowVariant.Model;
-	groupId: Flow.GroupId;
+	groupId: FlowGroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
 }): Iterable<Flow.Edge[]> {

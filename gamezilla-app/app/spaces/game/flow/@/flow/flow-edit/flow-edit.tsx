@@ -20,6 +20,7 @@ import * as FlowVariant from "../flow-variant/flow-variant";
 import * as FlowVariantDimensions from "../flow-variant/flow-variant-dimensions";
 import * as FlowVariantUI from "../flow-variant/flow-variant-ui";
 import { p } from "gamezilla-app/@/core/parser";
+import { FlowGroupId } from "../flow/flow-group-id";
 
 //
 //
@@ -30,13 +31,13 @@ import { p } from "gamezilla-app/@/core/parser";
 //
 
 const DraftTerminal = p.obj({
-	groupId: Flow.GroupId,
+	groupId: FlowGroupId,
 	startId: Flow.NodeId,
 	endId: p.maybe(Flow.NodeId),
 });
 type DraftTerminal = p.Infer<typeof DraftTerminal>;
 
-const DraftTerminals = p.partialDict(Flow.GroupId, DraftTerminal);
+const DraftTerminals = p.partialDict(FlowGroupId, DraftTerminal);
 type DraftTerminals = p.Infer<typeof DraftTerminals>;
 
 const Form = p.obj({
@@ -298,7 +299,7 @@ const resetDimensionsForm = (model: Model): Model => {
 
 export const updateDraftTerminalsOnPressedDownNode = (
 	draftTerminals: DraftTerminals,
-	currentPlacingGroupId: Flow.GroupId,
+	currentPlacingGroupId: FlowGroupId,
 	pressedNodeId: Flow.NodeId,
 ): DraftTerminals => {
 	const pressedTerminal = findDraftTerminalByNodeId(
@@ -375,7 +376,7 @@ const findDraftTerminalByNodeId = (
 	nodeId: Flow.NodeId,
 ): DraftTerminal | null => {
 	for (const groupId in draftTerminals) {
-		const draftTerminal = draftTerminals[groupId as Flow.GroupId];
+		const draftTerminal = draftTerminals[groupId as FlowGroupId];
 
 		if (draftTerminal?.startId === nodeId) {
 			return draftTerminal;
@@ -388,8 +389,8 @@ const findDraftTerminalByNodeId = (
 	return null;
 };
 
-export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
-	for (const groupId of Flow.GROUP_ID_ORDER) {
+export const toCurrentPlacingGroupId = (model: Model): FlowGroupId => {
+	for (const groupId of FlowGroupId.ORDER) {
 		const draftTerminal = History.present(model.form).terminalsByGroupId[
 			groupId
 		];
@@ -404,13 +405,13 @@ export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
 	}
 
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
-	return Flow.GROUP_ID_ORDER[Flow.GROUP_ID_ORDER.length - 1]!;
+	return FlowGroupId.ORDER[FlowGroupId.ORDER.length - 1]!;
 };
 
 export const toCurrentPlacingTerminalPosition = (
 	model: Model,
 ): "start" | "end" => {
-	for (const groupId of Flow.GROUP_ID_ORDER) {
+	for (const groupId of FlowGroupId.ORDER) {
 		const draftTerminal = History.present(model.form).terminalsByGroupId[
 			groupId
 		];
@@ -433,7 +434,7 @@ export const removeIncompleteTerminals = (
 	const terminalsByGroupId: Flow.Model["terminalsByGroupId"] = {};
 
 	for (const groupId in draftTerminals) {
-		const draftTerminal = draftTerminals[groupId as Flow.GroupId];
+		const draftTerminal = draftTerminals[groupId as FlowGroupId];
 		if (!draftTerminal) {
 			continue;
 		}
@@ -575,7 +576,7 @@ const ViewTerminal = ({
 	className,
 }: {
 	className: string;
-	groupId: Flow.GroupId;
+	groupId: FlowGroupId;
 }) => {
 	const color = FlowUI.Color.groupIdToHex(groupId);
 	return (
