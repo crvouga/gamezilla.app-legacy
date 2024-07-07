@@ -4,6 +4,7 @@ import * as FlowGrid from "../flow-grid";
 import * as FlowGridDimensions from "../flow-grid-dimensions";
 import { FlowGroupId } from "../../../flow/flow-group-id";
 import { FlowNodeId } from "../../../flow/flow-node-id";
+import { FlowTerminal } from "../../../flow/flow-terminal";
 
 //
 //
@@ -236,7 +237,7 @@ const DELTAS = [
 const toPipesBySourceIdForTerminalList = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
-	terminal: Flow.Terminal;
+	terminal: FlowTerminal;
 }): FlowGrid.Model["pipesBySourceId"][] => {
 	const allPaths: FlowGrid.Model["pipesBySourceId"][] = [];
 	const visitedNodeIds = new Set<FlowNodeId>();

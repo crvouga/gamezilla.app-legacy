@@ -1,8 +1,9 @@
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
-import { Flow } from "../../../flow";
 import { FlowVariant } from "../..";
+import { Flow } from "../../../flow";
 import { FlowGroupId } from "../../flow/flow-group-id";
 import { FlowNodeId } from "../../flow/flow-node-id";
+import { FlowTerminal } from "../../flow/flow-terminal";
 
 const calculateDirection = (
 	model: FlowVariant.Model,
@@ -137,7 +138,7 @@ const toPossiblePipelines = function* (input: {
 
 const drawPipeline = (
 	model: FlowVariant.Model,
-	terminal: Flow.Terminal,
+	terminal: FlowTerminal,
 	path: Flow.Edge[],
 ): FlowVariant.Model => {
 	const pipesBySourceId = { ...model.pipesBySourceId };
@@ -172,7 +173,7 @@ const drawPipeline = (
 
 const solveStep = function* (
 	model: FlowVariant.Model,
-	disconnectedTerminals: Flow.Terminal[],
+	disconnectedTerminals: FlowTerminal[],
 	depth = 0,
 	maxDepth = 100,
 ): Iterable<Flow.Model> {

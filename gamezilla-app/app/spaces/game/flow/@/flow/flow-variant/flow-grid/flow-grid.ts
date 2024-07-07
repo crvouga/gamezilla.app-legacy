@@ -5,6 +5,7 @@ import * as FlowGridDimensions from "./flow-grid-dimensions";
 import { Position } from "./flow-grid-position";
 import { FlowNodeId } from "../../flow/flow-node-id";
 import { FlowEdgeId } from "../../flow/flow-edge-id";
+import { FlowTerminal } from "../../flow/flow-terminal";
 
 //
 //
@@ -155,7 +156,7 @@ export const init = (input: {
 
 		const endNew = end?.nodeId === startNew ? null : end?.nodeId;
 
-		const terminalNew: Flow.Terminal = {
+		const terminalNew: FlowTerminal = {
 			groupId: terminal.groupId,
 			startId: startNew,
 			endId: endNew,
@@ -284,7 +285,7 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
 	}
 };
 
-export type Terminal = Flow.Terminal & {
+export type Terminal = FlowTerminal & {
 	start: Node;
 	end?: Node | null;
 };

@@ -3,40 +3,7 @@ import { p } from "gamezilla-app/@/core/parser";
 import { FlowEdgeId } from "./flow-edge-id";
 import { FlowGroupId } from "./flow-group-id";
 import { FlowNodeId } from "./flow-node-id";
-
-
-//
-//
-//
-//
-//
-//
-//
-
-/**
- * A terminal represents the start and end nodes for a group.
- * These are the two circles the user is trying to connect
- */
-
-export const Terminal = p.obj({
-	groupId: FlowGroupId,
-	startId: FlowNodeId,
-	endId: p.maybe(FlowNodeId),
-});
-export type Terminal = p.Infer<typeof Terminal>;
-
-export const isSameTerminal = (a: Terminal, b: Terminal): boolean => {
-	const startA = a.startId ?? null;
-	const startB = b.startId ?? null;
-	const endA = a.endId ?? null;
-	const endB = b.endId ?? null;
-	const isSameNodes =
-		(startA === startB && endA === endB) ||
-		(endA === startB && startA === endB);
-	const isSameGroup = a.groupId === b.groupId;
-	const isSame = isSameNodes && isSameGroup;
-	return isSame;
-};
+import { FlowTerminal } from "./flow-terminal";
 
 export const isSameTerminalsByGroupId = (
 	a: Model["terminalsByGroupId"],
@@ -54,7 +21,7 @@ export const isSameTerminalsByGroupId = (
 		if (!terminalB) {
 			return false;
 		}
-		if (!isSameTerminal(terminalA, terminalB)) {
+		if (!FlowTerminal.isSame(terminalA, terminalB)) {
 			return false;
 		}
 	}
@@ -185,7 +152,7 @@ export const Model = p.obj({
 	/**
 	 * Represents the start and end nodes for each pipeline.
 	 */
-	terminalsByGroupId: p.partialDict(FlowGroupId, Terminal),
+	terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
 
 	/**
 	 * Represents the pipes that are connected to each node.
@@ -294,7 +261,7 @@ const hasNode = (model: Model, nodeId: FlowNodeId): boolean => {
 /**
  * @param model
  */
-export const addTerminal = (model: Model, terminal: Terminal): Model => {
+export const addTerminal = (model: Model, terminal: FlowTerminal): Model => {
 	if (terminal.endId === terminal.startId) {
 		return model;
 	}
@@ -475,7 +442,7 @@ export const yieldEdgesIn = function* (
 /**
  *
  */
-export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
+export const yieldTerminals = function* (model: Model): Iterable<FlowTerminal> {
 	for (const groupId in model.terminalsByGroupId) {
 		const terminal = model.terminalsByGroupId[groupId as FlowGroupId];
 
@@ -487,7 +454,7 @@ export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
 	}
 };
 
-export const toTerminals = (model: Model): Terminal[] => {
+export const toTerminals = (model: Model): FlowTerminal[] => {
 	return Array.from(yieldTerminals(model));
 };
 
@@ -631,7 +598,7 @@ export const hasEdge = (
 export const toTerminalByGroupId = (
 	model: Model,
 	groupId: FlowGroupId,
-): Terminal | null => {
+): FlowTerminal | null => {
 	return model.terminalsByGroupId[groupId] ?? null;
 };
 
@@ -660,7 +627,7 @@ export const randomEmptyNode = (model: Model): Node | null => {
 	return null;
 };
 
-export const randomTerminal = (model: Model): Terminal | null => {
+export const randomTerminal = (model: Model): FlowTerminal | null => {
 	const terminals = Object.values(model.terminalsByGroupId);
 
 	if (terminals.length === 0) {
@@ -685,7 +652,7 @@ export const randomOutEdge = (
 export const findTerminalByFlowNodeId = (
 	model: Model,
 	nodeId: FlowNodeId,
-): Terminal | null => {
+): FlowTerminal | null => {
 	for (const terminal of yieldTerminals(model)) {
 		if (terminal.startId === nodeId) {
 			return terminal;
@@ -754,7 +721,7 @@ export const findGroupIdByFlowNodeId = (
  */
 export const flipTerminal = <TModel extends Model>(
 	model: TModel,
-	terminal: Terminal | null,
+	terminal: FlowTerminal | null,
 ): TModel => {
 	if (!terminal) {
 		return model;
@@ -764,7 +731,7 @@ export const flipTerminal = <TModel extends Model>(
 		return model;
 	}
 
-	const terminalNew: Terminal = {
+	const terminalNew: FlowTerminal = {
 		...terminal,
 		startId: terminal.endId,
 		endId: terminal.startId,

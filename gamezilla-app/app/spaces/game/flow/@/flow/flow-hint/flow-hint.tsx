@@ -7,10 +7,11 @@ import { Flow } from "../flow";
 import { FlowVariant } from "..";
 import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
+import { FlowTerminal } from "../flow/flow-terminal";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
-	terminalsByGroupId: p.partialDict(FlowGroupId, Flow.Terminal),
+	terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
 	usedHints: p.partialDict(FlowGroupId, FlowGroupId),
 });
 export type Model = p.Infer<typeof Model>;

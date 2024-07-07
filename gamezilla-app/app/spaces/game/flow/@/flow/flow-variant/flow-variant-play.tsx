@@ -10,6 +10,7 @@ import * as Flow from "../flow/flow";
 import * as FlowVariantUI from "./flow-variant-ui";
 import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
+import { FlowTerminal } from "../flow/flow-terminal";
 
 //
 //
@@ -36,7 +37,7 @@ export const Model = p.and(
 	FlowHint.Model,
 	p.obj({
 		pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
-		terminalsByGroupId: p.partialDict(FlowGroupId, Flow.Terminal),
+		terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
 		status: Status,
 	}),
 );

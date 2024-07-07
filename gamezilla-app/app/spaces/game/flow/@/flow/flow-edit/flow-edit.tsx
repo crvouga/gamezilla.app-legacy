@@ -22,6 +22,7 @@ import * as FlowVariantUI from "../flow-variant/flow-variant-ui";
 import { p } from "gamezilla-app/@/core/parser";
 import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
+import { FlowTerminal } from "../flow/flow-terminal";
 
 //
 //
@@ -442,7 +443,7 @@ export const removeIncompleteTerminals = (
 		if (!draftTerminal.endId) {
 			continue;
 		}
-		const terminal: Flow.Terminal = {
+		const terminal: FlowTerminal = {
 			startId: draftTerminal.startId,
 			endId: draftTerminal.endId,
 			groupId: draftTerminal.groupId,
