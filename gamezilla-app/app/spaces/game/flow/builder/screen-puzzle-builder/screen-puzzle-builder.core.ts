@@ -1,9 +1,9 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { FlowVarianEdit, FlowVariantPlay } from "../../@/flow";
+import { FlowEdit, FlowPlay } from "../../@/flow";
 import type { ModelCore, MsgCore } from "../builder.types";
-import { PuzzleDeleteForeverCore } from "./delete-forever/puzzle-delete-forever.core";
+import { DeleteForeverCore } from "./delete-forever/delete-forever.core";
 import { EditPuzzleNameCore } from "./edit-puzzle-name/edit-puzzle-name.core";
-import { PuzzleSaveChangesCore } from "./save-changes/save-changes.core";
+import { SaveChangesCore } from "./save-changes/save-changes.core";
 
 const updateCoreMain = ({
 	modelCore,
@@ -20,11 +20,11 @@ const updateCoreMain = ({
 				return modelCore;
 			}
 
-			const flow = FlowVarianEdit.deriveFlowMemoized({
+			const flow = FlowEdit.toFlowMemoized({
 				model: modelCore.puzzleBuilder.edit,
 			});
 
-			const updated = FlowVariantPlay.update({
+			const updated = FlowPlay.update({
 				model: modelCore.puzzleBuilder.play,
 				msg: msgCore.c,
 				flowPuzzle: { ...modelCore.puzzleBuilder.puzzle, flow: flow },
@@ -44,7 +44,7 @@ const updateCoreMain = ({
 				return modelCore;
 			}
 
-			const updated = FlowVarianEdit.update({
+			const updated = FlowEdit.update({
 				model: modelCore.puzzleBuilder.edit,
 				msg: msgCore.c,
 				flow: modelCore.puzzleBuilder.puzzle.flow,
@@ -81,10 +81,10 @@ const updateCoreMain = ({
 			if (!modelCore.puzzleBuilder) {
 				return modelCore;
 			}
-			const initial = FlowVariantPlay.init({
+			const initial = FlowPlay.init({
 				flowPuzzle: {
 					...modelCore.puzzleBuilder.puzzle,
-					flow: FlowVarianEdit.deriveFlowMemoized({
+					flow: FlowEdit.toFlowMemoized({
 						model: modelCore.puzzleBuilder.edit,
 					}),
 				},
@@ -116,9 +116,9 @@ const updateCoreMain = ({
 const updateCore: typeof updateCoreMain = (input) => {
 	return [
 		updateCoreMain,
-		PuzzleDeleteForeverCore.updateCore,
+		DeleteForeverCore.updateCore,
 		EditPuzzleNameCore.updateCore,
-		PuzzleSaveChangesCore.updateCore,
+		SaveChangesCore.updateCore,
 	].reduce(
 		(acc, updateCore) => updateCore({ ...input, modelCore: acc }),
 		input.modelCore,

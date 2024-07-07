@@ -231,14 +231,20 @@ describe(import.meta.file, () => {
 		expect(Flow.hasBranchingPipelines(after)).toBe(false);
 	});
 
-	it.todo("should disable hint button if no hints are available", async () => {
+	it("should disable hint button if puzzle is solved", async () => {
 		const f = await Fixture({
 			flow: FlowGridShorthand.toGrid([
-				["A", " ", "B"],
-				[" ", " ", " "],
-				["B", " ", "A"],
+				["A",  "B"],
+				["a",  "b"],
+				["A",  "B"],
 			]),
 		});
-		f;
+		const viewed = FlowHint.viewHintAction({
+			ctx: f.ctx,
+			dispatch: () => {},
+			flowPuzzle: f.flowPuzzle,
+			model: f.init,
+		})
+		expect(viewed.disabled).toBe(true);
 	});
 });

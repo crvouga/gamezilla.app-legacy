@@ -1,7 +1,7 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { FlowVariantPlay } from "../../@/flow";
+import { FlowPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import { FlowGroupId } from "../../@/flow/flow/flow-group-id";
@@ -11,7 +11,7 @@ export const MsgCore = p.or(
 	CopyPuzzleTypes.MsgCore,
 	p.obj({
 		t: p.l("flow-variant-play"),
-		c: FlowVariantPlay.Msg,
+		c: FlowPlay.Msg,
 	}),
 	p.obj({
 		t: p.l("user-clicked-exit-puzzle"),
@@ -59,7 +59,7 @@ export const ModelCore = p.obj({
 	t: p.l("screen-play-puzzle"),
 	flowPack: FlowPack,
 	flowPuzzle: FlowPuzzle,
-	flowPlay: FlowVariantPlay.Model,
+	flowPlay: FlowPlay.Model,
 	puzzleIndex: p.num,
 	// state: State,
 	opened: p.or(p.l("puzzle-complete"), p.l("action-drawer"), p.l(null)),

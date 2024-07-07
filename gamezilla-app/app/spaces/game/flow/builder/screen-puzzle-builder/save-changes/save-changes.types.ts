@@ -12,6 +12,8 @@ export type ModelClient = {
 	puzzleSaveChangesIsExiting?: boolean;
 };
 
+export const initClient: ModelClient = {};
+
 export type ModelServer = {};
 
 //
@@ -19,17 +21,20 @@ export type ModelServer = {};
 //
 
 export type MsgClient =
-	| { t: "puzzle-save-changes.user-clicked-save-button" }
-	| { t: "puzzle-save-changes.user-clicked-cancel-exit" }
-	| { t: "puzzle-save-changes.user-clicked-save-and-exit" }
-	| { t: "puzzle-save-changes.user-clicked-discard-and-exit" };
+	| { t: "screen-puzzle-builder.save-changes.user-clicked-save-button" }
+	| { t: "screen-puzzle-builder.save-changes.user-clicked-cancel-exit" }
+	| { t: "screen-puzzle-builder.save-changes.user-clicked-save-and-exit" }
+	| { t: "screen-puzzle-builder.save-changes.user-clicked-discard-and-exit" };
 
 export type MsgServer = { t: "noop" };
 
 export type MsgToServer =
-	| { t: "puzzle-save-changes.user-clicked-save-button"; puzzle: FlowPuzzle }
 	| {
-			t: "puzzle-save-changes.user-clicked-save-and-exit";
+			t: "screen-puzzle-builder.save-changes.user-clicked-save-button";
+			puzzle: FlowPuzzle;
+	  }
+	| {
+			t: "screen-puzzle-builder.save-changes.user-clicked-save-and-exit";
 			puzzle: FlowPuzzle;
 	  };
 

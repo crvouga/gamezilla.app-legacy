@@ -30,6 +30,6 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 	}
 };
 
-export const PuzzleSaveChangesCore = {
+export const SaveChangesCore = {
 	updateCore,
 };

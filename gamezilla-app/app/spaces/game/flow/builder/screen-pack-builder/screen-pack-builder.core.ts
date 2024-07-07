@@ -1,5 +1,5 @@
 import { isErr } from "gamezilla-app/@/core";
-import { FlowVariantPlay } from "../../@/flow";
+import { FlowPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack/flow-pack";
 import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
 import type { UpdateCore } from "../builder.types";
@@ -141,7 +141,7 @@ updates.push(({ modelCore, msgCore }) => {
 						t: "screen-puzzle",
 						puzzleIndex: msgCore.puzzleIndex,
 						puzzle: msgCore.puzzle,
-						playUI: FlowVariantPlay.init({
+						playUI: FlowPlay.init({
 							flowPuzzle: msgCore.puzzle,
 						}),
 					},
@@ -224,7 +224,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 			const screen = modelCore.packBuilder.screen;
 
-			const updated = FlowVariantPlay.update({
+			const updated = FlowPlay.update({
 				flowPuzzle: screen.puzzle,
 				model: screen.playUI,
 				msg: msgCore.c,
@@ -275,7 +275,7 @@ updates.push(({ modelCore, msgCore }) => {
 							0,
 							modelCore.packBuilder.pack.puzzleIds.length - 1,
 						),
-						playUI: FlowVariantPlay.init({
+						playUI: FlowPlay.init({
 							flowPuzzle: msgCore.nextPuzzle,
 						}),
 						puzzle: msgCore.nextPuzzle,
@@ -314,7 +314,7 @@ updates.push(({ modelCore, msgCore }) => {
 							0,
 							modelCore.packBuilder.pack.puzzleIds.length - 1,
 						),
-						playUI: FlowVariantPlay.init({
+						playUI: FlowPlay.init({
 							flowPuzzle: msgCore.previousPuzzle,
 						}),
 						puzzle: msgCore.previousPuzzle,

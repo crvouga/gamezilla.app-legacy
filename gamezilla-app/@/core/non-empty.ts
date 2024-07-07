@@ -26,9 +26,19 @@ const concat = <T>(...arrays: NonEmpty<NonEmpty<T>>): NonEmpty<T> => {
 	return concatenated as NonEmpty<T>;
 };
 
+const append = <T>(x: T, xs: NonEmpty<T>): NonEmpty<T> => {
+	return [...xs, x];
+};
+
+const prepend = <T>(x: T, xs: NonEmpty<T>): NonEmpty<T> => {
+	return [x, ...xs];
+};
+
 export const NonEmpty = {
 	concat,
 	is,
 	last,
 	map,
+	append,
+	prepend,
 };

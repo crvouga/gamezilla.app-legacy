@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from "bun:test";
-import { Flow, FlowVariantPlay, type FlowVariant } from "../../@/flow";
+import { Flow, FlowPlay, type FlowVariant } from "../../@/flow";
 import { ScreenPuzzlePlayCoreChildFixture } from "./@/testing.core";
 import type { MsgCore } from "./screen-play-puzzle.types";
 import { ScreenPlayPuzzleCore } from "./screen-play-puzzle.core";
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const after = f.update(
 			f.init,
-			FlowVariantPlay.randomMsgs(f.puzzle).map(
+			FlowPlay.randomMsgs(f.puzzle).map(
 				(c): MsgCore => ({
 					t: "flow-variant-play",
 					c,
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
 	it("should start with empty puzzle after going to next puzzle", async () => {
 		const f = await Fixture();
 
-		const msgs = FlowVariantPlay.randomMsgs({
+		const msgs = FlowPlay.randomMsgs({
 			flow: f.puzzle.flow,
 		}).map(
 			(c): MsgCore => ({
@@ -99,16 +99,14 @@ describe(import.meta.file, () => {
 		]);
 
 		expect(before.flowPlay).not.toEqual(after.flowPlay);
-		expect(after.flowPlay).toEqual(
-			FlowVariantPlay.init({ flowPuzzle: f.nextPuzzle }),
-		);
+		expect(after.flowPlay).toEqual(FlowPlay.init({ flowPuzzle: f.nextPuzzle }));
 	});
 
 	it("should go into puzzle solved state after solving", async () => {
 		const f = await Fixture();
 		const before = f.init;
 		const after = f.update(before, f.completePuzzleMsgs);
-		const afterFlow = FlowVariantPlay.toFlow({
+		const afterFlow = FlowPlay.toFlow({
 			flow: f.puzzle.flow,
 			model: after.flowPlay,
 		});
@@ -144,7 +142,7 @@ describe(import.meta.file, () => {
 			{
 				t: "flow-variant-play",
 				c: {
-					t: "pressed-down",
+					t: "user-pressed-down-node",
 					nodeId,
 				},
 			},
@@ -195,7 +193,7 @@ describe(import.meta.file, () => {
 			{
 				t: "flow-variant-play",
 				c: {
-					t: "pressed-up",
+					t: "user-pressed-up-node",
 					nodeId: endId,
 				},
 			},
@@ -226,9 +224,7 @@ describe(import.meta.file, () => {
 				t: "user-clicked-reset-puzzle",
 			},
 		]);
-		expect(before.flowPlay).toEqual(
-			FlowVariantPlay.init({ flowPuzzle: f.puzzle }),
-		);
+		expect(before.flowPlay).toEqual(FlowPlay.init({ flowPuzzle: f.puzzle }));
 	});
 
 	it("should be in a solving state after going to the next puzzle", async () => {

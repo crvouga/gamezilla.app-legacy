@@ -1055,3 +1055,7 @@ export const removeAllPipelines = <TModel extends Model>(
 		pipesBySourceId: {},
 	};
 };
+
+export const isPipesEmpty = (model: Model): boolean => {
+	return Object.keys(model.pipesBySourceId).length === 0;
+};

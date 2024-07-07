@@ -13,7 +13,7 @@ import {
 import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
 
-export type ButtonActionProps = {
+export type ActionProps = {
 	label: string;
 	disabled?: boolean;
 	icon: (props: { className: string }) => VDom;
@@ -41,7 +41,7 @@ const View = ({
 }: {
 	id: string;
 	ctx: Ctx;
-	buttons: ButtonActionProps[];
+	buttons: ActionProps[];
 	open: boolean;
 	onToggle: () => void;
 	limit?: number;
@@ -90,7 +90,7 @@ export const ViewBottomButtonBar = ({
 	);
 };
 
-export const ViewBottomButtonBarAction = (props: ButtonActionProps) => {
+export const ViewBottomButtonBarAction = (props: ActionProps) => {
 	const isDisabled = props.disabled || props.loading;
 	return (
 		<button
@@ -155,7 +155,7 @@ export const ViewBottomButtonBarActionExit = (
 	);
 };
 
-const exit = (input: BottomBarButtonActionPrebuilt): ButtonActionProps => ({
+const exit = (input: BottomBarButtonActionPrebuilt): ActionProps => ({
 	...input,
 	icon: (props) => <IconArrowLeftOnRect {...props} />,
 	label: input.ctx.t("app.exit"),
@@ -173,7 +173,7 @@ export const ViewBottomButtonBarActionNext = (
 	);
 };
 
-const next = (input: BottomBarButtonActionPrebuilt): ButtonActionProps => ({
+const next = (input: BottomBarButtonActionPrebuilt): ActionProps => ({
 	...input,
 	icon: (props) => <IconChevronRight {...props} />,
 	label: input.ctx.t("app.next"),
@@ -191,7 +191,7 @@ export const ViewBottomButtonBarActionReset = (
 	);
 };
 
-const reset = (input: BottomBarButtonActionPrebuilt): ButtonActionProps => ({
+const reset = (input: BottomBarButtonActionPrebuilt): ActionProps => ({
 	...input,
 	icon: (props) => <IconArrowRotateLeft {...props} />,
 	label: input.ctx.t("app.reset"),
@@ -209,7 +209,7 @@ export const ViewBottomButtonBarActionPrev = (
 	);
 };
 
-const prev = (input: BottomBarButtonActionPrebuilt): ButtonActionProps => ({
+const prev = (input: BottomBarButtonActionPrebuilt): ActionProps => ({
 	...input,
 	icon: (props) => <IconChevronLeft {...props} />,
 	label: input.ctx.t("app.prev"),
@@ -227,13 +227,13 @@ export const ViewBottomButtonBarActionHint = (
 	);
 };
 
-const hint = (input: BottomBarButtonActionPrebuilt): ButtonActionProps => ({
+const hint = (input: BottomBarButtonActionPrebuilt): ActionProps => ({
 	...input,
 	icon: (props) => <IconLightbulb {...props} />,
 	label: input.ctx.t("game.hint"),
 });
 
-export const ButtonActions = {
+export const Actions = {
 	exit,
 	next,
 	reset,

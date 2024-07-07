@@ -1,21 +1,21 @@
 import { describe, expect, it } from "bun:test";
-import { FlowVariantDimensions, FlowVarianEdit } from "../flow-variant";
+import { FlowVariantDimensions, FlowEdit } from "../flow-variant";
 import { FlowPuzzle } from "../../flow-puzzle";
 
 const Fixture = async () => {
 	const puzzle = await FlowPuzzle.random();
 	const flow = puzzle.flow;
 
-	const init = FlowVarianEdit.init({
+	const init = FlowEdit.init({
 		flow,
 	});
-	const update = (init: FlowVarianEdit.Model, msgs: FlowVarianEdit.Msg[]) => {
-		let updated: ReturnType<typeof FlowVarianEdit.update> = {
+	const update = (init: FlowEdit.Model, msgs: FlowEdit.Msg[]) => {
+		let updated: ReturnType<typeof FlowEdit.update> = {
 			model: init,
 		};
 
 		for (const msg of msgs) {
-			updated = FlowVarianEdit.update({
+			updated = FlowEdit.update({
 				flow,
 				model: updated.model,
 				msg,
@@ -36,7 +36,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
 	it("should make sounds interacting with dimensions form", async () => {
 		const f = await Fixture();
-		const msgs: FlowVarianEdit.Msg[] = [
+		const msgs: FlowEdit.Msg[] = [
 			{ t: "dimensions-form.clicked-save" },
 			{ t: "dimensions-form.clicked-cancel" },
 			{ t: "dimensions-form.clicked-open" },

@@ -1,7 +1,7 @@
 import { Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
-import { FlowVariantPlay } from "../../@/flow";
+import { FlowPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack/flow-pack";
 import { FlowPackPuzzlesGridTypes } from "../../@/flow-pack/flow-pack-puzzles-grid";
 import { FlowPuzzle } from "../../@/flow-puzzle/flow-puzzle";
@@ -73,7 +73,7 @@ export const Screen = p.or(
 		t: p.l("screen-puzzle"),
 		puzzleIndex: p.num,
 		puzzle: FlowPuzzle,
-		playUI: FlowVariantPlay.Model,
+		playUI: FlowPlay.Model,
 		opened: p.maybe(p.l("more")),
 	}),
 );
@@ -131,7 +131,7 @@ export const MsgCore = p.or(
 	}),
 	p.obj({
 		t: p.l("pack-builder.flow-play-ui"),
-		c: FlowVariantPlay.Msg,
+		c: FlowPlay.Msg,
 	}),
 	p.obj({
 		t: p.l("pack-builder.puzzle-screen.user-clicked-exit-puzzle"),

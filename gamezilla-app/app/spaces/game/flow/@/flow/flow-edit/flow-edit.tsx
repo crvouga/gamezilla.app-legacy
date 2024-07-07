@@ -292,7 +292,7 @@ const canSubmitDimensionsForm = (model: Model): boolean => {
 };
 
 const resetDimensionsForm = (model: Model): Model => {
-	const flow = deriveFlowMemoized({ model });
+	const flow = toFlowMemoized({ model });
 	return {
 		...model,
 		dimensions: FlowVariantDimensions.init(flow),
@@ -452,7 +452,7 @@ export const removeIncompleteTerminals = (
 	}
 	return terminalsByGroupId;
 };
-const deriveFlow = ({ model }: { model: Model }): FlowVariant.Model => {
+const toFlow = ({ model }: { model: Model }): FlowVariant.Model => {
 	const form = History.present(model.form);
 	return FlowVariant.init({
 		dimensions: model.dimensions,
@@ -460,8 +460,8 @@ const deriveFlow = ({ model }: { model: Model }): FlowVariant.Model => {
 	});
 };
 
-export const deriveFlowMemoized = memoize({
-	func: deriveFlow,
+export const toFlowMemoized = memoize({
+	func: toFlow,
 	toKey(input) {
 		return JSON.stringify(History.present(input.model.form));
 	},
@@ -487,7 +487,7 @@ export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
 			</div>
 
 			<FlowVariantUI.View
-				model={deriveFlowMemoized({ model })}
+				model={toFlowMemoized({ model })}
 				onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
 				onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
 				onPressUp={(nodeId) => dispatch({ t: "pressed-up-node", nodeId })}

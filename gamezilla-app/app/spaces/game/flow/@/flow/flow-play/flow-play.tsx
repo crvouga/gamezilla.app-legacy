@@ -1,4 +1,3 @@
-import type { Eff } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { APP_SOUND } from "gamezilla-app/app/@/client";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
@@ -11,6 +10,10 @@ import * as Flow from "../flow/flow";
 import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
 import { FlowTerminal } from "../flow/flow-terminal";
+import { ActionProps, Actions } from "gamezilla-app/app/@/ui/actions";
+import { Translator } from "gamezilla-app/@/l18n/generated";
+import { pipe, TimeSpan } from "gamezilla-app/@/core";
+import { IconCheckmark, Transition } from "gamezilla-app/app/@/ui";
 
 //
 //
@@ -104,12 +107,12 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 
 	const msgs: Msg[] = [
 		{
-			t: "pressed-down",
+			t: "user-pressed-down-node",
 			nodeId: terminal.startId,
 		},
 		...edges.map(
 			(edge): Msg => ({
-				t: "dragged-over",
+				t: "user-dragged-over-node",
 				nodeId: edge.targetId,
 			}),
 		),
@@ -143,7 +146,7 @@ export const toSolutionMsgs = ({
 		}
 
 		msgs.push({
-			t: "pressed-down",
+			t: "user-pressed-down-node",
 			nodeId: terminal.startId,
 		});
 
@@ -153,13 +156,13 @@ export const toSolutionMsgs = ({
 				continue;
 			}
 			msgs.push({
-				t: "dragged-over",
+				t: "user-dragged-over-node",
 				nodeId: edge.targetId,
 			});
 		}
 
 		msgs.push({
-			t: "pressed-up",
+			t: "user-pressed-up-node",
 			nodeId: terminal.endId,
 		});
 	}
@@ -184,19 +187,22 @@ const first = <T,>(iterable: Iterable<T>): T | null => {
 export const Msg = p.or(
 	FlowHint.Msg,
 	p.obj({
-		t: p.l("pressed-down"),
+		t: p.l("user-clicked-reset"),
+	}),
+	p.obj({
+		t: p.l("user-pressed-down-node"),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("pressed-up"),
+		t: p.l("user-pressed-up-node"),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("dragged-over"),
+		t: p.l("user-dragged-over-node"),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("left"),
+		t: p.l("user-dragging-left"),
 	}),
 );
 
@@ -213,12 +219,14 @@ export type Event =
 	  }
 	| {
 			t: "solved";
-	  };
+	}
+	| {
+		  t: 'resetted'
+	  }
 
 export const eventToSoundSrc = (event: Event): string => {
 	switch (event.t) {
 		case "connected-terminals": {
-			// return nthConnectedTerminal(event.connectedTerminalCount);
 			return APP_SOUND.tap;
 		}
 
@@ -232,6 +240,10 @@ export const eventToSoundSrc = (event: Event): string => {
 
 		case "used-hint": {
 			return APP_SOUND.navForwardMin;
+		}
+			
+		case 'resetted': {
+			return APP_SOUND.navTransitionLeft
 		}
 	}
 };
@@ -247,19 +259,52 @@ export const update = ({
 }): {
 	model: Model;
 	event?: Event;
-	eff?: Eff<Msg>;
 } => {
-	const updated = updateMain({ msg, model, flowPuzzle });
+	const updated = updateMain({
+		msg,
+		model,
+		flowPuzzle,
+	});
+
 	const updatedHint = FlowHint.update({
 		model: updated.model,
 		msg,
 		flowPuzzle,
 	});
-	return {
-		...updated,
-		event: updatedHint.event ?? updated.event,
+
+	const updatedReset = updateReset({
 		model: updatedHint.model,
+		msg,
+		flowPuzzle,
+	});
+
+	return {
+		event: updatedReset.event ?? updatedHint.event ?? updated.event,
+		model: updatedReset.model,
 	};
+};
+
+const resetPipes = (model: Model): Model => {
+	return {
+		...model,
+		pipesBySourceId: {},
+	};
+}
+
+const updateReset: typeof update = ({ model, msg }) => {
+	switch (msg.t) {
+		case "user-clicked-reset": {
+			return {
+				model: pipe(model, resetPipes, FlowHint.resetUsedHints),
+				event: {
+					t: 'resetted',
+				}
+			};
+		}
+		default: {
+			return { model };
+		}
+	}
 };
 
 const updateMain: typeof update = ({ model, flowPuzzle, msg }) => {
@@ -281,7 +326,7 @@ const updateMain: typeof update = ({ model, flowPuzzle, msg }) => {
 
 const updateIdle: typeof update = ({ msg, model, flowPuzzle }) => {
 	switch (msg.t) {
-		case "pressed-down": {
+		case "user-pressed-down-node": {
 			const current = toFlow({ model, flow: flowPuzzle.flow });
 
 			const groupId = Flow.toGroupId(current, msg.nodeId);
@@ -334,7 +379,7 @@ const updateDragging = ({
 	event?: Event;
 } => {
 	switch (msg.t) {
-		case "dragged-over": {
+		case "user-dragged-over-node": {
 			const { nodeId } = msg;
 
 			const current: FlowVariant.Model = {
@@ -359,7 +404,7 @@ const updateDragging = ({
 			return { model: modelNew };
 		}
 
-		case "pressed-up": {
+		case "user-pressed-up-node": {
 			const current = toFlow({ model, flow });
 			const modelNew: Model = { ...model, status: { t: "idle" } };
 
@@ -402,7 +447,7 @@ const updateDragging = ({
 			return { model: modelNew };
 		}
 
-		case "left": {
+		case "user-dragging-left": {
 			const current = toFlow({ model, flow });
 			const isSolved = Flow.isSolved(current);
 
@@ -480,10 +525,16 @@ export const View = (input: {
 			model={toFlow(input)}
 			showCoordinates={false}
 			isDragging={input.model.status.t === "dragging"}
-			onDraggedOver={(nodeId) => input.dispatch({ t: "dragged-over", nodeId })}
-			onPressDown={(nodeId) => input.dispatch({ t: "pressed-down", nodeId })}
-			onPressUp={(nodeId) => input.dispatch({ t: "pressed-up", nodeId })}
-			onLeave={() => input.dispatch({ t: "left" })}
+			onDraggedOver={(nodeId) =>
+				input.dispatch({ t: "user-dragged-over-node", nodeId })
+			}
+			onPressDown={(nodeId) =>
+				input.dispatch({ t: "user-pressed-down-node", nodeId })
+			}
+			onPressUp={(nodeId) =>
+				input.dispatch({ t: "user-pressed-up-node", nodeId })
+			}
+			onLeave={() => input.dispatch({ t: "user-dragging-left" })}
 			autocompleteEdge={
 				input.model.status.t === "dragging" &&
 				input.model.status.autocompleteEdge
@@ -497,9 +548,65 @@ export const View = (input: {
 				input.model.status.t === "dragging" &&
 				input.model.status.activeGroupId === groupId
 			}
-			usedHints={input.model.usedHints}
+			usedHints={FlowHint.toUsedHints(input.model)}
 		/>
 	);
 };
 
-export const viewHintButtonAction = FlowHint.viewHintButtonAction;
+export const viewHintAction = FlowHint.viewHintAction;
+
+export const viewResetAction = (input: {
+	flowPuzzle: FlowPuzzle;
+	model: Model;
+	dispatch: (m: Msg) => void;
+	ctx: {
+		t: Translator;
+	};
+}): ActionProps => {
+	const flow = toFlow({ model: input.model, flow: input.flowPuzzle.flow });
+	const disabled = Flow.isPipesEmpty(flow);
+	return Actions.reset({
+		ctx: input.ctx,
+		onClick: () => input.dispatch({ t: "user-clicked-reset" }),
+		disabled,
+	});
+};
+
+export const defaultCheckmarkAnimationDuration = TimeSpan.seconds(1 / 2);
+
+export const CheckmarkAnimation = (input: {
+	open: boolean;
+	duration?: TimeSpan | null | undefined;
+}) => {
+	const duration = input.duration ?? defaultCheckmarkAnimationDuration;
+	return (
+		<Transition
+			id="checkmark"
+			onEnter={animateCheckmark({ duration })}
+			onExit={async () => {}}
+			mode="out-in"
+			className="pointer-events-none"
+		>
+			{input.open && (
+				<div className="absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
+					<IconCheckmark className="aspect-square w-full opacity-50 pointer-events-none" />
+				</div>
+			)}
+		</Transition>
+	);
+};
+
+const animateCheckmark =
+	(input: { duration: TimeSpan }) => async (node: HTMLElement) => {
+		node.style.transition = "all 0.3s ease-in-out";
+		node.style.opacity = "0";
+		node.style.transform = "scale(0.8)";
+		await new Promise((r) => setTimeout(r, 50));
+		node.style.opacity = "1";
+		node.style.transform = "scale(1)";
+		await new Promise((r) =>
+			setTimeout(r, TimeSpan.toMilliseconds(input.duration)),
+		);
+		node.style.opacity = "0";
+		node.style.transform = "scale(0.8)";
+	};

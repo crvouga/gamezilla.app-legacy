@@ -19,51 +19,65 @@ type Input = {
 	ctx?: FlowClientCtx;
 	msg: BuilderTypes.MsgClient;
 };
-type Output = ReturnType<typeof BuilderClient.update>;
+type Output = ReturnType<typeof BuilderClient.update> & {
+	modelCore: BuilderTypes.ModelCore;
+};
 
 const toModelCore = (
 	ctx: FlowClientCtx,
-	outputs: Output[],
+	initial: BuilderTypes.ModelCore,
+	msgCores: BuilderTypes.MsgCore[],
 ): BuilderTypes.ModelCore => {
-	return outputs
-		.flatMap((output) => output.msgCore ?? [])
-		.reduce(
-			(modelCore, msgCore) =>
-				BuilderCore.updateCore({
-					ctx,
-					modelCore,
-					msgCore,
-				}),
-			BuilderCore.initCore({
+	return msgCores.reduce(
+		(modelCore, msgCore) =>
+			BuilderCore.updateCore({
 				ctx,
+				modelCore,
+				msgCore,
 			}),
-		);
+		initial,
+	);
 };
 
+const updatesReducer =
+	(initCtx: FlowClientCtx) => (outputs: NonEmpty<Output>, input: Input) => {
+		const ctx = input.ctx ?? initCtx;
+		const output = BuilderClient.update({
+			...input,
+			model: NonEmpty.last(outputs).model,
+			modelCore: NonEmpty.last(outputs).modelCore,
+			ctx,
+		});
+		const modelCoreOutput = toModelCore(
+			ctx,
+			NonEmpty.last(outputs).modelCore,
+			output.msgCore ?? [],
+		);
+		outputs.push({ ...output, modelCore: modelCoreOutput });
+		return outputs;
+	};
+
 const updates = (
-	init: { model: BuilderTypes.ModelClient; ctx: FlowClientCtx },
+	init: {
+		model: BuilderTypes.ModelClient;
+		ctx: FlowClientCtx;
+		modelCore: BuilderTypes.ModelCore;
+	},
 	inputs: Input[],
 ): NonEmpty<Output> => {
-	const outputs: NonEmpty<Output> = [
+	return inputs.reduce(updatesReducer(init.ctx), [
 		{
 			model: init.model,
+			modelCore: init.modelCore,
 		},
-	];
-	for (const input of inputs) {
-		const ctx = input.ctx ?? init.ctx;
-		const modelCore = toModelCore(ctx, outputs);
-		const output = BuilderClient.update({
-			model: NonEmpty.last(outputs).model,
-			modelCore,
-			ctx,
-			...input,
-		});
-		outputs.push(output);
-	}
-	return outputs;
+	]);
 };
 const update = (
-	init: { model: BuilderTypes.ModelClient; ctx: FlowClientCtx },
+	init: {
+		model: BuilderTypes.ModelClient;
+		ctx: FlowClientCtx;
+		modelCore: BuilderTypes.ModelCore;
+	},
 	inputs: Input[],
 ): Output => {
 	const outputs = updates(init, inputs);
@@ -83,6 +97,7 @@ export const FlowBuilderFixtureClient = async () => {
 	const init = {
 		ctx,
 		model,
+		modelCore,
 	};
 
 	return {

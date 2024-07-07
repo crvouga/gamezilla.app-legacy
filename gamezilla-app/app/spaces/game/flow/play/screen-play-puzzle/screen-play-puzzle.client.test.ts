@@ -223,7 +223,7 @@ describe(import.meta.file, () => {
 				msgCore: withEventMeta({
 					t: "flow-variant-play",
 					c: {
-						t: "pressed-down",
+						t: "user-pressed-down-node",
 						nodeId: terminal.startId,
 					},
 				}),

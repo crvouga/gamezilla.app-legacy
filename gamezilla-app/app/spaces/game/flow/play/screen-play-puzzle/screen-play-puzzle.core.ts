@@ -1,4 +1,4 @@
-import { Flow, FlowVariantPlay } from "../../@/flow";
+import { Flow, FlowPlay } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
 import type { CoreModule, MsgCore } from "../play.types";
@@ -24,7 +24,7 @@ const updatePuzzleScreen: CoreModule["updateCore"] = (input) => {
 const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 	switch (msgCore.t) {
 		case "flow-variant-play": {
-			const flowPlayNew = FlowVariantPlay.update({
+			const flowPlayNew = FlowPlay.update({
 				msg: msgCore.c,
 				model: modelCore.flowPlay,
 				flowPuzzle: modelCore.flowPuzzle,
@@ -60,7 +60,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-next-puzzle": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantPlay.init({ flowPuzzle: msgCore.nextPuzzle }),
+				flowPlay: FlowPlay.init({ flowPuzzle: msgCore.nextPuzzle }),
 				opened:
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.nextPuzzle,
@@ -71,7 +71,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-prev-puzzle": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantPlay.init({
+				flowPlay: FlowPlay.init({
 					flowPuzzle: msgCore.prevPuzzle,
 				}),
 				opened:
@@ -84,7 +84,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-reset-puzzle": {
 			return {
 				...modelCore,
-				flowPlay: FlowVariantPlay.init({
+				flowPlay: FlowPlay.init({
 					flowPuzzle: modelCore.flowPuzzle,
 				}),
 			};
@@ -134,7 +134,7 @@ const initCore = (input: {
 }): ModelCore => {
 	return {
 		...input,
-		flowPlay: FlowVariantPlay.init({ flowPuzzle: input.flowPuzzle }),
+		flowPlay: FlowPlay.init({ flowPuzzle: input.flowPuzzle }),
 		opened: null,
 		t: "screen-play-puzzle",
 		hints: {},
@@ -156,7 +156,7 @@ const updateCore: CoreModule["updateCore"] = (input) => {
 };
 
 const toStatus = (modelCore: ModelCore): "solved" | "solving" => {
-	const flow = FlowVariantPlay.toFlow({
+	const flow = FlowPlay.toFlow({
 		flow: modelCore.flowPuzzle.flow,
 		model: modelCore.flowPlay,
 	});

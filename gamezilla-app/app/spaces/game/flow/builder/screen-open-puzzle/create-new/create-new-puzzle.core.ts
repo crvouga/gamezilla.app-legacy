@@ -1,5 +1,5 @@
 import { isErr } from "gamezilla-app/@/core";
-import { FlowVarianEdit, FlowVariantPlay } from "../../../@/flow";
+import { FlowEdit, FlowPlay } from "../../../@/flow";
 import type { UpdateCore } from "../../builder.types";
 
 const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
@@ -17,8 +17,8 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 				puzzleBuilder: {
 					t: "puzzle-builder",
 					mode: { t: "edit" },
-					edit: FlowVarianEdit.init({ flow: puzzleNew.flow }),
-					play: FlowVariantPlay.init({ flowPuzzle: puzzleNew }),
+					edit: FlowEdit.init({ flow: puzzleNew.flow }),
+					play: FlowPlay.init({ flowPuzzle: puzzleNew }),
 					puzzle: puzzleNew,
 				},
 			};

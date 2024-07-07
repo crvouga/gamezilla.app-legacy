@@ -5,14 +5,12 @@ import {
 	Dialog,
 	DialogHeader,
 	DialogSurface,
-	IconCheckmark,
-	Transition,
 } from "gamezilla-app/app/@/ui";
-import { ButtonActions } from "gamezilla-app/app/@/ui/bottom-actions";
+import { Actions } from "gamezilla-app/app/@/ui/actions";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
-import { FlowVariantPlay } from "../../@/flow";
+import { FlowPlay } from "../../@/flow";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import type { ClientModule } from "../play.types";
 import * as CopyPuzzleClient from "./copy-puzzle/copy-puzzle.client";
@@ -107,7 +105,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				return { model: input.model };
 			}
 
-			const output = FlowVariantPlay.update({
+			const output = FlowPlay.update({
 				msg: input.msgCore.c,
 				model: input.modelCore.screen.flowPlay,
 				flowPuzzle: input.modelCore.screen.flowPuzzle,
@@ -117,7 +115,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 				return { model: input.model };
 			}
 
-			const soundSrc = FlowVariantPlay.eventToSoundSrc(output.event);
+			const soundSrc = FlowPlay.eventToSoundSrc(output.event);
 
 			return {
 				model: input.model,
@@ -175,14 +173,14 @@ const View: ClientModule["View"] = (input) => {
 			>
 				<ViewScreenTitle title={`Level ${puzzleIndex + 1}`} />
 				<div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
-					<FlowVariantPlay.View
+					<FlowPlay.View
 						key={flowPuzzle.id}
 						flow={flowPuzzle.flow}
 						model={flowPlay}
 						dispatch={(c) => input.dispatch({ t: "flow-variant-play", c })}
 					/>
 
-					<CheckmarkAnimation
+					<FlowPlay.CheckmarkAnimation
 						open={isSolvedPuzzleDialogOpen}
 						duration={checkmarkDuration}
 					/>
@@ -221,7 +219,7 @@ const View: ClientModule["View"] = (input) => {
 						</Dialog>
 					)}
 				</div>
-				<ButtonActions.View
+				<Actions.View
 					id="screen-play-puzzle-bottom-bar"
 					ctx={input.ctx}
 					onToggle={() =>
@@ -229,12 +227,12 @@ const View: ClientModule["View"] = (input) => {
 					}
 					open={input.modelCore.screen.opened === "action-drawer"}
 					buttons={[
-						ButtonActions.exit({
+						Actions.exit({
 							...input,
 							onClick: () => input.dispatch({ t: "user-clicked-exit-puzzle" }),
 						}),
 
-						ButtonActions.prev({
+						Actions.prev({
 							...input,
 							hidden: true,
 							disabled: puzzleIndex === 0,
@@ -249,7 +247,7 @@ const View: ClientModule["View"] = (input) => {
 						}),
 
 						isSolved
-							? ButtonActions.next({
+							? Actions.next({
 									...input,
 									disabled:
 										puzzleIndex >=
@@ -263,7 +261,7 @@ const View: ClientModule["View"] = (input) => {
 												})
 											: null,
 								})
-							: FlowVariantPlay.viewHintButtonAction({
+							: FlowPlay.viewHintAction({
 									model: flowPlay,
 									ctx: input.ctx,
 									flowPuzzle,
@@ -271,7 +269,7 @@ const View: ClientModule["View"] = (input) => {
 										input.dispatch({ t: "flow-variant-play", c }),
 								}),
 
-						ButtonActions.reset({
+						Actions.reset({
 							...input,
 							onClick: () => input.dispatch({ t: "user-clicked-reset-puzzle" }),
 						}),
@@ -281,35 +279,6 @@ const View: ClientModule["View"] = (input) => {
 				/>
 			</div>
 		</>
-	);
-};
-
-const CheckmarkAnimation = (input: { open: boolean; duration: TimeSpan }) => {
-	return (
-		<Transition
-			id="checkmark"
-			onEnter={async (node) => {
-				node.style.transition = "all 0.3s ease-in-out";
-				node.style.opacity = "0";
-				node.style.transform = "scale(0.8)";
-				await new Promise((r) => setTimeout(r, 50));
-				node.style.opacity = "1";
-				node.style.transform = "scale(1)";
-				await new Promise((r) =>
-					setTimeout(r, TimeSpan.toMilliseconds(input.duration)),
-				);
-				node.style.opacity = "0";
-				node.style.transform = "scale(0.8)";
-			}}
-			onExit={async () => {}}
-			mode="out-in"
-		>
-			{input.open && (
-				<div className="absolute inset-0 flex items-center justify-center opacity-0">
-					<IconCheckmark className="aspect-square w-full opacity-50" />
-				</div>
-			)}
-		</Transition>
 	);
 };
 

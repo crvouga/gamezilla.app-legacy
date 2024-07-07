@@ -6,8 +6,8 @@ import {
 	type ClientCtx,
 } from "gamezilla-app/app/@/client";
 import { IconCopy } from "gamezilla-app/app/@/ui";
-import type { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
-import { FlowVariantPlay } from "../../../@/flow";
+import type { ActionProps } from "gamezilla-app/app/@/ui/actions";
+import { FlowPlay } from "../../../@/flow";
 import { FlowGridShorthand } from "../../../@/flow/flow-variant/flow-grid";
 import type { ClientModule, MsgClient } from "../../play.types";
 
@@ -18,7 +18,7 @@ export const update: ClientModule["update"] = (input) => {
 				return { model: input.model };
 			}
 
-			const flow = FlowVariantPlay.toFlow({
+			const flow = FlowPlay.toFlow({
 				flow: input.modelCore.screen.flowPuzzle.flow,
 				model: input.modelCore.screen.flowPlay,
 			});
@@ -52,7 +52,7 @@ export const viewButtonAction = ({
 }: {
 	ctx: ClientCtx;
 	dispatch: (m: MsgClient) => void;
-}): ButtonActionProps[] => {
+}): ActionProps[] => {
 	if (ctx.currentUserRole !== "super") {
 		return [];
 	}

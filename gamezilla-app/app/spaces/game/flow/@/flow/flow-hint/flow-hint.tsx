@@ -1,7 +1,7 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import { IconLightbulb } from "gamezilla-app/app/@/ui";
-import type { ButtonActionProps } from "gamezilla-app/app/@/ui/bottom-actions";
+import type { ActionProps } from "gamezilla-app/app/@/ui/actions";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { Flow } from "../flow";
 import { FlowVariant } from "..";
@@ -137,6 +137,21 @@ export const isAnyShowingHint = (model: Model): boolean => {
 	return toShowingHintGroupIds(model).length > 0;
 };
 
+export const resetUsedHints = <TModel extends Model>(model: TModel): TModel => {
+	return {
+		...model,
+		usedHints: {},
+	};
+};
+
+export const toUsedHints = (
+	model: Model,
+): {
+	[flowGroupId in FlowGroupId]?: FlowGroupId;
+} => {
+	return model.usedHints;
+};
+
 export const toFlow = (input: {
 	model: Model;
 	flow: FlowVariant.Model;
@@ -147,16 +162,22 @@ export const toFlow = (input: {
 		terminalsByGroupId: input.model.terminalsByGroupId,
 	};
 };
-export const viewHintButtonAction = (input: {
+
+export const viewHintAction = (input: {
 	flowPuzzle: FlowPuzzle;
 	model: Model;
 	dispatch: (msg: Msg) => void;
 	ctx: ClientCtx;
-}): ButtonActionProps => {
+}): ActionProps => {
+	const flow = toFlow({
+		flow: input.flowPuzzle.flow,
+		model: input.model,
+	});
+	const disabled = Flow.isSolved(flow)||input.flowPuzzle.flowSolutions.length === 0;
 	return {
 		icon: (props) => <IconLightbulb {...props} />,
 		label: input.ctx.t("game.hint"),
 		onClick: () => input.dispatch({ t: "user-clicked-hint" }),
-		disabled: input.flowPuzzle.flowSolutions.length === 0,
+		disabled,
 	};
 };

@@ -1,4 +1,4 @@
-import { FlowVarianEdit, FlowVariantPlay } from "../../@/flow";
+import { FlowEdit, FlowPlay } from "../../@/flow";
 import type { UpdateCore } from "../builder.types";
 import { CreateNewPuzzleCore } from "./create-new/create-new-puzzle.core";
 
@@ -12,10 +12,10 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
 				opened: { t: "puzzle-builder" },
 				puzzleBuilder: {
 					t: "puzzle-builder",
-					edit: FlowVarianEdit.init({
+					edit: FlowEdit.init({
 						flow: msgCore.puzzle.flow,
 					}),
-					play: FlowVariantPlay.init({
+					play: FlowPlay.init({
 						flowPuzzle: msgCore.puzzle,
 					}),
 					mode: { t: "edit" },

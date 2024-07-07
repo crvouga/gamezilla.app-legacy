@@ -1,37 +1,34 @@
 import { UserId } from "gamezilla-app/app/@/data";
-import {
-	type FlowVariant,
-	FlowVarianEdit,
-	FlowVariantPlay,
-} from "../../@/flow";
+import { type FlowVariant, FlowEdit, FlowPlay } from "../../@/flow";
 import { FlowPuzzle } from "../../@/flow-puzzle/flow-puzzle";
 import { p } from "gamezilla-app/@/core/parser";
-import { PuzzleSaveChanges } from "./save-changes";
+import { SaveChangesTypes } from "./save-changes";
 import { EditPuzzleNameTypes } from "./edit-puzzle-name";
-import { PuzzleDeleteForever } from "./delete-forever";
+import { DeleteForeverTypes } from "./delete-forever";
 
-export type ModelClient = PuzzleSaveChanges.ModelClient &
+export type ModelClient = SaveChangesTypes.ModelClient &
 	EditPuzzleNameTypes.ModelClient &
-	PuzzleDeleteForever.ModelClient;
+	DeleteForeverTypes.ModelClient;
 
 export const initClient: ModelClient = {
 	...EditPuzzleNameTypes.initClient,
-	...PuzzleDeleteForever.initClient,
+	...DeleteForeverTypes.initClient,
+	...SaveChangesTypes.initClient,
 };
 
 export type ModelServer = null;
 
 export type MsgServer =
-	| PuzzleSaveChanges.MsgServer
-	| PuzzleDeleteForever.MsgServer
+	| SaveChangesTypes.MsgServer
+	| DeleteForeverTypes.MsgServer
 	| EditPuzzleNameTypes.MsgServer;
 
 export type MsgClient =
 	| EditPuzzleNameTypes.MsgClient
-	| PuzzleDeleteForever.MsgClient
-	| PuzzleSaveChanges.MsgClient
-	| { t: "screen-puzzle-builder.flow-ui-edit"; c: FlowVarianEdit.Msg }
-	| { t: "screen-puzzle-builder.flow-ui-play"; c: FlowVariantPlay.Msg }
+	| DeleteForeverTypes.MsgClient
+	| SaveChangesTypes.MsgClient
+	| { t: "screen-puzzle-builder.flow-ui-edit"; c: FlowEdit.Msg }
+	| { t: "screen-puzzle-builder.flow-ui-play"; c: FlowPlay.Msg }
 	| { t: "screen-puzzle-builder.user-clicked-more-button" }
 	| { t: "screen-puzzle-builder.user-closed-more-drawer" }
 	| { t: "screen-puzzle-builder.user-clicked-exit-button" }
@@ -39,13 +36,13 @@ export type MsgClient =
 	| { t: "screen-puzzle-builder.user-clicked-play-mode-button" };
 
 export type MsgToClient =
-	| PuzzleSaveChanges.MsgToClient
-	| PuzzleDeleteForever.MsgToClient
+	| SaveChangesTypes.MsgToClient
+	| DeleteForeverTypes.MsgToClient
 	| EditPuzzleNameTypes.MsgToClient;
 
 export type MsgToServer =
-	| PuzzleSaveChanges.MsgToServer
-	| PuzzleDeleteForever.MsgToServer
+	| SaveChangesTypes.MsgToServer
+	| DeleteForeverTypes.MsgToServer
 	| EditPuzzleNameTypes.MsgToServer;
 
 //
@@ -62,22 +59,22 @@ export const ModelCore = p.obj({
 	t: p.l("puzzle-builder"),
 	puzzle: FlowPuzzle,
 	mode: Mode,
-	play: FlowVariantPlay.Model,
-	edit: FlowVarianEdit.Model,
+	play: FlowPlay.Model,
+	edit: FlowEdit.Model,
 });
 export type ModelCore = p.Infer<typeof ModelCore>;
 
-export const toCurrentFlow = (modelCore: ModelCore): FlowVariant.Model => {
+export const toFlow = (modelCore: ModelCore): FlowVariant.Model => {
 	switch (modelCore.mode.t) {
 		case "edit": {
-			return FlowVarianEdit.deriveFlowMemoized({
+			return FlowEdit.toFlowMemoized({
 				model: modelCore.edit,
 			});
 		}
 
 		case "play": {
-			return FlowVariantPlay.toFlow({
-				flow: FlowVarianEdit.deriveFlowMemoized({
+			return FlowPlay.toFlow({
+				flow: FlowEdit.toFlowMemoized({
 					model: modelCore.edit,
 				}),
 				model: modelCore.play,
@@ -87,16 +84,16 @@ export const toCurrentFlow = (modelCore: ModelCore): FlowVariant.Model => {
 };
 
 export const MsgCore = p.or(
-	PuzzleSaveChanges.MsgCore,
-	PuzzleDeleteForever.MsgCore,
+	SaveChangesTypes.MsgCore,
+	DeleteForeverTypes.MsgCore,
 	EditPuzzleNameTypes.MsgCore,
 	p.obj({
 		t: p.l("screen-puzzle-builder.flow-ui-play"),
-		c: FlowVariantPlay.Msg,
+		c: FlowPlay.Msg,
 	}),
 	p.obj({
 		t: p.l("screen-puzzle-builder.flow-ui-edit"),
-		c: FlowVarianEdit.Msg,
+		c: FlowEdit.Msg,
 	}),
 	p.obj({
 		t: p.l("screen-puzzle-builder.user-clicked-edit-mode-button"),

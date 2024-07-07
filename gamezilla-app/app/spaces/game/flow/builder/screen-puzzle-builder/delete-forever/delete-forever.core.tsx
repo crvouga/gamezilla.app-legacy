@@ -16,6 +16,6 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 	}
 };
 
-export const PuzzleDeleteForeverCore = {
+export const DeleteForeverCore = {
 	updateCore,
 };

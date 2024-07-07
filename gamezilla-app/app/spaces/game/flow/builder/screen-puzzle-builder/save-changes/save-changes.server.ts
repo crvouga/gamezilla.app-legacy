@@ -11,35 +11,35 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-	const { ctx, msgClient, model, deps } = input;
-
-	switch (msgClient?.t) {
-		case "puzzle-save-changes.user-clicked-save-and-exit":
-		case "puzzle-save-changes.user-clicked-save-button": {
-			const saved = await deps.flowPuzzleDb.put({
-				...msgClient.puzzle,
-				lastUpdatedBy: msgClient.userId,
-				lastUpdatedAt: ctx.now,
+	switch (input.msgClient?.t) {
+		case "screen-puzzle-builder.save-changes.user-clicked-save-and-exit":
+		case "screen-puzzle-builder.save-changes.user-clicked-save-button": {
+			const saved = await input.deps.flowPuzzleDb.put({
+				...input.msgClient.puzzle,
+				lastUpdatedBy: input.msgClient.userId,
+				lastUpdatedAt: input.ctx.now,
 			});
+
+			const puzzle = input.msgClient.puzzle;
 
 			const msgCore: MsgCore = {
 				t: "screen-puzzle-builder.saved-puzzle",
-				saved: Result.mapOk(saved, () => msgClient.puzzle),
-				userId: msgClient.puzzle.createdBy,
+				saved: Result.mapOk(saved, () => puzzle),
+				userId: input.msgClient.puzzle.createdBy,
 			};
 
 			return {
-				model,
+				model: input.model,
 				msgCore: [withId(msgCore)],
 			};
 		}
 
 		default: {
-			return { model };
+			return { model: input.model };
 		}
 	}
 };
 
-export const PuzzleSaveChangesServer = {
+export const SaveChangesServer = {
 	update,
 };

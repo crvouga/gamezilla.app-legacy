@@ -14,7 +14,7 @@ import {
 	IconFloppyDisk,
 } from "gamezilla-app/app/@/ui";
 import { Result, isErr, isOk, Loading } from "gamezilla-app/@/core";
-import { FlowVarianEdit } from "../../../@/flow";
+import { FlowEdit } from "../../../@/flow";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type {
 	ModelClient,
@@ -75,7 +75,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 			}
 
 			if (
-				FlowVarianEdit.isUnsavedChanges(
+				FlowEdit.isUnsavedChanges(
 					modelCore.puzzleBuilder.edit,
 					modelCore.puzzleBuilder.puzzle.flow,
 				)
@@ -89,18 +89,18 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 			return exitBuilderWithSound(input);
 		}
 
-		case "puzzle-save-changes.user-clicked-cancel-exit": {
+		case "screen-puzzle-builder.save-changes.user-clicked-cancel-exit": {
 			return {
 				model: { ...model, puzzleBuilderOpened: null },
 				msgCmd: [playSound(APP_SOUND.tap)],
 			};
 		}
 
-		case "puzzle-save-changes.user-clicked-discard-and-exit": {
+		case "screen-puzzle-builder.save-changes.user-clicked-discard-and-exit": {
 			return exitBuilderWithSound(input);
 		}
 
-		case "puzzle-save-changes.user-clicked-save-and-exit": {
+		case "screen-puzzle-builder.save-changes.user-clicked-save-and-exit": {
 			return saveChanges({
 				...input,
 				model: { ...model, puzzleSaveChangesIsExiting: true },
@@ -141,7 +141,9 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 const updateSaveChangesRequest: ClientModule["update"] = (input) => {
 	const { model, msg, ctx, msgCore } = input;
 
-	if (msg?.t === "puzzle-save-changes.user-clicked-save-button") {
+	if (
+		msg?.t === "screen-puzzle-builder.save-changes.user-clicked-save-button"
+	) {
 		return saveChanges(input);
 	}
 
@@ -191,7 +193,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
 
 	const puzzleNew: FlowPuzzle = {
 		...puzzleBuilder.puzzle,
-		flow: FlowVarianEdit.deriveFlowMemoized({
+		flow: FlowEdit.toFlowMemoized({
 			model: puzzleBuilder.edit,
 		}),
 	};
@@ -201,7 +203,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
 		msgCmd: [
 			playSound(APP_SOUND.tap),
 			sendToServer({
-				t: "puzzle-save-changes.user-clicked-save-button",
+				t: "screen-puzzle-builder.save-changes.user-clicked-save-button",
 				puzzle: puzzleNew,
 			}),
 		],
@@ -237,7 +239,9 @@ export const ViewActionButtons = ({
 				icon={(props) => <IconFloppyDisk {...props} />}
 				label="Save"
 				onClick={() =>
-					dispatch({ t: "puzzle-save-changes.user-clicked-save-button" })
+					dispatch({
+						t: "screen-puzzle-builder.save-changes.user-clicked-save-button",
+					})
 				}
 				loading={model.puzzleSaveChangesRequest?.t === "loading"}
 			/>
@@ -253,7 +257,9 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 		<Drawer
 			id="unsaved-changes-drawer"
 			onClose={() =>
-				dispatch({ t: "puzzle-save-changes.user-clicked-cancel-exit" })
+				dispatch({
+					t: "screen-puzzle-builder.save-changes.user-clicked-cancel-exit",
+				})
 			}
 			open={model.puzzleBuilderOpened === "unsaved-changes"}
 			position="bottom"
@@ -271,7 +277,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 					loading={model.puzzleSaveChangesRequest?.t === "loading"}
 					onClick={() =>
 						dispatch({
-							t: "puzzle-save-changes.user-clicked-save-and-exit",
+							t: "screen-puzzle-builder.save-changes.user-clicked-save-and-exit",
 						})
 					}
 				/>
@@ -280,7 +286,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 					text="Don't Save"
 					onClick={() =>
 						dispatch({
-							t: "puzzle-save-changes.user-clicked-discard-and-exit",
+							t: "screen-puzzle-builder.save-changes.user-clicked-discard-and-exit",
 						})
 					}
 				/>
@@ -290,7 +296,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 					text="Cancel"
 					onClick={() =>
 						dispatch({
-							t: "puzzle-save-changes.user-clicked-cancel-exit",
+							t: "screen-puzzle-builder.save-changes.user-clicked-cancel-exit",
 						})
 					}
 				/>
@@ -299,8 +305,8 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 	);
 };
 
-export const PuzzleSaveChangesClient = {
-	ViewActionButtons: ViewActionButtons,
+export const SaveChangesClient = {
+	ViewActionButtons,
 	update,
 	ViewUnsavedChangesDrawer,
 };

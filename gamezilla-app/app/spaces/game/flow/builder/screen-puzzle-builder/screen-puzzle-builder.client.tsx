@@ -1,10 +1,4 @@
-import {
-	GameLayout,
-	ViewBottomButtonBar,
-	ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@/game";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@/event";
+import type { VDom } from "gamezilla-app/@/vdom";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import {
 	Drawer,
@@ -13,14 +7,21 @@ import {
 	IconPlay,
 	cn,
 } from "gamezilla-app/app/@/ui";
-import type { VDom } from "gamezilla-app/@/vdom";
-import { FlowVariantUI, FlowVarianEdit, FlowVariantPlay } from "../../@/flow";
+import { Actions } from "gamezilla-app/app/@/ui/actions";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import {
+	GameLayout,
+	ViewBottomButtonBar,
+	ViewBottomButtonBarAction,
+} from "gamezilla-app/app/spaces/game/@/game";
 import { ViewProfileCard } from "../../../@/game/view-profile-card";
+import { Flow, FlowEdit, FlowPlay, FlowVariantUI } from "../../@/flow";
 import type { ClientModule } from "../builder.types";
+import { DeleteForeverClient } from "./delete-forever/delete-forever.client";
 import { EditPuzzleNameClient } from "./edit-puzzle-name/edit-puzzle-name.client";
-import { PuzzleSaveChangesClient } from "./save-changes/save-changes.client";
-import { toCurrentFlow } from "./screen-puzzle-builder.types";
-import { PuzzleDeleteForeverClient } from "./delete-forever/puzzle-delete-forever.client";
+import { SaveChangesClient } from "./save-changes/save-changes.client";
+import { toFlow } from "./screen-puzzle-builder.types";
 
 //
 //
@@ -33,8 +34,8 @@ import { PuzzleDeleteForeverClient } from "./delete-forever/puzzle-delete-foreve
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
-		(model) => PuzzleDeleteForeverClient.update({ ...input, model }),
-		(model) => PuzzleSaveChangesClient.update({ ...input, model }),
+		(model) => DeleteForeverClient.update({ ...input, model }),
+		(model) => SaveChangesClient.update({ ...input, model }),
 		(model) => EditPuzzleNameClient.update({ ...input, model }),
 		(model) => updateFromMsgCore({ ...input, model }),
 		(model) => updateMoreDrawer({ ...input, model }),
@@ -100,14 +101,38 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 	const { model, modelCore, msgCore } = input;
 
 	switch (msgCore?.t) {
+		case "screen-puzzle-builder.flow-ui-play": {
+			if (modelCore.puzzleBuilder?.mode.t !== "play") {
+				return { model };
+			}
+			const flow = toFlow(modelCore.puzzleBuilder);
+			const updated = FlowPlay.update({
+				msg: msgCore.c,
+				model: {
+					...modelCore.puzzleBuilder.play,
+					terminalsByGroupId: flow.terminalsByGroupId,
+				},
+				flowPuzzle: {
+					...modelCore.puzzleBuilder.puzzle,
+					flow,
+				},
+			});
+
+			if (updated.event) {
+				const soundSrc = FlowPlay.eventToSoundSrc(updated.event);
+				return {
+					model,
+					msgCmd: [playSound(soundSrc)],
+				};
+			}
+
+			return { model };
+		}
 		case "screen-puzzle-builder.flow-ui-edit": {
-			if (!modelCore.puzzleBuilder) {
+			if (modelCore.puzzleBuilder?.mode.t !== "edit") {
 				return { model };
 			}
-			if (modelCore.puzzleBuilder.mode.t !== "edit") {
-				return { model };
-			}
-			const updated = FlowVarianEdit.update({
+			const updated = FlowEdit.update({
 				model: modelCore.puzzleBuilder.edit,
 				msg: msgCore.c,
 				flow: modelCore.puzzleBuilder.puzzle.flow,
@@ -158,7 +183,7 @@ const View: ClientModule["View"] = (input) => {
 		<>
 			<ViewMode {...input} />
 			<ViewMoreDrawer {...input} />
-			<PuzzleSaveChangesClient.ViewUnsavedChangesDrawer {...input} />
+			<SaveChangesClient.ViewUnsavedChangesDrawer {...input} />
 		</>
 	);
 };
@@ -193,7 +218,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 					/>
 
 					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
-						<FlowVarianEdit.View
+						<FlowEdit.View
 							model={puzzleBuilder.edit}
 							dispatch={(c) =>
 								dispatch({
@@ -205,10 +230,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 					</div>
 
 					<ViewBottomButtonBar>
-						<PuzzleSaveChangesClient.ViewActionButtons
-							{...input}
-							model={model}
-						/>
+						<SaveChangesClient.ViewActionButtons {...input} model={model} />
 
 						<ViewBottomButtonBarAction
 							icon={(props) => <IconPlay {...props} />}
@@ -229,6 +251,8 @@ const ViewMode: ClientModule["View"] = (input) => {
 		}
 
 		case "play": {
+			const flow = toFlow(puzzleBuilder);
+			const isSolved = Flow.isSolved(flow);
 			return (
 				<div className="flex h-full w-full flex-col items-center justify-center">
 					<ViewModeBar
@@ -237,10 +261,12 @@ const ViewMode: ClientModule["View"] = (input) => {
 						color="blue"
 					/>
 
-					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
-						<FlowVariantPlay.View
+					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden relative">
+						<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden" />
+
+						<FlowPlay.View
 							model={puzzleBuilder.play}
-							flow={toCurrentFlow(puzzleBuilder)}
+							flow={flow}
 							dispatch={(c) =>
 								dispatch({
 									t: "screen-puzzle-builder.flow-ui-play",
@@ -248,13 +274,43 @@ const ViewMode: ClientModule["View"] = (input) => {
 								})
 							}
 						/>
+
+						<FlowPlay.CheckmarkAnimation open={isSolved} />
+
+						<div className="flex w-full flex-1 flex-col items-center justify-end overflow-hidden">
+							<Actions.View
+								ctx={input.ctx}
+								id="hint-button"
+								open={false}
+								onToggle={() => {}}
+								buttons={[
+									FlowPlay.viewHintAction({
+										ctx: input.ctx,
+										dispatch: (c) =>
+											dispatch({
+												t: "screen-puzzle-builder.flow-ui-play",
+												c,
+											}),
+										flowPuzzle: puzzleBuilder.puzzle,
+										model: puzzleBuilder.play,
+									}),
+									FlowPlay.viewResetAction({
+										ctx: input.ctx,
+										dispatch: (c) =>
+											dispatch({
+												t: "screen-puzzle-builder.flow-ui-play",
+												c,
+											}),
+										flowPuzzle: puzzleBuilder.puzzle,
+										model: puzzleBuilder.play,
+									}),
+								]}
+							/>
+						</div>
 					</div>
 
 					<ViewBottomButtonBar>
-						<PuzzleSaveChangesClient.ViewActionButtons
-							{...input}
-							model={model}
-						/>
+						<SaveChangesClient.ViewActionButtons {...input} model={model} />
 
 						<ViewBottomButtonBarAction
 							icon={(props) => <IconPenToSquare {...props} />}
@@ -290,7 +346,7 @@ const ViewSpectating: ClientModule["View"] = (input) => {
 				/>
 				<FlowVariantUI.View
 					disabled
-					model={toCurrentFlow(input.modelCore.puzzleBuilder)}
+					model={toFlow(input.modelCore.puzzleBuilder)}
 				/>
 			</div>
 		</GameLayout>
@@ -353,7 +409,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
 			position="bottom"
 		>
 			<EditPuzzleNameClient.View {...input} />
-			<PuzzleDeleteForeverClient.View {...input} />
+			<DeleteForeverClient.View {...input} />
 			<div className="pb-2 w-full" />
 		</Drawer>
 	);

@@ -1,5 +1,5 @@
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
-import { FlowVariantPlay } from "../../../@/flow";
+import { FlowPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import {
@@ -8,7 +8,7 @@ import {
 } from "../../@/testing";
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
-	FlowVariantPlay.toSolutionMsgs({
+	FlowPlay.toSolutionMsgs({
 		flow: puzzle.flow,
 	}).map(
 		(c): FixtureUpdateInput => ({

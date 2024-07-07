@@ -1,1 +1,1 @@
-export * as PuzzleDeleteForever from "./puzzle-delete-forever.types";
+export * as DeleteForeverTypes from "./delete-forever.types";

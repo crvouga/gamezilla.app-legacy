@@ -11,11 +11,51 @@ import {
 	testFlowClientCtx,
 } from "../@/testing/client";
 import { deriveModelCore } from "../@/testing/game";
+import { ScreenPuzzleBuilderClient } from "./screen-puzzle-builder.client";
+import { PubSub } from "gamezilla-app/@/core";
+import type { MsgClient } from "../builder.types";
+import { FlowPuzzle } from "../../@/flow-puzzle";
 
 const Fixture = async () => {
 	const f = await FlowBuilderFixtureClient();
+
+	const flowPuzzle = await FlowPuzzle.random({});
+
+	const init = f.update(f.init, [
+		{
+			msg: {
+				t: "puzzle-list.clicked-puzzle-list-item",
+				puzzle: flowPuzzle,
+			},
+		},
+	]);
+
+	const renderMsg = PubSub.create<MsgClient>();
+	const render = (input: {
+		model: typeof f.model;
+		modelCore: typeof f.modelCore;
+	}) => {
+		return f.render(
+			<ScreenPuzzleBuilderClient.View
+				ctx={f.ctx}
+				dispatch={renderMsg.pub}
+				model={input.model}
+				modelCore={input.modelCore}
+			/>,
+		);
+	};
+
 	return {
 		...f,
+		init: {
+			...init,
+			ctx: f.ctx,
+			model: init.model,
+			modelCore: init.modelCore,
+		},
+		flowPuzzle,
+		renderMsg,
+		render,
 	};
 };
 
@@ -86,8 +126,29 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.todo("render hint button", async () => {
+	test("render hint button", async () => {
 		const f = await Fixture();
-		f;
+		const output = f.update(f.init, [
+			{
+				msg: {
+					t: "screen-puzzle-builder.user-clicked-play-mode-button",
+				},
+			},
+		]);
+		const r = f.render(output);
+		expect(r.getByRole("button", f.ctx.t("game.hint"))).toBeTruthy();
+	});
+
+	test("render reset button", async () => {
+		const f = await Fixture();
+		const output = f.update(f.init, [
+			{
+				msg: {
+					t: "screen-puzzle-builder.user-clicked-play-mode-button",
+				},
+			},
+		]);
+		const r = f.render(output);
+		expect(r.getByRole("button", f.ctx.t("app.reset"))).toBeTruthy();
 	});
 });
