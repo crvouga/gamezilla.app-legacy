@@ -66,9 +66,15 @@ export const update = <
 				return { model: input.model };
 			}
 
-			const solutionPipeline = Flow.toPipelineByGroupId(solution, nextHintGroupId);
+			const solutionPipeline = Flow.toPipelineByGroupId(
+				solution,
+				nextHintGroupId,
+			);
 
-			const solutionTerminal = Flow.toTerminalByGroupId(solution, nextHintGroupId);
+			const solutionTerminal = Flow.toTerminalByGroupId(
+				solution,
+				nextHintGroupId,
+			);
 
 			const addedSolution = Flow.addPipeline(flow, solutionPipeline);
 

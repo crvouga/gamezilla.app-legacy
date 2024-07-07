@@ -1075,7 +1075,7 @@ const removeOverlappingPipes = (model: Model, newPipeline: Pipeline): Model => {
 		const isExistingOverlappingNew = newPipeline.some((newPipe) =>
 			arePipesOverlapping(model, existingPipe, newPipe),
 		);
-		
+
 		if (isExistingOverlappingNew) {
 			continue;
 		}

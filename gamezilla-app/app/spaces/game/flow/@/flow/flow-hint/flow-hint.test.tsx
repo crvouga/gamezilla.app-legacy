@@ -199,6 +199,45 @@ describe(import.meta.file, () => {
 		expect(pipelineAfter.length).toEqual(1);
 	});
 
+	it.only("should NOT branch pipelines after using hint", async () => {
+		const f = await Fixture({
+			flow: FlowGridShorthand.toGrid([
+				["A", " ", " "],
+				[" ", " ", " "],
+				[" ", " ", "A"],
+			]),
+		});
+		const {pipesBySourceId, terminalsByGroupId} = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			[" ", " ", " "],
+			["a", "a", "A"],
+		]);
+		const init: FlowHint.Model = {
+			...f.init,
+			pipesBySourceId,
+			terminalsByGroupId,
+		};
+		const updated = f.update(init, [
+			{
+				flowPuzzle: {
+					...f.flowPuzzle,
+					flow: {
+						...f.flow,
+						pipesBySourceId,
+						terminalsByGroupId,
+					}
+				},
+				msg: { t: "user-clicked-hint" },
+			},
+		]);
+		const after = FlowHint.toFlow({
+			flow: f.flow,
+			model: updated.model,
+		});
+		expect(Flow.hasMultipleDeadEndPipelines(after)).toBe(false);
+		expect(Flow.hasBranchingPipelines(after)).toBe(false);
+	});
+
 	it.todo("should disable hint button if no hints are available", async () => {
 		const f = await Fixture({
 			flow: FlowGridShorthand.toGrid([
