@@ -21,6 +21,7 @@ import * as FlowVariantDimensions from "../flow-variant/flow-variant-dimensions"
 import * as FlowVariantUI from "../flow-variant/flow-variant-ui";
 import { p } from "gamezilla-app/@/core/parser";
 import { FlowGroupId } from "../flow/flow-group-id";
+import { FlowNodeId } from "../flow/flow-node-id";
 
 //
 //
@@ -32,8 +33,8 @@ import { FlowGroupId } from "../flow/flow-group-id";
 
 const DraftTerminal = p.obj({
 	groupId: FlowGroupId,
-	startId: Flow.NodeId,
-	endId: p.maybe(Flow.NodeId),
+	startId: FlowNodeId,
+	endId: p.maybe(FlowNodeId),
 });
 type DraftTerminal = p.Infer<typeof DraftTerminal>;
 
@@ -104,9 +105,9 @@ export const isUnsavedChanges = (
 //
 //
 export const Msg = p.or(
-	p.obj({ t: p.l("dragged-over"), nodeId: Flow.NodeId }),
-	p.obj({ t: p.l("pressed-up-node"), nodeId: Flow.NodeId }),
-	p.obj({ t: p.l("pressed-down-node"), nodeId: Flow.NodeId }),
+	p.obj({ t: p.l("dragged-over"), nodeId: FlowNodeId }),
+	p.obj({ t: p.l("pressed-up-node"), nodeId: FlowNodeId }),
+	p.obj({ t: p.l("pressed-down-node"), nodeId: FlowNodeId }),
 	p.obj({ t: p.l("clicked-clear") }),
 	p.obj({ t: p.l("clicked-undo") }),
 	p.obj({ t: p.l("clicked-redo") }),
@@ -300,7 +301,7 @@ const resetDimensionsForm = (model: Model): Model => {
 export const updateDraftTerminalsOnPressedDownNode = (
 	draftTerminals: DraftTerminals,
 	currentPlacingGroupId: FlowGroupId,
-	pressedNodeId: Flow.NodeId,
+	pressedNodeId: FlowNodeId,
 ): DraftTerminals => {
 	const pressedTerminal = findDraftTerminalByNodeId(
 		draftTerminals,
@@ -373,7 +374,7 @@ export const updateDraftTerminalsOnPressedDownNode = (
 
 const findDraftTerminalByNodeId = (
 	draftTerminals: DraftTerminals,
-	nodeId: Flow.NodeId,
+	nodeId: FlowNodeId,
 ): DraftTerminal | null => {
 	for (const groupId in draftTerminals) {
 		const draftTerminal = draftTerminals[groupId as FlowGroupId];

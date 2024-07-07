@@ -1,49 +1,9 @@
 import { eq, memoize } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
+import { FlowEdgeId } from "./flow-edge-id";
 import { FlowGroupId } from "./flow-group-id";
+import { FlowNodeId } from "./flow-node-id";
 
-//
-//
-//
-//
-//
-//
-
-export const NodeId = p.brand(p.str, "NodeId");
-
-export type NodeId = p.Infer<typeof NodeId>;
-
-export const createNodeId = (nodeId: string): NodeId => {
-	return nodeId as NodeId;
-};
-
-export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
-	return nodeId in model.nodes;
-};
-
-//
-//
-//
-//
-//
-
-export const EdgeId = p.brand(p.str, "EdgeId");
-
-export type EdgeId = p.Infer<typeof EdgeId>;
-
-const EDGE_ID_SEPARATOR = "->";
-
-export const toEdgeId = (edge: Edge): EdgeId => {
-	return `${edge.sourceId}${EDGE_ID_SEPARATOR}${edge.targetId}` as EdgeId;
-};
-
-export const hasEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
-	return edgeId in model.edges;
-};
-
-export const isEdgeId = (edgeId: unknown): edgeId is EdgeId => {
-	return typeof edgeId === "string";
-};
 
 //
 //
@@ -60,8 +20,8 @@ export const isEdgeId = (edgeId: unknown): edgeId is EdgeId => {
 
 export const Terminal = p.obj({
 	groupId: FlowGroupId,
-	startId: NodeId,
-	endId: p.maybe(NodeId),
+	startId: FlowNodeId,
+	endId: p.maybe(FlowNodeId),
 });
 export type Terminal = p.Infer<typeof Terminal>;
 
@@ -101,12 +61,25 @@ export const isSameTerminalsByGroupId = (
 	return true;
 };
 
+
+export const toFlowEdgeId = (edge: Edge): FlowEdgeId => {
+	return FlowEdgeId.init(edge.sourceId, edge.targetId);
+};
+
+export const hasFlowEdgeId = (
+	model: Model,
+	edgeId: string,
+): edgeId is FlowEdgeId => {
+	return edgeId in model.edges;
+};
+
+
 export const toReversedPipesBySourceId = (
 	model: Pick<Model, "pipesBySourceId" | "edges">,
 ): Model["pipesBySourceId"] => {
 	const reversed: Model["pipesBySourceId"] = {};
 	for (const sourceId in model.pipesBySourceId) {
-		const pipe = model.pipesBySourceId[sourceId as NodeId];
+		const pipe = model.pipesBySourceId[sourceId as FlowNodeId];
 		if (!pipe) {
 			continue;
 		}
@@ -115,7 +88,7 @@ export const toReversedPipesBySourceId = (
 			continue;
 		}
 		reversed[edge.targetId] = {
-			edgeId: toEdgeId({
+			edgeId: toFlowEdgeId({
 				sourceId: edge.targetId,
 				targetId: edge.sourceId,
 			}),
@@ -155,8 +128,8 @@ export const countNodes = (model: Model): number => {
  * Represents a connection between two nodes.
  */
 export const Edge = p.obj({
-	sourceId: NodeId,
-	targetId: NodeId,
+	sourceId: FlowNodeId,
+	targetId: FlowNodeId,
 });
 export type Edge = p.Infer<typeof Edge>;
 
@@ -166,7 +139,7 @@ export type Edge = p.Infer<typeof Edge>;
  */
 export const Pipe = p.obj({
 	groupId: FlowGroupId,
-	edgeId: EdgeId,
+	edgeId: FlowEdgeId,
 });
 export type Pipe = p.Infer<typeof Pipe>;
 
@@ -179,11 +152,11 @@ export const PipeJoined = p.and(
 export type PipeJoined = p.Infer<typeof PipeJoined>;
 
 export const Node = p.obj({
-	nodeId: NodeId,
+	nodeId: FlowNodeId,
 });
 export type Node = p.Infer<typeof Node>;
 
-export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
+export const toNodes = (model: Model): { [nodeId: FlowNodeId]: Node } => {
 	return model.nodes;
 };
 
@@ -202,12 +175,12 @@ export const Model = p.obj({
 	/**
 	 * The set of all valid nodes in the puzzle.
 	 */
-	nodes: p.dict(NodeId, Node),
+	nodes: p.dict(FlowNodeId, Node),
 
 	/**
 	 * The set of all valid connections between nodes.
 	 */
-	edges: p.dict(EdgeId, Edge),
+	edges: p.dict(FlowEdgeId, Edge),
 
 	/**
 	 * Represents the start and end nodes for each pipeline.
@@ -219,7 +192,7 @@ export const Model = p.obj({
 	 * We index each pipe with pipe's source node
 	 * so that it's impossible for a node to be associated with more than one group
 	 */
-	pipesBySourceId: p.dict(NodeId, Pipe),
+	pipesBySourceId: p.dict(FlowNodeId, Pipe),
 
 	/**
 	 * A hash of the edges in the puzzle. Used for memoization.
@@ -250,7 +223,7 @@ export const init: Model = {
 /**
  * Finds node
  */
-export const toNode = (model: Model, nodeId: NodeId): Node | null => {
+export const toNode = (model: Model, nodeId: FlowNodeId): Node | null => {
 	return toNodes(model)[nodeId] ?? null;
 };
 
@@ -259,7 +232,7 @@ export const toNode = (model: Model, nodeId: NodeId): Node | null => {
  */
 export const toEdge = (
 	model: Pick<Model, "edges">,
-	edgeId: EdgeId,
+	edgeId: FlowEdgeId,
 ): Edge | null => {
 	const edge = model.edges[edgeId];
 
@@ -304,7 +277,7 @@ export const addEdge = (model: Model, edge: Edge): Model => {
 		...model,
 		edges: {
 			...model.edges,
-			[toEdgeId(edge)]: edge,
+			[toFlowEdgeId(edge)]: edge,
 		},
 	};
 	const edgeHash = deriveEdgeHash(modelNew);
@@ -314,7 +287,7 @@ export const addEdge = (model: Model, edge: Edge): Model => {
 /**
  *
  */
-const hasNode = (model: Model, nodeId: NodeId): boolean => {
+const hasNode = (model: Model, nodeId: FlowNodeId): boolean => {
 	return nodeId in model.nodes;
 };
 
@@ -357,7 +330,7 @@ export const removeTerminal = (model: Model, groupId: FlowGroupId): Model => {
  */
 export const yieldNodes = function* (model: Model): Generator<Node> {
 	for (const nodeId in model.nodes) {
-		const node = model.nodes[nodeId as NodeId];
+		const node = model.nodes[nodeId as FlowNodeId];
 
 		if (!node) {
 			continue;
@@ -373,7 +346,7 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
 
 export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
 	for (const nodeId in model.pipesBySourceId) {
-		const pipe = model.pipesBySourceId[nodeId as NodeId];
+		const pipe = model.pipesBySourceId[nodeId as FlowNodeId];
 
 		if (!pipe) {
 			continue;
@@ -397,7 +370,7 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
  */
 export const yieldEdges = function* (model: Model): Generator<Edge> {
 	for (const edgeId in model.edges) {
-		const edge = toEdge(model, edgeId as EdgeId);
+		const edge = toEdge(model, edgeId as FlowEdgeId);
 
 		if (!edge) {
 			continue;
@@ -408,13 +381,14 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
 };
 
 export const toIndexEdgesOut = (model: Model) => {
-	const indexEdgesOut: { [sourceId: NodeId]: { [targetId: NodeId]: EdgeId } } =
-		{};
+	const indexEdgesOut: {
+		[sourceId: FlowNodeId]: { [targetId: FlowNodeId]: FlowEdgeId };
+	} = {};
 
 	for (const edge of yieldEdges(model)) {
 		indexEdgesOut[edge.sourceId] = indexEdgesOut[edge.sourceId] ?? {};
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		indexEdgesOut[edge.sourceId]![edge.targetId] = toEdgeId(edge);
+		indexEdgesOut[edge.sourceId]![edge.targetId] = toFlowEdgeId(edge);
 	}
 
 	return indexEdgesOut;
@@ -427,14 +401,16 @@ export const toIndexEdgesOutMemoized = memoize({
 });
 
 export const toIndexEdgesIn = (model: Model) => {
-	let indexEdgesIn: { [targetId: NodeId]: { [sourceId: NodeId]: EdgeId } } = {};
+	let indexEdgesIn: {
+		[targetId: FlowNodeId]: { [sourceId: FlowNodeId]: FlowEdgeId };
+	} = {};
 
 	for (const edge of yieldEdges(model)) {
 		indexEdgesIn = {
 			...indexEdgesIn,
 			[edge.targetId]: {
 				...indexEdgesIn[edge.targetId],
-				[edge.sourceId]: toEdgeId(edge),
+				[edge.sourceId]: toFlowEdgeId(edge),
 			},
 		};
 	}
@@ -446,12 +422,12 @@ export const toIndexEdgesIn = (model: Model) => {
  */
 export const yieldEdgesOut = function* (
 	model: Model,
-	sourceNodeId: NodeId,
-): Iterable<Edge & { edgeId: EdgeId }> {
+	sourceFlowNodeId: FlowNodeId,
+): Iterable<Edge & { edgeId: FlowEdgeId }> {
 	const indexEdgesOut = toIndexEdgesOutMemoized(model);
 
-	for (const targetId in indexEdgesOut[sourceNodeId]) {
-		const edgeId = indexEdgesOut[sourceNodeId]?.[targetId as NodeId];
+	for (const targetId in indexEdgesOut[sourceFlowNodeId]) {
+		const edgeId = indexEdgesOut[sourceFlowNodeId]?.[targetId as FlowNodeId];
 
 		if (!edgeId) {
 			continue;
@@ -472,15 +448,15 @@ export const yieldEdgesOut = function* (
  */
 export const yieldEdgesIn = function* (
 	model: Model,
-	targetNodeId: NodeId,
+	targetFlowNodeId: FlowNodeId,
 ): Iterable<Edge> {
 	const indexEdgesIn = toIndexEdgesIn(model);
-	for (const sourceId in indexEdgesIn[targetNodeId]) {
-		if (!hasNodeId(model, sourceId)) {
+	for (const sourceId in indexEdgesIn[targetFlowNodeId]) {
+		if (!FlowNodeId.is(sourceId)) {
 			continue;
 		}
 
-		const edgeId = indexEdgesIn[targetNodeId]?.[sourceId];
+		const edgeId = indexEdgesIn[targetFlowNodeId]?.[sourceId];
 
 		if (!edgeId) {
 			continue;
@@ -523,7 +499,9 @@ export const yieldPipelines = function* (
 	}
 };
 
-export const pipelineToGroupId = (pipeline: Iterable<Pipe>): FlowGroupId | null => {
+export const pipelineToGroupId = (
+	pipeline: Iterable<Pipe>,
+): FlowGroupId | null => {
 	for (const pipe of pipeline) {
 		return pipe.groupId;
 	}
@@ -537,10 +515,10 @@ export type Pipeline = Pipe[];
  */
 export const toPipeline = (
 	model: Model,
-	sourceNodeId: NodeId,
+	sourceFlowNodeId: FlowNodeId,
 	groupId?: FlowGroupId,
 ): Pipe[] => {
-	const pipe = toPipeBySourceId(model, sourceNodeId);
+	const pipe = toPipeBySourceId(model, sourceFlowNodeId);
 
 	if (!pipe) {
 		return [];
@@ -559,7 +537,10 @@ export const toPipeline = (
 	return [pipe, ...toPipeline(model, pipe.edge.targetId, pipe.groupId)];
 };
 
-export const toPipelineFromGroupId = (model: Model, groupId: FlowGroupId): Pipe[] => {
+export const toPipelineFromGroupId = (
+	model: Model,
+	groupId: FlowGroupId,
+): Pipe[] => {
 	const terminal = toTerminalByGroupId(model, groupId);
 
 	if (!terminal) {
@@ -571,14 +552,14 @@ export const toPipelineFromGroupId = (model: Model, groupId: FlowGroupId): Pipe[
 
 export const yieldPipeline = (
 	model: Model,
-	startingNodeId: NodeId,
+	startingFlowNodeId: FlowNodeId,
 ): Iterable<PipeJoined> => {
 	const pipeline: PipeJoined[] = [];
 
-	let currentNodeId = startingNodeId;
+	let currentFlowNodeId = startingFlowNodeId;
 
 	while (true) {
-		const pipe = toPipeBySourceId(model, currentNodeId);
+		const pipe = toPipeBySourceId(model, currentFlowNodeId);
 
 		if (!pipe) {
 			return pipeline;
@@ -586,14 +567,17 @@ export const yieldPipeline = (
 
 		pipeline.push(pipe);
 
-		currentNodeId = pipe.edge.targetId;
+		currentFlowNodeId = pipe.edge.targetId;
 	}
 };
 
 /**
  *
  */
-export const toGroupId = (model: Model, nodeId: NodeId): FlowGroupId | null => {
+export const toGroupId = (
+	model: Model,
+	nodeId: FlowNodeId,
+): FlowGroupId | null => {
 	for (const pipe of yieldPipes(model)) {
 		if (pipe.edge.sourceId === nodeId) {
 			return pipe.groupId;
@@ -617,7 +601,7 @@ export const toGroupId = (model: Model, nodeId: NodeId): FlowGroupId | null => {
 
 export const toPipeBySourceId = (
 	model: Model,
-	sourceId: NodeId,
+	sourceId: FlowNodeId,
 ): PipeJoined | null => {
 	const pipe = model.pipesBySourceId[sourceId];
 	if (!pipe) {
@@ -635,10 +619,10 @@ export const toPipeBySourceId = (
 
 export const hasEdge = (
 	model: Model,
-	sourceId: NodeId,
-	targetId: NodeId,
+	sourceId: FlowNodeId,
+	targetId: FlowNodeId,
 ): boolean => {
-	return toEdgeId({ sourceId, targetId }) in model.edges;
+	return toFlowEdgeId({ sourceId, targetId }) in model.edges;
 };
 
 /**
@@ -686,7 +670,10 @@ export const randomTerminal = (model: Model): Terminal | null => {
 	return terminals[Math.floor(Math.random() * terminals.length)] ?? null;
 };
 
-export const randomOutEdge = (model: Model, nodeId: NodeId): Edge | null => {
+export const randomOutEdge = (
+	model: Model,
+	nodeId: FlowNodeId,
+): Edge | null => {
 	const edges = Array.from(yieldEdgesOut(model, nodeId));
 	const randomEdge = edges[Math.floor(Math.random() * edges.length)];
 	return randomEdge ?? null;
@@ -695,9 +682,9 @@ export const randomOutEdge = (model: Model, nodeId: NodeId): Edge | null => {
 /**
  * Find the terminal where the inputted node id is either the start or end node.
  */
-export const findTerminalByNodeId = (
+export const findTerminalByFlowNodeId = (
 	model: Model,
-	nodeId: NodeId,
+	nodeId: FlowNodeId,
 ): Terminal | null => {
 	for (const terminal of yieldTerminals(model)) {
 		if (terminal.startId === nodeId) {
@@ -709,9 +696,9 @@ export const findTerminalByNodeId = (
 	}
 	return null;
 };
-export const findPipeByNodeId = (
+export const findPipeByFlowNodeId = (
 	model: Model,
-	nodeId: NodeId,
+	nodeId: FlowNodeId,
 ): PipeJoined | null => {
 	for (const pipe of yieldPipes(model)) {
 		if (pipe.edge.sourceId === nodeId) {
@@ -743,17 +730,17 @@ export const addPipe = (model: Model, pipe: Pipe): Model | null => {
 	};
 };
 
-export const findGroupIdByNodeId = (
+export const findGroupIdByFlowNodeId = (
 	model: Model,
-	nodeId: NodeId,
+	nodeId: FlowNodeId,
 ): FlowGroupId | null => {
-	const terminal = findTerminalByNodeId(model, nodeId);
+	const terminal = findTerminalByFlowNodeId(model, nodeId);
 
 	if (terminal) {
 		return terminal.groupId;
 	}
 
-	const pipe = findPipeByNodeId(model, nodeId);
+	const pipe = findPipeByFlowNodeId(model, nodeId);
 
 	if (pipe) {
 		return pipe.groupId;
@@ -761,7 +748,6 @@ export const findGroupIdByNodeId = (
 
 	return null;
 };
-
 
 /**
  * Flips the start and end nodes of the inputted terminal.
@@ -804,10 +790,10 @@ function djb2Hash(str: string) {
 
 const isConnectedWithPipeOneWay = (
 	model: Model,
-	sourceId: NodeId,
-	targetId: NodeId,
+	sourceId: FlowNodeId,
+	targetId: FlowNodeId,
 ): boolean => {
-	const visited = new Set<NodeId>();
+	const visited = new Set<FlowNodeId>();
 
 	let currentId = sourceId;
 
@@ -840,8 +826,8 @@ const isConnectedWithPipeOneWay = (
 
 export const isConnectedWithPipes = (
 	model: Model,
-	nodeA: NodeId,
-	nodeB?: NodeId | null,
+	nodeA: FlowNodeId,
+	nodeB?: FlowNodeId | null,
 ): boolean => {
 	if (!nodeB) {
 		return false;
@@ -853,11 +839,11 @@ export const isConnectedWithPipes = (
 	);
 };
 
-const hasOutPipe = (model: Model, nodeId: NodeId): boolean => {
+const hasOutPipe = (model: Model, nodeId: FlowNodeId): boolean => {
 	return nodeId in model.pipesBySourceId;
 };
 
-const hasInPipe = (model: Model, nodeId: NodeId): boolean => {
+const hasInPipe = (model: Model, nodeId: FlowNodeId): boolean => {
 	for (const pipe of yieldPipes(model)) {
 		if (pipe.edge.targetId === nodeId) {
 			return true;
@@ -868,8 +854,8 @@ const hasInPipe = (model: Model, nodeId: NodeId): boolean => {
 
 export const isProbablyConnectedWithPipes = (
 	model: Model,
-	sourceId: NodeId,
-	targetId: NodeId,
+	sourceId: FlowNodeId,
+	targetId: FlowNodeId,
 ): boolean => {
 	return hasOutPipe(model, sourceId) && hasInPipe(model, targetId);
 };
@@ -910,7 +896,7 @@ export const isTerminalConnectedWithPipes = (
 	return isConnectedWithPipes(model, terminal.startId, terminal.endId);
 };
 
-export const hasInwardPipe = (model: Model, nodeId: NodeId): boolean => {
+export const hasInwardPipe = (model: Model, nodeId: FlowNodeId): boolean => {
 	for (const pipe of yieldPipes(model)) {
 		if (pipe.edge.targetId === nodeId) {
 			return true;
@@ -919,7 +905,7 @@ export const hasInwardPipe = (model: Model, nodeId: NodeId): boolean => {
 	return false;
 };
 
-export const hasOutwardPipe = (model: Model, nodeId: NodeId): boolean => {
+export const hasOutwardPipe = (model: Model, nodeId: FlowNodeId): boolean => {
 	for (const pipe of yieldPipes(model)) {
 		if (pipe.edge.sourceId === nodeId) {
 			return true;
@@ -1009,8 +995,8 @@ export const removePipeline = (model: Model, groupId: FlowGroupId): Model => {
 const pipelineToPipesBySourceId = (
 	model: Model,
 	pipeline: Pipeline,
-): { [sourceId: NodeId]: Pipe } => {
-	const pipsBySourceId: { [sourceId: NodeId]: Pipe } = {};
+): { [sourceId: FlowNodeId]: Pipe } => {
+	const pipsBySourceId: { [sourceId: FlowNodeId]: Pipe } = {};
 
 	for (const pipe of pipeline) {
 		const edge = toEdge(model, pipe.edgeId);

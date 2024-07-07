@@ -4,6 +4,7 @@ import { FlowGrid } from "./flow-grid";
 import { FlowHex } from "./flow-hex";
 import { FlowTri } from "./flow-tri";
 import type * as FlowVariantDimensions from "./flow-variant-dimensions";
+import { FlowNodeId } from "../flow/flow-node-id";
 
 export const Model = p.or(FlowGrid.Model, FlowHex.Model, FlowTri.Model);
 export type Model = p.Infer<typeof Model>;
@@ -20,11 +21,7 @@ export const isTri = (flow: Model): flow is FlowTri.Model => {
 	return flow.t === "flow-tri";
 };
 
-export const distance = (
-	flow: Model,
-	a: Flow.NodeId,
-	b: Flow.NodeId,
-): number => {
+export const distance = (flow: Model, a: FlowNodeId, b: FlowNodeId): number => {
 	switch (flow.t) {
 		case "flow-grid": {
 			return FlowGrid.distance(flow, a, b);

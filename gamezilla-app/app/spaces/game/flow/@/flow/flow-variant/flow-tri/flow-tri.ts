@@ -1,6 +1,7 @@
 import { p } from "gamezilla-app/@/core/parser";
 import { Flow } from "../../flow";
 import * as FlowTriDimensions from "./flow-tri-dimensions";
+import { FlowNodeId } from "../../flow/flow-node-id";
 
 export const Model = p.and(
 	Flow.Model,
@@ -26,8 +27,8 @@ export const init = (input: {
 
 export const distance = (
 	_model: Model,
-	_a: Flow.NodeId,
-	_b: Flow.NodeId,
+	_a: FlowNodeId,
+	_b: FlowNodeId,
 ): number => {
 	return 0;
 };

@@ -3,11 +3,13 @@ import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import { Flow } from "../../../flow";
 import { FlowVariant } from "../..";
 import { FlowGroupId } from "../../flow/flow-group-id";
+import { FlowNodeId } from "../../flow/flow-node-id";
+import { FlowEdgeId } from "../../flow/flow-edge-id";
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
  */
-type Pipeline = Flow.NodeId[];
+type Pipeline = FlowNodeId[];
 
 /**
  * Starts
@@ -15,7 +17,7 @@ type Pipeline = Flow.NodeId[];
 export const startDrawPipes = (
 	model: FlowVariant.Model,
 	groupId: FlowGroupId,
-	newNodeId: Flow.NodeId,
+	newNodeId: FlowNodeId,
 ): Flow.Model => {
 	const terminal = Flow.toTerminalByGroupId(model, groupId);
 
@@ -42,9 +44,9 @@ export const startDrawPipes = (
 export const drawPipes = (
 	model: FlowVariant.Model,
 	groupId: FlowGroupId,
-	nodeIdNew: Flow.NodeId,
+	nodeIdNew: FlowNodeId,
 ): Flow.Model => {
-	const newNodeGroupId = Flow.findGroupIdByNodeId(model, nodeIdNew);
+	const newNodeGroupId = Flow.findGroupIdByFlowNodeId(model, nodeIdNew);
 
 	if (newNodeGroupId && newNodeGroupId !== groupId) {
 		return model;
@@ -175,7 +177,7 @@ const isTerminalConnected = (
 const findPipeline = (
 	model: Flow.Model,
 	groupId: FlowGroupId,
-	initial: Flow.NodeId,
+	initial: FlowNodeId,
 ): Pipeline => {
 	const pipeline: Pipeline = [];
 	let currentId = initial;
@@ -232,7 +234,7 @@ const addPipeline = (
 		}
 
 		const pipeNew: Flow.Pipe = {
-			edgeId: Flow.toEdgeId(edge),
+			edgeId: Flow.toFlowEdgeId(edge),
 			groupId: terminal.groupId,
 		};
 
@@ -247,10 +249,10 @@ const addPipeline = (
  */
 export const _findShortestEmptyPipelineBFS = (
 	model: Flow.Model,
-	sourceId: Flow.NodeId,
-	targetId: Flow.NodeId,
-): Flow.NodeId[] => {
-	const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId);
+	sourceId: FlowNodeId,
+	targetId: FlowNodeId,
+): FlowNodeId[] => {
+	const sourceGroupId = Flow.findGroupIdByFlowNodeId(model, sourceId);
 
 	if (!sourceGroupId) {
 		return [];
@@ -264,9 +266,9 @@ export const _findShortestEmptyPipelineBFS = (
 	//
 	//
 
-	const queue: Flow.NodeId[] = [];
-	const visited = new Set<Flow.NodeId>();
-	const tree: { [id: Flow.NodeId]: { parent?: Flow.NodeId } } = {};
+	const queue: FlowNodeId[] = [];
+	const visited = new Set<FlowNodeId>();
+	const tree: { [id: FlowNodeId]: { parent?: FlowNodeId } } = {};
 
 	visited.add(sourceId);
 	queue.push(sourceId);
@@ -295,13 +297,13 @@ export const _findShortestEmptyPipelineBFS = (
 				continue;
 			}
 
-			const adjacentPipe = Flow.findPipeByNodeId(model, adjacentId);
+			const adjacentPipe = Flow.findPipeByFlowNodeId(model, adjacentId);
 
 			if (adjacentPipe) {
 				continue;
 			}
 
-			const adjacentTerminal = Flow.findTerminalByNodeId(model, adjacentId);
+			const adjacentTerminal = Flow.findTerminalByFlowNodeId(model, adjacentId);
 
 			if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
 				continue;
@@ -315,7 +317,7 @@ export const _findShortestEmptyPipelineBFS = (
 	// Construct the path from the breadth first tree
 
 	let current = targetId;
-	const nodePath: Flow.NodeId[] = [current];
+	const nodePath: FlowNodeId[] = [current];
 
 	while (current !== sourceId) {
 		const parent = tree[current]?.parent;
@@ -332,7 +334,7 @@ export const _findShortestEmptyPipelineBFS = (
 
 	// Convert node path to edge path
 
-	const path: Flow.EdgeId[] = [];
+	const path: FlowEdgeId[] = [];
 
 	for (let i = 0; i < nodePath.length; i++) {
 		const from = nodePath[i];
@@ -343,7 +345,7 @@ export const _findShortestEmptyPipelineBFS = (
 		if (!to) {
 			continue;
 		}
-		path.push(Flow.toEdgeId({ sourceId: from, targetId: to }));
+		path.push(Flow.toFlowEdgeId({ sourceId: from, targetId: to }));
 	}
 
 	// Done
@@ -355,27 +357,27 @@ export const _findShortestEmptyPipelineBFS = (
 // This might cause bugs but it's worth a try for perf
 //
 
-const gScore = new Map<Flow.NodeId, number>();
-const fScore = new Map<Flow.NodeId, number>();
-const cameFrom = new Map<Flow.NodeId, Flow.NodeId>();
-const openSet = new MinHeap<Flow.NodeId>((a, b) => {
+const gScore = new Map<FlowNodeId, number>();
+const fScore = new Map<FlowNodeId, number>();
+const cameFrom = new Map<FlowNodeId, FlowNodeId>();
+const openSet = new MinHeap<FlowNodeId>((a, b) => {
 	const fScoreA = fScore.get(a) ?? Number.POSITIVE_INFINITY;
 	const fScoreB = fScore.get(b) ?? Number.POSITIVE_INFINITY;
 	return fScoreA - fScoreB;
 });
 
 const findShortestEmptyPipelineAStar = (
-	heuristicScore: (node: Flow.NodeId) => number,
+	heuristicScore: (node: FlowNodeId) => number,
 	model: Flow.Model,
-	sourceId: Flow.NodeId,
-	targetId: Flow.NodeId,
-): Flow.NodeId[] => {
+	sourceId: FlowNodeId,
+	targetId: FlowNodeId,
+): FlowNodeId[] => {
 	gScore.clear();
 	fScore.clear();
 	cameFrom.clear();
 	openSet.clear();
 
-	const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId);
+	const sourceGroupId = Flow.findGroupIdByFlowNodeId(model, sourceId);
 
 	if (!sourceGroupId) {
 		return [];
@@ -398,7 +400,7 @@ const findShortestEmptyPipelineAStar = (
 			return reconstructPath(cameFrom, current);
 		}
 
-		const currentTerminal = Flow.findTerminalByNodeId(model, current);
+		const currentTerminal = Flow.findTerminalByFlowNodeId(model, current);
 
 		if (currentTerminal) {
 			return reconstructPath(cameFrom, current);
@@ -407,13 +409,13 @@ const findShortestEmptyPipelineAStar = (
 		for (const edgeOut of Flow.yieldEdgesOut(model, current)) {
 			const adjacent = edgeOut.targetId;
 
-			const adjacentPipe = Flow.findPipeByNodeId(model, adjacent);
+			const adjacentPipe = Flow.findPipeByFlowNodeId(model, adjacent);
 
 			if (adjacentPipe) {
 				continue;
 			}
 
-			const adjacentTerminal = Flow.findTerminalByNodeId(model, adjacent);
+			const adjacentTerminal = Flow.findTerminalByFlowNodeId(model, adjacent);
 
 			if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
 				continue;
@@ -442,9 +444,9 @@ const findShortestEmptyPipelineAStar = (
 };
 
 const reconstructPath = (
-	cameFrom: Map<Flow.NodeId, Flow.NodeId>,
-	start: Flow.NodeId,
-): Flow.NodeId[] => {
+	cameFrom: Map<FlowNodeId, FlowNodeId>,
+	start: FlowNodeId,
+): FlowNodeId[] => {
 	let current = start;
 	const totalPath = [current];
 

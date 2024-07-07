@@ -1,6 +1,7 @@
 import { p } from "gamezilla-app/@/core/parser";
 import { Flow } from "../../flow";
 import * as FlowHexDimensions from "./flow-hex-dimensions";
+import { FlowNodeId } from "../../flow/flow-node-id";
 
 export const HexPosition = p.obj({
 	x: p.num,
@@ -15,7 +16,7 @@ export const Model = p.and(
 	p.obj({
 		t: p.l("flow-hex"),
 		FlowHex: p.l(true),
-		positions: p.dict(Flow.NodeId, HexPosition),
+		positions: p.dict(FlowNodeId, HexPosition),
 	}),
 );
 export type Model = p.Infer<typeof Model>;
@@ -35,8 +36,8 @@ export const init = (input: {
 
 export const distance = (
 	model: Model,
-	a: Flow.NodeId,
-	b: Flow.NodeId,
+	a: FlowNodeId,
+	b: FlowNodeId,
 ): number => {
 	const positionA = model.positions[a];
 

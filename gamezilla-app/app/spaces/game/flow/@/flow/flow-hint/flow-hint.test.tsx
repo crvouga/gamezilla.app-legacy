@@ -223,7 +223,7 @@ describe(import.meta.file, () => {
 					flow: {
 						...f.flow,
 						// pipesBySourceId,
-					}
+					},
 				},
 				msg: { t: "user-clicked-hint" },
 			},

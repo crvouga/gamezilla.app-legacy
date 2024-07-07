@@ -2,16 +2,17 @@ import { IconCheckmark, cn } from "gamezilla-app/app/@/ui";
 import { Flow, FlowUI } from "../../../flow";
 import * as FlowGrid from "../flow-grid";
 import type { VDom } from "gamezilla-app/@/vdom";
+import { FlowNodeId } from "../../../flow/flow-node-id";
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33;
 const EDGE_STROKE_WIDTH = 0.3;
 
-let lastDraggedOver: Flow.NodeId | null = null;
+let lastDraggedOver: FlowNodeId | null = null;
 let isCurrentDeviceTouch = false;
 
 const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
-	const draggedOver = (nodeId: Flow.NodeId) => {
+	const draggedOver = (nodeId: FlowNodeId) => {
 		if (!props.isDragging || lastDraggedOver === nodeId) {
 			return;
 		}
@@ -260,7 +261,7 @@ const ViewCoordinates = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 
 const ViewClickable = (
 	props: FlowUI.FlowViewProps<FlowGrid.Model> & {
-		draggedOver?: (nodeId: Flow.NodeId) => void;
+		draggedOver?: (nodeId: FlowNodeId) => void;
 	},
 ) => {
 	return (
@@ -286,7 +287,7 @@ const ViewClickableNode = (
 		"onPressDown" | "onPressUp"
 	> & {
 		node: FlowGrid.Node;
-		draggedOver?: (nodeId: Flow.NodeId) => void;
+		draggedOver?: (nodeId: FlowNodeId) => void;
 	},
 ) => {
 	return (
@@ -336,7 +337,7 @@ const pipelineToSvgPathData = (
 	return path;
 };
 
-const touchEventToNodeId = (msgCore: TouchEvent): Flow.NodeId | null => {
+const touchEventToNodeId = (msgCore: TouchEvent): FlowNodeId | null => {
 	const touch = msgCore.touches[0];
 	if (!touch) {
 		return null;

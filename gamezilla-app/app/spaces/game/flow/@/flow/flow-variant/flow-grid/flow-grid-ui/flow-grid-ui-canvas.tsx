@@ -1,6 +1,7 @@
 import { cn } from "gamezilla-app/app/@/ui";
 import { Canvas } from "gamezilla-app/app/@/ui/canvas";
-import { type Flow, FlowUI } from "../../../flow";
+import { FlowUI } from "../../../flow";
+import { FlowNodeId } from "../../../flow/flow-node-id";
 import * as FlowGrid from "../flow-grid";
 
 const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
@@ -104,7 +105,7 @@ const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
 	}
 };
 
-let previouseMouseMove: Flow.NodeId | null = null;
+let previouseMouseMove: FlowNodeId | null = null;
 
 const View = ({
 	model,

@@ -3,6 +3,8 @@ import { Flow } from "../../flow";
 import { FlowGroupId } from "../../flow/flow-group-id";
 import * as FlowGridDimensions from "./flow-grid-dimensions";
 import { Position } from "./flow-grid-position";
+import { FlowNodeId } from "../../flow/flow-node-id";
+import { FlowEdgeId } from "../../flow/flow-edge-id";
 
 //
 //
@@ -17,23 +19,23 @@ export const Model = p.and(
 	FlowGridDimensions.Model,
 	p.obj({
 		t: p.l("flow-grid"),
-		positions: p.dict(Flow.NodeId, Position.parser),
+		positions: p.dict(FlowNodeId, Position.parser),
 	}),
 );
 export type Model = p.Infer<typeof Model>;
 
-const _toNodeId = (x: number, y: number): Flow.NodeId => {
-	return Flow.createNodeId(`${x},${y}`);
+const initNodeId = (x: number, y: number): FlowNodeId => {
+	return FlowNodeId.init(`${x},${y}`);
 };
 
-export const toNodeId = (position: Position): Flow.NodeId => {
-	return _toNodeId(position.x, position.y);
+export const toNodeId = (position: Position): FlowNodeId => {
+	return initNodeId(position.x, position.y);
 };
 
 export const distance = (
 	model: Model,
-	a: Flow.NodeId,
-	b: Flow.NodeId,
+	a: FlowNodeId,
+	b: FlowNodeId,
 ): number => {
 	const positionA = model.positions[a];
 
@@ -89,44 +91,44 @@ export const init = (input: {
 
 	for (x = 0; x < width; x++) {
 		for (y = 0; y < height; y++) {
-			const nodeId = _toNodeId(x, y);
+			const nodeId = initNodeId(x, y);
 			model.positions[nodeId] = { x, y };
 			model.nodes[nodeId] = { nodeId };
 
 			if (y > 0) {
-				const north = _toNodeId(x, y - 1);
+				const north = initNodeId(x, y - 1);
 				const edgeNorth: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: north,
 				};
-				model.edges[Flow.toEdgeId(edgeNorth)] = edgeNorth;
+				model.edges[Flow.toFlowEdgeId(edgeNorth)] = edgeNorth;
 			}
 
 			if (x < maxX) {
-				const east = _toNodeId(x + 1, y);
+				const east = initNodeId(x + 1, y);
 				const edgeEast: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: east,
 				};
-				model.edges[Flow.toEdgeId(edgeEast)] = edgeEast;
+				model.edges[Flow.toFlowEdgeId(edgeEast)] = edgeEast;
 			}
 
 			if (y < maxY) {
-				const south = _toNodeId(x, y + 1);
+				const south = initNodeId(x, y + 1);
 				const edgeSouth: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: south,
 				};
-				model.edges[Flow.toEdgeId(edgeSouth)] = edgeSouth;
+				model.edges[Flow.toFlowEdgeId(edgeSouth)] = edgeSouth;
 			}
 
 			if (x > 0) {
-				const west = _toNodeId(x - 1, y);
+				const west = initNodeId(x - 1, y);
 				const edgeWest: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: west,
 				};
-				model.edges[Flow.toEdgeId(edgeWest)] = edgeWest;
+				model.edges[Flow.toFlowEdgeId(edgeWest)] = edgeWest;
 			}
 		}
 	}
@@ -183,7 +185,7 @@ export type Edge = Flow.Edge & {
 	target: Node;
 };
 
-export const toNode = (model: Model, nodeId: Flow.NodeId): Node | null => {
+export const toNode = (model: Model, nodeId: FlowNodeId): Node | null => {
 	const node = Flow.toNode(model, nodeId);
 
 	if (!node) {
@@ -202,7 +204,7 @@ export const toNode = (model: Model, nodeId: Flow.NodeId): Node | null => {
 	};
 };
 
-export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
+export const toEdge = (model: Model, edgeId: FlowEdgeId): Edge | null => {
 	const edge = Flow.toEdge(model, edgeId);
 
 	if (!edge) {
@@ -360,7 +362,7 @@ const pipeToPipeJoined = (model: Model, pipe: Flow.Pipe): PipeJoined[] => {
 
 export const toPipeline = (
 	model: Model,
-	startingNodeId: Flow.NodeId,
+	startingNodeId: FlowNodeId,
 ): PipeJoined[] => {
 	const USE_V2 = true;
 	if (USE_V2) {
@@ -373,7 +375,7 @@ export const toPipeline = (
 	const pipeline: PipeJoined[] = [];
 
 	let currentNodeId = startingNodeId;
-	const visited = new Set<Flow.NodeId>();
+	const visited = new Set<FlowNodeId>();
 
 	while (true) {
 		if (visited.has(currentNodeId)) {

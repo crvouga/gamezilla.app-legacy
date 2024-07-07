@@ -9,6 +9,7 @@ import type { FlowVariant } from "../flow-variant";
 import * as FlowVariantUI from "../flow-variant/flow-variant-ui";
 import * as Flow from "../flow/flow";
 import { FlowGroupId } from "../flow/flow-group-id";
+import { FlowNodeId } from "../flow/flow-node-id";
 
 //
 //
@@ -34,7 +35,7 @@ type Status = p.Infer<typeof Status>;
 export const Model = p.and(
 	FlowHint.Model,
 	p.obj({
-		pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
+		pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
 		terminalsByGroupId: p.partialDict(FlowGroupId, Flow.Terminal),
 		status: Status,
 	}),
@@ -69,7 +70,7 @@ export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
 		...initial,
 		pipesBySourceId: {
 			[terminal.startId]: {
-				edgeId: Flow.toEdgeId(edge),
+				edgeId: Flow.toFlowEdgeId(edge),
 				groupId: terminal.groupId,
 			},
 		},
@@ -88,7 +89,7 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 
 	const edges: Flow.Edge[] = [];
 
-	const currentNodeId: Flow.NodeId = terminal.startId;
+	const currentNodeId: FlowNodeId = terminal.startId;
 
 	for (let i = 0; i < Math.random() * 10; i++) {
 		const edge = Flow.randomOutEdge(flow, currentNodeId);
@@ -183,15 +184,15 @@ export const Msg = p.or(
 	FlowHint.Msg,
 	p.obj({
 		t: p.l("pressed-down"),
-		nodeId: Flow.NodeId,
+		nodeId: FlowNodeId,
 	}),
 	p.obj({
 		t: p.l("pressed-up"),
-		nodeId: Flow.NodeId,
+		nodeId: FlowNodeId,
 	}),
 	p.obj({
 		t: p.l("dragged-over"),
-		nodeId: Flow.NodeId,
+		nodeId: FlowNodeId,
 	}),
 	p.obj({
 		t: p.l("left"),

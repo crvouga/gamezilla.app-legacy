@@ -2,11 +2,12 @@ import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import { Flow } from "../../../flow";
 import { FlowVariant } from "../..";
 import { FlowGroupId } from "../../flow/flow-group-id";
+import { FlowNodeId } from "../../flow/flow-node-id";
 
 const calculateDirection = (
 	model: FlowVariant.Model,
-	sourceId: Flow.NodeId,
-	targetId: Flow.NodeId,
+	sourceId: FlowNodeId,
+	targetId: FlowNodeId,
 ): string => {
 	const distance = FlowVariant.distance(model, sourceId, targetId);
 	return `${sourceId}${targetId}${distance}`;
@@ -42,8 +43,8 @@ const countTurns = (model: FlowVariant.Model, path: Flow.Edge[]): number => {
 
 const calculateHeuristic = (
 	model: FlowVariant.Model,
-	currentNode: Flow.NodeId,
-	endNode: Flow.NodeId,
+	currentNode: FlowNodeId,
+	endNode: FlowNodeId,
 	path: Flow.Edge[],
 ): number => {
 	const distanceHeuristic = FlowVariant.distance(model, currentNode, endNode);
@@ -62,13 +63,13 @@ const normalizePath = (path: Flow.Edge[]): string => {
 const toPossiblePipelines = function* (input: {
 	model: FlowVariant.Model;
 	groupId: FlowGroupId;
-	startId: Flow.NodeId;
-	endId: Flow.NodeId;
+	startId: FlowNodeId;
+	endId: FlowNodeId;
 }): Iterable<Flow.Edge[]> {
 	type HeapItem = {
 		path: Flow.Edge[];
-		currentNode: Flow.NodeId;
-		visited: Set<Flow.NodeId>;
+		currentNode: FlowNodeId;
+		visited: Set<FlowNodeId>;
 		cost: number;
 		heuristic: number;
 	};
@@ -143,7 +144,7 @@ const drawPipeline = (
 
 	for (const edge of path) {
 		pipesBySourceId[edge.sourceId] = {
-			edgeId: Flow.toEdgeId(edge),
+			edgeId: Flow.toFlowEdgeId(edge),
 			groupId: terminal.groupId,
 		};
 	}
@@ -154,7 +155,7 @@ const drawPipeline = (
 	};
 };
 
-// const isBoundaryNode = (config: Config, model: Flow.Model, nodeId: Flow.NodeId): boolean => {
+// const isBoundaryNode = (config: Config, model: Flow.Model, nodeId: FlowNodeId): boolean => {
 // 	Flow.yieldEdgesOut(model, nodeId)
 // 	Flow.yieldEdgesIn(model, nodeId)
 // 	config.distance(nodeId, nodeId)

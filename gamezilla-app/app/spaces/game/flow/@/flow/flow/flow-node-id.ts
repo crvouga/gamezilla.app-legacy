@@ -8,7 +8,12 @@ const init = (nodeId: string): FlowNodeId => {
 	return nodeId as FlowNodeId;
 };
 
+const is = (nodeId: unknown): nodeId is FlowNodeId => {
+	return parser.parse(nodeId).t === "ok";
+};
+
 export const FlowNodeId = {
-    init,
-    ...parser,
-}
+	init,
+	is,
+	...parser,
+};

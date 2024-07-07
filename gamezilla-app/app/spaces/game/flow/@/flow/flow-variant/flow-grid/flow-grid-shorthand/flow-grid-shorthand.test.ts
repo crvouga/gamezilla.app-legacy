@@ -182,14 +182,14 @@ describe(import.meta.file, () => {
 			},
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 					}),
@@ -226,7 +226,7 @@ describe(import.meta.file, () => {
 			},
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
@@ -302,14 +302,14 @@ describe(import.meta.file, () => {
 			},
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 1, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 					}),
@@ -360,28 +360,28 @@ describe(import.meta.file, () => {
 			},
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 2 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 1, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 					}),
 					groupId: "B",
 				},
 				[FlowGrid.toNodeId({ x: 1, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 2 }),
 					}),
@@ -429,14 +429,14 @@ describe(import.meta.file, () => {
 			},
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 2 }),
 					}),
@@ -489,56 +489,56 @@ describe(import.meta.file, () => {
 			},
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 2 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 0, y: 2 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 2 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 2 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 1, y: 2 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 2 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 1, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 0 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 1, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 2, y: 0 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 2, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 2, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 2, y: 1 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 2, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 2, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 2, y: 2 }),
 					}),
@@ -598,42 +598,42 @@ describe(import.meta.file, () => {
 			},
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 2 }),
 					}),
 					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 1, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 					}),
 					groupId: "B",
 				},
 				[FlowGrid.toNodeId({ x: 1, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 2 }),
 					}),
 					groupId: "B",
 				},
 				[FlowGrid.toNodeId({ x: 2, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 2, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 2, y: 1 }),
 					}),
 					groupId: "C",
 				},
 				[FlowGrid.toNodeId({ x: 2, y: 1 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 2, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 2, y: 2 }),
 					}),
@@ -742,7 +742,7 @@ describe(import.meta.file, () => {
 			terminalsByGroupId: actual.terminalsByGroupId,
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 1, y: 2 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 1, y: 2 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 					}),

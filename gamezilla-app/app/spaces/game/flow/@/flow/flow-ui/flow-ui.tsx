@@ -1,5 +1,6 @@
-import type { Edge,  NodeId } from "../flow/flow";
+import type { Edge } from "../flow/flow";
 import { FlowGroupId } from "../flow/flow-group-id";
+import { FlowNodeId } from "../flow/flow-node-id";
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const COLOR_TO_HEX = {
@@ -157,10 +158,10 @@ export type FlowViewProps<TModel> = {
 	disableHighlight?: boolean;
 	autocompleteEdge?: (Edge & { groupId: FlowGroupId }) | null;
 	showCoordinates?: boolean;
-	onPressDown?: (nodeId: NodeId) => void;
-	onPressUp?: (nodeId: NodeId) => void;
+	onPressDown?: (nodeId: FlowNodeId) => void;
+	onPressUp?: (nodeId: FlowNodeId) => void;
 	onLeave?: () => void;
-	onDraggedOver?: (nodeId: NodeId) => void;
+	onDraggedOver?: (nodeId: FlowNodeId) => void;
 	isGroupActive?: (groupId: FlowGroupId) => boolean;
 	usedHints?: {
 		[groupId in FlowGroupId]?: FlowGroupId;

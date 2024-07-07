@@ -105,14 +105,14 @@ describe(import.meta.file, () => {
 			pipesBySourceId: {
 				...grid.pipesBySourceId,
 				[node3]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: node3,
 						targetId: node2,
 					}),
 					groupId: "A",
 				},
 				[node2]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: node2,
 						targetId: node1,
 					}),

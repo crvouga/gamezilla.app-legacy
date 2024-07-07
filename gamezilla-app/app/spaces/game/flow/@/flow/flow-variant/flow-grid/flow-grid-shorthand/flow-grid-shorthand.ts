@@ -3,6 +3,7 @@ import { Flow } from "../../../flow";
 import * as FlowGrid from "../flow-grid";
 import * as FlowGridDimensions from "../flow-grid-dimensions";
 import { FlowGroupId } from "../../../flow/flow-group-id";
+import { FlowNodeId } from "../../../flow/flow-node-id";
 
 //
 //
@@ -141,8 +142,8 @@ export const init = (model: Model): Model => {
 
 type DraftTerminal = {
 	groupId: FlowGroupId;
-	startId: Flow.NodeId;
-	endId: Flow.NodeId | null;
+	startId: FlowNodeId;
+	endId: FlowNodeId | null;
 };
 
 const toTerminalsByGroupId = (
@@ -238,12 +239,12 @@ const toPipesBySourceIdForTerminalList = (input: {
 	terminal: Flow.Terminal;
 }): FlowGrid.Model["pipesBySourceId"][] => {
 	const allPaths: FlowGrid.Model["pipesBySourceId"][] = [];
-	const visitedNodeIds = new Set<Flow.NodeId>();
+	const visitedNodeIds = new Set<FlowNodeId>();
 
 	const groupId = input.terminal.groupId;
 
 	const findPaths = (
-		currentNodeId: Flow.NodeId,
+		currentNodeId: FlowNodeId,
 		path: FlowGrid.Model["pipesBySourceId"],
 	) => {
 		if (visitedNodeIds.has(currentNodeId)) {
@@ -301,7 +302,7 @@ const toPipesBySourceIdForTerminalList = (input: {
 			}
 
 			if (adjacentTerminalNode) {
-				const edgeId = Flow.toEdgeId({
+				const edgeId = Flow.toFlowEdgeId({
 					sourceId: currentNodeId,
 					targetId: adjacentTerminalNode.nodeId,
 				});
@@ -316,7 +317,7 @@ const toPipesBySourceIdForTerminalList = (input: {
 		}
 
 		const validAdjacent: {
-			adjacentNodeId: Flow.NodeId;
+			adjacentNodeId: FlowNodeId;
 			adjacentElement: Element;
 		}[] = [];
 
@@ -353,7 +354,7 @@ const toPipesBySourceIdForTerminalList = (input: {
 		}
 
 		for (const { adjacentNodeId, adjacentElement } of validAdjacent) {
-			const edgeId = Flow.toEdgeId({
+			const edgeId = Flow.toFlowEdgeId({
 				sourceId: currentNodeId,
 				targetId: adjacentNodeId,
 			});
@@ -411,7 +412,10 @@ const toPipesBySourceIdList_ = (input: {
 			terminal,
 		});
 
-		if (pipesBySourceIdForTerminal.length <= 1 && pipesBySourceIdForTerminal.every(p => Object.keys(p).length === 0)) {
+		if (
+			pipesBySourceIdForTerminal.length <= 1 &&
+			pipesBySourceIdForTerminal.every((p) => Object.keys(p).length === 0)
+		) {
 			// const flipped = FlowTerminal.flip(terminal);
 		}
 

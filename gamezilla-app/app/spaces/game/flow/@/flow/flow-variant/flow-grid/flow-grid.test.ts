@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
 			},
 			pipesBySourceId: {
 				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
-					edgeId: Flow.toEdgeId({
+					edgeId: Flow.toFlowEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
@@ -58,7 +58,7 @@ describe(import.meta.file, () => {
 		});
 		const expected: FlowGrid.Model["pipesBySourceId"] = {
 			[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
-				edgeId: Flow.toEdgeId({
+				edgeId: Flow.toFlowEdgeId({
 					targetId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 					sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 				}),

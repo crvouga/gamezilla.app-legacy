@@ -6,9 +6,10 @@ import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { Flow } from "../flow";
 import { FlowVariant } from "..";
 import { FlowGroupId } from "../flow/flow-group-id";
+import { FlowNodeId } from "../flow/flow-node-id";
 
 export const Model = p.obj({
-	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
+	pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
 	terminalsByGroupId: p.partialDict(FlowGroupId, Flow.Terminal),
 	usedHints: p.partialDict(FlowGroupId, FlowGroupId),
 });
