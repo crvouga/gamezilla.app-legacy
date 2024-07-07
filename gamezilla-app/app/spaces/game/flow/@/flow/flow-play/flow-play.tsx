@@ -1,5 +1,9 @@
+import { pipe, TimeSpan } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 import { APP_SOUND } from "gamezilla-app/app/@/client";
+import { IconCheckmark, Transition } from "gamezilla-app/app/@/ui";
+import { ActionProps, Actions } from "gamezilla-app/app/@/ui/actions";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { FlowAlgoDrawPipes } from "../flow-aglo/flow-algo-draw-pipes";
 import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
@@ -10,10 +14,6 @@ import * as Flow from "../flow/flow";
 import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
 import { FlowTerminal } from "../flow/flow-terminal";
-import { ActionProps, Actions } from "gamezilla-app/app/@/ui/actions";
-import { Translator } from "gamezilla-app/@/l18n/generated";
-import { pipe, TimeSpan } from "gamezilla-app/@/core";
-import { IconCheckmark, Transition } from "gamezilla-app/app/@/ui";
 
 //
 //
