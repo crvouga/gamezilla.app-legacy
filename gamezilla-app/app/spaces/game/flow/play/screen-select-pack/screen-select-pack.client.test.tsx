@@ -53,7 +53,5 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(updated)).toBe(true);
 	});
 
-	it("should render all packs", async () => {
-		//
-	});
+	it.todo("should render all packs", async () => {});
 });
