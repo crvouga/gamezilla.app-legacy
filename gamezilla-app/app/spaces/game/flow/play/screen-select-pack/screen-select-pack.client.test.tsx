@@ -18,11 +18,13 @@ describe(import.meta.file, () => {
 		const rendered = f.render(f.initial);
 		expect(rendered.getByRole("button", f.ctx.t("app.exit"))).toBeTruthy();
 	});
+	
 	it("should render select pack screen", async () => {
 		const f = await Fixture();
 		const r = f.render(f.initial);
 		expect(r.getByRole("heading", f.ctx.t("flow.play"))).toBeTruthy();
 	});
+
 	it("should show pack screen after opening pack", async () => {
 		const f = await Fixture();
 		const pack = await FlowPack.random();
@@ -37,6 +39,7 @@ describe(import.meta.file, () => {
 		const r = f.render(updated);
 		expect(r.getByRole("heading", pack.name)).toBeTruthy();
 	});
+
 	it("should make a sound when opening a pack", async () => {
 		const f = await Fixture();
 		const pack = await FlowPack.random();
