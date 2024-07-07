@@ -19,9 +19,10 @@ import type { IFlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db/flow-puzzle-
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { FlowPuzzleList } from "../@/flow-puzzle/flow-puzzle-list";
 import { ListTabs } from "./list-tabs";
-import { PackTypes } from "./pack";
 import { ScreenOpenPuzzleTypes } from "./screen-open-puzzle";
 import { ScreenPuzzleBuilderTypes } from "./screen-puzzle-builder";
+import { ScreenPackBuilderTypes } from "./screen-pack-builder";
+import { ScreenOpenPackTypes } from "./screen-open-pack";
 
 //
 //
@@ -91,12 +92,14 @@ type BaseModelClient = {
 export type ModelClient = BaseModelClient &
 	ScreenOpenPuzzleTypes.ModelClient &
 	ScreenPuzzleBuilderTypes.ModelClient &
-	PackTypes.ModelClient;
+	ScreenPackBuilderTypes.ModelClient &
+	ScreenOpenPackTypes.ModelClient;
 
 export const initClient: ClientModule["init"] = {
-	...PackTypes.initClient(),
 	...ScreenOpenPuzzleTypes.initClient,
 	...ScreenPuzzleBuilderTypes.initClient,
+	...ScreenPackBuilderTypes.initClient,
+	...ScreenOpenPackTypes.initClient,
 	flowPuzzleList: FlowPuzzleList.initClient,
 	flowPackList: FlowPackListTypes.initClient,
 	packs: {},
@@ -131,28 +134,32 @@ export type MsgClient =
 	| ScreenOpenPuzzleTypes.MsgClient
 	| ScreenPuzzleBuilderTypes.MsgClient
 	| ListTabs.MsgClient
-	| PackTypes.MsgClient;
+	| ScreenPackBuilderTypes.MsgClient
+	| ScreenOpenPackTypes.MsgClient;
 
 export type MsgServer =
 	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgServer }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgServer }
 	| ScreenOpenPuzzleTypes.MsgServer
 	| ScreenPuzzleBuilderTypes.MsgServer
-	| PackTypes.MsgServer;
+	| ScreenPackBuilderTypes.MsgServer
+	| ScreenOpenPackTypes.MsgServer;
 
 export type MsgToServer =
 	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgToServer }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToServer }
 	| ScreenPuzzleBuilderTypes.MsgToServer
 	| ScreenOpenPuzzleTypes.MsgToServer
-	| PackTypes.MsgToServer;
+	| ScreenPackBuilderTypes.MsgToServer
+	| ScreenOpenPackTypes.MsgToServer;
 
 export type MsgToClient =
 	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgToClient }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToClient }
-	| PackTypes.MsgToClient
 	| ScreenPuzzleBuilderTypes.MsgToClient
-	| ScreenOpenPuzzleTypes.MsgToClient;
+	| ScreenOpenPuzzleTypes.MsgToClient
+	| ScreenPackBuilderTypes.MsgToClient
+	| ScreenOpenPackTypes.MsgToClient;
 
 //
 //
@@ -166,7 +173,8 @@ export const MsgCore = p.or(
 	ListTabs.MsgCore,
 	ScreenPuzzleBuilderTypes.MsgCore,
 	ScreenOpenPuzzleTypes.MsgCore,
-	PackTypes.MsgCore,
+	ScreenPackBuilderTypes.MsgCore,
+	ScreenOpenPackTypes.MsgCore,
 );
 export type MsgCore = p.Infer<typeof MsgCore>;
 
@@ -181,14 +189,12 @@ export const BaseModelCore = p.obj({
 	opened: Open,
 	puzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
 	openPuzzle: p.maybe(ScreenOpenPuzzleTypes.ModelCore),
+	packBuilder: p.maybe(ScreenPackBuilderTypes.ModelCore),
+	openPack: p.maybe(ScreenOpenPackTypes.ModelCore),
 });
 type BaseModelCore = p.Infer<typeof BaseModelCore>;
 
-export const ModelCore = p.and(
-	BaseModelCore,
-	PackTypes.ModelCore,
-	ListTabs.ModelCore,
-);
+export const ModelCore = p.and(BaseModelCore, ListTabs.ModelCore);
 export type ModelCore = p.Infer<typeof ModelCore>;
 
 export type UpdateCore = (input: {

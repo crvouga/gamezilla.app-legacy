@@ -14,11 +14,7 @@ import {
 	cn,
 } from "gamezilla-app/app/@/ui";
 import type { VDom } from "gamezilla-app/@/vdom";
-import {
-	FlowVariantUI,
-	FlowVarianEdit,
-	FlowVariantPlay,
-} from "../../@/flow";
+import { FlowVariantUI, FlowVarianEdit, FlowVariantPlay } from "../../@/flow";
 import { ViewProfileCard } from "../../../@/game/view-profile-card";
 import type { ClientModule } from "../builder.types";
 import { EditPuzzleNameClient } from "./edit-puzzle-name/edit-puzzle-name.client";

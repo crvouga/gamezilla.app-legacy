@@ -1,14 +1,14 @@
 import { describe, expect, it } from "bun:test";
 import { UserId } from "gamezilla-app/app/@/data";
 import { SpaceGameCoreFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
-import { FlowPackPuzzlesGridUI } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
-import { FlowPuzzle } from "../../../@/flow-puzzle";
+import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
+import { FlowPuzzle } from "../../@/flow-puzzle";
 
-import { FlowPack } from "../../../@/flow-pack";
-import { BuilderCore } from "../../builder.core";
-import type { ModelCore } from "../../builder.types";
-import { PackBuilderCore } from "./pack-builder.core";
-import type { MsgCore } from "./pack-builder.types";
+import { FlowPack } from "../../@/flow-pack";
+import { BuilderCore } from "../builder.core";
+import type { ModelCore } from "../builder.types";
+import { ScreenPackBuilderCore } from "./screen-pack-builder.core";
+import type { MsgCore } from "./screen-pack-builder.types";
 
 const Fixture = async (input?: {
 	puzzleCount?: number;
@@ -47,13 +47,13 @@ const Fixture = async (input?: {
 	const init = BuilderCore.initCore({ ctx: f.ctx });
 	const modelCore: ModelCore = {
 		...init,
-		packBuilder: PackBuilderCore.init({ pack }),
+		packBuilder: ScreenPackBuilderCore.init({ pack }),
 	};
 
 	const updateModelCore = (msgs: MsgCore[]): ModelCore => {
 		return msgs.reduce(
 			(modelCore, msgCore) =>
-				PackBuilderCore.update({ ctx: f.ctx, modelCore, msgCore }),
+				ScreenPackBuilderCore.update({ ctx: f.ctx, modelCore, msgCore }),
 			{ ...modelCore },
 		);
 	};
@@ -325,7 +325,7 @@ describe(import.meta.file, () => {
 		const expected = FlowPackPuzzlesGridUI.toSlideIndex(
 			modelCore.packBuilder?.pack.puzzleIds.indexOf(puzzle.id) ?? 0,
 		);
-		const actual = PackBuilderCore.toSlideIndex(modelCore.packBuilder);
+		const actual = ScreenPackBuilderCore.toSlideIndex(modelCore.packBuilder);
 		expect(actual).toBe(expected);
 	});
 
@@ -341,8 +341,8 @@ describe(import.meta.file, () => {
 				userId: f.currentUserId,
 			},
 		]);
-		expect(PackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
-		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(1);
+		expect(ScreenPackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
+		expect(ScreenPackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(1);
 	});
 
 	it("should prevent slide index from going out of bounds", async () => {
@@ -359,7 +359,7 @@ describe(import.meta.file, () => {
 				userId: f.currentUserId,
 			},
 		]);
-		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(
+		expect(ScreenPackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(
 			expectedSlide,
 		);
 	});
@@ -384,8 +384,8 @@ describe(import.meta.file, () => {
 			},
 		]);
 
-		expect(PackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
-		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(1);
+		expect(ScreenPackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
+		expect(ScreenPackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(1);
 	});
 
 	it("should open the correct level when opening puzzle screen", async () => {

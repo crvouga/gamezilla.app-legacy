@@ -3,10 +3,10 @@ import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-s
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 
-import { FlowPackPuzzlesGridServer } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server";
-import type { ServerModule } from "../../builder.types";
+import { FlowPackPuzzlesGridServer } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server";
+import type { ServerModule } from "../builder.types";
 import { EditPackNameServer } from "./edit-pack-name/edit-pack-name.server";
-import { PackBuilderCore } from "./pack-builder.core";
+import { ScreenPackBuilderCore } from "./screen-pack-builder.core";
 
 const SavePack: Pick<ServerModule, "update"> = {
 	async update(input) {
@@ -70,7 +70,7 @@ const RemovedPuzzleFromPack: Pick<ServerModule, "update"> = {
 	async update(input) {
 		switch (input.msgCore?.t) {
 			case "remove-puzzle-from-pack.user-clicked-remove-from-pack-button": {
-				const modelCoreNew = PackBuilderCore.update({
+				const modelCoreNew = ScreenPackBuilderCore.update({
 					ctx: input.ctx,
 					modelCore: input.modelCore,
 					msgCore: input.msgCore,
@@ -114,7 +114,7 @@ const EditPackName: Pick<ServerModule, "update"> = {
 	},
 };
 
-export const PackBuilderServer: Pick<ServerModule, "update"> = {
+export const ScreenPackBuilderServer: Pick<ServerModule, "update"> = {
 	async update(input) {
 		return GameServerModule.andThen(
 			{ model: input.model },

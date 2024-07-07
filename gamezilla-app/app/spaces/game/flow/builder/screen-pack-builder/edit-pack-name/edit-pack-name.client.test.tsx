@@ -4,7 +4,7 @@ import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import { didShowErrorSm } from "gamezilla-app/app/@/client";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
-import { FlowPack } from "../../../../@/flow-pack";
+import { FlowPack } from "../../../@/flow-pack";
 import { EditPackNameClient } from "./edit-pack-name.client";
 import { EditPackNameCore } from "./edit-pack-name.core";
 import type { MsgCore } from "./edit-pack-name.types";

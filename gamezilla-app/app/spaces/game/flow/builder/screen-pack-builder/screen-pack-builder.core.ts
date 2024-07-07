@@ -1,10 +1,10 @@
 import { isErr } from "gamezilla-app/@/core";
-import { FlowVariantPlay } from "../../../@/flow";
-import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { FlowPackPuzzlesGridUI } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
-import type { UpdateCore } from "../../builder.types";
+import { FlowVariantPlay } from "../../@/flow";
+import { FlowPack } from "../../@/flow-pack/flow-pack";
+import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
+import type { UpdateCore } from "../builder.types";
 import { EditPackNameCore } from "./edit-pack-name/edit-pack-name.core";
-import type { ModelCore } from "./pack-builder.types";
+import type { ModelCore } from "./screen-pack-builder.types";
 
 const updates: UpdateCore[] = [];
 
@@ -440,7 +440,7 @@ const toSlideIndex = (modelCore?: ModelCore | null | undefined): number => {
 	return modelCore?.slideIndex ?? 0;
 };
 
-export const PackBuilderCore = {
+export const ScreenPackBuilderCore = {
 	toSlideIndex,
 	init,
 	update,

@@ -1,7 +1,7 @@
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { FlowPackListClient } from "../../../@/flow-pack/flow-pack-list";
-import type { ClientModule } from "../../builder.types";
-import { PackCreateNewClient } from "../create-new-pack/pack-create-new.client";
+import { FlowPackListClient } from "../../@/flow-pack/flow-pack-list";
+import type { ClientModule } from "../builder.types";
+import { PackCreateNewClient } from "./create-new-pack/create-new-pack.client";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 
@@ -10,6 +10,7 @@ const update: ClientModule["update"] = (input) => {
 		{ model: input.model },
 		//
 		(model) => updateClickedPackItem({ ...input, model }),
+		(model) => PackCreateNewClient.update({ ...input, model }),
 	);
 };
 
@@ -52,7 +53,7 @@ const View: ClientModule["View"] = (input) => {
 	);
 };
 
-export const PackListClient = {
+export const ScreenOpenPackClient = {
 	View,
 	update,
 };

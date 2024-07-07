@@ -6,8 +6,8 @@ import {
 	createFlowPack,
 	initial,
 	testFlowClientCtx,
-} from "../../@/testing/client";
-import { deriveModelCore } from "../../@/testing/game";
+} from "../@/testing/client";
+import { deriveModelCore } from "../@/testing/game";
 
 describe(import.meta.file, () => {
 	it("should open pack builder when clicked pack list item", async () => {

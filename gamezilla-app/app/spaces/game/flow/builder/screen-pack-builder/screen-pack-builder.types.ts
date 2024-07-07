@@ -1,10 +1,10 @@
 import { Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
-import { FlowVariantPlay } from "../../../@/flow";
-import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { FlowPackPuzzlesGridTypes } from "../../../@/flow-pack/flow-pack-puzzles-grid";
-import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { FlowVariantPlay } from "../../@/flow";
+import { FlowPack } from "../../@/flow-pack/flow-pack";
+import { FlowPackPuzzlesGridTypes } from "../../@/flow-pack/flow-pack-puzzles-grid";
+import { FlowPuzzle } from "../../@/flow-puzzle/flow-puzzle";
 import { EditPackNameTypes } from "./edit-pack-name";
 
 //

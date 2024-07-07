@@ -7,9 +7,10 @@ import { FlowPackListServer } from "../@/flow-pack/flow-pack-list";
 import { FlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db";
 import { FlowPuzzleListServer } from "../@/flow-puzzle/flow-puzzle-list";
 import { initServer, type ServerModule } from "./builder.types";
-import { PackServer } from "./pack/pack.server";
 import { ScreenOpenPuzzleServer } from "./screen-open-puzzle/screen-open-puzzle.server";
 import { ScreenPuzzleBuilderServer } from "./screen-puzzle-builder/screen-puzzle-builder.server";
+import { ScreenPackBuilderServer } from "./screen-pack-builder/screen-pack-builder.server";
+import { ScreenOpenPackServer } from "./screen-open-pack/screen-open-pack.server";
 
 const deps: ServerModule["deps"] = async (input) => {
 	return {
@@ -30,7 +31,8 @@ const update: ServerModule["update"] = async (input) => {
 		{ model: input.model },
 		(model) => ScreenPuzzleBuilderServer.update({ ...input, model }),
 		(model) => ScreenOpenPuzzleServer.update({ ...input, model }),
-		(model) => PackServer.update({ ...input, model }),
+		(model) => ScreenOpenPackServer.update({ ...input, model }),
+		(model) => ScreenPackBuilderServer.update({ ...input, model }),
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => updateFlowPuzzleList({ ...input, model }),
 	);

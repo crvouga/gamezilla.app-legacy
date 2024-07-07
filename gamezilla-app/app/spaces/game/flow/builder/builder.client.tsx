@@ -5,8 +5,8 @@ import { FlowPackListClient } from "../@/flow-pack/flow-pack-list";
 import { FlowPuzzleListClient } from "../@/flow-puzzle/flow-puzzle-list";
 import { initClient, type ClientModule } from "./builder.types";
 import { ListTabsClient } from "./list-tabs/list-tabs.client";
-import { PackBuilderClient } from "./pack/screen-pack-builder/pack-builder.client";
-import { PackClient } from "./pack/pack.client";
+import { ScreenOpenPackClient } from "./screen-open-pack/screen-open-pack.client";
+import { ScreenPackBuilderClient } from "./screen-pack-builder/screen-pack-builder.client";
 import { ScreenOpenPuzzleClient } from "./screen-open-puzzle/screen-open-puzzle.client";
 import { ScreenPuzzleBuilderClient } from "./screen-puzzle-builder/screen-puzzle-builder.client";
 
@@ -15,11 +15,11 @@ const update: ClientModule["update"] = (input) => {
 		{ model: input.model },
 		(model) => updateFlowPuzzleList({ ...input, model }),
 		(model) => updateFlowPackList({ ...input, model }),
+		(model) => ScreenOpenPackClient.update({ ...input, model }),
+		(model) => ScreenPackBuilderClient.update({ ...input, model }),
 		(model) => ScreenPuzzleBuilderClient.update({ ...input, model }),
 		(model) => ScreenOpenPuzzleClient.update({ ...input, model }),
 		(model) => ListTabsClient.update({ ...input, model }),
-
-		(model) => PackClient.update({ ...input, model }),
 	);
 };
 
@@ -86,7 +86,7 @@ const View: ClientModule["View"] = (input) => {
 		}
 
 		case "pack-builder": {
-			return <PackBuilderClient.View {...input} />;
+			return <ScreenPackBuilderClient.View {...input} />;
 		}
 
 		case "list": {
@@ -103,8 +103,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 	return Sub.batch([
 		//
 		ScreenOpenPuzzleClient.subscriptions(input),
-
-		PackClient.subscriptions(input),
+		ScreenPackBuilderClient.subscriptions(input),
 		Sub.tag(
 			"flow-pack-list",
 			FlowPackListClient.subscriptions({

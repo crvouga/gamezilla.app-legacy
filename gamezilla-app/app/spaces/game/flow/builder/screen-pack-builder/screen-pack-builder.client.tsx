@@ -16,14 +16,14 @@ import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import {
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
-} from "../../../../@/game";
-import { FlowVariantPlay } from "../../../@/flow";
-import { FlowPackPuzzlesGridUI } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
-import { FlowPackPuzzlesGridClient } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
-import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
-import type { ClientModule } from "../../builder.types";
+} from "../../../@/game";
+import { FlowVariantPlay } from "../../@/flow";
+import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
+import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
+import { FlowPuzzleListClient } from "../../@/flow-puzzle/flow-puzzle-list";
+import type { ClientModule } from "../builder.types";
 import { EditPackNameClient } from "./edit-pack-name/edit-pack-name.client";
-import { PackBuilderCore } from "./pack-builder.core";
+import { ScreenPackBuilderCore } from "./screen-pack-builder.core";
 
 //
 //
@@ -223,7 +223,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 					<div className="flex w-full flex-1 flex-col items-center justify-center">
 						<FlowPackPuzzlesGridUI.ViewPackPuzzleGrid
 							id={packBuilder.pack.id}
-							slideIndex={PackBuilderCore.toSlideIndex(packBuilder)}
+							slideIndex={ScreenPackBuilderCore.toSlideIndex(packBuilder)}
 							puzzleIds={packBuilder.pack.puzzleIds}
 							onSlideIndexChanged={(newSlideIndex) =>
 								input.dispatch({
@@ -621,7 +621,7 @@ const updateRecordPack: ClientModule["update"] = (input) => {
 	}
 	return { model: input.model };
 };
-export const PackBuilderClient: Pick<
+export const ScreenPackBuilderClient: Pick<
 	ClientModule,
 	"update" | "View" | "subscriptions"
 > = {

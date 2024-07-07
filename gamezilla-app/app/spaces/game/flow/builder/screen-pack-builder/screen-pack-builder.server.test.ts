@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import { Result } from "gamezilla-app/@/core";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import { FlowPuzzle } from "../../../@/flow-puzzle";
-import { FlowCreateFixtureServer } from "../../@/testing/server";
-import type { ModelCore, MsgCore } from "../../builder.types";
-import { PackBuilderCore } from "./pack-builder.core";
-import { PackBuilderServer } from "./pack-builder.server";
-import { FlowPack } from "../../../@/flow-pack";
+import { FlowPuzzle } from "../../@/flow-puzzle";
+import { FlowCreateFixtureServer } from "../@/testing/server";
+import type { ModelCore, MsgCore } from "../builder.types";
+import { ScreenPackBuilderCore } from "./screen-pack-builder.core";
+import { ScreenPackBuilderServer } from "./screen-pack-builder.server";
+import { FlowPack } from "../../@/flow-pack";
 
 const Fixture = async () => {
 	const f = await FlowCreateFixtureServer();
@@ -19,7 +19,7 @@ const Fixture = async () => {
 	await f.deps.flowPuzzleDb.put(puzzle);
 	const modelCore: ModelCore = {
 		...f.modelCore,
-		packBuilder: PackBuilderCore.init({
+		packBuilder: ScreenPackBuilderCore.init({
 			pack,
 		}),
 	};
@@ -42,13 +42,13 @@ describe(import.meta.file, () => {
 			userId: puzzle.createdBy,
 		});
 
-		const modelCoreNew = PackBuilderCore.update({
+		const modelCoreNew = ScreenPackBuilderCore.update({
 			ctx: f.ctx,
 			modelCore: f.modelCore,
 			msgCore,
 		});
 
-		const updated = await PackBuilderServer.update({
+		const updated = await ScreenPackBuilderServer.update({
 			...f,
 			modelCore: modelCoreNew,
 			msgCore,
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
 	it("should save pack after user removes puzzle from it", async () => {
 		const f = await Fixture();
 
-		await PackBuilderServer.update({
+		await ScreenPackBuilderServer.update({
 			...f,
 			msgCore: withId({
 				t: "remove-puzzle-from-pack.user-clicked-remove-from-pack-button",

@@ -1,7 +1,7 @@
 import type { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import type { FlowServerDeps } from "../../../builder.types";
+import type { FlowServerDeps } from "../../builder.types";
 import { EditPackNameCore } from "./edit-pack-name.core";
 import type { ModelCore, MsgCore } from "./edit-pack-name.types";
 

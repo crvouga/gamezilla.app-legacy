@@ -52,3 +52,5 @@ export const MsgCore = p.obj({
 });
 
 export type MsgCore = p.Infer<typeof MsgCore>;
+
+export const ModelCore = p.obj({});

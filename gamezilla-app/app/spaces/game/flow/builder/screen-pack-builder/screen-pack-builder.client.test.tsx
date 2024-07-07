@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { andThen } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import type { FlowClientCtx } from "../../../@/flow-ctx";
-import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { FlowPuzzle } from "../../../@/flow-puzzle";
+import type { FlowClientCtx } from "../../@/flow-ctx";
+import { FlowPack } from "../../@/flow-pack/flow-pack";
+import { FlowPuzzle } from "../../@/flow-puzzle";
 import {
 	FlowBuilderFixtureClient,
 	clickedExitPuzzleButton,
@@ -15,15 +15,15 @@ import {
 	initial,
 	serverCreatedPack,
 	testFlowClientCtx,
-} from "../../@/testing/client";
-import { deriveModelCore } from "../../@/testing/game";
-import { BuilderCore } from "../../builder.core";
-import type { ModelClient, ModelCore } from "../../builder.types";
-import { PackBuilderClient } from "./pack-builder.client";
-import { PackBuilderCore } from "./pack-builder.core";
+} from "../@/testing/client";
+import { deriveModelCore } from "../@/testing/game";
+import { BuilderCore } from "../builder.core";
+import type { ModelClient, ModelCore } from "../builder.types";
+import { ScreenPackBuilderClient } from "./screen-pack-builder.client";
+import { ScreenPackBuilderCore } from "./screen-pack-builder.core";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
-	return PackBuilderClient.update({
+	return ScreenPackBuilderClient.update({
 		ctx,
 		model,
 		modelCore: BuilderCore.initCore({ ctx }),
@@ -35,7 +35,7 @@ const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
 };
 
 const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
-	return PackBuilderClient.update({
+	return ScreenPackBuilderClient.update({
 		ctx,
 		model,
 		modelCore: BuilderCore.initCore({ ctx }),
@@ -66,7 +66,7 @@ export const Fixture = async () => {
 	};
 	const modelCore: ModelCore = {
 		...f.modelCore,
-		packBuilder: PackBuilderCore.init({
+		packBuilder: ScreenPackBuilderCore.init({
 			pack,
 		}),
 	};
@@ -203,7 +203,7 @@ describe(import.meta.file, () => {
 
 	it("should should remove puzzle from pack clicking remove from pack button", async () => {
 		const f = await Fixture();
-		const output = PackBuilderClient.update({
+		const output = ScreenPackBuilderClient.update({
 			...f,
 			msg: {
 				t: "remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
@@ -227,11 +227,11 @@ describe(import.meta.file, () => {
 			...f.pack,
 			puzzleIds: [],
 		};
-		const output = PackBuilderClient.update({
+		const output = ScreenPackBuilderClient.update({
 			...f,
 			modelCore: {
 				...f.modelCore,
-				packBuilder: PackBuilderCore.init({
+				packBuilder: ScreenPackBuilderCore.init({
 					pack: updatedPack,
 				}),
 			},

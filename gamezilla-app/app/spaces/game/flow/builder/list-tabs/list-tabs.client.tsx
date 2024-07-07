@@ -9,7 +9,7 @@ import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-c
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewSpaceHostChip } from "../../../@/game";
 import type { ClientModule } from "../builder.types";
-import { PackListClient } from "../pack/screen-open-pack/screen-open-pack.client";
+import { ScreenOpenPackClient } from "../screen-open-pack/screen-open-pack.client";
 import { ScreenOpenPuzzleClient } from "../screen-open-puzzle/screen-open-puzzle.client";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 
@@ -105,7 +105,9 @@ const View: ClientModule["View"] = (input) => {
 				<ScreenOpenPuzzleClient.View {...input} />
 			)}
 
-			{modelCore.listTab === "packs" && <PackListClient.View {...input} />}
+			{modelCore.listTab === "packs" && (
+				<ScreenOpenPackClient.View {...input} />
+			)}
 
 			<div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
 				<Button
