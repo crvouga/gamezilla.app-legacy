@@ -9,7 +9,6 @@ const Fixture = async (input?: { currentUserRole: UserRole }) => {
 		currentUserRole: input?.currentUserRole ?? "super",
 	};
 
-
 	return {
 		...f,
 		ctx,

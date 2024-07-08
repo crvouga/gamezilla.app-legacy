@@ -34,11 +34,11 @@ export const init = (input: { flowPuzzle: FlowPuzzle }): Model => {
 
 export type Event =
 	| {
-		t: "solved";
-	}
+			t: "solved";
+	  }
 	| {
-		t: "used-hint";
-	}	
+			t: "used-hint";
+	  };
 
 export const update = <
 	TModel extends Model,
@@ -64,7 +64,10 @@ export const update = <
 				return { model: input.model };
 			}
 
-			const solution = FlowAlgoSolve.solve(flow)
+			const solution =
+				input.flowPuzzle.flowSolutions.length > 0
+					? input.flowPuzzle.flowSolutions[0]
+					: FlowAlgoSolve.solve(flow);
 
 			if (!solution) {
 				return { model: input.model };
@@ -174,8 +177,7 @@ export const viewHintAction = (input: {
 		flow: input.flowPuzzle.flow,
 		model: input.model,
 	});
-	const disabled =
-		Flow.isSolved(flow)
+	const disabled = Flow.isSolved(flow);
 	return {
 		icon: (props) => <IconLightbulb {...props} />,
 		label: input.ctx.t("game.hint"),

@@ -247,4 +247,9 @@ describe(import.meta.file, () => {
 		});
 		expect(viewed.disabled).toBe(true);
 	});
+
+	it.todo(
+		"should never change the positions of the terminals when using a hint",
+		async () => {},
+	);
 });

@@ -75,7 +75,7 @@ const andThen = async (
 		};
 	}
 
-	return acc;	
+	return acc;
 };
 
 export const SpaceServerModule = {

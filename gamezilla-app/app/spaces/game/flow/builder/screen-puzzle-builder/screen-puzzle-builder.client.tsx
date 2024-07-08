@@ -288,7 +288,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 												t: "screen-puzzle-builder.flow-ui-play",
 												c,
 											}),
-										flowPuzzle: {...puzzleBuilder.puzzle, flow},
+										flowPuzzle: { ...puzzleBuilder.puzzle, flow },
 										model: puzzleBuilder.play,
 									}),
 									FlowPlay.viewResetAction({
@@ -298,7 +298,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 												t: "screen-puzzle-builder.flow-ui-play",
 												c,
 											}),
-										flowPuzzle: {...puzzleBuilder.puzzle, flow},
+										flowPuzzle: { ...puzzleBuilder.puzzle, flow },
 										model: puzzleBuilder.play,
 									}),
 								]}

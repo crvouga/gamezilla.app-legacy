@@ -12,7 +12,6 @@ import type { ActionProps } from "gamezilla-app/app/@/ui/actions";
 import { FlowVariant } from "..";
 import { FlowGridShorthand } from "../flow-variant/flow-grid";
 
-
 export const MsgClient = p.or(
 	p.obj({
 		t: p.l("user-clicked-copy-to-clipboard"),
@@ -22,7 +21,6 @@ export const MsgClient = p.or(
 	}),
 );
 export type MsgClient = p.Infer<typeof MsgClient>;
-
 
 const update = <TModel,>(input: {
 	msg: MsgClient | { t: string & {} };
@@ -73,7 +71,6 @@ const viewAction = ({
 		},
 	];
 };
-
 
 export const FlowCopyToClipboardClient = {
 	update,

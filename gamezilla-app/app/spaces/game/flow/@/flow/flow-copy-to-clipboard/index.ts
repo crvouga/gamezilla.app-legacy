@@ -1,1 +1,1 @@
-export * from "./flow-copy-to-clipboard.client"
+export * from "./flow-copy-to-clipboard.client";
