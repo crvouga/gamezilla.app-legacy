@@ -173,7 +173,8 @@ export const viewHintAction = (input: {
 		flow: input.flowPuzzle.flow,
 		model: input.model,
 	});
-	const disabled = Flow.isSolved(flow)||input.flowPuzzle.flowSolutions.length === 0;
+	const disabled =
+		Flow.isSolved(flow) || input.flowPuzzle.flowSolutions.length === 0;
 	return {
 		icon: (props) => <IconLightbulb {...props} />,
 		label: input.ctx.t("game.hint"),

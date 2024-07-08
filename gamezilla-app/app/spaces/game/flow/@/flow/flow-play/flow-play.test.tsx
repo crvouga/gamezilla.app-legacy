@@ -326,10 +326,10 @@ describe(import.meta.file, () => {
 		const f = await Fixture({
 			flow: FlowGridShorthand.toGrid([
 				["A", " "],
-				[" ", "A"],				
+				[" ", "A"],
 			]),
 		});
 		const output = f.update(f.init, [{ t: "user-clicked-reset" }]);
 		expect(output.event?.t).toBe("resetted");
-	})
+	});
 });

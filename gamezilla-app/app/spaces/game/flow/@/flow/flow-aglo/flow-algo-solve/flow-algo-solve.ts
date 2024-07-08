@@ -4,6 +4,7 @@ import { Flow } from "../../../flow";
 import { FlowGroupId } from "../../flow/flow-group-id";
 import { FlowNodeId } from "../../flow/flow-node-id";
 import { FlowTerminal } from "../../flow/flow-terminal";
+import { ascend } from "gamezilla-app/@/core";
 
 const calculateDirection = (
 	model: FlowVariant.Model,
@@ -61,12 +62,12 @@ const normalizePath = (path: Flow.Edge[]): string => {
 		.join(",");
 };
 
-const toPossiblePipelines = function* (input: {
-	model: FlowVariant.Model;
-	groupId: FlowGroupId;
-	startId: FlowNodeId;
-	endId: FlowNodeId;
-}): Iterable<Flow.Edge[]> {
+const toPossiblePipelines = function* (
+	model: FlowVariant.Model,
+	groupId: FlowGroupId,
+	startId: FlowNodeId,
+	endId: FlowNodeId,
+): Iterable<Flow.Edge[]> {
 	type HeapItem = {
 		path: Flow.Edge[];
 		currentNode: FlowNodeId;
@@ -80,10 +81,10 @@ const toPossiblePipelines = function* (input: {
 
 	minHeap.insert({
 		path: [],
-		currentNode: input.startId,
-		visited: new Set([input.startId]),
+		currentNode: startId,
+		visited: new Set([startId]),
 		cost: 0,
-		heuristic: FlowVariant.distance(input.model, input.startId, input.endId),
+		heuristic: FlowVariant.distance(model, startId, endId),
 	});
 
 	while (!minHeap.isEmpty()) {
@@ -95,7 +96,7 @@ const toPossiblePipelines = function* (input: {
 
 		const { path, currentNode, visited, cost } = min;
 
-		if (currentNode === input.endId) {
+		if (currentNode === endId) {
 			const normalizedPath = normalizePath(path);
 			if (!visitedPaths.has(normalizedPath)) {
 				visitedPaths.add(normalizedPath);
@@ -104,10 +105,10 @@ const toPossiblePipelines = function* (input: {
 			continue;
 		}
 
-		for (const edgeOut of Flow.yieldEdgesOut(input.model, currentNode)) {
-			const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId);
+		for (const edgeOut of Flow.yieldEdgesOut(model, currentNode)) {
+			const targetGroupId = Flow.toGroupId(model, edgeOut.targetId);
 
-			if (targetGroupId && targetGroupId !== input.groupId) {
+			if (targetGroupId && targetGroupId !== groupId) {
 				continue;
 			}
 
@@ -119,9 +120,9 @@ const toPossiblePipelines = function* (input: {
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
 			const heuristic = calculateHeuristic(
-				input.model,
+				model,
 				edgeOut.targetId,
-				input.endId,
+				endId,
 				newPath,
 			);
 
@@ -156,31 +157,10 @@ const drawPipeline = (
 	};
 };
 
-// const isBoundaryNode = (config: Config, model: Flow.Model, nodeId: FlowNodeId): boolean => {
-// 	Flow.yieldEdgesOut(model, nodeId)
-// 	Flow.yieldEdgesIn(model, nodeId)
-// 	config.distance(nodeId, nodeId)
-// 	return false;
-// }
-
-// const isUnsolvable = (config: Config, model: Flow.Model, disconnectedTerminals: Flow.Terminal[]): boolean => {
-// 	for (const terminal of Flow.yieldTerminals(model)) {
-// 		if(!terminal.endId) {
-// 			continue;
-// 		}
-// 	}
-// }
-
 const solveStep = function* (
 	model: FlowVariant.Model,
 	disconnectedTerminals: FlowTerminal[],
-	depth = 0,
-	maxDepth = 100,
 ): Iterable<Flow.Model> {
-	if (depth > maxDepth) {
-		return;
-	}
-
 	if (Flow.isSolved(model)) {
 		yield model;
 		return;
@@ -192,17 +172,32 @@ const solveStep = function* (
 		return;
 	}
 
-	const possiblePipelines = toPossiblePipelines({
+	const possiblePipelines = toPossiblePipelines(
 		model,
-		endId: terminal.endId,
-		groupId: terminal.groupId,
-		startId: terminal.startId,
-	});
+		terminal.groupId,
+		terminal.startId,
+		terminal.endId,
+	);
+
+	const disconnectedTerminalsRest = disconnectedTerminals.slice(1);
 
 	for (const possiblePipeline of possiblePipelines) {
 		const drew = drawPipeline(model, terminal, possiblePipeline);
-		yield* solveStep(drew, disconnectedTerminals.slice(1), depth + 1, maxDepth);
+		for(const solution of solveStep(drew, disconnectedTerminalsRest)) {
+			yield solution;
+			return
+		}
 	}
+};
+
+const toTerminalDistance = (
+	model: FlowVariant.Model,
+	terminal: FlowTerminal,
+): number => {
+	if (!terminal.endId) {
+		return Number.POSITIVE_INFINITY;
+	}
+	return FlowVariant.distance(model, terminal.startId, terminal.endId);
 };
 
 export const solutions = function* (
@@ -210,19 +205,13 @@ export const solutions = function* (
 ): Iterable<Flow.Model> {
 	const cleared = Flow.removeAllPipelines(model);
 
-	const terminals = Flow.toTerminals(cleared);
+	const disconnectedTerminals = Flow.toTerminals(cleared);
 
-	terminals.sort((a, b) => {
-		if (a.endId && b.endId) {
-			return (
-				FlowVariant.distance(cleared, a.startId, a.endId) -
-				FlowVariant.distance(cleared, b.startId, b.endId)
-			);
-		}
-		return Number.POSITIVE_INFINITY;
-	});
+	disconnectedTerminals.sort(
+		ascend((terminal) => toTerminalDistance(cleared, terminal)),
+	);
 
-	yield* solveStep(cleared, terminals);
+	yield* solveStep(cleared, disconnectedTerminals);
 };
 
 export const solve = (model: FlowVariant.Model): Flow.Model | null => {

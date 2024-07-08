@@ -219,10 +219,10 @@ export type Event =
 	  }
 	| {
 			t: "solved";
-	}
-	| {
-		  t: 'resetted'
 	  }
+	| {
+			t: "resetted";
+	  };
 
 export const eventToSoundSrc = (event: Event): string => {
 	switch (event.t) {
@@ -241,9 +241,9 @@ export const eventToSoundSrc = (event: Event): string => {
 		case "used-hint": {
 			return APP_SOUND.navForwardMin;
 		}
-			
-		case 'resetted': {
-			return APP_SOUND.navTransitionLeft
+
+		case "resetted": {
+			return APP_SOUND.navTransitionLeft;
 		}
 	}
 };
@@ -289,7 +289,7 @@ const resetPipes = (model: Model): Model => {
 		...model,
 		pipesBySourceId: {},
 	};
-}
+};
 
 const updateReset: typeof update = ({ model, msg }) => {
 	switch (msg.t) {
@@ -297,8 +297,8 @@ const updateReset: typeof update = ({ model, msg }) => {
 			return {
 				model: pipe(model, resetPipes, FlowHint.resetUsedHints),
 				event: {
-					t: 'resetted',
-				}
+					t: "resetted",
+				},
 			};
 		}
 		default: {

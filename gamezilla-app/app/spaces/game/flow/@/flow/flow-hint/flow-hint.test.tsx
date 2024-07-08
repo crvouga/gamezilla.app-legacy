@@ -234,9 +234,9 @@ describe(import.meta.file, () => {
 	it("should disable hint button if puzzle is solved", async () => {
 		const f = await Fixture({
 			flow: FlowGridShorthand.toGrid([
-				["A",  "B"],
-				["a",  "b"],
-				["A",  "B"],
+				["A", "B"],
+				["a", "b"],
+				["A", "B"],
 			]),
 		});
 		const viewed = FlowHint.viewHintAction({
@@ -244,7 +244,7 @@ describe(import.meta.file, () => {
 			dispatch: () => {},
 			flowPuzzle: f.flowPuzzle,
 			model: f.init,
-		})
+		});
 		expect(viewed.disabled).toBe(true);
 	});
 });
