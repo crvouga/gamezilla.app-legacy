@@ -8,6 +8,7 @@ import { FlowVariant } from "..";
 import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
 import { FlowTerminal } from "../flow/flow-terminal";
+import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
@@ -33,11 +34,11 @@ export const init = (input: { flowPuzzle: FlowPuzzle }): Model => {
 
 export type Event =
 	| {
-			t: "solved";
-	  }
+		t: "solved";
+	}
 	| {
-			t: "used-hint";
-	  };
+		t: "used-hint";
+	}	
 
 export const update = <
 	TModel extends Model,
@@ -63,7 +64,7 @@ export const update = <
 				return { model: input.model };
 			}
 
-			const solution = input.flowPuzzle.flowSolutions[0];
+			const solution = FlowAlgoSolve.solve(flow)
 
 			if (!solution) {
 				return { model: input.model };
@@ -174,7 +175,7 @@ export const viewHintAction = (input: {
 		model: input.model,
 	});
 	const disabled =
-		Flow.isSolved(flow) || input.flowPuzzle.flowSolutions.length === 0;
+		Flow.isSolved(flow)
 	return {
 		icon: (props) => <IconLightbulb {...props} />,
 		label: input.ctx.t("game.hint"),

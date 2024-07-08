@@ -67,14 +67,14 @@ export type ModelCore = p.Infer<typeof ModelCore>;
 export const toFlow = (modelCore: ModelCore): FlowVariant.Model => {
 	switch (modelCore.mode.t) {
 		case "edit": {
-			return FlowEdit.toFlowMemoized({
+			return FlowEdit.toFlow({
 				model: modelCore.edit,
 			});
 		}
 
 		case "play": {
 			return FlowPlay.toFlow({
-				flow: FlowEdit.toFlowMemoized({
+				flow: FlowEdit.toFlow({
 					model: modelCore.edit,
 				}),
 				model: modelCore.play,

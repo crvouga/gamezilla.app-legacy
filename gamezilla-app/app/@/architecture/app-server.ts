@@ -152,24 +152,17 @@ const andThen = async <T extends AppServerModuleTypes>(
 	accPromise: MaybePromise<Output<T>>,
 	...updates: ((model: T["Model"]) => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
-	const [update, ...rest] = updates;
-
-	const acc = await accPromise;
-
-	if (!update) {
-		return acc;
+	let acc = await accPromise;
+	for (const update of updates) {
+		const updated = await update(acc.model);
+		acc = {
+			model: updated.model,
+			eff: Eff.batch([acc.eff, updated.eff]),
+			msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+			msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
+		};
 	}
-
-	const updated = await update(acc.model);
-
-	const accNew: Output<T> = {
-		model: { ...acc.model, ...updated.model },
-		eff: Eff.batch([acc.eff, updated.eff]),
-		msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-		msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-	};
-
-	return andThen(accNew, ...rest);
+	return acc;
 };
 
 const updateLoop = async <T extends AppServerModuleTypes>(

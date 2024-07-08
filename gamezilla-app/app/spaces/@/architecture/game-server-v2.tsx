@@ -1,6 +1,7 @@
 import { Eff, type Sub } from "gamezilla-app/@/core";
 import type { ClientId, SessionId, UserId } from "gamezilla-app/app/@/data";
 import type { EventId, WithEventId } from "../event";
+import { Msg } from "gamezilla-app/@/core/msg";
 
 //
 //
@@ -197,23 +198,17 @@ const andThen = async <T extends GameServerModuleTypes>(
 	acc: Output<T>,
 	...updates: ((model: T["Model"]) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
-	const [update, ...rest] = updates;
-
-	if (!update) {
-		return acc;
+	for (const update of updates) {
+		const updated = await update(acc.model);
+		acc = {
+			model: updated.model,
+			eff: Eff.batch([acc.eff, updated.eff]),
+			msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
+			msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+			msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+		};
 	}
-
-	const updated = await update(acc.model);
-
-	const accNew: Output<T> = {
-		model: updated.model,
-		eff: Eff.batch([acc.eff, updated.eff]),
-		msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-		msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-		msgCore: [...(acc.msgCore ?? []), ...(updated.msgCore ?? [])],
-	};
-
-	return andThen(accNew, ...rest);
+	return acc;
 };
 
 const tagOutput = <

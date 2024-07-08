@@ -46,13 +46,19 @@ const tag = <Tag extends string, Msg>(
 };
 
 const batch = <Msg>(
-	...effLists: (Eff<Msg> | undefined | null)[][]
+	...effLists: ((Eff<Msg> | undefined | null)[] | Eff<Msg> | null | undefined)[]
 ): Eff<Msg> => {
 	return (dispatch) => {
 		for (const effList of effLists) {
-			for (const eff of effList) {
-				if (eff) {
-					eff(dispatch);
+			if (Array.isArray(effList)) {
+				for (const eff of effList) {
+					if (eff) {
+						eff(dispatch);
+					}
+				}
+			} else {
+				if (effList) {
+					effList(dispatch);
 				}
 			}
 		}

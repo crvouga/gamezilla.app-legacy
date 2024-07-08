@@ -1,3 +1,6 @@
+import { eq, memoize } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import { History } from "gamezilla-app/@/history";
 import { APP_SOUND } from "gamezilla-app/app/@/client";
 import {
 	Button,
@@ -8,18 +11,15 @@ import {
 	IconExpand,
 	IconXMark,
 } from "gamezilla-app/app/@/ui";
-import { eq, memoize } from "gamezilla-app/@/core";
-import { History } from "gamezilla-app/@/history";
 import {
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
 } from "../../../../@/game";
-import * as Flow from "../flow/flow";
 import * as FlowUI from "../flow-ui/flow-ui";
 import * as FlowVariant from "../flow-variant/flow-variant";
 import * as FlowVariantDimensions from "../flow-variant/flow-variant-dimensions";
 import * as FlowVariantUI from "../flow-variant/flow-variant-ui";
-import { p } from "gamezilla-app/@/core/parser";
+import * as Flow from "../flow/flow";
 import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
 import { FlowTerminal } from "../flow/flow-terminal";
@@ -452,7 +452,8 @@ export const removeIncompleteTerminals = (
 	}
 	return terminalsByGroupId;
 };
-const toFlow = ({ model }: { model: Model }): FlowVariant.Model => {
+
+export const toFlow = ({ model }: { model: Model }): FlowVariant.Model => {
 	const form = History.present(model.form);
 	return FlowVariant.init({
 		dimensions: model.dimensions,

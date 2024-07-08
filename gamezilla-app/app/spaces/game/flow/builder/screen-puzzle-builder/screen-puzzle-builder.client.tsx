@@ -108,10 +108,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 			const flow = toFlow(modelCore.puzzleBuilder);
 			const updated = FlowPlay.update({
 				msg: msgCore.c,
-				model: {
-					...modelCore.puzzleBuilder.play,
-					terminalsByGroupId: flow.terminalsByGroupId,
-				},
+				model: modelCore.puzzleBuilder.play,
 				flowPuzzle: {
 					...modelCore.puzzleBuilder.puzzle,
 					flow,
@@ -291,7 +288,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 												t: "screen-puzzle-builder.flow-ui-play",
 												c,
 											}),
-										flowPuzzle: puzzleBuilder.puzzle,
+										flowPuzzle: {...puzzleBuilder.puzzle, flow},
 										model: puzzleBuilder.play,
 									}),
 									FlowPlay.viewResetAction({
@@ -301,7 +298,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 												t: "screen-puzzle-builder.flow-ui-play",
 												c,
 											}),
-										flowPuzzle: puzzleBuilder.puzzle,
+										flowPuzzle: {...puzzleBuilder.puzzle, flow},
 										model: puzzleBuilder.play,
 									}),
 								]}

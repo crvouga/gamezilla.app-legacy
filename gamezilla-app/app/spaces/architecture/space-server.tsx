@@ -12,6 +12,7 @@ import type {
 	MsgToServer,
 	ServerDeps,
 } from "../spaces.types";
+import { Msg } from "gamezilla-app/@/core/msg";
 
 type Ctx = ServerCtx & {
 	space?: Space;
@@ -62,28 +63,19 @@ const andThen = async (
 	accPromise: MaybePromise<Output>,
 	...updates: ((model: ModelServer) => MaybePromise<Output>)[]
 ): Promise<Output> => {
-	const [update, ...rest] = updates;
-
-	const acc = await accPromise;
-
-	if (!update) {
-		return acc;
+	let acc = await accPromise;
+	for (const update of updates) {
+		const updated = await update(acc.model);
+		acc = {
+			model: updated.model,
+			eff: Eff.batch([acc.eff, updated.eff]),
+			msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
+			msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+			msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
+		};
 	}
 
-	const updated = await update(acc.model);
-
-	const accNew: Output = {
-		model: updated.model,
-		eff: Eff.batch([acc.eff, updated.eff]),
-		msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-		msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-		msgSpaceEvent: [
-			...(acc.msgSpaceEvent ?? []),
-			...(updated.msgSpaceEvent ?? []),
-		],
-	};
-
-	return andThen(accNew, ...rest);
+	return acc;	
 };
 
 export const SpaceServerModule = {

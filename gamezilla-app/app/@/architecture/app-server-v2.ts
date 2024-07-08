@@ -1,4 +1,5 @@
-import { Eff, batchMsgs, type Sub } from "gamezilla-app/@/core";
+import { Eff, type Sub } from "gamezilla-app/@/core";
+import { Msg } from "gamezilla-app/@/core/msg";
 
 //
 //
@@ -108,22 +109,15 @@ const andThen = async <T extends AppServerModuleTypes>(
 	accPromise: MaybePromise<Output<T>>,
 	...updates: (() => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
-	const [update, ...rest] = updates;
-
-	const acc = await accPromise;
-
-	if (!update) {
-		return acc;
+	let acc = await accPromise;
+	for (const update of updates) {
+		const updated = await update();
+		acc = {
+			eff: Eff.batch([acc.eff, updated.eff]),
+			msg: Msg.batch(acc.msg, updated.msg),
+		};
 	}
-
-	const updated = await update();
-
-	const accNew: Output<T> = {
-		eff: Eff.batch([acc.eff, updated.eff]),
-		msg: batchMsgs(acc.msg, updated.msg),
-	};
-
-	return andThen(accNew, ...rest);
+	return acc;
 };
 
 export const AppServerModule = {

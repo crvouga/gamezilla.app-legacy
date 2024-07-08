@@ -1,4 +1,5 @@
 import { Eff, type Sub } from "gamezilla-app/@/core";
+import { Msg } from "gamezilla-app/@/core/msg";
 import type { VDom } from "gamezilla-app/@/vdom";
 
 //
@@ -165,32 +166,19 @@ export const andThen = <T extends AppClientModuleTypes>(
 	acc: Output<T>,
 	...updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {
-	let runningModel = { ...acc.model };
-	const runningEffs = [acc.eff];
-	const runningCmds = [...(acc?.msgCmd ?? [])];
-	const runningEvts = [...(acc?.msgEvt ?? [])];
-	for (let i = 0; i < updates.length; i++) {
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		const update = updates[i]!;
-		const updated = update(runningModel);
-		runningModel = {
-			...runningModel,
-			...updated.model,
+	for (const update of updates) {
+		const updated = update(acc.model);
+		acc = {
+			model: {
+				...acc.model,
+				...updated.model,
+			},
+			eff: Eff.batch(acc.eff, updated.eff),
+			msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
+			msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
 		};
-		runningEffs.push(updated.eff);
-		if (updated.msgCmd) {
-			runningCmds.push(...updated.msgCmd);
-		}
-		if (updated.msgEvt) {
-			runningEvts?.push(...updated.msgEvt);
-		}
 	}
-	return {
-		model: runningModel,
-		eff: Eff.batch(runningEffs),
-		msgCmd: runningCmds,
-		msgEvt: runningEvts,
-	};
+	return acc;
 };
 
 export const AppClientModule = {

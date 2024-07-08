@@ -1,6 +1,7 @@
 import { Eff, type Sub } from "gamezilla-app/@/core";
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { WithEventId } from "../event";
+import { Msg } from "gamezilla-app/@/core/msg";
 
 //
 //
@@ -252,27 +253,18 @@ export const andThen = <T extends GameClientModuleTypes>(
 	acc: Output<T>,
 	...updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {
-	const [update, ...rest] = updates;
-
-	if (!update) {
-		return acc;
+	for (const update of updates) {
+		const updated = update(acc.model);
+		acc = {
+			model: updated.model,
+			eff: Eff.batch(acc.eff, updated.eff),
+			msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+			msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
+			msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+		};
 	}
 
-	const updated = update(acc.model);
-
-	if (!updated) {
-		return acc;
-	}
-
-	const accNew: Output<T> = {
-		model: updated.model,
-		eff: Eff.batch([acc.eff, updated.eff]),
-		msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-		msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-		msgCore: [...(acc.msgCore ?? []), ...(updated.msgCore ?? [])],
-	};
-
-	return andThen(accNew, ...rest);
+	return acc;
 };
 
 const tagOutput = <

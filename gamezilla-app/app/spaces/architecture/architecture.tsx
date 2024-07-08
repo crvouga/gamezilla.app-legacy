@@ -56,23 +56,17 @@ const andThen = (
 	acc: Output,
 	...updates: ((model: ModelClient) => Output)[]
 ): Output => {
-	const [update, ...rest] = updates;
-
-	if (!update) {
-		return acc;
+	for (const update of updates) {
+		const updated = update(acc.model);
+		acc = {
+			model: updated.model,
+			eff: Eff.batch([acc.eff, updated.eff]),
+			msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+			msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
+			msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
+		};
 	}
-
-	const updated = update(acc.model);
-
-	const accNew: Output = {
-		model: updated.model,
-		eff: Eff.batch([acc.eff, updated.eff]),
-		msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
-		msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
-		msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
-	};
-
-	return andThen(accNew, ...rest);
+	return acc;
 };
 
 export const SpaceClientModule = {

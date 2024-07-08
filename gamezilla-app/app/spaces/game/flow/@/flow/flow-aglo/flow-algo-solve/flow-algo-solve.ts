@@ -1,10 +1,10 @@
+import { ascend } from "gamezilla-app/@/core";
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import { FlowVariant } from "../..";
 import { Flow } from "../../../flow";
 import { FlowGroupId } from "../../flow/flow-group-id";
 import { FlowNodeId } from "../../flow/flow-node-id";
 import { FlowTerminal } from "../../flow/flow-terminal";
-import { ascend } from "gamezilla-app/@/core";
 import { FlowAlgoIsUnsolvable } from "../flow-algo-is-unsolvable";
 
 const toDirection = (
