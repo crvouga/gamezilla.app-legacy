@@ -5,8 +5,9 @@ import { FlowGroupId } from "../../flow/flow-group-id";
 import { FlowNodeId } from "../../flow/flow-node-id";
 import { FlowTerminal } from "../../flow/flow-terminal";
 import { ascend } from "gamezilla-app/@/core";
+import { FlowAlgoIsUnsolvable } from "../flow-algo-is-unsolvable";
 
-const calculateDirection = (
+const toDirection = (
 	model: FlowVariant.Model,
 	sourceId: FlowNodeId,
 	targetId: FlowNodeId,
@@ -17,33 +18,20 @@ const calculateDirection = (
 
 const countTurns = (model: FlowVariant.Model, path: Flow.Edge[]): number => {
 	let turns = 0;
-	for (let i = 1; i < path.length; i++) {
-		const prev = path[i - 1];
-		if (!prev) {
-			continue;
-		}
-		const prevDirection = calculateDirection(
-			model,
-			prev.sourceId,
-			prev.targetId,
-		);
+	let prevDirection = "";
+	for (let i = 0; i < path.length; i++) {
 		const curr = path[i];
-		if (!curr) {
-			continue;
-		}
-		const currDirection = calculateDirection(
-			model,
-			curr.sourceId,
-			curr.targetId,
-		);
-		if (prevDirection !== currDirection) {
+		if (!curr) continue;
+		const currDirection = toDirection(model, curr.sourceId, curr.targetId);
+		if (prevDirection && prevDirection !== currDirection) {
 			turns++;
 		}
+		prevDirection = currDirection;
 	}
 	return turns;
 };
 
-const calculateHeuristic = (
+const toHeuristic = (
 	model: FlowVariant.Model,
 	currentNode: FlowNodeId,
 	endNode: FlowNodeId,
@@ -51,16 +39,14 @@ const calculateHeuristic = (
 ): number => {
 	const distanceHeuristic = FlowVariant.distance(model, currentNode, endNode);
 	const turnsHeuristic = countTurns(model, path);
-	const heuristic = distanceHeuristic + turnsHeuristic * 1.5;
-	return heuristic;
+	return distanceHeuristic + turnsHeuristic * 1.5;
 };
 
 const normalizePath = (path: Flow.Edge[]): string => {
-	return path
-		.map((edge) => `${edge.sourceId}-${edge.targetId}`)
-		.sort()
-		.join(",");
+	return path.map((edge) => `${edge.sourceId}-${edge.targetId}`).join(",");
 };
+
+// const MAX_ITERATIONS = 5000;
 
 const toPossiblePipelines = function* (
 	model: FlowVariant.Model,
@@ -119,12 +105,7 @@ const toPossiblePipelines = function* (
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
-			const heuristic = calculateHeuristic(
-				model,
-				edgeOut.targetId,
-				endId,
-				newPath,
-			);
+			const heuristic = toHeuristic(model, edgeOut.targetId, endId, newPath);
 
 			minHeap.insert({
 				path: newPath,
@@ -161,6 +142,10 @@ const solveStep = function* (
 	model: FlowVariant.Model,
 	disconnectedTerminals: FlowTerminal[],
 ): Iterable<Flow.Model> {
+	if (FlowAlgoIsUnsolvable.isUnsolvable(model)) {
+		return;
+	}
+
 	if (Flow.isSolved(model)) {
 		yield model;
 		return;
@@ -183,10 +168,7 @@ const solveStep = function* (
 
 	for (const possiblePipeline of possiblePipelines) {
 		const drew = drawPipeline(model, terminal, possiblePipeline);
-		for(const solution of solveStep(drew, disconnectedTerminalsRest)) {
-			yield solution;
-			return
-		}
+		yield* solveStep(drew, disconnectedTerminalsRest);
 	}
 };
 
@@ -204,7 +186,6 @@ export const solutions = function* (
 	model: FlowVariant.Model,
 ): Iterable<Flow.Model> {
 	const cleared = Flow.removeAllPipelines(model);
-
 	const disconnectedTerminals = Flow.toTerminals(cleared);
 
 	disconnectedTerminals.sort(

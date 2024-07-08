@@ -362,7 +362,7 @@ export const toIndexEdgesOut = (model: Model) => {
 export const toIndexEdgesOutMemoized = memoize({
 	toKey: (model) => model.edgeHash ?? 0,
 	func: toIndexEdgesOut,
-	cacheCapacity: 1000,
+	cacheCapacity: 5000,
 });
 
 export const toIndexEdgesIn = (model: Model) => {
@@ -1058,4 +1058,15 @@ export const removeAllPipelines = <TModel extends Model>(
 
 export const isPipesEmpty = (model: Model): boolean => {
 	return Object.keys(model.pipesBySourceId).length === 0;
+};
+
+export const toTargetId = (
+	model: Model,
+	edgeId: FlowEdgeId,
+): FlowNodeId | null => {
+	const edge = toEdge(model, edgeId);
+	if (!edge) {
+		return null;
+	}
+	return edge.targetId;
 };

@@ -555,7 +555,29 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.todo("3x3 no solutions", () => {
+	test("14x14 puzzle", () => {
+		const grid = FlowGridShorthand.toGrid([
+			[" ", " ", " ", " ", " ", " ", " ", " ", "J", "K", "L", "M", "N", "O"],
+			[" ", " ", " ", " ", "E", " ", "E", " ", " ", " ", " ", " ", " ", " "],
+			[" ", " ", "F", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+			[" ", " ", "G", " ", "H", "I", " ", " ", " ", " ", " ", " ", " ", " "],
+			[" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+			[" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+			[" ", "F", " ", "G", " ", " ", "H", " ", " ", " ", " ", " ", " ", " "],
+			[" ", " ", " ", " ", " ", " ", " ", "I", " ", " ", " ", " ", " ", " "],
+			["J", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+			["K", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+			["L", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+			["M", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+			["N", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+			["O", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+		]);
+
+		const solution = first(FlowAlgoSolve.solutions(grid));
+		expect(solution && Flow.isSolved(solution)).toBe(true);
+	});
+
+	test("3x3 no solutions", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", "B", "A"],
 			[" ", " ", " "],
@@ -563,6 +585,17 @@ describe(import.meta.file, () => {
 		]);
 		const actual = Array.from(FlowAlgoSolve.solutions(grid));
 		expect(actual).toEqual([]);
+	});
+
+	test("disregard existing pipes", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " ", "B"],
+			["a", "a", "A"],
+			[" ", "B", " "],
+			[" ", " ", " "],
+		]);
+		const solutions = FlowAlgoSolve.solutions(grid);
+		expect(isEmpty(solutions)).toBe(false);
 	});
 
 	test.todo("8x8 no solutions", () => {
@@ -577,17 +610,6 @@ describe(import.meta.file, () => {
 		]);
 		const actual = first(FlowAlgoSolve.solutions(grid));
 		expect(actual).toEqual(null);
-	});
-
-	test("disregard existing pipes", () => {
-		const grid = FlowGridShorthand.toGrid([
-			["A", " ", "B"],
-			["a", "a", "A"],
-			[" ", "B", " "],
-			[" ", " ", " "],
-		]);
-		const solutions = FlowAlgoSolve.solutions(grid);
-		expect(isEmpty(solutions)).toBe(false);
 	});
 });
 
