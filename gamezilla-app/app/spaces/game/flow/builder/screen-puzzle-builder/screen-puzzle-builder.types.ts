@@ -1,10 +1,12 @@
-import { UserId } from "gamezilla-app/app/@/data";
-import { type FlowVariant, FlowEdit, FlowPlay } from "../../@/flow";
-import { FlowPuzzle } from "../../@/flow-puzzle/flow-puzzle";
 import { p } from "gamezilla-app/@/core/parser";
-import { SaveChangesTypes } from "./save-changes";
-import { EditPuzzleNameTypes } from "./edit-puzzle-name";
+import { UserId } from "gamezilla-app/app/@/data";
+import type { FlowVariant } from "../../@/flow";
+import { FlowPuzzle } from "../../@/flow-puzzle/flow-puzzle";
+import { FlowEdit } from "../../@/flow/flow-edit";
+import { FlowPlay } from "../../@/flow/flow-play";
 import { DeleteForeverTypes } from "./delete-forever";
+import { EditPuzzleNameTypes } from "./edit-puzzle-name";
+import { SaveChangesTypes } from "./save-changes";
 
 export type ModelClient = SaveChangesTypes.ModelClient &
 	EditPuzzleNameTypes.ModelClient &

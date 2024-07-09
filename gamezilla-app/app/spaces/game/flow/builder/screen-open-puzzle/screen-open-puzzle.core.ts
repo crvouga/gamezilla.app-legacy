@@ -1,4 +1,5 @@
-import { FlowEdit, FlowPlay } from "../../@/flow";
+import { FlowEdit } from "../../@/flow/flow-edit";
+import { FlowPlay } from "../../@/flow/flow-play";
 import type { UpdateCore } from "../builder.types";
 import { CreateNewPuzzleCore } from "./create-new/create-new-puzzle.core";
 

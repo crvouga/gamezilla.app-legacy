@@ -1,9 +1,10 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { FlowEdit, FlowPlay } from "../../@/flow";
 import type { ModelCore, MsgCore } from "../builder.types";
 import { DeleteForeverCore } from "./delete-forever/delete-forever.core";
 import { EditPuzzleNameCore } from "./edit-puzzle-name/edit-puzzle-name.core";
 import { SaveChangesCore } from "./save-changes/save-changes.core";
+import { FlowEdit } from "../../@/flow/flow-edit";
+import { FlowPlay } from "../../@/flow/flow-play";
 
 const updateCoreMain = ({
 	modelCore,

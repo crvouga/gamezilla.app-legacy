@@ -1,11 +1,11 @@
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
-import { FlowPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import {
 	FlowPlayClientFixture,
 	type FixtureUpdateInput,
 } from "../../@/testing";
+import { FlowPlay } from "../../../@/flow/flow-play";
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
 	FlowPlay.toSolutionMsgs({

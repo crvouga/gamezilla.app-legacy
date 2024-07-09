@@ -10,12 +10,12 @@ import { Actions } from "gamezilla-app/app/@/ui/actions";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
-import { FlowPlay } from "../../@/flow";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import type { ClientModule } from "../play.types";
 import * as CopyPuzzleClient from "./copy-puzzle/copy-puzzle.client";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
 import { ScreenPlayPuzzleCore } from "./screen-play-puzzle.core";
+import { FlowPlay } from "../../@/flow/flow-play";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(

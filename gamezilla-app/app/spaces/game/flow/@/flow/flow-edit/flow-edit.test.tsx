@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { FlowVariantDimensions, FlowEdit } from "../flow-variant";
+import { FlowVariantDimensions } from "../flow-variant";
 import { FlowPuzzle } from "../../flow-puzzle";
+import { FlowEdit } from ".";
 
 const Fixture = async () => {
 	const puzzle = await FlowPuzzle.random();

@@ -1,6 +1,7 @@
-import { Flow, FlowPlay } from "../../@/flow";
+import { Flow } from "../../@/flow";
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPuzzle } from "../../@/flow-puzzle";
+import { FlowPlay } from "../../@/flow/flow-play";
 import type { CoreModule, MsgCore } from "../play.types";
 import * as CopyPuzzleCore from "./copy-puzzle/copy-puzzle.core";
 import { LastPuzzleCore } from "./last-puzzle/last-puzzle.core";

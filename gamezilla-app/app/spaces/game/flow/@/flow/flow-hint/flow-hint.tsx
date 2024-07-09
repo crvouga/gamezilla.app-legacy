@@ -4,7 +4,7 @@ import { IconLightbulb } from "gamezilla-app/app/@/ui";
 import type { ActionProps } from "gamezilla-app/app/@/ui/actions";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { Flow } from "../flow";
-import { FlowVariant } from "..";
+import type { FlowVariant } from "../flow-variant";
 import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
 import { FlowTerminal } from "../flow/flow-terminal";

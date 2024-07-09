@@ -1,9 +1,10 @@
 import { describe, expect, it, test } from "bun:test";
-import { FlowPlay, type FlowVariant } from "../flow-variant";
+import type { FlowVariant } from "../flow-variant";
 import { Flow } from "../flow";
 import { FlowGrid } from "../flow-variant/flow-grid";
 import { FlowGridShorthand } from "../flow-variant/flow-grid/flow-grid-shorthand";
 import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
+import { FlowPlay } from ".";
 
 const Fixture = async ({ flow }: { flow: FlowVariant.Model }) => {
 	const flowPuzzle = await FlowPuzzle.random({ flow });

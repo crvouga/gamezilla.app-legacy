@@ -16,7 +16,9 @@ import {
 	ViewBottomButtonBarAction,
 } from "gamezilla-app/app/spaces/game/@/game";
 import { ViewProfileCard } from "../../../@/game/view-profile-card";
-import { Flow, FlowEdit, FlowPlay, FlowVariantUI } from "../../@/flow";
+import { Flow, FlowVariantUI } from "../../@/flow";
+import { FlowEdit } from "../../@/flow/flow-edit";
+import { FlowPlay } from "../../@/flow/flow-play";
 import type { ClientModule } from "../builder.types";
 import { DeleteForeverClient } from "./delete-forever/delete-forever.client";
 import { EditPuzzleNameClient } from "./edit-puzzle-name/edit-puzzle-name.client";

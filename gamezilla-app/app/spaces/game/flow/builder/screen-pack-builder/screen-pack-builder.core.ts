@@ -1,10 +1,10 @@
 import { isErr } from "gamezilla-app/@/core";
-import { FlowPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack/flow-pack";
 import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
 import type { UpdateCore } from "../builder.types";
 import { EditPackNameCore } from "./edit-pack-name/edit-pack-name.core";
 import type { ModelCore } from "./screen-pack-builder.types";
+import { FlowPlay } from "../../@/flow/flow-play";
 
 const updates: UpdateCore[] = [];
 

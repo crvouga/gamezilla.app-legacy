@@ -14,7 +14,6 @@ import {
 	IconFloppyDisk,
 } from "gamezilla-app/app/@/ui";
 import { Result, isErr, isOk, Loading } from "gamezilla-app/@/core";
-import { FlowEdit } from "../../../@/flow";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type {
 	ModelClient,
@@ -23,6 +22,7 @@ import type {
 	MsgCore,
 } from "../../builder.types";
 import { ViewBottomButtonBarAction } from "../../../../@/game";
+import { FlowEdit } from "../../../@/flow/flow-edit";
 
 //
 //

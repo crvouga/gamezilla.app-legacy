@@ -7,9 +7,9 @@ import {
 } from "gamezilla-app/app/@/client";
 import { IconCopy } from "gamezilla-app/app/@/ui";
 import type { ActionProps } from "gamezilla-app/app/@/ui/actions";
-import { FlowPlay } from "../../../@/flow";
 import { FlowGridShorthand } from "../../../@/flow/flow-variant/flow-grid";
 import type { ClientModule, MsgClient } from "../../play.types";
+import { FlowPlay } from "../../../@/flow/flow-play";
 
 export const update: ClientModule["update"] = (input) => {
 	switch (input.msgCore?.t) {

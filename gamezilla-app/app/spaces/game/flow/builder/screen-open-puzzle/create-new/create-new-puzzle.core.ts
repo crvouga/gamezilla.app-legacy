@@ -1,6 +1,7 @@
 import { isErr } from "gamezilla-app/@/core";
-import { FlowEdit, FlowPlay } from "../../../@/flow";
 import type { UpdateCore } from "../../builder.types";
+import { FlowEdit } from "../../../@/flow/flow-edit";
+import { FlowPlay } from "../../../@/flow/flow-play";
 
 const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {

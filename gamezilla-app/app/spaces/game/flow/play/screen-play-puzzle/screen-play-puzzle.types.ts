@@ -1,11 +1,11 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { FlowPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import { FlowGroupId } from "../../@/flow/flow/flow-group-id";
 import { CopyPuzzleTypes } from "./copy-puzzle";
+import { FlowPlay } from "../../@/flow/flow-play";
 
 export const MsgCore = p.or(
 	CopyPuzzleTypes.MsgCore,

@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from "bun:test";
-import { Flow, FlowPlay, type FlowVariant } from "../../@/flow";
+import { Flow, type FlowVariant } from "../../@/flow";
 import { ScreenPuzzlePlayCoreChildFixture } from "./@/testing.core";
 import type { MsgCore } from "./screen-play-puzzle.types";
 import { ScreenPlayPuzzleCore } from "./screen-play-puzzle.core";
@@ -7,6 +7,7 @@ import {
 	FlowGrid,
 	FlowGridShorthand,
 } from "../../@/flow/flow-variant/flow-grid";
+import { FlowPlay } from "../../@/flow/flow-play";
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 	const f = await ScreenPuzzlePlayCoreChildFixture(input);
