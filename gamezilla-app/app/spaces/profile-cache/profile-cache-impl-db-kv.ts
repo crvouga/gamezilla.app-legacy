@@ -1,6 +1,9 @@
-import { Ok } from "gamezilla-app/@/core";
-import { Profile, type UserId } from "gamezilla-app/app/@/data";
-import { DbConnKv, IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import { Ok, isErr } from "gamezilla-app/@/core";
+import { Profile } from "gamezilla-app/app/@/data";
+import {
+	DbConnKv,
+	type IDbConnKv,
+} from "gamezilla-app/app/@/server/db-conn-kv";
 import type { IProfileCache } from "./profile-cache";
 
 export const ProfileCacheDbKv = ({
@@ -15,28 +18,16 @@ export const ProfileCacheDbKv = ({
 	);
 	return {
 		async add(profiles) {
-			await Promise.all(
-				Object.entries(profiles).map(([userId, profile]) =>
-					profilesKv.set(userId, profile),
-				),
-			);
-			return Ok(null);
+			return profilesKv.setMany(Object.entries(profiles));
 		},
 		async get(userIds) {
-			const profiles: { [userId: UserId]: Profile } = {};
+			const got = await profilesKv.getMany(userIds);
 
-			const all = await Promise.all(
-				userIds.map((userId) => profilesKv.get(userId)),
-			);
-
-			for (const result of all) {
-				if (result.t === "ok") {
-					const profile = result.value;
-					if (profile) {
-						profiles[profile.userId] = profile;
-					}
-				}
+			if (isErr(got)) {
+				return got;
 			}
+
+			const profiles = Profile.indexByUserId(got.value);
 
 			return Ok(profiles);
 		},

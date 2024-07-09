@@ -1,3 +1,4 @@
+import { Ok, RequestResponse, requesting } from "gamezilla-app/@/core";
 import {
 	APP_SOUND,
 	playSound,
@@ -7,8 +8,8 @@ import {
 import type { SpaceId } from "gamezilla-app/app/@/data";
 import { IconGamepad, TopBar } from "gamezilla-app/app/@/ui";
 import { EmptyState } from "gamezilla-app/app/@/ui/empty-state";
-import { Ok, RequestResponse, requesting } from "gamezilla-app/@/core";
 import type { SpaceClientModule } from "../architecture/architecture";
+import type { SpaceCoreState } from "../spaces-core";
 import * as Spaces from "../spaces-core/spaces-core.client";
 import { StartSpaceClient } from "../start-space/start-space.client";
 import { ViewSpaceCard } from "./space-card";
@@ -37,12 +38,7 @@ const sendListSpacesRequest: SpaceClientModule["update"] = ({ model, ctx }) => {
 //
 
 const init: SpaceClientModule["init"] = ({ model, ctx }) => {
-	if (ctx.currentRoute.t === "space-list") {
-		return sendListSpacesRequest({ model, ctx });
-	}
-	return {
-		model,
-	};
+	return sendListSpacesRequest({ model, ctx });
 };
 
 //
@@ -62,6 +58,10 @@ const update: SpaceClientModule["update"] = (input) => {
 				return sendListSpacesRequest({ model, ctx });
 			}
 			return { model };
+		}
+
+		case "wire/server-connected": {
+			return sendListSpacesRequest({ model, ctx });
 		}
 	}
 
@@ -122,6 +122,17 @@ const update: SpaceClientModule["update"] = (input) => {
 //
 //
 
+const toSpaces = (model: Spaces.Model) => {
+	const spaces: SpaceCoreState.Started[] = [];
+	for (const spaceId in model.spaces) {
+		const started = Spaces.toSpaceStarted(model, spaceId as SpaceId);
+		if (started) {
+			spaces.push(started);
+		}
+	}
+	return spaces;
+};
+
 const View: SpaceClientModule["View"] = (props) => {
 	const currentUserId = props.ctx.currentUserId;
 
@@ -131,13 +142,7 @@ const View: SpaceClientModule["View"] = (props) => {
 
 	const currentUserSpaceId = props.model.spaceIdByUserId[currentUserId];
 
-	const spaces = Object.keys(props.model.spaces).flatMap((spaceId) => {
-		const space = Spaces.toSpaceStarted(props.model, spaceId as SpaceId);
-		if (!space) {
-			return [];
-		}
-		return [space];
-	});
+	const spaces = toSpaces(props.model);
 
 	return (
 		<div className="relative flex w-full flex-1 flex-col overflow-hidden">
