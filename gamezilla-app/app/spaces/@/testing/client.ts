@@ -1,7 +1,12 @@
-import { Posix, pipe, type TimeSpan } from "gamezilla-app/@/core";
+import { NonEmpty, Posix, pipe, type TimeSpan } from "gamezilla-app/@/core";
 import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
-import { routeChanged, type ClientCtx } from "gamezilla-app/app/@/client";
+import {
+	ClientCmd,
+	ClientEvent,
+	routeChanged,
+	type ClientCtx,
+} from "gamezilla-app/app/@/client";
 import { AppClientFixture } from "gamezilla-app/app/@/client/client-test-env";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import {
@@ -96,8 +101,8 @@ const randomProfile = (): Profile => {
 	};
 };
 
-export const SpaceClientFixture = async () => {
-	const f = await AppClientFixture();
+export const SpaceClientFixture = async (input?: { currentRoute?: Route }) => {
+	const f = await AppClientFixture(input);
 	const currentUser = { ...randomProfile(), userId: f.ctx.currentUserId };
 	const userA = randomProfile();
 	const userB = randomProfile();
@@ -168,6 +173,39 @@ export const SpaceClientFixture = async () => {
 		},
 		space,
 	};
+
+	type Input = {
+		ctx?: ClientCtx | null;
+		msg?: SpacesTypes.MsgClient | null;
+		msgCmd?: ClientCmd<{
+			MsgClient: SpacesTypes.MsgClient;
+			MsgToServer: SpacesTypes.MsgToServer;
+		}> | null;
+		msgServer?: SpacesTypes.MsgToClient | null;
+		msgEvt?: ClientEvent | null;
+	};
+
+	type Output = ReturnType<typeof SpaceClient.update>;
+
+	const updates = (initial: Output, inputs: Input[]): NonEmpty<Output> => {
+		const outputs: NonEmpty<Output> = [initial];
+		for (const input of inputs) {
+			const lastOutput = NonEmpty.last(outputs);
+			const output = SpaceClient.update({
+				ctx: input.ctx ?? ctx,
+				model: lastOutput.model,
+				msg: input.msg,
+				msgServer: input.msgServer,
+			});
+			outputs.push(output);
+		}
+		return outputs;
+	};
+
+	const update = (initial: Output, inputs: Input[]): Output => {
+		return NonEmpty.last(updates(initial, inputs));
+	};
+
 	return {
 		...f,
 		ctx,
@@ -176,6 +214,8 @@ export const SpaceClientFixture = async () => {
 		userA,
 		userB,
 		userC,
+		updates,
+		update,
 	};
 };
 

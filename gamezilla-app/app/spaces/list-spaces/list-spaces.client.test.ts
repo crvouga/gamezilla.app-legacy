@@ -1,4 +1,12 @@
 import { describe, expect, it } from "bun:test";
+import {
+	Posix,
+	RequestResponse,
+	TimeSpan,
+	isRequesting,
+	isResponseOk,
+} from "gamezilla-app/@/core";
+import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
@@ -8,44 +16,45 @@ import {
 } from "gamezilla-app/app/@/client";
 import { SpaceId } from "gamezilla-app/app/@/data";
 import {
-	RequestResponse,
-	TimeSpan,
-	isRequesting,
-	isResponseOk,
-} from "gamezilla-app/@/core";
-import {
+	Ctx,
+	SpaceClientFixture,
 	changeRoute,
 	clickSpaceCard,
 	clickedGoHomeButton,
-	Ctx,
 	elapsed,
 	init,
 	serverListedSpaces,
 } from "../@/testing/client";
+import * as SpaceClient from "../spaces.client";
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
 	return changeRoute(ctx, { n: "spaces", t: "space-list" });
 };
 
+const Fixture = async (input?: { currentRoute?: Route }) => {
+	const f = await SpaceClientFixture(input);
+	return {
+		...f,
+	};
+};
+
 describe(import.meta.file, () => {
-	it("should request spaces on init if on space list route", () => {
-		const ctx = Ctx();
-		const output = init({
-			...ctx,
+	it("should request spaces on init if on space list route", async () => {
+		const f = await Fixture({
 			currentRoute: { n: "spaces", t: "space-list" },
 		});
+		const output = SpaceClient.init({ ctx: f.ctx });
 		expect(
 			isRequesting(output.model.listSpacesRequest) &&
-				output.model.listSpacesRequest.requestedAt === ctx.now,
+				output.model.listSpacesRequest.requestedAt === f.ctx.now,
 		).toBe(true);
 	});
 
-	it("should send list space request to server initially", () => {
-		const ctx = Ctx();
-		const output = init({
-			...ctx,
+	it("should send list space request to server initially", async () => {
+		const f = await Fixture({
 			currentRoute: { n: "spaces", t: "space-list" },
 		});
+		const output = SpaceClient.init({ ctx: f.ctx });
 		expect(
 			output.msgCmd?.some(
 				(msgCmd) => msgCmd.t === "wire" && msgCmd.c.msg?.t === "list-spaces",
@@ -53,29 +62,54 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it("should request spaces on space list route change", () => {
-		const ctx = Ctx();
-		const updated = AppClientModule.andThen(
-			init(ctx),
-			changeRouteToSpaceList(ctx),
-		);
-		expect(updated.model.listSpacesRequest.t === "loading").toBe(true);
+	it("should request spaces on space list route change", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			{
+				msgEvt: {
+					t: "routing/route-changed",
+					route: { n: "spaces", t: "space-list" },
+				},
+			},
+		]);
+		expect(output.model.listSpacesRequest.t === "loading").toBe(true);
 	});
 
-	it("should timeout request", () => {
-		const ctx = Ctx();
-		const updated = AppClientModule.andThen(
-			init(ctx),
-			changeRouteToSpaceList(ctx),
-			elapsed(ctx, TimeSpan.minutes(5)),
-		);
-
+	it("should timeout request", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			{
+				msgEvt: {
+					t: "routing/route-changed",
+					route: { n: "spaces", t: "space-list" },
+				},
+			},
+			{
+				ctx: { ...f.ctx, now: Posix.future(f.ctx.now, TimeSpan.minutes(5)) },
+				msg: { t: "time-passed" },
+			},
+		]);
 		expect(
-			RequestResponse.didRequestTimeout(updated.model.listSpacesRequest),
+			RequestResponse.didRequestTimeout(output.model.listSpacesRequest),
 		).toBe(true);
 	});
 
-	it("should be ok when server responds with a list of spaces", () => {
+	it("should be ok when server responds with a list of spaces", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			{
+				msgEvt: {
+					t: "routing/route-changed",
+					route: { n: "spaces", t: "space-list" },
+				},
+			},
+			// {
+			// 	// msgServer: { t: "listed-spaces", },
+			// },
+		]);
+		expect(
+			RequestResponse.didRequestTimeout(output.model.listSpacesRequest),
+		).toBe(true);
 		const ctx = Ctx();
 		const updated = AppClientModule.andThen(
 			init(ctx),

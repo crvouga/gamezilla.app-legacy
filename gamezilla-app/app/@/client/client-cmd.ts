@@ -108,7 +108,7 @@ export const didOpenProfile = <T>(
 	{
 		msgCmd,
 	}: {
-		msgCmd?: (ProfileCmd | T)[];
+		msgCmd?: (ProfileCmd | T)[] | null;
 	},
 	userId: UserId,
 ): boolean => {
@@ -204,7 +204,7 @@ export const didCopyToClipboard = <T extends ClientCmdTypes, TCmd>(
 	{
 		msgCmd,
 	}: {
-		msgCmd?: (PlatformCmd<T["MsgClient"]> | TCmd)[];
+		msgCmd?: (PlatformCmd<T["MsgClient"]> | TCmd)[] | null;
 	},
 	isValidText?: (text: string) => boolean,
 ): boolean => {
@@ -254,7 +254,7 @@ export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
 	{
 		msgCmd,
 	}: {
-		msgCmd?: (WireCmd<T> | TCmd)[];
+		msgCmd?: (WireCmd<T> | TCmd)[] | null;
 	},
 	predicate: (msg: T["MsgToServer"]) => boolean,
 ): boolean => {
@@ -308,7 +308,7 @@ export const showToast = <T extends ClientCmdTypes>(
 
 export const didShowToast = <T>(
 	output?: {
-		msgCmd?: (ToastCmd | T)[];
+		msgCmd?: (ToastCmd | T)[] | null;
 	},
 	predicate?: (toast: { message: string }) => boolean,
 ): boolean => {
@@ -377,7 +377,7 @@ export const didShowErrorSm = <TCmd>(
 	{
 		msgCmd,
 	}: {
-		msgCmd?: (ToastCmd | SoundCmd | TCmd)[];
+		msgCmd?: (ToastCmd | SoundCmd | TCmd)[] | null;
 	},
 	errorMessage?: string,
 ): boolean => {
@@ -468,7 +468,7 @@ export const didPlaySound = <T>(
 	{
 		msgCmd,
 	}: {
-		msgCmd?: (SoundCmd | T)[];
+		msgCmd?: (SoundCmd | T)[] | null | null;
 	},
 	src?: string,
 ): boolean => {
@@ -539,7 +539,7 @@ export const pushRoute = <T extends ClientCmdTypes>(
 
 export const didPushRoute = <T>(
 	output?: {
-		msgCmd?: (RouteCmd | T)[];
+		msgCmd?: (RouteCmd | T)[] | null;
 	},
 	predicate?: (route: Route) => boolean,
 ): boolean => {
@@ -682,7 +682,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 
 const tag = <Tag extends string, T extends ClientCmdTypes>(
 	tag: Tag,
-	msgCmd?: (ClientCmd<T> | null | undefined)[] | null | undefined,
+	msgCmd?: (ClientCmd<T> | null | undefined)[] | null | undefined | null,
 ): ClientCmd<{
 	MsgClient: { t: Tag; c: T["MsgClient"] };
 	MsgToServer: { t: Tag; c: T["MsgToServer"] };

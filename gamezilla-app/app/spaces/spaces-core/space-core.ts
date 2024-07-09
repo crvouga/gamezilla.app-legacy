@@ -6,6 +6,7 @@ import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import {
 	EventId,
 	EventMeta,
+	withId,
 	type WithEventId,
 	type WithEventMeta,
 } from "../@/event";
@@ -312,4 +313,17 @@ export const mergeLeft = (left: Model, right: Model): Model => {
 			...right.eventIds,
 		},
 	};
+};
+
+export const generate = (spaceId: SpaceId, startedBy: UserId) => {
+	return [
+		withId<SpaceCoreEvent>({
+			t: "user-started-space",
+			spaceId,
+			userId: startedBy,
+		}),
+	].reduce(
+		(model, msgEvt) => appendEvent({ model, event: msgEvt }),
+		init,
+	);
 };
