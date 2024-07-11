@@ -25,6 +25,7 @@ import {
 	init,
 	serverListedSpaces,
 } from "../@/testing/client";
+import { SpaceCore } from "../spaces-core";
 import * as SpaceClient from "../spaces.client";
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
@@ -103,20 +104,19 @@ describe(import.meta.file, () => {
 					route: { n: "spaces", t: "space-list" },
 				},
 			},
-			// {
-			// 	// msgServer: { t: "listed-spaces", },
-			// },
+			{
+				msgServer: {
+					t: "listed-spaces",
+					spaces: [
+						SpaceCore.random(),
+						SpaceCore.random(),
+						SpaceCore.random()
+					],
+					causedBy: "list-spaces",
+				},
+			},
 		]);
-		expect(
-			RequestResponse.didRequestTimeout(output.model.listSpacesRequest),
-		).toBe(true);
-		const ctx = Ctx();
-		const updated = AppClientModule.andThen(
-			init(ctx),
-			changeRouteToSpaceList(ctx),
-			serverListedSpaces(ctx),
-		);
-		expect(isResponseOk(updated.model.listSpacesRequest)).toBe(true);
+		expect(isResponseOk(output.model.listSpacesRequest)).toBe(true);
 	});
 
 	it("should be ok when server responds with a list of spaces even when it timed out", () => {

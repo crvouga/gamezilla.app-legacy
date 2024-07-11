@@ -1,14 +1,13 @@
-import { SpaceId, UserId } from "gamezilla-app/app/@/data";
+import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
 import { ascend, eq, pipe } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
 import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
+import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import {
 	EventId,
 	EventMeta,
-	withId,
 	type WithEventId,
-	type WithEventMeta,
+	type WithEventMeta
 } from "../@/event";
 import { SpaceCoreEvent } from "./space-core-event";
 import * as SpaceState from "./space-core-state";
@@ -313,17 +312,4 @@ export const mergeLeft = (left: Model, right: Model): Model => {
 			...right.eventIds,
 		},
 	};
-};
-
-export const generate = (spaceId: SpaceId, startedBy: UserId) => {
-	return [
-		withId<SpaceCoreEvent>({
-			t: "user-started-space",
-			spaceId,
-			userId: startedBy,
-		}),
-	].reduce(
-		(model, msgEvt) => appendEvent({ model, event: msgEvt }),
-		init,
-	);
 };
