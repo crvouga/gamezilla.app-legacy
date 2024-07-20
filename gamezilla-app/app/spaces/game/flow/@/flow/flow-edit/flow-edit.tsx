@@ -1,7 +1,7 @@
 import { eq, memoize } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { History } from "gamezilla-app/@/history";
-import { APP_SOUND } from "gamezilla-app/app/@/client";
+import { APP_SOUND, ClientCtx } from "gamezilla-app/app/@/client";
 import {
 	Button,
 	Drawer,
@@ -477,7 +477,11 @@ export const toFlowMemoized = memoize({
 //
 //
 
-export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
+export const View = (input: {
+	ctx: ClientCtx;
+	model: Model;
+	dispatch: (m: Msg) => void;
+}) => {
 	const { model, dispatch } = input;
 	return (
 		<div className="flex h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto">
@@ -564,7 +568,7 @@ const ViewStatus: typeof View = (input) => {
 			? "first"
 			: "last";
 	return (
-		<div className="flex w-full items-center justify-center gap-1 pb-2">
+		<div className="flex w-full items-center justify-center gap-1 p-2">
 			{`Placing ${position}`}
 			<ViewTerminal
 				groupId={toCurrentPlacingGroupId(input.model)}

@@ -6,22 +6,22 @@ import { FlowGridShorthand } from "../flow-variant/flow-grid/flow-grid-shorthand
 import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { FlowPlay } from ".";
 
-const Fixture = async ({ flow }: { flow: FlowVariant.Model }) => {
-	const flowPuzzle = await FlowPuzzle.random({ flow });
-	const init = FlowPlay.init({ flowPuzzle });
+const Fixture = async ({ ctxFlow }: { ctxFlow: FlowVariant.Model }) => {
+	const ctxflowPuzzle = await FlowPuzzle.random({ flow: ctxFlow });
+	const ctx = { flowPuzzle: ctxflowPuzzle };
+	const init = FlowPlay.init({ ctx });
 
 	const update = (init: FlowPlay.Model, msgs: FlowPlay.Msg[]) => {
 		return msgs.reduce<ReturnType<typeof FlowPlay.update>>(
-			(output, msg) =>
-				FlowPlay.update({ flowPuzzle, model: output.model, msg }),
+			(output, msg) => FlowPlay.update({ ctx, model: output.model, msg }),
 			{ model: init },
 		);
 	};
 
-	const solutionMsgs = FlowPlay.toSolutionMsgs({ flow });
+	const solutionMsgs = FlowPlay.toSolutionMsgs({ flow: ctxFlow });
 
 	return {
-		flow,
+		flow: ctxFlow,
 		init,
 		update,
 		solutionMsgs,
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
 			[" ", " ", "A"],
 		]);
 
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const msgs = FlowPlay.toSolutionMsgs({ flow });
 
@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const output = f.update(f.init, [
 			{
@@ -87,7 +87,7 @@ describe(import.meta.file, () => {
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const output = f.update(f.init, [
 			{
@@ -105,7 +105,7 @@ describe(import.meta.file, () => {
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const output = f.update(f.init, [
 			{
@@ -132,7 +132,7 @@ describe(import.meta.file, () => {
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const output = f.update(f.init, [
 			{
@@ -158,7 +158,7 @@ describe(import.meta.file, () => {
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const output = f.update(f.init, [
 			{
@@ -180,7 +180,7 @@ describe(import.meta.file, () => {
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const output = f.update(f.init, [
 			{
@@ -207,7 +207,7 @@ describe(import.meta.file, () => {
 			["a", "a", "A"],
 		]);
 
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const output = f.update(f.init, [
 			{
@@ -229,7 +229,7 @@ describe(import.meta.file, () => {
 			["A", " "],
 			[" ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const msgs: FlowPlay.Msg[] = [
 			{
@@ -253,7 +253,7 @@ describe(import.meta.file, () => {
 			["A", " "],
 			[" ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const model = f.update(f.init, [{ t: "user-clicked-hint" }]).model;
 
@@ -268,7 +268,7 @@ describe(import.meta.file, () => {
 			[" ", " ", "a"],
 			[" ", " ", "A"],
 		]);
-		const f = await Fixture({ flow });
+		const f = await Fixture({ ctxFlow: flow });
 
 		const msgs: FlowPlay.Msg[] = [
 			{
@@ -293,7 +293,7 @@ describe(import.meta.file, () => {
 
 	test("reset pipes", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
+			ctxFlow: FlowGridShorthand.toGrid([
 				["A", " ", " "],
 				["a", " ", " "],
 				["a", "a", "A"],
@@ -311,7 +311,7 @@ describe(import.meta.file, () => {
 
 	test("reset hints used", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
+			ctxFlow: FlowGridShorthand.toGrid([
 				["A", " ", " "],
 				[" ", " ", " "],
 				[" ", " ", "A"],
@@ -325,7 +325,7 @@ describe(import.meta.file, () => {
 
 	test("output reset event", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
+			ctxFlow: FlowGridShorthand.toGrid([
 				["A", " "],
 				[" ", "A"],
 			]),

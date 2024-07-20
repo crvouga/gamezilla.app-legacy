@@ -1,9 +1,8 @@
-import type { VDom } from "gamezilla-app/@/vdom";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import {
 	Drawer,
 	IconEllipsisVertical,
-	IconPenToSquare,
+	IconPen,
 	IconPlay,
 	cn,
 } from "gamezilla-app/app/@/ui";
@@ -111,9 +110,11 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 			const updated = FlowPlay.update({
 				msg: msgCore.c,
 				model: modelCore.puzzleBuilder.play,
-				flowPuzzle: {
-					...modelCore.puzzleBuilder.puzzle,
-					flow,
+				ctx: {
+					flowPuzzle: {
+						...modelCore.puzzleBuilder.puzzle,
+						flow,
+					},
 				},
 			});
 
@@ -180,10 +181,34 @@ const View: ClientModule["View"] = (input) => {
 
 	return (
 		<>
+			<div className="px-4 py-2 flex items-center">
+				<p className=" text-lg">{input.modelCore.puzzleBuilder?.puzzle.name}</p>
+			</div>
 			<ViewMode {...input} />
 			<ViewMoreDrawer {...input} />
 			<SaveChangesClient.ViewUnsavedChangesDrawer {...input} />
 		</>
+	);
+};
+
+const ViewChip = (input: {
+	label: string;
+	color: "amber" | "blue";
+	position: "top-left" | "top-center";
+}) => {
+	return (
+		<div
+			className={cn(
+				"text-white drop-shadow-2xl px-2 py-1 font-bold rounded-3xl text-xs",
+				input.position === "top-left" && "absolute top-3 left-3",
+				input.position === "top-center" &&
+					"absolute top-3 left-1/2 transform -translate-x-1/2",
+				input.color === "amber" && "amber-blue-600 bg-amber-500",
+				input.color === "blue" && "blue-amber-600 bg-blue-500",
+			)}
+		>
+			{input.label}
+		</div>
 	);
 };
 
@@ -210,15 +235,11 @@ const ViewMode: ClientModule["View"] = (input) => {
 		case "edit": {
 			return (
 				<div className="flex h-full w-full flex-col items-center justify-center">
-					<ViewModeBar
-						icon={(props) => <IconPenToSquare {...props} />}
-						label="Edit Mode"
-						color="yellow"
-					/>
-
-					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
+					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden border-2 border-amber-500 relative">
+						<ViewChip label="Edit Mode" color="amber" position="top-left" />
 						<FlowEdit.View
 							model={puzzleBuilder.edit}
+							ctx={input.ctx}
 							dispatch={(c) =>
 								dispatch({
 									t: "screen-puzzle-builder.flow-ui-edit",
@@ -254,15 +275,11 @@ const ViewMode: ClientModule["View"] = (input) => {
 			const isSolved = Flow.isSolved(flow);
 			return (
 				<div className="flex h-full w-full flex-col items-center justify-center">
-					<ViewModeBar
-						icon={(props) => <IconPlay {...props} />}
-						label="Play Mode"
-						color="blue"
-					/>
+					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden relative border-2 border-blue-500">
+						<ViewChip label="Play Mode" color="blue" position="top-left" />
+						<div className="w-full flex-1"></div>
 
-					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden relative">
-						<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden" />
-
+					
 						<FlowPlay.View
 							model={puzzleBuilder.play}
 							flow={flow}
@@ -275,8 +292,11 @@ const ViewMode: ClientModule["View"] = (input) => {
 						/>
 
 						<FlowPlay.CheckmarkAnimation open={isSolved} />
+					
 
-						<div className="flex w-full flex-1 flex-col items-center justify-end overflow-hidden">
+						<div className="w-full flex-1"></div>
+
+						<div className="flex w-full flex-col items-center justify-end overflow-hidden shrink-0">
 							<Actions.View
 								ctx={input.ctx}
 								id="hint-button"
@@ -284,13 +304,15 @@ const ViewMode: ClientModule["View"] = (input) => {
 								onToggle={() => {}}
 								buttons={[
 									FlowPlay.viewHintAction({
-										ctx: input.ctx,
+										ctx: {
+											...input.ctx,
+											flowPuzzle: { ...puzzleBuilder.puzzle, flow },
+										},
 										dispatch: (c) =>
 											dispatch({
 												t: "screen-puzzle-builder.flow-ui-play",
 												c,
 											}),
-										flowPuzzle: { ...puzzleBuilder.puzzle, flow },
 										model: puzzleBuilder.play,
 									}),
 									FlowPlay.viewResetAction({
@@ -312,7 +334,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 						<SaveChangesClient.ViewActionButtons {...input} model={model} />
 
 						<ViewBottomButtonBarAction
-							icon={(props) => <IconPenToSquare {...props} />}
+							icon={(props) => <IconPen {...props} />}
 							label="Edit Mode"
 							classNames={{
 								button: "text-amber-500",
@@ -349,24 +371,6 @@ const ViewSpectating: ClientModule["View"] = (input) => {
 				/>
 			</div>
 		</GameLayout>
-	);
-};
-
-const ViewModeBar = (props: {
-	icon: (props: { className: string }) => VDom;
-	label: string;
-	color: "blue" | "yellow";
-}) => {
-	return (
-		<div
-			className={cn(
-				"flex w-full items-center justify-center gap-2 p-1 text-xs font-bold text-white",
-				props.color === "blue" ? "bg-blue-500" : "bg-amber-500",
-			)}
-		>
-			{props.icon({ className: "h-4 w-4" })}
-			{props.label}
-		</div>
 	);
 };
 

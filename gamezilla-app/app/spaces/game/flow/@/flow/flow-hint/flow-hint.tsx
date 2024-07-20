@@ -11,6 +11,10 @@ import { FlowTerminal } from "../flow/flow-terminal";
 import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
 import { eq } from "gamezilla-app/@/core";
 
+type Ctx = {
+	flowPuzzle: FlowPuzzle;
+};
+
 export const Model = p.obj({
 	pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
 	terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
@@ -25,11 +29,11 @@ export const Msg = p.or(
 );
 export type Msg = p.Infer<typeof Msg>;
 
-export const init = (input: { flowPuzzle: FlowPuzzle }): Model => {
+export const init = (input: { ctx: Ctx }): Model => {
 	return {
 		pipesBySourceId: {},
 		usedHints: {},
-		terminalsByGroupId: input.flowPuzzle.flow.terminalsByGroupId,
+		terminalsByGroupId: input.ctx.flowPuzzle.flow.terminalsByGroupId,
 	};
 };
 
@@ -47,7 +51,9 @@ export const update = <
 >(input: {
 	msg: Msg | TMsg;
 	model: TModel;
-	flowPuzzle: FlowPuzzle;
+	ctx: {
+		flowPuzzle: FlowPuzzle;
+	};
 }): {
 	model: TModel;
 	event?: Event;
@@ -55,7 +61,7 @@ export const update = <
 	switch (input.msg.t) {
 		case "user-clicked-hint": {
 			const flow = toFlow({
-				flow: input.flowPuzzle.flow,
+				flow: input.ctx.flowPuzzle.flow,
 				model: input.model,
 			});
 
@@ -66,15 +72,15 @@ export const update = <
 			}
 
 			const terminalFlowPuzzle = Flow.toTerminalByGroupId(
-				input.flowPuzzle.flow,
+				input.ctx.flowPuzzle.flow,
 				nextHintGroupId,
 			);
 			const terminalFlowModel = Flow.toTerminalByGroupId(flow, nextHintGroupId);
 
 			const solution =
-				input.flowPuzzle.flowSolutions.length > 0 &&
+				input.ctx.flowPuzzle.flowSolutions.length > 0 &&
 				eq(terminalFlowPuzzle, terminalFlowModel)
-					? input.flowPuzzle.flowSolutions[0]
+					? input.ctx.flowPuzzle.flowSolutions[0]
 					: FlowAlgoSolve.solve(flow);
 
 			if (!solution) {
@@ -176,13 +182,12 @@ export const toFlow = (input: {
 };
 
 export const viewHintAction = (input: {
-	flowPuzzle: FlowPuzzle;
 	model: Model;
 	dispatch: (msg: Msg) => void;
-	ctx: ClientCtx;
+	ctx: ClientCtx & Ctx;
 }): ActionProps => {
 	const flow = toFlow({
-		flow: input.flowPuzzle.flow,
+		flow: input.ctx.flowPuzzle.flow,
 		model: input.model,
 	});
 	const disabled = Flow.isSolved(flow);

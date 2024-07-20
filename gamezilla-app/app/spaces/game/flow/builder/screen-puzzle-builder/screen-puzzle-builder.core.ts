@@ -28,7 +28,9 @@ const updateCoreMain = ({
 			const updated = FlowPlay.update({
 				model: modelCore.puzzleBuilder.play,
 				msg: msgCore.c,
-				flowPuzzle: { ...modelCore.puzzleBuilder.puzzle, flow: flow },
+				ctx: {
+					flowPuzzle: { ...modelCore.puzzleBuilder.puzzle, flow: flow },
+				},
 			});
 
 			return {
@@ -83,11 +85,13 @@ const updateCoreMain = ({
 				return modelCore;
 			}
 			const initial = FlowPlay.init({
-				flowPuzzle: {
-					...modelCore.puzzleBuilder.puzzle,
-					flow: FlowEdit.toFlowMemoized({
-						model: modelCore.puzzleBuilder.edit,
-					}),
+				ctx: {
+					flowPuzzle: {
+						...modelCore.puzzleBuilder.puzzle,
+						flow: FlowEdit.toFlowMemoized({
+							model: modelCore.puzzleBuilder.edit,
+						}),
+					},
 				},
 			});
 			return {

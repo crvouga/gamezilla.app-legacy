@@ -142,7 +142,9 @@ updates.push(({ modelCore, msgCore }) => {
 						puzzleIndex: msgCore.puzzleIndex,
 						puzzle: msgCore.puzzle,
 						playUI: FlowPlay.init({
-							flowPuzzle: msgCore.puzzle,
+							ctx: {
+								flowPuzzle: msgCore.puzzle,
+							},
 						}),
 					},
 				},
@@ -225,7 +227,9 @@ updates.push(({ modelCore, msgCore }) => {
 			const screen = modelCore.packBuilder.screen;
 
 			const updated = FlowPlay.update({
-				flowPuzzle: screen.puzzle,
+				ctx: {
+					flowPuzzle: screen.puzzle,
+				},
 				model: screen.playUI,
 				msg: msgCore.c,
 			});
@@ -276,7 +280,9 @@ updates.push(({ modelCore, msgCore }) => {
 							modelCore.packBuilder.pack.puzzleIds.length - 1,
 						),
 						playUI: FlowPlay.init({
-							flowPuzzle: msgCore.nextPuzzle,
+							ctx: {
+								flowPuzzle: msgCore.nextPuzzle,
+							},
 						}),
 						puzzle: msgCore.nextPuzzle,
 					},
@@ -315,7 +321,9 @@ updates.push(({ modelCore, msgCore }) => {
 							modelCore.packBuilder.pack.puzzleIds.length - 1,
 						),
 						playUI: FlowPlay.init({
-							flowPuzzle: msgCore.previousPuzzle,
+							ctx: {
+								flowPuzzle: msgCore.previousPuzzle,
+							},
 						}),
 						puzzle: msgCore.previousPuzzle,
 					},

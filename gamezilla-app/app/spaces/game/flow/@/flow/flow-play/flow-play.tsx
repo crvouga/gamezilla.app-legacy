@@ -23,6 +23,10 @@ import { FlowTerminal } from "../flow/flow-terminal";
 //
 //
 
+type Ctx = {
+	flowPuzzle: FlowPuzzle;
+};
+
 const Idle = p.obj({ t: p.l("idle") });
 type Idle = p.Infer<typeof Idle>;
 
@@ -46,17 +50,17 @@ export const Model = p.and(
 );
 export type Model = p.Infer<typeof Model>;
 
-export const init = (input: { flowPuzzle: FlowPuzzle }): Model => {
+export const init = (input: { ctx: Ctx }): Model => {
 	return {
 		...FlowHint.init(input),
-		pipesBySourceId: { ...input.flowPuzzle.flow.pipesBySourceId },
-		terminalsByGroupId: { ...input.flowPuzzle.flow.terminalsByGroupId },
+		pipesBySourceId: { ...input.ctx.flowPuzzle.flow.pipesBySourceId },
+		terminalsByGroupId: { ...input.ctx.flowPuzzle.flow.terminalsByGroupId },
 		status: { t: "idle" },
 	};
 };
 
 export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
-	const initial = init(input);
+	const initial = init({ ctx: input });
 
 	const terminal = Flow.randomTerminal(input.flowPuzzle.flow);
 
@@ -251,11 +255,11 @@ export const eventToSoundSrc = (event: Event): string => {
 export const update = ({
 	msg,
 	model,
-	flowPuzzle,
+	ctx,
 }: {
 	msg: Msg;
 	model: Model;
-	flowPuzzle: FlowPuzzle;
+	ctx: Ctx;
 }): {
 	model: Model;
 	event?: Event;
@@ -263,19 +267,19 @@ export const update = ({
 	const updated = updateMain({
 		msg,
 		model,
-		flowPuzzle,
+		ctx,
 	});
 
 	const updatedHint = FlowHint.update({
 		model: updated.model,
 		msg,
-		flowPuzzle,
+		ctx,
 	});
 
 	const updatedReset = updateReset({
 		model: updatedHint.model,
 		msg,
-		flowPuzzle,
+		ctx,
 	});
 
 	return {
@@ -307,11 +311,11 @@ const updateReset: typeof update = ({ model, msg }) => {
 	}
 };
 
-const updateMain: typeof update = ({ model, flowPuzzle, msg }) => {
+const updateMain: typeof update = ({ model, ctx, msg }) => {
 	switch (model.status.t) {
 		case "dragging": {
 			return updateDragging({
-				flow: flowPuzzle.flow,
+				ctx,
 				msg,
 				model,
 				modelStatus: model.status,
@@ -319,15 +323,15 @@ const updateMain: typeof update = ({ model, flowPuzzle, msg }) => {
 		}
 
 		case "idle": {
-			return updateIdle({ flowPuzzle, msg, model });
+			return updateIdle({ ctx, msg, model });
 		}
 	}
 };
 
-const updateIdle: typeof update = ({ msg, model, flowPuzzle }) => {
+const updateIdle: typeof update = ({ msg, model, ctx }) => {
 	switch (msg.t) {
 		case "user-pressed-down-node": {
-			const current = toFlow({ model, flow: flowPuzzle.flow });
+			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
 
 			const groupId = Flow.toGroupId(current, msg.nodeId);
 
@@ -368,12 +372,12 @@ const updateDragging = ({
 	msg,
 	modelStatus,
 	model,
-	flow,
+	ctx,
 }: {
 	msg: Msg;
 	model: Model;
 	modelStatus: Dragging;
-	flow: FlowVariant.Model;
+	ctx: Ctx;
 }): {
 	model: Model;
 	event?: Event;
@@ -382,11 +386,7 @@ const updateDragging = ({
 		case "user-dragged-over-node": {
 			const { nodeId } = msg;
 
-			const current: FlowVariant.Model = {
-				...flow,
-				pipesBySourceId: model.pipesBySourceId,
-				terminalsByGroupId: model.terminalsByGroupId,
-			};
+			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
 
 			const extended = FlowAlgoDrawPipes.drawPipes(
 				current,
@@ -405,7 +405,7 @@ const updateDragging = ({
 		}
 
 		case "user-pressed-up-node": {
-			const current = toFlow({ model, flow });
+			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
 			const modelNew: Model = { ...model, status: { t: "idle" } };
 
 			const activeGroupTerminal = Flow.toTerminalByGroupId(
@@ -448,7 +448,7 @@ const updateDragging = ({
 		}
 
 		case "user-dragging-left": {
-			const current = toFlow({ model, flow });
+			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
 			const isSolved = Flow.isSolved(current);
 
 			const terminal = Flow.toTerminalByGroupId(

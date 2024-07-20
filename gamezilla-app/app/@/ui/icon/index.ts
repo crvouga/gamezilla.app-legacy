@@ -29,6 +29,7 @@ export * from "./icon-language";
 export * from "./icon-lightbulb";
 export * from "./icon-magnifying-glass";
 export * from "./icon-mobile-phone";
+export * from "./icon-pen";
 export * from "./icon-pen-to-square";
 export * from "./icon-phone";
 export * from "./icon-play";

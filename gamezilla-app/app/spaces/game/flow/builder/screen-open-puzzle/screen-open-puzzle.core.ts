@@ -17,7 +17,9 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
 						flow: msgCore.puzzle.flow,
 					}),
 					play: FlowPlay.init({
-						flowPuzzle: msgCore.puzzle,
+						ctx: {
+							flowPuzzle: msgCore.puzzle,
+						},
 					}),
 					mode: { t: "edit" },
 					puzzle: msgCore.puzzle,

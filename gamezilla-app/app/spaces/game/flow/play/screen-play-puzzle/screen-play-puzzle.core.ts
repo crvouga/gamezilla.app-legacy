@@ -28,7 +28,9 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			const flowPlayNew = FlowPlay.update({
 				msg: msgCore.c,
 				model: modelCore.flowPlay,
-				flowPuzzle: modelCore.flowPuzzle,
+				ctx: {
+					flowPuzzle: modelCore.flowPuzzle,
+				},
 			});
 
 			if (flowPlayNew.event?.t === "solved") {
@@ -61,7 +63,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 		case "user-clicked-next-puzzle": {
 			return {
 				...modelCore,
-				flowPlay: FlowPlay.init({ flowPuzzle: msgCore.nextPuzzle }),
+				flowPlay: FlowPlay.init({ ctx: { flowPuzzle: msgCore.nextPuzzle } }),
 				opened:
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
 				flowPuzzle: msgCore.nextPuzzle,
@@ -73,7 +75,9 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			return {
 				...modelCore,
 				flowPlay: FlowPlay.init({
-					flowPuzzle: msgCore.prevPuzzle,
+					ctx: {
+						flowPuzzle: modelCore.flowPuzzle,
+					},
 				}),
 				opened:
 					modelCore.opened === "puzzle-complete" ? null : modelCore.opened,
@@ -86,7 +90,9 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 			return {
 				...modelCore,
 				flowPlay: FlowPlay.init({
-					flowPuzzle: modelCore.flowPuzzle,
+					ctx: {
+						flowPuzzle: modelCore.flowPuzzle,
+					},
 				}),
 			};
 		}
@@ -135,7 +141,7 @@ const initCore = (input: {
 }): ModelCore => {
 	return {
 		...input,
-		flowPlay: FlowPlay.init({ flowPuzzle: input.flowPuzzle }),
+		flowPlay: FlowPlay.init({ ctx: { flowPuzzle: input.flowPuzzle } }),
 		opened: null,
 		t: "screen-play-puzzle",
 		hints: {},

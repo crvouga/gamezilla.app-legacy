@@ -9,7 +9,7 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 			if (isErr(msgCore.created)) {
 				return modelCore;
 			}
-			const puzzleNew = msgCore.created.value;
+			const flowPuzzleNew = msgCore.created.value;
 			return {
 				...modelCore,
 				listTab: modelCore.listTab,
@@ -18,9 +18,9 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 				puzzleBuilder: {
 					t: "puzzle-builder",
 					mode: { t: "edit" },
-					edit: FlowEdit.init({ flow: puzzleNew.flow }),
-					play: FlowPlay.init({ flowPuzzle: puzzleNew }),
-					puzzle: puzzleNew,
+					edit: FlowEdit.init({ flow: flowPuzzleNew.flow }),
+					play: FlowPlay.init({ ctx: { flowPuzzle: flowPuzzleNew } }),
+					puzzle: flowPuzzleNew,
 				},
 			};
 		}

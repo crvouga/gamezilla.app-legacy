@@ -108,7 +108,9 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 			const output = FlowPlay.update({
 				msg: input.msgCore.c,
 				model: input.modelCore.screen.flowPlay,
-				flowPuzzle: input.modelCore.screen.flowPuzzle,
+				ctx: {
+					flowPuzzle: input.modelCore.screen.flowPuzzle,
+				},
 			});
 
 			if (!output.event) {
@@ -263,8 +265,7 @@ const View: ClientModule["View"] = (input) => {
 								})
 							: FlowPlay.viewHintAction({
 									model: flowPlay,
-									ctx: input.ctx,
-									flowPuzzle,
+									ctx: { ...input.ctx, flowPuzzle },
 									dispatch: (c) =>
 										input.dispatch({ t: "flow-variant-play", c }),
 								}),

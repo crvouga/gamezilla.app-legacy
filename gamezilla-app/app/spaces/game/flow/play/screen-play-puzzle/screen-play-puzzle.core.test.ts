@@ -100,7 +100,9 @@ describe(import.meta.file, () => {
 		]);
 
 		expect(before.flowPlay).not.toEqual(after.flowPlay);
-		expect(after.flowPlay).toEqual(FlowPlay.init({ flowPuzzle: f.nextPuzzle }));
+		expect(after.flowPlay).toEqual(
+			FlowPlay.init({ ctx: { flowPuzzle: f.nextPuzzle } }),
+		);
 	});
 
 	it("should go into puzzle solved state after solving", async () => {
@@ -225,7 +227,9 @@ describe(import.meta.file, () => {
 				t: "user-clicked-reset-puzzle",
 			},
 		]);
-		expect(before.flowPlay).toEqual(FlowPlay.init({ flowPuzzle: f.puzzle }));
+		expect(before.flowPlay).toEqual(
+			FlowPlay.init({ ctx: { flowPuzzle: f.puzzle } }),
+		);
 	});
 
 	it("should be in a solving state after going to the next puzzle", async () => {
