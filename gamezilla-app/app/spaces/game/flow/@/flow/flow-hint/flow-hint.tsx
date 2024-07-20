@@ -9,6 +9,7 @@ import { FlowGroupId } from "../flow/flow-group-id";
 import { FlowNodeId } from "../flow/flow-node-id";
 import { FlowTerminal } from "../flow/flow-terminal";
 import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
+import { eq } from "gamezilla-app/@/core";
 
 export const Model = p.obj({
 	pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
@@ -64,8 +65,15 @@ export const update = <
 				return { model: input.model };
 			}
 
+			const terminalFlowPuzzle = Flow.toTerminalByGroupId(
+				input.flowPuzzle.flow,
+				nextHintGroupId,
+			);
+			const terminalFlowModel = Flow.toTerminalByGroupId(flow, nextHintGroupId);
+
 			const solution =
-				input.flowPuzzle.flowSolutions.length > 0
+				input.flowPuzzle.flowSolutions.length > 0 &&
+				eq(terminalFlowPuzzle, terminalFlowModel)
 					? input.flowPuzzle.flowSolutions[0]
 					: FlowAlgoSolve.solve(flow);
 

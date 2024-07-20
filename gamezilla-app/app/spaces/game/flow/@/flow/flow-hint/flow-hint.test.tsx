@@ -2,22 +2,20 @@ import { describe, expect, it, test } from "bun:test";
 import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { FlowClientFixture } from "../../testing";
 import { Flow } from "../flow";
-import { FlowVariant } from "../flow-variant";
 import { FlowGridShorthand } from "../flow-variant/flow-grid";
 import * as FlowHint from "./flow-hint";
 
-const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
+const Fixture = async (input?: { flowPuzzle?: FlowPuzzle }) => {
 	const f = await FlowClientFixture();
-	const flow =
-		input?.flow ??
-		FlowGridShorthand.toGrid([
-			["A", " "],
-			[" ", "A"],
-		]);
 
-	const flowPuzzle = await FlowPuzzle.random({
-		flow,
-	});
+	const flowPuzzle =
+		input?.flowPuzzle ??
+		(await FlowPuzzle.random({
+			flow: FlowGridShorthand.toGrid([
+				["A", " "],
+				[" ", "A"],
+			]),
+		}));
 
 	type Input = {
 		msg: FlowHint.Msg;
@@ -31,7 +29,7 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 		let output: ReturnType<typeof FlowHint.update> = { model: init };
 		for (const input of inputs) {
 			output = FlowHint.update({
-				flowPuzzle: input.flowPuzzle ?? flowPuzzle,
+				flowPuzzle,
 				model: output.model,
 				msg: input.msg,
 			});
@@ -44,14 +42,13 @@ const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
 			flowPuzzle,
 		}),
 		pipesBySourceId: {
-			...flow.pipesBySourceId,
+			...flowPuzzle.flow.pipesBySourceId,
 		},
 	};
 
 	return {
 		...f,
 		flowPuzzle,
-		flow,
 		update,
 		init,
 	};
@@ -62,7 +59,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const after = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
 		const flow = FlowHint.toFlow({
-			flow: f.flow,
+			flow: f.flowPuzzle.flow,
 			model: after.model,
 		});
 		for (const groupId of FlowHint.toShowingHintGroupIds(after.model)) {
@@ -72,11 +69,13 @@ describe(import.meta.file, () => {
 
 	test("hint multiple terminals", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
-				["A", "B"],
-				[" ", " "],
-				["A", "B"],
-			]),
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					["A", "B"],
+					[" ", " "],
+					["A", "B"],
+				]),
+			}),
 		});
 
 		const output = f.update(f.init, [
@@ -84,7 +83,7 @@ describe(import.meta.file, () => {
 			{ msg: { t: "user-clicked-hint" } },
 		]);
 		const flow = FlowHint.toFlow({
-			flow: f.flow,
+			flow: f.flowPuzzle.flow,
 			model: output.model,
 		});
 		expect(Flow.isSolved(flow)).toBe(true);
@@ -92,11 +91,13 @@ describe(import.meta.file, () => {
 
 	test("output use hint event", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
-				["A", "B"],
-				[" ", " "],
-				["A", "B"],
-			]),
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					["A", "B"],
+					[" ", " "],
+					["A", "B"],
+				]),
+			}),
 		});
 
 		const output = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
@@ -105,11 +106,13 @@ describe(import.meta.file, () => {
 
 	test("output solved event", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
-				["A", "B", "C"],
-				[" ", " ", " "],
-				["A", "B", "C"],
-			]),
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					["A", "B", "C"],
+					[" ", " ", " "],
+					["A", "B", "C"],
+				]),
+			}),
 		});
 
 		const output = f.update(f.init, [
@@ -122,18 +125,20 @@ describe(import.meta.file, () => {
 
 	it("should not create branching in pipes after using a hint", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
-				["A", "a", "a", " "],
-				[" ", " ", "a", " "],
-				["a", "a", "a", " "],
-				[" ", " ", " ", "A"],
-			]),
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					["A", "a", "a", " "],
+					[" ", " ", "a", " "],
+					["a", "a", "a", " "],
+					[" ", " ", " ", "A"],
+				]),
+			}),
 		});
 
 		const output = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
 
 		const derived = FlowHint.toFlow({
-			flow: f.flow,
+			flow: f.flowPuzzle.flow,
 			model: output.model,
 		});
 
@@ -142,15 +147,17 @@ describe(import.meta.file, () => {
 
 	it("should work even with flipped terminal", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
-				["A", " ", " "],
-				[" ", " ", " "],
-				["A", " ", " "],
-			]),
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					["A", " ", " "],
+					[" ", " ", " "],
+					["A", " ", " "],
+				]),
+			}),
 		});
 
-		const terminal = Flow.toTerminalByGroupId(f.flow, "A");
-		const flipped = Flow.flipTerminal(f.flow, terminal);
+		const terminal = Flow.toTerminalByGroupId(f.flowPuzzle.flow, "A");
+		const flipped = Flow.flipTerminal(f.flowPuzzle.flow, terminal);
 
 		const output = f.update(
 			{
@@ -165,7 +172,7 @@ describe(import.meta.file, () => {
 		);
 
 		const derived = FlowHint.toFlow({
-			flow: f.flow,
+			flow: f.flowPuzzle.flow,
 			model: output.model,
 		});
 
@@ -187,10 +194,12 @@ describe(import.meta.file, () => {
 			[" ", "B", " "],
 			[" ", " ", " "],
 		]);
-		const f = await Fixture({ flow: before });
+		const f = await Fixture({
+			flowPuzzle: await FlowPuzzle.random({ flow: before }),
+		});
 		const updated = f.update(f.init, [{ msg: { t: "user-clicked-hint" } }]);
 		const after = FlowHint.toFlow({
-			flow: f.flow,
+			flow: f.flowPuzzle.flow,
 			model: updated.model,
 		});
 		const pipelineBefore = Flow.toPipelineFromGroupId(before, "A");
@@ -201,11 +210,13 @@ describe(import.meta.file, () => {
 
 	it("should NOT branch pipelines after using hint", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
-				["A", " ", " "],
-				[" ", " ", " "],
-				[" ", " ", "A"],
-			]),
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					["A", " ", " "],
+					[" ", " ", " "],
+					[" ", " ", "A"],
+				]),
+			}),
 		});
 
 		const initialPipesBySourceId = FlowGridShorthand.toGrid([
@@ -225,7 +236,7 @@ describe(import.meta.file, () => {
 			},
 		]);
 		const after = FlowHint.toFlow({
-			flow: f.flow,
+			flow: f.flowPuzzle.flow,
 			model: updated.model,
 		});
 		expect(Flow.hasBranchingPipelines(after)).toBe(false);
@@ -233,11 +244,13 @@ describe(import.meta.file, () => {
 
 	it("should disable hint button if puzzle is solved", async () => {
 		const f = await Fixture({
-			flow: FlowGridShorthand.toGrid([
-				["A", "B"],
-				["a", "b"],
-				["A", "B"],
-			]),
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					["A", "B"],
+					["a", "b"],
+					["A", "B"],
+				]),
+			}),
 		});
 		const viewed = FlowHint.viewHintAction({
 			ctx: f.ctx,
@@ -248,8 +261,39 @@ describe(import.meta.file, () => {
 		expect(viewed.disabled).toBe(true);
 	});
 
-	it.todo(
-		"should never change the positions of the terminals when using a hint",
-		async () => {},
-	);
+	it.only("should never change the positions of the terminals when using a hint", async () => {
+		const f = await Fixture({
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					["A", " ", " "],
+					[" ", " ", " "],
+					[" ", " ", "A"],
+				]),
+			}),
+		});
+
+		const init = FlowHint.init({
+			flowPuzzle: await FlowPuzzle.random({
+				flow: FlowGridShorthand.toGrid([
+					[" ", " ", "A"],
+					[" ", " ", " "],
+					["A", " ", " "],
+				]),
+			}),
+		});
+
+		const output = f.update(init, [{ msg: { t: "user-clicked-hint" } }]);
+
+		const before = FlowHint.toFlow({
+			flow: f.flowPuzzle.flow,
+			model: init,
+		});
+
+		const after = FlowHint.toFlow({
+			flow: f.flowPuzzle.flow,
+			model: output.model,
+		});
+
+		expect(Flow.toTerminals(before)).toEqual(Flow.toTerminals(after));
+	});
 });

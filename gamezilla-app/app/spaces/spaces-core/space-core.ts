@@ -7,7 +7,7 @@ import {
 	EventId,
 	EventMeta,
 	type WithEventId,
-	type WithEventMeta
+	type WithEventMeta,
 } from "../@/event";
 import { SpaceCoreEvent } from "./space-core-event";
 import * as SpaceState from "./space-core-state";

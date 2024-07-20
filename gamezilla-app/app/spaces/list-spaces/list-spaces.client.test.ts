@@ -107,11 +107,7 @@ describe(import.meta.file, () => {
 			{
 				msgServer: {
 					t: "listed-spaces",
-					spaces: [
-						SpaceCore.random(),
-						SpaceCore.random(),
-						SpaceCore.random()
-					],
+					spaces: [SpaceCore.random(), SpaceCore.random(), SpaceCore.random()],
 					causedBy: "list-spaces",
 				},
 			},
