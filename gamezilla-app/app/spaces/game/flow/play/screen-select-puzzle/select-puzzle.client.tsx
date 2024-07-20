@@ -1,6 +1,5 @@
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import { ViewBottomBarExitButton } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
@@ -47,7 +46,11 @@ const View: ClientModule["View"] = (input) => {
 				dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
 			/>
 			<div className="flex h-full w-full flex-1 flex-col">
-				<ViewScreenTitle title={input.modelCore.screen.flowPack.name} />
+				<ViewScreenTitle
+					ctx={input.ctx}
+					onBack={() => input.dispatch({ t: "user-clicked-exit-pack-button" })}
+					title={input.modelCore.screen.flowPack.name}
+				/>
 				<div className="flex flex-1 flex-col items-center justify-center">
 					<FlowPackPuzzlesGridUI.ViewPackPuzzleGrid
 						id="pack-puzzle-grid"
@@ -77,10 +80,6 @@ const View: ClientModule["View"] = (input) => {
 						slideIndex={0}
 					/>
 				</div>
-				<ViewBottomBarExitButton
-					ctx={input.ctx}
-					onClick={() => input.dispatch({ t: "user-clicked-exit-pack-button" })}
-				/>
 			</div>
 		</>
 	);

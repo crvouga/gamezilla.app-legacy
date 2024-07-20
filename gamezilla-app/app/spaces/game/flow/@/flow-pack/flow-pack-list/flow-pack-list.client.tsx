@@ -157,7 +157,7 @@ const View: ClientModule["View"] = (input) => {
 				/>
 			</div>
 
-			<div className="absolute bottom-5 right-5 bg-black">
+			<div className="absolute bottom-6 right-4 bg-black">
 				{input.slots?.fab?.(null)}
 			</div>
 		</div>

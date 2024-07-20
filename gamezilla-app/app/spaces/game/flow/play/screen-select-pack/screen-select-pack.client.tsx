@@ -1,7 +1,6 @@
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import { ViewBottomBarExitButton } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowPackListClient } from "../../@/flow-pack";
 import type { ClientModule } from "../play.types";
@@ -49,7 +48,11 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 const View: ClientModule["View"] = (input) => {
 	return (
 		<div className="w-full h-full flex-1 flex flex-col">
-			<ViewScreenTitle title={input.ctx.t("flow.play")} />
+			<ViewScreenTitle
+				ctx={input.ctx}
+				onBack={input.ctx.onQuit}
+				title={input.ctx.t("flow.play")}
+			/>
 			<FlowPackListClient.View
 				ctx={input.ctx}
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
@@ -63,7 +66,6 @@ const View: ClientModule["View"] = (input) => {
 					},
 				}}
 			/>
-			<ViewBottomBarExitButton ctx={input.ctx} onClick={input.ctx.onQuit} />
 		</div>
 	);
 };

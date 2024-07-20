@@ -1,20 +1,15 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import {
-	Button,
-	IconArrowLeftOnRect,
-	IconRobot,
-	IconUsers,
-} from "gamezilla-app/app/@/ui";
-import { ViewGameHeader } from "./view-game-header";
-import { ViewUsersInSpaceList } from "./view-users-in-space-list";
+import type { VDom } from "gamezilla-app/@/vdom";
 import type { UserId } from "gamezilla-app/app/@/data";
+import { IconRobot, IconUsers } from "gamezilla-app/app/@/ui";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import {
 	type SpaceClientCmd,
 	type SpaceClientCmdTypes,
 	exitGame,
 	openUserDetails,
 } from "../../../@/space-client-cmd";
-import type { VDom } from "gamezilla-app/@/vdom";
+import { ViewGameHeader } from "./view-game-header";
+import { ViewUsersInSpaceList } from "./view-users-in-space-list";
 
 //
 //
@@ -91,7 +86,14 @@ export const View = ({
 	if (ctx.currentUserId !== ctx.space.hostId) {
 		return (
 			<div className="flex h-full w-full flex-col">
-				<ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
+				<ViewGameHeader
+					ctx={ctx}
+					onBack={() =>
+						dispatch({ t: "game-main-menu/clicked-exit-game-button" })
+					}
+					title={title}
+					renderCoverArt={renderCoverArt}
+				/>
 				<ViewUsersInSpaceList
 					onOpenUserDetails={(userId) =>
 						dispatch({
@@ -108,7 +110,14 @@ export const View = ({
 	return (
 		<div className="flex h-full w-full flex-col overflow-y-hidden">
 			<div className="flex w-full flex-1 flex-col items-center overflow-y-scroll">
-				<ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
+				<ViewGameHeader
+					ctx={ctx}
+					onBack={() =>
+						dispatch({ t: "game-main-menu/clicked-exit-game-button" })
+					}
+					title={title}
+					renderCoverArt={renderCoverArt}
+				/>
 
 				<div className="flex w-full flex-col p-4">
 					{buttons.map(({ renderIcon, title, description, onClick }, index) => (
@@ -130,17 +139,6 @@ export const View = ({
 						</button>
 					))}
 				</div>
-			</div>
-
-			<div className="flex justify-center border-t border-neutral-700 p-4">
-				<Button
-					onClick={() =>
-						dispatch({ t: "game-main-menu/clicked-exit-game-button" })
-					}
-					className="w-full"
-					start={<IconArrowLeftOnRect className="h-6 w-6" />}
-					text="Exit"
-				/>
 			</div>
 		</div>
 	);

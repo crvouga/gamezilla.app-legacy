@@ -4,7 +4,6 @@ import {
 	IconEllipsisVertical,
 	IconPen,
 	IconPlay,
-	cn,
 } from "gamezilla-app/app/@/ui";
 import { Actions } from "gamezilla-app/app/@/ui/actions";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
@@ -15,6 +14,7 @@ import {
 	ViewBottomButtonBarAction,
 } from "gamezilla-app/app/spaces/game/@/game";
 import { ViewProfileCard } from "../../../@/game/view-profile-card";
+import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { Flow, FlowVariantUI } from "../../@/flow";
 import { FlowEdit } from "../../@/flow/flow-edit";
 import { FlowPlay } from "../../@/flow/flow-play";
@@ -173,6 +173,10 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 const View: ClientModule["View"] = (input) => {
 	const { ctx } = input;
 
+	if (!input.modelCore.puzzleBuilder) {
+		return null;
+	}
+
 	const isSpectating = ctx.currentUserId !== ctx.space.hostId;
 
 	if (isSpectating) {
@@ -181,34 +185,19 @@ const View: ClientModule["View"] = (input) => {
 
 	return (
 		<>
-			<div className="px-4 py-2 flex items-center">
-				<p className=" text-lg">{input.modelCore.puzzleBuilder?.puzzle.name}</p>
-			</div>
+			<ViewScreenTitle
+				ctx={input.ctx}
+				onBack={() =>
+					input.dispatch({
+						t: "screen-puzzle-builder.user-clicked-exit-button",
+					})
+				}
+				title={input.modelCore.puzzleBuilder.puzzle.name}
+			/>
 			<ViewMode {...input} />
 			<ViewMoreDrawer {...input} />
 			<SaveChangesClient.ViewUnsavedChangesDrawer {...input} />
 		</>
-	);
-};
-
-const ViewChip = (input: {
-	label: string;
-	color: "amber" | "blue";
-	position: "top-left" | "top-center";
-}) => {
-	return (
-		<div
-			className={cn(
-				"text-white drop-shadow-2xl px-2 py-1 font-bold rounded-3xl text-xs",
-				input.position === "top-left" && "absolute top-3 left-3",
-				input.position === "top-center" &&
-					"absolute top-3 left-1/2 transform -translate-x-1/2",
-				input.color === "amber" && "amber-blue-600 bg-amber-500",
-				input.color === "blue" && "blue-amber-600 bg-blue-500",
-			)}
-		>
-			{input.label}
-		</div>
 	);
 };
 
@@ -235,8 +224,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 		case "edit": {
 			return (
 				<div className="flex h-full w-full flex-col items-center justify-center">
-					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden border-2 border-amber-500 relative">
-						<ViewChip label="Edit Mode" color="amber" position="top-left" />
+					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
 						<FlowEdit.View
 							model={puzzleBuilder.edit}
 							ctx={input.ctx}
@@ -275,11 +263,9 @@ const ViewMode: ClientModule["View"] = (input) => {
 			const isSolved = Flow.isSolved(flow);
 			return (
 				<div className="flex h-full w-full flex-col items-center justify-center">
-					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden relative border-2 border-blue-500">
-						<ViewChip label="Play Mode" color="blue" position="top-left" />
+					<div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
 						<div className="w-full flex-1"></div>
 
-					
 						<FlowPlay.View
 							model={puzzleBuilder.play}
 							flow={flow}
@@ -292,7 +278,6 @@ const ViewMode: ClientModule["View"] = (input) => {
 						/>
 
 						<FlowPlay.CheckmarkAnimation open={isSolved} />
-					
 
 						<div className="w-full flex-1"></div>
 

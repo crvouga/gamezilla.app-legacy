@@ -1,15 +1,14 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import type { VDom } from "gamezilla-app/@/vdom";
 import type { UserId } from "gamezilla-app/app/@/data";
 import {
+	Avatar,
 	Button,
 	Drawer,
-	IconArrowLeftOnRect,
 	IconQuestionMark,
-	Avatar,
 } from "gamezilla-app/app/@/ui";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { ViewGameHeader } from "../../game/view-game-header";
 import type { PlayerType, VsBotProps } from "../vs-bot";
-import type { VDom } from "gamezilla-app/@/vdom";
 
 //
 //
@@ -139,7 +138,12 @@ export const View = ({
 
 	return (
 		<div className="flex w-full flex-1 flex-col">
-			<ViewGameHeader renderCoverArt={renderCoverArt} title={title} />
+			<ViewGameHeader
+				ctx={ctx}
+				onBack={onQuit}
+				renderCoverArt={renderCoverArt}
+				title={title}
+			/>
 
 			<div className="flex w-full flex-col gap-2 p-4">
 				<div className="grid w-full grid-cols-7">
@@ -181,12 +185,6 @@ export const View = ({
 
 			{ctx.currentUserId === ctx.space.hostId && (
 				<div className="flex items-center gap-4 border-t border-neutral-700 p-4">
-					<Button
-						className="flex-1"
-						onClick={onQuit}
-						start={<IconArrowLeftOnRect className="h-6 w-6" />}
-						text="Exit"
-					/>
 					<Button
 						disabled={!canStartGame}
 						variant="contained"

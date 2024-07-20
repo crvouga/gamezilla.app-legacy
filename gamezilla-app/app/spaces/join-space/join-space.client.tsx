@@ -131,6 +131,8 @@ const View: SpaceClientModule["View"] = (input) => {
 
 			<div className="flex w-full flex-1 flex-col overflow-y-scroll">
 				<ViewGameHeader
+					ctx={input.ctx}
+					onBack={() => input.dispatch({ t: "clicked-go-home-button" })}
 					title={spaceState.game ? gameNameToString(spaceState.game.t) : null}
 					renderCoverArt={(props) =>
 						spaceState.game ? (
@@ -155,14 +157,6 @@ const View: SpaceClientModule["View"] = (input) => {
 			</div>
 
 			<div className="flex flex-row gap-4 border-t border-neutral-700 p-4">
-				<Button
-					className="flex-1"
-					onClick={() => {
-						input.dispatch({ t: "clicked-go-home-button" });
-					}}
-					text="Go Home"
-				/>
-
 				<Button
 					className="flex-1"
 					variant="contained"

@@ -326,7 +326,10 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
 	if (ctx.space.hostId !== ctx.currentUserId) {
 		return (
 			<div className="flex h-full w-full flex-1 flex-col">
-				<ViewGameHeader />
+				<ViewGameHeader
+					ctx={ctx}
+					onBack={() => dispatch({ t: "clicked-go-home-button" })}
+				/>
 
 				<div className="w-full flex-1">
 					<ViewUsersInSpaceList
@@ -339,14 +342,6 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
 							currentUserId: ctx.currentUserId,
 							currentUserRole: ctx.currentUserRole,
 						}}
-					/>
-				</div>
-
-				<div className="flex w-full items-center justify-center border-t border-neutral-700 p-4">
-					<Button
-						className="w-full"
-						onClick={() => dispatch({ t: "clicked-go-home-button" })}
-						text="Go Home"
 					/>
 				</div>
 			</div>

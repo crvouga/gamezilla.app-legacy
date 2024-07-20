@@ -108,17 +108,15 @@ const subscriptions: ClientModule["subscriptions"] = ({ model }) => {
 };
 
 const ViewCreateButton: ClientModule["View"] = (input) => {
-	const { model, dispatch } = input;
-
 	return (
 		<Button
-			text="Create Puzzle"
+			text={input.ctx.t("flow.create-puzzle")}
 			variant="contained"
 			color="primary"
-			loading={model.puzzleCreateRequest.t === "loading"}
+			loading={input.model.puzzleCreateRequest.t === "loading"}
 			start={<IconPlus className="h-8 w-8" />}
 			onClick={() =>
-				dispatch({ t: "puzzle-create.user-clicked-create-button" })
+				input.dispatch({ t: "puzzle-create.user-clicked-create-button" })
 			}
 		/>
 	);

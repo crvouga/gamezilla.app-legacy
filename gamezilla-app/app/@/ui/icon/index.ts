@@ -1,4 +1,5 @@
 export * from "./icon-arrow-circle";
+export * from "./icon-arrow-left";
 export * from "./icon-arrow-left-on-rect";
 export * from "./icon-arrow-right";
 export * from "./icon-arrow-rotate-left";

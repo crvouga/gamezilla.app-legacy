@@ -1,28 +1,23 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@/event";
+import { isErr, isOk, Loading, Result } from "gamezilla-app/@/core";
 import {
 	APP_SOUND,
 	playSound,
 	sendToServer,
-	showErrSm,
 	showCreatedSm,
+	showErrSm,
 } from "gamezilla-app/app/@/client";
-import {
-	Button,
-	Drawer,
-	IconArrowLeftOnRect,
-	IconFloppyDisk,
-} from "gamezilla-app/app/@/ui";
-import { Result, isErr, isOk, Loading } from "gamezilla-app/@/core";
+import { Button, Drawer, IconFloppyDisk } from "gamezilla-app/app/@/ui";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import { ViewBottomButtonBarAction } from "../../../../@/game";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { FlowEdit } from "../../../@/flow/flow-edit";
 import type {
-	ModelClient,
 	ClientModule,
+	ModelClient,
 	MsgClient,
 	MsgCore,
 } from "../../builder.types";
-import { ViewBottomButtonBarAction } from "../../../../@/game";
-import { FlowEdit } from "../../../@/flow/flow-edit";
 
 //
 //
@@ -227,14 +222,6 @@ export const ViewActionButtons = ({
 }) => {
 	return (
 		<>
-			<ViewBottomButtonBarAction
-				icon={(props) => <IconArrowLeftOnRect {...props} />}
-				label="Exit"
-				onClick={() =>
-					dispatch({ t: "screen-puzzle-builder.user-clicked-exit-button" })
-				}
-				disabled={model.puzzleSaveChangesRequest?.t === "loading"}
-			/>
 			<ViewBottomButtonBarAction
 				icon={(props) => <IconFloppyDisk {...props} />}
 				label="Save"
