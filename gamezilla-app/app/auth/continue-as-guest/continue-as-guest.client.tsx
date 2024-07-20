@@ -44,15 +44,15 @@ const update: ClientModule["update"] = (input) => {
 	};
 };
 
-const ViewButton: ClientModule["View"] = (props) => {
+const ViewButton: ClientModule["View"] = (input) => {
 	return (
 		<Button
 			onClick={() =>
-				props.dispatch({ t: "guest.clicked-continue-as-guest-button" })
+				input.dispatch({ t: "guest.clicked-continue-as-guest-button" })
 			}
 			start={<IconUserCircle className="h-6 w-6" />}
-			text={props.ctx.t("auth.continue-as-guest")}
-			loading={isRequesting(props.model.guestRequest)}
+			text={input.ctx.t("auth.continue-as-guest")}
+			loading={isRequesting(input.model.guestRequest)}
 		/>
 	);
 };

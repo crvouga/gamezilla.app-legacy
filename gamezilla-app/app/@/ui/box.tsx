@@ -1,6 +1,6 @@
-export const Box = (props: {
+export const Box = (input: {
 	children: React.ReactNode;
 	className?: string;
 }) => {
-	return <div className={props.className}>{props.children}</div>;
+	return <div className={input.className}>{input.children}</div>;
 };

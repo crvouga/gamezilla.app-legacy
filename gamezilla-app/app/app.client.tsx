@@ -386,6 +386,7 @@ const updateChild = (input: {
 	});
 
 	const wire = Wire.update({
+		ctx: clientCtx,
 		model: input.model.wire,
 		msg: input.msg?.t === "wire" ? input.msg.c : null,
 		msgServer: input.msgServer?.t === "wire" ? input.msgServer.c : null,
@@ -416,7 +417,7 @@ const updateChild = (input: {
 		model: input.model.toast,
 		msg: input.msg?.t === "toast" ? input.msg.c : null,
 		msgCmd: input.msgCmd?.t === "toast" ? input.msgCmd : null,
-		ctx: input.ctx,
+		ctx: clientCtx,
 	});
 
 	const lang = LangClient.update({
@@ -548,7 +549,7 @@ export const View = (input: {
 	model: ModelClient;
 	dispatch: (msg: MsgClient) => void;
 }) => {
-	const clientCtx = () => toClientCtx(input);
+	const clientCtx = toClientCtx(input);
 
 	return (
 		<div
@@ -566,12 +567,12 @@ export const View = (input: {
 					<ViewRoute
 						model={input.model}
 						dispatch={input.dispatch}
-						ctx={clientCtx()}
+						ctx={clientCtx}
 					/>
 				</div>
 
 				<AuthClient.ViewModals
-					ctx={clientCtx()}
+					ctx={clientCtx}
 					dispatch={(c) => input.dispatch({ t: "auth", c })}
 					model={input.model.auth}
 				/>
@@ -579,7 +580,7 @@ export const View = (input: {
 				<Portal.Exit portalId="modals" />
 
 				<Toast.View
-					ctx={input.ctx}
+					ctx={clientCtx}
 					model={input.model.toast}
 					dispatch={(c) => input.dispatch({ t: "toast", c })}
 				/>

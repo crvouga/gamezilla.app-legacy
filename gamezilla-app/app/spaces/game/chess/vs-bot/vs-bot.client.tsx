@@ -267,23 +267,23 @@ export const View = ({
 			<VsBotSetup.View
 				model={model.vsBotSetup}
 				dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
-				title="Chess"
-				renderCoverArt={(props) => {
-					return <CoverArt {...props} />;
+				title={ctx.t('chess')}
+				renderCoverArt={(input) => {
+					return <CoverArt {...input} />;
 				}}
 				bot={{
 					label: Chess.botLevelToString(model.coreModel.botLevel),
-					renderIcon: (props) =>
+					renderIcon: (input) =>
 						Chess.renderBotLevel({
 							level: model.coreModel.botLevel,
-							...props,
+							...input,
 						}),
 				}}
 				botVariants={Chess.allBotLevels.map((botLevel) => {
 					return {
 						label: Chess.botLevelToString(botLevel),
-						renderIcon: (props) =>
-							Chess.renderBotLevel({ level: botLevel, ...props }),
+						renderIcon: (input) =>
+							Chess.renderBotLevel({ level: botLevel, ...input }),
 						onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
 					};
 				})}
@@ -306,16 +306,16 @@ export const View = ({
 					label: "White",
 					onStartPlaying: () => dispatch({ t: "start-playing", color: "w" }),
 					onStopPlaying: () => dispatch({ t: "stop-playing" }),
-					renderIcon: (props) => {
-						return <PlayerIcon {...props} color="w" />;
+					renderIcon: (input) => {
+						return <PlayerIcon {...input} color="w" />;
 					},
 				}}
 				playerTwo={{
 					label: "Black",
 					onStartPlaying: () => dispatch({ t: "start-playing", color: "b" }),
 					onStopPlaying: () => dispatch({ t: "stop-playing" }),
-					renderIcon: (props) => {
-						return <PlayerIcon {...props} color="b" />;
+					renderIcon: (input) => {
+						return <PlayerIcon {...input} color="b" />;
 					},
 				}}
 			/>
@@ -386,7 +386,7 @@ export const View = ({
 			</div>
 			<ViewBottomButtonBar>
 				<ViewBottomButtonBarAction
-					icon={(props) => <IconArrowLeftOnRect {...props} />}
+					icon={(input) => <IconArrowLeftOnRect {...input} />}
 					label="Exit"
 					onClick={onClose}
 				/>

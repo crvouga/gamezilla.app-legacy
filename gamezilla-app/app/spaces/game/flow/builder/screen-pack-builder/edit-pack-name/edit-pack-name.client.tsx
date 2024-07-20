@@ -35,10 +35,7 @@ const update: ClientModule["update"] = (input) => {
 			if (isErr(input.msgCore.result)) {
 				return {
 					model: input.model,
-					msgCmd: showErrSm(
-						input.ctx.t("app.something-went-wrong"),
-						input.msgCore.result.error,
-					),
+					msgCmd: showErrSm(input.ctx.t("app.something-went-wrong")),
 				};
 			}
 			return { model: input.model };

@@ -1,5 +1,8 @@
 import { PubSub } from "gamezilla-app/@/core";
-import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import type {
+	LanguageCodeISO_639_1,
+	TranslatedText,
+} from "gamezilla-app/@/l18n";
 import {
 	loadTranslator,
 	type Translator,
@@ -34,8 +37,8 @@ export type TranslatorMsg =
 
 export const translatorSubscriptions = PubSub.create<TranslatorMsg>();
 
-function noop(): string {
-	return "";
+function noop(): TranslatedText {
+	return "" as TranslatedText;
 }
 
 export function Translator(languageCode: LanguageCodeISO_639_1): Translator {

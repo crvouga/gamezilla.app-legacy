@@ -1,7 +1,7 @@
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import type { SpaceId } from "gamezilla-app/app/@/data";
-import { Button, IconHome, IconUserGroup } from "gamezilla-app/app/@/ui";
+import { Button, IconChevronDown, IconUserGroup } from "gamezilla-app/app/@/ui";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceClientModule } from "../architecture/architecture";
 import { EndSpaceClient } from "../end-space/end-space.client";
@@ -9,65 +9,65 @@ import { Feed } from "../feed/feed";
 import { JoinSpaceClient } from "../join-space/join-space.client";
 import { LeaveSpaceClient } from "../leave-space/leave-space.client";
 import { Modals } from "../modals/modals";
-import { SpaceGameClient } from "./space-game.client";
 import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { ModelClient, MsgClient } from "../spaces.types";
+import { SpaceGameClient } from "./space-game.client";
 
-const View = (props: {
+const View = (input: {
 	model: ModelClient;
 	ctx: ClientCtx;
 	dispatch: (m: MsgClient) => void;
 	spaceId: SpaceId;
 }) => {
-	const spaceState = SpacesCoreClient.toSpaceState(props.model, props.spaceId);
+	const spaceState = SpacesCoreClient.toSpaceState(input.model, input.spaceId);
 
 	switch (spaceState.type) {
 		case "initial": {
-			return <ViewSpaceNotFound {...props} />;
+			return <ViewSpaceNotFound {...input} />;
 		}
 
 		case "ended": {
-			return <EndSpaceClient.ViewSpaceEnded {...props} />;
+			return <EndSpaceClient.ViewSpaceEnded {...input} />;
 		}
 
 		case "started": {
 			const spaceCtx: SpaceClientCtx = {
-				...props.ctx,
-				currentUserId: props.ctx.currentUserId,
+				...input.ctx,
+				currentUserId: input.ctx.currentUserId,
 				space: spaceState,
 			};
 
 			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
-				props.model,
-				props.ctx.currentUserId,
+				input.model,
+				input.ctx.currentUserId,
 			);
 
 			if (currentUserSpaceId !== spaceCtx.space.spaceId) {
 				return (
 					<>
-						<JoinSpaceClient.View {...props} ctx={spaceCtx} />
-						<Modals.View {...props} ctx={spaceCtx} />
+						<JoinSpaceClient.View {...input} ctx={spaceCtx} />
+						<Modals.View {...input} ctx={spaceCtx} />
 					</>
 				);
 			}
 
 			return (
 				<div className="flex h-full w-full flex-1 flex-col">
-					<Modals.View {...props} ctx={spaceCtx} />
+					<Modals.View {...input} ctx={spaceCtx} />
 
-					<ViewTopBar {...props} ctx={spaceCtx} />
+					<ViewTopBar {...input} ctx={spaceCtx} />
 
 					{false && (
 						<Feed.View
 							spaceState={spaceState}
 							ctx={spaceCtx}
-							model={props.model}
-							dispatch={props.dispatch}
+							model={input.model}
+							dispatch={input.dispatch}
 						/>
 					)}
 
 					<div className="flex w-full flex-1 flex-col overflow-hidden">
-						<SpaceGameClient.View {...props} ctx={spaceCtx} />
+						<SpaceGameClient.View {...input} ctx={spaceCtx} />
 					</div>
 				</div>
 			);
@@ -75,49 +75,45 @@ const View = (props: {
 	}
 };
 
-const ViewTopBar: SpaceClientModule["View"] = (props) => {
-	if (!props.ctx.space || !props.ctx.currentUserId) {
+const ViewTopBar: SpaceClientModule["View"] = (input) => {
+	if (!input.ctx.space || !input.ctx.currentUserId) {
 		return null;
 	}
 
-	const peopleCount = Object.keys(props.ctx.space.users).length;
+	const peopleCount = Object.keys(input.ctx.space.users).length;
 
 	return (
 		<nav className="flex h-14 w-full items-center border-b border-neutral-700">
 			<ViewTopBarButton
-				onClick={() => props.dispatch({ t: "clicked-go-home-button" })}
-				label="Home"
-				icon={<IconHome className="h-6 w-6" />}
+				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
+				label={"Home"}
+				icon={<IconChevronDown className="h-6 w-6" />}
 			/>
 
 			<ViewTopBarButton
-				onClick={() => props.dispatch({ t: "clicked-people-button" })}
+				onClick={() => input.dispatch({ t: "clicked-people-button" })}
 				label={peopleCount > 1 ? `People (${peopleCount})` : "People"}
 				icon={<IconUserGroup className="h-6 w-6" />}
 			/>
 
 			<div className="flex-1" />
 
-			{props.ctx.space.hostId !== props.ctx.currentUserId && (
+			{input.ctx.space.hostId !== input.ctx.currentUserId && (
 				<div className="p-2">
-					<LeaveSpaceClient.ViewLeaveSpaceButton {...props} />
+					<LeaveSpaceClient.ViewLeaveSpaceButton {...input} />
 				</div>
 			)}
 
-			{props.ctx.space.hostId === props.ctx.currentUserId && (
+			{input.ctx.space.hostId === input.ctx.currentUserId && (
 				<div className="p-2">
-					<EndSpaceClient.ViewEndSpaceButton {...props} />
+					<EndSpaceClient.ViewEndSpaceButton {...input} />
 				</div>
 			)}
 		</nav>
 	);
 };
 
-const ViewTopBarButton = ({
-	icon,
-	label,
-	onClick,
-}: {
+const ViewTopBarButton = (input: {
 	icon: VDom;
 	label: string;
 	onClick: () => void;
@@ -126,10 +122,10 @@ const ViewTopBarButton = ({
 		<button
 			type="button"
 			className="grid w-20 place-items-center py-1"
-			onClick={onClick}
+			onClick={input.onClick}
 		>
-			{icon}
-			<p className="text-xs">{label}</p>
+			{input.icon}
+			{/* <p className="text-xs">{label}</p> */}
 		</button>
 	);
 };

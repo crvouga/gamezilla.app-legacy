@@ -1,13 +1,13 @@
-import type { IconProps } from "../icon-shared";
+import type { Iconinput } from "../icon-shared";
 
-export const IconSpinner = (props: IconProps) => {
+export const IconSpinner = (input: Iconinput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="currentColor"
 			stroke="currentColor"
 			viewBox="0 0 24 24"
-			{...props}
+			{...input}
 		>
 			<path
 				fillRule="evenodd"

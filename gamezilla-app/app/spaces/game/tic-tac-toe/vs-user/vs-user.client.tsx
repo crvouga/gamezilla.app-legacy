@@ -174,20 +174,20 @@ export const View = ({
 				onStartGame={() =>
 					dispatch(["start-game", { userId: ctx.currentUserId }])
 				}
-				renderCoverArt={(props) => {
+				renderCoverArt={(input) => {
 					return (
-						<div {...props}>
+						<div {...input}>
 							<CoverArt />
 						</div>
 					);
 				}}
-				title={"Tic-Tac-Toe"}
+				title={ctx.t('tic-tac-toe')}
 				canStartGame={model.X !== "none" && model.O !== "none"}
 				playerOne={{
 					label: "Cross",
 					userId: model.X === "none" ? null : model.X,
-					renderIcon: (props) => {
-						return <PlayerTypeIcon playerType="X" {...props} />;
+					renderIcon: (input) => {
+						return <PlayerTypeIcon playerType="X" {...input} />;
 					},
 					onStartPlaying: () => {
 						dispatch([
@@ -205,8 +205,8 @@ export const View = ({
 				playerTwo={{
 					label: "Naught",
 					userId: model.O === "none" ? null : model.O,
-					renderIcon: (props) => {
-						return <PlayerTypeIcon playerType="O" {...props} />;
+					renderIcon: (input) => {
+						return <PlayerTypeIcon playerType="O" {...input} />;
 					},
 					onStartPlaying: () => {
 						dispatch([

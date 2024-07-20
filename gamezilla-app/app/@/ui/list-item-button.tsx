@@ -10,7 +10,7 @@ export const ListItemButton = ({
 	className,
 }: {
 	className?: string;
-	icon: (props: { className: string }) => VDom;
+	icon: (input: { className: string }) => VDom;
 	end?: () => VDom;
 	label: string;
 	onClick?: () => void;

@@ -1,12 +1,12 @@
-import type { IconProps } from "../icon-shared";
+import type { Iconinput } from "../icon-shared";
 
-export const IconCheckmarkCircle = (props: IconProps) => {
+export const IconCheckmarkCircle = (input: Iconinput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
 			fill="currentColor"
-			{...props}
+			{...input}
 		>
 			<path
 				fillRule="evenodd"
@@ -17,9 +17,9 @@ export const IconCheckmarkCircle = (props: IconProps) => {
 	);
 };
 
-export const IconCheckmarkCircleEmpty = (props: IconProps) => {
+export const IconCheckmarkCircleEmpty = (input: Iconinput) => {
 	return (
-		<div {...props}>
+		<div {...input}>
 			<div className="p-0.5">
 				<div className="aspect-square h-full w-full rounded-full border border-current" />
 			</div>

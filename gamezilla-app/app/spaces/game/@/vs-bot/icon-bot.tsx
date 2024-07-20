@@ -1,14 +1,14 @@
-type Props = {
+type input = {
 	className?: string;
 };
 
-export const IconBotLevel0 = (props: Props) => {
+export const IconBotLevel0 = (input: input) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
 			fill="currentColor"
-			{...props}
+			{...input}
 		>
 			<g>
 				<path fill="none" d="M0 0h24v24H0z" />
@@ -18,7 +18,7 @@ export const IconBotLevel0 = (props: Props) => {
 	);
 };
 
-export const IconBotLevel1 = (props: Props) => {
+export const IconBotLevel1 = (input: input) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -26,20 +26,20 @@ export const IconBotLevel1 = (props: Props) => {
 			width="800px"
 			height="800px"
 			viewBox="0 -64 640 640"
-			{...props}
+			{...input}
 		>
 			<path d="M32,224H64V416H32A31.96166,31.96166,0,0,1,0,384V256A31.96166,31.96166,0,0,1,32,224Zm512-48V448a64.06328,64.06328,0,0,1-64,64H160a64.06328,64.06328,0,0,1-64-64V176a79.974,79.974,0,0,1,80-80H288V32a32,32,0,0,1,64,0V96H464A79.974,79.974,0,0,1,544,176ZM264,256a40,40,0,1,0-40,40A39.997,39.997,0,0,0,264,256Zm-8,128H192v32h64Zm96,0H288v32h64ZM456,256a40,40,0,1,0-40,40A39.997,39.997,0,0,0,456,256Zm-8,128H384v32h64ZM640,256V384a31.96166,31.96166,0,0,1-32,32H576V224h32A31.96166,31.96166,0,0,1,640,256Z" />
 		</svg>
 	);
 };
 
-export const IconBotLevel2 = (props: Props) => {
+export const IconBotLevel2 = (input: input) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 15 15"
 			fill="none"
-			{...props}
+			{...input}
 		>
 			<path
 				d="M5 8.5C5 8.22386 5.22386 8 5.5 8C5.77614 8 6 8.22386 6 8.5C6 8.77614 5.77614 9 5.5 9C5.22386 9 5 8.77614 5 8.5Z"
@@ -61,9 +61,9 @@ export const IconBotLevel2 = (props: Props) => {
 	);
 };
 
-export const IconBotLevel3 = (props: Props) => {
+export const IconBotLevel3 = (input: input) => {
 	return (
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" {...props}>
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" {...input}>
 			<path
 				fill="currentColor"
 				d="M81 21.499c-12.81 0-23 10.192-23 23.002 0 12.81 10.19 23 23 23s23.002-10.19 23.002-23S93.81 21.499 81 21.499zm350 0c-12.81 0-23.002 10.192-23.002 23.002 0 12.81 10.192 23 23.002 23 12.81 0 23-10.19 23-23s-10.19-23.002-23-23.002zM110.18 73.212a41.25 41.25 0 0 1-15.11 9.781l28.666 45.867 14.983-9.988zm291.64 0l-28.539 45.66 14.983 9.988 28.666-45.867a41.25 41.25 0 0 1-15.11-9.781zm-242.966 53.87l-36.143 24.095 6.652 19.955c9.215-12.422 23.339-21.987 39.614-28.912 1.172-.5 2.37-.973 3.568-1.448zm194.292 0l-13.69 13.69c1.197.475 2.395.949 3.567 1.448 16.275 6.925 30.399 16.49 39.614 28.912l6.652-19.955zM256 144.5c-29 0-58.021 4.939-79.977 14.281-21.898 9.319-35.908 22.38-39.164 38.364L106.28 426.5h299.442l-30.58-229.355c-3.256-15.984-17.266-29.045-39.164-38.364C314.02 149.44 285 144.501 256 144.501zm-64 58c31.373 0 57 25.627 57 57s-25.627 57-57 57-57-25.627-57-57 25.627-57 57-57zm128 0c31.373 0 57 25.627 57 57s-25.627 57-57 57-57-25.627-57-57 25.627-57 57-57zm-128.549 16.023c-22.754 0-41.547 18.366-41.547 40.977 0 22.611 18.793 40.977 41.547 40.977 22.754 0 41.549-18.366 41.549-40.977 0-22.611-18.795-40.977-41.549-40.977zm128 0c-22.754 0-41.547 18.366-41.547 40.977 0 22.611 18.793 40.977 41.547 40.977 22.754 0 41.549-18.366 41.549-40.977 0-22.611-18.795-40.977-41.549-40.977zm-128 17.998c13.198 0 23.549 10.269 23.549 22.979 0 12.71-10.35 22.978-23.549 22.978-13.198 0-23.549-10.268-23.549-22.978s10.351-22.979 23.55-22.979zm128 0c13.198 0 23.549 10.269 23.549 22.979 0 12.71-10.35 22.978-23.549 22.978-13.198 0-23.549-10.268-23.549-22.978s10.351-22.979 23.55-22.979zM208 330.501h96v18h-96zm-16 32h128v18H192zm-16 32h160v18H176zm-103 50v46h46v-46zm64 0v46h46v-46zm64 0v46h46v-46zm64 0v46h46v-46zm64 0v46h46v-46zm64 0v46h46v-46z"
@@ -72,7 +72,7 @@ export const IconBotLevel3 = (props: Props) => {
 	);
 };
 
-export const IconBotLevel4 = (props: Props) => {
+export const IconBotLevel4 = (input: input) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +82,7 @@ export const IconBotLevel4 = (props: Props) => {
 			id="Layer_1"
 			viewBox="0 0 512.001 512.001"
 			xmlSpace="preserve"
-			{...props}
+			{...input}
 		>
 			<g>
 				<g>
@@ -113,7 +113,7 @@ export const IconBotLevel4 = (props: Props) => {
 	);
 };
 
-export const IconBotScary = (props: Props) => {
+export const IconBotScary = (input: input) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -123,7 +123,7 @@ export const IconBotScary = (props: Props) => {
 			id="Capa_1"
 			viewBox="0 0 299.299 299.299"
 			xmlSpace="preserve"
-			{...props}
+			{...input}
 		>
 			<g>
 				<g>
@@ -141,7 +141,7 @@ export const IconBotScary = (props: Props) => {
 	);
 };
 
-export const IconBotCute = (props: Props) => {
+export const IconBotCute = (input: input) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +151,7 @@ export const IconBotCute = (props: Props) => {
 			id="Capa_1"
 			viewBox="0 0 32 32"
 			xmlSpace="preserve"
-			{...props}
+			{...input}
 		>
 			<g>
 				<g>
@@ -165,7 +165,7 @@ export const IconBotCute = (props: Props) => {
 	);
 };
 
-export const IconBotHappy = (props: Props) => {
+export const IconBotHappy = (input: input) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -175,7 +175,7 @@ export const IconBotHappy = (props: Props) => {
 			id="Layer_1"
 			viewBox="0 0 512 512"
 			xmlSpace="preserve"
-			{...props}
+			{...input}
 		>
 			<g>
 				<g>
@@ -186,7 +186,7 @@ export const IconBotHappy = (props: Props) => {
 	);
 };
 
-export const IconBotSimple = (props: Props) => {
+export const IconBotSimple = (input: input) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +194,7 @@ export const IconBotSimple = (props: Props) => {
 			fill="currentColor"
 			viewBox="0 0 1024 1024"
 			version="1.1"
-			{...props}
+			{...input}
 		>
 			<path
 				d="M852 64H172c-17.7 0-32 14.3-32 32v660c0 17.7 14.3 32 32 32h680c17.7 0 32-14.3 32-32V96c0-17.7-14.3-32-32-32zM300 328c0-33.1 26.9-60 60-60s60 26.9 60 60-26.9 60-60 60-60-26.9-60-60z m372 248c0 4.4-3.6 8-8 8H360c-4.4 0-8-3.6-8-8v-60c0-4.4 3.6-8 8-8h304c4.4 0 8 3.6 8 8v60z m-8-188c-33.1 0-60-26.9-60-60s26.9-60 60-60 60 26.9 60 60-26.9 60-60 60zM799 864H225c-13.8 0-25 14.3-25 32v56c0 4.4 2.8 8 6.2 8h611.5c3.4 0 6.2-3.6 6.2-8v-56c0.1-17.7-11.1-32-24.9-32z"

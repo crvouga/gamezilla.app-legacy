@@ -3,7 +3,7 @@ import { p } from "gamezilla-app/@/core/parser";
 import { Translator } from "gamezilla-app/@/l18n/generated";
 import { APP_SOUND } from "gamezilla-app/app/@/client";
 import { IconCheckmark, Transition } from "gamezilla-app/app/@/ui";
-import { ActionProps, Actions } from "gamezilla-app/app/@/ui/actions";
+import { Actioninput, Actions } from "gamezilla-app/app/@/ui/actions";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { FlowAlgoDrawPipes } from "../flow-aglo/flow-algo-draw-pipes";
 import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
@@ -562,7 +562,7 @@ export const viewResetAction = (input: {
 	ctx: {
 		t: Translator;
 	};
-}): ActionProps => {
+}): Actioninput => {
 	const flow = toFlow({ model: input.model, flow: input.flowPuzzle.flow });
 	const disabled = Flow.isPipesEmpty(flow);
 	return Actions.reset({

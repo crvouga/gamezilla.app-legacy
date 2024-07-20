@@ -1,4 +1,6 @@
 import { Posix, Sub, Time, TimeSpan } from "gamezilla-app/@/core";
+import { TranslatedText } from "gamezilla-app/@/l18n";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
@@ -16,7 +18,7 @@ import { IconXMark, Show, Transition, cn } from "gamezilla-app/app/@/ui";
 //
 //
 
-type Ctx = { now: Posix };
+type Ctx = { now: Posix; t: Translator };
 
 type Module = AppClientModule<{
 	Model: Model;
@@ -52,7 +54,7 @@ export type Model = {
 
 export type Toast = {
 	toastId: number;
-	text: string;
+	text: TranslatedText;
 	duration: TimeSpan;
 	variant: "error" | "info";
 	createdAt: Posix;
@@ -216,13 +218,13 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 //
 
-export const View: Module["View"] = (props) => {
+export const View: Module["View"] = (input) => {
 	return (
 		<Transition mode="out-in" id="toast-root" onEnter={onEnter} onExit={onExit}>
 			<Show
-				when={() => props.model.toast}
+				when={() => input.model.toast}
 				render={(toast) => (
-					<Toast key={toast.toastId} toast={toast} dispatch={props.dispatch} />
+					<Toast key={toast.toastId} toast={toast} dispatch={input.dispatch} />
 				)}
 			/>
 		</Transition>
@@ -265,25 +267,25 @@ const onExit = async (node: HTMLElement) => {
 	).finished;
 };
 
-const Toast = (props: { toast: Toast; dispatch: (m: Msg) => void }) => {
-	const errorMsg = props.toast.errorMsg;
+const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
+	const errorMsg = input.toast.errorMsg;
 	return (
 		<div
-			id={String(props.toast.toastId)}
+			id={String(input.toast.toastId)}
 			className="pointer-events-none absolute left-0 top-0 z-40 w-full overflow-visible p-4"
 			//
 			onMouseDown={() =>
-				props.dispatch({ t: "pressed-down-on-toast", toast: props.toast })
+				input.dispatch({ t: "pressed-down-on-toast", toast: input.toast })
 			}
 			onMouseUp={() =>
-				props.dispatch({ t: "pressed-up-on-toast", toast: props.toast })
+				input.dispatch({ t: "pressed-up-on-toast", toast: input.toast })
 			}
 			//
 			onTouchStart={() =>
-				props.dispatch({ t: "pressed-down-on-toast", toast: props.toast })
+				input.dispatch({ t: "pressed-down-on-toast", toast: input.toast })
 			}
 			onTouchEnd={() =>
-				props.dispatch({ t: "pressed-up-on-toast", toast: props.toast })
+				input.dispatch({ t: "pressed-up-on-toast", toast: input.toast })
 			}
 			//
 			onContextMenu={(e) => {
@@ -293,22 +295,22 @@ const Toast = (props: { toast: Toast; dispatch: (m: Msg) => void }) => {
 			<div
 				className={cn(
 					"pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
-					props.toast.variant === "info" && "border-neutral-600 bg-neutral-700",
-					props.toast.variant === "error" && "border-red-400 bg-red-500",
+					input.toast.variant === "info" && "border-neutral-600 bg-neutral-700",
+					input.toast.variant === "error" && "border-red-400 bg-red-500",
 				)}
-				key={props.toast.toastId}
+				key={input.toast.toastId}
 			>
-				{props.toast.text}
+				{input.toast.text}
 				{errorMsg && (
 					<>
 						<button
 							type="button"
 							className="font-bold"
 							onClick={() =>
-								props.dispatch({
+								input.dispatch({
 									t: "clicked-see-error",
 									errorMsg: errorMsg,
-									toastId: props.toast.toastId,
+									toastId: input.toast.toastId,
 								})
 							}
 						>
@@ -319,9 +321,9 @@ const Toast = (props: { toast: Toast; dispatch: (m: Msg) => void }) => {
 				<button
 					type="button"
 					onClick={() =>
-						props.dispatch({
+						input.dispatch({
 							t: "clicked-dismiss-button",
-							toastId: props.toast.toastId,
+							toastId: input.toast.toastId,
 						})
 					}
 				>

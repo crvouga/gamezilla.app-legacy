@@ -1,7 +1,7 @@
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { UserId } from "gamezilla-app/app/@/data";
 import { IconRobot, Avatar, Transition, cn } from "gamezilla-app/app/@/ui";
-import type { PlayerType, VsBotProps } from "../vs-bot";
+import type { PlayerType, VsBotInput } from "../vs-bot";
 import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
 
 //
@@ -54,7 +54,7 @@ export type GameOver =
 			t: "draw";
 	  };
 
-type Props = {
+type input = {
 	ctx: SpaceClientCtx;
 	model?: Model;
 	gameOver: GameOver | null;
@@ -64,18 +64,18 @@ type Props = {
 	};
 	bot: {
 		label: string;
-		renderIcon: (props: { className: string }) => VDom;
+		renderIcon: (input: { className: string }) => VDom;
 	};
 	playerOne: {
-		renderIcon: (props: { className: string }) => VDom;
+		renderIcon: (input: { className: string }) => VDom;
 	};
 	playerTwo: {
-		renderIcon: (props: { className: string }) => VDom;
+		renderIcon: (input: { className: string }) => VDom;
 	};
 	onPlayAgain?: () => void;
 };
 
-export type VsBotGameProps = VsBotProps & {
+export type VsBotGameinput = VsBotInput & {
 	turn: PlayerType | null;
 	human: {
 		player: PlayerType;
@@ -97,7 +97,7 @@ export type Status =
 			t: "draw";
 	  };
 
-export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
+export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
 	return (
 		<Transition
 			id="status-bar"
@@ -107,10 +107,10 @@ export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
 			className="relative h-8 w-full"
 		>
 			<div
-				key={statusToKey(props.status)}
+				key={statusToKey(input.status)}
 				className="absolute inset-0 flex items-center justify-center gap-1 text-neutral-300"
 			>
-				<ViewStatusBarContent {...props} />
+				<ViewStatusBarContent {...input} />
 			</div>
 		</Transition>
 	);
@@ -148,14 +148,14 @@ function statusToKey(status: Status) {
 	}
 }
 
-const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
-	switch (props.status.t) {
+const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
+	switch (input.status.t) {
 		case "playing": {
-			switch (props.status.turn) {
+			switch (input.status.turn) {
 				case "player-one": {
 					return (
 						<>
-							{props.playerOne.renderIcon({
+							{input.playerOne.renderIcon({
 								className: "h-5 w-5",
 							})}
 							<p>Turn</p>
@@ -166,7 +166,7 @@ const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
 				case "player-two": {
 					return (
 						<>
-							{props.playerTwo.renderIcon({
+							{input.playerTwo.renderIcon({
 								className: "h-5 w-5",
 							})}
 							<p>Turn</p>
@@ -183,9 +183,9 @@ const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
 };
 
 export const ViewGameOverOverlay = (
-	props: Props & { isSpectating: boolean },
+	input: input & { isSpectating: boolean },
 ) => {
-	const { gameOver } = props;
+	const { gameOver } = input;
 
 	return (
 		<Transition
@@ -197,14 +197,14 @@ export const ViewGameOverOverlay = (
 			{gameOver?.t === "winner" && (
 				<button
 					className="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
-					disabled={props.isSpectating}
-					onClick={!props.isSpectating ? props.onPlayAgain : undefined}
+					disabled={input.isSpectating}
+					onClick={!input.isSpectating ? input.onPlayAgain : undefined}
 				>
 					<div className="flex-1" />
 
-					<Winner {...props} winner={gameOver.winner} />
+					<Winner {...input} winner={gameOver.winner} />
 
-					{props.onPlayAgain && !props.isSpectating ? (
+					{input.onPlayAgain && !input.isSpectating ? (
 						<div className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold">
 							Tap to play again
 						</div>
@@ -216,14 +216,14 @@ export const ViewGameOverOverlay = (
 			{gameOver?.t === "draw" && (
 				<button
 					className="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
-					disabled={props.isSpectating}
-					onClick={!props.isSpectating ? props.onPlayAgain : undefined}
+					disabled={input.isSpectating}
+					onClick={!input.isSpectating ? input.onPlayAgain : undefined}
 				>
 					<div className="flex-1" />
 
-					<Draw {...props} />
+					<Draw {...input} />
 
-					{props.onPlayAgain && !props.isSpectating ? (
+					{input.onPlayAgain && !input.isSpectating ? (
 						<div className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0">
 							Tap to play again
 						</div>
@@ -243,7 +243,7 @@ const Winner = ({
 	human,
 	bot,
 	winner,
-}: Props & { winner: PlayerType }) => {
+}: input & { winner: PlayerType }) => {
 	const humanSlot = (
 		<>
 			<Avatar
@@ -289,10 +289,10 @@ const Winner = ({
 	);
 };
 
-const Draw = (props: Props) => {
+const Draw = (input: input) => {
 	const humanSlot = (
 		<>
-			<Avatar src={props.ctx.profiles[props.ctx.currentUserId]?.avatarUrl} />
+			<Avatar src={input.ctx.profiles[input.ctx.currentUserId]?.avatarUrl} />
 		</>
 	);
 
@@ -304,15 +304,15 @@ const Draw = (props: Props) => {
 
 	const playerOneSlot = (
 		<>
-			{props.playerOne.renderIcon({ className: "h-5 w-5" })}
-			{props.human.player === "player-one" ? humanSlot : botSlot}
+			{input.playerOne.renderIcon({ className: "h-5 w-5" })}
+			{input.human.player === "player-one" ? humanSlot : botSlot}
 		</>
 	);
 
 	const playerTwoSlot = (
 		<>
-			{props.playerTwo.renderIcon({ className: "h-5 w-5" })}
-			{props.human.player === "player-two" ? humanSlot : botSlot}
+			{input.playerTwo.renderIcon({ className: "h-5 w-5" })}
+			{input.human.player === "player-two" ? humanSlot : botSlot}
 		</>
 	);
 
@@ -334,7 +334,7 @@ export const VsBotPlayerSection = ({
 	playerOne,
 	playerTwo,
 	turn,
-}: VsBotGameProps) => {
+}: VsBotGameinput) => {
 	const humanSlot = (
 		<>
 			<Avatar

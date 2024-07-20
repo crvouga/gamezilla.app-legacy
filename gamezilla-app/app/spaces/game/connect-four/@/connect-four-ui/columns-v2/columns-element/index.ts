@@ -4,7 +4,7 @@ import {
 	MAX_COLUMN_HEIGHT,
 } from "../../../connect-four";
 import { gameTheme } from "../../shared";
-import { type ColumnsProps, columnsPropsSub } from "../shared";
+import { type Columnsinput, columnsinputSub } from "../shared";
 import { initColumns } from "./columns";
 import { initDiscs, syncDiscs } from "./discs";
 import type { SvgIds } from "./shared";
@@ -36,8 +36,8 @@ if (typeof window !== "undefined" && "customElements" in window) {
 	customElements.define(
 		"connect-four-columns",
 		class extends HTMLElement {
-			private props: ColumnsProps | null = null;
-			private prevProps: ColumnsProps | null = null;
+			private input: Columnsinput | null = null;
+			private previnput: Columnsinput | null = null;
 			private cleanUps: (() => void)[] = [];
 
 			constructor() {
@@ -56,16 +56,16 @@ if (typeof window !== "undefined" && "customElements" in window) {
 			}
 
 			initUI() {
-				const unsubscribe = columnsPropsSub.sub((props) => {
-					this.prevProps = this.props;
-					this.props = props;
+				const unsubscribe = columnsinputSub.sub((input) => {
+					this.previnput = this.input;
+					this.input = input;
 					this.syncUI();
 				});
 				this.cleanUps.push(unsubscribe);
 
 				const initialColumns = this.getAttribute("initial-columns-json");
 				if (initialColumns) {
-					this.props = {
+					this.input = {
 						columns: JSON.parse(initialColumns),
 					};
 				}
@@ -130,21 +130,21 @@ if (typeof window !== "undefined" && "customElements" in window) {
 					});
 				}
 
-				if (this.props && discs) {
+				if (this.input && discs) {
 					initDiscs({
-						columns: this.props.columns,
+						columns: this.input.columns,
 						ids,
 						parentNode: discs,
 					});
 				}
 
-				if (this.props && wins) {
-					initWins({ columns: this.props.columns, parentNode: wins });
+				if (this.input && wins) {
+					initWins({ columns: this.input.columns, parentNode: wins });
 				}
 			}
 
 			onColumnClick(columnIndex: ColumnIndex) {
-				this.props?.onDropDisc?.(columnIndex);
+				this.input?.onDropDisc?.(columnIndex);
 			}
 
 			getColumnsParentNode() {
@@ -172,7 +172,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
 			syncUI() {
 				const discs = this.getDiscsParentNode();
-				const columns = this.props?.columns;
+				const columns = this.input?.columns;
 				if (columns && discs) {
 					syncDiscs({
 						columns,
@@ -185,14 +185,14 @@ if (typeof window !== "undefined" && "customElements" in window) {
 					syncWins({
 						columns,
 						parentNode: wins,
-						prevColumns: this.prevProps?.columns ?? null,
+						prevColumns: this.previnput?.columns ?? null,
 					});
 				}
 
 				const root = this.shadowRoot?.querySelector("svg");
 
 				if (root) {
-					if (this.props?.disabled) {
+					if (this.input?.disabled) {
 						root.classList.add("pointer-events-none");
 					} else {
 						root.classList.remove("pointer-events-none");

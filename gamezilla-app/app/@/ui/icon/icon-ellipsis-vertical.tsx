@@ -1,13 +1,13 @@
-import type { IconProps } from "../icon-shared";
+import type { Iconinput } from "../icon-shared";
 
-export const IconEllipsisVertical = (props: IconProps) => {
+export const IconEllipsisVertical = (input: Iconinput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 128 512"
 			fill="currentColor"
 			stroke="currentColor"
-			{...props}
+			{...input}
 		>
 			<path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
 		</svg>

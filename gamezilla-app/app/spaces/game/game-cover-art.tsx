@@ -14,8 +14,7 @@ export const CoverArt = (input: { gameName: GameName }) => {
 		}
 
 		default: {
-			const check: never = input.gameName;
-			return check;
+			throw new Error(`Unknown game name: ${input.gameName}`);
 		}
 	}
 };

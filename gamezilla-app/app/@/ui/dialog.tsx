@@ -3,15 +3,15 @@ import { cn } from "./ui";
 import { TimeSpan } from "gamezilla-app/@/core";
 import { styles } from "gamezilla-app/@/vdom/style";
 
-export const Dialog = (props: {
+export const Dialog = (input: {
 	children: VDomChildren;
 	open: boolean;
 	onClose: () => void;
 	delay?: TimeSpan;
 }) => {
-	const delayMs = props.delay ? TimeSpan.toMilliseconds(props.delay) : null;
+	const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null;
 	const style = styles({
-		"transition-delay": props.open && delayMs ? `${delayMs}ms` : undefined,
+		"transition-delay": input.open && delayMs ? `${delayMs}ms` : undefined,
 	});
 	return (
 		<div
@@ -19,7 +19,7 @@ export const Dialog = (props: {
 			style={style}
 			className={cn(
 				"absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out",
-				props.open
+				input.open
 					? "scale-100 opacity-100"
 					: "pointer-events-none scale-0 opacity-0",
 			)}
@@ -27,12 +27,12 @@ export const Dialog = (props: {
 				if (e.target !== e.currentTarget) {
 					return;
 				}
-				props.onClose();
+				input.onClose();
 			}}
 			onKeyDown={(e) => {
 				switch (e.key) {
 					case "Escape": {
-						props.onClose();
+						input.onClose();
 						return;
 					}
 					default: {
@@ -41,28 +41,28 @@ export const Dialog = (props: {
 				}
 			}}
 		>
-			{props.children}
+			{input.children}
 		</div>
 	);
 };
 
-export const DialogSurface = (props: { children: VDomChildren }) => {
+export const DialogSurface = (input: { children: VDomChildren }) => {
 	return (
 		<div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-900 p-6">
-			{props.children}
+			{input.children}
 		</div>
 	);
 };
 
-export const DialogHeader = (props: { title: string }) => {
+export const DialogHeader = (input: { title: string }) => {
 	return (
 		<h1
 			role="heading"
 			aria-level={1}
-			title={props.title}
+			title={input.title}
 			className="text-center text-xl font-semibold"
 		>
-			{props.title}
+			{input.title}
 		</h1>
 	);
 };

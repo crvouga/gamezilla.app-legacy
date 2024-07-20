@@ -1,3 +1,4 @@
+import { Brand } from "../core/brand";
 import { LanguageCodeISO_639_1 } from "./lang-code-iso-639-1/lang-code-iso-639-1";
 
 export type TranslationText = {
@@ -7,6 +8,8 @@ export type TranslationText = {
 export type Translations<TText extends TranslationText> = {
 	[lang in LanguageCodeISO_639_1]: TText;
 };
+
+export type TranslatedText = Brand<"TranslatedText", string>;
 
 export const createTranslator =
 	<TTranslationText extends TranslationText>(text: TTranslationText) =>
@@ -18,13 +21,13 @@ export const createTranslator =
 	>(
 		key: K,
 		...args: Args
-	): string => {
+	): TranslatedText => {
 		const translation = text[key];
 
 		if (typeof translation === "function") {
 			const result = translation(...(args as any));
-			return result;
+			return result as TranslatedText;
 		}
 
-		return translation!;
+		return translation as TranslatedText;
 	};

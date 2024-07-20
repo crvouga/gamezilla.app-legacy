@@ -196,7 +196,7 @@ export const View = ({
 	);
 };
 
-export const ViewBoard = (_props: {
+export const ViewBoard = (_input: {
 	model: Model;
 	dispatch: (msg: Msg) => void;
 }) => {

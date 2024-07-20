@@ -4,14 +4,14 @@ import {
 	type ClientCtx,
 	playSound,
 } from "gamezilla-app/app/@/client";
-import { Button } from "gamezilla-app/app/@/ui";
+import { TopBar } from "gamezilla-app/app/@/ui";
 import { type WithEventId, withId } from "../@/event";
 import { SpaceClientCmd } from "../@/space-client-cmd";
 import { SpaceClientModule } from "../architecture/architecture";
-import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
+import { ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import { GameClient } from "../game/game.client";
-import { gameNameList, gameNameToString } from "../game/game.types";
+import { gameNameList } from "../game/game.types";
 import { SpaceCore, type SpaceCoreEvent } from "../spaces-core";
 import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { MsgClient } from "../spaces.types";
@@ -318,29 +318,28 @@ const View: SpaceClientModule["View"] = (input) => {
 	return <ViewScreenNotInGame {...input} />;
 };
 
-const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
-	if (!ctx.space || !ctx.currentUserId || !ctx.currentUserRole) {
+const ViewScreenNotInGame: SpaceClientModule["View"] = (input) => {
+	if (
+		!input.ctx.space ||
+		!input.ctx.currentUserId ||
+		!input.ctx.currentUserRole
+	) {
 		return null;
 	}
 
-	if (ctx.space.hostId !== ctx.currentUserId) {
+	if (input.ctx.space.hostId !== input.ctx.currentUserId) {
 		return (
 			<div className="flex h-full w-full flex-1 flex-col">
-				<ViewGameHeader
-					ctx={ctx}
-					onBack={() => dispatch({ t: "clicked-go-home-button" })}
-				/>
-
 				<div className="w-full flex-1">
 					<ViewUsersInSpaceList
 						onOpenUserDetails={(userId) =>
-							dispatch({ t: "clicked-user", userId })
+							input.dispatch({ t: "clicked-user", userId })
 						}
 						ctx={{
-							...ctx,
-							space: ctx.space,
-							currentUserId: ctx.currentUserId,
-							currentUserRole: ctx.currentUserRole,
+							...input.ctx,
+							space: input.ctx.space,
+							currentUserId: input.ctx.currentUserId,
+							currentUserRole: input.ctx.currentUserRole,
 						}}
 					/>
 				</div>
@@ -350,7 +349,12 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
 
 	return (
 		<div className="flex h-full w-full flex-1 flex-col">
-			<h1 className="p-4 text-center text-3xl font-bold">Games</h1>
+			<TopBar
+				ctx={input.ctx}
+				center
+				onBack={() => input.dispatch({ t: "clicked-go-home-button" })}
+				title={input.ctx.t("spaces.games")}
+			/>
 
 			<div className="grid flex-1 grid-cols-3 justify-between gap-8 px-4">
 				{gameNameList.map((gameName) => (
@@ -358,25 +362,19 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
 						<button
 							type="button"
 							aria-label={gameName}
-							onClick={() => dispatch({ t: "clicked-game-tile", gameName })}
+							onClick={() =>
+								input.dispatch({ t: "clicked-game-tile", gameName })
+							}
 							className="flex overflow-hidden rounded-lg border border-neutral-700"
 						>
 							<CoverArt gameName={gameName} />
 						</button>
 
 						<p className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">
-							{gameNameToString(gameName)}
+							{input.ctx.t(gameName)}
 						</p>
 					</div>
 				))}
-			</div>
-
-			<div className="flex w-full items-center justify-center border-t border-neutral-700 p-4">
-				<Button
-					className="w-full"
-					onClick={() => dispatch({ t: "clicked-go-home-button" })}
-					text="Go Home"
-				/>
 			</div>
 		</div>
 	);

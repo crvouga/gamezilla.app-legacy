@@ -1,3 +1,6 @@
+import { LocalStorage } from "gamezilla-app/@/core";
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import { translations } from "gamezilla-app/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n";
 import {
 	APP_SOUND,
 	type AnonymousClientCtx,
@@ -9,13 +12,9 @@ import {
 	playSound,
 	pushRoute,
 } from "gamezilla-app/app/@/client";
-import { LocalStorage } from "gamezilla-app/@/core";
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
-import { translations } from "gamezilla-app/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n";
 import type { AppClientModule } from "../@/architecture/app-client";
 import { translatorSubscriptions } from "../@/client/translator";
 import {
-	Button,
 	IconCheckmarkCircle,
 	IconCheckmarkCircleEmpty,
 	IconLanguage,
@@ -189,7 +188,7 @@ export const ViewStatusBarDrawer: Module["View"] = ({
 }) => {
 	return (
 		<ListItemButton
-			icon={(props) => <IconLanguage {...props} />}
+			icon={(input) => <IconLanguage {...input} />}
 			label={ctx.t("lang.language")}
 			end={() => ctx.t(model.lang)}
 			onClick={() => dispatch({ t: "clicked-change-lang" })}
@@ -221,21 +220,26 @@ export const View: Module["View"] = (input) => {
 const ViewChooseLang: Module["View"] = (input) => {
 	return (
 		<div className="relative flex h-full w-full flex-col overflow-hidden">
-			<TopBar title={input.ctx.t("lang.choose-language")} />
+			<TopBar
+				ctx={input.ctx}
+				onBack={() => input.dispatch({ t: "choose-lang.clicked-done" })}
+				title={input.ctx.t("lang.choose-language")}
+			/>
 			<div className="flex flex-1 flex-col divide-y divide-neutral-700 overflow-y-scroll">
 				{LanguageCodeISO_639_1.ALL.map((code) => {
 					return (
 						<ListItemButton
 							label={translations[code][code]}
-							icon={(props) => {
+							icon={(inputIcon) => {
 								if (input.model.loading[code]?.endedAt === null) {
-									return <Spinner {...props} />;
+									return <Spinner {...inputIcon} />;
 								}
 
 								if (input.model.lang === code) {
-									return <IconCheckmarkCircle {...props} />;
+									return <IconCheckmarkCircle {...inputIcon} />;
 								}
-								return <IconCheckmarkCircleEmpty {...props} />;
+
+								return <IconCheckmarkCircleEmpty {...inputIcon} />;
 							}}
 							end={() => <p>{input.ctx.t(code)}</p>}
 							onClick={() =>
@@ -245,13 +249,6 @@ const ViewChooseLang: Module["View"] = (input) => {
 					);
 				})}
 				<div className="w-full p-8" />
-			</div>
-			<div className="w-full border-t border-t-neutral-800 p-4">
-				<Button
-					onClick={() => input.dispatch({ t: "choose-lang.clicked-done" })}
-					text={input.ctx.t("lang.done")}
-					className="w-full"
-				/>
 			</div>
 		</div>
 	);

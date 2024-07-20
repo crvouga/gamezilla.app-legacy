@@ -6,7 +6,7 @@ import {
 	MAX_COLUMN_HEIGHT,
 } from "../../connect-four";
 import { gameTheme } from "../shared";
-import type { ViewColumnsProps } from "./shared";
+import type { ViewColumnsinput } from "./shared";
 
 export const doPaint = (columns: Columns) => {
 	const canvas = document.getElementById("view-columns-canvas");
@@ -31,7 +31,7 @@ export const doPaint = (columns: Columns) => {
 	paint({ context, columns });
 };
 
-export const ViewColumnsCanvas = (props: ViewColumnsProps) => {
+export const ViewColumnsCanvas = (input: ViewColumnsinput) => {
 	return (
 		<canvas
 			id="view-columns-canvas"
@@ -49,8 +49,8 @@ export const ViewColumnsCanvas = (props: ViewColumnsProps) => {
 					}),
 				);
 
-				if (props.onClick && isColumnIndex(columnIndex)) {
-					props.onClick(columnIndex);
+				if (input.onClick && isColumnIndex(columnIndex)) {
+					input.onClick(columnIndex);
 					return;
 				}
 			}}

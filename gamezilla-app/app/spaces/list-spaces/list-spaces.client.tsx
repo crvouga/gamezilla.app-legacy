@@ -133,25 +133,25 @@ const toSpaces = (model: Spaces.Model) => {
 	return spaces;
 };
 
-const View: SpaceClientModule["View"] = (props) => {
-	const currentUserId = props.ctx.currentUserId;
+const View: SpaceClientModule["View"] = (input) => {
+	const currentUserId = input.ctx.currentUserId;
 
 	if (!currentUserId) {
 		return null;
 	}
 
-	const currentUserSpaceId = props.model.spaceIdByUserId[currentUserId];
+	const currentUserSpaceId = input.model.spaceIdByUserId[currentUserId];
 
-	const spaces = toSpaces(props.model);
+	const spaces = toSpaces(input.model);
 
 	return (
 		<div className="relative flex w-full flex-1 flex-col overflow-hidden">
-			<TopBar title="Spaces" />
+			<TopBar onBack={false} ctx={input.ctx} title={input.ctx.t('spaces.spaces')} />
 
 			<div className="relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8">
 				{spaces.length === 0 && (
 					<EmptyState
-						renderIcon={(props) => <IconGamepad {...props} />}
+						renderIcon={(input) => <IconGamepad {...input} />}
 						label="No active spaces"
 					/>
 				)}
@@ -161,9 +161,9 @@ const View: SpaceClientModule["View"] = (props) => {
 						return (
 							<ViewSpaceCard
 								key={state.spaceId}
-								ctx={{ ...props.ctx, currentUserId }}
+								ctx={{ ...input.ctx, currentUserId }}
 								onClick={() => {
-									props.dispatch({
+									input.dispatch({
 										t: "clicked-space-card",
 										spaceId: state.spaceId,
 									});
@@ -176,8 +176,8 @@ const View: SpaceClientModule["View"] = (props) => {
 			</div>
 
 			{!currentUserSpaceId && (
-				<div className="flex border-t border-neutral-700 p-4">
-					<StartSpaceClient.ViewStartSpaceButton {...props} />
+				<div className="absolute right-4 bottom-6">
+					<StartSpaceClient.ViewStartSpaceButton {...input} />
 				</div>
 			)}
 		</div>

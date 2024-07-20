@@ -139,70 +139,70 @@ const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-const View: Module["View"] = (props) => {
-	if (!props.model) {
+const View: Module["View"] = (input) => {
+	if (!input.model) {
 		return null;
 	}
 
-	switch (props.modelCore.type) {
+	switch (input.modelCore.type) {
 		case "setup": {
 			return (
 				<VsUserSetupScreen
-					ctx={props.ctx}
-					title="Connect Four"
-					renderCoverArt={(props) => {
+					ctx={input.ctx}
+					title={input.ctx.t('connect-four')}
+					renderCoverArt={(input) => {
 						return (
-							<div {...props}>
+							<div {...input}>
 								<CoverArt />
 							</div>
 						);
 					}}
 					onStartGame={() => {
-						props.dispatch({
+						input.dispatch({
 							t: "user-started-game",
-							userId: props.ctx.currentUserId,
+							userId: input.ctx.currentUserId,
 						});
 					}}
-					onQuit={props.ctx.onQuit}
+					onQuit={input.ctx.onQuit}
 					playerOne={{
 						label: "Red",
 						onStartPlaying: () => {
-							props.dispatch({
+							input.dispatch({
 								t: "user-started-playing",
 								playerType: "player-one",
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 							});
 						},
 						onStopPlaying: () => {
-							props.dispatch({
+							input.dispatch({
 								t: "user-stopped-playing",
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 							});
 						},
-						renderIcon: (props) => {
-							return <PlayerIcon playerType="player-one" {...props} />;
+						renderIcon: (input) => {
+							return <PlayerIcon playerType="player-one" {...input} />;
 						},
-						userId: props.modelCore.players["player-one"] ?? null,
+						userId: input.modelCore.players["player-one"] ?? null,
 					}}
 					playerTwo={{
 						label: "Yellow",
 						onStartPlaying: () => {
-							props.dispatch({
+							input.dispatch({
 								t: "user-started-playing",
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 								playerType: "player-two",
 							});
 						},
 						onStopPlaying: () => {
-							props.dispatch({
+							input.dispatch({
 								t: "user-stopped-playing",
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 							});
 						},
-						renderIcon: (props) => {
-							return <PlayerIcon playerType="player-two" {...props} />;
+						renderIcon: (input) => {
+							return <PlayerIcon playerType="player-two" {...input} />;
 						},
-						userId: props.modelCore.players["player-two"] ?? null,
+						userId: input.modelCore.players["player-two"] ?? null,
 					}}
 				/>
 			);
@@ -211,8 +211,8 @@ const View: Module["View"] = (props) => {
 		case "game":
 		case "game-over": {
 			const currentUserPlayerType = toPlayerType(
-				props.ctx.currentUserId,
-				props.modelCore,
+				input.ctx.currentUserId,
+				input.modelCore,
 			);
 
 			return (
@@ -221,46 +221,46 @@ const View: Module["View"] = (props) => {
 						<div className="flex w-full items-center gap-2 px-2">
 							<PlayerSlot
 								playerType="player-one"
-								modelCore={props.modelCore}
-								ctx={props.ctx}
+								modelCore={input.modelCore}
+								ctx={input.ctx}
 							/>
 							<PlayerSlot
 								playerType="player-two"
-								modelCore={props.modelCore}
-								ctx={props.ctx}
+								modelCore={input.modelCore}
+								ctx={input.ctx}
 							/>
 						</div>
 
-						<Feedback ctx={props.ctx} modelCore={props.modelCore} />
+						<Feedback ctx={input.ctx} modelCore={input.modelCore} />
 
 						<div className="relative w-full">
 							<ViewColumns
-								columns={props.modelCore.columns}
-								gameId={props.modelCore.gameId}
+								columns={input.modelCore.columns}
+								gameId={input.modelCore.gameId}
 								onDropDisc={(columnIndex) =>
-									props.dispatch({
+									input.dispatch({
 										t: "user-dropped-disc",
-										userId: props.ctx.currentUserId,
+										userId: input.ctx.currentUserId,
 										columnIndex,
 									})
 								}
 								onHover={(columnIndex) =>
-									props.dispatch({
+									input.dispatch({
 										t: "hovered-over-columns",
 										columnIndex,
 									})
 								}
 								disabled={
-									toTurn(props.modelCore.columns) !== currentUserPlayerType ||
-									props.modelCore.type === "game-over"
+									toTurn(input.modelCore.columns) !== currentUserPlayerType ||
+									input.modelCore.type === "game-over"
 								}
 							/>
-							{props.modelCore.type === "game-over" && (
+							{input.modelCore.type === "game-over" && (
 								<div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
 									<ViewGameOverMessage
-										dispatch={props.dispatch}
-										ctx={props.ctx}
-										modelCore={props.modelCore}
+										dispatch={input.dispatch}
+										ctx={input.ctx}
+										modelCore={input.modelCore}
 									/>
 								</div>
 							)}
@@ -268,40 +268,40 @@ const View: Module["View"] = (props) => {
 					</div>
 
 					<ViewBottomButtonBar>
-						{props.modelCore.type === "game" && (
+						{input.modelCore.type === "game" && (
 							<ViewBottomButtonBarAction
-								icon={(props) => <IconFlag {...props} />}
+								icon={(input) => <IconFlag {...input} />}
 								label="Resign"
 								onClick={() => {
-									props.dispatch({
+									input.dispatch({
 										t: "clicked-resign",
-										userId: props.ctx.currentUserId,
+										userId: input.ctx.currentUserId,
 									});
 								}}
 							/>
 						)}
 
-						{props.modelCore.type === "game-over" &&
-							props.ctx.currentUserId === props.ctx.space.hostId && (
+						{input.modelCore.type === "game-over" &&
+							input.ctx.currentUserId === input.ctx.space.hostId && (
 								<>
 									<ViewBottomButtonBarAction
-										icon={(props) => <IconArrowLeftOnRect {...props} />}
+										icon={(input) => <IconArrowLeftOnRect {...input} />}
 										label="Exit"
 										onClick={() => {
-											props.dispatch({
+											input.dispatch({
 												t: "user-stopped-game",
-												userId: props.ctx.currentUserId,
+												userId: input.ctx.currentUserId,
 											});
 										}}
 									/>
 
 									<ViewBottomButtonBarAction
-										icon={(props) => <IconArrowRotateLeft {...props} />}
+										icon={(input) => <IconArrowRotateLeft {...input} />}
 										label="Rematch"
 										onClick={() => {
-											props.dispatch({
+											input.dispatch({
 												t: "user-requested-rematch",
-												userId: props.ctx.currentUserId,
+												userId: input.ctx.currentUserId,
 											});
 										}}
 									/>
@@ -312,16 +312,16 @@ const View: Module["View"] = (props) => {
 					<ConfirmationDialog
 						headerIcon={<IconFlag className="h-10 w-10" />}
 						title="Resign from game?"
-						onCancel={() => props.dispatch({ t: "close-modal" })}
-						onClose={() => props.dispatch({ t: "close-modal" })}
+						onCancel={() => input.dispatch({ t: "close-modal" })}
+						onClose={() => input.dispatch({ t: "close-modal" })}
 						confirmTitle="Resign"
 						onConfirm={() =>
-							props.dispatch({
+							input.dispatch({
 								t: "user-resigned",
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 							})
 						}
-						open={props.model.openedModal === "confirm-resign"}
+						open={input.model.openedModal === "confirm-resign"}
 					/>
 				</GameLayout>
 			);

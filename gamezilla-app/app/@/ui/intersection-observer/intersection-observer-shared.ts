@@ -1,6 +1,6 @@
 import { PubSub } from "gamezilla-app/@/core";
 
-export type IntersectionObserverEmitterProps = {
+export type IntersectionObserverEmitterinput = {
 	onVisible?: () => void;
 	onHidden?: () => void;
 	className?: string;
@@ -8,8 +8,8 @@ export type IntersectionObserverEmitterProps = {
 };
 
 export type IntersectionObserverEmitterEvent = {
-	type: "props";
-	props: IntersectionObserverEmitterProps;
+	type: "input";
+	input: IntersectionObserverEmitterinput;
 };
 
 export const sub = PubSub.create<IntersectionObserverEmitterEvent>();

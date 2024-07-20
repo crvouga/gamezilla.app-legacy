@@ -47,26 +47,26 @@ export const botLevelToString = (level: BotLevel): string => {
 
 export const renderBotLevel = ({
 	level,
-	...props
+	...input
 }: {
 	level: BotLevel;
 	className?: string;
 }): VDom => {
 	switch (level) {
 		case 0: {
-			return <IconBotSimple {...props} />;
+			return <IconBotSimple {...input} />;
 		}
 		case 1: {
-			return <IconBotCute {...props} />;
+			return <IconBotCute {...input} />;
 		}
 		case 2: {
-			return <IconBotLevel1 {...props} />;
+			return <IconBotLevel1 {...input} />;
 		}
 		case 3: {
-			return <IconBotLevel4 {...props} />;
+			return <IconBotLevel4 {...input} />;
 		}
 		case 4: {
-			return <IconBotScary {...props} />;
+			return <IconBotScary {...input} />;
 		}
 	}
 };

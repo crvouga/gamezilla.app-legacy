@@ -44,10 +44,10 @@ export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
 	);
 };
 
-export const CoverArt = (props: { className?: string }) => {
+export const CoverArt = (input: { className?: string }) => {
 	return (
 		<ViewBoard
-			{...props}
+			{...input}
 			viewBoxOffset={0.5}
 			bounds={{
 				lower: { x: 0, y: 0 },

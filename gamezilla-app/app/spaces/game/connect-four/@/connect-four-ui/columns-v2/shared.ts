@@ -2,7 +2,7 @@ import { PubSub } from "gamezilla-app/@/core";
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { ColumnIndex, Columns, PlayerType } from "../../connect-four";
 
-export type ColumnsProps = {
+export type Columnsinput = {
 	columns: Columns;
 	ghost?: {
 		columnIndex: ColumnIndex;
@@ -15,4 +15,4 @@ export type ColumnsProps = {
 	gameOverOverlay?: () => VDom | VDom[] | null;
 };
 
-export const columnsPropsSub = PubSub.create<ColumnsProps>();
+export const columnsinputSub = PubSub.create<Columnsinput>();

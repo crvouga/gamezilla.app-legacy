@@ -8,7 +8,7 @@ import {
 	type ClientCtx,
 } from "gamezilla-app/app/@/client";
 import { IconCopy } from "gamezilla-app/app/@/ui";
-import type { ActionProps } from "gamezilla-app/app/@/ui/actions";
+import type { Actioninput } from "gamezilla-app/app/@/ui/actions";
 import { FlowVariant } from "..";
 import { FlowGridShorthand } from "../flow-variant/flow-grid";
 
@@ -62,10 +62,10 @@ const viewAction = ({
 }: {
 	ctx: ClientCtx;
 	dispatch: (m: MsgClient) => void;
-}): ActionProps[] => {
+}): Actioninput[] => {
 	return [
 		{
-			icon: (props) => <IconCopy {...props} />,
+			icon: (input) => <IconCopy {...input} />,
 			label: ctx.t("flow.copy-puzzle-to-clipboard"),
 			onClick: () => dispatch({ t: "user-clicked-copy-to-clipboard" }),
 		},

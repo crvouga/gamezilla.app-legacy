@@ -101,7 +101,9 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 					if (msgSpaceEvent.userId === ctx.currentUserId) {
 						return {
 							model,
-							msgCmd: [showToast("Space ended")],
+							msgCmd: [
+								showToast(input.ctx.t("spaces.ended-space-current-user")),
+							],
 						};
 					}
 
@@ -110,13 +112,17 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 					if (!profile) {
 						return {
 							model,
-							msgCmd: [showToast("Space ended by host")],
+							msgCmd: [showToast(input.ctx.t("spaces.ended-space-host"))],
 						};
 					}
 
 					return {
 						model,
-						msgCmd: [showToast(`Space ended by ${profile.username}`)],
+						msgCmd: [
+							showToast(
+								input.ctx.t("spaces.ended-space-other-user", profile.username),
+							),
+						],
 					};
 				},
 			);
@@ -165,24 +171,24 @@ const updateEndSpaceButton: SpaceClientModule["update"] = ({
 	}
 };
 
-export const ViewEndSpaceButton: SpaceClientModule["View"] = (props) => {
+export const ViewEndSpaceButton: SpaceClientModule["View"] = (input) => {
 	return (
 		<Button
 			color="danger"
 			variant="contained"
 			size="sm"
 			text="End"
-			onClick={() => props.dispatch({ t: "clicked-end-space-button" })}
+			onClick={() => input.dispatch({ t: "clicked-end-space-button" })}
 		/>
 	);
 };
 
-const ViewSpaceEnded: SpaceClientModule["View"] = (props) => {
+const ViewSpaceEnded: SpaceClientModule["View"] = (input) => {
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center gap-4">
 			<p className="text-center text-2xl">Space ended</p>
 			<Button
-				onClick={() => props.dispatch({ t: "clicked-go-home-button" })}
+				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
 				size="lg"
 				variant="contained"
 				color="primary"

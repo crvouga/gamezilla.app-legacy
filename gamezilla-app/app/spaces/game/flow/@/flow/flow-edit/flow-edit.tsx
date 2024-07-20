@@ -501,25 +501,25 @@ export const View = (input: {
 			<div className="flex w-full flex-1 flex-col justify-end">
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconArrowRotateLeft {...props} />}
+						icon={(input) => <IconArrowRotateLeft {...input} />}
 						label="Undo"
 						onClick={() => dispatch({ t: "clicked-undo" })}
 						disabled={!History.canUndo(model.form)}
 					/>
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconArrowRotateRight {...props} />}
+						icon={(input) => <IconArrowRotateRight {...input} />}
 						label="Redo"
 						disabled={!History.canRedo(model.form)}
 						onClick={() => dispatch({ t: "clicked-redo" })}
 					/>
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconXMark {...props} />}
+						icon={(input) => <IconXMark {...input} />}
 						label="Clear"
 						disabled={!canClear(model)}
 						onClick={() => dispatch({ t: "clicked-clear" })}
 					/>
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconExpand {...props} />}
+						icon={(input) => <IconExpand {...input} />}
 						label="Dimensions"
 						onClick={() => dispatch({ t: "dimensions-form.clicked-open" })}
 					/>

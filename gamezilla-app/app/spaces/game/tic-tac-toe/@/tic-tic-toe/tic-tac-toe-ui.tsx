@@ -111,8 +111,8 @@ export const ViewBoard = ({
 };
 
 const strokeWidth = 0.1 * scale;
-const ViewWins = (props: { board: Model }) => {
-	const wins = toWins(props.board);
+const ViewWins = (input: { board: Model }) => {
+	const wins = toWins(input.board);
 
 	return (
 		<g>
@@ -352,7 +352,7 @@ export const PlayerTypeIcon = ({
 	);
 };
 
-export const CoverArt = (props: { className?: string }) => {
+export const CoverArt = (input: { className?: string }) => {
 	const positions: [Position, Slot][] = [
 		[{ row: 0, column: 0 }, "X"],
 		[{ row: 0, column: 1 }, Empty],
@@ -366,7 +366,7 @@ export const CoverArt = (props: { className?: string }) => {
 	] as const;
 
 	return (
-		<svg width="100%" viewBox="0 0 2 2" {...props}>
+		<svg width="100%" viewBox="0 0 2 2" {...input}>
 			<rect x={0} y={0} width={2} height={2} fill={gameTheme.background} />
 
 			{LINES.map((line, index) => (

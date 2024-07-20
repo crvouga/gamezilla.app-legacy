@@ -153,17 +153,14 @@ const updateRedirect: ClientModule["update"] = (input) => {
 				return { model };
 			}
 
-			const toastMessage =
-				msgEvt.account.role === "guest"
-					? ctx.t("auth.logged-in-as-guest")
-					: ctx.t("auth.logged-in");
-
 			return {
 				model,
 				msgCmd: [
 					replaceRoute({ n: "spaces", t: "space-list" }, false),
 					playSound(APP_SOUND.celebration),
-					showToast(toastMessage),
+					msgEvt.account.role === "guest"
+						? showToast(input.ctx.t("auth.logged-in-as-guest"))
+						: showToast(input.ctx.t("auth.logged-in")),
 				],
 			};
 		}
@@ -177,7 +174,7 @@ const updateRedirect: ClientModule["update"] = (input) => {
 					model,
 					msgCmd: [
 						replaceRoute({ n: "spaces", t: "space-list" }),
-						showToast("Logged in"),
+						showToast(input.ctx.t("auth.current-user-logged-in")),
 					],
 				};
 			}

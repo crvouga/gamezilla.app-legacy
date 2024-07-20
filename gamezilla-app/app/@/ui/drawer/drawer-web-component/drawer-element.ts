@@ -1,4 +1,4 @@
-import type { PrivateDrawerProps } from "../drawer-shared";
+import type { PrivateDrawerinput } from "../drawer-shared";
 import { drawerSub } from "./drawer-shared";
 
 declare global {
@@ -30,7 +30,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 		private root: HTMLElement | null = null;
 
 		private unsubscribe: () => void = () => {};
-		private props: PrivateDrawerProps | null = null;
+		private input: PrivateDrawerinput | null = null;
 
 		constructor() {
 			super();
@@ -45,7 +45,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 		connectedCallback() {
 			this.unsubscribe = drawerSub.sub((drawerEvent) => {
 				if (drawerEvent.id === this.getAttribute("id")) {
-					this.props = { ...drawerEvent };
+					this.input = { ...drawerEvent };
 
 					this.syncUI();
 				}
@@ -124,7 +124,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 			this.content = this.shadowRoot.querySelector(".content");
 
 			this.backdrop?.addEventListener("click", () => {
-				this.props?.onClose();
+				this.input?.onClose();
 			});
 
 			this.root?.classList.add("pointer-events-none");
@@ -166,16 +166,16 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
 		onKeyDown(keyboardEvent: KeyboardEvent) {
 			if (keyboardEvent.key === "Escape") {
-				this.props?.onClose();
+				this.input?.onClose();
 			}
 		}
 
 		syncUI() {
-			if (!this.props || !this.content || !this.root || !this.backdrop) {
+			if (!this.input || !this.content || !this.root || !this.backdrop) {
 				return;
 			}
 
-			switch (this.props.open) {
+			switch (this.input.open) {
 				case true: {
 					this.content.classList.add("open");
 					this.root.classList.remove("pointer-events-none");
@@ -198,7 +198,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 				}
 			}
 
-			switch (this.props.position) {
+			switch (this.input.position) {
 				case "bottom": {
 					this.root.style.top = "auto";
 					this.root.style.bottom = "0";

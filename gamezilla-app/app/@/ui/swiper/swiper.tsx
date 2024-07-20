@@ -16,21 +16,21 @@ declare global {
 }
 const mountedElementIds = new Set<string>();
 
-const onContainer = async (props: {
+const onContainer = async (input: {
 	id: string;
 	onSlideIndexChanged: (index: number) => void;
 }) => {
-	if (mountedElementIds.has(props.id)) {
+	if (mountedElementIds.has(input.id)) {
 		return;
 	}
 
-	const swiperElement = await waitForElementById(props.id);
+	const swiperElement = await waitForElementById(input.id);
 
 	if (!swiperElement) {
 		return;
 	}
 
-	mountedElementIds.add(props.id);
+	mountedElementIds.add(input.id);
 
 	// @ts-expect-error
 	let previousActiveIndex = swiperElement.swiper?.activeIndex ?? 0;
@@ -39,7 +39,7 @@ const onContainer = async (props: {
 		const swiper = event?.detail?.[0];
 		const activeIndex = swiper?.activeIndex ?? 0;
 		if (activeIndex !== previousActiveIndex) {
-			props.onSlideIndexChanged(activeIndex);
+			input.onSlideIndexChanged(activeIndex);
 			previousActiveIndex = activeIndex;
 		}
 	};
@@ -55,7 +55,7 @@ const onContainer = async (props: {
 			for (let j = 0; j < mutation.removedNodes.length; j++) {
 				const node = mutation.removedNodes[j]!;
 				if (node.contains(swiperElement)) {
-					mountedElementIds.delete(props.id);
+					mountedElementIds.delete(input.id);
 					observer.disconnect();
 					swiperElement.removeEventListener(
 						"swiperslidechange",
@@ -69,32 +69,32 @@ const onContainer = async (props: {
 	observer.observe(document.body, { childList: true, subtree: true });
 };
 
-const Container = (props: {
+const Container = (input: {
 	id: string;
 	onSlideIndexChanged: (index: number) => void;
 	children?: VDomChildren;
 	className?: string;
 	slideIndex: number;
 }) => {
-	onContainer(props);
+	onContainer(input);
 	return (
 		<swiper-container
-			id={props.id}
+			id={input.id}
 			slides-per-view="auto"
-			className={props.className}
+			className={input.className}
 			grab-cursor
 			centered-slides
-			initial-slide={props.slideIndex}
-			slide={props.slideIndex}
+			initial-slide={input.slideIndex}
+			slide={input.slideIndex}
 		>
-			{props.children}
+			{input.children}
 		</swiper-container>
 	);
 };
 
-const Slide = (props: { children?: VDomChildren; className?: string }) => {
+const Slide = (input: { children?: VDomChildren; className?: string }) => {
 	return (
-		<swiper-slide className={props.className}>{props.children}</swiper-slide>
+		<swiper-slide className={input.className}>{input.children}</swiper-slide>
 	);
 };
 

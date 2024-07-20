@@ -1,12 +1,12 @@
-import type { IconProps } from "../icon-shared";
+import type { Iconinput } from "../icon-shared";
 
-export const IconInfoCircle = (props: IconProps) => {
+export const IconInfoCircle = (input: Iconinput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
 			fill="currentColor"
-			{...props}
+			{...input}
 		>
 			<path
 				fillRule="evenodd"

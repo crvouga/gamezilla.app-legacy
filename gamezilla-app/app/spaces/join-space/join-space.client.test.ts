@@ -25,8 +25,9 @@ describe(import.meta.file, () => {
 		);
 
 		expect(
-			didShowToast(output, (toast) =>
-				toast.message.toLowerCase().includes("join"),
+			didShowToast(
+				output,
+				(toast) => toast.message === ctx.t("spaces.current-user-joined-space"),
 			),
 		).toBe(true);
 	});

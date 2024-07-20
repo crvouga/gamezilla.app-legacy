@@ -57,7 +57,7 @@ export type MsgToServer =
 //
 //
 
-export const GAME_NAME = ["connect-four", "flow"] as const;
+export const GAME_NAME = ["connect-four", "flow", "tic-tac-toe", 'gomoku', 'chess'] as const;
 
 export const GameName = p.enumeration(GAME_NAME);
 
@@ -66,6 +66,9 @@ export type GameName = p.Infer<typeof GameName>;
 export const gameNames: { [gameName in GameName]: GameName } = {
 	"connect-four": "connect-four",
 	flow: "flow",
+	"tic-tac-toe": "tic-tac-toe",
+	gomoku: 'gomoku',
+	chess: 'chess',
 };
 
 export const isGameName = (x: unknown): x is GameName => {
@@ -76,18 +79,6 @@ export const gameNameList: GameName[] = [
 	// "connect-four",
 	"flow",
 ];
-
-export const gameNameToString = (gameName: GameName): string => {
-	switch (gameName) {
-		case "connect-four": {
-			return "Connect Four";
-		}
-
-		case "flow": {
-			return "Flow";
-		}
-	}
-};
 
 export const ModelCore = p.or(
 	p.obj({

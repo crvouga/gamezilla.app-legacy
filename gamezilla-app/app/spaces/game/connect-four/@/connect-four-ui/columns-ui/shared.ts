@@ -3,7 +3,7 @@ import { Sub, type Transition } from "gamezilla-app/@/core";
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { ColumnIndex, Columns, PlayerType, Win } from "../../connect-four";
 
-export type ViewColumnsProps = {
+export type ViewColumnsinput = {
 	columns: Columns;
 	model?: Model;
 	ghost?: { columnIndex: ColumnIndex; playerType: PlayerType };
@@ -14,7 +14,7 @@ export type ViewColumnsProps = {
 	gameOverOverlay?: () => VDom | VDom[] | null;
 };
 
-export const columnsPropsSub = Sub.create<ViewColumnsProps>();
+export const columnsinputSub = Sub.create<ViewColumnsinput>();
 
 export type Model = {
 	discs: Transition.Model<Disc>;

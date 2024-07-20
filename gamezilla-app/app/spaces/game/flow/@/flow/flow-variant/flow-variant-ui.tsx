@@ -1,21 +1,21 @@
-import type { FlowViewProps } from "../flow-ui/flow-ui";
+import type { FlowViewinput } from "../flow-ui/flow-ui";
 import { FlowGridUI } from "./flow-grid";
 import { FlowHexUI } from "./flow-hex";
 import { FlowTriUI } from "./flow-tri";
 import type { Model } from "./flow-variant";
 
-export const View = (props: FlowViewProps<Model>) => {
-	switch (props.model.t) {
+export const View = (input: FlowViewinput<Model>) => {
+	switch (input.model.t) {
 		case "flow-grid": {
-			return <FlowGridUI.View {...props} model={props.model} />;
+			return <FlowGridUI.View {...input} model={input.model} />;
 		}
 
 		case "flow-hex": {
-			return <FlowHexUI.View {...props} model={props.model} />;
+			return <FlowHexUI.View {...input} model={input.model} />;
 		}
 
 		case "flow-tri": {
-			return <FlowTriUI.View {...props} model={props.model} />;
+			return <FlowTriUI.View {...input} model={input.model} />;
 		}
 	}
 };

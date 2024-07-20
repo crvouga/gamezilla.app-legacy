@@ -2,23 +2,18 @@ import type { BaseClientCtx } from "gamezilla-app/app/@/client";
 import { Avatar, cn } from "gamezilla-app/app/@/ui";
 import { ViewSpaceHostChip, ViewYouChip } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
-import { gameNameToString } from "../game/game.types";
 import type { SpaceCoreState } from "../spaces-core";
 
 const MAX_AVATAR_COUNT = 3;
 
-export const ViewSpaceCard = ({
-	ctx,
-	state,
-	onClick,
-}: {
+export const ViewSpaceCard = (input: {
 	ctx: BaseClientCtx;
 	state: SpaceCoreState.Started;
 	onClick?: () => void;
 }) => {
-	const host = ctx.profiles[state.hostId];
-	const users = Object.values(state.users).flatMap((userId) => {
-		const profile = ctx.profiles[userId];
+	const host = input.ctx.profiles[input.state.hostId];
+	const users = Object.values(input.state.users).flatMap((userId) => {
+		const profile = input.ctx.profiles[userId];
 
 		if (!profile) {
 			return [];
@@ -32,20 +27,22 @@ export const ViewSpaceCard = ({
 		];
 	});
 
-	const gameName = state.game?.t ?? null;
+	const gameName = input.state.game?.t ?? null;
 
 	return (
 		<button
 			type="button"
-			onClick={onClick}
-			disabled={!onClick}
+			onClick={input.onClick}
+			disabled={!input.onClick}
 			className={cn(
 				"flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500 p-4",
-				onClick && "hover:opacity-90 active:opacity-70",
+				input.onClick && "hover:opacity-90 active:opacity-70",
 			)}
 		>
 			<div className="flex w-full items-center justify-start">
-				<p className="block flex-1 text-left font-bold uppercase">LIVE</p>
+				<p className="block flex-1 text-left font-bold uppercase">
+					{input.ctx.t("space-card.live")}
+				</p>
 			</div>
 
 			{gameName && (
@@ -53,7 +50,7 @@ export const ViewSpaceCard = ({
 					<div className="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
 						<CoverArt gameName={gameName} />
 					</div>
-					<p className="text-xl">{gameNameToString(gameName)}</p>
+					<p className="text-xl">{input.ctx.t(gameName)}</p>
 				</div>
 			)}
 
@@ -65,8 +62,10 @@ export const ViewSpaceCard = ({
 						{host?.username}
 					</p>
 				</div>
-				<ViewSpaceHostChip ctx={ctx} />
-				{ctx.currentUserId === host?.userId && <ViewYouChip ctx={ctx} />}
+				<ViewSpaceHostChip ctx={input.ctx} />
+				{input.ctx.currentUserId === host?.userId && (
+					<ViewYouChip ctx={input.ctx} />
+				)}
 			</div>
 
 			{users.length > 1 && (
@@ -88,7 +87,9 @@ export const ViewSpaceCard = ({
 							</div>
 						)}
 					</div>
-					<p className="text-lg">{users.length} people</p>
+					<p className="text-lg">
+						{input.ctx.t("space-card.people-count", users.length)}
+					</p>
 				</div>
 			)}
 		</button>

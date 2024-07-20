@@ -1,5 +1,5 @@
 import {
-	type IntersectionObserverEmitterProps,
+	type IntersectionObserverEmitterinput,
 	sub,
 } from "./intersection-observer-shared";
 
@@ -15,7 +15,7 @@ declare global {
 if (typeof window !== "undefined" && "customElements" in window) {
 	class IntersectionObserverEmitter extends HTMLElement {
 		private unsubscribe: () => void = () => {};
-		private props: IntersectionObserverEmitterProps | null = null;
+		private input: IntersectionObserverEmitterinput | null = null;
 		private intersectionObserver: IntersectionObserver | null = null;
 		private queue: IntersectionObserverEntry[] = [];
 
@@ -39,10 +39,10 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
 		connectedCallback() {
 			this.unsubscribe = sub.sub((msgEvt) => {
-				if (msgEvt.props.id !== this.getAttribute("id")) {
+				if (msgEvt.input.id !== this.getAttribute("id")) {
 					return;
 				}
-				this.props = msgEvt.props;
+				this.input = msgEvt.input;
 
 				if (this.queue.length > 0) {
 					this.onIntersection(this.queue);
@@ -59,11 +59,11 @@ if (typeof window !== "undefined" && "customElements" in window) {
 		}
 
 		private onIntersection = (entries: IntersectionObserverEntry[]) => {
-			if (typeof this.props?.onVisible !== "function") {
+			if (typeof this.input?.onVisible !== "function") {
 				this.queue.push(...entries);
 				return;
 			}
-			this.props.onVisible();
+			this.input.onVisible();
 		};
 	}
 

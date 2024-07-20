@@ -1,12 +1,12 @@
-import type { IconProps } from "../icon-shared";
+import type { Iconinput } from "../icon-shared";
 
-export const IconUserGroup = (props: IconProps) => {
+export const IconUserGroup = (input: Iconinput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
 			fill="currentColor"
-			className={["h-6 w-6", props.className ? props.className : ""].join(" ")}
+			className={["h-6 w-6", input.className ? input.className : ""].join(" ")}
 		>
 			<path
 				fillRule="evenodd"

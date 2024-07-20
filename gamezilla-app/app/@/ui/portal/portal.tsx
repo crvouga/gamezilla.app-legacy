@@ -9,21 +9,21 @@ const getExit = (portalId: string): HTMLElement | null => {
 	) ?? null) as HTMLElement | null;
 };
 
-const Entrance = (props: { portalId: string; children: VDomChildren }) => {
-	const element = getExit(props.portalId);
+const Entrance = (input: { portalId: string; children: VDomChildren }) => {
+	const element = getExit(input.portalId);
 	if (!element) {
-		return props.children;
+		return input.children;
 	}
 	return (
-		<div data-portal-entrance data-portal-id={props.portalId}>
-			{createPortal?.(props.children, element)}
+		<div data-portal-entrance data-portal-id={input.portalId}>
+			{createPortal?.(input.children, element)}
 		</div>
 	);
 };
 
-const Exit = (props: { portalId: string }) => {
+const Exit = (input: { portalId: string }) => {
 	return (
-		<div id={props.portalId} data-portal-exit data-portal-id={props.portalId} />
+		<div id={input.portalId} data-portal-exit data-portal-id={input.portalId} />
 	);
 };
 

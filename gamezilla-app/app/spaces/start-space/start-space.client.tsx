@@ -36,7 +36,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
 							t: "space",
 							spaceId: msgSpaceEvent.spaceId,
 						}),
-						showToast("Started space"),
+						showToast(ctx.t("spaces.space-started")),
 					],
 				};
 			}
@@ -82,19 +82,18 @@ const updateStartSpaceButton: SpaceClientModule["update"] = (input) => {
 	}
 };
 
-const ViewStartSpaceButton: SpaceClientModule["View"] = (props) => {
+const ViewStartSpaceButton: SpaceClientModule["View"] = (input) => {
 	return (
 		<Button
 			size="lg"
 			color="primary"
-			className="w-full"
 			onClick={() =>
-				props.dispatch({
+				input.dispatch({
 					t: "clicked-start-space-button",
 					spaceId: SpaceId.generate(),
 				})
 			}
-			text="Start new space"
+			text={input.ctx.t("spaces.start-space")}
 		/>
 	);
 };

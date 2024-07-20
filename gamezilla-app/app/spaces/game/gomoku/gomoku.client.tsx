@@ -231,8 +231,8 @@ export const view = ({
 		case "none": {
 			return (
 				<GameMainMenu.View
-					title="Gomoku"
-					renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
+					title={ctx.t("gomoku")}
+					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
 					ctx={spaceCtx}
 					dispatch={() => {
 						//

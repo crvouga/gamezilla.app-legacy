@@ -8,7 +8,7 @@ import {
 } from "gamezilla-app/app/@/ui";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { ViewGameHeader } from "../../game/view-game-header";
-import type { PlayerType, VsBotProps } from "../vs-bot";
+import type { PlayerType, VsBotInput } from "../vs-bot";
 
 //
 //
@@ -63,7 +63,7 @@ type PlayerProp =
 			t: "user";
 			userId: UserId | null;
 			playerLabel: string;
-			renderIcon: (props: { className: string }) => VDom;
+			renderIcon: (input: { className: string }) => VDom;
 			onStartPlaying: () => void;
 			onStopPlaying: () => void;
 	  }
@@ -71,14 +71,14 @@ type PlayerProp =
 			t: "bot";
 
 			botLabel: string;
-			renderBotIcon: (props: { className: string }) => VDom;
+			renderBotIcon: (input: { className: string }) => VDom;
 			playerLabel: string;
-			renderIcon: (props: { className: string }) => VDom;
+			renderIcon: (input: { className: string }) => VDom;
 			onStartPlaying: () => void;
 			onStopPlaying: () => void;
 	  };
 
-export type VsBotSetupProps = VsBotProps & {
+export type VsBotSetupinput = VsBotInput & {
 	human: {
 		player: PlayerType;
 		userId: UserId | null;
@@ -86,7 +86,7 @@ export type VsBotSetupProps = VsBotProps & {
 	canStartGame: boolean;
 };
 
-type Props = VsBotSetupProps & { model: Model; dispatch: (m: Msg) => void };
+type Input = VsBotSetupinput & { model: Model; dispatch: (m: Msg) => void };
 
 export const View = ({
 	dispatch,
@@ -103,7 +103,7 @@ export const View = ({
 	canStartGame,
 	onStartGame,
 	onSwapSides,
-}: Props) => {
+}: Input) => {
 	const playerOneProp: PlayerProp =
 		human.player === "player-one"
 			? {

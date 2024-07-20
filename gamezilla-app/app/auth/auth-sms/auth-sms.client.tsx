@@ -36,7 +36,6 @@ import {
 	Text,
 	TextField,
 	TopBar,
-	TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
 import type {
 	ModelClient,
@@ -363,6 +362,11 @@ const updateFromServer: Module["update"] = (input) => {
 				};
 			}
 
+			input.ctx.t(
+				"auth-sms.sent-code-to",
+				PhoneNumber.format(msgServer.phoneNumber),
+			);
+
 			return {
 				model: {
 					...model,
@@ -377,7 +381,10 @@ const updateFromServer: Module["update"] = (input) => {
 						phoneNumber: msgServer.phoneNumber,
 					}),
 					showToast(
-						`Sent code to ${PhoneNumber.format(msgServer.phoneNumber)}`,
+						input.ctx.t(
+							"auth-sms.sent-code-to",
+							PhoneNumber.format(msgServer.phoneNumber),
+						),
 						"info",
 						TimeSpan.seconds(4),
 					),
@@ -467,11 +474,8 @@ const ViewSendCode: Module["View"] = (input) => {
 	return (
 		<div className="w-full flex-1">
 			<TopBar
-				left={
-					<TopBarBackButton
-						onClick={() => input.dispatch({ t: "clicked-back-button" })}
-					/>
-				}
+				onBack={() => input.dispatch({ t: "clicked-back-button" })}
+				ctx={input.ctx}
 				title={input.ctx.t("auth-sms.login-with-phone")}
 			/>
 
@@ -550,11 +554,8 @@ const ViewVerifyCode: Module["View"] = (input) => {
 	return (
 		<div className="w-full flex-1">
 			<TopBar
-				left={
-					<TopBarBackButton
-						onClick={() => input.dispatch({ t: "clicked-back-button" })}
-					/>
-				}
+				onBack={() => input.dispatch({ t: "clicked-back-button" })}
+				ctx={input.ctx}
 				title={input.ctx.t("auth-sms.login-with-phone")}
 			/>
 

@@ -1,3 +1,4 @@
+import { Loading, Sub, isErr } from "gamezilla-app/@/core";
 import type { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	type AnonymousClientCtx,
@@ -18,9 +19,7 @@ import {
 	IconChevronRight,
 	TextField,
 	TopBar,
-	TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
-import { Sub, isErr, Loading } from "gamezilla-app/@/core";
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
 import type {
@@ -425,34 +424,35 @@ export const subscriptions: ClientModule["subscriptions"] = (_input) => {
 //
 //
 
-export const View: ClientModule["View"] = (props) => {
-	switch (props.ctx.currentRoute.n) {
+export const View: ClientModule["View"] = (input) => {
+	switch (input.ctx.currentRoute.n) {
 		case "profile": {
-			switch (props.ctx.currentRoute.t) {
+			switch (input.ctx.currentRoute.t) {
 				case "profile": {
 					return (
 						<div className="relative flex h-full w-full flex-col">
 							<ViewProfileScreen
-								model={props.model}
-								ctx={props.ctx}
-								dispatch={props.dispatch}
-								userId={props.ctx.currentRoute.userId}
+								model={input.model}
+								ctx={input.ctx}
+								dispatch={input.dispatch}
+								userId={input.ctx.currentRoute.userId}
 							/>
 
-							{props.slots?.bottomBar(null)}
+							{input.slots?.bottomBar(null)}
 						</div>
 					);
 				}
 
 				case "profile-edit": {
-					return <ViewUpdateScreen ctx={props.ctx} dispatch={props.dispatch} />;
+					return <ViewUpdateScreen ctx={input.ctx} dispatch={input.dispatch} />;
 				}
 
 				case "profile-edit-avatar": {
 					return (
 						<ViewUpdateAvatarScreen
-							model={props.model}
-							dispatch={props.dispatch}
+							ctx={input.ctx}
+							model={input.model}
+							dispatch={input.dispatch}
 						/>
 					);
 				}
@@ -460,9 +460,9 @@ export const View: ClientModule["View"] = (props) => {
 				case "profile-edit-username": {
 					return (
 						<ViewUpdateUsernameScreen
-							ctx={props.ctx}
-							model={props.model}
-							dispatch={props.dispatch}
+							ctx={input.ctx}
+							model={input.model}
+							dispatch={input.dispatch}
 						/>
 					);
 				}
@@ -491,17 +491,14 @@ const ViewUpdateScreen = (input: {
 	return (
 		<div className="flex h-full w-full flex-col items-center gap-4">
 			<TopBar
-				left={
-					<TopBarBackButton
-						onClick={() =>
-							input.dispatch({
-								t: "clicked-back-button",
-								from: { t: "profile-update" },
-							})
-						}
-					/>
+				ctx={input.ctx}
+				onBack={() =>
+					input.dispatch({
+						t: "clicked-back-button",
+						from: { t: "profile-update" },
+					})
 				}
-				title="Update Profile"
+				title={input.ctx.t('profile.update-profile')}
 			/>
 
 			<div className="flex w-full flex-col items-center gap-2 py-2">
@@ -572,33 +569,14 @@ const ViewUpdateUsernameScreen = (input: {
 	return (
 		<div className="flex h-full w-full flex-col">
 			<TopBar
-				left={
-					<Button
-						variant="text"
-						color="primary"
-						onClick={() =>
-							input.dispatch({
-								t: "clicked-back-button",
-								from: { t: "profile-update-username" },
-							})
-						}
-						text="Back"
-					/>
+				onBack={() =>
+					input.dispatch({
+						t: "clicked-back-button",
+						from: { t: "profile-update-username" },
+					})
 				}
-				title="Username"
-				right={
-					<Button
-						variant="text"
-						color="primary"
-						onClick={() => {
-							const username = input.model.draft?.username;
-							if (username) {
-								input.dispatch({ t: "change-username", username });
-							}
-						}}
-						text="Done"
-					/>
-				}
+				title={input.ctx.t('username-title')}
+				ctx={input.ctx}
 			/>
 
 			<div className="w-full p-4">

@@ -207,8 +207,8 @@ export const updateFromCmd: Module["update"] = ({ model, msgCmd, ctx }) => {
 	}
 };
 
-export const ViewStatusBar = (props: { model: Model }) => {
-	if (props.model.muted) {
+export const ViewStatusBar = (input: { model: Model }) => {
+	if (input.model.muted) {
 		return <IconVolumeXMark className="h-4 w-4" />;
 	}
 
@@ -225,11 +225,11 @@ export const ViewStatusBarDrawer = ({
 	return (
 		<ListItemButton
 			onClick={() => dispatch({ t: "toggle-mute" })}
-			icon={(props) =>
+			icon={(input) =>
 				model.muted ? (
-					<IconVolumeXMark {...props} />
+					<IconVolumeXMark {...input} />
 				) : (
-					<IconVolumeHigh {...props} />
+					<IconVolumeHigh {...input} />
 				)
 			}
 			label={model.muted ? "Sound off" : "Sound on"}

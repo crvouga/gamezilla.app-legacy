@@ -7,6 +7,7 @@ import type { Eff, Sub } from "gamezilla-app/@/core";
 import { ListItemButton, cn } from "../@/ui";
 import type { IClientTransport } from "./transport-client";
 import type { ModelClient, MsgClient, MsgToClient } from "./wire.types";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 
 //
 //
@@ -45,8 +46,12 @@ export const update = <
 	msgServer,
 	msgCmd,
 	model,
+	ctx,
 	transport,
 }: {
+	ctx: {
+		t: Translator;
+	};
 	msg?: MsgClient | null;
 	msgServer?: MsgToClient | null;
 	msgCmd?: ClientCmd<{
@@ -64,15 +69,16 @@ export const update = <
 	eff?: Eff<MsgClient>;
 } => {
 	if (msg) {
-		return updateFromMsg({ msg, model, transport });
+		return updateFromMsg({ ctx, msg, model, transport });
 	}
 
 	if (msgServer) {
-		return updateFromServer({ model, msgServer, transport });
+		return updateFromServer({ ctx, model, msgServer, transport });
 	}
 
 	if (msgCmd) {
 		return updateFromCmd({
+			ctx,
 			msgCmd,
 			model,
 			transport,
@@ -140,7 +146,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
 	}
 };
 
-const updateFromServer: typeof update = ({ model, msgServer }) => {
+const updateFromServer: typeof update = ({ ctx, model, msgServer }) => {
 	if (!msgServer) {
 		return { model };
 	}
@@ -149,7 +155,7 @@ const updateFromServer: typeof update = ({ model, msgServer }) => {
 		case "server-restarted": {
 			return {
 				model,
-				msgCmd: [showToast("Server restarted")],
+				msgCmd: [showToast(ctx.t("wire.server-restarted"))],
 			};
 		}
 	}
@@ -188,8 +194,8 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 //
 //
 
-export const ViewStatusBar = (props: { model: ModelClient }) => {
-	switch (props.model.state.t) {
+export const ViewStatusBar = (input: { model: ModelClient }) => {
+	switch (input.model.state.t) {
 		case "server-connected": {
 			return <span className="h-2 w-2 rounded-full bg-green-500" />;
 		}
@@ -226,9 +232,9 @@ export const ViewStatusBarDrawer = ({
 		case "server-connected": {
 			return (
 				<ListItemButton
-					icon={(props) => (
+					icon={(input) => (
 						<span
-							className={cn(props.className, "rounded-full bg-green-500")}
+							className={cn(input.className, "rounded-full bg-green-500")}
 						/>
 					)}
 					className="text-green-500"
@@ -241,9 +247,9 @@ export const ViewStatusBarDrawer = ({
 		case "server-connecting": {
 			return (
 				<ListItemButton
-					icon={(props) => (
+					icon={(input) => (
 						<span
-							className={cn(props.className, "rounded-full bg-orange-500")}
+							className={cn(input.className, "rounded-full bg-orange-500")}
 						/>
 					)}
 					color="warning"
@@ -255,8 +261,8 @@ export const ViewStatusBarDrawer = ({
 		case "server-disconnected": {
 			return (
 				<ListItemButton
-					icon={(props) => (
-						<span className={cn(props.className, "rounded-full bg-red-500")} />
+					icon={(input) => (
+						<span className={cn(input.className, "rounded-full bg-red-500")} />
 					)}
 					color="danger"
 					label="Offline"

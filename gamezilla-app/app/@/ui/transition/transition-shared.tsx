@@ -1,6 +1,6 @@
 import { PubSub } from "gamezilla-app/@/core";
 
-export type TransitionProps = {
+export type Transitioninput = {
 	id: string;
 	onEnter: (node: HTMLElement) => Promise<void>;
 	onExit: (node: HTMLElement) => Promise<void>;
@@ -10,8 +10,8 @@ export type TransitionProps = {
 	appear?: boolean;
 };
 
-export type TransitionEvent = TransitionProps & {
-	type: "props";
+export type TransitionEvent = Transitioninput & {
+	type: "input";
 };
 
 export const transitionSub = PubSub.create<TransitionEvent>();

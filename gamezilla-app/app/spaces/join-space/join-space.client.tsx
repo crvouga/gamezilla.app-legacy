@@ -9,7 +9,6 @@ import { withId } from "../@/event";
 import { SpaceClientModule } from "../architecture/architecture";
 import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
-import { gameNameToString } from "../game/game.types";
 import type { SpaceCoreEvent } from "../spaces-core";
 import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
@@ -67,7 +66,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 					if (error.userId === ctx.currentUserId) {
 						return {
 							model,
-							msgCmd: showErrSm("You are already in a space"),
+							msgCmd: showErrSm(ctx.t("spaces.you're-already-in-a-space")),
 						};
 					}
 
@@ -90,14 +89,19 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 					model,
 					msgCmd: [
 						playSound(APP_SOUND.navForward),
-						showToast(username ? `${username} joined space` : "Joined space"),
+						username
+							? showToast(ctx.t("spaces.other-user-joined-space", username))
+							: showToast(ctx.t("spaces.current-user-joined-space")),
 					],
 				};
 			}
 
 			return {
 				model,
-				msgCmd: [playSound(APP_SOUND.navForward), showToast("Joined space")],
+				msgCmd: [
+					playSound(APP_SOUND.navForward),
+					showToast(ctx.t("spaces.current-user-joined-space")),
+				],
 			};
 		}
 
@@ -127,21 +131,27 @@ const View: SpaceClientModule["View"] = (input) => {
 
 	return (
 		<div className="flex h-full w-full flex-col">
-			<TopBar title="Space" />
+			<TopBar
+				onBack={() => input.dispatch({ t: "clicked-go-home-button" })}
+				ctx={input.ctx}
+				title={input.ctx.t('spaces.space')}
+			/>
 
 			<div className="flex w-full flex-1 flex-col overflow-y-scroll">
-				<ViewGameHeader
-					ctx={input.ctx}
-					onBack={() => input.dispatch({ t: "clicked-go-home-button" })}
-					title={spaceState.game ? gameNameToString(spaceState.game.t) : null}
-					renderCoverArt={(props) =>
-						spaceState.game ? (
-							<div {...props}>
-								<CoverArt gameName={spaceState.game.t} />
-							</div>
-						) : null
-					}
-				/>
+				{spaceState.game && (
+					<ViewGameHeader
+						ctx={input.ctx}
+						onBack={() => input.dispatch({ t: "clicked-go-home-button" })}
+						title={input.ctx.t(spaceState.game.t)}
+						renderCoverArt={(inputCoverArt) =>
+							spaceState.game && (
+								<div {...inputCoverArt}>
+									<CoverArt gameName={spaceState.game.t} />
+								</div>
+							)
+						}
+					/>
+				)}
 
 				<ViewUsersInSpaceList
 					ctx={{

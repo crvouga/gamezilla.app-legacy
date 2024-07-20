@@ -114,7 +114,7 @@ const View = ({
 	onPressDown,
 	onDraggedOver,
 	onPressUp,
-}: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+}: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
 		<Canvas
 			className={cn(

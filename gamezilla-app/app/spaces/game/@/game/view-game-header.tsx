@@ -1,7 +1,7 @@
-import { cn } from "gamezilla-app/app/@/ui";
-import type { VDom } from "gamezilla-app/@/vdom";
-import { ViewScreenTitle } from "./view-screen-title";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/@/l18n/generated";
+import type { VDom } from "gamezilla-app/@/vdom";
+import { cn, TopBar } from "gamezilla-app/app/@/ui";
 
 export const ViewGameHeader = ({
 	title,
@@ -9,8 +9,8 @@ export const ViewGameHeader = ({
 	onBack,
 	ctx,
 }: {
-	title?: string | null;
-	renderCoverArt?: (props: { key: string; className: string }) => VDom;
+	title: TranslatedText;
+	renderCoverArt?: (input: { key: string; className: string }) => VDom;
 	onBack: () => void;
 	ctx: {
 		t: Translator;
@@ -18,16 +18,10 @@ export const ViewGameHeader = ({
 }) => {
 	return (
 		<section className="flex w-full flex-col items-center pb-4">
-			{title ? (
-				<ViewScreenTitle ctx={ctx} onBack={onBack} title={title} center />
-			) : (
-				<div className="flex h-[36px] items-center justify-center font-bold text-neutral-300 text-center p-4">
-					No game selected
-				</div>
-			)}
+			<TopBar ctx={ctx} onBack={onBack} title={title} center />
 
 			{renderCoverArt({
-				key: title ?? "PLACEHOLDER",
+				key: title,
 				className:
 					"w-28 h-28 overflow-hidden rounded-lg border border-white/20",
 			})}
@@ -35,13 +29,13 @@ export const ViewGameHeader = ({
 	);
 };
 
-const renderDefaultCoverArt = (props: { key: string; className: string }) => {
+const renderDefaultCoverArt = (input: { key: string; className: string }) => {
 	return (
 		<div
-			key={props.key}
+			key={input.key}
 			className={cn(
 				"flex items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-neutral-800 p-4 text-neutral-300",
-				props.className,
+				input.className,
 			)}
 		>
 			<svg

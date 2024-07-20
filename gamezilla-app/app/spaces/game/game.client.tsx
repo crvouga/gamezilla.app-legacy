@@ -63,6 +63,10 @@ const init = (gameName: GameName): Module["init"] => {
 				c: FlowClient.init,
 			};
 		}
+		
+		default: {
+			throw new Error(`Unknown game name: ${gameName}`);
+		}
 	}
 };
 

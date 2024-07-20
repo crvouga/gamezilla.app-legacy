@@ -4,6 +4,7 @@ import {
 	IconEllipsisVertical,
 	IconPen,
 	IconPlay,
+	TopBar,
 } from "gamezilla-app/app/@/ui";
 import { Actions } from "gamezilla-app/app/@/ui/actions";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
@@ -14,7 +15,6 @@ import {
 	ViewBottomButtonBarAction,
 } from "gamezilla-app/app/spaces/game/@/game";
 import { ViewProfileCard } from "../../../@/game/view-profile-card";
-import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { Flow, FlowVariantUI } from "../../@/flow";
 import { FlowEdit } from "../../@/flow/flow-edit";
 import { FlowPlay } from "../../@/flow/flow-play";
@@ -185,14 +185,14 @@ const View: ClientModule["View"] = (input) => {
 
 	return (
 		<>
-			<ViewScreenTitle
+			<TopBar
 				ctx={input.ctx}
 				onBack={() =>
 					input.dispatch({
 						t: "screen-puzzle-builder.user-clicked-exit-button",
 					})
 				}
-				title={input.modelCore.puzzleBuilder.puzzle.name}
+				title={input.ctx.t('flow-puzzle-name', input.modelCore.puzzleBuilder.puzzle.name)}
 			/>
 			<ViewMode {...input} />
 			<ViewMoreDrawer {...input} />
@@ -212,7 +212,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 
 	const more = (
 		<ViewBottomButtonBarAction
-			icon={(props) => <IconEllipsisVertical {...props} />}
+			icon={(input) => <IconEllipsisVertical {...input} />}
 			label="More"
 			onClick={() =>
 				dispatch({ t: "screen-puzzle-builder.user-clicked-more-button" })
@@ -241,7 +241,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 						<SaveChangesClient.ViewActionButtons {...input} model={model} />
 
 						<ViewBottomButtonBarAction
-							icon={(props) => <IconPlay {...props} />}
+							icon={(input) => <IconPlay {...input} />}
 							label="Play Mode"
 							classNames={{
 								button: "text-blue-500",
@@ -319,7 +319,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 						<SaveChangesClient.ViewActionButtons {...input} model={model} />
 
 						<ViewBottomButtonBarAction
-							icon={(props) => <IconPen {...props} />}
+							icon={(input) => <IconPen {...input} />}
 							label="Edit Mode"
 							classNames={{
 								button: "text-amber-500",

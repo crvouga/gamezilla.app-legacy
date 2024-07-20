@@ -1,9 +1,8 @@
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
-import { Avatar, Tabs } from "gamezilla-app/app/@/ui";
+import { Avatar, Tabs, TopBar } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewSpaceHostChip } from "../../../@/game";
-import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import type { ClientModule } from "../builder.types";
 import { ScreenOpenPackClient } from "../screen-open-pack/screen-open-pack.client";
 import { ScreenOpenPuzzleClient } from "../screen-open-puzzle/screen-open-puzzle.client";
@@ -82,7 +81,7 @@ const View: ClientModule["View"] = (input) => {
 
 	return (
 		<div className="flex h-full w-full flex-1 flex-col">
-			<ViewScreenTitle
+			<TopBar
 				ctx={input.ctx}
 				onBack={input.ctx.onQuit}
 				title={input.ctx.t("flow.builder")}

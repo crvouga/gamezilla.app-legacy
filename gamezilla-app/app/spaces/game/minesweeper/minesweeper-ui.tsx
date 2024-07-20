@@ -1,6 +1,6 @@
-export type GameMinesweeperProps = null;
+export type GameMinesweeperinput = null;
 
-export function GameMinesweeper(_props: GameMinesweeperProps) {
+export function GameMinesweeper(_input: GameMinesweeperinput) {
 	return <h1>Welcome to GameMinesweeper!</h1>;
 }
 

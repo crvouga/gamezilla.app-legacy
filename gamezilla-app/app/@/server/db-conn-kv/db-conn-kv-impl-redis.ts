@@ -44,15 +44,22 @@ export const DbConnKvRedis = async ({
 
 				const parsed = parser.parse(json);
 
-				if (parsed.t === "ok") {
-					return Ok(parsed.value);
+				switch (parsed.t) {
+					case "err": {
+						logger.error(
+							`get: not a value: ${key} ${JSON.stringify(
+								parsed.error,
+								null,
+								2,
+							)}`,
+						);
+						return Ok(null);
+					}
+
+					case "ok": {
+						return parsed;
+					}
 				}
-
-				logger.error(
-					`get: not a value: ${key} ${JSON.stringify(parsed.error, null, 2)}`,
-				);
-
-				return Ok(null);
 			} catch (e) {
 				return Err(String(e));
 			}

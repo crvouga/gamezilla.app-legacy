@@ -185,7 +185,7 @@ export const ViewPage = ({
 	return null;
 };
 
-const ViewNotInParty = (_props: {
+const ViewNotInParty = (_input: {
 	ctx: ClientCtx;
 	model: Model;
 	dispatch: (msg: Msg) => void;

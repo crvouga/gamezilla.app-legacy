@@ -46,13 +46,12 @@ const update: ClientModule["update"] = (input) => {
 					TimeSpan.seconds(5),
 				)
 			) {
-				const errorMessage = "Request timed out";
 				return {
 					model: {
 						...model,
-						puzzleCreateRequest: Result.Err(errorMessage),
+						puzzleCreateRequest: Result.Err(ctx.t("app.something-went-wrong")),
 					},
-					msgCmd: showErrSm(errorMessage),
+					msgCmd: showErrSm(input.ctx.t("app.something-went-wrong")),
 				};
 			}
 			return { model };
@@ -68,7 +67,7 @@ const update: ClientModule["update"] = (input) => {
 			if (isErr(msgCore.created)) {
 				return {
 					model: { ...model, puzzleCreateRequest: msgCore.created },
-					msgCmd: showErrSm(msgCore.created.error),
+					msgCmd: showErrSm(input.ctx.t("app.something-went-wrong")),
 				};
 			}
 
@@ -80,7 +79,7 @@ const update: ClientModule["update"] = (input) => {
 					puzzleCreateRequest: Result.mapOk(msgCore.created, () => null),
 					puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
 				},
-				msgCmd: showCreatedSm("Puzzle created"),
+				msgCmd: showCreatedSm(input.ctx.t("flow.puzzle-created")),
 			};
 		}
 

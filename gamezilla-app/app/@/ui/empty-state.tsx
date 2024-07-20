@@ -4,7 +4,7 @@ export const EmptyState = ({
 	renderIcon,
 	label,
 }: {
-	renderIcon: (props: { className: string }) => VDom;
+	renderIcon: (input: { className: string }) => VDom;
 	label: string;
 }) => {
 	return (

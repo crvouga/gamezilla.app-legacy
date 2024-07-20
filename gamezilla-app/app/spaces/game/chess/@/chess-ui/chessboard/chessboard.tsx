@@ -20,7 +20,7 @@ import {
 //
 //
 
-export type ChessboardProps = {
+export type Chessboardinput = {
 	id: string;
 	model?: Model;
 	"draggable-pieces"?: boolean;
@@ -131,7 +131,7 @@ const TOUCHED_Y_OFFSET = SCALE;
 //
 
 const onDragStartOrMove =
-	(props: ChessboardProps) => (e: MouseEvent | TouchEvent) => {
+	(input: Chessboardinput) => (e: MouseEvent | TouchEvent) => {
 		e.preventDefault(); // prmsgCore swipe gestures on iOS
 
 		let clientX: number;
@@ -166,9 +166,9 @@ const onDragStartOrMove =
 			touched.node.setAttribute("y", `${newY}`);
 		}
 
-		updateDropZoneUI(props.orientation ?? "w");
-		showSourceCheckerUI(props.orientation ?? "w");
-		setLegalMoveDotsFill(props, THEME.legalMoveDot);
+		updateDropZoneUI(input.orientation ?? "w");
+		showSourceCheckerUI(input.orientation ?? "w");
+		setLegalMoveDotsFill(input, THEME.legalMoveDot);
 	};
 
 const updateDropZoneUI = (orientation: Color) => {
@@ -205,13 +205,13 @@ const updateDropZoneUI = (orientation: Color) => {
 	}
 };
 
-const setLegalMoveDotsFill = (props: ChessboardProps, fill: string) => {
+const setLegalMoveDotsFill = (input: Chessboardinput, fill: string) => {
 	if (!touched) {
 		return;
 	}
 	const sourceSquare = positionToSquare(
 		touched.source,
-		props.orientation ?? "w",
+		input.orientation ?? "w",
 	);
 	if (!sourceSquare) {
 		return;
@@ -268,7 +268,7 @@ const hideSourceCheckerUI = (orientation: Color) => {
 	}
 };
 
-const onDragEnd = (props: ChessboardProps) => () => {
+const onDragEnd = (input: Chessboardinput) => () => {
 	if (!touched) {
 		return;
 	}
@@ -290,17 +290,17 @@ const onDragEnd = (props: ChessboardProps) => () => {
 
 	touched.node.width.baseVal.value = SCALE * 1;
 	touched.node.height.baseVal.value = SCALE * 1;
-	const source = positionToSquare(touched.source, props.orientation ?? "w");
+	const source = positionToSquare(touched.source, input.orientation ?? "w");
 	const target = positionToSquare(
 		{
 			x: Math.floor(roundedX / stepX),
 			y: Math.floor(roundedY / stepY),
 		},
-		props.orientation ?? "w",
+		input.orientation ?? "w",
 	);
 
-	if (props.onPieceDrop && source && target) {
-		const isValidDrop = props.onPieceDrop({ source, target });
+	if (input.onPieceDrop && source && target) {
+		const isValidDrop = input.onPieceDrop({ source, target });
 
 		if (!isValidDrop) {
 			touched.node.setAttribute("x", `${touched.source.x}`);
@@ -313,23 +313,23 @@ const onDragEnd = (props: ChessboardProps) => () => {
 		touched.node.setAttribute("y", `${touched.source.y}`);
 	}
 
-	hideSourceCheckerUI(props.orientation ?? "w");
+	hideSourceCheckerUI(input.orientation ?? "w");
 	setVisibleDropZoneNode(null);
-	setLegalMoveDotsFill(props, "none");
+	setLegalMoveDotsFill(input, "none");
 
 	touched = null;
 };
 
 const onPieceDragStart =
 	(input: {
-		props: ChessboardProps;
+		input: Chessboardinput;
 		source: { x: number; y: number };
 		piece: Piece;
 	}) =>
 	(e: MouseEvent | TouchEvent) => {
 		const square = positionToSquare(
 			input.source,
-			input.props.orientation ?? "w",
+			input.input.orientation ?? "w",
 		);
 
 		if (!square) {
@@ -337,8 +337,8 @@ const onPieceDragStart =
 		}
 
 		if (
-			input.props.isPieceDraggable &&
-			!input.props.isPieceDraggable({ square, piece: input.piece })
+			input.input.isPieceDraggable &&
+			!input.input.isPieceDraggable({ square, piece: input.piece })
 		) {
 			return;
 		}
@@ -356,7 +356,7 @@ const onPieceDragStart =
 		if (touched?.node?.parentNode) {
 			touched.node.parentNode.appendChild(touched.node);
 		}
-		updateDropZoneUI(input.props.orientation ?? "w");
+		updateDropZoneUI(input.input.orientation ?? "w");
 	};
 
 const toDropZoneId = (square: Square) => {
@@ -371,10 +371,10 @@ const toLegalMoveDotId = (square: Square) => {
 	return `legal-move-dot-${square}`;
 };
 
-const onDragCancel = (props: ChessboardProps) => () => {
-	hideSourceCheckerUI(props.orientation ?? "w");
+const onDragCancel = (input: Chessboardinput) => () => {
+	hideSourceCheckerUI(input.orientation ?? "w");
 	setVisibleDropZoneNode(null);
-	setLegalMoveDotsFill(props, "none");
+	setLegalMoveDotsFill(input, "none");
 
 	if (touched) {
 		touched.node.setAttribute("x", `${touched.source.x}`);
@@ -386,13 +386,13 @@ const onDragCancel = (props: ChessboardProps) => () => {
 	touched = null;
 };
 
-export const Chessboard = (props: ChessboardProps) => {
-	const pieces = props.model?.fen
-		? fenToPieces(props.model.fen, props.orientation ?? "w")
+export const Chessboard = (input: Chessboardinput) => {
+	const pieces = input.model?.fen
+		? fenToPieces(input.model.fen, input.orientation ?? "w")
 		: [];
 
-	if (props.model?.fen) {
-		instance.load(props.model?.fen);
+	if (input.model?.fen) {
+		instance.load(input.model?.fen);
 	}
 
 	return (
@@ -405,23 +405,23 @@ export const Chessboard = (props: ChessboardProps) => {
 			}}
 			className="touch-none select-none overflow-visible"
 			preserveAspectRatio="xMinYMin meet"
-			onMouseLeave={onDragCancel(props)}
-			onTouchCancel={onDragCancel(props)}
+			onMouseLeave={onDragCancel(input)}
+			onTouchCancel={onDragCancel(input)}
 			// @ts-ignore
-			onTouchStart={onDragStartOrMove(props)}
+			onTouchStart={onDragStartOrMove(input)}
 			// @ts-ignore
-			onMouseDown={onDragStartOrMove(props)}
+			onMouseDown={onDragStartOrMove(input)}
 			// @ts-ignore
-			onTouchMove={onDragStartOrMove(props)}
+			onTouchMove={onDragStartOrMove(input)}
 			// @ts-ignore
-			onMouseMove={onDragStartOrMove(props)}
+			onMouseMove={onDragStartOrMove(input)}
 			//
-			onTouchEnd={onDragEnd(props)}
-			onMouseUp={onDragEnd(props)}
+			onTouchEnd={onDragEnd(input)}
+			onMouseUp={onDragEnd(input)}
 		>
 			<g>
 				{CHECKERS.map((checker) => {
-					const square = positionToSquare(checker, props.orientation ?? "w");
+					const square = positionToSquare(checker, input.orientation ?? "w");
 					return (
 						<rect
 							key={checker.id}
@@ -432,9 +432,9 @@ export const Chessboard = (props: ChessboardProps) => {
 							height={SCALE * 1}
 							stroke="none"
 							fill={
-								props.model?.previousMove?.from === square
+								input.model?.previousMove?.from === square
 									? "orange"
-									: props.model?.previousMove?.to === square
+									: input.model?.previousMove?.to === square
 										? "yellow"
 										: checker.color === "white"
 											? THEME.lightChecker
@@ -448,7 +448,7 @@ export const Chessboard = (props: ChessboardProps) => {
 			{/* legal moves */}
 			<g>
 				{CHECKERS.map((checker) => {
-					const square = positionToSquare(checker, props.orientation ?? "w");
+					const square = positionToSquare(checker, input.orientation ?? "w");
 					return (
 						<circle
 							key={checker.id}
@@ -467,7 +467,7 @@ export const Chessboard = (props: ChessboardProps) => {
 			{/* drop zone */}
 			<g>
 				{CHECKERS.map((checker) => {
-					const square = positionToSquare(checker, props.orientation ?? "w");
+					const square = positionToSquare(checker, input.orientation ?? "w");
 					return (
 						<circle
 							key={checker.id}
@@ -488,20 +488,20 @@ export const Chessboard = (props: ChessboardProps) => {
 				{pieces?.map(({ piece, x, y }) => {
 					return (
 						<svg
-							key={[piece, x, y, props.model?.fen].join(",")}
+							key={[piece, x, y, input.model?.fen].join(",")}
 							x={SCALE * x}
 							y={SCALE * y}
 							width={SCALE * 1}
 							height={SCALE * 1}
 							// @ts-ignore
 							onMouseDown={onPieceDragStart({
-								props,
+								input,
 								piece,
 								source: { x, y },
 							})}
 							// @ts-ignore
 							onTouchStart={onPieceDragStart({
-								props,
+								input,
 								piece,
 								source: { x, y },
 							})}

@@ -27,7 +27,7 @@ const update: ClientModule["update"] = (input) => {
 				},
 				msgCmd: [
 					sendToServer({ t: "logout" }),
-					showToast("Logged out"),
+					showToast(input.ctx.t("auth.current-user-logged-out")),
 					playSound(APP_SOUND.navBackwardMin),
 				],
 				msgEvt: [{ t: "auth/unauthenticated" }],

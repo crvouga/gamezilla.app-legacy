@@ -190,38 +190,38 @@ const updateChild =
 //
 //
 
-const View: Module["View"] = (props) => {
+const View: Module["View"] = (input) => {
 	const onQuit = () => {
-		props.dispatch({
+		input.dispatch({
 			t: "user-changed-mode",
 			mode: "none",
-			userId: props.ctx.currentUserId,
+			userId: input.ctx.currentUserId,
 		});
 	};
 
-	switch (props.modelCore.t) {
+	switch (input.modelCore.t) {
 		case "none": {
 			return (
 				<GameMainMenu.View
-					ctx={props.ctx}
-					title="Connect Four"
-					renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
-					dispatch={props.dispatch}
+					ctx={input.ctx}
+					title={input.ctx.t('connect-four')}
+					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
+					dispatch={input.dispatch}
 					buttons={[
 						GameMainMenu.buttons.playFriend({
 							onClick: () =>
-								props.dispatch({
+								input.dispatch({
 									mode: "vs-user",
 									t: "user-changed-mode",
-									userId: props.ctx.currentUserId,
+									userId: input.ctx.currentUserId,
 								}),
 						}),
 						GameMainMenu.buttons.playComputer({
 							onClick: () =>
-								props.dispatch({
+								input.dispatch({
 									mode: "vs-bot",
 									t: "user-changed-mode",
-									userId: props.ctx.currentUserId,
+									userId: input.ctx.currentUserId,
 								}),
 						}),
 					]}
@@ -232,10 +232,10 @@ const View: Module["View"] = (props) => {
 		case "vs-bot": {
 			return (
 				<VsBot.View
-					ctx={{ ...props.ctx, onQuit }}
-					dispatch={(c) => props.dispatch({ t: "vs-bot", c })}
-					model={props.model?.t === "vs-bot" ? props.model.c : VsBot.init}
-					modelCore={props.modelCore.c}
+					ctx={{ ...input.ctx, onQuit }}
+					dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
+					model={input.model?.t === "vs-bot" ? input.model.c : VsBot.init}
+					modelCore={input.modelCore.c}
 				/>
 			);
 		}
@@ -243,10 +243,10 @@ const View: Module["View"] = (props) => {
 		case "vs-user": {
 			return (
 				<VsUser.View
-					ctx={{ ...props.ctx, onQuit }}
-					dispatch={(c) => props.dispatch({ t: "vs-user", c })}
-					model={props.model?.t === "vs-user" ? props.model.c : VsUser.init}
-					modelCore={props.modelCore.c}
+					ctx={{ ...input.ctx, onQuit }}
+					dispatch={(c) => input.dispatch({ t: "vs-user", c })}
+					model={input.model?.t === "vs-user" ? input.model.c : VsUser.init}
+					modelCore={input.modelCore.c}
 				/>
 			);
 		}

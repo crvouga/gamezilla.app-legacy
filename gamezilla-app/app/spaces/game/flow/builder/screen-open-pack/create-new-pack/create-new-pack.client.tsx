@@ -51,7 +51,10 @@ const update: ClientModule["update"] = (input) => {
 					...model,
 					packCreateNewRequest: Ok(null),
 				},
-				msgCmd: [playSound(APP_SOUND.refreshFeed), showToast("Pack created")],
+				msgCmd: [
+					playSound(APP_SOUND.refreshFeed),
+					showToast(input.ctx.t("flow.pack-created")),
+				],
 			};
 		}
 	}

@@ -150,7 +150,7 @@ export const Color = {
 	},
 };
 
-export type FlowViewProps<TModel> = {
+export type FlowViewinput<TModel> = {
 	disabled?: boolean;
 	className?: string;
 	model: TModel;

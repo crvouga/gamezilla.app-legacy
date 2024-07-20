@@ -1,12 +1,12 @@
 import "./columns-element";
-import { type ColumnsProps, columnsPropsSub } from "./shared";
+import { type Columnsinput, columnsinputSub } from "./shared";
 
-export const ViewColumns = (props: ColumnsProps) => {
-	columnsPropsSub.pub(props);
+export const ViewColumns = (input: Columnsinput) => {
+	columnsinputSub.pub(input);
 	return (
 		// @ts-ignore
 		<connect-four-columns
-			initial-columns-json={JSON.stringify(props.columns)}
+			initial-columns-json={JSON.stringify(input.columns)}
 		/>
 	);
 };

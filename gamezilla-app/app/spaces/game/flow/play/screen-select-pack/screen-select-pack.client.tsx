@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
+import { TopBar } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowPackListClient } from "../../@/flow-pack";
 import type { ClientModule } from "../play.types";
 
@@ -48,7 +48,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 const View: ClientModule["View"] = (input) => {
 	return (
 		<div className="w-full h-full flex-1 flex flex-col">
-			<ViewScreenTitle
+			<TopBar
 				ctx={input.ctx}
 				onBack={input.ctx.onQuit}
 				title={input.ctx.t("flow.play")}

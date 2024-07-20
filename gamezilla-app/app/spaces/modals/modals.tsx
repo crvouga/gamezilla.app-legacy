@@ -94,32 +94,32 @@ const updateFromEvent: SpaceClientModule["update"] = ({ msgEvt, model }) => {
 	}
 };
 
-const View: SpaceClientModule["View"] = (props) => {
+const View: SpaceClientModule["View"] = (input) => {
 	if (
-		!props.ctx.space ||
-		!props.ctx.currentUserId ||
-		!props.ctx.currentUserRole
+		!input.ctx.space ||
+		!input.ctx.currentUserId ||
+		!input.ctx.currentUserRole
 	) {
 		return null;
 	}
 
 	const spaceCtx: SpaceClientCtx = {
-		...props.ctx,
-		currentUserId: props.ctx.currentUserId,
-		currentUserRole: props.ctx.currentUserRole,
-		space: props.ctx.space,
+		...input.ctx,
+		currentUserId: input.ctx.currentUserId,
+		currentUserRole: input.ctx.currentUserRole,
+		space: input.ctx.space,
 	};
 	return (
 		<>
 			<Drawer
 				position="bottom"
 				id="users"
-				open={props.model.modal === "users"}
-				onClose={() => props.dispatch({ t: "closed-modal" })}
+				open={input.model.modal === "users"}
+				onClose={() => input.dispatch({ t: "closed-modal" })}
 			>
 				<ViewUsersInSpaceList
 					onOpenUserDetails={(userId) =>
-						props.dispatch({ t: "clicked-user", userId })
+						input.dispatch({ t: "clicked-user", userId })
 					}
 					ctx={spaceCtx}
 				/>
@@ -127,45 +127,45 @@ const View: SpaceClientModule["View"] = (props) => {
 			<Drawer
 				position="bottom"
 				id="user-preview"
-				open={props.model.modal === "user-preview"}
-				onClose={() => props.dispatch({ t: "closed-modal" })}
+				open={input.model.modal === "user-preview"}
+				onClose={() => input.dispatch({ t: "closed-modal" })}
 			>
 				<div>
 					<button
 						type="button"
 						className="flex w-full flex-col items-center justify-center gap-2 p-4"
-						onClick={() => props.dispatch({ t: "clicked-preview-user-link" })}
+						onClick={() => input.dispatch({ t: "clicked-preview-user-link" })}
 					>
 						<Avatar
 							src={
-								props.model.modalPreviewUserId
-									? props.ctx.profiles[props.model.modalPreviewUserId]
+								input.model.modalPreviewUserId
+									? input.ctx.profiles[input.model.modalPreviewUserId]
 											?.avatarUrl
 									: undefined
 							}
 							className="h-24 w-24"
 						/>
 						<p className="text-xl font-semibold">
-							{props.model.modalPreviewUserId
-								? props.ctx.profiles[props.model.modalPreviewUserId]
+							{input.model.modalPreviewUserId
+								? input.ctx.profiles[input.model.modalPreviewUserId]
 										?.username ?? "..."
 								: "..."}
 						</p>
 						<div className="flex items-center gap-2">
-							{spaceCtx.space.hostId === props.model.modalPreviewUserId && (
-								<ViewSpaceHostChip ctx={props.ctx} />
+							{spaceCtx.space.hostId === input.model.modalPreviewUserId && (
+								<ViewSpaceHostChip ctx={input.ctx} />
 							)}
-							{spaceCtx.currentUserId === props.model.modalPreviewUserId && (
-								<ViewYouChip ctx={props.ctx} />
+							{spaceCtx.currentUserId === input.model.modalPreviewUserId && (
+								<ViewYouChip ctx={input.ctx} />
 							)}
 						</div>
 					</button>
 
 					<div className="w-full px-4 pb-8">
 						<Button
-							onClick={() => props.dispatch({ t: "clicked-preview-user-link" })}
+							onClick={() => input.dispatch({ t: "clicked-preview-user-link" })}
 							className="w-full"
-							text={props.ctx.t("spaces.see-profile")}
+							text={input.ctx.t("spaces.see-profile")}
 						/>
 					</div>
 				</div>

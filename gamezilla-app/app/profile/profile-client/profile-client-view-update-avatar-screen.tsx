@@ -1,41 +1,33 @@
+import { AnonymousClientCtx, ClientCtx } from "gamezilla-app/app/@/client";
 import { ProfileAvatar } from "gamezilla-app/app/@/data";
-import { Button, Avatar, TextField, TopBar } from "gamezilla-app/app/@/ui";
+import { Avatar, Button, TextField, TopBar } from "gamezilla-app/app/@/ui";
 import type { ModelClient, MsgClient } from "../profile.types";
 
-export const ViewUpdateAvatarScreen = ({
-	model,
-	dispatch,
-}: {
+export const ViewUpdateAvatarScreen = (input: {
 	model: ModelClient;
 	dispatch: (msg: MsgClient) => void;
+	ctx: AnonymousClientCtx | ClientCtx;
 }) => {
 	return (
 		<div className="flex h-full w-full flex-col items-center">
 			<TopBar
-				left={
-					<Button
-						color="primary"
-						variant="text"
-						onClick={() =>
-							dispatch({
-								t: "clicked-back-button",
-								from: { t: "profile-avatar" },
-							})
-						}
-						text="Cancel"
-					/>
+				onBack={() =>
+					input.dispatch({
+						t: "clicked-back-button",
+						from: { t: "profile-avatar" },
+					})
 				}
-				title="Avatar"
-				right={<Button color="primary" variant="text" text="Done" />}
+				title={input.ctx.t("profile.update-avatar")}
+				ctx={input.ctx}
 			/>
 
 			<div className="flex w-full flex-1 flex-col gap-8 p-4">
 				<Avatar
 					src={
-						model.draft?.avatarSeed && model.draft?.avatarStyle
+						input.model.draft?.avatarSeed && input.model.draft?.avatarStyle
 							? ProfileAvatar.toUrl({
-									seed: model.draft?.avatarSeed,
-									style: model.draft?.avatarStyle,
+									seed: input.model.draft?.avatarSeed,
+									style: input.model.draft?.avatarStyle,
 								})
 							: undefined
 					}
@@ -45,15 +37,17 @@ export const ViewUpdateAvatarScreen = ({
 				<div className="flex w-full flex-col gap-4">
 					<TextField
 						label="Seed"
-						value={model.draft?.avatarSeed ?? ""}
+						value={input.model.draft?.avatarSeed ?? ""}
 						onChange={(val) =>
-							dispatch({ t: "inputted-avatar-seed", seed: val })
+							input.dispatch({ t: "inputted-avatar-seed", seed: val })
 						}
 						id="seed"
 					/>
 
 					<Button
-						onClick={() => dispatch({ t: "clicked-generate-random-seed" })}
+						onClick={() =>
+							input.dispatch({ t: "clicked-generate-random-seed" })
+						}
 						text=" Random seed"
 					/>
 				</div>

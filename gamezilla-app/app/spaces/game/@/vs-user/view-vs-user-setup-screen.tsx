@@ -3,6 +3,7 @@ import type { UserId } from "gamezilla-app/app/@/data";
 import { Avatar, Button, IconQuestionMark } from "gamezilla-app/app/@/ui";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { ViewGameHeader } from "../game/view-game-header";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 
 type IconProps = { className: string };
 
@@ -161,7 +162,7 @@ export const VsUserSetupScreen = ({
 	canStartGame = Boolean(playerOne.userId && playerTwo.userId),
 }: {
 	ctx: SpaceClientCtx;
-	title: string;
+	title: TranslatedText;
 	renderCoverArt: (props: { className: string }) => VDom;
 	playerOne: PlayerProp;
 	playerTwo: PlayerProp;

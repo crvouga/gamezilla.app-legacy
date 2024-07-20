@@ -81,8 +81,8 @@ const transformClassName = (vDom) => {
 	if (Array.isArray(vDom)) {
 		return vDom.map(transformClassName);
 	} else if (vDom && typeof vDom === "object") {
-		const { className, ...restProps } = vDom.props || {};
-		const newProps = className ? { class: className, ...restProps } : restProps;
+		const { className, ...restinput } = vDom.input || {};
+		const newinput = className ? { class: className, ...restinput } : restinput;
 		// @ts-ignore
 		const children = vDom.children
 			? transformClassName(vDom.children)
@@ -90,7 +90,7 @@ const transformClassName = (vDom) => {
 
 		return {
 			...vDom,
-			props: newProps,
+			input: newinput,
 			children: children,
 		};
 	}

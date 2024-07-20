@@ -127,8 +127,8 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 					puzzleBuilderOpened: null,
 				},
 				msgCmd: isOk(msgCore.edited)
-					? showCreatedSm("Saved name")
-					: showErrSm(msgCore.edited.error),
+					? showCreatedSm(input.ctx.t("flow.saved-name"))
+					: showErrSm(input.ctx.t("app.something-went-wrong")),
 			};
 		}
 
@@ -211,7 +211,7 @@ const ViewDrawer = (
 	return (
 		<>
 			<ListItemButton
-				icon={(props) => <IconPenToSquare {...props} />}
+				icon={(input) => <IconPenToSquare {...input} />}
 				label="Edit Name"
 				onClick={() => dispatch({ t: "puzzle.edit-name.user-clicked-button" })}
 			/>

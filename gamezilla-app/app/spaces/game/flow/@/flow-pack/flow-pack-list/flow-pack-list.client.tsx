@@ -102,7 +102,7 @@ const updateList: ClientModule["update"] = (input) => {
 					packs: packsNew,
 				},
 				msgCmd: isErr(msgServer.listed)
-					? showErrSm(msgServer.listed.error)
+					? showErrSm(input.ctx.t("app.something-went-wrong"))
 					: [],
 			};
 		}
@@ -127,7 +127,7 @@ const View: ClientModule["View"] = (input) => {
 				{shouldShowEmptyState && (
 					<EmptyState
 						label="No packs"
-						renderIcon={(props) => <IconBox {...props} />}
+						renderIcon={(input) => <IconBox {...input} />}
 					/>
 				)}
 

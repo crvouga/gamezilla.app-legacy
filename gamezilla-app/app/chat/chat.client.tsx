@@ -182,14 +182,14 @@ export const View = (_input: {
 	return null;
 };
 
-export const ViewChat = (_props: {
+export const ViewChat = (_input: {
 	model: ModelClient;
 	dispatch: (m: Msg) => void;
 }) => {
 	return <div>ViewChat</div>;
 };
 
-export const ViewChatNew = (_props: {
+export const ViewChatNew = (_input: {
 	ctx: ClientCtx;
 	model: ModelClient;
 	dispatch: (m: Msg) => void;
@@ -201,7 +201,7 @@ export const ViewChatNew = (_props: {
 	return <div>ViewChat</div>;
 };
 
-export const ViewChatList = (_props: {
+export const ViewChatList = (_input: {
 	ctx: ClientCtx;
 	model: ModelClient;
 	dispatch: (m: Msg) => void;

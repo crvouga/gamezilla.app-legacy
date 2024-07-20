@@ -11,21 +11,21 @@ const EDGE_STROKE_WIDTH = 0.3;
 let lastDraggedOver: FlowNodeId | null = null;
 let isCurrentDeviceTouch = false;
 
-const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+const View = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	const draggedOver = (nodeId: FlowNodeId) => {
-		if (!props.isDragging || lastDraggedOver === nodeId) {
+		if (!input.isDragging || lastDraggedOver === nodeId) {
 			return;
 		}
 		lastDraggedOver = nodeId;
-		props.onDraggedOver?.(nodeId);
+		input.onDraggedOver?.(nodeId);
 	};
 
 	const left = () => {
-		if (!props.isDragging) {
+		if (!input.isDragging) {
 			return;
 		}
 		lastDraggedOver = null;
-		props.onLeave?.();
+		input.onLeave?.();
 	};
 
 	const onTouchMove = (e: TouchEvent) => {
@@ -42,36 +42,36 @@ const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 		<svg
 			className={cn(
 				"w-full touch-none select-none",
-				props.isDragging && "cursor-grabbing",
-				props.disabled && "pointer-events-none",
-				props.className,
+				input.isDragging && "cursor-grabbing",
+				input.disabled && "pointer-events-none",
+				input.className,
 			)}
 			onContextMenu={(e) => {
 				e.stopPropagation();
 				e.preventDefault();
 			}}
-			viewBox={`${0} ${0} ${props.model.width} ${props.model.height}`}
+			viewBox={`${0} ${0} ${input.model.width} ${input.model.height}`}
 			onTouchMove={onTouchMove}
 			onMouseLeave={left}
 			onMouseUp={left}
 		>
 			<title>Flow Grid</title>
-			<ViewGrid {...props} />
+			<ViewGrid {...input} />
 
-			<ViewPipelines {...props} />
+			<ViewPipelines {...input} />
 
-			<ViewAutocompleteEdge {...props} />
+			<ViewAutocompleteEdge {...input} />
 
-			<ViewCoordinates {...props} />
+			<ViewCoordinates {...input} />
 
-			{!props.disabled && (
-				<ViewClickable {...props} draggedOver={draggedOver} />
+			{!input.disabled && (
+				<ViewClickable {...input} draggedOver={draggedOver} />
 			)}
 		</svg>
 	);
 };
 
-const ViewGrid = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+const ViewGrid = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
 		<>
 			<defs>
@@ -88,8 +88,8 @@ const ViewGrid = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 			<rect
 				x={0}
 				y={0}
-				width={props.model.width}
-				height={props.model.height}
+				width={input.model.width}
+				height={input.model.height}
 				fill="url(#grid)"
 				stroke="green"
 				strokeWidth="0.02"
@@ -98,12 +98,12 @@ const ViewGrid = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 	);
 };
 
-const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+const ViewPipelines = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
 		<g transform="translate(0.5, 0.5)">
-			{map(FlowGrid.yieldTerminals(props.model), (terminal) => {
+			{map(FlowGrid.yieldTerminals(input.model), (terminal) => {
 				return (
-					<ViewPipeline key={terminal.groupId} {...props} terminal={terminal} />
+					<ViewPipeline key={terminal.groupId} {...input} terminal={terminal} />
 				);
 			})}
 		</g>
@@ -111,26 +111,26 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 };
 
 const ViewPipeline = (
-	props: FlowUI.FlowViewProps<FlowGrid.Model> & {
+	input: FlowUI.FlowViewinput<FlowGrid.Model> & {
 		terminal: FlowGrid.Terminal;
 	},
 ) => {
-	const terminal = props.terminal;
+	const terminal = input.terminal;
 	const groupColor = FlowUI.Color.groupIdToHex(terminal.groupId);
-	const pipeline = FlowGrid.toPipeline(props.model, terminal.startId);
+	const pipeline = FlowGrid.toPipeline(input.model, terminal.startId);
 	const pipelinePathData = pipelineToSvgPathData(pipeline);
-	const didUseHint = Boolean(props.usedHints?.[terminal.groupId]);
+	const didUseHint = Boolean(input.usedHints?.[terminal.groupId]);
 	const isConnectedWithPipes = Flow.isTerminalConnectedWithPipes(
-		props.model,
+		input.model,
 		terminal.groupId,
 	);
 	const shouldShowUsedHint = isConnectedWithPipes && didUseHint;
 
 	return (
 		<g key={terminal.groupId} id={terminal.groupId}>
-			{!props.disableHighlight && (
+			{!input.disableHighlight && (
 				<path
-					d={props.isGroupActive?.(terminal.groupId) ? "" : pipelinePathData}
+					d={input.isGroupActive?.(terminal.groupId) ? "" : pipelinePathData}
 					stroke={groupColor}
 					fill="none"
 					strokeLinejoin="inherit"
@@ -185,25 +185,25 @@ const HintCheckmark = (input: { x: number; y: number }) => {
 			width={1}
 			height={1}
 			padding={0.25}
-			render={(props) => <IconCheckmark {...props} />}
+			render={(input) => <IconCheckmark {...input} />}
 		/>
 	);
 };
 
-const WithPadding = (props: {
+const WithPadding = (input: {
 	x: number;
 	y: number;
 	width: number;
 	height: number;
 	padding: number;
-	render: (props: {
+	render: (input: {
 		x: number;
 		y: number;
 		width: number;
 		height: number;
 	}) => VDom;
 }) => {
-	const { x, y, width, height, padding, render } = props;
+	const { x, y, width, height, padding, render } = input;
 
 	const paddedWidth = Math.max(0, width - padding * 2);
 	const paddedHeight = Math.max(0, height - padding * 2);
@@ -218,16 +218,16 @@ const WithPadding = (props: {
 	});
 };
 
-const ViewAutocompleteEdge = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+const ViewAutocompleteEdge = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
-		props.autocompleteEdge && (
+		input.autocompleteEdge && (
 			<g transform="translate(0.5, 0.5)">
 				<line
-					x1={props.model.positions[props.autocompleteEdge.sourceId]?.x}
-					y1={props.model.positions[props.autocompleteEdge.sourceId]?.y}
-					x2={props.model.positions[props.autocompleteEdge.targetId]?.x}
-					y2={props.model.positions[props.autocompleteEdge.targetId]?.y}
-					stroke={FlowUI.Color.groupIdToHex(props.autocompleteEdge.groupId)}
+					x1={input.model.positions[input.autocompleteEdge.sourceId]?.x}
+					y1={input.model.positions[input.autocompleteEdge.sourceId]?.y}
+					x2={input.model.positions[input.autocompleteEdge.targetId]?.x}
+					y2={input.model.positions[input.autocompleteEdge.targetId]?.y}
+					stroke={FlowUI.Color.groupIdToHex(input.autocompleteEdge.groupId)}
 					strokeWidth={EDGE_STROKE_WIDTH}
 					strokeOpacity={0.5}
 				/>
@@ -236,11 +236,11 @@ const ViewAutocompleteEdge = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 	);
 };
 
-const ViewCoordinates = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+const ViewCoordinates = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
-		props.showCoordinates && (
+		input.showCoordinates && (
 			<g transform="translate(0, 1)">
-				{map(FlowGrid.yieldNodes(props.model), (node) => {
+				{map(FlowGrid.yieldNodes(input.model), (node) => {
 					return (
 						<text
 							className="pointer-events-none"
@@ -260,20 +260,20 @@ const ViewCoordinates = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 };
 
 const ViewClickable = (
-	props: FlowUI.FlowViewProps<FlowGrid.Model> & {
+	input: FlowUI.FlowViewinput<FlowGrid.Model> & {
 		draggedOver?: (nodeId: FlowNodeId) => void;
 	},
 ) => {
 	return (
-		<g key={props.model.nodeHash}>
-			{map(FlowGrid.yieldNodes(props.model), (node) => {
+		<g key={input.model.nodeHash}>
+			{map(FlowGrid.yieldNodes(input.model), (node) => {
 				return (
 					<ViewClickableNode
 						key={node.nodeId}
 						node={node}
-						onPressDown={props.onPressDown}
-						onPressUp={props.onPressUp}
-						draggedOver={props.draggedOver}
+						onPressDown={input.onPressDown}
+						onPressUp={input.onPressUp}
+						draggedOver={input.draggedOver}
 					/>
 				);
 			})}
@@ -282,8 +282,8 @@ const ViewClickable = (
 };
 
 const ViewClickableNode = (
-	props: Pick<
-		FlowUI.FlowViewProps<FlowGrid.Model>,
+	input: Pick<
+		FlowUI.FlowViewinput<FlowGrid.Model>,
 		"onPressDown" | "onPressUp"
 	> & {
 		node: FlowGrid.Node;
@@ -292,9 +292,9 @@ const ViewClickableNode = (
 ) => {
 	return (
 		<rect
-			key={props.node.nodeId}
-			x={props.node.x}
-			y={props.node.y}
+			key={input.node.nodeId}
+			x={input.node.x}
+			y={input.node.y}
 			width="1"
 			height="1"
 			fill="transparent"
@@ -302,26 +302,26 @@ const ViewClickableNode = (
 				if (isCurrentDeviceTouch) {
 					return;
 				}
-				props.onPressDown?.(props.node.nodeId);
+				input.onPressDown?.(input.node.nodeId);
 			}}
 			onMouseUp={(event) => {
 				event.stopPropagation();
-				props.onPressUp?.(props.node.nodeId);
+				input.onPressUp?.(input.node.nodeId);
 			}}
 			onMouseEnter={() => {
-				props.draggedOver?.(props.node.nodeId);
+				input.draggedOver?.(input.node.nodeId);
 			}}
 			onTouchStart={() => {
 				isCurrentDeviceTouch = true;
-				props.onPressDown?.(props.node.nodeId);
+				input.onPressDown?.(input.node.nodeId);
 			}}
 			onTouchCancel={() => {
 				isCurrentDeviceTouch = true;
-				props.onPressUp?.(props.node.nodeId);
+				input.onPressUp?.(input.node.nodeId);
 			}}
 			onTouchEnd={() => {
 				isCurrentDeviceTouch = true;
-				props.onPressUp?.(props.node.nodeId);
+				input.onPressUp?.(input.node.nodeId);
 			}}
 		/>
 	);

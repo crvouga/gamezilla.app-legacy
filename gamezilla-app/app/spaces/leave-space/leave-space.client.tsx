@@ -44,7 +44,9 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
 					model,
 					msgCmd: [
 						playSound(APP_SOUND.navBackward),
-						showToast(username ? `${username} left space` : "Left space"),
+						username
+							? showToast(ctx.t("leave-space.other-user-left", username))
+							: showToast(ctx.t("leave-space.current-user-left")),
 					],
 				};
 			}
@@ -53,7 +55,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
 				model,
 				msgCmd: [
 					playSound(APP_SOUND.navBackward),
-					showToast("Left space"),
+					showToast(ctx.t("leave-space.current-user-left")),
 					pushRoute({
 						n: "spaces",
 						t: "space-list",
@@ -105,14 +107,14 @@ const updateLeaveSpaceButton: SpaceClientModule["update"] = ({
 	}
 };
 
-const ViewLeaveSpaceButton: SpaceClientModule["View"] = (props) => {
+const ViewLeaveSpaceButton: SpaceClientModule["View"] = (input) => {
 	return (
 		<Button
 			color="danger"
 			variant="contained"
 			size="sm"
 			text="Leave"
-			onClick={() => props.dispatch({ t: "clicked-leave-space-button" })}
+			onClick={() => input.dispatch({ t: "clicked-leave-space-button" })}
 		/>
 	);
 };

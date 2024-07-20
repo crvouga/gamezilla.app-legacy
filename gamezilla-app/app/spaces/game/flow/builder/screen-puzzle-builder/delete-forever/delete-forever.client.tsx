@@ -70,7 +70,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 					puzzleDeleteForeverRequest: msgCore.deleted,
 					puzzleBuilderOpened: null,
 				},
-				msgCmd: showCreatedSm("Deleted puzzle"),
+				msgCmd: showCreatedSm(input.ctx.t("flow.puzzle-deleted")),
 			};
 		}
 
@@ -85,7 +85,7 @@ const View: ClientModule["View"] = (input) => {
 	return (
 		<>
 			<ListItemButton
-				icon={(props) => <IconDeleteForever {...props} />}
+				icon={(input) => <IconDeleteForever {...input} />}
 				label="Delete Forever"
 				color="danger"
 				onClick={() =>

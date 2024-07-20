@@ -309,103 +309,103 @@ export const toGameOver = (
 	}
 };
 
-const View: Module["View"] = (props) => {
-	const vsBotSetupProps: VsBotSetup.VsBotSetupProps = {
-		ctx: props.ctx,
-		onQuit: props.ctx.onQuit,
-		title: "Connect Four",
-		renderCoverArt: (props) => <CoverArt {...props} />,
-		canStartGame: props.modelCore.playingUserId !== null,
+const View: Module["View"] = (input) => {
+	const vsBotSetupinput: VsBotSetup.VsBotSetupinput = {
+		ctx: input.ctx,
+		onQuit: input.ctx.onQuit,
+		title: input.ctx.t('chess'),
+		renderCoverArt: (input) => <CoverArt {...input} />,
+		canStartGame: input.modelCore.playingUserId !== null,
 		onSwapSides: () =>
-			props.dispatch({
+			input.dispatch({
 				t: "user-swapped-sides",
-				userId: props.ctx.currentUserId,
+				userId: input.ctx.currentUserId,
 			}),
 		onStartGame: () =>
-			props.dispatch({
+			input.dispatch({
 				t: "user-started-game",
-				userId: props.ctx.currentUserId,
+				userId: input.ctx.currentUserId,
 			}),
 		botVariants: ALL_BOT_LEVELS.map((botLevel) => {
 			return {
 				label: botLevel,
-				renderIcon: (props) => <ViewBotLevel {...props} level={botLevel} />,
+				renderIcon: (input) => <ViewBotLevel {...input} level={botLevel} />,
 				onSelect: () =>
-					props.dispatch({
+					input.dispatch({
 						t: "user-changed-bot-level",
 						botLevel,
-						userId: props.ctx.currentUserId,
+						userId: input.ctx.currentUserId,
 					}),
 			};
 		}),
 		human: {
 			player:
-				props.modelCore.userPlayerType === "player-one"
+				input.modelCore.userPlayerType === "player-one"
 					? "player-one"
 					: "player-two",
-			userId: props.modelCore.playingUserId ?? null,
+			userId: input.modelCore.playingUserId ?? null,
 		},
 		bot: {
-			label: props.modelCore.botLevel,
-			renderIcon: (iconProps) => (
-				<ViewBotLevel {...iconProps} level={props.modelCore.botLevel} />
+			label: input.modelCore.botLevel,
+			renderIcon: (iconinput) => (
+				<ViewBotLevel {...iconinput} level={input.modelCore.botLevel} />
 			),
 		},
 		playerOne: {
 			label: "Red",
-			renderIcon: (props) => <PlayerOneIcon {...props} />,
+			renderIcon: (input) => <PlayerOneIcon {...input} />,
 			onStartPlaying: () =>
-				props.dispatch({
+				input.dispatch({
 					t: "user-started-playing",
 					playerType: "player-one",
-					userId: props.ctx.currentUserId,
+					userId: input.ctx.currentUserId,
 				}),
 			onStopPlaying: () =>
-				props.dispatch({
+				input.dispatch({
 					t: "user-stopped-playing",
-					userId: props.ctx.currentUserId,
+					userId: input.ctx.currentUserId,
 				}),
 		},
 		playerTwo: {
 			label: "Yellow",
-			renderIcon: (props) => <PlayerTwoIcon {...props} />,
+			renderIcon: (input) => <PlayerTwoIcon {...input} />,
 			onStartPlaying: () =>
-				props.dispatch({
+				input.dispatch({
 					t: "user-started-playing",
 					playerType: "player-two",
-					userId: props.ctx.currentUserId,
+					userId: input.ctx.currentUserId,
 				}),
 			onStopPlaying: () =>
-				props.dispatch({
+				input.dispatch({
 					t: "user-stopped-playing",
-					userId: props.ctx.currentUserId,
+					userId: input.ctx.currentUserId,
 				}),
 		},
 	};
 
-	if (!props.model) {
+	if (!input.model) {
 		return null;
 	}
 
-	if (props.modelCore.type === "setup") {
+	if (input.modelCore.type === "setup") {
 		return (
 			<VsBotSetup.View
-				model={props.model.vsBotSetup}
-				dispatch={(c) => props.dispatch({ t: "vs-bot-setup", c })}
-				{...vsBotSetupProps}
+				model={input.model.vsBotSetup}
+				dispatch={(c) => input.dispatch({ t: "vs-bot-setup", c })}
+				{...vsBotSetupinput}
 			/>
 		);
 	}
 
-	const status = ConnectFour.toStatus(props.modelCore.columns);
+	const status = ConnectFour.toStatus(input.modelCore.columns);
 
-	const vsBotGameProps: VsBotGame.VsBotGameProps = {
-		...vsBotSetupProps,
+	const vsBotGameinput: VsBotGame.VsBotGameinput = {
+		...vsBotSetupinput,
 		human: {
-			...vsBotSetupProps.human,
-			userId: props.modelCore.playingUserId,
+			...vsBotSetupinput.human,
+			userId: input.modelCore.playingUserId,
 		},
-		isSpectating: props.ctx.currentUserId !== props.modelCore.playingUserId,
+		isSpectating: input.ctx.currentUserId !== input.modelCore.playingUserId,
 		turn:
 			status.type !== "Playing"
 				? null
@@ -415,78 +415,78 @@ const View: Module["View"] = (props) => {
 	};
 
 	const isSpectating =
-		props.ctx.currentUserId !== props.modelCore.playingUserId;
+		input.ctx.currentUserId !== input.modelCore.playingUserId;
 
 	return (
 		<GameLayout isSpectating={isSpectating}>
 			<div className="flex w-full flex-1 flex-col items-center justify-center gap-1">
-				<VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
+				<VsBotGame.VsBotPlayerSection {...vsBotGameinput} />
 
 				<VsBotGame.ViewStatusBar
-					{...vsBotSetupProps}
+					{...vsBotSetupinput}
 					status={toVsBotStatus(status)}
 				/>
 
 				<div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
 					<ViewColumns
 						gameId={0}
-						columns={props.modelCore.columns}
+						columns={input.modelCore.columns}
 						disabled={isSpectating || status.type !== "Playing"}
 						onDropDisc={(columnIndex) => {
-							props.dispatch({
+							input.dispatch({
 								t: "user-dropped-disc",
 								columnIndex,
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 							});
 						}}
 					/>
-					{props.model && (
+					{input.model && (
 						<VsBotGame.ViewGameOverOverlay
-							{...vsBotGameProps}
-							model={props.model.vsBotGame}
+							{...vsBotGameinput}
+							model={input.model.vsBotGame}
 							onPlayAgain={() =>
-								props.dispatch({
+								input.dispatch({
 									t: "user-restarted-game",
-									userId: props.ctx.currentUserId,
+									userId: input.ctx.currentUserId,
 								})
 							}
-							gameOver={toGameOver(props.modelCore.columns)}
+							gameOver={toGameOver(input.modelCore.columns)}
 						/>
 					)}
 				</div>
 			</div>
 
-			{props.ctx.currentUserId === props.modelCore.playingUserId && (
+			{input.ctx.currentUserId === input.modelCore.playingUserId && (
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconArrowLeftOnRect {...props} />}
+						icon={(input) => <IconArrowLeftOnRect {...input} />}
 						label="Exit"
 						onClick={() =>
-							props.dispatch({
+							input.dispatch({
 								t: "user-stopped-game",
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 							})
 						}
 					/>
 
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconRightLeft {...props} />}
+						icon={(input) => <IconRightLeft {...input} />}
 						label="Swap sides"
 						onClick={() =>
-							props.dispatch({
+							input.dispatch({
 								t: "user-swapped-sides",
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 							})
 						}
 					/>
 
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconArrowRotateLeft {...props} />}
+						icon={(input) => <IconArrowRotateLeft {...input} />}
 						label="Restart"
 						onClick={() =>
-							props.dispatch({
+							input.dispatch({
 								t: "user-restarted-game",
-								userId: props.ctx.currentUserId,
+								userId: input.ctx.currentUserId,
 							})
 						}
 					/>
@@ -510,13 +510,13 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
 	}
 };
 
-const ViewFeedItem: Module["ViewFeedItem"] = (props) => {
+const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 	const username =
-		"userId" in props.msgCore
-			? props.ctx.profiles[props.msgCore.userId]?.username ?? null
+		"userId" in input.msgCore
+			? input.ctx.profiles[input.msgCore.userId]?.username ?? null
 			: null;
 
-	switch (props.msgCore.t) {
+	switch (input.msgCore.t) {
 		case "bot-dropped-disc": {
 			return <FeedItem.Info text="Bot dropped disc" />;
 		}
@@ -524,13 +524,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = (props) => {
 		case "user-changed-bot-level": {
 			return (
 				<FeedItem.Info
-					text={`${username} changed bot level to ${props.msgCore.botLevel}`}
+					text={`${username} changed bot level to ${input.msgCore.botLevel}`}
 				/>
 			);
 		}
 
 		case "user-dropped-disc": {
-			if (props.msgCore.userId === props.ctx.currentUserId) {
+			if (input.msgCore.userId === input.ctx.currentUserId) {
 				return <FeedItem.Info text={`${username} dropped disc`} />;
 			}
 
@@ -568,20 +568,20 @@ const ViewFeedItem: Module["ViewFeedItem"] = (props) => {
 
 const ViewBotLevel = ({
 	level,
-	...props
+	...input
 }: {
 	level: BotLevel;
 	className?: string;
 }) => {
 	switch (level) {
 		case "Easy": {
-			return <IconBotHappy {...props} />;
+			return <IconBotHappy {...input} />;
 		}
 		case "Medium": {
-			return <IconBotLevel1 {...props} />;
+			return <IconBotLevel1 {...input} />;
 		}
 		case "Hard": {
-			return <IconBotLevel4 {...props} />;
+			return <IconBotLevel4 {...input} />;
 		}
 	}
 };

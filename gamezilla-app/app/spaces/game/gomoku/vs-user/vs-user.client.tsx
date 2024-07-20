@@ -118,7 +118,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = (_props: {
+export const View = (_input: {
 	dispatch: (m: Msg) => void;
 	ctx: ClientCtx;
 	model: Model;

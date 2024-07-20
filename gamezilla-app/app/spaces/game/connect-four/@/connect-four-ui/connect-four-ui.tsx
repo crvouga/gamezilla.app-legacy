@@ -4,7 +4,7 @@ import { gameTheme } from "./shared";
 
 export const PlayerIcon = ({
 	playerType,
-	...props
+	...input
 }: {
 	playerType: PlayerType;
 	key?: string;
@@ -12,11 +12,11 @@ export const PlayerIcon = ({
 }) => {
 	switch (playerType) {
 		case "player-one": {
-			return <PlayerOneIcon {...props} />;
+			return <PlayerOneIcon {...input} />;
 		}
 
 		case "player-two": {
-			return <PlayerTwoIcon {...props} />;
+			return <PlayerTwoIcon {...input} />;
 		}
 	}
 };
@@ -59,20 +59,20 @@ export const ViewPlayerTwoGradientDef = ({
 	);
 };
 
-export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
+export const PlayerOneIcon = (input: { key?: string; className?: string }) => {
 	const playerOneId = Uuid.generate();
 	return (
-		<svg viewBox="-1 -1 2 2" {...props}>
+		<svg viewBox="-1 -1 2 2" {...input}>
 			<ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={playerOneId} />
 			<circle cx={0} cy={0} r={1} fill={`url(#${playerOneId})`} />
 		</svg>
 	);
 };
 
-export const PlayerTwoIcon = (props: { key?: string; className?: string }) => {
+export const PlayerTwoIcon = (input: { key?: string; className?: string }) => {
 	const playerTwoId = Uuid.generate();
 	return (
-		<svg viewBox="-1 -1 2 2" {...props}>
+		<svg viewBox="-1 -1 2 2" {...input}>
 			<ViewPlayerTwoGradientDef gradientId={playerTwoId} />
 			<circle cx={0} cy={0} r={1} fill={`url(#${playerTwoId})`} />
 		</svg>

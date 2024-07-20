@@ -152,8 +152,8 @@ const updateSaveChangesRequest: ClientModule["update"] = (input) => {
 				puzzleSaveChangesRequest: Result.mapOk(msgCore.saved, () => null),
 			},
 			msgCmd: isOk(msgCore.saved)
-				? showCreatedSm("Saved changes")
-				: showErrSm(msgCore.saved.error),
+				? showCreatedSm(ctx.t("app.saved-changes"))
+				: showErrSm(ctx.t("app.something-went-wrong")),
 		};
 	}
 	return { model };
@@ -223,7 +223,7 @@ export const ViewActionButtons = ({
 	return (
 		<>
 			<ViewBottomButtonBarAction
-				icon={(props) => <IconFloppyDisk {...props} />}
+				icon={(input) => <IconFloppyDisk {...input} />}
 				label="Save"
 				onClick={() =>
 					dispatch({

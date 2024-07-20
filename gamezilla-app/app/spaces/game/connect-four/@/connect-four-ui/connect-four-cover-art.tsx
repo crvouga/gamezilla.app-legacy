@@ -4,7 +4,7 @@ import { gameTheme } from "./shared";
 
 const coverArtId = Uuid.generate();
 
-export const CoverArt = (props: { className?: string }) => {
+export const CoverArt = (input: { className?: string }) => {
 	const ids = {
 		playerOneGradient: `playerOneGradient${coverArtId}`,
 		playerTwoGradient: `playerTwoGradient${coverArtId}`,
@@ -17,7 +17,7 @@ export const CoverArt = (props: { className?: string }) => {
 	const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
 	return (
-		<svg width="100%" viewBox="0 0 2 2" {...props}>
+		<svg width="100%" viewBox="0 0 2 2" {...input}>
 			<defs>
 				<pattern
 					id={ids.holePattern}

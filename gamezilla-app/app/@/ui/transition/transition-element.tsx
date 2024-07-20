@@ -1,4 +1,4 @@
-import { transitionSub, type TransitionProps } from "./transition-shared";
+import { transitionSub, type Transitioninput } from "./transition-shared";
 
 declare global {
 	namespace JSX {
@@ -15,7 +15,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 	class Transition extends HTMLElement {
 		observer: MutationObserver;
 		unsubscribe: () => void;
-		props: TransitionProps;
+		input: Transitioninput;
 		enterQueue: Array<Node> = [];
 		activeExits = 0;
 
@@ -23,7 +23,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 			super();
 			this.observer = new MutationObserver(this.onMutations.bind(this));
 			this.unsubscribe = () => {};
-			this.props = {
+			this.input = {
 				id: this.getAttribute("id") || "",
 				onEnter: async () => {},
 				onExit: async () => {},
@@ -37,17 +37,17 @@ if (typeof window !== "undefined" && "customElements" in window) {
 			this.observer.observe(this, { childList: true });
 			this.unsubscribe = transitionSub.sub((msgEvt) => {
 				if (msgEvt.id === this.getAttribute("id")) {
-					this.props = msgEvt;
+					this.input = msgEvt;
 					this.syncUI();
 				}
 			});
 
-			if (this.props.appear) {
+			if (this.input.appear) {
 				Array.from(this.childNodes).forEach((child) => {
 					if (child instanceof HTMLElement) {
 						this.applyTransition(child, "enter");
-						if (this.props.onAppear) {
-							this.props.onAppear(child);
+						if (this.input.onAppear) {
+							this.input.onAppear(child);
 						}
 					}
 				});
@@ -55,7 +55,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 		}
 
 		syncUI() {
-			this.className = this.props.className ?? "";
+			this.className = this.input.className ?? "";
 		}
 
 		disconnectedCallback() {
@@ -64,7 +64,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 		}
 
 		onMutations(mutationsList: MutationRecord[], _observer: MutationObserver) {
-			switch (this.props.mode) {
+			switch (this.input.mode) {
 				case "in-out": {
 					mutationsList.forEach((mutation) => {
 						if (mutation.type === "childList") {
@@ -123,9 +123,9 @@ if (typeof window !== "undefined" && "customElements" in window) {
 			try {
 				if (type === "enter") {
 					node.style.visibility = "visible";
-					await this.props.onEnter?.(node);
+					await this.input.onEnter?.(node);
 				} else {
-					await this.props.onExit?.(node);
+					await this.input.onExit?.(node);
 				}
 			} finally {
 				if (type === "exit") {

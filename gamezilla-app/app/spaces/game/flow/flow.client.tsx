@@ -299,13 +299,13 @@ const View: ClientModule["View"] = (input) => {
 		case null: {
 			return (
 				<GameMainMenu.View
-					renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
+					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
 					ctx={ctx}
-					title="Flow"
+					title={ctx.t("flow")}
 					dispatch={dispatch}
 					buttons={[
 						{
-							renderIcon: (props) => <IconGamepad {...props} />,
+							renderIcon: (input) => <IconGamepad {...input} />,
 							title: ctx.t("flow.play"),
 							description: "Start playing puzzles",
 							onClick: () => {
@@ -320,7 +320,7 @@ const View: ClientModule["View"] = (input) => {
 							},
 						},
 						{
-							renderIcon: (props) => <IconScrewdriverWrench {...props} />,
+							renderIcon: (input) => <IconScrewdriverWrench {...input} />,
 							title: "Builder",
 							description: "Create and edit puzzles and packs",
 							onClick: () => {

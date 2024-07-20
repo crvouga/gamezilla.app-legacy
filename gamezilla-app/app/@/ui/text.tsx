@@ -1,13 +1,13 @@
 import { AriaRole } from "react";
 
-export const Text = (props: {
+export const Text = (input: {
 	role: AriaRole;
 	value: string;
 	className?: string;
 }) => {
 	return (
-		<p role={props.role} className={props.className} aria-label={props.value}>
-			{props.value}
+		<p role={input.role} className={input.className} aria-label={input.value}>
+			{input.value}
 		</p>
 	);
 };

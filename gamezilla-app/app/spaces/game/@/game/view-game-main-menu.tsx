@@ -10,6 +10,7 @@ import {
 } from "../../../@/space-client-cmd";
 import { ViewGameHeader } from "./view-game-header";
 import { ViewUsersInSpaceList } from "./view-users-in-space-list";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 
 //
 //
@@ -78,9 +79,9 @@ export const View = ({
 	dispatch,
 }: {
 	ctx: SpaceClientCtx;
-	title: string;
+	title: TranslatedText;
 	dispatch: (msg: Msg) => void;
-	renderCoverArt: (props: { className: string; key: string }) => VDom;
+	renderCoverArt: (input: { className: string; key: string }) => VDom;
 	buttons: MainMenuButton[];
 }) => {
 	if (ctx.currentUserId !== ctx.space.hostId) {
@@ -122,12 +123,12 @@ export const View = ({
 				<div className="flex w-full flex-col p-4">
 					{buttons.map(({ renderIcon, title, description, onClick }, index) => (
 						<button
-							className="mb-6 flex w-full items-center rounded-lg bg-neutral-800 p-6 active:opacity-70"
+							className="mb-6 flex w-full items-center rounded bg-neutral-800 p-6 active:opacity-70"
 							onClick={onClick}
 							key={`${index} ${title}`}
 						>
 							{renderIcon({
-								className: "aspect-square w-12 h-12 mr-4",
+								className: "aspect-square w-10 h-10 mr-4",
 							})}
 							<div className="flex-1 text-left">
 								<p className="text-2xl font-bold">{title}</p>
@@ -148,7 +149,7 @@ export const buttons = {
 	playFriend: (input: { onClick: () => void }): MainMenuButton => {
 		return {
 			...input,
-			renderIcon: (props) => <IconUsers {...props} />,
+			renderIcon: (input) => <IconUsers {...input} />,
 			title: "Play Friend",
 			description: "Play against people in your space",
 		};
@@ -157,7 +158,7 @@ export const buttons = {
 	playComputer: (input: { onClick: () => void }): MainMenuButton => {
 		return {
 			...input,
-			renderIcon: (props) => <IconRobot {...props} />,
+			renderIcon: (input) => <IconRobot {...input} />,
 			title: "Play Computer",
 			description: "Play against a computer",
 		};

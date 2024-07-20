@@ -1,4 +1,4 @@
-export type IconProps = {
+export type Iconinput = {
 	className?: string;
 	"aria-label"?: string;
 	x?: number;

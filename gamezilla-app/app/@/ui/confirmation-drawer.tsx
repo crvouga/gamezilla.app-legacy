@@ -1,8 +1,8 @@
 import { Button } from "./button";
-import { Drawer, type DrawerProps } from "./drawer";
+import { Drawer, type Drawerinput } from "./drawer";
 import { cn } from "./ui";
 
-type Props = DrawerProps & {
+type input = Drawerinput & {
 	title: string;
 	body: string;
 	variant?: "danger";
@@ -16,34 +16,34 @@ type Props = DrawerProps & {
 	confirmLoading?: boolean;
 };
 
-export const ConfirmationDrawer = (props: Props) => {
+export const ConfirmationDrawer = (input: input) => {
 	return (
-		<Drawer {...props}>
+		<Drawer {...input}>
 			<p
 				className={cn(
 					"w-full px-4 pt-4 text-left text-3xl font-bold",
-					//   props.variant === "danger" && "text-red-500"
+					//   input.variant === "danger" && "text-red-500"
 				)}
 			>
-				{props.title}
+				{input.title}
 			</p>
 			<p className="w-full p-4 text-left text-lg text-neutral-300">
-				{props.body}
+				{input.body}
 			</p>
 			<div className="flex w-full items-center gap-4 p-4">
 				<Button
 					className="flex-1"
-					onClick={props.onCancel}
-					text={props.cancelText ?? "Cancel"}
-					disabled={props.cancelDisabled}
+					onClick={input.onCancel}
+					text={input.cancelText ?? "Cancel"}
+					disabled={input.cancelDisabled}
 				/>
 				<Button
 					className="flex-1"
-					color={props.variant === "danger" ? "danger" : "default"}
-					onClick={props.onConfirm}
+					color={input.variant === "danger" ? "danger" : "default"}
+					onClick={input.onConfirm}
 					variant="contained"
-					text={props.confirmText}
-					loading={props.confirmLoading}
+					text={input.confirmText}
+					loading={input.confirmLoading}
 				/>
 			</div>
 		</Drawer>

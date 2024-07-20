@@ -170,20 +170,21 @@ describe(import.meta.file, () => {
 
 	it("should show an error when server sends an error while listing puzzles", async () => {
 		const f = await Fixture();
-		const error = "Something went wrong";
 		const output = f.update(f.init.model, [
 			{
 				msgServer: {
 					t: "listed-puzzles-by-id",
 					listed: {
 						t: "err",
-						error,
+						error: "Some error",
 					},
 				},
 			},
 		]);
 
-		expect(didShowErrorSm(output, error)).toBe(true);
+		expect(didShowErrorSm(output, f.ctx.t("app.something-went-wrong"))).toBe(
+			true,
+		);
 	});
 
 	it("should be in a loading state after requesting to list puzzles", async () => {

@@ -5,7 +5,6 @@ import {
 	type ClientCmd,
 	playSound,
 	sendToServer,
-	showToast,
 } from "gamezilla-app/app/@/client";
 import {
 	Avatar,
@@ -160,20 +159,6 @@ export const updateFromServerMain: typeof updateFromServer = ({
 			const result = msg.result;
 
 			if (isErr(result)) {
-				if (msg.t === "db-got-puzzles") {
-					return {
-						model,
-						msgCmd: [showToast("Failed to load puzzles")],
-					};
-				}
-
-				if (msg.t === "db-got-initial-load") {
-					return {
-						model,
-						msgCmd: [showToast("Failed to load puzzles and profile.", "error")],
-					};
-				}
-
 				return { model };
 			}
 
@@ -366,7 +351,7 @@ export const View = ({
 	);
 };
 
-// export const toChessboardPropsForHint = (model: Model): Partial<BoardProps> => {
+// export const toChessboardinputForHint = (model: Model): Partial<Boardinput> => {
 //   const correctMove = toCorrectMove(model);
 
 //   if (!correctMove) {
@@ -415,7 +400,7 @@ export const BottomBarActions = ({
 }): VDomChildren => {
 	const exit = (
 		<ViewBottomButtonBarAction
-			icon={(props) => <IconArrowLeftOnRect {...props} />}
+			icon={(input) => <IconArrowLeftOnRect {...input} />}
 			label="Exit"
 			onClick={onClose}
 		/>
@@ -423,7 +408,7 @@ export const BottomBarActions = ({
 
 	const hint = (
 		<ViewBottomButtonBarAction
-			icon={(props) => <IconLightbulb {...props} />}
+			icon={(input) => <IconLightbulb {...input} />}
 			label="Hint"
 			disabled={isNoMoreHints(model) || model.t === "loading"}
 			onClick={() => dispatch({ t: "show-hint" })}
@@ -432,7 +417,7 @@ export const BottomBarActions = ({
 
 	const retry = (
 		<ViewBottomButtonBarAction
-			icon={(props) => <IconArrowRotateLeft {...props} />}
+			icon={(input) => <IconArrowRotateLeft {...input} />}
 			label="Retry"
 			onClick={() => dispatch({ t: "retry" })}
 			color="danger"
@@ -441,7 +426,7 @@ export const BottomBarActions = ({
 
 	const skip = (
 		<ViewBottomButtonBarAction
-			icon={(props) => <IconArrowRight {...props} />}
+			icon={(input) => <IconArrowRight {...input} />}
 			label="Skip"
 			onClick={() => dispatch({ t: "skip" })}
 		/>
@@ -449,7 +434,7 @@ export const BottomBarActions = ({
 
 	const next = (
 		<ViewBottomButtonBarAction
-			icon={(props) => <IconArrowCircle {...props} />}
+			icon={(input) => <IconArrowCircle {...input} />}
 			label="Next"
 			color="success"
 			onClick={() => dispatch({ t: "next" })}

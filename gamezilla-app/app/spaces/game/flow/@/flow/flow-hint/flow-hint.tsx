@@ -1,7 +1,7 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import { IconLightbulb } from "gamezilla-app/app/@/ui";
-import type { ActionProps } from "gamezilla-app/app/@/ui/actions";
+import type { Actioninput } from "gamezilla-app/app/@/ui/actions";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { Flow } from "../flow";
 import type { FlowVariant } from "../flow-variant";
@@ -185,14 +185,14 @@ export const viewHintAction = (input: {
 	model: Model;
 	dispatch: (msg: Msg) => void;
 	ctx: ClientCtx & Ctx;
-}): ActionProps => {
+}): Actioninput => {
 	const flow = toFlow({
 		flow: input.ctx.flowPuzzle.flow,
 		model: input.model,
 	});
 	const disabled = Flow.isSolved(flow);
 	return {
-		icon: (props) => <IconLightbulb {...props} />,
+		icon: (input) => <IconLightbulb {...input} />,
 		label: input.ctx.t("game.hint"),
 		onClick: () => input.dispatch({ t: "user-clicked-hint" }),
 		disabled,

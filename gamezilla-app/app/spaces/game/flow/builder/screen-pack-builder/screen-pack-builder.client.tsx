@@ -9,6 +9,7 @@ import {
 	IconDeleteForever,
 	IconEllipsisVertical,
 	ListItemButton,
+	TopBar,
 } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
@@ -20,10 +21,10 @@ import {
 import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import { FlowPuzzleListClient } from "../../@/flow-puzzle/flow-puzzle-list";
+import { FlowPlay } from "../../@/flow/flow-play";
 import type { ClientModule } from "../builder.types";
 import { EditPackNameClient } from "./edit-pack-name/edit-pack-name.client";
 import { ScreenPackBuilderCore } from "./screen-pack-builder.core";
-import { FlowPlay } from "../../@/flow/flow-play";
 
 //
 //
@@ -126,7 +127,10 @@ const ScreenAddPuzzle: Pick<ClientModule, "update" | "View"> = {
 				return {
 					model,
 					msgCore: [withId(msg)],
-					msgCmd: [playSound(APP_SOUND.refreshFeed), showToast("Puzzle added")],
+					msgCmd: [
+						playSound(APP_SOUND.refreshFeed),
+						showToast(input.ctx.t("flow.puzzle-added")),
+					],
 				};
 			}
 
@@ -217,9 +221,16 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 		return (
 			<div className="flex w-full flex-1 flex-col items-center justify-center">
 				<div className="flex w-full flex-1 flex-col">
-					<p className="w-full p-3 text-3xl font-bold">
-						{packBuilder.pack.name}
-					</p>
+					<TopBar
+						ctx={input.ctx}
+						onBack={() =>
+							input.dispatch({
+								t: "pack-builder.user-clicked-exit-button",
+								userId: input.ctx.currentUserId,
+							})
+						}
+						title={input.ctx.t('flow-pack-name', packBuilder.pack.name)}
+					/>
 					<div className="flex w-full flex-1 flex-col items-center justify-center">
 						<FlowPackPuzzlesGridUI.ViewPackPuzzleGrid
 							id={packBuilder.pack.id}
@@ -232,8 +243,8 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 									userId: input.ctx.currentUserId,
 								})
 							}
-							renderCell={(props) => {
-								const puzzleId = packBuilder.pack.puzzleIds[props.index];
+							renderCell={(inputCell) => {
+								const puzzleId = packBuilder.pack.puzzleIds[inputCell.index];
 
 								if (puzzleId) {
 									const puzzle = puzzleId
@@ -250,15 +261,15 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 												input.dispatch({
 													t: "pack-builder.user-clicked-pack-item",
 													puzzle,
-													puzzleIndex: props.index,
+													puzzleIndex: inputCell.index,
 												})
 											}
-											index={props.index}
+											index={inputCell.index}
 										/>
 									);
 								}
 
-								if (props.index === packBuilder.pack.puzzleIds.length) {
+								if (inputCell.index === packBuilder.pack.puzzleIds.length) {
 									return <ButtonAddPuzzle.View {...input} />;
 								}
 
@@ -266,10 +277,6 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 							}}
 						/>
 					</div>
-				</div>
-
-				<div className="w-full border-t border-neutral-700 p-4">
-					<ButtonExitBuilder.View {...input} />
 				</div>
 			</div>
 		);
@@ -318,7 +325,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 		return (
 			<>
 				<ViewBottomButtonBarAction
-					icon={(props) => <IconEllipsisVertical {...props} />}
+					icon={(input) => <IconEllipsisVertical {...input} />}
 					label="More"
 					onClick={() =>
 						dispatch({
@@ -339,7 +346,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 					position="bottom"
 				>
 					<ListItemButton
-						icon={(props) => <IconDeleteForever {...props} />}
+						icon={(input) => <IconDeleteForever {...input} />}
 						label="Remove from pack"
 						color="danger"
 						onClick={() =>
@@ -399,7 +406,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 					msgCore: [withId(msg)],
 					msgCmd: [
 						playSound(APP_SOUND.refreshFeed),
-						showToast("Puzzle removed"),
+						showToast(input.ctx.t("flow.puzzle-removed")),
 					],
 				};
 			}
@@ -432,10 +439,17 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 
 		return (
 			<div className="flex h-full w-full flex-col">
-				<div className="flex flex-1 flex-col gap-1 px-4 py-4">
-					<p className="text-3xl font-bold">Level {screen.puzzleIndex + 1}</p>
-					<p className="text-xs text-neutral-300">{screen.puzzle.name}</p>
-				</div>
+				<TopBar
+					ctx={input.ctx}
+					title={input.ctx.t('flow.level', screen.puzzleIndex + 1)}
+					subtitle={input.ctx.t('flow-puzzle-name', screen.puzzle.name)}
+					onBack={() =>
+						input.dispatch({
+							t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle",
+							userId: input.ctx.currentUserId,
+						})
+					}
+				/>
 
 				<FlowPlay.View
 					dispatch={(c) =>
@@ -449,18 +463,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconArrowLeftOnRect {...props} />}
-						label="Exit"
-						onClick={() =>
-							input.dispatch({
-								t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle",
-								userId: input.ctx.currentUserId,
-							})
-						}
-					/>
-
-					<ViewBottomButtonBarAction
-						icon={(props) => <IconChevronLeft {...props} />}
+						icon={(input) => <IconChevronLeft {...input} />}
 						label="Previous"
 						disabled={!canGoPrevious}
 						onClick={() => {
@@ -475,7 +478,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 					/>
 
 					<ViewBottomButtonBarAction
-						icon={(props) => <IconChevronRight {...props} />}
+						icon={(input) => <IconChevronRight {...input} />}
 						label="Next"
 						disabled={!canGoNext}
 						onClick={() => {

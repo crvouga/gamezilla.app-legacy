@@ -34,6 +34,6 @@ const gridView = (
 	/>
 );
 
-export const CoverArt = (props: { className?: string }) => {
-	return <div {...props}>{gridView}</div>;
+export const CoverArt = (input: { className?: string }) => {
+	return <div {...input}>{gridView}</div>;
 };

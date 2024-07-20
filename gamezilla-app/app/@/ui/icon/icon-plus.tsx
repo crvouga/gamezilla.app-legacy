@@ -1,6 +1,6 @@
-import type { IconProps } from "../icon-shared";
+import type { Iconinput } from "../icon-shared";
 
-export const IconPlus = (props: IconProps) => {
+export const IconPlus = (input: Iconinput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -8,7 +8,7 @@ export const IconPlus = (props: IconProps) => {
 			viewBox="0 0 24 24"
 			strokeWidth="1.5"
 			stroke="currentColor"
-			{...props}
+			{...input}
 		>
 			<path
 				strokeLinecap="round"

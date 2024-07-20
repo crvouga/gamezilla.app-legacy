@@ -6,7 +6,7 @@ import {
 
 export const init = initShared;
 
-export const View = (_props: {
+export const View = (_input: {
 	model: ModelClient;
 	dispatch: (msg: MsgClient) => void;
 }) => {

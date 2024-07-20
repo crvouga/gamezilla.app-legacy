@@ -19,7 +19,7 @@ const clampSlideIndex = (slideIndex: number, itemCount: number): number => {
 	return Math.min(slideIndex, slideCount - 1);
 };
 
-const ViewPackPuzzleGridSlide = (props: {
+const ViewPackPuzzleGridSlide = (input: {
 	slideIndex: number;
 	puzzleIds: FlowPuzzleId[];
 	renderCell: (input: {
@@ -31,14 +31,14 @@ const ViewPackPuzzleGridSlide = (props: {
 	}) => VDom;
 }) => {
 	const columns: VDom[] = [];
-	const indexOffset = props.slideIndex * (COLUMN_COUNT * ROW_COUNT);
+	const indexOffset = input.slideIndex * (COLUMN_COUNT * ROW_COUNT);
 
 	for (let y = 0; y < ROW_COUNT; y++) {
 		const row: VDom[] = [];
 		for (let x = 0; x < COLUMN_COUNT; x++) {
 			const index = toIndex({ x, y }) + indexOffset;
-			const puzzleId = props.puzzleIds[index] ?? null;
-			const empty = index >= props.puzzleIds.length;
+			const puzzleId = input.puzzleIds[index] ?? null;
+			const empty = index >= input.puzzleIds.length;
 
 			row.push(
 				<div
@@ -46,7 +46,7 @@ const ViewPackPuzzleGridSlide = (props: {
 					key={`${y}-${x}`}
 					className="flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16"
 				>
-					{props.renderCell({ x, y, puzzleId, empty, index })}
+					{input.renderCell({ x, y, puzzleId, empty, index })}
 				</div>,
 			);
 		}
@@ -65,7 +65,7 @@ const ViewPackPuzzleGridSlide = (props: {
 	);
 };
 
-const ViewPackPuzzleGrid = (props: {
+const ViewPackPuzzleGrid = (input: {
 	id: string;
 	slideIndex: number;
 	onSlideIndexChanged: (index: number) => void;
@@ -81,7 +81,7 @@ const ViewPackPuzzleGrid = (props: {
 	const slides: VDom[] = [];
 
 	const slideCount = Math.ceil(
-		(props.puzzleIds.length + 1) / (COLUMN_COUNT * ROW_COUNT),
+		(input.puzzleIds.length + 1) / (COLUMN_COUNT * ROW_COUNT),
 	);
 
 	for (let slideIndex = 0; slideIndex < slideCount; slideIndex++) {
@@ -90,8 +90,8 @@ const ViewPackPuzzleGrid = (props: {
 				<ViewPackPuzzleGridSlide
 					key={slideIndex}
 					slideIndex={slideIndex}
-					puzzleIds={props.puzzleIds}
-					renderCell={props.renderCell}
+					puzzleIds={input.puzzleIds}
+					renderCell={input.renderCell}
 				/>
 			</Swiper.Slide>,
 		);
@@ -99,9 +99,9 @@ const ViewPackPuzzleGrid = (props: {
 
 	return (
 		<Swiper.Container
-			onSlideIndexChanged={props.onSlideIndexChanged}
-			id={props.id}
-			slideIndex={props.slideIndex}
+			onSlideIndexChanged={input.onSlideIndexChanged}
+			id={input.id}
+			slideIndex={input.slideIndex}
 			className="w-full"
 		>
 			{slides}
@@ -109,10 +109,10 @@ const ViewPackPuzzleGrid = (props: {
 	);
 };
 
-const ViewAddCell = (props: { onClick: () => void }) => {
+const ViewAddCell = (input: { onClick: () => void }) => {
 	return (
 		<button
-			onClick={props.onClick}
+			onClick={input.onClick}
 			className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-800 hover:opacity-90 active:opacity-80"
 		>
 			<IconPlus className="h-8 w-8" />

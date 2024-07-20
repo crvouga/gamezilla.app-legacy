@@ -8,6 +8,7 @@ export * from "./icon-bars-3";
 export * from "./icon-box";
 export * from "./icon-checkmark";
 export * from "./icon-checkmark-circle";
+export * from "./icon-chevron-down";
 export * from "./icon-chevron-left";
 export * from "./icon-chevron-right";
 export * from "./icon-clock";

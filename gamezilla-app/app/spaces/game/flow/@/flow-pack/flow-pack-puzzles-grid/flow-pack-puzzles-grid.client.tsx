@@ -82,7 +82,7 @@ const updateServerListedPuzzles: ClientModule["update"] = (input) => {
 					if (isErr(msgServer.listed)) {
 						return {
 							model,
-							msgCmd: showErrSm(msgServer.listed.error),
+							msgCmd: showErrSm(input.ctx.t("app.something-went-wrong")),
 						};
 					}
 

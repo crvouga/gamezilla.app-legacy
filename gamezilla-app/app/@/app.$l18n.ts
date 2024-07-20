@@ -9,6 +9,7 @@ export type Text = {
 	"app.congratulations": string;
 	"app.more": string;
 	"app.copied-to-clipboard": string;
+	"app.saved-changes": string;
 };
 
 export const translations: Translations<Text> = {
@@ -21,6 +22,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "Congratulations",
 		"app.more": "More",
 		"app.copied-to-clipboard": "Copied to clipboard",
+		"app.saved-changes": "Saved changes",
 	},
 	ar: {
 		"app.something-went-wrong": "حدث خطأ ما",
@@ -31,6 +33,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "تهانينا",
 		"app.more": "أكثر",
 		"app.copied-to-clipboard": "تم النسخ إلى الحافظة",
+		"app.saved-changes": "تم حفظ التغييرات",
 	},
 	de: {
 		"app.something-went-wrong": "Etwas ist schief gelaufen",
@@ -41,6 +44,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "Herzlichen Glückwunsch",
 		"app.more": "Mehr",
 		"app.copied-to-clipboard": "In die Zwischenablage kopiert",
+		"app.saved-changes": "Änderungen gespeichert",
 	},
 	es: {
 		"app.something-went-wrong": "Algo salió mal",
@@ -51,6 +55,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "Felicidades",
 		"app.more": "Más",
 		"app.copied-to-clipboard": "Copiado al portapapeles",
+		"app.saved-changes": "Cambios guardados",
 	},
 	fr: {
 		"app.something-went-wrong": "Quelque chose s'est mal passé",
@@ -61,6 +66,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "Félicitations",
 		"app.more": "Plus",
 		"app.copied-to-clipboard": "Copié dans le presse-papiers",
+		"app.saved-changes": "Modifications enregistrées",
 	},
 	it: {
 		"app.something-went-wrong": "Qualcosa è andato storto",
@@ -71,6 +77,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "Ripristina",
 		"app.more": "Di più",
 		"app.copied-to-clipboard": "Copiato negli appunti",
+		"app.saved-changes": "Modifiche salvate",
 	},
 	ja: {
 		"app.something-went-wrong": "何かがうまくいかなかった",
@@ -81,6 +88,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "リセット",
 		"app.more": "もっと",
 		"app.copied-to-clipboard": "クリップボードにコピーしました",
+		"app.saved-changes": "変更を保存しました",
 	},
 	ko: {
 		"app.something-went-wrong": "문제가 발생했습니다",
@@ -91,6 +99,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "재설정",
 		"app.more": "더",
 		"app.copied-to-clipboard": "클립 보드에 복사됨",
+		"app.saved-changes": "변경 사항 저장됨",
 	},
 	pt: {
 		"app.something-went-wrong": "Algo deu errado",
@@ -101,6 +110,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "Redefinir",
 		"app.more": "Mais",
 		"app.copied-to-clipboard": "Copiado para a área de transferência",
+		"app.saved-changes": "Alterações salvas",
 	},
 	ru: {
 		"app.something-went-wrong": "Что-то пошло не так",
@@ -111,6 +121,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "Сброс",
 		"app.more": "Больше",
 		"app.copied-to-clipboard": "Скопировано в буфер обмена",
+		"app.saved-changes": "Изменения сохранены",
 	},
 	zh: {
 		"app.something-went-wrong": "出了点问题",
@@ -121,6 +132,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "重启",
 		"app.more": "更多",
 		"app.copied-to-clipboard": "已复制到剪贴板",
+		"app.saved-changes": "已保存更改",
 	},
 	hi: {
 		"app.something-went-wrong": "कुछ गलत हो गया",
@@ -131,5 +143,6 @@ export const translations: Translations<Text> = {
 		"app.reset": "रीसेट",
 		"app.more": "अधिक",
 		"app.copied-to-clipboard": "क्लिपबोर्ड पर कॉपी किया गया",
+		"app.saved-changes": "परिवर्तन सहेजे गए",
 	},
 };

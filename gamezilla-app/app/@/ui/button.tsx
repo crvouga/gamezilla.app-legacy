@@ -45,21 +45,21 @@ export const Button = ({
 			type={type}
 			className={cn(
 				className,
-				"relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden font-semibold outline-none focus:ring-2",
+				"relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden font-semibold outline-none focus:ring-2 rounded",
 
-				combo === "contained-primary" &&
-					"rounded-md bg-blue-600 text-white ring-blue-500",
+				combo === "contained-primary" && "bg-blue-600 text-white ring-blue-500",
 
-				combo === "contained-danger" &&
-					"rounded-md bg-red-600 text-white ring-red-500",
+				combo === "contained-danger" && "bg-red-600 text-white ring-red-500",
 
 				combo === "contained-default" &&
-					"rounded-md border-2 border-blue-500/40  text-blue-500 ring-blue-500",
+					"border-2 border-blue-500/40  text-blue-500 ring-blue-500",
+
+				combo === "text-danger" && "text-red-500",
 
 				combo === "outlined-default" &&
-					"rounded-md border border-neutral-700 text-inherit text-neutral-300",
+					"border border-neutral-700 text-inherit text-neutral-300",
 
-				combo === "soft-primary" && "rounded-md bg-blue-500/20 text-blue-200",
+				combo === "soft-primary" && "bg-blue-500/20 text-blue-200",
 
 				!disabled && combo === "text-primary" && "text-blue-500",
 				size === "lg" && "px-4 py-3 text-xl",

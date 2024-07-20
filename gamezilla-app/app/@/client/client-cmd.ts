@@ -1,4 +1,5 @@
 import { TimeSpan, type UnitInterval, eq } from "gamezilla-app/@/core";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import type { Profile, UserId } from "../data";
 
@@ -283,7 +284,7 @@ export type ToastCmd = {
 	t: "toast";
 	c: {
 		t: "enqueue";
-		text: string;
+		text: TranslatedText;
 		toastVariant?: "error" | "info";
 		duration?: TimeSpan;
 		errorMsg?: string;
@@ -291,7 +292,7 @@ export type ToastCmd = {
 };
 
 export const showToast = <T extends ClientCmdTypes>(
-	text: string,
+	text: TranslatedText,
 	variant?: "error" | "info",
 	duration?: TimeSpan,
 ): ClientCmd<T> => {
@@ -310,7 +311,7 @@ export const didShowToast = <T>(
 	output?: {
 		msgCmd?: (ToastCmd | T)[] | null;
 	},
-	predicate?: (toast: { message: string }) => boolean,
+	predicate?: (toast: { message: TranslatedText }) => boolean,
 ): boolean => {
 	return (
 		output?.msgCmd?.some((cmd) => {
@@ -327,7 +328,7 @@ export const didShowToast = <T>(
 };
 
 export const showCreatedSm = <T extends ClientCmdTypes>(
-	text: string,
+	text: TranslatedText,
 ): ClientCmd<T>[] => {
 	return [
 		{
@@ -348,7 +349,7 @@ export const showCreatedSm = <T extends ClientCmdTypes>(
 };
 
 export const showErrSm = <T extends ClientCmdTypes>(
-	text: string,
+	text: TranslatedText,
 	errorMsg?: string,
 	duration?: TimeSpan,
 ): ClientCmd<T>[] => {
@@ -379,7 +380,7 @@ export const didShowErrorSm = <TCmd>(
 	}: {
 		msgCmd?: (ToastCmd | SoundCmd | TCmd)[] | null;
 	},
-	errorMessage?: string,
+	errorMessage?: TranslatedText,
 ): boolean => {
 	const isSomeErrorToast =
 		msgCmd?.some(
@@ -390,7 +391,7 @@ export const didShowErrorSm = <TCmd>(
 				cmd.t === "toast" &&
 				cmd.c.t === "enqueue" &&
 				cmd.c.toastVariant === "error" &&
-				(errorMessage ? cmd.c.text === errorMessage : true),
+				(errorMessage ? eq(cmd.c.text, errorMessage) : true),
 		) ?? false;
 
 	const isSomeErrorSound =

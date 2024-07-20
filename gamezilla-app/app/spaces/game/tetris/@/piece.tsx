@@ -65,8 +65,8 @@ export const colors: { [name in Name]: string } = {
 	Z: "red",
 };
 
-export const View = (props: { name: Name }) => {
-	switch (props.name) {
+export const View = (input: { name: Name }) => {
+	switch (input.name) {
 		case "I": {
 			return (
 				<svg>

@@ -1,32 +1,49 @@
-import type { VDomChildren } from "gamezilla-app/@/vdom";
-import { IconChevronLeft } from "./icon";
-import { IconButton } from "./icon-button";
-import { Spinner } from "./spinner";
+import { TranslatedText } from "gamezilla-app/@/l18n";
+import { Translator } from "gamezilla-app/@/l18n/generated";
+import { cn, IconArrowLeft } from "gamezilla-app/app/@/ui";
 
 export const TopBar = (input: {
-	left?: VDomChildren;
-	title: VDomChildren;
-	loading?: boolean;
-	right?: VDomChildren;
+	title: TranslatedText;
+	subtitle?: TranslatedText;
+	center?: boolean;
+	ctx: {
+		t: Translator;
+	};
+	onBack: (() => void) | false;
 }) => {
 	return (
-		<div className="min-h-fit w-full">
-			<nav className="grid  h-14 w-full grid-cols-5 justify-center border-b border-neutral-700">
-				<div className="flex items-center justify-start">{input.left}</div>
-				<div className="col-span-3 flex items-center justify-center">
-					<p className="text-center text-xl font-semibold">{input.title}</p>
-					{input.loading && <Spinner className="h-3 w-3" />}
-				</div>
-				<div className="flex items-center justify-end">{input.right}</div>
-			</nav>
-		</div>
-	);
-};
+		<div
+			className={cn(
+				"w-full px-4 h-14 flex items-center truncate shrink-0",
+				input.center && "text-center",
+			)}
+		>
+			{input.onBack && (
+				<button
+					onClick={input.onBack}
+					className="p-2 rounded-full -ml-2"
+					aria-label={input.ctx.t("app.exit")}
+				>
+					<IconArrowLeft className="h-7 w-7" />
+				</button>
+			)}
 
-export const TopBarBackButton = (props: { onClick: () => void }) => {
-	return (
-		<IconButton onClick={props.onClick} label="Go back">
-			<IconChevronLeft className="h-6 w-6" />
-		</IconButton>
+			<div className="flex-1 truncate flex flex-col">
+				<p role="heading" className="text-2xl font-bold truncate px-2">
+					{input.title}
+				</p>
+				{input.subtitle && (
+					<p className="text-xs text-neutral-300 truncate px-2" role="heading">
+						{input.subtitle}
+					</p>
+				)}
+			</div>
+
+			{input.center && input.onBack && (
+				<div className="p-2 rounded-full -mr-2">
+					<div className="h-7 w-7" />
+				</div>
+			)}
+		</div>
 	);
 };

@@ -13,7 +13,7 @@ import { ViewColumnsSvg } from "./columns-ui-svg";
 import {
 	type Disc,
 	type Model as SharedModel,
-	type ViewColumnsProps,
+	type ViewColumnsinput,
 	toDiscs,
 } from "./shared";
 
@@ -202,17 +202,17 @@ export const update = (model: Model, msg: Msg) => {
 
 export const View = ({
 	implementation = "svg",
-	...props
-}: ViewColumnsProps & {
+	...input
+}: ViewColumnsinput & {
 	implementation?: "svg" | "canvas";
 }) => {
 	switch (implementation) {
 		case "canvas": {
-			return <ViewColumnsCanvas {...props} />;
+			return <ViewColumnsCanvas {...input} />;
 		}
 
 		case "svg": {
-			return <ViewColumnsSvg id={rootId} {...props} />;
+			return <ViewColumnsSvg id={rootId} {...input} />;
 		}
 	}
 };

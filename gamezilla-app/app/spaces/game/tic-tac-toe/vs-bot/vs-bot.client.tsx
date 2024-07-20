@@ -152,138 +152,138 @@ export const mergeWithServer = ({
 //
 //
 
-export const View = (props: {
+export const View = (input: {
 	ctx: SpaceClientCtx;
 	goBack: () => void;
 	model: Model;
 	dispatch: (msg: Msg) => void;
 }) => {
-	const vsBotProps: VsBotSetup.VsBotSetupProps = {
+	const vsBotinput: VsBotSetup.VsBotSetupinput = {
 		bot: {
-			label: props.model.botLevel,
-			renderIcon: (iconProps) =>
-				renderBotLevel({ level: props.model.botLevel, ...iconProps }),
+			label: input.model.botLevel,
+			renderIcon: (iconinput) =>
+				renderBotLevel({ level: input.model.botLevel, ...iconinput }),
 		},
-		onSwapSides: () => props.dispatch({ t: "swap-sides" }),
-		canStartGame: Boolean(props.model.player),
-		ctx: props.ctx,
+		onSwapSides: () => input.dispatch({ t: "swap-sides" }),
+		canStartGame: Boolean(input.model.player),
+		ctx: input.ctx,
 		human: {
-			player: props.model.userPlayerType === "X" ? "player-one" : "player-two",
-			userId: props.model.player ?? null,
+			player: input.model.userPlayerType === "X" ? "player-one" : "player-two",
+			userId: input.model.player ?? null,
 		},
-		onQuit: props.goBack,
-		onStartGame: () => props.dispatch({ t: "start-game" }),
+		onQuit: input.goBack,
+		onStartGame: () => input.dispatch({ t: "start-game" }),
 		botVariants: allBotLevels.map((botLevel) => {
 			return {
 				label: botLevel,
-				renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
-				onSelect: () => props.dispatch({ t: "input-bot-level", botLevel }),
+				renderIcon: (input) => renderBotLevel({ level: botLevel, ...input }),
+				onSelect: () => input.dispatch({ t: "input-bot-level", botLevel }),
 			};
 		}),
 		playerOne: {
 			label: "Cross",
 			onStartPlaying: () =>
-				props.dispatch({ t: "start-playing", playerType: "X" }),
-			onStopPlaying: () => props.dispatch({ t: "stop-playing" }),
-			renderIcon: (props) => <PlayerTypeIcon {...props} playerType="X" />,
+				input.dispatch({ t: "start-playing", playerType: "X" }),
+			onStopPlaying: () => input.dispatch({ t: "stop-playing" }),
+			renderIcon: (input) => <PlayerTypeIcon {...input} playerType="X" />,
 		},
 		playerTwo: {
 			label: "Naught",
 			onStartPlaying: () =>
-				props.dispatch({ t: "start-playing", playerType: "O" }),
-			onStopPlaying: () => props.dispatch({ t: "stop-playing" }),
-			renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
+				input.dispatch({ t: "start-playing", playerType: "O" }),
+			onStopPlaying: () => input.dispatch({ t: "stop-playing" }),
+			renderIcon: (input) => <PlayerTypeIcon {...input} playerType="O" />,
 		},
-		renderCoverArt: (props) => <CoverArt {...props} />,
-		title: "Tic-Tac-Toe",
+		renderCoverArt: (input) => <CoverArt {...input} />,
+		title: input.ctx.t("tic-tac-toe"),
 	};
 
-	if (props.model.type === "setup") {
+	if (input.model.type === "setup") {
 		return (
 			<VsBotSetup.View
-				model={props.model.vsBotSetup}
-				dispatch={(c) => props.dispatch({ t: "vs-bot-setup", c })}
-				{...vsBotProps}
+				model={input.model.vsBotSetup}
+				dispatch={(c) => input.dispatch({ t: "vs-bot-setup", c })}
+				{...vsBotinput}
 			/>
 		);
 	}
 
-	const vsBotGameProps: VsBotGame.VsBotGameProps = {
-		...vsBotProps,
+	const vsBotGameinput: VsBotGame.VsBotGameinput = {
+		...vsBotinput,
 		human: {
-			...vsBotProps.human,
-			userId: props.model.player,
+			...vsBotinput.human,
+			userId: input.model.player,
 		},
 		turn: null,
 		isSpectating: false,
 	};
 
-	const turn = toTurn(props.model.board);
-	const status = toStatus(props.model.board);
+	const turn = toTurn(input.model.board);
+	const status = toStatus(input.model.board);
 
 	return (
 		<div className="flex h-full w-full flex-col ">
 			<div className="flex flex-1 flex-col items-center justify-center">
-				<VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
+				<VsBotGame.VsBotPlayerSection {...vsBotGameinput} />
 
 				<LoadingBar
 					className="w-full"
 					disabled={
-						props.model.userPlayerType === turn || status.type !== "Turn"
+						input.model.userPlayerType === turn || status.type !== "Turn"
 					}
 					color={gameTheme.background}
 				/>
 
 				<ViewBoard
-					board={props.model.board}
-					onClick={(position) => props.dispatch({ t: "input-move", position })}
+					board={input.model.board}
+					onClick={(position) => input.dispatch({ t: "input-move", position })}
 				/>
 			</div>
 
 			<ViewBottomButtonBar>
 				<ViewBottomButtonBarAction
-					icon={(props) => <IconArrowLeftOnRect {...props} />}
+					icon={(input) => <IconArrowLeftOnRect {...input} />}
 					label="Exit"
-					onClick={() => props.dispatch({ t: "stop-game" })}
+					onClick={() => input.dispatch({ t: "stop-game" })}
 				/>
 				<ViewBottomButtonBarAction
-					icon={(props) => <IconRightLeft {...props} />}
+					icon={(input) => <IconRightLeft {...input} />}
 					label="Swap sides"
-					onClick={() => props.dispatch({ t: "swap-sides" })}
+					onClick={() => input.dispatch({ t: "swap-sides" })}
 				/>
 				<ViewBottomButtonBarAction
-					icon={(props) => <IconArrowRotateLeft {...props} />}
+					icon={(input) => <IconArrowRotateLeft {...input} />}
 					label="Restart"
-					onClick={() => props.dispatch({ t: "restart" })}
+					onClick={() => input.dispatch({ t: "restart" })}
 				/>
 			</ViewBottomButtonBar>
 		</div>
 	);
 };
 
-export const ViewMsg = (props: { msg: Msg | MsgToClient }) => {
-	if ("result" in props.msg && props.msg.result.t === "err") {
-		return props.msg.result.error;
+export const ViewMsg = (input: { msg: Msg | MsgToClient }) => {
+	if ("result" in input.msg && input.msg.result.t === "err") {
+		return input.msg.result.error;
 	}
 	return null;
 };
 
 export const renderBotLevel = ({
 	level,
-	...props
+	...input
 }: {
 	level: BotLevel;
 	className?: string;
 }) => {
 	switch (level) {
 		case "Easy": {
-			return <IconBotCute {...props} />;
+			return <IconBotCute {...input} />;
 		}
 		case "Medium": {
-			return <IconBotLevel1 {...props} />;
+			return <IconBotLevel1 {...input} />;
 		}
 		case "Impossible": {
-			return <IconBotScary {...props} />;
+			return <IconBotScary {...input} />;
 		}
 	}
 };

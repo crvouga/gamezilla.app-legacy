@@ -5,17 +5,17 @@ import {
 	Dialog,
 	DialogHeader,
 	DialogSurface,
+	TopBar,
 } from "gamezilla-app/app/@/ui";
 import { Actions } from "gamezilla-app/app/@/ui/actions";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
+import { FlowPlay } from "../../@/flow/flow-play";
 import type { ClientModule } from "../play.types";
 import * as CopyPuzzleClient from "./copy-puzzle/copy-puzzle.client";
 import { LastPuzzleClient } from "./last-puzzle/last-puzzle.client";
 import { ScreenPlayPuzzleCore } from "./screen-play-puzzle.core";
-import { FlowPlay } from "../../@/flow/flow-play";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
@@ -173,10 +173,10 @@ const View: ClientModule["View"] = (input) => {
 				className="flex w-full flex-1 flex-col overflow-y-scroll"
 				data-puzzle-id={flowPuzzle.id}
 			>
-				<ViewScreenTitle
+				<TopBar
 					ctx={input.ctx}
 					onBack={() => input.dispatch({ t: "user-clicked-exit-puzzle" })}
-					title={`Level ${puzzleIndex + 1}`}
+					title={input.ctx.t('flow.level', puzzleIndex + 1)}
 				/>
 				<div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
 					<FlowPlay.View

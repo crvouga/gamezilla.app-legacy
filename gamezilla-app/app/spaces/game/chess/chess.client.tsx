@@ -294,9 +294,9 @@ export const View: Client["View"] = (input) => {
 		case "none": {
 			return (
 				<GameMainMenu.View
-					title="Chess"
+					title={input.ctx.t('chess')}
 					ctx={input.ctx}
-					renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
+					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
 					dispatch={input.dispatch}
 					buttons={[
 						GameMainMenu.buttons.playComputer({
@@ -318,7 +318,7 @@ export const View: Client["View"] = (input) => {
 						{
 							title: "Puzzles",
 							description: "Train with more than 3 million puzzles",
-							renderIcon: (props) => <IconPuzzlePiece {...props} />,
+							renderIcon: (input) => <IconPuzzlePiece {...input} />,
 							onClick: () =>
 								input.dispatch({
 									t: "input-mode",

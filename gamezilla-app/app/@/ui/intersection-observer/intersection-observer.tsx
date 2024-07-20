@@ -1,17 +1,17 @@
 import type { VDomChildren } from "gamezilla-app/@/vdom";
 import "./intersection-observer-element";
 import {
-	type IntersectionObserverEmitterProps,
+	type IntersectionObserverEmitterinput,
 	sub,
 } from "./intersection-observer-shared";
 
 export const IntersectionObserverEmitter = (
-	props: IntersectionObserverEmitterProps & {
+	input: IntersectionObserverEmitterinput & {
 		children?: VDomChildren;
 	},
 ) => {
 	// There is some kind of race condition setTimeout fixes
-	setTimeout(() => sub.pub({ type: "props", props }), 1);
+	setTimeout(() => sub.pub({ type: "input", input }), 1);
 
-	return <intersection-observer-dispatcher id={props.id} />;
+	return <intersection-observer-dispatcher id={input.id} />;
 };

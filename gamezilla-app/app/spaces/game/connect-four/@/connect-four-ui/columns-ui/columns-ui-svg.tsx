@@ -8,7 +8,7 @@ import {
 	winToId,
 } from "../../connect-four";
 import { gameTheme } from "../shared";
-import type { Model, ViewColumnsProps } from "./shared";
+import type { Model, ViewColumnsinput } from "./shared";
 
 type SvgIds = {
 	playerOneGradient: string;
@@ -34,7 +34,7 @@ export const ViewColumnsSvg = ({
 	onHover,
 	disabled,
 	model,
-}: ViewColumnsProps & { id: string }) => {
+}: ViewColumnsinput & { id: string }) => {
 	const playerOneFill = `url(#${ids.playerOneGradient})`;
 	const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 

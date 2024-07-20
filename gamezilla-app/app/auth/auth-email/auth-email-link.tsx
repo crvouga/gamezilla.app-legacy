@@ -1,4 +1,5 @@
 import { type Eff, type Result, exhaustive, isErr } from "gamezilla-app/@/core";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 import type { RouteCmd } from "gamezilla-app/app/@/client";
 import {
 	AlertError,
@@ -6,7 +7,6 @@ import {
 	Button,
 	TextField,
 	TopBar,
-	TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
 
 //
@@ -133,27 +133,26 @@ export const update = ({
 //
 //
 
-export const View = ({
-	model,
-	dispatch,
-}: {
+export const View = (input: {
 	model: Model;
 	dispatch: (msg: Msg) => void;
+	ctx: {
+		t: Translator;
+	};
 }) => {
 	return (
 		<div className="flex h-full w-full flex-col">
 			<TopBar
-				left={
-					<TopBarBackButton onClick={() => dispatch({ t: "clicked-back" })} />
-				}
-				title="Login With Email"
+				onBack={() => input.dispatch({ t: "clicked-back" })}
+				ctx={input.ctx}
+				title={input.ctx.t('auth-email.login-with-email')}
 			/>
 
 			<form
 				className="flex flex-col gap-6 p-4"
 				onSubmit={(e) => {
 					e.preventDefault();
-					dispatch({ t: "clicked-send-login-link" });
+					input.dispatch({ t: "clicked-send-login-link" });
 				}}
 			>
 				<TextField
@@ -161,19 +160,19 @@ export const View = ({
 					id="email-address"
 					type="email"
 					label="Email Address"
-					value={model.emailAddress}
+					value={input.model.emailAddress}
 					onChange={(emailAddress) => {
-						dispatch({ t: "inputted-email-address", emailAddress });
+						input.dispatch({ t: "inputted-email-address", emailAddress });
 					}}
 					onClear={() =>
-						dispatch({
+						input.dispatch({
 							t: "inputted-email-address",
 							emailAddress: "",
 						})
 					}
-					error={model.validation === "invalid-email"}
+					error={input.model.validation === "invalid-email"}
 					helperText={
-						model.validation === "invalid-email"
+						input.model.validation === "invalid-email"
 							? "Please enter a valid email address"
 							: undefined
 					}
@@ -185,22 +184,22 @@ export const View = ({
 					className="w-full"
 					color="primary"
 					type="submit"
-					loading={model.submission.type === "loading"}
+					loading={input.model.submission.type === "loading"}
 					text="Send Login Link"
 				/>
 
-				{model.submission.type === "problem" && (
-					<AlertError text={model.submission.message} />
+				{input.model.submission.type === "problem" && (
+					<AlertError text={input.model.submission.message} />
 				)}
 
-				{model.submission.type === "ok" && (
+				{input.model.submission.type === "ok" && (
 					<AlertSuccess>
 						<div className="flex flex-col gap-1">
 							<div className="text-lg">Check your email</div>
 							<div className="font-light">
 								Login link was send to{" "}
 								<span className="font-semibold text-white">
-									{model.submission.sentToEmailAddress}
+									{input.model.submission.sentToEmailAddress}
 								</span>
 							</div>
 						</div>

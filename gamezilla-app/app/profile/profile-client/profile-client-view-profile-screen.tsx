@@ -1,23 +1,22 @@
 import type { AnonymousClientCtx, ClientCtx } from "gamezilla-app/app/@/client";
 import type { UserId } from "gamezilla-app/app/@/data";
 import {
+	Avatar,
 	Button,
 	IconArrowLeftOnRect,
 	IconSpinner,
 	IconUserPen,
-	Avatar,
 	TopBar,
-	TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
 import type { ModelClient, MsgClient } from "../profile.types";
 
-export const ViewProfileScreen = (props: {
+export const ViewProfileScreen = (input: {
 	ctx: ClientCtx | AnonymousClientCtx;
 	userId: UserId;
 	model: ModelClient;
 	dispatch: (msg: MsgClient) => void;
 }) => {
-	const profile = props.model.profiles[props.userId];
+	const profile = input.model.profiles[input.userId];
 
 	if (!profile) {
 		return (
@@ -27,10 +26,15 @@ export const ViewProfileScreen = (props: {
 		);
 	}
 
-	if (profile?.userId === props.ctx.currentUserId) {
+	if (profile?.userId === input.ctx.currentUserId) {
 		return (
 			<div className="flex w-full flex-1 flex-col overflow-hidden">
-				<TopBar title={profile?.username} />
+				<TopBar
+					center
+					onBack={false}
+					ctx={input.ctx}
+					title={input.ctx.t('username', profile.username)}
+				/>
 
 				<div className="flex flex-1 shrink-0 flex-col items-center justify-start gap-4 overflow-x-hidden overflow-y-scroll p-4">
 					<Avatar
@@ -38,17 +42,17 @@ export const ViewProfileScreen = (props: {
 						src={profile?.avatarUrl}
 						alt="profile avatar"
 					/>
-					<p className="w-full shrink-0 overflow-hidden text-ellipsis text-center text-3xl">
+					{/* <p className="w-full shrink-0 overflow-hidden text-ellipsis text-center text-3xl">
 						@{profile?.username}
-					</p>
+					</p> */}
 					<Button
-						onClick={() => props.dispatch({ t: "clicked-edit-profile-button" })}
+						onClick={() => input.dispatch({ t: "clicked-edit-profile-button" })}
 						className="w-full"
 						start={<IconUserPen className="h-6 w-6" />}
 						text="Edit Profile"
 					/>
 					<Button
-						onClick={() => props.dispatch({ t: "clicked-logout-button" })}
+						onClick={() => input.dispatch({ t: "clicked-logout-button" })}
 						className="w-full"
 						start={<IconArrowLeftOnRect className="h-6 w-6" />}
 						text="Logout"
@@ -62,17 +66,14 @@ export const ViewProfileScreen = (props: {
 	return (
 		<div className="flex w-full flex-1 flex-col">
 			<TopBar
-				left={
-					<TopBarBackButton
-						onClick={() =>
-							props.dispatch({
-								t: "clicked-back-button",
-								from: { t: "profile", userId: profile?.userId },
-							})
-						}
-					/>
+				onBack={() =>
+					input.dispatch({
+						t: "clicked-back-button",
+						from: { t: "profile", userId: profile?.userId },
+					})
 				}
-				title={profile?.username}
+				title={input.ctx.t('username', profile.username)}
+				ctx={input.ctx}
 			/>
 			<div className="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">
 				<Avatar

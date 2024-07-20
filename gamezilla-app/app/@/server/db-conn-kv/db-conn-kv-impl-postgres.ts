@@ -49,15 +49,18 @@ export const DbConnKvPostgres = async ({
 
 				const parsed = parser.parse(json);
 
-				if (isErr(parsed)) {
-					const errorStr = JSON.stringify(parsed.error, null, 2);
+				switch (parsed.t) {
+					case "err": {
+						const errorStr = JSON.stringify(parsed.error, null, 2);
 
-					logger.error(`get: not a value: ${key} ${errorStr}`);
+						logger.error(`get: not a value: ${key} ${errorStr}`);
 
-					return Ok(null);
+						return Ok(null);
+					}
+					case "ok": {
+						return parsed;
+					}
 				}
-
-				return Ok(parsed.value);
 			} catch (e) {
 				logger.error(`get: ${key} ${String(e)}`);
 				return Err(String(e));

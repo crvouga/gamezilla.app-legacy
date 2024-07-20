@@ -1,6 +1,6 @@
-import type { IconProps } from "../icon-shared";
+import type { Iconinput } from "../icon-shared";
 
-export const IconBars3 = (props: IconProps) => {
+export const IconBars3 = (input: Iconinput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -8,7 +8,7 @@ export const IconBars3 = (props: IconProps) => {
 			viewBox="0 0 24 24"
 			strokeWidth={1.5}
 			stroke="currentColor"
-			{...props}
+			{...input}
 		>
 			<path
 				strokeLinecap="round"
