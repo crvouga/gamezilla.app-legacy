@@ -87,7 +87,7 @@ export const View = ({
 }) => {
 	if (ctx.currentUserId !== ctx.space.hostId) {
 		return (
-			<div className="flex h-full w-full flex-col">
+			<div className="flex h-full w-full flex-col p-4">
 				<ViewGameHeader
 					ctx={ctx}
 					onBack={() =>
@@ -129,9 +129,9 @@ export const View = ({
 							key={`${index} ${title}`}
 						>
 							{renderIcon({
-								className: "aspect-square w-10 h-10 mr-4",
+								className: "aspect-square w-12 h-12 mr-4",
 							})}
-							<div className="flex-1 text-left">
+							<div className="flex-1 text-left flex flex-col gap-1">
 								<Typography variant="title" text={title} />
 
 								{description && (

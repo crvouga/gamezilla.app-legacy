@@ -17,7 +17,7 @@ export const ViewGameHeader = ({
 	};
 }) => {
 	return (
-		<section className="flex w-full flex-col items-center pb-4">
+		<div className="flex w-full flex-col items-center pb-4 gap-4">
 			<TopBar ctx={ctx} onBack={onBack} title={title} center />
 
 			{renderCoverArt({
@@ -25,7 +25,7 @@ export const ViewGameHeader = ({
 				className:
 					"w-28 h-28 overflow-hidden rounded-lg border border-white/20",
 			})}
-		</section>
+		</div>
 	);
 };
 

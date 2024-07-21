@@ -356,7 +356,7 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = (input) => {
 				title={input.ctx.t("spaces.games")}
 			/>
 
-			<div className="grid flex-1 grid-cols-3 justify-between gap-8 px-4">
+			<div className="grid flex-1 grid-cols-3 justify-between gap-8 p-4">
 				{gameNameList.map((gameName) => (
 					<div key={gameName}>
 						<button

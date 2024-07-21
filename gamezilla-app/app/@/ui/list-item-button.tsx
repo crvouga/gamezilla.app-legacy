@@ -26,12 +26,12 @@ export const ListItemButton = ({
 			name={label}
 			className={cn(
 				className,
-				"flex w-full items-center p-4 text-lg font-bold",
+				"flex w-full items-center p-4 text-lg font-bold truncate",
 				color === "warning" && "text-orange-500",
 				color === "danger" && "text-red-500",
 			)}
 		>
-			<div className="flex flex-1 items-center gap-3">
+			<div className="flex flex-1 items-center gap-3 truncate">
 				{icon({ className: "h-6 w-6" })}
 
 				{label}

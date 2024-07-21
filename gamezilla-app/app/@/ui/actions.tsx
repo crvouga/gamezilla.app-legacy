@@ -105,7 +105,7 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
 			aria-label={input.label}
 			onClick={input.onClick}
 			className={cn(
-				"relative flex flex-1 flex-col items-center gap-0.5 p-2 text-sm transition-opacity",
+				"relative flex flex-1 flex-col items-center gap-0.5 p-2 text-sm transition-opacity truncate",
 				!isDisabled && "active:opacity-50",
 				input.disabled && "cursor-not-allowed opacity-50",
 				input.color === "danger" && "text-red-500",
@@ -116,7 +116,7 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
 		>
 			<div
 				className={cn(
-					"flex h-full w-full flex-col items-center justify-center gap-0.5 transition-opacity",
+					"flex h-full w-full flex-col items-center justify-center gap-0.5 transition-opacity truncate",
 					input.loading ? "opacity-0" : "opacity-100",
 				)}
 			>
@@ -124,7 +124,7 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
 				<Typography
 					variant="label"
 					text={input.label}
-					className={input.classNames?.label}
+					className={cn('truncate', input.classNames?.label)}
 				/>
 			</div>
 

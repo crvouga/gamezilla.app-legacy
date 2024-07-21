@@ -15,8 +15,8 @@ export const ViewUsersInSpaceList = ({
 }) => {
 	const profiles = spaceToProfiles(ctx, ctx.space);
 	return (
-		<section className="flex w-full flex-col gap-2 py-4">
-			<Typography variant="title" text={ctx.t("app.people")} />
+		<section className="flex w-full flex-col gap-3 py-4">
+			<Typography variant="title" className="px-4" text={ctx.t("app.people")} />
 
 			<div className="w-full">
 				{profiles.map((profile) => {
