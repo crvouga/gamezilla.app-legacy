@@ -5,6 +5,7 @@ import {
 	UnitInterval,
 	type Result,
 } from "gamezilla-app/@/core";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
@@ -215,28 +216,28 @@ export const ViewStatusBar = (input: { model: Model }) => {
 	return <IconVolumeHigh className="h-4 w-4" />;
 };
 
-export const ViewStatusBarDrawer = ({
-	model,
-	dispatch,
-}: {
+export const ViewStatusBarDrawer = (input: {
 	model: Model;
 	dispatch: (m: Msg) => void;
+	ctx: {
+		t: Translator
+	}
 }) => {
 	return (
 		<ListItemButton
-			onClick={() => dispatch({ t: "toggle-mute" })}
-			icon={(input) =>
-				model.muted ? (
-					<IconVolumeXMark {...input} />
+			onClick={() => input.dispatch({ t: "toggle-mute" })}
+			icon={(inputIcon) =>
+				input.model.muted ? (
+					<IconVolumeXMark {...inputIcon} />
 				) : (
-					<IconVolumeHigh {...input} />
+					<IconVolumeHigh {...inputIcon} />
 				)
 			}
-			label={model.muted ? "Sound off" : "Sound on"}
+			label={input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on')}
 			end={() => (
 				<ToggleButton
 					label="toggle sound"
-					checked={!model.muted}
+					checked={!input.model.muted}
 					id="toggle-sound"
 				/>
 			)}

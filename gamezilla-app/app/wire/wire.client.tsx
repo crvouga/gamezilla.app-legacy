@@ -232,24 +232,24 @@ export const ViewStatusBar = (input: {
 	}
 };
 
-export const ViewStatusBarDrawer = ({
-	model,
-	dispatch,
-}: {
+export const ViewStatusBarDrawer = (input: {
 	model: ModelClient;
-	dispatch: (m: MsgClient) => void;
+		dispatch: (m: MsgClient) => void;
+		ctx: {
+		t: Translator
+	}
 }) => {
-	switch (model.state.t) {
+	switch (input.model.state.t) {
 		case "server-connected": {
 			return (
 				<ListItemButton
-					icon={(input) => (
+					icon={(inputIcon) => (
 						<span
-							className={cn(input.className, "rounded-full bg-green-500")}
+							className={cn(inputIcon.className, "rounded-full bg-green-500")}
 						/>
 					)}
 					className="text-green-500"
-					label="Online"
+					label={input.ctx.t("wire.online")}
 				/>
 			);
 		}
@@ -264,7 +264,7 @@ export const ViewStatusBarDrawer = ({
 						/>
 					)}
 					color="warning"
-					label="Connecting..."
+					label={input.ctx.t("wire.connecting...")}
 				/>
 			);
 		}
@@ -276,18 +276,16 @@ export const ViewStatusBarDrawer = ({
 						<span className={cn(input.className, "rounded-full bg-red-500")} />
 					)}
 					color="danger"
-					label="Offline"
-					end={() => {
-						return (
-							<button
-								type="button"
-								onClick={() => dispatch({ t: "clicked-try-reconnect" })}
-								className="font-bold text-red-500"
-							>
-								Try reconnect
-							</button>
-						);
-					}}
+					label={input.ctx.t("wire.offline")}
+					end={() => (
+						<button
+							type="button"
+							onClick={() => input.dispatch({ t: "clicked-try-reconnect" })}
+							className="font-bold text-red-500"
+						>
+							{input.ctx.t('wire.try-reconnect')}
+						</button>
+					)}
 				/>
 			);
 		}

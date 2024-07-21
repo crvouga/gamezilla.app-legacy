@@ -55,7 +55,7 @@ export const ViewSpaceCard = (input: {
 					</div>
 					<Typography
 						variant="title"
-						className="truncate"
+						className="truncate text-lg"
 						text={input.ctx.t(gameName)}
 					/>
 				</div>
@@ -68,7 +68,7 @@ export const ViewSpaceCard = (input: {
 					{host && (
 						<Typography
 							variant="title"
-							className="truncate"
+							className="truncate text-lg"
 							text={input.ctx.t("username", host.username)}
 						/>
 					)}

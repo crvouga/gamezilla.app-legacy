@@ -209,7 +209,7 @@ const ViewDrawer = (
 		<>
 			<ListItemButton
 				icon={(input) => <IconPenToSquare {...input} />}
-				label="Edit Name"
+				label={input.ctx.t("puzzle.edit-name")}
 				onClick={() => dispatch({ t: "puzzle.edit-name.user-clicked-button" })}
 			/>
 

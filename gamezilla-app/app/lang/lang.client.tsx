@@ -1,6 +1,5 @@
 import { LocalStorage } from "gamezilla-app/@/core";
 import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
-import { translations } from "gamezilla-app/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n";
 import {
 	APP_SOUND,
 	type AnonymousClientCtx,
@@ -229,7 +228,7 @@ const ViewChooseLang: Module["View"] = (input) => {
 				{LanguageCodeISO_639_1.ALL.map((code) => {
 					return (
 						<ListItemButton
-							label={translations[code][code]}
+							label={input.ctx.t(code)}
 							icon={(inputIcon) => {
 								if (input.model.loading[code]?.endedAt === null) {
 									return <Spinner {...inputIcon} />;

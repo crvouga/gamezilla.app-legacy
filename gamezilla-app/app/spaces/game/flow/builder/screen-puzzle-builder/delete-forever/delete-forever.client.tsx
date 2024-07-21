@@ -86,7 +86,7 @@ const View: ClientModule["View"] = (input) => {
 		<>
 			<ListItemButton
 				icon={(input) => <IconDeleteForever {...input} />}
-				label="Delete Forever"
+				label={input.ctx.t("flow.delete-forever")}
 				color="danger"
 				onClick={() =>
 					dispatch({ t: "delete-forever.user-clicked-delete-button" })

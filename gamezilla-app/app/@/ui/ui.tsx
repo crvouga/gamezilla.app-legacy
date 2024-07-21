@@ -1,7 +1,9 @@
+import { ClassNameValue, twMerge } from 'tailwind-merge'
+
 export const cn = (
-	...classes: (string | boolean | number | undefined | null)[]
+	...classes: ClassNameValue[]
 ) => {
-	return classes.filter(Boolean).join(" ");
+	return twMerge(classes);
 };
 
 declare global {

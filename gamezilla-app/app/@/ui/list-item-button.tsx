@@ -1,5 +1,6 @@
 import type { VDom } from "gamezilla-app/@/vdom";
 import { cn } from "./ui";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 
 export const ListItemButton = ({
 	label,
@@ -12,7 +13,7 @@ export const ListItemButton = ({
 	className?: string;
 	icon: (input: { className: string }) => VDom;
 	end?: () => VDom;
-	label: string;
+	label: TranslatedText;
 	onClick?: () => void;
 	color?: "default" | "danger" | "warning" | "success" | "inherit";
 }) => {

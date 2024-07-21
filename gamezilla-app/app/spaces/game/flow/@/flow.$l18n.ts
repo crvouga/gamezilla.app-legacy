@@ -10,6 +10,8 @@ export type Text = {
 	"flow.select-next-pack": string;
 	"flow.next-puzzle": string;
 	"flow.level": (level: number) => string;
+	"flow.puzzles": string;
+	"flow.packs": string;
 };
 
 export const translations: Translations<Text> = {
@@ -23,6 +25,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "حدد الحزمة التالية",
 		"flow.next-puzzle": "اللغز التالي",
 		"flow.level": (level) => `مستوى ${level}`,
+		"flow.packs": "حزم",
+		"flow.puzzles": "ألغاز",
 	},
 	de: {
 		"flow.flow": "Fluss",
@@ -35,6 +39,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "Nächstes Paket auswählen",
 		"flow.next-puzzle": "Nächstes Rätsel",
 		"flow.level": (level) => `Stufe ${level}`,
+		"flow.packs": "Pakete",
+		"flow.puzzles": "Rätsel",
 	},
 	en: {
 		"flow.flow": "Flow",
@@ -46,6 +52,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "Select Next Pack",
 		"flow.next-puzzle": "Next Puzzle",
 		"flow.level": (level) => `Level ${level}`,
+		"flow.packs": "Packs",
+		"flow.puzzles": "Puzzles",
 	},
 	es: {
 		"flow.flow": "Flujo",
@@ -57,6 +65,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "Seleccionar siguiente paquete",
 		"flow.next-puzzle": "Siguiente rompecabezas",
 		"flow.level": (level) => `Nivel ${level}`,
+		"flow.packs": "Paquetes",
+		"flow.puzzles": "Rompecabezas",
 	},
 	fr: {
 		"flow.flow": "Flux",
@@ -68,6 +78,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "Sélectionner le pack suivant",
 		"flow.next-puzzle": "Puzzle suivant",
 		"flow.level": (level) => `Niveau ${level}`,
+		"flow.packs": "Packs",
+		"flow.puzzles": "Puzzles",
 	},
 	it: {
 		"flow.flow": "Flusso",
@@ -79,6 +91,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "Seleziona il pacchetto successivo",
 		"flow.next-puzzle": "Puzzle successivo",
 		"flow.level": (level) => `Livello ${level}`,
+		"flow.packs": "Pacchetti",
+		"flow.puzzles": "Puzzle",
 	},
 	ja: {
 		"flow.flow": "フロー",
@@ -90,6 +104,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "次のパックを選択",
 		"flow.next-puzzle": "次のパズル",
 		"flow.level": (level) => `レベル${level}`,
+		"flow.packs": "パック",
+		"flow.puzzles": "パズル",
 	},
 	ko: {
 		"flow.flow": "흐름",
@@ -101,6 +117,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "다음 팩 선택",
 		"flow.next-puzzle": "다음 퍼즐",
 		"flow.level": (level) => `레벨 ${level}`,
+		"flow.packs": "팩",
+		"flow.puzzles": "퍼즐",
 	},
 	pt: {
 		"flow.flow": "Fluxo",
@@ -112,6 +130,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "Selecionar próximo pacote",
 		"flow.next-puzzle": "Próximo quebra-cabeça",
 		"flow.level": (level) => `Nível ${level}`,
+		"flow.packs": "Pacotes",
+		"flow.puzzles": "Quebra-cabeças",
 	},
 	ru: {
 		"flow.flow": "Поток",
@@ -124,6 +144,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "Выбрать следующий пакет",
 		"flow.next-puzzle": "Следующая головоломка",
 		"flow.level": (level) => `Уровень ${level}`,
+		"flow.packs": "Пакеты",
+		"flow.puzzles": "Головоломки",
 	},
 	zh: {
 		"flow.flow": "流",
@@ -135,6 +157,8 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "选择下一个包",
 		"flow.next-puzzle": "下一个拼图",
 		"flow.level": (level) => `等级 ${level}`,
+		"flow.packs": "包",
+		"flow.puzzles": "拼图",
 	},
 	hi: {
 		"flow.flow": "फ्लो",
@@ -146,5 +170,7 @@ export const translations: Translations<Text> = {
 		"flow.select-next-pack": "अगला पैक चुनें",
 		"flow.next-puzzle": "अगली पहेली",
 		"flow.level": (level) => `स्तर ${level}`,
+		"flow.packs": "पैक",
+		"flow.puzzles": "पहेलियाँ",
 	},
 };

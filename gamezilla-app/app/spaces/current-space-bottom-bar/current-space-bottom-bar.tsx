@@ -94,17 +94,17 @@ const View = ({
 						)}
 					</div>
 
-					<div className="flex flex-1 flex-col gap-1 overflow-hidden py-3">
+					<div className="flex flex-1 flex-col gap-1 overflow-hidden py-3 pr-3">
 						<Typography
 							variant="title"
-							className="truncate"
+							className="truncate text-lg text-left"
 							text={ctx.t("spaces.current-space", {
 								hostUsername: hostProfile.username,
 							})}
 						/>
 						<Typography
 							variant="subtitle"
-							className="truncate"
+							className="truncate text-left"
 							text={ctx.t("space-card.people-count", userCount)}
 						/>
 					</div>

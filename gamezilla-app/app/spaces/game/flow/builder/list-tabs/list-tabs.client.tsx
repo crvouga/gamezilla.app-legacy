@@ -90,8 +90,8 @@ const View: ClientModule["View"] = (input) => {
 			<Tabs
 				tabs={["puzzles", "packs"]}
 				labels={{
-					packs: "Packs",
-					puzzles: "Puzzles",
+					packs: input.ctx.t('flow.packs'),
+					puzzles: input.ctx.t('flow.puzzles'),
 				}}
 				onSelect={(listTab) =>
 					dispatch({ t: "user-changed-list-tab", listTab })

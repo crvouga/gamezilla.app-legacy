@@ -8,7 +8,7 @@ import {
 	toMsgType,
 } from "gamezilla-app/@/core";
 import { Msg } from "gamezilla-app/@/core/msg";
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import { LanguageCodeISO_639_1, TranslatedText } from "gamezilla-app/@/l18n";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import type { VDom } from "gamezilla-app/@/vdom";
 import {
@@ -753,6 +753,7 @@ const ViewStatusBar: typeof View = (input) => {
 						<Wire.ViewStatusBarDrawer
 							model={input.model.wire}
 							dispatch={(c) => input.dispatch({ t: "wire", c })}
+							ctx={clientCtx}
 						/>
 
 						<LangClient.ViewStatusBarDrawer
@@ -762,6 +763,7 @@ const ViewStatusBar: typeof View = (input) => {
 						/>
 
 						<Sound.ViewStatusBarDrawer
+							ctx={clientCtx}
 							model={input.model.sound}
 							dispatch={(c) => input.dispatch({ t: "sound", c })}
 						/>
@@ -782,7 +784,7 @@ const ViewBottomNavBar = (input: {
 	}
 	const items: {
 		route: Route;
-		label: string;
+		label: TranslatedText;
 		icon: VDom;
 	}[] = [
 		{
@@ -790,7 +792,7 @@ const ViewBottomNavBar = (input: {
 				n: "spaces",
 				t: "space-list",
 			},
-			label: "Spaces",
+			label: input.ctx.t('spaces.spaces'),
 			icon: <IconGamepad className="h-6 w-6" />,
 		},
 		{
@@ -799,7 +801,7 @@ const ViewBottomNavBar = (input: {
 				t: "profile",
 				userId: input.ctx.currentUserId,
 			},
-			label: "Profile",
+			label: input.ctx.t('profile.profile'),
 			icon: <IconUserCircle className="h-6 w-6" />,
 		},
 	];

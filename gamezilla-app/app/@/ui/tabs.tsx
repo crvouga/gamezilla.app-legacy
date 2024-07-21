@@ -1,3 +1,4 @@
+import { TranslatedText } from "gamezilla-app/@/l18n";
 import { cn } from "./ui";
 
 export const Tabs = <TTab extends string>({
@@ -8,7 +9,7 @@ export const Tabs = <TTab extends string>({
 }: {
 	tabs: TTab[];
 	selected: TTab;
-	labels: { [tab in TTab]: string };
+	labels: { [tab in TTab]: TranslatedText };
 	onSelect: (tab: TTab) => void;
 }) => {
 	return (
