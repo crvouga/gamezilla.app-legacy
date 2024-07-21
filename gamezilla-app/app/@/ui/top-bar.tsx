@@ -14,7 +14,7 @@ export const TopBar = (input: {
 	return (
 		<div
 			className={cn(
-				"w-full px-4 h-14 flex items-center truncate shrink-0",
+				"w-full px-4 h-16 flex items-center truncate shrink-0",
 				input.center && "text-center",
 			)}
 		>
@@ -31,7 +31,7 @@ export const TopBar = (input: {
 			<div className="flex-1 truncate flex flex-col">
 				<Typography
 					role="heading"
-					className="text-2xl font-bold truncate px-2"
+					className="text-3xl font-bold truncate px-2"
 					variant="title"
 					text={input.title}
 				/>

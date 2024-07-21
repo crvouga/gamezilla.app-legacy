@@ -26,7 +26,7 @@ export const ListItemButton = ({
 			name={label}
 			className={cn(
 				className,
-				"flex w-full items-center p-4 text-lg font-bold truncate",
+				"flex w-full items-center p-4 text-lg font-bold truncate shrink-0",
 				color === "warning" && "text-orange-500",
 				color === "danger" && "text-red-500",
 			)}
