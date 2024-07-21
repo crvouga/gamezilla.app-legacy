@@ -67,7 +67,7 @@ export const ViewSpaceCard = (input: {
 					{host && (
 						<Typography
 							variant="title"
-							className="truncate text-lg"
+							className="truncate text-lg font-normal"
 							text={input.ctx.t("username", host.username)}
 						/>
 					)}

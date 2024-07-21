@@ -1,10 +1,9 @@
-import type { TranslatedText } from "gamezilla-app/@/l18n";
-import type { VDom } from "gamezilla-app/@/vdom";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import type { SpaceId } from "gamezilla-app/app/@/data";
 import {
 	Button,
-	IconChevronDown,
+	IconButton,
+	IconHome,
 	IconUserGroup,
 	Typography,
 } from "gamezilla-app/app/@/ui";
@@ -89,52 +88,35 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
 	const peopleCount = Object.keys(input.ctx.space.users).length;
 
 	return (
-		<nav className="flex h-14 w-full items-center border-b border-neutral-700">
-			<ViewTopBarButton
+		<div className="flex w-full items-center border-b border-neutral-700 h-12 px-4 gap-2">
+			<IconButton
 				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
 				label={input.ctx.t("spaces.home")}
-				icon={<IconChevronDown className="h-6 w-6" />}
+				className="-ml-2"
+				renderIcon={(inputIcon) => <IconHome {...inputIcon} />}
 			/>
 
-			<ViewTopBarButton
+			<IconButton
 				onClick={() => input.dispatch({ t: "clicked-people-button" })}
 				label={input.ctx.t("spaces.people-count", peopleCount)}
-				icon={<IconUserGroup className="h-6 w-6" />}
+				renderIcon={(inputIcon) => <IconUserGroup {...inputIcon} />}
 			/>
 
 			<div className="flex-1" />
 
-			{input.ctx.space.hostId !== input.ctx.currentUserId && (
-				<div className="p-2">
+			<div className="p-2 -mr-2">
+				{input.ctx.space.hostId !== input.ctx.currentUserId && (
 					<LeaveSpaceClient.ViewLeaveSpaceButton {...input} />
-				</div>
-			)}
+				)}
 
-			{input.ctx.space.hostId === input.ctx.currentUserId && (
-				<div className="p-2">
+				{input.ctx.space.hostId === input.ctx.currentUserId && (
 					<EndSpaceClient.ViewEndSpaceButton {...input} />
-				</div>
-			)}
-		</nav>
+				)}
+			</div>
+		</div>
 	);
 };
 
-const ViewTopBarButton = (input: {
-	icon: VDom;
-	label: TranslatedText;
-	onClick: () => void;
-}) => {
-	return (
-		<button
-			type="button"
-			className="grid w-20 place-items-center py-1"
-			onClick={input.onClick}
-		>
-			{input.icon}
-			<Typography text={input.label} variant="caption" />
-		</button>
-	);
-};
 
 const ViewSpaceNotFound = (input: {
 	ctx: ClientCtx;

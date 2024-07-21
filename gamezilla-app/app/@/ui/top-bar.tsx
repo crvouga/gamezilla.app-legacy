@@ -1,6 +1,12 @@
 import { TranslatedText } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/@/l18n/generated";
-import { cn, IconArrowLeft, Typography } from "gamezilla-app/app/@/ui";
+import {
+	cn,
+	IconArrowLeft,
+	IconButton,
+	IconButtonEmpty,
+	Typography,
+} from "gamezilla-app/app/@/ui";
 
 export const TopBar = (input: {
 	title: TranslatedText;
@@ -14,24 +20,23 @@ export const TopBar = (input: {
 	return (
 		<div
 			className={cn(
-				"w-full px-4 h-16 flex items-center truncate shrink-0",
+				"w-full px-4 h-16 flex items-center truncate shrink-0 border-b border-neutral-700",
 				input.center && "text-center",
 			)}
 		>
 			{input.onBack && (
-				<button
+				<IconButton
 					onClick={input.onBack}
-					className="p-2 rounded-full -ml-2"
-					aria-label={input.ctx.t("app.exit")}
-				>
-					<IconArrowLeft className="h-7 w-7" />
-				</button>
+					className="-ml-2"
+					label={input.ctx.t("app.exit")}
+					renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
+				/>
 			)}
 
 			<div className="flex-1 truncate flex flex-col">
 				<Typography
 					role="heading"
-					className="text-3xl font-bold truncate px-2"
+					className="font-bold truncate px-2 text-2xl"
 					variant="title"
 					text={input.title}
 				/>
@@ -46,11 +51,7 @@ export const TopBar = (input: {
 				)}
 			</div>
 
-			{input.center && input.onBack && (
-				<div className="p-2 rounded-full -mr-2">
-					<div className="h-7 w-7" />
-				</div>
-			)}
+			{input.center && input.onBack && <IconButtonEmpty />}
 		</div>
 	);
 };

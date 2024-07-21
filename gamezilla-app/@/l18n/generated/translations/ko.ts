@@ -211,6 +211,7 @@ export const translations: Text = {
 	"app.reset": "재설정",
 	"app.more": "더",
 	"app.copied-to-clipboard": "클립 보드에 복사됨",
+	"app.copy": "부",
 	"app.saved-changes": "변경 사항 저장됨",
 	"app.dont-save": "저장하지 마세요",
 	"app.save": "저장",

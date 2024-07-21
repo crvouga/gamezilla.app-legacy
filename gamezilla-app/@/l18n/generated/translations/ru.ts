@@ -216,6 +216,7 @@ export const translations: Text = {
 	"app.reset": "Сброс",
 	"app.more": "Больше",
 	"app.copied-to-clipboard": "Скопировано в буфер обмена",
+	"app.copy": "Копировать",
 	"app.saved-changes": "Изменения сохранены",
 	"app.dont-save": "Не сохранять",
 	"app.save": "Сохранить",

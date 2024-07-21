@@ -204,6 +204,7 @@ export const translations: Text = {
 	"app.congratulations": "Congratulations",
 	"app.more": "More",
 	"app.copied-to-clipboard": "Copied to clipboard",
+	"app.copy": "Copy",
 	"app.saved-changes": "Saved changes",
 	"app.dont-save": "Don't Save",
 	"app.save": "Save",

@@ -208,6 +208,7 @@ export const translations: Text = {
 	"app.reset": "重启",
 	"app.more": "更多",
 	"app.copied-to-clipboard": "已复制到剪贴板",
+	"app.copy": "复制",
 	"app.saved-changes": "已保存更改",
 	"app.dont-save": "不要保存",
 	"app.save": "保存",

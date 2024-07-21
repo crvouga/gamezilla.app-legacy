@@ -228,29 +228,27 @@ const ViewChooseLang: Module["View"] = (input) => {
 				title={input.ctx.t("lang.choose-language")}
 			/>
 			<div className="flex flex-1 flex-col divide-y divide-neutral-700 overflow-y-scroll">
-				{LanguageCodeISO_639_1.ALL.map((code) => {
-					return (
-						<ListItemButton
-							key={code}
-							label={input.ctx.t(code)}
-							icon={(inputIcon) => {
-								if (input.model.loading[code]?.endedAt === null) {
-									return <Spinner {...inputIcon} />;
-								}
-
-								if (input.model.lang === code) {
-									return <IconCheckmarkCircle {...inputIcon} />;
-								}
-
-								return <IconCheckmarkCircleEmpty {...inputIcon} />;
-							}}
-							end={() => <p>{input.ctx.t(code)}</p>}
-							onClick={() =>
-								input.dispatch({ t: "choose-lang.clicked-lang", lang: code })
+				{LanguageCodeISO_639_1.ALL.map((code) => (
+					<ListItemButton
+						key={code}
+						label={input.ctx.t(code)}
+						icon={(inputIcon) => {
+							if (input.model.loading[code]?.endedAt === null) {
+								return <Spinner {...inputIcon} />;
 							}
-						/>
-					);
-				})}
+
+							if (input.model.lang === code) {
+								return <IconCheckmarkCircle {...inputIcon} />;
+							}
+
+							return <IconCheckmarkCircleEmpty {...inputIcon} />;
+						}}
+						end={() => <div>{input.ctx.t(code)}</div>}
+						onClick={() =>
+							input.dispatch({ t: "choose-lang.clicked-lang", lang: code })
+						}
+					/>
+				))}
 				<div className="w-full p-8" />
 			</div>
 		</div>

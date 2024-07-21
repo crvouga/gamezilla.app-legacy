@@ -176,7 +176,7 @@ export const ViewEndSpaceButton: SpaceClientModule["View"] = (input) => {
 		<Button
 			color="danger"
 			variant="contained"
-			size="sm"
+			size="xs"
 			text={input.ctx.t("spaces.end")}
 			onClick={() => input.dispatch({ t: "clicked-end-space-button" })}
 		/>

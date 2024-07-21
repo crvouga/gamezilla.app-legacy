@@ -10,6 +10,7 @@ export type Text = {
 	"app.congratulations": string;
 	"app.more": string;
 	"app.copied-to-clipboard": string;
+	"app.copy": string;
 	"app.saved-changes": string;
 	"app.dont-save": string;
 	"app.save": string;
@@ -49,6 +50,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "Congratulations",
 		"app.more": "More",
 		"app.copied-to-clipboard": "Copied to clipboard",
+		"app.copy": "Copy",
 		"app.saved-changes": "Saved changes",
 		"app.dont-save": "Don't Save",
 		"app.save": "Save",
@@ -86,6 +88,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "تهانينا",
 		"app.more": "أكثر",
 		"app.copied-to-clipboard": "تم النسخ إلى الحافظة",
+		"app.copy": "نسخ",
 		"app.saved-changes": "تم حفظ التغييرات",
 		"app.dont-save": "لا تحفظ",
 		"app.save": "حفظ",
@@ -123,6 +126,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "Herzlichen Glückwunsch",
 		"app.more": "Mehr",
 		"app.copied-to-clipboard": "In die Zwischenablage kopiert",
+		"app.copy": "Kopieren",
 		"app.saved-changes": "Änderungen gespeichert",
 		"app.dont-save": "Nicht speichern",
 		"app.save": "Speichern",
@@ -161,6 +165,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "Felicidades",
 		"app.more": "Más",
 		"app.copied-to-clipboard": "Copiado al portapapeles",
+		"app.copy": "Copiar",
 		"app.saved-changes": "Cambios guardados",
 		"app.dont-save": "No guardar",
 		"app.save": "Guardar",
@@ -198,6 +203,7 @@ export const translations: Translations<Text> = {
 		"app.congratulations": "Félicitations",
 		"app.more": "Plus",
 		"app.copied-to-clipboard": "Copié dans le presse-papiers",
+		"app.copy": "Copier",
 		"app.saved-changes": "Modifications enregistrées",
 		"app.dont-save": "Ne pas enregistrer",
 		"app.save": "Enregistrer",
@@ -235,6 +241,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "Ripristina",
 		"app.more": "Di più",
 		"app.copied-to-clipboard": "Copiato negli appunti",
+		"app.copy": "Copia",
 		"app.saved-changes": "Modifiche salvate",
 		"app.dont-save": "Non salvare",
 		"app.save": "Salvare",
@@ -273,6 +280,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "リセット",
 		"app.more": "もっと",
 		"app.copied-to-clipboard": "クリップボードにコピーしました",
+		"app.copy": "コピー",
 		"app.saved-changes": "変更を保存しました",
 		"app.dont-save": "保存しない",
 		"app.save": "保存",
@@ -310,6 +318,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "재설정",
 		"app.more": "더",
 		"app.copied-to-clipboard": "클립 보드에 복사됨",
+		"app.copy": "부",
 		"app.saved-changes": "변경 사항 저장됨",
 		"app.dont-save": "저장하지 마세요",
 		"app.save": "저장",
@@ -347,6 +356,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "Redefinir",
 		"app.more": "Mais",
 		"app.copied-to-clipboard": "Copiado para a área de transferência",
+		"app.copy": "Cópia",
 		"app.saved-changes": "Alterações salvas",
 		"app.dont-save": "Não Salvar",
 		"app.save": "Salvar",
@@ -384,6 +394,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "Сброс",
 		"app.more": "Больше",
 		"app.copied-to-clipboard": "Скопировано в буфер обмена",
+		"app.copy": "Копировать",
 		"app.saved-changes": "Изменения сохранены",
 		"app.dont-save": "Не сохранять",
 		"app.save": "Сохранить",
@@ -421,6 +432,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "重启",
 		"app.more": "更多",
 		"app.copied-to-clipboard": "已复制到剪贴板",
+		"app.copy": "复制",
 		"app.saved-changes": "已保存更改",
 		"app.dont-save": "不要保存",
 		"app.save": "保存",
@@ -458,6 +470,7 @@ export const translations: Translations<Text> = {
 		"app.reset": "रीसेट",
 		"app.more": "अधिक",
 		"app.copied-to-clipboard": "क्लिपबोर्ड पर कॉपी किया गया",
+		"app.copy": "कॉपी",
 		"app.saved-changes": "परिवर्तन सहेजे गए",
 		"app.dont-save": "न बचाएं",
 		"app.save": "सहेजें",

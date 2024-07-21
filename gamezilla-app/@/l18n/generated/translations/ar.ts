@@ -212,6 +212,7 @@ export const translations: Text = {
 	"app.congratulations": "تهانينا",
 	"app.more": "أكثر",
 	"app.copied-to-clipboard": "تم النسخ إلى الحافظة",
+	"app.copy": "نسخ",
 	"app.saved-changes": "تم حفظ التغييرات",
 	"app.dont-save": "لا تحفظ",
 	"app.save": "حفظ",

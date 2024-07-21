@@ -94,10 +94,10 @@ const View = ({
 						)}
 					</div>
 
-					<div className="flex flex-1 flex-col gap-1 overflow-hidden py-3 pr-3">
+					<div className="flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3">
 						<Typography
 							variant="title"
-							className="truncate text-lg text-left"
+							className="truncate text-lg text-left font-normal"
 							text={ctx.t("spaces.current-space", {
 								hostUsername: hostProfile.username,
 							})}

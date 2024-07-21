@@ -59,7 +59,7 @@ export const viewButtonAction = ({
 	return [
 		{
 			icon: (input) => <IconCopy {...input} />,
-			label: ctx.t("flow.copy-puzzle-to-clipboard"),
+			label: ctx.t("app.copy"),
 			onClick: () => dispatch({ t: "user-clicked-copy-to-clipboard" }),
 		},
 	];

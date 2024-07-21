@@ -7,7 +7,7 @@ export type ButtonVariant = "contained" | "outlined" | "text" | "soft";
 
 export type ButtonColor = "primary" | "danger" | "default";
 
-export type ButtonSize = "sm" | "md" | "lg";
+export type ButtonSize = "xs" | "sm" | "md" | "lg";
 
 type VariantColor = `${ButtonVariant}-${ButtonColor}`;
 
@@ -66,6 +66,7 @@ export const Button = ({
 				size === "lg" && "px-4 py-3 text-xl",
 				size === "md" && "px-4 py-2 text-lg",
 				size === "sm" && "text-md  px-4 py-1",
+				size === 'xs' && 'text-sm px-3 py-1',
 				disabled && "cursor-not-allowed opacity-60",
 				!disabled && !loading && " active:opacity-70",
 				loading && "cursor-wait opacity-70",

@@ -149,6 +149,7 @@ const View: SpaceClientModule["View"] = (input) => {
 			<TopBar
 				onBack={false}
 				ctx={input.ctx}
+				center
 				title={input.ctx.t("spaces.spaces")}
 			/>
 

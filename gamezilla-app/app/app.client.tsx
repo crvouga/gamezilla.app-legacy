@@ -796,7 +796,7 @@ const ViewBottomNavBar = (input: {
 				t: "space-list",
 			},
 			label: input.ctx.t("spaces.spaces"),
-			icon: <IconGamepad className="h-6 w-6" />,
+			icon: <IconGamepad className="h-7 w-7" />,
 		},
 		{
 			route: {
@@ -805,7 +805,7 @@ const ViewBottomNavBar = (input: {
 				userId: input.ctx.currentUserId,
 			},
 			label: input.ctx.t("profile.profile"),
-			icon: <IconUserCircle className="h-6 w-6" />,
+			icon: <IconUserCircle className="h-7 w-7" />,
 		},
 	];
 
@@ -816,8 +816,8 @@ const ViewBottomNavBar = (input: {
 				model={input.model.spaces}
 				dispatch={(c) => input.dispatch({ t: "spaces", c })}
 			/>
-			<div className="flex w-full items-center justify-center border-t border-neutral-700">
-				{items.map((item, index) => {
+			<div className="flex w-full items-center justify-center border-t border-neutral-700 h-16">
+				{items.map((item) => {
 					const isSelected = eq(item.route, input.model.routing.currentRoute);
 					return (
 						<button
@@ -832,7 +832,6 @@ const ViewBottomNavBar = (input: {
 							className={cn(
 								"flex flex-1 flex-col items-center justify-center pb-2 pt-1",
 								isSelected ? "text-blue-500" : "text-opacity-50",
-								index < items.length - 1 ? "border-r border-neutral-700" : "",
 							)}
 						>
 							{item.icon}

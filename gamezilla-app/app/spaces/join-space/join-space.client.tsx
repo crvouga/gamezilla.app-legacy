@@ -134,6 +134,7 @@ const View: SpaceClientModule["View"] = (input) => {
 			<TopBar
 				onBack={() => input.dispatch({ t: "clicked-go-home-button" })}
 				ctx={input.ctx}
+				center
 				title={input.ctx.t("spaces.space")}
 			/>
 

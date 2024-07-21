@@ -212,6 +212,7 @@ export const translations: Text = {
 	"app.reset": "रीसेट",
 	"app.more": "अधिक",
 	"app.copied-to-clipboard": "क्लिपबोर्ड पर कॉपी किया गया",
+	"app.copy": "कॉपी",
 	"app.saved-changes": "परिवर्तन सहेजे गए",
 	"app.dont-save": "न बचाएं",
 	"app.save": "सहेजें",

@@ -206,6 +206,7 @@ export const translations: Text = {
 	"app.reset": "Redefinir",
 	"app.more": "Mais",
 	"app.copied-to-clipboard": "Copiado para a área de transferência",
+	"app.copy": "Cópia",
 	"app.saved-changes": "Alterações salvas",
 	"app.dont-save": "Não Salvar",
 	"app.save": "Salvar",

@@ -210,6 +210,7 @@ export const translations: Text = {
 	"app.congratulations": "Félicitations",
 	"app.more": "Plus",
 	"app.copied-to-clipboard": "Copié dans le presse-papiers",
+	"app.copy": "Copier",
 	"app.saved-changes": "Modifications enregistrées",
 	"app.dont-save": "Ne pas enregistrer",
 	"app.save": "Enregistrer",

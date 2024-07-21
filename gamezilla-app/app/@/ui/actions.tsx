@@ -124,7 +124,7 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
 				<Typography
 					variant="label"
 					text={input.label}
-					className={cn('truncate', input.classNames?.label)}
+					className={cn("truncate", input.classNames?.label)}
 				/>
 			</div>
 

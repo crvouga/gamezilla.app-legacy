@@ -209,6 +209,7 @@ export const translations: Text = {
 	"app.reset": "リセット",
 	"app.more": "もっと",
 	"app.copied-to-clipboard": "クリップボードにコピーしました",
+	"app.copy": "コピー",
 	"app.saved-changes": "変更を保存しました",
 	"app.dont-save": "保存しない",
 	"app.save": "保存",
