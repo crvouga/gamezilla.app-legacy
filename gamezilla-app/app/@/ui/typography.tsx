@@ -27,6 +27,8 @@ export const Typography = (input: {
 		<p
 			className={cn(variantClasses[input.variant], input.className)}
 			aria-role={input.role}
+			role={input.role}
+			aria-label={input.text}
 		>
 			{input.text}
 		</p>
