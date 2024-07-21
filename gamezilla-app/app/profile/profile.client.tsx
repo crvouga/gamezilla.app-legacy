@@ -19,6 +19,7 @@ import {
 	IconChevronRight,
 	TextField,
 	TopBar,
+	Typography,
 } from "gamezilla-app/app/@/ui";
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
@@ -28,6 +29,7 @@ import type {
 	MsgToClient,
 	MsgToServer,
 } from "./profile.types";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 
 //
 //
@@ -488,6 +490,10 @@ const ViewUpdateScreen = (input: {
 
 	const profile = input.ctx.profiles[input.ctx.currentUserId];
 
+	if (!profile) {
+		return null;
+	}
+
 	return (
 		<div className="flex h-full w-full flex-col items-center gap-4">
 			<TopBar
@@ -521,8 +527,8 @@ const ViewUpdateScreen = (input: {
 
 			<ViewField
 				onClick={() => input.dispatch({ t: "clicked-update-username-button" })}
-				label="Username"
-				value={profile?.username}
+				label={input.ctx.t("username-title")}
+				value={input.ctx.t("username", profile.username)}
 			/>
 		</div>
 	);
@@ -533,8 +539,8 @@ const ViewField = ({
 	value,
 	onClick,
 }: {
-	label: string;
-	value?: string | null;
+	label: TranslatedText;
+	value: TranslatedText;
 	onClick?: () => void;
 }) => (
 	<button
@@ -542,14 +548,8 @@ const ViewField = ({
 		className="flex w-full items-center justify-start px-4 py-2"
 	>
 		<div className="flex flex-1 flex-col items-start">
-			<p className="text-sm text-neutral-300">{label}</p>
-			{typeof value === "string" ? (
-				<p className="h-7 text-lg">{value}</p>
-			) : (
-				<div className="flex h-7 w-full items-center ">
-					<div className="h-4 w-1/2 animate-pulse rounded-lg bg-neutral-800" />
-				</div>
-			)}
+			<Typography variant="label" text={label} />
+			{value && <Typography variant="body" text={value} />}
 		</div>
 
 		<IconChevronRight className="h-6 w-6" />

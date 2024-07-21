@@ -243,17 +243,17 @@ export const View = (input: {
 			<ViewBottomButtonBar>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconArrowLeftOnRect {...input} />}
-					label="Exit"
+					label={input.ctx.t('app.exit')}
 					onClick={() => input.dispatch({ t: "stop-game" })}
 				/>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconRightLeft {...input} />}
-					label="Swap sides"
+					label={input.ctx.t('game.swap-sides')}
 					onClick={() => input.dispatch({ t: "swap-sides" })}
 				/>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconArrowRotateLeft {...input} />}
-					label="Restart"
+					label={input.ctx.t('app.restart')}
 					onClick={() => input.dispatch({ t: "restart" })}
 				/>
 			</ViewBottomButtonBar>

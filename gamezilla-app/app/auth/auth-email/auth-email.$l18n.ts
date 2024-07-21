@@ -2,7 +2,7 @@ import { Translations } from "gamezilla-app/@/l18n";
 
 export type Text = {
 	"auth-email.login-with-email": string;
-	"auth-email.send-login-link": string
+	"auth-email.send-login-link": string;
 };
 
 export const translations: Translations<Text> = {

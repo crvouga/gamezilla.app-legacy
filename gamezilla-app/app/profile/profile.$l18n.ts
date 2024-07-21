@@ -3,7 +3,6 @@ import { Translations } from "gamezilla-app/@/l18n";
 export type Text = {
 	"profile.update-profile": string;
 	"profile.update-avatar": string;
-
 };
 
 export const translations: Translations<Text> = {

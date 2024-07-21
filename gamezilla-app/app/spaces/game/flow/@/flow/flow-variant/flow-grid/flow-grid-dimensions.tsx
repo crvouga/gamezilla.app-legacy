@@ -24,10 +24,10 @@ export const ViewForm = ({
 	ctx,
 }: {
 	form: Model;
-		onInput: (dimensions: Model) => void;
-		ctx: {
+	onInput: (dimensions: Model) => void;
+	ctx: {
 		t: Translator;
-	}
+	};
 }) => {
 	return (
 		<>
@@ -43,7 +43,7 @@ export const ViewForm = ({
 				<Slider
 					onInput={(width) => onInput({ ...form, width })}
 					value={form.width}
-					label={ctx.t('app.width')}
+					label={ctx.t("app.width")}
 					min={3}
 					max={15}
 					step={1}
@@ -51,7 +51,7 @@ export const ViewForm = ({
 				<Slider
 					onInput={(height) => onInput({ ...form, height })}
 					value={form.height}
-					label={ctx.t('app.height')}
+					label={ctx.t("app.height")}
 					min={3}
 					max={15}
 					step={1}

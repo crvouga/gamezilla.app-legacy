@@ -326,7 +326,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 			<>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconEllipsisVertical {...input} />}
-					label="More"
+					label={ctx.t("app.more")}
 					onClick={() =>
 						dispatch({
 							t: "pack-builder.puzzle-screen.user-clicked-more-button",
@@ -464,7 +464,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconChevronLeft {...input} />}
-						label="Previous"
+						label={input.ctx.t("app.prev")}
 						disabled={!canGoPrevious}
 						onClick={() => {
 							if (previousPuzzle) {
@@ -479,7 +479,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconChevronRight {...input} />}
-						label="Next"
+						label={input.ctx.t("app.next")}
 						disabled={!canGoNext}
 						onClick={() => {
 							if (nextPuzzle) {

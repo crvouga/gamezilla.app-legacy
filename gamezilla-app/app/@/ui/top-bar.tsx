@@ -1,6 +1,6 @@
 import { TranslatedText } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/@/l18n/generated";
-import { cn, IconArrowLeft } from "gamezilla-app/app/@/ui";
+import { cn, IconArrowLeft, Typography } from "gamezilla-app/app/@/ui";
 
 export const TopBar = (input: {
 	title: TranslatedText;
@@ -29,13 +29,20 @@ export const TopBar = (input: {
 			)}
 
 			<div className="flex-1 truncate flex flex-col">
-				<p role="heading" className="text-2xl font-bold truncate px-2">
-					{input.title}
-				</p>
+				<Typography
+					role="heading"
+					className="text-2xl font-bold truncate px-2"
+					variant="title"
+					text={input.title}
+				/>
+
 				{input.subtitle && (
-					<p className="text-xs text-neutral-300 truncate px-2" role="heading">
-						{input.subtitle}
-					</p>
+					<Typography
+						className="text-xs text-neutral-300 truncate px-2"
+						role="heading"
+						variant="subtitle"
+						text={input.subtitle}
+					/>
 				)}
 			</div>
 

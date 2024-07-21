@@ -104,7 +104,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "Sei sicuro di voler uscire?",
 	},
 	ja: {
-		"auth.logout"	: "ログアウト",
+		"auth.logout": "ログアウト",
 		"auth.logged-in-as-guest": "ゲストとしてログイン",
 		"auth.logged-in-with-phone": "電話でログイン",
 		"auth.current-user-logged-out": "ログアウトしました",

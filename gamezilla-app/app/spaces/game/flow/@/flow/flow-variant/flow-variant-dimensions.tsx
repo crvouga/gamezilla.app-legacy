@@ -32,8 +32,8 @@ export const ViewForm = (input: {
 	form: Model;
 	onInput: (dimensions: Model) => void;
 	ctx: {
-		t: Translator	;	
-	}
+		t: Translator;
+	};
 }) => {
 	switch (input.form.t) {
 		case "flow-grid": {

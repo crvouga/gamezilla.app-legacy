@@ -37,11 +37,8 @@ export const ConfirmationDialog = ({
 			}}
 		>
 			<div className="flex w-80 flex-col gap-6 rounded-lg bg-black p-6">
-				<Typography
-					variant="title"
-					text={title}
-				/>
-			
+				<Typography variant="title" text={title} />
+
 				<div className="flex w-full items-center gap-4">
 					<Button
 						variant="outlined"

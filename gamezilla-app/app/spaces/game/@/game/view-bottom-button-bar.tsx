@@ -5,13 +5,15 @@ import {
 	IconChevronRight,
 	IconLightbulb,
 	Spinner,
+	Typography,
 	cn,
 } from "gamezilla-app/app/@/ui";
 import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 
 type BottomBarButtonAction = {
-	label: string;
+	label: TranslatedText;
 	disabled?: boolean;
 	icon: (input: { className: string }) => VDom;
 	classNames?: {
@@ -63,7 +65,7 @@ export const ViewBottomButtonBarAction = (input: BottomBarButtonAction) => {
 				)}
 			>
 				{input.icon({ className: "h-7 w-7" })}
-				<p className={cn("text-xs", input.classNames?.label)}>{input.label}</p>
+				<Typography variant="label" className={input.classNames?.label} text={input.label} />
 			</div>
 
 			<div

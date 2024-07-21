@@ -502,25 +502,25 @@ export const View = (input: {
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconArrowRotateLeft {...input} />}
-						label="Undo"
+						label={input.ctx.t("app.undo")}
 						onClick={() => dispatch({ t: "clicked-undo" })}
 						disabled={!History.canUndo(model.form)}
 					/>
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconArrowRotateRight {...input} />}
-						label="Redo"
+						label={input.ctx.t("app.redo")}
 						disabled={!History.canRedo(model.form)}
 						onClick={() => dispatch({ t: "clicked-redo" })}
 					/>
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconXMark {...input} />}
-						label="Clear"
+						label={input.ctx.t("app.clear")}
 						disabled={!canClear(model)}
 						onClick={() => dispatch({ t: "clicked-clear" })}
 					/>
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconExpand {...input} />}
-						label="Dimensions"
+						label={input.ctx.t("app.dimensions")}
 						onClick={() => dispatch({ t: "dimensions-form.clicked-open" })}
 					/>
 				</ViewBottomButtonBar>

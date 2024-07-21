@@ -18,6 +18,7 @@ import type {
 	MsgClient,
 	MsgCore,
 } from "../../builder.types";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 
 //
 //
@@ -216,7 +217,11 @@ const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
 export const ViewActionButtons = ({
 	model,
 	dispatch,
+	ctx,
 }: {
+	ctx: {
+			t: Translator;
+	}
 	model: ModelClient;
 	dispatch: (msg: MsgClient) => void;
 }) => {
@@ -224,7 +229,7 @@ export const ViewActionButtons = ({
 		<>
 			<ViewBottomButtonBarAction
 				icon={(input) => <IconFloppyDisk {...input} />}
-				label="Save"
+				label={ctx.t('app.save')}
 				onClick={() =>
 					dispatch({
 						t: "screen-puzzle-builder.save-changes.user-clicked-save-button",

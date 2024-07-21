@@ -113,7 +113,7 @@ const View: ClientModule["View"] = (input) => {
 			<div className="border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll border-t border-neutral-700">
 				{shouldShowEmptyState && (
 					<EmptyState
-						label={ctx.t('flow.no-puzzles')}
+						label={ctx.t("flow.no-puzzles")}
 						renderIcon={(input) => <IconPuzzlePiece {...input} />}
 					/>
 				)}

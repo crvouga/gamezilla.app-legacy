@@ -4,7 +4,7 @@ import {
 	pushRoute,
 	showToast,
 } from "gamezilla-app/app/@/client";
-import { Button } from "gamezilla-app/app/@/ui";
+import { Button, Typography } from "gamezilla-app/app/@/ui";
 import { withId } from "../@/event";
 import { SpaceClientModule } from "../architecture/architecture";
 import type { SpaceCoreEvent } from "../spaces-core";
@@ -186,7 +186,10 @@ export const ViewEndSpaceButton: SpaceClientModule["View"] = (input) => {
 const ViewSpaceEnded: SpaceClientModule["View"] = (input) => {
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center gap-4">
-			<p className="text-center text-2xl">Space ended</p>
+			<Typography
+				text={input.ctx.t("spaces.space-ended")}
+				variant="title"
+			/>
 			<Button
 				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
 				size="lg"

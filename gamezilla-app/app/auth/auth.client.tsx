@@ -9,7 +9,7 @@ import {
 	showToast,
 	type BaseClientCtx,
 } from "gamezilla-app/app/@/client";
-import { Button, IconMobilePhone } from "gamezilla-app/app/@/ui";
+import { Button, IconMobilePhone, Typography } from "gamezilla-app/app/@/ui";
 import { AuthSMSClient } from "./auth-sms/auth-sms.client";
 import type { ClientModule, ModelClient, MsgClient } from "./auth.types";
 import { ContinueAsGuestClient } from "./continue-as-guest/continue-as-guest.client";
@@ -242,12 +242,12 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
 		<div className="relative flex h-full w-full flex-1 flex-col">
 			<div className="flex flex-1 flex-col items-center justify-center gap-8 p-4">
 				<div className="flex w-full flex-col items-start justify-center">
-					<p className="text-2xl text-neutral-200">
-						{input.ctx.t("auth.sign-in-to")}
-					</p>
-					<h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
-						gamezilla.app
-					</h1>
+					<Typography text={input.ctx.t("auth.sign-in-to")} variant="title" />
+					<Typography
+						text={input.ctx.t("app.gamezilla-app")}
+						variant="title"
+						className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent"
+					/>
 				</div>
 
 				<div className="flex w-full flex-col gap-6">
@@ -262,9 +262,11 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
 					/>
 
 					<div className="flex w-full items-center justify-center py-1">
-						<p className="text-base font-bold uppercase text-neutral-300">
-							{input.ctx.t("auth.or")}
-						</p>
+						<Typography
+							variant="body"
+							className="text-base font-bold uppercase text-neutral-300"
+							text={input.ctx.t("auth.or")}
+						/>
 					</div>
 
 					<ContinueAsGuestClient.ViewButton {...input} />

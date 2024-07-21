@@ -4,7 +4,7 @@ import {
 	playSound,
 	pushRoute,
 } from "gamezilla-app/app/@/client";
-import { Avatar, Button } from "gamezilla-app/app/@/ui";
+import { Avatar, Button, Typography } from "gamezilla-app/app/@/ui";
 import { CoverArt } from "../game/game-cover-art";
 import type { SpaceClientModule } from "../architecture/architecture";
 import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
@@ -65,6 +65,10 @@ const View = ({
 
 	const hostProfile = ctx.profiles[space.hostId];
 
+	if (!hostProfile) {
+		return null;
+	}
+
 	const userCount = Object.values(space.users).length;
 
 	return (
@@ -91,12 +95,16 @@ const View = ({
 					</div>
 
 					<div className="flex flex-1 flex-col gap-1 overflow-hidden py-3">
-						<p className="truncate text-left text-lg">
-							{hostProfile ? `${hostProfile.username}'s space` : "..."}
-						</p>
-						<p className="truncate text-left text-sm text-neutral-300">
-							{userCount} in space
-						</p>
+						<Typography
+							variant="title"
+							className="truncate"
+							text={ctx.t("spaces.current-space", {hostUsername: hostProfile.username})}
+						/>
+						<Typography
+							variant="subtitle"
+							className="truncate"
+							text={ctx.t("space-card.people-count", userCount)}
+						/>
 					</div>
 				</button>
 
@@ -104,7 +112,7 @@ const View = ({
 					{ctx.currentUserId === space.hostId && (
 						<Button
 							color="danger"
-							text={ctx.t('spaces.end')}
+							text={ctx.t("spaces.end")}
 							onClick={() => dispatch({ t: "clicked-end-space-button" })}
 							size="sm"
 						/>
@@ -113,7 +121,7 @@ const View = ({
 					{ctx.currentUserId !== space.hostId && (
 						<Button
 							color="danger"
-							text={ctx.t('spaces.leave')}
+							text={ctx.t("spaces.leave")}
 							onClick={() => dispatch({ t: "clicked-leave-space-button" })}
 							size="sm"
 						/>

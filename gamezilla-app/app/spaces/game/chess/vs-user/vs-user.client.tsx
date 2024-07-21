@@ -316,7 +316,7 @@ export const View = ({
 						variant="contained"
 						color="primary"
 						className="flex-1"
-						text={ctx.t('game.start-game')}
+						text={ctx.t("game.start-game")}
 					/>
 				</div>
 			</div>

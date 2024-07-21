@@ -460,7 +460,8 @@ const View: Module["View"] = (input) => {
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconArrowLeftOnRect {...input} />}
-						label="Exit"
+					
+						label={input.ctx.t("app.exit")}
 						onClick={() =>
 							input.dispatch({
 								t: "user-stopped-game",
@@ -471,7 +472,7 @@ const View: Module["View"] = (input) => {
 
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconRightLeft {...input} />}
-						label="Swap sides"
+						label={input.ctx.t("game.swap-sides")}
 						onClick={() =>
 							input.dispatch({
 								t: "user-swapped-sides",
@@ -482,7 +483,7 @@ const View: Module["View"] = (input) => {
 
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconArrowRotateLeft {...input} />}
-						label="Restart"
+						label={input.ctx.t("app.restart")}
 						onClick={() =>
 							input.dispatch({
 								t: "user-restarted-game",

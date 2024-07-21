@@ -216,7 +216,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 	const more = (
 		<ViewBottomButtonBarAction
 			icon={(input) => <IconEllipsisVertical {...input} />}
-			label="More"
+			label={input.ctx.t('app.more')}
 			onClick={() =>
 				dispatch({ t: "screen-puzzle-builder.user-clicked-more-button" })
 			}
@@ -245,7 +245,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 
 						<ViewBottomButtonBarAction
 							icon={(input) => <IconPlay {...input} />}
-							label="Play Mode"
+							label={input.ctx.t('flow.play-mode')}
 							classNames={{
 								button: "text-blue-500",
 							}}
@@ -323,7 +323,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 
 						<ViewBottomButtonBarAction
 							icon={(input) => <IconPen {...input} />}
-							label="Edit Mode"
+							label={input.ctx.t('flow.edit-mode')}
 							classNames={{
 								button: "text-amber-500",
 							}}

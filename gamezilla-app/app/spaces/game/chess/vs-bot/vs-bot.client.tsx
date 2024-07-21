@@ -387,7 +387,7 @@ export const View = ({
 			<ViewBottomButtonBar>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconArrowLeftOnRect {...input} />}
-					label="Exit"
+					label={ctx.t('app.exit')}
 					onClick={onClose}
 				/>
 			</ViewBottomButtonBar>

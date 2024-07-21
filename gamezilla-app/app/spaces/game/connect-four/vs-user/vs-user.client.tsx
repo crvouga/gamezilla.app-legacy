@@ -271,7 +271,7 @@ const View: Module["View"] = (input) => {
 						{input.modelCore.type === "game" && (
 							<ViewBottomButtonBarAction
 								icon={(input) => <IconFlag {...input} />}
-								label="Resign"
+								label={input.ctx.t("app.resign")}
 								onClick={() => {
 									input.dispatch({
 										t: "clicked-resign",
@@ -286,7 +286,7 @@ const View: Module["View"] = (input) => {
 								<>
 									<ViewBottomButtonBarAction
 										icon={(input) => <IconArrowLeftOnRect {...input} />}
-										label="Exit"
+										label={input.ctx.t("app.exit")}
 										onClick={() => {
 											input.dispatch({
 												t: "user-stopped-game",
@@ -297,7 +297,7 @@ const View: Module["View"] = (input) => {
 
 									<ViewBottomButtonBarAction
 										icon={(input) => <IconArrowRotateLeft {...input} />}
-										label="Rematch"
+										label={input.ctx.t("game.rematch")}
 										onClick={() => {
 											input.dispatch({
 												t: "user-requested-rematch",
@@ -381,7 +381,7 @@ const ViewGameOverMessage = ({
 							})
 						}
 						start={<IconXMark className="h-6 w-6" />}
-						text={ctx.t('app.decline')}
+						text={ctx.t("app.decline")}
 					/>
 
 					<Button
@@ -394,7 +394,7 @@ const ViewGameOverMessage = ({
 							})
 						}
 						start={<IconCheckmarkCircle className="h-6 w-6" />}
-						text={ctx.t('app.accept')}
+						text={ctx.t("app.accept")}
 					/>
 				</div>
 			</>

@@ -1,6 +1,7 @@
 import type { Translations } from "gamezilla-app/@/l18n";
 
 export type Text = {
+	"app.gamezilla-app": string;
 	"app.something-went-wrong": string;
 	"app.exit": string;
 	"app.next": string;
@@ -22,10 +23,18 @@ export type Text = {
 	"app.delete": string;
 	"app.width": string;
 	"app.height": string;
+	"app.retry": string
+	"app.skip": string
+	"app.restart": string
+	"app.undo": string
+	"app.redo": string
+	"app.clear": string
+	"app.dimensions": string
 };
 
 export const translations: Translations<Text> = {
 	en: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "Something went wrong",
 		"app.exit": "Exit",
 		"app.next": "Next",
@@ -47,8 +56,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "This action cannot be undone",
 		"app.height": "Height",
 		"app.width": "Width",
+		"app.restart": "Restart",
+		"app.retry": "Retry",
+		"app.skip": "Skip",
+		"app.clear": "Clear",
+		"app.dimensions": "Dimensions",
+		"app.redo": "Redo",
+		"app.undo": "Undo",
 	},
 	ar: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "حدث خطأ ما",
 		"app.exit": "خروج",
 		"app.next": "التالى",
@@ -70,8 +87,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "لا يمكن التراجع عن هذا الإجراء",
 		"app.height": "ارتفاع",
 		"app.width": "عرض",
+		"app.restart": "إعادة بدء",
+		"app.retry": "أعد المحاولة",
+		"app.skip": "تخطى",
+		"app.clear": "واضح",
+		"app.dimensions": "الأبعاد",
+		"app.redo": "إعادة",
+		"app.undo": "إلغاء",		
 	},
 	de: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "Etwas ist schief gelaufen",
 		"app.exit": "Beenden",
 		"app.next": "Nächster",
@@ -90,11 +115,20 @@ export const translations: Translations<Text> = {
 		"app.decline": "Ablehnen",
 		"app.resign": "Kündigen",
 		"app.delete": "Löschen",
-		"app.this-action-cannot-be-undone": "Dieser Vorgang kann nicht rückgängig gemacht werden",
+		"app.this-action-cannot-be-undone":
+			"Dieser Vorgang kann nicht rückgängig gemacht werden",
 		"app.height": "Höhe",
 		"app.width": "Breite",
+		"app.restart": "Neustart",
+		"app.retry": "Wiederholen",
+		"app.skip": "Überspringen",
+		"app.clear": "Klar",
+		"app.dimensions": "Abmessungen",
+		"app.redo": "Wiederholen",
+		"app.undo": "Rückgängig machen",
 	},
 	es: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "Algo salió mal",
 		"app.exit": "Salir",
 		"app.next": "Siguiente",
@@ -116,8 +150,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "Esta acción no se puede deshacer",
 		"app.height": "Altura",
 		"app.width": "Ancho",
+		"app.restart": "Reiniciar",
+		"app.retry": "Reintentar",	
+		"app.skip": "Saltar",
+		"app.clear": "Claro",
+		"app.dimensions": "Dimensiones",
+		"app.redo": "Rehacer",
+		"app.undo": "Deshacer",
 	},
 	fr: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "Quelque chose s'est mal passé",
 		"app.exit": "Sortie",
 		"app.next": "Suivant",
@@ -139,8 +181,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "Cette action est irréversible",
 		"app.height": "Hauteur",
 		"app.width": "Largeur",
+		"app.restart": "Redémarrer",
+		"app.retry": "Réessayer",
+		"app.skip": "Sauter",
+		"app.clear": "Clair",
+		"app.dimensions": "Dimensions",
+		"app.redo": "Refaire",
+		"app.undo": "Annuler",
 	},
 	it: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "Qualcosa è andato storto",
 		"app.exit": "Uscita",
 		"app.next": "Il prossimo",
@@ -159,11 +209,20 @@ export const translations: Translations<Text> = {
 		"app.decline": "Declino",
 		"app.resign": "Dimettersi",
 		"app.delete": "Elimina",
-		"app.this-action-cannot-be-undone": "Questa azione non può essere annullata",
+		"app.this-action-cannot-be-undone":
+			"Questa azione non può essere annullata",
 		"app.height": "Altezza",
 		"app.width": "Larghezza",
+		"app.restart": "Ricomincia",
+		"app.retry": "Riprova",
+		"app.skip": "Salta",
+		"app.clear": "Chiaro",
+		"app.dimensions": "Dimensioni",
+		"app.redo": "Rifare",
+		"app.undo": "Disfare",
 	},
 	ja: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "何かがうまくいかなかった",
 		"app.exit": "出口",
 		"app.next": "次",
@@ -185,8 +244,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "この操作は取り消せません",
 		"app.height": "高さ",
 		"app.width": "幅",
+		"app.restart": "再起動",
+		"app.retry": "再試行",
+		"app.skip": "スキップ",
+		"app.clear": "クリア",
+		"app.dimensions": "寸法",
+		"app.redo": "やり直す",
+		"app.undo": "元に戻す",
 	},
 	ko: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "문제가 발생했습니다",
 		"app.exit": "출구",
 		"app.next": "다음",
@@ -208,8 +275,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "이 작업은 취소할 수 없습니다",
 		"app.height": "신장",
 		"app.width": "폭",
+		"app.restart": "다시 시작",
+		"app.retry": "다시 시도",
+		"app.skip": "건너 뛰기",
+		"app.clear": "명확한",
+		"app.dimensions": "치수",
+		"app.redo": "다시 하다",
+		"app.undo": "실행 취소",
 	},
 	pt: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "Algo deu errado",
 		"app.exit": "Saída",
 		"app.next": "Próximo",
@@ -231,8 +306,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "Esta ação não pode ser desfeita",
 		"app.height": "Altura",
 		"app.width": "Largura",
+		"app.restart": "Reiniciar",
+		"app.retry": "Tentar novamente",
+		"app.skip": "Pular",
+		"app.clear": "Claro",
+		"app.dimensions": "Dimensões",
+		"app.redo": "Refazer",
+		"app.undo": "Desfazer",
 	},
 	ru: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "Что-то пошло не так",
 		"app.exit": "Выход",
 		"app.next": "Следующий",
@@ -254,8 +337,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "Это действие нельзя отменить",
 		"app.height": "Высота",
 		"app.width": "Ширина",
+		"app.restart": "Перезапуск",
+		"app.retry": "Повторить",
+		"app.skip": "Пропуск",
+		"app.clear": "Чистый",
+		"app.dimensions": "Размеры",
+		"app.redo": "Повторить",
+		"app.undo": "Отменить",
 	},
 	zh: {
+		"app.gamezilla-app": "gamezilla.app",
 		"app.something-went-wrong": "出了点问题",
 		"app.exit": "出口",
 		"app.next": "下一个",
@@ -277,8 +368,16 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "此操作无法撤消",
 		"app.height": "高度",
 		"app.width": "宽度",
+		"app.restart": "重新启动",
+		"app.retry": "重试",
+		"app.skip": "跳过",
+		"app.clear": "明确",
+		"app.dimensions": "尺寸",
+		"app.redo": "重做",
+		"app.undo": "撤销",
 	},
 	hi: {
+		"app.gamezilla-app": "गेमजिला.एप",
 		"app.something-went-wrong": "कुछ गलत हो गया",
 		"app.exit": "निकास",
 		"app.next": "अगला",
@@ -300,5 +399,12 @@ export const translations: Translations<Text> = {
 		"app.this-action-cannot-be-undone": "यह कार्रवाई पूर्ववत नहीं की जा सकती",
 		"app.height": "ऊँचाई",
 		"app.width": "चौड़ाई",
+		"app.restart": "पुनः प्रारंभ करें",
+		"app.retry": "पुनः प्रयास करें",
+		"app.skip": "छोड़ें",
+		"app.clear": "स्पष्ट",
+		"app.dimensions": "आयाम",
+		"app.redo": "फिर से करें",
+		"app.undo": "पूर्ववत करें",
 	},
 };

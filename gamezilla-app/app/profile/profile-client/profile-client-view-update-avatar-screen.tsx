@@ -43,7 +43,6 @@ export const ViewUpdateAvatarScreen = (input: {
 						}
 						id="seed"
 					/>
-
 				</div>
 			</div>
 		</div>

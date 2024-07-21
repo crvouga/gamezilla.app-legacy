@@ -7,6 +7,7 @@ import {
 	IconSpinner,
 	IconUserPen,
 	TopBar,
+	Typography,
 } from "gamezilla-app/app/@/ui";
 import type { ModelClient, MsgClient } from "../profile.types";
 
@@ -78,9 +79,10 @@ export const ViewProfileScreen = (input: {
 					src={profile?.avatarUrl}
 					alt="profile avatar"
 				/>
-				<p className="w-full overflow-hidden text-ellipsis text-center text-3xl">
-					{profile?.username}
-				</p>
+				<Typography
+					variant="title"
+					text={input.ctx.t("username", profile.username)}
+				/>
 			</div>
 		</div>
 	);
