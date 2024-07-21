@@ -40,9 +40,12 @@ export const ViewSpaceCard = (input: {
 			)}
 		>
 			<div className="flex w-full items-center justify-start">
-				<p className="block flex-1 text-left font-bold uppercase">
-					{input.ctx.t("space-card.live")}
-				</p>
+				<Typography
+					variant="label"
+					className="block flex-1 text-left font-bold uppercase text-white"
+					text={input.ctx.t("space-card.live")}
+				/>
+			
 			</div>
 
 			{gameName && (

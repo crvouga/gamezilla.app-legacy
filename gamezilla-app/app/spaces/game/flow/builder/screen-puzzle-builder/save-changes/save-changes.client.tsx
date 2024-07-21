@@ -6,7 +6,7 @@ import {
 	showCreatedSm,
 	showErrSm,
 } from "gamezilla-app/app/@/client";
-import { Button, Drawer, IconFloppyDisk } from "gamezilla-app/app/@/ui";
+import { Button, Drawer, IconFloppyDisk, Typography } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewBottomButtonBarAction } from "../../../../@/game";
@@ -253,10 +253,17 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = (input) => {
 			open={input.model.puzzleBuilderOpened === "unsaved-changes"}
 			position="bottom"
 		>
-			<p className="px-4 pt-4 text-3xl font-bold">Save changes?</p>
-			<p className="p-4 text-neutral-300">
-				Your changes will be lost if you don't save them before exiting.
-			</p>
+
+			<Typography
+				className="px-4 pt-4 text-3xl font-bold"
+				variant="title"
+				text={input.ctx.t("app.save-changes?")}
+			/>
+			<Typography
+				className="p-4 text-neutral-300"
+				variant="body"
+				text={input.ctx.t("app.save-changes-warning")}
+			/>
 			<div className="flex w-full flex-col gap-4 p-4">
 				<Button
 					className="w-full"

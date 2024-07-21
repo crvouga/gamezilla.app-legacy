@@ -10,6 +10,7 @@ import {
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { ViewGameHeader } from "../../game/view-game-header";
 import type { PlayerType, VsBotInput } from "../vs-bot";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 
 //
 //
@@ -63,7 +64,7 @@ type PlayerProp =
 	| {
 			t: "user";
 			userId: UserId | null;
-			playerLabel: string;
+			playerLabel: TranslatedText;
 			renderIcon: (input: { className: string }) => VDom;
 			onStartPlaying: () => void;
 			onStopPlaying: () => void;
@@ -71,9 +72,9 @@ type PlayerProp =
 	| {
 			t: "bot";
 
-			botLabel: string;
+			botLabel: TranslatedText;
 			renderBotIcon: (input: { className: string }) => VDom;
-			playerLabel: string;
+			playerLabel: TranslatedText;
 			renderIcon: (input: { className: string }) => VDom;
 			onStartPlaying: () => void;
 			onStopPlaying: () => void;
@@ -273,19 +274,28 @@ const PlayerLabels = ({
 	ctx: SpaceClientCtx;
 	player: PlayerProp;
 }) => {
+	const profile =
+		player.t === "user" && player.userId && ctx.profiles[player.userId]
+			? ctx.profiles[player.userId]
+			: null;
 	return (
 		<div className="col-span-3 grid grid-cols-2 place-items-center">
-			<p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-neutral-300">
-				{player.t === "bot"
-					? player.botLabel
-					: player.userId
-						? ctx.profiles[player.userId]?.username ?? "..."
-						: "?"}
-			</p>
-
-			<p className="text-center text-sm text-neutral-300">
-				{player.playerLabel}
-			</p>
+			<Typography
+				variant="label"
+				className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-neutral-300"
+				text={
+					player.t === "bot"
+						? player.botLabel
+						: profile
+							? ctx.t("username", profile.username)
+							: ctx.t("?")
+				}
+			/>
+			<Typography
+				variant="label"
+				className="text-center text-sm text-neutral-300"
+				text={player.playerLabel}
+			/>
 		</div>
 	);
 };

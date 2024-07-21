@@ -4,16 +4,16 @@ import type { LanguageCodeISO_639_1 } from "../lang-code-iso-639-1";
 import { createTranslator } from "../translations";
 
 export const loadTranslations = async (
-	languageCode: LanguageCodeISO_639_1,
+  languageCode: LanguageCodeISO_639_1
 ): Promise<Text> => {
-	const translations = await import(`./translations/${languageCode}.ts`);
-	return translations.translations;
+  const translations = await import(`./translations/${languageCode}.ts`);
+  return translations.translations;
 };
 
 export const loadTranslator = async (languageCode: LanguageCodeISO_639_1) => {
-	const translations = await loadTranslations(languageCode);
-	const t = createTranslator(translations);
-	return t;
+  const translations = await loadTranslations(languageCode);
+  const t = createTranslator(translations);
+  return t;
 };
 
 export type Translator = Awaited<ReturnType<typeof loadTranslator>>;

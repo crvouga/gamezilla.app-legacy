@@ -1,6 +1,6 @@
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { UserId } from "gamezilla-app/app/@/data";
-import { Avatar, Button, IconQuestionMark } from "gamezilla-app/app/@/ui";
+import { Avatar, Button, IconQuestionMark, Typography } from "gamezilla-app/app/@/ui";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { ViewGameHeader } from "../game/view-game-header";
 import { TranslatedText } from "gamezilla-app/@/l18n";
@@ -8,7 +8,7 @@ import { TranslatedText } from "gamezilla-app/@/l18n";
 type IconProps = { className: string };
 
 type PlayerProp = {
-	label: string;
+	label: TranslatedText;
 	userId: UserId | null;
 	onStartPlaying: () => void;
 	onStopPlaying: () => void;
@@ -30,9 +30,12 @@ const VersusSection = ({
 				<PlayerIcons player={playerOne} ctx={ctx} />
 
 				<div className="col-span-1">
-					<p className=" flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black">
-						VS
-					</p>
+					<Typography
+						text={ctx.t("game.vs")}
+						variant="title"
+						className="flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black"
+					/>
+					
 				</div>
 
 				<PlayerIcons player={playerTwo} ctx={ctx} />
@@ -144,9 +147,13 @@ const PlayerLabels = ({
 				{player.userId ? ctx.profiles[player.userId]?.username ?? "..." : "?"}
 			</p>
 
-			<p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center">
-				{player.label}
-			</p>
+			<Typography
+				className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center"
+				text={player.label}
+				variant="body"
+			/>
+
+			
 		</div>
 	);
 };
