@@ -36,7 +36,7 @@ export const TopBar = (input: {
 			<div className="flex-1 truncate flex flex-col">
 				<Typography
 					role="heading"
-					className="font-bold truncate px-2 text-2xl"
+					className="font-bold truncate px-2 text-xl"
 					variant="title"
 					text={input.title}
 				/>

@@ -495,7 +495,7 @@ const ViewUpdateScreen = (input: {
 	}
 
 	return (
-		<div className="flex h-full w-full flex-col items-center gap-4">
+		<div className="flex h-full w-full flex-col items-center">
 			<TopBar
 				ctx={input.ctx}
 				onBack={() =>
@@ -507,7 +507,7 @@ const ViewUpdateScreen = (input: {
 				title={input.ctx.t("profile.update-profile")}
 			/>
 
-			<div className="flex w-full flex-col items-center gap-2 py-2">
+			<div className="flex w-full flex-col items-center gap-4 p-4">
 				<Avatar
 					src={profile?.avatarUrl}
 					className="h-28 w-28"
