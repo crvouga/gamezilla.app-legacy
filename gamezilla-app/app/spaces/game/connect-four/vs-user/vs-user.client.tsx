@@ -165,7 +165,7 @@ const View: Module["View"] = (input) => {
 					}}
 					onQuit={input.ctx.onQuit}
 					playerOne={{
-						label: input.ctx.t('connect-four.red'),
+						label: input.ctx.t("connect-four.red"),
 						onStartPlaying: () => {
 							input.dispatch({
 								t: "user-started-playing",
@@ -185,7 +185,7 @@ const View: Module["View"] = (input) => {
 						userId: input.modelCore.players["player-one"] ?? null,
 					}}
 					playerTwo={{
-						label: input.ctx.t('connect-four.yellow'),
+						label: input.ctx.t("connect-four.yellow"),
 						onStartPlaying: () => {
 							input.dispatch({
 								t: "user-started-playing",

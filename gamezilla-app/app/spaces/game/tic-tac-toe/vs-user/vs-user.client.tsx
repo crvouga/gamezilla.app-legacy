@@ -184,7 +184,7 @@ export const View = ({
 				title={ctx.t("tic-tac-toe")}
 				canStartGame={model.X !== "none" && model.O !== "none"}
 				playerOne={{
-					label: ctx.t('tic-tac-toe.cross'),
+					label: ctx.t("tic-tac-toe.cross"),
 					userId: model.X === "none" ? null : model.X,
 					renderIcon: (input) => {
 						return <PlayerTypeIcon playerType="X" {...input} />;
@@ -203,7 +203,7 @@ export const View = ({
 					},
 				}}
 				playerTwo={{
-					label: ctx.t('tic-tac-toe.naught'),
+					label: ctx.t("tic-tac-toe.naught"),
 					userId: model.O === "none" ? null : model.O,
 					renderIcon: (input) => {
 						return <PlayerTypeIcon playerType="O" {...input} />;

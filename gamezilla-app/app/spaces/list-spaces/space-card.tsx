@@ -45,7 +45,6 @@ export const ViewSpaceCard = (input: {
 					className="block flex-1 text-left font-bold uppercase text-white"
 					text={input.ctx.t("space-card.live")}
 				/>
-			
 			</div>
 
 			{gameName && (

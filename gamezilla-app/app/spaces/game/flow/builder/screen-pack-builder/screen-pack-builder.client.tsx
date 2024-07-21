@@ -346,7 +346,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 					position="bottom"
 				>
 					<ListItemButton
-						icon={(inputIcon) => <IconDeleteForever {...inputIcon} />}						
+						icon={(inputIcon) => <IconDeleteForever {...inputIcon} />}
 						label={input.ctx.t("flow.remove-from-pack")}
 						color="danger"
 						onClick={() =>

@@ -234,10 +234,10 @@ export const ViewStatusBar = (input: {
 
 export const ViewStatusBarDrawer = (input: {
 	model: ModelClient;
-		dispatch: (m: MsgClient) => void;
-		ctx: {
-		t: Translator
-	}
+	dispatch: (m: MsgClient) => void;
+	ctx: {
+		t: Translator;
+	};
 }) => {
 	switch (input.model.state.t) {
 		case "server-connected": {
@@ -283,7 +283,7 @@ export const ViewStatusBarDrawer = (input: {
 							onClick={() => input.dispatch({ t: "clicked-try-reconnect" })}
 							className="font-bold text-red-500"
 						>
-							{input.ctx.t('wire.try-reconnect')}
+							{input.ctx.t("wire.try-reconnect")}
 						</button>
 					)}
 				/>

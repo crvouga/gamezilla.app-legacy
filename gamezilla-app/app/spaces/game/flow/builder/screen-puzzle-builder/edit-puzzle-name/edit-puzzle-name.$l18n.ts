@@ -1,4 +1,4 @@
-import { Translations } from "gamezilla-app/@/l18n";
+import type { Translations } from "gamezilla-app/@/l18n";
 
 export type Text = {
 	"flow.saved-name": string;
@@ -32,7 +32,7 @@ export const translations: Translations<Text> = {
 	},
 	it: {
 		"flow.saved-name": "Nome salvato",
-		 "puzzle.edit-name": "Modifica nome",
+		"puzzle.edit-name": "Modifica nome",
 	},
 	ja: {
 		"flow.saved-name": "名前が保存されました",

@@ -1,4 +1,4 @@
-import { Translations } from "gamezilla-app/@/l18n";
+import type { Translations } from "gamezilla-app/@/l18n";
 import { BotLevel } from "./chess/chess-core";
 
 export type Text = {

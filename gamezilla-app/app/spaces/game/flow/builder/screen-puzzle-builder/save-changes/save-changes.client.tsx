@@ -6,7 +6,12 @@ import {
 	showCreatedSm,
 	showErrSm,
 } from "gamezilla-app/app/@/client";
-import { Button, Drawer, IconFloppyDisk, Typography } from "gamezilla-app/app/@/ui";
+import {
+	Button,
+	Drawer,
+	IconFloppyDisk,
+	Typography,
+} from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewBottomButtonBarAction } from "../../../../@/game";
@@ -253,7 +258,6 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = (input) => {
 			open={input.model.puzzleBuilderOpened === "unsaved-changes"}
 			position="bottom"
 		>
-
 			<Typography
 				className="px-4 pt-4 text-3xl font-bold"
 				variant="title"

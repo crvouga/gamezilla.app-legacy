@@ -208,6 +208,9 @@ export const View: Module["View"] = (input) => {
 						/>
 					);
 				}
+				default: {
+					return null;
+				}
 			}
 		}
 		default: {
@@ -228,6 +231,7 @@ const ViewChooseLang: Module["View"] = (input) => {
 				{LanguageCodeISO_639_1.ALL.map((code) => {
 					return (
 						<ListItemButton
+							key={code}
 							label={input.ctx.t(code)}
 							icon={(inputIcon) => {
 								if (input.model.loading[code]?.endedAt === null) {

@@ -1,6 +1,11 @@
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { UserId } from "gamezilla-app/app/@/data";
-import { Avatar, Button, IconQuestionMark, Typography } from "gamezilla-app/app/@/ui";
+import {
+	Avatar,
+	Button,
+	IconQuestionMark,
+	Typography,
+} from "gamezilla-app/app/@/ui";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { ViewGameHeader } from "../game/view-game-header";
 import { TranslatedText } from "gamezilla-app/@/l18n";
@@ -35,7 +40,6 @@ const VersusSection = ({
 						variant="title"
 						className="flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black"
 					/>
-					
 				</div>
 
 				<PlayerIcons player={playerTwo} ctx={ctx} />
@@ -152,8 +156,6 @@ const PlayerLabels = ({
 				text={player.label}
 				variant="body"
 			/>
-
-			
 		</div>
 	);
 };

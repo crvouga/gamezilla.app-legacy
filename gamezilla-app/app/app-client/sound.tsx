@@ -220,8 +220,8 @@ export const ViewStatusBarDrawer = (input: {
 	model: Model;
 	dispatch: (m: Msg) => void;
 	ctx: {
-		t: Translator
-	}
+		t: Translator;
+	};
 }) => {
 	return (
 		<ListItemButton
@@ -233,7 +233,11 @@ export const ViewStatusBarDrawer = (input: {
 					<IconVolumeHigh {...inputIcon} />
 				)
 			}
-			label={input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on')}
+			label={
+				input.model.muted
+					? input.ctx.t("sound.sound-off")
+					: input.ctx.t("sound.sound-on")
+			}
 			end={() => (
 				<ToggleButton
 					label="toggle sound"

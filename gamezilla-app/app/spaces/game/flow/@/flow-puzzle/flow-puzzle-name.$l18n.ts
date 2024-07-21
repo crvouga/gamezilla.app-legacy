@@ -1,4 +1,4 @@
-import { Translations } from "gamezilla-app/@/l18n";
+import type { Translations } from "gamezilla-app/@/l18n";
 import { FlowPuzzleName } from "./flow-puzzle-name";
 
 export type Text = {

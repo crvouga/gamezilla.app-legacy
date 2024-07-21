@@ -1,5 +1,5 @@
-import { Translations } from "gamezilla-app/@/l18n";
-import { Username } from "gamezilla-app/app/@/data";
+import type { Translations } from "gamezilla-app/@/l18n";
+import type { Username } from "gamezilla-app/app/@/data";
 
 export type Text = {
 	"spaces.games": string;

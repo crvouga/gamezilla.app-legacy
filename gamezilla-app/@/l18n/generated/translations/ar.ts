@@ -2,255 +2,255 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-  "sound.sound-off": "الصوت معطل",
-  "sound.sound-on": "الصوت مفعل",
-  "wire.server-restarted": "تم إعادة تشغيل الخادم",
-  "wire.connecting...": "جاري الاتصال...",
-  "wire.offline": "غير متصل",
-  "wire.online": "متصل",
-  "wire.try-reconnect": "حاول إعادة الاتصال",
-  "auth.logout": "تسجيل الخروج",
-  "auth.logged-in-as-guest": "تم تسجيل الدخول كضيف",
-  "auth.logged-in-with-phone": "تم تسجيل الدخول بالهاتف",
-  "auth.current-user-logged-out": "تسجيل الخروج",
-  "auth.current-user-logged-in": "تسجيل الدخول",
-  "auth.continue-as-guest": "المتابعة كضيف",
-  "auth.continue-with-phone": "المتابعة بالهاتف",
-  "auth.or": "أو",
-  "auth.sign-in-to": "تسجيل الدخول إلى",
-  "auth.logged-in": "تم تسجيل الدخول",
-  "auth.logout-of-gamezill.app": "تسجيل الخروج من gamezilla.app",
-  "auth.logout-of-gamezill.app-body": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
-  "verify-sms.code-message": (code) =>
-    `\u0631\u0645\u0632 \u0627\u0644\u062A\u062D\u0642\u0642 \u0627\u0644\u062E\u0627\u0635 \u0628\u0643 \u0647\u0648 ${code}`,
-  "verify-sms-problem.code-incorrect": "الرمز غير صحيح",
-  "verify-sms-problem.verification-expired": "انتهت صلاحية التحقق",
-  "verify-sms-problem.verification-not-found": "لم يتم العثور على التحقق",
-  "verify-sms-problem.verification-already-verified": "تم التحقق بالفعل",
-  "verify-sms-problem.database-error": "خطأ في قاعدة البيانات",
-  "verify-sms-problem.verification-expired-too-many-failed-attempts":
-    "انتهت صلاحية التحقق بسبب عدد كبير من المحاولات الفاشلة",
-  "verify-sms-problem.send-code-hourly-limit-reached":
-    "تم الوصول إلى الحد الساعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
-  "verify-sms-problem.send-code-daily-limit-reached":
-    "تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.",
-  "verify-sms-problem.verification-expired-not-latest-verification":
-    "انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق",
-  "verify-sms-problem.send-code-limit-reached":
-    "تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.",
-  "auth-sms.login-with-phone": "تسجيل الدخول برقم الهاتف",
-  "auth-sms.phone-number": "رقم الهاتف",
-  "auth-sms.send-code": "إرسال الرمز",
-  "auth-sms.country": "بلد",
-  "auth-sms.code": "الرمز",
-  "auth-sms.verify-code": "التحقق من الرمز",
-  "auth-sms.invalid-phone-number": "رقم الهاتف غير صالح",
-  "auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
-    `\u0623\u062F\u062E\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0631\u0633\u0644 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
-  "auth-sms.sent-code-to": (formattedPhoneNumber) =>
-    `\u062A\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0645\u0632 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
-  "auth-email.login-with-email": "تسجيل الدخول بالبريد الإلكتروني",
-  "auth-email.send-login-link": "إرسال رابط تسجيل الدخول",
-  "spaces.current-user-left": "ترك الفضاء",
-  "spaces.other-user-left": (username) =>
-    `${username} \u062A\u0631\u0643 \u0627\u0644\u0641\u0636\u0627\u0621`,
-  "spaces.leave": "غادر",
-  "spaces.start-space": "بدء المساحة",
-  "spaces.space-started": "بدأت المساحة",
-  "spaces.see-profile": "مشاهدة الملف الشخصي",
-  "tic-tac-toe.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case "Easy":
-        return "\u0633\u0647\u0644";
-      case "Impossible":
-        return "\u0645\u0633\u062A\u062D\u064A\u0644";
-      case "Medium":
-        return "\u0645\u062A\u0648\u0633\u0637";
-      default:
-        return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
-    }
-  },
-  "tic-tac-toe.cross": "صليب",
-  "tic-tac-toe.naught": "دائرة",
-  "connect-four": "ربط أربعة",
-  flow: "تدفق",
-  "tic-tac-toe": "لعبة إكس أو",
-  gomoku: "جوموكو",
-  chess: "شطرنج",
-  "connect-four.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case "Easy":
-        return "\u0633\u0647\u0644";
-      case "Hard":
-        return "\u0635\u0639\u0628";
-      case "Medium":
-        return "\u0645\u062A\u0648\u0633\u0637";
-      default:
-        return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
-    }
-  },
-  "connect-four.red": "أحمر",
-  "connect-four.yellow": "أصفر",
-  "chess.puzzle-description": "تدرب مع أكثر من 3 ملايين لغز",
-  "chess.puzzle-title": "ألغاز",
-  "chess.black": "أسود",
-  "chess.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case 0:
-        return "\u0645\u0628\u062A\u062F\u0626";
-      case 1:
-        return "\u0645\u062A\u0648\u0633\u0637";
-      case 2:
-        return "\u0645\u062A\u0642\u062F\u0645";
-      case 3:
-        return "\u062E\u0628\u064A\u0631";
-      case 4:
-        return "\u0645\u0627\u062C\u0633\u062A\u064A\u0631";
-      default:
-        return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
-    }
-  },
-  "chess.white": "أبيض",
-  "game.hint": "ملحوظة",
-  "game.start-game": "بدء اللعبة",
-  "game.start-playing": "بدء اللعب",
-  "game.stop-playing": "توقف عن اللعب",
-  "game.change-bot": "تغيير البوت",
-  "game.swap-sides": "تبديل الجانب",
-  "game.rematch": "إعادة المباراة",
-  "game.draw": "تعادل",
-  "game.loser": "الخاسر",
-  "game.play-again": "العب مرة أخرى",
-  "game.winner": "الفائز",
-  "game.vs": "ضد",
-  host: "المضيف",
-  you: "أنت",
-  "game.play-friend-title": "العب مع صديق",
-  "game.play-friend-description": "العب ضد أصدقائك في المكان",
-  "game.play-computer-title": "العب مع الكمبيوتر",
-  "game.play-computer-description": "العب ضد الكمبيوتر",
-  "flow.copy-puzzle-to-clipboard": "نسخ اللغز إلى الحافظة",
-  "flow.create-new": "إنشاء جديد",
-  "flow.create-puzzle": "إنشاء لغز",
-  "flow.puzzle-created": "تم إنشاء اللغز",
-  "flow.saved-name": "تم حفظ الاسم",
-  "puzzle.edit-name": "تحرير الاسم",
-  "flow.puzzle-deleted": "تم حذف اللغز",
-  "flow.delete-puzzle-forever?": "هل تريد حذف اللغز نهائياً؟",
-  "flow.delete-forever": "حذف نهائي",
-  "flow.edit-mode": "وضع التحرير",
-  "flow.play-mode": "وضع اللعب",
-  "flow.puzzle-removed": "تمت إزالة اللغز",
-  "flow.puzzle-added": "تمت إضافة اللغز",
-  "flow.remove-from-pack": "إزالة من الحزمة",
-  "flow.create-pack": "إنشاء حزمة",
-  "flow.pack-created": "تم إنشاء الحزمة",
-  "flow.flow": "تدفق",
-  "flow.play": "لعب",
-  "flow.play-description": "ابدأ في لعب الألغاز",
-  "flow.builder": "باني",
-  "flow.builder-description": "إنشاء وتحرير الألغاز والحزم",
-  "flow.puzzle-completed": "تم حل اللغز",
-  "flow.select-next-pack": "حدد الحزمة التالية",
-  "flow.next-puzzle": "اللغز التالي",
-  "flow.level": (level) => `\u0645\u0633\u062A\u0648\u0649 ${level}`,
-  "flow.packs": "حزم",
-  "flow.puzzles": "ألغاز",
-  "flow-pack-name": (flowPackName) => `${flowPackName}`,
-  "flow.no-packs": "لا توجد حزم",
-  "flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
-  "flow.no-puzzles": "لا توجد ألغاز",
-  "space-game-flow-edit.editing": "تحرير",
-  "spaces.end": "نهاية",
-  "spaces.end-space": "انهاء المساحة",
-  "spaces.ended-space-host": "تم انهاء المساحة من قبل المضيف",
-  "spaces.ended-space-current-user": "انهاء المساحة",
-  "spaces.ended-space-other-user": (username) =>
-    `${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
-  "spaces.space-ended": "تم انهاء المساحة",
-  "spaces.space": "الفضاء",
-  "spaces.join-space": "انضم إلى المساحة",
-  "spaces.current-user-joined-space": "انضم إلى الفضاء",
-  "spaces.other-user-joined-space": (username) =>
-    username
-      ? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
-      : "\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
-  "spaces.you're-already-in-a-space": "أنت بالفعل في مساحة",
-  "spaces.games": "الألعاب",
-  "spaces.current-space": ({ hostUsername }) =>
-    `\u0627\u0644\u0645\u0633\u0627\u062D\u0629 \u0627\u0644\u062D\u0627\u0644\u064A\u0629 \u0644\u0640 ${hostUsername}`,
-  "spaces.home": "الصفحة الرئيسية",
-  "spaces.people-count": (peopleCount) =>
-    peopleCount === 1
-      ? "\u0627\u0644\u0646\u0627\u0633"
-      : `\u0627\u0644\u0646\u0627\u0633 (${peopleCount.toLocaleString()})`,
-  "space-card.live": "حي",
-  "space-card.people-count": (count) =>
-    `${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
-  "spaces.spaces": "الفضاءات",
-  "spaces.no-spaces": "لا توجد مساحات",
-  "spaces.space-not-found": "الفضاء غير موجود",
-  "spaces.go-home": "اذهب إلى الصفحة الرئيسية",
-  "spaces.current-user-ended-space": "انتهى الفضاء",
-  "spaces.other-user-ended-space": (username) =>
-    username
-      ? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
-      : "\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
-  "lang.language": "اللغة",
-  "lang.choose-language": "اختر اللغة",
-  "lang.done": "تم",
-  "lang.loaded-translations": "تم تحميل الترجمات",
-  "profile.update-profile": "تحديث الملف الشخصي",
-  "profile.update-avatar": "تحديث الصورة الرمزية",
-  "profile.profile": "الملف الشخصي",
-  "app.gamezilla-app": "gamezilla.app",
-  "app.something-went-wrong": "حدث خطأ ما",
-  "app.exit": "خروج",
-  "app.next": "التالى",
-  "app.prev": "سابق",
-  "app.reset": "إعادة تعيين",
-  "app.congratulations": "تهانينا",
-  "app.more": "أكثر",
-  "app.copied-to-clipboard": "تم النسخ إلى الحافظة",
-  "app.saved-changes": "تم حفظ التغييرات",
-  "app.dont-save": "لا تحفظ",
-  "app.save": "حفظ",
-  "app.cancel": "إلغاء",
-  "app.close": "إغلاق",
-  "app.change": "تغيير",
-  "app.accept": "قبول",
-  "app.decline": "انخفاض",
-  "app.resign": "استقالة",
-  "app.delete": "حذف",
-  "app.this-action-cannot-be-undone": "لا يمكن التراجع عن هذا الإجراء",
-  "app.height": "ارتفاع",
-  "app.width": "عرض",
-  "app.restart": "إعادة بدء",
-  "app.retry": "أعد المحاولة",
-  "app.skip": "تخطى",
-  "app.clear": "واضح",
-  "app.dimensions": "الأبعاد",
-  "app.redo": "إعادة",
-  "app.undo": "إلغاء",
-  "app.editor": "محرر",
-  "app.people": "الناس",
-  "app.+number": (number) => `+${number.toLocaleString()}`,
-  "?": "؟",
-  "app.save-changes-warning":
-    "سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.",
-  "app.save-changes?": "حفظ التغييرات؟",
-  "username-title": "اسم المستخدم",
-  username: (username) => `@${username}`,
-  en: "إنجليزي",
-  es: "إسباني",
-  ar: "عربي",
-  de: "ألماني",
-  fr: "فرنسي",
-  hi: "هندي",
-  it: "إيطالي",
-  ja: "ياباني",
-  ko: "كوري",
-  pt: "برتغالي",
-  ru: "روسي",
-  zh: "صيني",
+	"sound.sound-off": "الصوت معطل",
+	"sound.sound-on": "الصوت مفعل",
+	"wire.server-restarted": "تم إعادة تشغيل الخادم",
+	"wire.connecting...": "جاري الاتصال...",
+	"wire.offline": "غير متصل",
+	"wire.online": "متصل",
+	"wire.try-reconnect": "حاول إعادة الاتصال",
+	"auth.logout": "تسجيل الخروج",
+	"auth.logged-in-as-guest": "تم تسجيل الدخول كضيف",
+	"auth.logged-in-with-phone": "تم تسجيل الدخول بالهاتف",
+	"auth.current-user-logged-out": "تسجيل الخروج",
+	"auth.current-user-logged-in": "تسجيل الدخول",
+	"auth.continue-as-guest": "المتابعة كضيف",
+	"auth.continue-with-phone": "المتابعة بالهاتف",
+	"auth.or": "أو",
+	"auth.sign-in-to": "تسجيل الدخول إلى",
+	"auth.logged-in": "تم تسجيل الدخول",
+	"auth.logout-of-gamezill.app": "تسجيل الخروج من gamezilla.app",
+	"auth.logout-of-gamezill.app-body": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+	"verify-sms.code-message": (code) =>
+		`\u0631\u0645\u0632 \u0627\u0644\u062A\u062D\u0642\u0642 \u0627\u0644\u062E\u0627\u0635 \u0628\u0643 \u0647\u0648 ${code}`,
+	"verify-sms-problem.code-incorrect": "الرمز غير صحيح",
+	"verify-sms-problem.verification-expired": "انتهت صلاحية التحقق",
+	"verify-sms-problem.verification-not-found": "لم يتم العثور على التحقق",
+	"verify-sms-problem.verification-already-verified": "تم التحقق بالفعل",
+	"verify-sms-problem.database-error": "خطأ في قاعدة البيانات",
+	"verify-sms-problem.verification-expired-too-many-failed-attempts":
+		"انتهت صلاحية التحقق بسبب عدد كبير من المحاولات الفاشلة",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"تم الوصول إلى الحد الساعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+	"verify-sms-problem.send-code-daily-limit-reached":
+		"تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+	"verify-sms-problem.verification-expired-not-latest-verification":
+		"انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق",
+	"verify-sms-problem.send-code-limit-reached":
+		"تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.",
+	"auth-sms.login-with-phone": "تسجيل الدخول برقم الهاتف",
+	"auth-sms.phone-number": "رقم الهاتف",
+	"auth-sms.send-code": "إرسال الرمز",
+	"auth-sms.country": "بلد",
+	"auth-sms.code": "الرمز",
+	"auth-sms.verify-code": "التحقق من الرمز",
+	"auth-sms.invalid-phone-number": "رقم الهاتف غير صالح",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`\u0623\u062F\u062E\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0631\u0633\u0644 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
+	"auth-sms.sent-code-to": (formattedPhoneNumber) =>
+		`\u062A\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0645\u0632 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
+	"auth-email.login-with-email": "تسجيل الدخول بالبريد الإلكتروني",
+	"auth-email.send-login-link": "إرسال رابط تسجيل الدخول",
+	"spaces.current-user-left": "ترك الفضاء",
+	"spaces.other-user-left": (username) =>
+		`${username} \u062A\u0631\u0643 \u0627\u0644\u0641\u0636\u0627\u0621`,
+	"spaces.leave": "غادر",
+	"spaces.start-space": "بدء المساحة",
+	"spaces.space-started": "بدأت المساحة",
+	"spaces.see-profile": "مشاهدة الملف الشخصي",
+	"tic-tac-toe.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case "Easy":
+				return "\u0633\u0647\u0644";
+			case "Impossible":
+				return "\u0645\u0633\u062A\u062D\u064A\u0644";
+			case "Medium":
+				return "\u0645\u062A\u0648\u0633\u0637";
+			default:
+				return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
+		}
+	},
+	"tic-tac-toe.cross": "صليب",
+	"tic-tac-toe.naught": "دائرة",
+	"connect-four": "ربط أربعة",
+	flow: "تدفق",
+	"tic-tac-toe": "لعبة إكس أو",
+	gomoku: "جوموكو",
+	chess: "شطرنج",
+	"connect-four.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case "Easy":
+				return "\u0633\u0647\u0644";
+			case "Hard":
+				return "\u0635\u0639\u0628";
+			case "Medium":
+				return "\u0645\u062A\u0648\u0633\u0637";
+			default:
+				return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
+		}
+	},
+	"connect-four.red": "أحمر",
+	"connect-four.yellow": "أصفر",
+	"chess.puzzle-description": "تدرب مع أكثر من 3 ملايين لغز",
+	"chess.puzzle-title": "ألغاز",
+	"chess.black": "أسود",
+	"chess.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case 0:
+				return "\u0645\u0628\u062A\u062F\u0626";
+			case 1:
+				return "\u0645\u062A\u0648\u0633\u0637";
+			case 2:
+				return "\u0645\u062A\u0642\u062F\u0645";
+			case 3:
+				return "\u062E\u0628\u064A\u0631";
+			case 4:
+				return "\u0645\u0627\u062C\u0633\u062A\u064A\u0631";
+			default:
+				return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
+		}
+	},
+	"chess.white": "أبيض",
+	"game.hint": "ملحوظة",
+	"game.start-game": "بدء اللعبة",
+	"game.start-playing": "بدء اللعب",
+	"game.stop-playing": "توقف عن اللعب",
+	"game.change-bot": "تغيير البوت",
+	"game.swap-sides": "تبديل الجانب",
+	"game.rematch": "إعادة المباراة",
+	"game.draw": "تعادل",
+	"game.loser": "الخاسر",
+	"game.play-again": "العب مرة أخرى",
+	"game.winner": "الفائز",
+	"game.vs": "ضد",
+	host: "المضيف",
+	you: "أنت",
+	"game.play-friend-title": "العب مع صديق",
+	"game.play-friend-description": "العب ضد أصدقائك في المكان",
+	"game.play-computer-title": "العب مع الكمبيوتر",
+	"game.play-computer-description": "العب ضد الكمبيوتر",
+	"flow.copy-puzzle-to-clipboard": "نسخ اللغز إلى الحافظة",
+	"flow.create-new": "إنشاء جديد",
+	"flow.create-puzzle": "إنشاء لغز",
+	"flow.puzzle-created": "تم إنشاء اللغز",
+	"flow.saved-name": "تم حفظ الاسم",
+	"puzzle.edit-name": "تحرير الاسم",
+	"flow.puzzle-deleted": "تم حذف اللغز",
+	"flow.delete-puzzle-forever?": "هل تريد حذف اللغز نهائياً؟",
+	"flow.delete-forever": "حذف نهائي",
+	"flow.edit-mode": "وضع التحرير",
+	"flow.play-mode": "وضع اللعب",
+	"flow.puzzle-removed": "تمت إزالة اللغز",
+	"flow.puzzle-added": "تمت إضافة اللغز",
+	"flow.remove-from-pack": "إزالة من الحزمة",
+	"flow.create-pack": "إنشاء حزمة",
+	"flow.pack-created": "تم إنشاء الحزمة",
+	"flow.flow": "تدفق",
+	"flow.play": "لعب",
+	"flow.play-description": "ابدأ في لعب الألغاز",
+	"flow.builder": "باني",
+	"flow.builder-description": "إنشاء وتحرير الألغاز والحزم",
+	"flow.puzzle-completed": "تم حل اللغز",
+	"flow.select-next-pack": "حدد الحزمة التالية",
+	"flow.next-puzzle": "اللغز التالي",
+	"flow.level": (level) => `\u0645\u0633\u062A\u0648\u0649 ${level}`,
+	"flow.packs": "حزم",
+	"flow.puzzles": "ألغاز",
+	"flow-pack-name": (flowPackName) => `${flowPackName}`,
+	"flow.no-packs": "لا توجد حزم",
+	"flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
+	"flow.no-puzzles": "لا توجد ألغاز",
+	"space-game-flow-edit.editing": "تحرير",
+	"spaces.end": "نهاية",
+	"spaces.end-space": "انهاء المساحة",
+	"spaces.ended-space-host": "تم انهاء المساحة من قبل المضيف",
+	"spaces.ended-space-current-user": "انهاء المساحة",
+	"spaces.ended-space-other-user": (username) =>
+		`${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
+	"spaces.space-ended": "تم انهاء المساحة",
+	"spaces.space": "الفضاء",
+	"spaces.join-space": "انضم إلى المساحة",
+	"spaces.current-user-joined-space": "انضم إلى الفضاء",
+	"spaces.other-user-joined-space": (username) =>
+		username
+			? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
+			: "\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
+	"spaces.you're-already-in-a-space": "أنت بالفعل في مساحة",
+	"spaces.games": "الألعاب",
+	"spaces.current-space": ({ hostUsername }) =>
+		`\u0627\u0644\u0645\u0633\u0627\u062D\u0629 \u0627\u0644\u062D\u0627\u0644\u064A\u0629 \u0644\u0640 ${hostUsername}`,
+	"spaces.home": "الصفحة الرئيسية",
+	"spaces.people-count": (peopleCount) =>
+		peopleCount === 1
+			? "\u0627\u0644\u0646\u0627\u0633"
+			: `\u0627\u0644\u0646\u0627\u0633 (${peopleCount.toLocaleString()})`,
+	"space-card.live": "حي",
+	"space-card.people-count": (count) =>
+		`${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
+	"spaces.spaces": "الفضاءات",
+	"spaces.no-spaces": "لا توجد مساحات",
+	"spaces.space-not-found": "الفضاء غير موجود",
+	"spaces.go-home": "اذهب إلى الصفحة الرئيسية",
+	"spaces.current-user-ended-space": "انتهى الفضاء",
+	"spaces.other-user-ended-space": (username) =>
+		username
+			? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
+			: "\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
+	"lang.language": "اللغة",
+	"lang.choose-language": "اختر اللغة",
+	"lang.done": "تم",
+	"lang.loaded-translations": "تم تحميل الترجمات",
+	"profile.update-profile": "تحديث الملف الشخصي",
+	"profile.update-avatar": "تحديث الصورة الرمزية",
+	"profile.profile": "الملف الشخصي",
+	"app.gamezilla-app": "gamezilla.app",
+	"app.something-went-wrong": "حدث خطأ ما",
+	"app.exit": "خروج",
+	"app.next": "التالى",
+	"app.prev": "سابق",
+	"app.reset": "إعادة تعيين",
+	"app.congratulations": "تهانينا",
+	"app.more": "أكثر",
+	"app.copied-to-clipboard": "تم النسخ إلى الحافظة",
+	"app.saved-changes": "تم حفظ التغييرات",
+	"app.dont-save": "لا تحفظ",
+	"app.save": "حفظ",
+	"app.cancel": "إلغاء",
+	"app.close": "إغلاق",
+	"app.change": "تغيير",
+	"app.accept": "قبول",
+	"app.decline": "انخفاض",
+	"app.resign": "استقالة",
+	"app.delete": "حذف",
+	"app.this-action-cannot-be-undone": "لا يمكن التراجع عن هذا الإجراء",
+	"app.height": "ارتفاع",
+	"app.width": "عرض",
+	"app.restart": "إعادة بدء",
+	"app.retry": "أعد المحاولة",
+	"app.skip": "تخطى",
+	"app.clear": "واضح",
+	"app.dimensions": "الأبعاد",
+	"app.redo": "إعادة",
+	"app.undo": "إلغاء",
+	"app.editor": "محرر",
+	"app.people": "الناس",
+	"app.+number": (number) => `+${number.toLocaleString()}`,
+	"?": "؟",
+	"app.save-changes-warning":
+		"سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.",
+	"app.save-changes?": "حفظ التغييرات؟",
+	"username-title": "اسم المستخدم",
+	username: (username) => `@${username}`,
+	en: "إنجليزي",
+	es: "إسباني",
+	ar: "عربي",
+	de: "ألماني",
+	fr: "فرنسي",
+	hi: "هندي",
+	it: "إيطالي",
+	ja: "ياباني",
+	ko: "كوري",
+	pt: "برتغالي",
+	ru: "روسي",
+	zh: "صيني",
 };

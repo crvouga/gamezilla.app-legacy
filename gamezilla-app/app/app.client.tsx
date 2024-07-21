@@ -8,7 +8,10 @@ import {
 	toMsgType,
 } from "gamezilla-app/@/core";
 import { Msg } from "gamezilla-app/@/core/msg";
-import { LanguageCodeISO_639_1, TranslatedText } from "gamezilla-app/@/l18n";
+import {
+	LanguageCodeISO_639_1,
+	type TranslatedText,
+} from "gamezilla-app/@/l18n";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import type { VDom } from "gamezilla-app/@/vdom";
 import {
@@ -792,7 +795,7 @@ const ViewBottomNavBar = (input: {
 				n: "spaces",
 				t: "space-list",
 			},
-			label: input.ctx.t('spaces.spaces'),
+			label: input.ctx.t("spaces.spaces"),
 			icon: <IconGamepad className="h-6 w-6" />,
 		},
 		{
@@ -801,7 +804,7 @@ const ViewBottomNavBar = (input: {
 				t: "profile",
 				userId: input.ctx.currentUserId,
 			},
-			label: input.ctx.t('profile.profile'),
+			label: input.ctx.t("profile.profile"),
 			icon: <IconUserCircle className="h-6 w-6" />,
 		},
 	];

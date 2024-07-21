@@ -1,3 +1,4 @@
+import type { TranslatedText } from "gamezilla-app/@/l18n";
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import type { SpaceId } from "gamezilla-app/app/@/data";
@@ -17,7 +18,6 @@ import { Modals } from "../modals/modals";
 import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { ModelClient, MsgClient } from "../spaces.types";
 import { SpaceGameClient } from "./space-game.client";
-import { TranslatedText } from "gamezilla-app/@/l18n";
 
 const View = (input: {
 	model: ModelClient;

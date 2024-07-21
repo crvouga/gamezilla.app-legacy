@@ -1,4 +1,4 @@
-import { Translations } from "gamezilla-app/@/l18n";
+import type { Translations } from "gamezilla-app/@/l18n";
 
 export type Text = {
 	"wire.server-restarted": string;
@@ -76,7 +76,7 @@ export const translations: Translations<Text> = {
 		"wire.server-restarted": "Servidor reiniciado",
 		"wire.connecting...": "Conectando...",
 		"wire.offline": "Offline",
-		'wire.online': 'Online',
+		"wire.online": "Online",
 		"wire.try-reconnect": "Tentar reconectar",
 	},
 	ru: {

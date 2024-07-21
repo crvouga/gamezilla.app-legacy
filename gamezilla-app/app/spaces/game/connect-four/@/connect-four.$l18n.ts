@@ -1,4 +1,4 @@
-import { Translations } from "gamezilla-app/@/l18n";
+import type { Translations } from "gamezilla-app/@/l18n";
 import { BotLevel } from "../vs-bot/bot-level";
 
 export type Text = {
