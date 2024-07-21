@@ -2,6 +2,7 @@ import { p } from "gamezilla-app/@/core/parser";
 import { FlowGridDimensions } from "./flow-grid";
 import { FlowHexDimensions } from "./flow-hex";
 import { FlowTriDimensions } from "./flow-tri";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 
 export const Model = p.or(
 	FlowGridDimensions.Model,
@@ -30,11 +31,15 @@ export const init = (model: Model): Model => {
 export const ViewForm = (input: {
 	form: Model;
 	onInput: (dimensions: Model) => void;
+	ctx: {
+		t: Translator	;	
+	}
 }) => {
 	switch (input.form.t) {
 		case "flow-grid": {
 			return (
 				<FlowGridDimensions.ViewForm
+					ctx={input.ctx}
 					form={input.form}
 					onInput={input.onInput}
 				/>

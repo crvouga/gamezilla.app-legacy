@@ -1,7 +1,7 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import { IconLightbulb } from "gamezilla-app/app/@/ui";
-import type { Actioninput } from "gamezilla-app/app/@/ui/actions";
+import type { ActionInput } from "gamezilla-app/app/@/ui/actions";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import { Flow } from "../flow";
 import type { FlowVariant } from "../flow-variant";
@@ -185,7 +185,7 @@ export const viewHintAction = (input: {
 	model: Model;
 	dispatch: (msg: Msg) => void;
 	ctx: ClientCtx & Ctx;
-}): Actioninput => {
+}): ActionInput => {
 	const flow = toFlow({
 		flow: input.ctx.flowPuzzle.flow,
 		model: input.model,

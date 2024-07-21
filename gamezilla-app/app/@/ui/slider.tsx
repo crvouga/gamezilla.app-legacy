@@ -1,3 +1,6 @@
+import { TranslatedText } from "gamezilla-app/@/l18n";
+import { Typography } from "./typography";
+
 export const Slider = ({
 	label,
 	max,
@@ -7,7 +10,7 @@ export const Slider = ({
 	onInput,
 }: {
 	value: number;
-	label: string;
+	label: TranslatedText;
 	min: number;
 	max: number;
 	step: number;
@@ -15,7 +18,7 @@ export const Slider = ({
 }) => {
 	return (
 		<div>
-			<p className="text-base">{label}</p>
+			<Typography variant="label" text={label} />
 			<input
 				type="range"
 				min={min}

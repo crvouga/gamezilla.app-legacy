@@ -20,6 +20,8 @@ export type Text = {
 	"app.resign": string;
 	"app.this-action-cannot-be-undone": string;
 	"app.delete": string;
+	"app.width": string;
+	"app.height": string;
 };
 
 export const translations: Translations<Text> = {
@@ -43,6 +45,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "Resign",
 		"app.delete": "Delete",
 		"app.this-action-cannot-be-undone": "This action cannot be undone",
+		"app.height": "Height",
+		"app.width": "Width",
 	},
 	ar: {
 		"app.something-went-wrong": "حدث خطأ ما",
@@ -64,6 +68,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "استقالة",
 		"app.delete": "حذف",
 		"app.this-action-cannot-be-undone": "لا يمكن التراجع عن هذا الإجراء",
+		"app.height": "ارتفاع",
+		"app.width": "عرض",
 	},
 	de: {
 		"app.something-went-wrong": "Etwas ist schief gelaufen",
@@ -85,6 +91,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "Kündigen",
 		"app.delete": "Löschen",
 		"app.this-action-cannot-be-undone": "Dieser Vorgang kann nicht rückgängig gemacht werden",
+		"app.height": "Höhe",
+		"app.width": "Breite",
 	},
 	es: {
 		"app.something-went-wrong": "Algo salió mal",
@@ -106,6 +114,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "Renunciar",
 		"app.delete": "Eliminar",
 		"app.this-action-cannot-be-undone": "Esta acción no se puede deshacer",
+		"app.height": "Altura",
+		"app.width": "Ancho",
 	},
 	fr: {
 		"app.something-went-wrong": "Quelque chose s'est mal passé",
@@ -127,6 +137,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "Démissionner",
 		"app.delete": "Effacer",
 		"app.this-action-cannot-be-undone": "Cette action est irréversible",
+		"app.height": "Hauteur",
+		"app.width": "Largeur",
 	},
 	it: {
 		"app.something-went-wrong": "Qualcosa è andato storto",
@@ -148,6 +160,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "Dimettersi",
 		"app.delete": "Elimina",
 		"app.this-action-cannot-be-undone": "Questa azione non può essere annullata",
+		"app.height": "Altezza",
+		"app.width": "Larghezza",
 	},
 	ja: {
 		"app.something-went-wrong": "何かがうまくいかなかった",
@@ -169,6 +183,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "辞任",
 		"app.delete": "削除",
 		"app.this-action-cannot-be-undone": "この操作は取り消せません",
+		"app.height": "高さ",
+		"app.width": "幅",
 	},
 	ko: {
 		"app.something-went-wrong": "문제가 발생했습니다",
@@ -190,6 +206,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "사임",
 		"app.delete": "삭제",
 		"app.this-action-cannot-be-undone": "이 작업은 취소할 수 없습니다",
+		"app.height": "신장",
+		"app.width": "폭",
 	},
 	pt: {
 		"app.something-went-wrong": "Algo deu errado",
@@ -211,6 +229,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "Desistir",
 		"app.delete": "Excluir",
 		"app.this-action-cannot-be-undone": "Esta ação não pode ser desfeita",
+		"app.height": "Altura",
+		"app.width": "Largura",
 	},
 	ru: {
 		"app.something-went-wrong": "Что-то пошло не так",
@@ -232,6 +252,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "Уволиться",
 		"app.delete": "Удалить",
 		"app.this-action-cannot-be-undone": "Это действие нельзя отменить",
+		"app.height": "Высота",
+		"app.width": "Ширина",
 	},
 	zh: {
 		"app.something-went-wrong": "出了点问题",
@@ -253,6 +275,8 @@ export const translations: Translations<Text> = {
 		"app.resign": "辞职",
 		"app.delete": "删除",
 		"app.this-action-cannot-be-undone": "此操作无法撤消",
+		"app.height": "高度",
+		"app.width": "宽度",
 	},
 	hi: {
 		"app.something-went-wrong": "कुछ गलत हो गया",
@@ -274,5 +298,7 @@ export const translations: Translations<Text> = {
 		"app.resign": "त्यागपत्र",
 		"app.delete": "हटाएं",
 		"app.this-action-cannot-be-undone": "यह कार्रवाई पूर्ववत नहीं की जा सकती",
+		"app.height": "ऊँचाई",
+		"app.width": "चौड़ाई",
 	},
 };

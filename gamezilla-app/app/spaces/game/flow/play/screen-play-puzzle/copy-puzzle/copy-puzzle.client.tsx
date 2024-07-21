@@ -6,7 +6,7 @@ import {
 	type ClientCtx,
 } from "gamezilla-app/app/@/client";
 import { IconCopy } from "gamezilla-app/app/@/ui";
-import type { Actioninput } from "gamezilla-app/app/@/ui/actions";
+import type { ActionInput } from "gamezilla-app/app/@/ui/actions";
 import { FlowGridShorthand } from "../../../@/flow/flow-variant/flow-grid";
 import type { ClientModule, MsgClient } from "../../play.types";
 import { FlowPlay } from "../../../@/flow/flow-play";
@@ -52,7 +52,7 @@ export const viewButtonAction = ({
 }: {
 	ctx: ClientCtx;
 	dispatch: (m: MsgClient) => void;
-}): Actioninput[] => {
+}): ActionInput[] => {
 	if (ctx.currentUserRole !== "super") {
 		return [];
 	}

@@ -8,7 +8,7 @@ import {
 	type ClientCtx,
 } from "gamezilla-app/app/@/client";
 import { IconCopy } from "gamezilla-app/app/@/ui";
-import type { Actioninput } from "gamezilla-app/app/@/ui/actions";
+import type { ActionInput } from "gamezilla-app/app/@/ui/actions";
 import { FlowVariant } from "..";
 import { FlowGridShorthand } from "../flow-variant/flow-grid";
 
@@ -62,7 +62,7 @@ const viewAction = ({
 }: {
 	ctx: ClientCtx;
 	dispatch: (m: MsgClient) => void;
-}): Actioninput[] => {
+}): ActionInput[] => {
 	return [
 		{
 			icon: (input) => <IconCopy {...input} />,

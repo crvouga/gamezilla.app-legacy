@@ -22,9 +22,10 @@ export * from "./slider";
 export * from "./spinner";
 export * from "./swiper/swiper";
 export * from "./tabs";
-export * from "./text";
 export * from "./text-field";
 export * from "./toggle-button";
 export * from "./top-bar";
 export * from "./transition";
+export * from "./typography";
 export * from "./ui";
+

@@ -33,9 +33,9 @@ import {
 	Button,
 	IconMobilePhone,
 	Select,
-	Text,
 	TextField,
 	TopBar,
+	Typography,
 } from "gamezilla-app/app/@/ui";
 import type {
 	ModelClient,
@@ -560,10 +560,11 @@ const ViewVerifyCode: Module["View"] = (input) => {
 			/>
 
 			<div className="flex w-full flex-col gap-6 p-4 py-6">
-				<Text
+				<Typography
 					role="status"
 					className="text-lg"
-					value={input.ctx.t(
+					variant="body"
+					text={input.ctx.t(
 						"auth-sms.enter-code-sent-to",
 						PhoneNumber.format(phoneNumber),
 					)}

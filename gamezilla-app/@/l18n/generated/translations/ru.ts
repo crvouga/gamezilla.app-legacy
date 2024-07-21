@@ -87,7 +87,9 @@ export const translations: Text = {
   "flow.level": (level) =>
     `\u0423\u0440\u043E\u0432\u0435\u043D\u044C ${level}`,
   "flow-pack-name": (flowPackName) => `${flowPackName}`,
+  "flow.no-packs": "Нет пакетов",
   "flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
+  "flow.no-puzzles": "Нет пазлов",
   "space-game-flow-edit.editing": "редактирование",
   "spaces.end": "Конец",
   "spaces.end-space": "Завершить пространство",
@@ -108,6 +110,7 @@ export const translations: Text = {
   "space-card.people-count": (count) =>
     `${count.toLocaleString()} \u0447\u0435\u043B\u043E\u0432\u0435\u043A`,
   "spaces.spaces": "Пространства",
+  "spaces.no-spaces": "Нет пространств",
   "spaces.space-not-found": "Пространство не найдено",
   "spaces.go-home": "Иди домой",
   "spaces.current-user-ended-space": "Пространство закончено",
@@ -140,6 +143,8 @@ export const translations: Text = {
   "app.resign": "Уволиться",
   "app.delete": "Удалить",
   "app.this-action-cannot-be-undone": "Это действие нельзя отменить",
+  "app.height": "Высота",
+  "app.width": "Ширина",
   "username-title": "Имя пользователя",
   username: (username) => `@${username}`,
   en: "Английский",

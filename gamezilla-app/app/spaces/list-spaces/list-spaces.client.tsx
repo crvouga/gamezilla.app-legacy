@@ -156,7 +156,7 @@ const View: SpaceClientModule["View"] = (input) => {
 				{spaces.length === 0 && (
 					<EmptyState
 						renderIcon={(input) => <IconGamepad {...input} />}
-						label="No active spaces"
+						label={input.ctx.t("spaces.no-spaces")}
 					/>
 				)}
 

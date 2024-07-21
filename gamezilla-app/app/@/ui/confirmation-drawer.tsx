@@ -1,7 +1,7 @@
 import { TranslatedText } from "gamezilla-app/@/l18n";
 import { Button } from "./button";
 import { Drawer, type Drawerinput } from "./drawer";
-import { cn } from "./ui";
+import { Typography } from "./typography";
 
 type input = Drawerinput & {
 	title: TranslatedText;
@@ -20,17 +20,17 @@ type input = Drawerinput & {
 export const ConfirmationDrawer = (input: input) => {
 	return (
 		<Drawer {...input}>
-			<p
-				className={cn(
-					"w-full px-4 pt-4 text-left text-3xl font-bold",
-					//   input.variant === "danger" && "text-red-500"
-				)}
-			>
-				{input.title}
-			</p>
-			<p className="w-full p-4 text-left text-lg text-neutral-300">
-				{input.body}
-			</p>
+			<Typography
+				variant="title"
+				className="w-full px-4 pt-4 text-left"
+				text={input.title}
+			/>
+
+			<Typography
+				variant="body"
+				text={input.body}
+			/>
+				
 			<div className="flex w-full items-center gap-4 p-4">
 				<Button
 					className="flex-1"

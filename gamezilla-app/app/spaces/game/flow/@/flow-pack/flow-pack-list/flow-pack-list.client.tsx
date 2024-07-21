@@ -126,7 +126,7 @@ const View: ClientModule["View"] = (input) => {
 			<div className="relative flex max-h-full w-full flex-1 flex-col items-center overflow-hidden overflow-y-scroll border-t border-t-neutral-800">
 				{shouldShowEmptyState && (
 					<EmptyState
-						label="No packs"
+						label={ctx.t("flow.no-packs")}
 						renderIcon={(input) => <IconBox {...input} />}
 					/>
 				)}

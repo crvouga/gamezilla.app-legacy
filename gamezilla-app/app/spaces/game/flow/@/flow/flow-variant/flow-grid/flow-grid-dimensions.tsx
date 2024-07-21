@@ -1,4 +1,5 @@
 import { p } from "gamezilla-app/@/core/parser";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 import { IconXMark, Slider } from "gamezilla-app/app/@/ui";
 
 export const Model = p.obj({
@@ -20,9 +21,13 @@ export const init = (model: { width: number; height: number }): Model => {
 export const ViewForm = ({
 	form,
 	onInput,
+	ctx,
 }: {
 	form: Model;
-	onInput: (dimensions: Model) => void;
+		onInput: (dimensions: Model) => void;
+		ctx: {
+		t: Translator;
+	}
 }) => {
 	return (
 		<>
@@ -38,7 +43,7 @@ export const ViewForm = ({
 				<Slider
 					onInput={(width) => onInput({ ...form, width })}
 					value={form.width}
-					label="Width"
+					label={ctx.t('app.width')}
 					min={3}
 					max={15}
 					step={1}
@@ -46,7 +51,7 @@ export const ViewForm = ({
 				<Slider
 					onInput={(height) => onInput({ ...form, height })}
 					value={form.height}
-					label="Height"
+					label={ctx.t('app.height')}
 					min={3}
 					max={15}
 					step={1}

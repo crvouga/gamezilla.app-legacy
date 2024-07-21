@@ -536,6 +536,7 @@ export const View = (input: {
 				/>
 
 				<FlowVariantDimensions.ViewForm
+					ctx={input.ctx}
 					form={model.dimensions}
 					onInput={(dimensions) =>
 						dispatch({ t: "dimensions-form.inputted", dimensions })

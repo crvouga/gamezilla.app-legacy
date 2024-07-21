@@ -2,6 +2,7 @@ import type { VDom } from "gamezilla-app/@/vdom";
 import { Button } from "./button";
 import { cn } from "./ui";
 import { TranslatedText } from "gamezilla-app/@/l18n";
+import { Typography } from "./typography";
 
 export const ConfirmationDialog = ({
 	open,
@@ -36,8 +37,11 @@ export const ConfirmationDialog = ({
 			}}
 		>
 			<div className="flex w-80 flex-col gap-6 rounded-lg bg-black p-6">
-				<p className="text-center text-xl font-semibold">{title}</p>
-
+				<Typography
+					variant="title"
+					text={title}
+				/>
+			
 				<div className="flex w-full items-center gap-4">
 					<Button
 						variant="outlined"

@@ -1,3 +1,6 @@
+import { TranslatedText } from "gamezilla-app/@/l18n";
+import type { Translator } from "gamezilla-app/@/l18n/generated";
+import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
 import {
 	Drawer,
 	IconArrowLeftOnRect,
@@ -8,13 +11,12 @@ import {
 	IconLightbulb,
 	ListItemButton,
 	Spinner,
+	Typography,
 	cn,
 } from "gamezilla-app/app/@/ui";
-import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
-import type { Translator } from "gamezilla-app/@/l18n/generated";
 
-export type Actioninput = {
-	label: string;
+export type ActionInput = {
+	label: TranslatedText;
 	disabled?: boolean;
 	icon: (input: { className: string }) => VDom;
 	classNames?: {
@@ -41,7 +43,7 @@ const View = ({
 }: {
 	id: string;
 	ctx: Ctx;
-	buttons: Actioninput[];
+	buttons: ActionInput[];
 	open: boolean;
 	onToggle: () => void;
 	limit?: number;
@@ -90,7 +92,7 @@ export const ViewBottomButtonBar = ({
 	);
 };
 
-export const ViewBottomButtonBarAction = (input: Actioninput) => {
+export const ViewBottomButtonBarAction = (input: ActionInput) => {
 	const isDisabled = input.disabled || input.loading;
 	return (
 		<button
@@ -119,7 +121,7 @@ export const ViewBottomButtonBarAction = (input: Actioninput) => {
 				)}
 			>
 				{input.icon({ className: "h-7 w-7" })}
-				<p className={cn("text-xs", input.classNames?.label)}>{input.label}</p>
+				<Typography variant="label" text={input.label} className={input.classNames?.label} />
 			</div>
 
 			<div
@@ -155,7 +157,7 @@ export const ViewBottomButtonBarActionExit = (
 	);
 };
 
-const exit = (input: BottomBarButtonActionPrebuilt): Actioninput => ({
+const exit = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconArrowLeftOnRect {...input} />,
 	label: input.ctx.t("app.exit"),
@@ -173,7 +175,7 @@ export const ViewBottomButtonBarActionNext = (
 	);
 };
 
-const next = (input: BottomBarButtonActionPrebuilt): Actioninput => ({
+const next = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconChevronRight {...input} />,
 	label: input.ctx.t("app.next"),
@@ -191,7 +193,7 @@ export const ViewBottomButtonBarActionReset = (
 	);
 };
 
-const reset = (input: BottomBarButtonActionPrebuilt): Actioninput => ({
+const reset = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconArrowRotateLeft {...input} />,
 	label: input.ctx.t("app.reset"),
@@ -209,7 +211,7 @@ export const ViewBottomButtonBarActionPrev = (
 	);
 };
 
-const prev = (input: BottomBarButtonActionPrebuilt): Actioninput => ({
+const prev = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconChevronLeft {...input} />,
 	label: input.ctx.t("app.prev"),
@@ -227,7 +229,7 @@ export const ViewBottomButtonBarActionHint = (
 	);
 };
 
-const hint = (input: BottomBarButtonActionPrebuilt): Actioninput => ({
+const hint = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconLightbulb {...input} />,
 	label: input.ctx.t("game.hint"),

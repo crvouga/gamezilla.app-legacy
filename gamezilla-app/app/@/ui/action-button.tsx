@@ -1,4 +1,6 @@
+import { TranslatedText } from "gamezilla-app/@/l18n";
 import type { VDom } from "gamezilla-app/@/vdom";
+import { Typography } from "./typography";
 import { cn } from "./ui";
 
 export const ActionButton = ({
@@ -9,7 +11,7 @@ export const ActionButton = ({
 	color,
 }: {
 	color?: "error" | "success";
-	label: string;
+	label: TranslatedText;
 	icon: VDom;
 	onClick: () => void;
 	disabled?: boolean;
@@ -27,7 +29,7 @@ export const ActionButton = ({
 			)}
 		>
 			{icon}
-			<p className="mt-0.5 text-xs">{label}</p>
+			<Typography variant="label" text={label} />
 		</button>
 	);
 };
