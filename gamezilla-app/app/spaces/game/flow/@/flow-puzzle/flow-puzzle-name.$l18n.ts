@@ -1,5 +1,5 @@
 import type { Translations } from "gamezilla-app/@/l18n";
-import { FlowPuzzleName } from "./flow-puzzle-name";
+import type { FlowPuzzleName } from "./flow-puzzle-name";
 
 export type Text = {
 	"flow-puzzle-name": (flowPuzzleName: FlowPuzzleName) => string;

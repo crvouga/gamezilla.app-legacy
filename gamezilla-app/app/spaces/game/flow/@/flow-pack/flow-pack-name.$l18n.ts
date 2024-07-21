@@ -1,5 +1,5 @@
 import type { Translations } from "gamezilla-app/@/l18n";
-import { FlowPackName } from "./flow-pack-name";
+import type { FlowPackName } from "./flow-pack-name";
 
 export type Text = {
 	"flow-pack-name": (flowPackName: FlowPackName) => string;
