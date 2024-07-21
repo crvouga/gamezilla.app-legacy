@@ -1,4 +1,5 @@
-import { isErr, isOk, Loading, Result } from "gamezilla-app/@/core";
+import { Loading, Result, isErr, isOk } from "gamezilla-app/@/core";
+import type { Translator } from "gamezilla-app/@/l18n/generated";
 import {
 	APP_SOUND,
 	playSound,
@@ -23,7 +24,6 @@ import type {
 	MsgClient,
 	MsgCore,
 } from "../../builder.types";
-import { Translator } from "gamezilla-app/@/l18n/generated";
 
 //
 //
