@@ -300,6 +300,7 @@ export const View: Client["View"] = (input) => {
 					dispatch={input.dispatch}
 					buttons={[
 						GameMainMenu.buttons.playComputer({
+							ctx: input.ctx,
 							onClick: () =>
 								input.dispatch({
 									t: "input-mode",
@@ -308,6 +309,7 @@ export const View: Client["View"] = (input) => {
 								}),
 						}),
 						GameMainMenu.buttons.playFriend({
+							ctx: input.ctx,
 							onClick: () =>
 								input.dispatch({
 									t: "input-mode",
@@ -316,8 +318,8 @@ export const View: Client["View"] = (input) => {
 								}),
 						}),
 						{
-							title: "Puzzles",
-							description: "Train with more than 3 million puzzles",
+							title: input.ctx.t('chess.puzzle-title'),
+							description: input.ctx.t('chess.puzzle-description'),
 							renderIcon: (input) => <IconPuzzlePiece {...input} />,
 							onClick: () =>
 								input.dispatch({

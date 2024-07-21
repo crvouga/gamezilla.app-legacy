@@ -1,6 +1,6 @@
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { UserId } from "gamezilla-app/app/@/data";
-import { IconRobot, IconUsers } from "gamezilla-app/app/@/ui";
+import { IconRobot, IconUsers, Typography } from "gamezilla-app/app/@/ui";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import {
 	type SpaceClientCmd,
@@ -11,6 +11,7 @@ import {
 import { ViewGameHeader } from "./view-game-header";
 import { ViewUsersInSpaceList } from "./view-users-in-space-list";
 import { TranslatedText } from "gamezilla-app/@/l18n";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 
 //
 //
@@ -66,8 +67,8 @@ export const update = <TModel, TMsg, T extends SpaceClientCmdTypes>({
 
 type MainMenuButton = {
 	renderIcon: (input: { className: string }) => VDom;
-	title: string;
-	description: string;
+	title: TranslatedText;
+	description: TranslatedText;
 	onClick: () => void;
 };
 
@@ -131,10 +132,10 @@ export const View = ({
 								className: "aspect-square w-10 h-10 mr-4",
 							})}
 							<div className="flex-1 text-left">
-								<p className="text-2xl font-bold">{title}</p>
+								<Typography variant="title" text={title}/>
 
 								{description && (
-									<p className="text-sm text-neutral-300">{description}</p>
+									<Typography variant="label" text={description}/>
 								)}
 							</div>
 						</button>
@@ -146,21 +147,21 @@ export const View = ({
 };
 
 export const buttons = {
-	playFriend: (input: { onClick: () => void }): MainMenuButton => {
+	playFriend: (input: { onClick: () => void, ctx: {t: Translator} }): MainMenuButton => {
 		return {
 			...input,
 			renderIcon: (input) => <IconUsers {...input} />,
-			title: "Play Friend",
-			description: "Play against people in your space",
+			title:input.ctx.t('game.play-friend-title'),
+			description:input.ctx.t('game.play-friend-description'),
 		};
 	},
 
-	playComputer: (input: { onClick: () => void }): MainMenuButton => {
+	playComputer: (input: { onClick: () => void; ctx: {t: Translator} }): MainMenuButton => {
 		return {
 			...input,
 			renderIcon: (input) => <IconRobot {...input} />,
-			title: "Play Computer",
-			description: "Play against a computer",
+			title:input.ctx.t('game.play-computer-title'),
+			description:input.ctx.t('game.play-computer-description'),
 		};
 	},
 };

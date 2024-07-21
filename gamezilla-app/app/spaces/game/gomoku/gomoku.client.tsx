@@ -239,6 +239,7 @@ export const view = ({
 					}}
 					buttons={[
 						GameMainMenu.buttons.playComputer({
+							ctx,
 							onClick: () =>
 								dispatch({
 									t: "input-mode",
@@ -248,6 +249,7 @@ export const view = ({
 						}),
 
 						GameMainMenu.buttons.playFriend({
+							ctx,
 							onClick: () =>
 								dispatch({
 									t: "input-mode",

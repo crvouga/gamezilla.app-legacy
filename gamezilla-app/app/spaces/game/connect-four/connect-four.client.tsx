@@ -209,6 +209,7 @@ const View: Module["View"] = (input) => {
 					dispatch={input.dispatch}
 					buttons={[
 						GameMainMenu.buttons.playFriend({
+							ctx: input.ctx,
 							onClick: () =>
 								input.dispatch({
 									mode: "vs-user",
@@ -217,6 +218,7 @@ const View: Module["View"] = (input) => {
 								}),
 						}),
 						GameMainMenu.buttons.playComputer({
+							ctx: input.ctx,
 							onClick: () =>
 								input.dispatch({
 									mode: "vs-bot",

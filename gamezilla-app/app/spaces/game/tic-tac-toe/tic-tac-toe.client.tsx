@@ -95,9 +95,11 @@ export const View = ({
 				renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
 				buttons={[
 					GameMainMenu.buttons.playFriend({
+						ctx,
 						onClick: () => dispatch({ t: "input-mode", mode: "vs-user" }),
 					}),
 					GameMainMenu.buttons.playComputer({
+						ctx,
 						onClick: () => dispatch({ t: "input-mode", mode: "vs-bot" }),
 					}),
 				]}
