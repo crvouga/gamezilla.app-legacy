@@ -52,13 +52,59 @@ export const translations: Text = {
   "spaces.start-space": "Iniciar espaço",
   "spaces.space-started": "Espaço iniciado",
   "spaces.see-profile": "Ver perfil",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "F\xE1cil";
+      case "Impossible":
+        return "Imposs\xEDvel";
+      case "Medium":
+        return "M\xE9dio";
+      default:
+        return "Desconhecido";
+    }
+  },
+  "tic-tac-toe.cross": "Cruz",
+  "tic-tac-toe.naught": "Círculo",
   "connect-four": "Conectar Quatro",
   flow: "Fluxo",
   "tic-tac-toe": "Jogo da Velha",
   gomoku: "Gomoku",
   chess: "Xadrez",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "F\xE1cil";
+      case "Hard":
+        return "Dif\xEDcil";
+      case "Medium":
+        return "M\xE9dio";
+      default:
+        return "Desconhecido";
+    }
+  },
+  "connect-four.red": "Vermelho",
+  "connect-four.yellow": "Amarelo",
   "chess.puzzle-description": "Treine com mais de 3 milhões de quebra-cabeças",
   "chess.puzzle-title": "Quebra-cabeças",
+  "chess.black": "Preto",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "Iniciante";
+      case 1:
+        return "Intermedi\xE1rio";
+      case 2:
+        return "Avan\xE7ado";
+      case 3:
+        return "Especialista";
+      case 4:
+        return "Mestre";
+      default:
+        return "Desconhecido";
+    }
+  },
+  "chess.white": "Branco",
   "game.hint": "Dica",
   "game.start-game": "Iniciar jogo",
   "game.start-playing": "Começar a jogar",
@@ -66,6 +112,10 @@ export const translations: Text = {
   "game.change-bot": "Mudar bot",
   "game.swap-sides": "Trocar de lado",
   "game.rematch": "Revanche",
+  "game.draw": "Empate",
+  "game.loser": "Perdedor",
+  "game.play-again": "Jogar novamente",
+  "game.winner": "Vencedor",
   host: "Anfitrião",
   you: "Você",
   "game.play-friend-title": "Jogar com amigo",
@@ -160,6 +210,8 @@ export const translations: Text = {
   "app.dimensions": "Dimensões",
   "app.redo": "Refazer",
   "app.undo": "Desfazer",
+  "app.editor": "Editor",
+  "app.people": "Pessoas",
   "username-title": "Nome de usuário",
   username: (username) => `@${username}`,
   en: "Inglês",

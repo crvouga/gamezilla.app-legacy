@@ -52,13 +52,59 @@ export const translations: Text = {
   "spaces.start-space": "공간 시작",
   "spaces.space-started": "공간 시작됨",
   "spaces.see-profile": "프로필 보기",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\uC26C\uC6B4";
+      case "Impossible":
+        return "\uBD88\uAC00\uB2A5\uD55C";
+      case "Medium":
+        return "\uC911\uAC04";
+      default:
+        return "\uC54C \uC218 \uC5C6\uB294";
+    }
+  },
+  "tic-tac-toe.cross": "크로스",
+  "tic-tac-toe.naught": "놋",
   "connect-four": "네 개 연결",
   flow: "흐름",
   "tic-tac-toe": "틱택토",
   gomoku: "오목",
   chess: "체스",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\uC26C\uC6B4";
+      case "Hard":
+        return "\uC5B4\uB824\uC6B4";
+      case "Medium":
+        return "\uC911\uAC04";
+      default:
+        return "\uC54C \uC218 \uC5C6\uC74C";
+    }
+  },
+  "connect-four.red": "빨강",
+  "connect-four.yellow": "노랑",
   "chess.puzzle-description": "300 만 개 이상의 퍼즐로 훈련",
   "chess.puzzle-title": "퍼즐",
+  "chess.black": "검은색",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\uCD08\uBCF4\uC790";
+      case 1:
+        return "\uC911\uAE09";
+      case 2:
+        return "\uACE0\uAE09";
+      case 3:
+        return "\uC804\uBB38\uAC00";
+      case 4:
+        return "\uB9C8\uC2A4\uD130";
+      default:
+        return "\uC54C \uC218 \uC5C6\uC74C";
+    }
+  },
+  "chess.white": "흰색",
   "game.hint": "힌트",
   "game.start-game": "게임 시작",
   "game.start-playing": "플레이 시작",
@@ -66,6 +112,10 @@ export const translations: Text = {
   "game.change-bot": "봇 변경",
   "game.swap-sides": "측면 교환",
   "game.rematch": "다시 경기",
+  "game.draw": "무승부",
+  "game.loser": "패자",
+  "game.play-again": "다시 플레이",
+  "game.winner": "승자",
   host: "호스트",
   you: "당신",
   "game.play-friend-title": "친구와 함께하기",
@@ -163,6 +213,8 @@ export const translations: Text = {
   "app.dimensions": "치수",
   "app.redo": "다시 하다",
   "app.undo": "실행 취소",
+  "app.editor": "편집자",
+  "app.people": "사람들",
   "username-title": "사용자 이름",
   username: (username) => `@${username}`,
   en: "영어",

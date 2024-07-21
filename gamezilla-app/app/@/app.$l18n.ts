@@ -23,13 +23,15 @@ export type Text = {
 	"app.delete": string;
 	"app.width": string;
 	"app.height": string;
-	"app.retry": string
-	"app.skip": string
-	"app.restart": string
-	"app.undo": string
-	"app.redo": string
-	"app.clear": string
-	"app.dimensions": string
+	"app.retry": string;
+	"app.skip": string;
+	"app.restart": string;
+	"app.undo": string;
+	"app.redo": string;
+	"app.clear": string;
+	"app.dimensions": string;
+	"app.editor": string;
+	"app.people": string;
 };
 
 export const translations: Translations<Text> = {
@@ -63,6 +65,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "Dimensions",
 		"app.redo": "Redo",
 		"app.undo": "Undo",
+		"app.editor": "Editor",
+		"app.people": "People",
 	},
 	ar: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -93,7 +97,9 @@ export const translations: Translations<Text> = {
 		"app.clear": "واضح",
 		"app.dimensions": "الأبعاد",
 		"app.redo": "إعادة",
-		"app.undo": "إلغاء",		
+		"app.undo": "إلغاء",
+		"app.editor": "محرر",
+		"app.people": "الناس",
 	},
 	de: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -126,6 +132,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "Abmessungen",
 		"app.redo": "Wiederholen",
 		"app.undo": "Rückgängig machen",
+		"app.editor": "Editor",
+		"app.people": "Menschen",
 	},
 	es: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -151,12 +159,14 @@ export const translations: Translations<Text> = {
 		"app.height": "Altura",
 		"app.width": "Ancho",
 		"app.restart": "Reiniciar",
-		"app.retry": "Reintentar",	
+		"app.retry": "Reintentar",
 		"app.skip": "Saltar",
 		"app.clear": "Claro",
 		"app.dimensions": "Dimensiones",
 		"app.redo": "Rehacer",
 		"app.undo": "Deshacer",
+		"app.editor": "Editor",
+		"app.people": "Gente",
 	},
 	fr: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -188,6 +198,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "Dimensions",
 		"app.redo": "Refaire",
 		"app.undo": "Annuler",
+		"app.editor": "Éditeur",
+		"app.people": "Personnes",
 	},
 	it: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -220,6 +232,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "Dimensioni",
 		"app.redo": "Rifare",
 		"app.undo": "Disfare",
+		"app.editor": "Editore",
+		"app.people": "Persone",
 	},
 	ja: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -251,6 +265,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "寸法",
 		"app.redo": "やり直す",
 		"app.undo": "元に戻す",
+		"app.editor": "エディタ",
+		"app.people": "人々",
 	},
 	ko: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -282,6 +298,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "치수",
 		"app.redo": "다시 하다",
 		"app.undo": "실행 취소",
+		"app.editor": "편집자",
+		"app.people": "사람들",
 	},
 	pt: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -313,6 +331,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "Dimensões",
 		"app.redo": "Refazer",
 		"app.undo": "Desfazer",
+		"app.editor": "Editor",
+		"app.people": "Pessoas",
 	},
 	ru: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -344,6 +364,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "Размеры",
 		"app.redo": "Повторить",
 		"app.undo": "Отменить",
+		"app.editor": "Редактор",
+		"app.people": "Люди",
 	},
 	zh: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -375,6 +397,8 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "尺寸",
 		"app.redo": "重做",
 		"app.undo": "撤销",
+		"app.editor": "编辑者",
+		"app.people": "人们",
 	},
 	hi: {
 		"app.gamezilla-app": "गेमजिला.एप",
@@ -406,5 +430,7 @@ export const translations: Translations<Text> = {
 		"app.dimensions": "आयाम",
 		"app.redo": "फिर से करें",
 		"app.undo": "पूर्ववत करें",
+		"app.editor": "संपादक",
+		"app.people": "लोग",
 	},
 };

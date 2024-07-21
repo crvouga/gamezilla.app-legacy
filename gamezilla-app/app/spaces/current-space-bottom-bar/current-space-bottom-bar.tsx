@@ -98,7 +98,9 @@ const View = ({
 						<Typography
 							variant="title"
 							className="truncate"
-							text={ctx.t("spaces.current-space", {hostUsername: hostProfile.username})}
+							text={ctx.t("spaces.current-space", {
+								hostUsername: hostProfile.username,
+							})}
 						/>
 						<Typography
 							variant="subtitle"

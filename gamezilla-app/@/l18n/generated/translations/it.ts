@@ -50,13 +50,59 @@ export const translations: Text = {
   "spaces.start-space": "Inizia spazio",
   "spaces.space-started": "Spazio avviato",
   "spaces.see-profile": "Vedi profilo",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "Facile";
+      case "Impossible":
+        return "Impossibile";
+      case "Medium":
+        return "Medio";
+      default:
+        return "Sconosciuto";
+    }
+  },
+  "tic-tac-toe.cross": "Croce",
+  "tic-tac-toe.naught": "Cerchio",
   "connect-four": "Collega Quattro",
   flow: "Flusso",
   "tic-tac-toe": "Tris",
   gomoku: "Gomoku",
   chess: "Scacchi",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "Facile";
+      case "Hard":
+        return "Difficile";
+      case "Medium":
+        return "Medio";
+      default:
+        return "Sconosciuto";
+    }
+  },
+  "connect-four.red": "Rosso",
+  "connect-four.yellow": "Giallo",
   "chess.puzzle-description": "Allenati con più di 3 milioni di puzzle",
   "chess.puzzle-title": "Puzzle",
+  "chess.black": "Nero",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "Principiante";
+      case 1:
+        return "Intermedio";
+      case 2:
+        return "Avanzato";
+      case 3:
+        return "Esperto";
+      case 4:
+        return "Maestro";
+      default:
+        return "Sconosciuto";
+    }
+  },
+  "chess.white": "Bianco",
   "game.hint": "Suggerimento",
   "game.start-game": "Inizia gioco",
   "game.start-playing": "Inizia a giocare",
@@ -64,6 +110,10 @@ export const translations: Text = {
   "game.change-bot": "Cambia bot",
   "game.swap-sides": "Scambia lati",
   "game.rematch": "Rivincita",
+  "game.draw": "Pareggio",
+  "game.loser": "Perdente",
+  "game.play-again": "Gioca di nuovo",
+  "game.winner": "Vincitore",
   host: "Ospite",
   you: "Tu",
   "game.play-friend-title": "Gioca con un amico",
@@ -157,6 +207,8 @@ export const translations: Text = {
   "app.dimensions": "Dimensioni",
   "app.redo": "Rifare",
   "app.undo": "Disfare",
+  "app.editor": "Editore",
+  "app.people": "Persone",
   "username-title": "Nome utente",
   username: (username) => `@${username}`,
   en: "Inglese",

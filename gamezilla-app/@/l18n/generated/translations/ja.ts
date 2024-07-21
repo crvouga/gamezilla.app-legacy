@@ -52,13 +52,59 @@ export const translations: Text = {
   "spaces.start-space": "スペースを開始",
   "spaces.space-started": "スペースが開始されました",
   "spaces.see-profile": "プロフィールを見る",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u7C21\u5358";
+      case "Impossible":
+        return "\u4E0D\u53EF\u80FD";
+      case "Medium":
+        return "\u4E2D";
+      default:
+        return "\u672A\u77E5";
+    }
+  },
+  "tic-tac-toe.cross": "クロス",
+  "tic-tac-toe.naught": "ノート",
   "connect-four": "フォーをつなげる",
   flow: "フロー",
   "tic-tac-toe": "三目並べ",
   gomoku: "五目並べ",
   chess: "チェス",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u7C21\u5358";
+      case "Hard":
+        return "\u96E3\u3057\u3044";
+      case "Medium":
+        return "\u4E2D";
+      default:
+        return "\u4E0D\u660E";
+    }
+  },
+  "connect-four.red": "赤",
+  "connect-four.yellow": "黄色",
   "chess.puzzle-description": "300 万以上のパズルでトレーニング",
   "chess.puzzle-title": "パズル",
+  "chess.black": "黒",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\u521D\u5FC3\u8005";
+      case 1:
+        return "\u4E2D\u7D1A";
+      case 2:
+        return "\u4E0A\u7D1A";
+      case 3:
+        return "\u30A8\u30AD\u30B9\u30D1\u30FC\u30C8";
+      case 4:
+        return "\u30DE\u30B9\u30BF\u30FC";
+      default:
+        return "\u4E0D\u660E";
+    }
+  },
+  "chess.white": "白",
   "game.hint": "ヒント",
   "game.start-game": "ゲームを開始",
   "game.start-playing": "プレイを開始",
@@ -66,6 +112,10 @@ export const translations: Text = {
   "game.change-bot": "ボットを変更",
   "game.swap-sides": "サイドを交換",
   "game.rematch": "リマッチ",
+  "game.draw": "引き分け",
+  "game.loser": "敗者",
+  "game.play-again": "もう一度プレイ",
+  "game.winner": "勝者",
   host: "ホスト",
   you: "あなた",
   "game.play-friend-title": "友達と遊ぶ",
@@ -163,6 +213,8 @@ export const translations: Text = {
   "app.dimensions": "寸法",
   "app.redo": "やり直す",
   "app.undo": "元に戻す",
+  "app.editor": "エディタ",
+  "app.people": "人々",
   "username-title": "ユーザー名",
   username: (username) => `@${username}`,
   en: "英語",

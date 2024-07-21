@@ -12,23 +12,23 @@ export type VsBotInput = {
 	onStartGame: () => void;
 	onSwapSides: () => void;
 	bot: {
-		label: string;
+		label: TranslatedText;
 		renderIcon: (input: { className: string }) => VDom;
 	};
 	playerOne: {
-		label: string;
+		label: TranslatedText;
 		renderIcon: (input: { className: string }) => VDom;
 		onStartPlaying: () => void;
 		onStopPlaying: () => void;
 	};
 	playerTwo: {
-		label: string;
+		label: TranslatedText;
 		renderIcon: (input: { className: string }) => VDom;
 		onStartPlaying: () => void;
 		onStopPlaying: () => void;
 	};
 	botVariants: {
-		label: string;
+		label: TranslatedText;
 		renderIcon: (input: { className: string }) => VDom;
 		onSelect: () => void;
 	}[];

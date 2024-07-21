@@ -220,8 +220,8 @@ export const ViewActionButtons = ({
 	ctx,
 }: {
 	ctx: {
-			t: Translator;
-	}
+		t: Translator;
+	};
 	model: ModelClient;
 	dispatch: (msg: MsgClient) => void;
 }) => {
@@ -229,7 +229,7 @@ export const ViewActionButtons = ({
 		<>
 			<ViewBottomButtonBarAction
 				icon={(input) => <IconFloppyDisk {...input} />}
-				label={ctx.t('app.save')}
+				label={ctx.t("app.save")}
 				onClick={() =>
 					dispatch({
 						t: "screen-puzzle-builder.save-changes.user-clicked-save-button",

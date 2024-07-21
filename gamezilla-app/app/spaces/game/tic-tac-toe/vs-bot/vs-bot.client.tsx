@@ -160,7 +160,7 @@ export const View = (input: {
 }) => {
 	const vsBotinput: VsBotSetup.VsBotSetupinput = {
 		bot: {
-			label: input.model.botLevel,
+			label: input.ctx.t('tic-tac-toe.bot-level', input.model.botLevel),
 			renderIcon: (iconinput) =>
 				renderBotLevel({ level: input.model.botLevel, ...iconinput }),
 		},
@@ -175,20 +175,20 @@ export const View = (input: {
 		onStartGame: () => input.dispatch({ t: "start-game" }),
 		botVariants: allBotLevels.map((botLevel) => {
 			return {
-				label: botLevel,
+				label: input.ctx.t('tic-tac-toe.bot-level', botLevel),
 				renderIcon: (input) => renderBotLevel({ level: botLevel, ...input }),
 				onSelect: () => input.dispatch({ t: "input-bot-level", botLevel }),
 			};
 		}),
 		playerOne: {
-			label: "Cross",
+			label: input.ctx.t('tic-tac-toe.cross'),
 			onStartPlaying: () =>
 				input.dispatch({ t: "start-playing", playerType: "X" }),
 			onStopPlaying: () => input.dispatch({ t: "stop-playing" }),
 			renderIcon: (input) => <PlayerTypeIcon {...input} playerType="X" />,
 		},
 		playerTwo: {
-			label: "Naught",
+			label: input.ctx.t('tic-tac-toe.naught'),
 			onStartPlaying: () =>
 				input.dispatch({ t: "start-playing", playerType: "O" }),
 			onStopPlaying: () => input.dispatch({ t: "stop-playing" }),
@@ -243,17 +243,17 @@ export const View = (input: {
 			<ViewBottomButtonBar>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconArrowLeftOnRect {...input} />}
-					label={input.ctx.t('app.exit')}
+					label={input.ctx.t("app.exit")}
 					onClick={() => input.dispatch({ t: "stop-game" })}
 				/>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconRightLeft {...input} />}
-					label={input.ctx.t('game.swap-sides')}
+					label={input.ctx.t("game.swap-sides")}
 					onClick={() => input.dispatch({ t: "swap-sides" })}
 				/>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconArrowRotateLeft {...input} />}
-					label={input.ctx.t('app.restart')}
+					label={input.ctx.t("app.restart")}
 					onClick={() => input.dispatch({ t: "restart" })}
 				/>
 			</ViewBottomButtonBar>

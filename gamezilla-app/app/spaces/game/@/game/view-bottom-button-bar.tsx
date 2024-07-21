@@ -65,7 +65,11 @@ export const ViewBottomButtonBarAction = (input: BottomBarButtonAction) => {
 				)}
 			>
 				{input.icon({ className: "h-7 w-7" })}
-				<Typography variant="label" className={input.classNames?.label} text={input.label} />
+				<Typography
+					variant="label"
+					className={input.classNames?.label}
+					text={input.label}
+				/>
 			</div>
 
 			<div

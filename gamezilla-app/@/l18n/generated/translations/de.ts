@@ -51,13 +51,59 @@ export const translations: Text = {
   "spaces.start-space": "Raum starten",
   "spaces.space-started": "Raum gestartet",
   "spaces.see-profile": "Profil anzeigen",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "Leicht";
+      case "Impossible":
+        return "Unm\xF6glich";
+      case "Medium":
+        return "Mittel";
+      default:
+        return "Unbekannt";
+    }
+  },
+  "tic-tac-toe.cross": "Kreuz",
+  "tic-tac-toe.naught": "Kreis",
   "connect-four": "Vier gewinnt",
   flow: "Fluss",
   "tic-tac-toe": "Tic Tac Toe",
   gomoku: "Gomoku",
   chess: "Schach",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "Leicht";
+      case "Hard":
+        return "Schwer";
+      case "Medium":
+        return "Mittel";
+      default:
+        return "Unbekannt";
+    }
+  },
+  "connect-four.red": "Rot",
+  "connect-four.yellow": "Gelb",
   "chess.puzzle-description": "Trainieren Sie mit mehr als 3 Millionen Rätseln",
   "chess.puzzle-title": "Rätsel",
+  "chess.black": "Schwarz",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "Anf\xE4nger";
+      case 1:
+        return "Fortgeschritten";
+      case 2:
+        return "Experte";
+      case 3:
+        return "Profi";
+      case 4:
+        return "Meister";
+      default:
+        return "Unbekannt";
+    }
+  },
+  "chess.white": "Weiß",
   "game.hint": "Hinweis",
   "game.start-game": "Spiel starten",
   "game.start-playing": "Spiel starten",
@@ -65,6 +111,10 @@ export const translations: Text = {
   "game.change-bot": "Bot ändern",
   "game.swap-sides": "Seiten tauschen",
   "game.rematch": "Neues Spiel",
+  "game.draw": "Unentschieden",
+  "game.loser": "Verlierer",
+  "game.play-again": "Erneut spielen",
+  "game.winner": "Gewinner",
   host: "Host",
   you: "Du",
   "game.play-friend-title": "Mit Freund spielen",
@@ -157,6 +207,8 @@ export const translations: Text = {
   "app.dimensions": "Abmessungen",
   "app.redo": "Wiederholen",
   "app.undo": "Rückgängig machen",
+  "app.editor": "Editor",
+  "app.people": "Menschen",
   "username-title": "Benutzername",
   username: (username) => `@${username}`,
   en: "Englisch",

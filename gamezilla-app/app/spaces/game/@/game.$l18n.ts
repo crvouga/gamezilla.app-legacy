@@ -8,6 +8,10 @@ export type Text = {
 	"game.swap-sides": string;
 	"game.change-bot": string;
 	"game.rematch": string;
+	"game.winner": string;
+	"game.draw": string;
+	"game.play-again": string;
+	"game.loser": string;
 };
 
 export const translations: Translations<Text> = {
@@ -19,6 +23,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "Change Bot",
 		"game.swap-sides": "Swap Sides",
 		"game.rematch": "Rematch",
+		"game.draw": "Draw",
+		"game.loser": "Loser",
+		"game.play-again": "Play Again",
+		"game.winner": "Winner",
 	},
 	ar: {
 		"game.hint": "ملحوظة",
@@ -28,6 +36,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "تغيير البوت",
 		"game.swap-sides": "تبديل الجانب",
 		"game.rematch": "إعادة المباراة",
+		"game.draw": "تعادل",
+		"game.loser": "الخاسر",
+		"game.play-again": "العب مرة أخرى",
+		"game.winner": "الفائز",
 	},
 	de: {
 		"game.hint": "Hinweis",
@@ -37,6 +49,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "Bot ändern",
 		"game.swap-sides": "Seiten tauschen",
 		"game.rematch": "Neues Spiel",
+		"game.draw": "Unentschieden",
+		"game.loser": "Verlierer",
+		"game.play-again": "Erneut spielen",
+		"game.winner": "Gewinner",
 	},
 	es: {
 		"game.hint": "Sugerencia",
@@ -46,6 +62,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "Cambiar bot",
 		"game.swap-sides": "Intercambiar lados",
 		"game.rematch": "Revancha",
+		"game.draw": "Empate",
+		"game.loser": "Perdedor",
+		"game.play-again": "Jugar de nuevo",
+		"game.winner": "Ganador",
 	},
 	fr: {
 		"game.hint": "Indice",
@@ -55,6 +75,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "Changer de bot",
 		"game.swap-sides": "Changer de côté",
 		"game.rematch": "Revanche",
+		"game.draw": "Match nul",
+		"game.loser": "Perdant",
+		"game.play-again": "Rejouer",
+		"game.winner": "Gagnant",
 	},
 	it: {
 		"game.hint": "Suggerimento",
@@ -64,6 +88,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "Cambia bot",
 		"game.swap-sides": "Scambia lati",
 		"game.rematch": "Rivincita",
+		"game.draw": "Pareggio",
+		"game.loser": "Perdente",
+		"game.play-again": "Gioca di nuovo",
+		"game.winner": "Vincitore",
 	},
 	ja: {
 		"game.hint": "ヒント",
@@ -73,6 +101,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "ボットを変更",
 		"game.swap-sides": "サイドを交換",
 		"game.rematch": "リマッチ",
+		"game.draw": "引き分け",
+		"game.loser": "敗者",
+		"game.play-again": "もう一度プレイ",
+		"game.winner": "勝者",
 	},
 	ko: {
 		"game.hint": "힌트",
@@ -82,6 +114,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "봇 변경",
 		"game.swap-sides": "측면 교환",
 		"game.rematch": "다시 경기",
+		"game.draw": "무승부",
+		"game.loser": "패자",
+		"game.play-again": "다시 플레이",
+		"game.winner": "승자",
 	},
 	pt: {
 		"game.hint": "Dica",
@@ -91,6 +127,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "Mudar bot",
 		"game.swap-sides": "Trocar de lado",
 		"game.rematch": "Revanche",
+		"game.draw": "Empate",
+		"game.loser": "Perdedor",
+		"game.play-again": "Jogar novamente",
+		"game.winner": "Vencedor",
 	},
 	ru: {
 		"game.hint": "Подсказка",
@@ -100,6 +140,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "Изменить бота",
 		"game.swap-sides": "Поменять стороны",
 		"game.rematch": "Реванш",
+		"game.draw": "Ничья",
+		"game.loser": "Проигравший",
+		"game.play-again": "Играть снова",
+		"game.winner": "Победитель",
 	},
 	zh: {
 		"game.hint": "提示",
@@ -109,6 +153,10 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "更改机器人",
 		"game.swap-sides": "交换边",
 		"game.rematch": "再来一局",
+		"game.draw": "平局",
+		"game.loser": "失败者",
+		"game.play-again": "再玩一次",
+		"game.winner": "获胜者",
 	},
 	hi: {
 		"game.hint": "संकेत",
@@ -118,5 +166,9 @@ export const translations: Translations<Text> = {
 		"game.change-bot": "बॉट बदलें",
 		"game.swap-sides": "पक्ष बदलें",
 		"game.rematch": "रीमैच",
+		"game.draw": "ड्रा",
+		"game.loser": "हारने वाला",
+		"game.play-again": "फिर से खेलें",
+		"game.winner": "विजेता",
 	},
 };

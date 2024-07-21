@@ -186,10 +186,7 @@ export const ViewEndSpaceButton: SpaceClientModule["View"] = (input) => {
 const ViewSpaceEnded: SpaceClientModule["View"] = (input) => {
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center gap-4">
-			<Typography
-				text={input.ctx.t("spaces.space-ended")}
-				variant="title"
-			/>
+			<Typography text={input.ctx.t("spaces.space-ended")} variant="title" />
 			<Button
 				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
 				size="lg"

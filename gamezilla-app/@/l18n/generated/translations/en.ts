@@ -53,13 +53,59 @@ export const translations: Text = {
   "spaces.start-space": "Start space",
   "spaces.space-started": "Space started",
   "spaces.see-profile": "See profile",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "Easy";
+      case "Impossible":
+        return "Impossible";
+      case "Medium":
+        return "Medium";
+      default:
+        return "Unknown";
+    }
+  },
+  "tic-tac-toe.cross": "Cross",
+  "tic-tac-toe.naught": "Naught",
   "connect-four": "Connect Four",
   flow: "Flow",
   "tic-tac-toe": "Tic Tac Toe",
   gomoku: "Gomoku",
   chess: "Chess",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "Easy";
+      case "Hard":
+        return "Hard";
+      case "Medium":
+        return "Medium";
+      default:
+        return "Unknown";
+    }
+  },
+  "connect-four.red": "Red",
+  "connect-four.yellow": "Yellow",
   "chess.puzzle-title": "Puzzles",
   "chess.puzzle-description": "Train with more than 3 million puzzles",
+  "chess.black": "Black",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "Beginner";
+      case 1:
+        return "Intermediate";
+      case 2:
+        return "Advanced";
+      case 3:
+        return "Expert";
+      case 4:
+        return "Master";
+      default:
+        return "Unknown";
+    }
+  },
+  "chess.white": "White",
   "game.hint": "Hint",
   "game.start-game": "Start Game",
   "game.start-playing": "Start Playing",
@@ -67,6 +113,10 @@ export const translations: Text = {
   "game.change-bot": "Change Bot",
   "game.swap-sides": "Swap Sides",
   "game.rematch": "Rematch",
+  "game.draw": "Draw",
+  "game.loser": "Loser",
+  "game.play-again": "Play Again",
+  "game.winner": "Winner",
   host: "Host",
   you: "You",
   "game.play-friend-title": "Play Friend",
@@ -158,6 +208,8 @@ export const translations: Text = {
   "app.dimensions": "Dimensions",
   "app.redo": "Redo",
   "app.undo": "Undo",
+  "app.editor": "Editor",
+  "app.people": "People",
   "username-title": "Username",
   username: (username) => `@${username}`,
   en: "English",

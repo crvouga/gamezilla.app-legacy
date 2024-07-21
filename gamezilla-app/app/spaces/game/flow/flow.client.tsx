@@ -307,7 +307,7 @@ const View: ClientModule["View"] = (input) => {
 						{
 							renderIcon: (input) => <IconGamepad {...input} />,
 							title: ctx.t("flow.play"),
-							description: ctx.t('flow.play-description'),
+							description: ctx.t("flow.play-description"),
 							onClick: () => {
 								dispatch({
 									t: "msgCore",
@@ -321,8 +321,8 @@ const View: ClientModule["View"] = (input) => {
 						},
 						{
 							renderIcon: (input) => <IconScrewdriverWrench {...input} />,
-							title: ctx.t('flow.builder'),
-							description: ctx.t('flow.builder-description'),
+							title: ctx.t("flow.builder"),
+							description: ctx.t("flow.builder-description"),
 							onClick: () => {
 								dispatch({
 									t: "msgCore",

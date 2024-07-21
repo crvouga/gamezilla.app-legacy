@@ -1,6 +1,12 @@
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { UserId } from "gamezilla-app/app/@/data";
-import { IconRobot, Avatar, Transition, cn } from "gamezilla-app/app/@/ui";
+import {
+	IconRobot,
+	Avatar,
+	Transition,
+	cn,
+	Typography,
+} from "gamezilla-app/app/@/ui";
 import type { PlayerType, VsBotInput } from "../vs-bot";
 import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
 
@@ -261,9 +267,14 @@ const Winner = ({
 				{playerOne.renderIcon({ className: "h-16 w-16" })}
 				{human.player === "player-one" ? humanSlot : botSlot}
 			</div>
-			<p className="text-center text-4xl font-black">
-				{winner === "player-one" ? "Winner" : "Loser"}
-			</p>
+
+			<Typography
+				variant="title"
+				className="text-center text-4xl font-black"
+				text={
+					winner === "player-one" ? ctx.t("game.winner") : ctx.t("game.loser")
+				}
+			/>
 		</div>
 	);
 
@@ -275,9 +286,13 @@ const Winner = ({
 				{human.player === "player-two" ? humanSlot : botSlot}
 			</div>
 
-			<p className="text-center text-4xl font-black">
-				{winner === "player-two" ? "Winner" : "Loser"}
-			</p>
+			<Typography
+				variant="title"
+				className="text-center text-4xl font-black"
+				text={
+					winner === "player-two" ? ctx.t("game.winner") : ctx.t("game.loser")
+				}
+			/>
 		</div>
 	);
 
@@ -335,24 +350,22 @@ export const VsBotPlayerSection = ({
 	playerTwo,
 	turn,
 }: VsBotGameinput) => {
+	const profile = ctx.profiles[human.userId]
 	const humanSlot = (
 		<>
 			<Avatar
 				className="h-6 w-6 "
 				src={ctx.profiles[human.userId]?.avatarUrl}
 			/>
-			<p className="overflow-hidden text-ellipsis whitespace-nowrap">
-				{ctx.profiles[human.userId]?.username}
-			</p>
+			{profile && <Typography className="truncate" variant="body" text={ctx.t('username', profile.username)} />}
+			
 		</>
 	);
 
 	const botSlot = (
 		<>
 			{bot.renderIcon({ className: "h-6 w-6 flex-shrink-0" })}
-			<p className="overflow-hidden text-ellipsis whitespace-nowrap">
-				{bot.label}
-			</p>
+			<Typography className="truncate" variant="body" text={bot.label} />
 		</>
 	);
 

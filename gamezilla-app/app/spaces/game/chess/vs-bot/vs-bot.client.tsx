@@ -272,7 +272,7 @@ export const View = ({
 					return <CoverArt {...input} />;
 				}}
 				bot={{
-					label: Chess.botLevelToString(model.coreModel.botLevel),
+					label: ctx.t("chess.bot-level", model.coreModel.botLevel),
 					renderIcon: (input) =>
 						Chess.renderBotLevel({
 							level: model.coreModel.botLevel,
@@ -281,7 +281,7 @@ export const View = ({
 				}}
 				botVariants={Chess.allBotLevels.map((botLevel) => {
 					return {
-						label: Chess.botLevelToString(botLevel),
+						label: ctx.t("chess.bot-level", botLevel),
 						renderIcon: (input) =>
 							Chess.renderBotLevel({ level: botLevel, ...input }),
 						onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
@@ -303,7 +303,7 @@ export const View = ({
 				onQuit={onClose}
 				onStartGame={() => dispatch({ t: "start-game" })}
 				playerOne={{
-					label: "White",
+					label: ctx.t("chess.white"),
 					onStartPlaying: () => dispatch({ t: "start-playing", color: "w" }),
 					onStopPlaying: () => dispatch({ t: "stop-playing" }),
 					renderIcon: (input) => {
@@ -311,7 +311,7 @@ export const View = ({
 					},
 				}}
 				playerTwo={{
-					label: "Black",
+					label: ctx.t("chess.black"),
 					onStartPlaying: () => dispatch({ t: "start-playing", color: "b" }),
 					onStopPlaying: () => dispatch({ t: "stop-playing" }),
 					renderIcon: (input) => {
@@ -387,7 +387,7 @@ export const View = ({
 			<ViewBottomButtonBar>
 				<ViewBottomButtonBarAction
 					icon={(input) => <IconArrowLeftOnRect {...input} />}
-					label={ctx.t('app.exit')}
+					label={ctx.t("app.exit")}
 					onClick={onClose}
 				/>
 			</ViewBottomButtonBar>

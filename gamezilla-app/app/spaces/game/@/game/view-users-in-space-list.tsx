@@ -4,7 +4,7 @@ import {
 } from "gamezilla-app/app/spaces/@/space";
 import type { BaseClientCtx } from "gamezilla-app/app/@/client";
 import type { UserId } from "gamezilla-app/app/@/data";
-import { Avatar, IconCrown } from "gamezilla-app/app/@/ui";
+import { Avatar, IconCrown, Typography } from "gamezilla-app/app/@/ui";
 
 export const ViewUsersInSpaceList = ({
 	ctx,
@@ -16,7 +16,7 @@ export const ViewUsersInSpaceList = ({
 	const profiles = spaceToProfiles(ctx, ctx.space);
 	return (
 		<section className="flex w-full flex-col gap-2 py-4">
-			<p className="text-center text-3xl font-bold">People</p>
+			<Typography variant="title" text={ctx.t("app.people")} />
 
 			<div className="w-full">
 				{profiles.map((profile) => {

@@ -399,15 +399,15 @@ export const BottomBarActions = ({
 }: {
 	model: ModelClient;
 	onClose: () => void;
-		dispatch: (m: MsgClient) => void;
-		ctx: {
-		t: Translator
-	}
+	dispatch: (m: MsgClient) => void;
+	ctx: {
+		t: Translator;
+	};
 }): VDomChildren => {
 	const exit = (
 		<ViewBottomButtonBarAction
 			icon={(input) => <IconArrowLeftOnRect {...input} />}
-			label={ctx.t('app.exit')}
+			label={ctx.t("app.exit")}
 			onClick={onClose}
 		/>
 	);
@@ -415,7 +415,7 @@ export const BottomBarActions = ({
 	const hint = (
 		<ViewBottomButtonBarAction
 			icon={(input) => <IconLightbulb {...input} />}
-			label={ctx.t('game.hint')}
+			label={ctx.t("game.hint")}
 			disabled={isNoMoreHints(model) || model.t === "loading"}
 			onClick={() => dispatch({ t: "show-hint" })}
 		/>
@@ -424,7 +424,7 @@ export const BottomBarActions = ({
 	const retry = (
 		<ViewBottomButtonBarAction
 			icon={(input) => <IconArrowRotateLeft {...input} />}
-			label={ctx.t('app.retry')}
+			label={ctx.t("app.retry")}
 			onClick={() => dispatch({ t: "retry" })}
 			color="danger"
 		/>
@@ -433,7 +433,7 @@ export const BottomBarActions = ({
 	const skip = (
 		<ViewBottomButtonBarAction
 			icon={(input) => <IconArrowRight {...input} />}
-			label={ctx.t('app.skip')}
+			label={ctx.t("app.skip")}
 			onClick={() => dispatch({ t: "skip" })}
 		/>
 	);
@@ -441,7 +441,7 @@ export const BottomBarActions = ({
 	const next = (
 		<ViewBottomButtonBarAction
 			icon={(input) => <IconArrowCircle {...input} />}
-			label={ctx.t('app.next')}
+			label={ctx.t("app.next")}
 			color="success"
 			onClick={() => dispatch({ t: "next" })}
 		/>

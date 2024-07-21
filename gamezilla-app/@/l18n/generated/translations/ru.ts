@@ -54,14 +54,60 @@ export const translations: Text = {
   "spaces.start-space": "Начать пространство",
   "spaces.space-started": "Пространство началось",
   "spaces.see-profile": "Посмотреть профиль",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u041B\u0435\u0433\u043A\u043E";
+      case "Impossible":
+        return "\u041D\u0435\u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E";
+      case "Medium":
+        return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
+      default:
+        return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
+    }
+  },
+  "tic-tac-toe.cross": "Крест",
+  "tic-tac-toe.naught": "Нолик",
   "connect-four": "Соедините четыре",
   flow: "Поток",
   "tic-tac-toe": "Крестики-нолики",
   gomoku: "Гомоку",
   chess: "Шахматы",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u041B\u0435\u0433\u043A\u043E";
+      case "Hard":
+        return "\u0422\u0440\u0443\u0434\u043D\u043E";
+      case "Medium":
+        return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
+      default:
+        return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
+    }
+  },
+  "connect-four.red": "Красный",
+  "connect-four.yellow": "Желтый",
   "chess.puzzle-description":
     "Тренируйтесь с более чем 3 миллионами головоломок",
   "chess.puzzle-title": "Головоломки",
+  "chess.black": "Черный",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\u041D\u043E\u0432\u0438\u0447\u043E\u043A";
+      case 1:
+        return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
+      case 2:
+        return "\u041F\u0440\u043E\u0434\u0432\u0438\u043D\u0443\u0442\u044B\u0439";
+      case 3:
+        return "\u042D\u043A\u0441\u043F\u0435\u0440\u0442";
+      case 4:
+        return "\u041C\u0430\u0441\u0442\u0435\u0440";
+      default:
+        return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
+    }
+  },
+  "chess.white": "Белый",
   "game.hint": "Подсказка",
   "game.start-game": "Начать игру",
   "game.start-playing": "Начать играть",
@@ -69,6 +115,10 @@ export const translations: Text = {
   "game.change-bot": "Изменить бота",
   "game.swap-sides": "Поменять стороны",
   "game.rematch": "Реванш",
+  "game.draw": "Ничья",
+  "game.loser": "Проигравший",
+  "game.play-again": "Играть снова",
+  "game.winner": "Победитель",
   host: "Хост",
   you: "Вы",
   "game.play-friend-title": "Играть с другом",
@@ -168,6 +218,8 @@ export const translations: Text = {
   "app.dimensions": "Размеры",
   "app.redo": "Повторить",
   "app.undo": "Отменить",
+  "app.editor": "Редактор",
+  "app.people": "Люди",
   "username-title": "Имя пользователя",
   username: (username) => `@${username}`,
   en: "Английский",

@@ -3,7 +3,7 @@ import { Translations } from "gamezilla-app/@/l18n";
 export type Text = {
 	"flow.flow": string;
 	"flow.play": string;
-	"flow.play-description":string
+	"flow.play-description": string;
 	"flow.builder": string;
 	"flow.builder-description": string;
 	"flow.puzzle-completed": string;
@@ -29,7 +29,8 @@ export const translations: Translations<Text> = {
 		"flow.play": "Spielen",
 		"flow.play-description": "Beginnen Sie mit dem Spielen von Rätseln",
 		"flow.builder": "Baumeister",
-		"flow.builder-description": "Erstellen und bearbeiten Sie Rätsel und Pakete",
+		"flow.builder-description":
+			"Erstellen und bearbeiten Sie Rätsel und Pakete",
 		"flow.puzzle-completed": "Rätsel gelöst",
 		"flow.select-next-pack": "Nächstes Paket auswählen",
 		"flow.next-puzzle": "Nächstes Rätsel",
@@ -38,7 +39,7 @@ export const translations: Translations<Text> = {
 	en: {
 		"flow.flow": "Flow",
 		"flow.play": "Play",
-		"flow.play-description":  "Start playing puzzles",
+		"flow.play-description": "Start playing puzzles",
 		"flow.builder": "Builder",
 		"flow.builder-description": "Create and edit puzzles and packs",
 		"flow.puzzle-completed": "Puzzle Completed",
@@ -117,7 +118,8 @@ export const translations: Translations<Text> = {
 		"flow.play": "Играть",
 		"flow.play-description": "Начните играть в головоломки",
 		"flow.builder": "Строитель",
-		"flow.builder-description": "Создание и редактирование головоломок и пакетов",
+		"flow.builder-description":
+			"Создание и редактирование головоломок и пакетов",
 		"flow.puzzle-completed": "Головоломка завершена ",
 		"flow.select-next-pack": "Выбрать следующий пакет",
 		"flow.next-puzzle": "Следующая головоломка",

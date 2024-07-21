@@ -53,13 +53,59 @@ export const translations: Text = {
   "spaces.start-space": "स्थान शुरू करें",
   "spaces.space-started": "स्थान शुरू हो गया",
   "spaces.see-profile": "प्रोफ़ाइल देखें",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u0906\u0938\u093E\u0928";
+      case "Impossible":
+        return "\u0905\u0938\u0902\u092D\u0935";
+      case "Medium":
+        return "\u092E\u0927\u094D\u092F\u092E";
+      default:
+        return "\u0905\u091C\u094D\u091E\u093E\u0924";
+    }
+  },
+  "tic-tac-toe.cross": "क्रॉस",
+  "tic-tac-toe.naught": "नॉट",
   "connect-four": "चार कनेक्ट करें",
   flow: "धारा",
   "tic-tac-toe": "टिक टैक टो",
   gomoku: "गोमोकु",
   chess: "शतरंज",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u0906\u0938\u093E\u0928";
+      case "Hard":
+        return "\u0915\u0920\u093F\u0928";
+      case "Medium":
+        return "\u092E\u0927\u094D\u092F\u092E";
+      default:
+        return "\u0905\u091C\u094D\u091E\u093E\u0924";
+    }
+  },
+  "connect-four.red": "लाल",
+  "connect-four.yellow": "पीला",
   "chess.puzzle-description": "3 मिलियन से अधिक पहेलियों के साथ प्रशिक्षण करें",
   "chess.puzzle-title": "पहेलियाँ",
+  "chess.black": "काला",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\u0936\u0941\u0930\u0941\u0906\u0924\u0940";
+      case 1:
+        return "\u0907\u0902\u091F\u0930\u092E\u0940\u0921\u093F\u090F\u091F";
+      case 2:
+        return "\u0909\u0928\u094D\u0928\u0924";
+      case 3:
+        return "\u0935\u093F\u0936\u0947\u0937\u091C\u094D\u091E";
+      case 4:
+        return "\u092E\u093E\u0938\u094D\u091F\u0930";
+      default:
+        return "\u0905\u091C\u094D\u091E\u093E\u0924";
+    }
+  },
+  "chess.white": "सफेद",
   "game.hint": "संकेत",
   "game.start-game": "खेल शुरू करें",
   "game.start-playing": "खेलना शुरू करें",
@@ -67,6 +113,10 @@ export const translations: Text = {
   "game.change-bot": "बॉट बदलें",
   "game.swap-sides": "पक्ष बदलें",
   "game.rematch": "रीमैच",
+  "game.draw": "ड्रा",
+  "game.loser": "हारने वाला",
+  "game.play-again": "फिर से खेलें",
+  "game.winner": "विजेता",
   host: "मेज़बान",
   you: "तुम",
   "game.play-friend-title": "दोस्त के साथ खेलें",
@@ -166,6 +216,8 @@ export const translations: Text = {
   "app.dimensions": "आयाम",
   "app.redo": "फिर से करें",
   "app.undo": "पूर्ववत करें",
+  "app.editor": "संपादक",
+  "app.people": "लोग",
   "username-title": "उपयोगकर्ता नाम",
   username: (username) => `@${username}`,
   en: "अंग्रेज़ी",

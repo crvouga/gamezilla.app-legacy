@@ -52,13 +52,59 @@ export const translations: Text = {
   "spaces.start-space": "بدء المساحة",
   "spaces.space-started": "بدأت المساحة",
   "spaces.see-profile": "مشاهدة الملف الشخصي",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u0633\u0647\u0644";
+      case "Impossible":
+        return "\u0645\u0633\u062A\u062D\u064A\u0644";
+      case "Medium":
+        return "\u0645\u062A\u0648\u0633\u0637";
+      default:
+        return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
+    }
+  },
+  "tic-tac-toe.cross": "صليب",
+  "tic-tac-toe.naught": "دائرة",
   "connect-four": "ربط أربعة",
   flow: "تدفق",
   "tic-tac-toe": "لعبة إكس أو",
   gomoku: "جوموكو",
   chess: "شطرنج",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u0633\u0647\u0644";
+      case "Hard":
+        return "\u0635\u0639\u0628";
+      case "Medium":
+        return "\u0645\u062A\u0648\u0633\u0637";
+      default:
+        return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
+    }
+  },
+  "connect-four.red": "أحمر",
+  "connect-four.yellow": "أصفر",
   "chess.puzzle-description": "تدرب مع أكثر من 3 ملايين لغز",
   "chess.puzzle-title": "ألغاز",
+  "chess.black": "أسود",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\u0645\u0628\u062A\u062F\u0626";
+      case 1:
+        return "\u0645\u062A\u0648\u0633\u0637";
+      case 2:
+        return "\u0645\u062A\u0642\u062F\u0645";
+      case 3:
+        return "\u062E\u0628\u064A\u0631";
+      case 4:
+        return "\u0645\u0627\u062C\u0633\u062A\u064A\u0631";
+      default:
+        return "\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641";
+    }
+  },
+  "chess.white": "أبيض",
   "game.hint": "ملحوظة",
   "game.start-game": "بدء اللعبة",
   "game.start-playing": "بدء اللعب",
@@ -66,6 +112,10 @@ export const translations: Text = {
   "game.change-bot": "تغيير البوت",
   "game.swap-sides": "تبديل الجانب",
   "game.rematch": "إعادة المباراة",
+  "game.draw": "تعادل",
+  "game.loser": "الخاسر",
+  "game.play-again": "العب مرة أخرى",
+  "game.winner": "الفائز",
   host: "المضيف",
   you: "أنت",
   "game.play-friend-title": "العب مع صديق",
@@ -164,6 +214,8 @@ export const translations: Text = {
   "app.dimensions": "الأبعاد",
   "app.redo": "إعادة",
   "app.undo": "إلغاء",
+  "app.editor": "محرر",
+  "app.people": "الناس",
   "username-title": "اسم المستخدم",
   username: (username) => `@${username}`,
   en: "إنجليزي",

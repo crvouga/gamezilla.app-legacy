@@ -318,8 +318,8 @@ export const View: Client["View"] = (input) => {
 								}),
 						}),
 						{
-							title: input.ctx.t('chess.puzzle-title'),
-							description: input.ctx.t('chess.puzzle-description'),
+							title: input.ctx.t("chess.puzzle-title"),
+							description: input.ctx.t("chess.puzzle-description"),
 							renderIcon: (input) => <IconPuzzlePiece {...input} />,
 							onClick: () =>
 								input.dispatch({

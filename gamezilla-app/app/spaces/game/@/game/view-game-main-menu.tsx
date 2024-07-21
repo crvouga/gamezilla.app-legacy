@@ -132,10 +132,10 @@ export const View = ({
 								className: "aspect-square w-10 h-10 mr-4",
 							})}
 							<div className="flex-1 text-left">
-								<Typography variant="title" text={title}/>
+								<Typography variant="title" text={title} />
 
 								{description && (
-									<Typography variant="label" text={description}/>
+									<Typography variant="label" text={description} />
 								)}
 							</div>
 						</button>
@@ -147,21 +147,27 @@ export const View = ({
 };
 
 export const buttons = {
-	playFriend: (input: { onClick: () => void, ctx: {t: Translator} }): MainMenuButton => {
+	playFriend: (input: {
+		onClick: () => void;
+		ctx: { t: Translator };
+	}): MainMenuButton => {
 		return {
 			...input,
 			renderIcon: (input) => <IconUsers {...input} />,
-			title:input.ctx.t('game.play-friend-title'),
-			description:input.ctx.t('game.play-friend-description'),
+			title: input.ctx.t("game.play-friend-title"),
+			description: input.ctx.t("game.play-friend-description"),
 		};
 	},
 
-	playComputer: (input: { onClick: () => void; ctx: {t: Translator} }): MainMenuButton => {
+	playComputer: (input: {
+		onClick: () => void;
+		ctx: { t: Translator };
+	}): MainMenuButton => {
 		return {
 			...input,
 			renderIcon: (input) => <IconRobot {...input} />,
-			title:input.ctx.t('game.play-computer-title'),
-			description:input.ctx.t('game.play-computer-description'),
+			title: input.ctx.t("game.play-computer-title"),
+			description: input.ctx.t("game.play-computer-description"),
 		};
 	},
 };

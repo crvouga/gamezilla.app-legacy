@@ -53,13 +53,59 @@ export const translations: Text = {
   "spaces.start-space": "Iniciar espacio",
   "spaces.space-started": "Espacio iniciado",
   "spaces.see-profile": "Ver perfil",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "F\xE1cil";
+      case "Impossible":
+        return "Imposible";
+      case "Medium":
+        return "Medio";
+      default:
+        return "Desconocido";
+    }
+  },
+  "tic-tac-toe.cross": "Cruz",
+  "tic-tac-toe.naught": "Círculo",
   "connect-four": "Conectar cuatro",
   flow: "Flujo",
   "tic-tac-toe": "Tres en raya",
   gomoku: "Gomoku",
   chess: "Ajedrez",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "F\xE1cil";
+      case "Hard":
+        return "Dif\xEDcil";
+      case "Medium":
+        return "Medio";
+      default:
+        return "Desconocido";
+    }
+  },
+  "connect-four.red": "Rojo",
+  "connect-four.yellow": "Amarillo",
   "chess.puzzle-description": "Entrenar con más de 3 millones de rompecabezas",
   "chess.puzzle-title": "Rompecabezas",
+  "chess.white": "Blanco",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "Principiante";
+      case 1:
+        return "Intermedio";
+      case 2:
+        return "Avanzado";
+      case 3:
+        return "Experto";
+      case 4:
+        return "Maestro";
+      default:
+        return "Desconocido";
+    }
+  },
+  "chess.black": "Black",
   "game.hint": "Sugerencia",
   "game.start-game": "Comenzar juego",
   "game.start-playing": "Comenzar a jugar",
@@ -67,6 +113,10 @@ export const translations: Text = {
   "game.change-bot": "Cambiar bot",
   "game.swap-sides": "Intercambiar lados",
   "game.rematch": "Revancha",
+  "game.draw": "Empate",
+  "game.loser": "Perdedor",
+  "game.play-again": "Jugar de nuevo",
+  "game.winner": "Ganador",
   host: "Anfitrión",
   you: "Tú",
   "game.play-friend-title": "Jugar con amigo",
@@ -160,6 +210,8 @@ export const translations: Text = {
   "app.dimensions": "Dimensiones",
   "app.redo": "Rehacer",
   "app.undo": "Deshacer",
+  "app.editor": "Editor",
+  "app.people": "Gente",
   "username-title": "Nombre de usuario",
   username: (username) => `@${username}`,
   en: "Inglés",

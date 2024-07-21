@@ -328,7 +328,7 @@ const View: Module["View"] = (input) => {
 			}),
 		botVariants: ALL_BOT_LEVELS.map((botLevel) => {
 			return {
-				label: botLevel,
+				label: input.ctx.t('connect-four.bot-level', botLevel),
 				renderIcon: (input) => <ViewBotLevel {...input} level={botLevel} />,
 				onSelect: () =>
 					input.dispatch({
@@ -346,13 +346,13 @@ const View: Module["View"] = (input) => {
 			userId: input.modelCore.playingUserId ?? null,
 		},
 		bot: {
-			label: input.modelCore.botLevel,
+			label: input.ctx.t('connect-four.bot-level', input.modelCore.botLevel),
 			renderIcon: (iconinput) => (
 				<ViewBotLevel {...iconinput} level={input.modelCore.botLevel} />
 			),
 		},
 		playerOne: {
-			label: "Red",
+			label: input.ctx.t('connect-four.red'),
 			renderIcon: (input) => <PlayerOneIcon {...input} />,
 			onStartPlaying: () =>
 				input.dispatch({
@@ -367,7 +367,7 @@ const View: Module["View"] = (input) => {
 				}),
 		},
 		playerTwo: {
-			label: "Yellow",
+			label: input.ctx.t('connect-four.yellow'),
 			renderIcon: (input) => <PlayerTwoIcon {...input} />,
 			onStartPlaying: () =>
 				input.dispatch({
@@ -460,7 +460,6 @@ const View: Module["View"] = (input) => {
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
 						icon={(input) => <IconArrowLeftOnRect {...input} />}
-					
 						label={input.ctx.t("app.exit")}
 						onClick={() =>
 							input.dispatch({

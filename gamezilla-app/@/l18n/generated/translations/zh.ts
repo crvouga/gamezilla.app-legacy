@@ -51,13 +51,59 @@ export const translations: Text = {
   "spaces.start-space": "开始空间",
   "spaces.space-started": "空间已开始",
   "spaces.see-profile": "查看个人资料",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u5BB9\u6613";
+      case "Impossible":
+        return "\u4E0D\u53EF\u80FD";
+      case "Medium":
+        return "\u4E2D";
+      default:
+        return "\u672A\u77E5";
+    }
+  },
+  "tic-tac-toe.cross": "交叉",
+  "tic-tac-toe.naught": "零",
   "connect-four": "连接四",
   flow: "流",
   "tic-tac-toe": "井字棋",
   gomoku: "五子棋",
   chess: "国际象棋",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u7B80\u5355";
+      case "Hard":
+        return "\u56F0\u96BE";
+      case "Medium":
+        return "\u4E2D";
+      default:
+        return "\u672A\u77E5";
+    }
+  },
+  "connect-four.red": "红色",
+  "connect-four.yellow": "黄色",
   "chess.puzzle-description": "使用300多万个拼图进行训练",
   "chess.puzzle-title": "拼图",
+  "chess.black": "黑色",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\u521D\u5B66\u8005";
+      case 1:
+        return "\u4E2D\u7EA7";
+      case 2:
+        return "\u9AD8\u7EA7";
+      case 3:
+        return "\u4E13\u5BB6";
+      case 4:
+        return "\u5927\u5E08";
+      default:
+        return "\u672A\u77E5";
+    }
+  },
+  "chess.white": "白色",
   "game.hint": "提示",
   "game.start-game": "开始游戏",
   "game.start-playing": "开始游戏",
@@ -65,6 +111,10 @@ export const translations: Text = {
   "game.change-bot": "更改机器人",
   "game.swap-sides": "交换边",
   "game.rematch": "再来一局",
+  "game.draw": "平局",
+  "game.loser": "失败者",
+  "game.play-again": "再玩一次",
+  "game.winner": "获胜者",
   host: "主持人",
   you: "你",
   "game.play-friend-title": "与朋友玩",
@@ -162,6 +212,8 @@ export const translations: Text = {
   "app.dimensions": "尺寸",
   "app.redo": "重做",
   "app.undo": "撤销",
+  "app.editor": "编辑者",
+  "app.people": "人们",
   "username-title": "用户名",
   username: (username) => `@${username}`,
   en: "英语",
