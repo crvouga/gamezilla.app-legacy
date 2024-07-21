@@ -4,7 +4,7 @@ import {
 	type ClientCtx,
 	playSound,
 } from "gamezilla-app/app/@/client";
-import { TopBar } from "gamezilla-app/app/@/ui";
+import { TopBar, Typography } from "gamezilla-app/app/@/ui";
 import { type WithEventId, withId } from "../@/event";
 import { SpaceClientCmd } from "../@/space-client-cmd";
 import { SpaceClientModule } from "../architecture/architecture";
@@ -370,9 +370,11 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = (input) => {
 							<CoverArt gameName={gameName} />
 						</button>
 
-						<p className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">
-							{input.ctx.t(gameName)}
-						</p>
+						<Typography
+							className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold"
+							variant="label"
+							text={input.ctx.t(gameName)}
+						/>
 					</div>
 				))}
 			</div>

@@ -32,6 +32,7 @@ export type Text = {
 	"app.dimensions": string;
 	"app.editor": string;
 	"app.people": string;
+	"app.+number": (number: number) => string;
 };
 
 export const translations: Translations<Text> = {
@@ -67,6 +68,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "Undo",
 		"app.editor": "Editor",
 		"app.people": "People",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	ar: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -100,6 +102,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "إلغاء",
 		"app.editor": "محرر",
 		"app.people": "الناس",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	de: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -134,6 +137,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "Rückgängig machen",
 		"app.editor": "Editor",
 		"app.people": "Menschen",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	es: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -167,6 +171,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "Deshacer",
 		"app.editor": "Editor",
 		"app.people": "Gente",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	fr: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -200,6 +205,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "Annuler",
 		"app.editor": "Éditeur",
 		"app.people": "Personnes",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	it: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -234,6 +240,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "Disfare",
 		"app.editor": "Editore",
 		"app.people": "Persone",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	ja: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -267,6 +274,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "元に戻す",
 		"app.editor": "エディタ",
 		"app.people": "人々",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	ko: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -300,6 +308,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "실행 취소",
 		"app.editor": "편집자",
 		"app.people": "사람들",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	pt: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -333,6 +342,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "Desfazer",
 		"app.editor": "Editor",
 		"app.people": "Pessoas",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	ru: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -366,6 +376,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "Отменить",
 		"app.editor": "Редактор",
 		"app.people": "Люди",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	zh: {
 		"app.gamezilla-app": "gamezilla.app",
@@ -399,6 +410,7 @@ export const translations: Translations<Text> = {
 		"app.undo": "撤销",
 		"app.editor": "编辑者",
 		"app.people": "人们",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 	hi: {
 		"app.gamezilla-app": "गेमजिला.एप",
@@ -432,5 +444,6 @@ export const translations: Translations<Text> = {
 		"app.undo": "पूर्ववत करें",
 		"app.editor": "संपादक",
 		"app.people": "लोग",
+		"app.+number": (number) => `+${number.toLocaleString()}`,
 	},
 };

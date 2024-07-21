@@ -5,6 +5,7 @@ import {
 	Button,
 	Drawer,
 	IconQuestionMark,
+	Typography,
 } from "gamezilla-app/app/@/ui";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { ViewGameHeader } from "../../game/view-game-header";
@@ -149,9 +150,11 @@ export const View = ({
 				<div className="grid w-full grid-cols-7">
 					<PlayerIcons player={playerOneProp} ctx={ctx} />
 					<div className="col-span-1 grid place-items-center">
-						<p className=" flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black">
-							VS
-						</p>
+						<Typography
+							className=" flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black"
+							variant="title"
+							text={ctx.t("game.vs")}
+						/>
 					</div>
 					<PlayerIcons player={playerTwoProp} ctx={ctx} />
 				</div>
@@ -203,7 +206,11 @@ export const View = ({
 				onClose={() => dispatch({ t: "closed-modal" })}
 			>
 				<div className="flex flex-col pb-6">
-					<p className="p-4 text-2xl font-bold">Change bot</p>
+					<Typography
+						className="p-4 text-2xl font-bold"
+						variant="title"
+						text={ctx.t("game.change-bot")}
+					/>
 					<div>
 						{botVariants.map((botLevel) => {
 							const onClick = () => {

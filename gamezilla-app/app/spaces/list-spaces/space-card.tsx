@@ -1,5 +1,5 @@
 import type { BaseClientCtx } from "gamezilla-app/app/@/client";
-import { Avatar, cn } from "gamezilla-app/app/@/ui";
+import { Avatar, cn, Typography } from "gamezilla-app/app/@/ui";
 import { ViewSpaceHostChip, ViewYouChip } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import type { SpaceCoreState } from "../spaces-core";
@@ -50,7 +50,11 @@ export const ViewSpaceCard = (input: {
 					<div className="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
 						<CoverArt gameName={gameName} />
 					</div>
-					<p className="text-xl">{input.ctx.t(gameName)}</p>
+					<Typography
+						variant="title"
+						className="truncate"
+						text={input.ctx.t(gameName)}
+					/>
 				</div>
 			)}
 
@@ -58,9 +62,13 @@ export const ViewSpaceCard = (input: {
 				<Avatar src={host?.avatarUrl} alt="avatar" className="h-12 w-12" />
 
 				<div className="flex-1 overflow-hidden">
-					<p className="overflow-hidden text-ellipsis whitespace-nowrap text-xl">
-						{host?.username}
-					</p>
+					{host && (
+						<Typography
+							variant="title"
+							className="truncate"
+							text={input.ctx.t("username", host.username)}
+						/>
+					)}
 				</div>
 				<ViewSpaceHostChip ctx={input.ctx} />
 				{input.ctx.currentUserId === host?.userId && (
@@ -81,15 +89,20 @@ export const ViewSpaceCard = (input: {
 						))}
 						{users.length > MAX_AVATAR_COUNT && (
 							<div className="-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30">
-								<p className="text-xs">
-									+{(users.length - MAX_AVATAR_COUNT).toLocaleString()}
-								</p>
+								<Typography
+									variant="label"
+									text={input.ctx.t(
+										"app.+number",
+										users.length - MAX_AVATAR_COUNT,
+									)}
+								/>
 							</div>
 						)}
 					</div>
-					<p className="text-lg">
-						{input.ctx.t("space-card.people-count", users.length)}
-					</p>
+					<Typography
+						variant="title"
+						text={input.ctx.t("space-card.people-count", users.length)}
+					/>
 				</div>
 			)}
 		</button>

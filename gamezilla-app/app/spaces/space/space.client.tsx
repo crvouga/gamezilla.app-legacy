@@ -1,7 +1,12 @@
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import type { SpaceId } from "gamezilla-app/app/@/data";
-import { Button, IconChevronDown, IconUserGroup } from "gamezilla-app/app/@/ui";
+import {
+	Button,
+	IconChevronDown,
+	IconUserGroup,
+	Typography,
+} from "gamezilla-app/app/@/ui";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceClientModule } from "../architecture/architecture";
 import { EndSpaceClient } from "../end-space/end-space.client";
@@ -12,6 +17,7 @@ import { Modals } from "../modals/modals";
 import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { ModelClient, MsgClient } from "../spaces.types";
 import { SpaceGameClient } from "./space-game.client";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 
 const View = (input: {
 	model: ModelClient;
@@ -86,13 +92,13 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
 		<nav className="flex h-14 w-full items-center border-b border-neutral-700">
 			<ViewTopBarButton
 				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
-				label={"Home"}
+				label={input.ctx.t("spaces.home")}
 				icon={<IconChevronDown className="h-6 w-6" />}
 			/>
 
 			<ViewTopBarButton
 				onClick={() => input.dispatch({ t: "clicked-people-button" })}
-				label={peopleCount > 1 ? `People (${peopleCount})` : "People"}
+				label={input.ctx.t("spaces.people-count", peopleCount)}
 				icon={<IconUserGroup className="h-6 w-6" />}
 			/>
 
@@ -115,7 +121,7 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
 
 const ViewTopBarButton = (input: {
 	icon: VDom;
-	label: string;
+	label: TranslatedText;
 	onClick: () => void;
 }) => {
 	return (
@@ -125,7 +131,7 @@ const ViewTopBarButton = (input: {
 			onClick={input.onClick}
 		>
 			{input.icon}
-			{/* <p className="text-xs">{label}</p> */}
+			<Typography text={input.label} variant="caption" />
 		</button>
 	);
 };
@@ -136,7 +142,10 @@ const ViewSpaceNotFound = (input: {
 }) => {
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center gap-4">
-			<p className="text-center text-2xl">Space not found</p>
+			<Typography
+				variant="title"
+				text={input.ctx.t("spaces.space-not-found")}
+			/>
 			<Button
 				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
 				size="lg"

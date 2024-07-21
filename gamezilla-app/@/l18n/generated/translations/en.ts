@@ -2,226 +2,233 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-  "wire.server-restarted": "Server restarted",
-  "auth.logout": "Logout",
-  "auth.logged-in-as-guest": "Logged in as a guest",
-  "auth.logged-in-with-phone": "Logged in with phone",
-  "auth.current-user-logged-out": "Logged out",
-  "auth.current-user-logged-in": "Logged in",
-  "auth.continue-as-guest": "Continue as guest",
-  "auth.continue-with-phone": "Continue with phone",
-  "auth.or": "or",
-  "auth.sign-in-to": "Sign in to",
-  "auth.logged-in": "Logged in",
-  "auth.logout-of-gamezill.app": "Logout of gamezilla.app?",
-  "auth.logout-of-gamezill.app-body":
-    "This will log you out of the app. Are you sure?",
-  "verify-sms.code-message": (code) =>
-    `Your gamezilla.app verification code is ${code}. Do not share this code with anyone. We will never ask for this code.`,
-  "verify-sms-problem.code-incorrect": "Code is incorrect",
-  "verify-sms-problem.verification-expired": "Verification expired",
-  "verify-sms-problem.verification-not-found": "Verification not found",
-  "verify-sms-problem.verification-already-verified":
-    "Verification already verified",
-  "verify-sms-problem.database-error": "Database error",
-  "verify-sms-problem.verification-expired-too-many-failed-attempts":
-    "Verification expired due to too many failed attempts",
-  "verify-sms-problem.send-code-hourly-limit-reached":
-    "Hourly limit reached. Please try again later.",
-  "verify-sms-problem.send-code-daily-limit-reached":
-    "Daily limit reached. Please try again later.",
-  "verify-sms-problem.verification-expired-not-latest-verification":
-    "Verification expired because it is not the latest verification",
-  "verify-sms-problem.send-code-limit-reached":
-    "Limit reached. Please try again later.",
-  "auth-sms.login-with-phone": "Login with phone",
-  "auth-sms.phone-number": "Phone number",
-  "auth-sms.send-code": "Send code",
-  "auth-sms.country": "Country",
-  "auth-sms.code": "Code",
-  "auth-sms.verify-code": "Verify Code",
-  "auth-sms.invalid-phone-number": "Invalid phone number",
-  "auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
-    `Enter the code sent to ${formattedPhoneNumber}`,
-  "auth-sms.sent-code-to": (formattedPhoneNumber) =>
-    `Sent code to ${formattedPhoneNumber}`,
-  "auth-email.login-with-email": "Login with email",
-  "auth-email.send-login-link": "Send login link",
-  "spaces.current-user-left": "Left space",
-  "spaces.other-user-left": (username) => `${username} left space`,
-  "spaces.leave": "Leave",
-  "spaces.start-space": "Start space",
-  "spaces.space-started": "Space started",
-  "spaces.see-profile": "See profile",
-  "tic-tac-toe.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case "Easy":
-        return "Easy";
-      case "Impossible":
-        return "Impossible";
-      case "Medium":
-        return "Medium";
-      default:
-        return "Unknown";
-    }
-  },
-  "tic-tac-toe.cross": "Cross",
-  "tic-tac-toe.naught": "Naught",
-  "connect-four": "Connect Four",
-  flow: "Flow",
-  "tic-tac-toe": "Tic Tac Toe",
-  gomoku: "Gomoku",
-  chess: "Chess",
-  "connect-four.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case "Easy":
-        return "Easy";
-      case "Hard":
-        return "Hard";
-      case "Medium":
-        return "Medium";
-      default:
-        return "Unknown";
-    }
-  },
-  "connect-four.red": "Red",
-  "connect-four.yellow": "Yellow",
-  "chess.puzzle-title": "Puzzles",
-  "chess.puzzle-description": "Train with more than 3 million puzzles",
-  "chess.black": "Black",
-  "chess.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case 0:
-        return "Beginner";
-      case 1:
-        return "Intermediate";
-      case 2:
-        return "Advanced";
-      case 3:
-        return "Expert";
-      case 4:
-        return "Master";
-      default:
-        return "Unknown";
-    }
-  },
-  "chess.white": "White",
-  "game.hint": "Hint",
-  "game.start-game": "Start Game",
-  "game.start-playing": "Start Playing",
-  "game.stop-playing": "Stop Playing",
-  "game.change-bot": "Change Bot",
-  "game.swap-sides": "Swap Sides",
-  "game.rematch": "Rematch",
-  "game.draw": "Draw",
-  "game.loser": "Loser",
-  "game.play-again": "Play Again",
-  "game.winner": "Winner",
-  host: "Host",
-  you: "You",
-  "game.play-friend-title": "Play Friend",
-  "game.play-friend-description": "Play against people in your space",
-  "game.play-computer-title": "Play Computer",
-  "game.play-computer-description": "Play against a computer",
-  "flow.copy-puzzle-to-clipboard": "Copy puzzle to clipboard",
-  "flow.create-new": "Create New",
-  "flow.create-puzzle": "Create Puzzle",
-  "flow.puzzle-created": "Puzzle created",
-  "flow.saved-name": "Saved name",
-  "flow.puzzle-deleted": "Puzzle deleted",
-  "flow.delete-puzzle-forever?": "Delete puzzle forever?",
-  "flow.edit-mode": "Edit Mode",
-  "flow.play-mode": "Play Mode",
-  "flow.puzzle-removed": "Puzzle removed",
-  "flow.puzzle-added": "Puzzle added",
-  "flow.create-pack": "Create pack",
-  "flow.pack-created": "Pack created",
-  "flow.flow": "Flow",
-  "flow.play": "Play",
-  "flow.play-description": "Start playing puzzles",
-  "flow.builder": "Builder",
-  "flow.builder-description": "Create and edit puzzles and packs",
-  "flow.puzzle-completed": "Puzzle Completed",
-  "flow.select-next-pack": "Select Next Pack",
-  "flow.next-puzzle": "Next Puzzle",
-  "flow.level": (level) => `Level ${level}`,
-  "flow-pack-name": (flowPackName) => `${flowPackName}`,
-  "flow.no-packs": "No packs",
-  "flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
-  "flow.no-puzzles": "No puzzles",
-  "space-game-flow-edit.editing": "Editing",
-  "spaces.end": "End",
-  "spaces.end-space": "End space",
-  "spaces.ended-space-host": "Space ended by host",
-  "spaces.ended-space-current-user": "Ended space",
-  "spaces.ended-space-other-user": (username) => `${username} ended space`,
-  "spaces.space-ended": "Space ended",
-  "spaces.space": "Space",
-  "spaces.join-space": "Join space",
-  "spaces.current-user-joined-space": "Joined space",
-  "spaces.other-user-joined-space": (username) =>
-    username ? `${username} joined space` : "Joined space",
-  "spaces.you're-already-in-a-space": "You're already in a space",
-  "spaces.games": "Games",
-  "spaces.current-space": ({ hostUsername }) => `${hostUsername}'s space`,
-  "space-card.live": "Live",
-  "space-card.people-count": (count) => `${count.toLocaleString()} people`,
-  "spaces.spaces": "Spaces",
-  "spaces.no-spaces": "No spaces",
-  "spaces.space-not-found": "Space not found",
-  "spaces.go-home": "Go home",
-  "spaces.current-user-ended-space": "Ended space",
-  "spaces.other-user-ended-space": (username) =>
-    username ? `${username} ended space` : "Ended space",
-  "lang.language": "Language",
-  "lang.choose-language": "Choose Language",
-  "lang.done": "Done",
-  "lang.loaded-translations": "Loaded translations",
-  "profile.update-profile": "Update Profile",
-  "profile.update-avatar": "Update Avatar",
-  "app.gamezilla-app": "gamezilla.app",
-  "app.something-went-wrong": "Something went wrong",
-  "app.exit": "Exit",
-  "app.next": "Next",
-  "app.prev": "Prev",
-  "app.reset": "Reset",
-  "app.congratulations": "Congratulations",
-  "app.more": "More",
-  "app.copied-to-clipboard": "Copied to clipboard",
-  "app.saved-changes": "Saved changes",
-  "app.dont-save": "Don't Save",
-  "app.save": "Save",
-  "app.cancel": "Cancel",
-  "app.close": "Close",
-  "app.change": "Change",
-  "app.accept": "Accept",
-  "app.decline": "Decline",
-  "app.resign": "Resign",
-  "app.delete": "Delete",
-  "app.this-action-cannot-be-undone": "This action cannot be undone",
-  "app.height": "Height",
-  "app.width": "Width",
-  "app.restart": "Restart",
-  "app.retry": "Retry",
-  "app.skip": "Skip",
-  "app.clear": "Clear",
-  "app.dimensions": "Dimensions",
-  "app.redo": "Redo",
-  "app.undo": "Undo",
-  "app.editor": "Editor",
-  "app.people": "People",
-  "username-title": "Username",
-  username: (username) => `@${username}`,
-  en: "English",
-  es: "Spanish",
-  ar: "Arabic",
-  de: "German",
-  fr: "French",
-  hi: "Hindi",
-  it: "Italian",
-  ja: "Japanese",
-  ko: "Korean",
-  pt: "Portuguese",
-  ru: "Russian",
-  zh: "Chinese",
+	"wire.server-restarted": "Server restarted",
+	"wire.connecting...": "Connecting...",
+	"wire.offline": "Offline",
+	"auth.logout": "Logout",
+	"auth.logged-in-as-guest": "Logged in as a guest",
+	"auth.logged-in-with-phone": "Logged in with phone",
+	"auth.current-user-logged-out": "Logged out",
+	"auth.current-user-logged-in": "Logged in",
+	"auth.continue-as-guest": "Continue as guest",
+	"auth.continue-with-phone": "Continue with phone",
+	"auth.or": "or",
+	"auth.sign-in-to": "Sign in to",
+	"auth.logged-in": "Logged in",
+	"auth.logout-of-gamezill.app": "Logout of gamezilla.app?",
+	"auth.logout-of-gamezill.app-body":
+		"This will log you out of the app. Are you sure?",
+	"verify-sms.code-message": (code) =>
+		`Your gamezilla.app verification code is ${code}. Do not share this code with anyone. We will never ask for this code.`,
+	"verify-sms-problem.code-incorrect": "Code is incorrect",
+	"verify-sms-problem.verification-expired": "Verification expired",
+	"verify-sms-problem.verification-not-found": "Verification not found",
+	"verify-sms-problem.verification-already-verified":
+		"Verification already verified",
+	"verify-sms-problem.database-error": "Database error",
+	"verify-sms-problem.verification-expired-too-many-failed-attempts":
+		"Verification expired due to too many failed attempts",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"Hourly limit reached. Please try again later.",
+	"verify-sms-problem.send-code-daily-limit-reached":
+		"Daily limit reached. Please try again later.",
+	"verify-sms-problem.verification-expired-not-latest-verification":
+		"Verification expired because it is not the latest verification",
+	"verify-sms-problem.send-code-limit-reached":
+		"Limit reached. Please try again later.",
+	"auth-sms.login-with-phone": "Login with phone",
+	"auth-sms.phone-number": "Phone number",
+	"auth-sms.send-code": "Send code",
+	"auth-sms.country": "Country",
+	"auth-sms.code": "Code",
+	"auth-sms.verify-code": "Verify Code",
+	"auth-sms.invalid-phone-number": "Invalid phone number",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`Enter the code sent to ${formattedPhoneNumber}`,
+	"auth-sms.sent-code-to": (formattedPhoneNumber) =>
+		`Sent code to ${formattedPhoneNumber}`,
+	"auth-email.login-with-email": "Login with email",
+	"auth-email.send-login-link": "Send login link",
+	"spaces.current-user-left": "Left space",
+	"spaces.other-user-left": (username) => `${username} left space`,
+	"spaces.leave": "Leave",
+	"spaces.start-space": "Start space",
+	"spaces.space-started": "Space started",
+	"spaces.see-profile": "See profile",
+	"tic-tac-toe.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case "Easy":
+				return "Easy";
+			case "Impossible":
+				return "Impossible";
+			case "Medium":
+				return "Medium";
+			default:
+				return "Unknown";
+		}
+	},
+	"tic-tac-toe.cross": "Cross",
+	"tic-tac-toe.naught": "Naught",
+	"connect-four": "Connect Four",
+	flow: "Flow",
+	"tic-tac-toe": "Tic Tac Toe",
+	gomoku: "Gomoku",
+	chess: "Chess",
+	"connect-four.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case "Easy":
+				return "Easy";
+			case "Hard":
+				return "Hard";
+			case "Medium":
+				return "Medium";
+			default:
+				return "Unknown";
+		}
+	},
+	"connect-four.red": "Red",
+	"connect-four.yellow": "Yellow",
+	"chess.puzzle-title": "Puzzles",
+	"chess.puzzle-description": "Train with more than 3 million puzzles",
+	"chess.black": "Black",
+	"chess.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case 0:
+				return "Beginner";
+			case 1:
+				return "Intermediate";
+			case 2:
+				return "Advanced";
+			case 3:
+				return "Expert";
+			case 4:
+				return "Master";
+			default:
+				return "Unknown";
+		}
+	},
+	"chess.white": "White",
+	"game.hint": "Hint",
+	"game.start-game": "Start Game",
+	"game.start-playing": "Start Playing",
+	"game.stop-playing": "Stop Playing",
+	"game.change-bot": "Change Bot",
+	"game.swap-sides": "Swap Sides",
+	"game.rematch": "Rematch",
+	"game.draw": "Draw",
+	"game.loser": "Loser",
+	"game.play-again": "Play Again",
+	"game.winner": "Winner",
+	"game.vs": "vs",
+	host: "Host",
+	you: "You",
+	"game.play-friend-title": "Play Friend",
+	"game.play-friend-description": "Play against people in your space",
+	"game.play-computer-title": "Play Computer",
+	"game.play-computer-description": "Play against a computer",
+	"flow.copy-puzzle-to-clipboard": "Copy puzzle to clipboard",
+	"flow.create-new": "Create New",
+	"flow.create-puzzle": "Create Puzzle",
+	"flow.puzzle-created": "Puzzle created",
+	"flow.saved-name": "Saved name",
+	"flow.puzzle-deleted": "Puzzle deleted",
+	"flow.delete-puzzle-forever?": "Delete puzzle forever?",
+	"flow.edit-mode": "Edit Mode",
+	"flow.play-mode": "Play Mode",
+	"flow.puzzle-removed": "Puzzle removed",
+	"flow.puzzle-added": "Puzzle added",
+	"flow.create-pack": "Create pack",
+	"flow.pack-created": "Pack created",
+	"flow.flow": "Flow",
+	"flow.play": "Play",
+	"flow.play-description": "Start playing puzzles",
+	"flow.builder": "Builder",
+	"flow.builder-description": "Create and edit puzzles and packs",
+	"flow.puzzle-completed": "Puzzle Completed",
+	"flow.select-next-pack": "Select Next Pack",
+	"flow.next-puzzle": "Next Puzzle",
+	"flow.level": (level) => `Level ${level}`,
+	"flow-pack-name": (flowPackName) => `${flowPackName}`,
+	"flow.no-packs": "No packs",
+	"flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
+	"flow.no-puzzles": "No puzzles",
+	"space-game-flow-edit.editing": "Editing",
+	"spaces.end": "End",
+	"spaces.end-space": "End space",
+	"spaces.ended-space-host": "Space ended by host",
+	"spaces.ended-space-current-user": "Ended space",
+	"spaces.ended-space-other-user": (username) => `${username} ended space`,
+	"spaces.space-ended": "Space ended",
+	"spaces.space": "Space",
+	"spaces.join-space": "Join space",
+	"spaces.current-user-joined-space": "Joined space",
+	"spaces.other-user-joined-space": (username) =>
+		username ? `${username} joined space` : "Joined space",
+	"spaces.you're-already-in-a-space": "You're already in a space",
+	"spaces.games": "Games",
+	"spaces.current-space": ({ hostUsername }) => `${hostUsername}'s space`,
+	"spaces.home": "Home",
+	"spaces.people-count": (peopleCount) =>
+		peopleCount === 1 ? "People" : `People (${peopleCount.toLocaleString()})`,
+	"space-card.live": "Live",
+	"space-card.people-count": (count) => `${count.toLocaleString()} people`,
+	"spaces.spaces": "Spaces",
+	"spaces.no-spaces": "No spaces",
+	"spaces.space-not-found": "Space not found",
+	"spaces.go-home": "Go home",
+	"spaces.current-user-ended-space": "Ended space",
+	"spaces.other-user-ended-space": (username) =>
+		username ? `${username} ended space` : "Ended space",
+	"lang.language": "Language",
+	"lang.choose-language": "Choose Language",
+	"lang.done": "Done",
+	"lang.loaded-translations": "Loaded translations",
+	"profile.update-profile": "Update Profile",
+	"profile.update-avatar": "Update Avatar",
+	"app.gamezilla-app": "gamezilla.app",
+	"app.something-went-wrong": "Something went wrong",
+	"app.exit": "Exit",
+	"app.next": "Next",
+	"app.prev": "Prev",
+	"app.reset": "Reset",
+	"app.congratulations": "Congratulations",
+	"app.more": "More",
+	"app.copied-to-clipboard": "Copied to clipboard",
+	"app.saved-changes": "Saved changes",
+	"app.dont-save": "Don't Save",
+	"app.save": "Save",
+	"app.cancel": "Cancel",
+	"app.close": "Close",
+	"app.change": "Change",
+	"app.accept": "Accept",
+	"app.decline": "Decline",
+	"app.resign": "Resign",
+	"app.delete": "Delete",
+	"app.this-action-cannot-be-undone": "This action cannot be undone",
+	"app.height": "Height",
+	"app.width": "Width",
+	"app.restart": "Restart",
+	"app.retry": "Retry",
+	"app.skip": "Skip",
+	"app.clear": "Clear",
+	"app.dimensions": "Dimensions",
+	"app.redo": "Redo",
+	"app.undo": "Undo",
+	"app.editor": "Editor",
+	"app.people": "People",
+	"app.+number": (number) => `+${number.toLocaleString()}`,
+	"username-title": "Username",
+	username: (username) => `@${username}`,
+	en: "English",
+	es: "Spanish",
+	ar: "Arabic",
+	de: "German",
+	fr: "French",
+	hi: "Hindi",
+	it: "Italian",
+	ja: "Japanese",
+	ko: "Korean",
+	pt: "Portuguese",
+	ru: "Russian",
+	zh: "Chinese",
 };

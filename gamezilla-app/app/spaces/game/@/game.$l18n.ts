@@ -12,6 +12,7 @@ export type Text = {
 	"game.draw": string;
 	"game.play-again": string;
 	"game.loser": string;
+	"game.vs": string;
 };
 
 export const translations: Translations<Text> = {
@@ -27,6 +28,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "Loser",
 		"game.play-again": "Play Again",
 		"game.winner": "Winner",
+		"game.vs": "vs",
 	},
 	ar: {
 		"game.hint": "ملحوظة",
@@ -40,6 +42,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "الخاسر",
 		"game.play-again": "العب مرة أخرى",
 		"game.winner": "الفائز",
+		"game.vs": "ضد",
 	},
 	de: {
 		"game.hint": "Hinweis",
@@ -53,6 +56,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "Verlierer",
 		"game.play-again": "Erneut spielen",
 		"game.winner": "Gewinner",
+		"game.vs": "vs",
 	},
 	es: {
 		"game.hint": "Sugerencia",
@@ -66,6 +70,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "Perdedor",
 		"game.play-again": "Jugar de nuevo",
 		"game.winner": "Ganador",
+		"game.vs": "vs",
 	},
 	fr: {
 		"game.hint": "Indice",
@@ -79,6 +84,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "Perdant",
 		"game.play-again": "Rejouer",
 		"game.winner": "Gagnant",
+		"game.vs": "vs",
 	},
 	it: {
 		"game.hint": "Suggerimento",
@@ -92,6 +98,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "Perdente",
 		"game.play-again": "Gioca di nuovo",
 		"game.winner": "Vincitore",
+		"game.vs": "vs",
 	},
 	ja: {
 		"game.hint": "ヒント",
@@ -105,6 +112,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "敗者",
 		"game.play-again": "もう一度プレイ",
 		"game.winner": "勝者",
+		"game.vs": "対",
 	},
 	ko: {
 		"game.hint": "힌트",
@@ -118,6 +126,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "패자",
 		"game.play-again": "다시 플레이",
 		"game.winner": "승자",
+		"game.vs": "대",
 	},
 	pt: {
 		"game.hint": "Dica",
@@ -131,6 +140,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "Perdedor",
 		"game.play-again": "Jogar novamente",
 		"game.winner": "Vencedor",
+		"game.vs": "vs",
 	},
 	ru: {
 		"game.hint": "Подсказка",
@@ -144,6 +154,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "Проигравший",
 		"game.play-again": "Играть снова",
 		"game.winner": "Победитель",
+		"game.vs": "против",
 	},
 	zh: {
 		"game.hint": "提示",
@@ -157,6 +168,7 @@ export const translations: Translations<Text> = {
 		"game.loser": "失败者",
 		"game.play-again": "再玩一次",
 		"game.winner": "获胜者",
+		"game.vs": "对",
 	},
 	hi: {
 		"game.hint": "संकेत",
@@ -170,5 +182,6 @@ export const translations: Translations<Text> = {
 		"game.loser": "हारने वाला",
 		"game.play-again": "फिर से खेलें",
 		"game.winner": "विजेता",
+		"game.vs": "बनाम",
 	},
 };

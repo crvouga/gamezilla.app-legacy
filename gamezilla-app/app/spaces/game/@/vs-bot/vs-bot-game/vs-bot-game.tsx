@@ -350,15 +350,20 @@ export const VsBotPlayerSection = ({
 	playerTwo,
 	turn,
 }: VsBotGameinput) => {
-	const profile = ctx.profiles[human.userId]
+	const profile = ctx.profiles[human.userId];
 	const humanSlot = (
 		<>
 			<Avatar
 				className="h-6 w-6 "
 				src={ctx.profiles[human.userId]?.avatarUrl}
 			/>
-			{profile && <Typography className="truncate" variant="body" text={ctx.t('username', profile.username)} />}
-			
+			{profile && (
+				<Typography
+					className="truncate"
+					variant="body"
+					text={ctx.t("username", profile.username)}
+				/>
+			)}
 		</>
 	);
 

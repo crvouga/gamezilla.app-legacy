@@ -738,7 +738,7 @@ const ViewStatusBar: typeof View = (input) => {
 			slots={{
 				barLeft: (
 					<>
-						<Wire.ViewStatusBar model={input.model.wire} />
+						<Wire.ViewStatusBar ctx={clientCtx} model={input.model.wire} />
 					</>
 				),
 

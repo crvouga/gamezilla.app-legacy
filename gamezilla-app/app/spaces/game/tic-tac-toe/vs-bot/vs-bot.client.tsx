@@ -160,7 +160,7 @@ export const View = (input: {
 }) => {
 	const vsBotinput: VsBotSetup.VsBotSetupinput = {
 		bot: {
-			label: input.ctx.t('tic-tac-toe.bot-level', input.model.botLevel),
+			label: input.ctx.t("tic-tac-toe.bot-level", input.model.botLevel),
 			renderIcon: (iconinput) =>
 				renderBotLevel({ level: input.model.botLevel, ...iconinput }),
 		},
@@ -175,20 +175,20 @@ export const View = (input: {
 		onStartGame: () => input.dispatch({ t: "start-game" }),
 		botVariants: allBotLevels.map((botLevel) => {
 			return {
-				label: input.ctx.t('tic-tac-toe.bot-level', botLevel),
+				label: input.ctx.t("tic-tac-toe.bot-level", botLevel),
 				renderIcon: (input) => renderBotLevel({ level: botLevel, ...input }),
 				onSelect: () => input.dispatch({ t: "input-bot-level", botLevel }),
 			};
 		}),
 		playerOne: {
-			label: input.ctx.t('tic-tac-toe.cross'),
+			label: input.ctx.t("tic-tac-toe.cross"),
 			onStartPlaying: () =>
 				input.dispatch({ t: "start-playing", playerType: "X" }),
 			onStopPlaying: () => input.dispatch({ t: "stop-playing" }),
 			renderIcon: (input) => <PlayerTypeIcon {...input} playerType="X" />,
 		},
 		playerTwo: {
-			label: input.ctx.t('tic-tac-toe.naught'),
+			label: input.ctx.t("tic-tac-toe.naught"),
 			onStartPlaying: () =>
 				input.dispatch({ t: "start-playing", playerType: "O" }),
 			onStopPlaying: () => input.dispatch({ t: "stop-playing" }),

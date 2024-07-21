@@ -4,7 +4,7 @@ import {
 	showToast,
 } from "gamezilla-app/app/@/client";
 import type { Eff, Sub } from "gamezilla-app/@/core";
-import { ListItemButton, cn } from "../@/ui";
+import { ListItemButton, Typography, cn } from "../@/ui";
 import type { IClientTransport } from "./transport-client";
 import type { ModelClient, MsgClient, MsgToClient } from "./wire.types";
 import { Translator } from "gamezilla-app/@/l18n/generated";
@@ -194,7 +194,10 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 //
 //
 
-export const ViewStatusBar = (input: { model: ModelClient }) => {
+export const ViewStatusBar = (input: {
+	model: ModelClient;
+	ctx: { t: Translator };
+}) => {
 	switch (input.model.state.t) {
 		case "server-connected": {
 			return <span className="h-2 w-2 rounded-full bg-green-500" />;
@@ -204,8 +207,11 @@ export const ViewStatusBar = (input: { model: ModelClient }) => {
 		case "server-connect-error": {
 			return (
 				<div className="flex animate-pulse items-center gap-1">
-					<span className="h-2 w-2 rounded-full bg-orange-500" />
-					<p className="text-orange-500">Connecting...</p>
+					<Typography
+						className="text-orange-500"
+						variant="caption"
+						text={input.ctx.t("wire.connecting...")}
+					/>
 				</div>
 			);
 		}
@@ -214,7 +220,12 @@ export const ViewStatusBar = (input: { model: ModelClient }) => {
 			return (
 				<div className="flex items-center gap-1">
 					<span className="h-2 w-2 rounded-full bg-red-500" />
-					<p className="text-red-500">Offline</p>
+
+					<Typography
+						className="text-orange-500"
+						variant="caption"
+						text={input.ctx.t("wire.offline")}
+					/>
 				</div>
 			);
 		}

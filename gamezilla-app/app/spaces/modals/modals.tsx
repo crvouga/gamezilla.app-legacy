@@ -1,5 +1,5 @@
 import { APP_SOUND, openProfile, playSound } from "gamezilla-app/app/@/client";
-import { Avatar, Button, Drawer } from "gamezilla-app/app/@/ui";
+import { Avatar, Button, Drawer, Typography } from "gamezilla-app/app/@/ui";
 import {
 	ViewSpaceHostChip,
 	ViewUsersInSpaceList,
@@ -109,6 +109,10 @@ const View: SpaceClientModule["View"] = (input) => {
 		currentUserRole: input.ctx.currentUserRole,
 		space: input.ctx.space,
 	};
+
+	const modalProfile = input.model.modalPreviewUserId
+		? input.ctx.profiles[input.model.modalPreviewUserId]
+		: null;
 	return (
 		<>
 			<Drawer
@@ -145,12 +149,12 @@ const View: SpaceClientModule["View"] = (input) => {
 							}
 							className="h-24 w-24"
 						/>
-						<p className="text-xl font-semibold">
-							{input.model.modalPreviewUserId
-								? input.ctx.profiles[input.model.modalPreviewUserId]
-										?.username ?? "..."
-								: "..."}
-						</p>
+						{modalProfile && (
+							<Typography
+								variant="title"
+								text={input.ctx.t("username", modalProfile.username)}
+							/>
+						)}
 						<div className="flex items-center gap-2">
 							{spaceCtx.space.hostId === input.model.modalPreviewUserId && (
 								<ViewSpaceHostChip ctx={input.ctx} />
