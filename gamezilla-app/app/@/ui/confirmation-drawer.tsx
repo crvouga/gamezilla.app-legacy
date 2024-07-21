@@ -26,7 +26,7 @@ export const ConfirmationDrawer = (input: input) => {
 				text={input.title}
 			/>
 
-			<Typography variant="body" text={input.body} />
+			<Typography className="p-4" variant="body" text={input.body} />
 
 			<div className="flex w-full items-center gap-4 p-4">
 				<Button

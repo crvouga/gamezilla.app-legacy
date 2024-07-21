@@ -42,7 +42,7 @@ export const ViewSpaceCard = (input: {
 			<div className="flex w-full items-center justify-start">
 				<Typography
 					variant="label"
-					className="block flex-1 text-left font-bold uppercase text-white"
+					className="block flex-1 text-left font-bold uppercase text-white text-lg"
 					text={input.ctx.t("space-card.live")}
 				/>
 			</div>
