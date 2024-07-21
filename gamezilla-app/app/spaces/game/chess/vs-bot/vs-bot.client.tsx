@@ -267,7 +267,7 @@ export const View = ({
 			<VsBotSetup.View
 				model={model.vsBotSetup}
 				dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
-				title={ctx.t('chess')}
+				title={ctx.t("chess")}
 				renderCoverArt={(input) => {
 					return <CoverArt {...input} />;
 				}}

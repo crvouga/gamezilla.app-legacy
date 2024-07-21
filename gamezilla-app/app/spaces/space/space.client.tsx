@@ -130,20 +130,19 @@ const ViewTopBarButton = (input: {
 	);
 };
 
-const ViewSpaceNotFound = ({
-	dispatch,
-}: {
+const ViewSpaceNotFound = (input: {
+	ctx: ClientCtx;
 	dispatch: (m: MsgClient) => void;
 }) => {
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center gap-4">
 			<p className="text-center text-2xl">Space not found</p>
 			<Button
-				onClick={() => dispatch({ t: "clicked-go-home-button" })}
+				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
 				size="lg"
 				variant="contained"
 				color="primary"
-				text="Go Home"
+				text={input.ctx.t("spaces.go-home")}
 			/>
 		</div>
 	);

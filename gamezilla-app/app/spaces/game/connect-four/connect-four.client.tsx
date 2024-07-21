@@ -204,7 +204,7 @@ const View: Module["View"] = (input) => {
 			return (
 				<GameMainMenu.View
 					ctx={input.ctx}
-					title={input.ctx.t('connect-four')}
+					title={input.ctx.t("connect-four")}
 					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
 					dispatch={input.dispatch}
 					buttons={[

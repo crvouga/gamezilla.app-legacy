@@ -1,17 +1,18 @@
+import { TranslatedText } from "gamezilla-app/@/l18n";
 import { Button } from "./button";
 import { Drawer, type Drawerinput } from "./drawer";
 import { cn } from "./ui";
 
 type input = Drawerinput & {
-	title: string;
-	body: string;
+	title: TranslatedText;
+	body: TranslatedText;
 	variant?: "danger";
 	//
-	cancelText?: string;
+	cancelText: TranslatedText;
 	cancelDisabled?: boolean;
 	onCancel: () => void;
 	//
-	confirmText: string;
+	confirmText: TranslatedText;
 	onConfirm: () => void;
 	confirmLoading?: boolean;
 };

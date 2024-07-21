@@ -63,16 +63,16 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const ViewCreateButton: ClientModule["View"] = (input) => {
-	const { dispatch, model } = input;
-
 	return (
 		<Button
-			text="Create Pack"
+			text={input.ctx.t("flow.create-pack")}
 			variant="contained"
 			color="primary"
-			loading={model.packCreateNewRequest.t === "loading"}
+			loading={input.model.packCreateNewRequest.t === "loading"}
 			start={<IconPlus className="h-8 w-8" />}
-			onClick={() => dispatch({ t: "pack-create-new.clicked-create-button" })}
+			onClick={() =>
+				input.dispatch({ t: "pack-create-new.clicked-create-button" })
+			}
 		/>
 	);
 };

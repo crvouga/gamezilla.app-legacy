@@ -191,7 +191,7 @@ export const View = ({
 						color="primary"
 						className="flex-1"
 						onClick={onStartGame}
-						text="Start Game"
+						text={ctx.t('game.start-game')}
 					/>
 				</div>
 			)}
@@ -303,7 +303,7 @@ const PlayerButtons = ({
 					onClick={player.onStartPlaying}
 					className="w-full"
 					color="primary"
-					text="Start playing"
+					text={ctx.t('game.start-playing')}
 				/>
 			)}
 			{player.t === "user" && ctx.currentUserId === player.userId && (
@@ -312,7 +312,7 @@ const PlayerButtons = ({
 					className="w-full"
 					variant="text"
 					color="primary"
-					text="Stop playing"
+					text={ctx.t('game.stop-playing')}
 				/>
 			)}
 			{player.t === "bot" && human.userId === ctx.currentUserId && (
@@ -321,7 +321,7 @@ const PlayerButtons = ({
 					className="w-full"
 					variant="text"
 					color="primary"
-					text="Swap sides"
+					text={ctx.t('game.swap-sides')}
 				/>
 			)}
 			{player.t === "bot" && human.userId === ctx.currentUserId && (
@@ -330,7 +330,7 @@ const PlayerButtons = ({
 					className="w-full"
 					variant="text"
 					color="primary"
-					text="Change bot"
+					text={ctx.t('game.change-bot')}
 				/>
 			)}
 		</div>

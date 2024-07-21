@@ -176,7 +176,7 @@ const View: ClientModule["View"] = (input) => {
 				<TopBar
 					ctx={input.ctx}
 					onBack={() => input.dispatch({ t: "user-clicked-exit-puzzle" })}
-					title={input.ctx.t('flow.level', puzzleIndex + 1)}
+					title={input.ctx.t("flow.level", puzzleIndex + 1)}
 				/>
 				<div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
 					<FlowPlay.View

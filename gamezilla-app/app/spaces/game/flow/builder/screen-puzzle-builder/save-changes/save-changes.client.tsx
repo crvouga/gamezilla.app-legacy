@@ -236,19 +236,16 @@ export const ViewActionButtons = ({
 	);
 };
 
-const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
-	model,
-	dispatch,
-}) => {
+const ViewUnsavedChangesDrawer: ClientModule["View"] = (input) => {
 	return (
 		<Drawer
 			id="unsaved-changes-drawer"
 			onClose={() =>
-				dispatch({
+				input.dispatch({
 					t: "screen-puzzle-builder.save-changes.user-clicked-cancel-exit",
 				})
 			}
-			open={model.puzzleBuilderOpened === "unsaved-changes"}
+			open={input.model.puzzleBuilderOpened === "unsaved-changes"}
 			position="bottom"
 		>
 			<p className="px-4 pt-4 text-3xl font-bold">Save changes?</p>
@@ -258,21 +255,21 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 			<div className="flex w-full flex-col gap-4 p-4">
 				<Button
 					className="w-full"
-					text="Save"
+					text={input.ctx.t("app.save")}
 					variant="contained"
 					color="primary"
-					loading={model.puzzleSaveChangesRequest?.t === "loading"}
+					loading={input.model.puzzleSaveChangesRequest?.t === "loading"}
 					onClick={() =>
-						dispatch({
+						input.dispatch({
 							t: "screen-puzzle-builder.save-changes.user-clicked-save-and-exit",
 						})
 					}
 				/>
 				<Button
 					className="w-full"
-					text="Don't Save"
+					text={input.ctx.t("app.dont-save")}
 					onClick={() =>
-						dispatch({
+						input.dispatch({
 							t: "screen-puzzle-builder.save-changes.user-clicked-discard-and-exit",
 						})
 					}
@@ -280,9 +277,9 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 				<div className="w-full" />
 				<Button
 					className="w-full"
-					text="Cancel"
+					text={input.ctx.t("app.cancel")}
 					onClick={() =>
-						dispatch({
+						input.dispatch({
 							t: "screen-puzzle-builder.save-changes.user-clicked-cancel-exit",
 						})
 					}

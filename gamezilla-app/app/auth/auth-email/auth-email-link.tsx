@@ -145,7 +145,7 @@ export const View = (input: {
 			<TopBar
 				onBack={() => input.dispatch({ t: "clicked-back" })}
 				ctx={input.ctx}
-				title={input.ctx.t('auth-email.login-with-email')}
+				title={input.ctx.t("auth-email.login-with-email")}
 			/>
 
 			<form
@@ -185,7 +185,7 @@ export const View = (input: {
 					color="primary"
 					type="submit"
 					loading={input.model.submission.type === "loading"}
-					text="Send Login Link"
+					text={input.ctx.t("auth-email.send-login-link")}
 				/>
 
 				{input.model.submission.type === "problem" && (

@@ -67,9 +67,12 @@ const ViewDrawer: ClientModule["View"] = (input) => {
 				}
 			/>
 			<div>
-				<Button text="Cancel" onClick={() => input.emits?.cancel(null)} />
 				<Button
-					text="Save"
+					text={input.ctx.t("app.cancel")}
+					onClick={() => input.emits?.cancel(null)}
+				/>
+				<Button
+					text={input.ctx.t("app.save")}
 					onClick={() =>
 						input.dispatch({
 							t: "edit-pack-name.user-clicked-save-button",

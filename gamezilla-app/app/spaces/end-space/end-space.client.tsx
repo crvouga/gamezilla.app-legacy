@@ -177,7 +177,7 @@ export const ViewEndSpaceButton: SpaceClientModule["View"] = (input) => {
 			color="danger"
 			variant="contained"
 			size="sm"
-			text="End"
+			text={input.ctx.t("spaces.end")}
 			onClick={() => input.dispatch({ t: "clicked-end-space-button" })}
 		/>
 	);
@@ -192,7 +192,7 @@ const ViewSpaceEnded: SpaceClientModule["View"] = (input) => {
 				size="lg"
 				variant="contained"
 				color="primary"
-				text="Go Home"
+				text={input.ctx.t("spaces.go-home")}
 			/>
 		</div>
 	);

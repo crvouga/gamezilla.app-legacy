@@ -57,7 +57,13 @@ export type MsgToServer =
 //
 //
 
-export const GAME_NAME = ["connect-four", "flow", "tic-tac-toe", 'gomoku', 'chess'] as const;
+export const GAME_NAME = [
+	"connect-four",
+	"flow",
+	"tic-tac-toe",
+	"gomoku",
+	"chess",
+] as const;
 
 export const GameName = p.enumeration(GAME_NAME);
 
@@ -67,8 +73,8 @@ export const gameNames: { [gameName in GameName]: GameName } = {
 	"connect-four": "connect-four",
 	flow: "flow",
 	"tic-tac-toe": "tic-tac-toe",
-	gomoku: 'gomoku',
-	chess: 'chess',
+	gomoku: "gomoku",
+	chess: "chess",
 };
 
 export const isGameName = (x: unknown): x is GameName => {

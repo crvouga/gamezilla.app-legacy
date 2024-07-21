@@ -19,7 +19,7 @@ export const initCore = (gameName: GameName): ModelCore => {
 				c: Flow.initCore(),
 			};
 		}
-			
+
 		default: {
 			throw new Error(`Unknown game name: ${gameName}`);
 		}

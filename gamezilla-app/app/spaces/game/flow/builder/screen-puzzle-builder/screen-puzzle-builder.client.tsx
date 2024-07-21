@@ -192,7 +192,10 @@ const View: ClientModule["View"] = (input) => {
 						t: "screen-puzzle-builder.user-clicked-exit-button",
 					})
 				}
-				title={input.ctx.t('flow-puzzle-name', input.modelCore.puzzleBuilder.puzzle.name)}
+				title={input.ctx.t(
+					"flow-puzzle-name",
+					input.modelCore.puzzleBuilder.puzzle.name,
+				)}
 			/>
 			<ViewMode {...input} />
 			<ViewMoreDrawer {...input} />

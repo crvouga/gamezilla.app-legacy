@@ -294,7 +294,7 @@ export const View: Client["View"] = (input) => {
 		case "none": {
 			return (
 				<GameMainMenu.View
-					title={input.ctx.t('chess')}
+					title={input.ctx.t("chess")}
 					ctx={input.ctx}
 					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
 					dispatch={input.dispatch}

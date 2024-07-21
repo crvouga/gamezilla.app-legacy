@@ -1,6 +1,6 @@
 import { AnonymousClientCtx, ClientCtx } from "gamezilla-app/app/@/client";
 import { ProfileAvatar } from "gamezilla-app/app/@/data";
-import { Avatar, Button, TextField, TopBar } from "gamezilla-app/app/@/ui";
+import { Avatar, TextField, TopBar } from "gamezilla-app/app/@/ui";
 import type { ModelClient, MsgClient } from "../profile.types";
 
 export const ViewUpdateAvatarScreen = (input: {
@@ -44,12 +44,6 @@ export const ViewUpdateAvatarScreen = (input: {
 						id="seed"
 					/>
 
-					<Button
-						onClick={() =>
-							input.dispatch({ t: "clicked-generate-random-seed" })
-						}
-						text=" Random seed"
-					/>
 				</div>
 			</div>
 		</div>

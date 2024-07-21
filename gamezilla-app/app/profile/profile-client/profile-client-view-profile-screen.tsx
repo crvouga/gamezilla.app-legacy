@@ -33,7 +33,7 @@ export const ViewProfileScreen = (input: {
 					center
 					onBack={false}
 					ctx={input.ctx}
-					title={input.ctx.t('username', profile.username)}
+					title={input.ctx.t("username", profile.username)}
 				/>
 
 				<div className="flex flex-1 shrink-0 flex-col items-center justify-start gap-4 overflow-x-hidden overflow-y-scroll p-4">
@@ -42,20 +42,17 @@ export const ViewProfileScreen = (input: {
 						src={profile?.avatarUrl}
 						alt="profile avatar"
 					/>
-					{/* <p className="w-full shrink-0 overflow-hidden text-ellipsis text-center text-3xl">
-						@{profile?.username}
-					</p> */}
 					<Button
 						onClick={() => input.dispatch({ t: "clicked-edit-profile-button" })}
 						className="w-full"
 						start={<IconUserPen className="h-6 w-6" />}
-						text="Edit Profile"
+						text={input.ctx.t("profile.update-profile")}
 					/>
 					<Button
 						onClick={() => input.dispatch({ t: "clicked-logout-button" })}
 						className="w-full"
 						start={<IconArrowLeftOnRect className="h-6 w-6" />}
-						text="Logout"
+						text={input.ctx.t("auth.logout")}
 					/>
 					<div className="w-full p-4" />
 				</div>
@@ -72,7 +69,7 @@ export const ViewProfileScreen = (input: {
 						from: { t: "profile", userId: profile?.userId },
 					})
 				}
-				title={input.ctx.t('username', profile.username)}
+				title={input.ctx.t("username", profile.username)}
 				ctx={input.ctx}
 			/>
 			<div className="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">

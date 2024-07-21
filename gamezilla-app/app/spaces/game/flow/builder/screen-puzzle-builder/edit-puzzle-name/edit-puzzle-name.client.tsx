@@ -140,18 +140,14 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 	return { model };
 };
 
-const ViewFormButtons: ClientModule["View"] = ({
-	dispatch,
-	model,
-	modelCore,
-}) => {
+const ViewFormButtons: ClientModule["View"] = (input) => {
 	return (
 		<div className="flex w-full items-center gap-4 p-4 pb-6">
 			<Button
 				className="flex-1"
-				text="Cancel"
+				text={input.ctx.t("app.cancel")}
 				onClick={() =>
-					dispatch({
+					input.dispatch({
 						t: "puzzle.edit-name.user-clicked-cancel-button",
 					})
 				}
@@ -160,14 +156,15 @@ const ViewFormButtons: ClientModule["View"] = ({
 				className="flex-1"
 				color="primary"
 				variant="contained"
-				text="Save"
-				loading={isLoading(model.puzzleEditNameRequest)}
+				text={input.ctx.t("app.save")}
+				loading={isLoading(input.model.puzzleEditNameRequest)}
 				disabled={
-					modelCore.opened.t !== "puzzle-builder" ||
-					model.puzzleEditNameDraft === modelCore.puzzleBuilder?.puzzle.name
+					input.modelCore.opened.t !== "puzzle-builder" ||
+					input.model.puzzleEditNameDraft ===
+						input.modelCore.puzzleBuilder?.puzzle.name
 				}
 				onClick={() =>
-					dispatch({ t: "puzzle.edit-name.user-clicked-save-button" })
+					input.dispatch({ t: "puzzle.edit-name.user-clicked-save-button" })
 				}
 			/>
 		</div>

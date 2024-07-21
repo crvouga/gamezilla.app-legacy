@@ -544,12 +544,12 @@ export const View = (input: {
 
 				<div className="flex w-full items-center gap-4 p-4">
 					<Button
-						text="Cancel"
+						text={input.ctx.t("app.cancel")}
 						className="flex-1"
 						onClick={() => dispatch({ t: "dimensions-form.clicked-cancel" })}
 					/>
 					<Button
-						text="Change"
+						text={input.ctx.t("app.save")}
 						className="flex-1"
 						variant="contained"
 						color="primary"

@@ -77,7 +77,7 @@ const PlayerButtons = ({
 					variant="text"
 					color="primary"
 					onClick={player.onStopPlaying}
-					text="Stop Playing"
+					text={ctx.t("game.stop-playing")}
 				/>
 			)}
 
@@ -88,7 +88,7 @@ const PlayerButtons = ({
 					variant="contained"
 					color="primary"
 					onClick={player.onStartPlaying}
-					text="Start Playing"
+					text={ctx.t("game.start-playing")}
 				/>
 			)}
 		</div>
@@ -191,7 +191,7 @@ export const VsUserSetupScreen = ({
 						color="primary"
 						className="flex-1"
 						onClick={onStartGame}
-						text="Start Game"
+						text={ctx.t("game.start-game")}
 					/>
 				</div>
 			)}

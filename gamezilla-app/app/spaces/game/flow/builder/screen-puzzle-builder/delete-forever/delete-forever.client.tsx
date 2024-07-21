@@ -102,11 +102,12 @@ const View: ClientModule["View"] = (input) => {
 				onClose={() => dispatch({ t: "delete-forever.user-closed-drawer" })}
 				variant="danger"
 				position="bottom"
-				title="Delete puzzle forever?"
-				body="This action cannot be undone."
+				title={input.ctx.t('flow.delete-puzzle-forever?')}
+				body={input.ctx.t("app.this-action-cannot-be-undone")}
 				//
 				confirmLoading={isLoading(model.puzzleDeleteForeverRequest)}
-				confirmText="Delete"
+				confirmText={input.ctx.t('app.delete')}
+				cancelText={input.ctx.t('app.cancel')}
 				onConfirm={() =>
 					dispatch({
 						t: "delete-forever.user-clicked-confirm-button",

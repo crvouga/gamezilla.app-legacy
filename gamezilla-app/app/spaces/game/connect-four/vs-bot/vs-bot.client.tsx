@@ -313,7 +313,7 @@ const View: Module["View"] = (input) => {
 	const vsBotSetupinput: VsBotSetup.VsBotSetupinput = {
 		ctx: input.ctx,
 		onQuit: input.ctx.onQuit,
-		title: input.ctx.t('chess'),
+		title: input.ctx.t("chess"),
 		renderCoverArt: (input) => <CoverArt {...input} />,
 		canStartGame: input.modelCore.playingUserId !== null,
 		onSwapSides: () =>

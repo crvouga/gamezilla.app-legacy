@@ -134,7 +134,7 @@ const View: SpaceClientModule["View"] = (input) => {
 			<TopBar
 				onBack={() => input.dispatch({ t: "clicked-go-home-button" })}
 				ctx={input.ctx}
-				title={input.ctx.t('spaces.space')}
+				title={input.ctx.t("spaces.space")}
 			/>
 
 			<div className="flex w-full flex-1 flex-col overflow-y-scroll">
@@ -181,7 +181,7 @@ const View: SpaceClientModule["View"] = (input) => {
 							spaceId,
 						});
 					}}
-					text="Join space"
+					text={input.ctx.t("spaces.join-space")}
 				/>
 			</div>
 		</div>

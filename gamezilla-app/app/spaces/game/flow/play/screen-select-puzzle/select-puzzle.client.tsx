@@ -49,7 +49,10 @@ const View: ClientModule["View"] = (input) => {
 				<TopBar
 					ctx={input.ctx}
 					onBack={() => input.dispatch({ t: "user-clicked-exit-pack-button" })}
-					title={input.ctx.t('flow-pack-name',input.modelCore.screen.flowPack.name)}
+					title={input.ctx.t(
+						"flow-pack-name",
+						input.modelCore.screen.flowPack.name,
+					)}
 				/>
 				<div className="flex flex-1 flex-col items-center justify-center">
 					<FlowPackPuzzlesGridUI.ViewPackPuzzleGrid

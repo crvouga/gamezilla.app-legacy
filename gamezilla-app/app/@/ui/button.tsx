@@ -1,3 +1,4 @@
+import { TranslatedText } from "gamezilla-app/@/l18n";
 import type { VDomChildren } from "gamezilla-app/@/vdom";
 import { Spinner } from "./spinner";
 import { cn } from "./ui";
@@ -24,9 +25,9 @@ export const Button = ({
 	size = "lg",
 	disabled = false,
 	loading = false,
-	text = "",
+	text,
 }: {
-	text?: string;
+	text?: TranslatedText;
 	disabled?: boolean;
 	type?: "button" | "submit" | "reset";
 	className?: string;

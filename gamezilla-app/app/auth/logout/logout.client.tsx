@@ -105,7 +105,8 @@ const View = ({
 			open={model.opened === "logged-out"}
 			title={ctx.t("auth.logout-of-gamezill.app")}
 			body={ctx.t("auth.logout-of-gamezill.app-body")}
-			confirmText="Logout"
+			confirmText={ctx.t("auth.logout")}
+			cancelText={ctx.t("app.cancel")}
 			id="logout"
 			confirmLoading={model.logout.t === "loading"}
 			position="bottom"

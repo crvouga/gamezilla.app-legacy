@@ -291,6 +291,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
+	ctx,
 	model,
 	dispatch,
 	onQuit,
@@ -309,13 +310,13 @@ export const View = ({
 						className="flex-1"
 						onClick={onQuit}
 						start={<IconArrowLeftOnRect className="h-6 w-6" />}
-						text="Exit"
+						text={ctx.t("app.exit")}
 					/>
 					<Button
 						variant="contained"
 						color="primary"
 						className="flex-1"
-						text="Start Game"
+						text={ctx.t('game.start-game')}
 					/>
 				</div>
 			</div>

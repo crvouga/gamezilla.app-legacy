@@ -2,6 +2,7 @@ import { Translations } from "gamezilla-app/@/l18n";
 import { Username } from "gamezilla-app/app/@/data";
 
 export type Text = {
+	"spaces.end": string;
 	"spaces.end-space": string;
 	"spaces.ended-space-host": string;
 	"spaces.ended-space-current-user": string;
@@ -10,24 +11,28 @@ export type Text = {
 
 export const translations: Translations<Text> = {
 	en: {
+		"spaces.end": "End",
 		"spaces.end-space": "End space",
 		"spaces.ended-space-host": "Space ended by host",
 		"spaces.ended-space-current-user": "Ended space",
 		"spaces.ended-space-other-user": (username) => `${username} ended space`,
 	},
 	ar: {
+		"spaces.end": "نهاية",
 		"spaces.end-space": "انهاء المساحة",
 		"spaces.ended-space-host": "تم انهاء المساحة من قبل المضيف",
 		"spaces.ended-space-current-user": "انهاء المساحة",
 		"spaces.ended-space-other-user": (username) => `${username} انهاء المساحة`,
 	},
 	de: {
+		"spaces.end": "Ende",
 		"spaces.end-space": "Raum beenden",
 		"spaces.ended-space-host": "Raum beendet vom Gastgeber",
 		"spaces.ended-space-current-user": "Raum beendet",
 		"spaces.ended-space-other-user": (username) => `${username} Raum beendet`,
 	},
 	es: {
+		"spaces.end": "Finalizar",
 		"spaces.end-space": "Finalizar espacio",
 		"spaces.ended-space-host": "Espacio finalizado por el anfitrión",
 		"spaces.ended-space-current-user": "Espacio finalizado",
@@ -35,6 +40,7 @@ export const translations: Translations<Text> = {
 			`${username} finalizó espacio`,
 	},
 	fr: {
+		"spaces.end": "Fin",
 		"spaces.end-space": "Terminer l'espace",
 		"spaces.ended-space-host": "Espace terminé par l'hôte",
 		"spaces.ended-space-current-user": "Espace terminé",
@@ -42,6 +48,7 @@ export const translations: Translations<Text> = {
 			`${username} a terminé l'espace`,
 	},
 	hi: {
+		"spaces.end": "समाप्त",
 		"spaces.end-space": "स्थान समाप्त करें",
 		"spaces.ended-space-host": "स्थान मेज़बान द्वारा समाप्त",
 		"spaces.ended-space-current-user": "स्थान समाप्त",
@@ -49,6 +56,7 @@ export const translations: Translations<Text> = {
 			`${username} ने स्थान समाप्त किया`,
 	},
 	it: {
+		"spaces.end": "Fine",
 		"spaces.end-space": "Fine spazio",
 		"spaces.ended-space-host": "Spazio terminato dall'host",
 		"spaces.ended-space-current-user": "Spazio terminato",
@@ -56,6 +64,7 @@ export const translations: Translations<Text> = {
 			`${username} ha terminato lo spazio`,
 	},
 	ja: {
+		"spaces.end": "終了",
 		"spaces.end-space": "スペースを終了",
 		"spaces.ended-space-host": "ホストによってスペースが終了しました",
 		"spaces.ended-space-current-user": "スペースが終了しました",
@@ -63,12 +72,14 @@ export const translations: Translations<Text> = {
 			`${username} がスペースを終了しました`,
 	},
 	ko: {
+		"spaces.end": "종료",
 		"spaces.end-space": "공간 종료",
 		"spaces.ended-space-host": "공간 종료됨",
 		"spaces.ended-space-current-user": "공간 종료됨",
 		"spaces.ended-space-other-user": (username) => `${username} 공간 종료됨`,
 	},
 	pt: {
+		"spaces.end": "Fim",
 		"spaces.end-space": "Finalizar espaço",
 		"spaces.ended-space-host": "Espaço finalizado pelo anfitrião",
 		"spaces.ended-space-current-user": "Esp espaço finalizado",
@@ -76,6 +87,7 @@ export const translations: Translations<Text> = {
 			`${username} finalizou espaço`,
 	},
 	ru: {
+		"spaces.end": "Конец",
 		"spaces.end-space": "Завершить пространство",
 		"spaces.ended-space-host": "Пространство завершено хостом",
 		"spaces.ended-space-current-user": "Пространство завершено",
@@ -83,6 +95,7 @@ export const translations: Translations<Text> = {
 			`${username} завершил пространство`,
 	},
 	zh: {
+		"spaces.end": "结束",
 		"spaces.end-space": "结束空间",
 		"spaces.ended-space-host": "空间已结束",
 		"spaces.ended-space-current-user": "空间已结束",

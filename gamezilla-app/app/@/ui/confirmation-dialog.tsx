@@ -1,6 +1,7 @@
 import type { VDom } from "gamezilla-app/@/vdom";
 import { Button } from "./button";
 import { cn } from "./ui";
+import { TranslatedText } from "gamezilla-app/@/l18n";
 
 export const ConfirmationDialog = ({
 	open,
@@ -9,16 +10,16 @@ export const ConfirmationDialog = ({
 	onConfirm,
 	title,
 	confirmTitle,
-	cancelTitle = "Cancel",
+	cancelTitle,
 }: {
 	open: boolean;
 	onCancel: () => void;
 	onClose: () => void;
 	onConfirm: () => void;
-	title: string;
-	subtitle?: string;
-	confirmTitle: string;
-	cancelTitle?: string;
+	title: TranslatedText;
+	subtitle?: TranslatedText;
+	confirmTitle: TranslatedText;
+	cancelTitle?: TranslatedText;
 	headerIcon?: VDom;
 }) => {
 	return (

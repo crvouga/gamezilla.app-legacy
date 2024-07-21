@@ -90,7 +90,7 @@ export const View = ({
 		return (
 			<GameMainMenu.View
 				dispatch={dispatch}
-				title={ctx.t('tic-tac-toe')}
+				title={ctx.t("tic-tac-toe")}
 				ctx={ctx}
 				renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
 				buttons={[

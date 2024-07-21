@@ -1,6 +1,7 @@
 import type { Translations } from "gamezilla-app/@/l18n";
 
 export type Text = {
+	"auth.logout": string;
 	"auth.current-user-logged-out": string;
 	"auth.current-user-logged-in": string;
 	"auth.continue-with-phone": string;
@@ -16,6 +17,7 @@ export type Text = {
 
 export const translations: Translations<Text> = {
 	en: {
+		"auth.logout": "Logout",
 		"auth.logged-in-as-guest": "Logged in as a guest",
 		"auth.logged-in-with-phone": "Logged in with phone",
 		"auth.current-user-logged-out": "Logged out",
@@ -30,6 +32,7 @@ export const translations: Translations<Text> = {
 			"This will log you out of the app. Are you sure?",
 	},
 	de: {
+		"auth.logout": "Abmelden",
 		"auth.logged-in-as-guest": "Als Gast angemeldet",
 		"auth.logged-in-with-phone": "Mit Telefon angemeldet",
 		"auth.current-user-logged-out": "Abgemeldet",
@@ -43,6 +46,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "Möchtest du dich wirklich abmelden?",
 	},
 	es: {
+		"auth.logout": "Cerrar sesión",
 		"auth.logged-in-as-guest": "Conectado como invitado",
 		"auth.logged-in-with-phone": "Conectado con el teléfono",
 		"auth.current-user-logged-out": "Desconectado",
@@ -57,6 +61,7 @@ export const translations: Translations<Text> = {
 			"¿Estás seguro de que quieres cerrar sesión?",
 	},
 	fr: {
+		"auth.logout": "Déconnexion",
 		"auth.logged-in-as-guest": "Connecté en tant qu'invité",
 		"auth.logged-in-with-phone": "Connecté avec le téléphone",
 		"auth.current-user-logged-out": "Déconnecté",
@@ -71,6 +76,7 @@ export const translations: Translations<Text> = {
 			"Êtes-vous sûr de vouloir vous déconnecter?",
 	},
 	hi: {
+		"auth.logout": "लॉग आउट",
 		"auth.logged-in-as-guest": "मेहमान के रूप में लॉग इन",
 		"auth.logged-in-with-phone": "फोन के साथ लॉग इन",
 		"auth.current-user-logged-out": "लॉग आउट",
@@ -84,6 +90,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
 	},
 	it: {
+		"auth.logout": "Disconnettersi",
 		"auth.logged-in-as-guest": "Accesso come ospite",
 		"auth.logged-in-with-phone": "Accesso con telefono",
 		"auth.current-user-logged-out": "Disconnesso",
@@ -97,6 +104,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "Sei sicuro di voler uscire?",
 	},
 	ja: {
+		"auth.logout"	: "ログアウト",
 		"auth.logged-in-as-guest": "ゲストとしてログイン",
 		"auth.logged-in-with-phone": "電話でログイン",
 		"auth.current-user-logged-out": "ログアウトしました",
@@ -110,6 +118,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "本当にログアウトしますか？",
 	},
 	ko: {
+		"auth.logout": "로그아웃",
 		"auth.logged-in-as-guest": "손님으로 로그인됨",
 		"auth.logged-in-with-phone": "전화로 로그인됨",
 		"auth.current-user-logged-out": "로그아웃됨",
@@ -123,6 +132,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "정말 로그아웃 하시겠습니까?",
 	},
 	pt: {
+		"auth.logout": "Sair",
 		"auth.logged-in-as-guest": "Logado como convidado",
 		"auth.logged-in-with-phone": "Logado com o telefone",
 		"auth.current-user-logged-out": "Deslogado",
@@ -136,6 +146,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "Tem cert sure que deseja sair?",
 	},
 	ru: {
+		"auth.logout": "Выйти",
 		"auth.logged-in-as-guest": "Вошел как гость",
 		"auth.logged-in-with-phone": "Вошел с телефона",
 		"auth.current-user-logged-out": "Вышел",
@@ -149,6 +160,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "Вы уверены, что хотите выйти?",
 	},
 	zh: {
+		"auth.logout": "登出",
 		"auth.logged-in-as-guest": "以访客身份登录",
 		"auth.logged-in-with-phone": "使用电话登录",
 		"auth.current-user-logged-out": "已登出",
@@ -162,6 +174,7 @@ export const translations: Translations<Text> = {
 		"auth.logout-of-gamezill.app-body": "您确定要登出吗？",
 	},
 	ar: {
+		"auth.logout": "تسجيل الخروج",
 		"auth.logged-in-as-guest": "تم تسجيل الدخول كضيف",
 		"auth.logged-in-with-phone": "تم تسجيل الدخول بالهاتف",
 		"auth.current-user-logged-out": "تسجيل الخروج",

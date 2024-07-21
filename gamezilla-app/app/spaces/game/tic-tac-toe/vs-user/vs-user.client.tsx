@@ -181,7 +181,7 @@ export const View = ({
 						</div>
 					);
 				}}
-				title={ctx.t('tic-tac-toe')}
+				title={ctx.t("tic-tac-toe")}
 				canStartGame={model.X !== "none" && model.O !== "none"}
 				playerOne={{
 					label: "Cross",

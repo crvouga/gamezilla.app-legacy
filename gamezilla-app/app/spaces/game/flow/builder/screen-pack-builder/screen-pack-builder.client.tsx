@@ -60,7 +60,7 @@ const ButtonExitBuilder: Pick<ClientModule, "update" | "View"> = {
 			<Button
 				start={<IconArrowLeftOnRect className="h-6 w-6" />}
 				className="w-full"
-				text="Exit"
+				text={input.ctx.t("app.exit")}
 				onClick={() =>
 					input.dispatch({
 						t: "pack-builder.user-clicked-exit-button",
@@ -169,7 +169,7 @@ const ScreenAddPuzzle: Pick<ClientModule, "update" | "View"> = {
 				</div>
 				<div className="flex w-full shrink-0 items-center justify-center border-t border-neutral-700 p-4">
 					<Button
-						text="Close"
+						text={input.ctx.t("app.close")}
 						className="w-full"
 						onClick={() =>
 							input.dispatch({
@@ -229,7 +229,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 								userId: input.ctx.currentUserId,
 							})
 						}
-						title={input.ctx.t('flow-pack-name', packBuilder.pack.name)}
+						title={input.ctx.t("flow-pack-name", packBuilder.pack.name)}
 					/>
 					<div className="flex w-full flex-1 flex-col items-center justify-center">
 						<FlowPackPuzzlesGridUI.ViewPackPuzzleGrid
@@ -441,8 +441,8 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 			<div className="flex h-full w-full flex-col">
 				<TopBar
 					ctx={input.ctx}
-					title={input.ctx.t('flow.level', screen.puzzleIndex + 1)}
-					subtitle={input.ctx.t('flow-puzzle-name', screen.puzzle.name)}
+					title={input.ctx.t("flow.level", screen.puzzleIndex + 1)}
+					subtitle={input.ctx.t("flow-puzzle-name", screen.puzzle.name)}
 					onBack={() =>
 						input.dispatch({
 							t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle",

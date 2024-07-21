@@ -498,7 +498,7 @@ const ViewUpdateScreen = (input: {
 						from: { t: "profile-update" },
 					})
 				}
-				title={input.ctx.t('profile.update-profile')}
+				title={input.ctx.t("profile.update-profile")}
 			/>
 
 			<div className="flex w-full flex-col items-center gap-2 py-2">
@@ -515,7 +515,7 @@ const ViewUpdateScreen = (input: {
 					variant="text"
 					className="block"
 					onClick={() => input.dispatch({ t: "clicked-change-avatar-button" })}
-					text=" Change Avatar"
+					text={input.ctx.t("profile.update-avatar")}
 				/>
 			</div>
 
@@ -575,7 +575,7 @@ const ViewUpdateUsernameScreen = (input: {
 						from: { t: "profile-update-username" },
 					})
 				}
-				title={input.ctx.t('username-title')}
+				title={input.ctx.t("username-title")}
 				ctx={input.ctx}
 			/>
 

@@ -68,14 +68,13 @@ const init = (gameName: GameName): ServerModule["init"] => {
 				c: FlowServer.init,
 			};
 		}
-			
+
 		default: {
 			return {
 				t: "connect-four",
 				c: ConnectFourServer.init,
 			};
 		}
-			
 	}
 };
 

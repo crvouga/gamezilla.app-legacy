@@ -146,7 +146,11 @@ const View: SpaceClientModule["View"] = (input) => {
 
 	return (
 		<div className="relative flex w-full flex-1 flex-col overflow-hidden">
-			<TopBar onBack={false} ctx={input.ctx} title={input.ctx.t('spaces.spaces')} />
+			<TopBar
+				onBack={false}
+				ctx={input.ctx}
+				title={input.ctx.t("spaces.spaces")}
+			/>
 
 			<div className="relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8">
 				{spaces.length === 0 && (

@@ -149,7 +149,7 @@ const View: Module["View"] = (input) => {
 			return (
 				<VsUserSetupScreen
 					ctx={input.ctx}
-					title={input.ctx.t('connect-four')}
+					title={input.ctx.t("connect-four")}
 					renderCoverArt={(input) => {
 						return (
 							<div {...input}>
@@ -311,10 +311,10 @@ const View: Module["View"] = (input) => {
 
 					<ConfirmationDialog
 						headerIcon={<IconFlag className="h-10 w-10" />}
-						title="Resign from game?"
+						title={input.ctx.t("app.resign")}
 						onCancel={() => input.dispatch({ t: "close-modal" })}
 						onClose={() => input.dispatch({ t: "close-modal" })}
-						confirmTitle="Resign"
+						confirmTitle={input.ctx.t("app.resign")}
 						onConfirm={() =>
 							input.dispatch({
 								t: "user-resigned",
@@ -356,7 +356,7 @@ const ViewGameOverMessage = ({
 							userId: ctx.currentUserId,
 						})
 					}
-					text="Cancel"
+					text={ctx.t("app.cancel")}
 				/>
 			</>
 		);
@@ -381,7 +381,7 @@ const ViewGameOverMessage = ({
 							})
 						}
 						start={<IconXMark className="h-6 w-6" />}
-						text="Decline"
+						text={ctx.t('app.decline')}
 					/>
 
 					<Button
@@ -394,7 +394,7 @@ const ViewGameOverMessage = ({
 							})
 						}
 						start={<IconCheckmarkCircle className="h-6 w-6" />}
-						text="Accept"
+						text={ctx.t('app.accept')}
 					/>
 				</div>
 			</>

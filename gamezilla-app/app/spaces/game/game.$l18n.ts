@@ -53,7 +53,7 @@ export const translations: Translations<Text> = {
 		flow: "Flusso",
 		"tic-tac-toe": "Tris",
 		gomoku: "Gomoku",
-		chess: "Scacchi",	
+		chess: "Scacchi",
 	},
 	ja: {
 		"connect-four": "フォーをつなげる",
