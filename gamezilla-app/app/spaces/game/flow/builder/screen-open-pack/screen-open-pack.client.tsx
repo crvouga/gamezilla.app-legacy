@@ -42,7 +42,7 @@ const View: ClientModule["View"] = (input) => {
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
 				model={input.model.flowPackList}
 				slots={{
-					fab: () => <PackCreateNewClient.ViewCreateButton {...input} />,
+					fab: () => <PackCreateNewClient.ViewCreateFab {...input} />,
 				}}
 				emits={{
 					clickedPackItem: (pack) =>

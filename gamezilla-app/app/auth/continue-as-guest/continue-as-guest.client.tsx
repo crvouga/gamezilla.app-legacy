@@ -50,7 +50,7 @@ const ViewButton: ClientModule["View"] = (input) => {
 			onClick={() =>
 				input.dispatch({ t: "guest.clicked-continue-as-guest-button" })
 			}
-			start={<IconUserCircle className="h-6 w-6" />}
+			renderIconStart={iconInput => <IconUserCircle {...iconInput} />}
 			text={input.ctx.t("auth.continue-as-guest")}
 			loading={isRequesting(input.model.guestRequest)}
 		/>

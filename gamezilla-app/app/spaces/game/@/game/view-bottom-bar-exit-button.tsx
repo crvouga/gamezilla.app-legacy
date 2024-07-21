@@ -11,7 +11,7 @@ export const ViewBottomBarExitButton = (input: {
 				onClick={input.onClick}
 				className="flex-1"
 				text={input.ctx.t("app.exit")}
-				start={<IconArrowLeftOnRect className="h-6 w-6" />}
+				renderIconStart={iconInput => <IconArrowLeftOnRect {...iconInput} />}
 				variant="contained"
 				color="default"
 			/>

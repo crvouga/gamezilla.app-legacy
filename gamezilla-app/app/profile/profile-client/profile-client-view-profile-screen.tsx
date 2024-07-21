@@ -46,13 +46,13 @@ export const ViewProfileScreen = (input: {
 					<Button
 						onClick={() => input.dispatch({ t: "clicked-edit-profile-button" })}
 						className="w-full"
-						start={<IconUserPen className="h-6 w-6" />}
+						renderIconStart={iconInput => <IconUserPen {...iconInput} />}
 						text={input.ctx.t("profile.update-profile")}
 					/>
 					<Button
 						onClick={() => input.dispatch({ t: "clicked-logout-button" })}
 						className="w-full"
-						start={<IconArrowLeftOnRect className="h-6 w-6" />}
+						renderIconStart={iconInput => <IconArrowLeftOnRect {...iconInput} />}
 						text={input.ctx.t("auth.logout")}
 					/>
 					<div className="w-full p-4" />

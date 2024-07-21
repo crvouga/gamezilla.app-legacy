@@ -1,5 +1,5 @@
 import { TranslatedText } from "gamezilla-app/@/l18n";
-import type { VDomChildren } from "gamezilla-app/@/vdom";
+import type { VDom } from "gamezilla-app/@/vdom";
 import { Spinner } from "./spinner";
 import { cn } from "./ui";
 
@@ -17,7 +17,7 @@ export type ButtonEvent = {
 
 export const Button = ({
 	type,
-	start,
+	renderIconStart,
 	className = "",
 	onClick,
 	variant = "contained",
@@ -26,13 +26,15 @@ export const Button = ({
 	disabled = false,
 	loading = false,
 	text,
+	fab = false,
 }: {
+	fab?: boolean;
 	text?: TranslatedText;
 	disabled?: boolean;
 	type?: "button" | "submit" | "reset";
 	className?: string;
 	onClick?: (msgEvt: ButtonEvent) => void;
-	start?: VDomChildren;
+	renderIconStart?: (input: {className?: string}) => VDom;
 	variant?: ButtonVariant;
 	color?: ButtonColor;
 	size?: ButtonSize;
@@ -63,6 +65,9 @@ export const Button = ({
 				combo === "soft-primary" && "bg-blue-500/20 text-blue-200",
 
 				!disabled && combo === "text-primary" && "text-blue-500",
+
+				fab && 'rounded-3xl shadow-2xl drop-shadow-2xl',
+
 				size === "lg" && "px-4 py-3 text-xl",
 				size === "md" && "px-4 py-2 text-lg",
 				size === "sm" && "text-md  px-4 py-1",
@@ -82,12 +87,12 @@ export const Button = ({
 					loading && "text-transparent",
 				)}
 			>
-				{start && <div className="mr-2">{start}</div>}
+				{renderIconStart?.({className: "mr-2 w-7 h-7"})}
 				{text}
 			</div>
 			{loading && (
 				<div className="absolute inset-0 flex items-center justify-center">
-					<Spinner className="h-6 w-6" />
+					<Spinner className="w-7 h-7" />
 				</div>
 			)}
 		</button>

@@ -66,7 +66,7 @@ const View: ClientModule["View"] = (input) => {
 					}),
 			}}
 			slots={{
-				fab: () => <CreateNewPuzzleClient.ViewCreateButton {...input} />,
+				fab: () => <CreateNewPuzzleClient.ViewCreateFab {...input} />,
 			}}
 		/>
 	);

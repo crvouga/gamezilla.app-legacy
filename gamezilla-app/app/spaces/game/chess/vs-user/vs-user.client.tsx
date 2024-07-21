@@ -309,7 +309,7 @@ export const View = ({
 					<Button
 						className="flex-1"
 						onClick={onQuit}
-						start={<IconArrowLeftOnRect className="h-6 w-6" />}
+						renderIconStart={iconInput => <IconArrowLeftOnRect {...iconInput} />}
 						text={ctx.t("app.exit")}
 					/>
 					<Button

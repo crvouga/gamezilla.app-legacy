@@ -380,7 +380,7 @@ const ViewGameOverMessage = ({
 								response: "Decline",
 							})
 						}
-						start={<IconXMark className="h-6 w-6" />}
+						renderIconStart={iconInput => <IconXMark {...iconInput} />}
 						text={ctx.t("app.decline")}
 					/>
 
@@ -393,7 +393,7 @@ const ViewGameOverMessage = ({
 								response: "Decline",
 							})
 						}
-						start={<IconCheckmarkCircle className="h-6 w-6" />}
+						renderIconStart={iconInput => <IconCheckmarkCircle {...iconInput} />}
 						text={ctx.t("app.accept")}
 					/>
 				</div>

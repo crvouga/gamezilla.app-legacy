@@ -5,7 +5,7 @@ import {
 	showToast,
 } from "gamezilla-app/app/@/client";
 import { SpaceId } from "gamezilla-app/app/@/data";
-import { Button } from "gamezilla-app/app/@/ui";
+import { Button, IconPlus } from "gamezilla-app/app/@/ui";
 import { withId } from "../@/event";
 import { SpaceClientModule } from "../architecture/architecture";
 import type { SpaceCoreEvent } from "../spaces-core";
@@ -85,8 +85,10 @@ const updateStartSpaceButton: SpaceClientModule["update"] = (input) => {
 const ViewStartSpaceButton: SpaceClientModule["View"] = (input) => {
 	return (
 		<Button
+			fab
 			size="lg"
 			color="primary"
+			renderIconStart={iconInput => <IconPlus {...iconInput} />}
 			onClick={() =>
 				input.dispatch({
 					t: "clicked-start-space-button",

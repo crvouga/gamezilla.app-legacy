@@ -62,14 +62,15 @@ const update: ClientModule["update"] = (input) => {
 	return { model };
 };
 
-const ViewCreateButton: ClientModule["View"] = (input) => {
+const ViewCreateFab: ClientModule["View"] = (input) => {
 	return (
 		<Button
+			fab
 			text={input.ctx.t("flow.create-pack")}
 			variant="contained"
 			color="primary"
 			loading={input.model.packCreateNewRequest.t === "loading"}
-			start={<IconPlus className="h-8 w-8" />}
+			renderIconStart={iconInput => <IconPlus {...iconInput} />}
 			onClick={() =>
 				input.dispatch({ t: "pack-create-new.clicked-create-button" })
 			}
@@ -79,5 +80,5 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
 
 export const PackCreateNewClient = {
 	update,
-	ViewCreateButton,
+ 	ViewCreateFab,
 };
