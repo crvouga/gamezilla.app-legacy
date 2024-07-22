@@ -2,252 +2,252 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-	"sound.sound-off": "サウンドオフ",
-	"sound.sound-on": "サウンドオン",
-	"wire.server-restarted": "サーバーが再起動しました",
-	"wire.connecting...": "接続中...",
-	"wire.offline": "オフライン",
-	"wire.online": "オンライン",
-	"wire.try-reconnect": "再接続を試みる",
-	"auth.logout": "ログアウト",
-	"auth.logged-in-as-guest": "ゲストとしてログイン",
-	"auth.logged-in-with-phone": "電話でログイン",
-	"auth.current-user-logged-out": "ログアウトしました",
-	"auth.current-user-logged-in": "ログインしました",
-	"auth.continue-as-guest": "ゲストとして続行",
-	"auth.continue-with-phone": "電話で続行",
-	"auth.or": "または",
-	"auth.sign-in-to": "サインイン",
-	"auth.logged-in": "ログインしました",
-	"auth.logout-of-gamezill.app": "gamezilla.appからログアウト",
-	"auth.logout-of-gamezill.app-body": "本当にログアウトしますか？",
-	"verify-sms.code-message": (code) =>
-		`\u8A8D\u8A3C\u30B3\u30FC\u30C9\u306F${code}\u3067\u3059`,
-	"verify-sms-problem.code-incorrect": "コードが間違っています",
-	"verify-sms-problem.verification-expired": "認証期限切れ",
-	"verify-sms-problem.verification-not-found": "認証が見つかりません",
-	"verify-sms-problem.verification-already-verified": "認証済み",
-	"verify-sms-problem.database-error": "データベースエラー",
-	"verify-sms-problem.verification-expired-too-many-failed-attempts":
-		"多くの失敗した試行のため、認証が期限切れ",
-	"verify-sms-problem.send-code-hourly-limit-reached":
-		"時間制限に達しました。後でもう一度お試しください。",
-	"verify-sms-problem.send-code-daily-limit-reached":
-		"1日の制限に達しました。後でもう一度お試しください。",
-	"verify-sms-problem.verification-expired-not-latest-verification":
-		"最新の検証ではないため、検証が期限切れになりました",
-	"verify-sms-problem.send-code-limit-reached":
-		"制限に達しました。後でもう一度お試しください。",
-	"auth-sms.login-with-phone": "電話でログイン",
-	"auth-sms.phone-number": "電話番号",
-	"auth-sms.send-code": "コードを送信",
-	"auth-sms.country": "国",
-	"auth-sms.code": "コード",
-	"auth-sms.verify-code": "確認",
-	"auth-sms.invalid-phone-number": "無効な電話番号",
-	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
-		`${formattedPhoneNumber} \u306B\u9001\u4FE1\u3055\u308C\u305F\u30B3\u30FC\u30C9\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044`,
-	"auth-sms.sent-code-to": (formattedPhoneNumber) =>
-		`${formattedPhoneNumber} \u306B\u30B3\u30FC\u30C9\u3092\u9001\u4FE1\u3057\u307E\u3057\u305F`,
-	"auth-email.login-with-email": "メールでログイン",
-	"auth-email.send-login-link": "ログインリンクを送信",
-	"spaces.current-user-left": "スペースを離れました",
-	"spaces.other-user-left": (username) =>
-		`${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u96E2\u308C\u307E\u3057\u305F`,
-	"spaces.leave": "去る",
-	"spaces.start-space": "スペースを開始",
-	"spaces.space-started": "スペースが開始されました",
-	"spaces.see-profile": "プロフィールを見る",
-	"tic-tac-toe.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case "Easy":
-				return "\u7C21\u5358";
-			case "Impossible":
-				return "\u4E0D\u53EF\u80FD";
-			case "Medium":
-				return "\u4E2D";
-			default:
-				return "\u672A\u77E5";
-		}
-	},
-	"tic-tac-toe.cross": "クロス",
-	"tic-tac-toe.naught": "ノート",
-	"connect-four": "フォーをつなげる",
-	flow: "フロー",
-	"tic-tac-toe": "三目並べ",
-	gomoku: "五目並べ",
-	chess: "チェス",
-	"connect-four.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case "Easy":
-				return "\u7C21\u5358";
-			case "Hard":
-				return "\u96E3\u3057\u3044";
-			case "Medium":
-				return "\u4E2D";
-			default:
-				return "\u4E0D\u660E";
-		}
-	},
-	"connect-four.red": "赤",
-	"connect-four.yellow": "黄色",
-	"chess.puzzle-description": "300 万以上のパズルでトレーニング",
-	"chess.puzzle-title": "パズル",
-	"chess.black": "黒",
-	"chess.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case 0:
-				return "\u521D\u5FC3\u8005";
-			case 1:
-				return "\u4E2D\u7D1A";
-			case 2:
-				return "\u4E0A\u7D1A";
-			case 3:
-				return "\u30A8\u30AD\u30B9\u30D1\u30FC\u30C8";
-			case 4:
-				return "\u30DE\u30B9\u30BF\u30FC";
-			default:
-				return "\u4E0D\u660E";
-		}
-	},
-	"chess.white": "白",
-	"game.hint": "ヒント",
-	"game.start-game": "ゲームを開始",
-	"game.start-playing": "プレイを開始",
-	"game.stop-playing": "プレイを停止",
-	"game.change-bot": "ボットを変更",
-	"game.swap-sides": "サイドを交換",
-	"game.rematch": "リマッチ",
-	"game.draw": "引き分け",
-	"game.loser": "敗者",
-	"game.play-again": "もう一度プレイ",
-	"game.winner": "勝者",
-	"game.vs": "対",
-	host: "ホスト",
-	you: "あなた",
-	"game.play-friend-title": "友達と遊ぶ",
-	"game.play-friend-description": "あなたのスペースの人々と対戦する",
-	"game.play-computer-title": "コンピューターと遊ぶ",
-	"game.play-computer-description": "コンピューターと対戦する",
-	"flow.copy-puzzle-to-clipboard": "パズルをクリップボードにコピー",
-	"flow.create-new": "新規作成",
-	"flow.create-puzzle": "パズルを作成",
-	"flow.puzzle-created": "パズルが作成されました",
-	"flow.saved-name": "名前が保存されました",
-	"puzzle.edit-name": "名前を編集",
-	"flow.puzzle-deleted": "パズルが削除されました",
-	"flow.delete-puzzle-forever?": "パズルを完全に削除しますか？",
-	"flow.delete-forever": "完全に削除",
-	"flow.edit-mode": "編集モード",
-	"flow.play-mode": "プレイモード",
-	"flow.puzzle-removed": "パズルが削除されました",
-	"flow.puzzle-added": "パズルが追加されました",
-	"flow.remove-from-pack": "パックから削除",
-	"flow.create-pack": "パックを作成",
-	"flow.pack-created": "パックが作成されました",
-	"flow.flow": "フロー",
-	"flow.play": "遊ぶ",
-	"flow.play-description": "パズルをプレイし始める",
-	"flow.builder": "ビルダー",
-	"flow.builder-description": "パズルとパックを作成および編集",
-	"flow.puzzle-completed": "パズルが完了しました",
-	"flow.select-next-pack": "次のパックを選択",
-	"flow.next-puzzle": "次のパズル",
-	"flow.level": (level) => `\u30EC\u30D9\u30EB${level}`,
-	"flow.packs": "パック",
-	"flow.puzzles": "パズル",
-	"flow-pack-name": (flowPackName) => `${flowPackName}`,
-	"flow.no-packs": "パックなし",
-	"flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
-	"flow.no-puzzles": "パズルなし",
-	"space-game-flow-edit.editing": "編集",
-	"spaces.end": "終了",
-	"spaces.end-space": "スペースを終了",
-	"spaces.ended-space-host": "ホストによってスペースが終了しました",
-	"spaces.ended-space-current-user": "スペースが終了しました",
-	"spaces.ended-space-other-user": (username) =>
-		`${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`,
-	"spaces.space-ended": "スペースが終了しました",
-	"spaces.space": "スペース",
-	"spaces.join-space": "スペースに参加",
-	"spaces.current-user-joined-space": "スペースに参加しました",
-	"spaces.other-user-joined-space": (username) =>
-		username
-			? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`
-			: "\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F",
-	"spaces.you're-already-in-a-space": "すでにスペースにいます",
-	"spaces.games": "ゲーム",
-	"spaces.current-space": ({ hostUsername }) =>
-		`${hostUsername} \u306E\u30B9\u30DA\u30FC\u30B9`,
-	"spaces.home": "ホーム",
-	"spaces.people-count": (peopleCount) =>
-		peopleCount === 1 ? "\u4EBA" : `\u4EBA (${peopleCount.toLocaleString()})`,
-	"space-card.live": "ライブ",
-	"space-card.people-count": (count) => `${count.toLocaleString()} \u4EBA`,
-	"spaces.spaces": "スペース",
-	"spaces.no-spaces": "スペースなし",
-	"spaces.space-not-found": "スペースが見つかりません",
-	"spaces.go-home": "家に帰る",
-	"spaces.current-user-ended-space": "スペース終了",
-	"spaces.other-user-ended-space": (username) =>
-		username
-			? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`
-			: "\u30B9\u30DA\u30FC\u30B9\u7D42\u4E86",
-	"lang.language": "言語",
-	"lang.choose-language": "言語を選択",
-	"lang.done": "完了",
-	"lang.loaded-translations": "翻訳が読み込まれました",
-	"profile.update-profile": "プロフィールを更新",
-	"profile.update-avatar": "アバターを更新",
-	"profile.profile": "プロフィール",
-	"app.gamezilla-app": "gamezilla.app",
-	"app.something-went-wrong": "何かがうまくいかなかった",
-	"app.exit": "出口",
-	"app.next": "次",
-	"app.prev": "前",
-	"app.congratulations": "おめでとう",
-	"app.reset": "リセット",
-	"app.more": "もっと",
-	"app.copied-to-clipboard": "クリップボードにコピーしました",
-	"app.copy": "コピー",
-	"app.saved-changes": "変更を保存しました",
-	"app.dont-save": "保存しない",
-	"app.save": "保存",
-	"app.cancel": "キャンセル",
-	"app.close": "閉じる",
-	"app.change": "変更",
-	"app.accept": "受け入れる",
-	"app.decline": "低下",
-	"app.resign": "辞任",
-	"app.delete": "削除",
-	"app.this-action-cannot-be-undone": "この操作は取り消せません",
-	"app.height": "高さ",
-	"app.width": "幅",
-	"app.restart": "再起動",
-	"app.retry": "再試行",
-	"app.skip": "スキップ",
-	"app.clear": "クリア",
-	"app.dimensions": "寸法",
-	"app.redo": "やり直す",
-	"app.undo": "元に戻す",
-	"app.editor": "エディタ",
-	"app.people": "人々",
-	"app.+number": (number) => `+${number.toLocaleString()}`,
-	"?": "？",
-	"app.save-changes-warning": "終了する前に保存しないと、変更が失われます。",
-	"app.save-changes?": "変更を保存しますか？",
-	"username-title": "ユーザー名",
-	username: (username) => `@${username}`,
-	en: "英語",
-	es: "スペイン語",
-	ar: "アラビア語",
-	de: "ドイツ語",
-	fr: "フランス語",
-	hi: "ヒンディー語",
-	it: "イタリア語",
-	ja: "日本語",
-	ko: "韓国語",
-	pt: "ポルトガル語",
-	ru: "ロシア語",
-	zh: "中国語",
+  "sound.sound-off": "サウンドオフ",
+  "sound.sound-on": "サウンドオン",
+  "wire.server-restarted": "サーバーが再起動しました",
+  "wire.connecting...": "接続中...",
+  "wire.offline": "オフライン",
+  "wire.online": "オンライン",
+  "wire.try-reconnect": "再接続を試みる",
+  "auth.logout": "ログアウト",
+  "auth.logged-in-as-guest": "ゲストとしてログイン",
+  "auth.logged-in-with-phone": "電話でログイン",
+  "auth.current-user-logged-out": "ログアウトしました",
+  "auth.current-user-logged-in": "ログインしました",
+  "auth.continue-as-guest": "ゲストとして続行",
+  "auth.continue-with-phone": "電話で続行",
+  "auth.or": "または",
+  "auth.sign-in-to": "サインイン",
+  "auth.logged-in": "ログインしました",
+  "auth.logout-of-gamezill.app": "gamezilla.appからログアウト",
+  "auth.logout-of-gamezill.app-body": "本当にログアウトしますか？",
+  "verify-sms.code-message": (code) =>
+    `\u8A8D\u8A3C\u30B3\u30FC\u30C9\u306F${code}\u3067\u3059`,
+  "verify-sms-problem.code-incorrect": "コードが間違っています",
+  "verify-sms-problem.verification-expired": "認証期限切れ",
+  "verify-sms-problem.verification-not-found": "認証が見つかりません",
+  "verify-sms-problem.verification-already-verified": "認証済み",
+  "verify-sms-problem.database-error": "データベースエラー",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "多くの失敗した試行のため、認証が期限切れ",
+  "verify-sms-problem.send-code-hourly-limit-reached":
+    "時間制限に達しました。後でもう一度お試しください。",
+  "verify-sms-problem.send-code-daily-limit-reached":
+    "1日の制限に達しました。後でもう一度お試しください。",
+  "verify-sms-problem.verification-expired-not-latest-verification":
+    "最新の検証ではないため、検証が期限切れになりました",
+  "verify-sms-problem.send-code-limit-reached":
+    "制限に達しました。後でもう一度お試しください。",
+  "auth-sms.login-with-phone": "電話でログイン",
+  "auth-sms.phone-number": "電話番号",
+  "auth-sms.send-code": "コードを送信",
+  "auth-sms.country": "国",
+  "auth-sms.code": "コード",
+  "auth-sms.verify-code": "確認",
+  "auth-sms.invalid-phone-number": "無効な電話番号",
+  "auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+    `${formattedPhoneNumber} \u306B\u9001\u4FE1\u3055\u308C\u305F\u30B3\u30FC\u30C9\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044`,
+  "auth-sms.sent-code-to": (formattedPhoneNumber) =>
+    `${formattedPhoneNumber} \u306B\u30B3\u30FC\u30C9\u3092\u9001\u4FE1\u3057\u307E\u3057\u305F`,
+  "auth-email.login-with-email": "メールでログイン",
+  "auth-email.send-login-link": "ログインリンクを送信",
+  "spaces.current-user-left": "スペースを離れました",
+  "spaces.other-user-left": (username) =>
+    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u96E2\u308C\u307E\u3057\u305F`,
+  "spaces.leave": "去る",
+  "spaces.start-space": "スペースを開始",
+  "spaces.space-started": "スペースが開始されました",
+  "spaces.see-profile": "プロフィールを見る",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u7C21\u5358";
+      case "Impossible":
+        return "\u4E0D\u53EF\u80FD";
+      case "Medium":
+        return "\u4E2D";
+      default:
+        return "\u672A\u77E5";
+    }
+  },
+  "tic-tac-toe.cross": "クロス",
+  "tic-tac-toe.naught": "ノート",
+  "connect-four": "フォーをつなげる",
+  flow: "フロー",
+  "tic-tac-toe": "三目並べ",
+  gomoku: "五目並べ",
+  chess: "チェス",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u7C21\u5358";
+      case "Hard":
+        return "\u96E3\u3057\u3044";
+      case "Medium":
+        return "\u4E2D";
+      default:
+        return "\u4E0D\u660E";
+    }
+  },
+  "connect-four.red": "赤",
+  "connect-four.yellow": "黄色",
+  "chess.puzzle-description": "300 万以上のパズルでトレーニング",
+  "chess.puzzle-title": "パズル",
+  "chess.black": "黒",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\u521D\u5FC3\u8005";
+      case 1:
+        return "\u4E2D\u7D1A";
+      case 2:
+        return "\u4E0A\u7D1A";
+      case 3:
+        return "\u30A8\u30AD\u30B9\u30D1\u30FC\u30C8";
+      case 4:
+        return "\u30DE\u30B9\u30BF\u30FC";
+      default:
+        return "\u4E0D\u660E";
+    }
+  },
+  "chess.white": "白",
+  "game.hint": "ヒント",
+  "game.start-game": "ゲームを開始",
+  "game.start-playing": "プレイを開始",
+  "game.stop-playing": "プレイを停止",
+  "game.change-bot": "ボットを変更",
+  "game.swap-sides": "サイドを交換",
+  "game.rematch": "リマッチ",
+  "game.draw": "引き分け",
+  "game.loser": "敗者",
+  "game.play-again": "もう一度プレイ",
+  "game.winner": "勝者",
+  "game.vs": "対",
+  host: "ホスト",
+  you: "あなた",
+  "game.play-friend-title": "友達と遊ぶ",
+  "game.play-friend-description": "あなたのスペースの人々と対戦する",
+  "game.play-computer-title": "コンピューターと遊ぶ",
+  "game.play-computer-description": "コンピューターと対戦する",
+  "flow.copy-puzzle-to-clipboard": "パズルをクリップボードにコピー",
+  "flow.create-new": "新規作成",
+  "flow.create-puzzle": "パズルを作成",
+  "flow.puzzle-created": "パズルが作成されました",
+  "flow.saved-name": "名前が保存されました",
+  "puzzle.edit-name": "名前を編集",
+  "flow.puzzle-deleted": "パズルが削除されました",
+  "flow.delete-puzzle-forever?": "パズルを完全に削除しますか？",
+  "flow.delete-forever": "完全に削除",
+  "flow.edit-mode": "編集モード",
+  "flow.play-mode": "プレイモード",
+  "flow.puzzle-removed": "パズルが削除されました",
+  "flow.puzzle-added": "パズルが追加されました",
+  "flow.remove-from-pack": "パックから削除",
+  "flow.create-pack": "パックを作成",
+  "flow.pack-created": "パックが作成されました",
+  "flow.flow": "フロー",
+  "flow.play": "遊ぶ",
+  "flow.play-description": "パズルをプレイし始める",
+  "flow.builder": "ビルダー",
+  "flow.builder-description": "パズルとパックを作成および編集",
+  "flow.puzzle-completed": "パズルが完了しました",
+  "flow.select-next-pack": "次のパックを選択",
+  "flow.next-puzzle": "次のパズル",
+  "flow.level": (level) => `\u30EC\u30D9\u30EB${level}`,
+  "flow.packs": "パック",
+  "flow.puzzles": "パズル",
+  "flow-pack-name": (flowPackName) => `${flowPackName}`,
+  "flow.no-packs": "パックなし",
+  "flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
+  "flow.no-puzzles": "パズルなし",
+  "space-game-flow-edit.editing": "編集",
+  "spaces.end": "終了",
+  "spaces.end-space": "スペースを終了",
+  "spaces.ended-space-host": "ホストによってスペースが終了しました",
+  "spaces.ended-space-current-user": "スペースが終了しました",
+  "spaces.ended-space-other-user": (username) =>
+    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`,
+  "spaces.space-ended": "スペースが終了しました",
+  "spaces.space": "スペース",
+  "spaces.join-space": "スペースに参加",
+  "spaces.current-user-joined-space": "スペースに参加しました",
+  "spaces.other-user-joined-space": (username) =>
+    username
+      ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`
+      : "\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F",
+  "spaces.you're-already-in-a-space": "すでにスペースにいます",
+  "spaces.games": "ゲーム",
+  "spaces.current-space": ({ hostUsername }) =>
+    `${hostUsername} \u306E\u30B9\u30DA\u30FC\u30B9`,
+  "spaces.home": "ホーム",
+  "spaces.people-count": (peopleCount) =>
+    peopleCount === 1 ? "\u4EBA" : `\u4EBA (${peopleCount.toLocaleString()})`,
+  "space-card.live": "ライブ",
+  "space-card.people-count": (count) => `${count.toLocaleString()} \u4EBA`,
+  "spaces.spaces": "スペース",
+  "spaces.no-spaces": "スペースなし",
+  "spaces.space-not-found": "スペースが見つかりません",
+  "spaces.go-home": "家に帰る",
+  "spaces.current-user-ended-space": "スペース終了",
+  "spaces.other-user-ended-space": (username) =>
+    username
+      ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`
+      : "\u30B9\u30DA\u30FC\u30B9\u7D42\u4E86",
+  "lang.language": "言語",
+  "lang.choose-language": "言語を選択",
+  "lang.done": "完了",
+  "lang.loaded-translations": "翻訳が読み込まれました",
+  "profile.update-profile": "プロフィールを更新",
+  "profile.update-avatar": "アバターを更新",
+  "profile.profile": "プロフィール",
+  "app.gamezilla-app": "gamezilla.app",
+  "app.something-went-wrong": "何かがうまくいかなかった",
+  "app.exit": "出口",
+  "app.next": "次",
+  "app.prev": "前",
+  "app.congratulations": "おめでとう",
+  "app.reset": "リセット",
+  "app.more": "もっと",
+  "app.copied-to-clipboard": "クリップボードにコピーしました",
+  "app.copy": "コピー",
+  "app.saved-changes": "変更を保存しました",
+  "app.dont-save": "保存しない",
+  "app.save": "保存",
+  "app.cancel": "キャンセル",
+  "app.close": "閉じる",
+  "app.change": "変更",
+  "app.accept": "受け入れる",
+  "app.decline": "低下",
+  "app.resign": "辞任",
+  "app.delete": "削除",
+  "app.this-action-cannot-be-undone": "この操作は取り消せません",
+  "app.height": "高さ",
+  "app.width": "幅",
+  "app.restart": "再起動",
+  "app.retry": "再試行",
+  "app.skip": "スキップ",
+  "app.clear": "クリア",
+  "app.dimensions": "寸法",
+  "app.redo": "やり直す",
+  "app.undo": "元に戻す",
+  "app.editor": "エディタ",
+  "app.people": "人々",
+  "app.+number": (number) => `+${number.toLocaleString()}`,
+  "?": "？",
+  "app.save-changes-warning": "終了する前に保存しないと、変更が失われます。",
+  "app.save-changes?": "変更を保存しますか？",
+  "username-title": "ユーザー名",
+  username: (username) => `@${username}`,
+  en: "英語",
+  es: "スペイン語",
+  ar: "アラビア語",
+  de: "ドイツ語",
+  fr: "フランス語",
+  hi: "ヒンディー語",
+  it: "イタリア語",
+  ja: "日本語",
+  ko: "韓国語",
+  pt: "ポルトガル語",
+  ru: "ロシア語",
+  zh: "中国語",
 };

@@ -2,260 +2,260 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-	"sound.sound-off": "Звук выключен",
-	"sound.sound-on": "Звук включен",
-	"wire.server-restarted": "Сервер перезапущен",
-	"wire.connecting...": "Подключение...",
-	"wire.offline": "Не в сети",
-	"wire.online": "В сети",
-	"wire.try-reconnect": "Попробовать переподключиться",
-	"auth.logout": "Выйти",
-	"auth.logged-in-as-guest": "Вошел как гость",
-	"auth.logged-in-with-phone": "Вошел с телефона",
-	"auth.current-user-logged-out": "Вышел",
-	"auth.current-user-logged-in": "Вошел",
-	"auth.continue-as-guest": "Продолжить как гость",
-	"auth.continue-with-phone": "Продолжить с телефоном",
-	"auth.or": "или",
-	"auth.sign-in-to": "Войти в",
-	"auth.logged-in": "Вошел",
-	"auth.logout-of-gamezill.app": "Выйти из gamezilla.app",
-	"auth.logout-of-gamezill.app-body": "Вы уверены, что хотите выйти?",
-	"verify-sms.code-message": (code) =>
-		`\u0412\u0430\u0448 \u043A\u043E\u0434 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F - ${code}`,
-	"verify-sms-problem.code-incorrect": "Неверный код",
-	"verify-sms-problem.database-error": "Ошибка базы данных",
-	"verify-sms-problem.verification-already-verified":
-		"Подтверждение уже подтверждено",
-	"verify-sms-problem.verification-expired":
-		"Истек срок действия подтверждения",
-	"verify-sms-problem.verification-not-found": "Подтверждение не найдено",
-	"verify-sms-problem.verification-expired-too-many-failed-attempts":
-		"Истек срок действия подтверждения из-за слишком многих неудачных попыток",
-	"verify-sms-problem.send-code-hourly-limit-reached":
-		"Достигнут часовой лимит. Пожалуйста, попробуйте позже.",
-	"verify-sms-problem.send-code-daily-limit-reached":
-		"Достигнут дневной лимит. Пожалуйста, попробуйте позже.",
-	"verify-sms-problem.verification-expired-not-latest-verification":
-		"Подтверждение истекло, потому что это не последнее подтверждение",
-	"verify-sms-problem.send-code-limit-reached":
-		"Лимит достигнут. Пожалуйста, попробуйте позже.",
-	"auth-sms.login-with-phone": "Войти с телефона",
-	"auth-sms.phone-number": "Номер телефона",
-	"auth-sms.send-code": "Отправить код",
-	"auth-sms.country": "Страна",
-	"auth-sms.code": "Код",
-	"auth-sms.verify-code": "Проверить",
-	"auth-sms.invalid-phone-number": "Неверный номер телефона",
-	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
-		`\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043A\u043E\u0434, \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043D\u044B\u0439 \u043D\u0430 ${formattedPhoneNumber}`,
-	"auth-sms.sent-code-to": (formattedPhoneNumber) =>
-		`\u041A\u043E\u0434 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D \u043D\u0430 ${formattedPhoneNumber}`,
-	"auth-email.login-with-email": "Войти по электронной почте",
-	"auth-email.send-login-link": "Отправить ссылку для входа",
-	"spaces.current-user-left": "Покинул пространство",
-	"spaces.other-user-left": (username) =>
-		`${username} \u043F\u043E\u043A\u0438\u043D\u0443\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
-	"spaces.leave": "Покинуть",
-	"spaces.start-space": "Начать пространство",
-	"spaces.space-started": "Пространство началось",
-	"spaces.see-profile": "Посмотреть профиль",
-	"tic-tac-toe.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case "Easy":
-				return "\u041B\u0435\u0433\u043A\u043E";
-			case "Impossible":
-				return "\u041D\u0435\u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E";
-			case "Medium":
-				return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
-			default:
-				return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
-		}
-	},
-	"tic-tac-toe.cross": "Крест",
-	"tic-tac-toe.naught": "Нолик",
-	"connect-four": "Соедините четыре",
-	flow: "Поток",
-	"tic-tac-toe": "Крестики-нолики",
-	gomoku: "Гомоку",
-	chess: "Шахматы",
-	"connect-four.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case "Easy":
-				return "\u041B\u0435\u0433\u043A\u043E";
-			case "Hard":
-				return "\u0422\u0440\u0443\u0434\u043D\u043E";
-			case "Medium":
-				return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
-			default:
-				return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
-		}
-	},
-	"connect-four.red": "Красный",
-	"connect-four.yellow": "Желтый",
-	"chess.puzzle-description":
-		"Тренируйтесь с более чем 3 миллионами головоломок",
-	"chess.puzzle-title": "Головоломки",
-	"chess.black": "Черный",
-	"chess.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case 0:
-				return "\u041D\u043E\u0432\u0438\u0447\u043E\u043A";
-			case 1:
-				return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
-			case 2:
-				return "\u041F\u0440\u043E\u0434\u0432\u0438\u043D\u0443\u0442\u044B\u0439";
-			case 3:
-				return "\u042D\u043A\u0441\u043F\u0435\u0440\u0442";
-			case 4:
-				return "\u041C\u0430\u0441\u0442\u0435\u0440";
-			default:
-				return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
-		}
-	},
-	"chess.white": "Белый",
-	"game.hint": "Подсказка",
-	"game.start-game": "Начать игру",
-	"game.start-playing": "Начать играть",
-	"game.stop-playing": "Прекратить играть",
-	"game.change-bot": "Изменить бота",
-	"game.swap-sides": "Поменять стороны",
-	"game.rematch": "Реванш",
-	"game.draw": "Ничья",
-	"game.loser": "Проигравший",
-	"game.play-again": "Играть снова",
-	"game.winner": "Победитель",
-	"game.vs": "против",
-	host: "Хост",
-	you: "Вы",
-	"game.play-friend-title": "Играть с другом",
-	"game.play-friend-description": "Играть против людей в вашем пространстве",
-	"game.play-computer-title": "Играть с компьютером",
-	"game.play-computer-description": "Играть против компьютера",
-	"flow.copy-puzzle-to-clipboard": "Скопировать головоломку в буфер обмена",
-	"flow.create-new": "Создать новый",
-	"flow.create-puzzle": "Создать головоломку",
-	"flow.puzzle-created": "Головоломка создана",
-	"flow.saved-name": "Имя сохранено",
-	"puzzle.edit-name": "Изменить имя",
-	"flow.puzzle-deleted": "Головоломка удалена",
-	"flow.delete-puzzle-forever?": "Удалить головоломку навсегда?",
-	"flow.delete-forever": "Удалить навсегда",
-	"flow.edit-mode": "Режим редактирования",
-	"flow.play-mode": "Режим игры",
-	"flow.puzzle-removed": "Головоломка удалена",
-	"flow.puzzle-added": "Головоломка добавлена",
-	"flow.remove-from-pack": "Удалить из пакета",
-	"flow.create-pack": "Создать пакет",
-	"flow.pack-created": "Пакет создан",
-	"flow.flow": "Поток",
-	"flow.play": "Играть",
-	"flow.play-description": "Начните играть в головоломки",
-	"flow.builder": "Строитель",
-	"flow.builder-description": "Создание и редактирование головоломок и пакетов",
-	"flow.puzzle-completed": "Головоломка завершена ",
-	"flow.select-next-pack": "Выбрать следующий пакет",
-	"flow.next-puzzle": "Следующая головоломка",
-	"flow.level": (level) =>
-		`\u0423\u0440\u043E\u0432\u0435\u043D\u044C ${level}`,
-	"flow.packs": "Пакеты",
-	"flow.puzzles": "Головоломки",
-	"flow-pack-name": (flowPackName) => `${flowPackName}`,
-	"flow.no-packs": "Нет пакетов",
-	"flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
-	"flow.no-puzzles": "Нет пазлов",
-	"space-game-flow-edit.editing": "редактирование",
-	"spaces.end": "Конец",
-	"spaces.end-space": "Завершить пространство",
-	"spaces.ended-space-host": "Пространство завершено хостом",
-	"spaces.ended-space-current-user": "Пространство завершено",
-	"spaces.ended-space-other-user": (username) =>
-		`${username} \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
-	"spaces.space-ended": "Пространство завершено",
-	"spaces.space": "Пространство",
-	"spaces.join-space": "Присоединиться к пространству",
-	"spaces.current-user-joined-space": "Присоединился к пространству",
-	"spaces.other-user-joined-space": (username) =>
-		username
-			? `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`
-			: "\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443",
-	"spaces.you're-already-in-a-space": "Вы уже находитесь в пространстве",
-	"spaces.games": "игры",
-	"spaces.current-space": ({ hostUsername }) =>
-		`\u0422\u0435\u043A\u0443\u0449\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E ${hostUsername}`,
-	"spaces.home": "Главная",
-	"spaces.people-count": (peopleCount) =>
-		peopleCount === 1
-			? "\u041B\u044E\u0434\u0438"
-			: `\u041B\u044E\u0434\u0438 (${peopleCount.toLocaleString()})`,
-	"space-card.live": "Прямой эфир",
-	"space-card.people-count": (count) =>
-		`${count.toLocaleString()} \u0447\u0435\u043B\u043E\u0432\u0435\u043A`,
-	"spaces.spaces": "Пространства",
-	"spaces.no-spaces": "Нет пространств",
-	"spaces.space-not-found": "Пространство не найдено",
-	"spaces.go-home": "Иди домой",
-	"spaces.current-user-ended-space": "Пространство закончено",
-	"spaces.other-user-ended-space": (username) =>
-		username
-			? `${username} \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`
-			: "\u041F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u0437\u0430\u043A\u043E\u043D\u0447\u0435\u043D\u043E",
-	"lang.language": "Язык",
-	"lang.choose-language": "Выберите язык",
-	"lang.done": "Готово",
-	"lang.loaded-translations": "Загруженные переводы",
-	"profile.update-profile": "Обновить профиль",
-	"profile.update-avatar": "Обновить аватар",
-	"profile.profile": "Профиль",
-	"app.gamezilla-app": "gamezilla.app",
-	"app.something-went-wrong": "Что-то пошло не так",
-	"app.exit": "Выход",
-	"app.next": "Следующий",
-	"app.prev": "Предыдущий",
-	"app.congratulations": "Поздравляем",
-	"app.reset": "Сброс",
-	"app.more": "Больше",
-	"app.copied-to-clipboard": "Скопировано в буфер обмена",
-	"app.copy": "Копировать",
-	"app.saved-changes": "Изменения сохранены",
-	"app.dont-save": "Не сохранять",
-	"app.save": "Сохранить",
-	"app.cancel": "Отмена",
-	"app.close": "Закрыть",
-	"app.change": "Изменить",
-	"app.accept": "Принять",
-	"app.decline": "Упадок",
-	"app.resign": "Уволиться",
-	"app.delete": "Удалить",
-	"app.this-action-cannot-be-undone": "Это действие нельзя отменить",
-	"app.height": "Высота",
-	"app.width": "Ширина",
-	"app.restart": "Перезапуск",
-	"app.retry": "Повторить",
-	"app.skip": "Пропуск",
-	"app.clear": "Чистый",
-	"app.dimensions": "Размеры",
-	"app.redo": "Повторить",
-	"app.undo": "Отменить",
-	"app.editor": "Редактор",
-	"app.people": "Люди",
-	"app.+number": (number) => `+${number.toLocaleString()}`,
-	"?": "?",
-	"app.save-changes-warning":
-		"Ваши изменения будут потеряны, если вы не сохраните их перед выходом.",
-	"app.save-changes?": "Сохранить изменения?",
-	"username-title": "Имя пользователя",
-	username: (username) => `@${username}`,
-	en: "Английский",
-	es: "Испанский",
-	ar: "Арабский",
-	de: "Немецкий",
-	fr: "Французский",
-	hi: "Хинди",
-	it: "Итальянский",
-	ja: "Японский",
-	ko: "Корейский",
-	pt: "Португальский",
-	ru: "Русский",
-	zh: "Китайский",
+  "sound.sound-off": "Звук выключен",
+  "sound.sound-on": "Звук включен",
+  "wire.server-restarted": "Сервер перезапущен",
+  "wire.connecting...": "Подключение...",
+  "wire.offline": "Не в сети",
+  "wire.online": "В сети",
+  "wire.try-reconnect": "Попробовать переподключиться",
+  "auth.logout": "Выйти",
+  "auth.logged-in-as-guest": "Вошел как гость",
+  "auth.logged-in-with-phone": "Вошел с телефона",
+  "auth.current-user-logged-out": "Вышел",
+  "auth.current-user-logged-in": "Вошел",
+  "auth.continue-as-guest": "Продолжить как гость",
+  "auth.continue-with-phone": "Продолжить с телефоном",
+  "auth.or": "или",
+  "auth.sign-in-to": "Войти в",
+  "auth.logged-in": "Вошел",
+  "auth.logout-of-gamezill.app": "Выйти из gamezilla.app",
+  "auth.logout-of-gamezill.app-body": "Вы уверены, что хотите выйти?",
+  "verify-sms.code-message": (code) =>
+    `\u0412\u0430\u0448 \u043A\u043E\u0434 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F - ${code}`,
+  "verify-sms-problem.code-incorrect": "Неверный код",
+  "verify-sms-problem.database-error": "Ошибка базы данных",
+  "verify-sms-problem.verification-already-verified":
+    "Подтверждение уже подтверждено",
+  "verify-sms-problem.verification-expired":
+    "Истек срок действия подтверждения",
+  "verify-sms-problem.verification-not-found": "Подтверждение не найдено",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "Истек срок действия подтверждения из-за слишком многих неудачных попыток",
+  "verify-sms-problem.send-code-hourly-limit-reached":
+    "Достигнут часовой лимит. Пожалуйста, попробуйте позже.",
+  "verify-sms-problem.send-code-daily-limit-reached":
+    "Достигнут дневной лимит. Пожалуйста, попробуйте позже.",
+  "verify-sms-problem.verification-expired-not-latest-verification":
+    "Подтверждение истекло, потому что это не последнее подтверждение",
+  "verify-sms-problem.send-code-limit-reached":
+    "Лимит достигнут. Пожалуйста, попробуйте позже.",
+  "auth-sms.login-with-phone": "Войти с телефона",
+  "auth-sms.phone-number": "Номер телефона",
+  "auth-sms.send-code": "Отправить код",
+  "auth-sms.country": "Страна",
+  "auth-sms.code": "Код",
+  "auth-sms.verify-code": "Проверить",
+  "auth-sms.invalid-phone-number": "Неверный номер телефона",
+  "auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+    `\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043A\u043E\u0434, \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043D\u044B\u0439 \u043D\u0430 ${formattedPhoneNumber}`,
+  "auth-sms.sent-code-to": (formattedPhoneNumber) =>
+    `\u041A\u043E\u0434 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D \u043D\u0430 ${formattedPhoneNumber}`,
+  "auth-email.login-with-email": "Войти по электронной почте",
+  "auth-email.send-login-link": "Отправить ссылку для входа",
+  "spaces.current-user-left": "Покинул пространство",
+  "spaces.other-user-left": (username) =>
+    `${username} \u043F\u043E\u043A\u0438\u043D\u0443\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
+  "spaces.leave": "Покинуть",
+  "spaces.start-space": "Начать пространство",
+  "spaces.space-started": "Пространство началось",
+  "spaces.see-profile": "Посмотреть профиль",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u041B\u0435\u0433\u043A\u043E";
+      case "Impossible":
+        return "\u041D\u0435\u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E";
+      case "Medium":
+        return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
+      default:
+        return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
+    }
+  },
+  "tic-tac-toe.cross": "Крест",
+  "tic-tac-toe.naught": "Нолик",
+  "connect-four": "Соедините четыре",
+  flow: "Поток",
+  "tic-tac-toe": "Крестики-нолики",
+  gomoku: "Гомоку",
+  chess: "Шахматы",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u041B\u0435\u0433\u043A\u043E";
+      case "Hard":
+        return "\u0422\u0440\u0443\u0434\u043D\u043E";
+      case "Medium":
+        return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
+      default:
+        return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
+    }
+  },
+  "connect-four.red": "Красный",
+  "connect-four.yellow": "Желтый",
+  "chess.puzzle-description":
+    "Тренируйтесь с более чем 3 миллионами головоломок",
+  "chess.puzzle-title": "Головоломки",
+  "chess.black": "Черный",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\u041D\u043E\u0432\u0438\u0447\u043E\u043A";
+      case 1:
+        return "\u0421\u0440\u0435\u0434\u043D\u0438\u0439";
+      case 2:
+        return "\u041F\u0440\u043E\u0434\u0432\u0438\u043D\u0443\u0442\u044B\u0439";
+      case 3:
+        return "\u042D\u043A\u0441\u043F\u0435\u0440\u0442";
+      case 4:
+        return "\u041C\u0430\u0441\u0442\u0435\u0440";
+      default:
+        return "\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E";
+    }
+  },
+  "chess.white": "Белый",
+  "game.hint": "Подсказка",
+  "game.start-game": "Начать игру",
+  "game.start-playing": "Начать играть",
+  "game.stop-playing": "Прекратить играть",
+  "game.change-bot": "Изменить бота",
+  "game.swap-sides": "Поменять стороны",
+  "game.rematch": "Реванш",
+  "game.draw": "Ничья",
+  "game.loser": "Проигравший",
+  "game.play-again": "Играть снова",
+  "game.winner": "Победитель",
+  "game.vs": "против",
+  host: "Хост",
+  you: "Вы",
+  "game.play-friend-title": "Играть с другом",
+  "game.play-friend-description": "Играть против людей в вашем пространстве",
+  "game.play-computer-title": "Играть с компьютером",
+  "game.play-computer-description": "Играть против компьютера",
+  "flow.copy-puzzle-to-clipboard": "Скопировать головоломку в буфер обмена",
+  "flow.create-new": "Создать новый",
+  "flow.create-puzzle": "Создать головоломку",
+  "flow.puzzle-created": "Головоломка создана",
+  "flow.saved-name": "Имя сохранено",
+  "puzzle.edit-name": "Изменить имя",
+  "flow.puzzle-deleted": "Головоломка удалена",
+  "flow.delete-puzzle-forever?": "Удалить головоломку навсегда?",
+  "flow.delete-forever": "Удалить навсегда",
+  "flow.edit-mode": "Режим редактирования",
+  "flow.play-mode": "Режим игры",
+  "flow.puzzle-removed": "Головоломка удалена",
+  "flow.puzzle-added": "Головоломка добавлена",
+  "flow.remove-from-pack": "Удалить из пакета",
+  "flow.create-pack": "Создать пакет",
+  "flow.pack-created": "Пакет создан",
+  "flow.flow": "Поток",
+  "flow.play": "Играть",
+  "flow.play-description": "Начните играть в головоломки",
+  "flow.builder": "Строитель",
+  "flow.builder-description": "Создание и редактирование головоломок и пакетов",
+  "flow.puzzle-completed": "Головоломка завершена ",
+  "flow.select-next-pack": "Выбрать следующий пакет",
+  "flow.next-puzzle": "Следующая головоломка",
+  "flow.level": (level) =>
+    `\u0423\u0440\u043E\u0432\u0435\u043D\u044C ${level}`,
+  "flow.packs": "Пакеты",
+  "flow.puzzles": "Головоломки",
+  "flow-pack-name": (flowPackName) => `${flowPackName}`,
+  "flow.no-packs": "Нет пакетов",
+  "flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
+  "flow.no-puzzles": "Нет пазлов",
+  "space-game-flow-edit.editing": "редактирование",
+  "spaces.end": "Конец",
+  "spaces.end-space": "Завершить пространство",
+  "spaces.ended-space-host": "Пространство завершено хостом",
+  "spaces.ended-space-current-user": "Пространство завершено",
+  "spaces.ended-space-other-user": (username) =>
+    `${username} \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
+  "spaces.space-ended": "Пространство завершено",
+  "spaces.space": "Пространство",
+  "spaces.join-space": "Присоединиться к пространству",
+  "spaces.current-user-joined-space": "Присоединился к пространству",
+  "spaces.other-user-joined-space": (username) =>
+    username
+      ? `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`
+      : "\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443",
+  "spaces.you're-already-in-a-space": "Вы уже находитесь в пространстве",
+  "spaces.games": "игры",
+  "spaces.current-space": ({ hostUsername }) =>
+    `\u0422\u0435\u043A\u0443\u0449\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E ${hostUsername}`,
+  "spaces.home": "Главная",
+  "spaces.people-count": (peopleCount) =>
+    peopleCount === 1
+      ? "\u041B\u044E\u0434\u0438"
+      : `\u041B\u044E\u0434\u0438 (${peopleCount.toLocaleString()})`,
+  "space-card.live": "Прямой эфир",
+  "space-card.people-count": (count) =>
+    `${count.toLocaleString()} \u0447\u0435\u043B\u043E\u0432\u0435\u043A`,
+  "spaces.spaces": "Пространства",
+  "spaces.no-spaces": "Нет пространств",
+  "spaces.space-not-found": "Пространство не найдено",
+  "spaces.go-home": "Иди домой",
+  "spaces.current-user-ended-space": "Пространство закончено",
+  "spaces.other-user-ended-space": (username) =>
+    username
+      ? `${username} \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`
+      : "\u041F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u0437\u0430\u043A\u043E\u043D\u0447\u0435\u043D\u043E",
+  "lang.language": "Язык",
+  "lang.choose-language": "Выберите язык",
+  "lang.done": "Готово",
+  "lang.loaded-translations": "Загруженные переводы",
+  "profile.update-profile": "Обновить профиль",
+  "profile.update-avatar": "Обновить аватар",
+  "profile.profile": "Профиль",
+  "app.gamezilla-app": "gamezilla.app",
+  "app.something-went-wrong": "Что-то пошло не так",
+  "app.exit": "Выход",
+  "app.next": "Следующий",
+  "app.prev": "Предыдущий",
+  "app.congratulations": "Поздравляем",
+  "app.reset": "Сброс",
+  "app.more": "Больше",
+  "app.copied-to-clipboard": "Скопировано в буфер обмена",
+  "app.copy": "Копировать",
+  "app.saved-changes": "Изменения сохранены",
+  "app.dont-save": "Не сохранять",
+  "app.save": "Сохранить",
+  "app.cancel": "Отмена",
+  "app.close": "Закрыть",
+  "app.change": "Изменить",
+  "app.accept": "Принять",
+  "app.decline": "Упадок",
+  "app.resign": "Уволиться",
+  "app.delete": "Удалить",
+  "app.this-action-cannot-be-undone": "Это действие нельзя отменить",
+  "app.height": "Высота",
+  "app.width": "Ширина",
+  "app.restart": "Перезапуск",
+  "app.retry": "Повторить",
+  "app.skip": "Пропуск",
+  "app.clear": "Чистый",
+  "app.dimensions": "Размеры",
+  "app.redo": "Повторить",
+  "app.undo": "Отменить",
+  "app.editor": "Редактор",
+  "app.people": "Люди",
+  "app.+number": (number) => `+${number.toLocaleString()}`,
+  "?": "?",
+  "app.save-changes-warning":
+    "Ваши изменения будут потеряны, если вы не сохраните их перед выходом.",
+  "app.save-changes?": "Сохранить изменения?",
+  "username-title": "Имя пользователя",
+  username: (username) => `@${username}`,
+  en: "Английский",
+  es: "Испанский",
+  ar: "Арабский",
+  de: "Немецкий",
+  fr: "Французский",
+  hi: "Хинди",
+  it: "Итальянский",
+  ja: "Японский",
+  ko: "Корейский",
+  pt: "Португальский",
+  ru: "Русский",
+  zh: "Китайский",
 };

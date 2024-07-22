@@ -2,251 +2,251 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-	"sound.sound-off": "关闭声音",
-	"sound.sound-on": "打开声音",
-	"wire.server-restarted": "服务器重新启动",
-	"wire.connecting...": "连接中...",
-	"wire.offline": "离线",
-	"wire.online": "在线",
-	"wire.try-reconnect": "尝试重新连接",
-	"auth.logout": "登出",
-	"auth.logged-in-as-guest": "以访客身份登录",
-	"auth.logged-in-with-phone": "使用电话登录",
-	"auth.current-user-logged-out": "已登出",
-	"auth.current-user-logged-in": "已登录",
-	"auth.continue-as-guest": "继续以访客身份",
-	"auth.continue-with-phone": "继续使用电话",
-	"auth.or": "要么",
-	"auth.sign-in-to": "登录到",
-	"auth.logged-in": "已登录",
-	"auth.logout-of-gamezill.app": "登出gamezilla.app",
-	"auth.logout-of-gamezill.app-body": "您确定要登出吗？",
-	"verify-sms.code-message": (code) =>
-		`\u60A8\u7684\u9A8C\u8BC1\u7801\u662F${code}`,
-	"verify-sms-problem.code-incorrect": "验证码错误",
-	"verify-sms-problem.verification-expired": "验证已过期",
-	"verify-sms-problem.verification-not-found": "找不到验证",
-	"verify-sms-problem.verification-already-verified": "验证已经验证",
-	"verify-sms-problem.database-error": "数据库错误",
-	"verify-sms-problem.verification-expired-too-many-failed-attempts":
-		"由于失败尝试过多，验证已过期",
-	"verify-sms-problem.send-code-hourly-limit-reached":
-		"已达到每小时限制。请稍后再试。",
-	"verify-sms-problem.send-code-daily-limit-reached":
-		"已达到每日限制。请稍后再试。",
-	"verify-sms-problem.verification-expired-not-latest-verification":
-		"验证已过期，因为它不是最新的验证",
-	"verify-sms-problem.send-code-limit-reached": "已达到限制。请稍后再试。",
-	"auth-sms.login-with-phone": "使用电话登录",
-	"auth-sms.phone-number": "电话号码",
-	"auth-sms.send-code": "发送代码",
-	"auth-sms.country": "国家",
-	"auth-sms.code": "代码",
-	"auth-sms.verify-code": "验证",
-	"auth-sms.invalid-phone-number": "无效的电话号码",
-	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
-		`\u8F93\u5165\u53D1\u9001\u5230 ${formattedPhoneNumber} \u7684\u4EE3\u7801`,
-	"auth-sms.sent-code-to": (formattedPhoneNumber) =>
-		`\u5DF2\u53D1\u9001\u4EE3\u7801\u5230 ${formattedPhoneNumber}`,
-	"auth-email.login-with-email": "用电子邮件登录",
-	"auth-email.send-login-link": "发送登录链接",
-	"spaces.current-user-left": "离开空间",
-	"spaces.other-user-left": (username) =>
-		`${username} \u79BB\u5F00\u4E86\u7A7A\u95F4`,
-	"spaces.leave": "离开",
-	"spaces.start-space": "开始空间",
-	"spaces.space-started": "空间已开始",
-	"spaces.see-profile": "查看个人资料",
-	"tic-tac-toe.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case "Easy":
-				return "\u5BB9\u6613";
-			case "Impossible":
-				return "\u4E0D\u53EF\u80FD";
-			case "Medium":
-				return "\u4E2D";
-			default:
-				return "\u672A\u77E5";
-		}
-	},
-	"tic-tac-toe.cross": "交叉",
-	"tic-tac-toe.naught": "零",
-	"connect-four": "连接四",
-	flow: "流",
-	"tic-tac-toe": "井字棋",
-	gomoku: "五子棋",
-	chess: "国际象棋",
-	"connect-four.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case "Easy":
-				return "\u7B80\u5355";
-			case "Hard":
-				return "\u56F0\u96BE";
-			case "Medium":
-				return "\u4E2D";
-			default:
-				return "\u672A\u77E5";
-		}
-	},
-	"connect-four.red": "红色",
-	"connect-four.yellow": "黄色",
-	"chess.puzzle-description": "使用300多万个拼图进行训练",
-	"chess.puzzle-title": "拼图",
-	"chess.black": "黑色",
-	"chess.bot-level": (botLevel) => {
-		switch (botLevel) {
-			case 0:
-				return "\u521D\u5B66\u8005";
-			case 1:
-				return "\u4E2D\u7EA7";
-			case 2:
-				return "\u9AD8\u7EA7";
-			case 3:
-				return "\u4E13\u5BB6";
-			case 4:
-				return "\u5927\u5E08";
-			default:
-				return "\u672A\u77E5";
-		}
-	},
-	"chess.white": "白色",
-	"game.hint": "提示",
-	"game.start-game": "开始游戏",
-	"game.start-playing": "开始游戏",
-	"game.stop-playing": "停止游戏",
-	"game.change-bot": "更改机器人",
-	"game.swap-sides": "交换边",
-	"game.rematch": "再来一局",
-	"game.draw": "平局",
-	"game.loser": "失败者",
-	"game.play-again": "再玩一次",
-	"game.winner": "获胜者",
-	"game.vs": "对",
-	host: "主持人",
-	you: "你",
-	"game.play-friend-title": "与朋友玩",
-	"game.play-friend-description": "与您的空间中的人对战",
-	"game.play-computer-title": "与电脑玩",
-	"game.play-computer-description": "与电脑对战",
-	"flow.copy-puzzle-to-clipboard": "将拼图复制到剪贴板",
-	"flow.create-new": "创建新",
-	"flow.create-puzzle": "创建拼图",
-	"flow.puzzle-created": "拼图已创建",
-	"flow.saved-name": "已保存名称",
-	"puzzle.edit-name": "编辑名称",
-	"flow.puzzle-deleted": "拼图已删除",
-	"flow.delete-puzzle-forever?": "永久删除拼图？",
-	"flow.delete-forever": "永久删除",
-	"flow.edit-mode": "编辑模式",
-	"flow.play-mode": "游戏模式",
-	"flow.puzzle-removed": "拼图已删除",
-	"flow.puzzle-added": "拼图已添加",
-	"flow.remove-from-pack": "从包中删除",
-	"flow.create-pack": "创建包",
-	"flow.pack-created": "包已创建",
-	"flow.flow": "流",
-	"flow.play": "玩",
-	"flow.play-description": "开始玩拼图",
-	"flow.builder": "建造者",
-	"flow.builder-description": "创建和编辑拼图和包",
-	"flow.puzzle-completed": "拼图完成",
-	"flow.select-next-pack": "选择下一个包",
-	"flow.next-puzzle": "下一个拼图",
-	"flow.level": (level) => `\u7B49\u7EA7 ${level}`,
-	"flow.packs": "包",
-	"flow.puzzles": "拼图",
-	"flow-pack-name": (flowPackName) => `${flowPackName}`,
-	"flow.no-packs": "没有包",
-	"flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
-	"flow.no-puzzles": "没有拼图",
-	"space-game-flow-edit.editing": "编辑",
-	"spaces.end": "结束",
-	"spaces.end-space": "结束空间",
-	"spaces.ended-space-host": "空间已结束",
-	"spaces.ended-space-current-user": "空间已结束",
-	"spaces.ended-space-other-user": (username) =>
-		`${username} \u5DF2\u7ED3\u675F\u7A7A\u95F4`,
-	"spaces.space-ended": "空间已结束",
-	"spaces.space": "空间",
-	"spaces.join-space": "加入空间",
-	"spaces.current-user-joined-space": "加入空间",
-	"spaces.other-user-joined-space": (username) =>
-		username
-			? `${username}\u52A0\u5165\u7A7A\u95F4`
-			: "\u52A0\u5165\u7A7A\u95F4",
-	"spaces.you're-already-in-a-space": "您已经在一个空间中",
-	"spaces.games": "游戏",
-	"spaces.current-space": ({ hostUsername }) =>
-		`${hostUsername} \u7684\u7A7A\u95F4`,
-	"spaces.home": "主页",
-	"spaces.people-count": (peopleCount) =>
-		peopleCount === 1 ? "\u4EBA" : `\u4EBA (${peopleCount.toLocaleString()})`,
-	"space-card.live": "现场",
-	"space-card.people-count": (count) => `${count.toLocaleString()} \u4EBA`,
-	"spaces.spaces": "空间",
-	"spaces.no-spaces": "没有空间",
-	"spaces.space-not-found": "找不到空间",
-	"spaces.go-home": "回家",
-	"spaces.current-user-ended-space": "结束空间",
-	"spaces.other-user-ended-space": (username) =>
-		username
-			? `${username}\u7ED3\u675F\u7A7A\u95F4`
-			: "\u7ED3\u675F\u7A7A\u95F4",
-	"lang.language": "语言",
-	"lang.choose-language": "选择语言",
-	"lang.done": "完成",
-	"lang.loaded-translations": "已加载翻译",
-	"profile.update-profile": "更新个人资料",
-	"profile.update-avatar": "更新头像",
-	"profile.profile": "个人资料",
-	"app.gamezilla-app": "gamezilla.app",
-	"app.something-went-wrong": "出了点问题",
-	"app.exit": "出口",
-	"app.next": "下一个",
-	"app.prev": "以前",
-	"app.congratulations": "祝贺",
-	"app.reset": "重启",
-	"app.more": "更多",
-	"app.copied-to-clipboard": "已复制到剪贴板",
-	"app.copy": "复制",
-	"app.saved-changes": "已保存更改",
-	"app.dont-save": "不要保存",
-	"app.save": "保存",
-	"app.cancel": "取消",
-	"app.close": "关闭",
-	"app.change": "更改",
-	"app.accept": "接受",
-	"app.decline": "下降",
-	"app.resign": "辞职",
-	"app.delete": "删除",
-	"app.this-action-cannot-be-undone": "此操作无法撤消",
-	"app.height": "高度",
-	"app.width": "宽度",
-	"app.restart": "重新启动",
-	"app.retry": "重试",
-	"app.skip": "跳过",
-	"app.clear": "明确",
-	"app.dimensions": "尺寸",
-	"app.redo": "重做",
-	"app.undo": "撤销",
-	"app.editor": "编辑者",
-	"app.people": "人们",
-	"app.+number": (number) => `+${number.toLocaleString()}`,
-	"?": "？",
-	"app.save-changes-warning": "如果在退出之前不保存更改，您的更改将丢失。",
-	"app.save-changes?": "保存更改？",
-	"username-title": "用户名",
-	username: (username) => `@${username}`,
-	en: "英语",
-	es: "西班牙语",
-	ar: "阿拉伯语",
-	de: "德语",
-	fr: "法语",
-	hi: "印地语",
-	it: "意大利语",
-	ja: "日语",
-	ko: "韩语",
-	pt: "葡萄牙语",
-	ru: "俄语",
-	zh: "中文",
+  "sound.sound-off": "关闭声音",
+  "sound.sound-on": "打开声音",
+  "wire.server-restarted": "服务器重新启动",
+  "wire.connecting...": "连接中...",
+  "wire.offline": "离线",
+  "wire.online": "在线",
+  "wire.try-reconnect": "尝试重新连接",
+  "auth.logout": "登出",
+  "auth.logged-in-as-guest": "以访客身份登录",
+  "auth.logged-in-with-phone": "使用电话登录",
+  "auth.current-user-logged-out": "已登出",
+  "auth.current-user-logged-in": "已登录",
+  "auth.continue-as-guest": "继续以访客身份",
+  "auth.continue-with-phone": "继续使用电话",
+  "auth.or": "要么",
+  "auth.sign-in-to": "登录到",
+  "auth.logged-in": "已登录",
+  "auth.logout-of-gamezill.app": "登出gamezilla.app",
+  "auth.logout-of-gamezill.app-body": "您确定要登出吗？",
+  "verify-sms.code-message": (code) =>
+    `\u60A8\u7684\u9A8C\u8BC1\u7801\u662F${code}`,
+  "verify-sms-problem.code-incorrect": "验证码错误",
+  "verify-sms-problem.verification-expired": "验证已过期",
+  "verify-sms-problem.verification-not-found": "找不到验证",
+  "verify-sms-problem.verification-already-verified": "验证已经验证",
+  "verify-sms-problem.database-error": "数据库错误",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "由于失败尝试过多，验证已过期",
+  "verify-sms-problem.send-code-hourly-limit-reached":
+    "已达到每小时限制。请稍后再试。",
+  "verify-sms-problem.send-code-daily-limit-reached":
+    "已达到每日限制。请稍后再试。",
+  "verify-sms-problem.verification-expired-not-latest-verification":
+    "验证已过期，因为它不是最新的验证",
+  "verify-sms-problem.send-code-limit-reached": "已达到限制。请稍后再试。",
+  "auth-sms.login-with-phone": "使用电话登录",
+  "auth-sms.phone-number": "电话号码",
+  "auth-sms.send-code": "发送代码",
+  "auth-sms.country": "国家",
+  "auth-sms.code": "代码",
+  "auth-sms.verify-code": "验证",
+  "auth-sms.invalid-phone-number": "无效的电话号码",
+  "auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+    `\u8F93\u5165\u53D1\u9001\u5230 ${formattedPhoneNumber} \u7684\u4EE3\u7801`,
+  "auth-sms.sent-code-to": (formattedPhoneNumber) =>
+    `\u5DF2\u53D1\u9001\u4EE3\u7801\u5230 ${formattedPhoneNumber}`,
+  "auth-email.login-with-email": "用电子邮件登录",
+  "auth-email.send-login-link": "发送登录链接",
+  "spaces.current-user-left": "离开空间",
+  "spaces.other-user-left": (username) =>
+    `${username} \u79BB\u5F00\u4E86\u7A7A\u95F4`,
+  "spaces.leave": "离开",
+  "spaces.start-space": "开始空间",
+  "spaces.space-started": "空间已开始",
+  "spaces.see-profile": "查看个人资料",
+  "tic-tac-toe.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u5BB9\u6613";
+      case "Impossible":
+        return "\u4E0D\u53EF\u80FD";
+      case "Medium":
+        return "\u4E2D";
+      default:
+        return "\u672A\u77E5";
+    }
+  },
+  "tic-tac-toe.cross": "交叉",
+  "tic-tac-toe.naught": "零",
+  "connect-four": "连接四",
+  flow: "流",
+  "tic-tac-toe": "井字棋",
+  gomoku: "五子棋",
+  chess: "国际象棋",
+  "connect-four.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case "Easy":
+        return "\u7B80\u5355";
+      case "Hard":
+        return "\u56F0\u96BE";
+      case "Medium":
+        return "\u4E2D";
+      default:
+        return "\u672A\u77E5";
+    }
+  },
+  "connect-four.red": "红色",
+  "connect-four.yellow": "黄色",
+  "chess.puzzle-description": "使用300多万个拼图进行训练",
+  "chess.puzzle-title": "拼图",
+  "chess.black": "黑色",
+  "chess.bot-level": (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return "\u521D\u5B66\u8005";
+      case 1:
+        return "\u4E2D\u7EA7";
+      case 2:
+        return "\u9AD8\u7EA7";
+      case 3:
+        return "\u4E13\u5BB6";
+      case 4:
+        return "\u5927\u5E08";
+      default:
+        return "\u672A\u77E5";
+    }
+  },
+  "chess.white": "白色",
+  "game.hint": "提示",
+  "game.start-game": "开始游戏",
+  "game.start-playing": "开始游戏",
+  "game.stop-playing": "停止游戏",
+  "game.change-bot": "更改机器人",
+  "game.swap-sides": "交换边",
+  "game.rematch": "再来一局",
+  "game.draw": "平局",
+  "game.loser": "失败者",
+  "game.play-again": "再玩一次",
+  "game.winner": "获胜者",
+  "game.vs": "对",
+  host: "主持人",
+  you: "你",
+  "game.play-friend-title": "与朋友玩",
+  "game.play-friend-description": "与您的空间中的人对战",
+  "game.play-computer-title": "与电脑玩",
+  "game.play-computer-description": "与电脑对战",
+  "flow.copy-puzzle-to-clipboard": "将拼图复制到剪贴板",
+  "flow.create-new": "创建新",
+  "flow.create-puzzle": "创建拼图",
+  "flow.puzzle-created": "拼图已创建",
+  "flow.saved-name": "已保存名称",
+  "puzzle.edit-name": "编辑名称",
+  "flow.puzzle-deleted": "拼图已删除",
+  "flow.delete-puzzle-forever?": "永久删除拼图？",
+  "flow.delete-forever": "永久删除",
+  "flow.edit-mode": "编辑模式",
+  "flow.play-mode": "游戏模式",
+  "flow.puzzle-removed": "拼图已删除",
+  "flow.puzzle-added": "拼图已添加",
+  "flow.remove-from-pack": "从包中删除",
+  "flow.create-pack": "创建包",
+  "flow.pack-created": "包已创建",
+  "flow.flow": "流",
+  "flow.play": "玩",
+  "flow.play-description": "开始玩拼图",
+  "flow.builder": "建造者",
+  "flow.builder-description": "创建和编辑拼图和包",
+  "flow.puzzle-completed": "拼图完成",
+  "flow.select-next-pack": "选择下一个包",
+  "flow.next-puzzle": "下一个拼图",
+  "flow.level": (level) => `\u7B49\u7EA7 ${level}`,
+  "flow.packs": "包",
+  "flow.puzzles": "拼图",
+  "flow-pack-name": (flowPackName) => `${flowPackName}`,
+  "flow.no-packs": "没有包",
+  "flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
+  "flow.no-puzzles": "没有拼图",
+  "space-game-flow-edit.editing": "编辑",
+  "spaces.end": "结束",
+  "spaces.end-space": "结束空间",
+  "spaces.ended-space-host": "空间已结束",
+  "spaces.ended-space-current-user": "空间已结束",
+  "spaces.ended-space-other-user": (username) =>
+    `${username} \u5DF2\u7ED3\u675F\u7A7A\u95F4`,
+  "spaces.space-ended": "空间已结束",
+  "spaces.space": "空间",
+  "spaces.join-space": "加入空间",
+  "spaces.current-user-joined-space": "加入空间",
+  "spaces.other-user-joined-space": (username) =>
+    username
+      ? `${username}\u52A0\u5165\u7A7A\u95F4`
+      : "\u52A0\u5165\u7A7A\u95F4",
+  "spaces.you're-already-in-a-space": "您已经在一个空间中",
+  "spaces.games": "游戏",
+  "spaces.current-space": ({ hostUsername }) =>
+    `${hostUsername} \u7684\u7A7A\u95F4`,
+  "spaces.home": "主页",
+  "spaces.people-count": (peopleCount) =>
+    peopleCount === 1 ? "\u4EBA" : `\u4EBA (${peopleCount.toLocaleString()})`,
+  "space-card.live": "现场",
+  "space-card.people-count": (count) => `${count.toLocaleString()} \u4EBA`,
+  "spaces.spaces": "空间",
+  "spaces.no-spaces": "没有空间",
+  "spaces.space-not-found": "找不到空间",
+  "spaces.go-home": "回家",
+  "spaces.current-user-ended-space": "结束空间",
+  "spaces.other-user-ended-space": (username) =>
+    username
+      ? `${username}\u7ED3\u675F\u7A7A\u95F4`
+      : "\u7ED3\u675F\u7A7A\u95F4",
+  "lang.language": "语言",
+  "lang.choose-language": "选择语言",
+  "lang.done": "完成",
+  "lang.loaded-translations": "已加载翻译",
+  "profile.update-profile": "更新个人资料",
+  "profile.update-avatar": "更新头像",
+  "profile.profile": "个人资料",
+  "app.gamezilla-app": "gamezilla.app",
+  "app.something-went-wrong": "出了点问题",
+  "app.exit": "出口",
+  "app.next": "下一个",
+  "app.prev": "以前",
+  "app.congratulations": "祝贺",
+  "app.reset": "重启",
+  "app.more": "更多",
+  "app.copied-to-clipboard": "已复制到剪贴板",
+  "app.copy": "复制",
+  "app.saved-changes": "已保存更改",
+  "app.dont-save": "不要保存",
+  "app.save": "保存",
+  "app.cancel": "取消",
+  "app.close": "关闭",
+  "app.change": "更改",
+  "app.accept": "接受",
+  "app.decline": "下降",
+  "app.resign": "辞职",
+  "app.delete": "删除",
+  "app.this-action-cannot-be-undone": "此操作无法撤消",
+  "app.height": "高度",
+  "app.width": "宽度",
+  "app.restart": "重新启动",
+  "app.retry": "重试",
+  "app.skip": "跳过",
+  "app.clear": "明确",
+  "app.dimensions": "尺寸",
+  "app.redo": "重做",
+  "app.undo": "撤销",
+  "app.editor": "编辑者",
+  "app.people": "人们",
+  "app.+number": (number) => `+${number.toLocaleString()}`,
+  "?": "？",
+  "app.save-changes-warning": "如果在退出之前不保存更改，您的更改将丢失。",
+  "app.save-changes?": "保存更改？",
+  "username-title": "用户名",
+  username: (username) => `@${username}`,
+  en: "英语",
+  es: "西班牙语",
+  ar: "阿拉伯语",
+  de: "德语",
+  fr: "法语",
+  hi: "印地语",
+  it: "意大利语",
+  ja: "日语",
+  ko: "韩语",
+  pt: "葡萄牙语",
+  ru: "俄语",
+  zh: "中文",
 };
