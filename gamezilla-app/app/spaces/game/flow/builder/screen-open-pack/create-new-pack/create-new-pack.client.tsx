@@ -70,7 +70,7 @@ const ViewCreateFab: ClientModule["View"] = (input) => {
 			variant="contained"
 			color="primary"
 			loading={input.model.packCreateNewRequest.t === "loading"}
-			renderIconStart={iconInput => <IconPlus {...iconInput} />}
+			renderIconStart={(iconInput) => <IconPlus {...iconInput} />}
 			onClick={() =>
 				input.dispatch({ t: "pack-create-new.clicked-create-button" })
 			}
@@ -80,5 +80,5 @@ const ViewCreateFab: ClientModule["View"] = (input) => {
 
 export const PackCreateNewClient = {
 	update,
- 	ViewCreateFab,
+	ViewCreateFab,
 };

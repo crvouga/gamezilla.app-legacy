@@ -3,7 +3,7 @@ import type { FlowVariant } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import { FlowPlay } from "../../../@/flow/flow-play";
-import { CoreFixture } from "../../@/testing";
+import { CoreFixture } from "../../@/fixture";
 import { ScreenPlayPuzzleCore } from "../screen-play-puzzle.core";
 import type { ModelCore, MsgCore } from "../screen-play-puzzle.types";
 

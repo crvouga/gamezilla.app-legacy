@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { FlowPack } from "../@/flow-pack";
 import { FlowPuzzle } from "../@/flow-puzzle";
-import { CoreFixture } from "./@/testing";
+import { CoreFixture } from "./@/fixture";
 
 describe(import.meta.file, () => {
 	it("should be able to open pack from list", async () => {

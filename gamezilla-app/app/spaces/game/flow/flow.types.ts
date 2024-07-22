@@ -6,7 +6,7 @@ import type { FlowPackId } from "./@/flow-pack/flow-pack-id";
 import type { FlowPuzzle } from "./@/flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "./@/flow-puzzle/flow-puzzle-id";
 import { BuilderTypes } from "./builder";
-import * as Play from "./play/play.types";
+import { PlayTypes } from "./play";
 
 //
 //
@@ -26,7 +26,7 @@ export type BaseModelClient = {
 export type VariantModelClient =
 	| { t: "none" }
 	| { t: "builder"; c: BuilderTypes.ModelClient }
-	| { t: "play"; c: Play.ModelClient };
+	| { t: "play"; c: PlayTypes.ModelClient };
 
 export type ModelClient = BaseModelClient & VariantModelClient;
 
@@ -40,7 +40,7 @@ export const ModelServer = p.or(
 	}),
 	p.obj({
 		t: p.l("play"),
-		c: Play.ModelServer,
+		c: PlayTypes.ModelServer,
 	}),
 );
 
@@ -56,19 +56,19 @@ export type MsgClient =
 	| GameMainMenu.Msg
 	| { t: "msgCore"; c: MsgCore }
 	| { t: "builder"; c: BuilderTypes.MsgClient }
-	| { t: "play"; c: Play.MsgClient };
+	| { t: "play"; c: PlayTypes.MsgClient };
 
 export type MsgServer =
 	| { t: "builder"; c: BuilderTypes.MsgServer }
-	| { t: "play"; c: Play.MsgServer };
+	| { t: "play"; c: PlayTypes.MsgServer };
 
 export type MsgToServer =
 	| { t: "builder"; c: BuilderTypes.MsgToServer }
-	| { t: "play"; c: Play.MsgToServer };
+	| { t: "play"; c: PlayTypes.MsgToServer };
 
 export type MsgToClient =
 	| { t: "builder"; c: BuilderTypes.MsgToClient }
-	| { t: "play"; c: Play.MsgToClient };
+	| { t: "play"; c: PlayTypes.MsgToClient };
 
 const MODE = ["builder", "play"] as const;
 export const Mode = p.enumeration(MODE);
@@ -90,7 +90,7 @@ export const MsgCore = p.or(
 	}),
 	p.obj({
 		t: p.l("play"),
-		c: Play.MsgCore,
+		c: PlayTypes.MsgCore,
 	}),
 	p.obj({
 		t: p.l("builder"),
@@ -102,6 +102,6 @@ export type MsgCore = p.Infer<typeof MsgCore>;
 export const ModelCore = p.or(
 	p.obj({ t: p.l(null) }),
 	p.obj({ t: p.l("builder"), c: BuilderTypes.ModelCore }),
-	p.obj({ t: p.l("play"), c: Play.ModelCore }),
+	p.obj({ t: p.l("play"), c: PlayTypes.ModelCore }),
 );
 export type ModelCore = p.Infer<typeof ModelCore>;

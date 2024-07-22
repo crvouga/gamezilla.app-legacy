@@ -1,6 +1,6 @@
-import type { Iconinput } from "../icon-shared";
+import type { IconInput } from "../icon-shared";
 
-export const IconRightLeft = (input: Iconinput) => {
+export const IconRightLeft = (input: IconInput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

@@ -60,7 +60,7 @@ const updateFetchMissingPuzzles: ClientModule["update"] = (input) => {
 	return {
 		model: {
 			...input.model,
-			request: RequestResponse.requesting(input.ctx.now),
+			request: RequestResponse.startedRequest(input.ctx.now),
 		},
 		msgCmd: [
 			sendToServer({
@@ -123,7 +123,7 @@ const updateRequest: ClientModule["update"] = (input) => {
 	return {
 		model: {
 			...input.model,
-			request: RequestResponse.elapsed(input.model.request, input.ctx.now),
+			request: RequestResponse.timePassed(input.model.request, input.ctx.now),
 		},
 	};
 };

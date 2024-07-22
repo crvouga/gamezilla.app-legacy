@@ -69,7 +69,7 @@ const elapsed =
 				now: Posix.future(ctx.now, timeSpan),
 			},
 			model,
-			msg: { t: "flow-puzzle-list.elasped" },
+			msg: { t: "flow-puzzle-list.time-passed" },
 		});
 	};
 

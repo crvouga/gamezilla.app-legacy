@@ -1,6 +1,6 @@
-import { Iconinput } from "../icon-shared";
+import { IconInput } from "../icon-shared";
 
-export const IconPen = (input: Iconinput) => {
+export const IconPen = (input: IconInput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

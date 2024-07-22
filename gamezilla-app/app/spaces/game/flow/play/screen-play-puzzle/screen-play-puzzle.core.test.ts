@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from "bun:test";
 import { Flow, type FlowVariant } from "../../@/flow";
-import { ScreenPuzzlePlayCoreChildFixture } from "./@/testing.core";
+import { ScreenPuzzlePlayCoreChildFixture } from "./@/fixture.core";
 import type { MsgCore } from "./screen-play-puzzle.types";
 import { ScreenPlayPuzzleCore } from "./screen-play-puzzle.core";
 import {

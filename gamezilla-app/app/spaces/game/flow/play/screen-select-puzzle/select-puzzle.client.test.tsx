@@ -4,10 +4,10 @@ import { didPlaySound } from "gamezilla-app/app/@/client";
 import { EventId } from "gamezilla-app/app/spaces/@/event";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
-import { FlowPlayClientFixture } from "../@/testing";
+import { FixtureFlowPlayClient } from "../@/fixture";
 
 const Fixture = async () => {
-	const f = await FlowPlayClientFixture();
+	const f = await FixtureFlowPlayClient();
 	const puzzle = await FlowPuzzle.random();
 	const pack = await FlowPack.random({
 		puzzleIds: [puzzle.id],

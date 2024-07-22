@@ -4,7 +4,7 @@ import {
 	clickedExitPuzzleBuilderButton,
 	clickedPuzzleListItem,
 	createFlowPuzzle,
-	FlowBuilderFixtureClient,
+	FixtureFlowBuilderClient,
 	initial,
 	puzzleBuilderPressDownRandomNode,
 	serverListedPuzzlesOk,
@@ -17,14 +17,14 @@ import type { MsgClient } from "../builder.types";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 
 const Fixture = async () => {
-	const f = await FlowBuilderFixtureClient();
+	const f = await FixtureFlowBuilderClient();
 
 	const flowPuzzle = await FlowPuzzle.random({});
 
 	const init = f.update(f.init, [
 		{
 			msg: {
-				t: "puzzle-list.clicked-puzzle-list-item",
+				t: "builder-open-puzzle.clicked-puzzle-list-item",
 				puzzle: flowPuzzle,
 			},
 		},

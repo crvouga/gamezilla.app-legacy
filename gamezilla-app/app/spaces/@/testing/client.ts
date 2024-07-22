@@ -7,7 +7,7 @@ import {
 	routeChanged,
 	type ClientCtx,
 } from "gamezilla-app/app/@/client";
-import { AppClientFixture } from "gamezilla-app/app/@/client/client-test-env";
+import { FixtureAppClient } from "gamezilla-app/app/@/client/client-test-env";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import {
 	ProfileAvatar,
@@ -101,8 +101,8 @@ const randomProfile = (): Profile => {
 	};
 };
 
-export const SpaceClientFixture = async (input?: { currentRoute?: Route }) => {
-	const f = await AppClientFixture(input);
+export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
+	const f = await FixtureAppClient(input);
 	const currentUser = { ...randomProfile(), userId: f.ctx.currentUserId };
 	const userA = randomProfile();
 	const userB = randomProfile();

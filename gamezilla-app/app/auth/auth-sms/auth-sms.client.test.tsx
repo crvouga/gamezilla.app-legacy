@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { Err, Ok, PhoneNumber, eq } from "gamezilla-app/@/core";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import { didPushRoute } from "gamezilla-app/app/@/client";
-import { AppClientFixture } from "gamezilla-app/app/@/client/client-test-env";
+import { FixtureAppClient } from "gamezilla-app/app/@/client/client-test-env";
 import type { AuthSMSTypes } from ".";
 import { AuthSMSClient } from "./auth-sms.client";
 
@@ -15,7 +15,7 @@ type Msg =
 	  };
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
-	const f = await AppClientFixture({
+	const f = await FixtureAppClient({
 		currentRoute: input?.currentRoute ?? {
 			n: "auth-login",
 			t: "login-sms-request",

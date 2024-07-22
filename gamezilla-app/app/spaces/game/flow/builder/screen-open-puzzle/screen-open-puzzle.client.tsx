@@ -10,21 +10,20 @@ const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => CreateNewPuzzleClient.update({ ...input, model }),
-		(model) => updatePuzzleListItem({ ...input, model }),
-		(model) => updateUserClickedListItem({ ...input, model }),
+		(model) => updateOpenPuzzle({ ...input, model }),
 	);
 };
 
-const updatePuzzleListItem: ClientModule["update"] = (input) => {
-	const { model, msg } = input;
+const updateOpenPuzzle: ClientModule["update"] = (input) => {
+	const { model, msgCore, msg } = input;
 
 	switch (msg?.t) {
-		case "puzzle-list.clicked-puzzle-list-item": {
+		case "builder-open-puzzle.clicked-puzzle-list-item": {
 			return {
 				model,
 				msgCore: [
 					withId({
-						t: "puzzle-list.clicked-puzzle-list-item",
+						t: "builder-open-puzzle.clicked-puzzle-list-item",
 						puzzle: msg.puzzle,
 					}),
 				],
@@ -32,14 +31,8 @@ const updatePuzzleListItem: ClientModule["update"] = (input) => {
 		}
 	}
 
-	return { model };
-};
-
-const updateUserClickedListItem: ClientModule["update"] = (input) => {
-	const { model, msgCore } = input;
-
 	switch (msgCore?.t) {
-		case "puzzle-list.clicked-puzzle-list-item": {
+		case "builder-open-puzzle.clicked-puzzle-list-item": {
 			return {
 				model,
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -61,7 +54,7 @@ const View: ClientModule["View"] = (input) => {
 			emits={{
 				clickedPuzzleItem: (puzzle) =>
 					dispatch({
-						t: "puzzle-list.clicked-puzzle-list-item",
+						t: "builder-open-puzzle.clicked-puzzle-list-item",
 						puzzle,
 					}),
 			}}

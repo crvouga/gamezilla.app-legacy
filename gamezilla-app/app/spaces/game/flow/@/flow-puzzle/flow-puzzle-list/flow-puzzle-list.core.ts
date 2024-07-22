@@ -75,7 +75,7 @@ export type ModelServer = null;
 
 export type MsgClient =
 	| { t: "flow-puzzle-list.user-observed-end-of-list" }
-	| { t: "flow-puzzle-list.elasped" };
+	| { t: "flow-puzzle-list.time-passed" };
 
 export type MsgServer = { t: "flow-puzzle-list.noop" };
 

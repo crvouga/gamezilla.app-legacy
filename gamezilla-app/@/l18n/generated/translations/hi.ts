@@ -2,258 +2,256 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-  "sound.sound-off": "ध्वनि बंद",
-  "sound.sound-on": "ध्वनि चालू",
-  "wire.server-restarted": "सर्वर पुनः आरंभ हुआ",
-  "wire.connecting...": "कनेक्टिंग...",
-  "wire.offline": "ऑफलाइन",
-  "wire.online": "ऑनलाइन",
-  "wire.try-reconnect": "पुनः कनेक्ट करने का प्रयास करें",
-  "auth.logout": "लॉग आउट",
-  "auth.logged-in-as-guest": "मेहमान के रूप में लॉग इन",
-  "auth.logged-in-with-phone": "फोन के साथ लॉग इन",
-  "auth.current-user-logged-out": "लॉग आउट",
-  "auth.current-user-logged-in": "लॉग इन",
-  "auth.continue-as-guest": "मेहमान के रूप में जारी रखें",
-  "auth.continue-with-phone": "फोन के साथ जारी रखें",
-  "auth.or": "या",
-  "auth.sign-in-to": "में साइन इन करें",
-  "auth.logged-in": "लॉग इन",
-  "auth.logout-of-gamezill.app": "gamezilla.app से लॉग आउट करें",
-  "auth.logout-of-gamezill.app-body": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
-  "verify-sms.code-message": (code) =>
-    `\u0906\u092A\u0915\u093E \u0938\u0924\u094D\u092F\u093E\u092A\u0928 \u0915\u094B\u0921 \u0939\u0948 ${code}`,
-  "verify-sms-problem.code-incorrect": "कोड गलत है",
-  "verify-sms-problem.verification-expired": "सत्यापन समाप्त हो गया",
-  "verify-sms-problem.verification-not-found": "सत्यापन नहीं मिला",
-  "verify-sms-problem.verification-already-verified":
-    "सत्यापन पहले ही सत्यापित है",
-  "verify-sms-problem.database-error": "डेटाबेस त्रुटि",
-  "verify-sms-problem.verification-expired-too-many-failed-attempts":
-    "बहुत सारे विफल प्रयासों के कारण सत्यापन समाप्त हो गया",
-  "verify-sms-problem.send-code-hourly-limit-reached":
-    "प्रति घंटे सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
-  "verify-sms-problem.send-code-daily-limit-reached":
-    "दैनिक सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
-  "verify-sms-problem.verification-expired-not-latest-verification":
-    "सत्यापन समाप्त हो गया क्योंकि यह नवीनतम सत्यापन नहीं है",
-  "verify-sms-problem.send-code-limit-reached":
-    "सीमा पहुंच गई। कृपया बाद में पुन: प्रयास करें।",
-  "auth-sms.login-with-phone": "फोन से लॉगिन करें",
-  "auth-sms.phone-number": "फ़ोन नंबर",
-  "auth-sms.send-code": "कोड भेजें",
-  "auth-sms.country": "देश",
-  "auth-sms.code": "कोड",
-  "auth-sms.verify-code": "सत्यापित करें",
-  "auth-sms.invalid-phone-number": "अमान्य फोन नंबर",
-  "auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
-    `\u0915\u094B\u0921 ${formattedPhoneNumber} \u092A\u0930 \u092D\u0947\u091C\u093E \u0917\u092F\u093E \u0939\u0948`,
-  "auth-sms.sent-code-to": (formattedPhoneNumber) =>
-    `\u0915\u094B\u0921 ${formattedPhoneNumber} \u092A\u0930 \u092D\u0947\u091C\u093E \u0917\u092F\u093E`,
-  "auth-email.login-with-email": "ईमेल से लॉगिन करें",
-  "auth-email.send-login-link": "लॉगिन लिंक भेजें",
-  "spaces.current-user-left": "अंतरिक्ष छोड़ दिया",
-  "spaces.other-user-left": (username) =>
-    `${username} \u0905\u0902\u0924\u0930\u093F\u0915\u094D\u0937 \u091B\u094B\u0921\u093C \u0917\u092F\u093E`,
-  "spaces.leave": "छोड़ना",
-  "spaces.start-space": "स्थान शुरू करें",
-  "spaces.space-started": "स्थान शुरू हो गया",
-  "spaces.see-profile": "प्रोफ़ाइल देखें",
-  "tic-tac-toe.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case "Easy":
-        return "\u0906\u0938\u093E\u0928";
-      case "Impossible":
-        return "\u0905\u0938\u0902\u092D\u0935";
-      case "Medium":
-        return "\u092E\u0927\u094D\u092F\u092E";
-      default:
-        return "\u0905\u091C\u094D\u091E\u093E\u0924";
-    }
-  },
-  "tic-tac-toe.cross": "क्रॉस",
-  "tic-tac-toe.naught": "नॉट",
-  "connect-four": "चार कनेक्ट करें",
-  flow: "धारा",
-  "tic-tac-toe": "टिक टैक टो",
-  gomoku: "गोमोकु",
-  chess: "शतरंज",
-  "connect-four.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case "Easy":
-        return "\u0906\u0938\u093E\u0928";
-      case "Hard":
-        return "\u0915\u0920\u093F\u0928";
-      case "Medium":
-        return "\u092E\u0927\u094D\u092F\u092E";
-      default:
-        return "\u0905\u091C\u094D\u091E\u093E\u0924";
-    }
-  },
-  "connect-four.red": "लाल",
-  "connect-four.yellow": "पीला",
-  "chess.puzzle-description": "3 मिलियन से अधिक पहेलियों के साथ प्रशिक्षण करें",
-  "chess.puzzle-title": "पहेलियाँ",
-  "chess.black": "काला",
-  "chess.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case 0:
-        return "\u0936\u0941\u0930\u0941\u0906\u0924\u0940";
-      case 1:
-        return "\u0907\u0902\u091F\u0930\u092E\u0940\u0921\u093F\u090F\u091F";
-      case 2:
-        return "\u0909\u0928\u094D\u0928\u0924";
-      case 3:
-        return "\u0935\u093F\u0936\u0947\u0937\u091C\u094D\u091E";
-      case 4:
-        return "\u092E\u093E\u0938\u094D\u091F\u0930";
-      default:
-        return "\u0905\u091C\u094D\u091E\u093E\u0924";
-    }
-  },
-  "chess.white": "सफेद",
-  "game.hint": "संकेत",
-  "game.start-game": "खेल शुरू करें",
-  "game.start-playing": "खेलना शुरू करें",
-  "game.stop-playing": "खेलना बंद करें",
-  "game.change-bot": "बॉट बदलें",
-  "game.swap-sides": "पक्ष बदलें",
-  "game.rematch": "रीमैच",
-  "game.draw": "ड्रा",
-  "game.loser": "हारने वाला",
-  "game.play-again": "फिर से खेलें",
-  "game.winner": "विजेता",
-  "game.vs": "बनाम",
-  host: "मेज़बान",
-  you: "तुम",
-  "game.play-friend-title": "दोस्त के साथ खेलें",
-  "game.play-friend-description": "अपने स्थान में लोगों के खिलाफ खेलें",
-  "game.play-computer-title": "कंप्यूटर के साथ खेलें",
-  "game.play-computer-description": "कंप्यूटर के खिलाफ खेलें",
-  "flow.copy-puzzle-to-clipboard": "क्लिपबोर्ड पर पहेली कॉपी करें",
-  "flow.create-new": "नया बनाएं",
-  "flow.create-puzzle": "पहेली बनाएं",
-  "flow.puzzle-created": "पहेली बनाई गई",
-  "flow.saved-name": "नाम सहेजा गया",
-  "puzzle.edit-name": "नाम संपादित करें",
-  "flow.puzzle-deleted": "पहेली हटा दी गई",
-  "flow.delete-puzzle-forever?":
-    "क्या आप पहेली को स्थायी रूप से हटाना चाहते हैं?",
-  "flow.delete-forever": "स्थायी रूप से हटाएं",
-  "flow.edit-mode": "संपादन मोड",
-  "flow.play-mode": "खेल मोड",
-  "flow.puzzle-removed": "पहेली हटा दी गई",
-  "flow.puzzle-added": "पहेली जोड़ी गई",
-  "flow.remove-from-pack": "पैक से हटाएं",
-  "flow.create-pack": "पैक बनाएं",
-  "flow.pack-created": "पैक बनाया गया",
-  "flow.flow": "फ्लो",
-  "flow.play": "खेलें",
-  "flow.play-description": "पहेलियों का खेल शुरू करें",
-  "flow.builder": "निर्माता",
-  "flow.builder-description": "पहेलियों और पैक बनाएं और संपादित करें",
-  "flow.puzzle-completed": "पहेली पूरी हो गई",
-  "flow.select-next-pack": "अगला पैक चुनें",
-  "flow.next-puzzle": "अगली पहेली",
-  "flow.level": (level) => `\u0938\u094D\u0924\u0930 ${level}`,
-  "flow.packs": "पैक",
-  "flow.puzzles": "पहेलियाँ",
-  "flow-pack-name": (flowPackName) => `${flowPackName}`,
-  "flow.no-packs": "कोई पैक नहीं",
-  "flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
-  "flow.no-puzzles": "कोई पहेली नहीं",
-  "space-game-flow-edit.editing": "संपादन",
-  "spaces.end": "समाप्त",
-  "spaces.end-space": "स्थान समाप्त करें",
-  "spaces.ended-space-host": "स्थान मेज़बान द्वारा समाप्त",
-  "spaces.ended-space-current-user": "स्थान समाप्त",
-  "spaces.ended-space-other-user": (username) =>
-    `${username} \u0928\u0947 \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924 \u0915\u093F\u092F\u093E`,
-  "spaces.space-ended": "स्थान समाप्त",
-  "spaces.space": "स्थान",
-  "spaces.join-space": "स्थान जोड़ें",
-  "spaces.current-user-joined-space": "स्थान जुड़ गया",
-  "spaces.other-user-joined-space": (username) =>
-    username
-      ? `${username} \u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E`
-      : "\u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E",
-  "spaces.you're-already-in-a-space": "आप पहले से ही एक स्थान में हैं",
-  "spaces.games": "खेल",
-  "spaces.current-space": ({ hostUsername }) =>
-    `${hostUsername} \u0915\u093E \u0938\u094D\u0925\u093E\u0928`,
-  "spaces.home": "होम",
-  "spaces.people-count": (peopleCount) =>
-    peopleCount === 1
-      ? "\u0932\u094B\u0917"
-      : `\u0932\u094B\u0917 (${peopleCount.toLocaleString()})`,
-  "space-card.live": "लाइव",
-  "space-card.people-count": (count) =>
-    `${count.toLocaleString()} \u0932\u094B\u0917`,
-  "spaces.spaces": "स्थान",
-  "spaces.no-spaces": "कोई स्थान नहीं",
-  "spaces.space-not-found": "स्थान नहीं मिला",
-  "spaces.go-home": "घर जा",
-  "spaces.current-user-ended-space": "स्थान समाप्त",
-  "spaces.other-user-ended-space": (username) =>
-    username
-      ? `${username} \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924`
-      : "\u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924",
-  "lang.language": "भाषा",
-  "lang.choose-language": "भाषा चुनें",
-  "lang.done": "किया",
-  "lang.loaded-translations": "लोड की गई अनुवाद",
-  "profile.update-profile": "प्रोफ़ाइल अपडेट करें",
-  "profile.update-avatar": "अवतार अपडेट करें",
-  "profile.profile": "प्रोफ़ाइल",
-  "app.gamezilla-app": "गेमजिला.एप",
-  "app.something-went-wrong": "कुछ गलत हो गया",
-  "app.exit": "निकास",
-  "app.next": "अगला",
-  "app.prev": "पिछला",
-  "app.congratulations": "बधाई हो",
-  "app.reset": "रीसेट",
-  "app.more": "अधिक",
-  "app.copied-to-clipboard": "क्लिपबोर्ड पर कॉपी किया गया",
-  "app.copy": "कॉपी",
-  "app.saved-changes": "परिवर्तन सहेजे गए",
-  "app.dont-save": "न बचाएं",
-  "app.save": "सहेजें",
-  "app.cancel": "रद्द करें",
-  "app.close": "बंद करें",
-  "app.change": "परिवर्तन",
-  "app.accept": "स्वीकार करें",
-  "app.decline": "कमी",
-  "app.resign": "त्यागपत्र",
-  "app.delete": "हटाएं",
-  "app.this-action-cannot-be-undone": "यह कार्रवाई पूर्ववत नहीं की जा सकती",
-  "app.height": "ऊँचाई",
-  "app.width": "चौड़ाई",
-  "app.restart": "पुनः प्रारंभ करें",
-  "app.retry": "पुनः प्रयास करें",
-  "app.skip": "छोड़ें",
-  "app.clear": "स्पष्ट",
-  "app.dimensions": "आयाम",
-  "app.redo": "फिर से करें",
-  "app.undo": "पूर्ववत करें",
-  "app.editor": "संपादक",
-  "app.people": "लोग",
-  "app.+number": (number) => `+${number.toLocaleString()}`,
-  "?": "?",
-  "app.save-changes-warning":
-    "आपके परिवर्तन खो जाएंगे अगर आप उन्हें बाहर निकलने से पहले सहेजते नहीं हैं।",
-  "app.save-changes?": "परिवर्तन सहेजें?",
-  "username-title": "उपयोगकर्ता नाम",
-  username: (username) => `@${username}`,
-  en: "अंग्रेज़ी",
-  es: "स्पेनिश",
-  ar: "अरबी",
-  de: "जर्मन",
-  fr: "फ्रेंच",
-  hi: "हिंदी",
-  it: "इतालवी",
-  ja: "जापानी",
-  ko: "कोरियाई",
-  pt: "पुर्तगाली",
-  ru: "रूसी",
-  zh: "चीनी",
+	"sound.sound-off": "ध्वनि बंद",
+	"sound.sound-on": "ध्वनि चालू",
+	"wire.server-restarted": "सर्वर पुनः आरंभ हुआ",
+	"wire.connecting...": "कनेक्टिंग...",
+	"wire.offline": "ऑफलाइन",
+	"wire.online": "ऑनलाइन",
+	"wire.try-reconnect": "पुनः कनेक्ट करने का प्रयास करें",
+	"auth.logout": "लॉग आउट",
+	"auth.logged-in-as-guest": "मेहमान के रूप में लॉग इन",
+	"auth.logged-in-with-phone": "फोन के साथ लॉग इन",
+	"auth.current-user-logged-out": "लॉग आउट",
+	"auth.current-user-logged-in": "लॉग इन",
+	"auth.continue-as-guest": "मेहमान के रूप में जारी रखें",
+	"auth.continue-with-phone": "फोन के साथ जारी रखें",
+	"auth.or": "या",
+	"auth.sign-in-to": "में साइन इन करें",
+	"auth.logged-in": "लॉग इन",
+	"auth.logout-of-gamezill.app": "gamezilla.app से लॉग आउट करें",
+	"auth.logout-of-gamezill.app-body": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
+	"verify-sms.code-message": (code) =>
+		`\u0906\u092A\u0915\u093E \u0938\u0924\u094D\u092F\u093E\u092A\u0928 \u0915\u094B\u0921 \u0939\u0948 ${code}`,
+	"verify-sms-problem.code-incorrect": "कोड गलत है",
+	"verify-sms-problem.verification-expired": "सत्यापन समाप्त हो गया",
+	"verify-sms-problem.verification-not-found": "सत्यापन नहीं मिला",
+	"verify-sms-problem.verification-already-verified": "सत्यापन पहले ही सत्यापित है",
+	"verify-sms-problem.database-error": "डेटाबेस त्रुटि",
+	"verify-sms-problem.verification-expired-too-many-failed-attempts":
+		"बहुत सारे विफल प्रयासों के कारण सत्यापन समाप्त हो गया",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"प्रति घंटे सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
+	"verify-sms-problem.send-code-daily-limit-reached":
+		"दैनिक सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
+	"verify-sms-problem.verification-expired-not-latest-verification":
+		"सत्यापन समाप्त हो गया क्योंकि यह नवीनतम सत्यापन नहीं है",
+	"verify-sms-problem.send-code-limit-reached":
+		"सीमा पहुंच गई। कृपया बाद में पुन: प्रयास करें।",
+	"auth-sms.login-with-phone": "फोन से लॉगिन करें",
+	"auth-sms.phone-number": "फ़ोन नंबर",
+	"auth-sms.send-code": "कोड भेजें",
+	"auth-sms.country": "देश",
+	"auth-sms.code": "कोड",
+	"auth-sms.verify-code": "सत्यापित करें",
+	"auth-sms.invalid-phone-number": "अमान्य फोन नंबर",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`\u0915\u094B\u0921 ${formattedPhoneNumber} \u092A\u0930 \u092D\u0947\u091C\u093E \u0917\u092F\u093E \u0939\u0948`,
+	"auth-sms.sent-code-to": (formattedPhoneNumber) =>
+		`\u0915\u094B\u0921 ${formattedPhoneNumber} \u092A\u0930 \u092D\u0947\u091C\u093E \u0917\u092F\u093E`,
+	"auth-email.login-with-email": "ईमेल से लॉगिन करें",
+	"auth-email.send-login-link": "लॉगिन लिंक भेजें",
+	"spaces.current-user-left": "अंतरिक्ष छोड़ दिया",
+	"spaces.other-user-left": (username) =>
+		`${username} \u0905\u0902\u0924\u0930\u093F\u0915\u094D\u0937 \u091B\u094B\u0921\u093C \u0917\u092F\u093E`,
+	"spaces.leave": "छोड़ना",
+	"spaces.start-space": "स्थान शुरू करें",
+	"spaces.space-started": "स्थान शुरू हो गया",
+	"spaces.see-profile": "प्रोफ़ाइल देखें",
+	"tic-tac-toe.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case "Easy":
+				return "\u0906\u0938\u093E\u0928";
+			case "Impossible":
+				return "\u0905\u0938\u0902\u092D\u0935";
+			case "Medium":
+				return "\u092E\u0927\u094D\u092F\u092E";
+			default:
+				return "\u0905\u091C\u094D\u091E\u093E\u0924";
+		}
+	},
+	"tic-tac-toe.cross": "क्रॉस",
+	"tic-tac-toe.naught": "नॉट",
+	"connect-four": "चार कनेक्ट करें",
+	flow: "धारा",
+	"tic-tac-toe": "टिक टैक टो",
+	gomoku: "गोमोकु",
+	chess: "शतरंज",
+	"connect-four.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case "Easy":
+				return "\u0906\u0938\u093E\u0928";
+			case "Hard":
+				return "\u0915\u0920\u093F\u0928";
+			case "Medium":
+				return "\u092E\u0927\u094D\u092F\u092E";
+			default:
+				return "\u0905\u091C\u094D\u091E\u093E\u0924";
+		}
+	},
+	"connect-four.red": "लाल",
+	"connect-four.yellow": "पीला",
+	"chess.puzzle-description": "3 मिलियन से अधिक पहेलियों के साथ प्रशिक्षण करें",
+	"chess.puzzle-title": "पहेलियाँ",
+	"chess.black": "काला",
+	"chess.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case 0:
+				return "\u0936\u0941\u0930\u0941\u0906\u0924\u0940";
+			case 1:
+				return "\u0907\u0902\u091F\u0930\u092E\u0940\u0921\u093F\u090F\u091F";
+			case 2:
+				return "\u0909\u0928\u094D\u0928\u0924";
+			case 3:
+				return "\u0935\u093F\u0936\u0947\u0937\u091C\u094D\u091E";
+			case 4:
+				return "\u092E\u093E\u0938\u094D\u091F\u0930";
+			default:
+				return "\u0905\u091C\u094D\u091E\u093E\u0924";
+		}
+	},
+	"chess.white": "सफेद",
+	"game.hint": "संकेत",
+	"game.start-game": "खेल शुरू करें",
+	"game.start-playing": "खेलना शुरू करें",
+	"game.stop-playing": "खेलना बंद करें",
+	"game.change-bot": "बॉट बदलें",
+	"game.swap-sides": "पक्ष बदलें",
+	"game.rematch": "रीमैच",
+	"game.draw": "ड्रा",
+	"game.loser": "हारने वाला",
+	"game.play-again": "फिर से खेलें",
+	"game.winner": "विजेता",
+	"game.vs": "बनाम",
+	host: "मेज़बान",
+	you: "तुम",
+	"game.play-friend-title": "दोस्त के साथ खेलें",
+	"game.play-friend-description": "अपने स्थान में लोगों के खिलाफ खेलें",
+	"game.play-computer-title": "कंप्यूटर के साथ खेलें",
+	"game.play-computer-description": "कंप्यूटर के खिलाफ खेलें",
+	"flow.copy-puzzle-to-clipboard": "क्लिपबोर्ड पर पहेली कॉपी करें",
+	"flow.create-new": "नया बनाएं",
+	"flow.create-puzzle": "पहेली बनाएं",
+	"flow.puzzle-created": "पहेली बनाई गई",
+	"flow.saved-name": "नाम सहेजा गया",
+	"puzzle.edit-name": "नाम संपादित करें",
+	"flow.puzzle-deleted": "पहेली हटा दी गई",
+	"flow.delete-puzzle-forever?": "क्या आप पहेली को स्थायी रूप से हटाना चाहते हैं?",
+	"flow.delete-forever": "स्थायी रूप से हटाएं",
+	"flow.edit-mode": "संपादन मोड",
+	"flow.play-mode": "खेल मोड",
+	"flow.puzzle-removed": "पहेली हटा दी गई",
+	"flow.puzzle-added": "पहेली जोड़ी गई",
+	"flow.remove-from-pack": "पैक से हटाएं",
+	"flow.create-pack": "पैक बनाएं",
+	"flow.pack-created": "पैक बनाया गया",
+	"flow.flow": "फ्लो",
+	"flow.play": "खेलें",
+	"flow.play-description": "पहेलियों का खेल शुरू करें",
+	"flow.builder": "निर्माता",
+	"flow.builder-description": "पहेलियों और पैक बनाएं और संपादित करें",
+	"flow.puzzle-completed": "पहेली पूरी हो गई",
+	"flow.select-next-pack": "अगला पैक चुनें",
+	"flow.next-puzzle": "अगली पहेली",
+	"flow.level": (level) => `\u0938\u094D\u0924\u0930 ${level}`,
+	"flow.packs": "पैक",
+	"flow.puzzles": "पहेलियाँ",
+	"flow-pack-name": (flowPackName) => `${flowPackName}`,
+	"flow.no-packs": "कोई पैक नहीं",
+	"flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
+	"flow.no-puzzles": "कोई पहेली नहीं",
+	"space-game-flow-edit.editing": "संपादन",
+	"spaces.end": "समाप्त",
+	"spaces.end-space": "स्थान समाप्त करें",
+	"spaces.ended-space-host": "स्थान मेज़बान द्वारा समाप्त",
+	"spaces.ended-space-current-user": "स्थान समाप्त",
+	"spaces.ended-space-other-user": (username) =>
+		`${username} \u0928\u0947 \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924 \u0915\u093F\u092F\u093E`,
+	"spaces.space-ended": "स्थान समाप्त",
+	"spaces.space": "स्थान",
+	"spaces.join-space": "स्थान जोड़ें",
+	"spaces.current-user-joined-space": "स्थान जुड़ गया",
+	"spaces.other-user-joined-space": (username) =>
+		username
+			? `${username} \u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E`
+			: "\u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E",
+	"spaces.you're-already-in-a-space": "आप पहले से ही एक स्थान में हैं",
+	"spaces.games": "खेल",
+	"spaces.current-space": ({ hostUsername }) =>
+		`${hostUsername} \u0915\u093E \u0938\u094D\u0925\u093E\u0928`,
+	"spaces.home": "होम",
+	"spaces.people-count": (peopleCount) =>
+		peopleCount === 1
+			? "\u0932\u094B\u0917"
+			: `\u0932\u094B\u0917 (${peopleCount.toLocaleString()})`,
+	"space-card.live": "लाइव",
+	"space-card.people-count": (count) =>
+		`${count.toLocaleString()} \u0932\u094B\u0917`,
+	"spaces.spaces": "स्थान",
+	"spaces.no-spaces": "कोई स्थान नहीं",
+	"spaces.space-not-found": "स्थान नहीं मिला",
+	"spaces.go-home": "घर जा",
+	"spaces.current-user-ended-space": "स्थान समाप्त",
+	"spaces.other-user-ended-space": (username) =>
+		username
+			? `${username} \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924`
+			: "\u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924",
+	"lang.language": "भाषा",
+	"lang.choose-language": "भाषा चुनें",
+	"lang.done": "किया",
+	"lang.loaded-translations": "लोड की गई अनुवाद",
+	"profile.update-profile": "प्रोफ़ाइल अपडेट करें",
+	"profile.update-avatar": "अवतार अपडेट करें",
+	"profile.profile": "प्रोफ़ाइल",
+	"app.gamezilla-app": "गेमजिला.एप",
+	"app.something-went-wrong": "कुछ गलत हो गया",
+	"app.exit": "निकास",
+	"app.next": "अगला",
+	"app.prev": "पिछला",
+	"app.congratulations": "बधाई हो",
+	"app.reset": "रीसेट",
+	"app.more": "अधिक",
+	"app.copied-to-clipboard": "क्लिपबोर्ड पर कॉपी किया गया",
+	"app.copy": "कॉपी",
+	"app.saved-changes": "परिवर्तन सहेजे गए",
+	"app.dont-save": "न बचाएं",
+	"app.save": "सहेजें",
+	"app.cancel": "रद्द करें",
+	"app.close": "बंद करें",
+	"app.change": "परिवर्तन",
+	"app.accept": "स्वीकार करें",
+	"app.decline": "कमी",
+	"app.resign": "त्यागपत्र",
+	"app.delete": "हटाएं",
+	"app.this-action-cannot-be-undone": "यह कार्रवाई पूर्ववत नहीं की जा सकती",
+	"app.height": "ऊँचाई",
+	"app.width": "चौड़ाई",
+	"app.restart": "पुनः प्रारंभ करें",
+	"app.retry": "पुनः प्रयास करें",
+	"app.skip": "छोड़ें",
+	"app.clear": "स्पष्ट",
+	"app.dimensions": "आयाम",
+	"app.redo": "फिर से करें",
+	"app.undo": "पूर्ववत करें",
+	"app.editor": "संपादक",
+	"app.people": "लोग",
+	"app.+number": (number) => `+${number.toLocaleString()}`,
+	"?": "?",
+	"app.save-changes-warning":
+		"आपके परिवर्तन खो जाएंगे अगर आप उन्हें बाहर निकलने से पहले सहेजते नहीं हैं।",
+	"app.save-changes?": "परिवर्तन सहेजें?",
+	"username-title": "उपयोगकर्ता नाम",
+	username: (username) => `@${username}`,
+	en: "अंग्रेज़ी",
+	es: "स्पेनिश",
+	ar: "अरबी",
+	de: "जर्मन",
+	fr: "फ्रेंच",
+	hi: "हिंदी",
+	it: "इतालवी",
+	ja: "जापानी",
+	ko: "कोरियाई",
+	pt: "पुर्तगाली",
+	ru: "रूसी",
+	zh: "चीनी",
 };

@@ -4,7 +4,7 @@ import type { FlowClientCtx } from "../../@/flow-ctx";
 import { FlowPack } from "../../@/flow-pack/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import {
-	FlowBuilderFixtureClient,
+	FixtureFlowBuilderClient,
 	clickedExitPuzzleButton,
 	clickedOpenPuzzlePickerButton,
 	clickedPuzzleGridItem,
@@ -47,7 +47,7 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
 };
 
 export const Fixture = async () => {
-	const f = await FlowBuilderFixtureClient();
+	const f = await FixtureFlowBuilderClient();
 	const puzzle = await FlowPuzzle.random({
 		createdBy: f.ctx.currentUserId,
 	});

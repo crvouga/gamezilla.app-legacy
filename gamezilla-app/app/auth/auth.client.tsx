@@ -257,7 +257,7 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
 						}
 						size="lg"
 						className="w-full"
-						renderIconStart={iconInput => <IconMobilePhone {...iconInput} />}
+						renderIconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
 						text={input.ctx.t("auth.continue-with-phone")}
 					/>
 

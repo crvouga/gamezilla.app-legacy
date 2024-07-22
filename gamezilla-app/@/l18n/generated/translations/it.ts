@@ -2,247 +2,247 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-  "sound.sound-off": "Suono spento",
-  "sound.sound-on": "Suono acceso",
-  "wire.server-restarted": "Server riavviato",
-  "wire.connecting...": "Connessione in corso...",
-  "wire.offline": "Non in linea",
-  "wire.online": "Online",
-  "wire.try-reconnect": "Prova a riconnettere",
-  "auth.logout": "Disconnettersi",
-  "auth.logged-in-as-guest": "Accesso come ospite",
-  "auth.logged-in-with-phone": "Accesso con telefono",
-  "auth.current-user-logged-out": "Disconnesso",
-  "auth.current-user-logged-in": "Connesso",
-  "auth.continue-as-guest": "Continua come ospite",
-  "auth.continue-with-phone": "Continua con il telefono",
-  "auth.or": "o",
-  "auth.sign-in-to": "Accedi a",
-  "auth.logged-in": "Connesso",
-  "auth.logout-of-gamezill.app": "Disconnettersi da gamezilla.app",
-  "auth.logout-of-gamezill.app-body": "Sei sicuro di voler uscire?",
-  "verify-sms.code-message": (code) => `Il tuo codice di verifica \xE8 ${code}`,
-  "verify-sms-problem.code-incorrect": "Il codice è sbagliato",
-  "verify-sms-problem.verification-expired": "Verifica scaduta",
-  "verify-sms-problem.verification-not-found": "Verifica non trovata",
-  "verify-sms-problem.verification-already-verified": "Verifica già verificata",
-  "verify-sms-problem.database-error": "Errore del database",
-  "verify-sms-problem.verification-expired-too-many-failed-attempts":
-    "Verifica scaduta a causa di troppi tentativi falliti",
-  "verify-sms-problem.send-code-hourly-limit-reached":
-    "Limite orario raggiunto. Riprova più tardi.",
-  "verify-sms-problem.send-code-daily-limit-reached":
-    "Limite giornaliero raggiunto. Riprova più tardi.",
-  "verify-sms-problem.verification-expired-not-latest-verification":
-    "La verifica è scaduta perché non è l'ultima verifica",
-  "verify-sms-problem.send-code-limit-reached":
-    "Limite raggiunto. Riprova più tardi.",
-  "auth-sms.login-with-phone": "Accedi con il telefono",
-  "auth-sms.phone-number": "Numero di telefono",
-  "auth-sms.send-code": "Invia codice",
-  "auth-sms.country": "Paese",
-  "auth-sms.code": "Codice",
-  "auth-sms.verify-code": "Verifica",
-  "auth-sms.invalid-phone-number": "Numero di telefono non valido",
-  "auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
-    `Inserisci il codice inviato a ${formattedPhoneNumber}`,
-  "auth-sms.sent-code-to": (formattedPhoneNumber) =>
-    `Codice inviato a ${formattedPhoneNumber}`,
-  "auth-email.login-with-email": "Accedi con e-mail",
-  "auth-email.send-login-link": "Invia il link di accesso",
-  "spaces.current-user-left": "Ha lasciato lo spazio",
-  "spaces.other-user-left": (username) => `${username} ha lasciato lo spazio`,
-  "spaces.leave": "Lasciare",
-  "spaces.start-space": "Inizia spazio",
-  "spaces.space-started": "Spazio avviato",
-  "spaces.see-profile": "Vedi profilo",
-  "tic-tac-toe.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case "Easy":
-        return "Facile";
-      case "Impossible":
-        return "Impossibile";
-      case "Medium":
-        return "Medio";
-      default:
-        return "Sconosciuto";
-    }
-  },
-  "tic-tac-toe.cross": "Croce",
-  "tic-tac-toe.naught": "Cerchio",
-  "connect-four": "Collega Quattro",
-  flow: "Flusso",
-  "tic-tac-toe": "Tris",
-  gomoku: "Gomoku",
-  chess: "Scacchi",
-  "connect-four.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case "Easy":
-        return "Facile";
-      case "Hard":
-        return "Difficile";
-      case "Medium":
-        return "Medio";
-      default:
-        return "Sconosciuto";
-    }
-  },
-  "connect-four.red": "Rosso",
-  "connect-four.yellow": "Giallo",
-  "chess.puzzle-description": "Allenati con più di 3 milioni di puzzle",
-  "chess.puzzle-title": "Puzzle",
-  "chess.black": "Nero",
-  "chess.bot-level": (botLevel) => {
-    switch (botLevel) {
-      case 0:
-        return "Principiante";
-      case 1:
-        return "Intermedio";
-      case 2:
-        return "Avanzato";
-      case 3:
-        return "Esperto";
-      case 4:
-        return "Maestro";
-      default:
-        return "Sconosciuto";
-    }
-  },
-  "chess.white": "Bianco",
-  "game.hint": "Suggerimento",
-  "game.start-game": "Inizia gioco",
-  "game.start-playing": "Inizia a giocare",
-  "game.stop-playing": "Smetti di giocare",
-  "game.change-bot": "Cambia bot",
-  "game.swap-sides": "Scambia lati",
-  "game.rematch": "Rivincita",
-  "game.draw": "Pareggio",
-  "game.loser": "Perdente",
-  "game.play-again": "Gioca di nuovo",
-  "game.winner": "Vincitore",
-  "game.vs": "vs",
-  host: "Ospite",
-  you: "Tu",
-  "game.play-friend-title": "Gioca con un amico",
-  "game.play-friend-description": "Gioca contro le persone nel tuo spazio",
-  "game.play-computer-title": "Gioca con il computer",
-  "game.play-computer-description": "Gioca contro un computer",
-  "flow.copy-puzzle-to-clipboard": "Copia il puzzle negli appunti",
-  "flow.create-new": "Crea nuovo",
-  "flow.create-puzzle": "Crea puzzle",
-  "flow.puzzle-created": "Puzzle creato",
-  "flow.saved-name": "Nome salvato",
-  "puzzle.edit-name": "Modifica nome",
-  "flow.puzzle-deleted": "Puzzle eliminato",
-  "flow.delete-puzzle-forever?": "Elimina il puzzle per sempre?",
-  "flow.delete-forever": "Elimina per sempre",
-  "flow.edit-mode": "Modalità modifica",
-  "flow.play-mode": "Modalità gioco",
-  "flow.puzzle-removed": "Puzzle rimosso",
-  "flow.puzzle-added": "Puzzle aggiunto",
-  "flow.remove-from-pack": "Rimuovi dal pacchetto",
-  "flow.create-pack": "Crea pack",
-  "flow.pack-created": "Pack creato",
-  "flow.flow": "Flusso",
-  "flow.play": "Gioca",
-  "flow.play-description": "Inizia a giocare ai puzzle",
-  "flow.builder": "Costruttore",
-  "flow.builder-description": "Crea e modifica puzzle e pacchetti",
-  "flow.puzzle-completed": "Puzzle completato",
-  "flow.select-next-pack": "Seleziona il pacchetto successivo",
-  "flow.next-puzzle": "Puzzle successivo",
-  "flow.level": (level) => `Livello ${level}`,
-  "flow.packs": "Pacchetti",
-  "flow.puzzles": "Puzzle",
-  "flow-pack-name": (flowPackName) => `${flowPackName}`,
-  "flow.no-packs": "Nessun pacchetto",
-  "flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
-  "flow.no-puzzles": "Nessun puzzle",
-  "space-game-flow-edit.editing": "Modifica",
-  "spaces.end": "Fine",
-  "spaces.end-space": "Fine spazio",
-  "spaces.ended-space-host": "Spazio terminato dall'host",
-  "spaces.ended-space-current-user": "Spazio terminato",
-  "spaces.ended-space-other-user": (username) =>
-    `${username} ha terminato lo spazio`,
-  "spaces.space-ended": "Spazio terminato",
-  "spaces.space": "Spazio",
-  "spaces.join-space": "Unisciti allo spazio",
-  "spaces.current-user-joined-space": "Spazio unito",
-  "spaces.other-user-joined-space": (username) =>
-    username ? `${username} unito allo spazio` : "Spazio unito",
-  "spaces.you're-already-in-a-space": "Sei già in uno spazio",
-  "spaces.games": "Giochi",
-  "spaces.current-space": ({ hostUsername }) =>
-    `Spazio attuale di ${hostUsername}`,
-  "spaces.home": "Home",
-  "spaces.people-count": (peopleCount) =>
-    peopleCount === 1 ? "Persone" : `Persone (${peopleCount.toLocaleString()})`,
-  "space-card.live": "Dal vivo",
-  "space-card.people-count": (count) => `${count.toLocaleString()} persone`,
-  "spaces.spaces": "Spazi",
-  "spaces.no-spaces": "Nessuno spazio",
-  "spaces.space-not-found": "Spazio non trovato",
-  "spaces.go-home": "Torna a casa",
-  "spaces.current-user-ended-space": "Spazio terminato",
-  "spaces.other-user-ended-space": (username) =>
-    username ? `${username} ha terminato lo spazio` : "Spazio terminato",
-  "lang.language": "Lingua",
-  "lang.choose-language": "Scegli la lingua",
-  "lang.done": "Fatto",
-  "lang.loaded-translations": "Traduzioni caricate",
-  "profile.update-profile": "Aggiorna profilo",
-  "profile.update-avatar": "Aggiorna avatar",
-  "profile.profile": "Profilo",
-  "app.gamezilla-app": "gamezilla.app",
-  "app.something-went-wrong": "Qualcosa è andato storto",
-  "app.exit": "Uscita",
-  "app.next": "Il prossimo",
-  "app.prev": "Precedente",
-  "app.congratulations": "Congratulazioni",
-  "app.reset": "Ripristina",
-  "app.more": "Di più",
-  "app.copied-to-clipboard": "Copiato negli appunti",
-  "app.copy": "Copia",
-  "app.saved-changes": "Modifiche salvate",
-  "app.dont-save": "Non salvare",
-  "app.save": "Salvare",
-  "app.cancel": "Annulla",
-  "app.close": "Chiudere",
-  "app.change": "Cambiamento",
-  "app.accept": "Accettare",
-  "app.decline": "Declino",
-  "app.resign": "Dimettersi",
-  "app.delete": "Elimina",
-  "app.this-action-cannot-be-undone": "Questa azione non può essere annullata",
-  "app.height": "Altezza",
-  "app.width": "Larghezza",
-  "app.restart": "Ricomincia",
-  "app.retry": "Riprova",
-  "app.skip": "Salta",
-  "app.clear": "Chiaro",
-  "app.dimensions": "Dimensioni",
-  "app.redo": "Rifare",
-  "app.undo": "Disfare",
-  "app.editor": "Editore",
-  "app.people": "Persone",
-  "app.+number": (number) => `+${number.toLocaleString()}`,
-  "?": "?",
-  "app.save-changes-warning":
-    "Le tue modifiche andranno perse se non le salvi prima di uscire.",
-  "app.save-changes?": "Salvare le modifiche?",
-  "username-title": "Nome utente",
-  username: (username) => `@${username}`,
-  en: "Inglese",
-  es: "Spagnolo",
-  ar: "Arabo",
-  de: "Tedesco",
-  fr: "Francese",
-  hi: "Hindi",
-  it: "Italiano",
-  ja: "Giapponese",
-  ko: "Coreano",
-  pt: "Portoghese",
-  ru: "Russo",
-  zh: "Cinese",
+	"sound.sound-off": "Suono spento",
+	"sound.sound-on": "Suono acceso",
+	"wire.server-restarted": "Server riavviato",
+	"wire.connecting...": "Connessione in corso...",
+	"wire.offline": "Non in linea",
+	"wire.online": "Online",
+	"wire.try-reconnect": "Prova a riconnettere",
+	"auth.logout": "Disconnettersi",
+	"auth.logged-in-as-guest": "Accesso come ospite",
+	"auth.logged-in-with-phone": "Accesso con telefono",
+	"auth.current-user-logged-out": "Disconnesso",
+	"auth.current-user-logged-in": "Connesso",
+	"auth.continue-as-guest": "Continua come ospite",
+	"auth.continue-with-phone": "Continua con il telefono",
+	"auth.or": "o",
+	"auth.sign-in-to": "Accedi a",
+	"auth.logged-in": "Connesso",
+	"auth.logout-of-gamezill.app": "Disconnettersi da gamezilla.app",
+	"auth.logout-of-gamezill.app-body": "Sei sicuro di voler uscire?",
+	"verify-sms.code-message": (code) => `Il tuo codice di verifica \xE8 ${code}`,
+	"verify-sms-problem.code-incorrect": "Il codice è sbagliato",
+	"verify-sms-problem.verification-expired": "Verifica scaduta",
+	"verify-sms-problem.verification-not-found": "Verifica non trovata",
+	"verify-sms-problem.verification-already-verified": "Verifica già verificata",
+	"verify-sms-problem.database-error": "Errore del database",
+	"verify-sms-problem.verification-expired-too-many-failed-attempts":
+		"Verifica scaduta a causa di troppi tentativi falliti",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"Limite orario raggiunto. Riprova più tardi.",
+	"verify-sms-problem.send-code-daily-limit-reached":
+		"Limite giornaliero raggiunto. Riprova più tardi.",
+	"verify-sms-problem.verification-expired-not-latest-verification":
+		"La verifica è scaduta perché non è l'ultima verifica",
+	"verify-sms-problem.send-code-limit-reached":
+		"Limite raggiunto. Riprova più tardi.",
+	"auth-sms.login-with-phone": "Accedi con il telefono",
+	"auth-sms.phone-number": "Numero di telefono",
+	"auth-sms.send-code": "Invia codice",
+	"auth-sms.country": "Paese",
+	"auth-sms.code": "Codice",
+	"auth-sms.verify-code": "Verifica",
+	"auth-sms.invalid-phone-number": "Numero di telefono non valido",
+	"auth-sms.enter-code-sent-to": (formattedPhoneNumber) =>
+		`Inserisci il codice inviato a ${formattedPhoneNumber}`,
+	"auth-sms.sent-code-to": (formattedPhoneNumber) =>
+		`Codice inviato a ${formattedPhoneNumber}`,
+	"auth-email.login-with-email": "Accedi con e-mail",
+	"auth-email.send-login-link": "Invia il link di accesso",
+	"spaces.current-user-left": "Ha lasciato lo spazio",
+	"spaces.other-user-left": (username) => `${username} ha lasciato lo spazio`,
+	"spaces.leave": "Lasciare",
+	"spaces.start-space": "Inizia spazio",
+	"spaces.space-started": "Spazio avviato",
+	"spaces.see-profile": "Vedi profilo",
+	"tic-tac-toe.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case "Easy":
+				return "Facile";
+			case "Impossible":
+				return "Impossibile";
+			case "Medium":
+				return "Medio";
+			default:
+				return "Sconosciuto";
+		}
+	},
+	"tic-tac-toe.cross": "Croce",
+	"tic-tac-toe.naught": "Cerchio",
+	"connect-four": "Collega Quattro",
+	flow: "Flusso",
+	"tic-tac-toe": "Tris",
+	gomoku: "Gomoku",
+	chess: "Scacchi",
+	"connect-four.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case "Easy":
+				return "Facile";
+			case "Hard":
+				return "Difficile";
+			case "Medium":
+				return "Medio";
+			default:
+				return "Sconosciuto";
+		}
+	},
+	"connect-four.red": "Rosso",
+	"connect-four.yellow": "Giallo",
+	"chess.puzzle-description": "Allenati con più di 3 milioni di puzzle",
+	"chess.puzzle-title": "Puzzle",
+	"chess.black": "Nero",
+	"chess.bot-level": (botLevel) => {
+		switch (botLevel) {
+			case 0:
+				return "Principiante";
+			case 1:
+				return "Intermedio";
+			case 2:
+				return "Avanzato";
+			case 3:
+				return "Esperto";
+			case 4:
+				return "Maestro";
+			default:
+				return "Sconosciuto";
+		}
+	},
+	"chess.white": "Bianco",
+	"game.hint": "Suggerimento",
+	"game.start-game": "Inizia gioco",
+	"game.start-playing": "Inizia a giocare",
+	"game.stop-playing": "Smetti di giocare",
+	"game.change-bot": "Cambia bot",
+	"game.swap-sides": "Scambia lati",
+	"game.rematch": "Rivincita",
+	"game.draw": "Pareggio",
+	"game.loser": "Perdente",
+	"game.play-again": "Gioca di nuovo",
+	"game.winner": "Vincitore",
+	"game.vs": "vs",
+	host: "Ospite",
+	you: "Tu",
+	"game.play-friend-title": "Gioca con un amico",
+	"game.play-friend-description": "Gioca contro le persone nel tuo spazio",
+	"game.play-computer-title": "Gioca con il computer",
+	"game.play-computer-description": "Gioca contro un computer",
+	"flow.copy-puzzle-to-clipboard": "Copia il puzzle negli appunti",
+	"flow.create-new": "Crea nuovo",
+	"flow.create-puzzle": "Crea puzzle",
+	"flow.puzzle-created": "Puzzle creato",
+	"flow.saved-name": "Nome salvato",
+	"puzzle.edit-name": "Modifica nome",
+	"flow.puzzle-deleted": "Puzzle eliminato",
+	"flow.delete-puzzle-forever?": "Elimina il puzzle per sempre?",
+	"flow.delete-forever": "Elimina per sempre",
+	"flow.edit-mode": "Modalità modifica",
+	"flow.play-mode": "Modalità gioco",
+	"flow.puzzle-removed": "Puzzle rimosso",
+	"flow.puzzle-added": "Puzzle aggiunto",
+	"flow.remove-from-pack": "Rimuovi dal pacchetto",
+	"flow.create-pack": "Crea pack",
+	"flow.pack-created": "Pack creato",
+	"flow.flow": "Flusso",
+	"flow.play": "Gioca",
+	"flow.play-description": "Inizia a giocare ai puzzle",
+	"flow.builder": "Costruttore",
+	"flow.builder-description": "Crea e modifica puzzle e pacchetti",
+	"flow.puzzle-completed": "Puzzle completato",
+	"flow.select-next-pack": "Seleziona il pacchetto successivo",
+	"flow.next-puzzle": "Puzzle successivo",
+	"flow.level": (level) => `Livello ${level}`,
+	"flow.packs": "Pacchetti",
+	"flow.puzzles": "Puzzle",
+	"flow-pack-name": (flowPackName) => `${flowPackName}`,
+	"flow.no-packs": "Nessun pacchetto",
+	"flow-puzzle-name": (flowPuzzleName) => `${flowPuzzleName}`,
+	"flow.no-puzzles": "Nessun puzzle",
+	"space-game-flow-edit.editing": "Modifica",
+	"spaces.end": "Fine",
+	"spaces.end-space": "Fine spazio",
+	"spaces.ended-space-host": "Spazio terminato dall'host",
+	"spaces.ended-space-current-user": "Spazio terminato",
+	"spaces.ended-space-other-user": (username) =>
+		`${username} ha terminato lo spazio`,
+	"spaces.space-ended": "Spazio terminato",
+	"spaces.space": "Spazio",
+	"spaces.join-space": "Unisciti allo spazio",
+	"spaces.current-user-joined-space": "Spazio unito",
+	"spaces.other-user-joined-space": (username) =>
+		username ? `${username} unito allo spazio` : "Spazio unito",
+	"spaces.you're-already-in-a-space": "Sei già in uno spazio",
+	"spaces.games": "Giochi",
+	"spaces.current-space": ({ hostUsername }) =>
+		`Spazio attuale di ${hostUsername}`,
+	"spaces.home": "Home",
+	"spaces.people-count": (peopleCount) =>
+		peopleCount === 1 ? "Persone" : `Persone (${peopleCount.toLocaleString()})`,
+	"space-card.live": "Dal vivo",
+	"space-card.people-count": (count) => `${count.toLocaleString()} persone`,
+	"spaces.spaces": "Spazi",
+	"spaces.no-spaces": "Nessuno spazio",
+	"spaces.space-not-found": "Spazio non trovato",
+	"spaces.go-home": "Torna a casa",
+	"spaces.current-user-ended-space": "Spazio terminato",
+	"spaces.other-user-ended-space": (username) =>
+		username ? `${username} ha terminato lo spazio` : "Spazio terminato",
+	"lang.language": "Lingua",
+	"lang.choose-language": "Scegli la lingua",
+	"lang.done": "Fatto",
+	"lang.loaded-translations": "Traduzioni caricate",
+	"profile.update-profile": "Aggiorna profilo",
+	"profile.update-avatar": "Aggiorna avatar",
+	"profile.profile": "Profilo",
+	"app.gamezilla-app": "gamezilla.app",
+	"app.something-went-wrong": "Qualcosa è andato storto",
+	"app.exit": "Uscita",
+	"app.next": "Il prossimo",
+	"app.prev": "Precedente",
+	"app.congratulations": "Congratulazioni",
+	"app.reset": "Ripristina",
+	"app.more": "Di più",
+	"app.copied-to-clipboard": "Copiato negli appunti",
+	"app.copy": "Copia",
+	"app.saved-changes": "Modifiche salvate",
+	"app.dont-save": "Non salvare",
+	"app.save": "Salvare",
+	"app.cancel": "Annulla",
+	"app.close": "Chiudere",
+	"app.change": "Cambiamento",
+	"app.accept": "Accettare",
+	"app.decline": "Declino",
+	"app.resign": "Dimettersi",
+	"app.delete": "Elimina",
+	"app.this-action-cannot-be-undone": "Questa azione non può essere annullata",
+	"app.height": "Altezza",
+	"app.width": "Larghezza",
+	"app.restart": "Ricomincia",
+	"app.retry": "Riprova",
+	"app.skip": "Salta",
+	"app.clear": "Chiaro",
+	"app.dimensions": "Dimensioni",
+	"app.redo": "Rifare",
+	"app.undo": "Disfare",
+	"app.editor": "Editore",
+	"app.people": "Persone",
+	"app.+number": (number) => `+${number.toLocaleString()}`,
+	"?": "?",
+	"app.save-changes-warning":
+		"Le tue modifiche andranno perse se non le salvi prima di uscire.",
+	"app.save-changes?": "Salvare le modifiche?",
+	"username-title": "Nome utente",
+	username: (username) => `@${username}`,
+	en: "Inglese",
+	es: "Spagnolo",
+	ar: "Arabo",
+	de: "Tedesco",
+	fr: "Francese",
+	hi: "Hindi",
+	it: "Italiano",
+	ja: "Giapponese",
+	ko: "Coreano",
+	pt: "Portoghese",
+	ru: "Russo",
+	zh: "Cinese",
 };

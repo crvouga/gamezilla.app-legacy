@@ -22,7 +22,7 @@ const clickedPuzzleListItem =
 			model,
 			modelCore: BuilderCore.initCore({ ctx }),
 			msg: {
-				t: "puzzle-list.clicked-puzzle-list-item",
+				t: "builder-open-puzzle.clicked-puzzle-list-item",
 				puzzle,
 			},
 		});
@@ -35,7 +35,7 @@ const userClickedPuzzleListItem =
 			model,
 			modelCore: BuilderCore.initCore({ ctx }),
 			msgCore: {
-				t: "puzzle-list.clicked-puzzle-list-item",
+				t: "builder-open-puzzle.clicked-puzzle-list-item",
 				puzzle,
 				eventId: EventId.generate(),
 				happenedAt: LamportTimestamp.fromNumber(0),

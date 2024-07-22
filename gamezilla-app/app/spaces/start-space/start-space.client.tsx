@@ -88,7 +88,7 @@ const ViewStartSpaceButton: SpaceClientModule["View"] = (input) => {
 			fab
 			size="lg"
 			color="primary"
-			renderIconStart={iconInput => <IconPlus {...iconInput} />}
+			renderIconStart={(iconInput) => <IconPlus {...iconInput} />}
 			onClick={() =>
 				input.dispatch({
 					t: "clicked-start-space-button",

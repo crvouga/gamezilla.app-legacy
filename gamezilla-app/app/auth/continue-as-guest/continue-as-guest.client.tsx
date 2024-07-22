@@ -14,7 +14,7 @@ const update: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...input.model,
-					guestRequest: RequestResponse.requesting(input.ctx.now),
+					guestRequest: RequestResponse.startedRequest(input.ctx.now),
 				},
 				msgCmd: [
 					playSound(APP_SOUND.tap),
@@ -50,7 +50,7 @@ const ViewButton: ClientModule["View"] = (input) => {
 			onClick={() =>
 				input.dispatch({ t: "guest.clicked-continue-as-guest-button" })
 			}
-			renderIconStart={iconInput => <IconUserCircle {...iconInput} />}
+			renderIconStart={(iconInput) => <IconUserCircle {...iconInput} />}
 			text={input.ctx.t("auth.continue-as-guest")}
 			loading={isRequesting(input.model.guestRequest)}
 		/>

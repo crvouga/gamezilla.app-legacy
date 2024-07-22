@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { ScreenPlayPuzzleClientFixture } from "../@/testing.client";
+import { FixtureScreenPlayPuzzleClient } from "../@/fixture.client";
 import { didPlaySound } from "gamezilla-app/app/@/client";
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
 
 const Fixture = async () => {
-	const f = await ScreenPlayPuzzleClientFixture();
+	const f = await FixtureScreenPlayPuzzleClient();
 	return {
 		...f,
 	};

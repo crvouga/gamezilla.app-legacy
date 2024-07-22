@@ -4,10 +4,16 @@ import { didPlaySound, didShowToast } from "gamezilla-app/app/@/client";
 import {
 	clickedPackCreateNewButton,
 	createFlowPack,
+	FixtureFlowBuilderClient,
 	initial,
 	testFlowClientCtx,
 	userCreatedPack,
 } from "../../@/testing/client";
+
+export const Fixture = () => {
+	const f = FixtureFlowBuilderClient();
+	return { ...f };
+};
 
 describe(import.meta.file, () => {
 	it("should make a sound when the user clicks the create button", async () => {

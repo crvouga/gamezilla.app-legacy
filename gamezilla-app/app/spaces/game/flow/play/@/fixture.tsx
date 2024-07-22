@@ -12,7 +12,7 @@ export type FixtureUpdateInput = {
 	msgCore?: WithEventMeta<MsgCore>;
 };
 
-export const FlowPlayClientFixture = async () => {
+export const FixtureFlowPlayClient = async () => {
 	const f = await FlowClientFixture();
 	const initCore = PlayCore.initCore(f);
 

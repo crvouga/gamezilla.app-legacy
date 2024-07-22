@@ -17,7 +17,7 @@ import {
 import { SpaceId } from "gamezilla-app/app/@/data";
 import {
 	Ctx,
-	SpaceClientFixture,
+	FixtureSpaceClient,
 	changeRoute,
 	clickSpaceCard,
 	clickedGoHomeButton,
@@ -33,7 +33,7 @@ const changeRouteToSpaceList = (ctx: ClientCtx) => {
 };
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
-	const f = await SpaceClientFixture(input);
+	const f = await FixtureSpaceClient(input);
 	return {
 		...f,
 	};

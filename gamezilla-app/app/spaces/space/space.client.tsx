@@ -117,7 +117,6 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
 	);
 };
 
-
 const ViewSpaceNotFound = (input: {
 	ctx: ClientCtx;
 	dispatch: (m: MsgClient) => void;

@@ -2,9 +2,9 @@ import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
 import { FlowPack } from "../../../@/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 import {
-	FlowPlayClientFixture,
+	FixtureFlowPlayClient,
 	type FixtureUpdateInput,
-} from "../../@/testing";
+} from "../../@/fixture";
 import { FlowPlay } from "../../../@/flow/flow-play";
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
@@ -19,8 +19,8 @@ const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
 		}),
 	);
 
-export const ScreenPlayPuzzleClientFixture = async () => {
-	const f = await FlowPlayClientFixture();
+export const FixtureScreenPlayPuzzleClient = async () => {
+	const f = await FixtureFlowPlayClient();
 	const puzzle = await FlowPuzzle.random();
 	const nextPuzzle = await FlowPuzzle.random();
 	const prevPuzzle = await FlowPuzzle.random();

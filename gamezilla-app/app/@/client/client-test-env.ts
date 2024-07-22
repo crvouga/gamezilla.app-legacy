@@ -6,7 +6,7 @@ import type { ClientCtx } from "./client-ctx";
 import { Translator } from "./translator";
 import { VDOM_IMPL_TEST } from "public-config";
 
-export const AppClientFixture = async (input?: { currentRoute?: Route }) => {
+export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {
 	const currentUserId = UserId.generate();
 	const ctx: ClientCtx = {
 		currentRoute: input?.currentRoute ?? {

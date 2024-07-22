@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
+import { FixtureSpaceClient } from "gamezilla-app/app/spaces/@/testing/client";
 import type { FlowViewinput } from "../flow-ui/flow-ui";
 import { FlowGridShorthand } from "./flow-grid";
 import type * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
 
 const Fixture = async () => {
-	const f = await SpaceClientFixture();
+	const f = await FixtureSpaceClient();
 	const flow = FlowGridShorthand.toGrid([
 		["A", " "],
 		[" ", "A"],

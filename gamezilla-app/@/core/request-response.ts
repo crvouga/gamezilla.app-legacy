@@ -49,7 +49,7 @@ export type RequestResponse<TError, TValue> =
 	| ResponseErr<TError>
 	| ResponseOk<TValue>;
 
-export const requesting = (
+export const startedRequest = (
 	requestedAt: Posix,
 	lifeSpan: TimeSpan = TimeSpan.minutes(1),
 ): Requesting => {
@@ -97,7 +97,7 @@ export const response = <TError, TValue>(
 	};
 };
 
-export const elapsed = <TError, TValue>(
+export const timePassed = <TError, TValue>(
 	request: RequestResponse<TError, TValue>,
 	now: Posix,
 ): RequestResponse<TError, TValue> => {
@@ -148,11 +148,11 @@ export const RequestResponse = {
 	isOk,
 	isErr,
 	isRequesting,
-	requesting,
+	startedRequest,
 	response,
 	err: Err,
 	ok: Ok,
-	elapsed,
+	timePassed,
 	didRequestTimeout,
 	subscriptions,
 };

@@ -13,7 +13,7 @@ import { BuilderClient } from "../../builder.client";
 import { BuilderCore } from "../../builder.core";
 import * as BuilderTypes from "../../builder.types";
 
-import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
+import { FixtureSpaceClient } from "gamezilla-app/app/spaces/@/testing/client";
 
 type Input = {
 	ctx?: FlowClientCtx;
@@ -84,8 +84,8 @@ const update = (
 	return NonEmpty.last(outputs);
 };
 
-export const FlowBuilderFixtureClient = async () => {
-	const f = await SpaceClientFixture();
+export const FixtureFlowBuilderClient = async () => {
+	const f = await FixtureSpaceClient();
 	const model = BuilderTypes.initClient;
 	const modelCore = BuilderCore.initCore({ ctx: f.ctx });
 	const ctx: FlowClientCtx = {
@@ -193,7 +193,7 @@ export const clickedPuzzleListItem =
 		return BuilderClient.update({
 			model,
 			msg: {
-				t: "puzzle-list.clicked-puzzle-list-item",
+				t: "builder-open-puzzle.clicked-puzzle-list-item",
 				puzzle,
 			},
 			ctx,

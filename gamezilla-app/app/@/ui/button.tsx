@@ -34,7 +34,7 @@ export const Button = ({
 	type?: "button" | "submit" | "reset";
 	className?: string;
 	onClick?: (msgEvt: ButtonEvent) => void;
-	renderIconStart?: (input: {className?: string}) => VDom;
+	renderIconStart?: (input: { className?: string }) => VDom;
 	variant?: ButtonVariant;
 	color?: ButtonColor;
 	size?: ButtonSize;
@@ -66,12 +66,12 @@ export const Button = ({
 
 				!disabled && combo === "text-primary" && "text-blue-500",
 
-				fab && 'rounded-3xl shadow-2xl drop-shadow-2xl',
+				fab && "rounded-3xl",
 
 				size === "lg" && "px-4 py-3 text-xl",
 				size === "md" && "px-4 py-2 text-lg",
 				size === "sm" && "text-md  px-4 py-1",
-				size === 'xs' && 'text-sm px-3 py-1',
+				size === "xs" && "text-sm px-3 py-1",
 				disabled && "cursor-not-allowed opacity-60",
 				!disabled && !loading && " active:opacity-70",
 				loading && "cursor-wait opacity-70",
@@ -87,7 +87,7 @@ export const Button = ({
 					loading && "text-transparent",
 				)}
 			>
-				{renderIconStart?.({className: "mr-2 w-7 h-7"})}
+				{renderIconStart?.({ className: "mr-2 w-7 h-7" })}
 				{text}
 			</div>
 			{loading && (

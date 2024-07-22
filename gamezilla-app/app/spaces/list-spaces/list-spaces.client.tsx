@@ -1,4 +1,4 @@
-import { Ok, RequestResponse, requesting } from "gamezilla-app/@/core";
+import { Ok, RequestResponse, startedRequest } from "gamezilla-app/@/core";
 import {
 	APP_SOUND,
 	playSound,
@@ -24,7 +24,7 @@ const sendListSpacesRequest: SpaceClientModule["update"] = ({ model, ctx }) => {
 	return {
 		model: {
 			...model,
-			listSpacesRequest: requesting(ctx.now),
+			listSpacesRequest: startedRequest(ctx.now),
 		},
 		msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
 	};
@@ -70,7 +70,7 @@ const update: SpaceClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					listSpacesRequest: RequestResponse.elapsed(
+					listSpacesRequest: RequestResponse.timePassed(
 						model.listSpacesRequest,
 						ctx.now,
 					),

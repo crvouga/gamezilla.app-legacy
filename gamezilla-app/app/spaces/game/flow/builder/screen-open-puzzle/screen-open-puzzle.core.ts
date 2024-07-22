@@ -5,7 +5,7 @@ import { CreateNewPuzzleCore } from "./create-new/create-new-puzzle.core";
 
 const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
-		case "puzzle-list.clicked-puzzle-list-item": {
+		case "builder-open-puzzle.clicked-puzzle-list-item": {
 			return {
 				...modelCore,
 				listTab: "puzzles",

@@ -49,7 +49,7 @@ const updateList: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					request: RequestResponse.requesting(ctx.now),
+					request: RequestResponse.startedRequest(ctx.now),
 				},
 				msgCmd: [
 					sendToServer({
@@ -75,7 +75,7 @@ const updateList: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					request: RequestResponse.elapsed(model.request, ctx.now),
+					request: RequestResponse.timePassed(model.request, ctx.now),
 				},
 			};
 		}

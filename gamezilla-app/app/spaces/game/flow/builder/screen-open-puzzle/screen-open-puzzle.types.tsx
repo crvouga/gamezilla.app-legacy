@@ -16,7 +16,7 @@ export const initClient: ModelClient = {
 export type MsgClient =
 	| CreateNewPuzzleTypes.MsgClient
 	| {
-			t: "puzzle-list.clicked-puzzle-list-item";
+			t: "builder-open-puzzle.clicked-puzzle-list-item";
 			puzzle: FlowPuzzle;
 	  };
 
@@ -40,7 +40,7 @@ export type ModelCore = p.Infer<typeof ModelCore>;
 export const MsgCore = p.or(
 	CreateNewPuzzleTypes.MsgCore,
 	p.obj({
-		t: p.l("puzzle-list.clicked-puzzle-list-item"),
+		t: p.l("builder-open-puzzle.clicked-puzzle-list-item"),
 		puzzle: FlowPuzzle,
 	}),
 );

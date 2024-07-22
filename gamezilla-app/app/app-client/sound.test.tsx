@@ -6,7 +6,7 @@ import {
 	SoundCmd,
 	playSound,
 } from "../@/client";
-import { AppClientFixture } from "../@/client/client-test-env";
+import { FixtureAppClient } from "../@/client/client-test-env";
 import * as Sound from "./sound";
 
 type Input =
@@ -24,7 +24,7 @@ type Input =
 	  };
 
 const Fixture = async () => {
-	const f = await AppClientFixture();
+	const f = await FixtureAppClient();
 
 	const init = Sound.init({
 		ctx: f.ctx,

@@ -1,6 +1,6 @@
-import type { Iconinput } from "../icon-shared";
+import type { IconInput } from "../icon-shared";
 
-export const IconCheckmarkCircle = (input: Iconinput) => {
+export const IconCheckmarkCircle = (input: IconInput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export const IconCheckmarkCircle = (input: Iconinput) => {
 	);
 };
 
-export const IconCheckmarkCircleEmpty = (input: Iconinput) => {
+export const IconCheckmarkCircleEmpty = (input: IconInput) => {
 	return (
 		<div {...input}>
 			<div className="p-0.5">

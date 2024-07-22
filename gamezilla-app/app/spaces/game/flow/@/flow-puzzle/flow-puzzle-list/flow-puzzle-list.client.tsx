@@ -32,7 +32,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					request: RequestResponse.requesting(input.ctx.now),
+					request: RequestResponse.startedRequest(input.ctx.now),
 				},
 				msgCmd: [
 					sendToServer({
@@ -56,8 +56,8 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 			};
 		}
 
-		case "flow-puzzle-list.elasped": {
-			const requestNew = RequestResponse.elapsed(model.request, ctx.now);
+		case "flow-puzzle-list.time-passed": {
+			const requestNew = RequestResponse.timePassed(model.request, ctx.now);
 			return {
 				model: {
 					...model,
