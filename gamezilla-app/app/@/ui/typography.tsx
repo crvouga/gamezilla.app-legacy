@@ -24,13 +24,13 @@ export const Typography = (input: {
 	role?: AriaRole;
 }) => {
 	return (
-		<p
+		<div
 			className={cn(variantClasses[input.variant], input.className)}
 			aria-role={input.role}
 			role={input.role}
 			aria-label={input.text}
 		>
 			{input.text}
-		</p>
+		</div>
 	);
 };
