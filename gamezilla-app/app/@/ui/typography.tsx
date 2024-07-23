@@ -1,6 +1,6 @@
-import { TranslatedText } from "gamezilla-app/@/l18n";
+import type { TranslatedText } from "gamezilla-app/@/l18n";
 import { cn } from "./ui";
-import { AriaRole } from "react";
+import type { AriaRole } from "react";
 
 export type TypographyVariant =
 	| "title"
@@ -26,7 +26,6 @@ export const Typography = (input: {
 	return (
 		<div
 			className={cn(variantClasses[input.variant], input.className)}
-			aria-role={input.role}
 			role={input.role}
 			aria-label={input.text}
 		>

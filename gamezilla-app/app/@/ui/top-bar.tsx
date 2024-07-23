@@ -1,5 +1,5 @@
-import { TranslatedText } from "gamezilla-app/@/l18n";
-import { Translator } from "gamezilla-app/@/l18n/generated";
+import type { TranslatedText } from "gamezilla-app/@/l18n";
+import type { Translator } from "gamezilla-app/@/l18n/generated";
 import {
 	cn,
 	IconArrowLeft,
