@@ -5,7 +5,6 @@ import type { FlowPuzzle } from "./flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "./flow-puzzle/flow-puzzle-id";
 
 export type FlowClientCtx = SpaceClientCtx & {
-	// onQuit: () => void;
 	flowPacks: {
 		[flowPackId: FlowPackId]: FlowPack;
 	};
