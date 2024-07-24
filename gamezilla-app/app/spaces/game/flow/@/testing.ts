@@ -5,7 +5,6 @@ export const FlowClientFixture = async () => {
 	const f = await FixtureSpaceClient();
 	const ctx: FlowClientCtx = {
 		...f.ctx,
-		onQuit() {},
 		flowPacks: {},
 		flowPuzzles: {},
 	};

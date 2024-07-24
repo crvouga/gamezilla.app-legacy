@@ -122,11 +122,13 @@ const fromNullable =
 
 const withDefault = <T>(result: ResultPrivate<unknown, T>, fallback: T) => {
 	switch (result.t) {
-		case "err":
+		case "err": {
 			return fallback;
+		}
 
-		case "ok":
+		case "ok": {
 			return result.value;
+		}
 	}
 };
 

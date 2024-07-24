@@ -1,6 +1,6 @@
 import type { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import type { IGameDb } from "./space-game-db";
-import { ImplDbConnKv } from "./space-game-db-impl-db-conn-kv";
+import * as ImplDbConnKv from "./space-game-db-impl-db-conn-kv";
 
 type Impl = {
 	t: "db-conn-kv";

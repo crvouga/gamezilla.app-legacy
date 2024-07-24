@@ -13,6 +13,17 @@ const updateCore: UpdateCore = (input) => {
 				listTab: input.msgCore.listTab,
 			};
 		}
+			
+		case 'user-clicked-back-button': {
+			return {
+				...input.modelCore,
+				event: {
+					t: 'user-clicked-exit-mode-button',
+					userId: input.msgCore.userId,
+				}
+			};
+		}
+		
 
 		default: {
 			return input.modelCore;

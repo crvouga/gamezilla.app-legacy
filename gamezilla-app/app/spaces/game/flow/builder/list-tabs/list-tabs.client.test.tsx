@@ -19,6 +19,7 @@ const userChangedListTab =
 			modelCore: BuilderCore.initCore({ ctx }),
 			msgCore: {
 				t: "user-changed-list-tab",
+				userId: ctx.currentUserId,
 				eventId: EventId.generate(),
 				listTab,
 				happenedAt: LamportTimestamp.fromNumber(0),

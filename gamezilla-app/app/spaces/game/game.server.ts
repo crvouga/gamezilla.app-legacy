@@ -87,70 +87,66 @@ const init = (gameName: GameName): ServerModule["init"] => {
 //
 
 const update: ServerModule["update"] = async (input) => {
-	return GameServerModule.andThen(
-		{ model: input.model },
-		//
-		async (model) => {
-			switch (input.modelCore.t) {
-				case "flow": {
-					const updated = await FlowServer.update({
-						ctx: input.ctx,
-						modelCore: input.modelCore.c,
-						model: model.t === "flow" ? model.c : FlowServer.init,
-						msgCmd: input.msgCmd,
-						msgEvt: input.msgEvt,
-						msgClient:
-							input.msgClient?.t === "flow"
-								? { ...input.msgClient, ...input.msgClient.c }
-								: null,
-						msgCore:
-							input.msgCore?.t === "flow"
-								? { ...input.msgCore, ...input.msgCore.c }
-								: null,
-						msg: input.msg?.t === "flow" ? input.msg.c : null,
-						deps: input.deps.flow,
-					});
+	switch (input.modelCore.t) {
+		case "flow": {
+			const updated = await FlowServer.update({
+				ctx: input.ctx,
+				modelCore: input.modelCore.c,
+				model: input.model.t === "flow" ? input.model.c : FlowServer.init,
+				msgCmd: input.msgCmd,
+				msgEvt: input.msgEvt,
+				msgClient:
+					input.msgClient?.t === "flow"
+						? { ...input.msgClient, ...input.msgClient.c }
+						: null,
+				msgCore:
+					input.msgCore?.t === "flow"
+						? { ...input.msgCore, ...input.msgCore.c }
+						: null,
+				msg: input.msg?.t === "flow" ? input.msg.c : null,
+				deps: input.deps.flow,
+			});
 
-					const tagged = GameServerModule.tagOutput(
-						"flow",
-						(msgCmd) => SpaceServerCmd.tag("flow", msgCmd),
-						updated,
-					);
+			const tagged = GameServerModule.tagOutput(
+				"flow",
+				(msgCmd) => SpaceServerCmd.tag("flow", msgCmd),
+				updated,
+			);
 
-					return tagged;
-				}
+			return tagged;
+		}
 
-				case "connect-four": {
-					const updated = await ConnectFourServer.update({
-						ctx: input.ctx,
-						modelCore: input.modelCore.c,
-						model:
-							model.t === "connect-four" ? model.c : ConnectFourServer.init,
-						msgCmd: input.msgCmd,
-						msgEvt: input.msgEvt,
-						msgClient:
-							input.msgClient?.t === "connect-four"
-								? { ...input.msgClient, ...input.msgClient.c }
-								: null,
-						msgCore:
-							input.msgCore?.t === "connect-four"
-								? { ...input.msgCore, ...input.msgCore.c }
-								: null,
-						msg: input.msg?.t === "connect-four" ? input.msg.c : null,
-						deps: null,
-					});
+		case "connect-four": {
+			const updated = await ConnectFourServer.update({
+				ctx: input.ctx,
+				modelCore: input.modelCore.c,
+				model:
+					input.model.t === "connect-four"
+						? input.model.c
+						: ConnectFourServer.init,
+				msgCmd: input.msgCmd,
+				msgEvt: input.msgEvt,
+				msgClient:
+					input.msgClient?.t === "connect-four"
+						? { ...input.msgClient, ...input.msgClient.c }
+						: null,
+				msgCore:
+					input.msgCore?.t === "connect-four"
+						? { ...input.msgCore, ...input.msgCore.c }
+						: null,
+				msg: input.msg?.t === "connect-four" ? input.msg.c : null,
+				deps: null,
+			});
 
-					const tagged = GameServerModule.tagOutput(
-						"connect-four",
-						(msgCmd) => SpaceServerCmd.tag("connect-four", msgCmd),
-						updated,
-					);
+			const tagged = GameServerModule.tagOutput(
+				"connect-four",
+				(msgCmd) => SpaceServerCmd.tag("connect-four", msgCmd),
+				updated,
+			);
 
-					return tagged;
-				}
-			}
-		},
-	);
+			return tagged;
+		}
+	}
 };
 
 //
@@ -162,16 +158,17 @@ const update: ServerModule["update"] = async (input) => {
 //
 
 const subscriptions: ServerModule["subscriptions"] = async (input) => {
-	const { modelCore, model } = input;
-
-	switch (modelCore.t) {
+	switch (input.modelCore.t) {
 		case "connect-four": {
 			return Sub.tag(
 				"connect-four",
 				await ConnectFourServer.subscriptions({
 					...input,
-					modelCore: modelCore.c,
-					model: model?.t === "connect-four" ? model.c : ConnectFourServer.init,
+					modelCore: input.modelCore.c,
+					model:
+						input.model?.t === "connect-four"
+							? input.model.c
+							: ConnectFourServer.init,
 				}),
 			);
 		}
@@ -181,8 +178,8 @@ const subscriptions: ServerModule["subscriptions"] = async (input) => {
 				"flow",
 				await FlowServer.subscriptions({
 					...input,
-					modelCore: modelCore.c,
-					model: model?.t === "flow" ? model.c : FlowServer.init,
+					modelCore: input.modelCore.c,
+					model: input.model?.t === "flow" ? input.model.c : FlowServer.init,
 				}),
 			);
 		}

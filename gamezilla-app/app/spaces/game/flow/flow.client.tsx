@@ -79,7 +79,6 @@ const updateChild: ClientModule["update"] = (input) => {
 			const updated = PlayClient.update({
 				ctx: {
 					...input.ctx,
-					onQuit: () => {},
 					flowPacks: input.model.flowPacks,
 					flowPuzzles: input.model.flowPuzzles,
 				},
@@ -117,7 +116,6 @@ const updateChild: ClientModule["update"] = (input) => {
 			const updated = BuilderClient.update({
 				ctx: {
 					...input.ctx,
-					onQuit: () => {},
 					flowPacks: input.model.flowPacks,
 					flowPuzzles: input.model.flowPuzzles,
 				},
@@ -239,7 +237,6 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 				PlayClient.subscriptions({
 					ctx: {
 						...input.ctx,
-						onQuit() {},
 						flowPacks: input.model.flowPacks,
 						flowPuzzles: input.model.flowPuzzles,
 					},
@@ -254,7 +251,6 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 				BuilderClient.subscriptions({
 					ctx: {
 						...input.ctx,
-						onQuit() {},
 						flowPacks: input.model.flowPacks,
 						flowPuzzles: input.model.flowPuzzles,
 					},
@@ -278,38 +274,27 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 //
 
 const View: ClientModule["View"] = (input) => {
-	const { modelCore, dispatch } = input;
-
 	const ctx: FlowClientCtx = {
 		...input.ctx,
 		flowPacks: input.model.flowPacks,
 		flowPuzzles: input.model.flowPuzzles,
-		onQuit: () =>
-			dispatch({
-				t: "msgCore",
-				c: {
-					t: "user-changed-mode",
-					mode: null,
-					userId: input.ctx.currentUserId,
-				},
-			}),
 	};
 
-	switch (modelCore.t) {
+	switch (input.modelCore.t) {
 		case null: {
 			return (
 				<GameMainMenu.View
 					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
 					ctx={ctx}
 					title={ctx.t("flow")}
-					dispatch={dispatch}
+					dispatch={input.dispatch}
 					buttons={[
 						{
 							renderIcon: (input) => <IconGamepad {...input} />,
 							title: ctx.t("flow.play"),
 							description: ctx.t("flow.play-description"),
 							onClick: () => {
-								dispatch({
+								input.dispatch({
 									t: "msgCore",
 									c: {
 										t: "user-changed-mode",
@@ -324,7 +309,7 @@ const View: ClientModule["View"] = (input) => {
 							title: ctx.t("flow.builder"),
 							description: ctx.t("flow.builder-description"),
 							onClick: () => {
-								dispatch({
+								input.dispatch({
 									t: "msgCore",
 									c: {
 										t: "user-changed-mode",
@@ -343,8 +328,8 @@ const View: ClientModule["View"] = (input) => {
 			return (
 				<BuilderClient.View
 					ctx={ctx}
-					dispatch={(c) => dispatch({ t: "builder", c })}
-					modelCore={modelCore.c}
+					dispatch={(c) => input.dispatch({ t: "builder", c })}
+					modelCore={input.modelCore.c}
 					model={
 						input.model.t === "builder"
 							? {
@@ -363,9 +348,9 @@ const View: ClientModule["View"] = (input) => {
 				<PlayClient.View
 					ctx={ctx}
 					dispatch={(c) => {
-						dispatch({ t: "play", c });
+						input.dispatch({ t: "play", c });
 					}}
-					modelCore={modelCore.c}
+					modelCore={input.modelCore.c}
 					model={input.model.t === "play" ? input.model.c : PlayClient.init}
 				/>
 			);
@@ -385,7 +370,7 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 				case "play": {
 					return (
 						<PlayClient.ViewFeedItem
-							ctx={{ ...ctx, onQuit() {}, flowPacks: {}, flowPuzzles: {} }}
+							ctx={{ ...ctx, flowPacks: {}, flowPuzzles: {} }}
 							dispatch={(c) => dispatch({ t: "play", c })}
 							modelCore={modelCore.c}
 							msgCore={msgCore.c}
@@ -403,7 +388,7 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 				case "builder": {
 					return (
 						<BuilderClient.ViewFeedItem
-							ctx={{ ...ctx, onQuit() {}, flowPacks: {}, flowPuzzles: {} }}
+							ctx={{ ...ctx, flowPacks: {}, flowPuzzles: {} }}
 							dispatch={(c) => dispatch({ t: "builder", c })}
 							modelCore={modelCore.c}
 							msgCore={msgCore.c}

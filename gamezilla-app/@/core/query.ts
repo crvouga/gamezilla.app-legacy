@@ -29,8 +29,8 @@ export const query: Query<Row> = {
 		"and",
 		[
 			["=", "userId", "1234"],
-            ["=", "puzzleId", "5678"],
-            ['or', [['>=', 'createdAt', 123]]]
+			["=", "puzzleId", "5678"],
+			["or", [[">=", "createdAt", 123]]],
 		],
 	],
 };

@@ -50,7 +50,12 @@ const View: ClientModule["View"] = (input) => {
 		<div className="w-full h-full flex-1 flex flex-col">
 			<TopBar
 				ctx={input.ctx}
-				onBack={input.ctx.onQuit}
+				onBack={() =>
+					input.dispatch({
+						t: "user-clicked-exit-play-mode-button",
+						userId: input.ctx.currentUserId,
+					})
+				}
 				title={input.ctx.t("flow.play")}
 			/>
 			<FlowPackListClient.View

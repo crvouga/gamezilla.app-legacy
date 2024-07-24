@@ -9,66 +9,25 @@ import { Msg } from "gamezilla-app/@/core/msg";
 //
 //
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type Any = any;
 
 export type GameClientModuleTypes = {
-	/**
-	 * `Ctx` is data passed down from parent modules
-	 */
 	Ctx?: Any;
-	/**
-	 * `Model` is the state of the module
-	 */
 	Model?: Any;
-	/**
-	 * `Msg` is a message that is local to the module. Should almost always be past tense like an event
-	 */
 	Msg?: Any;
-	/**
-	 * `MsgToClient` is a message to send to the client component of the module
-	 */
 	MsgToClient?: Any;
-	/**
-	 * `MsgToServer` is a message to send to the client component of the module
-	 */
 	MsgToServer?: Any;
-	/**
-	 * `MsgCmdIn` is a message from other modules. Usually verbs
-	 */
 	MsgCmdIn?: Any;
-	/**
-	 * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
-	 */
 	MsgCmdOut?: Any;
-	/**
-	 * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
-	 */
 	MsgEvtIn?: Any;
-	/**
-	 * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
-	 */
 	MsgEvtOut?: Any;
-	/**
-	 *
-	 */
 	MsgCore?: Any;
-	/**
-	 *
-	 */
 	ModelCore?: Any;
-	/**
-	 *  `ViewSlot` is a slot that the module can fill with a view
-	 */
 	ViewSlot?: SlotInputTypes;
-	/**
-	 * `ViewEmits` is a slot that the module can fill with a view
-	 */
 	ViewEmit?: EmitInputTypes;
 };
 export type GameClientModuleTypesConfig<T extends GameClientModuleTypes> = T;
 
-// Define a more flexible structure for slots and emits
 type SlotInputTypes = {
 	[key: string]: Any;
 };
@@ -91,42 +50,13 @@ type EmitFunctions<Emits> = Emits extends EmitInputTypes
 //
 
 export type Input<T extends GameClientModuleTypes> = {
-	/**
-	 * `ctx` is data passed down from parent modules
-	 */
 	ctx: T["Ctx"];
-	/**
-	 * `model` is the current state of the module
-	 */
 	model: T["Model"];
-	/**
-	 * `location`
-	 */
-	// location: T["Location"];
-	/**
-	 * `msg`
-	 */
 	msg?: T["Msg"] | null;
-	/**
-	 * `msgServer` is a message from the server
-	 */
 	msgServer?: T["MsgToClient"] | null;
-	/**
-	 * `msgEvt`
-	 */
 	msgEvt?: T["MsgEvtIn"] | null;
-	/**
-	 * `msgCmd`
-	 */
 	msgCmd?: T["MsgCmdIn"] | null;
-
-	/**
-	 * `modelCore` is the current state of the game. This is shared and auto synced between client and server.
-	 */
 	modelCore: T["ModelCore"];
-	/**
-	 * `msgCore` is an msgEvt of game
-	 */
 	msgCore?: WithEventId<T["MsgCore"]> | null;
 };
 
@@ -137,54 +67,24 @@ export type Input<T extends GameClientModuleTypes> = {
 //
 
 export type Output<T extends GameClientModuleTypes> = {
-	/**
-	 * `model` will be the new state of the module
-	 */
 	model: T["Model"];
-	/**
-	 * `eff` is a side effect to be performed. May dispatch a message
-	 */
 	eff?: Eff<T["Msg"]>;
-	/**
-	 * `msgCmd` is a message to one other module. Always present tense
-	 */
 	msgCmd?: T["MsgCmdOut"][];
-	/**
-	 * `msgEvt` is a message to many other modules. Always past tense
-	 */
 	msgEvt?: T["MsgEvtOut"][];
-	/**
-	 *  `msgCore` are events that occurred in the game. Shared with the server side
-	 */
 	msgCore?: WithEventId<T["MsgCore"]>[];
 };
 
-/**
- * `GameClientModule` represents a client side app module
- */
 export type GameClientModule<T extends GameClientModuleTypes> = {
-	/**
-	 * `init` is the initial state of the module
-	 */
 	init: T["Model"];
 
-	/**
-	 * `update` handles all the state transitions and business logic of the module
-	 */
 	update: (input: Input<T>) => Output<T>;
 
-	/**
-	 * `subscriptions` is emits msgs specific to the module
-	 */
 	subscriptions: (input: {
 		ctx: T["Ctx"];
 		modelCore: T["ModelCore"];
 		model: T["Model"];
 	}) => Sub<T["Msg"]>;
 
-	/**
-	 * `View` is for rendering the UI for the module
-	 */
 	View: (input: {
 		ctx: T["Ctx"];
 		modelCore: T["ModelCore"];
@@ -194,9 +94,6 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 		emits?: EmitFunctions<T["ViewEmit"]>;
 	}) => VDom;
 
-	/**
-	 *
-	 */
 	ViewFeedItem: (input: {
 		ctx: T["Ctx"];
 		msgCore: T["MsgCore"];
@@ -277,19 +174,9 @@ const tagOutput = <
 	output: Output<T>,
 ): {
 	model: { t: TTag; c: T["Model"] };
-
 	eff?: Eff<{ t: TTag; c: T["Msg"] }>;
-	/**
-	 *
-	 */
 	msgCmd?: TTaggedCmd[];
-	/**
-	 *
-	 */
 	msgEvt?: T["MsgEvtOut"][];
-	/**
-	 *
-	 */
 	msgCore?: WithEventId<{ t: TTag; c: T["MsgCore"] }>[];
 } => {
 	return {

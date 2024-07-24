@@ -6,7 +6,7 @@ import {
 import * as Game from "../../game/game.types";
 import type { IGameDb } from "./space-game-db";
 
-const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {
+export const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {
 	const bySpaceId = DbConnKv.withNamespace<SpaceId, Game.ModelServer>(
 		dbConnKv,
 		["game", "game-by-id"],
@@ -21,8 +21,4 @@ const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {
 			return bySpaceId.set(spaceId, game);
 		},
 	};
-};
-
-export const ImplDbConnKv = {
-	GameDb,
 };

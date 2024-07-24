@@ -1,11 +1,68 @@
 import { Eff, Result, Sub } from "gamezilla-app/@/core";
-import { GameServer } from "../game/game.server";
-import type { WithEventId } from "../@/event";
 import { SpaceServerCmd } from "../@/space-server-cmd";
 import { SpaceServerModule } from "../architecture/space-server";
-import type { SpaceCoreEvent } from "../spaces-core";
+import { GameServer } from "../game/game.server";
 import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
 import type { MsgServer } from "../spaces.types";
+
+const update: SpaceServerModule["update"] = async (input) => {
+	const spaceId = inputToSpaceId(input);
+
+	if (!spaceId) {
+		return { model: input.model };
+	}
+
+	const spaceState = await SpacesCoreServer.getSpaceStarted(
+		input.deps.spaceCoreDb,
+		spaceId,
+	);
+
+	if (!spaceState?.game) {
+		return { model: input.model };
+	}
+
+	const gameModel = Result.withDefault(
+		await input.deps.gameDb.getBySpaceId(spaceId),
+		null,
+	);
+
+	const gameUpdated = await GameServer.update({
+		deps: input.deps.gameServer,
+		ctx: { ...input.ctx, ...input.deps.gameServer, space: spaceState },
+		model: gameModel ?? GameServer.init(spaceState.game.t),
+		msg: input.msg?.t === "game" ? input.msg.c : null,
+		modelCore: spaceState.game,
+		msgClient:
+			input.msgClient?.t === "game" && input.msgClient.userId
+				? {
+						...input.msgClient,
+						userId: input.msgClient.userId,
+						...input.msgClient.c,
+					}
+				: null,
+		msgEvt: input.msgEvt,
+		msgCore:
+			input.msgSpaceEvent?.t === "game"
+				? { ...input.msgSpaceEvent, ...input.msgSpaceEvent.c }
+				: null,
+	});
+
+	return {
+		model: input.model,
+		eff: Eff.map(gameUpdated.eff, (c) => ({ t: "game", c, spaceId })),
+		msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({
+			t: "game",
+			c,
+			spaceId,
+		})),
+		msgSpaceEvent: gameUpdated.msgCore?.map((e) => ({
+			...e,
+			spaceId,
+			t: "game",
+			c: e,
+		})),
+	};
+};
 
 const inputToSpaceId = (input: Parameters<SpaceServerModule["update"]>[0]) => {
 	if (input.msg && "spaceId" in input.msg) {
@@ -21,81 +78,6 @@ const inputToSpaceId = (input: Parameters<SpaceServerModule["update"]>[0]) => {
 	}
 
 	return null;
-};
-
-const updateGame: SpaceServerModule["update"] = async (input) => {
-	const spaceId = inputToSpaceId(input);
-
-	if (!spaceId) {
-		return { model: input.model };
-	}
-
-	const spaceState = await SpacesCoreServer.getSpaceStarted(
-		input.deps.spaceCoreDb,
-		spaceId,
-	);
-
-	if (!spaceState) {
-		return { model: input.model };
-	}
-
-	if (!spaceState.game) {
-		return { model: input.model };
-	}
-
-	if (input.msgClient && !input.msgClient.userId) {
-		input.ctx.logger.warn("msgClient is missing userId");
-	}
-
-	const gameModel = Result.withDefault(
-		await input.deps.gameDb.getBySpaceId(spaceId),
-		null,
-	);
-
-	const gameUpdated = await GameServer.update({
-		ctx: { ...input.ctx, space: spaceState },
-		model: gameModel ?? GameServer.init(spaceState.game.t),
-		msg: input.msg?.t === "game" ? input.msg.c : null,
-		msgClient:
-			input.msgClient?.t === "game" && input.msgClient.userId
-				? {
-						...input.msgClient,
-						userId: input.msgClient.userId,
-						...input.msgClient.c,
-					}
-				: null,
-		msgEvt: input.msgEvt,
-		msgCore:
-			input.msgSpaceEvent?.t === "game"
-				? { ...input.msgSpaceEvent, ...input.msgSpaceEvent.c }
-				: null,
-		modelCore: spaceState.game,
-		deps: input.deps.gameServer,
-	});
-
-	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
-		(e): WithEventId<SpaceCoreEvent> => ({ ...e, spaceId, t: "game", c: e }),
-	);
-
-	return {
-		model: input.model,
-		eff: Eff.map((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
-		msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({
-			t: "game",
-			c,
-			spaceId,
-		})),
-		msgEvt: [],
-		msgSpaceEvent: msgSpaceEventNew,
-	};
-};
-
-const update: SpaceServerModule["update"] = async (input) => {
-	return SpaceServerModule.andThen(
-		{ model: input.model },
-		//
-		(model) => updateGame({ ...input, model }),
-	);
 };
 
 const subscriptions: SpaceServerModule["subscriptions"] = async (_input) => {

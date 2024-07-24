@@ -151,7 +151,7 @@ const subscriptions: ServerModule["subscriptions"] = async (input) => {
 	}
 };
 
-export const FlowServer: ServerModule = {
+export const FlowServer = {
 	init,
 	subscriptions,
 	update,

@@ -11,6 +11,16 @@ const initCore: CoreModule["initCore"] = () => {
 
 const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
+		case "user-clicked-exit-play-mode-button": {
+			return {
+				...modelCore,
+				event: {
+					t: "user-clicked-exit-mode-button",
+					userId: msgCore.userId,
+				},
+			};
+		}
+
 		case "user-clicked-open-pack-list-item": {
 			return {
 				...modelCore,

@@ -17,51 +17,54 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const updateUserChangedListTab: ClientModule["update"] = (input) => {
-	const { model, msgCore } = input;
-
-	switch (msgCore?.t) {
+	switch (input.msgCore?.t) {
 		case "user-changed-list-tab": {
 			return {
-				model,
+				model: input.model,
 				msgCmd: [playSound(APP_SOUND.tap)],
 			};
 		}
+			
+		case 'user-clicked-back-button': {
+			return {
+				model: input.model,
+				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+			}
+		}
 
 		default: {
-			return { model };
+			return { model: input.model };
 		}
 	}
 };
 
 const updateListTab: ClientModule["update"] = (input) => {
-	const { model, msg } = input;
+	const { msg } = input;
 
-	switch (msg?.t) {
-		case "user-changed-list-tab": {
+	if (!msg) {
+		return { model: input.model };
+	}
+
+	switch (msg.t) {
+		case "user-changed-list-tab":
+		case "user-clicked-back-button": {
 			return {
-				model,
-				msgCore: [
-					withId({
-						t: "user-changed-list-tab",
-						listTab: msg.listTab,
-					}),
-				],
+				model: input.model,
+				msgCore: [withId(msg)],
 			};
 		}
 
 		default: {
-			return { model };
+			return { model: input.model };
 		}
 	}
 };
 
 const View: ClientModule["View"] = (input) => {
-	const { ctx, modelCore, dispatch } = input;
-
-	const isSpectating = ctx.space.hostId !== ctx.currentUserId;
+	const isSpectating = input.ctx.space.hostId !== input.ctx.currentUserId;
 
 	if (isSpectating) {
-		const host = ctx.profiles[ctx.space.hostId];
+		const host = input.ctx.profiles[input.ctx.space.hostId];
 		const name = host?.username ?? "Host";
 		return (
 			<div className="h-ull flex w-full flex-1 flex-col items-center justify-center gap-4">
@@ -69,7 +72,7 @@ const View: ClientModule["View"] = (input) => {
 					<Avatar src={host?.avatarUrl} className="h-20 w-20" />
 					<div className="flex items-center gap-2">
 						<p className="text-xl font-bold">{name}</p>
-						<ViewSpaceHostChip ctx={ctx} />
+						<ViewSpaceHostChip ctx={input.ctx} />
 					</div>
 				</div>
 				<p className="text-lg font-bold text-neutral-300">
@@ -83,7 +86,12 @@ const View: ClientModule["View"] = (input) => {
 		<div className="flex h-full w-full flex-1 flex-col">
 			<TopBar
 				ctx={input.ctx}
-				onBack={input.ctx.onQuit}
+				onBack={() =>
+					input.dispatch({
+						t: "user-clicked-back-button",
+						userId: input.ctx.currentUserId,
+					})
+				}
 				title={input.ctx.t("flow.builder")}
 			/>
 
@@ -94,23 +102,27 @@ const View: ClientModule["View"] = (input) => {
 					puzzles: input.ctx.t("flow.puzzles"),
 				}}
 				onSelect={(listTab) =>
-					dispatch({ t: "user-changed-list-tab", listTab })
+					input.dispatch({
+						t: "user-changed-list-tab",
+						listTab,
+						userId: input.ctx.currentUserId,
+					})
 				}
-				selected={modelCore.listTab}
+				selected={input.modelCore.listTab}
 			/>
 
-			{modelCore.listTab === "puzzles" && (
+			{input.modelCore.listTab === "puzzles" && (
 				<ScreenOpenPuzzleClient.View {...input} />
 			)}
 
-			{modelCore.listTab === "packs" && (
+			{input.modelCore.listTab === "packs" && (
 				<ScreenOpenPackClient.View {...input} />
 			)}
 		</div>
 	);
 };
 
-export const ListTabsClient: Pick<ClientModule, "update" | "View"> = {
+export const ListTabsClient = {
 	update,
 	View,
 };

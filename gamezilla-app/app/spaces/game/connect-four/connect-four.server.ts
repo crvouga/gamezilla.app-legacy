@@ -69,9 +69,8 @@ const subscriptions: ServerModule["subscriptions"] = async (_input) => {
 	return Sub.None;
 };
 
-export const ConnectFourServer: ServerModule = {
+export const ConnectFourServer = {
 	init,
 	update,
 	subscriptions,
-	deps: async () => null,
 };

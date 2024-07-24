@@ -1,9 +1,10 @@
 import { p } from "gamezilla-app/@/core/parser";
+import { UserId } from "gamezilla-app/app/@/data";
 import type {
 	GameClientModule,
 	GameClientModuleTypesConfig,
 } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
+import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-core";
 import type {
 	SpaceClientEvent,
 	SpaceCtx,
@@ -16,6 +17,7 @@ import type { FlowPackPuzzlesGridTypes } from "../@/flow-pack/flow-pack-puzzles-
 import { FlowPuzzle } from "../@/flow-puzzle";
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { ScreenPuzzleTypes } from "./screen-play-puzzle";
+import { FlowCoreEvent } from "../@/flow-core-event";
 
 //
 //
@@ -83,6 +85,14 @@ export type MsgToClient =
 	  };
 
 export const MsgCore = p.or(
+	p.obj({
+		t: p.l("user-clicked-exit-play-mode-button"),
+		userId: UserId,
+	}),
+	p.obj({
+		t: p.l("user-clicked-select-pack-back-button"),
+		userId: UserId,
+	}),
 	p.obj({
 		t: p.l("user-clicked-open-pack-list-item"),
 		pack: FlowPack,
@@ -158,4 +168,5 @@ export type CoreModule = GameCoreModule<{
 	Ctx: SpaceCtx;
 	ModelCore: ModelCore;
 	MsgCore: MsgCore;
+	EventCore: FlowCoreEvent;
 }>;

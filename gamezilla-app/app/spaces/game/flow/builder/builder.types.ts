@@ -9,6 +9,7 @@ import type {
 } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
+import { FlowCoreEvent } from "../@/flow-core-event";
 import type { FlowClientCtx } from "../@/flow-ctx";
 import type { FlowPack } from "../@/flow-pack/flow-pack";
 import type { IFlowPackDb } from "../@/flow-pack/flow-pack-db";
@@ -19,10 +20,10 @@ import type { IFlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db/flow-puzzle-
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { FlowPuzzleList } from "../@/flow-puzzle/flow-puzzle-list";
 import { ListTabs } from "./list-tabs";
-import { ScreenOpenPuzzleTypes } from "./screen-open-puzzle";
-import { ScreenPuzzleBuilderTypes } from "./screen-puzzle-builder";
-import { ScreenPackBuilderTypes } from "./screen-pack-builder";
 import { ScreenOpenPackTypes } from "./screen-open-pack";
+import { ScreenOpenPuzzleTypes } from "./screen-open-puzzle";
+import { ScreenPackBuilderTypes } from "./screen-pack-builder";
+import { ScreenPuzzleBuilderTypes } from "./screen-puzzle-builder";
 
 //
 //
@@ -201,4 +202,4 @@ export type UpdateCore = (input: {
 	ctx: SpaceCtx;
 	msgCore: MsgCore;
 	modelCore: ModelCore;
-}) => ModelCore;
+}) => ModelCore & { event?: FlowCoreEvent };

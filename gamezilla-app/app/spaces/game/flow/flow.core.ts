@@ -21,13 +21,23 @@ export const updateCore = ({
 		case "play": {
 			switch (modelCore.t) {
 				case "play": {
+					const updated = PlayCore.updateCore({
+						ctx,
+						msgCore: msgCore.c,
+						modelCore: modelCore.c,
+					});
+
+					switch (updated.event?.t) {
+						case "user-clicked-exit-mode-button": {
+							return {
+								t: null,
+							};
+						}
+					}
+
 					return {
 						t: "play",
-						c: PlayCore.updateCore({
-							ctx,
-							msgCore: msgCore.c,
-							modelCore: modelCore.c,
-						}),
+						c: updated,
 					};
 				}
 				default: {
@@ -39,13 +49,28 @@ export const updateCore = ({
 		case "builder": {
 			switch (modelCore.t) {
 				case "builder": {
+					const updated = BuilderCore.updateCore({
+						ctx,
+						msgCore: msgCore.c,
+						modelCore: modelCore.c,
+					});
+
+					switch (updated.event?.t) {
+						case "user-clicked-exit-mode-button": {
+							if (ctx.space.hostId === updated.event?.userId) {
+								return {
+									t: null,
+								};
+							}
+							return {
+								t: null,
+							};
+						}
+					}
+
 					return {
 						t: "builder",
-						c: BuilderCore.updateCore({
-							ctx,
-							msgCore: msgCore.c,
-							modelCore: modelCore.c,
-						}),
+						c: updated,
 					};
 				}
 				default: {
