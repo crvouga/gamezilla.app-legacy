@@ -1,2 +1,2 @@
-export * from './event-stream';
-export * from './event-stream-impl-in-memory';
+export * from './event-stream'
+export * from './event-stream-impl-in-memory'

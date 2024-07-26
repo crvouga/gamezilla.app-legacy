@@ -1,93 +1,72 @@
-import {AppServerModule} from 'gamezilla-app/app/@/architecture/app-server';
-import {sendToClient} from 'gamezilla-app/app/@/server';
-import type {
-	SpaceServerCtx,
-	SpaceServerEvent,
-} from 'gamezilla-app/app/spaces/@/space';
-import type {SpaceServerCmd} from 'gamezilla-app/app/spaces/@/space-server-cmd';
-import {IFlowPuzzleDb} from '../../flow-puzzle';
-import {IFlowPackDb} from '../flow-pack-db';
-import type {
-	ModelServer,
-	MsgServer,
-	MsgToClient,
-	MsgToServer,
-} from './flow-pack-puzzles-grid.types';
+import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
+import { sendToClient } from 'gamezilla-app/app/@/server'
+import type { SpaceServerCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { IFlowPuzzleDb } from '../../flow-puzzle'
+import { IFlowPackDb } from '../flow-pack-db'
+import type { ModelServer, MsgServer, MsgToClient, MsgToServer } from './flow-pack-puzzles-grid.types'
 
 type ServerModule = AppServerModule<{
-	Ctx: SpaceServerCtx;
-	Model: ModelServer;
-	Msg: MsgServer;
-	MsgEvtIn: SpaceServerEvent;
-	MsgCmdOut: SpaceServerCmd<MsgToClient>;
-	MsgToClient: MsgToClient;
-	MsgToServer: MsgToServer;
-	Deps: ServerDeps;
-}>;
+  Ctx: SpaceServerCtx
+  Model: ModelServer
+  Msg: MsgServer
+  MsgEvtIn: SpaceServerEvent
+  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  Deps: ServerDeps
+}>
 
 type ServerDeps = {
-	flowPuzzleDb: IFlowPuzzleDb;
-	flowPackDb: IFlowPackDb;
-};
+  flowPuzzleDb: IFlowPuzzleDb
+  flowPackDb: IFlowPackDb
+}
 
 const ListPuzzlesById: Pick<ServerModule, 'update'> = {
-	async update(input) {
-		switch (input.msgClient?.t) {
-			case 'list-puzzles-by-id': {
-				const listed =
-					await input.deps.flowPuzzleDb.list(
-						{
-							pagination: {
-								limit: input
-									.msgClient
-									.puzzleIds
-									.length,
-								offset: 0,
-							},
-							order: {
-								createdAt: 'asc',
-							},
-							where: {
-								puzzleId: {
-									in: input
-										.msgClient
-										.puzzleIds,
-								},
-							},
-						},
-					);
-				return {
-					model: input.model,
-					msgCmd: [
-						sendToClient(
-							input.msgClient,
-							{
-								t: 'listed-puzzles-by-id',
-								listed,
-							},
-						),
-					],
-				};
-			}
-		}
-		return {model: input.model};
-	},
-};
+  async update(input) {
+    switch (input.msgClient?.t) {
+      case 'list-puzzles-by-id': {
+        const listed = await input.deps.flowPuzzleDb.list({
+          pagination: {
+            limit: input.msgClient.puzzleIds.length,
+            offset: 0
+          },
+          order: {
+            createdAt: 'asc'
+          },
+          where: {
+            puzzleId: {
+              in: input.msgClient.puzzleIds
+            }
+          }
+        })
+        return {
+          model: input.model,
+          msgCmd: [
+            sendToClient(input.msgClient, {
+              t: 'listed-puzzles-by-id',
+              listed
+            })
+          ]
+        }
+      }
+    }
+    return { model: input.model }
+  }
+}
 
 export const FlowPackPuzzlesGridServer: Pick<ServerModule, 'update'> = {
-	async update(input) {
-		return AppServerModule.andThen(
-			{
-				model: input.model,
-			},
-			(model) =>
-				ListPuzzlesById.update(
-					{
-						...input,
-						model,
-					},
-				),
-			//
-		);
-	},
-};
+  async update(input) {
+    return AppServerModule.andThen(
+      {
+        model: input.model
+      },
+      (model) =>
+        ListPuzzlesById.update({
+          ...input,
+          model
+        })
+      //
+    )
+  }
+}

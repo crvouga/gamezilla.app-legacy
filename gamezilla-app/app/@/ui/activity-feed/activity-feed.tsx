@@ -1,3 +1,3 @@
 export const ActivityFeed = () => {
-	return <div />;
-};
+  return <div />
+}

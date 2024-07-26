@@ -1,235 +1,150 @@
-import type {Translations} from 'gamezilla-app/@/l18n';
+import type { Translations } from 'gamezilla-app/@/l18n'
 
 export type Text = {
-	'auth-sms.phone-number': string;
-	'auth-sms.send-code': string;
-	'auth-sms.login-with-phone': string;
-	'auth-sms.country': string;
-	'auth-sms.code': string;
-	'auth-sms.verify-code': string;
-	'auth-sms.invalid-phone-number': string;
-	'auth-sms.enter-code-sent-to': (
-		formattedPhoneNumber: string,
-	) => string;
-	'auth-sms.sent-code-to': (
-		formattedPhoneNumber: string,
-	) => string;
-};
+  'auth-sms.phone-number': string
+  'auth-sms.send-code': string
+  'auth-sms.login-with-phone': string
+  'auth-sms.country': string
+  'auth-sms.code': string
+  'auth-sms.verify-code': string
+  'auth-sms.invalid-phone-number': string
+  'auth-sms.enter-code-sent-to': (formattedPhoneNumber: string) => string
+  'auth-sms.sent-code-to': (formattedPhoneNumber: string) => string
+}
 
 export const translations: Translations<Text> = {
-	ar: {
-		'auth-sms.login-with-phone':
-			'تسجيل الدخول برقم الهاتف',
-		'auth-sms.phone-number': 'رقم الهاتف',
-		'auth-sms.send-code': 'إرسال الرمز',
-		'auth-sms.country': 'بلد',
-		'auth-sms.code': 'الرمز',
-		'auth-sms.verify-code': 'التحقق من الرمز',
-		'auth-sms.invalid-phone-number':
-			'رقم الهاتف غير صالح',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`أدخل الرمز المرسل إلى ${formattedPhoneNumber}`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) =>
-			`تم إرسال الرمز إلى ${formattedPhoneNumber}`,
-	},
-	de: {
-		'auth-sms.login-with-phone':
-			'Mit Telefonnummer anmelden',
-		'auth-sms.phone-number': 'Telefonnummer',
-		'auth-sms.send-code': 'Code senden',
-		'auth-sms.country': 'Land',
-		'auth-sms.code': 'Code',
-		'auth-sms.verify-code': 'Code überprüfen',
-		'auth-sms.invalid-phone-number':
-			'Ungültige Telefonnummer',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`Code eingeben, der an ${formattedPhoneNumber} gesendet wurde`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) => `Code an ${formattedPhoneNumber} gesendet`,
-	},
-	en: {
-		'auth-sms.login-with-phone': 'Login with phone',
-		'auth-sms.phone-number': 'Phone number',
-		'auth-sms.send-code': 'Send code',
-		'auth-sms.country': 'Country',
-		'auth-sms.code': 'Code',
-		'auth-sms.verify-code': 'Verify Code',
-		'auth-sms.invalid-phone-number':
-			'Invalid phone number',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`Enter the code sent to ${formattedPhoneNumber}`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) => `Sent code to ${formattedPhoneNumber}`,
-	},
-	es: {
-		'auth-sms.login-with-phone':
-			'Iniciar sesión con el teléfono',
-		'auth-sms.phone-number': 'Número de teléfono',
-		'auth-sms.send-code': 'Enviar código',
-		'auth-sms.country': 'País',
-		'auth-sms.code': 'Código',
-		'auth-sms.verify-code': 'Verificar código',
-		'auth-sms.invalid-phone-number':
-			'Número de teléfono no válido',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`Introduce el código enviado a ${formattedPhoneNumber}`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) => `Código enviado a ${formattedPhoneNumber}`,
-	},
-	fr: {
-		'auth-sms.login-with-phone':
-			'Se connecter avec le téléphone',
-		'auth-sms.phone-number': 'Numéro de téléphone',
-		'auth-sms.send-code': 'Envoyer le code',
-		'auth-sms.country': 'Pays',
-		'auth-sms.code': 'Code',
-		'auth-sms.verify-code': 'Vérifier le code',
-		'auth-sms.invalid-phone-number':
-			'Numéro de téléphone invalide',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`Entrez le code envoyé à ${formattedPhoneNumber}`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) => `Code envoyé à ${formattedPhoneNumber}`,
-	},
-	hi: {
-		'auth-sms.login-with-phone':
-			'फोन से लॉगिन करें',
-		'auth-sms.phone-number': 'फ़ोन नंबर',
-		'auth-sms.send-code': 'कोड भेजें',
-		'auth-sms.country': 'देश',
-		'auth-sms.code': 'कोड',
-		'auth-sms.verify-code': 'सत्यापित करें',
-		'auth-sms.invalid-phone-number':
-			'अमान्य फोन नंबर',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`कोड ${formattedPhoneNumber} पर भेजा गया है`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) => `कोड ${formattedPhoneNumber} पर भेजा गया`,
-	},
-	it: {
-		'auth-sms.login-with-phone':
-			'Accedi con il telefono',
-		'auth-sms.phone-number': 'Numero di telefono',
-		'auth-sms.send-code': 'Invia codice',
-		'auth-sms.country': 'Paese',
-		'auth-sms.code': 'Codice',
-		'auth-sms.verify-code': 'Verifica',
-		'auth-sms.invalid-phone-number':
-			'Numero di telefono non valido',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`Inserisci il codice inviato a ${formattedPhoneNumber}`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) => `Codice inviato a ${formattedPhoneNumber}`,
-	},
-	ja: {
-		'auth-sms.login-with-phone': '電話でログイン',
-		'auth-sms.phone-number': '電話番号',
-		'auth-sms.send-code': 'コードを送信',
-		'auth-sms.country': '国',
-		'auth-sms.code': 'コード',
-		'auth-sms.verify-code': '確認',
-		'auth-sms.invalid-phone-number':
-			'無効な電話番号',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`${formattedPhoneNumber} に送信されたコードを入力してください`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) =>
-			`${formattedPhoneNumber} にコードを送信しました`,
-	},
-	ko: {
-		'auth-sms.login-with-phone': '전화로 로그인',
-		'auth-sms.phone-number': '전화 번호',
-		'auth-sms.send-code': '코드 보내기',
-		'auth-sms.country': '국가',
-		'auth-sms.code': '코드',
-		'auth-sms.verify-code': '확인',
-		'auth-sms.invalid-phone-number':
-			'유효하지 않은 전화 번호',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`${formattedPhoneNumber}로 전송된 코드를 입력하십시오`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) =>
-			`${formattedPhoneNumber}로 코드를 보냈습니다`,
-	},
-	pt: {
-		'auth-sms.login-with-phone':
-			'Login com telefone',
-		'auth-sms.phone-number': 'Número de telefone',
-		'auth-sms.send-code': 'Enviar código',
-		'auth-sms.country': 'País',
-		'auth-sms.code': 'Código',
-		'auth-sms.verify-code': 'Verificar',
-		'auth-sms.invalid-phone-number':
-			'Número de telefone inválido',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`Insira o código enviado para ${formattedPhoneNumber}`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) =>
-			`Código enviado para ${formattedPhoneNumber}`,
-	},
-	ru: {
-		'auth-sms.login-with-phone': 'Войти с телефона',
-		'auth-sms.phone-number': 'Номер телефона',
-		'auth-sms.send-code': 'Отправить код',
-		'auth-sms.country': 'Страна',
-		'auth-sms.code': 'Код',
-		'auth-sms.verify-code': 'Проверить',
-		'auth-sms.invalid-phone-number':
-			'Неверный номер телефона',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`Введите код, отправленный на ${formattedPhoneNumber}`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) => `Код отправлен на ${formattedPhoneNumber}`,
-	},
-	zh: {
-		'auth-sms.login-with-phone': '使用电话登录',
-		'auth-sms.phone-number': '电话号码',
-		'auth-sms.send-code': '发送代码',
-		'auth-sms.country': '国家',
-		'auth-sms.code': '代码',
-		'auth-sms.verify-code': '验证',
-		'auth-sms.invalid-phone-number':
-			'无效的电话号码',
-		'auth-sms.enter-code-sent-to': (
-			formattedPhoneNumber,
-		) =>
-			`输入发送到 ${formattedPhoneNumber} 的代码`,
-		'auth-sms.sent-code-to': (
-			formattedPhoneNumber,
-		) => `已发送代码到 ${formattedPhoneNumber}`,
-	},
-};
+  ar: {
+    'auth-sms.login-with-phone': 'تسجيل الدخول برقم الهاتف',
+    'auth-sms.phone-number': 'رقم الهاتف',
+    'auth-sms.send-code': 'إرسال الرمز',
+    'auth-sms.country': 'بلد',
+    'auth-sms.code': 'الرمز',
+    'auth-sms.verify-code': 'التحقق من الرمز',
+    'auth-sms.invalid-phone-number': 'رقم الهاتف غير صالح',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `أدخل الرمز المرسل إلى ${formattedPhoneNumber}`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `تم إرسال الرمز إلى ${formattedPhoneNumber}`
+  },
+  de: {
+    'auth-sms.login-with-phone': 'Mit Telefonnummer anmelden',
+    'auth-sms.phone-number': 'Telefonnummer',
+    'auth-sms.send-code': 'Code senden',
+    'auth-sms.country': 'Land',
+    'auth-sms.code': 'Code',
+    'auth-sms.verify-code': 'Code überprüfen',
+    'auth-sms.invalid-phone-number': 'Ungültige Telefonnummer',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) =>
+      `Code eingeben, der an ${formattedPhoneNumber} gesendet wurde`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Code an ${formattedPhoneNumber} gesendet`
+  },
+  en: {
+    'auth-sms.login-with-phone': 'Login with phone',
+    'auth-sms.phone-number': 'Phone number',
+    'auth-sms.send-code': 'Send code',
+    'auth-sms.country': 'Country',
+    'auth-sms.code': 'Code',
+    'auth-sms.verify-code': 'Verify Code',
+    'auth-sms.invalid-phone-number': 'Invalid phone number',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Enter the code sent to ${formattedPhoneNumber}`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Sent code to ${formattedPhoneNumber}`
+  },
+  es: {
+    'auth-sms.login-with-phone': 'Iniciar sesión con el teléfono',
+    'auth-sms.phone-number': 'Número de teléfono',
+    'auth-sms.send-code': 'Enviar código',
+    'auth-sms.country': 'País',
+    'auth-sms.code': 'Código',
+    'auth-sms.verify-code': 'Verificar código',
+    'auth-sms.invalid-phone-number': 'Número de teléfono no válido',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Introduce el código enviado a ${formattedPhoneNumber}`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Código enviado a ${formattedPhoneNumber}`
+  },
+  fr: {
+    'auth-sms.login-with-phone': 'Se connecter avec le téléphone',
+    'auth-sms.phone-number': 'Numéro de téléphone',
+    'auth-sms.send-code': 'Envoyer le code',
+    'auth-sms.country': 'Pays',
+    'auth-sms.code': 'Code',
+    'auth-sms.verify-code': 'Vérifier le code',
+    'auth-sms.invalid-phone-number': 'Numéro de téléphone invalide',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Entrez le code envoyé à ${formattedPhoneNumber}`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Code envoyé à ${formattedPhoneNumber}`
+  },
+  hi: {
+    'auth-sms.login-with-phone': 'फोन से लॉगिन करें',
+    'auth-sms.phone-number': 'फ़ोन नंबर',
+    'auth-sms.send-code': 'कोड भेजें',
+    'auth-sms.country': 'देश',
+    'auth-sms.code': 'कोड',
+    'auth-sms.verify-code': 'सत्यापित करें',
+    'auth-sms.invalid-phone-number': 'अमान्य फोन नंबर',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `कोड ${formattedPhoneNumber} पर भेजा गया है`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `कोड ${formattedPhoneNumber} पर भेजा गया`
+  },
+  it: {
+    'auth-sms.login-with-phone': 'Accedi con il telefono',
+    'auth-sms.phone-number': 'Numero di telefono',
+    'auth-sms.send-code': 'Invia codice',
+    'auth-sms.country': 'Paese',
+    'auth-sms.code': 'Codice',
+    'auth-sms.verify-code': 'Verifica',
+    'auth-sms.invalid-phone-number': 'Numero di telefono non valido',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Inserisci il codice inviato a ${formattedPhoneNumber}`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Codice inviato a ${formattedPhoneNumber}`
+  },
+  ja: {
+    'auth-sms.login-with-phone': '電話でログイン',
+    'auth-sms.phone-number': '電話番号',
+    'auth-sms.send-code': 'コードを送信',
+    'auth-sms.country': '国',
+    'auth-sms.code': 'コード',
+    'auth-sms.verify-code': '確認',
+    'auth-sms.invalid-phone-number': '無効な電話番号',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) =>
+      `${formattedPhoneNumber} に送信されたコードを入力してください`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `${formattedPhoneNumber} にコードを送信しました`
+  },
+  ko: {
+    'auth-sms.login-with-phone': '전화로 로그인',
+    'auth-sms.phone-number': '전화 번호',
+    'auth-sms.send-code': '코드 보내기',
+    'auth-sms.country': '국가',
+    'auth-sms.code': '코드',
+    'auth-sms.verify-code': '확인',
+    'auth-sms.invalid-phone-number': '유효하지 않은 전화 번호',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `${formattedPhoneNumber}로 전송된 코드를 입력하십시오`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `${formattedPhoneNumber}로 코드를 보냈습니다`
+  },
+  pt: {
+    'auth-sms.login-with-phone': 'Login com telefone',
+    'auth-sms.phone-number': 'Número de telefone',
+    'auth-sms.send-code': 'Enviar código',
+    'auth-sms.country': 'País',
+    'auth-sms.code': 'Código',
+    'auth-sms.verify-code': 'Verificar',
+    'auth-sms.invalid-phone-number': 'Número de telefone inválido',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Insira o código enviado para ${formattedPhoneNumber}`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Código enviado para ${formattedPhoneNumber}`
+  },
+  ru: {
+    'auth-sms.login-with-phone': 'Войти с телефона',
+    'auth-sms.phone-number': 'Номер телефона',
+    'auth-sms.send-code': 'Отправить код',
+    'auth-sms.country': 'Страна',
+    'auth-sms.code': 'Код',
+    'auth-sms.verify-code': 'Проверить',
+    'auth-sms.invalid-phone-number': 'Неверный номер телефона',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Введите код, отправленный на ${formattedPhoneNumber}`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Код отправлен на ${formattedPhoneNumber}`
+  },
+  zh: {
+    'auth-sms.login-with-phone': '使用电话登录',
+    'auth-sms.phone-number': '电话号码',
+    'auth-sms.send-code': '发送代码',
+    'auth-sms.country': '国家',
+    'auth-sms.code': '代码',
+    'auth-sms.verify-code': '验证',
+    'auth-sms.invalid-phone-number': '无效的电话号码',
+    'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `输入发送到 ${formattedPhoneNumber} 的代码`,
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `已发送代码到 ${formattedPhoneNumber}`
+  }
+}

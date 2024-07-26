@@ -1,3 +1,3 @@
-export * from './fleet-formation';
-export * from './position';
-export * from './shot-rule';
+export * from './fleet-formation'
+export * from './position'
+export * from './shot-rule'

@@ -1,6 +1,6 @@
-import {exec} from 'node:child_process';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { exec } from 'node:child_process'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
 //
 //
@@ -10,8 +10,8 @@ import path from 'node:path';
 //
 //
 
-const DIR_PATH = path.join(__dirname, '..', '..');
-const TARGET_FILE_SUFFIX = '.type.ts';
+const DIR_PATH = path.join(__dirname, '..', '..')
+const TARGET_FILE_SUFFIX = '.type.ts'
 
 //
 //
@@ -21,35 +21,30 @@ const TARGET_FILE_SUFFIX = '.type.ts';
 //
 
 async function generateGuardFiles(files: string[]) {
-	for (const file of files) {
-		const COMMAND = `npx ts-auto-guard ${file}`;
+  for (const file of files) {
+    const COMMAND = `npx ts-auto-guard ${file}`
 
-		exec(COMMAND, (error, stdout, stderr) => {
-			console.log(stdout);
-			if (error) {
-				console.error(
-					'Error running ts-auto-guard:',
-					stderr,
-				);
-				return;
-			}
-			console.log(
-				`Generated type guards for ${file}`,
-			);
-		});
-	}
+    exec(COMMAND, (error, stdout, stderr) => {
+      console.log(stdout)
+      if (error) {
+        console.error('Error running ts-auto-guard:', stderr)
+        return
+      }
+      console.log(`Generated type guards for ${file}`)
+    })
+  }
 }
 
 async function main() {
-	const files = await scanFiles({
-		dir: DIR_PATH,
-		targetFileSuffix: TARGET_FILE_SUFFIX,
-	});
+  const files = await scanFiles({
+    dir: DIR_PATH,
+    targetFileSuffix: TARGET_FILE_SUFFIX
+  })
 
-	await generateGuardFiles(files);
+  await generateGuardFiles(files)
 }
 
-main().catch(console.error);
+main().catch(console.error)
 
 //
 //
@@ -61,39 +56,29 @@ main().catch(console.error);
 //
 //
 
-async function scanFiles(input: {
-	dir: string;
-	targetFileSuffix: string;
-}): Promise<string[]> {
-	const files: string[] = [];
+async function scanFiles(input: { dir: string; targetFileSuffix: string }): Promise<string[]> {
+  const files: string[] = []
 
-	const filesAndDirectories = await fs.readdir(input.dir, {
-		withFileTypes: true,
-	});
+  const filesAndDirectories = await fs.readdir(input.dir, {
+    withFileTypes: true
+  })
 
-	for (const file of filesAndDirectories) {
-		const res = path.resolve(input.dir, file.name);
+  for (const file of filesAndDirectories) {
+    const res = path.resolve(input.dir, file.name)
 
-		if (file.isDirectory()) {
-			const children =
-				await scanFiles(
-					{
-						dir: res,
-						targetFileSuffix: input.targetFileSuffix,
-					},
-				);
-			files.push(...children);
-			continue;
-		}
+    if (file.isDirectory()) {
+      const children = await scanFiles({
+        dir: res,
+        targetFileSuffix: input.targetFileSuffix
+      })
+      files.push(...children)
+      continue
+    }
 
-		if (
-			file.name.endsWith(
-				input.targetFileSuffix,
-			)
-		) {
-			files.push(res);
-		}
-	}
+    if (file.name.endsWith(input.targetFileSuffix)) {
+      files.push(res)
+    }
+  }
 
-	return files;
+  return files
 }

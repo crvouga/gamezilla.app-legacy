@@ -1,1 +1,1 @@
-export * from './battleship-cover-art';
+export * from './battleship-cover-art'

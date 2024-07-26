@@ -1,3 +1,3 @@
-export * from './render';
-export * from './vdom';
-export * from './vdom-impl';
+export * from './render'
+export * from './vdom'
+export * from './vdom-impl'

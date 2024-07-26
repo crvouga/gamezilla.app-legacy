@@ -1,1 +1,1 @@
-export * from './minimax';
+export * from './minimax'

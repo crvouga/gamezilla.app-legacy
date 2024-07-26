@@ -1,1 +1,1 @@
-export * from './@/connect-four-ui/connect-four-cover-art';
+export * from './@/connect-four-ui/connect-four-cover-art'

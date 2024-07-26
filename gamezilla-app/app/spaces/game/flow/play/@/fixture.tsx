@@ -1,155 +1,110 @@
-import {NonEmpty, PubSub} from 'gamezilla-app/@/core';
-import type {WithEventMeta} from 'gamezilla-app/app/spaces/@/event';
-import {SpaceCoreFixture} from 'gamezilla-app/app/spaces/@/testing/core';
-import {FlowClientFixture} from '../../@/testing';
-import {PlayClient} from '../play.client';
-import {PlayCore} from '../play.core';
-import type {ModelCore, MsgClient, MsgCore, MsgToClient} from '../play.types';
+import { NonEmpty, PubSub } from 'gamezilla-app/@/core'
+import type { WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import { SpaceCoreFixture } from 'gamezilla-app/app/spaces/@/testing/core'
+import { FlowClientFixture } from '../../@/testing'
+import { PlayClient } from '../play.client'
+import { PlayCore } from '../play.core'
+import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../play.types'
 
 export type FixtureUpdateInput = {
-	msg?: MsgClient;
-	msgServer?: MsgToClient;
-	msgCore?: WithEventMeta<MsgCore>;
-};
+  msg?: MsgClient
+  msgServer?: MsgToClient
+  msgCore?: WithEventMeta<MsgCore>
+}
 
 export const FixtureFlowPlayClient = async () => {
-	const f = await FlowClientFixture();
-	const initCore = PlayCore.initCore(f);
+  const f = await FlowClientFixture()
+  const initCore = PlayCore.initCore(f)
 
-	type Output = ReturnType<typeof PlayClient.update> & {
-		modelCore: ModelCore;
-	};
+  type Output = ReturnType<typeof PlayClient.update> & {
+    modelCore: ModelCore
+  }
 
-	const render = (output: Output, ctx: typeof f.ctx = f.ctx) => {
-		const msgs = PubSub.create<MsgClient>();
-		const rendered = f.render(
-			<PlayClient.View
-				ctx={ctx}
-				dispatch={
-					msgs.pub
-				}
-				model={
-					output.model
-				}
-				modelCore={
-					output.modelCore
-				}
-			/>,
-		);
-		return {...rendered, msgs};
-	};
+  const render = (output: Output, ctx: typeof f.ctx = f.ctx) => {
+    const msgs = PubSub.create<MsgClient>()
+    const rendered = f.render(
+      <PlayClient.View ctx={ctx} dispatch={msgs.pub} model={output.model} modelCore={output.modelCore} />
+    )
+    return { ...rendered, msgs }
+  }
 
-	const updates = (
-		output: Output,
-		inputs: FixtureUpdateInput[],
-	): NonEmpty<Output> => {
-		const outputs: NonEmpty<Output> = [output];
-		for (const input of inputs) {
-			const lastOutput =
-				NonEmpty.last(
-					outputs,
-				);
-			const nextOutput =
-				PlayClient.update(
-					{
-						model: lastOutput.model,
-						ctx: f.ctx,
-						modelCore: lastOutput.modelCore,
-						...input,
-					},
-				);
-			const msgCore = [
-				...(input.msgCore
-					? [
-							input.msgCore,
-					  ]
-					: []),
-				...(nextOutput.msgCore ??
-					[]),
-			].flat(2);
-			const nextModelCore =
-				msgCore.reduce(
-					(
-						modelCore,
-						msgCore,
-					) =>
-						PlayCore.updateCore(
-							{
-								ctx: f.ctx,
-								modelCore,
-								msgCore,
-							},
-						),
-					lastOutput.modelCore,
-				);
-			outputs.push({
-				...nextOutput,
-				modelCore: nextModelCore,
-			});
-		}
-		return outputs;
-	};
+  const updates = (output: Output, inputs: FixtureUpdateInput[]): NonEmpty<Output> => {
+    const outputs: NonEmpty<Output> = [output]
+    for (const input of inputs) {
+      const lastOutput = NonEmpty.last(outputs)
+      const nextOutput = PlayClient.update({
+        model: lastOutput.model,
+        ctx: f.ctx,
+        modelCore: lastOutput.modelCore,
+        ...input
+      })
+      const msgCore = [...(input.msgCore ? [input.msgCore] : []), ...(nextOutput.msgCore ?? [])].flat(2)
+      const nextModelCore = msgCore.reduce(
+        (modelCore, msgCore) =>
+          PlayCore.updateCore({
+            ctx: f.ctx,
+            modelCore,
+            msgCore
+          }),
+        lastOutput.modelCore
+      )
+      outputs.push({
+        ...nextOutput,
+        modelCore: nextModelCore
+      })
+    }
+    return outputs
+  }
 
-	const update = (
-		output: Output,
-		msgs: FixtureUpdateInput[],
-	): Output => {
-		return NonEmpty.last(updates(output, msgs));
-	};
+  const update = (output: Output, msgs: FixtureUpdateInput[]): Output => {
+    return NonEmpty.last(updates(output, msgs))
+  }
 
-	const initial: Output = {
-		model: PlayClient.init,
-		modelCore: initCore,
-	};
+  const initial: Output = {
+    model: PlayClient.init,
+    modelCore: initCore
+  }
 
-	return {
-		...f,
-		initial,
-		render,
-		update,
-		updates,
-	};
-};
+  return {
+    ...f,
+    initial,
+    render,
+    update,
+    updates
+  }
+}
 
 export const CoreFixture = async () => {
-	const f = await SpaceCoreFixture();
+  const f = await SpaceCoreFixture()
 
-	const updates = (
-		modelCore: ModelCore,
-		msgs: MsgCore[],
-	): NonEmpty<ModelCore> => {
-		const [msgCore, ...rest] = msgs;
+  const updates = (modelCore: ModelCore, msgs: MsgCore[]): NonEmpty<ModelCore> => {
+    const [msgCore, ...rest] = msgs
 
-		if (!msgCore) {
-			return [modelCore];
-		}
+    if (!msgCore) {
+      return [modelCore]
+    }
 
-		const updated = PlayCore.updateCore({
-			ctx: f.ctx,
-			modelCore,
-			msgCore,
-		});
+    const updated = PlayCore.updateCore({
+      ctx: f.ctx,
+      modelCore,
+      msgCore
+    })
 
-		return [modelCore, ...updates(updated, rest)];
-	};
+    return [modelCore, ...updates(updated, rest)]
+  }
 
-	const update = (
-		modelCore: ModelCore,
-		msgCore: MsgCore[],
-	): ModelCore => {
-		return NonEmpty.last(
-			updates(modelCore, msgCore),
-		);
-	};
+  const update = (modelCore: ModelCore, msgCore: MsgCore[]): ModelCore => {
+    return NonEmpty.last(updates(modelCore, msgCore))
+  }
 
-	const init = PlayCore.initCore({
-		ctx: f.ctx,
-	});
+  const init = PlayCore.initCore({
+    ctx: f.ctx
+  })
 
-	return {
-		init,
-		f,
-		updates,
-		update,
-	};
-};
+  return {
+    init,
+    f,
+    updates,
+    update
+  }
+}

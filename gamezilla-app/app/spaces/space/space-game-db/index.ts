@@ -1,2 +1,2 @@
-export * from './space-game-db';
-export * from './space-game-db-impl';
+export * from './space-game-db'
+export * from './space-game-db-impl'

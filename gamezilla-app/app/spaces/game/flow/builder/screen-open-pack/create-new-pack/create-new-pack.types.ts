@@ -1,7 +1,7 @@
-import {UserId} from 'gamezilla-app/app/@/data';
-import {type RemoteResult, Result, NotAsked} from 'gamezilla-app/@/core';
-import {p} from 'gamezilla-app/@/core/parser';
-import {FlowPack} from '../../../@/flow-pack/flow-pack';
+import { UserId } from 'gamezilla-app/app/@/data'
+import { type RemoteResult, Result, NotAsked } from 'gamezilla-app/@/core'
+import { p } from 'gamezilla-app/@/core/parser'
+import { FlowPack } from '../../../@/flow-pack/flow-pack'
 
 //
 //
@@ -10,14 +10,14 @@ import {FlowPack} from '../../../@/flow-pack/flow-pack';
 //
 
 export type ModelClient = {
-	packCreateNewRequest: RemoteResult<string, null>;
-};
+  packCreateNewRequest: RemoteResult<string, null>
+}
 
 export const initClient: ModelClient = {
-	packCreateNewRequest: NotAsked,
-};
+  packCreateNewRequest: NotAsked
+}
 
-export type ModelServer = Record<string, unknown>;
+export type ModelServer = Record<string, unknown>
 
 //
 //
@@ -25,19 +25,19 @@ export type ModelServer = Record<string, unknown>;
 //
 
 export type MsgClient = {
-	t: 'pack-create-new.clicked-create-button';
-};
+  t: 'pack-create-new.clicked-create-button'
+}
 
-export type MsgToServer = {t: 'pack-create-new.clicked-create-button'};
+export type MsgToServer = { t: 'pack-create-new.clicked-create-button' }
 
 export type MsgServer = {
-	t: 'noop';
-};
+  t: 'noop'
+}
 
 export type MsgToClient = {
-	t: 'pack-create-new.created-pack';
-	created: Result<string, FlowPack>;
-};
+  t: 'pack-create-new.created-pack'
+  created: Result<string, FlowPack>
+}
 
 //
 //
@@ -46,11 +46,11 @@ export type MsgToClient = {
 //
 
 export const MsgCore = p.obj({
-	t: p.l('user-created-pack'),
-	created: Result.parser(p.str, FlowPack),
-	userId: UserId,
-});
+  t: p.l('user-created-pack'),
+  created: Result.parser(p.str, FlowPack),
+  userId: UserId
+})
 
-export type MsgCore = p.Infer<typeof MsgCore>;
+export type MsgCore = p.Infer<typeof MsgCore>
 
-export const ModelCore = p.obj({});
+export const ModelCore = p.obj({})

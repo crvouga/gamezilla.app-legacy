@@ -1,130 +1,75 @@
-import {Ok, isErr} from 'gamezilla-app/@/core';
-import type {IFlowPuzzleDb} from './flow-puzzle-db';
-import {FlowAlgoSolveAsync} from '../../flow/flow-aglo/flow-algo-solve-async';
+import { Ok, isErr } from 'gamezilla-app/@/core'
+import type { IFlowPuzzleDb } from './flow-puzzle-db'
+import { FlowAlgoSolveAsync } from '../../flow/flow-aglo/flow-algo-solve-async'
 
-export const SKIP_QUERIES = true;
+export const SKIP_QUERIES = true
 
 export const WithSolutions = (flowPuzzleDb: IFlowPuzzleDb): IFlowPuzzleDb => {
-	return {
-		...flowPuzzleDb,
-		async list(input) {
-			const listed =
-				await flowPuzzleDb.list(
-					input,
-				);
+  return {
+    ...flowPuzzleDb,
+    async list(input) {
+      const listed = await flowPuzzleDb.list(input)
 
-			if (SKIP_QUERIES) {
-				return listed;
-			}
+      if (SKIP_QUERIES) {
+        return listed
+      }
 
-			if (isErr(listed))
-				return listed;
+      if (isErr(listed)) return listed
 
-			const promises =
-				listed.value.items.map(
-					async (
-						puzzle,
-					) => {
-						if (
-							puzzle
-								.flowSolutions
-								.length >
-							0
-						)
-							return puzzle;
+      const promises = listed.value.items.map(async (puzzle) => {
+        if (puzzle.flowSolutions.length > 0) return puzzle
 
-						const solution =
-							await FlowAlgoSolveAsync.solve(
-								puzzle.flow,
-							);
+        const solution = await FlowAlgoSolveAsync.solve(puzzle.flow)
 
-						if (
-							!solution
-						)
-							return puzzle;
+        if (!solution) return puzzle
 
-						const withSolution: typeof puzzle =
-							{
-								...puzzle,
-								flowSolutions: [
-									solution,
-								],
-							};
+        const withSolution: typeof puzzle = {
+          ...puzzle,
+          flowSolutions: [solution]
+        }
 
-						return withSolution;
-					},
-				);
+        return withSolution
+      })
 
-			const awaited =
-				await Promise.all(
-					promises,
-				);
+      const awaited = await Promise.all(promises)
 
-			return Ok({
-				...listed.value,
-				items: awaited,
-			});
-		},
-		async get(id) {
-			const got =
-				await flowPuzzleDb.get(
-					id,
-				);
+      return Ok({
+        ...listed.value,
+        items: awaited
+      })
+    },
+    async get(id) {
+      const got = await flowPuzzleDb.get(id)
 
-			if (SKIP_QUERIES) {
-				return got;
-			}
+      if (SKIP_QUERIES) {
+        return got
+      }
 
-			if (isErr(got)) return got;
+      if (isErr(got)) return got
 
-			if (!got.value) return got;
+      if (!got.value) return got
 
-			if (
-				got.value
-					.flowSolutions
-					.length >
-				0
-			)
-				return got;
+      if (got.value.flowSolutions.length > 0) return got
 
-			const solution =
-				await FlowAlgoSolveAsync.solve(
-					got
-						.value
-						.flow,
-				);
+      const solution = await FlowAlgoSolveAsync.solve(got.value.flow)
 
-			if (!solution) return got;
+      if (!solution) return got
 
-			const withSolution: typeof got.value =
-				{
-					...got.value,
-					flowSolutions: [
-						solution,
-					],
-				};
+      const withSolution: typeof got.value = {
+        ...got.value,
+        flowSolutions: [solution]
+      }
 
-			return Ok(withSolution);
-		},
-		async put(puzzle) {
-			const solution =
-				await FlowAlgoSolveAsync.solve(
-					puzzle.flow,
-				);
-			const withSolution: typeof puzzle =
-				{
-					...puzzle,
-					flowSolutions: solution
-						? [
-								solution,
-						  ]
-						: [],
-				};
-			const output =
-				await flowPuzzleDb.put(
-					withSolution,
-				);
-			return output;
-		},
-	};
-};
+      return Ok(withSolution)
+    },
+    async put(puzzle) {
+      const solution = await FlowAlgoSolveAsync.solve(puzzle.flow)
+      const withSolution: typeof puzzle = {
+        ...puzzle,
+        flowSolutions: solution ? [solution] : []
+      }
+      const output = await flowPuzzleDb.put(withSolution)
+      return output
+    }
+  }
+}

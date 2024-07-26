@@ -1,71 +1,43 @@
-import * as FlowGridShorthand from './flow-grid-shorthand';
+import * as FlowGridShorthand from './flow-grid-shorthand'
 
-const LETTER_MAP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' as const;
+const LETTER_MAP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' as const
 
-export const numberStringToShorthand = (
-	input: string,
-): FlowGridShorthand.Model => {
-	const lines = input
-		.trim()
-		.split('\n')
-		.map((line) => line.trim());
-	const rows = lines.length;
-	const cols = lines[0]?.length ?? 0;
+export const numberStringToShorthand = (input: string): FlowGridShorthand.Model => {
+  const lines = input
+    .trim()
+    .split('\n')
+    .map((line) => line.trim())
+  const rows = lines.length
+  const cols = lines[0]?.length ?? 0
 
-	const shorthand: FlowGridShorthand.Element[][] = Array.from(
-		{length: rows},
-		() => Array(cols).fill(' '),
-	);
+  const shorthand: FlowGridShorthand.Element[][] = Array.from({ length: rows }, () => Array(cols).fill(' '))
 
-	for (let i = 0; i < rows; i++) {
-		for (let j = 0; j < cols; j++) {
-			const cell = lines[i]?.[j];
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const cell = lines[i]?.[j]
 
-			if (
-				!cell ||
-				cell === ' ' ||
-				cell === '.'
-			) {
-				// @ts-ignore
-				shorthand[i][
-					j
-				] = ' ';
-				continue;
-			}
+      if (!cell || cell === ' ' || cell === '.') {
+        // @ts-ignore
+        shorthand[i][j] = ' '
+        continue
+      }
 
-			const cellNumber = parseInt(
-				cell,
-				10,
-			);
+      const cellNumber = parseInt(cell, 10)
 
-			if (
-				isNaN(
-					cellNumber,
-				) ||
-				cellNumber <
-					1 ||
-				cellNumber >
-					LETTER_MAP.length
-			) {
-				// @ts-ignore
-				shorthand[i][
-					j
-				] = ' ';
-				continue;
-			}
+      if (isNaN(cellNumber) || cellNumber < 1 || cellNumber > LETTER_MAP.length) {
+        // @ts-ignore
+        shorthand[i][j] = ' '
+        continue
+      }
 
-			const letter =
-				LETTER_MAP[
-					cellNumber -
-						1
-				];
-			// @ts-ignore
-			shorthand[i][j] = letter;
-		}
-	}
+      const letter = LETTER_MAP[cellNumber - 1]
+      // @ts-ignore
+      shorthand[i][j] = letter
+    }
+  }
 
-	if (FlowGridShorthand.isModel(shorthand)) {
-		return shorthand;
-	}
-	return [[' ']];
-};
+  if (FlowGridShorthand.isModel(shorthand)) {
+    return shorthand
+  }
+  return [[' ']]
+}

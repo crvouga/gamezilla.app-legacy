@@ -1,173 +1,99 @@
-import {describe, expect, it} from 'bun:test';
-import {andThen} from 'gamezilla-app/app/@/architecture/app-client';
+import { describe, expect, it } from 'bun:test'
+import { andThen } from 'gamezilla-app/app/@/architecture/app-client'
+import { didPlaySound, didPushRoute, didShowToast } from 'gamezilla-app/app/@/client'
+import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import {
-	didPlaySound,
-	didPushRoute,
-	didShowToast,
-} from 'gamezilla-app/app/@/client';
-import {SpaceId, UserId} from 'gamezilla-app/app/@/data';
-import {
-	Ctx,
-	clickedLeaveSpaceButton,
-	init,
-	userJoinedSpace,
-	userLeftSpace,
-	userStartedSpace,
-} from '../@/testing/client';
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client';
+  Ctx,
+  clickedLeaveSpaceButton,
+  init,
+  userJoinedSpace,
+  userLeftSpace,
+  userStartedSpace
+} from '../@/testing/client'
+import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
 
 describe(import.meta.file, () => {
-	it('should navigate to list screen after leaving space', () => {
-		const ctx = Ctx();
-		const spaceId = SpaceId.generate();
+  it('should navigate to list screen after leaving space', () => {
+    const ctx = Ctx()
+    const spaceId = SpaceId.generate()
 
-		const joined = andThen(
-			init(ctx),
-			userStartedSpace(
-				ctx,
-				UserId.generate(),
-				spaceId,
-			),
-			userJoinedSpace(
-				ctx,
-				ctx.currentUserId,
-				spaceId,
-			),
-		);
+    const joined = andThen(
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(ctx, ctx.currentUserId, spaceId)
+    )
 
-		const output = andThen(
-			joined,
-			userLeftSpace(
-				ctx,
-				ctx.currentUserId,
-				spaceId,
-			),
-		);
+    const output = andThen(joined, userLeftSpace(ctx, ctx.currentUserId, spaceId))
 
-		expect(
-			didPushRoute(
-				output,
-				(x) =>
-					x.t ===
-					'space-list',
-			),
-		).toBe(true);
-	});
+    expect(didPushRoute(output, (x) => x.t === 'space-list')).toBe(true)
+  })
 
-	it('should only redirect to list screen for the user leaving the space', () => {
-		const ctx = Ctx();
-		const spaceId = SpaceId.generate();
-		const userId = UserId.generate();
+  it('should only redirect to list screen for the user leaving the space', () => {
+    const ctx = Ctx()
+    const spaceId = SpaceId.generate()
+    const userId = UserId.generate()
 
-		const joined = andThen(
-			init(ctx),
-			userStartedSpace(
-				ctx,
-				ctx.currentUserId,
-				spaceId,
-			),
-			userJoinedSpace(
-				ctx,
-				userId,
-				spaceId,
-			),
-		);
+    const joined = andThen(
+      init(ctx),
+      userStartedSpace(ctx, ctx.currentUserId, spaceId),
+      userJoinedSpace(ctx, userId, spaceId)
+    )
 
-		const output = andThen(
-			{
-				model: joined.model,
-			},
-			userLeftSpace(
-				ctx,
-				userId,
-				spaceId,
-			),
-		);
+    const output = andThen(
+      {
+        model: joined.model
+      },
+      userLeftSpace(ctx, userId, spaceId)
+    )
 
-		expect(didPushRoute(output)).toBe(false);
-	});
+    expect(didPushRoute(output)).toBe(false)
+  })
 
-	it('should show some toast after leaving a space', () => {
-		const ctx = Ctx();
-		const spaceId = SpaceId.generate();
+  it('should show some toast after leaving a space', () => {
+    const ctx = Ctx()
+    const spaceId = SpaceId.generate()
 
-		const joined = andThen(
-			init(ctx),
-			userStartedSpace(
-				ctx,
-				UserId.generate(),
-				spaceId,
-			),
-			userJoinedSpace(
-				ctx,
-				ctx.currentUserId,
-				spaceId,
-			),
-		);
+    const joined = andThen(
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(ctx, ctx.currentUserId, spaceId)
+    )
 
-		const output = andThen(
-			{
-				model: joined.model,
-			},
-			userLeftSpace(
-				ctx,
-				ctx.currentUserId,
-				spaceId,
-			),
-		);
+    const output = andThen(
+      {
+        model: joined.model
+      },
+      userLeftSpace(ctx, ctx.currentUserId, spaceId)
+    )
 
-		expect(didShowToast(output)).toBe(true);
-	});
+    expect(didShowToast(output)).toBe(true)
+  })
 
-	it('user is not in space after leaving', () => {
-		const ctx = Ctx();
-		const spaceId = SpaceId.generate();
-		const updated = andThen(
-			init(ctx),
-			userStartedSpace(
-				ctx,
-				UserId.generate(),
-				spaceId,
-			),
-			userJoinedSpace(
-				ctx,
-				ctx.currentUserId,
-				spaceId,
-			),
-			clickedLeaveSpaceButton(ctx),
-		);
+  it('user is not in space after leaving', () => {
+    const ctx = Ctx()
+    const spaceId = SpaceId.generate()
+    const updated = andThen(
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(ctx, ctx.currentUserId, spaceId),
+      clickedLeaveSpaceButton(ctx)
+    )
 
-		expect(
-			SpacesCoreClient.toSpaceIdByUserId(
-				updated.model,
-				ctx.currentUserId,
-			),
-		).toEqual(null);
-	});
+    expect(SpacesCoreClient.toSpaceIdByUserId(updated.model, ctx.currentUserId)).toEqual(null)
+  })
 
-	it('should play sound after leaving', () => {
-		const ctx = Ctx();
-		const spaceId = SpaceId.generate();
+  it('should play sound after leaving', () => {
+    const ctx = Ctx()
+    const spaceId = SpaceId.generate()
 
-		const joined = andThen(
-			init(ctx),
-			userStartedSpace(
-				ctx,
-				UserId.generate(),
-				spaceId,
-			),
-			userJoinedSpace(
-				ctx,
-				ctx.currentUserId,
-				spaceId,
-			),
-		);
+    const joined = andThen(
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(ctx, ctx.currentUserId, spaceId)
+    )
 
-		const left = andThen(
-			joined,
-			clickedLeaveSpaceButton(ctx),
-		);
+    const left = andThen(joined, clickedLeaveSpaceButton(ctx))
 
-		expect(didPlaySound(left)).toBe(true);
-	});
-});
+    expect(didPlaySound(left)).toBe(true)
+  })
+})

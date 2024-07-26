@@ -1,110 +1,82 @@
-import {describe, expect, it} from 'bun:test';
-import {Result} from 'gamezilla-app/@/core';
-import {withId} from 'gamezilla-app/app/spaces/@/event';
-import {FlowPuzzle} from '../../@/flow-puzzle';
-import {FlowCreateFixtureServer} from '../@/testing/server';
-import type {ModelCore, MsgCore} from '../builder.types';
-import {ScreenPackBuilderCore} from './screen-pack-builder.core';
-import {ScreenPackBuilderServer} from './screen-pack-builder.server';
-import {FlowPack} from '../../@/flow-pack';
+import { describe, expect, it } from 'bun:test'
+import { Result } from 'gamezilla-app/@/core'
+import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { FlowPuzzle } from '../../@/flow-puzzle'
+import { FlowCreateFixtureServer } from '../@/testing/server'
+import type { ModelCore, MsgCore } from '../builder.types'
+import { ScreenPackBuilderCore } from './screen-pack-builder.core'
+import { ScreenPackBuilderServer } from './screen-pack-builder.server'
+import { FlowPack } from '../../@/flow-pack'
 
 const Fixture = async () => {
-	const f = await FlowCreateFixtureServer();
-	const puzzle = await FlowPuzzle.random();
-	const pack = await FlowPack.random({
-		createdBy: puzzle.createdBy,
-		puzzleIds: [puzzle.id],
-	});
-	await f.deps.flowPackDb.put(pack);
-	await f.deps.flowPuzzleDb.put(puzzle);
-	const modelCore: ModelCore = {
-		...f.modelCore,
-		packBuilder: ScreenPackBuilderCore.init({
-			pack,
-		}),
-	};
-	return {
-		...f,
-		pack,
-		modelCore,
-	};
-};
+  const f = await FlowCreateFixtureServer()
+  const puzzle = await FlowPuzzle.random()
+  const pack = await FlowPack.random({
+    createdBy: puzzle.createdBy,
+    puzzleIds: [puzzle.id]
+  })
+  await f.deps.flowPackDb.put(pack)
+  await f.deps.flowPuzzleDb.put(puzzle)
+  const modelCore: ModelCore = {
+    ...f.modelCore,
+    packBuilder: ScreenPackBuilderCore.init({
+      pack
+    })
+  }
+  return {
+    ...f,
+    pack,
+    modelCore
+  }
+}
 
 describe(import.meta.file, () => {
-	it('should save pack after user adds a new puzzle', async () => {
-		const f = await Fixture();
+  it('should save pack after user adds a new puzzle', async () => {
+    const f = await Fixture()
 
-		const puzzle = await FlowPuzzle.random();
+    const puzzle = await FlowPuzzle.random()
 
-		const msgCore = withId<MsgCore>({
-			t: 'pack-builder.user-clicked-add-puzzle-item',
-			puzzle: puzzle,
-			userId: puzzle.createdBy,
-		});
+    const msgCore = withId<MsgCore>({
+      t: 'pack-builder.user-clicked-add-puzzle-item',
+      puzzle: puzzle,
+      userId: puzzle.createdBy
+    })
 
-		const modelCoreNew =
-			ScreenPackBuilderCore.update({
-				ctx: f.ctx,
-				modelCore: f.modelCore,
-				msgCore,
-			});
+    const modelCoreNew = ScreenPackBuilderCore.update({
+      ctx: f.ctx,
+      modelCore: f.modelCore,
+      msgCore
+    })
 
-		const updated =
-			await ScreenPackBuilderServer.update(
-				{
-					...f,
-					modelCore: modelCoreNew,
-					msgCore,
-				},
-			);
+    const updated = await ScreenPackBuilderServer.update({
+      ...f,
+      modelCore: modelCoreNew,
+      msgCore
+    })
 
-		expect(
-			updated.msgCore?.some(
-				(msgCore) =>
-					msgCore.t ===
-						'pack-builder.saved-pack' &&
-					msgCore
-						.saved
-						.t ===
-						'ok',
-			),
-		).toBe(true);
-	});
+    expect(
+      updated.msgCore?.some((msgCore) => msgCore.t === 'pack-builder.saved-pack' && msgCore.saved.t === 'ok')
+    ).toBe(true)
+  })
 
-	it('should save pack after user removes puzzle from it', async () => {
-		const f = await Fixture();
+  it('should save pack after user removes puzzle from it', async () => {
+    const f = await Fixture()
 
-		await ScreenPackBuilderServer.update({
-			...f,
-			msgCore: withId({
-				t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
-				puzzleIndex: 0,
-				userId: f.pack
-					.createdBy,
-			}),
-		});
+    await ScreenPackBuilderServer.update({
+      ...f,
+      msgCore: withId({
+        t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+        puzzleIndex: 0,
+        userId: f.pack.createdBy
+      })
+    })
 
-		const before = f.pack;
-		const after = Result.withDefault(
-			await f.deps.flowPackDb.get(
-				f.pack.id,
-			),
-			null,
-		);
+    const before = f.pack
+    const after = Result.withDefault(await f.deps.flowPackDb.get(f.pack.id), null)
 
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		expect(
-			before.puzzleIds.includes(
-				f.pack
-					.puzzleIds[0]!,
-			),
-		).toBe(true);
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		expect(
-			after?.puzzleIds.includes(
-				f.pack
-					.puzzleIds[0]!,
-			),
-		).toBe(false);
-	});
-});
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    expect(before.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(true)
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    expect(after?.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(false)
+  })
+})

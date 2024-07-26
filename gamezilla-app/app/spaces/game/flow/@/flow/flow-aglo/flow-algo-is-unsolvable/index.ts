@@ -1,1 +1,1 @@
-export * as FlowAlgoIsUnsolvable from './flow-algo-is-unsolvable';
+export * as FlowAlgoIsUnsolvable from './flow-algo-is-unsolvable'

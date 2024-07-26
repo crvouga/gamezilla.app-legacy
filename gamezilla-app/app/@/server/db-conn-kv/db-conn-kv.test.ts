@@ -1,299 +1,193 @@
-import {describe, expect, it} from 'bun:test';
-import {Ok, Result, TimeSpan, Uuid} from 'gamezilla-app/@/core';
-import {p} from 'gamezilla-app/@/core/parser';
-import {Logger} from '../logger';
-import {AppServerTestEnv} from '../server-test-env';
-import {DbConnKv} from './db-conn-kv-impl';
+import { describe, expect, it } from 'bun:test'
+import { Ok, Result, TimeSpan, Uuid } from 'gamezilla-app/@/core'
+import { p } from 'gamezilla-app/@/core/parser'
+import { Logger } from '../logger'
+import { AppServerTestEnv } from '../server-test-env'
+import { DbConnKv } from './db-conn-kv-impl'
 
 const Fixture = async () => {
-	const testEnv = await AppServerTestEnv();
-	const logger = Logger({t: 'noop'});
-	switch (testEnv.t) {
-		case 'integration': {
-			const dbConnKv =
-				testEnv.dbConnKv;
+  const testEnv = await AppServerTestEnv()
+  const logger = Logger({ t: 'noop' })
+  switch (testEnv.t) {
+    case 'integration': {
+      const dbConnKv = testEnv.dbConnKv
 
-			return {
-				logger,
-				dbConnKv,
-			};
-		}
+      return {
+        logger,
+        dbConnKv
+      }
+    }
 
-		case 'unit': {
-			const dbConnKv = await DbConnKv(
-				{
-					t: 'hash-map',
-				},
-			);
+    case 'unit': {
+      const dbConnKv = await DbConnKv({
+        t: 'hash-map'
+      })
 
-			return {
-				logger,
-				dbConnKv,
-			};
-		}
-	}
-};
+      return {
+        logger,
+        dbConnKv
+      }
+    }
+  }
+}
 
 type Implementation = {
-	name: string;
-	Fixture: () => ReturnType<typeof Fixture>;
-};
+  name: string
+  Fixture: () => ReturnType<typeof Fixture>
+}
 
 const implementations: Implementation[] = [
-	{
-		name: 'base',
-		Fixture,
-	},
-	{
-		name: 'with-cache',
-		async Fixture() {
-			const f = await Fixture();
-			return {
-				...f,
-				dbConnKv: DbConnKv.withCache(
-					{
-						cache: await DbConnKv(
-							{
-								t: 'hash-map',
-							},
-						),
-						source: f.dbConnKv,
-						logger: f.logger,
-					},
-				),
-			};
-		},
-	},
-	{
-		name: 'with-reduced-parsing',
-		async Fixture() {
-			const f = await Fixture();
-			return {
-				...f,
-				dbConnKv: DbConnKv.withReducedParsing(
-					{
-						dbConnKv: f.dbConnKv,
-						verifiedKeys: new Set(),
-					},
-				),
-			};
-		},
-	},
-	{
-		name: 'with-throttled-writes-to-source',
-		async Fixture() {
-			const f = await Fixture();
-			return {
-				...f,
-				dbConnKv: DbConnKv.withCache(
-					{
-						cache: await DbConnKv(
-							{
-								t: 'hash-map',
-							},
-						),
-						source: DbConnKv.withThrottledWrites(
-							{
-								dbConnKv: f.dbConnKv,
-								logger: f.logger,
-								throttle: TimeSpan.seconds(
-									10,
-								),
-							},
-						),
-						logger: f.logger,
-					},
-				),
-			};
-		},
-	},
-];
+  {
+    name: 'base',
+    Fixture
+  },
+  {
+    name: 'with-cache',
+    async Fixture() {
+      const f = await Fixture()
+      return {
+        ...f,
+        dbConnKv: DbConnKv.withCache({
+          cache: await DbConnKv({
+            t: 'hash-map'
+          }),
+          source: f.dbConnKv,
+          logger: f.logger
+        })
+      }
+    }
+  },
+  {
+    name: 'with-reduced-parsing',
+    async Fixture() {
+      const f = await Fixture()
+      return {
+        ...f,
+        dbConnKv: DbConnKv.withReducedParsing({
+          dbConnKv: f.dbConnKv,
+          verifiedKeys: new Set()
+        })
+      }
+    }
+  },
+  {
+    name: 'with-throttled-writes-to-source',
+    async Fixture() {
+      const f = await Fixture()
+      return {
+        ...f,
+        dbConnKv: DbConnKv.withCache({
+          cache: await DbConnKv({
+            t: 'hash-map'
+          }),
+          source: DbConnKv.withThrottledWrites({
+            dbConnKv: f.dbConnKv,
+            logger: f.logger,
+            throttle: TimeSpan.seconds(10)
+          }),
+          logger: f.logger
+        })
+      }
+    }
+  }
+]
 
-const Item = p.obj({id: p.str});
+const Item = p.obj({ id: p.str })
 
-type Item = p.Infer<typeof Item>;
+type Item = p.Infer<typeof Item>
 
 const randomItem = (): Item => {
-	return {
-		id: Uuid.generate(),
-	};
-};
+  return {
+    id: Uuid.generate()
+  }
+}
 
 const normalizeItemArray = (items: Item[]): Item[] => {
-	return items.sort((a, b) => a.id.localeCompare(b.id));
-};
+  return items.sort((a, b) => a.id.localeCompare(b.id))
+}
 
-const normalizeItemArrayResult = <T>(
-	result: Result<T, Item[]>,
-): Result<T, Item[]> => {
-	return Result.mapOk(result, normalizeItemArray);
-};
+const normalizeItemArrayResult = <T>(result: Result<T, Item[]>): Result<T, Item[]> => {
+  return Result.mapOk(result, normalizeItemArray)
+}
 
-for (const {name, Fixture} of implementations) {
-	describe(`${import.meta.file} ${name}`, () => {
-		it('should set correctly', async () => {
-			const f = await Fixture();
+for (const { name, Fixture } of implementations) {
+  describe(`${import.meta.file} ${name}`, () => {
+    it('should set correctly', async () => {
+      const f = await Fixture()
 
-			const item = randomItem();
+      const item = randomItem()
 
-			const before =
-				await f.dbConnKv.get(
-					item.id,
-					Item,
-				);
-			await f.dbConnKv.set(
-				item.id,
-				item,
-			);
-			const after =
-				await f.dbConnKv.get(
-					item.id,
-					Item,
-				);
+      const before = await f.dbConnKv.get(item.id, Item)
+      await f.dbConnKv.set(item.id, item)
+      const after = await f.dbConnKv.get(item.id, Item)
 
-			expect(before).toEqual(
-				Ok(null),
-			);
-			expect(after).toEqual(Ok(item));
-		});
+      expect(before).toEqual(Ok(null))
+      expect(after).toEqual(Ok(item))
+    })
 
-		it('should set many correctly', async () => {
-			const f = await Fixture();
+    it('should set many correctly', async () => {
+      const f = await Fixture()
 
-			const items = [
-				randomItem(),
-				randomItem(),
-				randomItem(),
-			];
+      const items = [randomItem(), randomItem(), randomItem()]
 
-			const before =
-				await f.dbConnKv.getMany(
-					items.map(
-						(
-							item,
-						) =>
-							item.id,
-					),
-					Item,
-				);
+      const before = await f.dbConnKv.getMany(
+        items.map((item) => item.id),
+        Item
+      )
 
-			await f.dbConnKv.setMany(
-				items.map(
-					(
-						item,
-					) => [
-						item.id,
-						item,
-					],
-				),
-			);
+      await f.dbConnKv.setMany(items.map((item) => [item.id, item]))
 
-			const after =
-				await f.dbConnKv.getMany(
-					items.map(
-						(
-							item,
-						) =>
-							item.id,
-					),
-					Item,
-				);
+      const after = await f.dbConnKv.getMany(
+        items.map((item) => item.id),
+        Item
+      )
 
-			expect(before).toEqual(Ok([]));
-			expect(
-				normalizeItemArrayResult(
-					after,
-				),
-			).toEqual(
-				normalizeItemArrayResult(
-					Ok(
-						items,
-					),
-				),
-			);
-		});
+      expect(before).toEqual(Ok([]))
+      expect(normalizeItemArrayResult(after)).toEqual(normalizeItemArrayResult(Ok(items)))
+    })
 
-		it('should get correctly', async () => {
-			const f = await Fixture();
+    it('should get correctly', async () => {
+      const f = await Fixture()
 
-			const item = randomItem();
+      const item = randomItem()
 
-			await f.dbConnKv.set(
-				item.id,
-				item,
-			);
+      await f.dbConnKv.set(item.id, item)
 
-			const got =
-				await f.dbConnKv.get(
-					item.id,
-					Item,
-				);
+      const got = await f.dbConnKv.get(item.id, Item)
 
-			expect(got).toEqual(Ok(item));
-		});
+      expect(got).toEqual(Ok(item))
+    })
 
-		it('should get many correctly', async () => {
-			const f = await Fixture();
+    it('should get many correctly', async () => {
+      const f = await Fixture()
 
-			const items = [
-				randomItem(),
-				randomItem(),
-				randomItem(),
-			];
+      const items = [randomItem(), randomItem(), randomItem()]
 
-			await f.dbConnKv.setMany(
-				items.map(
-					(
-						item,
-					) => [
-						item.id,
-						item,
-					],
-				),
-			);
+      await f.dbConnKv.setMany(items.map((item) => [item.id, item]))
 
-			const got =
-				await f.dbConnKv.getMany(
-					items.map(
-						(
-							item,
-						) =>
-							item.id,
-					),
-					Item,
-				);
+      const got = await f.dbConnKv.getMany(
+        items.map((item) => item.id),
+        Item
+      )
 
-			expect(got).toEqual(Ok(items));
-		});
+      expect(got).toEqual(Ok(items))
+    })
 
-		it('should zap items correctly', async () => {
-			const f = await Fixture();
+    it('should zap items correctly', async () => {
+      const f = await Fixture()
 
-			const item = randomItem();
+      const item = randomItem()
 
-			await f.dbConnKv.set(
-				item.id,
-				item,
-			);
+      await f.dbConnKv.set(item.id, item)
 
-			const before =
-				await f.dbConnKv.get(
-					item.id,
-					Item,
-				);
+      const before = await f.dbConnKv.get(item.id, Item)
 
-			await f.dbConnKv.zap(item.id);
+      await f.dbConnKv.zap(item.id)
 
-			const after =
-				await f.dbConnKv.get(
-					item.id,
-					Item,
-				);
+      const after = await f.dbConnKv.get(item.id, Item)
 
-			expect(before).toEqual(
-				Ok(item),
-			);
-			expect(after).toEqual(Ok(null));
-		});
-	});
+      expect(before).toEqual(Ok(item))
+      expect(after).toEqual(Ok(null))
+    })
+  })
 }

@@ -1,1 +1,1 @@
-export * as FlowEdit from './flow-edit';
+export * as FlowEdit from './flow-edit'

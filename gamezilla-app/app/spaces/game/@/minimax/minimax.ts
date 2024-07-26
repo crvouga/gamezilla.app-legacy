@@ -25,133 +25,81 @@ function alphabeta(node, depth, α, β, maximizingPlayer) is
 
 */
 
-export type ScoreFn<TState> = (
-	currentState: TState,
-	currentDepth: number,
-) => number;
+export type ScoreFn<TState> = (currentState: TState, currentDepth: number) => number
 
-export type ChildrenFn<TState> = (currentState: TState) => Iterable<TState>;
+export type ChildrenFn<TState> = (currentState: TState) => Iterable<TState>
 
 const findBestChildState = <TState>({
-	scoreFn,
-	childrenFn,
-	parentState,
-	maxDepth,
+  scoreFn,
+  childrenFn,
+  parentState,
+  maxDepth
 }: {
-	scoreFn: ScoreFn<TState>;
-	childrenFn: ChildrenFn<TState>;
-	parentState: TState;
-	maxDepth: number;
+  scoreFn: ScoreFn<TState>
+  childrenFn: ChildrenFn<TState>
+  parentState: TState
+  maxDepth: number
 }) => {
-	const calculateScore = (
-		currentState: TState,
-		currentDepth: number,
-		alpha: number,
-		beta: number,
-		isMaximizing: boolean,
-	): number => {
-		if (currentDepth >= maxDepth) {
-			return scoreFn(
-				currentState,
-				currentDepth,
-			);
-		}
+  const calculateScore = (
+    currentState: TState,
+    currentDepth: number,
+    alpha: number,
+    beta: number,
+    isMaximizing: boolean
+  ): number => {
+    if (currentDepth >= maxDepth) {
+      return scoreFn(currentState, currentDepth)
+    }
 
-		if (
-			Array.from(
-				childrenFn(
-					currentState,
-				),
-			).length === 0
-		) {
-			return scoreFn(
-				currentState,
-				currentDepth,
-			);
-		}
+    if (Array.from(childrenFn(currentState)).length === 0) {
+      return scoreFn(currentState, currentDepth)
+    }
 
-		if (isMaximizing) {
-			let value =
-				Number.NEGATIVE_INFINITY;
+    if (isMaximizing) {
+      let value = Number.NEGATIVE_INFINITY
 
-			for (const child of childrenFn(
-				currentState,
-			)) {
-				value =
-					Math.max(
-						value,
-						calculateScore(
-							child,
-							currentDepth +
-								1,
-							alpha,
-							beta,
-							false,
-						),
-					);
+      for (const child of childrenFn(currentState)) {
+        value = Math.max(value, calculateScore(child, currentDepth + 1, alpha, beta, false))
 
-				if (
-					value >=
-					beta
-				) {
-					break;
-				}
+        if (value >= beta) {
+          break
+        }
 
-				alpha =
-					Math.max(
-						alpha,
-						value,
-					);
-			}
+        alpha = Math.max(alpha, value)
+      }
 
-			return value;
-		}
+      return value
+    }
 
-		let value = Number.POSITIVE_INFINITY;
+    let value = Number.POSITIVE_INFINITY
 
-		for (const child of childrenFn(currentState)) {
-			value = Math.min(
-				value,
-				calculateScore(
-					child,
-					currentDepth +
-						1,
-					alpha,
-					beta,
-					true,
-				),
-			);
+    for (const child of childrenFn(currentState)) {
+      value = Math.min(value, calculateScore(child, currentDepth + 1, alpha, beta, true))
 
-			if (value <= alpha) {
-				break;
-			}
+      if (value <= alpha) {
+        break
+      }
 
-			beta = Math.min(beta, value);
-		}
+      beta = Math.min(beta, value)
+    }
 
-		return value;
-	};
+    return value
+  }
 
-	let bestChildState: TState | null = null;
-	let bestChildScore = Number.NEGATIVE_INFINITY;
-	for (const child of childrenFn(parentState)) {
-		const childScore = calculateScore(
-			child,
-			0,
-			Number.NEGATIVE_INFINITY,
-			Number.POSITIVE_INFINITY,
-			true,
-		);
+  let bestChildState: TState | null = null
+  let bestChildScore = Number.NEGATIVE_INFINITY
+  for (const child of childrenFn(parentState)) {
+    const childScore = calculateScore(child, 0, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, true)
 
-		if (childScore > bestChildScore) {
-			bestChildState = child;
-			bestChildScore = childScore;
-		}
-	}
+    if (childScore > bestChildScore) {
+      bestChildState = child
+      bestChildScore = childScore
+    }
+  }
 
-	return bestChildState;
-};
+  return bestChildState
+}
 
 export const Minimax = {
-	findBestChildState,
-};
+  findBestChildState
+}

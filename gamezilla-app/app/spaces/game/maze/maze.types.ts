@@ -1,14 +1,9 @@
-import type {UserId} from 'gamezilla-app/app/@/data';
-import {
-	type Keyboard,
-	type NonEmpty,
-	Result,
-	dissoc,
-} from 'gamezilla-app/@/core';
-import {Maze} from './@/maze';
-import {Direction, Position} from './@/position';
+import type { UserId } from 'gamezilla-app/app/@/data'
+import { type Keyboard, type NonEmpty, Result, dissoc } from 'gamezilla-app/@/core'
+import { Maze } from './@/maze'
+import { Direction, Position } from './@/position'
 
-const {Err, Ok} = Result;
+const { Err, Ok } = Result
 
 //
 //
@@ -18,49 +13,45 @@ const {Err, Ok} = Result;
 //
 //
 
-export type CoreModel = SetupModel;
+export type CoreModel = SetupModel
 
 export type SetupModel =
-	| {
-			type: 'setup';
-			players: {
-				[
-					userId: UserId
-				]: {
-					userId: UserId;
-					color: Color;
-				};
-			};
-			seed: string;
-			lower: Position;
-			upper: Position;
-	  }
-	| {
-			type: 'game';
-			players: {
-				[
-					userId: UserId
-				]: Player;
-			};
-			seed: string;
-			lower: Position;
-			upper: Position;
-	  };
+  | {
+      type: 'setup'
+      players: {
+        [userId: UserId]: {
+          userId: UserId
+          color: Color
+        }
+      }
+      seed: string
+      lower: Position
+      upper: Position
+    }
+  | {
+      type: 'game'
+      players: {
+        [userId: UserId]: Player
+      }
+      seed: string
+      lower: Position
+      upper: Position
+    }
 
 type Player = {
-	userId: UserId;
-	position: Position;
-	direction: Direction | 'none';
-	color: Color;
-};
+  userId: UserId
+  position: Position
+  direction: Direction | 'none'
+  color: Color
+}
 
-export type Color = 'Red' | 'Blue' | 'Green' | 'Purple' | 'Cyan' | 'Pink';
+export type Color = 'Red' | 'Blue' | 'Green' | 'Purple' | 'Cyan' | 'Pink'
 
-const colorSeq: NonEmpty<Color> = ['Red', 'Blue', 'Green', 'Purple'];
+const colorSeq: NonEmpty<Color> = ['Red', 'Blue', 'Green', 'Purple']
 
-export type ModelClient = CoreModel;
+export type ModelClient = CoreModel
 
-export type ModelServer = CoreModel;
+export type ModelServer = CoreModel
 
 //
 //
@@ -70,16 +61,13 @@ export type ModelServer = CoreModel;
 //
 //
 
-export type MsgClient =
-	| Req
-	| ['key-down', Keyboard.Key]
-	| ['key-up', Keyboard.Key];
+export type MsgClient = Req | ['key-down', Keyboard.Key] | ['key-up', Keyboard.Key]
 
-export type MsgServer = ['tick'];
+export type MsgServer = ['tick']
 
-export type MsgToServer = Req;
+export type MsgToServer = Req
 
-export type MsgToClient = Res | ['tick', CoreModel];
+export type MsgToClient = Res | ['tick', CoreModel]
 
 //
 //
@@ -87,351 +75,247 @@ export type MsgToClient = Res | ['tick', CoreModel];
 //
 
 export type Req =
-	| ['start-playing', {userId: UserId}]
-	| ['stop-playing', {userId: UserId}]
-	| ['start-game', {userId: UserId}]
-	| ['stop-game', {userId: UserId}]
-	| [
-			'input-direction',
-			{
-				userId: UserId;
-				direction:
-					| Direction
-					| 'none';
-			},
-	  ]
-	| ['input-seed', {userId: UserId; seed: string}];
+  | ['start-playing', { userId: UserId }]
+  | ['stop-playing', { userId: UserId }]
+  | ['start-game', { userId: UserId }]
+  | ['stop-game', { userId: UserId }]
+  | [
+      'input-direction',
+      {
+        userId: UserId
+        direction: Direction | 'none'
+      }
+    ]
+  | ['input-seed', { userId: UserId; seed: string }]
 
-export type Res = [...Req, Result<Problem, CoreModel>];
+export type Res = [...Req, Result<Problem, CoreModel>]
 
 type Problem =
-	| 'must_be_setup'
-	| 'already_playing'
-	| 'must_have_at_least_one_player'
-	| 'must_be_playing'
-	| 'must_be_game'
-	| 'out_of_bounds'
-	| 'hit_wall'
-	| 'no_next_color';
+  | 'must_be_setup'
+  | 'already_playing'
+  | 'must_have_at_least_one_player'
+  | 'must_be_playing'
+  | 'must_be_game'
+  | 'out_of_bounds'
+  | 'hit_wall'
+  | 'no_next_color'
 
 const toNextColor = (model: CoreModel): Color | null => {
-	for (const color of colorSeq) {
-		if (
-			Object.values(
-				model.players,
-			).every(
-				(p) =>
-					p.color !==
-					color,
-			)
-		) {
-			return color;
-		}
-	}
-	return null;
-};
+  for (const color of colorSeq) {
+    if (Object.values(model.players).every((p) => p.color !== color)) {
+      return color
+    }
+  }
+  return null
+}
 
-export const handle = (
-	msg: Req,
-	model: CoreModel,
-): Result<Problem, CoreModel> => {
-	switch (msg[0]) {
-		case 'input-seed': {
-			if (model.type !== 'setup') {
-				return Err(
-					'must_be_setup',
-				);
-			}
+export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> => {
+  switch (msg[0]) {
+    case 'input-seed': {
+      if (model.type !== 'setup') {
+        return Err('must_be_setup')
+      }
 
-			const player =
-				model.players[
-					msg[1]
-						.userId
-				];
+      const player = model.players[msg[1].userId]
 
-			if (!player) {
-				return Err(
-					'must_be_playing',
-				);
-			}
+      if (!player) {
+        return Err('must_be_playing')
+      }
 
-			const modelNew: CoreModel = {
-				...model,
-				seed: msg[1]
-					.seed,
-			};
+      const modelNew: CoreModel = {
+        ...model,
+        seed: msg[1].seed
+      }
 
-			return Ok(modelNew);
-		}
+      return Ok(modelNew)
+    }
 
-		case 'stop-game': {
-			if (model.type !== 'game') {
-				return Err(
-					'must_be_game',
-				);
-			}
+    case 'stop-game': {
+      if (model.type !== 'game') {
+        return Err('must_be_game')
+      }
 
-			const player =
-				model.players[
-					msg[1]
-						.userId
-				];
+      const player = model.players[msg[1].userId]
 
-			if (!player) {
-				return Err(
-					'must_be_playing',
-				);
-			}
+      if (!player) {
+        return Err('must_be_playing')
+      }
 
-			const modelNew: CoreModel = {
-				type: 'setup',
-				lower: model.lower,
-				players: mapValues(
-					(
-						val,
-					) => ({
-						userId: val.userId,
-						color: val.color,
-					}),
-					model.players,
-				),
-				seed: model.seed,
-				upper: model.upper,
-			};
+      const modelNew: CoreModel = {
+        type: 'setup',
+        lower: model.lower,
+        players: mapValues(
+          (val) => ({
+            userId: val.userId,
+            color: val.color
+          }),
+          model.players
+        ),
+        seed: model.seed,
+        upper: model.upper
+      }
 
-			return Ok(modelNew);
-		}
+      return Ok(modelNew)
+    }
 
-		case 'start-playing': {
-			if (model.type !== 'setup') {
-				return Err(
-					'must_be_setup',
-				);
-			}
+    case 'start-playing': {
+      if (model.type !== 'setup') {
+        return Err('must_be_setup')
+      }
 
-			const player =
-				model.players[
-					msg[1]
-						.userId
-				];
+      const player = model.players[msg[1].userId]
 
-			if (player) {
-				return Err(
-					'already_playing',
-				);
-			}
+      if (player) {
+        return Err('already_playing')
+      }
 
-			const nextColor =
-				toNextColor(
-					model,
-				);
+      const nextColor = toNextColor(model)
 
-			if (!nextColor) {
-				return Err(
-					'no_next_color',
-				);
-			}
+      if (!nextColor) {
+        return Err('no_next_color')
+      }
 
-			const modelNew: CoreModel = {
-				...model,
-				players: {
-					...model.players,
-					[msg[1]
-						.userId]:
-						{
-							color: nextColor,
-							userId: msg[1]
-								.userId,
-						},
-				},
-			};
-			return Ok(modelNew);
-		}
+      const modelNew: CoreModel = {
+        ...model,
+        players: {
+          ...model.players,
+          [msg[1].userId]: {
+            color: nextColor,
+            userId: msg[1].userId
+          }
+        }
+      }
+      return Ok(modelNew)
+    }
 
-		case 'stop-playing': {
-			if (model.type !== 'setup') {
-				return Err(
-					'must_be_setup',
-				);
-			}
+    case 'stop-playing': {
+      if (model.type !== 'setup') {
+        return Err('must_be_setup')
+      }
 
-			const modelNew: CoreModel = {
-				...model,
-				players: dissoc(
-					model.players,
-					msg[1]
-						.userId,
-				),
-			};
+      const modelNew: CoreModel = {
+        ...model,
+        players: dissoc(model.players, msg[1].userId)
+      }
 
-			return Ok(modelNew);
-		}
+      return Ok(modelNew)
+    }
 
-		case 'start-game': {
-			if (model.type !== 'setup') {
-				return Err(
-					'must_be_setup',
-				);
-			}
+    case 'start-game': {
+      if (model.type !== 'setup') {
+        return Err('must_be_setup')
+      }
 
-			if (
-				Object.values(
-					model.players,
-				).length === 0
-			) {
-				return Err(
-					'must_have_at_least_one_player',
-				);
-			}
+      if (Object.values(model.players).length === 0) {
+        return Err('must_have_at_least_one_player')
+      }
 
-			const playersNew =
-				Object.values(
-					model.players,
-				).reduce<{
-					[
-						userId: UserId
-					]: Player;
-				}>(
-					(
-						byId,
-						player,
-					) => {
-						const playerNew: Player =
-							{
-								userId: player.userId,
-								color: player.color,
-								position: {
-									x: 0,
-									y: 0,
-								},
-								direction: 'none',
-							};
-						return {
-							...byId,
-							[player.userId]:
-								playerNew,
-						};
-					},
-					{},
-				);
+      const playersNew = Object.values(model.players).reduce<{
+        [userId: UserId]: Player
+      }>((byId, player) => {
+        const playerNew: Player = {
+          userId: player.userId,
+          color: player.color,
+          position: {
+            x: 0,
+            y: 0
+          },
+          direction: 'none'
+        }
+        return {
+          ...byId,
+          [player.userId]: playerNew
+        }
+      }, {})
 
-			const modelNew: CoreModel = {
-				type: 'game',
-				seed: model.seed,
-				lower: model.lower,
-				upper: model.upper,
-				players: playersNew,
-			};
+      const modelNew: CoreModel = {
+        type: 'game',
+        seed: model.seed,
+        lower: model.lower,
+        upper: model.upper,
+        players: playersNew
+      }
 
-			return Ok(modelNew);
-		}
+      return Ok(modelNew)
+    }
 
-		case 'input-direction': {
-			if (model.type !== 'game') {
-				return Err(
-					'must_be_game',
-				);
-			}
+    case 'input-direction': {
+      if (model.type !== 'game') {
+        return Err('must_be_game')
+      }
 
-			const player =
-				model.players[
-					msg[1]
-						.userId
-				];
+      const player = model.players[msg[1].userId]
 
-			if (!player) {
-				return Err(
-					'must_be_playing',
-				);
-			}
+      if (!player) {
+        return Err('must_be_playing')
+      }
 
-			const modelNew: CoreModel = {
-				type: 'game',
-				seed: model.seed,
-				upper: model.upper,
-				lower: model.lower,
-				players: {
-					...model.players,
-					[player.userId]:
-						{
-							...player,
-							direction: msg[1]
-								.direction,
-						},
-				},
-			};
+      const modelNew: CoreModel = {
+        type: 'game',
+        seed: model.seed,
+        upper: model.upper,
+        lower: model.lower,
+        players: {
+          ...model.players,
+          [player.userId]: {
+            ...player,
+            direction: msg[1].direction
+          }
+        }
+      }
 
-			return Ok(modelNew);
-		}
-	}
-};
+      return Ok(modelNew)
+    }
+  }
+}
 
 export const tick = (model: CoreModel): CoreModel => {
-	if (model.type !== 'game') {
-		return model;
-	}
+  if (model.type !== 'game') {
+    return model
+  }
 
-	const maze = Maze.makeMemoized(model);
+  const maze = Maze.makeMemoized(model)
 
-	const modelNew: CoreModel = {
-		...model,
-		players: mapValues(
-			(player) =>
-				mapPlayer(
-					maze,
-					player,
-				),
-			model.players,
-		),
-	};
+  const modelNew: CoreModel = {
+    ...model,
+    players: mapValues((player) => mapPlayer(maze, player), model.players)
+  }
 
-	return modelNew;
-};
+  return modelNew
+}
 
 const mapPlayer = (maze: Maze, player: Player): Player => {
-	if (player.direction === 'none') {
-		return player;
-	}
+  if (player.direction === 'none') {
+    return player
+  }
 
-	const positionNew = Position.add(
-		Direction.toVector(player.direction),
-		player.position,
-	);
+  const positionNew = Position.add(Direction.toVector(player.direction), player.position)
 
-	const playerNew: Player = {
-		...player,
-		position: positionNew,
-	};
+  const playerNew: Player = {
+    ...player,
+    position: positionNew
+  }
 
-	if (
-		!Maze.hasEdge(
-			[
-				player.position,
-				playerNew.position,
-			],
-			maze,
-		) ||
-		!Maze.hasVertex(playerNew.position, maze)
-	) {
-		return {
-			...player,
-			direction: 'none',
-		};
-	}
+  if (!Maze.hasEdge([player.position, playerNew.position], maze) || !Maze.hasVertex(playerNew.position, maze)) {
+    return {
+      ...player,
+      direction: 'none'
+    }
+  }
 
-	return playerNew;
-};
+  return playerNew
+}
 
 const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
-	const ret: Record<string, B> = {};
-	for (const key in record) {
-		const value = record[key];
-		if (value) {
-			ret[key] = f(value);
-		}
-	}
-	return ret;
-};
+  const ret: Record<string, B> = {}
+  for (const key in record) {
+    const value = record[key]
+    if (value) {
+      ret[key] = f(value)
+    }
+  }
+  return ret
+}
 
 //
 //
@@ -441,19 +325,19 @@ const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
 //
 //
 
-export const initShared = ({userId}: {userId?: UserId}): CoreModel => {
-	return {
-		type: 'setup',
-		players: userId
-			? {
-					[userId]: {
-						color: colorSeq[0],
-						userId,
-					},
-			  }
-			: {},
-		seed: 'some arbitrary seed',
-		lower: {x: -10, y: -10},
-		upper: {x: 10, y: 10},
-	};
-};
+export const initShared = ({ userId }: { userId?: UserId }): CoreModel => {
+  return {
+    type: 'setup',
+    players: userId
+      ? {
+          [userId]: {
+            color: colorSeq[0],
+            userId
+          }
+        }
+      : {},
+    seed: 'some arbitrary seed',
+    lower: { x: -10, y: -10 },
+    upper: { x: 10, y: 10 }
+  }
+}

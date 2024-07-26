@@ -1,98 +1,94 @@
-import {withEventMeta} from 'gamezilla-app/app/spaces/@/event';
-import {FlowPack} from '../../../@/flow-pack';
-import {FlowPuzzle} from '../../../@/flow-puzzle';
-import {FixtureFlowPlayClient, type FixtureUpdateInput} from '../../@/fixture';
-import {FlowPlay} from '../../../@/flow/flow-play';
+import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import { FlowPack } from '../../../@/flow-pack'
+import { FlowPuzzle } from '../../../@/flow-puzzle'
+import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture'
+import { FlowPlay } from '../../../@/flow/flow-play'
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
-	FlowPlay.toSolutionMsgs({
-		flow: puzzle.flow,
-	}).map(
-		(c): FixtureUpdateInput => ({
-			msgCore: withEventMeta({
-				t: 'flow-variant-play',
-				c,
-			}),
-		}),
-	);
+  FlowPlay.toSolutionMsgs({
+    flow: puzzle.flow
+  }).map(
+    (c): FixtureUpdateInput => ({
+      msgCore: withEventMeta({
+        t: 'flow-variant-play',
+        c
+      })
+    })
+  )
 
 export const FixtureScreenPlayPuzzleClient = async () => {
-	const f = await FixtureFlowPlayClient();
-	const puzzle = await FlowPuzzle.random();
-	const nextPuzzle = await FlowPuzzle.random();
-	const prevPuzzle = await FlowPuzzle.random();
-	const pack = await FlowPack.random({
-		puzzleIds: [
-			prevPuzzle.id,
-			puzzle.id,
-			nextPuzzle.id,
-		],
-	});
-	const puzzleIndex = 1;
-	const prevPuzzleIndex = 0;
-	const nextPuzzleIndex = 2;
+  const f = await FixtureFlowPlayClient()
+  const puzzle = await FlowPuzzle.random()
+  const nextPuzzle = await FlowPuzzle.random()
+  const prevPuzzle = await FlowPuzzle.random()
+  const pack = await FlowPack.random({
+    puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id]
+  })
+  const puzzleIndex = 1
+  const prevPuzzleIndex = 0
+  const nextPuzzleIndex = 2
 
-	f.initial.model = {
-		...f.initial.model,
-		flowPuzzles: {
-			[puzzle.id]: puzzle,
-			[nextPuzzle.id]: nextPuzzle,
-			[prevPuzzle.id]: prevPuzzle,
-		},
-		flowPacks: {
-			[pack.id]: pack,
-		},
-	};
+  f.initial.model = {
+    ...f.initial.model,
+    flowPuzzles: {
+      [puzzle.id]: puzzle,
+      [nextPuzzle.id]: nextPuzzle,
+      [prevPuzzle.id]: prevPuzzle
+    },
+    flowPacks: {
+      [pack.id]: pack
+    }
+  }
 
-	const initial = f.update(f.initial, [
-		{
-			msg: {
-				t: 'user-clicked-open-pack-list-item',
-				pack,
-			},
-		},
-		{
-			msg: {
-				t: 'user-clicked-open-puzzle-grid-item',
-				flowPuzzle: puzzle,
-				puzzleIndex,
-			},
-		},
-	]);
+  const initial = f.update(f.initial, [
+    {
+      msg: {
+        t: 'user-clicked-open-pack-list-item',
+        pack
+      }
+    },
+    {
+      msg: {
+        t: 'user-clicked-open-puzzle-grid-item',
+        flowPuzzle: puzzle,
+        puzzleIndex
+      }
+    }
+  ])
 
-	const firstPuzzle = prevPuzzle;
-	const firstPuzzleIndex = 0;
-	const lastPuzzle = nextPuzzle;
-	const lastPuzzleIndex = 2;
+  const firstPuzzle = prevPuzzle
+  const firstPuzzleIndex = 0
+  const lastPuzzle = nextPuzzle
+  const lastPuzzleIndex = 2
 
-	const completePuzzleMsgs = toCompletePuzzleMsgs(puzzle);
-	const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
-		{
-			msgCore: withEventMeta({
-				t: 'user-clicked-next-puzzle',
-				nextPuzzleIndex: lastPuzzleIndex,
-				nextPuzzle: lastPuzzle,
-			}),
-		},
-		...toCompletePuzzleMsgs(lastPuzzle),
-	];
+  const completePuzzleMsgs = toCompletePuzzleMsgs(puzzle)
+  const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
+    {
+      msgCore: withEventMeta({
+        t: 'user-clicked-next-puzzle',
+        nextPuzzleIndex: lastPuzzleIndex,
+        nextPuzzle: lastPuzzle
+      })
+    },
+    ...toCompletePuzzleMsgs(lastPuzzle)
+  ]
 
-	return {
-		...f,
-		completeLastPuzzleMsgs,
-		completePuzzleMsgs,
-		initial,
-		pack,
-		puzzle,
-		puzzleIndex,
-		firstPuzzle,
-		firstPuzzleIndex,
-		lastPuzzle,
-		lastPuzzleIndex,
-		//
-		nextPuzzle,
-		nextPuzzleIndex,
-		prevPuzzle,
-		prevPuzzleIndex,
-	};
-};
+  return {
+    ...f,
+    completeLastPuzzleMsgs,
+    completePuzzleMsgs,
+    initial,
+    pack,
+    puzzle,
+    puzzleIndex,
+    firstPuzzle,
+    firstPuzzleIndex,
+    lastPuzzle,
+    lastPuzzleIndex,
+    //
+    nextPuzzle,
+    nextPuzzleIndex,
+    prevPuzzle,
+    prevPuzzleIndex
+  }
+}

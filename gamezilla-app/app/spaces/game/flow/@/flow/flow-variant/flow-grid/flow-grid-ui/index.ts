@@ -1,1 +1,1 @@
-export * from './flow-grid-ui';
+export * from './flow-grid-ui'

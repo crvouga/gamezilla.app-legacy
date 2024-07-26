@@ -1,50 +1,50 @@
-import {NotAsked} from 'gamezilla-app/@/core';
-import type {RequestResponse} from 'gamezilla-app/@/core/request-response';
-import type {ListPuzzlesOutput} from '../../flow-puzzle';
-import type {FlowPuzzle} from '../../flow-puzzle/flow-puzzle';
-import type {FlowPuzzleId} from '../../flow-puzzle/flow-puzzle-id';
-import type {FlowPack} from '../flow-pack';
+import { NotAsked } from 'gamezilla-app/@/core'
+import type { RequestResponse } from 'gamezilla-app/@/core/request-response'
+import type { ListPuzzlesOutput } from '../../flow-puzzle'
+import type { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
+import type { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
+import type { FlowPack } from '../flow-pack'
 
 export type ModelClient = {
-	request: RequestResponse<string, null>;
-	puzzles: {
-		[puzzleId: FlowPuzzleId]: FlowPuzzle;
-	};
-};
+  request: RequestResponse<string, null>
+  puzzles: {
+    [puzzleId: FlowPuzzleId]: FlowPuzzle
+  }
+}
 
 export const initClient: ModelClient = {
-	request: NotAsked,
-	puzzles: {},
-};
+  request: NotAsked,
+  puzzles: {}
+}
 
-export type ModelServer = Record<string, unknown>;
+export type ModelServer = Record<string, unknown>
 
 export type MsgClient =
-	| {
-			t: 'user-observed-grid';
-	  }
-	| {
-			t: 'elapsed';
-	  };
+  | {
+      t: 'user-observed-grid'
+    }
+  | {
+      t: 'elapsed'
+    }
 
 export type MsgServer = {
-	t: 'noop';
-};
+  t: 'noop'
+}
 
 export type MsgToClient = {
-	t: 'listed-puzzles-by-id';
-	listed: ListPuzzlesOutput;
-};
+  t: 'listed-puzzles-by-id'
+  listed: ListPuzzlesOutput
+}
 
 export type MsgToServer = {
-	t: 'list-puzzles-by-id';
-	puzzleIds: FlowPuzzleId[];
-};
+  t: 'list-puzzles-by-id'
+  puzzleIds: FlowPuzzleId[]
+}
 
 export type MsgInCmdClient = {
-	t: 'flow-pack-puzzles-grid';
-	c: {
-		t: 'load';
-		pack: FlowPack;
-	};
-};
+  t: 'flow-pack-puzzles-grid'
+  c: {
+    t: 'load'
+    pack: FlowPack
+  }
+}

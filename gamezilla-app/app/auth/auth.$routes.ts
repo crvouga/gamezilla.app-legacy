@@ -1,23 +1,22 @@
-import {PhoneNumber, Result} from 'gamezilla-app/@/core';
-import {p} from 'gamezilla-app/@/core/parser';
+import { PhoneNumber, Result } from 'gamezilla-app/@/core'
+import { p } from 'gamezilla-app/@/core/parser'
 
 const Route = p.or(
-	p.obj({
-		n: p.l('auth-login'),
-		t: p.l('login'),
-	}),
-	p.obj({
-		n: p.l('auth-login'),
-		t: p.l('login-sms-request'),
-	}),
-	p.obj({
-		n: p.l('auth-login'),
-		t: p.l('login-sms-verify'),
-		phoneNumber: PhoneNumber,
-	}),
-);
+  p.obj({
+    n: p.l('auth-login'),
+    t: p.l('login')
+  }),
+  p.obj({
+    n: p.l('auth-login'),
+    t: p.l('login-sms-request')
+  }),
+  p.obj({
+    n: p.l('auth-login'),
+    t: p.l('login-sms-verify'),
+    phoneNumber: PhoneNumber
+  })
+)
 
-export type Route = p.Infer<typeof Route>;
+export type Route = p.Infer<typeof Route>
 
-export const toRoute = (x: unknown): Route | null =>
-	Result.withDefault(Route.parse(x), null);
+export const toRoute = (x: unknown): Route | null => Result.withDefault(Route.parse(x), null)

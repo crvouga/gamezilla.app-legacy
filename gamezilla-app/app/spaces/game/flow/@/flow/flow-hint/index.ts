@@ -1,1 +1,1 @@
-export * as FlowHint from './flow-hint';
+export * as FlowHint from './flow-hint'

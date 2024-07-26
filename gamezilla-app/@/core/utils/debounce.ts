@@ -20,23 +20,20 @@
  *
  * // Only the last call to the debounced function will be executed after 500ms
  */
-export const debounce = <F extends (...args: unknown[]) => unknown>(
-	func: F,
-	delay: number,
-): DebouncedFunction<F> => {
-	let timeoutId: ReturnType<typeof setTimeout> | undefined;
+export const debounce = <F extends (...args: unknown[]) => unknown>(func: F, delay: number): DebouncedFunction<F> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
 
-	return (...args: Parameters<F>) => {
-		if (timeoutId) {
-			clearTimeout(timeoutId);
-		}
-		timeoutId = setTimeout(() => {
-			return func(...args);
-		}, delay);
+  return (...args: Parameters<F>) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+    timeoutId = setTimeout(() => {
+      return func(...args)
+    }, delay)
 
-		return undefined;
-	};
-};
+    return undefined
+  }
+}
 type DebouncedFunction<F extends (...args: unknown[]) => unknown> = (
-	...args: Parameters<F>
-) => ReturnType<F> | undefined;
+  ...args: Parameters<F>
+) => ReturnType<F> | undefined

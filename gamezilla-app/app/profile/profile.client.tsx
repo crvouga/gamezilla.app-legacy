@@ -1,35 +1,23 @@
-import {Loading, Sub, isErr} from 'gamezilla-app/@/core';
-import type {AppClientModule} from 'gamezilla-app/app/@/architecture/app-client';
+import { Loading, Sub, isErr } from 'gamezilla-app/@/core'
+import type { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import {
-	type AnonymousClientCtx,
-	type ClientCmd,
-	type ClientCtx,
-	type ClientEvent,
-	type ProfileCmd,
-	back,
-	logout,
-	pushRoute,
-	replaceRoute,
-	sendToServer,
-} from 'gamezilla-app/app/@/client';
-import {ProfileAvatar, type UserId} from 'gamezilla-app/app/@/data';
-import {
-	Avatar,
-	Button,
-	IconChevronRight,
-	TextField,
-	TopBar,
-	Typography,
-} from 'gamezilla-app/app/@/ui';
-import {ViewProfileScreen} from './profile-client/profile-client-view-profile-screen';
-import {ViewUpdateAvatarScreen} from './profile-client/profile-client-view-update-avatar-screen';
-import type {
-	ModelClient,
-	MsgClient,
-	MsgToClient,
-	MsgToServer,
-} from './profile.types';
-import {TranslatedText} from 'gamezilla-app/@/l18n';
+  type AnonymousClientCtx,
+  type ClientCmd,
+  type ClientCtx,
+  type ClientEvent,
+  type ProfileCmd,
+  back,
+  logout,
+  pushRoute,
+  replaceRoute,
+  sendToServer
+} from 'gamezilla-app/app/@/client'
+import { ProfileAvatar, type UserId } from 'gamezilla-app/app/@/data'
+import { Avatar, Button, IconChevronRight, TextField, TopBar, Typography } from 'gamezilla-app/app/@/ui'
+import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'
+import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
+import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './profile.types'
+import { TranslatedText } from 'gamezilla-app/@/l18n'
 
 //
 //
@@ -39,25 +27,25 @@ import {TranslatedText} from 'gamezilla-app/@/l18n';
 //
 //
 
-type Ctx = ClientCtx | AnonymousClientCtx;
+type Ctx = ClientCtx | AnonymousClientCtx
 
 type ClientModule = AppClientModule<{
-	Model: ModelClient;
-	Msg: MsgClient;
-	MsgToClient: MsgToClient;
-	MsgToServer: MsgToServer;
-	Ctx: Ctx;
-	MsgCmdIn: ProfileCmd;
-	MsgEvtIn: ClientEvent;
-	MsgCmdOut: ClientCmd<{
-		MsgClient: MsgClient;
-		MsgToServer: MsgToServer;
-	}>;
-	MsgEvtOut: never;
-	ViewSlot: {
-		bottomBar: null;
-	};
-}>;
+  Model: ModelClient
+  Msg: MsgClient
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  Ctx: Ctx
+  MsgCmdIn: ProfileCmd
+  MsgEvtIn: ClientEvent
+  MsgCmdOut: ClientCmd<{
+    MsgClient: MsgClient
+    MsgToServer: MsgToServer
+  }>
+  MsgEvtOut: never
+  ViewSlot: {
+    bottomBar: null
+  }
+}>
 
 //
 //
@@ -67,27 +55,21 @@ type ClientModule = AppClientModule<{
 //
 //
 
-export const init: ClientModule['init'] = ({ctx}) => {
-	const initialModel: ModelClient = {
-		profiles: {},
-		requests: {},
-		draft: {},
-	};
+export const init: ClientModule['init'] = ({ ctx }) => {
+  const initialModel: ModelClient = {
+    profiles: {},
+    requests: {},
+    draft: {}
+  }
 
-	const model = initialModel;
+  const model = initialModel
 
-	if (
-		ctx.currentRoute.n === 'profile' &&
-		ctx.currentRoute.t === 'profile'
-	) {
-		return loadProfile(
-			ctx.currentRoute.userId,
-			model,
-		);
-	}
+  if (ctx.currentRoute.n === 'profile' && ctx.currentRoute.t === 'profile') {
+    return loadProfile(ctx.currentRoute.userId, model)
+  }
 
-	return {model};
-};
+  return { model }
+}
 
 //
 //
@@ -98,387 +80,339 @@ export const init: ClientModule['init'] = ({ctx}) => {
 //
 
 export const update: ClientModule['update'] = (input) => {
-	if (input.msgEvt) {
-		return updateFromEvent(input);
-	}
+  if (input.msgEvt) {
+    return updateFromEvent(input)
+  }
 
-	if (input.msg) {
-		return updateFromMsg(input);
-	}
+  if (input.msg) {
+    return updateFromMsg(input)
+  }
 
-	if (input.msgServer) {
-		return updateFromServer(input);
-	}
+  if (input.msgServer) {
+    return updateFromServer(input)
+  }
 
-	if (input.msgCmd) {
-		return updateFromCmd(input);
-	}
+  if (input.msgCmd) {
+    return updateFromCmd(input)
+  }
 
-	return {model: input.model};
-};
+  return { model: input.model }
+}
 
 const updateFromCmd: ClientModule['update'] = (input) => {
-	const {model, msgCmd} = input;
+  const { model, msgCmd } = input
 
-	if (!msgCmd) {
-		return {model};
-	}
+  if (!msgCmd) {
+    return { model }
+  }
 
-	switch (msgCmd.c.t) {
-		case 'add-profiles': {
-			return {
-				model: {
-					...model,
-					profiles: {
-						...model.profiles,
-						...msgCmd
-							.c
-							.profiles,
-					},
-				},
-			};
-		}
-		case 'open-profile': {
-			return {
-				model,
-				msgCmd: [
-					pushRoute(
-						{
-							t: 'profile',
-							n: 'profile',
-							userId: msgCmd
-								.c
-								.userId,
-						},
-					),
-				],
-			};
-		}
-	}
-};
+  switch (msgCmd.c.t) {
+    case 'add-profiles': {
+      return {
+        model: {
+          ...model,
+          profiles: {
+            ...model.profiles,
+            ...msgCmd.c.profiles
+          }
+        }
+      }
+    }
+    case 'open-profile': {
+      return {
+        model,
+        msgCmd: [
+          pushRoute({
+            t: 'profile',
+            n: 'profile',
+            userId: msgCmd.c.userId
+          })
+        ]
+      }
+    }
+  }
+}
 
 const updateFromEvent: ClientModule['update'] = (input) => {
-	const {msgEvt, model} = input;
+  const { msgEvt, model } = input
 
-	if (!msgEvt) {
-		return {model};
-	}
+  if (!msgEvt) {
+    return { model }
+  }
 
-	switch (msgEvt.t) {
-		case 'routing/route-changed': {
-			if (
-				msgEvt.route
-					.n ===
-					'profile' &&
-				msgEvt.route
-					.t ===
-					'profile'
-			) {
-				return loadProfile(
-					msgEvt
-						.route
-						.userId,
-					model,
-				);
-			}
-			return {
-				model,
-			};
-		}
+  switch (msgEvt.t) {
+    case 'routing/route-changed': {
+      if (msgEvt.route.n === 'profile' && msgEvt.route.t === 'profile') {
+        return loadProfile(msgEvt.route.userId, model)
+      }
+      return {
+        model
+      }
+    }
 
-		default: {
-			return {
-				model,
-			};
-		}
-	}
-};
+    default: {
+      return {
+        model
+      }
+    }
+  }
+}
 
 const updateFromServer: ClientModule['update'] = (input) => {
-	const {model, msgServer} = input;
+  const { model, msgServer } = input
 
-	if (!msgServer) {
-		return {model};
-	}
+  if (!msgServer) {
+    return { model }
+  }
 
-	switch (msgServer.t) {
-		case 'current-user-profile': {
-			if (isErr(msgServer.result)) {
-				return {
-					model,
-				};
-			}
+  switch (msgServer.t) {
+    case 'current-user-profile': {
+      if (isErr(msgServer.result)) {
+        return {
+          model
+        }
+      }
 
-			const profile =
-				msgServer.result
-					.value;
+      const profile = msgServer.result.value
 
-			const modelNew: ModelClient = {
-				...model,
-				profiles: {
-					...model.profiles,
-					[profile.userId]:
-						profile,
-				},
-			};
+      const modelNew: ModelClient = {
+        ...model,
+        profiles: {
+          ...model.profiles,
+          [profile.userId]: profile
+        }
+      }
 
-			return {
-				model: modelNew,
-			};
-		}
-		default: {
-			if (isErr(msgServer.result)) {
-				return {
-					model: {
-						...model,
-						requests: {
-							...model.requests,
-							[msgServer.t]:
-								msgServer.result,
-						},
-					},
-				};
-			}
+      return {
+        model: modelNew
+      }
+    }
+    default: {
+      if (isErr(msgServer.result)) {
+        return {
+          model: {
+            ...model,
+            requests: {
+              ...model.requests,
+              [msgServer.t]: msgServer.result
+            }
+          }
+        }
+      }
 
-			const profilesNew =
-				msgServer.result.value.reduce<
-					ModelClient['profiles']
-				>(
-					(
-						acc,
-						profile,
-					) => {
-						return {
-							...acc,
-							[profile.userId]:
-								profile,
-						};
-					},
-					model.profiles,
-				);
+      const profilesNew = msgServer.result.value.reduce<ModelClient['profiles']>((acc, profile) => {
+        return {
+          ...acc,
+          [profile.userId]: profile
+        }
+      }, model.profiles)
 
-			const modelNew: ModelClient = {
-				...model,
-				profiles: profilesNew,
-			};
+      const modelNew: ModelClient = {
+        ...model,
+        profiles: profilesNew
+      }
 
-			return {
-				model: modelNew,
-			};
-		}
-	}
-};
+      return {
+        model: modelNew
+      }
+    }
+  }
+}
 
 const updateFromMsg: ClientModule['update'] = (input) => {
-	const {msg, model, ctx} = input;
+  const { msg, model, ctx } = input
 
-	if (!msg) {
-		return {model};
-	}
+  if (!msg) {
+    return { model }
+  }
 
-	if (!ctx.currentUserId) {
-		return {model};
-	}
+  if (!ctx.currentUserId) {
+    return { model }
+  }
 
-	switch (msg.t) {
-		case 'inputted-username': {
-			return {
-				model: {
-					...model,
-					draft: {
-						...model.draft,
-						username: msg.username,
-					},
-				},
-			};
-		}
+  switch (msg.t) {
+    case 'inputted-username': {
+      return {
+        model: {
+          ...model,
+          draft: {
+            ...model.draft,
+            username: msg.username
+          }
+        }
+      }
+    }
 
-		case 'inputted-avatar-seed': {
-			return {
-				model: {
-					...model,
-					draft: {
-						...model.draft,
-						avatarSeed: ProfileAvatar.toSeed(
-							msg.seed,
-						),
-					},
-				},
-			};
-		}
+    case 'inputted-avatar-seed': {
+      return {
+        model: {
+          ...model,
+          draft: {
+            ...model.draft,
+            avatarSeed: ProfileAvatar.toSeed(msg.seed)
+          }
+        }
+      }
+    }
 
-		case 'inputted-avatar-style': {
-			return {
-				model: {
-					...model,
-					draft: {
-						...model.draft,
-						avatarStyle: msg.style,
-					},
-				},
-			};
-		}
+    case 'inputted-avatar-style': {
+      return {
+        model: {
+          ...model,
+          draft: {
+            ...model.draft,
+            avatarStyle: msg.style
+          }
+        }
+      }
+    }
 
-		case 'clicked-generate-random-seed': {
-			return {
-				model: {
-					...model,
-					draft: {
-						...model.draft,
-					},
-				},
-			};
-		}
+    case 'clicked-generate-random-seed': {
+      return {
+        model: {
+          ...model,
+          draft: {
+            ...model.draft
+          }
+        }
+      }
+    }
 
-		case 'clicked-back-button': {
-			switch (msg.from.t) {
-				case 'profile': {
-					return {
-						model,
-						msgCmd: [
-							back(),
-						],
-					};
-				}
+    case 'clicked-back-button': {
+      switch (msg.from.t) {
+        case 'profile': {
+          return {
+            model,
+            msgCmd: [back()]
+          }
+        }
 
-				case 'profile-update': {
-					return {
-						model,
-						msgCmd: [
-							replaceRoute(
-								{
-									n: 'profile',
-									t: 'profile',
-									userId: ctx.currentUserId,
-								},
-							),
-						],
-					};
-				}
+        case 'profile-update': {
+          return {
+            model,
+            msgCmd: [
+              replaceRoute({
+                n: 'profile',
+                t: 'profile',
+                userId: ctx.currentUserId
+              })
+            ]
+          }
+        }
 
-				case 'profile-avatar': {
-					return {
-						model,
-						msgCmd: [
-							replaceRoute(
-								{
-									n: 'profile',
-									t: 'profile-edit',
-								},
-							),
-						],
-					};
-				}
+        case 'profile-avatar': {
+          return {
+            model,
+            msgCmd: [
+              replaceRoute({
+                n: 'profile',
+                t: 'profile-edit'
+              })
+            ]
+          }
+        }
 
-				case 'profile-update-username': {
-					return {
-						model,
-						msgCmd: [
-							replaceRoute(
-								{
-									n: 'profile',
-									t: 'profile-edit',
-								},
-							),
-						],
-					};
-				}
-			}
-		}
+        case 'profile-update-username': {
+          return {
+            model,
+            msgCmd: [
+              replaceRoute({
+                n: 'profile',
+                t: 'profile-edit'
+              })
+            ]
+          }
+        }
+      }
+    }
 
-		case 'clicked-logout-button': {
-			return {
-				model,
-				msgCmd: [
-					logout(),
-				],
-			};
-		}
+    case 'clicked-logout-button': {
+      return {
+        model,
+        msgCmd: [logout()]
+      }
+    }
 
-		case 'clicked-update-username-button': {
-			return {
-				model,
-				msgCmd: [
-					pushRoute(
-						{
-							n: 'profile',
-							t: 'profile-edit-username',
-						},
-						true,
-					),
-				],
-			};
-		}
+    case 'clicked-update-username-button': {
+      return {
+        model,
+        msgCmd: [
+          pushRoute(
+            {
+              n: 'profile',
+              t: 'profile-edit-username'
+            },
+            true
+          )
+        ]
+      }
+    }
 
-		case 'clicked-edit-profile-button': {
-			return {
-				model,
-				msgCmd: [
-					pushRoute(
-						{
-							n: 'profile',
-							t: 'profile-edit',
-						},
-						true,
-					),
-				],
-			};
-		}
+    case 'clicked-edit-profile-button': {
+      return {
+        model,
+        msgCmd: [
+          pushRoute(
+            {
+              n: 'profile',
+              t: 'profile-edit'
+            },
+            true
+          )
+        ]
+      }
+    }
 
-		case 'clicked-avatar':
-		case 'clicked-change-avatar-button': {
-			return {
-				model,
-				msgCmd: [
-					pushRoute(
-						{
-							n: 'profile',
-							t: 'profile-edit-avatar',
-						},
-						true,
-					),
-				],
-			};
-		}
+    case 'clicked-avatar':
+    case 'clicked-change-avatar-button': {
+      return {
+        model,
+        msgCmd: [
+          pushRoute(
+            {
+              n: 'profile',
+              t: 'profile-edit-avatar'
+            },
+            true
+          )
+        ]
+      }
+    }
 
-		default: {
-			return {
-				model: {
-					...model,
-					requests: {
-						...model.requests,
-						[msg.t]:
-							{
-								t: 'loading',
-							},
-					},
-				},
-				toServer: [msg],
-			};
-		}
-	}
-};
+    default: {
+      return {
+        model: {
+          ...model,
+          requests: {
+            ...model.requests,
+            [msg.t]: {
+              t: 'loading'
+            }
+          }
+        },
+        toServer: [msg]
+      }
+    }
+  }
+}
 
-const loadProfile = (
-	userId: UserId,
-	model: ModelClient,
-): ReturnType<ClientModule['update']> => {
-	return {
-		model: {
-			...model,
-			requests: {
-				...model.requests,
-				'find-one': Loading,
-			},
-		},
-		msgCmd: [
-			sendToServer({
-				t: 'find-one',
-				userId,
-			}),
-		],
-	};
-};
+const loadProfile = (userId: UserId, model: ModelClient): ReturnType<ClientModule['update']> => {
+  return {
+    model: {
+      ...model,
+      requests: {
+        ...model.requests,
+        'find-one': Loading
+      }
+    },
+    msgCmd: [
+      sendToServer({
+        t: 'find-one',
+        userId
+      })
+    ]
+  }
+}
 
 //
 //
@@ -489,8 +423,8 @@ const loadProfile = (
 //
 
 export const subscriptions: ClientModule['subscriptions'] = (_input) => {
-	return Sub.None;
-};
+  return Sub.None
+}
 
 //
 //
@@ -501,270 +435,163 @@ export const subscriptions: ClientModule['subscriptions'] = (_input) => {
 //
 
 export const View: ClientModule['View'] = (input) => {
-	switch (input.ctx.currentRoute.n) {
-		case 'profile': {
-			switch (
-				input.ctx
-					.currentRoute
-					.t
-			) {
-				case 'profile': {
-					return (
-						<div className="relative flex h-full w-full flex-col">
-							<ViewProfileScreen
-								model={
-									input.model
-								}
-								ctx={
-									input.ctx
-								}
-								dispatch={
-									input.dispatch
-								}
-								userId={
-									input
-										.ctx
-										.currentRoute
-										.userId
-								}
-							/>
+  switch (input.ctx.currentRoute.n) {
+    case 'profile': {
+      switch (input.ctx.currentRoute.t) {
+        case 'profile': {
+          return (
+            <div className='relative flex h-full w-full flex-col'>
+              <ViewProfileScreen
+                model={input.model}
+                ctx={input.ctx}
+                dispatch={input.dispatch}
+                userId={input.ctx.currentRoute.userId}
+              />
 
-							{input.slots?.bottomBar(
-								null,
-							)}
-						</div>
-					);
-				}
+              {input.slots?.bottomBar(null)}
+            </div>
+          )
+        }
 
-				case 'profile-edit': {
-					return (
-						<ViewUpdateScreen
-							ctx={
-								input.ctx
-							}
-							dispatch={
-								input.dispatch
-							}
-						/>
-					);
-				}
+        case 'profile-edit': {
+          return <ViewUpdateScreen ctx={input.ctx} dispatch={input.dispatch} />
+        }
 
-				case 'profile-edit-avatar': {
-					return (
-						<ViewUpdateAvatarScreen
-							ctx={
-								input.ctx
-							}
-							model={
-								input.model
-							}
-							dispatch={
-								input.dispatch
-							}
-						/>
-					);
-				}
+        case 'profile-edit-avatar': {
+          return <ViewUpdateAvatarScreen ctx={input.ctx} model={input.model} dispatch={input.dispatch} />
+        }
 
-				case 'profile-edit-username': {
-					return (
-						<ViewUpdateUsernameScreen
-							ctx={
-								input.ctx
-							}
-							model={
-								input.model
-							}
-							dispatch={
-								input.dispatch
-							}
-						/>
-					);
-				}
+        case 'profile-edit-username': {
+          return <ViewUpdateUsernameScreen ctx={input.ctx} model={input.model} dispatch={input.dispatch} />
+        }
 
-				default: {
-					return null;
-				}
-			}
-		}
-		default: {
-			return null;
-		}
-	}
-};
+        default: {
+          return null
+        }
+      }
+    }
+    default: {
+      return null
+    }
+  }
+}
 
-const ViewUpdateScreen = (input: {
-	ctx: Ctx;
-	dispatch: (m: MsgClient) => void;
-}) => {
-	if (!input.ctx.currentUserId) {
-		return null;
-	}
+const ViewUpdateScreen = (input: { ctx: Ctx; dispatch: (m: MsgClient) => void }) => {
+  if (!input.ctx.currentUserId) {
+    return null
+  }
 
-	const profile = input.ctx.profiles[input.ctx.currentUserId];
+  const profile = input.ctx.profiles[input.ctx.currentUserId]
 
-	if (!profile) {
-		return null;
-	}
+  if (!profile) {
+    return null
+  }
 
-	return (
-		<div className="flex h-full w-full flex-col items-center">
-			<TopBar
-				ctx={input.ctx}
-				onBack={() =>
-					input.dispatch(
-						{
-							t: 'clicked-back-button',
-							from: {
-								t: 'profile-update',
-							},
-						},
-					)
-				}
-				title={input.ctx.t(
-					'profile.update-profile',
-				)}
-			/>
+  return (
+    <div className='flex h-full w-full flex-col items-center'>
+      <TopBar
+        ctx={input.ctx}
+        onBack={() =>
+          input.dispatch({
+            t: 'clicked-back-button',
+            from: {
+              t: 'profile-update'
+            }
+          })
+        }
+        title={input.ctx.t('profile.update-profile')}
+      />
 
-			<div className="flex w-full flex-col items-center gap-4 p-4">
-				<Avatar
-					src={
-						profile?.avatarUrl
-					}
-					className="h-28 w-28"
-					alt="profile avatar"
-					onClick={() =>
-						input.dispatch(
-							{
-								t: 'clicked-avatar',
-							},
-						)
-					}
-				/>
+      <div className='flex w-full flex-col items-center gap-4 p-4'>
+        <Avatar
+          src={profile?.avatarUrl}
+          className='h-28 w-28'
+          alt='profile avatar'
+          onClick={() =>
+            input.dispatch({
+              t: 'clicked-avatar'
+            })
+          }
+        />
 
-				<Button
-					size="sm"
-					color="primary"
-					variant="text"
-					className="block"
-					onClick={() =>
-						input.dispatch(
-							{
-								t: 'clicked-change-avatar-button',
-							},
-						)
-					}
-					text={input.ctx.t(
-						'profile.update-avatar',
-					)}
-				/>
-			</div>
+        <Button
+          size='sm'
+          color='primary'
+          variant='text'
+          className='block'
+          onClick={() =>
+            input.dispatch({
+              t: 'clicked-change-avatar-button'
+            })
+          }
+          text={input.ctx.t('profile.update-avatar')}
+        />
+      </div>
 
-			<ViewField
-				onClick={() =>
-					input.dispatch(
-						{
-							t: 'clicked-update-username-button',
-						},
-					)
-				}
-				label={input.ctx.t(
-					'username-title',
-				)}
-				value={input.ctx.t(
-					'username',
-					profile.username,
-				)}
-			/>
-		</div>
-	);
-};
+      <ViewField
+        onClick={() =>
+          input.dispatch({
+            t: 'clicked-update-username-button'
+          })
+        }
+        label={input.ctx.t('username-title')}
+        value={input.ctx.t('username', profile.username)}
+      />
+    </div>
+  )
+}
 
 const ViewField = ({
-	label,
-	value,
-	onClick,
+  label,
+  value,
+  onClick
 }: {
-	label: TranslatedText;
-	value: TranslatedText;
-	onClick?: () => void;
+  label: TranslatedText
+  value: TranslatedText
+  onClick?: () => void
 }) => (
-	<button
-		onClick={onClick}
-		className="flex w-full items-center justify-start px-4 py-2"
-	>
-		<div className="flex flex-1 flex-col items-start">
-			<Typography
-				variant="label"
-				text={label}
-			/>
-			{value && (
-				<Typography
-					variant="body"
-					text={
-						value
-					}
-				/>
-			)}
-		</div>
+  <button onClick={onClick} className='flex w-full items-center justify-start px-4 py-2'>
+    <div className='flex flex-1 flex-col items-start'>
+      <Typography variant='label' text={label} />
+      {value && <Typography variant='body' text={value} />}
+    </div>
 
-		<IconChevronRight className="h-6 w-6" />
-	</button>
-);
+    <IconChevronRight className='h-6 w-6' />
+  </button>
+)
 
-const ViewUpdateUsernameScreen = (input: {
-	model: ModelClient;
-	dispatch: (msg: MsgClient) => void;
-	ctx: Ctx;
-}) => {
-	const currentUsername = input.ctx.currentUserId
-		? input.model.profiles[input.ctx.currentUserId]
-				?.username
-		: null;
+const ViewUpdateUsernameScreen = (input: { model: ModelClient; dispatch: (msg: MsgClient) => void; ctx: Ctx }) => {
+  const currentUsername = input.ctx.currentUserId ? input.model.profiles[input.ctx.currentUserId]?.username : null
 
-	const inputVal =
-		input.model.draft?.username ??
-		currentUsername ??
-		'';
-	return (
-		<div className="flex h-full w-full flex-col">
-			<TopBar
-				onBack={() =>
-					input.dispatch(
-						{
-							t: 'clicked-back-button',
-							from: {
-								t: 'profile-update-username',
-							},
-						},
-					)
-				}
-				title={input.ctx.t(
-					'username-title',
-				)}
-				ctx={input.ctx}
-			/>
+  const inputVal = input.model.draft?.username ?? currentUsername ?? ''
+  return (
+    <div className='flex h-full w-full flex-col'>
+      <TopBar
+        onBack={() =>
+          input.dispatch({
+            t: 'clicked-back-button',
+            from: {
+              t: 'profile-update-username'
+            }
+          })
+        }
+        title={input.ctx.t('username-title')}
+        ctx={input.ctx}
+      />
 
-			<div className="w-full p-4">
-				<TextField
-					label="Username"
-					value={
-						inputVal
-					}
-					id={
-						'username'
-					}
-					onChange={(
-						username,
-					) =>
-						input.dispatch(
-							{
-								t: 'inputted-username',
-								username,
-							},
-						)
-					}
-				/>
-			</div>
-		</div>
-	);
-};
+      <div className='w-full p-4'>
+        <TextField
+          label='Username'
+          value={inputVal}
+          id={'username'}
+          onChange={(username) =>
+            input.dispatch({
+              t: 'inputted-username',
+              username
+            })
+          }
+        />
+      </div>
+    </div>
+  )
+}

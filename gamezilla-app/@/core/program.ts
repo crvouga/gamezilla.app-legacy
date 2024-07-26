@@ -1,5 +1,5 @@
-import type {Eff} from './eff';
-import type {Sub} from './sub';
+import type { Eff } from './eff'
+import type { Sub } from './sub'
 
 //
 //
@@ -8,40 +8,26 @@ import type {Sub} from './sub';
 //
 //
 
-type MaybePromise<T> = T | Promise<T>;
+type MaybePromise<T> = T | Promise<T>
 
 export type Program<TModel, TMsg, TCtx> = {
-	ctx: () => MaybePromise<TCtx>;
+  ctx: () => MaybePromise<TCtx>
 
-	init: (input: {
-		ctx: TCtx;
-	}) => MaybePromise<{model: TModel; eff?: Eff<TMsg>}>;
+  init: (input: { ctx: TCtx }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
 
-	update: (input: {
-		ctx: TCtx;
-		msg: TMsg;
-		model: TModel;
-	}) => MaybePromise<{model: TModel; eff?: Eff<TMsg>}>;
+  update: (input: { ctx: TCtx; msg: TMsg; model: TModel }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
 
-	subscriptions: (input: {
-		intervalId: string;
-		ctx: TCtx;
-		model: TModel;
-	}) => MaybePromise<Sub<TMsg>>;
+  subscriptions: (input: { intervalId: string; ctx: TCtx; model: TModel }) => MaybePromise<Sub<TMsg>>
 
-	debugger?: ProgramDebugger;
+  debugger?: ProgramDebugger
 
-	crash: (input: {error: unknown}) => void;
+  crash: (input: { error: unknown }) => void
 
-	render?: (input: {
-		model: TModel;
-		ctx: TCtx;
-		dispatch: (msg: TMsg) => void;
-	}) => void;
-};
+  render?: (input: { model: TModel; ctx: TCtx; dispatch: (msg: TMsg) => void }) => void
+}
 
 function generateProgramId() {
-	return `program:${Math.random().toString(36).slice(2)}`;
+  return `program:${Math.random().toString(36).slice(2)}`
 }
 
 //
@@ -54,139 +40,126 @@ function generateProgramId() {
 //
 
 export type ProgramDebugger = (
-	initialModel: unknown,
-	setModel: (model: unknown, msg?: unknown) => MaybePromise<void>,
-) => MaybePromise<(model: unknown, msg?: unknown) => void>;
+  initialModel: unknown,
+  setModel: (model: unknown, msg?: unknown) => MaybePromise<void>
+) => MaybePromise<(model: unknown, msg?: unknown) => void>
 
-export async function run<TModel, TMsg, TCtx>(
-	program: Program<TModel, TMsg, TCtx> & {},
-) {
-	let model: TModel | null = null;
+export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCtx> & {}) {
+  let model: TModel | null = null
 
-	//
-	//
-	//
-	//
-	//
-	//
+  //
+  //
+  //
+  //
+  //
+  //
 
-	function updateUI(model: TModel, ctx: TCtx) {
-		program.render?.({
-			model,
-			ctx,
-			dispatch,
-		});
-	}
+  function updateUI(model: TModel, ctx: TCtx) {
+    program.render?.({
+      model,
+      ctx,
+      dispatch
+    })
+  }
 
-	function updateEff(eff?: Eff<TMsg> | null) {
-		if (eff) {
-			Promise.resolve().then(
-				function runEffect() {
-					eff(
-						dispatch,
-					);
-				},
-			);
-		}
-	}
+  function updateEff(eff?: Eff<TMsg> | null) {
+    if (eff) {
+      Promise.resolve().then(function runEffect() {
+        eff(dispatch)
+      })
+    }
+  }
 
-	const intervalId = generateProgramId();
-	let cleanUpSubscriptions = () => {};
-	async function updateSubscriptions(model: TModel, ctx: TCtx) {
-		const sub = await program.subscriptions({
-			intervalId,
-			ctx,
-			model,
-		});
-		cleanUpSubscriptions();
-		cleanUpSubscriptions = sub.sub(dispatch);
-	}
+  const intervalId = generateProgramId()
+  let cleanUpSubscriptions = () => {}
+  async function updateSubscriptions(model: TModel, ctx: TCtx) {
+    const sub = await program.subscriptions({
+      intervalId,
+      ctx,
+      model
+    })
+    cleanUpSubscriptions()
+    cleanUpSubscriptions = sub.sub(dispatch)
+  }
 
-	let isUpdating = false;
-	const queue: TMsg[] = [];
+  let isUpdating = false
+  const queue: TMsg[] = []
 
-	async function dispatch(msg: TMsg) {
-		if (!model) {
-			return;
-		}
-		try {
-			const ctx = await program.ctx();
+  async function dispatch(msg: TMsg) {
+    if (!model) {
+      return
+    }
+    try {
+      const ctx = await program.ctx()
 
-			// This is so we don't overwrite ongoing updates
-			if (isUpdating) {
-				queue.push(msg);
-				return;
-			}
+      // This is so we don't overwrite ongoing updates
+      if (isUpdating) {
+        queue.push(msg)
+        return
+      }
 
-			isUpdating = true;
-			const updated =
-				await program.update(
-					{
-						ctx,
-						msg,
-						model,
-					},
-				);
-			isUpdating = false;
+      isUpdating = true
+      const updated = await program.update({
+        ctx,
+        msg,
+        model
+      })
+      isUpdating = false
 
-			model = updated.model;
-			updateUI(model, ctx);
-			updateEff(updated.eff);
-			updateSubscriptions(model, ctx);
-			updateDebugger?.(model, msg);
+      model = updated.model
+      updateUI(model, ctx)
+      updateEff(updated.eff)
+      updateSubscriptions(model, ctx)
+      updateDebugger?.(model, msg)
 
-			if (queue.length > 0) {
-				const msg =
-					queue.shift();
-				if (!msg) {
-					return;
-				}
-				dispatch(msg);
-			}
-		} catch (error) {
-			program.crash({
-				error,
-			});
-		}
-	}
+      if (queue.length > 0) {
+        const msg = queue.shift()
+        if (!msg) {
+          return
+        }
+        dispatch(msg)
+      }
+    } catch (error) {
+      program.crash({
+        error
+      })
+    }
+  }
 
-	const ctx = await program.ctx();
+  const ctx = await program.ctx()
 
-	const init = await program.init({ctx});
+  const init = await program.init({ ctx })
 
-	model = init.model;
-	updateUI(model, ctx);
-	updateEff(init.eff);
-	updateSubscriptions(model, ctx);
+  model = init.model
+  updateUI(model, ctx)
+  updateEff(init.eff)
+  updateSubscriptions(model, ctx)
 
-	const updateDebugger = await program.debugger?.(
-		model,
-		async function debuggerSetModel(modelNew) {
-			const ctx = await program.ctx();
+  const updateDebugger = await program.debugger?.(model, async function debuggerSetModel(modelNew) {
+    const ctx = await program.ctx()
 
-			// @ts-expect-error
-			model = modelNew;
+    // @ts-expect-error
+    model = modelNew
 
-			if (!model) {
-				return;
-			}
+    if (!model) {
+      return
+    }
 
-			program.render?.({
-				model,
-				ctx,
-				dispatch,
-			});
-		},
-	);
-	updateDebugger?.(model, '@INIT');
+    program.render?.({
+      model,
+      ctx,
+      dispatch
+    })
+  })
+  updateDebugger?.(model, '@INIT')
 
-	return {
-		getModel() {
-			return model;
-		},
-	};
+  return {
+    getModel() {
+      return model
+    }
+  }
 }
 
 export const Program = {
-	run,
-};
+  run
+}

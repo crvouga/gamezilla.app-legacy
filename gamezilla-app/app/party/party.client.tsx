@@ -1,15 +1,8 @@
-import type {ClientCtx} from 'gamezilla-app/app/@/client';
-import type {UserId} from 'gamezilla-app/app/@/data';
-import {
-	Eff,
-	RemoteResult,
-	Sub,
-	exhaustive,
-	isErr,
-	pipe,
-} from 'gamezilla-app/@/core';
-import {Mic} from './mic';
-import type {ModelClient, MsgClient, MsgToClient} from './party.types';
+import type { ClientCtx } from 'gamezilla-app/app/@/client'
+import type { UserId } from 'gamezilla-app/app/@/data'
+import { Eff, RemoteResult, Sub, exhaustive, isErr, pipe } from 'gamezilla-app/@/core'
+import { Mic } from './mic'
+import type { ModelClient, MsgClient, MsgToClient } from './party.types'
 
 //
 //
@@ -19,20 +12,20 @@ import type {ModelClient, MsgClient, MsgToClient} from './party.types';
 //
 //
 
-export type Model = ModelClient;
+export type Model = ModelClient
 
 export const init = (): [Model, Eff<Msg>] => {
-	return [
-		{
-			parties: {},
-			users: {},
-			//
-			requests: {},
-			volume: 0,
-		},
-		Eff.None,
-	];
-};
+  return [
+    {
+      parties: {},
+      users: {},
+      //
+      requests: {},
+      volume: 0
+    },
+    Eff.None
+  ]
+}
 
 //
 //
@@ -42,142 +35,128 @@ export const init = (): [Model, Eff<Msg>] => {
 //
 //
 
-export type Msg = MsgClient;
+export type Msg = MsgClient
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
-	switch (msg[0]) {
-		case 'clicked-banner': {
-			return [model, Eff.None];
-		}
+  switch (msg[0]) {
+    case 'clicked-banner': {
+      return [model, Eff.None]
+    }
 
-		case 'MicSound': {
-			return [
-				{
-					...model,
-					volume: msg[1]
-						.volume,
-				},
-				Eff.None,
-			];
-		}
+    case 'MicSound': {
+      return [
+        {
+          ...model,
+          volume: msg[1].volume
+        },
+        Eff.None
+      ]
+    }
 
-		case 'MicUnload':
-		case 'MicLoad': {
-			return [model, Eff.None];
-		}
+    case 'MicUnload':
+    case 'MicLoad': {
+      return [model, Eff.None]
+    }
 
-		case 'party-get':
-		case 'PartyCreate':
-		case 'PartyDestroy':
-		case 'PartyLeave':
-		case 'PartyJoin': {
-			return [
-				{
-					...model,
-					requests: {
-						...model.requests,
-						[msg[0]]:
-							RemoteResult.Loading,
-					},
-				},
-				Eff.None,
-			];
-		}
+    case 'party-get':
+    case 'PartyCreate':
+    case 'PartyDestroy':
+    case 'PartyLeave':
+    case 'PartyJoin': {
+      return [
+        {
+          ...model,
+          requests: {
+            ...model.requests,
+            [msg[0]]: RemoteResult.Loading
+          }
+        },
+        Eff.None
+      ]
+    }
 
-		default: {
-			return exhaustive(msg[0]);
-		}
-	}
-};
+    default: {
+      return exhaustive(msg[0])
+    }
+  }
+}
 
 export const updateFromServer = (
-	{currentUserId}: {currentUserId: UserId},
-	msg: MsgToClient,
-	model: Model,
+  { currentUserId }: { currentUserId: UserId },
+  msg: MsgToClient,
+  model: Model
 ): [Model, Eff<Msg>] => {
-	switch (msg[0]) {
-		case 'party-get':
-		case 'PartyDestroy':
-		case 'PartyCreate':
-		case 'PartyJoin':
-		case 'PartyLeave': {
-			const requestsNew: Model['requests'] =
-				{
-					...model.requests,
-					[msg[0]]:
-						RemoteResult.map(
-							msg[2],
-							() =>
-								null,
-						),
-				};
+  switch (msg[0]) {
+    case 'party-get':
+    case 'PartyDestroy':
+    case 'PartyCreate':
+    case 'PartyJoin':
+    case 'PartyLeave': {
+      const requestsNew: Model['requests'] = {
+        ...model.requests,
+        [msg[0]]: RemoteResult.map(msg[2], () => null)
+      }
 
-			if (isErr(msg[2])) {
-				return [
-					{
-						...model,
-						requests: requestsNew,
-					},
-					Eff.None,
-				];
-			}
+      if (isErr(msg[2])) {
+        return [
+          {
+            ...model,
+            requests: requestsNew
+          },
+          Eff.None
+        ]
+      }
 
-			const modelNext: Model = {
-				...model,
-				requests: requestsNew,
-				...msg[2].value,
-			};
+      const modelNext: Model = {
+        ...model,
+        requests: requestsNew,
+        ...msg[2].value
+      }
 
-			const eff = toLifecycleEff({
-				currentUserId,
-				modelNext: modelNext,
-				modelPrev: model,
-			});
+      const eff = toLifecycleEff({
+        currentUserId,
+        modelNext: modelNext,
+        modelPrev: model
+      })
 
-			return [modelNext, eff];
-		}
-		default: {
-			return exhaustive(msg[0]);
-		}
-	}
-};
+      return [modelNext, eff]
+    }
+    default: {
+      return exhaustive(msg[0])
+    }
+  }
+}
 
 const toLifecycleEff = ({
-	currentUserId,
-	modelNext,
-	modelPrev,
+  currentUserId,
+  modelNext,
+  modelPrev
 }: {
-	currentUserId: UserId;
-	modelPrev: Model;
-	modelNext: Model;
+  currentUserId: UserId
+  modelPrev: Model
+  modelNext: Model
 }): Eff<Msg> => {
-	const userPrev = modelPrev.users[currentUserId];
-	const userNext = modelNext.users[currentUserId];
+  const userPrev = modelPrev.users[currentUserId]
+  const userNext = modelNext.users[currentUserId]
 
-	// did user just leave party?
-	if (userPrev && !userNext) {
-		return pipe(
-			Mic.unload,
-			Eff.perform((result) => [
-				'MicUnload',
-				result,
-			]),
-		);
-	}
+  // did user just leave party?
+  if (userPrev && !userNext) {
+    return pipe(
+      Mic.unload,
+      Eff.perform((result) => ['MicUnload', result])
+    )
+  }
 
-	// did user just join party?
-	if (!userPrev && userNext) {
-		return pipe(
-			Mic.load,
-			Eff.perform((result) => [
-				'MicLoad',
-				result,
-			]),
-		);
-	}
+  // did user just join party?
+  if (!userPrev && userNext) {
+    return pipe(
+      Mic.load,
+      Eff.perform((result) => ['MicLoad', result])
+    )
+  }
 
-	return Eff.None;
-};
+  return Eff.None
+}
 
 //
 //
@@ -187,77 +166,49 @@ const toLifecycleEff = ({
 //
 //
 
-export const ViewPage = ({
-	ctx,
-	model,
-	dispatch,
-}: {
-	ctx: ClientCtx;
-	model: Model;
-	dispatch: (msg: Msg) => void;
-}) => {
-	const user = model.users[ctx.currentUserId];
+export const ViewPage = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: Model; dispatch: (msg: Msg) => void }) => {
+  const user = model.users[ctx.currentUserId]
 
-	if (!user) {
-		return (
-			<ViewNotInParty
-				ctx={ctx}
-				model={model}
-				dispatch={
-					dispatch
-				}
-			/>
-		);
-	}
+  if (!user) {
+    return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />
+  }
 
-	const party = model.parties[user.partyId];
+  const party = model.parties[user.partyId]
 
-	if (!party) {
-		return (
-			<ViewNotInParty
-				ctx={ctx}
-				model={model}
-				dispatch={
-					dispatch
-				}
-			/>
-		);
-	}
+  if (!party) {
+    return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />
+  }
 
-	return null;
-};
+  return null
+}
 
-const ViewNotInParty = (_input: {
-	ctx: ClientCtx;
-	model: Model;
-	dispatch: (msg: Msg) => void;
-}) => {
-	return <div>View</div>;
-};
+const ViewNotInParty = (_input: { ctx: ClientCtx; model: Model; dispatch: (msg: Msg) => void }) => {
+  return <div>View</div>
+}
 
 export const ViewBanner = ({
-	model,
-	ctx,
+  model,
+  ctx
 }: {
-	ctx: ClientCtx;
+  ctx: ClientCtx
 
-	model: Model;
-	dispatch: (msg: Msg) => void;
+  model: Model
+  dispatch: (msg: Msg) => void
 }) => {
-	const user = model.users[ctx.currentUserId];
+  const user = model.users[ctx.currentUserId]
 
-	if (!user) {
-		return null;
-	}
+  if (!user) {
+    return null
+  }
 
-	const party = model.parties[user.partyId];
+  const party = model.parties[user.partyId]
 
-	if (!party) {
-		return null;
-	}
+  if (!party) {
+    return null
+  }
 
-	return <div>Banner</div>;
-};
+  return <div>Banner</div>
+}
 
 //
 //
@@ -268,5 +219,5 @@ export const ViewBanner = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-	return Sub.None;
-};
+  return Sub.None
+}

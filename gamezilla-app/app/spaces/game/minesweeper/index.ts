@@ -1,1 +1,1 @@
-export * from './minesweeper-ui';
+export * from './minesweeper-ui'

@@ -1,18 +1,10 @@
-import {Sub} from 'gamezilla-app/@/core';
-import {GameServerModule} from '../@/architecture/game-server-v2';
-import type {SpaceServerCtx, SpaceServerEvent} from '../@/space';
-import {SpaceServerCmd} from '../@/space-server-cmd';
-import {FlowServer} from './flow/flow.server';
-import type {
-	MsgCore,
-	GameName,
-	ModelCore,
-	ModelServer,
-	MsgServer,
-	MsgToClient,
-	MsgToServer,
-} from './game.types';
-import {ConnectFourServer} from './connect-four/connect-four.server';
+import { Sub } from 'gamezilla-app/@/core'
+import { GameServerModule } from '../@/architecture/game-server-v2'
+import type { SpaceServerCtx, SpaceServerEvent } from '../@/space'
+import { SpaceServerCmd } from '../@/space-server-cmd'
+import { FlowServer } from './flow/flow.server'
+import type { MsgCore, GameName, ModelCore, ModelServer, MsgServer, MsgToClient, MsgToServer } from './game.types'
+import { ConnectFourServer } from './connect-four/connect-four.server'
 
 //
 //
@@ -23,27 +15,27 @@ import {ConnectFourServer} from './connect-four/connect-four.server';
 //
 
 type ServerModule = GameServerModule<{
-	Model: ModelServer;
-	Msg: MsgServer;
-	MsgToClient: MsgToClient;
-	MsgToServer: MsgToServer;
-	ModelCore: ModelCore;
-	MsgCore: MsgCore;
-	Ctx: SpaceServerCtx;
-	MsgEvtIn: SpaceServerEvent;
-	MsgCmdOut: SpaceServerCmd<MsgToClient>;
-	Deps: ServerDeps;
-}>;
+  Model: ModelServer
+  Msg: MsgServer
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  ModelCore: ModelCore
+  MsgCore: MsgCore
+  Ctx: SpaceServerCtx
+  MsgEvtIn: SpaceServerEvent
+  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  Deps: ServerDeps
+}>
 
 type ServerDeps = {
-	flow: Awaited<ReturnType<(typeof FlowServer)['deps']>>;
-};
+  flow: Awaited<ReturnType<(typeof FlowServer)['deps']>>
+}
 
 const deps: ServerModule['deps'] = async (input) => {
-	return {
-		flow: await FlowServer.deps(input),
-	};
-};
+  return {
+    flow: await FlowServer.deps(input)
+  }
+}
 
 //
 //
@@ -54,29 +46,29 @@ const deps: ServerModule['deps'] = async (input) => {
 //
 
 const init = (gameName: GameName): ServerModule['init'] => {
-	switch (gameName) {
-		case 'connect-four': {
-			return {
-				t: 'connect-four',
-				c: ConnectFourServer.init,
-			};
-		}
+  switch (gameName) {
+    case 'connect-four': {
+      return {
+        t: 'connect-four',
+        c: ConnectFourServer.init
+      }
+    }
 
-		case 'flow': {
-			return {
-				t: 'flow',
-				c: FlowServer.init,
-			};
-		}
+    case 'flow': {
+      return {
+        t: 'flow',
+        c: FlowServer.init
+      }
+    }
 
-		default: {
-			return {
-				t: 'connect-four',
-				c: ConnectFourServer.init,
-			};
-		}
-	}
-};
+    default: {
+      return {
+        t: 'connect-four',
+        c: ConnectFourServer.init
+      }
+    }
+  }
+}
 
 //
 //
@@ -87,154 +79,72 @@ const init = (gameName: GameName): ServerModule['init'] => {
 //
 
 const update: ServerModule['update'] = async (input) => {
-	switch (input.modelCore.t) {
-		case 'flow': {
-			const updated =
-				await FlowServer.update(
-					{
-						ctx: input.ctx,
-						modelCore: input
-							.modelCore
-							.c,
-						model:
-							input
-								.model
-								.t ===
-							'flow'
-								? input
-										.model
-										.c
-								: FlowServer.init,
-						msgCmd: input.msgCmd,
-						msgEvt: input.msgEvt,
-						msgClient:
-							input
-								.msgClient
-								?.t ===
-							'flow'
-								? {
-										...input.msgClient,
-										...input
-											.msgClient
-											.c,
-								  }
-								: null,
-						msgCore:
-							input
-								.msgCore
-								?.t ===
-							'flow'
-								? {
-										...input.msgCore,
-										...input
-											.msgCore
-											.c,
-								  }
-								: null,
-						msg:
-							input
-								.msg
-								?.t ===
-							'flow'
-								? input
-										.msg
-										.c
-								: null,
-						deps: input
-							.deps
-							.flow,
-					},
-				);
+  switch (input.modelCore.t) {
+    case 'flow': {
+      const updated = await FlowServer.update({
+        ctx: input.ctx,
+        modelCore: input.modelCore.c,
+        model: input.model.t === 'flow' ? input.model.c : FlowServer.init,
+        msgCmd: input.msgCmd,
+        msgEvt: input.msgEvt,
+        msgClient:
+          input.msgClient?.t === 'flow'
+            ? {
+                ...input.msgClient,
+                ...input.msgClient.c
+              }
+            : null,
+        msgCore:
+          input.msgCore?.t === 'flow'
+            ? {
+                ...input.msgCore,
+                ...input.msgCore.c
+              }
+            : null,
+        msg: input.msg?.t === 'flow' ? input.msg.c : null,
+        deps: input.deps.flow
+      })
 
-			const tagged =
-				GameServerModule.tagOutput(
-					'flow',
-					(
-						msgCmd,
-					) =>
-						SpaceServerCmd.tag(
-							'flow',
-							msgCmd,
-						),
-					updated,
-				);
+      const tagged = GameServerModule.tagOutput('flow', (msgCmd) => SpaceServerCmd.tag('flow', msgCmd), updated)
 
-			return tagged;
-		}
+      return tagged
+    }
 
-		case 'connect-four': {
-			const updated =
-				await ConnectFourServer.update(
-					{
-						ctx: input.ctx,
-						modelCore: input
-							.modelCore
-							.c,
-						model:
-							input
-								.model
-								.t ===
-							'connect-four'
-								? input
-										.model
-										.c
-								: ConnectFourServer.init,
-						msgCmd: input.msgCmd,
-						msgEvt: input.msgEvt,
-						msgClient:
-							input
-								.msgClient
-								?.t ===
-							'connect-four'
-								? {
-										...input.msgClient,
-										...input
-											.msgClient
-											.c,
-								  }
-								: null,
-						msgCore:
-							input
-								.msgCore
-								?.t ===
-							'connect-four'
-								? {
-										...input.msgCore,
-										...input
-											.msgCore
-											.c,
-								  }
-								: null,
-						msg:
-							input
-								.msg
-								?.t ===
-							'connect-four'
-								? input
-										.msg
-										.c
-								: null,
-						deps: null,
-					},
-				);
+    case 'connect-four': {
+      const updated = await ConnectFourServer.update({
+        ctx: input.ctx,
+        modelCore: input.modelCore.c,
+        model: input.model.t === 'connect-four' ? input.model.c : ConnectFourServer.init,
+        msgCmd: input.msgCmd,
+        msgEvt: input.msgEvt,
+        msgClient:
+          input.msgClient?.t === 'connect-four'
+            ? {
+                ...input.msgClient,
+                ...input.msgClient.c
+              }
+            : null,
+        msgCore:
+          input.msgCore?.t === 'connect-four'
+            ? {
+                ...input.msgCore,
+                ...input.msgCore.c
+              }
+            : null,
+        msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
+        deps: null
+      })
 
-			const tagged =
-				GameServerModule.tagOutput(
-					'connect-four',
-					(
-						msgCmd,
-					) =>
-						SpaceServerCmd.tag(
-							'connect-four',
-							msgCmd,
-						),
-					updated,
-				);
+      const tagged = GameServerModule.tagOutput(
+        'connect-four',
+        (msgCmd) => SpaceServerCmd.tag('connect-four', msgCmd),
+        updated
+      )
 
-			return tagged;
-		}
-	}
-};
+      return tagged
+    }
+  }
+}
 
 //
 //
@@ -245,58 +155,34 @@ const update: ServerModule['update'] = async (input) => {
 //
 
 const subscriptions: ServerModule['subscriptions'] = async (input) => {
-	switch (input.modelCore.t) {
-		case 'connect-four': {
-			return Sub.tag(
-				'connect-four',
-				await ConnectFourServer.subscriptions(
-					{
-						...input,
-						modelCore: input
-							.modelCore
-							.c,
-						model:
-							input
-								.model
-								?.t ===
-							'connect-four'
-								? input
-										.model
-										.c
-								: ConnectFourServer.init,
-					},
-				),
-			);
-		}
+  switch (input.modelCore.t) {
+    case 'connect-four': {
+      return Sub.tag(
+        'connect-four',
+        await ConnectFourServer.subscriptions({
+          ...input,
+          modelCore: input.modelCore.c,
+          model: input.model?.t === 'connect-four' ? input.model.c : ConnectFourServer.init
+        })
+      )
+    }
 
-		case 'flow': {
-			return Sub.tag(
-				'flow',
-				await FlowServer.subscriptions(
-					{
-						...input,
-						modelCore: input
-							.modelCore
-							.c,
-						model:
-							input
-								.model
-								?.t ===
-							'flow'
-								? input
-										.model
-										.c
-								: FlowServer.init,
-					},
-				),
-			);
-		}
-	}
-};
+    case 'flow': {
+      return Sub.tag(
+        'flow',
+        await FlowServer.subscriptions({
+          ...input,
+          modelCore: input.modelCore.c,
+          model: input.model?.t === 'flow' ? input.model.c : FlowServer.init
+        })
+      )
+    }
+  }
+}
 
 export const GameServer = {
-	init,
-	update,
-	subscriptions,
-	deps,
-};
+  init,
+  update,
+  subscriptions,
+  deps
+}

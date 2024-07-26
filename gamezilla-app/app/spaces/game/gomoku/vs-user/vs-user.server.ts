@@ -1,14 +1,6 @@
-import {Sub, type Eff} from 'gamezilla-app/@/core';
-import type {
-	SpaceReqCtx,
-	SpaceServerEvent,
-} from 'gamezilla-app/app/spaces/@/space';
-import {
-	initShared,
-	type ModelServer,
-	type MsgServer,
-	type MsgToServer,
-} from './vs-user.types';
+import { Sub, type Eff } from 'gamezilla-app/@/core'
+import type { SpaceReqCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import { initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-user.types'
 
 //
 //
@@ -18,9 +10,9 @@ import {
 //
 //
 
-export type Model = ModelServer;
+export type Model = ModelServer
 
-export const init = initShared;
+export const init = initShared
 
 //
 //
@@ -30,49 +22,49 @@ export const init = initShared;
 //
 //
 
-export type Msg = MsgServer;
+export type Msg = MsgServer
 
 export const update = ({
-	model,
+  model
 }: {
-	msg: Msg;
-	model: Model;
+  msg: Msg
+  model: Model
 }): {
-	model: Model;
-	eff?: Eff<Msg>;
+  model: Model
+  eff?: Eff<Msg>
 } => {
-	return {model};
-};
+  return { model }
+}
 
 export const updateFromClient = ({
-	model,
+  model
 }: {
-	ctx: SpaceReqCtx;
-	msg: MsgToServer;
-	model: Model;
+  ctx: SpaceReqCtx
+  msg: MsgToServer
+  model: Model
 }): {
-	model: Model;
-	eff?: Eff<Msg>;
+  model: Model
+  eff?: Eff<Msg>
 } => {
-	return {model};
-};
+  return { model }
+}
 
 export const updateFromEvent = ({
-	msg,
-	model,
+  msg,
+  model
 }: {
-	msg: SpaceServerEvent;
-	model: Model;
+  msg: SpaceServerEvent
+  model: Model
 }): {
-	model: Model;
-	eff?: Eff<Msg>;
+  model: Model
+  eff?: Eff<Msg>
 } => {
-	if (msg.t === 'space/user-left-space') {
-		return {model: init(model)};
-	}
+  if (msg.t === 'space/user-left-space') {
+    return { model: init(model) }
+  }
 
-	return {model};
-};
+  return { model }
+}
 
 //
 //
@@ -83,5 +75,5 @@ export const updateFromEvent = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-	return Sub.None;
-};
+  return Sub.None
+}

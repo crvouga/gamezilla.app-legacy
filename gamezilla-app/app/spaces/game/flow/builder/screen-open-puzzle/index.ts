@@ -1,1 +1,1 @@
-export * as ScreenOpenPuzzleTypes from './screen-open-puzzle.types';
+export * as ScreenOpenPuzzleTypes from './screen-open-puzzle.types'

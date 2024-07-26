@@ -1,3 +1,3 @@
-export type FleetFormation = 'standard' | 'classic' | 'russian';
+export type FleetFormation = 'standard' | 'classic' | 'russian'
 
-export const FleetFormation = {};
+export const FleetFormation = {}

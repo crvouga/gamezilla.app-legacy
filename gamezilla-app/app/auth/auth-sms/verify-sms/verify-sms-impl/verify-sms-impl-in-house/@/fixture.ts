@@ -1,82 +1,65 @@
-import {PhoneNumber, Posix, TimeSpan, unwrap} from 'gamezilla-app/@/core';
-import {Hashing, type IHashing} from 'gamezilla-app/@/hashing';
-import type {LanguageCodeISO_639_1} from 'gamezilla-app/@/l18n';
-import {Translator} from 'gamezilla-app/app/@/client/translator';
-import {Logger} from 'gamezilla-app/app/@/server/logger';
-import {SMSFake} from 'gamezilla-app/app/@/server/sms/sms-impl-fake';
-import {VerificationAttemptDb} from '../../../verification-attempt';
-import {
-	type IVerificationCodeGenerator,
-	VerificationCodeGenerator,
-} from '../../../verification-code-generator';
-import {
-	type IVerificationDb,
-	VerificationDb,
-} from '../../../verification/verification-db';
-import {VerifySMS} from '../verify-sms-impl-in-house';
+import { PhoneNumber, Posix, TimeSpan, unwrap } from 'gamezilla-app/@/core'
+import { Hashing, type IHashing } from 'gamezilla-app/@/hashing'
+import type { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n'
+import { Translator } from 'gamezilla-app/app/@/client/translator'
+import { Logger } from 'gamezilla-app/app/@/server/logger'
+import { SMSFake } from 'gamezilla-app/app/@/server/sms/sms-impl-fake'
+import { VerificationAttemptDb } from '../../../verification-attempt'
+import { type IVerificationCodeGenerator, VerificationCodeGenerator } from '../../../verification-code-generator'
+import { type IVerificationDb, VerificationDb } from '../../../verification/verification-db'
+import { VerifySMS } from '../verify-sms-impl-in-house'
 
 export const VerifySMSInHouseFixture = async (input?: {
-	verifyCodeMaxAttempts?: number;
-	verifyCodeExpiresIn?: TimeSpan;
-	sendCodeHourlyLimit?: number;
-	sendCodeDailyLimit?: number;
-	codeGenerator?: IVerificationCodeGenerator;
-	now?: () => Posix;
-	hashing?: IHashing;
-	verificationDb?: IVerificationDb;
+  verifyCodeMaxAttempts?: number
+  verifyCodeExpiresIn?: TimeSpan
+  sendCodeHourlyLimit?: number
+  sendCodeDailyLimit?: number
+  codeGenerator?: IVerificationCodeGenerator
+  now?: () => Posix
+  hashing?: IHashing
+  verificationDb?: IVerificationDb
 }) => {
-	const sms = SMSFake({logger: Logger({t: 'noop'})});
-	const CODE = '123456';
-	const WRONG_CODE = '42';
-	const verificationCodeGenerator =
-		input?.codeGenerator ??
-		VerificationCodeGenerator({
-			t: 'fake',
-			code: CODE,
-		});
-	const logger = Logger({t: 'noop'});
-	const verificationDb =
-		input?.verificationDb ??
-		VerificationDb({t: 'hash-map'});
-	const verificationAttemptDb = VerificationAttemptDb({
-		t: 'hash-map',
-	});
-	const hashing = input?.hashing ?? Hashing({t: 'noop'});
+  const sms = SMSFake({ logger: Logger({ t: 'noop' }) })
+  const CODE = '123456'
+  const WRONG_CODE = '42'
+  const verificationCodeGenerator =
+    input?.codeGenerator ??
+    VerificationCodeGenerator({
+      t: 'fake',
+      code: CODE
+    })
+  const logger = Logger({ t: 'noop' })
+  const verificationDb = input?.verificationDb ?? VerificationDb({ t: 'hash-map' })
+  const verificationAttemptDb = VerificationAttemptDb({
+    t: 'hash-map'
+  })
+  const hashing = input?.hashing ?? Hashing({ t: 'noop' })
 
-	const verifySMS = VerifySMS({
-		logger,
-		verificationDb,
-		verificationAttemptDb,
-		hashing,
-		now: input?.now ?? Posix.now,
-		sendCodeHourlyLimit:
-			input?.sendCodeHourlyLimit ??
-			10,
-		sendCodeDailyLimit:
-			input?.sendCodeDailyLimit ?? 10,
-		verifyCodeExpiresIn:
-			input?.verifyCodeExpiresIn ??
-			TimeSpan.minutes(5),
-		verifyCodeMaxAttempts:
-			input?.verifyCodeMaxAttempts ??
-			3,
-		sms,
-		Translator,
-		verificationCodeGenerator,
-	});
+  const verifySMS = VerifySMS({
+    logger,
+    verificationDb,
+    verificationAttemptDb,
+    hashing,
+    now: input?.now ?? Posix.now,
+    sendCodeHourlyLimit: input?.sendCodeHourlyLimit ?? 10,
+    sendCodeDailyLimit: input?.sendCodeDailyLimit ?? 10,
+    verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.minutes(5),
+    verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
+    sms,
+    Translator,
+    verificationCodeGenerator
+  })
 
-	const phoneNumber = unwrap(
-		PhoneNumber.fromString('+1 480-209-8698'),
-	);
-	const preferredLanguage: LanguageCodeISO_639_1 = 'en';
+  const phoneNumber = unwrap(PhoneNumber.fromString('+1 480-209-8698'))
+  const preferredLanguage: LanguageCodeISO_639_1 = 'en'
 
-	return {
-		preferredLanguage,
-		verificationDb,
-		CODE,
-		WRONG_CODE,
-		phoneNumber,
-		verifySMS,
-		sms,
-	};
-};
+  return {
+    preferredLanguage,
+    verificationDb,
+    CODE,
+    WRONG_CODE,
+    phoneNumber,
+    verifySMS,
+    sms
+  }
+}

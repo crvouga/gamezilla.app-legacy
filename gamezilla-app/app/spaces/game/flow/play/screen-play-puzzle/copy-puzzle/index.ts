@@ -1,1 +1,1 @@
-export * as CopyPuzzleTypes from './copy-puzzle.types';
+export * as CopyPuzzleTypes from './copy-puzzle.types'

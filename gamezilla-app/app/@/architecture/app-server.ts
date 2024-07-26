@@ -1,5 +1,5 @@
-import {Eff, batchMsgs, type Sub} from 'gamezilla-app/@/core';
-import type {ClientId, SessionId, UserId} from 'gamezilla-app/app/@/data';
+import { Eff, batchMsgs, type Sub } from 'gamezilla-app/@/core'
+import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 
 //
 //
@@ -8,47 +8,47 @@ import type {ClientId, SessionId, UserId} from 'gamezilla-app/app/@/data';
 //
 
 export type AppServerModuleTypes = {
-	/**
-	 * `Deps` is the dependencies of the module
-	 */
-	Deps?: any;
-	/**
-	 * `Ctx` is data passed down from parent modules
-	 */
-	Ctx?: any;
-	/**
-	 * `Model` is the state of the module
-	 */
-	Model?: any;
-	/**
-	 * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
-	 */
-	Msg?: any;
-	/**
-	 * `MsgToClient` is a message to send to the client component of the module
-	 */
-	MsgToClient?: any;
-	/**
-	 * `MsgToServer` is a message to send to the client component of the module
-	 */
-	MsgToServer?: any;
-	/**
-	 * `MsgCmdIn` is a message from other modules. Usually verbs
-	 */
-	MsgCmdIn?: any;
-	/**
-	 * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
-	 */
-	MsgEvtIn?: any;
-	/**
-	 * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
-	 */
-	MsgCmdOut?: any;
-	/**
-	 * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
-	 */
-	MsgEvtOut?: any;
-};
+  /**
+   * `Deps` is the dependencies of the module
+   */
+  Deps?: any
+  /**
+   * `Ctx` is data passed down from parent modules
+   */
+  Ctx?: any
+  /**
+   * `Model` is the state of the module
+   */
+  Model?: any
+  /**
+   * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
+   */
+  Msg?: any
+  /**
+   * `MsgToClient` is a message to send to the client component of the module
+   */
+  MsgToClient?: any
+  /**
+   * `MsgToServer` is a message to send to the client component of the module
+   */
+  MsgToServer?: any
+  /**
+   * `MsgCmdIn` is a message from other modules. Usually verbs
+   */
+  MsgCmdIn?: any
+  /**
+   * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
+   */
+  MsgEvtIn?: any
+  /**
+   * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
+   */
+  MsgCmdOut?: any
+  /**
+   * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
+   */
+  MsgEvtOut?: any
+}
 
 //
 //
@@ -57,41 +57,41 @@ export type AppServerModuleTypes = {
 //
 
 export type Input<T extends AppServerModuleTypes> = {
-	/**
-	 * `deps` are the dependencies of the module
-	 */
-	deps: T['Deps'];
-	/**
-	 * `ctx` is data passed down from parent modules
-	 */
-	ctx: T['Ctx'];
-	/**
-	 * `model` is the current state of the module
-	 */
-	model: T['Model'];
-	/**
-	 *
-	 */
-	msg?: T['Msg'] | null;
-	/**
-	 *
-	 */
-	msgClient?:
-		| (T['MsgToServer'] & {
-				clientId: ClientId;
-				sessionId: SessionId;
-				userId?: UserId | null;
-		  })
-		| null;
-	/**
-	 *
-	 */
-	msgEvt?: T['MsgEvtIn'] | null;
-	/**
-	 *
-	 */
-	msgCmd?: T['MsgCmdIn'] | null;
-};
+  /**
+   * `deps` are the dependencies of the module
+   */
+  deps: T['Deps']
+  /**
+   * `ctx` is data passed down from parent modules
+   */
+  ctx: T['Ctx']
+  /**
+   * `model` is the current state of the module
+   */
+  model: T['Model']
+  /**
+   *
+   */
+  msg?: T['Msg'] | null
+  /**
+   *
+   */
+  msgClient?:
+    | (T['MsgToServer'] & {
+        clientId: ClientId
+        sessionId: SessionId
+        userId?: UserId | null
+      })
+    | null
+  /**
+   *
+   */
+  msgEvt?: T['MsgEvtIn'] | null
+  /**
+   *
+   */
+  msgCmd?: T['MsgCmdIn'] | null
+}
 
 //
 //
@@ -100,146 +100,112 @@ export type Input<T extends AppServerModuleTypes> = {
 //
 
 export type Output<T extends AppServerModuleTypes> = {
-	/**
-	 * `model` will be the new state of the module
-	 */
-	model: T['Model'];
-	/**
-	 * `eff` is a side effect to be performed. May dispatch a message
-	 */
-	eff?: Eff<T['Msg']>;
-	/**
-	 *
-	 */
-	msgCmd?: T['MsgCmdOut'][];
-	/**
-	 *
-	 */
-	msgEvt?: T['MsgEvtOut'][];
-};
+  /**
+   * `model` will be the new state of the module
+   */
+  model: T['Model']
+  /**
+   * `eff` is a side effect to be performed. May dispatch a message
+   */
+  eff?: Eff<T['Msg']>
+  /**
+   *
+   */
+  msgCmd?: T['MsgCmdOut'][]
+  /**
+   *
+   */
+  msgEvt?: T['MsgEvtOut'][]
+}
 
 /**
  * `AppServerModule` represents a server side app module
  */
 export type AppServerModule<T extends AppServerModuleTypes> = {
-	getDeps: (input: {ctx: T['Ctx']}) => Promise<T['Deps']>;
-	/**
-	 * `init` is the initial state of the module
-	 */
-	init: (input: {
-		ctx: T['Ctx'];
-		stored?: T['Model'] | null;
-	}) => Promise<Output<T>>;
+  getDeps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
+  /**
+   * `init` is the initial state of the module
+   */
+  init: (input: { ctx: T['Ctx']; stored?: T['Model'] | null }) => Promise<Output<T>>
 
-	/**
-	 * `update` handles all the state transitions and business logic of the module
-	 */
-	update: (input: Input<T>) => Promise<Output<T>>;
+  /**
+   * `update` handles all the state transitions and business logic of the module
+   */
+  update: (input: Input<T>) => Promise<Output<T>>
 
-	/**
-	 * `subscriptions` is dispatches msgs specific to the module
-	 */
-	subscriptions: (input: {
-		ctx: T['Ctx'];
-		model: T['Model'];
-		deps: T['Deps'];
-	}) => Promise<Sub<T['Msg']>>;
-};
+  /**
+   * `subscriptions` is dispatches msgs specific to the module
+   */
+  subscriptions: (input: { ctx: T['Ctx']; model: T['Model']; deps: T['Deps'] }) => Promise<Sub<T['Msg']>>
+}
 
-type MaybePromise<T> = T | Promise<T>;
+type MaybePromise<T> = T | Promise<T>
 
 const andThen = async <T extends AppServerModuleTypes>(
-	accPromise: MaybePromise<Output<T>>,
-	...updates: ((model: T['Model']) => MaybePromise<Output<T>>)[]
+  accPromise: MaybePromise<Output<T>>,
+  ...updates: ((model: T['Model']) => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
-	let acc = await accPromise;
-	for (const update of updates) {
-		const updated = await update(acc.model);
-		acc = {
-			model: updated.model,
-			eff: Eff.batch([
-				acc.eff,
-				updated.eff,
-			]),
-			msgCmd: batchMsgs(
-				acc.msgCmd,
-				updated.msgCmd,
-			),
-			msgEvt: batchMsgs(
-				acc.msgEvt,
-				updated.msgEvt,
-			),
-		};
-	}
-	return acc;
-};
+  let acc = await accPromise
+  for (const update of updates) {
+    const updated = await update(acc.model)
+    acc = {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+      msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt)
+    }
+  }
+  return acc
+}
 
 const updateLoop = async <T extends AppServerModuleTypes>(
-	deps: T['Deps'],
-	ctx: T['Ctx'],
-	update: (input: Input<T>) => MaybePromise<Output<T>>,
-	accPromise: MaybePromise<Output<T>>,
+  deps: T['Deps'],
+  ctx: T['Ctx'],
+  update: (input: Input<T>) => MaybePromise<Output<T>>,
+  accPromise: MaybePromise<Output<T>>
 ): Promise<Output<T>> => {
-	const acc = await accPromise;
+  const acc = await accPromise
 
-	const [msgEvt, ...msgEvtRest] = acc.msgEvt ?? [];
+  const [msgEvt, ...msgEvtRest] = acc.msgEvt ?? []
 
-	if (msgEvt) {
-		const updated = await update({
-			deps,
-			ctx,
-			model: acc.model,
-			msgEvt: msgEvt,
-		});
+  if (msgEvt) {
+    const updated = await update({
+      deps,
+      ctx,
+      model: acc.model,
+      msgEvt: msgEvt
+    })
 
-		return updateLoop(deps, ctx, update, {
-			model: updated.model,
-			eff: Eff.batch([
-				acc.eff,
-				updated.eff,
-			]),
-			msgCmd: batchMsgs(
-				updated.msgCmd,
-				acc.msgCmd,
-			),
-			msgEvt: batchMsgs(
-				updated.msgEvt,
-				msgEvtRest,
-			),
-		});
-	}
+    return updateLoop(deps, ctx, update, {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgCmd: batchMsgs(updated.msgCmd, acc.msgCmd),
+      msgEvt: batchMsgs(updated.msgEvt, msgEvtRest)
+    })
+  }
 
-	const [msgCmd, ...msgCmdRest] = acc.msgCmd ?? [];
+  const [msgCmd, ...msgCmdRest] = acc.msgCmd ?? []
 
-	if (msgCmd) {
-		const updated = await update({
-			deps,
-			ctx,
-			model: acc.model,
-			msgCmd: msgCmd,
-		});
+  if (msgCmd) {
+    const updated = await update({
+      deps,
+      ctx,
+      model: acc.model,
+      msgCmd: msgCmd
+    })
 
-		return updateLoop(deps, ctx, update, {
-			model: updated.model,
-			eff: Eff.batch([
-				acc.eff,
-				updated.eff,
-			]),
-			msgCmd: batchMsgs(
-				updated.msgCmd,
-				msgCmdRest,
-			),
-			msgEvt: batchMsgs(
-				updated.msgEvt,
-				acc.msgEvt,
-			),
-		});
-	}
+    return updateLoop(deps, ctx, update, {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgCmd: batchMsgs(updated.msgCmd, msgCmdRest),
+      msgEvt: batchMsgs(updated.msgEvt, acc.msgEvt)
+    })
+  }
 
-	return acc;
-};
+  return acc
+}
 
 export const AppServerModule = {
-	andThen,
-	updateLoop,
-};
+  andThen,
+  updateLoop
+}

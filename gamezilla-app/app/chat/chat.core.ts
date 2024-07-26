@@ -1,8 +1,8 @@
-import type {Browser, Eff, RemoteResult, Result} from 'gamezilla-app/@/core';
-import type {ChatId} from './chat-id';
-import type {ChatMessageId} from './chat-message-id';
-import type {ChatUserJoinId} from './chat-user-join-id';
-import type {UserId} from 'gamezilla-app/app/@/data';
+import type { Browser, Eff, RemoteResult, Result } from 'gamezilla-app/@/core'
+import type { ChatId } from './chat-id'
+import type { ChatMessageId } from './chat-message-id'
+import type { ChatUserJoinId } from './chat-user-join-id'
+import type { UserId } from 'gamezilla-app/app/@/data'
 
 //
 //
@@ -13,46 +13,46 @@ import type {UserId} from 'gamezilla-app/app/@/data';
 //
 
 export type ModelClient = {
-	chats: {
-		[chatId: ChatId]: {
-			chatId: ChatId;
-		};
-	};
-	chatsUsers: {
-		[chatsUsersId: ChatUserJoinId]: {
-			chatsUsersId: ChatUserJoinId;
-			chatId: ChatId;
-			userId: UserId;
-		};
-	};
-	users: {
-		[userId: UserId]: {
-			userId: UserId;
-			chatId: ChatId;
-		};
-	};
-	messages: {
-		[messageId: ChatMessageId]: {
-			messageId: ChatMessageId;
-			chatId: ChatId;
-		};
-	};
-	messageDrafts: {
-		[chatId: ChatId]: {
-			chatId: ChatId;
-			text: string;
-		};
-	};
-	requests: {
-		[key in Req[0]]?: RemoteResult<Problem, null>;
-	};
-	userSearch: string;
-	userSelected: {
-		[userId: UserId]: UserId;
-	};
-};
+  chats: {
+    [chatId: ChatId]: {
+      chatId: ChatId
+    }
+  }
+  chatsUsers: {
+    [chatsUsersId: ChatUserJoinId]: {
+      chatsUsersId: ChatUserJoinId
+      chatId: ChatId
+      userId: UserId
+    }
+  }
+  users: {
+    [userId: UserId]: {
+      userId: UserId
+      chatId: ChatId
+    }
+  }
+  messages: {
+    [messageId: ChatMessageId]: {
+      messageId: ChatMessageId
+      chatId: ChatId
+    }
+  }
+  messageDrafts: {
+    [chatId: ChatId]: {
+      chatId: ChatId
+      text: string
+    }
+  }
+  requests: {
+    [key in Req[0]]?: RemoteResult<Problem, null>
+  }
+  userSearch: string
+  userSelected: {
+    [userId: UserId]: UserId
+  }
+}
 
-export type ModelServer = null;
+export type ModelServer = null
 
 //
 //
@@ -63,60 +63,60 @@ export type ModelServer = null;
 //
 
 export type MsgClient =
-	| ['inputted-user-search', {userSearch: string}]
-	| ['clicked-user-search-result', {userId: UserId}]
-	| [
-			'clicked-user-selected-delete-button',
-			{
-				userId: UserId;
-			},
-	  ]
-	| ['clicked-user-search-clear-button']
-	| ['focused', Browser.FocusResult]
-	| Req;
+  | ['inputted-user-search', { userSearch: string }]
+  | ['clicked-user-search-result', { userId: UserId }]
+  | [
+      'clicked-user-selected-delete-button',
+      {
+        userId: UserId
+      }
+    ]
+  | ['clicked-user-search-clear-button']
+  | ['focused', Browser.FocusResult]
+  | Req
 
 export type Req =
-	| ['chat-join', {chatId: string}]
-	| ['chat-leave', {chatId: string}]
-	| ['chat-list', {userId: UserId}]
-	| ['chat-start', {userId: UserId[]}]
-	| ['message-send', {chatId: string; text: string}]
-	| ['message-unsend', {chatId: string; text: string}]
-	| ['message-list', {chatId: string}];
+  | ['chat-join', { chatId: string }]
+  | ['chat-leave', { chatId: string }]
+  | ['chat-list', { userId: UserId }]
+  | ['chat-start', { userId: UserId[] }]
+  | ['message-send', { chatId: string; text: string }]
+  | ['message-unsend', { chatId: string; text: string }]
+  | ['message-list', { chatId: string }]
 
-type Problem = ['database-error', string];
+type Problem = ['database-error', string]
 
-export type Res = [...Req, Result<Problem, Partial<ModelClient>>];
+export type Res = [...Req, Result<Problem, Partial<ModelClient>>]
 
-export const update = (input: {msg: MsgClient; model: ModelClient}) => {
-	switch (input.msg[0]) {
-		default: {
-			return null;
-		}
-	}
-};
+export const update = (input: { msg: MsgClient; model: ModelClient }) => {
+  switch (input.msg[0]) {
+    default: {
+      return null
+    }
+  }
+}
 
-export type MsgToServer = Req;
+export type MsgToServer = Req
 
-export type MsgServer = Res;
+export type MsgServer = Res
 
-export type MsgToClient = Res;
+export type MsgToClient = Res
 
 export const updateFromClient = ({
-	msg,
+  msg
 }: {
-	msg: MsgToServer;
-	model: ModelServer;
+  msg: MsgToServer
+  model: ModelServer
 }): {
-	eff: Eff<MsgServer>;
+  eff: Eff<MsgServer>
 } => {
-	switch (msg[0]) {
-		default: {
-			return {
-				eff: () => {
-					//
-				},
-			};
-		}
-	}
-};
+  switch (msg[0]) {
+    default: {
+      return {
+        eff: () => {
+          //
+        }
+      }
+    }
+  }
+}

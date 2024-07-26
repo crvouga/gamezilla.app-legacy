@@ -1,14 +1,14 @@
-import {Eff} from '../eff';
+import { Eff } from '../eff'
 
 /**
  *
  */
 type Output<Model, Msg, Event, Cmd> = {
-	model: Model;
-	eff?: Eff<Msg>;
-	msgEvt?: Event[];
-	msgCmd?: Cmd[];
-};
+  model: Model
+  eff?: Eff<Msg>
+  msgEvt?: Event[]
+  msgCmd?: Cmd[]
+}
 
 /**
  * @description
@@ -21,60 +21,40 @@ type Output<Model, Msg, Event, Cmd> = {
  * )
  */
 export const andThen =
-	<Model, Msg, Event, Cmd>(
-		updateStep: (
-			input: Model,
-		) => Output<Model, Msg, Event, Cmd>,
-	) =>
-	(output: Output<Model, Msg, Event, Cmd>) => {
-		const updated = updateStep(output.model);
+  <Model, Msg, Event, Cmd>(updateStep: (input: Model) => Output<Model, Msg, Event, Cmd>) =>
+  (output: Output<Model, Msg, Event, Cmd>) => {
+    const updated = updateStep(output.model)
 
-		return {
-			model: updated.model,
-			eff: Eff.batch([
-				output.eff,
-				updated.eff,
-			]),
-			msgEvt: [
-				...(output.msgEvt ??
-					[]),
-				...(updated.msgEvt ??
-					[]),
-			],
-			msgCmd: [
-				...(output.msgCmd ??
-					[]),
-				...(updated.msgCmd ??
-					[]),
-			],
-		};
-	};
+    return {
+      model: updated.model,
+      eff: Eff.batch([output.eff, updated.eff]),
+      msgEvt: [...(output.msgEvt ?? []), ...(updated.msgEvt ?? [])],
+      msgCmd: [...(output.msgCmd ?? []), ...(updated.msgCmd ?? [])]
+    }
+  }
 
-type NullishItems<T> = T | null | undefined | Array<NullishItems<T>>;
+type NullishItems<T> = T | null | undefined | Array<NullishItems<T>>
 
 /**
  * @description
  * A helper function used for composing update functions together.
  */
 export function batchMsgs<T>(...msgs: Array<NullishItems<T>>): Array<T> {
-	const flattened: Array<T> = [];
+  const flattened: Array<T> = []
 
-	const stack = [...msgs];
+  const stack = [...msgs]
 
-	while (stack.length > 0) {
-		const item = stack.pop();
+  while (stack.length > 0) {
+    const item = stack.pop()
 
-		if (Array.isArray(item)) {
-			stack.push(...item);
-		} else if (
-			item !== null &&
-			item !== undefined
-		) {
-			flattened.push(item);
-		}
-	}
+    if (Array.isArray(item)) {
+      stack.push(...item)
+    } else if (item !== null && item !== undefined) {
+      flattened.push(item)
+    }
+  }
 
-	return flattened.reverse();
+  return flattened.reverse()
 }
 
 /**
@@ -94,82 +74,50 @@ export function batchMsgs<T>(...msgs: Array<NullishItems<T>>): Array<T> {
  * @returns Accumulated output from all the update functions
  */
 export const chainAwait = async <Model, Msg, Event, Cmd>(
-	initial: Output<Model, Msg, Event, Cmd>,
-	...updaters: ((
-		input: Model,
-	) =>
-		| Output<Model, Msg, Event, Cmd>
-		| Promise<Output<Model, Msg, Event, Cmd>>)[]
+  initial: Output<Model, Msg, Event, Cmd>,
+  ...updaters: ((input: Model) => Output<Model, Msg, Event, Cmd> | Promise<Output<Model, Msg, Event, Cmd>>)[]
 ): Promise<Output<Model, Msg, Event, Cmd>> => {
-	const msgCmd: Cmd[] = [...(initial.msgCmd ?? [])];
-	const msgEvt: Event[] = [...(initial.msgEvt ?? [])];
-	const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : [];
-	let model: Model = {...initial.model};
+  const msgCmd: Cmd[] = [...(initial.msgCmd ?? [])]
+  const msgEvt: Event[] = [...(initial.msgEvt ?? [])]
+  const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : []
+  let model: Model = { ...initial.model }
 
-	for (let i = 0, len = updaters.length; i < len; ++i) {
-		const updated = await updaters[i]?.(model);
+  for (let i = 0, len = updaters.length; i < len; ++i) {
+    const updated = await updaters[i]?.(model)
 
-		if (!updated) {
-			continue;
-		}
+    if (!updated) {
+      continue
+    }
 
-		model = updated.model;
+    model = updated.model
 
-		if (updated.eff) {
-			eff.push(updated.eff);
-		}
+    if (updated.eff) {
+      eff.push(updated.eff)
+    }
 
-		if (updated.msgEvt) {
-			for (
-				let j = 0,
-					len =
-						updated
-							.msgEvt
-							.length;
-				j < len;
-				++j
-			) {
-				const msg =
-					updated
-						.msgEvt[
-						j
-					];
-				if (msg) {
-					msgEvt.push(
-						msg,
-					);
-				}
-			}
-		}
+    if (updated.msgEvt) {
+      for (let j = 0, len = updated.msgEvt.length; j < len; ++j) {
+        const msg = updated.msgEvt[j]
+        if (msg) {
+          msgEvt.push(msg)
+        }
+      }
+    }
 
-		if (updated.msgCmd) {
-			for (
-				let j = 0,
-					len =
-						updated
-							.msgCmd
-							.length;
-				j < len;
-				++j
-			) {
-				const msg =
-					updated
-						.msgCmd[
-						j
-					];
-				if (msg) {
-					msgCmd.push(
-						msg,
-					);
-				}
-			}
-		}
-	}
+    if (updated.msgCmd) {
+      for (let j = 0, len = updated.msgCmd.length; j < len; ++j) {
+        const msg = updated.msgCmd[j]
+        if (msg) {
+          msgCmd.push(msg)
+        }
+      }
+    }
+  }
 
-	return {
-		model,
-		eff: Eff.batch(eff),
-		msgEvt,
-		msgCmd,
-	};
-};
+  return {
+    model,
+    eff: Eff.batch(eff),
+    msgEvt,
+    msgCmd
+  }
+}

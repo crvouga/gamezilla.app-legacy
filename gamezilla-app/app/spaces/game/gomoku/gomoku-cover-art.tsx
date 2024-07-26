@@ -1,1 +1,1 @@
-export {CoverArt} from './@/gomoku/gomoku-ui';
+export { CoverArt } from './@/gomoku/gomoku-ui'

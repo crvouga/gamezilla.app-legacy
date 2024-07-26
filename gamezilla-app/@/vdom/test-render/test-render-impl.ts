@@ -1,20 +1,18 @@
-import type {VDomImpl} from '../vdom-impl';
-import type {ITestRender} from './test-render';
-import {TestRenderReact} from './test-render-impl-react';
+import type { VDomImpl } from '../vdom-impl'
+import type { ITestRender } from './test-render'
+import { TestRenderReact } from './test-render-impl-react'
 
 export const TestRender = async (vDomImpl: VDomImpl): Promise<ITestRender> => {
-	switch (vDomImpl) {
-		case 'react-with-compiler':
-		case 'react': {
-			return TestRenderReact;
-		}
-		case 'vue':
-		case 'inferno':
-		case 'preact':
-		case 'solid': {
-			throw new Error(
-				`TestRender not implemented for ${vDomImpl}`,
-			);
-		}
-	}
-};
+  switch (vDomImpl) {
+    case 'react-with-compiler':
+    case 'react': {
+      return TestRenderReact
+    }
+    case 'vue':
+    case 'inferno':
+    case 'preact':
+    case 'solid': {
+      throw new Error(`TestRender not implemented for ${vDomImpl}`)
+    }
+  }
+}

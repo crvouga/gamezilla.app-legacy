@@ -1,26 +1,26 @@
-import {Err, type IO, Ok, type Result} from 'gamezilla-app/@/core';
+import { Err, type IO, Ok, type Result } from 'gamezilla-app/@/core'
 
-export type MicLoadResult = Result<string, null>;
+export type MicLoadResult = Result<string, null>
 
 const load: IO<MicLoadResult> = async () => {
-	try {
-		await navigator.mediaDevices.getUserMedia({
-			audio: true,
-		});
+  try {
+    await navigator.mediaDevices.getUserMedia({
+      audio: true
+    })
 
-		return Ok(null);
-	} catch (error) {
-		return Err('failed_to_load');
-	}
-};
+    return Ok(null)
+  } catch (error) {
+    return Err('failed_to_load')
+  }
+}
 
-export type MicUnloadResult = Result<string, null>;
+export type MicUnloadResult = Result<string, null>
 
 const unload: IO<MicUnloadResult> = async () => {
-	return Ok(null);
-};
+  return Ok(null)
+}
 
 export const Mic = {
-	load,
-	unload,
-};
+  load,
+  unload
+}

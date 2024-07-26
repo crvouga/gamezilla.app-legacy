@@ -7,17 +7,14 @@
  * takeWhile([1, 2, 3], isNeg); //=> []
  * takeWhile([], isNeg); //=> []
  */
-export const takeWhile = <T>(
-	arr: Iterable<T>,
-	predicate: (item: T) => boolean,
-): T[] => {
-	const results: T[] = [];
+export const takeWhile = <T>(arr: Iterable<T>, predicate: (item: T) => boolean): T[] => {
+  const results: T[] = []
 
-	for (const item of arr) {
-		if (!predicate(item)) {
-			break;
-		}
-		results.push(item);
-	}
-	return results;
-};
+  for (const item of arr) {
+    if (!predicate(item)) {
+      break
+    }
+    results.push(item)
+  }
+  return results
+}
