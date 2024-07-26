@@ -1,4 +1,4 @@
-import { Query, QueryResult, Where, WhereClause, WhereOperator, WhereValue } from './query'
+import { Query, QueryResult, WhereClause } from './query'
 
 export type Model<TRow> = {
   rows: {
@@ -16,7 +16,7 @@ export const init = <TRow>(_rows: TRow[]): Model<TRow> => {
   }
 }
 
-const filter = <TRow>(rows: TRow[], whereClause: WhereClause<TRow>): TRow[] => {
+export const filter = <TRow>(rows: TRow[], whereClause: WhereClause<TRow>): TRow[] => {
   const [operator, key, value] = whereClause
 
   switch (operator) {
@@ -54,18 +54,18 @@ const filter = <TRow>(rows: TRow[], whereClause: WhereClause<TRow>): TRow[] => {
   }
 }
 
-const and = <TRow>(rows: TRow[], whereClauses: WhereClause<TRow>[]): TRow[] => {
-  const [first, ...rest] = whereClauses
+export const and = <TRow>(rows: TRow[], whereClauses: WhereClause<TRow>[]): TRow[] => {
+  const [first] = whereClauses
 
   if (!first) {
     return rows
   }
+
+  return rows
 }
 
 export const query = <TRow>(map: Model<TRow>, query: Query<TRow>): QueryResult<TRow> => {
-  const filtered = Object.values(map.rows).filter((row) => true)
-
-  const [first, ...rest] = query.where
+  const filtered = Object.values(map.rows)
 
   return {
     limit: query.limit,

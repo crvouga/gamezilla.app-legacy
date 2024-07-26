@@ -15,28 +15,6 @@ export type Where<T, TWhereOperator = WhereOperator> = ['and' | 'or', ...WhereCl
 
 export type WhereClause<T, TWhereOperator = WhereOperator> = [TWhereOperator, keyof T, WhereValue<T>]
 
-export type WhereOperations<TRow> =
-  | ['=', number, number]
-  | ['!=', number, number]
-  | ['>', number, number]
-  | ['<', number, number]
-  | ['>=', number, number]
-  | ['<=', number, number]
-  | ['like', string, string]
-  | ['in', string, string[]]
-  | ['not in', string, string[]]
-  | ['is null', string]
-  | ['is not null', string]
-  | ['between', string, number, number]
-  | ['not between', string, number, number]
-  | ['exists', string]
-  | ['not exists', string]
-  | ['any', string, string]
-  | ['all', string, string]
-  | ['some', string, string]
-  | ['overlaps', string, string]
-  | ['contains', string, string]
-
 export type WhereOperator =
   | '='
   | '!='
@@ -77,12 +55,13 @@ export type QueryResult<T> = PaginationResult & {
 type Row = {
   id: string
   name: string
+  lastName: string
   age: number
 }
 
-const query: Query<Row> = {
+export const example: Query<Row> = {
   limit: 10,
   offset: 0,
   order: [['asc', 'age']],
-  where: ['and', ['>', 'age', 18], ['like', 'name', 'John']]
+  where: ['and', ['>', 'age', 18], ['like', 'name', 'John'], ['like', 'lastName', 'Doe']]
 }
