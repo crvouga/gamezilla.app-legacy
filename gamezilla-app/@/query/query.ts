@@ -1,0 +1,88 @@
+export type Query<T, TWhereOperator = WhereOperator> = {
+  limit: number
+  offset: number
+  order: Order<T>
+  where: Where<T, TWhereOperator>
+}
+
+export type Order<T> = OrderSingle<T> | OrderSingle<T>[]
+
+export type OrderSingle<T> = [OrderDirection, keyof T]
+
+export type OrderDirection = 'asc' | 'desc'
+
+export type Where<T, TWhereOperator = WhereOperator> = ['and' | 'or', ...WhereClause<T, TWhereOperator>[]]
+
+export type WhereClause<T, TWhereOperator = WhereOperator> = [TWhereOperator, keyof T, WhereValue<T>]
+
+export type WhereOperations<TRow> =
+  | ['=', number, number]
+  | ['!=', number, number]
+  | ['>', number, number]
+  | ['<', number, number]
+  | ['>=', number, number]
+  | ['<=', number, number]
+  | ['like', string, string]
+  | ['in', string, string[]]
+  | ['not in', string, string[]]
+  | ['is null', string]
+  | ['is not null', string]
+  | ['between', string, number, number]
+  | ['not between', string, number, number]
+  | ['exists', string]
+  | ['not exists', string]
+  | ['any', string, string]
+  | ['all', string, string]
+  | ['some', string, string]
+  | ['overlaps', string, string]
+  | ['contains', string, string]
+
+export type WhereOperator =
+  | '='
+  | '!='
+  | '>'
+  | '<'
+  | '>='
+  | '<='
+  | 'like'
+  | 'in'
+  | 'not in'
+  | 'is null'
+  | 'is not null'
+  | 'between'
+  | 'not between'
+  | 'exists'
+  | 'not exists'
+  | 'any'
+  | 'all'
+  | 'some'
+  | 'overlaps'
+  | 'contains'
+
+export type WhereValue<T> = T[keyof T] | T[keyof T][]
+
+export type Pagination = {
+  limit: number
+  offset: number
+}
+
+export type PaginationResult = Pagination & {
+  total: number
+}
+
+export type QueryResult<T> = PaginationResult & {
+  rows: T[]
+}
+
+type Row = {
+  id: string
+  name: string
+  age: number
+}
+
+const query: Query<Row> = {
+  limit: 10,
+  offset: 0,
+  order: [['asc', 'age']],
+  where: ['and', ['>', 'age', 18], ['like', 'name', 'John']]
+}
