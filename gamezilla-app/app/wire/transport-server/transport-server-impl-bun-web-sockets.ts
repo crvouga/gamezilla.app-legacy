@@ -1,13 +1,13 @@
-import type { Server, ServerWebSocket, WebSocketHandler } from "bun";
-import type { ServerBun } from "gamezilla-app/@/server/server-impl-bun/server-impl-bun";
-import { ClientId, SessionId } from "gamezilla-app/app/@/data";
+import type {Server, ServerWebSocket, WebSocketHandler} from 'bun';
+import type {ServerBun} from 'gamezilla-app/@/server/server-impl-bun/server-impl-bun';
+import {ClientId, SessionId} from 'gamezilla-app/app/@/data';
 import {
 	SESSION_ID_COOKIE_NAME,
 	toSetSessionCookie,
 	type MsgClientToMsgServer,
 	type MsgServerToMsgClient,
-} from "../transport.core";
-import { initServerTransport, type IServerTransport } from "./transport-server";
+} from '../transport.core';
+import {initServerTransport, type IServerTransport} from './transport-server';
 
 type ServerWebSocketData = {
 	clientId: ClientId;
@@ -32,7 +32,10 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 	//
 	//
 
-	const transport = initServerTransport<MsgToServer, MsgToClient>();
+	const transport = initServerTransport<
+		MsgToServer,
+		MsgToClient
+	>();
 
 	//
 	//
@@ -42,27 +45,46 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 	//
 	//
 
-	const clients = new Map<ClientId, ServerWebSocket<ServerWebSocketData>>();
+	const clients = new Map<
+		ClientId,
+		ServerWebSocket<ServerWebSocketData>
+	>();
 	const clientsBySessionId = new Map<SessionId, Set<ClientId>>();
-	const addClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
+	const addClient = (
+		ws: ServerWebSocket<ServerWebSocketData>,
+	) => {
 		clients.set(ws.data.clientId, ws);
 
-		const clientIds = clientsBySessionId.get(ws.data.sessionId);
+		const clientIds = clientsBySessionId.get(
+			ws.data.sessionId,
+		);
 
 		if (!clientIds) {
-			const clientIdsNew = new Set<ClientId>();
-			clientIdsNew.add(ws.data.clientId);
-			clientsBySessionId.set(ws.data.sessionId, clientIdsNew);
+			const clientIdsNew =
+				new Set<ClientId>();
+			clientIdsNew.add(
+				ws.data
+					.clientId,
+			);
+			clientsBySessionId.set(
+				ws.data
+					.sessionId,
+				clientIdsNew,
+			);
 			return;
 		}
 
 		clientIds.add(ws.data.clientId);
 	};
 
-	const removeClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
+	const removeClient = (
+		ws: ServerWebSocket<ServerWebSocketData>,
+	) => {
 		clients.delete(ws.data.clientId);
 
-		const clientIds = clientsBySessionId.get(ws.data.sessionId);
+		const clientIds = clientsBySessionId.get(
+			ws.data.sessionId,
+		);
 
 		if (!clientIds) {
 			return;
@@ -83,39 +105,73 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 		const url = new URL(req.url);
 
 		switch (url.pathname) {
-			case "/ws": {
-				const maybeSessionIdCookie = req.headers
-					?.get("cookie")
-					?.split(";")
-					?.map((cookie) => cookie.trim())
-					?.find((cookie) => cookie.startsWith(`${SESSION_ID_COOKIE_NAME}=`))
-					?.split("=");
+			case '/ws': {
+				const maybeSessionIdCookie =
+					req.headers
+						?.get(
+							'cookie',
+						)
+						?.split(
+							';',
+						)
+						?.map(
+							(
+								cookie,
+							) =>
+								cookie.trim(),
+						)
+						?.find(
+							(
+								cookie,
+							) =>
+								cookie.startsWith(
+									`${SESSION_ID_COOKIE_NAME}=`,
+								),
+						)
+						?.split(
+							'=',
+						);
 
-				const maybeSessionId = maybeSessionIdCookie
-					? maybeSessionIdCookie[1]
-					: null;
+				const maybeSessionId =
+					maybeSessionIdCookie
+						? maybeSessionIdCookie[1]
+						: null;
 
-				const sessionId = SessionId.is(maybeSessionId)
-					? maybeSessionId
-					: SessionId.generate();
+				const sessionId =
+					SessionId.is(
+						maybeSessionId,
+					)
+						? maybeSessionId
+						: SessionId.generate();
 
-				const clientId = ClientId.generate();
+				const clientId =
+					ClientId.generate();
 
-				const data: ServerWebSocketData = {
-					clientId,
-					sessionId,
-				};
+				const data: ServerWebSocketData =
+					{
+						clientId,
+						sessionId,
+					};
 
-				const headers: Record<string, string> = maybeSessionId
-					? {}
-					: {
-							"Set-Cookie": toSetSessionCookie(sessionId),
-						};
+				const headers: Record<
+					string,
+					string
+				> =
+					maybeSessionId
+						? {}
+						: {
+								'Set-Cookie': toSetSessionCookie(
+									sessionId,
+								),
+						  };
 
-				server.upgrade(req, {
-					headers,
-					data,
-				});
+				server.upgrade(
+					req,
+					{
+						headers,
+						data,
+					},
+				);
 				return;
 			}
 
@@ -129,37 +185,65 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 		open(ws: ServerWebSocket<ServerWebSocketData>) {
 			addClient(ws);
 			transport.wire.pub({
-				t: "client-connected",
-				clientId: ws.data.clientId,
-				sessionId: ws.data.sessionId,
+				t: 'client-connected',
+				clientId: ws
+					.data
+					.clientId,
+				sessionId: ws
+					.data
+					.sessionId,
 			});
 		},
-		close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
+		close(
+			ws: ServerWebSocket<ServerWebSocketData>,
+			_code,
+			_message,
+		) {
 			removeClient(ws);
 			transport.wire.pub({
-				t: "client-disconnected",
-				clientId: ws.data.clientId,
-				sessionId: ws.data.sessionId,
+				t: 'client-disconnected',
+				clientId: ws
+					.data
+					.clientId,
+				sessionId: ws
+					.data
+					.sessionId,
 			});
 		},
-		message(ws: ServerWebSocket<ServerWebSocketData>, message) {
+		message(
+			ws: ServerWebSocket<ServerWebSocketData>,
+			message,
+		) {
 			const msg = JSON.parse(
 				message.toString(),
 			) as MsgClientToMsgServer<MsgToServer>; // leap of faith
 
-			if (msg.v !== codebaseVersionId) {
-				transport.wire.pub({
-					t: "got-bad-msgs",
-					reason: "codebase-version-id-mismatch",
-					clientId: ws.data.clientId,
-					sessionId: ws.data.sessionId,
-					msgs: msg.m,
-				});
+			if (
+				msg.v !==
+				codebaseVersionId
+			) {
+				transport.wire.pub(
+					{
+						t: 'got-bad-msgs',
+						reason: 'codebase-version-id-mismatch',
+						clientId: ws
+							.data
+							.clientId,
+						sessionId: ws
+							.data
+							.sessionId,
+						msgs: msg.m,
+					},
+				);
 			}
 
 			transport.toServer.pub({
-				clientId: ws.data.clientId,
-				sessionId: ws.data.sessionId,
+				clientId: ws
+					.data
+					.clientId,
+				sessionId: ws
+					.data
+					.sessionId,
 				msgs: msg.m,
 			});
 		},
@@ -168,7 +252,10 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 	server._registerFetchHandler(onRequest);
 	server._setWebSocketHandler(websocket);
 
-	transport.wire.pub({ t: "server-started", port: Number.NaN });
+	transport.wire.pub({
+		t: 'server-started',
+		port: Number.NaN,
+	});
 
 	//
 	//
@@ -180,7 +267,12 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
 	transport.topicPublish.sub((msg) => {
 		for (const topic of msg.topics) {
-			server._publish(topic, JSON.stringify(msg.msg));
+			server._publish(
+				topic,
+				JSON.stringify(
+					msg.msg,
+				),
+			);
 		}
 	});
 
@@ -209,7 +301,11 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 		Promise.resolve().then(() => {
 			switch (ws.readyState) {
 				case 1: {
-					ws.send(JSON.stringify(msg));
+					ws.send(
+						JSON.stringify(
+							msg,
+						),
+					);
 					return;
 				}
 				default: {
@@ -221,15 +317,23 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
 	transport.toClientBroadcast.sub((msgs) => {
 		for (const client of clients.values()) {
-			send(client, { m: msgs, v: codebaseVersionId });
+			send(client, {
+				m: msgs,
+				v: codebaseVersionId,
+			});
 		}
 	});
 
 	transport.toClient.sub((toClient) => {
 		for (const clientId in toClient) {
 			// biome-ignore lint/style/noNonNullAssertion: <explanation>
-			const toClientSingle = toClient[clientId as ClientId]!;
-			const client = clients.get(clientId as ClientId);
+			const toClientSingle =
+				toClient[
+					clientId as ClientId
+				]!;
+			const client = clients.get(
+				clientId as ClientId,
+			);
 
 			if (!client) {
 				continue;

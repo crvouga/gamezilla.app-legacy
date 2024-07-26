@@ -1,14 +1,14 @@
-import { Posix, Sub, Time, TimeSpan } from "gamezilla-app/@/core";
-import { TranslatedText } from "gamezilla-app/@/l18n";
-import { Translator } from "gamezilla-app/@/l18n/generated";
-import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
+import {Posix, Sub, Time, TimeSpan} from 'gamezilla-app/@/core';
+import {TranslatedText} from 'gamezilla-app/@/l18n';
+import {Translator} from 'gamezilla-app/@/l18n/generated';
+import {AppClientModule} from 'gamezilla-app/app/@/architecture/app-client';
 import {
 	APP_SOUND,
 	type SoundCmd,
 	playSound,
 	type ToastCmd,
-} from "gamezilla-app/app/@/client";
-import { IconXMark, Show, Transition, cn } from "gamezilla-app/app/@/ui";
+} from 'gamezilla-app/app/@/client';
+import {IconXMark, Show, Transition, cn} from 'gamezilla-app/app/@/ui';
 
 //
 //
@@ -18,7 +18,7 @@ import { IconXMark, Show, Transition, cn } from "gamezilla-app/app/@/ui";
 //
 //
 
-type Ctx = { now: Posix; t: Translator };
+type Ctx = {now: Posix; t: Translator};
 
 type Module = AppClientModule<{
 	Model: Model;
@@ -49,21 +49,21 @@ export type Model = {
 	hold: {
 		[toastId: number]: Toast;
 	};
-	errorModal?: { errorMsg: string; toastId: number } | null;
+	errorModal?: {errorMsg: string; toastId: number} | null;
 };
 
 export type Toast = {
 	toastId: number;
 	text: TranslatedText;
 	duration: TimeSpan;
-	variant: "error" | "info";
+	variant: 'error' | 'info';
 	createdAt: Posix;
 	errorMsg?: string | null;
 };
 
-export const init: Module["init"] = () => {
+export const init: Module['init'] = () => {
 	return {
-		model: { runningId: 0, hold: {} },
+		model: {runningId: 0, hold: {}},
 	};
 };
 
@@ -76,70 +76,111 @@ export const init: Module["init"] = () => {
 //
 
 export type Msg =
-	| { t: "time-passed" }
-	| { t: "pressed-down-on-toast"; toast: Toast }
-	| { t: "pressed-up-on-toast"; toast: Toast }
-	| { t: "clicked-dismiss-button"; toastId: number }
-	| { t: "clicked-see-error"; errorMsg: string; toastId: number };
+	| {t: 'time-passed'}
+	| {t: 'pressed-down-on-toast'; toast: Toast}
+	| {t: 'pressed-up-on-toast'; toast: Toast}
+	| {t: 'clicked-dismiss-button'; toastId: number}
+	| {
+			t: 'clicked-see-error';
+			errorMsg: string;
+			toastId: number;
+	  };
 
-export const update: Module["update"] = (input) => {
+export const update: Module['update'] = (input) => {
 	return AppClientModule.andThen(
-		{ model: input.model },
-		(model) => updateFromMsg({ ...input, model }),
-		(model) => updateFromCmd({ ...input, model }),
+		{model: input.model},
+		(model) =>
+			updateFromMsg({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromCmd({
+				...input,
+				model,
+			}),
 	);
 };
 
-const updateFromMsg: Module["update"] = (input) => {
+const updateFromMsg: Module['update'] = (input) => {
 	if (!input.msg) {
-		return { model: input.model };
+		return {model: input.model};
 	}
 
-	const { ctx, model, msg } = input;
+	const {ctx, model, msg} = input;
 
 	switch (msg.t) {
-		case "clicked-dismiss-button": {
+		case 'clicked-dismiss-button': {
 			return {
 				model: {
 					...model,
 					toast: null,
 				},
-				msgCmd: [playSound(APP_SOUND.tap)],
+				msgCmd: [
+					playSound(
+						APP_SOUND.tap,
+					),
+				],
 			};
 		}
 
-		case "time-passed": {
+		case 'time-passed': {
 			if (!model.toast) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const isToastInactive = TimeSpan.lte(
-				model.toast.duration,
-				Posix.diff(model.toast.createdAt, ctx.now),
-			);
+			const isToastInactive =
+				TimeSpan.lte(
+					model
+						.toast
+						.duration,
+					Posix.diff(
+						model
+							.toast
+							.createdAt,
+						ctx.now,
+					),
+				);
 
 			if (isToastInactive) {
-				return { model: { ...model, toast: null } };
+				return {
+					model: {
+						...model,
+						toast: null,
+					},
+				};
 			}
 
-			return { model };
+			return {
+				model,
+			};
 		}
 
-		case "pressed-down-on-toast": {
+		case 'pressed-down-on-toast': {
 			return {
 				model: {
 					...model,
 					hold: {
 						...model.hold,
-						[msg.toast.toastId]: msg.toast,
+						[msg
+							.toast
+							.toastId]:
+							msg.toast,
 					},
 				},
 			};
 		}
 
-		case "pressed-up-on-toast": {
-			const holdNew = { ...model.hold };
-			delete holdNew[msg.toast.toastId];
+		case 'pressed-up-on-toast': {
+			const holdNew = {
+				...model.hold,
+			};
+			delete holdNew[
+				msg.toast
+					.toastId
+			];
 			return {
 				model: {
 					...model,
@@ -148,7 +189,7 @@ const updateFromMsg: Module["update"] = (input) => {
 			};
 		}
 
-		case "clicked-see-error": {
+		case 'clicked-see-error': {
 			return {
 				model: {
 					...model,
@@ -162,30 +203,40 @@ const updateFromMsg: Module["update"] = (input) => {
 	}
 };
 
-const updateFromCmd: Module["update"] = (input) => {
+const updateFromCmd: Module['update'] = (input) => {
 	if (!input.msgCmd) {
-		return { model: input.model };
+		return {model: input.model};
 	}
 
-	const { ctx, msgCmd, model } = input;
+	const {ctx, msgCmd, model} = input;
 
 	const toastCmd = msgCmd.c;
 
 	switch (toastCmd.t) {
-		case "enqueue": {
+		case 'enqueue': {
 			const toastNew: Toast = {
 				toastId: model.runningId,
 				text: toastCmd.text,
-				duration: toastCmd.duration ?? TimeSpan.seconds(2),
-				variant: toastCmd.toastVariant ?? "info",
+				duration:
+					toastCmd.duration ??
+					TimeSpan.seconds(
+						2,
+					),
+				variant:
+					toastCmd.toastVariant ??
+					'info',
 				createdAt: ctx.now,
-				errorMsg: toastCmd.errorMsg ?? null,
+				errorMsg:
+					toastCmd.errorMsg ??
+					null,
 			};
 
 			return {
 				model: {
 					...model,
-					runningId: model.runningId + 1,
+					runningId:
+						model.runningId +
+						1,
 					toast: toastNew,
 				},
 			};
@@ -200,11 +251,15 @@ const updateFromCmd: Module["update"] = (input) => {
 //
 //
 
-export const subscriptions: Module["subscriptions"] = ({ model }) => {
+export const subscriptions: Module['subscriptions'] = ({model}) => {
 	if (model.toast) {
-		return Time.interval("toasts", model.toast.duration, () => ({
-			t: "time-passed",
-		}));
+		return Time.interval(
+			'toasts',
+			model.toast.duration,
+			() => ({
+				t: 'time-passed',
+			}),
+		);
 	}
 
 	return Sub.None;
@@ -218,13 +273,34 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 //
 
-export const View: Module["View"] = (input) => {
+export const View: Module['View'] = (input) => {
 	return (
-		<Transition mode="out-in" id="toast-root" onEnter={onEnter} onExit={onExit}>
+		<Transition
+			mode="out-in"
+			id="toast-root"
+			onEnter={onEnter}
+			onExit={onExit}
+		>
 			<Show
-				when={() => input.model.toast}
-				render={(toast) => (
-					<Toast key={toast.toastId} toast={toast} dispatch={input.dispatch} />
+				when={() =>
+					input
+						.model
+						.toast
+				}
+				render={(
+					toast,
+				) => (
+					<Toast
+						key={
+							toast.toastId
+						}
+						toast={
+							toast
+						}
+						dispatch={
+							input.dispatch
+						}
+					/>
 				)}
 			/>
 		</Transition>
@@ -235,16 +311,16 @@ const onEnter = async (node: HTMLElement) => {
 	await node?.animate(
 		[
 			{
-				transform: "translateY(-150%)",
+				transform: 'translateY(-150%)',
 			},
 			{
-				transform: "translateY(0%)",
+				transform: 'translateY(0%)',
 			},
 		],
 		{
 			duration: 200,
-			easing: "ease-in-out",
-			fill: "both",
+			easing: 'ease-in-out',
+			fill: 'both',
 		},
 	).finished;
 };
@@ -253,21 +329,21 @@ const onExit = async (node: HTMLElement) => {
 	await node?.animate(
 		[
 			{
-				transform: "translateY(0%)",
+				transform: 'translateY(0%)',
 			},
 			{
-				transform: "translateY(-150%)",
+				transform: 'translateY(-150%)',
 			},
 		],
 		{
 			duration: 200,
-			easing: "ease-in-out",
-			fill: "both",
+			easing: 'ease-in-out',
+			fill: 'both',
 		},
 	).finished;
 };
 
-const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
+const Toast = (input: {toast: Toast; dispatch: (m: Msg) => void}) => {
 	const errorMsg = input.toast.errorMsg;
 	return (
 		<div
@@ -275,17 +351,29 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
 			className="pointer-events-none absolute left-0 top-0 z-40 w-full overflow-visible p-4"
 			//
 			onMouseDown={() =>
-				input.dispatch({ t: "pressed-down-on-toast", toast: input.toast })
+				input.dispatch({
+					t: 'pressed-down-on-toast',
+					toast: input.toast,
+				})
 			}
 			onMouseUp={() =>
-				input.dispatch({ t: "pressed-up-on-toast", toast: input.toast })
+				input.dispatch({
+					t: 'pressed-up-on-toast',
+					toast: input.toast,
+				})
 			}
 			//
 			onTouchStart={() =>
-				input.dispatch({ t: "pressed-down-on-toast", toast: input.toast })
+				input.dispatch({
+					t: 'pressed-down-on-toast',
+					toast: input.toast,
+				})
 			}
 			onTouchEnd={() =>
-				input.dispatch({ t: "pressed-up-on-toast", toast: input.toast })
+				input.dispatch({
+					t: 'pressed-up-on-toast',
+					toast: input.toast,
+				})
 			}
 			//
 			onContextMenu={(e) => {
@@ -294,40 +382,65 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
 		>
 			<div
 				className={cn(
-					"pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
-					input.toast.variant === "info" && "border-neutral-600 bg-neutral-700",
-					input.toast.variant === "error" && "border-red-400 bg-red-500",
+					'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl',
+					input
+						.toast
+						.variant ===
+						'info' &&
+						'border-neutral-600 bg-neutral-700',
+					input
+						.toast
+						.variant ===
+						'error' &&
+						'border-red-400 bg-red-500',
 				)}
-				key={input.toast.toastId}
+				key={
+					input
+						.toast
+						.toastId
+				}
 			>
-				{input.toast.text}
+				{
+					input
+						.toast
+						.text
+				}
 				{errorMsg && (
 					<>
 						<button
 							type="button"
 							className="font-bold"
 							onClick={() =>
-								input.dispatch({
-									t: "clicked-see-error",
-									errorMsg: errorMsg,
-									toastId: input.toast.toastId,
-								})
+								input.dispatch(
+									{
+										t: 'clicked-see-error',
+										errorMsg: errorMsg,
+										toastId: input
+											.toast
+											.toastId,
+									},
+								)
 							}
 						>
-							See Error
+							See
+							Error
 						</button>
 					</>
 				)}
 				<button
 					type="button"
 					onClick={() =>
-						input.dispatch({
-							t: "clicked-dismiss-button",
-							toastId: input.toast.toastId,
-						})
+						input.dispatch(
+							{
+								t: 'clicked-dismiss-button',
+								toastId: input
+									.toast
+									.toastId,
+							},
+						)
 					}
 				>
-					<IconXMark className="w-5 h-5" />
+					<IconXMark className="h-5 w-5" />
 				</button>
 			</div>
 		</div>

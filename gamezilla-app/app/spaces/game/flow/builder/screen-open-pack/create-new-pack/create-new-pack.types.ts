@@ -1,7 +1,7 @@
-import { UserId } from "gamezilla-app/app/@/data";
-import { type RemoteResult, Result, NotAsked } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { FlowPack } from "../../../@/flow-pack/flow-pack";
+import {UserId} from 'gamezilla-app/app/@/data';
+import {type RemoteResult, Result, NotAsked} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {FlowPack} from '../../../@/flow-pack/flow-pack';
 
 //
 //
@@ -25,17 +25,17 @@ export type ModelServer = Record<string, unknown>;
 //
 
 export type MsgClient = {
-	t: "pack-create-new.clicked-create-button";
+	t: 'pack-create-new.clicked-create-button';
 };
 
-export type MsgToServer = { t: "pack-create-new.clicked-create-button" };
+export type MsgToServer = {t: 'pack-create-new.clicked-create-button'};
 
 export type MsgServer = {
-	t: "noop";
+	t: 'noop';
 };
 
 export type MsgToClient = {
-	t: "pack-create-new.created-pack";
+	t: 'pack-create-new.created-pack';
 	created: Result<string, FlowPack>;
 };
 
@@ -46,7 +46,7 @@ export type MsgToClient = {
 //
 
 export const MsgCore = p.obj({
-	t: p.l("user-created-pack"),
+	t: p.l('user-created-pack'),
 	created: Result.parser(p.str, FlowPack),
 	userId: UserId,
 });

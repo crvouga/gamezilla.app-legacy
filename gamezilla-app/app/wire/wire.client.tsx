@@ -2,12 +2,12 @@ import {
 	type ClientCmd,
 	type ClientEvent,
 	showToast,
-} from "gamezilla-app/app/@/client";
-import type { Eff, Sub } from "gamezilla-app/@/core";
-import { ListItemButton, Typography, cn } from "../@/ui";
-import type { IClientTransport } from "./transport-client";
-import type { ModelClient, MsgClient, MsgToClient } from "./wire.types";
-import { Translator } from "gamezilla-app/@/l18n/generated";
+} from 'gamezilla-app/app/@/client';
+import type {Eff, Sub} from 'gamezilla-app/@/core';
+import {ListItemButton, Typography, cn} from '../@/ui';
+import type {IClientTransport} from './transport-client';
+import type {ModelClient, MsgClient, MsgToClient} from './wire.types';
+import {Translator} from 'gamezilla-app/@/l18n/generated';
 
 //
 //
@@ -19,11 +19,11 @@ import { Translator } from "gamezilla-app/@/l18n/generated";
 
 export const init = (_input: {
 	stored: Record<string, unknown> | null;
-}): { model: ModelClient } => {
+}): {model: ModelClient} => {
 	return {
 		model: {
 			state: {
-				t: "server-connecting",
+				t: 'server-connecting',
 			},
 			serverTime: null,
 		},
@@ -69,11 +69,21 @@ export const update = <
 	eff?: Eff<MsgClient>;
 } => {
 	if (msg) {
-		return updateFromMsg({ ctx, msg, model, transport });
+		return updateFromMsg({
+			ctx,
+			msg,
+			model,
+			transport,
+		});
 	}
 
 	if (msgServer) {
-		return updateFromServer({ ctx, model, msgServer, transport });
+		return updateFromServer({
+			ctx,
+			model,
+			msgServer,
+			transport,
+		});
 	}
 
 	if (msgCmd) {
@@ -85,58 +95,84 @@ export const update = <
 		});
 	}
 
-	return { model };
+	return {model};
 };
 
-const updateFromMsg: typeof update = ({ msg, model, transport }) => {
+const updateFromMsg: typeof update = ({msg, model, transport}) => {
 	if (!msg) {
-		return { model };
+		return {model};
 	}
 
 	switch (msg.t) {
-		case "server-connect-error": {
+		case 'server-connect-error': {
 			return {
 				model: {
 					...model,
 					state: {
-						t: "server-connect-error",
+						t: 'server-connect-error',
 						errorCount:
-							model.state.t === "server-connect-error"
-								? model.state.errorCount + 1
+							model
+								.state
+								.t ===
+							'server-connect-error'
+								? model
+										.state
+										.errorCount +
+								  1
 								: 1,
 					},
 				},
 			};
 		}
 
-		case "server-connected": {
+		case 'server-connected': {
 			return {
 				model: {
 					...model,
 					state: {
-						t: "server-connected",
+						t: 'server-connected',
 					},
 				},
-				msgEvt: [{ t: "wire/server-connected" }],
+				msgEvt: [
+					{
+						t: 'wire/server-connected',
+					},
+				],
 			};
 		}
 
-		case "server-disconnected": {
-			return { model: { ...model, state: { t: msg.t } } };
-		}
-
-		case "clicked-try-reconnect": {
+		case 'server-disconnected': {
 			return {
-				model: { ...model, state: { t: "server-connecting" } },
-				eff: () => {
-					transport.msgCmd.pub({ t: "try-reconnect" });
+				model: {
+					...model,
+					state: {
+						t: msg.t,
+					},
 				},
 			};
 		}
 
-		case "got-bad-msgs": {
+		case 'clicked-try-reconnect': {
+			return {
+				model: {
+					...model,
+					state: {
+						t: 'server-connecting',
+					},
+				},
+				eff: () => {
+					transport.msgCmd.pub(
+						{
+							t: 'try-reconnect',
+						},
+					);
+				},
+			};
+		}
+
+		case 'got-bad-msgs': {
 			switch (msg.reason) {
-				case "codebase-version-mismatch": {
+				case 'codebase-version-mismatch': {
 					return {
 						model,
 					};
@@ -146,42 +182,56 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
 	}
 };
 
-const updateFromServer: typeof update = ({ ctx, model, msgServer }) => {
+const updateFromServer: typeof update = ({ctx, model, msgServer}) => {
 	if (!msgServer) {
-		return { model };
+		return {model};
 	}
 
 	switch (msgServer.t) {
-		case "server-restarted": {
+		case 'server-restarted': {
 			return {
 				model,
-				msgCmd: [showToast(ctx.t("wire.server-restarted"))],
+				msgCmd: [
+					showToast(
+						ctx.t(
+							'wire.server-restarted',
+						),
+					),
+				],
 			};
 		}
 	}
 };
 
-const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
+const updateFromCmd: typeof update = ({msgCmd, model, transport}) => {
 	if (!msgCmd) {
-		return { model };
+		return {model};
 	}
 
 	const wireCmd = msgCmd.c;
 
 	switch (wireCmd.t) {
-		case "send-to-server": {
+		case 'send-to-server': {
 			return {
 				model,
 				eff: () => {
-					if (wireCmd.msg) {
-						transport.toServer.pub([wireCmd.msg]);
+					if (
+						wireCmd.msg
+					) {
+						transport.toServer.pub(
+							[
+								wireCmd.msg,
+							],
+						);
 					}
 				},
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -196,27 +246,31 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 
 export const ViewStatusBar = (input: {
 	model: ModelClient;
-	ctx: { t: Translator };
+	ctx: {t: Translator};
 }) => {
 	switch (input.model.state.t) {
-		case "server-connected": {
-			return <span className="h-2 w-2 rounded-full bg-green-500" />;
+		case 'server-connected': {
+			return (
+				<span className="h-2 w-2 rounded-full bg-green-500" />
+			);
 		}
 
-		case "server-connecting":
-		case "server-connect-error": {
+		case 'server-connecting':
+		case 'server-connect-error': {
 			return (
 				<div className="flex animate-pulse items-center gap-1">
 					<Typography
 						className="text-orange-500"
 						variant="caption"
-						text={input.ctx.t("wire.connecting...")}
+						text={input.ctx.t(
+							'wire.connecting...',
+						)}
 					/>
 				</div>
 			);
 		}
 
-		case "server-disconnected": {
+		case 'server-disconnected': {
 			return (
 				<div className="flex items-center gap-1">
 					<span className="h-2 w-2 rounded-full bg-red-500" />
@@ -224,7 +278,9 @@ export const ViewStatusBar = (input: {
 					<Typography
 						className="text-orange-500"
 						variant="caption"
-						text={input.ctx.t("wire.offline")}
+						text={input.ctx.t(
+							'wire.offline',
+						)}
 					/>
 				</div>
 			);
@@ -240,50 +296,81 @@ export const ViewStatusBarDrawer = (input: {
 	};
 }) => {
 	switch (input.model.state.t) {
-		case "server-connected": {
+		case 'server-connected': {
 			return (
 				<ListItemButton
-					icon={(inputIcon) => (
+					icon={(
+						inputIcon,
+					) => (
 						<span
-							className={cn(inputIcon.className, "rounded-full bg-green-500")}
+							className={cn(
+								inputIcon.className,
+								'rounded-full bg-green-500',
+							)}
 						/>
 					)}
 					className="text-green-500"
-					label={input.ctx.t("wire.online")}
+					label={input.ctx.t(
+						'wire.online',
+					)}
 				/>
 			);
 		}
 
-		case "server-connect-error":
-		case "server-connecting": {
+		case 'server-connect-error':
+		case 'server-connecting': {
 			return (
 				<ListItemButton
-					icon={(input) => (
+					icon={(
+						input,
+					) => (
 						<span
-							className={cn(input.className, "rounded-full bg-orange-500")}
+							className={cn(
+								input.className,
+								'rounded-full bg-orange-500',
+							)}
 						/>
 					)}
 					color="warning"
-					label={input.ctx.t("wire.connecting...")}
+					label={input.ctx.t(
+						'wire.connecting...',
+					)}
 				/>
 			);
 		}
 
-		case "server-disconnected": {
+		case 'server-disconnected': {
 			return (
 				<ListItemButton
-					icon={(input) => (
-						<span className={cn(input.className, "rounded-full bg-red-500")} />
+					icon={(
+						input,
+					) => (
+						<span
+							className={cn(
+								input.className,
+								'rounded-full bg-red-500',
+							)}
+						/>
 					)}
 					color="danger"
-					label={input.ctx.t("wire.offline")}
+					label={input.ctx.t(
+						'wire.offline',
+					)}
 					end={() => (
 						<button
 							type="button"
-							onClick={() => input.dispatch({ t: "clicked-try-reconnect" })}
+							onClick={() =>
+								input.dispatch(
+									{
+										t: 'clicked-try-reconnect',
+									},
+								)
+							}
 							className="font-bold text-red-500"
 						>
-							{input.ctx.t("wire.try-reconnect")}
+							{input.ctx.t(
+								'wire.try-reconnect',
+							)}
 						</button>
 					)}
 				/>

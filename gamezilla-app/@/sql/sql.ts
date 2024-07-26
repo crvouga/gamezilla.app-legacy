@@ -1,22 +1,22 @@
 export type VarTypePrimitive = number | string | boolean | null | undefined;
 
 export type VarTypeJson = {
-	t: "json";
+	t: 'json';
 	json: string;
 };
 
 export const json = <T>(value: T): VarTypeJson => ({
-	t: "json",
+	t: 'json',
 	json: JSON.stringify(value),
 });
 
 export type VarTypeCommas = {
-	t: "commas";
+	t: 'commas';
 	values: (string | number)[];
 };
 
 export const commas = (values: (string | number)[]): VarTypeCommas => ({
-	t: "commas",
+	t: 'commas',
 	values,
 });
 
@@ -26,8 +26,8 @@ export type Vars = {
 	[key: string]: VarType;
 };
 
-export const pagination = (input: { limit?: number; offset?: number }) => {
-	let str = "";
+export const pagination = (input: {limit?: number; offset?: number}) => {
+	let str = '';
 
 	if (input.limit) {
 		str += `LIMIT\t${input.limit}\n`;
@@ -50,7 +50,11 @@ export const to = (query: string, variables: Vars): string => {
 	keys.sort((a, b) => b.length - a.length);
 	let replaced = query;
 	for (const key of keys) {
-		replaced = replaceParam(replaced, key, variables[key]);
+		replaced = replaceParam(
+			replaced,
+			key,
+			variables[key],
+		);
 	}
 	return replaced;
 };
@@ -61,71 +65,113 @@ const replaceParam = (
 	value: VarType,
 ): string => {
 	switch (typeof value) {
-		case "number":
-		case "bigint":
-		case "boolean": {
+		case 'number':
+		case 'bigint':
+		case 'boolean': {
 			const replaced = query.replace(
-				new RegExp(`:${variable}`, "g"),
+				new RegExp(
+					`:${variable}`,
+					'g',
+				),
 				`${value}`,
 			);
 			return replaced;
 		}
-		case "object": {
+		case 'object': {
 			switch (value?.t) {
-				case "commas": {
-					const commasStr = value.values
-						.map((v) => {
-							switch (typeof v) {
-								case "string": {
-									return `'${v}'`;
-								}
-								default: {
-									return `${v}`;
-								}
-							}
-						})
-						.join(", ");
+				case 'commas': {
+					const commasStr =
+						value.values
+							.map(
+								(
+									v,
+								) => {
+									switch (
+										typeof v
+									) {
+										case 'string': {
+											return `'${v}'`;
+										}
+										default: {
+											return `${v}`;
+										}
+									}
+								},
+							)
+							.join(
+								', ',
+							);
 
-					const replaced = query.replace(
-						new RegExp(`:${variable}`, "g"),
-						commasStr,
-					);
+					const replaced =
+						query.replace(
+							new RegExp(
+								`:${variable}`,
+								'g',
+							),
+							commasStr,
+						);
 
 					return replaced;
 				}
 
-				case "json": {
-					const jsonString = value.json;
-					const escapedJsonString = jsonString.replace(/'/g, "''");
+				case 'json': {
+					const jsonString =
+						value.json;
+					const escapedJsonString =
+						jsonString.replace(
+							/'/g,
+							"''",
+						);
 
-					const replaced = query.replace(
-						new RegExp(`:${variable}`, "g"),
-						`'${escapedJsonString}'`,
-					);
+					const replaced =
+						query.replace(
+							new RegExp(
+								`:${variable}`,
+								'g',
+							),
+							`'${escapedJsonString}'`,
+						);
 
 					return replaced;
 				}
 				default: {
-					const replaced = query.replace(
-						new RegExp(`:${variable}`, "g"),
-						"NULL",
-					);
+					const replaced =
+						query.replace(
+							new RegExp(
+								`:${variable}`,
+								'g',
+							),
+							'NULL',
+						);
 
 					return replaced;
 				}
 			}
 		}
-		case "undefined":
-			return query.replace(new RegExp(`:${variable}`, "g"), "NULL");
-		case "string": {
-			const escapedValue = value.replace(/'/g, "''");
+		case 'undefined':
 			return query.replace(
-				new RegExp(`:${variable}`, "g"),
+				new RegExp(
+					`:${variable}`,
+					'g',
+				),
+				'NULL',
+			);
+		case 'string': {
+			const escapedValue =
+				value.replace(
+					/'/g,
+					"''",
+				);
+			return query.replace(
+				new RegExp(
+					`:${variable}`,
+					'g',
+				),
 				`'${escapedValue}'`,
 			);
 		}
-		case "function":
-		case "symbol": {
+		case 'function':
+		case 'symbol': {
 			return query;
 		}
 		default: {
@@ -139,7 +185,11 @@ export const toLog = (query: string, params: Vars): string => {
 	keys.sort((a, b) => b.length - a.length);
 	let replaced = query;
 	for (const key of keys) {
-		replaced = replaceParamLog(replaced, key, params[key]);
+		replaced = replaceParamLog(
+			replaced,
+			key,
+			params[key],
+		);
 	}
 	return replaced;
 };
@@ -150,11 +200,15 @@ const replaceParamLog = (
 	value: VarType,
 ): string => {
 	switch (typeof value) {
-		case "object": {
+		case 'object': {
 			return query;
 		}
 		default: {
-			return replaceParam(query, key, value);
+			return replaceParam(
+				query,
+				key,
+				value,
+			);
 		}
 	}
 };

@@ -1,11 +1,11 @@
 export type TimeSpan = {
-	type: "TimeSpan";
+	type: 'TimeSpan';
 	_durationMilliseconds: number;
 };
 
 const milliseconds = (durationMilliseconds: number): TimeSpan => {
 	return {
-		type: "TimeSpan",
+		type: 'TimeSpan',
 		_durationMilliseconds: durationMilliseconds,
 	};
 };
@@ -55,29 +55,37 @@ const toWeeks = (timeSpan: TimeSpan): number => {
 };
 
 const add = (left: TimeSpan, right: TimeSpan): TimeSpan => {
-	return milliseconds(toMilliseconds(left) + toMilliseconds(right));
+	return milliseconds(
+		toMilliseconds(left) + toMilliseconds(right),
+	);
 };
 
 const subtract = (left: TimeSpan, right: TimeSpan): TimeSpan => {
-	return milliseconds(toMilliseconds(left) - toMilliseconds(right));
+	return milliseconds(
+		toMilliseconds(left) - toMilliseconds(right),
+	);
 };
 
 const scale = (timeSpan: TimeSpan, factor: number): TimeSpan => {
 	return milliseconds(toMilliseconds(timeSpan) * factor);
 };
 
-const encodingKey = "TimeSpan";
-const delimiter = ":";
+const encodingKey = 'TimeSpan';
+const delimiter = ':';
 const encode = (timeSpan: TimeSpan): string => {
-	return [encodingKey, delimiter, timeSpan._durationMilliseconds].join("");
+	return [
+		encodingKey,
+		delimiter,
+		timeSpan._durationMilliseconds,
+	].join('');
 };
 
 const decode = (encoded: string): TimeSpan | null => {
 	const [key, value] = encoded.split(delimiter);
-	if (typeof key !== "string") {
+	if (typeof key !== 'string') {
 		return null;
 	}
-	if (typeof value !== "string") {
+	if (typeof value !== 'string') {
 		return null;
 	}
 	if (key !== encodingKey) {
@@ -88,7 +96,7 @@ const decode = (encoded: string): TimeSpan | null => {
 		return null;
 	}
 	return {
-		type: "TimeSpan",
+		type: 'TimeSpan',
 		_durationMilliseconds: parsed,
 	};
 };
@@ -125,29 +133,47 @@ const humanFriendlyString = (timeSpan: TimeSpan): string => {
 
 	if (days >= 365) {
 		const years = days / 365;
-		return years >= 2 ? `${Math.floor(years)} years ago` : "1 year ago";
+		return years >= 2
+			? `${Math.floor(
+					years,
+			  )} years ago`
+			: '1 year ago';
 	}
 
 	if (days >= 30) {
 		const months = days / 30;
-		return months >= 2 ? `${Math.floor(months)} months ago` : "1 month ago";
+		return months >= 2
+			? `${Math.floor(
+					months,
+			  )} months ago`
+			: '1 month ago';
 	}
 
 	if (days >= 1) {
-		return days >= 2 ? `${Math.floor(days)} days ago` : "1 day ago";
+		return days >= 2
+			? `${Math.floor(days)} days ago`
+			: '1 day ago';
 	}
 
 	const hours = seconds / 3600;
 	if (hours >= 1) {
-		return hours >= 2 ? `${Math.floor(hours)} hours ago` : "1 hour ago";
+		return hours >= 2
+			? `${Math.floor(
+					hours,
+			  )} hours ago`
+			: '1 hour ago';
 	}
 
 	const minutes = seconds / 60;
 	if (minutes >= 1) {
-		return minutes >= 2 ? `${Math.floor(minutes)} minutes ago` : "1 minute ago";
+		return minutes >= 2
+			? `${Math.floor(
+					minutes,
+			  )} minutes ago`
+			: '1 minute ago';
 	}
 
-	return "A moment ago";
+	return 'A moment ago';
 };
 
 const negate = (timeSpan: TimeSpan): TimeSpan => {

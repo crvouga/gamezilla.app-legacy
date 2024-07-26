@@ -1,4 +1,4 @@
-import type { Store, StoreModule } from "./immutable-store";
+import type {Store, StoreModule} from './immutable-store';
 
 const UPGRADE_SQL = `
 CREATE TABLE IF NOT EXISTS immutable_store (
@@ -30,20 +30,21 @@ type Row = {
 
 function toRow(row: unknown): Row | null {
 	if (
-		typeof row === "object" &&
+		typeof row === 'object' &&
 		row !== null &&
-		"value" in row &&
-		(typeof row.value === "string" || row.value === null) &&
-		"key_space" in row &&
-		typeof row.key_space === "string" &&
-		"append_step" in row &&
-		typeof row.append_step === "number" &&
-		"instance_step" in row &&
-		typeof row.instance_step === "number" &&
-		"posix_timestamp" in row &&
-		typeof row.posix_timestamp === "number" &&
-		"key" in row &&
-		typeof row.key === "string"
+		'value' in row &&
+		(typeof row.value === 'string' ||
+			row.value === null) &&
+		'key_space' in row &&
+		typeof row.key_space === 'string' &&
+		'append_step' in row &&
+		typeof row.append_step === 'number' &&
+		'instance_step' in row &&
+		typeof row.instance_step === 'number' &&
+		'posix_timestamp' in row &&
+		typeof row.posix_timestamp === 'number' &&
+		'key' in row &&
+		typeof row.key === 'string'
 	) {
 		return {
 			key_space: row.key_space,
@@ -88,27 +89,46 @@ export const SqlStore = <TKey extends string | number, TValue>({
 		await upgrade();
 
 		const instanceNew: Store<TKey, TValue> = {
-			_posixTimestamp: Math.max(now, 0),
-			_instanceStep: instance._instanceStep + 1,
+			_posixTimestamp: Math.max(
+				now,
+				0,
+			),
+			_instanceStep:
+				instance._instanceStep +
+				1,
 			_appendStep: runningAppendStep++,
 		};
 
 		const sql_values = entries
 			.map(([key, value]) => {
-				const encodedValue = value ? encodeValue(value) : null;
+				const encodedValue =
+					value
+						? encodeValue(
+								value,
+						  )
+						: null;
 				const valueSql =
-					typeof encodedValue === "string" ? quote(encodedValue) : "NULL";
+					typeof encodedValue ===
+					'string'
+						? quote(
+								encodedValue,
+						  )
+						: 'NULL';
 				return [
-					quote(keySpace),
-					quote(key),
+					quote(
+						keySpace,
+					),
+					quote(
+						key,
+					),
 					instanceNew._posixTimestamp,
 					instanceNew._appendStep,
 					instanceNew._instanceStep,
 					valueSql,
-				].join(", ");
+				].join(', ');
 			})
 			.map((values) => `(${values})`)
-			.join(",\n");
+			.join(',\n');
 
 		const sql_query = `
       INSERT INTO immutable_store (
@@ -130,24 +150,35 @@ export const SqlStore = <TKey extends string | number, TValue>({
 	return {
 		startingAt(now) {
 			return {
-				_posixTimestamp: Math.max(now, 0),
+				_posixTimestamp: Math.max(
+					now,
+					0,
+				),
 				_instanceStep: 0,
 				_appendStep: 0,
 			};
 		},
 		async assoc(now, instance, key, value) {
 			await upgrade();
-			return append(now, instance, [[key, value]]);
+			return append(now, instance, [
+				[key, value],
+			]);
 		},
 
 		async assocMany(now, instance, entries) {
 			await upgrade();
-			return append(now, instance, entries);
+			return append(
+				now,
+				instance,
+				entries,
+			);
 		},
 
 		async dissoc(now, instance, key) {
 			await upgrade();
-			return append(now, instance, [[key, null]]);
+			return append(now, instance, [
+				[key, null],
+			]);
 		},
 
 		async dissocMany(now, instance, keys) {
@@ -155,7 +186,14 @@ export const SqlStore = <TKey extends string | number, TValue>({
 			return append(
 				now,
 				instance,
-				keys.map((key) => [key, null]),
+				keys.map(
+					(
+						key,
+					) => [
+						key,
+						null,
+					],
+				),
 			);
 		},
 
@@ -196,19 +234,35 @@ export const SqlStore = <TKey extends string | number, TValue>({
             immutable_store.append_step ASC
       `;
 
-			const rows = await executeSql(listLatestQuery);
+			const rows = await executeSql(
+				listLatestQuery,
+			);
 
-			const values = rows.flatMap((row) => {
-				const maybeParsedRow = toRow(row);
-				if (!maybeParsedRow) {
-					return [];
-				}
-				const parsedValue = decodeValue(maybeParsedRow.value);
-				if (!parsedValue) {
-					return [];
-				}
-				return [parsedValue];
-			});
+			const values = rows.flatMap(
+				(row) => {
+					const maybeParsedRow =
+						toRow(
+							row,
+						);
+					if (
+						!maybeParsedRow
+					) {
+						return [];
+					}
+					const parsedValue =
+						decodeValue(
+							maybeParsedRow.value,
+						);
+					if (
+						!parsedValue
+					) {
+						return [];
+					}
+					return [
+						parsedValue,
+					];
+				},
+			);
 
 			return values;
 		},
@@ -251,18 +305,34 @@ export const SqlStore = <TKey extends string | number, TValue>({
         LIMIT 1
       `;
 
-			const rows = await executeSql(latestQuery);
+			const rows = await executeSql(
+				latestQuery,
+			);
 
-			const values = rows.flatMap((row) => {
-				const maybeParsedRow = toRow(row);
-				if (maybeParsedRow) {
-					const parsedValue = decodeValue(maybeParsedRow.value);
-					return [parsedValue];
-				}
-				return [];
-			});
+			const values = rows.flatMap(
+				(row) => {
+					const maybeParsedRow =
+						toRow(
+							row,
+						);
+					if (
+						maybeParsedRow
+					) {
+						const parsedValue =
+							decodeValue(
+								maybeParsedRow.value,
+							);
+						return [
+							parsedValue,
+						];
+					}
+					return [];
+				},
+			);
 
-			const latestValue = values[0] ?? null;
+			const latestValue =
+				values[0] ??
+				null;
 
 			return latestValue;
 		},

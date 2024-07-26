@@ -11,7 +11,8 @@ export function waitForElementById(
 	}
 
 	const parentElement =
-		document.getElementById(String(parentHtmlId)) ?? document.body;
+		document.getElementById(String(parentHtmlId)) ??
+		document.body;
 
 	return new Promise<HTMLElement | null>((resolve) => {
 		const timeout = setTimeout(() => {
@@ -19,14 +20,26 @@ export function waitForElementById(
 			resolve(null);
 		}, maxWait);
 		const observer = new MutationObserver(() => {
-			const targetElement = document.getElementById(String(htmlId));
+			const targetElement =
+				document.getElementById(
+					String(
+						htmlId,
+					),
+				);
 			if (targetElement) {
 				observer.disconnect();
-				clearTimeout(timeout);
-				resolve(targetElement);
+				clearTimeout(
+					timeout,
+				);
+				resolve(
+					targetElement,
+				);
 			}
 		});
 
-		observer.observe(parentElement, { childList: true, subtree: true });
+		observer.observe(parentElement, {
+			childList: true,
+			subtree: true,
+		});
 	});
 }

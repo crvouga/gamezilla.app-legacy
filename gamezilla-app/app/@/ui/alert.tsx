@@ -1,7 +1,7 @@
-import type { VDomChildren } from "gamezilla-app/@/vdom";
-import { IconExclamationCircle, IconInfoCircle } from "./icon";
-import { IconCheckmarkCircle } from "./icon/icon-checkmark-circle";
-import { cn } from "./ui";
+import type {VDomChildren} from 'gamezilla-app/@/vdom';
+import {IconExclamationCircle, IconInfoCircle} from './icon';
+import {IconCheckmarkCircle} from './icon/icon-checkmark-circle';
+import {cn} from './ui';
 
 export const AlertError = ({
 	className,
@@ -15,7 +15,7 @@ export const AlertError = ({
 			role="alert"
 			aria-label={text}
 			className={cn(
-				"flex w-full items-center rounded-md bg-red-500 p-4 text-white",
+				'flex w-full items-center rounded-md bg-red-500 p-4 text-white',
 				className,
 			)}
 		>
@@ -39,7 +39,7 @@ export const AlertInfo = ({
 		<div
 			className={cn(
 				className,
-				"flex w-full items-center rounded-md bg-blue-500 p-4 text-white",
+				'flex w-full items-center rounded-md bg-blue-500 p-4 text-white',
 			)}
 		>
 			<div className="mr-2">
@@ -61,7 +61,7 @@ export const AlertSuccess = ({
 		<div
 			className={cn(
 				className,
-				"flex w-full items-center rounded-md bg-green-500 p-4 text-white",
+				'flex w-full items-center rounded-md bg-green-500 p-4 text-white',
 			)}
 		>
 			<div className="mr-2">

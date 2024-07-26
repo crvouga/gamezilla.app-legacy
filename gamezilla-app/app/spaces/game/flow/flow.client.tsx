@@ -1,17 +1,17 @@
-import { Sub } from "gamezilla-app/@/core";
-import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
-import { IconGamepad, IconScrewdriverWrench } from "gamezilla-app/app/@/ui";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@/event";
+import {Sub} from 'gamezilla-app/@/core';
+import {APP_SOUND, playSound} from 'gamezilla-app/app/@/client';
+import {IconGamepad, IconScrewdriverWrench} from 'gamezilla-app/app/@/ui';
+import {GameClientModule} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2';
+import {withId} from 'gamezilla-app/app/spaces/@/event';
 import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@/game";
-import { SpaceClientCmd } from "../../@/space-client-cmd";
-import { CoverArt } from "./@/flow-cover-art";
-import type { FlowClientCtx } from "./@/flow-ctx";
-import { BuilderClient } from "./builder/builder.client";
+} from 'gamezilla-app/app/spaces/@/space';
+import {GameMainMenu} from 'gamezilla-app/app/spaces/game/@/game';
+import {SpaceClientCmd} from '../../@/space-client-cmd';
+import {CoverArt} from './@/flow-cover-art';
+import type {FlowClientCtx} from './@/flow-ctx';
+import {BuilderClient} from './builder/builder.client';
 import type {
 	ModelClient,
 	ModelCore,
@@ -19,8 +19,8 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./flow.types";
-import { PlayClient } from "./play/play.client";
+} from './flow.types';
+import {PlayClient} from './play/play.client';
 
 //
 //
@@ -42,7 +42,10 @@ type ClientModule = GameClientModule<{
 	//
 	Ctx: SpaceClientCtx;
 	//
-	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgCmdOut: SpaceClientCmd<{
+		MsgToServer: MsgToServer;
+		MsgClient: MsgClient;
+	}>;
 	MsgEvtIn: SpaceClientEvent;
 }>;
 
@@ -53,169 +56,322 @@ type ClientModule = GameClientModule<{
 //
 //
 
-const init: ClientModule["init"] = {
-	t: "none",
+const init: ClientModule['init'] = {
+	t: 'none',
 	flowPuzzles: {},
 	flowPacks: {},
 };
 
-const update: ClientModule["update"] = (input) => {
+const update: ClientModule['update'] = (input) => {
 	return GameClientModule.andThen(
-		{ model: input.model },
-		(model) => GameMainMenu.update({ ...input, model }),
-		(model) => updateFromMsg({ ...input, model }),
-		(model) => updateFromMsgCore({ ...input, model }),
-		(model) => updateChild({ ...input, model }),
+		{model: input.model},
+		(model) =>
+			GameMainMenu.update({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromMsg({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromMsgCore({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateChild({
+				...input,
+				model,
+			}),
 	);
 };
 
-const updateChild: ClientModule["update"] = (input) => {
+const updateChild: ClientModule['update'] = (input) => {
 	switch (input.modelCore.t) {
 		case null: {
-			return { model: input.model };
+			return {
+				model: input.model,
+			};
 		}
 
-		case "play": {
-			const updated = PlayClient.update({
-				ctx: {
-					...input.ctx,
-					flowPacks: input.model.flowPacks,
-					flowPuzzles: input.model.flowPuzzles,
-				},
-				modelCore: input.modelCore.c,
-				model: {
-					...(input.model.t === "play" ? input.model.c : PlayClient.init),
-				},
-				msgCmd: null,
-				msgEvt: input.msgEvt,
-				msgServer: input.msgServer?.t === "play" ? input.msgServer.c : null,
-				msgCore:
-					input.msgCore?.t === "play"
-						? { ...input.msgCore, ...input.msgCore.c }
-						: null,
-				msg: input.msg?.t === "play" ? input.msg.c : null,
-			});
+		case 'play': {
+			const updated =
+				PlayClient.update(
+					{
+						ctx: {
+							...input.ctx,
+							flowPacks: input
+								.model
+								.flowPacks,
+							flowPuzzles: input
+								.model
+								.flowPuzzles,
+						},
+						modelCore: input
+							.modelCore
+							.c,
+						model: {
+							...(input
+								.model
+								.t ===
+							'play'
+								? input
+										.model
+										.c
+								: PlayClient.init),
+						},
+						msgCmd: null,
+						msgEvt: input.msgEvt,
+						msgServer:
+							input
+								.msgServer
+								?.t ===
+							'play'
+								? input
+										.msgServer
+										.c
+								: null,
+						msgCore:
+							input
+								.msgCore
+								?.t ===
+							'play'
+								? {
+										...input.msgCore,
+										...input
+											.msgCore
+											.c,
+								  }
+								: null,
+						msg:
+							input
+								.msg
+								?.t ===
+							'play'
+								? input
+										.msg
+										.c
+								: null,
+					},
+				);
 
-			const tagged = GameClientModule.tagOutput(
-				"play",
-				(msgCmd) => SpaceClientCmd.tag("play", msgCmd),
-				updated,
-			);
+			const tagged =
+				GameClientModule.tagOutput(
+					'play',
+					(
+						msgCmd,
+					) =>
+						SpaceClientCmd.tag(
+							'play',
+							msgCmd,
+						),
+					updated,
+				);
 
 			return {
 				...tagged,
 				model: {
 					...tagged.model,
-					flowPuzzles: input.model.flowPuzzles,
-					flowPacks: input.model.flowPacks,
+					flowPuzzles: input
+						.model
+						.flowPuzzles,
+					flowPacks: input
+						.model
+						.flowPacks,
 				},
 			};
 		}
 
-		case "builder": {
-			const updated = BuilderClient.update({
-				ctx: {
-					...input.ctx,
-					flowPacks: input.model.flowPacks,
-					flowPuzzles: input.model.flowPuzzles,
-				},
-				modelCore: input.modelCore.c,
-				model: {
-					...(input.model.t === "builder" ? input.model.c : BuilderClient.init),
-					packs: input.model.flowPacks,
-					puzzles: input.model.flowPuzzles,
-				},
-				msgCmd: null,
-				msgEvt: input.msgEvt,
-				msgServer: input.msgServer?.t === "builder" ? input.msgServer.c : null,
-				msgCore:
-					input.msgCore?.t === "builder"
-						? { ...input.msgCore, ...input.msgCore.c }
-						: null,
-				msg: input.msg?.t === "builder" ? input.msg.c : null,
-			});
+		case 'builder': {
+			const updated =
+				BuilderClient.update(
+					{
+						ctx: {
+							...input.ctx,
+							flowPacks: input
+								.model
+								.flowPacks,
+							flowPuzzles: input
+								.model
+								.flowPuzzles,
+						},
+						modelCore: input
+							.modelCore
+							.c,
+						model: {
+							...(input
+								.model
+								.t ===
+							'builder'
+								? input
+										.model
+										.c
+								: BuilderClient.init),
+							packs: input
+								.model
+								.flowPacks,
+							puzzles: input
+								.model
+								.flowPuzzles,
+						},
+						msgCmd: null,
+						msgEvt: input.msgEvt,
+						msgServer:
+							input
+								.msgServer
+								?.t ===
+							'builder'
+								? input
+										.msgServer
+										.c
+								: null,
+						msgCore:
+							input
+								.msgCore
+								?.t ===
+							'builder'
+								? {
+										...input.msgCore,
+										...input
+											.msgCore
+											.c,
+								  }
+								: null,
+						msg:
+							input
+								.msg
+								?.t ===
+							'builder'
+								? input
+										.msg
+										.c
+								: null,
+					},
+				);
 
-			const tagged = GameClientModule.tagOutput(
-				"builder",
-				(msgCmd) => SpaceClientCmd.tag("builder", msgCmd),
-				updated,
-			);
+			const tagged =
+				GameClientModule.tagOutput(
+					'builder',
+					(
+						msgCmd,
+					) =>
+						SpaceClientCmd.tag(
+							'builder',
+							msgCmd,
+						),
+					updated,
+				);
 
 			return {
 				...tagged,
 				model: {
 					...tagged.model,
-					t: "builder",
+					t: 'builder',
 					c: {
-						...tagged.model.c,
+						...tagged
+							.model
+							.c,
 						packs: {},
 						puzzles: {},
 					},
-					flowPacks: updated.model.packs,
-					flowPuzzles: updated.model.puzzles,
+					flowPacks: updated
+						.model
+						.packs,
+					flowPuzzles: updated
+						.model
+						.puzzles,
 				},
 			};
 		}
 	}
 };
 
-const updateFromMsgCore: ClientModule["update"] = (input) => {
-	const { msgCore, model } = input;
+const updateFromMsgCore: ClientModule['update'] = (input) => {
+	const {msgCore, model} = input;
 
 	switch (msgCore?.t) {
-		case "user-changed-mode": {
+		case 'user-changed-mode': {
 			switch (msgCore.mode) {
-				case "play": {
-					return {
-						model: { ...model, t: "play", c: PlayClient.init },
-						msgCmd: [playSound(APP_SOUND.navForwardMin)],
-					};
-				}
-
-				case "builder": {
+				case 'play': {
 					return {
 						model: {
 							...model,
-							t: "builder",
+							t: 'play',
+							c: PlayClient.init,
+						},
+						msgCmd: [
+							playSound(
+								APP_SOUND.navForwardMin,
+							),
+						],
+					};
+				}
+
+				case 'builder': {
+					return {
+						model: {
+							...model,
+							t: 'builder',
 							c: BuilderClient.init,
 						},
-						msgCmd: [playSound(APP_SOUND.navForwardMin)],
+						msgCmd: [
+							playSound(
+								APP_SOUND.navForwardMin,
+							),
+						],
 					};
 				}
 
 				case null: {
 					return {
-						model: { ...model, t: "none" },
-						msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+						model: {
+							...model,
+							t: 'none',
+						},
+						msgCmd: [
+							playSound(
+								APP_SOUND.navBackwardMin,
+							),
+						],
 					};
 				}
 
 				default: {
-					return { model };
+					return {
+						model,
+					};
 				}
 			}
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
-const updateFromMsg: ClientModule["update"] = (input) => {
-	const { msg, model } = input;
+const updateFromMsg: ClientModule['update'] = (input) => {
+	const {msg, model} = input;
 
 	switch (msg?.t) {
-		case "msgCore": {
+		case 'msgCore': {
 			const msgCore = withId(msg.c);
 			return {
 				model,
-				msgCore: [msgCore],
+				msgCore: [
+					msgCore,
+				],
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -229,35 +385,66 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 //
 //
 
-const subscriptions: ClientModule["subscriptions"] = (input) => {
+const subscriptions: ClientModule['subscriptions'] = (input) => {
 	switch (input.modelCore.t) {
-		case "play": {
+		case 'play': {
 			return Sub.tag(
-				"play",
-				PlayClient.subscriptions({
-					ctx: {
-						...input.ctx,
-						flowPacks: input.model.flowPacks,
-						flowPuzzles: input.model.flowPuzzles,
+				'play',
+				PlayClient.subscriptions(
+					{
+						ctx: {
+							...input.ctx,
+							flowPacks: input
+								.model
+								.flowPacks,
+							flowPuzzles: input
+								.model
+								.flowPuzzles,
+						},
+						modelCore: input
+							.modelCore
+							.c,
+						model:
+							input
+								.model
+								.t ===
+							'play'
+								? input
+										.model
+										.c
+								: PlayClient.init,
 					},
-					modelCore: input.modelCore.c,
-					model: input.model.t === "play" ? input.model.c : PlayClient.init,
-				}),
+				),
 			);
 		}
-		case "builder": {
+		case 'builder': {
 			return Sub.tag(
-				"builder",
-				BuilderClient.subscriptions({
-					ctx: {
-						...input.ctx,
-						flowPacks: input.model.flowPacks,
-						flowPuzzles: input.model.flowPuzzles,
+				'builder',
+				BuilderClient.subscriptions(
+					{
+						ctx: {
+							...input.ctx,
+							flowPacks: input
+								.model
+								.flowPacks,
+							flowPuzzles: input
+								.model
+								.flowPuzzles,
+						},
+						modelCore: input
+							.modelCore
+							.c,
+						model:
+							input
+								.model
+								.t ===
+							'builder'
+								? input
+										.model
+										.c
+								: BuilderClient.init,
 					},
-					modelCore: input.modelCore.c,
-					model:
-						input.model.t === "builder" ? input.model.c : BuilderClient.init,
-				}),
+				),
 			);
 		}
 
@@ -273,7 +460,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 //
 //
 
-const View: ClientModule["View"] = (input) => {
+const View: ClientModule['View'] = (input) => {
 	const ctx: FlowClientCtx = {
 		...input.ctx,
 		flowPacks: input.model.flowPacks,
@@ -284,39 +471,82 @@ const View: ClientModule["View"] = (input) => {
 		case null: {
 			return (
 				<GameMainMenu.View
-					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
-					ctx={ctx}
-					title={ctx.t("flow")}
-					dispatch={input.dispatch}
+					renderCoverArt={(
+						input,
+					) => (
+						<CoverArt
+							{...input}
+							key={
+								input.key
+							}
+						/>
+					)}
+					ctx={
+						ctx
+					}
+					title={ctx.t(
+						'flow',
+					)}
+					dispatch={
+						input.dispatch
+					}
 					buttons={[
 						{
-							renderIcon: (input) => <IconGamepad {...input} />,
-							title: ctx.t("flow.play"),
-							description: ctx.t("flow.play-description"),
+							renderIcon: (
+								input,
+							) => (
+								<IconGamepad
+									{...input}
+								/>
+							),
+							title: ctx.t(
+								'flow.play',
+							),
+							description: ctx.t(
+								'flow.play-description',
+							),
 							onClick: () => {
-								input.dispatch({
-									t: "msgCore",
-									c: {
-										t: "user-changed-mode",
-										mode: "play",
-										userId: input.ctx.currentUserId,
+								input.dispatch(
+									{
+										t: 'msgCore',
+										c: {
+											t: 'user-changed-mode',
+											mode: 'play',
+											userId: input
+												.ctx
+												.currentUserId,
+										},
 									},
-								});
+								);
 							},
 						},
 						{
-							renderIcon: (input) => <IconScrewdriverWrench {...input} />,
-							title: ctx.t("flow.builder"),
-							description: ctx.t("flow.builder-description"),
+							renderIcon: (
+								input,
+							) => (
+								<IconScrewdriverWrench
+									{...input}
+								/>
+							),
+							title: ctx.t(
+								'flow.builder',
+							),
+							description: ctx.t(
+								'flow.builder-description',
+							),
 							onClick: () => {
-								input.dispatch({
-									t: "msgCore",
-									c: {
-										t: "user-changed-mode",
-										mode: "builder",
-										userId: input.ctx.currentUserId,
+								input.dispatch(
+									{
+										t: 'msgCore',
+										c: {
+											t: 'user-changed-mode',
+											mode: 'builder',
+											userId: input
+												.ctx
+												.currentUserId,
+										},
 									},
-								});
+								);
 							},
 						},
 					]}
@@ -324,56 +554,119 @@ const View: ClientModule["View"] = (input) => {
 			);
 		}
 
-		case "builder": {
+		case 'builder': {
 			return (
 				<BuilderClient.View
-					ctx={ctx}
-					dispatch={(c) => input.dispatch({ t: "builder", c })}
-					modelCore={input.modelCore.c}
+					ctx={
+						ctx
+					}
+					dispatch={(
+						c,
+					) =>
+						input.dispatch(
+							{
+								t: 'builder',
+								c,
+							},
+						)
+					}
+					modelCore={
+						input
+							.modelCore
+							.c
+					}
 					model={
-						input.model.t === "builder"
+						input
+							.model
+							.t ===
+						'builder'
 							? {
-									...input.model.c,
-									packs: input.model.flowPacks,
-									puzzles: input.model.flowPuzzles,
-								}
+									...input
+										.model
+										.c,
+									packs: input
+										.model
+										.flowPacks,
+									puzzles: input
+										.model
+										.flowPuzzles,
+							  }
 							: BuilderClient.init
 					}
 				/>
 			);
 		}
 
-		case "play": {
+		case 'play': {
 			return (
 				<PlayClient.View
-					ctx={ctx}
-					dispatch={(c) => {
-						input.dispatch({ t: "play", c });
+					ctx={
+						ctx
+					}
+					dispatch={(
+						c,
+					) => {
+						input.dispatch(
+							{
+								t: 'play',
+								c,
+							},
+						);
 					}}
-					modelCore={input.modelCore.c}
-					model={input.model.t === "play" ? input.model.c : PlayClient.init}
+					modelCore={
+						input
+							.modelCore
+							.c
+					}
+					model={
+						input
+							.model
+							.t ===
+						'play'
+							? input
+									.model
+									.c
+							: PlayClient.init
+					}
 				/>
 			);
 		}
 	}
 };
 
-const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
+const ViewFeedItem: ClientModule['ViewFeedItem'] = ({
 	ctx,
 	dispatch,
 	modelCore,
 	msgCore,
 }) => {
 	switch (msgCore.t) {
-		case "play": {
+		case 'play': {
 			switch (modelCore.t) {
-				case "play": {
+				case 'play': {
 					return (
 						<PlayClient.ViewFeedItem
-							ctx={{ ...ctx, flowPacks: {}, flowPuzzles: {} }}
-							dispatch={(c) => dispatch({ t: "play", c })}
-							modelCore={modelCore.c}
-							msgCore={msgCore.c}
+							ctx={{
+								...ctx,
+								flowPacks: {},
+								flowPuzzles: {},
+							}}
+							dispatch={(
+								c,
+							) =>
+								dispatch(
+									{
+										t: 'play',
+										c,
+									},
+								)
+							}
+							modelCore={
+								modelCore.c
+							}
+							msgCore={
+								msgCore.c
+							}
 						/>
 					);
 				}
@@ -383,15 +676,32 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 			}
 		}
 
-		case "builder": {
+		case 'builder': {
 			switch (modelCore.t) {
-				case "builder": {
+				case 'builder': {
 					return (
 						<BuilderClient.ViewFeedItem
-							ctx={{ ...ctx, flowPacks: {}, flowPuzzles: {} }}
-							dispatch={(c) => dispatch({ t: "builder", c })}
-							modelCore={modelCore.c}
-							msgCore={msgCore.c}
+							ctx={{
+								...ctx,
+								flowPacks: {},
+								flowPuzzles: {},
+							}}
+							dispatch={(
+								c,
+							) =>
+								dispatch(
+									{
+										t: 'builder',
+										c,
+									},
+								)
+							}
+							modelCore={
+								modelCore.c
+							}
+							msgCore={
+								msgCore.c
+							}
 						/>
 					);
 				}

@@ -1,4 +1,4 @@
-import { p } from "../core/parser";
+import {p} from '../core/parser';
 
 /**
  * `History` is a data structure that allows you to keep track of the state of
@@ -42,7 +42,10 @@ const undo = <T>(history: History<T>): History<T> => {
 		return history;
 	}
 
-	const newPast = history._past.slice(0, history._past.length - 1);
+	const newPast = history._past.slice(
+		0,
+		history._past.length - 1,
+	);
 	const newFuture = [history._present, ...history._future];
 
 	return {

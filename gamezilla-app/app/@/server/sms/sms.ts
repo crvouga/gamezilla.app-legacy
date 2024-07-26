@@ -1,4 +1,4 @@
-import type { PhoneNumber, Result } from "gamezilla-app/@/core";
+import type {PhoneNumber, Result} from 'gamezilla-app/@/core';
 
 export type ISMS = {
 	sendMessage: (input: {

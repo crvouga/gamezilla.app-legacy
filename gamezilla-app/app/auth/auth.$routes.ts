@@ -1,18 +1,18 @@
-import { PhoneNumber, Result } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
+import {PhoneNumber, Result} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
 
 const Route = p.or(
 	p.obj({
-		n: p.l("auth-login"),
-		t: p.l("login"),
+		n: p.l('auth-login'),
+		t: p.l('login'),
 	}),
 	p.obj({
-		n: p.l("auth-login"),
-		t: p.l("login-sms-request"),
+		n: p.l('auth-login'),
+		t: p.l('login-sms-request'),
 	}),
 	p.obj({
-		n: p.l("auth-login"),
-		t: p.l("login-sms-verify"),
+		n: p.l('auth-login'),
+		t: p.l('login-sms-verify'),
 		phoneNumber: PhoneNumber,
 	}),
 );

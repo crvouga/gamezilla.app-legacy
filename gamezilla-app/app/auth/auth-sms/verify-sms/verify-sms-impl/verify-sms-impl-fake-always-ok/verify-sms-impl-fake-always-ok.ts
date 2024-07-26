@@ -1,5 +1,5 @@
-import { Ok } from "gamezilla-app/@/core";
-import type { IVerifySMS } from "../../verify-sms";
+import {Ok} from 'gamezilla-app/@/core';
+import type {IVerifySMS} from '../../verify-sms';
 
 export const VerifySMS = (): IVerifySMS => {
 	return {

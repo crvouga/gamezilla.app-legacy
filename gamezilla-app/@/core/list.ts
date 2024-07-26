@@ -1,17 +1,18 @@
-import { NonNegInt, Num } from "./num";
+import {NonNegInt, Num} from './num';
 
 export type List<T> = {
-	_type: "List";
+	_type: 'List';
 	_elements: T[];
 	[Symbol.iterator]: () => Iterator<T>;
 };
 
 const empty = <T>(): List<T> => {
 	return {
-		_type: "List",
+		_type: 'List',
 		_elements: [],
 		[Symbol.iterator]: function* () {
-			for (const element of this._elements) {
+			for (const element of this
+				._elements) {
 				yield element;
 			}
 		},
@@ -20,10 +21,11 @@ const empty = <T>(): List<T> => {
 
 const of = <T>(element: T): List<T> => {
 	return {
-		_type: "List",
+		_type: 'List',
 		_elements: [element],
 		[Symbol.iterator]: function* () {
-			for (const element of this._elements) {
+			for (const element of this
+				._elements) {
 				yield element;
 			}
 		},
@@ -32,10 +34,11 @@ const of = <T>(element: T): List<T> => {
 
 const fromArray = <T>(array: T[]): List<T> => {
 	return {
-		_type: "List",
+		_type: 'List',
 		_elements: array,
 		[Symbol.iterator]: function* () {
-			for (const element of this._elements) {
+			for (const element of this
+				._elements) {
 				yield element;
 			}
 		},
@@ -62,7 +65,12 @@ const filter = <T>(fn: (element: T) => boolean, list: List<T>): List<T> => {
 };
 
 const slice = <T>(start: NonNegInt, end: NonNegInt, list: List<T>): List<T> => {
-	return fromArray(list._elements.slice(Num.unwrap(start), Num.unwrap(end)));
+	return fromArray(
+		list._elements.slice(
+			Num.unwrap(start),
+			Num.unwrap(end),
+		),
+	);
 };
 
 const concat = <T>(a: List<T>, b: List<T>): List<T> => {
@@ -100,15 +108,31 @@ const product = <A, B, C>(
 ): List<C> => {
 	return fromArray(
 		a._elements.flatMap((a) => {
-			return b._elements.map((b) => f(a, b));
+			return b._elements.map((b) =>
+				f(a, b),
+			);
 		}),
 	);
 };
 
 const range = (start: NonNegInt, end: NonNegInt): List<NonNegInt> => {
 	return fromArray(
-		[...Array(Num.unwrap(end) - Num.unwrap(start))].map((_, i) =>
-			NonNegInt.of(i + Num.unwrap(start)),
+		[
+			...Array(
+				Num.unwrap(
+					end,
+				) -
+					Num.unwrap(
+						start,
+					),
+			),
+		].map((_, i) =>
+			NonNegInt.of(
+				i +
+					Num.unwrap(
+						start,
+					),
+			),
 		),
 	);
 };

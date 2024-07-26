@@ -51,27 +51,57 @@ const findBestChildState = <TState>({
 		isMaximizing: boolean,
 	): number => {
 		if (currentDepth >= maxDepth) {
-			return scoreFn(currentState, currentDepth);
+			return scoreFn(
+				currentState,
+				currentDepth,
+			);
 		}
 
-		if (Array.from(childrenFn(currentState)).length === 0) {
-			return scoreFn(currentState, currentDepth);
+		if (
+			Array.from(
+				childrenFn(
+					currentState,
+				),
+			).length === 0
+		) {
+			return scoreFn(
+				currentState,
+				currentDepth,
+			);
 		}
 
 		if (isMaximizing) {
-			let value = Number.NEGATIVE_INFINITY;
+			let value =
+				Number.NEGATIVE_INFINITY;
 
-			for (const child of childrenFn(currentState)) {
-				value = Math.max(
-					value,
-					calculateScore(child, currentDepth + 1, alpha, beta, false),
-				);
+			for (const child of childrenFn(
+				currentState,
+			)) {
+				value =
+					Math.max(
+						value,
+						calculateScore(
+							child,
+							currentDepth +
+								1,
+							alpha,
+							beta,
+							false,
+						),
+					);
 
-				if (value >= beta) {
+				if (
+					value >=
+					beta
+				) {
 					break;
 				}
 
-				alpha = Math.max(alpha, value);
+				alpha =
+					Math.max(
+						alpha,
+						value,
+					);
 			}
 
 			return value;
@@ -82,7 +112,14 @@ const findBestChildState = <TState>({
 		for (const child of childrenFn(currentState)) {
 			value = Math.min(
 				value,
-				calculateScore(child, currentDepth + 1, alpha, beta, true),
+				calculateScore(
+					child,
+					currentDepth +
+						1,
+					alpha,
+					beta,
+					true,
+				),
 			);
 
 			if (value <= alpha) {

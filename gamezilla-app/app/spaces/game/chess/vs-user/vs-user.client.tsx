@@ -1,9 +1,9 @@
-import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla-app/@/core";
-import type { ClientCtx } from "gamezilla-app/app/@/client";
-import type { UserId } from "gamezilla-app/app/@/data";
-import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import { Chess } from "../@/chess";
+import {Eff, Option, Sub, exhaustive, isErr} from 'gamezilla-app/@/core';
+import type {ClientCtx} from 'gamezilla-app/app/@/client';
+import type {UserId} from 'gamezilla-app/app/@/data';
+import {Button, IconArrowLeftOnRect} from 'gamezilla-app/app/@/ui';
+import type {SpaceClientCtx} from 'gamezilla-app/app/spaces/@/space';
+import {Chess} from '../@/chess';
 import {
 	type CoreModel,
 	type ModelClient,
@@ -11,7 +11,7 @@ import {
 	type MsgClient,
 	type MsgToClient,
 	initCore,
-} from "./vs-user.types";
+} from './vs-user.types';
 
 //
 //
@@ -32,9 +32,13 @@ export const init = ({
 } => {
 	return {
 		model: {
-			coreModel: initCore({ userId: userId ?? "none" }),
+			coreModel: initCore({
+				userId:
+					userId ??
+					'none',
+			}),
 			openedMenuId: Option.None,
-			openedModal: "none",
+			openedModal: 'none',
 			isFlipped: false,
 		},
 	};
@@ -53,7 +57,7 @@ export type Msg = MsgClient;
 export const update = (
 	msg: Msg,
 	model: Model,
-): { model: Model; eff?: Eff<Msg> } => {
+): {model: Model; eff?: Eff<Msg>} => {
 	switch (msg[0]) {
 		//
 		//
@@ -61,24 +65,51 @@ export const update = (
 		//
 		//
 
-		case "OpenedMenu": {
-			return { model: { ...model, openedMenuId: Option.Some(msg[1]) } };
+		case 'OpenedMenu': {
+			return {
+				model: {
+					...model,
+					openedMenuId: Option.Some(
+						msg[1],
+					),
+				},
+			};
 		}
 
-		case "ClosedMenu": {
-			return { model: { ...model, openedMenuId: Option.None } };
+		case 'ClosedMenu': {
+			return {
+				model: {
+					...model,
+					openedMenuId: Option.None,
+				},
+			};
 		}
 
-		case "ClickedFlip": {
-			return { model: { ...model, isFlipped: !model.isFlipped } };
+		case 'ClickedFlip': {
+			return {
+				model: {
+					...model,
+					isFlipped: !model.isFlipped,
+				},
+			};
 		}
 
-		case "OpenedModal": {
-			return { model: { ...model, openedModal: msg[1] } };
+		case 'OpenedModal': {
+			return {
+				model: {
+					...model,
+					openedModal: msg[1],
+				},
+			};
 		}
 
-		case "ClosedModal": {
-			return { model: { ...model, openedModal: "none" } };
+		case 'ClosedModal': {
+			return {
+				model: {
+					...model,
+					openedModal: 'none',
+				},
+			};
 		}
 
 		//
@@ -90,58 +121,107 @@ export const update = (
 		//
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
 export const updateFromServer = (
-	{ ctx }: { ctx: SpaceClientCtx },
+	{ctx}: {ctx: SpaceClientCtx},
 	msg: MsgToClient,
 	_model: Model,
 ): [Model, Eff<Msg>] => {
-	const model: Model = { ..._model, openedMenuId: Option.None };
+	const model: Model = {
+		..._model,
+		openedMenuId: Option.None,
+	};
 
 	switch (msg[0]) {
-		case "InputClock_Done": {
-			if (msg[1].t === "err") {
-				return [model, Eff.None];
+		case 'InputClock_Done': {
+			if (msg[1].t === 'err') {
+				return [
+					model,
+					Eff.None,
+				];
 			}
-			return [{ ...model, coreModel: msg[1].value }, Eff.None];
+			return [
+				{
+					...model,
+					coreModel: msg[1]
+						.value,
+				},
+				Eff.None,
+			];
 		}
 
-		case "input-move-done": {
-			if (msg[1].t === "err") {
-				return [model, Eff.None];
+		case 'input-move-done': {
+			if (msg[1].t === 'err') {
+				return [
+					model,
+					Eff.None,
+				];
 			}
 
-			const coreModelNew = msg[1].value;
+			const coreModelNew =
+				msg[1].value;
 
-			if (coreModelNew.type !== "game") {
-				return [model, Eff.None];
+			if (
+				coreModelNew.type !==
+				'game'
+			) {
+				return [
+					model,
+					Eff.None,
+				];
 			}
 
-			return [{ ...model, coreModel: coreModelNew }, Eff.None];
+			return [
+				{
+					...model,
+					coreModel: coreModelNew,
+				},
+				Eff.None,
+			];
 		}
 
-		case "InputPlayer_Done": {
-			if (msg[1].t === "err") {
-				return [model, Eff.None];
+		case 'InputPlayer_Done': {
+			if (msg[1].t === 'err') {
+				return [
+					model,
+					Eff.None,
+				];
 			}
 
 			const coreModel = msg[1].value;
 
-			return [{ ...model, coreModel }, Eff.None];
+			return [
+				{
+					...model,
+					coreModel,
+				},
+				Eff.None,
+			];
 		}
 
-		case "StartGame_Done": {
-			if (msg[1].t === "err") {
-				return [model, Eff.None];
+		case 'StartGame_Done': {
+			if (msg[1].t === 'err') {
+				return [
+					model,
+					Eff.None,
+				];
 			}
 
 			const coreModel = msg[1].value;
 
-			return [{ ...model, coreModel }, Eff.None];
+			return [
+				{
+					...model,
+					coreModel,
+				},
+				Eff.None,
+			];
 		}
 
 		//
@@ -150,118 +230,213 @@ export const updateFromServer = (
 		//
 		//
 
-		case "RequestToDraw_Done": {
+		case 'RequestToDraw_Done': {
 			switch (msg[1].t) {
-				case "err": {
-					return [model, Eff.None];
+				case 'err': {
+					return [
+						model,
+						Eff.None,
+					];
 				}
 
-				case "ok": {
-					return [{ ...model, openedModal: "AskedToDraw" }, Eff.None];
+				case 'ok': {
+					return [
+						{
+							...model,
+							openedModal: 'AskedToDraw',
+						},
+						Eff.None,
+					];
 				}
 
 				default: {
-					return [model, Eff.None];
+					return [
+						model,
+						Eff.None,
+					];
 				}
 			}
 		}
 
-		case "RespondToDraw_Done": {
-			if (msg[1].t === "err") {
-				return [model, Eff.None];
+		case 'RespondToDraw_Done': {
+			if (msg[1].t === 'err') {
+				return [
+					model,
+					Eff.None,
+				];
 			}
 
 			const coreModel = msg[1].value;
 
-			if (coreModel.type === "game-over") {
-				return [{ ...model, coreModel }, Eff.None];
+			if (
+				coreModel.type ===
+				'game-over'
+			) {
+				return [
+					{
+						...model,
+						coreModel,
+					},
+					Eff.None,
+				];
 			}
 
 			const isNotPlaying =
-				coreModel.type === "game" &&
-				coreModel.w !== ctx.currentUserId &&
-				coreModel.b !== ctx.currentUserId;
+				coreModel.type ===
+					'game' &&
+				coreModel.w !==
+					ctx.currentUserId &&
+				coreModel.b !==
+					ctx.currentUserId;
 
 			if (isNotPlaying) {
-				return [{ ...model, coreModel }, Eff.None];
+				return [
+					{
+						...model,
+						coreModel,
+					},
+					Eff.None,
+				];
 			}
 
-			return [{ ...model, coreModel }, Eff.None];
-		}
-
-		case "CancelDraw_Done": {
-			const result = msg[1];
-
-			if (isErr(result)) {
-				return [model, Eff.None];
-			}
-
-			const coreModel = result.value;
-
-			const isNotPlaying =
-				coreModel.type === "game" &&
-				coreModel.w !== ctx.currentUserId &&
-				coreModel.b !== ctx.currentUserId;
-
-			if (isNotPlaying) {
-				return [{ ...model, coreModel }, Eff.None];
-			}
-
-			return [{ ...model, coreModel }, Eff.None];
-		}
-
-		//
-		//
-		//
-		//
-		//
-
-		case "resign_Done": {
-			if (msg[1].t === "err") {
-				return [model, Eff.None];
-			}
-
-			const coreModelNew = msg[1].value;
-
-			if (coreModelNew.type === "setup") {
-				return [model, Eff.None];
-			}
-
-			return [{ ...model, coreModel: coreModelNew }, Eff.None];
-		}
-
-		case "NewGame_Done": {
-			if (msg[1].t === "err") {
-				return [model, Eff.None];
-			}
-
-			const coreModelNew = msg[1].value;
-
-			return [{ ...model, coreModel: coreModelNew }, Eff.None];
-		}
-
-		case "game-over": {
 			return [
 				{
 					...model,
-					openedModal: "game-over",
+					coreModel,
 				},
 				Eff.None,
 			];
 		}
 
-		case "GameStarted": {
+		case 'CancelDraw_Done': {
+			const result = msg[1];
+
+			if (isErr(result)) {
+				return [
+					model,
+					Eff.None,
+				];
+			}
+
+			const coreModel = result.value;
+
+			const isNotPlaying =
+				coreModel.type ===
+					'game' &&
+				coreModel.w !==
+					ctx.currentUserId &&
+				coreModel.b !==
+					ctx.currentUserId;
+
+			if (isNotPlaying) {
+				return [
+					{
+						...model,
+						coreModel,
+					},
+					Eff.None,
+				];
+			}
+
+			return [
+				{
+					...model,
+					coreModel,
+				},
+				Eff.None,
+			];
+		}
+
+		//
+		//
+		//
+		//
+		//
+
+		case 'resign_Done': {
+			if (msg[1].t === 'err') {
+				return [
+					model,
+					Eff.None,
+				];
+			}
+
+			const coreModelNew =
+				msg[1].value;
+
+			if (
+				coreModelNew.type ===
+				'setup'
+			) {
+				return [
+					model,
+					Eff.None,
+				];
+			}
+
+			return [
+				{
+					...model,
+					coreModel: coreModelNew,
+				},
+				Eff.None,
+			];
+		}
+
+		case 'NewGame_Done': {
+			if (msg[1].t === 'err') {
+				return [
+					model,
+					Eff.None,
+				];
+			}
+
+			const coreModelNew =
+				msg[1].value;
+
+			return [
+				{
+					...model,
+					coreModel: coreModelNew,
+				},
+				Eff.None,
+			];
+		}
+
+		case 'game-over': {
+			return [
+				{
+					...model,
+					openedModal: 'game-over',
+				},
+				Eff.None,
+			];
+		}
+
+		case 'GameStarted': {
 			return [model, Eff.None];
 		}
 
-		case "ClockTicked": {
+		case 'ClockTicked': {
 			const coreModel = msg[1];
 
-			return [{ ...model, coreModel }, Eff.None];
+			return [
+				{
+					...model,
+					coreModel,
+				},
+				Eff.None,
+			];
 		}
 
-		case "player-left": {
-			return [{ ...model, coreModel: msg[1] }, Eff.None];
+		case 'player-left': {
+			return [
+				{
+					...model,
+					coreModel: msg[1],
+				},
+				Eff.None,
+			];
 		}
 
 		default: {
@@ -301,24 +476,34 @@ export const View = ({
 	dispatch: (msg: Msg) => void;
 	onQuit: () => void;
 }) => {
-	if (model.coreModel.type === "setup") {
+	if (model.coreModel.type === 'setup') {
 		return (
 			<div>
 				<div className="flex-1" />
 				<div className="flex items-center gap-4 border-t border-neutral-700 p-4">
 					<Button
 						className="flex-1"
-						onClick={onQuit}
-						renderIconStart={(iconInput) => (
-							<IconArrowLeftOnRect {...iconInput} />
+						onClick={
+							onQuit
+						}
+						renderIconStart={(
+							iconInput,
+						) => (
+							<IconArrowLeftOnRect
+								{...iconInput}
+							/>
 						)}
-						text={ctx.t("app.exit")}
+						text={ctx.t(
+							'app.exit',
+						)}
 					/>
 					<Button
 						variant="contained"
 						color="primary"
 						className="flex-1"
-						text={ctx.t("game.start-game")}
+						text={ctx.t(
+							'game.start-game',
+						)}
 					/>
 				</div>
 			</div>
@@ -373,7 +558,12 @@ export const View = ({
 
 			<div className="flex-1" />
 
-			<ViewGameOverDialog model={model} dispatch={dispatch} />
+			<ViewGameOverDialog
+				model={model}
+				dispatch={
+					dispatch
+				}
+			/>
 		</div>
 	);
 };
@@ -384,11 +574,17 @@ const ViewGameOverDialog = ({
 	model: Model;
 	dispatch: (msg: Msg) => void;
 }) => {
-	if (model.coreModel.type === "setup") {
-		return <span>{toGameText(model.coreModel)}</span>;
+	if (model.coreModel.type === 'setup') {
+		return (
+			<span>
+				{toGameText(
+					model.coreModel,
+				)}
+			</span>
+		);
 	}
 
-	if (model.coreModel.type === "game") {
+	if (model.coreModel.type === 'game') {
 		return <span />;
 	}
 
@@ -397,44 +593,71 @@ const ViewGameOverDialog = ({
 
 const toGameText = (model: CoreModel): string => {
 	switch (model.type) {
-		case "game-over": {
+		case 'game-over': {
 			switch (model.gameOver.type) {
-				case "Checkmate": {
-					const colorStr = Chess.colorToString(model.gameOver.winner);
+				case 'Checkmate': {
+					const colorStr =
+						Chess.colorToString(
+							model
+								.gameOver
+								.winner,
+						);
 					return `${colorStr} won by checkmate`;
 				}
 
-				case "DrawByAgreement": {
-					return "Drawn by agreement";
+				case 'DrawByAgreement': {
+					return 'Drawn by agreement';
 				}
 
-				case "resignation": {
-					return `${Chess.colorToString(model.gameOver.resigner)} resigned`;
+				case 'resignation': {
+					return `${Chess.colorToString(
+						model
+							.gameOver
+							.resigner,
+					)} resigned`;
 				}
 
-				case "Stalemate": {
-					return "Stalemate";
+				case 'Stalemate': {
+					return 'Stalemate';
 				}
 
-				case "WinOnTime": {
-					return `${Chess.colorToString(model.gameOver.winner)} won on time`;
+				case 'WinOnTime': {
+					return `${Chess.colorToString(
+						model
+							.gameOver
+							.winner,
+					)} won on time`;
 				}
 
 				default:
-					return exhaustive(model.gameOver);
+					return exhaustive(
+						model.gameOver,
+					);
 			}
 		}
 
-		case "setup": {
-			return "Setting up game";
+		case 'setup': {
+			return 'Setting up game';
 		}
 
-		case "game": {
-			if (Chess.inCheck(model.board)) {
-				return `${Chess.colorToString(Chess.toTurn(model.board))} is in check`;
+		case 'game': {
+			if (
+				Chess.inCheck(
+					model.board,
+				)
+			) {
+				return `${Chess.colorToString(
+					Chess.toTurn(
+						model.board,
+					),
+				)} is in check`;
 			}
 
-			return `${Chess.colorToString(Chess.toTurn(model.board))}'s turn`;
+			return `${Chess.colorToString(
+				Chess.toTurn(
+					model.board,
+				),
+			)}'s turn`;
 		}
 
 		default:
@@ -457,7 +680,7 @@ export const mergeWithServer = ({
 	client?: ModelClient;
 	server: ModelServer;
 }): ModelClient => {
-	const initial = init({ userId: null });
+	const initial = init({userId: null});
 	const clientModel = client ?? initial.model;
 	return {
 		isFlipped: clientModel.isFlipped,

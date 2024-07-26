@@ -1,10 +1,10 @@
-import { type Keyboard, type Option, Result } from "gamezilla-app/@/core";
-import * as Board from "./@/board";
-import * as Direction from "./@/direction";
-import * as Piece from "./@/piece";
-import * as Position from "./@/position";
+import {type Keyboard, type Option, Result} from 'gamezilla-app/@/core';
+import * as Board from './@/board';
+import * as Direction from './@/direction';
+import * as Piece from './@/piece';
+import * as Position from './@/position';
 
-const { Err, Ok } = Result;
+const {Err, Ok} = Result;
 
 //
 //
@@ -38,16 +38,27 @@ const initialOrigin: Position.Position = {
 };
 
 export const initShared: CoreModel = {
-	board: Board.init({ rowCount, columnCount }),
+	board: Board.init({rowCount, columnCount}),
 	origin: initialOrigin,
-	tetrominoName: "Z",
+	tetrominoName: 'Z',
 	rotations: 0,
 };
 
 export const toPiece = (model: CoreModel): Piece.Piece => {
 	return Piece.toUnit(model.tetrominoName)
-		.map((position) => times(model.rotations, Position.rotate, position))
-		.map((position) => Position.add(position, model.origin));
+		.map((position) =>
+			times(
+				model.rotations,
+				Position.rotate,
+				position,
+			),
+		)
+		.map((position) =>
+			Position.add(
+				position,
+				model.origin,
+			),
+		);
 };
 
 const times = <X>(count: number, f: (x: X) => X, x: X): X => {
@@ -60,7 +71,11 @@ const times = <X>(count: number, f: (x: X) => X, x: X): X => {
 export const inCollision = (model: CoreModel): boolean => {
 	return (
 		toPiece(model).some(
-			(position) => Board.toCell(position, model.board) !== "Empty",
+			(position) =>
+				Board.toCell(
+					position,
+					model.board,
+				) !== 'Empty',
 		) || isOutOfBounds(model)
 	);
 };
@@ -68,14 +83,19 @@ export const inCollision = (model: CoreModel): boolean => {
 export const isOutOfBounds = (model: CoreModel): boolean => {
 	return toPiece(model).some(
 		(position) =>
-			position.x >= columnCount || position.x < 0 || position.y >= rowCount,
+			position.x >= columnCount ||
+			position.x < 0 ||
+			position.y >= rowCount,
 	);
 };
 
 export const toDrop = (model: CoreModel): CoreModel => {
 	const modelNext: CoreModel = {
 		...model,
-		origin: Position.add(Direction.toPosition("Down"), model.origin),
+		origin: Position.add(
+			Direction.toPosition('Down'),
+			model.origin,
+		),
 	};
 
 	if (inCollision(modelNext)) {
@@ -98,11 +118,11 @@ export const toGhostPiece = (model: CoreModel): Piece.Piece => {
 //
 
 export type MsgClient =
-	| ["PressedKey", Keyboard.Key]
-	| ["TouchStart", Position.Position]
-	| ["TouchMove", Position.Position]
-	| ["TouchEnd", Position.Position]
-	| ["ClickedBoard", Position.Position]
+	| ['PressedKey', Keyboard.Key]
+	| ['TouchStart', Position.Position]
+	| ['TouchMove', Position.Position]
+	| ['TouchEnd', Position.Position]
+	| ['ClickedBoard', Position.Position]
 	| MouseMove;
 
 export type MsgServer = Tick;
@@ -124,8 +144,8 @@ export type MsgToClient =
 //
 //
 
-export type MouseMove = ["MouseMove", Position.Position];
-export type MouseMove_Done = ["MouseMove_Done", Result<"collision", CoreModel>];
+export type MouseMove = ['MouseMove', Position.Position];
+export type MouseMove_Done = ['MouseMove_Done', Result<'collision', CoreModel>];
 
 export const mouseMove = (msg: MouseMove, model: CoreModel): MouseMove_Done => {
 	const modelNew: CoreModel = {
@@ -137,24 +157,24 @@ export const mouseMove = (msg: MouseMove, model: CoreModel): MouseMove_Done => {
 	};
 
 	if (inCollision(modelNew)) {
-		return ["MouseMove_Done", Err("collision")];
+		return ['MouseMove_Done', Err('collision')];
 	}
 
-	return ["MouseMove_Done", Ok(modelNew)];
+	return ['MouseMove_Done', Ok(modelNew)];
 };
 
 export type InputTranslate = [
-	"InputTranslate",
-	{ direction: Direction.Direction },
+	'InputTranslate',
+	{direction: Direction.Direction},
 ];
 export type InputTranslate_Done = [
-	"InputTranslate_Done",
+	'InputTranslate_Done',
 	Result<InputTranslateProblem, CoreModel>,
 ];
-export type InputTranslateProblem = "collision";
+export type InputTranslateProblem = 'collision';
 
 export const inputTranslate = (
-	{ direction }: InputTranslate[1],
+	{direction}: InputTranslate[1],
 	model: CoreModel,
 ): InputTranslate_Done[1] => {
 	const originNext = Position.add(
@@ -168,7 +188,7 @@ export const inputTranslate = (
 	};
 
 	if (inCollision(modelNext)) {
-		return Result.Err("collision");
+		return Result.Err('collision');
 	}
 
 	return Result.Ok(modelNext);
@@ -182,12 +202,12 @@ export const inputTranslate = (
 //
 //
 
-export type InputRotate = ["InputRotate"];
+export type InputRotate = ['InputRotate'];
 export type InputRotate_Done = [
-	"InputRotate_Done",
+	'InputRotate_Done',
 	Result<InputRotateProblem, CoreModel>,
 ];
-export type InputRotateProblem = "collision";
+export type InputRotateProblem = 'collision';
 
 export const inputRotate = (model: CoreModel): InputRotate_Done[1] => {
 	const modelNew: CoreModel = {
@@ -196,7 +216,7 @@ export const inputRotate = (model: CoreModel): InputRotate_Done[1] => {
 	};
 
 	if (inCollision(modelNew)) {
-		return Result.Err("collision");
+		return Result.Err('collision');
 	}
 
 	return Result.Ok(modelNew);
@@ -223,12 +243,12 @@ const toNextRotation = (rotation: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
 //
 //
 
-export type InputDrop = ["InputDrop"];
+export type InputDrop = ['InputDrop'];
 export type InputDrop_Done = [
-	"InputDrop_Done",
+	'InputDrop_Done',
 	Result<InputDropProblem, CoreModel>,
 ];
-export type InputDropProblem = "";
+export type InputDropProblem = '';
 
 export const inputDrop = (model: CoreModel): InputDrop_Done[1] => {
 	const modelNext = tick(toDrop(model));
@@ -244,11 +264,14 @@ export const inputDrop = (model: CoreModel): InputDrop_Done[1] => {
 //
 //
 
-export type Tick = ["tick"];
-export type Tick_Done = ["Tick_Done", CoreModel];
+export type Tick = ['tick'];
+export type Tick_Done = ['Tick_Done', CoreModel];
 
 export const tick = (model: CoreModel): CoreModel => {
-	const originNext = Position.add(Direction.toPosition("Down"), model.origin);
+	const originNext = Position.add(
+		Direction.toPosition('Down'),
+		model.origin,
+	);
 
 	const modelNext: CoreModel = {
 		...model,
@@ -259,11 +282,18 @@ export const tick = (model: CoreModel): CoreModel => {
 		const tetromino = toPiece(model);
 
 		const boardNew = tetromino.reduce(
-			(board, position) => Board.setCell(position, model.tetrominoName, board),
+			(board, position) =>
+				Board.setCell(
+					position,
+					model.tetrominoName,
+					board,
+				),
 			model.board,
 		);
 
-		const tetrominoNameNew = randomElement(Piece.allNames) ?? "O";
+		const tetrominoNameNew =
+			randomElement(Piece.allNames) ??
+			'O';
 
 		return {
 			...model,

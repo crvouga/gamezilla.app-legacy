@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@/core/parser";
+import {p} from 'gamezilla-app/@/core/parser';
 
 export const parser = p.obj({
 	x: p.num,
@@ -22,8 +22,8 @@ export const Position = {
 };
 
 export const DELTAS: Position[] = [
-	{ x: -1, y: 0 },
-	{ x: 1, y: 0 },
-	{ x: 0, y: 1 },
-	{ x: 0, y: -1 },
+	{x: -1, y: 0},
+	{x: 1, y: 0},
+	{x: 0, y: 1},
+	{x: 0, y: -1},
 ];

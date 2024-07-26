@@ -1,7 +1,7 @@
-import { Sub } from "gamezilla-app/@/core";
-import type { GameServerModule } from "../../@/architecture/game-server-v2";
-import type { SpaceServerCtx, SpaceServerEvent } from "../../@/space";
-import type { SpaceServerCmd } from "../../@/space-server-cmd";
+import {Sub} from 'gamezilla-app/@/core';
+import type {GameServerModule} from '../../@/architecture/game-server-v2';
+import type {SpaceServerCtx, SpaceServerEvent} from '../../@/space';
+import type {SpaceServerCmd} from '../../@/space-server-cmd';
 import type {
 	MsgCore,
 	ModelCore,
@@ -9,7 +9,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./connect-four.types";
+} from './connect-four.types';
 
 //
 //
@@ -39,7 +39,7 @@ type ServerModule = GameServerModule<{
 //
 //
 
-const init: ServerModule["init"] = {
+const init: ServerModule['init'] = {
 	t: null,
 };
 
@@ -51,7 +51,7 @@ const init: ServerModule["init"] = {
 //
 //
 
-const update: ServerModule["update"] = async (input) => {
+const update: ServerModule['update'] = async (input) => {
 	return {
 		model: input.model,
 	};
@@ -65,7 +65,7 @@ const update: ServerModule["update"] = async (input) => {
 //
 //
 
-const subscriptions: ServerModule["subscriptions"] = async (_input) => {
+const subscriptions: ServerModule['subscriptions'] = async (_input) => {
 	return Sub.None;
 };
 

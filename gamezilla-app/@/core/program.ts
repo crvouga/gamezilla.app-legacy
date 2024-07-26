@@ -1,5 +1,5 @@
-import type { Eff } from "./eff";
-import type { Sub } from "./sub";
+import type {Eff} from './eff';
+import type {Sub} from './sub';
 
 //
 //
@@ -15,13 +15,13 @@ export type Program<TModel, TMsg, TCtx> = {
 
 	init: (input: {
 		ctx: TCtx;
-	}) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>;
+	}) => MaybePromise<{model: TModel; eff?: Eff<TMsg>}>;
 
 	update: (input: {
 		ctx: TCtx;
 		msg: TMsg;
 		model: TModel;
-	}) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>;
+	}) => MaybePromise<{model: TModel; eff?: Eff<TMsg>}>;
 
 	subscriptions: (input: {
 		intervalId: string;
@@ -31,7 +31,7 @@ export type Program<TModel, TMsg, TCtx> = {
 
 	debugger?: ProgramDebugger;
 
-	crash: (input: { error: unknown }) => void;
+	crash: (input: {error: unknown}) => void;
 
 	render?: (input: {
 		model: TModel;
@@ -71,14 +71,22 @@ export async function run<TModel, TMsg, TCtx>(
 	//
 
 	function updateUI(model: TModel, ctx: TCtx) {
-		program.render?.({ model, ctx, dispatch });
+		program.render?.({
+			model,
+			ctx,
+			dispatch,
+		});
 	}
 
 	function updateEff(eff?: Eff<TMsg> | null) {
 		if (eff) {
-			Promise.resolve().then(function runEffect() {
-				eff(dispatch);
-			});
+			Promise.resolve().then(
+				function runEffect() {
+					eff(
+						dispatch,
+					);
+				},
+			);
 		}
 	}
 
@@ -111,11 +119,14 @@ export async function run<TModel, TMsg, TCtx>(
 			}
 
 			isUpdating = true;
-			const updated = await program.update({
-				ctx,
-				msg,
-				model,
-			});
+			const updated =
+				await program.update(
+					{
+						ctx,
+						msg,
+						model,
+					},
+				);
 			isUpdating = false;
 
 			model = updated.model;
@@ -125,20 +136,23 @@ export async function run<TModel, TMsg, TCtx>(
 			updateDebugger?.(model, msg);
 
 			if (queue.length > 0) {
-				const msg = queue.shift();
+				const msg =
+					queue.shift();
 				if (!msg) {
 					return;
 				}
 				dispatch(msg);
 			}
 		} catch (error) {
-			program.crash({ error });
+			program.crash({
+				error,
+			});
 		}
 	}
 
 	const ctx = await program.ctx();
 
-	const init = await program.init({ ctx });
+	const init = await program.init({ctx});
 
 	model = init.model;
 	updateUI(model, ctx);
@@ -157,10 +171,14 @@ export async function run<TModel, TMsg, TCtx>(
 				return;
 			}
 
-			program.render?.({ model, ctx, dispatch });
+			program.render?.({
+				model,
+				ctx,
+				dispatch,
+			});
 		},
 	);
-	updateDebugger?.(model, "@INIT");
+	updateDebugger?.(model, '@INIT');
 
 	return {
 		getModel() {

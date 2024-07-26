@@ -1,42 +1,38 @@
-import { Sub, TimeSpan } from "gamezilla-app/@/core";
-import {
-	APP_SOUND,
-	type ClientCmd,
-	playSound,
-} from "gamezilla-app/app/@/client";
-import type { UserId } from "gamezilla-app/app/@/data";
+import {Sub, TimeSpan} from 'gamezilla-app/@/core';
+import {APP_SOUND, type ClientCmd, playSound} from 'gamezilla-app/app/@/client';
+import type {UserId} from 'gamezilla-app/app/@/data';
 import {
 	IconArrowLeftOnRect,
 	IconArrowRotateLeft,
 	IconRightLeft,
-} from "gamezilla-app/app/@/ui";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { type WithEventId, withId } from "gamezilla-app/app/spaces/@/event";
-import { FeedItem } from "gamezilla-app/app/spaces/@/feed-item";
+} from 'gamezilla-app/app/@/ui';
+import {GameClientModule} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2';
+import {type WithEventId, withId} from 'gamezilla-app/app/spaces/@/event';
+import {FeedItem} from 'gamezilla-app/app/spaces/@/feed-item';
 import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@/space";
+} from 'gamezilla-app/app/spaces/@/space';
 import {
 	GameLayout,
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@/game";
+} from 'gamezilla-app/app/spaces/game/@/game';
 import {
 	IconBotHappy,
 	IconBotLevel1,
 	IconBotLevel4,
 	VsBotGame,
 	VsBotSetup,
-} from "gamezilla-app/app/spaces/game/@/vs-bot";
-import * as ConnectFour from "../@/connect-four";
+} from 'gamezilla-app/app/spaces/game/@/vs-bot';
+import * as ConnectFour from '../@/connect-four';
 import {
 	CoverArt,
 	PlayerOneIcon,
 	PlayerTwoIcon,
 	ViewColumns,
-} from "../@/connect-four-ui";
-import { ALL_BOT_LEVELS, type BotLevel } from "./bot-level";
+} from '../@/connect-four-ui';
+import {ALL_BOT_LEVELS, type BotLevel} from './bot-level';
 import {
 	type ModelClient,
 	type ModelCore,
@@ -45,7 +41,7 @@ import {
 	type MsgToClient,
 	type MsgToServer,
 	updateCore,
-} from "./vs-bot.types";
+} from './vs-bot.types';
 
 //
 //
@@ -62,8 +58,11 @@ type Module = GameClientModule<{
 	MsgToServer: MsgToServer;
 	ModelCore: ModelCore;
 	MsgCore: MsgCore;
-	Ctx: SpaceClientCtx & { onQuit: () => void };
-	MsgCmdOut: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	Ctx: SpaceClientCtx & {onQuit: () => void};
+	MsgCmdOut: ClientCmd<{
+		MsgToServer: MsgToServer;
+		MsgClient: MsgClient;
+	}>;
 	MsgEvtIn: SpaceClientEvent;
 	MsgCmdIn: null;
 	MsgEvtOut: null;
@@ -74,7 +73,7 @@ type Module = GameClientModule<{
 //
 //
 
-const init: Module["init"] = {
+const init: Module['init'] = {
 	vsBotSetup: VsBotSetup.init,
 	vsBotGame: VsBotGame.init(),
 };
@@ -85,9 +84,9 @@ const init: Module["init"] = {
 //
 //
 
-const update: Module["update"] = (input) => {
+const update: Module['update'] = (input) => {
 	return GameClientModule.andThen(
-		{ model: input.model },
+		{model: input.model},
 		(model) => updateFromMsg(model)(input),
 		(model) => updateFromMsgCore(model)(input),
 		(model) => watchGameOver(model)(input),
@@ -95,12 +94,14 @@ const update: Module["update"] = (input) => {
 };
 
 const watchGameOver =
-	(model: ModelClient): Module["update"] =>
+	(model: ModelClient): Module['update'] =>
 	(input) => {
-		const { msgCore, modelCore } = input;
+		const {msgCore, modelCore} = input;
 
 		if (!msgCore) {
-			return { model };
+			return {
+				model,
+			};
 		}
 
 		const modelCoreNext = updateCore({
@@ -108,44 +109,79 @@ const watchGameOver =
 			modelCore: modelCore,
 		});
 
-		if (modelCore.type !== "game" || modelCoreNext.type !== "game") {
-			return { model };
+		if (
+			modelCore.type !== 'game' ||
+			modelCoreNext.type !== 'game'
+		) {
+			return {
+				model,
+			};
 		}
 
-		const statusBefore = ConnectFour.toStatus(modelCore.columns);
+		const statusBefore = ConnectFour.toStatus(
+			modelCore.columns,
+		);
 
-		const status = ConnectFour.toStatus(modelCoreNext.columns);
+		const status = ConnectFour.toStatus(
+			modelCoreNext.columns,
+		);
 
 		if (statusBefore.type === status.type) {
-			return { model };
+			return {
+				model,
+			};
 		}
 
 		switch (status.type) {
-			case "Playing": {
-				return { model };
+			case 'Playing': {
+				return {
+					model,
+				};
 			}
 
-			case "Tie": {
-				return { model, msgCmd: [playSound(APP_SOUND.alertErrorSm)] };
+			case 'Tie': {
+				return {
+					model,
+					msgCmd: [
+						playSound(
+							APP_SOUND.alertErrorSm,
+						),
+					],
+				};
 			}
 
-			case "Winner": {
-				if (status.winner === modelCoreNext.userPlayerType) {
+			case 'Winner': {
+				if (
+					status.winner ===
+					modelCoreNext.userPlayerType
+				) {
 					return {
 						model,
 						msgCmd: [
-							playSound(APP_SOUND.celebration, {
-								delay: TimeSpan.seconds(1 / 2),
-							}),
+							playSound(
+								APP_SOUND.celebration,
+								{
+									delay: TimeSpan.seconds(
+										1 /
+											2,
+									),
+								},
+							),
 						],
 					};
 				}
 				return {
 					model,
 					msgCmd: [
-						playSound(APP_SOUND.alertErrorLg, {
-							delay: TimeSpan.seconds(1 / 2),
-						}),
+						playSound(
+							APP_SOUND.alertErrorLg,
+							{
+								delay: TimeSpan.seconds(
+									1 /
+										2,
+								),
+							},
+						),
 					],
 				};
 			}
@@ -153,51 +189,73 @@ const watchGameOver =
 	};
 
 const updateFromMsgCore =
-	(model: ModelClient): Module["update"] =>
+	(model: ModelClient): Module['update'] =>
 	(input) => {
-		const { msgCore, modelCore, ctx } = input;
+		const {msgCore, modelCore, ctx} = input;
 
 		if (!msgCore) {
-			return { model };
+			return {
+				model,
+			};
 		}
 
 		return {
 			model,
-			msgCmd: updateSound(ctx.currentUserId, modelCore, msgCore),
+			msgCmd: updateSound(
+				ctx.currentUserId,
+				modelCore,
+				msgCore,
+			),
 		};
 	};
 
 const updateFromMsg =
-	(model: ModelClient): Module["update"] =>
+	(model: ModelClient): Module['update'] =>
 	(input) => {
-		const { msg } = input;
+		const {msg} = input;
 
 		if (!msg) {
-			return { model };
+			return {
+				model,
+			};
 		}
 
 		switch (msg.t) {
-			case "vs-bot-game": {
+			case 'vs-bot-game': {
 				return {
 					model: {
 						...model,
-						vsBotGame: VsBotGame.update(model.vsBotGame, msg.c),
+						vsBotGame: VsBotGame.update(
+							model.vsBotGame,
+							msg.c,
+						),
 					},
 				};
 			}
 
-			case "vs-bot-setup": {
+			case 'vs-bot-setup': {
 				return {
 					model: {
 						...model,
-						vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c),
+						vsBotSetup: VsBotSetup.update(
+							model.vsBotSetup,
+							msg.c,
+						),
 					},
 				};
 			}
 
 			default: {
-				const msgCore = withId(msg);
-				return { model, msgCore: [msgCore] };
+				const msgCore =
+					withId(
+						msg,
+					);
+				return {
+					model,
+					msgCore: [
+						msgCore,
+					],
+				};
 			}
 		}
 	};
@@ -211,30 +269,59 @@ const updateSound = (
 	MsgClient: MsgClient;
 }>[] => {
 	switch (modelCore.type) {
-		case "game": {
+		case 'game': {
 			switch (msgCore.t) {
-				case "user-dropped-disc": {
-					const error = modelCore.errors[msgCore.eventId];
+				case 'user-dropped-disc': {
+					const error =
+						modelCore
+							.errors[
+							msgCore
+								.eventId
+						];
 
-					if (error && msgCore.userId === currentUserId) {
-						return [playSound(APP_SOUND.alertErrorSm)];
+					if (
+						error &&
+						msgCore.userId ===
+							currentUserId
+					) {
+						return [
+							playSound(
+								APP_SOUND.alertErrorSm,
+							),
+						];
 					}
 
-					return [playSound(APP_SOUND.tap)];
+					return [
+						playSound(
+							APP_SOUND.tap,
+						),
+					];
 				}
 
-				case "bot-dropped-disc": {
-					return [playSound(APP_SOUND.tap)];
+				case 'bot-dropped-disc': {
+					return [
+						playSound(
+							APP_SOUND.tap,
+						),
+					];
 				}
 
-				case "user-started-game":
-				case "user-swapped-sides":
-				case "user-restarted-game": {
-					return [playSound(APP_SOUND.navForwardMin)];
+				case 'user-started-game':
+				case 'user-swapped-sides':
+				case 'user-restarted-game': {
+					return [
+						playSound(
+							APP_SOUND.navForwardMin,
+						),
+					];
 				}
 
-				case "user-stopped-game": {
-					return [playSound(APP_SOUND.navBackwardMin)];
+				case 'user-stopped-game': {
+					return [
+						playSound(
+							APP_SOUND.navBackwardMin,
+						),
+					];
 				}
 
 				default: {
@@ -243,22 +330,34 @@ const updateSound = (
 			}
 		}
 
-		case "setup": {
+		case 'setup': {
 			switch (msgCore.t) {
-				case "user-started-playing":
-				case "user-stopped-playing":
-				case "user-swapped-sides":
-				case "user-changed-bot-level": {
-					return [playSound(APP_SOUND.tap)];
+				case 'user-started-playing':
+				case 'user-stopped-playing':
+				case 'user-swapped-sides':
+				case 'user-changed-bot-level': {
+					return [
+						playSound(
+							APP_SOUND.tap,
+						),
+					];
 				}
 
-				case "user-restarted-game":
-				case "user-started-game": {
-					return [playSound(APP_SOUND.navForwardMin)];
+				case 'user-restarted-game':
+				case 'user-started-game': {
+					return [
+						playSound(
+							APP_SOUND.navForwardMin,
+						),
+					];
 				}
 
-				case "user-stopped-game": {
-					return [playSound(APP_SOUND.navBackwardMin)];
+				case 'user-stopped-game': {
+					return [
+						playSound(
+							APP_SOUND.navBackwardMin,
+						),
+					];
 				}
 
 				default: {
@@ -277,7 +376,7 @@ const updateSound = (
 //
 //
 
-const subscriptions: Module["subscriptions"] = (): Sub<MsgClient> => {
+const subscriptions: Module['subscriptions'] = (): Sub<MsgClient> => {
 	return Sub.None;
 };
 
@@ -294,91 +393,160 @@ export const toGameOver = (
 ): VsBotGame.GameOver => {
 	const status = ConnectFour.toStatus(columns);
 	switch (status.type) {
-		case "Playing": {
-			return { t: null };
-		}
-		case "Tie": {
-			return { t: "draw" };
-		}
-		case "Winner": {
+		case 'Playing': {
 			return {
-				t: "winner",
-				winner: status.winner === "player-one" ? "player-one" : "player-two",
+				t: null,
+			};
+		}
+		case 'Tie': {
+			return {
+				t: 'draw',
+			};
+		}
+		case 'Winner': {
+			return {
+				t: 'winner',
+				winner:
+					status.winner ===
+					'player-one'
+						? 'player-one'
+						: 'player-two',
 			};
 		}
 	}
 };
 
-const View: Module["View"] = (input) => {
+const View: Module['View'] = (input) => {
 	const vsBotSetupinput: VsBotSetup.VsBotSetupinput = {
 		ctx: input.ctx,
 		onQuit: input.ctx.onQuit,
-		title: input.ctx.t("chess"),
-		renderCoverArt: (input) => <CoverArt {...input} />,
-		canStartGame: input.modelCore.playingUserId !== null,
+		title: input.ctx.t('chess'),
+		renderCoverArt: (input) => (
+			<CoverArt {...input} />
+		),
+		canStartGame:
+			input.modelCore
+				.playingUserId !==
+			null,
 		onSwapSides: () =>
 			input.dispatch({
-				t: "user-swapped-sides",
-				userId: input.ctx.currentUserId,
+				t: 'user-swapped-sides',
+				userId: input
+					.ctx
+					.currentUserId,
 			}),
 		onStartGame: () =>
 			input.dispatch({
-				t: "user-started-game",
-				userId: input.ctx.currentUserId,
+				t: 'user-started-game',
+				userId: input
+					.ctx
+					.currentUserId,
 			}),
 		botVariants: ALL_BOT_LEVELS.map((botLevel) => {
 			return {
-				label: input.ctx.t("connect-four.bot-level", botLevel),
-				renderIcon: (input) => <ViewBotLevel {...input} level={botLevel} />,
+				label: input.ctx.t(
+					'connect-four.bot-level',
+					botLevel,
+				),
+				renderIcon: (
+					input,
+				) => (
+					<ViewBotLevel
+						{...input}
+						level={
+							botLevel
+						}
+					/>
+				),
 				onSelect: () =>
-					input.dispatch({
-						t: "user-changed-bot-level",
-						botLevel,
-						userId: input.ctx.currentUserId,
-					}),
+					input.dispatch(
+						{
+							t: 'user-changed-bot-level',
+							botLevel,
+							userId: input
+								.ctx
+								.currentUserId,
+						},
+					),
 			};
 		}),
 		human: {
 			player:
-				input.modelCore.userPlayerType === "player-one"
-					? "player-one"
-					: "player-two",
-			userId: input.modelCore.playingUserId ?? null,
+				input.modelCore
+					.userPlayerType ===
+				'player-one'
+					? 'player-one'
+					: 'player-two',
+			userId:
+				input.modelCore
+					.playingUserId ??
+				null,
 		},
 		bot: {
-			label: input.ctx.t("connect-four.bot-level", input.modelCore.botLevel),
+			label: input.ctx.t(
+				'connect-four.bot-level',
+				input.modelCore
+					.botLevel,
+			),
 			renderIcon: (iconinput) => (
-				<ViewBotLevel {...iconinput} level={input.modelCore.botLevel} />
+				<ViewBotLevel
+					{...iconinput}
+					level={
+						input
+							.modelCore
+							.botLevel
+					}
+				/>
 			),
 		},
 		playerOne: {
-			label: input.ctx.t("connect-four.red"),
-			renderIcon: (input) => <PlayerOneIcon {...input} />,
+			label: input.ctx.t(
+				'connect-four.red',
+			),
+			renderIcon: (input) => (
+				<PlayerOneIcon
+					{...input}
+				/>
+			),
 			onStartPlaying: () =>
 				input.dispatch({
-					t: "user-started-playing",
-					playerType: "player-one",
-					userId: input.ctx.currentUserId,
+					t: 'user-started-playing',
+					playerType: 'player-one',
+					userId: input
+						.ctx
+						.currentUserId,
 				}),
 			onStopPlaying: () =>
 				input.dispatch({
-					t: "user-stopped-playing",
-					userId: input.ctx.currentUserId,
+					t: 'user-stopped-playing',
+					userId: input
+						.ctx
+						.currentUserId,
 				}),
 		},
 		playerTwo: {
-			label: input.ctx.t("connect-four.yellow"),
-			renderIcon: (input) => <PlayerTwoIcon {...input} />,
+			label: input.ctx.t(
+				'connect-four.yellow',
+			),
+			renderIcon: (input) => (
+				<PlayerTwoIcon
+					{...input}
+				/>
+			),
 			onStartPlaying: () =>
 				input.dispatch({
-					t: "user-started-playing",
-					playerType: "player-two",
-					userId: input.ctx.currentUserId,
+					t: 'user-started-playing',
+					playerType: 'player-two',
+					userId: input
+						.ctx
+						.currentUserId,
 				}),
 			onStopPlaying: () =>
 				input.dispatch({
-					t: "user-stopped-playing",
-					userId: input.ctx.currentUserId,
+					t: 'user-stopped-playing',
+					userId: input
+						.ctx
+						.currentUserId,
 				}),
 		},
 	};
@@ -387,11 +555,22 @@ const View: Module["View"] = (input) => {
 		return null;
 	}
 
-	if (input.modelCore.type === "setup") {
+	if (input.modelCore.type === 'setup') {
 		return (
 			<VsBotSetup.View
-				model={input.model.vsBotSetup}
-				dispatch={(c) => input.dispatch({ t: "vs-bot-setup", c })}
+				model={
+					input
+						.model
+						.vsBotSetup
+				}
+				dispatch={(c) =>
+					input.dispatch(
+						{
+							t: 'vs-bot-setup',
+							c,
+						},
+					)
+				}
 				{...vsBotSetupinput}
 			/>
 		);
@@ -403,91 +582,166 @@ const View: Module["View"] = (input) => {
 		...vsBotSetupinput,
 		human: {
 			...vsBotSetupinput.human,
-			userId: input.modelCore.playingUserId,
+			userId: input.modelCore
+				.playingUserId,
 		},
-		isSpectating: input.ctx.currentUserId !== input.modelCore.playingUserId,
+		isSpectating:
+			input.ctx.currentUserId !==
+			input.modelCore.playingUserId,
 		turn:
-			status.type !== "Playing"
+			status.type !== 'Playing'
 				? null
-				: status.turn === "player-one"
-					? "player-one"
-					: "player-two",
+				: status.turn ===
+				  'player-one'
+				? 'player-one'
+				: 'player-two',
 	};
 
 	const isSpectating =
-		input.ctx.currentUserId !== input.modelCore.playingUserId;
+		input.ctx.currentUserId !==
+		input.modelCore.playingUserId;
 
 	return (
 		<GameLayout isSpectating={isSpectating}>
 			<div className="flex w-full flex-1 flex-col items-center justify-center gap-1">
-				<VsBotGame.VsBotPlayerSection {...vsBotGameinput} />
+				<VsBotGame.VsBotPlayerSection
+					{...vsBotGameinput}
+				/>
 
 				<VsBotGame.ViewStatusBar
 					{...vsBotSetupinput}
-					status={toVsBotStatus(status)}
+					status={toVsBotStatus(
+						status,
+					)}
 				/>
 
 				<div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
 					<ViewColumns
-						gameId={0}
-						columns={input.modelCore.columns}
-						disabled={isSpectating || status.type !== "Playing"}
-						onDropDisc={(columnIndex) => {
-							input.dispatch({
-								t: "user-dropped-disc",
-								columnIndex,
-								userId: input.ctx.currentUserId,
-							});
+						gameId={
+							0
+						}
+						columns={
+							input
+								.modelCore
+								.columns
+						}
+						disabled={
+							isSpectating ||
+							status.type !==
+								'Playing'
+						}
+						onDropDisc={(
+							columnIndex,
+						) => {
+							input.dispatch(
+								{
+									t: 'user-dropped-disc',
+									columnIndex,
+									userId: input
+										.ctx
+										.currentUserId,
+								},
+							);
 						}}
 					/>
 					{input.model && (
 						<VsBotGame.ViewGameOverOverlay
 							{...vsBotGameinput}
-							model={input.model.vsBotGame}
-							onPlayAgain={() =>
-								input.dispatch({
-									t: "user-restarted-game",
-									userId: input.ctx.currentUserId,
-								})
+							model={
+								input
+									.model
+									.vsBotGame
 							}
-							gameOver={toGameOver(input.modelCore.columns)}
+							onPlayAgain={() =>
+								input.dispatch(
+									{
+										t: 'user-restarted-game',
+										userId: input
+											.ctx
+											.currentUserId,
+									},
+								)
+							}
+							gameOver={toGameOver(
+								input
+									.modelCore
+									.columns,
+							)}
 						/>
 					)}
 				</div>
 			</div>
 
-			{input.ctx.currentUserId === input.modelCore.playingUserId && (
+			{input.ctx.currentUserId ===
+				input.modelCore
+					.playingUserId && (
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
-						icon={(input) => <IconArrowLeftOnRect {...input} />}
-						label={input.ctx.t("app.exit")}
+						icon={(
+							input,
+						) => (
+							<IconArrowLeftOnRect
+								{...input}
+							/>
+						)}
+						label={input.ctx.t(
+							'app.exit',
+						)}
 						onClick={() =>
-							input.dispatch({
-								t: "user-stopped-game",
-								userId: input.ctx.currentUserId,
-							})
+							input.dispatch(
+								{
+									t: 'user-stopped-game',
+									userId: input
+										.ctx
+										.currentUserId,
+								},
+							)
 						}
 					/>
 
 					<ViewBottomButtonBarAction
-						icon={(input) => <IconRightLeft {...input} />}
-						label={input.ctx.t("game.swap-sides")}
+						icon={(
+							input,
+						) => (
+							<IconRightLeft
+								{...input}
+							/>
+						)}
+						label={input.ctx.t(
+							'game.swap-sides',
+						)}
 						onClick={() =>
-							input.dispatch({
-								t: "user-swapped-sides",
-								userId: input.ctx.currentUserId,
-							})
+							input.dispatch(
+								{
+									t: 'user-swapped-sides',
+									userId: input
+										.ctx
+										.currentUserId,
+								},
+							)
 						}
 					/>
 
 					<ViewBottomButtonBarAction
-						icon={(input) => <IconArrowRotateLeft {...input} />}
-						label={input.ctx.t("app.restart")}
+						icon={(
+							input,
+						) => (
+							<IconArrowRotateLeft
+								{...input}
+							/>
+						)}
+						label={input.ctx.t(
+							'app.restart',
+						)}
 						onClick={() =>
-							input.dispatch({
-								t: "user-restarted-game",
-								userId: input.ctx.currentUserId,
-							})
+							input.dispatch(
+								{
+									t: 'user-restarted-game',
+									userId: input
+										.ctx
+										.currentUserId,
+								},
+							)
 						}
 					/>
 				</ViewBottomButtonBar>
@@ -498,30 +752,44 @@ const View: Module["View"] = (input) => {
 
 const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
 	switch (status.type) {
-		case "Playing": {
-			return { t: "playing", turn: status.turn };
+		case 'Playing': {
+			return {
+				t: 'playing',
+				turn: status.turn,
+			};
 		}
-		case "Tie": {
-			return { t: "draw" };
+		case 'Tie': {
+			return {
+				t: 'draw',
+			};
 		}
-		case "Winner": {
-			return { t: "winner", winner: status.winner };
+		case 'Winner': {
+			return {
+				t: 'winner',
+				winner: status.winner,
+			};
 		}
 	}
 };
 
-const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
+const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
 	const username =
-		"userId" in input.msgCore
-			? input.ctx.profiles[input.msgCore.userId]?.username ?? null
+		'userId' in input.msgCore
+			? input.ctx.profiles[
+					input
+						.msgCore
+						.userId
+			  ]?.username ?? null
 			: null;
 
 	switch (input.msgCore.t) {
-		case "bot-dropped-disc": {
-			return <FeedItem.Info text="Bot dropped disc" />;
+		case 'bot-dropped-disc': {
+			return (
+				<FeedItem.Info text="Bot dropped disc" />
+			);
 		}
 
-		case "user-changed-bot-level": {
+		case 'user-changed-bot-level': {
 			return (
 				<FeedItem.Info
 					text={`${username} changed bot level to ${input.msgCore.botLevel}`}
@@ -529,36 +797,77 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 			);
 		}
 
-		case "user-dropped-disc": {
-			if (input.msgCore.userId === input.ctx.currentUserId) {
-				return <FeedItem.Info text={`${username} dropped disc`} />;
+		case 'user-dropped-disc': {
+			if (
+				input.msgCore
+					.userId ===
+				input.ctx
+					.currentUserId
+			) {
+				return (
+					<FeedItem.Info
+						text={`${username} dropped disc`}
+					/>
+				);
 			}
 
-			return <FeedItem.Info text={`${username} dropped disc`} />;
+			return (
+				<FeedItem.Info
+					text={`${username} dropped disc`}
+				/>
+			);
 		}
-		case "user-restarted-game": {
-			return <FeedItem.Info text={`${username} restarted game`} />;
+		case 'user-restarted-game': {
+			return (
+				<FeedItem.Info
+					text={`${username} restarted game`}
+				/>
+			);
 		}
-		case "user-started-game": {
-			return <FeedItem.Info text={`${username} started game`} />;
+		case 'user-started-game': {
+			return (
+				<FeedItem.Info
+					text={`${username} started game`}
+				/>
+			);
 		}
-		case "user-started-playing": {
-			return <FeedItem.Info text={`${username} started playing`} />;
+		case 'user-started-playing': {
+			return (
+				<FeedItem.Info
+					text={`${username} started playing`}
+				/>
+			);
 		}
-		case "user-stopped-game": {
-			return <FeedItem.Info text={`${username} stopped game`} />;
+		case 'user-stopped-game': {
+			return (
+				<FeedItem.Info
+					text={`${username} stopped game`}
+				/>
+			);
 		}
-		case "user-stopped-playing": {
-			return <FeedItem.Info text={`${username} stopped playing`} />;
+		case 'user-stopped-playing': {
+			return (
+				<FeedItem.Info
+					text={`${username} stopped playing`}
+				/>
+			);
 		}
-		case "user-swapped-sides": {
-			return <FeedItem.Info text={`${username} swapped sides`} />;
+		case 'user-swapped-sides': {
+			return (
+				<FeedItem.Info
+					text={`${username} swapped sides`}
+				/>
+			);
 		}
-		case "time-passed": {
+		case 'time-passed': {
 			return null;
 		}
-		case "user-left": {
-			return <FeedItem.Info text={`${username} left space`} />;
+		case 'user-left': {
+			return (
+				<FeedItem.Info
+					text={`${username} left space`}
+				/>
+			);
 		}
 		default: {
 			return null;
@@ -574,14 +883,26 @@ const ViewBotLevel = ({
 	className?: string;
 }) => {
 	switch (level) {
-		case "Easy": {
-			return <IconBotHappy {...input} />;
+		case 'Easy': {
+			return (
+				<IconBotHappy
+					{...input}
+				/>
+			);
 		}
-		case "Medium": {
-			return <IconBotLevel1 {...input} />;
+		case 'Medium': {
+			return (
+				<IconBotLevel1
+					{...input}
+				/>
+			);
 		}
-		case "Hard": {
-			return <IconBotLevel4 {...input} />;
+		case 'Hard': {
+			return (
+				<IconBotLevel4
+					{...input}
+				/>
+			);
 		}
 	}
 };

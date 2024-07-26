@@ -1,13 +1,18 @@
-import { Ok, PhoneNumber } from "gamezilla-app/@/core";
-import type { ISMS } from "./sms";
-import type { ILogger } from "../logger";
+import {Ok, PhoneNumber} from 'gamezilla-app/@/core';
+import type {ISMS} from './sms';
+import type {ILogger} from '../logger';
 
 export const SMSFake = ({
 	logger,
-}: { logger: ILogger }): ISMS & {
-	sent: { phoneNumber: PhoneNumber; message: string }[];
+}: {
+	logger: ILogger;
+}): ISMS & {
+	sent: {phoneNumber: PhoneNumber; message: string}[];
 } => {
-	const sent: { phoneNumber: PhoneNumber; message: string }[] = [];
+	const sent: {
+		phoneNumber: PhoneNumber;
+		message: string;
+	}[] = [];
 	return {
 		sent,
 		async sendMessage(input) {
@@ -15,7 +20,10 @@ export const SMSFake = ({
 				phoneNumber: input.phoneNumber,
 				message: input.message,
 			});
-			const phoneNumber = PhoneNumber.toString(input.phoneNumber);
+			const phoneNumber =
+				PhoneNumber.toString(
+					input.phoneNumber,
+				);
 			logger.info(
 				`Sent SMS phoneNumber="${phoneNumber}" message="${input.message}"`,
 			);

@@ -35,7 +35,10 @@ export type StoreModule<TKey extends string | number, TValue> = {
 	/**
 	 * Returns the latest value for the given key, if it exists.
 	 */
-	get: (instance: Store<TKey, TValue>, key: TKey) => Promise<TValue | null>;
+	get: (
+		instance: Store<TKey, TValue>,
+		key: TKey,
+	) => Promise<TValue | null>;
 
 	/**
 	 * Returns a list of all values in the store that exist between the given

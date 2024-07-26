@@ -1,5 +1,5 @@
-import { describe, expect, it } from "bun:test";
-import { ScreenPuzzlePlayCoreFixture } from "../@/fixture.core";
+import {describe, expect, it} from 'bun:test';
+import {ScreenPuzzlePlayCoreFixture} from '../@/fixture.core';
 
 const Fixture = async () => {
 	const f = await ScreenPuzzlePlayCoreFixture();
@@ -12,13 +12,20 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
 	it('should exit to pack list after clicking "select next pack" button', async () => {
 		const f = await Fixture();
-		const before = f.update(f.init, f.completePuzzleMsgs);
+		const before = f.update(
+			f.init,
+			f.completePuzzleMsgs,
+		);
 		const after = f.update(before, [
 			{
-				t: "user-clicked-select-next-pack",
+				t: 'user-clicked-select-next-pack',
 			},
 		]);
-		expect(before.screen.t).toBe("screen-play-puzzle");
-		expect(after.screen.t).toBe("screen-select-pack");
+		expect(before.screen.t).toBe(
+			'screen-play-puzzle',
+		);
+		expect(after.screen.t).toBe(
+			'screen-select-pack',
+		);
 	});
 });

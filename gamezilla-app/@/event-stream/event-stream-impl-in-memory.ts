@@ -1,4 +1,4 @@
-import type { IEventStreamConfig, IEventStream } from "./event-stream";
+import type {IEventStreamConfig, IEventStream} from './event-stream';
 
 export type Instance<
 	TEventId extends string,
@@ -20,7 +20,9 @@ export type Instance<
 	 */
 	_indexes: {
 		[indexName in TIndexName]?: {
-			[indexKey: string]: EventStreamIndex<TEventId>;
+			[
+				indexKey: string
+			]: EventStreamIndex<TEventId>;
 		};
 	};
 	/**
@@ -66,11 +68,22 @@ export const EventStreamInMemory = <
 		},
 
 		async latest(_config, instance) {
-			const msgEvtId = instance._ordering[instance._ordering.length - 1];
+			const msgEvtId =
+				instance
+					._ordering[
+					instance
+						._ordering
+						.length -
+						1
+				];
 			if (!msgEvtId) {
 				return null;
 			}
-			const msgEvt = instance._msgEvts[msgEvtId];
+			const msgEvt =
+				instance
+					._msgEvts[
+					msgEvtId
+				];
 			if (!msgEvt) {
 				return null;
 			}
@@ -78,36 +91,78 @@ export const EventStreamInMemory = <
 		},
 
 		async get(instance, msgEvtId) {
-			return instance._msgEvts[msgEvtId] ?? null;
+			return (
+				instance
+					._msgEvts[
+					msgEvtId
+				] ?? null
+			);
 		},
 
 		async append(config, stream, msgEvt) {
-			if (config.toId(msgEvt) in stream._msgEvts) {
+			if (
+				config.toId(
+					msgEvt,
+				) in
+				stream._msgEvts
+			) {
 				return stream;
 			}
 
 			const newOrdering = [];
 			let inserted = false;
 
-			for (let i = 0; i < stream._ordering.length; i++) {
+			for (
+				let i = 0;
+				i <
+				stream._ordering
+					.length;
+				i++
+			) {
 				if (
 					!inserted &&
-					config.toOrdering(stream._msgEvts[stream._ordering[i]!]!) >
-						config.toOrdering(msgEvt)
+					config.toOrdering(
+						stream
+							._msgEvts[
+							stream
+								._ordering[
+								i
+							]!
+						]!,
+					) >
+						config.toOrdering(
+							msgEvt,
+						)
 				) {
-					newOrdering.push(config.toId(msgEvt));
-					inserted = true;
+					newOrdering.push(
+						config.toId(
+							msgEvt,
+						),
+					);
+					inserted =
+						true;
 				}
-				newOrdering.push(stream._ordering[i]!);
+				newOrdering.push(
+					stream
+						._ordering[
+						i
+					]!,
+				);
 			}
 
 			if (!inserted) {
-				newOrdering.push(config.toId(msgEvt));
+				newOrdering.push(
+					config.toId(
+						msgEvt,
+					),
+				);
 			}
 
 			const newEvents = {
 				...stream._msgEvts,
-				[config.toId(msgEvt)]: msgEvt,
+				[config.toId(
+					msgEvt,
+				)]: msgEvt,
 			};
 
 			return {
@@ -123,48 +178,96 @@ export const EventStreamInMemory = <
 					},
 					msgEvt,
 				)._indexes,
-				_hash: hash(newOrdering),
+				_hash: hash(
+					newOrdering,
+				),
 			};
 		},
 
 		async mergeLeft(config, left, right) {
-			let stream = await this.init(config);
+			let stream = await this.init(
+				config,
+			);
 
 			for (const msgEvtId of left._ordering) {
-				const msgEvt = left._msgEvts[msgEvtId]!;
-				stream = await this.append(config, stream, msgEvt);
+				const msgEvt =
+					left
+						._msgEvts[
+						msgEvtId
+					]!;
+				stream =
+					await this.append(
+						config,
+						stream,
+						msgEvt,
+					);
 			}
 
 			for (const msgEvtId of right._ordering) {
-				const msgEvt = right._msgEvts[msgEvtId]!;
-				stream = await this.append(config, stream, msgEvt);
+				const msgEvt =
+					right
+						._msgEvts[
+						msgEvtId
+					]!;
+				stream =
+					await this.append(
+						config,
+						stream,
+						msgEvt,
+					);
 			}
 
 			return stream;
 		},
 
 		async has(instance, msgEvtId) {
-			return msgEvtId in instance._msgEvts;
+			return (
+				msgEvtId in
+				instance._msgEvts
+			);
 		},
 
 		async equals(left, right) {
-			return left._hash === right._hash;
+			return (
+				left._hash ===
+				right._hash
+			);
 		},
 
-		async subset(config, instance, indexName, targetIndexVal) {
-			let streamNew = await this.init(config);
+		async subset(
+			config,
+			instance,
+			indexName,
+			targetIndexVal,
+		) {
+			let streamNew = await this.init(
+				config,
+			);
 
-			const index: EventStreamIndex<TEventId> = instance._indexes[indexName]?.[
-				targetIndexVal
-			] ?? {
-				_msgEvts: {},
-				_ordering: [],
-			};
+			const index: EventStreamIndex<TEventId> =
+				instance
+					._indexes[
+					indexName
+				]?.[
+					targetIndexVal
+				] ?? {
+					_msgEvts: {},
+					_ordering: [],
+				};
 
 			for (const msgEvtId of index._ordering) {
-				const msgEvt = instance._msgEvts[msgEvtId as TEventId];
+				const msgEvt =
+					instance
+						._msgEvts[
+						msgEvtId as TEventId
+					];
 				if (msgEvt) {
-					streamNew = await this.append(config, streamNew, msgEvt);
+					streamNew =
+						await this.append(
+							config,
+							streamNew,
+							msgEvt,
+						);
 				}
 			}
 
@@ -172,70 +275,118 @@ export const EventStreamInMemory = <
 		},
 
 		async startingAt(config, instance, msgEvtId) {
-			const orderingIndex = instance._ordering.indexOf(msgEvtId);
+			const orderingIndex =
+				instance._ordering.indexOf(
+					msgEvtId,
+				);
 
-			if (orderingIndex === undefined) {
+			if (
+				orderingIndex ===
+				undefined
+			) {
 				return instance;
 			}
 
-			const newOrdering = instance._ordering.slice(orderingIndex);
+			const newOrdering =
+				instance._ordering.slice(
+					orderingIndex,
+				);
 
-			const newEvents: Model["_msgEvts"] = {};
-			let newIndexes: Model["_indexes"] = {};
+			const newEvents: Model['_msgEvts'] =
+				{};
+			let newIndexes: Model['_indexes'] =
+				{};
 
 			for (const msgEvtId of newOrdering) {
-				newEvents[msgEvtId] = instance._msgEvts[msgEvtId];
-				const updated = updateIndexes(
-					config,
-					{
-						_msgEvts: newEvents,
-						_indexes: newIndexes,
-						_ordering: newOrdering,
-						_hash: 0,
-					},
-					instance._msgEvts[msgEvtId]!,
-				);
-				newIndexes = updated._indexes;
+				newEvents[
+					msgEvtId
+				] =
+					instance._msgEvts[
+						msgEvtId
+					];
+				const updated =
+					updateIndexes(
+						config,
+						{
+							_msgEvts: newEvents,
+							_indexes: newIndexes,
+							_ordering: newOrdering,
+							_hash: 0,
+						},
+						instance
+							._msgEvts[
+							msgEvtId
+						]!,
+					);
+				newIndexes =
+					updated._indexes;
 			}
 
 			return {
 				_msgEvts: newEvents,
-				_hash: hash(newOrdering),
+				_hash: hash(
+					newOrdering,
+				),
 				_indexes: newIndexes,
 				_ordering: newOrdering,
 			};
 		},
 
 		async endingAt(config, instance, msgEvtId) {
-			const orderingIndex = instance._ordering.indexOf(msgEvtId);
+			const orderingIndex =
+				instance._ordering.indexOf(
+					msgEvtId,
+				);
 
-			if (orderingIndex === undefined) {
+			if (
+				orderingIndex ===
+				undefined
+			) {
 				return instance;
 			}
 
-			const newOrdering = instance._ordering.slice(0, orderingIndex + 1);
+			const newOrdering =
+				instance._ordering.slice(
+					0,
+					orderingIndex +
+						1,
+				);
 
-			const newEvents: Model["_msgEvts"] = {};
-			let newIndexes: Model["_indexes"] = {};
+			const newEvents: Model['_msgEvts'] =
+				{};
+			let newIndexes: Model['_indexes'] =
+				{};
 
 			for (const msgEvtId of newOrdering) {
-				newEvents[msgEvtId] = instance._msgEvts[msgEvtId];
-				const updated = updateIndexes(
-					config,
-					{
-						_msgEvts: newEvents,
-						_indexes: newIndexes,
-						_ordering: newOrdering,
-						_hash: 0,
-					},
-					instance._msgEvts[msgEvtId]!,
-				);
-				newIndexes = updated._indexes;
+				newEvents[
+					msgEvtId
+				] =
+					instance._msgEvts[
+						msgEvtId
+					];
+				const updated =
+					updateIndexes(
+						config,
+						{
+							_msgEvts: newEvents,
+							_indexes: newIndexes,
+							_ordering: newOrdering,
+							_hash: 0,
+						},
+						instance
+							._msgEvts[
+							msgEvtId
+						]!,
+					);
+				newIndexes =
+					updated._indexes;
 			}
 
 			return {
 				_msgEvts: newEvents,
-				_hash: hash(newOrdering),
+				_hash: hash(
+					newOrdering,
+				),
 				_indexes: newIndexes,
 				_ordering: newOrdering,
 			};
@@ -247,27 +398,50 @@ export const EventStreamInMemory = <
 					let currentIndex = 0;
 					return {
 						async next() {
-							if (currentIndex >= instance._ordering.length) {
-								return { done: true, value: undefined };
+							if (
+								currentIndex >=
+								instance
+									._ordering
+									.length
+							) {
+								return {
+									done: true,
+									value: undefined,
+								};
 							}
 
-							const msgEvtId = instance._ordering[currentIndex]!;
+							const msgEvtId =
+								instance
+									._ordering[
+									currentIndex
+								]!;
 
-							const msgEvt = instance._msgEvts[msgEvtId]!;
+							const msgEvt =
+								instance
+									._msgEvts[
+									msgEvtId
+								]!;
 
 							currentIndex++;
 
-							return { done: false, value: msgEvt };
+							return {
+								done: false,
+								value: msgEvt,
+							};
 						},
 
 						return() {
-							return Promise.resolve({
-								done: true,
-								value: undefined,
-							});
+							return Promise.resolve(
+								{
+									done: true,
+									value: undefined,
+								},
+							);
 						},
 
-						throw(error) {
+						throw(
+							error,
+						) {
 							throw error;
 						},
 					};
@@ -276,10 +450,17 @@ export const EventStreamInMemory = <
 		},
 
 		async fromArray(config, msgEvts) {
-			let instance = await this.init(config);
+			let instance = await this.init(
+				config,
+			);
 
 			for (const msgEvt of msgEvts) {
-				instance = await this.append(config, instance, msgEvt);
+				instance =
+					await this.append(
+						config,
+						instance,
+						msgEvt,
+					);
 			}
 
 			return instance;
@@ -289,7 +470,12 @@ export const EventStreamInMemory = <
 			const msgEvts: TEvent[] = [];
 
 			for (const msgEvtId of instance._ordering) {
-				msgEvts.push(instance._msgEvts[msgEvtId]!);
+				msgEvts.push(
+					instance
+						._msgEvts[
+						msgEvtId
+					]!,
+				);
 			}
 
 			return msgEvts;
@@ -306,35 +492,74 @@ const updateIndexes = <
 	stream: Instance<TEventId, TEvent, TIndexName>,
 	msgEvt: TEvent,
 ): Instance<TEventId, TEvent, TIndexName> => {
-	const indexesNew = { ...stream._indexes };
+	const indexesNew = {...stream._indexes};
 
 	for (const indexName in config.indexes) {
-		const indexKey = config.indexes[indexName](msgEvt);
+		const indexKey =
+			config.indexes[indexName](
+				msgEvt,
+			);
 		const index = indexesNew[indexName] || {};
-		const indexEvents = index[indexKey] || { _ordering: [], _msgEvts: {} };
+		const indexEvents = index[indexKey] || {
+			_ordering: [],
+			_msgEvts: {},
+		};
 
 		let inserted = false;
 		const newOrdering = [];
-		for (let i = 0; i < indexEvents._ordering.length; i++) {
-			const msgEvt = stream._msgEvts?.[indexEvents?._ordering?.[i]!]!;
+		for (
+			let i = 0;
+			i <
+			indexEvents._ordering.length;
+			i++
+		) {
+			const msgEvt =
+				stream
+					._msgEvts?.[
+					indexEvents
+						?._ordering?.[
+						i
+					]!
+				]!;
 			if (
 				!inserted &&
-				(config.toOrdering(msgEvt) ?? Number.NEGATIVE_INFINITY) >
-					config.toOrdering(msgEvt)
+				(config.toOrdering(
+					msgEvt,
+				) ??
+					Number.NEGATIVE_INFINITY) >
+					config.toOrdering(
+						msgEvt,
+					)
 			) {
-				newOrdering.push(config.toId(msgEvt));
+				newOrdering.push(
+					config.toId(
+						msgEvt,
+					),
+				);
 				inserted = true;
 			}
-			newOrdering.push(indexEvents._ordering[i]!);
+			newOrdering.push(
+				indexEvents
+					._ordering[
+					i
+				]!,
+			);
 		}
 		if (!inserted) {
-			newOrdering.push(config.toId(msgEvt));
+			newOrdering.push(
+				config.toId(
+					msgEvt,
+				),
+			);
 		}
 
 		indexEvents._ordering = newOrdering;
 		indexEvents._msgEvts = {
 			...indexEvents._msgEvts,
-			[config.toId(msgEvt)]: config.toId(msgEvt),
+			[config.toId(msgEvt)]:
+				config.toId(
+					msgEvt,
+				),
 		};
 		index[indexKey] = indexEvents;
 		indexesNew[indexName] = index;
@@ -347,14 +572,17 @@ const updateIndexes = <
 };
 
 function hash<TEventId extends string>(ordering: TEventId[]): string | number {
-	return djb2Hash(ordering.join(""));
+	return djb2Hash(ordering.join(''));
 }
 
 function djb2Hash(str: string) {
 	let hash = 5381;
 	for (let i = 0; i < str.length; i++) {
 		const char = str.charCodeAt(i);
-		hash = (hash << 5) + hash + char; /* hash * 33 + c */
+		hash =
+			(hash << 5) +
+			hash +
+			char; /* hash * 33 + c */
 	}
 	return hash;
 }

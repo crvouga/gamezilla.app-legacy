@@ -1,8 +1,8 @@
 export type IconInput = {
-	className?: string;
-	"aria-label"?: string;
-	x?: number;
-	y?: number;
-	width?: number;
-	height?: number;
+	'className'?: string;
+	'aria-label'?: string;
+	'x'?: number;
+	'y'?: number;
+	'width'?: number;
+	'height'?: number;
 };

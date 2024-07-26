@@ -1,14 +1,14 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import type { UserId } from "gamezilla-app/app/@/data";
+import type {SpaceClientCtx} from 'gamezilla-app/app/spaces/@/space';
+import type {UserId} from 'gamezilla-app/app/@/data';
 import {
 	IconRobot,
 	Avatar,
 	Transition,
 	cn,
 	Typography,
-} from "gamezilla-app/app/@/ui";
-import type { PlayerType, VsBotInput } from "../vs-bot";
-import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
+} from 'gamezilla-app/app/@/ui';
+import type {PlayerType, VsBotInput} from '../vs-bot';
+import type {VDom, VDomChildren} from 'gamezilla-app/@/vdom';
 
 //
 //
@@ -53,11 +53,11 @@ export type GameOver =
 			t: null;
 	  }
 	| {
-			t: "winner";
+			t: 'winner';
 			winner: PlayerType;
 	  }
 	| {
-			t: "draw";
+			t: 'draw';
 	  };
 
 type input = {
@@ -70,13 +70,19 @@ type input = {
 	};
 	bot: {
 		label: string;
-		renderIcon: (input: { className: string }) => VDom;
+		renderIcon: (input: {
+			className: string;
+		}) => VDom;
 	};
 	playerOne: {
-		renderIcon: (input: { className: string }) => VDom;
+		renderIcon: (input: {
+			className: string;
+		}) => VDom;
 	};
 	playerTwo: {
-		renderIcon: (input: { className: string }) => VDom;
+		renderIcon: (input: {
+			className: string;
+		}) => VDom;
 	};
 	onPlayAgain?: () => void;
 };
@@ -92,31 +98,41 @@ export type VsBotGameinput = VsBotInput & {
 
 export type Status =
 	| {
-			t: "playing";
+			t: 'playing';
 			turn: PlayerType;
 	  }
 	| {
-			t: "winner";
+			t: 'winner';
 			winner: PlayerType;
 	  }
 	| {
-			t: "draw";
+			t: 'draw';
 	  };
 
-export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
+export const ViewStatusBar = (input: VsBotInput & {status: Status}) => {
 	return (
 		<Transition
 			id="status-bar"
 			mode="in-out"
-			onEnter={fadeIn({ duration: 300, delay: 0 })}
-			onExit={fadeOut({ duration: 300, delay: 0 })}
+			onEnter={fadeIn({
+				duration: 300,
+				delay: 0,
+			})}
+			onExit={fadeOut({
+				duration: 300,
+				delay: 0,
+			})}
 			className="relative h-8 w-full"
 		>
 			<div
-				key={statusToKey(input.status)}
+				key={statusToKey(
+					input.status,
+				)}
 				className="absolute inset-0 flex items-center justify-center gap-1 text-neutral-300"
 			>
-				<ViewStatusBarContent {...input} />
+				<ViewStatusBarContent
+					{...input}
+				/>
 			</div>
 		</Transition>
 	);
@@ -124,58 +140,66 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
 
 function statusToKey(status: Status) {
 	switch (status.t) {
-		case "playing": {
+		case 'playing': {
 			switch (status.turn) {
-				case "player-one": {
-					return "playing/player-one";
+				case 'player-one': {
+					return 'playing/player-one';
 				}
 
-				case "player-two": {
-					return "playing/player-two";
+				case 'player-two': {
+					return 'playing/player-two';
 				}
 			}
 		}
 
-		case "winner": {
+		case 'winner': {
 			switch (status.winner) {
-				case "player-one": {
-					return "winner/player-one";
+				case 'player-one': {
+					return 'winner/player-one';
 				}
 
-				case "player-two": {
-					return "winner/player-two";
+				case 'player-two': {
+					return 'winner/player-two';
 				}
 			}
 		}
 
-		case "draw": {
-			return "draw";
+		case 'draw': {
+			return 'draw';
 		}
 	}
 }
 
-const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
+const ViewStatusBarContent = (input: VsBotInput & {status: Status}) => {
 	switch (input.status.t) {
-		case "playing": {
+		case 'playing': {
 			switch (input.status.turn) {
-				case "player-one": {
+				case 'player-one': {
 					return (
 						<>
-							{input.playerOne.renderIcon({
-								className: "h-5 w-5",
-							})}
-							<p>Turn</p>
+							{input.playerOne.renderIcon(
+								{
+									className: 'h-5 w-5',
+								},
+							)}
+							<p>
+								Turn
+							</p>
 						</>
 					);
 				}
 
-				case "player-two": {
+				case 'player-two': {
 					return (
 						<>
-							{input.playerTwo.renderIcon({
-								className: "h-5 w-5",
-							})}
-							<p>Turn</p>
+							{input.playerTwo.renderIcon(
+								{
+									className: 'h-5 w-5',
+								},
+							)}
+							<p>
+								Turn
+							</p>
 						</>
 					);
 				}
@@ -188,50 +212,81 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
 	}
 };
 
-export const ViewGameOverOverlay = (
-	input: input & { isSpectating: boolean },
-) => {
-	const { gameOver } = input;
+export const ViewGameOverOverlay = (input: input & {isSpectating: boolean}) => {
+	const {gameOver} = input;
 
 	return (
 		<Transition
 			id="game-over-overlay"
 			mode="out-in"
-			onEnter={fadeIn({ duration: 200, delay: 500 })}
-			onExit={fadeOut({ duration: 200, delay: 0 })}
+			onEnter={fadeIn({
+				duration: 200,
+				delay: 500,
+			})}
+			onExit={fadeOut({
+				duration: 200,
+				delay: 0,
+			})}
 		>
-			{gameOver?.t === "winner" && (
+			{gameOver?.t === 'winner' && (
 				<button
 					className="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
-					disabled={input.isSpectating}
-					onClick={!input.isSpectating ? input.onPlayAgain : undefined}
+					disabled={
+						input.isSpectating
+					}
+					onClick={
+						!input.isSpectating
+							? input.onPlayAgain
+							: undefined
+					}
 				>
 					<div className="flex-1" />
 
-					<Winner {...input} winner={gameOver.winner} />
+					<Winner
+						{...input}
+						winner={
+							gameOver.winner
+						}
+					/>
 
-					{input.onPlayAgain && !input.isSpectating ? (
+					{input.onPlayAgain &&
+					!input.isSpectating ? (
 						<div className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold">
-							Tap to play again
+							Tap
+							to
+							play
+							again
 						</div>
 					) : (
 						<div className="flex-1" />
 					)}
 				</button>
 			)}
-			{gameOver?.t === "draw" && (
+			{gameOver?.t === 'draw' && (
 				<button
 					className="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
-					disabled={input.isSpectating}
-					onClick={!input.isSpectating ? input.onPlayAgain : undefined}
+					disabled={
+						input.isSpectating
+					}
+					onClick={
+						!input.isSpectating
+							? input.onPlayAgain
+							: undefined
+					}
 				>
 					<div className="flex-1" />
 
-					<Draw {...input} />
+					<Draw
+						{...input}
+					/>
 
-					{input.onPlayAgain && !input.isSpectating ? (
+					{input.onPlayAgain &&
+					!input.isSpectating ? (
 						<div className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0">
-							Tap to play again
+							Tap
+							to
+							play
+							again
 						</div>
 					) : (
 						<div className="flex-1" />
@@ -249,30 +304,57 @@ const Winner = ({
 	human,
 	bot,
 	winner,
-}: input & { winner: PlayerType }) => {
+}: input & {winner: PlayerType}) => {
 	const humanSlot = (
 		<>
 			<Avatar
 				className="h-16 w-16"
-				src={ctx.profiles[human.userId]?.avatarUrl}
+				src={
+					ctx
+						.profiles[
+						human
+							.userId
+					]
+						?.avatarUrl
+				}
 			/>
 		</>
 	);
 
-	const botSlot = <>{bot.renderIcon({ className: "h-16 w-16" })}</>;
+	const botSlot = (
+		<>
+			{bot.renderIcon({
+				className: 'h-16 w-16',
+			})}
+		</>
+	);
 
 	const playerOneSlot = (
 		<div className="flex flex-col items-center justify-center gap-3">
 			<div className="flex items-center justify-center gap-3">
-				{playerOne.renderIcon({ className: "h-16 w-16" })}
-				{human.player === "player-one" ? humanSlot : botSlot}
+				{playerOne.renderIcon(
+					{
+						className: 'h-16 w-16',
+					},
+				)}
+				{human.player ===
+				'player-one'
+					? humanSlot
+					: botSlot}
 			</div>
 
 			<Typography
 				variant="title"
 				className="text-center text-4xl font-black"
 				text={
-					winner === "player-one" ? ctx.t("game.winner") : ctx.t("game.loser")
+					winner ===
+					'player-one'
+						? ctx.t(
+								'game.winner',
+						  )
+						: ctx.t(
+								'game.loser',
+						  )
 				}
 			/>
 		</div>
@@ -281,16 +363,30 @@ const Winner = ({
 	const playerTwoSlot = (
 		<div className="flex flex-col items-center justify-center gap-3">
 			<div className="flex items-center justify-center gap-3">
-				{playerTwo.renderIcon({ className: "h-16 w-16" })}
+				{playerTwo.renderIcon(
+					{
+						className: 'h-16 w-16',
+					},
+				)}
 
-				{human.player === "player-two" ? humanSlot : botSlot}
+				{human.player ===
+				'player-two'
+					? humanSlot
+					: botSlot}
 			</div>
 
 			<Typography
 				variant="title"
 				className="text-center text-4xl font-black"
 				text={
-					winner === "player-two" ? ctx.t("game.winner") : ctx.t("game.loser")
+					winner ===
+					'player-two'
+						? ctx.t(
+								'game.winner',
+						  )
+						: ctx.t(
+								'game.loser',
+						  )
 				}
 			/>
 		</div>
@@ -307,7 +403,18 @@ const Winner = ({
 const Draw = (input: input) => {
 	const humanSlot = (
 		<>
-			<Avatar src={input.ctx.profiles[input.ctx.currentUserId]?.avatarUrl} />
+			<Avatar
+				src={
+					input
+						.ctx
+						.profiles[
+						input
+							.ctx
+							.currentUserId
+					]
+						?.avatarUrl
+				}
+			/>
 		</>
 	);
 
@@ -319,15 +426,25 @@ const Draw = (input: input) => {
 
 	const playerOneSlot = (
 		<>
-			{input.playerOne.renderIcon({ className: "h-5 w-5" })}
-			{input.human.player === "player-one" ? humanSlot : botSlot}
+			{input.playerOne.renderIcon({
+				className: 'h-5 w-5',
+			})}
+			{input.human.player ===
+			'player-one'
+				? humanSlot
+				: botSlot}
 		</>
 	);
 
 	const playerTwoSlot = (
 		<>
-			{input.playerTwo.renderIcon({ className: "h-5 w-5" })}
-			{input.human.player === "player-two" ? humanSlot : botSlot}
+			{input.playerTwo.renderIcon({
+				className: 'h-5 w-5',
+			})}
+			{input.human.player ===
+			'player-two'
+				? humanSlot
+				: botSlot}
 		</>
 	);
 
@@ -355,13 +472,23 @@ export const VsBotPlayerSection = ({
 		<>
 			<Avatar
 				className="h-6 w-6 "
-				src={ctx.profiles[human.userId]?.avatarUrl}
+				src={
+					ctx
+						.profiles[
+						human
+							.userId
+					]
+						?.avatarUrl
+				}
 			/>
 			{profile && (
 				<Typography
 					className="truncate"
 					variant="body"
-					text={ctx.t("username", profile.username)}
+					text={ctx.t(
+						'username',
+						profile.username,
+					)}
 				/>
 			)}
 		</>
@@ -369,24 +496,56 @@ export const VsBotPlayerSection = ({
 
 	const botSlot = (
 		<>
-			{bot.renderIcon({ className: "h-6 w-6 flex-shrink-0" })}
-			<Typography className="truncate" variant="body" text={bot.label} />
+			{bot.renderIcon({
+				className: 'h-6 w-6 flex-shrink-0',
+			})}
+			<Typography
+				className="truncate"
+				variant="body"
+				text={bot.label}
+			/>
 		</>
 	);
 
 	return (
 		<section className="flex w-full items-center gap-3 px-3">
 			<div className="flex w-1/2 items-center justify-center overflow-hidden">
-				<Slot active={turn === "player-one"}>
-					<div>{playerOne.renderIcon({ className: "h-6 w-6" })}</div>
-					{human.player === "player-one" ? humanSlot : botSlot}
+				<Slot
+					active={
+						turn ===
+						'player-one'
+					}
+				>
+					<div>
+						{playerOne.renderIcon(
+							{
+								className: 'h-6 w-6',
+							},
+						)}
+					</div>
+					{human.player ===
+					'player-one'
+						? humanSlot
+						: botSlot}
 				</Slot>
 			</div>
 
 			<div className="flex w-1/2 items-center justify-center overflow-hidden">
-				<Slot active={turn === "player-two"}>
-					{playerTwo.renderIcon({ className: "h-6 w-6" })}
-					{human.player === "player-two" ? humanSlot : botSlot}
+				<Slot
+					active={
+						turn ===
+						'player-two'
+					}
+				>
+					{playerTwo.renderIcon(
+						{
+							className: 'h-6 w-6',
+						},
+					)}
+					{human.player ===
+					'player-two'
+						? humanSlot
+						: botSlot}
 				</Slot>
 			</div>
 		</section>
@@ -403,8 +562,9 @@ const Slot = ({
 	return (
 		<div
 			className={cn(
-				"flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-700 bg-black p-2 text-sm transition-colors duration-200 ease-in-out",
-				active && "border-b-blue-500",
+				'flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-700 bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
+				active &&
+					'border-b-blue-500',
 			)}
 		>
 			{children}
@@ -422,23 +582,43 @@ const Slot = ({
 //
 
 const fadeIn =
-	({ duration, delay }: { delay: number; duration: number }) =>
+	({duration, delay}: {delay: number; duration: number}) =>
 	async (node: HTMLElement) => {
-		await node.animate([{ opacity: 0 }, { opacity: 1 }], {
-			duration: duration,
-			delay: delay,
-			easing: "ease-in-out",
-			fill: "both",
-		}).finished;
+		await node.animate(
+			[
+				{
+					opacity: 0,
+				},
+				{
+					opacity: 1,
+				},
+			],
+			{
+				duration: duration,
+				delay: delay,
+				easing: 'ease-in-out',
+				fill: 'both',
+			},
+		).finished;
 	};
 
 const fadeOut =
-	({ duration, delay }: { delay: number; duration: number }) =>
+	({duration, delay}: {delay: number; duration: number}) =>
 	async (node: HTMLElement) => {
-		await node.animate([{ opacity: 1 }, { opacity: 0 }], {
-			duration: duration,
-			delay: delay,
-			easing: "ease-in-out",
-			fill: "both",
-		}).finished;
+		await node.animate(
+			[
+				{
+					opacity: 1,
+				},
+				{
+					opacity: 0,
+				},
+			],
+			{
+				duration: duration,
+				delay: delay,
+				easing: 'ease-in-out',
+				fill: 'both',
+			},
+		).finished;
 	};

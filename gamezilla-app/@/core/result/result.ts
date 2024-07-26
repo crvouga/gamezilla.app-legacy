@@ -10,9 +10,9 @@
  */
 export type ResultPrivate<TError, TValue> = Err<TError> | Ok<TValue>;
 
-export type Ok<T> = { readonly t: "ok"; readonly value: T };
+export type Ok<T> = {readonly t: 'ok'; readonly value: T};
 
-export type Err<T> = { readonly t: "err"; readonly error: T };
+export type Err<T> = {readonly t: 'err'; readonly error: T};
 
 const is = <TError, TValue>(
 	isErr: (x: unknown) => x is TError,
@@ -27,20 +27,28 @@ const is = <TError, TValue>(
 			return false;
 		}
 
-		if (typeof x !== "object") {
+		if (typeof x !== 'object') {
 			return false;
 		}
 
-		if ("t" in x === false) {
+		if ('t' in x === false) {
 			return false;
 		}
 
-		if (x.t === "err") {
-			return isErr((x as Err<TError>).error);
+		if (x.t === 'err') {
+			return isErr(
+				(
+					x as Err<TError>
+				).error,
+			);
 		}
 
-		if (x.t === "ok") {
-			return isOk((x as Ok<TValue>).value);
+		if (x.t === 'ok') {
+			return isOk(
+				(
+					x as Ok<TValue>
+				).value,
+			);
 		}
 
 		return false;
@@ -54,12 +62,14 @@ export const unwrap = <TError, TValue>(
 	result: ResultPrivate<TError, TValue>,
 ): TValue => {
 	switch (result.t) {
-		case "ok":
+		case 'ok':
 			return result.value;
 
-		case "err":
+		case 'err':
 			throw new Error(
-				`Tried to unwrap an error result. ${String(result.error)}`,
+				`Tried to unwrap an error result. ${String(
+					result.error,
+				)}`,
 			);
 	}
 };
@@ -68,14 +78,14 @@ export const unwrap = <TError, TValue>(
  * `Ok<T>` represents a successful result
  */
 export const Ok = <T>(value: T): Ok<T> => {
-	return { t: "ok", value };
+	return {t: 'ok', value};
 };
 
 /**
  * `Err<T>` represents a failed result
  */
 export const Err = <T>(error: T): Err<T> => {
-	return { t: "err", error };
+	return {t: 'err', error};
 };
 
 /**
@@ -84,13 +94,13 @@ export const Err = <T>(error: T): Err<T> => {
 export const isErr = <TError, TValue>(
 	result: RemoteResultPrivate<TError, TValue>,
 ): result is Err<TError> => {
-	return result.t === "err";
+	return result.t === 'err';
 };
 
 export const isOk = <TError, TValue>(
 	result: ResultPrivate<TError, TValue>,
 ): result is Ok<TValue> => {
-	return result.t === "ok";
+	return result.t === 'ok';
 };
 
 const mapErr = <A, B, TValue>(
@@ -98,17 +108,23 @@ const mapErr = <A, B, TValue>(
 	mapper: (a: A) => B,
 ): ResultPrivate<B, TValue> => {
 	switch (result.t) {
-		case "err":
-			return Err(mapper(result.error));
+		case 'err':
+			return Err(
+				mapper(
+					result.error,
+				),
+			);
 
-		case "ok":
+		case 'ok':
 			return result;
 	}
 };
 
 const fromNullable =
 	<TError, TValue>(error: TError) =>
-	(value: TValue | undefined | null): ResultPrivate<TError, TValue> => {
+	(
+		value: TValue | undefined | null,
+	): ResultPrivate<TError, TValue> => {
 		if (value === undefined) {
 			return Err(error);
 		}
@@ -122,11 +138,11 @@ const fromNullable =
 
 const withDefault = <T>(result: ResultPrivate<unknown, T>, fallback: T) => {
 	switch (result.t) {
-		case "err": {
+		case 'err': {
 			return fallback;
 		}
 
-		case "ok": {
+		case 'ok': {
 			return result.value;
 		}
 	}
@@ -162,9 +178,9 @@ const mapOk = <TError, A, B>(
 	mapper: (a: A) => B,
 ): ResultPrivate<TError, B> => {
 	switch (result.t) {
-		case "err":
+		case 'err':
 			return result;
-		case "ok":
+		case 'ok':
 			return Ok(mapper(result.value));
 	}
 };
@@ -190,16 +206,16 @@ export const ResultPrivate = {
 //
 //
 
-export const NotAsked: NotAsked = { t: "not-asked" };
+export const NotAsked: NotAsked = {t: 'not-asked'};
 
 export type NotAsked = {
-	t: "not-asked";
+	t: 'not-asked';
 };
 
-export const Loading: Loading = { t: "loading" };
+export const Loading: Loading = {t: 'loading'};
 
 export type Loading = {
-	t: "loading";
+	t: 'loading';
 };
 
 export type Remote = NotAsked | Loading;
@@ -211,13 +227,13 @@ export type RemoteResultPrivate<TError, TValue> =
 export const isLoading = <TError, TValue>(
 	result?: RemoteResultPrivate<TError, TValue>,
 ): result is Loading => {
-	return result?.t === "loading";
+	return result?.t === 'loading';
 };
 
 export const isNotAsked = <TError, TValue>(
 	result: RemoteResultPrivate<TError, TValue>,
 ): result is NotAsked => {
-	return result.t === "not-asked";
+	return result.t === 'not-asked';
 };
 
 export const isPending = <TError, TValue>(
@@ -231,13 +247,16 @@ export const remoteResultMap = <E, A, B>(
 	mapper: (a: A) => B,
 ): RemoteResultPrivate<E, B> => {
 	switch (result.t) {
-		case "not-asked":
-		case "loading":
+		case 'not-asked':
+		case 'loading':
 			return result;
 
-		case "err":
-		case "ok":
-			return ResultPrivate.mapOk(result, mapper);
+		case 'err':
+		case 'ok':
+			return ResultPrivate.mapOk(
+				result,
+				mapper,
+			);
 	}
 };
 

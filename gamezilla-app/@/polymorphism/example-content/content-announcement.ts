@@ -1,13 +1,13 @@
-import { type Content, renderHTML } from "./content";
+import {type Content, renderHTML} from './content';
 
 export type Announcement = {
-	Content: "announcement";
+	Content: 'announcement';
 	title: string;
 	message: string;
 };
 
 const isAnnouncement = (content: Content): content is Announcement =>
-	content.Content === "announcement";
+	content.Content === 'announcement';
 
 renderHTML.implement(isAnnouncement, (announcement) => {
 	return `
@@ -23,5 +23,5 @@ export const Announcement = (input: {
 	message: string;
 }): Announcement => ({
 	...input,
-	Content: "announcement",
+	Content: 'announcement',
 });

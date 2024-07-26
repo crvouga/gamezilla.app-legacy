@@ -1,20 +1,22 @@
-import * as ConnectFour from "./connect-four/connect-four-cover-art";
-import * as Flow from "./flow/flow-cover-art";
+import * as ConnectFour from './connect-four/connect-four-cover-art';
+import * as Flow from './flow/flow-cover-art';
 
-import type { GameName } from "./game.types";
+import type {GameName} from './game.types';
 
-export const CoverArt = (input: { gameName: GameName }) => {
+export const CoverArt = (input: {gameName: GameName}) => {
 	switch (input.gameName) {
-		case "connect-four": {
+		case 'connect-four': {
 			return <ConnectFour.CoverArt />;
 		}
 
-		case "flow": {
+		case 'flow': {
 			return <Flow.CoverArt />;
 		}
 
 		default: {
-			throw new Error(`Unknown game name: ${input.gameName}`);
+			throw new Error(
+				`Unknown game name: ${input.gameName}`,
+			);
 		}
 	}
 };

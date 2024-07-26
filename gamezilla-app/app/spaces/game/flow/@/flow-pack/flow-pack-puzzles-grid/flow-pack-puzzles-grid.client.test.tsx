@@ -1,18 +1,18 @@
-import { describe, expect, it } from "bun:test";
-import { Posix, RequestResponse, TimeSpan } from "gamezilla-app/@/core";
-import { didSendToServer, didShowErrorSm } from "gamezilla-app/app/@/client";
-import { FixtureSpaceClient } from "gamezilla-app/app/spaces/@/testing/client";
-import { FlowPack } from "..";
-import { FlowPuzzle } from "../../flow-puzzle";
+import {describe, expect, it} from 'bun:test';
+import {Posix, RequestResponse, TimeSpan} from 'gamezilla-app/@/core';
+import {didSendToServer, didShowErrorSm} from 'gamezilla-app/app/@/client';
+import {FixtureSpaceClient} from 'gamezilla-app/app/spaces/@/testing/client';
+import {FlowPack} from '..';
+import {FlowPuzzle} from '../../flow-puzzle';
 import {
 	FlowPackPuzzlesGridClient,
 	type FlowPackGridClientCtx as FlowPackPuzzlesGridClientCtx,
-} from "./flow-pack-puzzles-grid.client";
+} from './flow-pack-puzzles-grid.client';
 import type {
 	ModelClient,
 	MsgClient,
 	MsgToClient,
-} from "./flow-pack-puzzles-grid.types";
+} from './flow-pack-puzzles-grid.types';
 
 type Input = {
 	ctx?: FlowPackPuzzlesGridClientCtx;
@@ -36,7 +36,9 @@ const Fixture = async () => {
 	};
 
 	const updates = (initial: ModelClient, msgs: Input[]) => {
-		const outputs: ReturnType<typeof FlowPackPuzzlesGridClient.update>[] = [
+		const outputs: ReturnType<
+			typeof FlowPackPuzzlesGridClient.update
+		>[] = [
 			{
 				model: initial,
 			},
@@ -45,11 +47,14 @@ const Fixture = async () => {
 		let model = initial;
 
 		for (const msg of msgs) {
-			const outputNew = FlowPackPuzzlesGridClient.update({
-				ctx,
-				model,
-				...msg,
-			});
+			const outputNew =
+				FlowPackPuzzlesGridClient.update(
+					{
+						ctx,
+						model,
+						...msg,
+					},
+				);
 			model = outputNew.model;
 			outputs.push(outputNew);
 		}
@@ -59,9 +64,12 @@ const Fixture = async () => {
 
 	const update = (initial: ModelClient, msgs: Input[]) => {
 		const outputs = updates(initial, msgs);
-		const latestOutput = outputs[outputs.length - 1];
+		const latestOutput =
+			outputs[outputs.length - 1];
 		if (!latestOutput) {
-			throw new Error("latestOutput is undefined");
+			throw new Error(
+				'latestOutput is undefined',
+			);
 		}
 		return latestOutput;
 	};
@@ -82,9 +90,9 @@ const Fixture = async () => {
 
 const msgServerListedByPuzzlesByIdOk = (puzzles: FlowPuzzle[]): Input => ({
 	msgServer: {
-		t: "listed-puzzles-by-id",
+		t: 'listed-puzzles-by-id',
 		listed: {
-			t: "ok",
+			t: 'ok',
 			value: {
 				items: puzzles,
 				limit: puzzles.length,
@@ -104,49 +112,12 @@ const areEqualSets = <T,>(a: T[], b: T[]): boolean => {
 };
 
 describe(import.meta.file, () => {
-	it("should send a request to list puzzles when grid is visible", async () => {
+	it('should send a request to list puzzles when grid is visible', async () => {
 		const f = await Fixture();
 		const output = f.update(f.init.model, [
 			{
 				msg: {
-					t: "user-observed-grid",
-				},
-			},
-		]);
-		expect(
-			didSendToServer(output, (msg) => msg.t === "list-puzzles-by-id"),
-		).toBe(true);
-	});
-
-	it("should not fetch puzzles when all are not missing", async () => {
-		const f = await Fixture();
-		const output = f.update(f.init.model, [
-			msgServerListedByPuzzlesByIdOk([f.puzzle]),
-			{
-				msg: {
-					t: "user-observed-grid",
-				},
-			},
-		]);
-		expect(
-			didSendToServer(output, (msg) => msg.t === "list-puzzles-by-id"),
-		).toBe(false);
-	});
-
-	it("should fetch puzzles when some are missing", async () => {
-		const f = await Fixture();
-		const output = f.update(f.init.model, [{}]);
-		expect(
-			didSendToServer(output, (msg) => msg.t === "list-puzzles-by-id"),
-		).toBe(true);
-	});
-
-	it("should have missing puzzle ids in list request", async () => {
-		const f = await Fixture();
-		const output = f.update(f.init.model, [
-			{
-				msg: {
-					t: "user-observed-grid",
+					t: 'user-observed-grid',
 				},
 			},
 		]);
@@ -154,76 +125,177 @@ describe(import.meta.file, () => {
 			didSendToServer(
 				output,
 				(msg) =>
-					msg.t === "list-puzzles-by-id" &&
-					areEqualSets(msg.puzzleIds, f.pack.puzzleIds),
+					msg.t ===
+					'list-puzzles-by-id',
 			),
 		).toBe(true);
 	});
 
-	it("should record puzzles listed by server", async () => {
+	it('should not fetch puzzles when all are not missing', async () => {
 		const f = await Fixture();
 		const output = f.update(f.init.model, [
-			msgServerListedByPuzzlesByIdOk([f.puzzle]),
+			msgServerListedByPuzzlesByIdOk([
+				f.puzzle,
+			]),
+			{
+				msg: {
+					t: 'user-observed-grid',
+				},
+			},
 		]);
-		expect(output.model.puzzles[f.puzzle.id]).toEqual(f.puzzle);
+		expect(
+			didSendToServer(
+				output,
+				(msg) =>
+					msg.t ===
+					'list-puzzles-by-id',
+			),
+		).toBe(false);
 	});
 
-	it("should show an error when server sends an error while listing puzzles", async () => {
+	it('should fetch puzzles when some are missing', async () => {
+		const f = await Fixture();
+		const output = f.update(f.init.model, [{}]);
+		expect(
+			didSendToServer(
+				output,
+				(msg) =>
+					msg.t ===
+					'list-puzzles-by-id',
+			),
+		).toBe(true);
+	});
+
+	it('should have missing puzzle ids in list request', async () => {
+		const f = await Fixture();
+		const output = f.update(f.init.model, [
+			{
+				msg: {
+					t: 'user-observed-grid',
+				},
+			},
+		]);
+		expect(
+			didSendToServer(
+				output,
+				(msg) =>
+					msg.t ===
+						'list-puzzles-by-id' &&
+					areEqualSets(
+						msg.puzzleIds,
+						f
+							.pack
+							.puzzleIds,
+					),
+			),
+		).toBe(true);
+	});
+
+	it('should record puzzles listed by server', async () => {
+		const f = await Fixture();
+		const output = f.update(f.init.model, [
+			msgServerListedByPuzzlesByIdOk([
+				f.puzzle,
+			]),
+		]);
+		expect(
+			output.model.puzzles[
+				f.puzzle.id
+			],
+		).toEqual(f.puzzle);
+	});
+
+	it('should show an error when server sends an error while listing puzzles', async () => {
 		const f = await Fixture();
 		const output = f.update(f.init.model, [
 			{
 				msgServer: {
-					t: "listed-puzzles-by-id",
+					t: 'listed-puzzles-by-id',
 					listed: {
-						t: "err",
-						error: "Some error",
+						t: 'err',
+						error: 'Some error',
 					},
 				},
 			},
 		]);
 
-		expect(didShowErrorSm(output, f.ctx.t("app.something-went-wrong"))).toBe(
-			true,
-		);
+		expect(
+			didShowErrorSm(
+				output,
+				f.ctx.t(
+					'app.something-went-wrong',
+				),
+			),
+		).toBe(true);
 	});
 
-	it("should be in a loading state after requesting to list puzzles", async () => {
+	it('should be in a loading state after requesting to list puzzles', async () => {
 		const f = await Fixture();
 		const output = f.update(f.init.model, [
 			{
 				msg: {
-					t: "user-observed-grid",
+					t: 'user-observed-grid',
 				},
 			},
 		]);
-		expect(RequestResponse.isRequesting(output.model.request)).toBe(true);
+		expect(
+			RequestResponse.isRequesting(
+				output.model
+					.request,
+			),
+		).toBe(true);
 	});
 
-	it("should in an ok state after server listed puzzles", async () => {
+	it('should in an ok state after server listed puzzles', async () => {
 		const f = await Fixture();
 		const output = f.update(f.init.model, [
 			{
-				msg: { t: "user-observed-grid" },
+				msg: {
+					t: 'user-observed-grid',
+				},
 			},
-			msgServerListedByPuzzlesByIdOk([f.puzzle]),
+			msgServerListedByPuzzlesByIdOk([
+				f.puzzle,
+			]),
 		]);
-		expect(RequestResponse.isOk(output.model.request)).toBe(true);
+		expect(
+			RequestResponse.isOk(
+				output.model
+					.request,
+			),
+		).toBe(true);
 	});
 
-	it("should timeout request after too much time", async () => {
+	it('should timeout request after too much time', async () => {
 		const f = await Fixture();
 		const output = f.update(f.init.model, [
 			{
-				msg: { t: "user-observed-grid" },
+				msg: {
+					t: 'user-observed-grid',
+				},
 			},
 			{
 				ctx: {
 					...f.ctx,
-					now: Posix.future(f.ctx.now, TimeSpan.minutes(5)),
+					now: Posix.future(
+						f
+							.ctx
+							.now,
+						TimeSpan.minutes(
+							5,
+						),
+					),
 				},
-				msg: { t: "elapsed" },
+				msg: {
+					t: 'elapsed',
+				},
 			},
 		]);
-		expect(RequestResponse.isTimedOut(output.model.request)).toBe(true);
+		expect(
+			RequestResponse.isTimedOut(
+				output.model
+					.request,
+			),
+		).toBe(true);
 	});
 });

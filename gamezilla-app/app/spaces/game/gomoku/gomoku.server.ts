@@ -1,12 +1,12 @@
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import type { UserId } from "gamezilla-app/app/@/data";
-import { Eff, Sub } from "gamezilla-app/@/core";
-import * as VsBot from "./vs-bot/vs-bot.server";
-import * as VsUser from "./vs-user/vs-user.server";
-import type { Mode, ModelServer, MsgServer, MsgToServer } from "./gomoku.types";
+} from 'gamezilla-app/app/spaces/@/space';
+import type {UserId} from 'gamezilla-app/app/@/data';
+import {Eff, Sub} from 'gamezilla-app/@/core';
+import * as VsBot from './vs-bot/vs-bot.server';
+import * as VsUser from './vs-user/vs-user.server';
+import type {Mode, ModelServer, MsgServer, MsgToServer} from './gomoku.types';
 
 //
 //
@@ -19,26 +19,33 @@ import type { Mode, ModelServer, MsgServer, MsgToServer } from "./gomoku.types";
 export type Model = ModelServer;
 
 export const init: Model = {
-	t: "none",
+	t: 'none',
 };
 
-const initMode = ({ mode, userId }: { mode: Mode; userId: UserId }): Model => {
+const initMode = ({mode, userId}: {mode: Mode; userId: UserId}): Model => {
 	switch (mode) {
-		case "none": {
-			return { t: "none" };
-		}
-
-		case "vs-bot": {
+		case 'none': {
 			return {
-				t: "vs-bot",
-				c: VsBot.init({ userId }),
+				t: 'none',
 			};
 		}
 
-		case "vs-user": {
+		case 'vs-bot': {
 			return {
-				t: "vs-user",
-				c: VsUser.init({ white: userId, black: null }),
+				t: 'vs-bot',
+				c: VsBot.init({
+					userId,
+				}),
+			};
+		}
+
+		case 'vs-user': {
+			return {
+				t: 'vs-user',
+				c: VsUser.init({
+					white: userId,
+					black: null,
+				}),
 			};
 		}
 	}
@@ -60,24 +67,42 @@ export const update = ({
 }: {
 	msg: Msg;
 	model: Model;
-}): { model: Model; eff?: Eff<Msg> } => {
-	if (msg.t === "vs-bot" && model.t === "vs-bot") {
-		const updated = VsBot.update({ msg: msg.c, model: model.c });
+}): {model: Model; eff?: Eff<Msg>} => {
+	if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+		const updated = VsBot.update({
+			msg: msg.c,
+			model: model.c,
+		});
 		return {
-			model: { t: "vs-bot", c: updated.model },
-			eff: Eff.tag("vs-bot", updated.eff),
+			model: {
+				t: 'vs-bot',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-bot',
+				updated.eff,
+			),
 		};
 	}
 
-	if (msg.t === "vs-user" && model.t === "vs-user") {
-		const updated = VsUser.update({ msg: msg.c, model: model.c });
+	if (msg.t === 'vs-user' && model.t === 'vs-user') {
+		const updated = VsUser.update({
+			msg: msg.c,
+			model: model.c,
+		});
 		return {
-			model: { t: "vs-user", c: updated.model },
-			eff: Eff.tag("vs-user", updated.eff),
+			model: {
+				t: 'vs-user',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-user',
+				updated.eff,
+			),
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
 export const updateFromClient = ({
@@ -92,7 +117,7 @@ export const updateFromClient = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "input-mode") {
+	if (msg.t === 'input-mode') {
 		const modelNew = initMode(msg);
 		return {
 			model: modelNew,
@@ -100,19 +125,25 @@ export const updateFromClient = ({
 		};
 	}
 
-	if (model.t === "vs-bot" && msg.t === "vs-bot") {
+	if (model.t === 'vs-bot' && msg.t === 'vs-bot') {
 		const updated = VsBot.updateFromClient({
 			ctx,
 			msg: msg.c,
 			model: model.c,
 		});
 		return {
-			model: { t: "vs-bot", c: updated.model },
-			eff: Eff.tag("vs-bot", updated.eff),
+			model: {
+				t: 'vs-bot',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-bot',
+				updated.eff,
+			),
 		};
 	}
 
-	if (model.t === "vs-user" && msg.t === "vs-user") {
+	if (model.t === 'vs-user' && msg.t === 'vs-user') {
 		const updated = VsUser.updateFromClient({
 			msg: msg.c,
 			model: model.c,
@@ -120,12 +151,18 @@ export const updateFromClient = ({
 		});
 
 		return {
-			model: { t: "vs-user", c: updated.model },
-			eff: Eff.tag("vs-user", updated.eff),
+			model: {
+				t: 'vs-user',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-user',
+				updated.eff,
+			),
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
 export const updateFromEvent = ({
@@ -138,19 +175,37 @@ export const updateFromEvent = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (model.t === "vs-bot") {
-		const updated = VsBot.updateFromEvent({ msg, model: model.c });
+	if (model.t === 'vs-bot') {
+		const updated = VsBot.updateFromEvent({
+			msg,
+			model: model.c,
+		});
 		return {
-			model: { t: "vs-bot", c: updated.model },
-			eff: Eff.tag("vs-bot", updated.eff),
+			model: {
+				t: 'vs-bot',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-bot',
+				updated.eff,
+			),
 		};
 	}
 
-	if (model.t === "vs-user") {
-		const updated = VsUser.updateFromEvent({ msg, model: model.c });
+	if (model.t === 'vs-user') {
+		const updated = VsUser.updateFromEvent({
+			msg,
+			model: model.c,
+		});
 		return {
-			model: { t: "vs-user", c: updated.model },
-			eff: Eff.tag("vs-user", updated.eff),
+			model: {
+				t: 'vs-user',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-user',
+				updated.eff,
+			),
 		};
 	}
 

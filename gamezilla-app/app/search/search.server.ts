@@ -1,9 +1,9 @@
-import type { Eff } from "gamezilla-app/@/core";
-import type { ModelServer, MsgServer, MsgToServer } from "./search.types";
+import type {Eff} from 'gamezilla-app/@/core';
+import type {ModelServer, MsgServer, MsgToServer} from './search.types';
 
 type Model = ModelServer;
 
-export const init: { model: Model } = {
+export const init: {model: Model} = {
 	model: null,
 };
 
@@ -18,7 +18,7 @@ export const update = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	return { model };
+	return {model};
 };
 
 export const updateFromClient = ({
@@ -31,8 +31,8 @@ export const updateFromClient = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "search") {
-		return { model };
+	if (msg.t === 'search') {
+		return {model};
 	}
-	return { model };
+	return {model};
 };

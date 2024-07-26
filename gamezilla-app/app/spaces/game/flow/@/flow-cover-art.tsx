@@ -1,24 +1,24 @@
-import { pipe } from "gamezilla-app/@/core";
-import { FlowGridShorthand, FlowGridUI } from "./flow/flow-variant/flow-grid";
+import {pipe} from 'gamezilla-app/@/core';
+import {FlowGridShorthand, FlowGridUI} from './flow/flow-variant/flow-grid';
 
 const grid1 = pipe(
 	FlowGridShorthand.init([
-		["B", "a", "a", "A", "D"],
-		["b", "a", "c", "C", "d"],
-		["b", "a", "C", "d", "d"],
-		["b", "A", "D", "d", "E"],
-		["b", "B", "E", "e", "e"],
+		['B', 'a', 'a', 'A', 'D'],
+		['b', 'a', 'c', 'C', 'd'],
+		['b', 'a', 'C', 'd', 'd'],
+		['b', 'A', 'D', 'd', 'E'],
+		['b', 'B', 'E', 'e', 'e'],
 	]),
 	FlowGridShorthand.toGrid,
 );
 
 const grid2 = pipe(
 	FlowGridShorthand.init([
-		["d", "d", "d", "A", "a"],
-		["d", "C", "D", "B", "a"],
-		["d", "c", "C", "b", "a"],
-		["d", "b", "b", "b", "a"],
-		["D", "B", "A", "a", "a"],
+		['d', 'd', 'd', 'A', 'a'],
+		['d', 'C', 'D', 'B', 'a'],
+		['d', 'c', 'C', 'b', 'a'],
+		['d', 'b', 'b', 'b', 'a'],
+		['D', 'B', 'A', 'a', 'a'],
 	]),
 	FlowGridShorthand.toGrid,
 );
@@ -34,6 +34,6 @@ const gridView = (
 	/>
 );
 
-export const CoverArt = (input: { className?: string }) => {
+export const CoverArt = (input: {className?: string}) => {
 	return <div {...input}>{gridView}</div>;
 };

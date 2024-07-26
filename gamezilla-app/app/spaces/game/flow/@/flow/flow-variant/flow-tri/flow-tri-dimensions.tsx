@@ -1,15 +1,15 @@
-import { p } from "gamezilla-app/@/core/parser";
+import {p} from 'gamezilla-app/@/core/parser';
 
 export const Model = p.obj({
-	t: p.l("flow-tri"),
+	t: p.l('flow-tri'),
 	side: p.num,
 });
 
 export type Model = p.Infer<typeof Model>;
 
-export const init = (input: { side: number }): Model => {
+export const init = (input: {side: number}): Model => {
 	return {
-		t: "flow-tri",
+		t: 'flow-tri',
 		side: input.side,
 	};
 };

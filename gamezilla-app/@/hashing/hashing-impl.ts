@@ -1,22 +1,22 @@
-import type { IHashing } from "./hashing";
-import * as ImplBun from "./hashing-impl-bun";
-import * as ImplNoop from "./hashing-impl-noop";
+import type {IHashing} from './hashing';
+import * as ImplBun from './hashing-impl-bun';
+import * as ImplNoop from './hashing-impl-noop';
 
 export type HashingImpl =
 	| {
-			t: "bun";
+			t: 'bun';
 	  }
 	| {
-			t: "noop";
+			t: 'noop';
 	  };
 
 export const Hashing = (impl: HashingImpl): IHashing => {
 	switch (impl.t) {
-		case "bun": {
+		case 'bun': {
 			return ImplBun.Hashing();
 		}
 
-		case "noop": {
+		case 'noop': {
 			return ImplNoop.Hashing();
 		}
 	}

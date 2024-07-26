@@ -11,21 +11,27 @@ export const WorkerRPC = <TOperationTypes extends OperationTypes>({
 	const worker = new Worker(filePath);
 
 	return async (
-		request: TOperationTypes["Request"],
-	): Promise<TOperationTypes["Response"]> => {
-		const responsePromise = new Promise<TOperationTypes["Response"]>(
-			(resolve) => {
-				worker.onmessage = (event) => {
-					const msg = event.data;
-					if (msg.t === "response") {
-						resolve(msg.response);
-					}
-				};
-			},
-		);
+		request: TOperationTypes['Request'],
+	): Promise<TOperationTypes['Response']> => {
+		const responsePromise = new Promise<
+			TOperationTypes['Response']
+		>((resolve) => {
+			worker.onmessage = (event) => {
+				const msg =
+					event.data;
+				if (
+					msg.t ===
+					'response'
+				) {
+					resolve(
+						msg.response,
+					);
+				}
+			};
+		});
 
 		worker.postMessage({
-			t: "request",
+			t: 'request',
 			request,
 		});
 

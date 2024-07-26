@@ -1,12 +1,12 @@
-import { describe, expect, it } from "bun:test";
-import { Result } from "gamezilla-app/@/core";
-import { withId } from "gamezilla-app/app/spaces/@/event";
-import { FlowPuzzle } from "../../@/flow-puzzle";
-import { FlowCreateFixtureServer } from "../@/testing/server";
-import type { ModelCore, MsgCore } from "../builder.types";
-import { ScreenPackBuilderCore } from "./screen-pack-builder.core";
-import { ScreenPackBuilderServer } from "./screen-pack-builder.server";
-import { FlowPack } from "../../@/flow-pack";
+import {describe, expect, it} from 'bun:test';
+import {Result} from 'gamezilla-app/@/core';
+import {withId} from 'gamezilla-app/app/spaces/@/event';
+import {FlowPuzzle} from '../../@/flow-puzzle';
+import {FlowCreateFixtureServer} from '../@/testing/server';
+import type {ModelCore, MsgCore} from '../builder.types';
+import {ScreenPackBuilderCore} from './screen-pack-builder.core';
+import {ScreenPackBuilderServer} from './screen-pack-builder.server';
+import {FlowPack} from '../../@/flow-pack';
 
 const Fixture = async () => {
 	const f = await FlowCreateFixtureServer();
@@ -31,58 +31,80 @@ const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it("should save pack after user adds a new puzzle", async () => {
+	it('should save pack after user adds a new puzzle', async () => {
 		const f = await Fixture();
 
 		const puzzle = await FlowPuzzle.random();
 
 		const msgCore = withId<MsgCore>({
-			t: "pack-builder.user-clicked-add-puzzle-item",
+			t: 'pack-builder.user-clicked-add-puzzle-item',
 			puzzle: puzzle,
 			userId: puzzle.createdBy,
 		});
 
-		const modelCoreNew = ScreenPackBuilderCore.update({
-			ctx: f.ctx,
-			modelCore: f.modelCore,
-			msgCore,
-		});
+		const modelCoreNew =
+			ScreenPackBuilderCore.update({
+				ctx: f.ctx,
+				modelCore: f.modelCore,
+				msgCore,
+			});
 
-		const updated = await ScreenPackBuilderServer.update({
-			...f,
-			modelCore: modelCoreNew,
-			msgCore,
-		});
+		const updated =
+			await ScreenPackBuilderServer.update(
+				{
+					...f,
+					modelCore: modelCoreNew,
+					msgCore,
+				},
+			);
 
 		expect(
 			updated.msgCore?.some(
 				(msgCore) =>
-					msgCore.t === "pack-builder.saved-pack" && msgCore.saved.t === "ok",
+					msgCore.t ===
+						'pack-builder.saved-pack' &&
+					msgCore
+						.saved
+						.t ===
+						'ok',
 			),
 		).toBe(true);
 	});
 
-	it("should save pack after user removes puzzle from it", async () => {
+	it('should save pack after user removes puzzle from it', async () => {
 		const f = await Fixture();
 
 		await ScreenPackBuilderServer.update({
 			...f,
 			msgCore: withId({
-				t: "remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
+				t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
 				puzzleIndex: 0,
-				userId: f.pack.createdBy,
+				userId: f.pack
+					.createdBy,
 			}),
 		});
 
 		const before = f.pack;
 		const after = Result.withDefault(
-			await f.deps.flowPackDb.get(f.pack.id),
+			await f.deps.flowPackDb.get(
+				f.pack.id,
+			),
 			null,
 		);
 
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		expect(before.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(true);
+		expect(
+			before.puzzleIds.includes(
+				f.pack
+					.puzzleIds[0]!,
+			),
+		).toBe(true);
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		expect(after?.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(false);
+		expect(
+			after?.puzzleIds.includes(
+				f.pack
+					.puzzleIds[0]!,
+			),
+		).toBe(false);
 	});
 });

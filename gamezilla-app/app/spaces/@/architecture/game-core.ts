@@ -6,12 +6,12 @@ export type GameCoreTypes = {
 };
 
 export type GameCoreModule<T extends GameCoreTypes> = {
-	initCore: (input: { ctx: T["Ctx"] }) => T["ModelCore"];
+	initCore: (input: {ctx: T['Ctx']}) => T['ModelCore'];
 	updateCore: (input: {
-		ctx: T["Ctx"];
-		msgCore: T["MsgCore"];
-		modelCore: T["ModelCore"];
-	}) => T["ModelCore"] & {
-		event?: T["EventCore"];
+		ctx: T['Ctx'];
+		msgCore: T['MsgCore'];
+		modelCore: T['ModelCore'];
+	}) => T['ModelCore'] & {
+		event?: T['EventCore'];
 	};
 };

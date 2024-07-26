@@ -1,26 +1,32 @@
-import { isErr } from "gamezilla-app/@/core";
-import { FlowPack } from "../../@/flow-pack/flow-pack";
-import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
-import type { UpdateCore } from "../builder.types";
-import { EditPackNameCore } from "./edit-pack-name/edit-pack-name.core";
-import type { ModelCore } from "./screen-pack-builder.types";
-import { FlowPlay } from "../../@/flow/flow-play";
+import {isErr} from 'gamezilla-app/@/core';
+import {FlowPack} from '../../@/flow-pack/flow-pack';
+import {FlowPackPuzzlesGridUI} from '../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui';
+import type {UpdateCore} from '../builder.types';
+import {EditPackNameCore} from './edit-pack-name/edit-pack-name.core';
+import type {ModelCore} from './screen-pack-builder.types';
+import {FlowPlay} from '../../@/flow/flow-play';
 
 const updates: UpdateCore[] = [];
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "user-created-pack": {
+		case 'user-created-pack': {
 			if (isErr(msgCore.created)) {
 				return modelCore;
 			}
 
 			return {
 				...modelCore,
-				opened: { t: "pack-builder" },
-				packBuilder: init({
-					pack: msgCore.created.value,
-				}),
+				opened: {
+					t: 'pack-builder',
+				},
+				packBuilder: init(
+					{
+						pack: msgCore
+							.created
+							.value,
+					},
+				),
 			};
 		}
 		default: {
@@ -29,13 +35,15 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-builder.user-clicked-exit-button": {
+		case 'pack-builder.user-clicked-exit-button': {
 			return {
 				...modelCore,
-				opened: { t: "list" },
-				listTab: "packs",
+				opened: {
+					t: 'list',
+				},
+				listTab: 'packs',
 			};
 		}
 		default: {
@@ -44,9 +52,9 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-builder.user-clicked-add-puzzle-item": {
+		case 'pack-builder.user-clicked-add-puzzle-item': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -54,9 +62,16 @@ updates.push(({ modelCore, msgCore }) => {
 				...modelCore,
 				packBuilder: {
 					...modelCore.packBuilder,
-					pack: FlowPack.add(modelCore.packBuilder.pack, msgCore.puzzle.id),
+					pack: FlowPack.add(
+						modelCore
+							.packBuilder
+							.pack,
+						msgCore
+							.puzzle
+							.id,
+					),
 					screen: {
-						t: "screen-puzzle-grid",
+						t: 'screen-puzzle-grid',
 						slideIndex: 0,
 					},
 					opened: {
@@ -71,9 +86,9 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-builder.user-opened-add-puzzle-screen": {
+		case 'pack-builder.user-opened-add-puzzle-screen': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -82,7 +97,7 @@ updates.push(({ modelCore, msgCore }) => {
 				packBuilder: {
 					...modelCore.packBuilder,
 					screen: {
-						t: "screen-add-puzzle",
+						t: 'screen-add-puzzle',
 					},
 				},
 			};
@@ -93,9 +108,9 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-builder.user-closed-add-puzzle-screen": {
+		case 'pack-builder.user-closed-add-puzzle-screen': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -107,7 +122,7 @@ updates.push(({ modelCore, msgCore }) => {
 						t: null,
 					},
 					screen: {
-						t: "screen-puzzle-grid",
+						t: 'screen-puzzle-grid',
 					},
 				},
 			};
@@ -118,17 +133,27 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-builder.user-clicked-pack-item": {
+		case 'pack-builder.user-clicked-pack-item': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
 
 			const puzzleId =
-				modelCore.packBuilder.pack.puzzleIds[msgCore.puzzleIndex];
+				modelCore
+					.packBuilder
+					.pack
+					.puzzleIds[
+					msgCore
+						.puzzleIndex
+				];
 
-			if (puzzleId !== msgCore.puzzle.id) {
+			if (
+				puzzleId !==
+				msgCore.puzzle
+					.id
+			) {
 				return modelCore;
 			}
 
@@ -138,14 +163,16 @@ updates.push(({ modelCore, msgCore }) => {
 					...modelCore.packBuilder,
 					screen: {
 						opened: null,
-						t: "screen-puzzle",
+						t: 'screen-puzzle',
 						puzzleIndex: msgCore.puzzleIndex,
 						puzzle: msgCore.puzzle,
-						playUI: FlowPlay.init({
-							ctx: {
-								flowPuzzle: msgCore.puzzle,
+						playUI: FlowPlay.init(
+							{
+								ctx: {
+									flowPuzzle: msgCore.puzzle,
+								},
 							},
-						}),
+						),
 					},
 				},
 			};
@@ -157,23 +184,33 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-builder.puzzle-screen.user-clicked-exit-puzzle": {
+		case 'pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
 
 			const puzzleIndex =
-				modelCore.packBuilder.screen.t === "screen-puzzle"
-					? modelCore.packBuilder.screen.puzzleIndex
+				modelCore
+					.packBuilder
+					.screen
+					.t ===
+				'screen-puzzle'
+					? modelCore
+							.packBuilder
+							.screen
+							.puzzleIndex
 					: null;
 
 			if (puzzleIndex === null) {
 				return modelCore;
 			}
 
-			const slideIndex = FlowPackPuzzlesGridUI.toSlideIndex(puzzleIndex);
+			const slideIndex =
+				FlowPackPuzzlesGridUI.toSlideIndex(
+					puzzleIndex,
+				);
 
 			return {
 				...modelCore,
@@ -181,7 +218,7 @@ updates.push(({ modelCore, msgCore }) => {
 					...modelCore.packBuilder,
 					slideIndex: slideIndex,
 					screen: {
-						t: "screen-puzzle-grid",
+						t: 'screen-puzzle-grid',
 					},
 				},
 			};
@@ -195,15 +232,22 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push((input) => {
 	switch (input.msgCore.t) {
-		case "pack-builder.user-changed-slide": {
-			if (!input.modelCore.packBuilder) {
+		case 'pack-builder.user-changed-slide': {
+			if (
+				!input.modelCore
+					.packBuilder
+			) {
 				return input.modelCore;
 			}
 			return {
 				...input.modelCore,
 				packBuilder: {
-					...input.modelCore.packBuilder,
-					slideIndex: input.msgCore.newSlideIndex,
+					...input
+						.modelCore
+						.packBuilder,
+					slideIndex: input
+						.msgCore
+						.newSlideIndex,
 				},
 			};
 		}
@@ -213,26 +257,37 @@ updates.push((input) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-builder.flow-play-ui": {
+		case 'pack-builder.flow-play-ui': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
 
-			if (modelCore.packBuilder.screen.t !== "screen-puzzle") {
+			if (
+				modelCore
+					.packBuilder
+					.screen
+					.t !==
+				'screen-puzzle'
+			) {
 				return modelCore;
 			}
 
-			const screen = modelCore.packBuilder.screen;
+			const screen =
+				modelCore
+					.packBuilder
+					.screen;
 
-			const updated = FlowPlay.update({
-				ctx: {
-					flowPuzzle: screen.puzzle,
+			const updated = FlowPlay.update(
+				{
+					ctx: {
+						flowPuzzle: screen.puzzle,
+					},
+					model: screen.playUI,
+					msg: msgCore.c,
 				},
-				model: screen.playUI,
-				msg: msgCore.c,
-			});
+			);
 
 			return {
 				...modelCore,
@@ -240,9 +295,15 @@ updates.push(({ modelCore, msgCore }) => {
 					...modelCore.packBuilder,
 					screen: {
 						opened: null,
-						t: "screen-puzzle",
-						puzzleIndex: modelCore.packBuilder.screen.puzzleIndex,
-						puzzle: modelCore.packBuilder.screen.puzzle,
+						t: 'screen-puzzle',
+						puzzleIndex: modelCore
+							.packBuilder
+							.screen
+							.puzzleIndex,
+						puzzle: modelCore
+							.packBuilder
+							.screen
+							.puzzle,
 						playUI: updated.model,
 					},
 				},
@@ -254,16 +315,19 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
-	if (modelCore.packBuilder?.screen.t !== "screen-puzzle") {
+updates.push(({modelCore, msgCore}) => {
+	if (modelCore.packBuilder?.screen.t !== 'screen-puzzle') {
 		return modelCore;
 	}
 
 	switch (msgCore.t) {
-		case "pack-builder.puzzle-screen.user-clicked-next-puzzle": {
-			const indexOfNextPuzzle = modelCore.packBuilder.pack.puzzleIds.indexOf(
-				msgCore.nextPuzzle.id,
-			);
+		case 'pack-builder.puzzle-screen.user-clicked-next-puzzle': {
+			const indexOfNextPuzzle =
+				modelCore.packBuilder.pack.puzzleIds.indexOf(
+					msgCore
+						.nextPuzzle
+						.id,
+				);
 			if (indexOfNextPuzzle === -1) {
 				return modelCore;
 			}
@@ -272,18 +336,29 @@ updates.push(({ modelCore, msgCore }) => {
 				packBuilder: {
 					...modelCore.packBuilder,
 					screen: {
-						t: "screen-puzzle",
+						t: 'screen-puzzle',
 						opened: null,
 						puzzleIndex: clamp(
-							modelCore.packBuilder.screen.puzzleIndex + 1,
+							modelCore
+								.packBuilder
+								.screen
+								.puzzleIndex +
+								1,
 							0,
-							modelCore.packBuilder.pack.puzzleIds.length - 1,
+							modelCore
+								.packBuilder
+								.pack
+								.puzzleIds
+								.length -
+								1,
 						),
-						playUI: FlowPlay.init({
-							ctx: {
-								flowPuzzle: msgCore.nextPuzzle,
+						playUI: FlowPlay.init(
+							{
+								ctx: {
+									flowPuzzle: msgCore.nextPuzzle,
+								},
 							},
-						}),
+						),
 						puzzle: msgCore.nextPuzzle,
 					},
 				},
@@ -296,16 +371,23 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
-	if (modelCore.packBuilder?.screen.t !== "screen-puzzle") {
+updates.push(({modelCore, msgCore}) => {
+	if (modelCore.packBuilder?.screen.t !== 'screen-puzzle') {
 		return modelCore;
 	}
 
 	switch (msgCore.t) {
-		case "pack-builder.puzzle-screen.user-clicked-previous-puzzle-button": {
+		case 'pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
 			const indexOfPreviousPuzzle =
-				modelCore.packBuilder.pack.puzzleIds.indexOf(msgCore.previousPuzzle.id);
-			if (indexOfPreviousPuzzle === -1) {
+				modelCore.packBuilder.pack.puzzleIds.indexOf(
+					msgCore
+						.previousPuzzle
+						.id,
+				);
+			if (
+				indexOfPreviousPuzzle ===
+				-1
+			) {
 				return modelCore;
 			}
 			return {
@@ -313,18 +395,29 @@ updates.push(({ modelCore, msgCore }) => {
 				packBuilder: {
 					...modelCore.packBuilder,
 					screen: {
-						t: "screen-puzzle",
+						t: 'screen-puzzle',
 						opened: null,
 						puzzleIndex: clamp(
-							modelCore.packBuilder.screen.puzzleIndex - 1,
+							modelCore
+								.packBuilder
+								.screen
+								.puzzleIndex -
+								1,
 							0,
-							modelCore.packBuilder.pack.puzzleIds.length - 1,
+							modelCore
+								.packBuilder
+								.pack
+								.puzzleIds
+								.length -
+								1,
 						),
-						playUI: FlowPlay.init({
-							ctx: {
-								flowPuzzle: msgCore.previousPuzzle,
+						playUI: FlowPlay.init(
+							{
+								ctx: {
+									flowPuzzle: msgCore.previousPuzzle,
+								},
 							},
-						}),
+						),
 						puzzle: msgCore.previousPuzzle,
 					},
 				},
@@ -336,9 +429,9 @@ updates.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-builder.puzzle-screen.user-clicked-more-button": {
+		case 'pack-builder.puzzle-screen.user-clicked-more-button': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -347,13 +440,15 @@ updates.push(({ modelCore, msgCore }) => {
 				packBuilder: {
 					...modelCore.packBuilder,
 					screen: {
-						...modelCore.packBuilder.screen,
-						opened: "more",
+						...modelCore
+							.packBuilder
+							.screen,
+						opened: 'more',
 					},
 				},
 			};
 		}
-		case "pack-builder.puzzle-screen.user-closed-more-drawer": {
+		case 'pack-builder.puzzle-screen.user-closed-more-drawer': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -362,7 +457,9 @@ updates.push(({ modelCore, msgCore }) => {
 				packBuilder: {
 					...modelCore.packBuilder,
 					screen: {
-						...modelCore.packBuilder.screen,
+						...modelCore
+							.packBuilder
+							.screen,
 						opened: null,
 					},
 				},
@@ -378,22 +475,28 @@ const clamp = (value: number, min: number, max: number): number => {
 	return Math.max(min, Math.min(max, value));
 };
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "remove-puzzle-from-pack.user-clicked-remove-from-pack-button": {
+		case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
 
-			const pack = modelCore.packBuilder.pack;
+			const pack =
+				modelCore
+					.packBuilder
+					.pack;
 
 			return {
 				...modelCore,
 				packBuilder: {
 					...modelCore.packBuilder,
-					pack: FlowPack.remove(pack, msgCore.puzzleIndex),
+					pack: FlowPack.remove(
+						pack,
+						msgCore.puzzleIndex,
+					),
 					screen: {
-						t: "screen-puzzle-grid",
+						t: 'screen-puzzle-grid',
 					},
 				},
 			};
@@ -414,8 +517,14 @@ updates.push((input) => {
 		packBuilder: {
 			...input.modelCore.packBuilder,
 			slideIndex: FlowPackPuzzlesGridUI.clampSlideIndex(
-				input.modelCore.packBuilder.slideIndex,
-				input.modelCore.packBuilder.pack.puzzleIds.length,
+				input.modelCore
+					.packBuilder
+					.slideIndex,
+				input.modelCore
+					.packBuilder
+					.pack
+					.puzzleIds
+					.length,
 			),
 		},
 	};
@@ -433,13 +542,13 @@ const update: UpdateCore = (input) => {
 	);
 };
 
-const init = ({ pack }: { pack: FlowPack }): ModelCore => {
+const init = ({pack}: {pack: FlowPack}): ModelCore => {
 	return {
-		editPackName: EditPackNameCore.init({ pack }),
+		editPackName: EditPackNameCore.init({pack}),
 		pack,
 		slideIndex: 0,
 		screen: {
-			t: "screen-puzzle-grid",
+			t: 'screen-puzzle-grid',
 		},
 	};
 };

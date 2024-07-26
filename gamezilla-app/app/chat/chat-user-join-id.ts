@@ -1,7 +1,7 @@
-import { Uuid } from "gamezilla-app/@/core";
-import type { Brand } from "gamezilla-app/@/core/brand";
+import {Uuid} from 'gamezilla-app/@/core';
+import type {Brand} from 'gamezilla-app/@/core/brand';
 
-export type ChatUserJoinId = Brand<string, "ChatUserJoinId">;
+export type ChatUserJoinId = Brand<string, 'ChatUserJoinId'>;
 
 const generate = (): ChatUserJoinId => {
 	const id = Uuid.generate();
@@ -9,7 +9,10 @@ const generate = (): ChatUserJoinId => {
 };
 
 const is = (id: unknown): id is ChatUserJoinId => {
-	return typeof id === "string" && id.startsWith("chat-user-join:");
+	return (
+		typeof id === 'string' &&
+		id.startsWith('chat-user-join:')
+	);
 };
 
 export const ChatUserJoinId = {

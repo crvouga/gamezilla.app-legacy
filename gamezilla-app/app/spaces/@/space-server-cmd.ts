@@ -1,4 +1,4 @@
-import { ServerCmd } from "gamezilla-app/app/@/server";
+import {ServerCmd} from 'gamezilla-app/app/@/server';
 
 //
 //
@@ -10,7 +10,7 @@ import { ServerCmd } from "gamezilla-app/app/@/server";
 
 export type SpaceServerCmd<MsgToClient> =
 	| ServerCmd<MsgToClient>
-	| { t: "send-to-space"; msg: MsgToClient };
+	| {t: 'send-to-space'; msg: MsgToClient};
 
 //
 //
@@ -24,7 +24,7 @@ export type SpaceServerCmd<MsgToClient> =
 export const sendToSpace = <MsgToClient>(
 	msg: MsgToClient,
 ): SpaceServerCmd<MsgToClient> => {
-	return { t: "send-to-space", msg };
+	return {t: 'send-to-space', msg};
 };
 
 //
@@ -40,11 +40,19 @@ const mapOne = <A, B>(
 	msgCmd: SpaceServerCmd<A>,
 ): SpaceServerCmd<B> => {
 	switch (msgCmd.t) {
-		case "send-to-space": {
-			return { ...msgCmd, msg: fn(msgCmd.msg) };
+		case 'send-to-space': {
+			return {
+				...msgCmd,
+				msg: fn(
+					msgCmd.msg,
+				),
+			};
 		}
 		default: {
-			return ServerCmd.mapOne(fn, msgCmd);
+			return ServerCmd.mapOne(
+				fn,
+				msgCmd,
+			);
 		}
 	}
 };
@@ -59,8 +67,8 @@ const map = <A, B>(
 const tag = <T extends string, A>(
 	tag: T,
 	msgCmd?: SpaceServerCmd<A>[],
-): SpaceServerCmd<{ t: T; c: A }>[] | undefined => {
-	return map(msgCmd ?? [], (c) => ({ t: tag, c }));
+): SpaceServerCmd<{t: T; c: A}>[] | undefined => {
+	return map(msgCmd ?? [], (c) => ({t: tag, c}));
 };
 
 const toSpaceServerCmd = <TMsgToClient>(
@@ -68,7 +76,7 @@ const toSpaceServerCmd = <TMsgToClient>(
 ): SpaceServerCmd<TMsgToClient>[] => {
 	return (msgCmd ?? []).flatMap((msgCmd) => {
 		switch (msgCmd.t) {
-			case "send-to-space": {
+			case 'send-to-space': {
 				return [msgCmd];
 			}
 			default: {
@@ -83,7 +91,7 @@ const toServerCmd = <TMsgToClient>(
 ): ServerCmd<TMsgToClient>[] => {
 	return (msgCmd ?? []).flatMap((msgCmd) => {
 		switch (msgCmd.t) {
-			case "send-to-space": {
+			case 'send-to-space': {
 				return [];
 			}
 			default: {

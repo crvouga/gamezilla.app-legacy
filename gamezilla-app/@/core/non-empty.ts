@@ -9,7 +9,7 @@ const last = <T>(xs: NonEmpty<T>): T => {
 
 	if (!lastEl) {
 		throw new Error(
-			"Impossible condition! NonEmpty array has no last element!",
+			'Impossible condition! NonEmpty array has no last element!',
 		);
 	}
 

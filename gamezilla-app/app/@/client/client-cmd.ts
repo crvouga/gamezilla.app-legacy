@@ -1,7 +1,7 @@
-import { TimeSpan, type UnitInterval, eq } from "gamezilla-app/@/core";
-import { TranslatedText } from "gamezilla-app/@/l18n";
-import type { Route } from "gamezilla-app/@/routing/generated/routes";
-import type { Profile, UserId } from "../data";
+import {TimeSpan, type UnitInterval, eq} from 'gamezilla-app/@/core';
+import {TranslatedText} from 'gamezilla-app/@/l18n';
+import type {Route} from 'gamezilla-app/@/routing/generated/routes';
+import type {Profile, UserId} from '../data';
 
 //
 //
@@ -20,7 +20,7 @@ export type ClientCmd<T extends ClientCmdTypes> =
 	| ToastCmd
 	| RouteCmd
 	| SoundCmd
-	| PlatformCmd<T["MsgClient"]>
+	| PlatformCmd<T['MsgClient']>
 	| ProfileCmd
 	| StatusBarCmd
 	| AuthCmd;
@@ -33,17 +33,17 @@ export type ClientCmd<T extends ClientCmdTypes> =
 //
 
 export type AuthCmd = {
-	t: "auth";
+	t: 'auth';
 	c: {
-		t: "logout";
+		t: 'logout';
 	};
 };
 
 export const logout = <T extends ClientCmdTypes>(): ClientCmd<T> => {
 	return {
-		t: "auth",
+		t: 'auth',
 		c: {
-			t: "logout",
+			t: 'logout',
 		},
 	};
 };
@@ -54,17 +54,17 @@ export const logout = <T extends ClientCmdTypes>(): ClientCmd<T> => {
 //
 
 export type StatusBarCmd = {
-	t: "status-bar";
+	t: 'status-bar';
 	c: {
-		t: "close";
+		t: 'close';
 	};
 };
 
 export const closeStatusBar = <T extends ClientCmdTypes>(): ClientCmd<T> => {
 	return {
-		t: "status-bar",
+		t: 'status-bar',
 		c: {
-			t: "close",
+			t: 'close',
 		},
 	};
 };
@@ -77,18 +77,20 @@ export const closeStatusBar = <T extends ClientCmdTypes>(): ClientCmd<T> => {
 
 export type ProfileCmd =
 	| {
-			t: "profile";
+			t: 'profile';
 			c: {
-				t: "add-profiles";
+				t: 'add-profiles';
 				profiles: {
-					[userId: UserId]: Profile;
+					[
+						userId: UserId
+					]: Profile;
 				};
 			};
 	  }
 	| {
-			t: "profile";
+			t: 'profile';
 			c: {
-				t: "open-profile";
+				t: 'open-profile';
 				userId: UserId;
 			};
 	  };
@@ -96,13 +98,13 @@ export type ProfileCmd =
 export const addProfiles = <T extends ClientCmdTypes>(profiles: {
 	[userId: UserId]: Profile;
 }): ClientCmd<T> => {
-	return { t: "profile", c: { t: "add-profiles", profiles } };
+	return {t: 'profile', c: {t: 'add-profiles', profiles}};
 };
 
 export const openProfile = <T extends ClientCmdTypes>(
 	userId: UserId,
 ): ClientCmd<T> => {
-	return { t: "profile", c: { t: "open-profile", userId } };
+	return {t: 'profile', c: {t: 'open-profile', userId}};
 };
 
 export const didOpenProfile = <T>(
@@ -116,12 +118,16 @@ export const didOpenProfile = <T>(
 	return (
 		msgCmd?.some(
 			(cmd) =>
-				typeof cmd === "object" &&
+				typeof cmd ===
+					'object' &&
 				cmd &&
-				"t" in cmd &&
-				cmd.t === "profile" &&
-				cmd.c.t === "open-profile" &&
-				cmd.c.userId === userId,
+				't' in cmd &&
+				cmd.t ===
+					'profile' &&
+				cmd.c.t ===
+					'open-profile' &&
+				cmd.c.userId ===
+					userId,
 		) ?? false
 	);
 };
@@ -133,24 +139,28 @@ export const didOpenProfile = <T>(
 //
 
 export type PlatformCmd<Msg> = {
-	t: "platform";
+	t: 'platform';
 	c:
 		| {
-				t: "focus";
+				t: 'focus';
 				viewId: string;
 		  }
 		| {
-				t: "start-timeout";
-				timeoutId: string | number;
+				t: 'start-timeout';
+				timeoutId:
+					| string
+					| number;
 				duration: TimeSpan;
 				msg: Msg;
 		  }
 		| {
-				t: "cancel-timeout";
-				timeoutId: string | number;
+				t: 'cancel-timeout';
+				timeoutId:
+					| string
+					| number;
 		  }
 		| {
-				t: "copy-to-clipboard";
+				t: 'copy-to-clipboard';
 				text: string;
 		  };
 };
@@ -158,18 +168,18 @@ export type PlatformCmd<Msg> = {
 export const focusView = <T extends ClientCmdTypes>(
 	viewId: string,
 ): ClientCmd<T> => {
-	return { t: "platform", c: { t: "focus", viewId: viewId } };
+	return {t: 'platform', c: {t: 'focus', viewId: viewId}};
 };
 
 export const startTimeout = <T extends ClientCmdTypes>(
 	timeoutId: string | number,
 	duration: TimeSpan,
-	msg: T["MsgClient"],
+	msg: T['MsgClient'],
 ): ClientCmd<T> => {
 	return {
-		t: "platform",
+		t: 'platform',
 		c: {
-			t: "start-timeout",
+			t: 'start-timeout',
 			timeoutId,
 			duration,
 			msg,
@@ -181,9 +191,9 @@ export const cancelTimeout = <T extends ClientCmdTypes>(
 	timeoutId: string | number,
 ): ClientCmd<T> => {
 	return {
-		t: "platform",
+		t: 'platform',
 		c: {
-			t: "cancel-timeout",
+			t: 'cancel-timeout',
 			timeoutId,
 		},
 	};
@@ -193,9 +203,9 @@ export const copyToClipboard = <T extends ClientCmdTypes>(
 	text: string,
 ): ClientCmd<T> => {
 	return {
-		t: "platform",
+		t: 'platform',
 		c: {
-			t: "copy-to-clipboard",
+			t: 'copy-to-clipboard',
 			text,
 		},
 	};
@@ -205,19 +215,36 @@ export const didCopyToClipboard = <T extends ClientCmdTypes, TCmd>(
 	{
 		msgCmd,
 	}: {
-		msgCmd?: (PlatformCmd<T["MsgClient"]> | TCmd)[] | null;
+		msgCmd?:
+			| (
+					| PlatformCmd<
+							T['MsgClient']
+					  >
+					| TCmd
+			  )[]
+			| null;
 	},
 	isValidText?: (text: string) => boolean,
 ): boolean => {
 	return (
 		msgCmd?.some(
 			(cmd) =>
-				typeof cmd === "object" &&
+				typeof cmd ===
+					'object' &&
 				cmd &&
-				"t" in cmd &&
-				cmd.t === "platform" &&
-				cmd.c.t === "copy-to-clipboard" &&
-				(typeof isValidText === "function" ? isValidText(cmd.c.text) : true),
+				't' in cmd &&
+				cmd.t ===
+					'platform' &&
+				cmd.c.t ===
+					'copy-to-clipboard' &&
+				(typeof isValidText ===
+				'function'
+					? isValidText(
+							cmd
+								.c
+								.text,
+					  )
+					: true),
 		) ?? false
 	);
 };
@@ -229,10 +256,10 @@ export const didCopyToClipboard = <T extends ClientCmdTypes, TCmd>(
 //
 
 export type WireCmd<T extends ClientCmdTypes> = {
-	t: "wire";
+	t: 'wire';
 	c: {
-		t: "send-to-server";
-		msg: T["MsgToServer"] | null;
+		t: 'send-to-server';
+		msg: T['MsgToServer'] | null;
 	};
 };
 
@@ -240,12 +267,12 @@ export type WireCmd<T extends ClientCmdTypes> = {
  * A msgCmd creator for sending a messages to the server.
  */
 export const sendToServer = <T extends ClientCmdTypes>(
-	msg: T["MsgToServer"],
+	msg: T['MsgToServer'],
 ): ClientCmd<T> => {
 	return {
-		t: "wire",
+		t: 'wire',
 		c: {
-			t: "send-to-server",
+			t: 'send-to-server',
 			msg,
 		},
 	};
@@ -257,18 +284,25 @@ export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
 	}: {
 		msgCmd?: (WireCmd<T> | TCmd)[] | null;
 	},
-	predicate: (msg: T["MsgToServer"]) => boolean,
+	predicate: (msg: T['MsgToServer']) => boolean,
 ): boolean => {
 	return (
 		msgCmd?.some(
 			(cmd) =>
-				typeof cmd === "object" &&
+				typeof cmd ===
+					'object' &&
 				cmd &&
-				"t" in cmd &&
-				cmd.t === "wire" &&
-				cmd.c.t === "send-to-server" &&
+				't' in cmd &&
+				cmd.t ===
+					'wire' &&
+				cmd.c.t ===
+					'send-to-server' &&
 				cmd.c.msg &&
-				predicate(cmd.c.msg),
+				predicate(
+					cmd
+						.c
+						.msg,
+				),
 		) ?? false
 	);
 };
@@ -281,11 +315,11 @@ export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
 //
 
 export type ToastCmd = {
-	t: "toast";
+	t: 'toast';
 	c: {
-		t: "enqueue";
+		t: 'enqueue';
 		text: TranslatedText;
-		toastVariant?: "error" | "info";
+		toastVariant?: 'error' | 'info';
 		duration?: TimeSpan;
 		errorMsg?: string;
 	};
@@ -293,13 +327,13 @@ export type ToastCmd = {
 
 export const showToast = <T extends ClientCmdTypes>(
 	text: TranslatedText,
-	variant?: "error" | "info",
+	variant?: 'error' | 'info',
 	duration?: TimeSpan,
 ): ClientCmd<T> => {
 	return {
-		t: "toast",
+		t: 'toast',
 		c: {
-			t: "enqueue",
+			t: 'enqueue',
 			text,
 			toastVariant: variant,
 			duration,
@@ -311,17 +345,28 @@ export const didShowToast = <T>(
 	output?: {
 		msgCmd?: (ToastCmd | T)[] | null;
 	},
-	predicate?: (toast: { message: TranslatedText }) => boolean,
+	predicate?: (toast: {message: TranslatedText}) => boolean,
 ): boolean => {
 	return (
 		output?.msgCmd?.some((cmd) => {
 			return (
-				typeof cmd === "object" &&
+				typeof cmd ===
+					'object' &&
 				cmd !== null &&
-				"t" in cmd &&
-				cmd.t === "toast" &&
-				cmd.c.t === "enqueue" &&
-				(predicate ? predicate({ message: cmd.c.text }) : true)
+				't' in cmd &&
+				cmd.t ===
+					'toast' &&
+				cmd.c.t ===
+					'enqueue' &&
+				(predicate
+					? predicate(
+							{
+								message: cmd
+									.c
+									.text,
+							},
+					  )
+					: true)
 			);
 		}) ?? false
 	);
@@ -332,16 +377,16 @@ export const showCreatedSm = <T extends ClientCmdTypes>(
 ): ClientCmd<T>[] => {
 	return [
 		{
-			t: "toast",
+			t: 'toast',
 			c: {
-				t: "enqueue",
+				t: 'enqueue',
 				text,
 			},
 		},
 		{
-			t: "sound",
+			t: 'sound',
 			c: {
-				t: "play",
+				t: 'play',
 				src: APP_SOUND.refreshFeed,
 			},
 		},
@@ -355,19 +400,23 @@ export const showErrSm = <T extends ClientCmdTypes>(
 ): ClientCmd<T>[] => {
 	return [
 		{
-			t: "toast",
+			t: 'toast',
 			c: {
-				t: "enqueue",
+				t: 'enqueue',
 				text,
-				toastVariant: "error",
+				toastVariant: 'error',
 				errorMsg,
-				duration: duration ?? TimeSpan.seconds(4),
+				duration:
+					duration ??
+					TimeSpan.seconds(
+						4,
+					),
 			},
 		},
 		{
-			t: "sound",
+			t: 'sound',
 			c: {
-				t: "play",
+				t: 'play',
 				src: APP_SOUND.alertErrorSm,
 			},
 		},
@@ -385,24 +434,40 @@ export const didShowErrorSm = <TCmd>(
 	const isSomeErrorToast =
 		msgCmd?.some(
 			(cmd) =>
-				typeof cmd === "object" &&
+				typeof cmd ===
+					'object' &&
 				cmd &&
-				"t" in cmd &&
-				cmd.t === "toast" &&
-				cmd.c.t === "enqueue" &&
-				cmd.c.toastVariant === "error" &&
-				(errorMessage ? eq(cmd.c.text, errorMessage) : true),
+				't' in cmd &&
+				cmd.t ===
+					'toast' &&
+				cmd.c.t ===
+					'enqueue' &&
+				cmd.c
+					.toastVariant ===
+					'error' &&
+				(errorMessage
+					? eq(
+							cmd
+								.c
+								.text,
+							errorMessage,
+					  )
+					: true),
 		) ?? false;
 
 	const isSomeErrorSound =
 		msgCmd?.some(
 			(cmd) =>
-				typeof cmd === "object" &&
+				typeof cmd ===
+					'object' &&
 				cmd &&
-				"t" in cmd &&
-				cmd.t === "sound" &&
-				cmd.c.t === "play" &&
-				cmd.c.src === APP_SOUND.alertErrorSm,
+				't' in cmd &&
+				cmd.t ===
+					'sound' &&
+				cmd.c.t ===
+					'play' &&
+				cmd.c.src ===
+					APP_SOUND.alertErrorSm,
 		) ?? false;
 	return isSomeErrorToast && isSomeErrorSound;
 };
@@ -416,35 +481,35 @@ export const didShowErrorSm = <TCmd>(
 //
 
 export type SoundCmd = {
-	t: "sound";
+	t: 'sound';
 	c:
 		| {
-				t: "play";
+				t: 'play';
 				src: string;
 				volume?: UnitInterval;
 				delay?: TimeSpan;
 		  }
 		| {
-				t: "preload";
+				t: 'preload';
 				src: string[];
 		  };
 };
 
 export const APP_SOUND = {
-	tap: "./app/tap.wav",
-	alertErrorLg: "./app/alert-error-lg.wav",
-	alertErrorMd: "./app/alert-error-md.wav",
-	alertErrorSm: "./app/alert-error-sm.wav",
-	celebration: "./app/celebration.wav",
-	celebrationDecorative: "./app/celebration-decorative.wav",
-	navForward: "./app/nav-forward.wav",
-	navBackward: "./app/nav-backward.wav",
-	navForwardMin: "./app/nav-forward-min.wav",
-	navBackwardMin: "./app/nav-backward-min.wav",
-	navTransitionLeft: "./app/nav-transition-left.wav",
-	stateChangeUp: "./app/state-change-up.wav",
-	stateChangeDown: "./app/state-change-down.wav",
-	refreshFeed: "./app/refresh-feed.wav",
+	tap: './app/tap.wav',
+	alertErrorLg: './app/alert-error-lg.wav',
+	alertErrorMd: './app/alert-error-md.wav',
+	alertErrorSm: './app/alert-error-sm.wav',
+	celebration: './app/celebration.wav',
+	celebrationDecorative: './app/celebration-decorative.wav',
+	navForward: './app/nav-forward.wav',
+	navBackward: './app/nav-backward.wav',
+	navForwardMin: './app/nav-forward-min.wav',
+	navBackwardMin: './app/nav-backward-min.wav',
+	navTransitionLeft: './app/nav-transition-left.wav',
+	stateChangeUp: './app/state-change-up.wav',
+	stateChangeDown: './app/state-change-down.wav',
+	refreshFeed: './app/refresh-feed.wav',
 };
 
 export const playSound = (
@@ -455,9 +520,9 @@ export const playSound = (
 	},
 ): SoundCmd => {
 	return {
-		t: "sound",
+		t: 'sound',
 		c: {
-			t: "play",
+			t: 'play',
 			src,
 			volume: config?.volume,
 			delay: config?.delay,
@@ -476,12 +541,20 @@ export const didPlaySound = <T>(
 	return (
 		msgCmd?.some(
 			(cmd) =>
-				typeof cmd === "object" &&
+				typeof cmd ===
+					'object' &&
 				cmd &&
-				"t" in cmd &&
-				cmd.t === "sound" &&
-				cmd.c.t === "play" &&
-				(src ? cmd.c.src === src : true),
+				't' in cmd &&
+				cmd.t ===
+					'sound' &&
+				cmd.c.t ===
+					'play' &&
+				(src
+					? cmd
+							.c
+							.src ===
+					  src
+					: true),
 		) ?? false
 	);
 };
@@ -490,9 +563,9 @@ export const preloadSound = <T extends ClientCmdTypes>(
 	src: string[],
 ): ClientCmd<T> => {
 	return {
-		t: "sound",
+		t: 'sound',
 		c: {
-			t: "preload",
+			t: 'preload',
 			src,
 		},
 	};
@@ -508,21 +581,21 @@ export const preloadSound = <T extends ClientCmdTypes>(
 //
 
 export type RouteCmd = {
-	t: "routing";
+	t: 'routing';
 	c:
 		| {
-				t: "push";
+				t: 'push';
 				route: Route;
 				playSound?: boolean;
 		  }
 		| {
-				t: "replace";
+				t: 'replace';
 				route: Route;
 				reason?: string;
 				playSound?: boolean;
 		  }
 		| {
-				t: "back";
+				t: 'back';
 				reason?: string;
 				playSound?: boolean;
 		  };
@@ -533,8 +606,12 @@ export const pushRoute = <T extends ClientCmdTypes>(
 	playSound?: boolean,
 ): ClientCmd<T> => {
 	return {
-		t: "routing",
-		c: { t: "push", route, playSound },
+		t: 'routing',
+		c: {
+			t: 'push',
+			route,
+			playSound,
+		},
 	};
 };
 
@@ -547,14 +624,21 @@ export const didPushRoute = <T>(
 	return Boolean(
 		output?.msgCmd?.some((cmd) => {
 			if (
-				typeof cmd === "object" &&
+				typeof cmd ===
+					'object' &&
 				cmd &&
-				"t" in cmd &&
-				cmd.t === "routing" &&
-				cmd.c.t === "push"
+				't' in cmd &&
+				cmd.t ===
+					'routing' &&
+				cmd.c.t ===
+					'push'
 			) {
 				if (predicate) {
-					return predicate(cmd.c.route);
+					return predicate(
+						cmd
+							.c
+							.route,
+					);
 				}
 				return true;
 			}
@@ -568,9 +652,9 @@ export const replaceRoute = <T extends ClientCmdTypes>(
 	playSound?: boolean,
 ): ClientCmd<T> => {
 	return {
-		t: "routing",
+		t: 'routing',
 		c: {
-			t: "replace",
+			t: 'replace',
 			route,
 			playSound: playSound ?? true,
 		},
@@ -587,9 +671,19 @@ export const didReplaceRoute = <T extends ClientCmdTypes>(
 ): boolean => {
 	return Boolean(
 		msgCmd?.some((cmd) => {
-			if (cmd.t === "routing" && cmd.c.t === "replace") {
+			if (
+				cmd.t ===
+					'routing' &&
+				cmd.c.t ===
+					'replace'
+			) {
 				if (route) {
-					return eq(cmd.c.route, route);
+					return eq(
+						cmd
+							.c
+							.route,
+						route,
+					);
 				}
 				return true;
 			}
@@ -602,9 +696,9 @@ export const back = <T extends ClientCmdTypes>(
 	reason?: string,
 ): ClientCmd<T> => {
 	return {
-		t: "routing",
+		t: 'routing',
 		c: {
-			t: "back",
+			t: 'back',
 			reason,
 			playSound: true,
 		},
@@ -624,43 +718,69 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 	t: Tag,
 	msgCmd: ClientCmd<T>,
 ): ClientCmd<{
-	MsgClient: { t: Tag; c: T["MsgClient"] };
-	MsgToServer: { t: Tag; c: T["MsgToServer"] };
+	MsgClient: {t: Tag; c: T['MsgClient']};
+	MsgToServer: {t: Tag; c: T['MsgToServer']};
 }> => {
 	switch (msgCmd.t) {
-		case "wire": {
+		case 'wire': {
 			switch (msgCmd.c.t) {
-				case "send-to-server": {
-					if (msgCmd.c.msg) {
+				case 'send-to-server': {
+					if (
+						msgCmd
+							.c
+							.msg
+					) {
 						return {
 							...msgCmd,
-							c: { ...msgCmd.c, msg: { t, c: msgCmd.c.msg } },
+							c: {
+								...msgCmd.c,
+								msg: {
+									t,
+									c: msgCmd
+										.c
+										.msg,
+								},
+							},
 						};
 					}
-					return {
-						...msgCmd,
-						c: { ...msgCmd.c, msg: { t, c: null } },
-					};
-				}
-				default: {
-					return msgCmd as ClientCmd<{
-						MsgClient: { t: Tag; c: T["MsgClient"] };
-						MsgToServer: { t: Tag; c: T["MsgToServer"] };
-					}>;
-				}
-			}
-		}
-
-		case "platform": {
-			switch (msgCmd.c.t) {
-				case "start-timeout": {
 					return {
 						...msgCmd,
 						c: {
 							...msgCmd.c,
 							msg: {
 								t,
-								c: msgCmd.c.msg,
+								c: null,
+							},
+						},
+					};
+				}
+				default: {
+					return msgCmd as ClientCmd<{
+						MsgClient: {
+							t: Tag;
+							c: T['MsgClient'];
+						};
+						MsgToServer: {
+							t: Tag;
+							c: T['MsgToServer'];
+						};
+					}>;
+				}
+			}
+		}
+
+		case 'platform': {
+			switch (msgCmd.c.t) {
+				case 'start-timeout': {
+					return {
+						...msgCmd,
+						c: {
+							...msgCmd.c,
+							msg: {
+								t,
+								c: msgCmd
+									.c
+									.msg,
 							},
 						},
 					};
@@ -668,8 +788,14 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 
 				default: {
 					return msgCmd as ClientCmd<{
-						MsgClient: { t: Tag; c: T["MsgClient"] };
-						MsgToServer: { t: Tag; c: T["MsgToServer"] };
+						MsgClient: {
+							t: Tag;
+							c: T['MsgClient'];
+						};
+						MsgToServer: {
+							t: Tag;
+							c: T['MsgToServer'];
+						};
 					}>;
 				}
 			}
@@ -683,34 +809,60 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 
 const tag = <Tag extends string, T extends ClientCmdTypes>(
 	tag: Tag,
-	msgCmd?: (ClientCmd<T> | null | undefined)[] | null | undefined | null,
+	msgCmd?:
+		| (ClientCmd<T> | null | undefined)[]
+		| null
+		| undefined
+		| null,
 ): ClientCmd<{
-	MsgClient: { t: Tag; c: T["MsgClient"] };
-	MsgToServer: { t: Tag; c: T["MsgToServer"] };
+	MsgClient: {t: Tag; c: T['MsgClient']};
+	MsgToServer: {t: Tag; c: T['MsgToServer']};
 }>[] => {
-	return msgCmd?.flatMap((c) => (c ? [tagOne(tag, c)] : [])) ?? [];
+	return (
+		msgCmd?.flatMap((c) =>
+			c ? [tagOne(tag, c)] : [],
+		) ?? []
+	);
 };
 
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
 	msgCmd: ClientCmd<A>[],
-	toServerMap: (a: A["MsgToServer"]) => B["MsgToServer"],
-	clientMsgMap: (b: A["MsgClient"]) => B["MsgClient"],
+	toServerMap: (a: A['MsgToServer']) => B['MsgToServer'],
+	clientMsgMap: (b: A['MsgClient']) => B['MsgClient'],
 ): ClientCmd<B>[] => {
 	return msgCmd.map((msgCmd) => {
 		switch (msgCmd.t) {
-			case "wire": {
-				switch (msgCmd.c.t) {
-					case "send-to-server": {
-						if (msgCmd.c.msg) {
+			case 'wire': {
+				switch (
+					msgCmd
+						.c
+						.t
+				) {
+					case 'send-to-server': {
+						if (
+							msgCmd
+								.c
+								.msg
+						) {
 							return {
 								...msgCmd,
 								c: {
 									...msgCmd.c,
-									msg: toServerMap(msgCmd.c.msg),
+									msg: toServerMap(
+										msgCmd
+											.c
+											.msg,
+									),
 								},
 							};
 						}
-						return { ...msgCmd, c: { ...msgCmd.c, msg: null } };
+						return {
+							...msgCmd,
+							c: {
+								...msgCmd.c,
+								msg: null,
+							},
+						};
 					}
 					default: {
 						return msgCmd;
@@ -718,14 +870,22 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
 				}
 			}
 
-			case "platform": {
-				switch (msgCmd.c.t) {
-					case "start-timeout": {
+			case 'platform': {
+				switch (
+					msgCmd
+						.c
+						.t
+				) {
+					case 'start-timeout': {
 						return {
 							...msgCmd,
 							c: {
 								...msgCmd.c,
-								msg: clientMsgMap(msgCmd.c.msg),
+								msg: clientMsgMap(
+									msgCmd
+										.c
+										.msg,
+								),
 							},
 						};
 					}

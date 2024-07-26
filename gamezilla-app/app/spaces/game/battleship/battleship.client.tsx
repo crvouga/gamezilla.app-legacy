@@ -1,8 +1,4 @@
-import {
-	type MsgClient,
-	type ModelClient,
-	initShared,
-} from "./battleship.types";
+import {type MsgClient, type ModelClient, initShared} from './battleship.types';
 
 export const init = initShared;
 

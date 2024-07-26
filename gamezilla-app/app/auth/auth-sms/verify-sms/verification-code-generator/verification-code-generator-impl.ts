@@ -1,13 +1,13 @@
-import type { IVerificationCodeGenerator } from "./verification-code-generator";
-import { CodeGeneratorFake as VerificationCodeGeneratorFake } from "./verification-code-generator-impl-fake";
-import { VerificationCodeGeneratorReal } from "./verification-code-generator-impl-real";
+import type {IVerificationCodeGenerator} from './verification-code-generator';
+import {CodeGeneratorFake as VerificationCodeGeneratorFake} from './verification-code-generator-impl-fake';
+import {VerificationCodeGeneratorReal} from './verification-code-generator-impl-real';
 
 export type Impl =
 	| {
-			t: "real";
+			t: 'real';
 	  }
 	| {
-			t: "fake";
+			t: 'fake';
 			code: string;
 	  };
 
@@ -15,12 +15,14 @@ export const VerificationCodeGenerator = (
 	impl: Impl,
 ): IVerificationCodeGenerator => {
 	switch (impl.t) {
-		case "real": {
+		case 'real': {
 			return VerificationCodeGeneratorReal();
 		}
 
-		case "fake": {
-			return VerificationCodeGeneratorFake(impl);
+		case 'fake': {
+			return VerificationCodeGeneratorFake(
+				impl,
+			);
 		}
 	}
 };

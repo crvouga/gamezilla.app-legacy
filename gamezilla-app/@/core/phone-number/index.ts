@@ -1,17 +1,17 @@
-import { Iso3166Alpha2Code } from "../Iso-3166-alpha-2-code";
-import { p } from "../parser";
-import { Result } from "../result";
-import { phone } from "./phone";
+import {Iso3166Alpha2Code} from '../Iso-3166-alpha-2-code';
+import {p} from '../parser';
+import {Result} from '../result';
+import {phone} from './phone';
 
 const parser = p.obj({
 	_country: Iso3166Alpha2Code,
 	_validPhoneNumber: p.str,
-	_opaque: p.l("PhoneNumber"),
+	_opaque: p.l('PhoneNumber'),
 });
 
 export type PhoneNumber = p.Infer<typeof parser>;
 
-type Problem = "invalid_phone_number";
+type Problem = 'invalid_phone_number';
 
 const fromStringDeriveCountry = (
 	phoneNumber: string,
@@ -34,23 +34,23 @@ const fromStringDeriveCountry = (
 	});
 
 	if (!result.isValid) {
-		return Result.Err("invalid_phone_number");
+		return Result.Err('invalid_phone_number');
 	}
 
 	const country = Iso3166Alpha2Code.is(result.countryCode)
 		? result.countryCode
 		: Iso3166Alpha2Code.is(result.countryIso2)
-			? result.countryIso2
-			: Iso3166Alpha2Code.is(result.countryIso3)
-				? result.countryIso3
-				: null;
+		? result.countryIso2
+		: Iso3166Alpha2Code.is(result.countryIso3)
+		? result.countryIso3
+		: null;
 
 	if (!country) {
-		return Result.Err("invalid_phone_number");
+		return Result.Err('invalid_phone_number');
 	}
 
 	return Result.Ok({
-		_opaque: "PhoneNumber",
+		_opaque: 'PhoneNumber',
 		_validPhoneNumber: result.phoneNumber,
 		_country: country,
 	});
@@ -60,8 +60,8 @@ const fromString = (
 	phoneNumber: unknown,
 	maybeCountryCode?: Iso3166Alpha2Code,
 ): Result<Problem, PhoneNumber> => {
-	if (typeof phoneNumber !== "string") {
-		return Result.Err("invalid_phone_number");
+	if (typeof phoneNumber !== 'string') {
+		return Result.Err('invalid_phone_number');
 	}
 
 	if (maybeCountryCode) {
@@ -70,40 +70,42 @@ const fromString = (
 		});
 
 		if (!result.isValid) {
-			return Result.Err("invalid_phone_number");
+			return Result.Err(
+				'invalid_phone_number',
+			);
 		}
 
 		return Result.Ok({
-			_opaque: "PhoneNumber",
+			_opaque: 'PhoneNumber',
 			_validPhoneNumber: result.phoneNumber,
 			_country: maybeCountryCode,
 		});
 	}
 
-	if (!phoneNumber.startsWith("+")) {
+	if (!phoneNumber.startsWith('+')) {
 		return fromStringDeriveCountry(phoneNumber);
 	}
 
 	const result = phone(phoneNumber);
 
 	if (!result.isValid) {
-		return Result.Err("invalid_phone_number");
+		return Result.Err('invalid_phone_number');
 	}
 
 	const country = Iso3166Alpha2Code.is(result.countryCode)
 		? result.countryCode
 		: Iso3166Alpha2Code.is(result.countryIso2)
-			? result.countryIso2
-			: Iso3166Alpha2Code.is(result.countryIso3)
-				? result.countryIso3
-				: null;
+		? result.countryIso2
+		: Iso3166Alpha2Code.is(result.countryIso3)
+		? result.countryIso3
+		: null;
 
 	if (!country) {
-		return Result.Err("invalid_phone_number");
+		return Result.Err('invalid_phone_number');
 	}
 
 	return Result.Ok({
-		_opaque: "PhoneNumber",
+		_opaque: 'PhoneNumber',
 		_validPhoneNumber: result.phoneNumber,
 		_country: country,
 	});
@@ -111,8 +113,8 @@ const fromString = (
 
 const unsafeParse = (phoneNumber: string): PhoneNumber => {
 	const result = fromString(phoneNumber);
-	if (result.t === "err") {
-		throw new Error("Invalid phone number");
+	if (result.t === 'err') {
+		throw new Error('Invalid phone number');
 	}
 	return result.value;
 };
@@ -130,9 +132,9 @@ const eq = (a: PhoneNumber, b: PhoneNumber): boolean => {
 };
 
 const format = (phoneNumber: PhoneNumber): string => {
-	const { _validPhoneNumber: rawPhoneNumber } = phoneNumber;
+	const {_validPhoneNumber: rawPhoneNumber} = phoneNumber;
 
-	const numericPhoneNumber = rawPhoneNumber.replace(/\D/g, "");
+	const numericPhoneNumber = rawPhoneNumber.replace(/\D/g, '');
 
 	if (numericPhoneNumber.length !== 11) {
 		return rawPhoneNumber;
@@ -149,22 +151,24 @@ const format = (phoneNumber: PhoneNumber): string => {
 };
 
 const is = (phoneNumber: unknown): phoneNumber is PhoneNumber => {
-	return fromString(phoneNumber).t === "ok";
+	return fromString(phoneNumber).t === 'ok';
 };
 
 const countries = [
-	{ code: "US", format: "10000000000" },
-	{ code: "GB", format: "20000000000" },
-	{ code: "DE", format: "30000000000" },
-	{ code: "IN", format: "40000000000" },
+	{code: 'US', format: '10000000000'},
+	{code: 'GB', format: '20000000000'},
+	{code: 'DE', format: '30000000000'},
+	{code: 'IN', format: '40000000000'},
 ] as const;
 
 const random = (): PhoneNumber => {
-	const countryIndex = Math.floor(Math.random() * countries.length);
+	const countryIndex = Math.floor(
+		Math.random() * countries.length,
+	);
 	const country = countries[countryIndex];
 
 	if (!country) {
-		throw new Error("Invalid country");
+		throw new Error('Invalid country');
 	}
 
 	const phoneNumber = country.format.replace(/[0-9]/g, () =>
@@ -173,7 +177,7 @@ const random = (): PhoneNumber => {
 
 	const phoneNumberResult = fromString(phoneNumber);
 
-	if (phoneNumberResult.t === "ok") {
+	if (phoneNumberResult.t === 'ok') {
 		return phoneNumberResult.value;
 	}
 	return random();

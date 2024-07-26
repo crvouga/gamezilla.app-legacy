@@ -1,4 +1,4 @@
-import { Eff } from "../eff";
+import {Eff} from '../eff';
 
 /**
  *
@@ -22,16 +22,31 @@ type Output<Model, Msg, Event, Cmd> = {
  */
 export const andThen =
 	<Model, Msg, Event, Cmd>(
-		updateStep: (input: Model) => Output<Model, Msg, Event, Cmd>,
+		updateStep: (
+			input: Model,
+		) => Output<Model, Msg, Event, Cmd>,
 	) =>
 	(output: Output<Model, Msg, Event, Cmd>) => {
 		const updated = updateStep(output.model);
 
 		return {
 			model: updated.model,
-			eff: Eff.batch([output.eff, updated.eff]),
-			msgEvt: [...(output.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-			msgCmd: [...(output.msgCmd ?? []), ...(updated.msgCmd ?? [])],
+			eff: Eff.batch([
+				output.eff,
+				updated.eff,
+			]),
+			msgEvt: [
+				...(output.msgEvt ??
+					[]),
+				...(updated.msgEvt ??
+					[]),
+			],
+			msgCmd: [
+				...(output.msgCmd ??
+					[]),
+				...(updated.msgCmd ??
+					[]),
+			],
 		};
 	};
 
@@ -51,7 +66,10 @@ export function batchMsgs<T>(...msgs: Array<NullishItems<T>>): Array<T> {
 
 		if (Array.isArray(item)) {
 			stack.push(...item);
-		} else if (item !== null && item !== undefined) {
+		} else if (
+			item !== null &&
+			item !== undefined
+		) {
 			flattened.push(item);
 		}
 	}
@@ -86,7 +104,7 @@ export const chainAwait = async <Model, Msg, Event, Cmd>(
 	const msgCmd: Cmd[] = [...(initial.msgCmd ?? [])];
 	const msgEvt: Event[] = [...(initial.msgEvt ?? [])];
 	const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : [];
-	let model: Model = { ...initial.model };
+	let model: Model = {...initial.model};
 
 	for (let i = 0, len = updaters.length; i < len; ++i) {
 		const updated = await updaters[i]?.(model);
@@ -102,19 +120,47 @@ export const chainAwait = async <Model, Msg, Event, Cmd>(
 		}
 
 		if (updated.msgEvt) {
-			for (let j = 0, len = updated.msgEvt.length; j < len; ++j) {
-				const msg = updated.msgEvt[j];
+			for (
+				let j = 0,
+					len =
+						updated
+							.msgEvt
+							.length;
+				j < len;
+				++j
+			) {
+				const msg =
+					updated
+						.msgEvt[
+						j
+					];
 				if (msg) {
-					msgEvt.push(msg);
+					msgEvt.push(
+						msg,
+					);
 				}
 			}
 		}
 
 		if (updated.msgCmd) {
-			for (let j = 0, len = updated.msgCmd.length; j < len; ++j) {
-				const msg = updated.msgCmd[j];
+			for (
+				let j = 0,
+					len =
+						updated
+							.msgCmd
+							.length;
+				j < len;
+				++j
+			) {
+				const msg =
+					updated
+						.msgCmd[
+						j
+					];
 				if (msg) {
-					msgCmd.push(msg);
+					msgCmd.push(
+						msg,
+					);
 				}
 			}
 		}

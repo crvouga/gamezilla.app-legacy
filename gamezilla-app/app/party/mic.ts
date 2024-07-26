@@ -1,4 +1,4 @@
-import { Err, type IO, Ok, type Result } from "gamezilla-app/@/core";
+import {Err, type IO, Ok, type Result} from 'gamezilla-app/@/core';
 
 export type MicLoadResult = Result<string, null>;
 
@@ -10,7 +10,7 @@ const load: IO<MicLoadResult> = async () => {
 
 		return Ok(null);
 	} catch (error) {
-		return Err("failed_to_load");
+		return Err('failed_to_load');
 	}
 };
 

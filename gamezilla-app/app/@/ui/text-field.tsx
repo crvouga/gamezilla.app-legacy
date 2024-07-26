@@ -1,6 +1,6 @@
-import type { VDom } from "gamezilla-app/@/vdom";
-import { IconXMark } from "./icon";
-import { cn } from "./ui";
+import type {VDom} from 'gamezilla-app/@/vdom';
+import {IconXMark} from './icon';
+import {cn} from './ui';
 
 export const TextField = ({
 	label,
@@ -18,7 +18,14 @@ export const TextField = ({
 	step,
 }: {
 	startIcon?: VDom;
-	type?: "text" | "password" | "email" | "number" | "search" | "tel" | "url";
+	type?:
+		| 'text'
+		| 'password'
+		| 'email'
+		| 'number'
+		| 'search'
+		| 'tel'
+		| 'url';
 	autoFocus?: boolean;
 	id: string;
 	label: string;
@@ -34,13 +41,22 @@ export const TextField = ({
 }) => {
 	return (
 		<div className="flex w-full flex-col gap-1">
-			<label htmlFor={id} className={cn("text-base", error && "text-red-500")}>
+			<label
+				htmlFor={id}
+				className={cn(
+					'text-base',
+					error &&
+						'text-red-500',
+				)}
+			>
 				{label}
 			</label>
 
 			<input
 				id={id}
-				autoFocus={autoFocus}
+				autoFocus={
+					autoFocus
+				}
 				type={type}
 				value={value}
 				min={min}
@@ -50,36 +66,60 @@ export const TextField = ({
 				auto-correct="off"
 				auto-save="off"
 				step={step}
-				onInput={(e) => {
+				onInput={(
+					e,
+				) => {
 					e.preventDefault();
-					onChange(e.currentTarget.value);
+					onChange(
+						e
+							.currentTarget
+							.value,
+					);
 				}}
 				className={cn(
-					"flex appearance-none items-center gap-2 rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none",
-					error && "border border-red-500 text-red-500",
-					!error && " ring-blue-600 focus-within:ring-2",
+					'flex appearance-none items-center gap-2 rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none',
+					error &&
+						'border border-red-500 text-red-500',
+					!error &&
+						' ring-blue-600 focus-within:ring-2',
 				)}
 				style={{
-					background: "transparent !important",
+					background: 'transparent !important',
 				}}
 			/>
-			{onClear && value && value?.toString().length > 0 && (
-				<button
-					className="rounded-md outline-none ring-blue-600 focus:ring-2"
-					aria-label="Clear input"
-					onClick={(e) => {
-						e.preventDefault();
-						document.getElementById(id)?.focus();
-						onClear();
-					}}
-				>
-					<IconXMark className="h-6 w-6" />
-				</button>
-			)}
+			{onClear &&
+				value &&
+				value?.toString()
+					.length >
+					0 && (
+					<button
+						className="rounded-md outline-none ring-blue-600 focus:ring-2"
+						aria-label="Clear input"
+						onClick={(
+							e,
+						) => {
+							e.preventDefault();
+							document.getElementById(
+								id,
+							)?.focus();
+							onClear();
+						}}
+					>
+						<IconXMark className="h-6 w-6" />
+					</button>
+				)}
 
 			{helperText && (
-				<div className={cn("text-sm", error && "text-red-500")}>
-					{helperText}
+				<div
+					className={cn(
+						'text-sm',
+						error &&
+							'text-red-500',
+					)}
+				>
+					{
+						helperText
+					}
 				</div>
 			)}
 		</div>

@@ -1,8 +1,8 @@
-import type { Browser, RemoteResult, Result } from "gamezilla-app/@/core";
-import type { UserId, Username } from "gamezilla-app/app/@/data";
+import type {Browser, RemoteResult, Result} from 'gamezilla-app/@/core';
+import type {UserId, Username} from 'gamezilla-app/app/@/data';
 
 type SearchResult = {
-	t: "profile";
+	t: 'profile';
 	id: string;
 	userId: UserId;
 	username: Username;
@@ -15,7 +15,10 @@ export type ModelClient = {
 		[id: string]: SearchResult;
 	};
 	requests: {
-		[searchText: string]: RemoteResult<string, null>;
+		[searchText: string]: RemoteResult<
+			string,
+			null
+		>;
 	};
 };
 
@@ -25,15 +28,15 @@ export type MsgToServer = Req;
 
 export type MsgToClient = Res;
 
-export type MsgServer = { t: "none" };
+export type MsgServer = {t: 'none'};
 
 export type MsgClient =
 	| Req
-	| { t: "clicked-clear" }
-	| { t: "focus-done"; result: Browser.FocusResult }
-	| { t: "inputted-search-text"; searchText: string }
-	| { t: "clicked-result"; userId: UserId };
+	| {t: 'clicked-clear'}
+	| {t: 'focus-done'; result: Browser.FocusResult}
+	| {t: 'inputted-search-text'; searchText: string}
+	| {t: 'clicked-result'; userId: UserId};
 
-export type Req = { t: "search"; searchText: string };
+export type Req = {t: 'search'; searchText: string};
 
-export type Res = Req & { result: Result<string, SearchResult[]> };
+export type Res = Req & {result: Result<string, SearchResult[]>};

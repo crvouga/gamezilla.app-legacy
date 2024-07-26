@@ -1,17 +1,17 @@
-import type { BaseClientCtx, ClientEvent } from "gamezilla-app/app/@/client";
+import type {BaseClientCtx, ClientEvent} from 'gamezilla-app/app/@/client';
 
-import { Eff, type Sub, batchMsgs } from "gamezilla-app/@/core";
-import type { VDom } from "gamezilla-app/@/vdom";
-import type { WithEventId } from "../@/event";
-import type { Space } from "../@/space";
-import type { SpaceClientCmd } from "../@/space-client-cmd";
-import type { SpaceCoreEvent } from "../spaces-core";
+import {Eff, type Sub, batchMsgs} from 'gamezilla-app/@/core';
+import type {VDom} from 'gamezilla-app/@/vdom';
+import type {WithEventId} from '../@/event';
+import type {Space} from '../@/space';
+import type {SpaceClientCmd} from '../@/space-client-cmd';
+import type {SpaceCoreEvent} from '../spaces-core';
 import type {
 	ModelClient,
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "../spaces.types";
+} from '../spaces.types';
 
 type Ctx = BaseClientCtx & {
 	space?: Space;
@@ -42,9 +42,12 @@ export type Output = {
 };
 
 export type SpaceClientModule = {
-	init: (input: { ctx: Ctx; model: ModelClient }) => Output;
+	init: (input: {ctx: Ctx; model: ModelClient}) => Output;
 	update: (input: Input) => Output;
-	subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>;
+	subscriptions: (input: {
+		ctx: Ctx;
+		model: ModelClient;
+	}) => Sub<MsgClient>;
 	View: (input: {
 		ctx: Ctx;
 		model: ModelClient;
@@ -60,10 +63,22 @@ const andThen = (
 		const updated = update(acc.model);
 		acc = {
 			model: updated.model,
-			eff: Eff.batch([acc.eff, updated.eff]),
-			msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
-			msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
-			msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
+			eff: Eff.batch([
+				acc.eff,
+				updated.eff,
+			]),
+			msgCmd: batchMsgs(
+				acc.msgCmd,
+				updated.msgCmd,
+			),
+			msgEvt: batchMsgs(
+				acc.msgEvt,
+				updated.msgEvt,
+			),
+			msgSpaceEvent: batchMsgs(
+				acc.msgSpaceEvent,
+				updated.msgSpaceEvent,
+			),
 		};
 	}
 	return acc;

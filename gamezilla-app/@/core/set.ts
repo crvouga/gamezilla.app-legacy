@@ -1,14 +1,14 @@
-import { Num } from "./num";
-import { NonNegInt } from "./num/non-neg-int";
+import {Num} from './num';
+import {NonNegInt} from './num/non-neg-int';
 
 export type Set<T> = {
-	_type: "Set";
-	_elements: { [key: string]: T };
+	_type: 'Set';
+	_elements: {[key: string]: T};
 };
 
 export const empty = <T>(): Set<T> => {
 	return {
-		_type: "Set",
+		_type: 'Set',
 		_elements: {},
 	};
 };
@@ -18,7 +18,7 @@ type ToKey<T> = (element: T) => string;
 const singleton = <T>(toKey: ToKey<T>, element: T): Set<T> => {
 	const key = toKey ? toKey(element) : String(element);
 	return {
-		_type: "Set",
+		_type: 'Set',
 		_elements: {
 			[key]: element,
 		},
@@ -49,7 +49,7 @@ const add = <T>(toKey: ToKey<T>, element: T, set: Set<T>): Set<T> => {
 
 const remove = <T>(toKey: ToKey<T>, element: T, set: Set<T>): Set<T> => {
 	const key = toKey(element);
-	const { [key]: _removed, ...rest } = set._elements;
+	const {[key]: _removed, ...rest} = set._elements;
 	return {
 		...set,
 		_elements: rest,
@@ -82,7 +82,7 @@ const intersect = <T>(a: Set<T>, b: Set<T>): Set<T> => {
 };
 
 const diff = <T>(a: Set<T>, b: Set<T>): Set<T> => {
-	const c: Set<T> = { ...a, _elements: { ...a._elements } };
+	const c: Set<T> = {...a, _elements: {...a._elements}};
 
 	for (const key in a) {
 		const element = a._elements[key];

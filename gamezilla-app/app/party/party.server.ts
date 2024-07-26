@@ -1,11 +1,11 @@
-import { Eff, exhaustive, isErr } from "gamezilla-app/@/core";
+import {Eff, exhaustive, isErr} from 'gamezilla-app/@/core';
 import {
 	type Res,
 	type ModelServer,
 	type MsgServer,
 	type MsgToServer,
 	handle,
-} from "./party.types";
+} from './party.types';
 
 //
 //
@@ -34,7 +34,7 @@ export type Msg = MsgServer;
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 	switch (msg[0]) {
-		case "none": {
+		case 'none': {
 			return [model, Eff.None];
 		}
 
@@ -49,14 +49,23 @@ export const updateFromClient = (
 	model: Model,
 ): [Model, Eff<Msg>] => {
 	switch (msg[0]) {
-		case "PartyCreate":
-		case "PartyDestroy":
-		case "PartyJoin":
-		case "party-get":
-		case "PartyLeave": {
-			const res: Res = [...msg, handle(msg, model)];
+		case 'PartyCreate':
+		case 'PartyDestroy':
+		case 'PartyJoin':
+		case 'party-get':
+		case 'PartyLeave': {
+			const res: Res = [
+				...msg,
+				handle(
+					msg,
+					model,
+				),
+			];
 			if (isErr(res[2])) {
-				return [model, Eff.None];
+				return [
+					model,
+					Eff.None,
+				];
 			}
 			return [res[2].value, Eff.None];
 		}

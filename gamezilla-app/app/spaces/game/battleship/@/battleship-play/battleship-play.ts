@@ -1,5 +1,5 @@
-import { Set } from "gamezilla-app/@/core";
-import type { Pos2d } from "../pos-2d/pos-2d";
+import {Set} from 'gamezilla-app/@/core';
+import type {Pos2d} from '../pos-2d/pos-2d';
 
 export type Model<TPlayerType extends string> = {
 	water: Set<Pos2d>;
@@ -13,15 +13,16 @@ export const init = <TPlayerType extends string>(
 ): Model<TPlayerType> => {
 	return {
 		water: Set.empty(),
-		players: allPlayerTypes.reduce<Model<TPlayerType>["players"]>(
-			(acc, player) => {
-				return {
-					...acc,
-					[player]: initPlayer(player),
-				};
-			},
-			{},
-		),
+		players: allPlayerTypes.reduce<
+			Model<TPlayerType>['players']
+		>((acc, player) => {
+			return {
+				...acc,
+				[player]: initPlayer(
+					player,
+				),
+			};
+		}, {}),
 	};
 };
 
@@ -32,13 +33,22 @@ type Ship = {
 
 export const submarine = (): Ship => {
 	return {
-		name: "submarine",
+		name: 'submarine',
 		positions: Set.from(
 			(pos) => `${pos.x},${pos.y}`,
 			[
-				{ x: 0, y: 0 },
-				{ x: 0, y: 1 },
-				{ x: 0, y: 2 },
+				{
+					x: 0,
+					y: 0,
+				},
+				{
+					x: 0,
+					y: 1,
+				},
+				{
+					x: 0,
+					y: 2,
+				},
 			],
 		),
 	};

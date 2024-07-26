@@ -3,41 +3,50 @@ import {
 	type ClientCtx,
 	playSound,
 	pushRoute,
-} from "gamezilla-app/app/@/client";
-import { Avatar, Button, Typography } from "gamezilla-app/app/@/ui";
-import { CoverArt } from "../game/game-cover-art";
-import type { SpaceClientModule } from "../architecture/architecture";
-import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
-import type { ModelClient, MsgClient } from "../spaces.types";
+} from 'gamezilla-app/app/@/client';
+import {Avatar, Button, Typography} from 'gamezilla-app/app/@/ui';
+import {CoverArt} from '../game/game-cover-art';
+import type {SpaceClientModule} from '../architecture/architecture';
+import * as SpacesCoreClient from '../spaces-core/spaces-core.client';
+import type {ModelClient, MsgClient} from '../spaces.types';
 
-const update: SpaceClientModule["update"] = ({ model, msg, ctx }) => {
+const update: SpaceClientModule['update'] = ({model, msg, ctx}) => {
 	switch (msg?.t) {
-		case "clicked-current-space-bottom-bar": {
-			const { currentUserId } = ctx;
-			const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(
-				model,
-				currentUserId,
-			);
+		case 'clicked-current-space-bottom-bar': {
+			const {currentUserId} = ctx;
+			const currentUsersSpaceId =
+				SpacesCoreClient.toSpaceIdByUserId(
+					model,
+					currentUserId,
+				);
 
 			if (!currentUsersSpaceId) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
 			return {
 				model,
 				msgCmd: [
-					playSound(APP_SOUND.navForwardMin),
-					pushRoute({
-						n: "spaces",
-						t: "space",
-						spaceId: currentUsersSpaceId,
-					}),
+					playSound(
+						APP_SOUND.navForwardMin,
+					),
+					pushRoute(
+						{
+							n: 'spaces',
+							t: 'space',
+							spaceId: currentUsersSpaceId,
+						},
+					),
 				],
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -57,7 +66,10 @@ const View = ({
 		return null;
 	}
 
-	const space = SpacesCoreClient.toSpaceStarted(model, userSpaceId);
+	const space = SpacesCoreClient.toSpaceStarted(
+		model,
+		userSpaceId,
+	);
 
 	if (!space) {
 		return null;
@@ -78,18 +90,32 @@ const View = ({
 				<button
 					type="button"
 					className="flex flex-1 items-center gap-3 overflow-hidden"
-					onClick={() => dispatch({ t: "clicked-current-space-bottom-bar" })}
+					onClick={() =>
+						dispatch(
+							{
+								t: 'clicked-current-space-bottom-bar',
+							},
+						)
+					}
 				>
 					<div className="p-2">
 						{!space.game ? (
 							<Avatar
-								src={hostProfile?.avatarUrl}
+								src={
+									hostProfile?.avatarUrl
+								}
 								alt="Host Avatar"
 								className="h-14 w-14"
 							/>
 						) : (
 							<div className="h-14 w-14 overflow-hidden rounded border border-neutral-700">
-								<CoverArt gameName={space.game.t} />
+								<CoverArt
+									gameName={
+										space
+											.game
+											.t
+									}
+								/>
 							</div>
 						)}
 					</div>
@@ -97,34 +123,58 @@ const View = ({
 					<div className="flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3">
 						<Typography
 							variant="title"
-							className="truncate text-lg text-left font-normal"
-							text={ctx.t("spaces.current-space", {
-								hostUsername: hostProfile.username,
-							})}
+							className="truncate text-left text-lg font-normal"
+							text={ctx.t(
+								'spaces.current-space',
+								{
+									hostUsername: hostProfile.username,
+								},
+							)}
 						/>
 						<Typography
 							variant="subtitle"
 							className="truncate text-left"
-							text={ctx.t("space-card.people-count", userCount)}
+							text={ctx.t(
+								'space-card.people-count',
+								userCount,
+							)}
 						/>
 					</div>
 				</button>
 
 				<div className="pr-4">
-					{ctx.currentUserId === space.hostId && (
+					{ctx.currentUserId ===
+						space.hostId && (
 						<Button
 							color="danger"
-							text={ctx.t("spaces.end")}
-							onClick={() => dispatch({ t: "clicked-end-space-button" })}
+							text={ctx.t(
+								'spaces.end',
+							)}
+							onClick={() =>
+								dispatch(
+									{
+										t: 'clicked-end-space-button',
+									},
+								)
+							}
 							size="sm"
 						/>
 					)}
 
-					{ctx.currentUserId !== space.hostId && (
+					{ctx.currentUserId !==
+						space.hostId && (
 						<Button
 							color="danger"
-							text={ctx.t("spaces.leave")}
-							onClick={() => dispatch({ t: "clicked-leave-space-button" })}
+							text={ctx.t(
+								'spaces.leave',
+							)}
+							onClick={() =>
+								dispatch(
+									{
+										t: 'clicked-leave-space-button',
+									},
+								)
+							}
 							size="sm"
 						/>
 					)}

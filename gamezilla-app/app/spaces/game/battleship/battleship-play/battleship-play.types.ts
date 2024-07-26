@@ -1,40 +1,40 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { UserId } from "gamezilla-app/app/@/data";
+import {p} from 'gamezilla-app/@/core/parser';
+import {UserId} from 'gamezilla-app/app/@/data';
 
 export const MsgCore = p.or(
 	p.obj({
-		t: p.l("user-clicked-start-game"),
+		t: p.l('user-clicked-start-game'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-added-bot-player"),
+		t: p.l('user-added-bot-player'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-removed-bot-player"),
+		t: p.l('user-removed-bot-player'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-started-playing"),
+		t: p.l('user-started-playing'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-stopped-playing"),
+		t: p.l('user-stopped-playing'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-removed-user-player"),
+		t: p.l('user-removed-user-player'),
 		userId: UserId,
 	}),
 );
 
 const Player = p.or(
 	p.obj({
-		t: p.l("user"),
+		t: p.l('user'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("bot"),
+		t: p.l('bot'),
 	}),
 );
 

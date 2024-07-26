@@ -1,5 +1,5 @@
-import type { Result } from "gamezilla-app/@/core";
-import type { SessionId, UserId } from "gamezilla-app/app/@/data";
+import type {Result} from 'gamezilla-app/@/core';
+import type {SessionId, UserId} from 'gamezilla-app/app/@/data';
 
 export type IUserSessionDb = {
 	findSessionIdsByUserId: (
@@ -17,5 +17,7 @@ export type IUserSessionDb = {
 
 	zapByUserId: (userId: UserId) => Promise<Result<string, null>>;
 
-	zapBySessionId: (sessionId: SessionId) => Promise<Result<string, null>>;
+	zapBySessionId: (
+		sessionId: SessionId,
+	) => Promise<Result<string, null>>;
 };

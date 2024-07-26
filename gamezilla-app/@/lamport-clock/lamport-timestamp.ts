@@ -1,7 +1,7 @@
-import { p } from "../core/parser";
+import {p} from '../core/parser';
 
 const parser = p.obj({
-	_type: p.l("LamportTimestamp"),
+	_type: p.l('LamportTimestamp'),
 	_value: p.num,
 });
 
@@ -9,7 +9,7 @@ export type LamportTimestamp = p.Infer<typeof parser>;
 
 const fromNumber = (value: number): LamportTimestamp => {
 	return {
-		_type: "LamportTimestamp",
+		_type: 'LamportTimestamp',
 		_value: Math.max(0, Math.floor(value)),
 	};
 };
@@ -26,7 +26,9 @@ const max = (
 	timestampA: LamportTimestamp,
 	timestampB: LamportTimestamp,
 ): LamportTimestamp => {
-	return fromNumber(Math.max(timestampA._value, timestampB._value));
+	return fromNumber(
+		Math.max(timestampA._value, timestampB._value),
+	);
 };
 
 const lte = (

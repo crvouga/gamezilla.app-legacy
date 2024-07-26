@@ -3,8 +3,8 @@ import type {
 	IfVoid,
 	IsAny,
 	IsUnknownOrNonInferrable,
-} from "./helpers";
-import { hasMatchFunction } from "./helpers";
+} from './helpers';
+import {hasMatchFunction} from './helpers';
 
 /**
  * An action with a string type and an associated payload. This is the
@@ -29,12 +29,12 @@ export type PayloadMsg<
 	? {}
 	: {
 			meta: M;
-		}) &
+	  }) &
 	([E] extends [never]
 		? {}
 		: {
 				error: E;
-			});
+		  });
 
 /**
  * A "prepare" method to be used as the second parameter of `Msg`.
@@ -44,10 +44,14 @@ export type PayloadMsg<
  * @public
  */
 export type PrepareMsg<P> =
-	| ((...args: any[]) => { payload: P })
-	| ((...args: any[]) => { payload: P; meta: any })
-	| ((...args: any[]) => { payload: P; error: any })
-	| ((...args: any[]) => { payload: P; meta: any; error: any });
+	| ((...args: any[]) => {payload: P})
+	| ((...args: any[]) => {payload: P; meta: any})
+	| ((...args: any[]) => {payload: P; error: any})
+	| ((...args: any[]) => {
+			payload: P;
+			meta: any;
+			error: any;
+	  });
 
 /**
  * Internal version of `MsgCreatorWithPreparedPayload`. Not to be used externally.
@@ -72,7 +76,7 @@ export type _MsgCreatorWithPreparedPayload<
 			}
 				? M
 				: never
-		>
+	  >
 	: void;
 
 /**
@@ -209,9 +213,15 @@ export type PayloadMsgCreator<
 				// else
 				IfMaybeUndefined<
 					P,
-					MsgCreatorWithOptionalPayload<P, T>,
+					MsgCreatorWithOptionalPayload<
+						P,
+						T
+					>,
 					// else
-					MsgCreatorWithPayload<P, T>
+					MsgCreatorWithPayload<
+						P,
+						T
+					>
 				>
 			>
 		>
@@ -249,24 +259,34 @@ export function Msg<P = void, T extends string = string>(
 export function Msg<PA extends PrepareMsg<any>, T extends string = string>(
 	type: T,
 	prepareMsg: PA,
-): PayloadMsgCreator<ReturnType<PA>["payload"], T, PA>;
+): PayloadMsgCreator<ReturnType<PA>['payload'], T, PA>;
 
 export function Msg(type: string, prepareMsg?: Function): any {
 	function actionCreator(...args: any[]) {
 		if (prepareMsg) {
-			let prepared = prepareMsg(...args);
+			let prepared = prepareMsg(
+				...args,
+			);
 			if (!prepared) {
-				throw new Error("prepareMsg did not return an object");
+				throw new Error(
+					'prepareMsg did not return an object',
+				);
 			}
 
 			return {
 				type,
 				payload: prepared.payload,
-				...("meta" in prepared && { meta: prepared.meta }),
-				...("error" in prepared && { error: prepared.error }),
+				...('meta' in
+					prepared && {
+					meta: prepared.meta,
+				}),
+				...('error' in
+					prepared && {
+					error: prepared.error,
+				}),
 			};
 		}
-		return { type, payload: args[0] };
+		return {type, payload: args[0]};
 	}
 
 	actionCreator.toString = () => `${type}`;
@@ -286,8 +306,8 @@ export function isMsgCreator(
 	action: unknown,
 ): action is BaseMsgCreator<unknown, string> & Function {
 	return (
-		typeof action === "function" &&
-		"type" in action &&
+		typeof action === 'function' &&
+		'type' in action &&
 		// hasMatchFunction only wants Matchers but I don't see the point in rewriting it
 		hasMatchFunction(action as any)
 	);
@@ -305,18 +325,18 @@ export function isFSA(action: unknown): action is {
 	return isMsg(action) && Object.keys(action).every(isValidKey);
 }
 
-export type Msg = { type: string };
+export type Msg = {type: string};
 
-export function isMsg(action: unknown): action is { type: string } {
+export function isMsg(action: unknown): action is {type: string} {
 	return (
-		typeof action === "object" &&
+		typeof action === 'object' &&
 		action !== null &&
-		typeof (action as any).type === "string"
+		typeof (action as any).type === 'string'
 	);
 }
 
 function isValidKey(key: string) {
-	return ["type", "payload", "error", "meta"].indexOf(key) > -1;
+	return ['type', 'payload', 'error', 'meta'].indexOf(key) > -1;
 }
 
 // helper types for more readable typings
@@ -338,12 +358,14 @@ export function Namespace<TN extends string>(namespace: TN) {
 		P = void,
 		T extends string = string,
 		PA extends PrepareMsg<P> | void = void,
-	>(type: T, prepareMsg?: PA): PayloadMsgCreator<P, `${TN}/${T}`, PA> {
+	>(
+		type: T,
+		prepareMsg?: PA,
+	): PayloadMsgCreator<P, `${TN}/${T}`, PA> {
 		// @ts-ignore
-		return Msg(`${namespace}/${type}`, prepareMsg) as PayloadMsgCreator<
-			P,
-			`${TN}/${T}`,
-			PA
-		>;
+		return Msg(
+			`${namespace}/${type}`,
+			prepareMsg,
+		) as PayloadMsgCreator<P, `${TN}/${T}`, PA>;
 	};
 }

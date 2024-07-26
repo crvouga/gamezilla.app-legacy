@@ -1,16 +1,16 @@
-import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
-import { ascend, eq, pipe } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
-import { SpaceId, UserId } from "gamezilla-app/app/@/data";
+import {CappedOrderedDict} from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict';
+import {ascend, eq, pipe} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {LamportClock, LamportTimestamp} from 'gamezilla-app/@/lamport-clock';
+import {SpaceId, UserId} from 'gamezilla-app/app/@/data';
 import {
 	EventId,
 	EventMeta,
 	type WithEventId,
 	type WithEventMeta,
-} from "../@/event";
-import { SpaceCoreEvent } from "./space-core-event";
-import * as SpaceState from "./space-core-state";
+} from '../@/event';
+import {SpaceCoreEvent} from './space-core-event';
+import * as SpaceState from './space-core-state';
 
 //
 //
@@ -31,7 +31,7 @@ export type Model = p.Infer<typeof Model>;
 export const init: Model = {
 	clock: LamportClock.init,
 	events: [],
-	snapshots: CappedOrderedDict.init({ maxSize: 10 }),
+	snapshots: CappedOrderedDict.init({maxSize: 10}),
 	eventIds: {},
 };
 
@@ -54,7 +54,7 @@ export const random = () => {
 			appendEvent({
 				model,
 				event: {
-					t: "user-started-space",
+					t: 'user-started-space',
 					eventId: EventId.generate(),
 					spaceId: SpaceId.generate(),
 					userId: UserId.generate(),
@@ -72,7 +72,7 @@ export const random = () => {
 
 export const startFromLatestSnapshot = (model: Model): Model => {
 	const events: WithEventMeta<SpaceCoreEvent>[] = [];
-	const eventIds: Model["eventIds"] = {};
+	const eventIds: Model['eventIds'] = {};
 
 	for (let i = model.events.length - 1; i >= 0; i--) {
 		const event = model.events[i];
@@ -81,17 +81,31 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 			continue;
 		}
 
-		const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId);
+		const snapshot = CappedOrderedDict.get(
+			model.snapshots,
+			event.eventId,
+		);
 
 		events.unshift(event);
 		eventIds[event.eventId] = event.eventId;
 
 		if (snapshot) {
 			return {
-				eventIds: events.reduce<Model["eventIds"]>((acc, event) => {
-					acc[event.eventId] = event.eventId;
-					return acc;
-				}, {}),
+				eventIds: events.reduce<
+					Model['eventIds']
+				>(
+					(
+						acc,
+						event,
+					) => {
+						acc[
+							event.eventId
+						] =
+							event.eventId;
+						return acc;
+					},
+					{},
+				),
 				clock: model.clock,
 				events: events,
 				snapshots: CappedOrderedDict.add(
@@ -134,15 +148,21 @@ export const appendEvent = ({
 
 	const newEvent: WithEventMeta<SpaceCoreEvent> = {
 		...event,
-		happenedAt: LamportClock.toCurrentTime(model.clock),
+		happenedAt: LamportClock.toCurrentTime(
+			model.clock,
+		),
 	};
 
-	let newSnapshots = { ...model.snapshots };
+	let newSnapshots = {...model.snapshots};
 
 	const appended = [...model.events, newEvent];
 
 	const newEvents = appended.sort(
-		ascend((e) => LamportTimestamp.toNumber(e.happenedAt)),
+		ascend((e) =>
+			LamportTimestamp.toNumber(
+				e.happenedAt,
+			),
+		),
 	);
 
 	const newEventIds = {
@@ -154,7 +174,9 @@ export const appendEvent = ({
 	// Remove invalid snapshots
 	//
 
-	const newEventIndex = newEvents.findIndex((e) => e.eventId === event.eventId);
+	const newEventIndex = newEvents.findIndex(
+		(e) => e.eventId === event.eventId,
+	);
 
 	if (newEventIndex === -1) {
 		// This should never happen because we just appended the event
@@ -164,7 +186,11 @@ export const appendEvent = ({
 	for (let i = newEventIndex; i < newEvents.length; i++) {
 		const eventId = newEvents[i]?.eventId;
 		if (eventId) {
-			newSnapshots = CappedOrderedDict.remove(newSnapshots, eventId);
+			newSnapshots =
+				CappedOrderedDict.remove(
+					newSnapshots,
+					eventId,
+				);
 		}
 	}
 
@@ -179,7 +205,11 @@ export const appendEvent = ({
 		eventIds: newEventIds,
 	});
 
-	newSnapshots = CappedOrderedDict.add(newSnapshots, event.eventId, snapshot);
+	newSnapshots = CappedOrderedDict.add(
+		newSnapshots,
+		event.eventId,
+		snapshot,
+	);
 
 	//
 	//
@@ -220,7 +250,10 @@ export const deriveState = (model: Model): SpaceState.State => {
 			continue;
 		}
 
-		const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId);
+		const snapshot = CappedOrderedDict.get(
+			model.snapshots,
+			event.eventId,
+		);
 
 		if (snapshot) {
 			running = snapshot;
@@ -235,7 +268,10 @@ export const deriveState = (model: Model): SpaceState.State => {
 	//
 
 	for (const event of events) {
-		running = SpaceState.updateCore({ state: running, msgSpace: event });
+		running = SpaceState.updateCore({
+			state: running,
+			msgSpace: event,
+		});
 	}
 
 	return running;
@@ -259,11 +295,11 @@ export const toSpaceId = (model: Model): SpaceId | null => {
 	const state = deriveState(model);
 
 	switch (state.type) {
-		case "ended":
-		case "started": {
+		case 'ended':
+		case 'started': {
 			return state.spaceId;
 		}
-		case "initial": {
+		case 'initial': {
 			return null;
 		}
 	}
@@ -273,7 +309,7 @@ export const toSpaceStarted = (model: Model): SpaceState.Started | null => {
 	const state = deriveState(model);
 
 	switch (state.type) {
-		case "started": {
+		case 'started': {
 			return state;
 		}
 		default: {
@@ -287,13 +323,19 @@ export const toUserIds = (model: Model): UserId[] => {
 };
 
 export const mergeLeft = (left: Model, right: Model): Model => {
-	const eventsNew: Model["events"] = [...left.events, ...right.events].sort(
-		ascend((e) => LamportTimestamp.toNumber(e.happenedAt)),
-	);
+	const eventsNew: Model['events'] = [
+		...left.events,
+		...right.events,
+	].sort(ascend((e) => LamportTimestamp.toNumber(e.happenedAt)));
 
 	const distinctEvents = eventsNew.filter(
 		(event, index, self) =>
-			index === self.findIndex((e) => e.eventId === event.eventId),
+			index ===
+			self.findIndex(
+				(e) =>
+					e.eventId ===
+					event.eventId,
+			),
 	);
 
 	const snapshots = CappedOrderedDict.mergeLeft(

@@ -1,24 +1,24 @@
-import { Result } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { UserId } from "../@/data";
+import {Result} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {UserId} from '../@/data';
 
 const Route = p.or(
 	p.obj({
-		n: p.l("profile"),
-		t: p.l("profile"),
+		n: p.l('profile'),
+		t: p.l('profile'),
 		userId: UserId,
 	}),
 	p.obj({
-		n: p.l("profile"),
-		t: p.l("profile-edit"),
+		n: p.l('profile'),
+		t: p.l('profile-edit'),
 	}),
 	p.obj({
-		n: p.l("profile"),
-		t: p.l("profile-edit-avatar"),
+		n: p.l('profile'),
+		t: p.l('profile-edit-avatar'),
 	}),
 	p.obj({
-		n: p.l("profile"),
-		t: p.l("profile-edit-username"),
+		n: p.l('profile'),
+		t: p.l('profile-edit-username'),
 	}),
 );
 

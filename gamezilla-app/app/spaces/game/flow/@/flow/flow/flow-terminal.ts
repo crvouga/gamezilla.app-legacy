@@ -1,6 +1,6 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { FlowGroupId } from "./flow-group-id";
-import { FlowNodeId } from "./flow-node-id";
+import {p} from 'gamezilla-app/@/core/parser';
+import {FlowGroupId} from './flow-group-id';
+import {FlowNodeId} from './flow-node-id';
 
 const parser = p.obj({
 	groupId: FlowGroupId,

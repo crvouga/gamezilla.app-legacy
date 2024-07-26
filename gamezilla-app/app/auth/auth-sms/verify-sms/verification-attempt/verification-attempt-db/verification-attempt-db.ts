@@ -1,10 +1,10 @@
-import type { Task } from "gamezilla-app/@/core";
-import type { VerificationId } from "../../verification/verification-id";
-import type { VerificationAttempt } from "../verification-attempt";
+import type {Task} from 'gamezilla-app/@/core';
+import type {VerificationId} from '../../verification/verification-id';
+import type {VerificationAttempt} from '../verification-attempt';
 
 export type WhereClause = {
 	verificationId?: {
-		"="?: VerificationId;
+		'='?: VerificationId;
 	};
 };
 
@@ -12,7 +12,7 @@ export type IVerificationAttemptDb = {
 	find(input: {
 		where: {
 			verificationId?: {
-				"=": VerificationId;
+				'=': VerificationId;
 			};
 		};
 	}): Task<string, VerificationAttempt[]>;

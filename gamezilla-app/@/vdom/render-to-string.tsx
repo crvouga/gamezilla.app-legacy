@@ -1,4 +1,4 @@
-import type { VDom } from "./vdom";
+import type {VDom} from './vdom';
 
 export type CreatePortal = (vDom: VDom, container: Element) => VDom;
 
@@ -7,9 +7,12 @@ export let createPortal: CreatePortal | null = null;
 export type RenderToString = (vDom: VDom) => string;
 
 export const RenderToString = async (): Promise<RenderToString> => {
-	const ReactDOMServer = await import("react-dom/server");
+	const ReactDOMServer = await import('react-dom/server');
 	return (vDom) => {
-		const html = ReactDOMServer.renderToString(vDom);
+		const html =
+			ReactDOMServer.renderToString(
+				vDom,
+			);
 		return html;
 	};
 };
@@ -17,12 +20,16 @@ export const RenderToString = async (): Promise<RenderToString> => {
 type RenderToNode = (vDom: VDom) => HTMLElement;
 
 export const RenderToNode = async (): Promise<RenderToNode> => {
-	const ReactDOM = await import("react-dom/client");
-	const React = await import("react");
+	const ReactDOM = await import('react-dom/client');
+	const React = await import('react');
 	return (vDom) => {
-		const root = document.createElement("div");
+		const root = document.createElement('div');
 		const reactRoot = ReactDOM.createRoot(root);
-		reactRoot.render(<React.StrictMode>{vDom}</React.StrictMode>);
+		reactRoot.render(
+			<React.StrictMode>
+				{vDom}
+			</React.StrictMode>,
+		);
 		return root;
 	};
 };

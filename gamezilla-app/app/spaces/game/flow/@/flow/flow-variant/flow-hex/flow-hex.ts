@@ -1,7 +1,7 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { Flow } from "../../flow";
-import * as FlowHexDimensions from "./flow-hex-dimensions";
-import { FlowNodeId } from "../../flow/flow-node-id";
+import {p} from 'gamezilla-app/@/core/parser';
+import {Flow} from '../../flow';
+import * as FlowHexDimensions from './flow-hex-dimensions';
+import {FlowNodeId} from '../../flow/flow-node-id';
 
 export const HexPosition = p.obj({
 	x: p.num,
@@ -14,7 +14,7 @@ export const Model = p.and(
 	Flow.Model,
 	FlowHexDimensions.Model,
 	p.obj({
-		t: p.l("flow-hex"),
+		t: p.l('flow-hex'),
 		FlowHex: p.l(true),
 		positions: p.dict(FlowNodeId, HexPosition),
 	}),
@@ -23,12 +23,12 @@ export type Model = p.Infer<typeof Model>;
 
 export const init = (input: {
 	dimensions: FlowHexDimensions.Model;
-	terminalsByGroupId: Flow.Model["terminalsByGroupId"];
+	terminalsByGroupId: Flow.Model['terminalsByGroupId'];
 }): Model => {
 	return {
 		...Flow.init,
 		...input.dimensions,
-		t: "flow-hex",
+		t: 'flow-hex',
 		FlowHex: true,
 		positions: {},
 	};
@@ -55,5 +55,10 @@ export const distance = (
 };
 
 const hexDistance = (a: HexPosition, b: HexPosition): number => {
-	return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2;
+	return (
+		(Math.abs(a.x - b.x) +
+			Math.abs(a.y - b.y) +
+			Math.abs(a.z - b.z)) /
+		2
+	);
 };

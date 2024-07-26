@@ -1,7 +1,7 @@
-import { Result } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import { PuzzleDb, type PuzzleRow } from "../puzzle-db/puzzle-db-impl";
+import {Result} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import type {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
+import {PuzzleDb, type PuzzleRow} from '../puzzle-db/puzzle-db-impl';
 
 //
 //
@@ -43,9 +43,9 @@ export const uploadLichessDbPuzzleCsv = async ({
 	lichessDbPuzzleCsvPath: string;
 	batchSize?: number;
 }) => {
-	if (typeof window !== "undefined") {
+	if (typeof window !== 'undefined') {
 		// Code to run in the browser environment
-		log("Running in a browser environment");
+		log('Running in a browser environment');
 		return;
 	}
 
@@ -54,15 +54,17 @@ export const uploadLichessDbPuzzleCsv = async ({
 	const file = Bun.file(lichessDbPuzzleCsvPath);
 
 	if (await file.exists()) {
-		log(`file ${lichessDbPuzzleCsvPath} does not exist`);
+		log(
+			`file ${lichessDbPuzzleCsvPath} does not exist`,
+		);
 		return;
 	}
 
-	console.error("not implemented");
+	console.error('not implemented');
 
 	let batch: PuzzleRow[] = [];
 
-	log("starting upload");
+	log('starting upload');
 	for await (const lichessRow of []) {
 		const parsed = toLichessRow(lichessRow);
 		if (!parsed) {
@@ -76,36 +78,44 @@ export const uploadLichessDbPuzzleCsv = async ({
 			continue;
 		}
 
-		log("insert started");
+		log('insert started');
 
-		const inserted = await PuzzleDb.puzzles.replace({
-			dbConn,
-			rows: batch,
-		});
+		const inserted = await PuzzleDb.puzzles.replace(
+			{
+				dbConn,
+				rows: batch,
+			},
+		);
 
 		log(`${inserted.t} - ${batch.length} rows -`);
 
 		batch = [];
 
-		if (inserted.t === "err") {
-			log(`insert error ${inserted.error}`);
+		if (inserted.t === 'err') {
+			log(
+				`insert error ${inserted.error}`,
+			);
 		}
 	}
 
 	if (batch.length > 0) {
-		const inserted = await PuzzleDb.puzzles.replace({
-			dbConn,
-			rows: batch,
-		});
+		const inserted = await PuzzleDb.puzzles.replace(
+			{
+				dbConn,
+				rows: batch,
+			},
+		);
 
-		if (inserted.t === "err") {
-			log(`insert error ${inserted.error}`);
+		if (inserted.t === 'err') {
+			log(
+				`insert error ${inserted.error}`,
+			);
 		} else {
-			log("inserted batch");
+			log('inserted batch');
 		}
 	}
 
-	log("upload done");
+	log('upload done');
 };
 
 const lichessRowToRow = (lichessRow: LichessRow): PuzzleRow => {

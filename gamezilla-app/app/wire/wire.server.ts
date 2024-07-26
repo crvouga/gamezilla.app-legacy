@@ -1,24 +1,24 @@
-import type { ClientId, SessionId } from "gamezilla-app/app/@/data";
+import type {ClientId, SessionId} from 'gamezilla-app/app/@/data';
 import type {
 	ServerCmd,
 	ServerCtx,
 	ServerEvent,
 	WireCmd,
-} from "gamezilla-app/app/@/server";
-import { Eff, isErr } from "gamezilla-app/@/core";
-import type { Sub } from "gamezilla-app/@/core/sub";
-import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
-import { AppServerModule } from "../@/architecture/app-server";
-import type { IDbConnKv } from "../@/server/db-conn-kv";
-import type { IServerTransport } from "./transport-server";
-import { type IWireSessionDb, WireSessionDb } from "./wire-session-db";
+} from 'gamezilla-app/app/@/server';
+import {Eff, isErr} from 'gamezilla-app/@/core';
+import type {Sub} from 'gamezilla-app/@/core/sub';
+import {CappedOrderedDict} from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict';
+import {AppServerModule} from '../@/architecture/app-server';
+import type {IDbConnKv} from '../@/server/db-conn-kv';
+import type {IServerTransport} from './transport-server';
+import {type IWireSessionDb, WireSessionDb} from './wire-session-db';
 import type {
 	Client,
 	ModelServer,
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./wire.types";
+} from './wire.types';
 
 //
 //
@@ -45,7 +45,7 @@ export const getDeps = async <TMsgToClient, TMsgToServer>(input: {
 	return {
 		transport: input.transport,
 		WireSessionDb: await WireSessionDb({
-			t: "db-conn-kv",
+			t: 'db-conn-kv',
 			dbConnKv: input.dbConnKv,
 		}),
 	};
@@ -104,71 +104,116 @@ export const update = async <TMsgToClient, TMsgToServer>(
 	input: Input<TMsgToClient, TMsgToServer>,
 ): Promise<Output> => {
 	return AppServerModule.andThen(
-		{ model: input.model },
-		(model) => updateFromMsg({ ...input, model }),
-		(model) => updateFromClient({ ...input, model }),
-		(model) => updateFromCmd({ ...input, model }),
-		(model) => updateFromEvent({ ...input, model }),
+		{model: input.model},
+		(model) =>
+			updateFromMsg({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromClient({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromCmd({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromEvent({
+				...input,
+				model,
+			}),
 	);
 };
 
-const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
+const updateFromMsg: typeof update = async ({msg, model, ctx, deps}) => {
 	if (!msg) {
-		return { model };
+		return {model};
 	}
 
 	switch (msg.t) {
-		case "client-connected": {
-			return AppServerModule.andThen({ model }, async (model) => {
-				const gotExisting = await deps.WireSessionDb.clients.findBySessionIds([
-					msg.sessionId,
-				]);
-
-				const maybeExisting: Client | null =
-					gotExisting.t === "ok" ? gotExisting.value[0] ?? null : null;
-
-				const existing: Client = maybeExisting ?? {
-					clientIds: CappedOrderedDict.init({ maxSize: 10 }),
-					sessionId: msg.sessionId,
-				};
-
-				const clientNew: Client = {
-					sessionId: msg.sessionId,
-					clientIds: CappedOrderedDict.add(
-						existing.clientIds,
-						msg.clientId,
-						msg.clientId,
-					),
-				};
-
-				const set = await deps.WireSessionDb.clients.set(
-					msg.sessionId,
-					clientNew,
-				);
-
-				if (isErr(set)) {
-					return { model };
-				}
-
-				const msgEvt: ServerEvent[] = [
-					{
-						t: "wire/client-connected",
-						clientId: msg.clientId,
-						sessionId: msg.sessionId,
-					},
-				];
-
-				return {
+		case 'client-connected': {
+			return AppServerModule.andThen(
+				{
 					model,
-					msgEvt,
-				};
-			});
+				},
+				async (
+					model,
+				) => {
+					const gotExisting =
+						await deps.WireSessionDb.clients.findBySessionIds(
+							[
+								msg.sessionId,
+							],
+						);
+
+					const maybeExisting: Client | null =
+						gotExisting.t ===
+						'ok'
+							? gotExisting
+									.value[0] ??
+							  null
+							: null;
+
+					const existing: Client =
+						maybeExisting ?? {
+							clientIds: CappedOrderedDict.init(
+								{
+									maxSize: 10,
+								},
+							),
+							sessionId: msg.sessionId,
+						};
+
+					const clientNew: Client =
+						{
+							sessionId: msg.sessionId,
+							clientIds: CappedOrderedDict.add(
+								existing.clientIds,
+								msg.clientId,
+								msg.clientId,
+							),
+						};
+
+					const set =
+						await deps.WireSessionDb.clients.set(
+							msg.sessionId,
+							clientNew,
+						);
+
+					if (
+						isErr(
+							set,
+						)
+					) {
+						return {
+							model,
+						};
+					}
+
+					const msgEvt: ServerEvent[] =
+						[
+							{
+								t: 'wire/client-connected',
+								clientId: msg.clientId,
+								sessionId: msg.sessionId,
+							},
+						];
+
+					return {
+						model,
+						msgEvt,
+					};
+				},
+			);
 		}
 
-		case "client-disconnected": {
+		case 'client-disconnected': {
 			const msgEvt: ServerEvent[] = [
 				{
-					t: "wire/client-disconnected",
+					t: 'wire/client-disconnected',
 					clientId: msg.clientId,
 					sessionId: msg.sessionId,
 				},
@@ -179,13 +224,13 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
 			};
 		}
 
-		case "server-started": {
+		case 'server-started': {
 			return {
 				model,
 			};
 		}
 
-		case "got-bad-msgs": {
+		case 'got-bad-msgs': {
 			ctx.logger.warn(
 				`Got bad msg from client. reason=${msg.reason}, client's clientId=${msg.clientId}, client's sessionId=${msg.sessionId}`,
 			);
@@ -196,35 +241,53 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
 	}
 };
 
-const updateFromEvent: typeof update = async ({ deps, msgEvt, model }) => {
+const updateFromEvent: typeof update = async ({deps, msgEvt, model}) => {
 	if (!msgEvt) {
-		return { model };
+		return {model};
 	}
 	switch (msgEvt.t) {
-		case "auth/client-authenticated": {
-			const foundSessionIds = await deps.WireSessionDb.sessionIds.findByUserIds(
-				[msgEvt.account.userId],
-			);
+		case 'auth/client-authenticated': {
+			const foundSessionIds =
+				await deps.WireSessionDb.sessionIds.findByUserIds(
+					[
+						msgEvt
+							.account
+							.userId,
+					],
+				);
 			const sessionIds =
-				foundSessionIds.t === "ok" ? foundSessionIds.value : [];
+				foundSessionIds.t ===
+				'ok'
+					? foundSessionIds.value
+					: [];
 
-			const sessionIdsNew = [...new Set([...sessionIds, msgEvt.sessionId])];
+			const sessionIdsNew = [
+				...new Set([
+					...sessionIds,
+					msgEvt.sessionId,
+				]),
+			];
 
 			await deps.WireSessionDb.sessionIds.set(
-				msgEvt.account.userId,
+				msgEvt.account
+					.userId,
 				sessionIdsNew,
 			);
 
-			return { model };
+			return {
+				model,
+			};
 		}
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
-const updateFromClient: typeof update = async ({ model }) => {
-	return { model };
+const updateFromClient: typeof update = async ({model}) => {
+	return {model};
 };
 
 const updateFromCmd = async <TMsgToClient, TMsgToServer>({
@@ -234,92 +297,124 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
 	ctx,
 }: Input<TMsgToClient, TMsgToServer>): Promise<Output> => {
 	if (!msgCmd) {
-		return { model };
+		return {model};
 	}
 
 	const msgCmdChild = msgCmd.c;
 
 	switch (msgCmdChild.t) {
-		case "broadcast": {
+		case 'broadcast': {
 			return {
 				model,
 				eff: () => {
-					deps.transport.toClientBroadcast.pub([msgCmdChild.msg]);
+					deps.transport.toClientBroadcast.pub(
+						[
+							msgCmdChild.msg,
+						],
+					);
 				},
 			};
 		}
 
-		case "send-to-client": {
+		case 'send-to-client': {
 			return {
 				model,
 				eff: () => {
 					const toClientPayload: {
-						[clientId: ClientId]: {
+						[
+							clientId: ClientId
+						]: {
 							clientId: ClientId;
 							msgs: TMsgToClient[];
 						};
-					} = {};
+					} =
+						{};
 
-					if (msgCmdChild.clientIds.length === 0) {
-						ctx.logger.warn(`${msgCmdChild.t} failed. No client ids provided`);
+					if (
+						msgCmdChild
+							.clientIds
+							.length ===
+						0
+					) {
+						ctx.logger.warn(
+							`${msgCmdChild.t} failed. No client ids provided`,
+						);
 						return;
 					}
 
 					for (const clientId of msgCmdChild.clientIds) {
-						toClientPayload[clientId] = {
-							clientId,
-							msgs: [msgCmdChild.msg],
-						};
+						toClientPayload[
+							clientId
+						] =
+							{
+								clientId,
+								msgs: [
+									msgCmdChild.msg,
+								],
+							};
 					}
 
-					deps.transport.toClient.pub(toClientPayload);
+					deps.transport.toClient.pub(
+						toClientPayload,
+					);
 				},
 			};
 		}
 
-		case "send-to-user": {
-			const gotSessionIds = await deps.WireSessionDb.sessionIds.findByUserIds(
-				msgCmdChild.userIds,
-			);
+		case 'send-to-user': {
+			const gotSessionIds =
+				await deps.WireSessionDb.sessionIds.findByUserIds(
+					msgCmdChild.userIds,
+				);
 
-			const sessionIds = gotSessionIds.t === "ok" ? gotSessionIds.value : [];
+			const sessionIds =
+				gotSessionIds.t ===
+				'ok'
+					? gotSessionIds.value
+					: [];
 
 			return {
 				model,
 				eff: () => {
-					sendToSession({
-						ctx,
-						sessionIds,
-						msg: msgCmdChild.msg,
-						deps,
-					});
+					sendToSession(
+						{
+							ctx,
+							sessionIds,
+							msg: msgCmdChild.msg,
+							deps,
+						},
+					);
 				},
 			};
 		}
 
-		case "send-to-session": {
+		case 'send-to-session': {
 			return {
 				model,
 				eff: () => {
-					sendToSession({
-						ctx,
-						sessionIds: msgCmdChild.sessionIds,
-						msg: msgCmdChild.msg,
-						deps,
-					});
+					sendToSession(
+						{
+							ctx,
+							sessionIds: msgCmdChild.sessionIds,
+							msg: msgCmdChild.msg,
+							deps,
+						},
+					);
 				},
 			};
 		}
 
-		case "topic-publish": {
+		case 'topic-publish': {
 			return {
 				model,
 				eff: () => {},
 			};
 		}
 
-		case "topic-subscribe": {
-			return { model };
+		case 'topic-subscribe': {
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -343,17 +438,24 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
 	} = {};
 
 	if (sessionIds.length === 0) {
-		ctx.logger.warn("send to session failed. no sessionIds provided");
+		ctx.logger.warn(
+			'send to session failed. no sessionIds provided',
+		);
 		return;
 	}
 
 	const gotClients =
-		await deps.WireSessionDb.clients.findBySessionIds(sessionIds);
+		await deps.WireSessionDb.clients.findBySessionIds(
+			sessionIds,
+		);
 
-	const clients = gotClients.t === "ok" ? gotClients.value : [];
+	const clients = gotClients.t === 'ok' ? gotClients.value : [];
 
 	for (const client of clients) {
-		const clientIds = CappedOrderedDict.valuesNewestFirst(client.clientIds);
+		const clientIds =
+			CappedOrderedDict.valuesNewestFirst(
+				client.clientIds,
+			);
 
 		if (clientIds.length === 0) {
 			ctx.logger.warn(
@@ -365,7 +467,14 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
 		for (const clientId of clientIds) {
 			toClientPayload[clientId] = {
 				clientId,
-				msgs: [...(toClientPayload[clientId]?.msgs ?? []), msg],
+				msgs: [
+					...(toClientPayload[
+						clientId
+					]
+						?.msgs ??
+						[]),
+					msg,
+				],
 			};
 		}
 	}

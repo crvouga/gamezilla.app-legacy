@@ -1,6 +1,6 @@
-import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
-import type { Task } from "gamezilla-app/@/core";
-import type * as SpaceCore from "../space-core";
+import type {SpaceId, UserId} from 'gamezilla-app/app/@/data';
+import type {Task} from 'gamezilla-app/@/core';
+import type * as SpaceCore from '../space-core';
 
 export type SpaceCoreDbWhere = {
 	spaceId?: SpaceId;
@@ -14,9 +14,13 @@ export type ISpaceCoreDb = {
 		where?: SpaceCoreDbWhere;
 	}) => Task<string, SpaceCore.Model[]>;
 
-	get: (spaceId: SpaceId | null) => Task<string, SpaceCore.Model | null>;
+	get: (
+		spaceId: SpaceId | null,
+	) => Task<string, SpaceCore.Model | null>;
 
-	getByUserId: (userId: UserId) => Task<string, SpaceCore.Model | null>;
+	getByUserId: (
+		userId: UserId,
+	) => Task<string, SpaceCore.Model | null>;
 
 	upsert: (space: SpaceCore.Model) => Task<string, null>;
 };

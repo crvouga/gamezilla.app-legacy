@@ -1,4 +1,4 @@
-import type { IO } from "./io";
+import type {IO} from './io';
 
 export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void;
 
@@ -28,9 +28,15 @@ const chain =
 	(eff: Eff<A>): Eff<B> => {
 		return (dispatch) => {
 			eff((a) => {
-				mapper(a)((b) => {
-					dispatch(b);
-				});
+				mapper(a)(
+					(
+						b,
+					) => {
+						dispatch(
+							b,
+						);
+					},
+				);
 			});
 		};
 	};
@@ -38,27 +44,38 @@ const chain =
 const tag = <Tag extends string, Msg>(
 	tagName: Tag,
 	eff: Eff<Msg> | undefined | null,
-): Eff<{ t: Tag; c: Msg }> => {
+): Eff<{t: Tag; c: Msg}> => {
 	if (!eff) {
 		return None;
 	}
-	return map(eff, (msg) => ({ t: tagName, c: msg }));
+	return map(eff, (msg) => ({t: tagName, c: msg}));
 };
 
 const batch = <Msg>(
-	...effLists: ((Eff<Msg> | undefined | null)[] | Eff<Msg> | null | undefined)[]
+	...effLists: (
+		| (Eff<Msg> | undefined | null)[]
+		| Eff<Msg>
+		| null
+		| undefined
+	)[]
 ): Eff<Msg> => {
 	return (dispatch) => {
 		for (const effList of effLists) {
 			if (Array.isArray(effList)) {
 				for (const eff of effList) {
-					if (eff) {
-						eff(dispatch);
+					if (
+						eff
+					) {
+						eff(
+							dispatch,
+						);
 					}
 				}
 			} else {
 				if (effList) {
-					effList(dispatch);
+					effList(
+						dispatch,
+					);
 				}
 			}
 		}

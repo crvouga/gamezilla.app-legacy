@@ -1,16 +1,16 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { UserId } from "gamezilla-app/app/@/data";
+import {p} from 'gamezilla-app/@/core/parser';
+import {UserId} from 'gamezilla-app/app/@/data';
 
 export const MsgCore = p.or(
 	p.obj({
-		t: p.l("user-created-pack"),
+		t: p.l('user-created-pack'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-exited-pack-builder"),
+		t: p.l('user-exited-pack-builder'),
 	}),
 	p.obj({
-		t: p.l("user-exited-puzzle-builder"),
+		t: p.l('user-exited-puzzle-builder'),
 	}),
 );
 

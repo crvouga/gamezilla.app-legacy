@@ -1,8 +1,8 @@
-import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
-import { sendToServer, showErrSm } from "gamezilla-app/app/@/client";
-import { IconPuzzlePiece, Spinner, cn } from "gamezilla-app/app/@/ui";
-import { EmptyState } from "gamezilla-app/app/@/ui/empty-state";
-import { IntersectionObserverEmitter } from "gamezilla-app/app/@/ui/intersection-observer";
+import {AppClientModule} from 'gamezilla-app/app/@/architecture/app-client';
+import {sendToServer, showErrSm} from 'gamezilla-app/app/@/client';
+import {IconPuzzlePiece, Spinner, cn} from 'gamezilla-app/app/@/ui';
+import {EmptyState} from 'gamezilla-app/app/@/ui/empty-state';
+import {IntersectionObserverEmitter} from 'gamezilla-app/app/@/ui/intersection-observer';
 import {
 	Posix,
 	RequestResponse,
@@ -10,54 +10,70 @@ import {
 	TimeSpan,
 	descend,
 	isErr,
-} from "gamezilla-app/@/core";
-import type { FlowPuzzle } from "../flow-puzzle";
-import type { ClientModule } from "./flow-puzzle-list.core";
-import { FlowVariantUI } from "../../flow/flow-variant";
+} from 'gamezilla-app/@/core';
+import type {FlowPuzzle} from '../flow-puzzle';
+import type {ClientModule} from './flow-puzzle-list.core';
+import {FlowVariantUI} from '../../flow/flow-variant';
 
-const update: ClientModule["update"] = (input) => {
+const update: ClientModule['update'] = (input) => {
 	return AppClientModule.andThen(
-		{ model: input.model },
+		{model: input.model},
 		//
-		(model) => updatePuzzleList({ ...input, model }),
+		(model) =>
+			updatePuzzleList({
+				...input,
+				model,
+			}),
 		//
 	);
 };
 
-const updatePuzzleList: ClientModule["update"] = (input) => {
-	const { model, msg, msgServer, ctx } = input;
+const updatePuzzleList: ClientModule['update'] = (input) => {
+	const {model, msg, msgServer, ctx} = input;
 
 	switch (msg?.t) {
-		case "flow-puzzle-list.user-observed-end-of-list": {
+		case 'flow-puzzle-list.user-observed-end-of-list': {
 			return {
 				model: {
 					...model,
-					request: RequestResponse.startedRequest(input.ctx.now),
+					request: RequestResponse.startedRequest(
+						input
+							.ctx
+							.now,
+					),
 				},
 				msgCmd: [
-					sendToServer({
-						t: "flow-puzzle-list.list-puzzles",
-						input: {
-							order: {
-								lastUpdatedAt: "desc",
-							},
-							pagination: {
-								limit: 25,
-								offset: 0,
-							},
-							where: {
-								createdBy: {
-									equals: ctx.space.hostId,
+					sendToServer(
+						{
+							t: 'flow-puzzle-list.list-puzzles',
+							input: {
+								order: {
+									lastUpdatedAt: 'desc',
+								},
+								pagination: {
+									limit: 25,
+									offset: 0,
+								},
+								where: {
+									createdBy: {
+										equals: ctx
+											.space
+											.hostId,
+									},
 								},
 							},
 						},
-					}),
+					),
 				],
 			};
 		}
 
-		case "flow-puzzle-list.time-passed": {
-			const requestNew = RequestResponse.timePassed(model.request, ctx.now);
+		case 'flow-puzzle-list.time-passed': {
+			const requestNew =
+				RequestResponse.timePassed(
+					model.request,
+					ctx.now,
+				);
 			return {
 				model: {
 					...model,
@@ -68,13 +84,24 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 	}
 
 	switch (msgServer?.t) {
-		case "flow-puzzle-list.listed-puzzle": {
+		case 'flow-puzzle-list.listed-puzzle': {
 			const puzzles =
-				msgServer.listed.t === "ok" ? msgServer.listed.value.items : [];
+				msgServer.listed
+					.t ===
+				'ok'
+					? msgServer
+							.listed
+							.value
+							.items
+					: [];
 
-			const puzzlesNew = { ...model.puzzles };
+			const puzzlesNew = {
+				...model.puzzles,
+			};
 			for (const puzzle of puzzles) {
-				puzzlesNew[puzzle.id] = puzzle;
+				puzzlesNew[
+					puzzle.id
+				] = puzzle;
 			}
 
 			return {
@@ -83,12 +110,22 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 					request: RequestResponse.response(
 						model.request,
 						ctx.now,
-						Result.mapOk(msgServer.listed, () => null),
+						Result.mapOk(
+							msgServer.listed,
+							() =>
+								null,
+						),
 					),
 					puzzles: puzzlesNew,
 				},
-				msgCmd: isErr(msgServer.listed)
-					? showErrSm(input.ctx.t("app.something-went-wrong"))
+				msgCmd: isErr(
+					msgServer.listed,
+				)
+					? showErrSm(
+							input.ctx.t(
+								'app.something-went-wrong',
+							),
+					  )
 					: [],
 			};
 		}
@@ -97,42 +134,76 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 		}
 	}
 
-	return { model };
+	return {model};
 };
 
-const View: ClientModule["View"] = (input) => {
-	const { model, dispatch, ctx } = input;
+const View: ClientModule['View'] = (input) => {
+	const {model, dispatch, ctx} = input;
 
 	const puzzles = Object.values(model.puzzles);
 	const shouldShowLoadingState =
-		model.request.t === "not-asked" || model.request.t === "loading";
-	const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0;
+		model.request.t === 'not-asked' ||
+		model.request.t === 'loading';
+	const shouldShowEmptyState =
+		!shouldShowLoadingState && puzzles.length === 0;
 
 	return (
 		<div className="relative flex h-full w-full flex-col gap-2 overflow-hidden">
 			<div className="border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll border-t border-neutral-700">
 				{shouldShowEmptyState && (
 					<EmptyState
-						label={ctx.t("flow.no-puzzles")}
-						renderIcon={(input) => <IconPuzzlePiece {...input} />}
+						label={ctx.t(
+							'flow.no-puzzles',
+						)}
+						renderIcon={(
+							input,
+						) => (
+							<IconPuzzlePiece
+								{...input}
+							/>
+						)}
 					/>
 				)}
 
 				{puzzles
-					.sort(descend((puzzle) => Posix.toNumber(puzzle.lastUpdatedAt)))
-					.map((puzzle) => (
-						<FlowPuzzleListItem
-							now={ctx.now}
-							key={puzzle.id}
-							puzzle={puzzle}
-							onClick={() => input.emits?.clickedPuzzleItem(puzzle)}
-						/>
-					))}
+					.sort(
+						descend(
+							(
+								puzzle,
+							) =>
+								Posix.toNumber(
+									puzzle.lastUpdatedAt,
+								),
+						),
+					)
+					.map(
+						(
+							puzzle,
+						) => (
+							<FlowPuzzleListItem
+								now={
+									ctx.now
+								}
+								key={
+									puzzle.id
+								}
+								puzzle={
+									puzzle
+								}
+								onClick={() =>
+									input.emits?.clickedPuzzleItem(
+										puzzle,
+									)
+								}
+							/>
+						),
+					)}
 
 				<div
 					className={cn(
-						"flex h-32 w-full items-center justify-center py-6",
-						!shouldShowLoadingState && "opacity-0",
+						'flex h-32 w-full items-center justify-center py-6',
+						!shouldShowLoadingState &&
+							'opacity-0',
 					)}
 				>
 					<Spinner />
@@ -141,13 +212,19 @@ const View: ClientModule["View"] = (input) => {
 				<IntersectionObserverEmitter
 					id="puzzle-builder-list"
 					onVisible={() =>
-						dispatch({ t: "flow-puzzle-list.user-observed-end-of-list" })
+						dispatch(
+							{
+								t: 'flow-puzzle-list.user-observed-end-of-list',
+							},
+						)
 					}
 				/>
 			</div>
 
 			<div className="absolute bottom-6 right-4 bg-black">
-				{input.slots?.fab(null)}
+				{input.slots?.fab(
+					null,
+				)}
 			</div>
 		</div>
 	);
@@ -170,14 +247,26 @@ const FlowPuzzleListItem = ({
 			onClick={onClick}
 		>
 			<div className="flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden border-r border-neutral-700">
-				<FlowVariantUI.View disabled model={puzzle.flow} />
+				<FlowVariantUI.View
+					disabled
+					model={
+						puzzle.flow
+					}
+				/>
 			</div>
 			<div className="overflow-hidden">
 				<p className="flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold">
-					{puzzle.name}
+					{
+						puzzle.name
+					}
 				</p>
 				<p className="text-xs text-neutral-300">
-					{TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}
+					{TimeSpan.humanFriendlyString(
+						Posix.diff(
+							puzzle.createdAt,
+							now,
+						),
+					)}
 				</p>
 			</div>
 		</button>

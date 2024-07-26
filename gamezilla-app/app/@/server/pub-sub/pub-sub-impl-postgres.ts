@@ -1,7 +1,7 @@
-import type { PubSub as IPubSub } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import type { IDbConnSql } from "../db-conn-sql";
-import type { ILogger } from "../logger/logger";
+import type {PubSub as IPubSub} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import type {IDbConnSql} from '../db-conn-sql';
+import type {ILogger} from '../logger/logger';
 
 export type Deps<T> = {
 	dbConnSql: IDbConnSql;
@@ -23,7 +23,7 @@ export const PubSub = <T>({
 	const subscribers = new Map<number, (msg: T) => void>();
 
 	const instanceId = Math.random().toString(36).substring(2);
-	const SEPERATOR = "___";
+	const SEPERATOR = '___';
 
 	dbConnSql.query(p.unknown, `LISTEN ${channel}`, {});
 
@@ -36,7 +36,10 @@ export const PubSub = <T>({
 			return;
 		}
 
-		const [payloadInstanceId, payload] = notification.payload.split(SEPERATOR);
+		const [payloadInstanceId, payload] =
+			notification.payload.split(
+				SEPERATOR,
+			);
 
 		if (payloadInstanceId === instanceId) {
 			return;
@@ -62,7 +65,9 @@ export const PubSub = <T>({
 
 	return {
 		once(_subscriber) {
-			throw new Error("Method not implemented.");
+			throw new Error(
+				'Method not implemented.',
+			);
 		},
 		pub(msg) {
 			const payload = encode(msg);
@@ -78,12 +83,19 @@ export const PubSub = <T>({
 		},
 
 		sub(subscriber) {
-			const subscriberId = runningSubscriberId + 1;
+			const subscriberId =
+				runningSubscriberId +
+				1;
 
-			subscribers.set(subscriberId, subscriber);
+			subscribers.set(
+				subscriberId,
+				subscriber,
+			);
 
 			return () => {
-				subscribers.delete(subscriberId);
+				subscribers.delete(
+					subscriberId,
+				);
 			};
 		},
 	};

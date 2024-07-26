@@ -1,5 +1,5 @@
-import { Sub } from "gamezilla-app/@/core";
-import type { GameServer } from "gamezilla-app/app/spaces/@/architecture/game-server";
+import {Sub} from 'gamezilla-app/@/core';
+import type {GameServer} from 'gamezilla-app/app/spaces/@/architecture/game-server';
 import type {
 	ModelServer,
 	ModelCore,
@@ -7,7 +7,7 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./chess.types";
+} from './chess.types';
 
 //
 //
@@ -34,12 +34,12 @@ type Server = GameServer<{
 //
 //
 
-export const init: Server["init"] = async (input) => {
+export const init: Server['init'] = async (input) => {
 	if (input.model) {
-		return { model: input.model };
+		return {model: input.model};
 	}
 	return {
-		model: { t: "none" },
+		model: {t: 'none'},
 	};
 };
 
@@ -51,10 +51,10 @@ export const init: Server["init"] = async (input) => {
 //
 //
 
-export const update: Server["update"] = async (_input) => {
+export const update: Server['update'] = async (_input) => {
 	return {
 		model: {
-			t: "none",
+			t: 'none',
 		},
 	};
 };
@@ -67,6 +67,6 @@ export const update: Server["update"] = async (_input) => {
 //
 //
 
-export const subscriptions: Server["subscriptions"] = async (_input) => {
+export const subscriptions: Server['subscriptions'] = async (_input) => {
 	return Sub.None;
 };

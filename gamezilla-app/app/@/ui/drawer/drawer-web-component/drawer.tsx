@@ -1,21 +1,31 @@
-import { Portal } from "../../portal";
-import { cn } from "../../ui";
-import type { Drawerinput } from "../drawer-shared";
-import "./drawer-element";
-import { drawerSub } from "./drawer-shared";
+import {Portal} from '../../portal';
+import {cn} from '../../ui';
+import type {Drawerinput} from '../drawer-shared';
+import './drawer-element';
+import {drawerSub} from './drawer-shared';
 
 export const DrawerWebComponent = (input: Drawerinput) => {
-	drawerSub.pub({ type: "input", ...input });
+	drawerSub.pub({type: 'input', ...input});
 	return (
 		<Portal.Entrance portalId="modals">
-			<drawer-element id={input.id} position={input.position}>
+			<drawer-element
+				id={input.id}
+				position={
+					input.position
+				}
+			>
 				<div
 					className={cn(
-						"h-fit max-h-full w-full overflow-hidden border border-neutral-700 bg-black",
-						input.position === "bottom" ? "rounded-t-2xl" : "rounded-b-2xl",
+						'h-fit max-h-full w-full overflow-hidden border border-neutral-700 bg-black',
+						input.position ===
+							'bottom'
+							? 'rounded-t-2xl'
+							: 'rounded-b-2xl',
 					)}
 				>
-					{input.children}
+					{
+						input.children
+					}
 				</div>
 			</drawer-element>
 		</Portal.Entrance>

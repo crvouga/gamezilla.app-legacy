@@ -1,28 +1,28 @@
-import type { PhoneNumber, Task } from "gamezilla-app/@/core";
-import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
-import type { Translator } from "gamezilla-app/@/l18n/generated";
+import type {PhoneNumber, Task} from 'gamezilla-app/@/core';
+import type {LanguageCodeISO_639_1} from 'gamezilla-app/@/l18n';
+import type {Translator} from 'gamezilla-app/@/l18n/generated';
 
 export type VerifyCodeProblem =
 	| {
-			t: "code-incorrect";
+			t: 'code-incorrect';
 	  }
 	| {
-			t: "verification-expired";
+			t: 'verification-expired';
 	  }
 	| {
-			t: "verification-expired-too-many-failed-attempts";
+			t: 'verification-expired-too-many-failed-attempts';
 	  }
 	| {
-			t: "verification-expired-not-latest-verification";
+			t: 'verification-expired-not-latest-verification';
 	  }
 	| {
-			t: "verification-not-found";
+			t: 'verification-not-found';
 	  }
 	| {
-			t: "verification-already-verified";
+			t: 'verification-already-verified';
 	  }
 	| {
-			t: "database-error";
+			t: 'database-error';
 			error: string;
 	  };
 
@@ -34,40 +34,50 @@ export const verifyCodeProblemToString = ({
 	t: Translator;
 }): string => {
 	switch (problem.t) {
-		case "code-incorrect":
-			return t("verify-sms-problem.code-incorrect");
-		case "verification-expired":
-			return t("verify-sms-problem.verification-expired");
-		case "verification-not-found":
-			return t("verify-sms-problem.verification-not-found");
-		case "verification-already-verified":
-			return t("verify-sms-problem.verification-already-verified");
-		case "database-error":
-			return t("verify-sms-problem.database-error");
-		case "verification-expired-too-many-failed-attempts":
+		case 'code-incorrect':
 			return t(
-				"verify-sms-problem.verification-expired-too-many-failed-attempts",
+				'verify-sms-problem.code-incorrect',
 			);
-		case "verification-expired-not-latest-verification":
+		case 'verification-expired':
 			return t(
-				"verify-sms-problem.verification-expired-not-latest-verification",
+				'verify-sms-problem.verification-expired',
+			);
+		case 'verification-not-found':
+			return t(
+				'verify-sms-problem.verification-not-found',
+			);
+		case 'verification-already-verified':
+			return t(
+				'verify-sms-problem.verification-already-verified',
+			);
+		case 'database-error':
+			return t(
+				'verify-sms-problem.database-error',
+			);
+		case 'verification-expired-too-many-failed-attempts':
+			return t(
+				'verify-sms-problem.verification-expired-too-many-failed-attempts',
+			);
+		case 'verification-expired-not-latest-verification':
+			return t(
+				'verify-sms-problem.verification-expired-not-latest-verification',
 			);
 	}
 };
 
 export type SendCodeProblem =
 	| {
-			t: "database-error";
+			t: 'database-error';
 			error: string;
 	  }
 	| {
-			t: "hourly-limit-reached";
+			t: 'hourly-limit-reached';
 	  }
 	| {
-			t: "daily-limit-reached";
+			t: 'daily-limit-reached';
 	  }
 	| {
-			t: "limit-reached";
+			t: 'limit-reached';
 	  };
 
 export const sendCodeProblemToString = ({
@@ -78,14 +88,22 @@ export const sendCodeProblemToString = ({
 	t: Translator;
 }): string => {
 	switch (problem.t) {
-		case "database-error":
-			return t("verify-sms-problem.database-error");
-		case "hourly-limit-reached":
-			return t("verify-sms-problem.send-code-hourly-limit-reached");
-		case "daily-limit-reached":
-			return t("verify-sms-problem.send-code-daily-limit-reached");
-		case "limit-reached":
-			return t("verify-sms-problem.send-code-limit-reached");
+		case 'database-error':
+			return t(
+				'verify-sms-problem.database-error',
+			);
+		case 'hourly-limit-reached':
+			return t(
+				'verify-sms-problem.send-code-hourly-limit-reached',
+			);
+		case 'daily-limit-reached':
+			return t(
+				'verify-sms-problem.send-code-daily-limit-reached',
+			);
+		case 'limit-reached':
+			return t(
+				'verify-sms-problem.send-code-limit-reached',
+			);
 	}
 };
 
@@ -100,6 +118,6 @@ export type IVerifySMS = {
 	}) => Task<VerifyCodeProblem, null>;
 };
 
-export type SendCodeOutput = Awaited<ReturnType<IVerifySMS["sendCode"]>>;
+export type SendCodeOutput = Awaited<ReturnType<IVerifySMS['sendCode']>>;
 
-export type VerifyCodeOutput = Awaited<ReturnType<IVerifySMS["verifyCode"]>>;
+export type VerifyCodeOutput = Awaited<ReturnType<IVerifySMS['verifyCode']>>;

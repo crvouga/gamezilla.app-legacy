@@ -1,5 +1,5 @@
-import { editDistance } from "./edit-distance";
-import { ascend } from "./sorting";
+import {editDistance} from './edit-distance';
+import {ascend} from './sorting';
 
 export const matchSort = <T>(
 	items: T[],
@@ -8,7 +8,10 @@ export const matchSort = <T>(
 ): T[] => {
 	return items
 		.flatMap((item) => {
-			const distance = editDistance(toValue(item), value);
+			const distance = editDistance(
+				toValue(item),
+				value,
+			);
 
 			if (distance > 5) {
 				return [];
@@ -18,7 +21,12 @@ export const matchSort = <T>(
 		})
 		.sort(
 			ascend((item) => {
-				return editDistance(toValue(item), value);
+				return editDistance(
+					toValue(
+						item,
+					),
+					value,
+				);
 			}),
 		);
 };

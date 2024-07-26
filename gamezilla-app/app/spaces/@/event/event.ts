@@ -1,6 +1,6 @@
-import { LamportTimestamp } from "gamezilla-app/@/lamport-clock/lamport-timestamp";
-import { EventId } from "./event-id";
-import { p } from "gamezilla-app/@/core/parser";
+import {LamportTimestamp} from 'gamezilla-app/@/lamport-clock/lamport-timestamp';
+import {EventId} from './event-id';
+import {p} from 'gamezilla-app/@/core/parser';
 
 export const EventMeta = p.obj({
 	happenedAt: LamportTimestamp,

@@ -1,6 +1,6 @@
-import { p } from "../core/parser";
-import { HashValue } from "./hash-value";
-import { HashingAlgo } from "./hashing-algo";
+import {p} from '../core/parser';
+import {HashValue} from './hash-value';
+import {HashingAlgo} from './hashing-algo';
 
 export const Hash = p.obj({
 	value: HashValue,

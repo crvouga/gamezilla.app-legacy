@@ -1,5 +1,5 @@
-import { IS_PROD } from "public-config";
-import type { SessionId } from "../@/data";
+import {IS_PROD} from 'public-config';
+import type {SessionId} from '../@/data';
 
 export type MsgServerToMsgClient<MsgToClient> = {
 	m: MsgToClient[];
@@ -11,8 +11,8 @@ export type MsgClientToMsgServer<MsgToServer> = {
 	v: string;
 };
 
-export const ORIGINS = IS_PROD ? "https://gamezilla.app" : true;
-export const SESSION_ID_COOKIE_NAME = "gamezilla-app-session-id";
+export const ORIGINS = IS_PROD ? 'https://gamezilla.app' : true;
+export const SESSION_ID_COOKIE_NAME = 'gamezilla-app-session-id';
 const MAX_AGE = 31536000;
 export const toSetSessionCookie = (sessionId: SessionId) => {
 	const baseCookie = `${SESSION_ID_COOKIE_NAME}=${sessionId}; Max-Age=${MAX_AGE}; SameSite=Lax;`;

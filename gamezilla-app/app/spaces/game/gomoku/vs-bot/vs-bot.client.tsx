@@ -1,5 +1,5 @@
-import type { ClientCtx } from "gamezilla-app/app/@/client";
-import { Eff, Sub, isErr } from "gamezilla-app/@/core";
+import type {ClientCtx} from 'gamezilla-app/app/@/client';
+import {Eff, Sub, isErr} from 'gamezilla-app/@/core';
 import {
 	type ModelClient,
 	type MsgClient,
@@ -7,7 +7,7 @@ import {
 	type MsgToClient,
 	handle,
 	initShared,
-} from "./vs-bot.types";
+} from './vs-bot.types';
 
 //
 //
@@ -45,7 +45,11 @@ export const update = ({
 } => {
 	switch (msg.t) {
 		default: {
-			const result = handle({ ctx, msg, model });
+			const result = handle({
+				ctx,
+				msg,
+				model,
+			});
 
 			if (isErr(result)) {
 				return {
@@ -80,8 +84,8 @@ export const updateFromServer = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.result.t === "err") {
-		return { model };
+	if (msg.result.t === 'err') {
+		return {model};
 	}
 
 	const merged = mergeWithServer({
@@ -90,7 +94,7 @@ export const updateFromServer = ({
 		serverModel: msg.result.value,
 	});
 
-	return { model: merged };
+	return {model: merged};
 };
 
 export const mergeWithServer = ({
@@ -101,7 +105,7 @@ export const mergeWithServer = ({
 	clientModel: ModelClient;
 	serverModel: ModelServer;
 }): ModelClient => {
-	return { ...clientModel, ...serverModel };
+	return {...clientModel, ...serverModel};
 };
 
 //
@@ -114,11 +118,11 @@ export const mergeWithServer = ({
 
 export const subscriptions = (_ctx: ClientCtx, model: Model): Sub<Msg> => {
 	switch (model.type) {
-		case "game": {
+		case 'game': {
 			return Sub.None;
 		}
 
-		case "setup": {
+		case 'setup': {
 			return Sub.None;
 		}
 	}

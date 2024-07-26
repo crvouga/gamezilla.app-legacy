@@ -1,18 +1,23 @@
-import { UserId } from "gamezilla-app/app/@/data";
-import { Posix } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id";
-import { FlowPackId } from "./flow-pack-id";
-import { FlowPackName } from "./flow-pack-name";
+import {UserId} from 'gamezilla-app/app/@/data';
+import {Posix} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {FlowPuzzleId} from '../flow-puzzle/flow-puzzle-id';
+import {FlowPackId} from './flow-pack-id';
+import {FlowPackName} from './flow-pack-name';
 
 const parser = p.obj({
-	id: p.custom(FlowPackId.is, "Invalid flow pack id"),
-	createdBy: p.custom(UserId.is, "Invalid user id"),
-	createdAt: p.custom(Posix.is, "Invalid posix"),
-	lastUpdatedBy: p.custom(UserId.is, "Invalid user id"),
-	lastUpdatedAt: p.custom(Posix.is, "Invalid posix"),
-	name: p.custom(FlowPackName.is, "Invalid flow pack name"),
-	puzzleIds: p.arr(p.custom(FlowPuzzleId.is, "Invalid flow puzzle id")),
+	id: p.custom(FlowPackId.is, 'Invalid flow pack id'),
+	createdBy: p.custom(UserId.is, 'Invalid user id'),
+	createdAt: p.custom(Posix.is, 'Invalid posix'),
+	lastUpdatedBy: p.custom(UserId.is, 'Invalid user id'),
+	lastUpdatedAt: p.custom(Posix.is, 'Invalid posix'),
+	name: p.custom(FlowPackName.is, 'Invalid flow pack name'),
+	puzzleIds: p.arr(
+		p.custom(
+			FlowPuzzleId.is,
+			'Invalid flow puzzle id',
+		),
+	),
 });
 
 export type FlowPack = p.Infer<typeof parser>;
@@ -50,7 +55,9 @@ const add = (pack: FlowPack, puzzleId: FlowPuzzleId): FlowPack => {
 const remove = (pack: FlowPack, index: number): FlowPack => {
 	return {
 		...pack,
-		puzzleIds: pack.puzzleIds.filter((_, i) => i !== index),
+		puzzleIds: pack.puzzleIds.filter(
+			(_, i) => i !== index,
+		),
 	};
 };
 
@@ -58,8 +65,13 @@ const removePuzzleAtIndex = (pack: FlowPack, index: number): FlowPack => {
 	return {
 		...pack,
 		puzzleIds: [
-			...pack.puzzleIds.slice(0, index),
-			...pack.puzzleIds.slice(index + 1),
+			...pack.puzzleIds.slice(
+				0,
+				index,
+			),
+			...pack.puzzleIds.slice(
+				index + 1,
+			),
 		],
 	};
 };

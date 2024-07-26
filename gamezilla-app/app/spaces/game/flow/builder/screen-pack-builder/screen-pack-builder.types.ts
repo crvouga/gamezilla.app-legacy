@@ -1,11 +1,11 @@
-import { Result } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { UserId } from "gamezilla-app/app/@/data";
-import { FlowPack } from "../../@/flow-pack/flow-pack";
-import { FlowPackPuzzlesGridTypes } from "../../@/flow-pack/flow-pack-puzzles-grid";
-import { FlowPuzzle } from "../../@/flow-puzzle/flow-puzzle";
-import { EditPackNameTypes } from "./edit-pack-name";
-import { FlowPlay } from "../../@/flow/flow-play";
+import {Result} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {UserId} from 'gamezilla-app/app/@/data';
+import {FlowPack} from '../../@/flow-pack/flow-pack';
+import {FlowPackPuzzlesGridTypes} from '../../@/flow-pack/flow-pack-puzzles-grid';
+import {FlowPuzzle} from '../../@/flow-puzzle/flow-puzzle';
+import {EditPackNameTypes} from './edit-pack-name';
+import {FlowPlay} from '../../@/flow/flow-play';
 
 //
 //
@@ -37,22 +37,22 @@ export const initServer: ModelServer = null;
 export type MsgClient =
 	| MsgCore
 	| {
-			t: "pack-builder.flow-pack-grid";
+			t: 'pack-builder.flow-pack-grid';
 			c: FlowPackPuzzlesGridTypes.MsgClient;
 	  };
 
 export type MsgServer = {
-	t: "pack-builder.flow-pack-grid";
+	t: 'pack-builder.flow-pack-grid';
 	c: FlowPackPuzzlesGridTypes.MsgServer;
 };
 
 export type MsgToServer = {
-	t: "pack-builder.flow-pack-grid";
+	t: 'pack-builder.flow-pack-grid';
 	c: FlowPackPuzzlesGridTypes.MsgToServer;
 };
 
 export type MsgToClient = {
-	t: "pack-builder.flow-pack-grid";
+	t: 'pack-builder.flow-pack-grid';
 	c: FlowPackPuzzlesGridTypes.MsgToClient;
 };
 
@@ -64,17 +64,17 @@ export type MsgToClient = {
 
 export const Screen = p.or(
 	p.obj({
-		t: p.l("screen-add-puzzle"),
+		t: p.l('screen-add-puzzle'),
 	}),
 	p.obj({
-		t: p.l("screen-puzzle-grid"),
+		t: p.l('screen-puzzle-grid'),
 	}),
 	p.obj({
-		t: p.l("screen-puzzle"),
+		t: p.l('screen-puzzle'),
 		puzzleIndex: p.num,
 		puzzle: FlowPuzzle,
 		playUI: FlowPlay.Model,
-		opened: p.maybe(p.l("more")),
+		opened: p.maybe(p.l('more')),
 	}),
 );
 
@@ -96,67 +96,85 @@ export type ModelCore = {
 
 export const MsgCore = p.or(
 	p.obj({
-		t: p.l("got-edit-pack-name"),
+		t: p.l('got-edit-pack-name'),
 		c: EditPackNameTypes.MsgCore,
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-clicked-exit-button"),
+		t: p.l('pack-builder.user-clicked-exit-button'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.saved-pack"),
+		t: p.l('pack-builder.saved-pack'),
 		saved: Result.parser(p.str, FlowPack),
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-opened-add-puzzle-screen"),
+		t: p.l(
+			'pack-builder.user-opened-add-puzzle-screen',
+		),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-closed-add-puzzle-screen"),
+		t: p.l(
+			'pack-builder.user-closed-add-puzzle-screen',
+		),
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-clicked-add-puzzle-item"),
+		t: p.l(
+			'pack-builder.user-clicked-add-puzzle-item',
+		),
 		puzzle: FlowPuzzle,
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-clicked-pack-item"),
+		t: p.l('pack-builder.user-clicked-pack-item'),
 		puzzle: FlowPuzzle,
 		puzzleIndex: p.num,
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-changed-slide"),
+		t: p.l('pack-builder.user-changed-slide'),
 		newSlideIndex: p.num,
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.flow-play-ui"),
+		t: p.l('pack-builder.flow-play-ui'),
 		c: FlowPlay.Msg,
 	}),
 	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-exit-puzzle"),
+		t: p.l(
+			'pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+		),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-next-puzzle"),
+		t: p.l(
+			'pack-builder.puzzle-screen.user-clicked-next-puzzle',
+		),
 		userId: UserId,
 		nextPuzzle: FlowPuzzle,
 	}),
 	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-previous-puzzle-button"),
+		t: p.l(
+			'pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+		),
 		userId: UserId,
 		previousPuzzle: FlowPuzzle,
 	}),
 	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-more-button"),
+		t: p.l(
+			'pack-builder.puzzle-screen.user-clicked-more-button',
+		),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-closed-more-drawer"),
+		t: p.l(
+			'pack-builder.puzzle-screen.user-closed-more-drawer',
+		),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("remove-puzzle-from-pack.user-clicked-remove-from-pack-button"),
+		t: p.l(
+			'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+		),
 		puzzleIndex: p.num,
 		userId: UserId,
 	}),

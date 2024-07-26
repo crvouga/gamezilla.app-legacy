@@ -1,10 +1,10 @@
-import { Err, Ok } from "gamezilla-app/@/core";
-import type { p } from "gamezilla-app/@/core/parser";
-import pg from "pg";
-import type { ILogger } from "../logger/logger";
-import type { IDbConnSql } from "./db-conn-sql";
-import { logQuery } from "./shared";
-import { Sql } from "gamezilla-app/@/sql";
+import {Err, Ok} from 'gamezilla-app/@/core';
+import type {p} from 'gamezilla-app/@/core/parser';
+import pg from 'pg';
+import type {ILogger} from '../logger/logger';
+import type {IDbConnSql} from './db-conn-sql';
+import {logQuery} from './shared';
+import {Sql} from 'gamezilla-app/@/sql';
 
 declare global {
 	var pgPool: pg.Pool;
@@ -29,63 +29,138 @@ export const DbConnPostgres = async ({
 
 	return {
 		async query(rowParser, rawSql, params) {
-			const sql = Sql.to(rawSql, params);
+			const sql = Sql.to(
+				rawSql,
+				params,
+			);
 			try {
-				const start = Date.now();
+				const start =
+					Date.now();
 
 				let queried: pg.QueryResult<any>;
 				try {
-					queried = await pgPool.query(sql);
+					queried =
+						await pgPool.query(
+							sql,
+						);
 				} catch (error) {
-					logger.error(`Errored while querying\nerror=${error}\nsql=${rawSql}`);
-					logger.info("Reconnecting to database to retry query");
-					await connect(databaseUrl);
-					queried = await pgPool.query(sql);
+					logger.error(
+						`Errored while querying\nerror=${error}\nsql=${rawSql}`,
+					);
+					logger.info(
+						'Reconnecting to database to retry query',
+					);
+					await connect(
+						databaseUrl,
+					);
+					queried =
+						await pgPool.query(
+							sql,
+						);
 				}
 
-				const end = Date.now();
+				const end =
+					Date.now();
 
 				logQuery({
 					logger,
-					sql: Sql.toLog(rawSql, params),
+					sql: Sql.toLog(
+						rawSql,
+						params,
+					),
 					start,
 					end,
 				});
 
-				const output: p.Infer<typeof rowParser>[] = [];
+				const output: p.Infer<
+					typeof rowParser
+				>[] = [];
 
-				for (let i = 0; i < queried.rows.length; i++) {
-					const row = queried.rows[i]!;
+				for (
+					let i = 0;
+					i <
+					queried
+						.rows
+						.length;
+					i++
+				) {
+					const row =
+						queried
+							.rows[
+							i
+						]!;
 					for (const columnKey in row) {
-						const value = row[columnKey];
+						const value =
+							row[
+								columnKey
+							];
 
-						if (value instanceof Date) {
-							row[columnKey] = value.toUTCString();
+						if (
+							value instanceof
+							Date
+						) {
+							row[
+								columnKey
+							] =
+								value.toUTCString();
 						}
 					}
 
-					const parsed = rowParser.parse(row);
+					const parsed =
+						rowParser.parse(
+							row,
+						);
 
-					if (parsed.t === "err") {
-						const rowStr = JSON.stringify(row, null, 4);
-						const errorStr = JSON.stringify(parsed.error, null, 4);
+					if (
+						parsed.t ===
+						'err'
+					) {
+						const rowStr =
+							JSON.stringify(
+								row,
+								null,
+								4,
+							);
+						const errorStr =
+							JSON.stringify(
+								parsed.error,
+								null,
+								4,
+							);
 						const error = `Failed to parse row\nerror=${errorStr}\nrow=${rowStr}\nsql=${rawSql}`;
-						return Err(error);
+						return Err(
+							error,
+						);
 					}
 
-					output.push(parsed.value);
+					output.push(
+						parsed.value,
+					);
 				}
 
-				return Ok(output);
+				return Ok(
+					output,
+				);
 			} catch (error) {
-				console.error(sql, error);
-				logger.error(`${error} sql=${rawSql}`);
-				return Err(String(error));
+				console.error(
+					sql,
+					error,
+				);
+				logger.error(
+					`${error} sql=${rawSql}`,
+				);
+				return Err(
+					String(
+						error,
+					),
+				);
 			}
 		},
 
 		async onNotification(callback) {
-			const cb = (notification: pg.Notification) => {
+			const cb = (
+				notification: pg.Notification,
+			) => {
 				callback({
 					processId: notification.processId,
 					channel: notification.channel,
@@ -93,10 +168,16 @@ export const DbConnPostgres = async ({
 				});
 			};
 
-			pgPoolClient.on("notification", cb);
+			pgPoolClient.on(
+				'notification',
+				cb,
+			);
 
 			return () => {
-				pgPoolClient.off("notification", cb);
+				pgPoolClient.off(
+					'notification',
+					cb,
+				);
 			};
 		},
 	};

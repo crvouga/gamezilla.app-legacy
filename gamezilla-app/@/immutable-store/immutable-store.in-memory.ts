@@ -1,4 +1,4 @@
-import type { StoreModule, Store } from "./immutable-store";
+import type {StoreModule, Store} from './immutable-store';
 
 export type MapEntry<TKey extends string | number, TValue> = Store<
 	TKey,
@@ -35,7 +35,10 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 
 		const mapNew = new Map<
 			string | number,
-			MapEntry<string | number, unknown>[]
+			MapEntry<
+				string | number,
+				unknown
+			>[]
 		>();
 
 		mapsByNamespace.set(keySpace, mapNew);
@@ -44,16 +47,27 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 	};
 
 	const setMap = (
-		map: Map<string | number, MapEntry<string | number, unknown>[]>,
+		map: Map<
+			string | number,
+			MapEntry<
+				string | number,
+				unknown
+			>[]
+		>,
 	) => {
 		mapsByNamespace.set(keySpace, map);
 	};
 
 	const decodeEntry = (
-		encodedEntry: MapEntry<string | number, unknown>,
+		encodedEntry: MapEntry<
+			string | number,
+			unknown
+		>,
 	): MapEntry<TKey, TValue> | null => {
 		const value = encodedEntry.value
-			? decodeValue(encodedEntry.value)
+			? decodeValue(
+					encodedEntry.value,
+			  )
 			: undefined;
 
 		if (!value) {
@@ -78,24 +92,39 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 	): Promise<Store<TKey, TValue>> => {
 		const instanceNew: Store<TKey, TValue> = {
 			_posixTimestamp: now,
-			_instanceStep: instance._instanceStep + 1,
+			_instanceStep:
+				instance._instanceStep +
+				1,
 			_appendStep: runningAppendStep++,
 		};
 
 		const map = getMap();
 
 		for (const [key, value] of entries) {
-			const entry: MapEntry<string | number, unknown> = {
+			const entry: MapEntry<
+				string | number,
+				unknown
+			> = {
 				...instanceNew,
 				key,
-				value: value ? encodeValue(value) : undefined,
+				value: value
+					? encodeValue(
+							value,
+					  )
+					: undefined,
 			};
 
-			const keyEntries = map.get(entry.key) ?? [];
+			const keyEntries =
+				map.get(
+					entry.key,
+				) ?? [];
 
 			keyEntries.push(entry);
 
-			if (keyEntries.length > maxEntryCount) {
+			if (
+				keyEntries.length >
+				maxEntryCount
+			) {
 				keyEntries.shift();
 			}
 
@@ -108,10 +137,23 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 
 	return {
 		toJSON() {
-			const json: { [key: string | number]: MapEntry<TKey, TValue>[] } = {};
-			for (const [key, entries] of mapsByNamespace.entries()) {
+			const json: {
+				[
+					key:
+						| string
+						| number
+				]: MapEntry<
+					TKey,
+					TValue
+				>[];
+			} = {};
+			for (const [
+				key,
+				entries,
+			] of mapsByNamespace.entries()) {
 				// @ts-expect-error
-				json[key] = entries;
+				json[key] =
+					entries;
 			}
 			return json;
 		},
@@ -123,94 +165,154 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 			};
 		},
 		async assoc(now, instance, key, value) {
-			return append(now, instance, [[key, value]]);
+			return append(now, instance, [
+				[key, value],
+			]);
 		},
 
 		async assocMany(now, instance, entries) {
-			return append(now, instance, entries);
+			return append(
+				now,
+				instance,
+				entries,
+			);
 		},
 
 		async dissoc(now, instance, key) {
-			return append(now, instance, [[key, undefined]]);
+			return append(now, instance, [
+				[
+					key,
+					undefined,
+				],
+			]);
 		},
 
 		async dissocMany(now, instance, keys) {
 			return append(
 				now,
 				instance,
-				keys.map((key) => [key, undefined]),
+				keys.map(
+					(
+						key,
+					) => [
+						key,
+						undefined,
+					],
+				),
 			);
 		},
 
 		async listLatest(_from, _to, instance) {
-			const latestValues: TValue[] = [];
+			const latestValues: TValue[] =
+				[];
 
 			const map = getMap();
 
 			for (const key of map.keys()) {
-				const value = await this.get(instance, key as TKey);
+				const value =
+					await this.get(
+						instance,
+						key as TKey,
+					);
 
 				if (!value) {
 					continue;
 				}
 
-				latestValues.push(value);
+				latestValues.push(
+					value,
+				);
 			}
 			return latestValues;
 		},
 
 		async get(instance, key) {
-			let runningEntry: MapEntry<TKey, TValue> | null = null;
+			let runningEntry: MapEntry<
+				TKey,
+				TValue
+			> | null = null;
 
 			const map = getMap();
 
-			for (const encoded of map.get(key) ?? []) {
-				const entry = decodeEntry(encoded);
+			for (const encoded of map.get(
+				key,
+			) ?? []) {
+				const entry =
+					decodeEntry(
+						encoded,
+					);
 
 				if (!entry) {
 					continue;
 				}
 
 				// SKIP entry is from the future
-				if (entry._posixTimestamp > instance._posixTimestamp) {
+				if (
+					entry._posixTimestamp >
+					instance._posixTimestamp
+				) {
 					continue;
 				}
 
 				// SKIP entry is from the future
-				if (entry._instanceStep > instance._instanceStep) {
+				if (
+					entry._instanceStep >
+					instance._instanceStep
+				) {
 					continue;
 				}
 
 				// SKIP entry is from the future
-				if (entry._appendStep > instance._appendStep) {
+				if (
+					entry._appendStep >
+					instance._appendStep
+				) {
 					continue;
 				}
 
 				// KEEP entry exists
-				if (!runningEntry) {
-					runningEntry = entry;
+				if (
+					!runningEntry
+				) {
+					runningEntry =
+						entry;
 					continue;
 				}
 
 				// KEEP entry is newer
-				if (entry._posixTimestamp > runningEntry._posixTimestamp) {
-					runningEntry = entry;
+				if (
+					entry._posixTimestamp >
+					runningEntry._posixTimestamp
+				) {
+					runningEntry =
+						entry;
 					continue;
 				}
 
 				// KEEP entry is newer
-				if (entry._instanceStep > runningEntry._instanceStep) {
-					runningEntry = entry;
+				if (
+					entry._instanceStep >
+					runningEntry._instanceStep
+				) {
+					runningEntry =
+						entry;
 					continue;
 				}
 
 				// KEEP entry is newer
-				if (entry._appendStep > runningEntry._appendStep) {
-					runningEntry = entry;
+				if (
+					entry._appendStep >
+					runningEntry._appendStep
+				) {
+					runningEntry =
+						entry;
 				}
 			}
 
-			return runningEntry?.value ?? null;
+			return (
+				runningEntry?.value ??
+				null
+			);
 		},
 	};
 };

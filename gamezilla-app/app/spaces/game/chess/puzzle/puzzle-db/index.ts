@@ -1,1 +1,1 @@
-export * from "./puzzle-db-impl";
+export * from './puzzle-db-impl';

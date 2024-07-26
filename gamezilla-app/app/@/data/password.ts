@@ -1,15 +1,18 @@
-import { Result } from "gamezilla-app/@/core";
-import type { Brand } from "gamezilla-app/@/core/brand";
+import {Result} from 'gamezilla-app/@/core';
+import type {Brand} from 'gamezilla-app/@/core/brand';
 
-export type Password = Brand<string, "Password">;
+export type Password = Brand<string, 'Password'>;
 
 const passwordMinLength = 6;
 
 const is = (password: unknown): password is Password => {
-	return typeof password === "string" && password.length >= passwordMinLength;
+	return (
+		typeof password === 'string' &&
+		password.length >= passwordMinLength
+	);
 };
 
-type Problem = { message: string };
+type Problem = {message: string};
 
 const decode = (password: string): Result<Problem, Password> => {
 	if (password.length < passwordMinLength) {
@@ -22,7 +25,9 @@ const decode = (password: string): Result<Problem, Password> => {
 		return Result.Ok(password);
 	}
 
-	return Result.Err({ message: "Password is invalid for an unknown reason." });
+	return Result.Err({
+		message: 'Password is invalid for an unknown reason.',
+	});
 };
 
 export const Password = {

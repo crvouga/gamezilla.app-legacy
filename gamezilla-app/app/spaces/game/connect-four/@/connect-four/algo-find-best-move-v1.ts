@@ -2,17 +2,17 @@ import {
 	type ChildrenFn,
 	Minimax,
 	type ScoreFn,
-} from "gamezilla-app/app/spaces/game/@/minimax";
-import type { Result } from "gamezilla-app/@/core";
+} from 'gamezilla-app/app/spaces/game/@/minimax';
+import type {Result} from 'gamezilla-app/@/core';
 import {
 	type Columns,
 	MAX_COLUMN_HEIGHT,
 	type PlayerType,
 	opposite,
 	toStatus,
-} from "./connect-four";
+} from './connect-four';
 
-export type BestMoveProblem = "no_move_available";
+export type BestMoveProblem = 'no_move_available';
 
 export type BestMoveResult = Result<BestMoveProblem, number | null>;
 
@@ -41,15 +41,21 @@ const childrenFn: ChildrenFn<State> = (modelCore) => {
 		}
 
 		const copied: Columns = [
-			...modelCore.columns.slice(0, columnIndex),
+			...modelCore.columns.slice(
+				0,
+				columnIndex,
+			),
 			[...column, modelCore.turn],
-			...modelCore.columns.slice(columnIndex + 1),
+			...modelCore.columns.slice(
+				columnIndex + 1,
+			),
 		];
 
 		children.push({
 			columns: copied,
 			turn: turnNew,
-			lastMoveColumnIndex: columnIndex,
+			lastMoveColumnIndex:
+				columnIndex,
 		});
 	}
 
@@ -70,7 +76,7 @@ export const findBestMove = ({
 	const scoreFn: ScoreFn<State> = (modelCore) => {
 		const status = toStatus(modelCore.columns);
 
-		if (status.type !== "Winner") {
+		if (status.type !== 'Winner') {
 			return 0;
 		}
 

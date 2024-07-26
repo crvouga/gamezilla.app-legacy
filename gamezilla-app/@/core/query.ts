@@ -1,7 +1,17 @@
 export type QueryWhere<TRow> = [
-	"and" | "or",
+	'and' | 'or',
 	(
-		| ["=" | ">=" | "<=" | "not" | "in", keyof TRow, string | number]
+		| [
+				(
+					| '='
+					| '>='
+					| '<='
+					| 'not'
+					| 'in'
+				),
+				keyof TRow,
+				string | number,
+		  ]
 		| QueryWhere<TRow>
 	)[],
 ];
@@ -9,7 +19,7 @@ export type QueryWhere<TRow> = [
 export type Query<TRow> = {
 	limit: number;
 	offset: number;
-	order: [keyof TRow, "asc" | "desc"][];
+	order: [keyof TRow, 'asc' | 'desc'][];
 	where: QueryWhere<TRow>;
 };
 
@@ -24,13 +34,22 @@ type Row = {
 export const query: Query<Row> = {
 	limit: 10,
 	offset: 0,
-	order: [["createdAt", "asc"]],
+	order: [['createdAt', 'asc']],
 	where: [
-		"and",
+		'and',
 		[
-			["=", "userId", "1234"],
-			["=", "puzzleId", "5678"],
-			["or", [[">=", "createdAt", 123]]],
+			['=', 'userId', '1234'],
+			['=', 'puzzleId', '5678'],
+			[
+				'or',
+				[
+					[
+						'>=',
+						'createdAt',
+						123,
+					],
+				],
+			],
 		],
 	],
 };

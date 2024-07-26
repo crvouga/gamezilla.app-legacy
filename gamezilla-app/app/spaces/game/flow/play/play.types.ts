@@ -1,23 +1,23 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { UserId } from "gamezilla-app/app/@/data";
+import {p} from 'gamezilla-app/@/core/parser';
+import {UserId} from 'gamezilla-app/app/@/data';
 import type {
 	GameClientModule,
 	GameClientModuleTypesConfig,
-} from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-core";
+} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2';
+import type {GameCoreModule} from 'gamezilla-app/app/spaces/@/architecture/game-core';
 import type {
 	SpaceClientEvent,
 	SpaceCtx,
-} from "gamezilla-app/app/spaces/@/space";
-import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import type { FlowClientCtx } from "../@/flow-ctx";
-import { FlowPack, type FlowPackListTypes } from "../@/flow-pack";
-import type { FlowPackId } from "../@/flow-pack/flow-pack-id";
-import type { FlowPackPuzzlesGridTypes } from "../@/flow-pack/flow-pack-puzzles-grid";
-import { FlowPuzzle } from "../@/flow-puzzle";
-import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
-import { ScreenPuzzleTypes } from "./screen-play-puzzle";
-import { FlowCoreEvent } from "../@/flow-core-event";
+} from 'gamezilla-app/app/spaces/@/space';
+import type {SpaceClientCmd} from 'gamezilla-app/app/spaces/@/space-client-cmd';
+import type {FlowClientCtx} from '../@/flow-ctx';
+import {FlowPack, type FlowPackListTypes} from '../@/flow-pack';
+import type {FlowPackId} from '../@/flow-pack/flow-pack-id';
+import type {FlowPackPuzzlesGridTypes} from '../@/flow-pack/flow-pack-puzzles-grid';
+import {FlowPuzzle} from '../@/flow-puzzle';
+import type {FlowPuzzleId} from '../@/flow-puzzle/flow-puzzle-id';
+import {ScreenPuzzleTypes} from './screen-play-puzzle';
+import {FlowCoreEvent} from '../@/flow-core-event';
 
 //
 //
@@ -27,8 +27,8 @@ import { FlowCoreEvent } from "../@/flow-core-event";
 //
 
 export type ModelClient = {
-	flowPuzzles: { [flowPuzzleId: FlowPuzzleId]: FlowPuzzle };
-	flowPacks: { [flowPackId: FlowPackId]: FlowPack };
+	flowPuzzles: {[flowPuzzleId: FlowPuzzleId]: FlowPuzzle};
+	flowPacks: {[flowPackId: FlowPackId]: FlowPack};
 	flowPackGrid: FlowPackPuzzlesGridTypes.ModelClient;
 	flowPackList: FlowPackListTypes.ModelClient;
 };
@@ -46,62 +46,62 @@ export type ModelServer = p.Infer<typeof ModelServer>;
 export type MsgClient =
 	| MsgCore
 	| {
-			t: "flow-pack-list";
+			t: 'flow-pack-list';
 			c: FlowPackListTypes.MsgClient;
 	  }
 	| {
-			t: "flow-pack-grid";
+			t: 'flow-pack-grid';
 			c: FlowPackPuzzlesGridTypes.MsgClient;
 	  };
 
 export type MsgServer =
 	| {
-			t: "flow-pack-list";
+			t: 'flow-pack-list';
 			c: FlowPackListTypes.MsgServer;
 	  }
 	| {
-			t: "flow-pack-grid";
+			t: 'flow-pack-grid';
 			c: FlowPackPuzzlesGridTypes.MsgServer;
 	  };
 
 export type MsgToServer =
 	| {
-			t: "flow-pack-list";
+			t: 'flow-pack-list';
 			c: FlowPackListTypes.MsgToServer;
 	  }
 	| {
-			t: "flow-pack-grid";
+			t: 'flow-pack-grid';
 			c: FlowPackPuzzlesGridTypes.MsgToServer;
 	  };
 
 export type MsgToClient =
 	| {
-			t: "flow-pack-list";
+			t: 'flow-pack-list';
 			c: FlowPackListTypes.MsgToClient;
 	  }
 	| {
-			t: "flow-pack-grid";
+			t: 'flow-pack-grid';
 			c: FlowPackPuzzlesGridTypes.MsgToClient;
 	  };
 
 export const MsgCore = p.or(
 	p.obj({
-		t: p.l("user-clicked-exit-play-mode-button"),
+		t: p.l('user-clicked-exit-play-mode-button'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-clicked-select-pack-back-button"),
+		t: p.l('user-clicked-select-pack-back-button'),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-clicked-open-pack-list-item"),
+		t: p.l('user-clicked-open-pack-list-item'),
 		pack: FlowPack,
 	}),
 	p.obj({
-		t: p.l("user-clicked-exit-pack-button"),
+		t: p.l('user-clicked-exit-pack-button'),
 	}),
 	p.obj({
-		t: p.l("user-clicked-open-puzzle-grid-item"),
+		t: p.l('user-clicked-open-puzzle-grid-item'),
 		flowPuzzle: FlowPuzzle,
 		puzzleIndex: p.num,
 	}),
@@ -112,10 +112,10 @@ export type MsgCore = p.Infer<typeof MsgCore>;
 
 const Screen = p.or(
 	p.obj({
-		t: p.l("screen-select-pack"),
+		t: p.l('screen-select-pack'),
 	}),
 	p.obj({
-		t: p.l("screen-select-puzzle"),
+		t: p.l('screen-select-puzzle'),
 		flowPack: FlowPack,
 	}),
 	ScreenPuzzleTypes.ModelCore,
@@ -141,7 +141,10 @@ export type FlowPlayClientModuleTypes = GameClientModuleTypesConfig<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: FlowClientCtx;
-	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgCmdOut: SpaceClientCmd<{
+		MsgToServer: MsgToServer;
+		MsgClient: MsgClient;
+	}>;
 	MsgEvtIn: SpaceClientEvent;
 }>;
 
@@ -157,7 +160,10 @@ export type ClientModuleTypes = GameClientModuleTypesConfig<{
 	Ctx: FlowClientCtx;
 	MsgEvtIn: SpaceClientEvent;
 	MsgCmdOut:
-		| SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
+		| SpaceClientCmd<{
+				MsgToServer: MsgToServer;
+				MsgClient: MsgClient;
+		  }>
 		| FlowPackPuzzlesGridTypes.MsgInCmdClient;
 	MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient;
 }>;

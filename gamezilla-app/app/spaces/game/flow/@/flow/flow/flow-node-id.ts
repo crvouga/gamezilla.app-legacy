@@ -1,6 +1,6 @@
-import { p } from "gamezilla-app/@/core/parser";
+import {p} from 'gamezilla-app/@/core/parser';
 
-const parser = p.brand(p.str, "NodeId");
+const parser = p.brand(p.str, 'NodeId');
 
 export type FlowNodeId = p.Infer<typeof parser>;
 
@@ -9,7 +9,7 @@ const init = (nodeId: string): FlowNodeId => {
 };
 
 const is = (nodeId: unknown): nodeId is FlowNodeId => {
-	return parser.parse(nodeId).t === "ok";
+	return parser.parse(nodeId).t === 'ok';
 };
 
 export const FlowNodeId = {

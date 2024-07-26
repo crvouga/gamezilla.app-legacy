@@ -3,10 +3,10 @@
 //
 //
 
-import { p } from "gamezilla-app/@/core/parser";
-import { UserId } from "gamezilla-app/app/@/data";
+import {p} from 'gamezilla-app/@/core/parser';
+import {UserId} from 'gamezilla-app/app/@/data';
 
-export const LIST_TABS = ["puzzles", "packs"] as const;
+export const LIST_TABS = ['puzzles', 'packs'] as const;
 
 export const ListTab = p.enumeration(LIST_TABS);
 
@@ -21,12 +21,12 @@ export type MsgClient = MsgCore;
 
 export const MsgCore = p.or(
 	p.obj({
-		t: p.l("user-changed-list-tab"),
+		t: p.l('user-changed-list-tab'),
 		listTab: ListTab,
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("user-clicked-back-button"),
+		t: p.l('user-clicked-back-button'),
 		userId: UserId,
 	}),
 );

@@ -1,29 +1,29 @@
-import { Loading, Result, isErr, isOk } from "gamezilla-app/@/core";
-import type { Translator } from "gamezilla-app/@/l18n/generated";
+import {Loading, Result, isErr, isOk} from 'gamezilla-app/@/core';
+import type {Translator} from 'gamezilla-app/@/l18n/generated';
 import {
 	APP_SOUND,
 	playSound,
 	sendToServer,
 	showCreatedSm,
 	showErrSm,
-} from "gamezilla-app/app/@/client";
+} from 'gamezilla-app/app/@/client';
 import {
 	Button,
 	Drawer,
 	IconFloppyDisk,
 	Typography,
-} from "gamezilla-app/app/@/ui";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@/event";
-import { ViewBottomButtonBarAction } from "../../../../@/game";
-import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
-import { FlowEdit } from "../../../@/flow/flow-edit";
+} from 'gamezilla-app/app/@/ui';
+import {GameClientModule} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2';
+import {withId} from 'gamezilla-app/app/spaces/@/event';
+import {ViewBottomButtonBarAction} from '../../../../@/game';
+import type {FlowPuzzle} from '../../../@/flow-puzzle/flow-puzzle';
+import {FlowEdit} from '../../../@/flow/flow-edit';
 import type {
 	ClientModule,
 	ModelClient,
 	MsgClient,
 	MsgCore,
-} from "../../builder.types";
+} from '../../builder.types';
 
 //
 //
@@ -31,80 +31,130 @@ import type {
 //
 //
 
-const update: ClientModule["update"] = (input) => {
-	const { model } = input;
+const update: ClientModule['update'] = (input) => {
+	const {model} = input;
 	return GameClientModule.andThen(
-		{ model },
-		(model) => updateExitBuilder({ ...input, model }),
-		(model) => updateSaveChangesRequest({ ...input, model }),
-		(model) => updatePuzzles({ ...input, model }),
+		{model},
+		(model) =>
+			updateExitBuilder({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateSaveChangesRequest({
+				...input,
+				model,
+			}),
+		(model) =>
+			updatePuzzles({
+				...input,
+				model,
+			}),
 	);
 };
 
-const updatePuzzles: ClientModule["update"] = ({ msgCore, model }) => {
+const updatePuzzles: ClientModule['update'] = ({msgCore, model}) => {
 	switch (msgCore?.t) {
-		case "screen-puzzle-builder.saved-puzzle": {
+		case 'screen-puzzle-builder.saved-puzzle': {
 			if (isErr(msgCore.saved)) {
-				return { model };
+				return {
+					model,
+				};
 			}
-			const puzzleNew = msgCore.saved.value;
+			const puzzleNew =
+				msgCore.saved
+					.value;
 
 			return {
 				model: {
 					...model,
 					puzzles: {
 						...model.puzzles,
-						[puzzleNew.id]: puzzleNew,
+						[puzzleNew.id]:
+							puzzleNew,
 					},
 				},
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
-const updateExitBuilder: ClientModule["update"] = (input) => {
-	const { msg, model, modelCore, msgCore } = input;
+const updateExitBuilder: ClientModule['update'] = (input) => {
+	const {msg, model, modelCore, msgCore} = input;
 
 	switch (msg?.t) {
-		case "screen-puzzle-builder.user-clicked-exit-button": {
+		case 'screen-puzzle-builder.user-clicked-exit-button': {
 			if (!modelCore.puzzleBuilder) {
-				return exitBuilderWithSound(input);
+				return exitBuilderWithSound(
+					input,
+				);
 			}
 
 			if (
 				FlowEdit.isUnsavedChanges(
-					modelCore.puzzleBuilder.edit,
-					modelCore.puzzleBuilder.puzzle.flow,
+					modelCore
+						.puzzleBuilder
+						.edit,
+					modelCore
+						.puzzleBuilder
+						.puzzle
+						.flow,
 				)
 			) {
 				return {
-					model: { ...model, puzzleBuilderOpened: "unsaved-changes" },
-					msgCmd: [playSound(APP_SOUND.alertErrorSm)],
+					model: {
+						...model,
+						puzzleBuilderOpened:
+							'unsaved-changes',
+					},
+					msgCmd: [
+						playSound(
+							APP_SOUND.alertErrorSm,
+						),
+					],
 				};
 			}
 
-			return exitBuilderWithSound(input);
+			return exitBuilderWithSound(
+				input,
+			);
 		}
 
-		case "screen-puzzle-builder.save-changes.user-clicked-cancel-exit": {
+		case 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit': {
 			return {
-				model: { ...model, puzzleBuilderOpened: null },
-				msgCmd: [playSound(APP_SOUND.tap)],
+				model: {
+					...model,
+					puzzleBuilderOpened:
+						null,
+				},
+				msgCmd: [
+					playSound(
+						APP_SOUND.tap,
+					),
+				],
 			};
 		}
 
-		case "screen-puzzle-builder.save-changes.user-clicked-discard-and-exit": {
-			return exitBuilderWithSound(input);
+		case 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit': {
+			return exitBuilderWithSound(
+				input,
+			);
 		}
 
-		case "screen-puzzle-builder.save-changes.user-clicked-save-and-exit": {
+		case 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit': {
 			return saveChanges({
 				...input,
-				model: { ...model, puzzleSaveChangesIsExiting: true },
+				model: {
+					...model,
+					puzzleSaveChangesIsExiting:
+						true,
+				},
 			});
 		}
 
@@ -114,82 +164,122 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 	}
 
 	switch (msgCore?.t) {
-		case "screen-puzzle-builder.saved-puzzle": {
+		case 'screen-puzzle-builder.saved-puzzle': {
 			if (
-				model.puzzleSaveChangesRequest?.t === "loading" &&
+				model
+					.puzzleSaveChangesRequest
+					?.t ===
+					'loading' &&
 				model.puzzleSaveChangesIsExiting &&
-				isOk(msgCore.saved)
+				isOk(
+					msgCore.saved,
+				)
 			) {
-				return exitBuilder({
-					...input,
-					model: {
-						...model,
-						puzzleSaveChangesIsExiting: false,
-						puzzleBuilderOpened: null,
+				return exitBuilder(
+					{
+						...input,
+						model: {
+							...model,
+							puzzleSaveChangesIsExiting:
+								false,
+							puzzleBuilderOpened:
+								null,
+						},
 					},
-				});
+				);
 			}
-			return { model };
+			return {
+				model,
+			};
 		}
 		default: {
 			break;
 		}
 	}
 
-	return { model };
+	return {model};
 };
 
-const updateSaveChangesRequest: ClientModule["update"] = (input) => {
-	const { model, msg, ctx, msgCore } = input;
+const updateSaveChangesRequest: ClientModule['update'] = (input) => {
+	const {model, msg, ctx, msgCore} = input;
 
 	if (
-		msg?.t === "screen-puzzle-builder.save-changes.user-clicked-save-button"
+		msg?.t ===
+		'screen-puzzle-builder.save-changes.user-clicked-save-button'
 	) {
 		return saveChanges(input);
 	}
 
 	if (
-		msgCore?.t === "screen-puzzle-builder.saved-puzzle" &&
+		msgCore?.t ===
+			'screen-puzzle-builder.saved-puzzle' &&
 		msgCore.userId === ctx.currentUserId
 	) {
 		return {
 			model: {
 				...model,
-				puzzleSaveChangesRequest: Result.mapOk(msgCore.saved, () => null),
+				puzzleSaveChangesRequest:
+					Result.mapOk(
+						msgCore.saved,
+						() =>
+							null,
+					),
 			},
 			msgCmd: isOk(msgCore.saved)
-				? showCreatedSm(ctx.t("app.saved-changes"))
-				: showErrSm(ctx.t("app.something-went-wrong")),
+				? showCreatedSm(
+						ctx.t(
+							'app.saved-changes',
+						),
+				  )
+				: showErrSm(
+						ctx.t(
+							'app.something-went-wrong',
+						),
+				  ),
 		};
 	}
-	return { model };
+	return {model};
 };
 
-const exitBuilderWithSound: ClientModule["update"] = (input) => {
+const exitBuilderWithSound: ClientModule['update'] = (input) => {
 	return GameClientModule.andThen(
-		{ model: input.model },
-		(model) => exitBuilder({ ...input, model }),
-		(model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }),
+		{model: input.model},
+		(model) =>
+			exitBuilder({
+				...input,
+				model,
+			}),
+		(model) => ({
+			model,
+			msgCmd: [
+				playSound(
+					APP_SOUND.navBackwardMin,
+				),
+			],
+		}),
 	);
 };
 
-const exitBuilder: ClientModule["update"] = (input) => {
+const exitBuilder: ClientModule['update'] = (input) => {
 	const msgCore: MsgCore = {
-		t: "screen-puzzle-builder.user-clicked-exit-button",
+		t: 'screen-puzzle-builder.user-clicked-exit-button',
 		userId: input.ctx.currentUserId,
 	};
 
 	return {
-		model: { ...input.model, puzzleBuilderOpened: null },
+		model: {
+			...input.model,
+			puzzleBuilderOpened: null,
+		},
 		msgCore: [withId(msgCore)],
 	};
 };
 
-const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
+const saveChanges: ClientModule['update'] = ({model, modelCore}) => {
 	const puzzleBuilder = modelCore.puzzleBuilder;
 
 	if (!puzzleBuilder) {
-		return { model };
+		return {model};
 	}
 
 	const puzzleNew: FlowPuzzle = {
@@ -200,11 +290,15 @@ const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
 	};
 
 	return {
-		model: { ...model, puzzleSaveChangesRequest: Loading },
+		model: {
+			...model,
+			puzzleSaveChangesRequest:
+				Loading,
+		},
 		msgCmd: [
 			playSound(APP_SOUND.tap),
 			sendToServer({
-				t: "screen-puzzle-builder.save-changes.user-clicked-save-button",
+				t: 'screen-puzzle-builder.save-changes.user-clicked-save-button',
 				puzzle: puzzleNew,
 			}),
 		],
@@ -233,71 +327,112 @@ export const ViewActionButtons = ({
 	return (
 		<>
 			<ViewBottomButtonBarAction
-				icon={(input) => <IconFloppyDisk {...input} />}
-				label={ctx.t("app.save")}
+				icon={(
+					input,
+				) => (
+					<IconFloppyDisk
+						{...input}
+					/>
+				)}
+				label={ctx.t(
+					'app.save',
+				)}
 				onClick={() =>
-					dispatch({
-						t: "screen-puzzle-builder.save-changes.user-clicked-save-button",
-					})
+					dispatch(
+						{
+							t: 'screen-puzzle-builder.save-changes.user-clicked-save-button',
+						},
+					)
 				}
-				loading={model.puzzleSaveChangesRequest?.t === "loading"}
+				loading={
+					model
+						.puzzleSaveChangesRequest
+						?.t ===
+					'loading'
+				}
 			/>
 		</>
 	);
 };
 
-const ViewUnsavedChangesDrawer: ClientModule["View"] = (input) => {
+const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
 	return (
 		<Drawer
 			id="unsaved-changes-drawer"
 			onClose={() =>
 				input.dispatch({
-					t: "screen-puzzle-builder.save-changes.user-clicked-cancel-exit",
+					t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit',
 				})
 			}
-			open={input.model.puzzleBuilderOpened === "unsaved-changes"}
+			open={
+				input.model
+					.puzzleBuilderOpened ===
+				'unsaved-changes'
+			}
 			position="bottom"
 		>
 			<Typography
 				className="px-4 pt-4 text-3xl font-bold"
 				variant="title"
-				text={input.ctx.t("app.save-changes?")}
+				text={input.ctx.t(
+					'app.save-changes?',
+				)}
 			/>
 			<Typography
 				className="p-4 text-neutral-300"
 				variant="body"
-				text={input.ctx.t("app.save-changes-warning")}
+				text={input.ctx.t(
+					'app.save-changes-warning',
+				)}
 			/>
 			<div className="flex w-full flex-col gap-4 p-4">
 				<Button
 					className="w-full"
-					text={input.ctx.t("app.save")}
+					text={input.ctx.t(
+						'app.save',
+					)}
 					variant="contained"
 					color="primary"
-					loading={input.model.puzzleSaveChangesRequest?.t === "loading"}
+					loading={
+						input
+							.model
+							.puzzleSaveChangesRequest
+							?.t ===
+						'loading'
+					}
 					onClick={() =>
-						input.dispatch({
-							t: "screen-puzzle-builder.save-changes.user-clicked-save-and-exit",
-						})
+						input.dispatch(
+							{
+								t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit',
+							},
+						)
 					}
 				/>
 				<Button
 					className="w-full"
-					text={input.ctx.t("app.dont-save")}
+					text={input.ctx.t(
+						'app.dont-save',
+					)}
 					onClick={() =>
-						input.dispatch({
-							t: "screen-puzzle-builder.save-changes.user-clicked-discard-and-exit",
-						})
+						input.dispatch(
+							{
+								t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit',
+							},
+						)
 					}
 				/>
 				<div className="w-full" />
 				<Button
 					className="w-full"
-					text={input.ctx.t("app.cancel")}
+					text={input.ctx.t(
+						'app.cancel',
+					)}
 					onClick={() =>
-						input.dispatch({
-							t: "screen-puzzle-builder.save-changes.user-clicked-cancel-exit",
-						})
+						input.dispatch(
+							{
+								t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit',
+							},
+						)
 					}
 				/>
 			</div>

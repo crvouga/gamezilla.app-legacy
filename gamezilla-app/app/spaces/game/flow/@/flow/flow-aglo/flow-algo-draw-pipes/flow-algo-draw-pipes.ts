@@ -1,11 +1,11 @@
-import { pipe } from "gamezilla-app/@/core";
-import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
-import { Flow } from "../../../flow";
-import { FlowVariant } from "../..";
-import { FlowGroupId } from "../../flow/flow-group-id";
-import { FlowNodeId } from "../../flow/flow-node-id";
-import { FlowEdgeId } from "../../flow/flow-edge-id";
-import { FlowTerminal } from "../../flow/flow-terminal";
+import {pipe} from 'gamezilla-app/@/core';
+import {MinHeap} from 'gamezilla-app/@/min-heap/min-heap';
+import {Flow} from '../../../flow';
+import {FlowVariant} from '../..';
+import {FlowGroupId} from '../../flow/flow-group-id';
+import {FlowNodeId} from '../../flow/flow-node-id';
+import {FlowEdgeId} from '../../flow/flow-edge-id';
+import {FlowTerminal} from '../../flow/flow-terminal';
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -27,9 +27,16 @@ export const startDrawPipes = (
 	}
 
 	if (terminal.endId === newNodeId) {
-		const reversed = Flow.flipTerminal(model, terminal);
+		const reversed = Flow.flipTerminal(
+			model,
+			terminal,
+		);
 
-		const drew = drawPipes(reversed, groupId, newNodeId);
+		const drew = drawPipes(
+			reversed,
+			groupId,
+			newNodeId,
+		);
 
 		return drew;
 	}
@@ -47,7 +54,10 @@ export const drawPipes = (
 	groupId: FlowGroupId,
 	nodeIdNew: FlowNodeId,
 ): Flow.Model => {
-	const newNodeGroupId = Flow.findGroupIdByFlowNodeId(model, nodeIdNew);
+	const newNodeGroupId = Flow.findGroupIdByFlowNodeId(
+		model,
+		nodeIdNew,
+	);
 
 	if (newNodeGroupId && newNodeGroupId !== groupId) {
 		return model;
@@ -75,28 +85,55 @@ export const drawPipes = (
 		(pipeline) =>
 			takeWhile(
 				pipeline,
-				(nodeId) => nodeId !== nodeIdNew && nodeId !== terminal.endId,
+				(nodeId) =>
+					nodeId !==
+						nodeIdNew &&
+					nodeId !==
+						terminal.endId,
 			),
 
 		(pipeline) => [...pipeline, nodeIdNew],
 
-		(pipeline) => takeWhileConnected(model, pipeline),
+		(pipeline) =>
+			takeWhileConnected(
+				model,
+				pipeline,
+			),
 
 		(pipeline) => {
-			const startNodeId = pipeline[pipeline.length - 1];
+			const startNodeId =
+				pipeline[
+					pipeline.length -
+						1
+				];
 
 			if (!startNodeId) {
 				return pipeline;
 			}
 
-			const shortest = findShortestEmptyPipelineAStar(
-				(nodeId) => 1 - 1 / FlowVariant.distance(model, nodeId, nodeIdNew),
-				model,
-				startNodeId,
-				nodeIdNew,
-			);
+			const shortest =
+				findShortestEmptyPipelineAStar(
+					(
+						nodeId,
+					) =>
+						1 -
+						1 /
+							FlowVariant.distance(
+								model,
+								nodeId,
+								nodeIdNew,
+							),
+					model,
+					startNodeId,
+					nodeIdNew,
+				);
 
-			const pipelineNew = [...pipeline, ...shortest.slice(1)];
+			const pipelineNew = [
+				...pipeline,
+				...shortest.slice(
+					1,
+				),
+			];
 
 			return pipelineNew;
 		},
@@ -127,7 +164,11 @@ const takeWhileConnected = (
 			continue;
 		}
 
-		const prevNode = pipelineNew[pipelineNew.length - 1];
+		const prevNode =
+			pipelineNew[
+				pipelineNew.length -
+					1
+			];
 
 		if (!prevNode) {
 			pipelineNew.push(currNode);
@@ -158,7 +199,10 @@ const isTerminalConnected = (
 			return true;
 		}
 
-		const pipe = Flow.toPipeBySourceId(model, currentId);
+		const pipe = Flow.toPipeBySourceId(
+			model,
+			currentId,
+		);
 
 		if (!pipe) {
 			return false;
@@ -186,7 +230,10 @@ const findPipeline = (
 	while (true) {
 		pipeline.push(currentId);
 
-		const pipe = Flow.toPipeBySourceId(model, currentId);
+		const pipe = Flow.toPipeBySourceId(
+			model,
+			currentId,
+		);
 
 		if (!pipe) {
 			break;
@@ -210,7 +257,7 @@ const addPipeline = (
 	terminal: FlowTerminal,
 	pipeline: Pipeline,
 ): Flow.Model => {
-	const modelNew: Flow.Model = { ...model };
+	const modelNew: Flow.Model = {...model};
 
 	for (let i = 0; i < pipeline.length - 1; i++) {
 		const first = pipeline[i];
@@ -239,7 +286,8 @@ const addPipeline = (
 			groupId: terminal.groupId,
 		};
 
-		modelNew.pipesBySourceId[edge.sourceId] = pipeNew;
+		modelNew.pipesBySourceId[edge.sourceId] =
+			pipeNew;
 	}
 
 	return modelNew;
@@ -253,7 +301,10 @@ export const _findShortestEmptyPipelineBFS = (
 	sourceId: FlowNodeId,
 	targetId: FlowNodeId,
 ): FlowNodeId[] => {
-	const sourceGroupId = Flow.findGroupIdByFlowNodeId(model, sourceId);
+	const sourceGroupId = Flow.findGroupIdByFlowNodeId(
+		model,
+		sourceId,
+	);
 
 	if (!sourceGroupId) {
 		return [];
@@ -269,7 +320,7 @@ export const _findShortestEmptyPipelineBFS = (
 
 	const queue: FlowNodeId[] = [];
 	const visited = new Set<FlowNodeId>();
-	const tree: { [id: FlowNodeId]: { parent?: FlowNodeId } } = {};
+	const tree: {[id: FlowNodeId]: {parent?: FlowNodeId}} = {};
 
 	visited.add(sourceId);
 	queue.push(sourceId);
@@ -291,27 +342,45 @@ export const _findShortestEmptyPipelineBFS = (
 			break;
 		}
 
-		for (const outEdge of Flow.yieldEdgesOut(model, currentId)) {
-			const adjacentId = outEdge.targetId;
+		for (const outEdge of Flow.yieldEdgesOut(
+			model,
+			currentId,
+		)) {
+			const adjacentId =
+				outEdge.targetId;
 
 			if (visited.has(adjacentId)) {
 				continue;
 			}
 
-			const adjacentPipe = Flow.findPipeByFlowNodeId(model, adjacentId);
+			const adjacentPipe =
+				Flow.findPipeByFlowNodeId(
+					model,
+					adjacentId,
+				);
 
 			if (adjacentPipe) {
 				continue;
 			}
 
-			const adjacentTerminal = Flow.findTerminalByFlowNodeId(model, adjacentId);
+			const adjacentTerminal =
+				Flow.findTerminalByFlowNodeId(
+					model,
+					adjacentId,
+				);
 
-			if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
+			if (
+				adjacentTerminal &&
+				adjacentTerminal.groupId !==
+					sourceGroupId
+			) {
 				continue;
 			}
 
 			queue.push(adjacentId);
-			tree[adjacentId] = { parent: currentId };
+			tree[adjacentId] = {
+				parent: currentId,
+			};
 		}
 	}
 
@@ -346,7 +415,12 @@ export const _findShortestEmptyPipelineBFS = (
 		if (!to) {
 			continue;
 		}
-		path.push(Flow.toFlowEdgeId({ sourceId: from, targetId: to }));
+		path.push(
+			Flow.toFlowEdgeId({
+				sourceId: from,
+				targetId: to,
+			}),
+		);
 	}
 
 	// Done
@@ -378,7 +452,10 @@ const findShortestEmptyPipelineAStar = (
 	cameFrom.clear();
 	openSet.clear();
 
-	const sourceGroupId = Flow.findGroupIdByFlowNodeId(model, sourceId);
+	const sourceGroupId = Flow.findGroupIdByFlowNodeId(
+		model,
+		sourceId,
+	);
 
 	if (!sourceGroupId) {
 		return [];
@@ -398,44 +475,96 @@ const findShortestEmptyPipelineAStar = (
 		}
 
 		if (current === targetId) {
-			return reconstructPath(cameFrom, current);
+			return reconstructPath(
+				cameFrom,
+				current,
+			);
 		}
 
-		const currentTerminal = Flow.findTerminalByFlowNodeId(model, current);
+		const currentTerminal =
+			Flow.findTerminalByFlowNodeId(
+				model,
+				current,
+			);
 
 		if (currentTerminal) {
-			return reconstructPath(cameFrom, current);
+			return reconstructPath(
+				cameFrom,
+				current,
+			);
 		}
 
-		for (const edgeOut of Flow.yieldEdgesOut(model, current)) {
-			const adjacent = edgeOut.targetId;
+		for (const edgeOut of Flow.yieldEdgesOut(
+			model,
+			current,
+		)) {
+			const adjacent =
+				edgeOut.targetId;
 
-			const adjacentPipe = Flow.findPipeByFlowNodeId(model, adjacent);
+			const adjacentPipe =
+				Flow.findPipeByFlowNodeId(
+					model,
+					adjacent,
+				);
 
 			if (adjacentPipe) {
 				continue;
 			}
 
-			const adjacentTerminal = Flow.findTerminalByFlowNodeId(model, adjacent);
+			const adjacentTerminal =
+				Flow.findTerminalByFlowNodeId(
+					model,
+					adjacent,
+				);
 
-			if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
+			if (
+				adjacentTerminal &&
+				adjacentTerminal.groupId !==
+					sourceGroupId
+			) {
 				continue;
 			}
 
 			const edgeWeight = 0;
 
 			const tentativeGScore =
-				(gScore.get(current) ?? Number.POSITIVE_INFINITY) + edgeWeight;
+				(gScore.get(
+					current,
+				) ??
+					Number.POSITIVE_INFINITY) +
+				edgeWeight;
 
 			if (
-				tentativeGScore < (gScore.get(adjacent) ?? Number.POSITIVE_INFINITY)
+				tentativeGScore <
+				(gScore.get(
+					adjacent,
+				) ??
+					Number.POSITIVE_INFINITY)
 			) {
-				cameFrom.set(adjacent, current);
-				gScore.set(adjacent, tentativeGScore);
-				fScore.set(adjacent, tentativeGScore + heuristicScore(adjacent));
+				cameFrom.set(
+					adjacent,
+					current,
+				);
+				gScore.set(
+					adjacent,
+					tentativeGScore,
+				);
+				fScore.set(
+					adjacent,
+					tentativeGScore +
+						heuristicScore(
+							adjacent,
+						),
+				);
 
-				if (!openSet.has(adjacent)) {
-					openSet.insert(adjacent);
+				if (
+					!openSet.has(
+						adjacent,
+					)
+				) {
+					openSet.insert(
+						adjacent,
+					);
 				}
 			}
 		}

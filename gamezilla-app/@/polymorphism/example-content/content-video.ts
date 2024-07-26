@@ -1,14 +1,14 @@
-import { type Content, renderHTML } from "./content";
+import {type Content, renderHTML} from './content';
 
 export type Video = {
-	Content: "video";
+	Content: 'video';
 	title: string;
 	message: string;
 	videoSrc: string;
 };
 
 const isVideo = (content: Content): content is Video =>
-	content.Content === "video";
+	content.Content === 'video';
 
 renderHTML.implement(isVideo, (video) => {
 	return `
@@ -25,5 +25,5 @@ export const Video = (input: {
 	videoSrc: string;
 }): Video => ({
 	...input,
-	Content: "video",
+	Content: 'video',
 });

@@ -1,6 +1,6 @@
-import { TranslatedText } from "gamezilla-app/@/l18n";
-import type { Translator } from "gamezilla-app/@/l18n/generated";
-import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
+import {TranslatedText} from 'gamezilla-app/@/l18n';
+import type {Translator} from 'gamezilla-app/@/l18n/generated';
+import type {VDom, VDomChildren} from 'gamezilla-app/@/vdom';
 import {
 	Drawer,
 	IconArrowLeftOnRect,
@@ -13,19 +13,19 @@ import {
 	Spinner,
 	Typography,
 	cn,
-} from "gamezilla-app/app/@/ui";
+} from 'gamezilla-app/app/@/ui';
 
 export type ActionInput = {
 	label: TranslatedText;
 	disabled?: boolean;
-	icon: (input: { className: string }) => VDom;
+	icon: (input: {className: string}) => VDom;
 	classNames?: {
 		button?: string;
 		label?: string;
 	};
 	onClick: () => void;
 	loading?: boolean;
-	color?: "danger" | "success" | "inherit";
+	color?: 'danger' | 'success' | 'inherit';
 	hidden?: boolean;
 };
 
@@ -53,26 +53,66 @@ const View = ({
 	return (
 		<div className="flex w-full items-center border-t border-neutral-700">
 			{firstButtons.map((button) => (
-				<ViewBottomButtonBarAction {...button} key={button.label} />
+				<ViewBottomButtonBarAction
+					{...button}
+					key={
+						button.label
+					}
+				/>
 			))}
 
 			{lastButtons.length > 0 && (
 				<>
 					<ViewBottomButtonBarAction
-						icon={(input) => <IconEllipsisVertical {...input} />}
-						label={ctx.t("app.more")}
-						onClick={onToggle}
-					/>
-					<Drawer id={id} onClose={onToggle} open={open} position="bottom">
-						{lastButtons.map((button) => (
-							<ListItemButton
-								key={button.label}
-								icon={button.icon}
-								label={button.label}
-								onClick={button.onClick}
-								color={button.color}
+						icon={(
+							input,
+						) => (
+							<IconEllipsisVertical
+								{...input}
 							/>
-						))}
+						)}
+						label={ctx.t(
+							'app.more',
+						)}
+						onClick={
+							onToggle
+						}
+					/>
+					<Drawer
+						id={
+							id
+						}
+						onClose={
+							onToggle
+						}
+						open={
+							open
+						}
+						position="bottom"
+					>
+						{lastButtons.map(
+							(
+								button,
+							) => (
+								<ListItemButton
+									key={
+										button.label
+									}
+									icon={
+										button.icon
+									}
+									label={
+										button.label
+									}
+									onClick={
+										button.onClick
+									}
+									color={
+										button.color
+									}
+								/>
+							),
+						)}
 					</Drawer>
 				</>
 			)}
@@ -80,11 +120,7 @@ const View = ({
 	);
 };
 
-export const ViewBottomButtonBar = ({
-	children,
-}: {
-	children: VDomChildren;
-}) => {
+export const ViewBottomButtonBar = ({children}: {children: VDomChildren}) => {
 	return (
 		<div className="flex w-full items-center border-t border-neutral-700">
 			{children}
@@ -105,33 +141,55 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
 			aria-label={input.label}
 			onClick={input.onClick}
 			className={cn(
-				"relative flex flex-1 flex-col items-center gap-0.5 p-2 text-sm transition-opacity truncate",
-				!isDisabled && "active:opacity-50",
-				input.disabled && "cursor-not-allowed opacity-50",
-				input.color === "danger" && "text-red-500",
-				input.color === "success" && "text-green-500",
-				input.hidden ? "hidden" : "",
-				input.classNames?.button,
+				'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm transition-opacity',
+				!isDisabled &&
+					'active:opacity-50',
+				input.disabled &&
+					'cursor-not-allowed opacity-50',
+				input.color ===
+					'danger' &&
+					'text-red-500',
+				input.color ===
+					'success' &&
+					'text-green-500',
+				input.hidden
+					? 'hidden'
+					: '',
+				input.classNames
+					?.button,
 			)}
 		>
 			<div
 				className={cn(
-					"flex h-full w-full flex-col items-center justify-center gap-0.5 transition-opacity truncate",
-					input.loading ? "opacity-0" : "opacity-100",
+					'flex h-full w-full flex-col items-center justify-center gap-0.5 truncate transition-opacity',
+					input.loading
+						? 'opacity-0'
+						: 'opacity-100',
 				)}
 			>
-				{input.icon({ className: "h-7 w-7" })}
+				{input.icon({
+					className: 'h-7 w-7',
+				})}
 				<Typography
 					variant="label"
-					text={input.label}
-					className={cn("truncate", input.classNames?.label)}
+					text={
+						input.label
+					}
+					className={cn(
+						'truncate',
+						input
+							.classNames
+							?.label,
+					)}
 				/>
 			</div>
 
 			<div
 				className={cn(
-					"absolute inset-0 flex h-full w-full items-center justify-center transition-opacity",
-					input.loading ? "opacity-100" : "opacity-0",
+					'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity',
+					input.loading
+						? 'opacity-100'
+						: 'opacity-0',
 				)}
 			>
 				<Spinner className="h-8 w-8" />
@@ -155,8 +213,12 @@ export const ViewBottomButtonBarActionExit = (
 	return (
 		<ViewBottomButtonBarAction
 			{...input}
-			icon={(input) => <IconArrowLeftOnRect {...input} />}
-			label={input.ctx.t("app.exit")}
+			icon={(input) => (
+				<IconArrowLeftOnRect
+					{...input}
+				/>
+			)}
+			label={input.ctx.t('app.exit')}
 		/>
 	);
 };
@@ -164,7 +226,7 @@ export const ViewBottomButtonBarActionExit = (
 const exit = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconArrowLeftOnRect {...input} />,
-	label: input.ctx.t("app.exit"),
+	label: input.ctx.t('app.exit'),
 });
 
 export const ViewBottomButtonBarActionNext = (
@@ -173,8 +235,12 @@ export const ViewBottomButtonBarActionNext = (
 	return (
 		<ViewBottomButtonBarAction
 			{...input}
-			icon={(input) => <IconChevronRight {...input} />}
-			label={input.ctx.t("app.next")}
+			icon={(input) => (
+				<IconChevronRight
+					{...input}
+				/>
+			)}
+			label={input.ctx.t('app.next')}
 		/>
 	);
 };
@@ -182,7 +248,7 @@ export const ViewBottomButtonBarActionNext = (
 const next = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconChevronRight {...input} />,
-	label: input.ctx.t("app.next"),
+	label: input.ctx.t('app.next'),
 });
 
 export const ViewBottomButtonBarActionReset = (
@@ -191,8 +257,12 @@ export const ViewBottomButtonBarActionReset = (
 	return (
 		<ViewBottomButtonBarAction
 			{...input}
-			icon={(input) => <IconArrowRotateLeft {...input} />}
-			label={input.ctx.t("app.reset")}
+			icon={(input) => (
+				<IconArrowRotateLeft
+					{...input}
+				/>
+			)}
+			label={input.ctx.t('app.reset')}
 		/>
 	);
 };
@@ -200,7 +270,7 @@ export const ViewBottomButtonBarActionReset = (
 const reset = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconArrowRotateLeft {...input} />,
-	label: input.ctx.t("app.reset"),
+	label: input.ctx.t('app.reset'),
 });
 
 export const ViewBottomButtonBarActionPrev = (
@@ -209,8 +279,12 @@ export const ViewBottomButtonBarActionPrev = (
 	return (
 		<ViewBottomButtonBarAction
 			{...input}
-			icon={(input) => <IconChevronLeft {...input} />}
-			label={input.ctx.t("app.prev")}
+			icon={(input) => (
+				<IconChevronLeft
+					{...input}
+				/>
+			)}
+			label={input.ctx.t('app.prev')}
 		/>
 	);
 };
@@ -218,7 +292,7 @@ export const ViewBottomButtonBarActionPrev = (
 const prev = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconChevronLeft {...input} />,
-	label: input.ctx.t("app.prev"),
+	label: input.ctx.t('app.prev'),
 });
 
 export const ViewBottomButtonBarActionHint = (
@@ -227,8 +301,12 @@ export const ViewBottomButtonBarActionHint = (
 	return (
 		<ViewBottomButtonBarAction
 			{...input}
-			icon={(input) => <IconLightbulb {...input} />}
-			label={input.ctx.t("game.hint")}
+			icon={(input) => (
+				<IconLightbulb
+					{...input}
+				/>
+			)}
+			label={input.ctx.t('game.hint')}
 		/>
 	);
 };
@@ -236,7 +314,7 @@ export const ViewBottomButtonBarActionHint = (
 const hint = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
 	...input,
 	icon: (input) => <IconLightbulb {...input} />,
-	label: input.ctx.t("game.hint"),
+	label: input.ctx.t('game.hint'),
 });
 
 export const Actions = {

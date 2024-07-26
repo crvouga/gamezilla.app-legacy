@@ -1,15 +1,15 @@
-import { Ok, PhoneNumber, Posix, Result, isErr } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { Hash } from "gamezilla-app/@/hashing";
-import { Sql } from "gamezilla-app/@/sql";
-import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import { Verification } from "../verification";
-import { VerificationId } from "../verification-id";
+import {Ok, PhoneNumber, Posix, Result, isErr} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {Hash} from 'gamezilla-app/@/hashing';
+import {Sql} from 'gamezilla-app/@/sql';
+import {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
+import {Verification} from '../verification';
+import {VerificationId} from '../verification-id';
 import type {
 	IVerificationDb,
 	OrderClause,
 	WhereClause,
-} from "./verification-db";
+} from './verification-db';
 
 export const Row = p.obj({
 	verification_id: VerificationId,
@@ -26,9 +26,16 @@ export const VerificationDbPostgres = (deps: {
 }): IVerificationDb => {
 	return {
 		async find(input) {
-			const where = toSqlWhere(input.where);
-			const order = toSqlOrder(input.order);
-			const pagination = Sql.pagination(input);
+			const where = toSqlWhere(
+				input.where,
+			);
+			const order = toSqlOrder(
+				input.order,
+			);
+			const pagination =
+				Sql.pagination(
+					input,
+				);
 			const query = `
 				SELECT * FROM auth_sms_verification
 				${where.str}
@@ -40,7 +47,12 @@ export const VerificationDbPostgres = (deps: {
 				...pagination.vars,
 				...order.vars,
 			};
-			const queried = await deps.dbConnSql.query(Row, query, vars);
+			const queried =
+				await deps.dbConnSql.query(
+					Row,
+					query,
+					vars,
+				);
 
 			if (isErr(queried)) {
 				return queried;
@@ -50,24 +62,42 @@ export const VerificationDbPostgres = (deps: {
 				SELECT COUNT(*) FROM auth_sms_verification
 				${where.str}
 			`;
-			const queriedCount = await deps.dbConnSql.query(
-				p.obj({ count: p.str }),
-				queryCount,
-				vars,
-			);
+			const queriedCount =
+				await deps.dbConnSql.query(
+					p.obj(
+						{
+							count: p.str,
+						},
+					),
+					queryCount,
+					vars,
+				);
 
 			if (isErr(queriedCount)) {
 				return queriedCount;
 			}
 
-			const total = parseInt(queriedCount.value[0]?.count ?? "0") ?? 0;
+			const total =
+				parseInt(
+					queriedCount
+						.value[0]
+						?.count ??
+						'0',
+				) ?? 0;
 
-			const items = queried.value.flatMap(rowToVerification);
+			const items =
+				queried.value.flatMap(
+					rowToVerification,
+				);
 
 			return Ok({
 				items,
-				limit: input.limit ?? Infinity,
-				offset: input.offset ?? 0,
+				limit:
+					input.limit ??
+					Infinity,
+				offset:
+					input.offset ??
+					0,
 				total,
 			});
 		},
@@ -97,15 +127,27 @@ export const VerificationDbPostgres = (deps: {
 
 			const vars = {
 				verification_id: verification.verificationId,
-				phone_number: PhoneNumber.toString(verification.phoneNumber),
+				phone_number: PhoneNumber.toString(
+					verification.phoneNumber,
+				),
 				created_at_posix: verification.createdAt,
 				expires_at_posix: verification.expiresAt,
-				code_hash: Sql.json(verification.codeHash),
+				code_hash: Sql.json(
+					verification.codeHash,
+				),
 				verified_at_posix: verification.verifiedAt,
 			};
-			const queried = await deps.dbConnSql.query(p.unknown, query, vars);
+			const queried =
+				await deps.dbConnSql.query(
+					p.unknown,
+					query,
+					vars,
+				);
 
-			return Result.mapOk(queried, () => null);
+			return Result.mapOk(
+				queried,
+				() => null,
+			);
 		},
 	};
 };
@@ -118,16 +160,25 @@ const rowToVerification = (row: Row): Verification[] => {
 	if (!phoneNumber) {
 		return [];
 	}
-	const codeHash = Result.withDefault(Hash.parse(row.code_hash), null);
+	const codeHash = Result.withDefault(
+		Hash.parse(row.code_hash),
+		null,
+	);
 	return [
 		{
 			verificationId: row.verification_id,
 			codeHash,
 			phoneNumber,
-			createdAt: Posix.init(row.created_at_posix),
-			expiresAt: Posix.init(row.expires_at_posix),
+			createdAt: Posix.init(
+				row.created_at_posix,
+			),
+			expiresAt: Posix.init(
+				row.expires_at_posix,
+			),
 			verifiedAt: row.verified_at_posix
-				? Posix.init(row.verified_at_posix)
+				? Posix.init(
+						row.verified_at_posix,
+				  )
 				: null,
 		},
 	];
@@ -138,14 +189,19 @@ const toSqlOrder = (order?: OrderClause) => {
 	const clauses: string[] = [];
 
 	if (order?.createdAt) {
-		const sqlOrder = order.createdAt === "asc" ? "ASC" : "DESC";
+		const sqlOrder =
+			order.createdAt === 'asc'
+				? 'ASC'
+				: 'DESC';
 		clauses.push(`created_at_posix ${sqlOrder}`);
 	}
 
 	const str =
 		clauses.length > 0
-			? `ORDER BY ${clauses.join(", ")}`
-			: "ORDER BY created_at_posix DESC";
+			? `ORDER BY ${clauses.join(
+					', ',
+			  )}`
+			: 'ORDER BY created_at_posix DESC';
 
 	return {
 		str,
@@ -157,27 +213,43 @@ const toSqlWhere = (where?: WhereClause) => {
 	const vars: Record<string, any> = {};
 	const clauses: string[] = [];
 
-	if (where?.verificationId?.["="]) {
-		clauses.push(`verification_id = :verification_id`);
-		vars["verification_id"] = where?.verificationId["="];
+	if (where?.verificationId?.['=']) {
+		clauses.push(
+			`verification_id = :verification_id`,
+		);
+		vars['verification_id'] =
+			where?.verificationId['='];
 	}
 
-	if (where?.phoneNumber?.["="]) {
+	if (where?.phoneNumber?.['=']) {
 		clauses.push(`phone_number = :phone_number`);
-		vars["phone_number"] = PhoneNumber.toString(where?.phoneNumber["="]);
+		vars['phone_number'] = PhoneNumber.toString(
+			where?.phoneNumber['='],
+		);
 	}
 
-	if (where?.createdAt?.["<="]) {
-		clauses.push(`:lte_created_at_posix >= created_at_posix `);
-		vars["lte_created_at_posix"] = where?.createdAt["<="];
+	if (where?.createdAt?.['<=']) {
+		clauses.push(
+			`:lte_created_at_posix >= created_at_posix `,
+		);
+		vars['lte_created_at_posix'] =
+			where?.createdAt['<='];
 	}
 
-	if (where?.createdAt?.[">="]) {
-		clauses.push(`created_at_posix >= :gte_created_at_posix`);
-		vars["gte_created_at_posix"] = where?.createdAt[">="];
+	if (where?.createdAt?.['>=']) {
+		clauses.push(
+			`created_at_posix >= :gte_created_at_posix`,
+		);
+		vars['gte_created_at_posix'] =
+			where?.createdAt['>='];
 	}
 
-	const str = clauses.length > 0 ? `WHERE ${clauses.join(" AND ")}` : "";
+	const str =
+		clauses.length > 0
+			? `WHERE ${clauses.join(
+					' AND ',
+			  )}`
+			: '';
 
 	return {
 		str,

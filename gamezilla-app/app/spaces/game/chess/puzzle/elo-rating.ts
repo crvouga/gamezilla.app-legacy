@@ -1,5 +1,5 @@
-import type { IntRange } from "gamezilla-app/@/core";
-import type { Brand } from "gamezilla-app/@/core/brand";
+import type {IntRange} from 'gamezilla-app/@/core';
+import type {Brand} from 'gamezilla-app/@/core/brand';
 
 //
 //
@@ -9,14 +9,18 @@ import type { Brand } from "gamezilla-app/@/core/brand";
 //
 //
 
-export type EloRating = Brand<number, "EloRating">;
+export type EloRating = Brand<number, 'EloRating'>;
 
 const MIN_ELO_RATING: EloRating = 100 as EloRating;
 
 const MAX_ELO_RATING: EloRating = 4000 as EloRating;
 
 const is = (n: unknown): n is EloRating => {
-	return typeof n === "number" && n >= MIN_ELO_RATING && n <= MAX_ELO_RATING;
+	return (
+		typeof n === 'number' &&
+		n >= MIN_ELO_RATING &&
+		n <= MAX_ELO_RATING
+	);
 };
 
 export type KFactor = IntRange<10, 40>;
@@ -31,7 +35,7 @@ const fromNumber = (n: number): EloRating => {
 		return cleaned;
 	}
 
-	throw new Error("Impossible condition");
+	throw new Error('Impossible condition');
 };
 
 //
@@ -42,15 +46,15 @@ const fromNumber = (n: number): EloRating => {
 //
 //
 
-export type EndGame = "win" | "lost" | "draw";
+export type EndGame = 'win' | 'lost' | 'draw';
 
 const endGameToScore = (endGame: EndGame): number => {
 	switch (endGame) {
-		case "win":
+		case 'win':
 			return 1;
-		case "lost":
+		case 'lost':
 			return 0;
-		case "draw":
+		case 'draw':
 			return 0.5;
 	}
 };
@@ -84,7 +88,12 @@ const toNewRating = ({
 	expectedScore: number;
 	kFactor: KFactor;
 }): EloRating => {
-	return fromNumber(rating + kFactor * (actualScore - expectedScore));
+	return fromNumber(
+		rating +
+			kFactor *
+				(actualScore -
+					expectedScore),
+	);
 };
 
 const toNextRating = ({
@@ -125,30 +134,30 @@ const defaultKFactor: KFactor = 30;
 //
 
 export type ChessLevel =
-	| "Beginner"
-	| "Intermediate"
-	| "Advanced"
-	| "Expert"
-	| "Master"
-	| "Grandmaster";
+	| 'Beginner'
+	| 'Intermediate'
+	| 'Advanced'
+	| 'Expert'
+	| 'Master'
+	| 'Grandmaster';
 
 const toChessLevel = (rating: number): ChessLevel => {
 	if (rating < 800) {
-		return "Beginner";
+		return 'Beginner';
 	}
 	if (rating < 1200) {
-		return "Intermediate";
+		return 'Intermediate';
 	}
 	if (rating < 1600) {
-		return "Advanced";
+		return 'Advanced';
 	}
 	if (rating < 2000) {
-		return "Expert";
+		return 'Expert';
 	}
 	if (rating < 2400) {
-		return "Master";
+		return 'Master';
 	}
-	return "Grandmaster";
+	return 'Grandmaster';
 };
 
 export const EloRating = {

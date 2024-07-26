@@ -1,27 +1,33 @@
-import { describe, expect, it } from "bun:test";
-import { GuestSessionMappingDb } from "./guest-session-mapping-db-impl";
-import { SessionId, UserId } from "gamezilla-app/app/@/data";
-import { unwrap } from "gamezilla-app/@/core";
-import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
+import {describe, expect, it} from 'bun:test';
+import {GuestSessionMappingDb} from './guest-session-mapping-db-impl';
+import {SessionId, UserId} from 'gamezilla-app/app/@/data';
+import {unwrap} from 'gamezilla-app/@/core';
+import {AppServerTestEnv} from 'gamezilla-app/app/@/server/server-test-env';
 
 const Fixture = async () => {
 	const testEnv = await AppServerTestEnv();
 	switch (testEnv.t) {
-		case "integration": {
-			const guestSessionMappingDb = GuestSessionMappingDb({
-				t: "postgres",
-				dbConnSql: testEnv.dbConnSql,
-			});
+		case 'integration': {
+			const guestSessionMappingDb =
+				GuestSessionMappingDb(
+					{
+						t: 'postgres',
+						dbConnSql: testEnv.dbConnSql,
+					},
+				);
 
 			return {
 				guestSessionMappingDb,
 			};
 		}
 
-		case "unit": {
-			const guestSessionMappingDb = GuestSessionMappingDb({
-				t: "hash-map",
-			});
+		case 'unit': {
+			const guestSessionMappingDb =
+				GuestSessionMappingDb(
+					{
+						t: 'hash-map',
+					},
+				);
 
 			return {
 				guestSessionMappingDb,
@@ -31,14 +37,16 @@ const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it("should insert correctly", async () => {
+	it('should insert correctly', async () => {
 		const f = await Fixture();
 
 		const sessionId = SessionId.generate();
 		const guestUserId = UserId.generate();
 
 		const before = unwrap(
-			await f.guestSessionMappingDb.findUserIdBySessionId(sessionId),
+			await f.guestSessionMappingDb.findUserIdBySessionId(
+				sessionId,
+			),
 		);
 
 		await f.guestSessionMappingDb.insert({
@@ -47,14 +55,16 @@ describe(import.meta.file, () => {
 		});
 
 		const after = unwrap(
-			await f.guestSessionMappingDb.findUserIdBySessionId(sessionId),
+			await f.guestSessionMappingDb.findUserIdBySessionId(
+				sessionId,
+			),
 		);
 
 		expect(before).toBeNull();
 		expect(after).toBe(guestUserId);
 	});
 
-	it("should let guest have many sessions", async () => {
+	it('should let guest have many sessions', async () => {
 		const f = await Fixture();
 
 		const sessionIdA = SessionId.generate();
@@ -76,13 +86,19 @@ describe(import.meta.file, () => {
 		});
 
 		const userIdA = unwrap(
-			await f.guestSessionMappingDb.findUserIdBySessionId(sessionIdA),
+			await f.guestSessionMappingDb.findUserIdBySessionId(
+				sessionIdA,
+			),
 		);
 		const userIdB = unwrap(
-			await f.guestSessionMappingDb.findUserIdBySessionId(sessionIdB),
+			await f.guestSessionMappingDb.findUserIdBySessionId(
+				sessionIdB,
+			),
 		);
 		const userIdC = unwrap(
-			await f.guestSessionMappingDb.findUserIdBySessionId(sessionIdC),
+			await f.guestSessionMappingDb.findUserIdBySessionId(
+				sessionIdC,
+			),
 		);
 
 		expect(userIdA).toBe(guestUserId);

@@ -1,4 +1,4 @@
-import { p } from "../core/parser";
+import {p} from '../core/parser';
 
 export const AnyMsg = p.obj({
 	t: p.str,
@@ -17,7 +17,7 @@ export const Msg = <
 	) as p.Parser<TPayload>,
 ) => {
 	function msgCreator(payload: TPayload) {
-		return { t, ...payload };
+		return {t, ...payload};
 	}
 	const MsgBase = p.obj({
 		t: p.l(t),
@@ -28,7 +28,10 @@ export const Msg = <
 
 	function is(msg: unknown): msg is Msg {
 		const parsed = AnyMsg.parse(msg);
-		return parsed.t === "ok" && parsed.value.t === t;
+		return (
+			parsed.t === 'ok' &&
+			parsed.value.t === t
+		);
 	}
 
 	msgCreator.is = is;
@@ -38,7 +41,10 @@ export const Msg = <
 };
 
 export const Namespace = <TNamespace extends string>(namespace: TNamespace) => {
-	return <TTag extends string, TPayload extends Record<string, unknown>>(
+	return <
+		TTag extends string,
+		TPayload extends Record<string, unknown>,
+	>(
 		t: TTag,
 		payloadParser: p.Parser<TPayload> = p.dict(
 			p.str,

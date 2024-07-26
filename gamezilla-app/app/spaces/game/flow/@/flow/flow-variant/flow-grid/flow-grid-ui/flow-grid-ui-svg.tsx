@@ -1,8 +1,8 @@
-import { IconCheckmark, cn } from "gamezilla-app/app/@/ui";
-import { Flow, FlowUI } from "../../../flow";
-import * as FlowGrid from "../flow-grid";
-import type { VDom } from "gamezilla-app/@/vdom";
-import { FlowNodeId } from "../../../flow/flow-node-id";
+import {IconCheckmark, cn} from 'gamezilla-app/app/@/ui';
+import {Flow, FlowUI} from '../../../flow';
+import * as FlowGrid from '../flow-grid';
+import type {VDom} from 'gamezilla-app/@/vdom';
+import {FlowNodeId} from '../../../flow/flow-node-id';
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33;
@@ -13,7 +13,10 @@ let isCurrentDeviceTouch = false;
 
 const View = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	const draggedOver = (nodeId: FlowNodeId) => {
-		if (!input.isDragging || lastDraggedOver === nodeId) {
+		if (
+			!input.isDragging ||
+			lastDraggedOver === nodeId
+		) {
 			return;
 		}
 		lastDraggedOver = nodeId;
@@ -41,16 +44,21 @@ const View = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
 		<svg
 			className={cn(
-				"w-full touch-none select-none",
-				input.isDragging && "cursor-grabbing",
-				input.disabled && "pointer-events-none",
+				'w-full touch-none select-none',
+				input.isDragging &&
+					'cursor-grabbing',
+				input.disabled &&
+					'pointer-events-none',
 				input.className,
 			)}
 			onContextMenu={(e) => {
 				e.stopPropagation();
 				e.preventDefault();
 			}}
-			viewBox={`${0} ${0} ${input.model.width} ${input.model.height}`}
+			viewBox={`${0} ${0} ${
+				input.model
+					.width
+			} ${input.model.height}`}
 			onTouchMove={onTouchMove}
 			onMouseLeave={left}
 			onMouseUp={left}
@@ -60,12 +68,19 @@ const View = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 
 			<ViewPipelines {...input} />
 
-			<ViewAutocompleteEdge {...input} />
+			<ViewAutocompleteEdge
+				{...input}
+			/>
 
 			<ViewCoordinates {...input} />
 
 			{!input.disabled && (
-				<ViewClickable {...input} draggedOver={draggedOver} />
+				<ViewClickable
+					{...input}
+					draggedOver={
+						draggedOver
+					}
+				/>
 			)}
 		</svg>
 	);
@@ -75,7 +90,12 @@ const ViewGrid = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
 		<>
 			<defs>
-				<pattern id="grid" width="1" height="1" patternUnits="userSpaceOnUse">
+				<pattern
+					id="grid"
+					width="1"
+					height="1"
+					patternUnits="userSpaceOnUse"
+				>
 					<path
 						d="M 1 0 L 0 0 0 1"
 						fill="none"
@@ -88,8 +108,16 @@ const ViewGrid = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 			<rect
 				x={0}
 				y={0}
-				width={input.model.width}
-				height={input.model.height}
+				width={
+					input
+						.model
+						.width
+				}
+				height={
+					input
+						.model
+						.height
+				}
 				fill="url(#grid)"
 				stroke="green"
 				strokeWidth="0.02"
@@ -101,11 +129,24 @@ const ViewGrid = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 const ViewPipelines = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
 		<g transform="translate(0.5, 0.5)">
-			{map(FlowGrid.yieldTerminals(input.model), (terminal) => {
-				return (
-					<ViewPipeline key={terminal.groupId} {...input} terminal={terminal} />
-				);
-			})}
+			{map(
+				FlowGrid.yieldTerminals(
+					input.model,
+				),
+				(terminal) => {
+					return (
+						<ViewPipeline
+							key={
+								terminal.groupId
+							}
+							{...input}
+							terminal={
+								terminal
+							}
+						/>
+					);
+				},
+			)}
 		</g>
 	);
 };
@@ -117,7 +158,10 @@ const ViewPipeline = (
 ) => {
 	const terminal = input.terminal;
 	const groupColor = FlowUI.Color.groupIdToHex(terminal.groupId);
-	const pipeline = FlowGrid.toPipeline(input.model, terminal.startId);
+	const pipeline = FlowGrid.toPipeline(
+		input.model,
+		terminal.startId,
+	);
 	const pipelinePathData = pipelineToSvgPathData(pipeline);
 	const didUseHint = Boolean(input.usedHints?.[terminal.groupId]);
 	const isConnectedWithPipes = Flow.isTerminalConnectedWithPipes(
@@ -130,8 +174,16 @@ const ViewPipeline = (
 		<g key={terminal.groupId} id={terminal.groupId}>
 			{!input.disableHighlight && (
 				<path
-					d={input.isGroupActive?.(terminal.groupId) ? "" : pipelinePathData}
-					stroke={groupColor}
+					d={
+						input.isGroupActive?.(
+							terminal.groupId,
+						)
+							? ''
+							: pipelinePathData
+					}
+					stroke={
+						groupColor
+					}
 					fill="none"
 					strokeLinejoin="inherit"
 					strokeLinecap="square"
@@ -141,35 +193,87 @@ const ViewPipeline = (
 			)}
 
 			<path
-				d={pipelinePathData}
-				stroke={groupColor}
+				d={
+					pipelinePathData
+				}
+				stroke={
+					groupColor
+				}
 				fill="none"
 				strokeLinejoin="round"
 				strokeLinecap="round"
-				strokeWidth={EDGE_STROKE_WIDTH}
+				strokeWidth={
+					EDGE_STROKE_WIDTH
+				}
 			/>
 
 			<circle
-				cx={terminal.start.x}
-				cy={terminal.start.y}
-				r={TERMINAL_NODE_RADIUS}
-				fill={groupColor}
+				cx={
+					terminal
+						.start
+						.x
+				}
+				cy={
+					terminal
+						.start
+						.y
+				}
+				r={
+					TERMINAL_NODE_RADIUS
+				}
+				fill={
+					groupColor
+				}
 			/>
 
 			{shouldShowUsedHint && (
-				<HintCheckmark x={terminal.start.x} y={terminal.start.y} />
+				<HintCheckmark
+					x={
+						terminal
+							.start
+							.x
+					}
+					y={
+						terminal
+							.start
+							.y
+					}
+				/>
 			)}
 
 			{terminal.end && (
 				<>
 					<circle
-						cx={terminal.end.x}
-						cy={terminal.end.y}
-						r={TERMINAL_NODE_RADIUS}
-						fill={groupColor}
+						cx={
+							terminal
+								.end
+								.x
+						}
+						cy={
+							terminal
+								.end
+								.y
+						}
+						r={
+							TERMINAL_NODE_RADIUS
+						}
+						fill={
+							groupColor
+						}
 					/>
 					{shouldShowUsedHint && (
-						<HintCheckmark x={terminal.end.x} y={terminal.end.y} />
+						<HintCheckmark
+							x={
+								terminal
+									.end
+									.x
+							}
+							y={
+								terminal
+									.end
+									.y
+							}
+						/>
 					)}
 				</>
 			)}
@@ -177,7 +281,7 @@ const ViewPipeline = (
 	);
 };
 
-const HintCheckmark = (input: { x: number; y: number }) => {
+const HintCheckmark = (input: {x: number; y: number}) => {
 	return (
 		<WithPadding
 			x={input.x - 0.5}
@@ -185,7 +289,11 @@ const HintCheckmark = (input: { x: number; y: number }) => {
 			width={1}
 			height={1}
 			padding={0.25}
-			render={(input) => <IconCheckmark {...input} />}
+			render={(input) => (
+				<IconCheckmark
+					{...input}
+				/>
+			)}
 		/>
 	);
 };
@@ -203,7 +311,7 @@ const WithPadding = (input: {
 		height: number;
 	}) => VDom;
 }) => {
-	const { x, y, width, height, padding, render } = input;
+	const {x, y, width, height, padding, render} = input;
 
 	const paddedWidth = Math.max(0, width - padding * 2);
 	const paddedHeight = Math.max(0, height - padding * 2);
@@ -223,13 +331,57 @@ const ViewAutocompleteEdge = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 		input.autocompleteEdge && (
 			<g transform="translate(0.5, 0.5)">
 				<line
-					x1={input.model.positions[input.autocompleteEdge.sourceId]?.x}
-					y1={input.model.positions[input.autocompleteEdge.sourceId]?.y}
-					x2={input.model.positions[input.autocompleteEdge.targetId]?.x}
-					y2={input.model.positions[input.autocompleteEdge.targetId]?.y}
-					stroke={FlowUI.Color.groupIdToHex(input.autocompleteEdge.groupId)}
-					strokeWidth={EDGE_STROKE_WIDTH}
-					strokeOpacity={0.5}
+					x1={
+						input
+							.model
+							.positions[
+							input
+								.autocompleteEdge
+								.sourceId
+						]
+							?.x
+					}
+					y1={
+						input
+							.model
+							.positions[
+							input
+								.autocompleteEdge
+								.sourceId
+						]
+							?.y
+					}
+					x2={
+						input
+							.model
+							.positions[
+							input
+								.autocompleteEdge
+								.targetId
+						]
+							?.x
+					}
+					y2={
+						input
+							.model
+							.positions[
+							input
+								.autocompleteEdge
+								.targetId
+						]
+							?.y
+					}
+					stroke={FlowUI.Color.groupIdToHex(
+						input
+							.autocompleteEdge
+							.groupId,
+					)}
+					strokeWidth={
+						EDGE_STROKE_WIDTH
+					}
+					strokeOpacity={
+						0.5
+					}
 				/>
 			</g>
 		)
@@ -240,20 +392,33 @@ const ViewCoordinates = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
 	return (
 		input.showCoordinates && (
 			<g transform="translate(0, 1)">
-				{map(FlowGrid.yieldNodes(input.model), (node) => {
-					return (
-						<text
-							className="pointer-events-none"
-							key={node.nodeId}
-							x={node.x}
-							y={node.y}
-							fontSize="0.2"
-							fill="#fff"
-						>
-							{`${node.x},${node.y}`}
-						</text>
-					);
-				})}
+				{map(
+					FlowGrid.yieldNodes(
+						input.model,
+					),
+					(
+						node,
+					) => {
+						return (
+							<text
+								className="pointer-events-none"
+								key={
+									node.nodeId
+								}
+								x={
+									node.x
+								}
+								y={
+									node.y
+								}
+								fontSize="0.2"
+								fill="#fff"
+							>
+								{`${node.x},${node.y}`}
+							</text>
+						);
+					},
+				)}
 			</g>
 		)
 	);
@@ -266,17 +431,32 @@ const ViewClickable = (
 ) => {
 	return (
 		<g key={input.model.nodeHash}>
-			{map(FlowGrid.yieldNodes(input.model), (node) => {
-				return (
-					<ViewClickableNode
-						key={node.nodeId}
-						node={node}
-						onPressDown={input.onPressDown}
-						onPressUp={input.onPressUp}
-						draggedOver={input.draggedOver}
-					/>
-				);
-			})}
+			{map(
+				FlowGrid.yieldNodes(
+					input.model,
+				),
+				(node) => {
+					return (
+						<ViewClickableNode
+							key={
+								node.nodeId
+							}
+							node={
+								node
+							}
+							onPressDown={
+								input.onPressDown
+							}
+							onPressUp={
+								input.onPressUp
+							}
+							draggedOver={
+								input.draggedOver
+							}
+						/>
+					);
+				},
+			)}
 		</g>
 	);
 };
@@ -284,7 +464,7 @@ const ViewClickable = (
 const ViewClickableNode = (
 	input: Pick<
 		FlowUI.FlowViewinput<FlowGrid.Model>,
-		"onPressDown" | "onPressUp"
+		'onPressDown' | 'onPressUp'
 	> & {
 		node: FlowGrid.Node;
 		draggedOver?: (nodeId: FlowNodeId) => void;
@@ -299,29 +479,58 @@ const ViewClickableNode = (
 			height="1"
 			fill="transparent"
 			onMouseDown={() => {
-				if (isCurrentDeviceTouch) {
+				if (
+					isCurrentDeviceTouch
+				) {
 					return;
 				}
-				input.onPressDown?.(input.node.nodeId);
+				input.onPressDown?.(
+					input
+						.node
+						.nodeId,
+				);
 			}}
 			onMouseUp={(event) => {
 				event.stopPropagation();
-				input.onPressUp?.(input.node.nodeId);
+				input.onPressUp?.(
+					input
+						.node
+						.nodeId,
+				);
 			}}
 			onMouseEnter={() => {
-				input.draggedOver?.(input.node.nodeId);
+				input.draggedOver?.(
+					input
+						.node
+						.nodeId,
+				);
 			}}
 			onTouchStart={() => {
-				isCurrentDeviceTouch = true;
-				input.onPressDown?.(input.node.nodeId);
+				isCurrentDeviceTouch =
+					true;
+				input.onPressDown?.(
+					input
+						.node
+						.nodeId,
+				);
 			}}
 			onTouchCancel={() => {
-				isCurrentDeviceTouch = true;
-				input.onPressUp?.(input.node.nodeId);
+				isCurrentDeviceTouch =
+					true;
+				input.onPressUp?.(
+					input
+						.node
+						.nodeId,
+				);
 			}}
 			onTouchEnd={() => {
-				isCurrentDeviceTouch = true;
-				input.onPressUp?.(input.node.nodeId);
+				isCurrentDeviceTouch =
+					true;
+				input.onPressUp?.(
+					input
+						.node
+						.nodeId,
+				);
 			}}
 		/>
 	);
@@ -330,7 +539,7 @@ const ViewClickableNode = (
 const pipelineToSvgPathData = (
 	pipeline: Iterable<FlowGrid.PipeJoined>,
 ): string => {
-	let path = "";
+	let path = '';
 	for (const pipe of pipeline) {
 		path += `M ${pipe.source.x} ${pipe.source.y} L ${pipe.target.x} ${pipe.target.y} `;
 	}

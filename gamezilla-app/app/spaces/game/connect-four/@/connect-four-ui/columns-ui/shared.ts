@@ -1,12 +1,15 @@
-import { Sub, type Transition } from "gamezilla-app/@/core";
+import {Sub, type Transition} from 'gamezilla-app/@/core';
 
-import type { VDom } from "gamezilla-app/@/vdom";
-import type { ColumnIndex, Columns, PlayerType, Win } from "../../connect-four";
+import type {VDom} from 'gamezilla-app/@/vdom';
+import type {ColumnIndex, Columns, PlayerType, Win} from '../../connect-four';
 
 export type ViewColumnsinput = {
 	columns: Columns;
 	model?: Model;
-	ghost?: { columnIndex: ColumnIndex; playerType: PlayerType };
+	ghost?: {
+		columnIndex: ColumnIndex;
+		playerType: PlayerType;
+	};
 	onClick?: (columnIndex: ColumnIndex) => void;
 	onHover?: (columnINdex: ColumnIndex) => void;
 	disabled?: boolean;
@@ -31,17 +34,24 @@ export type Disc = {
 export const toDiscs = (columns: Columns): Disc[] => {
 	const discs: Disc[] = [];
 	for (let x = 0; x < columns.length; x++) {
-		for (let y = 0; y < (columns[x]?.length ?? 0); y++) {
+		for (
+			let y = 0;
+			y < (columns[x]?.length ?? 0);
+			y++
+		) {
 			const player = columns[x]?.[y];
 
 			if (player) {
-				const disc: Disc = {
-					id: `${player}-${x}-${y}`,
-					x,
-					y,
-					player,
-				};
-				discs.push(disc);
+				const disc: Disc =
+					{
+						id: `${player}-${x}-${y}`,
+						x,
+						y,
+						player,
+					};
+				discs.push(
+					disc,
+				);
 			}
 		}
 	}

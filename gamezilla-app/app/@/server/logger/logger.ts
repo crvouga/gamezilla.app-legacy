@@ -10,22 +10,34 @@ export type ILogger = {
 const prefix = (prefix: string, logger: ILogger): ILogger => {
 	return {
 		debug(msg) {
-			logger.debug(`[${prefix}] ${msg}`);
+			logger.debug(
+				`[${prefix}] ${msg}`,
+			);
 		},
 		error(msg) {
-			logger.error(`[${prefix}] ${msg}`);
+			logger.error(
+				`[${prefix}] ${msg}`,
+			);
 		},
 		fatal(msg) {
-			logger.fatal(`[${prefix}] ${msg}`);
+			logger.fatal(
+				`[${prefix}] ${msg}`,
+			);
 		},
 		info(msg) {
-			logger.info(`[${prefix}] ${msg}`);
+			logger.info(
+				`[${prefix}] ${msg}`,
+			);
 		},
 		trace(msg) {
-			logger.trace(`[${prefix}] ${msg}`);
+			logger.trace(
+				`[${prefix}] ${msg}`,
+			);
 		},
 		warn(msg) {
-			logger.warn(`[${prefix}] ${msg}`);
+			logger.warn(
+				`[${prefix}] ${msg}`,
+			);
 		},
 	};
 };

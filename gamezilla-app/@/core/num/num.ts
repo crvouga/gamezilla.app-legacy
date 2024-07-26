@@ -1,11 +1,11 @@
 export type Num = {
-	Num: "Num";
+	Num: 'Num';
 	_value: number;
 };
 
 const wrap = (number: number): Num => {
 	return {
-		Num: "Num",
+		Num: 'Num',
 		_value: number,
 	};
 };

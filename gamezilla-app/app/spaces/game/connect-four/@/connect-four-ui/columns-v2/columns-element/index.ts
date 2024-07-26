@@ -2,19 +2,19 @@ import {
 	COLUMN_COUNT,
 	type ColumnIndex,
 	MAX_COLUMN_HEIGHT,
-} from "../../../connect-four";
-import { gameTheme } from "../../shared";
-import { type Columnsinput, columnsinputSub } from "../shared";
-import { initColumns } from "./columns";
-import { initDiscs, syncDiscs } from "./discs";
-import type { SvgIds } from "./shared";
-import { initWins, syncWins } from "./wins";
+} from '../../../connect-four';
+import {gameTheme} from '../../shared';
+import {type Columnsinput, columnsinputSub} from '../shared';
+import {initColumns} from './columns';
+import {initDiscs, syncDiscs} from './discs';
+import type {SvgIds} from './shared';
+import {initWins, syncWins} from './wins';
 
 declare global {
 	namespace JSX {
 		interface IntrinsicElements {
-			"connect-four-columns": {
-				"initial-columns-json": string;
+			'connect-four-columns': {
+				'initial-columns-json': string;
 			};
 		}
 	}
@@ -32,21 +32,29 @@ const ids: SvgIds = {
 /* Have to increase the viewBox so that the draw animation is smooth >:-{ */
 const N = 1000;
 
-if (typeof window !== "undefined" && "customElements" in window) {
+if (typeof window !== 'undefined' && 'customElements' in window) {
 	customElements.define(
-		"connect-four-columns",
+		'connect-four-columns',
 		class extends HTMLElement {
-			private input: Columnsinput | null = null;
-			private previnput: Columnsinput | null = null;
-			private cleanUps: (() => void)[] = [];
+			private input: Columnsinput | null =
+				null;
+			private previnput: Columnsinput | null =
+				null;
+			private cleanUps: (() => void)[] =
+				[];
 
 			constructor() {
 				super();
-				this.attachShadow({ mode: "open" });
+				this.attachShadow(
+					{
+						mode: 'open',
+					},
+				);
 			}
 
 			disconnectedCallback() {
-				for (const cleanUp of this.cleanUps) {
+				for (const cleanUp of this
+					.cleanUps) {
 					cleanUp();
 				}
 			}
@@ -56,21 +64,41 @@ if (typeof window !== "undefined" && "customElements" in window) {
 			}
 
 			initUI() {
-				const unsubscribe = columnsinputSub.sub((input) => {
-					this.previnput = this.input;
-					this.input = input;
-					this.syncUI();
-				});
-				this.cleanUps.push(unsubscribe);
+				const unsubscribe =
+					columnsinputSub.sub(
+						(
+							input,
+						) => {
+							this.previnput =
+								this.input;
+							this.input =
+								input;
+							this.syncUI();
+						},
+					);
+				this.cleanUps.push(
+					unsubscribe,
+				);
 
-				const initialColumns = this.getAttribute("initial-columns-json");
-				if (initialColumns) {
-					this.input = {
-						columns: JSON.parse(initialColumns),
-					};
+				const initialColumns =
+					this.getAttribute(
+						'initial-columns-json',
+					);
+				if (
+					initialColumns
+				) {
+					this.input =
+						{
+							columns: JSON.parse(
+								initialColumns,
+							),
+						};
 				}
 
-				if (!this.shadowRoot) {
+				if (
+					!this
+						.shadowRoot
+				) {
 					return;
 				}
 
@@ -83,7 +111,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
           }
         </style>
         <svg width="100%" viewBox="0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}">
-          ${createSvgDefs({ ids })}
+          ${createSvgDefs({ids})}
 
           <g transform="translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)">
             <rect
@@ -117,85 +145,165 @@ if (typeof window !== "undefined" && "customElements" in window) {
           </g>
         </svg>`;
 
-				const columns = this.getColumnsParentNode();
-				const discs = this.getDiscsParentNode();
-				const wins = this.getWinsParentNode();
+				const columns =
+					this.getColumnsParentNode();
+				const discs =
+					this.getDiscsParentNode();
+				const wins =
+					this.getWinsParentNode();
 
 				if (columns) {
-					initColumns({
-						onClick: (columnIndex) => {
-							this.onColumnClick(columnIndex);
+					initColumns(
+						{
+							onClick: (
+								columnIndex,
+							) => {
+								this.onColumnClick(
+									columnIndex,
+								);
+							},
+							parentNode: columns,
 						},
-						parentNode: columns,
-					});
+					);
 				}
 
-				if (this.input && discs) {
-					initDiscs({
-						columns: this.input.columns,
-						ids,
-						parentNode: discs,
-					});
+				if (
+					this
+						.input &&
+					discs
+				) {
+					initDiscs(
+						{
+							columns: this
+								.input
+								.columns,
+							ids,
+							parentNode: discs,
+						},
+					);
 				}
 
-				if (this.input && wins) {
-					initWins({ columns: this.input.columns, parentNode: wins });
+				if (
+					this
+						.input &&
+					wins
+				) {
+					initWins(
+						{
+							columns: this
+								.input
+								.columns,
+							parentNode: wins,
+						},
+					);
 				}
 			}
 
-			onColumnClick(columnIndex: ColumnIndex) {
-				this.input?.onDropDisc?.(columnIndex);
+			onColumnClick(
+				columnIndex: ColumnIndex,
+			) {
+				this.input?.onDropDisc?.(
+					columnIndex,
+				);
 			}
 
 			getColumnsParentNode() {
-				const columns = this.shadowRoot?.getElementById("columns")!;
-				if (columns instanceof SVGGElement) {
+				const columns =
+					this.shadowRoot?.getElementById(
+						'columns',
+					)!;
+				if (
+					columns instanceof
+					SVGGElement
+				) {
 					return columns;
 				}
 				return null;
 			}
 			getDiscsParentNode() {
-				const node = this.shadowRoot?.getElementById("discs");
-				if (node instanceof SVGGElement) {
+				const node =
+					this.shadowRoot?.getElementById(
+						'discs',
+					);
+				if (
+					node instanceof
+					SVGGElement
+				) {
 					return node;
 				}
 				return null;
 			}
 			getWinsParentNode() {
-				const node = this.shadowRoot?.getElementById("wins");
+				const node =
+					this.shadowRoot?.getElementById(
+						'wins',
+					);
 
-				if (node instanceof SVGElement) {
+				if (
+					node instanceof
+					SVGElement
+				) {
 					return node;
 				}
 				return null;
 			}
 
 			syncUI() {
-				const discs = this.getDiscsParentNode();
-				const columns = this.input?.columns;
-				if (columns && discs) {
-					syncDiscs({
-						columns,
-						ids,
-						parentNode: discs,
-					});
+				const discs =
+					this.getDiscsParentNode();
+				const columns =
+					this
+						.input
+						?.columns;
+				if (
+					columns &&
+					discs
+				) {
+					syncDiscs(
+						{
+							columns,
+							ids,
+							parentNode: discs,
+						},
+					);
 				}
-				const wins = this.getWinsParentNode();
-				if (columns && wins) {
-					syncWins({
-						columns,
-						parentNode: wins,
-						prevColumns: this.previnput?.columns ?? null,
-					});
+				const wins =
+					this.getWinsParentNode();
+				if (
+					columns &&
+					wins
+				) {
+					syncWins(
+						{
+							columns,
+							parentNode: wins,
+							prevColumns:
+								this
+									.previnput
+									?.columns ??
+								null,
+						},
+					);
 				}
 
-				const root = this.shadowRoot?.querySelector("svg");
+				const root =
+					this.shadowRoot?.querySelector(
+						'svg',
+					);
 
 				if (root) {
-					if (this.input?.disabled) {
-						root.classList.add("pointer-events-none");
+					if (
+						this
+							.input
+							?.disabled
+					) {
+						root.classList.add(
+							'pointer-events-none',
+						);
 					} else {
-						root.classList.remove("pointer-events-none");
+						root.classList.remove(
+							'pointer-events-none',
+						);
 					}
 				}
 			}
@@ -203,7 +311,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 	);
 }
 
-function createSvgDefs({ ids }: { ids: SvgIds }) {
+function createSvgDefs({ids}: {ids: SvgIds}) {
 	return `<defs>
       <pattern
         id="${ids.holePattern}"
@@ -234,13 +342,13 @@ function createSvgDefs({ ids }: { ids: SvgIds }) {
       </linearGradient>
 
       <linearGradient id="${ids.playerOneGradient}" gradient-transform="rotate(90)">
-        <stop offset="0%" stop-color="${gameTheme["player-one"].light}" />
-        <stop offset="100%" stop-color="${gameTheme["player-one"].dark}" />
+        <stop offset="0%" stop-color="${gameTheme['player-one'].light}" />
+        <stop offset="100%" stop-color="${gameTheme['player-one'].dark}" />
       </linearGradient>
 
       <linearGradient id="${ids.playerTwoGradient}" gradient-transform="rotate(90)">
-        <stop offset="0%" stop-color="${gameTheme["player-two"].light}" />
-        <stop offset="100%" stop-color="${gameTheme["player-two"].dark}" />
+        <stop offset="0%" stop-color="${gameTheme['player-two'].light}" />
+        <stop offset="100%" stop-color="${gameTheme['player-two'].dark}" />
       </linearGradient>
     </defs>`;
 }

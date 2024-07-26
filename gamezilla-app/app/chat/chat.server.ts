@@ -1,7 +1,7 @@
-import type { Eff } from "gamezilla-app/@/core";
-import type { ModelServer, MsgServer, MsgToServer } from "./chat.core";
+import type {Eff} from 'gamezilla-app/@/core';
+import type {ModelServer, MsgServer, MsgToServer} from './chat.core';
 
-export const init: { model: ModelServer } = { model: null };
+export const init: {model: ModelServer} = {model: null};
 
 export const updateFromClient = ({
 	model,
@@ -12,7 +12,7 @@ export const updateFromClient = ({
 	model: ModelServer;
 	eff?: Eff<MsgServer>;
 } => {
-	return { model };
+	return {model};
 };
 
 export const update = ({
@@ -24,5 +24,5 @@ export const update = ({
 	model: ModelServer;
 	eff?: Eff<MsgServer>;
 } => {
-	return { model };
+	return {model};
 };

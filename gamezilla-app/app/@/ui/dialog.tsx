@@ -1,7 +1,7 @@
-import type { VDomChildren } from "gamezilla-app/@/vdom";
-import { cn } from "./ui";
-import { TimeSpan } from "gamezilla-app/@/core";
-import { styles } from "gamezilla-app/@/vdom/style";
+import type {VDomChildren} from 'gamezilla-app/@/vdom';
+import {cn} from './ui';
+import {TimeSpan} from 'gamezilla-app/@/core';
+import {styles} from 'gamezilla-app/@/vdom/style';
 
 export const Dialog = (input: {
 	children: VDomChildren;
@@ -9,29 +9,37 @@ export const Dialog = (input: {
 	onClose: () => void;
 	delay?: TimeSpan;
 }) => {
-	const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null;
+	const delayMs = input.delay
+		? TimeSpan.toMilliseconds(input.delay)
+		: null;
 	const style = styles({
-		"transition-delay": input.open && delayMs ? `${delayMs}ms` : undefined,
+		'transition-delay':
+			input.open && delayMs
+				? `${delayMs}ms`
+				: undefined,
 	});
 	return (
 		<div
 			role="dialog"
 			style={style}
 			className={cn(
-				"absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out",
+				'absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out',
 				input.open
-					? "scale-100 opacity-100"
-					: "pointer-events-none scale-0 opacity-0",
+					? 'scale-100 opacity-100'
+					: 'pointer-events-none scale-0 opacity-0',
 			)}
 			onClick={(e) => {
-				if (e.target !== e.currentTarget) {
+				if (
+					e.target !==
+					e.currentTarget
+				) {
 					return;
 				}
 				input.onClose();
 			}}
 			onKeyDown={(e) => {
 				switch (e.key) {
-					case "Escape": {
+					case 'Escape': {
 						input.onClose();
 						return;
 					}
@@ -46,15 +54,15 @@ export const Dialog = (input: {
 	);
 };
 
-export const DialogSurface = (input: { children: VDomChildren }) => {
+export const DialogSurface = (input: {children: VDomChildren}) => {
 	return (
-		<div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-950 shadow-2xl drop-shadow-2xl border border-neutral-700 p-6">
+		<div className="flex w-80 flex-col gap-6 rounded-lg border border-neutral-700 bg-neutral-950 p-6 shadow-2xl drop-shadow-2xl">
 			{input.children}
 		</div>
 	);
 };
 
-export const DialogHeader = (input: { title: string }) => {
+export const DialogHeader = (input: {title: string}) => {
 	return (
 		<h1
 			role="heading"

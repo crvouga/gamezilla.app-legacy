@@ -1,13 +1,18 @@
 export class MapFileSystem<TKey, TValue> extends Map<TKey, TValue> {
 	private directory: string;
 
-	constructor({ directory }: { directory: string; filename: string }) {
+	constructor({
+		directory,
+	}: {
+		directory: string;
+		filename: string;
+	}) {
 		super();
 		this.directory = directory;
 	}
 
 	private writeFile() {
-		console.log("writeFile", this.directory);
+		console.log('writeFile', this.directory);
 	}
 
 	override clear(): void {
@@ -40,7 +45,11 @@ export class MapFileSystem<TKey, TValue> extends Map<TKey, TValue> {
 	}
 
 	override forEach(
-		callbackfn: (value: TValue, key: TKey, map: Map<TKey, TValue>) => void,
+		callbackfn: (
+			value: TValue,
+			key: TKey,
+			map: Map<TKey, TValue>,
+		) => void,
 		thisArg?: any,
 	) {
 		return super.forEach(callbackfn, thisArg);

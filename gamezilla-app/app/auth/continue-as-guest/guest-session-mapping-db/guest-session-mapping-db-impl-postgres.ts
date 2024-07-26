@@ -1,8 +1,8 @@
-import { Ok, Posix, isErr } from "gamezilla-app/@/core";
-import { IGuestSessionMappingDb } from "./guest-session-mapping-db";
-import { SessionId, UserId } from "gamezilla-app/app/@/data";
-import { p } from "gamezilla-app/@/core/parser";
-import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
+import {Ok, Posix, isErr} from 'gamezilla-app/@/core';
+import {IGuestSessionMappingDb} from './guest-session-mapping-db';
+import {SessionId, UserId} from 'gamezilla-app/app/@/data';
+import {p} from 'gamezilla-app/@/core/parser';
+import {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
 
 export const Row = p.obj({
 	user_id: UserId,
@@ -24,17 +24,25 @@ export const GuestSessionMappingDbPostgres = (deps: {
 			const vars = {
 				session_id: sessionId,
 			};
-			const queried = await deps.dbConnSql.query(
-				p.obj({ user_id: UserId }),
-				query,
-				vars,
-			);
+			const queried =
+				await deps.dbConnSql.query(
+					p.obj(
+						{
+							user_id: UserId,
+						},
+					),
+					query,
+					vars,
+				);
 
 			if (isErr(queried)) {
 				return queried;
 			}
 
-			const userId = queried.value[0]?.user_id ?? null;
+			const userId =
+				queried.value[0]
+					?.user_id ??
+				null;
 
 			return Ok(userId);
 		},
@@ -48,7 +56,12 @@ export const GuestSessionMappingDbPostgres = (deps: {
 				session_id: input.sessionId,
 				created_at_posix: Posix.now(),
 			};
-			const inserted = await deps.dbConnSql.query(p.unknown, query, vars);
+			const inserted =
+				await deps.dbConnSql.query(
+					p.unknown,
+					query,
+					vars,
+				);
 			if (isErr(inserted)) {
 				return inserted;
 			}

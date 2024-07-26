@@ -1,6 +1,6 @@
-import type { ClientTransportImpl, IClientTransport } from "./transport-client";
-import { ClientTransportSocketIO } from "./transport-client-impl-socket-io";
-import { ClientTransportWebSockets } from "./transport-client-impl-web-sockets";
+import type {ClientTransportImpl, IClientTransport} from './transport-client';
+import {ClientTransportSocketIO} from './transport-client-impl-socket-io';
+import {ClientTransportWebSockets} from './transport-client-impl-web-sockets';
 
 export const ClientTransport = async <MsgToServer, MsgToClient>({
 	codebaseVersionId,
@@ -15,15 +15,21 @@ export const ClientTransport = async <MsgToServer, MsgToClient>({
 	}>
 > => {
 	switch (impl.t) {
-		case "web-sockets": {
-			return ClientTransportWebSockets<MsgToServer, MsgToClient>({
+		case 'web-sockets': {
+			return ClientTransportWebSockets<
+				MsgToServer,
+				MsgToClient
+			>({
 				codebaseVersionId,
 				impl,
 			});
 		}
 
-		case "socket-io": {
-			return ClientTransportSocketIO<MsgToServer, MsgToClient>({
+		case 'socket-io': {
+			return ClientTransportSocketIO<
+				MsgToServer,
+				MsgToClient
+			>({
 				codebaseVersionId,
 				impl,
 			});

@@ -1,6 +1,6 @@
-import type { VDomChildren } from "gamezilla-app/@/vdom";
-import "./transition-element";
-import { type Transitioninput, transitionSub } from "./transition-shared";
+import type {VDomChildren} from 'gamezilla-app/@/vdom';
+import './transition-element';
+import {type Transitioninput, transitionSub} from './transition-shared';
 
 export const Transition = ({
 	id,
@@ -14,7 +14,7 @@ export const Transition = ({
 	children?: VDomChildren;
 }) => {
 	transitionSub.pub({
-		type: "input",
+		type: 'input',
 		id,
 		onEnter,
 		onExit,
@@ -23,5 +23,9 @@ export const Transition = ({
 		mode,
 	});
 	// @ts-ignore
-	return <transition-element id={id}>{children}</transition-element>;
+	return (
+		<transition-element id={id}>
+			{children}
+		</transition-element>
+	);
 };

@@ -1,2 +1,2 @@
-export * from "./logger";
-export * from "./logger-impl";
+export * from './logger';
+export * from './logger-impl';

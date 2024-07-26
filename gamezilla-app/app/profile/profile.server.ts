@@ -3,17 +3,17 @@ import {
 	ProfileAvatar,
 	type UserId,
 	Username,
-} from "gamezilla-app/app/@/data";
+} from 'gamezilla-app/app/@/data';
 import {
 	type ServerCmd,
 	type ServerCtx,
 	type ServerEvent,
 	sendToClient,
-} from "gamezilla-app/app/@/server";
-import { Err, Ok, Result, isErr } from "gamezilla-app/@/core";
-import type { AppServerModule } from "../@/architecture/app-server";
-import type { ProfileDb } from "./profile-db/profile-db";
-import { createProfileDb } from "./profile-db/profile-db-impl.postgres";
+} from 'gamezilla-app/app/@/server';
+import {Err, Ok, Result, isErr} from 'gamezilla-app/@/core';
+import type {AppServerModule} from '../@/architecture/app-server';
+import type {ProfileDb} from './profile-db/profile-db';
+import {createProfileDb} from './profile-db/profile-db-impl.postgres';
 import {
 	type MsgServer,
 	type MsgToClient,
@@ -21,7 +21,7 @@ import {
 	type ProfileCore,
 	type Req,
 	profileCoreToProfile,
-} from "./profile.types";
+} from './profile.types';
 
 //
 //
@@ -51,7 +51,7 @@ type Module = AppServerModule<{
 
 export type Deps = {};
 
-export const getDeps: Module["getDeps"] = async () => {
+export const getDeps: Module['getDeps'] = async () => {
 	return {};
 };
 
@@ -63,7 +63,7 @@ export const getDeps: Module["getDeps"] = async () => {
 //
 //
 
-export const init: Module["init"] = async () => {
+export const init: Module['init'] = async () => {
 	return {
 		model: null,
 	};
@@ -77,7 +77,7 @@ export const init: Module["init"] = async () => {
 //
 //
 
-export const update: Module["update"] = async (input) => {
+export const update: Module['update'] = async (input) => {
 	if (input.msg) {
 		return updateFromMsg(input);
 	}
@@ -90,31 +90,34 @@ export const update: Module["update"] = async (input) => {
 		return updateFromEvent(input);
 	}
 
-	return { model: input.model };
+	return {model: input.model};
 };
 
-const updateFromMsg: Module["update"] = async ({ msg, model }) => {
+const updateFromMsg: Module['update'] = async ({msg, model}) => {
 	if (!msg) {
-		return { model };
+		return {model};
 	}
 
 	switch (msg.t) {
-		case "handled": {
+		case 'handled': {
 			return {
 				model,
-				msgCmd: [sendToClient([msg.clientId], msg.msg)],
+				msgCmd: [
+					sendToClient(
+						[
+							msg.clientId,
+						],
+						msg.msg,
+					),
+				],
 			};
 		}
 	}
 };
 
-const updateFromClient: Module["update"] = async ({
-	msgClient,
-	model,
-	ctx,
-}) => {
+const updateFromClient: Module['update'] = async ({msgClient, model, ctx}) => {
 	if (!msgClient) {
-		return { model };
+		return {model};
 	}
 
 	return {
@@ -126,53 +129,83 @@ const updateFromClient: Module["update"] = async ({
 				return;
 			}
 
-			const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql });
+			const ProfileDb =
+				createProfileDb(
+					{
+						dbConn: ctx.dbConnSql,
+					},
+				);
 			const result = await handler({
 				ProfileDb,
 				msg: msgClient,
-				ctx: { ...ctx, currentUserId: userId },
+				ctx: {
+					...ctx,
+					currentUserId: userId,
+				},
 			});
 
 			dispatch({
-				t: "handled",
+				t: 'handled',
 				clientId: msgClient.clientId,
-				msg: { ...msgClient, result },
+				msg: {
+					...msgClient,
+					result,
+				},
 			});
 		},
 	};
 };
 
-const updateFromEvent: Module["update"] = async ({ msgEvt, model, ctx }) => {
+const updateFromEvent: Module['update'] = async ({msgEvt, model, ctx}) => {
 	if (!msgEvt) {
-		return { model };
+		return {model};
 	}
 
 	switch (msgEvt.t) {
-		case "auth/client-authenticated": {
+		case 'auth/client-authenticated': {
 			return {
 				model,
-				eff: async (dispatch) => {
-					const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql });
-					const result = await findElseInsertNew({
-						ProfileDb,
-						userId: msgEvt.account.userId,
-					});
-					dispatch({
-						t: "handled",
-						clientId: msgEvt.clientId,
-						msg: {
-							t: "current-user-profile",
-							result: Result.mapOk(result, profileCoreToProfile),
-							source: msgEvt,
-							loggedIn: msgEvt.loggedIn,
+				eff: async (
+					dispatch,
+				) => {
+					const ProfileDb =
+						createProfileDb(
+							{
+								dbConn: ctx.dbConnSql,
+							},
+						);
+					const result =
+						await findElseInsertNew(
+							{
+								ProfileDb,
+								userId: msgEvt
+									.account
+									.userId,
+							},
+						);
+					dispatch(
+						{
+							t: 'handled',
+							clientId: msgEvt.clientId,
+							msg: {
+								t: 'current-user-profile',
+								result: Result.mapOk(
+									result,
+									profileCoreToProfile,
+								),
+								source: msgEvt,
+								loggedIn: msgEvt.loggedIn,
+							},
 						},
-					});
+					);
 				},
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -183,26 +216,33 @@ const handler = async ({
 }: {
 	ProfileDb: ProfileDb;
 	msg: Req;
-	ctx: { currentUserId: UserId };
+	ctx: {currentUserId: UserId};
 }): Promise<Result<string, Profile[]>> => {
 	switch (msg.t) {
-		case "find-one": {
-			const found = await ProfileDb.findOneByUserId(msg.userId);
-			return Result.mapOk(found, (profiles) =>
-				profiles.map(profileCoreToProfile),
+		case 'find-one': {
+			const found =
+				await ProfileDb.findOneByUserId(
+					msg.userId,
+				);
+			return Result.mapOk(
+				found,
+				(profiles) =>
+					profiles.map(
+						profileCoreToProfile,
+					),
 			);
 		}
 
-		case "change-username": {
-			return Err("not implemented");
+		case 'change-username': {
+			return Err('not implemented');
 		}
 
-		case "delete-forever": {
-			return Err("not implemented");
+		case 'delete-forever': {
+			return Err('not implemented');
 		}
 
-		case "search": {
-			return Err("not implemented");
+		case 'search': {
+			return Err('not implemented');
 		}
 	}
 };
@@ -227,12 +267,12 @@ const findElseInsertNew = async ({
 	}
 
 	const randomSeed = ProfileAvatar.generateRandomSeed();
-	const randomUsername = await Username.generate(".");
+	const randomUsername = await Username.generate('.');
 	const profileNew: ProfileCore = {
 		userId,
 		username: randomUsername,
 		avatarSeed: randomSeed,
-		avatarStyle: "thumbs",
+		avatarStyle: 'thumbs',
 	};
 
 	const inserted = await ProfileDb.insertOne(profileNew);

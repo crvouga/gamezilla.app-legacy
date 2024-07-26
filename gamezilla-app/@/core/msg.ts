@@ -14,7 +14,10 @@ const batch = <T>(...msgs: Array<NullishItems<T>>): Array<T> => {
 
 		if (Array.isArray(item)) {
 			stack.push(...item);
-		} else if (item !== null && item !== undefined) {
+		} else if (
+			item !== null &&
+			item !== undefined
+		) {
 			flattened.push(item);
 		}
 	}

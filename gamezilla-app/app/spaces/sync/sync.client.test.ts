@@ -1,13 +1,13 @@
-import { describe, expect, it } from "bun:test";
-import { andThen } from "gamezilla-app/app/@/architecture/app-client";
-import { addProfiles } from "gamezilla-app/app/@/client";
+import {describe, expect, it} from 'bun:test';
+import {andThen} from 'gamezilla-app/app/@/architecture/app-client';
+import {addProfiles} from 'gamezilla-app/app/@/client';
 import {
 	type Profile,
 	SpaceId,
 	UserId,
 	Username,
-} from "gamezilla-app/app/@/data";
-import { eq } from "gamezilla-app/@/core";
+} from 'gamezilla-app/app/@/data';
+import {eq} from 'gamezilla-app/@/core';
 import {
 	Ctx,
 	clickedJoinSpaceButton,
@@ -19,10 +19,10 @@ import {
 	serverConnected,
 	userEndedSpace,
 	userStartedSpace,
-} from "../@/testing/client";
-import { makeSpace } from "../@/testing/shared";
-import { SpaceCore } from "../spaces-core";
-import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
+} from '../@/testing/client';
+import {makeSpace} from '../@/testing/shared';
+import {SpaceCore} from '../spaces-core';
+import * as SpacesCoreClient from '../spaces-core/spaces-core.client';
 
 const hasExcatlyOne = <T>(
 	items: T[],
@@ -32,15 +32,18 @@ const hasExcatlyOne = <T>(
 };
 
 describe(import.meta.file, () => {
-	it("should record profiles when recieved from server", async () => {
+	it('should record profiles when recieved from server', async () => {
 		const someProfile: Profile = {
 			userId: UserId.generate(),
-			avatarUrl: "some url",
+			avatarUrl: 'some url',
 			username: await Username.generate(),
 		};
 
-		const someProfiles: { [userId: UserId]: Profile } = {
-			[someProfile.userId]: someProfile,
+		const someProfiles: {
+			[userId: UserId]: Profile;
+		} = {
+			[someProfile.userId]:
+				someProfile,
 		};
 
 		const ctx = Ctx();
@@ -49,27 +52,38 @@ describe(import.meta.file, () => {
 			init(ctx),
 			//
 			gotMsgServer(ctx, {
-				t: "listed-spaces",
+				t: 'listed-spaces',
 				spaces: [],
 				profiles: someProfiles,
 			}),
 		);
 
 		expect(
-			hasExcatlyOne(updated.msgCmd ?? [], (msgCmd) =>
-				eq(msgCmd, addProfiles(someProfiles)),
+			hasExcatlyOne(
+				updated.msgCmd ??
+					[],
+				(msgCmd) =>
+					eq(
+						msgCmd,
+						addProfiles(
+							someProfiles,
+						),
+					),
 			),
 		).toBe(true);
 	});
 
-	it("should merge space recieved from server", () => {
+	it('should merge space recieved from server', () => {
 		const someSpace = makeSpace({
 			spaceId: SpaceId.generate(),
 			hostId: UserId.generate(),
 		});
 		const ctx = Ctx();
 
-		const output = andThen(init(ctx), gotSpace(ctx, someSpace));
+		const output = andThen(
+			init(ctx),
+			gotSpace(ctx, someSpace),
+		);
 
 		const listed = SpacesCoreClient.listSpaces({
 			model: output.model,
@@ -77,25 +91,38 @@ describe(import.meta.file, () => {
 			limit: Number.POSITIVE_INFINITY,
 		});
 
-		expect(listed.some((space) => SpaceCore.isEqual(space, someSpace))).toBe(
-			true,
-		);
+		expect(
+			listed.some((space) =>
+				SpaceCore.isEqual(
+					space,
+					someSpace,
+				),
+			),
+		).toBe(true);
 	});
 
 	it("should merge current user's space when recieved from server", () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 
-		const someStartedSpace = makeSpace({ spaceId, hostId: ctx.currentUserId });
+		const someStartedSpace = makeSpace({
+			spaceId,
+			hostId: ctx.currentUserId,
+		});
 
 		const updated = andThen(
 			init(ctx),
-			gotCurrentUsersSpace(ctx, someStartedSpace),
+			gotCurrentUsersSpace(
+				ctx,
+				someStartedSpace,
+			),
 		);
 
 		expect(
-			SpacesCoreClient.toSpaceIdByUserId(updated.model, ctx.currentUserId) ===
-				spaceId,
+			SpacesCoreClient.toSpaceIdByUserId(
+				updated.model,
+				ctx.currentUserId,
+			) === spaceId,
 		).toBe(true);
 	});
 
@@ -103,57 +130,108 @@ describe(import.meta.file, () => {
 		const ctx = Ctx();
 		const output = andThen(
 			init(ctx),
-			clickedStartSpaceButton(ctx, SpaceId.generate()),
+			clickedStartSpaceButton(
+				ctx,
+				SpaceId.generate(),
+			),
 			serverConnected(ctx),
 		);
 		expect(
 			hasExcatlyOne(
-				output.msgCmd ?? [],
+				output.msgCmd ??
+					[],
 				(msgCmd) =>
-					msgCmd.t === "wire" &&
-					msgCmd.c.t === "send-to-server" &&
-					msgCmd.c.msg?.t === "sync",
+					msgCmd.t ===
+						'wire' &&
+					msgCmd
+						.c
+						.t ===
+						'send-to-server' &&
+					msgCmd
+						.c
+						.msg
+						?.t ===
+						'sync',
 			),
 		).toBe(true);
 	});
 
-	it("should send events to the server like user joined space", () => {
+	it('should send events to the server like user joined space', () => {
 		const spaceId = SpaceId.generate();
 		const ctx = Ctx();
 		const output = andThen(
 			init(ctx),
 			//
-			userStartedSpace(ctx, UserId.generate(), spaceId),
-			clickedJoinSpaceButton(ctx, spaceId),
+			userStartedSpace(
+				ctx,
+				UserId.generate(),
+				spaceId,
+			),
+			clickedJoinSpaceButton(
+				ctx,
+				spaceId,
+			),
 		);
 
 		expect(
 			hasExcatlyOne(
-				output?.msgCmd ?? [],
+				output?.msgCmd ??
+					[],
 				(msgCmd) =>
-					msgCmd.t === "wire" &&
-					msgCmd.c.t === "send-to-server" &&
-					msgCmd.c.msg?.t === "event" &&
-					msgCmd.c.msg?.c.t === "user-joined-space",
+					msgCmd.t ===
+						'wire' &&
+					msgCmd
+						.c
+						.t ===
+						'send-to-server' &&
+					msgCmd
+						.c
+						.msg
+						?.t ===
+						'event' &&
+					msgCmd
+						.c
+						.msg
+						?.c
+						.t ===
+						'user-joined-space',
 			),
 		).toBe(true);
 	});
 
-	it("should send events to the server like user ended space", () => {
+	it('should send events to the server like user ended space', () => {
 		const ctx = Ctx();
 		const output = andThen(
 			init(ctx),
-			userEndedSpace(ctx, UserId.generate(), SpaceId.generate()),
+			userEndedSpace(
+				ctx,
+				UserId.generate(),
+				SpaceId.generate(),
+			),
 		);
 
 		expect(
 			hasExcatlyOne(
-				output.msgCmd ?? [],
+				output.msgCmd ??
+					[],
 				(msgCmd) =>
-					msgCmd.t === "wire" &&
-					msgCmd.c.t === "send-to-server" &&
-					msgCmd.c.msg?.t === "event" &&
-					msgCmd.c.msg?.c.t === "user-ended-space",
+					msgCmd.t ===
+						'wire' &&
+					msgCmd
+						.c
+						.t ===
+						'send-to-server' &&
+					msgCmd
+						.c
+						.msg
+						?.t ===
+						'event' &&
+					msgCmd
+						.c
+						.msg
+						?.c
+						.t ===
+						'user-ended-space',
 			),
 		).toBe(true);
 	});

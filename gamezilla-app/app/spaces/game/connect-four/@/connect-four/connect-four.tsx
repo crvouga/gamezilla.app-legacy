@@ -1,12 +1,5 @@
-import {
-	Err,
-	Ok,
-	type Result,
-	eq,
-	isSubset,
-	unique,
-} from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
+import {Err, Ok, type Result, eq, isSubset, unique} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
 
 //
 //
@@ -17,7 +10,7 @@ import { p } from "gamezilla-app/@/core/parser";
 //
 //
 
-export type Pos2d = { x: number; y: number };
+export type Pos2d = {x: number; y: number};
 
 //
 //
@@ -27,27 +20,27 @@ export type Pos2d = { x: number; y: number };
 //
 //
 
-export const ALL_PLAYER_TYPES = ["player-one", "player-two"] as const;
+export const ALL_PLAYER_TYPES = ['player-one', 'player-two'] as const;
 
 export const PlayerType = p.enumeration(ALL_PLAYER_TYPES);
 
 export type PlayerType = p.Infer<typeof PlayerType>;
 
-export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
-	"player-one": "player-one",
-	"player-two": "player-two",
+export const playerTypes: {[playerType in PlayerType]: PlayerType} = {
+	'player-one': 'player-one',
+	'player-two': 'player-two',
 };
 
-export const opposite: { [playerType in PlayerType]: PlayerType } = {
-	"player-one": "player-two",
-	"player-two": "player-one",
+export const opposite: {[playerType in PlayerType]: PlayerType} = {
+	'player-one': 'player-two',
+	'player-two': 'player-one',
 };
 
-type Color = "Red" | "Yellow";
+type Color = 'Red' | 'Yellow';
 
-export const playerTypeToColor: { [key in PlayerType]: Color } = {
-	"player-one": "Red",
-	"player-two": "Yellow",
+export const playerTypeToColor: {[key in PlayerType]: Color} = {
+	'player-one': 'Red',
+	'player-two': 'Yellow',
 };
 
 export const Column = p.arr(PlayerType);
@@ -69,13 +62,16 @@ export type ColumnIndex = p.Infer<typeof ColumnIndex>;
 export const ALL_POSITIONS: Pos2d[] = [];
 for (let x = 0; x < COLUMN_COUNT; x++) {
 	for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
-		ALL_POSITIONS.push({ x: x, y: y });
+		ALL_POSITIONS.push({
+			x: x,
+			y: y,
+		});
 	}
 }
 
 export const isColumnIndex = (index: unknown): index is ColumnIndex => {
 	return (
-		typeof index === "number" &&
+		typeof index === 'number' &&
 		(index === 0 ||
 			index === 1 ||
 			index === 2 ||
@@ -89,27 +85,27 @@ export const isColumnIndex = (index: unknown): index is ColumnIndex => {
 export type RowIndex = 0 | 1 | 2 | 3 | 4 | 5;
 
 export const ALL_MOVE_PROBLEMS = [
-	"game-over-winner",
-	"game-over-tie",
-	"not-turn",
-	"column-is-full",
-	"out-of-bounds",
+	'game-over-winner',
+	'game-over-tie',
+	'not-turn',
+	'column-is-full',
+	'out-of-bounds',
 ] as const;
 export const MoveProblem = p.enumeration(ALL_MOVE_PROBLEMS);
 export type MoveProblem = p.Infer<typeof MoveProblem>;
 
 export const moveProblemToString = (problem: MoveProblem): string => {
 	switch (problem) {
-		case "game-over-winner":
-			return "Game over, winner";
-		case "game-over-tie":
-			return "Game over, tie";
-		case "not-turn":
-			return "Not your turn";
-		case "column-is-full":
-			return "Column is full";
-		case "out-of-bounds":
-			return "Out of bounds";
+		case 'game-over-winner':
+			return 'Game over, winner';
+		case 'game-over-tie':
+			return 'Game over, tie';
+		case 'not-turn':
+			return 'Not your turn';
+		case 'column-is-full':
+			return 'Column is full';
+		case 'out-of-bounds':
+			return 'Out of bounds';
 	}
 };
 
@@ -122,33 +118,40 @@ export const dropDisc = (
 ): MoveResult => {
 	const status = toStatus(columns);
 
-	if (status.type === "Winner") {
-		return Err("game-over-winner");
+	if (status.type === 'Winner') {
+		return Err('game-over-winner');
 	}
 
-	if (status.type === "Tie") {
-		return Err("game-over-tie");
+	if (status.type === 'Tie') {
+		return Err('game-over-tie');
 	}
 
 	const turn = status.turn;
 
 	if (turn !== player) {
-		return Err("not-turn");
+		return Err('not-turn');
 	}
 
 	const column = columns[columnIndex];
 
 	if (!column) {
-		return Err("out-of-bounds");
+		return Err('out-of-bounds');
 	}
 
 	if (column.length >= MAX_COLUMN_HEIGHT) {
-		return Err("column-is-full");
+		return Err('column-is-full');
 	}
 
 	const columnsNew = columns.map((column, index) => {
 		if (index === columnIndex) {
-			return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT);
+			return column
+				.concat([
+					player,
+				])
+				.slice(
+					0,
+					MAX_COLUMN_HEIGHT,
+				);
 		}
 		return column;
 	});
@@ -157,41 +160,46 @@ export const dropDisc = (
 };
 
 export const isGameOver = (columns: Columns): boolean => {
-	return toStatus(columns).type !== "Playing";
+	return toStatus(columns).type !== 'Playing';
 };
 
 export const toSlot = (
 	columns: Columns,
-	{ x, y }: { x: number; y: number },
-): PlayerType | "Empty" => {
+	{x, y}: {x: number; y: number},
+): PlayerType | 'Empty' => {
 	const slot = columns?.[x]?.[y];
 
 	if (slot) {
 		return slot;
 	}
 
-	return "Empty";
+	return 'Empty';
 };
 
 export const toTurn = (columns: Columns): PlayerType => {
-	return columns.flat().length % 2 === 0 ? "player-one" : "player-two";
+	return columns.flat().length % 2 === 0
+		? 'player-one'
+		: 'player-two';
 };
 
 const isFull = (columns: Columns) => {
-	return columns.flat().length >= MAX_COLUMN_HEIGHT * COLUMN_COUNT;
+	return (
+		columns.flat().length >=
+		MAX_COLUMN_HEIGHT * COLUMN_COUNT
+	);
 };
 
 export type Status =
 	| {
-			type: "Playing";
+			type: 'Playing';
 			turn: PlayerType;
 	  }
 	| {
-			type: "Winner";
+			type: 'Winner';
 			winner: PlayerType;
 	  }
 	| {
-			type: "Tie";
+			type: 'Tie';
 	  };
 
 export const toStatus = (columns: Columns): Status => {
@@ -204,34 +212,34 @@ export const toStatus = (columns: Columns): Status => {
 
 		if (!position) {
 			return {
-				type: "Playing",
+				type: 'Playing',
 				turn,
 			};
 		}
 
 		const winner = toSlot(columns, position);
 
-		if (winner === "Empty") {
+		if (winner === 'Empty') {
 			return {
-				type: "Playing",
+				type: 'Playing',
 				turn,
 			};
 		}
 
 		return {
-			type: "Winner",
+			type: 'Winner',
 			winner,
 		};
 	}
 
 	if (isFull(columns)) {
 		return {
-			type: "Tie",
+			type: 'Tie',
 		};
 	}
 
 	return {
-		type: "Playing",
+		type: 'Playing',
 		turn,
 	};
 };
@@ -273,7 +281,7 @@ const directions: [number, number][] = [
 
 export type Win = [Pos2d, Pos2d, Pos2d, Pos2d, ...Pos2d[]];
 
-export const winToId = (win: Win) => win.map((x) => `${x.x},${x.y}`).join(" ");
+export const winToId = (win: Win) => win.map((x) => `${x.x},${x.y}`).join(' ');
 
 export const findWins = (columns: Columns): Win[] => {
 	const consecutives = findAllConsecutives(columns);
@@ -295,35 +303,86 @@ const findAllConsecutives = (columns: Columns): Pos2d[][] => {
 		}
 
 		for (let y = 0; y < column.length; y++) {
-			for (const [dx, dy] of directions) {
-				if (visited.has(toKey({ x, y, dx, dy }))) {
+			for (const [
+				dx,
+				dy,
+			] of directions) {
+				if (
+					visited.has(
+						toKey(
+							{
+								x,
+								y,
+								dx,
+								dy,
+							},
+						),
+					)
+				) {
 					continue;
 				}
 
-				const targetSlot = column[y];
+				const targetSlot =
+					column[
+						y
+					];
 
-				if (!targetSlot) {
+				if (
+					!targetSlot
+				) {
 					continue;
 				}
 
-				const consecutive: Pos2d[] = [];
+				const consecutive: Pos2d[] =
+					[];
 
-				let position = { x, y };
+				let position = {
+					x,
+					y,
+				};
 
 				while (true) {
-					const currentSlot = toSlot(columns, position);
+					const currentSlot =
+						toSlot(
+							columns,
+							position,
+						);
 
-					if (currentSlot !== targetSlot) {
+					if (
+						currentSlot !==
+						targetSlot
+					) {
 						break;
 					}
 
-					visited.add(toKey({ x: position.x, y: position.y, dx, dy }));
+					visited.add(
+						toKey(
+							{
+								x: position.x,
+								y: position.y,
+								dx,
+								dy,
+							},
+						),
+					);
 
-					consecutive.push(position);
+					consecutive.push(
+						position,
+					);
 
-					position = { x: position.x + dx, y: position.y + dy };
+					position =
+						{
+							x:
+								position.x +
+								dx,
+							y:
+								position.y +
+								dy,
+						};
 				}
-				consecutives.push(consecutive);
+				consecutives.push(
+					consecutive,
+				);
 			}
 		}
 	}

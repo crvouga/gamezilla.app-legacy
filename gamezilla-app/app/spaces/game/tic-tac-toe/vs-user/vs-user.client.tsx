@@ -1,9 +1,9 @@
-import { type ClientCmd, sendToServer } from "gamezilla-app/app/@/client";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import { VsUserSetupScreen } from "gamezilla-app/app/spaces/game/@/vs-user";
-import { toTurn } from "../@/tic-tic-toe/tic-tac-toe";
-import { CoverArt, PlayerTypeIcon } from "../@/tic-tic-toe/tic-tac-toe-ui";
-import * as Round from "./vs-user-round";
+import {type ClientCmd, sendToServer} from 'gamezilla-app/app/@/client';
+import type {SpaceClientCtx} from 'gamezilla-app/app/spaces/@/space';
+import {VsUserSetupScreen} from 'gamezilla-app/app/spaces/game/@/vs-user';
+import {toTurn} from '../@/tic-tic-toe/tic-tac-toe';
+import {CoverArt, PlayerTypeIcon} from '../@/tic-tic-toe/tic-tac-toe-ui';
+import * as Round from './vs-user-round';
 import {
 	type ModelClient,
 	type ModelServer,
@@ -12,7 +12,7 @@ import {
 	type MsgToServer,
 	type Res,
 	initCoreModel,
-} from "./vs-user.types";
+} from './vs-user.types';
 
 //
 //
@@ -23,8 +23,8 @@ import {
 //
 
 export const init: ModelClient = {
-	...initCoreModel({ X: "none", O: "none" }),
-	openedModal: "none",
+	...initCoreModel({X: 'none', O: 'none'}),
+	openedModal: 'none',
 };
 
 //
@@ -39,7 +39,10 @@ export const update = (
 	model: ModelClient,
 ): {
 	model: ModelClient;
-	msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
+	msgCmd?: ClientCmd<{
+		MsgToServer: MsgToServer;
+		MsgClient: MsgClient;
+	}>[];
 } => {
 	switch (msg[0]) {
 		//
@@ -48,12 +51,22 @@ export const update = (
 		//
 		//
 
-		case "close-modal": {
-			return { model: { ...model, openedModal: "none" } };
+		case 'close-modal': {
+			return {
+				model: {
+					...model,
+					openedModal: 'none',
+				},
+			};
 		}
 
-		case "OpenModal": {
-			return { model: { ...model, openedModal: msg[1] } };
+		case 'OpenModal': {
+			return {
+				model: {
+					...model,
+					openedModal: msg[1],
+				},
+			};
 		}
 
 		//
@@ -64,69 +77,94 @@ export const update = (
 		//
 		//
 
-		case "RematchAccept":
-		case "RematchAsk":
-		case "RematchDecline":
-		case "Rematch_Cancel":
-		case "InputBestOutOf":
-		case "input-move":
-		case "resign":
-		case "InputPlayer":
-		case "stop-playing":
-		case "start-game":
-		case "NewGame": {
+		case 'RematchAccept':
+		case 'RematchAsk':
+		case 'RematchDecline':
+		case 'Rematch_Cancel':
+		case 'InputBestOutOf':
+		case 'input-move':
+		case 'resign':
+		case 'InputPlayer':
+		case 'stop-playing':
+		case 'start-game':
+		case 'NewGame': {
 			return {
 				model,
-				msgCmd: [sendToServer(msg)],
+				msgCmd: [
+					sendToServer(
+						msg,
+					),
+				],
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
 export const updateFromServer = (
-	_: { ctx: SpaceClientCtx },
+	_: {ctx: SpaceClientCtx},
 	msg: MsgToClient,
 	model: ModelClient,
 ): [ModelClient] => {
 	switch (msg[0]) {
-		case "player-left": {
-			const modelNew = mergeWithServer(model, msg[1]);
+		case 'player-left': {
+			const modelNew =
+				mergeWithServer(
+					model,
+					msg[1],
+				);
 			return [modelNew];
 		}
 
-		case "RematchAccept_Done":
-		case "RematchAsk_Done":
-		case "Rematch_Cancel_Done":
-		case "NewGame_Done":
-		case "InputBestOutOf_Done":
-		case "input-move-done":
-		case "InputPlayer_Done":
-		case "StopPlaying_Done":
-		case "StartGame_Done":
-		case "RematchDecline_Done":
-		case "resign_Done": {
+		case 'RematchAccept_Done':
+		case 'RematchAsk_Done':
+		case 'Rematch_Cancel_Done':
+		case 'NewGame_Done':
+		case 'InputBestOutOf_Done':
+		case 'input-move-done':
+		case 'InputPlayer_Done':
+		case 'StopPlaying_Done':
+		case 'StartGame_Done':
+		case 'RematchDecline_Done':
+		case 'resign_Done': {
 			const res: Res = msg;
 
-			if (res[1].t === "err") {
+			if (res[1].t === 'err') {
 				return [model];
 			}
 
-			const modelNew = mergeWithServer(model, res[1].value);
+			const modelNew =
+				mergeWithServer(
+					model,
+					res[1]
+						.value,
+				);
 
-			return [{ ...modelNew, openedModal: "none" }];
+			return [
+				{
+					...modelNew,
+					openedModal: 'none',
+				},
+			];
 		}
 
-		case "MoveCountDown_Done":
-		case "RoundCountDown_Done": {
-			if (msg[1].t === "err") {
+		case 'MoveCountDown_Done':
+		case 'RoundCountDown_Done': {
+			if (msg[1].t === 'err') {
 				return [model];
 			}
 
-			const modelNew = mergeWithServer(model, msg[1].value);
+			const modelNew =
+				mergeWithServer(
+					model,
+					msg[1]
+						.value,
+				);
 
 			return [modelNew];
 		}
@@ -166,130 +204,206 @@ export const View = ({
 	dispatch: (msg: MsgClient) => void;
 	onCloseGame: () => void;
 }) => {
-	if (model.type === "setup") {
+	if (model.type === 'setup') {
 		return (
 			<VsUserSetupScreen
 				ctx={ctx}
-				onQuit={onCloseGame}
-				onStartGame={() =>
-					dispatch(["start-game", { userId: ctx.currentUserId }])
+				onQuit={
+					onCloseGame
 				}
-				renderCoverArt={(input) => {
+				onStartGame={() =>
+					dispatch(
+						[
+							'start-game',
+							{
+								userId: ctx.currentUserId,
+							},
+						],
+					)
+				}
+				renderCoverArt={(
+					input,
+				) => {
 					return (
-						<div {...input}>
+						<div
+							{...input}
+						>
 							<CoverArt />
 						</div>
 					);
 				}}
-				title={ctx.t("tic-tac-toe")}
-				canStartGame={model.X !== "none" && model.O !== "none"}
+				title={ctx.t(
+					'tic-tac-toe',
+				)}
+				canStartGame={
+					model.X !==
+						'none' &&
+					model.O !==
+						'none'
+				}
 				playerOne={{
-					label: ctx.t("tic-tac-toe.cross"),
-					userId: model.X === "none" ? null : model.X,
-					renderIcon: (input) => {
-						return <PlayerTypeIcon playerType="X" {...input} />;
+					label: ctx.t(
+						'tic-tac-toe.cross',
+					),
+					userId:
+						model.X ===
+						'none'
+							? null
+							: model.X,
+					renderIcon: (
+						input,
+					) => {
+						return (
+							<PlayerTypeIcon
+								playerType="X"
+								{...input}
+							/>
+						);
 					},
 					onStartPlaying: () => {
-						dispatch([
-							"InputPlayer",
-							{ playerType: "X", userId: ctx.currentUserId },
-						]);
+						dispatch(
+							[
+								'InputPlayer',
+								{
+									playerType: 'X',
+									userId: ctx.currentUserId,
+								},
+							],
+						);
 					},
 					onStopPlaying: () => {
-						dispatch([
-							"InputPlayer",
-							{ playerType: "X", userId: ctx.currentUserId },
-						]);
+						dispatch(
+							[
+								'InputPlayer',
+								{
+									playerType: 'X',
+									userId: ctx.currentUserId,
+								},
+							],
+						);
 					},
 				}}
 				playerTwo={{
-					label: ctx.t("tic-tac-toe.naught"),
-					userId: model.O === "none" ? null : model.O,
-					renderIcon: (input) => {
-						return <PlayerTypeIcon playerType="O" {...input} />;
+					label: ctx.t(
+						'tic-tac-toe.naught',
+					),
+					userId:
+						model.O ===
+						'none'
+							? null
+							: model.O,
+					renderIcon: (
+						input,
+					) => {
+						return (
+							<PlayerTypeIcon
+								playerType="O"
+								{...input}
+							/>
+						);
 					},
 					onStartPlaying: () => {
-						dispatch([
-							"InputPlayer",
-							{ playerType: "O", userId: ctx.currentUserId },
-						]);
+						dispatch(
+							[
+								'InputPlayer',
+								{
+									playerType: 'O',
+									userId: ctx.currentUserId,
+								},
+							],
+						);
 					},
 					onStopPlaying: () => {
-						dispatch([
-							"InputPlayer",
-							{ playerType: "O", userId: ctx.currentUserId },
-						]);
+						dispatch(
+							[
+								'InputPlayer',
+								{
+									playerType: 'O',
+									userId: ctx.currentUserId,
+								},
+							],
+						);
 					},
 				}}
 			/>
 		);
 	}
 
-	if (model.type === "game") {
+	if (model.type === 'game') {
 		return <div />;
 	}
 
 	return <div />;
 };
 
-export const toGameText = ({ model }: { model: ModelClient }): string => {
+export const toGameText = ({model}: {model: ModelClient}): string => {
 	switch (model.type) {
-		case "setup": {
-			return "Setting up";
+		case 'setup': {
+			return 'Setting up';
 		}
 
-		case "game-over": {
+		case 'game-over': {
 			switch (model.gameOver.type) {
-				case "resignation": {
-					return "Resigned";
+				case 'resignation': {
+					return 'Resigned';
 				}
 
-				case "Winner": {
+				case 'Winner': {
 					// const userId = model[model.gameOver.winner];
 
-					return "won";
+					return 'won';
 				}
 
-				case "Tie": {
-					return "Tie";
+				case 'Tie': {
+					return 'Tie';
 				}
 
 				default: {
-					return "Game Over";
+					return 'Game Over';
 				}
 			}
 		}
 
-		case "game": {
-			const currentRound = Round.toCurrent(model.round);
+		case 'game': {
+			const currentRound =
+				Round.toCurrent(
+					model.round,
+				);
 
 			switch (currentRound.type) {
-				case "RoundOver": {
-					switch (currentRound.roundOver.type) {
-						case "Tie": {
-							return "Tie";
+				case 'RoundOver': {
+					switch (
+						currentRound
+							.roundOver
+							.type
+					) {
+						case 'Tie': {
+							return 'Tie';
 						}
 
-						case "Win": {
+						case 'Win': {
 							return `${currentRound.roundOver.winner} won`;
 						}
 
 						default: {
-							return "Round Over";
+							return 'Round Over';
 						}
 					}
 				}
-				case "RoundStarted": {
-					const turn = toTurn(currentRound.board);
+				case 'RoundStarted': {
+					const turn =
+						toTurn(
+							currentRound.board,
+						);
 					return `${turn} Turn`;
 				}
 
-				case "RoundStarting": {
-					return "Starting...";
+				case 'RoundStarting': {
+					return 'Starting...';
 				}
 
 				default: {
-					return "Starting...";
+					return 'Starting...';
 				}
 			}
 		}

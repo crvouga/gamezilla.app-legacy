@@ -1,13 +1,13 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { Flow } from "../../flow";
-import * as FlowTriDimensions from "./flow-tri-dimensions";
-import { FlowNodeId } from "../../flow/flow-node-id";
+import {p} from 'gamezilla-app/@/core/parser';
+import {Flow} from '../../flow';
+import * as FlowTriDimensions from './flow-tri-dimensions';
+import {FlowNodeId} from '../../flow/flow-node-id';
 
 export const Model = p.and(
 	Flow.Model,
 	FlowTriDimensions.Model,
 	p.obj({
-		t: p.l("flow-tri"),
+		t: p.l('flow-tri'),
 		FlowTri: p.l(true),
 	}),
 );
@@ -15,12 +15,12 @@ export type Model = p.Infer<typeof Model>;
 
 export const init = (input: {
 	dimensions: FlowTriDimensions.Model;
-	terminalsByGroupId: Flow.Model["terminalsByGroupId"];
+	terminalsByGroupId: Flow.Model['terminalsByGroupId'];
 }): Model => {
 	return {
 		...Flow.init,
 		...input.dimensions,
-		t: "flow-tri",
+		t: 'flow-tri',
 		FlowTri: true,
 	};
 };

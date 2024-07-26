@@ -1,7 +1,7 @@
-import { Uuid } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
+import {Uuid} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
 
-const parser = p.brand(p.str, "VerificationAttemptId");
+const parser = p.brand(p.str, 'VerificationAttemptId');
 
 export type VerificationAttemptId = p.Infer<typeof parser>;
 
@@ -10,7 +10,7 @@ const generate = (): VerificationAttemptId => {
 	if (p.is(parser)(id)) {
 		return id;
 	}
-	throw new Error("Failed to generate VerificationAttemptId");
+	throw new Error('Failed to generate VerificationAttemptId');
 };
 
 export const VerificationAttemptId = {

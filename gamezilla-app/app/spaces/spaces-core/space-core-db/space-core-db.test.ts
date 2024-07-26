@@ -1,13 +1,15 @@
-import { describe, expect, it } from "bun:test";
-import { Ok } from "gamezilla-app/@/core";
-import { DbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
-import * as SpaceCore from "../space-core";
-import { SpaceCoreDb } from "./space-core-db-impl";
+import {describe, expect, it} from 'bun:test';
+import {Ok} from 'gamezilla-app/@/core';
+import {DbConnKv} from 'gamezilla-app/app/@/server/db-conn-kv';
+import * as SpaceCore from '../space-core';
+import {SpaceCoreDb} from './space-core-db-impl';
 
 const Fixture = async () => {
 	const spacesDb = SpaceCoreDb({
-		t: "db-conn-kv",
-		dbConnKv: await DbConnKv({ t: "hash-map" }),
+		t: 'db-conn-kv',
+		dbConnKv: await DbConnKv({
+			t: 'hash-map',
+		}),
 	});
 
 	const spaceA = SpaceCore.random();
@@ -19,14 +21,19 @@ const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it("should work", async () => {
+	it('should work', async () => {
 		const f = await Fixture();
 
-		const spaceId = SpaceCore.toSpaceStarted(f.spaceA)?.spaceId ?? null;
+		const spaceId =
+			SpaceCore.toSpaceStarted(
+				f.spaceA,
+			)?.spaceId ?? null;
 
 		const before = await f.spacesDb.get(spaceId);
 
-		const upserted = await f.spacesDb.upsert(f.spaceA);
+		const upserted = await f.spacesDb.upsert(
+			f.spaceA,
+		);
 
 		const after = await f.spacesDb.get(spaceId);
 
@@ -35,7 +42,7 @@ describe(import.meta.file, () => {
 		expect(after).toEqual(Ok(f.spaceA));
 	});
 
-	it("should be able to list spaces", async () => {
+	it('should be able to list spaces', async () => {
 		const f = await Fixture();
 
 		const before = await f.spacesDb.list({
@@ -43,7 +50,9 @@ describe(import.meta.file, () => {
 			offset: 0,
 		});
 
-		const upserted = await f.spacesDb.upsert(f.spaceA);
+		const upserted = await f.spacesDb.upsert(
+			f.spaceA,
+		);
 
 		const after = await f.spacesDb.list({
 			limit: 10,

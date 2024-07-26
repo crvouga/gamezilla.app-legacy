@@ -1,4 +1,4 @@
-import { ClassNameValue, twMerge } from "tailwind-merge";
+import {ClassNameValue, twMerge} from 'tailwind-merge';
 
 export const cn = (...classes: ClassNameValue[]) => {
 	return twMerge(classes);
@@ -14,6 +14,6 @@ declare global {
 	}
 }
 
-if (typeof window !== "undefined" && "customElements" in window) {
+if (typeof window !== 'undefined' && 'customElements' in window) {
 	window.customElementsCallbacks = new Map();
 }

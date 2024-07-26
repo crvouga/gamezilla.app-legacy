@@ -1,12 +1,12 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { UserId } from "gamezilla-app/app/@/data";
-import type { GameMainMenu } from "../@/game";
-import type { FlowPack } from "./@/flow-pack";
-import type { FlowPackId } from "./@/flow-pack/flow-pack-id";
-import type { FlowPuzzle } from "./@/flow-puzzle/flow-puzzle";
-import type { FlowPuzzleId } from "./@/flow-puzzle/flow-puzzle-id";
-import { BuilderTypes } from "./builder";
-import { PlayTypes } from "./play";
+import {p} from 'gamezilla-app/@/core/parser';
+import {UserId} from 'gamezilla-app/app/@/data';
+import type {GameMainMenu} from '../@/game';
+import type {FlowPack} from './@/flow-pack';
+import type {FlowPackId} from './@/flow-pack/flow-pack-id';
+import type {FlowPuzzle} from './@/flow-puzzle/flow-puzzle';
+import type {FlowPuzzleId} from './@/flow-puzzle/flow-puzzle-id';
+import {BuilderTypes} from './builder';
+import {PlayTypes} from './play';
 
 //
 //
@@ -24,22 +24,22 @@ export type BaseModelClient = {
 };
 
 export type VariantModelClient =
-	| { t: "none" }
-	| { t: "builder"; c: BuilderTypes.ModelClient }
-	| { t: "play"; c: PlayTypes.ModelClient };
+	| {t: 'none'}
+	| {t: 'builder'; c: BuilderTypes.ModelClient}
+	| {t: 'play'; c: PlayTypes.ModelClient};
 
 export type ModelClient = BaseModelClient & VariantModelClient;
 
 export const ModelServer = p.or(
 	p.obj({
-		t: p.l("none"),
+		t: p.l('none'),
 	}),
 	p.obj({
-		t: p.l("builder"),
+		t: p.l('builder'),
 		c: BuilderTypes.ModelServer,
 	}),
 	p.obj({
-		t: p.l("play"),
+		t: p.l('play'),
 		c: PlayTypes.ModelServer,
 	}),
 );
@@ -54,23 +54,23 @@ export type ModelServer = p.Infer<typeof ModelServer>;
 
 export type MsgClient =
 	| GameMainMenu.Msg
-	| { t: "msgCore"; c: MsgCore }
-	| { t: "builder"; c: BuilderTypes.MsgClient }
-	| { t: "play"; c: PlayTypes.MsgClient };
+	| {t: 'msgCore'; c: MsgCore}
+	| {t: 'builder'; c: BuilderTypes.MsgClient}
+	| {t: 'play'; c: PlayTypes.MsgClient};
 
 export type MsgServer =
-	| { t: "builder"; c: BuilderTypes.MsgServer }
-	| { t: "play"; c: PlayTypes.MsgServer };
+	| {t: 'builder'; c: BuilderTypes.MsgServer}
+	| {t: 'play'; c: PlayTypes.MsgServer};
 
 export type MsgToServer =
-	| { t: "builder"; c: BuilderTypes.MsgToServer }
-	| { t: "play"; c: PlayTypes.MsgToServer };
+	| {t: 'builder'; c: BuilderTypes.MsgToServer}
+	| {t: 'play'; c: PlayTypes.MsgToServer};
 
 export type MsgToClient =
-	| { t: "builder"; c: BuilderTypes.MsgToClient }
-	| { t: "play"; c: PlayTypes.MsgToClient };
+	| {t: 'builder'; c: BuilderTypes.MsgToClient}
+	| {t: 'play'; c: PlayTypes.MsgToClient};
 
-const MODE = ["builder", "play"] as const;
+const MODE = ['builder', 'play'] as const;
 export const Mode = p.enumeration(MODE);
 export type Mode = p.Infer<typeof Mode>;
 
@@ -84,24 +84,24 @@ export type Mode = p.Infer<typeof Mode>;
 
 export const MsgCore = p.or(
 	p.obj({
-		t: p.l("user-changed-mode"),
+		t: p.l('user-changed-mode'),
 		mode: p.or(Mode, p.l(null)),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("play"),
+		t: p.l('play'),
 		c: PlayTypes.MsgCore,
 	}),
 	p.obj({
-		t: p.l("builder"),
+		t: p.l('builder'),
 		c: BuilderTypes.MsgCore,
 	}),
 );
 export type MsgCore = p.Infer<typeof MsgCore>;
 
 export const ModelCore = p.or(
-	p.obj({ t: p.l(null) }),
-	p.obj({ t: p.l("builder"), c: BuilderTypes.ModelCore }),
-	p.obj({ t: p.l("play"), c: PlayTypes.ModelCore }),
+	p.obj({t: p.l(null)}),
+	p.obj({t: p.l('builder'), c: BuilderTypes.ModelCore}),
+	p.obj({t: p.l('play'), c: PlayTypes.ModelCore}),
 );
 export type ModelCore = p.Infer<typeof ModelCore>;

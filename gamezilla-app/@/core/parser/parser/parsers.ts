@@ -1,13 +1,13 @@
-import type { Brand } from "../../brand";
-import { Err, Ok } from "../../result/result";
-import type { Parser, ParserError } from "./parser-types";
+import type {Brand} from '../../brand';
+import {Err, Ok} from '../../result/result';
+import type {Parser, ParserError} from './parser-types';
 
 const errorToString = (error: ParserError): string => {
-	return `${error.path.join(".")}: ${error.message}`;
+	return `${error.path.join('.')}: ${error.message}`;
 };
 
 export const errorsToString = (errors: ParserError[]): string => {
-	return errors.map(errorToString).join("\n");
+	return errors.map(errorToString).join('\n');
 };
 
 const toErrorMessage = (
@@ -21,7 +21,7 @@ const toErrorMessage = (
 export const is =
 	<T>(parser: Parser<T>) =>
 	(input: unknown): input is T => {
-		return parser.parse(input).t === "ok";
+		return parser.parse(input).t === 'ok';
 	};
 
 export const noop = <T>(): Parser<T> => {
@@ -39,23 +39,23 @@ export const noop = <T>(): Parser<T> => {
 //
 
 const isIndexable = (input: unknown): input is Record<string, unknown> => {
-	return typeof input === "object" && input !== null;
+	return typeof input === 'object' && input !== null;
 };
 
-export const obj = <T>(
-	parsers: {
-		[K in keyof T]: Parser<T[K]>;
-	},
-): Parser<T> => {
+export const obj = <T>(parsers: {
+	[K in keyof T]: Parser<T[K]>;
+}): Parser<T> => {
 	return {
 		parse(input) {
-			if (typeof input !== "object") {
+			if (typeof input !== 'object') {
 				return Err([
 					{
 						message: toErrorMessage(
-							"object",
+							'object',
 							typeof input,
-							JSON.stringify(input),
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
@@ -65,7 +65,13 @@ export const obj = <T>(
 			if (input === null) {
 				return Err([
 					{
-						message: toErrorMessage("object", "null", JSON.stringify(input)),
+						message: toErrorMessage(
+							'object',
+							'null',
+							JSON.stringify(
+								input,
+							),
+						),
 						path: [],
 					},
 				]);
@@ -75,9 +81,11 @@ export const obj = <T>(
 				return Err([
 					{
 						message: toErrorMessage(
-							"object",
-							"non-indexable",
-							JSON.stringify(input),
+							'object',
+							'non-indexable',
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
@@ -85,31 +93,56 @@ export const obj = <T>(
 			}
 
 			const result: Partial<T> = {};
-			const errors: ParserError[] = [];
+			const errors: ParserError[] =
+				[];
 			for (const key in parsers) {
-				const parser = parsers[key];
+				const parser =
+					parsers[
+						key
+					];
 
-				const value = input[key];
+				const value =
+					input[
+						key
+					];
 
-				const parsed = parser.parse(value);
+				const parsed =
+					parser.parse(
+						value,
+					);
 
-				if (parsed.t === "ok") {
-					result[key] = parsed.value;
+				if (
+					parsed.t ===
+					'ok'
+				) {
+					result[
+						key
+					] =
+						parsed.value;
 					continue;
 				}
 
 				errors.push(
-					...parsed.error.map((err): ParserError => {
-						return {
-							message: err.message,
-							path: [key, ...err.path],
-						};
-					}),
+					...parsed.error.map(
+						(
+							err,
+						): ParserError => {
+							return {
+								message: err.message,
+								path: [
+									key,
+									...err.path,
+								],
+							};
+						},
+					),
 				);
 			}
 
 			if (errors.length > 0) {
-				return Err(errors);
+				return Err(
+					errors,
+				);
 			}
 
 			return Ok(result as T);
@@ -119,13 +152,18 @@ export const obj = <T>(
 
 export const str: Parser<string> = {
 	parse(input) {
-		if (typeof input !== "string") {
+		if (typeof input !== 'string') {
 			return Err([
 				{
 					message: toErrorMessage(
-						"string",
+						'string',
 						typeof input,
-						`${input instanceof Date}, ${JSON.stringify(input)}`,
+						`${
+							input instanceof
+							Date
+						}, ${JSON.stringify(
+							input,
+						)}`,
 					),
 					path: [],
 				},
@@ -137,13 +175,15 @@ export const str: Parser<string> = {
 
 export const num: Parser<number> = {
 	parse(input) {
-		if (typeof input !== "number") {
+		if (typeof input !== 'number') {
 			return Err([
 				{
 					message: toErrorMessage(
-						"number",
+						'number',
 						typeof input,
-						JSON.stringify(input),
+						JSON.stringify(
+							input,
+						),
 					),
 					path: [],
 				},
@@ -162,9 +202,15 @@ export const l = <T extends string | number | boolean | null | undefined>(
 				return Err([
 					{
 						message: toErrorMessage(
-							String(value),
-							String(input),
-							JSON.stringify(input),
+							String(
+								value,
+							),
+							String(
+								input,
+							),
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
@@ -182,9 +228,11 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
 				return Err([
 					{
 						message: toErrorMessage(
-							"array",
+							'array',
 							typeof input,
-							JSON.stringify(input),
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
@@ -192,26 +240,54 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
 			}
 
 			const result: T[] = [];
-			const errors: ParserError[] = [];
-			for (let i = 0; i < input.length; i++) {
-				const value = input[i];
-				const parsed = parser.parse(value);
-				if (parsed.t === "ok") {
-					result.push(parsed.value);
+			const errors: ParserError[] =
+				[];
+			for (
+				let i = 0;
+				i <
+				input.length;
+				i++
+			) {
+				const value =
+					input[
+						i
+					];
+				const parsed =
+					parser.parse(
+						value,
+					);
+				if (
+					parsed.t ===
+					'ok'
+				) {
+					result.push(
+						parsed.value,
+					);
 					continue;
 				}
 				errors.push(
-					...parsed.error.map((err): ParserError => {
-						return {
-							message: err.message,
-							path: [String(i), ...err.path],
-						};
-					}),
+					...parsed.error.map(
+						(
+							err,
+						): ParserError => {
+							return {
+								message: err.message,
+								path: [
+									String(
+										i,
+									),
+									...err.path,
+								],
+							};
+						},
+					),
 				);
 			}
 
 			if (errors.length > 0) {
-				return Err(errors);
+				return Err(
+					errors,
+				);
 			}
 
 			return Ok(result);
@@ -222,7 +298,12 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
 export const maybe = <T>(parser: Parser<T>): Parser<T | null | undefined> => {
 	return {
 		parse(input) {
-			if (input === null || input === undefined) {
+			if (
+				input ===
+					null ||
+				input ===
+					undefined
+			) {
 				return Ok(null);
 			}
 			return parser.parse(input);
@@ -233,56 +314,95 @@ export const maybe = <T>(parser: Parser<T>): Parser<T | null | undefined> => {
 export const dict = <TKey extends string | number, TValue>(
 	key: Parser<TKey>,
 	value: Parser<TValue>,
-): Parser<{ [key in TKey]: TValue }> => {
+): Parser<{[key in TKey]: TValue}> => {
 	return {
 		parse(input) {
 			if (!isIndexable(input)) {
 				return Err([
 					{
 						message: toErrorMessage(
-							"object",
+							'object',
 							typeof input,
-							JSON.stringify(input),
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
 				]);
 			}
 
-			const result = {} as Record<TKey, TValue>;
-			const errors: ParserError[] = [];
+			const result = {} as Record<
+				TKey,
+				TValue
+			>;
+			const errors: ParserError[] =
+				[];
 			for (const k in input) {
-				const keyParsed = key.parse(k);
-				if (keyParsed.t === "err") {
+				const keyParsed =
+					key.parse(
+						k,
+					);
+				if (
+					keyParsed.t ===
+					'err'
+				) {
 					errors.push(
-						...keyParsed.error.map((err): ParserError => {
-							return {
-								message: err.message,
-								path: [k, ...err.path],
-							};
-						}),
+						...keyParsed.error.map(
+							(
+								err,
+							): ParserError => {
+								return {
+									message: err.message,
+									path: [
+										k,
+										...err.path,
+									],
+								};
+							},
+						),
 					);
 					continue;
 				}
 
-				const valueParsed = value.parse(input[k]);
-				if (valueParsed.t === "err") {
+				const valueParsed =
+					value.parse(
+						input[
+							k
+						],
+					);
+				if (
+					valueParsed.t ===
+					'err'
+				) {
 					errors.push(
-						...valueParsed.error.map((err): ParserError => {
-							return {
-								message: err.message,
-								path: [k, ...err.path],
-							};
-						}),
+						...valueParsed.error.map(
+							(
+								err,
+							): ParserError => {
+								return {
+									message: err.message,
+									path: [
+										k,
+										...err.path,
+									],
+								};
+							},
+						),
 					);
 					continue;
 				}
 
-				result[keyParsed.value] = valueParsed.value;
+				result[
+					keyParsed.value
+				] =
+					valueParsed.value;
 			}
 
 			if (errors.length > 0) {
-				return Err(errors);
+				return Err(
+					errors,
+				);
 			}
 
 			return Ok(result);
@@ -293,56 +413,95 @@ export const dict = <TKey extends string | number, TValue>(
 export const partialDict = <TKey extends string | number, TValue>(
 	key: Parser<TKey>,
 	value: Parser<TValue>,
-): Parser<Partial<{ [key in TKey]: TValue }>> => {
+): Parser<Partial<{[key in TKey]: TValue}>> => {
 	return {
 		parse(input) {
 			if (!isIndexable(input)) {
 				return Err([
 					{
 						message: toErrorMessage(
-							"object",
+							'object',
 							typeof input,
-							JSON.stringify(input),
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
 				]);
 			}
 
-			const result = {} as Record<TKey, TValue>;
-			const errors: ParserError[] = [];
+			const result = {} as Record<
+				TKey,
+				TValue
+			>;
+			const errors: ParserError[] =
+				[];
 			for (const k in input) {
-				const keyParsed = key.parse(k);
-				if (keyParsed.t === "err") {
+				const keyParsed =
+					key.parse(
+						k,
+					);
+				if (
+					keyParsed.t ===
+					'err'
+				) {
 					errors.push(
-						...keyParsed.error.map((err): ParserError => {
-							return {
-								message: err.message,
-								path: [k, ...err.path],
-							};
-						}),
+						...keyParsed.error.map(
+							(
+								err,
+							): ParserError => {
+								return {
+									message: err.message,
+									path: [
+										k,
+										...err.path,
+									],
+								};
+							},
+						),
 					);
 					continue;
 				}
 
-				const valueParsed = value.parse(input[k]);
-				if (valueParsed.t === "err") {
+				const valueParsed =
+					value.parse(
+						input[
+							k
+						],
+					);
+				if (
+					valueParsed.t ===
+					'err'
+				) {
 					errors.push(
-						...valueParsed.error.map((err): ParserError => {
-							return {
-								message: err.message,
-								path: [k, ...err.path],
-							};
-						}),
+						...valueParsed.error.map(
+							(
+								err,
+							): ParserError => {
+								return {
+									message: err.message,
+									path: [
+										k,
+										...err.path,
+									],
+								};
+							},
+						),
 					);
 					continue;
 				}
 
-				result[keyParsed.value] = valueParsed.value;
+				result[
+					keyParsed.value
+				] =
+					valueParsed.value;
 			}
 
 			if (errors.length > 0) {
-				return Err(errors);
+				return Err(
+					errors,
+				);
 			}
 
 			return Ok(result);
@@ -357,7 +516,9 @@ export const custom = <T>(
 	return {
 		parse(input) {
 			if (predicate(input)) {
-				return Ok(input);
+				return Ok(
+					input,
+				);
 			}
 			return Err([
 				{
@@ -389,13 +550,23 @@ export const enumeration = <
 ): Parser<T> => {
 	return {
 		parse(input) {
-			if (!values.includes(input as T)) {
+			if (
+				!values.includes(
+					input as T,
+				)
+			) {
 				return Err([
 					{
 						message: toErrorMessage(
-							`one of ${values.join(", ")}`,
-							String(input),
-							JSON.stringify(input),
+							`one of ${values.join(
+								', ',
+							)}`,
+							String(
+								input,
+							),
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
@@ -415,12 +586,20 @@ export const brand = <
 ): Parser<Brand<T, TBrand>> => {
 	return {
 		parse(input) {
-			const parsed = parser.parse(input);
+			const parsed =
+				parser.parse(
+					input,
+				);
 			switch (parsed.t) {
-				case "err":
+				case 'err':
 					return parsed;
-				case "ok":
-					return Ok(parsed.value as Brand<T, TBrand>);
+				case 'ok':
+					return Ok(
+						parsed.value as Brand<
+							T,
+							TBrand
+						>,
+					);
 			}
 		},
 	};
@@ -429,13 +608,15 @@ export const brand = <
 export const regex = (regex: RegExp): Parser<string> => {
 	return {
 		parse(input) {
-			if (typeof input !== "string") {
+			if (typeof input !== 'string') {
 				return Err([
 					{
 						message: toErrorMessage(
-							"string",
+							'string',
 							typeof input,
-							JSON.stringify(input),
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
@@ -461,20 +642,28 @@ export type Json =
 	| number
 	| boolean
 	| null
-	| { [key: string]: Json }
+	| {[key: string]: Json}
 	| Json[];
 
 export const json: Parser<Json> = {
 	parse(input) {
 		try {
-			const serialized = JSON.stringify(input);
-			if (typeof serialized !== "string") {
+			const serialized =
+				JSON.stringify(
+					input,
+				);
+			if (
+				typeof serialized !==
+				'string'
+			) {
 				return Err([
 					{
 						message: toErrorMessage(
-							"string",
+							'string',
 							typeof input,
-							JSON.stringify(input),
+							JSON.stringify(
+								input,
+							),
 						),
 						path: [],
 					},
@@ -494,13 +683,15 @@ export const json: Parser<Json> = {
 
 export const bool: Parser<boolean> = {
 	parse(input) {
-		if (typeof input !== "boolean") {
+		if (typeof input !== 'boolean') {
 			return Err([
 				{
 					message: toErrorMessage(
-						"boolean",
+						'boolean',
 						typeof input,
-						JSON.stringify(input),
+						JSON.stringify(
+							input,
+						),
 					),
 					path: [],
 				},

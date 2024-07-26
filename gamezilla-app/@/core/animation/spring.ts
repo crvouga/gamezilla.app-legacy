@@ -15,7 +15,7 @@ export type Config = {
 	mass: number;
 };
 
-export const init = (inp: { from: number; to: number }): Model => {
+export const init = (inp: {from: number; to: number}): Model => {
 	return {
 		current: inp.from,
 		target: inp.to,
@@ -29,7 +29,8 @@ export const init = (inp: { from: number; to: number }): Model => {
 export const isDone = (model: Model): boolean => {
 	return (
 		Math.abs(model.velocity) < model.precision &&
-		Math.abs(model.target - model.current) < model.precision
+		Math.abs(model.target - model.current) <
+			model.precision
 	);
 };
 
@@ -38,7 +39,8 @@ export const step = (model: Model): Model => {
 		return model;
 	}
 	const velocityNew =
-		model.velocity + (model.target - model.current) * model.tension;
+		model.velocity +
+		(model.target - model.current) * model.tension;
 	const currentNew = model.current + velocityNew;
 	const velocityNew2 = velocityNew * (1 - model.friction);
 	const modelNew: Model = {

@@ -1,5 +1,5 @@
-import type { VDom } from "gamezilla-app/@/vdom";
-import { cn } from "./ui";
+import type {VDom} from 'gamezilla-app/@/vdom';
+import {cn} from './ui';
 
 export const Select = <T,>({
 	onChange,
@@ -29,7 +29,11 @@ export const Select = <T,>({
 			<label
 				id={labelId}
 				htmlFor={id}
-				className={cn("text-base", error && "text-red-500")}
+				className={cn(
+					'text-base',
+					error &&
+						'text-red-500',
+				)}
 			>
 				{label}
 			</label>
@@ -37,33 +41,75 @@ export const Select = <T,>({
 			<select
 				id={id}
 				className={cn(
-					"flex appearance-none items-center rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none",
-					error && "border border-red-500 text-red-500",
-					!error && " ring-blue-600 focus:ring-2",
+					'flex appearance-none items-center rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none',
+					error &&
+						'border border-red-500 text-red-500',
+					!error &&
+						' ring-blue-600 focus:ring-2',
 				)}
-				aria-labelledby={labelId}
-				value={value ? toKey(value) : undefined}
-				onChange={(e) => {
+				aria-labelledby={
+					labelId
+				}
+				value={
+					value
+						? toKey(
+								value,
+						  )
+						: undefined
+				}
+				onChange={(
+					e,
+				) => {
 					for (const option of options) {
-						if (toKey(option) === e.currentTarget.value) {
-							onChange(option);
+						if (
+							toKey(
+								option,
+							) ===
+							e
+								.currentTarget
+								.value
+						) {
+							onChange(
+								option,
+							);
 							return;
 						}
 					}
 				}}
 			>
-				{options.map((option) => {
-					return (
-						<option key={toKey(option)} value={toKey(option)}>
-							{toName(option)}
-						</option>
-					);
-				})}
+				{options.map(
+					(
+						option,
+					) => {
+						return (
+							<option
+								key={toKey(
+									option,
+								)}
+								value={toKey(
+									option,
+								)}
+							>
+								{toName(
+									option,
+								)}
+							</option>
+						);
+					},
+				)}
 			</select>
 
 			{helperText && (
-				<div className={cn("text-sm", error && "text-red-500")}>
-					{helperText}
+				<div
+					className={cn(
+						'text-sm',
+						error &&
+							'text-red-500',
+					)}
+				>
+					{
+						helperText
+					}
 				</div>
 			)}
 		</div>

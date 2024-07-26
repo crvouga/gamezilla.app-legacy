@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@/core/parser";
+import {p} from 'gamezilla-app/@/core/parser';
 import {
 	APP_SOUND,
 	ClientCmd,
@@ -6,24 +6,24 @@ import {
 	playSound,
 	showToast,
 	type ClientCtx,
-} from "gamezilla-app/app/@/client";
-import { IconCopy } from "gamezilla-app/app/@/ui";
-import type { ActionInput } from "gamezilla-app/app/@/ui/actions";
-import { FlowVariant } from "..";
-import { FlowGridShorthand } from "../flow-variant/flow-grid";
+} from 'gamezilla-app/app/@/client';
+import {IconCopy} from 'gamezilla-app/app/@/ui';
+import type {ActionInput} from 'gamezilla-app/app/@/ui/actions';
+import {FlowVariant} from '..';
+import {FlowGridShorthand} from '../flow-variant/flow-grid';
 
 export const MsgClient = p.or(
 	p.obj({
-		t: p.l("user-clicked-copy-to-clipboard"),
+		t: p.l('user-clicked-copy-to-clipboard'),
 	}),
 	p.obj({
-		t: p.l("copied-to-clipboard"),
+		t: p.l('copied-to-clipboard'),
 	}),
 );
 export type MsgClient = p.Infer<typeof MsgClient>;
 
 const update = <TModel,>(input: {
-	msg: MsgClient | { t: string & {} };
+	msg: MsgClient | {t: string & {}};
 	model: TModel;
 	ctx: ClientCtx;
 	flow: FlowVariant.Model;
@@ -32,21 +32,40 @@ const update = <TModel,>(input: {
 	msgCmd?: ClientCmd<never>[];
 } => {
 	switch (input.msg?.t) {
-		case "user-clicked-copy-to-clipboard": {
-			if (input.flow.t !== "flow-grid") {
-				return { model: input.model };
+		case 'user-clicked-copy-to-clipboard': {
+			if (
+				input.flow.t !==
+				'flow-grid'
+			) {
+				return {
+					model: input.model,
+				};
 			}
 
-			const shorthand = FlowGridShorthand.fromGrid(input.flow);
+			const shorthand =
+				FlowGridShorthand.fromGrid(
+					input.flow,
+				);
 
-			const encoded = JSON.stringify(shorthand);
+			const encoded =
+				JSON.stringify(
+					shorthand,
+				);
 
 			return {
 				model: input.model,
 				msgCmd: [
-					playSound(APP_SOUND.refreshFeed),
-					showToast(input.ctx.t("app.copied-to-clipboard")),
-					copyToClipboard(encoded),
+					playSound(
+						APP_SOUND.refreshFeed,
+					),
+					showToast(
+						input.ctx.t(
+							'app.copied-to-clipboard',
+						),
+					),
+					copyToClipboard(
+						encoded,
+					),
 				],
 			};
 		}
@@ -65,9 +84,18 @@ const viewAction = ({
 }): ActionInput[] => {
 	return [
 		{
-			icon: (input) => <IconCopy {...input} />,
-			label: ctx.t("flow.copy-puzzle-to-clipboard"),
-			onClick: () => dispatch({ t: "user-clicked-copy-to-clipboard" }),
+			icon: (input) => (
+				<IconCopy
+					{...input}
+				/>
+			),
+			label: ctx.t(
+				'flow.copy-puzzle-to-clipboard',
+			),
+			onClick: () =>
+				dispatch({
+					t: 'user-clicked-copy-to-clipboard',
+				}),
 		},
 	];
 };

@@ -30,10 +30,28 @@ export class MinHeap<T> {
 	private heapifyUp(): void {
 		let index = this.heap.length - 1;
 		while (index > 0) {
-			const parentIndex = this.getParentIndex(index);
-			if (this.compare(this.heap[parentIndex]!, this.heap[index]!) > 0) {
-				this.swap(parentIndex, index);
-				index = parentIndex;
+			const parentIndex =
+				this.getParentIndex(
+					index,
+				);
+			if (
+				this.compare(
+					this
+						.heap[
+						parentIndex
+					]!,
+					this
+						.heap[
+						index
+					]!,
+				) > 0
+			) {
+				this.swap(
+					parentIndex,
+					index,
+				);
+				index =
+					parentIndex;
 			} else {
 				break;
 			}
@@ -44,26 +62,65 @@ export class MinHeap<T> {
 		let index = 0;
 		let smallest = index;
 
-		while (this.getLeftChildIndex(index) < this.heap.length) {
-			const leftChildIndex = this.getLeftChildIndex(index);
-			const rightChildIndex = this.getRightChildIndex(index);
+		while (
+			this.getLeftChildIndex(index) <
+			this.heap.length
+		) {
+			const leftChildIndex =
+				this.getLeftChildIndex(
+					index,
+				);
+			const rightChildIndex =
+				this.getRightChildIndex(
+					index,
+				);
 
 			if (
-				leftChildIndex < this.heap.length &&
-				this.compare(this.heap[leftChildIndex]!, this.heap[smallest]!) < 0
+				leftChildIndex <
+					this
+						.heap
+						.length &&
+				this.compare(
+					this
+						.heap[
+						leftChildIndex
+					]!,
+					this
+						.heap[
+						smallest
+					]!,
+				) < 0
 			) {
-				smallest = leftChildIndex;
+				smallest =
+					leftChildIndex;
 			}
 			if (
-				rightChildIndex < this.heap.length &&
-				this.compare(this.heap[rightChildIndex]!, this.heap[smallest]!) < 0
+				rightChildIndex <
+					this
+						.heap
+						.length &&
+				this.compare(
+					this
+						.heap[
+						rightChildIndex
+					]!,
+					this
+						.heap[
+						smallest
+					]!,
+				) < 0
 			) {
-				smallest = rightChildIndex;
+				smallest =
+					rightChildIndex;
 			}
 
 			if (smallest !== index) {
-				this.swap(index, smallest);
-				index = smallest;
+				this.swap(
+					index,
+					smallest,
+				);
+				index =
+					smallest;
 			} else {
 				break;
 			}
@@ -94,7 +151,9 @@ export class MinHeap<T> {
 	}
 
 	public peek(): T | undefined {
-		return this.heap.length > 0 ? this.heap[0] : undefined;
+		return this.heap.length > 0
+			? this.heap[0]
+			: undefined;
 	}
 
 	public isEmpty(): boolean {
@@ -102,7 +161,13 @@ export class MinHeap<T> {
 	}
 
 	public has(value: T): boolean {
-		return this.heap.some((element) => this.compare(element, value) === 0);
+		return this.heap.some(
+			(element) =>
+				this.compare(
+					element,
+					value,
+				) === 0,
+		);
 	}
 
 	public clear(): void {

@@ -1,4 +1,4 @@
-import type { IconInput } from "../icon-shared";
+import type {IconInput} from '../icon-shared';
 
 export const IconCheckmarkCircle = (input: IconInput) => {
 	return (

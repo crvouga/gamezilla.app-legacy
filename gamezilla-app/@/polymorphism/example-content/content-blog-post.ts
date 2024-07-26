@@ -1,13 +1,13 @@
-import { type Content, renderHTML } from "./content";
+import {type Content, renderHTML} from './content';
 
 export type BlogPost = {
-	Content: "blog-post";
+	Content: 'blog-post';
 	title: string;
 	body: string;
 };
 
 const isBlogPost = (content: Content): content is BlogPost =>
-	content.Content === "blog-post";
+	content.Content === 'blog-post';
 
 renderHTML.implement(isBlogPost, (blogPost) => {
 	return `
@@ -18,7 +18,7 @@ renderHTML.implement(isBlogPost, (blogPost) => {
     `;
 });
 
-export const BlogPost = (input: { title: string; body: string }): BlogPost => ({
+export const BlogPost = (input: {title: string; body: string}): BlogPost => ({
 	...input,
-	Content: "blog-post",
+	Content: 'blog-post',
 });

@@ -1,4 +1,4 @@
-import { Polymorphic } from "../polymorphic-function";
+import {Polymorphic} from '../polymorphic-function';
 
 export type Content = {
 	Content: string;

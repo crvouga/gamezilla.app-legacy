@@ -1,11 +1,11 @@
-import { Eff, Sub } from "gamezilla-app/@/core";
-import type { SpaceReqCtx, SpaceServerCtx, SpaceServerEvent } from "../space";
-import { SpaceServerCmd } from "../space-server-cmd";
+import {Eff, Sub} from 'gamezilla-app/@/core';
+import type {SpaceReqCtx, SpaceServerCtx, SpaceServerEvent} from '../space';
+import {SpaceServerCmd} from '../space-server-cmd';
 import type {
 	EventMeta,
 	WithEventId,
 	WithEventMeta,
-} from "gamezilla-app/app/spaces/@/event";
+} from 'gamezilla-app/app/spaces/@/event';
 
 //
 //
@@ -28,40 +28,40 @@ export type GameServerTypes = {
 };
 
 type Output<T extends GameServerTypes> = {
-	model: T["ModelServer"];
-	msgCore?: WithEventId<T["MsgCore"]>[];
-	eff?: Eff<T["MsgServer"]>;
-	msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
+	model: T['ModelServer'];
+	msgCore?: WithEventId<T['MsgCore']>[];
+	eff?: Eff<T['MsgServer']>;
+	msgCmd?: SpaceServerCmd<T['MsgToClient']>[];
 };
 
 export type GameServer<T extends GameServerTypes> = {
 	init: (input: {
 		ctx: SpaceServerCtx;
-		state: T["ModelCore"];
-		model?: T["ModelServer"] | null;
+		state: T['ModelCore'];
+		model?: T['ModelServer'] | null;
 	}) => Promise<{
-		model: T["ModelServer"];
-		eff?: Eff<T["MsgServer"]>;
-		msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
+		model: T['ModelServer'];
+		eff?: Eff<T['MsgServer']>;
+		msgCmd?: SpaceServerCmd<T['MsgToClient']>[];
 	}>;
 
 	update: (input: {
 		ctx: SpaceServerCtx | SpaceReqCtx;
-		state: T["ModelCore"];
-		model?: T["ModelServer"] | null;
+		state: T['ModelCore'];
+		model?: T['ModelServer'] | null;
 		//
-		msg?: T["MsgServer"] | null;
-		clientMsg?: T["MsgToServer"] | null;
-		msgCore?: WithEventMeta<T["MsgCore"]> | null;
+		msg?: T['MsgServer'] | null;
+		clientMsg?: T['MsgToServer'] | null;
+		msgCore?: WithEventMeta<T['MsgCore']> | null;
 		msgEvt?: SpaceServerEvent | null;
 	}) => Promise<Output<T>>;
 
 	subscriptions: (input: {
-		model?: T["ModelServer"] | null;
+		model?: T['ModelServer'] | null;
 		intervalId: string;
 		ctx: SpaceServerCtx;
-		state: T["ModelCore"];
-	}) => Promise<Sub<T["MsgServer"]>>;
+		state: T['ModelCore'];
+	}) => Promise<Sub<T['MsgServer']>>;
 };
 
 /**
@@ -71,61 +71,132 @@ const tag = <T extends string, Types extends GameServerTypes>(
 	tag: T,
 	server: GameServer<Types>,
 ): GameServer<{
-	ModelServer: { t: T; c: Types["ModelServer"] };
-	MsgServer: { t: T; c: Types["MsgServer"] };
-	MsgToClient: { t: T; c: Types["MsgToClient"] };
-	MsgToServer: { t: T; c: Types["MsgToServer"] };
-	ModelCore: { t: T; c: Types["ModelCore"] };
-	MsgCore: { t: T; c: Types["MsgCore"] & EventMeta };
+	ModelServer: {t: T; c: Types['ModelServer']};
+	MsgServer: {t: T; c: Types['MsgServer']};
+	MsgToClient: {t: T; c: Types['MsgToClient']};
+	MsgToServer: {t: T; c: Types['MsgToServer']};
+	ModelCore: {t: T; c: Types['ModelCore']};
+	MsgCore: {t: T; c: Types['MsgCore'] & EventMeta};
 }> => {
 	return {
 		init: async (input) => {
-			const initial = await server.init({
-				ctx: input.ctx,
-				state: input.state.c,
-			});
+			const initial =
+				await server.init(
+					{
+						ctx: input.ctx,
+						state: input
+							.state
+							.c,
+					},
+				);
 			return {
-				model: { t: tag, c: initial.model },
-				eff: Eff.tag(tag, initial.eff),
-				msgCmd: SpaceServerCmd.tag(tag, initial.msgCmd),
+				model: {
+					t: tag,
+					c: initial.model,
+				},
+				eff: Eff.tag(
+					tag,
+					initial.eff,
+				),
+				msgCmd: SpaceServerCmd.tag(
+					tag,
+					initial.msgCmd,
+				),
 			};
 		},
 
 		update: async (input) => {
-			const updated = await server.update({
-				msgEvt: input.msgEvt,
-				msg: input.msg?.t === tag ? input.msg?.c : undefined,
-				model: input.model?.t === tag ? input.model?.c : undefined,
-				msgCore: input.msgCore?.t === tag ? input.msgCore?.c : undefined,
-				clientMsg: input.clientMsg?.t === tag ? input.clientMsg?.c : undefined,
-				ctx: input.ctx,
-				state: input.state.c,
-			});
+			const updated =
+				await server.update(
+					{
+						msgEvt: input.msgEvt,
+						msg:
+							input
+								.msg
+								?.t ===
+							tag
+								? input
+										.msg
+										?.c
+								: undefined,
+						model:
+							input
+								.model
+								?.t ===
+							tag
+								? input
+										.model
+										?.c
+								: undefined,
+						msgCore:
+							input
+								.msgCore
+								?.t ===
+							tag
+								? input
+										.msgCore
+										?.c
+								: undefined,
+						clientMsg:
+							input
+								.clientMsg
+								?.t ===
+							tag
+								? input
+										.clientMsg
+										?.c
+								: undefined,
+						ctx: input.ctx,
+						state: input
+							.state
+							.c,
+					},
+				);
 			return {
-				model: { t: tag, c: updated.model },
-				eff: Eff.tag(tag, updated.eff),
-				msgCmd: SpaceServerCmd.tag(tag, updated.msgCmd),
+				model: {
+					t: tag,
+					c: updated.model,
+				},
+				eff: Eff.tag(
+					tag,
+					updated.eff,
+				),
+				msgCmd: SpaceServerCmd.tag(
+					tag,
+					updated.msgCmd,
+				),
 				msgCore: updated.msgCore
 					? updated.msgCore.map(
-							(msgCore): EventMeta & { t: T; c: Types["MsgCore"] } => ({
+							(
+								msgCore,
+							): EventMeta & {
+								t: T;
+								c: Types['MsgCore'];
+							} => ({
 								eventId: msgCore.msgEvtId,
 								happenedAt: msgCore.happenedAt,
 								t: tag,
 								c: msgCore,
 							}),
-						)
+					  )
 					: undefined,
 			};
 		},
 		subscriptions: async (input) => {
 			return Sub.tag(
 				tag,
-				await server.subscriptions({
-					ctx: input.ctx,
-					intervalId: input.intervalId,
-					model: input.model?.c,
-					state: input.state.c,
-				}),
+				await server.subscriptions(
+					{
+						ctx: input.ctx,
+						intervalId: input.intervalId,
+						model: input
+							.model
+							?.c,
+						state: input
+							.state
+							.c,
+					},
+				),
 			);
 		},
 	};
@@ -149,12 +220,13 @@ const tag = <T extends string, Types extends GameServerTypes>(
  */
 const chain = async <T extends GameServerTypes>(
 	initial: Output<T> | Promise<Output<T>>,
-	...updaters: ((input: T["ModelServer"]) => Promise<Output<T>>)[]
+	...updaters: ((input: T['ModelServer']) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
-	const msgCmd: SpaceServerCmd<T["MsgToClient"]>[] =
+	const msgCmd: SpaceServerCmd<T['MsgToClient']>[] =
 		(await initial).msgCmd ?? [];
-	const msgCores: (T["MsgCore"] & EventMeta)[] = (await initial)?.msgCore ?? [];
-	const eff: Eff<T["MsgServer"]>[] = (await initial).eff
+	const msgCores: (T['MsgCore'] & EventMeta)[] =
+		(await initial)?.msgCore ?? [];
+	const eff: Eff<T['MsgServer']>[] = (await initial).eff
 		? [(await initial).eff!]
 		: [];
 
@@ -172,16 +244,30 @@ const chain = async <T extends GameServerTypes>(
 		}
 		if (updated.msgCore) {
 			let j = 0;
-			const len = updated.msgCore.length;
+			const len =
+				updated.msgCore
+					.length;
 			for (j = 0; j < len; ++j) {
-				msgCores.push(updated.msgCore[j]!);
+				msgCores.push(
+					updated
+						.msgCore[
+						j
+					]!,
+				);
 			}
 		}
 		if (updated.msgCmd) {
 			let j = 0;
-			const len = updated.msgCmd.length;
+			const len =
+				updated.msgCmd
+					.length;
 			for (j = 0; j < len; ++j) {
-				msgCmd.push(updated.msgCmd[j]!);
+				msgCmd.push(
+					updated
+						.msgCmd[
+						j
+					]!,
+				);
 			}
 		}
 	}

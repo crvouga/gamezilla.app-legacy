@@ -1,9 +1,9 @@
-import { Ok, Result, isErr, type Posix, type Task } from "gamezilla-app/@/core";
-import { UserId, type SessionId } from "gamezilla-app/app/@/data";
-import type { UserAccount } from "gamezilla-app/app/@/data/account";
-import { sendToClient } from "gamezilla-app/app/@/server";
-import type { ServerDeps, ServerModule } from "../auth.types";
-import type { ModelServer } from "./continue-as-guest.types";
+import {Ok, Result, isErr, type Posix, type Task} from 'gamezilla-app/@/core';
+import {UserId, type SessionId} from 'gamezilla-app/app/@/data';
+import type {UserAccount} from 'gamezilla-app/app/@/data/account';
+import {sendToClient} from 'gamezilla-app/app/@/server';
+import type {ServerDeps, ServerModule} from '../auth.types';
+import type {ModelServer} from './continue-as-guest.types';
 
 const initModel: ModelServer = null;
 
@@ -17,7 +17,9 @@ const continueAsGuest = async ({
 	now: Posix;
 }): Task<string, UserAccount> => {
 	const existingGuestUserId =
-		await deps.guestSessionMappingDb.findUserIdBySessionId(sessionId);
+		await deps.guestSessionMappingDb.findUserIdBySessionId(
+			sessionId,
+		);
 
 	if (isErr(existingGuestUserId)) {
 		return existingGuestUserId;
@@ -31,13 +33,14 @@ const continueAsGuest = async ({
 	);
 
 	const newGuestAccount: UserAccount = {
-		role: "guest",
+		role: 'guest',
 		userId: UserId.generate(),
 		createdAt: now,
 		phoneNumber: null,
 	};
 
-	const guestAccount: UserAccount = existingGuestAccount ?? newGuestAccount;
+	const guestAccount: UserAccount =
+		existingGuestAccount ?? newGuestAccount;
 
 	await deps.guestSessionMappingDb.insert({
 		guestUserId: guestAccount.userId,
@@ -46,7 +49,9 @@ const continueAsGuest = async ({
 
 	const insertedAccount = existingGuestAccount
 		? Ok(null)
-		: await deps.userAccountDb.insert({ account: guestAccount });
+		: await deps.userAccountDb.insert({
+				account: guestAccount,
+		  });
 
 	if (isErr(insertedAccount)) {
 		return insertedAccount;
@@ -64,28 +69,34 @@ const continueAsGuest = async ({
 	return Ok(guestAccount);
 };
 
-const update: ServerModule["update"] = async ({
+const update: ServerModule['update'] = async ({
 	model,
 	msgClient,
 	deps,
 	ctx,
 }) => {
 	switch (msgClient?.t) {
-		case "guest.clicked-continue-as-guest-button": {
-			const result = await continueAsGuest({
-				deps,
-				now: ctx.now,
-				sessionId: msgClient.sessionId,
-			});
+		case 'guest.clicked-continue-as-guest-button': {
+			const result =
+				await continueAsGuest(
+					{
+						deps,
+						now: ctx.now,
+						sessionId: msgClient.sessionId,
+					},
+				);
 
 			if (isErr(result)) {
 				return {
 					model,
 					msgCmd: [
-						sendToClient(msgClient, {
-							t: "guest.continue-as-guest-result",
-							result: result,
-						}),
+						sendToClient(
+							msgClient,
+							{
+								t: 'guest.continue-as-guest-result',
+								result: result,
+							},
+						),
 					],
 				};
 			}
@@ -93,14 +104,21 @@ const update: ServerModule["update"] = async ({
 			return {
 				model,
 				msgCmd: [
-					sendToClient(msgClient, {
-						t: "guest.continue-as-guest-result",
-						result: Ok(result.value.userId),
-					}),
+					sendToClient(
+						msgClient,
+						{
+							t: 'guest.continue-as-guest-result',
+							result: Ok(
+								result
+									.value
+									.userId,
+							),
+						},
+					),
 				],
 				msgEvt: [
 					{
-						t: "auth/client-authenticated",
+						t: 'auth/client-authenticated',
 						clientId: msgClient.clientId,
 						account: result.value,
 						sessionId: msgClient.sessionId,

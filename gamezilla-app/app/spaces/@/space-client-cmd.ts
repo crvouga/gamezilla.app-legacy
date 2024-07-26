@@ -1,5 +1,5 @@
-import { ClientCmd } from "gamezilla-app/app/@/client";
-import type { UserId } from "gamezilla-app/app/@/data";
+import {ClientCmd} from 'gamezilla-app/app/@/client';
+import type {UserId} from 'gamezilla-app/app/@/data';
 
 export type SpaceClientCmdTypes = {
 	MsgClient: any;
@@ -8,37 +8,40 @@ export type SpaceClientCmdTypes = {
 
 export type SpaceClientCmd<T extends SpaceClientCmdTypes> =
 	| ClientCmd<T>
-	| { t: "space/exit-game" }
-	| { t: "space/open-user-details"; userId: UserId };
+	| {t: 'space/exit-game'}
+	| {t: 'space/open-user-details'; userId: UserId};
 
 export const exitGame = <
 	T extends SpaceClientCmdTypes,
 >(): SpaceClientCmd<T> => {
-	return { t: "space/exit-game" };
+	return {t: 'space/exit-game'};
 };
 
 export const openUserDetails = <T extends SpaceClientCmdTypes>(
 	userId: UserId,
 ): SpaceClientCmd<T> => {
-	return { t: "space/open-user-details", userId };
+	return {t: 'space/open-user-details', userId};
 };
 
 const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
 	t: Tag,
 	cmds?: SpaceClientCmd<T>[],
 ): SpaceClientCmd<{
-	MsgClient: { t: Tag; c: T["MsgClient"] };
-	MsgToServer: { t: Tag; c: T["MsgToServer"] };
+	MsgClient: {t: Tag; c: T['MsgClient']};
+	MsgToServer: {t: Tag; c: T['MsgToServer']};
 }>[] => {
 	return (
 		cmds?.map((msgCmd) => {
 			switch (msgCmd.t) {
-				case "space/open-user-details":
-				case "space/exit-game": {
+				case 'space/open-user-details':
+				case 'space/exit-game': {
 					return msgCmd;
 				}
 				default: {
-					return ClientCmd.tagOne(t, msgCmd);
+					return ClientCmd.tagOne(
+						t,
+						msgCmd,
+					);
 				}
 			}
 		}) ?? []
@@ -47,21 +50,35 @@ const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
 
 const map = <A extends SpaceClientCmdTypes, B extends SpaceClientCmdTypes>(
 	msgCmd: SpaceClientCmd<A>[] | undefined | null,
-	msgToServer: (a: A["MsgToServer"]) => B["MsgToServer"],
-	msgClient: (b: A["MsgClient"]) => B["MsgClient"],
+	msgToServer: (a: A['MsgToServer']) => B['MsgToServer'],
+	msgClient: (b: A['MsgClient']) => B['MsgClient'],
 ): SpaceClientCmd<B>[] => {
 	return (
-		msgCmd?.flatMap((msgCmd): SpaceClientCmd<B>[] => {
-			switch (msgCmd.t) {
-				case "space/open-user-details":
-				case "space/exit-game": {
-					return [msgCmd];
+		msgCmd?.flatMap(
+			(
+				msgCmd,
+			): SpaceClientCmd<B>[] => {
+				switch (
+					msgCmd.t
+				) {
+					case 'space/open-user-details':
+					case 'space/exit-game': {
+						return [
+							msgCmd,
+						];
+					}
+					default: {
+						return ClientCmd.map(
+							[
+								msgCmd,
+							],
+							msgToServer,
+							msgClient,
+						);
+					}
 				}
-				default: {
-					return ClientCmd.map([msgCmd], msgToServer, msgClient);
-				}
-			}
-		}) ?? []
+			},
+		) ?? []
 	);
 };
 
@@ -71,12 +88,14 @@ const toClientCmd = <T extends SpaceClientCmdTypes>(
 	return (
 		msgCmd?.flatMap((msgCmd) => {
 			switch (msgCmd.t) {
-				case "space/open-user-details":
-				case "space/exit-game": {
+				case 'space/open-user-details':
+				case 'space/exit-game': {
 					return [];
 				}
 				default: {
-					return [msgCmd];
+					return [
+						msgCmd,
+					];
 				}
 			}
 		}) ?? []
@@ -89,9 +108,11 @@ const toSpaceClientCmd = <T extends SpaceClientCmdTypes>(
 	return (
 		msgCmd?.flatMap((msgCmd) => {
 			switch (msgCmd.t) {
-				case "space/open-user-details":
-				case "space/exit-game": {
-					return [msgCmd];
+				case 'space/open-user-details':
+				case 'space/exit-game': {
+					return [
+						msgCmd,
+					];
 				}
 				default: {
 					return [];

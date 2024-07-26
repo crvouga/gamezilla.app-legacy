@@ -1,39 +1,39 @@
-import { Polymorphic } from "gamezilla-app/@/polymorphism/polymorphic-function";
+import {Polymorphic} from 'gamezilla-app/@/polymorphism/polymorphic-function';
 
 type Torpedo = {
-	type: "Torpedo";
+	type: 'Torpedo';
 };
 
 type Cannonball = {
-	type: "Cannonball";
+	type: 'Cannonball';
 };
 
 type Ammo = Torpedo | Cannonball;
 
 type Battleship = {
-	type: "Battleship";
+	type: 'Battleship';
 };
 
 type Submarine = {
-	type: "Submarine";
+	type: 'Submarine';
 };
 
 type Ship = Battleship | Submarine;
 
 const isTorpedo = (ammo: Ammo): ammo is Torpedo => {
-	return ammo.type === "Torpedo";
+	return ammo.type === 'Torpedo';
 };
 
 const isCannonball = (ammo: Ammo): ammo is Cannonball => {
-	return ammo.type === "Cannonball";
+	return ammo.type === 'Cannonball';
 };
 
 const isBattleship = (ship: Ship): ship is Battleship => {
-	return ship.type === "Battleship";
+	return ship.type === 'Battleship';
 };
 
 const isSubmarine = (ship: Ship): ship is Submarine => {
-	return ship.type === "Submarine";
+	return ship.type === 'Submarine';
 };
 
 type Model = {
@@ -54,7 +54,7 @@ type Model = {
 //
 //
 
-type ShootInput = { ammo: Ammo; target: Ship; shotCount: number };
+type ShootInput = {ammo: Ammo; target: Ship; shotCount: number};
 
 const shoot = Polymorphic<(input: ShootInput, model: Model) => Model>();
 
@@ -63,41 +63,57 @@ shoot.implementDefault((_input, model) => {
 });
 
 shoot.implement(
-	(input): input is ShootInput & { ammo: Cannonball; target: Battleship } =>
-		isCannonball(input.ammo) && isBattleship(input.target),
+	(
+		input,
+	): input is ShootInput & {
+		ammo: Cannonball;
+		target: Battleship;
+	} => isCannonball(input.ammo) && isBattleship(input.target),
 	(_input, model) => {
 		return {
 			...model,
-			message: "Cannonball hits the battleship with significant damage.",
+			message: 'Cannonball hits the battleship with significant damage.',
 		};
 	},
 );
 
 shoot.implement(
-	(input): input is ShootInput & { ammo: Cannonball; target: Submarine } =>
-		isCannonball(input.ammo) && isSubmarine(input.target),
+	(
+		input,
+	): input is ShootInput & {
+		ammo: Cannonball;
+		target: Submarine;
+	} => isCannonball(input.ammo) && isSubmarine(input.target),
 	(_input, model) => {
 		return {
 			...model,
-			message: "Cannonball splashes harmlessly into the water.",
+			message: 'Cannonball splashes harmlessly into the water.',
 		};
 	},
 );
 
 shoot.implement(
-	(input): input is ShootInput & { ammo: Torpedo; target: Submarine } =>
-		isTorpedo(input.ammo) && isSubmarine(input.target),
+	(
+		input,
+	): input is ShootInput & {
+		ammo: Torpedo;
+		target: Submarine;
+	} => isTorpedo(input.ammo) && isSubmarine(input.target),
 	(_input, model) => {
 		return {
 			...model,
-			message: "Torpedo strikes the submarine with devastating force.",
+			message: 'Torpedo strikes the submarine with devastating force.',
 		};
 	},
 );
 
 shoot.implement(
-	(input): input is ShootInput & { ammo: Torpedo; target: Battleship } =>
-		isTorpedo(input.ammo) && isBattleship(input.target),
+	(
+		input,
+	): input is ShootInput & {
+		ammo: Torpedo;
+		target: Battleship;
+	} => isTorpedo(input.ammo) && isBattleship(input.target),
 	(_input, model) => {
 		return {
 			...model,
@@ -116,12 +132,12 @@ shoot.implement(
 //
 //
 
-const cannonball: Cannonball = { type: "Cannonball" };
-const torpedo: Torpedo = { type: "Torpedo" };
-const battleship: Battleship = { type: "Battleship" };
-const submarine: Submarine = { type: "Submarine" };
+const cannonball: Cannonball = {type: 'Cannonball'};
+const torpedo: Torpedo = {type: 'Torpedo'};
+const battleship: Battleship = {type: 'Battleship'};
+const submarine: Submarine = {type: 'Submarine'};
 const model: Model = {
-	message: "",
+	message: '',
 	playerOne: {
 		ships: [battleship],
 	},

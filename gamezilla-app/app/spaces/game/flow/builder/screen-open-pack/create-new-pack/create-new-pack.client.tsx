@@ -1,78 +1,111 @@
-import { withId } from "gamezilla-app/app/spaces/@/event";
+import {withId} from 'gamezilla-app/app/spaces/@/event';
 import {
 	APP_SOUND,
 	playSound,
 	sendToServer,
 	showToast,
-} from "gamezilla-app/app/@/client";
-import { Button, IconPlus } from "gamezilla-app/app/@/ui";
-import { Ok, Loading } from "gamezilla-app/@/core";
-import type { ClientModule } from "../../builder.types";
+} from 'gamezilla-app/app/@/client';
+import {Button, IconPlus} from 'gamezilla-app/app/@/ui';
+import {Ok, Loading} from 'gamezilla-app/@/core';
+import type {ClientModule} from '../../builder.types';
 
-const update: ClientModule["update"] = (input) => {
-	const { model, msg, msgCore, msgServer } = input;
+const update: ClientModule['update'] = (input) => {
+	const {model, msg, msgCore, msgServer} = input;
 
 	switch (msg?.t) {
-		case "pack-create-new.clicked-create-button": {
+		case 'pack-create-new.clicked-create-button': {
 			return {
 				model: {
 					...model,
-					packCreateNewRequest: Loading,
+					packCreateNewRequest:
+						Loading,
 				},
 				msgCmd: [
-					playSound(APP_SOUND.tap),
-					sendToServer({
-						t: "pack-create-new.clicked-create-button",
-					}),
+					playSound(
+						APP_SOUND.tap,
+					),
+					sendToServer(
+						{
+							t: 'pack-create-new.clicked-create-button',
+						},
+					),
 				],
 			};
 		}
 	}
 
 	switch (msgServer?.t) {
-		case "pack-create-new.created-pack": {
+		case 'pack-create-new.created-pack': {
 			return {
 				model,
 				msgCore: [
-					withId({
-						t: "user-created-pack",
-						created: msgServer.created,
-						userId: input.ctx.currentUserId,
-					}),
+					withId(
+						{
+							t: 'user-created-pack',
+							created: msgServer.created,
+							userId: input
+								.ctx
+								.currentUserId,
+						},
+					),
 				],
 			};
 		}
 	}
 
 	switch (msgCore?.t) {
-		case "user-created-pack": {
+		case 'user-created-pack': {
 			return {
 				model: {
 					...model,
-					packCreateNewRequest: Ok(null),
+					packCreateNewRequest:
+						Ok(
+							null,
+						),
 				},
 				msgCmd: [
-					playSound(APP_SOUND.refreshFeed),
-					showToast(input.ctx.t("flow.pack-created")),
+					playSound(
+						APP_SOUND.refreshFeed,
+					),
+					showToast(
+						input.ctx.t(
+							'flow.pack-created',
+						),
+					),
 				],
 			};
 		}
 	}
 
-	return { model };
+	return {model};
 };
 
-const ViewCreateFab: ClientModule["View"] = (input) => {
+const ViewCreateFab: ClientModule['View'] = (input) => {
 	return (
 		<Button
 			fab
-			text={input.ctx.t("flow.create-pack")}
+			text={input.ctx.t(
+				'flow.create-pack',
+			)}
 			variant="contained"
 			color="primary"
-			loading={input.model.packCreateNewRequest.t === "loading"}
-			renderIconStart={(iconInput) => <IconPlus {...iconInput} />}
+			loading={
+				input.model
+					.packCreateNewRequest
+					.t ===
+				'loading'
+			}
+			renderIconStart={(
+				iconInput,
+			) => (
+				<IconPlus
+					{...iconInput}
+				/>
+			)}
 			onClick={() =>
-				input.dispatch({ t: "pack-create-new.clicked-create-button" })
+				input.dispatch({
+					t: 'pack-create-new.clicked-create-button',
+				})
 			}
 		/>
 	);

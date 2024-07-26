@@ -1,52 +1,130 @@
-import { Ok, ascend, descend, eq } from "gamezilla-app/@/core";
-import type { Verification, VerificationId } from "..";
-import type { IVerificationDb } from "./verification-db";
+import {Ok, ascend, descend, eq} from 'gamezilla-app/@/core';
+import type {Verification, VerificationId} from '..';
+import type {IVerificationDb} from './verification-db';
 
 export const VerificationDbHashMap = (): IVerificationDb => {
 	const verifications = new Map<VerificationId, Verification>();
 
 	return {
 		async find(input) {
-			const filtered = Array.from(verifications.values())
+			const filtered = Array.from(
+				verifications.values(),
+			)
 				.filter((v) => {
-					if (input.where?.verificationId?.["="]) {
-						return input.where?.verificationId?.["="] === v.verificationId;
+					if (
+						input
+							.where
+							?.verificationId?.[
+							'='
+						]
+					) {
+						return (
+							input
+								.where
+								?.verificationId?.[
+								'='
+							] ===
+							v.verificationId
+						);
 					}
 					return true;
 				})
 				.filter((v) => {
-					if (input.where?.createdAt?.["<="]) {
-						return v.createdAt <= input.where?.createdAt?.["<="];
+					if (
+						input
+							.where
+							?.createdAt?.[
+							'<='
+						]
+					) {
+						return (
+							v.createdAt <=
+							input
+								.where
+								?.createdAt?.[
+								'<='
+							]
+						);
 					}
 					return true;
 				})
 				.filter((v) => {
-					if (input.where?.createdAt?.[">="]) {
-						return v.createdAt >= input.where?.createdAt?.[">="];
+					if (
+						input
+							.where
+							?.createdAt?.[
+							'>='
+						]
+					) {
+						return (
+							v.createdAt >=
+							input
+								.where
+								?.createdAt?.[
+								'>='
+							]
+						);
 					}
 					return true;
 				})
 				.filter((v) => {
-					if (input.where?.phoneNumber?.["="]) {
-						return eq(input.where?.phoneNumber?.["="], v.phoneNumber);
+					if (
+						input
+							.where
+							?.phoneNumber?.[
+							'='
+						]
+					) {
+						return eq(
+							input
+								.where
+								?.phoneNumber?.[
+								'='
+							],
+							v.phoneNumber,
+						);
 					}
 					return true;
 				});
 
-			switch (input.order?.createdAt) {
-				case "asc": {
-					filtered.sort(ascend((v) => v.createdAt));
+			switch (
+				input.order
+					?.createdAt
+			) {
+				case 'asc': {
+					filtered.sort(
+						ascend(
+							(
+								v,
+							) =>
+								v.createdAt,
+						),
+					);
 					break;
 				}
-				case "desc": {
-					filtered.sort(descend((v) => v.createdAt));
+				case 'desc': {
+					filtered.sort(
+						descend(
+							(
+								v,
+							) =>
+								v.createdAt,
+						),
+					);
 					break;
 				}
 			}
 
-			const limit = input.limit ?? Number.POSITIVE_INFINITY;
-			const offset = input.offset ?? 0;
-			const sliced = filtered.slice(offset, offset + limit);
+			const limit =
+				input.limit ??
+				Number.POSITIVE_INFINITY;
+			const offset =
+				input.offset ??
+				0;
+			const sliced = filtered.slice(
+				offset,
+				offset + limit,
+			);
 			return Ok({
 				items: sliced,
 				total: filtered.length,
@@ -55,7 +133,10 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 			});
 		},
 		async put(verification) {
-			verifications.set(verification.verificationId, verification);
+			verifications.set(
+				verification.verificationId,
+				verification,
+			);
 			return Ok(null);
 		},
 	};

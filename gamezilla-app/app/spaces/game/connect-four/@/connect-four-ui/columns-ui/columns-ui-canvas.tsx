@@ -1,15 +1,15 @@
-import { rescale } from "gamezilla-app/@/core";
+import {rescale} from 'gamezilla-app/@/core';
 import {
 	COLUMN_COUNT,
 	type Columns,
 	isColumnIndex,
 	MAX_COLUMN_HEIGHT,
-} from "../../connect-four";
-import { gameTheme } from "../shared";
-import type { ViewColumnsinput } from "./shared";
+} from '../../connect-four';
+import {gameTheme} from '../shared';
+import type {ViewColumnsinput} from './shared';
 
 export const doPaint = (columns: Columns) => {
-	const canvas = document.getElementById("view-columns-canvas");
+	const canvas = document.getElementById('view-columns-canvas');
 
 	if (!canvas) {
 		return;
@@ -19,16 +19,17 @@ export const doPaint = (columns: Columns) => {
 		return;
 	}
 
-	const context = canvas.getContext("2d");
+	const context = canvas.getContext('2d');
 
 	if (!context) {
 		return;
 	}
 
 	context.canvas.height =
-		(MAX_COLUMN_HEIGHT / COLUMN_COUNT) * context.canvas.width;
+		(MAX_COLUMN_HEIGHT / COLUMN_COUNT) *
+		context.canvas.width;
 
-	paint({ context, columns });
+	paint({context, columns});
 };
 
 export const ViewColumnsCanvas = (input: ViewColumnsinput) => {
@@ -37,20 +38,45 @@ export const ViewColumnsCanvas = (input: ViewColumnsinput) => {
 			id="view-columns-canvas"
 			className="w-full cursor-pointer"
 			onClick={(e) => {
-				const rect = e.currentTarget.getBoundingClientRect();
-				const elementRelativeX = e.clientX - rect.left;
-				const elementWidth = e.currentTarget.width;
-				const canvasRelativeX = (elementRelativeX * elementWidth) / rect.width;
-				const columnIndex = Math.floor(
-					rescale({
-						value: canvasRelativeX,
-						from: [0, elementWidth],
-						to: [0, COLUMN_COUNT],
-					}),
-				);
+				const rect =
+					e.currentTarget.getBoundingClientRect();
+				const elementRelativeX =
+					e.clientX -
+					rect.left;
+				const elementWidth =
+					e
+						.currentTarget
+						.width;
+				const canvasRelativeX =
+					(elementRelativeX *
+						elementWidth) /
+					rect.width;
+				const columnIndex =
+					Math.floor(
+						rescale(
+							{
+								value: canvasRelativeX,
+								from: [
+									0,
+									elementWidth,
+								],
+								to: [
+									0,
+									COLUMN_COUNT,
+								],
+							},
+						),
+					);
 
-				if (input.onClick && isColumnIndex(columnIndex)) {
-					input.onClick(columnIndex);
+				if (
+					input.onClick &&
+					isColumnIndex(
+						columnIndex,
+					)
+				) {
+					input.onClick(
+						columnIndex,
+					);
 					return;
 				}
 			}}
@@ -102,14 +128,45 @@ const paint = ({
 			r = cellWidth / 2;
 
 			context.beginPath();
-			context.arc(cx, cy, r, 0, Math.PI * 2);
+			context.arc(
+				cx,
+				cy,
+				r,
+				0,
+				Math.PI * 2,
+			);
 			try {
-				gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74);
-				gradient.addColorStop(0, gameTheme[disc].light);
-				gradient.addColorStop(1, gameTheme[disc].dark);
-				context.fillStyle = gradient;
+				gradient =
+					context.createRadialGradient(
+						cx,
+						cy,
+						0,
+						cx,
+						cy,
+						r *
+							0.74,
+					);
+				gradient.addColorStop(
+					0,
+					gameTheme[
+						disc
+					]
+						.light,
+				);
+				gradient.addColorStop(
+					1,
+					gameTheme[
+						disc
+					]
+						.dark,
+				);
+				context.fillStyle =
+					gradient;
 			} catch (error) {
-				context.fillStyle = gameTheme[disc].light;
+				context.fillStyle =
+					gameTheme[
+						disc
+					].light;
 			}
 			context.fill();
 			context.closePath();
@@ -125,7 +182,7 @@ const paint = ({
 		0,
 		Math.PI * 2,
 	);
-	context.fillStyle = "purple";
+	context.fillStyle = 'purple';
 	context.fill();
 	context.closePath();
 
@@ -140,13 +197,19 @@ const paint = ({
 			cy = (y + 1 / 2) * cellHeight;
 			r = (cellWidth / 2) * 0.8;
 			context.moveTo(cy, cy);
-			context.arc(cx, cy, r, 0, Math.PI * 2);
+			context.arc(
+				cx,
+				cy,
+				r,
+				0,
+				Math.PI * 2,
+			);
 		}
 	}
 
 	context.fillStyle = gameTheme.primary.light;
 	context.rect(0, 0, width, height);
-	context.fill("evenodd");
+	context.fill('evenodd');
 };
 
 const isCanvas = (i: unknown): i is HTMLCanvasElement => {

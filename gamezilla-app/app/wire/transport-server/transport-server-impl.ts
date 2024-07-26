@@ -1,8 +1,8 @@
-import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
-import type { ServerInstance } from "gamezilla-app/@/server";
-import type { IServerTransport } from "./transport-server";
-import { ServerTransportBunWebSockets } from "./transport-server-impl-bun-web-sockets";
-import { ServerTransportSocketIO } from "./transport-server-impl-socket-io";
+import type {ILogger} from 'gamezilla-app/app/@/server/logger/logger';
+import type {ServerInstance} from 'gamezilla-app/@/server';
+import type {IServerTransport} from './transport-server';
+import {ServerTransportBunWebSockets} from './transport-server-impl-bun-web-sockets';
+import {ServerTransportSocketIO} from './transport-server-impl-socket-io';
 
 export const ServerTransport = async <MsgToServer, MsgToClient>({
 	server,
@@ -19,15 +19,21 @@ export const ServerTransport = async <MsgToServer, MsgToClient>({
 	}>
 > => {
 	switch (server.t) {
-		case "bun": {
-			return ServerTransportBunWebSockets<MsgToServer, MsgToClient>({
+		case 'bun': {
+			return ServerTransportBunWebSockets<
+				MsgToServer,
+				MsgToClient
+			>({
 				codebaseVersionId,
 				server,
 			});
 		}
 
-		case "node": {
-			return ServerTransportSocketIO<MsgToServer, MsgToClient>({
+		case 'node': {
+			return ServerTransportSocketIO<
+				MsgToServer,
+				MsgToClient
+			>({
 				codebaseVersionId,
 				server,
 				logger,

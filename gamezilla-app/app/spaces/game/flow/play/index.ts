@@ -1,1 +1,1 @@
-export * as PlayTypes from "./play.types";
+export * as PlayTypes from './play.types';

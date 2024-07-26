@@ -22,8 +22,8 @@ function deepEqual(
 	}
 
 	if (
-		typeof a !== "object" ||
-		typeof b !== "object" ||
+		typeof a !== 'object' ||
+		typeof b !== 'object' ||
 		a === null ||
 		b === null
 	) {
@@ -51,8 +51,18 @@ function deepEqual(
 
 		if (
 			!deepEqual(
-				(a as Record<string, unknown>)[key],
-				(b as Record<string, unknown>)[key],
+				(
+					a as Record<
+						string,
+						unknown
+					>
+				)[key],
+				(
+					b as Record<
+						string,
+						unknown
+					>
+				)[key],
 				visitedA,
 				visitedB,
 			)

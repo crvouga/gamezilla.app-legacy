@@ -1,4 +1,4 @@
-import countryPhoneData from "../data/country_phone_data";
+import countryPhoneData from '../data/country_phone_data';
 
 type GetArrayElementType<T extends readonly unknown[]> =
 	T extends readonly (infer U)[] ? U : never;
@@ -13,7 +13,11 @@ export function findCountryPhoneDataByCountry(country: string) {
 	if (!country) {
 		return (
 			countryPhoneData.find(
-				(countryPhoneDatum) => countryPhoneDatum.alpha3 === "USA",
+				(
+					countryPhoneDatum,
+				) =>
+					countryPhoneDatum.alpha3 ===
+					'USA',
 			) || null
 		);
 	}
@@ -21,8 +25,11 @@ export function findCountryPhoneDataByCountry(country: string) {
 	if (country.length === 2) {
 		return (
 			countryPhoneData.find(
-				(countryPhoneDatum) =>
-					country.toUpperCase() === countryPhoneDatum.alpha2,
+				(
+					countryPhoneDatum,
+				) =>
+					country.toUpperCase() ===
+					countryPhoneDatum.alpha2,
 			) || null
 		);
 	}
@@ -30,8 +37,11 @@ export function findCountryPhoneDataByCountry(country: string) {
 	if (country.length === 3) {
 		return (
 			countryPhoneData.find(
-				(countryPhoneDatum) =>
-					country.toUpperCase() === countryPhoneDatum.alpha3,
+				(
+					countryPhoneDatum,
+				) =>
+					country.toUpperCase() ===
+					countryPhoneDatum.alpha3,
 			) || null
 		);
 	}
@@ -39,7 +49,8 @@ export function findCountryPhoneDataByCountry(country: string) {
 	return (
 		countryPhoneData.find(
 			(countryPhoneDatum) =>
-				country.toUpperCase() === countryPhoneDatum.country_name.toUpperCase(),
+				country.toUpperCase() ===
+				countryPhoneDatum.country_name.toUpperCase(),
 		) || null
 	);
 }
@@ -50,16 +61,21 @@ export function findExactCountryPhoneData(
 	countryPhoneDatum: CountryPhoneDataItem,
 ) {
 	// check if the phone number length match any one of the length config
-	const phoneNumberLengthMatched = countryPhoneDatum.phone_number_lengths.some(
-		(length) => {
-			// as the phone number must include the country code,
-			// but countryPhoneDatum.phone_number_lengths is the length without country code
-			// therefore need to add back countryPhoneDatum.country_code.length to length
-			return (
-				countryPhoneDatum.country_code.length + length === phoneNumber.length
-			);
-		},
-	);
+	const phoneNumberLengthMatched =
+		countryPhoneDatum.phone_number_lengths.some(
+			(length) => {
+				// as the phone number must include the country code,
+				// but countryPhoneDatum.phone_number_lengths is the length without country code
+				// therefore need to add back countryPhoneDatum.country_code.length to length
+				return (
+					countryPhoneDatum
+						.country_code
+						.length +
+						length ===
+					phoneNumber.length
+				);
+			},
+		);
 
 	if (!phoneNumberLengthMatched) {
 		return null;
@@ -67,17 +83,24 @@ export function findExactCountryPhoneData(
 
 	// if no need to validate mobile prefix or the country data does not have mobile begin with
 	// pick the current one as the answer directly
-	if (!countryPhoneDatum.mobile_begin_with.length || !validateMobilePrefix) {
+	if (
+		!countryPhoneDatum.mobile_begin_with.length ||
+		!validateMobilePrefix
+	) {
 		return countryPhoneDatum;
 	}
 
 	// if the mobile begin with is correct, pick as the correct answer
 	if (
-		countryPhoneDatum.mobile_begin_with.some((beginWith) => {
-			return phoneNumber.match(
-				new RegExp(`^${countryPhoneDatum.country_code}${beginWith}`),
-			);
-		})
+		countryPhoneDatum.mobile_begin_with.some(
+			(beginWith) => {
+				return phoneNumber.match(
+					new RegExp(
+						`^${countryPhoneDatum.country_code}${beginWith}`,
+					),
+				);
+			},
+		)
 	) {
 		return countryPhoneDatum;
 	}
@@ -91,17 +114,22 @@ export function findPossibleCountryPhoneData(
 	countryPhoneDatum: CountryPhoneDataItem,
 ) {
 	// check if the phone number length match any one of the length config
-	const phoneNumberLengthMatched = countryPhoneDatum.phone_number_lengths.some(
-		(length) => {
-			// the phone number must include the country code
-			// countryPhoneDatum.phone_number_lengths is the length without country code
-			// + 1 is assuming there is an unwanted trunk code prepended to the phone number
-			return (
-				countryPhoneDatum.country_code.length + length + 1 ===
-				phoneNumber.length
-			);
-		},
-	);
+	const phoneNumberLengthMatched =
+		countryPhoneDatum.phone_number_lengths.some(
+			(length) => {
+				// the phone number must include the country code
+				// countryPhoneDatum.phone_number_lengths is the length without country code
+				// + 1 is assuming there is an unwanted trunk code prepended to the phone number
+				return (
+					countryPhoneDatum
+						.country_code
+						.length +
+						length +
+						1 ===
+					phoneNumber.length
+				);
+			},
+		);
 
 	if (!phoneNumberLengthMatched) {
 		return null;
@@ -109,18 +137,25 @@ export function findPossibleCountryPhoneData(
 
 	// if no need to validate mobile prefix or the country data does not have mobile begin with
 	// pick the current one as the answer directly
-	if (!countryPhoneDatum.mobile_begin_with.length || !validateMobilePrefix) {
+	if (
+		!countryPhoneDatum.mobile_begin_with.length ||
+		!validateMobilePrefix
+	) {
 		return countryPhoneDatum;
 	}
 
 	// if the mobile begin with is correct, pick as the correct answer
 	// match another \d for the unwanted trunk code prepended to the phone number
 	if (
-		countryPhoneDatum.mobile_begin_with.some((beginWith) => {
-			return phoneNumber.match(
-				new RegExp(`^${countryPhoneDatum.country_code}\\d?${beginWith}`),
-			);
-		})
+		countryPhoneDatum.mobile_begin_with.some(
+			(beginWith) => {
+				return phoneNumber.match(
+					new RegExp(
+						`^${countryPhoneDatum.country_code}\\d?${beginWith}`,
+					),
+				);
+			},
+		)
 	) {
 		return countryPhoneDatum;
 	}
@@ -144,25 +179,33 @@ export function findCountryPhoneDataByPhoneNumber(
 
 	for (const countryPhoneDatum of countryPhoneData) {
 		// if the country code is wrong, skip directly
-		if (!phoneNumber.match(new RegExp(`^${countryPhoneDatum.country_code}`))) {
+		if (
+			!phoneNumber.match(
+				new RegExp(
+					`^${countryPhoneDatum.country_code}`,
+				),
+			)
+		) {
 			continue;
 		}
 
 		// process only if exact match not found yet
 		if (!exactCountryPhoneData) {
-			exactCountryPhoneData = findExactCountryPhoneData(
-				phoneNumber,
-				validateMobilePrefix,
-				countryPhoneDatum,
-			);
+			exactCountryPhoneData =
+				findExactCountryPhoneData(
+					phoneNumber,
+					validateMobilePrefix,
+					countryPhoneDatum,
+				);
 		}
 
 		if (!possibleCountryPhoneData) {
-			possibleCountryPhoneData = findPossibleCountryPhoneData(
-				phoneNumber,
-				validateMobilePrefix,
-				countryPhoneDatum,
-			);
+			possibleCountryPhoneData =
+				findPossibleCountryPhoneData(
+					phoneNumber,
+					validateMobilePrefix,
+					countryPhoneDatum,
+				);
 		}
 	}
 
@@ -195,8 +238,10 @@ export function validatePhoneISO3166(
 
 	// remove country calling code from the phone number
 	const phoneWithoutCountry = phone.replace(
-		new RegExp(`^${countryPhoneDatum.country_code}`),
-		"",
+		new RegExp(
+			`^${countryPhoneDatum.country_code}`,
+		),
+		'',
 	);
 
 	// if the phone number have +, countryPhoneDatum detected,
@@ -210,18 +255,28 @@ export function validatePhoneISO3166(
 		return false;
 	}
 
-	const phone_number_lengths = countryPhoneDatum.phone_number_lengths;
+	const phone_number_lengths =
+		countryPhoneDatum.phone_number_lengths;
 	const mobile_begin_with = countryPhoneDatum.mobile_begin_with;
 
 	const isLengthValid = phone_number_lengths.some(
-		(length) => phoneWithoutCountry.length === length,
+		(length) =>
+			phoneWithoutCountry.length ===
+			length,
 	);
 	// some country doesn't have mobile_begin_with
 	const isBeginWithValid = mobile_begin_with.length
 		? mobile_begin_with.some((beginWith) =>
-				phoneWithoutCountry.match(new RegExp(`^${beginWith}`)),
-			)
+				phoneWithoutCountry.match(
+					new RegExp(
+						`^${beginWith}`,
+					),
+				),
+		  )
 		: true;
 
-	return isLengthValid && (!validateMobilePrefix || isBeginWithValid);
+	return (
+		isLengthValid &&
+		(!validateMobilePrefix || isBeginWithValid)
+	);
 }

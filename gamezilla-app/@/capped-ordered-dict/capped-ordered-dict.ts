@@ -1,4 +1,4 @@
-import { p } from "../core/parser";
+import {p} from '../core/parser';
 
 export type CappedOrderedDict<TKey extends string | number, TValue> = {
 	_valuesByKey: {
@@ -26,10 +26,15 @@ const add = <TKey extends string | number, TValue>(
 	item: TValue,
 ): CappedOrderedDict<TKey, TValue> => {
 	const orderNewestFirstNew = [key, ...model._orderNewestFirst];
-	const valuesByKeyNew = { ...model._valuesByKey, [key]: item };
+	const valuesByKeyNew = {
+		...model._valuesByKey,
+		[key]: item,
+	};
 
 	if (orderNewestFirstNew.length > model._maxSize) {
-		delete valuesByKeyNew[orderNewestFirstNew.pop()!];
+		delete valuesByKeyNew[
+			orderNewestFirstNew.pop()!
+		];
 	}
 
 	return {
@@ -46,14 +51,16 @@ const remove = <TKey extends string | number, TValue>(
 	if (!(key in model._valuesByKey)) {
 		return model;
 	}
-	const valuesByKeyNew = { ...model._valuesByKey };
+	const valuesByKeyNew = {...model._valuesByKey};
 	const orderIndex = model._orderNewestFirst.indexOf(key);
 	if (orderIndex === -1) {
 		return model;
 	}
 	const orderNewestFirstNew = [
 		...model._orderNewestFirst.slice(0, orderIndex),
-		...model._orderNewestFirst.slice(orderIndex + 1),
+		...model._orderNewestFirst.slice(
+			orderIndex + 1,
+		),
 	];
 	delete valuesByKeyNew[key];
 	return {
@@ -74,16 +81,20 @@ const mergeLeft = <TKey extends string | number, TValue>(
 	left: CappedOrderedDict<TKey, TValue>,
 	right: CappedOrderedDict<TKey, TValue>,
 ): CappedOrderedDict<TKey, TValue> => {
-	const valuesByKeyNew = { ...left._valuesByKey };
+	const valuesByKeyNew = {...left._valuesByKey};
 	const orderNewestFirstNew = [...left._orderNewestFirst];
 
 	for (let i = 0; i < right._orderNewestFirst.length; i++) {
 		const key = right._orderNewestFirst[i]!;
 		if (
 			!(key in valuesByKeyNew) &&
-			orderNewestFirstNew.length < left._maxSize
+			orderNewestFirstNew.length <
+				left._maxSize
 		) {
-			valuesByKeyNew[key] = right._valuesByKey[key];
+			valuesByKeyNew[key] =
+				right._valuesByKey[
+					key
+				];
 			orderNewestFirstNew.push(key);
 		}
 	}
@@ -99,7 +110,14 @@ const valuesNewestFirst = <TKey extends string | number, TValue>(
 ): TValue[] => {
 	const values: TValue[] = [];
 	for (let i = 0; i < model._orderNewestFirst.length; i++) {
-		values.push(model._valuesByKey[model._orderNewestFirst[i]!]!);
+		values.push(
+			model._valuesByKey[
+				model
+					._orderNewestFirst[
+					i
+				]!
+			]!,
+		);
 	}
 	return values;
 };

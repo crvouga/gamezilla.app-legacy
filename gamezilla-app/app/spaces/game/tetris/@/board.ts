@@ -1,5 +1,5 @@
-import type * as Piece from "./piece";
-import type * as Position from "./position";
+import type * as Piece from './piece';
+import type * as Position from './position';
 
 //
 //
@@ -15,7 +15,7 @@ export type Board = {
 	matrix: Cell[][];
 };
 
-export type Cell = "Empty" | Piece.Name;
+export type Cell = 'Empty' | Piece.Name;
 
 export const init = ({
 	columnCount,
@@ -24,7 +24,10 @@ export const init = ({
 	columnCount: number;
 	rowCount: number;
 }): Board => {
-	const emptyMatrix: Cell[][] = repeat(columnCount, repeat(rowCount, "Empty"));
+	const emptyMatrix: Cell[][] = repeat(
+		columnCount,
+		repeat(rowCount, 'Empty'),
+	);
 	return {
 		rowCount,
 		columnCount,
@@ -34,15 +37,21 @@ export const init = ({
 
 export const flatMap = <T>(
 	board: Board,
-	f: (item: { cell: Cell; x: number; y: number }) => T,
+	f: (item: {cell: Cell; x: number; y: number}) => T,
 ): T[] => {
 	return board.matrix.flatMap((column, x) =>
-		column.map((cell, y) => f({ cell, x, y })),
+		column.map((cell, y) =>
+			f({
+				cell,
+				x,
+				y,
+			}),
+		),
 	);
 };
 
 export const toCell = (position: Position.Position, board: Board): Cell => {
-	return board.matrix?.[position.x]?.[position.y] ?? "Empty";
+	return board.matrix?.[position.x]?.[position.y] ?? 'Empty';
 };
 
 export const setCell = (
@@ -52,7 +61,10 @@ export const setCell = (
 ): Board => {
 	const matrixNew = board.matrix.map((column, x) =>
 		column.map((cell, y) =>
-			position.x === x && position.y === y ? cellNext : cell,
+			position.x === x &&
+			position.y === y
+				? cellNext
+				: cell,
 		),
 	);
 
@@ -71,11 +83,23 @@ export const toColumnCount = (board: Board) => {
 };
 
 export const transpose = (board: Board): Board => {
-	const { columnCount, rowCount, matrix } = board;
+	const {columnCount, rowCount, matrix} = board;
 
 	const matrixNew = matrix.reduce<Cell[][]>(
 		(prev, next) =>
-			next.map((_item, i) => (prev[i] || []).concat(next[i] ?? [])),
+			next.map((_item, i) =>
+				(
+					prev[
+						i
+					] ||
+					[]
+				).concat(
+					next[
+						i
+					] ??
+						[],
+				),
+			),
 		[],
 	);
 

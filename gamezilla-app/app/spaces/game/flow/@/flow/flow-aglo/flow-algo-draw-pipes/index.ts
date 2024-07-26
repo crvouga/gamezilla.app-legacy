@@ -1,1 +1,1 @@
-export * as FlowAlgoDrawPipes from "./flow-algo-draw-pipes";
+export * as FlowAlgoDrawPipes from './flow-algo-draw-pipes';

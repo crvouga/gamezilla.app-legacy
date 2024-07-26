@@ -1,12 +1,12 @@
-import { or } from "../parser/parser/parser-or";
-import { Parser } from "../parser/parser/parser-types";
-import { l, obj } from "../parser/parser/parsers";
+import {or} from '../parser/parser/parser-or';
+import {Parser} from '../parser/parser/parser-types';
+import {l, obj} from '../parser/parser/parsers';
 import type {
 	Loading,
 	NotAsked,
 	RemoteResultPrivate,
 	ResultPrivate,
-} from "./result";
+} from './result';
 
 export const parser = <TError, TValue>(
 	errParser: Parser<TError>,
@@ -14,11 +14,11 @@ export const parser = <TError, TValue>(
 ): Parser<ResultPrivate<TError, TValue>> => {
 	return or(
 		obj({
-			t: l("err"),
+			t: l('err'),
 			error: errParser,
 		}),
 		obj({
-			t: l("ok"),
+			t: l('ok'),
 			value: okParser,
 		}),
 	);
@@ -29,8 +29,10 @@ export const remoteResultParser = <E, A>(
 	value: Parser<A>,
 ): Parser<RemoteResultPrivate<E, A>> => {
 	return or(
-		obj<NotAsked>({ t: l("not-asked") }),
-		obj<Loading>({ t: l("loading") }),
+		obj<NotAsked>({
+			t: l('not-asked'),
+		}),
+		obj<Loading>({t: l('loading')}),
 		parser(error, value),
 	);
 };

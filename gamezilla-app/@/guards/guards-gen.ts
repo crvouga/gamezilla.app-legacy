@@ -1,6 +1,6 @@
-import { exec } from "node:child_process";
-import fs from "node:fs/promises";
-import path from "node:path";
+import {exec} from 'node:child_process';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 //
 //
@@ -10,8 +10,8 @@ import path from "node:path";
 //
 //
 
-const DIR_PATH = path.join(__dirname, "..", "..");
-const TARGET_FILE_SUFFIX = ".type.ts";
+const DIR_PATH = path.join(__dirname, '..', '..');
+const TARGET_FILE_SUFFIX = '.type.ts';
 
 //
 //
@@ -27,10 +27,15 @@ async function generateGuardFiles(files: string[]) {
 		exec(COMMAND, (error, stdout, stderr) => {
 			console.log(stdout);
 			if (error) {
-				console.error("Error running ts-auto-guard:", stderr);
+				console.error(
+					'Error running ts-auto-guard:',
+					stderr,
+				);
 				return;
 			}
-			console.log(`Generated type guards for ${file}`);
+			console.log(
+				`Generated type guards for ${file}`,
+			);
 		});
 	}
 }
@@ -70,15 +75,22 @@ async function scanFiles(input: {
 		const res = path.resolve(input.dir, file.name);
 
 		if (file.isDirectory()) {
-			const children = await scanFiles({
-				dir: res,
-				targetFileSuffix: input.targetFileSuffix,
-			});
+			const children =
+				await scanFiles(
+					{
+						dir: res,
+						targetFileSuffix: input.targetFileSuffix,
+					},
+				);
 			files.push(...children);
 			continue;
 		}
 
-		if (file.name.endsWith(input.targetFileSuffix)) {
+		if (
+			file.name.endsWith(
+				input.targetFileSuffix,
+			)
+		) {
 			files.push(res);
 		}
 	}

@@ -15,19 +15,28 @@ export function editDistance(s1: string, s2: string): number {
 
 	for (let i = 1; i <= m; i++) {
 		for (let j = 1; j <= n; j++) {
-			const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+			const cost =
+				s1[i - 1] ===
+				s2[j - 1]
+					? 0
+					: 1;
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			dp[i][j] = Math.min(
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				dp[i - 1][j] + 1,
+				dp[i - 1][j] +
+					1,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				dp[i][j - 1] + 1,
+				dp[i][j - 1] +
+					1,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				dp[i - 1][j - 1] + cost,
+				dp[i - 1][
+					j -
+						1
+				] + cost,
 			);
 		}
 	}

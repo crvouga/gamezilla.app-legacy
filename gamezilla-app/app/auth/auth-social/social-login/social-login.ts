@@ -1,6 +1,6 @@
-import type { EmailAddress, RemoteResult, Result } from "gamezilla-app/@/core";
+import type {EmailAddress, RemoteResult, Result} from 'gamezilla-app/@/core';
 
-type SocialLoginProvider = "google";
+type SocialLoginProvider = 'google';
 
 export type SocialLogin = {
 	/**
@@ -12,5 +12,7 @@ export type SocialLogin = {
 	/**
 	 * Returns the result of the social login redirect.
 	 */
-	getSocialLoginResult: () => Promise<RemoteResult<string, EmailAddress>>;
+	getSocialLoginResult: () => Promise<
+		RemoteResult<string, EmailAddress>
+	>;
 };

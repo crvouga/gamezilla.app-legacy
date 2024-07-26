@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 //@ts-ignore
-import type { RtpCodecCapability } from "mediasoup/node/lib/RtpParameters";
+import type {RtpCodecCapability} from 'mediasoup/node/lib/RtpParameters';
 //@ts-ignore
-import type { TransportListenIp } from "mediasoup/node/lib/Transport";
+import type {TransportListenIp} from 'mediasoup/node/lib/Transport';
 //@ts-ignore
-import type { WorkerLogTag } from "mediasoup/node/lib/Worker";
+import type {WorkerLogTag} from 'mediasoup/node/lib/Worker';
 
 // source: https://github.com/benawad/dogehouse/blob/staging/shawarma/src/config.ts#L2
 
 export const Config = {
 	// http server ip, port, and peer timeout constant
 	//
-	httpIp: "0.0.0.0",
+	httpIp: '0.0.0.0',
 	httpPort: 3000,
 	httpPeerStale: 360000,
 
@@ -19,14 +19,14 @@ export const Config = {
 		worker: {
 			rtcMinPort: 40000,
 			rtcMaxPort: 49999,
-			logLevel: "debug",
+			logLevel: 'debug',
 			logTags: [
-				"info",
-				"ice",
-				"dtls",
-				"rtp",
-				"srtp",
-				"rtcp",
+				'info',
+				'ice',
+				'dtls',
+				'rtp',
+				'srtp',
+				'rtcp',
 				// 'rtx',
 				// 'bwe',
 				// 'score',
@@ -37,8 +37,8 @@ export const Config = {
 		router: {
 			mediaCodecs: [
 				{
-					kind: "audio",
-					mimeType: "audio/opus",
+					kind: 'audio',
+					mimeType: 'audio/opus',
 					clockRate: 48000,
 					channels: 2,
 				},
@@ -54,7 +54,10 @@ export const Config = {
 				//     ip: process.env.WEBRTC_LISTEN_IP || "192.168.1.165",
 				//     announcedIp: process.env.A_IP || undefined,
 				// },
-				{ ip: "127.0.0.1", announcedIp: undefined },
+				{
+					ip: '127.0.0.1',
+					announcedIp: undefined,
+				},
 				// { ip: "192.168.42.68", announcedIp: undefined },
 				// { ip: '10.10.23.101', announcedIp: null },
 			] as TransportListenIp[],

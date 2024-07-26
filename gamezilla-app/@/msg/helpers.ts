@@ -12,9 +12,7 @@ export function safeAssign<T extends object>(
  * @internal
  */
 export type IsAny<T, True, False = never> = true | false extends ( // test if we are going the left AND right path in the condition
-	T extends never
-		? true
-		: false
+	T extends never ? true : false
 )
 	? True
 	: False;
@@ -50,7 +48,19 @@ export type IfVoid<P, True, False> = [void] extends [P] ? True : False;
  */
 export type IsEmptyObj<T, True, False = never> = T extends any
 	? keyof T extends never
-		? IsUnknown<T, False, IfMaybeUndefined<T, False, IfVoid<T, False, True>>>
+		? IsUnknown<
+				T,
+				False,
+				IfMaybeUndefined<
+					T,
+					False,
+					IfVoid<
+						T,
+						False,
+						True
+					>
+				>
+		  >
 		: False
 	: never;
 
@@ -80,9 +90,7 @@ export type IsUnknownOrNonInferrable<T, True, False> = AtLeastTS35<
  * Convert a Union type `(A|B)` to an intersection type `(A&B)`
  */
 export type UnionToIntersection<U> = (
-	U extends any
-		? (k: U) => void
-		: never
+	U extends any ? (k: U) => void : never
 ) extends (k: infer I) => void
 	? I
 	: never;
@@ -92,7 +100,20 @@ export type ExcludeFromTuple<T, E, Acc extends unknown[] = []> = T extends [
 	infer Head,
 	...infer Tail,
 ]
-	? ExcludeFromTuple<Tail, E, [...Acc, ...([Head] extends [E] ? [] : [Head])]>
+	? ExcludeFromTuple<
+			Tail,
+			E,
+			[
+				...Acc,
+				...([
+					Head,
+				] extends [E]
+					? []
+					: [
+							Head,
+					  ]),
+			]
+	  >
 	: Acc;
 
 /**
@@ -125,7 +146,11 @@ export interface HasMatchFunction<T> {
 export const hasMatchFunction = <T>(
 	v: Matcher<T>,
 ): v is HasMatchFunction<T> => {
-	return v && typeof (v as HasMatchFunction<T>).match === "function";
+	return (
+		v &&
+		typeof (v as HasMatchFunction<T>).match ===
+			'function'
+	);
 };
 
 /** @public */
@@ -138,7 +163,7 @@ export type ActionFromMatcher<M extends Matcher<any>> = M extends Matcher<
 	? T
 	: never;
 
-export type Id<T> = { [K in keyof T]: T[K] } & {};
+export type Id<T> = {[K in keyof T]: T[K]} & {};
 
 export type Tail<T extends any[]> = T extends [any, ...infer Tail]
 	? Tail
@@ -151,5 +176,5 @@ export type UnknownIfNonSpecific<T> = {} extends T ? unknown : T;
  * @see https://github.com/reduxjs/redux-toolkit/issues/4101
  */
 export type SafePromise<T> = Promise<T> & {
-	__linterBrands: "SafePromise";
+	__linterBrands: 'SafePromise';
 };

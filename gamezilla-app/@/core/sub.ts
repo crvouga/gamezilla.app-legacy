@@ -23,7 +23,9 @@ const create = <Msg>(): PubSub<Msg> => {
 			const id = runningId;
 			subscribers.set(id, subscriber);
 			return () => {
-				subscribers.delete(id);
+				subscribers.delete(
+					id,
+				);
 			};
 		},
 		pub(msg: Msg) {
@@ -34,20 +36,33 @@ const create = <Msg>(): PubSub<Msg> => {
 			queue.push(msg);
 			for (const subscriber of subscribers.values()) {
 				for (const msg of queue) {
-					subscriber(msg);
+					subscriber(
+						msg,
+					);
 				}
 			}
 			queue.length = 0;
 		},
 		once(subscriber) {
-			return new Promise<Msg>((resolve) => {
-				const unsubscribe = this.sub((a) => {
-					// NOTE: order matters here
-					subscriber?.(a);
-					resolve(a);
-					unsubscribe();
-				});
-			});
+			return new Promise<Msg>(
+				(resolve) => {
+					const unsubscribe =
+						this.sub(
+							(
+								a,
+							) => {
+								// NOTE: order matters here
+								subscriber?.(
+									a,
+								);
+								resolve(
+									a,
+								);
+								unsubscribe();
+							},
+						);
+				},
+			);
 		},
 	};
 };
@@ -65,7 +80,11 @@ const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
 	return {
 		sub: (subscriber) => {
 			return sub.sub((a) => {
-				subscriber(f(a));
+				subscriber(
+					f(
+						a,
+					),
+				);
 			});
 		},
 	};
@@ -74,18 +93,37 @@ const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
 function flatMap<A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> {
 	return {
 		sub: (subscriber: (msg: B) => void) => {
-			const unsubscribeFunctions: Array<() => void> = [];
+			const unsubscribeFunctions: Array<
+				() => void
+			> = [];
 
-			const unsubscribeA = sub.sub((msgA) => {
-				const subB = fn(msgA);
-				const unsubscribeB = subB.sub(subscriber);
-				unsubscribeFunctions.push(unsubscribeB);
-			});
+			const unsubscribeA = sub.sub(
+				(msgA) => {
+					const subB =
+						fn(
+							msgA,
+						);
+					const unsubscribeB =
+						subB.sub(
+							subscriber,
+						);
+					unsubscribeFunctions.push(
+						unsubscribeB,
+					);
+				},
+			);
 
-			unsubscribeFunctions.push(unsubscribeA);
+			unsubscribeFunctions.push(
+				unsubscribeA,
+			);
 
 			return () => {
-				unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
+				unsubscribeFunctions.forEach(
+					(
+						unsubscribe,
+					) =>
+						unsubscribe(),
+				);
 			};
 		},
 	};
@@ -94,10 +132,15 @@ function flatMap<A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> {
 const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
 	return {
 		sub: (subscriber) => {
-			const unsubscribeList: (() => void)[] = [];
+			const unsubscribeList: (() => void)[] =
+				[];
 
 			for (const sub of arr) {
-				unsubscribeList.push(sub.sub(subscriber));
+				unsubscribeList.push(
+					sub.sub(
+						subscriber,
+					),
+				);
 			}
 
 			return () => {
@@ -118,7 +161,9 @@ const flat = <A>(sub: Sub<Iterable<A>>): Sub<A> => {
 		sub: (subscriber) => {
 			return sub.sub((a) => {
 				for (const b of a) {
-					subscriber(b);
+					subscriber(
+						b,
+					);
 				}
 			});
 		},
@@ -128,8 +173,8 @@ const flat = <A>(sub: Sub<Iterable<A>>): Sub<A> => {
 const tag = <Tag extends string, Msg>(
 	t: Tag,
 	sub: Sub<Msg>,
-): Sub<{ t: Tag; c: Msg }> => {
-	return Sub.map(sub, (c) => ({ t, c }));
+): Sub<{t: Tag; c: Msg}> => {
+	return Sub.map(sub, (c) => ({t, c}));
 };
 
 const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {

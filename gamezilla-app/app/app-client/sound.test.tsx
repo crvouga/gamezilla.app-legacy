@@ -1,13 +1,13 @@
-import { describe, expect, test } from "bun:test";
+import {describe, expect, test} from 'bun:test';
 import {
 	APP_SOUND,
 	ClientCtx,
 	ClientEvent,
 	SoundCmd,
 	playSound,
-} from "../@/client";
-import { FixtureAppClient } from "../@/client/client-test-env";
-import * as Sound from "./sound";
+} from '../@/client';
+import {FixtureAppClient} from '../@/client/client-test-env';
+import * as Sound from './sound';
 
 type Input =
 	| {
@@ -31,10 +31,14 @@ const Fixture = async () => {
 	}).model;
 
 	const update = (init: Sound.Model, inputs: Input[]) => {
-		let output: ReturnType<typeof Sound.update> = { model: init };
+		let output: ReturnType<typeof Sound.update> = {
+			model: init,
+		};
 		for (const input of inputs) {
 			output = Sound.update({
-				ctx: input.ctx ?? f.ctx,
+				ctx:
+					input.ctx ??
+					f.ctx,
 				model: output.model,
 				...input,
 			});
@@ -53,11 +57,13 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
 	//
 
-	test("make sound", async () => {
+	test('make sound', async () => {
 		const f = await Fixture();
 		const after = f.update(f.init, [
 			{
-				msgCmd: playSound(APP_SOUND.tap),
+				msgCmd: playSound(
+					APP_SOUND.tap,
+				),
 			},
 		]);
 		expect(after.eff).toBeTruthy();

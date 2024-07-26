@@ -1,15 +1,15 @@
-import { Eff, Sub, andThen, pipe } from "gamezilla-app/@/core";
+import {Eff, Sub, andThen, pipe} from 'gamezilla-app/@/core';
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@/space";
+} from 'gamezilla-app/app/spaces/@/space';
 import {
 	handleBotMove,
 	initShared,
 	type ModelServer,
 	type MsgServer,
 	type MsgToServer,
-} from "./vs-bot.types";
+} from './vs-bot.types';
 
 //
 //
@@ -44,8 +44,10 @@ export const update = ({
 	eff?: Eff<Msg>;
 } => {
 	switch (msg.t) {
-		case "none": {
-			return { model };
+		case 'none': {
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -63,15 +65,25 @@ type updateFromClient = (input: {
 export const updateFromClient: updateFromClient = (input) => {
 	return pipe(
 		input,
-		andThen((model) => updateFromClient_({ ...input, model })),
-		andThen((model) => updateBotMove({ ...input, model })),
+		andThen((model) =>
+			updateFromClient_({
+				...input,
+				model,
+			}),
+		),
+		andThen((model) =>
+			updateBotMove({
+				...input,
+				model,
+			}),
+		),
 	);
 };
 
-const updateBotMove: updateFromClient = ({ model }) => {
+const updateBotMove: updateFromClient = ({model}) => {
 	const handled = handleBotMove(model);
 
-	if (handled.t === "err") {
+	if (handled.t === 'err') {
 		return {
 			model,
 			eff: Eff.None,
@@ -85,10 +97,12 @@ const updateBotMove: updateFromClient = ({ model }) => {
 	};
 };
 
-const updateFromClient_: updateFromClient = ({ msg, model }) => {
+const updateFromClient_: updateFromClient = ({msg, model}) => {
 	switch (msg.t) {
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -103,13 +117,15 @@ export const updateFromEvent = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "space/user-joined-space") {
+	if (msg.t === 'space/user-joined-space') {
 		return {
-			model: init({ userId: model.userId }),
+			model: init({
+				userId: model.userId,
+			}),
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
 //

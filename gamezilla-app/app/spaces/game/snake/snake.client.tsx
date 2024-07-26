@@ -6,10 +6,10 @@ import {
 	type Sub,
 	exhaustive,
 	isErr,
-} from "gamezilla-app/@/core";
-import type { ClientCtx } from "gamezilla-app/app/@/client";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import { Direction } from "./@/direction";
+} from 'gamezilla-app/@/core';
+import type {ClientCtx} from 'gamezilla-app/app/@/client';
+import type {SpaceClientCtx} from 'gamezilla-app/app/spaces/@/space';
+import {Direction} from './@/direction';
 import {
 	type CoreModel,
 	type ModelClient,
@@ -17,7 +17,7 @@ import {
 	type MsgClient,
 	type MsgToClient,
 	initCoreModel,
-} from "./snake.types";
+} from './snake.types';
 
 //
 //
@@ -53,50 +53,97 @@ export const update = (
 	msg: Msg,
 	_model: Model,
 ): [Model, Eff<Msg>] => {
-	const model: Model = { ..._model, openedMenuId: Option.None };
+	const model: Model = {
+		..._model,
+		openedMenuId: Option.None,
+	};
 
 	switch (msg[0]) {
-		case "PressedKeyDown": {
-			if (model.gameStatus.type !== "GameStarted") {
-				return [model, Eff.None];
+		case 'PressedKeyDown': {
+			if (
+				model.gameStatus
+					.type !==
+				'GameStarted'
+			) {
+				return [
+					model,
+					Eff.None,
+				];
 			}
 
-			if (model.gameStatus.player[1] !== ctx.currentUserId) {
-				return [model, Eff.None];
+			if (
+				model.gameStatus
+					.player[1] !==
+				ctx.currentUserId
+			) {
+				return [
+					model,
+					Eff.None,
+				];
 			}
 
-			const direction = Direction.fromKey(msg[1]);
+			const direction =
+				Direction.fromKey(
+					msg[1],
+				);
 
 			const changeDirectionEff =
-				direction.type === "Some" ? Eff.None : Eff.None;
+				direction.type ===
+				'Some'
+					? Eff.None
+					: Eff.None;
 
-			const toggleStatusEff = msg[1] === "Space" ? Eff.None : Eff.None;
+			const toggleStatusEff =
+				msg[1] ===
+				'Space'
+					? Eff.None
+					: Eff.None;
 
-			return [model, Eff.batch([changeDirectionEff, toggleStatusEff])];
+			return [
+				model,
+				Eff.batch([
+					changeDirectionEff,
+					toggleStatusEff,
+				]),
+			];
 		}
 
-		case "ToggleStatus": {
+		case 'ToggleStatus': {
 			return [model, Eff.None];
 		}
 
-		case "InputPlayer": {
+		case 'InputPlayer': {
 			return [model, Eff.None];
 		}
 
-		case "input-direction": {
+		case 'input-direction': {
 			return [model, Eff.None];
 		}
 
-		case "start-game": {
+		case 'start-game': {
 			return [model, Eff.None];
 		}
 
-		case "OpenedMenu": {
-			return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Eff.None];
+		case 'OpenedMenu': {
+			return [
+				{
+					...model,
+					openedMenuId: Option.Some(
+						msg[1],
+					),
+				},
+				Eff.None,
+			];
 		}
 
-		case "ClosedMenu": {
-			return [{ ...model, openedMenuId: Option.None }, Eff.None];
+		case 'ClosedMenu': {
+			return [
+				{
+					...model,
+					openedMenuId: Option.None,
+				},
+				Eff.None,
+			];
 		}
 
 		default: {
@@ -110,7 +157,7 @@ export const updateFromServer = (
 	model: Model,
 ): [Model, Eff<Msg>] => {
 	switch (msg[0]) {
-		case "tick": {
+		case 'tick': {
 			const coreModel = msg[1];
 			return [
 				{
@@ -121,20 +168,32 @@ export const updateFromServer = (
 			];
 		}
 
-		case "InputDirection_Done": {
-			return updateResponse(msg[1], model);
+		case 'InputDirection_Done': {
+			return updateResponse(
+				msg[1],
+				model,
+			);
 		}
 
-		case "ToggleStatus_Done": {
-			return updateResponse(msg[1], model);
+		case 'ToggleStatus_Done': {
+			return updateResponse(
+				msg[1],
+				model,
+			);
 		}
 
-		case "InputPlayer_Done": {
-			return updateResponse(msg[1], model);
+		case 'InputPlayer_Done': {
+			return updateResponse(
+				msg[1],
+				model,
+			);
 		}
 
-		case "StartGame_Done": {
-			return updateResponse(msg[1], model);
+		case 'StartGame_Done': {
+			return updateResponse(
+				msg[1],
+				model,
+			);
 		}
 
 		default: {
@@ -154,7 +213,7 @@ const updateResponse = <
 		return [model, Eff.None];
 	}
 	const coreModel = result.value;
-	return [{ ...model, ...coreModel }, Eff.None];
+	return [{...model, ...coreModel}, Eff.None];
 };
 
 //
@@ -166,7 +225,7 @@ const updateResponse = <
 //
 
 export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
-	return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key]);
+	return Keyboard.keyDowns<Msg>((key) => ['PressedKeyDown', key]);
 };
 
 //
@@ -185,13 +244,18 @@ export const View = ({
 	model: Model;
 	dispatch: (msg: Msg) => void;
 }) => {
-	if (model.gameStatus.type === "GameSetup") {
+	if (model.gameStatus.type === 'GameSetup') {
 		return <div />;
 	}
 
 	return (
 		<div>
-			<ViewBoard model={model} dispatch={dispatch} />
+			<ViewBoard
+				model={model}
+				dispatch={
+					dispatch
+				}
+			/>
 		</div>
 	);
 };

@@ -2,19 +2,19 @@
 import {
 	Route as Route0,
 	toRoute as toRoute0,
-} from "../../../app/auth/auth.$routes";
+} from '../../../app/auth/auth.$routes';
 import {
 	Route as Route1,
 	toRoute as toRoute1,
-} from "../../../app/spaces/@/space.$routes";
+} from '../../../app/spaces/@/space.$routes';
 import {
 	Route as Route2,
 	toRoute as toRoute2,
-} from "../../../app/lang/lang.$routes";
+} from '../../../app/lang/lang.$routes';
 import {
 	Route as Route3,
 	toRoute as toRoute3,
-} from "../../../app/profile/profile.$routes";
+} from '../../../app/profile/profile.$routes';
 
 export type Route = Route0 | Route1 | Route2 | Route3;
 

@@ -10,12 +10,19 @@ const add = (a: Position, b: Position): Position => {
 	};
 };
 
-const range = (exclusiveUpperBounds: { x: number; y: number }): Position[] => {
+const range = (exclusiveUpperBounds: {x: number; y: number}): Position[] => {
 	const positions: Position[] = [];
 
 	for (let x = 0; x < exclusiveUpperBounds.x; x++) {
-		for (let y = 0; y < exclusiveUpperBounds.y; y++) {
-			positions.push({ x, y });
+		for (
+			let y = 0;
+			y < exclusiveUpperBounds.y;
+			y++
+		) {
+			positions.push({
+				x,
+				y,
+			});
 		}
 	}
 
@@ -23,7 +30,7 @@ const range = (exclusiveUpperBounds: { x: number; y: number }): Position[] => {
 };
 
 const toKey = (position: Position): string => {
-	return [position.x, position.y].join("-");
+	return [position.x, position.y].join('-');
 };
 
 export type Bounds = {
@@ -32,7 +39,7 @@ export type Bounds = {
 };
 
 const inclusiveContains = (
-	{ lower, upper }: Bounds,
+	{lower, upper}: Bounds,
 	position: Position,
 ): boolean => {
 	return (
@@ -60,24 +67,24 @@ const toDirection = ({
 	const diff = sub(to, from);
 
 	if (diff.x > 0) {
-		return "East";
+		return 'East';
 	}
 
 	if (diff.x < 0) {
-		return "West";
+		return 'West';
 	}
 
 	if (diff.y > 0) {
-		return "South";
+		return 'South';
 	}
 
 	if (diff.y < 0) {
-		return "North";
+		return 'North';
 	}
 
 	return null;
 };
-export const random = (gen: () => number, { lower, upper }: Bounds) => {
+export const random = (gen: () => number, {lower, upper}: Bounds) => {
 	const x = Math.floor(gen() * (upper.x - lower.x)) + lower.x;
 	const y = Math.floor(gen() * (upper.y - lower.y)) + lower.y;
 	return {
@@ -101,23 +108,35 @@ export const Position = {
 	inclusiveContains,
 };
 
-export type Direction = "North" | "South" | "East" | "West";
+export type Direction = 'North' | 'South' | 'East' | 'West';
 
-const all: Direction[] = ["East", "North", "South", "West"];
+const all: Direction[] = ['East', 'North', 'South', 'West'];
 
 const toVector = (direction: Direction): Position => {
 	switch (direction) {
-		case "East": {
-			return { x: 1, y: 0 };
+		case 'East': {
+			return {
+				x: 1,
+				y: 0,
+			};
 		}
-		case "West": {
-			return { x: -1, y: 0 };
+		case 'West': {
+			return {
+				x: -1,
+				y: 0,
+			};
 		}
-		case "North": {
-			return { x: 0, y: -1 };
+		case 'North': {
+			return {
+				x: 0,
+				y: -1,
+			};
 		}
-		case "South": {
-			return { x: 0, y: 1 };
+		case 'South': {
+			return {
+				x: 0,
+				y: 1,
+			};
 		}
 	}
 };

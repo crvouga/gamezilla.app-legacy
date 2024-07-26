@@ -1,16 +1,16 @@
-import { waitForElementById } from "gamezilla-app/@/core/dom";
-import type { VDomChildren } from "gamezilla-app/@/vdom";
-import { register } from "swiper/element/bundle";
+import {waitForElementById} from 'gamezilla-app/@/core/dom';
+import type {VDomChildren} from 'gamezilla-app/@/vdom';
+import {register} from 'swiper/element/bundle';
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
 	register();
 }
 
 declare global {
 	namespace JSX {
 		interface IntrinsicElements {
-			"swiper-container": any;
-			"swiper-slide": any;
+			'swiper-container': any;
+			'swiper-slide': any;
 		}
 	}
 }
@@ -33,32 +33,53 @@ const onContainer = async (input: {
 	mountedElementIds.add(input.id);
 
 	// @ts-expect-error
-	let previousActiveIndex = swiperElement.swiper?.activeIndex ?? 0;
+	let previousActiveIndex =
+		swiperElement.swiper?.activeIndex ?? 0;
 	const onSlideChangeEventHandler = (event: Event) => {
 		// @ts-expect-error
 		const swiper = event?.detail?.[0];
 		const activeIndex = swiper?.activeIndex ?? 0;
 		if (activeIndex !== previousActiveIndex) {
-			input.onSlideIndexChanged(activeIndex);
-			previousActiveIndex = activeIndex;
+			input.onSlideIndexChanged(
+				activeIndex,
+			);
+			previousActiveIndex =
+				activeIndex;
 		}
 	};
 
 	swiperElement.addEventListener(
-		"swiperslidechange",
+		'swiperslidechange',
 		onSlideChangeEventHandler,
 	);
 
 	const observer = new MutationObserver((mutations) => {
 		for (let i = 0; i < mutations.length; i++) {
 			const mutation = mutations[i]!;
-			for (let j = 0; j < mutation.removedNodes.length; j++) {
-				const node = mutation.removedNodes[j]!;
-				if (node.contains(swiperElement)) {
-					mountedElementIds.delete(input.id);
+			for (
+				let j = 0;
+				j <
+				mutation
+					.removedNodes
+					.length;
+				j++
+			) {
+				const node =
+					mutation
+						.removedNodes[
+						j
+					]!;
+				if (
+					node.contains(
+						swiperElement,
+					)
+				) {
+					mountedElementIds.delete(
+						input.id,
+					);
 					observer.disconnect();
 					swiperElement.removeEventListener(
-						"swiperslidechange",
+						'swiperslidechange',
 						onSlideChangeEventHandler,
 					);
 					swiperElement.remove();
@@ -66,7 +87,10 @@ const onContainer = async (input: {
 			}
 		}
 	});
-	observer.observe(document.body, { childList: true, subtree: true });
+	observer.observe(document.body, {
+		childList: true,
+		subtree: true,
+	});
 };
 
 const Container = (input: {
@@ -92,9 +116,11 @@ const Container = (input: {
 	);
 };
 
-const Slide = (input: { children?: VDomChildren; className?: string }) => {
+const Slide = (input: {children?: VDomChildren; className?: string}) => {
 	return (
-		<swiper-slide className={input.className}>{input.children}</swiper-slide>
+		<swiper-slide className={input.className}>
+			{input.children}
+		</swiper-slide>
 	);
 };
 

@@ -1,11 +1,8 @@
-import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
-import { FlowPack } from "../../../@/flow-pack";
-import { FlowPuzzle } from "../../../@/flow-puzzle";
-import {
-	FixtureFlowPlayClient,
-	type FixtureUpdateInput,
-} from "../../@/fixture";
-import { FlowPlay } from "../../../@/flow/flow-play";
+import {withEventMeta} from 'gamezilla-app/app/spaces/@/event';
+import {FlowPack} from '../../../@/flow-pack';
+import {FlowPuzzle} from '../../../@/flow-puzzle';
+import {FixtureFlowPlayClient, type FixtureUpdateInput} from '../../@/fixture';
+import {FlowPlay} from '../../../@/flow/flow-play';
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
 	FlowPlay.toSolutionMsgs({
@@ -13,7 +10,7 @@ const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
 	}).map(
 		(c): FixtureUpdateInput => ({
 			msgCore: withEventMeta({
-				t: "flow-variant-play",
+				t: 'flow-variant-play',
 				c,
 			}),
 		}),
@@ -25,7 +22,11 @@ export const FixtureScreenPlayPuzzleClient = async () => {
 	const nextPuzzle = await FlowPuzzle.random();
 	const prevPuzzle = await FlowPuzzle.random();
 	const pack = await FlowPack.random({
-		puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
+		puzzleIds: [
+			prevPuzzle.id,
+			puzzle.id,
+			nextPuzzle.id,
+		],
 	});
 	const puzzleIndex = 1;
 	const prevPuzzleIndex = 0;
@@ -46,13 +47,13 @@ export const FixtureScreenPlayPuzzleClient = async () => {
 	const initial = f.update(f.initial, [
 		{
 			msg: {
-				t: "user-clicked-open-pack-list-item",
+				t: 'user-clicked-open-pack-list-item',
 				pack,
 			},
 		},
 		{
 			msg: {
-				t: "user-clicked-open-puzzle-grid-item",
+				t: 'user-clicked-open-puzzle-grid-item',
 				flowPuzzle: puzzle,
 				puzzleIndex,
 			},
@@ -68,7 +69,7 @@ export const FixtureScreenPlayPuzzleClient = async () => {
 	const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
 		{
 			msgCore: withEventMeta({
-				t: "user-clicked-next-puzzle",
+				t: 'user-clicked-next-puzzle',
 				nextPuzzleIndex: lastPuzzleIndex,
 				nextPuzzle: lastPuzzle,
 			}),

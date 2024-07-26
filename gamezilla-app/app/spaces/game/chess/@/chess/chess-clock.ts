@@ -1,5 +1,5 @@
-import type { Brand } from "gamezilla-app/@/core/brand";
-import type * as Board from "./chess-core";
+import type {Brand} from 'gamezilla-app/@/core/brand';
+import type * as Board from './chess-core';
 
 export type Clock = {
 	preset: Preset;
@@ -8,7 +8,7 @@ export type Clock = {
 	};
 };
 
-export type Seconds = Brand<number, "Seconds">;
+export type Seconds = Brand<number, 'Seconds'>;
 
 export const tick = ({
 	turn,
@@ -17,21 +17,25 @@ export const tick = ({
 	turn: Board.Color;
 	clock: Clock;
 }):
-	| { type: "TimeIsUp"; clock: Clock; timeIsUp: Board.Color }
-	| { type: "Ticked"; clock: Clock } => {
+	| {
+			type: 'TimeIsUp';
+			clock: Clock;
+			timeIsUp: Board.Color;
+	  }
+	| {type: 'Ticked'; clock: Clock} => {
 	if (clock.times.w === 0) {
 		return {
-			type: "TimeIsUp",
+			type: 'TimeIsUp',
 			clock,
-			timeIsUp: "w",
+			timeIsUp: 'w',
 		};
 	}
 
 	if (clock.times.b === 0) {
 		return {
-			type: "TimeIsUp",
+			type: 'TimeIsUp',
 			clock,
-			timeIsUp: "b",
+			timeIsUp: 'b',
 		};
 	}
 
@@ -39,20 +43,24 @@ export const tick = ({
 		preset: clock.preset,
 		times: {
 			...clock.times,
-			[turn]: toSeconds(clock.times[turn] - 1),
+			[turn]: toSeconds(
+				clock.times[
+					turn
+				] - 1,
+			),
 		},
 	};
 
 	if (clockNew.times[turn] === 0) {
 		return {
-			type: "TimeIsUp",
+			type: 'TimeIsUp',
 			clock: clockNew,
 			timeIsUp: turn,
 		};
 	}
 
 	return {
-		type: "Ticked",
+		type: 'Ticked',
 		clock: clockNew,
 	};
 };
@@ -65,15 +73,15 @@ export const toTime = (color: Board.Color, clock: Clock): Seconds => {
 	return clock.times[color];
 };
 
-export type Preset = "Bullet" | "Blitz" | "Fast";
+export type Preset = 'Bullet' | 'Blitz' | 'Fast';
 
-export const presets: { [preset in Preset]: Preset } = {
-	Bullet: "Bullet",
-	Blitz: "Blitz",
-	Fast: "Fast",
+export const presets: {[preset in Preset]: Preset} = {
+	Bullet: 'Bullet',
+	Blitz: 'Blitz',
+	Fast: 'Fast',
 };
 
-export const presetToSeconds: { [preset in Preset]: Seconds } = {
+export const presetToSeconds: {[preset in Preset]: Seconds} = {
 	Bullet: toSeconds(60 * 1),
 	Blitz: toSeconds(60 * 3),
 	Fast: toSeconds(60 * 10),

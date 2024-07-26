@@ -1,4 +1,4 @@
-import { IconInput } from "../icon-shared";
+import {IconInput} from '../icon-shared';
 
 export const IconPen = (input: IconInput) => {
 	return (

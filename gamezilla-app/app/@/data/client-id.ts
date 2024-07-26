@@ -1,41 +1,43 @@
-import type { Brand } from "gamezilla-app/@/core/brand";
-import { Result } from "../../../@/core/result";
+import type {Brand} from 'gamezilla-app/@/core/brand';
+import {Result} from '../../../@/core/result';
 
-export type ClientId = Brand<string, "ClientId">;
+export type ClientId = Brand<string, 'ClientId'>;
 
 const is = (id: unknown): id is ClientId => {
-	return typeof id === "string";
+	return typeof id === 'string';
 };
 
-type Problem = "invalid_client_id";
+type Problem = 'invalid_client_id';
 
 const decode = (id: string): Result<Problem, ClientId> => {
 	if (is(id)) {
 		return Result.Ok(id);
 	}
 
-	return Result.Err("invalid_client_id");
+	return Result.Err('invalid_client_id');
 };
 
 const characters =
-	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+	'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 
 const randomCharacter = (word: string): string => {
-	return word[Math.floor(Math.random() * word.length)] ?? "a";
+	return word[Math.floor(Math.random() * word.length)] ?? 'a';
 };
 
 const generateId = (length: number): string => {
-	let runningId = "";
+	let runningId = '';
 
 	for (let i = 0; i < length; i++) {
-		runningId = `${runningId}${randomCharacter(characters)}`;
+		runningId = `${runningId}${randomCharacter(
+			characters,
+		)}`;
 	}
 
 	return runningId;
 };
 
-const namespace = "client";
-const separator = ":";
+const namespace = 'client';
+const separator = ':';
 
 const generate = (): ClientId => {
 	const id = `${generateId(5)}`;
@@ -46,7 +48,7 @@ const generate = (): ClientId => {
 		return clientId;
 	}
 
-	throw new Error("generated invalid client id");
+	throw new Error('generated invalid client id');
 };
 
 export const ClientId = {

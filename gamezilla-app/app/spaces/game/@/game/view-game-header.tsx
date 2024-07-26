@@ -1,7 +1,7 @@
-import { TranslatedText } from "gamezilla-app/@/l18n";
-import { Translator } from "gamezilla-app/@/l18n/generated";
-import type { VDom } from "gamezilla-app/@/vdom";
-import { cn, TopBar } from "gamezilla-app/app/@/ui";
+import {TranslatedText} from 'gamezilla-app/@/l18n';
+import {Translator} from 'gamezilla-app/@/l18n/generated';
+import type {VDom} from 'gamezilla-app/@/vdom';
+import {cn, TopBar} from 'gamezilla-app/app/@/ui';
 
 export const ViewGameHeader = ({
 	title,
@@ -10,31 +10,38 @@ export const ViewGameHeader = ({
 	ctx,
 }: {
 	title: TranslatedText;
-	renderCoverArt?: (input: { key: string; className: string }) => VDom;
+	renderCoverArt?: (input: {
+		key: string;
+		className: string;
+	}) => VDom;
 	onBack: () => void;
 	ctx: {
 		t: Translator;
 	};
 }) => {
 	return (
-		<div className="flex w-full flex-col items-center pb-4 gap-4">
-			<TopBar ctx={ctx} onBack={onBack} title={title} center />
+		<div className="flex w-full flex-col items-center gap-4 pb-4">
+			<TopBar
+				ctx={ctx}
+				onBack={onBack}
+				title={title}
+				center
+			/>
 
 			{renderCoverArt({
 				key: title,
-				className:
-					"w-28 h-28 overflow-hidden rounded-lg border border-white/20",
+				className: 'w-28 h-28 overflow-hidden rounded-lg border border-white/20',
 			})}
 		</div>
 	);
 };
 
-const renderDefaultCoverArt = (input: { key: string; className: string }) => {
+const renderDefaultCoverArt = (input: {key: string; className: string}) => {
 	return (
 		<div
 			key={input.key}
 			className={cn(
-				"flex items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-neutral-800 p-4 text-neutral-300",
+				'flex items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-neutral-800 p-4 text-neutral-300',
 				input.className,
 			)}
 		>

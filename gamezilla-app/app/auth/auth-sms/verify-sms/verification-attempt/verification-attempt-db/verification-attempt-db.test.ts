@@ -1,87 +1,122 @@
-import { describe, expect, it } from "bun:test";
-import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { VerificationAttempt } from "../verification-attempt";
-import { VerificationAttemptDb } from "./verification-attempt-db-impl";
-import { unwrap } from "gamezilla-app/@/core";
-import { VerificationId } from "../../verification/verification-id";
+import {describe, expect, it} from 'bun:test';
+import {AppServerTestEnv} from 'gamezilla-app/app/@/server/server-test-env';
+import {VerificationAttempt} from '../verification-attempt';
+import {VerificationAttemptDb} from './verification-attempt-db-impl';
+import {unwrap} from 'gamezilla-app/@/core';
+import {VerificationId} from '../../verification/verification-id';
 
 const Fixture = async () => {
 	const testEnv = await AppServerTestEnv();
 
 	switch (testEnv.t) {
-		case "integration": {
+		case 'integration': {
 			return {
-				verificationAttemptDb: VerificationAttemptDb({
-					t: "postgres",
-					dbConnSql: testEnv.dbConnSql,
-				}),
+				verificationAttemptDb:
+					VerificationAttemptDb(
+						{
+							t: 'postgres',
+							dbConnSql: testEnv.dbConnSql,
+						},
+					),
 			};
 		}
-		case "unit": {
+		case 'unit': {
 			return {
-				verificationAttemptDb: VerificationAttemptDb({
-					t: "hash-map",
-				}),
+				verificationAttemptDb:
+					VerificationAttemptDb(
+						{
+							t: 'hash-map',
+						},
+					),
 			};
 		}
 	}
 };
 
 describe(import.meta.file, () => {
-	it("should be ok after inserting", async () => {
+	it('should be ok after inserting', async () => {
 		const f = await Fixture();
-		const verificationAttempt = await VerificationAttempt.random();
-		const result = await f.verificationAttemptDb.insert(verificationAttempt);
-		expect(result.t).toBe("ok");
+		const verificationAttempt =
+			await VerificationAttempt.random();
+		const result =
+			await f.verificationAttemptDb.insert(
+				verificationAttempt,
+			);
+		expect(result.t).toBe('ok');
 	});
 
-	it("should insert correctly", async () => {
+	it('should insert correctly', async () => {
 		const f = await Fixture();
-		const verificationAttempt = await VerificationAttempt.random();
-		const before = await f.verificationAttemptDb.find({
-			where: {
-				verificationId: {
-					"=": verificationAttempt.verificationId,
+		const verificationAttempt =
+			await VerificationAttempt.random();
+		const before =
+			await f.verificationAttemptDb.find(
+				{
+					where: {
+						verificationId: {
+							'=': verificationAttempt.verificationId,
+						},
+					},
 				},
-			},
-		});
-		await f.verificationAttemptDb.insert(verificationAttempt);
-		const after = await f.verificationAttemptDb.find({
-			where: {
-				verificationId: {
-					"=": verificationAttempt.verificationId,
+			);
+		await f.verificationAttemptDb.insert(
+			verificationAttempt,
+		);
+		const after =
+			await f.verificationAttemptDb.find(
+				{
+					where: {
+						verificationId: {
+							'=': verificationAttempt.verificationId,
+						},
+					},
 				},
-			},
-		});
+			);
 		expect(unwrap(before)[0] ?? null).toBe(null);
-		expect(unwrap(after)[0]).toEqual(verificationAttempt);
+		expect(unwrap(after)[0]).toEqual(
+			verificationAttempt,
+		);
 	});
 
-	it("should find correctly", async () => {
+	it('should find correctly', async () => {
 		const f = await Fixture();
-		const verificationAttempt = await VerificationAttempt.random();
-		await f.verificationAttemptDb.insert(verificationAttempt);
-		const result = await f.verificationAttemptDb.find({
-			where: {
-				verificationId: {
-					"=": verificationAttempt.verificationId,
+		const verificationAttempt =
+			await VerificationAttempt.random();
+		await f.verificationAttemptDb.insert(
+			verificationAttempt,
+		);
+		const result =
+			await f.verificationAttemptDb.find(
+				{
+					where: {
+						verificationId: {
+							'=': verificationAttempt.verificationId,
+						},
+					},
 				},
-			},
-		});
-		expect(unwrap(result)[0]).toEqual(verificationAttempt);
+			);
+		expect(unwrap(result)[0]).toEqual(
+			verificationAttempt,
+		);
 	});
 
-	it("should not find when verificationId is not equal", async () => {
+	it('should not find when verificationId is not equal', async () => {
 		const f = await Fixture();
-		const verificationAttempt = await VerificationAttempt.random();
-		await f.verificationAttemptDb.insert(verificationAttempt);
-		const result = await f.verificationAttemptDb.find({
-			where: {
-				verificationId: {
-					"=": VerificationId.generate(),
+		const verificationAttempt =
+			await VerificationAttempt.random();
+		await f.verificationAttemptDb.insert(
+			verificationAttempt,
+		);
+		const result =
+			await f.verificationAttemptDb.find(
+				{
+					where: {
+						verificationId: {
+							'=': VerificationId.generate(),
+						},
+					},
 				},
-			},
-		});
+			);
 		expect(unwrap(result)[0] ?? null).toBe(null);
 	});
 });

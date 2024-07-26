@@ -1,4 +1,4 @@
-import { Result } from "./result";
+import {Result} from './result';
 
 export type Task<TErr, TVal> = Promise<Result<TErr, TVal>>;
 
@@ -73,7 +73,7 @@ async function p<E, A>(
 	let currentTask = await task;
 
 	for (const fn of functions) {
-		if (currentTask.t === "err") {
+		if (currentTask.t === 'err') {
 			return currentTask;
 		}
 		currentTask = await fn(currentTask.value);

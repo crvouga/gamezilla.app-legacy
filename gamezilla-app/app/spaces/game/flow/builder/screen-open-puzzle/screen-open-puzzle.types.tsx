@@ -1,6 +1,6 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { FlowPuzzle } from "../../@/flow-puzzle/flow-puzzle";
-import { CreateNewPuzzleTypes } from "./create-new";
+import {p} from 'gamezilla-app/@/core/parser';
+import {FlowPuzzle} from '../../@/flow-puzzle/flow-puzzle';
+import {CreateNewPuzzleTypes} from './create-new';
 
 //
 //
@@ -16,22 +16,22 @@ export const initClient: ModelClient = {
 export type MsgClient =
 	| CreateNewPuzzleTypes.MsgClient
 	| {
-			t: "builder-open-puzzle.clicked-puzzle-list-item";
+			t: 'builder-open-puzzle.clicked-puzzle-list-item';
 			puzzle: FlowPuzzle;
 	  };
 
-export type MsgServer = CreateNewPuzzleTypes.MsgServer | { t: "noop" };
+export type MsgServer = CreateNewPuzzleTypes.MsgServer | {t: 'noop'};
 
-export type MsgToServer = CreateNewPuzzleTypes.MsgToServer | { t: "noop" };
+export type MsgToServer = CreateNewPuzzleTypes.MsgToServer | {t: 'noop'};
 
 export type MsgToClient =
 	| CreateNewPuzzleTypes.MsgToClient
 	| {
-			t: "noop";
+			t: 'noop';
 	  };
 
 export const ModelCore = p.obj({
-	t: p.l("puzzle-list"),
+	t: p.l('puzzle-list'),
 	puzzle: FlowPuzzle,
 });
 
@@ -40,7 +40,9 @@ export type ModelCore = p.Infer<typeof ModelCore>;
 export const MsgCore = p.or(
 	CreateNewPuzzleTypes.MsgCore,
 	p.obj({
-		t: p.l("builder-open-puzzle.clicked-puzzle-list-item"),
+		t: p.l(
+			'builder-open-puzzle.clicked-puzzle-list-item',
+		),
 		puzzle: FlowPuzzle,
 	}),
 );

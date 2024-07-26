@@ -1,13 +1,13 @@
-import { Posix, Result } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { Sql } from "gamezilla-app/@/sql";
-import { UserId } from "gamezilla-app/app/@/data";
-import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
-import type { FlowPack } from "../flow-pack";
-import { FlowPackId } from "../flow-pack-id";
-import { FlowPackName } from "../flow-pack-name";
-import type { IFlowPackDb, OrderClause, WhereClause } from "./flow-pack-db";
+import {Posix, Result} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {Sql} from 'gamezilla-app/@/sql';
+import {UserId} from 'gamezilla-app/app/@/data';
+import type {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
+import {FlowPuzzleId} from '../../flow-puzzle/flow-puzzle-id';
+import type {FlowPack} from '../flow-pack';
+import {FlowPackId} from '../flow-pack-id';
+import {FlowPackName} from '../flow-pack-name';
+import type {IFlowPackDb, OrderClause, WhereClause} from './flow-pack-db';
 
 const Row = p.obj({
 	flow_pack_id: FlowPackId,
@@ -28,7 +28,9 @@ const rowToFlowPack = (row: Row): FlowPack | null => {
 		createdAt: Posix.init(row.created_at_posix),
 		createdBy: row.created_by_user_id,
 		id: row.flow_pack_id,
-		lastUpdatedAt: Posix.init(row.last_updated_at_posix),
+		lastUpdatedAt: Posix.init(
+			row.last_updated_at_posix,
+		),
 		lastUpdatedBy: row.last_updated_by_user_id,
 		name: row.flow_pack_name,
 		puzzleIds: row.flow_puzzle_ids,
@@ -39,13 +41,20 @@ const toSqlWhere = (where: WhereClause) => {
 	const clauses: string[] = [];
 	const vars: Record<string, any> = {};
 	if (where.createdBy) {
-		clauses.push("created_by_user_id = :created_by_user_id");
-		vars["created_by_user_id"] = where.createdBy;
+		clauses.push(
+			'created_by_user_id = :created_by_user_id',
+		);
+		vars['created_by_user_id'] = where.createdBy;
 	}
 
-	const str = clauses.length > 0 ? `WHERE ${clauses.join("\nAND\t")}` : "";
+	const str =
+		clauses.length > 0
+			? `WHERE ${clauses.join(
+					'\nAND\t',
+			  )}`
+			: '';
 
-	return { str, vars };
+	return {str, vars};
 };
 
 const toSqlOrder = (order: OrderClause) => {
@@ -53,25 +62,40 @@ const toSqlOrder = (order: OrderClause) => {
 	const vars: Record<string, any> = {};
 	if (order.createdAt) {
 		clauses.push(
-			`created_at_posix ${order.createdAt === "asc" ? "ASC" : "DESC"}`,
+			`created_at_posix ${
+				order.createdAt ===
+				'asc'
+					? 'ASC'
+					: 'DESC'
+			}`,
 		);
 	}
 	if (order.lastUpdatedAt) {
 		clauses.push(
-			`last_updated_at_posix ${order.lastUpdatedAt === "asc" ? "ASC" : "DESC"}`,
+			`last_updated_at_posix ${
+				order.lastUpdatedAt ===
+				'asc'
+					? 'ASC'
+					: 'DESC'
+			}`,
 		);
 	}
 
-	const str = clauses.length > 0 ? `ORDER BY ${clauses.join(",\n")}` : "";
+	const str =
+		clauses.length > 0
+			? `ORDER BY ${clauses.join(
+					',\n',
+			  )}`
+			: '';
 
-	return { str, vars };
+	return {str, vars};
 };
 
 const ensureNumber = (maybeNumber: unknown): number => {
-	if (typeof maybeNumber === "number") {
+	if (typeof maybeNumber === 'number') {
 		return maybeNumber;
 	}
-	if (typeof maybeNumber === "string") {
+	if (typeof maybeNumber === 'string') {
 		return Number.parseFloat(maybeNumber);
 	}
 	return 0;
@@ -84,18 +108,29 @@ export const FlowPackDbPostgres = ({
 }): IFlowPackDb => {
 	return {
 		async get(id) {
-			const queried = await dbConnSql.query(
-				Row,
-				"SELECT * FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id",
-				{ flow_pack_id: id },
-			);
-			return Result.mapOk(queried, (row) =>
-				row[0] ? rowToFlowPack(row[0]) : null,
+			const queried =
+				await dbConnSql.query(
+					Row,
+					'SELECT * FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id',
+					{
+						flow_pack_id: id,
+					},
+				);
+			return Result.mapOk(
+				queried,
+				(row) =>
+					row[0]
+						? rowToFlowPack(
+								row[0],
+						  )
+						: null,
 			);
 		},
 
 		async count(input) {
-			const where = toSqlWhere(input.where);
+			const where = toSqlWhere(
+				input.where,
+			);
 			const vars = where.vars;
 			const str = `
 				SELECT
@@ -105,19 +140,41 @@ export const FlowPackDbPostgres = ({
 				${where.str}
 			`;
 
-			const queried = await dbConnSql.query(
-				p.obj({ count: p.or(p.num, p.str) }),
-				str,
-				vars,
-			);
+			const queried =
+				await dbConnSql.query(
+					p.obj(
+						{
+							count: p.or(
+								p.num,
+								p.str,
+							),
+						},
+					),
+					str,
+					vars,
+				);
 
-			return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count));
+			return Result.mapOk(
+				queried,
+				(rows) =>
+					ensureNumber(
+						rows[0]
+							?.count,
+					),
+			);
 		},
 
 		async list(input) {
-			const sqlWhere = toSqlWhere(input.where);
-			const sqlOrder = toSqlOrder(input.order);
-			const sqlPagination = Sql.pagination(input.pagination);
+			const sqlWhere = toSqlWhere(
+				input.where,
+			);
+			const sqlOrder = toSqlOrder(
+				input.order,
+			);
+			const sqlPagination =
+				Sql.pagination(
+					input.pagination,
+				);
 			const vars = {
 				...sqlWhere.vars,
 				...sqlOrder.vars,
@@ -131,28 +188,54 @@ export const FlowPackDbPostgres = ({
 				${sqlPagination.str}
 			`;
 
-			const queried = await dbConnSql.query(Row, str, vars);
+			const queried =
+				await dbConnSql.query(
+					Row,
+					str,
+					vars,
+				);
 
-			const total = Result.withDefault(await this.count(input), 0);
+			const total =
+				Result.withDefault(
+					await this.count(
+						input,
+					),
+					0,
+				);
 
-			const result = Result.mapOk(queried, (rows) => {
-				return {
-					...input.pagination,
-					items: rows.flatMap((row) => {
-						const pack = rowToFlowPack(row);
-						return pack ? [pack] : [];
-					}),
-					total,
-				};
-			});
+			const result = Result.mapOk(
+				queried,
+				(rows) => {
+					return {
+						...input.pagination,
+						items: rows.flatMap(
+							(
+								row,
+							) => {
+								const pack =
+									rowToFlowPack(
+										row,
+									);
+								return pack
+									? [
+											pack,
+									  ]
+									: [];
+							},
+						),
+						total,
+					};
+				},
+			);
 
 			return result;
 		},
 
 		async put(input) {
-			const queried = await dbConnSql.query(
-				p.unknown,
-				`
+			const queried =
+				await dbConnSql.query(
+					p.unknown,
+					`
 				INSERT INTO game_flow_pack (
 					flow_pack_id,
 					flow_pack_name,
@@ -179,28 +262,41 @@ export const FlowPackDbPostgres = ({
 					last_updated_at_posix = :last_updated_at_posix,
 					last_updated_by_user_id = :last_updated_by_user_id
 				`,
-				{
-					flow_pack_id: input.id,
-					flow_pack_name: input.name,
-					flow_puzzle_ids: Sql.commas(input.puzzleIds),
-					created_at_posix: input.createdAt,
-					created_by_user_id: input.createdBy,
-					last_updated_at_posix: input.lastUpdatedAt,
-					last_updated_by_user_id: input.lastUpdatedBy,
-					deleted_at_posix: null,
-					deleted_by_user_id: null,
-				},
+					{
+						flow_pack_id: input.id,
+						flow_pack_name: input.name,
+						flow_puzzle_ids: Sql.commas(
+							input.puzzleIds,
+						),
+						created_at_posix: input.createdAt,
+						created_by_user_id: input.createdBy,
+						last_updated_at_posix:
+							input.lastUpdatedAt,
+						last_updated_by_user_id:
+							input.lastUpdatedBy,
+						deleted_at_posix: null,
+						deleted_by_user_id: null,
+					},
+				);
+			return Result.mapOk(
+				queried,
+				() => input,
 			);
-			return Result.mapOk(queried, () => input);
 		},
 
 		async zap(input) {
-			const queried = await dbConnSql.query(
-				p.unknown,
-				"DELETE FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id",
-				{ flow_pack_id: input.id },
+			const queried =
+				await dbConnSql.query(
+					p.unknown,
+					'DELETE FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id',
+					{
+						flow_pack_id: input.id,
+					},
+				);
+			return Result.mapOk(
+				queried,
+				() => null,
 			);
-			return Result.mapOk(queried, () => null);
 		},
 	};
 };

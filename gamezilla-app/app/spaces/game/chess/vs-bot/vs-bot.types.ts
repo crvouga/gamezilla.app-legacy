@@ -1,8 +1,8 @@
-import { Err, isErr, Ok, Result } from "gamezilla-app/@/core";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import type { VsBotSetup } from "gamezilla-app/app/spaces/game/@/vs-bot";
-import { Chess } from "../@/chess";
+import {Err, isErr, Ok, Result} from 'gamezilla-app/@/core';
+import type {UserId} from 'gamezilla-app/app/@/data';
+import type {SpaceCtx} from 'gamezilla-app/app/spaces/@/space';
+import type {VsBotSetup} from 'gamezilla-app/app/spaces/game/@/vs-bot';
+import {Chess} from '../@/chess';
 
 //
 //
@@ -15,7 +15,7 @@ import { Chess } from "../@/chess";
 export type ModelClient = {
 	coreModel: CoreModel;
 	openedMenuId: string | null;
-	openedModal: null | "game-over";
+	openedModal: null | 'game-over';
 	isFlipped: boolean;
 	vsBotSetup: VsBotSetup.Model;
 };
@@ -25,14 +25,14 @@ export type ModelServer = CoreModel;
 export type CoreModel = SetupModel | ModelCore | GameOverModel;
 
 export type SetupModel = {
-	type: "setup";
+	type: 'setup';
 	userColor: Chess.Color;
 	userId: UserId | null;
 	botLevel: Chess.BotLevel;
 };
 
 export type ModelCore = {
-	type: "game";
+	type: 'game';
 	userColor: Chess.Color;
 	userId: UserId;
 	board: Chess.Model;
@@ -40,7 +40,7 @@ export type ModelCore = {
 };
 
 export type GameOverModel = {
-	type: "game-over";
+	type: 'game-over';
 	gameOver: GameOver;
 	userColor: Chess.Color;
 	userId: UserId;
@@ -51,19 +51,15 @@ export type GameOverModel = {
 export type GameOver = Chess.GameOver;
 
 export const initCore: CoreModel = {
-	type: "setup",
-	userColor: "w",
+	type: 'setup',
+	userColor: 'w',
 	userId: null,
 	botLevel: 1,
 };
 
-export const initServer = ({
-	userId,
-}: {
-	userId: UserId | null;
-}): ModelServer => {
+export const initServer = ({userId}: {userId: UserId | null}): ModelServer => {
 	return {
-		type: "setup",
+		type: 'setup',
 		botLevel: initCore.botLevel,
 		userColor: initCore.userColor,
 		userId,
@@ -71,7 +67,10 @@ export const initServer = ({
 };
 
 export const isBotTurn = (model: CoreModel) => {
-	return model.type === "game" && Chess.toTurn(model.board) !== model.userColor;
+	return (
+		model.type === 'game' &&
+		Chess.toTurn(model.board) !== model.userColor
+	);
 };
 
 //
@@ -84,14 +83,14 @@ export const isBotTurn = (model: CoreModel) => {
 
 export type MsgClient =
 	| Req
-	| { t: "opened-menu"; menuId: string }
-	| { t: "closed-menu" }
-	| { t: "clicked-flip" }
-	| { t: "closed-modal" }
-	| { t: "vs-bot-setup"; c: VsBotSetup.Msg };
+	| {t: 'opened-menu'; menuId: string}
+	| {t: 'closed-menu'}
+	| {t: 'clicked-flip'}
+	| {t: 'closed-modal'}
+	| {t: 'vs-bot-setup'; c: VsBotSetup.Msg};
 
 export type MsgServer = {
-	t: "bot-moved";
+	t: 'bot-moved';
 	moved: Chess.BestMoveInputResult;
 };
 
@@ -100,21 +99,31 @@ export type MsgToServer = Req;
 export type MsgToClient =
 	| Res
 	| {
-			t: "bot-moved";
-			result: Result<string, CoreModel & { didCapture: boolean }>;
+			t: 'bot-moved';
+			result: Result<
+				string,
+				CoreModel & {
+					didCapture: boolean;
+				}
+			>;
 	  }
-	| { t: "player-left"; model: CoreModel };
+	| {t: 'player-left'; model: CoreModel};
 
 export type Req =
-	| { t: "input-bot-level"; botLevel: Chess.BotLevel }
-	| { t: "start-playing"; color: Chess.Color }
-	| { t: "stop-playing" }
-	| { t: "start-game" }
-	| { t: "stop-game" }
-	| { t: "input-move"; move: Chess.MoveInput };
+	| {t: 'input-bot-level'; botLevel: Chess.BotLevel}
+	| {t: 'start-playing'; color: Chess.Color}
+	| {t: 'stop-playing'}
+	| {t: 'start-game'}
+	| {t: 'stop-game'}
+	| {t: 'input-move'; move: Chess.MoveInput};
 
 export type Res = Req & {
-	result: Result<string, CoreModel & { didCapture?: boolean }>;
+	result: Result<
+		string,
+		CoreModel & {
+			didCapture?: boolean;
+		}
+	>;
 };
 
 //
@@ -127,159 +136,248 @@ export const updateCore = ({
 	model,
 	ctx,
 }: {
-	ctx: SpaceCtx & { currentUserId: UserId };
+	ctx: SpaceCtx & {currentUserId: UserId};
 	msg: Req;
 	model: CoreModel;
-}): Result<string, CoreModel & { didCapture?: boolean }> => {
+}): Result<string, CoreModel & {didCapture?: boolean}> => {
 	switch (model.type) {
-		case "setup": {
+		case 'setup': {
 			switch (msg.t) {
-				case "start-game": {
-					if (!model.userId) {
-						return Err("missing-user");
+				case 'start-game': {
+					if (
+						!model.userId
+					) {
+						return Err(
+							'missing-user',
+						);
 					}
 					if (
-						model.userId !== ctx.currentUserId ||
-						model.userId !== ctx.space.hostId
+						model.userId !==
+							ctx.currentUserId ||
+						model.userId !==
+							ctx
+								.space
+								.hostId
 					) {
-						return Err("not-allowed");
+						return Err(
+							'not-allowed',
+						);
 					}
-					return Ok({
-						type: "game",
-						botLevel: model.botLevel,
-						userColor: model.userColor,
-						userId: model.userId,
-						board: Chess.init(),
-					});
+					return Ok(
+						{
+							type: 'game',
+							botLevel: model.botLevel,
+							userColor: model.userColor,
+							userId: model.userId,
+							board: Chess.init(),
+						},
+					);
 				}
 
-				case "input-bot-level": {
+				case 'input-bot-level': {
 					if (
-						model.userId !== ctx.currentUserId ||
-						model.userId !== ctx.space.hostId
+						model.userId !==
+							ctx.currentUserId ||
+						model.userId !==
+							ctx
+								.space
+								.hostId
 					) {
-						return Err("not-allowed");
+						return Err(
+							'not-allowed',
+						);
 					}
-					return Ok({
-						...model,
-						botLevel: msg.botLevel,
-					});
+					return Ok(
+						{
+							...model,
+							botLevel: msg.botLevel,
+						},
+					);
 				}
 
-				case "stop-playing": {
-					if (model.userId !== ctx.currentUserId) {
-						return Err("not-allowed");
+				case 'stop-playing': {
+					if (
+						model.userId !==
+						ctx.currentUserId
+					) {
+						return Err(
+							'not-allowed',
+						);
 					}
-					return Ok({
-						...model,
-						userId: null,
-					});
+					return Ok(
+						{
+							...model,
+							userId: null,
+						},
+					);
 				}
 
-				case "start-playing": {
-					if (model.userId !== null && model.userId !== ctx.currentUserId) {
-						return Err("not-allowed");
+				case 'start-playing': {
+					if (
+						model.userId !==
+							null &&
+						model.userId !==
+							ctx.currentUserId
+					) {
+						return Err(
+							'not-allowed',
+						);
 					}
-					return Ok({
-						...model,
-						userId: ctx.currentUserId,
-						userColor: msg.color,
-					});
+					return Ok(
+						{
+							...model,
+							userId: ctx.currentUserId,
+							userColor: msg.color,
+						},
+					);
 				}
 
 				default: {
-					return Err("unhandled");
+					return Err(
+						'unhandled',
+					);
 				}
 			}
 		}
 
-		case "game": {
+		case 'game': {
 			switch (msg.t) {
-				case "input-move": {
-					if (model.userId !== ctx.currentUserId) {
-						return Err("must-be-playing");
+				case 'input-move': {
+					if (
+						model.userId !==
+						ctx.currentUserId
+					) {
+						return Err(
+							'must-be-playing',
+						);
 					}
 
-					if (Chess.toTurn(model.board) !== model.userColor) {
-						return Err("must-be-turn");
+					if (
+						Chess.toTurn(
+							model.board,
+						) !==
+						model.userColor
+					) {
+						return Err(
+							'must-be-turn',
+						);
 					}
 
-					const moved = Chess.move(msg.move, model.board);
+					const moved =
+						Chess.move(
+							msg.move,
+							model.board,
+						);
 
-					if (moved.t === "err") {
+					if (
+						moved.t ===
+						'err'
+					) {
 						return moved;
 					}
 
-					const boardNew = moved.value;
+					const boardNew =
+						moved.value;
 
-					const gameOver = Chess.toGameOver(boardNew);
+					const gameOver =
+						Chess.toGameOver(
+							boardNew,
+						);
 
-					if (gameOver.type !== "none") {
-						return Ok({
-							...model,
-							type: "game-over",
-							board: boardNew,
-							gameOver: gameOver,
-							didCapture: boardNew.didCapture,
-						});
+					if (
+						gameOver.type !==
+						'none'
+					) {
+						return Ok(
+							{
+								...model,
+								type: 'game-over',
+								board: boardNew,
+								gameOver: gameOver,
+								didCapture: boardNew.didCapture,
+							},
+						);
 					}
 
-					const modelNew: CoreModel = {
-						...model,
-						board: boardNew,
-					};
+					const modelNew: CoreModel =
+						{
+							...model,
+							board: boardNew,
+						};
 
-					return Result.Ok({
-						...modelNew,
-						didCapture: boardNew.didCapture,
-					});
+					return Result.Ok(
+						{
+							...modelNew,
+							didCapture: boardNew.didCapture,
+						},
+					);
 				}
 
-				case "stop-game": {
+				case 'stop-game': {
 					if (
-						model.userId !== ctx.currentUserId ||
-						ctx.currentUserId !== ctx.space.hostId
+						model.userId !==
+							ctx.currentUserId ||
+						ctx.currentUserId !==
+							ctx
+								.space
+								.hostId
 					) {
-						return Err("not-allowed");
+						return Err(
+							'not-allowed',
+						);
 					}
-					return Ok({
-						type: "setup",
-						botLevel: model.botLevel,
-						userColor: model.userColor,
-						userId: model.userId,
-					});
+					return Ok(
+						{
+							type: 'setup',
+							botLevel: model.botLevel,
+							userColor: model.userColor,
+							userId: model.userId,
+						},
+					);
 				}
 
 				default: {
-					return Err("unhandled");
+					return Err(
+						'unhandled',
+					);
 				}
 			}
 		}
 
-		case "game-over": {
+		case 'game-over': {
 			switch (msg.t) {
-				case "stop-game": {
+				case 'stop-game': {
 					if (
-						model.userId !== ctx.currentUserId ||
-						ctx.currentUserId !== ctx.space.hostId
+						model.userId !==
+							ctx.currentUserId ||
+						ctx.currentUserId !==
+							ctx
+								.space
+								.hostId
 					) {
-						return Err("not-allowed");
+						return Err(
+							'not-allowed',
+						);
 					}
-					return Ok({
-						type: "setup",
-						botLevel: model.botLevel,
-						userColor: model.userColor,
-						userId: model.userId,
-					});
+					return Ok(
+						{
+							type: 'setup',
+							botLevel: model.botLevel,
+							userColor: model.userColor,
+							userId: model.userId,
+						},
+					);
 				}
 				default: {
-					return Err("unhandled");
+					return Err(
+						'unhandled',
+					);
 				}
 			}
 		}
 
 		default: {
-			return Err("unhandled");
+			return Err('unhandled');
 		}
 	}
 };
@@ -295,12 +393,12 @@ export const updateCore = ({
 export const botMoved = (
 	botMoveResult: Chess.BestMoveInputResult,
 	model: CoreModel,
-): Result<string, CoreModel & { didCapture: boolean }> => {
-	if (model.type !== "game") {
-		return Err("must_be_started");
+): Result<string, CoreModel & {didCapture: boolean}> => {
+	if (model.type !== 'game') {
+		return Err('must_be_started');
 	}
 
-	if (botMoveResult.t === "err") {
+	if (botMoveResult.t === 'err') {
 		return botMoveResult;
 	}
 
@@ -309,7 +407,7 @@ export const botMoved = (
 	const botColor = Chess.toOppositeColor(model.userColor);
 
 	if (Chess.toTurn(model.board) !== botColor) {
-		return Err("must_be_turn");
+		return Err('must_be_turn');
 	}
 
 	const result = Chess.move(botMoveInput, model.board);
@@ -318,18 +416,21 @@ export const botMoved = (
 		return result;
 	}
 
-	const { didCapture, ...boardNew } = result.value;
+	const {didCapture, ...boardNew} = result.value;
 
 	const gameOver = Chess.toGameOver(boardNew);
 
-	if (gameOver.type !== "none") {
+	if (gameOver.type !== 'none') {
 		const modelNew: CoreModel = {
 			...model,
-			type: "game-over",
+			type: 'game-over',
 			gameOver: gameOver,
 			board: boardNew,
 		};
-		return Ok({ ...modelNew, didCapture });
+		return Ok({
+			...modelNew,
+			didCapture,
+		});
 	}
 
 	return Ok({

@@ -1,5 +1,5 @@
-import { Iter, Random, Set, pipe, type NonNegInt } from "gamezilla-app/@/core";
-import { Position } from "./position";
+import {Iter, Random, Set, pipe, type NonNegInt} from 'gamezilla-app/@/core';
+import {Position} from './position';
 
 export type Model = {
 	mines: Set<Position>;
@@ -10,7 +10,12 @@ export type Model = {
 };
 
 export const toMineCount = (model: Model, position: Position): NonNegInt => {
-	return Set.size(Set.intersect(model.mines, Position.toAdjacent(position)));
+	return Set.size(
+		Set.intersect(
+			model.mines,
+			Position.toAdjacent(position),
+		),
+	);
 };
 
 export const initMines = ({
@@ -39,12 +44,18 @@ export const didLose = (model: Model) => {
 const toAllPositions = (model: Model): Set<Position> => {
 	return Set.from(
 		Position.toKey,
-		Position.range(model.columnCount, model.rowCount),
+		Position.range(
+			model.columnCount,
+			model.rowCount,
+		),
 	);
 };
 
 export const didWin = (model: Model) => {
-	return Set.eq(model.holes, Set.diff(toAllPositions(model), model.mines));
+	return Set.eq(
+		model.holes,
+		Set.diff(toAllPositions(model), model.mines),
+	);
 };
 
 export const plantFlag = (model: Model, position: Position): Model => {
@@ -54,14 +65,22 @@ export const plantFlag = (model: Model, position: Position): Model => {
 
 	return {
 		...model,
-		flags: Set.add(Position.toKey, position, model.flags),
+		flags: Set.add(
+			Position.toKey,
+			position,
+			model.flags,
+		),
 	};
 };
 
 export const removeFlag = (model: Model, position: Position): Model => {
 	return {
 		...model,
-		flags: Set.remove(Position.toKey, position, model.flags),
+		flags: Set.remove(
+			Position.toKey,
+			position,
+			model.flags,
+		),
 	};
 };
 
@@ -72,6 +91,10 @@ export const digHole = (model: Model, position: Position): Model => {
 
 	return {
 		...model,
-		holes: Set.add(Position.toKey, position, model.holes),
+		holes: Set.add(
+			Position.toKey,
+			position,
+			model.holes,
+		),
 	};
 };

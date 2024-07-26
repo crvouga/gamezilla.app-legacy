@@ -1,5 +1,5 @@
-import { eq, memoize, Random } from "gamezilla-app/@/core";
-import { Direction, Position } from "./position";
+import {eq, memoize, Random} from 'gamezilla-app/@/core';
+import {Direction, Position} from './position';
 
 //
 //
@@ -28,7 +28,7 @@ const make = ({
 	lower: Position;
 	upper: Position;
 }) => {
-	const maze: Maze = { edges: [], lower, upper };
+	const maze: Maze = {edges: [], lower, upper};
 
 	const stack = [lower];
 	const visited = new Set<string>([Position.toKey(lower)]);
@@ -48,18 +48,40 @@ const make = ({
 			direction: Direction;
 		} | null = null;
 
-		for (const direction of Random.shuffle(`${seed}-${count}`, Direction.all)) {
-			const neighbor = Position.add(Direction.toVector(direction), current);
+		for (const direction of Random.shuffle(
+			`${seed}-${count}`,
+			Direction.all,
+		)) {
+			const neighbor = Position.add(
+				Direction.toVector(
+					direction,
+				),
+				current,
+			);
 
-			if (!hasVertex(neighbor, maze)) {
+			if (
+				!hasVertex(
+					neighbor,
+					maze,
+				)
+			) {
 				continue;
 			}
 
-			if (visited.has(Position.toKey(neighbor))) {
+			if (
+				visited.has(
+					Position.toKey(
+						neighbor,
+					),
+				)
+			) {
 				continue;
 			}
 
-			unvisitedNeighbor = { position: neighbor, direction };
+			unvisitedNeighbor = {
+				position: neighbor,
+				direction,
+			};
 			break;
 		}
 
@@ -69,50 +91,105 @@ const make = ({
 
 		stack.push(current);
 		stack.push(unvisitedNeighbor.position);
-		visited.add(Position.toKey(unvisitedNeighbor.position));
-		maze.edges.push([current, unvisitedNeighbor.position]);
+		visited.add(
+			Position.toKey(
+				unvisitedNeighbor.position,
+			),
+		);
+		maze.edges.push([
+			current,
+			unvisitedNeighbor.position,
+		]);
 	}
 
-	remove_dead_ends({ limit: Number.POSITIVE_INFINITY, seed }, maze);
+	remove_dead_ends(
+		{
+			limit: Number.POSITIVE_INFINITY,
+			seed,
+		},
+		maze,
+	);
 
 	return maze;
 };
 
 const remove_dead_ends = (
-	{ seed, limit }: { seed: string; limit: number },
+	{seed, limit}: {seed: string; limit: number},
 	maze: Maze,
 ) => {
 	let count = 0;
 
 	for (let x = maze.lower.x; x <= maze.upper.x; x++) {
-		for (let y = maze.lower.y; y <= maze.upper.y; y++) {
-			const position: Position = { x, y };
+		for (
+			let y = maze.lower.y;
+			y <= maze.upper.y;
+			y++
+		) {
+			const position: Position = {
+				x,
+				y,
+			};
 
-			const connections = toConnections(position, maze);
+			const connections =
+				toConnections(
+					position,
+					maze,
+				);
 
 			if (connections.length >= 2) {
 				continue;
 			}
 
-			for (const direction of Random.shuffle(seed, Direction.all)) {
-				const neighbor = Position.add(Direction.toVector(direction), position);
+			for (const direction of Random.shuffle(
+				seed,
+				Direction.all,
+			)) {
+				const neighbor =
+					Position.add(
+						Direction.toVector(
+							direction,
+						),
+						position,
+					);
 
-				if (!hasVertex(neighbor, maze)) {
+				if (
+					!hasVertex(
+						neighbor,
+						maze,
+					)
+				) {
 					continue;
 				}
 
-				const isAdjacent = connections.some((adj) =>
-					Position.eq(adj, neighbor),
+				const isAdjacent =
+					connections.some(
+						(
+							adj,
+						) =>
+							Position.eq(
+								adj,
+								neighbor,
+							),
+					);
+
+				if (
+					isAdjacent
+				) {
+					continue;
+				}
+
+				maze.edges.push(
+					[
+						neighbor,
+						position,
+					],
 				);
 
-				if (isAdjacent) {
-					continue;
-				}
-
-				maze.edges.push([neighbor, position]);
-
 				count++;
-				if (count >= limit) {
+				if (
+					count >=
+					limit
+				) {
 					return;
 				}
 
@@ -123,8 +200,10 @@ const remove_dead_ends = (
 };
 
 const makeMemoized = memoize({
-	toKey: ({ seed, lower, upper }) =>
-		[seed, lower.x, lower.y, upper.x, upper.y].join("-"),
+	toKey: ({seed, lower, upper}) =>
+		[seed, lower.x, lower.y, upper.x, upper.y].join(
+			'-',
+		),
 	func: make,
 	cacheCapacity: 100,
 });
@@ -145,7 +224,7 @@ const toConnections = (position: Position, maze: Maze) => {
 	return adjacent;
 };
 
-const hasVertex = (vertex: Position, { lower, upper }: Maze): boolean => {
+const hasVertex = (vertex: Position, {lower, upper}: Maze): boolean => {
 	return (
 		lower.x <= vertex.x &&
 		vertex.x <= upper.x &&
@@ -160,7 +239,8 @@ const hasEdge = (edge: [Position, Position], maze: Maze): boolean => {
 
 const eqEdge = <T,>(x: [T, T], y: [T, T]): boolean => {
 	return (
-		(eq(x[0], y[0]) && eq(x[1], y[1])) || (eq(x[1], y[0]) && eq(x[0], y[1]))
+		(eq(x[0], y[0]) && eq(x[1], y[1])) ||
+		(eq(x[1], y[0]) && eq(x[0], y[1]))
 	);
 };
 
@@ -178,9 +258,9 @@ export const Maze = {
 //
 
 const coverArtMaze = Maze.make({
-	seed: "cover art maze!",
-	lower: { x: 0, y: 0 },
-	upper: { x: 8, y: 8 },
+	seed: 'cover art maze!',
+	lower: {x: 0, y: 0},
+	upper: {x: 8, y: 8},
 });
 
 const viewBox = [
@@ -188,33 +268,72 @@ const viewBox = [
 	coverArtMaze.lower.y,
 	coverArtMaze.upper.x - coverArtMaze.lower.x + 1,
 	coverArtMaze.upper.y - coverArtMaze.lower.y + 1,
-].join(" ");
+].join(' ');
 
 export const CoverArt = () => {
 	return (
 		// biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
-		<svg viewBox={viewBox} width="100%" className="border border-neutral-700">
+		<svg
+			viewBox={viewBox}
+			width="100%"
+			className="border border-neutral-700"
+		>
 			<rect
-				x={coverArtMaze.lower.x}
-				y={coverArtMaze.lower.y}
+				x={
+					coverArtMaze
+						.lower
+						.x
+				}
+				y={
+					coverArtMaze
+						.lower
+						.y
+				}
 				width="100%"
 				height="100%"
-				fill={"#000"}
+				fill={'#000'}
 			/>
-			{coverArtMaze.edges.map(([a, b]) => (
-				<g
-					key={[a.x, a.y, b.x, b.y].join("-")}
-					strokeWidth="0.1"
-					stroke={"#fff"}
-				>
-					<line
-						x1={a.x + 1 / 2}
-						y1={a.y + 1 / 2}
-						x2={b.x + 1 / 2}
-						y2={b.y + 1 / 2}
-					/>
-				</g>
-			))}
+			{coverArtMaze.edges.map(
+				([a, b]) => (
+					<g
+						key={[
+							a.x,
+							a.y,
+							b.x,
+							b.y,
+						].join(
+							'-',
+						)}
+						strokeWidth="0.1"
+						stroke={
+							'#fff'
+						}
+					>
+						<line
+							x1={
+								a.x +
+								1 /
+									2
+							}
+							y1={
+								a.y +
+								1 /
+									2
+							}
+							x2={
+								b.x +
+								1 /
+									2
+							}
+							y2={
+								b.y +
+								1 /
+									2
+							}
+						/>
+					</g>
+				),
+			)}
 		</svg>
 	);
 };

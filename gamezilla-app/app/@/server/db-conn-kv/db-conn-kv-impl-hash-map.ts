@@ -1,6 +1,6 @@
-import { Ok } from "gamezilla-app/@/core";
-import type { p } from "gamezilla-app/@/core/parser";
-import type { IDbConnKv } from "./db-conn-kv";
+import {Ok} from 'gamezilla-app/@/core';
+import type {p} from 'gamezilla-app/@/core/parser';
+import type {IDbConnKv} from './db-conn-kv';
 
 export const DbConnKvHashMap = (config?: {
 	map?: Map<string, unknown>;
@@ -8,30 +8,61 @@ export const DbConnKvHashMap = (config?: {
 	const hashMap = config?.map ?? new Map<string, unknown>();
 	return {
 		async get(key, parser) {
-			const got = hashMap.get(key) ?? null;
+			const got =
+				hashMap.get(
+					key,
+				) ?? null;
 
-			const parsed = parser.parse(got);
+			const parsed =
+				parser.parse(
+					got,
+				);
 
 			switch (parsed.t) {
-				case "err":
-					return Ok(null);
-				case "ok":
-					return Ok(parsed.value);
+				case 'err':
+					return Ok(
+						null,
+					);
+				case 'ok':
+					return Ok(
+						parsed.value,
+					);
 			}
 		},
 
-		async getMany<TValue>(keys: string[], parser: p.Parser<TValue>) {
+		async getMany<TValue>(
+			keys: string[],
+			parser: p.Parser<TValue>,
+		) {
 			const rows: TValue[] = [];
 
-			for (let i = 0; i < keys.length; i++) {
-				const key = keys[i]!;
-				const got = hashMap.get(key);
+			for (
+				let i = 0;
+				i < keys.length;
+				i++
+			) {
+				const key =
+					keys[
+						i
+					]!;
+				const got =
+					hashMap.get(
+						key,
+					);
 				if (!got) {
 					continue;
 				}
-				const parsed = parser.parse(got);
-				if (parsed.t === "ok") {
-					rows.push(parsed.value);
+				const parsed =
+					parser.parse(
+						got,
+					);
+				if (
+					parsed.t ===
+					'ok'
+				) {
+					rows.push(
+						parsed.value,
+					);
 				}
 			}
 
@@ -44,8 +75,20 @@ export const DbConnKvHashMap = (config?: {
 		},
 
 		async setMany(entries) {
-			for (let i = 0; i < entries.length; i++) {
-				hashMap.set(entries[i]![0], entries[i]![1]);
+			for (
+				let i = 0;
+				i <
+				entries.length;
+				i++
+			) {
+				hashMap.set(
+					entries[
+						i
+					]![0],
+					entries[
+						i
+					]![1],
+				);
 			}
 			return Ok(null);
 		},

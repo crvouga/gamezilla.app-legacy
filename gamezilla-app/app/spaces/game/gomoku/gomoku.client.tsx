@@ -1,16 +1,16 @@
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@/game";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import type { ClientCtx } from "gamezilla-app/app/@/client";
-import { Eff, Sub } from "gamezilla-app/@/core";
-import * as VsBot from "./vs-bot/vs-bot.client";
-import * as VsUser from "./vs-user/vs-user.client";
-import { CoverArt } from "./@/gomoku/gomoku-ui";
+import {GameMainMenu} from 'gamezilla-app/app/spaces/game/@/game';
+import type {SpaceClientCtx} from 'gamezilla-app/app/spaces/@/space';
+import type {ClientCtx} from 'gamezilla-app/app/@/client';
+import {Eff, Sub} from 'gamezilla-app/@/core';
+import * as VsBot from './vs-bot/vs-bot.client';
+import * as VsUser from './vs-user/vs-user.client';
+import {CoverArt} from './@/gomoku/gomoku-ui';
 import type {
 	ModelClient,
 	MsgClient,
 	ModelServer,
 	MsgToClient,
-} from "./gomoku.types";
+} from './gomoku.types';
 
 //
 //
@@ -23,7 +23,7 @@ import type {
 export type Model = ModelClient;
 
 export const init: Model = {
-	t: "none",
+	t: 'none',
 };
 
 //
@@ -48,34 +48,46 @@ export const update = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "input-mode") {
-		return { model };
+	if (msg.t === 'input-mode') {
+		return {model};
 	}
 
-	if (model.t === "vs-bot" && msg.t === "vs-bot") {
+	if (model.t === 'vs-bot' && msg.t === 'vs-bot') {
 		const updated = VsBot.update({
 			ctx,
 			msg: msg.c,
 			model: model.c,
 		});
 		return {
-			model: { t: "vs-bot", c: updated.model },
-			eff: Eff.tag("vs-bot", updated.eff),
+			model: {
+				t: 'vs-bot',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-bot',
+				updated.eff,
+			),
 		};
 	}
 
-	if (model.t === "vs-user" && msg.t === "vs-user") {
+	if (model.t === 'vs-user' && msg.t === 'vs-user') {
 		const updated = VsUser.update({
 			msg: msg.c,
 			model: model.c,
 		});
 		return {
-			model: { t: "vs-user", c: updated.model },
-			eff: Eff.tag("vs-user", updated.eff),
+			model: {
+				t: 'vs-user',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-user',
+				updated.eff,
+			),
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
 export const updateFromServer = ({
@@ -90,42 +102,56 @@ export const updateFromServer = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "input-mode") {
-		if (msg.result.t === "err") {
-			return { model };
+	if (msg.t === 'input-mode') {
+		if (msg.result.t === 'err') {
+			return {
+				model,
+			};
 		}
 		const merged = mergeWithServer({
 			ctx,
 			clientModel: model,
 			serverModel: msg.result.value,
 		});
-		return { model: merged };
+		return {model: merged};
 	}
 
-	if (model.t === "vs-bot" && msg.t === "vs-bot") {
+	if (model.t === 'vs-bot' && msg.t === 'vs-bot') {
 		const updated = VsBot.updateFromServer({
 			ctx,
 			msg: msg.c,
 			model: model.c,
 		});
 		return {
-			model: { t: "vs-bot", c: updated.model },
-			eff: Eff.tag("vs-bot", updated.eff),
+			model: {
+				t: 'vs-bot',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-bot',
+				updated.eff,
+			),
 		};
 	}
 
-	if (model.t === "vs-user" && msg.t === "vs-user") {
+	if (model.t === 'vs-user' && msg.t === 'vs-user') {
 		const updated = VsUser.updateFromServer({
 			model: model.c,
 			msg: msg.c,
 		});
 		return {
-			model: { t: "vs-user", c: updated.model },
-			eff: Eff.tag("vs-user", updated.eff),
+			model: {
+				t: 'vs-user',
+				c: updated.model,
+			},
+			eff: Eff.tag(
+				'vs-user',
+				updated.eff,
+			),
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
 export const mergeWithServer = ({
@@ -138,47 +164,72 @@ export const mergeWithServer = ({
 	serverModel: ModelServer;
 }): ModelClient => {
 	switch (serverModel.t) {
-		case "none": {
-			return { t: "none" };
-		}
-
-		case "vs-bot": {
-			if (clientModel.t === "vs-bot") {
-				return {
-					t: "vs-bot",
-					c: VsBot.mergeWithServer({
-						ctx,
-						clientModel: clientModel.c,
-						serverModel: serverModel.c,
-					}),
-				};
-			}
+		case 'none': {
 			return {
-				t: "vs-bot",
-				c: VsBot.mergeWithServer({
-					ctx,
-					clientModel: VsBot.init({ userId: null }),
-					serverModel: serverModel.c,
-				}),
+				t: 'none',
 			};
 		}
 
-		case "vs-user": {
-			if (clientModel.t === "vs-user") {
+		case 'vs-bot': {
+			if (
+				clientModel.t ===
+				'vs-bot'
+			) {
 				return {
-					t: "vs-user",
-					c: VsUser.mergeWithServer({
-						clientModel: clientModel.c,
-						serverModel: serverModel.c,
-					}),
+					t: 'vs-bot',
+					c: VsBot.mergeWithServer(
+						{
+							ctx,
+							clientModel: clientModel.c,
+							serverModel: serverModel.c,
+						},
+					),
 				};
 			}
 			return {
-				t: "vs-user",
-				c: VsUser.mergeWithServer({
-					clientModel: VsUser.init({ white: null, black: null }),
-					serverModel: serverModel.c,
-				}),
+				t: 'vs-bot',
+				c: VsBot.mergeWithServer(
+					{
+						ctx,
+						clientModel: VsBot.init(
+							{
+								userId: null,
+							},
+						),
+						serverModel: serverModel.c,
+					},
+				),
+			};
+		}
+
+		case 'vs-user': {
+			if (
+				clientModel.t ===
+				'vs-user'
+			) {
+				return {
+					t: 'vs-user',
+					c: VsUser.mergeWithServer(
+						{
+							clientModel: clientModel.c,
+							serverModel: serverModel.c,
+						},
+					),
+				};
+			}
+			return {
+				t: 'vs-user',
+				c: VsUser.mergeWithServer(
+					{
+						clientModel: VsUser.init(
+							{
+								white: null,
+								black: null,
+							},
+						),
+						serverModel: serverModel.c,
+					},
+				),
 			};
 		}
 	}
@@ -194,15 +245,21 @@ export const mergeWithServer = ({
 
 export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
 	switch (model.t) {
-		case "vs-bot": {
-			return Sub.tag("vs-bot", VsBot.subscriptions(ctx, model.c));
+		case 'vs-bot': {
+			return Sub.tag(
+				'vs-bot',
+				VsBot.subscriptions(
+					ctx,
+					model.c,
+				),
+			);
 		}
 
-		case "vs-user": {
+		case 'vs-user': {
 			return Sub.None;
 		}
 
-		case "none": {
+		case 'none': {
 			return Sub.None;
 		}
 	}
@@ -228,70 +285,121 @@ export const view = ({
 	dispatch: (m: Msg) => void;
 }) => {
 	switch (model.t) {
-		case "none": {
+		case 'none': {
 			return (
 				<GameMainMenu.View
-					title={ctx.t("gomoku")}
-					renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
-					ctx={spaceCtx}
+					title={ctx.t(
+						'gomoku',
+					)}
+					renderCoverArt={(
+						input,
+					) => (
+						<CoverArt
+							{...input}
+							key={
+								input.key
+							}
+						/>
+					)}
+					ctx={
+						spaceCtx
+					}
 					dispatch={() => {
 						//
 					}}
 					buttons={[
-						GameMainMenu.buttons.playComputer({
-							ctx,
-							onClick: () =>
-								dispatch({
-									t: "input-mode",
-									userId: ctx.currentUserId,
-									mode: "vs-bot",
-								}),
-						}),
+						GameMainMenu.buttons.playComputer(
+							{
+								ctx,
+								onClick: () =>
+									dispatch(
+										{
+											t: 'input-mode',
+											userId: ctx.currentUserId,
+											mode: 'vs-bot',
+										},
+									),
+							},
+						),
 
-						GameMainMenu.buttons.playFriend({
-							ctx,
-							onClick: () =>
-								dispatch({
-									t: "input-mode",
-									userId: ctx.currentUserId,
-									mode: "vs-user",
-								}),
-						}),
+						GameMainMenu.buttons.playFriend(
+							{
+								ctx,
+								onClick: () =>
+									dispatch(
+										{
+											t: 'input-mode',
+											userId: ctx.currentUserId,
+											mode: 'vs-user',
+										},
+									),
+							},
+						),
 					]}
 				/>
 			);
 		}
 
-		case "vs-bot": {
+		case 'vs-bot': {
 			return (
 				<VsBot.View
-					model={model.c}
-					ctx={ctx}
-					onBack={() =>
-						dispatch({
-							t: "input-mode",
-							mode: "none",
-							userId: ctx.currentUserId,
-						})
+					model={
+						model.c
 					}
-					dispatch={(c) => dispatch({ t: "vs-bot", c })}
+					ctx={
+						ctx
+					}
+					onBack={() =>
+						dispatch(
+							{
+								t: 'input-mode',
+								mode: 'none',
+								userId: ctx.currentUserId,
+							},
+						)
+					}
+					dispatch={(
+						c,
+					) =>
+						dispatch(
+							{
+								t: 'vs-bot',
+								c,
+							},
+						)
+					}
 				/>
 			);
 		}
 
-		case "vs-user": {
+		case 'vs-user': {
 			return (
 				<VsUser.View
-					model={model.c}
-					ctx={ctx}
-					onCancel={() =>
-						dispatch({
-							t: "input-mode",
-							mode: "none",
-							userId: ctx.currentUserId,
-						})
+					model={
+						model.c
 					}
-					dispatch={(c) => dispatch({ t: "vs-user", c })}
+					ctx={
+						ctx
+					}
+					onCancel={() =>
+						dispatch(
+							{
+								t: 'input-mode',
+								mode: 'none',
+								userId: ctx.currentUserId,
+							},
+						)
+					}
+					dispatch={(
+						c,
+					) =>
+						dispatch(
+							{
+								t: 'vs-user',
+								c,
+							},
+						)
+					}
 				/>
 			);
 		}

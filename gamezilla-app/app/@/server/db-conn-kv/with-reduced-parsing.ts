@@ -1,6 +1,6 @@
-import { isErr } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import type { IDbConnKv } from "./db-conn-kv";
+import {isErr} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import type {IDbConnKv} from './db-conn-kv';
 
 export const withReducedParsing = ({
 	dbConnKv,
@@ -12,12 +12,21 @@ export const withReducedParsing = ({
 	return {
 		...dbConnKv,
 
-		async get<TValue>(key: string, parser: p.Parser<TValue>) {
+		async get<TValue>(
+			key: string,
+			parser: p.Parser<TValue>,
+		) {
 			if (verifiedKeys.has(key)) {
-				return dbConnKv.get(key, p.noop<TValue>());
+				return dbConnKv.get(
+					key,
+					p.noop<TValue>(),
+				);
 			}
 
-			const got = await dbConnKv.get(key, parser);
+			const got = await dbConnKv.get(
+				key,
+				parser,
+			);
 
 			if (isErr(got)) {
 				return got;
@@ -28,14 +37,24 @@ export const withReducedParsing = ({
 			return got;
 		},
 
-		async getMany<TValue>(keys: string[], parser: p.Parser<TValue>) {
-			const key = keys.join(",");
+		async getMany<TValue>(
+			keys: string[],
+			parser: p.Parser<TValue>,
+		) {
+			const key = keys.join(',');
 
 			if (verifiedKeys.has(key)) {
-				return dbConnKv.getMany(keys, p.noop<TValue>());
+				return dbConnKv.getMany(
+					keys,
+					p.noop<TValue>(),
+				);
 			}
 
-			const got = await dbConnKv.getMany(keys, parser);
+			const got =
+				await dbConnKv.getMany(
+					keys,
+					parser,
+				);
 
 			if (isErr(got)) {
 				return got;

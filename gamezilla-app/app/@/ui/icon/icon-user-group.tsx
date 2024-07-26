@@ -1,4 +1,4 @@
-import type { IconInput } from "../icon-shared";
+import type {IconInput} from '../icon-shared';
 
 export const IconUserGroup = (input: IconInput) => {
 	return (
@@ -6,7 +6,12 @@ export const IconUserGroup = (input: IconInput) => {
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
 			fill="currentColor"
-			className={["h-6 w-6", input.className ? input.className : ""].join(" ")}
+			className={[
+				'h-6 w-6',
+				input.className
+					? input.className
+					: '',
+			].join(' ')}
 		>
 			<path
 				fillRule="evenodd"

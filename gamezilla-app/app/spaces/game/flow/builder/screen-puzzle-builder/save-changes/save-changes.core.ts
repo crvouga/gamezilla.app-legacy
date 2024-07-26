@@ -1,9 +1,9 @@
-import { isErr } from "gamezilla-app/@/core";
-import type { UpdateCore } from "../../builder.types";
+import {isErr} from 'gamezilla-app/@/core';
+import type {UpdateCore} from '../../builder.types';
 
-const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+const updateCore: UpdateCore = ({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "screen-puzzle-builder.saved-puzzle": {
+		case 'screen-puzzle-builder.saved-puzzle': {
 			if (isErr(msgCore.saved)) {
 				return modelCore;
 			}
@@ -19,7 +19,9 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 				packBuilder: modelCore.packBuilder,
 				puzzleBuilder: {
 					...modelCore.puzzleBuilder,
-					puzzle: msgCore.saved.value,
+					puzzle: msgCore
+						.saved
+						.value,
 				},
 			};
 		}

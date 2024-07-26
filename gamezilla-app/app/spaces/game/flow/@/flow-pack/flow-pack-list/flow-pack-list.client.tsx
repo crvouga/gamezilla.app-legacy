@@ -6,24 +6,24 @@ import {
 	TimeSpan,
 	descend,
 	isErr,
-} from "gamezilla-app/@/core";
-import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
-import { sendToServer, showErrSm } from "gamezilla-app/app/@/client";
-import { IconBox, Spinner, cn } from "gamezilla-app/app/@/ui";
-import { EmptyState } from "gamezilla-app/app/@/ui/empty-state";
-import { IntersectionObserverEmitter } from "gamezilla-app/app/@/ui/intersection-observer";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import type { FlowPack } from "../flow-pack";
+} from 'gamezilla-app/@/core';
+import {AppClientModule} from 'gamezilla-app/app/@/architecture/app-client';
+import {sendToServer, showErrSm} from 'gamezilla-app/app/@/client';
+import {IconBox, Spinner, cn} from 'gamezilla-app/app/@/ui';
+import {EmptyState} from 'gamezilla-app/app/@/ui/empty-state';
+import {IntersectionObserverEmitter} from 'gamezilla-app/app/@/ui/intersection-observer';
+import type {SpaceClientCtx} from 'gamezilla-app/app/spaces/@/space';
+import type {FlowPack} from '../flow-pack';
 import {
 	initClient,
 	type ClientModule,
 	type ModelClient,
-} from "./flow-pack-list.types";
+} from './flow-pack-list.types';
 
 const init = (input: {
 	ctx: SpaceClientCtx;
-	packs: ModelClient["packs"];
-}): ReturnType<ClientModule["update"]> => {
+	packs: ModelClient['packs'];
+}): ReturnType<ClientModule['update']> => {
 	return {
 		model: {
 			request: NotAsked,
@@ -32,64 +32,91 @@ const init = (input: {
 	};
 };
 
-const update: ClientModule["update"] = (input) => {
+const update: ClientModule['update'] = (input) => {
 	return AppClientModule.andThen(
-		{ model: input.model },
+		{model: input.model},
 		//
-		(model) => updateList({ ...input, model }),
+		(model) =>
+			updateList({
+				...input,
+				model,
+			}),
 		//
 	);
 };
 
-const updateList: ClientModule["update"] = (input) => {
-	const { model, msg, msgServer, ctx } = input;
+const updateList: ClientModule['update'] = (input) => {
+	const {model, msg, msgServer, ctx} = input;
 
 	switch (msg?.t) {
-		case "user-observed-end-of-list": {
+		case 'user-observed-end-of-list': {
 			return {
 				model: {
 					...model,
-					request: RequestResponse.startedRequest(ctx.now),
+					request: RequestResponse.startedRequest(
+						ctx.now,
+					),
 				},
 				msgCmd: [
-					sendToServer({
-						t: "list-packs",
-						input: {
-							order: {
-								lastUpdatedAt: "desc",
-							},
-							pagination: {
-								limit: 25,
-								offset: 0,
-							},
-							where: {
-								createdBy: ctx.currentUserId,
+					sendToServer(
+						{
+							t: 'list-packs',
+							input: {
+								order: {
+									lastUpdatedAt: 'desc',
+								},
+								pagination: {
+									limit: 25,
+									offset: 0,
+								},
+								where: {
+									createdBy: ctx.currentUserId,
+								},
 							},
 						},
-					}),
+					),
 				],
 			};
 		}
 
-		case "elapsed": {
+		case 'elapsed': {
 			return {
 				model: {
 					...model,
-					request: RequestResponse.timePassed(model.request, ctx.now),
+					request: RequestResponse.timePassed(
+						model.request,
+						ctx.now,
+					),
 				},
 			};
 		}
 	}
 
 	switch (msgServer?.t) {
-		case "listed-packs": {
+		case 'listed-packs': {
 			const puzzles =
-				msgServer.listed.t === "ok" ? msgServer.listed.value.items : [];
+				msgServer.listed
+					.t ===
+				'ok'
+					? msgServer
+							.listed
+							.value
+							.items
+					: [];
 
-			const packsNew = puzzles.reduce((acc, puzzle) => {
-				acc[puzzle.id] = puzzle;
-				return acc;
-			}, model.packs);
+			const packsNew = puzzles.reduce(
+				(
+					acc,
+					puzzle,
+				) => {
+					acc[
+						puzzle.id
+					] =
+						puzzle;
+					return acc;
+				},
+				model.packs,
+			);
 
 			return {
 				model: {
@@ -97,12 +124,22 @@ const updateList: ClientModule["update"] = (input) => {
 					request: RequestResponse.response(
 						model.request,
 						ctx.now,
-						Result.mapOk(msgServer.listed, () => null),
+						Result.mapOk(
+							msgServer.listed,
+							() =>
+								null,
+						),
 					),
 					packs: packsNew,
 				},
-				msgCmd: isErr(msgServer.listed)
-					? showErrSm(input.ctx.t("app.something-went-wrong"))
+				msgCmd: isErr(
+					msgServer.listed,
+				)
+					? showErrSm(
+							input.ctx.t(
+								'app.something-went-wrong',
+							),
+					  )
 					: [],
 			};
 		}
@@ -111,41 +148,76 @@ const updateList: ClientModule["update"] = (input) => {
 		}
 	}
 
-	return { model };
+	return {model};
 };
 
-const View: ClientModule["View"] = (input) => {
-	const { model, dispatch, ctx } = input;
+const View: ClientModule['View'] = (input) => {
+	const {model, dispatch, ctx} = input;
 
 	const packs = Object.values(model.packs);
-	const shouldShowLoadingState = RequestResponse.isRequesting(model.request);
-	const shouldShowEmptyState = !shouldShowLoadingState && packs.length === 0;
+	const shouldShowLoadingState = RequestResponse.isRequesting(
+		model.request,
+	);
+	const shouldShowEmptyState =
+		!shouldShowLoadingState && packs.length === 0;
 
 	return (
 		<div className="relative flex w-full flex-1 flex-col gap-2 overflow-hidden">
 			<div className="relative flex max-h-full w-full flex-1 flex-col items-center overflow-hidden overflow-y-scroll border-t border-t-neutral-800">
 				{shouldShowEmptyState && (
 					<EmptyState
-						label={ctx.t("flow.no-packs")}
-						renderIcon={(input) => <IconBox {...input} />}
+						label={ctx.t(
+							'flow.no-packs',
+						)}
+						renderIcon={(
+							input,
+						) => (
+							<IconBox
+								{...input}
+							/>
+						)}
 					/>
 				)}
 
 				{packs
-					.sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt)))
-					.map((pack) => (
-						<FlowPackListItem
-							ctx={ctx}
-							key={pack.id}
-							pack={pack}
-							onClick={() => input.emits?.clickedPackItem(pack)}
-						/>
-					))}
+					.sort(
+						descend(
+							(
+								pack,
+							) =>
+								Posix.toNumber(
+									pack.lastUpdatedAt,
+								),
+						),
+					)
+					.map(
+						(
+							pack,
+						) => (
+							<FlowPackListItem
+								ctx={
+									ctx
+								}
+								key={
+									pack.id
+								}
+								pack={
+									pack
+								}
+								onClick={() =>
+									input.emits?.clickedPackItem(
+										pack,
+									)
+								}
+							/>
+						),
+					)}
 
 				<div
 					className={cn(
-						"flex h-32 w-full items-center justify-center py-6",
-						!shouldShowLoadingState && "opacity-0",
+						'flex h-32 w-full items-center justify-center py-6',
+						!shouldShowLoadingState &&
+							'opacity-0',
 					)}
 				>
 					<Spinner />
@@ -153,12 +225,20 @@ const View: ClientModule["View"] = (input) => {
 
 				<IntersectionObserverEmitter
 					id="flow-pack-list"
-					onVisible={() => dispatch({ t: "user-observed-end-of-list" })}
+					onVisible={() =>
+						dispatch(
+							{
+								t: 'user-observed-end-of-list',
+							},
+						)
+					}
 				/>
 			</div>
 
 			<div className="absolute bottom-6 right-4 bg-black">
-				{input.slots?.fab?.(null)}
+				{input.slots?.fab?.(
+					null,
+				)}
 			</div>
 		</div>
 	);
@@ -181,19 +261,30 @@ const FlowPackListItem = ({
 			className="flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden border-b border-b-neutral-800 px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50"
 			onClick={onClick}
 		>
-			{false && <IconBox className="h-9 w-9 shrink-0" />}
+			{false && (
+				<IconBox className="h-9 w-9 shrink-0" />
+			)}
 			<div className="flex flex-1 flex-col overflow-hidden">
 				<p className="overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold">
-					{pack.name}
+					{
+						pack.name
+					}
 				</p>
 				<p className="text-sm text-neutral-300">
 					{TimeSpan.humanFriendlyString(
-						Posix.diff(pack.lastUpdatedAt, ctx.now),
+						Posix.diff(
+							pack.lastUpdatedAt,
+							ctx.now,
+						),
 					)}
 				</p>
 			</div>
 			<p className="flex shrink-0 text-sm text-neutral-300">
-				{plural(pack.puzzleIds, "puzzle", "puzzles")}
+				{plural(
+					pack.puzzleIds,
+					'puzzle',
+					'puzzles',
+				)}
 			</p>
 		</button>
 	);
@@ -202,10 +293,10 @@ const FlowPackListItem = ({
 const plural = (arr: unknown[], singular: string, plural: string) =>
 	`${arr.length} ${arr.length === 1 ? singular : plural}`;
 
-const subscriptions: ClientModule["subscriptions"] = (input) => {
+const subscriptions: ClientModule['subscriptions'] = (input) => {
 	return RequestResponse.subscriptions(
 		input.model.request,
-		() => ({ t: "elapsed" }),
+		() => ({t: 'elapsed'}),
 		//
 	);
 };

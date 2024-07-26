@@ -27,7 +27,12 @@ const chain =
 const timeout =
 	<T>(milliseconds: number, value: T): IO<T> =>
 	async () => {
-		await new Promise((resolve) => setTimeout(resolve, milliseconds));
+		await new Promise((resolve) =>
+			setTimeout(
+				resolve,
+				milliseconds,
+			),
+		);
 		return value;
 	};
 

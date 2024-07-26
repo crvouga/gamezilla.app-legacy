@@ -1,7 +1,7 @@
-import { List, NonNegInt, pipe } from "gamezilla-app/@/core";
-import { TimeSpan } from "gamezilla-app/@/core/time-span";
-import { Direction } from "./direction";
-import { Position } from "./position";
+import {List, NonNegInt, pipe} from 'gamezilla-app/@/core';
+import {TimeSpan} from 'gamezilla-app/@/core/time-span';
+import {Direction} from './direction';
+import {Position} from './position';
 
 //
 //
@@ -29,16 +29,16 @@ export type Model = {
 
 export type Event =
 	| {
-			t: "tick";
+			t: 'tick';
 	  }
 	| {
-			t: "changed-direction";
+			t: 'changed-direction';
 			direction: Direction;
 	  };
 
-export type Status = "Paused" | "Playing";
+export type Status = 'Paused' | 'Playing';
 
-export type MouseStatus = "active" | "inactive";
+export type MouseStatus = 'active' | 'inactive';
 
 //
 //
@@ -48,7 +48,7 @@ export type MouseStatus = "active" | "inactive";
 //
 //
 
-const bounds: Model["bounds"] = {
+const bounds: Model['bounds'] = {
 	lower: {
 		x: 0,
 		y: 0,
@@ -59,27 +59,27 @@ const bounds: Model["bounds"] = {
 	},
 };
 
-const head: Model["head"] = {
+const head: Model['head'] = {
 	x: Math.floor((bounds.upper.x - bounds.lower.x) / 2) - 3,
 	y: Math.floor((bounds.upper.y - bounds.lower.y) / 2),
 };
 
-const tail: Model["tail"] = List.fromArray([
-	Position.subtract(head, { x: 1, y: 0 }),
-	Position.subtract(head, { x: 2, y: 0 }),
+const tail: Model['tail'] = List.fromArray([
+	Position.subtract(head, {x: 1, y: 0}),
+	Position.subtract(head, {x: 2, y: 0}),
 ]);
 
-const food: Model["food"] = Position.add(head, { x: 3, y: 0 });
+const food: Model['food'] = Position.add(head, {x: 3, y: 0});
 
 export const init: Model = {
-	status: "Paused",
+	status: 'Paused',
 	tickRate: TimeSpan.milliseconds(1000 / 6),
 	head,
 	tail,
 	food,
 	tailLength: NonNegInt.of(4),
 	foodEatenCount: NonNegInt.of(0),
-	direction: "right",
+	direction: 'right',
 	directionQueue: [],
 	bounds,
 };
@@ -98,14 +98,23 @@ const circularIndex = (index: number, length: number): number => {
 
 const circular = (model: Model, position: Position): Position => {
 	return {
-		x: circularIndex(position.x, model.bounds.upper.x),
-		y: circularIndex(position.y, model.bounds.upper.y),
+		x: circularIndex(
+			position.x,
+			model.bounds.upper.x,
+		),
+		y: circularIndex(
+			position.y,
+			model.bounds.upper.y,
+		),
 	};
 };
 
 export const enqueueDirection = (direction: Direction, model: Model): Model => {
 	const directionQueueNew = unique(
-		[...model.directionQueue, direction].slice(0, 2),
+		[...model.directionQueue, direction].slice(
+			0,
+			2,
+		),
 	);
 
 	return {
@@ -119,7 +128,11 @@ export const toEmptyPositions = (model: Model) => {
 	return Position.range(model.bounds).filter((position) =>
 		List.every(
 			snake,
-			(snakePosition) => !Position.equals(position, snakePosition),
+			(snakePosition) =>
+				!Position.equals(
+					position,
+					snakePosition,
+				),
 		),
 	);
 };
@@ -132,26 +145,40 @@ export const step = (model: Model): Model => {
 		(x) => List.map(x, (x) => circular(model, x)),
 	);
 
-	const queuedDirection = model.directionQueue[0] ?? model.direction;
+	const queuedDirection =
+		model.directionQueue[0] ?? model.direction;
 
 	const directionQueueNew = model.directionQueue.slice(1);
 
-	const directionNew = Direction.isOpposite(queuedDirection, model.direction)
+	const directionNew = Direction.isOpposite(
+		queuedDirection,
+		model.direction,
+	)
 		? model.direction
 		: queuedDirection;
 
 	const headNew = circular(
 		model,
-		Position.add(model.head, Direction.toVector(directionNew)),
+		Position.add(
+			model.head,
+			Direction.toVector(
+				directionNew,
+			),
+		),
 	);
 
 	const isSnakeEatingFood = List.some(
 		List.concat(List.of(model.head), tailNew),
-		(position) => Position.equals(position, model.food),
+		(position) =>
+			Position.equals(
+				position,
+				model.food,
+			),
 	);
 
 	const foodNew = isSnakeEatingFood
-		? shuffle(toEmptyPositions(model))[0] ?? model.food
+		? shuffle(toEmptyPositions(model))[0] ??
+		  model.food
 		: model.food;
 
 	const tailLengthNew = isSnakeEatingFood
@@ -195,19 +222,23 @@ const unique = <T,>(as: T[]): T[] => {
 //
 
 export const theme = {
-	light: "#AAD751",
-	dark: "#A2D149",
-	snake: "#4573E8",
-	apple: "#E7471D",
+	light: '#AAD751',
+	dark: '#A2D149',
+	snake: '#4573E8',
+	apple: '#E7471D',
 };
 
 export const draw = (
-	{ width, height }: { width: number; height: number },
+	{width, height}: {width: number; height: number},
 	model: Model,
 	ctx: CanvasRenderingContext2D,
 ): void => {
-	const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x);
-	const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y);
+	const tileWidth =
+		width /
+		(model.bounds.upper.x - model.bounds.lower.x);
+	const tileHeight =
+		height /
+		(model.bounds.upper.y - model.bounds.lower.y);
 
 	ctx.canvas.width = width;
 	ctx.canvas.height = height;
@@ -235,7 +266,10 @@ export const draw = (
 		);
 	}
 
-	for (const position of List.concat(List.of(model.head), model.tail)) {
+	for (const position of List.concat(
+		List.of(model.head),
+		model.tail,
+	)) {
 		ctx.fillStyle = theme.snake;
 		ctx.strokeStyle = theme.snake;
 		ctx.strokeRect(
@@ -253,16 +287,16 @@ export const draw = (
 	}
 };
 
-export type TileVariant = "light" | "dark";
+export type TileVariant = 'light' | 'dark';
 
 export const toTileVariant = (position: Position): TileVariant => {
 	if (
 		(isEven(position.x) && isOdd(position.y)) ||
 		(isOdd(position.x) && isEven(position.y))
 	) {
-		return "light";
+		return 'light';
 	}
-	return "dark";
+	return 'dark';
 };
 
 const isEven = (x: number) => x % 2 === 0;
@@ -275,11 +309,11 @@ const isOdd = (x: number) => !isEven(x);
 //
 //
 
-const toViewBox = ({ lower, upper }: Model["bounds"]) =>
-	[lower.x, lower.y, upper.x, upper.y].join(", ");
+const toViewBox = ({lower, upper}: Model['bounds']) =>
+	[lower.x, lower.y, upper.x, upper.y].join(', ');
 
 export const CoverArt = () => {
-	const bounds: Model["bounds"] = {
+	const bounds: Model['bounds'] = {
 		lower: {
 			x: 0,
 			y: 0,
@@ -290,47 +324,101 @@ export const CoverArt = () => {
 		},
 	};
 
-	const tail: Model["tail"] = List.fromArray([
-		{ x: 0, y: 1 },
-		{ x: 1, y: 1 },
+	const tail: Model['tail'] = List.fromArray([
+		{x: 0, y: 1},
+		{x: 1, y: 1},
 	]);
 
-	const food: Model["food"] = { x: 2, y: 2 };
+	const food: Model['food'] = {x: 2, y: 2};
 
 	return (
 		<svg width="100%" viewBox={toViewBox(bounds)}>
-			{Position.range(bounds).map(({ x, y }, index) => (
-				<rect
-					key={`${x} ${y} ${index}`}
-					x={x}
-					y={y}
-					width={1}
-					height={1}
-					fill={theme[toTileVariant({ x, y })]}
-					stroke="none"
-				/>
-			))}
+			{Position.range(bounds).map(
+				(
+					{
+						x,
+						y,
+					},
+					index,
+				) => (
+					<rect
+						key={`${x} ${y} ${index}`}
+						x={
+							x
+						}
+						y={
+							y
+						}
+						width={
+							1
+						}
+						height={
+							1
+						}
+						fill={
+							theme[
+								toTileVariant(
+									{
+										x,
+										y,
+									},
+								)
+							]
+						}
+						stroke="none"
+					/>
+				),
+			)}
 
-			{List.map(tail, ({ x, y }, index) => (
-				<rect
-					key={`${x} ${y} ${index}`}
-					x={x}
-					y={y}
-					width={1}
-					height={1}
-					fill={theme.snake}
-					stroke="none"
-				/>
-			))}
+			{List.map(
+				tail,
+				(
+					{
+						x,
+						y,
+					},
+					index,
+				) => (
+					<rect
+						key={`${x} ${y} ${index}`}
+						x={
+							x
+						}
+						y={
+							y
+						}
+						width={
+							1
+						}
+						height={
+							1
+						}
+						fill={
+							theme.snake
+						}
+						stroke="none"
+					/>
+				),
+			)}
 
-			{[food].map(({ x, y }, index) => (
+			{[food].map(({x, y}, index) => (
 				<rect
 					key={`${x} ${y} ${index}`}
-					x={x}
-					y={y}
-					width={1}
-					height={1}
-					fill={theme.apple}
+					x={
+						x
+					}
+					y={
+						y
+					}
+					width={
+						1
+					}
+					height={
+						1
+					}
+					fill={
+						theme.apple
+					}
 					stroke="none"
 				/>
 			))}

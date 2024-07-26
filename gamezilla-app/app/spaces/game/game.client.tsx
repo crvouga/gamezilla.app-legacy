@@ -1,12 +1,12 @@
 import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import { Sub } from "gamezilla-app/@/core";
-import { GameClientModule } from "../@/architecture/game-client-v2";
-import { SpaceClientCmd } from "../@/space-client-cmd";
-import { ConnectFour } from "./connect-four/connect-four.client";
-import { FlowClient } from "./flow/flow.client";
+} from 'gamezilla-app/app/spaces/@/space';
+import {Sub} from 'gamezilla-app/@/core';
+import {GameClientModule} from '../@/architecture/game-client-v2';
+import {SpaceClientCmd} from '../@/space-client-cmd';
+import {ConnectFour} from './connect-four/connect-four.client';
+import {FlowClient} from './flow/flow.client';
 import type {
 	GameName,
 	ModelClient,
@@ -15,7 +15,7 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./game.types";
+} from './game.types';
 
 //
 //
@@ -48,24 +48,26 @@ type Module = GameClientModule<{
 //
 //
 
-const init = (gameName: GameName): Module["init"] => {
+const init = (gameName: GameName): Module['init'] => {
 	switch (gameName) {
-		case "connect-four": {
+		case 'connect-four': {
 			return {
-				t: "connect-four",
+				t: 'connect-four',
 				c: ConnectFour.init,
 			};
 		}
 
-		case "flow": {
+		case 'flow': {
 			return {
-				t: "flow",
+				t: 'flow',
 				c: FlowClient.init,
 			};
 		}
 
 		default: {
-			throw new Error(`Unknown game name: ${gameName}`);
+			throw new Error(
+				`Unknown game name: ${gameName}`,
+			);
 		}
 	}
 };
@@ -78,54 +80,140 @@ const init = (gameName: GameName): Module["init"] => {
 //
 //
 
-const update: Module["update"] = (input) => {
+const update: Module['update'] = (input) => {
 	switch (input.modelCore.t) {
-		case "connect-four": {
-			const updated = ConnectFour.update({
-				ctx: input.ctx,
-				modelCore: input.modelCore.c,
-				model:
-					input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
-				msgCmd: input.msgCmd,
-				msgEvt: input.msgEvt,
-				msgServer:
-					input.msgServer?.t === "connect-four" ? input.msgServer.c : null,
-				msgCore:
-					input.msgCore?.t === "connect-four"
-						? { ...input.msgCore, ...input.msgCore.c }
-						: null,
-				msg: input.msg?.t === "connect-four" ? input.msg.c : null,
-			});
+		case 'connect-four': {
+			const updated =
+				ConnectFour.update(
+					{
+						ctx: input.ctx,
+						modelCore: input
+							.modelCore
+							.c,
+						model:
+							input
+								.model
+								?.t ===
+							'connect-four'
+								? input
+										.model
+										.c
+								: ConnectFour.init,
+						msgCmd: input.msgCmd,
+						msgEvt: input.msgEvt,
+						msgServer:
+							input
+								.msgServer
+								?.t ===
+							'connect-four'
+								? input
+										.msgServer
+										.c
+								: null,
+						msgCore:
+							input
+								.msgCore
+								?.t ===
+							'connect-four'
+								? {
+										...input.msgCore,
+										...input
+											.msgCore
+											.c,
+								  }
+								: null,
+						msg:
+							input
+								.msg
+								?.t ===
+							'connect-four'
+								? input
+										.msg
+										.c
+								: null,
+					},
+				);
 
-			const tagged = GameClientModule.tagOutput(
-				"connect-four",
-				(msgCmd) => SpaceClientCmd.tag("connect-four", msgCmd),
-				updated,
-			);
+			const tagged =
+				GameClientModule.tagOutput(
+					'connect-four',
+					(
+						msgCmd,
+					) =>
+						SpaceClientCmd.tag(
+							'connect-four',
+							msgCmd,
+						),
+					updated,
+				);
 
 			return tagged;
 		}
 
-		case "flow": {
-			const updated = FlowClient.update({
-				ctx: input.ctx,
-				modelCore: input.modelCore.c,
-				model: input.model?.t === "flow" ? input.model.c : FlowClient.init,
-				msgCmd: input.msgCmd,
-				msgEvt: input.msgEvt,
-				msgServer: input.msgServer?.t === "flow" ? input.msgServer.c : null,
-				msgCore:
-					input.msgCore?.t === "flow"
-						? { ...input.msgCore, ...input.msgCore.c }
-						: null,
-				msg: input.msg?.t === "flow" ? input.msg.c : null,
-			});
+		case 'flow': {
+			const updated =
+				FlowClient.update(
+					{
+						ctx: input.ctx,
+						modelCore: input
+							.modelCore
+							.c,
+						model:
+							input
+								.model
+								?.t ===
+							'flow'
+								? input
+										.model
+										.c
+								: FlowClient.init,
+						msgCmd: input.msgCmd,
+						msgEvt: input.msgEvt,
+						msgServer:
+							input
+								.msgServer
+								?.t ===
+							'flow'
+								? input
+										.msgServer
+										.c
+								: null,
+						msgCore:
+							input
+								.msgCore
+								?.t ===
+							'flow'
+								? {
+										...input.msgCore,
+										...input
+											.msgCore
+											.c,
+								  }
+								: null,
+						msg:
+							input
+								.msg
+								?.t ===
+							'flow'
+								? input
+										.msg
+										.c
+								: null,
+					},
+				);
 
-			const tagged = GameClientModule.tagOutput(
-				"flow",
-				(msgCmd) => SpaceClientCmd.tag("flow", msgCmd),
-				updated,
-			);
+			const tagged =
+				GameClientModule.tagOutput(
+					'flow',
+					(
+						msgCmd,
+					) =>
+						SpaceClientCmd.tag(
+							'flow',
+							msgCmd,
+						),
+					updated,
+				);
 
 			return tagged;
 		}
@@ -140,29 +228,41 @@ const update: Module["update"] = (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = (input) => {
-	const { modelCore, model } = input;
+const subscriptions: Module['subscriptions'] = (input) => {
+	const {modelCore, model} = input;
 
 	switch (modelCore.t) {
-		case "connect-four": {
+		case 'connect-four': {
 			return Sub.tag(
-				"connect-four",
-				ConnectFour.subscriptions({
-					ctx: input.ctx,
-					modelCore: modelCore.c,
-					model: model.t === "connect-four" ? model.c : ConnectFour.init,
-				}),
+				'connect-four',
+				ConnectFour.subscriptions(
+					{
+						ctx: input.ctx,
+						modelCore: modelCore.c,
+						model:
+							model.t ===
+							'connect-four'
+								? model.c
+								: ConnectFour.init,
+					},
+				),
 			);
 		}
 
-		case "flow": {
+		case 'flow': {
 			return Sub.tag(
-				"flow",
-				FlowClient.subscriptions({
-					ctx: input.ctx,
-					modelCore: modelCore.c,
-					model: model.t === "flow" ? model.c : FlowClient.init,
-				}),
+				'flow',
+				FlowClient.subscriptions(
+					{
+						ctx: input.ctx,
+						modelCore: modelCore.c,
+						model:
+							model.t ===
+							'flow'
+								? model.c
+								: FlowClient.init,
+					},
+				),
 			);
 		}
 	}
@@ -176,49 +276,98 @@ const subscriptions: Module["subscriptions"] = (input) => {
 //
 //
 
-const View: Module["View"] = (input) => {
-	const { model, ctx, modelCore, dispatch } = input;
+const View: Module['View'] = (input) => {
+	const {model, ctx, modelCore, dispatch} = input;
 
 	switch (modelCore.t) {
-		case "connect-four": {
+		case 'connect-four': {
 			return (
 				<ConnectFour.View
-					ctx={ctx}
-					dispatch={(c) => dispatch({ t: "connect-four", c })}
-					modelCore={modelCore.c}
-					model={model?.t === "connect-four" ? model.c : ConnectFour.init}
+					ctx={
+						ctx
+					}
+					dispatch={(
+						c,
+					) =>
+						dispatch(
+							{
+								t: 'connect-four',
+								c,
+							},
+						)
+					}
+					modelCore={
+						modelCore.c
+					}
+					model={
+						model?.t ===
+						'connect-four'
+							? model.c
+							: ConnectFour.init
+					}
 				/>
 			);
 		}
 
-		case "flow": {
+		case 'flow': {
 			return (
 				<FlowClient.View
-					ctx={ctx}
-					dispatch={(c) => {
-						dispatch({ t: "flow", c });
+					ctx={
+						ctx
+					}
+					dispatch={(
+						c,
+					) => {
+						dispatch(
+							{
+								t: 'flow',
+								c,
+							},
+						);
 					}}
-					modelCore={modelCore.c}
-					model={model.t === "flow" ? model.c : FlowClient.init}
+					modelCore={
+						modelCore.c
+					}
+					model={
+						model.t ===
+						'flow'
+							? model.c
+							: FlowClient.init
+					}
 				/>
 			);
 		}
 	}
 };
 
-const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-	const { msgCore, modelCore, ctx, dispatch } = input;
+const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
+	const {msgCore, modelCore, ctx, dispatch} = input;
 
 	switch (modelCore.t) {
-		case "connect-four": {
+		case 'connect-four': {
 			switch (msgCore.t) {
-				case "connect-four": {
+				case 'connect-four': {
 					return (
 						<ConnectFour.ViewFeedItem
-							ctx={ctx}
-							msgCore={msgCore.c}
-							modelCore={modelCore.c}
-							dispatch={(c) => dispatch({ t: "connect-four", c })}
+							ctx={
+								ctx
+							}
+							msgCore={
+								msgCore.c
+							}
+							modelCore={
+								modelCore.c
+							}
+							dispatch={(
+								c,
+							) =>
+								dispatch(
+									{
+										t: 'connect-four',
+										c,
+									},
+								)
+							}
 						/>
 					);
 				}

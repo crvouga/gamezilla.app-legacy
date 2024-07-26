@@ -1,12 +1,16 @@
-import type { IconInput } from "../icon-shared";
+import type {IconInput} from '../icon-shared';
 
-export const IconExclamationCircle = ({ className, ...input }: IconInput) => {
+export const IconExclamationCircle = ({className, ...input}: IconInput) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
 			fill="currentColor"
-			className={className ? className : "h-6 w-6"}
+			className={
+				className
+					? className
+					: 'h-6 w-6'
+			}
 			{...input}
 		>
 			<path

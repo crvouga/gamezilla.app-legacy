@@ -1,29 +1,29 @@
-import { p } from "gamezilla-app/@/core/parser";
-import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import type { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
+import {p} from 'gamezilla-app/@/core/parser';
+import type {GameClientModule} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2';
+import type {GameServerModule} from 'gamezilla-app/app/spaces/@/architecture/game-server-v2';
 import type {
 	SpaceClientEvent,
 	SpaceCtx,
 	SpaceServerCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import { FlowCoreEvent } from "../@/flow-core-event";
-import type { FlowClientCtx } from "../@/flow-ctx";
-import type { FlowPack } from "../@/flow-pack/flow-pack";
-import type { IFlowPackDb } from "../@/flow-pack/flow-pack-db";
-import { FlowPackListTypes } from "../@/flow-pack/flow-pack-list";
-import { FlowPackPuzzlesGridTypes } from "../@/flow-pack/flow-pack-puzzles-grid";
-import type { FlowPuzzle } from "../@/flow-puzzle/flow-puzzle";
-import type { IFlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db/flow-puzzle-db";
-import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
-import { FlowPuzzleList } from "../@/flow-puzzle/flow-puzzle-list";
-import { ListTabs } from "./list-tabs";
-import { ScreenOpenPackTypes } from "./screen-open-pack";
-import { ScreenOpenPuzzleTypes } from "./screen-open-puzzle";
-import { ScreenPackBuilderTypes } from "./screen-pack-builder";
-import { ScreenPuzzleBuilderTypes } from "./screen-puzzle-builder";
+} from 'gamezilla-app/app/spaces/@/space';
+import type {SpaceClientCmd} from 'gamezilla-app/app/spaces/@/space-client-cmd';
+import type {SpaceServerCmd} from 'gamezilla-app/app/spaces/@/space-server-cmd';
+import {FlowCoreEvent} from '../@/flow-core-event';
+import type {FlowClientCtx} from '../@/flow-ctx';
+import type {FlowPack} from '../@/flow-pack/flow-pack';
+import type {IFlowPackDb} from '../@/flow-pack/flow-pack-db';
+import {FlowPackListTypes} from '../@/flow-pack/flow-pack-list';
+import {FlowPackPuzzlesGridTypes} from '../@/flow-pack/flow-pack-puzzles-grid';
+import type {FlowPuzzle} from '../@/flow-puzzle/flow-puzzle';
+import type {IFlowPuzzleDb} from '../@/flow-puzzle/flow-puzzle-db/flow-puzzle-db';
+import type {FlowPuzzleId} from '../@/flow-puzzle/flow-puzzle-id';
+import {FlowPuzzleList} from '../@/flow-puzzle/flow-puzzle-list';
+import {ListTabs} from './list-tabs';
+import {ScreenOpenPackTypes} from './screen-open-pack';
+import {ScreenOpenPuzzleTypes} from './screen-open-puzzle';
+import {ScreenPackBuilderTypes} from './screen-pack-builder';
+import {ScreenPuzzleBuilderTypes} from './screen-puzzle-builder';
 
 //
 //
@@ -42,7 +42,10 @@ export type ClientModule = GameClientModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: FlowClientCtx;
-	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgCmdOut: SpaceClientCmd<{
+		MsgToServer: MsgToServer;
+		MsgClient: MsgClient;
+	}>;
 	MsgEvtIn: SpaceClientEvent;
 	MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient;
 }>;
@@ -83,10 +86,10 @@ type BaseModelClient = {
 	flowPuzzleList: FlowPuzzleList.ModelClient;
 	flowPackList: FlowPackListTypes.ModelClient;
 	puzzleBuilderOpened?:
-		| "more"
-		| "edit-name"
-		| "delete-forever"
-		| "unsaved-changes"
+		| 'more'
+		| 'edit-name'
+		| 'delete-forever'
+		| 'unsaved-changes'
 		| null;
 };
 
@@ -96,7 +99,7 @@ export type ModelClient = BaseModelClient &
 	ScreenPackBuilderTypes.ModelClient &
 	ScreenOpenPackTypes.ModelClient;
 
-export const initClient: ClientModule["init"] = {
+export const initClient: ClientModule['init'] = {
 	...ScreenOpenPuzzleTypes.initClient,
 	...ScreenPuzzleBuilderTypes.initClient,
 	...ScreenPackBuilderTypes.initClient,
@@ -112,7 +115,7 @@ export const ModelServer = p.obj({
 });
 export type ModelServer = p.Infer<typeof ModelServer>;
 
-export const initServer: ServerModule["init"] = {
+export const initServer: ServerModule['init'] = {
 	flowPackList: FlowPackListTypes.initServer,
 };
 
@@ -124,13 +127,13 @@ export const initServer: ServerModule["init"] = {
 //
 //
 
-type BaseMsgClient = { t: "time-passed" };
+type BaseMsgClient = {t: 'time-passed'};
 
 //
 
 export type MsgClient =
-	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgClient }
-	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgClient }
+	| {t: 'flow-pack-list'; c: FlowPackListTypes.MsgClient}
+	| {t: 'flow-puzzle-list'; c: FlowPuzzleList.MsgClient}
 	| BaseMsgClient
 	| ScreenOpenPuzzleTypes.MsgClient
 	| ScreenPuzzleBuilderTypes.MsgClient
@@ -139,24 +142,30 @@ export type MsgClient =
 	| ScreenOpenPackTypes.MsgClient;
 
 export type MsgServer =
-	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgServer }
-	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgServer }
+	| {t: 'flow-pack-list'; c: FlowPackListTypes.MsgServer}
+	| {t: 'flow-puzzle-list'; c: FlowPuzzleList.MsgServer}
 	| ScreenOpenPuzzleTypes.MsgServer
 	| ScreenPuzzleBuilderTypes.MsgServer
 	| ScreenPackBuilderTypes.MsgServer
 	| ScreenOpenPackTypes.MsgServer;
 
 export type MsgToServer =
-	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgToServer }
-	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToServer }
+	| {
+			t: 'flow-pack-list';
+			c: FlowPackListTypes.MsgToServer;
+	  }
+	| {t: 'flow-puzzle-list'; c: FlowPuzzleList.MsgToServer}
 	| ScreenPuzzleBuilderTypes.MsgToServer
 	| ScreenOpenPuzzleTypes.MsgToServer
 	| ScreenPackBuilderTypes.MsgToServer
 	| ScreenOpenPackTypes.MsgToServer;
 
 export type MsgToClient =
-	| { t: "flow-pack-list"; c: FlowPackListTypes.MsgToClient }
-	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToClient }
+	| {
+			t: 'flow-pack-list';
+			c: FlowPackListTypes.MsgToClient;
+	  }
+	| {t: 'flow-puzzle-list'; c: FlowPuzzleList.MsgToClient}
 	| ScreenPuzzleBuilderTypes.MsgToClient
 	| ScreenOpenPuzzleTypes.MsgToClient
 	| ScreenPackBuilderTypes.MsgToClient
@@ -180,9 +189,9 @@ export const MsgCore = p.or(
 export type MsgCore = p.Infer<typeof MsgCore>;
 
 const Open = p.or(
-	p.obj({ t: p.l("list") }),
-	p.obj({ t: p.l("puzzle-builder") }),
-	p.obj({ t: p.l("pack-builder") }),
+	p.obj({t: p.l('list')}),
+	p.obj({t: p.l('puzzle-builder')}),
+	p.obj({t: p.l('pack-builder')}),
 );
 type Open = p.Infer<typeof Open>;
 
@@ -202,4 +211,4 @@ export type UpdateCore = (input: {
 	ctx: SpaceCtx;
 	msgCore: MsgCore;
 	modelCore: ModelCore;
-}) => ModelCore & { event?: FlowCoreEvent };
+}) => ModelCore & {event?: FlowCoreEvent};

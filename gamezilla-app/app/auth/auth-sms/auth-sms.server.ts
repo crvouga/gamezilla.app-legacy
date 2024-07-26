@@ -7,32 +7,32 @@ import {
 	TimeSpan,
 	isErr,
 	type Task,
-} from "gamezilla-app/@/core";
-import { Hashing } from "gamezilla-app/@/hashing";
-import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
-import { Translator } from "gamezilla-app/app/@/client/translator";
-import { UserId } from "gamezilla-app/app/@/data";
-import type { UserAccount } from "gamezilla-app/app/@/data/account";
+} from 'gamezilla-app/@/core';
+import {Hashing} from 'gamezilla-app/@/hashing';
+import {AppServerModule} from 'gamezilla-app/app/@/architecture/app-server';
+import {Translator} from 'gamezilla-app/app/@/client/translator';
+import {UserId} from 'gamezilla-app/app/@/data';
+import type {UserAccount} from 'gamezilla-app/app/@/data/account';
 import {
 	sendToClient,
 	type ServerCmd,
 	type ServerCtx,
 	type ServerEvent,
-} from "gamezilla-app/app/@/server";
-import { ILogger } from "gamezilla-app/app/@/server/logger";
-import { SMS } from "gamezilla-app/app/@/server/sms";
-import type { IUserAccountDb } from "../@/server/user-account-db";
-import { UserAccountDb } from "../@/server/user-account-db/user-account-db-impl";
-import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
-import { VerificationAttemptDb } from "./verify-sms/verification-attempt";
-import { VerificationCodeGenerator } from "./verify-sms/verification-code-generator";
-import { VerificationDb } from "./verify-sms/verification/verification-db";
+} from 'gamezilla-app/app/@/server';
+import {ILogger} from 'gamezilla-app/app/@/server/logger';
+import {SMS} from 'gamezilla-app/app/@/server/sms';
+import type {IUserAccountDb} from '../@/server/user-account-db';
+import {UserAccountDb} from '../@/server/user-account-db/user-account-db-impl';
+import type {MsgServer, MsgToClient, MsgToServer} from './auth-sms.types';
+import {VerificationAttemptDb} from './verify-sms/verification-attempt';
+import {VerificationCodeGenerator} from './verify-sms/verification-code-generator';
+import {VerificationDb} from './verify-sms/verification/verification-db';
 import {
 	verifyCodeProblemToString,
 	type IVerifySMS,
 	type VerifyCodeProblem,
-} from "./verify-sms/verify-sms";
-import { VerifySMS } from "./verify-sms/verify-sms-impl/verify-sms-impl";
+} from './verify-sms/verify-sms';
+import {VerifySMS} from './verify-sms/verify-sms-impl/verify-sms-impl';
 
 //
 //
@@ -62,31 +62,31 @@ type Module = AppServerModule<{
 //
 //
 
-const getDeps: Module["getDeps"] = async ({ ctx }) => {
+const getDeps: Module['getDeps'] = async ({ctx}) => {
 	const verificationDb = VerificationDb({
-		t: "postgres",
+		t: 'postgres',
 		dbConnSql: ctx.dbConnSql,
 	});
 
 	const verificationAttemptDb = VerificationAttemptDb({
-		t: "postgres",
+		t: 'postgres',
 		dbConnSql: ctx.dbConnSql,
 	});
 
-	const hashing = Hashing({ t: "bun" });
+	const hashing = Hashing({t: 'bun'});
 
 	const verificationCodeGenerator = VerificationCodeGenerator({
-		t: "fake",
-		code: "123",
+		t: 'fake',
+		code: '123',
 	});
 
 	const sms = SMS({
-		t: "fake",
-		logger: ILogger.prefix("sms", ctx.logger),
+		t: 'fake',
+		logger: ILogger.prefix('sms', ctx.logger),
 	});
 
 	const verifySMSInHouse = VerifySMS({
-		t: "in-house",
+		t: 'in-house',
 		logger: ctx.logger,
 		hashing,
 		now: Posix.now,
@@ -102,15 +102,21 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 	});
 
 	const verifySMSTwilio = VerifySMS({
-		t: "twilio",
-		logger: ILogger.prefix("twilio-verify", ctx.logger),
+		t: 'twilio',
+		logger: ILogger.prefix(
+			'twilio-verify',
+			ctx.logger,
+		),
 	});
 
-	const verifySMS = ctx.env === "prod" ? verifySMSTwilio : verifySMSInHouse;
+	const verifySMS =
+		ctx.env === 'prod'
+			? verifySMSTwilio
+			: verifySMSInHouse;
 
 	return {
 		AccountDb: UserAccountDb({
-			t: "postgres",
+			t: 'postgres',
 			dbConnSql: ctx.dbConnSql,
 		}),
 		VerifySMS: verifySMS,
@@ -124,7 +130,7 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 //
 //
 
-const init: Module["init"] = async () => {
+const init: Module['init'] = async () => {
 	return {
 		model: null,
 	};
@@ -138,31 +144,49 @@ const init: Module["init"] = async () => {
 //
 //
 
-const update: Module["update"] = async (input) => {
+const update: Module['update'] = async (input) => {
 	return AppServerModule.andThen(
-		{ model: input.model },
-		(model) => updateSendCode({ ...input, model }),
-		(model) => updateVerifyCode({ ...input, model }),
+		{model: input.model},
+		(model) =>
+			updateSendCode({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateVerifyCode({
+				...input,
+				model,
+			}),
 	);
 };
 
-const updateSendCode: Module["update"] = async ({ msgClient, model, deps }) => {
+const updateSendCode: Module['update'] = async ({msgClient, model, deps}) => {
 	switch (msgClient?.t) {
-		case "user-clicked-send-code-button": {
-			const sent = await deps.VerifySMS.sendCode(msgClient);
+		case 'user-clicked-send-code-button': {
+			const sent =
+				await deps.VerifySMS.sendCode(
+					msgClient,
+				);
 			return {
 				model,
 				msgCmd: [
-					sendToClient([msgClient.clientId], {
-						t: "sent-code",
-						phoneNumber: msgClient.phoneNumber,
-						sent,
-					}),
+					sendToClient(
+						[
+							msgClient.clientId,
+						],
+						{
+							t: 'sent-code',
+							phoneNumber: msgClient.phoneNumber,
+							sent,
+						},
+					),
 				],
 			};
 		}
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -189,7 +213,7 @@ const handleVerifyCode = async (input: {
 
 	if (isErr(found)) {
 		return Err({
-			t: "database-error",
+			t: 'database-error',
 			error: found.error,
 		});
 	}
@@ -203,7 +227,7 @@ const handleVerifyCode = async (input: {
 	const accountNew: UserAccount = {
 		createdAt: input.now,
 		phoneNumber: input.phoneNumber,
-		role: "normal",
+		role: 'normal',
 		userId: UserId.generate(),
 	};
 
@@ -213,7 +237,7 @@ const handleVerifyCode = async (input: {
 
 	if (isErr(inserted)) {
 		return Err({
-			t: "database-error",
+			t: 'database-error',
 			error: inserted.error,
 		});
 	}
@@ -221,48 +245,75 @@ const handleVerifyCode = async (input: {
 	return Ok(accountNew);
 };
 
-const updateVerifyCode: Module["update"] = async ({
+const updateVerifyCode: Module['update'] = async ({
 	msgClient,
 	model,
 	deps,
 	ctx,
 }) => {
 	switch (msgClient?.t) {
-		case "user-clicked-verify-code-button": {
+		case 'user-clicked-verify-code-button': {
 			ctx.logger.info(
-				`Verifying code for ${PhoneNumber.toString(msgClient.phoneNumber)}`,
+				`Verifying code for ${PhoneNumber.toString(
+					msgClient.phoneNumber,
+				)}`,
 			);
-			const verified = await handleVerifyCode({
-				AccountDb: deps.AccountDb,
-				VerifySMS: deps.VerifySMS,
-				now: ctx.now,
-				phoneNumber: msgClient.phoneNumber,
-				inputtedCode: msgClient.inputtedCode,
-			});
+			const verified =
+				await handleVerifyCode(
+					{
+						AccountDb: deps.AccountDb,
+						VerifySMS: deps.VerifySMS,
+						now: ctx.now,
+						phoneNumber: msgClient.phoneNumber,
+						inputtedCode: msgClient.inputtedCode,
+					},
+				);
 			ctx.logger.info(
-				`Verified code for ${PhoneNumber.toString(msgClient.phoneNumber)}`,
+				`Verified code for ${PhoneNumber.toString(
+					msgClient.phoneNumber,
+				)}`,
 			);
 
 			if (isErr(verified)) {
 				ctx.logger.error(
-					`Failed to verify code. ${verifyCodeProblemToString({
-						problem: verified.error,
-						t: Translator("en"),
-					})}`,
+					`Failed to verify code. ${verifyCodeProblemToString(
+						{
+							problem: verified.error,
+							t: Translator(
+								'en',
+							),
+						},
+					)}`,
 				);
 				return {
 					model,
-					msgCmd: [sendToClient(msgClient, { t: "verified-code", verified })],
+					msgCmd: [
+						sendToClient(
+							msgClient,
+							{
+								t: 'verified-code',
+								verified,
+							},
+						),
+					],
 				};
 			}
 
 			return {
 				model,
-				msgCmd: [sendToClient(msgClient, { t: "verified-code", verified })],
+				msgCmd: [
+					sendToClient(
+						msgClient,
+						{
+							t: 'verified-code',
+							verified,
+						},
+					),
+				],
 				msgEvt: [
 					{
 						...msgClient,
-						t: "auth/client-authenticated",
+						t: 'auth/client-authenticated',
 						account: verified.value,
 						loggedIn: true,
 					},
@@ -271,7 +322,9 @@ const updateVerifyCode: Module["update"] = async ({
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -283,7 +336,7 @@ const updateVerifyCode: Module["update"] = async ({
 //
 //
 
-const subscriptions: Module["subscriptions"] = async () => {
+const subscriptions: Module['subscriptions'] = async () => {
 	return Sub.None;
 };
 

@@ -1,6 +1,6 @@
-import { describe, expect, it } from "bun:test";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { didPlaySound, didShowToast } from "gamezilla-app/app/@/client";
+import {describe, expect, it} from 'bun:test';
+import {GameClientModule} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2';
+import {didPlaySound, didShowToast} from 'gamezilla-app/app/@/client';
 import {
 	clickedPackCreateNewButton,
 	createFlowPack,
@@ -8,15 +8,15 @@ import {
 	initial,
 	testFlowClientCtx,
 	userCreatedPack,
-} from "../../@/testing/client";
+} from '../../@/testing/client';
 
 export const Fixture = () => {
 	const f = FixtureFlowBuilderClient();
-	return { ...f };
+	return {...f};
 };
 
 describe(import.meta.file, () => {
-	it("should make a sound when the user clicks the create button", async () => {
+	it('should make a sound when the user clicks the create button', async () => {
 		const ctx = await testFlowClientCtx();
 
 		const output = GameClientModule.andThen(
@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it("should play a sound after user created a pack", async () => {
+	it('should play a sound after user created a pack', async () => {
 		const ctx = await testFlowClientCtx();
 		const pack = await createFlowPack(ctx);
 		const output = GameClientModule.andThen(
@@ -38,7 +38,7 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it("should show toast after server created current users pack", async () => {
+	it('should show toast after server created current users pack', async () => {
 		const ctx = await testFlowClientCtx();
 		const pack = await createFlowPack(ctx);
 		const output = GameClientModule.andThen(

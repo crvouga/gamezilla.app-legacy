@@ -1,2 +1,2 @@
-export * from "./social-login";
-export * from "./social-login-impl";
+export * from './social-login';
+export * from './social-login-impl';

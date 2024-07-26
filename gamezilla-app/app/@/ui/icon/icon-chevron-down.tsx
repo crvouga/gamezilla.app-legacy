@@ -1,4 +1,4 @@
-import type { IconInput } from "../icon-shared";
+import type {IconInput} from '../icon-shared';
 
 export const IconChevronDown = (input: IconInput) => {
 	return (

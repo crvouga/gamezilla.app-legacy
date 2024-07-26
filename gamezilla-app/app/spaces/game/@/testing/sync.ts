@@ -1,9 +1,9 @@
-import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
-import type { SpaceCtx } from "../../../@/space";
+import type {SpaceId, UserId} from 'gamezilla-app/app/@/data';
+import type {SpaceCtx} from '../../../@/space';
 
-const hostUserId = "test-user-id" as UserId;
+const hostUserId = 'test-user-id' as UserId;
 
-const currentSpaceId = "test-space-id" as SpaceId;
+const currentSpaceId = 'test-space-id' as SpaceId;
 
 export const SpaceGameCoreFixture = async () => {
 	const ctx: SpaceCtx = {
@@ -13,7 +13,7 @@ export const SpaceGameCoreFixture = async () => {
 			users: {
 				[hostUserId]: hostUserId,
 			},
-			visibility: "public",
+			visibility: 'public',
 		},
 	};
 

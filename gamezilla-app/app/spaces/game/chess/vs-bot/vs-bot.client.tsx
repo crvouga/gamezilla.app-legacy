@@ -5,23 +5,23 @@ import {
 	exhaustive,
 	isErr,
 	pipe,
-} from "gamezilla-app/@/core";
-import { type ClientCmd, sendToServer } from "gamezilla-app/app/@/client";
+} from 'gamezilla-app/@/core';
+import {type ClientCmd, sendToServer} from 'gamezilla-app/app/@/client';
 import {
 	Avatar,
 	IconArrowLeftOnRect,
 	IconRobot,
 	Spinner,
-} from "gamezilla-app/app/@/ui";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+} from 'gamezilla-app/app/@/ui';
+import type {SpaceClientCtx} from 'gamezilla-app/app/spaces/@/space';
 import {
 	GameLayout,
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@/game";
-import { VsBotSetup } from "gamezilla-app/app/spaces/game/@/vs-bot";
-import { Chess } from "../@/chess";
-import { Chessboard, CoverArt, PlayerIcon } from "../@/chess-ui";
+} from 'gamezilla-app/app/spaces/game/@/game';
+import {VsBotSetup} from 'gamezilla-app/app/spaces/game/@/vs-bot';
+import {Chess} from '../@/chess';
+import {Chessboard, CoverArt, PlayerIcon} from '../@/chess-ui';
 import {
 	type CoreModel,
 	type ModelClient,
@@ -32,7 +32,7 @@ import {
 	initCore,
 	isBotTurn,
 	updateCore,
-} from "./vs-bot.types";
+} from './vs-bot.types';
 
 //
 //
@@ -69,30 +69,65 @@ export const update = ({
 }): {
 	model: ModelClient;
 	eff?: Eff<MsgClient>;
-	msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
+	msgCmd?: ClientCmd<{
+		MsgToServer: MsgToServer;
+		MsgClient: MsgClient;
+	}>[];
 } => {
-	const model: ModelClient = { ...modelPrev, openedMenuId: null };
+	const model: ModelClient = {
+		...modelPrev,
+		openedMenuId: null,
+	};
 
 	switch (msg.t) {
-		case "closed-modal": {
-			return { model: { ...model, openedModal: null } };
+		case 'closed-modal': {
+			return {
+				model: {
+					...model,
+					openedModal: null,
+				},
+			};
 		}
 
-		case "clicked-flip": {
-			return { model: { ...model, isFlipped: !model.isFlipped } };
+		case 'clicked-flip': {
+			return {
+				model: {
+					...model,
+					isFlipped: !model.isFlipped,
+				},
+			};
 		}
 
-		case "opened-menu": {
-			return { model: { ...model, openedMenuId: msg.menuId } };
+		case 'opened-menu': {
+			return {
+				model: {
+					...model,
+					openedMenuId: msg.menuId,
+				},
+			};
 		}
 
-		case "closed-menu": {
-			return { model: { ...model, openedMenuId: null } };
+		case 'closed-menu': {
+			return {
+				model: {
+					...model,
+					openedMenuId: null,
+				},
+			};
 		}
 
-		case "vs-bot-setup": {
-			const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
-			return { model: { ...model, vsBotSetup: updated } };
+		case 'vs-bot-setup': {
+			const updated =
+				VsBotSetup.update(
+					model.vsBotSetup,
+					msg.c,
+				);
+			return {
+				model: {
+					...model,
+					vsBotSetup: updated,
+				},
+			};
 		}
 
 		default: {
@@ -102,18 +137,35 @@ export const update = ({
 				model: model.coreModel,
 			});
 
-			if (handled.t === "err") {
-				return { model, msgCmd: [sendToServer(msg)] };
+			if (handled.t === 'err') {
+				return {
+					model,
+					msgCmd: [
+						sendToServer(
+							msg,
+						),
+					],
+				};
 			}
 
 			const coreModel = handled.value;
 
-			const modelNew = mergeWithServer({
-				client: model,
-				server: coreModel,
-			});
+			const modelNew =
+				mergeWithServer(
+					{
+						client: model,
+						server: coreModel,
+					},
+				);
 
-			return { model: modelNew, msgCmd: [sendToServer(msg)] };
+			return {
+				model: modelNew,
+				msgCmd: [
+					sendToServer(
+						msg,
+					),
+				],
+			};
 		}
 	}
 };
@@ -129,80 +181,122 @@ export const updateFromServer = (input: {
 		updateFromServerMain(input),
 		andThen((model) => {
 			if (
-				input.model.coreModel.type !== "game-over" &&
-				model.coreModel.type === "game-over"
+				input.model
+					.coreModel
+					.type !==
+					'game-over' &&
+				model.coreModel
+					.type ===
+					'game-over'
 			) {
 				return {
-					model: { ...model, openedModal: "game-over" },
+					model: {
+						...model,
+						openedModal: 'game-over',
+					},
 				};
 			}
 
 			if (
-				input.model.coreModel.type !== "game" &&
-				model.coreModel.type === "game"
+				input.model
+					.coreModel
+					.type !==
+					'game' &&
+				model.coreModel
+					.type ===
+					'game'
 			) {
 				return {
 					model,
 				};
 			}
 
-			return { model };
+			return {
+				model,
+			};
 		}),
 	);
 };
 
-const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
+const updateFromServerMain: typeof updateFromServer = ({msg, model}) => {
 	switch (msg.t) {
-		case "bot-moved": {
-			const { result } = msg;
+		case 'bot-moved': {
+			const {result} = msg;
 
 			if (isErr(result)) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const { didCapture, ...coreModel } = result.value;
+			const {
+				didCapture,
+				...coreModel
+			} = result.value;
 
-			return { model: { ...model, coreModel } };
+			return {
+				model: {
+					...model,
+					coreModel,
+				},
+			};
 		}
 
-		case "player-left": {
+		case 'player-left': {
 			const merged = mergeWithServer({
 				client: model,
 				server: msg.model,
 			});
-			return { model: merged };
+			return {
+				model: merged,
+			};
 		}
 
-		case "input-move": {
-			const { result } = msg;
+		case 'input-move': {
+			const {result} = msg;
 
 			if (isErr(result)) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const coreModelNew = result.value;
+			const coreModelNew =
+				result.value;
 
-			const modelNew = mergeWithServer({
-				client: model,
-				server: coreModelNew,
-			});
+			const modelNew =
+				mergeWithServer(
+					{
+						client: model,
+						server: coreModelNew,
+					},
+				);
 
-			return { model: modelNew };
+			return {
+				model: modelNew,
+			};
 		}
 
 		default: {
-			const { result } = msg;
+			const {result} = msg;
 
 			if (isErr(result)) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const modelNew = mergeWithServer({
-				client: model,
-				server: result.value,
-			});
+			const modelNew =
+				mergeWithServer(
+					{
+						client: model,
+						server: result.value,
+					},
+				);
 
-			return { model: modelNew };
+			return {
+				model: modelNew,
+			};
 		}
 	}
 };
@@ -262,60 +356,174 @@ export const View = ({
 	dispatch: (msg: MsgClient) => void;
 	onClose: () => void;
 }) => {
-	if (model.coreModel.type === "setup") {
+	if (model.coreModel.type === 'setup') {
 		return (
 			<VsBotSetup.View
-				model={model.vsBotSetup}
-				dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
-				title={ctx.t("chess")}
-				renderCoverArt={(input) => {
-					return <CoverArt {...input} />;
+				model={
+					model.vsBotSetup
+				}
+				dispatch={(c) =>
+					dispatch(
+						{
+							t: 'vs-bot-setup',
+							c,
+						},
+					)
+				}
+				title={ctx.t(
+					'chess',
+				)}
+				renderCoverArt={(
+					input,
+				) => {
+					return (
+						<CoverArt
+							{...input}
+						/>
+					);
 				}}
 				bot={{
-					label: ctx.t("chess.bot-level", model.coreModel.botLevel),
-					renderIcon: (input) =>
-						Chess.renderBotLevel({
-							level: model.coreModel.botLevel,
-							...input,
-						}),
+					label: ctx.t(
+						'chess.bot-level',
+						model
+							.coreModel
+							.botLevel,
+					),
+					renderIcon: (
+						input,
+					) =>
+						Chess.renderBotLevel(
+							{
+								level: model
+									.coreModel
+									.botLevel,
+								...input,
+							},
+						),
 				}}
-				botVariants={Chess.allBotLevels.map((botLevel) => {
-					return {
-						label: ctx.t("chess.bot-level", botLevel),
-						renderIcon: (input) =>
-							Chess.renderBotLevel({ level: botLevel, ...input }),
-						onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
-					};
-				})}
+				botVariants={Chess.allBotLevels.map(
+					(
+						botLevel,
+					) => {
+						return {
+							label: ctx.t(
+								'chess.bot-level',
+								botLevel,
+							),
+							renderIcon: (
+								input,
+							) =>
+								Chess.renderBotLevel(
+									{
+										level: botLevel,
+										...input,
+									},
+								),
+							onSelect: () =>
+								dispatch(
+									{
+										t: 'input-bot-level',
+										botLevel,
+									},
+								),
+						};
+					},
+				)}
 				onSwapSides={() =>
-					dispatch({
-						t: "start-playing",
-						color: model.coreModel.userColor === "w" ? "b" : "w",
-					})
+					dispatch(
+						{
+							t: 'start-playing',
+							color:
+								model
+									.coreModel
+									.userColor ===
+								'w'
+									? 'b'
+									: 'w',
+						},
+					)
 				}
-				canStartGame={model.coreModel.userId !== null}
+				canStartGame={
+					model
+						.coreModel
+						.userId !==
+					null
+				}
 				ctx={ctx}
 				human={{
 					player:
-						model.coreModel.userColor === "b" ? "player-two" : "player-one",
-					userId: model.coreModel.userId,
+						model
+							.coreModel
+							.userColor ===
+						'b'
+							? 'player-two'
+							: 'player-one',
+					userId: model
+						.coreModel
+						.userId,
 				}}
 				onQuit={onClose}
-				onStartGame={() => dispatch({ t: "start-game" })}
+				onStartGame={() =>
+					dispatch(
+						{
+							t: 'start-game',
+						},
+					)
+				}
 				playerOne={{
-					label: ctx.t("chess.white"),
-					onStartPlaying: () => dispatch({ t: "start-playing", color: "w" }),
-					onStopPlaying: () => dispatch({ t: "stop-playing" }),
-					renderIcon: (input) => {
-						return <PlayerIcon {...input} color="w" />;
+					label: ctx.t(
+						'chess.white',
+					),
+					onStartPlaying: () =>
+						dispatch(
+							{
+								t: 'start-playing',
+								color: 'w',
+							},
+						),
+					onStopPlaying: () =>
+						dispatch(
+							{
+								t: 'stop-playing',
+							},
+						),
+					renderIcon: (
+						input,
+					) => {
+						return (
+							<PlayerIcon
+								{...input}
+								color="w"
+							/>
+						);
 					},
 				}}
 				playerTwo={{
-					label: ctx.t("chess.black"),
-					onStartPlaying: () => dispatch({ t: "start-playing", color: "b" }),
-					onStopPlaying: () => dispatch({ t: "stop-playing" }),
-					renderIcon: (input) => {
-						return <PlayerIcon {...input} color="b" />;
+					label: ctx.t(
+						'chess.black',
+					),
+					onStartPlaying: () =>
+						dispatch(
+							{
+								t: 'start-playing',
+								color: 'b',
+							},
+						),
+					onStopPlaying: () =>
+						dispatch(
+							{
+								t: 'stop-playing',
+							},
+						),
+					renderIcon: (
+						input,
+					) => {
+						return (
+							<PlayerIcon
+								{...input}
+								color="b"
+							/>
+						);
 					},
 				}}
 			/>
@@ -327,10 +535,16 @@ export const View = ({
 			<IconRobot className="h-10 w-10" />
 
 			<p className="flex-1 text-lg">
-				{Chess.botLevelToString(model.coreModel.botLevel)}
+				{Chess.botLevelToString(
+					model
+						.coreModel
+						.botLevel,
+				)}
 			</p>
 
-			{isBotTurn(model.coreModel) && <Spinner className="h-10 w-10" />}
+			{isBotTurn(model.coreModel) && (
+				<Spinner className="h-10 w-10" />
+			)}
 		</div>
 	);
 
@@ -338,24 +552,47 @@ export const View = ({
 		<div className="flex w-full items-center gap-3 p-3">
 			<Avatar
 				className="h-10 w-10"
-				src={ctx.profiles[model.coreModel.userId]?.avatarUrl}
+				src={
+					ctx
+						.profiles[
+						model
+							.coreModel
+							.userId
+					]
+						?.avatarUrl
+				}
 			/>
 
 			<p className="flex-1 text-lg">
-				{ctx.profiles[model.coreModel.userId]?.username}
+				{
+					ctx
+						.profiles[
+						model
+							.coreModel
+							.userId
+					]
+						?.username
+				}
 			</p>
 		</div>
 	);
 
 	const boardOrientation = model.isFlipped
-		? Chess.toOppositeColor(model.coreModel.userColor)
+		? Chess.toOppositeColor(
+				model.coreModel
+					.userColor,
+		  )
 		: model.coreModel.userColor;
 
 	const topSlot =
-		boardOrientation === model.coreModel.userColor ? botSlot : userSlot;
+		boardOrientation === model.coreModel.userColor
+			? botSlot
+			: userSlot;
 
 	const bottomSlot =
-		boardOrientation === model.coreModel.userColor ? userSlot : botSlot;
+		boardOrientation === model.coreModel.userColor
+			? userSlot
+			: botSlot;
 
 	return (
 		<GameLayout>
@@ -364,19 +601,30 @@ export const View = ({
 
 				<Chessboard
 					id="chessboard"
-					model={model.coreModel.board}
-					orientation={boardOrientation}
-					onPieceDrop={(move) => {
-						const msg: MsgClient = {
-							t: "input-move",
-							move: {
-								from: move.source,
-								to: move.target,
-								promotion: "q",
-							},
-						};
+					model={
+						model
+							.coreModel
+							.board
+					}
+					orientation={
+						boardOrientation
+					}
+					onPieceDrop={(
+						move,
+					) => {
+						const msg: MsgClient =
+							{
+								t: 'input-move',
+								move: {
+									from: move.source,
+									to: move.target,
+									promotion: 'q',
+								},
+							};
 
-						dispatch(msg);
+						dispatch(
+							msg,
+						);
 
 						// return result.t === "ok";
 						return true;
@@ -386,9 +634,19 @@ export const View = ({
 			</div>
 			<ViewBottomButtonBar>
 				<ViewBottomButtonBarAction
-					icon={(input) => <IconArrowLeftOnRect {...input} />}
-					label={ctx.t("app.exit")}
-					onClick={onClose}
+					icon={(
+						input,
+					) => (
+						<IconArrowLeftOnRect
+							{...input}
+						/>
+					)}
+					label={ctx.t(
+						'app.exit',
+					)}
+					onClick={
+						onClose
+					}
 				/>
 			</ViewBottomButtonBar>
 		</GameLayout>
@@ -397,32 +655,51 @@ export const View = ({
 
 export const toGameText = (model: CoreModel): string => {
 	switch (model.type) {
-		case "game-over": {
+		case 'game-over': {
 			switch (model.gameOver.type) {
-				case "Checkmate": {
-					const color = Chess.colorToString(model.gameOver.winner);
+				case 'Checkmate': {
+					const color =
+						Chess.colorToString(
+							model
+								.gameOver
+								.winner,
+						);
 					return `${color} won by checkmate`;
 				}
 
-				case "Stalemate": {
-					return "Stalemate";
+				case 'Stalemate': {
+					return 'Stalemate';
 				}
 
 				default:
-					return exhaustive(model.gameOver);
+					return exhaustive(
+						model.gameOver,
+					);
 			}
 		}
 
-		case "setup": {
-			return "Setting up game";
+		case 'setup': {
+			return 'Setting up game';
 		}
 
-		case "game": {
-			if (Chess.inCheck(model.board)) {
-				return `${Chess.colorToString(Chess.toTurn(model.board))} is in check`;
+		case 'game': {
+			if (
+				Chess.inCheck(
+					model.board,
+				)
+			) {
+				return `${Chess.colorToString(
+					Chess.toTurn(
+						model.board,
+					),
+				)} is in check`;
 			}
 
-			return `${Chess.colorToString(Chess.toTurn(model.board))}'s turn`;
+			return `${Chess.colorToString(
+				Chess.toTurn(
+					model.board,
+				),
+			)}'s turn`;
 		}
 
 		default:

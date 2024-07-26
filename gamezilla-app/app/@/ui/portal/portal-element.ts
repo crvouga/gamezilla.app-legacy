@@ -1,18 +1,18 @@
 declare global {
 	namespace JSX {
 		interface IntrinsicElements {
-			"portal-entrance": {
-				"portal-id": string;
-				children: unknown;
+			'portal-entrance': {
+				'portal-id': string;
+				'children': unknown;
 			};
-			"portal-exit": {
-				"portal-id": string;
+			'portal-exit': {
+				'portal-id': string;
 			};
 		}
 	}
 }
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
 	//
 	//
 	//
@@ -41,15 +41,29 @@ if (typeof window !== "undefined") {
 		if (entranceSet && exit) {
 			// Clear existing content in exit
 			while (exit.firstChild) {
-				exit.removeChild(exit.firstChild);
+				exit.removeChild(
+					exit.firstChild,
+				);
 			}
 
 			// Aggregate and append children from all entrances to exit
-			entranceSet.forEach((entrance) => {
-				Array.from(entrance.childNodes).forEach((child) => {
-					exit.appendChild(child.cloneNode(true));
-				});
-			});
+			entranceSet.forEach(
+				(entrance) => {
+					Array.from(
+						entrance.childNodes,
+					).forEach(
+						(
+							child,
+						) => {
+							exit.appendChild(
+								child.cloneNode(
+									true,
+								),
+							);
+						},
+					);
+				},
+			);
 		}
 	};
 
@@ -65,13 +79,25 @@ if (typeof window !== "undefined") {
 
 		constructor() {
 			super();
-			this.observer = new MutationObserver(() => {
-				const id = this.getAttribute("portal-id");
-				if (id) {
-					updatePortal(id);
-				}
+			this.observer =
+				new MutationObserver(
+					() => {
+						const id =
+							this.getAttribute(
+								'portal-id',
+							);
+						if (
+							id
+						) {
+							updatePortal(
+								id,
+							);
+						}
+					},
+				);
+			this.attachShadow({
+				mode: 'open',
 			});
-			this.attachShadow({ mode: "open" });
 		}
 
 		connectedCallback() {
@@ -84,20 +110,28 @@ if (typeof window !== "undefined") {
 		// }
 
 		private observeChildChanges() {
-			this.observer.observe(this, { childList: true });
+			this.observer.observe(this, {
+				childList: true,
+			});
 		}
 
 		private updatePortalId() {
-			const id = this.getAttribute("portal-id");
+			const id =
+				this.getAttribute(
+					'portal-id',
+				);
 			if (id) {
 				this.observer.disconnect();
-				registerEntrance(id, this);
+				registerEntrance(
+					id,
+					this,
+				);
 				this.observeChildChanges();
 			}
 		}
 	}
 
-	customElements.define("portal-entrance", PortalEntrance);
+	customElements.define('portal-entrance', PortalEntrance);
 
 	//
 	//
@@ -108,7 +142,7 @@ if (typeof window !== "undefined") {
 
 	class PortalExit extends HTMLElement {
 		static get observedAttributes() {
-			return ["portal-id"];
+			return ['portal-id'];
 		}
 
 		connectedCallback() {
@@ -120,14 +154,20 @@ if (typeof window !== "undefined") {
 		}
 
 		private updatePortalId() {
-			const id = this.getAttribute("portal-id");
+			const id =
+				this.getAttribute(
+					'portal-id',
+				);
 			if (id) {
-				registerExit(id, this);
+				registerExit(
+					id,
+					this,
+				);
 			}
 		}
 	}
 
-	customElements.define("portal-exit", PortalExit);
+	customElements.define('portal-exit', PortalExit);
 
 	//
 	//

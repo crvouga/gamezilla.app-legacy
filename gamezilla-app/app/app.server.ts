@@ -6,34 +6,31 @@ import {
 	batchMsgs,
 	pipe,
 	toMsgType,
-} from "gamezilla-app/@/core";
-import { LRUCache } from "gamezilla-app/@/least-recently-used-cache";
-import type { ServerInstance } from "gamezilla-app/@/server";
+} from 'gamezilla-app/@/core';
+import {LRUCache} from 'gamezilla-app/@/least-recently-used-cache';
+import type {ServerInstance} from 'gamezilla-app/@/server';
 import {
 	ServerCmd,
 	type ServerCtx,
 	type ServerEvent,
-} from "gamezilla-app/app/@/server";
-import { DbConnKv, type IDbConnKv } from "./@/server/db-conn-kv";
-import { DbConnSql, type IDbConnSql } from "./@/server/db-conn-sql";
-import { ILogger } from "./@/server/logger/logger";
-import { SMS, type ISMS } from "./@/server/sms";
+} from 'gamezilla-app/app/@/server';
+import {DbConnKv, type IDbConnKv} from './@/server/db-conn-kv';
+import {DbConnSql, type IDbConnSql} from './@/server/db-conn-sql';
+import {ILogger} from './@/server/logger/logger';
+import {SMS, type ISMS} from './@/server/sms';
 import type {
 	ModelServer,
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
 	MsgToServerMeta,
-} from "./app.types";
-import * as AuthServer from "./auth/auth.server";
-import * as LangServer from "./lang/lang.server";
-import * as ProfileServer from "./profile/profile.server";
-import * as SpaceServer from "./spaces/spaces.server";
-import {
-	ServerTransport,
-	type IServerTransport,
-} from "./wire/transport-server";
-import * as WireServer from "./wire/wire.server";
+} from './app.types';
+import * as AuthServer from './auth/auth.server';
+import * as LangServer from './lang/lang.server';
+import * as ProfileServer from './profile/profile.server';
+import * as SpaceServer from './spaces/spaces.server';
+import {ServerTransport, type IServerTransport} from './wire/transport-server';
+import * as WireServer from './wire/wire.server';
 
 //
 //
@@ -71,41 +68,56 @@ export const getDeps = async ({
 	const databaseUrl = process.env.DATABASE_URL;
 
 	if (!databaseUrl) {
-		throw new Error("DATABASE_URL not set");
+		throw new Error('DATABASE_URL not set');
 	}
 
 	const dbConnSql = await DbConnSql({
-		t: "postgres",
+		t: 'postgres',
 		databaseUrl,
-		logger: ILogger.prefix("db-conn-sql", logger),
+		logger: ILogger.prefix('db-conn-sql', logger),
 	});
 
-	const loggerDbConnKv = ILogger.prefix("db-conn-kv", logger);
+	const loggerDbConnKv = ILogger.prefix('db-conn-kv', logger);
 
 	const dbConnKv = await pipe(
 		DbConnKv({
-			t: "postgres",
+			t: 'postgres',
 			dbConnSql,
-			logger: ILogger.prefix("postgres", loggerDbConnKv),
+			logger: ILogger.prefix(
+				'postgres',
+				loggerDbConnKv,
+			),
 		}),
 
 		async (dbConnKv) =>
 			DbConnKv.withThrottledWrites({
-				logger: ILogger.prefix("with-throttled-writes", loggerDbConnKv),
+				logger: ILogger.prefix(
+					'with-throttled-writes',
+					loggerDbConnKv,
+				),
 				dbConnKv: await dbConnKv,
-				throttle: TimeSpan.seconds(5),
+				throttle: TimeSpan.seconds(
+					5,
+				),
 			}),
 
 		async (dbConnKv) =>
 			DbConnKv.withCache({
-				logger: ILogger.prefix("with-cache", loggerDbConnKv),
+				logger: ILogger.prefix(
+					'with-cache',
+					loggerDbConnKv,
+				),
 				source: await dbConnKv,
-				cache: await DbConnKv({
-					t: "hash-map",
-					map: LRUCache({
-						maxCapcity: 1000,
-					}),
-				}),
+				cache: await DbConnKv(
+					{
+						t: 'hash-map',
+						map: LRUCache(
+							{
+								maxCapcity: 1000,
+							},
+						),
+					},
+				),
 			}),
 
 		async (dbConnKv) =>
@@ -116,14 +128,17 @@ export const getDeps = async ({
 	);
 
 	const sms = SMS({
-		t: "twilio",
-		logger: ILogger.prefix("twilio", logger),
+		t: 'twilio',
+		logger: ILogger.prefix('twilio', logger),
 	});
 
-	const transport = await ServerTransport<MsgToServer, MsgToClient>({
+	const transport = await ServerTransport<
+		MsgToServer,
+		MsgToClient
+	>({
 		codebaseVersionId,
 		server,
-		logger: ILogger.prefix("transport", logger),
+		logger: ILogger.prefix('transport', logger),
 	});
 
 	const wire = await WireServer.getDeps({
@@ -132,7 +147,11 @@ export const getDeps = async ({
 	});
 
 	const ctx: ServerCtx = {
-		env: process.env.NODE_ENV === "production" ? "prod" : "dev",
+		env:
+			process.env.NODE_ENV ===
+			'production'
+				? 'prod'
+				: 'dev',
 		sms,
 		dbConnSql,
 		dbConnKv,
@@ -171,7 +190,7 @@ export const getDeps = async ({
 };
 
 export const ctx = () => {
-	return { now: Posix.now() };
+	return {now: Posix.now()};
 };
 
 //
@@ -183,14 +202,18 @@ export const ctx = () => {
 //
 
 export const init = async (input: {
-	ctx: { now: Posix };
+	ctx: {now: Posix};
 	deps: Deps;
 }): Promise<{
 	model: ModelServer;
 	eff?: Eff<MsgServer>;
 }> => {
 	const ctx: ServerCtx = {
-		env: process.env.NODE_ENV === "production" ? "prod" : "dev",
+		env:
+			process.env.NODE_ENV ===
+			'production'
+				? 'prod'
+				: 'dev',
 		sms: input.deps.sms,
 		dbConnSql: input.deps.dbConnSql,
 		dbConnKv: input.deps.dbConnKv,
@@ -223,11 +246,11 @@ export const init = async (input: {
 	return {
 		model: null,
 		eff: Eff.batch<MsgServer>([
-			Eff.tag("auth", auth.eff),
-			Eff.tag("profile", profile.eff),
-			Eff.tag("lang", lang.eff),
-			Eff.tag("wire", wire.eff),
-			Eff.tag("spaces", space.eff),
+			Eff.tag('auth', auth.eff),
+			Eff.tag('profile', profile.eff),
+			Eff.tag('lang', lang.eff),
+			Eff.tag('wire', wire.eff),
+			Eff.tag('spaces', space.eff),
 		]),
 	};
 };
@@ -243,16 +266,20 @@ export const init = async (input: {
 export const update = async (input: {
 	msg: MsgServer;
 	model: ModelServer;
-	ctx: { now: Posix };
+	ctx: {now: Posix};
 	deps: Deps;
 }): Promise<{
 	model: ModelServer;
 	eff?: Eff<MsgServer>;
 }> => {
-	logMsg({ msg: input.msg, logger: input.deps.logger });
+	logMsg({msg: input.msg, logger: input.deps.logger});
 
 	const ctx: ServerCtx = {
-		env: process.env.NODE_ENV === "production" ? "prod" : "dev",
+		env:
+			process.env.NODE_ENV ===
+			'production'
+				? 'prod'
+				: 'dev',
 		sms: input.deps.sms,
 		dbConnSql: input.deps.dbConnSql,
 		dbConnKv: input.deps.dbConnKv,
@@ -265,10 +292,22 @@ export const update = async (input: {
 		ctx: ctx,
 		model: input.model,
 		msg: input.msg,
-		msgClient: input.msg.t === "→" ? { ...input.msg, ...input.msg.c } : null,
+		msgClient:
+			input.msg.t === '→'
+				? {
+						...input.msg,
+						...input
+							.msg
+							.c,
+				  }
+				: null,
 	});
 
-	const updated = await updateLoop(input.deps, ctx, updatedFromMsg);
+	const updated = await updateLoop(
+		input.deps,
+		ctx,
+		updatedFromMsg,
+	);
 
 	return {
 		model: updated.model,
@@ -287,15 +326,15 @@ const logMsg = ({
 	msgEvt?: ServerEvent;
 	msgCmd?: ServerCmd<MsgToClient>;
 }) => {
-	const prefix = msg ? "[msg]" : msgEvt ? "[evt]" : "[cmd]";
+	const prefix = msg ? '[msg]' : msgEvt ? '[evt]' : '[cmd]';
 
-	const obj = { ...msg, ...msgEvt, ...msgCmd };
+	const obj = {...msg, ...msgEvt, ...msgCmd};
 
 	const sentMsgType =
-		msgCmd?.c.t === "send-to-client" ||
-		msgCmd?.c.t === "send-to-session" ||
-		msgCmd?.c.t === "send-to-user" ||
-		msgCmd?.c.t === "broadcast"
+		msgCmd?.c.t === 'send-to-client' ||
+		msgCmd?.c.t === 'send-to-session' ||
+		msgCmd?.c.t === 'send-to-user' ||
+		msgCmd?.c.t === 'broadcast'
 			? toMsgType(msgCmd.c.msg)
 			: null;
 
@@ -305,7 +344,7 @@ const logMsg = ({
 		log.push(`sent ${sentMsgType}`);
 	}
 
-	logger.info(log.join(" "));
+	logger.info(log.join(' '));
 };
 
 type Output = {
@@ -332,12 +371,24 @@ const updateLoop = async (
 
 		const accNew: Output = {
 			model: updatedCmd.model,
-			msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
-			eff: Eff.batch([acc.eff, updatedCmd.eff]),
-			msgEvt: batchMsgs(acc.msgEvt, updatedCmd.msgEvt),
+			msgCmd: [
+				...msgCmdRest,
+				...updatedCmd.msgCmd,
+			],
+			eff: Eff.batch([
+				acc.eff,
+				updatedCmd.eff,
+			]),
+			msgEvt: batchMsgs(
+				acc.msgEvt,
+				updatedCmd.msgEvt,
+			),
 		};
 
-		logMsg({ msgCmd, logger: deps.logger });
+		logMsg({
+			msgCmd,
+			logger: deps.logger,
+		});
 
 		return updateLoop(deps, ctx, accNew);
 	}
@@ -354,12 +405,24 @@ const updateLoop = async (
 
 		const accNew: Output = {
 			model: updatedEvent.model,
-			msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
-			eff: Eff.batch([acc.eff, updatedEvent.eff]),
-			msgEvt: batchMsgs(msgEvtRest, updatedEvent.msgEvt),
+			msgCmd: [
+				...msgCmdRest,
+				...updatedEvent.msgCmd,
+			],
+			eff: Eff.batch([
+				acc.eff,
+				updatedEvent.eff,
+			]),
+			msgEvt: batchMsgs(
+				msgEvtRest,
+				updatedEvent.msgEvt,
+			),
 		};
 
-		logMsg({ msgEvt, logger: deps.logger });
+		logMsg({
+			msgEvt,
+			logger: deps.logger,
+		});
 
 		return updateLoop(deps, ctx, accNew);
 	}
@@ -391,7 +454,10 @@ export const updateChild = async ({
 	//
 
 	const userId = msgClient?.sessionId
-		? await AuthServer.toUserIdFromSessionId(deps.auth, msgClient.sessionId)
+		? await AuthServer.toUserIdFromSessionId(
+				deps.auth,
+				msgClient.sessionId,
+		  )
 		: null;
 
 	//
@@ -407,10 +473,14 @@ export const updateChild = async ({
 		msgCmd: null,
 		msgEvt: msgEvt,
 		msgClient:
-			msgClient?.t === "spaces"
-				? { ...msgClient, ...msgClient.c, userId }
+			msgClient?.t === 'spaces'
+				? {
+						...msgClient,
+						...msgClient.c,
+						userId,
+				  }
 				: null,
-		msg: msg?.t === "spaces" ? msg.c : null,
+		msg: msg?.t === 'spaces' ? msg.c : null,
 	});
 
 	const auth = await AuthServer.update({
@@ -420,18 +490,29 @@ export const updateChild = async ({
 		msgCmd: null,
 		msgEvt: msgEvt,
 		msgClient:
-			msgClient?.t === "auth" ? { ...msgClient, ...msgClient.c, userId } : null,
-		msg: msg?.t === "auth" ? msg.c : null,
+			msgClient?.t === 'auth'
+				? {
+						...msgClient,
+						...msgClient.c,
+						userId,
+				  }
+				: null,
+		msg: msg?.t === 'auth' ? msg.c : null,
 	});
 
 	const wire = await WireServer.update({
 		model: null,
 		ctx,
-		msgCmd: msgCmd?.t === "wire" ? msgCmd : null,
+		msgCmd: msgCmd?.t === 'wire' ? msgCmd : null,
 		msgEvt: msgEvt,
 		msgClient:
-			msgClient?.t === "wire" ? { ...msgClient, ...msgClient.c } : null,
-		msg: msg?.t === "wire" ? msg.c : null,
+			msgClient?.t === 'wire'
+				? {
+						...msgClient,
+						...msgClient.c,
+				  }
+				: null,
+		msg: msg?.t === 'wire' ? msg.c : null,
 		deps: deps.wire,
 	});
 
@@ -442,8 +523,13 @@ export const updateChild = async ({
 		msgCmd: null,
 		msgEvt: msgEvt,
 		msgClient:
-			msgClient?.t === "profile" ? { ...msgClient, ...msgClient.c } : null,
-		msg: msg?.t === "profile" ? msg.c : null,
+			msgClient?.t === 'profile'
+				? {
+						...msgClient,
+						...msgClient.c,
+				  }
+				: null,
+		msg: msg?.t === 'profile' ? msg.c : null,
 	});
 
 	const lang = await LangServer.update({
@@ -453,8 +539,13 @@ export const updateChild = async ({
 		msgCmd: null,
 		msgEvt: msgEvt,
 		msgClient:
-			msgClient?.t === "lang" ? { ...msgClient, ...msgClient.c } : null,
-		msg: msg?.t === "lang" ? msg.c : null,
+			msgClient?.t === 'lang'
+				? {
+						...msgClient,
+						...msgClient.c,
+				  }
+				: null,
+		msg: msg?.t === 'lang' ? msg.c : null,
 	});
 
 	//
@@ -465,18 +556,33 @@ export const updateChild = async ({
 	return {
 		model,
 		msgCmd: batchMsgs<ServerCmd<MsgToClient>>(
-			ServerCmd.tag("spaces", space.msgCmd),
-			ServerCmd.tag("auth", auth.msgCmd),
-			ServerCmd.tag("wire", wire.msgCmd),
-			ServerCmd.tag("profile", profile.msgCmd),
-			ServerCmd.tag("lang", lang.msgCmd),
+			ServerCmd.tag(
+				'spaces',
+				space.msgCmd,
+			),
+			ServerCmd.tag(
+				'auth',
+				auth.msgCmd,
+			),
+			ServerCmd.tag(
+				'wire',
+				wire.msgCmd,
+			),
+			ServerCmd.tag(
+				'profile',
+				profile.msgCmd,
+			),
+			ServerCmd.tag(
+				'lang',
+				lang.msgCmd,
+			),
 		),
 		eff: Eff.batch<MsgServer>([
-			Eff.tag("spaces", space.eff),
-			Eff.tag("auth", auth.eff),
-			Eff.tag("wire", wire.eff),
-			Eff.tag("profile", profile.eff),
-			Eff.tag("lang", lang.eff),
+			Eff.tag('spaces', space.eff),
+			Eff.tag('auth', auth.eff),
+			Eff.tag('wire', wire.eff),
+			Eff.tag('profile', profile.eff),
+			Eff.tag('lang', lang.eff),
 		]),
 		msgEvt: batchMsgs<ServerEvent>(
 			auth.msgEvt,
@@ -499,10 +605,14 @@ export const updateChild = async ({
 export const subscriptions = async (input: {
 	deps: Deps;
 	model: ModelServer;
-	ctx: { now: Posix };
+	ctx: {now: Posix};
 }): Promise<Sub<MsgServer>> => {
 	const ctx: ServerCtx = {
-		env: process.env.NODE_ENV === "production" ? "prod" : "dev",
+		env:
+			process.env.NODE_ENV ===
+			'production'
+				? 'prod'
+				: 'dev',
 		dbConnSql: input.deps.dbConnSql,
 		dbConnKv: input.deps.dbConnKv,
 		logger: input.deps.logger,
@@ -511,35 +621,54 @@ export const subscriptions = async (input: {
 	};
 	return Sub.batch([
 		Sub.tag(
-			"spaces",
-			await SpaceServer.subscriptions({
-				model: null,
-				ctx,
-				deps: input.deps.space,
+			'spaces',
+			await SpaceServer.subscriptions(
+				{
+					model: null,
+					ctx,
+					deps: input
+						.deps
+						.space,
+				},
+			),
+		),
+		Sub.tag(
+			'wire',
+			WireServer.subscriptions({
+				transport: input
+					.deps
+					.transport,
 			}),
 		),
 		Sub.tag(
-			"wire",
-			WireServer.subscriptions({ transport: input.deps.transport }),
-		),
-		Sub.tag(
-			"lang",
+			'lang',
 			await LangServer.subscriptions({
 				model: null,
 				ctx,
-				deps: input.deps.lang,
+				deps: input.deps
+					.lang,
 			}),
 		),
 		Sub.flat(
-			Sub.map(input.deps.transport.toServer, ({ sessionId, clientId, msgs }) =>
-				msgs.map(
-					(msg: any): MsgServer => ({
-						t: "→",
-						sessionId,
-						clientId,
-						c: msg,
-					}),
-				),
+			Sub.map(
+				input.deps
+					.transport
+					.toServer,
+				({
+					sessionId,
+					clientId,
+					msgs,
+				}) =>
+					msgs.map(
+						(
+							msg: any,
+						): MsgServer => ({
+							t: '→',
+							sessionId,
+							clientId,
+							c: msg,
+						}),
+					),
 			),
 		),
 	]);

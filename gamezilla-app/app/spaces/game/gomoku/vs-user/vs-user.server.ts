@@ -1,14 +1,14 @@
-import { Sub, type Eff } from "gamezilla-app/@/core";
+import {Sub, type Eff} from 'gamezilla-app/@/core';
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@/space";
+} from 'gamezilla-app/app/spaces/@/space';
 import {
 	initShared,
 	type ModelServer,
 	type MsgServer,
 	type MsgToServer,
-} from "./vs-user.types";
+} from './vs-user.types';
 
 //
 //
@@ -41,7 +41,7 @@ export const update = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	return { model };
+	return {model};
 };
 
 export const updateFromClient = ({
@@ -54,7 +54,7 @@ export const updateFromClient = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	return { model };
+	return {model};
 };
 
 export const updateFromEvent = ({
@@ -67,11 +67,11 @@ export const updateFromEvent = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "space/user-left-space") {
-		return { model: init(model) };
+	if (msg.t === 'space/user-left-space') {
+		return {model: init(model)};
 	}
 
-	return { model };
+	return {model};
 };
 
 //

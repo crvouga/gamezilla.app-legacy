@@ -4,10 +4,10 @@ import type {
 	Posix,
 	Remote,
 	Result,
-} from "gamezilla-app/@/core";
-import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
-import type { UserAccount } from "gamezilla-app/app/@/data/account";
-import type { SendCodeOutput, VerifyCodeProblem } from "./verify-sms";
+} from 'gamezilla-app/@/core';
+import type {LanguageCodeISO_639_1} from 'gamezilla-app/@/l18n';
+import type {UserAccount} from 'gamezilla-app/app/@/data/account';
+import type {SendCodeOutput, VerifyCodeProblem} from './verify-sms';
 
 export type ModelClient = {
 	//
@@ -28,41 +28,44 @@ export type ModelClient = {
 type VerifyCodeOutput = Result<VerifyCodeProblem, UserAccount>;
 
 export type MsgClient =
-	| { t: "clicked-back-button" }
-	| { t: "inputted-phone-number"; phoneNumber: string }
-	| { t: "inputted-country-code"; countryCode: Iso3166Alpha2Code }
-	| { t: "clicked-phone-number-clear" }
-	| { t: "user-clicked-send-code-button" }
-	| { t: "inputted-code"; inputtedCode: string }
-	| { t: "clicked-code-clear" }
+	| {t: 'clicked-back-button'}
+	| {t: 'inputted-phone-number'; phoneNumber: string}
 	| {
-			t: "user-clicked-verify-code-button";
+			t: 'inputted-country-code';
+			countryCode: Iso3166Alpha2Code;
+	  }
+	| {t: 'clicked-phone-number-clear'}
+	| {t: 'user-clicked-send-code-button'}
+	| {t: 'inputted-code'; inputtedCode: string}
+	| {t: 'clicked-code-clear'}
+	| {
+			t: 'user-clicked-verify-code-button';
 			phoneNumber: PhoneNumber;
 			inputtedCode: string;
 	  }
-	| { t: "time-passed"; now: Posix };
+	| {t: 'time-passed'; now: Posix};
 
-export type MsgServer = { t: "noop" };
+export type MsgServer = {t: 'noop'};
 
 export type MsgToServer =
 	| {
-			t: "user-clicked-send-code-button";
+			t: 'user-clicked-send-code-button';
 			phoneNumber: PhoneNumber;
 			preferredLanguage: LanguageCodeISO_639_1;
 	  }
 	| {
-			t: "user-clicked-verify-code-button";
+			t: 'user-clicked-verify-code-button';
 			phoneNumber: PhoneNumber;
 			inputtedCode: string;
 	  };
 
 export type MsgToClient =
 	| {
-			t: "sent-code";
+			t: 'sent-code';
 			phoneNumber: PhoneNumber;
 			sent: SendCodeOutput;
 	  }
 	| {
-			t: "verified-code";
+			t: 'verified-code';
 			verified: VerifyCodeOutput;
 	  };

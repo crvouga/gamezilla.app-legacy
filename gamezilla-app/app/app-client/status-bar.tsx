@@ -1,7 +1,7 @@
-import type { Eff } from "gamezilla-app/@/core";
-import type { VDom } from "gamezilla-app/@/vdom";
-import { Drawer } from "../@/ui";
-import type { StatusBarCmd } from "../@/client";
+import type {Eff} from 'gamezilla-app/@/core';
+import type {VDom} from 'gamezilla-app/@/vdom';
+import {Drawer} from '../@/ui';
+import type {StatusBarCmd} from '../@/client';
 
 export type Model = {
 	isDrawerOpen: boolean;
@@ -9,7 +9,7 @@ export type Model = {
 
 export const init = (_input: {
 	stored: Record<string, unknown> | null;
-}): { model: Model } => {
+}): {model: Model} => {
 	return {
 		model: {
 			isDrawerOpen: false,
@@ -17,9 +17,7 @@ export const init = (_input: {
 	};
 };
 
-export type Msg =
-	| { t: "clicked-status-bar" }
-	| { t: "closed-status-bar-drawer" };
+export type Msg = {t: 'clicked-status-bar'} | {t: 'closed-status-bar-drawer'};
 
 export const update = (input: {
 	model: Model;
@@ -30,26 +28,41 @@ export const update = (input: {
 	eff?: Eff<Msg>;
 } => {
 	switch (input.msg?.t) {
-		case "clicked-status-bar": {
-			return { model: { ...input.model, isDrawerOpen: true } };
+		case 'clicked-status-bar': {
+			return {
+				model: {
+					...input.model,
+					isDrawerOpen: true,
+				},
+			};
 		}
 
-		case "closed-status-bar-drawer": {
-			return { model: { ...input.model, isDrawerOpen: false } };
+		case 'closed-status-bar-drawer': {
+			return {
+				model: {
+					...input.model,
+					isDrawerOpen: false,
+				},
+			};
 		}
 	}
 
 	switch (input.msgCmd?.t) {
-		case "status-bar": {
+		case 'status-bar': {
 			switch (input.msgCmd.c.t) {
-				case "close": {
-					return { model: { ...input.model, isDrawerOpen: false } };
+				case 'close': {
+					return {
+						model: {
+							...input.model,
+							isDrawerOpen: false,
+						},
+					};
 				}
 			}
 		}
 	}
 
-	return { model: input.model };
+	return {model: input.model};
 };
 
 export const View = ({
@@ -71,7 +84,13 @@ export const View = ({
 				type="button"
 				aria-label="open status bar"
 				className="flex w-full items-center gap-2 border-b border-neutral-700 p-0.5 px-2 text-xs text-neutral-300"
-				onClick={() => dispatch({ t: "clicked-status-bar" })}
+				onClick={() =>
+					dispatch(
+						{
+							t: 'clicked-status-bar',
+						},
+					)
+				}
 			>
 				{slots.barLeft}
 
@@ -83,10 +102,20 @@ export const View = ({
 			<Drawer
 				position="top"
 				id="drawer"
-				open={model.isDrawerOpen}
-				onClose={() => dispatch({ t: "closed-status-bar-drawer" })}
+				open={
+					model.isDrawerOpen
+				}
+				onClose={() =>
+					dispatch(
+						{
+							t: 'closed-status-bar-drawer',
+						},
+					)
+				}
 			>
-				{slots.drawerContent}
+				{
+					slots.drawerContent
+				}
 			</Drawer>
 		</div>
 	);

@@ -1,12 +1,12 @@
-import { easeAttrs } from "gamezilla-app/@/core";
+import {easeAttrs} from 'gamezilla-app/@/core';
 import {
 	COLUMN_COUNT,
 	type Columns,
 	MAX_COLUMN_HEIGHT,
-} from "../../../connect-four";
-import type { SvgIds } from "./shared";
+} from '../../../connect-four';
+import type {SvgIds} from './shared';
 
-const toDiscId = (input: { x: number; y: number }) => {
+const toDiscId = (input: {x: number; y: number}) => {
 	return `disc-${input.x}-${input.y}`;
 };
 
@@ -19,20 +19,20 @@ const createDiscNode = ({
 	ids: SvgIds;
 	x: number;
 	y: number;
-	player: "player-one" | "player-two";
+	player: 'player-one' | 'player-two';
 }) => {
 	const circle = document.createElementNS(
-		"http://www.w3.org/2000/svg",
-		"circle",
+		'http://www.w3.org/2000/svg',
+		'circle',
 	);
 
-	circle.setAttribute("id", toDiscId({ x, y }));
-	circle.setAttribute("cx", `${x}`);
-	circle.setAttribute("cy", `${y}`);
-	circle.setAttribute("r", "0.425");
+	circle.setAttribute('id', toDiscId({x, y}));
+	circle.setAttribute('cx', `${x}`);
+	circle.setAttribute('cy', `${y}`);
+	circle.setAttribute('r', '0.425');
 	circle.setAttribute(
-		"fill",
-		player === "player-one"
+		'fill',
+		player === 'player-one'
 			? `url(#${ids.playerOneGradient})`
 			: `url(#${ids.playerTwoGradient})`,
 	);
@@ -48,18 +48,20 @@ export const exitDisc = async ({
 	x: number;
 	y: number;
 }) => {
-	if (node.dataset["exiting"] === "true") {
+	if (node.dataset['exiting'] === 'true') {
 		return;
 	}
 
-	node.dataset["exiting"] = "true";
+	node.dataset['exiting'] = 'true';
 
 	await easeAttrs(node, {
 		cy: {
 			from: y,
 			to: y - MAX_COLUMN_HEIGHT,
 			duration: 750,
-			easing: { type: "ease-in-back" },
+			easing: {
+				type: 'ease-in-back',
+			},
 			delay: (x / COLUMN_COUNT) * 500,
 		},
 	});
@@ -76,19 +78,26 @@ export const enterDisc = async ({
 }: {
 	ids: SvgIds;
 	parentNode: SVGGElement;
-	player: "player-one" | "player-two";
+	player: 'player-one' | 'player-two';
 	x: number;
 	y: number;
 }) => {
-	const node = createDiscNode({ x, y, player, ids });
+	const node = createDiscNode({x, y, player, ids});
 	parentNode.appendChild(node);
 
 	await easeAttrs(node, {
 		cy: {
 			from: MAX_COLUMN_HEIGHT + 1,
 			to: y,
-			duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-			easing: { type: "ease-out-quint" },
+			duration:
+				200 +
+				300 *
+					(1 -
+						y /
+							MAX_COLUMN_HEIGHT),
+			easing: {
+				type: 'ease-out-quint',
+			},
 		},
 	});
 };
@@ -102,23 +111,31 @@ export const initDiscs = ({
 	parentNode: SVGGElement;
 	ids: SvgIds;
 }) => {
-	parentNode.innerHTML = "";
+	parentNode.innerHTML = '';
 
 	for (let x = 0; x < columns.length; x++) {
-		for (let y = 0; y < (columns?.[x]?.length ?? 0); y++) {
+		for (
+			let y = 0;
+			y < (columns?.[x]?.length ?? 0);
+			y++
+		) {
 			const player = columns[x]?.[y];
 
 			if (!player) {
 				continue;
 			}
 
-			const discNode = createDiscNode({
-				x,
-				ids,
-				y,
-				player,
-			});
-			parentNode?.appendChild(discNode);
+			const discNode = createDiscNode(
+				{
+					x,
+					ids,
+					y,
+					player,
+				},
+			);
+			parentNode?.appendChild(
+				discNode,
+			);
 		}
 	}
 };
@@ -136,11 +153,28 @@ export function syncDiscs({
 		for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
 			const disc = columns[x]?.[y]!;
 
-			const node = parentNode.querySelector(`#${toDiscId({ x, y })}`);
+			const node =
+				parentNode.querySelector(
+					`#${toDiscId(
+						{
+							x,
+							y,
+						},
+					)}`,
+				);
 
 			if (!disc && node) {
-				if (node instanceof SVGCircleElement) {
-					exitDisc({ node: node, x, y });
+				if (
+					node instanceof
+					SVGCircleElement
+				) {
+					exitDisc(
+						{
+							node: node,
+							x,
+							y,
+						},
+					);
 				}
 				continue;
 			}

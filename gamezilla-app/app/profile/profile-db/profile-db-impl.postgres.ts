@@ -1,9 +1,9 @@
-import { ProfileAvatar, UserId, Username } from "gamezilla-app/app/@/data";
-import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import { Err, Ok, Result, isErr } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import type { ProfileCore } from "../profile.types";
-import type { ProfileDb } from "./profile-db";
+import {ProfileAvatar, UserId, Username} from 'gamezilla-app/app/@/data';
+import type {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
+import {Err, Ok, Result, isErr} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import type {ProfileCore} from '../profile.types';
+import type {ProfileDb} from './profile-db';
 
 const ProfileRow = p.obj({
 	user_id: p.str,
@@ -16,11 +16,11 @@ type ProfileRow = p.Infer<typeof ProfileRow>;
 
 const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
 	if (!UserId.is(row.user_id)) {
-		return Err("invalid user_id");
+		return Err('invalid user_id');
 	}
 
 	if (!Username.is(row.username)) {
-		return Err("invalid username");
+		return Err('invalid username');
 	}
 
 	const avatarSeed = row.avatar_seed
@@ -29,7 +29,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
 
 	const avatarStyle = row.avatar_style
 		? ProfileAvatar.toStyle(row.avatar_style)
-		: ProfileAvatar.STYLES["big-ears-neutral"];
+		: ProfileAvatar.STYLES['big-ears-neutral'];
 
 	const avatarUrl = ProfileAvatar.toUrl({
 		seed: avatarSeed,
@@ -45,11 +45,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
 	});
 };
 
-export const createProfileDb = ({
-	dbConn,
-}: {
-	dbConn: IDbConnSql;
-}): ProfileDb => {
+export const createProfileDb = ({dbConn}: {dbConn: IDbConnSql}): ProfileDb => {
 	return {
 		findOneByUserId: async (userId) => {
 			const sql = `
@@ -64,15 +60,24 @@ export const createProfileDb = ({
           user_id = :user_id
       `;
 
-			const queried = await dbConn.query(ProfileRow, sql, {
-				user_id: userId,
-			});
+			const queried =
+				await dbConn.query(
+					ProfileRow,
+					sql,
+					{
+						user_id: userId,
+					},
+				);
 
 			if (isErr(queried)) {
 				return queried;
 			}
 
-			const parsed = Result.combine(queried.value.map(fromProfileRow));
+			const parsed = Result.combine(
+				queried.value.map(
+					fromProfileRow,
+				),
+			);
 
 			if (isErr(parsed)) {
 				return parsed;
@@ -88,9 +93,10 @@ export const createProfileDb = ({
 				avatar_style: profile.avatarStyle,
 			};
 
-			const inserted = await dbConn.query(
-				ProfileRow,
-				`
+			const inserted =
+				await dbConn.query(
+					ProfileRow,
+					`
         INSERT INTO user_profile (
           user_id,
           username,
@@ -104,8 +110,8 @@ export const createProfileDb = ({
           :avatar_style
         )
         `,
-				rowNew,
-			);
+					rowNew,
+				);
 
 			if (isErr(inserted)) {
 				return inserted;

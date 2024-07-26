@@ -1,7 +1,7 @@
 // https://en.wikipedia.org/wiki/Lamport_timestamp
 
-import { p } from "../core/parser";
-import { LamportTimestamp } from "./lamport-timestamp";
+import {p} from '../core/parser';
+import {LamportTimestamp} from './lamport-timestamp';
 
 const parser = p.obj({
 	_currentTime: LamportTimestamp,
@@ -15,7 +15,9 @@ const init: LamportClock = {
 
 const increment = (clock: LamportClock): LamportClock => {
 	return {
-		_currentTime: LamportTimestamp.increment(clock._currentTime),
+		_currentTime: LamportTimestamp.increment(
+			clock._currentTime,
+		),
 	};
 };
 
@@ -25,7 +27,10 @@ const update = (
 ): LamportClock => {
 	return {
 		_currentTime: LamportTimestamp.increment(
-			LamportTimestamp.max(clock._currentTime, otherClock._currentTime),
+			LamportTimestamp.max(
+				clock._currentTime,
+				otherClock._currentTime,
+			),
 		),
 	};
 };

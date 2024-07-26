@@ -1,29 +1,40 @@
-import { ascend } from "gamezilla-app/@/core";
-import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
-import { FlowVariant } from "../..";
-import { Flow } from "../../../flow";
-import { FlowGroupId } from "../../flow/flow-group-id";
-import { FlowNodeId } from "../../flow/flow-node-id";
-import { FlowTerminal } from "../../flow/flow-terminal";
-import { FlowAlgoIsUnsolvable } from "../flow-algo-is-unsolvable";
+import {ascend} from 'gamezilla-app/@/core';
+import {MinHeap} from 'gamezilla-app/@/min-heap/min-heap';
+import {FlowVariant} from '../..';
+import {Flow} from '../../../flow';
+import {FlowGroupId} from '../../flow/flow-group-id';
+import {FlowNodeId} from '../../flow/flow-node-id';
+import {FlowTerminal} from '../../flow/flow-terminal';
+import {FlowAlgoIsUnsolvable} from '../flow-algo-is-unsolvable';
 
 const toDirection = (
 	model: FlowVariant.Model,
 	sourceId: FlowNodeId,
 	targetId: FlowNodeId,
 ): string => {
-	const distance = FlowVariant.distance(model, sourceId, targetId);
+	const distance = FlowVariant.distance(
+		model,
+		sourceId,
+		targetId,
+	);
 	return `${sourceId}${targetId}${distance}`;
 };
 
 const countTurns = (model: FlowVariant.Model, path: Flow.Edge[]): number => {
 	let turns = 0;
-	let prevDirection = "";
+	let prevDirection = '';
 	for (let i = 0; i < path.length; i++) {
 		const curr = path[i];
 		if (!curr) continue;
-		const currDirection = toDirection(model, curr.sourceId, curr.targetId);
-		if (prevDirection && prevDirection !== currDirection) {
+		const currDirection = toDirection(
+			model,
+			curr.sourceId,
+			curr.targetId,
+		);
+		if (
+			prevDirection &&
+			prevDirection !== currDirection
+		) {
 			turns++;
 		}
 		prevDirection = currDirection;
@@ -37,13 +48,22 @@ const toHeuristic = (
 	endNode: FlowNodeId,
 	path: Flow.Edge[],
 ): number => {
-	const distanceHeuristic = FlowVariant.distance(model, currentNode, endNode);
+	const distanceHeuristic = FlowVariant.distance(
+		model,
+		currentNode,
+		endNode,
+	);
 	const turnsHeuristic = countTurns(model, path);
 	return distanceHeuristic + turnsHeuristic * 1.5;
 };
 
 const normalizePath = (path: Flow.Edge[]): string => {
-	return path.map((edge) => `${edge.sourceId}-${edge.targetId}`).join(",");
+	return path
+		.map(
+			(edge) =>
+				`${edge.sourceId}-${edge.targetId}`,
+		)
+		.join(',');
 };
 
 // const MAX_ITERATIONS = 5000;
@@ -62,7 +82,9 @@ const toPossiblePipelines = function* (
 		heuristic: number;
 	};
 
-	const minHeap = new MinHeap<HeapItem>((a, b) => a.heuristic - b.heuristic);
+	const minHeap = new MinHeap<HeapItem>(
+		(a, b) => a.heuristic - b.heuristic,
+	);
 	const visitedPaths = new Set<string>();
 
 	minHeap.insert({
@@ -70,7 +92,11 @@ const toPossiblePipelines = function* (
 		currentNode: startId,
 		visited: new Set([startId]),
 		cost: 0,
-		heuristic: FlowVariant.distance(model, startId, endId),
+		heuristic: FlowVariant.distance(
+			model,
+			startId,
+			endId,
+		),
 	});
 
 	while (!minHeap.isEmpty()) {
@@ -80,32 +106,66 @@ const toPossiblePipelines = function* (
 			break;
 		}
 
-		const { path, currentNode, visited, cost } = min;
+		const {path, currentNode, visited, cost} = min;
 
 		if (currentNode === endId) {
-			const normalizedPath = normalizePath(path);
-			if (!visitedPaths.has(normalizedPath)) {
-				visitedPaths.add(normalizedPath);
+			const normalizedPath =
+				normalizePath(
+					path,
+				);
+			if (
+				!visitedPaths.has(
+					normalizedPath,
+				)
+			) {
+				visitedPaths.add(
+					normalizedPath,
+				);
 				yield path;
 			}
 			continue;
 		}
 
-		for (const edgeOut of Flow.yieldEdgesOut(model, currentNode)) {
-			const targetGroupId = Flow.toGroupId(model, edgeOut.targetId);
+		for (const edgeOut of Flow.yieldEdgesOut(
+			model,
+			currentNode,
+		)) {
+			const targetGroupId =
+				Flow.toGroupId(
+					model,
+					edgeOut.targetId,
+				);
 
-			if (targetGroupId && targetGroupId !== groupId) {
+			if (
+				targetGroupId &&
+				targetGroupId !==
+					groupId
+			) {
 				continue;
 			}
 
-			if (visited.has(edgeOut.targetId)) {
+			if (
+				visited.has(
+					edgeOut.targetId,
+				)
+			) {
 				continue;
 			}
 
-			const newPath = [...path, edgeOut];
-			const newVisited = new Set(visited).add(edgeOut.targetId);
+			const newPath = [
+				...path,
+				edgeOut,
+			];
+			const newVisited = new Set(
+				visited,
+			).add(edgeOut.targetId);
 			const newCost = cost + 1;
-			const heuristic = toHeuristic(model, edgeOut.targetId, endId, newPath);
+			const heuristic = toHeuristic(
+				model,
+				edgeOut.targetId,
+				endId,
+				newPath,
+			);
 
 			minHeap.insert({
 				path: newPath,
@@ -123,7 +183,7 @@ const drawPipeline = (
 	terminal: FlowTerminal,
 	path: Flow.Edge[],
 ): FlowVariant.Model => {
-	const pipesBySourceId = { ...model.pipesBySourceId };
+	const pipesBySourceId = {...model.pipesBySourceId};
 
 	for (const edge of path) {
 		pipesBySourceId[edge.sourceId] = {
@@ -164,11 +224,19 @@ const solveStep = function* (
 		terminal.endId,
 	);
 
-	const disconnectedTerminalsRest = disconnectedTerminals.slice(1);
+	const disconnectedTerminalsRest =
+		disconnectedTerminals.slice(1);
 
 	for (const possiblePipeline of possiblePipelines) {
-		const drew = drawPipeline(model, terminal, possiblePipeline);
-		yield* solveStep(drew, disconnectedTerminalsRest);
+		const drew = drawPipeline(
+			model,
+			terminal,
+			possiblePipeline,
+		);
+		yield* solveStep(
+			drew,
+			disconnectedTerminalsRest,
+		);
 	}
 };
 
@@ -179,7 +247,11 @@ const toTerminalDistance = (
 	if (!terminal.endId) {
 		return Number.POSITIVE_INFINITY;
 	}
-	return FlowVariant.distance(model, terminal.startId, terminal.endId);
+	return FlowVariant.distance(
+		model,
+		terminal.startId,
+		terminal.endId,
+	);
 };
 
 export const solutions = function* (
@@ -189,7 +261,12 @@ export const solutions = function* (
 	const disconnectedTerminals = Flow.toTerminals(cleared);
 
 	disconnectedTerminals.sort(
-		ascend((terminal) => toTerminalDistance(cleared, terminal)),
+		ascend((terminal) =>
+			toTerminalDistance(
+				cleared,
+				terminal,
+			),
+		),
 	);
 
 	yield* solveStep(cleared, disconnectedTerminals);

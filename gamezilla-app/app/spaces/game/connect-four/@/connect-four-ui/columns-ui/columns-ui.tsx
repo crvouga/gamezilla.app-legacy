@@ -1,4 +1,4 @@
-import { Eff, Transition, easeAttrs } from "gamezilla-app/@/core";
+import {Eff, Transition, easeAttrs} from 'gamezilla-app/@/core';
 import {
 	COLUMN_COUNT,
 	type Columns,
@@ -6,19 +6,19 @@ import {
 	type Win,
 	findWins,
 	winToId,
-} from "../../connect-four";
-import "./columns-element";
-import { ViewColumnsCanvas } from "./columns-ui-canvas";
-import { ViewColumnsSvg } from "./columns-ui-svg";
+} from '../../connect-four';
+import './columns-element';
+import {ViewColumnsCanvas} from './columns-ui-canvas';
+import {ViewColumnsSvg} from './columns-ui-svg';
 import {
 	type Disc,
 	type Model as SharedModel,
 	type ViewColumnsinput,
 	toDiscs,
-} from "./shared";
+} from './shared';
 
 const discEnter = async (disc: Disc) => {
-	const { y, id } = disc;
+	const {y, id} = disc;
 
 	const node = await Transition.waitForElementById(id, rootId);
 
@@ -29,14 +29,21 @@ const discEnter = async (disc: Disc) => {
 		cy: {
 			from: MAX_COLUMN_HEIGHT + 1,
 			to: y,
-			duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-			easing: { type: "ease-out-quint" },
+			duration:
+				200 +
+				300 *
+					(1 -
+						y /
+							MAX_COLUMN_HEIGHT),
+			easing: {
+				type: 'ease-out-quint',
+			},
 		},
 	});
 };
 
 const discExit = async (disc: Disc) => {
-	const { x, y, id } = disc;
+	const {x, y, id} = disc;
 
 	const node = await Transition.waitForElementById(id, rootId);
 
@@ -49,7 +56,9 @@ const discExit = async (disc: Disc) => {
 			from: y,
 			to: y - MAX_COLUMN_HEIGHT,
 			duration: 750,
-			easing: { type: "ease-in-back" },
+			easing: {
+				type: 'ease-in-back',
+			},
 			delay: (x / COLUMN_COUNT) * 500,
 		},
 	});
@@ -67,14 +76,21 @@ const draw = async (win: Win) => {
 	const length = node.getTotalLength();
 	node.style.strokeDasharray = length.toString();
 	node.style.strokeDashoffset = length.toString();
-	node.style.stroke = "#fff";
+	node.style.stroke = '#fff';
 
 	const animation = node.animate(
-		[{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
+		[
+			{
+				strokeDashoffset: length,
+			},
+			{
+				strokeDashoffset: 0,
+			},
+		],
 		{
 			duration: 500,
-			easing: "ease-in-out",
-			fill: "both",
+			easing: 'ease-in-out',
+			fill: 'both',
 		},
 	);
 
@@ -92,14 +108,21 @@ const undraw = async (win: Win) => {
 
 	const length = node.getTotalLength();
 	node.style.strokeDasharray = length.toString();
-	node.style.strokeDashoffset = "0";
+	node.style.strokeDashoffset = '0';
 
 	const animation = node.animate(
-		[{ strokeDashoffset: 0 }, { strokeDashoffset: length }],
+		[
+			{
+				strokeDashoffset: 0,
+			},
+			{
+				strokeDashoffset: length,
+			},
+		],
 		{
 			duration: 500,
-			easing: "ease-in-out",
-			fill: "both",
+			easing: 'ease-in-out',
+			fill: 'both',
 		},
 	);
 
@@ -126,7 +149,7 @@ const winsConfig = Transition.config<Win>({
 	exit: undraw,
 });
 
-const rootId = "connect-four-columns-svg";
+const rootId = 'connect-four-columns-svg';
 
 //
 //
@@ -137,8 +160,18 @@ const rootId = "connect-four-columns-svg";
 
 export const init = (columns?: Columns): Model => {
 	return {
-		discs: Transition.init(discsConfig.toId, columns ? toDiscs(columns) : []),
-		wins: Transition.init(winsConfig.toId, columns ? findWins(columns) : []),
+		discs: Transition.init(
+			discsConfig.toId,
+			columns ? toDiscs(columns) : [],
+		),
+		wins: Transition.init(
+			winsConfig.toId,
+			columns
+				? findWins(
+						columns,
+				  )
+				: [],
+		),
 	};
 };
 
@@ -151,8 +184,8 @@ export const init = (columns?: Columns): Model => {
 //
 
 export type Msg =
-	| { t: "discs"; c: Transition.Msg }
-	| { t: "wins"; c: Transition.Msg };
+	| {t: 'discs'; c: Transition.Msg}
+	| {t: 'wins'; c: Transition.Msg};
 
 export const watch = (model: Model, columns?: Columns) => {
 	const discs = Transition.watch<Disc>(
@@ -171,8 +204,8 @@ export const watch = (model: Model, columns?: Columns) => {
 			wins: wins.model,
 		},
 		eff: Eff.batch<Msg>([
-			Eff.tag("discs", discs.eff),
-			Eff.tag("wins", wins.eff),
+			Eff.tag('discs', discs.eff),
+			Eff.tag('wins', wins.eff),
 		]),
 	};
 };
@@ -180,11 +213,11 @@ export const watch = (model: Model, columns?: Columns) => {
 export const update = (model: Model, msg: Msg) => {
 	const discs = Transition.update<Disc>(
 		model.discs,
-		msg.t === "discs" ? msg.c : undefined,
+		msg.t === 'discs' ? msg.c : undefined,
 	);
 	const wins = Transition.update<Win>(
 		model.wins,
-		msg.t === "wins" ? msg.c : undefined,
+		msg.t === 'wins' ? msg.c : undefined,
 	);
 	return {
 		discs: discs,
@@ -201,18 +234,29 @@ export const update = (model: Model, msg: Msg) => {
 //
 
 export const View = ({
-	implementation = "svg",
+	implementation = 'svg',
 	...input
 }: ViewColumnsinput & {
-	implementation?: "svg" | "canvas";
+	implementation?: 'svg' | 'canvas';
 }) => {
 	switch (implementation) {
-		case "canvas": {
-			return <ViewColumnsCanvas {...input} />;
+		case 'canvas': {
+			return (
+				<ViewColumnsCanvas
+					{...input}
+				/>
+			);
 		}
 
-		case "svg": {
-			return <ViewColumnsSvg id={rootId} {...input} />;
+		case 'svg': {
+			return (
+				<ViewColumnsSvg
+					id={
+						rootId
+					}
+					{...input}
+				/>
+			);
 		}
 	}
 };

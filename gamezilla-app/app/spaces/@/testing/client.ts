@@ -1,27 +1,27 @@
-import { NonEmpty, Posix, pipe, type TimeSpan } from "gamezilla-app/@/core";
-import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
-import type { Route } from "gamezilla-app/@/routing/generated/routes";
+import {NonEmpty, Posix, pipe, type TimeSpan} from 'gamezilla-app/@/core';
+import {LamportClock, LamportTimestamp} from 'gamezilla-app/@/lamport-clock';
+import type {Route} from 'gamezilla-app/@/routing/generated/routes';
 import {
 	ClientCmd,
 	ClientEvent,
 	routeChanged,
 	type ClientCtx,
-} from "gamezilla-app/app/@/client";
-import { FixtureAppClient } from "gamezilla-app/app/@/client/client-test-env";
-import { Translator } from "gamezilla-app/app/@/client/translator";
+} from 'gamezilla-app/app/@/client';
+import {FixtureAppClient} from 'gamezilla-app/app/@/client/client-test-env';
+import {Translator} from 'gamezilla-app/app/@/client/translator';
 import {
 	ProfileAvatar,
 	SpaceId,
 	UserId,
 	Username,
 	type Profile,
-} from "gamezilla-app/app/@/data";
-import { withId } from "gamezilla-app/app/spaces/@/event";
-import type { GameName } from "../../game/game.types";
-import { SpaceCore, type SpaceCoreEvent } from "../../spaces-core";
-import * as SpaceClient from "../../spaces.client";
-import type * as SpacesTypes from "../../spaces.types";
-import type { SpaceClientCtx } from "../space";
+} from 'gamezilla-app/app/@/data';
+import {withId} from 'gamezilla-app/app/spaces/@/event';
+import type {GameName} from '../../game/game.types';
+import {SpaceCore, type SpaceCoreEvent} from '../../spaces-core';
+import * as SpaceClient from '../../spaces.client';
+import type * as SpacesTypes from '../../spaces.types';
+import type {SpaceClientCtx} from '../space';
 
 //
 //
@@ -32,53 +32,80 @@ import type { SpaceClientCtx } from "../space";
 
 export const Ctx = (): ClientCtx => {
 	return {
-		navigatorLanguage: "en",
-		t: Translator("en"),
-		currentRoute: { n: "spaces", t: "space-list" },
-		documentVisibilityState: "visible",
+		navigatorLanguage: 'en',
+		t: Translator('en'),
+		currentRoute: {
+			n: 'spaces',
+			t: 'space-list',
+		},
+		documentVisibilityState: 'visible',
 		now: Posix.now(),
 		profiles: {},
 		currentUserId: UserId.generate(),
-		currentUserRole: "normal",
+		currentUserRole: 'normal',
 	};
 };
 
 export const SoaceClientFixture = async () => {
 	const ctx: ClientCtx = {
-		navigatorLanguage: "en",
-		t: Translator("en"),
-		currentRoute: { n: "spaces", t: "space-list" },
-		documentVisibilityState: "visible",
+		navigatorLanguage: 'en',
+		t: Translator('en'),
+		currentRoute: {
+			n: 'spaces',
+			t: 'space-list',
+		},
+		documentVisibilityState: 'visible',
 		now: Posix.now(),
 		profiles: {},
 		currentUserId: UserId.generate(),
-		currentUserRole: "normal",
+		currentUserRole: 'normal',
 	};
 
 	type Msg =
-		| { t: "msg"; c: SpacesTypes.MsgClient }
-		| { t: "msg-server"; c: SpacesTypes.MsgToClient };
+		| {
+				t: 'msg';
+				c: SpacesTypes.MsgClient;
+		  }
+		| {
+				t: 'msg-server';
+				c: SpacesTypes.MsgToClient;
+		  };
 
-	const updates = (initial: SpacesTypes.ModelClient, msgs: Msg[]) => {
-		const outputs: ReturnType<typeof SpaceClient.update>[] = [];
+	const updates = (
+		initial: SpacesTypes.ModelClient,
+		msgs: Msg[],
+	) => {
+		const outputs: ReturnType<
+			typeof SpaceClient.update
+		>[] = [];
 		for (const msg of msgs) {
 			switch (msg.t) {
-				case "msg": {
-					const output = SpaceClient.update({
-						ctx,
-						model: initial,
-						msg: msg.c,
-					});
-					outputs.push(output);
+				case 'msg': {
+					const output =
+						SpaceClient.update(
+							{
+								ctx,
+								model: initial,
+								msg: msg.c,
+							},
+						);
+					outputs.push(
+						output,
+					);
 					break;
 				}
-				case "msg-server": {
-					const output = SpaceClient.update({
-						ctx,
-						model: initial,
-						msgServer: msg.c,
-					});
-					outputs.push(output);
+				case 'msg-server': {
+					const output =
+						SpaceClient.update(
+							{
+								ctx,
+								model: initial,
+								msgServer: msg.c,
+							},
+						);
+					outputs.push(
+						output,
+					);
 					break;
 				}
 			}
@@ -97,13 +124,18 @@ const randomProfile = (): Profile => {
 	return {
 		avatarUrl: ProfileAvatar.random(),
 		userId,
-		username: Username.fromString(`username-${userId}`),
+		username: Username.fromString(
+			`username-${userId}`,
+		),
 	};
 };
 
-export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
+export const FixtureSpaceClient = async (input?: {currentRoute?: Route}) => {
 	const f = await FixtureAppClient(input);
-	const currentUser = { ...randomProfile(), userId: f.ctx.currentUserId };
+	const currentUser = {
+		...randomProfile(),
+		userId: f.ctx.currentUserId,
+	};
 	const userA = randomProfile();
 	const userB = randomProfile();
 	const userC = randomProfile();
@@ -116,7 +148,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
 			SpaceCore.appendEvent({
 				model,
 				event: withId({
-					t: "user-started-space",
+					t: 'user-started-space',
 					spaceId,
 					userId: currentUser.userId,
 				}),
@@ -125,7 +157,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
 			SpaceCore.appendEvent({
 				model,
 				event: withId({
-					t: "user-joined-space",
+					t: 'user-joined-space',
 					spaceId,
 					userId: userA.userId,
 				}),
@@ -134,7 +166,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
 			SpaceCore.appendEvent({
 				model,
 				event: withId({
-					t: "user-joined-space",
+					t: 'user-joined-space',
 					spaceId,
 					userId: userB.userId,
 				}),
@@ -143,7 +175,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
 			SpaceCore.appendEvent({
 				model,
 				event: withId({
-					t: "user-joined-space",
+					t: 'user-joined-space',
 					spaceId,
 					userId: userC.userId,
 				}),
@@ -151,22 +183,28 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
 		(model) => SpaceCore.toSpaceStarted(model),
 		(space) => {
 			if (!space) {
-				throw new Error("Invalid fixture. Space is not started.");
+				throw new Error(
+					'Invalid fixture. Space is not started.',
+				);
 			}
 			return space;
 		},
 	);
 
 	const ctx: SpaceClientCtx = {
-		navigatorLanguage: "en",
-		t: Translator("en"),
-		currentRoute: { n: "spaces", t: "space-list" },
+		navigatorLanguage: 'en',
+		t: Translator('en'),
+		currentRoute: {
+			n: 'spaces',
+			t: 'space-list',
+		},
 		currentUserId: currentUser.userId,
-		currentUserRole: "normal",
-		documentVisibilityState: "visible",
+		currentUserRole: 'normal',
+		documentVisibilityState: 'visible',
 		now: Posix.now(),
 		profiles: {
-			[currentUser.userId]: currentUser,
+			[currentUser.userId]:
+				currentUser,
 			[userA.userId]: userA,
 			[userB.userId]: userB,
 			[userC.userId]: userC,
@@ -187,16 +225,27 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
 
 	type Output = ReturnType<typeof SpaceClient.update>;
 
-	const updates = (initial: Output, inputs: Input[]): NonEmpty<Output> => {
+	const updates = (
+		initial: Output,
+		inputs: Input[],
+	): NonEmpty<Output> => {
 		const outputs: NonEmpty<Output> = [initial];
 		for (const input of inputs) {
-			const lastOutput = NonEmpty.last(outputs);
-			const output = SpaceClient.update({
-				ctx: input.ctx ?? ctx,
-				model: lastOutput.model,
-				msg: input.msg,
-				msgServer: input.msgServer,
-			});
+			const lastOutput =
+				NonEmpty.last(
+					outputs,
+				);
+			const output =
+				SpaceClient.update(
+					{
+						ctx:
+							input.ctx ??
+							ctx,
+						model: lastOutput.model,
+						msg: input.msg,
+						msgServer: input.msgServer,
+					},
+				);
 			outputs.push(output);
 		}
 		return outputs;
@@ -220,7 +269,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
 };
 
 export const init = (ctx: ClientCtx) => {
-	return SpaceClient.init({ ctx, stored: null });
+	return SpaceClient.init({ctx, stored: null});
 };
 
 //
@@ -236,7 +285,7 @@ export const serverConnected =
 			ctx,
 			model,
 			msgEvt: {
-				t: "wire/server-connected",
+				t: 'wire/server-connected',
 			},
 		});
 	};
@@ -255,26 +304,31 @@ export const userStartedSpace =
 			ctx,
 			model,
 			msgServer: {
-				t: "event",
+				t: 'event',
 				c: {
-					...withId({
-						t: "user-started-space",
-						spaceId,
-						userId,
-					}),
-					happenedAt: LamportTimestamp.fromNumber(0),
+					...withId(
+						{
+							t: 'user-started-space',
+							spaceId,
+							userId,
+						},
+					),
+					happenedAt: LamportTimestamp.fromNumber(
+						0,
+					),
 				},
 			},
 		});
 	};
 
 export const clickedStartSpaceButton =
-	(ctx: ClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+	(ctx: ClientCtx, spaceId: SpaceId) =>
+	(model: SpacesTypes.ModelClient) => {
 		return SpaceClient.update({
 			ctx,
 			model,
 			msg: {
-				t: "clicked-start-space-button",
+				t: 'clicked-start-space-button',
 				spaceId,
 			},
 		});
@@ -292,20 +346,24 @@ export const userJoinedSpace =
 	(model: SpacesTypes.ModelClient) => {
 		const space = model.spaces[spaceId];
 		if (!space) {
-			return { model };
+			return {
+				model,
+			};
 		}
 
 		return SpaceClient.update({
 			ctx,
 			model,
 			msgServer: {
-				t: "event",
+				t: 'event',
 				c: {
-					...withId({
-						t: "user-joined-space",
-						spaceId: spaceId,
-						userId: userId,
-					}),
+					...withId(
+						{
+							t: 'user-joined-space',
+							spaceId: spaceId,
+							userId: userId,
+						},
+					),
 					happenedAt: pipe(
 						space.clock,
 						LamportClock.increment,
@@ -317,12 +375,13 @@ export const userJoinedSpace =
 	};
 
 export const clickedJoinSpaceButton =
-	(ctx: ClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+	(ctx: ClientCtx, spaceId: SpaceId) =>
+	(model: SpacesTypes.ModelClient) => {
 		return SpaceClient.update({
 			ctx,
 			model,
 			msg: {
-				t: "clicked-join-space-button",
+				t: 'clicked-join-space-button',
 				spaceId,
 			},
 		});
@@ -342,20 +401,24 @@ export const userLeftSpace =
 		const space = model.spaces[spaceId];
 
 		if (!space) {
-			return { model };
+			return {
+				model,
+			};
 		}
 
 		return SpaceClient.update({
 			ctx,
 			model,
 			msgServer: {
-				t: "event",
+				t: 'event',
 				c: {
-					...withId({
-						t: "user-left-space",
-						spaceId: spaceId,
-						userId: userId,
-					}),
+					...withId(
+						{
+							t: 'user-left-space',
+							spaceId: spaceId,
+							userId: userId,
+						},
+					),
 					happenedAt: pipe(
 						space.clock,
 						LamportClock.increment,
@@ -372,7 +435,7 @@ export const clickedLeaveSpaceButton =
 			ctx,
 			model,
 			msg: {
-				t: "clicked-leave-space-button",
+				t: 'clicked-leave-space-button',
 			},
 		});
 	};
@@ -386,7 +449,8 @@ export const clickedLeaveSpaceButton =
 //
 
 export const changeRoute =
-	(ctx: ClientCtx, route: Route) => (model: SpacesTypes.ModelClient) => {
+	(ctx: ClientCtx, route: Route) =>
+	(model: SpacesTypes.ModelClient) => {
 		return SpaceClient.update({
 			ctx,
 			model,
@@ -395,23 +459,36 @@ export const changeRoute =
 	};
 
 export const elapsed =
-	(ctx: ClientCtx, timeSpan: TimeSpan) => (model: SpacesTypes.ModelClient) => {
+	(ctx: ClientCtx, timeSpan: TimeSpan) =>
+	(model: SpacesTypes.ModelClient) => {
 		return SpaceClient.update({
-			ctx: { ...ctx, now: Posix.future(ctx.now, timeSpan) },
+			ctx: {
+				...ctx,
+				now: Posix.future(
+					ctx.now,
+					timeSpan,
+				),
+			},
 			model,
-			msg: { t: "time-passed" },
+			msg: {
+				t: 'time-passed',
+			},
 		});
 	};
 
 const toStartedSpace = (spaceId: SpaceId, startedBy: UserId) => {
 	return [
 		withId<SpaceCoreEvent>({
-			t: "user-started-space",
+			t: 'user-started-space',
 			spaceId,
 			userId: startedBy,
 		}),
 	].reduce(
-		(model, msgEvt) => SpaceCore.appendEvent({ model, event: msgEvt }),
+		(model, msgEvt) =>
+			SpaceCore.appendEvent({
+				model,
+				event: msgEvt,
+			}),
 		SpaceCore.init,
 	);
 };
@@ -430,21 +507,31 @@ export const serverListedSpaces =
 			ctx,
 			model,
 			msgServer: {
-				t: "listed-spaces",
-				spaces: spaceIds.map((spaceId) =>
-					toStartedSpace(spaceId, UserId.generate()),
+				t: 'listed-spaces',
+				spaces: spaceIds.map(
+					(
+						spaceId,
+					) =>
+						toStartedSpace(
+							spaceId,
+							UserId.generate(),
+						),
 				),
-				causedBy: "list-spaces",
+				causedBy: 'list-spaces',
 			},
 		});
 	};
 
 export const clickSpaceCard =
-	(ctx: ClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+	(ctx: ClientCtx, spaceId: SpaceId) =>
+	(model: SpacesTypes.ModelClient) => {
 		return SpaceClient.update({
 			ctx,
 			model,
-			msg: { t: "clicked-space-card", spaceId },
+			msg: {
+				t: 'clicked-space-card',
+				spaceId,
+			},
 		});
 	};
 
@@ -455,14 +542,18 @@ export const userEndedSpace =
 			ctx,
 			model,
 			msgServer: {
-				t: "event",
+				t: 'event',
 				c: {
-					...withId({
-						t: "user-ended-space",
-						spaceId,
-						userId,
-					}),
-					happenedAt: LamportTimestamp.fromNumber(0),
+					...withId(
+						{
+							t: 'user-ended-space',
+							spaceId,
+							userId,
+						},
+					),
+					happenedAt: LamportTimestamp.fromNumber(
+						0,
+					),
 				},
 			},
 		});
@@ -474,31 +565,40 @@ export const userClickedEndSpaceButton =
 			ctx,
 			model,
 			msg: {
-				t: "clicked-end-space-button",
+				t: 'clicked-end-space-button',
 			},
 		});
 	};
 
 export const userInputtedGame =
-	(ctx: ClientCtx, userId: UserId, spaceId: SpaceId, game: GameName | null) =>
+	(
+		ctx: ClientCtx,
+		userId: UserId,
+		spaceId: SpaceId,
+		game: GameName | null,
+	) =>
 	(model: SpacesTypes.ModelClient) => {
 		const space = model.spaces[spaceId];
 		if (!space) {
-			return { model };
+			return {
+				model,
+			};
 		}
 
 		return SpaceClient.update({
 			ctx,
 			model,
 			msgServer: {
-				t: "event",
+				t: 'event',
 				c: {
-					...withId({
-						t: "user-inputted-game",
-						game,
-						spaceId,
-						userId,
-					}),
+					...withId(
+						{
+							t: 'user-inputted-game',
+							game,
+							spaceId,
+							userId,
+						},
+					),
 					happenedAt: pipe(
 						space.clock,
 						LamportClock.increment,
@@ -510,18 +610,26 @@ export const userInputtedGame =
 	};
 
 export const clickedGameTile =
-	(ctx: ClientCtx, gameName: GameName) => (model: SpacesTypes.ModelClient) => {
+	(ctx: ClientCtx, gameName: GameName) =>
+	(model: SpacesTypes.ModelClient) => {
 		return SpaceClient.update({
 			ctx,
 			model,
-			msg: { t: "clicked-game-tile", gameName },
+			msg: {
+				t: 'clicked-game-tile',
+				gameName,
+			},
 		});
 	};
 
 export const gotMsgServer =
 	(ctx: ClientCtx, msgServer: SpacesTypes.MsgToClient) =>
 	(model: SpacesTypes.ModelClient) => {
-		return SpaceClient.update({ ctx, model, msgServer });
+		return SpaceClient.update({
+			ctx,
+			model,
+			msgServer,
+		});
 	};
 
 export const gotSpace =
@@ -530,7 +638,10 @@ export const gotSpace =
 		return SpaceClient.update({
 			ctx,
 			model,
-			msgServer: { t: "synced", space },
+			msgServer: {
+				t: 'synced',
+				space,
+			},
 		});
 	};
 
@@ -540,7 +651,10 @@ export const gotCurrentUsersSpace =
 		return SpaceClient.update({
 			ctx,
 			model,
-			msgServer: { t: "current-user-space", space },
+			msgServer: {
+				t: 'current-user-space',
+				space,
+			},
 		});
 	};
 
@@ -550,18 +664,19 @@ export const clickedPeopleButton =
 			ctx,
 			model,
 			msg: {
-				t: "clicked-people-button",
+				t: 'clicked-people-button',
 			},
 		});
 	};
 
 export const clickedUser =
-	(ctx: ClientCtx, userId: UserId) => (model: SpacesTypes.ModelClient) => {
+	(ctx: ClientCtx, userId: UserId) =>
+	(model: SpacesTypes.ModelClient) => {
 		return SpaceClient.update({
 			ctx,
 			model,
 			msg: {
-				t: "clicked-user",
+				t: 'clicked-user',
 				userId,
 			},
 		});
@@ -573,7 +688,7 @@ export const loggedOut =
 			ctx,
 			model,
 			msgEvt: {
-				t: "auth/unauthenticated",
+				t: 'auth/unauthenticated',
 			},
 		});
 	};
@@ -584,7 +699,7 @@ export const clickedGoHomeButton =
 			ctx,
 			model,
 			msg: {
-				t: "clicked-go-home-button",
+				t: 'clicked-go-home-button',
 			},
 		});
 	};
@@ -595,7 +710,7 @@ export const clickedCurrentSpaceBottomBar =
 			ctx,
 			model,
 			msg: {
-				t: "clicked-current-space-bottom-bar",
+				t: 'clicked-current-space-bottom-bar',
 			},
 		});
 	};
@@ -606,7 +721,7 @@ export const clickedUserPreviewLink =
 			ctx,
 			model,
 			msg: {
-				t: "clicked-preview-user-link",
+				t: 'clicked-preview-user-link',
 			},
 		});
 	};

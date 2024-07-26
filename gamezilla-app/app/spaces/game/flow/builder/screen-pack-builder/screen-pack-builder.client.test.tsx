@@ -1,8 +1,8 @@
-import { describe, expect, it } from "bun:test";
-import { andThen } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import type { FlowClientCtx } from "../../@/flow-ctx";
-import { FlowPack } from "../../@/flow-pack/flow-pack";
-import { FlowPuzzle } from "../../@/flow-puzzle";
+import {describe, expect, it} from 'bun:test';
+import {andThen} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2';
+import type {FlowClientCtx} from '../../@/flow-ctx';
+import {FlowPack} from '../../@/flow-pack/flow-pack';
+import {FlowPuzzle} from '../../@/flow-puzzle';
 import {
 	FixtureFlowBuilderClient,
 	clickedExitPuzzleButton,
@@ -15,20 +15,20 @@ import {
 	initial,
 	serverCreatedPack,
 	testFlowClientCtx,
-} from "../@/testing/client";
-import { deriveModelCore } from "../@/testing/game";
-import { BuilderCore } from "../builder.core";
-import type { ModelClient, ModelCore } from "../builder.types";
-import { ScreenPackBuilderClient } from "./screen-pack-builder.client";
-import { ScreenPackBuilderCore } from "./screen-pack-builder.core";
+} from '../@/testing/client';
+import {deriveModelCore} from '../@/testing/game';
+import {BuilderCore} from '../builder.core';
+import type {ModelClient, ModelCore} from '../builder.types';
+import {ScreenPackBuilderClient} from './screen-pack-builder.client';
+import {ScreenPackBuilderCore} from './screen-pack-builder.core';
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return ScreenPackBuilderClient.update({
 		ctx,
 		model,
-		modelCore: BuilderCore.initCore({ ctx }),
+		modelCore: BuilderCore.initCore({ctx}),
 		msg: {
-			t: "pack-builder.puzzle-screen.user-clicked-more-button",
+			t: 'pack-builder.puzzle-screen.user-clicked-more-button',
 			userId: ctx.currentUserId,
 		},
 	});
@@ -38,9 +38,9 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return ScreenPackBuilderClient.update({
 		ctx,
 		model,
-		modelCore: BuilderCore.initCore({ ctx }),
+		modelCore: BuilderCore.initCore({ctx}),
 		msg: {
-			t: "pack-builder.puzzle-screen.user-closed-more-drawer",
+			t: 'pack-builder.puzzle-screen.user-closed-more-drawer',
 			userId: ctx.currentUserId,
 		},
 	});
@@ -80,88 +80,175 @@ export const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it("should open puzzle when user clickes puzzle grid item", async () => {
+	it('should open puzzle when user clickes puzzle grid item', async () => {
 		const ctx = await testFlowClientCtx();
 		const puzzle = await createFlowPuzzle(ctx);
 
 		const output = andThen(
 			initial,
-			serverCreatedPack(ctx, await createFlowPack(ctx)),
-			clickedOpenPuzzlePickerButton(ctx),
-			clickedPuzzlePickerItem(ctx, puzzle),
-			clickedPuzzleGridItem(ctx, puzzle, 0),
+			serverCreatedPack(
+				ctx,
+				await createFlowPack(
+					ctx,
+				),
+			),
+			clickedOpenPuzzlePickerButton(
+				ctx,
+			),
+			clickedPuzzlePickerItem(
+				ctx,
+				puzzle,
+			),
+			clickedPuzzleGridItem(
+				ctx,
+				puzzle,
+				0,
+			),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
 		expect(
-			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
-				modelCore.packBuilder.screen.puzzleIndex === 0,
+			modelCore.packBuilder?.screen
+				.t ===
+				'screen-puzzle' &&
+				modelCore
+					.packBuilder
+					.screen
+					.puzzleIndex ===
+					0,
 		).toBe(true);
 	});
 
-	it("should open puzzle picker when user clicks add puzzle button", async () => {
+	it('should open puzzle picker when user clicks add puzzle button', async () => {
 		const ctx = await testFlowClientCtx();
 		const output = andThen(
 			initial,
-			serverCreatedPack(ctx, await createFlowPack(ctx)),
-			clickedOpenPuzzlePickerButton(ctx),
+			serverCreatedPack(
+				ctx,
+				await createFlowPack(
+					ctx,
+				),
+			),
+			clickedOpenPuzzlePickerButton(
+				ctx,
+			),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
-		expect(modelCore.packBuilder?.screen.t === "screen-add-puzzle").toBe(true);
+		expect(
+			modelCore.packBuilder?.screen
+				.t ===
+				'screen-add-puzzle',
+		).toBe(true);
 	});
 
-	it("should close puzzle picker when user clicks closes", async () => {
+	it('should close puzzle picker when user clicks closes', async () => {
 		const ctx = await testFlowClientCtx();
 		const output = andThen(
 			initial,
-			serverCreatedPack(ctx, await createFlowPack(ctx)),
-			clickedOpenPuzzlePickerButton(ctx),
+			serverCreatedPack(
+				ctx,
+				await createFlowPack(
+					ctx,
+				),
+			),
+			clickedOpenPuzzlePickerButton(
+				ctx,
+			),
 			closedPuzzlePickerDrawer(ctx),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
-		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		expect(
+			modelCore.packBuilder?.screen
+				.t ===
+				'screen-puzzle-grid',
+		).toBe(true);
 	});
 
-	it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
+	it('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
 		const ctx = await testFlowClientCtx();
 		const puzzle = await createFlowPuzzle(ctx);
 		const output = andThen(
 			initial,
-			serverCreatedPack(ctx, await createFlowPack(ctx)),
-			clickedPuzzlePickerItem(ctx, puzzle),
+			serverCreatedPack(
+				ctx,
+				await createFlowPack(
+					ctx,
+				),
+			),
+			clickedPuzzlePickerItem(
+				ctx,
+				puzzle,
+			),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
 		expect(
 			modelCore.packBuilder &&
-				FlowPack.includes(modelCore.packBuilder.pack, puzzle.id),
+				FlowPack.includes(
+					modelCore
+						.packBuilder
+						.pack,
+					puzzle.id,
+				),
 		).toBe(true);
 	});
 
-	it("should close puzzle picker after adding a puzzle to the pack", async () => {
+	it('should close puzzle picker after adding a puzzle to the pack', async () => {
 		const ctx = await testFlowClientCtx();
 		const puzzle = await createFlowPuzzle(ctx);
 		const output = andThen(
 			initial,
-			serverCreatedPack(ctx, await createFlowPack(ctx)),
-			clickedOpenPuzzlePickerButton(ctx),
-			clickedPuzzlePickerItem(ctx, puzzle),
+			serverCreatedPack(
+				ctx,
+				await createFlowPack(
+					ctx,
+				),
+			),
+			clickedOpenPuzzlePickerButton(
+				ctx,
+			),
+			clickedPuzzlePickerItem(
+				ctx,
+				puzzle,
+			),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
-		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		expect(
+			modelCore.packBuilder?.screen
+				.t ===
+				'screen-puzzle-grid',
+		).toBe(true);
 	});
 
-	it("should go back to grid after exiting puzzle", async () => {
+	it('should go back to grid after exiting puzzle', async () => {
 		const ctx = await testFlowClientCtx();
 		const puzzle = await createFlowPuzzle(ctx);
 		const output = andThen(
 			initial,
-			serverCreatedPack(ctx, await createFlowPack(ctx)),
-			clickedOpenPuzzlePickerButton(ctx),
-			clickedPuzzlePickerItem(ctx, puzzle),
-			clickedPuzzleGridItem(ctx, puzzle, 0),
+			serverCreatedPack(
+				ctx,
+				await createFlowPack(
+					ctx,
+				),
+			),
+			clickedOpenPuzzlePickerButton(
+				ctx,
+			),
+			clickedPuzzlePickerItem(
+				ctx,
+				puzzle,
+			),
+			clickedPuzzleGridItem(
+				ctx,
+				puzzle,
+				0,
+			),
 			clickedExitPuzzleButton(ctx),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
-		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		expect(
+			modelCore.packBuilder?.screen
+				.t ===
+				'screen-puzzle-grid',
+		).toBe(true);
 	});
 
 	it('should open the more drawer after clicking "more" button', async () => {
@@ -169,60 +256,107 @@ describe(import.meta.file, () => {
 		const puzzle = await createFlowPuzzle(ctx);
 		const output = andThen(
 			initial,
-			serverCreatedPack(ctx, await createFlowPack(ctx)),
-			clickedOpenPuzzlePickerButton(ctx),
-			clickedPuzzlePickerItem(ctx, puzzle),
-			clickedPuzzleGridItem(ctx, puzzle, 0),
+			serverCreatedPack(
+				ctx,
+				await createFlowPack(
+					ctx,
+				),
+			),
+			clickedOpenPuzzlePickerButton(
+				ctx,
+			),
+			clickedPuzzlePickerItem(
+				ctx,
+				puzzle,
+			),
+			clickedPuzzleGridItem(
+				ctx,
+				puzzle,
+				0,
+			),
 			clickedMoreButton(ctx),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
 		expect(
-			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
-				modelCore.packBuilder?.screen.opened === "more",
+			modelCore.packBuilder?.screen
+				.t ===
+				'screen-puzzle' &&
+				modelCore
+					.packBuilder
+					?.screen
+					.opened ===
+					'more',
 		).toBe(true);
 	});
 
-	it("should close the more drawer", async () => {
+	it('should close the more drawer', async () => {
 		const ctx = await testFlowClientCtx();
 		const puzzle = await createFlowPuzzle(ctx);
 		const output = andThen(
 			initial,
-			serverCreatedPack(ctx, await createFlowPack(ctx)),
-			clickedOpenPuzzlePickerButton(ctx),
-			clickedPuzzlePickerItem(ctx, puzzle),
-			clickedPuzzleGridItem(ctx, puzzle, 0),
+			serverCreatedPack(
+				ctx,
+				await createFlowPack(
+					ctx,
+				),
+			),
+			clickedOpenPuzzlePickerButton(
+				ctx,
+			),
+			clickedPuzzlePickerItem(
+				ctx,
+				puzzle,
+			),
+			clickedPuzzleGridItem(
+				ctx,
+				puzzle,
+				0,
+			),
 			clickedMoreButton(ctx),
 			closedMoreDrawer(ctx),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
 		expect(
-			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
-				modelCore.packBuilder?.screen.opened === null,
+			modelCore.packBuilder?.screen
+				.t ===
+				'screen-puzzle' &&
+				modelCore
+					.packBuilder
+					?.screen
+					.opened ===
+					null,
 		).toBe(true);
 	});
 
-	it("should should remove puzzle from pack clicking remove from pack button", async () => {
+	it('should should remove puzzle from pack clicking remove from pack button', async () => {
 		const f = await Fixture();
 		const output = ScreenPackBuilderClient.update({
 			...f,
 			msg: {
-				t: "remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
-				userId: f.ctx.currentUserId,
-				puzzleIndex: f.pack.puzzleIds.indexOf(f.puzzle.id),
+				t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+				userId: f.ctx
+					.currentUserId,
+				puzzleIndex: f.pack.puzzleIds.indexOf(
+					f
+						.puzzle
+						.id,
+				),
 			},
 		});
 		expect(
 			output.msgCore?.some(
 				(msg) =>
 					msg.t ===
-					"remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
+					'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
 			),
 		).toBe(true);
 	});
 
-	it("should update pack when pack changes in model sync", async () => {
+	it('should update pack when pack changes in model sync', async () => {
 		const f = await Fixture();
-		const before = { ...f.model.packs[f.pack.id] };
+		const before = {
+			...f.model.packs[f.pack.id],
+		};
 		const updatedPack: FlowPack = {
 			...f.pack,
 			puzzleIds: [],
@@ -231,12 +365,18 @@ describe(import.meta.file, () => {
 			...f,
 			modelCore: {
 				...f.modelCore,
-				packBuilder: ScreenPackBuilderCore.init({
-					pack: updatedPack,
-				}),
+				packBuilder: ScreenPackBuilderCore.init(
+					{
+						pack: updatedPack,
+					},
+				),
 			},
 		});
-		const after = { ...output.model.packs[f.pack.id] };
+		const after = {
+			...output.model.packs[
+				f.pack.id
+			],
+		};
 		expect(before).toEqual(f.pack);
 		expect(after).toEqual(updatedPack);
 	});

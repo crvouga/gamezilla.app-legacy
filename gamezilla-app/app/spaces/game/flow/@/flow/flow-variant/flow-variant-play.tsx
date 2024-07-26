@@ -1,15 +1,15 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { APP_SOUND } from "gamezilla-app/app/@/client";
-import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
-import { FlowAlgoDrawPipes } from "../flow-aglo/flow-algo-draw-pipes";
-import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
-import { FlowHint } from "../flow-hint";
-import type { FlowVariant } from "../flow-variant";
-import * as Flow from "../flow/flow";
-import { FlowGroupId } from "../flow/flow-group-id";
-import { FlowNodeId } from "../flow/flow-node-id";
-import { FlowTerminal } from "../flow/flow-terminal";
-import * as FlowVariantUI from "./flow-variant-ui";
+import {p} from 'gamezilla-app/@/core/parser';
+import {APP_SOUND} from 'gamezilla-app/app/@/client';
+import type {FlowPuzzle} from '../../flow-puzzle/flow-puzzle';
+import {FlowAlgoDrawPipes} from '../flow-aglo/flow-algo-draw-pipes';
+import {FlowAlgoSolve} from '../flow-aglo/flow-algo-solve';
+import {FlowHint} from '../flow-hint';
+import type {FlowVariant} from '../flow-variant';
+import * as Flow from '../flow/flow';
+import {FlowGroupId} from '../flow/flow-group-id';
+import {FlowNodeId} from '../flow/flow-node-id';
+import {FlowTerminal} from '../flow/flow-terminal';
+import * as FlowVariantUI from './flow-variant-ui';
 
 //
 //
@@ -23,11 +23,11 @@ type Ctx = {
 	flowPuzzle: FlowPuzzle;
 };
 
-const Idle = p.obj({ t: p.l("idle") });
+const Idle = p.obj({t: p.l('idle')});
 type Idle = p.Infer<typeof Idle>;
 
 const Dragging = p.obj({
-	t: p.l("dragging"),
+	t: p.l('dragging'),
 	activeGroupId: FlowGroupId,
 	autocompleteEdge: p.maybe(Flow.Edge),
 });
@@ -40,23 +40,32 @@ export const Model = p.and(
 	FlowHint.Model,
 	p.obj({
 		pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
-		terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
+		terminalsByGroupId: p.partialDict(
+			FlowGroupId,
+			FlowTerminal,
+		),
 		status: Status,
 	}),
 );
 export type Model = p.Infer<typeof Model>;
 
-export const init = (input: { ctx: Ctx }): Model => {
+export const init = (input: {ctx: Ctx}): Model => {
 	return {
 		...FlowHint.init(input),
-		pipesBySourceId: { ...input.ctx.flowPuzzle.flow.pipesBySourceId },
-		terminalsByGroupId: { ...input.ctx.flowPuzzle.flow.terminalsByGroupId },
-		status: { t: "idle" },
+		pipesBySourceId: {
+			...input.ctx.flowPuzzle.flow
+				.pipesBySourceId,
+		},
+		terminalsByGroupId: {
+			...input.ctx.flowPuzzle.flow
+				.terminalsByGroupId,
+		},
+		status: {t: 'idle'},
 	};
 };
 
-export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
-	const initial = init({ ctx: input });
+export const random = (input: {flowPuzzle: FlowPuzzle}): Model => {
+	const initial = init({ctx: input});
 
 	const terminal = Flow.randomTerminal(input.flowPuzzle.flow);
 
@@ -64,7 +73,10 @@ export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
 		return initial;
 	}
 
-	const edge = Flow.randomOutEdge(input.flowPuzzle.flow, terminal.startId);
+	const edge = Flow.randomOutEdge(
+		input.flowPuzzle.flow,
+		terminal.startId,
+	);
 
 	if (!edge) {
 		return initial;
@@ -74,7 +86,9 @@ export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
 		...initial,
 		pipesBySourceId: {
 			[terminal.startId]: {
-				edgeId: Flow.toFlowEdgeId(edge),
+				edgeId: Flow.toFlowEdgeId(
+					edge,
+				),
 				groupId: terminal.groupId,
 			},
 		},
@@ -84,7 +98,7 @@ export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
 	};
 };
 
-export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
+export const randomMsgs = ({flow}: {flow: Flow.Model}): Msg[] => {
 	const terminal = Flow.randomTerminal(flow);
 
 	if (!terminal) {
@@ -96,7 +110,10 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 	const currentNodeId: FlowNodeId = terminal.startId;
 
 	for (let i = 0; i < Math.random() * 10; i++) {
-		const edge = Flow.randomOutEdge(flow, currentNodeId);
+		const edge = Flow.randomOutEdge(
+			flow,
+			currentNodeId,
+		);
 
 		if (!edge) {
 			break;
@@ -107,12 +124,12 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 
 	const msgs: Msg[] = [
 		{
-			t: "pressed-down",
+			t: 'pressed-down',
 			nodeId: terminal.startId,
 		},
 		...edges.map(
 			(edge): Msg => ({
-				t: "dragged-over",
+				t: 'dragged-over',
 				nodeId: edge.targetId,
 			}),
 		),
@@ -125,11 +142,7 @@ export const isShowingHint = (_model: Model): boolean => {
 	return false;
 };
 
-export const toSolutionMsgs = ({
-	flow,
-}: {
-	flow: FlowVariant.Model;
-}): Msg[] => {
+export const toSolutionMsgs = ({flow}: {flow: FlowVariant.Model}): Msg[] => {
 	const solutions = FlowAlgoSolve.solutions(flow);
 
 	const solution = first(solutions);
@@ -146,23 +159,29 @@ export const toSolutionMsgs = ({
 		}
 
 		msgs.push({
-			t: "pressed-down",
+			t: 'pressed-down',
 			nodeId: terminal.startId,
 		});
 
-		for (const pipe of Flow.toPipeline(solution, terminal.startId)) {
-			const edge = Flow.toEdge(solution, pipe.edgeId);
+		for (const pipe of Flow.toPipeline(
+			solution,
+			terminal.startId,
+		)) {
+			const edge = Flow.toEdge(
+				solution,
+				pipe.edgeId,
+			);
 			if (!edge) {
 				continue;
 			}
 			msgs.push({
-				t: "dragged-over",
+				t: 'dragged-over',
 				nodeId: edge.targetId,
 			});
 		}
 
 		msgs.push({
-			t: "pressed-up",
+			t: 'pressed-up',
 			nodeId: terminal.endId,
 		});
 	}
@@ -187,19 +206,19 @@ const first = <T,>(iterable: Iterable<T>): T | null => {
 export const Msg = p.or(
 	FlowHint.Msg,
 	p.obj({
-		t: p.l("pressed-down"),
+		t: p.l('pressed-down'),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("pressed-up"),
+		t: p.l('pressed-up'),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("dragged-over"),
+		t: p.l('dragged-over'),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("left"),
+		t: p.l('left'),
 	}),
 );
 
@@ -208,32 +227,32 @@ export type Msg = p.Infer<typeof Msg>;
 export type Event =
 	| FlowHint.Event
 	| {
-			t: "started-dragging";
+			t: 'started-dragging';
 	  }
 	| {
-			t: "connected-terminals";
+			t: 'connected-terminals';
 			connectedTerminalCount: number;
 	  }
 	| {
-			t: "solved";
+			t: 'solved';
 	  };
 
 export const eventToSoundSrc = (event: Event): string => {
 	switch (event.t) {
-		case "connected-terminals": {
+		case 'connected-terminals': {
 			// return nthConnectedTerminal(event.connectedTerminalCount);
 			return APP_SOUND.tap;
 		}
 
-		case "solved": {
+		case 'solved': {
 			return APP_SOUND.celebration;
 		}
 
-		case "started-dragging": {
+		case 'started-dragging': {
 			return APP_SOUND.tap;
 		}
 
-		case "used-hint": {
+		case 'used-hint': {
 			return APP_SOUND.navForwardMin;
 		}
 	}
@@ -251,7 +270,7 @@ export const update = ({
 	model: Model;
 	event?: Event;
 } => {
-	const updated = updateMain({ msg, model, ctx });
+	const updated = updateMain({msg, model, ctx});
 	const updatedHint = FlowHint.update({
 		model: updated.model,
 		msg,
@@ -264,9 +283,9 @@ export const update = ({
 	};
 };
 
-const updateMain: typeof update = ({ model, ctx, msg }) => {
+const updateMain: typeof update = ({model, ctx, msg}) => {
 	switch (model.status.t) {
-		case "dragging": {
+		case 'dragging': {
 			return updateDragging({
 				ctx,
 				msg,
@@ -275,28 +294,43 @@ const updateMain: typeof update = ({ model, ctx, msg }) => {
 			});
 		}
 
-		case "idle": {
-			return updateIdle({ ctx, msg, model });
+		case 'idle': {
+			return updateIdle({
+				ctx,
+				msg,
+				model,
+			});
 		}
 	}
 };
 
-const updateIdle: typeof update = ({ msg, model, ctx }) => {
+const updateIdle: typeof update = ({msg, model, ctx}) => {
 	switch (msg.t) {
-		case "pressed-down": {
-			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
+		case 'pressed-down': {
+			const current = toFlow({
+				model,
+				flow: ctx
+					.flowPuzzle
+					.flow,
+			});
 
-			const groupId = Flow.toGroupId(current, msg.nodeId);
-
-			if (!groupId) {
-				return { model };
-			}
-
-			const started = FlowAlgoDrawPipes.startDrawPipes(
+			const groupId = Flow.toGroupId(
 				current,
-				groupId,
 				msg.nodeId,
 			);
+
+			if (!groupId) {
+				return {
+					model,
+				};
+			}
+
+			const started =
+				FlowAlgoDrawPipes.startDrawPipes(
+					current,
+					groupId,
+					msg.nodeId,
+				);
 
 			return {
 				model: {
@@ -304,19 +338,21 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
 					terminalsByGroupId: started.terminalsByGroupId,
 					pipesBySourceId: started.pipesBySourceId,
 					status: {
-						t: "dragging",
+						t: 'dragging',
 						activeGroupId: groupId,
 						autocompleteEdge: null,
 					},
 				},
 				event: {
-					t: "started-dragging",
+					t: 'started-dragging',
 				},
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -336,16 +372,22 @@ const updateDragging = ({
 	event?: Event;
 } => {
 	switch (msg.t) {
-		case "dragged-over": {
-			const { nodeId } = msg;
+		case 'dragged-over': {
+			const {nodeId} = msg;
 
-			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
+			const current = toFlow({
+				model,
+				flow: ctx
+					.flowPuzzle
+					.flow,
+			});
 
-			const extended = FlowAlgoDrawPipes.drawPipes(
-				current,
-				modelStatus.activeGroupId,
-				nodeId,
-			);
+			const extended =
+				FlowAlgoDrawPipes.drawPipes(
+					current,
+					modelStatus.activeGroupId,
+					nodeId,
+				);
 
 			const modelNew: Model = {
 				...model,
@@ -354,35 +396,54 @@ const updateDragging = ({
 				pipesBySourceId: extended.pipesBySourceId,
 			};
 
-			return { model: modelNew };
+			return {
+				model: modelNew,
+			};
 		}
 
-		case "pressed-up": {
-			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
-			const modelNew: Model = { ...model, status: { t: "idle" } };
+		case 'pressed-up': {
+			const current = toFlow({
+				model,
+				flow: ctx
+					.flowPuzzle
+					.flow,
+			});
+			const modelNew: Model = {
+				...model,
+				status: {
+					t: 'idle',
+				},
+			};
 
-			const activeGroupTerminal = Flow.toTerminalByGroupId(
-				current,
-				modelStatus.activeGroupId,
-			);
+			const activeGroupTerminal =
+				Flow.toTerminalByGroupId(
+					current,
+					modelStatus.activeGroupId,
+				);
 
 			if (!activeGroupTerminal) {
-				return { model: modelNew };
+				return {
+					model: modelNew,
+				};
 			}
 
-			const isConnected = Flow.isConnectedWithPipes(
-				current,
-				activeGroupTerminal.startId,
-				activeGroupTerminal.endId,
-			);
+			const isConnected =
+				Flow.isConnectedWithPipes(
+					current,
+					activeGroupTerminal.startId,
+					activeGroupTerminal.endId,
+				);
 
-			const isSolved = Flow.isSolved(current);
+			const isSolved =
+				Flow.isSolved(
+					current,
+				);
 
 			if (isSolved && isConnected) {
 				return {
 					model: modelNew,
 					event: {
-						t: "solved",
+						t: 'solved',
 					},
 				};
 			}
@@ -391,35 +452,50 @@ const updateDragging = ({
 				return {
 					model: modelNew,
 					event: {
-						t: "connected-terminals",
-						connectedTerminalCount: Flow.countConnectedPipes(current),
+						t: 'connected-terminals',
+						connectedTerminalCount:
+							Flow.countConnectedPipes(
+								current,
+							),
 					},
 				};
 			}
 
-			return { model: modelNew };
+			return {
+				model: modelNew,
+			};
 		}
 
-		case "left": {
-			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
-			const isSolved = Flow.isSolved(current);
+		case 'left': {
+			const current = toFlow({
+				model,
+				flow: ctx
+					.flowPuzzle
+					.flow,
+			});
+			const isSolved =
+				Flow.isSolved(
+					current,
+				);
 			return {
 				model: {
 					...model,
 					status: {
-						t: "idle",
+						t: 'idle',
 					},
 				},
 				event: isSolved
 					? {
-							t: "solved",
-						}
+							t: 'solved',
+					  }
 					: undefined,
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -460,25 +536,69 @@ export const View = (input: {
 			disabled={input.disabled}
 			model={toFlow(input)}
 			showCoordinates={false}
-			isDragging={input.model.status.t === "dragging"}
-			onDraggedOver={(nodeId) => input.dispatch({ t: "dragged-over", nodeId })}
-			onPressDown={(nodeId) => input.dispatch({ t: "pressed-down", nodeId })}
-			onPressUp={(nodeId) => input.dispatch({ t: "pressed-up", nodeId })}
-			onLeave={() => input.dispatch({ t: "left" })}
+			isDragging={
+				input.model
+					.status
+					.t ===
+				'dragging'
+			}
+			onDraggedOver={(nodeId) =>
+				input.dispatch({
+					t: 'dragged-over',
+					nodeId,
+				})
+			}
+			onPressDown={(nodeId) =>
+				input.dispatch({
+					t: 'pressed-down',
+					nodeId,
+				})
+			}
+			onPressUp={(nodeId) =>
+				input.dispatch({
+					t: 'pressed-up',
+					nodeId,
+				})
+			}
+			onLeave={() =>
+				input.dispatch({
+					t: 'left',
+				})
+			}
 			autocompleteEdge={
-				input.model.status.t === "dragging" &&
-				input.model.status.autocompleteEdge
+				input.model
+					.status
+					.t ===
+					'dragging' &&
+				input.model
+					.status
+					.autocompleteEdge
 					? {
-							...input.model.status.autocompleteEdge,
-							groupId: input.model.status.activeGroupId,
-						}
+							...input
+								.model
+								.status
+								.autocompleteEdge,
+							groupId: input
+								.model
+								.status
+								.activeGroupId,
+					  }
 					: null
 			}
 			isGroupActive={(groupId) =>
-				input.model.status.t === "dragging" &&
-				input.model.status.activeGroupId === groupId
+				input.model
+					.status
+					.t ===
+					'dragging' &&
+				input.model
+					.status
+					.activeGroupId ===
+					groupId
 			}
-			usedHints={input.model.usedHints}
+			usedHints={
+				input.model
+					.usedHints
+			}
 		/>
 	);
 };

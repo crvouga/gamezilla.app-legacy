@@ -1,12 +1,12 @@
-import type { ClientCtx } from "gamezilla-app/app/@/client";
-import { Eff, Sub } from "gamezilla-app/@/core";
+import type {ClientCtx} from 'gamezilla-app/app/@/client';
+import {Eff, Sub} from 'gamezilla-app/@/core';
 import {
 	type ModelClient,
 	type MsgClient,
 	type ModelServer,
 	type MsgToClient,
 	initShared,
-} from "./vs-user.types";
+} from './vs-user.types';
 
 //
 //
@@ -40,19 +40,32 @@ export const update = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "clicked-cancel") {
-		return { model: { ...model, confirming: undefined } };
+	if (msg.t === 'clicked-cancel') {
+		return {
+			model: {
+				...model,
+				confirming: undefined,
+			},
+		};
 	}
 
-	if (msg.t === "resign") {
-		if (model.confirming === "resign") {
-			return { model, eff: Eff.None };
+	if (msg.t === 'resign') {
+		if (model.confirming === 'resign') {
+			return {
+				model,
+				eff: Eff.None,
+			};
 		}
 
-		return { model: { ...model, confirming: "resign" } };
+		return {
+			model: {
+				...model,
+				confirming: 'resign',
+			},
+		};
 	}
 
-	return { model, eff: Eff.None };
+	return {model, eff: Eff.None};
 };
 
 export const updateFromServer = ({
@@ -65,20 +78,22 @@ export const updateFromServer = ({
 	model: Model;
 	eff?: Eff<Msg>;
 } => {
-	if (msg.t === "input-move") {
-		if (msg.result.t === "err") {
-			return { model };
+	if (msg.t === 'input-move') {
+		if (msg.result.t === 'err') {
+			return {
+				model,
+			};
 		}
 		const merged = mergeWithServer({
 			serverModel: msg.result.value,
 			clientModel: model,
 		});
 
-		return { model: merged };
+		return {model: merged};
 	}
 
-	if (msg.result.t === "err") {
-		return { model };
+	if (msg.result.t === 'err') {
+		return {model};
 	}
 
 	const merged = mergeWithServer({
@@ -86,7 +101,7 @@ export const updateFromServer = ({
 		clientModel: model,
 	});
 
-	return { model: merged };
+	return {model: merged};
 };
 
 export const mergeWithServer = ({

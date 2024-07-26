@@ -3,92 +3,136 @@ import {
 	playSound,
 	pushRoute,
 	showToast,
-} from "gamezilla-app/app/@/client";
-import { Button, Typography } from "gamezilla-app/app/@/ui";
-import { withId } from "../@/event";
-import { SpaceClientModule } from "../architecture/architecture";
-import type { SpaceCoreEvent } from "../spaces-core";
-import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
+} from 'gamezilla-app/app/@/client';
+import {Button, Typography} from 'gamezilla-app/app/@/ui';
+import {withId} from '../@/event';
+import {SpaceClientModule} from '../architecture/architecture';
+import type {SpaceCoreEvent} from '../spaces-core';
+import * as SpacesCoreClient from '../spaces-core/spaces-core.client';
 
-const update: SpaceClientModule["update"] = (input) => {
+const update: SpaceClientModule['update'] = (input) => {
 	return SpaceClientModule.andThen(
-		{ model: input.model },
-		(model) => updateEndSpaceButton({ ...input, model }),
-		(model) => updateFromSpaceEvent({ ...input, model }),
-		(model) => updateFromAppEvent({ ...input, model }),
+		{model: input.model},
+		(model) =>
+			updateEndSpaceButton({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromSpaceEvent({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromAppEvent({
+				...input,
+				model,
+			}),
 	);
 };
 
-const updateFromAppEvent: SpaceClientModule["update"] = (input) => {
-	const { ctx, model, msgEvt } = input;
+const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
+	const {ctx, model, msgEvt} = input;
 
 	switch (msgEvt?.t) {
-		case "auth/unauthenticated": {
-			const { currentUserId } = ctx;
-			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
-				model,
-				currentUserId,
-			);
-			if (!currentUserId || !currentUserSpaceId) {
-				return { model };
+		case 'auth/unauthenticated': {
+			const {currentUserId} = ctx;
+			const currentUserSpaceId =
+				SpacesCoreClient.toSpaceIdByUserId(
+					model,
+					currentUserId,
+				);
+			if (
+				!currentUserId ||
+				!currentUserSpaceId
+			) {
+				return {
+					model,
+				};
 			}
 
 			return {
 				model,
 				msgSpaceEvent: [
-					withId({
-						t: "user-ended-space",
-						spaceId: currentUserSpaceId,
-						userId: currentUserId,
-					}),
+					withId(
+						{
+							t: 'user-ended-space',
+							spaceId: currentUserSpaceId,
+							userId: currentUserId,
+						},
+					),
 				],
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
-const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
-	const { ctx, model, msgSpaceEvent } = input;
+const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
+	const {ctx, model, msgSpaceEvent} = input;
 
 	switch (msgSpaceEvent?.t) {
-		case "user-ended-space": {
+		case 'user-ended-space': {
 			if (!ctx.currentUserId) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
-				model,
-				ctx.currentUserId,
-			);
+			const currentUserSpaceId =
+				SpacesCoreClient.toSpaceIdByUserId(
+					model,
+					ctx.currentUserId,
+				);
 
-			if (msgSpaceEvent.spaceId !== currentUserSpaceId) {
-				return { model };
+			if (
+				msgSpaceEvent.spaceId !==
+				currentUserSpaceId
+			) {
+				return {
+					model,
+				};
 			}
 
 			return SpaceClientModule.andThen(
-				{ model },
+				{
+					model,
+				},
 				(model) => {
 					return {
 						model,
-						msgCmd: [playSound(APP_SOUND.navBackward)],
+						msgCmd: [
+							playSound(
+								APP_SOUND.navBackward,
+							),
+						],
 					};
 				},
 				(model) => {
 					if (
-						ctx.currentRoute.t === "space" &&
-						ctx.currentRoute.spaceId === msgSpaceEvent.spaceId
+						ctx
+							.currentRoute
+							.t ===
+							'space' &&
+						ctx
+							.currentRoute
+							.spaceId ===
+							msgSpaceEvent.spaceId
 					) {
 						return {
 							model,
 							msgCmd: [
-								pushRoute({
-									n: "spaces",
-									t: "space-list",
-								}),
+								pushRoute(
+									{
+										n: 'spaces',
+										t: 'space-list',
+									},
+								),
 							],
 						};
 					}
@@ -98,21 +142,41 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 					};
 				},
 				(model) => {
-					if (msgSpaceEvent.userId === ctx.currentUserId) {
+					if (
+						msgSpaceEvent.userId ===
+						ctx.currentUserId
+					) {
 						return {
 							model,
 							msgCmd: [
-								showToast(input.ctx.t("spaces.ended-space-current-user")),
+								showToast(
+									input.ctx.t(
+										'spaces.ended-space-current-user',
+									),
+								),
 							],
 						};
 					}
 
-					const profile = ctx.profiles[msgSpaceEvent.userId];
+					const profile =
+						ctx
+							.profiles[
+							msgSpaceEvent
+								.userId
+						];
 
-					if (!profile) {
+					if (
+						!profile
+					) {
 						return {
 							model,
-							msgCmd: [showToast(input.ctx.t("spaces.ended-space-host"))],
+							msgCmd: [
+								showToast(
+									input.ctx.t(
+										'spaces.ended-space-host',
+									),
+								),
+							],
 						};
 					}
 
@@ -120,7 +184,10 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 						model,
 						msgCmd: [
 							showToast(
-								input.ctx.t("spaces.ended-space-other-user", profile.username),
+								input.ctx.t(
+									'spaces.ended-space-other-user',
+									profile.username,
+								),
 							),
 						],
 					};
@@ -129,70 +196,101 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
-const updateEndSpaceButton: SpaceClientModule["update"] = ({
+const updateEndSpaceButton: SpaceClientModule['update'] = ({
 	msg,
 	model,
 	ctx,
 }) => {
 	switch (msg?.t) {
-		case "clicked-end-space-button": {
+		case 'clicked-end-space-button': {
 			if (!ctx.currentUserId) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
-				model,
-				ctx.currentUserId,
-			);
+			const currentUserSpaceId =
+				SpacesCoreClient.toSpaceIdByUserId(
+					model,
+					ctx.currentUserId,
+				);
 
 			if (!currentUserSpaceId) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const spaceEventNew = withId<SpaceCoreEvent>({
-				t: "user-ended-space",
-				spaceId: currentUserSpaceId,
-				userId: ctx.currentUserId,
-			});
+			const spaceEventNew =
+				withId<SpaceCoreEvent>(
+					{
+						t: 'user-ended-space',
+						spaceId: currentUserSpaceId,
+						userId: ctx.currentUserId,
+					},
+				);
 
 			return {
 				model,
-				msgSpaceEvent: [spaceEventNew],
+				msgSpaceEvent: [
+					spaceEventNew,
+				],
 			};
 		}
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
-export const ViewEndSpaceButton: SpaceClientModule["View"] = (input) => {
+export const ViewEndSpaceButton: SpaceClientModule['View'] = (input) => {
 	return (
 		<Button
 			color="danger"
 			variant="contained"
 			size="xs"
-			text={input.ctx.t("spaces.end")}
-			onClick={() => input.dispatch({ t: "clicked-end-space-button" })}
+			text={input.ctx.t('spaces.end')}
+			onClick={() =>
+				input.dispatch({
+					t: 'clicked-end-space-button',
+				})
+			}
 		/>
 	);
 };
 
-const ViewSpaceEnded: SpaceClientModule["View"] = (input) => {
+const ViewSpaceEnded: SpaceClientModule['View'] = (input) => {
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center gap-4">
-			<Typography text={input.ctx.t("spaces.space-ended")} variant="title" />
+			<Typography
+				text={input.ctx.t(
+					'spaces.space-ended',
+				)}
+				variant="title"
+			/>
 			<Button
-				onClick={() => input.dispatch({ t: "clicked-go-home-button" })}
+				onClick={() =>
+					input.dispatch(
+						{
+							t: 'clicked-go-home-button',
+						},
+					)
+				}
 				size="lg"
 				variant="contained"
 				color="primary"
-				text={input.ctx.t("spaces.go-home")}
+				text={input.ctx.t(
+					'spaces.go-home',
+				)}
 			/>
 		</div>
 	);

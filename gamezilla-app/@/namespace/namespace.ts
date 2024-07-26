@@ -31,7 +31,11 @@ export const unnamespace = <
 	for (const key in value) {
 		if (key.startsWith(namespace)) {
 			// @ts-ignore
-			result[key.slice(namespace.length)] = value[key];
+			result[
+				key.slice(
+					namespace.length,
+				)
+			] = value[key];
 		}
 	}
 	return result;

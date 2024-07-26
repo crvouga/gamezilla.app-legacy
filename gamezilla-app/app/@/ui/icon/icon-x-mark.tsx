@@ -1,4 +1,4 @@
-import type { IconInput } from "../icon-shared";
+import type {IconInput} from '../icon-shared';
 
 export const IconXMark = (input: IconInput) => {
 	return (
@@ -7,7 +7,7 @@ export const IconXMark = (input: IconInput) => {
 			viewBox="0 0 384 512"
 			fill="currentColor"
 			style={{
-				transform: "scale(1.3)",
+				transform: 'scale(1.3)',
 			}}
 			{...input}
 		>

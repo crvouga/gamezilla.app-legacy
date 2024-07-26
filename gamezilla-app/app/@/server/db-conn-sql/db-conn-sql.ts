@@ -1,6 +1,6 @@
-import type { Result } from "gamezilla-app/@/core";
-import type { p } from "gamezilla-app/@/core/parser";
-import type { Sql } from "gamezilla-app/@/sql";
+import type {Result} from 'gamezilla-app/@/core';
+import type {p} from 'gamezilla-app/@/core/parser';
+import type {Sql} from 'gamezilla-app/@/sql';
 
 export type DbConnSqlNotification = {
 	processId: number;
@@ -15,6 +15,8 @@ export type IDbConnSql = {
 		variables: Sql.Vars,
 	) => Promise<Result<string, TRow[]>>;
 	onNotification: (
-		callback: (notification: DbConnSqlNotification) => void,
+		callback: (
+			notification: DbConnSqlNotification,
+		) => void,
 	) => Promise<() => void>;
 };

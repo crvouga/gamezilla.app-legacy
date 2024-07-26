@@ -1,1 +1,1 @@
-export * as EditPuzzleNameTypes from "./edit-puzzle-name.types";
+export * as EditPuzzleNameTypes from './edit-puzzle-name.types';

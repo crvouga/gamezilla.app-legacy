@@ -1,81 +1,108 @@
-import { describe, expect, it } from "bun:test";
-import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
-import { didPlaySound, didPushRoute } from "gamezilla-app/app/@/client";
-import { SpaceId } from "gamezilla-app/app/@/data";
+import {describe, expect, it} from 'bun:test';
+import {AppClientModule} from 'gamezilla-app/app/@/architecture/app-client';
+import {didPlaySound, didPushRoute} from 'gamezilla-app/app/@/client';
+import {SpaceId} from 'gamezilla-app/app/@/data';
 import {
 	clickedStartSpaceButton,
 	Ctx,
 	init,
 	userClickedEndSpaceButton,
-} from "../@/testing/client";
-import { SpaceClientModule } from "../architecture/architecture";
-import { EndSpaceClient } from "./end-space.client";
+} from '../@/testing/client';
+import {SpaceClientModule} from '../architecture/architecture';
+import {EndSpaceClient} from './end-space.client';
 
 describe(import.meta.file, () => {
-	it("should redirect to space list after ending space if on space route", async () => {
+	it('should redirect to space list after ending space if on space route', async () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 		const updated = await AppClientModule.andThen(
 			init(ctx),
-			clickedStartSpaceButton(ctx, spaceId),
+			clickedStartSpaceButton(
+				ctx,
+				spaceId,
+			),
 			userClickedEndSpaceButton({
 				...ctx,
-				currentRoute: { n: "spaces", t: "space", spaceId },
+				currentRoute: {
+					n: 'spaces',
+					t: 'space',
+					spaceId,
+				},
 			}),
 		);
 
 		expect(didPushRoute(updated)).toBe(true);
 	});
 
-	it("should not redirect to space list after ending space if not on space route", async () => {
+	it('should not redirect to space list after ending space if not on space route', async () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 
 		const updated = await AppClientModule.andThen(
 			init(ctx),
-			clickedStartSpaceButton(ctx, spaceId),
+			clickedStartSpaceButton(
+				ctx,
+				spaceId,
+			),
 		);
 
 		const output = await AppClientModule.andThen(
-			{ model: updated.model },
+			{
+				model: updated.model,
+			},
 			userClickedEndSpaceButton({
 				...ctx,
-				currentRoute: { n: "spaces", t: "space-list" },
+				currentRoute: {
+					n: 'spaces',
+					t: 'space-list',
+				},
 			}),
 		);
 
 		expect(didPushRoute(output)).toBe(false);
 	});
 
-	it("should play sound after ending space", async () => {
+	it('should play sound after ending space', async () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 		const updated = await AppClientModule.andThen(
 			init(ctx),
-			clickedStartSpaceButton(ctx, spaceId),
+			clickedStartSpaceButton(
+				ctx,
+				spaceId,
+			),
 			userClickedEndSpaceButton(ctx),
 		);
 		expect(didPlaySound(updated)).toBe(true);
 	});
 
-	it("should end space when host logs out", async () => {
+	it('should end space when host logs out', async () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 		const updated = await SpaceClientModule.andThen(
 			init(ctx),
-			clickedStartSpaceButton(ctx, spaceId),
+			clickedStartSpaceButton(
+				ctx,
+				spaceId,
+			),
 			(model) =>
-				EndSpaceClient.update({
-					model,
-					ctx,
-					msgEvt: { t: "auth/unauthenticated" },
-				}),
+				EndSpaceClient.update(
+					{
+						model,
+						ctx,
+						msgEvt: {
+							t: 'auth/unauthenticated',
+						},
+					},
+				),
 		);
 		expect(
 			updated.msgSpaceEvent?.some(
 				(spaceEvent) =>
-					spaceEvent.t === "user-ended-space" &&
-					spaceEvent.userId === ctx.currentUserId,
+					spaceEvent.t ===
+						'user-ended-space' &&
+					spaceEvent.userId ===
+						ctx.currentUserId,
 			),
 		).toBe(true);
 	});

@@ -1,11 +1,11 @@
-import type { Server, WebSocketHandler } from "bun";
-import type { ILogger } from "gamezilla-app/app/@/server/logger";
+import type {Server, WebSocketHandler} from 'bun';
+import type {ILogger} from 'gamezilla-app/app/@/server/logger';
 import {
 	stringToHttpRequestMethod,
 	type HttpHandler,
 	type HttpRequest,
 	type IServer,
-} from "../server";
+} from '../server';
 
 type FetchHandler = (
 	req: Request,
@@ -14,7 +14,7 @@ type FetchHandler = (
 
 type MaybePromise<T> = T | Promise<T>;
 
-export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
+export const ServerBun = <T>({logger}: {logger: ILogger}) => {
 	const httpHandlers: HttpHandler[] = [];
 	const _fetchHandlers: FetchHandler[] = [];
 	let webSocketHandler: WebSocketHandler<T>;
@@ -23,57 +23,134 @@ export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
 		async start(port) {
 			server = Bun.serve({
 				port: port,
-				async fetch(req) {
+				async fetch(
+					req,
+				) {
 					for (const handler of _fetchHandlers) {
-						const response = await handler(req, server);
-						if (response) {
+						const response =
+							await handler(
+								req,
+								server,
+							);
+						if (
+							response
+						) {
 							return response;
 						}
 					}
 
-					const httpRequest: HttpRequest = {
-						body: req.body ? await readableStreamToString(req.body) : null,
-						headers: Array.from(req.headers.entries()).reduce<
-							Record<string, string>
-						>((acc, [key, value]) => {
-							acc[key] = value;
-							return acc;
-						}, {}),
-						method: stringToHttpRequestMethod(req.method),
-						pathname: req.url,
-						cookies: (req.headers.get("cookies")?.split(";") ?? []).reduce<
-							Record<string, string>
-						>((acc, cookie) => {
-							const [key, value] = cookie.split("=");
-							if (key && value) {
-								acc[key.trim()] = value.trim();
-							}
-							return acc;
-						}, {}),
-					};
+					const httpRequest: HttpRequest =
+						{
+							body: req.body
+								? await readableStreamToString(
+										req.body,
+								  )
+								: null,
+							headers: Array.from(
+								req.headers.entries(),
+							).reduce<
+								Record<
+									string,
+									string
+								>
+							>(
+								(
+									acc,
+									[
+										key,
+										value,
+									],
+								) => {
+									acc[
+										key
+									] =
+										value;
+									return acc;
+								},
+								{},
+							),
+							method: stringToHttpRequestMethod(
+								req.method,
+							),
+							pathname: req.url,
+							cookies: (
+								req.headers
+									.get(
+										'cookies',
+									)
+									?.split(
+										';',
+									) ??
+								[]
+							).reduce<
+								Record<
+									string,
+									string
+								>
+							>(
+								(
+									acc,
+									cookie,
+								) => {
+									const [
+										key,
+										value,
+									] =
+										cookie.split(
+											'=',
+										);
+									if (
+										key &&
+										value
+									) {
+										acc[
+											key.trim()
+										] =
+											value.trim();
+									}
+									return acc;
+								},
+								{},
+							),
+						};
 
 					for (const handler of httpHandlers) {
-						const response = await handler(httpRequest);
+						const response =
+							await handler(
+								httpRequest,
+							);
 
-						if (response) {
-							return new Response(response.body, {
-								headers: response.headers,
-								status: response.status,
-							});
+						if (
+							response
+						) {
+							return new Response(
+								response.body,
+								{
+									headers: response.headers,
+									status: response.status,
+								},
+							);
 						}
 					}
-					return new Response("Not found", { status: 404 });
+					return new Response(
+						'Not found',
+						{
+							status: 404,
+						},
+					);
 				},
 				websocket: webSocketHandler,
 			});
-			logger.info(`Listening on port ${port}`);
+			logger.info(
+				`Listening on port ${port}`,
+			);
 		},
 		registerHandler(handler) {
 			httpHandlers.push(handler);
 		},
 		serveSinglePageApp(_input) {
 			throw new Error(
-				"serveSinglePageApp not implemented for bun server. Will not work when deployed",
+				'serveSinglePageApp not implemented for bun server. Will not work when deployed',
 			);
 		},
 	};
@@ -82,13 +159,15 @@ export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
 		_registerFetchHandler(handler: FetchHandler) {
 			_fetchHandlers.push(handler);
 		},
-		_setWebSocketHandler(handler: WebSocketHandler<T>) {
+		_setWebSocketHandler(
+			handler: WebSocketHandler<T>,
+		) {
 			webSocketHandler = handler;
 		},
 		_publish(topic: string, data: string) {
 			server.publish(topic, data);
 		},
-		t: "bun",
+		t: 'bun',
 	} as const;
 };
 
@@ -98,13 +177,15 @@ async function readableStreamToString(
 	stream: ReadableStream<Uint8Array>,
 ): Promise<string> {
 	const reader = stream.getReader();
-	const decoder = new TextDecoder("utf-8");
-	let result = "";
+	const decoder = new TextDecoder('utf-8');
+	let result = '';
 
 	while (true) {
-		const { done, value } = await reader.read();
+		const {done, value} = await reader.read();
 		if (done) break;
-		result += decoder.decode(value, { stream: true });
+		result += decoder.decode(value, {
+			stream: true,
+		});
 	}
 
 	// Finish the stream and decode any remaining bytes

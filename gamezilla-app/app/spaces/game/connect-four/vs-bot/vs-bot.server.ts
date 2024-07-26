@@ -1,14 +1,14 @@
-import { GameServer } from "gamezilla-app/app/spaces/@/architecture/game-server";
-import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
-import { withId } from "gamezilla-app/app/spaces/@/event";
+import {GameServer} from 'gamezilla-app/app/spaces/@/architecture/game-server';
+import {GameServerModule} from 'gamezilla-app/app/spaces/@/architecture/game-server-v2';
+import {withId} from 'gamezilla-app/app/spaces/@/event';
 import type {
 	SpaceServerCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import { Sub, Time, TimeSpan, isErr } from "gamezilla-app/@/core";
-import { ConnectFourBotWorker } from "../@/connect-four";
-import * as ConnectFour from "../@/connect-four/connect-four";
+} from 'gamezilla-app/app/spaces/@/space';
+import type {SpaceServerCmd} from 'gamezilla-app/app/spaces/@/space-server-cmd';
+import {Sub, Time, TimeSpan, isErr} from 'gamezilla-app/@/core';
+import {ConnectFourBotWorker} from '../@/connect-four';
+import * as ConnectFour from '../@/connect-four/connect-four';
 import {
 	type MsgCore,
 	type ModelCore,
@@ -19,7 +19,7 @@ import {
 	isBotMoving,
 	isBotTurn,
 	toBotPlayer,
-} from "./vs-bot.types";
+} from './vs-bot.types';
 
 //
 //
@@ -44,84 +44,137 @@ type Module = GameServerModule<{
 	MsgEvtOut: null;
 }>;
 
-export const init: Module["init"] = {
+export const init: Module['init'] = {
 	botStartedFindingMoveAt: null,
 };
 
-export const update: Module["update"] = async (input) => {
-	return GameServerModule.andThen({ model: input.model }, (model) =>
-		updateFromMsg({ ...input, model }),
+export const update: Module['update'] = async (input) => {
+	return GameServerModule.andThen({model: input.model}, (model) =>
+		updateFromMsg({
+			...input,
+			model,
+		}),
 	);
 };
 
-const updateFromMsg: Module["update"] = async (input) => {
-	const { msg, model, modelCore, ctx } = input;
+const updateFromMsg: Module['update'] = async (input) => {
+	const {msg, model, modelCore, ctx} = input;
 
 	if (!msg) {
-		return { model };
+		return {model};
 	}
 
 	switch (msg.t) {
-		case "time-passed": {
+		case 'time-passed': {
 			const shouldBotMove =
-				isBotTurn(modelCore) && !isBotMoving(ctx.now, model);
+				isBotTurn(
+					modelCore,
+				) &&
+				!isBotMoving(
+					ctx.now,
+					model,
+				);
 			if (
-				modelCore.type === "game" &&
+				modelCore.type ===
+					'game' &&
 				shouldBotMove &&
-				msg.t === "time-passed"
+				msg.t ===
+					'time-passed'
 			) {
 				return {
 					model: {
 						...model,
-						botStartedFindingMoveAt: ctx.now,
+						botStartedFindingMoveAt:
+							ctx.now,
 					},
-					eff: async (dispatch) => {
-						const found = ConnectFourBotWorker.findBestMove({
-							columns: modelCore.columns,
-							maxDepth: 4,
-							maximizingPlayer: toBotPlayer(modelCore),
-						});
-						dispatch({
-							t: "bot-found-best-move",
-							found,
-							startedAt: ctx.now,
-						});
+					eff: async (
+						dispatch,
+					) => {
+						const found =
+							ConnectFourBotWorker.findBestMove(
+								{
+									columns: modelCore.columns,
+									maxDepth: 4,
+									maximizingPlayer: toBotPlayer(
+										modelCore,
+									),
+								},
+							);
+						dispatch(
+							{
+								t: 'bot-found-best-move',
+								found,
+								startedAt: ctx.now,
+							},
+						);
 					},
 				};
 			}
 
-			return { model };
+			return {
+				model,
+			};
 		}
 
-		case "bot-found-best-move": {
-			const { found } = msg;
+		case 'bot-found-best-move': {
+			const {found} = msg;
 
 			return GameServer.chain(
-				{ model },
-				async (model) => {
-					if (isErr(found)) {
-						return { model };
+				{
+					model,
+				},
+				async (
+					model,
+				) => {
+					if (
+						isErr(
+							found,
+						)
+					) {
+						return {
+							model,
+						};
 					}
 
-					const columnIndex = found.value.columnIndex;
+					const columnIndex =
+						found
+							.value
+							.columnIndex;
 
-					if (!ConnectFour.isColumnIndex(columnIndex)) {
-						return { model };
+					if (
+						!ConnectFour.isColumnIndex(
+							columnIndex,
+						)
+					) {
+						return {
+							model,
+						};
 					}
 
-					const msgCoreNew = withId<MsgCore>({
-						t: "bot-dropped-disc",
-						columnIndex,
-					});
+					const msgCoreNew =
+						withId<MsgCore>(
+							{
+								t: 'bot-dropped-disc',
+								columnIndex,
+							},
+						);
 
 					return {
 						model,
-						msgCore: [msgCoreNew],
+						msgCore: [
+							msgCoreNew,
+						],
 					};
 				},
-				async (model) => {
+				async (
+					model,
+				) => {
 					return {
-						model: { ...model, botStartedFindingMoveAt: null },
+						model: {
+							...model,
+							botStartedFindingMoveAt:
+								null,
+						},
 					};
 				},
 			);
@@ -129,11 +182,15 @@ const updateFromMsg: Module["update"] = async (input) => {
 	}
 };
 
-export const subscriptions: Module["subscriptions"] = async (input) => {
+export const subscriptions: Module['subscriptions'] = async (input) => {
 	if (isBotTurn(input.modelCore)) {
-		return Time.interval("vs-bot", TimeSpan.seconds(1 / 2), () => ({
-			t: "time-passed",
-		}));
+		return Time.interval(
+			'vs-bot',
+			TimeSpan.seconds(1 / 2),
+			() => ({
+				t: 'time-passed',
+			}),
+		);
 	}
 	return Sub.None;
 };

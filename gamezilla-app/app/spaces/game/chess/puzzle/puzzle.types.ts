@@ -5,12 +5,12 @@ import {
 	type Posix,
 	type RemoteResult,
 	type Result,
-} from "gamezilla-app/@/core";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { Chess } from "../@/chess";
-import { EloRating } from "./elo-rating";
-import { zip } from "./utils";
+} from 'gamezilla-app/@/core';
+import type {UserId} from 'gamezilla-app/app/@/data';
+import type {SpaceCtx} from 'gamezilla-app/app/spaces/@/space';
+import {Chess} from '../@/chess';
+import {EloRating} from './elo-rating';
+import {zip} from './utils';
 
 export const maxRating = 3212;
 export const minRating = 545;
@@ -36,29 +36,29 @@ type BaseModel = {
 
 type MainModel =
 	| {
-			t: "started";
+			t: 'started';
 			startedAt: Posix;
 			hint?: Hint | null;
 	  }
 	| {
-			t: "solved";
+			t: 'solved';
 			startedAt: Posix;
 			endedAt: Posix;
 	  }
 	| {
-			t: "solved-with-hint";
+			t: 'solved-with-hint';
 			startedAt: Posix;
 			endedAt: Posix;
 	  }
 	| {
-			t: "incorrect";
+			t: 'incorrect';
 			startedAt: Posix;
 			endedAt: Posix;
 	  };
 
 export type CoreModel =
 	| {
-			t: "loading";
+			t: 'loading';
 			profile?: PuzzleProfile | null;
 			queue?: Puzzle[];
 			puzzle?: Puzzle;
@@ -66,7 +66,7 @@ export type CoreModel =
 	| (BaseModel & MainModel);
 
 export type ModelServer = CoreModel & {
-	requests: { getPuzzles?: RemoteResult<string, null> };
+	requests: {getPuzzles?: RemoteResult<string, null>};
 };
 
 export type ModelClient = CoreModel & {
@@ -74,23 +74,23 @@ export type ModelClient = CoreModel & {
 	serverNow?: Posix;
 };
 
-type Hint = "from" | "from-and-to";
+type Hint = 'from' | 'from-and-to';
 
-const hintToNextHint: { [key in Hint]: Hint } = {
-	from: "from-and-to",
-	"from-and-to": "from-and-to",
+const hintToNextHint: {[key in Hint]: Hint} = {
+	'from': 'from-and-to',
+	'from-and-to': 'from-and-to',
 };
 
 export const isNoMoreHints = (model: CoreModel): boolean => {
-	return model.t === "started" && model.hint === "from-and-to";
+	return model.t === 'started' && model.hint === 'from-and-to';
 };
 
 export const isSolved = (model: CoreModel): boolean => {
-	return model.t === "solved" || model.t === "solved-with-hint";
+	return model.t === 'solved' || model.t === 'solved-with-hint';
 };
 
 export const isIncorrect = (model: CoreModel): boolean => {
-	return model.t === "incorrect";
+	return model.t === 'incorrect';
 };
 
 export const initQuery: PuzzleQuery = {
@@ -98,7 +98,7 @@ export const initQuery: PuzzleQuery = {
 };
 
 export const initCore: CoreModel = {
-	t: "loading",
+	t: 'loading',
 };
 
 export type PuzzleQuery = {
@@ -130,7 +130,7 @@ export type PuzzleProfile = {
 };
 
 export type PuzzleInteraction = {
-	type: "started" | "solved" | "incorrect" | "solved-with-hint";
+	type: 'started' | 'solved' | 'incorrect' | 'solved-with-hint';
 	puzzleId: string;
 	userId: UserId;
 };
@@ -144,25 +144,50 @@ export type PuzzleInteraction = {
 //
 
 export type Req =
-	| { t: "input-query"; query: PuzzleQuery }
-	| { t: "input-move"; moveInput: Chess.MoveInput; didCapture?: boolean }
-	| { t: "next" }
-	| { t: "retry" }
-	| { t: "skip" }
-	| { t: "show-hint" };
+	| {t: 'input-query'; query: PuzzleQuery}
+	| {
+			t: 'input-move';
+			moveInput: Chess.MoveInput;
+			didCapture?: boolean;
+	  }
+	| {t: 'next'}
+	| {t: 'retry'}
+	| {t: 'skip'}
+	| {t: 'show-hint'};
 
-export type Res = Req & { result: Result<string, CoreModel> };
+export type Res = Req & {result: Result<string, CoreModel>};
 
-export type MsgServer = { t: "clock-tick" } | DbMsg;
+export type MsgServer = {t: 'clock-tick'} | DbMsg;
 
 type DbMsg =
-	| { t: "db-got-puzzles"; result: Result<string, Puzzle[]> }
-	| { t: "db-got-profile"; result: Result<string, PuzzleProfile | null> }
-	| { t: "db-put-profile"; result: Result<string, null> }
-	| { t: "db-put-interaction"; result: Result<string, null> }
 	| {
-			t: "db-got-initial-load";
-			result: Result<string, { profile: PuzzleProfile; puzzles: Puzzle[] }>;
+			t: 'db-got-puzzles';
+			result: Result<
+				string,
+				Puzzle[]
+			>;
+	  }
+	| {
+			t: 'db-got-profile';
+			result: Result<
+				string,
+				PuzzleProfile | null
+			>;
+	  }
+	| {t: 'db-put-profile'; result: Result<string, null>}
+	| {
+			t: 'db-put-interaction';
+			result: Result<string, null>;
+	  }
+	| {
+			t: 'db-got-initial-load';
+			result: Result<
+				string,
+				{
+					profile: PuzzleProfile;
+					puzzles: Puzzle[];
+				}
+			>;
 	  };
 
 export type MsgClient = Req;
@@ -171,11 +196,20 @@ export type MsgToServer = Req;
 
 export type MsgToClient =
 	| Res
-	| { t: "clock-tick"; now: Posix }
-	| (Omit<DbMsg, "result"> & { result: Result<string, CoreModel> });
+	| {t: 'clock-tick'; now: Posix}
+	| (Omit<DbMsg, 'result'> & {
+			result: Result<
+				string,
+				CoreModel
+			>;
+	  });
 
 export const toOpponentColor = (puzzle: Puzzle): Chess.Color => {
-	return Chess.toTurn(Chess.initFromFen({ fen: puzzle.fen }));
+	return Chess.toTurn(
+		Chess.initFromFen({
+			fen: puzzle.fen,
+		}),
+	);
 };
 
 export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
@@ -183,8 +217,13 @@ export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
 };
 
 export const toCorrectMove = (model: CoreModel): Chess.MoveInput | null => {
-	if (model.t === "started") {
-		return model.puzzle.moves[model.moves.length]?.correctMove ?? null;
+	if (model.t === 'started') {
+		return (
+			model.puzzle.moves[
+				model.moves
+					.length
+			]?.correctMove ?? null
+		);
 	}
 	return null;
 };
@@ -200,7 +239,7 @@ export const toCorrectMove = (model: CoreModel): Chess.MoveInput | null => {
 //
 
 export const toCurrentBoard = (model: CoreModel): Chess.Model => {
-	if (model.t === "loading") {
+	if (model.t === 'loading') {
 		return Chess.init();
 	}
 
@@ -214,9 +253,12 @@ export const toCurrentBoard = (model: CoreModel): Chess.Model => {
 			break;
 		}
 
-		const opponentMoved = Chess.move(puzzleMove.opponentMove, board);
+		const opponentMoved = Chess.move(
+			puzzleMove.opponentMove,
+			board,
+		);
 
-		if (opponentMoved.t === "err") {
+		if (opponentMoved.t === 'err') {
 			break;
 		}
 
@@ -228,9 +270,12 @@ export const toCurrentBoard = (model: CoreModel): Chess.Model => {
 			break;
 		}
 
-		const playerMoved = Chess.move(playerMove, board);
+		const playerMoved = Chess.move(
+			playerMove,
+			board,
+		);
 
-		if (playerMoved.t === "err") {
+		if (playerMoved.t === 'err') {
 			break;
 		}
 
@@ -252,8 +297,12 @@ const didSolvePuzzle = (
 ): boolean => {
 	return (
 		puzzle.moves.length === playerMoves.length &&
-		zip(puzzle.moves, playerMoves).every(([puzzleMove, playerMoves]) =>
-			Chess.isMoveEqual(puzzleMove.correctMove, playerMoves),
+		zip(puzzle.moves, playerMoves).every(
+			([puzzleMove, playerMoves]) =>
+				Chess.isMoveEqual(
+					puzzleMove.correctMove,
+					playerMoves,
+				),
 		)
 	);
 };
@@ -264,7 +313,10 @@ const didFailPuzzle = (
 ): boolean => {
 	return zip(puzzle.moves, playerMoves).some(
 		([puzzleMove, playerMove]) =>
-			!Chess.isMoveEqual(puzzleMove.correctMove, playerMove),
+			!Chess.isMoveEqual(
+				puzzleMove.correctMove,
+				playerMove,
+			),
 	);
 };
 
@@ -288,7 +340,7 @@ export const updateCore = ({
 	//
 
 	if (ctx.currentUserId !== ctx.space.hostId) {
-		return Err("must-be-host");
+		return Err('must-be-host');
 	}
 
 	//
@@ -296,44 +348,69 @@ export const updateCore = ({
 	//
 	//
 
-	if (model.t === "started") {
-		if (msg.t === "input-move") {
-			const board = toCurrentBoard(model);
+	if (model.t === 'started') {
+		if (msg.t === 'input-move') {
+			const board =
+				toCurrentBoard(
+					model,
+				);
 
-			const moved = Chess.move(msg.moveInput, board);
+			const moved = Chess.move(
+				msg.moveInput,
+				board,
+			);
 
-			if (moved.t === "err") {
+			if (moved.t === 'err') {
 				return moved;
 			}
 
 			const modelNew: CoreModel = {
 				...model,
-				moves: [...model.moves, msg.moveInput],
+				moves: [
+					...model.moves,
+					msg.moveInput,
+				],
 				hint: null,
 			};
 
-			if (didSolvePuzzle(model.puzzle, modelNew.moves) && model.hasUsedHint) {
+			if (
+				didSolvePuzzle(
+					model.puzzle,
+					modelNew.moves,
+				) &&
+				model.hasUsedHint
+			) {
 				return Ok({
 					...modelNew,
-					t: "solved-with-hint",
+					t: 'solved-with-hint',
 					endedAt: ctx.now,
 					hasLost: true,
 					hasUsedHint: true,
 				});
 			}
 
-			if (didSolvePuzzle(model.puzzle, modelNew.moves)) {
+			if (
+				didSolvePuzzle(
+					model.puzzle,
+					modelNew.moves,
+				)
+			) {
 				return Ok({
 					...modelNew,
-					t: "solved",
+					t: 'solved',
 					endedAt: ctx.now,
 				});
 			}
 
-			if (didFailPuzzle(model.puzzle, modelNew.moves)) {
+			if (
+				didFailPuzzle(
+					model.puzzle,
+					modelNew.moves,
+				)
+			) {
 				return Ok({
 					...modelNew,
-					t: "incorrect",
+					t: 'incorrect',
 					hasLost: true,
 					endedAt: ctx.now,
 				});
@@ -342,47 +419,80 @@ export const updateCore = ({
 			return Ok(modelNew);
 		}
 
-		if (msg.t === "show-hint") {
+		if (msg.t === 'show-hint') {
 			return Ok({
 				...model,
-				hint: model.hint ? hintToNextHint[model.hint] : "from",
+				hint: model.hint
+					? hintToNextHint[
+							model
+								.hint
+					  ]
+					: 'from',
 				hasUsedHint: true,
 			});
 		}
 	}
 
-	if (model.t === "solved") {
-		if (msg.t === "next") {
-			return Ok(transitionNextPuzzle({ ctx, model }));
+	if (model.t === 'solved') {
+		if (msg.t === 'next') {
+			return Ok(
+				transitionNextPuzzle(
+					{
+						ctx,
+						model,
+					},
+				),
+			);
 		}
 	}
 
-	if (model.t === "solved-with-hint") {
-		if (msg.t === "next") {
-			return Ok(transitionNextPuzzle({ ctx, model }));
+	if (model.t === 'solved-with-hint') {
+		if (msg.t === 'next') {
+			return Ok(
+				transitionNextPuzzle(
+					{
+						ctx,
+						model,
+					},
+				),
+			);
 		}
 	}
 
-	if (model.t === "incorrect") {
-		if (msg.t === "next") {
-			return Ok(transitionNextPuzzle({ ctx, model }));
+	if (model.t === 'incorrect') {
+		if (msg.t === 'next') {
+			return Ok(
+				transitionNextPuzzle(
+					{
+						ctx,
+						model,
+					},
+				),
+			);
 		}
 
-		if (msg.t === "skip") {
-			return Ok(transitionNextPuzzle({ ctx, model }));
+		if (msg.t === 'skip') {
+			return Ok(
+				transitionNextPuzzle(
+					{
+						ctx,
+						model,
+					},
+				),
+			);
 		}
 
-		if (msg.t === "retry") {
+		if (msg.t === 'retry') {
 			return Ok({
 				...model,
 				moves: [],
-				t: "started",
+				t: 'started',
 				hasLost: true,
 			});
 		}
 	}
 
-	return Err("unhandled");
+	return Err('unhandled');
 };
 
 const transitionNextPuzzle = ({
@@ -392,7 +502,7 @@ const transitionNextPuzzle = ({
 	ctx: CoreCtx;
 	model: CoreModel;
 }): CoreModel => {
-	if (model.t === "loading") {
+	if (model.t === 'loading') {
 		return model;
 	}
 
@@ -402,17 +512,19 @@ const transitionNextPuzzle = ({
 		return {
 			...model,
 			puzzle: puzzleNew,
-			t: "loading",
+			t: 'loading',
 		};
 	}
 
 	const profileNew: PuzzleProfile = {
 		...model.profile,
-		eloRating: toNextEloRating(model) ?? model.profile.eloRating,
+		eloRating:
+			toNextEloRating(model) ??
+			model.profile.eloRating,
 	};
 
 	return {
-		t: "started",
+		t: 'started',
 		hasLost: false,
 		hasUsedHint: false,
 		hint: null,
@@ -425,35 +537,41 @@ const transitionNextPuzzle = ({
 };
 
 export const toNextEloRating = (model: CoreModel): EloRating | null => {
-	if (model.t === "loading") {
+	if (model.t === 'loading') {
 		return null;
 	}
 
 	if (model.hasLost) {
 		return EloRating.toNextRating({
-			endGame: "lost",
-			opponentRating: model.puzzle.rating,
-			playerRating: model.profile.eloRating,
+			endGame: 'lost',
+			opponentRating: model.puzzle
+				.rating,
+			playerRating: model.profile
+				.eloRating,
 		});
 	}
 
-	if (model.t === "started") {
+	if (model.t === 'started') {
 		return null;
 	}
 
-	if (model.t === "solved") {
+	if (model.t === 'solved') {
 		return EloRating.toNextRating({
-			endGame: "win",
-			opponentRating: model.puzzle.rating,
-			playerRating: model.profile.eloRating,
+			endGame: 'win',
+			opponentRating: model.puzzle
+				.rating,
+			playerRating: model.profile
+				.eloRating,
 		});
 	}
 
-	if (model.t === "incorrect" || model.t === "solved-with-hint") {
+	if (model.t === 'incorrect' || model.t === 'solved-with-hint') {
 		return EloRating.toNextRating({
-			endGame: "lost",
-			opponentRating: model.puzzle.rating,
-			playerRating: model.profile.eloRating,
+			endGame: 'lost',
+			opponentRating: model.puzzle
+				.rating,
+			playerRating: model.profile
+				.eloRating,
 		});
 	}
 
@@ -464,10 +582,10 @@ export const transitionLoadingToStarted = ({
 	model,
 	ctx,
 }: {
-	ctx: { now: Posix };
+	ctx: {now: Posix};
 	model: CoreModel;
 }): CoreModel => {
-	if (model.t === "loading") {
+	if (model.t === 'loading') {
 		const profile = model.profile;
 
 		if (!profile) {
@@ -483,11 +601,13 @@ export const transitionLoadingToStarted = ({
 				hasUsedHint: false,
 				hint: null,
 				profile: profile,
-				queue: queue ?? [],
+				queue:
+					queue ??
+					[],
 				puzzle,
 				moves: [],
 				startedAt: ctx.now,
-				t: "started",
+				t: 'started',
 			};
 		}
 
@@ -504,7 +624,7 @@ export const transitionLoadingToStarted = ({
 			puzzle: head,
 			moves: [],
 			startedAt: ctx.now,
-			t: "started",
+			t: 'started',
 		};
 	}
 

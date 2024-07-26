@@ -1,10 +1,10 @@
-import countryPhoneData from "./data/country_phone_data";
+import countryPhoneData from './data/country_phone_data';
 import {
 	findCountryPhoneDataByCountry,
 	findCountryPhoneDataByPhoneNumber,
 	validatePhoneISO3166,
 	type CountryPhoneDataItem,
-} from "./lib/utility";
+} from './lib/utility';
 
 export interface PhoneInvalidResult {
 	isValid: false;
@@ -37,7 +37,7 @@ export type PhoneResult = PhoneInvalidResult | PhoneValidResult;
 export default function phone(
 	phoneNumber: string,
 	{
-		country = "",
+		country = '',
 		validateMobilePrefix = true,
 		strictDetection = false,
 	}: {
@@ -55,14 +55,20 @@ export default function phone(
 	};
 
 	let processedPhoneNumber =
-		typeof phoneNumber !== "string" ? "" : phoneNumber.trim();
-	const processedCountry = typeof country !== "string" ? "" : country.trim();
+		typeof phoneNumber !== 'string'
+			? ''
+			: phoneNumber.trim();
+	const processedCountry =
+		typeof country !== 'string'
+			? ''
+			: country.trim();
 	const hasPlusSign = Boolean(processedPhoneNumber.match(/^\+/));
 
 	// remove any non-digit character, included the +
-	processedPhoneNumber = processedPhoneNumber.replace(/\D/g, "");
+	processedPhoneNumber = processedPhoneNumber.replace(/\D/g, '');
 
-	let foundCountryPhoneData = findCountryPhoneDataByCountry(processedCountry);
+	let foundCountryPhoneData =
+		findCountryPhoneDataByCountry(processedCountry);
 
 	if (!foundCountryPhoneData) {
 		return invalidResult;
@@ -73,17 +79,33 @@ export default function phone(
 	// if country provided, only reformat the phone number
 	if (processedCountry) {
 		// remove leading 0s for all countries except 'CIV', 'COG'
-		if (!["CIV", "COG"].includes(foundCountryPhoneData.alpha3)) {
-			processedPhoneNumber = processedPhoneNumber.replace(/^0+/, "");
+		if (
+			!['CIV', 'COG'].includes(
+				foundCountryPhoneData.alpha3,
+			)
+		) {
+			processedPhoneNumber =
+				processedPhoneNumber.replace(
+					/^0+/,
+					'',
+				);
 		}
 
 		// if input 89234567890, RUS, remove the 8
 		if (
-			foundCountryPhoneData.alpha3 === "RUS" &&
-			processedPhoneNumber.length === 11 &&
-			processedPhoneNumber.match(/^89/) !== null
+			foundCountryPhoneData.alpha3 ===
+				'RUS' &&
+			processedPhoneNumber.length ===
+				11 &&
+			processedPhoneNumber.match(
+				/^89/,
+			) !== null
 		) {
-			processedPhoneNumber = processedPhoneNumber.replace(/^8+/, "");
+			processedPhoneNumber =
+				processedPhoneNumber.replace(
+					/^8+/,
+					'',
+				);
 		}
 
 		// if there's no plus sign and the phone number length is one of the valid length under country phone data
@@ -99,26 +121,35 @@ export default function phone(
 	} else if (hasPlusSign) {
 		// if there is a plus sign but no country provided
 		// try to find the country phone data by the phone number
-		const { exactCountryPhoneData, possibleCountryPhoneData } =
-			findCountryPhoneDataByPhoneNumber(
-				processedPhoneNumber,
-				validateMobilePrefix,
-			);
+		const {
+			exactCountryPhoneData,
+			possibleCountryPhoneData,
+		} = findCountryPhoneDataByPhoneNumber(
+			processedPhoneNumber,
+			validateMobilePrefix,
+		);
 
 		if (exactCountryPhoneData) {
-			foundCountryPhoneData = exactCountryPhoneData;
-		} else if (possibleCountryPhoneData && !strictDetection) {
+			foundCountryPhoneData =
+				exactCountryPhoneData;
+		} else if (
+			possibleCountryPhoneData &&
+			!strictDetection
+		) {
 			// for some countries, the phone number usually includes one trunk prefix for local use
 			// The UK mobile phone number ‘07911 123456’ in international format is ‘+44 7911 123456’, so without the first zero.
 			// 8 (AAA) BBB-BB-BB, 0AA-BBBBBBB
 			// the numbers should be omitted in international calls
 
-			foundCountryPhoneData = possibleCountryPhoneData;
+			foundCountryPhoneData =
+				possibleCountryPhoneData;
 			processedPhoneNumber =
 				foundCountryPhoneData.country_code +
 				processedPhoneNumber.replace(
-					new RegExp(`^${foundCountryPhoneData.country_code}\\d`),
-					"",
+					new RegExp(
+						`^${foundCountryPhoneData.country_code}\\d`,
+					),
+					'',
 				);
 		} else {
 			foundCountryPhoneData = null;
@@ -159,9 +190,10 @@ export default function phone(
 
 	if (defaultCountry) {
 		// also try to validate against CAN for default country, as CAN is also start with +1
-		foundCountryPhoneData = findCountryPhoneDataByCountry(
-			"CAN",
-		) as CountryPhoneDataItem;
+		foundCountryPhoneData =
+			findCountryPhoneDataByCountry(
+				'CAN',
+			) as CountryPhoneDataItem;
 		validateResult = validatePhoneISO3166(
 			processedPhoneNumber,
 			foundCountryPhoneData,
@@ -182,4 +214,4 @@ export default function phone(
 	return invalidResult;
 }
 
-export { phone, countryPhoneData };
+export {phone, countryPhoneData};

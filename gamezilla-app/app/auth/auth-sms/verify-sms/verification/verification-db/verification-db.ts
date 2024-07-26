@@ -1,22 +1,22 @@
-import type { PhoneNumber, Posix, Task } from "gamezilla-app/@/core";
-import type { Paginated } from "gamezilla-app/app/@/data";
-import type { Verification, VerificationId } from "..";
+import type {PhoneNumber, Posix, Task} from 'gamezilla-app/@/core';
+import type {Paginated} from 'gamezilla-app/app/@/data';
+import type {Verification, VerificationId} from '..';
 
 export type WhereClause = {
 	verificationId?: {
-		"="?: VerificationId;
+		'='?: VerificationId;
 	};
 	createdAt?: {
-		"<="?: Posix;
-		">="?: Posix;
+		'<='?: Posix;
+		'>='?: Posix;
 	};
 	phoneNumber?: {
-		"="?: PhoneNumber;
+		'='?: PhoneNumber;
 	};
 };
 
 export type OrderClause = {
-	createdAt?: "asc" | "desc";
+	createdAt?: 'asc' | 'desc';
 };
 
 export type IVerificationDb = {

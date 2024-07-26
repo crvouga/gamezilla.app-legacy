@@ -1,4 +1,4 @@
-import { cn } from "./ui";
+import {cn} from './ui';
 
 export const Avatar = ({
 	className,
@@ -12,14 +12,21 @@ export const Avatar = ({
 	onClick?: () => void;
 }) => {
 	switch (typeof src) {
-		case "string": {
+		case 'string': {
 			return (
 				<img
-					onClick={onClick}
-					src={src}
-					alt={alt ?? "user avatar"}
+					onClick={
+						onClick
+					}
+					src={
+						src
+					}
+					alt={
+						alt ??
+						'user avatar'
+					}
 					className={cn(
-						"inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40",
+						'inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40',
 						className,
 					)}
 				/>
@@ -29,9 +36,11 @@ export const Avatar = ({
 		default: {
 			return (
 				<span
-					onClick={onClick}
+					onClick={
+						onClick
+					}
 					className={cn(
-						"inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40",
+						'inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40',
 						className,
 					)}
 				>

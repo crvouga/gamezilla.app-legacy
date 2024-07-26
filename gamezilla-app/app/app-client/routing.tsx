@@ -1,12 +1,12 @@
-import { Browser, Eff } from "gamezilla-app/@/core";
-import type { Route } from "gamezilla-app/@/routing/generated/routes";
+import {Browser, Eff} from 'gamezilla-app/@/core';
+import type {Route} from 'gamezilla-app/@/routing/generated/routes';
 import {
 	APP_SOUND,
 	playSound,
 	type ClientEvent,
 	type RouteCmd,
 	type SoundCmd,
-} from "gamezilla-app/app/@/client";
+} from 'gamezilla-app/app/@/client';
 
 //
 //
@@ -21,8 +21,8 @@ export type Model = {
 };
 
 const FALLBACK: Route = {
-	n: "spaces",
-	t: "space-list",
+	n: 'spaces',
+	t: 'space-list',
 };
 
 const encodeRoute = (route: Route): string => {
@@ -30,7 +30,7 @@ const encodeRoute = (route: Route): string => {
 };
 
 const decodeRoute = (route: unknown): Route => {
-	if (typeof route !== "string") {
+	if (typeof route !== 'string') {
 		return FALLBACK;
 	}
 	try {
@@ -41,7 +41,7 @@ const decodeRoute = (route: unknown): Route => {
 };
 
 const locationToRoute = (location: Browser.Location): Route => {
-	return decodeRoute(location.query["route"]);
+	return decodeRoute(location.query['route']);
 };
 
 export const init = ({
@@ -58,8 +58,13 @@ export const init = ({
 			currentRoute,
 		},
 		eff: Eff.batch([
-			Browser.replace("/"),
-			Browser.pushQueryParam("route", encodeRoute(currentRoute)),
+			Browser.replace('/'),
+			Browser.pushQueryParam(
+				'route',
+				encodeRoute(
+					currentRoute,
+				),
+			),
 		]),
 	};
 };
@@ -73,9 +78,9 @@ export const init = ({
 //
 
 export type Msg =
-	| { t: "route-changed"; route: Route }
-	| { t: "clicked-link"; route: Route }
-	| { t: "clicked-back" };
+	| {t: 'route-changed'; route: Route}
+	| {t: 'clicked-link'; route: Route}
+	| {t: 'clicked-back'};
 
 export const update = ({
 	msg,
@@ -92,80 +97,128 @@ export const update = ({
 	msgCmd?: SoundCmd[];
 } => {
 	if (msg) {
-		return updateFromMsg({ msg, model });
+		return updateFromMsg({
+			msg,
+			model,
+		});
 	}
 	if (msgCmd) {
-		return updateFromCmd({ msgCmd, model });
+		return updateFromCmd({
+			msgCmd,
+			model,
+		});
 	}
-	return { model };
+	return {model};
 };
 
-const updateFromMsg: typeof update = ({ msg, model }) => {
+const updateFromMsg: typeof update = ({msg, model}) => {
 	if (!msg) {
-		return { model };
+		return {model};
 	}
 	switch (msg.t) {
-		case "clicked-back": {
+		case 'clicked-back': {
 			return {
 				model,
 				eff: Browser.back,
 			};
 		}
 
-		case "clicked-link": {
+		case 'clicked-link': {
 			return {
 				model: {
 					currentRoute: msg.route,
 				},
-				eff: Browser.pushQueryParam("route", encodeRoute(msg.route)),
-				msgCmd: [playSound(APP_SOUND.tap)],
+				eff: Browser.pushQueryParam(
+					'route',
+					encodeRoute(
+						msg.route,
+					),
+				),
+				msgCmd: [
+					playSound(
+						APP_SOUND.tap,
+					),
+				],
 			};
 		}
 
-		case "route-changed": {
+		case 'route-changed': {
 			return {
 				model: {
 					currentRoute: msg.route,
 				},
-				msgEvt: [{ t: "routing/route-changed", route: msg.route }],
+				msgEvt: [
+					{
+						t: 'routing/route-changed',
+						route: msg.route,
+					},
+				],
 			};
 		}
 	}
 };
 
-const updateFromCmd: typeof update = ({ msgCmd, model }) => {
+const updateFromCmd: typeof update = ({msgCmd, model}) => {
 	if (!msgCmd) {
-		return { model };
+		return {model};
 	}
 
 	const routeCmd = msgCmd.c;
 
 	switch (routeCmd.t) {
-		case "push": {
+		case 'push': {
 			return {
 				model: {
 					currentRoute: routeCmd.route,
 				},
-				eff: Browser.pushQueryParam("route", encodeRoute(routeCmd.route)),
-				msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navForwardMin)] : [],
+				eff: Browser.pushQueryParam(
+					'route',
+					encodeRoute(
+						routeCmd.route,
+					),
+				),
+				msgCmd: routeCmd.playSound
+					? [
+							playSound(
+								APP_SOUND.navForwardMin,
+							),
+					  ]
+					: [],
 			};
 		}
 
-		case "back": {
+		case 'back': {
 			return {
 				model,
 				eff: Browser.back,
-				msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
+				msgCmd: routeCmd.playSound
+					? [
+							playSound(
+								APP_SOUND.navBackwardMin,
+							),
+					  ]
+					: [],
 			};
 		}
 
-		case "replace": {
+		case 'replace': {
 			return {
 				model: {
 					currentRoute: routeCmd.route,
 				},
-				eff: Browser.replaceQueryParam("route", encodeRoute(routeCmd.route)),
-				msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
+				eff: Browser.replaceQueryParam(
+					'route',
+					encodeRoute(
+						routeCmd.route,
+					),
+				),
+				msgCmd: routeCmd.playSound
+					? [
+							playSound(
+								APP_SOUND.navBackwardMin,
+							),
+					  ]
+					: [],
 			};
 		}
 	}
@@ -181,7 +234,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 
 export const subscriptions = Browser.onLocation(
 	(location): Msg => ({
-		t: "route-changed",
+		t: 'route-changed',
 		route: locationToRoute(location),
 	}),
 );

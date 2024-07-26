@@ -1,14 +1,14 @@
-import { p } from "gamezilla-app/@/core/parser";
+import {p} from 'gamezilla-app/@/core/parser';
 
 export const Model = p.obj({
-	t: p.l("flow-hex"),
+	t: p.l('flow-hex'),
 	width: p.num,
 	height: p.num,
 	side: p.num,
 });
 
 export type Model = {
-	t: "flow-hex";
+	t: 'flow-hex';
 	width: number;
 	height: number;
 	side: number;
@@ -20,7 +20,7 @@ export const init = (input: {
 	side: number;
 }): Model => {
 	return {
-		t: "flow-hex",
+		t: 'flow-hex',
 		width: input.width,
 		height: input.height,
 		side: input.side,

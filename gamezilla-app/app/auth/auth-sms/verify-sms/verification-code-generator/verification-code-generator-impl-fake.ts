@@ -1,4 +1,4 @@
-import type { IVerificationCodeGenerator } from "./verification-code-generator";
+import type {IVerificationCodeGenerator} from './verification-code-generator';
 
 export const CodeGeneratorFake = ({
 	code,

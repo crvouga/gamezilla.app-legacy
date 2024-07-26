@@ -1,14 +1,9 @@
-import { type ClientCtx, showErrSm } from "gamezilla-app/app/@/client";
-import {
-	Button,
-	Drawer,
-	DrawerHeader,
-	TextField,
-} from "gamezilla-app/app/@/ui";
-import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import type { ModelCore, MsgClient, MsgCore } from "./edit-pack-name.types";
-import { withId } from "gamezilla-app/app/spaces/@/event";
-import { isErr } from "gamezilla-app/@/core";
+import {type ClientCtx, showErrSm} from 'gamezilla-app/app/@/client';
+import {Button, Drawer, DrawerHeader, TextField} from 'gamezilla-app/app/@/ui';
+import type {GameClientModule} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2';
+import type {ModelCore, MsgClient, MsgCore} from './edit-pack-name.types';
+import {withId} from 'gamezilla-app/app/spaces/@/event';
+import {isErr} from 'gamezilla-app/@/core';
 
 type ClientModule = GameClientModule<{
 	Ctx: ClientCtx;
@@ -21,63 +16,114 @@ type ClientModule = GameClientModule<{
 	};
 }>;
 
-const update: ClientModule["update"] = (input) => {
+const update: ClientModule['update'] = (input) => {
 	switch (input.msg?.t) {
-		case "edit-pack-name.user-clicked-save-button":
-		case "edit-pack-name.user-closed-drawer":
-		case "edit-pack-name.user-inputted-draft-name": {
-			return { model: input.model, msgCore: [withId(input.msg)] };
+		case 'edit-pack-name.user-clicked-save-button':
+		case 'edit-pack-name.user-closed-drawer':
+		case 'edit-pack-name.user-inputted-draft-name': {
+			return {
+				model: input.model,
+				msgCore: [
+					withId(
+						input.msg,
+					),
+				],
+			};
 		}
 	}
 
 	switch (input.msgCore?.t) {
-		case "edit-pack-name.server-persisted-pack": {
-			if (isErr(input.msgCore.result)) {
+		case 'edit-pack-name.server-persisted-pack': {
+			if (
+				isErr(
+					input
+						.msgCore
+						.result,
+				)
+			) {
 				return {
 					model: input.model,
-					msgCmd: showErrSm(input.ctx.t("app.something-went-wrong")),
+					msgCmd: showErrSm(
+						input.ctx.t(
+							'app.something-went-wrong',
+						),
+					),
 				};
 			}
-			return { model: input.model };
+			return {
+				model: input.model,
+			};
 		}
 	}
 
-	return { model: input.model };
+	return {model: input.model};
 };
 
-const ViewDrawer: ClientModule["View"] = (input) => {
+const ViewDrawer: ClientModule['View'] = (input) => {
 	return (
 		<Drawer
 			id="edit-pack-name"
 			open={false}
-			onClose={() => input.emits?.close(null)}
+			onClose={() =>
+				input.emits?.close(
+					null,
+				)
+			}
 			position="bottom"
 		>
-			<DrawerHeader onClose={() => input.emits?.close(null)} />
+			<DrawerHeader
+				onClose={() =>
+					input.emits?.close(
+						null,
+					)
+				}
+			/>
 			<TextField
 				id="pack-name"
 				label="Pack Name"
-				value={input.modelCore.draft}
-				onChange={(packNameDraft) =>
-					input.dispatch({
-						t: "edit-pack-name.user-inputted-draft-name",
-						packNameDraft,
-						userId: input.ctx.currentUserId,
-					})
+				value={
+					input
+						.modelCore
+						.draft
+				}
+				onChange={(
+					packNameDraft,
+				) =>
+					input.dispatch(
+						{
+							t: 'edit-pack-name.user-inputted-draft-name',
+							packNameDraft,
+							userId: input
+								.ctx
+								.currentUserId,
+						},
+					)
 				}
 			/>
 			<div>
 				<Button
-					text={input.ctx.t("app.cancel")}
-					onClick={() => input.emits?.cancel(null)}
+					text={input.ctx.t(
+						'app.cancel',
+					)}
+					onClick={() =>
+						input.emits?.cancel(
+							null,
+						)
+					}
 				/>
 				<Button
-					text={input.ctx.t("app.save")}
+					text={input.ctx.t(
+						'app.save',
+					)}
 					onClick={() =>
-						input.dispatch({
-							t: "edit-pack-name.user-clicked-save-button",
-							userId: input.ctx.currentUserId,
-						})
+						input.dispatch(
+							{
+								t: 'edit-pack-name.user-clicked-save-button',
+								userId: input
+									.ctx
+									.currentUserId,
+							},
+						)
 					}
 				/>
 			</div>

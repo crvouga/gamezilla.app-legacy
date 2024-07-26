@@ -1,4 +1,4 @@
-import { IconInput } from "../icon-shared";
+import {IconInput} from '../icon-shared';
 
 export const IconCopy = (input: IconInput) => {
 	return (

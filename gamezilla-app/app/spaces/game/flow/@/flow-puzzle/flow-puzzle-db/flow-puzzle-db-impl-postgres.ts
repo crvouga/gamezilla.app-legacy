@@ -1,15 +1,15 @@
-import { Ok, Posix, Result, isErr } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { Sql } from "gamezilla-app/@/sql";
-import { UserId, type Pagination } from "gamezilla-app/app/@/data";
-import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import type { ILogger } from "gamezilla-app/app/@/server/logger";
-import { Flow } from "../../flow/flow";
-import { FlowVariant } from "../../flow/flow-variant";
-import type { FlowPuzzle } from "../flow-puzzle";
-import { FlowPuzzleId } from "../flow-puzzle-id";
-import { FlowPuzzleName } from "../flow-puzzle-name";
-import type { IFlowPuzzleDb, OrderClause, WhereClause } from "./flow-puzzle-db";
+import {Ok, Posix, Result, isErr} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {Sql} from 'gamezilla-app/@/sql';
+import {UserId, type Pagination} from 'gamezilla-app/app/@/data';
+import type {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
+import type {ILogger} from 'gamezilla-app/app/@/server/logger';
+import {Flow} from '../../flow/flow';
+import {FlowVariant} from '../../flow/flow-variant';
+import type {FlowPuzzle} from '../flow-puzzle';
+import {FlowPuzzleId} from '../flow-puzzle-id';
+import {FlowPuzzleName} from '../flow-puzzle-name';
+import type {IFlowPuzzleDb, OrderClause, WhereClause} from './flow-puzzle-db';
 
 export const Row = p.obj({
 	flow_puzzle_id: p.str,
@@ -25,7 +25,7 @@ export const Row = p.obj({
 export type Row = p.Infer<typeof Row>;
 
 const ensureNumber = (x: string | number): number => {
-	return typeof x === "string" ? Number.parseFloat(x) : x;
+	return typeof x === 'string' ? Number.parseFloat(x) : x;
 };
 
 const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
@@ -39,11 +39,15 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 	const parsedFlow = FlowVariant.Model.parse(row.flow);
 	const flow = Result.withDefault(parsedFlow, null);
 
-	const createdAt = Posix.init(ensureNumber(row.created_at_posix));
+	const createdAt = Posix.init(
+		ensureNumber(row.created_at_posix),
+	);
 	const createdBy = UserId.is(row.created_by_user_id)
 		? row.created_by_user_id
 		: null;
-	const lastUpdatedAt = Posix.init(ensureNumber(row.last_updated_at_posix));
+	const lastUpdatedAt = Posix.init(
+		ensureNumber(row.last_updated_at_posix),
+	);
 	const lastUpdatedBy = UserId.is(row.last_updated_by_user_id)
 		? row.last_updated_by_user_id
 		: null;
@@ -51,7 +55,10 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 	const parsedFlowSolutions = p
 		.arr(p.or(FlowVariant.Model, Flow.Model))
 		.parse(row.flow_solutions);
-	const flowSolutions = Result.withDefault(parsedFlowSolutions, []);
+	const flowSolutions = Result.withDefault(
+		parsedFlowSolutions,
+		[],
+	);
 
 	if (
 		flowPuzzleId &&
@@ -78,7 +85,11 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 			row,
 			null,
 			4,
-		)} \nerror=${JSON.stringify(parsedFlow, null, 4)}`,
+		)} \nerror=${JSON.stringify(
+			parsedFlow,
+			null,
+			4,
+		)}`,
 	);
 	return null;
 };
@@ -89,26 +100,35 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 //
 //
 
-const toSqlWhere = (input: { where: WhereClause }) => {
+const toSqlWhere = (input: {where: WhereClause}) => {
 	const variables: Sql.Vars = {};
 	const where: string[] = [
 		//
-		"deleted_at IS NULL",
+		'deleted_at IS NULL',
 	];
 
 	if (input.where.createdBy?.equals) {
-		where.push("created_by_user_id = :created_by_user_id");
-		variables.created_by_user_id = input.where.createdBy?.equals;
+		where.push(
+			'created_by_user_id = :created_by_user_id',
+		);
+		variables.created_by_user_id =
+			input.where.createdBy?.equals;
 	}
 
 	if (input.where.puzzleId?.in) {
 		const puzzleIds = input.where.puzzleId?.in
-			.map((puzzleId) => `'${puzzleId}'`)
-			.join(", ");
+			.map(
+				(puzzleId) =>
+					`'${puzzleId}'`,
+			)
+			.join(', ');
 		where.push(`flow_puzzle_id IN (${puzzleIds})`);
 	}
 
-	const str = where.length > 0 ? `WHERE ${where.join(" AND ")}` : "";
+	const str =
+		where.length > 0
+			? `WHERE ${where.join(' AND ')}`
+			: '';
 
 	return {
 		str,
@@ -116,36 +136,51 @@ const toSqlWhere = (input: { where: WhereClause }) => {
 	};
 };
 
-const toSqlOrder = (input: { order: OrderClause }) => {
+const toSqlOrder = (input: {order: OrderClause}) => {
 	const orderBy: string[] = [];
 
 	if (input.order.createdAt) {
 		orderBy.push(
-			`created_at_posix ${input.order.createdAt === "desc" ? "DESC" : "ASC"}`,
+			`created_at_posix ${
+				input.order
+					.createdAt ===
+				'desc'
+					? 'DESC'
+					: 'ASC'
+			}`,
 		);
 	}
 
 	if (input.order.lastUpdatedAt) {
 		orderBy.push(
 			`last_updated_at_posix ${
-				input.order.lastUpdatedAt === "desc" ? "DESC" : "ASC"
+				input.order
+					.lastUpdatedAt ===
+				'desc'
+					? 'DESC'
+					: 'ASC'
 			}`,
 		);
 	}
 
-	const str = orderBy.length > 0 ? `ORDER BY ${orderBy.join(", ")}` : "";
+	const str =
+		orderBy.length > 0
+			? `ORDER BY ${orderBy.join(
+					', ',
+			  )}`
+			: '';
 
 	return {
 		str,
 	};
 };
 
-const toSqlPagination = (input: { pagination: Pagination }) => {
+const toSqlPagination = (input: {pagination: Pagination}) => {
 	const variables: Sql.Vars = {
 		limit: input.pagination.limit,
 		offset: input.pagination.offset,
 	};
-	const str = "LIMIT :limit OFFSET :offset";
+	const str = 'LIMIT :limit OFFSET :offset';
 	return {
 		variables,
 		str,
@@ -160,9 +195,10 @@ export const FlowPuzzleDbPostgres = ({
 }): IFlowPuzzleDb => {
 	return {
 		async get(flowPuzzleId) {
-			const queried = await dbConnSql.query(
-				Row,
-				`
+			const queried =
+				await dbConnSql.query(
+					Row,
+					`
 				SELECT
 					*
 				FROM
@@ -172,64 +208,98 @@ export const FlowPuzzleDbPostgres = ({
 					AND deleted_at IS NULL
 				LIMIT 1
 				`,
-				{
-					flow_puzzle_id: flowPuzzleId,
-				},
-			);
+					{
+						flow_puzzle_id: flowPuzzleId,
+					},
+				);
 
 			if (isErr(queried)) {
 				return queried;
 			}
 
-			const queriedFlowPuzzle = queried.value.map(
-				async (row): Promise<FlowPuzzle[]> => {
-					const flowPuzzle = rowToFlowPuzzle(row);
-					if (!flowPuzzle) {
-						return [];
-					}
-					return [flowPuzzle];
-				},
+			const queriedFlowPuzzle =
+				queried.value.map(
+					async (
+						row,
+					): Promise<
+						FlowPuzzle[]
+					> => {
+						const flowPuzzle =
+							rowToFlowPuzzle(
+								row,
+							);
+						if (
+							!flowPuzzle
+						) {
+							return [];
+						}
+						return [
+							flowPuzzle,
+						];
+					},
+				);
+
+			const awaited =
+				await Promise.all(
+					queriedFlowPuzzle,
+				);
+
+			const flowPuzzles =
+				awaited.flat();
+
+			return Ok(
+				flowPuzzles[0] ??
+					null,
 			);
-
-			const awaited = await Promise.all(queriedFlowPuzzle);
-
-			const flowPuzzles = awaited.flat();
-
-			return Ok(flowPuzzles[0] ?? null);
 		},
 
 		async count(input) {
 			const where = toSqlWhere(input);
 
-			const queried = await dbConnSql.query(
-				p.obj({ count: p.str }),
-				`
+			const queried =
+				await dbConnSql.query(
+					p.obj(
+						{
+							count: p.str,
+						},
+					),
+					`
 				SELECT
 					COUNT(*) AS count
 				FROM
 					game_flow_puzzle
 					${where.str}
 				`,
-				where.variables,
-			);
-			return Result.mapOk(queried, (x) =>
-				Number.parseFloat(x[0]?.count ?? "0"),
+					where.variables,
+				);
+			return Result.mapOk(
+				queried,
+				(x) =>
+					Number.parseFloat(
+						x[0]
+							?.count ??
+							'0',
+					),
 			);
 		},
 
 		async list(input) {
 			const where = toSqlWhere(input);
 			const order = toSqlOrder(input);
-			const pagination = toSqlPagination(input);
+			const pagination =
+				toSqlPagination(
+					input,
+				);
 
 			const variables: Sql.Vars = {
 				...where.variables,
 				...pagination.variables,
 			};
 
-			const queried = await dbConnSql.query(
-				Row,
-				`
+			const queried =
+				await dbConnSql.query(
+					Row,
+					`
 				SELECT
 					*
 				FROM
@@ -238,57 +308,89 @@ export const FlowPuzzleDbPostgres = ({
 				${order.str}
 				${pagination.str}
 				`,
-				variables,
-			);
+					variables,
+				);
 
 			if (isErr(queried)) {
 				return queried;
 			}
 
-			const queriedCount = await dbConnSql.query(
-				p.obj({ count: p.str }),
-				`
+			const queriedCount =
+				await dbConnSql.query(
+					p.obj(
+						{
+							count: p.str,
+						},
+					),
+					`
 				SELECT
 					COUNT(*) AS count
 				FROM
 					game_flow_puzzle
 				${where.str}
 				`,
-				variables,
-			);
+					variables,
+				);
 
 			if (isErr(queriedCount)) {
 				return queriedCount;
 			}
 
-			const queriedFlowPuzzle = queried.value.map(
-				async (row): Promise<FlowPuzzle[]> => {
-					const flowPuzzle = rowToFlowPuzzle(row);
-					if (!flowPuzzle) {
-						return [];
-					}
-					return [flowPuzzle];
-				},
-			);
+			const queriedFlowPuzzle =
+				queried.value.map(
+					async (
+						row,
+					): Promise<
+						FlowPuzzle[]
+					> => {
+						const flowPuzzle =
+							rowToFlowPuzzle(
+								row,
+							);
+						if (
+							!flowPuzzle
+						) {
+							return [];
+						}
+						return [
+							flowPuzzle,
+						];
+					},
+				);
 
-			const awaited = await Promise.all(queriedFlowPuzzle);
+			const awaited =
+				await Promise.all(
+					queriedFlowPuzzle,
+				);
 
-			const flowPuzzles = awaited.flat();
+			const flowPuzzles =
+				awaited.flat();
 
-			const total = Number.parseFloat(queriedCount.value[0]?.count ?? "0") ?? 0;
+			const total =
+				Number.parseFloat(
+					queriedCount
+						.value[0]
+						?.count ??
+						'0',
+				) ?? 0;
 
 			return Ok({
 				items: flowPuzzles,
 				total: total,
-				limit: input.pagination.limit,
-				offset: input.pagination.offset,
+				limit: input
+					.pagination
+					.limit,
+				offset: input
+					.pagination
+					.offset,
 			});
 		},
 
 		async put(flowPuzzle) {
-			const queried = await dbConnSql.query(
-				p.unknown,
-				`
+			const queried =
+				await dbConnSql.query(
+					p.unknown,
+					`
 				INSERT INTO game_flow_puzzle (
 					flow_puzzle_id,
 					flow_puzzle_name,
@@ -316,24 +418,34 @@ export const FlowPuzzleDbPostgres = ({
 					last_updated_by_user_id = :last_updated_by_user_id,
 					flow_solutions = :flow_solutions
 				`,
-				{
-					flow_puzzle_id: flowPuzzle.id,
-					flow_puzzle_name: flowPuzzle.name,
-					flow: Sql.json(flowPuzzle.flow),
-					flow_solutions: Sql.json(flowPuzzle.flowSolutions),
-					created_at_posix: flowPuzzle.createdAt,
-					created_by_user_id: flowPuzzle.createdBy,
-					last_updated_at_posix: flowPuzzle.lastUpdatedAt,
-					last_updated_by_user_id: flowPuzzle.lastUpdatedBy,
-				},
+					{
+						flow_puzzle_id: flowPuzzle.id,
+						flow_puzzle_name: flowPuzzle.name,
+						flow: Sql.json(
+							flowPuzzle.flow,
+						),
+						flow_solutions: Sql.json(
+							flowPuzzle.flowSolutions,
+						),
+						created_at_posix: flowPuzzle.createdAt,
+						created_by_user_id: flowPuzzle.createdBy,
+						last_updated_at_posix:
+							flowPuzzle.lastUpdatedAt,
+						last_updated_by_user_id:
+							flowPuzzle.lastUpdatedBy,
+					},
+				);
+			return Result.mapOk(
+				queried,
+				() => null,
 			);
-			return Result.mapOk(queried, () => null);
 		},
 
 		async zap(input) {
-			const queried = await dbConnSql.query(
-				p.num,
-				`
+			const queried =
+				await dbConnSql.query(
+					p.num,
+					`
 				UPDATE
 					game_flow_puzzle
 				SET
@@ -342,13 +454,16 @@ export const FlowPuzzleDbPostgres = ({
 				WHERE
 					flow_puzzle_id = :flow_puzzle_id
 				`,
-				{
-					deleted_at: Posix.now(),
-					deleted_by_user_id: input.deletedByUserId,
-					flow_puzzle_id: input.id,
-				},
+					{
+						deleted_at: Posix.now(),
+						deleted_by_user_id: input.deletedByUserId,
+						flow_puzzle_id: input.id,
+					},
+				);
+			return Result.mapOk(
+				queried,
+				() => null,
 			);
-			return Result.mapOk(queried, () => null);
 		},
 	};
 };

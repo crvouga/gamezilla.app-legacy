@@ -1,13 +1,13 @@
-import { type Eff, type Result, exhaustive, isErr } from "gamezilla-app/@/core";
-import { Translator } from "gamezilla-app/@/l18n/generated";
-import type { RouteCmd } from "gamezilla-app/app/@/client";
+import {type Eff, type Result, exhaustive, isErr} from 'gamezilla-app/@/core';
+import {Translator} from 'gamezilla-app/@/l18n/generated';
+import type {RouteCmd} from 'gamezilla-app/app/@/client';
 import {
 	AlertError,
 	AlertSuccess,
 	Button,
 	TextField,
 	TopBar,
-} from "gamezilla-app/app/@/ui";
+} from 'gamezilla-app/app/@/ui';
 
 //
 //
@@ -19,17 +19,26 @@ import {
 
 export type Model = {
 	emailAddress: string;
-	validation?: "invalid-email" | null;
+	validation?: 'invalid-email' | null;
 	submission:
-		| { type: "idle" }
-		| { type: "loading"; sentToEmailAddress: string }
-		| { type: "problem"; message: string }
-		| { type: "ok"; sentToEmailAddress: string };
+		| {type: 'idle'}
+		| {
+				type: 'loading';
+				sentToEmailAddress: string;
+		  }
+		| {
+				type: 'problem';
+				message: string;
+		  }
+		| {
+				type: 'ok';
+				sentToEmailAddress: string;
+		  };
 };
 
 export const init: Model = {
-	emailAddress: "",
-	submission: { type: "idle" },
+	emailAddress: '',
+	submission: {type: 'idle'},
 };
 
 //
@@ -41,10 +50,10 @@ export const init: Model = {
 //
 
 export type Msg =
-	| { t: "clicked-back" }
-	| { t: "clicked-send-login-link" }
-	| { t: "inputted-email-address"; emailAddress: string }
-	| { t: "login-done"; result: Result<string, null> };
+	| {t: 'clicked-back'}
+	| {t: 'clicked-send-login-link'}
+	| {t: 'inputted-email-address'; emailAddress: string}
+	| {t: 'login-done'; result: Result<string, null>};
 
 export const update = ({
 	msg,
@@ -57,7 +66,7 @@ export const update = ({
 	eff?: Eff<Msg>;
 	msgCmd?: RouteCmd[];
 } => {
-	if (msg.t === "inputted-email-address") {
+	if (msg.t === 'inputted-email-address') {
 		return {
 			model: {
 				...model,
@@ -67,39 +76,47 @@ export const update = ({
 		};
 	}
 
-	if (msg.t === "login-done") {
+	if (msg.t === 'login-done') {
 		if (isErr(msg.result)) {
 			return {
 				model: {
 					...model,
 					submission: {
-						type: "problem",
-						message: msg.result.error,
+						type: 'problem',
+						message: msg
+							.result
+							.error,
 					},
 				},
 			};
 		}
 
 		const emailAddress =
-			model.submission.type === "loading"
-				? model.submission.sentToEmailAddress
+			model.submission.type ===
+			'loading'
+				? model
+						.submission
+						.sentToEmailAddress
 				: model.emailAddress;
 
 		return {
 			model: {
 				...model,
-				emailAddress: "",
-				submission: { type: "ok", sentToEmailAddress: emailAddress },
+				emailAddress: '',
+				submission: {
+					type: 'ok',
+					sentToEmailAddress: emailAddress,
+				},
 			},
 		};
 	}
 
-	if (msg.t === "clicked-send-login-link") {
+	if (msg.t === 'clicked-send-login-link') {
 		if (model.emailAddress.length === 0) {
 			return {
 				model: {
 					...model,
-					validation: "invalid-email",
+					validation: 'invalid-email',
 				},
 			};
 		}
@@ -108,17 +125,24 @@ export const update = ({
 			model: {
 				...model,
 				submission: {
-					type: "loading",
+					type: 'loading',
 					sentToEmailAddress: model.emailAddress,
 				},
 			},
 		};
 	}
 
-	if (msg.t === "clicked-back") {
+	if (msg.t === 'clicked-back') {
 		return {
 			model: model,
-			msgCmd: [{ t: "routing", c: { t: "back" } }],
+			msgCmd: [
+				{
+					t: 'routing',
+					c: {
+						t: 'back',
+					},
+				},
+			],
 		};
 	}
 
@@ -143,16 +167,30 @@ export const View = (input: {
 	return (
 		<div className="flex h-full w-full flex-col">
 			<TopBar
-				onBack={() => input.dispatch({ t: "clicked-back" })}
+				onBack={() =>
+					input.dispatch(
+						{
+							t: 'clicked-back',
+						},
+					)
+				}
 				ctx={input.ctx}
-				title={input.ctx.t("auth-email.login-with-email")}
+				title={input.ctx.t(
+					'auth-email.login-with-email',
+				)}
 			/>
 
 			<form
 				className="flex flex-col gap-6 p-4"
-				onSubmit={(e) => {
+				onSubmit={(
+					e,
+				) => {
 					e.preventDefault();
-					input.dispatch({ t: "clicked-send-login-link" });
+					input.dispatch(
+						{
+							t: 'clicked-send-login-link',
+						},
+					);
 				}}
 			>
 				<TextField
@@ -160,20 +198,41 @@ export const View = (input: {
 					id="email-address"
 					type="email"
 					label="Email Address"
-					value={input.model.emailAddress}
-					onChange={(emailAddress) => {
-						input.dispatch({ t: "inputted-email-address", emailAddress });
+					value={
+						input
+							.model
+							.emailAddress
+					}
+					onChange={(
+						emailAddress,
+					) => {
+						input.dispatch(
+							{
+								t: 'inputted-email-address',
+								emailAddress,
+							},
+						);
 					}}
 					onClear={() =>
-						input.dispatch({
-							t: "inputted-email-address",
-							emailAddress: "",
-						})
+						input.dispatch(
+							{
+								t: 'inputted-email-address',
+								emailAddress: '',
+							},
+						)
 					}
-					error={input.model.validation === "invalid-email"}
+					error={
+						input
+							.model
+							.validation ===
+						'invalid-email'
+					}
 					helperText={
-						input.model.validation === "invalid-email"
-							? "Please enter a valid email address"
+						input
+							.model
+							.validation ===
+						'invalid-email'
+							? 'Please enter a valid email address'
 							: undefined
 					}
 				/>
@@ -184,22 +243,56 @@ export const View = (input: {
 					className="w-full"
 					color="primary"
 					type="submit"
-					loading={input.model.submission.type === "loading"}
-					text={input.ctx.t("auth-email.send-login-link")}
+					loading={
+						input
+							.model
+							.submission
+							.type ===
+						'loading'
+					}
+					text={input.ctx.t(
+						'auth-email.send-login-link',
+					)}
 				/>
 
-				{input.model.submission.type === "problem" && (
-					<AlertError text={input.model.submission.message} />
+				{input.model
+					.submission
+					.type ===
+					'problem' && (
+					<AlertError
+						text={
+							input
+								.model
+								.submission
+								.message
+						}
+					/>
 				)}
 
-				{input.model.submission.type === "ok" && (
+				{input.model
+					.submission
+					.type ===
+					'ok' && (
 					<AlertSuccess>
 						<div className="flex flex-col gap-1">
-							<div className="text-lg">Check your email</div>
+							<div className="text-lg">
+								Check
+								your
+								email
+							</div>
 							<div className="font-light">
-								Login link was send to{" "}
+								Login
+								link
+								was
+								send
+								to{' '}
 								<span className="font-semibold text-white">
-									{input.model.submission.sentToEmailAddress}
+									{
+										input
+											.model
+											.submission
+											.sentToEmailAddress
+									}
 								</span>
 							</div>
 						</div>

@@ -1,1 +1,1 @@
-export * as ScreenPackBuilderTypes from "./screen-pack-builder.types";
+export * as ScreenPackBuilderTypes from './screen-pack-builder.types';

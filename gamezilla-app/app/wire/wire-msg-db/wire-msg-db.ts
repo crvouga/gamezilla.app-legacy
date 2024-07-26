@@ -1,4 +1,4 @@
-import type { Task } from "gamezilla-app/@/core";
+import type {Task} from 'gamezilla-app/@/core';
 
 export type IWireMsgDb<TMsg> = {
 	add: (msgId: string) => Task<string, null>;

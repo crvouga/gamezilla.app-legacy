@@ -1,19 +1,19 @@
-import { pipe, TimeSpan } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { Translator } from "gamezilla-app/@/l18n/generated";
-import { APP_SOUND } from "gamezilla-app/app/@/client";
-import { IconCheckmark, Transition } from "gamezilla-app/app/@/ui";
-import { ActionInput, Actions } from "gamezilla-app/app/@/ui/actions";
-import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
-import { FlowAlgoDrawPipes } from "../flow-aglo/flow-algo-draw-pipes";
-import { FlowAlgoSolve } from "../flow-aglo/flow-algo-solve";
-import { FlowHint } from "../flow-hint";
-import type { FlowVariant } from "../flow-variant";
-import * as FlowVariantUI from "../flow-variant/flow-variant-ui";
-import * as Flow from "../flow/flow";
-import { FlowGroupId } from "../flow/flow-group-id";
-import { FlowNodeId } from "../flow/flow-node-id";
-import { FlowTerminal } from "../flow/flow-terminal";
+import {pipe, TimeSpan} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {Translator} from 'gamezilla-app/@/l18n/generated';
+import {APP_SOUND} from 'gamezilla-app/app/@/client';
+import {IconCheckmark, Transition} from 'gamezilla-app/app/@/ui';
+import {ActionInput, Actions} from 'gamezilla-app/app/@/ui/actions';
+import type {FlowPuzzle} from '../../flow-puzzle/flow-puzzle';
+import {FlowAlgoDrawPipes} from '../flow-aglo/flow-algo-draw-pipes';
+import {FlowAlgoSolve} from '../flow-aglo/flow-algo-solve';
+import {FlowHint} from '../flow-hint';
+import type {FlowVariant} from '../flow-variant';
+import * as FlowVariantUI from '../flow-variant/flow-variant-ui';
+import * as Flow from '../flow/flow';
+import {FlowGroupId} from '../flow/flow-group-id';
+import {FlowNodeId} from '../flow/flow-node-id';
+import {FlowTerminal} from '../flow/flow-terminal';
 
 //
 //
@@ -27,11 +27,11 @@ type Ctx = {
 	flowPuzzle: FlowPuzzle;
 };
 
-const Idle = p.obj({ t: p.l("idle") });
+const Idle = p.obj({t: p.l('idle')});
 type Idle = p.Infer<typeof Idle>;
 
 const Dragging = p.obj({
-	t: p.l("dragging"),
+	t: p.l('dragging'),
 	activeGroupId: FlowGroupId,
 	autocompleteEdge: p.maybe(Flow.Edge),
 });
@@ -44,23 +44,32 @@ export const Model = p.and(
 	FlowHint.Model,
 	p.obj({
 		pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
-		terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
+		terminalsByGroupId: p.partialDict(
+			FlowGroupId,
+			FlowTerminal,
+		),
 		status: Status,
 	}),
 );
 export type Model = p.Infer<typeof Model>;
 
-export const init = (input: { ctx: Ctx }): Model => {
+export const init = (input: {ctx: Ctx}): Model => {
 	return {
 		...FlowHint.init(input),
-		pipesBySourceId: { ...input.ctx.flowPuzzle.flow.pipesBySourceId },
-		terminalsByGroupId: { ...input.ctx.flowPuzzle.flow.terminalsByGroupId },
-		status: { t: "idle" },
+		pipesBySourceId: {
+			...input.ctx.flowPuzzle.flow
+				.pipesBySourceId,
+		},
+		terminalsByGroupId: {
+			...input.ctx.flowPuzzle.flow
+				.terminalsByGroupId,
+		},
+		status: {t: 'idle'},
 	};
 };
 
-export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
-	const initial = init({ ctx: input });
+export const random = (input: {flowPuzzle: FlowPuzzle}): Model => {
+	const initial = init({ctx: input});
 
 	const terminal = Flow.randomTerminal(input.flowPuzzle.flow);
 
@@ -68,7 +77,10 @@ export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
 		return initial;
 	}
 
-	const edge = Flow.randomOutEdge(input.flowPuzzle.flow, terminal.startId);
+	const edge = Flow.randomOutEdge(
+		input.flowPuzzle.flow,
+		terminal.startId,
+	);
 
 	if (!edge) {
 		return initial;
@@ -78,7 +90,9 @@ export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
 		...initial,
 		pipesBySourceId: {
 			[terminal.startId]: {
-				edgeId: Flow.toFlowEdgeId(edge),
+				edgeId: Flow.toFlowEdgeId(
+					edge,
+				),
 				groupId: terminal.groupId,
 			},
 		},
@@ -88,7 +102,7 @@ export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
 	};
 };
 
-export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
+export const randomMsgs = ({flow}: {flow: Flow.Model}): Msg[] => {
 	const terminal = Flow.randomTerminal(flow);
 
 	if (!terminal) {
@@ -100,7 +114,10 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 	const currentNodeId: FlowNodeId = terminal.startId;
 
 	for (let i = 0; i < Math.random() * 10; i++) {
-		const edge = Flow.randomOutEdge(flow, currentNodeId);
+		const edge = Flow.randomOutEdge(
+			flow,
+			currentNodeId,
+		);
 
 		if (!edge) {
 			break;
@@ -111,12 +128,12 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 
 	const msgs: Msg[] = [
 		{
-			t: "user-pressed-down-node",
+			t: 'user-pressed-down-node',
 			nodeId: terminal.startId,
 		},
 		...edges.map(
 			(edge): Msg => ({
-				t: "user-dragged-over-node",
+				t: 'user-dragged-over-node',
 				nodeId: edge.targetId,
 			}),
 		),
@@ -129,11 +146,7 @@ export const isShowingHint = (_model: Model): boolean => {
 	return false;
 };
 
-export const toSolutionMsgs = ({
-	flow,
-}: {
-	flow: FlowVariant.Model;
-}): Msg[] => {
+export const toSolutionMsgs = ({flow}: {flow: FlowVariant.Model}): Msg[] => {
 	const solutions = FlowAlgoSolve.solutions(flow);
 
 	const solution = first(solutions);
@@ -150,23 +163,29 @@ export const toSolutionMsgs = ({
 		}
 
 		msgs.push({
-			t: "user-pressed-down-node",
+			t: 'user-pressed-down-node',
 			nodeId: terminal.startId,
 		});
 
-		for (const pipe of Flow.toPipeline(solution, terminal.startId)) {
-			const edge = Flow.toEdge(solution, pipe.edgeId);
+		for (const pipe of Flow.toPipeline(
+			solution,
+			terminal.startId,
+		)) {
+			const edge = Flow.toEdge(
+				solution,
+				pipe.edgeId,
+			);
 			if (!edge) {
 				continue;
 			}
 			msgs.push({
-				t: "user-dragged-over-node",
+				t: 'user-dragged-over-node',
 				nodeId: edge.targetId,
 			});
 		}
 
 		msgs.push({
-			t: "user-pressed-up-node",
+			t: 'user-pressed-up-node',
 			nodeId: terminal.endId,
 		});
 	}
@@ -191,22 +210,22 @@ const first = <T,>(iterable: Iterable<T>): T | null => {
 export const Msg = p.or(
 	FlowHint.Msg,
 	p.obj({
-		t: p.l("user-clicked-reset"),
+		t: p.l('user-clicked-reset'),
 	}),
 	p.obj({
-		t: p.l("user-pressed-down-node"),
+		t: p.l('user-pressed-down-node'),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("user-pressed-up-node"),
+		t: p.l('user-pressed-up-node'),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("user-dragged-over-node"),
+		t: p.l('user-dragged-over-node'),
 		nodeId: FlowNodeId,
 	}),
 	p.obj({
-		t: p.l("user-dragging-left"),
+		t: p.l('user-dragging-left'),
 	}),
 );
 
@@ -215,38 +234,38 @@ export type Msg = p.Infer<typeof Msg>;
 export type Event =
 	| FlowHint.Event
 	| {
-			t: "started-dragging";
+			t: 'started-dragging';
 	  }
 	| {
-			t: "connected-terminals";
+			t: 'connected-terminals';
 			connectedTerminalCount: number;
 	  }
 	| {
-			t: "solved";
+			t: 'solved';
 	  }
 	| {
-			t: "resetted";
+			t: 'resetted';
 	  };
 
 export const eventToSoundSrc = (event: Event): string => {
 	switch (event.t) {
-		case "connected-terminals": {
+		case 'connected-terminals': {
 			return APP_SOUND.tap;
 		}
 
-		case "solved": {
+		case 'solved': {
 			return APP_SOUND.celebration;
 		}
 
-		case "started-dragging": {
+		case 'started-dragging': {
 			return APP_SOUND.tap;
 		}
 
-		case "used-hint": {
+		case 'used-hint': {
 			return APP_SOUND.navForwardMin;
 		}
 
-		case "resetted": {
+		case 'resetted': {
 			return APP_SOUND.navTransitionLeft;
 		}
 	}
@@ -283,7 +302,10 @@ export const update = ({
 	});
 
 	return {
-		event: updatedReset.event ?? updatedHint.event ?? updated.event,
+		event:
+			updatedReset.event ??
+			updatedHint.event ??
+			updated.event,
 		model: updatedReset.model,
 	};
 };
@@ -295,25 +317,31 @@ const resetPipes = (model: Model): Model => {
 	};
 };
 
-const updateReset: typeof update = ({ model, msg }) => {
+const updateReset: typeof update = ({model, msg}) => {
 	switch (msg.t) {
-		case "user-clicked-reset": {
+		case 'user-clicked-reset': {
 			return {
-				model: pipe(model, resetPipes, FlowHint.resetUsedHints),
+				model: pipe(
+					model,
+					resetPipes,
+					FlowHint.resetUsedHints,
+				),
 				event: {
-					t: "resetted",
+					t: 'resetted',
 				},
 			};
 		}
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
-const updateMain: typeof update = ({ model, ctx, msg }) => {
+const updateMain: typeof update = ({model, ctx, msg}) => {
 	switch (model.status.t) {
-		case "dragging": {
+		case 'dragging': {
 			return updateDragging({
 				ctx,
 				msg,
@@ -322,28 +350,43 @@ const updateMain: typeof update = ({ model, ctx, msg }) => {
 			});
 		}
 
-		case "idle": {
-			return updateIdle({ ctx, msg, model });
+		case 'idle': {
+			return updateIdle({
+				ctx,
+				msg,
+				model,
+			});
 		}
 	}
 };
 
-const updateIdle: typeof update = ({ msg, model, ctx }) => {
+const updateIdle: typeof update = ({msg, model, ctx}) => {
 	switch (msg.t) {
-		case "user-pressed-down-node": {
-			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
+		case 'user-pressed-down-node': {
+			const current = toFlow({
+				model,
+				flow: ctx
+					.flowPuzzle
+					.flow,
+			});
 
-			const groupId = Flow.toGroupId(current, msg.nodeId);
-
-			if (!groupId) {
-				return { model };
-			}
-
-			const started = FlowAlgoDrawPipes.startDrawPipes(
+			const groupId = Flow.toGroupId(
 				current,
-				groupId,
 				msg.nodeId,
 			);
+
+			if (!groupId) {
+				return {
+					model,
+				};
+			}
+
+			const started =
+				FlowAlgoDrawPipes.startDrawPipes(
+					current,
+					groupId,
+					msg.nodeId,
+				);
 
 			return {
 				model: {
@@ -351,19 +394,21 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
 					terminalsByGroupId: started.terminalsByGroupId,
 					pipesBySourceId: started.pipesBySourceId,
 					status: {
-						t: "dragging",
+						t: 'dragging',
 						activeGroupId: groupId,
 						autocompleteEdge: null,
 					},
 				},
 				event: {
-					t: "started-dragging",
+					t: 'started-dragging',
 				},
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -383,16 +428,22 @@ const updateDragging = ({
 	event?: Event;
 } => {
 	switch (msg.t) {
-		case "user-dragged-over-node": {
-			const { nodeId } = msg;
+		case 'user-dragged-over-node': {
+			const {nodeId} = msg;
 
-			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
+			const current = toFlow({
+				model,
+				flow: ctx
+					.flowPuzzle
+					.flow,
+			});
 
-			const extended = FlowAlgoDrawPipes.drawPipes(
-				current,
-				modelStatus.activeGroupId,
-				nodeId,
-			);
+			const extended =
+				FlowAlgoDrawPipes.drawPipes(
+					current,
+					modelStatus.activeGroupId,
+					nodeId,
+				);
 
 			const modelNew: Model = {
 				...model,
@@ -401,35 +452,54 @@ const updateDragging = ({
 				pipesBySourceId: extended.pipesBySourceId,
 			};
 
-			return { model: modelNew };
+			return {
+				model: modelNew,
+			};
 		}
 
-		case "user-pressed-up-node": {
-			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
-			const modelNew: Model = { ...model, status: { t: "idle" } };
+		case 'user-pressed-up-node': {
+			const current = toFlow({
+				model,
+				flow: ctx
+					.flowPuzzle
+					.flow,
+			});
+			const modelNew: Model = {
+				...model,
+				status: {
+					t: 'idle',
+				},
+			};
 
-			const activeGroupTerminal = Flow.toTerminalByGroupId(
-				current,
-				modelStatus.activeGroupId,
-			);
+			const activeGroupTerminal =
+				Flow.toTerminalByGroupId(
+					current,
+					modelStatus.activeGroupId,
+				);
 
 			if (!activeGroupTerminal) {
-				return { model: modelNew };
+				return {
+					model: modelNew,
+				};
 			}
 
-			const isConnected = Flow.isConnectedWithPipes(
-				current,
-				activeGroupTerminal.startId,
-				activeGroupTerminal.endId,
-			);
+			const isConnected =
+				Flow.isConnectedWithPipes(
+					current,
+					activeGroupTerminal.startId,
+					activeGroupTerminal.endId,
+				);
 
-			const isSolved = Flow.isSolved(current);
+			const isSolved =
+				Flow.isSolved(
+					current,
+				);
 
 			if (isSolved && isConnected) {
 				return {
 					model: modelNew,
 					event: {
-						t: "solved",
+						t: 'solved',
 					},
 				};
 			}
@@ -438,30 +508,42 @@ const updateDragging = ({
 				return {
 					model: modelNew,
 					event: {
-						t: "connected-terminals",
-						connectedTerminalCount: Flow.countConnectedPipes(current),
+						t: 'connected-terminals',
+						connectedTerminalCount:
+							Flow.countConnectedPipes(
+								current,
+							),
 					},
 				};
 			}
 
-			return { model: modelNew };
+			return {
+				model: modelNew,
+			};
 		}
 
-		case "user-dragging-left": {
-			const current = toFlow({ model, flow: ctx.flowPuzzle.flow });
-			const isSolved = Flow.isSolved(current);
+		case 'user-dragging-left': {
+			const current = toFlow({
+				...ctx.flowPuzzle,
+				model,
+			});
+			const isSolved =
+				Flow.isSolved(
+					current,
+				);
 
-			const terminal = Flow.toTerminalByGroupId(
-				current,
-				modelStatus.activeGroupId,
-			);
+			const terminal =
+				Flow.toTerminalByGroupId(
+					current,
+					modelStatus.activeGroupId,
+				);
 
 			if (!terminal?.endId) {
 				return {
 					model: {
 						...model,
 						status: {
-							t: "idle",
+							t: 'idle',
 						},
 					},
 				};
@@ -471,19 +553,21 @@ const updateDragging = ({
 				model: {
 					...model,
 					status: {
-						t: "idle",
+						t: 'idle',
 					},
 				},
 				event: isSolved
 					? {
-							t: "solved",
-						}
+							t: 'solved',
+					  }
 					: undefined,
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -524,31 +608,68 @@ export const View = (input: {
 			disabled={input.disabled}
 			model={toFlow(input)}
 			showCoordinates={false}
-			isDragging={input.model.status.t === "dragging"}
+			isDragging={
+				input.model
+					.status
+					.t ===
+				'dragging'
+			}
 			onDraggedOver={(nodeId) =>
-				input.dispatch({ t: "user-dragged-over-node", nodeId })
+				input.dispatch({
+					t: 'user-dragged-over-node',
+					nodeId,
+				})
 			}
 			onPressDown={(nodeId) =>
-				input.dispatch({ t: "user-pressed-down-node", nodeId })
+				input.dispatch({
+					t: 'user-pressed-down-node',
+					nodeId,
+				})
 			}
 			onPressUp={(nodeId) =>
-				input.dispatch({ t: "user-pressed-up-node", nodeId })
+				input.dispatch({
+					t: 'user-pressed-up-node',
+					nodeId,
+				})
 			}
-			onLeave={() => input.dispatch({ t: "user-dragging-left" })}
+			onLeave={() =>
+				input.dispatch({
+					t: 'user-dragging-left',
+				})
+			}
 			autocompleteEdge={
-				input.model.status.t === "dragging" &&
-				input.model.status.autocompleteEdge
+				input.model
+					.status
+					.t ===
+					'dragging' &&
+				input.model
+					.status
+					.autocompleteEdge
 					? {
-							...input.model.status.autocompleteEdge,
-							groupId: input.model.status.activeGroupId,
-						}
+							...input
+								.model
+								.status
+								.autocompleteEdge,
+							groupId: input
+								.model
+								.status
+								.activeGroupId,
+					  }
 					: null
 			}
 			isGroupActive={(groupId) =>
-				input.model.status.t === "dragging" &&
-				input.model.status.activeGroupId === groupId
+				input.model
+					.status
+					.t ===
+					'dragging' &&
+				input.model
+					.status
+					.activeGroupId ===
+					groupId
 			}
-			usedHints={FlowHint.toUsedHints(input.model)}
+			usedHints={FlowHint.toUsedHints(
+				input.model,
+			)}
 		/>
 	);
 };
@@ -563,11 +684,17 @@ export const viewResetAction = (input: {
 		t: Translator;
 	};
 }): ActionInput => {
-	const flow = toFlow({ model: input.model, flow: input.flowPuzzle.flow });
+	const flow = toFlow({
+		model: input.model,
+		flow: input.flowPuzzle.flow,
+	});
 	const disabled = Flow.isPipesEmpty(flow);
 	return Actions.reset({
 		ctx: input.ctx,
-		onClick: () => input.dispatch({ t: "user-clicked-reset" }),
+		onClick: () =>
+			input.dispatch({
+				t: 'user-clicked-reset',
+			}),
 		disabled,
 	});
 };
@@ -578,18 +705,22 @@ export const CheckmarkAnimation = (input: {
 	open: boolean;
 	duration?: TimeSpan | null | undefined;
 }) => {
-	const duration = input.duration ?? defaultCheckmarkAnimationDuration;
+	const duration =
+		input.duration ??
+		defaultCheckmarkAnimationDuration;
 	return (
 		<Transition
 			id="checkmark"
-			onEnter={animateCheckmark({ duration })}
+			onEnter={animateCheckmark({
+				duration,
+			})}
 			onExit={async () => {}}
 			mode="out-in"
 			className="pointer-events-none"
 		>
 			{input.open && (
-				<div className="absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
-					<IconCheckmark className="aspect-square w-full opacity-50 pointer-events-none" />
+				<div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0">
+					<IconCheckmark className="pointer-events-none aspect-square w-full opacity-50" />
 				</div>
 			)}
 		</Transition>
@@ -597,16 +728,21 @@ export const CheckmarkAnimation = (input: {
 };
 
 const animateCheckmark =
-	(input: { duration: TimeSpan }) => async (node: HTMLElement) => {
-		node.style.transition = "all 0.3s ease-in-out";
-		node.style.opacity = "0";
-		node.style.transform = "scale(0.8)";
+	(input: {duration: TimeSpan}) => async (node: HTMLElement) => {
+		node.style.transition = 'all 0.3s ease-in-out';
+		node.style.opacity = '0';
+		node.style.transform = 'scale(0.8)';
 		await new Promise((r) => setTimeout(r, 50));
-		node.style.opacity = "1";
-		node.style.transform = "scale(1)";
+		node.style.opacity = '1';
+		node.style.transform = 'scale(1)';
 		await new Promise((r) =>
-			setTimeout(r, TimeSpan.toMilliseconds(input.duration)),
+			setTimeout(
+				r,
+				TimeSpan.toMilliseconds(
+					input.duration,
+				),
+			),
 		);
-		node.style.opacity = "0";
-		node.style.transform = "scale(0.8)";
+		node.style.opacity = '0';
+		node.style.transform = 'scale(0.8)';
 	};

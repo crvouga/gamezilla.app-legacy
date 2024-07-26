@@ -1,4 +1,4 @@
-import { PubSub } from "gamezilla-app/@/core";
+import {PubSub} from 'gamezilla-app/@/core';
 
 export type Transitioninput = {
 	id: string;
@@ -6,12 +6,12 @@ export type Transitioninput = {
 	onExit: (node: HTMLElement) => Promise<void>;
 	onAppear?: (node: HTMLElement) => Promise<void>;
 	className?: string;
-	mode: "in-out" | "out-in";
+	mode: 'in-out' | 'out-in';
 	appear?: boolean;
 };
 
 export type TransitionEvent = Transitioninput & {
-	type: "input";
+	type: 'input';
 };
 
 export const transitionSub = PubSub.create<TransitionEvent>();

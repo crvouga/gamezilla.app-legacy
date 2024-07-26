@@ -4,22 +4,22 @@ import {
 	TimeSpan,
 	UnitInterval,
 	type Result,
-} from "gamezilla-app/@/core";
-import { Translator } from "gamezilla-app/@/l18n/generated";
-import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
+} from 'gamezilla-app/@/core';
+import {Translator} from 'gamezilla-app/@/l18n/generated';
+import {AppClientModule} from 'gamezilla-app/app/@/architecture/app-client';
 import {
 	APP_SOUND,
 	BaseClientCtx,
 	playSound,
 	type ClientEvent,
 	type SoundCmd,
-} from "gamezilla-app/app/@/client";
+} from 'gamezilla-app/app/@/client';
 import {
 	IconVolumeHigh,
 	IconVolumeXMark,
 	ListItemButton,
 	ToggleButton,
-} from "gamezilla-app/app/@/ui";
+} from 'gamezilla-app/app/@/ui';
 
 //
 //
@@ -56,7 +56,7 @@ export type Model = {
 	isDocumentVisible: boolean;
 };
 
-export const init: Module["init"] = () => {
+export const init: Module['init'] = () => {
 	return {
 		model: {
 			muted: false,
@@ -77,42 +77,58 @@ export const init: Module["init"] = () => {
 
 export type Msg =
 	| {
-			t: "toggle-mute";
+			t: 'toggle-mute';
 	  }
 	| {
-			t: "played-sound";
+			t: 'played-sound';
 			src: string;
 			result: Result<string, null>;
 	  }
 	| {
-			t: "preloaded-sounds";
+			t: 'preloaded-sounds';
 			src: string[];
 			result: Result<string, null>;
 	  };
 
-export const update: Module["update"] = (input) => {
+export const update: Module['update'] = (input) => {
 	return AppClientModule.andThen(
-		{ model: input.model },
-		(model) => updateFromMsg({ ...input, model }),
-		(model) => updateFromCmd({ ...input, model }),
-		(model) => updateFromEvent({ ...input, model }),
+		{model: input.model},
+		(model) =>
+			updateFromMsg({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromCmd({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateFromEvent({
+				...input,
+				model,
+			}),
 	);
 };
 
-const updateFromMsg: Module["update"] = ({ msg, model }) => {
+const updateFromMsg: Module['update'] = ({msg, model}) => {
 	if (!msg) {
-		return { model };
+		return {model};
 	}
 
 	switch (msg.t) {
-		case "toggle-mute": {
+		case 'toggle-mute': {
 			if (model.muted) {
 				return {
 					model: {
 						...model,
 						muted: false,
 					},
-					msgCmd: [playSound(APP_SOUND.stateChangeUp)],
+					msgCmd: [
+						playSound(
+							APP_SOUND.stateChangeUp,
+						),
+					],
 				};
 			}
 			return {
@@ -122,12 +138,12 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
 				},
 			};
 		}
-		case "played-sound": {
+		case 'played-sound': {
 			return {
 				model,
 			};
 		}
-		case "preloaded-sounds": {
+		case 'preloaded-sounds': {
 			return {
 				model,
 			};
@@ -135,80 +151,122 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
 	}
 };
 
-const updateFromEvent: Module["update"] = ({ model, msgEvt }) => {
+const updateFromEvent: Module['update'] = ({model, msgEvt}) => {
 	if (!msgEvt) {
-		return { model };
+		return {model};
 	}
 
 	switch (msgEvt.t) {
-		case "platform/document-visibility-changed": {
+		case 'platform/document-visibility-changed': {
 			return {
-				model: { ...model, muted: msgEvt.state === "hidden" },
+				model: {
+					...model,
+					muted:
+						msgEvt.state ===
+						'hidden',
+				},
 			};
 		}
 
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };
 
-export const updateFromCmd: Module["update"] = ({ model, msgCmd, ctx }) => {
+export const updateFromCmd: Module['update'] = ({model, msgCmd, ctx}) => {
 	if (!msgCmd) {
-		return { model };
+		return {model};
 	}
 
 	const soundCmd = msgCmd.c;
 
 	switch (soundCmd.t) {
-		case "preload": {
+		case 'preload': {
 			return {
 				model,
-				eff: async (dispatch) => {
-					const preloaded = await preloadSoundsEffect(soundCmd.src);
-					dispatch({
-						t: "preloaded-sounds",
-						src: soundCmd.src,
-						result: preloaded,
-					});
+				eff: async (
+					dispatch,
+				) => {
+					const preloaded =
+						await preloadSoundsEffect(
+							soundCmd.src,
+						);
+					dispatch(
+						{
+							t: 'preloaded-sounds',
+							src: soundCmd.src,
+							result: preloaded,
+						},
+					);
 				},
 			};
 		}
-		case "play": {
+		case 'play': {
 			if (model.muted) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			if (ctx.documentVisibilityState === "hidden") {
-				return { model };
+			if (
+				ctx.documentVisibilityState ===
+				'hidden'
+			) {
+				return {
+					model,
+				};
 			}
 
 			return {
 				model,
-				eff: async (dispatch) => {
-					const { delay } = soundCmd;
+				eff: async (
+					dispatch,
+				) => {
+					const {
+						delay,
+					} =
+						soundCmd;
 
-					if (delay) {
-						await new Promise((r) =>
-							setTimeout(r, TimeSpan.toMilliseconds(delay)),
+					if (
+						delay
+					) {
+						await new Promise(
+							(
+								r,
+							) =>
+								setTimeout(
+									r,
+									TimeSpan.toMilliseconds(
+										delay,
+									),
+								),
 						);
 					}
-					const played = await playSoundEffect(
-						soundCmd.src,
-						soundCmd.volume ?? UnitInterval.init(1),
+					const played =
+						await playSoundEffect(
+							soundCmd.src,
+							soundCmd.volume ??
+								UnitInterval.init(
+									1,
+								),
+						);
+					dispatch(
+						{
+							t: 'played-sound',
+							src: soundCmd.src,
+							result: played,
+						},
 					);
-					dispatch({
-						t: "played-sound",
-						src: soundCmd.src,
-						result: played,
-					});
 				},
 			};
 		}
 	}
 };
 
-export const ViewStatusBar = (input: { model: Model }) => {
+export const ViewStatusBar = (input: {model: Model}) => {
 	if (input.model.muted) {
 		return <IconVolumeXMark className="h-4 w-4" />;
 	}
@@ -225,23 +283,41 @@ export const ViewStatusBarDrawer = (input: {
 }) => {
 	return (
 		<ListItemButton
-			onClick={() => input.dispatch({ t: "toggle-mute" })}
+			onClick={() =>
+				input.dispatch({
+					t: 'toggle-mute',
+				})
+			}
 			icon={(inputIcon) =>
-				input.model.muted ? (
-					<IconVolumeXMark {...inputIcon} />
+				input.model
+					.muted ? (
+					<IconVolumeXMark
+						{...inputIcon}
+					/>
 				) : (
-					<IconVolumeHigh {...inputIcon} />
+					<IconVolumeHigh
+						{...inputIcon}
+					/>
 				)
 			}
 			label={
-				input.model.muted
-					? input.ctx.t("sound.sound-off")
-					: input.ctx.t("sound.sound-on")
+				input.model
+					.muted
+					? input.ctx.t(
+							'sound.sound-off',
+					  )
+					: input.ctx.t(
+							'sound.sound-on',
+					  )
 			}
 			end={() => (
 				<ToggleButton
 					label="toggle sound"
-					checked={!input.model.muted}
+					checked={
+						!input
+							.model
+							.muted
+					}
 					id="toggle-sound"
 				/>
 			)}
@@ -273,12 +349,24 @@ const nextUserGesture = async () => {
 	await new Promise((resolve) => {
 		const handler = async () => {
 			resolve(null);
-			document.body.removeEventListener("click", handler);
-			document.body.removeEventListener("touchstart", handler);
+			document.body.removeEventListener(
+				'click',
+				handler,
+			);
+			document.body.removeEventListener(
+				'touchstart',
+				handler,
+			);
 		};
 
-		document.body.addEventListener("click", handler);
-		document.body.addEventListener("touchstart", handler);
+		document.body.addEventListener(
+			'click',
+			handler,
+		);
+		document.body.addEventListener(
+			'touchstart',
+			handler,
+		);
 	});
 };
 
@@ -308,7 +396,9 @@ const preloadSoundEffect = async (src: string) => {
 	const response = await fetch(src);
 	const arrayBuffer = await response.arrayBuffer();
 	const audioContext = await getAudioContext();
-	const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+	const audioBuffer = await audioContext.decodeAudioData(
+		arrayBuffer,
+	);
 	audioBuffers.set(src, audioBuffer);
 	return Ok(null);
 };

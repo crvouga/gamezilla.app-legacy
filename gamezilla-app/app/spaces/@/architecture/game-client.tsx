@@ -1,10 +1,10 @@
 import type {
 	WithEventId,
 	WithEventMeta,
-} from "gamezilla-app/app/spaces/@/event";
-import { ClientCmd, type ClientEvent } from "gamezilla-app/app/@/client";
-import { Eff, Sub } from "gamezilla-app/@/core";
-import type { VDom } from "gamezilla-app/@/vdom";
+} from 'gamezilla-app/app/spaces/@/event';
+import {ClientCmd, type ClientEvent} from 'gamezilla-app/app/@/client';
+import {Eff, Sub} from 'gamezilla-app/@/core';
+import type {VDom} from 'gamezilla-app/@/vdom';
 
 export type GameClientTypes = {
 	//
@@ -21,61 +21,61 @@ export type GameClientTypes = {
 };
 
 type Output<T extends GameClientTypes> = {
-	model: T["ModelClient"];
-	eff?: Eff<T["MsgClient"]>;
+	model: T['ModelClient'];
+	eff?: Eff<T['MsgClient']>;
 	msgCmd?: ClientCmd<{
-		MsgClient: T["MsgClient"];
-		MsgToServer: T["MsgToServer"];
+		MsgClient: T['MsgClient'];
+		MsgToServer: T['MsgToServer'];
 	}>[];
-	msgCore?: WithEventId<T["MsgCore"]>[];
+	msgCore?: WithEventId<T['MsgCore']>[];
 };
 
 export type InMsg<T extends GameClientTypes> =
-	| ({ variant: "msg" } & T["MsgClient"])
-	| ({ variant: "to-client" } & T["MsgToClient"])
-	| ({ variant: "event" } & ClientEvent);
+	| ({variant: 'msg'} & T['MsgClient'])
+	| ({variant: 'to-client'} & T['MsgToClient'])
+	| ({variant: 'event'} & ClientEvent);
 
 export type OutMsg<T extends GameClientTypes> =
-	| ({ variant: "msgCmd" } & ClientCmd<T>)
-	| ({ variant: "game-event" } & WithEventId<T["MsgCore"]>);
+	| ({variant: 'msgCmd'} & ClientCmd<T>)
+	| ({variant: 'game-event'} & WithEventId<T['MsgCore']>);
 
 export type GameClient<T extends GameClientTypes> = {
 	init: (input: {
-		ctx: T["ClientCtx"];
-		modelCore: T["ModelCore"];
-		model?: T["ModelClient"] | null;
+		ctx: T['ClientCtx'];
+		modelCore: T['ModelCore'];
+		model?: T['ModelClient'] | null;
 	}) => Output<T>;
 
 	update: (input: {
-		ctx: T["ClientCtx"];
-		modelCore: T["ModelCore"];
-		modelCoreBefore: T["ModelCore"];
-		model?: T["ModelClient"] | null;
+		ctx: T['ClientCtx'];
+		modelCore: T['ModelCore'];
+		modelCoreBefore: T['ModelCore'];
+		model?: T['ModelClient'] | null;
 		//
-		msg?: T["MsgClient"] | null;
-		msgServer?: T["MsgToClient"] | null;
+		msg?: T['MsgClient'] | null;
+		msgServer?: T['MsgToClient'] | null;
 		msgEvt?: ClientEvent | null;
-		msgCore?: WithEventMeta<T["MsgCore"]> | null;
+		msgCore?: WithEventMeta<T['MsgCore']> | null;
 	}) => Output<T>;
 
 	subscriptions: (input: {
 		intervalId: string;
-		ctx: T["ClientCtx"];
-		model?: T["ModelClient"] | null;
-		modelCore: T["ModelCore"];
-	}) => Sub<T["MsgClient"]>;
+		ctx: T['ClientCtx'];
+		model?: T['ModelClient'] | null;
+		modelCore: T['ModelCore'];
+	}) => Sub<T['MsgClient']>;
 
 	View: (input: {
-		ctx: T["ClientCtx"];
-		dispatch: (msg: T["MsgClient"]) => void;
-		modelCore: T["ModelCore"];
-		model?: T["ModelClient"] | null;
+		ctx: T['ClientCtx'];
+		dispatch: (msg: T['MsgClient']) => void;
+		modelCore: T['ModelCore'];
+		model?: T['ModelClient'] | null;
 	}) => VDom;
 
 	ViewFeedItem: (input: {
-		ctx: T["ClientCtx"];
-		modelCore: T["ModelCore"];
-		msgEvt: T["MsgCore"];
+		ctx: T['ClientCtx'];
+		modelCore: T['ModelCore'];
+		msgEvt: T['MsgCore'];
 	}) => VDom;
 };
 
@@ -86,50 +86,110 @@ export const tag = <T extends string, Types extends GameClientTypes>(
 	tag: T,
 	client: GameClient<Types>,
 ): GameClient<{
-	ModelClient: { t: T; c: Types["ModelClient"] };
-	MsgClient: { t: T; c: Types["MsgClient"] };
-	MsgToClient: { t: T; c: Types["MsgToClient"] };
-	MsgToServer: { t: T; c: Types["MsgToServer"] };
-	ModelCore: { t: T; c: Types["ModelCore"] };
-	MsgCore: { t: T; c: Types["MsgCore"] };
-	ClientCtx: Types["ClientCtx"];
+	ModelClient: {t: T; c: Types['ModelClient']};
+	MsgClient: {t: T; c: Types['MsgClient']};
+	MsgToClient: {t: T; c: Types['MsgToClient']};
+	MsgToServer: {t: T; c: Types['MsgToServer']};
+	ModelCore: {t: T; c: Types['ModelCore']};
+	MsgCore: {t: T; c: Types['MsgCore']};
+	ClientCtx: Types['ClientCtx'];
 }> => {
 	return {
 		init: (input) => {
 			const initial = client.init({
 				ctx: input.ctx,
-				modelCore: input.modelCore.c,
-				model: input.model?.c,
+				modelCore: input
+					.modelCore
+					.c,
+				model: input
+					.model
+					?.c,
 			});
 			return {
-				model: { t: tag, c: initial.model },
-				eff: Eff.tag(tag, initial.eff),
-				msgCmd: ClientCmd.tag(tag, initial.msgCmd),
+				model: {
+					t: tag,
+					c: initial.model,
+				},
+				eff: Eff.tag(
+					tag,
+					initial.eff,
+				),
+				msgCmd: ClientCmd.tag(
+					tag,
+					initial.msgCmd,
+				),
 			};
 		},
 
 		update: (input) => {
 			const updated = client.update({
 				msgEvt: input.msgEvt,
-				msg: input.msg?.t === tag ? input.msg?.c : undefined,
-				model: input.model?.t === tag ? input.model?.c : undefined,
-				msgCore: input.msgCore?.t === tag ? input.msgCore?.c : undefined,
-				msgServer: input.msgServer?.t === tag ? input.msgServer?.c : undefined,
+				msg:
+					input
+						.msg
+						?.t ===
+					tag
+						? input
+								.msg
+								?.c
+						: undefined,
+				model:
+					input
+						.model
+						?.t ===
+					tag
+						? input
+								.model
+								?.c
+						: undefined,
+				msgCore:
+					input
+						.msgCore
+						?.t ===
+					tag
+						? input
+								.msgCore
+								?.c
+						: undefined,
+				msgServer:
+					input
+						.msgServer
+						?.t ===
+					tag
+						? input
+								.msgServer
+								?.c
+						: undefined,
 				ctx: input.ctx,
-				modelCore: input.modelCore.c,
-				modelCoreBefore: input.modelCoreBefore.c,
+				modelCore: input
+					.modelCore
+					.c,
+				modelCoreBefore: input
+					.modelCoreBefore
+					.c,
 			});
 			return {
-				model: { t: tag, c: updated.model },
-				eff: Eff.tag(tag, updated.eff),
-				msgCmd: ClientCmd.tag(tag, updated.msgCmd),
+				model: {
+					t: tag,
+					c: updated.model,
+				},
+				eff: Eff.tag(
+					tag,
+					updated.eff,
+				),
+				msgCmd: ClientCmd.tag(
+					tag,
+					updated.msgCmd,
+				),
 				msgCore: updated.msgCore
 					? updated.msgCore.map(
 							(
 								msgCore,
 							): WithEventMeta<{
 								t: T;
-								c: WithEventMeta<Types["MsgCore"]>;
+								c: WithEventMeta<
+									Types['MsgCore']
+								>;
 							}> => ({
 								eventId: msgCore.msgEvtId,
 								happenedAt: msgCore.happenedAt,
@@ -140,7 +200,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
 									happenedAt: msgCore.happenedAt,
 								},
 							}),
-						)
+					  )
 					: undefined,
 			};
 		},
@@ -148,33 +208,64 @@ export const tag = <T extends string, Types extends GameClientTypes>(
 		subscriptions: (input) => {
 			return Sub.tag(
 				tag,
-				client.subscriptions({
-					ctx: input.ctx,
-					intervalId: input.intervalId,
-					modelCore: input.modelCore.c,
-					model: input.model?.c,
-				}),
+				client.subscriptions(
+					{
+						ctx: input.ctx,
+						intervalId: input.intervalId,
+						modelCore: input
+							.modelCore
+							.c,
+						model: input
+							.model
+							?.c,
+					},
+				),
 			);
 		},
 
 		View: (input) => {
 			return (
 				<client.View
-					ctx={input.ctx}
-					modelCore={input.modelCore.c}
-					dispatch={(m) => input.dispatch({ t: tag, c: m })}
-					model={input.model?.c}
+					ctx={
+						input.ctx
+					}
+					modelCore={
+						input
+							.modelCore
+							.c
+					}
+					dispatch={(
+						m,
+					) =>
+						input.dispatch(
+							{
+								t: tag,
+								c: m,
+							},
+						)
+					}
+					model={
+						input
+							.model
+							?.c
+					}
 				/>
 			);
 		},
 
 		ViewFeedItem: (input) => {
 			if (client.ViewFeedItem) {
-				return client.ViewFeedItem({
-					ctx: input.ctx,
-					msgEvt: input.msgEvt.c,
-					modelCore: input.modelCore.c,
-				});
+				return client.ViewFeedItem(
+					{
+						ctx: input.ctx,
+						msgEvt: input
+							.msgEvt
+							.c,
+						modelCore: input
+							.modelCore
+							.c,
+					},
+				);
 			}
 			return null;
 		},
@@ -199,14 +290,16 @@ export const tag = <T extends string, Types extends GameClientTypes>(
  */
 const chain = <T extends GameClientTypes>(
 	initial: Output<T>,
-	...updaters: ((input: T["ModelClient"]) => Output<T>)[]
+	...updaters: ((input: T['ModelClient']) => Output<T>)[]
 ): Output<T> => {
 	const msgCmd: ClientCmd<{
-		MsgClient: T["MsgClient"];
-		MsgToServer: T["MsgToServer"];
+		MsgClient: T['MsgClient'];
+		MsgToServer: T['MsgToServer'];
 	}>[] = initial.msgCmd ?? [];
-	const msgCores: T["MsgCore"][] = initial?.msgCore ?? [];
-	const eff: Eff<T["MsgClient"]>[] = initial.eff ? [initial.eff] : [];
+	const msgCores: T['MsgCore'][] = initial?.msgCore ?? [];
+	const eff: Eff<T['MsgClient']>[] = initial.eff
+		? [initial.eff]
+		: [];
 
 	let model = initial.model;
 	let i = 0;
@@ -222,16 +315,30 @@ const chain = <T extends GameClientTypes>(
 		}
 		if (updated.msgCore) {
 			let j = 0;
-			const len = updated.msgCore.length;
+			const len =
+				updated.msgCore
+					.length;
 			for (j = 0; j < len; ++j) {
-				msgCores.push(updated.msgCore[j]!);
+				msgCores.push(
+					updated
+						.msgCore[
+						j
+					]!,
+				);
 			}
 		}
 		if (updated.msgCmd) {
 			let j = 0;
-			const len = updated.msgCmd.length;
+			const len =
+				updated.msgCmd
+					.length;
 			for (j = 0; j < len; ++j) {
-				msgCmd.push(updated.msgCmd[j]!);
+				msgCmd.push(
+					updated
+						.msgCmd[
+						j
+					]!,
+				);
 			}
 		}
 	}
@@ -248,30 +355,41 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
 	tag: TTag,
 	output: Output<TTypes>,
 ): Output<{
-	ModelClient: { t: TTag; c: TTypes["ModelClient"] };
-	MsgClient: { t: TTag; c: TTypes["MsgClient"] };
-	MsgToClient: { t: TTag; c: TTypes["MsgToClient"] };
-	MsgToServer: { t: TTag; c: TTypes["MsgToServer"] };
-	ModelCore: { t: TTag; c: TTypes["ModelCore"] };
-	MsgCore: { t: TTag; c: TTypes["MsgCore"] };
-	ClientCtx: TTypes["ClientCtx"];
+	ModelClient: {t: TTag; c: TTypes['ModelClient']};
+	MsgClient: {t: TTag; c: TTypes['MsgClient']};
+	MsgToClient: {t: TTag; c: TTypes['MsgToClient']};
+	MsgToServer: {t: TTag; c: TTypes['MsgToServer']};
+	ModelCore: {t: TTag; c: TTypes['ModelCore']};
+	MsgCore: {t: TTag; c: TTypes['MsgCore']};
+	ClientCtx: TTypes['ClientCtx'];
 }> => {
 	return {
 		model: {
 			t: tag,
 			c: output.model,
 		},
-		eff: output.eff ? Eff.tag(tag, output.eff) : undefined,
+		eff: output.eff
+			? Eff.tag(tag, output.eff)
+			: undefined,
 		msgCmd: output.msgCmd
-			? output.msgCmd.map((msgCmd) => ClientCmd.tagOne(tag, msgCmd))
+			? output.msgCmd.map((msgCmd) =>
+					ClientCmd.tagOne(
+						tag,
+						msgCmd,
+					),
+			  )
 			: undefined,
 		msgCore: output.msgCore
-			? output.msgCore.map((msgCore) => ({
-					eventId: msgCore.eventId,
-					happenedAt: msgCore.happenedAt,
-					t: tag,
-					c: msgCore,
-				}))
+			? output.msgCore.map(
+					(
+						msgCore,
+					) => ({
+						eventId: msgCore.eventId,
+						happenedAt: msgCore.happenedAt,
+						t: tag,
+						c: msgCore,
+					}),
+			  )
 			: undefined,
 	};
 };

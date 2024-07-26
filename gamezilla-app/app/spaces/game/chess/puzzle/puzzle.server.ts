@@ -8,19 +8,19 @@ import {
 	andThen,
 	eq,
 	pipe,
-} from "gamezilla-app/@/core";
-import { TimeSpan } from "gamezilla-app/@/core/time-span";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
+} from 'gamezilla-app/@/core';
+import {TimeSpan} from 'gamezilla-app/@/core/time-span';
+import type {UserId} from 'gamezilla-app/app/@/data';
+import type {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
 import type {
 	SpaceReqCtx,
 	SpaceServerCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import type { ChessMsgCore } from "../@/chess/chess-shared";
-import { EloRating } from "./elo-rating";
-import { PuzzleDb } from "./puzzle-db";
+} from 'gamezilla-app/app/spaces/@/space';
+import type {SpaceServerCmd} from 'gamezilla-app/app/spaces/@/space-server-cmd';
+import type {ChessMsgCore} from '../@/chess/chess-shared';
+import {EloRating} from './elo-rating';
+import {PuzzleDb} from './puzzle-db';
 import {
 	type ModelServer,
 	type MsgServer,
@@ -29,7 +29,7 @@ import {
 	type PuzzleInteraction,
 	initCore,
 	transitionLoadingToStarted,
-} from "./puzzle.types";
+} from './puzzle.types';
 
 //
 //
@@ -53,11 +53,19 @@ export const init = ({
 			requests: {},
 		},
 		eff: async (dispatch) => {
-			const result = await initialLoad({
-				dbConn: ctx.dbConnSql,
-				userId: ctx.space.hostId,
+			const result =
+				await initialLoad(
+					{
+						dbConn: ctx.dbConnSql,
+						userId: ctx
+							.space
+							.hostId,
+					},
+				);
+			dispatch({
+				t: 'db-got-initial-load',
+				result,
 			});
-			dispatch({ t: "db-got-initial-load", result });
 		},
 	};
 };
@@ -72,30 +80,37 @@ const initialLoad = async ({
 	const found = await PuzzleDb.profiles.findElseInsert(dbConn, {
 		userId,
 		eloRating: EloRating.initialRating,
-		puzzleQuery: { ratingRange: [1200, 1500] },
+		puzzleQuery: {
+			ratingRange: [1200, 1500],
+		},
 	});
 
-	if (found.t === "err") {
+	if (found.t === 'err') {
 		return found;
 	}
 
 	const profile = found.value;
 
 	if (!profile) {
-		return Err("Initial load failed. No profile found.");
+		return Err(
+			'Initial load failed. No profile found.',
+		);
 	}
 
-	const foundPuzzles = await PuzzleDb.puzzles.findForProfile(dbConn, {
-		profile,
-	});
+	const foundPuzzles = await PuzzleDb.puzzles.findForProfile(
+		dbConn,
+		{
+			profile,
+		},
+	);
 
-	if (foundPuzzles.t === "err") {
+	if (foundPuzzles.t === 'err') {
 		return foundPuzzles;
 	}
 
 	const puzzles = foundPuzzles.value;
 
-	return Ok({ profile, puzzles });
+	return Ok({profile, puzzles});
 };
 
 //
@@ -126,67 +141,38 @@ export const update = (input: {
 		),
 	);
 };
-const updateMain: typeof update = ({ msg, model, ctx }) => {
+const updateMain: typeof update = ({msg, model, ctx}) => {
 	switch (msg.t) {
-		case "clock-tick": {
+		case 'clock-tick': {
 			return {
 				model,
 				msgCmd: [
 					{
-						t: "send-to-space",
-						msg: { t: "clock-tick", now: ctx.now },
+						t: 'send-to-space',
+						msg: {
+							t: 'clock-tick',
+							now: ctx.now,
+						},
 					},
 				],
 			};
 		}
 
-		case "db-got-puzzles": {
-			if (msg.result.t === "err") {
+		case 'db-got-puzzles': {
+			if (msg.result.t === 'err') {
 				return {
 					model: {
 						...model,
-						requests: { ...model.requests, getPuzzles: msg.result },
-					},
-					msgCmd: [
-						{
-							t: "send-to-space",
-							msg: { t: "db-got-puzzles", result: msg.result },
+						requests: {
+							...model.requests,
+							getPuzzles: msg.result,
 						},
-					],
-				};
-			}
-
-			const modelNew = transitionLoadingToStarted({
-				ctx,
-				model: {
-					...model,
-					queue: msg.result.value,
-				},
-			});
-
-			return {
-				model: {
-					...modelNew,
-					requests: { ...model.requests, getPuzzles: Ok(null) },
-				},
-				msgCmd: [
-					{
-						t: "send-to-space",
-						msg: { t: "db-got-puzzles", result: Ok(modelNew) },
 					},
-				],
-			};
-		}
-
-		case "db-got-initial-load": {
-			if (msg.result.t === "err") {
-				return {
-					model,
 					msgCmd: [
 						{
-							t: "send-to-space",
+							t: 'send-to-space',
 							msg: {
-								t: "db-got-initial-load",
+								t: 'db-got-puzzles',
 								result: msg.result,
 							},
 						},
@@ -194,7 +180,62 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
 				};
 			}
 
-			const { profile, puzzles } = msg.result.value;
+			const modelNew =
+				transitionLoadingToStarted(
+					{
+						ctx,
+						model: {
+							...model,
+							queue: msg
+								.result
+								.value,
+						},
+					},
+				);
+
+			return {
+				model: {
+					...modelNew,
+					requests: {
+						...model.requests,
+						getPuzzles: Ok(
+							null,
+						),
+					},
+				},
+				msgCmd: [
+					{
+						t: 'send-to-space',
+						msg: {
+							t: 'db-got-puzzles',
+							result: Ok(
+								modelNew,
+							),
+						},
+					},
+				],
+			};
+		}
+
+		case 'db-got-initial-load': {
+			if (msg.result.t === 'err') {
+				return {
+					model,
+					msgCmd: [
+						{
+							t: 'send-to-space',
+							msg: {
+								t: 'db-got-initial-load',
+								result: msg.result,
+							},
+						},
+					],
+				};
+			}
+
+			const {profile, puzzles} =
+				msg.result
+					.value;
 
 			const puzzle = puzzles[0];
 
@@ -203,10 +244,12 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
 					model,
 					msgCmd: [
 						{
-							t: "send-to-space",
+							t: 'send-to-space',
 							msg: {
-								t: "db-got-initial-load",
-								result: Err("No puzzles found."),
+								t: 'db-got-initial-load',
+								result: Err(
+									'No puzzles found.',
+								),
 							},
 						},
 					],
@@ -215,11 +258,13 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
 
 			const modelNew: ModelServer = {
 				...model,
-				t: "started",
+				t: 'started',
 				moves: [],
 				profile,
 				puzzle,
-				queue: puzzles.slice(1),
+				queue: puzzles.slice(
+					1,
+				),
 				startedAt: ctx.now,
 			};
 
@@ -227,45 +272,60 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
 				model: modelNew,
 				msgCmd: [
 					{
-						t: "send-to-space",
-						msg: { t: "db-got-initial-load", result: Ok(modelNew) },
-					},
-				],
-			};
-		}
-
-		case "db-put-interaction": {
-			return {
-				model,
-				msgCmd: [
-					{
-						t: "send-to-space",
+						t: 'send-to-space',
 						msg: {
-							t: "db-put-interaction",
-							result: Result.mapOk(msg.result, () => model),
+							t: 'db-got-initial-load',
+							result: Ok(
+								modelNew,
+							),
 						},
 					},
 				],
 			};
 		}
 
-		case "db-put-profile": {
+		case 'db-put-interaction': {
 			return {
 				model,
 				msgCmd: [
 					{
-						t: "send-to-space",
+						t: 'send-to-space',
 						msg: {
-							t: "db-put-profile",
-							result: Result.mapOk(msg.result, () => model),
+							t: 'db-put-interaction',
+							result: Result.mapOk(
+								msg.result,
+								() =>
+									model,
+							),
 						},
 					},
 				],
 			};
 		}
 
-		case "db-got-profile": {
-			return { model };
+		case 'db-put-profile': {
+			return {
+				model,
+				msgCmd: [
+					{
+						t: 'send-to-space',
+						msg: {
+							t: 'db-put-profile',
+							result: Result.mapOk(
+								msg.result,
+								() =>
+									model,
+							),
+						},
+					},
+				],
+			};
+		}
+
+		case 'db-got-profile': {
+			return {
+				model,
+			};
 		}
 	}
 };
@@ -281,7 +341,12 @@ export const updateFromClient = (input: {
 } => {
 	return pipe(
 		input,
-		andThen((model) => updateFromClientMain({ ...input, model })),
+		andThen((model) =>
+			updateFromClientMain({
+				...input,
+				model,
+			}),
+		),
 		// andThen((model) =>
 		//   watchPutInteraction({ ...input, modelPrev: input.model, model })
 		// ),
@@ -307,14 +372,14 @@ const watchPutInteraction = ({
 	eff?: Eff<MsgServer>;
 } => {
 	if (model.t === modelPrev.t) {
-		return { model };
+		return {model};
 	}
 
 	if (
-		model.t === "started" ||
-		model.t === "solved" ||
-		model.t === "incorrect" ||
-		model.t === "solved-with-hint"
+		model.t === 'started' ||
+		model.t === 'solved' ||
+		model.t === 'incorrect' ||
+		model.t === 'solved-with-hint'
 	) {
 		const interaction: PuzzleInteraction = {
 			puzzleId: model.puzzle.puzzleId,
@@ -324,15 +389,22 @@ const watchPutInteraction = ({
 		return {
 			model,
 			eff: async (dispatch) => {
-				const result = await PuzzleDb.interactions.insert(ctx.dbConnSql, [
-					interaction,
-				]);
-				dispatch({ t: "db-put-interaction", result });
+				const result =
+					await PuzzleDb.interactions.insert(
+						ctx.dbConnSql,
+						[
+							interaction,
+						],
+					);
+				dispatch({
+					t: 'db-put-interaction',
+					result,
+				});
 			},
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
 export const watchGetPuzzles = ({
@@ -347,8 +419,8 @@ export const watchGetPuzzles = ({
 	eff?: Eff<MsgServer>;
 } => {
 	if (
-		model.t !== "loading" &&
-		model.requests.getPuzzles?.t !== "loading" &&
+		model.t !== 'loading' &&
+		model.requests.getPuzzles?.t !== 'loading' &&
 		model.queue.length === 0
 	) {
 		return {
@@ -356,20 +428,39 @@ export const watchGetPuzzles = ({
 				...model,
 				requests: {
 					...model.requests,
-					getPuzzles: { t: "loading" },
+					getPuzzles: {
+						t: 'loading',
+					},
 				},
 			},
 			eff: async (dispatch) => {
-				const result = await PuzzleDb.puzzles.findForProfile(ctx.dbConnSql, {
-					profile: model.profile,
-					omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)],
+				const result =
+					await PuzzleDb.puzzles.findForProfile(
+						ctx.dbConnSql,
+						{
+							profile: model.profile,
+							omit: [
+								model
+									.puzzle
+									.puzzleId,
+								...model.queue.map(
+									(
+										x,
+									) =>
+										x.puzzleId,
+								),
+							],
+						},
+					);
+				dispatch({
+					t: 'db-got-puzzles',
+					result,
 				});
-				dispatch({ t: "db-got-puzzles", result });
 			},
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
 export const watchPutProfile = ({
@@ -389,22 +480,29 @@ export const watchPutProfile = ({
 		return {
 			model,
 			eff: async (dispatch) => {
-				const result = await PuzzleDb.profiles.update(ctx.dbConnSql, profile);
-				dispatch({ t: "db-put-profile", result });
+				const result =
+					await PuzzleDb.profiles.update(
+						ctx.dbConnSql,
+						profile,
+					);
+				dispatch({
+					t: 'db-put-profile',
+					result,
+				});
 			},
 		};
 	}
-	return { model };
+	return {model};
 };
 
-const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+const updateFromClientMain: typeof updateFromClient = ({model}) => {
 	// const handled = updateCore({ ctx, msg, model });
 
 	// return {
 	//   model: handled.t === "ok" ? { ...model, ...handled.value } : model,
 	//   msgCmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
 	// };
-	return { model };
+	return {model};
 };
 
 export const updateFromGame = ({
@@ -416,7 +514,7 @@ export const updateFromGame = ({
 	model: ModelServer;
 	eff?: Eff;
 } => {
-	return { model };
+	return {model};
 };
 
 export const updateFromEvent = ({
@@ -428,7 +526,7 @@ export const updateFromEvent = ({
 	model: ModelServer;
 	eff?: Eff;
 } => {
-	return { model };
+	return {model};
 };
 
 //
@@ -445,10 +543,14 @@ export const subscriptions = (
 	model: ModelServer,
 ): Sub<MsgServer> => {
 	switch (model.t) {
-		case "started": {
-			return Time.interval(intervalId, TICK_RATE, () => ({
-				t: "clock-tick",
-			}));
+		case 'started': {
+			return Time.interval(
+				intervalId,
+				TICK_RATE,
+				() => ({
+					t: 'clock-tick',
+				}),
+			);
 		}
 		default: {
 			return Sub.None;

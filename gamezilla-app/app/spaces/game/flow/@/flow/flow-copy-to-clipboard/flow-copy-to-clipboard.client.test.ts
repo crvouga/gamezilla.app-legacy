@@ -1,12 +1,14 @@
-import { describe, expect, test } from "bun:test";
-import { UserRole } from "gamezilla-app/app/@/data";
-import { FlowClientFixture } from "../../testing";
+import {describe, expect, test} from 'bun:test';
+import {UserRole} from 'gamezilla-app/app/@/data';
+import {FlowClientFixture} from '../../testing';
 
-const Fixture = async (input?: { currentUserRole: UserRole }) => {
+const Fixture = async (input?: {currentUserRole: UserRole}) => {
 	const f = await FlowClientFixture();
 	const ctx: typeof f.ctx = {
 		...f.ctx,
-		currentUserRole: input?.currentUserRole ?? "super",
+		currentUserRole:
+			input?.currentUserRole ??
+			'super',
 	};
 
 	return {
@@ -16,27 +18,45 @@ const Fixture = async (input?: { currentUserRole: UserRole }) => {
 };
 
 describe(import.meta.file, () => {
-	test.todo("render button for super users", async () => {
+	test.todo('render button for super users', async () => {
 		const f = await Fixture();
 		const r = f.render(f.initial);
 		const button = r.getByRole(
-			"button",
-			f.ctx.t("flow.copy-puzzle-to-clipboard"),
+			'button',
+			f.ctx.t(
+				'flow.copy-puzzle-to-clipboard',
+			),
 		);
 		expect(button).toBeTruthy();
 	});
 
-	test.todo("does not render button for non-super users", async () => {
-		for (const currentUserRole of UserRole.NON_SUPER_USER_ROLES) {
-			const f = await Fixture({ currentUserRole });
-			const r = f.render(f.initial);
-			const button = r.getByRole(
-				"button",
-				f.ctx.t("flow.copy-puzzle-to-clipboard"),
-			);
-			expect(button).toBeFalsy();
-		}
-	});
+	test.todo(
+		'does not render button for non-super users',
+		async () => {
+			for (const currentUserRole of UserRole.NON_SUPER_USER_ROLES) {
+				const f =
+					await Fixture(
+						{
+							currentUserRole,
+						},
+					);
+				const r =
+					f.render(
+						f.initial,
+					);
+				const button =
+					r.getByRole(
+						'button',
+						f.ctx.t(
+							'flow.copy-puzzle-to-clipboard',
+						),
+					);
+				expect(
+					button,
+				).toBeFalsy();
+			}
+		},
+	);
 
 	// test("play sound", async () => {
 	// 	const f = await Fixture();

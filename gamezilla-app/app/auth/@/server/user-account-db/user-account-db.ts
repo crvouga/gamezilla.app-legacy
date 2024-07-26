@@ -1,6 +1,6 @@
-import type { PhoneNumber, Task } from "gamezilla-app/@/core";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { UserAccount } from "gamezilla-app/app/@/data/account";
+import type {PhoneNumber, Task} from 'gamezilla-app/@/core';
+import type {UserId} from 'gamezilla-app/app/@/data';
+import type {UserAccount} from 'gamezilla-app/app/@/data/account';
 
 export type IUserAccountDb = {
 	findOneByPhoneNumber: (input: {
@@ -9,7 +9,5 @@ export type IUserAccountDb = {
 	findOneByUserId: (input: {
 		userId: UserId | null;
 	}) => Task<string, UserAccount | null>;
-	insert: (input: {
-		account: UserAccount;
-	}) => Task<string, null>;
+	insert: (input: {account: UserAccount}) => Task<string, null>;
 };

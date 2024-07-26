@@ -1,11 +1,11 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { Flow } from "../../flow";
-import { FlowGroupId } from "../../flow/flow-group-id";
-import * as FlowGridDimensions from "./flow-grid-dimensions";
-import { Position } from "./flow-grid-position";
-import { FlowNodeId } from "../../flow/flow-node-id";
-import { FlowEdgeId } from "../../flow/flow-edge-id";
-import { FlowTerminal } from "../../flow/flow-terminal";
+import {p} from 'gamezilla-app/@/core/parser';
+import {Flow} from '../../flow';
+import {FlowGroupId} from '../../flow/flow-group-id';
+import * as FlowGridDimensions from './flow-grid-dimensions';
+import {Position} from './flow-grid-position';
+import {FlowNodeId} from '../../flow/flow-node-id';
+import {FlowEdgeId} from '../../flow/flow-edge-id';
+import {FlowTerminal} from '../../flow/flow-terminal';
 
 //
 //
@@ -19,7 +19,7 @@ export const Model = p.and(
 	Flow.Model,
 	FlowGridDimensions.Model,
 	p.obj({
-		t: p.l("flow-grid"),
+		t: p.l('flow-grid'),
 		positions: p.dict(FlowNodeId, Position.parser),
 	}),
 );
@@ -63,11 +63,11 @@ export const distance = (
 
 export const init = (input: {
 	dimensions: FlowGridDimensions.Model;
-	terminalsByGroupId?: Flow.Model["terminalsByGroupId"];
-	pipesBySourceId?: Flow.Model["pipesBySourceId"];
+	terminalsByGroupId?: Flow.Model['terminalsByGroupId'];
+	pipesBySourceId?: Flow.Model['pipesBySourceId'];
 }): Model => {
 	const model: Model = {
-		t: "flow-grid",
+		t: 'flow-grid',
 		width: input.dimensions.width,
 		height: input.dimensions.height,
 		positions: {},
@@ -93,43 +93,88 @@ export const init = (input: {
 	for (x = 0; x < width; x++) {
 		for (y = 0; y < height; y++) {
 			const nodeId = initNodeId(x, y);
-			model.positions[nodeId] = { x, y };
-			model.nodes[nodeId] = { nodeId };
+			model.positions[nodeId] = {
+				x,
+				y,
+			};
+			model.nodes[nodeId] = {
+				nodeId,
+			};
 
 			if (y > 0) {
-				const north = initNodeId(x, y - 1);
-				const edgeNorth: Flow.Edge = {
-					sourceId: nodeId,
-					targetId: north,
-				};
-				model.edges[Flow.toFlowEdgeId(edgeNorth)] = edgeNorth;
+				const north =
+					initNodeId(
+						x,
+						y -
+							1,
+					);
+				const edgeNorth: Flow.Edge =
+					{
+						sourceId: nodeId,
+						targetId: north,
+					};
+				model.edges[
+					Flow.toFlowEdgeId(
+						edgeNorth,
+					)
+				] = edgeNorth;
 			}
 
 			if (x < maxX) {
-				const east = initNodeId(x + 1, y);
-				const edgeEast: Flow.Edge = {
-					sourceId: nodeId,
-					targetId: east,
-				};
-				model.edges[Flow.toFlowEdgeId(edgeEast)] = edgeEast;
+				const east =
+					initNodeId(
+						x +
+							1,
+						y,
+					);
+				const edgeEast: Flow.Edge =
+					{
+						sourceId: nodeId,
+						targetId: east,
+					};
+				model.edges[
+					Flow.toFlowEdgeId(
+						edgeEast,
+					)
+				] = edgeEast;
 			}
 
 			if (y < maxY) {
-				const south = initNodeId(x, y + 1);
-				const edgeSouth: Flow.Edge = {
-					sourceId: nodeId,
-					targetId: south,
-				};
-				model.edges[Flow.toFlowEdgeId(edgeSouth)] = edgeSouth;
+				const south =
+					initNodeId(
+						x,
+						y +
+							1,
+					);
+				const edgeSouth: Flow.Edge =
+					{
+						sourceId: nodeId,
+						targetId: south,
+					};
+				model.edges[
+					Flow.toFlowEdgeId(
+						edgeSouth,
+					)
+				] = edgeSouth;
 			}
 
 			if (x > 0) {
-				const west = initNodeId(x - 1, y);
-				const edgeWest: Flow.Edge = {
-					sourceId: nodeId,
-					targetId: west,
-				};
-				model.edges[Flow.toFlowEdgeId(edgeWest)] = edgeWest;
+				const west =
+					initNodeId(
+						x -
+							1,
+						y,
+					);
+				const edgeWest: Flow.Edge =
+					{
+						sourceId: nodeId,
+						targetId: west,
+					};
+				model.edges[
+					Flow.toFlowEdgeId(
+						edgeWest,
+					)
+				] = edgeWest;
 			}
 		}
 	}
@@ -138,7 +183,10 @@ export const init = (input: {
 	//
 
 	for (const groupId in input.terminalsByGroupId) {
-		const terminal = input.terminalsByGroupId[groupId as FlowGroupId];
+		const terminal =
+			input.terminalsByGroupId[
+				groupId as FlowGroupId
+			];
 
 		if (!terminal) {
 			continue;
@@ -146,7 +194,9 @@ export const init = (input: {
 
 		const start = model.nodes[terminal.startId];
 
-		const end = terminal?.endId ? model.nodes[terminal.endId] : null;
+		const end = terminal?.endId
+			? model.nodes[terminal.endId]
+			: null;
 
 		const startNew = start?.nodeId ?? end?.nodeId;
 
@@ -154,7 +204,10 @@ export const init = (input: {
 			continue;
 		}
 
-		const endNew = end?.nodeId === startNew ? null : end?.nodeId;
+		const endNew =
+			end?.nodeId === startNew
+				? null
+				: end?.nodeId;
 
 		const terminalNew: FlowTerminal = {
 			groupId: terminal.groupId,
@@ -162,7 +215,8 @@ export const init = (input: {
 			endId: endNew,
 		};
 
-		model.terminalsByGroupId[terminalNew.groupId] = terminalNew;
+		model.terminalsByGroupId[terminalNew.groupId] =
+			terminalNew;
 	}
 
 	model.edgeHash = Flow.deriveEdgeHash(model.edges);
@@ -236,7 +290,7 @@ export const toEdge = (model: Model, edgeId: FlowEdgeId): Edge | null => {
  */
 export const addNode = (model: Model, position: Position): Model => {
 	const nodeId = toNodeId(position);
-	const added = Flow.addNode(model, { nodeId });
+	const added = Flow.addNode(model, {nodeId});
 	return {
 		...model,
 		...added,
@@ -271,7 +325,7 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
 			continue;
 		}
 
-		yield { ...edge, source, target };
+		yield {...edge, source, target};
 	}
 };
 
@@ -281,7 +335,7 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
 		if (!position) {
 			continue;
 		}
-		yield { ...position, ...node };
+		yield {...position, ...node};
 	}
 };
 
@@ -298,9 +352,14 @@ export const yieldTerminals = function* (model: Model): Generator<Terminal> {
 			continue;
 		}
 
-		const end = terminal.endId ? toNode(model, terminal.endId) ?? null : null;
+		const end = terminal.endId
+			? toNode(
+					model,
+					terminal.endId,
+			  ) ?? null
+			: null;
 
-		yield { ...terminal, start, end };
+		yield {...terminal, start, end};
 	}
 };
 
@@ -311,13 +370,19 @@ export type PipeJoined = Flow.PipeJoined & {
 
 export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
 	for (const pipe of Flow.yieldPipes(model)) {
-		const source = toNode(model, pipe.edge.sourceId);
+		const source = toNode(
+			model,
+			pipe.edge.sourceId,
+		);
 
 		if (!source) {
 			continue;
 		}
 
-		const target = toNode(model, pipe.edge.targetId);
+		const target = toNode(
+			model,
+			pipe.edge.targetId,
+		);
 
 		if (!target) {
 			continue;
@@ -358,7 +423,7 @@ const pipeToPipeJoined = (model: Model, pipe: Flow.Pipe): PipeJoined[] => {
 		return [];
 	}
 
-	return [{ ...pipe, source, target, edge }];
+	return [{...pipe, source, target, edge}];
 };
 
 export const toPipeline = (
@@ -367,9 +432,16 @@ export const toPipeline = (
 ): PipeJoined[] => {
 	const USE_V2 = true;
 	if (USE_V2) {
-		const pipeline = Flow.toPipeline(model, startingNodeId);
-		const pipelineJoined = pipeline.flatMap((pipe) =>
-			pipeToPipeJoined(model, pipe),
+		const pipeline = Flow.toPipeline(
+			model,
+			startingNodeId,
+		);
+		const pipelineJoined = pipeline.flatMap(
+			(pipe) =>
+				pipeToPipeJoined(
+					model,
+					pipe,
+				),
 		);
 		return pipelineJoined;
 	}
@@ -383,25 +455,38 @@ export const toPipeline = (
 			return pipeline;
 		}
 		visited.add(currentNodeId);
-		const pipe = Flow.toPipeBySourceId(model, currentNodeId);
+		const pipe = Flow.toPipeBySourceId(
+			model,
+			currentNodeId,
+		);
 
 		if (!pipe) {
 			return pipeline;
 		}
 
-		const source = toNode(model, pipe.edge.sourceId);
+		const source = toNode(
+			model,
+			pipe.edge.sourceId,
+		);
 
 		if (!source) {
 			return pipeline;
 		}
 
-		const target = toNode(model, pipe.edge.targetId);
+		const target = toNode(
+			model,
+			pipe.edge.targetId,
+		);
 
 		if (!target) {
 			return pipeline;
 		}
 
-		pipeline.push({ ...pipe, source, target });
+		pipeline.push({
+			...pipe,
+			source,
+			target,
+		});
 
 		currentNodeId = pipe.edge.targetId;
 	}

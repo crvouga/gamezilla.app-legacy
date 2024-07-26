@@ -2,16 +2,16 @@ import {
 	type ClientCmd,
 	type ClientEvent,
 	sendToServer,
-} from "gamezilla-app/app/@/client";
-import { IconMagnifyingGlass, IconXMark } from "gamezilla-app/app/@/ui";
-import { Browser, Eff, matchSort, pipe } from "gamezilla-app/@/core";
-import type { VDom } from "gamezilla-app/@/vdom";
+} from 'gamezilla-app/app/@/client';
+import {IconMagnifyingGlass, IconXMark} from 'gamezilla-app/app/@/ui';
+import {Browser, Eff, matchSort, pipe} from 'gamezilla-app/@/core';
+import type {VDom} from 'gamezilla-app/@/vdom';
 import type {
 	ModelClient,
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "./search.types";
+} from './search.types';
 
 //
 //
@@ -35,7 +35,7 @@ export const init = ({
 	}
 	return {
 		model: {
-			searchText: "",
+			searchText: '',
 			searchResults: {},
 			requests: {},
 		},
@@ -52,7 +52,7 @@ export const init = ({
 
 export type Msg = MsgClient;
 
-const searchInputId = "search-input";
+const searchInputId = 'search-input';
 
 export const update = ({
 	msg,
@@ -64,33 +64,51 @@ export const update = ({
 	model: ModelClient;
 	eff?: Eff<Msg>;
 	msgEvt?: ClientEvent[];
-	msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
+	msgCmd?: ClientCmd<{
+		MsgToServer: MsgToServer;
+		MsgClient: MsgClient;
+	}>[];
 } => {
-	if (msg.t === "focus-done") {
-		return { model };
+	if (msg.t === 'focus-done') {
+		return {model};
 	}
 
-	if (msg.t === "clicked-clear") {
+	if (msg.t === 'clicked-clear') {
 		return {
-			model: { ...model, searchText: "" },
+			model: {
+				...model,
+				searchText: '',
+			},
 			eff: pipe(
-				Browser.focus(searchInputId),
-				Eff.perform((result) => ({ t: "focus-done", result })),
+				Browser.focus(
+					searchInputId,
+				),
+				Eff.perform(
+					(
+						result,
+					) => ({
+						t: 'focus-done',
+						result,
+					}),
+				),
 			),
 		};
 	}
 
-	if (msg.t === "inputted-search-text") {
+	if (msg.t === 'inputted-search-text') {
 		return {
-			model: { ...model, searchText: msg.searchText },
+			model: {
+				...model,
+				searchText: msg.searchText,
+			},
 		};
 	}
 
-	if (msg.t === "clicked-result") {
-		return { model };
+	if (msg.t === 'clicked-result') {
+		return {model};
 	}
 
-	return { model, msgCmd: [sendToServer(msg)] };
+	return {model, msgCmd: [sendToServer(msg)]};
 };
 
 export const updateFromServer = ({
@@ -98,8 +116,8 @@ export const updateFromServer = ({
 }: {
 	msg: MsgToClient;
 	model: ModelClient;
-}): { model: ModelClient; eff?: Eff<Msg> } => {
-	return { model };
+}): {model: ModelClient; eff?: Eff<Msg>} => {
+	return {model};
 };
 
 //
@@ -134,20 +152,36 @@ export const View = ({
 					<div className="flex w-full items-center gap-2 rounded-full bg-neutral-800 px-4 py-2">
 						<IconMagnifyingGlass className="h-6 w-6" />
 						<input
-							id={searchInputId}
+							id={
+								searchInputId
+							}
 							className="flex-1 bg-transparent text-lg outline-none"
 							placeholder="Search"
-							value={model.searchText}
-							onChange={(msgEvt) =>
-								dispatch({
-									t: "inputted-search-text",
-									searchText: msgEvt.currentTarget.value,
-								})
+							value={
+								model.searchText
+							}
+							onChange={(
+								msgEvt,
+							) =>
+								dispatch(
+									{
+										t: 'inputted-search-text',
+										searchText: msgEvt
+											.currentTarget
+											.value,
+									},
+								)
 							}
 						/>
 						<button
 							type="button"
-							onClick={() => dispatch({ t: "clicked-clear" })}
+							onClick={() =>
+								dispatch(
+									{
+										t: 'clicked-clear',
+									},
+								)
+							}
 						>
 							<IconXMark className="h-6 w-6" />
 						</button>
@@ -155,22 +189,34 @@ export const View = ({
 				</div>
 				{/* results */}
 				<ul>
-					{results.map((result) => (
-						<li key={result.userId}>
-							<button
-								type="button"
-								className="flex w-full items-center gap-4 p-4 hover:bg-neutral-800"
-								onClick={() =>
-									dispatch({
-										t: "clicked-result",
-										userId: result.userId,
-									})
+					{results.map(
+						(
+							result,
+						) => (
+							<li
+								key={
+									result.userId
 								}
 							>
-								{result.username}
-							</button>
-						</li>
-					))}
+								<button
+									type="button"
+									className="flex w-full items-center gap-4 p-4 hover:bg-neutral-800"
+									onClick={() =>
+										dispatch(
+											{
+												t: 'clicked-result',
+												userId: result.userId,
+											},
+										)
+									}
+								>
+									{
+										result.username
+									}
+								</button>
+							</li>
+						),
+					)}
 				</ul>
 			</div>
 			{viewBottomBar}

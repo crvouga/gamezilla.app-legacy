@@ -1,18 +1,18 @@
-import { p } from "gamezilla-app/@/core/parser";
-import { Translator } from "gamezilla-app/@/l18n/generated";
-import { IconXMark, Slider } from "gamezilla-app/app/@/ui";
+import {p} from 'gamezilla-app/@/core/parser';
+import {Translator} from 'gamezilla-app/@/l18n/generated';
+import {IconXMark, Slider} from 'gamezilla-app/app/@/ui';
 
 export const Model = p.obj({
-	t: p.l("flow-grid"),
+	t: p.l('flow-grid'),
 	width: p.num,
 	height: p.num,
 });
 
 export type Model = p.Infer<typeof Model>;
 
-export const init = (model: { width: number; height: number }): Model => {
+export const init = (model: {width: number; height: number}): Model => {
 	return {
-		t: "flow-grid",
+		t: 'flow-grid',
 		width: model.width,
 		height: model.height,
 	};
@@ -41,20 +41,58 @@ export const ViewForm = ({
 
 			<div className="flex flex-col gap-3 p-4 pb-8">
 				<Slider
-					onInput={(width) => onInput({ ...form, width })}
-					value={form.width}
-					label={ctx.t("app.width")}
-					min={3}
-					max={15}
-					step={1}
+					onInput={(
+						width,
+					) =>
+						onInput(
+							{
+								...form,
+								width,
+							},
+						)
+					}
+					value={
+						form.width
+					}
+					label={ctx.t(
+						'app.width',
+					)}
+					min={
+						3
+					}
+					max={
+						15
+					}
+					step={
+						1
+					}
 				/>
 				<Slider
-					onInput={(height) => onInput({ ...form, height })}
-					value={form.height}
-					label={ctx.t("app.height")}
-					min={3}
-					max={15}
-					step={1}
+					onInput={(
+						height,
+					) =>
+						onInput(
+							{
+								...form,
+								height,
+							},
+						)
+					}
+					value={
+						form.height
+					}
+					label={ctx.t(
+						'app.height',
+					)}
+					min={
+						3
+					}
+					max={
+						15
+					}
+					step={
+						1
+					}
 				/>
 			</div>
 		</>

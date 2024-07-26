@@ -1,5 +1,5 @@
-import type { ClientCtx } from "gamezilla-app/app/@/client";
-import type { UserId } from "gamezilla-app/app/@/data";
+import type {ClientCtx} from 'gamezilla-app/app/@/client';
+import type {UserId} from 'gamezilla-app/app/@/data';
 import {
 	Eff,
 	RemoteResult,
@@ -7,9 +7,9 @@ import {
 	exhaustive,
 	isErr,
 	pipe,
-} from "gamezilla-app/@/core";
-import { Mic } from "./mic";
-import type { ModelClient, MsgClient, MsgToClient } from "./party.types";
+} from 'gamezilla-app/@/core';
+import {Mic} from './mic';
+import type {ModelClient, MsgClient, MsgToClient} from './party.types';
 
 //
 //
@@ -46,30 +46,38 @@ export type Msg = MsgClient;
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 	switch (msg[0]) {
-		case "clicked-banner": {
+		case 'clicked-banner': {
 			return [model, Eff.None];
 		}
 
-		case "MicSound": {
-			return [{ ...model, volume: msg[1].volume }, Eff.None];
+		case 'MicSound': {
+			return [
+				{
+					...model,
+					volume: msg[1]
+						.volume,
+				},
+				Eff.None,
+			];
 		}
 
-		case "MicUnload":
-		case "MicLoad": {
+		case 'MicUnload':
+		case 'MicLoad': {
 			return [model, Eff.None];
 		}
 
-		case "party-get":
-		case "PartyCreate":
-		case "PartyDestroy":
-		case "PartyLeave":
-		case "PartyJoin": {
+		case 'party-get':
+		case 'PartyCreate':
+		case 'PartyDestroy':
+		case 'PartyLeave':
+		case 'PartyJoin': {
 			return [
 				{
 					...model,
 					requests: {
 						...model.requests,
-						[msg[0]]: RemoteResult.Loading,
+						[msg[0]]:
+							RemoteResult.Loading,
 					},
 				},
 				Eff.None,
@@ -83,23 +91,35 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 };
 
 export const updateFromServer = (
-	{ currentUserId }: { currentUserId: UserId },
+	{currentUserId}: {currentUserId: UserId},
 	msg: MsgToClient,
 	model: Model,
 ): [Model, Eff<Msg>] => {
 	switch (msg[0]) {
-		case "party-get":
-		case "PartyDestroy":
-		case "PartyCreate":
-		case "PartyJoin":
-		case "PartyLeave": {
-			const requestsNew: Model["requests"] = {
-				...model.requests,
-				[msg[0]]: RemoteResult.map(msg[2], () => null),
-			};
+		case 'party-get':
+		case 'PartyDestroy':
+		case 'PartyCreate':
+		case 'PartyJoin':
+		case 'PartyLeave': {
+			const requestsNew: Model['requests'] =
+				{
+					...model.requests,
+					[msg[0]]:
+						RemoteResult.map(
+							msg[2],
+							() =>
+								null,
+						),
+				};
 
 			if (isErr(msg[2])) {
-				return [{ ...model, requests: requestsNew }, Eff.None];
+				return [
+					{
+						...model,
+						requests: requestsNew,
+					},
+					Eff.None,
+				];
 			}
 
 			const modelNext: Model = {
@@ -138,7 +158,10 @@ const toLifecycleEff = ({
 	if (userPrev && !userNext) {
 		return pipe(
 			Mic.unload,
-			Eff.perform((result) => ["MicUnload", result]),
+			Eff.perform((result) => [
+				'MicUnload',
+				result,
+			]),
 		);
 	}
 
@@ -146,7 +169,10 @@ const toLifecycleEff = ({
 	if (!userPrev && userNext) {
 		return pipe(
 			Mic.load,
-			Eff.perform((result) => ["MicLoad", result]),
+			Eff.perform((result) => [
+				'MicLoad',
+				result,
+			]),
 		);
 	}
 
@@ -173,13 +199,29 @@ export const ViewPage = ({
 	const user = model.users[ctx.currentUserId];
 
 	if (!user) {
-		return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />;
+		return (
+			<ViewNotInParty
+				ctx={ctx}
+				model={model}
+				dispatch={
+					dispatch
+				}
+			/>
+		);
 	}
 
 	const party = model.parties[user.partyId];
 
 	if (!party) {
-		return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />;
+		return (
+			<ViewNotInParty
+				ctx={ctx}
+				model={model}
+				dispatch={
+					dispatch
+				}
+			/>
+		);
 	}
 
 	return null;

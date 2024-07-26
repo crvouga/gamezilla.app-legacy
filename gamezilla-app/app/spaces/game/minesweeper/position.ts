@@ -1,4 +1,4 @@
-import { Set, List, NonNegInt } from "gamezilla-app/@/core";
+import {Set, List, NonNegInt} from 'gamezilla-app/@/core';
 
 export type Position = {
 	x: NonNegInt;
@@ -35,7 +35,9 @@ const sub = (a: Position, b: Position): Position => {
 };
 
 const toKey = (position: Position) => {
-	return `${NonNegInt.str(position.x)},${NonNegInt.str(position.y)}`;
+	return `${NonNegInt.str(position.x)},${NonNegInt.str(
+		position.y,
+	)}`;
 };
 
 const toAdjacent = (position: Position): Set<Position> => {

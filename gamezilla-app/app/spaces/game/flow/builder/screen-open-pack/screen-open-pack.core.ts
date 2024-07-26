@@ -1,18 +1,20 @@
-import type { UpdateCore } from "../builder.types";
-import { ScreenPackBuilderCore } from "../screen-pack-builder/screen-pack-builder.core";
-import { PackCreateNewCore } from "./create-new-pack/create-new-pack.core";
+import type {UpdateCore} from '../builder.types';
+import {ScreenPackBuilderCore} from '../screen-pack-builder/screen-pack-builder.core';
+import {PackCreateNewCore} from './create-new-pack/create-new-pack.core';
 
-const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
+const updateCoreMain: UpdateCore = ({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "pack-list.user-clicked-pack-item": {
+		case 'pack-list.user-clicked-pack-item': {
 			return {
 				...modelCore,
 				opened: {
-					t: "pack-builder",
+					t: 'pack-builder',
 				},
-				packBuilder: ScreenPackBuilderCore.init({
-					pack: msgCore.pack,
-				}),
+				packBuilder: ScreenPackBuilderCore.init(
+					{
+						pack: msgCore.pack,
+					},
+				),
 			};
 		}
 
@@ -24,7 +26,11 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
 
 const updateCore: UpdateCore = (input) => {
 	return [PackCreateNewCore.update, updateCoreMain].reduce(
-		(modelCore, updateCore) => updateCore({ ...input, modelCore }),
+		(modelCore, updateCore) =>
+			updateCore({
+				...input,
+				modelCore,
+			}),
 		input.modelCore,
 	);
 };

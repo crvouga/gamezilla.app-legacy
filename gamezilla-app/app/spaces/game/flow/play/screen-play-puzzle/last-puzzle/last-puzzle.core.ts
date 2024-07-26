@@ -1,12 +1,12 @@
-import type { CoreModule } from "../../play.types";
+import type {CoreModule} from '../../play.types';
 
-const updateCore: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
+const updateCore: CoreModule['updateCore'] = ({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "user-clicked-select-next-pack": {
+		case 'user-clicked-select-next-pack': {
 			return {
 				...modelCore,
 				screen: {
-					t: "screen-select-pack",
+					t: 'screen-select-pack',
 				},
 			};
 		}

@@ -1,4 +1,4 @@
-import type { ILogger } from "../logger/logger";
+import type {ILogger} from '../logger/logger';
 
 export function logQuery({
 	sql,
@@ -13,5 +13,10 @@ export function logQuery({
 }) {
 	const durationFormatted = `${end - start}ms`;
 
-	logger.info(`duration=${durationFormatted} sql=\n${sql.slice(0, 1000)}`);
+	logger.info(
+		`duration=${durationFormatted} sql=\n${sql.slice(
+			0,
+			1000,
+		)}`,
+	);
 }

@@ -1,15 +1,15 @@
-import { Result } from "gamezilla-app/@/core";
-import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
-import type { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
-import type { EventId, WithEventId } from "../@/event";
-import * as SpaceCore from "./space-core";
-import { SpaceCoreDb } from "./space-core-db";
+import {Result} from 'gamezilla-app/@/core';
+import type {SpaceId, UserId} from 'gamezilla-app/app/@/data';
+import type {IDbConnKv} from 'gamezilla-app/app/@/server/db-conn-kv';
+import type {EventId, WithEventId} from '../@/event';
+import * as SpaceCore from './space-core';
+import {SpaceCoreDb} from './space-core-db';
 import type {
 	ISpaceCoreDb,
 	SpaceCoreDbWhere,
-} from "./space-core-db/space-core-db";
-import type { SpaceCoreEvent } from "./space-core-event";
-import type * as SpaceState from "./space-core-state";
+} from './space-core-db/space-core-db';
+import type {SpaceCoreEvent} from './space-core-event';
+import type * as SpaceState from './space-core-state';
 
 //
 //
@@ -22,10 +22,10 @@ export type Deps = {
 	spacesDb: ISpaceCoreDb;
 };
 
-export const deps = async (input: { dbConnKv: IDbConnKv }): Promise<Deps> => {
+export const deps = async (input: {dbConnKv: IDbConnKv}): Promise<Deps> => {
 	return {
 		spacesDb: SpaceCoreDb({
-			t: "db-conn-kv",
+			t: 'db-conn-kv',
 			dbConnKv: input.dbConnKv,
 		}),
 	};
@@ -36,7 +36,7 @@ export const listSpaces = async (input: {
 	limit: number;
 	offset: number;
 	where?: SpaceCoreDbWhere;
-	sort?: "newest" | "oldest";
+	sort?: 'newest' | 'oldest';
 }): Promise<SpaceCore.Model[]> => {
 	const listed = await input.spacesDb.list({
 		limit: input.limit,
@@ -70,7 +70,10 @@ export const getSpaceStarted = async (
 		return null;
 	}
 
-	const spaceModel = Result.withDefault(await spaceDb.get(spaceId), null);
+	const spaceModel = Result.withDefault(
+		await spaceDb.get(spaceId),
+		null,
+	);
 
 	if (!spaceModel) {
 		return null;
@@ -102,7 +105,10 @@ export const update = async ({
 
 	const space = maybeSpace ?? SpaceCore.init;
 
-	const spaceNew = SpaceCore.appendEvent({ event: spaceEvent, model: space });
+	const spaceNew = SpaceCore.appendEvent({
+		event: spaceEvent,
+		model: space,
+	});
 
 	await spacesDb.upsert(spaceNew);
 };

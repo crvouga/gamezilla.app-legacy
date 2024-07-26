@@ -1,20 +1,24 @@
-import { describe, expect, it } from "bun:test";
-import { didPlaySound } from "gamezilla-app/app/@/client";
-import type { UserId } from "gamezilla-app/app/@/data";
-import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
-import { GameClientModule } from "../../@/architecture/game-client-v2";
-import { EventId } from "../../@/event";
-import type { FlowClientCtx } from "./@/flow-ctx";
-import { FlowClient } from "./flow.client";
-import type { ModelClient } from "./flow.types";
-import { testFlowClientCtx } from "./builder/@/testing/client";
+import {describe, expect, it} from 'bun:test';
+import {didPlaySound} from 'gamezilla-app/app/@/client';
+import type {UserId} from 'gamezilla-app/app/@/data';
+import {LamportTimestamp} from 'gamezilla-app/@/lamport-clock';
+import {GameClientModule} from '../../@/architecture/game-client-v2';
+import {EventId} from '../../@/event';
+import type {FlowClientCtx} from './@/flow-ctx';
+import {FlowClient} from './flow.client';
+import type {ModelClient} from './flow.types';
+import {testFlowClientCtx} from './builder/@/testing/client';
 
 const init = {
 	model: FlowClient.init,
 };
 
 const userSelectedMode =
-	(ctx: FlowClientCtx, userId: UserId, mode: "builder" | "play" | null) =>
+	(
+		ctx: FlowClientCtx,
+		userId: UserId,
+		mode: 'builder' | 'play' | null,
+	) =>
 	(model: ModelClient) => {
 		return FlowClient.update({
 			ctx,
@@ -23,39 +27,53 @@ const userSelectedMode =
 				t: null,
 			},
 			msgCore: {
-				t: "user-changed-mode",
+				t: 'user-changed-mode',
 				userId: userId,
 				mode,
 				eventId: EventId.generate(),
-				happenedAt: LamportTimestamp.fromNumber(0),
+				happenedAt: LamportTimestamp.fromNumber(
+					0,
+				),
 			},
 		});
 	};
 
 describe(import.meta.file, () => {
-	it("should play a sound when selecting play mode", async () => {
+	it('should play a sound when selecting play mode', async () => {
 		const ctx = await testFlowClientCtx();
 		const output = GameClientModule.andThen(
 			init,
-			userSelectedMode(ctx, ctx.currentUserId, "play"),
+			userSelectedMode(
+				ctx,
+				ctx.currentUserId,
+				'play',
+			),
 		);
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it("should play a sound when selecting create mode", async () => {
+	it('should play a sound when selecting create mode', async () => {
 		const ctx = await testFlowClientCtx();
 		const output = GameClientModule.andThen(
 			init,
-			userSelectedMode(ctx, ctx.currentUserId, "builder"),
+			userSelectedMode(
+				ctx,
+				ctx.currentUserId,
+				'builder',
+			),
 		);
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it("should not play a sound when selecting no mode", async () => {
+	it('should not play a sound when selecting no mode', async () => {
 		const ctx = await testFlowClientCtx();
 		const output = GameClientModule.andThen(
 			init,
-			userSelectedMode(ctx, ctx.currentUserId, null),
+			userSelectedMode(
+				ctx,
+				ctx.currentUserId,
+				null,
+			),
 		);
 		expect(didPlaySound(output)).toBe(true);
 	});

@@ -1,282 +1,289 @@
-import type { Translations } from "gamezilla-app/@/l18n";
-import { BotLevel } from "./chess/chess-core";
+import type {Translations} from 'gamezilla-app/@/l18n';
+import {BotLevel} from './chess/chess-core';
 
 export type Text = {
-	"chess.puzzle-title": string;
-	"chess.puzzle-description": string;
-	"chess.white": string;
-	"chess.black": string;
-	"chess.bot-level": (botLevel: BotLevel) => string;
+	'chess.puzzle-title': string;
+	'chess.puzzle-description': string;
+	'chess.white': string;
+	'chess.black': string;
+	'chess.bot-level': (botLevel: BotLevel) => string;
 };
 
 export const translations: Translations<Text> = {
 	en: {
-		"chess.puzzle-title": "Puzzles",
-		"chess.puzzle-description": "Train with more than 3 million puzzles",
-		"chess.black": "Black",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-title': 'Puzzles',
+		'chess.puzzle-description':
+			'Train with more than 3 million puzzles',
+		'chess.black': 'Black',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "Beginner";
+					return 'Beginner';
 				case 1:
-					return "Intermediate";
+					return 'Intermediate';
 				case 2:
-					return "Advanced";
+					return 'Advanced';
 				case 3:
-					return "Expert";
+					return 'Expert';
 				case 4:
-					return "Master";
+					return 'Master';
 				default:
-					return "Unknown";
+					return 'Unknown';
 			}
 		},
-		"chess.white": "White",
+		'chess.white': 'White',
 	},
 	ar: {
-		"chess.puzzle-description": "تدرب مع أكثر من 3 ملايين لغز",
-		"chess.puzzle-title": "ألغاز",
-		"chess.black": "أسود",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'تدرب مع أكثر من 3 ملايين لغز',
+		'chess.puzzle-title': 'ألغاز',
+		'chess.black': 'أسود',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "مبتدئ";
+					return 'مبتدئ';
 				case 1:
-					return "متوسط";
+					return 'متوسط';
 				case 2:
-					return "متقدم";
+					return 'متقدم';
 				case 3:
-					return "خبير";
+					return 'خبير';
 				case 4:
-					return "ماجستير";
+					return 'ماجستير';
 				default:
-					return "غير معروف";
+					return 'غير معروف';
 			}
 		},
-		"chess.white": "أبيض",
+		'chess.white': 'أبيض',
 	},
 	de: {
-		"chess.puzzle-description":
-			"Trainieren Sie mit mehr als 3 Millionen Rätseln",
-		"chess.puzzle-title": "Rätsel",
-		"chess.black": "Schwarz",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'Trainieren Sie mit mehr als 3 Millionen Rätseln',
+		'chess.puzzle-title': 'Rätsel',
+		'chess.black': 'Schwarz',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "Anfänger";
+					return 'Anfänger';
 				case 1:
-					return "Fortgeschritten";
+					return 'Fortgeschritten';
 				case 2:
-					return "Experte";
+					return 'Experte';
 				case 3:
-					return "Profi";
+					return 'Profi';
 				case 4:
-					return "Meister";
+					return 'Meister';
 				default:
-					return "Unbekannt";
+					return 'Unbekannt';
 			}
 		},
-		"chess.white": "Weiß",
+		'chess.white': 'Weiß',
 	},
 	es: {
-		"chess.puzzle-description":
-			"Entrenar con más de 3 millones de rompecabezas",
-		"chess.puzzle-title": "Rompecabezas",
-		"chess.white": "Blanco",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'Entrenar con más de 3 millones de rompecabezas',
+		'chess.puzzle-title': 'Rompecabezas',
+		'chess.white': 'Blanco',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "Principiante";
+					return 'Principiante';
 				case 1:
-					return "Intermedio";
+					return 'Intermedio';
 				case 2:
-					return "Avanzado";
+					return 'Avanzado';
 				case 3:
-					return "Experto";
+					return 'Experto';
 				case 4:
-					return "Maestro";
+					return 'Maestro';
 				default:
-					return "Desconocido";
+					return 'Desconocido';
 			}
 		},
-		"chess.black": "Black",
+		'chess.black': 'Black',
 	},
 	fr: {
-		"chess.puzzle-description":
-			"Entraînez-vous avec plus de 3 millions de puzzles",
-		"chess.puzzle-title": "Puzzles",
-		"chess.black": "Noir",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'Entraînez-vous avec plus de 3 millions de puzzles',
+		'chess.puzzle-title': 'Puzzles',
+		'chess.black': 'Noir',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "Débutant";
+					return 'Débutant';
 				case 1:
-					return "Intermédiaire";
+					return 'Intermédiaire';
 				case 2:
-					return "Avancé";
+					return 'Avancé';
 				case 3:
-					return "Expert";
+					return 'Expert';
 				case 4:
-					return "Maître";
+					return 'Maître';
 				default:
-					return "Inconnu";
+					return 'Inconnu';
 			}
 		},
-		"chess.white": "Blanc",
+		'chess.white': 'Blanc',
 	},
 	hi: {
-		"chess.puzzle-description": "3 मिलियन से अधिक पहेलियों के साथ प्रशिक्षण करें",
-		"chess.puzzle-title": "पहेलियाँ",
-		"chess.black": "काला",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'3 मिलियन से अधिक पहेलियों के साथ प्रशिक्षण करें',
+		'chess.puzzle-title': 'पहेलियाँ',
+		'chess.black': 'काला',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "शुरुआती";
+					return 'शुरुआती';
 				case 1:
-					return "इंटरमीडिएट";
+					return 'इंटरमीडिएट';
 				case 2:
-					return "उन्नत";
+					return 'उन्नत';
 				case 3:
-					return "विशेषज्ञ";
+					return 'विशेषज्ञ';
 				case 4:
-					return "मास्टर";
+					return 'मास्टर';
 				default:
-					return "अज्ञात";
+					return 'अज्ञात';
 			}
 		},
-		"chess.white": "सफेद",
+		'chess.white': 'सफेद',
 	},
 	it: {
-		"chess.puzzle-description": "Allenati con più di 3 milioni di puzzle",
-		"chess.puzzle-title": "Puzzle",
-		"chess.black": "Nero",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'Allenati con più di 3 milioni di puzzle',
+		'chess.puzzle-title': 'Puzzle',
+		'chess.black': 'Nero',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "Principiante";
+					return 'Principiante';
 				case 1:
-					return "Intermedio";
+					return 'Intermedio';
 				case 2:
-					return "Avanzato";
+					return 'Avanzato';
 				case 3:
-					return "Esperto";
+					return 'Esperto';
 				case 4:
-					return "Maestro";
+					return 'Maestro';
 				default:
-					return "Sconosciuto";
+					return 'Sconosciuto';
 			}
 		},
-		"chess.white": "Bianco",
+		'chess.white': 'Bianco',
 	},
 	ja: {
-		"chess.puzzle-description": "300 万以上のパズルでトレーニング",
-		"chess.puzzle-title": "パズル",
-		"chess.black": "黒",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'300 万以上のパズルでトレーニング',
+		'chess.puzzle-title': 'パズル',
+		'chess.black': '黒',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "初心者";
+					return '初心者';
 				case 1:
-					return "中級";
+					return '中級';
 				case 2:
-					return "上級";
+					return '上級';
 				case 3:
-					return "エキスパート";
+					return 'エキスパート';
 				case 4:
-					return "マスター";
+					return 'マスター';
 				default:
-					return "不明";
+					return '不明';
 			}
 		},
-		"chess.white": "白",
+		'chess.white': '白',
 	},
 	ko: {
-		"chess.puzzle-description": "300 만 개 이상의 퍼즐로 훈련",
-		"chess.puzzle-title": "퍼즐",
-		"chess.black": "검은색",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'300 만 개 이상의 퍼즐로 훈련',
+		'chess.puzzle-title': '퍼즐',
+		'chess.black': '검은색',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "초보자";
+					return '초보자';
 				case 1:
-					return "중급";
+					return '중급';
 				case 2:
-					return "고급";
+					return '고급';
 				case 3:
-					return "전문가";
+					return '전문가';
 				case 4:
-					return "마스터";
+					return '마스터';
 				default:
-					return "알 수 없음";
+					return '알 수 없음';
 			}
 		},
-		"chess.white": "흰색",
+		'chess.white': '흰색',
 	},
 	pt: {
-		"chess.puzzle-description":
-			"Treine com mais de 3 milhões de quebra-cabeças",
-		"chess.puzzle-title": "Quebra-cabeças",
-		"chess.black": "Preto",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'Treine com mais de 3 milhões de quebra-cabeças',
+		'chess.puzzle-title': 'Quebra-cabeças',
+		'chess.black': 'Preto',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "Iniciante";
+					return 'Iniciante';
 				case 1:
-					return "Intermediário";
+					return 'Intermediário';
 				case 2:
-					return "Avançado";
+					return 'Avançado';
 				case 3:
-					return "Especialista";
+					return 'Especialista';
 				case 4:
-					return "Mestre";
+					return 'Mestre';
 				default:
-					return "Desconhecido";
+					return 'Desconhecido';
 			}
 		},
-		"chess.white": "Branco",
+		'chess.white': 'Branco',
 	},
 	ru: {
-		"chess.puzzle-description":
-			"Тренируйтесь с более чем 3 миллионами головоломок",
-		"chess.puzzle-title": "Головоломки",
-		"chess.black": "Черный",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'Тренируйтесь с более чем 3 миллионами головоломок',
+		'chess.puzzle-title': 'Головоломки',
+		'chess.black': 'Черный',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "Новичок";
+					return 'Новичок';
 				case 1:
-					return "Средний";
+					return 'Средний';
 				case 2:
-					return "Продвинутый";
+					return 'Продвинутый';
 				case 3:
-					return "Эксперт";
+					return 'Эксперт';
 				case 4:
-					return "Мастер";
+					return 'Мастер';
 				default:
-					return "Неизвестно";
+					return 'Неизвестно';
 			}
 		},
-		"chess.white": "Белый",
+		'chess.white': 'Белый',
 	},
 	zh: {
-		"chess.puzzle-description": "使用300多万个拼图进行训练",
-		"chess.puzzle-title": "拼图",
-		"chess.black": "黑色",
-		"chess.bot-level": (botLevel) => {
+		'chess.puzzle-description':
+			'使用300多万个拼图进行训练',
+		'chess.puzzle-title': '拼图',
+		'chess.black': '黑色',
+		'chess.bot-level': (botLevel) => {
 			switch (botLevel) {
 				case 0:
-					return "初学者";
+					return '初学者';
 				case 1:
-					return "中级";
+					return '中级';
 				case 2:
-					return "高级";
+					return '高级';
 				case 3:
-					return "专家";
+					return '专家';
 				case 4:
-					return "大师";
+					return '大师';
 				default:
-					return "未知";
+					return '未知';
 			}
 		},
-		"chess.white": "白色",
+		'chess.white': '白色',
 	},
 };

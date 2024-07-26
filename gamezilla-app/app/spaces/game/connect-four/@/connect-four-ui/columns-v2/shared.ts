@@ -1,6 +1,6 @@
-import { PubSub } from "gamezilla-app/@/core";
-import type { VDom } from "gamezilla-app/@/vdom";
-import type { ColumnIndex, Columns, PlayerType } from "../../connect-four";
+import {PubSub} from 'gamezilla-app/@/core';
+import type {VDom} from 'gamezilla-app/@/vdom';
+import type {ColumnIndex, Columns, PlayerType} from '../../connect-four';
 
 export type Columnsinput = {
 	columns: Columns;

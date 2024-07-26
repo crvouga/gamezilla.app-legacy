@@ -1,16 +1,16 @@
-import type { VDom } from "gamezilla-app/@/vdom";
-import type { UserId } from "gamezilla-app/app/@/data";
+import type {VDom} from 'gamezilla-app/@/vdom';
+import type {UserId} from 'gamezilla-app/app/@/data';
 import {
 	Avatar,
 	Button,
 	Drawer,
 	IconQuestionMark,
 	Typography,
-} from "gamezilla-app/app/@/ui";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import { ViewGameHeader } from "../../game/view-game-header";
-import type { PlayerType, VsBotInput } from "../vs-bot";
-import { TranslatedText } from "gamezilla-app/@/l18n";
+} from 'gamezilla-app/app/@/ui';
+import type {SpaceClientCtx} from 'gamezilla-app/app/spaces/@/space';
+import {ViewGameHeader} from '../../game/view-game-header';
+import type {PlayerType, VsBotInput} from '../vs-bot';
+import {TranslatedText} from 'gamezilla-app/@/l18n';
 
 //
 //
@@ -20,7 +20,7 @@ import { TranslatedText } from "gamezilla-app/@/l18n";
 //
 //
 
-type Opened = "change-bot";
+type Opened = 'change-bot';
 
 export type Model = {
 	opened: Opened | null;
@@ -38,16 +38,22 @@ export const init: Model = {
 //
 //
 
-export type Msg = { t: "clicked-change-bot" } | { t: "closed-modal" };
+export type Msg = {t: 'clicked-change-bot'} | {t: 'closed-modal'};
 
 export const update = (model: Model, msg: Msg): Model => {
 	switch (msg.t) {
-		case "clicked-change-bot": {
-			return { ...model, opened: "change-bot" };
+		case 'clicked-change-bot': {
+			return {
+				...model,
+				opened: 'change-bot',
+			};
 		}
 
-		case "closed-modal": {
-			return { ...model, opened: null };
+		case 'closed-modal': {
+			return {
+				...model,
+				opened: null,
+			};
 		}
 	}
 };
@@ -62,20 +68,26 @@ export const update = (model: Model, msg: Msg): Model => {
 
 type PlayerProp =
 	| {
-			t: "user";
+			t: 'user';
 			userId: UserId | null;
 			playerLabel: TranslatedText;
-			renderIcon: (input: { className: string }) => VDom;
+			renderIcon: (input: {
+				className: string;
+			}) => VDom;
 			onStartPlaying: () => void;
 			onStopPlaying: () => void;
 	  }
 	| {
-			t: "bot";
+			t: 'bot';
 
 			botLabel: TranslatedText;
-			renderBotIcon: (input: { className: string }) => VDom;
+			renderBotIcon: (input: {
+				className: string;
+			}) => VDom;
 			playerLabel: TranslatedText;
-			renderIcon: (input: { className: string }) => VDom;
+			renderIcon: (input: {
+				className: string;
+			}) => VDom;
 			onStartPlaying: () => void;
 			onStopPlaying: () => void;
 	  };
@@ -88,7 +100,7 @@ export type VsBotSetupinput = VsBotInput & {
 	canStartGame: boolean;
 };
 
-type Input = VsBotSetupinput & { model: Model; dispatch: (m: Msg) => void };
+type Input = VsBotSetupinput & {model: Model; dispatch: (m: Msg) => void};
 
 export const View = ({
 	dispatch,
@@ -107,95 +119,155 @@ export const View = ({
 	onSwapSides,
 }: Input) => {
 	const playerOneProp: PlayerProp =
-		human.player === "player-one"
+		human.player === 'player-one'
 			? {
 					...playerOne,
-					t: "user",
+					t: 'user',
 					userId: human.userId,
 					playerLabel: playerOne.label,
-				}
+			  }
 			: {
 					...playerOne,
-					t: "bot",
+					t: 'bot',
 					botLabel: bot.label,
 					playerLabel: playerOne.label,
 					renderBotIcon: bot.renderIcon,
-				};
+			  };
 
 	const playerTwoProp: PlayerProp =
-		human.player === "player-two"
+		human.player === 'player-two'
 			? {
 					...playerTwo,
-					t: "user",
+					t: 'user',
 					userId: human.userId,
 					playerLabel: playerTwo.label,
-				}
+			  }
 			: {
 					...playerTwo,
-					t: "bot",
+					t: 'bot',
 					botLabel: bot.label,
 					playerLabel: playerTwo.label,
 					renderBotIcon: bot.renderIcon,
-				};
+			  };
 
 	return (
 		<div className="flex w-full flex-1 flex-col">
 			<ViewGameHeader
 				ctx={ctx}
 				onBack={onQuit}
-				renderCoverArt={renderCoverArt}
+				renderCoverArt={
+					renderCoverArt
+				}
 				title={title}
 			/>
 
 			<div className="flex w-full flex-col gap-2 p-4">
 				<div className="grid w-full grid-cols-7">
-					<PlayerIcons player={playerOneProp} ctx={ctx} />
+					<PlayerIcons
+						player={
+							playerOneProp
+						}
+						ctx={
+							ctx
+						}
+					/>
 					<div className="col-span-1 grid place-items-center">
 						<Typography
 							className=" flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black"
 							variant="title"
-							text={ctx.t("game.vs")}
+							text={ctx.t(
+								'game.vs',
+							)}
 						/>
 					</div>
-					<PlayerIcons player={playerTwoProp} ctx={ctx} />
+					<PlayerIcons
+						player={
+							playerTwoProp
+						}
+						ctx={
+							ctx
+						}
+					/>
 				</div>
 
 				<div className="grid w-full grid-cols-7">
-					<PlayerLabels player={playerOneProp} ctx={ctx} />
+					<PlayerLabels
+						player={
+							playerOneProp
+						}
+						ctx={
+							ctx
+						}
+					/>
 					<div className="col-span-1" />
-					<PlayerLabels player={playerTwoProp} ctx={ctx} />
+					<PlayerLabels
+						player={
+							playerTwoProp
+						}
+						ctx={
+							ctx
+						}
+					/>
 				</div>
 
 				<div className="mt-2 grid w-full grid-cols-7">
 					<PlayerButtons
-						onSwapSides={onSwapSides}
-						dispatch={dispatch}
-						human={human}
-						player={playerOneProp}
-						ctx={ctx}
+						onSwapSides={
+							onSwapSides
+						}
+						dispatch={
+							dispatch
+						}
+						human={
+							human
+						}
+						player={
+							playerOneProp
+						}
+						ctx={
+							ctx
+						}
 					/>
 					<div className="col-span-1" />
 					<PlayerButtons
-						onSwapSides={onSwapSides}
-						dispatch={dispatch}
-						human={human}
-						player={playerTwoProp}
-						ctx={ctx}
+						onSwapSides={
+							onSwapSides
+						}
+						dispatch={
+							dispatch
+						}
+						human={
+							human
+						}
+						player={
+							playerTwoProp
+						}
+						ctx={
+							ctx
+						}
 					/>
 				</div>
 			</div>
 
 			<div className="flex flex-1 items-center justify-center" />
 
-			{ctx.currentUserId === ctx.space.hostId && (
+			{ctx.currentUserId ===
+				ctx.space
+					.hostId && (
 				<div className="flex items-center gap-4 border-t border-neutral-700 p-4">
 					<Button
-						disabled={!canStartGame}
+						disabled={
+							!canStartGame
+						}
 						variant="contained"
 						color="primary"
 						className="flex-1"
-						onClick={onStartGame}
-						text={ctx.t("game.start-game")}
+						onClick={
+							onStartGame
+						}
+						text={ctx.t(
+							'game.start-game',
+						)}
 					/>
 				</div>
 			)}
@@ -203,34 +275,62 @@ export const View = ({
 			<Drawer
 				position="bottom"
 				id="change-bot"
-				open={model.opened === "change-bot"}
-				onClose={() => dispatch({ t: "closed-modal" })}
+				open={
+					model.opened ===
+					'change-bot'
+				}
+				onClose={() =>
+					dispatch(
+						{
+							t: 'closed-modal',
+						},
+					)
+				}
 			>
 				<div className="flex flex-col pb-6">
 					<Typography
 						className="p-4 text-2xl font-bold"
 						variant="title"
-						text={ctx.t("game.change-bot")}
+						text={ctx.t(
+							'game.change-bot',
+						)}
 					/>
 					<div>
-						{botVariants.map((botLevel) => {
-							const onClick = () => {
-								botLevel.onSelect();
-								dispatch({ t: "closed-modal" });
-							};
-							return (
-								<button
-									key={botLevel.label}
-									className="flex w-full items-center gap-3 p-4 text-left text-xl font-bold"
-									onClick={onClick}
-								>
-									{botLevel.renderIcon({
-										className: "w-10 h-10",
-									})}
-									{botLevel.label}
-								</button>
-							);
-						})}
+						{botVariants.map(
+							(
+								botLevel,
+							) => {
+								const onClick =
+									() => {
+										botLevel.onSelect();
+										dispatch(
+											{
+												t: 'closed-modal',
+											},
+										);
+									};
+								return (
+									<button
+										key={
+											botLevel.label
+										}
+										className="flex w-full items-center gap-3 p-4 text-left text-xl font-bold"
+										onClick={
+											onClick
+										}
+									>
+										{botLevel.renderIcon(
+											{
+												className: 'w-10 h-10',
+											},
+										)}
+										{
+											botLevel.label
+										}
+									</button>
+								);
+							},
+						)}
 					</div>
 				</div>
 			</Drawer>
@@ -247,12 +347,23 @@ const PlayerIcons = ({
 }) => {
 	return (
 		<div className="col-span-3 grid grid-cols-2 place-items-center">
-			{player.t === "bot" ? (
-				player.renderBotIcon({ className: "h-14 w-14" })
+			{player.t === 'bot' ? (
+				player.renderBotIcon(
+					{
+						className: 'h-14 w-14',
+					},
+				)
 			) : player.userId ? (
 				<Avatar
 					className="h-14 w-14"
-					src={ctx.profiles[player.userId]?.avatarUrl}
+					src={
+						ctx
+							.profiles[
+							player
+								.userId
+						]
+							?.avatarUrl
+					}
 				/>
 			) : (
 				<div
@@ -262,7 +373,9 @@ const PlayerIcons = ({
 					<IconQuestionMark className="h-10 w-10 text-neutral-300" />
 				</div>
 			)}
-			{player.renderIcon({ className: "w-14 h-14" })}
+			{player.renderIcon({
+				className: 'w-14 h-14',
+			})}
 		</div>
 	);
 };
@@ -275,7 +388,9 @@ const PlayerLabels = ({
 	player: PlayerProp;
 }) => {
 	const profile =
-		player.t === "user" && player.userId && ctx.profiles[player.userId]
+		player.t === 'user' &&
+		player.userId &&
+		ctx.profiles[player.userId]
 			? ctx.profiles[player.userId]
 			: null;
 	return (
@@ -284,17 +399,25 @@ const PlayerLabels = ({
 				variant="label"
 				className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-neutral-300"
 				text={
-					player.t === "bot"
+					player.t ===
+					'bot'
 						? player.botLabel
 						: profile
-							? ctx.t("username", profile.username)
-							: ctx.t("?")
+						? ctx.t(
+								'username',
+								profile.username,
+						  )
+						: ctx.t(
+								'?',
+						  )
 				}
 			/>
 			<Typography
 				variant="label"
 				className="text-center text-sm text-neutral-300"
-				text={player.playerLabel}
+				text={
+					player.playerLabel
+				}
 			/>
 		</div>
 	);
@@ -308,7 +431,7 @@ const PlayerButtons = ({
 	dispatch,
 }: {
 	onSwapSides: () => void;
-	human: { userId: UserId | null };
+	human: {userId: UserId | null};
 	ctx: SpaceClientCtx;
 	player: PlayerProp;
 	dispatch: (m: Msg) => void;
@@ -317,39 +440,65 @@ const PlayerButtons = ({
 		<div className="col-span-3 flex flex-col gap-2">
 			{!human.userId && (
 				<Button
-					onClick={player.onStartPlaying}
+					onClick={
+						player.onStartPlaying
+					}
 					className="w-full"
 					color="primary"
-					text={ctx.t("game.start-playing")}
+					text={ctx.t(
+						'game.start-playing',
+					)}
 				/>
 			)}
-			{player.t === "user" && ctx.currentUserId === player.userId && (
-				<Button
-					onClick={player.onStopPlaying}
-					className="w-full"
-					variant="text"
-					color="primary"
-					text={ctx.t("game.stop-playing")}
-				/>
-			)}
-			{player.t === "bot" && human.userId === ctx.currentUserId && (
-				<Button
-					onClick={onSwapSides}
-					className="w-full"
-					variant="text"
-					color="primary"
-					text={ctx.t("game.swap-sides")}
-				/>
-			)}
-			{player.t === "bot" && human.userId === ctx.currentUserId && (
-				<Button
-					onClick={() => dispatch({ t: "clicked-change-bot" })}
-					className="w-full"
-					variant="text"
-					color="primary"
-					text={ctx.t("game.change-bot")}
-				/>
-			)}
+			{player.t === 'user' &&
+				ctx.currentUserId ===
+					player.userId && (
+					<Button
+						onClick={
+							player.onStopPlaying
+						}
+						className="w-full"
+						variant="text"
+						color="primary"
+						text={ctx.t(
+							'game.stop-playing',
+						)}
+					/>
+				)}
+			{player.t === 'bot' &&
+				human.userId ===
+					ctx.currentUserId && (
+					<Button
+						onClick={
+							onSwapSides
+						}
+						className="w-full"
+						variant="text"
+						color="primary"
+						text={ctx.t(
+							'game.swap-sides',
+						)}
+					/>
+				)}
+			{player.t === 'bot' &&
+				human.userId ===
+					ctx.currentUserId && (
+					<Button
+						onClick={() =>
+							dispatch(
+								{
+									t: 'clicked-change-bot',
+								},
+							)
+						}
+						className="w-full"
+						variant="text"
+						color="primary"
+						text={ctx.t(
+							'game.change-bot',
+						)}
+					/>
+				)}
 		</div>
 	);
 };

@@ -1,7 +1,7 @@
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
-import { FlowPuzzleName } from "../../../@/flow-puzzle/flow-puzzle-name";
-import type { ModelCore, MsgCore } from "../../builder.types";
+import type {SpaceCtx} from 'gamezilla-app/app/spaces/@/space';
+import type {FlowPuzzle} from '../../../@/flow-puzzle/flow-puzzle';
+import {FlowPuzzleName} from '../../../@/flow-puzzle/flow-puzzle-name';
+import type {ModelCore, MsgCore} from '../../builder.types';
 
 const updateCore = ({
 	modelCore,
@@ -12,19 +12,33 @@ const updateCore = ({
 	modelCore: ModelCore;
 }): ModelCore => {
 	switch (msgCore.t) {
-		case "user-edited-puzzle-name": {
-			const puzzleBuilder = modelCore.puzzleBuilder;
+		case 'user-edited-puzzle-name': {
+			const puzzleBuilder =
+				modelCore.puzzleBuilder;
 			if (!puzzleBuilder) {
 				return modelCore;
 			}
 
-			if (msgCore.flowPuzzleId !== puzzleBuilder.puzzle.id) {
+			if (
+				msgCore.flowPuzzleId !==
+				puzzleBuilder
+					.puzzle
+					.id
+			) {
 				return modelCore;
 			}
-			if (msgCore.edited.t === "err") {
+			if (
+				msgCore.edited
+					.t ===
+				'err'
+			) {
 				return modelCore;
 			}
-			if (!FlowPuzzleName.is(msgCore.newName)) {
+			if (
+				!FlowPuzzleName.is(
+					msgCore.newName,
+				)
+			) {
 				return modelCore;
 			}
 			const puzzleNew: FlowPuzzle = {

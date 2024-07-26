@@ -1,4 +1,4 @@
-import type { Eff } from "../eff";
+import type {Eff} from '../eff';
 
 /**
  *
@@ -11,7 +11,7 @@ import type { Eff } from "../eff";
 export type Id = string | number | null | undefined | boolean;
 
 export type Config<T> = {
-	mode?: "out-in" | "in-out";
+	mode?: 'out-in' | 'in-out';
 	toId: (item: T) => Id;
 	enter: (item: T) => Promise<void>;
 	exit: (item: T) => Promise<void>;
@@ -38,11 +38,11 @@ export type TransitionItem<T> = {
 	item: T;
 };
 
-export type TransitionState = "entering" | "entered" | "exiting" | "exited";
+export type TransitionState = 'entering' | 'entered' | 'exiting' | 'exited';
 
 export type Model<T> = TransitionItem<T>[];
 
-export const init = <T>(toId?: Config<T>["toId"], items?: T[]): Model<T> => {
+export const init = <T>(toId?: Config<T>['toId'], items?: T[]): Model<T> => {
 	if (!toId) {
 		return [];
 	}
@@ -54,7 +54,7 @@ export const init = <T>(toId?: Config<T>["toId"], items?: T[]): Model<T> => {
 	return items.map((item): TransitionItem<T> => {
 		return {
 			id: toId(item),
-			state: "entered",
+			state: 'entered',
 			item,
 		};
 	});
@@ -69,7 +69,7 @@ export const init = <T>(toId?: Config<T>["toId"], items?: T[]): Model<T> => {
  *
  * */
 
-export type Msg = { t: "entered"; ids: Id[] } | { t: "exited"; ids: Id[] };
+export type Msg = {t: 'entered'; ids: Id[]} | {t: 'exited'; ids: Id[]};
 
 /**
  * @description
@@ -79,9 +79,11 @@ export function watch<T>(
 	config: Config<T>,
 	model: Model<T>,
 	list?: T[],
-): { model: Model<T>; eff?: Eff<Msg> } {
+): {model: Model<T>; eff?: Eff<Msg>} {
 	if (!list) {
-		return { model: init(config.toId, []) };
+		return {
+			model: init(config.toId, []),
+		};
 	}
 
 	const prevKeys = new Map<Id, TransitionItem<T>>();
@@ -100,20 +102,24 @@ export function watch<T>(
 	for (const [key, prevItem] of prevKeys) {
 		if (
 			!nextKeys.has(key) &&
-			prevItem.state !== "exiting" &&
-			prevItem.item !== "exited"
+			prevItem.state !== 'exiting' &&
+			prevItem.item !== 'exited'
 		) {
 			exiting.set(key, {
 				id: key,
 				item: prevItem.item,
-				state: "entering",
+				state: 'entering',
 			});
 		}
 	}
 
 	for (const [key, nextItem] of nextKeys) {
 		if (!prevKeys.has(key)) {
-			entering.set(key, { id: key, item: nextItem, state: "exiting" });
+			entering.set(key, {
+				id: key,
+				item: nextItem,
+				state: 'exiting',
+			});
 		}
 	}
 
@@ -123,17 +129,25 @@ export function watch<T>(
 	//
 
 	const eff: Eff<Msg> = async (dispatch) => {
-		const mode = config.mode ?? "out-in";
+		const mode = config.mode ?? 'out-in';
 
 		const promisesIn: Promise<void>[] = [];
 		const promisesOut: Promise<void>[] = [];
 
 		for (const item of entering.values()) {
-			promisesIn.push(config.enter(item.item));
+			promisesIn.push(
+				config.enter(
+					item.item,
+				),
+			);
 		}
 
 		for (const item of exiting.values()) {
-			promisesOut.push(config.exit(item.item));
+			promisesOut.push(
+				config.exit(
+					item.item,
+				),
+			);
 		}
 
 		const promiseOut = Promise.all(promisesOut);
@@ -141,12 +155,12 @@ export function watch<T>(
 		const promiseIn = Promise.all(promisesIn);
 
 		switch (mode) {
-			case "out-in": {
+			case 'out-in': {
 				await promiseOut;
 				await promiseIn;
 				break;
 			}
-			case "in-out": {
+			case 'in-out': {
 				await promiseIn;
 				await promiseOut;
 				break;
@@ -155,15 +169,29 @@ export function watch<T>(
 
 		if (exiting.size > 0) {
 			dispatch({
-				t: "exited",
-				ids: Array.from(exiting.values()).map((x) => x.id),
+				t: 'exited',
+				ids: Array.from(
+					exiting.values(),
+				).map(
+					(
+						x,
+					) =>
+						x.id,
+				),
 			});
 		}
 
 		if (entering.size > 0) {
 			dispatch({
-				t: "entered",
-				ids: Array.from(entering.values()).map((x) => x.id),
+				t: 'entered',
+				ids: Array.from(
+					entering.values(),
+				).map(
+					(
+						x,
+					) =>
+						x.id,
+				),
 			});
 		}
 	};
@@ -179,7 +207,7 @@ export function watch<T>(
 		if (exiting.has(item.id)) {
 			modelNew.push({
 				id: item.id,
-				state: "exiting",
+				state: 'exiting',
 				item: item.item,
 			});
 			continue;
@@ -201,20 +229,34 @@ export function watch<T>(
  *
  */
 export function update<T>(model: Model<T>, msg?: Msg): Model<T> {
-	if (msg?.t === "entered") {
+	if (msg?.t === 'entered') {
 		return model.map((x) => {
-			if (msg.ids.some((y) => x.id === y)) {
+			if (
+				msg.ids.some(
+					(
+						y,
+					) =>
+						x.id ===
+						y,
+				)
+			) {
 				return {
 					...x,
-					state: "entered",
+					state: 'entered',
 				};
 			}
 			return x;
 		});
 	}
 
-	if (msg?.t === "exited") {
-		return model.filter((x) => msg.ids.every((y) => x.id !== y));
+	if (msg?.t === 'exited') {
+		return model.filter((x) =>
+			msg.ids.every(
+				(y) =>
+					x.id !==
+					y,
+			),
+		);
 	}
 
 	return model;
@@ -236,7 +278,8 @@ export function waitForElementById(
 	}
 
 	const parentElement =
-		document.getElementById(String(parentHtmlId)) ?? document.body;
+		document.getElementById(String(parentHtmlId)) ??
+		document.body;
 
 	return new Promise<HTMLElement | null>((resolve) => {
 		const timeout = setTimeout(() => {
@@ -244,14 +287,26 @@ export function waitForElementById(
 			resolve(null);
 		}, maxWait);
 		const observer = new MutationObserver(() => {
-			const targetElement = document.getElementById(String(htmlId));
+			const targetElement =
+				document.getElementById(
+					String(
+						htmlId,
+					),
+				);
 			if (targetElement) {
 				observer.disconnect();
-				clearTimeout(timeout);
-				resolve(targetElement);
+				clearTimeout(
+					timeout,
+				);
+				resolve(
+					targetElement,
+				);
 			}
 		});
 
-		observer.observe(parentElement, { childList: true, subtree: true });
+		observer.observe(parentElement, {
+			childList: true,
+			subtree: true,
+		});
 	});
 }

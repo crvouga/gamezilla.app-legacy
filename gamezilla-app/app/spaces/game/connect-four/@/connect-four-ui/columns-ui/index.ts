@@ -1,1 +1,1 @@
-export * as ColumnsUI from "./columns-ui";
+export * as ColumnsUI from './columns-ui';

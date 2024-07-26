@@ -1,46 +1,46 @@
-import type { Edge } from "../flow/flow";
-import { FlowGroupId } from "../flow/flow-group-id";
-import { FlowNodeId } from "../flow/flow-node-id";
+import type {Edge} from '../flow/flow';
+import {FlowGroupId} from '../flow/flow-group-id';
+import {FlowNodeId} from '../flow/flow-node-id';
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const COLOR_TO_HEX = {
-	red: "#FE0500",
-	orange: "#ea580c",
-	amber: "#d97706",
-	yellow: "#EBDF04",
-	lime: "#84cc16",
-	green: "#068C01",
-	emerald: "#10b981",
-	teal: "#2dd4bf",
-	cyan: "#22d3ee",
-	sky: "#38bdf8",
-	blue: "#0D2AFE",
-	indigo: "#4f46e5",
-	violet: "#7c3aed",
-	purple: "#9333ea",
-	fuchsia: "#c026d3",
-	pink: "#ec4899",
-	rose: "#e11d48",
+	red: '#FE0500',
+	orange: '#ea580c',
+	amber: '#d97706',
+	yellow: '#EBDF04',
+	lime: '#84cc16',
+	green: '#068C01',
+	emerald: '#10b981',
+	teal: '#2dd4bf',
+	cyan: '#22d3ee',
+	sky: '#38bdf8',
+	blue: '#0D2AFE',
+	indigo: '#4f46e5',
+	violet: '#7c3aed',
+	purple: '#9333ea',
+	fuchsia: '#c026d3',
+	pink: '#ec4899',
+	rose: '#e11d48',
 } as const;
 
-export const GROUP_ID_TO_COLOR: { [groupId in FlowGroupId]: Color } = {
-	A: "red",
-	B: "blue",
-	C: "yellow",
-	D: "green",
-	E: "pink",
-	F: "orange",
-	G: "purple",
-	H: "amber",
-	I: "lime",
-	J: "emerald",
-	K: "teal",
-	L: "cyan",
-	M: "sky",
-	N: "indigo",
-	O: "violet",
-	P: "fuchsia",
-	Q: "rose",
+export const GROUP_ID_TO_COLOR: {[groupId in FlowGroupId]: Color} = {
+	A: 'red',
+	B: 'blue',
+	C: 'yellow',
+	D: 'green',
+	E: 'pink',
+	F: 'orange',
+	G: 'purple',
+	H: 'amber',
+	I: 'lime',
+	J: 'emerald',
+	K: 'teal',
+	L: 'cyan',
+	M: 'sky',
+	N: 'indigo',
+	O: 'violet',
+	P: 'fuchsia',
+	Q: 'rose',
 };
 
 const ALL_COLORS = Object.keys(COLOR_TO_HEX) as Color[];
@@ -55,24 +55,24 @@ const isColor = (value: string): value is Color => {
 	return value in COLOR_TO_HEX;
 };
 
-const COLOR_TO_EMOJI: { [key in Color]: Emoji } = {
-	blue: "🔵",
-	violet: "🍇",
-	red: "🔴",
-	orange: "🟠",
-	amber: "🚨",
-	yellow: "🟡",
-	lime: "🥝",
-	green: "🟢",
-	emerald: "❇️",
-	teal: "🩱",
-	cyan: "🌐",
-	sky: "🏙",
-	indigo: "🟪",
-	purple: "🟣",
-	pink: "🌸",
-	rose: "🌹",
-	fuchsia: "💜",
+const COLOR_TO_EMOJI: {[key in Color]: Emoji} = {
+	blue: '🔵',
+	violet: '🍇',
+	red: '🔴',
+	orange: '🟠',
+	amber: '🚨',
+	yellow: '🟡',
+	lime: '🥝',
+	green: '🟢',
+	emerald: '❇️',
+	teal: '🩱',
+	cyan: '🌐',
+	sky: '🏙',
+	indigo: '🟪',
+	purple: '🟣',
+	pink: '🌸',
+	rose: '🌹',
+	fuchsia: '💜',
 };
 
 const colorToEmoji = (color: Color): Emoji => {
@@ -80,42 +80,42 @@ const colorToEmoji = (color: Color): Emoji => {
 };
 
 export type Emoji =
-	| "🔵" // blue
-	| "🍇" // violet
-	| "🔴" // red
-	| "🟠" // orange
-	| "🚨" // amber
-	| "🟡" // yellow
-	| "🥝" // lime
-	| "🟢" // green
-	| "❇️" // emerald
-	| "🩱" // teal
-	| "🌐" // cyan
-	| "🏙" // sky
-	| "🟪" // indigo
-	| "🟣" // purple
-	| "🌸" // pink
-	| "🌹" // rose
-	| "💜"; // fuchsia
+	| '🔵' // blue
+	| '🍇' // violet
+	| '🔴' // red
+	| '🟠' // orange
+	| '🚨' // amber
+	| '🟡' // yellow
+	| '🥝' // lime
+	| '🟢' // green
+	| '❇️' // emerald
+	| '🩱' // teal
+	| '🌐' // cyan
+	| '🏙' // sky
+	| '🟪' // indigo
+	| '🟣' // purple
+	| '🌸' // pink
+	| '🌹' // rose
+	| '💜'; // fuchsia
 
-const EMOJI_TO_COLOR_MAP: { [key in Emoji]: Color } = {
-	"🔵": "blue",
-	"🍇": "violet",
-	"🔴": "red",
-	"🟠": "orange",
-	"🚨": "amber",
-	"🟡": "yellow",
-	"🥝": "lime",
-	"🟢": "green",
-	"❇️": "emerald",
-	"🩱": "teal",
-	"🌐": "cyan",
-	"🏙": "sky",
-	"🟪": "indigo",
-	"🟣": "purple",
-	"🌸": "pink",
-	"🌹": "rose",
-	"💜": "fuchsia",
+const EMOJI_TO_COLOR_MAP: {[key in Emoji]: Color} = {
+	'🔵': 'blue',
+	'🍇': 'violet',
+	'🔴': 'red',
+	'🟠': 'orange',
+	'🚨': 'amber',
+	'🟡': 'yellow',
+	'🥝': 'lime',
+	'🟢': 'green',
+	'❇️': 'emerald',
+	'🩱': 'teal',
+	'🌐': 'cyan',
+	'🏙': 'sky',
+	'🟪': 'indigo',
+	'🟣': 'purple',
+	'🌸': 'pink',
+	'🌹': 'rose',
+	'💜': 'fuchsia',
 };
 
 const ALL_EMOJI = Object.keys(EMOJI_TO_COLOR_MAP) as Emoji[];
@@ -156,7 +156,11 @@ export type FlowViewinput<TModel> = {
 	model: TModel;
 	isDragging?: boolean;
 	disableHighlight?: boolean;
-	autocompleteEdge?: (Edge & { groupId: FlowGroupId }) | null;
+	autocompleteEdge?:
+		| (Edge & {
+				groupId: FlowGroupId;
+		  })
+		| null;
 	showCoordinates?: boolean;
 	onPressDown?: (nodeId: FlowNodeId) => void;
 	onPressUp?: (nodeId: FlowNodeId) => void;

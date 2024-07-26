@@ -1,1 +1,1 @@
-export * as Transition from "./transition";
+export * as Transition from './transition';

@@ -1,24 +1,24 @@
-import type { ILogger } from "gamezilla-app/app/@/server/logger";
-import { ServerBun } from "./server-impl-bun/server-impl-bun";
-import { ServerNode } from "./server-impl-node/server-impl-node";
+import type {ILogger} from 'gamezilla-app/app/@/server/logger';
+import {ServerBun} from './server-impl-bun/server-impl-bun';
+import {ServerNode} from './server-impl-node/server-impl-node';
 
 type Impl =
 	| {
-			t: "bun";
+			t: 'bun';
 			logger: ILogger;
 	  }
 	| {
-			t: "node";
+			t: 'node';
 			logger: ILogger;
 	  };
 
 export const Server = (impl: Impl) => {
 	switch (impl.t) {
-		case "bun": {
+		case 'bun': {
 			return ServerBun<unknown>(impl);
 		}
 
-		case "node": {
+		case 'node': {
 			return ServerNode(impl);
 		}
 	}

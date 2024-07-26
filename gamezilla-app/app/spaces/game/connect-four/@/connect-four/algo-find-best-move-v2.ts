@@ -2,21 +2,21 @@ import {
 	type ChildrenFn,
 	Minimax,
 	type ScoreFn,
-} from "gamezilla-app/app/spaces/game/@/minimax";
-import { Ok, type Result } from "gamezilla-app/@/core";
+} from 'gamezilla-app/app/spaces/game/@/minimax';
+import {Ok, type Result} from 'gamezilla-app/@/core';
 import {
 	type Columns,
 	MAX_COLUMN_HEIGHT,
 	type PlayerType,
 	opposite,
 	toStatus,
-} from "./connect-four";
+} from './connect-four';
 
-export type BestMoveProblem = "no_move_available";
+export type BestMoveProblem = 'no_move_available';
 
 export type BestMoveResult = Result<
 	BestMoveProblem,
-	{ columnIndex: number | null }
+	{columnIndex: number | null}
 >;
 
 type State = {
@@ -40,26 +40,49 @@ export const findBestMove = ({
 		const children: State[] = [];
 
 		for (const columnIndex of COLUMN_INDEX_ORDER) {
-			const column = modelCore.columns[columnIndex];
+			const column =
+				modelCore
+					.columns[
+					columnIndex
+				];
 
 			if (!column) {
 				continue;
 			}
 
-			if (column.length >= MAX_COLUMN_HEIGHT) {
+			if (
+				column.length >=
+				MAX_COLUMN_HEIGHT
+			) {
 				continue;
 			}
 
-			const columnsNew: Columns = modelCore.columns.map((column) =>
-				column.map((slot) => slot),
-			);
+			const columnsNew: Columns =
+				modelCore.columns.map(
+					(
+						column,
+					) =>
+						column.map(
+							(
+								slot,
+							) =>
+								slot,
+						),
+				);
 
-			columnsNew[columnIndex] = [...column, modelCore.turn];
+			columnsNew[columnIndex] = [
+				...column,
+				modelCore.turn,
+			];
 
 			children.push({
 				columns: columnsNew,
-				turn: opposite[modelCore.turn],
-				lastMoveColumnIndex: columnIndex,
+				turn: opposite[
+					modelCore
+						.turn
+				],
+				lastMoveColumnIndex:
+					columnIndex,
 			});
 		}
 
@@ -69,7 +92,7 @@ export const findBestMove = ({
 	const scoreFn: ScoreFn<State> = (modelCore) => {
 		const status = toStatus(modelCore.columns);
 
-		if (status.type !== "Winner") {
+		if (status.type !== 'Winner') {
 			return 0;
 		}
 

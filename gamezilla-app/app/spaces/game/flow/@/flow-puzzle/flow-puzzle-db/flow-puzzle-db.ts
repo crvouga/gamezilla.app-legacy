@@ -1,7 +1,7 @@
-import type { Paginated, Pagination, UserId } from "gamezilla-app/app/@/data";
-import type { Task } from "gamezilla-app/@/core";
-import type { FlowPuzzle } from "../flow-puzzle";
-import type { FlowPuzzleId } from "../flow-puzzle-id";
+import type {Paginated, Pagination, UserId} from 'gamezilla-app/app/@/data';
+import type {Task} from 'gamezilla-app/@/core';
+import type {FlowPuzzle} from '../flow-puzzle';
+import type {FlowPuzzleId} from '../flow-puzzle-id';
 
 export type WhereClause = {
 	createdBy?: {
@@ -13,8 +13,8 @@ export type WhereClause = {
 };
 
 export type OrderClause = {
-	createdAt?: "asc" | "desc";
-	lastUpdatedAt?: "asc" | "desc";
+	createdAt?: 'asc' | 'desc';
+	lastUpdatedAt?: 'asc' | 'desc';
 };
 
 export type ListPuzzlesInput = {
@@ -23,13 +23,18 @@ export type ListPuzzlesInput = {
 	order: OrderClause;
 };
 
-export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
+export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb['list']>>;
 
 export type IFlowPuzzleDb = {
 	count: (
-		input: Omit<ListPuzzlesInput, "pagination" | "order">,
+		input: Omit<
+			ListPuzzlesInput,
+			'pagination' | 'order'
+		>,
 	) => Task<string, number>;
-	list: (input: ListPuzzlesInput) => Task<string, Paginated<FlowPuzzle>>;
+	list: (
+		input: ListPuzzlesInput,
+	) => Task<string, Paginated<FlowPuzzle>>;
 	get: (id: FlowPuzzleId) => Task<string, FlowPuzzle | null>;
 	put: (input: FlowPuzzle) => Task<string, null>;
 	zap: (input: {

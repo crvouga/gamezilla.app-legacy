@@ -1,1 +1,1 @@
-export * as Sql from "./sql";
+export * as Sql from './sql';

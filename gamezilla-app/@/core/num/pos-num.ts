@@ -2,7 +2,7 @@
  * Represents a number that will always be positive
  */
 export type PosNum = {
-	_type: "PosNum";
+	_type: 'PosNum';
 	_value: number;
 };
 
@@ -10,7 +10,7 @@ const init = (number: number): PosNum => {
 	const value = Math.max(0, number);
 
 	return {
-		_type: "PosNum",
+		_type: 'PosNum',
 		_value: value,
 	};
 };

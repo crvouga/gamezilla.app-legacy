@@ -1,5 +1,5 @@
-import { Err, Ok } from "../../result/result";
-import type { Parser, ParserError } from "./parser-types";
+import {Err, Ok} from '../../result/result';
+import type {Parser, ParserError} from './parser-types';
 
 export function and<A>(a: Parser<A>): Parser<A>;
 export function and<A, B>(a: Parser<A>, b: Parser<B>): Parser<A & B>;
@@ -203,7 +203,24 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
 	q: Parser<Q>,
 	r: Parser<R>,
 ): Parser<
-	A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R
+	A &
+		B &
+		C &
+		D &
+		E &
+		F &
+		G &
+		H &
+		I &
+		J &
+		K &
+		L &
+		M &
+		N &
+		O &
+		P &
+		Q &
+		R
 >;
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
 	a: Parser<A>,
@@ -226,7 +243,25 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
 	r: Parser<R>,
 	s: Parser<S>,
 ): Parser<
-	A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S
+	A &
+		B &
+		C &
+		D &
+		E &
+		F &
+		G &
+		H &
+		I &
+		J &
+		K &
+		L &
+		M &
+		N &
+		O &
+		P &
+		Q &
+		R &
+		S
 >;
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
 	a: Parser<A>,
@@ -250,7 +285,26 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
 	s: Parser<S>,
 	t: Parser<T>,
 ): Parser<
-	A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T
+	A &
+		B &
+		C &
+		D &
+		E &
+		F &
+		G &
+		H &
+		I &
+		J &
+		K &
+		L &
+		M &
+		N &
+		O &
+		P &
+		Q &
+		R &
+		S &
+		T
 >;
 export function and<
 	A,
@@ -702,23 +756,40 @@ export function and<
 export function and(...parsers: Parser<unknown>[]): Parser<unknown> {
 	return {
 		parse(input) {
-			const errors: ParserError[] = [];
+			const errors: ParserError[] =
+				[];
 
-			for (let i = 0; i < parsers.length; i++) {
-				const result = parsers[i]!.parse(input);
-				switch (result.t) {
-					case "ok": {
+			for (
+				let i = 0;
+				i <
+				parsers.length;
+				i++
+			) {
+				const result =
+					parsers[
+						i
+					]!.parse(
+						input,
+					);
+				switch (
+					result.t
+				) {
+					case 'ok': {
 						continue;
 					}
-					case "err": {
-						errors.push(...result.error);
+					case 'err': {
+						errors.push(
+							...result.error,
+						);
 						break;
 					}
 				}
 			}
 
 			if (errors.length === 0) {
-				return Ok(input);
+				return Ok(
+					input,
+				);
 			}
 
 			return Err(errors);

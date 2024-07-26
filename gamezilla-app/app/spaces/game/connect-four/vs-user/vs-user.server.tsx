@@ -1,10 +1,10 @@
-import type { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
+import type {GameServerModule} from 'gamezilla-app/app/spaces/@/architecture/game-server-v2';
 import type {
 	SpaceServerCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import { Sub } from "gamezilla-app/@/core";
+} from 'gamezilla-app/app/spaces/@/space';
+import type {SpaceServerCmd} from 'gamezilla-app/app/spaces/@/space-server-cmd';
+import {Sub} from 'gamezilla-app/@/core';
 import type {
 	MsgCore,
 	ModelCore,
@@ -12,7 +12,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./vs-user.types";
+} from './vs-user.types';
 
 //
 //
@@ -35,12 +35,12 @@ type Module = GameServerModule<{
 	MsgEvtOut: null;
 }>;
 
-export const init: Module["init"] = null;
+export const init: Module['init'] = null;
 
-export const update: Module["update"] = async (input) => {
-	return { model: input.model };
+export const update: Module['update'] = async (input) => {
+	return {model: input.model};
 };
 
-export const subscriptions: Module["subscriptions"] = async (_input) => {
+export const subscriptions: Module['subscriptions'] = async (_input) => {
 	return Sub.None;
 };

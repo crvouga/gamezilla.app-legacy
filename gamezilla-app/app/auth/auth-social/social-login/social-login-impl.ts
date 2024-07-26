@@ -1,1 +1,1 @@
-export * from "./social-login-impl.supabase";
+export * from './social-login-impl.supabase';

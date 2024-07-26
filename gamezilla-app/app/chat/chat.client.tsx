@@ -1,7 +1,7 @@
-import type { ClientCtx, ClientEvent } from "gamezilla-app/app/@/client";
-import { Browser, Eff, pipe } from "gamezilla-app/@/core";
-import type { VDom } from "gamezilla-app/@/vdom";
-import type { ModelClient, MsgClient, MsgToClient } from "./chat.core";
+import type {ClientCtx, ClientEvent} from 'gamezilla-app/app/@/client';
+import {Browser, Eff, pipe} from 'gamezilla-app/@/core';
+import type {VDom} from 'gamezilla-app/@/vdom';
+import type {ModelClient, MsgClient, MsgToClient} from './chat.core';
 
 //
 //
@@ -15,7 +15,7 @@ export const init = ({
 	stored,
 }: {
 	stored: ModelClient | null;
-}): { model: ModelClient } => {
+}): {model: ModelClient} => {
 	if (stored) {
 		return {
 			model: stored,
@@ -30,7 +30,7 @@ export const init = ({
 			messageDrafts: {},
 			messages: {},
 			requests: {},
-			userSearch: "",
+			userSearch: '',
 			userSelected: {},
 		},
 	};
@@ -54,7 +54,7 @@ export type Msg = MsgClient;
 //
 //
 
-const userSearchInputId = "user-search-input";
+const userSearchInputId = 'user-search-input';
 
 export const update = ({
 	msg,
@@ -62,46 +62,64 @@ export const update = ({
 }: {
 	msg: Msg;
 	model: ModelClient;
-}): { model: ModelClient; eff?: Eff<Msg> } => {
+}): {model: ModelClient; eff?: Eff<Msg>} => {
 	switch (msg[0]) {
-		case "clicked-user-search-result": {
+		case 'clicked-user-search-result': {
 			return {
 				model: {
 					...model,
-					userSelected: toggleKey(model.userSelected, msg[1].userId),
-					userSearch: "",
+					userSelected: toggleKey(
+						model.userSelected,
+						msg[1]
+							.userId,
+					),
+					userSearch: '',
 				},
 			};
 		}
 
-		case "clicked-user-selected-delete-button": {
+		case 'clicked-user-selected-delete-button': {
 			return {
 				model: {
 					...model,
-					userSelected: removeKey(model.userSelected, msg[1].userId),
+					userSelected: removeKey(
+						model.userSelected,
+						msg[1]
+							.userId,
+					),
 				},
 			};
 		}
 
-		case "inputted-user-search": {
+		case 'inputted-user-search': {
 			return {
 				model: {
 					...model,
-					userSearch: msg[1].userSearch,
+					userSearch: msg[1]
+						.userSearch,
 				},
 			};
 		}
 
-		case "clicked-user-search-clear-button": {
+		case 'clicked-user-search-clear-button': {
 			return {
 				model: {
 					...model,
 					userSelected: {},
-					userSearch: "",
+					userSearch: '',
 				},
 				eff: pipe(
-					Browser.focus(userSearchInputId),
-					Eff.perform((result) => ["focused", result]),
+					Browser.focus(
+						userSearchInputId,
+					),
+					Eff.perform(
+						(
+							result,
+						) => [
+							'focused',
+							result,
+						],
+					),
 				),
 			};
 		}
@@ -116,7 +134,7 @@ export const update = ({
 };
 
 const toggleKey = <T extends object>(obj: T, key: keyof T) => {
-	const newObj: T = { ...obj };
+	const newObj: T = {...obj};
 	if (key in newObj) {
 		delete newObj[key];
 	} else {
@@ -125,7 +143,7 @@ const toggleKey = <T extends object>(obj: T, key: keyof T) => {
 	return newObj;
 };
 const removeKey = <T extends object>(obj: T, key: keyof T) => {
-	const newObj: T = { ...obj };
+	const newObj: T = {...obj};
 	if (key in newObj) {
 		delete newObj[key];
 	}
@@ -141,7 +159,7 @@ export const updateFromServer = ({
 	model: ModelClient;
 	eff?: Eff<Msg>;
 } => {
-	return { model };
+	return {model};
 };
 
 export const updateFromEvent = ({
@@ -156,7 +174,9 @@ export const updateFromEvent = ({
 } => {
 	switch (msg.t) {
 		default: {
-			return { model };
+			return {
+				model,
+			};
 		}
 	}
 };

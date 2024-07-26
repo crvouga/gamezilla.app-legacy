@@ -1,5 +1,5 @@
-import type { Eff } from "./eff";
-import type { Sub } from "./sub";
+import type {Eff} from './eff';
+import type {Sub} from './sub';
 
 //
 //
@@ -12,15 +12,15 @@ type MaybePromise<T> = T | Promise<T>;
 
 export type ProgramImpure<TMsg, TCtx> = {
 	ctx: () => MaybePromise<TCtx>;
-	init: (input: { ctx: TCtx }) => MaybePromise<{ eff?: Eff<TMsg> }>;
-	update: (input: { ctx: TCtx; msg: TMsg }) => MaybePromise<{
+	init: (input: {ctx: TCtx}) => MaybePromise<{eff?: Eff<TMsg>}>;
+	update: (input: {ctx: TCtx; msg: TMsg}) => MaybePromise<{
 		eff?: Eff<TMsg>;
 	}>;
 	subscriptions: (input: {
 		intervalId: string;
 		ctx: TCtx;
 	}) => MaybePromise<Sub<TMsg>>;
-	crash?: (input: { error: unknown }) => void;
+	crash?: (input: {error: unknown}) => void;
 };
 
 function generateProgramId() {
@@ -46,9 +46,13 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
 
 	function updateEff(eff?: Eff<TMsg> | null) {
 		if (eff) {
-			Promise.resolve().then(function runEffect() {
-				eff(dispatch);
-			});
+			Promise.resolve().then(
+				function runEffect() {
+					eff(
+						dispatch,
+					);
+				},
+			);
 		}
 	}
 
@@ -67,21 +71,26 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
 		try {
 			const ctx = await program.ctx();
 
-			const updated = await program.update({
-				ctx,
-				msg,
-			});
+			const updated =
+				await program.update(
+					{
+						ctx,
+						msg,
+					},
+				);
 
 			updateEff(updated.eff);
 			updateSubscriptions(ctx);
 		} catch (error) {
-			program.crash?.({ error });
+			program.crash?.({
+				error,
+			});
 		}
 	}
 
 	const ctx = await program.ctx();
 
-	const init = await program.init({ ctx });
+	const init = await program.init({ctx});
 
 	updateEff(init.eff);
 	updateSubscriptions(ctx);

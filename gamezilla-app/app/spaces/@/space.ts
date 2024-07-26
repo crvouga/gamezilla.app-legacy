@@ -1,13 +1,13 @@
-import { p } from "gamezilla-app/@/core/parser";
-import type { ClientCtx, ClientEvent } from "gamezilla-app/app/@/client";
+import {p} from 'gamezilla-app/@/core/parser';
+import type {ClientCtx, ClientEvent} from 'gamezilla-app/app/@/client';
 import {
 	SpaceId,
 	UserId,
 	type ClientId,
 	type Profile,
 	type SessionId,
-} from "gamezilla-app/app/@/data";
-import type { ServerCtx, ServerEvent } from "gamezilla-app/app/@/server";
+} from 'gamezilla-app/app/@/data';
+import type {ServerCtx, ServerEvent} from 'gamezilla-app/app/@/server';
 
 //
 //
@@ -19,7 +19,7 @@ import type { ServerCtx, ServerEvent } from "gamezilla-app/app/@/server";
 //
 
 export const Space = p.obj({
-	visibility: p.enumeration(["public", "private"]),
+	visibility: p.enumeration(['public', 'private']),
 	spaceId: SpaceId,
 	hostId: UserId,
 	users: p.dict(UserId, UserId),
@@ -28,8 +28,16 @@ export const Space = p.obj({
 export type Space = p.Infer<typeof Space>;
 
 type SpaceEvent =
-	| { t: "space/user-left-space"; spaceId: SpaceId; userId: UserId }
-	| { t: "space/user-joined-space"; spaceId: SpaceId; userId: UserId };
+	| {
+			t: 'space/user-left-space';
+			spaceId: SpaceId;
+			userId: UserId;
+	  }
+	| {
+			t: 'space/user-joined-space';
+			spaceId: SpaceId;
+			userId: UserId;
+	  };
 
 /**
  * @description

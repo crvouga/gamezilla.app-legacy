@@ -1,25 +1,41 @@
-import { isErr } from "gamezilla-app/@/core";
-import type { UpdateCore } from "../../builder.types";
-import { FlowEdit } from "../../../@/flow/flow-edit";
-import { FlowPlay } from "../../../@/flow/flow-play";
+import {isErr} from 'gamezilla-app/@/core';
+import type {UpdateCore} from '../../builder.types';
+import {FlowEdit} from '../../../@/flow/flow-edit';
+import {FlowPlay} from '../../../@/flow/flow-play';
 
-const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+const updateCore: UpdateCore = ({modelCore, msgCore}) => {
 	switch (msgCore.t) {
-		case "user-created-puzzle": {
+		case 'user-created-puzzle': {
 			if (isErr(msgCore.created)) {
 				return modelCore;
 			}
-			const flowPuzzleNew = msgCore.created.value;
+			const flowPuzzleNew =
+				msgCore.created
+					.value;
 			return {
 				...modelCore,
 				listTab: modelCore.listTab,
-				opened: { t: "puzzle-builder" },
+				opened: {
+					t: 'puzzle-builder',
+				},
 				packBuilder: modelCore.packBuilder,
 				puzzleBuilder: {
-					t: "puzzle-builder",
-					mode: { t: "edit" },
-					edit: FlowEdit.init({ flow: flowPuzzleNew.flow }),
-					play: FlowPlay.init({ ctx: { flowPuzzle: flowPuzzleNew } }),
+					t: 'puzzle-builder',
+					mode: {
+						t: 'edit',
+					},
+					edit: FlowEdit.init(
+						{
+							flow: flowPuzzleNew.flow,
+						},
+					),
+					play: FlowPlay.init(
+						{
+							ctx: {
+								flowPuzzle: flowPuzzleNew,
+							},
+						},
+					),
 					puzzle: flowPuzzleNew,
 				},
 			};
@@ -31,4 +47,4 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 	}
 };
 
-export const CreateNewPuzzleCore = { updateCore };
+export const CreateNewPuzzleCore = {updateCore};

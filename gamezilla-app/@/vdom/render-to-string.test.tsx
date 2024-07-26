@@ -1,9 +1,9 @@
-import { describe, expect, it } from "bun:test";
-import { RenderToString } from "./render-to-string";
-import { VDom } from "./vdom";
+import {describe, expect, it} from 'bun:test';
+import {RenderToString} from './render-to-string';
+import {VDom} from './vdom';
 
 describe(import.meta.file, () => {
-	it("should be able to render to string", async () => {
+	it('should be able to render to string', async () => {
 		const renderToString = await RenderToString();
 
 		const vDom: VDom = (
@@ -14,6 +14,8 @@ describe(import.meta.file, () => {
 
 		const string = renderToString(vDom);
 
-		expect(string).toEqual("<div><div>hello</div></div>");
+		expect(string).toEqual(
+			'<div><div>hello</div></div>',
+		);
 	});
 });

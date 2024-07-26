@@ -1,10 +1,10 @@
-import { describe, expect, it } from "bun:test";
-import { Err, Ok, PhoneNumber, eq } from "gamezilla-app/@/core";
-import type { Route } from "gamezilla-app/@/routing/generated/routes";
-import { didPushRoute } from "gamezilla-app/app/@/client";
-import { FixtureAppClient } from "gamezilla-app/app/@/client/client-test-env";
-import type { AuthSMSTypes } from ".";
-import { AuthSMSClient } from "./auth-sms.client";
+import {describe, expect, it} from 'bun:test';
+import {Err, Ok, PhoneNumber, eq} from 'gamezilla-app/@/core';
+import type {Route} from 'gamezilla-app/@/routing/generated/routes';
+import {didPushRoute} from 'gamezilla-app/app/@/client';
+import {FixtureAppClient} from 'gamezilla-app/app/@/client/client-test-env';
+import type {AuthSMSTypes} from '.';
+import {AuthSMSClient} from './auth-sms.client';
 
 type Msg =
 	| {
@@ -14,30 +14,41 @@ type Msg =
 			msgServer: AuthSMSTypes.MsgToClient;
 	  };
 
-const Fixture = async (input?: { currentRoute?: Route }) => {
+const Fixture = async (input?: {currentRoute?: Route}) => {
 	const f = await FixtureAppClient({
 		currentRoute: input?.currentRoute ?? {
-			n: "auth-login",
-			t: "login-sms-request",
+			n: 'auth-login',
+			t: 'login-sms-request',
 		},
 	});
 
-	const updates = (init: AuthSMSTypes.ModelClient, msgs: Msg[]) => {
-		const updates: ReturnType<typeof AuthSMSClient.update>[] = [];
+	const updates = (
+		init: AuthSMSTypes.ModelClient,
+		msgs: Msg[],
+	) => {
+		const updates: ReturnType<
+			typeof AuthSMSClient.update
+		>[] = [];
 		let model = init;
 		for (const msg of msgs) {
-			const updated = AuthSMSClient.update({
-				ctx: f.ctx,
-				model,
-				...msg,
-			});
+			const updated =
+				AuthSMSClient.update(
+					{
+						ctx: f.ctx,
+						model,
+						...msg,
+					},
+				);
 			model = updated.model;
 			updates.push(updated);
 		}
 		return updates;
 	};
 
-	const update = (init: AuthSMSTypes.ModelClient, msgs: Msg[]) => {
+	const update = (
+		init: AuthSMSTypes.ModelClient,
+		msgs: Msg[],
+	) => {
 		const updates_ = updates(init, msgs);
 		return updates_[updates_.length - 1];
 	};
@@ -49,7 +60,11 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
 
 	const render = (model: AuthSMSTypes.ModelClient = init) => {
 		const vDom = (
-			<AuthSMSClient.View ctx={f.ctx} dispatch={() => {}} model={model} />
+			<AuthSMSClient.View
+				ctx={f.ctx}
+				dispatch={() => {}}
+				model={model}
+			/>
 		);
 		const node = f.render(vDom);
 		return node;
@@ -64,7 +79,7 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
 };
 
 describe(import.meta.file, () => {
-	it("should navigate to verify code screen after code is sent", async () => {
+	it('should navigate to verify code screen after code is sent', async () => {
 		const f = await Fixture();
 
 		const phoneNumber = PhoneNumber.random();
@@ -72,9 +87,11 @@ describe(import.meta.file, () => {
 		const output = f.update(f.init, [
 			{
 				msgServer: {
-					t: "sent-code",
+					t: 'sent-code',
 					phoneNumber,
-					sent: Ok(null),
+					sent: Ok(
+						null,
+					),
 				},
 			},
 		]);
@@ -83,72 +100,94 @@ describe(import.meta.file, () => {
 			didPushRoute(
 				output,
 				(msg) =>
-					msg.n === "auth-login" &&
-					msg.t === "login-sms-verify" &&
-					eq(msg.phoneNumber, phoneNumber),
+					msg.n ===
+						'auth-login' &&
+					msg.t ===
+						'login-sms-verify' &&
+					eq(
+						msg.phoneNumber,
+						phoneNumber,
+					),
 			),
 		).toBe(true);
 	});
 
-	it("should render error message when send code errors", async () => {
+	it('should render error message when send code errors', async () => {
 		const f = await Fixture();
 		const output = f.update(f.init, [
 			{
 				msgServer: {
-					t: "sent-code",
+					t: 'sent-code',
 					phoneNumber: PhoneNumber.random(),
-					sent: Err({ t: "hourly-limit-reached" }),
+					sent: Err(
+						{
+							t: 'hourly-limit-reached',
+						},
+					),
 				},
 			},
 		]);
 		const r = f.render(output?.model);
 		const alertError = r.getByRole(
-			"alert",
-			f.ctx.t("verify-sms-problem.send-code-hourly-limit-reached"),
+			'alert',
+			f.ctx.t(
+				'verify-sms-problem.send-code-hourly-limit-reached',
+			),
 		);
 		expect(alertError).toBeTruthy();
 	});
 
-	it("should render error message when verify code errors", async () => {
+	it('should render error message when verify code errors', async () => {
 		const phoneNumber = PhoneNumber.random();
 
 		const f = await Fixture({
 			currentRoute: {
-				n: "auth-login",
-				t: "login-sms-verify",
+				n: 'auth-login',
+				t: 'login-sms-verify',
 				phoneNumber,
 			},
 		});
 		const output = f.update(f.init, [
 			{
 				msgServer: {
-					t: "verified-code",
-					verified: Err({ t: "verification-already-verified" }),
+					t: 'verified-code',
+					verified: Err(
+						{
+							t: 'verification-already-verified',
+						},
+					),
 				},
 			},
 		]);
 		const r = f.render(output?.model);
 		const alertError = r.getByRole(
-			"alert",
-			f.ctx.t("verify-sms-problem.verification-already-verified"),
+			'alert',
+			f.ctx.t(
+				'verify-sms-problem.verification-already-verified',
+			),
 		);
 		expect(alertError).toBeTruthy();
 	});
 
-	it("should render code sent to phone number message", async () => {
+	it('should render code sent to phone number message', async () => {
 		const phoneNumber = PhoneNumber.random();
 
 		const f = await Fixture({
 			currentRoute: {
-				n: "auth-login",
-				t: "login-sms-verify",
+				n: 'auth-login',
+				t: 'login-sms-verify',
 				phoneNumber,
 			},
 		});
 		const r = f.render(f.init);
 		const p = r.getByRole(
-			"status",
-			f.ctx.t("auth-sms.enter-code-sent-to", PhoneNumber.format(phoneNumber)),
+			'status',
+			f.ctx.t(
+				'auth-sms.enter-code-sent-to',
+				PhoneNumber.format(
+					phoneNumber,
+				),
+			),
 		);
 		expect(p).toBeTruthy();
 	});

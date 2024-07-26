@@ -1,6 +1,6 @@
-import { Flow, FlowVariant } from "../..";
-import { FlowNodeId } from "../../flow/flow-node-id";
-import { FlowTerminal } from "../../flow/flow-terminal";
+import {Flow, FlowVariant} from '../..';
+import {FlowNodeId} from '../../flow/flow-node-id';
+import {FlowTerminal} from '../../flow/flow-terminal';
 
 const isSplittingTerminal = (
 	model: FlowVariant.Model,
@@ -11,7 +11,9 @@ const isSplittingTerminal = (
 	}
 
 	const nodeIds = new Set(
-		Object.values(model.nodes).map((node) => node.nodeId),
+		Object.values(model.nodes).map(
+			(node) => node.nodeId,
+		),
 	);
 	nodeIds.delete(terminal.startId);
 	nodeIds.delete(terminal.endId);
@@ -25,19 +27,48 @@ const isSplittingTerminal = (
 
 		const pipe = model.pipesBySourceId[nodeId];
 		if (pipe && pipe.groupId === terminal.groupId) {
-			const targetId = Flow.toTargetId(model, pipe.edgeId);
-			if (targetId && targetId !== terminal.endId && !connected.has(targetId)) {
-				stack.push(targetId);
+			const targetId =
+				Flow.toTargetId(
+					model,
+					pipe.edgeId,
+				);
+			if (
+				targetId &&
+				targetId !==
+					terminal.endId &&
+				!connected.has(
+					targetId,
+				)
+			) {
+				stack.push(
+					targetId,
+				);
 			}
 		}
 
-		for (const [sourceId, sourcePipe] of Object.entries(
-			model.pipesBySourceId,
-		)) {
-			if (sourcePipe.groupId === terminal.groupId) {
-				const targetId = Flow.toTargetId(model, sourcePipe.edgeId);
-				if (targetId === nodeId && !connected.has(sourceId as FlowNodeId)) {
-					stack.push(sourceId as FlowNodeId);
+		for (const [
+			sourceId,
+			sourcePipe,
+		] of Object.entries(model.pipesBySourceId)) {
+			if (
+				sourcePipe.groupId ===
+				terminal.groupId
+			) {
+				const targetId =
+					Flow.toTargetId(
+						model,
+						sourcePipe.edgeId,
+					);
+				if (
+					targetId ===
+						nodeId &&
+					!connected.has(
+						sourceId as FlowNodeId,
+					)
+				) {
+					stack.push(
+						sourceId as FlowNodeId,
+					);
 				}
 			}
 		}
@@ -52,8 +83,12 @@ const isSplittingTerminal = (
 		if (!otherTerminal.endId) {
 			continue;
 		}
-		const startConnected = connected.has(otherTerminal.startId);
-		const endConnected = connected.has(otherTerminal.endId);
+		const startConnected = connected.has(
+			otherTerminal.startId,
+		);
+		const endConnected = connected.has(
+			otherTerminal.endId,
+		);
 		if (startConnected !== endConnected) {
 			return true;
 		}

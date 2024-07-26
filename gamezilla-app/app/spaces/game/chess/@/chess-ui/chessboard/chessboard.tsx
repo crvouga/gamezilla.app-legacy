@@ -1,6 +1,6 @@
-import { Chess } from "chess.js";
+import {Chess} from 'chess.js';
 
-import type { VDom } from "gamezilla-app/@/vdom";
+import type {VDom} from 'gamezilla-app/@/vdom';
 import {
 	type Color,
 	type Model,
@@ -11,7 +11,7 @@ import {
 	sanToSquare,
 	squareToChecker,
 	toLowercaseSquare,
-} from "../../chess";
+} from '../../chess';
 
 //
 //
@@ -21,12 +21,18 @@ import {
 //
 
 export type Chessboardinput = {
-	id: string;
-	model?: Model;
-	"draggable-pieces"?: boolean;
-	onPieceDrop?: (input: { source: Square; target: Square }) => boolean;
-	isPieceDraggable?: (input: { piece: Piece; square: Square }) => boolean;
-	orientation?: Color;
+	'id': string;
+	'model'?: Model;
+	'draggable-pieces'?: boolean;
+	'onPieceDrop'?: (input: {
+		source: Square;
+		target: Square;
+	}) => boolean;
+	'isPieceDraggable'?: (input: {
+		piece: Piece;
+		square: Square;
+	}) => boolean;
+	'orientation'?: Color;
 };
 
 //
@@ -40,15 +46,23 @@ type Checker = {
 	id: string;
 	x: number;
 	y: number;
-	color: "white" | "black";
+	color: 'white' | 'black';
 };
 
 const CHECKERS: Checker[] = [];
 
 for (let x = 0; x < 8; x++) {
 	for (let y = 0; y < 8; y++) {
-		const color = (x + y) % 2 === 0 ? "white" : "black";
-		CHECKERS.push({ id: `${x},${y}`, x, y, color });
+		const color =
+			(x + y) % 2 === 0
+				? 'white'
+				: 'black';
+		CHECKERS.push({
+			id: `${x},${y}`,
+			x,
+			y,
+			color,
+		});
 	}
 }
 
@@ -60,9 +74,9 @@ for (let x = 0; x < 8; x++) {
 //
 
 const THEME = {
-	lightChecker: "#f0d9b5",
-	darkChecker: "#b58863",
-	legalMoveDot: "green",
+	lightChecker: '#f0d9b5',
+	darkChecker: '#b58863',
+	legalMoveDot: 'green',
 };
 
 //
@@ -94,15 +108,21 @@ const instance = new Chess();
 const setVisibleDropZoneNode = (node: SVGCircleElement | null) => {
 	if (!node) {
 		if (visibleDropZoneNode) {
-			visibleDropZoneNode.setAttribute("fill", "transparent");
+			visibleDropZoneNode.setAttribute(
+				'fill',
+				'transparent',
+			);
 		}
 		visibleDropZoneNode = null;
 		return;
 	}
 
 	if (visibleDropZoneNode && visibleDropZoneNode !== node) {
-		visibleDropZoneNode.setAttribute("fill", "transparent");
-		node.setAttribute("fill", "black");
+		visibleDropZoneNode.setAttribute(
+			'fill',
+			'transparent',
+		);
+		node.setAttribute('fill', 'black');
 	}
 	visibleDropZoneNode = node;
 };
@@ -140,7 +160,10 @@ const onDragStartOrMove =
 		if (e instanceof MouseEvent) {
 			clientX = e.clientX;
 			clientY = e.clientY;
-		} else if (e instanceof TouchEvent && e.touches[0]) {
+		} else if (
+			e instanceof TouchEvent &&
+			e.touches[0]
+		) {
 			clientX = e.touches[0].clientX;
 			clientY = e.touches[0].clientY;
 		} else {
@@ -157,17 +180,27 @@ const onDragStartOrMove =
 		const scaleX = WIDTH / rect.width;
 		const scaleY = HEIGHT / rect.height;
 
-		const newX = (clientX - rect.left) * scaleX - TOUCHED_SCALED_OFFSET;
+		const newX =
+			(clientX - rect.left) * scaleX -
+			TOUCHED_SCALED_OFFSET;
 		const newY =
-			(clientY - rect.top) * scaleY - TOUCHED_SCALED_OFFSET - TOUCHED_Y_OFFSET;
+			(clientY - rect.top) * scaleY -
+			TOUCHED_SCALED_OFFSET -
+			TOUCHED_Y_OFFSET;
 
 		if (touched) {
-			touched.node.setAttribute("x", `${newX}`);
-			touched.node.setAttribute("y", `${newY}`);
+			touched.node.setAttribute(
+				'x',
+				`${newX}`,
+			);
+			touched.node.setAttribute(
+				'y',
+				`${newY}`,
+			);
 		}
 
-		updateDropZoneUI(input.orientation ?? "w");
-		showSourceCheckerUI(input.orientation ?? "w");
+		updateDropZoneUI(input.orientation ?? 'w');
+		showSourceCheckerUI(input.orientation ?? 'w');
 		setLegalMoveDotsFill(input, THEME.legalMoveDot);
 	};
 
@@ -176,11 +209,18 @@ const updateDropZoneUI = (orientation: Color) => {
 		return;
 	}
 
-	const currentX = Number.parseFloat(touched.node.getAttribute("x") || "0");
-	const currentY = Number.parseFloat(touched.node.getAttribute("y") || "0");
+	const currentX = Number.parseFloat(
+		touched.node.getAttribute('x') || '0',
+	);
+	const currentY = Number.parseFloat(
+		touched.node.getAttribute('y') || '0',
+	);
 
 	const newX = currentX + TOUCHED_SCALED_OFFSET / 2;
-	const newY = currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET;
+	const newY =
+		currentY +
+		TOUCHED_SCALED_OFFSET / 2 +
+		TOUCHED_Y_OFFSET;
 
 	const stepX = WIDTH / GRID_DIVISIONS;
 	const stepY = HEIGHT / GRID_DIVISIONS;
@@ -198,7 +238,9 @@ const updateDropZoneUI = (orientation: Color) => {
 
 	const dropzoneId = square ? toDropZoneId(square) : null;
 
-	const dropZoneNode = dropzoneId ? document.getElementById(dropzoneId) : null;
+	const dropZoneNode = dropzoneId
+		? document.getElementById(dropzoneId)
+		: null;
 
 	if (dropZoneNode instanceof SVGCircleElement) {
 		setVisibleDropZoneNode(dropZoneNode);
@@ -211,7 +253,7 @@ const setLegalMoveDotsFill = (input: Chessboardinput, fill: string) => {
 	}
 	const sourceSquare = positionToSquare(
 		touched.source,
-		input.orientation ?? "w",
+		input.orientation ?? 'w',
 	);
 	if (!sourceSquare) {
 		return;
@@ -226,7 +268,7 @@ const setLegalMoveDotsFill = (input: Chessboardinput, fill: string) => {
 		if (!(node instanceof SVGCircleElement)) {
 			continue;
 		}
-		node.setAttribute("fill", fill);
+		node.setAttribute('fill', fill);
 	}
 };
 
@@ -234,14 +276,22 @@ const showSourceCheckerUI = (orientation: Color) => {
 	if (!touched) {
 		return;
 	}
-	const sourceSquare = positionToSquare(touched.source, orientation);
-	const checkerId = sourceSquare ? toCheckerId(sourceSquare) : null;
+	const sourceSquare = positionToSquare(
+		touched.source,
+		orientation,
+	);
+	const checkerId = sourceSquare
+		? toCheckerId(sourceSquare)
+		: null;
 	const sourceCheckerNode = checkerId
 		? document.getElementById(checkerId)
 		: null;
 
 	if (sourceCheckerNode instanceof SVGRectElement) {
-		sourceCheckerNode.setAttribute("fill", "yellow");
+		sourceCheckerNode.setAttribute(
+			'fill',
+			'yellow',
+		);
 		return;
 	}
 };
@@ -250,19 +300,29 @@ const hideSourceCheckerUI = (orientation: Color) => {
 	if (!touched) {
 		return;
 	}
-	const sourceSquare = positionToSquare(touched.source, orientation);
+	const sourceSquare = positionToSquare(
+		touched.source,
+		orientation,
+	);
 
-	const checkerId = sourceSquare ? toCheckerId(sourceSquare) : null;
+	const checkerId = sourceSquare
+		? toCheckerId(sourceSquare)
+		: null;
 	const sourceCheckerNode = checkerId
 		? document.getElementById(checkerId)
 		: null;
 	const sourceCheckerColor = sourceSquare
 		? squareToChecker(sourceSquare)
 		: null;
-	if (sourceCheckerColor && sourceCheckerNode instanceof SVGRectElement) {
+	if (
+		sourceCheckerColor &&
+		sourceCheckerNode instanceof SVGRectElement
+	) {
 		sourceCheckerNode.setAttribute(
-			"fill",
-			sourceCheckerColor === "Light" ? THEME.lightChecker : THEME.darkChecker,
+			'fill',
+			sourceCheckerColor === 'Light'
+				? THEME.lightChecker
+				: THEME.darkChecker,
 		);
 		return;
 	}
@@ -273,11 +333,18 @@ const onDragEnd = (input: Chessboardinput) => () => {
 		return;
 	}
 
-	const currentX = Number.parseFloat(touched.node.getAttribute("x") || "0");
-	const currentY = Number.parseFloat(touched.node.getAttribute("y") || "0");
+	const currentX = Number.parseFloat(
+		touched.node.getAttribute('x') || '0',
+	);
+	const currentY = Number.parseFloat(
+		touched.node.getAttribute('y') || '0',
+	);
 
 	const newX = currentX + TOUCHED_SCALED_OFFSET / 2;
-	const newY = currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET;
+	const newY =
+		currentY +
+		TOUCHED_SCALED_OFFSET / 2 +
+		TOUCHED_Y_OFFSET;
 
 	const stepX = WIDTH / GRID_DIVISIONS;
 	const stepY = HEIGHT / GRID_DIVISIONS;
@@ -285,37 +352,55 @@ const onDragEnd = (input: Chessboardinput) => () => {
 	const roundedX = Math.round(newX / stepX) * stepX;
 	const roundedY = Math.round(newY / stepY) * stepY;
 
-	touched.node.setAttribute("x", `${roundedX}`);
-	touched.node.setAttribute("y", `${roundedY}`);
+	touched.node.setAttribute('x', `${roundedX}`);
+	touched.node.setAttribute('y', `${roundedY}`);
 
 	touched.node.width.baseVal.value = SCALE * 1;
 	touched.node.height.baseVal.value = SCALE * 1;
-	const source = positionToSquare(touched.source, input.orientation ?? "w");
+	const source = positionToSquare(
+		touched.source,
+		input.orientation ?? 'w',
+	);
 	const target = positionToSquare(
 		{
 			x: Math.floor(roundedX / stepX),
 			y: Math.floor(roundedY / stepY),
 		},
-		input.orientation ?? "w",
+		input.orientation ?? 'w',
 	);
 
 	if (input.onPieceDrop && source && target) {
-		const isValidDrop = input.onPieceDrop({ source, target });
+		const isValidDrop = input.onPieceDrop({
+			source,
+			target,
+		});
 
 		if (!isValidDrop) {
-			touched.node.setAttribute("x", `${touched.source.x}`);
-			touched.node.setAttribute("y", `${touched.source.y}`);
+			touched.node.setAttribute(
+				'x',
+				`${touched.source.x}`,
+			);
+			touched.node.setAttribute(
+				'y',
+				`${touched.source.y}`,
+			);
 		}
 	}
 
 	if (!target) {
-		touched.node.setAttribute("x", `${touched.source.x}`);
-		touched.node.setAttribute("y", `${touched.source.y}`);
+		touched.node.setAttribute(
+			'x',
+			`${touched.source.x}`,
+		);
+		touched.node.setAttribute(
+			'y',
+			`${touched.source.y}`,
+		);
 	}
 
-	hideSourceCheckerUI(input.orientation ?? "w");
+	hideSourceCheckerUI(input.orientation ?? 'w');
 	setVisibleDropZoneNode(null);
-	setLegalMoveDotsFill(input, "none");
+	setLegalMoveDotsFill(input, 'none');
 
 	touched = null;
 };
@@ -323,13 +408,13 @@ const onDragEnd = (input: Chessboardinput) => () => {
 const onPieceDragStart =
 	(input: {
 		input: Chessboardinput;
-		source: { x: number; y: number };
+		source: {x: number; y: number};
 		piece: Piece;
 	}) =>
 	(e: MouseEvent | TouchEvent) => {
 		const square = positionToSquare(
 			input.source,
-			input.input.orientation ?? "w",
+			input.input.orientation ?? 'w',
 		);
 
 		if (!square) {
@@ -338,7 +423,10 @@ const onPieceDragStart =
 
 		if (
 			input.input.isPieceDraggable &&
-			!input.input.isPieceDraggable({ square, piece: input.piece })
+			!input.input.isPieceDraggable({
+				square,
+				piece: input.piece,
+			})
 		) {
 			return;
 		}
@@ -350,13 +438,21 @@ const onPieceDragStart =
 
 		target.width.baseVal.value = TOUCHED_SCALED;
 		target.height.baseVal.value = TOUCHED_SCALED;
-		touched = { node: target, piece: input.piece, source: input.source };
+		touched = {
+			node: target,
+			piece: input.piece,
+			source: input.source,
+		};
 
 		// make sure piece is rendered on top of other pieces
 		if (touched?.node?.parentNode) {
-			touched.node.parentNode.appendChild(touched.node);
+			touched.node.parentNode.appendChild(
+				touched.node,
+			);
 		}
-		updateDropZoneUI(input.input.orientation ?? "w");
+		updateDropZoneUI(
+			input.input.orientation ?? 'w',
+		);
 	};
 
 const toDropZoneId = (square: Square) => {
@@ -372,13 +468,19 @@ const toLegalMoveDotId = (square: Square) => {
 };
 
 const onDragCancel = (input: Chessboardinput) => () => {
-	hideSourceCheckerUI(input.orientation ?? "w");
+	hideSourceCheckerUI(input.orientation ?? 'w');
 	setVisibleDropZoneNode(null);
-	setLegalMoveDotsFill(input, "none");
+	setLegalMoveDotsFill(input, 'none');
 
 	if (touched) {
-		touched.node.setAttribute("x", `${touched.source.x}`);
-		touched.node.setAttribute("y", `${touched.source.y}`);
+		touched.node.setAttribute(
+			'x',
+			`${touched.source.x}`,
+		);
+		touched.node.setAttribute(
+			'y',
+			`${touched.source.y}`,
+		);
 		touched.node.width.baseVal.value = SCALE * 1;
 		touched.node.height.baseVal.value = SCALE * 1;
 	}
@@ -388,7 +490,11 @@ const onDragCancel = (input: Chessboardinput) => () => {
 
 export const Chessboard = (input: Chessboardinput) => {
 	const pieces = input.model?.fen
-		? fenToPieces(input.model.fen, input.orientation ?? "w")
+		? fenToPieces(
+				input.model.fen,
+				input.orientation ??
+					'w',
+		  )
 		: [];
 
 	if (input.model?.fen) {
@@ -405,127 +511,277 @@ export const Chessboard = (input: Chessboardinput) => {
 			}}
 			className="touch-none select-none overflow-visible"
 			preserveAspectRatio="xMinYMin meet"
-			onMouseLeave={onDragCancel(input)}
-			onTouchCancel={onDragCancel(input)}
+			onMouseLeave={onDragCancel(
+				input,
+			)}
+			onTouchCancel={onDragCancel(
+				input,
+			)}
 			// @ts-ignore
-			onTouchStart={onDragStartOrMove(input)}
+			onTouchStart={onDragStartOrMove(
+				input,
+			)}
 			// @ts-ignore
-			onMouseDown={onDragStartOrMove(input)}
+			onMouseDown={onDragStartOrMove(
+				input,
+			)}
 			// @ts-ignore
-			onTouchMove={onDragStartOrMove(input)}
+			onTouchMove={onDragStartOrMove(
+				input,
+			)}
 			// @ts-ignore
-			onMouseMove={onDragStartOrMove(input)}
+			onMouseMove={onDragStartOrMove(
+				input,
+			)}
 			//
 			onTouchEnd={onDragEnd(input)}
 			onMouseUp={onDragEnd(input)}
 		>
 			<g>
-				{CHECKERS.map((checker) => {
-					const square = positionToSquare(checker, input.orientation ?? "w");
-					return (
-						<rect
-							key={checker.id}
-							id={square ? toCheckerId(square) : undefined}
-							x={checker.x * SCALE}
-							y={checker.y * SCALE}
-							width={SCALE * 1}
-							height={SCALE * 1}
-							stroke="none"
-							fill={
-								input.model?.previousMove?.from === square
-									? "orange"
-									: input.model?.previousMove?.to === square
-										? "yellow"
-										: checker.color === "white"
-											? THEME.lightChecker
-											: THEME.darkChecker
-							}
-						/>
-					);
-				})}
+				{CHECKERS.map(
+					(
+						checker,
+					) => {
+						const square =
+							positionToSquare(
+								checker,
+								input.orientation ??
+									'w',
+							);
+						return (
+							<rect
+								key={
+									checker.id
+								}
+								id={
+									square
+										? toCheckerId(
+												square,
+										  )
+										: undefined
+								}
+								x={
+									checker.x *
+									SCALE
+								}
+								y={
+									checker.y *
+									SCALE
+								}
+								width={
+									SCALE *
+									1
+								}
+								height={
+									SCALE *
+									1
+								}
+								stroke="none"
+								fill={
+									input
+										.model
+										?.previousMove
+										?.from ===
+									square
+										? 'orange'
+										: input
+												.model
+												?.previousMove
+												?.to ===
+										  square
+										? 'yellow'
+										: checker.color ===
+										  'white'
+										? THEME.lightChecker
+										: THEME.darkChecker
+								}
+							/>
+						);
+					},
+				)}
 			</g>
 
 			{/* legal moves */}
 			<g>
-				{CHECKERS.map((checker) => {
-					const square = positionToSquare(checker, input.orientation ?? "w");
-					return (
-						<circle
-							key={checker.id}
-							id={square ? toLegalMoveDotId(square) : undefined}
-							cx={checker.x * SCALE + SCALE / 2}
-							cy={checker.y * SCALE + SCALE / 2}
-							className="pointer-events-none"
-							r={(SCALE * 1) / 4}
-							fillOpacity="0.5"
-							fill="none"
-						/>
-					);
-				})}
+				{CHECKERS.map(
+					(
+						checker,
+					) => {
+						const square =
+							positionToSquare(
+								checker,
+								input.orientation ??
+									'w',
+							);
+						return (
+							<circle
+								key={
+									checker.id
+								}
+								id={
+									square
+										? toLegalMoveDotId(
+												square,
+										  )
+										: undefined
+								}
+								cx={
+									checker.x *
+										SCALE +
+									SCALE /
+										2
+								}
+								cy={
+									checker.y *
+										SCALE +
+									SCALE /
+										2
+								}
+								className="pointer-events-none"
+								r={
+									(SCALE *
+										1) /
+									4
+								}
+								fillOpacity="0.5"
+								fill="none"
+							/>
+						);
+					},
+				)}
 			</g>
 
 			{/* drop zone */}
 			<g>
-				{CHECKERS.map((checker) => {
-					const square = positionToSquare(checker, input.orientation ?? "w");
-					return (
-						<circle
-							key={checker.id}
-							id={square ? toDropZoneId(square) : undefined}
-							cx={checker.x * SCALE + SCALE / 2}
-							cy={checker.y * SCALE + SCALE / 2}
-							className="pointer-events-none"
-							r={SCALE * 1.25}
-							fillOpacity="0.2"
-							fill="none"
-						/>
-					);
-				})}
+				{CHECKERS.map(
+					(
+						checker,
+					) => {
+						const square =
+							positionToSquare(
+								checker,
+								input.orientation ??
+									'w',
+							);
+						return (
+							<circle
+								key={
+									checker.id
+								}
+								id={
+									square
+										? toDropZoneId(
+												square,
+										  )
+										: undefined
+								}
+								cx={
+									checker.x *
+										SCALE +
+									SCALE /
+										2
+								}
+								cy={
+									checker.y *
+										SCALE +
+									SCALE /
+										2
+								}
+								className="pointer-events-none"
+								r={
+									SCALE *
+									1.25
+								}
+								fillOpacity="0.2"
+								fill="none"
+							/>
+						);
+					},
+				)}
 			</g>
 
 			{/* pieces */}
 			<g>
-				{pieces?.map(({ piece, x, y }) => {
-					return (
-						<svg
-							key={[piece, x, y, input.model?.fen].join(",")}
-							x={SCALE * x}
-							y={SCALE * y}
-							width={SCALE * 1}
-							height={SCALE * 1}
-							// @ts-ignore
-							onMouseDown={onPieceDragStart({
-								input,
-								piece,
-								source: { x, y },
-							})}
-							// @ts-ignore
-							onTouchStart={onPieceDragStart({
-								input,
-								piece,
-								source: { x, y },
-							})}
-							viewBox="0 0 45 45"
-						>
-							<rect
-								fill="transparent"
-								stroke="transparent"
-								x="0"
-								y="0"
-								width="100%"
-								height="100%"
-							/>
+				{pieces?.map(
+					({
+						piece,
+						x,
+						y,
+					}) => {
+						return (
+							<svg
+								key={[
+									piece,
+									x,
+									y,
+									input
+										.model
+										?.fen,
+								].join(
+									',',
+								)}
+								x={
+									SCALE *
+									x
+								}
+								y={
+									SCALE *
+									y
+								}
+								width={
+									SCALE *
+									1
+								}
+								height={
+									SCALE *
+									1
+								}
+								// @ts-ignore
+								onMouseDown={onPieceDragStart(
+									{
+										input,
+										piece,
+										source: {
+											x,
+											y,
+										},
+									},
+								)}
+								// @ts-ignore
+								onTouchStart={onPieceDragStart(
+									{
+										input,
+										piece,
+										source: {
+											x,
+											y,
+										},
+									},
+								)}
+								viewBox="0 0 45 45"
+							>
+								<rect
+									fill="transparent"
+									stroke="transparent"
+									x="0"
+									y="0"
+									width="100%"
+									height="100%"
+								/>
 
-							{renderPiece[piece]()}
-						</svg>
-					);
-				})}
+								{renderPiece[
+									piece
+								]()}
+							</svg>
+						);
+					},
+				)}
 			</g>
 		</svg>
 	);
 };
 
-const renderPiece: { [piece in Piece]: () => VDom } = {
+const renderPiece: {[piece in Piece]: () => VDom} = {
 	wK: () => (
 		<g
 			// @ts-ignore
@@ -811,11 +1067,31 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 				// @ts-ignore
 				style="fill:#000000; stroke:none;"
 			>
-				<circle cx="6" cy="12" r="2.75" />
-				<circle cx="14" cy="9" r="2.75" />
-				<circle cx="22.5" cy="8" r="2.75" />
-				<circle cx="31" cy="9" r="2.75" />
-				<circle cx="39" cy="12" r="2.75" />
+				<circle
+					cx="6"
+					cy="12"
+					r="2.75"
+				/>
+				<circle
+					cx="14"
+					cy="9"
+					r="2.75"
+				/>
+				<circle
+					cx="22.5"
+					cy="8"
+					r="2.75"
+				/>
+				<circle
+					cx="31"
+					cy="9"
+					r="2.75"
+				/>
+				<circle
+					cx="39"
+					cy="12"
+					r="2.75"
+				/>
 			</g>
 			<path
 				d="M 9,26 C 17.5,24.5 30,24.5 36,26 L 38.5,13.5 L 31,25 L 30.7,10.9 L 25.5,24.5 L 22.5,10 L 19.5,24.5 L 14.3,10.9 L 14,25 L 6.5,13.5 L 9,26 z"

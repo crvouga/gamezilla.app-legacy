@@ -1,24 +1,28 @@
-import type { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
-import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import type { IWireMsgDb } from "./wire-msg-db";
+import type {IDbConnKv} from 'gamezilla-app/app/@/server/db-conn-kv';
+import type {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
+import type {IWireMsgDb} from './wire-msg-db';
 
 export type Impl =
 	| {
-			t: "db-conn-kv";
+			t: 'db-conn-kv';
 			dbConnKv: IDbConnKv;
 	  }
 	| {
-			t: "db-sql";
+			t: 'db-sql';
 			dbConnSql: IDbConnSql;
 	  };
 
 export const WireMsgDb = <TMsg>(impl: Impl): IWireMsgDb<TMsg> => {
 	switch (impl.t) {
-		case "db-conn-kv": {
-			throw new Error("not implemented");
+		case 'db-conn-kv': {
+			throw new Error(
+				'not implemented',
+			);
 		}
-		case "db-sql": {
-			throw new Error("not implemented");
+		case 'db-sql': {
+			throw new Error(
+				'not implemented',
+			);
 		}
 	}
 };

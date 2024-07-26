@@ -4,14 +4,21 @@ export const SwiperDots = (input: {
 }) => {
 	return (
 		<div>
-			{range(input.slideCount).map((index) => (
-				<div
-					key={index}
-					className={`w-2 h-2 rounded-full mx-1 bg-gray-300 ${
-						input.activeIndex === index ? "bg-gray-500" : ""
-					}`}
-				/>
-			))}
+			{range(input.slideCount).map(
+				(index) => (
+					<div
+						key={
+							index
+						}
+						className={`mx-1 h-2 w-2 rounded-full bg-gray-300 ${
+							input.activeIndex ===
+							index
+								? 'bg-gray-500'
+								: ''
+						}`}
+					/>
+				),
+			)}
 		</div>
 	);
 };

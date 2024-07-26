@@ -1,4 +1,4 @@
-import type { ResultPrivate } from "../../result/result";
+import type {ResultPrivate} from '../../result/result';
 
 export type ParserError = {
 	message: string;

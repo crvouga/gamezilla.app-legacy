@@ -1,6 +1,6 @@
-import { Eff, type Sub } from "gamezilla-app/@/core";
-import { Msg } from "gamezilla-app/@/core/msg";
-import type { VDom } from "gamezilla-app/@/vdom";
+import {Eff, type Sub} from 'gamezilla-app/@/core';
+import {Msg} from 'gamezilla-app/@/core/msg';
+import type {VDom} from 'gamezilla-app/@/vdom';
 
 //
 //
@@ -64,11 +64,11 @@ type EmitInputTypes = {
 	[key: string]: unknown;
 };
 type SlotRenderFunctions<Slots> = Slots extends SlotInputTypes
-	? { [K in keyof Slots]: (input: Slots[K]) => VDom }
+	? {[K in keyof Slots]: (input: Slots[K]) => VDom}
 	: {};
 
 type EmitFunctions<Emits> = Emits extends EmitInputTypes
-	? { [K in keyof Emits]: (input: Emits[K]) => void }
+	? {[K in keyof Emits]: (input: Emits[K]) => void}
 	: {};
 //
 //
@@ -80,27 +80,27 @@ export type Input<T extends AppClientModuleTypes> = {
 	/**
 	 * `ctx` is data passed down from parent modules
 	 */
-	ctx: T["Ctx"];
+	ctx: T['Ctx'];
 	/**
 	 * `model` is the current state of the module
 	 */
-	model: T["Model"];
+	model: T['Model'];
 	/**
 	 * `msg` is an event that happens client side within this module. Like `user-clicked-a-button`
 	 */
-	msg?: T["Msg"] | null;
+	msg?: T['Msg'] | null;
 	/**
 	 * `msgServer` is a message from the server
 	 */
-	msgServer?: T["MsgToClient"] | null;
+	msgServer?: T['MsgToClient'] | null;
 	/**
 	 * `msgEvt` is an event that happen in another module. Like `user-logged-out`, `route-changed`
 	 */
-	msgEvt?: T["MsgEvtIn"] | null;
+	msgEvt?: T['MsgEvtIn'] | null;
 	/**
 	 * `msgCmd` is a command to sent from another module. Like `show-toast`, `logout`
 	 */
-	msgCmd?: T["MsgCmdIn"] | null;
+	msgCmd?: T['MsgCmdIn'] | null;
 };
 
 //
@@ -113,19 +113,19 @@ export type Output<T extends AppClientModuleTypes> = {
 	/**
 	 * `model` will be the new state of the module
 	 */
-	model: T["Model"];
+	model: T['Model'];
 	/**
 	 * `eff` is a side effect to be performed. May dispatch a message
 	 */
-	eff?: Eff<T["Msg"]>;
+	eff?: Eff<T['Msg']>;
 	/**
 	 * `msgCmd` is a message to send to another module
 	 */
-	msgCmd?: T["MsgCmdOut"][];
+	msgCmd?: T['MsgCmdOut'][];
 	/**
 	 * `msgEvt` is a message to notify other modules
 	 */
-	msgEvt?: T["MsgEvtOut"][];
+	msgEvt?: T['MsgEvtOut'][];
 };
 
 /**
@@ -136,7 +136,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
 	 * `init` is the initial state of the module
 	 */
 	init: (input: {
-		ctx: T["Ctx"];
+		ctx: T['Ctx'];
 		stored?: Record<string, unknown> | null;
 	}) => Output<T>;
 
@@ -148,23 +148,26 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
 	/**
 	 * `subscriptions` is dispatches msgs specific to the module
 	 */
-	subscriptions: (input: { ctx: T["Ctx"]; model: T["Model"] }) => Sub<T["Msg"]>;
+	subscriptions: (input: {
+		ctx: T['Ctx'];
+		model: T['Model'];
+	}) => Sub<T['Msg']>;
 
 	/**
 	 * `View` is for rendering the UI for the module
 	 */
 	View: (input: {
-		ctx: T["Ctx"];
-		model: T["Model"];
-		dispatch: (msg: T["Msg"]) => void;
-		slots?: SlotRenderFunctions<T["ViewSlot"]>;
-		emits?: EmitFunctions<T["ViewEmit"]>;
+		ctx: T['Ctx'];
+		model: T['Model'];
+		dispatch: (msg: T['Msg']) => void;
+		slots?: SlotRenderFunctions<T['ViewSlot']>;
+		emits?: EmitFunctions<T['ViewEmit']>;
 	}) => VDom;
 };
 
 export const andThen = <T extends AppClientModuleTypes>(
 	acc: Output<T>,
-	...updates: ((model: T["Model"]) => Output<T>)[]
+	...updates: ((model: T['Model']) => Output<T>)[]
 ): Output<T> => {
 	for (const update of updates) {
 		const updated = update(acc.model);
@@ -173,9 +176,18 @@ export const andThen = <T extends AppClientModuleTypes>(
 				...acc.model,
 				...updated.model,
 			},
-			eff: Eff.batch(acc.eff, updated.eff),
-			msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-			msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+			eff: Eff.batch(
+				acc.eff,
+				updated.eff,
+			),
+			msgCmd: Msg.batch(
+				acc.msgCmd,
+				updated.msgCmd,
+			),
+			msgEvt: Msg.batch(
+				acc.msgEvt,
+				updated.msgEvt,
+			),
 		};
 	}
 	return acc;

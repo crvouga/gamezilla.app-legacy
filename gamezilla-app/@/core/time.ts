@@ -1,8 +1,8 @@
-import type { Eff } from "./eff";
-import type { IO } from "./io";
-import { Posix } from "./posix";
-import { PubSub, Sub } from "./sub";
-import { TimeSpan } from "./time-span";
+import type {Eff} from './eff';
+import type {IO} from './io';
+import {Posix} from './posix';
+import {PubSub, Sub} from './sub';
+import {TimeSpan} from './time-span';
 
 //
 //
@@ -15,7 +15,9 @@ import { TimeSpan } from "./time-span";
 const delay =
 	<TMsg>(timeout: number, msg?: TMsg): IO<TMsg | null> =>
 	async () => {
-		await new Promise((resolve) => setTimeout(resolve, timeout));
+		await new Promise((resolve) =>
+			setTimeout(resolve, timeout),
+		);
 		return msg ?? null;
 	};
 
@@ -40,7 +42,9 @@ const startTimeout = <Msg>(
 		setTimeout(() => {
 			if (timeouts.has(timeoutId)) {
 				dispatch(msg);
-				timeouts.delete(timeoutId);
+				timeouts.delete(
+					timeoutId,
+				);
 				return;
 			}
 
@@ -102,9 +106,15 @@ const interval = <Msg>(
 
 	return {
 		sub(subscriber) {
-			const unsub = subNew.sub((msg) => {
-				subscriber(f(msg));
-			});
+			const unsub = subNew.sub(
+				(msg) => {
+					subscriber(
+						f(
+							msg,
+						),
+					);
+				},
+			);
 			return () => {
 				unsub();
 			};

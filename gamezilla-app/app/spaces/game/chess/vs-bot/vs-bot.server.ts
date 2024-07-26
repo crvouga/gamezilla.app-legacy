@@ -1,10 +1,10 @@
-import { Eff, Sub, pipe } from "gamezilla-app/@/core";
+import {Eff, Sub, pipe} from 'gamezilla-app/@/core';
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import { Chess } from "../@/chess";
+} from 'gamezilla-app/app/spaces/@/space';
+import type {SpaceServerCmd} from 'gamezilla-app/app/spaces/@/space-server-cmd';
+import {Chess} from '../@/chess';
 import {
 	botMoved,
 	initServer,
@@ -13,7 +13,7 @@ import {
 	type MsgServer,
 	type MsgToClient,
 	type MsgToServer,
-} from "./vs-bot.types";
+} from './vs-bot.types';
 
 //
 //
@@ -48,18 +48,29 @@ export const update = ({
 	eff?: Eff<Msg>;
 	msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
-	if (msg.t === "bot-moved") {
+	if (msg.t === 'bot-moved') {
 		const result = botMoved(msg.moved, model);
 
-		const modelNew = result.t === "err" ? model : result.value;
+		const modelNew =
+			result.t === 'err'
+				? model
+				: result.value;
 
 		return {
 			model: modelNew,
-			msgCmd: [{ t: "send-to-space", msg: { t: "bot-moved", result } }],
+			msgCmd: [
+				{
+					t: 'send-to-space',
+					msg: {
+						t: 'bot-moved',
+						result,
+					},
+				},
+			],
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
 export const updateFromClient = (input: {
@@ -75,29 +86,44 @@ export const updateFromClient = (input: {
 
 	return {
 		...updated,
-		eff: Eff.batch([updated.eff, toBotMoveEff(input.model, updated.model)]),
+		eff: Eff.batch([
+			updated.eff,
+			toBotMoveEff(
+				input.model,
+				updated.model,
+			),
+		]),
 	};
 };
 
 const toBotMoveEff = (modelPrev: Model, modelNext: Model): Eff<Msg> => {
-	const didChangeToBotTurn = !isBotTurn(modelPrev) && isBotTurn(modelNext);
+	const didChangeToBotTurn =
+		!isBotTurn(modelPrev) && isBotTurn(modelNext);
 
 	if (!didChangeToBotTurn) {
 		return Eff.None;
 	}
-	if (modelNext.type !== "game") {
+	if (modelNext.type !== 'game') {
 		return Eff.None;
 	}
 
 	const eff = pipe(
-		Chess.getBestMove(modelNext.botLevel, modelNext.board),
-		Eff.perform((moved): Msg => ({ t: "bot-moved", moved })),
+		Chess.getBestMove(
+			modelNext.botLevel,
+			modelNext.board,
+		),
+		Eff.perform(
+			(moved): Msg => ({
+				t: 'bot-moved',
+				moved,
+			}),
+		),
 	);
 
 	return eff;
 };
 
-const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+const updateFromClientMain: typeof updateFromClient = ({model}) => {
 	// const handled = updateCore({ msg, model });
 
 	// const modelNew: Model = handled.t === "err" ? model : handled.value;
@@ -106,7 +132,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 	//   model: modelNew,
 	//   msgCmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
 	// };
-	return { model };
+	return {model};
 };
 
 export const updateFromEvent = ({
@@ -120,10 +146,10 @@ export const updateFromEvent = ({
 	msgCmd?: SpaceServerCmd<MsgToClient>[];
 	eff?: Eff;
 } => {
-	if (msg.t === "space/user-left-space") {
+	if (msg.t === 'space/user-left-space') {
 		if (model.userId === msg.userId) {
 			const modelNew: Model = {
-				type: "setup",
+				type: 'setup',
 				botLevel: model.botLevel,
 				userColor: model.userColor,
 				userId: null,
@@ -132,16 +158,19 @@ export const updateFromEvent = ({
 				model: modelNew,
 				msgCmd: [
 					{
-						t: "send-to-space",
-						msg: { t: "player-left", model: modelNew },
+						t: 'send-to-space',
+						msg: {
+							t: 'player-left',
+							model: modelNew,
+						},
 					},
 				],
 			};
 		}
-		return { model };
+		return {model};
 	}
 
-	return { model };
+	return {model};
 };
 
 //

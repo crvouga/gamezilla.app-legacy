@@ -1,2 +1,2 @@
-export * from "./verification-attempt-db-impl";
-export * from "./verification-attempt-db";
+export * from './verification-attempt-db-impl';
+export * from './verification-attempt-db';

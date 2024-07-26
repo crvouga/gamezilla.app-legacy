@@ -1,6 +1,6 @@
-import { p } from "../core/parser";
+import {p} from '../core/parser';
 
-const parser = p.brand(p.str, "HashValue");
+const parser = p.brand(p.str, 'HashValue');
 
 export type HashValue = p.Infer<typeof parser>;
 

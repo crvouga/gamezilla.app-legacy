@@ -1,17 +1,17 @@
-import { Uuid } from "gamezilla-app/@/core";
-import type { Brand } from "gamezilla-app/@/core/brand";
-import { p } from "gamezilla-app/@/core/parser";
+import {Uuid} from 'gamezilla-app/@/core';
+import type {Brand} from 'gamezilla-app/@/core/brand';
+import {p} from 'gamezilla-app/@/core/parser';
 
-export type FlowPuzzleId = Brand<string, "FlowPuzzleId">;
+export type FlowPuzzleId = Brand<string, 'FlowPuzzleId'>;
 
-const namespace = "flow-puzzle";
-const separator = ":";
+const namespace = 'flow-puzzle';
+const separator = ':';
 
 const is = (flowPuzzleId: unknown): flowPuzzleId is FlowPuzzleId => {
-	return typeof flowPuzzleId === "string";
+	return typeof flowPuzzleId === 'string';
 };
 
-const parser = p.custom(is, "Invalid flow puzzle id");
+const parser = p.custom(is, 'Invalid flow puzzle id');
 
 const generate = () => {
 	const id = Uuid.generate();
@@ -21,7 +21,7 @@ const generate = () => {
 		return flowPuzzleId;
 	}
 
-	throw new Error("impossible condition. generated invalid id.");
+	throw new Error('impossible condition. generated invalid id.');
 };
 
 export const FlowPuzzleId = {

@@ -1,6 +1,6 @@
-import { Uuid } from "gamezilla-app/@/core";
-import type { PlayerType } from "../connect-four";
-import { gameTheme } from "./shared";
+import {Uuid} from 'gamezilla-app/@/core';
+import type {PlayerType} from '../connect-four';
+import {gameTheme} from './shared';
 
 export const PlayerIcon = ({
 	playerType,
@@ -11,12 +11,20 @@ export const PlayerIcon = ({
 	className?: string;
 }) => {
 	switch (playerType) {
-		case "player-one": {
-			return <PlayerOneIcon {...input} />;
+		case 'player-one': {
+			return (
+				<PlayerOneIcon
+					{...input}
+				/>
+			);
 		}
 
-		case "player-two": {
-			return <PlayerTwoIcon {...input} />;
+		case 'player-two': {
+			return (
+				<PlayerTwoIcon
+					{...input}
+				/>
+			);
 		}
 	}
 };
@@ -40,8 +48,24 @@ export const ViewPlayerOneGradientDef = ({
 			cy={cy}
 			r={r}
 		>
-			<stop offset="50%" stopColor={gameTheme["player-one"].light} />
-			<stop offset="100%" stopColor={gameTheme["player-one"].dark} />
+			<stop
+				offset="50%"
+				stopColor={
+					gameTheme[
+						'player-one'
+					]
+						.light
+				}
+			/>
+			<stop
+				offset="100%"
+				stopColor={
+					gameTheme[
+						'player-one'
+					]
+						.dark
+				}
+			/>
 		</radialGradient>
 	);
 };
@@ -52,29 +76,69 @@ export const ViewPlayerTwoGradientDef = ({
 	gradientId: string;
 }) => {
 	return (
-		<radialGradient id={gradientId} gradientTransform="rotate(90)">
-			<stop offset="50%" stopColor={gameTheme["player-two"].light} />
-			<stop offset="100%" stopColor={gameTheme["player-two"].dark} />
+		<radialGradient
+			id={gradientId}
+			gradientTransform="rotate(90)"
+		>
+			<stop
+				offset="50%"
+				stopColor={
+					gameTheme[
+						'player-two'
+					]
+						.light
+				}
+			/>
+			<stop
+				offset="100%"
+				stopColor={
+					gameTheme[
+						'player-two'
+					]
+						.dark
+				}
+			/>
 		</radialGradient>
 	);
 };
 
-export const PlayerOneIcon = (input: { key?: string; className?: string }) => {
+export const PlayerOneIcon = (input: {key?: string; className?: string}) => {
 	const playerOneId = Uuid.generate();
 	return (
 		<svg viewBox="-1 -1 2 2" {...input}>
-			<ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={playerOneId} />
-			<circle cx={0} cy={0} r={1} fill={`url(#${playerOneId})`} />
+			<ViewPlayerOneGradientDef
+				cx={0}
+				cy={0}
+				r={1}
+				gradientId={
+					playerOneId
+				}
+			/>
+			<circle
+				cx={0}
+				cy={0}
+				r={1}
+				fill={`url(#${playerOneId})`}
+			/>
 		</svg>
 	);
 };
 
-export const PlayerTwoIcon = (input: { key?: string; className?: string }) => {
+export const PlayerTwoIcon = (input: {key?: string; className?: string}) => {
 	const playerTwoId = Uuid.generate();
 	return (
 		<svg viewBox="-1 -1 2 2" {...input}>
-			<ViewPlayerTwoGradientDef gradientId={playerTwoId} />
-			<circle cx={0} cy={0} r={1} fill={`url(#${playerTwoId})`} />
+			<ViewPlayerTwoGradientDef
+				gradientId={
+					playerTwoId
+				}
+			/>
+			<circle
+				cx={0}
+				cy={0}
+				r={1}
+				fill={`url(#${playerTwoId})`}
+			/>
 		</svg>
 	);
 };

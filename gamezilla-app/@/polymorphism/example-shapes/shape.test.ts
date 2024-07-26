@@ -1,36 +1,46 @@
-import { expect, it, describe } from "bun:test";
-import { area, perimeter, volume } from "./shape";
-import { Circle } from "./shape-circle";
-import { Octagon } from "./shape-octagon";
-import { Rect } from "./shape-rect";
-import { Sphere } from "./shape-sphere";
+import {expect, it, describe} from 'bun:test';
+import {area, perimeter, volume} from './shape';
+import {Circle} from './shape-circle';
+import {Octagon} from './shape-octagon';
+import {Rect} from './shape-rect';
+import {Sphere} from './shape-sphere';
 
-const shapes3D = [Sphere({ radius: 5 })];
+const shapes3D = [Sphere({radius: 5})];
 
 const shapes2D = [
-	Circle({ radius: 5 }),
-	Circle({ radius: 10 }),
-	Octagon({ side: 5 }),
-	Rect({ width: 5, height: 20 }),
-	Rect({ width: 10, height: 20 }),
+	Circle({radius: 5}),
+	Circle({radius: 10}),
+	Octagon({side: 5}),
+	Rect({width: 5, height: 20}),
+	Rect({width: 10, height: 20}),
 ];
 
 describe(import.meta.file, () => {
-	it("area", async () => {
+	it('area', async () => {
 		for (const shape of shapes2D) {
-			expect(typeof area(shape)).toBe("number");
+			expect(typeof area(shape)).toBe(
+				'number',
+			);
 		}
 	});
 
-	it("perimeter", async () => {
+	it('perimeter', async () => {
 		for (const shape of shapes2D) {
-			expect(typeof perimeter(shape)).toBe("number");
+			expect(
+				typeof perimeter(
+					shape,
+				),
+			).toBe('number');
 		}
 	});
 
-	it("volume", async () => {
+	it('volume', async () => {
 		for (const shape of shapes3D) {
-			expect(typeof volume(shape)).toBe("number");
+			expect(
+				typeof volume(
+					shape,
+				),
+			).toBe('number');
 		}
 	});
 });

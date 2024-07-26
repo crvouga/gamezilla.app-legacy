@@ -1,5 +1,5 @@
-import { Eff, batchMsgs, type Sub } from "gamezilla-app/@/core";
-import type { ClientId, SessionId, UserId } from "gamezilla-app/app/@/data";
+import {Eff, batchMsgs, type Sub} from 'gamezilla-app/@/core';
+import type {ClientId, SessionId, UserId} from 'gamezilla-app/app/@/data';
 
 //
 //
@@ -60,24 +60,24 @@ export type Input<T extends AppServerModuleTypes> = {
 	/**
 	 * `deps` are the dependencies of the module
 	 */
-	deps: T["Deps"];
+	deps: T['Deps'];
 	/**
 	 * `ctx` is data passed down from parent modules
 	 */
-	ctx: T["Ctx"];
+	ctx: T['Ctx'];
 	/**
 	 * `model` is the current state of the module
 	 */
-	model: T["Model"];
+	model: T['Model'];
 	/**
 	 *
 	 */
-	msg?: T["Msg"] | null;
+	msg?: T['Msg'] | null;
 	/**
 	 *
 	 */
 	msgClient?:
-		| (T["MsgToServer"] & {
+		| (T['MsgToServer'] & {
 				clientId: ClientId;
 				sessionId: SessionId;
 				userId?: UserId | null;
@@ -86,11 +86,11 @@ export type Input<T extends AppServerModuleTypes> = {
 	/**
 	 *
 	 */
-	msgEvt?: T["MsgEvtIn"] | null;
+	msgEvt?: T['MsgEvtIn'] | null;
 	/**
 	 *
 	 */
-	msgCmd?: T["MsgCmdIn"] | null;
+	msgCmd?: T['MsgCmdIn'] | null;
 };
 
 //
@@ -103,32 +103,32 @@ export type Output<T extends AppServerModuleTypes> = {
 	/**
 	 * `model` will be the new state of the module
 	 */
-	model: T["Model"];
+	model: T['Model'];
 	/**
 	 * `eff` is a side effect to be performed. May dispatch a message
 	 */
-	eff?: Eff<T["Msg"]>;
+	eff?: Eff<T['Msg']>;
 	/**
 	 *
 	 */
-	msgCmd?: T["MsgCmdOut"][];
+	msgCmd?: T['MsgCmdOut'][];
 	/**
 	 *
 	 */
-	msgEvt?: T["MsgEvtOut"][];
+	msgEvt?: T['MsgEvtOut'][];
 };
 
 /**
  * `AppServerModule` represents a server side app module
  */
 export type AppServerModule<T extends AppServerModuleTypes> = {
-	getDeps: (input: { ctx: T["Ctx"] }) => Promise<T["Deps"]>;
+	getDeps: (input: {ctx: T['Ctx']}) => Promise<T['Deps']>;
 	/**
 	 * `init` is the initial state of the module
 	 */
 	init: (input: {
-		ctx: T["Ctx"];
-		stored?: T["Model"] | null;
+		ctx: T['Ctx'];
+		stored?: T['Model'] | null;
 	}) => Promise<Output<T>>;
 
 	/**
@@ -140,34 +140,43 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
 	 * `subscriptions` is dispatches msgs specific to the module
 	 */
 	subscriptions: (input: {
-		ctx: T["Ctx"];
-		model: T["Model"];
-		deps: T["Deps"];
-	}) => Promise<Sub<T["Msg"]>>;
+		ctx: T['Ctx'];
+		model: T['Model'];
+		deps: T['Deps'];
+	}) => Promise<Sub<T['Msg']>>;
 };
 
 type MaybePromise<T> = T | Promise<T>;
 
 const andThen = async <T extends AppServerModuleTypes>(
 	accPromise: MaybePromise<Output<T>>,
-	...updates: ((model: T["Model"]) => MaybePromise<Output<T>>)[]
+	...updates: ((model: T['Model']) => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
 	let acc = await accPromise;
 	for (const update of updates) {
 		const updated = await update(acc.model);
 		acc = {
 			model: updated.model,
-			eff: Eff.batch([acc.eff, updated.eff]),
-			msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
-			msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
+			eff: Eff.batch([
+				acc.eff,
+				updated.eff,
+			]),
+			msgCmd: batchMsgs(
+				acc.msgCmd,
+				updated.msgCmd,
+			),
+			msgEvt: batchMsgs(
+				acc.msgEvt,
+				updated.msgEvt,
+			),
 		};
 	}
 	return acc;
 };
 
 const updateLoop = async <T extends AppServerModuleTypes>(
-	deps: T["Deps"],
-	ctx: T["Ctx"],
+	deps: T['Deps'],
+	ctx: T['Ctx'],
 	update: (input: Input<T>) => MaybePromise<Output<T>>,
 	accPromise: MaybePromise<Output<T>>,
 ): Promise<Output<T>> => {
@@ -185,9 +194,18 @@ const updateLoop = async <T extends AppServerModuleTypes>(
 
 		return updateLoop(deps, ctx, update, {
 			model: updated.model,
-			eff: Eff.batch([acc.eff, updated.eff]),
-			msgCmd: batchMsgs(updated.msgCmd, acc.msgCmd),
-			msgEvt: batchMsgs(updated.msgEvt, msgEvtRest),
+			eff: Eff.batch([
+				acc.eff,
+				updated.eff,
+			]),
+			msgCmd: batchMsgs(
+				updated.msgCmd,
+				acc.msgCmd,
+			),
+			msgEvt: batchMsgs(
+				updated.msgEvt,
+				msgEvtRest,
+			),
 		});
 	}
 
@@ -203,9 +221,18 @@ const updateLoop = async <T extends AppServerModuleTypes>(
 
 		return updateLoop(deps, ctx, update, {
 			model: updated.model,
-			eff: Eff.batch([acc.eff, updated.eff]),
-			msgCmd: batchMsgs(updated.msgCmd, msgCmdRest),
-			msgEvt: batchMsgs(updated.msgEvt, acc.msgEvt),
+			eff: Eff.batch([
+				acc.eff,
+				updated.eff,
+			]),
+			msgCmd: batchMsgs(
+				updated.msgCmd,
+				msgCmdRest,
+			),
+			msgEvt: batchMsgs(
+				updated.msgEvt,
+				acc.msgEvt,
+			),
 		});
 	}
 

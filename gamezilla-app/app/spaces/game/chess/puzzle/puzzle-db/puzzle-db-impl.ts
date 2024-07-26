@@ -1,16 +1,16 @@
-import { Err, NonEmpty, Ok, Result, Uuid } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { UserId } from "gamezilla-app/app/@/data";
-import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import { type MoveInput, uciMoveToMoveInput } from "../../@/chess";
-import { EloRating } from "../elo-rating";
+import {Err, NonEmpty, Ok, Result, Uuid} from 'gamezilla-app/@/core';
+import {p} from 'gamezilla-app/@/core/parser';
+import {UserId} from 'gamezilla-app/app/@/data';
+import type {IDbConnSql} from 'gamezilla-app/app/@/server/db-conn-sql';
+import {type MoveInput, uciMoveToMoveInput} from '../../@/chess';
+import {EloRating} from '../elo-rating';
 import {
 	type Puzzle,
 	type PuzzleInteraction,
 	type PuzzleProfile,
 	initQuery,
-} from "../puzzle.types";
-import { splitEvery } from "../utils";
+} from '../puzzle.types';
+import {splitEvery} from '../utils';
 
 //
 //
@@ -42,10 +42,10 @@ export const PuzzleInteractionRow = p.obj({
 	puzzle_id: p.str,
 	user_id: p.str,
 	type: p.enumeration([
-		"started",
-		"solved",
-		"incorrect",
-		"solved-with-hint",
+		'started',
+		'solved',
+		'incorrect',
+		'solved-with-hint',
 	] as const),
 });
 
@@ -76,9 +76,9 @@ export type PuzzleProfileRow = p.Infer<typeof PuzzleProfileRow>;
 //
 
 const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
-	const parsedMoves = uciMovesToPuzzleMoves(row.moves.split(" "));
+	const parsedMoves = uciMovesToPuzzleMoves(row.moves.split(' '));
 
-	if (parsedMoves.t === "err") {
+	if (parsedMoves.t === 'err') {
 		return parsedMoves;
 	}
 
@@ -100,11 +100,15 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
 	);
 
 	if (!NonEmpty.is(moves)) {
-		return Err("Failed to parse moves from puzzle database record");
+		return Err(
+			'Failed to parse moves from puzzle database record',
+		);
 	}
 
 	if (!EloRating.is(row.rating)) {
-		return Err("Failed to parse elo rating from puzzle database record");
+		return Err(
+			'Failed to parse elo rating from puzzle database record',
+		);
 	}
 
 	const puzzle: Puzzle = {
@@ -113,20 +117,29 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
 		moves,
 		rating: row.rating,
 		ratingDeviation:
-			typeof row.rating_deviation === "string"
-				? Number.parseFloat(row.rating_deviation)
+			typeof row.rating_deviation ===
+			'string'
+				? Number.parseFloat(
+						row.rating_deviation,
+				  )
 				: row.rating_deviation,
 		popularity:
-			typeof row.popularity === "string"
-				? Number.parseInt(row.popularity)
+			typeof row.popularity ===
+			'string'
+				? Number.parseInt(
+						row.popularity,
+				  )
 				: row.popularity,
 		numberOfPlays:
-			typeof row.number_of_plays === "string"
-				? Number.parseInt(row.number_of_plays)
+			typeof row.number_of_plays ===
+			'string'
+				? Number.parseInt(
+						row.number_of_plays,
+				  )
 				: row.number_of_plays,
-		themes: row.themes.split(" "),
+		themes: row.themes.split(' '),
 		gameUrl: row.game_url,
-		openingTags: row.opening_tags.split(" "),
+		openingTags: row.opening_tags.split(' '),
 	};
 
 	return Ok(puzzle);
@@ -137,37 +150,45 @@ export const uciMovesToPuzzleMoves = (
 ): Result<string, [MoveInput, MoveInput, ...MoveInput[]]> => {
 	const [move1, move2, ...rest] = moves;
 	if (!(move1 && move2)) {
-		return Err("Missing first two moves");
+		return Err('Missing first two moves');
 	}
 	const moveInput1 = uciMoveToMoveInput(move1);
 	const moveInput2 = uciMoveToMoveInput(move2);
 
-	if (moveInput1.t === "err") {
+	if (moveInput1.t === 'err') {
 		return moveInput1;
 	}
 
-	if (moveInput2.t === "err") {
+	if (moveInput2.t === 'err') {
 		return moveInput2;
 	}
 
-	const moveInputRest = Result.combine(rest.map(uciMoveToMoveInput));
+	const moveInputRest = Result.combine(
+		rest.map(uciMoveToMoveInput),
+	);
 
-	if (moveInputRest.t === "err") {
+	if (moveInputRest.t === 'err') {
 		return moveInputRest;
 	}
 
-	return Ok([moveInput1.value, moveInput2.value, ...moveInputRest.value]);
+	return Ok([
+		moveInput1.value,
+		moveInput2.value,
+		...moveInputRest.value,
+	]);
 };
 
 const puzzlesFindForProfile = async (
 	dbConn: IDbConnSql,
-	input: { profile: PuzzleProfile; omit?: string[] },
+	input: {profile: PuzzleProfile; omit?: string[]},
 ): Promise<Result<string, Puzzle[]>> => {
 	const delta = 100;
 	const minRating = input.profile.eloRating - delta;
 	const maxRating = input.profile.eloRating + delta;
 	const userId = input.profile.userId;
-	const omit = input.omit?.map((x) => `"${x}"`).join(", ") ?? null;
+	const omit =
+		input.omit?.map((x) => `"${x}"`).join(', ') ??
+		null;
 
 	const sql = `
     SELECT
@@ -181,7 +202,7 @@ const puzzlesFindForProfile = async (
         WHERE p.puzzle_id = pi.puzzle_id AND pi.user_id = '${userId}'
       )
       AND p.rating BETWEEN ${minRating} AND ${maxRating}
-      ${omit ? `AND p.puzzle_id NOT IN (${omit})` : ""}
+      ${omit ? `AND p.puzzle_id NOT IN (${omit})` : ''}
     ORDER BY
       p.popularity DESC
     LIMIT 1
@@ -189,7 +210,7 @@ const puzzlesFindForProfile = async (
 
 	const found = await dbConn.query(PuzzleRow, sql, {});
 
-	if (found.t === "err") {
+	if (found.t === 'err') {
 		return found;
 	}
 
@@ -222,9 +243,9 @@ const puzzlesReplace = async ({
     )
     VALUES
       ${rows.map(
-				(row) =>
-					`("${row.puzzle_id}", ${row.rating}, ${row.rating_deviation}, "${row.opening_tags}", "${row.fen}", "${row.moves}", ${row.popularity}, ${row.number_of_plays}, "${row.themes}", "${row.game_url}")`,
-			)}
+		(row) =>
+			`("${row.puzzle_id}", ${row.rating}, ${row.rating_deviation}, "${row.opening_tags}", "${row.fen}", "${row.moves}", ${row.popularity}, ${row.number_of_plays}, "${row.themes}", "${row.game_url}")`,
+      )}
   `;
 
 	const inserted = await dbConn.query(PuzzleRow, queryString, {});
@@ -244,8 +265,11 @@ const interactionsInsert = async (
           user_id,
           type
         ) VALUES ${interactions
-					.map((x) => `('${x.puzzleId}', '${x.userId}', '${x.type}')`)
-					.join(", ")}
+		.map(
+			(x) =>
+				`('${x.puzzleId}', '${x.userId}', '${x.type}')`,
+		)
+		.join(', ')}
       `,
 		{},
 	);
@@ -253,13 +277,13 @@ const interactionsInsert = async (
 };
 
 const toPuzzleQueryJSON = (query: unknown): PuzzleQueryJSON | null => {
-	if (typeof query !== "string") {
+	if (typeof query !== 'string') {
 		return null;
 	}
 	try {
 		const json = JSON.parse(query);
 		const parsed = PuzzleQueryJSON.parse(json);
-		if (parsed.t === "err") {
+		if (parsed.t === 'err') {
 			return null;
 		}
 		return parsed.value;
@@ -286,7 +310,7 @@ const profilesFind = async (
 		},
 	);
 
-	if (found.t === "err") {
+	if (found.t === 'err') {
 		return found;
 	}
 
@@ -299,11 +323,11 @@ const profilesFind = async (
 	}
 
 	if (!UserId.is(row.user_id)) {
-		return Err("Invalid user id");
+		return Err('Invalid user id');
 	}
 
 	if (!EloRating.is(row.elo_rating)) {
-		return Err("Invalid elo rating");
+		return Err('Invalid elo rating');
 	}
 
 	const puzzleQuery = toPuzzleQueryJSON(row.puzzle_query);
@@ -313,8 +337,16 @@ const profilesFind = async (
 		eloRating: row.elo_rating,
 		puzzleQuery: {
 			ratingRange: [
-				puzzleQuery?.ratingRange.lower ?? initQuery.ratingRange[0],
-				puzzleQuery?.ratingRange.upper ?? initQuery.ratingRange[1],
+				puzzleQuery
+					?.ratingRange
+					.lower ??
+					initQuery
+						.ratingRange[0],
+				puzzleQuery
+					?.ratingRange
+					.upper ??
+					initQuery
+						.ratingRange[1],
 			],
 		},
 	};
@@ -347,11 +379,13 @@ export const profilesInsert = async (
 			puzzle_profile_id: puzzleProfileId,
 			user_id: profile.userId,
 			elo_rating: profile.eloRating,
-			puzzle_query: JSON.stringify(profile.puzzleQuery),
+			puzzle_query: JSON.stringify(
+				profile.puzzleQuery,
+			),
 		},
 	);
 
-	if (mutated.t === "err") {
+	if (mutated.t === 'err') {
 		return mutated;
 	}
 	return Ok(null);
@@ -363,7 +397,7 @@ export const profilesFindElseInsert = async (
 ): Promise<Result<string, PuzzleProfile>> => {
 	const found = await profilesFind(dbConn, profile.userId);
 
-	if (found.t === "err") {
+	if (found.t === 'err') {
 		return found;
 	}
 
@@ -373,7 +407,7 @@ export const profilesFindElseInsert = async (
 
 	const inserted = await profilesInsert(dbConn, profile);
 
-	if (inserted.t === "err") {
+	if (inserted.t === 'err') {
 		return inserted;
 	}
 
@@ -398,11 +432,13 @@ const profilesUpdate = async (
 		{
 			user_id: profile.userId,
 			elo_rating: profile.eloRating,
-			puzzle_query: JSON.stringify(profile.puzzleQuery),
+			puzzle_query: JSON.stringify(
+				profile.puzzleQuery,
+			),
 		},
 	);
 
-	if (mutated.t === "err") {
+	if (mutated.t === 'err') {
 		return mutated;
 	}
 	return Ok(null);

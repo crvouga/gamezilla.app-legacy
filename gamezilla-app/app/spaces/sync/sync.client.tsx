@@ -1,40 +1,58 @@
-import { addProfiles, sendToServer } from "gamezilla-app/app/@/client";
-import { SpaceClientModule } from "../architecture/architecture";
-import { SpaceCore } from "../spaces-core";
-import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
+import {addProfiles, sendToServer} from 'gamezilla-app/app/@/client';
+import {SpaceClientModule} from '../architecture/architecture';
+import {SpaceCore} from '../spaces-core';
+import * as SpacesCoreClient from '../spaces-core/spaces-core.client';
 
-const update: SpaceClientModule["update"] = (input) => {
+const update: SpaceClientModule['update'] = (input) => {
 	return SpaceClientModule.andThen(
-		{ model: input.model },
-		(model) => updateProfiles({ ...input, model }),
-		(model) => updateCore({ ...input, model }),
-		(model) => sendSpaceEventToServer({ ...input, model }),
-		(model) => outputSpaceEventsFromServer({ ...input, model }),
+		{model: input.model},
+		(model) =>
+			updateProfiles({
+				...input,
+				model,
+			}),
+		(model) =>
+			updateCore({
+				...input,
+				model,
+			}),
+		(model) =>
+			sendSpaceEventToServer({
+				...input,
+				model,
+			}),
+		(model) =>
+			outputSpaceEventsFromServer({
+				...input,
+				model,
+			}),
 	);
 };
 
-const outputSpaceEventsFromServer: SpaceClientModule["update"] = (input) => {
-	const { model, msgServer } = input;
+const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
+	const {model, msgServer} = input;
 
 	switch (msgServer?.t) {
-		case "event": {
+		case 'event': {
 			return {
 				model,
-				msgSpaceEvent: [msgServer.c],
+				msgSpaceEvent: [
+					msgServer.c,
+				],
 			};
 		}
 	}
 
-	return { model };
+	return {model};
 };
 
-const sendSpaceEventToServer: SpaceClientModule["update"] = ({
+const sendSpaceEventToServer: SpaceClientModule['update'] = ({
 	ctx,
 	model,
 	msgSpaceEvent,
 }) => {
 	if (!msgSpaceEvent) {
-		return { model };
+		return {model};
 	}
 
 	const spaceEventWithMeta = SpacesCoreClient.toEventWithMeta(
@@ -44,58 +62,88 @@ const sendSpaceEventToServer: SpaceClientModule["update"] = ({
 	);
 
 	if (!spaceEventWithMeta) {
-		return { model };
+		return {model};
 	}
 
 	const profile =
-		"userId" in spaceEventWithMeta
-			? ctx.profiles[spaceEventWithMeta.userId]
+		'userId' in spaceEventWithMeta
+			? ctx.profiles[
+					spaceEventWithMeta
+						.userId
+			  ]
 			: null;
 
-	const profiles = profile ? { [profile.userId]: profile } : {};
+	const profiles = profile ? {[profile.userId]: profile} : {};
 
 	return {
 		model,
-		msgCmd: [sendToServer({ t: "event", c: spaceEventWithMeta, profiles })],
+		msgCmd: [
+			sendToServer({
+				t: 'event',
+				c: spaceEventWithMeta,
+				profiles,
+			}),
+		],
 	};
 };
 
-const updateProfiles: SpaceClientModule["update"] = ({ model, msgServer }) => {
+const updateProfiles: SpaceClientModule['update'] = ({model, msgServer}) => {
 	if (msgServer?.profiles) {
 		return {
 			model,
-			msgCmd: [addProfiles(msgServer.profiles)],
+			msgCmd: [
+				addProfiles(
+					msgServer.profiles,
+				),
+			],
 		};
 	}
 
-	return { model };
+	return {model};
 };
 
-const updateCore: SpaceClientModule["update"] = (input) => {
-	const { model, msgEvt, msgServer } = input;
+const updateCore: SpaceClientModule['update'] = (input) => {
+	const {model, msgEvt, msgServer} = input;
 
 	switch (msgEvt?.t) {
-		case "wire/server-connected": {
-			const currentUserId = input.ctx.currentUserId;
+		case 'wire/server-connected': {
+			const currentUserId =
+				input.ctx
+					.currentUserId;
 
 			if (!currentUserId) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const currentUserProfile = currentUserId
-				? input.ctx.profiles[currentUserId]
-				: null;
+			const currentUserProfile =
+				currentUserId
+					? input
+							.ctx
+							.profiles[
+							currentUserId
+					  ]
+					: null;
 
-			const currentUserSpace = SpacesCoreClient.toSpaceByUserId({
-				model,
-				userId: currentUserId,
-			});
+			const currentUserSpace =
+				SpacesCoreClient.toSpaceByUserId(
+					{
+						model,
+						userId: currentUserId,
+					},
+				);
 
 			if (!currentUserSpace) {
-				return { model };
+				return {
+					model,
+				};
 			}
 
-			const started = SpaceCore.startFromLatestSnapshot(currentUserSpace);
+			const started =
+				SpaceCore.startFromLatestSnapshot(
+					currentUserSpace,
+				);
 
 			return {
 				model: {
@@ -103,33 +151,43 @@ const updateCore: SpaceClientModule["update"] = (input) => {
 					isSycing: true,
 				},
 				msgCmd: [
-					sendToServer({
-						t: "sync",
-						space: started,
-						profiles: currentUserProfile
-							? { [currentUserId]: currentUserProfile }
-							: {},
-						causedBy: msgEvt.t,
-					}),
+					sendToServer(
+						{
+							t: 'sync',
+							space: started,
+							profiles: currentUserProfile
+								? {
+										[currentUserId]: currentUserProfile,
+								  }
+								: {},
+							causedBy: msgEvt.t,
+						},
+					),
 				],
 			};
 		}
 	}
 
 	switch (msgServer?.t) {
-		case "synced":
-		case "current-user-space": {
-			const merged = SpacesCoreClient.mergeOne({
-				model,
-				space: msgServer.space,
-			});
+		case 'synced':
+		case 'current-user-space': {
+			const merged =
+				SpacesCoreClient.mergeOne(
+					{
+						model,
+						space: msgServer.space,
+					},
+				);
 			return {
-				model: { ...model, ...merged },
+				model: {
+					...model,
+					...merged,
+				},
 			};
 		}
 	}
 
-	return { model };
+	return {model};
 };
 
 export const SyncClient = {

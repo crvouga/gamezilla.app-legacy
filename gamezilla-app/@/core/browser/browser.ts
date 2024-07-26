@@ -1,7 +1,7 @@
-import type { Eff } from "../eff";
-import type { IO } from "../io";
-import { Result } from "../result";
-import { PubSub, Sub } from "../sub";
+import type {Eff} from '../eff';
+import type {IO} from '../io';
+import {Result} from '../result';
+import {PubSub, Sub} from '../sub';
 
 //
 //
@@ -13,15 +13,15 @@ import { PubSub, Sub } from "../sub";
 
 export type Location = {
 	pathname: string;
-	query: { [key: string]: string };
+	query: {[key: string]: string};
 };
 
 const locationSub = PubSub.create<Location>();
 const handler = () => {
 	locationSub.pub(location());
 };
-if (typeof window !== "undefined") {
-	window.addEventListener("popstate", handler);
+if (typeof window !== 'undefined') {
+	window.addEventListener('popstate', handler);
 }
 
 export const onLocation = <Msg>(fn: (location: Location) => Msg): Sub<Msg> => {
@@ -29,16 +29,18 @@ export const onLocation = <Msg>(fn: (location: Location) => Msg): Sub<Msg> => {
 };
 
 export const location = (): Location => {
-	if (typeof window === "undefined") {
+	if (typeof window === 'undefined') {
 		return {
-			pathname: "",
+			pathname: '',
 			query: {},
 		};
 	}
 	return {
 		pathname: window.location.pathname,
 		query: Object.fromEntries(
-			new URLSearchParams(window.location.search).entries(),
+			new URLSearchParams(
+				window.location.search,
+			).entries(),
 		),
 	};
 };
@@ -48,8 +50,16 @@ export const location = (): Location => {
 export const push = (url: string): Eff => {
 	return () => {
 		setTimeout(() => {
-			window.history.pushState(null, "", url);
-			window.dispatchEvent(new Event("popstate"));
+			window.history.pushState(
+				null,
+				'',
+				url,
+			);
+			window.dispatchEvent(
+				new Event(
+					'popstate',
+				),
+			);
 		}, 0);
 	};
 };
@@ -57,10 +67,23 @@ export const push = (url: string): Eff => {
 export const pushQueryParam = (key: string, value: string): Eff => {
 	return () => {
 		setTimeout(() => {
-			const url = new URL(window.location.href);
-			url.searchParams.set(key, value);
-			window.history.pushState(null, "", url.toString());
-			window.dispatchEvent(new Event("popstate"));
+			const url = new URL(
+				window.location.href,
+			);
+			url.searchParams.set(
+				key,
+				value,
+			);
+			window.history.pushState(
+				null,
+				'',
+				url.toString(),
+			);
+			window.dispatchEvent(
+				new Event(
+					'popstate',
+				),
+			);
 		}, 0);
 	};
 };
@@ -68,14 +91,25 @@ export const pushQueryParam = (key: string, value: string): Eff => {
 export const replaceQueryParam = (key: string, value: string): Eff => {
 	return () => {
 		setTimeout(() => {
-			const searchParams = new URLSearchParams(window.location.search);
+			const searchParams =
+				new URLSearchParams(
+					window.location.search,
+				);
 			searchParams.set(key, value);
 			window.history.replaceState(
 				null,
-				"",
-				`${window.location.pathname}?${searchParams.toString()}`,
+				'',
+				`${
+					window
+						.location
+						.pathname
+				}?${searchParams.toString()}`,
 			);
-			window.dispatchEvent(new Event("popstate"));
+			window.dispatchEvent(
+				new Event(
+					'popstate',
+				),
+			);
 		}, 0);
 	};
 };
@@ -83,8 +117,16 @@ export const replaceQueryParam = (key: string, value: string): Eff => {
 export const replace = (url: string): Eff => {
 	return () => {
 		setTimeout(() => {
-			window.history.replaceState(null, "", url);
-			window.dispatchEvent(new Event("popstate"));
+			window.history.replaceState(
+				null,
+				'',
+				url,
+			);
+			window.dispatchEvent(
+				new Event(
+					'popstate',
+				),
+			);
 		}, 0);
 	};
 };
@@ -92,7 +134,7 @@ export const replace = (url: string): Eff => {
 export const back: Eff = () => {
 	setTimeout(() => {
 		window.history.back();
-		window.dispatchEvent(new Event("popstate"));
+		window.dispatchEvent(new Event('popstate'));
 	}, 0);
 };
 
@@ -129,13 +171,19 @@ export const onIntersections = <T>(
 
 	observer.observe(element);
 
-	stateByHtmlId.set(htmlId, { entries: pubSub, observer });
+	stateByHtmlId.set(htmlId, {entries: pubSub, observer});
 
 	return {
 		sub(subscriber) {
-			const unsub = pubSub.sub((msg) => {
-				subscriber(mapper(msg));
-			});
+			const unsub = pubSub.sub(
+				(msg) => {
+					subscriber(
+						mapper(
+							msg,
+						),
+					);
+				},
+			);
 			return () => {
 				unsub();
 				observer.disconnect();
@@ -152,14 +200,16 @@ export const onIntersections = <T>(
 //
 //
 
-export type Problem = { type: "ElementNotFound" };
+export type Problem = {type: 'ElementNotFound'};
 
 export type FocusResult = Result<Problem, null>;
 
 export const focus =
 	(htmlId: string, timeout?: number): IO<FocusResult> =>
 	async () => {
-		await new Promise((resolve) => setTimeout(resolve, timeout));
+		await new Promise((resolve) =>
+			setTimeout(resolve, timeout),
+		);
 
 		const element = document.getElementById(htmlId);
 
@@ -168,7 +218,9 @@ export const focus =
 			return Result.Ok(null);
 		}
 
-		return Result.Err({ type: "ElementNotFound" });
+		return Result.Err({
+			type: 'ElementNotFound',
+		});
 	};
 
 export type ScrollResult = Result<Problem, null>;
@@ -176,21 +228,25 @@ export type ScrollResult = Result<Problem, null>;
 export const scrollIntoView =
 	(htmlId: string): IO<ScrollResult> =>
 	async () => {
-		await new Promise((resolve) => setTimeout(resolve, 0));
+		await new Promise((resolve) =>
+			setTimeout(resolve, 0),
+		);
 
 		const element = document.getElementById(htmlId);
 
 		if (element) {
 			element.scrollIntoView({
-				behavior: "auto",
+				behavior: 'auto',
 				// block: 'center',
-				inline: "center",
+				inline: 'center',
 			});
 
 			return Result.Ok(null);
 		}
 
-		return Result.Err({ type: "ElementNotFound" });
+		return Result.Err({
+			type: 'ElementNotFound',
+		});
 	};
 
 export type GetElementByIdResult = Result<Problem, DomElement>;
@@ -212,10 +268,12 @@ export const getElementById =
 			});
 		}
 
-		return Result.Err({ type: "ElementNotFound" });
+		return Result.Err({
+			type: 'ElementNotFound',
+		});
 	};
 
-type VisibilityState = "visible" | "hidden";
+type VisibilityState = 'visible' | 'hidden';
 
 const documentVisibilityState = PubSub.create<VisibilityState>();
 
@@ -225,15 +283,17 @@ export const onDocumentVisibilityState = <T>(
 	return Sub.map(documentVisibilityState, fn);
 };
 
-if (typeof document !== "undefined") {
-	document.addEventListener("visibilitychange", () => {
-		documentVisibilityState.pub(document.visibilityState);
+if (typeof document !== 'undefined') {
+	document.addEventListener('visibilitychange', () => {
+		documentVisibilityState.pub(
+			document.visibilityState,
+		);
 	});
 }
 
 export const getDocumentVisibilityState = (): VisibilityState => {
-	if (typeof document === "undefined") {
-		return "visible";
+	if (typeof document === 'undefined') {
+		return 'visible';
 	}
 	return document.visibilityState;
 };

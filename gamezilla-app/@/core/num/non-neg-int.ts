@@ -1,7 +1,7 @@
-import { Num } from "./num";
+import {Num} from './num';
 
 export type NonNegInt = Num & {
-	NonNegInt: "NonNegInt";
+	NonNegInt: 'NonNegInt';
 	_value: number;
 };
 
@@ -10,7 +10,7 @@ const of = (number: number): NonNegInt => {
 
 	return {
 		...num,
-		NonNegInt: "NonNegInt",
+		NonNegInt: 'NonNegInt',
 	};
 };
 
