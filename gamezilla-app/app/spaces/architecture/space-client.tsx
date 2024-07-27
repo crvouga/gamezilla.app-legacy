@@ -1,6 +1,7 @@
 import type { AnonymousClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 
-import { Eff, batchMsgs, type Sub } from 'gamezilla-app/@/core'
+import { Eff, type Sub } from 'gamezilla-app/@/core'
+import { Msg } from 'gamezilla-app/@/core/msg'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import type { WithEventId } from '../@/event'
 import type { Space } from '../@/space'
@@ -56,9 +57,9 @@ const andThen = async (
     acc = {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
-      msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
-      msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
-      msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent)
+      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+      msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent)
     }
   }
   return acc

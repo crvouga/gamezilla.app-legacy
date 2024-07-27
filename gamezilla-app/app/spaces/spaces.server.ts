@@ -1,6 +1,9 @@
-import { Eff, batchMsgs } from 'gamezilla-app/@/core'
+import { Eff } from 'gamezilla-app/@/core'
+import { Msg } from 'gamezilla-app/@/core/msg'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { ClientId, SessionId, SpaceId, UserId } from '../@/data'
 import { type Input, type Output, SpaceServerModule } from './architecture/space-server'
+import { GameServer } from './game/game.server'
 import { JoinSpaceServer } from './join-space/join-space.server'
 import { ListSpacesServer } from './list-spaces/list-spaces.server'
 import { ProfileCache } from './profile-cache'
@@ -11,8 +14,6 @@ import * as SpacesCoreServer from './spaces-core/spaces-core.server'
 import type { ServerModule } from './spaces.types'
 import { StartSpaceServer } from './start-space/start-space.server'
 import { SyncServer } from './sync/sync.server'
-import { GameServer } from './game/game.server'
-import { ClientId, SessionId, SpaceId, UserId } from '../@/data'
 
 //
 //
@@ -108,8 +109,8 @@ const updateMain = async (input: Input, initialAcc?: Output): Promise<Output> =>
     return updateMain(input, {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: batchMsgs(spaceEventsRest, updated.msgSpaceEvent),
-      msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+      msgSpaceEvent: Msg.batch(spaceEventsRest, updated.msgSpaceEvent),
+      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: updated.msgEvt
     })
   }
@@ -127,8 +128,8 @@ const updateMain = async (input: Input, initialAcc?: Output): Promise<Output> =>
     return updateMain(input, {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
-      msgCmd: batchMsgs(spaceCmdsRest, updated.msgCmd),
+      msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
+      msgCmd: Msg.batch(spaceCmdsRest, updated.msgCmd),
       msgEvt: updated.msgEvt
     })
   }

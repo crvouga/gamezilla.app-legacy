@@ -8,8 +8,8 @@
 import type { ProgramDebugger } from '..'
 import { IO } from '../io'
 import * as Json from '../json'
+import { Msg } from '../msg'
 import { Result, isErr } from '../result'
-import { toMsgPayload, toMsgType } from '../utils'
 import { pipe } from '../utils/pipe'
 import type { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from './debugger'
 
@@ -473,7 +473,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
   const COUNT_LIMIT = 10
 
   return function updateDebugger(model: any, msg: any) {
-    const actionType = toMsgType(msg)
+    const actionType = Msg.toMsgType(msg)
 
     if (blockList.has(actionType)) {
       return
@@ -502,7 +502,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
 
     const action = {
       type: actionType,
-      payload: toMsgPayload(msg, {})
+      payload: Msg.toMsgPayload(msg, {})
     }
 
     connection.send(action, model)

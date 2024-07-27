@@ -1,4 +1,5 @@
-import { Eff, NotAsked, Sub, batchMsgs } from 'gamezilla-app/@/core'
+import { Eff, NotAsked, Sub } from 'gamezilla-app/@/core'
+import { Msg } from 'gamezilla-app/@/core/msg'
 import { isAnonymous } from '../@/client'
 import { SpaceClientCmd } from './@/space-client-cmd'
 import { type Input, type Output, SpaceClientModule } from './architecture/architecture'
@@ -39,7 +40,7 @@ export const init: ClientModule['init'] = ({ ctx }) => {
       ...listSpaces.model
     },
     eff: Eff.batch([listSpaces.eff]),
-    msgCmd: SpaceClientCmd.toClientCmd(batchMsgs(listSpaces.msgCmd))
+    msgCmd: SpaceClientCmd.toClientCmd(Msg.batch(listSpaces.msgCmd))
   }
 }
 
@@ -76,8 +77,8 @@ export const updateMain = (input: Input, initial?: Output): Output => {
     return updateMain(input, {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: batchMsgs(spaceEventsRest, updated.msgSpaceEvent),
-      msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+      msgSpaceEvent: Msg.batch(spaceEventsRest, updated.msgSpaceEvent),
+      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: []
     })
   }
@@ -94,8 +95,8 @@ export const updateMain = (input: Input, initial?: Output): Output => {
     return updateMain(input, {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
-      msgCmd: batchMsgs(spaceCmdsRest, updated.msgCmd),
+      msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
+      msgCmd: Msg.batch(spaceCmdsRest, updated.msgCmd),
       msgEvt: []
     })
   }

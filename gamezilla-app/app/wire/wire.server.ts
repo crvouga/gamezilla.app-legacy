@@ -1,5 +1,5 @@
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
-import type { ServerCmd, ServerCtx, ServerEvent, WireCmd } from 'gamezilla-app/app/@/server'
+import type { ServerCmd, ServerCtx, ServerEvt, WireCmd } from 'gamezilla-app/app/@/server'
 import { Eff, isErr } from 'gamezilla-app/@/core'
 import type { Sub } from 'gamezilla-app/@/core/sub'
 import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
@@ -71,7 +71,7 @@ type Input<TMsgToClient, TMsgToServer> = {
   //
   msg?: MsgServer | null
   msgClient?: MsgToServer | null
-  msgEvt?: ServerEvent | null
+  msgEvt?: ServerEvt | null
   msgCmd?: WireCmd<TMsgToClient> | null
   //
   deps: Deps<TMsgToClient, TMsgToServer>
@@ -80,7 +80,7 @@ type Input<TMsgToClient, TMsgToServer> = {
 type Output = {
   model: ModelServer
   eff?: Eff<MsgServer>
-  msgEvt?: ServerEvent[]
+  msgEvt?: ServerEvt[]
   msgCmd?: ServerCmd<MsgToClient>[]
 }
 
@@ -151,7 +151,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
             }
           }
 
-          const msgEvt: ServerEvent[] = [
+          const msgEvt: ServerEvt[] = [
             {
               t: 'wire/client-connected',
               clientId: msg.clientId,
@@ -168,7 +168,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
     }
 
     case 'client-disconnected': {
-      const msgEvt: ServerEvent[] = [
+      const msgEvt: ServerEvt[] = [
         {
           t: 'wire/client-disconnected',
           clientId: msg.clientId,

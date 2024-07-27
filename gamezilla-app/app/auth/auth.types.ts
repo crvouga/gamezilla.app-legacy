@@ -3,7 +3,7 @@ import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, AuthCmd, ClientCmd, ClientCtx, ClientEvt } from '../@/client'
 import type { UserAccount } from '../@/data/account'
-import type { ServerCmd, ServerCtx, ServerEvent } from '../@/server'
+import type { ServerCmd, ServerCtx, ServerEvt } from '../@/server'
 import type { IUserAccountDb } from './@/server/user-account-db'
 import type { IUserSessionDb } from './@/server/user-session-db'
 import type * as AuthSMS from './auth-sms/auth-sms.types'
@@ -36,11 +36,11 @@ export type ClientModule = AppClientModule<{
 export type ServerModule = AppServerModule<{
   Ctx: ServerCtx
   MsgCmdIn: null
-  MsgEvtIn: ServerEvent
+  MsgEvtIn: ServerEvt
   Model: null
   Msg: MsgServer
   MsgCmdOut: ServerCmd<MsgToClient>
-  MsgEvtOut: ServerEvent
+  MsgEvtOut: ServerEvt
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   Deps: ServerDeps

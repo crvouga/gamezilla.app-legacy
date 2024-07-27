@@ -1,6 +1,6 @@
 import { Eff, type Sub } from 'gamezilla-app/@/core'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
-import type { ServerCtx, ServerEvent } from 'gamezilla-app/app/@/server'
+import type { ServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
 import type { WithEventId } from '../@/event'
 import type { Space } from '../@/space'
 import type { SpaceServerCmd } from '../@/space-server-cmd'
@@ -24,7 +24,7 @@ export type Input = {
         userId?: UserId | null
       })
     | null
-  msgEvt?: ServerEvent | null
+  msgEvt?: ServerEvt | null
   msgCmd?: SpaceServerCmd<MsgToClient> | null
   msgSpaceEvent?: WithEventId<SpaceCoreEvent> | null
 }

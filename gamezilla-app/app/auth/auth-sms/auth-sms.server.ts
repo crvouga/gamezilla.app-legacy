@@ -4,7 +4,7 @@ import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
-import { sendToClient, type ServerCmd, type ServerCtx, type ServerEvent } from 'gamezilla-app/app/@/server'
+import { sendToClient, type ServerCmd, type ServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { SMS } from 'gamezilla-app/app/@/server/sms'
 import type { IUserAccountDb } from '../@/server/user-account-db'
@@ -25,10 +25,10 @@ import { VerifySMS } from './verify-sms/verify-sms-impl/verify-sms-impl'
 
 type Module = AppServerModule<{
   Ctx: ServerCtx
-  MsgEvtIn: ServerEvent
+  MsgEvtIn: ServerEvt
   Msg: MsgServer
   MsgCmdOut: ServerCmd<MsgToClient>
-  MsgEvtOut: ServerEvent
+  MsgEvtOut: ServerEvt
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   Deps: {

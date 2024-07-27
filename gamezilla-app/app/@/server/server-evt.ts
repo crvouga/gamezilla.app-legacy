@@ -2,7 +2,7 @@ import { PhoneNumber } from 'gamezilla-app/@/core'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from '../data/account'
 
-export type ServerEvent =
+export type ServerEvt =
   | {
       t: 'wire/client-connected'
       clientId: ClientId

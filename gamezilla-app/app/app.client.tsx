@@ -1,4 +1,4 @@
-import { Browser, Eff, Posix, Sub, batchMsgs, eq, toMsgType } from 'gamezilla-app/@/core'
+import { Browser, Eff, Posix, Sub, batchMsgs, eq } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { LanguageCodeISO_639_1, type TranslatedText } from 'gamezilla-app/@/l18n'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
@@ -64,35 +64,12 @@ export const getDeps = async ({
     codebaseVersionId
   })
 
-  const stored = getStored()
+  const stored = {}
 
   return {
     transport,
     stored
   }
-}
-
-const getStored = () => {
-  if (typeof window === 'undefined') {
-    return {}
-  }
-
-  const stored: Record<string, unknown> = {}
-
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (!key) {
-      continue
-    }
-    const value = localStorage.getItem(key)
-    try {
-      stored[key] = value ? JSON.parse(value) : value
-    } catch (error) {
-      stored[key] = value
-    }
-  }
-
-  return stored
 }
 
 //
@@ -222,6 +199,26 @@ export const init = (input: {
   }
 }
 
+const toClientCtx = (input: { model: ModelClient; ctx: Ctx }): ClientCtx | AnonymousClientCtx => {
+  const anonymousCtx: AnonymousClientCtx = {
+    ...input.ctx,
+    t: Translator(input.model.lang.lang),
+    profiles: input.model.profile.profiles,
+    now: input.ctx.now,
+    documentVisibilityState: input.model.platform.documentVisibilityState,
+    currentRoute: input.model.routing.currentRoute,
+    currentUserId: null
+  }
+  if (input.model.auth.currentUser.t === 'logged-in') {
+    return {
+      ...anonymousCtx,
+      currentUserRole: input.model.auth.currentUser.account.role,
+      currentUserId: input.model.auth.currentUser.account.userId
+    }
+  }
+  return anonymousCtx
+}
+
 //
 //
 //
@@ -229,14 +226,6 @@ export const init = (input: {
 //
 //
 //
-
-const SHOULD_LOG = false
-
-const log = (...msg: unknown[]) => {
-  if (SHOULD_LOG) {
-    console.log(...msg)
-  }
-}
 
 export const update = (input: {
   ctx: Ctx
@@ -247,13 +236,7 @@ export const update = (input: {
   model: ModelClient
   eff?: Eff<MsgClient>
 } => {
-  if (input.msg) {
-    log('[msg]', toMsgType(input.msg))
-  }
   const msgServer = input.msg.t === '→' ? input.msg.c : undefined
-  if (msgServer) {
-    log('[➡️]', toMsgType(msgServer))
-  }
   const updatedFromMsg = updateChild({
     ctx: input.ctx,
     model: input.model,
@@ -281,11 +264,6 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
   if (msgCmd) {
-    if (msgCmd.t === 'wire') {
-      log('[msgCmd]', toMsgType(msgCmd), toMsgType(msgCmd.c.msg))
-    } else {
-      log('[msgCmd]', toMsgType(msgCmd))
-    }
     const updatedCmd = updateChild({
       deps,
       ctx,
@@ -296,14 +274,13 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
       model: updatedCmd.model,
       msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      msgEvt: batchMsgs(acc.msgEvt, updatedCmd.msgEvt)
+      msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt)
     })
   }
 
   const [msgEvt, ...msgEvtRest] = acc.msgEvt
 
   if (msgEvt) {
-    log('[msgEvt]', toMsgType(msgEvt))
     const updatedEvent = updateChild({
       deps,
       ctx,
@@ -314,7 +291,7 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
       model: updatedEvent.model,
       msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
-      msgEvt: batchMsgs(msgEvtRest, updatedEvent.msgEvt)
+      msgEvt: Msg.batch(msgEvtRest, updatedEvent.msgEvt)
     })
   }
 
@@ -465,26 +442,6 @@ const updateChild = (input: {
       toast.msgCmd
     )
   }
-}
-
-const toClientCtx = (input: { model: ModelClient; ctx: Ctx }): ClientCtx | AnonymousClientCtx => {
-  const anonymousCtx: AnonymousClientCtx = {
-    ...input.ctx,
-    t: Translator(input.model.lang.lang),
-    profiles: input.model.profile.profiles,
-    now: input.ctx.now,
-    documentVisibilityState: input.model.platform.documentVisibilityState,
-    currentRoute: input.model.routing.currentRoute,
-    currentUserId: null
-  }
-  if (input.model.auth.currentUser.t === 'logged-in') {
-    return {
-      ...anonymousCtx,
-      currentUserRole: input.model.auth.currentUser.account.role,
-      currentUserId: input.model.auth.currentUser.account.userId
-    }
-  }
-  return anonymousCtx
 }
 
 //

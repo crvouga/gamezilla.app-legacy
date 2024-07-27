@@ -1,7 +1,8 @@
-import { Eff, Posix, Sub, TimeSpan, batchMsgs, pipe, toMsgType } from 'gamezilla-app/@/core'
+import { Eff, Posix, Sub, TimeSpan, batchMsgs, pipe } from 'gamezilla-app/@/core'
+import { Msg } from 'gamezilla-app/@/core/msg'
 import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import type { ServerInstance } from 'gamezilla-app/@/server'
-import { ServerCmd, type ServerCtx, type ServerEvent } from 'gamezilla-app/app/@/server'
+import { ServerCmd, type ServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
 import { DbConnKv, type IDbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './@/server/db-conn-sql'
 import { ILogger } from './@/server/logger/logger'
@@ -269,7 +270,7 @@ const logMsg = ({
 }: {
   logger: ILogger
   msg?: MsgServer
-  msgEvt?: ServerEvent
+  msgEvt?: ServerEvt
   msgCmd?: ServerCmd<MsgToClient>
 }) => {
   const prefix = msg ? '[msg]' : msgEvt ? '[evt]' : '[cmd]'
@@ -281,10 +282,10 @@ const logMsg = ({
     msgCmd?.c.t === 'send-to-session' ||
     msgCmd?.c.t === 'send-to-user' ||
     msgCmd?.c.t === 'broadcast'
-      ? toMsgType(msgCmd.c.msg)
+      ? Msg.toMsgType(msgCmd.c.msg)
       : null
 
-  const log = [prefix, toMsgType(obj)]
+  const log = [prefix, Msg.toMsgType(obj)]
 
   if (sentMsgType) {
     log.push(`sent ${sentMsgType}`)
@@ -296,7 +297,7 @@ const logMsg = ({
 type Output = {
   model: ModelServer
   eff: Eff<MsgServer>
-  msgEvt: ServerEvent[]
+  msgEvt: ServerEvt[]
   msgCmd: ServerCmd<MsgToClient>[]
 }
 
@@ -315,7 +316,7 @@ const updateLoop = async (deps: Deps, ctx: ServerCtx, acc: Output): Promise<Outp
       model: updatedCmd.model,
       msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      msgEvt: batchMsgs(acc.msgEvt, updatedCmd.msgEvt)
+      msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt)
     }
 
     logMsg({
@@ -340,7 +341,7 @@ const updateLoop = async (deps: Deps, ctx: ServerCtx, acc: Output): Promise<Outp
       model: updatedEvent.model,
       msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
-      msgEvt: batchMsgs(msgEvtRest, updatedEvent.msgEvt)
+      msgEvt: Msg.batch(msgEvtRest, updatedEvent.msgEvt)
     }
 
     logMsg({
@@ -368,7 +369,7 @@ export const updateChild = async ({
   model: ModelServer
   msg?: MsgServer
   msgClient?: (MsgToServer & MsgToServerMeta) | null
-  msgEvt?: ServerEvent
+  msgEvt?: ServerEvt
   msgCmd?: ServerCmd<MsgToClient>
 }): Promise<Output> => {
   //
@@ -488,7 +489,7 @@ export const updateChild = async ({
       Eff.tag('profile', profile.eff),
       Eff.tag('lang', lang.eff)
     ]),
-    msgEvt: batchMsgs<ServerEvent>(auth.msgEvt, space.msgEvt, wire.msgEvt, profile.msgEvt, lang.msgEvt)
+    msgEvt: batchMsgs<ServerEvt>(auth.msgEvt, space.msgEvt, wire.msgEvt, profile.msgEvt, lang.msgEvt)
   }
 }
 

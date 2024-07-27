@@ -3,7 +3,7 @@ import type { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, ClientCmd, ClientCtx, ClientEvt } from '../@/client'
-import type { ServerCmd, ServerCtx, ServerEvent } from '../@/server'
+import type { ServerCmd, ServerCtx, ServerEvt } from '../@/server'
 import type { WithEventId, WithEventMeta } from './@/event'
 import type * as Game from './game/game.types'
 import type { IProfileCache } from './profile-cache'
@@ -44,7 +44,7 @@ export type ClientModule = AppClientModule<{
 export type ServerModule = AppServerModule<{
   Ctx: ServerCtx
   MsgCmdIn: null
-  MsgEvtIn: ServerEvent
+  MsgEvtIn: ServerEvt
   Model: ModelServer
   Msg: MsgServer
   MsgCmdOut: ServerCmd<MsgToClient>

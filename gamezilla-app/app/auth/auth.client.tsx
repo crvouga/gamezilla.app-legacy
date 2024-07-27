@@ -1,4 +1,5 @@
-import { Eff, NotAsked, Sub, batchMsgs } from 'gamezilla-app/@/core'
+import { Eff, NotAsked, Sub } from 'gamezilla-app/@/core'
+import { Msg } from 'gamezilla-app/@/core/msg'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import {
   APP_SOUND,
@@ -37,9 +38,9 @@ export const init: ClientModule['init'] = (input) => {
       sms: sms.model,
       opened: null
     },
-    eff: Eff.batch([Eff.tag('sms', sms.eff)]),
-    msgEvt: batchMsgs(sms.msgEvt),
-    msgCmd: batchMsgs(ClientCmd.tag('sms', sms.msgCmd))
+    eff: Eff.batch(Eff.tag('sms', sms.eff)),
+    msgEvt: Msg.batch(sms.msgEvt),
+    msgCmd: Msg.batch(ClientCmd.tag('sms', sms.msgCmd))
   }
 }
 
