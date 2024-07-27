@@ -1,4 +1,4 @@
-import type { ClientCtx, ClientEvent } from 'gamezilla-app/app/@/client'
+import type { ClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 import { Browser, Eff, pipe } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
@@ -138,7 +138,7 @@ export const updateFromEvent = ({
   msg,
   model
 }: {
-  msg: ClientEvent
+  msg: ClientEvt
   model: ModelClient
 }): {
   model: ModelClient

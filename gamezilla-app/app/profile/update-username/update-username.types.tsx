@@ -2,7 +2,7 @@ import { Posix, RequestResponse } from 'gamezilla-app/@/core'
 import { Username } from 'gamezilla-app/app/@/data'
 
 export type ModelClient = {
-  'profile.update-username.username': string
+  'profile.update-username.username'?: string
   'profile-update-username.request'?: RequestResponse<string, null>
 }
 

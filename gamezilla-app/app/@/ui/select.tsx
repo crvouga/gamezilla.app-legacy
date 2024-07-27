@@ -1,5 +1,6 @@
 import type { VDom } from 'gamezilla-app/@/vdom'
 import { cn } from './ui'
+import { TranslatedText } from 'gamezilla-app/@/l18n'
 
 export const Select = <T,>({
   onChange,
@@ -14,7 +15,7 @@ export const Select = <T,>({
 }: {
   helperText?: string
   id: string
-  label: string
+  label: TranslatedText
   options: T[]
   value?: T | null
   error?: boolean

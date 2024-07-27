@@ -1,4 +1,4 @@
-import type { BaseClientCtx, ClientEvent } from 'gamezilla-app/app/@/client'
+import type { BaseClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 
 import { Eff, type Sub, batchMsgs } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'
@@ -17,7 +17,7 @@ export type Input = {
   model: ModelClient
   msg?: MsgClient | null
   msgServer?: MsgToClient | null
-  msgEvt?: ClientEvent | null
+  msgEvt?: ClientEvt | null
   msgCmd?: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer

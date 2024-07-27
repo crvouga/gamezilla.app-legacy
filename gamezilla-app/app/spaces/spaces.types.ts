@@ -2,7 +2,7 @@ import type { RequestResponse } from 'gamezilla-app/@/core'
 import type { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
-import type { AnonymousClientCtx, ClientCmd, ClientCtx, ClientEvent } from '../@/client'
+import type { AnonymousClientCtx, ClientCmd, ClientCtx, ClientEvt } from '../@/client'
 import type { ServerCmd, ServerCtx, ServerEvent } from '../@/server'
 import type { WithEventId, WithEventMeta } from './@/event'
 import type * as Game from './game/game.types'
@@ -26,14 +26,14 @@ import type { GameServer } from './game/game.server'
 export type ClientModule = AppClientModule<{
   Ctx: AnonymousClientCtx | ClientCtx
   MsgCmdIn: never
-  MsgEvtIn: ClientEvent
+  MsgEvtIn: ClientEvt
   Model: ModelClient
   Msg: MsgClient
   MsgCmdOut: ClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
-  MsgEvtOut: ClientEvent
+  MsgEvtOut: ClientEvt
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   ViewSlot: {

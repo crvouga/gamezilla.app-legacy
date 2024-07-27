@@ -15,7 +15,7 @@ const Fixture = async () => {
     }
   }
 
-  const initial = init(f).model
+  const initial = init({ ...f, model: {} }).model
 
   return {
     ...f,

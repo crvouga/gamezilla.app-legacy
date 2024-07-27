@@ -97,7 +97,7 @@ export type MsgToClient =
   | {
       t: 'current-user-profile'
       result: Result<string, Profile>
-      source: unknown
+      causedBy: unknown
       loggedIn?: boolean
     }
   | Res

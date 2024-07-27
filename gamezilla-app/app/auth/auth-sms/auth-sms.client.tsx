@@ -11,7 +11,7 @@ import {
   isErr
 } from 'gamezilla-app/@/core'
 import { AppClientModule, andThen } from 'gamezilla-app/app/@/architecture/app-client'
-import { APP_SOUND, type BaseClientCtx, type ClientEvent } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, type BaseClientCtx, type ClientEvt } from 'gamezilla-app/app/@/client'
 import {
   focusView,
   playSound,
@@ -40,12 +40,12 @@ type Module = AppClientModule<{
   MsgToServer: MsgToServer
   Ctx: BaseClientCtx
   MsgCmdIn: null
-  MsgEvtIn: ClientEvent
+  MsgEvtIn: ClientEvt
   MsgCmdOut: ClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>
-  MsgEvtOut: ClientEvent
+  MsgEvtOut: ClientEvt
 }>
 
 //

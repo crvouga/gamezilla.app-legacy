@@ -1,4 +1,4 @@
-import { Err, Ok, Result, isErr } from 'gamezilla-app/@/core'
+import { Err, Ok, Result, isErr, pipe } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
@@ -71,7 +71,11 @@ export const ScoreCoreDb = (deps: Deps): ISpaceCoreDb => {
         await indexSpaceIdByUserId.setMany(entries)
       ]
 
-      return Result.mapOk(Result.combine(results), () => null)
+      return pipe(
+        results,
+        (results) => Result.combine(results),
+        (result) => Result.mapOk(result, () => null)
+      )
     },
 
     async list(input) {
@@ -79,7 +83,13 @@ export const ScoreCoreDb = (deps: Deps): ISpaceCoreDb => {
 
       const subset = allSpaceIds.slice(input.offset, input.offset + input.limit)
 
-      return await spacesBySpaceId.getMany(subset)
+      const got = await spacesBySpaceId.getMany(subset)
+
+      if (isErr(got)) {
+        return got
+      }
+
+      return got
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Browser, Eff } from 'gamezilla-app/@/core'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
-import { APP_SOUND, playSound, type ClientEvent, type RouteCmd, type SoundCmd } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, playSound, type ClientEvt, type RouteCmd, type SoundCmd } from 'gamezilla-app/app/@/client'
 
 //
 //
@@ -76,7 +76,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgEvt?: ClientEvent[]
+  msgEvt?: ClientEvt[]
   msgCmd?: SoundCmd[]
 } => {
   if (msg) {

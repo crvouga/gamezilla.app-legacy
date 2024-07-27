@@ -1,4 +1,4 @@
-import type { AnonymousClientCtx, ClientEvent } from 'gamezilla-app/app/@/client'
+import type { AnonymousClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 
 import { Eff, batchMsgs, type Sub } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'
@@ -18,7 +18,7 @@ export type Input = {
 
   msg?: MsgClient | null
   msgServer?: MsgToClient | null
-  msgEvt?: ClientEvent | null
+  msgEvt?: ClientEvt | null
   msgCmd?: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer

@@ -10,7 +10,7 @@ import {
   preloadSound,
   type AnonymousClientCtx,
   type ClientCtx,
-  type ClientEvent
+  type ClientEvt
 } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from 'gamezilla-app/app/@/ui'
 import type { ServerImpl } from 'public-config'
@@ -270,7 +270,7 @@ export const update = (input: {
 type Output = {
   model: ModelClient
   eff: Eff<MsgClient>
-  msgEvt: ClientEvent[]
+  msgEvt: ClientEvt[]
   msgCmd: ClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
@@ -327,7 +327,7 @@ const updateChild = (input: {
   model: ModelClient
   msg?: MsgClient
   msgServer?: MsgToClient
-  msgEvt?: ClientEvent
+  msgEvt?: ClientEvt
   msgCmd?: ClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
@@ -439,7 +439,7 @@ const updateChild = (input: {
       Eff.tag('lang', lang.eff)
     ]),
 
-    msgEvt: Msg.batch<ClientEvent>(
+    msgEvt: Msg.batch<ClientEvt>(
       auth.msgEvt,
       profile.msgEvt,
       routing.msgEvt,

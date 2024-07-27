@@ -1,7 +1,7 @@
 import { NonEmpty, Posix, pipe, type TimeSpan } from 'gamezilla-app/@/core'
 import { LamportClock, LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
-import { ClientCmd, ClientEvent, routeChanged, type ClientCtx } from 'gamezilla-app/app/@/client'
+import { ClientCmd, ClientEvt, routeChanged, type ClientCtx } from 'gamezilla-app/app/@/client'
 import { FixtureAppClient } from 'gamezilla-app/app/@/client/client-test-env'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { ProfileAvatar, SpaceId, UserId, Username, type Profile } from 'gamezilla-app/app/@/data'
@@ -189,7 +189,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
       MsgToServer: SpacesTypes.MsgToServer
     }> | null
     msgServer?: SpacesTypes.MsgToClient | null
-    msgEvt?: ClientEvent | null
+    msgEvt?: ClientEvt | null
   }
 
   type Output = ReturnType<typeof SpaceClient.update>

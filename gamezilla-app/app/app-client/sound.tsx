@@ -1,7 +1,7 @@
 import { Err, Ok, TimeSpan, UnitInterval, type Result } from 'gamezilla-app/@/core'
 import { Translator } from 'gamezilla-app/@/l18n/generated'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
-import { APP_SOUND, BaseClientCtx, playSound, type ClientEvent, type SoundCmd } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, BaseClientCtx, playSound, type ClientEvt, type SoundCmd } from 'gamezilla-app/app/@/client'
 import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from 'gamezilla-app/app/@/ui'
 
 //
@@ -15,7 +15,7 @@ import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from 'g
 type Module = AppClientModule<{
   Ctx: BaseClientCtx
   MsgCmdIn: SoundCmd
-  MsgEvtIn: ClientEvent
+  MsgEvtIn: ClientEvt
   Model: Model
   Msg: Msg
   MsgCmdOut: SoundCmd

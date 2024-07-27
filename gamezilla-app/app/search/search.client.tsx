@@ -1,4 +1,4 @@
-import { type ClientCmd, type ClientEvent, sendToServer } from 'gamezilla-app/app/@/client'
+import { type ClientCmd, type ClientEvt, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconMagnifyingGlass, IconXMark } from 'gamezilla-app/app/@/ui'
 import { Browser, Eff, matchSort, pipe } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'
@@ -54,7 +54,7 @@ export const update = ({
 }): {
   model: ModelClient
   eff?: Eff<Msg>
-  msgEvt?: ClientEvent[]
+  msgEvt?: ClientEvt[]
   msgCmd?: ClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient

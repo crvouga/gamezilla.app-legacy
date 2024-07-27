@@ -16,6 +16,10 @@ import { ViewSpaceCard } from './space-card'
 //
 
 const sendListSpacesRequest: SpaceClientModule['update'] = ({ model, ctx }) => {
+  if (model.listSpacesRequest.t === 'loading') {
+    return { model }
+  }
+
   return {
     model: {
       ...model,

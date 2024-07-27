@@ -1,5 +1,5 @@
 import type { WithEventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { ClientCmd, type ClientEvent } from 'gamezilla-app/app/@/client'
+import { ClientCmd, type ClientEvt } from 'gamezilla-app/app/@/client'
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'
 
@@ -30,7 +30,7 @@ type Output<T extends GameClientTypes> = {
 export type InMsg<T extends GameClientTypes> =
   | ({ variant: 'msg' } & T['MsgClient'])
   | ({ variant: 'to-client' } & T['MsgToClient'])
-  | ({ variant: 'event' } & ClientEvent)
+  | ({ variant: 'event' } & ClientEvt)
 
 export type OutMsg<T extends GameClientTypes> =
   | ({ variant: 'msgCmd' } & ClientCmd<T>)
@@ -47,7 +47,7 @@ export type GameClient<T extends GameClientTypes> = {
     //
     msg?: T['MsgClient'] | null
     msgServer?: T['MsgToClient'] | null
-    msgEvt?: ClientEvent | null
+    msgEvt?: ClientEvt | null
     msgCore?: WithEventMeta<T['MsgCore']> | null
   }) => Output<T>
 

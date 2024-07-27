@@ -5,7 +5,7 @@ import {
   type AnonymousClientCtx,
   type ClientCmd,
   type ClientCtx,
-  type ClientEvent,
+  type ClientEvt,
   back,
   closeStatusBar,
   playSound,
@@ -31,7 +31,7 @@ type Module = AppClientModule<{
   MsgToClient: MsgToClient
   Msg: MsgClient
   MsgCmdIn: null
-  MsgEvtIn: ClientEvent
+  MsgEvtIn: ClientEvt
   MsgCmdOut: ClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient

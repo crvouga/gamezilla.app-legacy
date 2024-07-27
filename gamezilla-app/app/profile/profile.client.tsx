@@ -5,7 +5,7 @@ import {
   type AnonymousClientCtx,
   type ClientCmd,
   type ClientCtx,
-  type ClientEvent,
+  type ClientEvt,
   type ProfileCmd,
   back,
   logout,
@@ -38,12 +38,12 @@ type ClientModule = AppClientModule<{
   MsgToServer: MsgToServer
   Ctx: Ctx
   MsgCmdIn: ProfileCmd
-  MsgEvtIn: ClientEvent
+  MsgEvtIn: ClientEvt
   MsgCmdOut: ClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>
-  MsgEvtOut: never
+  MsgEvtOut: ClientEvt
   ViewSlot: {
     bottomBar: null
   }
@@ -59,7 +59,6 @@ type ClientModule = AppClientModule<{
 
 export const init: ClientModule['init'] = ({ ctx }) => {
   const initialModel: ModelClient = {
-    ...UpdateUsernameClient.init({ ctx }).model,
     profiles: {},
     requests: {},
     draft: {}
@@ -85,7 +84,13 @@ export const init: ClientModule['init'] = ({ ctx }) => {
 export const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
-    (model) => UpdateUsernameClient.update({ ctx: input.ctx, msg: input.msg, model }),
+    (model) =>
+      UpdateUsernameClient.update({
+        ctx: input.ctx,
+        msg: input.msg && 'n' in input?.msg && input.msg.n === 'profile.update-username' ? input.msg : null,
+        model,
+        msgEvt: input.msgEvt
+      }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
@@ -181,7 +186,13 @@ const updateFromServer: ClientModule['update'] = (input) => {
       }
 
       return {
-        model: modelNew
+        model: modelNew,
+        msgEvt: [
+          {
+            t: 'profile/current-user-profile',
+            profile
+          }
+        ]
       }
     }
 

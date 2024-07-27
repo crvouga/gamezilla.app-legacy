@@ -1,4 +1,4 @@
-import { type ClientCmd, type ClientEvent, showToast } from 'gamezilla-app/app/@/client'
+import { type ClientCmd, type ClientEvt, showToast } from 'gamezilla-app/app/@/client'
 import type { Eff, Sub } from 'gamezilla-app/@/core'
 import { ListItemButton, Typography, cn } from '../@/ui'
 import type { IClientTransport } from './transport-client'
@@ -56,7 +56,7 @@ export const update = <TMsgToClient extends Record<string, unknown>, TMsgToServe
   }>
 }): {
   model: ModelClient
-  msgEvt?: ClientEvent[]
+  msgEvt?: ClientEvt[]
   eff?: Eff<MsgClient>
 } => {
   if (msg) {

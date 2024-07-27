@@ -1,5 +1,5 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import type { ClientCtx, ClientEvent } from 'gamezilla-app/app/@/client'
+import type { ClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 import { SpaceId, UserId, type ClientId, type Profile, type SessionId } from 'gamezilla-app/app/@/data'
 import type { ServerCtx, ServerEvent } from 'gamezilla-app/app/@/server'
 
@@ -43,7 +43,7 @@ export type SpaceServerEvent = ServerEvent | SpaceEvent
  * @description
  * Represents outside msgEvts that happened in the client app
  */
-export type SpaceClientEvent = ClientEvent | SpaceEvent
+export type SpaceClientEvent = ClientEvt | SpaceEvent
 
 //
 //

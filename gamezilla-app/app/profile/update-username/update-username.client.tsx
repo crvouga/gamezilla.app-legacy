@@ -1,11 +1,22 @@
 import { RequestResponse } from 'gamezilla-app/@/core'
-import { AnonymousClientCtx, ClientCmd, ClientCtx, pushRoute, sendToServer } from 'gamezilla-app/app/@/client'
+import {
+  AnonymousClientCtx,
+  ClientCmd,
+  ClientCtx,
+  ClientEvt,
+  pushRoute,
+  sendToServer
+} from 'gamezilla-app/app/@/client'
 import { Button, TextField, TopBar } from 'gamezilla-app/app/@/ui'
-import { isMsgClient, ModelClient, MsgClient, MsgToServer } from './update-username.types'
+import { ModelClient, MsgClient, MsgToServer } from './update-username.types'
 
-export const init = (input: { ctx: ClientCtx | AnonymousClientCtx }): { model: ModelClient } => {
+export const init = <TModel extends ModelClient>(input: {
+  ctx: ClientCtx | AnonymousClientCtx
+  model: TModel
+}): { model: TModel } => {
   return {
     model: {
+      ...input.model,
       'profile.update-username.username': input.ctx.currentUserId
         ? input.ctx.profiles[input.ctx.currentUserId]?.username ?? ''
         : ''
@@ -13,9 +24,10 @@ export const init = (input: { ctx: ClientCtx | AnonymousClientCtx }): { model: M
   }
 }
 
-export const update = <TModel extends ModelClient, TMsg>(input: {
-  msg: TMsg
+export const update = <TModel extends ModelClient>(input: {
+  msg?: MsgClient | null
   model: TModel
+  msgEvt?: ClientEvt | null
   ctx: ClientCtx | AnonymousClientCtx
 }): {
   model: TModel
@@ -24,11 +36,7 @@ export const update = <TModel extends ModelClient, TMsg>(input: {
     MsgToServer: MsgToServer
   }>[]
 } => {
-  if (!isMsgClient(input.msg)) {
-    return { model: input.model }
-  }
-
-  switch (input.msg.t) {
+  switch (input.msg?.t) {
     case 'clicked-back': {
       return {
         model: input.model,
@@ -46,7 +54,7 @@ export const update = <TModel extends ModelClient, TMsg>(input: {
           sendToServer({
             n: 'profile.update-username',
             t: 'clicked-save',
-            username: input.model['profile.update-username.username']
+            username: input.model['profile.update-username.username'] ?? ''
           })
         ]
       }
@@ -61,6 +69,21 @@ export const update = <TModel extends ModelClient, TMsg>(input: {
       }
     }
   }
+
+  switch (input.msgEvt?.t) {
+    case 'profile/current-user-profile': {
+      return init({ ctx: input.ctx, model: input.model })
+    }
+
+    case 'routing/route-changed': {
+      if (input.msgEvt.route.t === 'profile-edit-username') {
+        return init({ ctx: input.ctx, model: input.model })
+      }
+      return { model: input.model }
+    }
+  }
+
+  return { model: input.model }
 }
 
 export const View = (input: {
@@ -69,23 +92,29 @@ export const View = (input: {
   dispatch: (m: MsgClient) => void
 }) => {
   return (
-    <div>
+    <div className='flex flex-col'>
       <TopBar
         ctx={input.ctx}
+        center
         onBack={() => input.dispatch({ n: 'profile.update-username', t: 'clicked-back' })}
         title={input.ctx.t('profile.update-username.update-username')}
       />
-      <TextField
-        id='username'
-        label={input.ctx.t('username-title')}
-        value={input.model['profile.update-username.username']}
-        onChange={(username) => input.dispatch({ n: 'profile.update-username', t: 'inputted-username', username })}
-      />
-      <Button
-        text={input.ctx.t('app.save')}
-        className='w-full'
-        onClick={() => input.dispatch({ n: 'profile.update-username', t: 'clicked-save' })}
-      />
+      <div className='flex w-full flex-col gap-4 p-4'>
+        <TextField
+          id='username'
+          label={input.ctx.t('username-title')}
+          value={input.model['profile.update-username.username']}
+          onChange={(username) => input.dispatch({ n: 'profile.update-username', t: 'inputted-username', username })}
+        />
+        <div className='w-full pt-4'>
+          <Button
+            text={input.ctx.t('app.save')}
+            className='w-full'
+            loading={input.model['profile-update-username.request']?.t === 'loading'}
+            onClick={() => input.dispatch({ n: 'profile.update-username', t: 'clicked-save' })}
+          />
+        </div>
+      </div>
     </div>
   )
 }
