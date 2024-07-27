@@ -51,7 +51,7 @@ const ViewDrawer: ClientModule['View'] = (input) => {
       <DrawerHeader onClose={() => input.emits?.close(null)} />
       <TextField
         id='pack-name'
-        label='Pack Name'
+        label={input.ctx.t('flow.edit-pack-name.pack-name')}
         value={input.modelCore.draft}
         onChange={(packNameDraft) =>
           input.dispatch({

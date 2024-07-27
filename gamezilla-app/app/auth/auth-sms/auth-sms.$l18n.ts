@@ -10,6 +10,7 @@ export type Text = {
   'auth-sms.invalid-phone-number': string
   'auth-sms.enter-code-sent-to': (formattedPhoneNumber: string) => string
   'auth-sms.sent-code-to': (formattedPhoneNumber: string) => string
+  'auth-sms.please-enter-code': string
 }
 
 export const translations: Translations<Text> = {
@@ -22,7 +23,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': 'التحقق من الرمز',
     'auth-sms.invalid-phone-number': 'رقم الهاتف غير صالح',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `أدخل الرمز المرسل إلى ${formattedPhoneNumber}`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `تم إرسال الرمز إلى ${formattedPhoneNumber}`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `تم إرسال الرمز إلى ${formattedPhoneNumber}`,
+    'auth-sms.please-enter-code': 'الرجاء إدخال الرمز'
   },
   de: {
     'auth-sms.login-with-phone': 'Mit Telefonnummer anmelden',
@@ -34,7 +36,8 @@ export const translations: Translations<Text> = {
     'auth-sms.invalid-phone-number': 'Ungültige Telefonnummer',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) =>
       `Code eingeben, der an ${formattedPhoneNumber} gesendet wurde`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Code an ${formattedPhoneNumber} gesendet`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Code an ${formattedPhoneNumber} gesendet`,
+    'auth-sms.please-enter-code': 'Bitte geben Sie den Code ein'
   },
   en: {
     'auth-sms.login-with-phone': 'Login with phone',
@@ -45,7 +48,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': 'Verify Code',
     'auth-sms.invalid-phone-number': 'Invalid phone number',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Enter the code sent to ${formattedPhoneNumber}`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Sent code to ${formattedPhoneNumber}`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Sent code to ${formattedPhoneNumber}`,
+    'auth-sms.please-enter-code': 'Please enter the code'
   },
   es: {
     'auth-sms.login-with-phone': 'Iniciar sesión con el teléfono',
@@ -56,7 +60,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': 'Verificar código',
     'auth-sms.invalid-phone-number': 'Número de teléfono no válido',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Introduce el código enviado a ${formattedPhoneNumber}`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Código enviado a ${formattedPhoneNumber}`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Código enviado a ${formattedPhoneNumber}`,
+    'auth-sms.please-enter-code': 'Por favor, introduzca el código'
   },
   fr: {
     'auth-sms.login-with-phone': 'Se connecter avec le téléphone',
@@ -67,7 +72,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': 'Vérifier le code',
     'auth-sms.invalid-phone-number': 'Numéro de téléphone invalide',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Entrez le code envoyé à ${formattedPhoneNumber}`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Code envoyé à ${formattedPhoneNumber}`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Code envoyé à ${formattedPhoneNumber}`,
+    'auth-sms.please-enter-code': 'Veuillez entrer le code'
   },
   hi: {
     'auth-sms.login-with-phone': 'फोन से लॉगिन करें',
@@ -78,7 +84,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': 'सत्यापित करें',
     'auth-sms.invalid-phone-number': 'अमान्य फोन नंबर',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `कोड ${formattedPhoneNumber} पर भेजा गया है`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `कोड ${formattedPhoneNumber} पर भेजा गया`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `कोड ${formattedPhoneNumber} पर भेजा गया`,
+    'auth-sms.please-enter-code': 'कृपया कोड दर्ज करें'
   },
   it: {
     'auth-sms.login-with-phone': 'Accedi con il telefono',
@@ -89,7 +96,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': 'Verifica',
     'auth-sms.invalid-phone-number': 'Numero di telefono non valido',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Inserisci il codice inviato a ${formattedPhoneNumber}`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Codice inviato a ${formattedPhoneNumber}`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Codice inviato a ${formattedPhoneNumber}`,
+    'auth-sms.please-enter-code': 'Inserisci il codice'
   },
   ja: {
     'auth-sms.login-with-phone': '電話でログイン',
@@ -101,7 +109,8 @@ export const translations: Translations<Text> = {
     'auth-sms.invalid-phone-number': '無効な電話番号',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) =>
       `${formattedPhoneNumber} に送信されたコードを入力してください`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `${formattedPhoneNumber} にコードを送信しました`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `${formattedPhoneNumber} にコードを送信しました`,
+    'auth-sms.please-enter-code': 'コードを入力してください'
   },
   ko: {
     'auth-sms.login-with-phone': '전화로 로그인',
@@ -112,7 +121,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': '확인',
     'auth-sms.invalid-phone-number': '유효하지 않은 전화 번호',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `${formattedPhoneNumber}로 전송된 코드를 입력하십시오`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `${formattedPhoneNumber}로 코드를 보냈습니다`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `${formattedPhoneNumber}로 코드를 보냈습니다`,
+    'auth-sms.please-enter-code': '코드를 입력하십시오'
   },
   pt: {
     'auth-sms.login-with-phone': 'Login com telefone',
@@ -123,7 +133,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': 'Verificar',
     'auth-sms.invalid-phone-number': 'Número de telefone inválido',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Insira o código enviado para ${formattedPhoneNumber}`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Código enviado para ${formattedPhoneNumber}`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Código enviado para ${formattedPhoneNumber}`,
+    'auth-sms.please-enter-code': 'Por favor, insira o código'
   },
   ru: {
     'auth-sms.login-with-phone': 'Войти с телефона',
@@ -134,7 +145,8 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': 'Проверить',
     'auth-sms.invalid-phone-number': 'Неверный номер телефона',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Введите код, отправленный на ${formattedPhoneNumber}`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Код отправлен на ${formattedPhoneNumber}`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `Код отправлен на ${formattedPhoneNumber}`,
+    'auth-sms.please-enter-code': 'Пожалуйста, введите код'
   },
   zh: {
     'auth-sms.login-with-phone': '使用电话登录',
@@ -145,6 +157,7 @@ export const translations: Translations<Text> = {
     'auth-sms.verify-code': '验证',
     'auth-sms.invalid-phone-number': '无效的电话号码',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `输入发送到 ${formattedPhoneNumber} 的代码`,
-    'auth-sms.sent-code-to': (formattedPhoneNumber) => `已发送代码到 ${formattedPhoneNumber}`
+    'auth-sms.sent-code-to': (formattedPhoneNumber) => `已发送代码到 ${formattedPhoneNumber}`,
+    'auth-sms.please-enter-code': '请输入代码'
   }
 }

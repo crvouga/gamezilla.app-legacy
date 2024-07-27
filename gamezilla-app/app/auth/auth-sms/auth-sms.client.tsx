@@ -151,13 +151,11 @@ const updateAutoFocus: Module['update'] = (input) => {
 }
 
 const updateFromMsg: Module['update'] = (input) => {
-  const { ctx, model, msg } = input
-
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'clicked-back-button': {
-      if (ctx.currentRoute.t === 'login-sms-verify') {
+      if (input.ctx.currentRoute.t === 'login-sms-verify') {
         return {
-          model,
+          model: input.model,
           msgCmd: [
             replaceRoute({
               n: 'auth-login',
@@ -168,7 +166,7 @@ const updateFromMsg: Module['update'] = (input) => {
       }
 
       return {
-        model,
+        model: input.model,
         msgCmd: [
           replaceRoute({
             n: 'auth-login',
@@ -181,8 +179,8 @@ const updateFromMsg: Module['update'] = (input) => {
     case 'inputted-phone-number': {
       return {
         model: {
-          ...model,
-          inputtedPhoneNumber: msg.phoneNumber,
+          ...input.model,
+          inputtedPhoneNumber: input.msg.phoneNumber,
           phoneNumberError: null
         }
       }
@@ -191,7 +189,7 @@ const updateFromMsg: Module['update'] = (input) => {
     case 'clicked-phone-number-clear': {
       return {
         model: {
-          ...model,
+          ...input.model,
           inputtedPhoneNumber: '',
           phoneNumberError: null
         }
@@ -201,20 +199,20 @@ const updateFromMsg: Module['update'] = (input) => {
     case 'inputted-country-code': {
       return {
         model: {
-          ...model,
-          countryCodeInput: msg.countryCode
+          ...input.model,
+          countryCodeInput: input.msg.countryCode
         }
       }
     }
 
     case 'user-clicked-send-code-button': {
-      const phoneNumber = PhoneNumber.fromString(model.inputtedPhoneNumber, model.countryCodeInput)
+      const phoneNumber = PhoneNumber.fromString(input.model.inputtedPhoneNumber, input.model.countryCodeInput)
 
       if (isErr(phoneNumber)) {
         return {
           model: {
-            ...model,
-            phoneNumberError: ctx.t('auth-sms.invalid-phone-number')
+            ...input.model,
+            phoneNumberError: input.ctx.t('auth-sms.invalid-phone-number')
           },
           msgCmd: [playSound(APP_SOUND.alertErrorSm), focusView(PHONE_NUMBER_INPUT_VIEW_ID)]
         }
@@ -222,15 +220,15 @@ const updateFromMsg: Module['update'] = (input) => {
 
       return {
         model: {
-          ...model,
+          ...input.model,
           sendCode: RemoteResult.Loading,
-          sentCodeAt: ctx.now
+          sentCodeAt: input.ctx.now
         },
         msgCmd: [
           sendToServer({
             t: 'user-clicked-send-code-button',
             phoneNumber: phoneNumber.value,
-            preferredLanguage: ctx.navigatorLanguage
+            preferredLanguage: input.ctx.navigatorLanguage
           }),
           playSound(APP_SOUND.tap)
         ]
@@ -240,8 +238,8 @@ const updateFromMsg: Module['update'] = (input) => {
     case 'inputted-code': {
       return {
         model: {
-          ...model,
-          inputtedCode: msg.inputtedCode,
+          ...input.model,
+          inputtedCode: input.msg.inputtedCode,
           inputtedCodeError: null
         }
       }
@@ -250,7 +248,7 @@ const updateFromMsg: Module['update'] = (input) => {
     case 'clicked-code-clear': {
       return {
         model: {
-          ...model,
+          ...input.model,
           inputtedCode: '',
           inputtedCodeError: null
         }
@@ -258,11 +256,11 @@ const updateFromMsg: Module['update'] = (input) => {
     }
 
     case 'user-clicked-verify-code-button': {
-      if (model.inputtedCode === '') {
+      if (input.model.inputtedCode === '') {
         return {
           model: {
-            ...model,
-            inputtedCodeError: 'Please enter the code'
+            ...input.model,
+            inputtedCodeError: input.ctx.t('auth-sms.please-enter-code')
           },
           msgCmd: [playSound(APP_SOUND.alertErrorSm), focusView(CODE_INPUT_VIEW_ID)]
         }
@@ -270,15 +268,15 @@ const updateFromMsg: Module['update'] = (input) => {
 
       return {
         model: {
-          ...model,
+          ...input.model,
           verifyCode: RemoteResult.Loading
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
             t: 'user-clicked-verify-code-button',
-            inputtedCode: model.inputtedCode,
-            phoneNumber: msg.phoneNumber
+            inputtedCode: input.model.inputtedCode,
+            phoneNumber: input.msg.phoneNumber
           })
         ]
       }
@@ -287,20 +285,20 @@ const updateFromMsg: Module['update'] = (input) => {
     case 'time-passed': {
       return AppClientModule.andThen(
         {
-          model
+          model: input.model
         },
         (model) => {
           if (
             model.sentCodeAt &&
             model.sendCode.t === 'loading' &&
-            TimeSpan.gte(Posix.diff(ctx.now, model.sentCodeAt), TimeSpan.seconds(30))
+            TimeSpan.gte(Posix.diff(input.ctx.now, model.sentCodeAt), TimeSpan.seconds(30))
           ) {
             return {
               model: {
                 ...model,
                 sendCode: RemoteResult.Err({
                   t: 'database-error',
-                  error: ctx.t('app.something-went-wrong')
+                  error: input.ctx.t('app.something-went-wrong')
                 })
               },
               msgCmd: [playSound(APP_SOUND.alertErrorMd)]
@@ -314,7 +312,7 @@ const updateFromMsg: Module['update'] = (input) => {
           if (
             model.verifiedCodeAt &&
             model.verifyCode.t === 'loading' &&
-            TimeSpan.gte(Posix.diff(ctx.now, model.verifiedCodeAt), TimeSpan.seconds(30))
+            TimeSpan.gte(Posix.diff(input.ctx.now, model.verifiedCodeAt), TimeSpan.seconds(30))
           ) {
             return {
               model: {
@@ -337,7 +335,7 @@ const updateFromMsg: Module['update'] = (input) => {
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }

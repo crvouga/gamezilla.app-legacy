@@ -175,7 +175,7 @@ export const View = (input: {
           autoFocus
           id='email-address'
           type='email'
-          label='Email Address'
+          label={input.ctx.t('auth-email.email-address')}
           value={input.model.emailAddress}
           onChange={(emailAddress) => {
             input.dispatch({
@@ -190,7 +190,11 @@ export const View = (input: {
             })
           }
           error={input.model.validation === 'invalid-email'}
-          helperText={input.model.validation === 'invalid-email' ? 'Please enter a valid email address' : undefined}
+          helperText={
+            input.model.validation === 'invalid-email'
+              ? input.ctx.t('auth-email.please-enter-valid-email-address')
+              : undefined
+          }
         />
 
         <Button

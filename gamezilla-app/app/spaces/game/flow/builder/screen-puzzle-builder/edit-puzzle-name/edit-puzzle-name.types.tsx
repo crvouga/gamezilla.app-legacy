@@ -2,6 +2,8 @@ import { type RemoteResult, Result, NotAsked } from 'gamezilla-app/@/core'
 import { FlowPuzzleId } from '../../../@/flow-puzzle/flow-puzzle-id'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { p } from 'gamezilla-app/@/core/parser'
+import { TranslatedText } from 'gamezilla-app/@/l18n'
+import { Translator } from 'gamezilla-app/@/l18n/generated'
 
 //
 //
@@ -22,10 +24,13 @@ export const initClient: ModelClient = {
 
 export type EditNameValidationError = 'name-cannot-be-empty' | null
 
-export const editNameValidationErrorToString = (error?: EditNameValidationError) => {
+export const editNameValidationErrorToString = (
+  t: Translator,
+  error?: EditNameValidationError
+): TranslatedText | null => {
   switch (error) {
     case 'name-cannot-be-empty': {
-      return 'Name cannot be empty'
+      return t('flow.edit-puzzle-name.name-cannot-be-empty')
     }
     default: {
       return null

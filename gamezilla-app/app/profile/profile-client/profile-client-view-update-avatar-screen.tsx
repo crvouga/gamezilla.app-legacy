@@ -38,7 +38,7 @@ export const ViewUpdateAvatarScreen = (input: {
 
         <div className='flex w-full flex-col gap-4'>
           <TextField
-            label='Seed'
+            label={input.ctx.t('profile-avatar.seed')}
             value={input.model.draft?.avatarSeed ?? ''}
             onChange={(val) =>
               input.dispatch({

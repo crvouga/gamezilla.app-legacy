@@ -1,16 +1,16 @@
 import type { Iso3166Alpha2Code, PhoneNumber, Posix, Remote, Result } from 'gamezilla-app/@/core'
-import type { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n'
+import type { LanguageCodeISO_639_1, TranslatedText } from 'gamezilla-app/@/l18n'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import type { SendCodeOutput, VerifyCodeProblem } from './verify-sms'
 
 export type ModelClient = {
   //
   inputtedPhoneNumber: string
-  phoneNumberError: string | null
+  phoneNumberError: TranslatedText | null
   countryCodeInput: Iso3166Alpha2Code
   //
   inputtedCode: string
-  inputtedCodeError: string | null
+  inputtedCodeError: TranslatedText | null
   //
   sentCodeAt: Posix | null
   sendCode: Remote | SendCodeOutput

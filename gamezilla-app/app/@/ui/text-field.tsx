@@ -1,30 +1,17 @@
 import type { VDom } from 'gamezilla-app/@/vdom'
 import { IconXMark } from './icon'
 import { cn } from './ui'
+import { TranslatedText } from 'gamezilla-app/@/l18n'
 
-export const TextField = ({
-  label,
-  id,
-  value,
-
-  onChange,
-  onClear,
-  type,
-  error,
-  helperText,
-  autoFocus,
-  min,
-  max,
-  step
-}: {
+export const TextField = (input: {
   startIcon?: VDom
   type?: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel' | 'url'
   autoFocus?: boolean
   id: string
-  label: string
+  label: TranslatedText
   value?: string | number
   error?: boolean
-  helperText?: string | null
+  helperText?: TranslatedText | null
   min?: number
   max?: number
   step?: number
@@ -33,52 +20,52 @@ export const TextField = ({
 }) => {
   return (
     <div className='flex w-full flex-col gap-1'>
-      <label htmlFor={id} className={cn('text-base', error && 'text-red-500')}>
-        {label}
+      <label htmlFor={input.id} className={cn('text-base', input.error && 'text-red-500')}>
+        {input.label}
       </label>
 
       <input
         role='textbox'
-        aria-label={label}
-        id={id}
-        autoFocus={autoFocus}
-        type={type}
-        value={value}
-        min={min}
-        max={max}
+        aria-label={input.label}
+        id={input.id}
+        autoFocus={input.autoFocus}
+        type={input.type}
+        value={input.value}
+        min={input.min}
+        max={input.max}
         auto-complete='off'
         auto-capitalize='off'
         auto-correct='off'
         auto-save='off'
-        step={step}
+        step={input.step}
         onInput={(e) => {
           e.preventDefault()
-          onChange(e.currentTarget.value)
+          input.onChange(e.currentTarget.value)
         }}
         className={cn(
           'flex appearance-none items-center gap-2 rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none',
-          error && 'border border-red-500 text-red-500',
-          !error && ' ring-blue-600 focus-within:ring-2'
+          input.error && 'border border-red-500 text-red-500',
+          !input.error && ' ring-blue-600 focus-within:ring-2'
         )}
         style={{
           background: 'transparent !important'
         }}
       />
-      {onClear && value && value?.toString().length > 0 && (
+      {input.onClear && input.value && input.value?.toString().length > 0 && (
         <button
           className='rounded-md outline-none ring-blue-600 focus:ring-2'
           aria-label='Clear input'
           onClick={(e) => {
             e.preventDefault()
-            document.getElementById(id)?.focus()
-            onClear()
+            document.getElementById(input.id)?.focus()
+            input.onClear?.()
           }}
         >
           <IconXMark className='h-6 w-6' />
         </button>
       )}
 
-      {helperText && <div className={cn('text-sm', error && 'text-red-500')}>{helperText}</div>}
+      {input.helperText && <div className={cn('text-sm', input.error && 'text-red-500')}>{input.helperText}</div>}
     </div>
   )
 }

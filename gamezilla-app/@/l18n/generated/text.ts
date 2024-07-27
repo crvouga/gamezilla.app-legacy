@@ -21,26 +21,27 @@ import type { Text as Text18 } from '../../../app/spaces/game/flow/builder/scree
 import type { Text as Text19 } from '../../../app/spaces/game/flow/builder/screen-puzzle-builder/delete-forever/delete-forever.$l18n'
 import type { Text as Text20 } from '../../../app/spaces/game/flow/builder/screen-puzzle-builder/screen-puzzle-builder.$l18n'
 import type { Text as Text21 } from '../../../app/spaces/game/flow/builder/screen-pack-builder/screen-pack-builder.$l18n'
-import type { Text as Text22 } from '../../../app/spaces/game/flow/builder/screen-open-pack/create-new-pack/create-new-pack.$l18n'
-import type { Text as Text23 } from '../../../app/spaces/game/flow/@/flow.$l18n'
-import type { Text as Text24 } from '../../../app/spaces/game/flow/@/flow-pack/flow-pack-name.$l18n'
-import type { Text as Text25 } from '../../../app/spaces/game/flow/@/flow-pack/flow-pack-list/flow-pack-list.$l18n'
-import type { Text as Text26 } from '../../../app/spaces/game/flow/@/flow-puzzle/flow-puzzle-name.$l18n'
-import type { Text as Text27 } from '../../../app/spaces/game/flow/@/flow-puzzle/flow-puzzle-list/flow-puzzle-list.$l18n'
-import type { Text as Text28 } from '../../../app/spaces/game/flow/@/flow/flow-edit/flow-edit.$l18n'
-import type { Text as Text29 } from '../../../app/spaces/game/flow/@/flow/flow-copy-to-clipboard/flow-copy-to-clipboard.$l18n'
-import type { Text as Text30 } from '../../../app/spaces/end-space/end-space.$l18n'
-import type { Text as Text31 } from '../../../app/spaces/join-space/join-space.$l18n'
-import type { Text as Text32 } from '../../../app/spaces/space/space.$l18n'
-import type { Text as Text33 } from '../../../app/spaces/list-spaces/space-card.$l18n'
-import type { Text as Text34 } from '../../../app/spaces/list-spaces/list-spaces.$l18n'
-import type { Text as Text35 } from '../../../app/spaces/@/spaces.$l18n'
-import type { Text as Text36 } from '../../../app/lang/lang.$l18n'
-import type { Text as Text37 } from '../../../app/profile/update-username/update-username.$l18n'
-import type { Text as Text38 } from '../../../app/profile/profile.$l18n'
-import type { Text as Text39 } from '../../../app/@/app.$l18n'
-import type { Text as Text40 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text41 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
+import type { Text as Text22 } from '../../../app/spaces/game/flow/builder/screen-pack-builder/edit-pack-name/edit-pack-name.$l18n'
+import type { Text as Text23 } from '../../../app/spaces/game/flow/builder/screen-open-pack/create-new-pack/create-new-pack.$l18n'
+import type { Text as Text24 } from '../../../app/spaces/game/flow/@/flow.$l18n'
+import type { Text as Text25 } from '../../../app/spaces/game/flow/@/flow-pack/flow-pack-name.$l18n'
+import type { Text as Text26 } from '../../../app/spaces/game/flow/@/flow-pack/flow-pack-list/flow-pack-list.$l18n'
+import type { Text as Text27 } from '../../../app/spaces/game/flow/@/flow-puzzle/flow-puzzle-name.$l18n'
+import type { Text as Text28 } from '../../../app/spaces/game/flow/@/flow-puzzle/flow-puzzle-list/flow-puzzle-list.$l18n'
+import type { Text as Text29 } from '../../../app/spaces/game/flow/@/flow/flow-edit/flow-edit.$l18n'
+import type { Text as Text30 } from '../../../app/spaces/game/flow/@/flow/flow-copy-to-clipboard/flow-copy-to-clipboard.$l18n'
+import type { Text as Text31 } from '../../../app/spaces/end-space/end-space.$l18n'
+import type { Text as Text32 } from '../../../app/spaces/join-space/join-space.$l18n'
+import type { Text as Text33 } from '../../../app/spaces/space/space.$l18n'
+import type { Text as Text34 } from '../../../app/spaces/list-spaces/space-card.$l18n'
+import type { Text as Text35 } from '../../../app/spaces/list-spaces/list-spaces.$l18n'
+import type { Text as Text36 } from '../../../app/spaces/@/spaces.$l18n'
+import type { Text as Text37 } from '../../../app/lang/lang.$l18n'
+import type { Text as Text38 } from '../../../app/profile/update-username/update-username.$l18n'
+import type { Text as Text39 } from '../../../app/profile/profile.$l18n'
+import type { Text as Text40 } from '../../../app/@/app.$l18n'
+import type { Text as Text41 } from '../../../app/@/data/username/username.$l18n'
+import type { Text as Text42 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -83,4 +84,5 @@ export type Text = Text0 &
   Text38 &
   Text39 &
   Text40 &
-  Text41
+  Text41 &
+  Text42

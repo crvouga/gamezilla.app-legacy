@@ -276,7 +276,7 @@ const ViewDraftNameInput: ClientModule['View'] = (input) => {
     <div className='w-full p-4'>
       <TextField
         id='edit-name-input'
-        label='Name'
+        label={input.ctx.t('flow.edit-puzzle-name.name')}
         value={input.model.puzzleEditNameDraft}
         onChange={(draftName) =>
           input.dispatch({
@@ -285,7 +285,7 @@ const ViewDraftNameInput: ClientModule['View'] = (input) => {
           })
         }
         error={Boolean(input.model.puzzleEditNameValidationError)}
-        helperText={editNameValidationErrorToString(input.model.puzzleEditNameValidationError)}
+        helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
       />
     </div>
   )
