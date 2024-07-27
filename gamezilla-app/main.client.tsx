@@ -22,23 +22,11 @@ const main = async () => {
   await Program.run({
     ctx: AppClient.ctx,
 
-    init: (input) =>
-      AppClient.init({
-        ...input,
-        deps
-      }),
+    init: (input) => AppClient.init({ ...input, deps }),
 
-    update: (input) =>
-      AppClient.update({
-        ...input,
-        deps
-      }),
+    update: (input) => AppClient.update({ ...input, deps }),
 
-    subscriptions: (input) =>
-      AppClient.subscriptions({
-        ...input,
-        deps
-      }),
+    subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
 
     render: (input) => render(<AppClient.View {...input} />),
 

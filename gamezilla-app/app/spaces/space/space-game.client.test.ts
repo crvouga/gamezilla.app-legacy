@@ -45,7 +45,7 @@ describe(import.meta.file, () => {
       clickedStartSpaceButton(ctx, spaceId),
       clickedGameTile(ctx, 'connect-four'),
       (model) =>
-        SpacesClient.updateMain({
+        SpacesClient.updateLoop({
           model,
           ctx,
           msgCmd: exitGame()

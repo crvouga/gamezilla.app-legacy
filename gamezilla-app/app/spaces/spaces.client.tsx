@@ -1,4 +1,4 @@
-import { Eff, NotAsked, Sub } from 'gamezilla-app/@/core'
+import { Eff, NotAsked } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { isAnonymous } from '../@/client'
 import { SpaceClientCmd } from './@/space-client-cmd'
@@ -40,7 +40,7 @@ export const init: ClientModule['init'] = ({ ctx }) => {
       ...listSpaces.model
     },
     eff: Eff.batch([listSpaces.eff]),
-    msgCmd: SpaceClientCmd.toClientCmd(Msg.batch(listSpaces.msgCmd))
+    msgCmd: SpaceClientCmd.toClientCmd(listSpaces.msgCmd)
   }
 }
 
@@ -53,7 +53,7 @@ export const init: ClientModule['init'] = ({ ctx }) => {
 //
 
 export const update: ClientModule['update'] = (input) => {
-  const updated = updateMain(input)
+  const updated = updateLoop(input)
 
   return {
     model: updated.model,
@@ -62,7 +62,7 @@ export const update: ClientModule['update'] = (input) => {
   }
 }
 
-export const updateMain = (input: Input, initial?: Output): Output => {
+export const updateLoop = (input: Input, initial?: Output): Output => {
   const acc = initial ?? updateChild(input)
 
   const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? []
@@ -74,7 +74,7 @@ export const updateMain = (input: Input, initial?: Output): Output => {
       msgSpaceEvent: spaceEvent
     })
 
-    return updateMain(input, {
+    return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
       msgSpaceEvent: Msg.batch(spaceEventsRest, updated.msgSpaceEvent),
@@ -92,7 +92,7 @@ export const updateMain = (input: Input, initial?: Output): Output => {
       msgCmd: spaceCmd
     })
 
-    return updateMain(input, {
+    return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
       msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
@@ -114,61 +114,17 @@ const updateChild: SpaceClientModule['update'] = (input) => {
 
   return SpaceClientModule.andThen(
     { model: input.model },
-    (model) =>
-      EndSpaceClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      LeaveSpaceClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      SpaceGameClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateSpacesFromSpaceEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      SyncClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      StartSpaceClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      JoinSpaceClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ListSpacesClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      GoHome.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      CurrentSpaceBottomBar.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      Modals.update({
-        ...input,
-        model
-      })
+    (model) => EndSpaceClient.update({ ...input, model }),
+    (model) => LeaveSpaceClient.update({ ...input, model }),
+    (model) => SpaceGameClient.update({ ...input, model }),
+    (model) => updateSpacesFromSpaceEvent({ ...input, model }),
+    (model) => SyncClient.update({ ...input, model }),
+    (model) => StartSpaceClient.update({ ...input, model }),
+    (model) => JoinSpaceClient.update({ ...input, model }),
+    (model) => ListSpacesClient.update({ ...input, model }),
+    (model) => GoHome.update({ ...input, model }),
+    (model) => CurrentSpaceBottomBar.update({ ...input, model }),
+    (model) => Modals.update({ ...input, model })
   )
 }
 
@@ -196,10 +152,7 @@ const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgSpaceEvent
 //
 
 export const subscriptions: ClientModule['subscriptions'] = (input) => {
-  return Sub.batch([
-    //
-    SpaceGameClient.subscriptions(input)
-  ])
+  return SpaceGameClient.subscriptions(input)
 }
 
 //
@@ -227,7 +180,7 @@ export const View: ClientModule['View'] = (input) => {
         }
         case 'space': {
           if (isAnonymous(input.ctx)) {
-            return <>isAnonymous</>
+            return null
           }
 
           return (
@@ -240,12 +193,12 @@ export const View: ClientModule['View'] = (input) => {
           )
         }
         default: {
-          return <>404</>
+          return null
         }
       }
     }
     default: {
-      return <>404</>
+      return null
     }
   }
 }

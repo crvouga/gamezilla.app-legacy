@@ -272,7 +272,7 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
     })
     return updateLoop(deps, ctx, {
       model: updatedCmd.model,
-      msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
+      msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
       msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt)
     })
@@ -281,17 +281,17 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
   const [msgEvt, ...msgEvtRest] = acc.msgEvt
 
   if (msgEvt) {
-    const updatedEvent = updateChild({
+    const updatedEvt = updateChild({
       deps,
       ctx,
       model: acc.model,
       msgEvt
     })
     return updateLoop(deps, ctx, {
-      model: updatedEvent.model,
-      msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
-      eff: Eff.batch([acc.eff, updatedEvent.eff]),
-      msgEvt: Msg.batch(msgEvtRest, updatedEvent.msgEvt)
+      model: updatedEvt.model,
+      msgCmd: Msg.batch(msgCmdRest, updatedEvt.msgCmd),
+      eff: Eff.batch([acc.eff, updatedEvt.eff]),
+      msgEvt: Msg.batch(msgEvtRest, updatedEvt.msgEvt)
     })
   }
 
