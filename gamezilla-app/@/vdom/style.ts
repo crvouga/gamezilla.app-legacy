@@ -39,9 +39,7 @@ export const styles = (
 ): Record<string, unknown> => {
   switch (vdomImpl) {
     case 'inferno':
-    case 'preact':
-    case 'vue':
-    case 'solid': {
+    case 'preact': {
       return stylesObject as Record<string, unknown>
     }
     case 'react-with-compiler':

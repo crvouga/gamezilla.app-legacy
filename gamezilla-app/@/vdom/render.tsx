@@ -39,57 +39,5 @@ export const Render = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Ren
         Preact.render(vDom, root)
       }
     }
-
-    case 'solid': {
-      const Solid = await import('solid-js/web')
-      let dispose: () => void
-
-      return (vDom) => {
-        if (dispose) {
-          dispose()
-        }
-        dispose = Solid.render(() => vDom, root)
-      }
-    }
-
-    case 'vue': {
-      const Vue = await import('vue')
-      // createPortal = Vue
-      const vDomRef = Vue.ref(null)
-      const app = Vue.createApp({
-        render() {
-          return vDomRef.value
-        }
-      })
-      app.mount(root)
-      return (vDom) => {
-        vDomRef.value = transformClassName(vDom)
-        console.log(vDomRef.value)
-      }
-    }
   }
-}
-
-// @ts-ignore
-const transformClassName = (vDom) => {
-  if (Array.isArray(vDom)) {
-    return vDom.map(transformClassName)
-  } else if (vDom && typeof vDom === 'object') {
-    const { className, ...restinput } = vDom.input || {}
-    const newinput = className
-      ? {
-          class: className,
-          ...restinput
-        }
-      : restinput
-    // @ts-ignore
-    const children = vDom.children ? transformClassName(vDom.children) : vDom.children
-
-    return {
-      ...vDom,
-      input: newinput,
-      children: children
-    }
-  }
-  return vDom
 }
