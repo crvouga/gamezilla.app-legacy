@@ -89,7 +89,7 @@ const updateFromMsg: Module['update'] = async ({ msg, model }) => {
   }
 
   switch (msg.t) {
-    case 'noop': {
+    case 'profile.update-username.noop': {
       return { model }
     }
     case 'handled': {
@@ -106,7 +106,7 @@ const updateFromClient: Module['update'] = async ({ msgClient, model, ctx }) => 
     return { model }
   }
 
-  if (msgClient.t === 'clicked-save') {
+  if (msgClient.t === 'profile.update-username.clicked-save') {
     return { model }
   }
 

@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
     expect(button).toBeTruthy()
     button?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toBe('clicked-save')
+    expect(msg.t).toBe('profile.update-username.clicked-save')
   })
 
   test('render exit button', async () => {

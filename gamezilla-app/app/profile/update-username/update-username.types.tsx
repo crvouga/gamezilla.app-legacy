@@ -6,40 +6,29 @@ export type ModelClient = {
   'profile-update-username.request'?: RequestResponse<string, null>
 }
 
-export type ModelServer = {}
-
-export type MsgClient = { n: 'profile.update-username' } & (
+export type MsgClient =
   | {
-      t: 'inputted-username'
+      t: 'profile.update-username.inputted-username'
       username: string
     }
   | {
-      t: 'clicked-back'
+      t: 'profile.update-username.clicked-back'
     }
   | {
-      t: 'clicked-save'
+      t: 'profile.update-username.clicked-save'
     }
-)
 
-export type MsgServer = { n: 'profile.update-username' } & {
-  t: 'noop'
+export type MsgServer = {
+  t: 'profile.update-username.noop'
 }
 
-export type MsgToServer = { n: 'profile.update-username' } & {
-  t: 'clicked-save'
+export type MsgToServer = {
+  t: 'profile.update-username.clicked-save'
   username: string
 }
 
-export type MsgToClient = { n: 'profile.update-username' } & {
-  t: 'updated-username'
+export type MsgToClient = {
+  t: 'profile.update-username.updated-username'
   username: Username
   lastUpdatedAt: Posix
 }
-
-const hasNamespace = (msg: unknown) =>
-  typeof msg === 'object' && msg !== null && 'n' in msg && msg.n === 'profile.update-username'
-
-export const isMsgServer = (msg: unknown): msg is MsgServer => hasNamespace(msg)
-export const isMsgToServer = (msg: unknown): msg is MsgToServer => hasNamespace(msg)
-export const isMsgToClient = (msg: unknown): msg is MsgToClient => hasNamespace(msg)
-export const isMsgClient = (msg: unknown): msg is MsgClient => hasNamespace(msg)

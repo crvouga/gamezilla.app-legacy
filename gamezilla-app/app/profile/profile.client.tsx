@@ -19,7 +19,6 @@ import { ViewProfileScreen } from './profile-client/profile-client-view-profile-
 import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './profile.types'
 import * as UpdateUsernameClient from './update-username/update-username.client'
-import { UpdateUsernameTypes } from './update-username'
 
 //
 //
@@ -163,9 +162,6 @@ const updateFromServer: ClientModule['update'] = (input) => {
   if (!msgServer) {
     return { model }
   }
-  if (UpdateUsernameTypes.isMsgServer(msgServer)) {
-    return { model }
-  }
 
   switch (msgServer.t) {
     case 'current-user-profile': {
@@ -196,7 +192,7 @@ const updateFromServer: ClientModule['update'] = (input) => {
       }
     }
 
-    case 'updated-username': {
+    case 'profile.update-username.updated-username': {
       return { model }
     }
 

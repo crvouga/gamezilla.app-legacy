@@ -1,24 +1,21 @@
 import { ServerCmd } from 'gamezilla-app/app/@/server'
-import { ModelServer, MsgServer, MsgToClient, MsgToServer } from './update-username.types'
 import { ProfileDb } from '../profile-db/profile-db'
+import { MsgServer, MsgToClient, MsgToServer } from './update-username.types'
 
-export const update = async <TModel extends ModelServer>(input: {
+export const update = async (input: {
   deps: {
     profileDb: ProfileDb
   }
-  model: TModel
+
   msg: MsgServer | null
   msgClient: MsgToServer | null
 }): Promise<{
-  model: TModel
   msgCmd?: ServerCmd<MsgToClient>[]
 }> => {
   switch (input.msgClient?.t) {
-    case 'clicked-save': {
-      return {
-        model: input.model
-      }
+    case 'profile.update-username.clicked-save': {
+      return {}
     }
   }
-  return { model: input.model }
+  return {}
 }
