@@ -1,7 +1,7 @@
 import { GameServer } from 'gamezilla-app/app/spaces/@/architecture/game-server'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
-import type { SpaceServerCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { Sub, Time, TimeSpan, isErr } from 'gamezilla-app/@/core'
 import { ConnectFourBotWorker } from '../@/connect-four'
@@ -36,7 +36,7 @@ type Module = GameServerModule<{
   Ctx: SpaceServerCtx
   Deps: null
   MsgCmdIn: null
-  MsgEvtIn: SpaceServerEvent
+  MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
   MsgEvtOut: null
 }>

@@ -1,5 +1,5 @@
 import { Err, Ok, Sub, andThen, pipe, type Eff } from 'gamezilla-app/@/core'
-import type { SpaceReqCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { TicTacToe } from '../@/tic-tic-toe'
 import {
@@ -169,7 +169,7 @@ export const updateFromEvent = ({
   msg,
   model
 }: {
-  msg: SpaceServerEvent
+  msg: SpaceServerEvt
   model: Model
 }): {
   model: Model

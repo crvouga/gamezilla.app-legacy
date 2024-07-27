@@ -72,11 +72,6 @@ export const translations: Text = {
   },
   'tic-tac-toe.cross': 'क्रॉस',
   'tic-tac-toe.naught': 'नॉट',
-  'connect-four': 'चार कनेक्ट करें',
-  flow: 'धारा',
-  'tic-tac-toe': 'टिक टैक टो',
-  gomoku: 'गोमोकु',
-  chess: 'शतरंज',
   'connect-four.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -94,6 +89,7 @@ export const translations: Text = {
   'chess.puzzle-description': '3 मिलियन से अधिक पहेलियों के साथ प्रशिक्षण करें',
   'chess.puzzle-title': 'पहेलियाँ',
   'chess.black': 'काला',
+  'chess.white': 'सफेद',
   'chess.bot-level': (botLevel) => {
     switch (botLevel) {
       case 0:
@@ -110,7 +106,11 @@ export const translations: Text = {
         return '\u0905\u091C\u094D\u091E\u093E\u0924'
     }
   },
-  'chess.white': 'सफेद',
+  'connect-four': 'चार कनेक्ट करें',
+  flow: 'धारा',
+  'tic-tac-toe': 'टिक टैक टो',
+  gomoku: 'गोमोकु',
+  chess: 'शतरंज',
   'game.hint': 'संकेत',
   'game.start-game': 'खेल शुरू करें',
   'game.start-playing': 'खेलना शुरू करें',

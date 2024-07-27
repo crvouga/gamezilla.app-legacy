@@ -2,7 +2,7 @@ import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
-import type { SpaceClientCtx, SpaceClientEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
 import { APP_SOUND, ClientCmd, playSound } from 'gamezilla-app/app/@/client'
 import { Sub } from 'gamezilla-app/@/core'
 import type { SpaceClientCmd } from '../../@/space-client-cmd'
@@ -27,7 +27,7 @@ type Module = GameClientModule<{
   ModelCore: ModelCore
   MsgCore: MsgCore
   Ctx: SpaceClientCtx
-  MsgEvtIn: SpaceClientEvent
+  MsgEvtIn: SpaceClientEvt
   MsgCmdOut: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer

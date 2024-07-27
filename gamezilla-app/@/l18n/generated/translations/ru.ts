@@ -72,11 +72,6 @@ export const translations: Text = {
   },
   'tic-tac-toe.cross': 'Крест',
   'tic-tac-toe.naught': 'Нолик',
-  'connect-four': 'Соедините четыре',
-  flow: 'Поток',
-  'tic-tac-toe': 'Крестики-нолики',
-  gomoku: 'Гомоку',
-  chess: 'Шахматы',
   'connect-four.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -94,6 +89,7 @@ export const translations: Text = {
   'chess.puzzle-description': 'Тренируйтесь с более чем 3 миллионами головоломок',
   'chess.puzzle-title': 'Головоломки',
   'chess.black': 'Черный',
+  'chess.white': 'Белый',
   'chess.bot-level': (botLevel) => {
     switch (botLevel) {
       case 0:
@@ -110,7 +106,11 @@ export const translations: Text = {
         return '\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E'
     }
   },
-  'chess.white': 'Белый',
+  'connect-four': 'Соедините четыре',
+  flow: 'Поток',
+  'tic-tac-toe': 'Крестики-нолики',
+  gomoku: 'Гомоку',
+  chess: 'Шахматы',
   'game.hint': 'Подсказка',
   'game.start-game': 'Начать игру',
   'game.start-playing': 'Начать играть',

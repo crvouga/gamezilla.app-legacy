@@ -21,7 +21,7 @@ export const Space = p.obj({
 
 export type Space = p.Infer<typeof Space>
 
-type SpaceEvent =
+type SpaceEvt =
   | {
       t: 'space/user-left-space'
       spaceId: SpaceId
@@ -33,17 +33,9 @@ type SpaceEvent =
       userId: UserId
     }
 
-/**
- * @description
- * Represents outside msgEvts that happened in the server app
- */
-export type SpaceServerEvent = ServerEvt | SpaceEvent
+export type SpaceServerEvt = ServerEvt | SpaceEvt
 
-/**
- * @description
- * Represents outside msgEvts that happened in the client app
- */
-export type SpaceClientEvent = ClientEvt | SpaceEvent
+export type SpaceClientEvt = ClientEvt | SpaceEvt
 
 //
 //

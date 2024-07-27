@@ -69,11 +69,6 @@ export const translations: Text = {
   },
   'tic-tac-toe.cross': 'Cross',
   'tic-tac-toe.naught': 'Naught',
-  'connect-four': 'Connect Four',
-  flow: 'Flow',
-  'tic-tac-toe': 'Tic Tac Toe',
-  gomoku: 'Gomoku',
-  chess: 'Chess',
   'connect-four.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -91,6 +86,7 @@ export const translations: Text = {
   'chess.puzzle-title': 'Puzzles',
   'chess.puzzle-description': 'Train with more than 3 million puzzles',
   'chess.black': 'Black',
+  'chess.white': 'White',
   'chess.bot-level': (botLevel) => {
     switch (botLevel) {
       case 0:
@@ -107,7 +103,11 @@ export const translations: Text = {
         return 'Unknown'
     }
   },
-  'chess.white': 'White',
+  'connect-four': 'Connect Four',
+  flow: 'Flow',
+  'tic-tac-toe': 'Tic Tac Toe',
+  gomoku: 'Gomoku',
+  chess: 'Chess',
   'game.hint': 'Hint',
   'game.start-game': 'Start Game',
   'game.start-playing': 'Start Playing',

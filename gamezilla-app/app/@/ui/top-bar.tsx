@@ -1,6 +1,9 @@
 import type { TranslatedText } from 'gamezilla-app/@/l18n'
 import type { Translator } from 'gamezilla-app/@/l18n/generated'
-import { cn, IconArrowLeft, IconButton, IconButtonEmpty, Typography } from 'gamezilla-app/app/@/ui'
+import { cn } from './ui'
+import { IconButton, IconButtonEmpty } from './icon-button'
+import { IconArrowLeft } from './icon'
+import { Typography } from './typography'
 
 export const TopBar = (input: {
   title: TranslatedText

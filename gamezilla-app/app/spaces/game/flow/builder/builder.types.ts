@@ -1,7 +1,7 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import type { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
-import type { SpaceClientEvent, SpaceCtx, SpaceServerCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientEvt, SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { FlowCoreEvent } from '../@/flow-core-event'
@@ -41,7 +41,7 @@ export type ClientModule = GameClientModule<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
-  MsgEvtIn: SpaceClientEvent
+  MsgEvtIn: SpaceClientEvt
   MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient
 }>
 
@@ -51,7 +51,7 @@ export type ServerModule = GameServerModule<{
   MsgCore: MsgCore
   ModelCore: ModelCore
   Ctx: SpaceServerCtx
-  MsgEvtIn: SpaceServerEvent
+  MsgEvtIn: SpaceServerEvt
   Model: ModelServer
   Msg: MsgServer
   MsgCmdOut: SpaceServerCmd<MsgToClient>

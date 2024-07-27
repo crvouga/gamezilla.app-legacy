@@ -1,7 +1,7 @@
 import { Sub, Time, isErr } from 'gamezilla-app/@/core'
 import { TimeSpan } from 'gamezilla-app/@/core/time-span'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { SpaceReqCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { toOpposite, toTurn, type PlayerType } from '../@/tic-tic-toe/tic-tac-toe'
 import * as Round from './vs-user-round'
@@ -350,7 +350,7 @@ export const updateFromEvent = ({
   msg,
   model
 }: {
-  msg: SpaceServerEvent
+  msg: SpaceServerEvt
   model: Model
 }): {
   model: Model

@@ -1,6 +1,7 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import * as ConnectFour from './connect-four/connect-four.types'
 import * as Flow from './flow/flow.types'
+import { GameName } from './@/game-name'
 //
 //
 //
@@ -46,24 +47,6 @@ export type MsgToServer = { t: 'connect-four'; c: ConnectFour.MsgToServer } | { 
 //
 //
 //
-
-export const GAME_NAME = ['connect-four', 'flow', 'tic-tac-toe', 'gomoku', 'chess'] as const
-
-export const GameName = p.enumeration(GAME_NAME)
-
-export type GameName = p.Infer<typeof GameName>
-
-export const gameNames: { [gameName in GameName]: GameName } = {
-  'connect-four': 'connect-four',
-  flow: 'flow',
-  'tic-tac-toe': 'tic-tac-toe',
-  gomoku: 'gomoku',
-  chess: 'chess'
-}
-
-export const isGameName = (x: unknown): x is GameName => {
-  return typeof x === 'string' && Object.keys(gameNames).includes(x)
-}
 
 export const gameNameList: GameName[] = [
   // "connect-four",

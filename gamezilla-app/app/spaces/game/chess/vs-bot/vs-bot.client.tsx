@@ -17,6 +17,7 @@ import {
   isBotTurn,
   updateCore
 } from './vs-bot.types'
+import { ChessBotLevel } from '../@/chess-bot-level/chess-bot-level'
 
 //
 //
@@ -316,16 +317,16 @@ export const View = ({
         bot={{
           label: ctx.t('chess.bot-level', model.coreModel.botLevel),
           renderIcon: (input) =>
-            Chess.renderBotLevel({
+            ChessBotLevel.render({
               level: model.coreModel.botLevel,
               ...input
             })
         }}
-        botVariants={Chess.allBotLevels.map((botLevel) => {
+        botVariants={ChessBotLevel.all.map((botLevel) => {
           return {
             label: ctx.t('chess.bot-level', botLevel),
             renderIcon: (input) =>
-              Chess.renderBotLevel({
+              ChessBotLevel.render({
                 level: botLevel,
                 ...input
               }),
@@ -392,7 +393,7 @@ export const View = ({
     <div className='flex w-full items-center gap-3 p-3'>
       <IconRobot className='h-10 w-10' />
 
-      <p className='flex-1 text-lg'>{Chess.botLevelToString(model.coreModel.botLevel)}</p>
+      <p className='flex-1 text-lg'>{ChessBotLevel.toString(model.coreModel.botLevel)}</p>
 
       {isBotTurn(model.coreModel) && <Spinner className='h-10 w-10' />}
     </div>

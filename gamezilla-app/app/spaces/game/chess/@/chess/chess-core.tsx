@@ -1,63 +1,6 @@
 import * as ChessJS from 'chess.js'
 import { Err, type IO, Ok, type Result, exhaustive } from 'gamezilla-app/@/core'
-
-import type { VDom } from 'gamezilla-app/@/vdom'
-import {
-  IconBotCute,
-  IconBotLevel1,
-  IconBotLevel4,
-  IconBotScary,
-  IconBotSimple
-} from 'gamezilla-app/app/spaces/game/@/vs-bot'
-
-export type BotLevel = 0 | 1 | 2 | 3 | 4
-
-export const allBotLevels: BotLevel[] = [0, 1, 2, 3, 4]
-
-export const botLevelToString = (level: BotLevel): string => {
-  switch (level) {
-    case 0: {
-      return 'Monkey'
-      // return "Level 0";
-    }
-    case 1: {
-      return 'Beginner'
-      // return "Level 1";
-    }
-    case 2: {
-      return 'Intermediate'
-      // return "Level 2";
-    }
-    case 3: {
-      return 'Advanced'
-      // return "Level 3";
-    }
-    case 4: {
-      return 'Experienced'
-      // return "Level 4";
-    }
-  }
-}
-
-export const renderBotLevel = ({ level, ...input }: { level: BotLevel; className?: string }): VDom => {
-  switch (level) {
-    case 0: {
-      return <IconBotSimple {...input} />
-    }
-    case 1: {
-      return <IconBotCute {...input} />
-    }
-    case 2: {
-      return <IconBotLevel1 {...input} />
-    }
-    case 3: {
-      return <IconBotLevel4 {...input} />
-    }
-    case 4: {
-      return <IconBotScary {...input} />
-    }
-  }
-}
+import { ChessBotLevel } from '../chess-bot-level/chess-bot-level'
 
 export type BestMoveInputResult = Result<BestMoveInputProblem, MoveInput>
 export type BestMoveInputProblem = 'failed_to_calculate_best_move'
@@ -68,7 +11,7 @@ const isRecord = (record: unknown): record is Record<string, string> => {
   return typeof record === 'object' && record !== null
 }
 
-export const toBestMoveInput = (level: BotLevel, model: Model): BestMoveInputResult => {
+export const toBestMoveInput = (level: ChessBotLevel, model: Model): BestMoveInputResult => {
   const fen = toFen(model)
 
   const move: unknown = {
@@ -112,7 +55,7 @@ export const toRandomMoveInput = (model: Model): Result<'no_legal_move', MoveInp
 }
 
 export const getBestMove =
-  (level: BotLevel, model: Model): IO<BestMoveInputResult> =>
+  (level: ChessBotLevel, model: Model): IO<BestMoveInputResult> =>
   async () => {
     // TODO get this working off main thread
     // TODO: should not be hardcoded

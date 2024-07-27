@@ -70,11 +70,6 @@ export const translations: Text = {
   },
   'tic-tac-toe.cross': 'Cruz',
   'tic-tac-toe.naught': 'Círculo',
-  'connect-four': 'Conectar cuatro',
-  flow: 'Flujo',
-  'tic-tac-toe': 'Tres en raya',
-  gomoku: 'Gomoku',
-  chess: 'Ajedrez',
   'connect-four.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -92,6 +87,7 @@ export const translations: Text = {
   'chess.puzzle-description': 'Entrenar con más de 3 millones de rompecabezas',
   'chess.puzzle-title': 'Rompecabezas',
   'chess.white': 'Blanco',
+  'chess.black': 'Black',
   'chess.bot-level': (botLevel) => {
     switch (botLevel) {
       case 0:
@@ -108,7 +104,11 @@ export const translations: Text = {
         return 'Desconocido'
     }
   },
-  'chess.black': 'Black',
+  'connect-four': 'Conectar cuatro',
+  flow: 'Flujo',
+  'tic-tac-toe': 'Tres en raya',
+  gomoku: 'Gomoku',
+  chess: 'Ajedrez',
   'game.hint': 'Sugerencia',
   'game.start-game': 'Comenzar juego',
   'game.start-playing': 'Comenzar a jugar',

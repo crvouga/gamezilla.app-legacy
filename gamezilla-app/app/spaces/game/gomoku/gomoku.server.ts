@@ -1,4 +1,4 @@
-import type { SpaceReqCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import * as VsBot from './vs-bot/vs-bot.server'
@@ -148,7 +148,7 @@ export const updateFromEvent = ({
   msg,
   model
 }: {
-  msg: SpaceServerEvent
+  msg: SpaceServerEvt
   model: Model
 }): {
   model: Model

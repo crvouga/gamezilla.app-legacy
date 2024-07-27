@@ -3,7 +3,7 @@ import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconScrewdriverWrench } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
-import type { SpaceClientCtx, SpaceClientEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
 import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import { SpaceClientCmd } from '../../@/space-client-cmd'
 import { CoverArt } from './@/flow-cover-art'
@@ -36,7 +36,7 @@ type ClientModule = GameClientModule<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
-  MsgEvtIn: SpaceClientEvent
+  MsgEvtIn: SpaceClientEvt
 }>
 
 //

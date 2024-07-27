@@ -1,6 +1,6 @@
 import { Sub, Time, type Eff } from 'gamezilla-app/@/core'
 import { TimeSpan } from 'gamezilla-app/@/core/time-span'
-import type { SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import * as Board from '../@/chess/chess-core'
 import { initCore, type ModelServer, type MsgServer, type MsgToClient, type MsgToServer } from './vs-user.types'
@@ -42,7 +42,7 @@ export const updateFromEvent = ({
   msg,
   model
 }: {
-  msg: SpaceServerEvent
+  msg: SpaceServerEvt
   model: ModelServer
 }): {
   model: ModelServer

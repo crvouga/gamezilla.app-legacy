@@ -2,7 +2,7 @@ import { RequestResponse, Result, isErr } from 'gamezilla-app/@/core'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
-import type { SpaceClientCtx, SpaceClientEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { FlowPack } from '..'
 import {
@@ -22,7 +22,7 @@ type ClientModule = AppClientModule<{
   Ctx: FlowPackGridClientCtx
   Model: ModelClient
   Msg: MsgClient
-  MsgEvtIn: SpaceClientEvent
+  MsgEvtIn: SpaceClientEvt
   MsgCmdOut: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer

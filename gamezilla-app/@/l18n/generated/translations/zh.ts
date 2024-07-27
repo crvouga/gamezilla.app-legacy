@@ -67,11 +67,6 @@ export const translations: Text = {
   },
   'tic-tac-toe.cross': '交叉',
   'tic-tac-toe.naught': '零',
-  'connect-four': '连接四',
-  flow: '流',
-  'tic-tac-toe': '井字棋',
-  gomoku: '五子棋',
-  chess: '国际象棋',
   'connect-four.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -89,6 +84,7 @@ export const translations: Text = {
   'chess.puzzle-description': '使用300多万个拼图进行训练',
   'chess.puzzle-title': '拼图',
   'chess.black': '黑色',
+  'chess.white': '白色',
   'chess.bot-level': (botLevel) => {
     switch (botLevel) {
       case 0:
@@ -105,7 +101,11 @@ export const translations: Text = {
         return '\u672A\u77E5'
     }
   },
-  'chess.white': '白色',
+  'connect-four': '连接四',
+  flow: '流',
+  'tic-tac-toe': '井字棋',
+  gomoku: '五子棋',
+  chess: '国际象棋',
   'game.hint': '提示',
   'game.start-game': '开始游戏',
   'game.start-playing': '开始游戏',

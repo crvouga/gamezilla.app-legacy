@@ -2,7 +2,7 @@ import { Eff, RemoteResult, Sub, isErr } from 'gamezilla-app/@/core'
 import { APP_SOUND, ClientCmd, playSound, preloadSound, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconPuzzlePiece } from 'gamezilla-app/app/@/ui'
 import type { GameClient } from 'gamezilla-app/app/spaces/@/architecture/game-client'
-import type { SpaceClientCtx, SpaceClientEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
 import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import { GameClientModule } from '../../@/architecture/game-client-v2'
 import type { SpaceClientCmd } from '../../@/space-client-cmd'
@@ -32,7 +32,7 @@ type Client = GameClient<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
-  ClientEvent: SpaceClientEvent
+  ClientEvent: SpaceClientEvt
 }>
 
 //

@@ -1,7 +1,7 @@
 import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { VsUserSetupScreen } from 'gamezilla-app/app/spaces/game/@/vs-user'
 import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
-import type { SpaceClientCtx, SpaceClientEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { ClientCmd, ClientCtx } from 'gamezilla-app/app/@/client'
 import {
   Button,
@@ -47,7 +47,7 @@ type Module = GameClientModule<{
   MsgCore: MsgCore
   Ctx: SpaceClientCtx & { onQuit: () => void }
   MsgCmdIn: null
-  MsgEvtIn: SpaceClientEvent
+  MsgEvtIn: SpaceClientEvt
   MsgCmdOut: ClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer

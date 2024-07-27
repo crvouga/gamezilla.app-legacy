@@ -69,11 +69,6 @@ export const translations: Text = {
   },
   'tic-tac-toe.cross': 'Cruz',
   'tic-tac-toe.naught': 'Círculo',
-  'connect-four': 'Conectar Quatro',
-  flow: 'Fluxo',
-  'tic-tac-toe': 'Jogo da Velha',
-  gomoku: 'Gomoku',
-  chess: 'Xadrez',
   'connect-four.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -91,6 +86,7 @@ export const translations: Text = {
   'chess.puzzle-description': 'Treine com mais de 3 milhões de quebra-cabeças',
   'chess.puzzle-title': 'Quebra-cabeças',
   'chess.black': 'Preto',
+  'chess.white': 'Branco',
   'chess.bot-level': (botLevel) => {
     switch (botLevel) {
       case 0:
@@ -107,7 +103,11 @@ export const translations: Text = {
         return 'Desconhecido'
     }
   },
-  'chess.white': 'Branco',
+  'connect-four': 'Conectar Quatro',
+  flow: 'Fluxo',
+  'tic-tac-toe': 'Jogo da Velha',
+  gomoku: 'Gomoku',
+  chess: 'Xadrez',
   'game.hint': 'Dica',
   'game.start-game': 'Iniciar jogo',
   'game.start-playing': 'Começar a jogar',

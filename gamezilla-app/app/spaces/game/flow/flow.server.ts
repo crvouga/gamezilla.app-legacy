@@ -1,6 +1,6 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
-import type { SpaceServerCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import { BuilderCore } from './builder/builder.core'
 import { BuilderServer } from './builder/builder.server'
@@ -16,7 +16,7 @@ type ServerModule = GameServerModule<{
   MsgCore: MsgCore
   ModelCore: ModelCore
   Ctx: SpaceServerCtx
-  MsgEvtIn: SpaceServerEvent
+  MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
   Deps: ServerDeps
 }>

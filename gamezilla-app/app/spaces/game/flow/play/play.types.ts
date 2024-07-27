@@ -5,7 +5,7 @@ import type {
   GameClientModuleTypesConfig
 } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/@/architecture/game-core'
-import type { SpaceClientEvent, SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientEvt, SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { FlowClientCtx } from '../@/flow-ctx'
 import { FlowPack, type FlowPackListTypes } from '../@/flow-pack'
@@ -142,7 +142,7 @@ export type FlowPlayClientModuleTypes = GameClientModuleTypesConfig<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
-  MsgEvtIn: SpaceClientEvent
+  MsgEvtIn: SpaceClientEvt
 }>
 
 export type FlowPlayClientModule = GameClientModule<FlowPlayClientModuleTypes>
@@ -155,7 +155,7 @@ export type ClientModuleTypes = GameClientModuleTypesConfig<{
   MsgCore: MsgCore
   ModelCore: ModelCore
   Ctx: FlowClientCtx
-  MsgEvtIn: SpaceClientEvent
+  MsgEvtIn: SpaceClientEvt
   MsgCmdOut:
     | SpaceClientCmd<{
         MsgToServer: MsgToServer

@@ -1,6 +1,7 @@
-import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { p } from 'gamezilla-app/@/core/parser'
+import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import * as Game from '../game/game.types'
+import { GameName } from '../game/@/game-name'
 
 export const SpaceCoreEvent = p.or(
   p.obj({
@@ -27,7 +28,7 @@ export const SpaceCoreEvent = p.or(
     t: p.l('user-inputted-game'),
     userId: UserId,
     spaceId: SpaceId,
-    game: p.maybe(Game.GameName)
+    game: p.maybe(GameName)
   }),
   p.obj({
     t: p.l('game'),

@@ -1,7 +1,7 @@
 import { Eff, Result, Sub } from 'gamezilla-app/@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { SpaceReqCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import type { ModelServer, MsgServer, MsgToClient, MsgToServer } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.server'
@@ -154,7 +154,7 @@ export const updateFromEvent = ({
   model
 }: {
   model: Model
-  msg: SpaceServerEvent
+  msg: SpaceServerEvt
 }): {
   model: Model
   msgCmd?: SpaceServerCmd<MsgToClient>[]

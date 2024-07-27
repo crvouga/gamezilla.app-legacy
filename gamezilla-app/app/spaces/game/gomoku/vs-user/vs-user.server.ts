@@ -1,5 +1,5 @@
 import { Sub, type Eff } from 'gamezilla-app/@/core'
-import type { SpaceReqCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-user.types'
 
 //
@@ -53,7 +53,7 @@ export const updateFromEvent = ({
   msg,
   model
 }: {
-  msg: SpaceServerEvent
+  msg: SpaceServerEvt
   model: Model
 }): {
   model: Model

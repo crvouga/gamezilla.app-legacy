@@ -1,5 +1,5 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
-import type { SpaceReqCtx, SpaceServerCtx, SpaceServerEvent } from '../space'
+import type { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from '../space'
 import { SpaceServerCmd } from '../space-server-cmd'
 import type { EventMeta, WithEventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
 
@@ -45,7 +45,7 @@ export type GameServer<T extends GameServerTypes> = {
     msg?: T['MsgServer'] | null
     clientMsg?: T['MsgToServer'] | null
     msgCore?: WithEventMeta<T['MsgCore']> | null
-    msgEvt?: SpaceServerEvent | null
+    msgEvt?: SpaceServerEvt | null
   }) => Promise<Output<T>>
 
   subscriptions: (input: {

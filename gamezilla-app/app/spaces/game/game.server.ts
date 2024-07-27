@@ -1,10 +1,11 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { GameServerModule } from '../@/architecture/game-server-v2'
-import type { SpaceServerCtx, SpaceServerEvent } from '../@/space'
+import type { SpaceServerCtx, SpaceServerEvt } from '../@/space'
 import { SpaceServerCmd } from '../@/space-server-cmd'
-import { FlowServer } from './flow/flow.server'
-import type { MsgCore, GameName, ModelCore, ModelServer, MsgServer, MsgToClient, MsgToServer } from './game.types'
+import { GameName } from './@/game-name'
 import { ConnectFourServer } from './connect-four/connect-four.server'
+import { FlowServer } from './flow/flow.server'
+import type { ModelCore, ModelServer, MsgCore, MsgServer, MsgToClient, MsgToServer } from './game.types'
 
 //
 //
@@ -22,7 +23,7 @@ type ServerModule = GameServerModule<{
   ModelCore: ModelCore
   MsgCore: MsgCore
   Ctx: SpaceServerCtx
-  MsgEvtIn: SpaceServerEvent
+  MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
   Deps: ServerDeps
 }>

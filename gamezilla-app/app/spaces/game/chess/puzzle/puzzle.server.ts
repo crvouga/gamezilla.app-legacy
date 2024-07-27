@@ -2,7 +2,7 @@ import { type Eff, Err, Ok, Result, Sub, Time, andThen, eq, pipe } from 'gamezil
 import { TimeSpan } from 'gamezilla-app/@/core/time-span'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
-import type { SpaceReqCtx, SpaceServerCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import type { ChessMsgCore } from '../@/chess/chess-shared'
 import { EloRating } from './elo-rating'
@@ -432,7 +432,7 @@ export const updateFromGame = ({
 export const updateFromEvent = ({
   model
 }: {
-  msg: SpaceServerEvent
+  msg: SpaceServerEvt
   model: ModelServer
 }): {
   model: ModelServer

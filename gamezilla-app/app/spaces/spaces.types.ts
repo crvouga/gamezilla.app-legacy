@@ -13,6 +13,7 @@ import type { ISpaceCoreDb } from './spaces-core/space-core-db'
 import type { SpaceCoreEvent } from './spaces-core/space-core-event'
 import type * as Spaces from './spaces-core/spaces-core.client'
 import type { GameServer } from './game/game.server'
+import { GameName } from './game/@/game-name'
 
 //
 //
@@ -96,7 +97,7 @@ export type MsgClient =
   | { t: 'game'; spaceId: SpaceId; c: Game.MsgClient }
   | { t: 'time-passed' }
   | { t: 'clicked-go-home-button' }
-  | { t: 'clicked-game-tile'; gameName: Game.GameName }
+  | { t: 'clicked-game-tile'; gameName: GameName }
   | { t: 'clicked-join-space-button'; spaceId: SpaceId }
   | { t: 'clicked-end-space-button' }
   | { t: 'clicked-leave-space-button' }

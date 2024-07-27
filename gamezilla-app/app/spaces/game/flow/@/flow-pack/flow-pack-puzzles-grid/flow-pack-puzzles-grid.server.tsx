@@ -1,6 +1,6 @@
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { SpaceServerCtx, SpaceServerEvent } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { IFlowPuzzleDb } from '../../flow-puzzle'
 import { IFlowPackDb } from '../flow-pack-db'
@@ -10,7 +10,7 @@ type ServerModule = AppServerModule<{
   Ctx: SpaceServerCtx
   Model: ModelServer
   Msg: MsgServer
-  MsgEvtIn: SpaceServerEvent
+  MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer

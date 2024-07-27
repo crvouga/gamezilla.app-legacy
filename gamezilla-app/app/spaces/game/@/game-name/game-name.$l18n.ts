@@ -1,5 +1,5 @@
 import type { Translations } from 'gamezilla-app/@/l18n'
-import { GameName } from './game.types'
+import { GameName } from './game-name'
 
 export type Text = {
   [gameName in GameName]: string

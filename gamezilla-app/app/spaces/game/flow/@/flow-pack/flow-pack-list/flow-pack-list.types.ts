@@ -2,12 +2,7 @@ import { RemoteResult, type RequestResponse } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import type { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
-import type {
-  SpaceClientCtx,
-  SpaceClientEvent,
-  SpaceServerCtx,
-  SpaceServerEvent
-} from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientCtx, SpaceClientEvt, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import type { FlowPack } from '../flow-pack'
@@ -26,12 +21,12 @@ export type ClientModule = AppClientModule<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   Ctx: SpaceClientCtx
-  MsgEvtIn: SpaceClientEvent
+  MsgEvtIn: SpaceClientEvt
   MsgCmdOut: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>
-  MsgEvtOut: SpaceClientEvent
+  MsgEvtOut: SpaceClientEvt
   ViewSlot: {
     fab: null
   }
@@ -50,7 +45,7 @@ export type ServerModule = AppServerModule<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   Ctx: SpaceServerCtx
-  MsgEvtIn: SpaceServerEvent
+  MsgEvtIn: SpaceServerEvt
 }>
 
 //

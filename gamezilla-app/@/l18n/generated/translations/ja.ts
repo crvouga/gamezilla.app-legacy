@@ -70,11 +70,6 @@ export const translations: Text = {
   },
   'tic-tac-toe.cross': 'クロス',
   'tic-tac-toe.naught': 'ノート',
-  'connect-four': 'フォーをつなげる',
-  flow: 'フロー',
-  'tic-tac-toe': '三目並べ',
-  gomoku: '五目並べ',
-  chess: 'チェス',
   'connect-four.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -92,6 +87,7 @@ export const translations: Text = {
   'chess.puzzle-description': '300 万以上のパズルでトレーニング',
   'chess.puzzle-title': 'パズル',
   'chess.black': '黒',
+  'chess.white': '白',
   'chess.bot-level': (botLevel) => {
     switch (botLevel) {
       case 0:
@@ -108,7 +104,11 @@ export const translations: Text = {
         return '\u4E0D\u660E'
     }
   },
-  'chess.white': '白',
+  'connect-four': 'フォーをつなげる',
+  flow: 'フロー',
+  'tic-tac-toe': '三目並べ',
+  gomoku: '五目並べ',
+  chess: 'チェス',
   'game.hint': 'ヒント',
   'game.start-game': 'ゲームを開始',
   'game.start-playing': 'プレイを開始',

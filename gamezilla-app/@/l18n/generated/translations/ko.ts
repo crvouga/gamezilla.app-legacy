@@ -68,11 +68,6 @@ export const translations: Text = {
   },
   'tic-tac-toe.cross': '크로스',
   'tic-tac-toe.naught': '놋',
-  'connect-four': '네 개 연결',
-  flow: '흐름',
-  'tic-tac-toe': '틱택토',
-  gomoku: '오목',
-  chess: '체스',
   'connect-four.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -90,6 +85,7 @@ export const translations: Text = {
   'chess.puzzle-description': '300 만 개 이상의 퍼즐로 훈련',
   'chess.puzzle-title': '퍼즐',
   'chess.black': '검은색',
+  'chess.white': '흰색',
   'chess.bot-level': (botLevel) => {
     switch (botLevel) {
       case 0:
@@ -106,7 +102,11 @@ export const translations: Text = {
         return '\uC54C \uC218 \uC5C6\uC74C'
     }
   },
-  'chess.white': '흰색',
+  'connect-four': '네 개 연결',
+  flow: '흐름',
+  'tic-tac-toe': '틱택토',
+  gomoku: '오목',
+  chess: '체스',
   'game.hint': '힌트',
   'game.start-game': '게임 시작',
   'game.start-playing': '플레이 시작',

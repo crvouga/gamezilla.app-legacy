@@ -3,6 +3,7 @@ import type { UserId } from 'gamezilla-app/app/@/data'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { VsBotSetup } from 'gamezilla-app/app/spaces/game/@/vs-bot'
 import { Chess } from '../@/chess'
+import { ChessBotLevel } from '../@/chess-bot-level/chess-bot-level'
 
 //
 //
@@ -28,7 +29,7 @@ export type SetupModel = {
   type: 'setup'
   userColor: Chess.Color
   userId: UserId | null
-  botLevel: Chess.BotLevel
+  botLevel: ChessBotLevel
 }
 
 export type ModelCore = {
@@ -36,7 +37,7 @@ export type ModelCore = {
   userColor: Chess.Color
   userId: UserId
   board: Chess.Model
-  botLevel: Chess.BotLevel
+  botLevel: ChessBotLevel
 }
 
 export type GameOverModel = {
@@ -45,7 +46,7 @@ export type GameOverModel = {
   userColor: Chess.Color
   userId: UserId
   board: Chess.Model
-  botLevel: Chess.BotLevel
+  botLevel: ChessBotLevel
 }
 
 export type GameOver = Chess.GameOver
@@ -107,7 +108,7 @@ export type MsgToClient =
   | { t: 'player-left'; model: CoreModel }
 
 export type Req =
-  | { t: 'input-bot-level'; botLevel: Chess.BotLevel }
+  | { t: 'input-bot-level'; botLevel: ChessBotLevel }
   | { t: 'start-playing'; color: Chess.Color }
   | { t: 'stop-playing' }
   | { t: 'start-game' }
