@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
-import { EventId } from 'gamezilla-app/app/spaces/@/event'
+import { EventId, withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../@/flow-pack'
 import { FixtureFlowPlayClient } from '../@/fixture'
 
@@ -57,4 +57,19 @@ describe(import.meta.file, () => {
   })
 
   it.todo('should render all packs', async () => {})
+
+  test('sound on exit play mode ', async () => {
+    const f = await Fixture()
+
+    const output = f.update(f.initial, [
+      {
+        msgCore: withEventMeta({
+          t: 'user-clicked-exit-play-mode-button',
+          userId: f.ctx.currentUserId
+        })
+      }
+    ])
+
+    expect(didPlaySound(output)).toBe(true)
+  })
 })

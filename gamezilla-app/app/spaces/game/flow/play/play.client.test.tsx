@@ -1,4 +1,4 @@
-import { describe, it, test } from 'bun:test'
+import { describe, it } from 'bun:test'
 import { FixtureFlowPlayClient } from './@/fixture'
 
 const Fixture = async () => {
@@ -13,18 +13,5 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     f
     //
-  })
-
-  test('sound exit play mode ', async () => {
-    const f = await Fixture()
-
-    f.update(f.initial, [
-      {
-        msg: {
-          t: 'user-clicked-exit-play-mode-button',
-          userId: f.ctx.currentUserId
-        }
-      }
-    ])
   })
 })

@@ -8,16 +8,8 @@ import type { ClientModule } from '../play.types'
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromMsgCore({
-        ...input,
-        model
-      })
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromMsgCore({ ...input, model })
   )
 }
 
@@ -43,6 +35,12 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
       return {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.navForwardMin)]
+      }
+    }
+    case 'user-clicked-exit-play-mode-button': {
+      return {
+        model: input.model,
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
       }
     }
     default: {

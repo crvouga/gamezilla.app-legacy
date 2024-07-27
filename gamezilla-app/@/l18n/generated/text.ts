@@ -36,10 +36,11 @@ import type { Text as Text33 } from '../../../app/spaces/list-spaces/space-card.
 import type { Text as Text34 } from '../../../app/spaces/list-spaces/list-spaces.$l18n'
 import type { Text as Text35 } from '../../../app/spaces/@/spaces.$l18n'
 import type { Text as Text36 } from '../../../app/lang/lang.$l18n'
-import type { Text as Text37 } from '../../../app/profile/profile.$l18n'
-import type { Text as Text38 } from '../../../app/@/app.$l18n'
-import type { Text as Text39 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text40 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
+import type { Text as Text37 } from '../../../app/profile/update-username/update-username.$l18n'
+import type { Text as Text38 } from '../../../app/profile/profile.$l18n'
+import type { Text as Text39 } from '../../../app/@/app.$l18n'
+import type { Text as Text40 } from '../../../app/@/data/username/username.$l18n'
+import type { Text as Text41 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -81,4 +82,5 @@ export type Text = Text0 &
   Text37 &
   Text38 &
   Text39 &
-  Text40
+  Text40 &
+  Text41

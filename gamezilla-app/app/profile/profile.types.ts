@@ -8,7 +8,7 @@ import {
   type Username
 } from 'gamezilla-app/app/@/data'
 import type { RemoteResult, Result } from 'gamezilla-app/@/core'
-
+import * as UpdateUsernameTypes from './update-username/update-username.types'
 //
 //
 //
@@ -35,7 +35,7 @@ export const profileCoreToProfile = (profile: ProfileCore): Profile => {
   }
 }
 
-export type ModelClient = {
+export type ModelClient = UpdateUsernameTypes.ModelClient & {
   profiles: {
     [userId: UserId]: Profile
   }
@@ -59,6 +59,7 @@ export type ModelClient = {
 
 export type MsgClient =
   | Req
+  | UpdateUsernameTypes.MsgClient
   | {
       t: 'clicked-back-button'
       from:
@@ -89,9 +90,10 @@ export type MsgClient =
   | { t: 'clicked-avatar' }
   | { t: 'clicked-update-username-button' }
 
-export type MsgServer = { t: 'handled'; clientId: ClientId; msg: MsgToClient }
+export type MsgServer = UpdateUsernameTypes.MsgServer | { t: 'handled'; clientId: ClientId; msg: MsgToClient }
 
 export type MsgToClient =
+  | UpdateUsernameTypes.MsgToClient
   | {
       t: 'current-user-profile'
       result: Result<string, Profile>
@@ -100,7 +102,7 @@ export type MsgToClient =
     }
   | Res
 
-export type MsgToServer = Req
+export type MsgToServer = Req | UpdateUsernameTypes.MsgToServer
 
 export type Req =
   | { t: 'find-one'; userId: UserId }

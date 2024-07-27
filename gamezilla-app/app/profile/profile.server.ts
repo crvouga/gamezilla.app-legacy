@@ -89,6 +89,9 @@ const updateFromMsg: Module['update'] = async ({ msg, model }) => {
   }
 
   switch (msg.t) {
+    case 'noop': {
+      return { model }
+    }
     case 'handled': {
       return {
         model,
@@ -100,6 +103,10 @@ const updateFromMsg: Module['update'] = async ({ msg, model }) => {
 
 const updateFromClient: Module['update'] = async ({ msgClient, model, ctx }) => {
   if (!msgClient) {
+    return { model }
+  }
+
+  if (msgClient.t === 'clicked-save') {
     return { model }
   }
 

@@ -5,6 +5,7 @@ export type Text = {
   'app.something-went-wrong': string
   'app.exit': string
   'app.next': string
+  'app.back': string
   'app.prev': string
   'app.reset': string
   'app.congratulations': string
@@ -41,6 +42,7 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   en: {
+    'app.back': 'Back',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Something went wrong',
     'app.exit': 'Exit',
@@ -79,6 +81,7 @@ export const translations: Translations<Text> = {
     'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`
   },
   ar: {
+    'app.back': 'عودة',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'حدث خطأ ما',
     'app.exit': 'خروج',
@@ -117,6 +120,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'حفظ التغييرات؟'
   },
   de: {
+    'app.back': 'Zurück',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Etwas ist schief gelaufen',
     'app.exit': 'Beenden',
@@ -155,6 +159,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Änderungen speichern?'
   },
   es: {
+    'app.back': 'Atrás',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Algo salió mal',
     'app.exit': 'Salir',
@@ -193,6 +198,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '¿Guardar cambios?'
   },
   fr: {
+    'app.back': 'Retour',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': "Quelque chose s'est mal passé",
     'app.exit': 'Sortie',
@@ -231,6 +237,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Enregistrer les modifications?'
   },
   it: {
+    'app.back': 'Indietro',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Qualcosa è andato storto',
     'app.exit': 'Uscita',
@@ -269,6 +276,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvare le modifiche?'
   },
   ja: {
+    'app.back': '戻る',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '何かがうまくいかなかった',
     'app.exit': '出口',
@@ -307,6 +315,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '変更を保存しますか？'
   },
   ko: {
+    'app.back': '뒤로',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '문제가 발생했습니다',
     'app.exit': '출구',
@@ -345,6 +354,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '변경 사항 저장?'
   },
   pt: {
+    'app.back': 'Voltar',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Algo deu errado',
     'app.exit': 'Saída',
@@ -383,6 +393,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvar alterações?'
   },
   ru: {
+    'app.back': 'Назад',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Что-то пошло не так',
     'app.exit': 'Выход',
@@ -421,6 +432,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Сохранить изменения?'
   },
   zh: {
+    'app.back': '返回',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '出了点问题',
     'app.exit': '出口',
@@ -459,6 +471,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '保存更改？'
   },
   hi: {
+    'app.back': 'वापस',
     'app.gamezilla-app': 'गेमजिला.एप',
     'app.something-went-wrong': 'कुछ गलत हो गया',
     'app.exit': 'निकास',

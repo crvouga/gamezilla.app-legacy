@@ -7,7 +7,16 @@ export const isAnyMsg = (msg: unknown): msg is AnyMsg => {
   return typeof msg === 'object' && msg !== null && 't' in msg
 }
 
+const hasNamespace = (msg: unknown): msg is { n: string } =>
+  typeof msg === 'object' && msg !== null && 'n' in msg && typeof (msg as any).n === 'string'
+
+const toNamespace = (msg: unknown): string => (hasNamespace(msg) ? msg.n : '')
+
 export const toMsgType = (msg: unknown): string => {
+  const namespace = toNamespace(msg)
+  if (namespace && isAnyMsg(msg)) {
+    return `${namespace}.${msg.t}`
+  }
   if (!isAnyMsg(msg)) {
     return String(msg)
   }

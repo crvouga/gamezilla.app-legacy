@@ -28,7 +28,6 @@ export const TextField = ({
   min?: number
   max?: number
   step?: number
-
   onClear?: () => void
   onChange: (value: string) => void
 }) => {
@@ -39,6 +38,8 @@ export const TextField = ({
       </label>
 
       <input
+        role='textbox'
+        aria-label={label}
         id={id}
         autoFocus={autoFocus}
         type={type}

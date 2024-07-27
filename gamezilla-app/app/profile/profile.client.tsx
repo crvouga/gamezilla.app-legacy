@@ -1,5 +1,6 @@
 import { Loading, Sub, isErr } from 'gamezilla-app/@/core'
-import type { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
+import { TranslatedText } from 'gamezilla-app/@/l18n'
+import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import {
   type AnonymousClientCtx,
   type ClientCmd,
@@ -13,11 +14,12 @@ import {
   sendToServer
 } from 'gamezilla-app/app/@/client'
 import { ProfileAvatar, type UserId } from 'gamezilla-app/app/@/data'
-import { Avatar, Button, IconChevronRight, TextField, TopBar, Typography } from 'gamezilla-app/app/@/ui'
+import { Avatar, Button, IconChevronRight, TopBar, Typography } from 'gamezilla-app/app/@/ui'
 import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'
 import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './profile.types'
-import { TranslatedText } from 'gamezilla-app/@/l18n'
+import * as UpdateUsernameClient from './update-username/update-username.client'
+import { UpdateUsernameTypes } from './update-username'
 
 //
 //
@@ -57,6 +59,7 @@ type ClientModule = AppClientModule<{
 
 export const init: ClientModule['init'] = ({ ctx }) => {
   const initialModel: ModelClient = {
+    ...UpdateUsernameClient.init({ ctx }).model,
     profiles: {},
     requests: {},
     draft: {}
@@ -80,23 +83,14 @@ export const init: ClientModule['init'] = ({ ctx }) => {
 //
 
 export const update: ClientModule['update'] = (input) => {
-  if (input.msgEvt) {
-    return updateFromEvent(input)
-  }
-
-  if (input.msg) {
-    return updateFromMsg(input)
-  }
-
-  if (input.msgServer) {
-    return updateFromServer(input)
-  }
-
-  if (input.msgCmd) {
-    return updateFromCmd(input)
-  }
-
-  return { model: input.model }
+  return AppClientModule.andThen(
+    { model: input.model },
+    (model) => UpdateUsernameClient.update({ ctx: input.ctx, msg: input.msg, model }),
+    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model })
+  )
 }
 
 const updateFromCmd: ClientModule['update'] = (input) => {
@@ -164,6 +158,9 @@ const updateFromServer: ClientModule['update'] = (input) => {
   if (!msgServer) {
     return { model }
   }
+  if (UpdateUsernameTypes.isMsgServer(msgServer)) {
+    return { model }
+  }
 
   switch (msgServer.t) {
     case 'current-user-profile': {
@@ -187,6 +184,11 @@ const updateFromServer: ClientModule['update'] = (input) => {
         model: modelNew
       }
     }
+
+    case 'updated-username': {
+      return { model }
+    }
+
     default: {
       if (isErr(msgServer.result)) {
         return {
@@ -462,7 +464,7 @@ export const View: ClientModule['View'] = (input) => {
         }
 
         case 'profile-edit-username': {
-          return <ViewUpdateUsernameScreen ctx={input.ctx} model={input.model} dispatch={input.dispatch} />
+          return <UpdateUsernameClient.View {...input} />
         }
 
         default: {
@@ -560,38 +562,38 @@ const ViewField = ({
   </button>
 )
 
-const ViewUpdateUsernameScreen = (input: { model: ModelClient; dispatch: (msg: MsgClient) => void; ctx: Ctx }) => {
-  const currentUsername = input.ctx.currentUserId ? input.model.profiles[input.ctx.currentUserId]?.username : null
+// const ViewUpdateUsernameScreen = (input: { model: ModelClient; dispatch: (msg: MsgClient) => void; ctx: Ctx }) => {
+//   const currentUsername = input.ctx.currentUserId ? input.model.profiles[input.ctx.currentUserId]?.username : null
 
-  const inputVal = input.model.draft?.username ?? currentUsername ?? ''
-  return (
-    <div className='flex h-full w-full flex-col'>
-      <TopBar
-        onBack={() =>
-          input.dispatch({
-            t: 'clicked-back-button',
-            from: {
-              t: 'profile-update-username'
-            }
-          })
-        }
-        title={input.ctx.t('username-title')}
-        ctx={input.ctx}
-      />
+//   const inputVal = input.model.draft?.username ?? currentUsername ?? ''
+//   return (
+//     <div className='flex h-full w-full flex-col'>
+//       <TopBar
+//         onBack={() =>
+//           input.dispatch({
+//             t: 'clicked-back-button',
+//             from: {
+//               t: 'profile-update-username'
+//             }
+//           })
+//         }
+//         title={input.ctx.t('username-title')}
+//         ctx={input.ctx}
+//       />
 
-      <div className='w-full p-4'>
-        <TextField
-          label='Username'
-          value={inputVal}
-          id={'username'}
-          onChange={(username) =>
-            input.dispatch({
-              t: 'inputted-username',
-              username
-            })
-          }
-        />
-      </div>
-    </div>
-  )
-}
+//       <div className='w-full p-4'>
+//         <TextField
+//           label='Username'
+//           value={inputVal}
+//           id={'username'}
+//           onChange={(username) =>
+//             input.dispatch({
+//               t: 'inputted-username',
+//               username
+//             })
+//           }
+//         />
+//       </div>
+//     </div>
+//   )
+// }

@@ -62,31 +62,11 @@ const updateLoop: IUpdateLoop<ClientModuleTypes> = (input, acc) => {
 const updateChild: IUpdate<ClientModuleTypes> = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFlowPackList({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFlowPackPuzzlesGrid({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenPuzzleClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenSelectPackClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenSelectPuzzleClient.update({
-        ...input,
-        model
-      })
+    (model) => updateFlowPackList({ ...input, model }),
+    (model) => updateFlowPackPuzzlesGrid({ ...input, model }),
+    (model) => ScreenPuzzleClient.update({ ...input, model }),
+    (model) => ScreenSelectPackClient.update({ ...input, model }),
+    (model) => ScreenSelectPuzzleClient.update({ ...input, model })
   )
 }
 
