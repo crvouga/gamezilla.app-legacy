@@ -6,9 +6,6 @@
   "scripts": {
     "server": "bun src/gamezilla-app/main.server.ts",
     "server:build": "bun db:up",
-    "server:start": "bun x pm2 start bun --name \"gamezilla-app-server\" -- server -i 3",
-    "server:stop": "bun x pm2 stop gamezilla-app-server",
-    "server:delete": "bun x pm2 delete gamezilla-app-server",
     "db:up": "bun x dbmate -e DATABASE_URL up",
     "db:down": "bun x dbmate -e DATABASE_URL down",
     "db:start": "docker-compose -f docker-compose.local.yml up -d",
