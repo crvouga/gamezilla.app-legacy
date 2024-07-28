@@ -1,4 +1,4 @@
-import { Eff, Posix, Sub, TimeSpan, batchMsgs, pipe } from 'gamezilla-app/@/core'
+import { Eff, Posix, Sub, TimeSpan, pipe } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import type { ServerInstance } from 'gamezilla-app/@/server'
@@ -475,7 +475,7 @@ export const updateChild = async ({
 
   return {
     model,
-    msgCmd: batchMsgs<ServerCmd<MsgToClient>>(
+    msgCmd: Msg.batch<ServerCmd<MsgToClient>>(
       ServerCmd.tag('spaces', space.msgCmd),
       ServerCmd.tag('auth', auth.msgCmd),
       ServerCmd.tag('wire', wire.msgCmd),
@@ -489,7 +489,7 @@ export const updateChild = async ({
       Eff.tag('profile', profile.eff),
       Eff.tag('lang', lang.eff)
     ]),
-    msgEvt: batchMsgs<ServerEvt>(auth.msgEvt, space.msgEvt, wire.msgEvt, profile.msgEvt, lang.msgEvt)
+    msgEvt: Msg.batch<ServerEvt>(auth.msgEvt, space.msgEvt, wire.msgEvt, profile.msgEvt, lang.msgEvt)
   }
 }
 
