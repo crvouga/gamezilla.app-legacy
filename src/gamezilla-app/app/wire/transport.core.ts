@@ -1,4 +1,4 @@
-import { IS_PROD } from 'public-config'
+import { IS_PROD } from 'gamezilla-app/public-config'
 import type { SessionId } from '../@/data'
 
 export type MsgServerToMsgClient<MsgToClient> = {

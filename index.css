@@ -10,10 +10,8 @@ Fonts
 
 */
 * {
-  font-family:  "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 }
-
-
 
 /*
 
@@ -21,13 +19,13 @@ Remove arrows from number input
 https://stackoverflow.com/questions/26024771/styling-an-input-type-number
 
 */
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
   margin: 0;
 }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -45,7 +43,7 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 600000s 0s, color 600000s 0s;
 }
-input[data-autocompleted] {
+Ø input[data-autocompleted] {
   background-color: transparent !important;
 }
 

@@ -1,5 +1,5 @@
+import { VDOM_IMPL_CURRENT } from 'gamezilla-app/public-config'
 import { Inferno } from 'inferno'
-import { VDOM_IMPL_CURRENT } from 'public-config'
 import { VDomImpl } from './vdom-impl'
 
 export type StylesObjectKehab = Inferno.HTMLAttributes<HTMLDivElement>['style']

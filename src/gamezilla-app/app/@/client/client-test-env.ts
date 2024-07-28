@@ -4,7 +4,7 @@ import { TestRender } from 'gamezilla-app/@/vdom/test-render'
 import { UserId } from '../data'
 import type { ClientCtx } from './client-ctx'
 import { Translator } from './translator'
-import { VDOM_IMPL_TEST } from 'public-config'
+import { VDOM_IMPL_TEST } from 'gamezilla-app/public-config'
 
 export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {
   const currentUserId = UserId.generate()

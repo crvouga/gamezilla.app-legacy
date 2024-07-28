@@ -13,7 +13,7 @@ import {
   type ClientEvt
 } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from 'gamezilla-app/app/@/ui'
-import type { ServerImpl } from 'public-config'
+import type { ServerImpl } from 'gamezilla-app/public-config'
 import { Translator } from './@/client/translator'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
