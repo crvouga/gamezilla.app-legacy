@@ -48,7 +48,7 @@ export const ViewSpaceCard = (input: { ctx: BaseClientCtx; state: SpaceCoreState
           <div className='h-12 w-12 overflow-hidden rounded border-2 border-white/40'>
             <CoverArt gameName={gameName} />
           </div>
-          <Typography variant='title' className='truncate text-lg' text={input.ctx.t(gameName)} />
+          <Typography variant='title' className='truncate text-lg font-normal' text={input.ctx.t(gameName)} />
         </div>
       )}
 
