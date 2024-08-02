@@ -109,7 +109,7 @@ const normalizeItemArrayResult = <T>(result: Result<T, Item[]>): Result<T, Item[
   return Result.mapOk(result, normalizeItemArray)
 }
 
-describe.only(`${import.meta.file} ${name}`, () => {
+describe(`${import.meta.file} ${name}`, () => {
   it('should set correctly', async () => {
     for (const { Fixture } of implementations) {
       const f = await Fixture()
