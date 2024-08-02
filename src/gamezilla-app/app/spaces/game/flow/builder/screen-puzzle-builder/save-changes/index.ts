@@ -1,1 +1,1 @@
-export * as SaveChangesTypes from './save-changes.types'
+export * as SaveChangesTypes from './types'

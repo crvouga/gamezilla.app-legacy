@@ -1,1 +1,1 @@
-export * as ScreenPuzzleBuilderTypes from './screen-puzzle-builder.types'
+export * as ScreenPuzzleBuilderTypes from './types'

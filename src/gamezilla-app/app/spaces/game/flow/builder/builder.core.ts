@@ -4,7 +4,7 @@ import { ListTabsCore } from './list-tabs/list-tabs.core'
 import { ScreenOpenPackCore } from './screen-open-pack/screen-open-pack.core'
 import { ScreenPackBuilderCore } from './screen-pack-builder/screen-pack-builder.core'
 import { ScreenOpenPuzzleCore } from './screen-open-puzzle/screen-open-puzzle.core'
-import { ScreenPuzzleBuilderCore } from './screen-puzzle-builder/screen-puzzle-builder.core'
+import { ScreenPuzzleBuilderCore } from './screen-puzzle-builder/core'
 
 const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
   return {

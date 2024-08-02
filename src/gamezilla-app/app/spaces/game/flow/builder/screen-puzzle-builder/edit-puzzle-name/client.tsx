@@ -4,7 +4,7 @@ import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from 'game
 import { isLoading, isOk, Loading } from 'gamezilla-app/@/core'
 import { FlowPuzzleName } from '../../../@/flow-puzzle/flow-puzzle-name'
 import type { ClientModule } from '../../builder.types'
-import { editNameValidationErrorToString } from './edit-puzzle-name.types'
+import { editNameValidationErrorToString } from './types'
 import type { VDomChildren } from 'gamezilla-app/@/vdom'
 
 //

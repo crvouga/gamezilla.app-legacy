@@ -8,7 +8,7 @@ import { ListTabsClient } from './list-tabs/list-tabs.client'
 import { ScreenOpenPackClient } from './screen-open-pack/screen-open-pack.client'
 import { ScreenPackBuilderClient } from './screen-pack-builder/screen-pack-builder.client'
 import { ScreenOpenPuzzleClient } from './screen-open-puzzle/screen-open-puzzle.client'
-import { ScreenPuzzleBuilderClient } from './screen-puzzle-builder/screen-puzzle-builder.client'
+import { ScreenPuzzleBuilderClient } from './screen-puzzle-builder/client'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

@@ -9,10 +9,10 @@ import { Flow, FlowVariantUI } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import type { ClientModule } from '../builder.types'
-import { DeleteForeverClient } from './delete-forever/delete-forever.client'
-import { EditPuzzleNameClient } from './edit-puzzle-name/edit-puzzle-name.client'
-import { SaveChangesClient } from './save-changes/save-changes.client'
-import { toFlow } from './screen-puzzle-builder.types'
+import { DeleteForeverClient } from './delete-forever/client'
+import { EditPuzzleNameClient } from './edit-puzzle-name/client'
+import { SaveChangesClient } from './save-changes/client'
+import { toFlow } from './types'
 
 //
 //
@@ -25,16 +25,8 @@ import { toFlow } from './screen-puzzle-builder.types'
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) =>
-      DeleteForeverClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      SaveChangesClient.update({
-        ...input,
-        model
-      }),
+    (model) => DeleteForeverClient.update({ ...input, model }),
+    (model) => SaveChangesClient.update({ ...input, model }),
     (model) =>
       EditPuzzleNameClient.update({
         ...input,

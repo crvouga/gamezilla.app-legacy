@@ -7,7 +7,7 @@ import type { IFlowPuzzleDb } from '../../../@/flow-puzzle/flow-puzzle-db'
 import type { FlowPuzzleId } from '../../../@/flow-puzzle/flow-puzzle-id'
 import { FlowPuzzleName } from '../../../@/flow-puzzle/flow-puzzle-name'
 import type { ServerModule } from '../../builder.types'
-import type { MsgCore } from './edit-puzzle-name.types'
+import type { MsgCore } from './types'
 
 const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen({ model: input.model }, (model) =>

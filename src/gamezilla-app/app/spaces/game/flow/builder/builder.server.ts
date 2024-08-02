@@ -8,7 +8,7 @@ import { FlowPuzzleDb } from '../@/flow-puzzle/flow-puzzle-db'
 import { FlowPuzzleListServer } from '../@/flow-puzzle/flow-puzzle-list'
 import { initServer, type ServerModule } from './builder.types'
 import { ScreenOpenPuzzleServer } from './screen-open-puzzle/screen-open-puzzle.server'
-import { ScreenPuzzleBuilderServer } from './screen-puzzle-builder/screen-puzzle-builder.server'
+import { ScreenPuzzleBuilderServer } from './screen-puzzle-builder/server'
 import { ScreenPackBuilderServer } from './screen-pack-builder/screen-pack-builder.server'
 import { ScreenOpenPackServer } from './screen-open-pack/screen-open-pack.server'
 

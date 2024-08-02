@@ -11,7 +11,7 @@ import {
   testFlowClientCtx
 } from '../@/testing/client'
 import { deriveModelCore } from '../@/testing/game'
-import { ScreenPuzzleBuilderClient } from './screen-puzzle-builder.client'
+import { ScreenPuzzleBuilderClient } from './client'
 import { PubSub } from 'gamezilla-app/@/core'
 import type { MsgClient } from '../builder.types'
 import { FlowPuzzle } from '../../@/flow-puzzle'
