@@ -129,6 +129,10 @@ export const DbConnKvPostgres = async ({
     },
 
     async setMany(entries) {
+      if (entries.length === 0) {
+        return Ok(null)
+      }
+
       try {
         const valuesStr = entries.map(([key, value]) => `('${key}', '${JSON.stringify(value)}')`).join(', ')
 

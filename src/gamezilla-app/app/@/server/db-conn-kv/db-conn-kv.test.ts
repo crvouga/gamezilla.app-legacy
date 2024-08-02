@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { Ok, Result, TimeSpan, Uuid } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { Logger } from '../logger'
@@ -8,6 +8,7 @@ import { DbConnKv } from './db-conn-kv-impl'
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()
   const logger = Logger({ t: 'noop' })
+
   switch (testEnv.t) {
     case 'integration': {
       const dbConnKv = testEnv.dbConnKv
@@ -19,9 +20,7 @@ const Fixture = async () => {
     }
 
     case 'unit': {
-      const dbConnKv = await DbConnKv({
-        t: 'hash-map'
-      })
+      const dbConnKv = await DbConnKv({ t: 'hash-map' })
 
       return {
         logger,
@@ -110,9 +109,9 @@ const normalizeItemArrayResult = <T>(result: Result<T, Item[]>): Result<T, Item[
   return Result.mapOk(result, normalizeItemArray)
 }
 
-for (const { name, Fixture } of implementations) {
-  describe(`${import.meta.file} ${name}`, () => {
-    it('should set correctly', async () => {
+describe.only(`${import.meta.file} ${name}`, () => {
+  it('should set correctly', async () => {
+    for (const { Fixture } of implementations) {
       const f = await Fixture()
 
       const item = randomItem()
@@ -123,9 +122,21 @@ for (const { name, Fixture } of implementations) {
 
       expect(before).toEqual(Ok(null))
       expect(after).toEqual(Ok(item))
-    })
+    }
+  })
 
-    it('should set many correctly', async () => {
+  test('setMany empty input', async () => {
+    for (const { Fixture } of implementations) {
+      const f = await Fixture()
+
+      const set = await f.dbConnKv.setMany([])
+
+      expect(set).toEqual(Ok(null))
+    }
+  })
+
+  it('should set many correctly', async () => {
+    for (const { Fixture } of implementations) {
       const f = await Fixture()
 
       const items = [randomItem(), randomItem(), randomItem()]
@@ -144,9 +155,11 @@ for (const { name, Fixture } of implementations) {
 
       expect(before).toEqual(Ok([]))
       expect(normalizeItemArrayResult(after)).toEqual(normalizeItemArrayResult(Ok(items)))
-    })
+    }
+  })
 
-    it('should get correctly', async () => {
+  it('should get correctly', async () => {
+    for (const { Fixture } of implementations) {
       const f = await Fixture()
 
       const item = randomItem()
@@ -156,9 +169,11 @@ for (const { name, Fixture } of implementations) {
       const got = await f.dbConnKv.get(item.id, Item)
 
       expect(got).toEqual(Ok(item))
-    })
+    }
+  })
 
-    it('should get many correctly', async () => {
+  it('should get many correctly', async () => {
+    for (const { Fixture } of implementations) {
       const f = await Fixture()
 
       const items = [randomItem(), randomItem(), randomItem()]
@@ -171,9 +186,11 @@ for (const { name, Fixture } of implementations) {
       )
 
       expect(got).toEqual(Ok(items))
-    })
+    }
+  })
 
-    it('should zap items correctly', async () => {
+  it('should zap items correctly', async () => {
+    for (const { Fixture } of implementations) {
       const f = await Fixture()
 
       const item = randomItem()
@@ -188,6 +205,6 @@ for (const { name, Fixture } of implementations) {
 
       expect(before).toEqual(Ok(item))
       expect(after).toEqual(Ok(null))
-    })
+    }
   })
-}
+})
