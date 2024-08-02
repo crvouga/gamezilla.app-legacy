@@ -35,7 +35,7 @@ const ButtonExitBuilder: Pick<ClientModule, 'update' | 'View'> = {
     const { model, msg, msgCore } = input
 
     switch (msg?.t) {
-      case 'pack-builder.user-clicked-exit-button': {
+      case 'screen-pack-builder.user-clicked-exit-button': {
         return {
           model,
           msgCore: [withId(msg)]
@@ -44,7 +44,7 @@ const ButtonExitBuilder: Pick<ClientModule, 'update' | 'View'> = {
     }
 
     switch (msgCore?.t) {
-      case 'pack-builder.user-clicked-exit-button': {
+      case 'screen-pack-builder.user-clicked-exit-button': {
         return {
           model,
           msgCmd: [playSound(APP_SOUND.navBackwardMin)]
@@ -63,7 +63,7 @@ const ButtonExitBuilder: Pick<ClientModule, 'update' | 'View'> = {
         text={input.ctx.t('app.exit')}
         onClick={() =>
           input.dispatch({
-            t: 'pack-builder.user-clicked-exit-button',
+            t: 'screen-pack-builder.user-clicked-exit-button',
             userId: input.ctx.currentUserId
           })
         }
@@ -86,7 +86,7 @@ const ButtonAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
     const { model, msg } = input
 
     switch (msg?.t) {
-      case 'pack-builder.user-opened-add-puzzle-screen': {
+      case 'screen-pack-builder.user-opened-add-puzzle-screen': {
         return {
           model,
           msgCore: [withId(msg)],
@@ -102,7 +102,7 @@ const ButtonAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
       <FlowPackPuzzlesGridUI.ViewAddCell
         onClick={() =>
           input.dispatch({
-            t: 'pack-builder.user-opened-add-puzzle-screen',
+            t: 'screen-pack-builder.user-opened-add-puzzle-screen',
             userId: input.ctx.currentUserId
           })
         }
@@ -123,7 +123,7 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
     const { model, msg } = input
 
     switch (msg?.t) {
-      case 'pack-builder.user-clicked-add-puzzle-item': {
+      case 'screen-pack-builder.user-clicked-add-puzzle-item': {
         return {
           model,
           msgCore: [withId(msg)],
@@ -131,7 +131,7 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
         }
       }
 
-      case 'pack-builder.user-closed-add-puzzle-screen': {
+      case 'screen-pack-builder.user-closed-add-puzzle-screen': {
         return {
           model,
           msgCore: [withId(msg)],
@@ -162,7 +162,7 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
             emits={{
               clickedPuzzleItem: (puzzle) =>
                 input.dispatch({
-                  t: 'pack-builder.user-clicked-add-puzzle-item',
+                  t: 'screen-pack-builder.user-clicked-add-puzzle-item',
                   puzzle,
                   userId: input.ctx.currentUserId
                 })
@@ -175,7 +175,7 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
             className='w-full'
             onClick={() =>
               input.dispatch({
-                t: 'pack-builder.user-closed-add-puzzle-screen'
+                t: 'screen-pack-builder.user-closed-add-puzzle-screen'
               })
             }
           />
@@ -197,14 +197,14 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
     const { model, msg } = input
 
     switch (msg?.t) {
-      case 'pack-builder.user-clicked-pack-item': {
+      case 'screen-pack-builder.user-clicked-pack-item': {
         return {
           model,
           msgCore: [withId(msg)],
           msgCmd: [playSound(APP_SOUND.navForwardMin)]
         }
       }
-      case 'pack-builder.user-changed-slide': {
+      case 'screen-pack-builder.user-changed-slide': {
         return {
           model,
           msgCore: [withId(msg)]
@@ -227,7 +227,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
             ctx={input.ctx}
             onBack={() =>
               input.dispatch({
-                t: 'pack-builder.user-clicked-exit-button',
+                t: 'screen-pack-builder.user-clicked-exit-button',
                 userId: input.ctx.currentUserId
               })
             }
@@ -240,7 +240,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
               puzzleIds={packBuilder.pack.puzzleIds}
               onSlideIndexChanged={(newSlideIndex) =>
                 input.dispatch({
-                  t: 'pack-builder.user-changed-slide',
+                  t: 'screen-pack-builder.user-changed-slide',
                   newSlideIndex,
                   userId: input.ctx.currentUserId
                 })
@@ -259,7 +259,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
                     <FlowPackPuzzlesGridUI.ViewPuzzleCell
                       onClick={() =>
                         input.dispatch({
-                          t: 'pack-builder.user-clicked-pack-item',
+                          t: 'screen-pack-builder.user-clicked-pack-item',
                           puzzle,
                           puzzleIndex: inputCell.index
                         })
@@ -296,8 +296,8 @@ export const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
     const { model, msg } = input
 
     switch (msg?.t) {
-      case 'pack-builder.puzzle-screen.user-closed-more-drawer':
-      case 'pack-builder.puzzle-screen.user-clicked-more-button': {
+      case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer':
+      case 'screen-pack-builder.puzzle-screen.user-clicked-more-button': {
         return {
           model,
           msgCore: [withId(msg)],
@@ -329,7 +329,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
           label={ctx.t('app.more')}
           onClick={() =>
             dispatch({
-              t: 'pack-builder.puzzle-screen.user-clicked-more-button',
+              t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
               userId: ctx.currentUserId
             })
           }
@@ -339,7 +339,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
           open={screen.opened === 'more'}
           onClose={() =>
             dispatch({
-              t: 'pack-builder.puzzle-screen.user-closed-more-drawer',
+              t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
               userId: ctx.currentUserId
             })
           }
@@ -369,7 +369,7 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
     const { model, msg } = input
 
     switch (msg?.t) {
-      case 'pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
+      case 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
         return {
           model,
           msgCore: [withId(msg)],
@@ -377,14 +377,14 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
         }
       }
 
-      case 'pack-builder.flow-play-ui': {
+      case 'screen-pack-builder.flow-play-ui': {
         return {
           model,
           msgCore: [withId(msg)]
         }
       }
 
-      case 'pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
+      case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
         return {
           model,
           msgCore: [withId(msg)],
@@ -392,7 +392,7 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
         }
       }
 
-      case 'pack-builder.puzzle-screen.user-clicked-next-puzzle': {
+      case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
         return {
           model,
           msgCore: [withId(msg)],
@@ -440,7 +440,7 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
           subtitle={input.ctx.t('flow-puzzle-name', screen.puzzle.name)}
           onBack={() =>
             input.dispatch({
-              t: 'pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+              t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
               userId: input.ctx.currentUserId
             })
           }
@@ -449,7 +449,7 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
         <FlowPlay.View
           dispatch={(c) =>
             input.dispatch({
-              t: 'pack-builder.flow-play-ui',
+              t: 'screen-pack-builder.flow-play-ui',
               c
             })
           }
@@ -467,7 +467,7 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
             onClick={() => {
               if (previousPuzzle) {
                 input.dispatch({
-                  t: 'pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+                  t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
                   userId: input.ctx.currentUserId,
                   previousPuzzle
                 })
@@ -482,7 +482,7 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
             onClick={() => {
               if (nextPuzzle) {
                 input.dispatch({
-                  t: 'pack-builder.puzzle-screen.user-clicked-next-puzzle',
+                  t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
                   userId: input.ctx.currentUserId,
                   nextPuzzle
                 })
@@ -524,10 +524,10 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
         ...input.model.packBuilder?.flowPackPuzzleGrid,
         puzzles: input.model.puzzles
       },
-      msg: input.msg?.t === 'pack-builder.flow-pack-grid' ? input.msg.c : null,
+      msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
       msgCmd: input.msgCmd,
       msgEvt: input.msgEvt,
-      msgServer: input.msgServer?.t === 'pack-builder.flow-pack-grid' ? input.msgServer.c : null
+      msgServer: input.msgServer?.t === 'screen-pack-builder.flow-pack-grid' ? input.msgServer.c : null
     })
 
     return {
@@ -542,8 +542,8 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
           flowPackPuzzleGrid: updated.model
         }
       },
-      eff: Eff.tag('pack-builder.flow-pack-grid', updated.eff),
-      msgCmd: SpaceClientCmd.tag('pack-builder.flow-pack-grid', updated.msgCmd),
+      eff: Eff.tag('screen-pack-builder.flow-pack-grid', updated.eff),
+      msgCmd: SpaceClientCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
       msgEvt: updated.msgEvt
     }
   },
@@ -553,7 +553,7 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
       return Sub.None
     }
     return Sub.tag(
-      'pack-builder.flow-pack-grid',
+      'screen-pack-builder.flow-pack-grid',
       FlowPackPuzzlesGridClient.subscriptions({
         ctx: {
           ...input.ctx,
@@ -696,7 +696,7 @@ export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View' | 'su
         <FlowPackPuzzlesGridClient.ViewObserver
           dispatch={(c) =>
             input.dispatch({
-              t: 'pack-builder.flow-pack-grid',
+              t: 'screen-pack-builder.flow-pack-grid',
               c
             })
           }

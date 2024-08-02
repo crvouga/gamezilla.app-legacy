@@ -10,7 +10,7 @@ import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import type { ClientModule } from '../builder.types'
 import { DeleteForeverClient } from './delete-forever/client'
-import { EditPuzzleNameClient } from './edit-puzzle-name/client'
+import { EditPuzzleNameClient } from './edit-puzzle-name/edit-puzzle-name.client'
 import { SaveChangesClient } from './save-changes/client'
 import { toFlow } from './types'
 
@@ -27,26 +27,10 @@ const update: ClientModule['update'] = (input) => {
     { model: input.model },
     (model) => DeleteForeverClient.update({ ...input, model }),
     (model) => SaveChangesClient.update({ ...input, model }),
-    (model) =>
-      EditPuzzleNameClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromMsgCore({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateMoreDrawer({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model
-      })
+    (model) => EditPuzzleNameClient.update({ ...input, model }),
+    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateMoreDrawer({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model })
   )
 }
 
@@ -54,8 +38,8 @@ const updateFromMsg: ClientModule['update'] = (input) => {
   const { model, msg, ctx } = input
 
   switch (msg?.t) {
-    case 'screen-puzzle-builder.flow-ui-play':
-    case 'screen-puzzle-builder.flow-ui-edit': {
+    case 'screen-puzzle-builder.got-flow-ui-play-msg':
+    case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
       return {
         model,
         msgCore: [withId(msg)]
@@ -116,7 +100,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
   const { model, modelCore, msgCore } = input
 
   switch (msgCore?.t) {
-    case 'screen-puzzle-builder.flow-ui-play': {
+    case 'screen-puzzle-builder.got-flow-ui-play-msg': {
       if (modelCore.puzzleBuilder?.mode.t !== 'play') {
         return {
           model
@@ -146,7 +130,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
         model
       }
     }
-    case 'screen-puzzle-builder.flow-ui-edit': {
+    case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
       if (modelCore.puzzleBuilder?.mode.t !== 'edit') {
         return {
           model
@@ -251,14 +235,14 @@ const ViewMode: ClientModule['View'] = (input) => {
   switch (puzzleBuilder.mode.t) {
     case 'edit': {
       return (
-        <div className='flex h-full w-full flex-col items-center justify-center'>
+        <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
           <div className='flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
             <FlowEdit.View
               model={puzzleBuilder.edit}
               ctx={input.ctx}
               dispatch={(c) =>
                 dispatch({
-                  t: 'screen-puzzle-builder.flow-ui-edit',
+                  t: 'screen-puzzle-builder.got-flow-ui-edit-msg',
                   c
                 })
               }
@@ -290,16 +274,16 @@ const ViewMode: ClientModule['View'] = (input) => {
       const flow = toFlow(puzzleBuilder)
       const isSolved = Flow.isSolved(flow)
       return (
-        <div className='flex h-full w-full flex-col items-center justify-center'>
+        <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
           <div className='flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
-            <div className='w-full flex-1'></div>
+            <div className='w-full flex-1 shrink-0'></div>
 
             <FlowPlay.View
               model={puzzleBuilder.play}
               flow={flow}
               dispatch={(c) =>
                 dispatch({
-                  t: 'screen-puzzle-builder.flow-ui-play',
+                  t: 'screen-puzzle-builder.got-flow-ui-play-msg',
                   c
                 })
               }
@@ -307,9 +291,7 @@ const ViewMode: ClientModule['View'] = (input) => {
 
             <FlowPlay.CheckmarkAnimation open={isSolved} />
 
-            <div className='w-full flex-1'></div>
-
-            <div className='flex w-full shrink-0 flex-col items-center justify-end overflow-hidden'>
+            <div className='z-50 flex w-full flex-1 shrink-0 flex-col items-center justify-end overflow-hidden'>
               <Actions.View
                 ctx={input.ctx}
                 id='hint-button'
@@ -326,7 +308,7 @@ const ViewMode: ClientModule['View'] = (input) => {
                     },
                     dispatch: (c) =>
                       dispatch({
-                        t: 'screen-puzzle-builder.flow-ui-play',
+                        t: 'screen-puzzle-builder.got-flow-ui-play-msg',
                         c
                       }),
                     model: puzzleBuilder.play
@@ -335,7 +317,7 @@ const ViewMode: ClientModule['View'] = (input) => {
                     ctx: input.ctx,
                     dispatch: (c) =>
                       dispatch({
-                        t: 'screen-puzzle-builder.flow-ui-play',
+                        t: 'screen-puzzle-builder.got-flow-ui-play-msg',
                         c
                       }),
                     flowPuzzle: {

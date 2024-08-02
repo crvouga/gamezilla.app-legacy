@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
     const puzzle = await FlowPuzzle.random()
 
     const msgCore = withId<MsgCore>({
-      t: 'pack-builder.user-clicked-add-puzzle-item',
+      t: 'screen-pack-builder.user-clicked-add-puzzle-item',
       puzzle: puzzle,
       userId: puzzle.createdBy
     })
@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
     })
 
     expect(
-      updated.msgCore?.some((msgCore) => msgCore.t === 'pack-builder.saved-pack' && msgCore.saved.t === 'ok')
+      updated.msgCore?.some((msgCore) => msgCore.t === 'screen-pack-builder.saved-pack' && msgCore.saved.t === 'ok')
     ).toBe(true)
   })
 

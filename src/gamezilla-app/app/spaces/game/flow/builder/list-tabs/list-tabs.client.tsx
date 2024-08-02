@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Avatar, Tabs, TopBar } from 'gamezilla-app/app/@/ui'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { andThen } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { ViewSpaceHostChip } from '../../../@/game'
 import type { ClientModule } from '../builder.types'
@@ -8,19 +8,10 @@ import { ScreenOpenPackClient } from '../screen-open-pack/screen-open-pack.clien
 import { ScreenOpenPuzzleClient } from '../screen-open-puzzle/screen-open-puzzle.client'
 
 const update: ClientModule['update'] = (input) => {
-  return GameClientModule.andThen(
+  return andThen(
     { model: input.model },
-    //
-    (model) =>
-      updateListTab({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateUserChangedListTab({
-        ...input,
-        model
-      })
+    (model) => updateListTab({ ...input, model }),
+    (model) => updateUserChangedListTab({ ...input, model })
   )
 }
 

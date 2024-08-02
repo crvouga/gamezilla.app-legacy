@@ -170,7 +170,7 @@ export const clickedOpenPuzzlePickerButton =
     return BuilderClient.update({
       model,
       msg: {
-        t: 'pack-builder.user-opened-add-puzzle-screen',
+        t: 'screen-pack-builder.user-opened-add-puzzle-screen',
         userId: ctx.currentUserId
       },
       ctx,
@@ -182,7 +182,7 @@ export const closedPuzzlePickerDrawer = (ctx: FlowClientCtx) => (model: BuilderT
   return BuilderClient.update({
     model,
     msg: {
-      t: 'pack-builder.user-closed-add-puzzle-screen'
+      t: 'screen-pack-builder.user-closed-add-puzzle-screen'
     },
     ctx,
     modelCore: BuilderCore.initCore({
@@ -264,7 +264,7 @@ export const puzzleBuilderPressDownRandomNode =
     return BuilderClient.update({
       model,
       msg: {
-        t: 'screen-puzzle-builder.flow-ui-edit',
+        t: 'screen-puzzle-builder.got-flow-ui-edit-msg',
         c: {
           t: 'pressed-down-node',
           nodeId: randomNode.nodeId
@@ -300,7 +300,7 @@ export const clickedPuzzlePickerItem =
     return BuilderClient.update({
       model,
       msg: {
-        t: 'pack-builder.user-clicked-add-puzzle-item',
+        t: 'screen-pack-builder.user-clicked-add-puzzle-item',
         puzzle,
         userId: ctx.currentUserId
       },
@@ -315,7 +315,7 @@ export const clickedExitPuzzleButton = (ctx: FlowClientCtx) => (model: BuilderTy
   return BuilderClient.update({
     model,
     msg: {
-      t: 'pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+      t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
       userId: ctx.currentUserId
     },
     ctx,
@@ -330,7 +330,7 @@ export const clickedPuzzleGridItem =
     return BuilderClient.update({
       model,
       msg: {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle,
         puzzleIndex
       },

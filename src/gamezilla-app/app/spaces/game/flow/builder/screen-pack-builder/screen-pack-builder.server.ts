@@ -13,7 +13,7 @@ const SavePack: Pick<ServerModule, 'update'> = {
     const { deps, model, modelCore, msgCore } = input
 
     switch (msgCore?.t) {
-      case 'pack-builder.user-clicked-add-puzzle-item': {
+      case 'screen-pack-builder.user-clicked-add-puzzle-item': {
         if (!modelCore.packBuilder) {
           return {
             model
@@ -26,7 +26,7 @@ const SavePack: Pick<ServerModule, 'update'> = {
           model,
           msgCore: [
             withId({
-              t: 'pack-builder.saved-pack',
+              t: 'screen-pack-builder.saved-pack',
               saved
             })
           ]
@@ -60,10 +60,10 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
     const updated = await FlowPackPuzzlesGridServer.update({
       ctx,
       model: {},
-      msg: input.msg?.t === 'pack-builder.flow-pack-grid' ? input.msg.c : null,
+      msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
       msgCmd: input.msgCmd,
       msgClient:
-        input.msgClient?.t === 'pack-builder.flow-pack-grid'
+        input.msgClient?.t === 'screen-pack-builder.flow-pack-grid'
           ? {
               ...input.msgClient,
               ...input.msgClient.c
@@ -75,8 +75,8 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
 
     return {
       model: input.model,
-      eff: Eff.tag('pack-builder.flow-pack-grid', updated.eff),
-      msgCmd: SpaceServerCmd.tag('pack-builder.flow-pack-grid', updated.msgCmd),
+      eff: Eff.tag('screen-pack-builder.flow-pack-grid', updated.eff),
+      msgCmd: SpaceServerCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
       msgEvt: updated.msgEvt,
       msgCore: []
     }

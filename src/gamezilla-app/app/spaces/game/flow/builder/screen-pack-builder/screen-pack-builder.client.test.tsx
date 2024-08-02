@@ -28,7 +28,7 @@ const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
     model,
     modelCore: BuilderCore.initCore({ ctx }),
     msg: {
-      t: 'pack-builder.puzzle-screen.user-clicked-more-button',
+      t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
       userId: ctx.currentUserId
     }
   })
@@ -40,7 +40,7 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
     model,
     modelCore: BuilderCore.initCore({ ctx }),
     msg: {
-      t: 'pack-builder.puzzle-screen.user-closed-more-drawer',
+      t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
       userId: ctx.currentUserId
     }
   })

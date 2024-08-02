@@ -1,10 +1,10 @@
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import { FlowEdit } from '../../@/flow/flow-edit'
+import { FlowPlay } from '../../@/flow/flow-play'
 import type { ModelCore, MsgCore } from '../builder.types'
 import { DeleteForeverCore } from './delete-forever/core'
 import { EditPuzzleNameCore } from './edit-puzzle-name/core'
 import { SaveChangesCore } from './save-changes/core'
-import { FlowEdit } from '../../@/flow/flow-edit'
-import { FlowPlay } from '../../@/flow/flow-play'
 
 const updateCoreMain = ({
   modelCore,
@@ -16,7 +16,7 @@ const updateCoreMain = ({
   modelCore: ModelCore
 }): ModelCore => {
   switch (msgCore.t) {
-    case 'screen-puzzle-builder.flow-ui-play': {
+    case 'screen-puzzle-builder.got-flow-ui-play-msg': {
       if (!modelCore.puzzleBuilder) {
         return modelCore
       }
@@ -45,7 +45,7 @@ const updateCoreMain = ({
       }
     }
 
-    case 'screen-puzzle-builder.flow-ui-edit': {
+    case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
       if (!modelCore.puzzleBuilder) {
         return modelCore
       }

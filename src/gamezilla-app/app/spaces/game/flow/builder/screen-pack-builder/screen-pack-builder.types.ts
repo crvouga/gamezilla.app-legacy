@@ -37,22 +37,22 @@ export const initServer: ModelServer = null
 export type MsgClient =
   | MsgCore
   | {
-      t: 'pack-builder.flow-pack-grid'
+      t: 'screen-pack-builder.flow-pack-grid'
       c: FlowPackPuzzlesGridTypes.MsgClient
     }
 
 export type MsgServer = {
-  t: 'pack-builder.flow-pack-grid'
+  t: 'screen-pack-builder.flow-pack-grid'
   c: FlowPackPuzzlesGridTypes.MsgServer
 }
 
 export type MsgToServer = {
-  t: 'pack-builder.flow-pack-grid'
+  t: 'screen-pack-builder.flow-pack-grid'
   c: FlowPackPuzzlesGridTypes.MsgToServer
 }
 
 export type MsgToClient = {
-  t: 'pack-builder.flow-pack-grid'
+  t: 'screen-pack-builder.flow-pack-grid'
   c: FlowPackPuzzlesGridTypes.MsgToClient
 }
 
@@ -100,59 +100,59 @@ export const MsgCore = p.or(
     c: EditPackNameTypes.MsgCore
   }),
   p.obj({
-    t: p.l('pack-builder.user-clicked-exit-button'),
+    t: p.l('screen-pack-builder.user-clicked-exit-button'),
     userId: UserId
   }),
   p.obj({
-    t: p.l('pack-builder.saved-pack'),
+    t: p.l('screen-pack-builder.saved-pack'),
     saved: Result.parser(p.str, FlowPack)
   }),
   p.obj({
-    t: p.l('pack-builder.user-opened-add-puzzle-screen'),
+    t: p.l('screen-pack-builder.user-opened-add-puzzle-screen'),
     userId: UserId
   }),
   p.obj({
-    t: p.l('pack-builder.user-closed-add-puzzle-screen')
+    t: p.l('screen-pack-builder.user-closed-add-puzzle-screen')
   }),
   p.obj({
-    t: p.l('pack-builder.user-clicked-add-puzzle-item'),
+    t: p.l('screen-pack-builder.user-clicked-add-puzzle-item'),
     puzzle: FlowPuzzle,
     userId: UserId
   }),
   p.obj({
-    t: p.l('pack-builder.user-clicked-pack-item'),
+    t: p.l('screen-pack-builder.user-clicked-pack-item'),
     puzzle: FlowPuzzle,
     puzzleIndex: p.num
   }),
   p.obj({
-    t: p.l('pack-builder.user-changed-slide'),
+    t: p.l('screen-pack-builder.user-changed-slide'),
     newSlideIndex: p.num,
     userId: UserId
   }),
   p.obj({
-    t: p.l('pack-builder.flow-play-ui'),
+    t: p.l('screen-pack-builder.flow-play-ui'),
     c: FlowPlay.Msg
   }),
   p.obj({
-    t: p.l('pack-builder.puzzle-screen.user-clicked-exit-puzzle'),
+    t: p.l('screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle'),
     userId: UserId
   }),
   p.obj({
-    t: p.l('pack-builder.puzzle-screen.user-clicked-next-puzzle'),
+    t: p.l('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle'),
     userId: UserId,
     nextPuzzle: FlowPuzzle
   }),
   p.obj({
-    t: p.l('pack-builder.puzzle-screen.user-clicked-previous-puzzle-button'),
+    t: p.l('screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button'),
     userId: UserId,
     previousPuzzle: FlowPuzzle
   }),
   p.obj({
-    t: p.l('pack-builder.puzzle-screen.user-clicked-more-button'),
+    t: p.l('screen-pack-builder.puzzle-screen.user-clicked-more-button'),
     userId: UserId
   }),
   p.obj({
-    t: p.l('pack-builder.puzzle-screen.user-closed-more-drawer'),
+    t: p.l('screen-pack-builder.puzzle-screen.user-closed-more-drawer'),
     userId: UserId
   }),
   p.obj({

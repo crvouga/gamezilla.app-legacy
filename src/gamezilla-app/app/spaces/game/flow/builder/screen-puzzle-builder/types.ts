@@ -27,11 +27,11 @@ export type MsgClient =
   | DeleteForeverTypes.MsgClient
   | SaveChangesTypes.MsgClient
   | {
-      t: 'screen-puzzle-builder.flow-ui-edit'
+      t: 'screen-puzzle-builder.got-flow-ui-edit-msg'
       c: FlowEdit.Msg
     }
   | {
-      t: 'screen-puzzle-builder.flow-ui-play'
+      t: 'screen-puzzle-builder.got-flow-ui-play-msg'
       c: FlowPlay.Msg
     }
   | { t: 'screen-puzzle-builder.user-clicked-more-button' }
@@ -97,11 +97,11 @@ export const MsgCore = p.or(
   DeleteForeverTypes.MsgCore,
   EditPuzzleNameTypes.MsgCore,
   p.obj({
-    t: p.l('screen-puzzle-builder.flow-ui-play'),
+    t: p.l('screen-puzzle-builder.got-flow-ui-play-msg'),
     c: FlowPlay.Msg
   }),
   p.obj({
-    t: p.l('screen-puzzle-builder.flow-ui-edit'),
+    t: p.l('screen-puzzle-builder.got-flow-ui-edit-msg'),
     c: FlowEdit.Msg
   }),
   p.obj({

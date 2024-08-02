@@ -33,7 +33,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-builder.user-clicked-exit-button': {
+    case 'screen-pack-builder.user-clicked-exit-button': {
       return {
         ...modelCore,
         opened: {
@@ -50,7 +50,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-builder.user-clicked-add-puzzle-item': {
+    case 'screen-pack-builder.user-clicked-add-puzzle-item': {
       if (!modelCore.packBuilder) {
         return modelCore
       }
@@ -77,7 +77,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-builder.user-opened-add-puzzle-screen': {
+    case 'screen-pack-builder.user-opened-add-puzzle-screen': {
       if (!modelCore.packBuilder) {
         return modelCore
       }
@@ -99,7 +99,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-builder.user-closed-add-puzzle-screen': {
+    case 'screen-pack-builder.user-closed-add-puzzle-screen': {
       if (!modelCore.packBuilder) {
         return modelCore
       }
@@ -124,7 +124,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-builder.user-clicked-pack-item': {
+    case 'screen-pack-builder.user-clicked-pack-item': {
       if (!modelCore.packBuilder) {
         return modelCore
       }
@@ -162,7 +162,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
+    case 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
       if (!modelCore.packBuilder) {
         return modelCore
       }
@@ -196,7 +196,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push((input) => {
   switch (input.msgCore.t) {
-    case 'pack-builder.user-changed-slide': {
+    case 'screen-pack-builder.user-changed-slide': {
       if (!input.modelCore.packBuilder) {
         return input.modelCore
       }
@@ -216,7 +216,7 @@ updates.push((input) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-builder.flow-play-ui': {
+    case 'screen-pack-builder.flow-play-ui': {
       if (!modelCore.packBuilder) {
         return modelCore
       }
@@ -261,7 +261,7 @@ updates.push(({ modelCore, msgCore }) => {
   }
 
   switch (msgCore.t) {
-    case 'pack-builder.puzzle-screen.user-clicked-next-puzzle': {
+    case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
       const indexOfNextPuzzle = modelCore.packBuilder.pack.puzzleIds.indexOf(msgCore.nextPuzzle.id)
       if (indexOfNextPuzzle === -1) {
         return modelCore
@@ -301,7 +301,7 @@ updates.push(({ modelCore, msgCore }) => {
   }
 
   switch (msgCore.t) {
-    case 'pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
+    case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
       const indexOfPreviousPuzzle = modelCore.packBuilder.pack.puzzleIds.indexOf(msgCore.previousPuzzle.id)
       if (indexOfPreviousPuzzle === -1) {
         return modelCore
@@ -336,7 +336,7 @@ updates.push(({ modelCore, msgCore }) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-builder.puzzle-screen.user-clicked-more-button': {
+    case 'screen-pack-builder.puzzle-screen.user-clicked-more-button': {
       if (!modelCore.packBuilder) {
         return modelCore
       }
@@ -351,7 +351,7 @@ updates.push(({ modelCore, msgCore }) => {
         }
       }
     }
-    case 'pack-builder.puzzle-screen.user-closed-more-drawer': {
+    case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer': {
       if (!modelCore.packBuilder) {
         return modelCore
       }

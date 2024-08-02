@@ -90,7 +90,7 @@ describe(import.meta.file, () => {
 
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
         userId: f.currentUserId
       }
     ])
@@ -103,7 +103,7 @@ describe(import.meta.file, () => {
 
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[0],
         puzzleIndex: 0
       }
@@ -118,7 +118,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-exit-button',
+        t: 'screen-pack-builder.user-clicked-exit-button',
         userId: f.currentUserId
       }
     ])
@@ -129,12 +129,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[0],
         puzzleIndex: 0
       },
       {
-        t: 'pack-builder.puzzle-screen.user-clicked-more-button',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
         userId: f.currentUserId
       }
     ])
@@ -147,12 +147,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[0],
         puzzleIndex: 0
       },
       {
-        t: 'pack-builder.puzzle-screen.user-closed-more-drawer',
+        t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
         userId: f.currentUserId
       }
     ])
@@ -165,12 +165,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[0],
         puzzleIndex: 0
       },
       {
-        t: 'pack-builder.puzzle-screen.user-clicked-next-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
         userId: f.currentUserId,
         nextPuzzle: f.puzzles[1]
       }
@@ -184,12 +184,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[0],
         puzzleIndex: 0
       },
       {
-        t: 'pack-builder.puzzle-screen.user-clicked-next-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
         userId: f.currentUserId,
         nextPuzzle: await FlowPuzzle.random({
           createdBy: f.currentUserId
@@ -206,12 +206,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[1],
         puzzleIndex: 1
       },
       {
-        t: 'pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
         userId: f.currentUserId,
         previousPuzzle: f.puzzles[0]
       }
@@ -225,12 +225,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[1],
         puzzleIndex: 1
       },
       {
-        t: 'pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
         userId: f.currentUserId,
         previousPuzzle: await FlowPuzzle.random({
           createdBy: f.currentUserId
@@ -246,12 +246,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[1],
         puzzleIndex: 1
       },
       {
-        t: 'pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
         userId: f.currentUserId
       }
     ])
@@ -262,7 +262,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-opened-add-puzzle-screen',
+        t: 'screen-pack-builder.user-opened-add-puzzle-screen',
         userId: f.currentUserId
       }
     ])
@@ -273,11 +273,11 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-opened-add-puzzle-screen',
+        t: 'screen-pack-builder.user-opened-add-puzzle-screen',
         userId: f.currentUserId
       },
       {
-        t: 'pack-builder.user-closed-add-puzzle-screen'
+        t: 'screen-pack-builder.user-closed-add-puzzle-screen'
       }
     ])
     expect(modelCore.packBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
@@ -290,7 +290,7 @@ describe(import.meta.file, () => {
     })
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-add-puzzle-item',
+        t: 'screen-pack-builder.user-clicked-add-puzzle-item',
         puzzle: newPuzzle,
         userId: f.currentUserId
       }
@@ -309,12 +309,12 @@ describe(import.meta.file, () => {
 
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle,
         puzzleIndex: f.puzzles.length - 1
       },
       {
-        t: 'pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
         userId: f.currentUserId
       }
     ])
@@ -331,7 +331,7 @@ describe(import.meta.file, () => {
 
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-changed-slide',
+        t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 1,
         userId: f.currentUserId
       }
@@ -347,7 +347,7 @@ describe(import.meta.file, () => {
     const expectedSlide = FlowPackPuzzlesGridUI.toSlideIndex(FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1)
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-changed-slide',
+        t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 100000,
         userId: f.currentUserId
       }
@@ -362,16 +362,16 @@ describe(import.meta.file, () => {
 
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-changed-slide',
+        t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 1,
         userId: f.currentUserId
       },
       {
-        t: 'pack-builder.user-opened-add-puzzle-screen',
+        t: 'screen-pack-builder.user-opened-add-puzzle-screen',
         userId: f.currentUserId
       },
       {
-        t: 'pack-builder.user-closed-add-puzzle-screen'
+        t: 'screen-pack-builder.user-closed-add-puzzle-screen'
       }
     ])
 
@@ -386,7 +386,7 @@ describe(import.meta.file, () => {
     const indexNextPage = FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[indexNextPage] as FlowPuzzle,
         puzzleIndex: indexNextPage
       }
@@ -404,7 +404,7 @@ describe(import.meta.file, () => {
 
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: f.puzzles[f.puzzles.length - 1] as FlowPuzzle,
         puzzleIndex: f.puzzles.length - 1
       }
@@ -428,7 +428,7 @@ describe(import.meta.file, () => {
 
     const modelCore = f.updateModelCore([
       {
-        t: 'pack-builder.user-clicked-pack-item',
+        t: 'screen-pack-builder.user-clicked-pack-item',
         puzzle: puzzleLast,
         puzzleIndex: 0
       }

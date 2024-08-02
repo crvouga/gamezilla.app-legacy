@@ -61,7 +61,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.14",
     "babel-plugin-inferno": "^6.7.1",
-    "babel-plugin-react-compiler": "^0.0.0-experimental-938cd9a-20240601",
+    "babel-plugin-react-compiler": "^0.0.0-experimental-334f00b-20240725",
     "babel-preset-es2015": "^6.24.1",
     "bun-types": "^1.0.11",
     "csv-parser": "^3.0.0",
