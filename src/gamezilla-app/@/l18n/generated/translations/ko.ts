@@ -138,6 +138,7 @@ export const translations: Text = {
   'flow.puzzle-deleted': '퍼즐이 삭제되었습니다',
   'flow.delete-puzzle-forever?': '퍼즐을 영구적으로 삭제하시겠습니까?',
   'flow.delete-forever': '영구적으로 삭제',
+  'flow.add-puzzle': '퍼즐 추가',
   'flow.puzzle-removed': '퍼즐이 제거되었습니다',
   'flow.puzzle-added': '퍼즐이 추가되었습니다',
   'flow.remove-from-pack': '팩에서 제거',

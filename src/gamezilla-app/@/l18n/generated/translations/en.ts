@@ -139,6 +139,7 @@ export const translations: Text = {
   'flow.puzzle-deleted': 'Puzzle deleted',
   'flow.delete-puzzle-forever?': 'Delete puzzle forever?',
   'flow.delete-forever': 'Delete forever',
+  'flow.add-puzzle': 'Add Puzzle',
   'flow.puzzle-removed': 'Puzzle removed',
   'flow.puzzle-added': 'Puzzle added',
   'flow.remove-from-pack': 'Remove from pack',

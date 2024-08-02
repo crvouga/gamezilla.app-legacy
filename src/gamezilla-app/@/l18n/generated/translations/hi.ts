@@ -142,6 +142,7 @@ export const translations: Text = {
   'flow.puzzle-deleted': 'पहेली हटा दी गई',
   'flow.delete-puzzle-forever?': 'क्या आप पहेली को स्थायी रूप से हटाना चाहते हैं?',
   'flow.delete-forever': 'स्थायी रूप से हटाएं',
+  'flow.add-puzzle': 'पहेली जोड़ें',
   'flow.puzzle-removed': 'पहेली हटा दी गई',
   'flow.puzzle-added': 'पहेली जोड़ी गई',
   'flow.remove-from-pack': 'पैक से हटाएं',

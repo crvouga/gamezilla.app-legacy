@@ -140,6 +140,7 @@ export const translations: Text = {
   'flow.puzzle-deleted': 'Rompecabezas eliminado',
   'flow.delete-puzzle-forever?': '¿Eliminar rompecabezas para siempre?',
   'flow.delete-forever': 'Eliminar para siempre',
+  'flow.add-puzzle': 'Agregar rompecabezas',
   'flow.puzzle-removed': 'Rompecabezas eliminado',
   'flow.puzzle-added': 'Rompecabezas añadido',
   'flow.remove-from-pack': 'Eliminar del paquete',

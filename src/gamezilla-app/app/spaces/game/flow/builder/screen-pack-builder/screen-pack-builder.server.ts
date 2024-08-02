@@ -124,7 +124,7 @@ const EditPackName: Pick<ServerModule, 'update'> = {
       ...input,
       modelCore: input.modelCore.packBuilder.editPackName,
       msgCore:
-        input.msgCore?.t === 'got-edit-pack-name'
+        input.msgCore?.t === 'got-edit-pack-name-msg'
           ? {
               ...input.msgCore,
               ...input.msgCore.c
@@ -136,7 +136,7 @@ const EditPackName: Pick<ServerModule, 'update'> = {
       msgCore: (updated.msgCore ?? []).map(({ eventId, ...c }) => ({
         eventId,
         c,
-        t: 'got-edit-pack-name'
+        t: 'got-edit-pack-name-msg'
       }))
     }
   }

@@ -96,7 +96,7 @@ export type ModelCore = {
 
 export const MsgCore = p.or(
   p.obj({
-    t: p.l('got-edit-pack-name'),
+    t: p.l('got-edit-pack-name-msg'),
     c: EditPackNameTypes.MsgCore
   }),
   p.obj({

@@ -146,9 +146,15 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
   View(input) {
     return (
       <div className='flex h-full max-h-full w-full flex-col overflow-hidden'>
-        <div className='flex w-full shrink-0 items-center border-b border-neutral-700 p-4 text-3xl font-bold'>
-          <p className='flex-1'>Add puzzle</p>
-        </div>
+        <TopBar
+          ctx={input.ctx}
+          title={input.ctx.t('flow.add-puzzle')}
+          onBack={() =>
+            input.dispatch({
+              t: 'screen-pack-builder.user-closed-add-puzzle-screen'
+            })
+          }
+        />
         <div className='h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll'>
           <FlowPuzzleListClient.View
             ctx={input.ctx}
@@ -167,17 +173,6 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
                   userId: input.ctx.currentUserId
                 })
             }}
-          />
-        </div>
-        <div className='flex w-full shrink-0 items-center justify-center border-t border-neutral-700 p-4'>
-          <Button
-            text={input.ctx.t('app.close')}
-            className='w-full'
-            onClick={() =>
-              input.dispatch({
-                t: 'screen-pack-builder.user-closed-add-puzzle-screen'
-              })
-            }
           />
         </div>
       </div>
@@ -433,7 +428,7 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
     const canGoNext = Boolean(nextPuzzle)
 
     return (
-      <div className='flex h-full w-full flex-col'>
+      <div className='flex h-full w-full flex-col overflow-hidden'>
         <TopBar
           ctx={input.ctx}
           title={input.ctx.t('flow.level', screen.puzzleIndex + 1)}
@@ -446,18 +441,18 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
           }
         />
 
-        <FlowPlay.View
-          dispatch={(c) =>
-            input.dispatch({
-              t: 'screen-pack-builder.flow-play-ui',
-              c
-            })
-          }
-          flow={screen.puzzle.flow}
-          model={screen.playUI}
-        />
-
-        <div className='flex-1' />
+        <div className='flex w-full flex-1 flex-col items-center justify-center'>
+          <FlowPlay.View
+            dispatch={(c) =>
+              input.dispatch({
+                t: 'screen-pack-builder.flow-play-ui',
+                c
+              })
+            }
+            flow={screen.puzzle.flow}
+            model={screen.playUI}
+          />
+        </div>
 
         <ViewBottomButtonBar>
           <ViewBottomButtonBarAction
@@ -582,9 +577,9 @@ const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
     const updated = EditPackNameClient.update({
       ...input,
       modelCore: input.modelCore.packBuilder.editPackName,
-      msg: input.msgCore?.t === 'got-edit-pack-name' ? input.msgCore.c : null,
+      msg: input.msgCore?.t === 'got-edit-pack-name-msg' ? input.msgCore.c : null,
       msgCore:
-        input.msgCore?.t === 'got-edit-pack-name'
+        input.msgCore?.t === 'got-edit-pack-name-msg'
           ? {
               ...input.msgCore,
               ...input.msgCore.c
@@ -595,7 +590,7 @@ const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
       model: input.model,
       msgCore: (updated.msgCore ?? []).map((c) => ({
         c,
-        t: 'got-edit-pack-name',
+        t: 'got-edit-pack-name-msg',
         eventId: c.eventId
       }))
     }
@@ -612,7 +607,7 @@ const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
           modelCore={input.modelCore.packBuilder.editPackName}
           dispatch={(c) =>
             input.dispatch({
-              t: 'got-edit-pack-name',
+              t: 'got-edit-pack-name-msg',
               c
             })
           }
@@ -642,51 +637,15 @@ export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View' | 'su
       {
         model: input.model
       },
-      (model) =>
-        ButtonExitBuilder.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        ScreenAddPuzzle.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        ButtonAddPuzzle.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        ScreenPuzzleGrid.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        ScreenPuzzle.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        PackPuzzleGrid.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        ScreenPuzzleMore.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        EditPackName.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        updateRecordPack({
-          ...input,
-          model
-        })
+      (model) => ButtonExitBuilder.update({ ...input, model }),
+      (model) => ScreenAddPuzzle.update({ ...input, model }),
+      (model) => ButtonAddPuzzle.update({ ...input, model }),
+      (model) => ScreenPuzzleGrid.update({ ...input, model }),
+      (model) => ScreenPuzzle.update({ ...input, model }),
+      (model) => PackPuzzleGrid.update({ ...input, model }),
+      (model) => ScreenPuzzleMore.update({ ...input, model }),
+      (model) => EditPackName.update({ ...input, model }),
+      (model) => updateRecordPack({ ...input, model })
     )
   },
 
