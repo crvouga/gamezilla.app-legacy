@@ -1,3 +1,4 @@
+import { eq } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { ClientCtx } from 'gamezilla-app/app/@/client'
 import { IconLightbulb } from 'gamezilla-app/app/@/ui'
@@ -8,8 +9,6 @@ import type { FlowVariant } from '../flow-variant'
 import { FlowGroupId } from '../flow/flow-group-id'
 import { FlowNodeId } from '../flow/flow-node-id'
 import { FlowTerminal } from '../flow/flow-terminal'
-import { FlowAlgoSolve } from '../flow-aglo/flow-algo-solve'
-import { eq } from 'gamezilla-app/@/core'
 
 type Ctx = {
   flowPuzzle: FlowPuzzle
@@ -76,7 +75,8 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
       const solution =
         input.ctx.flowPuzzle.flowSolutions.length > 0 && eq(terminalFlowPuzzle, terminalFlowModel)
           ? input.ctx.flowPuzzle.flowSolutions[0]
-          : FlowAlgoSolve.solve(flow)
+          : null
+      // FlowAlgoSolve.solve(flow)
 
       if (!solution) {
         return {

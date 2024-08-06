@@ -55,7 +55,7 @@ const Fixture = async (input?: { ctxflowPuzzle?: FlowPuzzle }) => {
   }
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   test('hint', async () => {
     const f = await Fixture()
     const after = f.update(f.init, [
