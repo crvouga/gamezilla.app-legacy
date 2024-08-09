@@ -26,7 +26,7 @@ import { FlowCoreEvent } from '../@/flow-core-event'
 export type ModelClient = {
   flowPuzzles: { [flowPuzzleId: FlowPuzzleId]: FlowPuzzle }
   flowPacks: { [flowPackId: FlowPackId]: FlowPack }
-  flowPackGrid: FlowPackPuzzlesGridTypes.ModelClient
+  flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
   flowPackList: FlowPackListTypes.ModelClient
 }
 
@@ -102,6 +102,11 @@ export const MsgCore = p.or(
     flowPuzzle: FlowPuzzle,
     puzzleIndex: p.num
   }),
+  p.obj({
+    t: p.l('user-changed-slides'),
+    slideIndex: p.num,
+    userId: UserId
+  }),
   ScreenPuzzleTypes.MsgCore
 )
 
@@ -113,7 +118,8 @@ const Screen = p.or(
   }),
   p.obj({
     t: p.l('screen-select-puzzle'),
-    flowPack: FlowPack
+    flowPack: FlowPack,
+    slideIndex: p.num
   }),
   ScreenPuzzleTypes.ModelCore
 )

@@ -45,7 +45,8 @@ const ListPuzzlesById: Pick<ServerModule, 'update'> = {
           msgCmd: [
             sendToClient(input.msgClient, {
               t: 'listed-puzzles-by-id',
-              listed
+              listed,
+              causedBy: { msgClient: input.msgClient }
             })
           ]
         }

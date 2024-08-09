@@ -427,7 +427,7 @@ export const serverListedSpaces =
       msgServer: {
         t: 'listed-spaces',
         spaces: spaceIds.map((spaceId) => toStartedSpace(spaceId, UserId.generate())),
-        causedBy: 'list-spaces'
+        causedBy: null
       }
     })
   }

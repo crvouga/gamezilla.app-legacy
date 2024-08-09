@@ -87,7 +87,8 @@ const msgServerListedByPuzzlesByIdOk = (puzzles: FlowPuzzle[]): Input => ({
         offset: 0,
         total: puzzles.length
       }
-    }
+    },
+    causedBy: null
   }
 })
 
@@ -127,7 +128,13 @@ describe(import.meta.file, () => {
 
   it('should fetch puzzles when some are missing', async () => {
     const f = await Fixture()
-    const output = f.update(f.init.model, [{}])
+    const output = f.update(f.init.model, [
+      {
+        msg: {
+          t: 'elapsed'
+        }
+      }
+    ])
     expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(true)
   })
 
@@ -160,7 +167,8 @@ describe(import.meta.file, () => {
           listed: {
             t: 'err',
             error: 'Some error'
-          }
+          },
+          causedBy: null
         }
       }
     ])

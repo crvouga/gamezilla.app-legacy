@@ -166,7 +166,7 @@ const updateFromEvent: Module['update'] = async ({ msgEvt, model, ctx }) => {
             msg: {
               t: 'current-user-profile',
               result: Result.mapOk(result, profileCoreToProfile),
-              causedBy: msgEvt,
+              causedBy: { msgEvt },
               loggedIn: msgEvt.loggedIn
             }
           })

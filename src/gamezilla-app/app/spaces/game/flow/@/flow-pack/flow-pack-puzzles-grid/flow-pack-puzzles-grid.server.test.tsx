@@ -27,7 +27,8 @@ const userObversedGrid =
       msgClient: {
         ...client,
         puzzleIds,
-        t: 'list-puzzles-by-id'
+        t: 'list-puzzles-by-id',
+        causedBy: null
       }
     })
   }

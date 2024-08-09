@@ -34,11 +34,13 @@ export type MsgServer = {
 export type MsgToClient = {
   t: 'listed-puzzles-by-id'
   listed: ListPuzzlesOutput
+  causedBy: unknown
 }
 
 export type MsgToServer = {
   t: 'list-puzzles-by-id'
   puzzleIds: FlowPuzzleId[]
+  causedBy: unknown
 }
 
 export type MsgInCmdClient = {

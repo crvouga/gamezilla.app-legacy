@@ -36,7 +36,7 @@ const update: SpaceServerModule['update'] = async (input) => {
           sendToClient(msgClient, {
             t: 'listed-spaces',
             spaces: started,
-            causedBy: msgClient.t,
+            causedBy: { msgClient },
             profiles
           })
         ]

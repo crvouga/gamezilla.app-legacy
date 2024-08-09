@@ -69,7 +69,7 @@ const updateCore: SpaceServerModule['update'] = async (input) => {
             msgCmd: [
               sendToClient<MsgToClient>([msgClient.clientId], {
                 t: 'synced',
-                causedBy: msgClient.t,
+                causedBy: { msgClient },
                 space: starting,
                 profiles: profiles
               })
@@ -126,7 +126,7 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
             t: 'current-user-space',
             space: started,
             profiles,
-            causedBy: msgEvt.t
+            causedBy: { msgEvt }
           })
         ]
       }

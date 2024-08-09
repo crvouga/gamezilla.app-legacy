@@ -1,5 +1,5 @@
-import { RequestResponse, Result, isErr } from 'gamezilla-app/@/core'
-import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
+import { isErr, RequestResponse, Result } from 'gamezilla-app/@/core'
+import { andThen, AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
 import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
@@ -52,6 +52,14 @@ const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
     return { model: input.model }
   }
 
+  if (!input.msgCmd && !input.msgServer && !input.msgEvt && !input.msg) {
+    return { model: input.model }
+  }
+
+  if (input.msgServer?.t === 'listed-puzzles-by-id') {
+    return { model: input.model }
+  }
+
   return {
     model: {
       ...input.model,
@@ -60,7 +68,8 @@ const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
     msgCmd: [
       sendToServer({
         t: 'list-puzzles-by-id',
-        puzzleIds: input.ctx.pack.puzzleIds
+        puzzleIds: input.ctx.pack.puzzleIds,
+        causedBy: { msgClient: input.msgServer, msgServer: input.msgServer, msgCmd: input.msgCmd, msgEvt: input.msgEvt }
       })
     ]
   }
@@ -70,7 +79,7 @@ const updateServerListedPuzzles: ClientModule['update'] = (input) => {
   const { model, msgServer } = input
   switch (msgServer?.t) {
     case 'listed-puzzles-by-id': {
-      return AppClientModule.andThen(
+      return andThen(
         {
           model
         },
@@ -133,7 +142,8 @@ const updateFromCmd: ClientModule['update'] = (input) => {
         msgCmd: [
           sendToServer({
             t: 'list-puzzles-by-id',
-            puzzleIds: input.msgCmd.c.pack.puzzleIds
+            puzzleIds: input.msgCmd.c.pack.puzzleIds,
+            causedBy: { msgCmd: input.msgCmd }
           })
         ]
       }
@@ -189,10 +199,13 @@ const load = (pack: FlowPack): MsgInCmdClient => {
   }
 }
 
+const isLoading = (model: ModelClient): boolean => RequestResponse.isRequesting(model.request)
+
 export const FlowPackPuzzlesGridClient = {
   initClient,
   load,
   update,
   ViewObserver,
-  subscriptions
+  subscriptions,
+  isLoading
 }

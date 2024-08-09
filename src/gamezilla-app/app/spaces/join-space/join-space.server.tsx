@@ -35,7 +35,7 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
           sendToUser([msgSpaceEvent.userId], {
             t: 'synced',
             space: started,
-            causedBy: msgSpaceEvent.t
+            causedBy: { msgSpaceEvent }
           })
         ]
       }

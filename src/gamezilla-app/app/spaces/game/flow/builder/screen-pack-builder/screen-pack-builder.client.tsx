@@ -525,6 +525,8 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
       msgServer: input.msgServer?.t === 'screen-pack-builder.flow-pack-grid' ? input.msgServer.c : null
     })
 
+    console.log('PackPuzzleGrid.update', updated)
+
     return {
       model: {
         ...input.model,

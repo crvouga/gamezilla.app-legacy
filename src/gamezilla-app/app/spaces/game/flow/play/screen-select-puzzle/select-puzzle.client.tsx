@@ -63,7 +63,13 @@ const View: ClientModule['View'] = (input) => {
         <div className='flex flex-1 flex-col items-center justify-center'>
           <FlowPackPuzzlesGridUI.ViewPackPuzzleGrid
             id='pack-puzzle-grid'
-            onSlideIndexChanged={() => {}}
+            onSlideIndexChanged={(slideIndex) =>
+              input.dispatch({
+                t: 'user-changed-slides',
+                slideIndex,
+                userId: input.ctx.currentUserId
+              })
+            }
             puzzleIds={input.modelCore.screen.flowPack.puzzleIds}
             renderCell={(inputCell) => {
               if (!inputCell.puzzleId) {
@@ -73,7 +79,23 @@ const View: ClientModule['View'] = (input) => {
               const puzzle = input.model.flowPuzzles[inputCell.puzzleId]
 
               if (!puzzle) {
-                return <FlowPackPuzzlesGridUI.ViewLoadingCell />
+                if (FlowPackPuzzlesGridClient.isLoading(input.model.flowPackPuzzleGrid)) {
+                  return <FlowPackPuzzlesGridUI.ViewLoadingCell />
+                }
+
+                return (
+                  <FlowPackPuzzlesGridUI.ViewErrorCell
+                  // onClick={() =>
+                  //   input.dispatch({
+                  //     t: 'user-clicked-open-puzzle-grid-item',
+                  //     flowPuzzle: {
+                  //       type: "not-found",
+                  //     },
+                  //     puzzleIndex: inputCell.index
+                  //   })
+                  // }
+                  />
+                )
               }
 
               return (

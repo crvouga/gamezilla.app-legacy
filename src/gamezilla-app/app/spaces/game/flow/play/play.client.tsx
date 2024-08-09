@@ -17,7 +17,7 @@ import { ScreenSelectPuzzleClient } from './screen-select-puzzle/select-puzzle.c
 
 const init: ClientModule['init'] = {
   flowPackList: FlowPackListClient.initClient,
-  flowPackGrid: FlowPackPuzzlesGridClient.initClient,
+  flowPackPuzzleGrid: FlowPackPuzzlesGridClient.initClient,
   flowPacks: {},
   flowPuzzles: {}
 }
@@ -112,7 +112,7 @@ const updateFlowPackPuzzlesGrid: IUpdate<ClientModuleTypes> = (input) => {
       pack
     },
     model: {
-      ...input.model.flowPackGrid,
+      ...input.model.flowPackPuzzleGrid,
       puzzles: input.model.flowPuzzles
     },
     msg: input.msg?.t === 'flow-pack-grid' ? input.msg.c : null,
@@ -123,7 +123,7 @@ const updateFlowPackPuzzlesGrid: IUpdate<ClientModuleTypes> = (input) => {
   return {
     model: {
       ...input.model,
-      flowPackGrid: {
+      flowPackPuzzleGrid: {
         ...updated.model,
         puzzles: {}
       },
@@ -147,7 +147,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
             ...input.ctx,
             pack: input.modelCore.screen.flowPack
           },
-          model: input.model.flowPackGrid
+          model: input.model.flowPackPuzzleGrid
         })
       )
 

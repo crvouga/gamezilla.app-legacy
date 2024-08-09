@@ -139,6 +139,12 @@ const ViewLoadingCell = () => {
   )
 }
 
+const ViewErrorCell = () => {
+  return (
+    <div className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-red-500 bg-red-500' />
+  )
+}
+
 export const FlowPackPuzzlesGridUI = {
   PER_SLIDE_ITEM_COUNT,
   ROW_COUNT,
@@ -150,5 +156,6 @@ export const FlowPackPuzzlesGridUI = {
   ViewAddCell,
   ViewPuzzleCell,
   ViewEmptyCell,
-  ViewLoadingCell
+  ViewLoadingCell,
+  ViewErrorCell
 }

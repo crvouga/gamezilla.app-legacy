@@ -138,7 +138,8 @@ const updateCoreMain: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
             ...modelCore,
             screen: {
               t: 'screen-select-puzzle',
-              flowPack: modelCore.screen.flowPack
+              flowPack: modelCore.screen.flowPack,
+              slideIndex: 0
             }
           }
         }

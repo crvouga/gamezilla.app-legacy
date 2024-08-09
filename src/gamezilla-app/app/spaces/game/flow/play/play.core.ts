@@ -26,7 +26,8 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
         ...modelCore,
         screen: {
           t: 'screen-select-puzzle',
-          flowPack: msgCore.pack
+          flowPack: msgCore.pack,
+          slideIndex: 0
         }
       }
     }
@@ -55,6 +56,24 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
         }
       }
     }
+
+    case 'user-changed-slides': {
+      switch (modelCore.screen.t) {
+        case 'screen-select-puzzle': {
+          return {
+            ...modelCore,
+            screen: {
+              ...modelCore.screen,
+              slideIndex: msgCore.slideIndex
+            }
+          }
+        }
+        default: {
+          return modelCore
+        }
+      }
+    }
+
     default: {
       return modelCore
     }

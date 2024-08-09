@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { FlowPack } from '../@/flow-pack'
 import { FlowPuzzle } from '../@/flow-puzzle'
 import { CoreFixture } from './@/fixture'
+import { UserId } from 'gamezilla-app/app/@/data'
 
 describe(import.meta.file, () => {
   it('should be able to open pack from list', async () => {
@@ -60,6 +61,37 @@ describe(import.meta.file, () => {
     expect(after.screen.t).toEqual('screen-play-puzzle')
     if (after.screen.t === 'screen-play-puzzle' && after.screen.puzzleResult.t === 'got') {
       expect(after.screen.puzzleResult.c.id).toEqual(puzzle.id)
+    }
+  })
+
+  test('user changed slides', async () => {
+    const f = await CoreFixture()
+    const puzzle = await FlowPuzzle.random()
+    const pack = await FlowPack.random({
+      puzzleIds: [puzzle.id]
+    })
+
+    const before = f.update(f.init, [
+      {
+        t: 'user-clicked-open-pack-list-item',
+        pack
+      }
+    ])
+
+    const after = f.update(before, [
+      {
+        t: 'user-changed-slides',
+        slideIndex: 1,
+        userId: UserId.generate()
+      }
+    ])
+    expect(before.screen.t).toEqual('screen-select-puzzle')
+    if (before.screen.t === 'screen-select-puzzle') {
+      expect(before.screen.slideIndex).toEqual(0)
+    }
+    expect(after.screen.t).toEqual('screen-select-puzzle')
+    if (after.screen.t === 'screen-select-puzzle') {
+      expect(after.screen.slideIndex).toEqual(1)
     }
   })
 })

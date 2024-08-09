@@ -124,7 +124,7 @@ const updateCore: SpaceClientModule['update'] = (input) => {
                   [currentUserId]: currentUserProfile
                 }
               : {},
-            causedBy: msgEvt.t
+            causedBy: { msgEvt }
           })
         ]
       }
