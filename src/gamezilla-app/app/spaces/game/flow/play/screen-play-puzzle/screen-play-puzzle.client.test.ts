@@ -79,7 +79,7 @@ describe(import.meta.file, () => {
       }
     ])
     const r = f.render(updated)
-    expect(r.getAttribute('data-puzzle-id')).toBe(f.nextPuzzle.id)
+    expect(r.getAttribute('data-puzzle-id')).toBe(f.nextPuzzle.c.id)
   })
 
   it('should play sound after user clicks next puzzle button', async () => {
@@ -127,7 +127,7 @@ describe(import.meta.file, () => {
       }
     ])
     const r = f.render(updated)
-    expect(r.getAttribute('data-puzzle-id')).toBe(f.prevPuzzle.id)
+    expect(r.getAttribute('data-puzzle-id')).toBe(f.prevPuzzle.c.id)
   })
 
   it('should emit msg after clicking prev puzzle button', async () => {

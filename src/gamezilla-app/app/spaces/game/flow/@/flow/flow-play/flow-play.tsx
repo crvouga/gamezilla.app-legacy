@@ -63,6 +63,10 @@ export const init = (input: { ctx: Ctx }): Model => {
   }
 }
 
+export const toStatus = (model: Model): 'dragging' | 'idle' => {
+  return model.status.t
+}
+
 export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
   const initial = init({ ctx: input })
 

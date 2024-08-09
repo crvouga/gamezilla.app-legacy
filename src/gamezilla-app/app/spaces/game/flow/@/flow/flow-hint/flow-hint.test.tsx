@@ -314,7 +314,8 @@ describe(import.meta.file, () => {
     const viewed = FlowHint.viewHintAction({
       ctx: f.ctx,
       dispatch: () => {},
-      model: f.init
+      model: f.init,
+      disabled: true
     })
     expect(viewed.disabled).toBe(true)
   })

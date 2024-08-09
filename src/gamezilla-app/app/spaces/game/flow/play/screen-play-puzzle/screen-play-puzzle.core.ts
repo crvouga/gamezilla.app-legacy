@@ -1,11 +1,10 @@
 import { Flow } from '../../@/flow'
 import type { FlowPack } from '../../@/flow-pack'
-import type { FlowPuzzle } from '../../@/flow-puzzle'
 import { FlowPlay } from '../../@/flow/flow-play'
 import type { CoreModule, MsgCore } from '../play.types'
 import * as CopyPuzzleCore from './copy-puzzle/copy-puzzle.core'
 import { LastPuzzleCore } from './last-puzzle/last-puzzle.core'
-import type { ModelCore } from './screen-play-puzzle.types'
+import type { FlowPuzzleResult, ModelCore } from './screen-play-puzzle.types'
 
 const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
   switch (input.modelCore.screen.t) {
@@ -25,11 +24,23 @@ const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
 const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
   switch (msgCore.t) {
     case 'flow-variant-play': {
+      if (modelCore.puzzleResult.t === 'not-found') {
+        return modelCore
+      }
+
+      const flowPlay =
+        modelCore.flowPlay ??
+        FlowPlay.init({
+          ctx: {
+            flowPuzzle: modelCore.puzzleResult.c
+          }
+        })
+
       const flowPlayNew = FlowPlay.update({
         msg: msgCore.c,
-        model: modelCore.flowPlay,
+        model: flowPlay,
         ctx: {
-          flowPuzzle: modelCore.flowPuzzle
+          flowPuzzle: modelCore.puzzleResult.c
         }
       })
 
@@ -58,39 +69,48 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
     }
 
     case 'user-clicked-next-puzzle': {
+      if (msgCore.nextPuzzle.t === 'not-found') {
+        return modelCore
+      }
       return {
         ...modelCore,
         flowPlay: FlowPlay.init({
           ctx: {
-            flowPuzzle: msgCore.nextPuzzle
+            flowPuzzle: msgCore.nextPuzzle.c
           }
         }),
         opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
-        flowPuzzle: msgCore.nextPuzzle,
+        puzzleResult: msgCore.nextPuzzle,
         puzzleIndex: msgCore.nextPuzzleIndex
       }
     }
 
     case 'user-clicked-prev-puzzle': {
+      if (modelCore.puzzleResult.t === 'not-found') {
+        return modelCore
+      }
       return {
         ...modelCore,
         flowPlay: FlowPlay.init({
           ctx: {
-            flowPuzzle: modelCore.flowPuzzle
+            flowPuzzle: modelCore.puzzleResult.c
           }
         }),
         opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
-        flowPuzzle: msgCore.prevPuzzle,
+        puzzleResult: msgCore.prevPuzzle,
         puzzleIndex: msgCore.prevPuzzleIndex
       }
     }
 
     case 'user-clicked-reset-puzzle': {
+      if (modelCore.puzzleResult.t === 'not-found') {
+        return modelCore
+      }
       return {
         ...modelCore,
         flowPlay: FlowPlay.init({
           ctx: {
-            flowPuzzle: modelCore.flowPuzzle
+            flowPuzzle: modelCore.puzzleResult.c
           }
         })
       }
@@ -133,17 +153,21 @@ const updateCoreMain: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
   }
 }
 
-const initCore = (input: { flowPack: FlowPack; flowPuzzle: FlowPuzzle; puzzleIndex: number }): ModelCore => {
+const initCore = (input: { flowPack: FlowPack; flowPuzzle: FlowPuzzleResult; puzzleIndex: number }): ModelCore => {
   return {
     ...input,
-    flowPlay: FlowPlay.init({
-      ctx: {
-        flowPuzzle: input.flowPuzzle
-      }
-    }),
+    flowPlay:
+      input.flowPuzzle.t === 'got'
+        ? FlowPlay.init({
+            ctx: {
+              flowPuzzle: input.flowPuzzle.c
+            }
+          })
+        : null,
     opened: null,
     t: 'screen-play-puzzle',
-    hints: {}
+    hints: {},
+    puzzleResult: input.flowPuzzle
   }
 }
 
@@ -165,14 +189,32 @@ const updateCore: CoreModule['updateCore'] = (input) => {
   )
 }
 
-const toStatus = (modelCore: ModelCore): 'solved' | 'solving' => {
+const toStatus = (modelCore: ModelCore): 'solved' | 'solving' | 'not-playing' => {
+  if (modelCore.puzzleResult.t === 'not-found') {
+    return 'not-playing'
+  }
+
+  const flowPlay =
+    modelCore.flowPlay ??
+    FlowPlay.init({
+      ctx: {
+        flowPuzzle: modelCore.puzzleResult.c
+      }
+    })
+
   const flow = FlowPlay.toFlow({
-    flow: modelCore.flowPuzzle.flow,
-    model: modelCore.flowPlay
+    flow: modelCore.puzzleResult.c.flow,
+    model: flowPlay
   })
+
+  if (FlowPlay.toStatus(flowPlay) === 'dragging') {
+    return 'solving'
+  }
+
   if (Flow.isSolved(flow)) {
     return 'solved'
   }
+
   return 'solving'
 }
 

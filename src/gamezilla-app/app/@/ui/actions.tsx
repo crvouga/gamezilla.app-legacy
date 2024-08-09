@@ -43,13 +43,14 @@ const View = ({
 }: {
   id: string
   ctx: Ctx
-  buttons: ActionInput[]
+  buttons: (ActionInput | null)[]
   open: boolean
   onToggle: () => void
   limit?: number
 }) => {
-  const firstButtons = buttons.slice(0, limit)
-  const lastButtons = buttons.slice(limit)
+  const cleanedButtons = buttons.filter((button) => button !== null)
+  const firstButtons = cleanedButtons.slice(0, limit)
+  const lastButtons = cleanedButtons.slice(limit)
   return (
     <div className='flex w-full items-center border-t border-neutral-700'>
       {firstButtons.map((button) => (

@@ -14,9 +14,23 @@ export const update: ClientModule['update'] = (input) => {
         }
       }
 
+      if (input.modelCore.screen.puzzleResult.t === 'not-found') {
+        return {
+          model: input.model
+        }
+      }
+
+      const flowPlay =
+        input.modelCore.screen.flowPlay ??
+        FlowPlay.init({
+          ctx: {
+            flowPuzzle: input.modelCore.screen.puzzleResult.c
+          }
+        })
+
       const flow = FlowPlay.toFlow({
-        flow: input.modelCore.screen.flowPuzzle.flow,
-        model: input.modelCore.screen.flowPlay
+        flow: input.modelCore.screen.puzzleResult.c.flow,
+        model: flowPlay
       })
 
       if (flow.t !== 'flow-grid') {

@@ -177,12 +177,8 @@ export const viewHintAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
   ctx: ClientCtx & Ctx
+  disabled: boolean
 }): ActionInput => {
-  const flow = toFlow({
-    flow: input.ctx.flowPuzzle.flow,
-    model: input.model
-  })
-  const disabled = Flow.isSolved(flow)
   return {
     icon: (input) => <IconLightbulb {...input} />,
     label: input.ctx.t('game.hint'),
@@ -190,6 +186,6 @@ export const viewHintAction = (input: {
       input.dispatch({
         t: 'user-clicked-hint'
       }),
-    disabled
+    disabled: input.disabled
   }
 }

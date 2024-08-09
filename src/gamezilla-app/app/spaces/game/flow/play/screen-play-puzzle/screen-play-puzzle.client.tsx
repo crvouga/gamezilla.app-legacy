@@ -14,26 +14,10 @@ import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFromMsgCore({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model
-      }),
-    (model) =>
-      CopyPuzzleClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      LastPuzzleClient.update({
-        ...input,
-        model
-      })
+    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => CopyPuzzleClient.update({ ...input, model }),
+    (model) => LastPuzzleClient.update({ ...input, model })
   )
 }
 
@@ -119,11 +103,19 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
         }
       }
 
+      if (input.modelCore.screen.puzzleResult.t === 'not-found') {
+        return {
+          model: input.model
+        }
+      }
+      const flowPlay =
+        input.modelCore.screen.flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: input.modelCore.screen.puzzleResult.c } })
+
       const output = FlowPlay.update({
         msg: input.msgCore.c,
-        model: input.modelCore.screen.flowPlay,
+        model: flowPlay,
         ctx: {
-          flowPuzzle: input.modelCore.screen.flowPuzzle
+          flowPuzzle: input.modelCore.screen.puzzleResult.c
         }
       })
 
@@ -150,7 +142,7 @@ const View: ClientModule['View'] = (input) => {
   if (input.modelCore.screen.t !== 'screen-play-puzzle') {
     return null
   }
-  const flowPuzzle = input.modelCore.screen.flowPuzzle
+  const flowPuzzle = input.modelCore.screen.puzzleResult
   const flowPlay = input.modelCore.screen.flowPlay
   const isSolved = ScreenPlayPuzzleCore.toStatus(input.modelCore.screen) === 'solved'
   const puzzleIndex = input.modelCore.screen.puzzleIndex
@@ -180,7 +172,10 @@ const View: ClientModule['View'] = (input) => {
           })
         }
       />
-      <div className='flex w-full flex-1 flex-col overflow-y-scroll' data-puzzle-id={flowPuzzle.id}>
+      <div
+        className='flex w-full flex-1 flex-col overflow-y-scroll'
+        data-puzzle-id={flowPuzzle.t === 'got' ? flowPuzzle.c.id : null}
+      >
         <TopBar
           ctx={input.ctx}
           onBack={() =>
@@ -191,17 +186,21 @@ const View: ClientModule['View'] = (input) => {
           title={input.ctx.t('flow.level', puzzleIndex + 1)}
         />
         <div className='relative flex flex-1 flex-col items-center justify-center overflow-hidden'>
-          <FlowPlay.View
-            key={flowPuzzle.id}
-            flow={flowPuzzle.flow}
-            model={flowPlay}
-            dispatch={(c) =>
-              input.dispatch({
-                t: 'flow-variant-play',
-                c
-              })
-            }
-          />
+          {flowPuzzle.t === 'got' && (
+            <FlowPlay.View
+              key={flowPuzzle.c.id}
+              flow={flowPuzzle.c.flow}
+              model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
+              dispatch={(c) =>
+                input.dispatch({
+                  t: 'flow-variant-play',
+                  c
+                })
+              }
+            />
+          )}
+
+          {flowPuzzle.t === 'not-found' && <div>Not found</div>}
 
           <FlowPlay.CheckmarkAnimation open={isSolvedPuzzleDialogOpen} duration={checkmarkDuration} />
 
@@ -231,7 +230,10 @@ const View: ClientModule['View'] = (input) => {
                       nextPuzzle &&
                       input.dispatch({
                         t: 'user-clicked-next-puzzle',
-                        nextPuzzle,
+                        nextPuzzle: {
+                          t: 'got',
+                          c: nextPuzzle
+                        },
                         nextPuzzleIndex
                       })
                     }
@@ -259,7 +261,10 @@ const View: ClientModule['View'] = (input) => {
                 prevPuzzle
                   ? input.dispatch({
                       t: 'user-clicked-prev-puzzle',
-                      prevPuzzle,
+                      prevPuzzle: {
+                        t: 'got',
+                        c: prevPuzzle
+                      },
                       prevPuzzleIndex
                     })
                   : null
@@ -273,23 +278,35 @@ const View: ClientModule['View'] = (input) => {
                     nextPuzzle
                       ? input.dispatch({
                           t: 'user-clicked-next-puzzle',
-                          nextPuzzle,
+                          nextPuzzle: {
+                            t: 'got',
+                            c: nextPuzzle
+                          },
                           nextPuzzleIndex
                         })
                       : null
                 })
-              : FlowPlay.viewHintAction({
-                  model: flowPlay,
+              : flowPuzzle.t === 'got'
+              ? FlowPlay.viewHintAction({
+                  model:
+                    flowPlay ??
+                    FlowPlay.init({
+                      ctx: {
+                        flowPuzzle: flowPuzzle.c
+                      }
+                    }),
                   ctx: {
                     ...input.ctx,
-                    flowPuzzle
+                    flowPuzzle: flowPuzzle.c
                   },
+                  disabled: false,
                   dispatch: (c) =>
                     input.dispatch({
                       t: 'flow-variant-play',
                       c
                     })
-                }),
+                })
+              : null,
 
             Actions.reset({
               ...input,

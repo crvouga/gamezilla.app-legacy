@@ -69,10 +69,13 @@ const View: ClientModule['View'] = (input) => {
               if (!inputCell.puzzleId) {
                 return <FlowPackPuzzlesGridUI.ViewEmptyCell />
               }
+
               const puzzle = input.model.flowPuzzles[inputCell.puzzleId]
+
               if (!puzzle) {
                 return <FlowPackPuzzlesGridUI.ViewLoadingCell />
               }
+
               return (
                 <FlowPackPuzzlesGridUI.ViewPuzzleCell
                   index={inputCell.index}

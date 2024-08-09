@@ -5,15 +5,17 @@ import { FlowPuzzle } from '../../../@/flow-puzzle'
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { CoreFixture } from '../../@/fixture'
 import { ScreenPlayPuzzleCore } from '../screen-play-puzzle.core'
-import type { ModelCore, MsgCore } from '../screen-play-puzzle.types'
+import type { FlowPuzzleResult, ModelCore, MsgCore } from '../screen-play-puzzle.types'
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await CoreFixture()
   const puzzle = await FlowPuzzle.random(input)
   const puzzleIndex = 1
   const prevPuzzle = await FlowPuzzle.random()
+  const prevPuzzleResult: FlowPuzzleResult = { t: 'got', c: prevPuzzle }
   const prevPuzzleIndex = 0
   const nextPuzzle = await FlowPuzzle.random()
+  const nextPuzzleResult: FlowPuzzleResult = { t: 'got', c: nextPuzzle }
   const nextPuzzleIndex = 2
   const pack = await FlowPack.random({
     puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id]
@@ -49,9 +51,9 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
     completePuzzleMsgs,
     puzzle,
     puzzleIndex,
-    nextPuzzle,
+    nextPuzzle: nextPuzzleResult,
     nextPuzzleIndex,
-    prevPuzzle,
+    prevPuzzle: prevPuzzleResult,
     prevPuzzleIndex,
     pack,
     init
@@ -78,7 +80,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: FlowVari
 
   const init: ModelCore = ScreenPlayPuzzleCore.initCore({
     flowPack: f.pack,
-    flowPuzzle: f.puzzle,
+    flowPuzzle: { t: 'got', c: f.puzzle },
     puzzleIndex: f.puzzleIndex
   })
 

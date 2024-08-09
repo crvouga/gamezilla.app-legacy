@@ -88,8 +88,8 @@ describe(import.meta.file, () => {
       }
     ])
     expect(output.modelCore.screen.t).toBe('screen-play-puzzle')
-    if (output.modelCore.screen.t === 'screen-play-puzzle') {
-      expect(output.modelCore.screen.flowPuzzle).toEqual(f.puzzle)
+    if (output.modelCore.screen.t === 'screen-play-puzzle' && output.modelCore.screen.puzzleResult.t === 'got') {
+      expect(output.modelCore.screen.puzzleResult.c).toEqual(f.puzzle)
     }
   })
 

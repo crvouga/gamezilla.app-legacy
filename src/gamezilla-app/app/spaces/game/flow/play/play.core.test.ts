@@ -58,8 +58,8 @@ describe(import.meta.file, () => {
     ])
     expect(before.screen.t).toEqual('screen-select-puzzle')
     expect(after.screen.t).toEqual('screen-play-puzzle')
-    if (after.screen.t === 'screen-play-puzzle') {
-      expect(after.screen.flowPuzzle.id).toEqual(puzzle.id)
+    if (after.screen.t === 'screen-play-puzzle' && after.screen.puzzleResult.t === 'got') {
+      expect(after.screen.puzzleResult.c.id).toEqual(puzzle.id)
     }
   })
 })

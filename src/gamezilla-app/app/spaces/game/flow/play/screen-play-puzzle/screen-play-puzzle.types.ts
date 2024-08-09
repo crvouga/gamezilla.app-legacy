@@ -7,6 +7,18 @@ import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGroupId } from '../../@/flow/flow/flow-group-id'
 import { CopyPuzzleTypes } from './copy-puzzle'
 
+export const FlowPuzzleResult = p.or(
+  p.obj({
+    t: p.l('got'),
+    c: FlowPuzzle
+  }),
+  p.obj({
+    t: p.l('not-found')
+  })
+)
+
+export type FlowPuzzleResult = p.Infer<typeof FlowPuzzleResult>
+
 export const MsgCore = p.or(
   CopyPuzzleTypes.MsgCore,
   p.obj({
@@ -18,12 +30,12 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('user-clicked-next-puzzle'),
-    nextPuzzle: FlowPuzzle,
+    nextPuzzle: FlowPuzzleResult,
     nextPuzzleIndex: p.num
   }),
   p.obj({
     t: p.l('user-clicked-prev-puzzle'),
-    prevPuzzle: FlowPuzzle,
+    prevPuzzle: FlowPuzzleResult,
     prevPuzzleIndex: p.num
   }),
   p.obj({
@@ -45,23 +57,12 @@ export const MsgCore = p.or(
 
 export type MsgCore = p.Infer<typeof MsgCore>
 
-// export const State = p.or(
-// 	p.obj({
-// 		t: p.l("solving"),
-// 	}),
-// 	p.obj({
-// 		t: p.l("solved"),
-// 	}),
-// );
-// export type State = p.Infer<typeof State>;
-
 export const ModelCore = p.obj({
   t: p.l('screen-play-puzzle'),
   flowPack: FlowPack,
-  flowPuzzle: FlowPuzzle,
-  flowPlay: FlowPlay.Model,
+  puzzleResult: FlowPuzzleResult,
+  flowPlay: p.or(FlowPlay.Model, p.l(null)),
   puzzleIndex: p.num,
-  // state: State,
   opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),
   hints: p.partialDict(FlowGroupId, FlowGroupId)
 })

@@ -311,7 +311,8 @@ const ViewMode: ClientModule['View'] = (input) => {
                         t: 'screen-puzzle-builder.got-flow-ui-play-msg',
                         c
                       }),
-                    model: puzzleBuilder.play
+                    model: puzzleBuilder.play,
+                    disabled: isSolved
                   }),
                   FlowPlay.viewResetAction({
                     ctx: input.ctx,

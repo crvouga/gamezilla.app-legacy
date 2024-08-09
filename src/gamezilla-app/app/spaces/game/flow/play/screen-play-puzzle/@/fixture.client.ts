@@ -3,6 +3,7 @@ import { FlowPack } from '../../../@/flow-pack'
 import { FlowPuzzle } from '../../../@/flow-puzzle'
 import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture'
 import { FlowPlay } from '../../../@/flow/flow-play'
+import { FlowPuzzleResult } from '../screen-play-puzzle.types'
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
   FlowPlay.toSolutionMsgs({
@@ -21,6 +22,10 @@ export const FixtureScreenPlayPuzzleClient = async () => {
   const puzzle = await FlowPuzzle.random()
   const nextPuzzle = await FlowPuzzle.random()
   const prevPuzzle = await FlowPuzzle.random()
+
+  const nextPuzzleResult: FlowPuzzleResult = { t: 'got', c: nextPuzzle }
+  const prevPuzzleResult: FlowPuzzleResult = { t: 'got', c: prevPuzzle }
+
   const pack = await FlowPack.random({
     puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id]
   })
@@ -67,7 +72,10 @@ export const FixtureScreenPlayPuzzleClient = async () => {
       msgCore: withEventMeta({
         t: 'user-clicked-next-puzzle',
         nextPuzzleIndex: lastPuzzleIndex,
-        nextPuzzle: lastPuzzle
+        nextPuzzle: {
+          t: 'got',
+          c: lastPuzzle
+        }
       })
     },
     ...toCompletePuzzleMsgs(lastPuzzle)
@@ -86,9 +94,9 @@ export const FixtureScreenPlayPuzzleClient = async () => {
     lastPuzzle,
     lastPuzzleIndex,
     //
-    nextPuzzle,
+    nextPuzzle: nextPuzzleResult,
     nextPuzzleIndex,
-    prevPuzzle,
+    prevPuzzle: prevPuzzleResult,
     prevPuzzleIndex
   }
 }

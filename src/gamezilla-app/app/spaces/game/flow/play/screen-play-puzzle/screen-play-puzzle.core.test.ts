@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
     const after = f.update(before, [
       {
         t: 'user-clicked-prev-puzzle',
-        prevPuzzle: f.puzzle,
+        prevPuzzle: { t: 'got', c: f.puzzle },
         prevPuzzleIndex: f.puzzleIndex
       }
     ])
@@ -100,7 +100,7 @@ describe(import.meta.file, () => {
     expect(after.flowPlay).toEqual(
       FlowPlay.init({
         ctx: {
-          flowPuzzle: f.nextPuzzle
+          flowPuzzle: f.nextPuzzle.c
         }
       })
     )
@@ -112,7 +112,7 @@ describe(import.meta.file, () => {
     const after = f.update(before, f.completePuzzleMsgs)
     const afterFlow = FlowPlay.toFlow({
       flow: f.puzzle.flow,
-      model: after.flowPlay
+      model: after.flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: f.puzzle } })
     })
 
     expect(ScreenPlayPuzzleCore.toStatus(before)).toBe('solving')
