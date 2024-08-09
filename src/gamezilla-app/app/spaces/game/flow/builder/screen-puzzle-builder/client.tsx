@@ -5,14 +5,14 @@ import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-c
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { ViewProfileCard } from '../../../@/game/view-profile-card'
-import { Flow, FlowVariantUI } from '../../@/flow'
+import { FlowVariantUI } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import type { ClientModule } from '../builder.types'
 import { DeleteForeverClient } from './delete-forever/client'
 import { EditPuzzleNameClient } from './edit-puzzle-name/edit-puzzle-name.client'
 import { SaveChangesClient } from './save-changes/client'
-import { toFlow } from './types'
+import { toFlow, toStatus } from './types'
 
 //
 //
@@ -272,25 +272,17 @@ const ViewMode: ClientModule['View'] = (input) => {
 
     case 'play': {
       const flow = toFlow(puzzleBuilder)
-      const isSolved = Flow.isSolved(flow)
+      const status = modelCore.puzzleBuilder ? toStatus(modelCore.puzzleBuilder) : 'solving'
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
           <div className='flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
             <div className='w-full flex-1 shrink-0'></div>
-
             <FlowPlay.View
               model={puzzleBuilder.play}
               flow={flow}
-              dispatch={(c) =>
-                dispatch({
-                  t: 'screen-puzzle-builder.got-flow-ui-play-msg',
-                  c
-                })
-              }
+              dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
             />
-
-            <FlowPlay.CheckmarkAnimation open={isSolved} />
-
+            <FlowPlay.CheckmarkAnimation open={status === 'solved'} />
             <div className='z-50 flex w-full flex-1 shrink-0 flex-col items-center justify-end overflow-hidden'>
               <Actions.View
                 ctx={input.ctx}
@@ -299,32 +291,15 @@ const ViewMode: ClientModule['View'] = (input) => {
                 onToggle={() => {}}
                 buttons={[
                   FlowPlay.viewHintAction({
-                    ctx: {
-                      ...input.ctx,
-                      flowPuzzle: {
-                        ...puzzleBuilder.puzzle,
-                        flow
-                      }
-                    },
-                    dispatch: (c) =>
-                      dispatch({
-                        t: 'screen-puzzle-builder.got-flow-ui-play-msg',
-                        c
-                      }),
+                    ctx: { ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } },
+                    dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
                     model: puzzleBuilder.play,
-                    disabled: isSolved
+                    disabled: status === 'solved'
                   }),
                   FlowPlay.viewResetAction({
                     ctx: input.ctx,
-                    dispatch: (c) =>
-                      dispatch({
-                        t: 'screen-puzzle-builder.got-flow-ui-play-msg',
-                        c
-                      }),
-                    flowPuzzle: {
-                      ...puzzleBuilder.puzzle,
-                      flow
-                    },
+                    dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
+                    flowPuzzle: { ...puzzleBuilder.puzzle, flow },
                     model: puzzleBuilder.play
                   })
                 ]}

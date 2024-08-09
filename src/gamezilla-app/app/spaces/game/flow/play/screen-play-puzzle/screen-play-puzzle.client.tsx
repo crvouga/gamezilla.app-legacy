@@ -261,10 +261,7 @@ const View: ClientModule['View'] = (input) => {
                 prevPuzzle
                   ? input.dispatch({
                       t: 'user-clicked-prev-puzzle',
-                      prevPuzzle: {
-                        t: 'got',
-                        c: prevPuzzle
-                      },
+                      prevPuzzle: { t: 'got', c: prevPuzzle },
                       prevPuzzleIndex
                     })
                   : null
@@ -288,23 +285,10 @@ const View: ClientModule['View'] = (input) => {
                 })
               : flowPuzzle.t === 'got'
               ? FlowPlay.viewHintAction({
-                  model:
-                    flowPlay ??
-                    FlowPlay.init({
-                      ctx: {
-                        flowPuzzle: flowPuzzle.c
-                      }
-                    }),
-                  ctx: {
-                    ...input.ctx,
-                    flowPuzzle: flowPuzzle.c
-                  },
+                  model: flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } }),
+                  ctx: { ...input.ctx, flowPuzzle: flowPuzzle.c },
                   disabled: false,
-                  dispatch: (c) =>
-                    input.dispatch({
-                      t: 'flow-variant-play',
-                      c
-                    })
+                  dispatch: (c) => input.dispatch({ t: 'flow-variant-play', c })
                 })
               : null,
 
