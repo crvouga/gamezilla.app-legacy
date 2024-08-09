@@ -155,26 +155,10 @@ const subscriptionsRequest: ClientModule['subscriptions'] = (input) => {
 const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateServerListedPuzzles({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFetchMissingPuzzles({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateRequest({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromCmd({
-        ...input,
-        model
-      })
+    (model) => updateServerListedPuzzles({ ...input, model }),
+    (model) => updateFetchMissingPuzzles({ ...input, model }),
+    (model) => updateRequest({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model })
   )
 }
 

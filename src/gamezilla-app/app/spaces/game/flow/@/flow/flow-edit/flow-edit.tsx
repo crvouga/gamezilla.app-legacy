@@ -12,6 +12,7 @@ import {
   IconXMark
 } from 'gamezilla-app/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '../../../../@/game'
+import { FlowLayout } from '../flow-ui/flow-layout'
 import * as FlowUI from '../flow-ui/flow-ui'
 import * as FlowVariant from '../flow-variant/flow-variant'
 import * as FlowVariantDimensions from '../flow-variant/flow-variant-dimensions'
@@ -480,134 +481,119 @@ export const toFlowMemoized = memoize({
 export const View = (input: { ctx: ClientCtx; model: Model; dispatch: (m: Msg) => void }) => {
   const { model, dispatch } = input
   return (
-    <div className='flex h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
-      <div className='flex flex-1 flex-col justify-end'>
+    <FlowLayout
+      top={
         <div className='flex flex-col items-center justify-end'>
           <ViewStatus {...input} />
         </div>
-      </div>
-
-      <FlowVariantUI.View
-        model={toFlowMemoized({
-          model
-        })}
-        onDraggedOver={(nodeId) =>
-          dispatch({
-            t: 'dragged-over',
-            nodeId
-          })
-        }
-        onPressDown={(nodeId) =>
-          dispatch({
-            t: 'pressed-down-node',
-            nodeId
-          })
-        }
-        onPressUp={(nodeId) =>
-          dispatch({
-            t: 'pressed-up-node',
-            nodeId
-          })
-        }
-      />
-
-      <div className='flex w-full flex-1 flex-col justify-end'>
-        <ViewBottomButtonBar>
-          <ViewBottomButtonBarAction
-            icon={(input) => <IconArrowRotateLeft {...input} />}
-            label={input.ctx.t('app.undo')}
-            onClick={() =>
-              dispatch({
-                t: 'clicked-undo'
-              })
-            }
-            disabled={!History.canUndo(model.form)}
-          />
-          <ViewBottomButtonBarAction
-            icon={(input) => <IconArrowRotateRight {...input} />}
-            label={input.ctx.t('app.redo')}
-            disabled={!History.canRedo(model.form)}
-            onClick={() =>
-              dispatch({
-                t: 'clicked-redo'
-              })
-            }
-          />
-          <ViewBottomButtonBarAction
-            icon={(input) => <IconXMark {...input} />}
-            label={input.ctx.t('app.clear')}
-            disabled={!canClear(model)}
-            onClick={() =>
-              dispatch({
-                t: 'clicked-clear'
-              })
-            }
-          />
-          <ViewBottomButtonBarAction
-            icon={(input) => <IconExpand {...input} />}
-            label={input.ctx.t('app.dimensions')}
-            onClick={() =>
-              dispatch({
-                t: 'dimensions-form.clicked-open'
-              })
-            }
-          />
-        </ViewBottomButtonBar>
-      </div>
-      <Drawer
-        open={model.opened === 'dimensions'}
-        onClose={() =>
-          dispatch({
-            t: 'dimensions-form.closed'
-          })
-        }
-        id='dimensions'
-        position='bottom'
-      >
-        <DrawerHeader
-          onClose={() =>
-            dispatch({
-              t: 'dimensions-form.closed'
-            })
-          }
+      }
+      middle={
+        <FlowVariantUI.View
+          model={toFlow({ model })}
+          onDraggedOver={(nodeId) => dispatch({ t: 'dragged-over', nodeId })}
+          onPressDown={(nodeId) => dispatch({ t: 'pressed-down-node', nodeId })}
+          onPressUp={(nodeId) => dispatch({ t: 'pressed-up-node', nodeId })}
         />
-
-        <FlowVariantDimensions.ViewForm
-          ctx={input.ctx}
-          form={model.dimensions}
-          onInput={(dimensions) =>
-            dispatch({
-              t: 'dimensions-form.inputted',
-              dimensions
-            })
-          }
-        />
-
-        <div className='flex w-full items-center gap-4 p-4'>
-          <Button
-            text={input.ctx.t('app.cancel')}
-            className='flex-1'
-            onClick={() =>
+      }
+      bottom={
+        <>
+          <ViewBottomButtonBar>
+            <ViewBottomButtonBarAction
+              icon={(input) => <IconArrowRotateLeft {...input} />}
+              label={input.ctx.t('app.undo')}
+              onClick={() =>
+                dispatch({
+                  t: 'clicked-undo'
+                })
+              }
+              disabled={!History.canUndo(model.form)}
+            />
+            <ViewBottomButtonBarAction
+              icon={(input) => <IconArrowRotateRight {...input} />}
+              label={input.ctx.t('app.redo')}
+              disabled={!History.canRedo(model.form)}
+              onClick={() =>
+                dispatch({
+                  t: 'clicked-redo'
+                })
+              }
+            />
+            <ViewBottomButtonBarAction
+              icon={(input) => <IconXMark {...input} />}
+              label={input.ctx.t('app.clear')}
+              disabled={!canClear(model)}
+              onClick={() =>
+                dispatch({
+                  t: 'clicked-clear'
+                })
+              }
+            />
+            <ViewBottomButtonBarAction
+              icon={(input) => <IconExpand {...input} />}
+              label={input.ctx.t('app.dimensions')}
+              onClick={() =>
+                dispatch({
+                  t: 'dimensions-form.clicked-open'
+                })
+              }
+            />
+          </ViewBottomButtonBar>
+          <Drawer
+            open={model.opened === 'dimensions'}
+            onClose={() =>
               dispatch({
-                t: 'dimensions-form.clicked-cancel'
+                t: 'dimensions-form.closed'
               })
             }
-          />
-          <Button
-            text={input.ctx.t('app.save')}
-            className='flex-1'
-            variant='contained'
-            color='primary'
-            disabled={!canSubmitDimensionsForm(model)}
-            onClick={() =>
-              dispatch({
-                t: 'dimensions-form.clicked-save'
-              })
-            }
-          />
-        </div>
-      </Drawer>
-    </div>
+            id='dimensions'
+            position='bottom'
+          >
+            <DrawerHeader
+              onClose={() =>
+                dispatch({
+                  t: 'dimensions-form.closed'
+                })
+              }
+            />
+
+            <FlowVariantDimensions.ViewForm
+              ctx={input.ctx}
+              form={model.dimensions}
+              onInput={(dimensions) =>
+                dispatch({
+                  t: 'dimensions-form.inputted',
+                  dimensions
+                })
+              }
+            />
+
+            <div className='flex w-full items-center gap-4 p-4'>
+              <Button
+                text={input.ctx.t('app.cancel')}
+                className='flex-1'
+                onClick={() =>
+                  dispatch({
+                    t: 'dimensions-form.clicked-cancel'
+                  })
+                }
+              />
+              <Button
+                text={input.ctx.t('app.save')}
+                className='flex-1'
+                variant='contained'
+                color='primary'
+                disabled={!canSubmitDimensionsForm(model)}
+                onClick={() =>
+                  dispatch({
+                    t: 'dimensions-form.clicked-save'
+                  })
+                }
+              />
+            </div>
+          </Drawer>
+        </>
+      }
+    />
   )
 }
 

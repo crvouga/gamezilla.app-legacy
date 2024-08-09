@@ -139,6 +139,7 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': 'नाम',
   'flow.edit-mode': 'संपादन मोड',
   'flow.play-mode': 'खेल मोड',
+  'flow.playing': 'खेल रहे हैं',
   'flow.puzzle-deleted': 'पहेली हटा दी गई',
   'flow.delete-puzzle-forever?': 'क्या आप पहेली को स्थायी रूप से हटाना चाहते हैं?',
   'flow.delete-forever': 'स्थायी रूप से हटाएं',

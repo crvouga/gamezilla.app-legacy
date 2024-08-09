@@ -135,6 +135,7 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': '이름',
   'flow.edit-mode': '편집 모드',
   'flow.play-mode': '플레이 모드',
+  'flow.playing': '플레이 중',
   'flow.puzzle-deleted': '퍼즐이 삭제되었습니다',
   'flow.delete-puzzle-forever?': '퍼즐을 영구적으로 삭제하시겠습니까?',
   'flow.delete-forever': '영구적으로 삭제',

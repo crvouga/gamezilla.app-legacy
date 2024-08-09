@@ -13,6 +13,7 @@ import { DeleteForeverClient } from './delete-forever/client'
 import { EditPuzzleNameClient } from './edit-puzzle-name/edit-puzzle-name.client'
 import { SaveChangesClient } from './save-changes/client'
 import { toFlow, toStatus } from './types'
+import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
 
 //
 //
@@ -275,15 +276,19 @@ const ViewMode: ClientModule['View'] = (input) => {
       const status = modelCore.puzzleBuilder ? toStatus(modelCore.puzzleBuilder) : 'solving'
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
-          <div className='flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
-            <div className='w-full flex-1 shrink-0'></div>
-            <FlowPlay.View
-              model={puzzleBuilder.play}
-              flow={flow}
-              dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
-            />
-            <FlowPlay.CheckmarkAnimation open={status === 'solved'} />
-            <div className='z-50 flex w-full flex-1 shrink-0 flex-col items-center justify-end overflow-hidden'>
+          <FlowLayout
+            top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
+            middle={
+              <>
+                <FlowPlay.View
+                  model={puzzleBuilder.play}
+                  flow={flow}
+                  dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
+                />
+                <FlowPlay.CheckmarkAnimation open={status === 'solved'} />
+              </>
+            }
+            bottom={
               <Actions.View
                 ctx={input.ctx}
                 id='hint-button'
@@ -304,8 +309,8 @@ const ViewMode: ClientModule['View'] = (input) => {
                   })
                 ]}
               />
-            </div>
-          </div>
+            }
+          />
 
           <ViewBottomButtonBar>
             <SaveChangesClient.ViewActionButtons {...input} model={model} />

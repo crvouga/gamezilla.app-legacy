@@ -135,6 +135,7 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': 'Nome',
   'flow.edit-mode': 'Modalità modifica',
   'flow.play-mode': 'Modalità gioco',
+  'flow.playing': 'Giocando',
   'flow.puzzle-deleted': 'Puzzle eliminato',
   'flow.delete-puzzle-forever?': 'Elimina il puzzle per sempre?',
   'flow.delete-forever': 'Elimina per sempre',

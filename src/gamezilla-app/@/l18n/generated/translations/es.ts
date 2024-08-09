@@ -137,6 +137,7 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': 'Nombre',
   'flow.edit-mode': 'Modo de edición',
   'flow.play-mode': 'Modo de juego',
+  'flow.playing': 'Jugando',
   'flow.puzzle-deleted': 'Rompecabezas eliminado',
   'flow.delete-puzzle-forever?': '¿Eliminar rompecabezas para siempre?',
   'flow.delete-forever': 'Eliminar para siempre',

@@ -137,6 +137,7 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': 'الاسم',
   'flow.edit-mode': 'وضع التحرير',
   'flow.play-mode': 'وضع اللعب',
+  'flow.playing': 'اللعب',
   'flow.puzzle-deleted': 'تم حذف اللغز',
   'flow.delete-puzzle-forever?': 'هل تريد حذف اللغز نهائياً؟',
   'flow.delete-forever': 'حذف نهائي',

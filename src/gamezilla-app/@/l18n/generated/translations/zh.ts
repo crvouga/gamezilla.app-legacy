@@ -134,6 +134,7 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': '名称',
   'flow.edit-mode': '编辑模式',
   'flow.play-mode': '游戏模式',
+  'flow.playing': '游戏中',
   'flow.puzzle-deleted': '拼图已删除',
   'flow.delete-puzzle-forever?': '永久删除拼图？',
   'flow.delete-forever': '永久删除',
