@@ -73,7 +73,7 @@ export const Screen = p.or(
     t: p.l('screen-puzzle'),
     puzzleIndex: p.num,
     puzzle: FlowPuzzle,
-    playUI: FlowPlay.Model,
+    play: FlowPlay.Model,
     opened: p.maybe(p.l('more'))
   })
 )

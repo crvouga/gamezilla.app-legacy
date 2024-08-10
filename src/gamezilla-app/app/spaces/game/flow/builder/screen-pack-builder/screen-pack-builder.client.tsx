@@ -408,7 +408,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
     switch (input.msgCore?.t) {
       case 'screen-pack-builder.got-flow-play-msg': {
         const flowPlay =
-          input.modelCore.packBuilder?.screen.t === 'screen-puzzle' ? input.modelCore.packBuilder.screen.playUI : null
+          input.modelCore.packBuilder?.screen.t === 'screen-puzzle' ? input.modelCore.packBuilder.screen.play : null
         const flowPuzzle =
           input.modelCore.packBuilder?.screen.t === 'screen-puzzle' ? input.modelCore.packBuilder.screen.puzzle : null
         if (!flowPlay || !flowPuzzle) {
@@ -481,7 +481,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
                 })
               }
               flow={screen.puzzle.flow}
-              model={screen.playUI}
+              model={screen.play}
               showSolvedAnimation
             />
           }
@@ -665,6 +665,7 @@ const updateRecordPack: ClientModule['update'] = (input) => {
   }
   return { model: input.model }
 }
+
 export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View' | 'subscriptions'> = {
   update(input) {
     return GameClientModule.andThen(
