@@ -15,6 +15,7 @@ import { FlowPuzzle } from '../@/flow-puzzle'
 import type { FlowPuzzleId } from '../@/flow-puzzle/flow-puzzle-id'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
 import { FlowCoreEvent } from '../@/flow-core-event'
+import { FlowPuzzleResult } from './@/puzzle-result'
 
 //
 //
@@ -99,7 +100,7 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('user-clicked-open-puzzle-grid-item'),
-    flowPuzzle: FlowPuzzle,
+    flowPuzzle: FlowPuzzleResult,
     puzzleIndex: p.num
   }),
   p.obj({

@@ -5,7 +5,8 @@ import { FlowPuzzle } from '../../../@/flow-puzzle'
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { CoreFixture } from '../../@/fixture'
 import { ScreenPlayPuzzleCore } from '../screen-play-puzzle.core'
-import type { FlowPuzzleResult, ModelCore, MsgCore } from '../screen-play-puzzle.types'
+import type { ModelCore, MsgCore } from '../screen-play-puzzle.types'
+import { FlowPuzzleResult } from '../../@/puzzle-result'
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await CoreFixture()
@@ -28,7 +29,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
     },
     {
       t: 'user-clicked-open-puzzle-grid-item',
-      flowPuzzle: puzzle,
+      flowPuzzle: { t: 'got', c: puzzle },
       puzzleIndex
     }
   ])

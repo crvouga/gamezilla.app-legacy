@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-open-puzzle-grid-item',
-          flowPuzzle: f.puzzle,
+          flowPuzzle: { t: 'got', c: f.puzzle },
           puzzleIndex: 0
         }
       }
@@ -99,7 +99,7 @@ describe(import.meta.file, () => {
       {
         msgCore: {
           t: 'user-clicked-open-puzzle-grid-item',
-          flowPuzzle: f.puzzle,
+          flowPuzzle: { t: 'got', c: f.puzzle },
           eventId: EventId.generate(),
           happenedAt: LamportTimestamp.fromNumber(1),
           puzzleIndex: 0

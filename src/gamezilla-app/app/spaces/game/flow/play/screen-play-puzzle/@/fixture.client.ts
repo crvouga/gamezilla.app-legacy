@@ -1,9 +1,9 @@
 import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../../@/flow-pack'
 import { FlowPuzzle } from '../../../@/flow-puzzle'
-import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture'
 import { FlowPlay } from '../../../@/flow/flow-play'
-import { FlowPuzzleResult } from '../screen-play-puzzle.types'
+import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture'
+import { FlowPuzzleResult } from '../../@/puzzle-result'
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
   FlowPlay.toSolutionMsgs({
@@ -55,7 +55,7 @@ export const FixtureScreenPlayPuzzleClient = async () => {
     {
       msg: {
         t: 'user-clicked-open-puzzle-grid-item',
-        flowPuzzle: puzzle,
+        flowPuzzle: { t: 'got', c: puzzle },
         puzzleIndex
       }
     }

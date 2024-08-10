@@ -295,4 +295,28 @@ describe(import.meta.file, () => {
     ])
     expect(output[0].opened).toBe(null)
   })
+
+  test('open next puzzle not found', async () => {
+    const f = await Fixture()
+    const output = f.updates(f.init, [
+      {
+        t: 'user-clicked-next-puzzle',
+        nextPuzzle: { t: 'not-found' },
+        nextPuzzleIndex: f.nextPuzzleIndex
+      }
+    ])
+    expect(output[1]?.puzzleResult.t).toBe('not-found')
+  })
+
+  test('open prev puzzle not found', async () => {
+    const f = await Fixture()
+    const output = f.updates(f.init, [
+      {
+        t: 'user-clicked-prev-puzzle',
+        prevPuzzle: { t: 'not-found' },
+        prevPuzzleIndex: f.prevPuzzleIndex
+      }
+    ])
+    expect(output[1]?.puzzleResult.t).toBe('not-found')
+  })
 })

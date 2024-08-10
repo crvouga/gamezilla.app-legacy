@@ -53,7 +53,10 @@ describe(import.meta.file, () => {
     const after = f.update(before, [
       {
         t: 'user-clicked-open-puzzle-grid-item',
-        flowPuzzle: puzzle,
+        flowPuzzle: {
+          t: 'got',
+          c: puzzle
+        },
         puzzleIndex: 0
       }
     ])

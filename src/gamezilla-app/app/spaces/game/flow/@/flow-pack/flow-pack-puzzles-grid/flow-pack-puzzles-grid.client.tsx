@@ -199,7 +199,8 @@ const load = (pack: FlowPack): MsgInCmdClient => {
   }
 }
 
-const isLoading = (model: ModelClient): boolean => RequestResponse.isRequesting(model.request)
+const isLoading = (model: ModelClient): boolean =>
+  RequestResponse.isRequesting(model.request) || model.request.t === 'not-asked'
 
 export const FlowPackPuzzlesGridClient = {
   initClient,

@@ -69,7 +69,7 @@ const ViewPackPuzzleGridSlide = (input: {
   )
 }
 
-const ViewPackPuzzleGrid = (input: {
+const View = (input: {
   id: string
   slideIndex: number
   onSlideIndexChanged: (index: number) => void
@@ -139,9 +139,14 @@ const ViewLoadingCell = () => {
   )
 }
 
-const ViewErrorCell = () => {
+const ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
   return (
-    <div className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-red-500 bg-red-500' />
+    <button
+      onClick={onClick}
+      className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-red-500 bg-red-500'
+    >
+      {index + 1}
+    </button>
   )
 }
 
@@ -152,7 +157,7 @@ export const FlowPackPuzzlesGridUI = {
   clampSlideIndex,
   toIndex,
   toSlideIndex,
-  ViewPackPuzzleGrid,
+  View,
   ViewAddCell,
   ViewPuzzleCell,
   ViewEmptyCell,

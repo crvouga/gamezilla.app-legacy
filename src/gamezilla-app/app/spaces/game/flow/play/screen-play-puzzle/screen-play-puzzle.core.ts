@@ -1,10 +1,11 @@
 import { Flow } from '../../@/flow'
 import type { FlowPack } from '../../@/flow-pack'
 import { FlowPlay } from '../../@/flow/flow-play'
+import { FlowPuzzleResult } from '../@/puzzle-result'
 import type { CoreModule, MsgCore } from '../play.types'
 import * as CopyPuzzleCore from './copy-puzzle/copy-puzzle.core'
 import { LastPuzzleCore } from './last-puzzle/last-puzzle.core'
-import type { FlowPuzzleResult, ModelCore } from './screen-play-puzzle.types'
+import type { ModelCore } from './screen-play-puzzle.types'
 
 const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
   switch (input.modelCore.screen.t) {
@@ -69,36 +70,54 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
     }
 
     case 'user-clicked-next-puzzle': {
-      if (msgCore.nextPuzzle.t === 'not-found') {
-        return modelCore
-      }
-      return {
-        ...modelCore,
-        flowPlay: FlowPlay.init({
-          ctx: {
-            flowPuzzle: msgCore.nextPuzzle.c
+      switch (msgCore.nextPuzzle.t) {
+        case 'not-found': {
+          return {
+            ...modelCore,
+            puzzleResult: msgCore.nextPuzzle,
+            puzzleIndex: msgCore.nextPuzzleIndex
           }
-        }),
-        opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
-        puzzleResult: msgCore.nextPuzzle,
-        puzzleIndex: msgCore.nextPuzzleIndex
+        }
+
+        case 'got': {
+          return {
+            ...modelCore,
+            flowPlay: FlowPlay.init({
+              ctx: {
+                flowPuzzle: msgCore.nextPuzzle.c
+              }
+            }),
+            opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
+            puzzleResult: msgCore.nextPuzzle,
+            puzzleIndex: msgCore.nextPuzzleIndex
+          }
+        }
       }
     }
 
     case 'user-clicked-prev-puzzle': {
-      if (modelCore.puzzleResult.t === 'not-found') {
-        return modelCore
-      }
-      return {
-        ...modelCore,
-        flowPlay: FlowPlay.init({
-          ctx: {
-            flowPuzzle: modelCore.puzzleResult.c
+      switch (msgCore.prevPuzzle.t) {
+        case 'got': {
+          return {
+            ...modelCore,
+            flowPlay: FlowPlay.init({
+              ctx: {
+                flowPuzzle: msgCore.prevPuzzle.c
+              }
+            }),
+            opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
+            puzzleResult: msgCore.prevPuzzle,
+            puzzleIndex: msgCore.prevPuzzleIndex
           }
-        }),
-        opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
-        puzzleResult: msgCore.prevPuzzle,
-        puzzleIndex: msgCore.prevPuzzleIndex
+        }
+
+        case 'not-found': {
+          return {
+            ...modelCore,
+            puzzleResult: msgCore.prevPuzzle,
+            puzzleIndex: msgCore.prevPuzzleIndex
+          }
+        }
       }
     }
 

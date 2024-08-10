@@ -47,7 +47,7 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
             screen: ScreenPlayPuzzleCore.initCore({
               flowPack: modelCore.screen.flowPack,
               puzzleIndex: msgCore.puzzleIndex,
-              flowPuzzle: { t: 'got', c: msgCore.flowPuzzle }
+              flowPuzzle: msgCore.flowPuzzle
             })
           }
         }

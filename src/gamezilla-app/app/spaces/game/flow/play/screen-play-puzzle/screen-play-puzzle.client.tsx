@@ -222,22 +222,25 @@ const View: ClientModule['View'] = (input) => {
             >
               <DialogSurface>
                 <DialogHeader title={input.ctx.t('flow.puzzle-completed')} />
-                {nextPuzzle && (
-                  <Button
-                    text={input.ctx.t('flow.next-puzzle')}
-                    onClick={() =>
-                      nextPuzzle &&
-                      input.dispatch({
-                        t: 'user-clicked-next-puzzle',
-                        nextPuzzle: {
-                          t: 'got',
-                          c: nextPuzzle
-                        },
-                        nextPuzzleIndex
-                      })
-                    }
-                  />
-                )}
+
+                <Button
+                  text={input.ctx.t('flow.next-puzzle')}
+                  onClick={() =>
+                    nextPuzzle &&
+                    input.dispatch({
+                      t: 'user-clicked-next-puzzle',
+                      nextPuzzle: nextPuzzle
+                        ? {
+                            t: 'got',
+                            c: nextPuzzle
+                          }
+                        : {
+                            t: 'not-found'
+                          },
+                      nextPuzzleIndex
+                    })
+                  }
+                />
               </DialogSurface>
             </Dialog>
           )}
@@ -271,16 +274,18 @@ const View: ClientModule['View'] = (input) => {
                   ...input,
                   disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
                   onClick: () =>
-                    nextPuzzle
-                      ? input.dispatch({
-                          t: 'user-clicked-next-puzzle',
-                          nextPuzzle: {
+                    input.dispatch({
+                      t: 'user-clicked-next-puzzle',
+                      nextPuzzle: nextPuzzle
+                        ? {
                             t: 'got',
                             c: nextPuzzle
+                          }
+                        : {
+                            t: 'not-found'
                           },
-                          nextPuzzleIndex
-                        })
-                      : null
+                      nextPuzzleIndex
+                    })
                 })
               : flowPuzzle.t === 'got'
               ? FlowPlay.viewHintAction({

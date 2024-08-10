@@ -61,7 +61,7 @@ const View: ClientModule['View'] = (input) => {
           title={input.ctx.t('flow-pack-name', input.modelCore.screen.flowPack.name)}
         />
         <div className='flex flex-1 flex-col items-center justify-center'>
-          <FlowPackPuzzlesGridUI.ViewPackPuzzleGrid
+          <FlowPackPuzzlesGridUI.View
             id='pack-puzzle-grid'
             onSlideIndexChanged={(slideIndex) =>
               input.dispatch({
@@ -85,15 +85,16 @@ const View: ClientModule['View'] = (input) => {
 
                 return (
                   <FlowPackPuzzlesGridUI.ViewErrorCell
-                  // onClick={() =>
-                  //   input.dispatch({
-                  //     t: 'user-clicked-open-puzzle-grid-item',
-                  //     flowPuzzle: {
-                  //       type: "not-found",
-                  //     },
-                  //     puzzleIndex: inputCell.index
-                  //   })
-                  // }
+                    index={inputCell.index}
+                    onClick={() =>
+                      input.dispatch({
+                        t: 'user-clicked-open-puzzle-grid-item',
+                        flowPuzzle: {
+                          t: 'not-found'
+                        },
+                        puzzleIndex: inputCell.index
+                      })
+                    }
                   />
                 )
               }
@@ -104,7 +105,7 @@ const View: ClientModule['View'] = (input) => {
                   onClick={() =>
                     input.dispatch({
                       t: 'user-clicked-open-puzzle-grid-item',
-                      flowPuzzle: puzzle,
+                      flowPuzzle: { t: 'got', c: puzzle },
                       puzzleIndex: inputCell.index
                     })
                   }

@@ -230,7 +230,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
             title={input.ctx.t('flow-pack-name', packBuilder.pack.name)}
           />
           <div className='flex w-full flex-1 flex-col items-center justify-center'>
-            <FlowPackPuzzlesGridUI.ViewPackPuzzleGrid
+            <FlowPackPuzzlesGridUI.View
               id={packBuilder.pack.id}
               slideIndex={ScreenPackBuilderCore.toSlideIndex(packBuilder)}
               puzzleIds={packBuilder.pack.puzzleIds}

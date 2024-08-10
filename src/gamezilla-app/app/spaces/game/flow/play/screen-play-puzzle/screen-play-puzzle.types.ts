@@ -2,22 +2,10 @@ import { p } from 'gamezilla-app/@/core/parser'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/@/architecture/game-core'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
 import { FlowPack } from '../../@/flow-pack'
-import { FlowPuzzle } from '../../@/flow-puzzle'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGroupId } from '../../@/flow/flow/flow-group-id'
+import { FlowPuzzleResult } from '../@/puzzle-result'
 import { CopyPuzzleTypes } from './copy-puzzle'
-
-export const FlowPuzzleResult = p.or(
-  p.obj({
-    t: p.l('got'),
-    c: FlowPuzzle
-  }),
-  p.obj({
-    t: p.l('not-found')
-  })
-)
-
-export type FlowPuzzleResult = p.Infer<typeof FlowPuzzleResult>
 
 export const MsgCore = p.or(
   CopyPuzzleTypes.MsgCore,
