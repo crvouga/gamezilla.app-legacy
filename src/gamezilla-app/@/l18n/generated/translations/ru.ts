@@ -161,6 +161,7 @@ export const translations: Text = {
   'flow.level': (level) => `\u0423\u0440\u043E\u0432\u0435\u043D\u044C ${level}`,
   'flow.packs': 'Пакеты',
   'flow.puzzles': 'Головоломки',
+  'flow.puzzle-not-found': 'Головоломка не найдена',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'Нет пакетов',
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,

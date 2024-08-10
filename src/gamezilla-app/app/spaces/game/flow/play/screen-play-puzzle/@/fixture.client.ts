@@ -45,7 +45,7 @@ export const FixtureScreenPlayPuzzleClient = async () => {
     }
   }
 
-  const initial = f.update(f.initial, [
+  const init = f.update(f.initial, [
     {
       msg: {
         t: 'user-clicked-open-pack-list-item',
@@ -85,7 +85,7 @@ export const FixtureScreenPlayPuzzleClient = async () => {
     ...f,
     completeLastPuzzleMsgs,
     completePuzzleMsgs,
-    initial,
+    init,
     pack,
     puzzle,
     puzzleIndex,

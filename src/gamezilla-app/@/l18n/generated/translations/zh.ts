@@ -156,6 +156,7 @@ export const translations: Text = {
   'flow.level': (level) => `\u7B49\u7EA7 ${level}`,
   'flow.packs': '包',
   'flow.puzzles': '拼图',
+  'flow.puzzle-not-found': '找不到拼图',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': '没有包',
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,

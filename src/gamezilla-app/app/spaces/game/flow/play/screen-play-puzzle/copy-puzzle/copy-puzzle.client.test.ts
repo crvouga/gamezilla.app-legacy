@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       currentUserRole: 'super'
     })
-    const r = f.render(f.initial, f.ctx)
+    const r = f.render(f.init, f.ctx)
     const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))
     expect(button).toBeTruthy()
   })
@@ -34,7 +34,7 @@ describe(import.meta.file, () => {
       const f = await Fixture({
         currentUserRole
       })
-      const r = f.render(f.initial, f.ctx)
+      const r = f.render(f.init, f.ctx)
       const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))
       expect(button).toBeFalsy()
     }
@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
 
   test('play sound', async () => {
     const f = await Fixture()
-    const output = f.update(f.initial, [
+    const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
           t: 'user-clicked-copy-to-clipboard'
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
 
   test('copy puzzle to clipboard', async () => {
     const f = await Fixture()
-    const output = f.update(f.initial, [
+    const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
           t: 'user-clicked-copy-to-clipboard'
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
 
   test('show toast on copy success', async () => {
     const f = await Fixture()
-    const output = f.update(f.initial, [
+    const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
           t: 'user-clicked-copy-to-clipboard'
@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
 
   it('should copy the shorthand json to the clipboard', async () => {
     const f = await Fixture()
-    const output = f.update(f.initial, [
+    const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
           t: 'user-clicked-copy-to-clipboard'

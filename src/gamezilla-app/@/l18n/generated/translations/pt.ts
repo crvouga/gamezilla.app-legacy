@@ -158,6 +158,7 @@ export const translations: Text = {
   'flow.level': (level) => `N\xEDvel ${level}`,
   'flow.packs': 'Pacotes',
   'flow.puzzles': 'Quebra-cabeças',
+  'flow.puzzle-not-found': 'Quebra-cabeça não encontrado',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'Sem pacotes',
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,

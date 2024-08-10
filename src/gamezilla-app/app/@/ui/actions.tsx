@@ -65,15 +65,17 @@ const View = ({
             onClick={onToggle}
           />
           <Drawer id={id} onClose={onToggle} open={open} position='bottom'>
-            {lastButtons.map((button) => (
-              <ListItemButton
-                key={button.label}
-                icon={button.icon}
-                label={button.label}
-                onClick={button.onClick}
-                color={button.color}
-              />
-            ))}
+            {lastButtons.map((button) =>
+              button.hidden ? null : (
+                <ListItemButton
+                  key={button.label}
+                  icon={button.icon}
+                  label={button.label}
+                  onClick={button.onClick}
+                  color={button.color}
+                />
+              )
+            )}
           </Drawer>
         </>
       )}
@@ -87,6 +89,7 @@ export const ViewBottomButtonBar = ({ children }: { children: VDomChildren }) =>
 
 export const ViewBottomButtonBarAction = (input: ActionInput) => {
   const isDisabled = input.disabled || input.loading
+  if (input.hidden) return null
   return (
     <button
       type='button'
@@ -96,6 +99,7 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
       name={input.label}
       aria-disabled={isDisabled}
       aria-label={input.label}
+      aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
         'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm transition-opacity',

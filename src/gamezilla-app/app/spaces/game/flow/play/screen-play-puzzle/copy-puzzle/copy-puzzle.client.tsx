@@ -64,18 +64,16 @@ export const viewButtonAction = ({
 }: {
   ctx: ClientCtx
   dispatch: (m: MsgClient) => void
-}): ActionInput[] => {
+}): ActionInput | null => {
   if (ctx.currentUserRole !== 'super') {
-    return []
+    return null
   }
-  return [
-    {
-      icon: (input) => <IconCopy {...input} />,
-      label: ctx.t('app.copy'),
-      onClick: () =>
-        dispatch({
-          t: 'user-clicked-copy-to-clipboard'
-        })
-    }
-  ]
+  return {
+    icon: (input) => <IconCopy {...input} />,
+    label: ctx.t('app.copy'),
+    onClick: () =>
+      dispatch({
+        t: 'user-clicked-copy-to-clipboard'
+      })
+  }
 }

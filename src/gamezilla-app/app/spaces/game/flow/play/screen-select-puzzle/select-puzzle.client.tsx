@@ -63,6 +63,7 @@ const View: ClientModule['View'] = (input) => {
         <div className='flex flex-1 flex-col items-center justify-center'>
           <FlowPackPuzzlesGridUI.View
             id='pack-puzzle-grid'
+            slideIndex={input.modelCore.screen.slideIndex}
             onSlideIndexChanged={(slideIndex) =>
               input.dispatch({
                 t: 'user-changed-slides',
@@ -112,7 +113,6 @@ const View: ClientModule['View'] = (input) => {
                 />
               )
             }}
-            slideIndex={0}
           />
         </div>
       </div>

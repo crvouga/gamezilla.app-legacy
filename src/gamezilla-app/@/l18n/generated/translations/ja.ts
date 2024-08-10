@@ -159,6 +159,7 @@ export const translations: Text = {
   'flow.level': (level) => `\u30EC\u30D9\u30EB${level}`,
   'flow.packs': 'パック',
   'flow.puzzles': 'パズル',
+  'flow.puzzle-not-found': 'パズルが見つかりません',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'パックなし',
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,

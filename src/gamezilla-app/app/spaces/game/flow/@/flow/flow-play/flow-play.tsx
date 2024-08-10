@@ -45,7 +45,8 @@ export const Model = p.and(
   p.obj({
     pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
     terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
-    status: Status
+    status: Status,
+    showCheckmarkAnimation: p.bool
   })
 )
 export type Model = p.Infer<typeof Model>
@@ -59,7 +60,8 @@ export const init = (input: { ctx: Ctx }): Model => {
     terminalsByGroupId: {
       ...input.ctx.flowPuzzle.flow.terminalsByGroupId
     },
-    status: { t: 'idle' }
+    status: { t: 'idle' },
+    showCheckmarkAnimation: false
   }
 }
 
@@ -268,14 +270,14 @@ export const update = ({
   model: Model
   event?: Event
 } => {
-  const updated = updateMain({
+  const updatedMain = updateMain({
     msg,
     model,
     ctx
   })
 
   const updatedHint = FlowHint.update({
-    model: updated.model,
+    model: updatedMain.model,
     msg,
     ctx
   })
@@ -286,9 +288,33 @@ export const update = ({
     ctx
   })
 
+  const event = updatedReset.event ?? updatedHint.event ?? updatedMain.event
+
+  const updated = updateShowCheckmarkAnimation({
+    model: updatedReset.model,
+    event
+  })
+
   return {
-    event: updatedReset.event ?? updatedHint.event ?? updated.event,
-    model: updatedReset.model
+    event,
+    model: updated
+  }
+}
+
+const updateShowCheckmarkAnimation = (input: { model: Model; event?: Event }): Model => {
+  switch (input.event?.t) {
+    case 'solved': {
+      return {
+        ...input.model,
+        showCheckmarkAnimation: true
+      }
+    }
+    default: {
+      return {
+        ...input.model,
+        showCheckmarkAnimation: false
+      }
+    }
   }
 }
 
@@ -536,11 +562,9 @@ export const View = (input: {
   showSolvedAnimation?: boolean
 }) => {
   const flow = toFlow(input)
-  const isSolved = Flow.isSolved(flow)
-  const isDragging = input.model.status.t === 'dragging'
-  const showSolvedAnimation = Boolean(isSolved && !isDragging && input.showSolvedAnimation)
+
   return (
-    <div className='relative flex w-full flex-col items-center justify-center overflow-hidden'>
+    <>
       <FlowVariantUI.View
         disabled={input.disabled}
         model={flow}
@@ -561,8 +585,8 @@ export const View = (input: {
         isGroupActive={(groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId}
         usedHints={FlowHint.toUsedHints(input.model)}
       />
-      <CheckmarkAnimation open={showSolvedAnimation} />
-    </div>
+      <CheckmarkAnimation open={Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation)} />
+    </>
   )
 }
 

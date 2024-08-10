@@ -443,6 +443,18 @@ export const yieldTerminals = function* (model: Model): Iterable<FlowTerminal> {
   }
 }
 
+export const yieldFullTerminals = function* (model: Model): Iterable<FlowTerminal> {
+  for (const terminal of yieldTerminals(model)) {
+    if (terminal.endId) {
+      yield terminal
+    }
+  }
+}
+
+export const toFullTerminals = (model: Model): FlowTerminal[] => {
+  return Array.from(yieldFullTerminals(model))
+}
+
 export const toTerminals = (model: Model): FlowTerminal[] => {
   return Array.from(yieldTerminals(model))
 }

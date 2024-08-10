@@ -157,6 +157,7 @@ export const translations: Text = {
   'flow.level': (level) => `\uB808\uBCA8 ${level}`,
   'flow.packs': '팩',
   'flow.puzzles': '퍼즐',
+  'flow.puzzle-not-found': '퍼즐을 찾을 수 없습니다',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': '팩 없음',
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,

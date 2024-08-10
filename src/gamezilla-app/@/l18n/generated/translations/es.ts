@@ -159,6 +159,7 @@ export const translations: Text = {
   'flow.level': (level) => `Nivel ${level}`,
   'flow.packs': 'Paquetes',
   'flow.puzzles': 'Rompecabezas',
+  'flow.puzzle-not-found': 'Rompecabezas no encontrado',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'Sin paquetes',
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,

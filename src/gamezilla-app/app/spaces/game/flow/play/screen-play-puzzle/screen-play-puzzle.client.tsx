@@ -5,6 +5,7 @@ import { Actions } from 'gamezilla-app/app/@/ui/actions'
 import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPackPuzzlesGridClient } from '../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'
+import { ViewPuzzleNotFound } from '../../@/flow-puzzle/not-found'
 import { FlowPlay } from '../../@/flow/flow-play'
 import type { ClientModule } from '../play.types'
 import * as CopyPuzzleClient from './copy-puzzle/copy-puzzle.client'
@@ -147,10 +148,6 @@ const View: ClientModule['View'] = (input) => {
   const isSolved = ScreenPlayPuzzleCore.toStatus(input.modelCore.screen) === 'solved'
   const puzzleIndex = input.modelCore.screen.puzzleIndex
 
-  const prevPuzzleIndex = puzzleIndex - 1
-  const prevPuzzleId = input.modelCore.screen.flowPack.puzzleIds[prevPuzzleIndex]
-  const prevPuzzle = prevPuzzleId ? input.model.flowPuzzles[prevPuzzleId] : null
-
   //
   const nextPuzzleIndex = puzzleIndex + 1
   const nextPuzzleId = input.modelCore.screen.flowPack.puzzleIds[nextPuzzleIndex]
@@ -201,7 +198,7 @@ const View: ClientModule['View'] = (input) => {
             />
           )}
 
-          {flowPuzzle.t === 'not-found' && <div>Not found</div>}
+          {flowPuzzle.t === 'not-found' && <ViewPuzzleNotFound ctx={input.ctx} />}
 
           {isLastPuzzle ? (
             <LastPuzzleClient.View
@@ -226,7 +223,6 @@ const View: ClientModule['View'] = (input) => {
                 <Button
                   text={input.ctx.t('flow.next-puzzle')}
                   onClick={() =>
-                    nextPuzzle &&
                     input.dispatch({
                       t: 'user-clicked-next-puzzle',
                       nextPuzzle: nextPuzzle
@@ -255,39 +251,26 @@ const View: ClientModule['View'] = (input) => {
           }
           open={input.modelCore.screen.opened === 'action-drawer'}
           buttons={[
-            Actions.prev({
+            Actions.next({
               ...input,
-              hidden: true,
-              disabled: puzzleIndex === 0,
+              disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
+              hidden: !isSolved && flowPuzzle.t !== 'not-found',
               onClick: () =>
-                prevPuzzle
-                  ? input.dispatch({
-                      t: 'user-clicked-prev-puzzle',
-                      prevPuzzle: { t: 'got', c: prevPuzzle },
-                      prevPuzzleIndex
-                    })
-                  : null
+                input.dispatch({
+                  t: 'user-clicked-next-puzzle',
+                  nextPuzzle: nextPuzzle
+                    ? {
+                        t: 'got',
+                        c: nextPuzzle
+                      }
+                    : {
+                        t: 'not-found'
+                      },
+                  nextPuzzleIndex
+                })
             }),
 
-            isSolved
-              ? Actions.next({
-                  ...input,
-                  disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
-                  onClick: () =>
-                    input.dispatch({
-                      t: 'user-clicked-next-puzzle',
-                      nextPuzzle: nextPuzzle
-                        ? {
-                            t: 'got',
-                            c: nextPuzzle
-                          }
-                        : {
-                            t: 'not-found'
-                          },
-                      nextPuzzleIndex
-                    })
-                })
-              : flowPuzzle.t === 'got'
+            flowPuzzle.t === 'got' && !isSolved
               ? FlowPlay.viewHintAction({
                   model: flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } }),
                   ctx: { ...input.ctx, flowPuzzle: flowPuzzle.c },
@@ -298,13 +281,14 @@ const View: ClientModule['View'] = (input) => {
 
             Actions.reset({
               ...input,
+              hidden: flowPuzzle.t === 'not-found',
               onClick: () =>
                 input.dispatch({
                   t: 'user-clicked-reset-puzzle'
                 })
             }),
 
-            ...CopyPuzzleClient.viewButtonAction(input)
+            flowPuzzle.t === 'not-found' ? null : CopyPuzzleClient.viewButtonAction(input)
           ]}
         />
       </div>

@@ -12,6 +12,7 @@ export type Text = {
   'flow.level': (level: number) => string
   'flow.puzzles': string
   'flow.packs': string
+  'flow.puzzle-not-found': string
 }
 
 export const translations: Translations<Text> = {
@@ -26,7 +27,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'اللغز التالي',
     'flow.level': (level) => `مستوى ${level}`,
     'flow.packs': 'حزم',
-    'flow.puzzles': 'ألغاز'
+    'flow.puzzles': 'ألغاز',
+    'flow.puzzle-not-found': 'اللغز غير موجود'
   },
   de: {
     'flow.flow': 'Fluss',
@@ -39,7 +41,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'Nächstes Rätsel',
     'flow.level': (level) => `Stufe ${level}`,
     'flow.packs': 'Pakete',
-    'flow.puzzles': 'Rätsel'
+    'flow.puzzles': 'Rätsel',
+    'flow.puzzle-not-found': 'Rätsel nicht gefunden'
   },
   en: {
     'flow.flow': 'Flow',
@@ -52,7 +55,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'Next Puzzle',
     'flow.level': (level) => `Level ${level}`,
     'flow.packs': 'Packs',
-    'flow.puzzles': 'Puzzles'
+    'flow.puzzles': 'Puzzles',
+    'flow.puzzle-not-found': 'Puzzle not found'
   },
   es: {
     'flow.flow': 'Flujo',
@@ -65,7 +69,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'Siguiente rompecabezas',
     'flow.level': (level) => `Nivel ${level}`,
     'flow.packs': 'Paquetes',
-    'flow.puzzles': 'Rompecabezas'
+    'flow.puzzles': 'Rompecabezas',
+    'flow.puzzle-not-found': 'Rompecabezas no encontrado'
   },
   fr: {
     'flow.flow': 'Flux',
@@ -78,7 +83,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'Puzzle suivant',
     'flow.level': (level) => `Niveau ${level}`,
     'flow.packs': 'Packs',
-    'flow.puzzles': 'Puzzles'
+    'flow.puzzles': 'Puzzles',
+    'flow.puzzle-not-found': 'Puzzle non trouvé'
   },
   it: {
     'flow.flow': 'Flusso',
@@ -91,7 +97,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'Puzzle successivo',
     'flow.level': (level) => `Livello ${level}`,
     'flow.packs': 'Pacchetti',
-    'flow.puzzles': 'Puzzle'
+    'flow.puzzles': 'Puzzle',
+    'flow.puzzle-not-found': 'Puzzle non trovato'
   },
   ja: {
     'flow.flow': 'フロー',
@@ -104,7 +111,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': '次のパズル',
     'flow.level': (level) => `レベル${level}`,
     'flow.packs': 'パック',
-    'flow.puzzles': 'パズル'
+    'flow.puzzles': 'パズル',
+    'flow.puzzle-not-found': 'パズルが見つかりません'
   },
   ko: {
     'flow.flow': '흐름',
@@ -117,7 +125,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': '다음 퍼즐',
     'flow.level': (level) => `레벨 ${level}`,
     'flow.packs': '팩',
-    'flow.puzzles': '퍼즐'
+    'flow.puzzles': '퍼즐',
+    'flow.puzzle-not-found': '퍼즐을 찾을 수 없습니다'
   },
   pt: {
     'flow.flow': 'Fluxo',
@@ -130,7 +139,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'Próximo quebra-cabeça',
     'flow.level': (level) => `Nível ${level}`,
     'flow.packs': 'Pacotes',
-    'flow.puzzles': 'Quebra-cabeças'
+    'flow.puzzles': 'Quebra-cabeças',
+    'flow.puzzle-not-found': 'Quebra-cabeça não encontrado'
   },
   ru: {
     'flow.flow': 'Поток',
@@ -143,7 +153,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'Следующая головоломка',
     'flow.level': (level) => `Уровень ${level}`,
     'flow.packs': 'Пакеты',
-    'flow.puzzles': 'Головоломки'
+    'flow.puzzles': 'Головоломки',
+    'flow.puzzle-not-found': 'Головоломка не найдена'
   },
   zh: {
     'flow.flow': '流',
@@ -156,7 +167,8 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': '下一个拼图',
     'flow.level': (level) => `等级 ${level}`,
     'flow.packs': '包',
-    'flow.puzzles': '拼图'
+    'flow.puzzles': '拼图',
+    'flow.puzzle-not-found': '找不到拼图'
   },
   hi: {
     'flow.flow': 'फ्लो',
@@ -169,6 +181,7 @@ export const translations: Translations<Text> = {
     'flow.next-puzzle': 'अगली पहेली',
     'flow.level': (level) => `स्तर ${level}`,
     'flow.packs': 'पैक',
-    'flow.puzzles': 'पहेलियाँ'
+    'flow.puzzles': 'पहेलियाँ',
+    'flow.puzzle-not-found': 'पहेली नहीं मिली'
   }
 }

@@ -143,7 +143,7 @@ const ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number 
   return (
     <button
       onClick={onClick}
-      className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-red-500 bg-red-500'
+      className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-orange-500/60 bg-orange-500/50 text-xl font-bold hover:opacity-90 active:opacity-80'
     >
       {index + 1}
     </button>

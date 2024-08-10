@@ -159,6 +159,7 @@ export const translations: Text = {
   'flow.level': (level) => `\u0645\u0633\u062A\u0648\u0649 ${level}`,
   'flow.packs': 'حزم',
   'flow.puzzles': 'ألغاز',
+  'flow.puzzle-not-found': 'اللغز غير موجود',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'لا توجد حزم',
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
