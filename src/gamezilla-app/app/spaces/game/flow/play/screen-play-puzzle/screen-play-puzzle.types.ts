@@ -22,7 +22,7 @@ export type FlowPuzzleResult = p.Infer<typeof FlowPuzzleResult>
 export const MsgCore = p.or(
   CopyPuzzleTypes.MsgCore,
   p.obj({
-    t: p.l('flow-variant-play'),
+    t: p.l('got-flow-play-msg'),
     c: FlowPlay.Msg
   }),
   p.obj({

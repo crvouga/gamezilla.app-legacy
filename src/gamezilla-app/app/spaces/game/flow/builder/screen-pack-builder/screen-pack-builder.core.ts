@@ -216,7 +216,7 @@ updates.push((input) => {
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'screen-pack-builder.flow-play-ui': {
+    case 'screen-pack-builder.got-flow-play-msg': {
       if (!modelCore.packBuilder) {
         return modelCore
       }

@@ -209,7 +209,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgCore: withEventMeta({
-          t: 'flow-variant-play',
+          t: 'got-flow-play-msg',
           c: {
             t: 'user-pressed-down-node',
             nodeId: terminal.startId
@@ -263,7 +263,7 @@ describe(import.meta.file, () => {
     const btn = r.getByRole('button', f.ctx.t('game.hint'))
     btn?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toBe('flow-variant-play')
+    expect(msg.t).toBe('got-flow-play-msg')
   })
 
   test('hint button sound', async () => {

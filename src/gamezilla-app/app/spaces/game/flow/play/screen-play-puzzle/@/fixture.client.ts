@@ -11,7 +11,7 @@ const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
   }).map(
     (c): FixtureUpdateInput => ({
       msgCore: withEventMeta({
-        t: 'flow-variant-play',
+        t: 'got-flow-play-msg',
         c
       })
     })

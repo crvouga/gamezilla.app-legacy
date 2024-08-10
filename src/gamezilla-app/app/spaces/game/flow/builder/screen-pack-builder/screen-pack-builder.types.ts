@@ -130,7 +130,7 @@ export const MsgCore = p.or(
     userId: UserId
   }),
   p.obj({
-    t: p.l('screen-pack-builder.flow-play-ui'),
+    t: p.l('screen-pack-builder.got-flow-play-msg'),
     c: FlowPlay.Msg
   }),
   p.obj({

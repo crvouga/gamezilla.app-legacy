@@ -40,7 +40,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
     (msgs) =>
       msgs.map(
         (c): MsgCore => ({
-          t: 'flow-variant-play',
+          t: 'got-flow-play-msg',
           c
         })
       )

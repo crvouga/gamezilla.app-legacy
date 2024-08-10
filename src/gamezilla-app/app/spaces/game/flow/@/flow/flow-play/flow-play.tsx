@@ -533,47 +533,36 @@ export const View = (input: {
   model: Model
   dispatch: (m: Msg) => void
   disabled?: boolean
+  showSolvedAnimation?: boolean
 }) => {
+  const flow = toFlow(input)
+  const isSolved = Flow.isSolved(flow)
+  const isDragging = input.model.status.t === 'dragging'
+  const showSolvedAnimation = Boolean(isSolved && !isDragging && input.showSolvedAnimation)
   return (
-    <FlowVariantUI.View
-      disabled={input.disabled}
-      model={toFlow(input)}
-      showCoordinates={false}
-      isDragging={input.model.status.t === 'dragging'}
-      onDraggedOver={(nodeId) =>
-        input.dispatch({
-          t: 'user-dragged-over-node',
-          nodeId
-        })
-      }
-      onPressDown={(nodeId) =>
-        input.dispatch({
-          t: 'user-pressed-down-node',
-          nodeId
-        })
-      }
-      onPressUp={(nodeId) =>
-        input.dispatch({
-          t: 'user-pressed-up-node',
-          nodeId
-        })
-      }
-      onLeave={() =>
-        input.dispatch({
-          t: 'user-dragging-left'
-        })
-      }
-      autocompleteEdge={
-        input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
-          ? {
-              ...input.model.status.autocompleteEdge,
-              groupId: input.model.status.activeGroupId
-            }
-          : null
-      }
-      isGroupActive={(groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId}
-      usedHints={FlowHint.toUsedHints(input.model)}
-    />
+    <div className='relative flex w-full flex-col items-center justify-center overflow-hidden'>
+      <FlowVariantUI.View
+        disabled={input.disabled}
+        model={flow}
+        showCoordinates={false}
+        isDragging={input.model.status.t === 'dragging'}
+        onDraggedOver={(nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId })}
+        onPressDown={(nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId })}
+        onPressUp={(nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId })}
+        onLeave={() => input.dispatch({ t: 'user-dragging-left' })}
+        autocompleteEdge={
+          input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
+            ? {
+                ...input.model.status.autocompleteEdge,
+                groupId: input.model.status.activeGroupId
+              }
+            : null
+        }
+        isGroupActive={(groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId}
+        usedHints={FlowHint.toUsedHints(input.model)}
+      />
+      <CheckmarkAnimation open={showSolvedAnimation} />
+    </div>
   )
 }
 
@@ -604,7 +593,7 @@ export const viewResetAction = (input: {
 
 export const defaultCheckmarkAnimationDuration = TimeSpan.seconds(1 / 2)
 
-export const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null | undefined }) => {
+const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null | undefined }) => {
   const duration = input.duration ?? defaultCheckmarkAnimationDuration
   return (
     <Transition

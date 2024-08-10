@@ -23,7 +23,7 @@ const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
 
 const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
   switch (msgCore.t) {
-    case 'flow-variant-play': {
+    case 'got-flow-play-msg': {
       if (modelCore.puzzleResult.t === 'not-found') {
         return modelCore
       }

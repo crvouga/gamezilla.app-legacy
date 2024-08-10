@@ -373,7 +373,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
         }
       }
 
-      case 'screen-pack-builder.flow-play-ui': {
+      case 'screen-pack-builder.got-flow-play-msg': {
         return {
           model,
           msgCore: [withId(msg)]
@@ -402,6 +402,34 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           msgCore: [withId(msg)],
           msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-removed'))]
         }
+      }
+    }
+
+    switch (input.msgCore?.t) {
+      case 'screen-pack-builder.got-flow-play-msg': {
+        const flowPlay =
+          input.modelCore.packBuilder?.screen.t === 'screen-puzzle' ? input.modelCore.packBuilder.screen.playUI : null
+        const flowPuzzle =
+          input.modelCore.packBuilder?.screen.t === 'screen-puzzle' ? input.modelCore.packBuilder.screen.puzzle : null
+        if (!flowPlay || !flowPuzzle) {
+          return { model }
+        }
+        const updated = FlowPlay.update({
+          ctx: {
+            flowPuzzle
+          },
+          model: flowPlay,
+          msg: input.msgCore.c
+        })
+
+        if (updated.event) {
+          return {
+            model,
+            msgCmd: [playSound(FlowPlay.eventToSoundSrc(updated.event))]
+          }
+        }
+
+        return { model }
       }
     }
 
@@ -448,12 +476,13 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
             <FlowPlay.View
               dispatch={(c) =>
                 input.dispatch({
-                  t: 'screen-pack-builder.flow-play-ui',
+                  t: 'screen-pack-builder.got-flow-play-msg',
                   c
                 })
               }
               flow={screen.puzzle.flow}
               model={screen.playUI}
+              showSolvedAnimation
             />
           }
           bottom={
@@ -529,8 +558,6 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
       msgEvt: input.msgEvt,
       msgServer: input.msgServer?.t === 'screen-pack-builder.flow-pack-grid' ? input.msgServer.c : null
     })
-
-    console.log('PackPuzzleGrid.update', updated)
 
     return {
       model: {

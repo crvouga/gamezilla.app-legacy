@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
       f.init,
       FlowPlay.randomMsgs(f.puzzle).map(
         (c): MsgCore => ({
-          t: 'flow-variant-play',
+          t: 'got-flow-play-msg',
           c
         })
       )
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
       flow: f.puzzle.flow
     }).map(
       (c): MsgCore => ({
-        t: 'flow-variant-play',
+        t: 'got-flow-play-msg',
         c
       })
     )
@@ -144,7 +144,7 @@ describe(import.meta.file, () => {
     if (!nodeId) throw new Error('nodeId not found')
     const after = f.update(before, [
       {
-        t: 'flow-variant-play',
+        t: 'got-flow-play-msg',
         c: {
           t: 'user-pressed-down-node',
           nodeId
@@ -192,7 +192,7 @@ describe(import.meta.file, () => {
     ])
     const after = f.update(before, [
       {
-        t: 'flow-variant-play',
+        t: 'got-flow-play-msg',
         c: {
           t: 'user-pressed-up-node',
           nodeId: endId

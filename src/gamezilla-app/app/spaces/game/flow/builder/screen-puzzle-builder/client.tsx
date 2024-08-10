@@ -279,14 +279,12 @@ const ViewMode: ClientModule['View'] = (input) => {
           <FlowLayout
             top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
             middle={
-              <>
-                <FlowPlay.View
-                  model={puzzleBuilder.play}
-                  flow={flow}
-                  dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
-                />
-                <FlowPlay.CheckmarkAnimation open={status === 'solved'} />
-              </>
+              <FlowPlay.View
+                model={puzzleBuilder.play}
+                flow={flow}
+                dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
+                showSolvedAnimation
+              />
             }
             bottom={
               <Actions.View

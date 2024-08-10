@@ -25,7 +25,7 @@
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
     "check-imports": "bun scripts/check-imports.ts",
-    "cloc": "bun x cloc gamezilla-app",
+    "cloc": "bun x cloc src",
     "pretty": "bun x prettier --write .",
     "gen-events": "bun src/gamezilla-app/@/events/events-gen.ts",
     "gen-l18n": "bun src/gamezilla-app/@/l18n/l18n-gen.ts",

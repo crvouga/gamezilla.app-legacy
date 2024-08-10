@@ -96,7 +96,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
       }
     }
 
-    case 'flow-variant-play': {
+    case 'got-flow-play-msg': {
       if (input.modelCore.screen.t !== 'screen-play-puzzle') {
         return {
           model: input.model
@@ -193,16 +193,15 @@ const View: ClientModule['View'] = (input) => {
               model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
               dispatch={(c) =>
                 input.dispatch({
-                  t: 'flow-variant-play',
+                  t: 'got-flow-play-msg',
                   c
                 })
               }
+              showSolvedAnimation
             />
           )}
 
           {flowPuzzle.t === 'not-found' && <div>Not found</div>}
-
-          <FlowPlay.CheckmarkAnimation open={isSolvedPuzzleDialogOpen} duration={checkmarkDuration} />
 
           {isLastPuzzle ? (
             <LastPuzzleClient.View
@@ -288,7 +287,7 @@ const View: ClientModule['View'] = (input) => {
                   model: flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } }),
                   ctx: { ...input.ctx, flowPuzzle: flowPuzzle.c },
                   disabled: false,
-                  dispatch: (c) => input.dispatch({ t: 'flow-variant-play', c })
+                  dispatch: (c) => input.dispatch({ t: 'got-flow-play-msg', c })
                 })
               : null,
 
