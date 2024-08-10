@@ -45,14 +45,14 @@ const updateList: ClientModule['update'] = (input) => {
             t: 'list-packs',
             input: {
               order: {
-                lastUpdatedAt: 'desc'
+                lastUpdatedAt: 'asc'
               },
               pagination: {
                 limit: 25,
                 offset: 0
               },
               where: {
-                createdBy: ctx.currentUserId
+                // createdBy: ctx.currentUserId
               }
             }
           })
