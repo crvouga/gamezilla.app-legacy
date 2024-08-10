@@ -22,6 +22,7 @@ import { FlowPlay } from '../../@/flow/flow-play'
 import type { ClientModule } from '../builder.types'
 import { EditPackNameClient } from './edit-pack-name/edit-pack-name.client'
 import { ScreenPackBuilderCore } from './screen-pack-builder.core'
+import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
 
 //
 //
@@ -359,7 +360,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
   }
 }
 
-export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
+export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
   update(input) {
     const { model, msg } = input
 
@@ -441,52 +442,56 @@ export const ScreenPuzzle: Pick<ClientModule, 'update' | 'View'> = {
           }
         />
 
-        <div className='flex w-full flex-1 flex-col items-center justify-center'>
-          <FlowPlay.View
-            dispatch={(c) =>
-              input.dispatch({
-                t: 'screen-pack-builder.flow-play-ui',
-                c
-              })
-            }
-            flow={screen.puzzle.flow}
-            model={screen.playUI}
-          />
-        </div>
-
-        <ViewBottomButtonBar>
-          <ViewBottomButtonBarAction
-            icon={(input) => <IconChevronLeft {...input} />}
-            label={input.ctx.t('app.prev')}
-            disabled={!canGoPrevious}
-            onClick={() => {
-              if (previousPuzzle) {
+        <FlowLayout
+          top={null}
+          middle={
+            <FlowPlay.View
+              dispatch={(c) =>
                 input.dispatch({
-                  t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
-                  userId: input.ctx.currentUserId,
-                  previousPuzzle
+                  t: 'screen-pack-builder.flow-play-ui',
+                  c
                 })
               }
-            }}
-          />
+              flow={screen.puzzle.flow}
+              model={screen.playUI}
+            />
+          }
+          bottom={
+            <ViewBottomButtonBar>
+              <ViewBottomButtonBarAction
+                icon={(input) => <IconChevronLeft {...input} />}
+                label={input.ctx.t('app.prev')}
+                disabled={!canGoPrevious}
+                onClick={() => {
+                  if (previousPuzzle) {
+                    input.dispatch({
+                      t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+                      userId: input.ctx.currentUserId,
+                      previousPuzzle
+                    })
+                  }
+                }}
+              />
 
-          <ViewBottomButtonBarAction
-            icon={(input) => <IconChevronRight {...input} />}
-            label={input.ctx.t('app.next')}
-            disabled={!canGoNext}
-            onClick={() => {
-              if (nextPuzzle) {
-                input.dispatch({
-                  t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-                  userId: input.ctx.currentUserId,
-                  nextPuzzle
-                })
-              }
-            }}
-          />
+              <ViewBottomButtonBarAction
+                icon={(input) => <IconChevronRight {...input} />}
+                label={input.ctx.t('app.next')}
+                disabled={!canGoNext}
+                onClick={() => {
+                  if (nextPuzzle) {
+                    input.dispatch({
+                      t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
+                      userId: input.ctx.currentUserId,
+                      nextPuzzle
+                    })
+                  }
+                }}
+              />
 
-          <ScreenPuzzleMore.View {...input} />
-        </ViewBottomButtonBar>
+              <ScreenPuzzleMore.View {...input} />
+            </ViewBottomButtonBar>
+          }
+        />
       </div>
     )
   }
@@ -643,7 +648,7 @@ export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View' | 'su
       (model) => ScreenAddPuzzle.update({ ...input, model }),
       (model) => ButtonAddPuzzle.update({ ...input, model }),
       (model) => ScreenPuzzleGrid.update({ ...input, model }),
-      (model) => ScreenPuzzle.update({ ...input, model }),
+      (model) => ScreenPuzzlePlay.update({ ...input, model }),
       (model) => PackPuzzleGrid.update({ ...input, model }),
       (model) => ScreenPuzzleMore.update({ ...input, model }),
       (model) => EditPackName.update({ ...input, model }),
@@ -683,7 +688,7 @@ const ViewScreen: ClientModule['View'] = (input) => {
     }
 
     case 'screen-puzzle': {
-      return <ScreenPuzzle.View {...input} />
+      return <ScreenPuzzlePlay.View {...input} />
     }
 
     default: {
