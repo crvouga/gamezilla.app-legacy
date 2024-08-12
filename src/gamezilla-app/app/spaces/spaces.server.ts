@@ -1,4 +1,3 @@
-import { Eff } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { ClientId, SessionId, SpaceId, UserId } from '../@/data'
@@ -70,9 +69,7 @@ export type Deps = Awaited<ReturnType<typeof getDeps>>
 //
 
 export const init: ServerModule['init'] = async () => {
-  return {
-    model: null
-  }
+  return {}
 }
 
 //
@@ -87,8 +84,6 @@ export const update: ServerModule['update'] = async (input) => {
   const updated = await updateMain(input)
 
   return {
-    model: updated.model,
-    eff: updated.eff,
     msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd)
   }
 }
@@ -102,13 +97,10 @@ const updateMain = async (input: Input, initialAcc?: Output): Promise<Output> =>
     const updated = await updateChild({
       deps: input.deps,
       ctx: input.ctx,
-      model: acc.model,
       msgSpaceEvent: spaceEvent
     })
 
     return updateMain(input, {
-      model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
       msgSpaceEvent: Msg.batch(spaceEventsRest, updated.msgSpaceEvent),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: updated.msgEvt
@@ -121,13 +113,10 @@ const updateMain = async (input: Input, initialAcc?: Output): Promise<Output> =>
     const updated = await updateChild({
       deps: input.deps,
       ctx: input.ctx,
-      model: acc.model,
       msgCmd: spaceCmd
     })
 
     return updateMain(input, {
-      model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
       msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
       msgCmd: Msg.batch(spaceCmdsRest, updated.msgCmd),
       msgEvt: updated.msgEvt
@@ -142,48 +131,23 @@ const updateChild: SpaceServerModule['update'] = async (input) => {
     input.msgSpaceEvent &&
     (await SpacesCoreServer.hasEvent(input.deps.spaceCoreDb, input.msgSpaceEvent.spaceId, input.msgSpaceEvent.eventId))
   ) {
-    return { model: input.model }
+    return {}
   }
 
   return SpaceServerModule.andThen(
-    { model: input.model },
-    //
-    (model) =>
-      updateSpacesFromSpaceEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      ListSpacesServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      SyncServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      StartSpaceServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      JoinSpaceServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      SpaceGameServer.update({
-        ...input,
-        model
-      })
+    {},
+    () => updateSpacesFromSpaceEvent(input),
+    () => ListSpacesServer.update(input),
+    () => SyncServer.update(input),
+    () => StartSpaceServer.update(input),
+    () => JoinSpaceServer.update(input),
+    () => SpaceGameServer.update(input)
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgSpaceEvent, model, deps }) => {
+const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgSpaceEvent, deps }) => {
   if (!msgSpaceEvent) {
-    return { model }
+    return {}
   }
 
   await SpacesCoreServer.update({
@@ -191,7 +155,7 @@ const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgSpac
     spaceEvent: msgSpaceEvent
   })
 
-  return { model }
+  return {}
 }
 
 //

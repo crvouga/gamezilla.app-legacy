@@ -33,7 +33,6 @@ export type GameServerModuleTypes = {
 export type Input<T extends GameServerModuleTypes> = {
   deps: T['Deps']
   ctx: T['Ctx']
-  // model: T['Model']
   modelCore: T['ModelCore']
   msgCore?: (T['MsgCore'] & { eventId: EventId }) | null
   msg?: T['Msg'] | null
@@ -55,8 +54,6 @@ export type Input<T extends GameServerModuleTypes> = {
 //
 
 export type Output<T extends GameServerModuleTypes> = {
-  // model: T['Model']
-  // eff?: Eff<T['Msg']>
   msgCmd?: T['MsgCmdOut'][]
   msgEvt?: T['MsgEvtOut'][]
   msgCore?: WithEventId<T['MsgCore']>[]
@@ -66,7 +63,7 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
   deps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
   init: T['Model']
   update: (input: Input<T>) => Promise<Output<T>>
-  subscriptions: (input: { ctx: T['Ctx']; modelCore: T['ModelCore']; model: T['Model'] }) => Promise<Sub<T['Msg']>>
+  subscriptions: (input: { ctx: T['Ctx']; modelCore: T['ModelCore'] }) => Promise<Sub<T['Msg']>>
 }
 
 //

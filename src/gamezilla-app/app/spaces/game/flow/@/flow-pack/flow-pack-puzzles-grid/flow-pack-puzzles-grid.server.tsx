@@ -41,7 +41,6 @@ const ListPuzzlesById: Pick<ServerModule, 'update'> = {
           }
         })
         return {
-          model: input.model,
           msgCmd: [
             sendToClient(input.msgClient, {
               t: 'listed-puzzles-by-id',
@@ -52,21 +51,15 @@ const ListPuzzlesById: Pick<ServerModule, 'update'> = {
         }
       }
     }
-    return { model: input.model }
+    return {}
   }
 }
 
 export const FlowPackPuzzlesGridServer: Pick<ServerModule, 'update'> = {
   async update(input) {
     return AppServerModule.andThen(
-      {
-        model: input.model
-      },
-      (model) =>
-        ListPuzzlesById.update({
-          ...input,
-          model
-        })
+      {},
+      () => ListPuzzlesById.update(input)
       //
     )
   }

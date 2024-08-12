@@ -9,20 +9,15 @@ import type { FlowServerDeps } from '../../../builder/builder.types'
 import { FlowPuzzle, FlowPuzzleDb } from '../../flow-puzzle'
 import type { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
 import { FlowPackPuzzlesGridServer } from './flow-pack-puzzles-grid.server'
-import type { ModelServer } from './flow-pack-puzzles-grid.types'
 
 const initial = () => {
-  return {
-    model: {}
-  }
+  return {}
 }
 
 const userObversedGrid =
-  (deps: FlowServerDeps, ctx: SpaceServerCtx, client: AuthenticatedClient, puzzleIds: FlowPuzzleId[]) =>
-  (model: ModelServer) => {
+  (deps: FlowServerDeps, ctx: SpaceServerCtx, client: AuthenticatedClient, puzzleIds: FlowPuzzleId[]) => () => {
     return FlowPackPuzzlesGridServer.update({
       ctx,
-      model,
       deps,
       msgClient: {
         ...client,

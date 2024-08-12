@@ -5,27 +5,23 @@ import type { MsgServer, MsgToClient, MsgToServer } from './lang.types'
 
 type Module = AppServerModule<{
   Ctx: ServerCtx
-  Deps: null
-  Model: null
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
   Msg: MsgServer
-  MsgCmdIn: null
   MsgEvtIn: ServerEvt
   MsgCmdOut: ServerCmd<MsgToClient>
   MsgEvtOut: null
+  Deps: null
 }>
 
 export type Deps = null
 
 export const init: Module['init'] = async () => {
-  return {
-    model: null
-  }
+  return {}
 }
 
-export const update: Module['update'] = async ({ model }) => {
-  return { model }
+export const update: Module['update'] = async () => {
+  return {}
 }
 
 export const subscriptions: Module['subscriptions'] = async () => {

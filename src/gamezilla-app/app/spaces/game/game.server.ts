@@ -160,8 +160,7 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
         'connect-four',
         await ConnectFourServer.subscriptions({
           ...input,
-          modelCore: input.modelCore.c,
-          model: input.model?.t === 'connect-four' ? input.model.c : ConnectFourServer.init
+          modelCore: input.modelCore.c
         })
       )
     }
@@ -171,8 +170,7 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
         'flow',
         await FlowServer.subscriptions({
           ...input,
-          modelCore: input.modelCore.c,
-          model: input.model?.t === 'flow' ? input.model.c : FlowServer.init
+          modelCore: input.modelCore.c
         })
       )
     }

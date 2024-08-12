@@ -3,12 +3,7 @@ import { sendToClient } from 'gamezilla-app/app/@/server'
 import type { ServerModule } from './flow-pack-list.types'
 
 const update: ServerModule['update'] = async (input) => {
-  return AppServerModule.andThen({ model: input.model }, (model) =>
-    updateListPacks({
-      ...input,
-      model
-    })
-  )
+  return AppServerModule.andThen({}, () => updateListPacks(input))
 }
 
 const updateListPacks: ServerModule['update'] = async (input) => {
@@ -17,7 +12,6 @@ const updateListPacks: ServerModule['update'] = async (input) => {
       const listed = await input.deps.flowPackDb.list(input.msgClient.input)
 
       return {
-        model: input.model,
         msgCmd: [
           sendToClient(input.msgClient, {
             t: 'listed-packs',
@@ -28,9 +22,7 @@ const updateListPacks: ServerModule['update'] = async (input) => {
     }
 
     default: {
-      return {
-        model: input.model
-      }
+      return {}
     }
   }
 }

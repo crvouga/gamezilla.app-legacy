@@ -3,14 +3,12 @@ import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
 import { SpaceServerFixture, init, userStartedSpace } from '../@/testing/server'
-import type { ModelServer } from '../spaces.types'
 import * as SpacesServer from '../spaces.server'
 
-const clientAListSpaces = (f: Awaited<ReturnType<typeof SpaceServerFixture>>) => (model: ModelServer) => {
+const clientAListSpaces = (f: Awaited<ReturnType<typeof SpaceServerFixture>>) => () => {
   return SpacesServer.update({
     ctx: f.ctx,
     deps: f.deps,
-    model,
     msgClient: {
       t: 'list-spaces',
       clientId: f.clientA.clientId,

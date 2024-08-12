@@ -65,7 +65,7 @@ const continueAsGuest = async ({
   return Ok(guestAccount)
 }
 
-const update: ServerModule['update'] = async ({ model, msgClient, deps, ctx }) => {
+const update: ServerModule['update'] = async ({ msgClient, deps, ctx }) => {
   switch (msgClient?.t) {
     case 'guest.clicked-continue-as-guest-button': {
       const result = await continueAsGuest({
@@ -76,7 +76,6 @@ const update: ServerModule['update'] = async ({ model, msgClient, deps, ctx }) =
 
       if (isErr(result)) {
         return {
-          model,
           msgCmd: [
             sendToClient(msgClient, {
               t: 'guest.continue-as-guest-result',
@@ -87,7 +86,6 @@ const update: ServerModule['update'] = async ({ model, msgClient, deps, ctx }) =
       }
 
       return {
-        model,
         msgCmd: [
           sendToClient(msgClient, {
             t: 'guest.continue-as-guest-result',
@@ -107,9 +105,7 @@ const update: ServerModule['update'] = async ({ model, msgClient, deps, ctx }) =
     }
 
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }

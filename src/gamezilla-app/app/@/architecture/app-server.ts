@@ -1,4 +1,4 @@
-import { Eff, type Sub } from 'gamezilla-app/@/core'
+import { type Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 
@@ -17,10 +17,6 @@ export type AppServerModuleTypes = {
    * `Ctx` is data passed down from parent modules
    */
   Ctx?: any
-  /**
-   * `Model` is the state of the module
-   */
-  Model?: any
   /**
    * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
    */
@@ -67,10 +63,6 @@ export type Input<T extends AppServerModuleTypes> = {
    */
   ctx: T['Ctx']
   /**
-   * `model` is the current state of the module
-   */
-  model: T['Model']
-  /**
    *
    */
   msg?: T['Msg'] | null
@@ -102,14 +94,6 @@ export type Input<T extends AppServerModuleTypes> = {
 
 export type Output<T extends AppServerModuleTypes> = {
   /**
-   * `model` will be the new state of the module
-   */
-  model: T['Model']
-  /**
-   * `eff` is a side effect to be performed. May dispatch a message
-   */
-  eff?: Eff<T['Msg']>
-  /**
    *
    */
   msgCmd?: T['MsgCmdOut'][]
@@ -127,7 +111,7 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
-  init: (input: { ctx: T['Ctx']; stored?: T['Model'] | null }) => Promise<Output<T>>
+  init: (input: { ctx: T['Ctx'] }) => Promise<Output<T>>
 
   /**
    * `update` handles all the state transitions and business logic of the module
@@ -137,21 +121,19 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
   /**
    * `subscriptions` is dispatches msgs specific to the module
    */
-  subscriptions: (input: { ctx: T['Ctx']; model: T['Model']; deps: T['Deps'] }) => Promise<Sub<T['Msg']>>
+  subscriptions: (input: { ctx: T['Ctx']; deps: T['Deps'] }) => Promise<Sub<T['Msg']>>
 }
 
 type MaybePromise<T> = T | Promise<T>
 
 const andThen = async <T extends AppServerModuleTypes>(
   accPromise: MaybePromise<Output<T>>,
-  ...updates: ((model: T['Model']) => MaybePromise<Output<T>>)[]
+  ...updates: (() => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
   let acc = await accPromise
   for (const update of updates) {
-    const updated = await update(acc.model)
+    const updated = await update()
     acc = {
-      model: updated.model,
-      eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
     }

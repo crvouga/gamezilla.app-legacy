@@ -9,13 +9,13 @@ const update: SpaceServerModule['update'] = async (input) => {
   const spaceId = inputToSpaceId(input)
 
   if (!spaceId) {
-    return { model: input.model }
+    return {}
   }
 
   const spaceState = await SpacesCoreServer.getSpaceStarted(input.deps.spaceCoreDb, spaceId)
 
   if (!spaceState?.game) {
-    return { model: input.model }
+    return {}
   }
 
   const gameUpdated = await GameServer.update({
@@ -46,7 +46,6 @@ const update: SpaceServerModule['update'] = async (input) => {
   })
 
   return {
-    model: input.model,
     msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({
       t: 'game',
       c,

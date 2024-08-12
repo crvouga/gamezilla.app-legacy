@@ -1,4 +1,4 @@
-import { Eff, isErr } from 'gamezilla-app/@/core'
+import { isErr } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
@@ -52,7 +52,6 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
 
     const updated = await FlowPackPuzzlesGridServer.update({
       ctx,
-      model: {},
       msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
       msgCmd: input.msgCmd,
       msgClient:
@@ -67,7 +66,6 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
     })
 
     return {
-      eff: Eff.tag('screen-pack-builder.flow-pack-grid', updated.eff),
       msgCmd: SpaceServerCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
       msgEvt: updated.msgEvt,
       msgCore: []

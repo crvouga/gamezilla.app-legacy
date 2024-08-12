@@ -54,9 +54,7 @@ export const getDeps: Module['getDeps'] = async () => {
 //
 
 export const init: Module['init'] = async () => {
-  return {
-    model: null
-  }
+  return {}
 }
 
 //
@@ -80,104 +78,90 @@ export const update: Module['update'] = async (input) => {
     return updateFromEvent(input)
   }
 
-  return { model: input.model }
+  return {}
 }
 
-const updateFromMsg: Module['update'] = async ({ msg, model }) => {
+const updateFromMsg: Module['update'] = async ({ msg }) => {
   if (!msg) {
-    return { model }
+    return {}
   }
 
   switch (msg.t) {
     case 'profile.update-username.noop': {
-      return { model }
+      return {}
     }
     case 'handled': {
       return {
-        model,
         msgCmd: [sendToClient([msg.clientId], msg.msg)]
       }
     }
   }
 }
 
-const updateFromClient: Module['update'] = async ({ msgClient, model, ctx }) => {
+const updateFromClient: Module['update'] = async ({ msgClient, ctx }) => {
   if (!msgClient) {
-    return { model }
+    return {}
   }
 
   if (msgClient.t === 'profile.update-username.clicked-save') {
-    return { model }
+    return {}
   }
 
-  return {
-    model,
-    eff: async (dispatch) => {
-      const userId = msgClient.userId
+  const userId = msgClient.userId
 
-      if (!userId) {
-        return
-      }
+  if (!userId) {
+    return {}
+  }
 
-      const ProfileDb = createProfileDb({
-        dbConn: ctx.dbConnSql
-      })
-      const result = await handler({
-        ProfileDb,
-        msg: msgClient,
-        ctx: {
-          ...ctx,
-          currentUserId: userId
-        }
-      })
+  const ProfileDb = createProfileDb({
+    dbConn: ctx.dbConnSql
+  })
 
-      dispatch({
-        t: 'handled',
-        clientId: msgClient.clientId,
-        msg: {
-          ...msgClient,
-          result
-        }
-      })
+  const result = await handler({
+    ProfileDb,
+    msg: msgClient,
+    ctx: {
+      ...ctx,
+      currentUserId: userId
     }
+  })
+
+  return {
+    msgCmd: [
+      sendToClient([msgClient.clientId], {
+        ...msgClient,
+        result
+      })
+    ]
   }
 }
 
-const updateFromEvent: Module['update'] = async ({ msgEvt, model, ctx }) => {
+const updateFromEvent: Module['update'] = async ({ msgEvt, ctx }) => {
   if (!msgEvt) {
-    return { model }
+    return {}
   }
 
   switch (msgEvt.t) {
     case 'auth/client-authenticated': {
+      const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql })
+      const result = await findElseInsertNew({
+        ProfileDb,
+        userId: msgEvt.account.userId
+      })
       return {
-        model,
-        eff: async (dispatch) => {
-          const ProfileDb = createProfileDb({
-            dbConn: ctx.dbConnSql
+        msgCmd: [
+          sendToClient([msgEvt.clientId], {
+            t: 'current-user-profile',
+            result: Result.mapOk(result, profileCoreToProfile),
+            causedBy: { msgEvt },
+            loggedIn: msgEvt.loggedIn
           })
-          const result = await findElseInsertNew({
-            ProfileDb,
-            userId: msgEvt.account.userId
-          })
-          dispatch({
-            t: 'handled',
-            clientId: msgEvt.clientId,
-            msg: {
-              t: 'current-user-profile',
-              result: Result.mapOk(result, profileCoreToProfile),
-              causedBy: { msgEvt },
-              loggedIn: msgEvt.loggedIn
-            }
-          })
-        }
+        ]
       }
     }
 
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }

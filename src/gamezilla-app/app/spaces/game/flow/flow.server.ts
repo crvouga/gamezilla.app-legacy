@@ -118,8 +118,7 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
         'play',
         await PlayServer.subscriptions({
           ctx: input.ctx,
-          modelCore: modelCore.c,
-          model: input.model.t === 'play' ? input.model.c : PlayServer.init
+          modelCore: modelCore.c
         })
       )
     }
@@ -129,8 +128,7 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
         'builder',
         await BuilderServer.subscriptions({
           ctx: input.ctx,
-          modelCore: modelCore.c,
-          model: input.model.t === 'builder' ? input.model.c : BuilderServer.init
+          modelCore: modelCore.c
         })
       )
     }

@@ -1,4 +1,4 @@
-import { Eff, Sub, TimeSpan, isErr, isOk } from 'gamezilla-app/@/core'
+import { Sub, TimeSpan, isErr, isOk } from 'gamezilla-app/@/core'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import type { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { ServerCmd, sendToClient } from 'gamezilla-app/app/@/server'
@@ -46,14 +46,9 @@ export type Deps = Awaited<ReturnType<typeof getDeps>>
 //
 
 export const init: ServerModule['init'] = async (input) => {
-  const sms = await AuthSMSServer.init({
-    ...input,
-    stored: null
-  })
+  const sms = await AuthSMSServer.init(input)
 
   return {
-    model: null,
-    eff: Eff.tag('sms', sms.eff),
     msgCmd: ServerCmd.tag('sms', sms.msgCmd),
     msgEvt: []
   }
@@ -69,27 +64,11 @@ export const init: ServerModule['init'] = async (input) => {
 
 export const update: ServerModule['update'] = async (input) => {
   return AppServerModule.andThen(
-    { model: input.model },
-    (model) =>
-      updateFromEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateChild({
-        ...input,
-        model
-      }),
-    (model) =>
-      LogoutServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ContinueAsGuestServer.update({
-        ...input,
-        model
-      })
+    {},
+    () => updateFromEvent(input),
+    () => updateChild(input),
+    () => LogoutServer.update(input),
+    () => ContinueAsGuestServer.update(input)
   )
 }
 
@@ -120,14 +99,12 @@ const updateChild: ServerModule['update'] = async (input) => {
   })
 
   return {
-    model: null,
-    eff: Eff.tag('sms', sms.eff),
     msgCmd: ServerCmd.tag('sms', sms.msgCmd),
     msgEvt: sms.msgEvt
   }
 }
 
-const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
+const updateFromEvent: typeof update = async ({ msgEvt, deps }) => {
   switch (msgEvt?.t) {
     case 'wire/client-connected': {
       const foundUserId = await deps.userSessionDb.findUserIdBySessionId(msgEvt.sessionId)
@@ -142,7 +119,6 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 
       if (!account) {
         return {
-          model,
           msgEvt: [
             {
               t: 'auth/client-unauthenticated',
@@ -154,7 +130,6 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
       }
 
       return {
-        model: model,
         msgEvt: [
           {
             clientId: msgEvt.clientId,
@@ -168,7 +143,6 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 
     case 'auth/client-unauthenticated': {
       return {
-        model,
         msgCmd: [
           sendToClient([msgEvt.clientId], {
             t: 'client-unauthenticated'
@@ -186,7 +160,6 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 
       if (!msgEvt.loggedIn) {
         return {
-          model,
           msgCmd: [msgCmd]
         }
       }
@@ -197,21 +170,16 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
       })
 
       if (isErr(inserted)) {
-        return {
-          model
-        }
+        return {}
       }
 
       return {
-        model,
         msgCmd: [msgCmd]
       }
     }
 
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }
@@ -231,7 +199,6 @@ export const subscriptions: ServerModule['subscriptions'] = async (input) => {
       'sms',
       await AuthSMSServer.subscriptions({
         ...input,
-        model: null,
         deps: await AuthSMSServer.getDeps(input)
       })
     )

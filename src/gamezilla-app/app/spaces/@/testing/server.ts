@@ -13,8 +13,8 @@ import { GameDb } from '../../space/space-game-db'
 import type { SpaceCore } from '../../spaces-core'
 import { SpaceCoreDb } from '../../spaces-core/space-core-db'
 import * as SpacesServer from '../../spaces.server'
+import type { ServerDeps } from '../../spaces.types'
 import { EventId } from '../event'
-import type { ModelServer, ServerDeps } from '../../spaces.types'
 
 export const SpaceServerFixture = async () => {
   const f = await AppServerFixture()
@@ -99,53 +99,48 @@ export type AuthenticatedClient = {
   userId: UserId
 }
 
-export const userStartedSpace =
-  (deps: ServerDeps, client: AuthenticatedClient, spaceId: SpaceId) => (model: ModelServer) => {
-    return SpacesServer.update({
-      ctx,
-      deps,
-      model,
-      msgClient: {
-        t: 'event',
-        clientId: client.clientId,
-        sessionId: client.sessionId,
-        c: {
-          t: 'user-started-space',
-          eventId: EventId.generate(),
-          happenedAt: LamportTimestamp.fromNumber(0),
-          spaceId,
-          userId: client.userId
-        }
-      }
-    })
-  }
-
-export const userJoinedSpace =
-  (deps: ServerDeps, client: AuthenticatedClient, spaceId: SpaceId) => (model: ModelServer) => {
-    return SpacesServer.update({
-      ctx,
-      deps,
-      model,
-      msgClient: {
-        t: 'event',
-        clientId: client.clientId,
-        sessionId: client.sessionId,
-        c: {
-          t: 'user-joined-space',
-          eventId: EventId.generate(),
-          happenedAt: LamportTimestamp.fromNumber(1),
-          spaceId,
-          userId: client.userId
-        }
-      }
-    })
-  }
-
-export const authenticatedClientConnected = (deps: ServerDeps, client: AuthenticatedClient) => (model: ModelServer) => {
+export const userStartedSpace = (deps: ServerDeps, client: AuthenticatedClient, spaceId: SpaceId) => () => {
   return SpacesServer.update({
     ctx,
     deps,
-    model,
+    msgClient: {
+      t: 'event',
+      clientId: client.clientId,
+      sessionId: client.sessionId,
+      c: {
+        t: 'user-started-space',
+        eventId: EventId.generate(),
+        happenedAt: LamportTimestamp.fromNumber(0),
+        spaceId,
+        userId: client.userId
+      }
+    }
+  })
+}
+
+export const userJoinedSpace = (deps: ServerDeps, client: AuthenticatedClient, spaceId: SpaceId) => () => {
+  return SpacesServer.update({
+    ctx,
+    deps,
+    msgClient: {
+      t: 'event',
+      clientId: client.clientId,
+      sessionId: client.sessionId,
+      c: {
+        t: 'user-joined-space',
+        eventId: EventId.generate(),
+        happenedAt: LamportTimestamp.fromNumber(1),
+        spaceId,
+        userId: client.userId
+      }
+    }
+  })
+}
+
+export const authenticatedClientConnected = (deps: ServerDeps, client: AuthenticatedClient) => () => {
+  return SpacesServer.update({
+    ctx,
+    deps,
     msgEvt: {
       t: 'auth/client-authenticated',
       clientId: client.clientId,
@@ -160,17 +155,15 @@ export const authenticatedClientConnected = (deps: ServerDeps, client: Authentic
   })
 }
 
-export const clientCore =
-  (deps: ServerDeps, client: AuthenticatedClient, space: SpaceCore.Model) => (model: ModelServer) => {
-    return SpacesServer.update({
-      ctx,
-      deps,
-      model,
-      msgClient: {
-        t: 'sync',
-        clientId: client.clientId,
-        sessionId: client.sessionId,
-        space
-      }
-    })
-  }
+export const clientCore = (deps: ServerDeps, client: AuthenticatedClient, space: SpaceCore.Model) => () => {
+  return SpacesServer.update({
+    ctx,
+    deps,
+    msgClient: {
+      t: 'sync',
+      clientId: client.clientId,
+      sessionId: client.sessionId,
+      space
+    }
+  })
+}

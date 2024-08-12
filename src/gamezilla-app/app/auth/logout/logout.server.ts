@@ -3,32 +3,19 @@ import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import type { ServerModule } from '../auth.types'
 
 const update: ServerModule['update'] = async (input) => {
-  return AppServerModule.andThen({ model: input.model }, (model) =>
-    updateFromClient({
-      ...input,
-      model
-    })
-  )
+  return AppServerModule.andThen({}, () => updateFromClient(input))
 }
 
-const updateFromClient: ServerModule['update'] = async ({
-  model,
-  msgClient,
-
-  deps
-}) => {
+const updateFromClient: ServerModule['update'] = async ({ msgClient, deps }) => {
   switch (msgClient?.t) {
     case 'logout': {
       const zapped = await deps.userSessionDb.zapBySessionId(msgClient.sessionId)
 
       if (isErr(zapped)) {
-        return {
-          model
-        }
+        return {}
       }
 
       return {
-        model,
         msgEvt: [
           {
             ...msgClient,
@@ -39,9 +26,7 @@ const updateFromClient: ServerModule['update'] = async ({
     }
 
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }

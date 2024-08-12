@@ -5,32 +5,25 @@ import * as SpacesCoreServer from '../spaces-core/spaces-core.server'
 
 const update: SpaceServerModule['update'] = (input) => {
   return SpaceServerModule.andThen(
-    { model: input.model },
+    {},
     //
-    (model) =>
-      updateFromSpaceEvent({
-        ...input,
-        model
-      })
+    () => updateFromSpaceEvent({ ...input })
   )
 }
 
 const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
-  const { model, msgSpaceEvent, deps } = input
+  const { msgSpaceEvent, deps } = input
   switch (msgSpaceEvent?.t) {
     case 'user-joined-space': {
       const space = await SpacesCoreServer.getSpaceById(deps.spaceCoreDb, msgSpaceEvent.spaceId)
 
       if (!space) {
-        return {
-          model
-        }
+        return {}
       }
 
       const started = SpaceCore.startFromLatestSnapshot(space)
 
       return {
-        model,
         msgCmd: [
           sendToUser([msgSpaceEvent.userId], {
             t: 'synced',
@@ -42,9 +35,7 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
     }
 
     default: {
-      return {
-        model: input.model
-      }
+      return {}
     }
   }
 }

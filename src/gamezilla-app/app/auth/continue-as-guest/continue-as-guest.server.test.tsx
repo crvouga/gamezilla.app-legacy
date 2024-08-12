@@ -79,7 +79,6 @@ const Fixture = async () => {
     for (const msg of msgs) {
       const update = await ContinueAsGuestServer.update({
         ...msg,
-        model: updates[updates.length - 1]?.model ?? ContinueAsGuestServer.initModel,
         ctx: f.ctx,
         deps
       })

@@ -107,9 +107,7 @@ const getDeps: Module['getDeps'] = async ({ ctx }) => {
 //
 
 const init: Module['init'] = async () => {
-  return {
-    model: null
-  }
+  return {}
 }
 
 //
@@ -122,26 +120,17 @@ const init: Module['init'] = async () => {
 
 const update: Module['update'] = async (input) => {
   return AppServerModule.andThen(
-    { model: input.model },
-    (model) =>
-      updateSendCode({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateVerifyCode({
-        ...input,
-        model
-      })
+    {},
+    () => updateSendCode(input),
+    () => updateVerifyCode(input)
   )
 }
 
-const updateSendCode: Module['update'] = async ({ msgClient, model, deps }) => {
+const updateSendCode: Module['update'] = async ({ msgClient, deps }) => {
   switch (msgClient?.t) {
     case 'user-clicked-send-code-button': {
       const sent = await deps.VerifySMS.sendCode(msgClient)
       return {
-        model,
         msgCmd: [
           sendToClient([msgClient.clientId], {
             t: 'sent-code',
@@ -152,9 +141,7 @@ const updateSendCode: Module['update'] = async ({ msgClient, model, deps }) => {
       }
     }
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }
@@ -213,7 +200,7 @@ const handleVerifyCode = async (input: {
   return Ok(accountNew)
 }
 
-const updateVerifyCode: Module['update'] = async ({ msgClient, model, deps, ctx }) => {
+const updateVerifyCode: Module['update'] = async ({ msgClient, deps, ctx }) => {
   switch (msgClient?.t) {
     case 'user-clicked-verify-code-button': {
       ctx.logger.info(`Verifying code for ${PhoneNumber.toString(msgClient.phoneNumber)}`)
@@ -234,7 +221,6 @@ const updateVerifyCode: Module['update'] = async ({ msgClient, model, deps, ctx 
           })}`
         )
         return {
-          model,
           msgCmd: [
             sendToClient(msgClient, {
               t: 'verified-code',
@@ -245,7 +231,6 @@ const updateVerifyCode: Module['update'] = async ({ msgClient, model, deps, ctx 
       }
 
       return {
-        model,
         msgCmd: [
           sendToClient(msgClient, {
             t: 'verified-code',
@@ -264,9 +249,7 @@ const updateVerifyCode: Module['update'] = async ({ msgClient, model, deps, ctx 
     }
 
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }

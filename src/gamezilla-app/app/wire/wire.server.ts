@@ -78,8 +78,6 @@ type Input<TMsgToClient, TMsgToServer> = {
 }
 
 type Output = {
-  model: ModelServer
-  eff?: Eff<MsgServer>
   msgEvt?: ServerEvt[]
   msgCmd?: ServerCmd<MsgToClient>[]
 }
@@ -91,80 +89,56 @@ type Output = {
 
 export const update = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClient, TMsgToServer>): Promise<Output> => {
   return AppServerModule.andThen(
-    { model: input.model },
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromClient({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromCmd({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromEvent({
-        ...input,
-        model
-      })
+    {},
+    () => updateFromMsg(input),
+    () => updateFromClient(input),
+    () => updateFromCmd(input),
+    () => updateFromEvent(input)
   )
 }
 
-const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
+const updateFromMsg: typeof update = async ({ msg, ctx, deps }) => {
   if (!msg) {
-    return { model }
+    return {}
   }
 
   switch (msg.t) {
     case 'client-connected': {
-      return AppServerModule.andThen(
-        {
-          model
-        },
-        async (model) => {
-          const gotExisting = await deps.WireSessionDb.clients.findBySessionIds([msg.sessionId])
+      return AppServerModule.andThen({}, async () => {
+        const gotExisting = await deps.WireSessionDb.clients.findBySessionIds([msg.sessionId])
 
-          const maybeExisting: Client | null = gotExisting.t === 'ok' ? gotExisting.value[0] ?? null : null
+        const maybeExisting: Client | null = gotExisting.t === 'ok' ? gotExisting.value[0] ?? null : null
 
-          const existing: Client = maybeExisting ?? {
-            clientIds: CappedOrderedDict.init({
-              maxSize: 10
-            }),
+        const existing: Client = maybeExisting ?? {
+          clientIds: CappedOrderedDict.init({
+            maxSize: 10
+          }),
+          sessionId: msg.sessionId
+        }
+
+        const clientNew: Client = {
+          sessionId: msg.sessionId,
+          clientIds: CappedOrderedDict.add(existing.clientIds, msg.clientId, msg.clientId)
+        }
+
+        const set = await deps.WireSessionDb.clients.set(msg.sessionId, clientNew)
+
+        if (isErr(set)) {
+          return {}
+        }
+
+        const msgEvt: ServerEvt[] = [
+          {
+            t: 'wire/client-connected',
+            clientId: msg.clientId,
             sessionId: msg.sessionId
           }
+        ]
 
-          const clientNew: Client = {
-            sessionId: msg.sessionId,
-            clientIds: CappedOrderedDict.add(existing.clientIds, msg.clientId, msg.clientId)
-          }
-
-          const set = await deps.WireSessionDb.clients.set(msg.sessionId, clientNew)
-
-          if (isErr(set)) {
-            return {
-              model
-            }
-          }
-
-          const msgEvt: ServerEvt[] = [
-            {
-              t: 'wire/client-connected',
-              clientId: msg.clientId,
-              sessionId: msg.sessionId
-            }
-          ]
-
-          return {
-            model,
-            msgEvt
-          }
+        return {
+          msgEvt
         }
-      )
+      })
     }
 
     case 'client-disconnected': {
@@ -176,31 +150,26 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
         }
       ]
       return {
-        model,
         msgEvt: msgEvt
       }
     }
 
     case 'server-started': {
-      return {
-        model
-      }
+      return {}
     }
 
     case 'got-bad-msgs': {
       ctx.logger.warn(
         `Got bad msg from client. reason=${msg.reason}, client's clientId=${msg.clientId}, client's sessionId=${msg.sessionId}`
       )
-      return {
-        model
-      }
+      return {}
     }
   }
 }
 
-const updateFromEvent: typeof update = async ({ deps, msgEvt, model }) => {
+const updateFromEvent: typeof update = async ({ deps, msgEvt }) => {
   if (!msgEvt) {
-    return { model }
+    return {}
   }
   switch (msgEvt.t) {
     case 'auth/client-authenticated': {
@@ -211,70 +180,57 @@ const updateFromEvent: typeof update = async ({ deps, msgEvt, model }) => {
 
       await deps.WireSessionDb.sessionIds.set(msgEvt.account.userId, sessionIdsNew)
 
-      return {
-        model
-      }
+      return {}
     }
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }
 
-const updateFromClient: typeof update = async ({ model }) => {
-  return { model }
+const updateFromClient: typeof update = async () => {
+  return {}
 }
 
 const updateFromCmd = async <TMsgToClient, TMsgToServer>({
   msgCmd,
-  model,
   deps,
   ctx
 }: Input<TMsgToClient, TMsgToServer>): Promise<Output> => {
   if (!msgCmd) {
-    return { model }
+    return {}
   }
 
   const msgCmdChild = msgCmd.c
 
   switch (msgCmdChild.t) {
     case 'broadcast': {
-      return {
-        model,
-        eff: () => {
-          deps.transport.toClientBroadcast.pub([msgCmdChild.msg])
-        }
-      }
+      deps.transport.toClientBroadcast.pub([msgCmdChild.msg])
+      return {}
     }
 
     case 'send-to-client': {
-      return {
-        model,
-        eff: () => {
-          const toClientPayload: {
-            [clientId: ClientId]: {
-              clientId: ClientId
-              msgs: TMsgToClient[]
-            }
-          } = {}
+      const toClientPayload: {
+        [clientId: ClientId]: {
+          clientId: ClientId
+          msgs: TMsgToClient[]
+        }
+      } = {}
 
-          if (msgCmdChild.clientIds.length === 0) {
-            ctx.logger.warn(`${msgCmdChild.t} failed. No client ids provided`)
-            return
-          }
+      if (msgCmdChild.clientIds.length === 0) {
+        ctx.logger.warn(`${msgCmdChild.t} failed. No client ids provided`)
+        return {}
+      }
 
-          for (const clientId of msgCmdChild.clientIds) {
-            toClientPayload[clientId] = {
-              clientId,
-              msgs: [msgCmdChild.msg]
-            }
-          }
-
-          deps.transport.toClient.pub(toClientPayload)
+      for (const clientId of msgCmdChild.clientIds) {
+        toClientPayload[clientId] = {
+          clientId,
+          msgs: [msgCmdChild.msg]
         }
       }
+
+      deps.transport.toClient.pub(toClientPayload)
+      return {}
     }
 
     case 'send-to-user': {
@@ -282,44 +238,31 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
 
       const sessionIds = gotSessionIds.t === 'ok' ? gotSessionIds.value : []
 
-      return {
-        model,
-        eff: () => {
-          sendToSession({
-            ctx,
-            sessionIds,
-            msg: msgCmdChild.msg,
-            deps
-          })
-        }
-      }
+      sendToSession({
+        ctx,
+        sessionIds,
+        msg: msgCmdChild.msg,
+        deps
+      })
+      return {}
     }
 
     case 'send-to-session': {
-      return {
-        model,
-        eff: () => {
-          sendToSession({
-            ctx,
-            sessionIds: msgCmdChild.sessionIds,
-            msg: msgCmdChild.msg,
-            deps
-          })
-        }
-      }
+      sendToSession({
+        ctx,
+        sessionIds: msgCmdChild.sessionIds,
+        msg: msgCmdChild.msg,
+        deps
+      })
+      return {}
     }
 
     case 'topic-publish': {
-      return {
-        model,
-        eff: () => {}
-      }
+      return {}
     }
 
     case 'topic-subscribe': {
-      return {
-        model
-      }
+      return {}
     }
   }
 }

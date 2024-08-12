@@ -13,7 +13,7 @@ import * as SpacesCoreServer from '../spaces-core/spaces-core.server'
 //
 
 const update: SpaceServerModule['update'] = async (input) => {
-  const { msgClient, model, deps } = input
+  const { msgClient, deps } = input
 
   switch (msgClient?.t) {
     case 'list-spaces': {
@@ -31,7 +31,6 @@ const update: SpaceServerModule['update'] = async (input) => {
       const profiles = Result.withDefault(await deps.profileCache.get(userIds), {})
 
       return {
-        model,
         msgCmd: [
           sendToClient(msgClient, {
             t: 'listed-spaces',
@@ -44,7 +43,7 @@ const update: SpaceServerModule['update'] = async (input) => {
     }
   }
 
-  return { model }
+  return {}
 }
 
 //

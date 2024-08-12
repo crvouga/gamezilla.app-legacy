@@ -37,7 +37,6 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
       yield AuthSMSServer.update({
         ctx: f.ctx,
         deps,
-        model: null,
         ...msg
       })
     }

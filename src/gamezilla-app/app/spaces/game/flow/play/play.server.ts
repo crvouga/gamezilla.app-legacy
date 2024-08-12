@@ -25,7 +25,6 @@ const updateFlowPackList: ServerModule['update'] = async (input) => {
   const updated = await FlowPackListServer.update({
     ctx: input.ctx,
     deps: input.deps,
-    model: null,
     msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
     msgClient:
       input.msgClient?.t === 'flow-pack-list'
@@ -48,7 +47,6 @@ const updateFlowPackGrid: ServerModule['update'] = async (input) => {
   const updated = await FlowPackPuzzlesGridServer.update({
     ctx: input.ctx,
     deps: input.deps,
-    model: {},
     msg: input.msg?.t === 'flow-pack-grid' ? input.msg.c : null,
     msgClient:
       input.msgClient?.t === 'flow-pack-grid'
