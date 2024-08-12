@@ -78,7 +78,7 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
 //
 //
 
-const andThen = async <T extends GameServerModuleTypes>(
+export const andThen = async <T extends GameServerModuleTypes>(
   acc: Output<T>,
   ...updates: ((model: T['Model']) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {

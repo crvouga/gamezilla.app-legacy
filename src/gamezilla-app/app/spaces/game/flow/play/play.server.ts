@@ -1,28 +1,11 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
-import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { FlowPackDb, FlowPackListServer, IFlowPackDb } from '../@/flow-pack'
+import { FlowPackDb, FlowPackListServer } from '../@/flow-pack'
 import { FlowPackPuzzlesGridServer } from '../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server'
-import { FlowPuzzleDb, IFlowPuzzleDb } from '../@/flow-puzzle'
-import type { ModelCore, ModelServer, MsgCore, MsgServer, MsgToClient, MsgToServer } from './play.types'
-
-type ServerModule = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  MsgCore: MsgCore
-  ModelCore: ModelCore
-  Ctx: SpaceServerCtx
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
-  Deps: {
-    flowPackDb: IFlowPackDb
-    flowPuzzleDb: IFlowPuzzleDb
-  }
-}>
+import { FlowPuzzleDb } from '../@/flow-puzzle'
+import { ServerModule } from './play.types'
 
 const init: ServerModule['init'] = async () => {
   return {

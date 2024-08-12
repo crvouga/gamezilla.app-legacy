@@ -1,0 +1,46 @@
+import { NonEmpty } from 'gamezilla-app/@/core'
+import type { WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import { SpaceCoreFixture } from 'gamezilla-app/app/spaces/@/testing/core'
+import { PlayCore } from '../play.core'
+import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../play.types'
+
+export type FixtureUpdateInput = {
+  msg?: MsgClient
+  msgServer?: MsgToClient
+  msgCore?: WithEventMeta<MsgCore>
+}
+
+export const CoreFixture = async () => {
+  const f = await SpaceCoreFixture()
+
+  const updates = (modelCore: ModelCore, msgs: MsgCore[]): NonEmpty<ModelCore> => {
+    const [msgCore, ...rest] = msgs
+
+    if (!msgCore) {
+      return [modelCore]
+    }
+
+    const updated = PlayCore.updateCore({
+      ctx: f.ctx,
+      modelCore,
+      msgCore
+    })
+
+    return [modelCore, ...updates(updated, rest)]
+  }
+
+  const update = (modelCore: ModelCore, msgCore: MsgCore[]): ModelCore => {
+    return NonEmpty.last(updates(modelCore, msgCore))
+  }
+
+  const init = PlayCore.initCore({
+    ctx: f.ctx
+  })
+
+  return {
+    init,
+    f,
+    updates,
+    update
+  }
+}

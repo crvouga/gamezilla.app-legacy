@@ -1,6 +1,5 @@
 import { NonEmpty, PubSub } from 'gamezilla-app/@/core'
 import type { WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { SpaceCoreFixture } from 'gamezilla-app/app/spaces/@/testing/core'
 import { FlowClientFixture } from '../../@/testing'
 import { PlayClient } from '../play.client'
 import { PlayCore } from '../play.core'
@@ -71,40 +70,5 @@ export const FixtureFlowPlayClient = async () => {
     render,
     update,
     updates
-  }
-}
-
-export const CoreFixture = async () => {
-  const f = await SpaceCoreFixture()
-
-  const updates = (modelCore: ModelCore, msgs: MsgCore[]): NonEmpty<ModelCore> => {
-    const [msgCore, ...rest] = msgs
-
-    if (!msgCore) {
-      return [modelCore]
-    }
-
-    const updated = PlayCore.updateCore({
-      ctx: f.ctx,
-      modelCore,
-      msgCore
-    })
-
-    return [modelCore, ...updates(updated, rest)]
-  }
-
-  const update = (modelCore: ModelCore, msgCore: MsgCore[]): ModelCore => {
-    return NonEmpty.last(updates(modelCore, msgCore))
-  }
-
-  const init = PlayCore.initCore({
-    ctx: f.ctx
-  })
-
-  return {
-    init,
-    f,
-    updates,
-    update
   }
 }

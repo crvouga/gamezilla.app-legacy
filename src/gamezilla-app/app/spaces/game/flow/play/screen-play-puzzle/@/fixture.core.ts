@@ -3,10 +3,10 @@ import type { FlowVariant } from '../../../@/flow'
 import { FlowPack } from '../../../@/flow-pack'
 import { FlowPuzzle } from '../../../@/flow-puzzle'
 import { FlowPlay } from '../../../@/flow/flow-play'
-import { CoreFixture } from '../../@/fixture'
+import { CoreFixture } from '../../@/fixture.core'
+import { FlowPuzzleResult } from '../../@/puzzle-result'
 import { ScreenPlayPuzzleCore } from '../screen-play-puzzle.core'
 import type { ModelCore, MsgCore } from '../screen-play-puzzle.types'
-import { FlowPuzzleResult } from '../../@/puzzle-result'
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await CoreFixture()

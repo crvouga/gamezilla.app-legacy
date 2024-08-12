@@ -1,5 +1,5 @@
 import { describe, it } from 'bun:test'
-import { FixtureFlowPlayClient } from './@/fixture'
+import { FixtureFlowPlayClient } from './@/fixture.client'
 
 const Fixture = async () => {
   const f = await FixtureFlowPlayClient()

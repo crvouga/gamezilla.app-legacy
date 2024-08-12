@@ -4,7 +4,7 @@ import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { EventId } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../@/flow-pack'
 import { FlowPuzzle } from '../../@/flow-puzzle'
-import { FixtureFlowPlayClient } from '../@/fixture'
+import { FixtureFlowPlayClient } from '../@/fixture.client'
 
 const Fixture = async () => {
   const f = await FixtureFlowPlayClient()

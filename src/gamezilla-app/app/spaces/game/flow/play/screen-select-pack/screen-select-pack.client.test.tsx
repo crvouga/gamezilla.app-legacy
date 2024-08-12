@@ -3,7 +3,7 @@ import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { EventId, withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../@/flow-pack'
-import { FixtureFlowPlayClient } from '../@/fixture'
+import { FixtureFlowPlayClient } from '../@/fixture.client'
 
 const Fixture = async () => {
   const f = await FixtureFlowPlayClient()

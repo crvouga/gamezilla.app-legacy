@@ -5,17 +5,19 @@ import type {
   GameClientModuleTypesConfig
 } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/@/architecture/game-core'
-import type { SpaceClientEvt, SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import type { SpaceClientEvt, SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
+import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { FlowCoreEvent } from '../@/flow-core-event'
 import type { FlowClientCtx } from '../@/flow-ctx'
-import { FlowPack, type FlowPackListTypes } from '../@/flow-pack'
+import { FlowPack, IFlowPackDb, type FlowPackListTypes } from '../@/flow-pack'
 import type { FlowPackId } from '../@/flow-pack/flow-pack-id'
 import type { FlowPackPuzzlesGridTypes } from '../@/flow-pack/flow-pack-puzzles-grid'
-import { FlowPuzzle } from '../@/flow-puzzle'
+import { FlowPuzzle, IFlowPuzzleDb } from '../@/flow-puzzle'
 import type { FlowPuzzleId } from '../@/flow-puzzle/flow-puzzle-id'
-import { ScreenPuzzleTypes } from './screen-play-puzzle'
-import { FlowCoreEvent } from '../@/flow-core-event'
 import { FlowPuzzleResult } from './@/puzzle-result'
+import { ScreenPuzzleTypes } from './screen-play-puzzle'
 
 //
 //
@@ -173,6 +175,22 @@ export type ClientModuleTypes = GameClientModuleTypesConfig<{
 }>
 
 export type ClientModule = GameClientModule<ClientModuleTypes>
+
+export type ServerModule = GameServerModule<{
+  Model: ModelServer
+  Msg: MsgServer
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  MsgCore: MsgCore
+  ModelCore: ModelCore
+  Ctx: SpaceServerCtx
+  MsgEvtIn: SpaceServerEvt
+  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  Deps: {
+    flowPackDb: IFlowPackDb
+    flowPuzzleDb: IFlowPuzzleDb
+  }
+}>
 
 export type CoreModule = GameCoreModule<{
   Ctx: SpaceCtx

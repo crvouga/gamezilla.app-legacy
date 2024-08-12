@@ -2,7 +2,7 @@ import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../../@/flow-pack'
 import { FlowPuzzle } from '../../../@/flow-puzzle'
 import { FlowPlay } from '../../../@/flow/flow-play'
-import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture'
+import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture.client'
 import { FlowPuzzleResult } from '../../@/puzzle-result'
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
