@@ -14,8 +14,6 @@ import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 //
 //
 
-export type ModelServer = null
-
 export type ModelClient = {
   auth: Auth.ModelClient
   spaces: Spaces.ModelClient

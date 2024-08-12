@@ -82,7 +82,7 @@ const View = (input: {
 
   for (let slideIndex = 0; slideIndex < slideCount; slideIndex++) {
     slides.push(
-      <Swiper.Slide key={slideIndex} className='w-3/4'>
+      <Swiper.Slide key={slideIndex} className='flex h-full w-3/4 flex-col items-center justify-center'>
         <ViewPackPuzzleGridSlide
           key={slideIndex}
           slideIndex={slideIndex}
@@ -98,7 +98,7 @@ const View = (input: {
       onSlideIndexChanged={input.onSlideIndexChanged}
       id={input.id}
       slideIndex={input.slideIndex}
-      className='w-full'
+      className='flex h-full w-full items-center justify-center'
     >
       {slides}
     </Swiper.Container>
