@@ -87,27 +87,13 @@ const update: ServerModule['update'] = async (input) => {
         modelCore: input.modelCore.c,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
-        msgClient:
-          input.msgClient?.t === 'flow'
-            ? {
-                ...input.msgClient,
-                ...input.msgClient.c
-              }
-            : null,
-        msgCore:
-          input.msgCore?.t === 'flow'
-            ? {
-                ...input.msgCore,
-                ...input.msgCore.c
-              }
-            : null,
+        msgClient: input.msgClient?.t === 'flow' ? { ...input.msgClient, ...input.msgClient.c } : null,
+        msgCore: input.msgCore?.t === 'flow' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
         deps: input.deps.flow
       })
 
-      const tagged = GameServerModule.tagOutput('flow', (msgCmd) => SpaceServerCmd.tag('flow', msgCmd), updated)
-
-      return tagged
+      return GameServerModule.tagOutput('flow', (msgCmd) => SpaceServerCmd.tag('flow', msgCmd), updated)
     }
 
     case 'connect-four': {
@@ -116,31 +102,13 @@ const update: ServerModule['update'] = async (input) => {
         modelCore: input.modelCore.c,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
-        msgClient:
-          input.msgClient?.t === 'connect-four'
-            ? {
-                ...input.msgClient,
-                ...input.msgClient.c
-              }
-            : null,
-        msgCore:
-          input.msgCore?.t === 'connect-four'
-            ? {
-                ...input.msgCore,
-                ...input.msgCore.c
-              }
-            : null,
+        msgClient: input.msgClient?.t === 'connect-four' ? { ...input.msgClient, ...input.msgClient.c } : null,
+        msgCore: input.msgCore?.t === 'connect-four' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
         deps: null
       })
 
-      const tagged = GameServerModule.tagOutput(
-        'connect-four',
-        (msgCmd) => SpaceServerCmd.tag('connect-four', msgCmd),
-        updated
-      )
-
-      return tagged
+      return GameServerModule.tagOutput('connect-four', (msgCmd) => SpaceServerCmd.tag('connect-four', msgCmd), updated)
     }
   }
 }
@@ -156,23 +124,11 @@ const update: ServerModule['update'] = async (input) => {
 const subscriptions: ServerModule['subscriptions'] = async (input) => {
   switch (input.modelCore.t) {
     case 'connect-four': {
-      return Sub.tag(
-        'connect-four',
-        await ConnectFourServer.subscriptions({
-          ...input,
-          modelCore: input.modelCore.c
-        })
-      )
+      return Sub.tag('connect-four', await ConnectFourServer.subscriptions({ ...input, modelCore: input.modelCore.c }))
     }
 
     case 'flow': {
-      return Sub.tag(
-        'flow',
-        await FlowServer.subscriptions({
-          ...input,
-          modelCore: input.modelCore.c
-        })
-      )
+      return Sub.tag('flow', await FlowServer.subscriptions({ ...input, modelCore: input.modelCore.c }))
     }
   }
 }
