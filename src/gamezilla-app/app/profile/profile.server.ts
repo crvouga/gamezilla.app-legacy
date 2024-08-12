@@ -1,7 +1,7 @@
 import { type Profile, ProfileAvatar, type UserId, Username } from 'gamezilla-app/app/@/data'
 import { type ServerCmd, type ServerCtx, type ServerEvt, sendToClient } from 'gamezilla-app/app/@/server'
 import { Err, Ok, Result, isErr } from 'gamezilla-app/@/core'
-import type { AppServerModule } from '../@/architecture/app-server'
+import { AppServerModule } from '../@/architecture/app-server'
 import type { ProfileDb } from './profile-db/profile-db'
 import { createProfileDb } from './profile-db/profile-db-impl.postgres'
 import {
@@ -66,19 +66,12 @@ export const init: Module['init'] = async () => {
 //
 
 export const update: Module['update'] = async (input) => {
-  if (input.msg) {
-    return updateFromMsg(input)
-  }
-
-  if (input.msgClient) {
-    return updateFromClient(input)
-  }
-
-  if (input.msgEvt) {
-    return updateFromEvent(input)
-  }
-
-  return {}
+  return AppServerModule.andThen(
+    {},
+    () => updateFromMsg(input),
+    () => updateFromClient(input),
+    () => updateFromEvent(input)
+  )
 }
 
 const updateFromMsg: Module['update'] = async ({ msg }) => {

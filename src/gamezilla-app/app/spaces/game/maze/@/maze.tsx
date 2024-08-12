@@ -68,7 +68,7 @@ const make = ({ seed, lower, upper }: { seed: string; lower: Position; upper: Po
     maze.edges.push([current, unvisitedNeighbor.position])
   }
 
-  remove_dead_ends(
+  removeDeadEnds(
     {
       limit: Number.POSITIVE_INFINITY,
       seed
@@ -79,7 +79,7 @@ const make = ({ seed, lower, upper }: { seed: string; lower: Position; upper: Po
   return maze
 }
 
-const remove_dead_ends = ({ seed, limit }: { seed: string; limit: number }, maze: Maze) => {
+const removeDeadEnds = ({ seed, limit }: { seed: string; limit: number }, maze: Maze) => {
   let count = 0
 
   for (let x = maze.lower.x; x <= maze.upper.x; x++) {

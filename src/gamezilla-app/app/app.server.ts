@@ -201,20 +201,14 @@ export const update = async (input: { msg: MsgServer; ctx: { now: Posix }; deps:
     now: input.ctx.now
   }
 
-  const updatedFromMsg = await updateChild({
+  const updated = await updateChild({
     deps: input.deps,
     ctx: ctx,
     msg: input.msg,
-    msgClient:
-      input.msg.t === '→'
-        ? {
-            ...input.msg,
-            ...input.msg.c
-          }
-        : null
+    msgClient: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null
   })
 
-  await updateLoop(input.deps, ctx, updatedFromMsg)
+  await updateLoop(input.deps, ctx, updated)
 
   return {}
 }
@@ -251,12 +245,17 @@ const logMsg = ({
   logger.info(log.join(' '))
 }
 
-type Output = {
+const updateLoop = async (
+  deps: Deps,
+  ctx: ServerCtx,
+  acc: {
+    msgEvt: ServerEvt[]
+    msgCmd: ServerCmd<MsgToClient>[]
+  }
+): Promise<{
   msgEvt: ServerEvt[]
   msgCmd: ServerCmd<MsgToClient>[]
-}
-
-const updateLoop = async (deps: Deps, ctx: ServerCtx, acc: Output): Promise<Output> => {
+}> => {
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
   if (msgCmd) {
@@ -300,7 +299,10 @@ export const updateChild = async ({
   msgClient?: (MsgToServer & MsgToServerMeta) | null
   msgEvt?: ServerEvt
   msgCmd?: ServerCmd<MsgToClient>
-}): Promise<Output> => {
+}): Promise<{
+  msgEvt: ServerEvt[]
+  msgCmd: ServerCmd<MsgToClient>[]
+}> => {
   const userId = msgClient?.sessionId ? await AuthServer.toUserIdFromSessionId(deps.auth, msgClient.sessionId) : null
 
   const space = await SpaceServer.update({

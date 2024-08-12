@@ -55,26 +55,10 @@ const init: ClientModule['init'] = {
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) =>
-      GameMainMenu.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromMsgCore({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateChild({
-        ...input,
-        model
-      })
+    (model) => GameMainMenu.update({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateChild({ ...input, model })
   )
 }
 
