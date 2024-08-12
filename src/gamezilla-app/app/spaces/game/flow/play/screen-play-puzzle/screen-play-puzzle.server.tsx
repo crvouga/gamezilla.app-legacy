@@ -3,22 +3,18 @@ import { ServerModule } from '../play.types'
 
 export const update: ServerModule['update'] = async (input) => {
   return andThen(
-    { model: input.model },
+    {},
     //
-    (model) => recordUserCompletedPuzzle({ ...input, model })
+    () => recordUserCompletedPuzzle(input)
   )
 }
 
 const recordUserCompletedPuzzle: ServerModule['update'] = async (input) => {
   switch (input.msgCore?.t) {
     case 'got-flow-play-msg': {
-      return {
-        model: input.model
-      }
+      return {}
     }
   }
 
-  return {
-    model: input.model
-  }
+  return {}
 }

@@ -44,10 +44,8 @@ const init: ServerModule['init'] = {
 //
 //
 
-const update: ServerModule['update'] = async (input) => {
-  return {
-    model: input.model
-  }
+const update: ServerModule['update'] = async (_input) => {
+  return {}
 }
 
 //

@@ -30,44 +30,20 @@ const deps: ServerModule['deps'] = async (input) => {
 
 const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen(
-    { model: input.model },
-    (model) =>
-      ScreenPuzzleBuilderServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenOpenPuzzleServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenOpenPackServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenPackBuilderServer.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFlowPackList({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFlowPuzzleList({
-        ...input,
-        model
-      })
+    {},
+    () => ScreenPuzzleBuilderServer.update(input),
+    () => ScreenOpenPuzzleServer.update(input),
+    () => ScreenOpenPackServer.update(input),
+    () => ScreenPackBuilderServer.update(input),
+    () => updateFlowPackList(input),
+    () => updateFlowPuzzleList(input)
   )
 }
 
 const updateFlowPuzzleList: ServerModule['update'] = async (input) => {
   const updated = await FlowPuzzleListServer.update({
     ...input,
-    model: input.model.flowPackList,
+    model: null,
     msg: input.msg?.t === 'flow-puzzle-list' ? input.msg.c : undefined,
     msgClient:
       input.msgClient?.t === 'flow-puzzle-list'
@@ -79,10 +55,6 @@ const updateFlowPuzzleList: ServerModule['update'] = async (input) => {
   })
 
   return {
-    model: {
-      ...input.model,
-      flowPackList: updated.model
-    },
     msgCmd: SpaceServerCmd.tag('flow-puzzle-list', updated.msgCmd)
   }
 }
@@ -90,7 +62,7 @@ const updateFlowPuzzleList: ServerModule['update'] = async (input) => {
 const updateFlowPackList: ServerModule['update'] = async (input) => {
   const updated = await FlowPackListServer.update({
     ...input,
-    model: input.model.flowPackList,
+    model: null,
     msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : undefined,
     msgClient:
       input.msgClient?.t === 'flow-pack-list'
@@ -101,10 +73,6 @@ const updateFlowPackList: ServerModule['update'] = async (input) => {
         : undefined
   })
   return {
-    model: {
-      ...input.model,
-      flowPackList: updated.model
-    },
     msgCmd: SpaceServerCmd.tag('flow-pack-list', updated.msgCmd)
   }
 }

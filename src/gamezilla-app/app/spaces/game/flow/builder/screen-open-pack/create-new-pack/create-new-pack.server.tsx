@@ -6,16 +6,11 @@ import { FlowPackName } from '../../../@/flow-pack/flow-pack-name'
 import type { ServerModule } from '../../builder.types'
 
 const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen({ model: input.model }, (model) =>
-    updateFromClient({
-      ...input,
-      model
-    })
-  )
+  return GameServerModule.andThen({}, () => updateFromClient(input))
 }
 
 const updateFromClient: ServerModule['update'] = async (input) => {
-  const { model, msgClient, ctx, deps } = input
+  const { msgClient, ctx, deps } = input
 
   switch (msgClient?.t) {
     case 'pack-create-new.clicked-create-button': {
@@ -26,9 +21,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       })
 
       if (counted.t === 'err') {
-        return {
-          model
-        }
+        return {}
       }
 
       const packNew: FlowPack = {
@@ -46,9 +39,6 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       const put = await deps.flowPackDb.put(packNew)
 
       return {
-        model: {
-          ...model
-        },
         msgCmd: [
           sendToClient(msgClient, {
             t: 'pack-create-new.created-pack',
@@ -59,9 +49,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
     }
 
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }

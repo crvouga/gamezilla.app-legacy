@@ -85,7 +85,6 @@ const update: ServerModule['update'] = async (input) => {
       const updated = await FlowServer.update({
         ctx: input.ctx,
         modelCore: input.modelCore.c,
-        model: input.model.t === 'flow' ? input.model.c : FlowServer.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgClient:
@@ -115,7 +114,6 @@ const update: ServerModule['update'] = async (input) => {
       const updated = await ConnectFourServer.update({
         ctx: input.ctx,
         modelCore: input.modelCore.c,
-        model: input.model.t === 'connect-four' ? input.model.c : ConnectFourServer.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgClient:

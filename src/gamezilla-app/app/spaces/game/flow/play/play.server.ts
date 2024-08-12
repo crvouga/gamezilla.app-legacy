@@ -1,4 +1,4 @@
-import { Eff, Sub } from 'gamezilla-app/@/core'
+import { Sub } from 'gamezilla-app/@/core'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
@@ -15,9 +15,9 @@ const init: ServerModule['init'] = async () => {
 
 const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen(
-    { model: input.model },
-    (model) => updateFlowPackList({ ...input, model }),
-    (model) => updateFlowPackGrid({ ...input, model })
+    {},
+    () => updateFlowPackList(input),
+    () => updateFlowPackGrid(input)
   )
 }
 
@@ -38,8 +38,6 @@ const updateFlowPackList: ServerModule['update'] = async (input) => {
     msgEvt: input.msgEvt
   })
   return {
-    model: input.model,
-    eff: Eff.tag('flow-pack-list', updated.eff),
     msgCmd: SpaceServerCmd.tag('flow-pack-list', updated.msgCmd),
     msgCore: [],
     msgEvt: updated.msgEvt
@@ -64,8 +62,6 @@ const updateFlowPackGrid: ServerModule['update'] = async (input) => {
   })
 
   return {
-    model: input.model,
-    eff: Eff.tag('flow-pack-grid', updated.eff),
     msgCmd: SpaceServerCmd.tag('flow-pack-grid', updated.msgCmd),
     msgCore: [],
     msgEvt: updated.msgEvt

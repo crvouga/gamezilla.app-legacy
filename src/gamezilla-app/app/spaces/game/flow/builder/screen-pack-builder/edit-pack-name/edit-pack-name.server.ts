@@ -23,7 +23,6 @@ const update: ServerModule['update'] = async (input) => {
       const put = await input.deps.flowPackDb.put(modelCoreNext.pack)
 
       return {
-        model: input.model,
         msgCore: [
           withId({
             t: 'edit-pack-name.server-persisted-pack',
@@ -34,9 +33,7 @@ const update: ServerModule['update'] = async (input) => {
       }
     }
     default: {
-      return {
-        model: input.model
-      }
+      return {}
     }
   }
 }

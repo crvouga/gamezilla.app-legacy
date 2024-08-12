@@ -27,8 +27,8 @@ type Module = GameServerModule<{
 
 export const init: Module['init'] = null
 
-export const update: Module['update'] = async (input) => {
-  return { model: input.model }
+export const update: Module['update'] = async (_input) => {
+  return {}
 }
 
 export const subscriptions: Module['subscriptions'] = async (_input) => {

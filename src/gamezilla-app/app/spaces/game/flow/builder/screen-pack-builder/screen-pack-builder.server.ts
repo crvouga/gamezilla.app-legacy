@@ -10,20 +10,17 @@ import { ScreenPackBuilderCore } from './screen-pack-builder.core'
 
 const SavePack: Pick<ServerModule, 'update'> = {
   async update(input) {
-    const { deps, model, modelCore, msgCore } = input
+    const { deps, modelCore, msgCore } = input
 
     switch (msgCore?.t) {
       case 'screen-pack-builder.user-clicked-add-puzzle-item': {
         if (!modelCore.packBuilder) {
-          return {
-            model
-          }
+          return {}
         }
 
         const saved = await deps.flowPackDb.put(modelCore.packBuilder.pack)
 
         return {
-          model,
           msgCore: [
             withId({
               t: 'screen-pack-builder.saved-pack',
@@ -34,9 +31,7 @@ const SavePack: Pick<ServerModule, 'update'> = {
       }
 
       default: {
-        return {
-          model
-        }
+        return {}
       }
     }
   }
@@ -47,9 +42,7 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
     const pack = input.modelCore.packBuilder?.pack
 
     if (!pack) {
-      return {
-        model: input.model
-      }
+      return {}
     }
 
     const ctx = {
@@ -74,7 +67,6 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
     })
 
     return {
-      model: input.model,
       eff: Eff.tag('screen-pack-builder.flow-pack-grid', updated.eff),
       msgCmd: SpaceServerCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
       msgEvt: updated.msgEvt,
@@ -94,31 +86,23 @@ const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
         })
         const packNew = modelCoreNew.packBuilder?.pack
         if (!packNew) {
-          return {
-            model: input.model
-          }
+          return {}
         }
         const put = await input.deps.flowPackDb.put(packNew)
         if (isErr(put)) {
-          return {
-            model: input.model
-          }
+          return {}
         }
-        return {
-          model: input.model
-        }
+        return {}
       }
     }
-    return { model: input.model }
+    return {}
   }
 }
 
 const EditPackName: Pick<ServerModule, 'update'> = {
   async update(input) {
     if (!input.modelCore.packBuilder) {
-      return {
-        model: input.model
-      }
+      return {}
     }
     const updated = await EditPackNameServer.update({
       ...input,
@@ -132,7 +116,6 @@ const EditPackName: Pick<ServerModule, 'update'> = {
           : null
     })
     return {
-      model: input.model,
       msgCore: (updated.msgCore ?? []).map(({ eventId, ...c }) => ({
         eventId,
         c,
@@ -145,29 +128,11 @@ const EditPackName: Pick<ServerModule, 'update'> = {
 export const ScreenPackBuilderServer: Pick<ServerModule, 'update'> = {
   async update(input) {
     return GameServerModule.andThen(
-      {
-        model: input.model
-      },
-      (model) =>
-        SavePack.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        RemovedPuzzleFromPack.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        PuzzleGrid.update({
-          ...input,
-          model
-        }),
-      (model) =>
-        EditPackName.update({
-          ...input,
-          model
-        })
+      {},
+      () => SavePack.update(input),
+      () => RemovedPuzzleFromPack.update(input),
+      () => PuzzleGrid.update(input),
+      () => EditPackName.update(input)
     )
   }
 }

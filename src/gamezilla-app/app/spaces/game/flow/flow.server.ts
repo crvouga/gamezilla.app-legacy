@@ -39,18 +39,10 @@ const init: ServerModule['init'] = {
 
 const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen(
-    { model: input.model },
+    {},
     //
-    (model) =>
-      updatePlay({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateBuilder({
-        ...input,
-        model
-      })
+    () => updatePlay(input),
+    () => updateBuilder(input)
   )
 }
 
@@ -63,7 +55,6 @@ const updateBuilder: ServerModule['update'] = async (input) => {
         : BuilderCore.initCore({
             ctx: input.ctx
           }),
-    model: input.model.t === 'builder' ? input.model.c : BuilderServer.init,
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
     msgClient:
@@ -92,13 +83,7 @@ const updateBuilder: ServerModule['update'] = async (input) => {
 const updatePlay: ServerModule['update'] = async (input) => {
   const updated = await PlayServer.update({
     ctx: input.ctx,
-    modelCore:
-      input.modelCore.t === 'play'
-        ? input.modelCore.c
-        : PlayCore.initCore({
-            ctx: input.ctx
-          }),
-    model: input.model.t === 'play' ? input.model.c : PlayServer.init,
+    modelCore: input.modelCore.t === 'play' ? input.modelCore.c : PlayCore.initCore({ ctx: input.ctx }),
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
     msgClient:

@@ -1,4 +1,4 @@
-import { Eff, Result, Sub } from 'gamezilla-app/@/core'
+import { Sub } from 'gamezilla-app/@/core'
 import { SpaceServerCmd } from '../@/space-server-cmd'
 import { SpaceServerModule } from '../architecture/space-server'
 import { GameServer } from '../game/game.server'
@@ -18,8 +18,6 @@ const update: SpaceServerModule['update'] = async (input) => {
     return { model: input.model }
   }
 
-  const gameModel = Result.withDefault(await input.deps.gameDb.getBySpaceId(spaceId), null)
-
   const gameUpdated = await GameServer.update({
     deps: input.deps.gameServer,
     ctx: {
@@ -27,7 +25,6 @@ const update: SpaceServerModule['update'] = async (input) => {
       ...input.deps.gameServer,
       space: spaceState
     },
-    model: gameModel ?? GameServer.init(spaceState.game.t),
     msg: input.msg?.t === 'game' ? input.msg.c : null,
     modelCore: spaceState.game,
     msgClient:
@@ -50,11 +47,6 @@ const update: SpaceServerModule['update'] = async (input) => {
 
   return {
     model: input.model,
-    eff: Eff.map(gameUpdated.eff, (c) => ({
-      t: 'game',
-      c,
-      spaceId
-    })),
     msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({
       t: 'game',
       c,

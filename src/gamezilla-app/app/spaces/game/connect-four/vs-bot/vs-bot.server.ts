@@ -1,21 +1,17 @@
-import { GameServer } from 'gamezilla-app/app/spaces/@/architecture/game-server'
+import { Sub, Time, TimeSpan, isErr } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { Sub, Time, TimeSpan, isErr } from 'gamezilla-app/@/core'
-import { ConnectFourBotWorker } from '../@/connect-four'
 import * as ConnectFour from '../@/connect-four/connect-four'
 import {
-  type MsgCore,
   type ModelCore,
   type ModelServer,
+  type MsgCore,
   type MsgServer,
   type MsgToClient,
   type MsgToServer,
-  isBotMoving,
-  isBotTurn,
-  toBotPlayer
+  isBotTurn
 } from './vs-bot.types'
 
 //
@@ -46,91 +42,45 @@ export const init: Module['init'] = {
 }
 
 export const update: Module['update'] = async (input) => {
-  return GameServerModule.andThen({ model: input.model }, (model) =>
-    updateFromMsg({
-      ...input,
-      model
-    })
-  )
+  return GameServerModule.andThen({}, () => updateFromMsg(input))
 }
 
 const updateFromMsg: Module['update'] = async (input) => {
-  const { msg, model, modelCore, ctx } = input
+  const { msg, modelCore } = input
 
   if (!msg) {
-    return { model }
+    return {}
   }
 
   switch (msg.t) {
     case 'time-passed': {
-      const shouldBotMove = isBotTurn(modelCore) && !isBotMoving(ctx.now, model)
+      const shouldBotMove = isBotTurn(modelCore)
       if (modelCore.type === 'game' && shouldBotMove && msg.t === 'time-passed') {
-        return {
-          model: {
-            ...model,
-            botStartedFindingMoveAt: ctx.now
-          },
-          eff: async (dispatch) => {
-            const found = ConnectFourBotWorker.findBestMove({
-              columns: modelCore.columns,
-              maxDepth: 4,
-              maximizingPlayer: toBotPlayer(modelCore)
-            })
-            dispatch({
-              t: 'bot-found-best-move',
-              found,
-              startedAt: ctx.now
-            })
-          }
-        }
+        return {}
       }
 
-      return {
-        model
-      }
+      return {}
     }
 
     case 'bot-found-best-move': {
-      const { found } = msg
+      if (isErr(msg.found)) {
+        return {}
+      }
 
-      return GameServer.chain(
-        {
-          model
-        },
-        async (model) => {
-          if (isErr(found)) {
-            return {
-              model
-            }
-          }
+      const columnIndex = msg.found.value.columnIndex
 
-          const columnIndex = found.value.columnIndex
+      if (!ConnectFour.isColumnIndex(columnIndex)) {
+        return {}
+      }
 
-          if (!ConnectFour.isColumnIndex(columnIndex)) {
-            return {
-              model
-            }
-          }
+      const msgCoreNew = withId<MsgCore>({
+        t: 'bot-dropped-disc',
+        columnIndex
+      })
 
-          const msgCoreNew = withId<MsgCore>({
-            t: 'bot-dropped-disc',
-            columnIndex
-          })
-
-          return {
-            model,
-            msgCore: [msgCoreNew]
-          }
-        },
-        async (model) => {
-          return {
-            model: {
-              ...model,
-              botStartedFindingMoveAt: null
-            }
-          }
-        }
-      )
+      return {
+        msgCore: [msgCoreNew]
+      }
     }
   }
 }

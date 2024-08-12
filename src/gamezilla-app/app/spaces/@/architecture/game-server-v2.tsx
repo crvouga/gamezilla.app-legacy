@@ -1,7 +1,7 @@
-import { Eff, type Sub } from 'gamezilla-app/@/core'
+import { type Sub } from 'gamezilla-app/@/core'
+import { Msg } from 'gamezilla-app/@/core/msg'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { EventId, WithEventId } from '../event'
-import { Msg } from 'gamezilla-app/@/core/msg'
 
 //
 //
@@ -33,7 +33,7 @@ export type GameServerModuleTypes = {
 export type Input<T extends GameServerModuleTypes> = {
   deps: T['Deps']
   ctx: T['Ctx']
-  model: T['Model']
+  // model: T['Model']
   modelCore: T['ModelCore']
   msgCore?: (T['MsgCore'] & { eventId: EventId }) | null
   msg?: T['Msg'] | null
@@ -55,8 +55,8 @@ export type Input<T extends GameServerModuleTypes> = {
 //
 
 export type Output<T extends GameServerModuleTypes> = {
-  model: T['Model']
-  eff?: Eff<T['Msg']>
+  // model: T['Model']
+  // eff?: Eff<T['Msg']>
   msgCmd?: T['MsgCmdOut'][]
   msgEvt?: T['MsgEvtOut'][]
   msgCore?: WithEventId<T['MsgCore']>[]
@@ -80,13 +80,11 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
 
 export const andThen = async <T extends GameServerModuleTypes>(
   acc: Output<T>,
-  ...updates: ((model: T['Model']) => Promise<Output<T>>)[]
+  ...updates: (() => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
   for (const update of updates) {
-    const updated = await update(acc.model)
+    const updated = await update()
     acc = {
-      model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       msgCore: Msg.batch(acc.msgCore, updated.msgCore)
@@ -104,19 +102,12 @@ const tagOutput = <
   tagCmd: (msgCmd: T['MsgCmdOut'][]) => TTaggedCmd[] | null | undefined,
   output: Output<T>
 ): {
-  model: { t: TTag; c: T['Model'] }
-  eff?: Eff<{ t: TTag; c: T['Msg'] }>
   msgCmd?: TTaggedCmd[]
   msgEvt?: T['MsgEvtOut'][]
   msgCore?: WithEventId<{ t: TTag; c: T['MsgCore'] }>[]
 } => {
   return {
-    model: {
-      t: tag,
-      c: output.model
-    },
     msgCmd: output.msgCmd ? tagCmd(output.msgCmd) ?? [] : [],
-    eff: Eff.tag(tag, output.eff),
     msgEvt: output.msgEvt,
     msgCore: output.msgCore?.map((c) => ({
       eventId: c.eventId,

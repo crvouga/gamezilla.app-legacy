@@ -10,16 +10,11 @@ import type { ServerModule } from '../../builder.types'
 import type { MsgCore } from './types'
 
 const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen({ model: input.model }, (model) =>
-    updateFromClient({
-      ...input,
-      model
-    })
-  )
+  return GameServerModule.andThen({}, () => updateFromClient({ ...input }))
 }
 
 const updateFromClient: ServerModule['update'] = async (input) => {
-  const { msgClient, model, deps } = input
+  const { msgClient, deps } = input
 
   switch (msgClient?.t) {
     case 'puzzle.edit-name.user-clicked-save-button': {
@@ -39,15 +34,12 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       }
 
       return {
-        model,
         msgCore: [withId(msgCore)]
       }
     }
 
     default: {
-      return {
-        model
-      }
+      return {}
     }
   }
 }
