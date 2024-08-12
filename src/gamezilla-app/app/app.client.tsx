@@ -23,7 +23,7 @@ import * as LangClient from './lang/lang.client'
 import * as ProfileClient from './profile/profile.client'
 import * as SpaceClient from './spaces/spaces.client'
 import { ClientTransport, type IClientTransport } from './wire/transport-client'
-import * as Wire from './wire/wire.client'
+import * as WireClient from './wire/wire.client'
 
 //
 //
@@ -103,9 +103,7 @@ export const init = (input: {
   model: ModelClient
   eff?: Eff<MsgClient>
 } => {
-  const routing = Routing.init({
-    location: input.ctx.location
-  })
+  const routing = Routing.init({ location: input.ctx.location })
 
   const ctx: AnonymousClientCtx = {
     ...input.ctx,
@@ -116,47 +114,15 @@ export const init = (input: {
     profiles: {}
   }
 
-  const lang = LangClient.init({
-    ctx,
-    stored: input.deps.stored
-  })
-
-  const toast = Toast.init({
-    stored: input.deps.stored,
-    ctx
-  })
-
-  const wire = Wire.init({
-    stored: input.deps.stored
-  })
-
-  const auth = AuthClient.init({
-    stored: input.deps.stored,
-    ctx
-  })
-
-  const space = SpaceClient.init({
-    ctx,
-    stored: input.deps.stored
-  })
-
-  const profile = ProfileClient.init({
-    ctx,
-    stored: input.deps.stored
-  })
-
-  const sound = Sound.init({
-    ctx,
-    stored: input.deps.stored
-  })
-
-  const platform = Platform.init({
-    stored: input.deps.stored
-  })
-
-  const statusBar = StatusBar.init({
-    stored: input.deps.stored
-  })
+  const lang = LangClient.init({ ctx, stored: input.deps.stored })
+  const toast = Toast.init({ stored: input.deps.stored, ctx })
+  const wire = WireClient.init({ stored: input.deps.stored })
+  const auth = AuthClient.init({ stored: input.deps.stored, ctx })
+  const space = SpaceClient.init({ ctx, stored: input.deps.stored })
+  const profile = ProfileClient.init({ ctx, stored: input.deps.stored })
+  const sound = Sound.init({ ctx, stored: input.deps.stored })
+  const platform = Platform.init({ stored: input.deps.stored })
+  const statusBar = StatusBar.init({ stored: input.deps.stored })
 
   const initialModel: ModelClient = {
     statusBar: statusBar.model,
@@ -345,7 +311,7 @@ const updateChild = (input: {
     msgCmd: input.msgCmd?.t === 'routing' ? input.msgCmd : null
   })
 
-  const wire = Wire.update({
+  const wire = WireClient.update({
     ctx: clientCtx,
     model: input.model.wire,
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
@@ -459,42 +425,13 @@ export const subscriptions = (input: { ctx: Ctx; deps: Deps; model: ModelClient 
 
   return Sub.batch<MsgClient>([
     Sub.tag('→', Sub.flat(input.deps.transport.toClient)),
-    Sub.tag(
-      'wire',
-      Wire.subscriptions({
-        transport: input.deps.transport
-      })
-    ),
+    Sub.tag('wire', WireClient.subscriptions({ transport: input.deps.transport })),
     Sub.tag('platform', Platform.subscriptions),
     Sub.tag('routing', Routing.subscriptions),
-    Sub.tag(
-      'lang',
-      LangClient.subscriptions({
-        ctx,
-        model: input.model.lang
-      })
-    ),
-    Sub.tag(
-      'toast',
-      Toast.subscriptions({
-        ctx,
-        model: input.model.toast
-      })
-    ),
-    Sub.tag(
-      'auth',
-      AuthClient.subscriptions({
-        ctx,
-        model: input.model.auth
-      })
-    ),
-    Sub.tag(
-      'spaces',
-      SpaceClient.subscriptions({
-        ctx,
-        model: input.model.spaces
-      })
-    )
+    Sub.tag('lang', LangClient.subscriptions({ ctx, model: input.model.lang })),
+    Sub.tag('toast', Toast.subscriptions({ ctx, model: input.model.toast })),
+    Sub.tag('auth', AuthClient.subscriptions({ ctx, model: input.model.auth })),
+    Sub.tag('spaces', SpaceClient.subscriptions({ ctx, model: input.model.spaces }))
   ])
 }
 
@@ -710,7 +647,7 @@ const ViewStatusBar: typeof View = (input) => {
       slots={{
         barLeft: (
           <>
-            <Wire.ViewStatusBar ctx={clientCtx} model={input.model.wire} />
+            <WireClient.ViewStatusBar ctx={clientCtx} model={input.model.wire} />
           </>
         ),
 
@@ -722,7 +659,7 @@ const ViewStatusBar: typeof View = (input) => {
 
         drawerContent: (
           <>
-            <Wire.ViewStatusBarDrawer
+            <WireClient.ViewStatusBarDrawer
               model={input.model.wire}
               dispatch={(c) =>
                 input.dispatch({

@@ -260,45 +260,27 @@ const updateLoop = async (deps: Deps, ctx: ServerCtx, acc: Output): Promise<Outp
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
   if (msgCmd) {
-    const updatedCmd = await updateChild({
-      deps,
-      ctx,
-      msgCmd
-    })
+    const updatedCmd = await updateChild({ deps, ctx, msgCmd })
 
-    const accNew: Output = {
+    logMsg({ msgCmd, logger: deps.logger })
+
+    return updateLoop(deps, ctx, {
       msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt)
-    }
-
-    logMsg({
-      msgCmd,
-      logger: deps.logger
     })
-
-    return updateLoop(deps, ctx, accNew)
   }
 
   const [msgEvt, ...msgEvtRest] = acc.msgEvt
 
   if (msgEvt) {
-    const updatedEvent = await updateChild({
-      deps,
-      ctx,
-      msgEvt
-    })
+    const updatedEvent = await updateChild({ deps, ctx, msgEvt })
 
-    const accNew: Output = {
+    logMsg({ msgEvt, logger: deps.logger })
+
+    return updateLoop(deps, ctx, {
       msgCmd: Msg.batch(msgCmdRest, updatedEvent.msgCmd),
       msgEvt: Msg.batch(msgEvtRest, updatedEvent.msgEvt)
-    }
-
-    logMsg({
-      msgEvt,
-      logger: deps.logger
     })
-
-    return updateLoop(deps, ctx, accNew)
   }
 
   return acc
