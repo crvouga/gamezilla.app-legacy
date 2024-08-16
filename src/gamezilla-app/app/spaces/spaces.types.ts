@@ -9,7 +9,7 @@ import type * as Game from './game/game.types'
 import type { IProfileCache } from './profile-cache'
 import type { IGameDb } from './space/space-game-db'
 import type * as Space from './spaces-core/space-core'
-import type { ISpaceCoreDb } from './spaces-core/space-db'
+import type { ISpacesDb } from './spaces-core/space-db'
 import type { SpaceCoreEvent } from './spaces-core/space-core-event'
 import type * as Spaces from './spaces-core/spaces-core.client'
 import type { GameServer } from './game/game.server'
@@ -57,7 +57,7 @@ export type ServerModule = AppServerModule<{
 
 export type ServerDeps = {
   profileCache: IProfileCache
-  spaceCoreDb: ISpaceCoreDb
+  spaceCoreDb: ISpacesDb
   gameDb: IGameDb
   gameServer: Awaited<ReturnType<(typeof GameServer)['deps']>>
 }

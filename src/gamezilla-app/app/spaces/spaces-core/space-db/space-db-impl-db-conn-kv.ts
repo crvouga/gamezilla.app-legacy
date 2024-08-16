@@ -3,13 +3,13 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import * as Space from '../space-core'
-import type { ISpaceCoreDb } from './space-db'
+import type { ISpacesDb } from './space-db'
 
 export type Deps = {
   dbConnKv: IDbConnKv
 }
 
-export const SpacesDb = (deps: Deps): ISpaceCoreDb => {
+export const SpacesDb = (deps: Deps): ISpacesDb => {
   const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, Space.Model>(
     deps.dbConnKv,
     ['spaces', 'space-by-id'],

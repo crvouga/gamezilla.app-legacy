@@ -8,7 +8,7 @@ import { ListSpacesServer } from './list-spaces/list-spaces.server'
 import { ProfileCache } from './profile-cache'
 import { GameDb } from './space/space-game-db'
 import { SpaceGameServer } from './space/space-game.server'
-import { SpaceCoreDb } from './spaces-core/space-db'
+import { SpacesDb } from './spaces-core/space-db'
 import * as SpacesCoreServer from './spaces-core/spaces-core.server'
 import type { ServerModule } from './spaces.types'
 import { StartSpaceServer } from './start-space/start-space.server'
@@ -28,7 +28,7 @@ export const getDeps: ServerModule['getDeps'] = async ({ ctx }) => {
       t: 'db-conn-kv',
       dbConnKv: ctx.dbConnKv
     }),
-    spaceCoreDb: SpaceCoreDb({
+    spaceCoreDb: SpacesDb({
       t: 'db-conn-kv',
       dbConnKv: ctx.dbConnKv
     }),

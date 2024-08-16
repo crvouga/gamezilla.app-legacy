@@ -2,13 +2,13 @@ import type { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { Task } from 'gamezilla-app/@/core'
 import type * as SpaceCore from '../space-core'
 
-export type SpaceCoreDbWhere = {
+export type SpacesDbWhere = {
   spaceId?: SpaceId
   userId?: UserId
 }
 
-export type ISpaceCoreDb = {
-  list: (input: { limit: number; offset: number; where?: SpaceCoreDbWhere }) => Task<string, SpaceCore.Model[]>
+export type ISpacesDb = {
+  list: (input: { limit: number; offset: number; where?: SpacesDbWhere }) => Task<string, SpaceCore.Model[]>
 
   get: (spaceId: SpaceId | null) => Task<string, SpaceCore.Model | null>
 

@@ -2,10 +2,10 @@ import { describe, expect, it } from 'bun:test'
 import { Ok } from 'gamezilla-app/@/core'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import * as SpaceCore from '../space-core'
-import { SpaceCoreDb } from './space-db-impl'
+import { SpacesDb } from './space-db-impl'
 
 const Fixture = async () => {
-  const spacesDb = SpaceCoreDb({
+  const spacesDb = SpacesDb({
     t: 'db-conn-kv',
     dbConnKv: await DbConnKv({
       t: 'hash-map'
