@@ -163,6 +163,7 @@ export const translations: Text = {
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
   'flow.no-puzzles': '퍼즐이 없습니다',
   'space-game-flow-edit.editing': '편집',
+  'flow-play.no-hints-available': '힌트 없음',
   'spaces.end': '종료',
   'spaces.end-space': '공간 종료',
   'spaces.ended-space-host': '공간 종료됨',

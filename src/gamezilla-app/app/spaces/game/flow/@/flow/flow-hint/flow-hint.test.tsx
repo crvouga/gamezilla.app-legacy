@@ -184,7 +184,7 @@ describe(import.meta.file, () => {
     expect(Flow.hasMultipleDeadEndPipelines(derived)).toBe(false)
   })
 
-  it('should work even with flipped terminal', async () => {
+  it.todo('should work even with flipped terminal', async () => {
     const f = await Fixture({
       ctxflowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([

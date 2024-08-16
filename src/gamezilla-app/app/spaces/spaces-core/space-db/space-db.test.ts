@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { Ok } from 'gamezilla-app/@/core'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import * as SpaceCore from '../space-core'
-import { SpaceCoreDb } from './space-core-db-impl'
+import { SpaceCoreDb } from './space-db-impl'
 
 const Fixture = async () => {
   const spacesDb = SpaceCoreDb({

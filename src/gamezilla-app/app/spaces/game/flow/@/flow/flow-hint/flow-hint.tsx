@@ -5,7 +5,6 @@ import { IconLightbulb } from 'gamezilla-app/app/@/ui'
 import type { ActionInput } from 'gamezilla-app/app/@/ui/actions'
 import type { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
 import { Flow } from '../flow'
-import { FlowAlgoSolve } from '../flow-aglo/flow-algo-solve'
 import type { FlowVariant } from '../flow-variant'
 import { FlowGroupId } from '../flow/flow-group-id'
 import { FlowNodeId } from '../flow/flow-node-id'
@@ -44,6 +43,9 @@ export type Event =
   | {
       t: 'used-hint'
     }
+  | {
+      t: 'no-hints'
+    }
 
 export const update = <TModel extends Model, TMsg extends { t: string & {} }>(input: {
   msg: Msg | TMsg
@@ -76,11 +78,14 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
       const solution =
         input.ctx.flowPuzzle.flowSolutions.length > 0 && eq(terminalFlowPuzzle, terminalFlowModel)
           ? input.ctx.flowPuzzle.flowSolutions[0]
-          : FlowAlgoSolve.solve(flow)
+          : null
 
       if (!solution) {
         return {
-          model: input.model
+          model: input.model,
+          event: {
+            t: 'no-hints'
+          }
         }
       }
 

@@ -425,7 +425,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
         if (updated.event) {
           return {
             model,
-            msgCmd: [playSound(FlowPlay.eventToSoundSrc(updated.event))]
+            msgCmd: FlowPlay.eventToClientCmd(input.ctx, updated.event)
           }
         }
 

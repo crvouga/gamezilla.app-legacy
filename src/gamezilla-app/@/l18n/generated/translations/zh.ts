@@ -162,6 +162,7 @@ export const translations: Text = {
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
   'flow.no-puzzles': '没有拼图',
   'space-game-flow-edit.editing': '编辑',
+  'flow-play.no-hints-available': '没有提示',
   'spaces.end': '结束',
   'spaces.end-space': '结束空间',
   'spaces.ended-space-host': '空间已结束',

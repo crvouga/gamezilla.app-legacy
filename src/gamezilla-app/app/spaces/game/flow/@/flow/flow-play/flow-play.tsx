@@ -1,7 +1,7 @@
 import { pipe, TimeSpan } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { Translator } from 'gamezilla-app/@/l18n/generated'
-import { APP_SOUND } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, ClientCmd, playSound, showToast } from 'gamezilla-app/app/@/client'
 import { IconCheckmark, Transition } from 'gamezilla-app/app/@/ui'
 import { ActionInput, Actions } from 'gamezilla-app/app/@/ui/actions'
 import type { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
@@ -234,26 +234,36 @@ export type Event =
       t: 'resetted'
     }
 
-export const eventToSoundSrc = (event: Event): string => {
+export const eventToClientCmd = (
+  { t }: { t: Translator },
+  event: Event
+): ClientCmd<{
+  MsgClient: never
+  MsgToServer: never
+}>[] => {
   switch (event.t) {
     case 'connected-terminals': {
-      return APP_SOUND.tap
+      return [playSound(APP_SOUND.tap)]
     }
 
     case 'solved': {
-      return APP_SOUND.celebration
+      return [playSound(APP_SOUND.celebration)]
     }
 
     case 'started-dragging': {
-      return APP_SOUND.tap
+      return [playSound(APP_SOUND.tap)]
     }
 
     case 'used-hint': {
-      return APP_SOUND.navForwardMin
+      return [playSound(APP_SOUND.navForwardMin)]
     }
 
     case 'resetted': {
-      return APP_SOUND.navTransitionLeft
+      return [playSound(APP_SOUND.navTransitionLeft)]
+    }
+
+    case 'no-hints': {
+      return [playSound(APP_SOUND.alertErrorSm), showToast(t('flow-play.no-hints-available'))]
     }
   }
 }

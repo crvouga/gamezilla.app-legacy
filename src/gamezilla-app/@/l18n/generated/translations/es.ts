@@ -165,6 +165,7 @@ export const translations: Text = {
   'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
   'flow.no-puzzles': 'Sin rompecabezas',
   'space-game-flow-edit.editing': 'Edición',
+  'flow-play.no-hints-available': 'No hay pistas disponibles',
   'spaces.end': 'Finalizar',
   'spaces.end-space': 'Finalizar espacio',
   'spaces.ended-space-host': 'Espacio finalizado por el anfitrión',

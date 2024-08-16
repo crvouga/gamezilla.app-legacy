@@ -32,18 +32,19 @@ import type { Text as Text29 } from '../../../app/spaces/game/flow/@/flow-puzzle
 import type { Text as Text30 } from '../../../app/spaces/game/flow/@/flow-puzzle/flow-puzzle-list/flow-puzzle-list.$l18n'
 import type { Text as Text31 } from '../../../app/spaces/game/flow/@/flow/flow-edit/flow-edit.$l18n'
 import type { Text as Text32 } from '../../../app/spaces/game/flow/@/flow/flow-copy-to-clipboard/flow-copy-to-clipboard.$l18n'
-import type { Text as Text33 } from '../../../app/spaces/end-space/end-space.$l18n'
-import type { Text as Text34 } from '../../../app/spaces/join-space/join-space.$l18n'
-import type { Text as Text35 } from '../../../app/spaces/space/space.$l18n'
-import type { Text as Text36 } from '../../../app/spaces/list-spaces/space-card.$l18n'
-import type { Text as Text37 } from '../../../app/spaces/list-spaces/list-spaces.$l18n'
-import type { Text as Text38 } from '../../../app/spaces/@/spaces.$l18n'
-import type { Text as Text39 } from '../../../app/lang/lang.$l18n'
-import type { Text as Text40 } from '../../../app/profile/update-username/update-username.$l18n'
-import type { Text as Text41 } from '../../../app/profile/profile.$l18n'
-import type { Text as Text42 } from '../../../app/@/app.$l18n'
-import type { Text as Text43 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text44 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
+import type { Text as Text33 } from '../../../app/spaces/game/flow/@/flow/flow-play/flow-play.$l18n'
+import type { Text as Text34 } from '../../../app/spaces/end-space/end-space.$l18n'
+import type { Text as Text35 } from '../../../app/spaces/join-space/join-space.$l18n'
+import type { Text as Text36 } from '../../../app/spaces/space/space.$l18n'
+import type { Text as Text37 } from '../../../app/spaces/list-spaces/space-card.$l18n'
+import type { Text as Text38 } from '../../../app/spaces/list-spaces/list-spaces.$l18n'
+import type { Text as Text39 } from '../../../app/spaces/@/spaces.$l18n'
+import type { Text as Text40 } from '../../../app/lang/lang.$l18n'
+import type { Text as Text41 } from '../../../app/profile/update-username/update-username.$l18n'
+import type { Text as Text42 } from '../../../app/profile/profile.$l18n'
+import type { Text as Text43 } from '../../../app/@/app.$l18n'
+import type { Text as Text44 } from '../../../app/@/data/username/username.$l18n'
+import type { Text as Text45 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -89,4 +90,5 @@ export type Text = Text0 &
   Text41 &
   Text42 &
   Text43 &
-  Text44
+  Text44 &
+  Text45

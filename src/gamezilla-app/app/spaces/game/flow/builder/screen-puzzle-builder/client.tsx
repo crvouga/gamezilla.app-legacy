@@ -120,10 +120,9 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
       })
 
       if (updated.event) {
-        const soundSrc = FlowPlay.eventToSoundSrc(updated.event)
         return {
           model,
-          msgCmd: [playSound(soundSrc)]
+          msgCmd: FlowPlay.eventToClientCmd(input.ctx, updated.event)
         }
       }
 
