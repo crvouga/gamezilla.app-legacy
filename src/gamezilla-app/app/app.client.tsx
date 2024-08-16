@@ -453,7 +453,7 @@ export const View = (input: { ctx: Ctx; model: ModelClient; dispatch: (msg: MsgC
         transform: 'translate(-50%, -50%)'
       }}
     >
-      <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-700'>
+      <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600'>
         <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
 
         <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
@@ -742,7 +742,7 @@ const ViewBottomNavBar = (input: {
           })
         }
       />
-      <div className='flex h-16 w-full items-center justify-center border-t border-neutral-700'>
+      <div className='flex h-16 w-full items-center justify-center border-t border-neutral-600'>
         {items.map((item) => {
           const isSelected = eq(item.route, input.model.routing.currentRoute)
           return (

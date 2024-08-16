@@ -391,7 +391,7 @@ const Slot = ({ active, children }: { active: boolean; children: VDomChildren })
   return (
     <div
       className={cn(
-        'flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-700 bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
+        'flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-600 bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
         active && 'border-b-blue-500'
       )}
     >

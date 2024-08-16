@@ -174,7 +174,7 @@ const View: SpaceClientModule['View'] = (input) => {
         />
       </div>
 
-      <div className='flex flex-row gap-4 border-t border-neutral-700 p-4'>
+      <div className='flex flex-row gap-4 border-t border-neutral-600 p-4'>
         <Button
           className='flex-1'
           variant='contained'

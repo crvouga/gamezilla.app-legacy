@@ -17,7 +17,7 @@ export const TopBar = (input: {
   return (
     <div
       className={cn(
-        'flex h-16 w-full shrink-0 items-center truncate border-b border-neutral-700 px-4',
+        'flex h-16 w-full shrink-0 items-center truncate border-b border-neutral-600 px-4',
         input.center && 'text-center'
       )}
     >

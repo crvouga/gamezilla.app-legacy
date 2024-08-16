@@ -52,7 +52,7 @@ const View = ({
   const firstButtons = cleanedButtons.slice(0, limit)
   const lastButtons = cleanedButtons.slice(limit)
   return (
-    <div className='flex w-full items-center border-t border-neutral-700'>
+    <div className='flex w-full items-center border-t border-neutral-600'>
       {firstButtons.map((button) => (
         <ViewBottomButtonBarAction {...button} key={button.label} />
       ))}
@@ -84,7 +84,7 @@ const View = ({
 }
 
 export const ViewBottomButtonBar = ({ children }: { children: VDomChildren }) => {
-  return <div className='flex w-full items-center border-t border-neutral-700'>{children}</div>
+  return <div className='flex w-full items-center border-t border-neutral-600'>{children}</div>
 }
 
 export const ViewBottomButtonBarAction = (input: ActionInput) => {

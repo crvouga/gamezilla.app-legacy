@@ -22,10 +22,10 @@ export const Tabs = <TTab extends string>({
               onClick={() => onSelect(tab)}
               className={cn(
                 'flex h-full w-full items-center justify-center border-b border-t py-3 text-xl font-bold hover:bg-black active:opacity-60',
-                index !== tabs.length - 1 && 'border-r-2 border-r-neutral-700',
+                index !== tabs.length - 1 && 'border-r-2 border-r-neutral-600',
                 selected === tab
-                  ? 'border-neutral-700 border-b-blue-500 text-blue-500'
-                  : 'border-neutral-700 text-neutral-300'
+                  ? 'border-neutral-600 border-b-blue-500 text-blue-500'
+                  : 'border-neutral-600 text-neutral-300'
               )}
             >
               {labels[tab]}

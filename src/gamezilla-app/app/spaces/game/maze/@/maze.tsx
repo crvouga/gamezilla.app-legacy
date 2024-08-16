@@ -184,7 +184,7 @@ const viewBox = [
 export const CoverArt = () => {
   return (
     // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
-    <svg viewBox={viewBox} width='100%' className='border border-neutral-700'>
+    <svg viewBox={viewBox} width='100%' className='border border-neutral-600'>
       <rect x={coverArtMaze.lower.x} y={coverArtMaze.lower.y} width='100%' height='100%' fill={'#000'} />
       {coverArtMaze.edges.map(([a, b]) => (
         <g key={[a.x, a.y, b.x, b.y].join('-')} strokeWidth='0.1' stroke={'#fff'}>

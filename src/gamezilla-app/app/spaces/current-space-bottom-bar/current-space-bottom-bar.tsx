@@ -76,7 +76,7 @@ const View = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: ModelClient; di
             {!space.game ? (
               <Avatar src={hostProfile?.avatarUrl} alt='Host Avatar' className='h-14 w-14' />
             ) : (
-              <div className='h-14 w-14 overflow-hidden rounded border border-neutral-700'>
+              <div className='h-14 w-14 overflow-hidden rounded border border-neutral-600'>
                 <CoverArt gameName={space.game.t} />
               </div>
             )}

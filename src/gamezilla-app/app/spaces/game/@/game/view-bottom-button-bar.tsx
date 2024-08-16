@@ -26,7 +26,7 @@ type BottomBarButtonAction = {
 }
 
 export const ViewBottomButtonBar = ({ children }: { children: VDomChildren }) => {
-  return <div className='flex w-full shrink-0 items-center border-t border-neutral-700'>{children}</div>
+  return <div className='flex w-full shrink-0 items-center border-t border-neutral-600'>{children}</div>
 }
 
 export const ViewBottomButtonBarAction = (input: BottomBarButtonAction) => {

@@ -215,7 +215,7 @@ const ViewChooseLang: Module['View'] = (input) => {
         }
         title={input.ctx.t('lang.choose-language')}
       />
-      <div className='flex flex-1 flex-col divide-y divide-neutral-700 overflow-y-scroll'>
+      <div className='flex flex-1 flex-col divide-y divide-neutral-600 overflow-y-scroll'>
         {LanguageCodeISO_639_1.ALL.map((code) => (
           <ListItemButton
             key={code}

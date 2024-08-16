@@ -410,7 +410,7 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
                   gameName
                 })
               }
-              className='flex overflow-hidden rounded-lg border border-neutral-700'
+              className='flex overflow-hidden rounded-lg border border-neutral-600'
             >
               <CoverArt gameName={gameName} />
             </button>

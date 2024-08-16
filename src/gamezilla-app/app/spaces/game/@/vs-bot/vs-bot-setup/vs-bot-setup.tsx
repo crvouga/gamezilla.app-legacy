@@ -171,7 +171,7 @@ export const View = ({
       <div className='flex flex-1 items-center justify-center' />
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className='flex items-center gap-4 border-t border-neutral-700 p-4'>
+        <div className='flex items-center gap-4 border-t border-neutral-600 p-4'>
           <Button
             disabled={!canStartGame}
             variant='contained'
