@@ -320,7 +320,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
       <div
         className={cn(
           'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl',
-          input.toast.variant === 'info' && 'border-neutral-600 bg-neutral-700',
+          input.toast.variant === 'info' && 'border-neutral-700 bg-neutral-700',
           input.toast.variant === 'error' && 'border-red-400 bg-red-500'
         )}
         key={input.toast.toastId}

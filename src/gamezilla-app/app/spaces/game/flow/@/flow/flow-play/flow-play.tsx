@@ -564,7 +564,7 @@ export const View = (input: {
   const flow = toFlow(input)
 
   return (
-    <>
+    <div className='relative flex w-full items-center justify-center'>
       <FlowVariantUI.View
         disabled={input.disabled}
         model={flow}
@@ -586,7 +586,7 @@ export const View = (input: {
         usedHints={FlowHint.toUsedHints(input.model)}
       />
       <CheckmarkAnimation open={Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation)} />
-    </>
+    </div>
   )
 }
 
