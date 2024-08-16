@@ -81,14 +81,14 @@ export const init: ServerModule['init'] = async () => {
 //
 
 export const update: ServerModule['update'] = async (input) => {
-  const updated = await updateMain(input)
+  const updated = await updateLoop(input)
 
   return {
     msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd)
   }
 }
 
-const updateMain = async (input: Input, initialAcc?: Output): Promise<Output> => {
+const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> => {
   const acc = initialAcc ?? (await updateChild(input))
 
   const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? []
@@ -100,7 +100,7 @@ const updateMain = async (input: Input, initialAcc?: Output): Promise<Output> =>
       msgSpaceEvent: spaceEvent
     })
 
-    return updateMain(input, {
+    return updateLoop(input, {
       msgSpaceEvent: Msg.batch(spaceEventsRest, updated.msgSpaceEvent),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: updated.msgEvt
@@ -116,7 +116,7 @@ const updateMain = async (input: Input, initialAcc?: Output): Promise<Output> =>
       msgCmd: spaceCmd
     })
 
-    return updateMain(input, {
+    return updateLoop(input, {
       msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
       msgCmd: Msg.batch(spaceCmdsRest, updated.msgCmd),
       msgEvt: updated.msgEvt

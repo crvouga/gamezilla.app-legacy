@@ -6,6 +6,7 @@ import { FlowPackDb, FlowPackListServer } from '../@/flow-pack'
 import { FlowPackPuzzlesGridServer } from '../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server'
 import { FlowPuzzleDb } from '../@/flow-puzzle'
 import { ServerModule } from './play.types'
+import * as ScreenPlayPuzzleServer from './screen-play-puzzle/screen-play-puzzle.server'
 
 const init: ServerModule['init'] = async () => {
   return {
@@ -17,7 +18,8 @@ const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen(
     {},
     () => updateFlowPackList(input),
-    () => updateFlowPackGrid(input)
+    () => updateFlowPackGrid(input),
+    () => ScreenPlayPuzzleServer.update(input)
   )
 }
 
