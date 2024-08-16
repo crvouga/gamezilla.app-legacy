@@ -154,9 +154,7 @@ export type FlowPlayClientModuleTypes = GameClientModuleTypesConfig<{
   MsgEvtIn: SpaceClientEvt
 }>
 
-export type FlowPlayClientModule = GameClientModule<FlowPlayClientModuleTypes>
-
-export type ClientModuleTypes = GameClientModuleTypesConfig<{
+export type ClientModule = GameClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
@@ -173,8 +171,6 @@ export type ClientModuleTypes = GameClientModuleTypesConfig<{
     | FlowPackPuzzlesGridTypes.MsgInCmdClient
   MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient
 }>
-
-export type ClientModule = GameClientModule<ClientModuleTypes>
 
 export type ServerModule = GameServerModule<{
   Model: ModelServer

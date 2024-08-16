@@ -1,16 +1,10 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
-import {
-  GameClientModule,
-  type IUpdate,
-  type IUpdateLoop,
-  type IView,
-  type IViewFeedItem
-} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { FlowPackListClient } from '../@/flow-pack'
 import { FlowPackPuzzlesGridClient } from '../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'
-import type { ClientModule, ClientModuleTypes, FlowPlayClientModule, FlowPlayClientModuleTypes } from './play.types'
+import type { ClientModule, MsgClient, MsgToServer } from './play.types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/screen-play-puzzle.client'
 import { ScreenSelectPackClient } from './screen-select-pack/screen-select-pack.client'
 import { ScreenSelectPuzzleClient } from './screen-select-puzzle/select-puzzle.client'
@@ -22,7 +16,14 @@ const init: ClientModule['init'] = {
   flowPuzzles: {}
 }
 
-const update: IUpdate<FlowPlayClientModuleTypes> = (input) => {
+const update = (
+  input: Parameters<ClientModule['update']>[0]
+): ReturnType<ClientModule['update']> & {
+  msgCmd?: SpaceClientCmd<{
+    MsgClient: MsgClient
+    MsgToServer: MsgToServer
+  }>[]
+} => {
   const updatedChild = updateChild({
     ...input,
     msgCmd: null
@@ -38,7 +39,7 @@ const update: IUpdate<FlowPlayClientModuleTypes> = (input) => {
   }
 }
 
-const updateLoop: IUpdateLoop<ClientModuleTypes> = (input, acc) => {
+const updateLoop = (input: Parameters<ClientModule['update']>[0], acc: ReturnType<ClientModule['update']>) => {
   const [cmd, ...rest] = (acc.msgCmd ?? []).flatMap((cmd) => (cmd.t === 'flow-pack-puzzles-grid' ? [cmd] : []))
 
   if (cmd) {
@@ -59,7 +60,7 @@ const updateLoop: IUpdateLoop<ClientModuleTypes> = (input, acc) => {
   return acc
 }
 
-const updateChild: IUpdate<ClientModuleTypes> = (input) => {
+const updateChild: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => updateFlowPackList({ ...input, model }),
@@ -70,7 +71,7 @@ const updateChild: IUpdate<ClientModuleTypes> = (input) => {
   )
 }
 
-const updateFlowPackList: IUpdate<ClientModuleTypes> = (input) => {
+const updateFlowPackList: ClientModule['update'] = (input) => {
   const updated = FlowPackListClient.update({
     ctx: input.ctx,
     model: {
@@ -99,7 +100,7 @@ const updateFlowPackList: IUpdate<ClientModuleTypes> = (input) => {
   }
 }
 
-const updateFlowPackPuzzlesGrid: IUpdate<ClientModuleTypes> = (input) => {
+const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {
   const pack = 'flowPack' in input.modelCore.screen ? input.modelCore.screen.flowPack : null
 
   if (!pack) {
@@ -157,7 +158,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
   }
 }
 
-const View: IView<ClientModuleTypes> = (input) => {
+const View: ClientModule['View'] = (input) => {
   return (
     <div className='flex h-full w-full flex-col'>
       <ViewScreen {...input} />
@@ -165,7 +166,7 @@ const View: IView<ClientModuleTypes> = (input) => {
   )
 }
 
-const ViewScreen: IView<ClientModuleTypes> = (input) => {
+const ViewScreen: ClientModule['View'] = (input) => {
   switch (input.modelCore.screen.t) {
     case 'screen-select-puzzle': {
       return <ScreenSelectPuzzleClient.View {...input} />
@@ -185,11 +186,11 @@ const ViewScreen: IView<ClientModuleTypes> = (input) => {
   }
 }
 
-const ViewFeedItem: IViewFeedItem<ClientModuleTypes> = (_input) => {
+const ViewFeedItem: ClientModule['ViewFeedItem'] = (_input) => {
   return null
 }
 
-export const PlayClient: FlowPlayClientModule = {
+export const PlayClient = {
   init,
   update,
   subscriptions,

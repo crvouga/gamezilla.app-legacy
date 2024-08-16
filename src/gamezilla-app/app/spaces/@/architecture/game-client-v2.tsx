@@ -102,31 +102,6 @@ export type InferOutput<T extends GameClientModule<any>> = T extends GameClientM
 
 export type InferInput<T extends GameClientModule<any>> = T extends GameClientModule<infer U> ? Input<U> : never
 
-export type IUpdate<T extends GameClientModuleTypes> = (input: Input<T>) => Output<T>
-
-export type IUpdateLoop<T extends GameClientModuleTypes> = (input: Input<T>, acc: Output<T>) => Output<T>
-
-export type ISubscriptions<T extends GameClientModuleTypes> = (input: {
-  ctx: T['Ctx']
-  model: T['Model']
-}) => Sub<T['Msg']>
-
-export type IView<T extends GameClientModuleTypes> = (input: {
-  ctx: T['Ctx']
-  modelCore: T['ModelCore']
-  model: T['Model']
-  dispatch: (msg: T['Msg']) => void
-  slots?: SlotRenderFunctions<T['ViewSlot']>
-  emits?: EmitFunctions<T['ViewEmit']>
-}) => VDom
-
-export type IViewFeedItem<T extends GameClientModuleTypes> = (input: {
-  ctx: T['Ctx']
-  msgCore: T['MsgCore']
-  dispatch: (msg: T['Msg']) => void
-}) => VDom
-
-//
 //
 //
 //
