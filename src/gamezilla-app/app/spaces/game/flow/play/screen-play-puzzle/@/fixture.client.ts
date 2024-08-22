@@ -4,18 +4,22 @@ import { FlowPuzzle } from '../../../@/flow-puzzle'
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture.client'
 import { FlowPuzzleResult } from '../../@/puzzle-result'
+import { UserId } from 'gamezilla-app/app/@/data'
 
-const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) =>
-  FlowPlay.toSolutionMsgs({
+const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) => {
+  const userId = UserId.generate()
+  return FlowPlay.toSolutionMsgs({
     flow: puzzle.flow
   }).map(
     (c): FixtureUpdateInput => ({
       msgCore: withEventMeta({
         t: 'got-flow-play-msg',
+        userId,
         c
       })
     })
   )
+}
 
 export const FixtureScreenPlayPuzzleClient = async () => {
   const f = await FixtureFlowPlayClient()

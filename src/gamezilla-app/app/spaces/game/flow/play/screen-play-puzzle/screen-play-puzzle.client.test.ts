@@ -3,6 +3,7 @@ import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { Flow } from '../../@/flow'
 import { FixtureScreenPlayPuzzleClient } from './@/fixture.client'
+import { UserId } from 'gamezilla-app/app/@/data'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleClient()
@@ -151,6 +152,7 @@ describe(import.meta.file, () => {
       {
         msgCore: withEventMeta({
           t: 'got-flow-play-msg',
+          userId: UserId.generate(),
           c: {
             t: 'user-pressed-down-node',
             nodeId: terminal.startId

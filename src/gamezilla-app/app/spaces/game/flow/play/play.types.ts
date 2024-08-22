@@ -1,9 +1,6 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
-import type {
-  GameClientModule,
-  GameClientModuleTypesConfig
-} from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import type { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/@/architecture/game-core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import type { SpaceClientEvt, SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
@@ -138,21 +135,6 @@ export type ModelCore = p.Infer<typeof ModelCore>
 //
 //
 //
-
-export type FlowPlayClientModuleTypes = GameClientModuleTypesConfig<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  MsgCore: MsgCore
-  ModelCore: ModelCore
-  Ctx: FlowClientCtx
-  MsgCmdOut: SpaceClientCmd<{
-    MsgToServer: MsgToServer
-    MsgClient: MsgClient
-  }>
-  MsgEvtIn: SpaceClientEvt
-}>
 
 export type ClientModule = GameClientModule<{
   Model: ModelClient

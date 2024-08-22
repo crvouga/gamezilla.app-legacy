@@ -189,7 +189,8 @@ const View: ClientModule['View'] = (input) => {
               dispatch={(c) =>
                 input.dispatch({
                   t: 'got-flow-play-msg',
-                  c
+                  c,
+                  userId: input.ctx.currentUserId
                 })
               }
               showSolvedAnimation
@@ -273,7 +274,12 @@ const View: ClientModule['View'] = (input) => {
                   model: flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } }),
                   ctx: { ...input.ctx, flowPuzzle: flowPuzzle.c },
                   disabled: false,
-                  dispatch: (c) => input.dispatch({ t: 'got-flow-play-msg', c })
+                  dispatch: (c) =>
+                    input.dispatch({
+                      t: 'got-flow-play-msg',
+                      c,
+                      userId: input.ctx.currentUserId
+                    })
                 })
               : null,
 
