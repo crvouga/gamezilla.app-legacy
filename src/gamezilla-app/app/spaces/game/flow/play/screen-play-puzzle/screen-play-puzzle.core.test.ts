@@ -5,6 +5,7 @@ import type { MsgCore } from './screen-play-puzzle.types'
 import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
 import { FlowGrid, FlowGridShorthand } from '../../@/flow/flow-variant/flow-grid'
 import { FlowPlay } from '../../@/flow/flow-play'
+import { UserId } from 'gamezilla-app/app/@/data'
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await ScreenPuzzlePlayCoreChildFixture(input)
@@ -32,6 +33,7 @@ describe(import.meta.file, () => {
       f.init,
       FlowPlay.randomMsgs(f.puzzle).map(
         (c): MsgCore => ({
+          userId: UserId.generate(),
           t: 'got-flow-play-msg',
           c
         })
@@ -82,6 +84,7 @@ describe(import.meta.file, () => {
       flow: f.puzzle.flow
     }).map(
       (c): MsgCore => ({
+        userId: UserId.generate(),
         t: 'got-flow-play-msg',
         c
       })
@@ -144,6 +147,7 @@ describe(import.meta.file, () => {
     if (!nodeId) throw new Error('nodeId not found')
     const after = f.update(before, [
       {
+        userId: UserId.generate(),
         t: 'got-flow-play-msg',
         c: {
           t: 'user-pressed-down-node',
@@ -196,7 +200,8 @@ describe(import.meta.file, () => {
         c: {
           t: 'user-pressed-up-node',
           nodeId: endId
-        }
+        },
+        userId: UserId.generate()
       }
     ])
     expect(before.opened === null).toBe(true)
@@ -318,5 +323,11 @@ describe(import.meta.file, () => {
       }
     ])
     expect(output[1]?.puzzleResult.t).toBe('not-found')
+  })
+
+  test('output user completed puzzle event', async () => {
+    const f = await Fixture()
+    const output = f.update(f.init, [...f.completePuzzleMsgs])
+    expect(output.event?.t).toBe('user-completed-puzzle')
   })
 })

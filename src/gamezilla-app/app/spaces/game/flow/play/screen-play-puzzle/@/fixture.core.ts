@@ -7,6 +7,7 @@ import { CoreFixture } from '../../@/fixture.core'
 import { FlowPuzzleResult } from '../../@/puzzle-result'
 import { ScreenPlayPuzzleCore } from '../screen-play-puzzle.core'
 import type { ModelCore, MsgCore } from '../screen-play-puzzle.types'
+import { UserId } from 'gamezilla-app/app/@/data'
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await CoreFixture()
@@ -34,6 +35,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
     }
   ])
 
+  const userId = UserId.generate()
   const completePuzzleMsgs = pipe(
     FlowPlay.toSolutionMsgs({
       flow: puzzle.flow
@@ -41,6 +43,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
     (msgs) =>
       msgs.map(
         (c): MsgCore => ({
+          userId,
           t: 'got-flow-play-msg',
           c
         })
@@ -64,7 +67,10 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
 export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await ScreenPuzzlePlayCoreFixture(input)
 
-  const updates = (init: ModelCore, msgs: MsgCore[]): NonEmpty<ModelCore> => {
+  const updates = (
+    init: ModelCore,
+    msgs: MsgCore[]
+  ): NonEmpty<ReturnType<typeof ScreenPlayPuzzleCore.updateScreen>> => {
     const models: NonEmpty<ModelCore> = [init]
     for (const msg of msgs) {
       const last = NonEmpty.last(models)
@@ -74,7 +80,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: FlowVari
     return models
   }
 
-  const update = (init: ModelCore, msgs: MsgCore[]): ModelCore => {
+  const update = (init: ModelCore, msgs: MsgCore[]): ReturnType<typeof ScreenPlayPuzzleCore.updateScreen> => {
     const outputs = updates(init, msgs)
     return NonEmpty.last(outputs)
   }

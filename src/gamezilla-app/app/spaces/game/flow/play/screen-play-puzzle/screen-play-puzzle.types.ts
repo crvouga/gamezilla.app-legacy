@@ -6,12 +6,15 @@ import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGroupId } from '../../@/flow/flow/flow-group-id'
 import { FlowPuzzleResult } from '../@/puzzle-result'
 import { CopyPuzzleTypes } from './copy-puzzle'
+import { UserId } from 'gamezilla-app/app/@/data'
+import { FlowPackId } from '../../@/flow-pack/flow-pack-id'
 
 export const MsgCore = p.or(
   CopyPuzzleTypes.MsgCore,
   p.obj({
     t: p.l('got-flow-play-msg'),
-    c: FlowPlay.Msg
+    c: FlowPlay.Msg,
+    userId: UserId
   }),
   p.obj({
     t: p.l('user-clicked-exit-puzzle')
@@ -44,6 +47,16 @@ export const MsgCore = p.or(
 )
 
 export type MsgCore = p.Infer<typeof MsgCore>
+
+export const MsgCoreEvt = p.or(
+  p.obj({
+    t: p.l('user-completed-puzzle'),
+    userId: UserId,
+    packId: FlowPackId,
+    puzzleIndex: p.num
+  })
+)
+export type MsgCoreEvt = p.Infer<typeof MsgCoreEvt>
 
 export const ModelCore = p.obj({
   t: p.l('screen-play-puzzle'),

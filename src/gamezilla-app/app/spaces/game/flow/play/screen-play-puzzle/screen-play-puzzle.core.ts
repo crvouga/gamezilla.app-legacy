@@ -5,7 +5,7 @@ import { FlowPuzzleResult } from '../@/puzzle-result'
 import type { CoreModule, MsgCore } from '../play.types'
 import * as CopyPuzzleCore from './copy-puzzle/copy-puzzle.core'
 import { LastPuzzleCore } from './last-puzzle/last-puzzle.core'
-import type { ModelCore } from './screen-play-puzzle.types'
+import type { ModelCore, MsgCoreEvt } from './screen-play-puzzle.types'
 
 const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
   switch (input.modelCore.screen.t) {
@@ -22,7 +22,7 @@ const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
   }
 }
 
-const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
+const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { event?: MsgCoreEvt } => {
   switch (msgCore.t) {
     case 'got-flow-play-msg': {
       if (modelCore.puzzleResult.t === 'not-found') {
@@ -49,7 +49,13 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
         return {
           ...modelCore,
           flowPlay: flowPlayNew.model,
-          opened: 'puzzle-complete'
+          opened: 'puzzle-complete',
+          event: {
+            t: 'user-completed-puzzle',
+            packId: modelCore.flowPack.id,
+            puzzleIndex: modelCore.puzzleIndex,
+            userId: msgCore.userId
+          }
         }
       }
 
