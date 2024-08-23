@@ -1,4 +1,3 @@
-import { Flow } from '../../@/flow'
 import type { FlowPack } from '../../@/flow-pack'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowPuzzleResult } from '../@/puzzle-result'
@@ -226,33 +225,21 @@ const updateCore: CoreModule['updateCore'] = (input) => {
   )
 }
 
-const toStatus = (modelCore: ModelCore): 'solved' | 'solving' | 'not-playing' => {
+const toStatus = (modelCore: ModelCore) => {
   if (modelCore.puzzleResult.t === 'not-found') {
     return 'not-playing'
   }
 
-  const flowPlay =
-    modelCore.flowPlay ??
-    FlowPlay.init({
-      ctx: {
-        flowPuzzle: modelCore.puzzleResult.c
-      }
-    })
+  const flowPlay = modelCore.flowPlay
 
-  const flow = FlowPlay.toFlow({
-    flow: modelCore.puzzleResult.c.flow,
-    model: flowPlay
-  })
-
-  if (FlowPlay.toStatus(flowPlay) === 'dragging') {
+  if (!flowPlay) {
     return 'solving'
   }
 
-  if (Flow.isSolved(flow)) {
-    return 'solved'
-  }
-
-  return 'solving'
+  return FlowPlay.toStatus({
+    flow: modelCore.puzzleResult.c.flow,
+    model: flowPlay
+  })
 }
 
 export const ScreenPlayPuzzleCore = {

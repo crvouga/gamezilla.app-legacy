@@ -6,10 +6,18 @@ export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'capti
 
 const variantClasses: { [variant in TypographyVariant]: string } = {
   title: 'text-3xl font-bold text-white',
-  body: 'text-base text-neutral-300',
-  label: 'text-xs text-neutral-300',
-  subtitle: 'text-sm text-neutral-300',
-  caption: 'text-xs text-neutral-300'
+  body: 'text-base',
+  label: 'text-xs',
+  subtitle: 'text-sm',
+  caption: 'text-xs'
+}
+
+export type TypographyColor = 'inherit' | 'text-primary' | 'text-secondary'
+
+const colorClasses: { [color in TypographyColor]: string } = {
+  'text-secondary': 'text-neutral-300',
+  'text-primary': 'text-white',
+  inherit: 'text-inherit'
 }
 
 export const Typography = (input: {
@@ -17,9 +25,14 @@ export const Typography = (input: {
   variant: TypographyVariant
   className?: string
   role?: AriaRole
+  color?: 'inherit' | 'text-primary' | 'text-secondary'
 }) => {
   return (
-    <div className={cn(variantClasses[input.variant], input.className)} role={input.role} aria-label={input.text}>
+    <div
+      className={cn(variantClasses[input.variant], colorClasses[input.color ?? 'inherit'], input.className)}
+      role={input.role}
+      aria-label={input.text}
+    >
       {input.text}
     </div>
   )

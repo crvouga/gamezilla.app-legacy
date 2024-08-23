@@ -1,10 +1,11 @@
 import { describe, expect, it, test } from 'bun:test'
-import type { FlowVariant } from '../flow-variant'
+import { FlowPlay } from '.'
+import { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
 import { Flow } from '../flow'
+import type { FlowVariant } from '../flow-variant'
 import { FlowGrid } from '../flow-variant/flow-grid'
 import { FlowGridShorthand } from '../flow-variant/flow-grid/flow-grid-shorthand'
-import { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
-import { FlowPlay } from '.'
+import { toStatus } from './flow-play'
 
 const Fixture = async ({ ctxFlow }: { ctxFlow: FlowVariant.Model }) => {
   const ctxflowPuzzle = await FlowPuzzle.random({
@@ -518,5 +519,24 @@ describe(import.meta.file, () => {
     })
     const output = f.update(f.init, [...f.solutionMsgs])
     expect(output.model.showCheckmarkAnimation).toBe(true)
+  })
+
+  test('status should be solved if solved but is dragging lonely terminal', async () => {
+    const f = await Fixture({
+      ctxFlow: FlowGridShorthand.toGrid([
+        ['A', ' ', ' '],
+        [' ', ' ', ' '],
+        ['A', ' ', 'B']
+      ])
+    })
+
+    const output = f.update(f.init, [
+      ...f.solutionMsgs,
+      {
+        t: 'user-pressed-down-node',
+        nodeId: FlowGrid.toNodeId({ x: 2, y: 2 })
+      }
+    ])
+    expect(toStatus({ model: output.model, flow: f.flow })).toBe('solved')
   })
 })

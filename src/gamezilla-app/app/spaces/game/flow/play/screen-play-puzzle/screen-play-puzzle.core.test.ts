@@ -1,11 +1,11 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Flow, type FlowVariant } from '../../@/flow'
-import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture.core'
-import type { MsgCore } from './screen-play-puzzle.types'
-import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
-import { FlowGrid, FlowGridShorthand } from '../../@/flow/flow-variant/flow-grid'
-import { FlowPlay } from '../../@/flow/flow-play'
 import { UserId } from 'gamezilla-app/app/@/data'
+import { Flow, type FlowVariant } from '../../@/flow'
+import { FlowPlay } from '../../@/flow/flow-play'
+import { FlowGrid, FlowGridShorthand } from '../../@/flow/flow-variant/flow-grid'
+import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture.core'
+import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
+import type { MsgCore } from './screen-play-puzzle.types'
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await ScreenPuzzlePlayCoreChildFixture(input)
@@ -112,7 +112,7 @@ describe(import.meta.file, () => {
   it('should go into puzzle solved state after solving', async () => {
     const f = await Fixture()
     const before = f.init
-    const after = f.update(before, f.completePuzzleMsgs)
+    const after = f.update(before, f.solvePuzzleMsgs)
     const afterFlow = FlowPlay.toFlow({
       flow: f.puzzle.flow,
       model: after.flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: f.puzzle } })
@@ -126,7 +126,7 @@ describe(import.meta.file, () => {
   it('should open puzzle complete dialog after solving', async () => {
     const f = await Fixture()
 
-    const after = f.update(f.init, f.completePuzzleMsgs)
+    const after = f.update(f.init, f.solvePuzzleMsgs)
 
     expect(ScreenPlayPuzzleCore.toStatus(after) === 'solved' && after.opened === 'puzzle-complete').toBe(true)
   })
@@ -139,7 +139,7 @@ describe(import.meta.file, () => {
         [' ', ' ', 'A']
       ])
     })
-    const before = f.update(f.init, f.completePuzzleMsgs)
+    const before = f.update(f.init, f.solvePuzzleMsgs)
     const nodeId = FlowGrid.toNodeId({
       x: 0,
       y: 0
@@ -160,7 +160,7 @@ describe(import.meta.file, () => {
 
   it('should be able to close the puzzle complete dialog', async () => {
     const f = await Fixture()
-    const before = f.update(f.init, f.completePuzzleMsgs)
+    const before = f.update(f.init, f.solvePuzzleMsgs)
     const after = f.update(before, [
       {
         t: 'user-closed-puzzle-complete-dialog'
@@ -171,7 +171,7 @@ describe(import.meta.file, () => {
 
   it('should close puzzle complete dialog after clicking next puzzle button', async () => {
     const f = await Fixture()
-    const before = f.update(f.init, f.completePuzzleMsgs)
+    const before = f.update(f.init, f.solvePuzzleMsgs)
     const after = f.update(before, [
       {
         t: 'user-clicked-next-puzzle',
@@ -189,7 +189,7 @@ describe(import.meta.file, () => {
     if (!endId) throw new Error('endId not found')
 
     const before = f.update(f.init, [
-      ...f.completePuzzleMsgs,
+      ...f.solvePuzzleMsgs,
       {
         t: 'user-closed-puzzle-complete-dialog'
       }
@@ -210,7 +210,7 @@ describe(import.meta.file, () => {
 
   it('should close puzzle complete dialog after clicking prev puzzle button', async () => {
     const f = await Fixture()
-    const before = f.update(f.init, f.completePuzzleMsgs)
+    const before = f.update(f.init, f.solvePuzzleMsgs)
     const after = f.update(before, [
       {
         t: 'user-clicked-prev-puzzle',
@@ -225,7 +225,7 @@ describe(import.meta.file, () => {
   it('should clear puzzle after clicking reset button', async () => {
     const f = await Fixture()
     const before = f.update(f.init, [
-      ...f.completePuzzleMsgs,
+      ...f.solvePuzzleMsgs,
       {
         t: 'user-clicked-reset-puzzle'
       }
@@ -242,7 +242,7 @@ describe(import.meta.file, () => {
   it('should be in a solving state after going to the next puzzle', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [
-      ...f.completePuzzleMsgs,
+      ...f.solvePuzzleMsgs,
       {
         t: 'user-clicked-next-puzzle',
         nextPuzzle: f.nextPuzzle,
@@ -255,7 +255,7 @@ describe(import.meta.file, () => {
   it('should be in a solving state after going to the prev puzzle', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [
-      ...f.completePuzzleMsgs,
+      ...f.solvePuzzleMsgs,
       {
         t: 'user-clicked-prev-puzzle',
         prevPuzzle: f.prevPuzzle,
@@ -327,7 +327,7 @@ describe(import.meta.file, () => {
 
   test('output user completed puzzle event', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, [...f.completePuzzleMsgs])
+    const output = f.update(f.init, [...f.solvePuzzleMsgs])
     expect(output.events?.some((e) => e.t === 'user-completed-puzzle')).toBe(true)
   })
 

@@ -36,7 +36,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
   ])
 
   const userId = UserId.generate()
-  const completePuzzleMsgs = pipe(
+  const solvePuzzleMsgs = pipe(
     FlowPlay.toSolutionMsgs({
       flow: puzzle.flow
     }),
@@ -52,7 +52,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
 
   return {
     ...f,
-    completePuzzleMsgs,
+    solvePuzzleMsgs,
     puzzle,
     puzzleIndex,
     nextPuzzle: nextPuzzleResult,

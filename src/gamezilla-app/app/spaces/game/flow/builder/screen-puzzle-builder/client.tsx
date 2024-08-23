@@ -8,12 +8,12 @@ import { ViewProfileCard } from '../../../@/game/view-profile-card'
 import { FlowVariantUI } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
-import type { ClientModule } from '../builder.types'
+import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
+import * as BuilderTypes from '../builder.types'
+import { toFlow, toStatus } from './core'
 import { DeleteForeverClient } from './delete-forever/client'
 import { EditPuzzleNameClient } from './edit-puzzle-name/edit-puzzle-name.client'
 import { SaveChangesClient } from './save-changes/client'
-import { toFlow, toStatus } from './types'
-import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
 
 //
 //
@@ -23,7 +23,7 @@ import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
 //
 //
 
-const update: ClientModule['update'] = (input) => {
+const update: BuilderTypes.ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => DeleteForeverClient.update({ ...input, model }),
@@ -35,7 +35,7 @@ const update: ClientModule['update'] = (input) => {
   )
 }
 
-const updateFromMsg: ClientModule['update'] = (input) => {
+const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
   const { model, msg, ctx } = input
 
   switch (msg?.t) {
@@ -97,7 +97,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
   }
 }
 
-const updateFromMsgCore: ClientModule['update'] = (input) => {
+const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
   const { model, modelCore, msgCore } = input
 
   switch (msgCore?.t) {
@@ -174,7 +174,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
 //
 //
 
-const View: ClientModule['View'] = (input) => {
+const View: BuilderTypes.ClientModule['View'] = (input) => {
   const { ctx } = input
 
   if (!input.modelCore.puzzleBuilder) {
@@ -205,7 +205,7 @@ const View: ClientModule['View'] = (input) => {
   )
 }
 
-const ViewMode: ClientModule['View'] = (input) => {
+const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
   const { model, modelCore, dispatch } = input
 
   const puzzleBuilder = modelCore.puzzleBuilder
@@ -326,7 +326,7 @@ const ViewMode: ClientModule['View'] = (input) => {
   }
 }
 
-const ViewSpectating: ClientModule['View'] = (input) => {
+const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
   if (!input.modelCore.puzzleBuilder) {
     return null
   }
@@ -357,7 +357,7 @@ export const capitalize = (s: string) => {
 //
 //
 
-const updateMoreDrawer: ClientModule['update'] = (input) => {
+const updateMoreDrawer: BuilderTypes.ClientModule['update'] = (input) => {
   const { msg, model } = input
   switch (msg?.t) {
     case 'screen-puzzle-builder.user-closed-more-drawer': {
@@ -384,7 +384,7 @@ const updateMoreDrawer: ClientModule['update'] = (input) => {
   }
 }
 
-export const ViewMoreDrawer: ClientModule['View'] = (input) => {
+export const ViewMoreDrawer: BuilderTypes.ClientModule['View'] = (input) => {
   return (
     <Drawer
       id='more-drawer'

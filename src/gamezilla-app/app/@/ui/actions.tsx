@@ -3,6 +3,7 @@ import type { Translator } from 'gamezilla-app/@/l18n/generated'
 import type { VDom, VDomChildren } from 'gamezilla-app/@/vdom'
 import {
   Drawer,
+  IconArrowCircle,
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconChevronLeft,
@@ -105,8 +106,8 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
         'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm transition-opacity',
         !isDisabled && 'active:opacity-50',
         input.disabled && 'cursor-not-allowed opacity-50',
-        input.color === 'danger' && 'text-red-500',
-        input.color === 'success' && 'text-green-500',
+        input.color === 'danger' && 'font-bold text-red-500',
+        input.color === 'success' && 'font-bold text-green-500',
         input.hidden ? 'hidden' : '',
         input.classNames?.button
       )}
@@ -135,7 +136,7 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
   )
 }
 
-type BottomBarButtonActionPrebuilt = {
+type BottomBarButtonActionPrebuilt = Partial<ActionInput> & {
   onClick: () => void
   ctx: {
     t: Translator
@@ -172,7 +173,8 @@ export const ViewBottomButtonBarActionNext = (input: BottomBarButtonActionPrebui
 
 const next = (input: BottomBarButtonActionPrebuilt): ActionInput => ({
   ...input,
-  icon: (input) => <IconChevronRight {...input} />,
+  // icon: (input) => <IconChevronRight {...input} />,
+  icon: (input) => <IconArrowCircle {...input} />,
   label: input.ctx.t('app.next')
 })
 

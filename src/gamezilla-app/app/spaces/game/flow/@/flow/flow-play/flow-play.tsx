@@ -65,8 +65,26 @@ export const init = (input: { ctx: Ctx }): Model => {
   }
 }
 
-export const toStatus = (model: Model): 'dragging' | 'idle' => {
-  return model.status.t
+export const toStatus = (input: { flow: FlowVariant.Model; model: Model }) => {
+  const flow = toFlow(input)
+
+  if (input.model.status.t === 'dragging') {
+    const terminal = Flow.toTerminalByGroupId(flow, input.model.status.activeGroupId)
+    if (!terminal?.endId) {
+      if (Flow.isSolved(flow)) {
+        return 'solved'
+      }
+      return 'solving'
+    }
+
+    return 'solving'
+  }
+
+  if (Flow.isSolved(flow)) {
+    return 'solved'
+  }
+
+  return 'solving'
 }
 
 export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {

@@ -1,10 +1,38 @@
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import { FlowVariant } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
-import type { ModelCore, MsgCore } from '../builder.types'
+import * as BuilderTypes from '../builder.types'
 import { DeleteForeverCore } from './delete-forever/core'
 import { EditPuzzleNameCore } from './edit-puzzle-name/core'
 import { SaveChangesCore } from './save-changes/core'
+import { ModelCore } from './types'
+
+export const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
+  return FlowPlay.toStatus({
+    model: modelCore.play,
+    flow: toFlow(modelCore)
+  })
+}
+
+export const toFlow = (modelCore: ModelCore): FlowVariant.Model => {
+  switch (modelCore.mode.t) {
+    case 'edit': {
+      return FlowEdit.toFlow({
+        model: modelCore.edit
+      })
+    }
+
+    case 'play': {
+      return FlowPlay.toFlow({
+        flow: FlowEdit.toFlow({
+          model: modelCore.edit
+        }),
+        model: modelCore.play
+      })
+    }
+  }
+}
 
 const updateCoreMain = ({
   modelCore,
@@ -12,9 +40,9 @@ const updateCoreMain = ({
   ctx
 }: {
   ctx: SpaceCtx
-  msgCore: MsgCore
-  modelCore: ModelCore
-}): ModelCore => {
+  msgCore: BuilderTypes.MsgCore
+  modelCore: BuilderTypes.ModelCore
+}): BuilderTypes.ModelCore => {
   switch (msgCore.t) {
     case 'screen-puzzle-builder.got-flow-ui-play-msg': {
       if (!modelCore.puzzleBuilder) {

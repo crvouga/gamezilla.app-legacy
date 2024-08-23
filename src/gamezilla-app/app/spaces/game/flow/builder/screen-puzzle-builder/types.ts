@@ -1,6 +1,5 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
-import { Flow, type FlowVariant } from '../../@/flow'
 import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
@@ -72,39 +71,6 @@ export const ModelCore = p.obj({
   edit: FlowEdit.Model
 })
 export type ModelCore = p.Infer<typeof ModelCore>
-
-export const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
-  if (FlowPlay.toStatus(modelCore.play) === 'dragging') {
-    return 'solving'
-  }
-
-  const flow = toFlow(modelCore)
-
-  if (Flow.isSolved(flow)) {
-    return 'solved'
-  }
-
-  return 'solving'
-}
-
-export const toFlow = (modelCore: ModelCore): FlowVariant.Model => {
-  switch (modelCore.mode.t) {
-    case 'edit': {
-      return FlowEdit.toFlow({
-        model: modelCore.edit
-      })
-    }
-
-    case 'play': {
-      return FlowPlay.toFlow({
-        flow: FlowEdit.toFlow({
-          model: modelCore.edit
-        }),
-        model: modelCore.play
-      })
-    }
-  }
-}
 
 export const MsgCore = p.or(
   SaveChangesTypes.MsgCore,

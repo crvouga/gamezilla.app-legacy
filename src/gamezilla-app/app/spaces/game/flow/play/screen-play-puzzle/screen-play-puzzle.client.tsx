@@ -241,6 +241,7 @@ const View: ClientModule['View'] = (input) => {
               ...input,
               disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
               hidden: !isSolved && flowPuzzle.t !== 'not-found',
+              color: 'success',
               onClick: () =>
                 input.dispatch({
                   t: 'user-clicked-next-puzzle',
