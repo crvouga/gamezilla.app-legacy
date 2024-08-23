@@ -110,7 +110,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(output.event?.t).toBe('connected-terminals')
+    expect(output.events?.some((e) => e.t === 'connected-terminals')).toBe(true)
   })
 
   it('should output started dragging event', async () => {
@@ -133,7 +133,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(output.event?.t).toBe('started-dragging')
+    expect(output.events?.some((e) => e.t === 'started-dragging')).toBe(true)
   })
 
   it('should output solved event', async () => {
@@ -177,7 +177,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(output.event?.t).toBe('solved')
+    expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
   })
 
   it('should output solved event even after dragging left the board', async () => {
@@ -216,7 +216,7 @@ describe(import.meta.file, () => {
         t: 'user-dragging-left'
       }
     ])
-    expect(output.event?.t).toBe('solved')
+    expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
   })
 
   it('should not output solved event after dragging left the board if not connected', async () => {
@@ -248,7 +248,7 @@ describe(import.meta.file, () => {
         t: 'user-dragging-left'
       }
     ])
-    expect(output.event).toBeUndefined()
+    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
 
   it('should not output solved if not pressed up on terminal', async () => {
@@ -285,7 +285,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(output.event?.t).not.toBe('solved')
+    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
 
   it('should not output solved event if terminals are not connected', async () => {
@@ -323,7 +323,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(output.event?.t).not.toBe('solved')
+    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
 
   test('hint', async () => {
@@ -361,7 +361,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.init, msgs)
 
-    expect(output.event?.t).not.toBe('solved')
+    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
 
   test('derive flow with hints', async () => {
@@ -426,7 +426,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.init, msgs)
 
-    expect(output.event?.t).not.toBe('solved')
+    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
 
   test('reset pipes', async () => {
@@ -491,6 +491,32 @@ describe(import.meta.file, () => {
         t: 'user-clicked-reset'
       }
     ])
-    expect(output.event?.t).toBe('resetted')
+    expect(output.events?.some((e) => e.t === 'resetted')).toBe(true)
+  })
+
+  test('not output solved is no', async () => {
+    const f = await Fixture({
+      ctxFlow: FlowGridShorthand.toGrid([
+        ['A', ' '],
+        [' ', 'A']
+      ])
+    })
+    const output = f.update(f.init, [
+      {
+        t: 'user-clicked-hint'
+      }
+    ])
+    expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)
+  })
+
+  test('show checkmark animation on solve', async () => {
+    const f = await Fixture({
+      ctxFlow: FlowGridShorthand.toGrid([
+        ['A', ' '],
+        [' ', 'A']
+      ])
+    })
+    const output = f.update(f.init, [...f.solutionMsgs])
+    expect(output.model.showCheckmarkAnimation).toBe(true)
   })
 })

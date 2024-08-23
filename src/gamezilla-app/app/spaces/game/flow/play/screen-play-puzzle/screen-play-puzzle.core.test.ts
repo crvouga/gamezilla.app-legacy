@@ -328,6 +328,20 @@ describe(import.meta.file, () => {
   test('output user completed puzzle event', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [...f.completePuzzleMsgs])
-    expect(output.event?.t).toBe('user-completed-puzzle')
+    expect(output.events?.some((e) => e.t === 'user-completed-puzzle')).toBe(true)
+  })
+
+  test('output user used hint event', async () => {
+    const f = await Fixture()
+    const output = f.update(f.init, [
+      {
+        t: 'got-flow-play-msg',
+        c: {
+          t: 'user-clicked-hint'
+        },
+        userId: UserId.generate()
+      }
+    ])
+    expect(output.events?.some((e) => e.t === 'user-used-hint')).toBe(true)
   })
 })

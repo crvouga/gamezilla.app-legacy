@@ -15,18 +15,7 @@ const recordUserCompletedPuzzle: ServerModule['update'] = async (input) => {
     return {}
   }
 
-  const updated = ScreenPlayPuzzleCore.updateScreen(input.modelCore.screen, input.msgCore)
-
-  switch (updated.event?.t) {
-    case 'user-completed-puzzle': {
-      // await input.deps.flowPlayActivityDb.put([
-      //   {
-
-      //   }
-      // ])
-      return {}
-    }
-  }
+  ScreenPlayPuzzleCore.updateScreen(input.modelCore.screen, input.msgCore)
 
   return {}
 }

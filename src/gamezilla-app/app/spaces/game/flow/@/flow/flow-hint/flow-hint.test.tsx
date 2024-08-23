@@ -122,7 +122,7 @@ describe(import.meta.file, () => {
         }
       }
     ])
-    expect(output.event?.t).toBe('used-hint')
+    expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)
   })
 
   test('output solved event', async () => {
@@ -153,7 +153,8 @@ describe(import.meta.file, () => {
         }
       }
     ])
-    expect(output.event?.t).toBe('solved')
+
+    expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
   })
 
   it('should not create branching in pipes after using a hint', async () => {

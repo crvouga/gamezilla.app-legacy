@@ -42,6 +42,7 @@ export type Event =
     }
   | {
       t: 'used-hint'
+      groupId: FlowGroupId
     }
   | {
       t: 'no-hints'
@@ -55,7 +56,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
   }
 }): {
   model: TModel
-  event?: Event
+  events?: Event[]
 } => {
   switch (input.msg.t) {
     case 'user-clicked-hint': {
@@ -83,9 +84,11 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
       if (!solution) {
         return {
           model: input.model,
-          event: {
-            t: 'no-hints'
-          }
+          events: [
+            {
+              t: 'no-hints'
+            }
+          ]
         }
       }
 
@@ -116,17 +119,26 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
       if (Flow.isSolved(flowNew)) {
         return {
           model: modelNew,
-          event: {
-            t: 'solved'
-          }
+          events: [
+            {
+              t: 'solved'
+            },
+            {
+              t: 'used-hint',
+              groupId: nextHintGroupId
+            }
+          ]
         }
       }
 
       return {
         model: modelNew,
-        event: {
-          t: 'used-hint'
-        }
+        events: [
+          {
+            t: 'used-hint',
+            groupId: nextHintGroupId
+          }
+        ]
       }
     }
 

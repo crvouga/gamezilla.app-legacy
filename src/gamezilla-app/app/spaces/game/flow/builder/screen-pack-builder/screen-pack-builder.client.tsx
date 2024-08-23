@@ -422,14 +422,10 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           msg: input.msgCore.c
         })
 
-        if (updated.event) {
-          return {
-            model,
-            msgCmd: FlowPlay.eventToClientCmd(input.ctx, updated.event)
-          }
+        return {
+          model,
+          msgCmd: FlowPlay.eventsToClientCmd(input.ctx, updated.events)
         }
-
-        return { model }
       }
     }
 

@@ -234,38 +234,42 @@ export type Event =
       t: 'resetted'
     }
 
-export const eventToClientCmd = (
+export const eventsToClientCmd = (
   { t }: { t: Translator },
-  event: Event
+  events?: Event[] | null
 ): ClientCmd<{
   MsgClient: never
   MsgToServer: never
 }>[] => {
-  switch (event.t) {
-    case 'connected-terminals': {
-      return [playSound(APP_SOUND.tap)]
-    }
+  return (
+    events?.map((event) => {
+      switch (event.t) {
+        case 'connected-terminals': {
+          return playSound(APP_SOUND.tap)
+        }
 
-    case 'solved': {
-      return [playSound(APP_SOUND.celebration)]
-    }
+        case 'solved': {
+          return playSound(APP_SOUND.celebration)
+        }
 
-    case 'started-dragging': {
-      return [playSound(APP_SOUND.tap)]
-    }
+        case 'started-dragging': {
+          return playSound(APP_SOUND.tap)
+        }
 
-    case 'used-hint': {
-      return [playSound(APP_SOUND.navForwardMin)]
-    }
+        case 'used-hint': {
+          return playSound(APP_SOUND.navForwardMin)
+        }
 
-    case 'resetted': {
-      return [playSound(APP_SOUND.navTransitionLeft)]
-    }
+        case 'resetted': {
+          return playSound(APP_SOUND.navTransitionLeft)
+        }
 
-    case 'no-hints': {
-      return [playSound(APP_SOUND.alertErrorSm), showToast(t('flow-play.no-hints-available'))]
-    }
-  }
+        case 'no-hints': {
+          return playSound(APP_SOUND.alertErrorSm), showToast(t('flow-play.no-hints-available'))
+        }
+      }
+    }) ?? []
+  )
 }
 
 export const update = ({
@@ -278,7 +282,7 @@ export const update = ({
   ctx: Ctx
 }): {
   model: Model
-  event?: Event
+  events?: Event[]
 } => {
   const updatedMain = updateMain({
     msg,
@@ -298,33 +302,30 @@ export const update = ({
     ctx
   })
 
-  const event = updatedReset.event ?? updatedHint.event ?? updatedMain.event
+  const events = [...(updatedMain?.events ?? []), ...(updatedHint?.events ?? []), ...(updatedReset?.events ?? [])]
 
   const updated = updateShowCheckmarkAnimation({
     model: updatedReset.model,
-    event
+    events
   })
 
   return {
-    event,
+    events,
     model: updated
   }
 }
 
-const updateShowCheckmarkAnimation = (input: { model: Model; event?: Event }): Model => {
-  switch (input.event?.t) {
-    case 'solved': {
-      return {
-        ...input.model,
-        showCheckmarkAnimation: true
-      }
+const updateShowCheckmarkAnimation = (input: { model: Model; events: Event[] }): Model => {
+  if (input.events?.some((event) => event.t === 'solved')) {
+    return {
+      ...input.model,
+      showCheckmarkAnimation: true
     }
-    default: {
-      return {
-        ...input.model,
-        showCheckmarkAnimation: false
-      }
-    }
+  }
+
+  return {
+    ...input.model,
+    showCheckmarkAnimation: false
   }
 }
 
@@ -340,9 +341,11 @@ const updateReset: typeof update = ({ model, msg }) => {
     case 'user-clicked-reset': {
       return {
         model: pipe(model, resetPipes, FlowHint.resetUsedHints),
-        event: {
-          t: 'resetted'
-        }
+        events: [
+          {
+            t: 'resetted'
+          }
+        ]
       }
     }
     default: {
@@ -403,9 +406,11 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
             autocompleteEdge: null
           }
         },
-        event: {
-          t: 'started-dragging'
-        }
+        events: [
+          {
+            t: 'started-dragging'
+          }
+        ]
       }
     }
 
@@ -429,7 +434,7 @@ const updateDragging = ({
   ctx: Ctx
 }): {
   model: Model
-  event?: Event
+  events?: Event[]
 } => {
   switch (msg.t) {
     case 'user-dragged-over-node': {
@@ -481,19 +486,23 @@ const updateDragging = ({
       if (isSolved && isConnected) {
         return {
           model: modelNew,
-          event: {
-            t: 'solved'
-          }
+          events: [
+            {
+              t: 'solved'
+            }
+          ]
         }
       }
 
       if (isConnected) {
         return {
           model: modelNew,
-          event: {
-            t: 'connected-terminals',
-            connectedTerminalCount: Flow.countConnectedPipes(current)
-          }
+          events: [
+            {
+              t: 'connected-terminals',
+              connectedTerminalCount: Flow.countConnectedPipes(current)
+            }
+          ]
         }
       }
 
@@ -529,11 +538,13 @@ const updateDragging = ({
             t: 'idle'
           }
         },
-        event: isSolved
-          ? {
-              t: 'solved'
-            }
-          : undefined
+        events: isSolved
+          ? [
+              {
+                t: 'solved'
+              }
+            ]
+          : []
       }
     }
 

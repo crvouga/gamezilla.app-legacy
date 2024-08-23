@@ -76,13 +76,6 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
       }
     }
 
-    case 'user-clicked-hint': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
-      }
-    }
-
     case 'user-closed-puzzle-complete-dialog': {
       return {
         model: input.model,
@@ -120,15 +113,9 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
         }
       })
 
-      if (!output.event) {
-        return {
-          model: input.model
-        }
-      }
-
       return {
         model: input.model,
-        msgCmd: FlowPlay.eventToClientCmd(input.ctx, output.event)
+        msgCmd: FlowPlay.eventsToClientCmd(input.ctx, output.events)
       }
     }
   }

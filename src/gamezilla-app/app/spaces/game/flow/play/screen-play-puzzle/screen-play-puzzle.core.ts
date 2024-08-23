@@ -22,7 +22,7 @@ const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
   }
 }
 
-const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { event?: MsgCoreEvt } => {
+const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { events?: MsgCoreEvt[] } => {
   switch (msgCore.t) {
     case 'got-flow-play-msg': {
       if (modelCore.puzzleResult.t === 'not-found') {
@@ -45,23 +45,34 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
         }
       })
 
-      if (flowPlayNew.event?.t === 'solved') {
-        return {
-          ...modelCore,
-          flowPlay: flowPlayNew.model,
-          opened: 'puzzle-complete',
-          event: {
-            t: 'user-completed-puzzle',
-            packId: modelCore.flowPack.id,
-            puzzleIndex: modelCore.puzzleIndex,
-            userId: msgCore.userId
-          }
-        }
-      }
+      const didSolve = flowPlayNew.events?.some((e) => e.t === 'solved')
 
       return {
         ...modelCore,
-        flowPlay: flowPlayNew.model
+        flowPlay: flowPlayNew.model,
+        opened: didSolve ? 'puzzle-complete' : modelCore.opened,
+        events: flowPlayNew.events?.flatMap((event) => {
+          switch (event.t) {
+            case 'used-hint': {
+              return {
+                t: 'user-used-hint',
+                groupId: event.groupId,
+                userId: msgCore.userId
+              }
+            }
+            case 'solved': {
+              return {
+                t: 'user-completed-puzzle',
+                packId: modelCore.flowPack.id,
+                puzzleIndex: modelCore.puzzleIndex,
+                userId: msgCore.userId
+              }
+            }
+            default: {
+              return []
+            }
+          }
+        })
       }
     }
     case 'user-closed-puzzle-complete-dialog': {

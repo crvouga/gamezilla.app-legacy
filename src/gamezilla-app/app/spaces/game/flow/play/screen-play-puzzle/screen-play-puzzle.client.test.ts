@@ -209,18 +209,6 @@ describe(import.meta.file, () => {
     expect(msg.t).toBe('got-flow-play-msg')
   })
 
-  test('hint button sound', async () => {
-    const f = await Fixture()
-    const output = f.update(f.init, [
-      {
-        msgCore: withEventMeta({
-          t: 'user-clicked-hint'
-        })
-      }
-    ])
-    expect(didPlaySound(output)).toBe(true)
-  })
-
   test('not render hint button when puzzle is solved', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [...f.completePuzzleMsgs])

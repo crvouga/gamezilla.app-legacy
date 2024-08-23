@@ -119,15 +119,9 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
         }
       })
 
-      if (updated.event) {
-        return {
-          model,
-          msgCmd: FlowPlay.eventToClientCmd(input.ctx, updated.event)
-        }
-      }
-
       return {
-        model
+        model,
+        msgCmd: FlowPlay.eventsToClientCmd(input.ctx, updated.events)
       }
     }
     case 'screen-puzzle-builder.got-flow-ui-edit-msg': {

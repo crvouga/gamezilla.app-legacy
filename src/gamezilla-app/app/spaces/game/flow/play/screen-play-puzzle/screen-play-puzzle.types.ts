@@ -39,9 +39,6 @@ export const MsgCore = p.or(
     t: p.l('user-clicked-reset-puzzle')
   }),
   p.obj({
-    t: p.l('user-clicked-hint')
-  }),
-  p.obj({
     t: p.l('user-toggled-action-buttons-drawer')
   })
 )
@@ -54,6 +51,11 @@ export const MsgCoreEvt = p.or(
     userId: UserId,
     packId: FlowPackId,
     puzzleIndex: p.num
+  }),
+  p.obj({
+    t: p.l('user-used-hint'),
+    userId: UserId,
+    groupId: FlowGroupId
   })
 )
 export type MsgCoreEvt = p.Infer<typeof MsgCoreEvt>
