@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { andThen } from 'gamezilla-app/app/@/architecture/app-client'
 import { didShowErrorSm, didShowToast } from 'gamezilla-app/app/@/client'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
@@ -12,19 +12,32 @@ import {
   userStartedSpace
 } from '../@/testing/client'
 import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import { withEventMeta } from '../@/event'
 
 describe(import.meta.file, () => {
-  it('should show some toast after joining space', async () => {
-    const ctx = Ctx()
+  test('show toast after joining', async () => {
+    const f = await FixtureSpaceClient()
     const spaceId = SpaceId.generate()
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'event',
+          c: withEventMeta({
+            t: 'user-started-space',
+            spaceId,
+            userId: f.userA.userId
+          })
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-join-space-button',
+          spaceId
+        }
+      }
+    ])
 
-    const output = andThen(
-      init(ctx),
-      userStartedSpace(ctx, UserId.generate(), spaceId),
-      clickedJoinSpaceButton(ctx, spaceId)
-    )
-
-    expect(didShowToast(output, (toast) => toast.message === ctx.t('spaces.current-user-joined-space'))).toBe(true)
+    expect(didShowToast(output, (toast) => toast.message === f.ctx.t('spaces.current-user-joined-space'))).toBe(true)
   })
 
   it('should should toast of other user leaving space', async () => {
