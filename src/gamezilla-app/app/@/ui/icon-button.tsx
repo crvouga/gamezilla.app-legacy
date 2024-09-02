@@ -1,5 +1,5 @@
 import type { VDom } from 'gamezilla-app/@/vdom'
-import { cn } from './ui'
+import { cn } from './cn'
 
 export const IconButton = (input: {
   onClick?: () => void

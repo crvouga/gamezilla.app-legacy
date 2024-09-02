@@ -1,5 +1,5 @@
 import { IconSpinner } from './icon'
-import { cn } from './ui'
+import { cn } from './cn'
 
 export const Spinner = (input: { className?: string }) => {
   return (

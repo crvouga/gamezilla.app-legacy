@@ -1,5 +1,5 @@
 import type { TranslatedText } from 'gamezilla-app/@/l18n'
-import { cn } from './ui'
+import { cn } from './cn'
 import type { AriaRole } from 'react'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'

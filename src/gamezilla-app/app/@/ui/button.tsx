@@ -1,7 +1,7 @@
 import { TranslatedText } from 'gamezilla-app/@/l18n'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import { Spinner } from './spinner'
-import { cn } from './ui'
+import { cn } from './cn'
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text' | 'soft'
 

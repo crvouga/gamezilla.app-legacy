@@ -1,5 +1,5 @@
 import { TranslatedText } from 'gamezilla-app/@/l18n'
-import { cn } from './ui'
+import { cn } from './cn'
 
 export const Tabs = <TTab extends string>({
   tabs,

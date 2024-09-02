@@ -1,6 +1,6 @@
 import type { VDom } from 'gamezilla-app/@/vdom'
 import { Button } from './button'
-import { cn } from './ui'
+import { cn } from './cn'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
 import { Typography } from './typography'
 

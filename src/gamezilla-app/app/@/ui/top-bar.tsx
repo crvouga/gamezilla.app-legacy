@@ -1,6 +1,6 @@
 import type { TranslatedText } from 'gamezilla-app/@/l18n'
 import type { Translator } from 'gamezilla-app/@/l18n/generated'
-import { cn } from './ui'
+import { cn } from './cn'
 import { IconButton, IconButtonEmpty } from './icon-button'
 import { IconArrowLeft } from './icon'
 import { Typography } from './typography'

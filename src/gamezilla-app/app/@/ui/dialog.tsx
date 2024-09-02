@@ -1,5 +1,5 @@
 import type { VDomChildren } from 'gamezilla-app/@/vdom'
-import { cn } from './ui'
+import { cn } from './cn'
 import { TimeSpan } from 'gamezilla-app/@/core'
 import { styles } from 'gamezilla-app/@/vdom/style'
 

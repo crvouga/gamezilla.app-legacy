@@ -1,4 +1,4 @@
-import { cn } from './ui'
+import { cn } from './cn'
 
 export const Avatar = ({
   className,

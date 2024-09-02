@@ -1,7 +1,7 @@
 import type { VDomChildren } from 'gamezilla-app/@/vdom'
 import { IconExclamationCircle, IconInfoCircle } from './icon'
 import { IconCheckmarkCircle } from './icon/icon-checkmark-circle'
-import { cn } from './ui'
+import { cn } from './cn'
 
 export const AlertError = ({ className, text }: { text?: string; className?: string }) => {
   return (
