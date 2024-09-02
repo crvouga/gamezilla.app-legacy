@@ -3,7 +3,7 @@ import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { clickedStartSpaceButton, Ctx, init, userClickedEndSpaceButton } from '../@/testing/client'
-import { SpaceClientModule } from '../architecture/architecture'
+import { SpaceClientModule } from '../architecture/space-client'
 import { EndSpaceClient } from './end-space.client'
 
 describe(import.meta.file, () => {

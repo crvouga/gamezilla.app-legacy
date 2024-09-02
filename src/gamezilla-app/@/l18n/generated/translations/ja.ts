@@ -49,13 +49,13 @@ export const translations: Text = {
   'auth-email.send-login-link': 'ログインリンクを送信',
   'auth-email.email-address': 'メールアドレス',
   'auth-email.please-enter-valid-email-address': '有効なメールアドレスを入力してください',
+  'spaces.see-profile': 'プロフィールを見る',
   'spaces.current-user-left': 'スペースを離れました',
   'spaces.other-user-left': (username) =>
     `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u96E2\u308C\u307E\u3057\u305F`,
   'spaces.leave': '去る',
   'spaces.start-space': 'スペースを開始',
   'spaces.space-started': 'スペースが開始されました',
-  'spaces.see-profile': 'プロフィールを見る',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

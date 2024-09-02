@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound, showErrSm, showToast } from 'gamezilla-app/app/@/client'
 import { Button, TopBar } from 'gamezilla-app/app/@/ui'
 import { withId } from '../@/event'
-import { SpaceClientModule } from '../architecture/architecture'
+import { SpaceClientModule } from '../architecture/space-client'
 import { ViewGameHeader, ViewUsersInSpaceList } from '../game/@/game'
 import { CoverArt } from '../game/game-cover-art'
 import type { SpaceCoreEvent } from '../spaces-core'

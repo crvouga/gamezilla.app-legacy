@@ -6,7 +6,7 @@ import type { AnonymousClientCtx, ClientCmd, ClientCtx, ClientEvt } from '../@/c
 import type { ServerCmd, ServerCtx, ServerEvt } from '../@/server'
 import type { WithEventId, WithEventMeta } from './@/event'
 import type * as Game from './game/game.types'
-import type { IProfileCache } from './profile-cache'
+import type { IProfileCache } from './spaces-server/profile-cache'
 import type { IGameDb } from './space/space-game-db'
 import type * as Space from './spaces-core/space-core'
 import type { ISpacesDb } from './spaces-core/space-db'

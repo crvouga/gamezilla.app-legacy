@@ -51,13 +51,13 @@ export const translations: Text = {
   'auth-email.send-login-link': 'Отправить ссылку для входа',
   'auth-email.email-address': 'Адрес электронной почты',
   'auth-email.please-enter-valid-email-address': 'Пожалуйста, введите действительный адрес электронной почты',
+  'spaces.see-profile': 'Посмотреть профиль',
   'spaces.current-user-left': 'Покинул пространство',
   'spaces.other-user-left': (username) =>
     `${username} \u043F\u043E\u043A\u0438\u043D\u0443\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
   'spaces.leave': 'Покинуть',
   'spaces.start-space': 'Начать пространство',
   'spaces.space-started': 'Пространство началось',
-  'spaces.see-profile': 'Посмотреть профиль',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

@@ -1,5 +1,5 @@
 import { addProfiles, sendToServer } from 'gamezilla-app/app/@/client'
-import { SpaceClientModule } from '../architecture/architecture'
+import { SpaceClientModule } from '../architecture/space-client'
 import { SpaceCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
 

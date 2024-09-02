@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { SpaceId } from '../../@/data'
-import { clickedGoHomeButton, clickedStartSpaceButton, Ctx, init } from '../@/testing/client'
-import { SpaceClientModule } from '../architecture/architecture'
+import { SpaceId } from 'gamezilla-app/app/@/data'
+import { SpaceClientModule } from '../../architecture/space-client'
+import { clickedGoHomeButton, clickedStartSpaceButton, Ctx, init } from '../../@/testing/client'
 
 describe(import.meta.file, () => {
   it('should go to list screen when clicking go home button', async () => {

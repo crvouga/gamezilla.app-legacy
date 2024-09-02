@@ -1,9 +1,9 @@
 import { APP_SOUND, type ClientCtx, playSound, pushRoute } from 'gamezilla-app/app/@/client'
 import { Avatar, Button, Typography } from 'gamezilla-app/app/@/ui'
-import { CoverArt } from '../game/game-cover-art'
-import type { SpaceClientModule } from '../architecture/architecture'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
-import type { ModelClient, MsgClient } from '../spaces.types'
+import type { SpaceClientModule } from '../../architecture/space-client'
+import { CoverArt } from '../../game/game-cover-art'
+import * as SpacesCoreClient from '../../spaces-core/spaces-core.client'
+import type { ModelClient, MsgClient } from '../../spaces.types'
 
 const update: SpaceClientModule['update'] = ({ model, msg, ctx }) => {
   switch (msg?.t) {

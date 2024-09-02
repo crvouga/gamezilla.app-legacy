@@ -5,7 +5,7 @@ import { type Input, type Output, SpaceServerModule } from './architecture/space
 import { GameServer } from './game/game.server'
 import { JoinSpaceServer } from './join-space/join-space.server'
 import { ListSpacesServer } from './list-spaces/list-spaces.server'
-import { ProfileCache } from './profile-cache'
+import { ProfileCache } from './spaces-server/profile-cache'
 import { GameDb } from './space/space-game-db'
 import { SpaceGameServer } from './space/space-game.server'
 import { SpacesDb } from './spaces-core/space-db'

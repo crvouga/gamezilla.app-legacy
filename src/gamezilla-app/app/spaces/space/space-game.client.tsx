@@ -3,7 +3,7 @@ import { APP_SOUND, type ClientCtx, playSound } from 'gamezilla-app/app/@/client
 import { TopBar, Typography } from 'gamezilla-app/app/@/ui'
 import { type WithEventId, withId } from '../@/event'
 import { SpaceClientCmd } from '../@/space-client-cmd'
-import { SpaceClientModule } from '../architecture/architecture'
+import { SpaceClientModule } from '../architecture/space-client'
 import { ViewUsersInSpaceList } from '../game/@/game'
 import { CoverArt } from '../game/game-cover-art'
 import { GameClient } from '../game/game.client'

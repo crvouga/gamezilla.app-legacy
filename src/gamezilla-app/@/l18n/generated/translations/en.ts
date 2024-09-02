@@ -49,12 +49,12 @@ export const translations: Text = {
   'auth-email.send-login-link': 'Send login link',
   'auth-email.email-address': 'Email address',
   'auth-email.please-enter-valid-email-address': 'Please enter a valid email address',
+  'spaces.see-profile': 'See profile',
   'spaces.current-user-left': 'Left space',
   'spaces.other-user-left': (username) => `${username} left space`,
   'spaces.leave': 'Leave',
   'spaces.start-space': 'Start space',
   'spaces.space-started': 'Space started',
-  'spaces.see-profile': 'See profile',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

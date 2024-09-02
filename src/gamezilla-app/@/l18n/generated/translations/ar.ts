@@ -50,12 +50,12 @@ export const translations: Text = {
   'auth-email.send-login-link': 'إرسال رابط تسجيل الدخول',
   'auth-email.email-address': 'عنوان البريد الإلكتروني',
   'auth-email.please-enter-valid-email-address': 'الرجاء إدخال عنوان بريد إلكتروني صالح',
+  'spaces.see-profile': 'مشاهدة الملف الشخصي',
   'spaces.current-user-left': 'ترك الفضاء',
   'spaces.other-user-left': (username) => `${username} \u062A\u0631\u0643 \u0627\u0644\u0641\u0636\u0627\u0621`,
   'spaces.leave': 'غادر',
   'spaces.start-space': 'بدء المساحة',
   'spaces.space-started': 'بدأت المساحة',
-  'spaces.see-profile': 'مشاهدة الملف الشخصي',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

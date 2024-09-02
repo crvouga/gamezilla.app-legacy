@@ -48,12 +48,12 @@ export const translations: Text = {
   'auth-email.send-login-link': 'Invia il link di accesso',
   'auth-email.email-address': 'Indirizzo email',
   'auth-email.please-enter-valid-email-address': 'Inserisci un indirizzo email valido',
+  'spaces.see-profile': 'Vedi profilo',
   'spaces.current-user-left': 'Ha lasciato lo spazio',
   'spaces.other-user-left': (username) => `${username} ha lasciato lo spazio`,
   'spaces.leave': 'Lasciare',
   'spaces.start-space': 'Inizia spazio',
   'spaces.space-started': 'Spazio avviato',
-  'spaces.see-profile': 'Vedi profilo',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client.tsx'
 import { didOpenProfile } from 'gamezilla-app/app/@/client/client-cmd.ts'
-import { UserId } from '../../@/data/user-id.ts'
-import { openUserDetails } from '../@/space-client-cmd.ts'
+import { UserId } from 'gamezilla-app/app/@/data/user-id.ts'
+import { openUserDetails } from '../../@/space-client-cmd.ts'
 import {
   changeRoute,
   clickedPeopleButton,
@@ -10,8 +10,8 @@ import {
   clickedUserPreviewLink,
   Ctx,
   init
-} from '../@/testing/client.ts'
-import { SpaceClientModule } from '../architecture/architecture.tsx'
+} from '../../@/testing/client.ts'
+import { SpaceClientModule } from '../../architecture/space-client.tsx'
 import { Modals } from './modals.tsx'
 
 describe(import.meta.file, () => {

@@ -47,12 +47,12 @@ export const translations: Text = {
   'auth-email.send-login-link': '发送登录链接',
   'auth-email.email-address': '电子邮件地址',
   'auth-email.please-enter-valid-email-address': '请输入有效的电子邮件地址',
+  'spaces.see-profile': '查看个人资料',
   'spaces.current-user-left': '离开空间',
   'spaces.other-user-left': (username) => `${username} \u79BB\u5F00\u4E86\u7A7A\u95F4`,
   'spaces.leave': '离开',
   'spaces.start-space': '开始空间',
   'spaces.space-started': '空间已开始',
-  'spaces.see-profile': '查看个人资料',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

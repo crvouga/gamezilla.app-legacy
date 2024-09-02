@@ -1,5 +1,5 @@
 import { APP_SOUND, playSound, pushRoute } from 'gamezilla-app/app/@/client'
-import type { SpaceClientModule } from '../architecture/architecture'
+import type { SpaceClientModule } from '../../architecture/space-client'
 
 const update: SpaceClientModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {

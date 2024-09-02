@@ -51,13 +51,13 @@ export const translations: Text = {
   'auth-email.send-login-link': 'लॉगिन लिंक भेजें',
   'auth-email.email-address': 'ईमेल पता',
   'auth-email.please-enter-valid-email-address': 'कृपया एक वैध ईमेल पता दर्ज करें',
+  'spaces.see-profile': 'प्रोफ़ाइल देखें',
   'spaces.current-user-left': 'अंतरिक्ष छोड़ दिया',
   'spaces.other-user-left': (username) =>
     `${username} \u0905\u0902\u0924\u0930\u093F\u0915\u094D\u0937 \u091B\u094B\u0921\u093C \u0917\u092F\u093E`,
   'spaces.leave': 'छोड़ना',
   'spaces.start-space': 'स्थान शुरू करें',
   'spaces.space-started': 'स्थान शुरू हो गया',
-  'spaces.see-profile': 'प्रोफ़ाइल देखें',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

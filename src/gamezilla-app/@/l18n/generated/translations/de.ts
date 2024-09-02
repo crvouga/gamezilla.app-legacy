@@ -50,12 +50,12 @@ export const translations: Text = {
   'auth-email.send-login-link': 'Anmelde-Link senden',
   'auth-email.email-address': 'E-Mail-Adresse',
   'auth-email.please-enter-valid-email-address': 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
+  'spaces.see-profile': 'Profil anzeigen',
   'spaces.current-user-left': 'Raum verlassen',
   'spaces.other-user-left': (username) => `${username} hat den Raum verlassen`,
   'spaces.leave': 'Verlassen',
   'spaces.start-space': 'Raum starten',
   'spaces.space-started': 'Raum gestartet',
-  'spaces.see-profile': 'Profil anzeigen',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

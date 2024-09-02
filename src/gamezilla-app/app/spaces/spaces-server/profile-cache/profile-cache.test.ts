@@ -27,4 +27,19 @@ describe(import.meta.file, () => {
     expect(added).toEqual(null)
     expect(after).toEqual(profiles)
   })
+
+  test('get missing', async () => {
+    const f = await Fixture()
+    const profiles = Profile.indexByUserId([await Profile.random(), await Profile.random(), await Profile.random()])
+    const userIds = Object.values(profiles).map((p) => p.userId)
+
+    const got = Result.unwrap(await f.profileCache.get(userIds))
+    expect(got).toEqual({})
+
+    const added = Result.unwrap(await f.profileCache.add(profiles))
+    expect(added).toEqual(null)
+
+    const gotAgain = Result.unwrap(await f.profileCache.get(userIds))
+    expect(gotAgain).toEqual(profiles)
+  })
 })

@@ -48,12 +48,12 @@ export const translations: Text = {
   'auth-email.send-login-link': '로그인 링크 보내기',
   'auth-email.email-address': '이메일 주소',
   'auth-email.please-enter-valid-email-address': '유효한 이메일 주소를 입력하세요',
+  'spaces.see-profile': '프로필 보기',
   'spaces.current-user-left': '공간을 나갔습니다',
   'spaces.other-user-left': (username) => `${username}\uAC00 \uACF5\uAC04\uC744 \uB098\uAC14\uC2B5\uB2C8\uB2E4`,
   'spaces.leave': '나가기',
   'spaces.start-space': '공간 시작',
   'spaces.space-started': '공간 시작됨',
-  'spaces.see-profile': '프로필 보기',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':

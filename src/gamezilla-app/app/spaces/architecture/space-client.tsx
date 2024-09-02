@@ -1,22 +1,20 @@
-import type { AnonymousClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
-
 import { Eff, type Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import type { VDom } from 'gamezilla-app/@/vdom'
+import type { BaseClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 import type { WithEventId } from '../@/event'
 import type { Space } from '../@/space'
 import type { SpaceClientCmd } from '../@/space-client-cmd'
 import type { SpaceCoreEvent } from '../spaces-core'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../spaces.types'
 
-type Ctx = AnonymousClientCtx & {
+type Ctx = BaseClientCtx & {
   space?: Space
 }
 
 export type Input = {
   ctx: Ctx
   model: ModelClient
-
   msg?: MsgClient | null
   msgServer?: MsgToClient | null
   msgEvt?: ClientEvt | null
@@ -26,8 +24,6 @@ export type Input = {
   }> | null
   msgSpaceEvent?: WithEventId<SpaceCoreEvent> | null
 }
-
-export type MaybePromise<T> = T | Promise<T>
 
 export type Output = {
   model: ModelClient
@@ -41,19 +37,15 @@ export type Output = {
 }
 
 export type SpaceClientModule = {
-  init: (input: { ctx: Ctx; model: ModelClient }) => MaybePromise<Output>
-  update: (input: Input) => MaybePromise<Output>
-  subscriptions: (input: { ctx: Ctx; model: ModelClient }) => MaybePromise<Sub<MsgClient>>
+  init: (input: { ctx: Ctx; model: ModelClient }) => Output
+  update: (input: Input) => Output
+  subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>
   View: (input: { ctx: Ctx; model: ModelClient; dispatch: (msg: MsgClient) => void }) => VDom
 }
 
-const andThen = async (
-  accPromise: MaybePromise<Output>,
-  ...updates: ((model: ModelClient) => MaybePromise<Output>)[]
-): Promise<Output> => {
-  let acc = await accPromise
+const andThen = (acc: Output, ...updates: ((model: ModelClient) => Output)[]): Output => {
   for (const update of updates) {
-    const updated = await update(acc.model)
+    const updated = update(acc.model)
     acc = {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
