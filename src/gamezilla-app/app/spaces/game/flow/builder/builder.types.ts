@@ -5,7 +5,7 @@ import type { SpaceClientEvt, SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'g
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { FlowCoreEvent } from '../@/flow-core-event'
-import type { FlowClientCtx } from '../@/flow-ctx'
+import type { FlowClientCtx } from '../@/flow-client-ctx'
 import type { FlowPack } from '../@/flow-pack/flow-pack'
 import type { IFlowPackDb } from '../@/flow-pack/flow-pack-db'
 import { FlowPackListTypes } from '../@/flow-pack/flow-pack-list'

@@ -1,5 +1,5 @@
 import type { WithEventId } from 'gamezilla-app/app/spaces/@/event'
-import type { FlowClientCtx } from '../../../@/flow-ctx'
+import type { FlowClientCtx } from '../../../@/flow-client-ctx'
 import type { MsgCore } from '../../builder.types'
 import { BuilderCore } from '../../builder.core'
 

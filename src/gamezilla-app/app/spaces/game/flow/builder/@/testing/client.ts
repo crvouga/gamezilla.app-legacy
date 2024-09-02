@@ -4,7 +4,7 @@ import { EventId } from 'gamezilla-app/app/spaces/@/event'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { Flow } from '../../../@/flow'
-import type { FlowClientCtx } from '../../../@/flow-ctx'
+import type { FlowClientCtx } from '../../../@/flow-client-ctx'
 import { FlowPack } from '../../../@/flow-pack/flow-pack'
 import { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from '../../../@/flow-puzzle/flow-puzzle-id'
@@ -14,6 +14,7 @@ import { BuilderCore } from '../../builder.core'
 import * as BuilderTypes from '../../builder.types'
 
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/testing/client'
+import { FlowPuzzleList } from '../../../@/flow-puzzle'
 
 type Input = {
   ctx?: FlowClientCtx
@@ -89,7 +90,8 @@ export const FixtureFlowBuilderClient = async () => {
   const ctx: FlowClientCtx = {
     ...f.ctx,
     flowPuzzles: {},
-    flowPacks: {}
+    flowPacks: {},
+    flowPuzzleList: FlowPuzzleList.initClient
   }
   const init = {
     ctx,
@@ -116,7 +118,8 @@ export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
   return {
     ...(await testSpaceClientCtx()),
     flowPacks: {},
-    flowPuzzles: {}
+    flowPuzzles: {},
+    flowPuzzleList: FlowPuzzleList.initClient
   }
 }
 

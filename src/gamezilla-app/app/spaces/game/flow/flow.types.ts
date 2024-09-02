@@ -1,12 +1,20 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
+import { GameClientModule } from '../../@/architecture/game-client-v2'
+import { GameServerModule } from '../../@/architecture/game-server-v2'
+import { SpaceClientCtx, SpaceClientEvt, SpaceServerCtx, SpaceServerEvt } from '../../@/space'
+import { SpaceClientCmd } from '../../@/space-client-cmd'
+import { SpaceServerCmd } from '../../@/space-server-cmd'
 import type { GameMainMenu } from '../@/game'
 import type { FlowPack } from './@/flow-pack'
 import type { FlowPackId } from './@/flow-pack/flow-pack-id'
+import type { FlowPuzzleList } from './@/flow-puzzle'
 import type { FlowPuzzle } from './@/flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from './@/flow-puzzle/flow-puzzle-id'
 import { BuilderTypes } from './builder'
+import { BuilderServer } from './builder/builder.server'
 import { PlayTypes } from './play'
+import { PlayServer } from './play/play.server'
 
 //
 //
@@ -21,6 +29,7 @@ export type BaseModelClient = {
   flowPacks: {
     [flowPackId: FlowPackId]: FlowPack
   }
+  flowPuzzleList: FlowPuzzleList.ModelClient
 }
 
 export type VariantModelClient =
@@ -99,3 +108,46 @@ export const ModelCore = p.or(
   p.obj({ t: p.l('play'), c: PlayTypes.ModelCore })
 )
 export type ModelCore = p.Infer<typeof ModelCore>
+
+//
+//
+//
+//
+//
+//
+//
+
+export type ClientModule = GameClientModule<{
+  Model: ModelClient
+  Msg: MsgClient
+  //
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  //
+  MsgCore: MsgCore
+  ModelCore: ModelCore
+  //
+  Ctx: SpaceClientCtx
+  //
+  MsgCmdOut: SpaceClientCmd<{
+    MsgToServer: MsgToServer
+    MsgClient: MsgClient
+  }>
+  MsgEvtIn: SpaceClientEvt
+}>
+
+export type ServerModule = GameServerModule<{
+  Model: ModelServer
+  Msg: MsgServer
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  MsgCore: MsgCore
+  ModelCore: ModelCore
+  Ctx: SpaceServerCtx
+  MsgEvtIn: SpaceServerEvt
+  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  Deps: {
+    builder: Awaited<ReturnType<(typeof BuilderServer)['deps']>>
+    play: Awaited<ReturnType<(typeof PlayServer)['deps']>>
+  }
+}>
