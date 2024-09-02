@@ -1,9 +1,5 @@
 type NullishItems<T> = T | null | undefined | Array<NullishItems<T>>
 
-/**
- * @description
- * A helper function used for composing update functions together.
- */
 const batch = <T>(...msgs: Array<NullishItems<T>>): Array<T> => {
   const flattened: Array<T> = []
 
