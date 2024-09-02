@@ -332,7 +332,6 @@ export const unknown: Parser<unknown> = {
   }
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const any: Parser<any> = {
   parse(input) {
     return Ok(input)

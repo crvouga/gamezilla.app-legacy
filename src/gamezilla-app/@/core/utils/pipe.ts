@@ -1,6 +1,3 @@
-/* eslint-disable prefer-rest-params */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/ban-types */
 // Source: https://github.com/gcanti/fp-ts/blob/master/src/function.ts
 
 export function pipe<A>(a: A): A

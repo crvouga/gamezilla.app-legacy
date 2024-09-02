@@ -50,7 +50,6 @@
     "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.7.2",
     "@happy-dom/global-registrator": "^14.7.1",
     "@preact/preset-vite": "^2.7.0",
     "@testing-library/react": "^15.0.7",
@@ -64,7 +63,6 @@
     "babel-plugin-react-compiler": "^0.0.0-experimental-334f00b-20240725",
     "babel-preset-es2015": "^6.24.1",
     "bun-types": "^1.0.11",
-    "csv-parser": "^3.0.0",
     "eslint": "^9.1.1",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",

@@ -187,7 +187,6 @@ export const View = ({ model, ctx, dispatch }: { ctx: SpaceClientCtx; model: Mod
   return (
     <div>
       {!currentUserPlayer && <p>Spectating</p>}
-      {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
       <svg width='100%' viewBox={viewBox}>
         <rect x={model.lower.x} y={model.lower.y} width='100%' height='100%' fill={'#000'} />
         {maze.edges.map(([a, b]) => (
@@ -269,7 +268,6 @@ const ViewJoystick = ({
 }) => {
   return (
     <div>
-      {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
       <svg width='100%' viewBox='-1 -1 2 2' className='touch-none select-none overflow-hidden'>
         <defs>
           <clipPath id='cut-off-bottom'>
@@ -282,7 +280,6 @@ const ViewJoystick = ({
             {Direction.all.map((direction) => {
               const { x, y } = directionToVector(direction)
               return (
-                // biome-ignore lint/a11y/useKeyWithMouseEvents: <explanation>
                 <rect
                   key={direction}
                   x={x}

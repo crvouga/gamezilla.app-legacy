@@ -344,7 +344,6 @@ export const toIndexEdgesOut = (model: Model) => {
 
   for (const edge of yieldEdges(model)) {
     indexEdgesOut[edge.sourceId] = indexEdgesOut[edge.sourceId] ?? {}
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     indexEdgesOut[edge.sourceId]![edge.targetId] = toFlowEdgeId(edge)
   }
 

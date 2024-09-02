@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 //@ts-ignore
 import type { RtpCodecCapability } from 'mediasoup/node/lib/RtpParameters'
 //@ts-ignore

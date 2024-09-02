@@ -74,9 +74,7 @@ describe(import.meta.file, () => {
     const before = f.pack
     const after = Result.withDefault(await f.deps.flowPackDb.get(f.pack.id), null)
 
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     expect(before.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(true)
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     expect(after?.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(false)
   })
 })

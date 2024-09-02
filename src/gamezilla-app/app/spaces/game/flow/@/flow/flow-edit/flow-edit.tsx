@@ -413,7 +413,6 @@ export const toCurrentPlacingGroupId = (model: Model): FlowGroupId => {
     }
   }
 
-  // biome-ignore lint/style/noNonNullAssertion: <explanation>
   return FlowGroupId.ORDER[FlowGroupId.ORDER.length - 1]!
 }
 
@@ -610,7 +609,6 @@ const ViewStatus: typeof View = (input) => {
 const ViewTerminal = ({ groupId, className }: { className: string; groupId: FlowGroupId }) => {
   const color = FlowUI.Color.groupIdToHex(groupId)
   return (
-    // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
     <svg className={className} viewBox='-1 -1 2 2'>
       <circle cx='0' cy='0' r='0.8' fill={color} />
     </svg>

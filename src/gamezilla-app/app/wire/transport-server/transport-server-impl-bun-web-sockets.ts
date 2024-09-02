@@ -224,7 +224,6 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
   transport.toClient.sub((toClient) => {
     for (const clientId in toClient) {
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       const toClientSingle = toClient[clientId as ClientId]!
       const client = clients.get(clientId as ClientId)
 

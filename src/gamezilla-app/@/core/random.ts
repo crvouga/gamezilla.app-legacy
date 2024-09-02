@@ -31,7 +31,6 @@ const cyrb128 = (seed: string) => {
 }
 
 const generator = (seed: string) => {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return mulberry32(cyrb128(seed)[0]!)
 }
 
