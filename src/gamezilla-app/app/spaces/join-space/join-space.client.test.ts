@@ -1,30 +1,28 @@
 import { describe, expect, it, test } from 'bun:test'
-import { andThen } from 'gamezilla-app/app/@/architecture/app-client'
 import { didShowErrorSm, didShowToast } from 'gamezilla-app/app/@/client'
-import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import {
-  Ctx,
-  FixtureSpaceClient,
-  clickedJoinSpaceButton,
-  clickedLeaveSpaceButton,
-  init,
-  userJoinedSpace,
-  userStartedSpace
-} from '../@/testing/client'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import { SpaceId } from 'gamezilla-app/app/@/data'
 import { withEventMeta } from '../@/event'
+import { FixtureSpaceClient } from '../@/testing/client'
+import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+
+const Fixture = async () => {
+  const f = await FixtureSpaceClient()
+  return {
+    ...f,
+    spaceId: SpaceId.generate()
+  }
+}
 
 describe(import.meta.file, () => {
   test('show toast after joining', async () => {
-    const f = await FixtureSpaceClient()
-    const spaceId = SpaceId.generate()
+    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         msgServer: {
           t: 'event',
           c: withEventMeta({
             t: 'user-started-space',
-            spaceId,
+            spaceId: f.spaceId,
             userId: f.userA.userId
           })
         }
@@ -32,7 +30,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-join-space-button',
-          spaceId
+          spaceId: f.spaceId
         }
       }
     ])
@@ -41,70 +39,116 @@ describe(import.meta.file, () => {
   })
 
   it('should should toast of other user leaving space', async () => {
-    const f = await FixtureSpaceClient()
-    const spaceId = SpaceId.generate()
+    const f = await Fixture()
 
-    const started = andThen(f.initial, userStartedSpace(f.ctx, f.ctx.currentUserId, spaceId))
-
-    const output = andThen(
+    const output = f.update(f.initial, [
       {
-        model: started.model
+        msgServer: {
+          t: 'event',
+          c: withEventMeta({
+            t: 'user-started-space',
+            spaceId: f.spaceId,
+            userId: f.ctx.currentUserId
+          })
+        }
       },
-      userJoinedSpace(f.ctx, f.userA.userId, spaceId)
-    )
+      {
+        msgServer: {
+          t: 'event',
+          c: withEventMeta({
+            t: 'user-joined-space',
+            spaceId: f.spaceId,
+            userId: f.userA.userId
+          })
+        }
+      }
+    ])
 
     expect(didShowToast(output)).toBe(true)
   })
 
   it('should join space when clicking join space button', async () => {
-    const ctx = Ctx()
-    const spaceId = SpaceId.generate()
-
-    const joined = andThen(
-      init(ctx),
-      userStartedSpace(ctx, UserId.generate(), spaceId),
-      clickedJoinSpaceButton(ctx, spaceId)
-    )
-
-    expect(SpacesCoreClient.toSpaceIdByUserId(joined.model, ctx.currentUserId)).toEqual(spaceId)
+    const f = await Fixture()
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'event',
+          c: withEventMeta({
+            t: 'user-started-space',
+            spaceId: f.spaceId,
+            userId: f.userA.userId
+          })
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-join-space-button',
+          spaceId: f.spaceId
+        }
+      }
+    ])
+    expect(SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(f.spaceId)
   })
 
   it('current user leaving joined space', async () => {
-    const ctx = Ctx()
-    const spaceId = SpaceId.generate()
-
-    const left = andThen(
-      init(ctx),
-      userStartedSpace(ctx, UserId.generate(), spaceId),
-      clickedJoinSpaceButton(ctx, spaceId),
-      clickedLeaveSpaceButton(ctx)
-    )
-
-    expect(SpacesCoreClient.toSpaceIdByUserId(left.model, ctx.currentUserId)).toEqual(null)
-    //
+    const f = await Fixture()
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'event',
+          c: withEventMeta({
+            t: 'user-started-space',
+            spaceId: f.spaceId,
+            userId: f.userA.userId
+          })
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-join-space-button',
+          spaceId: f.spaceId
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-leave-space-button'
+        }
+      }
+    ])
+    expect(SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(null)
   })
 
   it('preventing joining a space if already in a space', async () => {
-    const ctx = Ctx()
-    const SpaceA = SpaceId.generate()
-    const SpaceB = SpaceId.generate()
+    const f = await Fixture()
+    const spaceA = SpaceId.generate()
+    const spaceB = SpaceId.generate()
 
-    const arranged = andThen(
-      init(ctx),
-      userStartedSpace(ctx, UserId.generate(), SpaceA),
-      clickedJoinSpaceButton(ctx, SpaceA)
-    )
-
-    const joined = andThen(
+    const output = f.update(f.initial, [
       {
-        model: arranged.model
+        msgServer: {
+          t: 'event',
+          c: withEventMeta({
+            t: 'user-started-space',
+            spaceId: spaceA,
+            userId: f.userA.userId
+          })
+        }
       },
-      userStartedSpace(ctx, UserId.generate(), SpaceB),
-      clickedJoinSpaceButton(ctx, SpaceB)
-    )
+      {
+        msg: {
+          t: 'clicked-join-space-button',
+          spaceId: spaceA
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-join-space-button',
+          spaceId: spaceB
+        }
+      }
+    ])
 
-    expect(SpacesCoreClient.toSpaceIdByUserId(arranged.model, ctx.currentUserId)).toEqual(SpaceA)
-
-    expect(didShowErrorSm(joined)).toBe(true)
+    expect(SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(spaceA)
+    expect(didShowErrorSm(output)).toBe(true)
   })
 })
