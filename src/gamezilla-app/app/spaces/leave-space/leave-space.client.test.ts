@@ -21,7 +21,7 @@ const Fixture = async () => {
   }
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   it('should navigate to list screen after leaving space', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
