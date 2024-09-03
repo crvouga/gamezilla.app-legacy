@@ -4,6 +4,7 @@ import { didPlaySound, didPushRoute, didShowToast } from 'gamezilla-app/app/@/cl
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import {
   Ctx,
+  FixtureSpaceClient,
   clickedLeaveSpaceButton,
   init,
   userJoinedSpace,
@@ -11,20 +12,47 @@ import {
   userStartedSpace
 } from '../@/testing/client'
 import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import { withEventMeta } from '../@/event'
 
-describe(import.meta.file, () => {
-  it('should navigate to list screen after leaving space', () => {
-    const ctx = Ctx()
+const Fixture = async () => {
+  const f = await FixtureSpaceClient()
+  return {
+    ...f
+  }
+}
+
+describe.only(import.meta.file, () => {
+  it('should navigate to list screen after leaving space', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
 
-    const joined = andThen(
-      init(ctx),
-      userStartedSpace(ctx, UserId.generate(), spaceId),
-      userJoinedSpace(ctx, ctx.currentUserId, spaceId)
-    )
-
-    const output = andThen(joined, userLeftSpace(ctx, ctx.currentUserId, spaceId))
-
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'event',
+          c: withEventMeta({
+            t: 'user-started-space',
+            spaceId: spaceId,
+            userId: f.userA.userId
+          })
+        }
+      },
+      {
+        msgServer: {
+          t: 'event',
+          c: withEventMeta({
+            t: 'user-joined-space',
+            spaceId: spaceId,
+            userId: f.ctx.currentUserId
+          })
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-leave-space-button'
+        }
+      }
+    ])
     expect(didPushRoute(output, (x) => x.t === 'space-list')).toBe(true)
   })
 
