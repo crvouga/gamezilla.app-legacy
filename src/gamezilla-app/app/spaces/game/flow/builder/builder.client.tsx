@@ -13,41 +13,13 @@ import { ScreenPuzzleBuilderClient } from './screen-puzzle-builder/client'
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFlowPuzzleList({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFlowPackList({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenOpenPackClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenPackBuilderClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenPuzzleBuilderClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ScreenOpenPuzzleClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      ListTabsClient.update({
-        ...input,
-        model
-      })
+    (model) => updateFlowPuzzleList({ ...input, model }),
+    (model) => updateFlowPackList({ ...input, model }),
+    (model) => ScreenOpenPackClient.update({ ...input, model }),
+    (model) => ScreenPackBuilderClient.update({ ...input, model }),
+    (model) => ScreenPuzzleBuilderClient.update({ ...input, model }),
+    (model) => ScreenOpenPuzzleClient.update({ ...input, model }),
+    (model) => ListTabsClient.update({ ...input, model })
   )
 }
 
@@ -61,7 +33,7 @@ const updateFlowPackList: ClientModule['update'] = (input) => {
     msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : undefined,
     msgServer: input.msgServer?.t === 'flow-pack-list' ? input.msgServer.c : undefined,
     msgEvt: input.msgEvt,
-    msgCmd: input.msgCmd
+    msgCmd: null
   })
   return {
     model: {
@@ -74,14 +46,8 @@ const updateFlowPackList: ClientModule['update'] = (input) => {
     msgCore: [],
     msgCmd: SpaceClientCmd.map(
       updated.msgCmd,
-      (c) => ({
-        t: 'flow-pack-list',
-        c
-      }),
-      (c) => ({
-        t: 'flow-pack-list',
-        c
-      })
+      (c) => ({ t: 'flow-pack-list', c }),
+      (c) => ({ t: 'flow-pack-list', c })
     )
   }
 }
@@ -109,14 +75,8 @@ const updateFlowPuzzleList: ClientModule['update'] = (input) => {
     msgCore: [],
     msgCmd: SpaceClientCmd.map(
       updated.msgCmd,
-      (c) => ({
-        t: 'flow-puzzle-list',
-        c
-      }),
-      (c) => ({
-        t: 'flow-puzzle-list',
-        c
-      })
+      (c) => ({ t: 'flow-puzzle-list', c }),
+      (c) => ({ t: 'flow-puzzle-list', c })
     )
   }
 }

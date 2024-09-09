@@ -9,8 +9,20 @@ const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromMsgCore({ ...input, model })
+    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateFromMsgEvt({ ...input, model })
   )
+}
+
+const updateFromMsgEvt: ClientModule['update'] = (input) => {
+  if (input.msgEvt?.t === 'flow' && input.msgEvt.c.t === 'user-changed-mode' && input.msgEvt.c.mode === 'play') {
+    return {
+      model: input.model,
+      msgCmd: [FlowPackListClient.load()]
+    }
+  }
+
+  return { model: input.model }
 }
 
 const updateFromMsg: ClientModule['update'] = (input) => {
@@ -66,22 +78,11 @@ const View: ClientModule['View'] = (input) => {
       />
       <FlowPackListClient.View
         ctx={input.ctx}
-        dispatch={(c) =>
-          input.dispatch({
-            t: 'flow-pack-list',
-            c
-          })
-        }
-        model={{
-          ...input.model.flowPackList,
-          packs: input.model.flowPacks
-        }}
+        dispatch={(c) => input.dispatch({ t: 'flow-pack-list', c })}
+        model={input.ctx.flowPackList}
         emits={{
           clickedPackItem(pack) {
-            input.dispatch({
-              t: 'user-clicked-open-pack-list-item',
-              pack
-            })
+            input.dispatch({ t: 'user-clicked-open-pack-list-item', pack })
           }
         }}
       />

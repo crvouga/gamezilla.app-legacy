@@ -5,30 +5,19 @@ import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
 import { Posix, RequestResponse, Result, TimeSpan, descend, isErr } from 'gamezilla-app/@/core'
 import type { FlowPuzzle } from '../flow-puzzle'
-import type { ClientModule } from './flow-puzzle-list.core'
+import type { ClientModule } from './flow-puzzle-list.types'
 import { FlowVariantUI } from '../../flow/flow-variant'
 
 const update: ClientModule['update'] = (input) => {
-  return AppClientModule.andThen(
-    { model: input.model },
-    //
-    (model) =>
-      updatePuzzleList({
-        ...input,
-        model
-      })
-    //
-  )
+  return AppClientModule.andThen({ model: input.model }, (model) => updatePuzzleList({ ...input, model }))
 }
 
 const updatePuzzleList: ClientModule['update'] = (input) => {
-  const { model, msg, msgServer, ctx } = input
-
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'flow-puzzle-list.user-observed-end-of-list': {
       return {
         model: {
-          ...model,
+          ...input.model,
           request: RequestResponse.startedRequest(input.ctx.now)
         },
         msgCmd: [
@@ -44,7 +33,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
               },
               where: {
                 createdBy: {
-                  equals: ctx.space.hostId
+                  equals: input.ctx.space.hostId
                 }
               }
             }
@@ -54,22 +43,22 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
     }
 
     case 'flow-puzzle-list.time-passed': {
-      const requestNew = RequestResponse.timePassed(model.request, ctx.now)
+      const requestNew = RequestResponse.timePassed(input.model.request, input.ctx.now)
       return {
         model: {
-          ...model,
+          ...input.model,
           request: requestNew
         }
       }
     }
   }
 
-  switch (msgServer?.t) {
+  switch (input.msgServer?.t) {
     case 'flow-puzzle-list.listed-puzzle': {
-      const puzzles = msgServer.listed.t === 'ok' ? msgServer.listed.value.items : []
+      const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
 
       const puzzlesNew = {
-        ...model.puzzles
+        ...input.model.puzzles
       }
       for (const puzzle of puzzles) {
         puzzlesNew[puzzle.id] = puzzle
@@ -77,15 +66,15 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
 
       return {
         model: {
-          ...model,
+          ...input.model,
           request: RequestResponse.response(
-            model.request,
-            ctx.now,
-            Result.mapOk(msgServer.listed, () => null)
+            input.model.request,
+            input.ctx.now,
+            Result.mapOk(input.msgServer.listed, () => null)
           ),
           puzzles: puzzlesNew
         },
-        msgCmd: isErr(msgServer.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : []
+        msgCmd: isErr(input.msgServer.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : []
       }
     }
     default: {
@@ -93,7 +82,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 const View: ClientModule['View'] = (input) => {

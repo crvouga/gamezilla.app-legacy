@@ -1,16 +1,21 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
-import { BuilderCore } from './builder/builder.core'
+import { FlowPackDb, FlowPackListServer } from './@/flow-pack'
 import { BuilderServer } from './builder/builder.server'
 import type { ServerModule } from './flow.types'
-import { PlayCore } from './play/play.core'
 import { PlayServer } from './play/play.server'
 
 const deps: ServerModule['deps'] = async (input) => {
   return {
     builder: await BuilderServer.deps(input),
-    play: await PlayServer.deps(input)
+    play: await PlayServer.deps(input),
+    flowPackList: {
+      flowPackDb: FlowPackDb({
+        t: 'db-conn-sql',
+        dbConnSql: input.ctx.dbConnSql
+      })
+    }
   }
 }
 
@@ -22,14 +27,31 @@ const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen(
     {},
     () => updatePlay(input),
-    () => updateBuilder(input)
+    () => updateBuilder(input),
+    () => updateFlowPackList(input)
   )
+}
+
+const updateFlowPackList: ServerModule['update'] = async (input) => {
+  const updated = await FlowPackListServer.update({
+    ctx: input.ctx,
+    msgCmd: input.msgCmd,
+    msgEvt: input.msgEvt,
+    msgClient: input.msgClient?.t === 'flow-pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
+    deps: input.deps.flowPackList
+  })
+
+  return {
+    msgCmd: SpaceServerCmd.tag('flow-pack-list', updated.msgCmd),
+    msgEvt: updated.msgEvt
+  }
 }
 
 const updateBuilder: ServerModule['update'] = async (input) => {
   const updated = await BuilderServer.update({
     ctx: input.ctx,
-    modelCore: input.modelCore.t === 'builder' ? input.modelCore.c : BuilderCore.initCore({ ctx: input.ctx }),
+    modelCore: input.modelCore.builder,
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
     msgClient: input.msgClient?.t === 'builder' ? { ...input.msgClient, ...input.msgClient.c } : null,
@@ -38,15 +60,17 @@ const updateBuilder: ServerModule['update'] = async (input) => {
     deps: input.deps.builder
   })
 
-  const tagged = GameServerModule.tagOutput('builder', (msgCmd) => SpaceServerCmd.tag('builder', msgCmd), updated)
-
-  return tagged
+  return {
+    msgCmd: SpaceServerCmd.tag('builder', updated.msgCmd),
+    msgCore: updated.msgCore?.map((c) => ({ ...c, t: 'builder', c })),
+    msgEvt: updated.msgEvt
+  }
 }
 
 const updatePlay: ServerModule['update'] = async (input) => {
   const updated = await PlayServer.update({
     ctx: input.ctx,
-    modelCore: input.modelCore.t === 'play' ? input.modelCore.c : PlayCore.initCore({ ctx: input.ctx }),
+    modelCore: input.modelCore.play,
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
     msgClient: input.msgClient?.t === 'play' ? { ...input.msgClient, ...input.msgClient.c } : null,
@@ -55,27 +79,15 @@ const updatePlay: ServerModule['update'] = async (input) => {
     deps: input.deps.play
   })
 
-  const tagged = GameServerModule.tagOutput('play', (msgCmd) => SpaceServerCmd.tag('play', msgCmd), updated)
-
-  return tagged
+  return {
+    msgCmd: SpaceServerCmd.tag('play', updated.msgCmd),
+    msgCore: updated.msgCore?.map((c) => ({ ...c, t: 'play', c })),
+    msgEvt: updated.msgEvt
+  }
 }
 
-const subscriptions: ServerModule['subscriptions'] = async (input) => {
-  const { modelCore } = input
-
-  switch (modelCore.t) {
-    case 'play': {
-      return Sub.tag('play', await PlayServer.subscriptions({ ctx: input.ctx, modelCore: modelCore.c }))
-    }
-
-    case 'builder': {
-      return Sub.tag('builder', await BuilderServer.subscriptions({ ctx: input.ctx, modelCore: modelCore.c }))
-    }
-
-    case null: {
-      return Sub.None
-    }
-  }
+const subscriptions: ServerModule['subscriptions'] = async (_input) => {
+  return Sub.None
 }
 
 export const FlowServer: ServerModule = {

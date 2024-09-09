@@ -1,15 +1,18 @@
-import { Sub } from 'gamezilla-app/@/core'
+import { Eff, Sub } from 'gamezilla-app/@/core'
+import { Msg } from 'gamezilla-app/@/core/msg'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconScrewdriverWrench } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import { SpaceClientCmd } from '../../@/space-client-cmd'
+import { FlowClientCmd } from './@/flow-client-cmd'
 import type { FlowClientCtx } from './@/flow-client-ctx'
 import { CoverArt } from './@/flow-cover-art'
-import { FlowPuzzleList } from './@/flow-puzzle'
+import { FlowPackListClient, FlowPackListTypes } from './@/flow-pack'
+import { FlowPuzzleListTypes } from './@/flow-puzzle'
 import { BuilderClient } from './builder/builder.client'
-import type { ClientModule } from './flow.types'
+import type { ClientModule, MsgClient, MsgToServer } from './flow.types'
 import { PlayClient } from './play/play.client'
 
 //
@@ -20,154 +23,229 @@ import { PlayClient } from './play/play.client'
 //
 
 const init: ClientModule['init'] = {
-  t: 'none',
+  builder: BuilderClient.init,
+  play: PlayClient.init,
   flowPuzzles: {},
   flowPacks: {},
-  flowPuzzleList: FlowPuzzleList.initClient
+  flowPuzzleList: FlowPuzzleListTypes.initClient,
+  flowPackList: FlowPackListTypes.initClient
 }
 
-const update: ClientModule['update'] = (input) => {
+const update = (
+  input: Parameters<ClientModule['update']>[0]
+): ReturnType<ClientModule['update']> & {
+  msgCmd?: SpaceClientCmd<{
+    MsgClient: MsgClient
+    MsgToServer: MsgToServer
+  }>[]
+} => {
+  const updatedChild = updateChild(input)
+
+  const updated = updateLoop(
+    {
+      ...input,
+      msg: null,
+      msgCore: null,
+      msgServer: null
+    },
+    updatedChild
+  )
+
+  return {
+    ...updated,
+    msgCmd: FlowClientCmd.toSpaceClientCmds(updated.msgCmd)
+  }
+}
+
+const updateLoop = (
+  input: Parameters<ClientModule['update']>[0],
+  acc: ReturnType<ClientModule['update']>
+): ReturnType<ClientModule['update']> => {
+  const [evt, ...restEvt] = acc.msgEvt ?? []
+
+  if (evt) {
+    const updated = updateChild({
+      ...input,
+      model: acc.model,
+      msgEvt: evt
+    })
+
+    return updateLoop(input, {
+      model: updated.model,
+      msgEvt: Msg.batch(restEvt, updated.msgEvt),
+      eff: Eff.batch(acc.eff, updated.eff),
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd)
+    })
+  }
+
+  const [cmd, restCmd] = FlowClientCmd.sieveOne(acc.msgCmd ?? [])
+
+  if (cmd) {
+    const updated = updateChild({
+      ...input,
+      model: acc.model,
+      msgCmd: cmd
+    })
+
+    return updateLoop(input, {
+      model: updated.model,
+      msgCmd: Msg.batch(restCmd, updated.msgCmd),
+      eff: Eff.batch(acc.eff, updated.eff),
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
+    })
+  }
+
+  return acc
+}
+
+const updateChild: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromMsgCore({ ...input, model }),
-    (model) => updateChild({ ...input, model })
+    (model) => updateModePlay({ ...input, model }),
+    (model) => updateModeBuilder({ ...input, model }),
+    (model) => updateFlowPackList({ ...input, model })
   )
 }
 
-const updateChild: ClientModule['update'] = (input) => {
+const updateFlowPackList: ClientModule['update'] = (input) => {
+  const updated = FlowPackListClient.update({
+    ctx: input.ctx,
+    model: {
+      ...input.model.flowPackList,
+      packs: input.model.flowPacks
+    },
+    msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'flow-pack-list' ? input.msgCmd : null,
+    msgEvt: input.msgEvt,
+    msgServer: input.msgServer?.t === 'flow-pack-list' ? input.msgServer.c : null
+  })
+
+  return {
+    model: {
+      ...input.model,
+      flowPackList: updated.model,
+      flowPacks: updated.model.packs
+    },
+    eff: Eff.tag('flow-pack-list', updated.eff),
+    msgCmd: FlowClientCmd.tag('flow-pack-list', updated.msgCmd),
+    msgEvt: []
+  }
+}
+const updateModePlay: ClientModule['update'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
     flowPacks: input.model.flowPacks,
     flowPuzzles: input.model.flowPuzzles,
-    flowPuzzleList: input.model.flowPuzzleList
+    flowPuzzleList: input.model.flowPuzzleList,
+    flowPackList: input.model.flowPackList
   }
 
-  switch (input.modelCore.t) {
-    case null: {
-      return {
-        model: input.model
-      }
+  const updated = PlayClient.update({
+    ctx,
+    modelCore: input.modelCore.play,
+    model: input.model.play,
+    msgCmd: null,
+    msgEvt: input.msgEvt,
+    msgServer: input.msgServer?.t === 'play' ? input.msgServer.c : null,
+    msgCore: input.msgCore?.t === 'play' ? { ...input.msgCore, ...input.msgCore.c } : null,
+    msg: input.msg?.t === 'play' ? input.msg.c : null
+  })
+
+  return {
+    eff: Eff.tag('play', updated.eff),
+    msgEvt: [],
+    msgCmd: FlowClientCmd.tag('play', updated.msgCmd),
+    msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'play' })),
+    model: {
+      ...input.model,
+      play: updated.model
     }
+  }
+}
 
-    case 'play': {
-      const updated = PlayClient.update({
-        ctx,
-        modelCore: input.modelCore.c,
-        model: { ...(input.model.t === 'play' ? input.model.c : PlayClient.init) },
-        msgCmd: null,
-        msgEvt: input.msgEvt,
-        msgServer: input.msgServer?.t === 'play' ? input.msgServer.c : null,
-        msgCore: input.msgCore?.t === 'play' ? { ...input.msgCore, ...input.msgCore.c } : null,
-        msg: input.msg?.t === 'play' ? input.msg.c : null
-      })
+const updateModeBuilder: ClientModule['update'] = (input) => {
+  const ctx: FlowClientCtx = {
+    ...input.ctx,
+    flowPacks: input.model.flowPacks,
+    flowPuzzles: input.model.flowPuzzles,
+    flowPuzzleList: input.model.flowPuzzleList,
+    flowPackList: input.model.flowPackList
+  }
+  const updated = BuilderClient.update({
+    ctx,
+    modelCore: input.modelCore.builder,
+    model: {
+      ...input.model.builder,
+      packs: input.model.flowPacks,
+      puzzles: input.model.flowPuzzles
+    },
+    msgCmd: null,
+    msgEvt: input.msgEvt,
+    msgServer: input.msgServer?.t === 'builder' ? input.msgServer.c : null,
+    msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
+    msg: input.msg?.t === 'builder' ? input.msg.c : null
+  })
 
-      const tagged = GameClientModule.tagOutput('play', (msgCmd) => SpaceClientCmd.tag('play', msgCmd), updated)
-
-      return {
-        ...tagged,
-        model: {
-          ...tagged.model,
-          flowPuzzleList: input.model.flowPuzzleList,
-          flowPuzzles: input.model.flowPuzzles,
-          flowPacks: input.model.flowPacks
-        }
-      }
-    }
-
-    case 'builder': {
-      const updated = BuilderClient.update({
-        ctx,
-        modelCore: input.modelCore.c,
-        model: {
-          ...(input.model.t === 'builder' ? input.model.c : BuilderClient.init),
-          packs: input.model.flowPacks,
-          puzzles: input.model.flowPuzzles
-        },
-        msgCmd: null,
-        msgEvt: input.msgEvt,
-        msgServer: input.msgServer?.t === 'builder' ? input.msgServer.c : null,
-        msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
-        msg: input.msg?.t === 'builder' ? input.msg.c : null
-      })
-
-      const tagged = GameClientModule.tagOutput('builder', (msgCmd) => SpaceClientCmd.tag('builder', msgCmd), updated)
-
-      return {
-        ...tagged,
-        model: {
-          ...tagged.model,
-          t: 'builder',
-          c: {
-            ...tagged.model.c,
-            packs: {},
-            puzzles: {}
-          },
-          flowPacks: updated.model.packs,
-          flowPuzzles: updated.model.puzzles,
-          flowPuzzleList: input.model.flowPuzzleList
-        }
-      }
+  return {
+    eff: Eff.tag('builder', updated.eff),
+    msgCmd: SpaceClientCmd.tag('builder', updated.msgCmd),
+    msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'builder' })),
+    msgEvt: [],
+    model: {
+      ...input.model,
+      builder: updated.model,
+      flowPacks: updated.model.packs,
+      flowPuzzles: updated.model.puzzles
     }
   }
 }
 
 const updateFromMsgCore: ClientModule['update'] = (input) => {
-  const { msgCore, model } = input
-
-  switch (msgCore?.t) {
+  switch (input.msgCore?.t) {
     case 'user-changed-mode': {
-      switch (msgCore.mode) {
-        case 'play': {
-          return {
-            model: { ...model, t: 'play', c: PlayClient.init },
-            msgCmd: [playSound(APP_SOUND.navForwardMin)]
+      return {
+        model: {
+          ...input.model,
+          play: PlayClient.init,
+          builder: BuilderClient.init
+        },
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
+        msgEvt: [
+          {
+            t: 'flow',
+            c: {
+              t: 'user-changed-mode',
+              mode: input.msgCore.mode,
+              userId: input.msgCore.userId
+            }
           }
-        }
-
-        case 'builder': {
-          return {
-            model: { ...model, t: 'builder', c: BuilderClient.init },
-            msgCmd: [playSound(APP_SOUND.navForwardMin)]
-          }
-        }
-
-        case null: {
-          return {
-            model: { ...model, t: 'none' },
-            msgCmd: [playSound(APP_SOUND.navBackwardMin)]
-          }
-        }
-
-        default: {
-          return {
-            model
-          }
-        }
+        ]
       }
     }
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
 }
 
 const updateFromMsg: ClientModule['update'] = (input) => {
-  const { msg, model } = input
-
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'msgCore': {
-      const msgCore = withId(msg.c)
-      return { model, msgCore: [msgCore] }
+      const msgCore = withId(input.msg.c)
+      return { model: input.model, msgCore: [msgCore] }
     }
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
@@ -187,34 +265,16 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
     ...input.ctx,
     flowPacks: input.model.flowPacks,
     flowPuzzles: input.model.flowPuzzles,
-    flowPuzzleList: input.model.flowPuzzleList
+    flowPuzzleList: input.model.flowPuzzleList,
+    flowPackList: input.model.flowPackList
   }
-  switch (input.modelCore.t) {
-    case 'play': {
-      return Sub.tag(
-        'play',
-        PlayClient.subscriptions({
-          ctx,
-          modelCore: input.modelCore.c,
-          model: input.model.t === 'play' ? input.model.c : PlayClient.init
-        })
-      )
-    }
-    case 'builder': {
-      return Sub.tag(
-        'builder',
-        BuilderClient.subscriptions({
-          ctx,
-          modelCore: input.modelCore.c,
-          model: input.model.t === 'builder' ? input.model.c : BuilderClient.init
-        })
-      )
-    }
-
-    default: {
-      return Sub.None
-    }
-  }
+  return Sub.batch<MsgClient>([
+    Sub.tag('play', PlayClient.subscriptions({ ctx, modelCore: input.modelCore.play, model: input.model.play })),
+    Sub.tag(
+      'builder',
+      BuilderClient.subscriptions({ ctx, modelCore: input.modelCore.builder, model: input.model.builder })
+    )
+  ])
 }
 
 //
@@ -228,10 +288,11 @@ const View: ClientModule['View'] = (input) => {
     ...input.ctx,
     flowPacks: input.model.flowPacks,
     flowPuzzles: input.model.flowPuzzles,
-    flowPuzzleList: input.model.flowPuzzleList
+    flowPuzzleList: input.model.flowPuzzleList,
+    flowPackList: input.model.flowPackList
   }
 
-  switch (input.modelCore.t) {
+  switch (input.modelCore.mode) {
     case null: {
       return (
         <GameMainMenu.View
@@ -280,12 +341,12 @@ const View: ClientModule['View'] = (input) => {
         <BuilderClient.View
           ctx={ctx}
           dispatch={(c) => input.dispatch({ t: 'builder', c })}
-          modelCore={input.modelCore.c}
-          model={
-            input.model.t === 'builder'
-              ? { ...input.model.c, packs: input.model.flowPacks, puzzles: input.model.flowPuzzles }
-              : BuilderClient.init
-          }
+          modelCore={input.modelCore.builder}
+          model={{
+            ...input.model.builder,
+            packs: input.model.flowPacks,
+            puzzles: input.model.flowPuzzles
+          }}
         />
       )
     }
@@ -300,66 +361,19 @@ const View: ClientModule['View'] = (input) => {
               c
             })
           }}
-          modelCore={input.modelCore.c}
-          model={input.model.t === 'play' ? input.model.c : PlayClient.init}
+          modelCore={input.modelCore.play}
+          model={input.model.play}
         />
       )
     }
   }
 }
 
-const ViewFeedItem: ClientModule['ViewFeedItem'] = (input) => {
-  const ctx: FlowClientCtx = {
-    ...input.ctx,
-    flowPacks: {},
-    flowPuzzles: {},
-    flowPuzzleList: FlowPuzzleList.initClient
-  }
-  switch (input.msgCore.t) {
-    case 'play': {
-      switch (input.modelCore.t) {
-        case 'play': {
-          return (
-            <PlayClient.ViewFeedItem
-              ctx={ctx}
-              dispatch={(c) => input.dispatch({ t: 'play', c })}
-              modelCore={input.modelCore.c}
-              msgCore={input.msgCore.c}
-            />
-          )
-        }
-        default: {
-          return null
-        }
-      }
-    }
-
-    case 'builder': {
-      switch (input.modelCore.t) {
-        case 'builder': {
-          return (
-            <BuilderClient.ViewFeedItem
-              ctx={ctx}
-              dispatch={(c) => input.dispatch({ t: 'builder', c })}
-              modelCore={input.modelCore.c}
-              msgCore={input.msgCore.c}
-            />
-          )
-        }
-
-        default: {
-          return null
-        }
-      }
-    }
-
-    default: {
-      return null
-    }
-  }
+const ViewFeedItem: ClientModule['ViewFeedItem'] = (_input) => {
+  return null
 }
 
-export const FlowClient: ClientModule = {
+export const FlowClient = {
   init,
   subscriptions,
   update,

@@ -2,13 +2,14 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { GameClientModule } from '../../@/architecture/game-client-v2'
 import { GameServerModule } from '../../@/architecture/game-server-v2'
-import { SpaceClientCtx, SpaceClientEvt, SpaceServerCtx, SpaceServerEvt } from '../../@/space'
-import { SpaceClientCmd } from '../../@/space-client-cmd'
+import { SpaceClientCtx, SpaceServerCtx, SpaceServerEvt } from '../../@/space'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import type { GameMainMenu } from '../@/game'
-import type { FlowPack } from './@/flow-pack'
+import { FlowClientCmd, FlowClientCmdLocal } from './@/flow-client-cmd'
+import { FlowClientEvt, FlowClientEvtIn } from './@/flow-client-evt'
+import type { FlowPack, FlowPackListTypes } from './@/flow-pack'
 import type { FlowPackId } from './@/flow-pack/flow-pack-id'
-import type { FlowPuzzleList } from './@/flow-puzzle'
+import type { FlowPuzzleListTypes } from './@/flow-puzzle'
 import type { FlowPuzzle } from './@/flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from './@/flow-puzzle/flow-puzzle-id'
 import { BuilderTypes } from './builder'
@@ -22,22 +23,18 @@ import { PlayServer } from './play/play.server'
 //
 //
 
-export type BaseModelClient = {
+export type ModelClient = {
   flowPuzzles: {
     [flowPuzzleId: FlowPuzzleId]: FlowPuzzle
   }
   flowPacks: {
     [flowPackId: FlowPackId]: FlowPack
   }
-  flowPuzzleList: FlowPuzzleList.ModelClient
+  flowPuzzleList: FlowPuzzleListTypes.ModelClient
+  flowPackList: FlowPackListTypes.ModelClient
+  builder: BuilderTypes.ModelClient
+  play: PlayTypes.ModelClient
 }
-
-export type VariantModelClient =
-  | { t: 'none' }
-  | { t: 'builder'; c: BuilderTypes.ModelClient }
-  | { t: 'play'; c: PlayTypes.ModelClient }
-
-export type ModelClient = BaseModelClient & VariantModelClient
 
 export const ModelServer = p.or(
   p.obj({
@@ -66,12 +63,22 @@ export type MsgClient =
   | { t: 'msgCore'; c: MsgCore }
   | { t: 'builder'; c: BuilderTypes.MsgClient }
   | { t: 'play'; c: PlayTypes.MsgClient }
+  | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgClient }
 
-export type MsgServer = { t: 'builder'; c: BuilderTypes.MsgServer } | { t: 'play'; c: PlayTypes.MsgServer }
+export type MsgServer =
+  | { t: 'builder'; c: BuilderTypes.MsgServer }
+  | { t: 'play'; c: PlayTypes.MsgServer }
+  | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgServer }
 
-export type MsgToServer = { t: 'builder'; c: BuilderTypes.MsgToServer } | { t: 'play'; c: PlayTypes.MsgToServer }
+export type MsgToServer =
+  | { t: 'builder'; c: BuilderTypes.MsgToServer }
+  | { t: 'play'; c: PlayTypes.MsgToServer }
+  | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgToServer }
 
-export type MsgToClient = { t: 'builder'; c: BuilderTypes.MsgToClient } | { t: 'play'; c: PlayTypes.MsgToClient }
+export type MsgToClient =
+  | { t: 'builder'; c: BuilderTypes.MsgToClient }
+  | { t: 'play'; c: PlayTypes.MsgToClient }
+  | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgToClient }
 
 const MODE = ['builder', 'play'] as const
 export const Mode = p.enumeration(MODE)
@@ -102,11 +109,11 @@ export const MsgCore = p.or(
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
-export const ModelCore = p.or(
-  p.obj({ t: p.l(null) }),
-  p.obj({ t: p.l('builder'), c: BuilderTypes.ModelCore }),
-  p.obj({ t: p.l('play'), c: PlayTypes.ModelCore })
-)
+export const ModelCore = p.obj({
+  mode: p.or(Mode, p.l(null)),
+  play: PlayTypes.ModelCore,
+  builder: BuilderTypes.ModelCore
+})
 export type ModelCore = p.Infer<typeof ModelCore>
 
 //
@@ -129,11 +136,13 @@ export type ClientModule = GameClientModule<{
   //
   Ctx: SpaceClientCtx
   //
-  MsgCmdOut: SpaceClientCmd<{
+  MsgCmdOut: FlowClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
-  MsgEvtIn: SpaceClientEvt
+  MsgCmdIn: FlowClientCmdLocal
+  MsgEvtIn: FlowClientEvtIn
+  MsgEvtOut: FlowClientEvt
 }>
 
 export type ServerModule = GameServerModule<{
@@ -149,5 +158,6 @@ export type ServerModule = GameServerModule<{
   Deps: {
     builder: Awaited<ReturnType<(typeof BuilderServer)['deps']>>
     play: Awaited<ReturnType<(typeof PlayServer)['deps']>>
+    flowPackList: Awaited<ReturnType<FlowPackListTypes.ServerModule['getDeps']>>
   }
 }>

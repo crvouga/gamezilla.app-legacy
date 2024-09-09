@@ -1,11 +1,12 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import type { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
-import type { SpaceClientEvt, SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { FlowCoreEvent } from '../@/flow-core-event'
 import type { FlowClientCtx } from '../@/flow-client-ctx'
+import { FlowClientEvtIn } from '../@/flow-client-evt'
+import { FlowCoreEvent } from '../@/flow-core-event'
 import type { FlowPack } from '../@/flow-pack/flow-pack'
 import type { IFlowPackDb } from '../@/flow-pack/flow-pack-db'
 import { FlowPackListTypes } from '../@/flow-pack/flow-pack-list'
@@ -13,7 +14,7 @@ import { FlowPackPuzzlesGridTypes } from '../@/flow-pack/flow-pack-puzzles-grid'
 import type { FlowPuzzle } from '../@/flow-puzzle/flow-puzzle'
 import type { IFlowPuzzleDb } from '../@/flow-puzzle/flow-puzzle-db/flow-puzzle-db'
 import type { FlowPuzzleId } from '../@/flow-puzzle/flow-puzzle-id'
-import { FlowPuzzleList } from '../@/flow-puzzle/flow-puzzle-list'
+import { FlowPuzzleListTypes } from '../@/flow-puzzle/flow-puzzle-list'
 import { ListTabs } from './list-tabs'
 import { ScreenOpenPackTypes } from './screen-open-pack'
 import { ScreenOpenPuzzleTypes } from './screen-open-puzzle'
@@ -41,7 +42,7 @@ export type ClientModule = GameClientModule<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
-  MsgEvtIn: SpaceClientEvt
+  MsgEvtIn: FlowClientEvtIn
   MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient
 }>
 
@@ -78,7 +79,7 @@ type BaseModelClient = {
   packs: {
     [packId: string]: FlowPack
   }
-  flowPuzzleList: FlowPuzzleList.ModelClient
+  flowPuzzleList: FlowPuzzleListTypes.ModelClient
   flowPackList: FlowPackListTypes.ModelClient
   puzzleBuilderOpened?: 'more' | 'edit-name' | 'delete-forever' | 'unsaved-changes' | null
 }
@@ -94,7 +95,7 @@ export const initClient: ClientModule['init'] = {
   ...ScreenPuzzleBuilderTypes.initClient,
   ...ScreenPackBuilderTypes.initClient,
   ...ScreenOpenPackTypes.initClient,
-  flowPuzzleList: FlowPuzzleList.initClient,
+  flowPuzzleList: FlowPuzzleListTypes.initClient,
   flowPackList: FlowPackListTypes.initClient,
   packs: {},
   puzzles: {}
@@ -123,7 +124,7 @@ type BaseMsgClient = { t: 'time-passed' }
 
 export type MsgClient =
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgClient }
-  | { t: 'flow-puzzle-list'; c: FlowPuzzleList.MsgClient }
+  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgClient }
   | BaseMsgClient
   | ScreenOpenPuzzleTypes.MsgClient
   | ScreenPuzzleBuilderTypes.MsgClient
@@ -133,7 +134,7 @@ export type MsgClient =
 
 export type MsgServer =
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgServer }
-  | { t: 'flow-puzzle-list'; c: FlowPuzzleList.MsgServer }
+  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgServer }
   | ScreenOpenPuzzleTypes.MsgServer
   | ScreenPuzzleBuilderTypes.MsgServer
   | ScreenPackBuilderTypes.MsgServer
@@ -144,7 +145,7 @@ export type MsgToServer =
       t: 'flow-pack-list'
       c: FlowPackListTypes.MsgToServer
     }
-  | { t: 'flow-puzzle-list'; c: FlowPuzzleList.MsgToServer }
+  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgToServer }
   | ScreenPuzzleBuilderTypes.MsgToServer
   | ScreenOpenPuzzleTypes.MsgToServer
   | ScreenPackBuilderTypes.MsgToServer
@@ -155,7 +156,7 @@ export type MsgToClient =
       t: 'flow-pack-list'
       c: FlowPackListTypes.MsgToClient
     }
-  | { t: 'flow-puzzle-list'; c: FlowPuzzleList.MsgToClient }
+  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgToClient }
   | ScreenPuzzleBuilderTypes.MsgToClient
   | ScreenOpenPuzzleTypes.MsgToClient
   | ScreenPackBuilderTypes.MsgToClient

@@ -9,7 +9,7 @@ import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import type { FlowClientCtx } from '../../flow-client-ctx'
 import { FlowPuzzle } from '../flow-puzzle'
 import { FlowPuzzleListClient } from './flow-puzzle-list.client'
-import { type ModelClient, initClient } from './flow-puzzle-list.core'
+import { type ModelClient, initClient } from './flow-puzzle-list.types'
 
 const initial = {
   model: initClient

@@ -5,6 +5,7 @@ import type { AppServerModule } from 'gamezilla-app/app/@/architecture/app-serve
 import type { SpaceClientCtx, SpaceClientEvt, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { FlowClientEvtIn } from '../../flow-client-evt'
 import type { FlowPack } from '../flow-pack'
 import type { IFlowPackDb } from '../flow-pack-db'
 import type { FlowPackId } from '../flow-pack-id'
@@ -21,11 +22,12 @@ export type ClientModule = AppClientModule<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   Ctx: SpaceClientCtx
-  MsgEvtIn: SpaceClientEvt
+  MsgEvtIn: FlowClientEvtIn
   MsgCmdOut: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>
+  MsgCmdIn: MsgInCmdClient
   MsgEvtOut: SpaceClientEvt
   ViewSlot: {
     fab: null
@@ -91,3 +93,10 @@ export type MsgToClient = {
 export type ListPackInput = Parameters<IFlowPackDb['list']>[0]
 
 export type ListPackOutput = Awaited<ReturnType<IFlowPackDb['list']>>
+
+export type MsgInCmdClient = {
+  t: 'flow-pack-list'
+  c: {
+    t: 'load'
+  }
+}

@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'bun:test'
+import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
-import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { GameClientModule } from '../../@/architecture/game-client-v2'
 import { EventId } from '../../@/event'
 import type { FlowClientCtx } from './@/flow-client-ctx'
+import { testFlowClientCtx } from './builder/@/testing/client'
 import { FlowClient } from './flow.client'
 import type { ModelClient } from './flow.types'
-import { testFlowClientCtx } from './builder/@/testing/client'
+import { initCore } from './flow.core'
 
 const init = {
   model: FlowClient.init
@@ -18,9 +19,7 @@ const userSelectedMode =
     return FlowClient.update({
       ctx,
       model,
-      modelCore: {
-        t: null
-      },
+      modelCore: initCore({ ctx }),
       msgCore: {
         t: 'user-changed-mode',
         userId: userId,

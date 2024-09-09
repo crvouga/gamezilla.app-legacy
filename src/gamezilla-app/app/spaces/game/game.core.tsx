@@ -5,8 +5,8 @@ import * as Flow from './flow/flow.core'
 import type { ModelCore, MsgCore } from './game.types'
 import { GameName } from './@/game-name'
 
-export const initCore = (gameName: GameName): ModelCore => {
-  switch (gameName) {
+export const initCore = (input: { gameName: GameName; ctx: SpaceCtx }): ModelCore => {
+  switch (input.gameName) {
     case 'connect-four': {
       return {
         t: 'connect-four',
@@ -17,12 +17,15 @@ export const initCore = (gameName: GameName): ModelCore => {
     case 'flow': {
       return {
         t: 'flow',
-        c: Flow.initCore()
+        c: Flow.initCore(input)
       }
     }
 
     default: {
-      throw new Error(`Unknown game name: ${gameName}`)
+      return {
+        t: 'flow',
+        c: Flow.initCore(input)
+      }
     }
   }
 }

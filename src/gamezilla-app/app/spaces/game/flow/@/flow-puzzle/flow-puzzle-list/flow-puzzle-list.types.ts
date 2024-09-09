@@ -4,6 +4,7 @@ import type { AppServerModule } from 'gamezilla-app/app/@/architecture/app-serve
 import type { SpaceClientCtx, SpaceClientEvt, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { FlowClientEvtIn } from '../../flow-client-evt'
 import type { FlowPuzzle } from '../flow-puzzle'
 import type { IFlowPuzzleDb, ListPuzzlesInput, ListPuzzlesOutput } from '../flow-puzzle-db'
 import type { FlowPuzzleId } from '../flow-puzzle-id'
@@ -20,7 +21,7 @@ export type ClientModule = AppClientModule<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   Ctx: SpaceClientCtx
-  MsgEvtIn: SpaceClientEvt
+  MsgEvtIn: FlowClientEvtIn
   MsgCmdOut: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer

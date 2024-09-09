@@ -2,7 +2,7 @@ import { Eff, Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
-import { FlowPackListClient } from '../@/flow-pack'
+import { FlowPackListClient, FlowPackListTypes } from '../@/flow-pack'
 import { FlowPackPuzzlesGridClient } from '../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'
 import type { ClientModule, MsgClient, MsgToServer } from './play.types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/screen-play-puzzle.client'
@@ -19,10 +19,13 @@ const init: ClientModule['init'] = {
 const update = (
   input: Parameters<ClientModule['update']>[0]
 ): ReturnType<ClientModule['update']> & {
-  msgCmd?: SpaceClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>[]
+  msgCmd?: (
+    | SpaceClientCmd<{
+        MsgClient: MsgClient
+        MsgToServer: MsgToServer
+      }>
+    | FlowPackListTypes.MsgInCmdClient
+  )[]
 } => {
   const updatedChild = updateChild({
     ...input,
@@ -81,7 +84,7 @@ const updateFlowPackList: ClientModule['update'] = (input) => {
     msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
     msgServer: input.msgServer?.t === 'flow-pack-list' ? input.msgServer.c : null,
     msgEvt: input.msgEvt,
-    msgCmd: input.msgCmd
+    msgCmd: null
   })
 
   return {

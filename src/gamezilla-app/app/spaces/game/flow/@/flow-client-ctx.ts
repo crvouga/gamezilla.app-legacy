@@ -1,9 +1,9 @@
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { FlowPack } from './flow-pack'
+import { FlowPack, FlowPackListTypes } from './flow-pack'
 import { FlowPackId } from './flow-pack/flow-pack-id'
 import type { FlowPuzzle } from './flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from './flow-puzzle/flow-puzzle-id'
-import { FlowPuzzleList } from './flow-puzzle'
+import { FlowPuzzleListTypes } from './flow-puzzle'
 
 export type FlowClientCtx = SpaceClientCtx & {
   flowPacks: {
@@ -12,5 +12,6 @@ export type FlowClientCtx = SpaceClientCtx & {
   flowPuzzles: {
     [flowPuzzleId: FlowPuzzleId]: FlowPuzzle
   }
-  flowPuzzleList: FlowPuzzleList.ModelClient
+  flowPuzzleList: FlowPuzzleListTypes.ModelClient
+  flowPackList: FlowPackListTypes.ModelClient
 }

@@ -4,8 +4,12 @@ import { BuilderCore } from './builder/builder.core'
 import type { ModelCore, MsgCore } from './flow.types'
 import { PlayCore } from './play/play.core'
 
-export const initCore = () => {
-  return { t: null }
+export const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
+  return {
+    mode: null,
+    builder: BuilderCore.initCore(input),
+    play: PlayCore.initCore(input)
+  }
 }
 
 export const updateCore = ({
@@ -19,63 +23,46 @@ export const updateCore = ({
 }): ModelCore => {
   switch (msgCore.t) {
     case 'play': {
-      switch (modelCore.t) {
-        case 'play': {
-          const updated = PlayCore.updateCore({
-            ctx,
-            msgCore: msgCore.c,
-            modelCore: modelCore.c
-          })
+      const updated = PlayCore.updateCore({
+        ctx,
+        msgCore: msgCore.c,
+        modelCore: modelCore.play
+      })
 
-          switch (updated.event?.t) {
-            case 'user-clicked-exit-mode-button': {
-              return {
-                t: null
-              }
-            }
-          }
-
+      switch (updated.event?.t) {
+        case 'user-clicked-exit-mode-button': {
           return {
-            t: 'play',
-            c: updated
+            ...modelCore,
+            mode: null
           }
         }
-        default: {
-          return modelCore
-        }
+      }
+
+      return {
+        ...modelCore,
+        play: updated
       }
     }
 
     case 'builder': {
-      switch (modelCore.t) {
-        case 'builder': {
-          const updated = BuilderCore.updateCore({
-            ctx,
-            msgCore: msgCore.c,
-            modelCore: modelCore.c
-          })
+      const updated = BuilderCore.updateCore({
+        ctx,
+        msgCore: msgCore.c,
+        modelCore: modelCore.builder
+      })
 
-          switch (updated.event?.t) {
-            case 'user-clicked-exit-mode-button': {
-              if (ctx.space.hostId === updated.event?.userId) {
-                return {
-                  t: null
-                }
-              }
-              return {
-                t: null
-              }
-            }
-          }
-
+      switch (updated.event?.t) {
+        case 'user-clicked-exit-mode-button': {
           return {
-            t: 'builder',
-            c: updated
+            ...modelCore,
+            mode: null
           }
         }
-        default: {
-          return modelCore
-        }
+      }
+
+      return {
+        ...modelCore,
+        builder: updated
       }
     }
 
@@ -84,30 +71,11 @@ export const updateCore = ({
         return modelCore
       }
 
-      switch (msgCore.mode) {
-        case null: {
-          return {
-            t: null
-          }
-        }
-
-        case 'play': {
-          return {
-            t: 'play',
-            c: PlayCore.initCore({
-              ctx
-            })
-          }
-        }
-
-        case 'builder': {
-          return {
-            t: 'builder',
-            c: BuilderCore.initCore({
-              ctx
-            })
-          }
-        }
+      return {
+        ...modelCore,
+        mode: msgCore.mode,
+        play: PlayCore.initCore({ ctx }),
+        builder: BuilderCore.initCore({ ctx })
       }
     }
   }

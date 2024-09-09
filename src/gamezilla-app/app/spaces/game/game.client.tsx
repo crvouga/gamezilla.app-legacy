@@ -1,5 +1,5 @@
 import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
-import { Sub } from 'gamezilla-app/@/core'
+import { Eff, Sub } from 'gamezilla-app/@/core'
 import { GameClientModule } from '../@/architecture/game-client-v2'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { ConnectFour } from './connect-four/connect-four.client'
@@ -102,7 +102,7 @@ const update: Module['update'] = (input) => {
         ctx: input.ctx,
         modelCore: input.modelCore.c,
         model: input.model?.t === 'flow' ? input.model.c : FlowClient.init,
-        msgCmd: input.msgCmd,
+        msgCmd: null,
         msgEvt: input.msgEvt,
         msgServer: input.msgServer?.t === 'flow' ? input.msgServer.c : null,
         msgCore:
@@ -115,9 +115,16 @@ const update: Module['update'] = (input) => {
         msg: input.msg?.t === 'flow' ? input.msg.c : null
       })
 
-      const tagged = GameClientModule.tagOutput('flow', (msgCmd) => SpaceClientCmd.tag('flow', msgCmd), updated)
-
-      return tagged
+      return {
+        model: {
+          t: 'flow',
+          c: updated.model
+        },
+        eff: Eff.tag('flow', updated.eff),
+        msgCmd: SpaceClientCmd.tag('flow', updated.msgCmd),
+        msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'flow' })),
+        msgEvt: updated.msgEvt
+      }
     }
   }
 }

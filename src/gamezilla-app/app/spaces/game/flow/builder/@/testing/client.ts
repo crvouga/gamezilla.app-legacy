@@ -14,7 +14,8 @@ import { BuilderCore } from '../../builder.core'
 import * as BuilderTypes from '../../builder.types'
 
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/testing/client'
-import { FlowPuzzleList } from '../../../@/flow-puzzle'
+import { FlowPackListTypes } from '../../../@/flow-pack'
+import { FlowPuzzleListTypes } from '../../../@/flow-puzzle'
 
 type Input = {
   ctx?: FlowClientCtx
@@ -91,7 +92,8 @@ export const FixtureFlowBuilderClient = async () => {
     ...f.ctx,
     flowPuzzles: {},
     flowPacks: {},
-    flowPuzzleList: FlowPuzzleList.initClient
+    flowPuzzleList: FlowPuzzleListTypes.initClient,
+    flowPackList: FlowPackListTypes.initClient
   }
   const init = {
     ctx,
@@ -119,7 +121,8 @@ export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
     ...(await testSpaceClientCtx()),
     flowPacks: {},
     flowPuzzles: {},
-    flowPuzzleList: FlowPuzzleList.initClient
+    flowPuzzleList: FlowPuzzleListTypes.initClient,
+    flowPackList: FlowPackListTypes.initClient
   }
 }
 

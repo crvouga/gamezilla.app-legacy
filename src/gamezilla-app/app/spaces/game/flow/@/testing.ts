@@ -1,6 +1,7 @@
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/testing/client'
 import type { FlowClientCtx } from './flow-client-ctx'
-import { FlowPuzzleList } from './flow-puzzle'
+import { FlowPackListTypes } from './flow-pack'
+import { FlowPuzzleListTypes } from './flow-puzzle'
 
 export const FlowClientFixture = async () => {
   const f = await FixtureSpaceClient()
@@ -8,7 +9,8 @@ export const FlowClientFixture = async () => {
     ...f.ctx,
     flowPacks: {},
     flowPuzzles: {},
-    flowPuzzleList: FlowPuzzleList.initClient
+    flowPuzzleList: FlowPuzzleListTypes.initClient,
+    flowPackList: FlowPackListTypes.initClient
   }
   return {
     ...f,

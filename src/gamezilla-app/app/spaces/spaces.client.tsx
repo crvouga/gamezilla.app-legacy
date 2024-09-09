@@ -65,38 +65,38 @@ export const update: ClientModule['update'] = (input) => {
 export const updateLoop = (input: Input, initial?: Output): Output => {
   const acc = initial ?? updateChild(input)
 
-  const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? []
+  const [evt, ...evtRest] = acc.msgSpaceEvent ?? []
 
-  if (spaceEvent) {
+  if (evt) {
     const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
-      msgSpaceEvent: spaceEvent
+      msgSpaceEvent: evt
     })
 
     return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: Msg.batch(spaceEventsRest, updated.msgSpaceEvent),
+      msgSpaceEvent: Msg.batch(evtRest, updated.msgSpaceEvent),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: []
     })
   }
 
-  const [spaceCmd, ...spaceCmdsRest] = SpaceClientCmd.toSpaceClientCmd(acc.msgCmd)
+  const [cmd, ...cmdRest] = SpaceClientCmd.toSpaceClientCmd(acc.msgCmd)
 
-  if (spaceCmd) {
+  if (cmd) {
     const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
-      msgCmd: spaceCmd
+      msgCmd: cmd
     })
 
     return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch([acc.eff, updated.eff]),
       msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
-      msgCmd: Msg.batch(spaceCmdsRest, updated.msgCmd),
+      msgCmd: Msg.batch(cmdRest, updated.msgCmd),
       msgEvt: []
     })
   }

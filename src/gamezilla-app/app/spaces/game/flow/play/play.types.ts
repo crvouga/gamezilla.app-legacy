@@ -3,11 +3,12 @@ import { UserId } from 'gamezilla-app/app/@/data'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/@/architecture/game-core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
-import type { SpaceClientEvt, SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { FlowCoreEvent } from '../@/flow-core-event'
 import type { FlowClientCtx } from '../@/flow-client-ctx'
+import { FlowClientEvtIn } from '../@/flow-client-evt'
+import { FlowCoreEvent } from '../@/flow-core-event'
 import { FlowPack, IFlowPackDb, type FlowPackListTypes } from '../@/flow-pack'
 import type { FlowPackId } from '../@/flow-pack/flow-pack-id'
 import type { FlowPackPuzzlesGridTypes } from '../@/flow-pack/flow-pack-puzzles-grid'
@@ -144,13 +145,14 @@ export type ClientModule = GameClientModule<{
   MsgCore: MsgCore
   ModelCore: ModelCore
   Ctx: FlowClientCtx
-  MsgEvtIn: SpaceClientEvt
+  MsgEvtIn: FlowClientEvtIn
   MsgCmdOut:
     | SpaceClientCmd<{
         MsgToServer: MsgToServer
         MsgClient: MsgClient
       }>
     | FlowPackPuzzlesGridTypes.MsgInCmdClient
+    | FlowPackListTypes.MsgInCmdClient
   MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient
 }>
 

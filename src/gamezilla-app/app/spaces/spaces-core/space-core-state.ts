@@ -99,7 +99,14 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: SpaceC
     case 'started': {
       switch (msgSpace.t) {
         case 'game': {
-          const game = state.game ?? GameGame.initCore(msgSpace.c.t)
+          const game =
+            state.game ??
+            GameGame.initCore({
+              gameName: msgSpace.c.t,
+              ctx: {
+                space: state
+              }
+            })
           const gameNew = GameGame.updateCore({
             ctx: {
               space: state
@@ -131,7 +138,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: SpaceC
           return {
             ...state,
             latestEvent: msgSpace.eventId,
-            game: msgSpace.game ? GameGame.initCore(msgSpace.game) : null
+            game: msgSpace.game ? GameGame.initCore({ gameName: msgSpace.game, ctx: { space: state } }) : null
           }
         }
 
