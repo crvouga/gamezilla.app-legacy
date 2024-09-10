@@ -2,7 +2,7 @@ import { Eff, Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
-import { FlowPackListClient, FlowPackListTypes } from '../@/flow-pack'
+import { FlowPackListTypes } from '../@/flow-pack'
 import { FlowPackPuzzlesGridClient } from '../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'
 import type { ClientModule, MsgClient, MsgToServer } from './play.types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/screen-play-puzzle.client'
@@ -10,7 +10,6 @@ import { ScreenSelectPackClient } from './screen-select-pack/screen-select-pack.
 import { ScreenSelectPuzzleClient } from './screen-select-puzzle/select-puzzle.client'
 
 const init: ClientModule['init'] = {
-  flowPackList: FlowPackListClient.initClient,
   flowPackPuzzleGrid: FlowPackPuzzlesGridClient.initClient,
   flowPacks: {},
   flowPuzzles: {}
@@ -66,41 +65,11 @@ const updateLoop = (input: Parameters<ClientModule['update']>[0], acc: ReturnTyp
 const updateChild: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) => updateFlowPackList({ ...input, model }),
     (model) => updateFlowPackPuzzlesGrid({ ...input, model }),
     (model) => ScreenPuzzleClient.update({ ...input, model }),
     (model) => ScreenSelectPackClient.update({ ...input, model }),
     (model) => ScreenSelectPuzzleClient.update({ ...input, model })
   )
-}
-
-const updateFlowPackList: ClientModule['update'] = (input) => {
-  const updated = FlowPackListClient.update({
-    ctx: input.ctx,
-    model: {
-      ...input.model.flowPackList,
-      packs: input.model.flowPacks
-    },
-    msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
-    msgServer: input.msgServer?.t === 'flow-pack-list' ? input.msgServer.c : null,
-    msgEvt: input.msgEvt,
-    msgCmd: null
-  })
-
-  return {
-    model: {
-      ...input.model,
-      flowPackList: {
-        ...updated.model,
-        packs: {}
-      },
-      flowPacks: updated.model.packs
-    },
-    eff: Eff.tag('flow-pack-list', updated.eff),
-    msgEvt: updated.msgEvt,
-    msgCmd: SpaceClientCmd.tag('flow-pack-list', updated.msgCmd),
-    msgCore: []
-  }
 }
 
 const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {

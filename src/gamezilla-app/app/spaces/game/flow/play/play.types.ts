@@ -28,7 +28,7 @@ export type ModelClient = {
   flowPuzzles: { [flowPuzzleId: FlowPuzzleId]: FlowPuzzle }
   flowPacks: { [flowPackId: FlowPackId]: FlowPack }
   flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
-  flowPackList: FlowPackListTypes.ModelClient
+  // flowPackList: FlowPackListTypes.ModelClient
 }
 
 export const ModelServer = p.obj({})
