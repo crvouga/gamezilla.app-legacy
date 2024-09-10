@@ -175,7 +175,7 @@ export const updateFromEvent = ({
   model: Model
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-  if (msg.t === 'space.user-left-space') {
+  if (msg.t === 'space/user-left-space') {
     if (model.player !== msg.userId) {
       return {
         model

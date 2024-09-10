@@ -6,13 +6,16 @@ import * as Space from '../spaces-core/space-core'
 import * as SpacesCoreServer from '../spaces-core/spaces-core.server'
 import type { MsgToClient, ServerDeps } from '../spaces.types'
 
-//
-//
-//
-//
-//
-//
-//
+const update: SpaceServerModule['update'] = async (input) => {
+  return SpaceServerModule.andThen(
+    {},
+    () => updateCore(input),
+    () => updateCurrentUserSpace(input),
+    () => updateProfileCache(input),
+    () => sendSpaceEventToClient(input),
+    () => outputSpaceEventsFromServer(input)
+  )
+}
 
 const updateProfileCache: SpaceServerModule['update'] = async (input) => {
   const added = await input.deps.profileCache.add(input.msgClient?.profiles ?? {})
@@ -25,49 +28,39 @@ const updateProfileCache: SpaceServerModule['update'] = async (input) => {
 }
 
 const updateCore: SpaceServerModule['update'] = async (input) => {
-  const { msgClient, deps } = input
-
-  switch (msgClient?.t) {
+  switch (input.msgClient?.t) {
     case 'sync': {
-      return SpaceServerModule.andThen(
-        {},
-        async () => {
-          await SpacesCoreServer.mergeOne({
-            spacesDb: deps.spaceCoreDb,
-            space: msgClient.space
+      await SpacesCoreServer.mergeOne({
+        spacesDb: input.deps.spaceCoreDb,
+        space: input.msgClient.space
+      })
+
+      const spaceId = Space.toSpaceId(input.msgClient.space)
+
+      if (!spaceId) {
+        return {}
+      }
+
+      const spaceNew = await SpacesCoreServer.getSpaceById(input.deps.spaceCoreDb, spaceId)
+
+      if (!spaceNew) {
+        return {}
+      }
+
+      const profiles = await spacesToProfiles(input.deps, [spaceNew])
+
+      const starting = Space.startFromLatestSnapshot(spaceNew)
+
+      return {
+        msgCmd: [
+          sendToClient<MsgToClient>([input.msgClient.clientId], {
+            t: 'synced',
+            causedBy: { msgClient: input.msgClient },
+            space: starting,
+            profiles: profiles
           })
-
-          return {}
-        },
-        async () => {
-          const spaceId = Space.toSpaceId(msgClient.space)
-
-          if (!spaceId) {
-            return {}
-          }
-
-          const spaceNew = await SpacesCoreServer.getSpaceById(deps.spaceCoreDb, spaceId)
-
-          if (!spaceNew) {
-            return {}
-          }
-
-          const profiles = await spacesToProfiles(input.deps, [spaceNew])
-
-          const starting = Space.startFromLatestSnapshot(spaceNew)
-
-          return {
-            msgCmd: [
-              sendToClient<MsgToClient>([msgClient.clientId], {
-                t: 'synced',
-                causedBy: { msgClient },
-                space: starting,
-                profiles: profiles
-              })
-            ]
-          }
-        }
-      )
+        ]
+      }
     }
     default: {
       return {}
@@ -173,17 +166,6 @@ const outputSpaceEventsFromServer: SpaceServerModule['update'] = (input) => {
   }
 
   return {}
-}
-
-const update: SpaceServerModule['update'] = async (input) => {
-  return SpaceServerModule.andThen(
-    {},
-    () => updateCore(input),
-    () => updateCurrentUserSpace(input),
-    () => updateProfileCache(input),
-    () => sendSpaceEventToClient(input),
-    () => outputSpaceEventsFromServer(input)
-  )
 }
 
 export const SyncServer = {

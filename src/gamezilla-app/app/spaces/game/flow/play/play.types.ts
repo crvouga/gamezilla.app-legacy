@@ -147,10 +147,7 @@ export type ClientModule = GameClientModule<{
   Ctx: FlowClientCtx
   MsgEvtIn: FlowClientEvtIn
   MsgCmdOut:
-    | SpaceClientCmd<{
-        MsgToServer: MsgToServer
-        MsgClient: MsgClient
-      }>
+    | SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
     | FlowPackPuzzlesGridTypes.MsgInCmdClient
     | FlowPackListTypes.MsgInCmdClient
   MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient

@@ -3,7 +3,7 @@ import { Msg } from 'gamezilla-app/@/core/msg'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import type { BaseClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 import type { WithEventId } from '../@/event'
-import type { Space } from '../@/space'
+import type { Space, SpaceClientEvt } from '../@/space'
 import type { SpaceClientCmd } from '../@/space-client-cmd'
 import type { SpaceCoreEvent } from '../spaces-core'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../spaces.types'
@@ -32,7 +32,7 @@ export type Output = {
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>[]
-  msgEvt?: unknown[]
+  msgEvt?: SpaceClientEvt[]
   msgSpaceEvent?: WithEventId<SpaceCoreEvent>[]
 }
 

@@ -6,42 +6,24 @@ import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateProfiles({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateCore({
-        ...input,
-        model
-      }),
-    (model) =>
-      sendSpaceEventToServer({
-        ...input,
-        model
-      }),
-    (model) =>
-      outputSpaceEventsFromServer({
-        ...input,
-        model
-      })
+    (model) => updateProfiles({ ...input, model }),
+    (model) => updateCore({ ...input, model }),
+    (model) => sendSpaceEventToServer({ ...input, model }),
+    (model) => outputSpaceEventsFromServer({ ...input, model })
   )
 }
 
 const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
-  const { model, msgServer } = input
-
-  switch (msgServer?.t) {
+  switch (input.msgServer?.t) {
     case 'event': {
       return {
-        model,
-        msgSpaceEvent: [msgServer.c]
+        model: input.model,
+        msgSpaceEvent: [input.msgServer.c]
       }
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgSpaceEvent }) => {
@@ -61,13 +43,7 @@ const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgSp
 
   return {
     model,
-    msgCmd: [
-      sendToServer({
-        t: 'event',
-        c: spaceEventWithMeta,
-        profiles
-      })
-    ]
+    msgCmd: [sendToServer({ t: 'event', c: spaceEventWithMeta, profiles })]
   }
 }
 
@@ -142,7 +118,12 @@ const updateCore: SpaceClientModule['update'] = (input) => {
         model: {
           ...model,
           ...merged
-        }
+        },
+        msgEvt: [
+          {
+            t: 'space/synced'
+          }
+        ]
       }
     }
   }

@@ -23,19 +23,24 @@ export type Space = p.Infer<typeof Space>
 
 type SpaceEvt =
   | {
-      t: 'space.user-left-space'
+      t: 'space/user-left-space'
       spaceId: SpaceId
       userId: UserId
     }
   | {
-      t: 'space.user-joined-space'
+      t: 'space/user-joined-space'
       spaceId: SpaceId
       userId: UserId
     }
 
-export type SpaceServerEvt = ServerEvt | SpaceEvt
+export type SpaceClientEvt =
+  | ClientEvt
+  | SpaceEvt
+  | {
+      t: 'space/synced'
+    }
 
-export type SpaceClientEvt = ClientEvt | SpaceEvt
+export type SpaceServerEvt = ServerEvt | SpaceEvt
 
 //
 //

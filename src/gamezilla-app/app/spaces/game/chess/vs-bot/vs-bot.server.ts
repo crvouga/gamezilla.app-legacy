@@ -130,7 +130,7 @@ export const updateFromEvent = ({
   msgCmd?: SpaceServerCmd<MsgToClient>[]
   eff?: Eff
 } => {
-  if (msg.t === 'space.user-left-space') {
+  if (msg.t === 'space/user-left-space') {
     if (model.userId === msg.userId) {
       const modelNew: Model = {
         type: 'setup',
