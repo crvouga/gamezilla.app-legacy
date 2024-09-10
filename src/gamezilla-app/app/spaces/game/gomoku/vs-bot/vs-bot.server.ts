@@ -108,7 +108,7 @@ export const updateFromEvent = ({
   model: Model
   eff?: Eff<Msg>
 } => {
-  if (msg.t === 'space/user-joined-space') {
+  if (msg.t === 'space.user-joined-space') {
     return {
       model: init({
         userId: model.userId

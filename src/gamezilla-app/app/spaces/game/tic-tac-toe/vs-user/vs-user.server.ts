@@ -356,7 +356,7 @@ export const updateFromEvent = ({
   model: Model
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-  if (msg.t === 'space/user-left-space') {
+  if (msg.t === 'space.user-left-space') {
     const { userId } = msg
 
     const player: PlayerType | 'none' = model.O === userId ? 'O' : model.X === userId ? 'X' : 'none'

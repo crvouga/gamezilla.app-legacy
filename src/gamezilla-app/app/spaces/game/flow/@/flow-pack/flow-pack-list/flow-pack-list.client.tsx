@@ -203,8 +203,17 @@ const load = (): MsgInCmdClient => {
   }
 }
 
+const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean => {
+  return (
+    output.msgCmd?.some(
+      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-pack-list' && cmd.c.t === 'load'
+    ) ?? false
+  )
+}
+
 export const FlowPackListClient = {
   load,
+  didLoad,
   initClient,
   init,
   update,

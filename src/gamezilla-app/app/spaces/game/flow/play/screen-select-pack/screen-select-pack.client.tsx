@@ -10,12 +10,15 @@ const update: ClientModule['update'] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromMsgCore({ ...input, model }),
-    (model) => updateFromMsgEvt({ ...input, model })
+    (model) => updatePackListLoad({ ...input, model })
   )
 }
 
-const updateFromMsgEvt: ClientModule['update'] = (input) => {
-  if (input.msgEvt?.t === 'flow' && input.msgEvt.c.t === 'user-changed-mode' && input.msgEvt.c.mode === 'play') {
+const updatePackListLoad: ClientModule['update'] = (input) => {
+  if (
+    (input.msgEvt?.t === 'flow' && input.msgEvt.c.t === 'user-changed-mode' && input.msgEvt.c.mode === 'play') ||
+    input.msgCore?.t === 'user-clicked-exit-pack-button'
+  ) {
     return {
       model: input.model,
       msgCmd: [FlowPackListClient.load()]

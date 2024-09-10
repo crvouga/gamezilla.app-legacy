@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { EventId, withEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { FlowPack } from '../../@/flow-pack'
+import { FlowPack, FlowPackListClient } from '../../@/flow-pack'
 import { FixtureFlowPlayClient } from '../@/fixture.client'
 
 const Fixture = async () => {
@@ -71,5 +71,20 @@ describe(import.meta.file, () => {
     ])
 
     expect(didPlaySound(output)).toBe(true)
+  })
+
+  test('load packs on exiting select puzzle screen', async () => {
+    const f = await Fixture()
+
+    const output = f.update(f.initial, [
+      {
+        msgCore: withEventMeta({
+          t: 'user-clicked-exit-pack-button',
+          userId: f.ctx.currentUserId
+        })
+      }
+    ])
+
+    expect(FlowPackListClient.didLoad(output)).toBe(true)
   })
 })
