@@ -218,12 +218,9 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
         msgEvt: [
           {
-            t: 'flow',
-            c: {
-              t: 'user-changed-mode',
-              mode: input.msgCore.mode,
-              userId: input.msgCore.userId
-            }
+            t: 'flow.user-changed-mode',
+            mode: input.msgCore.mode,
+            userId: input.msgCore.userId
           }
         ]
       }

@@ -87,4 +87,19 @@ describe(import.meta.file, () => {
 
     expect(FlowPackListClient.didLoad(output)).toBe(true)
   })
+
+  test('load packs on clicking select new pack', async () => {
+    const f = await Fixture()
+
+    const output = f.update(f.initial, [
+      {
+        msgCore: withEventMeta({
+          t: 'user-clicked-select-next-pack',
+          userId: f.ctx.currentUserId
+        })
+      }
+    ])
+
+    expect(FlowPackListClient.didLoad(output)).toBe(true)
+  })
 })

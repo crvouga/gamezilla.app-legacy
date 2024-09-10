@@ -16,8 +16,9 @@ const update: ClientModule['update'] = (input) => {
 
 const updatePackListLoad: ClientModule['update'] = (input) => {
   if (
-    (input.msgEvt?.t === 'flow' && input.msgEvt.c.t === 'user-changed-mode' && input.msgEvt.c.mode === 'play') ||
-    input.msgCore?.t === 'user-clicked-exit-pack-button'
+    input.msgEvt?.t === 'flow.user-changed-mode' ||
+    input.msgCore?.t === 'user-clicked-exit-pack-button' ||
+    input.msgCore?.t === 'user-clicked-select-next-pack'
   ) {
     return {
       model: input.model,
