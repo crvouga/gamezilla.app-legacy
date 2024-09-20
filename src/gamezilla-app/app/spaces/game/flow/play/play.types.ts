@@ -3,17 +3,18 @@ import { UserId } from 'gamezilla-app/app/@/data'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/@/architecture/game-core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
-import type { SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import type { FlowClientCtx } from '../@/flow-client-ctx'
 import { FlowClientEvtIn } from '../@/flow-client-evt'
 import { FlowCoreEvent } from '../@/flow-core-event'
-import { FlowPack, IFlowPackDb, type FlowPackListTypes } from '../@/flow-pack'
+import { FlowPack, type FlowPackListTypes } from '../@/flow-pack'
 import type { FlowPackId } from '../@/flow-pack/flow-pack-id'
 import type { FlowPackPuzzlesGridTypes } from '../@/flow-pack/flow-pack-puzzles-grid'
-import { FlowPuzzle, IFlowPuzzleDb } from '../@/flow-puzzle'
+import { FlowPuzzle } from '../@/flow-puzzle'
 import type { FlowPuzzleId } from '../@/flow-puzzle/flow-puzzle-id'
+import { FlowServerCtx } from '../@/flow-server-ctx'
 import { FlowPuzzleResult } from './@/puzzle-result'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
 
@@ -160,13 +161,9 @@ export type ServerModule = GameServerModule<{
   MsgToServer: MsgToServer
   MsgCore: MsgCore
   ModelCore: ModelCore
-  Ctx: SpaceServerCtx
+  Ctx: FlowServerCtx
   MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
-  Deps: {
-    flowPackDb: IFlowPackDb
-    flowPuzzleDb: IFlowPuzzleDb
-  }
 }>
 
 export type CoreModule = GameCoreModule<{

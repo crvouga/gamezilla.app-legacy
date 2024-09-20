@@ -10,15 +10,13 @@ import { ScreenPackBuilderCore } from './screen-pack-builder.core'
 
 const SavePack: Pick<ServerModule, 'update'> = {
   async update(input) {
-    const { deps, modelCore, msgCore } = input
-
-    switch (msgCore?.t) {
+    switch (input.msgCore?.t) {
       case 'screen-pack-builder.user-clicked-add-puzzle-item': {
-        if (!modelCore.packBuilder) {
+        if (!input.modelCore.packBuilder) {
           return {}
         }
 
-        const saved = await deps.flowPackDb.put(modelCore.packBuilder.pack)
+        const saved = await input.ctx.flowPackDb.put(input.modelCore.packBuilder.pack)
 
         return {
           msgCore: [
@@ -86,7 +84,7 @@ const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
         if (!packNew) {
           return {}
         }
-        const put = await input.deps.flowPackDb.put(packNew)
+        const put = await input.ctx.flowPackDb.put(packNew)
         if (isErr(put)) {
           return {}
         }

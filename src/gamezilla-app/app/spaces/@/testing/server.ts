@@ -61,7 +61,7 @@ export const initDeps = async (): Promise<ServerDeps> => {
       t: 'db-conn-kv',
       dbConnKv
     }),
-    gameServer: await GameServer.initDeps({
+    gameServer: await GameServer.initCtx({
       ctx: {
         clientId: ClientId.generate(),
         dbConnKv,

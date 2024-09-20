@@ -1,20 +1,19 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
 import type { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
-import type { SpaceCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import type { FlowClientCtx } from '../@/flow-client-ctx'
 import { FlowClientEvtIn } from '../@/flow-client-evt'
 import { FlowCoreEvent } from '../@/flow-core-event'
 import type { FlowPack } from '../@/flow-pack/flow-pack'
-import type { IFlowPackDb } from '../@/flow-pack/flow-pack-db'
 import { FlowPackListTypes } from '../@/flow-pack/flow-pack-list'
 import { FlowPackPuzzlesGridTypes } from '../@/flow-pack/flow-pack-puzzles-grid'
 import type { FlowPuzzle } from '../@/flow-puzzle/flow-puzzle'
-import type { IFlowPuzzleDb } from '../@/flow-puzzle/flow-puzzle-db/flow-puzzle-db'
 import type { FlowPuzzleId } from '../@/flow-puzzle/flow-puzzle-id'
 import { FlowPuzzleListTypes } from '../@/flow-puzzle/flow-puzzle-list'
+import { FlowServerCtx } from '../@/flow-server-ctx'
 import { ListTabs } from './list-tabs'
 import { ScreenOpenPackTypes } from './screen-open-pack'
 import { ScreenOpenPuzzleTypes } from './screen-open-puzzle'
@@ -51,18 +50,13 @@ export type ServerModule = GameServerModule<{
   MsgToServer: MsgToServer
   MsgCore: MsgCore
   ModelCore: ModelCore
-  Ctx: SpaceServerCtx
+  Ctx: FlowServerCtx
   MsgEvtIn: SpaceServerEvt
   Model: ModelServer
   Msg: MsgServer
   MsgCmdOut: SpaceServerCmd<MsgToClient>
-  Deps: FlowServerDeps
+  Deps: null
 }>
-
-export type FlowServerDeps = {
-  flowPuzzleDb: IFlowPuzzleDb
-  flowPackDb: IFlowPackDb
-}
 
 //
 //

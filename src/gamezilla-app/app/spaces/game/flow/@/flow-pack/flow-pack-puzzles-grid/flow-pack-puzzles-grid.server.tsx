@@ -1,32 +1,26 @@
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { IFlowPuzzleDb } from '../../flow-puzzle'
-import { IFlowPackDb } from '../flow-pack-db'
+import { FlowServerCtx } from '../../flow-server-ctx'
 import type { ModelServer, MsgServer, MsgToClient, MsgToServer } from './flow-pack-puzzles-grid.types'
 
 type ServerModule = AppServerModule<{
-  Ctx: SpaceServerCtx
+  Ctx: FlowServerCtx
   Model: ModelServer
   Msg: MsgServer
   MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Deps: ServerDeps
+  Deps: null
 }>
-
-type ServerDeps = {
-  flowPuzzleDb: IFlowPuzzleDb
-  flowPackDb: IFlowPackDb
-}
 
 const ListPuzzlesById: Pick<ServerModule, 'update'> = {
   async update(input) {
     switch (input.msgClient?.t) {
       case 'list-puzzles-by-id': {
-        const listed = await input.deps.flowPuzzleDb.list({
+        const listed = await input.ctx.flowPuzzleDb.list({
           pagination: {
             limit: input.msgClient.puzzleIds.length,
             offset: 0

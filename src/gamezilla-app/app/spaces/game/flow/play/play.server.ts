@@ -1,10 +1,8 @@
 import { Sub } from 'gamezilla-app/@/core'
-import { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { FlowPackDb, FlowPackListServer } from '../@/flow-pack'
+import { FlowPackListServer } from '../@/flow-pack'
 import { FlowPackPuzzlesGridServer } from '../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server'
-import { FlowPuzzleDb } from '../@/flow-puzzle'
 import { ServerModule } from './play.types'
 import * as ScreenPlayPuzzleServer from './screen-play-puzzle/screen-play-puzzle.server'
 
@@ -48,7 +46,7 @@ const updateFlowPackList: ServerModule['update'] = async (input) => {
 const updateFlowPackGrid: ServerModule['update'] = async (input) => {
   const updated = await FlowPackPuzzlesGridServer.update({
     ctx: input.ctx,
-    deps: input.deps,
+    deps: null,
     msg: input.msg?.t === 'flow-pack-grid' ? input.msg.c : null,
     msgClient:
       input.msgClient?.t === 'flow-pack-grid'
@@ -72,21 +70,8 @@ const subscriptions: ServerModule['subscriptions'] = async () => {
   return Sub.None
 }
 
-export const PlayServer: ServerModule = {
+export const PlayServer = {
   init,
   update,
-  subscriptions,
-  initDeps: async (input) => {
-    return {
-      flowPackDb: FlowPackDb({
-        t: 'db-conn-sql',
-        dbConnSql: input.ctx.dbConnSql
-      }),
-      flowPuzzleDb: FlowPuzzleDb({
-        t: 'db-conn-sql',
-        dbConnSql: input.ctx.dbConnSql,
-        logger: ILogger.prefix('flow-puzzle-db', input.ctx.logger)
-      })
-    }
-  }
+  subscriptions
 }

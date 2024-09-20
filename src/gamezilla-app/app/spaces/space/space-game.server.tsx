@@ -19,10 +19,10 @@ const update: SpaceServerModule['update'] = async (input) => {
   }
 
   const gameUpdated = await GameServer.update({
-    deps: input.deps.gameServer,
+    deps: null,
     ctx: {
-      ...input.ctx,
       ...input.deps.gameServer,
+      ...input.ctx,
       space: spaceState
     },
     msg: input.msg?.t === 'game' ? input.msg.c : null,

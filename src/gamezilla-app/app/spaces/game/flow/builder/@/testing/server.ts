@@ -2,19 +2,22 @@ import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { SpaceGameFixtureServer } from '../../../../@/testing/server'
 import { FlowPackDb } from '../../../@/flow-pack/flow-pack-db'
 import { FlowPuzzleDb } from '../../../@/flow-puzzle/flow-puzzle-db'
-import { initServer, type FlowServerDeps } from '../../builder.types'
+import { initServer } from '../../builder.types'
 import { BuilderCore } from '../../builder.core'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
+import { FlowServerCtx } from '../../../@/flow-server-ctx'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space'
 
 export const initial = {
   model: initServer
 }
 
-export const initDeps = async (): Promise<FlowServerDeps> => {
+export const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
     case 'integration': {
       return {
+        ...ctx,
         flowPackDb: FlowPackDb({
           t: 'db-conn-sql',
           dbConnSql: testEnv.dbConnSql
@@ -30,6 +33,7 @@ export const initDeps = async (): Promise<FlowServerDeps> => {
     }
     case 'unit': {
       return {
+        ...ctx,
         flowPackDb: FlowPackDb({
           t: 'hash-map'
         }),
@@ -43,14 +47,12 @@ export const initDeps = async (): Promise<FlowServerDeps> => {
 
 export const FlowCreateFixtureServer = async () => {
   const f = await SpaceGameFixtureServer()
-  const deps = await initDeps()
+  const ctx = await initCtx(f.ctx)
   const model = initServer
-  const modelCore = BuilderCore.initCore({
-    ctx: f.ctx
-  })
+  const modelCore = BuilderCore.initCore({ ctx })
   return {
     ...f,
-    deps,
+    ctx,
     model,
     modelCore
   }

@@ -12,7 +12,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit':
     case 'screen-puzzle-builder.save-changes.user-clicked-save-button': {
-      const saved = await input.deps.flowPuzzleDb.put({
+      const saved = await input.ctx.flowPuzzleDb.put({
         ...input.msgClient.puzzle,
         lastUpdatedBy: input.msgClient.userId,
         lastUpdatedAt: input.ctx.now

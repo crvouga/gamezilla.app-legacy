@@ -15,8 +15,8 @@ const Fixture = async () => {
     createdBy: puzzle.createdBy,
     puzzleIds: [puzzle.id]
   })
-  await f.deps.flowPackDb.put(pack)
-  await f.deps.flowPuzzleDb.put(puzzle)
+  await f.ctx.flowPackDb.put(pack)
+  await f.ctx.flowPuzzleDb.put(puzzle)
   const modelCore: ModelCore = {
     ...f.modelCore,
     packBuilder: ScreenPackBuilderCore.init({
@@ -26,7 +26,8 @@ const Fixture = async () => {
   return {
     ...f,
     pack,
-    modelCore
+    modelCore,
+    deps: null
   }
 }
 
@@ -72,7 +73,7 @@ describe(import.meta.file, () => {
     })
 
     const before = f.pack
-    const after = Result.withDefault(await f.deps.flowPackDb.get(f.pack.id), null)
+    const after = Result.withDefault(await f.ctx.flowPackDb.get(f.pack.id), null)
 
     expect(before.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(true)
     expect(after?.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(false)

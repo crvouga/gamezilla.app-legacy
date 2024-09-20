@@ -2,7 +2,7 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { GameClientModule } from '../../@/architecture/game-client-v2'
 import { GameServerModule } from '../../@/architecture/game-server-v2'
-import { SpaceClientCtx, SpaceServerCtx, SpaceServerEvt } from '../../@/space'
+import { SpaceClientCtx, SpaceServerEvt } from '../../@/space'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import type { GameMainMenu } from '../@/game'
 import { FlowClientCmd, FlowClientCmdLocal } from './@/flow-client-cmd'
@@ -12,10 +12,9 @@ import type { FlowPackId } from './@/flow-pack/flow-pack-id'
 import type { FlowPuzzleListTypes } from './@/flow-puzzle'
 import type { FlowPuzzle } from './@/flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from './@/flow-puzzle/flow-puzzle-id'
+import { FlowServerCtx } from './@/flow-server-ctx'
 import { BuilderTypes } from './builder'
-import { BuilderServer } from './builder/builder.server'
 import { PlayTypes } from './play'
-import { PlayServer } from './play/play.server'
 
 //
 //
@@ -152,12 +151,7 @@ export type ServerModule = GameServerModule<{
   MsgToServer: MsgToServer
   MsgCore: MsgCore
   ModelCore: ModelCore
-  Ctx: SpaceServerCtx
+  Ctx: FlowServerCtx
   MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
-  Deps: {
-    builder: Awaited<ReturnType<(typeof BuilderServer)['initDeps']>>
-    play: Awaited<ReturnType<(typeof PlayServer)['initDeps']>>
-    flowPackList: Awaited<ReturnType<FlowPackListTypes.ServerModule['initDeps']>>
-  }
 }>

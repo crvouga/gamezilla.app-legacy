@@ -1,32 +1,13 @@
 import { Sub } from 'gamezilla-app/@/core'
-import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { FlowPackDb } from '../@/flow-pack/flow-pack-db'
 import { FlowPackListServer } from '../@/flow-pack/flow-pack-list'
-import { FlowPuzzleDb } from '../@/flow-puzzle/flow-puzzle-db'
 import { FlowPuzzleListServer } from '../@/flow-puzzle/flow-puzzle-list'
 import { initServer, type ServerModule } from './builder.types'
-import { ScreenOpenPuzzleServer } from './screen-open-puzzle/screen-open-puzzle.server'
-import { ScreenPuzzleBuilderServer } from './screen-puzzle-builder/server'
-import { ScreenPackBuilderServer } from './screen-pack-builder/screen-pack-builder.server'
 import { ScreenOpenPackServer } from './screen-open-pack/screen-open-pack.server'
-
-const initDeps: ServerModule['initDeps'] = async (input) => {
-  return {
-    flowPuzzleDb: FlowPuzzleDb({
-      t: 'db-conn-sql',
-      dbConnSql: input.ctx.dbConnSql,
-      logger: Logger({
-        t: 'noop'
-      })
-    }),
-    flowPackDb: FlowPackDb({
-      t: 'db-conn-sql',
-      dbConnSql: input.ctx.dbConnSql
-    })
-  }
-}
+import { ScreenOpenPuzzleServer } from './screen-open-puzzle/screen-open-puzzle.server'
+import { ScreenPackBuilderServer } from './screen-pack-builder/screen-pack-builder.server'
+import { ScreenPuzzleBuilderServer } from './screen-puzzle-builder/server'
 
 const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen(
@@ -79,8 +60,7 @@ const subscriptions: ServerModule['subscriptions'] = async () => {
   return Sub.None
 }
 
-export const BuilderServer: ServerModule = {
-  initDeps: initDeps,
+export const BuilderServer = {
   init: initServer,
   update,
   subscriptions

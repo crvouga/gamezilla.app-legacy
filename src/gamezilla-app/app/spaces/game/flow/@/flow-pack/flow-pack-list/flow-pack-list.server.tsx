@@ -9,7 +9,7 @@ const update: ServerModule['update'] = async (input) => {
 const updateListPacks: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-packs': {
-      const listed = await input.deps.flowPackDb.list(input.msgClient.input)
+      const listed = await input.ctx.flowPackDb.list(input.msgClient.input)
 
       return {
         msgCmd: [

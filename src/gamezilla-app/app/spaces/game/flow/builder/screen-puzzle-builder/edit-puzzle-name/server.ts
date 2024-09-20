@@ -1,11 +1,11 @@
+import { Err, isErr } from 'gamezilla-app/@/core'
+import type { UserId } from 'gamezilla-app/app/@/data'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
-import type { UserId } from 'gamezilla-app/app/@/data'
-import { Err, isErr } from 'gamezilla-app/@/core'
 import type { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
-import type { IFlowPuzzleDb } from '../../../@/flow-puzzle/flow-puzzle-db'
 import type { FlowPuzzleId } from '../../../@/flow-puzzle/flow-puzzle-id'
 import { FlowPuzzleName } from '../../../@/flow-puzzle/flow-puzzle-name'
+import { FlowServerCtx } from '../../../@/flow-server-ctx'
 import type { ServerModule } from '../../builder.types'
 import type { MsgCore } from './types'
 
@@ -14,23 +14,17 @@ const update: ServerModule['update'] = async (input) => {
 }
 
 const updateFromClient: ServerModule['update'] = async (input) => {
-  const { msgClient, deps } = input
-
-  switch (msgClient?.t) {
+  switch (input.msgClient?.t) {
     case 'puzzle.edit-name.user-clicked-save-button': {
       const edited = await patchName({
-        deps,
-        flowPuzzleId: msgClient.flowPuzzleId,
-        newName: msgClient.newName,
-        userId: msgClient.userId
+        ...input,
+        ...input.msgClient
       })
 
       const msgCore: MsgCore = {
+        ...input.msgClient,
         t: 'user-edited-puzzle-name',
-        edited,
-        flowPuzzleId: msgClient.flowPuzzleId,
-        newName: msgClient.newName,
-        userId: msgClient.userId
+        edited
       }
 
       return {
@@ -48,11 +42,11 @@ const patchName = async (input: {
   flowPuzzleId: FlowPuzzleId
   newName: string
   userId: UserId
-  deps: { flowPuzzleDb: IFlowPuzzleDb }
+  ctx: FlowServerCtx
 }) => {
-  const { flowPuzzleId, newName, userId, deps } = input
+  const { flowPuzzleId, newName, userId, ctx } = input
 
-  const result = await deps.flowPuzzleDb.get(flowPuzzleId)
+  const result = await ctx.flowPuzzleDb.get(flowPuzzleId)
 
   if (isErr(result)) {
     return result
@@ -80,7 +74,7 @@ const patchName = async (input: {
     lastUpdatedBy: userId
   }
 
-  const put = await deps.flowPuzzleDb.put(patched)
+  const put = await ctx.flowPuzzleDb.put(patched)
 
   return put
 }

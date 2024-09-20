@@ -1,21 +1,29 @@
 import { Sub } from 'gamezilla-app/@/core'
+import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import { SpaceServerCtx } from '../../@/space'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import { FlowPackDb, FlowPackListServer } from './@/flow-pack'
+import { FlowPuzzleDb } from './@/flow-puzzle'
+import { FlowServerCtx } from './@/flow-server-ctx'
 import { BuilderServer } from './builder/builder.server'
 import type { ServerModule } from './flow.types'
 import { PlayServer } from './play/play.server'
 
-const initDeps: ServerModule['initDeps'] = async (input) => {
+export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
   return {
-    builder: await BuilderServer.initDeps(input),
-    play: await PlayServer.initDeps(input),
-    flowPackList: {
-      flowPackDb: FlowPackDb({
-        t: 'db-conn-sql',
-        dbConnSql: input.ctx.dbConnSql
+    ...input.ctx,
+    flowPuzzleDb: FlowPuzzleDb({
+      t: 'db-conn-sql',
+      dbConnSql: input.ctx.dbConnSql,
+      logger: Logger({
+        t: 'noop'
       })
-    }
+    }),
+    flowPackDb: FlowPackDb({
+      t: 'db-conn-sql',
+      dbConnSql: input.ctx.dbConnSql
+    })
   }
 }
 
@@ -39,7 +47,7 @@ const updateFlowPackList: ServerModule['update'] = async (input) => {
     msgEvt: input.msgEvt,
     msgClient: input.msgClient?.t === 'flow-pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
-    deps: input.deps.flowPackList
+    deps: null
   })
 
   return {
@@ -57,7 +65,7 @@ const updateBuilder: ServerModule['update'] = async (input) => {
     msgClient: input.msgClient?.t === 'builder' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'builder' ? input.msg.c : null,
-    deps: input.deps.builder
+    deps: null
   })
 
   return {
@@ -76,7 +84,7 @@ const updatePlay: ServerModule['update'] = async (input) => {
     msgClient: input.msgClient?.t === 'play' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msgCore: input.msgCore?.t === 'play' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'play' ? input.msg.c : null,
-    deps: input.deps.play
+    deps: null
   })
 
   return {
@@ -90,9 +98,9 @@ const subscriptions: ServerModule['subscriptions'] = async (_input) => {
   return Sub.None
 }
 
-export const FlowServer: ServerModule = {
+export const FlowServer = {
   init,
   subscriptions,
   update,
-  initDeps: initDeps
+  initCtx
 }

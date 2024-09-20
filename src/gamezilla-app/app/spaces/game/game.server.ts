@@ -6,6 +6,7 @@ import { GameName } from './@/game-name'
 import { ConnectFourServer } from './connect-four/connect-four.server'
 import { FlowServer } from './flow/flow.server'
 import type { ModelCore, ModelServer, MsgCore, MsgServer, MsgToClient, MsgToServer } from './game.types'
+import { FlowServerCtx } from './flow/@/flow-server-ctx'
 
 //
 //
@@ -14,6 +15,10 @@ import type { ModelCore, ModelServer, MsgCore, MsgServer, MsgToClient, MsgToServ
 //
 //
 //
+
+type GameServerCtx = SpaceServerCtx & {
+  flow: FlowServerCtx
+}
 
 type ServerModule = GameServerModule<{
   Model: ModelServer
@@ -22,19 +27,16 @@ type ServerModule = GameServerModule<{
   MsgToServer: MsgToServer
   ModelCore: ModelCore
   MsgCore: MsgCore
-  Ctx: SpaceServerCtx
+  Ctx: GameServerCtx
   MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
-  Deps: ServerDeps
+  Deps: null
 }>
 
-type ServerDeps = {
-  flow: Awaited<ReturnType<(typeof FlowServer)['initDeps']>>
-}
-
-const initDeps: ServerModule['initDeps'] = async (input) => {
+const initCtx = (input: { ctx: SpaceServerCtx }): GameServerCtx => {
   return {
-    flow: await FlowServer.initDeps(input)
+    ...input.ctx,
+    flow: FlowServer.initCtx(input)
   }
 }
 
@@ -83,14 +85,14 @@ const update: ServerModule['update'] = async (input) => {
   switch (input.modelCore.t) {
     case 'flow': {
       const updated = await FlowServer.update({
-        ctx: input.ctx,
+        ctx: input.ctx.flow,
         modelCore: input.modelCore.c,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgClient: input.msgClient?.t === 'flow' ? { ...input.msgClient, ...input.msgClient.c } : null,
         msgCore: input.msgCore?.t === 'flow' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
-        deps: input.deps.flow
+        deps: null
       })
 
       return GameServerModule.tagOutput('flow', (msgCmd) => SpaceServerCmd.tag('flow', msgCmd), updated)
@@ -128,7 +130,14 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
     }
 
     case 'flow': {
-      return Sub.tag('flow', await FlowServer.subscriptions({ ...input, modelCore: input.modelCore.c }))
+      return Sub.tag(
+        'flow',
+        await FlowServer.subscriptions({
+          ...input,
+          modelCore: input.modelCore.c,
+          ctx: input.ctx.flow
+        })
+      )
     }
   }
 }
@@ -137,5 +146,5 @@ export const GameServer = {
   init,
   update,
   subscriptions,
-  initDeps: initDeps
+  initCtx
 }

@@ -1,35 +1,35 @@
 import { describe, expect, it } from 'bun:test'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { didSendToClient } from 'gamezilla-app/app/@/server'
-import type { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space'
 import { randomAuthenticatedClient, type AuthenticatedClient } from 'gamezilla-app/app/spaces/@/testing/server'
 import { SpaceGameFixtureServer } from 'gamezilla-app/app/spaces/game/@/testing/server'
 import { FlowPack, FlowPackDb } from '..'
-import type { FlowServerDeps } from '../../../builder/builder.types'
 import { FlowPuzzle, FlowPuzzleDb } from '../../flow-puzzle'
 import type { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
+import { FlowServerCtx } from '../../flow-server-ctx'
 import { FlowPackPuzzlesGridServer } from './flow-pack-puzzles-grid.server'
 
 const initial = () => {
   return {}
 }
 
-const userObversedGrid =
-  (deps: FlowServerDeps, ctx: SpaceServerCtx, client: AuthenticatedClient, puzzleIds: FlowPuzzleId[]) => () => {
-    return FlowPackPuzzlesGridServer.update({
-      ctx,
-      deps,
-      msgClient: {
-        ...client,
-        puzzleIds,
-        t: 'list-puzzles-by-id',
-        causedBy: null
-      }
-    })
-  }
+const userObversedGrid = (ctx: FlowServerCtx, client: AuthenticatedClient, puzzleIds: FlowPuzzleId[]) => () => {
+  return FlowPackPuzzlesGridServer.update({
+    ctx,
+    deps: null,
+    msgClient: {
+      ...client,
+      puzzleIds,
+      t: 'list-puzzles-by-id',
+      causedBy: null
+    }
+  })
+}
 
 const Fixture = async () => {
-  const deps: FlowServerDeps = {
+  const f = await SpaceGameFixtureServer()
+  const ctx: FlowServerCtx = {
+    ...f.ctx,
     flowPackDb: FlowPackDb({
       t: 'hash-map'
     }),
@@ -37,7 +37,6 @@ const Fixture = async () => {
       t: 'hash-map'
     })
   }
-  const f = await SpaceGameFixtureServer()
   const client = randomAuthenticatedClient()
   const puzzle = await FlowPuzzle.random()
   const somePack = await FlowPack.create({
@@ -46,16 +45,16 @@ const Fixture = async () => {
     puzzleIds: [puzzle.id]
   })
 
-  await deps.flowPuzzleDb.put(puzzle)
-  await deps.flowPackDb.put(somePack)
+  await ctx.flowPuzzleDb.put(puzzle)
+  await ctx.flowPackDb.put(somePack)
 
-  return { ...f, client, deps }
+  return { ...f, client, ctx }
 }
 
 describe(import.meta.file, () => {
   it('should send back listed puzzles', async () => {
     const f = await Fixture()
-    const output = await AppServerModule.andThen(initial(), userObversedGrid(f.deps, f.ctx, f.client, []))
+    const output = await AppServerModule.andThen(initial(), userObversedGrid(f.ctx, f.client, []))
 
     expect(didSendToClient(output, f.client.clientId, (msg) => msg.t === 'listed-puzzles-by-id')).toBe(true)
   })
