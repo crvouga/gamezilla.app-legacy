@@ -55,7 +55,9 @@ const getDeps: Module['getDeps'] = async ({ ctx }) => {
     dbConnSql: ctx.dbConnSql
   })
 
-  const hashing = Hashing({ t: 'bun' })
+  const hashing = Hashing({
+    t: 'bun'
+  })
 
   const verificationCodeGenerator = VerificationCodeGenerator({
     t: 'fake',
@@ -67,28 +69,27 @@ const getDeps: Module['getDeps'] = async ({ ctx }) => {
     logger: ILogger.prefix('sms', ctx.logger)
   })
 
-  const verifySMSInHouse = VerifySMS({
-    t: 'in-house',
-    logger: ctx.logger,
-    hashing,
-    now: Posix.now,
-    sendCodeDailyLimit: 1000,
-    sendCodeHourlyLimit: 100,
-    verificationAttemptDb,
-    verificationDb,
-    verifyCodeExpiresIn: TimeSpan.minutes(5),
-    verifyCodeMaxAttempts: 3,
-    sms,
-    Translator,
-    verificationCodeGenerator
-  })
-
-  const verifySMSTwilio = VerifySMS({
-    t: 'twilio',
-    logger: ILogger.prefix('twilio-verify', ctx.logger)
-  })
-
-  const verifySMS = ctx.env === 'prod' ? verifySMSTwilio : verifySMSInHouse
+  const verifySMS =
+    ctx.env === 'prod'
+      ? VerifySMS({
+          t: 'twilio',
+          logger: ILogger.prefix('twilio-verify', ctx.logger)
+        })
+      : VerifySMS({
+          t: 'in-house',
+          logger: ctx.logger,
+          hashing,
+          now: Posix.now,
+          sendCodeDailyLimit: 1000,
+          sendCodeHourlyLimit: 100,
+          verificationAttemptDb,
+          verificationDb,
+          verifyCodeExpiresIn: TimeSpan.minutes(5),
+          verifyCodeMaxAttempts: 3,
+          sms,
+          Translator,
+          verificationCodeGenerator
+        })
 
   return {
     AccountDb: UserAccountDb({
