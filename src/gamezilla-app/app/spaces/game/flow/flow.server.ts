@@ -6,7 +6,7 @@ import { BuilderServer } from './builder/builder.server'
 import type { ServerModule } from './flow.types'
 import { PlayServer } from './play/play.server'
 
-const deps: ServerModule['initDeps'] = async (input) => {
+const initDeps: ServerModule['initDeps'] = async (input) => {
   return {
     builder: await BuilderServer.initDeps(input),
     play: await PlayServer.initDeps(input),
@@ -94,5 +94,5 @@ export const FlowServer: ServerModule = {
   init,
   subscriptions,
   update,
-  initDeps: deps
+  initDeps: initDeps
 }

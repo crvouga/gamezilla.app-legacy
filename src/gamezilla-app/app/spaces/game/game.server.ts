@@ -32,7 +32,7 @@ type ServerDeps = {
   flow: Awaited<ReturnType<(typeof FlowServer)['initDeps']>>
 }
 
-const deps: ServerModule['initDeps'] = async (input) => {
+const initDeps: ServerModule['initDeps'] = async (input) => {
   return {
     flow: await FlowServer.initDeps(input)
   }
@@ -137,5 +137,5 @@ export const GameServer = {
   init,
   update,
   subscriptions,
-  initDeps: deps
+  initDeps: initDeps
 }

@@ -12,7 +12,7 @@ import { ScreenPuzzleBuilderServer } from './screen-puzzle-builder/server'
 import { ScreenPackBuilderServer } from './screen-pack-builder/screen-pack-builder.server'
 import { ScreenOpenPackServer } from './screen-open-pack/screen-open-pack.server'
 
-const deps: ServerModule['initDeps'] = async (input) => {
+const initDeps: ServerModule['initDeps'] = async (input) => {
   return {
     flowPuzzleDb: FlowPuzzleDb({
       t: 'db-conn-sql',
@@ -80,7 +80,7 @@ const subscriptions: ServerModule['subscriptions'] = async () => {
 }
 
 export const BuilderServer: ServerModule = {
-  initDeps: deps,
+  initDeps: initDeps,
   init: initServer,
   update,
   subscriptions
