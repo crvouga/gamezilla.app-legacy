@@ -20,7 +20,7 @@ const main = async () => {
   const render = await Render(VDOM_IMPL, root)
 
   await Program.run({
-    ctx: AppClient.ctx,
+    initCtx: AppClient.initCtx,
 
     init: (input) => AppClient.init({ ...input, deps }),
 

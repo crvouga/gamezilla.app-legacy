@@ -150,7 +150,7 @@ export const initDeps = async ({
   }
 }
 
-export const ctx = () => {
+export const initCtx = () => {
   return { now: Posix.now() }
 }
 

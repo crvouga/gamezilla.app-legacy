@@ -88,7 +88,7 @@ export type Ctx = {
   navigatorLanguage: LanguageCodeISO_639_1
 }
 
-export const ctx = (): Ctx => {
+export const initCtx = (): Ctx => {
   return {
     now: Posix.now(),
     location: Browser.location(),

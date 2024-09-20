@@ -14,7 +14,7 @@ const main = async () => {
   const deps = await AppServer.initDeps({ codebaseVersionId: CODEBASE_VERSION_ID, server, logger })
 
   await ProgramImpure.run<MsgServer, { now: Posix }>({
-    ctx: AppServer.ctx,
+    initCtx: AppServer.initCtx,
     init: (input) => AppServer.init({ ...input, deps }),
     update: (input) => AppServer.update({ ...input, deps }),
     subscriptions: (input) => AppServer.subscriptions({ ...input, deps })
