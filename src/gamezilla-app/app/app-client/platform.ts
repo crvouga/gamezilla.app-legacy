@@ -45,17 +45,11 @@ export const update = <TMsgClient>({
   eff?: Eff<Msg>
 } => {
   if (msg) {
-    return updateFromMsg({
-      msg,
-      model
-    })
+    return updateFromMsg({ msg, model })
   }
 
   if (msgCmd) {
-    return updateFromCmd({
-      msgCmd,
-      model
-    })
+    return updateFromCmd({ msgCmd, model })
   }
 
   return { model }

@@ -393,12 +393,7 @@ const updateChild = (input: {
       lang.msgEvt
     ),
 
-    msgCmd: Msg.batch<
-      ClientCmd<{
-        MsgToServer: MsgToServer
-        MsgClient: MsgClient
-      }>
-    >(
+    msgCmd: Msg.batch<ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>>(
       ClientCmd.tag('auth', auth.msgCmd),
       ClientCmd.tag('profile', profile.msgCmd),
       ClientCmd.tag('spaces', space.msgCmd),
@@ -425,9 +420,9 @@ export const subscriptions = (input: { ctx: Ctx; deps: Deps; model: ModelClient 
 
   return Sub.batch<MsgClient>([
     Sub.tag('→', Sub.flat(input.deps.transport.toClient)),
-    Sub.tag('wire', WireClient.subscriptions({ transport: input.deps.transport })),
     Sub.tag('platform', Platform.subscriptions),
     Sub.tag('routing', Routing.subscriptions),
+    Sub.tag('wire', WireClient.subscriptions({ transport: input.deps.transport })),
     Sub.tag('lang', LangClient.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('toast', Toast.subscriptions({ ctx, model: input.model.toast })),
     Sub.tag('auth', AuthClient.subscriptions({ ctx, model: input.model.auth })),
