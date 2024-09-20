@@ -24,7 +24,7 @@ export type Deps<TMsgToClient, TMsgToServer> = {
   }>
 }
 
-export const getDeps = async <TMsgToClient, TMsgToServer>(input: {
+export const initDeps = async <TMsgToClient, TMsgToServer>(input: {
   transport: IServerTransport<{
     MsgToClient: TMsgToClient
     MsgToServer: TMsgToServer

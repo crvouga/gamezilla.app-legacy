@@ -107,7 +107,7 @@ export type Output<T extends AppServerModuleTypes> = {
  * `AppServerModule` represents a server side app module
  */
 export type AppServerModule<T extends AppServerModuleTypes> = {
-  getDeps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
+  initDeps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
   /**
    * `init` is the initial state of the module
    */

@@ -23,8 +23,8 @@ type InputMsg =
 
 const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
   const f = await AppServerFixture()
-  const depsBase = await AuthSMSServer.getDeps(f)
-  const deps: Awaited<ReturnType<typeof AuthSMSServer.getDeps>> = {
+  const depsBase = await AuthSMSServer.initDeps(f)
+  const deps: Awaited<ReturnType<typeof AuthSMSServer.initDeps>> = {
     ...depsBase,
     AccountDb: UserAccountDb({
       t: 'in-memory',

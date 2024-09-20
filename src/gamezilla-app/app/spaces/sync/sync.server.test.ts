@@ -6,7 +6,7 @@ import {
   authenticatedClientConnected,
   clientCore,
   randomAuthenticatedClient,
-  getDeps,
+  initDeps,
   init,
   userStartedSpace
 } from '../@/testing/server'
@@ -14,7 +14,7 @@ import { makeSpace } from '../@/testing/shared'
 
 describe(import.meta.file, () => {
   it("should send user's space when they connect to the server", async () => {
-    const deps = await getDeps()
+    const deps = await initDeps()
     const client = randomAuthenticatedClient()
     const spaceId = SpaceId.generate()
     const output = await AppServerModule.andThen(
@@ -26,7 +26,7 @@ describe(import.meta.file, () => {
   })
 
   it('should send back synced response when user sends sync message', async () => {
-    const deps = await getDeps()
+    const deps = await initDeps()
     const client = randomAuthenticatedClient()
     const clientsSpace = makeSpace({
       spaceId: SpaceId.generate(),
@@ -38,7 +38,7 @@ describe(import.meta.file, () => {
   })
 
   it('should broadcast space events received from clients to other clients', async () => {
-    const deps = await getDeps()
+    const deps = await initDeps()
     const client = randomAuthenticatedClient()
     const spaceId = SpaceId.generate()
     const output = await AppServerModule.andThen(init(), userStartedSpace(deps, client, spaceId))

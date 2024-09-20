@@ -158,6 +158,6 @@ export type ServerModule = GameServerModule<{
   Deps: {
     builder: Awaited<ReturnType<(typeof BuilderServer)['deps']>>
     play: Awaited<ReturnType<(typeof PlayServer)['deps']>>
-    flowPackList: Awaited<ReturnType<FlowPackListTypes.ServerModule['getDeps']>>
+    flowPackList: Awaited<ReturnType<FlowPackListTypes.ServerModule['initDeps']>>
   }
 }>

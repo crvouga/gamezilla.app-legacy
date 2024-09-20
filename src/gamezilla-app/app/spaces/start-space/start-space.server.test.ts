@@ -2,13 +2,13 @@ import { describe, expect, it } from 'bun:test'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
-import { randomAuthenticatedClient, getDeps, init, userStartedSpace } from '../@/testing/server'
+import { randomAuthenticatedClient, initDeps, init, userStartedSpace } from '../@/testing/server'
 import { SpaceCore } from '../spaces-core'
 import * as SpacesCoreServer from '../spaces-core/spaces-core.server'
 
 describe(import.meta.file, () => {
   it('should add a new space when recieving a user started space event', async () => {
-    const deps = await getDeps()
+    const deps = await initDeps()
     const spaceId = SpaceId.generate()
     const client = randomAuthenticatedClient()
 
@@ -18,7 +18,7 @@ describe(import.meta.file, () => {
   })
 
   it('should propogate the user started space event to the clients', async () => {
-    const deps = await getDeps()
+    const deps = await initDeps()
     const spaceId = SpaceId.generate()
     const client = randomAuthenticatedClient()
 

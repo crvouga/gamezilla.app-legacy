@@ -28,6 +28,6 @@ export const subscriptions: Module['subscriptions'] = async () => {
   return Sub.None
 }
 
-export const getDeps: Module['getDeps'] = async () => {
+export const initDeps: Module['initDeps'] = async () => {
   return null
 }

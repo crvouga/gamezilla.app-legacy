@@ -11,7 +11,7 @@ const main = async () => {
 
   const server = Server({ t: SERVER_IMPL, logger: ILogger.prefix('server', logger) })
 
-  const deps = await AppServer.getDeps({ codebaseVersionId: CODEBASE_VERSION_ID, server, logger })
+  const deps = await AppServer.initDeps({ codebaseVersionId: CODEBASE_VERSION_ID, server, logger })
 
   await ProgramImpure.run<MsgServer, { now: Posix }>({
     ctx: AppServer.ctx,

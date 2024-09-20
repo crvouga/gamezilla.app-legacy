@@ -41,7 +41,7 @@ export type Deps = {
   stored: Record<string, unknown>
 }
 
-export const getDeps = async ({
+export const initDeps = async ({
   serverUrl,
   codebaseVersionId,
   serverImpl

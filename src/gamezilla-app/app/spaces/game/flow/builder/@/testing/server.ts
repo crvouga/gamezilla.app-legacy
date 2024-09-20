@@ -10,7 +10,7 @@ export const initial = {
   model: initServer
 }
 
-export const getDeps = async (): Promise<FlowServerDeps> => {
+export const initDeps = async (): Promise<FlowServerDeps> => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
     case 'integration': {
@@ -43,7 +43,7 @@ export const getDeps = async (): Promise<FlowServerDeps> => {
 
 export const FlowCreateFixtureServer = async () => {
   const f = await SpaceGameFixtureServer()
-  const deps = await getDeps()
+  const deps = await initDeps()
   const model = initServer
   const modelCore = BuilderCore.initCore({
     ctx: f.ctx

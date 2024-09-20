@@ -22,7 +22,7 @@ import { SyncServer } from './sync/sync.server'
 //
 //
 
-export const getDeps: ServerModule['getDeps'] = async ({ ctx }) => {
+export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   return {
     profileCache: ProfileCache({
       t: 'db-conn-kv',
@@ -36,7 +36,7 @@ export const getDeps: ServerModule['getDeps'] = async ({ ctx }) => {
       t: 'db-conn-kv',
       dbConnKv: ctx.dbConnKv
     }),
-    gameServer: await GameServer.deps({
+    gameServer: await GameServer.initDeps({
       ctx: {
         clientId: ClientId.generate(),
         dbConnKv: ctx.dbConnKv,
@@ -58,7 +58,7 @@ export const getDeps: ServerModule['getDeps'] = async ({ ctx }) => {
   }
 }
 
-export type Deps = Awaited<ReturnType<typeof getDeps>>
+export type Deps = Awaited<ReturnType<typeof initDeps>>
 
 //
 //

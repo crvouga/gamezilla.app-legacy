@@ -39,7 +39,7 @@ export type Deps = {
   auth: AuthServer.Deps
 }
 
-export const getDeps = async ({
+export const initDeps = async ({
   logger,
   server,
   codebaseVersionId
@@ -106,7 +106,7 @@ export const getDeps = async ({
     logger: ILogger.prefix('transport', logger)
   })
 
-  const wire = await WireServer.getDeps({
+  const wire = await WireServer.initDeps({
     transport,
     dbConnKv
   })
@@ -120,19 +120,19 @@ export const getDeps = async ({
     now: Posix.now()
   }
 
-  const profile = await ProfileServer.getDeps({
+  const profile = await ProfileServer.initDeps({
     ctx
   })
 
-  const space = await SpaceServer.getDeps({
+  const space = await SpaceServer.initDeps({
     ctx
   })
 
-  const auth = await AuthServer.getDeps({
+  const auth = await AuthServer.initDeps({
     ctx
   })
 
-  const lang = await LangServer.getDeps({
+  const lang = await LangServer.initDeps({
     ctx
   })
 

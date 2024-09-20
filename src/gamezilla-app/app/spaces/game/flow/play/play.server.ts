@@ -76,7 +76,7 @@ export const PlayServer: ServerModule = {
   init,
   update,
   subscriptions,
-  deps: async (input) => {
+  initDeps: async (input) => {
     return {
       flowPackDb: FlowPackDb({
         t: 'db-conn-sql',

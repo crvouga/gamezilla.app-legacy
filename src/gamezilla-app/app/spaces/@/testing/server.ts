@@ -18,7 +18,7 @@ import { EventId } from '../event'
 
 export const SpaceServerFixture = async () => {
   const f = await AppServerFixture()
-  const deps = await getDeps()
+  const deps = await initDeps()
   const clientA = randomAuthenticatedClient()
   const clientB = randomAuthenticatedClient()
   const init = SpacesServer.init({ ctx })
@@ -46,7 +46,7 @@ export const init = () => {
   return SpacesServer.init({ ctx })
 }
 
-export const getDeps = async (): Promise<ServerDeps> => {
+export const initDeps = async (): Promise<ServerDeps> => {
   const dbConnKv = DbConnKvHashMap()
   return {
     profileCache: ProfileCache({
@@ -61,7 +61,7 @@ export const getDeps = async (): Promise<ServerDeps> => {
       t: 'db-conn-kv',
       dbConnKv
     }),
-    gameServer: await GameServer.deps({
+    gameServer: await GameServer.initDeps({
       ctx: {
         clientId: ClientId.generate(),
         dbConnKv,

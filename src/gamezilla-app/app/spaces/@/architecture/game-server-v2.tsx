@@ -60,7 +60,7 @@ export type Output<T extends GameServerModuleTypes> = {
 }
 
 export type GameServerModule<T extends GameServerModuleTypes> = {
-  deps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
+  initDeps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
   init: T['Model']
   update: (input: Input<T>) => Promise<Output<T>>
   subscriptions: (input: { ctx: T['Ctx']; modelCore: T['ModelCore'] }) => Promise<Sub<T['Msg']>>

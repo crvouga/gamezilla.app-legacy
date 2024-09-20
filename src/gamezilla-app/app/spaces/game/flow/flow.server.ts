@@ -6,10 +6,10 @@ import { BuilderServer } from './builder/builder.server'
 import type { ServerModule } from './flow.types'
 import { PlayServer } from './play/play.server'
 
-const deps: ServerModule['deps'] = async (input) => {
+const deps: ServerModule['initDeps'] = async (input) => {
   return {
-    builder: await BuilderServer.deps(input),
-    play: await PlayServer.deps(input),
+    builder: await BuilderServer.initDeps(input),
+    play: await PlayServer.initDeps(input),
     flowPackList: {
       flowPackDb: FlowPackDb({
         t: 'db-conn-sql',
@@ -94,5 +94,5 @@ export const FlowServer: ServerModule = {
   init,
   subscriptions,
   update,
-  deps
+  initDeps: deps
 }

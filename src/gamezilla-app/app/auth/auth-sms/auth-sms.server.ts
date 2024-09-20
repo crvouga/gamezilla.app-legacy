@@ -4,12 +4,12 @@ import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
-import { sendToClient, type ServerCmd, type ServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
+import { sendToClient } from 'gamezilla-app/app/@/server'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { SMS } from 'gamezilla-app/app/@/server/sms'
 import type { IUserAccountDb } from '../@/server/user-account-db'
 import { UserAccountDb } from '../@/server/user-account-db/user-account-db-impl'
-import type { MsgServer, MsgToClient, MsgToServer } from './auth-sms.types'
+import type { ServerModule } from './auth-sms.types'
 import { VerificationAttemptDb } from './verify-sms/verification-attempt'
 import { VerificationCodeGenerator } from './verify-sms/verification-code-generator'
 import { VerificationDb } from './verify-sms/verification/verification-db'
@@ -23,28 +23,7 @@ import { VerifySMS } from './verify-sms/verify-sms-impl/verify-sms-impl'
 //
 //
 
-type Module = AppServerModule<{
-  Ctx: ServerCtx
-  MsgEvtIn: ServerEvt
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
-  MsgEvtOut: ServerEvt
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Deps: {
-    AccountDb: IUserAccountDb
-    VerifySMS: IVerifySMS
-  }
-}>
-
-//
-//
-//
-//
-//
-//
-
-const getDeps: Module['getDeps'] = async ({ ctx }) => {
+const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   const verificationDb = VerificationDb({
     t: 'postgres',
     dbConnSql: ctx.dbConnSql
@@ -107,7 +86,7 @@ const getDeps: Module['getDeps'] = async ({ ctx }) => {
 //
 //
 
-const init: Module['init'] = async () => {
+const init: ServerModule['init'] = async () => {
   return {}
 }
 
@@ -119,7 +98,7 @@ const init: Module['init'] = async () => {
 //
 //
 
-const update: Module['update'] = async (input) => {
+const update: ServerModule['update'] = async (input) => {
   return AppServerModule.andThen(
     {},
     () => updateSendCode(input),
@@ -127,7 +106,7 @@ const update: Module['update'] = async (input) => {
   )
 }
 
-const updateSendCode: Module['update'] = async ({ msgClient, deps }) => {
+const updateSendCode: ServerModule['update'] = async ({ msgClient, deps }) => {
   switch (msgClient?.t) {
     case 'user-clicked-send-code-button': {
       const sent = await deps.VerifySMS.sendCode(msgClient)
@@ -201,7 +180,7 @@ const handleVerifyCode = async (input: {
   return Ok(accountNew)
 }
 
-const updateVerifyCode: Module['update'] = async ({ msgClient, deps, ctx }) => {
+const updateVerifyCode: ServerModule['update'] = async ({ msgClient, deps, ctx }) => {
   switch (msgClient?.t) {
     case 'user-clicked-verify-code-button': {
       ctx.logger.info(`Verifying code for ${PhoneNumber.toString(msgClient.phoneNumber)}`)
@@ -262,7 +241,7 @@ const updateVerifyCode: Module['update'] = async ({ msgClient, deps, ctx }) => {
 //
 //
 
-const subscriptions: Module['subscriptions'] = async () => {
+const subscriptions: ServerModule['subscriptions'] = async () => {
   return Sub.None
 }
 
@@ -275,7 +254,7 @@ const subscriptions: Module['subscriptions'] = async () => {
 //
 
 export const AuthSMSServer = {
-  getDeps,
+  initDeps,
   init,
   update,
   subscriptions

@@ -5,7 +5,7 @@ import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, SERVER_URL, TRANSPORT_IMPL, 
 import { Render } from './@/vdom'
 
 const main = async () => {
-  const deps = await AppClient.getDeps({
+  const deps = await AppClient.initDeps({
     codebaseVersionId: CODEBASE_VERSION_ID,
     serverImpl: SERVER_IMPL,
     serverUrl: SERVER_URL

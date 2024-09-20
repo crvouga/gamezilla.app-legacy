@@ -16,7 +16,7 @@ import { LogoutServer } from './logout/logout.server'
 //
 //
 
-export const getDeps: ServerModule['getDeps'] = async ({ ctx }) => {
+export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   return {
     userAccountDb: UserAccountDb({
       t: 'postgres',
@@ -35,7 +35,7 @@ export const getDeps: ServerModule['getDeps'] = async ({ ctx }) => {
   }
 }
 
-export type Deps = Awaited<ReturnType<typeof getDeps>>
+export type Deps = Awaited<ReturnType<typeof initDeps>>
 
 //
 //
@@ -87,7 +87,7 @@ export const toUserIdFromSessionId = async (deps: ServerDeps, sessionId: Session
 const updateChild: ServerModule['update'] = async (input) => {
   const sms = await AuthSMSServer.update({
     ...input,
-    deps: await AuthSMSServer.getDeps(input),
+    deps: await AuthSMSServer.initDeps(input),
     msgClient:
       input.msgClient?.t === 'sms'
         ? {
@@ -199,7 +199,7 @@ export const subscriptions: ServerModule['subscriptions'] = async (input) => {
       'sms',
       await AuthSMSServer.subscriptions({
         ...input,
-        deps: await AuthSMSServer.getDeps(input)
+        deps: await AuthSMSServer.initDeps(input)
       })
     )
   ])

@@ -41,7 +41,7 @@ type Module = AppServerModule<{
 
 export type Deps = {}
 
-export const getDeps: Module['getDeps'] = async () => {
+export const initDeps: Module['initDeps'] = async () => {
   return {}
 }
 
