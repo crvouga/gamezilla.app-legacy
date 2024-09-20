@@ -14,7 +14,7 @@ export const memoize = <TInput, TOutput extends {}>({
   cacheCapacity: number
 }) => {
   const cache = LRUCache<string | number, TOutput>({
-    maxCapcity: cacheCapacity
+    maxCapacity: cacheCapacity
   })
 
   return (x: TInput): TOutput => {
@@ -44,7 +44,7 @@ export const memoizeAsync = <TInput, TOutput extends {}>({
   cacheCapacity: number
 }) => {
   const cache = LRUCache<string | number, TOutput>({
-    maxCapcity: cacheCapacity
+    maxCapacity: cacheCapacity
   })
 
   return async (x: TInput): Promise<TOutput> => {

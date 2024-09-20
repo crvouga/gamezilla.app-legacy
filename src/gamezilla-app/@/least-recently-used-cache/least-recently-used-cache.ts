@@ -2213,9 +2213,9 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
 }
 
 export const LRUCache = <K extends {}, V extends {}, FC = unknown>({
-  maxCapcity
+  maxCapacity
 }: {
-  maxCapcity: number
+  maxCapacity: number
 }): Map<K, V> => {
-  return new _LRUCache<K, V, FC>({ max: maxCapcity })
+  return new _LRUCache<K, V, FC>({ max: maxCapacity })
 }

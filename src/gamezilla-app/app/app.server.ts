@@ -83,7 +83,7 @@ export const initDeps = async ({
         cache: await DbConnKv({
           t: 'hash-map',
           map: LRUCache({
-            maxCapcity: 1000
+            maxCapacity: 1000
           })
         })
       }),
