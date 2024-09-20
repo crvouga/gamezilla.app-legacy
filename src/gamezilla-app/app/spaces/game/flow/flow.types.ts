@@ -156,8 +156,8 @@ export type ServerModule = GameServerModule<{
   MsgEvtIn: SpaceServerEvt
   MsgCmdOut: SpaceServerCmd<MsgToClient>
   Deps: {
-    builder: Awaited<ReturnType<(typeof BuilderServer)['deps']>>
-    play: Awaited<ReturnType<(typeof PlayServer)['deps']>>
+    builder: Awaited<ReturnType<(typeof BuilderServer)['initDeps']>>
+    play: Awaited<ReturnType<(typeof PlayServer)['initDeps']>>
     flowPackList: Awaited<ReturnType<FlowPackListTypes.ServerModule['initDeps']>>
   }
 }>
