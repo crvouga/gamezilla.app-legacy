@@ -145,14 +145,14 @@ const updateChild: SpaceClientModule['update'] = (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCoreEvt: msgSpaceEvent, model }) => {
-  if (!msgSpaceEvent) {
+const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCoreEvt: msgCoreEvt, model }) => {
+  if (!msgCoreEvt) {
     return { model }
   }
 
   const updated = SpacesCoreClient.updateFromSpaceEvent({
     model,
-    spaceEvent: msgSpaceEvent
+    spaceEvent: msgCoreEvt
   })
 
   return { model: { ...model, ...updated.model } }

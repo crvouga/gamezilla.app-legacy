@@ -1,4 +1,4 @@
-import { NonEmpty, Posix, pipe, type TimeSpan } from 'gamezilla-app/@/core'
+import { NonEmpty, PhoneNumber, Posix, pipe, type TimeSpan } from 'gamezilla-app/@/core'
 import { LamportClock, LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import { ClientCmd, ClientEvt, routeChanged, type ClientCtx } from 'gamezilla-app/app/@/client'
@@ -11,6 +11,7 @@ import * as SpaceClient from '../../spaces.client'
 import type * as SpacesTypes from '../../spaces.types'
 import type { SpaceClientCtx } from '../space'
 import { GameName } from '../../game/@/game-name'
+import { UserAccount } from 'gamezilla-app/app/@/data/account'
 
 //
 //
@@ -20,6 +21,7 @@ import { GameName } from '../../game/@/game-name'
 //
 
 export const Ctx = (): ClientCtx => {
+  const currentUserId = UserId.generate()
   return {
     navigatorLanguage: 'en',
     t: Translator('en'),
@@ -30,12 +32,19 @@ export const Ctx = (): ClientCtx => {
     documentVisibilityState: 'visible',
     now: Posix.now(),
     profiles: {},
-    currentUserId: UserId.generate(),
-    currentUserRole: 'normal'
+    currentUserId,
+    currentUserRole: 'normal',
+    currentUser: {
+      createdAt: Posix.now(),
+      phoneNumber: PhoneNumber.random(),
+      role: 'normal',
+      userId: currentUserId
+    }
   }
 }
 
 export const SoaceClientFixture = async () => {
+  const currentUserId = UserId.generate()
   const ctx: ClientCtx = {
     navigatorLanguage: 'en',
     t: Translator('en'),
@@ -46,8 +55,14 @@ export const SoaceClientFixture = async () => {
     documentVisibilityState: 'visible',
     now: Posix.now(),
     profiles: {},
-    currentUserId: UserId.generate(),
-    currentUserRole: 'normal'
+    currentUserId,
+    currentUserRole: 'normal',
+    currentUser: {
+      createdAt: Posix.now(),
+      phoneNumber: PhoneNumber.random(),
+      role: 'normal',
+      userId: currentUserId
+    }
   }
 
   type Msg =
@@ -104,9 +119,11 @@ const randomProfile = (): Profile => {
 
 export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureAppClient(input)
-  const currentUser = {
-    ...randomProfile(),
-    userId: f.ctx.currentUserId
+  const currentUser: UserAccount = {
+    userId: f.ctx.currentUserId,
+    createdAt: Posix.now(),
+    phoneNumber: PhoneNumber.random(),
+    role: 'normal'
   }
   const userA = randomProfile()
   const userB = randomProfile()
@@ -173,12 +190,13 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
     documentVisibilityState: 'visible',
     now: Posix.now(),
     profiles: {
-      [currentUser.userId]: currentUser,
+      [currentUser.userId]: { ...randomProfile(), userId: currentUser.userId },
       [userA.userId]: userA,
       [userB.userId]: userB,
       [userC.userId]: userC
     },
-    space
+    space,
+    currentUser
   }
 
   type Input = {
@@ -536,7 +554,8 @@ export const gotCurrentUsersSpace = (ctx: ClientCtx, space: SpaceCore.Model) => 
     model,
     msgServer: {
       t: 'current-user-space',
-      space
+      space,
+      currentUser: ctx.currentUser
     }
   })
 }

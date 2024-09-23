@@ -91,34 +91,34 @@ export const update: ServerModule['update'] = async (input) => {
 const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> => {
   const acc = initialAcc ?? (await updateChild(input))
 
-  const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? []
+  const [coreEvt, ...coreEvtRest] = acc.msgCoreEvt ?? []
 
-  if (spaceEvent) {
+  if (coreEvt) {
     const updated = await updateChild({
       deps: input.deps,
       ctx: input.ctx,
-      msgSpaceEvent: spaceEvent
+      msgCoreEvt: coreEvt
     })
 
     return updateLoop(input, {
-      msgSpaceEvent: Msg.batch(spaceEventsRest, updated.msgSpaceEvent),
+      msgCoreEvt: Msg.batch(coreEvtRest, updated.msgCoreEvt),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: updated.msgEvt
     })
   }
 
-  const [spaceCmd, ...spaceCmdsRest] = SpaceServerCmd.toSpaceServerCmd(acc.msgCmd)
+  const [cmd, ...cmdRest] = SpaceServerCmd.toSpaceServerCmd(acc.msgCmd)
 
-  if (spaceCmd) {
+  if (cmd) {
     const updated = await updateChild({
       deps: input.deps,
       ctx: input.ctx,
-      msgCmd: spaceCmd
+      msgCmd: cmd
     })
 
     return updateLoop(input, {
-      msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
-      msgCmd: Msg.batch(spaceCmdsRest, updated.msgCmd),
+      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt),
+      msgCmd: Msg.batch(cmdRest, updated.msgCmd),
       msgEvt: updated.msgEvt
     })
   }
@@ -128,8 +128,8 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
 
 const updateChild: SpaceServerModule['update'] = async (input) => {
   if (
-    input.msgSpaceEvent &&
-    (await SpacesCoreServer.hasEvent(input.deps.spaceCoreDb, input.msgSpaceEvent.spaceId, input.msgSpaceEvent.eventId))
+    input.msgCoreEvt &&
+    (await SpacesCoreServer.hasEvent(input.deps.spaceCoreDb, input.msgCoreEvt.spaceId, input.msgCoreEvt.eventId))
   ) {
     return {}
   }
@@ -145,14 +145,14 @@ const updateChild: SpaceServerModule['update'] = async (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgSpaceEvent, deps }) => {
-  if (!msgSpaceEvent) {
+const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgCoreEvt, deps }) => {
+  if (!msgCoreEvt) {
     return {}
   }
 
   await SpacesCoreServer.update({
     spacesDb: deps.spaceCoreDb,
-    spaceEvent: msgSpaceEvent
+    spaceEvent: msgCoreEvt
   })
 
   return {}

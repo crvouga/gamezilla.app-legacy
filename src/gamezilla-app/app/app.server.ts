@@ -120,21 +120,13 @@ export const initDeps = async ({
     now: Posix.now()
   }
 
-  const profile = await ProfileServer.initDeps({
-    ctx
-  })
+  const profile = await ProfileServer.initDeps({ ctx })
 
-  const space = await SpaceServer.initDeps({
-    ctx
-  })
+  const space = await SpaceServer.initDeps({ ctx })
 
-  const auth = await AuthServer.initDeps({
-    ctx
-  })
+  const auth = await AuthServer.initDeps({ ctx })
 
-  const lang = await LangServer.initDeps({
-    ctx
-  })
+  const lang = await LangServer.initDeps({ ctx })
 
   return {
     lang,
@@ -359,7 +351,14 @@ export const updateChild = async ({
       ServerCmd.tag('profile', profile.msgCmd),
       ServerCmd.tag('lang', lang.msgCmd)
     ),
-    msgEvt: Msg.batch<ServerEvt>(auth.msgEvt, space.msgEvt, wire.msgEvt, profile.msgEvt, lang.msgEvt)
+    msgEvt: Msg.batch<ServerEvt>(
+      //
+      auth.msgEvt,
+      space.msgEvt,
+      wire.msgEvt,
+      profile.msgEvt,
+      lang.msgEvt
+    )
   }
 }
 

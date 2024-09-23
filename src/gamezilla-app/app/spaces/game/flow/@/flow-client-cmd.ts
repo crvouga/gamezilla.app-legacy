@@ -6,24 +6,7 @@ export type FlowClientCmd<T extends ClientCmdTypes> = SpaceClientCmd<T> | FlowPa
 
 export type FlowClientCmdLocal = FlowClientCmd<ClientCmdTypes>
 
-const sieveOne = <T extends ClientCmdTypes>(
-  cmds: FlowClientCmd<T>[] | undefined | null,
-  acc: FlowClientCmd<T>[] = []
-): [FlowClientCmdLocal | null, FlowClientCmd<T>[]] => {
-  const [cmd, ...rest] = cmds ?? []
-
-  if (!cmd) {
-    return [null, acc]
-  }
-
-  if (cmd?.t === 'flow-pack-list') {
-    return [cmd, [...acc, ...rest]]
-  }
-
-  return sieveOne(rest, [...acc, cmd])
-}
-
-const toSpaceClientCmds = <T extends ClientCmdTypes>(
+const toSpaceClientCmd = <T extends ClientCmdTypes>(
   cmds: FlowClientCmd<T>[] | undefined | null
 ): SpaceClientCmd<T>[] => {
   return (cmds ?? []).flatMap((cmd): SpaceClientCmd<T>[] => {
@@ -33,6 +16,19 @@ const toSpaceClientCmds = <T extends ClientCmdTypes>(
       }
       default: {
         return [cmd]
+      }
+    }
+  })
+}
+
+const toFlowClientCmd = <T extends ClientCmdTypes>(cmds: FlowClientCmd<T>[] | undefined | null): FlowClientCmd<T>[] => {
+  return (cmds ?? []).flatMap((cmd): FlowClientCmd<T>[] => {
+    switch (cmd.t) {
+      case 'flow-pack-list': {
+        return [cmd]
+      }
+      default: {
+        return []
       }
     }
   })
@@ -65,7 +61,7 @@ const tag = <T extends ClientCmdTypes, Tag extends string>(
 }
 
 export const FlowClientCmd = {
-  toSpaceClientCmds,
-  tag,
-  sieveOne
+  toSpaceClientCmd,
+  toFlowClientCmd,
+  tag
 }

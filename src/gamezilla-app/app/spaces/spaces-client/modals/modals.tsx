@@ -129,15 +129,16 @@ const updateFromEvent: SpaceClientModule['update'] = ({ msgEvt, model }) => {
 }
 
 const View: SpaceClientModule['View'] = (input) => {
-  if (!input.ctx.space || !input.ctx.currentUserId || !input.ctx.currentUserRole) {
+  if (!input.ctx.space || !input.ctx.currentUser) {
     return null
   }
 
   const spaceCtx: SpaceClientCtx = {
     ...input.ctx,
-    currentUserId: input.ctx.currentUserId,
-    currentUserRole: input.ctx.currentUserRole,
-    space: input.ctx.space
+    currentUserId: input.ctx.currentUser.userId,
+    currentUserRole: input.ctx.currentUser.role,
+    space: input.ctx.space,
+    currentUser: input.ctx.currentUser
   }
 
   const modalProfile = input.model.modalPreviewUserId ? input.ctx.profiles[input.model.modalPreviewUserId] : null

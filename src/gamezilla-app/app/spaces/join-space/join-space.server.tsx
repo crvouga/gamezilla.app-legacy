@@ -12,10 +12,10 @@ const update: SpaceServerModule['update'] = (input) => {
 }
 
 const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
-  const { msgSpaceEvent, deps } = input
-  switch (msgSpaceEvent?.t) {
+  const { msgCoreEvt, deps } = input
+  switch (msgCoreEvt?.t) {
     case 'user-joined-space': {
-      const space = await SpacesCoreServer.getSpaceById(deps.spaceCoreDb, msgSpaceEvent.spaceId)
+      const space = await SpacesCoreServer.getSpaceById(deps.spaceCoreDb, msgCoreEvt.spaceId)
 
       if (!space) {
         return {}
@@ -25,10 +25,10 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
 
       return {
         msgCmd: [
-          sendToUser([msgSpaceEvent.userId], {
+          sendToUser([msgCoreEvt.userId], {
             t: 'synced',
             space: started,
-            causedBy: { msgSpaceEvent }
+            causedBy: { msgCoreEvt }
           })
         ]
       }

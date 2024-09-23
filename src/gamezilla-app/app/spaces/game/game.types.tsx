@@ -1,7 +1,14 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import * as ConnectFour from './connect-four/connect-four.types'
-import * as Flow from './flow/flow.types'
+import { SpaceClientCtx, SpaceServerCtx, SpaceServerEvt } from '../@/space'
+import { SpaceClientCmd } from '../@/space-client-cmd'
+import { SpaceClientEvt } from '../@/space-client-evt'
+import { SpaceServerCmd } from '../@/space-server-cmd'
+import { GameClientModule } from './@/architecture/game-client-v2'
+import { GameServerModule } from './@/architecture/game-server-v2'
 import { GameName } from './@/game-name'
+import * as ConnectFour from './connect-four/connect-four.types'
+import { FlowServerCtx } from './flow/@/flow-server-ctx'
+import * as Flow from './flow/flow.types'
 //
 //
 //
@@ -76,3 +83,42 @@ export const MsgCore = p.or(
   })
 )
 export type MsgCore = p.Infer<typeof MsgCore>
+
+//
+//
+//
+//
+//
+//
+
+export type ClientModule = GameClientModule<{
+  Model: ModelClient
+  Msg: MsgClient
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  ModelCore: ModelCore
+  MsgCore: MsgCore
+  Ctx: SpaceClientCtx
+  MsgEvtIn: SpaceClientEvt
+  MsgCmdOut: SpaceClientCmd<{
+    MsgClient: MsgClient
+    MsgToServer: MsgToServer
+  }>
+}>
+
+export type GameServerCtx = SpaceServerCtx & {
+  flow: FlowServerCtx
+}
+
+export type ServerModule = GameServerModule<{
+  Model: ModelServer
+  Msg: MsgServer
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  ModelCore: ModelCore
+  MsgCore: MsgCore
+  Ctx: GameServerCtx
+  MsgEvtIn: SpaceServerEvt
+  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  Deps: null
+}>

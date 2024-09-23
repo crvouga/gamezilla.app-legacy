@@ -5,7 +5,7 @@ import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from 'gamezil
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { type WithEventId, withId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
-import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import {
   IconBotHappy,
@@ -26,6 +26,7 @@ import {
   type MsgToServer,
   updateCore
 } from './vs-bot.types'
+import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 
 //
 //

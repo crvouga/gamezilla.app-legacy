@@ -4,13 +4,13 @@ import { TopBar, Typography } from 'gamezilla-app/app/@/ui'
 import { type WithEventId, withId } from '../@/event'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { SpaceClientModule } from '../architecture/space-client'
+import { SpaceCore, type SpaceCoreEvent } from '../spaces-core'
+import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import type { MsgClient } from '../spaces.types'
 import { ViewUsersInSpaceList } from './@/game'
 import { CoverArt } from './game-cover-art'
 import { GameClient } from './game.client'
 import { gameNameList } from './game.types'
-import { SpaceCore, type SpaceCoreEvent } from '../spaces-core'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
-import type { MsgClient } from '../spaces.types'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
@@ -87,32 +87,30 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model, ctx }) => {
 }
 
 const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  const { msgCoreEvt: msgSpaceEvent, model, ctx } = input
-
-  switch (msgSpaceEvent?.t) {
+  switch (input.msgCoreEvt?.t) {
     case 'user-inputted-game': {
-      if (!ctx.currentUserId) {
+      if (!input.ctx.currentUserId) {
         return {
-          model
+          model: input.model
         }
       }
 
-      const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
-      if (msgSpaceEvent.spaceId === currentUserSpaceId) {
+      if (input.msgCoreEvt.spaceId === currentUserSpaceId) {
         return {
-          model,
-          msgCmd: [playSound(msgSpaceEvent.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)]
+          model: input.model,
+          msgCmd: [playSound(input.msgCoreEvt.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)]
         }
       }
       return {
-        model
+        model: input.model
       }
     }
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
@@ -137,7 +135,7 @@ const inputToSpaceId = (input: Parameters<SpaceClientModule['update']>[0]) => {
 }
 
 const updateGame: SpaceClientModule['update'] = (input) => {
-  if (!input.ctx.currentUserId || !input.ctx.currentUserRole) {
+  if (!input.ctx.currentUser) {
     return { model: input.model }
   }
 
@@ -149,35 +147,30 @@ const updateGame: SpaceClientModule['update'] = (input) => {
 
   const spaceState = SpacesCoreClient.toSpaceStarted(input.model, spaceId)
 
-  if (!spaceState) {
+  if (!spaceState || !spaceState.game) {
     return { model: input.model }
   }
 
-  const modelCore = spaceState.game
-
-  if (!modelCore) {
-    return { model: input.model }
-  }
-
-  const modelGame = input.model.games[spaceId] ?? GameClient.init(modelCore.t)
+  const modelGame = input.model.games[spaceId] ?? GameClient.init(spaceState.game.t)
 
   const gameUpdated = GameClient.update({
     ctx: {
       ...input.ctx,
       space: spaceState,
-      currentUserId: input.ctx.currentUserId,
-      currentUserRole: input.ctx.currentUserRole
+      currentUserId: input.ctx.currentUser.userId,
+      currentUserRole: input.ctx.currentUser.role,
+      currentUser: input.ctx.currentUser
     },
     model: modelGame,
     msgCore: input.msgCoreEvt?.t === 'game' ? { ...input.msgCoreEvt, ...input.msgCoreEvt.c } : null,
-    modelCore: modelCore,
+    modelCore: spaceState.game,
     msgServer: input.msgServer?.t === 'game' ? input.msgServer.c : null,
     msgCmd: null,
     msgEvt: input.msgEvt,
     msg: input.msg?.t === 'game' ? input.msg.c : null
   })
 
-  const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
+  const msgCoreEvtNew = (gameUpdated.msgCore ?? []).map(
     (c): WithEventId<SpaceCoreEvent> => ({ eventId: c.eventId, spaceId, t: 'game', c })
   )
 
@@ -196,7 +189,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
     ),
     eff: Eff.map(gameUpdated.eff, (c) => ({ t: 'game', c, spaceId })),
     msgEvt: [],
-    msgCoreEvt: msgSpaceEventNew
+    msgCoreEvt: msgCoreEvtNew
   }
 }
 
@@ -212,24 +205,25 @@ const subscriptions: SpaceClientModule['subscriptions'] = (input) => {
   return subscriptionsCurrentUserGame(input)
 }
 
-const subscriptionsCurrentUserGame: SpaceClientModule['subscriptions'] = ({ ctx, model }) => {
-  if (!ctx.currentUserId || !ctx.currentUserRole) {
+const subscriptionsCurrentUserGame: SpaceClientModule['subscriptions'] = (input) => {
+  if (!input.ctx.currentUser) {
     return Sub.None
   }
 
   const clientCtx: ClientCtx = {
-    ...ctx,
-    currentUserId: ctx.currentUserId,
-    currentUserRole: ctx.currentUserRole
+    ...input.ctx,
+    currentUserId: input.ctx.currentUser.userId,
+    currentUserRole: input.ctx.currentUser.role,
+    currentUser: input.ctx.currentUser
   }
 
-  const spaceId = SpacesCoreClient.toSpaceIdByUserId(model, clientCtx.currentUserId)
+  const spaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, clientCtx.currentUserId)
 
   if (!spaceId) {
     return Sub.None
   }
 
-  const spaceModel = model.spaces[spaceId]
+  const spaceModel = input.model.spaces[spaceId]
 
   if (!spaceModel) {
     return Sub.None
@@ -247,7 +241,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule['subscriptions'] = ({ ctx,
     return Sub.None
   }
 
-  const gameModel = model.games[spaceId] ?? GameClient.init(modelCore.t)
+  const gameModel = input.model.games[spaceId] ?? GameClient.init(modelCore.t)
 
   const gameSub = GameClient.subscriptions({
     ctx: { ...clientCtx, space: spaceState },
@@ -271,7 +265,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule['subscriptions'] = ({ ctx,
 const View: SpaceClientModule['View'] = (input) => {
   const { model, ctx, dispatch } = input
 
-  if (!ctx.space || !ctx.currentUserId || !ctx.currentUserRole) {
+  if (!ctx.space || !ctx.currentUser) {
     return null
   }
 
@@ -288,8 +282,9 @@ const View: SpaceClientModule['View'] = (input) => {
         ctx={{
           ...ctx,
           space,
-          currentUserId: ctx.currentUserId,
-          currentUserRole: ctx.currentUserRole
+          currentUserId: ctx.currentUser.userId,
+          currentUserRole: ctx.currentUser.role,
+          currentUser: ctx.currentUser
         }}
         dispatch={(c) =>
           dispatch({
@@ -307,7 +302,7 @@ const View: SpaceClientModule['View'] = (input) => {
 }
 
 const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
-  if (!input.ctx.space || !input.ctx.currentUserId || !input.ctx.currentUserRole) {
+  if (!input.ctx.space || !input.ctx.currentUser) {
     return null
   }
 
@@ -325,8 +320,9 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
             ctx={{
               ...input.ctx,
               space: input.ctx.space,
-              currentUserId: input.ctx.currentUserId,
-              currentUserRole: input.ctx.currentUserRole
+              currentUserId: input.ctx.currentUser.userId,
+              currentUserRole: input.ctx.currentUser.role,
+              currentUser: input.ctx.currentUser
             }}
           />
         </div>

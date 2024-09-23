@@ -178,6 +178,7 @@ const toClientCtx = (input: { model: ModelClient; ctx: Ctx }): ClientCtx | Anony
   if (input.model.auth.currentUser.t === 'logged-in') {
     return {
       ...anonymousCtx,
+      currentUser: input.model.auth.currentUser.account,
       currentUserRole: input.model.auth.currentUser.account.role,
       currentUserId: input.model.auth.currentUser.account.userId
     }

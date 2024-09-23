@@ -26,12 +26,12 @@ const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgCoreEvt: msgSpaceEvent }) => {
-  if (!msgSpaceEvent) {
+const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgCoreEvt: msgCoreEvt }) => {
+  if (!msgCoreEvt) {
     return { model }
   }
 
-  const spaceEventWithMeta = SpacesCoreClient.toEventWithMeta(model, msgSpaceEvent.spaceId, msgSpaceEvent.eventId)
+  const spaceEventWithMeta = SpacesCoreClient.toEventWithMeta(model, msgCoreEvt.spaceId, msgCoreEvt.eventId)
 
   if (!spaceEventWithMeta) {
     return { model }

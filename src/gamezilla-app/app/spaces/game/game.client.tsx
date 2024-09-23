@@ -1,34 +1,10 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
-import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'
 import { FlowClient } from './flow/flow.client'
-import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './game.types'
-
-//
-//
-//
-//
-//
-//
-//
-
-type Module = GameClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  ModelCore: ModelCore
-  MsgCore: MsgCore
-  Ctx: SpaceClientCtx
-  MsgEvtIn: SpaceClientEvt
-  MsgCmdOut: SpaceClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>
-}>
+import type { ClientModule } from './game.types'
 
 //
 //
@@ -38,7 +14,7 @@ type Module = GameClientModule<{
 //
 //
 
-const init = (gameName: GameName): Module['init'] => {
+const init = (gameName: GameName): ClientModule['init'] => {
   switch (gameName) {
     case 'connect-four': {
       return {
@@ -68,7 +44,7 @@ const init = (gameName: GameName): Module['init'] => {
 //
 //
 
-const update: Module['update'] = (input) => {
+const update: ClientModule['update'] = (input) => {
   switch (input.modelCore.t) {
     case 'connect-four': {
       const updated = ConnectFour.update({
@@ -137,7 +113,7 @@ const update: Module['update'] = (input) => {
 //
 //
 
-const subscriptions: Module['subscriptions'] = (input) => {
+const subscriptions: ClientModule['subscriptions'] = (input) => {
   const { modelCore, model } = input
 
   switch (modelCore.t) {
@@ -173,7 +149,7 @@ const subscriptions: Module['subscriptions'] = (input) => {
 //
 //
 
-const View: Module['View'] = (input) => {
+const View: ClientModule['View'] = (input) => {
   const { model, ctx, modelCore, dispatch } = input
 
   switch (modelCore.t) {
@@ -211,7 +187,7 @@ const View: Module['View'] = (input) => {
   }
 }
 
-const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
+const ViewFeedItem: ClientModule['ViewFeedItem'] = (input) => {
   const { msgCore, modelCore, ctx, dispatch } = input
 
   switch (modelCore.t) {

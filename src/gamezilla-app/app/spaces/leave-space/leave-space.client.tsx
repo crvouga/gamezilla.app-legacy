@@ -21,8 +21,8 @@ const update: SpaceClientModule['update'] = (input) => {
   )
 }
 
-const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCoreEvt: msgSpaceEvent, ctx }) => {
-  switch (msgSpaceEvent?.t) {
+const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCoreEvt: msgCoreEvt, ctx }) => {
+  switch (msgCoreEvt?.t) {
     case 'user-left-space': {
       if (!ctx.currentUserId) {
         return {
@@ -32,14 +32,14 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCoreEvt: 
 
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, ctx.currentUserId)
 
-      if (msgSpaceEvent.spaceId !== currentUserSpaceId) {
+      if (msgCoreEvt.spaceId !== currentUserSpaceId) {
         return {
           model
         }
       }
 
-      if (msgSpaceEvent.userId !== ctx.currentUserId) {
-        const username = ctx.profiles[msgSpaceEvent.userId]?.username
+      if (msgCoreEvt.userId !== ctx.currentUserId) {
+        const username = ctx.profiles[msgCoreEvt.userId]?.username
         return {
           model,
           msgCmd: [

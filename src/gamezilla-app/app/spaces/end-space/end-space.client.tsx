@@ -60,9 +60,9 @@ const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
 }
 
 const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  const { ctx, model, msgCoreEvt: msgSpaceEvent } = input
+  const { ctx, model, msgCoreEvt: msgCoreEvt } = input
 
-  switch (msgSpaceEvent?.t) {
+  switch (msgCoreEvt?.t) {
     case 'user-ended-space': {
       if (!ctx.currentUserId) {
         return {
@@ -72,7 +72,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
 
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, ctx.currentUserId)
 
-      if (msgSpaceEvent.spaceId !== currentUserSpaceId) {
+      if (msgCoreEvt.spaceId !== currentUserSpaceId) {
         return {
           model
         }
@@ -89,7 +89,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
           }
         },
         (model) => {
-          if (ctx.currentRoute.t === 'space' && ctx.currentRoute.spaceId === msgSpaceEvent.spaceId) {
+          if (ctx.currentRoute.t === 'space' && ctx.currentRoute.spaceId === msgCoreEvt.spaceId) {
             return {
               model,
               msgCmd: [
@@ -106,14 +106,14 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
           }
         },
         (model) => {
-          if (msgSpaceEvent.userId === ctx.currentUserId) {
+          if (msgCoreEvt.userId === ctx.currentUserId) {
             return {
               model,
               msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))]
             }
           }
 
-          const profile = ctx.profiles[msgSpaceEvent.userId]
+          const profile = ctx.profiles[msgCoreEvt.userId]
 
           if (!profile) {
             return {

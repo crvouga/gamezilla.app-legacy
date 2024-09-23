@@ -1,37 +1,11 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import type { SpaceServerCtx, SpaceServerEvt } from '../@/space'
+import type { SpaceServerCtx } from '../@/space'
 import { SpaceServerCmd } from '../@/space-server-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFourServer } from './connect-four/connect-four.server'
-import { FlowServerCtx } from './flow/@/flow-server-ctx'
 import { FlowServer } from './flow/flow.server'
-import type { ModelCore, ModelServer, MsgCore, MsgServer, MsgToClient, MsgToServer } from './game.types'
-
-//
-//
-//
-//
-//
-//
-//
-
-type GameServerCtx = SpaceServerCtx & {
-  flow: FlowServerCtx
-}
-
-type ServerModule = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  ModelCore: ModelCore
-  MsgCore: MsgCore
-  Ctx: GameServerCtx
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
-  Deps: null
-}>
+import type { GameServerCtx, ServerModule } from './game.types'
 
 const initCtx = (input: { ctx: SpaceServerCtx }): GameServerCtx => {
   return {

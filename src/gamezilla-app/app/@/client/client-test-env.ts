@@ -1,4 +1,4 @@
-import { Posix } from 'gamezilla-app/@/core'
+import { PhoneNumber, Posix } from 'gamezilla-app/@/core'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import { TestRender } from 'gamezilla-app/@/vdom/test-render'
 import { UserId } from '../data'
@@ -19,7 +19,13 @@ export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {
     navigatorLanguage: 'en',
     now: Posix.now(),
     profiles: {},
-    t: Translator('en')
+    t: Translator('en'),
+    currentUser: {
+      userId: currentUserId,
+      createdAt: Posix.now(),
+      phoneNumber: PhoneNumber.random(),
+      role: 'normal'
+    }
   }
 
   const render = await TestRender(VDOM_IMPL_TEST)

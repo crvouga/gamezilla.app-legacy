@@ -9,7 +9,7 @@ import type { MsgToClient, ServerDeps } from '../spaces.types'
 const update: SpaceServerModule['update'] = async (input) => {
   return SpaceServerModule.andThen(
     {},
-    () => updateCore(input),
+    () => updateFromClient(input),
     () => updateCurrentUserSpace(input),
     () => updateProfileCache(input),
     () => sendSpaceEventToClient(input),
@@ -27,7 +27,7 @@ const updateProfileCache: SpaceServerModule['update'] = async (input) => {
   return {}
 }
 
-const updateCore: SpaceServerModule['update'] = async (input) => {
+const updateFromClient: SpaceServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'sync': {
       await SpacesCoreServer.mergeOne({
@@ -85,11 +85,9 @@ const spacesToProfiles = async (deps: ServerDeps, spaces: Space.Model[]) => {
 }
 
 const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
-  const { msgEvt, deps } = input
-
-  switch (msgEvt?.t) {
+  switch (input.msgEvt?.t) {
     case 'auth/client-authenticated': {
-      const space = await SpacesCoreServer.getSpaceByUserId(deps.spaceCoreDb, msgEvt.account.userId)
+      const space = await SpacesCoreServer.getSpaceByUserId(input.deps.spaceCoreDb, input.msgEvt.account.userId)
 
       if (!space) {
         return {}
@@ -101,11 +99,14 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
 
       return {
         msgCmd: [
-          sendToClient<MsgToClient>([msgEvt.clientId], {
+          sendToClient<MsgToClient>([input.msgEvt.clientId], {
             t: 'current-user-space',
             space: started,
             profiles,
-            causedBy: { msgEvt }
+            currentUser: input.msgEvt.account,
+            causedBy: {
+              msgEvt: input.msgEvt
+            }
           })
         ]
       }
@@ -117,15 +118,15 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
   }
 }
 
-const sendSpaceEventToClient: SpaceServerModule['update'] = async ({ msgSpaceEvent, deps }) => {
-  if (!msgSpaceEvent) {
+const sendSpaceEventToClient: SpaceServerModule['update'] = async ({ msgCoreEvt, deps }) => {
+  if (!msgCoreEvt) {
     return {}
   }
 
   const msgEvtWithMeta = await SpacesCoreServer.getEventWithMeta(
     deps.spaceCoreDb,
-    msgSpaceEvent.spaceId,
-    msgSpaceEvent.eventId
+    msgCoreEvt.spaceId,
+    msgCoreEvt.eventId
   )
 
   if (!msgEvtWithMeta) {
@@ -160,7 +161,7 @@ const outputSpaceEventsFromServer: SpaceServerModule['update'] = (input) => {
   switch (input.msgClient?.t) {
     case 'event': {
       return {
-        msgSpaceEvent: [input.msgClient.c]
+        msgCoreEvt: [input.msgClient.c]
       }
     }
   }

@@ -54,15 +54,15 @@ const updateFromJoinSpaceButton: SpaceClientModule['update'] = ({ msg, model, ct
 }
 
 const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  const { msgCoreEvt: msgSpaceEvent, model, ctx } = input
+  const { msgCoreEvt: msgCoreEvt, model, ctx } = input
 
   if (!ctx.currentUserId) {
     return { model }
   }
 
-  switch (msgSpaceEvent?.t) {
+  switch (msgCoreEvt?.t) {
     case 'user-joined-space': {
-      const error = SpacesCoreClient.toErrorByEvenId(model, msgSpaceEvent.eventId)
+      const error = SpacesCoreClient.toErrorByEvenId(model, msgCoreEvt.eventId)
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
@@ -81,14 +81,14 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
 
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, ctx.currentUserId)
 
-      if (msgSpaceEvent.spaceId !== currentUserSpaceId) {
+      if (msgCoreEvt.spaceId !== currentUserSpaceId) {
         return {
           model
         }
       }
 
-      if (msgSpaceEvent.userId !== ctx.currentUserId) {
-        const username = ctx.profiles[msgSpaceEvent.userId]?.username ?? null
+      if (msgCoreEvt.userId !== ctx.currentUserId) {
+        const username = ctx.profiles[msgCoreEvt.userId]?.username ?? null
         return {
           model,
           msgCmd: [
@@ -115,7 +115,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
 }
 
 const View: SpaceClientModule['View'] = (input) => {
-  if (!input.ctx.space || !input.ctx.currentUserId || !input.ctx.currentUserRole) {
+  if (!input.ctx.space || !input.ctx.currentUser) {
     return null
   }
 
@@ -161,9 +161,10 @@ const View: SpaceClientModule['View'] = (input) => {
         <ViewUsersInSpaceList
           ctx={{
             ...input.ctx,
-            currentUserId: input.ctx.currentUserId,
-            currentUserRole: input.ctx.currentUserRole,
-            space: input.ctx.space
+            space: input.ctx.space,
+            currentUserId: input.ctx.currentUser.userId,
+            currentUserRole: input.ctx.currentUser.role,
+            currentUser: input.ctx.currentUser
           }}
           onOpenUserDetails={(userId) =>
             input.dispatch({

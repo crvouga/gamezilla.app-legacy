@@ -1,5 +1,5 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import type { ClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
+import type { ClientCtx } from 'gamezilla-app/app/@/client'
 import { SpaceId, UserId, type ClientId, type Profile, type SessionId } from 'gamezilla-app/app/@/data'
 import type { ServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
 
@@ -31,13 +31,6 @@ type SpaceEvt =
       t: 'space/user-joined-space'
       spaceId: SpaceId
       userId: UserId
-    }
-
-export type SpaceClientEvt =
-  | ClientEvt
-  | SpaceEvt
-  | {
-      t: 'space/synced'
     }
 
 export type SpaceServerEvt = ServerEvt | SpaceEvt

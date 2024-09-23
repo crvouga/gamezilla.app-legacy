@@ -4,8 +4,8 @@ const update: SpaceServerModule['update'] = (input) => {
   return SpaceServerModule.andThen({}, () => updateFromSpaceEvent(input))
 }
 
-const updateFromSpaceEvent: SpaceServerModule['update'] = ({ msgSpaceEvent }) => {
-  switch (msgSpaceEvent?.t) {
+const updateFromSpaceEvent: SpaceServerModule['update'] = ({ msgCoreEvt }) => {
+  switch (msgCoreEvt?.t) {
     case 'user-started-space': {
       return {}
     }

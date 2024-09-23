@@ -15,13 +15,11 @@ const update: ClientModule['update'] = (input) => {
 }
 
 const updatePackListLoad: ClientModule['update'] = (input) => {
-  if (input.msgEvt) {
-    console.log('updatePackListLoad', input.msgEvt)
-  }
   if (
     input.msgEvt?.t === 'flow.user-changed-mode' ||
     input.msgCore?.t === 'user-clicked-exit-pack-button' ||
-    input.msgCore?.t === 'user-clicked-select-next-pack'
+    input.msgCore?.t === 'user-clicked-select-next-pack' ||
+    input.msgEvt?.t === 'space/synced'
   ) {
     return {
       model: input.model,

@@ -2,12 +2,13 @@ import { Eff, Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconScrewdriverWrench } from 'gamezilla-app/app/@/ui'
-import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import { SpaceClientCmd } from '../../@/space-client-cmd'
 import { FlowClientCmd } from './@/flow-client-cmd'
 import type { FlowClientCtx } from './@/flow-client-ctx'
+import { FlowClientEvt } from './@/flow-client-evt'
 import { CoverArt } from './@/flow-cover-art'
 import { FlowPackListClient, FlowPackListTypes } from './@/flow-pack'
 import { FlowPuzzleListTypes } from './@/flow-puzzle'
@@ -39,8 +40,6 @@ const update = (
     MsgToServer: MsgToServer
   }>[]
 } => {
-  const updatedChild = updateChild(input)
-
   const updated = updateLoop(
     {
       ...input,
@@ -48,12 +47,12 @@ const update = (
       msgCore: null,
       msgServer: null
     },
-    updatedChild
+    updateChild(input)
   )
 
   return {
     ...updated,
-    msgCmd: FlowClientCmd.toSpaceClientCmds(updated.msgCmd)
+    msgCmd: FlowClientCmd.toSpaceClientCmd(updated.msgCmd)
   }
 }
 
@@ -61,11 +60,12 @@ const updateLoop = (
   input: Parameters<ClientModule['update']>[0],
   acc: ReturnType<ClientModule['update']>
 ): ReturnType<ClientModule['update']> => {
-  const [evt, ...restEvt] = acc.msgEvt ?? []
+  const [evt, ...restEvt] = FlowClientEvt.toFlowClientEvt(acc.msgEvt)
 
   if (evt) {
     const updated = updateChild({
-      ...input,
+      ctx: input.ctx,
+      modelCore: input.modelCore,
       model: acc.model,
       msgEvt: evt
     })
@@ -79,11 +79,12 @@ const updateLoop = (
     })
   }
 
-  const [cmd, restCmd] = FlowClientCmd.sieveOne(acc.msgCmd ?? [])
+  const [cmd, ...restCmd] = FlowClientCmd.toFlowClientCmd(acc.msgCmd)
 
   if (cmd) {
     const updated = updateChild({
-      ...input,
+      ctx: input.ctx,
+      modelCore: input.modelCore,
       model: acc.model,
       msgCmd: cmd
     })

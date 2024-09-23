@@ -1,14 +1,22 @@
-import { Posix } from 'gamezilla-app/@/core'
+import { PhoneNumber, Posix } from 'gamezilla-app/@/core'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { ProfileAvatar, Username, type SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import type { SpaceClientCtx } from '../../../@/space'
+import { UserAccount } from 'gamezilla-app/app/@/data/account'
 
 const currentUserId = 'test-user-id' as UserId
 
 const currentSpaceId = 'test-space-id' as SpaceId
 
 export async function testSpaceClientCtx(): Promise<SpaceClientCtx> {
+  const currentUser: UserAccount = {
+    createdAt: Posix.now(),
+    phoneNumber: PhoneNumber.random(),
+    role: 'normal',
+    userId: currentUserId
+  }
   return {
+    currentUser,
     navigatorLanguage: 'en',
     t: Translator('en'),
     currentRoute: {

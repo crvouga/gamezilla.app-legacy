@@ -14,6 +14,7 @@ import type { SpaceCoreEvent } from './spaces-core/space-core-event'
 import type * as Spaces from './spaces-core/spaces-core.client'
 import type { GameServer } from './game/game.server'
 import { GameName } from './game/@/game-name'
+import { UserAccount } from '../@/data/account'
 
 //
 //
@@ -126,6 +127,7 @@ export type MsgToClient = MsgToClientExtra &
     | {
         t: 'current-user-space'
         space: Space.Model
+        currentUser: UserAccount
       }
     | {
         t: 'game'

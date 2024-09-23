@@ -1,15 +1,16 @@
-import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
-import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
+import { Sub } from 'gamezilla-app/@/core'
+import { APP_SOUND, ClientCmd, playSound } from 'gamezilla-app/app/@/client'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
-import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
-import { APP_SOUND, ClientCmd, playSound } from 'gamezilla-app/app/@/client'
-import { Sub } from 'gamezilla-app/@/core'
+import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
+import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import type { SpaceClientCmd } from '../../@/space-client-cmd'
-import { VsBot } from './vs-bot/vs-bot.client'
-import { VsUser } from './vs-user/vs-user.client'
+import { SpaceClientEvt } from '../../@/space-client-evt'
 import { CoverArt } from './@/connect-four-ui/connect-four-cover-art'
 import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './connect-four.types'
+import { VsBot } from './vs-bot/vs-bot.client'
+import { VsUser } from './vs-user/vs-user.client'
 
 //
 //
