@@ -131,7 +131,9 @@ const inputToSpaceId = (input: Parameters<SpaceClientModule['update']>[0]) => {
     return input.msgCoreEvt.spaceId
   }
 
-  return null
+  const spaceId = input.ctx.currentUserId ? input.model.spaceIdByUserId[input.ctx.currentUserId] : null
+
+  return spaceId
 }
 
 const updateGame: SpaceClientModule['update'] = (input) => {
@@ -176,12 +178,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
   })
 
   const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
-    (c): WithEventId<SpaceCoreEvent> => ({
-      eventId: c.eventId,
-      spaceId,
-      t: 'game',
-      c
-    })
+    (c): WithEventId<SpaceCoreEvent> => ({ eventId: c.eventId, spaceId, t: 'game', c })
   )
 
   return {
