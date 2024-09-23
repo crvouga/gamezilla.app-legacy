@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Avatar, Tabs, TopBar } from 'gamezilla-app/app/@/ui'
-import { andThen } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { ViewSpaceHostChip } from '../../../@/game'
 import type { ClientModule } from '../builder.types'

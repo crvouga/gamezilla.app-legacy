@@ -1,5 +1,5 @@
 import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'

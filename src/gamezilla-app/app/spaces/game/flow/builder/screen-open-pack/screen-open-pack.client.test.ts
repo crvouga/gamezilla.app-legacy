@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { andThen } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { clickedPackItem, createFlowPack, initial, testFlowClientCtx } from '../@/testing/client'
 import { deriveModelCore } from '../@/testing/game'

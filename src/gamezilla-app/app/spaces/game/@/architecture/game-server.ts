@@ -1,7 +1,7 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
-import type { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from '../space'
-import { SpaceServerCmd } from '../space-server-cmd'
 import type { EventMeta, WithEventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import type { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 
 //
 //

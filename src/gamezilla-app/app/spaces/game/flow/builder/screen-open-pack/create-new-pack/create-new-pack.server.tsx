@@ -1,5 +1,5 @@
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import type { FlowPack } from '../../../@/flow-pack/flow-pack'
 import { FlowPackId } from '../../../@/flow-pack/flow-pack-id'
 import { FlowPackName } from '../../../@/flow-pack/flow-pack-name'

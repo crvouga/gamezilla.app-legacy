@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from 'gamezilla-app/app/@/ui'
 import { Actions } from 'gamezilla-app/app/@/ui/actions'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { ViewProfileCard } from '../../../@/game/view-profile-card'

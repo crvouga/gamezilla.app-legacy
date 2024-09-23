@@ -1,11 +1,11 @@
-import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
 import { Eff, Sub } from 'gamezilla-app/@/core'
-import { GameClientModule } from '../@/architecture/game-client-v2'
+import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { SpaceClientCmd } from '../@/space-client-cmd'
+import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'
 import { FlowClient } from './flow/flow.client'
 import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './game.types'
-import { GameName } from './@/game-name'
 
 //
 //

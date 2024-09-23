@@ -1,6 +1,6 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { FlowPackListTypes } from '../@/flow-pack'
 import { FlowPackPuzzlesGridClient } from '../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'

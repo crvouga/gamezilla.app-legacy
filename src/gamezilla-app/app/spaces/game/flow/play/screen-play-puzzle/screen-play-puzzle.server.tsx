@@ -1,4 +1,4 @@
-import { andThen } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { ServerModule } from '../play.types'
 import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
 

@@ -1,6 +1,6 @@
 import { Sub } from 'gamezilla-app/@/core'
 import type { ClientCmd } from 'gamezilla-app/app/@/client'
-import type { GameClient } from 'gamezilla-app/app/spaces/@/architecture/game-client'
+import type { GameClient } from 'gamezilla-app/app/spaces/game/@/architecture/game-client'
 import type { SpaceClientCtx, SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space'
 import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import { CoverArt } from './@/tic-tic-toe/tic-tac-toe-ui'

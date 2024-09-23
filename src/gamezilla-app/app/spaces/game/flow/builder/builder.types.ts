@@ -1,6 +1,6 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import type { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
-import type { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import type { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
+import type { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import type { SpaceCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'

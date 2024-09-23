@@ -1,5 +1,5 @@
 import { Sub, Time, TimeSpan, isErr } from 'gamezilla-app/@/core'
-import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'

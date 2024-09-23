@@ -181,10 +181,6 @@ export const translations: Text = {
       ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`
       : '\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F',
   "spaces.you're-already-in-a-space": 'すでにスペースにいます',
-  'spaces.games': 'ゲーム',
-  'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u306E\u30B9\u30DA\u30FC\u30B9`,
-  'spaces.home': 'ホーム',
-  'spaces.people-count': (peopleCount) => (peopleCount === 1 ? '\u4EBA' : `\u4EBA (${peopleCount.toLocaleString()})`),
   'space-card.live': 'ライブ',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u4EBA`,
   'spaces.spaces': 'スペース',
@@ -196,6 +192,10 @@ export const translations: Text = {
     username
       ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`
       : '\u30B9\u30DA\u30FC\u30B9\u7D42\u4E86',
+  'spaces.games': 'ゲーム',
+  'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u306E\u30B9\u30DA\u30FC\u30B9`,
+  'spaces.home': 'ホーム',
+  'spaces.people-count': (peopleCount) => (peopleCount === 1 ? '\u4EBA' : `\u4EBA (${peopleCount.toLocaleString()})`),
   'lang.language': '言語',
   'lang.choose-language': '言語を選択',
   'lang.done': '完了',

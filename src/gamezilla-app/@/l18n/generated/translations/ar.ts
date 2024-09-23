@@ -181,14 +181,6 @@ export const translations: Text = {
       ? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
       : '\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
   "spaces.you're-already-in-a-space": 'أنت بالفعل في مساحة',
-  'spaces.games': 'الألعاب',
-  'spaces.current-space': ({ hostUsername }) =>
-    `\u0627\u0644\u0645\u0633\u0627\u062D\u0629 \u0627\u0644\u062D\u0627\u0644\u064A\u0629 \u0644\u0640 ${hostUsername}`,
-  'spaces.home': 'الصفحة الرئيسية',
-  'spaces.people-count': (peopleCount) =>
-    peopleCount === 1
-      ? '\u0627\u0644\u0646\u0627\u0633'
-      : `\u0627\u0644\u0646\u0627\u0633 (${peopleCount.toLocaleString()})`,
   'space-card.live': 'حي',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
   'spaces.spaces': 'الفضاءات',
@@ -200,6 +192,14 @@ export const translations: Text = {
     username
       ? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
       : '\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
+  'spaces.games': 'الألعاب',
+  'spaces.current-space': ({ hostUsername }) =>
+    `\u0627\u0644\u0645\u0633\u0627\u062D\u0629 \u0627\u0644\u062D\u0627\u0644\u064A\u0629 \u0644\u0640 ${hostUsername}`,
+  'spaces.home': 'الصفحة الرئيسية',
+  'spaces.people-count': (peopleCount) =>
+    peopleCount === 1
+      ? '\u0627\u0644\u0646\u0627\u0633'
+      : `\u0627\u0644\u0646\u0627\u0633 (${peopleCount.toLocaleString()})`,
   'lang.language': 'اللغة',
   'lang.choose-language': 'اختر اللغة',
   'lang.done': 'تم',

@@ -175,10 +175,6 @@ export const translations: Text = {
   'spaces.other-user-joined-space': (username) =>
     username ? `${username}\u52A0\u5165\u7A7A\u95F4` : '\u52A0\u5165\u7A7A\u95F4',
   "spaces.you're-already-in-a-space": '您已经在一个空间中',
-  'spaces.games': '游戏',
-  'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u7684\u7A7A\u95F4`,
-  'spaces.home': '主页',
-  'spaces.people-count': (peopleCount) => (peopleCount === 1 ? '\u4EBA' : `\u4EBA (${peopleCount.toLocaleString()})`),
   'space-card.live': '现场',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u4EBA`,
   'spaces.spaces': '空间',
@@ -188,6 +184,10 @@ export const translations: Text = {
   'spaces.current-user-ended-space': '结束空间',
   'spaces.other-user-ended-space': (username) =>
     username ? `${username}\u7ED3\u675F\u7A7A\u95F4` : '\u7ED3\u675F\u7A7A\u95F4',
+  'spaces.games': '游戏',
+  'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u7684\u7A7A\u95F4`,
+  'spaces.home': '主页',
+  'spaces.people-count': (peopleCount) => (peopleCount === 1 ? '\u4EBA' : `\u4EBA (${peopleCount.toLocaleString()})`),
   'lang.language': '语言',
   'lang.choose-language': '选择语言',
   'lang.done': '完成',

@@ -1,6 +1,6 @@
 import { Err, isErr } from 'gamezilla-app/@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
-import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import type { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from '../../../@/flow-puzzle/flow-puzzle-id'

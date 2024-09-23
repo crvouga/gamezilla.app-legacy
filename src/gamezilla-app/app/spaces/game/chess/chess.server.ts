@@ -1,5 +1,5 @@
 import { Sub } from 'gamezilla-app/@/core'
-import type { GameServer } from 'gamezilla-app/app/spaces/@/architecture/game-server'
+import type { GameServer } from 'gamezilla-app/app/spaces/game/@/architecture/game-server'
 import type { ModelServer, ModelCore, MsgServer, MsgCore, MsgToClient, MsgToServer } from './chess.types'
 
 //

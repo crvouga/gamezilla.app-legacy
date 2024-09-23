@@ -183,12 +183,6 @@ export const translations: Text = {
       ? `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`
       : '\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443',
   "spaces.you're-already-in-a-space": 'Вы уже находитесь в пространстве',
-  'spaces.games': 'игры',
-  'spaces.current-space': ({ hostUsername }) =>
-    `\u0422\u0435\u043A\u0443\u0449\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E ${hostUsername}`,
-  'spaces.home': 'Главная',
-  'spaces.people-count': (peopleCount) =>
-    peopleCount === 1 ? '\u041B\u044E\u0434\u0438' : `\u041B\u044E\u0434\u0438 (${peopleCount.toLocaleString()})`,
   'space-card.live': 'Прямой эфир',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u0447\u0435\u043B\u043E\u0432\u0435\u043A`,
   'spaces.spaces': 'Пространства',
@@ -200,6 +194,12 @@ export const translations: Text = {
     username
       ? `${username} \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`
       : '\u041F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u0437\u0430\u043A\u043E\u043D\u0447\u0435\u043D\u043E',
+  'spaces.games': 'игры',
+  'spaces.current-space': ({ hostUsername }) =>
+    `\u0422\u0435\u043A\u0443\u0449\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E ${hostUsername}`,
+  'spaces.home': 'Главная',
+  'spaces.people-count': (peopleCount) =>
+    peopleCount === 1 ? '\u041B\u044E\u0434\u0438' : `\u041B\u044E\u0434\u0438 (${peopleCount.toLocaleString()})`,
   'lang.language': 'Язык',
   'lang.choose-language': 'Выберите язык',
   'lang.done': 'Готово',

@@ -183,11 +183,6 @@ export const translations: Text = {
       ? `${username} \u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E`
       : '\u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E',
   "spaces.you're-already-in-a-space": 'आप पहले से ही एक स्थान में हैं',
-  'spaces.games': 'खेल',
-  'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u0915\u093E \u0938\u094D\u0925\u093E\u0928`,
-  'spaces.home': 'होम',
-  'spaces.people-count': (peopleCount) =>
-    peopleCount === 1 ? '\u0932\u094B\u0917' : `\u0932\u094B\u0917 (${peopleCount.toLocaleString()})`,
   'space-card.live': 'लाइव',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u0932\u094B\u0917`,
   'spaces.spaces': 'स्थान',
@@ -199,6 +194,11 @@ export const translations: Text = {
     username
       ? `${username} \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924`
       : '\u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924',
+  'spaces.games': 'खेल',
+  'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u0915\u093E \u0938\u094D\u0925\u093E\u0928`,
+  'spaces.home': 'होम',
+  'spaces.people-count': (peopleCount) =>
+    peopleCount === 1 ? '\u0932\u094B\u0917' : `\u0932\u094B\u0917 (${peopleCount.toLocaleString()})`,
   'lang.language': 'भाषा',
   'lang.choose-language': 'भाषा चुनें',
   'lang.done': 'किया',

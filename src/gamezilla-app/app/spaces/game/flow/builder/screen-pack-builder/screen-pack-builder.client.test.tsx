@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { andThen } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { FlowClientCtx } from '../../@/flow-client-ctx'
 import { FlowPack } from '../../@/flow-pack/flow-pack'
 import { FlowPuzzle } from '../../@/flow-puzzle'

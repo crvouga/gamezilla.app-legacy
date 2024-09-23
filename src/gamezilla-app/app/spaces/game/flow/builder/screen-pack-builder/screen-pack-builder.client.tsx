@@ -11,7 +11,7 @@ import {
   ListItemButton,
   TopBar
 } from 'gamezilla-app/app/@/ui'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '../../../@/game'

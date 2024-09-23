@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
-import { andThen } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { EventId } from 'gamezilla-app/app/spaces/@/event'
 import type { FlowClientCtx } from '../../@/flow-client-ctx'
 import { initial, testFlowClientCtx } from '../@/testing/client'

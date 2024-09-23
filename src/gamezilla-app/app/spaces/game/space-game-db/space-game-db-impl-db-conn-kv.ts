@@ -1,6 +1,6 @@
 import type { SpaceId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import * as Game from '../../game/game.types'
+import * as Game from '../game.types'
 import type { IGameDb } from './space-game-db'
 
 export const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {

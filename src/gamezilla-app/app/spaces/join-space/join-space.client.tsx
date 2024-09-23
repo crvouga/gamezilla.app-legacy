@@ -42,7 +42,7 @@ const updateFromJoinSpaceButton: SpaceClientModule['update'] = ({ msg, model, ct
 
       return {
         model,
-        msgSpaceEvent: [spaceEventNew]
+        msgCoreEvt: [spaceEventNew]
       }
     }
     default: {
@@ -54,7 +54,7 @@ const updateFromJoinSpaceButton: SpaceClientModule['update'] = ({ msg, model, ct
 }
 
 const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  const { msgSpaceEvent, model, ctx } = input
+  const { msgCoreEvt: msgSpaceEvent, model, ctx } = input
 
   if (!ctx.currentUserId) {
     return { model }

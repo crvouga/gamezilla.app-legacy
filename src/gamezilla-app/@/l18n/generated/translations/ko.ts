@@ -178,11 +178,6 @@ export const translations: Text = {
       ? `${username}\uAC00 \uACF5\uAC04\uC5D0 \uCC38\uC5EC\uD588\uC2B5\uB2C8\uB2E4`
       : '\uACF5\uAC04\uC5D0 \uCC38\uC5EC\uD588\uC2B5\uB2C8\uB2E4',
   "spaces.you're-already-in-a-space": '이미 공간에 있습니다',
-  'spaces.games': '게임',
-  'spaces.current-space': ({ hostUsername }) => `${hostUsername}\uC758 \uACF5\uAC04`,
-  'spaces.home': '홈',
-  'spaces.people-count': (peopleCount) =>
-    peopleCount === 1 ? '\uC0AC\uB78C' : `\uC0AC\uB78C\uB4E4 (${peopleCount.toLocaleString()})`,
   'space-card.live': '실시간',
   'space-card.people-count': (count) => `${count.toLocaleString()} \uBA85`,
   'spaces.spaces': '공간',
@@ -194,6 +189,11 @@ export const translations: Text = {
     username
       ? `${username}\uAC00 \uACF5\uAC04\uC744 \uC885\uB8CC\uD588\uC2B5\uB2C8\uB2E4`
       : '\uACF5\uAC04 \uC885\uB8CC',
+  'spaces.games': '게임',
+  'spaces.current-space': ({ hostUsername }) => `${hostUsername}\uC758 \uACF5\uAC04`,
+  'spaces.home': '홈',
+  'spaces.people-count': (peopleCount) =>
+    peopleCount === 1 ? '\uC0AC\uB78C' : `\uC0AC\uB78C\uB4E4 (${peopleCount.toLocaleString()})`,
   'lang.language': '언어',
   'lang.choose-language': '언어 선택',
   'lang.done': '완료',

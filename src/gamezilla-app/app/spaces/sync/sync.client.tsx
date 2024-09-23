@@ -18,7 +18,7 @@ const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
     case 'event': {
       return {
         model: input.model,
-        msgSpaceEvent: [input.msgServer.c]
+        msgCoreEvt: [input.msgServer.c]
       }
     }
   }
@@ -26,7 +26,7 @@ const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgSpaceEvent }) => {
+const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgCoreEvt: msgSpaceEvent }) => {
   if (!msgSpaceEvent) {
     return { model }
   }

@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import {
   clickedExitPuzzleBuilderButton,
   clickedPuzzleListItem,

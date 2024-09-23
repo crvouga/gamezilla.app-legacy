@@ -7,8 +7,8 @@ import { EndSpaceClient } from './end-space/end-space.client'
 import { JoinSpaceClient } from './join-space/join-space.client'
 import { LeaveSpaceClient } from './leave-space/leave-space.client'
 import { ListSpacesClient } from './list-spaces/list-spaces.client'
-import { SpaceGameClient } from './space/space-game.client'
-import { SpaceClient } from './space/space.client'
+import { SpaceGameClient } from './game/space-game.client'
+import { SpaceClient } from './spaces-client/space.client'
 import { CurrentSpaceBottomBar } from './spaces-client/current-space-bottom-bar/current-space-bottom-bar'
 import { GoHome } from './spaces-client/go-home/go-home'
 import { Modals } from './spaces-client/modals/modals'
@@ -16,6 +16,7 @@ import * as SpacesCoreClient from './spaces-core/spaces-core.client'
 import type { ClientModule, ModelClient } from './spaces.types'
 import { StartSpaceClient } from './start-space/start-space.client'
 import { SyncClient } from './sync/sync.client'
+import { SpaceClientEvt } from './@/space-client-evt'
 
 //
 //
@@ -58,28 +59,47 @@ export const update: ClientModule['update'] = (input) => {
   return {
     model: updated.model,
     eff: updated.eff,
-    msgCmd: SpaceClientCmd.toClientCmd(updated.msgCmd)
+    msgCmd: SpaceClientCmd.toClientCmd(updated.msgCmd),
+    msgEvt: SpaceClientEvt.toClientEvt(updated.msgEvt)
   }
 }
 
 export const updateLoop = (input: Input, initial?: Output): Output => {
   const acc = initial ?? updateChild(input)
 
-  const [evt, ...evtRest] = acc.msgSpaceEvent ?? []
+  const [coreEvt, ...coreEvtRest] = acc.msgCoreEvt ?? []
+
+  if (coreEvt) {
+    const updated = updateChild({
+      ctx: input.ctx,
+      model: acc.model,
+      msgCoreEvt: coreEvt
+    })
+
+    return updateLoop(input, {
+      model: updated.model,
+      eff: Eff.batch(acc.eff, updated.eff),
+      msgCoreEvt: Msg.batch(coreEvtRest, updated.msgCoreEvt),
+      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
+    })
+  }
+
+  const [evt, ...evtRest] = SpaceClientEvt.toSpaceClientEvt(acc.msgEvt)
 
   if (evt) {
     const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
-      msgSpaceEvent: evt
+      msgEvt: evt
     })
 
     return updateLoop(input, {
       model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: Msg.batch(evtRest, updated.msgSpaceEvent),
+      eff: Eff.batch(acc.eff, updated.eff),
+      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: []
+      msgEvt: Msg.batch(evtRest, updated.msgEvt)
     })
   }
 
@@ -94,10 +114,10 @@ export const updateLoop = (input: Input, initial?: Output): Output => {
 
     return updateLoop(input, {
       model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent),
+      eff: Eff.batch(acc.eff, updated.eff),
+      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt),
       msgCmd: Msg.batch(cmdRest, updated.msgCmd),
-      msgEvt: []
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
     })
   }
 
@@ -105,10 +125,7 @@ export const updateLoop = (input: Input, initial?: Output): Output => {
 }
 
 const updateChild: SpaceClientModule['update'] = (input) => {
-  if (
-    input.msgSpaceEvent &&
-    SpacesCoreClient.hasEvent(input.model, input.msgSpaceEvent.spaceId, input.msgSpaceEvent.eventId)
-  ) {
+  if (input.msgCoreEvt && SpacesCoreClient.hasEvent(input.model, input.msgCoreEvt.spaceId, input.msgCoreEvt.eventId)) {
     return { model: input.model }
   }
 
@@ -128,7 +145,7 @@ const updateChild: SpaceClientModule['update'] = (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgSpaceEvent, model }) => {
+const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCoreEvt: msgSpaceEvent, model }) => {
   if (!msgSpaceEvent) {
     return { model }
   }

@@ -1,4 +1,4 @@
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { APP_SOUND, playSound, sendToServer, showErrSm, showCreatedSm } from 'gamezilla-app/app/@/client'
 import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from 'gamezilla-app/app/@/ui'
 import { isLoading, isOk, Loading } from 'gamezilla-app/@/core'

@@ -13,7 +13,7 @@ import {
   Spinner,
   cn
 } from 'gamezilla-app/app/@/ui'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { Chess } from '../@/chess'

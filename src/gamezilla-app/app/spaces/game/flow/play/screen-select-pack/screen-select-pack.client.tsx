@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPackListClient } from '../../@/flow-pack'
 import type { ClientModule } from '../play.types'
@@ -15,6 +15,9 @@ const update: ClientModule['update'] = (input) => {
 }
 
 const updatePackListLoad: ClientModule['update'] = (input) => {
+  if (input.msgEvt) {
+    console.log('updatePackListLoad', input.msgEvt)
+  }
   if (
     input.msgEvt?.t === 'flow.user-changed-mode' ||
     input.msgCore?.t === 'user-clicked-exit-pack-button' ||

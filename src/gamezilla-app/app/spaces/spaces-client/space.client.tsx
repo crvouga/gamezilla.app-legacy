@@ -6,11 +6,11 @@ import type { SpaceClientModule } from '../architecture/space-client'
 import { EndSpaceClient } from '../end-space/end-space.client'
 import { JoinSpaceClient } from '../join-space/join-space.client'
 import { LeaveSpaceClient } from '../leave-space/leave-space.client'
-import { Feed } from '../spaces-client/feed/feed'
-import { Modals } from '../spaces-client/modals/modals'
+import { Feed } from './feed/feed'
+import { Modals } from './modals/modals'
 import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
 import type { ModelClient, MsgClient } from '../spaces.types'
-import { SpaceGameClient } from './space-game.client'
+import { SpaceGameClient } from '../game/space-game.client'
 
 const View = (input: { model: ModelClient; ctx: ClientCtx; dispatch: (m: MsgClient) => void; spaceId: SpaceId }) => {
   const spaceState = SpacesCoreClient.toSpaceState(input.model, input.spaceId)

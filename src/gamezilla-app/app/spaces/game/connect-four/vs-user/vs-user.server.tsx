@@ -1,4 +1,4 @@
-import type { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import type { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { Sub } from 'gamezilla-app/@/core'

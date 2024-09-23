@@ -41,7 +41,7 @@ const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
 
       return {
         model,
-        msgSpaceEvent: [
+        msgCoreEvt: [
           withId({
             t: 'user-ended-space',
             spaceId: currentUserSpaceId,
@@ -60,7 +60,7 @@ const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
 }
 
 const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  const { ctx, model, msgSpaceEvent } = input
+  const { ctx, model, msgCoreEvt: msgSpaceEvent } = input
 
   switch (msgSpaceEvent?.t) {
     case 'user-ended-space': {
@@ -163,7 +163,7 @@ const updateEndSpaceButton: SpaceClientModule['update'] = ({ msg, model, ctx }) 
 
       return {
         model,
-        msgSpaceEvent: [spaceEventNew]
+        msgCoreEvt: [spaceEventNew]
       }
     }
     default: {

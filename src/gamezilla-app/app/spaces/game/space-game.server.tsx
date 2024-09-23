@@ -1,7 +1,7 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { SpaceServerCmd } from '../@/space-server-cmd'
 import { SpaceServerModule } from '../architecture/space-server'
-import { GameServer } from '../game/game.server'
+import { GameServer } from './game.server'
 import * as SpacesCoreServer from '../spaces-core/spaces-core.server'
 import type { MsgServer } from '../spaces.types'
 
@@ -20,11 +20,7 @@ const update: SpaceServerModule['update'] = async (input) => {
 
   const gameUpdated = await GameServer.update({
     deps: null,
-    ctx: {
-      ...input.deps.gameServer,
-      ...input.ctx,
-      space: spaceState
-    },
+    ctx: { ...input.deps.gameServer, ...input.ctx, space: spaceState },
     msg: input.msg?.t === 'game' ? input.msg.c : null,
     modelCore: spaceState.game,
     msgClient:
@@ -36,27 +32,12 @@ const update: SpaceServerModule['update'] = async (input) => {
           }
         : null,
     msgEvt: input.msgEvt,
-    msgCore:
-      input.msgSpaceEvent?.t === 'game'
-        ? {
-            ...input.msgSpaceEvent,
-            ...input.msgSpaceEvent.c
-          }
-        : null
+    msgCore: input.msgSpaceEvent?.t === 'game' ? { ...input.msgSpaceEvent, ...input.msgSpaceEvent.c } : null
   })
 
   return {
-    msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({
-      t: 'game',
-      c,
-      spaceId
-    })),
-    msgSpaceEvent: gameUpdated.msgCore?.map((e) => ({
-      ...e,
-      spaceId,
-      t: 'game',
-      c: e
-    }))
+    msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
+    msgSpaceEvent: gameUpdated.msgCore?.map((e) => ({ ...e, spaceId, t: 'game', c: e }))
   }
 }
 

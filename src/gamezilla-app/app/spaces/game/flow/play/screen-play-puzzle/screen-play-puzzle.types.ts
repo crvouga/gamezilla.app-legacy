@@ -1,5 +1,5 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import type { GameCoreModule } from 'gamezilla-app/app/spaces/@/architecture/game-core'
+import type { GameCoreModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-core'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
 import { FlowPack } from '../../@/flow-pack'
 import { FlowPlay } from '../../@/flow/flow-play'

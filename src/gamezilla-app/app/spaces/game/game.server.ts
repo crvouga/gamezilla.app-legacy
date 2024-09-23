@@ -1,12 +1,12 @@
 import { Sub } from 'gamezilla-app/@/core'
-import { GameServerModule } from '../@/architecture/game-server-v2'
+import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import type { SpaceServerCtx, SpaceServerEvt } from '../@/space'
 import { SpaceServerCmd } from '../@/space-server-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFourServer } from './connect-four/connect-four.server'
+import { FlowServerCtx } from './flow/@/flow-server-ctx'
 import { FlowServer } from './flow/flow.server'
 import type { ModelCore, ModelServer, MsgCore, MsgServer, MsgToClient, MsgToServer } from './game.types'
-import { FlowServerCtx } from './flow/@/flow-server-ctx'
 
 //
 //

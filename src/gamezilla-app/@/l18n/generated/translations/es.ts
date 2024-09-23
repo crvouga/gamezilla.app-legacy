@@ -177,11 +177,6 @@ export const translations: Text = {
   'spaces.current-user-joined-space': 'Espacio unido',
   'spaces.other-user-joined-space': (username) => (username ? `${username} unido al espacio` : 'Espacio unido'),
   "spaces.you're-already-in-a-space": 'Ya estás en un espacio',
-  'spaces.games': 'Juegos',
-  'spaces.current-space': ({ hostUsername }) => `Espacio actual de ${hostUsername}`,
-  'spaces.home': 'Inicio',
-  'spaces.people-count': (peopleCount) =>
-    peopleCount === 1 ? 'Persona' : `Personas (${peopleCount.toLocaleString()})`,
   'space-card.live': 'En vivo',
   'space-card.people-count': (count) => `${count.toLocaleString()} personas`,
   'spaces.spaces': 'Espacios',
@@ -190,6 +185,11 @@ export const translations: Text = {
   'spaces.go-home': 'Ir a casa',
   'spaces.current-user-ended-space': 'Espacio terminado',
   'spaces.other-user-ended-space': (username) => (username ? `${username} termin\xF3 el espacio` : 'Espacio terminado'),
+  'spaces.games': 'Juegos',
+  'spaces.current-space': ({ hostUsername }) => `Espacio actual de ${hostUsername}`,
+  'spaces.home': 'Inicio',
+  'spaces.people-count': (peopleCount) =>
+    peopleCount === 1 ? 'Persona' : `Personas (${peopleCount.toLocaleString()})`,
   'lang.language': 'Idioma',
   'lang.choose-language': 'Elegir idioma',
   'lang.done': 'Hecho',

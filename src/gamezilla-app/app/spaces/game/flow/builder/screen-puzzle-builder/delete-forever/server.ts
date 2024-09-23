@@ -1,4 +1,4 @@
-import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import type { ServerModule } from '../../builder.types'
 import type { MsgCore } from './types'

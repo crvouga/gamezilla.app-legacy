@@ -1,5 +1,5 @@
 import { Sub } from 'gamezilla-app/@/core'
-import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { FlowPackListServer } from '../@/flow-pack/flow-pack-list'
 import { FlowPuzzleListServer } from '../@/flow-puzzle/flow-puzzle-list'

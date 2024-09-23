@@ -21,7 +21,7 @@ const update: SpaceClientModule['update'] = (input) => {
   )
 }
 
-const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgSpaceEvent, ctx }) => {
+const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCoreEvt: msgSpaceEvent, ctx }) => {
   switch (msgSpaceEvent?.t) {
     case 'user-left-space': {
       if (!ctx.currentUserId) {
@@ -96,7 +96,7 @@ const updateLeaveSpaceButton: SpaceClientModule['update'] = ({ ctx, model, msg }
 
       return {
         model,
-        msgSpaceEvent: [spaceEventNew]
+        msgCoreEvt: [spaceEventNew]
       }
     }
 

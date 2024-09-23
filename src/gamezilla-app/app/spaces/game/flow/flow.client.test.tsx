@@ -2,13 +2,13 @@ import { describe, expect, it } from 'bun:test'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
-import { GameClientModule } from '../../@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { EventId } from '../../@/event'
 import type { FlowClientCtx } from './@/flow-client-ctx'
 import { testFlowClientCtx } from './builder/@/testing/client'
 import { FlowClient } from './flow.client'
-import type { ModelClient } from './flow.types'
 import { initCore } from './flow.core'
+import type { ModelClient } from './flow.types'
 
 const init = {
   model: FlowClient.init

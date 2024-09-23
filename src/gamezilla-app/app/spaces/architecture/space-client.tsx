@@ -1,7 +1,7 @@
 import { Eff, type Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import type { VDom } from 'gamezilla-app/@/vdom'
-import type { BaseClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
+import type { BaseClientCtx } from 'gamezilla-app/app/@/client'
 import type { WithEventId } from '../@/event'
 import type { Space, SpaceClientEvt } from '../@/space'
 import type { SpaceClientCmd } from '../@/space-client-cmd'
@@ -17,12 +17,12 @@ export type Input = {
   model: ModelClient
   msg?: MsgClient | null
   msgServer?: MsgToClient | null
-  msgEvt?: ClientEvt | null
+  msgEvt?: SpaceClientEvt | null
   msgCmd?: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }> | null
-  msgSpaceEvent?: WithEventId<SpaceCoreEvent> | null
+  msgCoreEvt?: WithEventId<SpaceCoreEvent> | null
 }
 
 export type Output = {
@@ -33,7 +33,7 @@ export type Output = {
     MsgToServer: MsgToServer
   }>[]
   msgEvt?: SpaceClientEvt[]
-  msgSpaceEvent?: WithEventId<SpaceCoreEvent>[]
+  msgCoreEvt?: WithEventId<SpaceCoreEvent>[]
 }
 
 export type SpaceClientModule = {
@@ -48,10 +48,10 @@ const andThen = (acc: Output, ...updates: ((model: ModelClient) => Output)[]): O
     const updated = update(acc.model)
     acc = {
       model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
+      eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgSpaceEvent: Msg.batch(acc.msgSpaceEvent, updated.msgSpaceEvent)
+      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt)
     }
   }
   return acc

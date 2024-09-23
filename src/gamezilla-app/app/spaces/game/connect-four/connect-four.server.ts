@@ -1,8 +1,8 @@
 import { Sub } from 'gamezilla-app/@/core'
-import type { GameServerModule } from '../../@/architecture/game-server-v2'
+import type { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import type { SpaceServerCtx, SpaceServerEvt } from '../../@/space'
 import type { SpaceServerCmd } from '../../@/space-server-cmd'
-import type { MsgCore, ModelCore, ModelServer, MsgServer, MsgToClient, MsgToServer } from './connect-four.types'
+import type { ModelCore, ModelServer, MsgCore, MsgServer, MsgToClient, MsgToServer } from './connect-four.types'
 
 //
 //

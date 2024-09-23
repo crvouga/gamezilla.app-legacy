@@ -1,5 +1,5 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPuzzleListClient } from '../../@/flow-puzzle/flow-puzzle-list'
 import type { ClientModule } from '../builder.types'

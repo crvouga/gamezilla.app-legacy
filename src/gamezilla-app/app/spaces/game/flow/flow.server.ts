@@ -1,6 +1,6 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
-import { GameServerModule } from 'gamezilla-app/app/spaces/@/architecture/game-server-v2'
+import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { SpaceServerCtx } from '../../@/space'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import { FlowPackDb, FlowPackListServer } from './@/flow-pack'

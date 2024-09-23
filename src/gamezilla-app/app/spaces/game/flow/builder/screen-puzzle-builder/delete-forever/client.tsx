@@ -1,7 +1,7 @@
 import { RemoteResult, isLoading } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound, sendToServer, showCreatedSm } from 'gamezilla-app/app/@/client'
 import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from 'gamezilla-app/app/@/ui'
-import { GameClientModule } from 'gamezilla-app/app/spaces/@/architecture/game-client-v2'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { ClientModule } from '../../builder.types'
 
 const update: ClientModule['update'] = (input) => {

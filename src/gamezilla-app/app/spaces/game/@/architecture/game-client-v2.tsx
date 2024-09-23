@@ -1,7 +1,7 @@
 import { Eff, type Sub } from 'gamezilla-app/@/core'
-import type { VDom } from 'gamezilla-app/@/vdom'
-import type { WithEventId } from '../event'
 import { Msg } from 'gamezilla-app/@/core/msg'
+import type { VDom } from 'gamezilla-app/@/vdom'
+import { WithEventId } from 'gamezilla-app/app/spaces/@/event'
 
 //
 //
