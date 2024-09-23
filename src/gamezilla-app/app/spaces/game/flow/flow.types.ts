@@ -6,7 +6,7 @@ import { SpaceClientCtx, SpaceServerEvt } from '../../@/space'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import type { GameMainMenu } from '../@/game'
 import { FlowClientCmd, FlowClientCmdLocal } from './@/flow-client-cmd'
-import { FlowClientEvt, FlowClientEvtIn } from './@/flow-client-evt'
+import { FlowClientEvtIn } from './@/flow-client-evt'
 import type { FlowPack, FlowPackListTypes } from './@/flow-pack'
 import type { FlowPackId } from './@/flow-pack/flow-pack-id'
 import type { FlowPuzzleListTypes } from './@/flow-puzzle'
@@ -126,22 +126,18 @@ export type ModelCore = p.Infer<typeof ModelCore>
 export type ClientModule = GameClientModule<{
   Model: ModelClient
   Msg: MsgClient
-  //
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  //
   MsgCore: MsgCore
   ModelCore: ModelCore
-  //
   Ctx: SpaceClientCtx
-  //
   MsgCmdOut: FlowClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
   MsgCmdIn: FlowClientCmdLocal
   MsgEvtIn: FlowClientEvtIn
-  MsgEvtOut: FlowClientEvt
+  MsgEvtOut: FlowClientEvtIn
 }>
 
 export type ServerModule = GameServerModule<{

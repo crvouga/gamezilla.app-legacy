@@ -463,8 +463,19 @@ export const didPlaySound = <T>(
   },
   src?: string
 ): boolean => {
+  return countPlaySoundCmd({ msgCmd }, src) > 0
+}
+
+export const countPlaySoundCmd = <T>(
+  {
+    msgCmd
+  }: {
+    msgCmd?: (SoundCmd | T)[] | null
+  },
+  src?: string
+): number => {
   return (
-    msgCmd?.some(
+    msgCmd?.filter(
       (cmd) =>
         typeof cmd === 'object' &&
         cmd &&
@@ -472,7 +483,7 @@ export const didPlaySound = <T>(
         cmd.t === 'sound' &&
         cmd.c.t === 'play' &&
         (src ? cmd.c.src === src : true)
-    ) ?? false
+    ).length ?? 0
   )
 }
 

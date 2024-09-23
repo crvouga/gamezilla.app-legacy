@@ -197,7 +197,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
             transport.toServer.pub([wireCmd.msg])
             dispatch({
               t: 'sent-to-server',
-              c: wireCmd.msg
+              msg: wireCmd.msg
             })
           }
         }

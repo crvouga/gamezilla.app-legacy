@@ -44,7 +44,7 @@ const update = (
   const updated = updateLoop(input, acc)
   return {
     ...updated,
-    msgCmd: FlowClientCmd.toSpaceClientCmd(Msg.batch(acc.msgCmd, updated.msgCmd))
+    msgCmd: FlowClientCmd.toSpaceClientCmd(updated.msgCmd)
   }
 }
 
@@ -64,7 +64,7 @@ const updateLoop = (
 
     return updateLoop(input, {
       model: updated.model,
-      msgEvt: Msg.batch(restEvt, updated.msgEvt),
+      msgEvt: Msg.batch(restEvt, updated.msgEvt, FlowClientEvt.toSpaceClientEvt(acc.msgEvt)),
       eff: Eff.batch(acc.eff, updated.eff),
       msgCore: Msg.batch(acc.msgCore, updated.msgCore),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd)
@@ -83,10 +83,10 @@ const updateLoop = (
 
     return updateLoop(input, {
       model: updated.model,
-      msgCmd: Msg.batch(restCmd, updated.msgCmd),
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       eff: Eff.batch(acc.eff, updated.eff),
       msgCore: Msg.batch(acc.msgCore, updated.msgCore),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
+      msgCmd: Msg.batch(restCmd, updated.msgCmd, FlowClientCmd.toSpaceClientCmd(acc.msgCmd))
     })
   }
 

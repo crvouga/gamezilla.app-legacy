@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { didPlaySound } from 'gamezilla-app/app/@/client'
+import { countPlaySoundCmd } from 'gamezilla-app/app/@/client'
 import { withEventMeta } from '../../@/event'
 import { FlowClientFixture } from './@/testing'
 
@@ -22,7 +22,7 @@ describe(import.meta.file, () => {
         })
       }
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(countPlaySoundCmd(output)).toEqual(1)
   })
 
   it('should play a sound when selecting create mode', async () => {
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
         })
       }
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(countPlaySoundCmd(output)).toEqual(1)
   })
 
   it('should not play a sound when selecting no mode', async () => {
@@ -50,6 +50,6 @@ describe(import.meta.file, () => {
         })
       }
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(countPlaySoundCmd(output)).toEqual(1)
   })
 })
