@@ -40,19 +40,11 @@ const update = (
     MsgToServer: MsgToServer
   }>[]
 } => {
-  const updated = updateLoop(
-    {
-      ...input,
-      msg: null,
-      msgCore: null,
-      msgServer: null
-    },
-    updateChild(input)
-  )
-
+  const acc = updateChild(input)
+  const updated = updateLoop(input, acc)
   return {
     ...updated,
-    msgCmd: FlowClientCmd.toSpaceClientCmd(updated.msgCmd)
+    msgCmd: FlowClientCmd.toSpaceClientCmd(Msg.batch(acc.msgCmd, updated.msgCmd))
   }
 }
 

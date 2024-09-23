@@ -1,5 +1,6 @@
 import type { ClientEvt } from 'gamezilla-app/app/@/client'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
+import { UserAccount } from 'gamezilla-app/app/@/data/account'
 
 type SpaceEvt =
   | {
@@ -16,7 +17,11 @@ type SpaceEvt =
       t: 'space/synced'
     }
 
-export type SpaceClientEvt = ClientEvt | SpaceEvt
+type SpaceClientEvtBase = {
+  currentUser?: UserAccount | null
+}
+
+export type SpaceClientEvt = SpaceClientEvtBase & (ClientEvt | SpaceEvt)
 
 const toSpaceClientEvt = (evt?: SpaceClientEvt[] | null): SpaceClientEvt[] => {
   return (evt ?? []).flatMap((evt): SpaceEvt[] => {

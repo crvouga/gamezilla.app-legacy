@@ -134,41 +134,13 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
   const space = pipe(
     SpaceCore.init,
     (model) =>
-      SpaceCore.appendEvent({
-        model,
-        event: withId({
-          t: 'user-started-space',
-          spaceId,
-          userId: currentUser.userId
-        })
-      }),
+      SpaceCore.appendEvent({ model, event: withId({ t: 'user-started-space', spaceId, userId: currentUser.userId }) }),
     (model) =>
-      SpaceCore.appendEvent({
-        model,
-        event: withId({
-          t: 'user-joined-space',
-          spaceId,
-          userId: userA.userId
-        })
-      }),
+      SpaceCore.appendEvent({ model, event: withId({ t: 'user-joined-space', spaceId, userId: userA.userId }) }),
     (model) =>
-      SpaceCore.appendEvent({
-        model,
-        event: withId({
-          t: 'user-joined-space',
-          spaceId,
-          userId: userB.userId
-        })
-      }),
+      SpaceCore.appendEvent({ model, event: withId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
     (model) =>
-      SpaceCore.appendEvent({
-        model,
-        event: withId({
-          t: 'user-joined-space',
-          spaceId,
-          userId: userC.userId
-        })
-      }),
+      SpaceCore.appendEvent({ model, event: withId({ t: 'user-joined-space', spaceId, userId: userC.userId }) }),
     (model) => SpaceCore.toSpaceStarted(model),
     (space) => {
       if (!space) {

@@ -11,6 +11,7 @@ import { ViewUsersInSpaceList } from './@/game'
 import { CoverArt } from './game-cover-art'
 import { GameClient } from './game.client'
 import { gameNameList } from './game.types'
+import { UserAccount } from 'gamezilla-app/app/@/data/account'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
@@ -116,7 +117,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
   }
 }
 
-const inputToSpaceId = (input: Parameters<SpaceClientModule['update']>[0]) => {
+const inputToSpaceId = (currentUser: UserAccount, input: Parameters<SpaceClientModule['update']>[0]) => {
   if (input.msg && 'spaceId' in input.msg) {
     return input.msg.spaceId
   }
@@ -129,17 +130,19 @@ const inputToSpaceId = (input: Parameters<SpaceClientModule['update']>[0]) => {
     return input.msgCoreEvt.spaceId
   }
 
-  const spaceId = input.ctx.currentUserId ? input.model.spaceIdByUserId[input.ctx.currentUserId] : null
+  const spaceId = input.model.spaceIdByUserId[currentUser.userId] ?? null
 
   return spaceId
 }
 
 const updateGame: SpaceClientModule['update'] = (input) => {
-  if (!input.ctx.currentUser) {
+  const currentUser = input.ctx.currentUser ?? input.msgEvt?.currentUser ?? null
+
+  if (!currentUser) {
     return { model: input.model }
   }
 
-  const spaceId = inputToSpaceId(input)
+  const spaceId = inputToSpaceId(currentUser, input)
 
   if (!spaceId) {
     return { model: input.model }
@@ -157,9 +160,9 @@ const updateGame: SpaceClientModule['update'] = (input) => {
     ctx: {
       ...input.ctx,
       space: spaceState,
-      currentUserId: input.ctx.currentUser.userId,
-      currentUserRole: input.ctx.currentUser.role,
-      currentUser: input.ctx.currentUser
+      currentUserId: currentUser.userId,
+      currentUserRole: currentUser.role,
+      currentUser: currentUser
     },
     model: modelGame,
     msgCore: input.msgCoreEvt?.t === 'game' ? { ...input.msgCoreEvt, ...input.msgCoreEvt.c } : null,

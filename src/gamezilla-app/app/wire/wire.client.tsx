@@ -159,6 +159,10 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
         }
       }
     }
+
+    case 'sent-to-server': {
+      return { model }
+    }
   }
 }
 
@@ -188,9 +192,13 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
     case 'send-to-server': {
       return {
         model,
-        eff: () => {
+        eff: (dispatch) => {
           if (wireCmd.msg) {
             transport.toServer.pub([wireCmd.msg])
+            dispatch({
+              t: 'sent-to-server',
+              c: wireCmd.msg
+            })
           }
         }
       }

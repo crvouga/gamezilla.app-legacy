@@ -121,7 +121,8 @@ const updateCore: SpaceClientModule['update'] = (input) => {
         },
         msgEvt: [
           {
-            t: 'space/synced'
+            t: 'space/synced',
+            currentUser: 'currentUser' in msgServer ? msgServer.currentUser : null
           }
         ]
       }
