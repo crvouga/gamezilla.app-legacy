@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { Ok, Posix, Result, TimeSpan, ascend } from 'gamezilla-app/@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { FlowPuzzle } from '../flow-puzzle'
@@ -203,5 +203,33 @@ describe(import.meta.file, () => {
     const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
     expect(before).toEqual(puzzle)
     expect(after).toBe(null)
+  })
+
+  test('list by id with empty id list', async () => {
+    const f = await Fixture()
+
+    const listed = await f.flowPuzzleDb.list({
+      where: {
+        puzzleId: {
+          in: []
+        }
+      },
+      order: {
+        createdAt: 'asc'
+      },
+      pagination: {
+        limit: 10,
+        offset: 0
+      }
+    })
+
+    expect(listed).toEqual(
+      Ok({
+        items: [],
+        limit: 10,
+        offset: 0,
+        total: 0
+      })
+    )
   })
 })

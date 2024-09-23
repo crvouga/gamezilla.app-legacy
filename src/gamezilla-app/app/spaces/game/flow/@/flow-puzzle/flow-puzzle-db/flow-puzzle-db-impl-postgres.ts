@@ -84,8 +84,12 @@ const toSqlWhere = (input: { where: WhereClause }) => {
   }
 
   if (input.where.puzzleId?.in) {
-    const puzzleIds = input.where.puzzleId?.in.map((puzzleId) => `'${puzzleId}'`).join(', ')
-    where.push(`flow_puzzle_id IN (${puzzleIds})`)
+    if (input.where.puzzleId?.in.length > 0) {
+      const puzzleIds = input.where.puzzleId?.in.map((puzzleId) => `'${puzzleId}'`).join(', ')
+      where.push(`flow_puzzle_id IN (${puzzleIds})`)
+    } else {
+      where.push('FALSE')
+    }
   }
 
   const str = where.length > 0 ? `WHERE ${where.join(' AND ')}` : ''
