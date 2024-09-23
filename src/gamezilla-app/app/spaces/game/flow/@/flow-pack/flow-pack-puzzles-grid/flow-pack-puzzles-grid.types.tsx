@@ -1,8 +1,15 @@
 import { NotAsked } from 'gamezilla-app/@/core'
 import type { RequestResponse } from 'gamezilla-app/@/core/request-response'
+import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
+import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
+import { SpaceClientCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
+import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { FlowClientEvtIn } from '../../flow-client-evt'
 import type { ListPuzzlesOutput } from '../../flow-puzzle'
 import type { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
+import { FlowServerCtx } from '../../flow-server-ctx'
 import type { FlowPack } from '../flow-pack'
 
 export type ModelClient = {
@@ -50,3 +57,37 @@ export type MsgInCmdClient = {
     pack: FlowPack
   }
 }
+
+export type FlowPackGridClientCtx = SpaceClientCtx & {
+  pack: FlowPack
+}
+
+export type ClientModule = AppClientModule<{
+  Ctx: FlowPackGridClientCtx
+  Model: ModelClient
+  Msg: MsgClient
+  MsgEvtIn: FlowClientEvtIn
+  MsgCmdOut: SpaceClientCmd<{
+    MsgClient: MsgClient
+    MsgToServer: MsgToServer
+  }>
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  ViewSlot: {
+    grid: {
+      request: RequestResponse<string, null>
+    }
+  }
+  MsgCmdIn: MsgInCmdClient | null
+}>
+
+export type ServerModule = AppServerModule<{
+  Ctx: FlowServerCtx
+  Model: ModelServer
+  Msg: MsgServer
+  MsgEvtIn: SpaceServerEvt
+  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  Deps: null
+}>

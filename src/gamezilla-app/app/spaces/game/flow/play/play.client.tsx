@@ -1,133 +1,23 @@
-import { Eff, Sub } from 'gamezilla-app/@/core'
-import { Msg } from 'gamezilla-app/@/core/msg'
+import { Sub } from 'gamezilla-app/@/core'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
-import { FlowPackListTypes } from '../@/flow-pack'
-import { FlowPackPuzzlesGridClient } from '../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'
-import type { ClientModule, MsgClient, MsgToServer } from './play.types'
+import type { ClientModule } from './play.types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/screen-play-puzzle.client'
 import { ScreenSelectPackClient } from './screen-select-pack/screen-select-pack.client'
 import { ScreenSelectPuzzleClient } from './screen-select-puzzle/select-puzzle.client'
 
-const init: ClientModule['init'] = {
-  flowPackPuzzleGrid: FlowPackPuzzlesGridClient.initClient,
-  flowPacks: {},
-  flowPuzzles: {}
-}
+const init: ClientModule['init'] = {}
 
-const update = (
-  input: Parameters<ClientModule['update']>[0]
-): ReturnType<ClientModule['update']> & {
-  msgCmd?: (
-    | SpaceClientCmd<{
-        MsgClient: MsgClient
-        MsgToServer: MsgToServer
-      }>
-    | FlowPackListTypes.MsgInCmdClient
-  )[]
-} => {
-  const updatedChild = updateChild({
-    ...input,
-    msgCmd: null
-  })
-
-  const updated = updateLoop({ ...input, msgCmd: null }, updatedChild)
-
-  const msgCmd = updated.msgCmd?.flatMap((msgCmd) => (msgCmd.t === 'flow-pack-puzzles-grid' ? [] : [msgCmd]))
-
-  return {
-    ...updated,
-    msgCmd
-  }
-}
-
-const updateLoop = (input: Parameters<ClientModule['update']>[0], acc: ReturnType<ClientModule['update']>) => {
-  const [cmd, ...rest] = (acc.msgCmd ?? []).flatMap((cmd) => (cmd.t === 'flow-pack-puzzles-grid' ? [cmd] : []))
-
-  if (cmd) {
-    const updated = updateChild({
-      ...input,
-      model: acc.model,
-      msgCmd: cmd
-    })
-    return updateLoop(input, {
-      model: updated.model,
-      msgCmd: Msg.batch(rest, updated.msgCmd),
-      eff: Eff.batch([acc.eff, updated.eff]),
-      msgCore: Msg.batch(input.msgCore, updated.msgCore),
-      msgEvt: Msg.batch(input.msgEvt, updated.msgEvt)
-    })
-  }
-
-  return acc
-}
-
-const updateChild: ClientModule['update'] = (input) => {
+const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) => updateFlowPackPuzzlesGrid({ ...input, model }),
     (model) => ScreenPuzzleClient.update({ ...input, model }),
     (model) => ScreenSelectPackClient.update({ ...input, model }),
     (model) => ScreenSelectPuzzleClient.update({ ...input, model })
   )
 }
 
-const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {
-  const pack = 'flowPack' in input.modelCore.screen ? input.modelCore.screen.flowPack : null
-
-  if (!pack) {
-    return { model: input.model }
-  }
-
-  const updated = FlowPackPuzzlesGridClient.update({
-    ctx: {
-      ...input.ctx,
-      pack
-    },
-    model: {
-      ...input.model.flowPackPuzzleGrid,
-      puzzles: input.model.flowPuzzles
-    },
-    msg: input.msg?.t === 'flow-pack-grid' ? input.msg.c : null,
-    msgServer: input.msgServer?.t === 'flow-pack-grid' ? input.msgServer.c : null,
-    msgEvt: input.msgEvt,
-    msgCmd: input.msgCmd
-  })
-  return {
-    model: {
-      ...input.model,
-      flowPackPuzzleGrid: {
-        ...updated.model,
-        puzzles: {}
-      },
-      flowPuzzles: updated.model.puzzles
-    },
-    eff: Eff.tag('flow-pack-grid', updated.eff),
-    msgEvt: updated.msgEvt,
-    msgCmd: SpaceClientCmd.tag('flow-pack-grid', updated.msgCmd),
-    msgCore: []
-  }
-}
-
-const subscriptions: ClientModule['subscriptions'] = (input) => {
-  switch (input.modelCore.screen.t) {
-    case 'screen-select-puzzle':
-    case 'screen-play-puzzle':
-      return Sub.tag(
-        'flow-pack-grid',
-        FlowPackPuzzlesGridClient.subscriptions({
-          ctx: {
-            ...input.ctx,
-            pack: input.modelCore.screen.flowPack
-          },
-          model: input.model.flowPackPuzzleGrid
-        })
-      )
-
-    default: {
-      return Sub.None
-    }
-  }
+const subscriptions: ClientModule['subscriptions'] = (_input) => {
+  return Sub.None
 }
 
 const View: ClientModule['View'] = (input) => {

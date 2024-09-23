@@ -9,6 +9,7 @@ import { FlowServerCtx } from './@/flow-server-ctx'
 import { BuilderServer } from './builder/builder.server'
 import type { ServerModule } from './flow.types'
 import { PlayServer } from './play/play.server'
+import { FlowPackPuzzlesGridServer } from './@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server'
 
 export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
   return {
@@ -36,7 +37,8 @@ const update: ServerModule['update'] = async (input) => {
     {},
     () => updatePlay(input),
     () => updateBuilder(input),
-    () => updateFlowPackList(input)
+    () => updateFlowPackList(input),
+    () => updateFlowPackPuzzlesGrid(input)
   )
 }
 
@@ -52,6 +54,22 @@ const updateFlowPackList: ServerModule['update'] = async (input) => {
 
   return {
     msgCmd: SpaceServerCmd.tag('flow-pack-list', updated.msgCmd),
+    msgEvt: updated.msgEvt
+  }
+}
+
+const updateFlowPackPuzzlesGrid: ServerModule['update'] = async (input) => {
+  const updated = await FlowPackPuzzlesGridServer.update({
+    ctx: input.ctx,
+    msgCmd: input.msgCmd,
+    msgEvt: input.msgEvt,
+    msgClient: input.msgClient?.t === 'flow-pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msg: input.msg?.t === 'flow-pack-puzzles-grid' ? input.msg.c : null,
+    deps: null
+  })
+
+  return {
+    msgCmd: SpaceServerCmd.tag('flow-pack-puzzles-grid', updated.msgCmd),
     msgEvt: updated.msgEvt
   }
 }

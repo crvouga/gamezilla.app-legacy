@@ -4,14 +4,11 @@ import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/testing/client'
 import { FlowPack } from '..'
 import { FlowPuzzle } from '../../flow-puzzle'
-import {
-  FlowPackPuzzlesGridClient,
-  type FlowPackGridClientCtx as FlowPackPuzzlesGridClientCtx
-} from './flow-pack-puzzles-grid.client'
-import type { ModelClient, MsgClient, MsgToClient } from './flow-pack-puzzles-grid.types'
+import { FlowPackPuzzlesGridClient } from './flow-pack-puzzles-grid.client'
+import type { FlowPackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './flow-pack-puzzles-grid.types'
 
 type Input = {
-  ctx?: FlowPackPuzzlesGridClientCtx
+  ctx?: FlowPackGridClientCtx
   msg?: MsgClient
   msgServer?: MsgToClient
 }
@@ -26,7 +23,7 @@ const Fixture = async () => {
     createdBy: f.ctx.currentUserId
   })
 
-  const ctx: FlowPackPuzzlesGridClientCtx = {
+  const ctx: FlowPackGridClientCtx = {
     ...f.ctx,
     pack
   }

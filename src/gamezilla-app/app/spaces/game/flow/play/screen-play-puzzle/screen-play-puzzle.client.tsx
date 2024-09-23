@@ -2,9 +2,8 @@ import { TimeSpan } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from 'gamezilla-app/app/@/ui'
 import { Actions } from 'gamezilla-app/app/@/ui/actions'
-import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
-import { FlowPackPuzzlesGridClient } from '../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { ViewPuzzleNotFound } from '../../@/flow-puzzle/not-found'
 import { FlowPlay } from '../../@/flow/flow-play'
 import type { ClientModule } from '../play.types'
@@ -24,13 +23,12 @@ const update: ClientModule['update'] = (input) => {
 
 const updateFromMsg: ClientModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case undefined:
-    case 'flow-pack-grid':
-    case 'flow-pack-list': {
+    case undefined: {
       return {
         model: input.model
       }
     }
+
     default: {
       return {
         model: input.model,
@@ -136,7 +134,7 @@ const View: ClientModule['View'] = (input) => {
   //
   const nextPuzzleIndex = puzzleIndex + 1
   const nextPuzzleId = input.modelCore.screen.flowPack.puzzleIds[nextPuzzleIndex]
-  const nextPuzzle = nextPuzzleId ? input.model.flowPuzzles[nextPuzzleId] : null
+  const nextPuzzle = nextPuzzleId ? input.ctx.flowPuzzles[nextPuzzleId] : null
 
   const isLastPuzzle = input.modelCore.screen.puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1
 
@@ -145,146 +143,136 @@ const View: ClientModule['View'] = (input) => {
   const checkmarkDuration = TimeSpan.seconds(1 / 2)
 
   return (
-    <>
-      <FlowPackPuzzlesGridClient.ViewObserver
-        dispatch={(c) =>
+    <div
+      className='flex w-full flex-1 flex-col overflow-y-scroll'
+      data-puzzle-id={flowPuzzle.t === 'got' ? flowPuzzle.c.id : null}
+    >
+      <TopBar
+        ctx={input.ctx}
+        onBack={() =>
           input.dispatch({
-            t: 'flow-pack-grid',
-            c
+            t: 'user-clicked-exit-puzzle'
           })
         }
+        title={input.ctx.t('flow.level', puzzleIndex + 1)}
       />
-      <div
-        className='flex w-full flex-1 flex-col overflow-y-scroll'
-        data-puzzle-id={flowPuzzle.t === 'got' ? flowPuzzle.c.id : null}
-      >
-        <TopBar
-          ctx={input.ctx}
-          onBack={() =>
-            input.dispatch({
-              t: 'user-clicked-exit-puzzle'
-            })
-          }
-          title={input.ctx.t('flow.level', puzzleIndex + 1)}
-        />
-        <div className='relative flex flex-1 flex-col items-center justify-center overflow-hidden'>
-          {flowPuzzle.t === 'got' && (
-            <FlowPlay.View
-              key={flowPuzzle.c.id}
-              flow={flowPuzzle.c.flow}
-              model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
-              dispatch={(c) =>
-                input.dispatch({
-                  t: 'got-flow-play-msg',
-                  c,
-                  userId: input.ctx.currentUserId
-                })
-              }
-              showSolvedAnimation
-            />
-          )}
+      <div className='relative flex flex-1 flex-col items-center justify-center overflow-hidden'>
+        {flowPuzzle.t === 'got' && (
+          <FlowPlay.View
+            key={flowPuzzle.c.id}
+            flow={flowPuzzle.c.flow}
+            model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
+            dispatch={(c) =>
+              input.dispatch({
+                t: 'got-flow-play-msg',
+                c,
+                userId: input.ctx.currentUserId
+              })
+            }
+            showSolvedAnimation
+          />
+        )}
 
-          {flowPuzzle.t === 'not-found' && <ViewPuzzleNotFound ctx={input.ctx} />}
+        {flowPuzzle.t === 'not-found' && <ViewPuzzleNotFound ctx={input.ctx} />}
 
-          {isLastPuzzle ? (
-            <LastPuzzleClient.View
-              delay={checkmarkDuration}
-              open={isSolvedPuzzleDialogOpen}
-              ctx={input.ctx}
-              dispatch={(c) => input.dispatch(c)}
-            />
-          ) : (
-            <Dialog
-              delay={checkmarkDuration}
-              open={isSolvedPuzzleDialogOpen}
-              onClose={() =>
-                input.dispatch({
-                  t: 'user-closed-puzzle-complete-dialog'
-                })
-              }
-            >
-              <DialogSurface>
-                <DialogHeader title={input.ctx.t('flow.puzzle-completed')} />
+        {isLastPuzzle ? (
+          <LastPuzzleClient.View
+            delay={checkmarkDuration}
+            open={isSolvedPuzzleDialogOpen}
+            ctx={input.ctx}
+            dispatch={(c) => input.dispatch(c)}
+          />
+        ) : (
+          <Dialog
+            delay={checkmarkDuration}
+            open={isSolvedPuzzleDialogOpen}
+            onClose={() =>
+              input.dispatch({
+                t: 'user-closed-puzzle-complete-dialog'
+              })
+            }
+          >
+            <DialogSurface>
+              <DialogHeader title={input.ctx.t('flow.puzzle-completed')} />
 
-                <Button
-                  text={input.ctx.t('flow.next-puzzle')}
-                  onClick={() =>
-                    input.dispatch({
-                      t: 'user-clicked-next-puzzle',
-                      nextPuzzle: nextPuzzle
-                        ? {
-                            t: 'got',
-                            c: nextPuzzle
-                          }
-                        : {
-                            t: 'not-found'
-                          },
-                      nextPuzzleIndex
-                    })
-                  }
-                />
-              </DialogSurface>
-            </Dialog>
-          )}
-        </div>
-        <Actions.View
-          id='screen-play-puzzle-bottom-bar'
-          ctx={input.ctx}
-          onToggle={() =>
-            input.dispatch({
-              t: 'user-toggled-action-buttons-drawer'
-            })
-          }
-          open={input.modelCore.screen.opened === 'action-drawer'}
-          buttons={[
-            Actions.next({
-              ...input,
-              disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
-              hidden: !isSolved && flowPuzzle.t !== 'not-found',
-              color: 'success',
-              onClick: () =>
-                input.dispatch({
-                  t: 'user-clicked-next-puzzle',
-                  nextPuzzle: nextPuzzle
-                    ? {
-                        t: 'got',
-                        c: nextPuzzle
-                      }
-                    : {
-                        t: 'not-found'
-                      },
-                  nextPuzzleIndex
-                })
-            }),
-
-            flowPuzzle.t === 'got' && !isSolved
-              ? FlowPlay.viewHintAction({
-                  model: flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } }),
-                  ctx: { ...input.ctx, flowPuzzle: flowPuzzle.c },
-                  disabled: false,
-                  dispatch: (c) =>
-                    input.dispatch({
-                      t: 'got-flow-play-msg',
-                      c,
-                      userId: input.ctx.currentUserId
-                    })
-                })
-              : null,
-
-            Actions.reset({
-              ...input,
-              hidden: flowPuzzle.t === 'not-found',
-              onClick: () =>
-                input.dispatch({
-                  t: 'user-clicked-reset-puzzle'
-                })
-            }),
-
-            flowPuzzle.t === 'not-found' ? null : CopyPuzzleClient.viewButtonAction(input)
-          ]}
-        />
+              <Button
+                text={input.ctx.t('flow.next-puzzle')}
+                onClick={() =>
+                  input.dispatch({
+                    t: 'user-clicked-next-puzzle',
+                    nextPuzzle: nextPuzzle
+                      ? {
+                          t: 'got',
+                          c: nextPuzzle
+                        }
+                      : {
+                          t: 'not-found'
+                        },
+                    nextPuzzleIndex
+                  })
+                }
+              />
+            </DialogSurface>
+          </Dialog>
+        )}
       </div>
-    </>
+      <Actions.View
+        id='screen-play-puzzle-bottom-bar'
+        ctx={input.ctx}
+        onToggle={() =>
+          input.dispatch({
+            t: 'user-toggled-action-buttons-drawer'
+          })
+        }
+        open={input.modelCore.screen.opened === 'action-drawer'}
+        buttons={[
+          Actions.next({
+            ...input,
+            disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
+            hidden: !isSolved && flowPuzzle.t !== 'not-found',
+            color: 'success',
+            onClick: () =>
+              input.dispatch({
+                t: 'user-clicked-next-puzzle',
+                nextPuzzle: nextPuzzle
+                  ? {
+                      t: 'got',
+                      c: nextPuzzle
+                    }
+                  : {
+                      t: 'not-found'
+                    },
+                nextPuzzleIndex
+              })
+          }),
+
+          flowPuzzle.t === 'got' && !isSolved
+            ? FlowPlay.viewHintAction({
+                model: flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } }),
+                ctx: { ...input.ctx, flowPuzzle: flowPuzzle.c },
+                disabled: false,
+                dispatch: (c) =>
+                  input.dispatch({
+                    t: 'got-flow-play-msg',
+                    c,
+                    userId: input.ctx.currentUserId
+                  })
+              })
+            : null,
+
+          Actions.reset({
+            ...input,
+            hidden: flowPuzzle.t === 'not-found',
+            onClick: () =>
+              input.dispatch({
+                t: 'user-clicked-reset-puzzle'
+              })
+          }),
+
+          flowPuzzle.t === 'not-found' ? null : CopyPuzzleClient.viewButtonAction(input)
+        ]}
+      />
+    </div>
   )
 }
 

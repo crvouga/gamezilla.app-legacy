@@ -1,19 +1,16 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { SpaceCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
-import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
+import { FlowClientCmd } from '../@/flow-client-cmd'
 import type { FlowClientCtx } from '../@/flow-client-ctx'
 import { FlowClientEvtIn } from '../@/flow-client-evt'
 import { FlowCoreEvent } from '../@/flow-core-event'
-import { FlowPack, type FlowPackListTypes } from '../@/flow-pack'
-import type { FlowPackId } from '../@/flow-pack/flow-pack-id'
+import { FlowPack } from '../@/flow-pack'
 import type { FlowPackPuzzlesGridTypes } from '../@/flow-pack/flow-pack-puzzles-grid'
-import { FlowPuzzle } from '../@/flow-puzzle'
-import type { FlowPuzzleId } from '../@/flow-puzzle/flow-puzzle-id'
 import { FlowServerCtx } from '../@/flow-server-ctx'
 import { FlowPuzzleResult } from './@/puzzle-result'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
@@ -25,12 +22,7 @@ import { ScreenPuzzleTypes } from './screen-play-puzzle'
 //
 //
 
-export type ModelClient = {
-  flowPuzzles: { [flowPuzzleId: FlowPuzzleId]: FlowPuzzle }
-  flowPacks: { [flowPackId: FlowPackId]: FlowPack }
-  flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
-  // flowPackList: FlowPackListTypes.ModelClient
-}
+export type ModelClient = {}
 
 export const ModelServer = p.obj({})
 export type ModelServer = p.Infer<typeof ModelServer>
@@ -42,46 +34,19 @@ export type ModelServer = p.Infer<typeof ModelServer>
 //
 //
 
-export type MsgClient =
-  | MsgCore
-  | {
-      t: 'flow-pack-list'
-      c: FlowPackListTypes.MsgClient
-    }
-  | {
-      t: 'flow-pack-grid'
-      c: FlowPackPuzzlesGridTypes.MsgClient
-    }
+export type MsgClient = MsgCore
 
-export type MsgServer =
-  | {
-      t: 'flow-pack-list'
-      c: FlowPackListTypes.MsgServer
-    }
-  | {
-      t: 'flow-pack-grid'
-      c: FlowPackPuzzlesGridTypes.MsgServer
-    }
+export type MsgServer = {
+  t: 'noop'
+}
 
-export type MsgToServer =
-  | {
-      t: 'flow-pack-list'
-      c: FlowPackListTypes.MsgToServer
-    }
-  | {
-      t: 'flow-pack-grid'
-      c: FlowPackPuzzlesGridTypes.MsgToServer
-    }
+export type MsgToServer = {
+  t: 'noop'
+}
 
-export type MsgToClient =
-  | {
-      t: 'flow-pack-list'
-      c: FlowPackListTypes.MsgToClient
-    }
-  | {
-      t: 'flow-pack-grid'
-      c: FlowPackPuzzlesGridTypes.MsgToClient
-    }
+export type MsgToClient = {
+  t: 'noop'
+}
 
 export const MsgCore = p.or(
   p.obj({
@@ -147,10 +112,10 @@ export type ClientModule = GameClientModule<{
   ModelCore: ModelCore
   Ctx: FlowClientCtx
   MsgEvtIn: FlowClientEvtIn
-  MsgCmdOut:
-    | SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
-    | FlowPackPuzzlesGridTypes.MsgInCmdClient
-    | FlowPackListTypes.MsgInCmdClient
+  MsgCmdOut: FlowClientCmd<{
+    MsgToServer: MsgToServer
+    MsgClient: MsgClient
+  }>
   MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient
 }>
 

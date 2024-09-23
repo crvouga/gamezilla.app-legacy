@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
-import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { FlowPackListClient } from '../../@/flow-pack'
 import type { ClientModule } from '../play.types'
 
@@ -17,9 +17,9 @@ const update: ClientModule['update'] = (input) => {
 const updatePackListLoad: ClientModule['update'] = (input) => {
   if (
     input.msgEvt?.t === 'flow.user-changed-mode' ||
+    input.msgEvt?.t === 'space/synced' ||
     input.msgCore?.t === 'user-clicked-exit-pack-button' ||
-    input.msgCore?.t === 'user-clicked-select-next-pack' ||
-    input.msgEvt?.t === 'space/synced'
+    input.msgCore?.t === 'user-clicked-select-next-pack'
   ) {
     return {
       model: input.model,
@@ -83,7 +83,7 @@ const View: ClientModule['View'] = (input) => {
       />
       <FlowPackListClient.View
         ctx={input.ctx}
-        dispatch={(c) => input.dispatch({ t: 'flow-pack-list', c })}
+        dispatch={(_c) => {}}
         model={input.ctx.flowPackList}
         emits={{
           clickedPackItem(pack) {

@@ -1,42 +1,15 @@
 import { isErr, RequestResponse, Result } from 'gamezilla-app/@/core'
-import { andThen, AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
+import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { FlowPack } from '..'
-import { FlowClientEvtIn } from '../../flow-client-evt'
 import {
+  ClientModule,
   initClient,
   type ModelClient,
   type MsgClient,
-  type MsgInCmdClient,
-  type MsgToClient,
-  type MsgToServer
+  type MsgInCmdClient
 } from './flow-pack-puzzles-grid.types'
-
-export type FlowPackGridClientCtx = SpaceClientCtx & {
-  pack: FlowPack
-}
-
-type ClientModule = AppClientModule<{
-  Ctx: FlowPackGridClientCtx
-  Model: ModelClient
-  Msg: MsgClient
-  MsgEvtIn: FlowClientEvtIn
-  MsgCmdOut: SpaceClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  ViewSlot: {
-    grid: {
-      request: RequestResponse<string, null>
-    }
-  }
-  MsgCmdIn: MsgInCmdClient | null
-}>
 
 const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
   if (!input.ctx.pack) {
@@ -80,11 +53,8 @@ const updateServerListedPuzzles: ClientModule['update'] = (input) => {
   const { model, msgServer } = input
   switch (msgServer?.t) {
     case 'listed-puzzles-by-id': {
-      return andThen(
-        {
-          model
-        },
-        //
+      return AppClientModule.andThen(
+        { model },
         (model) => {
           if (isErr(msgServer.listed)) {
             return {
@@ -136,10 +106,7 @@ const updateFromCmd: ClientModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
     case 'load': {
       return {
-        model: {
-          ...input.model,
-          puzzles: {}
-        },
+        model: input.model,
         msgCmd: [
           sendToServer({
             t: 'list-puzzles-by-id',

@@ -1,4 +1,4 @@
-import { Eff, Sub } from 'gamezilla-app/@/core'
+import { Eff, Posix, Sub, unwrap } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconScrewdriverWrench } from 'gamezilla-app/app/@/ui'
@@ -11,23 +11,21 @@ import type { FlowClientCtx } from './@/flow-client-ctx'
 import { FlowClientEvt } from './@/flow-client-evt'
 import { CoverArt } from './@/flow-cover-art'
 import { FlowPackListClient, FlowPackListTypes } from './@/flow-pack'
+import { FlowPackId } from './@/flow-pack/flow-pack-id'
+import { FlowPackName } from './@/flow-pack/flow-pack-name'
+import { FlowPackPuzzlesGridTypes } from './@/flow-pack/flow-pack-puzzles-grid'
+import { FlowPackPuzzlesGridClient } from './@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'
 import { FlowPuzzleListTypes } from './@/flow-puzzle'
 import { BuilderClient } from './builder/builder.client'
 import type { ClientModule, MsgClient, MsgToServer } from './flow.types'
 import { PlayClient } from './play/play.client'
-
-//
-//
-//
-//
-//
-//
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,
   play: PlayClient.init,
   flowPuzzles: {},
   flowPacks: {},
+  flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.initClient,
   flowPuzzleList: FlowPuzzleListTypes.initClient,
   flowPackList: FlowPackListTypes.initClient
 }
@@ -101,7 +99,8 @@ const updateChild: ClientModule['update'] = (input) => {
     (model) => updateFromMsgCore({ ...input, model }),
     (model) => updateModePlay({ ...input, model }),
     (model) => updateModeBuilder({ ...input, model }),
-    (model) => updateFlowPackList({ ...input, model })
+    (model) => updateFlowPackList({ ...input, model }),
+    (model) => updateFlowPackPuzzlesGrid({ ...input, model })
   )
 }
 
@@ -130,13 +129,50 @@ const updateFlowPackList: ClientModule['update'] = (input) => {
   }
 }
 
+const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {
+  const updated = FlowPackPuzzlesGridClient.update({
+    ctx: {
+      ...input.ctx,
+      pack: {
+        createdAt: Posix.now(),
+        createdBy: input.ctx.currentUserId,
+        id: FlowPackId.generate(),
+        lastUpdatedAt: Posix.now(),
+        lastUpdatedBy: input.ctx.currentUserId,
+        name: unwrap(FlowPackName.parse('New Pack')),
+        puzzleIds: []
+      }
+    },
+    model: {
+      ...input.model.flowPackPuzzleGrid,
+      puzzles: input.model.flowPuzzles
+    },
+    msg: input.msg?.t === 'flow-pack-puzzles-grid' ? input.msg.c : null,
+    msgServer: input.msgServer?.t === 'flow-pack-puzzles-grid' ? input.msgServer.c : null,
+    msgEvt: input.msgEvt,
+    msgCmd: input.msgCmd?.t === 'flow-pack-puzzles-grid' ? input.msgCmd : null
+  })
+  return {
+    model: {
+      ...input.model,
+      flowPackPuzzleGrid: updated.model,
+      flowPuzzles: updated.model.puzzles
+    },
+    eff: Eff.tag('flow-pack-puzzles-grid', updated.eff),
+    msgEvt: [],
+    msgCmd: SpaceClientCmd.tag('flow-pack-puzzles-grid', updated.msgCmd),
+    msgCore: []
+  }
+}
+
 const updateModePlay: ClientModule['update'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
     flowPacks: input.model.flowPacks,
     flowPuzzles: input.model.flowPuzzles,
     flowPuzzleList: input.model.flowPuzzleList,
-    flowPackList: input.model.flowPackList
+    flowPackList: input.model.flowPackList,
+    flowPackPuzzleGrid: input.model.flowPackPuzzleGrid
   }
 
   const updated = PlayClient.update({
@@ -168,7 +204,8 @@ const updateModeBuilder: ClientModule['update'] = (input) => {
     flowPacks: input.model.flowPacks,
     flowPuzzles: input.model.flowPuzzles,
     flowPuzzleList: input.model.flowPuzzleList,
-    flowPackList: input.model.flowPackList
+    flowPackList: input.model.flowPackList,
+    flowPackPuzzleGrid: input.model.flowPackPuzzleGrid
   }
   const updated = BuilderClient.update({
     ctx,
@@ -257,13 +294,32 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
     flowPacks: input.model.flowPacks,
     flowPuzzles: input.model.flowPuzzles,
     flowPuzzleList: input.model.flowPuzzleList,
-    flowPackList: input.model.flowPackList
+    flowPackList: input.model.flowPackList,
+    flowPackPuzzleGrid: input.model.flowPackPuzzleGrid
   }
   return Sub.batch<MsgClient>([
     Sub.tag('play', PlayClient.subscriptions({ ctx, modelCore: input.modelCore.play, model: input.model.play })),
     Sub.tag(
       'builder',
       BuilderClient.subscriptions({ ctx, modelCore: input.modelCore.builder, model: input.model.builder })
+    ),
+    Sub.tag(
+      'flow-pack-puzzles-grid',
+      FlowPackPuzzlesGridClient.subscriptions({
+        ctx: {
+          ...ctx,
+          pack: {
+            createdAt: Posix.now(),
+            createdBy: ctx.currentUserId,
+            id: FlowPackId.generate(),
+            lastUpdatedAt: Posix.now(),
+            lastUpdatedBy: ctx.currentUserId,
+            name: unwrap(FlowPackName.parse('New Pack')),
+            puzzleIds: []
+          }
+        },
+        model: input.model.flowPackPuzzleGrid
+      })
     )
   ])
 }
@@ -280,7 +336,8 @@ const View: ClientModule['View'] = (input) => {
     flowPacks: input.model.flowPacks,
     flowPuzzles: input.model.flowPuzzles,
     flowPuzzleList: input.model.flowPuzzleList,
-    flowPackList: input.model.flowPackList
+    flowPackList: input.model.flowPackList,
+    flowPackPuzzleGrid: input.model.flowPackPuzzleGrid
   }
 
   switch (input.modelCore.mode) {

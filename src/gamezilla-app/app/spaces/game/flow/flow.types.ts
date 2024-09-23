@@ -9,6 +9,7 @@ import { FlowClientCmd, FlowClientCmdLocal } from './@/flow-client-cmd'
 import { FlowClientEvtIn } from './@/flow-client-evt'
 import type { FlowPack, FlowPackListTypes } from './@/flow-pack'
 import type { FlowPackId } from './@/flow-pack/flow-pack-id'
+import { FlowPackPuzzlesGridTypes } from './@/flow-pack/flow-pack-puzzles-grid'
 import type { FlowPuzzleListTypes } from './@/flow-puzzle'
 import type { FlowPuzzle } from './@/flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from './@/flow-puzzle/flow-puzzle-id'
@@ -31,6 +32,7 @@ export type ModelClient = {
   }
   flowPuzzleList: FlowPuzzleListTypes.ModelClient
   flowPackList: FlowPackListTypes.ModelClient
+  flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
   builder: BuilderTypes.ModelClient
   play: PlayTypes.ModelClient
 }
@@ -63,21 +65,25 @@ export type MsgClient =
   | { t: 'builder'; c: BuilderTypes.MsgClient }
   | { t: 'play'; c: PlayTypes.MsgClient }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgClient }
+  | { t: 'flow-pack-puzzles-grid'; c: FlowPackPuzzlesGridTypes.MsgClient }
 
 export type MsgServer =
   | { t: 'builder'; c: BuilderTypes.MsgServer }
   | { t: 'play'; c: PlayTypes.MsgServer }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgServer }
+  | { t: 'flow-pack-puzzles-grid'; c: FlowPackPuzzlesGridTypes.MsgServer }
 
 export type MsgToServer =
   | { t: 'builder'; c: BuilderTypes.MsgToServer }
   | { t: 'play'; c: PlayTypes.MsgToServer }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgToServer }
+  | { t: 'flow-pack-puzzles-grid'; c: FlowPackPuzzlesGridTypes.MsgToServer }
 
 export type MsgToClient =
   | { t: 'builder'; c: BuilderTypes.MsgToClient }
   | { t: 'play'; c: PlayTypes.MsgToClient }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgToClient }
+  | { t: 'flow-pack-puzzles-grid'; c: FlowPackPuzzlesGridTypes.MsgToClient }
 
 const MODE = ['builder', 'play'] as const
 export const Mode = p.enumeration(MODE)
