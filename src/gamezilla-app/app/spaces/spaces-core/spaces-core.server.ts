@@ -19,7 +19,7 @@ export type Deps = {
   spacesDb: ISpacesDb
 }
 
-export const deps = async (input: { dbConnKv: IDbConnKv }): Promise<Deps> => {
+export const initDeps = async (input: { dbConnKv: IDbConnKv }): Promise<Deps> => {
   return {
     spacesDb: SpacesDb({
       t: 'db-conn-kv',
