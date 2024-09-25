@@ -21,6 +21,11 @@ const main = async () => {
   })
 
   await server.start(SERVER_PORT)
+
+  server.serveSinglePageApp({
+    directory: 'dist',
+    indexFile: 'index.html'
+  })
 }
 
 main()

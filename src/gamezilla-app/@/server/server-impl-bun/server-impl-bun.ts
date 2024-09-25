@@ -1,9 +1,15 @@
 import type { Server, WebSocketHandler } from 'bun'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
-import { stringToHttpRequestMethod, type HttpHandler, type HttpRequest, type IServer } from '../server'
+import * as path from 'path'
+import {
+  fileExtensionToContentType,
+  stringToHttpRequestMethod,
+  type HttpHandler,
+  type HttpRequest,
+  type IServer
+} from '../server'
 
 type FetchHandler = (req: Request, server: Server) => MaybePromise<Response | undefined | null>
-
 type MaybePromise<T> = T | Promise<T>
 
 export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
@@ -11,6 +17,7 @@ export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
   const _fetchHandlers: FetchHandler[] = []
   let webSocketHandler: WebSocketHandler<T>
   let server: Server
+
   const base: IServer = {
     async start(port) {
       server = Bun.serve({
@@ -61,8 +68,43 @@ export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
     registerHandler(handler) {
       httpHandlers.push(handler)
     },
-    serveSinglePageApp(_input) {
-      throw new Error('serveSinglePageApp not implemented for bun server. Will not work when deployed')
+    serveSinglePageApp(input) {
+      _fetchHandlers.push(async (req, _server) => {
+        try {
+          const url = new URL(req.url)
+
+          const pathname = decodeURIComponent(url.pathname)
+          const filePath = path.join(input.directory, pathname === '/' ? input.indexFile : pathname)
+          const ext = path.extname(filePath)
+          const contentType = fileExtensionToContentType(ext)
+
+          const file = Bun.file(filePath)
+
+          if (!(await file.exists())) {
+            const filePathIndex = path.join(input.directory, input.indexFile)
+            const extIndex = path.extname(filePathIndex)
+            const contentTypeIndex = fileExtensionToContentType(extIndex)
+            const fileIndex = Bun.file(filePathIndex)
+            return new Response(fileIndex, {
+              headers: {
+                'Content-Type': contentTypeIndex
+              },
+              status: 200
+            })
+          }
+
+          return new Response(file, {
+            headers: {
+              'Content-Type': contentType
+            },
+            status: 200
+          })
+        } catch (e) {
+          return new Response(`Server Error. ${String(e)}`, {
+            status: 500
+          })
+        }
+      })
     }
   }
   return {

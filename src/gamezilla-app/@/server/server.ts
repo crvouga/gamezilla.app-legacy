@@ -18,7 +18,7 @@ export type HttpHandler = (request: HttpRequest) => Promise<HttpResponse | null 
 
 export type IServer = {
   start: (port: number) => Promise<void>
-  serveSinglePageApp: (input: { directory: string; file: string }) => void
+  serveSinglePageApp: (input: { directory: string; indexFile: string }) => void
   registerHandler: (handler: HttpHandler) => void
 }
 
@@ -61,4 +61,32 @@ export const stringToHttpRequestMethod = (input: string): HttpRequestMethod => {
   }
 
   throw new Error(`Unknown method: ${input}`)
+}
+
+export const fileExtensionToContentType = (ext: string) => {
+  switch (ext) {
+    case '.html':
+      return 'text/html'
+    case '.css':
+      return 'text/css'
+    case '.js':
+      return 'application/javascript'
+    case '.png':
+      return 'image/png'
+    case '.jpg':
+    case '.jpeg':
+      return 'image/jpeg'
+    case '.gif':
+      return 'image/gif'
+    case '.svg':
+      return 'image/svg+xml'
+    case '.ico':
+      return 'image/x-icon'
+    case '.json':
+      return 'application/json'
+    case '.txt':
+      return 'text/plain'
+    default:
+      return 'application/octet-stream'
+  }
 }
