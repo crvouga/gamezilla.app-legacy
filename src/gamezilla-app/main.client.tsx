@@ -1,8 +1,8 @@
 import { Program } from 'gamezilla-app/@/core'
 import { DebuggerReduxDevTools } from 'gamezilla-app/@/core/debug'
+import { Render } from 'gamezilla-app/@/vdom'
 import * as AppClient from 'gamezilla-app/app/app.client'
 import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, SERVER_URL, TRANSPORT_IMPL, VDOM_IMPL } from 'gamezilla-app/config'
-import { Render } from './@/vdom'
 
 const main = async () => {
   const deps = await AppClient.initDeps({
@@ -37,7 +37,7 @@ const main = async () => {
 
   await deps.transport.start()
 
-  console.log({ IS_PROD, TRANSPORT_IMPL, VDOM_IMPL })
+  console.log({ CODEBASE_VERSION_ID, IS_PROD, TRANSPORT_IMPL, VDOM_IMPL })
 }
 
 main()

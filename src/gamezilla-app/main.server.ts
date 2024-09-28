@@ -1,17 +1,21 @@
-import { CODEBASE_VERSION_ID, SERVER_IMPL, SERVER_PORT } from 'gamezilla-app/config'
-import { ProgramImpure } from './@/core/program-impure'
-import { Server } from './@/server'
-import { ILogger, Logger } from './app/@/server/logger'
-import * as AppServer from './app/app.server'
-import { Posix } from './@/core'
-import { MsgServer } from './app/app.types'
+import { Posix } from 'gamezilla-app/@/core'
+import { ProgramImpure } from 'gamezilla-app/@/core/program-impure'
+import { Server } from 'gamezilla-app/@/server'
+import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
+import * as AppServer from 'gamezilla-app/app/app.server'
+import { MsgServer } from 'gamezilla-app/app/app.types'
+import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, SERVER_PORT, TRANSPORT_IMPL } from 'gamezilla-app/config'
 
 const main = async () => {
   const logger = ILogger.prefix('app', Logger({ t: 'console' }))
 
   const server = Server({ t: SERVER_IMPL, logger: ILogger.prefix('server', logger) })
 
-  const deps = await AppServer.initDeps({ codebaseVersionId: CODEBASE_VERSION_ID, server, logger })
+  const deps = await AppServer.initDeps({
+    codebaseVersionId: CODEBASE_VERSION_ID,
+    server,
+    logger
+  })
 
   await ProgramImpure.run<MsgServer, { now: Posix }>({
     initCtx: AppServer.initCtx,
@@ -21,6 +25,8 @@ const main = async () => {
   })
 
   await server.start(SERVER_PORT)
+
+  console.log({ CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, TRANSPORT_IMPL })
 }
 
 main()

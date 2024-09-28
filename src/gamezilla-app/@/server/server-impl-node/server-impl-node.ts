@@ -1,8 +1,8 @@
+import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import * as fs from 'node:fs'
 import * as http from 'node:http'
 import * as path from 'node:path'
-import type { HttpHandler, HttpRequest, IServer } from '../server'
-import type { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { fileExtensionToContentType, type HttpHandler, type HttpRequest, type IServer } from '../server'
 
 const removeDuplicateSlashes = (input: string) => {
   return input.replace(/\/{2,}/g, '/')
@@ -99,34 +99,17 @@ export const ServerNode = (input: { logger: ILogger }) => {
 
 export type ServerNode = ReturnType<typeof ServerNode>
 
-const fileExtensionToContentType = (ext: string) => {
-  switch (ext) {
-    case '.html':
-      return 'text/html'
-    case '.css':
-      return 'text/css'
-    case '.js':
-      return 'application/javascript'
-    case '.png':
-      return 'image/png'
-    default:
-      return 'text/html'
-  }
-}
-
 const serveSinglePageApp =
   (httpServer: http.Server): IServer['serveSinglePageApp'] =>
   (input) => {
     httpServer.on('request', (req, res) => {
       try {
-        let filePath = path.join(input.directory, req.url === '/' ? input.file : req.url ?? '')
-
-        console.log('filePath', filePath)
+        let filePath = path.join(input.directory, req.url === '/' ? input.indexFile : req.url ?? '')
 
         const ext = path.extname(filePath)
 
         if (!ext) {
-          filePath = path.join(input.directory, input.file)
+          filePath = path.join(input.directory, input.indexFile)
         }
 
         fs.readFile(filePath, (err, content) => {

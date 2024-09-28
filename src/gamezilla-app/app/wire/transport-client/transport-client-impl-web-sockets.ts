@@ -7,8 +7,8 @@ import {
   initClientTransport
 } from './transport-client'
 
-const RECONNECT_INTERVAL = 2000 // 1 second
-const MAX_RECONNECT_ATTEMPTS = 6 // Adjust as needed
+const RECONNECT_INTERVAL = 2000
+const MAX_RECONNECT_ATTEMPTS = 6
 
 type Model<MsgToServer> = {
   reconnectAttempts: number
@@ -79,7 +79,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
 }> => {
-  const serverUrl = toWebsocketServerUrl(impl.serverUrl)
+  const serverUrl = toWebsocketServerUrl(impl.serverUrl.toString())
 
   const transport = initClientTransport<MsgToServer, MsgToClient>()
 
@@ -138,7 +138,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 
     ws.onmessage = (msgEvt) => {
       isConnected = true
-      const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient> // leap of faith
+      const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>
 
       if (msg.v !== codebaseVersionId) {
         transport.msgEvt.pub({
@@ -155,7 +155,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
     if (document.hidden) {
       isDocumentHidden = true
       if (ws) {
-        ws.close() // Close the WebSocket connection
+        ws.close()
         isConnected = false
       }
       if (closeTimeout) {
@@ -163,7 +163,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
       }
     } else {
       isDocumentHidden = false
-      connect() // Re-establish the WebSocket connection when the page is shown again
+      connect()
     }
   })
 
@@ -202,21 +202,25 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 }
 
 const toWebsocketServerUrl = (baseServerUrl: string) => {
-  const baseServerUrlObj = new URL(baseServerUrl)
+  try {
+    const baseServerUrlObj = new URL(baseServerUrl)
 
-  if (typeof window === 'undefined') {
+    if (typeof window === 'undefined') {
+      return baseServerUrlObj.toString()
+    }
+
+    if (baseServerUrlObj.protocol === 'https:') {
+      baseServerUrlObj.protocol = 'wss'
+    }
+
+    if (baseServerUrlObj.protocol === 'http:') {
+      baseServerUrlObj.protocol = 'ws'
+    }
+
+    baseServerUrlObj.pathname = '/ws'
+
     return baseServerUrlObj.toString()
+  } catch (e) {
+    return '/ws'
   }
-
-  if (baseServerUrlObj.protocol === 'https:') {
-    baseServerUrlObj.protocol = 'wss'
-  }
-
-  if (baseServerUrlObj.protocol === 'http:') {
-    baseServerUrlObj.protocol = 'ws'
-  }
-
-  baseServerUrlObj.pathname = '/ws'
-
-  return baseServerUrlObj.toString()
 }

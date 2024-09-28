@@ -143,7 +143,9 @@ export const initDeps = async ({
 }
 
 export const initCtx = () => {
-  return { now: Posix.now() }
+  return {
+    now: Posix.now()
+  }
 }
 
 //

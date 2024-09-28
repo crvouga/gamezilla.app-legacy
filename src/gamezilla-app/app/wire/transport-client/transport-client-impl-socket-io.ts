@@ -18,11 +18,11 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
   const transport = initClientTransport<MsgToServer, MsgToClient>()
 
   const start = async () => {
-    await fetch(`${impl.serverUrl}/set-session-cookie`, {
+    await fetch(`${impl.serverUrl.toString()}/set-session-cookie`, {
       credentials: 'include'
     })
 
-    const socket = io(impl.serverUrl, {
+    const socket = io(impl.serverUrl.toString(), {
       transports: ['websocket'],
       withCredentials: true
     })
