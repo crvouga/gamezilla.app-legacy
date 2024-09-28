@@ -1,9 +1,9 @@
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/logger'
 import type { IDbConnKv } from './db-conn-kv'
-import { DbConnKvHashMap } from './db-conn-kv-impl-hash-map'
-import { DbConnKvPostgres } from './db-conn-kv-impl-postgres'
-import { DbConnKvRedis } from './db-conn-kv-impl-redis'
+import * as HashMap from './db-conn-kv-impl-hash-map'
+import * as DbConnSql from './db-conn-kv-impl-db-conn-sql'
+import * as Redis from './db-conn-kv-impl-redis'
 import { withCache } from './with-cache'
 import { withDistributedUpdates } from './with-distributed-updates'
 import { withNamespace } from './with-namespace'
@@ -21,7 +21,7 @@ export type Impl =
       logger: ILogger
     }
   | {
-      t: 'postgres'
+      t: 'db-conn-sql'
       dbConnSql: IDbConnSql
       logger: ILogger
     }
@@ -29,20 +29,20 @@ export type Impl =
 export const DbConnKv = async (impl: Impl): Promise<IDbConnKv> => {
   switch (impl.t) {
     case 'hash-map': {
-      return DbConnKvHashMap({
+      return HashMap.DbConnKv({
         map: impl.map
       })
     }
 
     case 'redis': {
-      return DbConnKvRedis({
+      return Redis.DbConnKv({
         url: impl.url,
         logger: impl.logger
       })
     }
 
-    case 'postgres': {
-      return DbConnKvPostgres({
+    case 'db-conn-sql': {
+      return DbConnSql.DbConnKv({
         dbConn: impl.dbConnSql,
         logger: impl.logger
       })

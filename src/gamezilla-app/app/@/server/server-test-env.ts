@@ -35,13 +35,13 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   }
 
   const dbConnSql = await DbConnSql({
-    t: 'postgres',
+    t: 'pg',
     databaseUrl: DATABASE_URL,
     logger: ILogger.prefix('db-conn-sql', logger)
   })
 
   const dbConnKv = await DbConnKv({
-    t: 'postgres',
+    t: 'db-conn-sql',
     logger: ILogger.prefix('db-conn-kv', logger),
     dbConnSql
   })

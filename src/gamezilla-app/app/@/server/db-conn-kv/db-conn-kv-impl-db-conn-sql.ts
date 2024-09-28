@@ -9,13 +9,7 @@ const Row = p.obj({
   value: p.str
 })
 
-export const DbConnKvPostgres = async ({
-  logger,
-  dbConn
-}: {
-  dbConn: IDbConnSql
-  logger: ILogger
-}): Promise<IDbConnKv> => {
+export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger: ILogger }): Promise<IDbConnKv> => {
   return {
     async get(key, parser) {
       try {

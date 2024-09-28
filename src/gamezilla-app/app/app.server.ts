@@ -55,7 +55,7 @@ export const initDeps = async ({
   }
 
   const dbConnSql = await DbConnSql({
-    t: 'postgres',
+    t: 'pg',
     databaseUrl,
     logger: ILogger.prefix('db-conn-sql', logger)
   })
@@ -64,7 +64,7 @@ export const initDeps = async ({
 
   const dbConnKv = await pipe(
     DbConnKv({
-      t: 'postgres',
+      t: 'db-conn-sql',
       dbConnSql,
       logger: ILogger.prefix('postgres', loggerDbConnKv)
     }),
@@ -83,7 +83,7 @@ export const initDeps = async ({
         cache: await DbConnKv({
           t: 'hash-map',
           map: LRUCache({
-            maxCapacity: 1000
+            maxCapacity: 2000
           })
         })
       }),

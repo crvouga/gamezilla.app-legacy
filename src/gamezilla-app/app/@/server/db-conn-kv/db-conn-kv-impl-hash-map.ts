@@ -2,7 +2,7 @@ import { Ok } from 'gamezilla-app/@/core'
 import type { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnKv } from './db-conn-kv'
 
-export const DbConnKvHashMap = (config?: { map?: Map<string, unknown> }): IDbConnKv => {
+export const DbConnKv = (config?: { map?: Map<string, unknown> }): IDbConnKv => {
   const hashMap = config?.map ?? new Map<string, unknown>()
   return {
     async get(key, parser) {

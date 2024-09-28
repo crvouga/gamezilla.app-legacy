@@ -7,7 +7,7 @@ declare global {
   var redisClient: Awaited<ReturnType<ReturnType<typeof createClient>['connect']>>
 }
 
-export const DbConnKvRedis = async ({ url, logger }: { url: string; logger: ILogger }): Promise<IDbConnKv> => {
+export const DbConnKv = async ({ url, logger }: { url: string; logger: ILogger }): Promise<IDbConnKv> => {
   // https://github.com/redis/node-redis
   globalThis.redisClient ??= await createClient({
     url

@@ -1,11 +1,11 @@
 import { Ok } from 'gamezilla-app/@/core'
 import type { ILogger } from '../logger/logger'
 import type { IDbConnSql } from './db-conn-sql'
-import { DbConnPostgres } from './db-conn-sql-impl-postgres'
+import { DbConnPostgres } from './db-conn-sql-impl-pg'
 
 type DbConnSqlImpl =
   | {
-      t: 'postgres'
+      t: 'pg'
       databaseUrl: string
       logger: ILogger
     }
@@ -18,7 +18,7 @@ export const DbConnSql = async (impl: DbConnSqlImpl): Promise<IDbConnSql> => {
     case 'noop': {
       return DbConnSqlNoop()
     }
-    case 'postgres': {
+    case 'pg': {
       return DbConnPostgres(impl)
     }
   }

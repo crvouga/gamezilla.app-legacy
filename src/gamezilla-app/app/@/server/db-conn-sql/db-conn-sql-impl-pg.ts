@@ -1,10 +1,10 @@
 import { Err, Ok } from 'gamezilla-app/@/core'
 import type { p } from 'gamezilla-app/@/core/parser'
+import { Sql } from 'gamezilla-app/@/sql'
 import pg from 'pg'
 import type { ILogger } from '../logger/logger'
 import type { IDbConnSql } from './db-conn-sql'
 import { logQuery } from './shared'
-import { Sql } from 'gamezilla-app/@/sql'
 
 declare global {
   var pgPool: pg.Pool

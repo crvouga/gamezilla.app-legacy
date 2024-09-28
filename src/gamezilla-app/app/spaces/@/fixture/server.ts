@@ -2,7 +2,7 @@ import { pipe, Posix } from 'gamezilla-app/@/core'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { ClientId, Profile, SessionId, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { ServerCtx } from 'gamezilla-app/app/@/server'
-import { DbConnKvHashMap } from 'gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map'
+import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map'
 import { DbConnSqlNoop } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { AppServerFixture } from 'gamezilla-app/app/@/server/server-test-env'
@@ -66,7 +66,7 @@ export const ctx: ServerCtx = {
   dbConnSql: DbConnSqlNoop(),
   logger: Logger({ t: 'noop' }),
   now: Posix.now(),
-  dbConnKv: DbConnKvHashMap()
+  dbConnKv: DbConnKv()
 }
 
 export const init = () => {
@@ -74,7 +74,7 @@ export const init = () => {
 }
 
 export const initDeps = async (): Promise<ServerDeps> => {
-  const dbConnKv = DbConnKvHashMap()
+  const dbConnKv = DbConnKv()
   return {
     profileCache: ProfileCache({
       t: 'db-conn-kv',

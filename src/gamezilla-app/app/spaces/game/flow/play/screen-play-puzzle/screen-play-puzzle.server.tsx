@@ -1,21 +1,64 @@
 import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { ServerModule } from '../play.types'
 import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
+import { MsgCoreEvt } from './screen-play-puzzle.types'
+import { UserActivity } from '../@/user-activity/user-activity'
+import { Posix } from 'gamezilla-app/@/core'
+import { FlowPuzzleId } from '../../@/flow-puzzle/flow-puzzle-id'
 
 const update: ServerModule['update'] = async (input) => {
   return andThen(
     {},
     //
-    () => recordUserCompletedPuzzle(input)
+    () => recordUserActivity(input)
   )
 }
 
-const recordUserCompletedPuzzle: ServerModule['update'] = async (input) => {
-  if (!input.msgCore || input.modelCore.screen.t !== 'screen-play-puzzle') {
+export const msgCoreEvtToUserActivity = (
+  input: MsgCoreEvt & { puzzleId: FlowPuzzleId; happenedAt: Posix }
+): UserActivity[] => {
+  switch (input.t) {
+    case 'user-completed-puzzle': {
+      return [
+        {
+          t: 'user-solved-puzzle',
+          happenedAt: Posix.now(),
+          puzzleId: input.puzzleId,
+          userId: input.userId
+        }
+      ]
+    }
+    case 'user-used-hint': {
+      return [
+        {
+          t: 'user-used-hint',
+          happenedAt: Posix.now(),
+          puzzleId: input.puzzleId,
+          userId: input.userId
+        }
+      ]
+    }
+  }
+}
+
+const recordUserActivity: ServerModule['update'] = async (input) => {
+  if (input.msgCore && input.modelCore.screen.t === 'screen-play-puzzle') {
+    const updated = ScreenPlayPuzzleCore.updateScreen(input.modelCore.screen, input.msgCore)
+
+    for (const event of updated.events ?? []) {
+      switch (event.t) {
+        case 'user-completed-puzzle': {
+          return {}
+        }
+
+        case 'user-used-hint': {
+          return {}
+        }
+      }
+    }
+
     return {}
   }
-
-  ScreenPlayPuzzleCore.updateScreen(input.modelCore.screen, input.msgCore)
 
   return {}
 }
