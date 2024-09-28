@@ -13,7 +13,7 @@ import {
   elapsed,
   init,
   serverListedSpaces
-} from '../@/testing/client'
+} from '../@/fixture/client'
 import { SpaceCore } from '../spaces-core'
 import * as SpaceClient from '../spaces.client'
 

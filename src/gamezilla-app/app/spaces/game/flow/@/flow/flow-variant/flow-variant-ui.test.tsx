@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/testing/client'
+import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import type { FlowViewinput } from '../flow-ui/flow-ui'
 import { FlowGridShorthand } from './flow-grid'
 import type * as FlowVariant from './flow-variant'

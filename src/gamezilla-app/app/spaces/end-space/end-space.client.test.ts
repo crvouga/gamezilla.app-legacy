@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
-import { clickedStartSpaceButton, Ctx, init, userClickedEndSpaceButton } from '../@/testing/client'
+import { clickedStartSpaceButton, Ctx, init, userClickedEndSpaceButton } from '../@/fixture/client'
 import { SpaceClientModule } from '../architecture/space-client'
 import { EndSpaceClient } from './end-space.client'
 

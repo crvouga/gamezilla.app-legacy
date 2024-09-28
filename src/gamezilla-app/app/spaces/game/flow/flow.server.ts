@@ -44,12 +44,9 @@ const update: ServerModule['update'] = async (input) => {
 
 const updateFlowPackList: ServerModule['update'] = async (input) => {
   const updated = await FlowPackListServer.update({
-    ctx: input.ctx,
-    msgCmd: input.msgCmd,
-    msgEvt: input.msgEvt,
+    ...input,
     msgClient: input.msgClient?.t === 'flow-pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
-    msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
-    deps: null
+    msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null
   })
 
   return {
@@ -60,11 +57,9 @@ const updateFlowPackList: ServerModule['update'] = async (input) => {
 
 const updateFlowPackPuzzlesGrid: ServerModule['update'] = async (input) => {
   const updated = await FlowPackPuzzlesGridServer.update({
-    ctx: input.ctx,
-    msgCmd: input.msgCmd,
-    msgEvt: input.msgEvt,
-    msgClient: input.msgClient?.t === 'flow-pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    ...input,
     msg: input.msg?.t === 'flow-pack-puzzles-grid' ? input.msg.c : null,
+    msgClient: input.msgClient?.t === 'flow-pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,
     deps: null
   })
 
@@ -76,10 +71,8 @@ const updateFlowPackPuzzlesGrid: ServerModule['update'] = async (input) => {
 
 const updateBuilder: ServerModule['update'] = async (input) => {
   const updated = await BuilderServer.update({
-    ctx: input.ctx,
+    ...input,
     modelCore: input.modelCore.builder,
-    msgCmd: input.msgCmd,
-    msgEvt: input.msgEvt,
     msgClient: input.msgClient?.t === 'builder' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'builder' ? input.msg.c : null,

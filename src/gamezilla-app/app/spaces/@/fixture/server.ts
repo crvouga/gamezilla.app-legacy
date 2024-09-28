@@ -1,6 +1,6 @@
-import { Posix } from 'gamezilla-app/@/core'
+import { pipe, Posix } from 'gamezilla-app/@/core'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
-import { ClientId, SessionId, SpaceId, UserId } from 'gamezilla-app/app/@/data'
+import { ClientId, Profile, SessionId, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { ServerCtx } from 'gamezilla-app/app/@/server'
 import { DbConnKvHashMap } from 'gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map'
 import { DbConnSqlNoop } from 'gamezilla-app/app/@/server/db-conn-sql'
@@ -8,19 +8,46 @@ import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { AppServerFixture } from 'gamezilla-app/app/@/server/server-test-env'
 import { smsNoop } from 'gamezilla-app/app/@/server/sms'
 import { GameServer } from '../../game/game.server'
-import { ProfileCache } from '../../spaces-server/profile-cache'
 import { GameDb } from '../../game/space-game-db'
-import type { SpaceCore } from '../../spaces-core'
+import { SpaceCore } from '../../spaces-core'
 import { SpacesDb } from '../../spaces-core/space-db'
+import { ProfileCache } from '../../spaces-server/profile-cache'
 import * as SpacesServer from '../../spaces.server'
 import type { ServerDeps } from '../../spaces.types'
-import { EventId } from '../event'
+import { EventId, withId } from '../event'
+import { SpaceServerCtx } from '../space'
 
-export const SpaceServerFixture = async () => {
+export const FixtureSpaceServer = async () => {
   const f = await AppServerFixture()
   const deps = await initDeps()
   const clientA = randomAuthenticatedClient()
   const clientB = randomAuthenticatedClient()
+  const userA = await Profile.random()
+  const userB = await Profile.random()
+  const userC = await Profile.random()
+
+  const spaceId = SpaceId.generate()
+
+  const space = pipe(
+    SpaceCore.init,
+    (model) =>
+      SpaceCore.appendEvent({ model, event: withId({ t: 'user-started-space', spaceId, userId: userA.userId }) }),
+    (model) =>
+      SpaceCore.appendEvent({ model, event: withId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
+    (model) =>
+      SpaceCore.appendEvent({ model, event: withId({ t: 'user-joined-space', spaceId, userId: userC.userId }) })
+  )
+
+  const spaceState = SpaceCore.toSpaceStarted(space)
+
+  if (!spaceState) {
+    throw new Error('Invalid fixture. Space is not started.')
+  }
+
+  const ctx: SpaceServerCtx = {
+    ...f.ctx,
+    space: spaceState
+  }
   const init = SpacesServer.init({ ctx })
 
   return {

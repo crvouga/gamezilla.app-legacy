@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { didSendToClient } from 'gamezilla-app/app/@/server'
-import { randomAuthenticatedClient, type AuthenticatedClient } from 'gamezilla-app/app/spaces/@/testing/server'
+import { randomAuthenticatedClient, type AuthenticatedClient } from 'gamezilla-app/app/spaces/@/fixture/server'
 import { SpaceGameFixtureServer } from 'gamezilla-app/app/spaces/game/@/testing/server'
 import { FlowPack, FlowPackDb } from '..'
 import { FlowPuzzle, FlowPuzzleDb } from '../../flow-puzzle'

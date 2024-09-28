@@ -1,15 +1,15 @@
 import { NonEmpty } from 'gamezilla-app/@/core'
 import { withEventMeta, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/testing/client'
+import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowClient } from '../flow.client'
-import { initCore, updateCore } from '../flow.core'
+import { FlowCore } from '../flow.core'
 import { ModelCore, MsgClient, MsgCore, MsgToClient } from '../flow.types'
 import type { FlowClientCtx } from './flow-client-ctx'
 import { FlowPackListTypes } from './flow-pack'
 import { FlowPackPuzzlesGridTypes } from './flow-pack/flow-pack-puzzles-grid'
 import { FlowPuzzleListTypes } from './flow-puzzle'
 
-export const FlowClientFixture = async () => {
+export const FixtureFlowClient = async () => {
   const f = await FixtureSpaceClient()
   const ctx: FlowClientCtx = {
     ...f.ctx,
@@ -44,13 +44,13 @@ export const FlowClientFixture = async () => {
           .reduce(
             (acc, msgCore): ModelCore =>
               msgCore
-                ? updateCore({
+                ? FlowCore.updateCore({
                     ctx: input.ctx ?? ctx,
                     modelCore: acc,
                     msgCore: withEventMeta(msgCore)
                   })
                 : acc,
-            initCore({ ctx: input.ctx ?? ctx })
+            FlowCore.initCore({ ctx: input.ctx ?? ctx })
           ),
         msgCmd: null,
         msgEvt: null

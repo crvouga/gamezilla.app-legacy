@@ -1,22 +1,21 @@
 import { NonEmpty, Ok } from 'gamezilla-app/@/core'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { EventId } from 'gamezilla-app/app/spaces/@/event'
+import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { testSpaceClientCtx } from '../../../../@/testing/client'
+import { testSpaceClientCtx } from 'gamezilla-app/app/spaces/game/@/testing/client'
 import { Flow } from '../../../@/flow'
 import type { FlowClientCtx } from '../../../@/flow-client-ctx'
+import { FlowPackListTypes } from '../../../@/flow-pack'
 import { FlowPack } from '../../../@/flow-pack/flow-pack'
+import { FlowPackPuzzlesGridTypes } from '../../../@/flow-pack/flow-pack-puzzles-grid'
+import { FlowPuzzleListTypes } from '../../../@/flow-puzzle'
 import { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
 import type { FlowPuzzleId } from '../../../@/flow-puzzle/flow-puzzle-id'
 import { samples } from '../../../@/flow/flow-variant/flow-grid/flow-grid-samples'
 import { BuilderClient } from '../../builder.client'
 import { BuilderCore } from '../../builder.core'
 import * as BuilderTypes from '../../builder.types'
-
-import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/testing/client'
-import { FlowPackListTypes } from '../../../@/flow-pack'
-import { FlowPuzzleListTypes } from '../../../@/flow-puzzle'
-import { FlowPackPuzzlesGridTypes } from '../../../@/flow-pack/flow-pack-puzzles-grid'
 
 type Input = {
   ctx?: FlowClientCtx

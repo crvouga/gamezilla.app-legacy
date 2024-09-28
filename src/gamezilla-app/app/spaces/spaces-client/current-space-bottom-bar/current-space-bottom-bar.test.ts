@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { SpaceId } from '../../../@/data'
-import { clickedCurrentSpaceBottomBar, clickedStartSpaceButton, Ctx, init } from '../../@/testing/client'
+import { clickedCurrentSpaceBottomBar, clickedStartSpaceButton, Ctx, init } from '../../@/fixture/client'
 import { SpaceClientModule } from '../../architecture/space-client'
 import * as SpacesCoreClient from '../../spaces-core/spaces-core.client'
 

@@ -1,9 +1,9 @@
 import type { EventMeta } from 'gamezilla-app/app/spaces/@/event'
 import type { SpaceCtx } from '../@/space'
-import * as ConnectFour from './connect-four/connect-four.types'
-import * as Flow from './flow/flow.core'
-import type { ModelCore, MsgCore } from './game.types'
 import { GameName } from './@/game-name'
+import * as ConnectFour from './connect-four/connect-four.types'
+import { FlowCore } from './flow/flow.core'
+import type { ModelCore, MsgCore } from './game.types'
 
 export const initCore = (input: { gameName: GameName; ctx: SpaceCtx }): ModelCore => {
   switch (input.gameName) {
@@ -17,14 +17,14 @@ export const initCore = (input: { gameName: GameName; ctx: SpaceCtx }): ModelCor
     case 'flow': {
       return {
         t: 'flow',
-        c: Flow.initCore(input)
+        c: FlowCore.initCore(input)
       }
     }
 
     default: {
       return {
         t: 'flow',
-        c: Flow.initCore(input)
+        c: FlowCore.initCore(input)
       }
     }
   }
@@ -66,7 +66,7 @@ export const updateCore = ({
         case 'flow': {
           return {
             t: 'flow',
-            c: Flow.updateCore({
+            c: FlowCore.updateCore({
               ctx,
               msgCore: {
                 ...msgCore,

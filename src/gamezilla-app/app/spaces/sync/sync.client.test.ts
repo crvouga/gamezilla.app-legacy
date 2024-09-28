@@ -14,8 +14,8 @@ import {
   serverConnected,
   userEndedSpace,
   userStartedSpace
-} from '../@/testing/client'
-import { makeSpace } from '../@/testing/shared'
+} from '../@/fixture/client'
+import { makeSpace } from '../@/fixture/shared'
 import { SpaceCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
 

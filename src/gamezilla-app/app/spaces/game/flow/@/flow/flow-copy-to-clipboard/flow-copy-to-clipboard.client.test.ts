@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { UserRole } from 'gamezilla-app/app/@/data'
-import { FlowClientFixture } from '../../testing'
+import { FixtureFlowClient } from '../../fixture-client'
 
 const Fixture = async (input?: { currentUserRole: UserRole }) => {
-  const f = await FlowClientFixture()
+  const f = await FixtureFlowClient()
   const ctx: typeof f.ctx = {
     ...f.ctx,
     currentUserRole: input?.currentUserRole ?? 'super'

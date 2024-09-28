@@ -2,7 +2,7 @@ import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-serve
 import { ServerModule } from '../play.types'
 import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
 
-export const update: ServerModule['update'] = async (input) => {
+const update: ServerModule['update'] = async (input) => {
   return andThen(
     {},
     //
@@ -18,4 +18,8 @@ const recordUserCompletedPuzzle: ServerModule['update'] = async (input) => {
   ScreenPlayPuzzleCore.updateScreen(input.modelCore.screen, input.msgCore)
 
   return {}
+}
+
+export const ScreenPlayPuzzleServer = {
+  update
 }
