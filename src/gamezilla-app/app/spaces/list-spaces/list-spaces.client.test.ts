@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
     const output = SpaceClient.init({
       ctx: f.ctx
     })
-    expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.msg?.t === 'list-spaces')).toBe(true)
+    expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toServer?.t === 'list-spaces')).toBe(true)
   })
 
   it('should request spaces on space list route change', async () => {

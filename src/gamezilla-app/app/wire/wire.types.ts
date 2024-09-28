@@ -32,7 +32,7 @@ export type MsgClient =
   | ClientTransportEvent
   //
   | { t: 'clicked-try-reconnect' }
-  | { t: 'sent-to-server'; msg: unknown }
+  | { t: 'sent-to-server'; toServer: unknown }
 
 export type ModelServer = null
 
