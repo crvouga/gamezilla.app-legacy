@@ -1,25 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk } from 'gamezilla-app/@/core'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
-import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
-import { APP_SOUND, type ClientCtx, didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
-import { SpaceId } from 'gamezilla-app/app/@/data'
-import {
-  Ctx,
-  FixtureSpaceClient,
-  changeRoute,
-  clickSpaceCard,
-  clickedGoHomeButton,
-  elapsed,
-  init,
-  serverListedSpaces
-} from '../@/fixture/client'
+import { APP_SOUND, didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
+import { FixtureSpaceClient } from '../@/fixture/client'
 import { SpaceCore } from '../spaces-core'
 import * as SpaceClient from '../spaces.client'
-
-const changeRouteToSpaceList = (ctx: ClientCtx) => {
-  return changeRoute(ctx, { n: 'spaces', t: 'space-list' })
-}
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureSpaceClient(input)
@@ -121,42 +106,145 @@ describe(import.meta.file, () => {
     expect(isResponseOk(output.model.listSpacesRequest)).toBe(true)
   })
 
-  it('should be ok when server responds with a list of spaces even when it timed out', () => {
-    const ctx = Ctx()
-    const updated = AppClientModule.andThen(
-      init(ctx),
-      changeRouteToSpaceList(ctx),
-      elapsed(ctx, TimeSpan.seconds(10)),
-      serverListedSpaces(ctx)
-    )
+  it('should be ok when server responds with a list of spaces even when it timed out', async () => {
+    const f = await Fixture()
+    const updated = f.update(f.initial, [
+      {
+        msgEvt: {
+          t: 'routing/route-changed',
+          route: {
+            n: 'spaces',
+            t: 'space-list'
+          }
+        }
+      },
+      {
+        ctx: {
+          ...f.ctx,
+          now: Posix.future(f.ctx.now, TimeSpan.minutes(5))
+        },
+        msg: {
+          t: 'time-passed'
+        }
+      },
+      {
+        msgServer: {
+          t: 'listed-spaces',
+          spaces: [SpaceCore.random(), SpaceCore.random(), SpaceCore.random()],
+          causedBy: null
+        }
+      }
+    ])
 
     expect(isResponseOk(updated.model.listSpacesRequest)).toBe(true)
   })
 
-  it('should navigate to space screen after clicking a space card', () => {
-    const SpaceA = SpaceId.generate()
-    const ctx = Ctx()
-    const updated = AppClientModule.andThen(init(ctx), serverListedSpaces(ctx, [SpaceA]), clickSpaceCard(ctx, SpaceA))
+  it('should navigate to space screen after clicking a space card', async () => {
+    const f = await Fixture()
+
+    const space = SpaceCore.random()
+    const spaceId = SpaceCore.toSpaceId(space)
+    if (!spaceId) throw new Error('SpaceId is null')
+
+    const updated = f.update(f.initial, [
+      {
+        msgEvt: {
+          t: 'routing/route-changed',
+          route: {
+            n: 'spaces',
+            t: 'space-list'
+          }
+        }
+      },
+      {
+        msgServer: {
+          t: 'listed-spaces',
+          spaces: [space],
+          causedBy: null
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-space-card',
+          spaceId
+        }
+      }
+    ])
 
     expect(didPushRoute(updated)).toBe(true)
   })
 
-  it('should make a nav forward sound when opening a space screen', () => {
-    const SpaceA = SpaceId.generate()
-    const ctx = Ctx()
-    const updated = AppClientModule.andThen(init(ctx), serverListedSpaces(ctx, [SpaceA]), clickSpaceCard(ctx, SpaceA))
+  it('should make a nav forward sound when opening a space screen', async () => {
+    const f = await Fixture()
+
+    const space = SpaceCore.random()
+    const spaceId = SpaceCore.toSpaceId(space)
+    if (!spaceId) throw new Error('SpaceId is null')
+
+    const updated = f.update(f.initial, [
+      {
+        msgEvt: {
+          t: 'routing/route-changed',
+          route: {
+            n: 'spaces',
+            t: 'space-list'
+          }
+        }
+      },
+      {
+        msgServer: {
+          t: 'listed-spaces',
+          spaces: [space],
+          causedBy: null
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-space-card',
+          spaceId
+        }
+      }
+    ])
+
     expect(didPlaySound(updated, APP_SOUND.navForwardMin)).toBe(true)
   })
 
-  it('should make a sound when closing room screen', () => {
-    const SpaceA = SpaceId.generate()
-    const ctx = Ctx()
-    const updated = AppClientModule.andThen(
-      init(ctx),
-      serverListedSpaces(ctx, [SpaceA]),
-      clickSpaceCard(ctx, SpaceA),
-      clickedGoHomeButton(ctx)
-    )
+  it('should make a sound when closing room screen', async () => {
+    const f = await Fixture()
+
+    const space = SpaceCore.random()
+    const spaceId = SpaceCore.toSpaceId(space)
+    if (!spaceId) throw new Error('SpaceId is null')
+
+    const updated = f.update(f.initial, [
+      {
+        msgEvt: {
+          t: 'routing/route-changed',
+          route: {
+            n: 'spaces',
+            t: 'space-list'
+          }
+        }
+      },
+      {
+        msgServer: {
+          t: 'listed-spaces',
+          spaces: [space],
+          causedBy: null
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-space-card',
+          spaceId
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-go-home-button'
+        }
+      }
+    ])
     expect(didPlaySound(updated, APP_SOUND.navBackwardMin)).toBe(true)
   })
 })
