@@ -3,6 +3,7 @@ import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk, pipe } fr
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import { APP_SOUND, didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
+import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from 'gamezilla-app/app/@/ui'
 import { withId } from '../@/event'
 import { FixtureSpaceClient } from '../@/fixture/client'
 import { SpaceCore } from '../spaces-core'
@@ -10,6 +11,7 @@ import * as SpaceClient from '../spaces.client'
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureSpaceClient(input)
+
   return {
     ...f
   }
@@ -276,5 +278,27 @@ describe(import.meta.file, () => {
 
     expect(before?.game?.t ?? null).toEqual('flow')
     expect(after?.game?.t ?? null).toEqual(null)
+  })
+
+  test('render spinner when listing spaces', async () => {
+    const f = await Fixture()
+
+    const initial = f.update(f.initial, [{ msgServer: { t: 'listed-spaces', spaces: [] } }])
+
+    const updated = f.update(initial, [
+      { msgEvt: { t: 'routing/route-changed', route: { n: 'spaces', t: 'space-list' } } }
+    ])
+    expect(f.view(initial).getByTestId(SPINNER_TEST_ID)).toBeFalsy()
+    expect(f.view(updated).getByTestId(SPINNER_TEST_ID)).toBeTruthy()
+  })
+
+  test('render empty state', async () => {
+    const f = await Fixture()
+    const initial = f.update(f.initial, [{ msgServer: { t: 'listed-spaces', spaces: [] } }])
+    const updated = f.update(initial, [
+      { msgEvt: { t: 'routing/route-changed', route: { n: 'spaces', t: 'space-list' } } }
+    ])
+    expect(f.view(initial).getByTestId(EMPTY_STATE_TEST_ID)).toBeTruthy()
+    expect(f.view(updated).getByTestId(EMPTY_STATE_TEST_ID)).toBeFalsy()
   })
 })

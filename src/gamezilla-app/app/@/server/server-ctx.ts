@@ -1,4 +1,4 @@
-import type { Posix } from 'gamezilla-app/@/core'
+import type { Posix, TimeSpan } from 'gamezilla-app/@/core'
 import type { IDbConnKv } from './db-conn-kv'
 import type { IDbConnSql } from './db-conn-sql/db-conn-sql'
 import type { ILogger } from './logger/logger'
@@ -11,4 +11,5 @@ export type ServerCtx = {
   logger: ILogger
   sms: ISMS
   env: 'prod' | 'test' | 'dev'
+  sleep: (time: TimeSpan) => Promise<null>
 }

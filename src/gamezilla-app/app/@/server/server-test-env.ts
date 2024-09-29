@@ -72,7 +72,8 @@ export const AppServerFixture = async () => {
     }),
     logger,
     now: Posix.now(),
-    sms: SMS({ t: 'fake', logger })
+    sms: SMS({ t: 'fake', logger }),
+    sleep: async () => null
   }
   return {
     ctx

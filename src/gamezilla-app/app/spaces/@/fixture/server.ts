@@ -61,6 +61,7 @@ export const FixtureSpaceServer = async () => {
 }
 
 export const ctx: ServerCtx = {
+  sleep: async () => null,
   env: 'test',
   sms: smsNoop,
   dbConnSql: DbConnSqlNoop(),
@@ -90,6 +91,7 @@ export const initDeps = async (): Promise<ServerDeps> => {
     }),
     gameServer: await GameServer.initCtx({
       ctx: {
+        sleep: async () => null,
         clientId: ClientId.generate(),
         dbConnKv,
         dbConnSql: DbConnSqlNoop(),

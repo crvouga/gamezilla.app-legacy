@@ -1,7 +1,7 @@
 import { Ok, RequestResponse, startedRequest } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound, pushRoute, sendToServer } from 'gamezilla-app/app/@/client'
 import type { SpaceId } from 'gamezilla-app/app/@/data'
-import { IconGamepad, TopBar } from 'gamezilla-app/app/@/ui'
+import { IconGamepad, Spinner, TopBar } from 'gamezilla-app/app/@/ui'
 import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
 import type { SpaceClientModule } from '../architecture/space-client'
 import type { SpaceCoreState } from '../spaces-core'
@@ -25,13 +25,7 @@ const sendListSpacesRequest: SpaceClientModule['update'] = ({ model, ctx }) => {
       ...model,
       listSpacesRequest: startedRequest(ctx.now)
     },
-    msgCmd: [
-      sendToServer({
-        t: 'list-spaces',
-        limit: 100,
-        offset: 0
-      })
-    ]
+    msgCmd: [sendToServer({ t: 'list-spaces', limit: 100, offset: 0 })]
   }
 }
 
@@ -55,47 +49,39 @@ const init: SpaceClientModule['init'] = ({ model, ctx }) => {
 //
 
 const update: SpaceClientModule['update'] = (input) => {
-  const { ctx, msgServer, model, msgEvt, msg } = input
-
-  switch (msgEvt?.t) {
+  switch (input.msgEvt?.t) {
     case 'routing/route-changed': {
-      if (msgEvt.route.t === 'space-list') {
-        return sendListSpacesRequest({
-          model,
-          ctx
-        })
+      if (input.msgEvt.route.t === 'space-list') {
+        return sendListSpacesRequest(input)
       }
       return {
-        model
+        model: input.model
       }
     }
 
     case 'wire/server-connected': {
-      return sendListSpacesRequest({
-        model,
-        ctx
-      })
+      return sendListSpacesRequest(input)
     }
   }
 
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'time-passed': {
       return {
         model: {
-          ...model,
-          listSpacesRequest: RequestResponse.timePassed(model.listSpacesRequest, ctx.now)
+          ...input.model,
+          listSpacesRequest: RequestResponse.timePassed(input.model.listSpacesRequest, input.ctx.now)
         }
       }
     }
 
     case 'clicked-space-card': {
       return {
-        model,
+        model: input.model,
         msgCmd: [
           pushRoute({
             n: 'spaces',
             t: 'space',
-            spaceId: msg.spaceId
+            spaceId: input.msg.spaceId
           }),
           playSound(APP_SOUND.navForwardMin)
         ]
@@ -103,24 +89,24 @@ const update: SpaceClientModule['update'] = (input) => {
     }
   }
 
-  switch (msgServer?.t) {
+  switch (input.msgServer?.t) {
     case 'listed-spaces': {
       const merged = Spaces.mergeMany({
-        model,
-        spaces: msgServer.spaces
+        model: input.model,
+        spaces: input.msgServer.spaces
       })
       return {
         model: {
-          ...model,
+          ...input.model,
           spaceIdByUserId: merged.spaceIdByUserId,
           spaces: merged.spaces,
-          listSpacesRequest: RequestResponse.response(model.listSpacesRequest, ctx.now, Ok(null))
+          listSpacesRequest: RequestResponse.response(input.model.listSpacesRequest, input.ctx.now, Ok(null))
         }
       }
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 //
@@ -143,44 +129,39 @@ const toSpaces = (model: Spaces.Model) => {
 }
 
 const View: SpaceClientModule['View'] = (input) => {
-  const currentUserId = input.ctx.currentUserId
-
-  if (!currentUserId) {
+  if (!input.ctx.currentUserId) {
     return null
   }
 
-  const currentUserSpaceId = input.model.spaceIdByUserId[currentUserId]
+  const currentUserSpaceId = input.model.spaceIdByUserId[input.ctx.currentUserId]
 
   const spaces = toSpaces(input.model)
+
+  const showSpinner = input.model.listSpacesRequest.t === 'loading'
 
   return (
     <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
       <TopBar onBack={false} ctx={input.ctx} center title={input.ctx.t('spaces.spaces')} />
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>
-        {spaces.length === 0 && (
+        {!showSpinner && spaces.length === 0 && (
           <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
         )}
 
         <div className='flex w-full flex-1 flex-col gap-5 p-5'>
-          {spaces.flatMap((state) => {
-            return (
-              <ViewSpaceCard
-                key={state.spaceId}
-                ctx={{
-                  ...input.ctx,
-                  currentUserId
-                }}
-                onClick={() => {
-                  input.dispatch({
-                    t: 'clicked-space-card',
-                    spaceId: state.spaceId
-                  })
-                }}
-                state={state}
-              />
-            )
-          })}
+          {spaces.flatMap((state) => (
+            <ViewSpaceCard
+              key={state.spaceId}
+              ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
+              onClick={() => input.dispatch({ t: 'clicked-space-card', spaceId: state.spaceId })}
+              state={state}
+            />
+          ))}
+          {showSpinner && (
+            <div className='flex w-full items-center justify-center p-4'>
+              <Spinner />
+            </div>
+          )}
         </div>
       </div>
 

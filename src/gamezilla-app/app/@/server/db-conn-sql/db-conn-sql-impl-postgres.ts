@@ -6,14 +6,13 @@ import type { ILogger } from '../logger/logger'
 import type { IDbConnSql } from './db-conn-sql'
 import { logQuery } from './shared'
 
-export const DbConnPostgres = async ({
-  databaseUrl,
-  logger
-}: {
+export type Config = {
   databaseUrl: string
   logger: ILogger
-}): Promise<IDbConnSql> => {
-  const client = postgres(databaseUrl)
+}
+
+export const DbConnPostgres = async (config: Config): Promise<IDbConnSql> => {
+  const client = postgres(config.databaseUrl)
 
   return {
     async query(rowParser, rawSql, params) {
@@ -26,7 +25,7 @@ export const DbConnPostgres = async ({
         const end = Date.now()
 
         logQuery({
-          logger,
+          logger: config.logger,
           sql: Sql.toLog(rawSql, params),
           start,
           end
@@ -54,7 +53,7 @@ export const DbConnPostgres = async ({
 
         return Ok(output)
       } catch (error) {
-        logger.error(`${error} sql=${sql}`)
+        config.logger.error(`${error} sql=${sql}`)
         return Err(String(error))
       }
     },
@@ -64,7 +63,7 @@ export const DbConnPostgres = async ({
         await client.notify(channel, payload)
         return Ok(null)
       } catch (error) {
-        logger.error(`${error} channel=${channel} payload=${payload}`)
+        config.logger.error(`${error} channel=${channel} payload=${payload}`)
         return Err(String(error))
       }
     },

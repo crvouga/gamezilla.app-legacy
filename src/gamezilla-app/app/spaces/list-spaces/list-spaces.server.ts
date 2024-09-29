@@ -2,7 +2,6 @@ import { Result } from 'gamezilla-app/@/core'
 import { sendToClient } from 'gamezilla-app/app/@/server'
 import type { SpaceServerModule } from '../architecture/space-server'
 import * as Space from '../spaces-core/space-core'
-import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 
 //
 //
@@ -13,29 +12,26 @@ import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 //
 
 const update: SpaceServerModule['update'] = async (input) => {
-  const { msgClient, deps } = input
-
-  switch (msgClient?.t) {
+  switch (input.msgClient?.t) {
     case 'list-spaces': {
-      const spaces = await SpacesCoreServer.listSpaces({
-        spacesDb: input.deps.spaceCoreDb,
-        limit: msgClient.limit,
-        offset: msgClient.offset,
-        where: msgClient.where
-      })
+      const listed = await input.deps.spaceCoreDb.list(input.msgClient)
 
-      const started = spaces.map(Space.startFromLatestSnapshot)
+      const spaces = Result.withDefault(listed, [])
 
-      const userIds = spaces.flatMap((space) => Space.toUserIds(space))
+      const started = spaces
+      // This causing a bug I can't replicate within a unit test
+      // .map(Space.startFromLatestSnapshot)
 
-      const profiles = Result.withDefault(await deps.profileCache.get(userIds), {})
+      const userIds = spaces.flatMap(Space.toUserIds)
+
+      const profiles = Result.withDefault(await input.deps.profileCache.get(userIds), {})
 
       return {
         msgCmd: [
-          sendToClient(msgClient, {
+          sendToClient(input.msgClient, {
             t: 'listed-spaces',
             spaces: started,
-            causedBy: { msgClient },
+            causedBy: { msgClient: input.msgClient },
             profiles
           })
         ]

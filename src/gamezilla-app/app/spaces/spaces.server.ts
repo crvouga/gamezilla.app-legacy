@@ -38,6 +38,7 @@ export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
     }),
     gameServer: GameServer.initCtx({
       ctx: {
+        sleep: async () => null,
         clientId: ClientId.generate(),
         dbConnKv: ctx.dbConnKv,
         dbConnSql: ctx.dbConnSql,

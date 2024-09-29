@@ -6,7 +6,7 @@ import * as SpaceCore from '../space-core'
 import type { SpaceCoreEvent } from '../space-core-event'
 import type * as SpaceState from '../space-core-state'
 import { SpacesDb } from './spaces-core-db'
-import type { ISpacesDb, SpacesDbWhere } from './spaces-core-db/spaces-core-db'
+import type { ISpacesDb } from './spaces-core-db/spaces-core-db'
 
 //
 //
@@ -26,24 +26,6 @@ const initDeps = async (input: { dbConnKv: IDbConnKv }): Promise<Deps> => {
       dbConnKv: input.dbConnKv
     })
   }
-}
-
-const listSpaces = async (input: {
-  spacesDb: ISpacesDb
-  limit: number
-  offset: number
-  where?: SpacesDbWhere
-  sort?: 'newest' | 'oldest'
-}): Promise<SpaceCore.Model[]> => {
-  const listed = await input.spacesDb.list({
-    limit: input.limit,
-    offset: input.offset,
-    where: input.where
-  })
-
-  const spaces = Result.withDefault(listed, [])
-
-  return spaces
 }
 
 const getSpaceById = async (spacesDb: ISpacesDb, spaceId: SpaceId): Promise<SpaceCore.Model> => {
@@ -134,7 +116,6 @@ const hasEvent = async (spacesDb: ISpacesDb, spaceId: SpaceId, eventId: EventId)
 
 export const SpacesCoreServer = {
   initDeps,
-  listSpaces,
   getSpaceById,
   getSpaceStarted,
   update,
