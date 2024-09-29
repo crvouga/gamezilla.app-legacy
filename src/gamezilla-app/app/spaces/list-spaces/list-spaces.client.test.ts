@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'bun:test'
-import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk } from 'gamezilla-app/@/core'
+import { describe, expect, it, test } from 'bun:test'
+import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk, pipe } from 'gamezilla-app/@/core'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import { APP_SOUND, didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
+import { SpaceId } from 'gamezilla-app/app/@/data'
+import { withId } from '../@/event'
 import { FixtureSpaceClient } from '../@/fixture/client'
 import { SpaceCore } from '../spaces-core'
 import * as SpaceClient from '../spaces.client'
@@ -246,5 +248,33 @@ describe(import.meta.file, () => {
       }
     ])
     expect(didPlaySound(updated, APP_SOUND.navBackwardMin)).toBe(true)
+  })
+
+  test('listing stale space should not override current state', async () => {
+    const f = await Fixture()
+
+    const spaceId = SpaceId.generate()
+    const hostId = f.currentUser.userId
+
+    const space = pipe(SpaceCore.random({ spaceId, hostId }), (model) =>
+      SpaceCore.appendEvent({
+        model,
+        event: withId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId })
+      })
+    )
+
+    const listedSpace = SpaceCore.startFromLatestSnapshot(space)
+    const updated = f.update(f.initial, [
+      { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
+      { msg: { t: 'game', c: { t: 'flow', c: { t: 'game-main-menu/clicked-exit-game-button' } }, spaceId } },
+      { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
+      { msgServer: { t: 'current-user-space', currentUser: f.currentUser, space: listedSpace } }
+    ])
+
+    const before = SpaceCore.toSpaceStarted(space)
+    const after = SpaceCore.toSpaceStarted(updated.model.spaces[spaceId])
+
+    expect(before?.game?.t ?? null).toEqual('flow')
+    expect(after?.game?.t ?? null).toEqual(null)
   })
 })

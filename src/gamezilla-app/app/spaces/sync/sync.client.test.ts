@@ -17,7 +17,7 @@ import {
 } from '../@/fixture/client'
 import { makeSpace } from '../@/fixture/shared'
 import { SpaceCore } from '../spaces-core'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 
 const hasExcatlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1

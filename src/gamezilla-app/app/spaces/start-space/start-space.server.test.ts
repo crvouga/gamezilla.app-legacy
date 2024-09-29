@@ -2,9 +2,9 @@ import { describe, expect, it } from 'bun:test'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
-import { randomAuthenticatedClient, initDeps, init, userStartedSpace } from '../@/fixture/server'
+import { init, initDeps, randomAuthenticatedClient, userStartedSpace } from '../@/fixture/server'
 import { SpaceCore } from '../spaces-core'
-import * as SpacesCoreServer from '../spaces-core/spaces-core.server'
+import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 
 describe(import.meta.file, () => {
   it('should add a new space when recieving a user started space event', async () => {

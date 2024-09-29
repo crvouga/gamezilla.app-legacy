@@ -11,7 +11,7 @@ import {
   userLeftSpace,
   userStartedSpace
 } from '../@/fixture/client'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 import { withEventMeta } from '../@/event'
 
 const Fixture = async () => {

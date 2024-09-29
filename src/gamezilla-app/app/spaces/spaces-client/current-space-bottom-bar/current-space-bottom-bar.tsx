@@ -2,7 +2,7 @@ import { APP_SOUND, type ClientCtx, playSound, pushRoute } from 'gamezilla-app/a
 import { Avatar, Button, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientModule } from '../../architecture/space-client'
 import { CoverArt } from '../../game/game-cover-art'
-import * as SpacesCoreClient from '../../spaces-core/spaces-core.client'
+import * as SpacesCoreClient from '../../spaces-core/spaces-core-client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../spaces.types'
 
 const update: SpaceClientModule['update'] = ({ model, msg, ctx }) => {

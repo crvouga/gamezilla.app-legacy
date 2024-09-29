@@ -5,7 +5,7 @@ import { IconGamepad, TopBar } from 'gamezilla-app/app/@/ui'
 import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
 import type { SpaceClientModule } from '../architecture/space-client'
 import type { SpaceCoreState } from '../spaces-core'
-import * as Spaces from '../spaces-core/spaces-core.client'
+import * as Spaces from '../spaces-core/spaces-core-client/spaces-core.client'
 import { StartSpaceClient } from '../start-space/start-space.client'
 import { ViewSpaceCard } from './space-card'
 

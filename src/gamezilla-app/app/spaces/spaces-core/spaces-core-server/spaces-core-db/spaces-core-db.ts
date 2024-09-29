@@ -1,6 +1,6 @@
-import type { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { Task } from 'gamezilla-app/@/core'
-import type * as SpaceCore from '../space-core'
+import type { SpaceId, UserId } from 'gamezilla-app/app/@/data'
+import type * as SpaceCore from '../../space-core'
 
 export type SpacesDbWhere = {
   spaceId?: SpaceId
