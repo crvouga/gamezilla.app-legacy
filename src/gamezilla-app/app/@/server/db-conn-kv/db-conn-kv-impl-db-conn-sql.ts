@@ -9,13 +9,18 @@ const Row = p.obj({
   value: p.str
 })
 
-export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger: ILogger }): Promise<IDbConnKv> => {
+export type Config = {
+  dbConnSql: IDbConnSql
+  logger: ILogger
+}
+
+export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
   return {
     async get(key, parser) {
       try {
         const start = process.hrtime.bigint()
 
-        const queried = await dbConn.query(Row, 'SELECT key, value FROM key_value WHERE key = :key', {
+        const queried = await config.dbConnSql.query(Row, 'SELECT key, value FROM key_value WHERE key = :key', {
           key: key
         })
 
@@ -23,7 +28,7 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
 
         const durationInMicroseconds = (end - start) / BigInt(1000)
 
-        logger.info(`duration=${durationInMicroseconds}µs get: key=${key}`)
+        config.logger.info(`duration=${durationInMicroseconds}µs get: key=${key}`)
 
         if (isErr(queried)) {
           return queried
@@ -43,7 +48,7 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
           case 'err': {
             const errorStr = JSON.stringify(parsed.error, null, 2)
 
-            logger.error(`get: not a value: ${key} ${errorStr}`)
+            config.logger.error(`get: not a value: ${key} ${errorStr}`)
 
             return Ok(null)
           }
@@ -52,7 +57,7 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
           }
         }
       } catch (e) {
-        logger.error(`get: ${key} ${String(e)}`)
+        config.logger.error(`get: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -63,13 +68,17 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
 
         const keysStr = keys.map((key) => `'${key}'`).join(', ')
 
-        const queried = await dbConn.query(Row, `SELECT key, value FROM key_value WHERE key IN (${keysStr})`, {})
+        const queried = await config.dbConnSql.query(
+          Row,
+          `SELECT key, value FROM key_value WHERE key IN (${keysStr})`,
+          {}
+        )
 
         const end = process.hrtime.bigint()
 
         const durationInMicroseconds = (end - start) / BigInt(1000)
 
-        logger.info(`duration=${durationInMicroseconds}µs get: keys=${keys.join(', ')}`)
+        config.logger.info(`duration=${durationInMicroseconds}µs get: keys=${keys.join(', ')}`)
 
         if (isErr(queried)) {
           return queried
@@ -85,7 +94,7 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
           if (isErr(parsed)) {
             const errorStr = JSON.stringify(parsed.error, null, 2)
 
-            logger.error(`get: not a value: ${row.key} ${errorStr}`)
+            config.logger.error(`get: not a value: ${row.key} ${errorStr}`)
 
             continue
           }
@@ -95,14 +104,14 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
 
         return Ok(rows)
       } catch (e) {
-        logger.error(`get: ${keys.join(', ')} ${String(e)}`)
+        config.logger.error(`get: ${keys.join(', ')} ${String(e)}`)
         return Err(String(e))
       }
     },
 
     async set(key, value) {
       try {
-        const queried = await dbConn.query(
+        const queried = await config.dbConnSql.query(
           Row,
           'INSERT INTO key_value (key, value) VALUES (:key, :value) ON CONFLICT (key) DO UPDATE SET value = :value',
           {
@@ -117,7 +126,7 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
 
         return Ok(null)
       } catch (e) {
-        logger.error(`set: ${key} ${String(e)}`)
+        config.logger.error(`set: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -130,7 +139,7 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
       try {
         const valuesStr = entries.map(([key, value]) => `('${key}', '${JSON.stringify(value)}')`).join(', ')
 
-        const queried = await dbConn.query(
+        const queried = await config.dbConnSql.query(
           Row,
           `INSERT INTO key_value (key, value) VALUES ${valuesStr} ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
           {}
@@ -142,20 +151,20 @@ export const DbConnKv = async ({ logger, dbConn }: { dbConn: IDbConnSql; logger:
 
         return Ok(null)
       } catch (e) {
-        logger.error(`setMany: ${String(e)}`)
+        config.logger.error(`setMany: ${String(e)}`)
         return Err(String(e))
       }
     },
 
     async zap(key) {
       try {
-        const queried = await dbConn.query(Row, 'DELETE FROM key_value WHERE key = :key', {
+        const queried = await config.dbConnSql.query(Row, 'DELETE FROM key_value WHERE key = :key', {
           key: key
         })
 
         return Result.mapOk(queried, () => null)
       } catch (e) {
-        logger.error(`zap: ${key} ${String(e)}`)
+        config.logger.error(`zap: ${key} ${String(e)}`)
         return Err(String(e))
       }
     }
