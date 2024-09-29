@@ -1,4 +1,4 @@
-import type { ResultPrivate } from '../../result/result'
+import type { ResultInternal } from '../../result/result'
 
 export type ParserError = {
   message: string
@@ -6,7 +6,7 @@ export type ParserError = {
 }
 
 export type Parser<T> = {
-  parse: (input: unknown) => ResultPrivate<ParserError[], T>
+  parse: (input: unknown) => ResultInternal<ParserError[], T>
 }
 
 export type Infer<TParser> = TParser extends Parser<infer T> ? T : never

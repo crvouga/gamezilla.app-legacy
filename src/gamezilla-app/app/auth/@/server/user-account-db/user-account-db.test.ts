@@ -120,4 +120,24 @@ describe(import.meta.file, () => {
     })
     expect(found).toEqual(Ok(null))
   })
+
+  it('should error if inserting an account with the same user id twice', async () => {
+    const f = await Fixture()
+    const userId = UserId.generate()
+    const account: UserAccount = {
+      userId,
+      role: 'guest',
+      createdAt: Posix.now({
+        precision: 'seconds'
+      }),
+      phoneNumber: null
+    }
+    await f.userAccountDb.insert({
+      account
+    })
+    const insert = await f.userAccountDb.insert({
+      account
+    })
+    expect(insert.t).toBe('err')
+  })
 })

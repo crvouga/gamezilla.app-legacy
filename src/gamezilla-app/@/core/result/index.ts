@@ -1,19 +1,19 @@
-import { RemoteResultPrivate, ResultPrivate } from './result'
+import { RemoteResultInternal, ResultInternal } from './result'
 import { parser, remoteResultParser } from './result-parser'
 export * from './result'
-export type { ResultPrivate } from './result'
+export type { ResultInternal } from './result'
 export * from './result-parser'
 
-export type Result<TError, TValue> = ResultPrivate<TError, TValue>
+export type Result<TError, TValue> = ResultInternal<TError, TValue>
 
 export const Result = {
   parser,
-  ...ResultPrivate
+  ...ResultInternal
 }
 
-export type RemoteResult<TError, TValue> = RemoteResultPrivate<TError, TValue>
+export type RemoteResult<TError, TValue> = RemoteResultInternal<TError, TValue>
 
 export const RemoteResult = {
   parser: remoteResultParser,
-  ...RemoteResultPrivate
+  ...RemoteResultInternal
 }

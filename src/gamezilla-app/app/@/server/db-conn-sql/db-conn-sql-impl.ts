@@ -1,7 +1,7 @@
 import { Ok } from 'gamezilla-app/@/core'
 import type { ILogger } from '../logger/logger'
 import type { IDbConnSql } from './db-conn-sql'
-import { DbConnPostgres } from './db-conn-sql-impl-pg'
+import { DbConnPostgres } from './db-conn-sql-impl-postgres'
 
 type DbConnSqlImpl =
   | {
@@ -29,7 +29,10 @@ export const DbConnSqlNoop = (): IDbConnSql => {
     async query() {
       return Ok([])
     },
-    async onNotification() {
+    async notify(_channel, _payload) {
+      return Ok(null)
+    },
+    async listen() {
       return () => {}
     }
   }
