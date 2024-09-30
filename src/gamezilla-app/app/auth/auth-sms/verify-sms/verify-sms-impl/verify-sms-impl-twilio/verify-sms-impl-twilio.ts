@@ -7,25 +7,25 @@ export type Deps = {
   logger: ILogger
 }
 
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
+
+if (typeof TWILIO_ACCOUNT_SID !== 'string') {
+  throw new Error('TWILIO_ACCOUNT_SID is required')
+}
+
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN
+
+if (typeof TWILIO_AUTH_TOKEN !== 'string') {
+  throw new Error('TWILIO_AUTH_TOKEN is required')
+}
+
+const TWILIO_MESSAGING_SERVICE_SID = process.env.TWILIO_MESSAGING_SERVICE_SID
+
+if (typeof TWILIO_MESSAGING_SERVICE_SID !== 'string') {
+  throw new Error('TWILIO_MESSAGING_SERVICE_SID is required')
+}
+
 export const VerifySMS = (deps: Deps): IVerifySMS => {
-  const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
-
-  if (typeof TWILIO_ACCOUNT_SID !== 'string') {
-    throw new Error('TWILIO_ACCOUNT_SID is required')
-  }
-
-  const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN
-
-  if (typeof TWILIO_AUTH_TOKEN !== 'string') {
-    throw new Error('TWILIO_AUTH_TOKEN is required')
-  }
-
-  const TWILIO_MESSAGING_SERVICE_SID = process.env.TWILIO_MESSAGING_SERVICE_SID
-
-  if (typeof TWILIO_MESSAGING_SERVICE_SID !== 'string') {
-    throw new Error('TWILIO_MESSAGING_SERVICE_SID is required')
-  }
-
   const twilioAccountSid = TWILIO_ACCOUNT_SID
   const twilioAuthToken = TWILIO_AUTH_TOKEN
   const twilioMessagingServiceSid = TWILIO_MESSAGING_SERVICE_SID
@@ -36,7 +36,7 @@ export const VerifySMS = (deps: Deps): IVerifySMS => {
         const to = PhoneNumber.toString(input.phoneNumber)
         deps.logger.info(`Sending code to ${to}`)
 
-        await fetch(`https://verify.twilio.com/v2/Services/${twilioAccountSid}/Verifications`, {
+        const response = await fetch(`https://verify.twilio.com/v2/Services/${twilioAccountSid}/Verifications`, {
           method: 'POST',
           headers: {
             Authorization: AUTHORIZATION,
@@ -48,7 +48,9 @@ export const VerifySMS = (deps: Deps): IVerifySMS => {
           })
         })
 
-        deps.logger.info(`Sent code to ${to}}`)
+        const json = await response.json()
+
+        deps.logger.info(`Sent code to ${to} successfully: ${JSON.stringify(json)}`)
         return Ok(null)
       } catch (error) {
         deps.logger.error(`Errored while sending code: ${error}`)
