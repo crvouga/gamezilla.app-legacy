@@ -1,6 +1,6 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { SpaceServerCmd } from '../@/space-server-cmd'
-import { SpaceServerModule } from '../architecture/space-server'
+import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 import type { MsgServer } from '../spaces.types'
 import { GameServer } from './game.server'

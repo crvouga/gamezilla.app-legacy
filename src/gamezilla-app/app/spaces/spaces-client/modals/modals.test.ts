@@ -11,7 +11,7 @@ import {
   init
 } from '../../@/fixture/client'
 import { openUserDetails } from '../../@/space-client-cmd'
-import { SpaceClientModule } from '../../architecture/space-client'
+import { SpaceClientModule } from '../../@/architecture/space-client'
 import { Modals } from './modals'
 
 describe(import.meta.file, () => {

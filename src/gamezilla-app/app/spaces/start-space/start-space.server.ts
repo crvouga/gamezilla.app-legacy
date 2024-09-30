@@ -1,4 +1,4 @@
-import { SpaceServerModule } from '../architecture/space-server'
+import { SpaceServerModule } from '../@/architecture/space-server'
 
 const update: SpaceServerModule['update'] = (input) => {
   return SpaceServerModule.andThen({}, () => updateFromSpaceEvent(input))

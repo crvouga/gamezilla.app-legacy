@@ -1,6 +1,6 @@
 import { Result } from 'gamezilla-app/@/core'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { SpaceServerModule } from '../architecture/space-server'
+import type { SpaceServerModule } from '../@/architecture/space-server'
 import * as Space from '../spaces-core/space-core'
 
 //

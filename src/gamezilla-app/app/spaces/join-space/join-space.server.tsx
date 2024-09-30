@@ -1,5 +1,5 @@
 import { sendToUser } from 'gamezilla-app/app/@/server'
-import { SpaceServerModule } from '../architecture/space-server'
+import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceCore } from '../spaces-core'
 import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 

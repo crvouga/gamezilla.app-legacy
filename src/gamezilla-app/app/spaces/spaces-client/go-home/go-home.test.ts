@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { SpaceId } from 'gamezilla-app/app/@/data'
-import { SpaceClientModule } from '../../architecture/space-client'
+import { SpaceClientModule } from '../../@/architecture/space-client'
 import { clickedGoHomeButton, clickedStartSpaceButton, Ctx, init } from '../../@/fixture/client'
 
 describe(import.meta.file, () => {

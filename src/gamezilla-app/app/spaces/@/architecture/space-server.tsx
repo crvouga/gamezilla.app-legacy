@@ -2,11 +2,11 @@ import { type Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { ServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
-import type { WithEventId } from '../@/event'
-import type { Space } from '../@/space'
-import type { SpaceServerCmd } from '../@/space-server-cmd'
-import type { SpaceCoreEvent } from '../spaces-core'
-import type { MsgServer, MsgToClient, MsgToServer, ServerDeps } from '../spaces.types'
+import type { SpaceCoreEvent } from '../../spaces-core'
+import type { MsgServer, MsgToClient, MsgToServer, ServerDeps } from '../../spaces.types'
+import type { WithEventId } from '../event'
+import type { Space } from '../space'
+import type { SpaceServerCmd } from '../space-server-cmd'
 
 type Ctx = ServerCtx & {
   space?: Space

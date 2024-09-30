@@ -2,7 +2,7 @@ import { APP_SOUND, playSound, pushRoute, showToast } from 'gamezilla-app/app/@/
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { Button, IconPlus } from 'gamezilla-app/app/@/ui'
 import { withId } from '../@/event'
-import { SpaceClientModule } from '../architecture/space-client'
+import { SpaceClientModule } from '../@/architecture/space-client'
 import type { SpaceCoreEvent } from '../spaces-core'
 
 const update: SpaceClientModule['update'] = (input) => {

@@ -1,7 +1,7 @@
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { ClientId, SessionId, SpaceId, UserId } from '../@/data'
-import { type Input, type Output, SpaceServerModule } from './architecture/space-server'
+import { type Input, type Output, SpaceServerModule } from './@/architecture/space-server'
 import { GameServer } from './game/game.server'
 import { GameDb } from './game/space-game-db'
 import { SpaceGameServer } from './game/space-game.server'

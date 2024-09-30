@@ -3,7 +3,7 @@ import { APP_SOUND, playSound, pushRoute, sendToServer } from 'gamezilla-app/app
 import type { SpaceId } from 'gamezilla-app/app/@/data'
 import { IconGamepad, Spinner, TopBar } from 'gamezilla-app/app/@/ui'
 import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
-import type { SpaceClientModule } from '../architecture/space-client'
+import type { SpaceClientModule } from '../@/architecture/space-client'
 import type { SpaceCoreState } from '../spaces-core'
 import * as Spaces from '../spaces-core/spaces-core-client/spaces-core.client'
 import { StartSpaceClient } from '../start-space/start-space.client'
