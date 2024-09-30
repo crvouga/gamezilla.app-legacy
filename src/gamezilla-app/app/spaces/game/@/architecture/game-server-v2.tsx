@@ -1,4 +1,4 @@
-import { type Sub } from 'gamezilla-app/@/core'
+import { NonEmpty, type Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { EventId, WithEventId } from 'gamezilla-app/app/spaces/@/event'
@@ -114,7 +114,53 @@ const tagOutput = <
   }
 }
 
+type FixtureUpdateConfig<T extends GameServerModuleTypes> = {
+  update: (input: Input<T>) => Promise<Output<T>>
+  updateCore: (input: { ctx: T['Ctx']; modelCore: T['ModelCore']; msgCore: T['MsgCore'] }) => T['ModelCore']
+  modelCore: T['ModelCore']
+  ctx: T['Ctx']
+}
+
+const fixtureUpdates =
+  <T extends GameServerModuleTypes>(config: FixtureUpdateConfig<T>) =>
+  async (
+    outputs: NonEmpty<Output<T> & { modelCore: T['ModelCore'] }>,
+    inputs: Partial<Input<T>>[]
+  ): Promise<NonEmpty<Output<T> & { modelCore: T['ModelCore'] }>> => {
+    const [input, ...rest] = inputs
+    if (!input) {
+      return outputs
+    }
+    const lastOutput = NonEmpty.last(outputs)
+    const nextOutput = await config.update({
+      ctx: config.ctx,
+      deps: null,
+      modelCore: lastOutput.modelCore,
+      ...input
+    })
+    const msgCore = Msg.batch(input.msgCore, nextOutput.msgCore)
+    const nextModelCore = msgCore.reduce(
+      (modelCore, msgCore) => config.updateCore({ ctx: config.ctx, modelCore, msgCore }),
+      lastOutput.modelCore
+    )
+    const output = {
+      ...nextOutput,
+      modelCore: nextModelCore
+    }
+    return fixtureUpdates(config)([...outputs, output], rest)
+  }
+
+const fixtureUpdate =
+  <T extends GameServerModuleTypes>(config: FixtureUpdateConfig<T>) =>
+  async (output: Output<T>, inputs: Partial<Input<T>>[]): Promise<Output<T> & { modelCore: T['ModelCore'] }> => {
+    const updates = fixtureUpdates(config)
+    const outputs = await updates([{ ...output, modelCore: config.modelCore }], inputs)
+    return NonEmpty.last(outputs)
+  }
+
 export const GameServerModule = {
   andThen,
-  tagOutput
+  tagOutput,
+  fixtureUpdate,
+  fixtureUpdates
 }

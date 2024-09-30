@@ -21,11 +21,7 @@ export const PubSub = <T>({ dbConnSql, channel, logger, encode, decode }: Deps<T
 
   dbConnSql.query(p.unknown, `LISTEN ${channel}`, {})
 
-  dbConnSql.onNotification((notification) => {
-    if (notification.channel !== channel) {
-      return
-    }
-
+  dbConnSql.listen(channel, (notification) => {
     if (notification.payload === undefined) {
       return
     }

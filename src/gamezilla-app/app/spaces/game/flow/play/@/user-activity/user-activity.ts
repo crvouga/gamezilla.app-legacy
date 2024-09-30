@@ -12,7 +12,7 @@ export const UserStartedPuzzle = p.obj({
 export type UserStartedPuzzle = p.Infer<typeof UserStartedPuzzle>
 
 export const UserSolvedPuzzle = p.obj({
-  t: p.l('user-puzzle-puzzle'),
+  t: p.l('user-solved-puzzle'),
   userId: UserId,
   puzzleId: FlowPuzzleId,
   happenedAt: Posix

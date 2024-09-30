@@ -1,9 +1,9 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { SpaceServerCmd } from '../@/space-server-cmd'
 import { SpaceServerModule } from '../architecture/space-server'
-import { GameServer } from './game.server'
-import * as SpacesCoreServer from '../spaces-core/spaces-core.server'
+import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 import type { MsgServer } from '../spaces.types'
+import { GameServer } from './game.server'
 
 const update: SpaceServerModule['update'] = async (input) => {
   const spaceId = inputToSpaceId(input)

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Posix, RequestResponse, TimeSpan } from 'gamezilla-app/@/core'
 import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
-import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/testing/client'
+import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowPack } from '..'
 import { FlowPuzzle } from '../../flow-puzzle'
 import { FlowPackPuzzlesGridClient } from './flow-pack-puzzles-grid.client'

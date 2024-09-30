@@ -3,7 +3,7 @@ import { FeedItem } from '../../@/feed-item'
 import type { SpaceClientCtx } from '../../@/space'
 import { GameClient } from '../../game/game.client'
 import type { SpaceCoreEvent, SpaceCoreState } from '../../spaces-core'
-import * as SpacesCoreClient from '../../spaces-core/spaces-core.client'
+import * as SpacesCoreClient from '../../spaces-core/spaces-core-client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../spaces.types'
 
 const View = ({

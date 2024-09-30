@@ -3,13 +3,13 @@ import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { ClientId, SessionId, SpaceId, UserId } from '../@/data'
 import { type Input, type Output, SpaceServerModule } from './architecture/space-server'
 import { GameServer } from './game/game.server'
-import { JoinSpaceServer } from './join-space/join-space.server'
-import { ListSpacesServer } from './list-spaces/list-spaces.server'
-import { ProfileCache } from './spaces-server/profile-cache'
 import { GameDb } from './game/space-game-db'
 import { SpaceGameServer } from './game/space-game.server'
-import { SpacesDb } from './spaces-core/space-db'
-import * as SpacesCoreServer from './spaces-core/spaces-core.server'
+import { JoinSpaceServer } from './join-space/join-space.server'
+import { ListSpacesServer } from './list-spaces/list-spaces.server'
+import { SpacesCoreServer } from './spaces-core/spaces-core-server'
+import { SpacesDb } from './spaces-core/spaces-core-server/spaces-core-db'
+import { ProfileCache } from './spaces-server/profile-cache'
 import type { ServerModule } from './spaces.types'
 import { StartSpaceServer } from './start-space/start-space.server'
 import { SyncServer } from './sync/sync.server'
@@ -38,6 +38,7 @@ export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
     }),
     gameServer: GameServer.initCtx({
       ctx: {
+        sleep: async () => null,
         clientId: ClientId.generate(),
         dbConnKv: ctx.dbConnKv,
         dbConnSql: ctx.dbConnSql,

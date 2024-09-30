@@ -125,12 +125,7 @@ export const UserAccountDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }):
 				)`,
         row
       )
-
-      if (isErr(inserted)) {
-        return inserted
-      }
-
-      return Ok(null)
+      return Result.mapOk(inserted, () => null)
     }
   }
 }

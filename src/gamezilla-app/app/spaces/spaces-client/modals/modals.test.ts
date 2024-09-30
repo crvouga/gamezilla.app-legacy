@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client.tsx'
-import { didOpenProfile } from 'gamezilla-app/app/@/client/client-cmd.ts'
-import { UserId } from 'gamezilla-app/app/@/data/user-id.ts'
-import { openUserDetails } from '../../@/space-client-cmd.ts'
+import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
+import { didOpenProfile } from 'gamezilla-app/app/@/client/client-cmd'
+import { UserId } from 'gamezilla-app/app/@/data/user-id'
 import {
   changeRoute,
   clickedPeopleButton,
@@ -10,9 +9,10 @@ import {
   clickedUserPreviewLink,
   Ctx,
   init
-} from '../../@/testing/client.ts'
-import { SpaceClientModule } from '../../architecture/space-client.tsx'
-import { Modals } from './modals.tsx'
+} from '../../@/fixture/client'
+import { openUserDetails } from '../../@/space-client-cmd'
+import { SpaceClientModule } from '../../architecture/space-client'
+import { Modals } from './modals'
 
 describe(import.meta.file, () => {
   it('should start with no modals open', async () => {

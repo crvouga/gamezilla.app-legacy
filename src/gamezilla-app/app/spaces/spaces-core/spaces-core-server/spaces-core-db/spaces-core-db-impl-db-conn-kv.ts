@@ -2,18 +2,18 @@ import { Err, Ok, Result, isErr, pipe } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import * as Space from '../space-core'
-import type { ISpacesDb } from './space-db'
+import * as SpaceCore from '../../space-core'
+import type { ISpacesDb } from './spaces-core-db'
 
 export type Deps = {
   dbConnKv: IDbConnKv
 }
 
 export const SpacesDb = (deps: Deps): ISpacesDb => {
-  const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, Space.Model>(
+  const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, SpaceCore.Model>(
     deps.dbConnKv,
     ['spaces', 'space-by-id'],
-    Space.Model
+    SpaceCore.Model
   )
   const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>(
     deps.dbConnKv,
@@ -54,13 +54,13 @@ export const SpacesDb = (deps: Deps): ISpacesDb => {
     },
 
     async upsert(space) {
-      const spaceId = Space.toSpaceId(space)
+      const spaceId = SpaceCore.toSpaceId(space)
 
       if (!spaceId) {
         return Err('Invalid space. Failed to derive spaceId')
       }
 
-      const entries = Space.toUserIds(space).map((userId): [UserId, SpaceId] => [userId, spaceId])
+      const entries = SpaceCore.toUserIds(space).map((userId): [UserId, SpaceId] => [userId, spaceId])
 
       const allSpaceIds = new Set(Result.withDefault(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? [])
       allSpaceIds.add(spaceId)

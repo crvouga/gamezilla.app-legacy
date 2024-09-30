@@ -5,7 +5,7 @@ import { DbConnPostgres } from './db-conn-sql-impl-postgres'
 
 type DbConnSqlImpl =
   | {
-      t: 'postgres'
+      t: 'pg'
       databaseUrl: string
       logger: ILogger
     }
@@ -18,7 +18,7 @@ export const DbConnSql = async (impl: DbConnSqlImpl): Promise<IDbConnSql> => {
     case 'noop': {
       return DbConnSqlNoop()
     }
-    case 'postgres': {
+    case 'pg': {
       return DbConnPostgres(impl)
     }
   }
@@ -29,7 +29,10 @@ export const DbConnSqlNoop = (): IDbConnSql => {
     async query() {
       return Ok([])
     },
-    async onNotification() {
+    async notify(_channel, _payload) {
+      return Ok(null)
+    },
+    async listen() {
       return () => {}
     }
   }

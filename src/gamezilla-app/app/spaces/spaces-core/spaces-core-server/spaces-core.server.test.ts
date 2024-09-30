@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import { withId } from '../@/event'
-import { SpacesDb } from './space-db/space-db-impl'
-import * as SpacesCoreServer from './spaces-core.server'
+import { withId } from '../../@/event'
+import { SpacesDb } from './spaces-core-db/spaces-core-db-impl'
+import { SpacesCoreServer } from './spaces-core.server'
 
 const Fixture = async () => {
   const spacesDb = SpacesDb({

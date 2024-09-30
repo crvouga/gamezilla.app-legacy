@@ -1,8 +1,8 @@
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { EventId, type WithEventId } from '../@/event'
-import * as SpaceState from './space-core-state'
-import * as Space from './space-core'
-import type { SpaceCoreEvent } from './space-core-event'
+import { EventId, type WithEventId } from '../../@/event'
+import * as SpaceState from '../space-core-state'
+import * as Space from '../space-core'
+import type { SpaceCoreEvent } from '../space-core-event'
 import { p } from 'gamezilla-app/@/core/parser'
 
 //
@@ -347,14 +347,7 @@ const appendEvent = ({
 }
 
 export const mergeMany = ({ model, spaces }: { model: Model; spaces: Space.Model[] }): Model => {
-  return spaces.reduce(
-    (modelNew, space) =>
-      mergeOne({
-        model: modelNew,
-        space
-      }),
-    model
-  )
+  return spaces.reduce((modelNew, space) => mergeOne({ model: modelNew, space }), model)
 }
 
 export const mergeOne = ({ model, space }: { model: Model; space: Space.Model }): Model => {

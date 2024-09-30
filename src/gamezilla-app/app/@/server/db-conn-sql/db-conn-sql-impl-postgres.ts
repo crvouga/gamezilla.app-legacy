@@ -1,31 +1,18 @@
 import { Err, Ok } from 'gamezilla-app/@/core'
 import type { p } from 'gamezilla-app/@/core/parser'
-import pg from 'pg'
+import { Sql } from 'gamezilla-app/@/sql'
+import postgres from 'postgres'
 import type { ILogger } from '../logger/logger'
 import type { IDbConnSql } from './db-conn-sql'
 import { logQuery } from './shared'
-import { Sql } from 'gamezilla-app/@/sql'
 
-declare global {
-  var pgPool: pg.Pool
-  var pgPoolClient: pg.PoolClient
-}
-
-const connect = async (databaseUrl: string) => {
-  globalThis.pgPool ??= new pg.Pool({
-    connectionString: databaseUrl
-  })
-  globalThis.pgPoolClient ??= await globalThis.pgPool.connect()
-}
-
-export const DbConnPostgres = async ({
-  databaseUrl,
-  logger
-}: {
+export type Config = {
   databaseUrl: string
   logger: ILogger
-}): Promise<IDbConnSql> => {
-  await connect(databaseUrl)
+}
+
+export const DbConnPostgres = async (config: Config): Promise<IDbConnSql> => {
+  const client = postgres(config.databaseUrl)
 
   return {
     async query(rowParser, rawSql, params) {
@@ -33,20 +20,12 @@ export const DbConnPostgres = async ({
       try {
         const start = Date.now()
 
-        let queried: pg.QueryResult<any>
-        try {
-          queried = await pgPool.query(sql)
-        } catch (error) {
-          logger.error(`Errored while querying\nerror=${error}\nsql=${rawSql}`)
-          logger.info('Reconnecting to database to retry query')
-          await connect(databaseUrl)
-          queried = await pgPool.query(sql)
-        }
+        const rows = await client.unsafe(sql)
 
         const end = Date.now()
 
         logQuery({
-          logger,
+          logger: config.logger,
           sql: Sql.toLog(rawSql, params),
           start,
           end
@@ -54,23 +33,14 @@ export const DbConnPostgres = async ({
 
         const output: p.Infer<typeof rowParser>[] = []
 
-        for (let i = 0; i < queried.rows.length; i++) {
-          const row = queried.rows[i]!
-          for (const columnKey in row) {
-            const value = row[columnKey]
-
-            if (value instanceof Date) {
-              row[columnKey] = value.toUTCString()
-            }
-          }
-
+        for (const row of rows) {
           const parsed = rowParser.parse(row)
 
           switch (parsed.t) {
             case 'err': {
               const rowStr = JSON.stringify(row, null, 4)
               const errorStr = JSON.stringify(parsed.error, null, 4)
-              const error = `Failed to parse row\nerror=${errorStr}\nrow=${rowStr}\nsql=${rawSql}`
+              const error = `Failed to parse row\nerror=${errorStr}\nrow=${rowStr}`
               return Err(error)
             }
 
@@ -83,25 +53,31 @@ export const DbConnPostgres = async ({
 
         return Ok(output)
       } catch (error) {
-        console.error(sql, error)
-        logger.error(`${error} sql=${rawSql}`)
+        config.logger.error(`${error} sql=${sql}`)
         return Err(String(error))
       }
     },
 
-    async onNotification(callback) {
-      const cb = (notification: pg.Notification) => {
-        callback({
-          processId: notification.processId,
-          channel: notification.channel,
-          payload: notification.payload
-        })
+    async notify(channel, payload) {
+      try {
+        await client.notify(channel, payload)
+        return Ok(null)
+      } catch (error) {
+        config.logger.error(`${error} channel=${channel} payload=${payload}`)
+        return Err(String(error))
       }
+    },
 
-      pgPoolClient.on('notification', cb)
+    async listen(channel, callback) {
+      const listening = await client.listen(channel, (payload) => {
+        callback({
+          channel: channel,
+          payload: payload
+        })
+      })
 
-      return () => {
-        pgPoolClient.off('notification', cb)
+      return async () => {
+        await listening.unlisten()
       }
     }
   }

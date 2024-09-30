@@ -41,7 +41,7 @@ export const isEqual = (left: Model, right: Model) => {
 //
 //
 
-export const random = () => {
+export const random = (input?: { hostId?: UserId; spaceId?: SpaceId }) => {
   return pipe(
     init,
     //
@@ -51,8 +51,8 @@ export const random = () => {
         event: {
           t: 'user-started-space',
           eventId: EventId.generate(),
-          spaceId: SpaceId.generate(),
-          userId: UserId.generate()
+          spaceId: input?.spaceId ?? SpaceId.generate(),
+          userId: input?.hostId ?? UserId.generate()
         }
       })
   )
@@ -255,7 +255,10 @@ export const toSpaceId = (model: Model): SpaceId | null => {
   }
 }
 
-export const toSpaceStarted = (model: Model): SpaceState.Started | null => {
+export const toSpaceStarted = (model: Model | null | undefined): SpaceState.Started | null => {
+  if (!model) {
+    return null
+  }
   const state = deriveState(model)
 
   switch (state.type) {

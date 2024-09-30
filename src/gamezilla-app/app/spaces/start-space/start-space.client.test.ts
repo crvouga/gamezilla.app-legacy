@@ -2,8 +2,8 @@ import { describe, expect, it } from 'bun:test'
 import { didPlaySound, didPushRoute, didSendToServer, didShowToast } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { andThen } from '../../@/architecture/app-client'
-import { Ctx, clickedStartSpaceButton, init } from '../@/testing/client'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import { Ctx, clickedStartSpaceButton, init } from '../@/fixture/client'
+import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 
 describe(import.meta.file, () => {
   it('should show toast when current user starts a space', () => {

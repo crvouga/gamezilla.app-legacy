@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { countPlaySoundCmd } from 'gamezilla-app/app/@/client'
 import { withEventMeta } from '../../@/event'
-import { FlowClientFixture } from './@/testing'
+import { FixtureFlowClient } from './@/fixture-client'
 
 const Fixture = async () => {
-  const f = await FlowClientFixture()
+  const f = await FixtureFlowClient()
   return {
     ...f
   }

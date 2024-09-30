@@ -1,4 +1,4 @@
-export type IconInput = {
+export type IconInput = JSX.IntrinsicAttributes & {
   className?: string
   'aria-label'?: string
   x?: number

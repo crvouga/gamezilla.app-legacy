@@ -39,6 +39,9 @@ export type Deps = {
   auth: AuthServer.Deps
 }
 
+const sleep = (time: TimeSpan) =>
+  new Promise<null>((resolve) => setTimeout(() => resolve(null), TimeSpan.toMilliseconds(time)))
+
 export const initDeps = async ({
   logger,
   server,
@@ -55,7 +58,7 @@ export const initDeps = async ({
   }
 
   const dbConnSql = await DbConnSql({
-    t: 'postgres',
+    t: 'pg',
     databaseUrl,
     logger: ILogger.prefix('db-conn-sql', logger)
   })
@@ -64,7 +67,7 @@ export const initDeps = async ({
 
   const dbConnKv = await pipe(
     DbConnKv({
-      t: 'postgres',
+      t: 'db-conn-sql',
       dbConnSql,
       logger: ILogger.prefix('postgres', loggerDbConnKv)
     }),
@@ -83,7 +86,7 @@ export const initDeps = async ({
         cache: await DbConnKv({
           t: 'hash-map',
           map: LRUCache({
-            maxCapacity: 1000
+            maxCapacity: 2000
           })
         })
       }),
@@ -117,7 +120,8 @@ export const initDeps = async ({
     dbConnSql,
     dbConnKv,
     logger,
-    now: Posix.now()
+    now: Posix.now(),
+    sleep
   }
 
   const profile = await ProfileServer.initDeps({ ctx })
@@ -158,6 +162,7 @@ export const initCtx = () => {
 
 export const init = async (input: { ctx: { now: Posix }; deps: Deps }): Promise<{}> => {
   const ctx: ServerCtx = {
+    sleep: (timeSpan) => new Promise((resolve) => setTimeout(resolve, TimeSpan.toMilliseconds(timeSpan))),
     env: process.env.NODE_ENV === 'production' ? 'prod' : 'dev',
     sms: input.deps.sms,
     dbConnSql: input.deps.dbConnSql,
@@ -187,6 +192,7 @@ export const update = async (input: { msg: MsgServer; ctx: { now: Posix }; deps:
   logMsg({ msg: input.msg, logger: input.deps.logger })
 
   const ctx: ServerCtx = {
+    sleep,
     env: process.env.NODE_ENV === 'production' ? 'prod' : 'dev',
     sms: input.deps.sms,
     dbConnSql: input.deps.dbConnSql,
@@ -374,6 +380,7 @@ export const updateChild = async ({
 
 export const subscriptions = async (input: { deps: Deps; ctx: { now: Posix } }): Promise<Sub<MsgServer>> => {
   const ctx: ServerCtx = {
+    sleep,
     env: process.env.NODE_ENV === 'production' ? 'prod' : 'dev',
     dbConnSql: input.deps.dbConnSql,
     dbConnKv: input.deps.dbConnKv,

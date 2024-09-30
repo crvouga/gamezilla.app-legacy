@@ -8,7 +8,7 @@ import { JoinSpaceClient } from '../join-space/join-space.client'
 import { LeaveSpaceClient } from '../leave-space/leave-space.client'
 import { Feed } from './feed/feed'
 import { Modals } from './modals/modals'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../spaces.types'
 import { SpaceGameClient } from '../game/space-game.client'
 

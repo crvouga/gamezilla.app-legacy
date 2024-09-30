@@ -35,13 +35,13 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   }
 
   const dbConnSql = await DbConnSql({
-    t: 'postgres',
+    t: 'pg',
     databaseUrl: DATABASE_URL,
     logger: ILogger.prefix('db-conn-sql', logger)
   })
 
   const dbConnKv = await DbConnKv({
-    t: 'postgres',
+    t: 'db-conn-sql',
     logger: ILogger.prefix('db-conn-kv', logger),
     dbConnSql
   })
@@ -72,7 +72,8 @@ export const AppServerFixture = async () => {
     }),
     logger,
     now: Posix.now(),
-    sms: SMS({ t: 'fake', logger })
+    sms: SMS({ t: 'fake', logger }),
+    sleep: async () => null
   }
   return {
     ctx

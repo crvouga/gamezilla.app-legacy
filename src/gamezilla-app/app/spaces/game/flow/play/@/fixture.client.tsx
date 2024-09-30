@@ -1,6 +1,6 @@
 import { NonEmpty, PubSub } from 'gamezilla-app/@/core'
 import type { WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { FlowClientFixture } from '../../@/testing'
+import { FixtureFlowClient } from '../../@/fixture-client'
 import { PlayClient } from '../play.client'
 import { PlayCore } from '../play.core'
 import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../play.types'
@@ -12,7 +12,7 @@ export type FixtureUpdateInput = {
 }
 
 export const FixtureFlowPlayClient = async () => {
-  const f = await FlowClientFixture()
+  const f = await FixtureFlowClient()
   const initCore = PlayCore.initCore(f)
 
   type Output = ReturnType<typeof PlayClient.update> & {

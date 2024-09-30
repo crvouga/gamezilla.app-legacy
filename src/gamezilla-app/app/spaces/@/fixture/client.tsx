@@ -1,17 +1,17 @@
 import { NonEmpty, PhoneNumber, Posix, pipe, type TimeSpan } from 'gamezilla-app/@/core'
 import { LamportClock, LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
-import { ClientCmd, ClientEvt, routeChanged, type ClientCtx } from 'gamezilla-app/app/@/client'
+import { routeChanged, type ClientCtx } from 'gamezilla-app/app/@/client'
 import { FixtureAppClient } from 'gamezilla-app/app/@/client/client-test-env'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
-import { ProfileAvatar, SpaceId, UserId, Username, type Profile } from 'gamezilla-app/app/@/data'
+import { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
+import { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { GameName } from '../../game/@/game-name'
 import { SpaceCore, type SpaceCoreEvent } from '../../spaces-core'
 import * as SpaceClient from '../../spaces.client'
 import type * as SpacesTypes from '../../spaces.types'
 import type { SpaceClientCtx } from '../space'
-import { GameName } from '../../game/@/game-name'
-import { UserAccount } from 'gamezilla-app/app/@/data/account'
 
 //
 //
@@ -108,15 +108,6 @@ export const SoaceClientFixture = async () => {
   }
 }
 
-const randomProfile = (): Profile => {
-  const userId = UserId.generate()
-  return {
-    avatarUrl: ProfileAvatar.random(),
-    userId,
-    username: Username.fromString(`username-${userId}`)
-  }
-}
-
 export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureAppClient(input)
   const currentUser: UserAccount = {
@@ -125,9 +116,9 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
     phoneNumber: PhoneNumber.random(),
     role: 'normal'
   }
-  const userA = randomProfile()
-  const userB = randomProfile()
-  const userC = randomProfile()
+  const userA = await Profile.random()
+  const userB = await Profile.random()
+  const userC = await Profile.random()
 
   const spaceId = SpaceId.generate()
 
@@ -151,8 +142,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
   )
 
   const ctx: SpaceClientCtx = {
-    navigatorLanguage: 'en',
-    t: Translator('en'),
+    ...f.ctx,
     currentRoute: {
       n: 'spaces',
       t: 'space-list'
@@ -162,7 +152,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
     documentVisibilityState: 'visible',
     now: Posix.now(),
     profiles: {
-      [currentUser.userId]: { ...randomProfile(), userId: currentUser.userId },
+      [currentUser.userId]: { ...(await Profile.random()), userId: currentUser.userId },
       [userA.userId]: userA,
       [userB.userId]: userB,
       [userC.userId]: userC
@@ -171,16 +161,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
     currentUser
   }
 
-  type Input = {
-    ctx?: ClientCtx | null
-    msg?: SpacesTypes.MsgClient | null
-    msgCmd?: ClientCmd<{
-      MsgClient: SpacesTypes.MsgClient
-      MsgToServer: SpacesTypes.MsgToServer
-    }> | null
-    msgServer?: SpacesTypes.MsgToClient | null
-    msgEvt?: ClientEvt | null
-  }
+  type Input = Partial<Parameters<typeof SpaceClient.update>[0]>
 
   type Output = ReturnType<typeof SpaceClient.update>
 
@@ -189,10 +170,9 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
     for (const input of inputs) {
       const lastOutput = NonEmpty.last(outputs)
       const output = SpaceClient.update({
+        ...input,
         ctx: input.ctx ?? ctx,
-        model: lastOutput.model,
-        msg: input.msg,
-        msgServer: input.msgServer
+        model: lastOutput.model
       })
       outputs.push(output)
     }
@@ -201,6 +181,10 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
 
   const update = (initial: Output, inputs: Input[]): Output => {
     return NonEmpty.last(updates(initial, inputs))
+  }
+
+  const view = (input: { model: SpacesTypes.ModelClient }) => {
+    return f.render(<SpaceClient.View ctx={ctx} dispatch={() => {}} {...input} />)
   }
 
   return {
@@ -212,7 +196,8 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
     userB,
     userC,
     updates,
-    update
+    update,
+    view
   }
 }
 

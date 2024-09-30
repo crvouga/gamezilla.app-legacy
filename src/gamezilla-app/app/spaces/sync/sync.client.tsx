@@ -1,7 +1,7 @@
 import { addProfiles, sendToServer } from 'gamezilla-app/app/@/client'
 import { SpaceClientModule } from '../architecture/space-client'
 import { SpaceCore } from '../spaces-core'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

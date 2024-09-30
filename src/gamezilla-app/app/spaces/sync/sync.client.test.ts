@@ -14,10 +14,10 @@ import {
   serverConnected,
   userEndedSpace,
   userStartedSpace
-} from '../@/testing/client'
-import { makeSpace } from '../@/testing/shared'
+} from '../@/fixture/client'
+import { makeSpace } from '../@/fixture/shared'
 import { SpaceCore } from '../spaces-core'
-import * as SpacesCoreClient from '../spaces-core/spaces-core.client'
+import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 
 const hasExcatlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
@@ -90,7 +90,7 @@ describe(import.meta.file, () => {
     expect(
       hasExcatlyOne(
         output.msgCmd ?? [],
-        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-server' && msgCmd.c.msg?.t === 'sync'
+        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-server' && msgCmd.c.toServer?.t === 'sync'
       )
     ).toBe(true)
   })
@@ -111,8 +111,8 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-server' &&
-          msgCmd.c.msg?.t === 'event' &&
-          msgCmd.c.msg?.c.t === 'user-joined-space'
+          msgCmd.c.toServer?.t === 'event' &&
+          msgCmd.c.toServer?.c.t === 'user-joined-space'
       )
     ).toBe(true)
   })
@@ -127,8 +127,8 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-server' &&
-          msgCmd.c.msg?.t === 'event' &&
-          msgCmd.c.msg?.c.t === 'user-ended-space'
+          msgCmd.c.toServer?.t === 'event' &&
+          msgCmd.c.toServer?.c.t === 'user-ended-space'
       )
     ).toBe(true)
   })

@@ -9,8 +9,8 @@ import {
   initDeps,
   init,
   userStartedSpace
-} from '../@/testing/server'
-import { makeSpace } from '../@/testing/shared'
+} from '../@/fixture/server'
+import { makeSpace } from '../@/fixture/shared'
 
 describe(import.meta.file, () => {
   it("should send user's space when they connect to the server", async () => {

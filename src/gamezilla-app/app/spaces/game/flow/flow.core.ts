@@ -4,7 +4,7 @@ import { BuilderCore } from './builder/builder.core'
 import type { ModelCore, MsgCore } from './flow.types'
 import { PlayCore } from './play/play.core'
 
-export const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
+const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
   return {
     mode: null,
     builder: BuilderCore.initCore(input),
@@ -12,7 +12,7 @@ export const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
   }
 }
 
-export const updateCore = ({
+const updateCore = ({
   ctx,
   msgCore,
   modelCore
@@ -79,4 +79,9 @@ export const updateCore = ({
       }
     }
   }
+}
+
+export const FlowCore = {
+  initCore,
+  updateCore
 }

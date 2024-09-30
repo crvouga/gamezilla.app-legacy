@@ -12,8 +12,8 @@ import type * as Game from './game/game.types'
 import type { IGameDb } from './game/space-game-db'
 import type * as Space from './spaces-core/space-core'
 import type { SpaceCoreEvent } from './spaces-core/space-core-event'
-import type { ISpacesDb } from './spaces-core/space-db'
-import type * as Spaces from './spaces-core/spaces-core.client'
+import type * as Spaces from './spaces-core/spaces-core-client/spaces-core.client'
+import { ISpacesDb } from './spaces-core/spaces-core-server/spaces-core-db'
 import type { IProfileCache } from './spaces-server/profile-cache'
 
 //
