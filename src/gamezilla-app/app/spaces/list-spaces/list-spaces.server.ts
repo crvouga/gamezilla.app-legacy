@@ -18,9 +18,7 @@ const update: SpaceServerModule['update'] = async (input) => {
 
       const spaces = Result.withDefault(listed, [])
 
-      const started = spaces
-      // This causing a bug I can't replicate within a unit test
-      // .map(Space.startFromLatestSnapshot)
+      const started = spaces.map(Space.startFromLatestSnapshot)
 
       const userIds = spaces.flatMap(Space.toUserIds)
 

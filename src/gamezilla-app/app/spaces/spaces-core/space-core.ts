@@ -83,22 +83,19 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 
     if (snapshot) {
       return {
-        eventIds: events.reduce<Model['eventIds']>((acc, event) => {
-          acc[event.eventId] = event.eventId
-          return acc
-        }, {}),
+        eventIds,
+        events,
         clock: model.clock,
-        events: events,
         snapshots: CappedOrderedDict.add(init.snapshots, event.eventId, snapshot)
       }
     }
   }
 
   return {
+    events,
+    eventIds,
     clock: model.clock,
-    events: events,
-    snapshots: init.snapshots,
-    eventIds: eventIds
+    snapshots: init.snapshots
   }
 }
 
