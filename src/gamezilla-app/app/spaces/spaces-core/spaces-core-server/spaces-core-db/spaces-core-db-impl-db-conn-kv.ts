@@ -5,11 +5,11 @@ import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import * as SpaceCore from '../../space-core'
 import type { ISpacesDb } from './spaces-core-db'
 
-export type Deps = {
+export type Config = {
   dbConnKv: IDbConnKv
 }
 
-export const SpacesDb = (deps: Deps): ISpacesDb => {
+export const SpacesDb = (deps: Config): ISpacesDb => {
   const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, SpaceCore.Model>(
     deps.dbConnKv,
     ['spaces', 'space-by-id'],
@@ -100,6 +100,23 @@ export const SpacesDb = (deps: Deps): ISpacesDb => {
       }
 
       return Ok(Boolean(got.value && eventId in got.value.eventIds))
+    },
+
+    async update(spaceEvent) {
+      const maybeSpace = Result.withDefault(await spacesBySpaceId.get(spaceEvent.spaceId), null)
+
+      const space = maybeSpace ?? SpaceCore.init
+
+      const spaceNew = SpaceCore.appendEvent({
+        event: spaceEvent,
+        model: space
+      })
+
+      return this.upsert(spaceNew)
+    },
+
+    async getWithFallback(spaceId) {
+      return Result.withDefault(await this.get(spaceId), null) ?? SpaceCore.init
     }
   }
 }

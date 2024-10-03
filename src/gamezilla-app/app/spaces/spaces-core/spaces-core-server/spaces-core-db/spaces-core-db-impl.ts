@@ -1,7 +1,7 @@
 import type { ISpacesDb } from './spaces-core-db'
 import * as ImplDbConnKv from './spaces-core-db-impl-db-conn-kv'
 
-export type Impl = ImplDbConnKv.Deps & {
+export type Impl = ImplDbConnKv.Config & {
   t: 'db-conn-kv'
 }
 

@@ -1,7 +1,8 @@
 import type { Task } from 'gamezilla-app/@/core'
 import type { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { EventId } from 'gamezilla-app/app/spaces/@/event'
+import { EventId, WithEventId } from 'gamezilla-app/app/spaces/@/event'
 import type * as SpaceCore from '../../space-core'
+import { SpaceCoreEvent } from '../../space-core-event'
 
 export type SpacesDbWhere = {
   spaceId?: SpaceId
@@ -13,9 +14,13 @@ export type ISpacesDb = {
 
   get: (spaceId: SpaceId | null) => Task<string, SpaceCore.Model | null>
 
+  getWithFallback: (spaceId: SpaceId | null) => Promise<SpaceCore.Model>
+
   getByUserId: (userId: UserId) => Task<string, SpaceCore.Model | null>
 
   upsert: (space: SpaceCore.Model) => Task<string, null>
 
   hasEvent: (spaceId: SpaceId, eventId: EventId) => Task<string, boolean>
+
+  update: (spaceEvent: WithEventId<SpaceCoreEvent>) => Task<string, null>
 }

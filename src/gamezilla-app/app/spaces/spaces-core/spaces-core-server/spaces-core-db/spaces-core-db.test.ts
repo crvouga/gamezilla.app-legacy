@@ -1,16 +1,20 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Ok } from 'gamezilla-app/@/core'
+import { Ok, unwrap } from 'gamezilla-app/@/core'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import * as SpaceCore from '../../space-core'
 import { SpacesDb } from './spaces-core-db-impl'
+import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
+import { withId } from 'gamezilla-app/app/spaces/@/event'
 
 const Fixture = async () => {
   const spacesDb = SpacesDb({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'hash-map' }) })
 
-  const spaceA = SpaceCore.random()
+  const spaceId = SpaceId.generate()
+  const spaceA = SpaceCore.random({ spaceId })
 
   return {
     spacesDb,
+    spaceId,
     spaceA
   }
 }
@@ -70,5 +74,30 @@ describe(import.meta.file, () => {
     expect(before).toEqual(Ok(false))
     expect(upserted).toEqual(Ok(null))
     expect(after).toEqual(Ok(true))
+  })
+
+  test('update', async () => {
+    const spaceId = SpaceId.generate()
+    const f = await Fixture()
+    const before = unwrap(await f.spacesDb.get(spaceId))
+    await f.spacesDb.update(
+      withId({
+        t: 'user-started-space',
+        spaceId: spaceId,
+        userId: UserId.generate()
+      })
+    )
+    const after = unwrap(await f.spacesDb.get(spaceId))
+    expect(SpaceCore.toSpaceStarted(before)).toEqual(null)
+    expect(SpaceCore.toSpaceStarted(after)?.type).toEqual('started')
+  })
+
+  test('getWithFallback', async () => {
+    const f = await Fixture()
+    const before = await f.spacesDb.getWithFallback(f.spaceId)
+    await f.spacesDb.upsert(f.spaceA)
+    const after = await f.spacesDb.getWithFallback(f.spaceId)
+    expect(SpaceCore.deriveState(before).type).toEqual('initial')
+    expect(SpaceCore.deriveState(after).type).toEqual('started')
   })
 })

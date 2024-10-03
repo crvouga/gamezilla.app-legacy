@@ -7,13 +7,7 @@ import type * as SpaceState from '../space-core-state'
 import type { ISpacesDb } from './spaces-core-db/spaces-core-db'
 
 const getSpaceById = async (spacesDb: ISpacesDb, spaceId: SpaceId): Promise<SpaceCore.Model> => {
-  const got = await spacesDb.get(spaceId)
-
-  const maybeSpace = Result.withDefault(got, null)
-
-  const space = maybeSpace ?? SpaceCore.init
-
-  return space
+  return Result.withDefault(await spacesDb.get(spaceId), null) ?? SpaceCore.init
 }
 
 const getSpaceStarted = async (spaceDb: ISpacesDb, spaceId?: SpaceId | null): Promise<SpaceState.Started | null> => {
