@@ -1,6 +1,6 @@
 import { UserId } from 'gamezilla-app/app/@/data'
 import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { FlowPack } from '../../../@/flow-pack/flow-pack'
+import { FlowPack } from '../../../@/pack/flow-pack'
 import { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture.client'

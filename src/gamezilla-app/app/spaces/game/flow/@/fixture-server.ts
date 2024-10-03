@@ -5,7 +5,7 @@ import { FixtureSpaceServer } from 'gamezilla-app/app/spaces/@/fixture/server'
 import { FlowCore } from '../flow.core'
 import { FlowServer } from '../flow.server'
 import { ModelCore } from '../flow.types'
-import { FlowPackDb } from './flow-pack/flow-pack-db'
+import { FlowPackDb } from './pack/flow-pack-db'
 import { FlowPuzzleDb } from './flow-puzzle/flow-puzzle-db'
 import type { FlowServerCtx } from './flow-server-ctx'
 

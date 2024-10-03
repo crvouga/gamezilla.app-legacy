@@ -1,6 +1,6 @@
 import { isErr } from 'gamezilla-app/@/core'
-import { FlowPack } from '../../@/flow-pack/flow-pack'
-import { FlowPackPuzzlesGridUI } from '../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui'
+import { FlowPack } from '../../@/pack/flow-pack'
+import { FlowPackPuzzlesGridUI } from '../../@/pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui'
 import type { UpdateCore } from '../builder.types'
 import { EditPackNameCore } from './edit-pack-name/edit-pack-name.core'
 import type { ModelCore } from './screen-pack-builder.types'

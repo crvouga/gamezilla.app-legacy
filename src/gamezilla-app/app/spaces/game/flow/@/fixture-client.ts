@@ -5,8 +5,8 @@ import { FlowClient } from '../flow.client'
 import { FlowCore } from '../flow.core'
 import { ModelCore, MsgClient, MsgCore, MsgToClient } from '../flow.types'
 import type { FlowClientCtx } from './flow-client-ctx'
-import { FlowPackListTypes } from './flow-pack/flow-pack-list'
-import { FlowPackPuzzlesGridTypes } from './flow-pack/flow-pack-puzzles-grid'
+import { FlowPackListTypes } from './pack/flow-pack-list'
+import { FlowPackPuzzlesGridTypes } from './pack/flow-pack-puzzles-grid'
 import { FlowPuzzleListTypes } from './flow-puzzle/flow-puzzle-list'
 
 export const FixtureFlowClient = async () => {

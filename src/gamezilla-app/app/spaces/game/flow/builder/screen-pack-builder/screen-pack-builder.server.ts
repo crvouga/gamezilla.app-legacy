@@ -3,7 +3,7 @@ import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/g
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 
-import { FlowPackPuzzlesGridServer } from '../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server'
+import { FlowPackPuzzlesGridServer } from '../../@/pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server'
 import type { ServerModule } from '../builder.types'
 import { EditPackNameServer } from './edit-pack-name/edit-pack-name.server'
 import { ScreenPackBuilderCore } from './screen-pack-builder.core'

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from 'gamezilla-app/@/core'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
-import { FlowPack } from '../../@/flow-pack/flow-pack'
+import { FlowPack } from '../../@/pack/flow-pack'
 import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
 import { FlowCreateFixtureServer } from '../@/testing/server'
 import type { ModelCore, MsgCore } from '../builder.types'

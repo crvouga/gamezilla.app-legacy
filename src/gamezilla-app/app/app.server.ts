@@ -83,12 +83,7 @@ export const initDeps = async ({
       DbConnKv.withCache({
         logger: ILogger.prefix('with-cache', loggerDbConnKv),
         source: await dbConnKv,
-        cache: await DbConnKv({
-          t: 'hash-map',
-          map: LRUCache({
-            maxCapacity: 2000
-          })
-        })
+        cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
       }),
 
     async (dbConnKv) =>

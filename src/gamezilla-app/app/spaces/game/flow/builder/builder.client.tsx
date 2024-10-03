@@ -1,7 +1,7 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
-import { FlowPackListClient } from '../@/flow-pack/flow-pack-list'
+import { FlowPackListClient } from '../@/pack/flow-pack-list'
 import { FlowPuzzleListClient } from '../@/flow-puzzle/flow-puzzle-list'
 import { initClient, type ClientModule } from './builder.types'
 import { ListTabsClient } from './list-tabs/list-tabs.client'

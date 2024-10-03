@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from 'gamezilla-app/app/@/data'
-import { FlowPack } from '../@/flow-pack/flow-pack'
+import { FlowPack } from '../@/pack/flow-pack'
 import { FlowPuzzle } from '../@/flow-puzzle/flow-puzzle'
 import { CoreFixture } from './@/fixture.core'
 
