@@ -1,52 +1,53 @@
 {
-	"cSpell.words": [
-		"biomejs",
-		"checkmark",
-		"chessboardjs",
-		"cloc",
-		"cmds",
-		"compat",
-		"dbmate",
-		"deinterleave",
-		"dissoc",
-		"dpdm",
-		"Esports",
-		"Esque",
-		"evts",
-		"gamezilla",
-		"gomoku",
-		"heapify",
-		"Lamport",
-		"Lichess",
-		"Obversed",
-		"preact",
-		"Premoves",
-		"Propgation",
-		"pscale",
-		"snabbdom",
-		"Supabase",
-		"swiper",
-		"tailwindcss",
-		"tetris",
-		"tetromino",
-		"Unflip",
-		"unpartition",
-		"upserted",
-		"upserting",
-		"vaul",
-		"vdom"
-	],
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"editor.formatOnPaste": true,
-	"editor.formatOnSave": true,
-	"editor.formatOnType": true,
-	"[typescript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"[typescriptreact]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"[json]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	}
+  "cSpell.words": [
+    "biomejs",
+    "checkmark",
+    "chessboardjs",
+    "cloc",
+    "cmds",
+    "compat",
+    "dbmate",
+    "deinterleave",
+    "dissoc",
+    "dpdm",
+    "Esports",
+    "Esque",
+    "evts",
+    "gamezilla",
+    "gomoku",
+    "heapify",
+    "Lamport",
+    "Lichess",
+    "Obversed",
+    "preact",
+    "Premoves",
+    "Propgation",
+    "pscale",
+    "snabbdom",
+    "Supabase",
+    "swiper",
+    "tailwindcss",
+    "tetris",
+    "tetromino",
+    "Unflip",
+    "unlisten",
+    "unpartition",
+    "upserted",
+    "upserting",
+    "vaul",
+    "vdom"
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

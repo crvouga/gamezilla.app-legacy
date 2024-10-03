@@ -61,7 +61,7 @@ export const TRANSPORT_IMPL = SERVER_IMPL === 'bun' ? 'bun-web-sockets' : 'socke
 //
 //
 
-const SERVER_PORT_LOCAL = 5002
+export const SERVER_PORT_LOCAL = 5002
 const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}`
 const SERVER_URL_NGROK = 'https://gamezilla-server.ngrok.io'
 const SERVER_URL_PROD = 'https://server.gamezilla.app'

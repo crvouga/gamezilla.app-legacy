@@ -134,7 +134,7 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it('should output a client authenitcated event', async () => {
+  it('should output a client authenticated event', async () => {
     const f = await Fixture()
 
     const clientId = ClientId.generate()
