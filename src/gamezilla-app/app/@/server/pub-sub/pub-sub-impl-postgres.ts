@@ -3,7 +3,8 @@ import { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/logger'
 
-export type Deps<T> = {
+export type Config<T> = {
+  t: 'postgres'
   dbConnSql: IDbConnSql
   logger: ILogger
   channel: string
@@ -11,13 +12,13 @@ export type Deps<T> = {
   decode: (msg: string | null) => T
 }
 
-export const PubSub = <T>({ dbConnSql, channel, logger, encode, decode }: Deps<T>): IPubSub<T> => {
+export const PubSub = <T>({ dbConnSql, channel, logger, encode, decode }: Config<T>): IPubSub<T> => {
   const runningSubscriberId = 0
 
   const subscribers = new Map<number, (msg: T) => void>()
 
   const instanceId = Math.random().toString(36).substring(2)
-  const SEPERATOR = '___'
+  const SEPARATOR = '___'
 
   dbConnSql.query(p.unknown, `LISTEN ${channel}`, {})
 
@@ -26,7 +27,7 @@ export const PubSub = <T>({ dbConnSql, channel, logger, encode, decode }: Deps<T
       return
     }
 
-    const [payloadInstanceId, payload] = notification.payload.split(SEPERATOR)
+    const [payloadInstanceId, payload] = notification.payload.split(SEPARATOR)
 
     if (payloadInstanceId === instanceId) {
       return
@@ -36,7 +37,7 @@ export const PubSub = <T>({ dbConnSql, channel, logger, encode, decode }: Deps<T
       return
     }
 
-    logger.info(`recieved notification channel=${channel} instanceId=${instanceId} payload=${payload?.slice(0, 100)}`)
+    logger.info(`received notification channel=${channel} instanceId=${instanceId} payload=${payload?.slice(0, 100)}`)
 
     const msg = decode(payload ?? null)
 
@@ -51,7 +52,7 @@ export const PubSub = <T>({ dbConnSql, channel, logger, encode, decode }: Deps<T
     },
     pub(msg) {
       const payload = encode(msg)
-      dbConnSql.query(p.unknown, `NOTIFY ${channel}, '${instanceId}${SEPERATOR}${payload}'`, {})
+      dbConnSql.query(p.unknown, `NOTIFY ${channel}, '${instanceId}${SEPARATOR}${payload}'`, {})
     },
 
     isSubbed() {
