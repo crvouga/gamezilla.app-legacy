@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { Ok } from 'gamezilla-app/@/core'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import * as SpaceCore from '../../space-core'
@@ -50,5 +50,25 @@ describe(import.meta.file, () => {
     expect(before).toEqual(Ok([]))
     expect(upserted).toEqual(Ok(null))
     expect(after).toEqual(Ok([f.spaceA]))
+  })
+
+  test('hasEvent', async () => {
+    const f = await Fixture()
+
+    const eventId = Object.values(f.spaceA.eventIds)[0]
+    if (!eventId) throw new Error('eventId not found')
+
+    const spaceId = SpaceCore.toSpaceStarted(f.spaceA)?.spaceId
+    if (!spaceId) throw new Error('spaceId not found')
+
+    const before = await f.spacesDb.hasEvent(spaceId, eventId)
+
+    const upserted = await f.spacesDb.upsert(f.spaceA)
+
+    const after = await f.spacesDb.hasEvent(spaceId, eventId)
+
+    expect(before).toEqual(Ok(false))
+    expect(upserted).toEqual(Ok(null))
+    expect(after).toEqual(Ok(true))
   })
 })

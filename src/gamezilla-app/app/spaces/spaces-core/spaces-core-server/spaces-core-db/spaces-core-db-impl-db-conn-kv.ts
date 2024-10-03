@@ -90,6 +90,16 @@ export const SpacesDb = (deps: Deps): ISpacesDb => {
       }
 
       return got
+    },
+
+    async hasEvent(spaceId, eventId) {
+      const got = await spacesBySpaceId.get(spaceId)
+
+      if (isErr(got)) {
+        return Ok(false)
+      }
+
+      return Ok(Boolean(got.value && eventId in got.value.eventIds))
     }
   }
 }
