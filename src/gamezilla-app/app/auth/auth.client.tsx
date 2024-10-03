@@ -10,7 +10,7 @@ import {
   showToast,
   type BaseClientCtx
 } from 'gamezilla-app/app/@/client'
-import { Button, IconMobilePhone, Typography } from 'gamezilla-app/app/@/ui'
+import { Button, IconEnvelope, IconMobilePhone, Typography } from 'gamezilla-app/app/@/ui'
 import { AuthSMSClient } from './auth-sms/auth-sms.client'
 import type { ClientModule, ModelClient, MsgClient } from './auth.types'
 import { ContinueAsGuestClient } from './continue-as-guest/continue-as-guest.client'
@@ -55,36 +55,12 @@ export const init: ClientModule['init'] = (input) => {
 export const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromServer({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateChild({
-        ...input,
-        model
-      }),
-    (model) =>
-      ContinueAsGuestClient.update({
-        ...input,
-        model
-      }),
-    (model) =>
-      LogoutClient.update({
-        ...input,
-        model
-      })
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateChild({ ...input, model }),
+    (model) => ContinueAsGuestClient.update({ ...input, model }),
+    (model) => LogoutClient.update({ ...input, model })
   )
 }
 
@@ -110,14 +86,10 @@ const updateChild: ClientModule['update'] = (input) => {
 }
 
 const updateFromMsg: ClientModule['update'] = (input) => {
-  if (!input.msg) {
-    return { model: input.model }
-  }
-  const { model, msg } = input
-  switch (msg.t) {
+  switch (input.msg?.t) {
     case 'user-clicked-login-with-phone': {
       return {
-        model,
+        model: input.model,
         msgCmd: [
           pushRoute({
             n: 'auth-login',
@@ -127,10 +99,22 @@ const updateFromMsg: ClientModule['update'] = (input) => {
         ]
       }
     }
+    case 'user-clicked-login-with-email': {
+      return {
+        model: input.model,
+        msgCmd: [
+          pushRoute({
+            n: 'auth-login',
+            t: 'login-email-send-link'
+          }),
+          playSound(APP_SOUND.navForwardMin)
+        ]
+      }
+    }
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
@@ -192,18 +176,16 @@ const updateRedirect: ClientModule['update'] = (input) => {
     return { model: input.model }
   }
 
-  const { ctx, msgEvt, model } = input
-
-  switch (msgEvt.t) {
+  switch (input.msgEvt.t) {
     case 'auth/authenticated': {
-      if (!msgEvt.loggedIn) {
+      if (!input.msgEvt.loggedIn) {
         return {
-          model
+          model: input.model
         }
       }
 
       return {
-        model,
+        model: input.model,
         msgCmd: [
           replaceRoute(
             {
@@ -213,7 +195,7 @@ const updateRedirect: ClientModule['update'] = (input) => {
             false
           ),
           playSound(APP_SOUND.celebration),
-          msgEvt.account.role === 'guest'
+          input.msgEvt.account.role === 'guest'
             ? showToast(input.ctx.t('auth.logged-in-as-guest'))
             : showToast(input.ctx.t('auth.logged-in'))
         ]
@@ -221,27 +203,24 @@ const updateRedirect: ClientModule['update'] = (input) => {
     }
 
     case 'routing/route-changed': {
-      if (model.currentUser.t === 'logged-in' && ctx.currentRoute.n === 'auth-login') {
+      if (input.model.currentUser.t === 'logged-in' && input.ctx.currentRoute.n === 'auth-login') {
         return {
-          model,
+          model: input.model,
           msgCmd: [
-            replaceRoute({
-              n: 'spaces',
-              t: 'space-list'
-            }),
+            replaceRoute({ n: 'spaces', t: 'space-list' }),
             showToast(input.ctx.t('auth.current-user-logged-in'))
           ]
         }
       }
 
       return {
-        model
+        model: input.model
       }
     }
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
@@ -254,13 +233,7 @@ const updateRedirect: ClientModule['update'] = (input) => {
 //
 
 export const subscriptions: ClientModule['subscriptions'] = ({ model, ctx }) => {
-  return Sub.tag(
-    'sms',
-    AuthSMSClient.subscriptions({
-      model: model.sms,
-      ctx
-    })
-  )
+  return Sub.tag('sms', AuthSMSClient.subscriptions({ model: model.sms, ctx }))
 }
 
 //
@@ -283,18 +256,18 @@ export const View: ClientModule['View'] = (input) => {
           return (
             <AuthSMSClient.View
               ctx={input.ctx}
-              dispatch={(c) =>
-                input.dispatch({
-                  t: 'sms',
-                  c
-                })
-              }
+              dispatch={(c) => input.dispatch({ t: 'sms', c })}
               model={input.model.sms}
             />
           )
         }
-        default: {
+        case 'login-email-send-link': {
           return null
+          // <AuthEmailClient.View
+          //   ctx={input.ctx}
+          //   dispatch={(c) => input.dispatch({ t: 'sms', c })}
+          //   model={input.model.sms}
+          // />
         }
       }
     }
@@ -318,17 +291,33 @@ const ViewLoginScreen: ClientModule['View'] = (input) => {
         </div>
 
         <div className='flex w-full flex-col gap-6'>
-          <Button
-            onClick={() =>
-              input.dispatch({
-                t: 'user-clicked-login-with-phone'
-              })
-            }
-            size='lg'
-            className='w-full'
-            renderIconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
-            text={input.ctx.t('auth.continue-with-phone')}
-          />
+          {true && (
+            <Button
+              onClick={() =>
+                input.dispatch({
+                  t: 'user-clicked-login-with-phone'
+                })
+              }
+              size='lg'
+              className='w-full'
+              renderIconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
+              text={input.ctx.t('auth.continue-with-phone')}
+            />
+          )}
+
+          {false && (
+            <Button
+              onClick={() =>
+                input.dispatch({
+                  t: 'user-clicked-login-with-email'
+                })
+              }
+              size='lg'
+              className='w-full'
+              renderIconStart={(iconInput) => <IconEnvelope {...iconInput} />}
+              text={input.ctx.t('auth.continue-with-email')}
+            />
+          )}
 
           <div className='flex w-full items-center justify-center py-1'>
             <Typography

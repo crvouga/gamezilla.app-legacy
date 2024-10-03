@@ -21,6 +21,7 @@ export const translations: Text = {
   'auth.logged-in': 'Вошел',
   'auth.logout-of-gamezill.app': 'Выйти из gamezilla.app',
   'auth.logout-of-gamezill.app-body': 'Вы уверены, что хотите выйти?',
+  'auth.continue-with-email': 'Продолжить с электронной почтой',
   'verify-sms.code-message': (code) =>
     `\u0412\u0430\u0448 \u043A\u043E\u0434 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F - ${code}`,
   'verify-sms-problem.code-incorrect': 'Неверный код',

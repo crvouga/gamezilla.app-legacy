@@ -25,30 +25,43 @@ if (typeof TWILIO_MESSAGING_SERVICE_SID !== 'string') {
   throw new Error('TWILIO_MESSAGING_SERVICE_SID is required')
 }
 
+const AUTHORIZATION = `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`
+
 export const VerifySMS = (deps: Deps): IVerifySMS => {
-  const twilioAccountSid = TWILIO_ACCOUNT_SID
-  const twilioAuthToken = TWILIO_AUTH_TOKEN
-  const twilioMessagingServiceSid = TWILIO_MESSAGING_SERVICE_SID
-  const AUTHORIZATION = `Basic ${btoa(`${twilioAccountSid}:${twilioAuthToken}`)}`
   return {
     async sendCode(input) {
       try {
         const to = PhoneNumber.toString(input.phoneNumber)
         deps.logger.info(`Sending code to ${to}`)
 
-        const response = await fetch(`https://verify.twilio.com/v2/Services/${twilioAccountSid}/Verifications`, {
-          method: 'POST',
-          headers: {
-            Authorization: AUTHORIZATION,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            To: to,
-            Channel: 'sms'
-          })
-        })
+        const body = new URLSearchParams({
+          To: to,
+          Channel: 'sms'
+        }).toString()
+
+        deps.logger.debug(`Sending code to ${to} body=${body}`)
+
+        const response = await fetch(
+          `https://verify.twilio.com/v2/Services/${TWILIO_MESSAGING_SERVICE_SID}/Verifications`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: AUTHORIZATION,
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body
+          }
+        )
 
         const json = await response.json()
+
+        if (!response.ok) {
+          deps.logger.error(`Errored while sending code: ${JSON.stringify(json)}`)
+          return Err({
+            t: 'database-error',
+            error: JSON.stringify(json)
+          })
+        }
 
         deps.logger.info(`Sent code to ${to} successfully: ${JSON.stringify(json)}`)
         return Ok(null)
@@ -77,7 +90,7 @@ export const VerifySMS = (deps: Deps): IVerifySMS => {
         deps.logger.info(`Verifying code for ${to}`)
 
         const response = await fetch(
-          `https://verify.twilio.com/v2/Services/${twilioMessagingServiceSid}/VerificationCheck`,
+          `https://verify.twilio.com/v2/Services/${TWILIO_MESSAGING_SERVICE_SID}/VerificationCheck`,
           {
             method: 'POST',
             headers: {

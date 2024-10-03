@@ -21,6 +21,7 @@ export const translations: Text = {
   'auth.logged-in': 'Conectado',
   'auth.logout-of-gamezill.app': 'Cerrar sesión en gamezilla.app',
   'auth.logout-of-gamezill.app-body': '¿Estás seguro de que quieres cerrar sesión?',
+  'auth.continue-with-email': 'Continuar con el correo electrónico',
   'verify-sms.code-message': (code) => `Su c\xF3digo de verificaci\xF3n es ${code}`,
   'verify-sms-problem.code-incorrect': 'El código es incorrecto',
   'verify-sms-problem.verification-expired': 'Verificación caducada',

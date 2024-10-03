@@ -49,7 +49,7 @@ const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   })
 
   const verifySMS =
-    ctx.env === 'prod'
+    ctx.env === 'prod' || true
       ? VerifySMS({
           t: 'twilio',
           logger: ILogger.prefix('twilio-verify', ctx.logger)

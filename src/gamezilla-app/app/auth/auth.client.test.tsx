@@ -1,48 +1,36 @@
-import { describe, expect, it } from 'bun:test'
-import { Posix } from 'gamezilla-app/@/core'
-import { andThen } from '../@/architecture/app-client'
-import { didPlaySound, didPushRoute, type AnonymousClientCtx, type ClientCtx } from '../@/client'
-import { Translator } from '../@/client/translator'
+import { describe, expect, test } from 'bun:test'
+import { didPlaySound, didPushRoute } from '../@/client'
+import { FixtureAuthClient } from './@/fixture/client'
 import * as AuthClient from './auth.client'
-import type * as AuthCore from './auth.types'
 
-const ctx: AnonymousClientCtx = {
-  currentRoute: {
-    n: 'auth-login',
-    t: 'login'
-  },
-  navigatorLanguage: 'en',
-  t: Translator('en'),
-  documentVisibilityState: 'visible',
-  now: Posix.now(),
-  profiles: {},
-  currentUserId: null
-}
+const Fixture = async () => {
+  const f = await FixtureAuthClient()
 
-const initial = {
-  model: AuthClient.init({
-    ctx
-  }).model
-}
-
-const clickedContinueWithPhone = (ctx: ClientCtx | AnonymousClientCtx) => (model: AuthCore.ModelClient) => {
-  return AuthClient.update({
-    ctx,
-    model,
-    msg: {
-      t: 'user-clicked-login-with-phone'
-    }
-  })
+  return {
+    ...f
+  }
 }
 
 describe(import.meta.file, () => {
-  it('should make a sound clicking the contine with phone button', () => {
-    const output = andThen(initial, clickedContinueWithPhone(ctx))
+  test('continue with phone', async () => {
+    const f = await Fixture()
+    const output = AuthClient.update({
+      ctx: f.ctx,
+      model: f.initial.model,
+      msg: { t: 'user-clicked-login-with-phone' }
+    })
     expect(didPlaySound(output)).toBe(true)
+    expect(didPushRoute(output, (route) => route.n === 'auth-login' && route.t === 'login-sms-request')).toBe(true)
   })
 
-  it('should push auth phone route after clicking continue with phone button', () => {
-    const output = andThen(initial, clickedContinueWithPhone(ctx))
-    expect(didPushRoute(output, (route) => route.n === 'auth-login' && route.t === 'login-sms-request')).toBe(true)
+  test('continue with email', async () => {
+    const f = await Fixture()
+    const output = AuthClient.update({
+      ctx: f.ctx,
+      model: f.initial.model,
+      msg: { t: 'user-clicked-login-with-email' }
+    })
+    expect(didPlaySound(output)).toBe(true)
+    expect(didPushRoute(output, (route) => route.n === 'auth-login' && route.t === 'login-email-send-link')).toBe(true)
   })
 })

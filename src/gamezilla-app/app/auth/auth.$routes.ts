@@ -14,6 +14,10 @@ const Route = p.or(
     n: p.l('auth-login'),
     t: p.l('login-sms-verify'),
     phoneNumber: PhoneNumber
+  }),
+  p.obj({
+    n: p.l('auth-login'),
+    t: p.l('login-email-send-link')
   })
 )
 

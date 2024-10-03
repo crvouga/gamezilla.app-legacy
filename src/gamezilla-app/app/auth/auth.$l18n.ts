@@ -13,6 +13,7 @@ export type Text = {
   'auth.logged-in': string
   'auth.logout-of-gamezill.app': string
   'auth.logout-of-gamezill.app-body': string
+  'auth.continue-with-email': string
 }
 
 export const translations: Translations<Text> = {
@@ -28,7 +29,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'Sign in to',
     'auth.logged-in': 'Logged in',
     'auth.logout-of-gamezill.app': 'Logout of gamezilla.app?',
-    'auth.logout-of-gamezill.app-body': 'This will log you out of the app. Are you sure?'
+    'auth.logout-of-gamezill.app-body': 'This will log you out of the app. Are you sure?',
+    'auth.continue-with-email': 'Continue with email'
   },
   de: {
     'auth.logout': 'Abmelden',
@@ -42,7 +44,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'Anmelden bei',
     'auth.logged-in': 'Angemeldet',
     'auth.logout-of-gamezill.app': 'Von gamezilla.app abmelden',
-    'auth.logout-of-gamezill.app-body': 'Möchtest du dich wirklich abmelden?'
+    'auth.logout-of-gamezill.app-body': 'Möchtest du dich wirklich abmelden?',
+    'auth.continue-with-email': 'Mit E-Mail fortfahren'
   },
   es: {
     'auth.logout': 'Cerrar sesión',
@@ -56,7 +59,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'Iniciar sesión en',
     'auth.logged-in': 'Conectado',
     'auth.logout-of-gamezill.app': 'Cerrar sesión en gamezilla.app',
-    'auth.logout-of-gamezill.app-body': '¿Estás seguro de que quieres cerrar sesión?'
+    'auth.logout-of-gamezill.app-body': '¿Estás seguro de que quieres cerrar sesión?',
+    'auth.continue-with-email': 'Continuar con el correo electrónico'
   },
   fr: {
     'auth.logout': 'Déconnexion',
@@ -70,7 +74,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'Se connecter à',
     'auth.logged-in': 'Connecté',
     'auth.logout-of-gamezill.app': 'Déconnexion de gamezilla.app',
-    'auth.logout-of-gamezill.app-body': 'Êtes-vous sûr de vouloir vous déconnecter?'
+    'auth.logout-of-gamezill.app-body': 'Êtes-vous sûr de vouloir vous déconnecter?',
+    'auth.continue-with-email': "Continuer avec l'e-mail"
   },
   hi: {
     'auth.logout': 'लॉग आउट',
@@ -84,7 +89,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'में साइन इन करें',
     'auth.logged-in': 'लॉग इन',
     'auth.logout-of-gamezill.app': 'gamezilla.app से लॉग आउट करें',
-    'auth.logout-of-gamezill.app-body': 'क्या आप वाकई लॉग आउट करना चाहते हैं?'
+    'auth.logout-of-gamezill.app-body': 'क्या आप वाकई लॉग आउट करना चाहते हैं?',
+    'auth.continue-with-email': 'ईमेल के साथ जारी रखें'
   },
   it: {
     'auth.logout': 'Disconnettersi',
@@ -98,7 +104,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'Accedi a',
     'auth.logged-in': 'Connesso',
     'auth.logout-of-gamezill.app': 'Disconnettersi da gamezilla.app',
-    'auth.logout-of-gamezill.app-body': 'Sei sicuro di voler uscire?'
+    'auth.logout-of-gamezill.app-body': 'Sei sicuro di voler uscire?',
+    'auth.continue-with-email': "Continua con l'email"
   },
   ja: {
     'auth.logout': 'ログアウト',
@@ -112,7 +119,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'サインイン',
     'auth.logged-in': 'ログインしました',
     'auth.logout-of-gamezill.app': 'gamezilla.appからログアウト',
-    'auth.logout-of-gamezill.app-body': '本当にログアウトしますか？'
+    'auth.logout-of-gamezill.app-body': '本当にログアウトしますか？',
+    'auth.continue-with-email': 'メールで続行'
   },
   ko: {
     'auth.logout': '로그아웃',
@@ -126,7 +134,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': '로그인',
     'auth.logged-in': '로그인됨',
     'auth.logout-of-gamezill.app': 'gamezilla.app에서 로그아웃',
-    'auth.logout-of-gamezill.app-body': '정말 로그아웃 하시겠습니까?'
+    'auth.logout-of-gamezill.app-body': '정말 로그아웃 하시겠습니까?',
+    'auth.continue-with-email': '이메일로 계속'
   },
   pt: {
     'auth.logout': 'Sair',
@@ -140,7 +149,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'Entrar em',
     'auth.logged-in': 'Logado',
     'auth.logout-of-gamezill.app': 'Sair do gamezilla.app',
-    'auth.logout-of-gamezill.app-body': 'Tem cert sure que deseja sair?'
+    'auth.logout-of-gamezill.app-body': 'Tem cert sure que deseja sair?',
+    'auth.continue-with-email': 'Continuar com o e-mail'
   },
   ru: {
     'auth.logout': 'Выйти',
@@ -154,7 +164,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'Войти в',
     'auth.logged-in': 'Вошел',
     'auth.logout-of-gamezill.app': 'Выйти из gamezilla.app',
-    'auth.logout-of-gamezill.app-body': 'Вы уверены, что хотите выйти?'
+    'auth.logout-of-gamezill.app-body': 'Вы уверены, что хотите выйти?',
+    'auth.continue-with-email': 'Продолжить с электронной почтой'
   },
   zh: {
     'auth.logout': '登出',
@@ -168,7 +179,8 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': '登录到',
     'auth.logged-in': '已登录',
     'auth.logout-of-gamezill.app': '登出gamezilla.app',
-    'auth.logout-of-gamezill.app-body': '您确定要登出吗？'
+    'auth.logout-of-gamezill.app-body': '您确定要登出吗？',
+    'auth.continue-with-email': '继续使用电子邮件'
   },
   ar: {
     'auth.logout': 'تسجيل الخروج',
@@ -182,6 +194,7 @@ export const translations: Translations<Text> = {
     'auth.sign-in-to': 'تسجيل الدخول إلى',
     'auth.logged-in': 'تم تسجيل الدخول',
     'auth.logout-of-gamezill.app': 'تسجيل الخروج من gamezilla.app',
-    'auth.logout-of-gamezill.app-body': 'هل أنت متأكد أنك تريد تسجيل الخروج؟'
+    'auth.logout-of-gamezill.app-body': 'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+    'auth.continue-with-email': 'المتابعة بالبريد الإلكتروني'
   }
 }

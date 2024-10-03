@@ -21,6 +21,7 @@ export const translations: Text = {
   'auth.logged-in': '已登录',
   'auth.logout-of-gamezill.app': '登出gamezilla.app',
   'auth.logout-of-gamezill.app-body': '您确定要登出吗？',
+  'auth.continue-with-email': '继续使用电子邮件',
   'verify-sms.code-message': (code) => `\u60A8\u7684\u9A8C\u8BC1\u7801\u662F${code}`,
   'verify-sms-problem.code-incorrect': '验证码错误',
   'verify-sms-problem.verification-expired': '验证已过期',

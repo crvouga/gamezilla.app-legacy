@@ -21,6 +21,7 @@ export const translations: Text = {
   'auth.logged-in': 'ログインしました',
   'auth.logout-of-gamezill.app': 'gamezilla.appからログアウト',
   'auth.logout-of-gamezill.app-body': '本当にログアウトしますか？',
+  'auth.continue-with-email': 'メールで続行',
   'verify-sms.code-message': (code) => `\u8A8D\u8A3C\u30B3\u30FC\u30C9\u306F${code}\u3067\u3059`,
   'verify-sms-problem.code-incorrect': 'コードが間違っています',
   'verify-sms-problem.verification-expired': '認証期限切れ',

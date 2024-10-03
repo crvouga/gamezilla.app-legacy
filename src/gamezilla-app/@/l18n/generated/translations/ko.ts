@@ -21,6 +21,7 @@ export const translations: Text = {
   'auth.logged-in': '로그인됨',
   'auth.logout-of-gamezill.app': 'gamezilla.app에서 로그아웃',
   'auth.logout-of-gamezill.app-body': '정말 로그아웃 하시겠습니까?',
+  'auth.continue-with-email': '이메일로 계속',
   'verify-sms.code-message': (code) => `\uC778\uC99D \uCF54\uB4DC\uB294 ${code}\uC785\uB2C8\uB2E4`,
   'verify-sms-problem.code-incorrect': '코드가 잘못되었습니다',
   'verify-sms-problem.verification-expired': '인증 만료됨',

@@ -21,6 +21,7 @@ export const translations: Text = {
   'auth.logged-in': 'लॉग इन',
   'auth.logout-of-gamezill.app': 'gamezilla.app से लॉग आउट करें',
   'auth.logout-of-gamezill.app-body': 'क्या आप वाकई लॉग आउट करना चाहते हैं?',
+  'auth.continue-with-email': 'ईमेल के साथ जारी रखें',
   'verify-sms.code-message': (code) =>
     `\u0906\u092A\u0915\u093E \u0938\u0924\u094D\u092F\u093E\u092A\u0928 \u0915\u094B\u0921 \u0939\u0948 ${code}`,
   'verify-sms-problem.code-incorrect': 'कोड गलत है',

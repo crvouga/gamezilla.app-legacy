@@ -86,6 +86,7 @@ export type MsgClient =
   | ContinueAsGuest.MsgClient
   | Logout.MsgClient
   | { t: 'user-clicked-login-with-phone' }
+  | { t: 'user-clicked-login-with-email' }
   | { t: 'sms'; c: AuthSMS.MsgClient }
 
 export type MsgServer =
