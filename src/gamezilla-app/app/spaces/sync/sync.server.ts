@@ -31,10 +31,7 @@ const updateProfileCache: SpaceServerModule['update'] = async (input) => {
 const updateFromClient: SpaceServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'sync': {
-      await SpacesCoreServer.mergeOne({
-        spacesDb: input.deps.spaceCoreDb,
-        space: input.msgClient.space
-      })
+      await SpacesCoreServer.mergeOne(input.deps.spaceCoreDb, input.msgClient.space)
 
       const spaceId = Space.toSpaceId(input.msgClient.space)
 

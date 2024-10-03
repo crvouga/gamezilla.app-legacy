@@ -29,14 +29,14 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const f = await Fixture()
     const before = await SpacesCoreServer.getSpaceStarted(f.spacesDb, spaceId)
-    await SpacesCoreServer.update({
-      spacesDb: f.spacesDb,
-      spaceEvent: withId({
+    await SpacesCoreServer.update(
+      f.spacesDb,
+      withId({
         t: 'user-started-space',
         spaceId: spaceId,
         userId: UserId.generate()
       })
-    })
+    )
     const after = await SpacesCoreServer.getSpaceStarted(f.spacesDb, spaceId)
     expect(before).toEqual(null)
     expect(after?.spaceId).toEqual(spaceId)

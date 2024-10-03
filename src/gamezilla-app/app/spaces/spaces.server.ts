@@ -151,10 +151,7 @@ const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgCore
     return {}
   }
 
-  await SpacesCoreServer.update({
-    spacesDb: deps.spaceCoreDb,
-    spaceEvent: msgCoreEvt
-  })
+  await SpacesCoreServer.update(deps.spaceCoreDb, msgCoreEvt)
 
   return {}
 }

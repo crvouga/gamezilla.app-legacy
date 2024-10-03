@@ -1,32 +1,10 @@
 import { Result } from 'gamezilla-app/@/core'
 import type { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import type { IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import type { EventId, WithEventId } from '../../@/event'
 import * as SpaceCore from '../space-core'
 import type { SpaceCoreEvent } from '../space-core-event'
 import type * as SpaceState from '../space-core-state'
-import { SpacesDb } from './spaces-core-db'
 import type { ISpacesDb } from './spaces-core-db/spaces-core-db'
-
-//
-//
-//
-//
-//
-//
-
-export type Deps = {
-  spacesDb: ISpacesDb
-}
-
-const initDeps = async (input: { dbConnKv: IDbConnKv }): Promise<Deps> => {
-  return {
-    spacesDb: SpacesDb({
-      t: 'db-conn-kv',
-      dbConnKv: input.dbConnKv
-    })
-  }
-}
 
 const getSpaceById = async (spacesDb: ISpacesDb, spaceId: SpaceId): Promise<SpaceCore.Model> => {
   const got = await spacesDb.get(spaceId)
@@ -54,14 +32,7 @@ const getSpaceStarted = async (spaceDb: ISpacesDb, spaceId?: SpaceId | null): Pr
   return spaceState
 }
 
-//
-//
-//
-//
-//
-//
-
-const update = async ({ spaceEvent, spacesDb }: { spacesDb: ISpacesDb; spaceEvent: WithEventId<SpaceCoreEvent> }) => {
+const update = async (spacesDb: ISpacesDb, spaceEvent: WithEventId<SpaceCoreEvent>) => {
   const maybeSpace = Result.withDefault(await spacesDb.get(spaceEvent.spaceId), null)
 
   const space = maybeSpace ?? SpaceCore.init
@@ -74,7 +45,7 @@ const update = async ({ spaceEvent, spacesDb }: { spacesDb: ISpacesDb; spaceEven
   await spacesDb.upsert(spaceNew)
 }
 
-const mergeOne = async ({ spacesDb, space }: { spacesDb: ISpacesDb; space: SpaceCore.Model }) => {
+const mergeOne = async (spacesDb: ISpacesDb, space: SpaceCore.Model) => {
   const spaceId = SpaceCore.toSpaceId(space)
 
   if (!spaceId) {
@@ -115,7 +86,6 @@ const hasEvent = async (spacesDb: ISpacesDb, spaceId: SpaceId, eventId: EventId)
 }
 
 export const SpacesCoreServer = {
-  initDeps,
   getSpaceById,
   getSpaceStarted,
   update,
