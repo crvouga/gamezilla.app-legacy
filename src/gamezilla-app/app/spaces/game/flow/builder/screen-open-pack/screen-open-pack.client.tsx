@@ -1,5 +1,5 @@
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { FlowPackListClient } from '../../@/pack/pack-list'
+import { PackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../builder.types'
 import { PackCreateNewClient } from './create-new-pack/create-new-pack.client'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
@@ -47,7 +47,7 @@ export const updateClickedPackItem: ClientModule['update'] = ({ msg, model }) =>
 const View: ClientModule['View'] = (input) => {
   return (
     <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
-      <FlowPackListClient.View
+      <PackListClient.View
         {...input}
         dispatch={(c) =>
           input.dispatch({

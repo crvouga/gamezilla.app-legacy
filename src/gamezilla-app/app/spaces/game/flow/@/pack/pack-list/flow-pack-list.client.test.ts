@@ -5,7 +5,7 @@ import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import type { FlowClientCtx } from '../../flow-client-ctx'
 import { FlowPack } from '../pack'
-import { FlowPackListClient } from './flow-pack-list.client'
+import { PackListClient } from './flow-pack-list.client'
 import { initClient, type ModelClient } from './flow-pack-list.types'
 
 const initial = {
@@ -13,7 +13,7 @@ const initial = {
 }
 
 const observedEndOfList = (ctx: FlowClientCtx) => (model: ModelClient) => {
-  return FlowPackListClient.update({
+  return PackListClient.update({
     ctx,
     model,
     msg: {
@@ -23,7 +23,7 @@ const observedEndOfList = (ctx: FlowClientCtx) => (model: ModelClient) => {
 }
 
 const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
-  return FlowPackListClient.update({
+  return PackListClient.update({
     ctx: {
       ...ctx,
       now: Posix.future(ctx.now, timeSpan)
@@ -38,7 +38,7 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
 const serverListedPacksOk =
   (ctx: FlowClientCtx, ...packs: FlowPack[]) =>
   (model: ModelClient) => {
-    return FlowPackListClient.update({
+    return PackListClient.update({
       ctx: ctx,
       model,
       msgServer: {
@@ -54,7 +54,7 @@ const serverListedPacksOk =
   }
 
 const serverListedPacksErr = (ctx: FlowClientCtx, errorMessage: string) => (model: ModelClient) => {
-  return FlowPackListClient.update({
+  return PackListClient.update({
     ctx,
     model,
     msgServer: {

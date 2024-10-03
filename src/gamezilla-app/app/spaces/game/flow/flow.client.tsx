@@ -11,7 +11,7 @@ import type { FlowClientCtx } from './@/flow-client-ctx'
 import { FlowClientEvt } from './@/flow-client-evt'
 import { CoverArt } from './@/flow-cover-art'
 import { FlowPackId } from './@/pack/pack-id'
-import { FlowPackListClient, FlowPackListTypes } from './@/pack/pack-list'
+import { PackListClient, FlowPackListTypes } from './@/pack/pack-list'
 import { FlowPackName } from './@/pack/pack-name'
 import { FlowPackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import { FlowPackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
@@ -105,7 +105,7 @@ const updateChild: ClientModule['update'] = (input) => {
 }
 
 const updateFlowPackList: ClientModule['update'] = (input) => {
-  const updated = FlowPackListClient.update({
+  const updated = PackListClient.update({
     ctx: input.ctx,
     model: {
       ...input.model.flowPackList,

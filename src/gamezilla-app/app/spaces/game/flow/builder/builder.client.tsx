@@ -1,7 +1,7 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
-import { FlowPackListClient } from '../@/pack/pack-list'
+import { PackListClient } from '../@/pack/pack-list'
 import { FlowPuzzleListClient } from '../@/puzzle/puzzle-list'
 import { initClient, type ClientModule } from './builder.types'
 import { ListTabsClient } from './list-tabs/list-tabs.client'
@@ -24,7 +24,7 @@ const update: ClientModule['update'] = (input) => {
 }
 
 const updateFlowPackList: ClientModule['update'] = (input) => {
-  const updated = FlowPackListClient.update({
+  const updated = PackListClient.update({
     ctx: input.ctx,
     model: {
       ...input.model.flowPackList,
@@ -110,7 +110,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
     ScreenPackBuilderClient.subscriptions(input),
     Sub.tag(
       'flow-pack-list',
-      FlowPackListClient.subscriptions({
+      PackListClient.subscriptions({
         ctx: input.ctx,
         model: input.model.flowPackList
       })

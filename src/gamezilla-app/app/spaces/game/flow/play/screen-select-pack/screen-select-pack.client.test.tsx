@@ -3,7 +3,7 @@ import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { EventId, withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../@/pack/pack'
-import { FlowPackListClient } from '../../@/pack/pack-list'
+import { PackListClient } from '../../@/pack/pack-list'
 import { FixtureFlowPlayClient } from '../@/fixture.client'
 
 const Fixture = async () => {
@@ -86,7 +86,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(FlowPackListClient.didLoad(output)).toBe(true)
+    expect(PackListClient.didLoad(output)).toBe(true)
   })
 
   test('load packs on clicking select new pack', async () => {
@@ -101,6 +101,6 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(FlowPackListClient.didLoad(output)).toBe(true)
+    expect(PackListClient.didLoad(output)).toBe(true)
   })
 })

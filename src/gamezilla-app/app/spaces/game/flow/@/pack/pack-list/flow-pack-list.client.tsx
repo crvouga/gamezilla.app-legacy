@@ -211,7 +211,7 @@ const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean
   )
 }
 
-export const FlowPackListClient = {
+export const PackListClient = {
   load,
   didLoad,
   initClient,
