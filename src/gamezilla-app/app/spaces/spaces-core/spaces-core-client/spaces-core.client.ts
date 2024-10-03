@@ -42,18 +42,18 @@ export const listSpaces = ({
   model,
   limit,
   offset,
-  where
+  whereAnd
 }: {
   model: Model
   limit: number
   offset: number
-  where?: {
+  whereAnd?: {
     spaceId?: SpaceId
   }
   sort?: 'newest' | 'oldest'
 }): Space.Model[] => {
-  if (where?.spaceId) {
-    const space = model.spaces[where.spaceId]
+  if (whereAnd?.spaceId) {
+    const space = model.spaces[whereAnd.spaceId]
 
     if (!space) {
       return []
