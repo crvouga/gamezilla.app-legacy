@@ -54,7 +54,7 @@ export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
       return this.get(got.value)
     },
 
-    async upsert(space) {
+    async _upsert(space) {
       const spaceId = SpaceCore.toSpaceId(space)
 
       if (!spaceId) {
@@ -113,7 +113,7 @@ export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
         model: space
       })
 
-      return this.upsert(spaceNew)
+      return this._upsert(spaceNew)
     },
 
     async getWithFallback(spaceId) {
@@ -139,7 +139,7 @@ export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
 
       const spaceNew = SpaceCore.mergeLeft(space, currentSpace)
 
-      return this.upsert(spaceNew)
+      return this._upsert(spaceNew)
     }
   }
 }

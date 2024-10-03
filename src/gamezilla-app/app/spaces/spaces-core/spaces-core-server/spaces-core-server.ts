@@ -22,7 +22,7 @@ export type ISpacesCoreServer = {
 
   getByUserId: (userId: UserId) => Task<string, SpaceCore.Model | null>
 
-  upsert: (space: SpaceCore.Model) => Task<string, null>
+  _upsert: (space: SpaceCore.Model) => Task<string, null>
 
   hasEvent: (spaceId: SpaceId, eventId: EventId) => Promise<boolean>
 

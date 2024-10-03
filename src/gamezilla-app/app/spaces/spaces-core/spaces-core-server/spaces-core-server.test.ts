@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
 
     const before = await f.spacesDb.get(spaceId)
 
-    const upserted = await f.spacesDb.upsert(f.spaceA)
+    const upserted = await f.spacesDb._upsert(f.spaceA)
 
     const after = await f.spacesDb.get(spaceId)
 
@@ -44,7 +44,7 @@ describe(import.meta.file, () => {
       offset: 0
     })
 
-    const upserted = await f.spacesDb.upsert(f.spaceA)
+    const upserted = await f.spacesDb._upsert(f.spaceA)
 
     const after = await f.spacesDb.list({
       limit: 10,
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
 
     const before = await f.spacesDb.hasEvent(spaceId, eventId)
 
-    const upserted = await f.spacesDb.upsert(f.spaceA)
+    const upserted = await f.spacesDb._upsert(f.spaceA)
 
     const after = await f.spacesDb.hasEvent(spaceId, eventId)
 
@@ -95,7 +95,7 @@ describe(import.meta.file, () => {
   test('getWithFallback', async () => {
     const f = await Fixture()
     const before = await f.spacesDb.getWithFallback(f.spaceId)
-    await f.spacesDb.upsert(f.spaceA)
+    await f.spacesDb._upsert(f.spaceA)
     const after = await f.spacesDb.getWithFallback(f.spaceId)
     expect(SpaceCore.deriveState(before).type).toEqual('initial')
     expect(SpaceCore.deriveState(after).type).toEqual('started')
