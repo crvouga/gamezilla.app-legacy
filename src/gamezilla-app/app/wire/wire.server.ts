@@ -1,6 +1,6 @@
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import type { ServerCmd, ServerCtx, ServerEvt, WireCmd } from 'gamezilla-app/app/@/server'
-import { Eff, isErr } from 'gamezilla-app/@/core'
+import { Eff, isErr, Result } from 'gamezilla-app/@/core'
 import type { Sub } from 'gamezilla-app/@/core/sub'
 import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
 import { AppServerModule } from '../@/architecture/app-server'
@@ -292,7 +292,7 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
 
   const gotClients = await deps.WireSessionDb.clients.findBySessionIds(sessionIds)
 
-  const clients = gotClients.t === 'ok' ? gotClients.value : []
+  const clients = Result.withDefault(gotClients, [])
 
   for (const client of clients) {
     const clientIds = CappedOrderedDict.valuesNewestFirst(client.clientIds)
