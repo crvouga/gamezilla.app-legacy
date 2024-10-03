@@ -32,7 +32,7 @@ const main = async () => {
 
     crash: (input) => console.error('Crash!', input.error),
 
-    debugger: DebuggerReduxDevTools
+    debugger: localStorage.getItem('debug') ? DebuggerReduxDevTools : undefined
   })
 
   await deps.transport.start()
