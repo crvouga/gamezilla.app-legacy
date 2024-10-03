@@ -1,3 +1,3 @@
-export * from './flow-pack-list.client'
-export * from './flow-pack-list.server'
-export * as FlowPackListTypes from './flow-pack-list.types'
+export * from './pack-list.client'
+export * from './pack-list.server'
+export * as FlowPackListTypes from './pack-list.types'

@@ -5,7 +5,7 @@ import { IconBox, Spinner, cn } from 'gamezilla-app/app/@/ui'
 import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { FlowPack } from '../pack'
-import { initClient, MsgInCmdClient, type ClientModule, type ModelClient } from './flow-pack-list.types'
+import { initClient, MsgInCmdClient, type ClientModule, type ModelClient } from './pack-list.types'
 
 const init = (input: { ctx: SpaceClientCtx; packs: ModelClient['packs'] }): ReturnType<ClientModule['update']> => {
   return {

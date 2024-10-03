@@ -27,7 +27,7 @@ import type { Text as Text24 } from '../../../app/spaces/game/flow/builder/scree
 import type { Text as Text25 } from '../../../app/spaces/game/flow/builder/screen-open-pack/create-new-pack/create-new-pack.$l18n'
 import type { Text as Text26 } from '../../../app/spaces/game/flow/@/flow.$l18n'
 import type { Text as Text27 } from '../../../app/spaces/game/flow/@/pack/pack-name.$l18n'
-import type { Text as Text28 } from '../../../app/spaces/game/flow/@/pack/pack-list/flow-pack-list.$l18n'
+import type { Text as Text28 } from '../../../app/spaces/game/flow/@/pack/pack-list/pack-list.$l18n'
 import type { Text as Text29 } from '../../../app/spaces/game/flow/@/puzzle/puzzle-name.$l18n'
 import type { Text as Text30 } from '../../../app/spaces/game/flow/@/puzzle/puzzle-list/flow-puzzle-list.$l18n'
 import type { Text as Text31 } from '../../../app/spaces/game/flow/@/flow/flow-edit/flow-edit.$l18n'

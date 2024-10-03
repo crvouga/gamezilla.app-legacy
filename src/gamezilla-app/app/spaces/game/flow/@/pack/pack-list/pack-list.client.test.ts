@@ -5,8 +5,8 @@ import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import type { FlowClientCtx } from '../../flow-client-ctx'
 import { FlowPack } from '../pack'
-import { PackListClient } from './flow-pack-list.client'
-import { initClient, type ModelClient } from './flow-pack-list.types'
+import { PackListClient } from './pack-list.client'
+import { initClient, type ModelClient } from './pack-list.types'
 
 const initial = {
   model: initClient
