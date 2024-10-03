@@ -1,11 +1,9 @@
-import { broadcast, sendToClient, sendToUser } from 'gamezilla-app/app/@/server'
 import { Result, isErr } from 'gamezilla-app/@/core'
+import { broadcast, sendToClient, sendToUser } from 'gamezilla-app/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
-import { SpaceCoreState } from '../spaces-core'
+import { SpaceCore, SpaceCoreState } from '../spaces-core'
 import * as Space from '../spaces-core/space-core'
-
 import type { MsgToClient, ServerDeps } from '../spaces.types'
-import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 
 const update: SpaceServerModule['update'] = async (input) => {
   return SpaceServerModule.andThen(
@@ -31,7 +29,7 @@ const updateProfileCache: SpaceServerModule['update'] = async (input) => {
 const updateFromClient: SpaceServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'sync': {
-      await SpacesCoreServer.mergeOne(input.deps.spaceCoreDb, input.msgClient.space)
+      await input.deps.spacesCoreServer.merge(input.msgClient.space)
 
       const spaceId = Space.toSpaceId(input.msgClient.space)
 
@@ -39,7 +37,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
         return {}
       }
 
-      const spaceNew = await SpacesCoreServer.getSpaceById(input.deps.spaceCoreDb, spaceId)
+      const spaceNew = await input.deps.spacesCoreServer.getWithFallback(spaceId)
 
       if (!spaceNew) {
         return {}
@@ -85,7 +83,7 @@ const spacesToProfiles = async (deps: ServerDeps, spaces: Space.Model[]) => {
 const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
     case 'auth/client-authenticated': {
-      const space = await SpacesCoreServer.getSpaceByUserId(input.deps.spaceCoreDb, input.msgEvt.account.userId)
+      const space = Result.withDefault(await input.deps.spacesCoreServer.getByUserId(input.msgEvt.account.userId), null)
 
       if (!space) {
         return {}
@@ -121,30 +119,28 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async ({ msgCoreEvt,
     return {}
   }
 
-  const msgEvtWithMeta = await SpacesCoreServer.getEventWithMeta(
-    deps.spaceCoreDb,
-    msgCoreEvt.spaceId,
-    msgCoreEvt.eventId
-  )
+  const space = await deps.spacesCoreServer.getWithFallback(msgCoreEvt.spaceId)
 
-  if (!msgEvtWithMeta) {
+  const eventWithMeta = SpaceCore.toEventWithMeta(space, msgCoreEvt.eventId)
+
+  if (!eventWithMeta) {
     return {}
   }
 
-  const spaceState = await SpacesCoreServer.getSpaceStarted(deps.spaceCoreDb, msgEvtWithMeta.spaceId)
+  const spaceState = SpaceCore.toSpaceStarted(space)
 
   const profiles = Result.withDefault(
-    await deps.profileCache.get('userId' in msgEvtWithMeta ? [msgEvtWithMeta.userId] : []),
+    await deps.profileCache.get('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
     {}
   )
 
   const toClient: MsgToClient = {
     t: 'event',
-    c: msgEvtWithMeta,
+    c: eventWithMeta,
     profiles
   }
 
-  if (spaceState && msgEvtWithMeta.t === 'game') {
+  if (spaceState && eventWithMeta.t === 'game') {
     return {
       msgCmd: [sendToUser<MsgToClient>(SpaceCoreState.toUserIds(spaceState), toClient)]
     }

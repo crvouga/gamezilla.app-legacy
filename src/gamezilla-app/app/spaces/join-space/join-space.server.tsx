@@ -1,7 +1,7 @@
+import { Result } from 'gamezilla-app/@/core'
 import { sendToUser } from 'gamezilla-app/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceCore } from '../spaces-core'
-import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 
 const update: SpaceServerModule['update'] = (input) => {
   return SpaceServerModule.andThen(
@@ -14,7 +14,7 @@ const update: SpaceServerModule['update'] = (input) => {
 const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
   switch (input.msgCoreEvt?.t) {
     case 'user-joined-space': {
-      const space = await SpacesCoreServer.getSpaceById(input.deps.spaceCoreDb, input.msgCoreEvt.spaceId)
+      const space = Result.withDefault(await input.deps.spacesCoreServer.get(input.msgCoreEvt.spaceId), null)
 
       if (!space) {
         return {}

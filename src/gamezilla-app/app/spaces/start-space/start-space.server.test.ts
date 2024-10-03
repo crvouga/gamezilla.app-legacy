@@ -4,20 +4,19 @@ import { SpaceId } from 'gamezilla-app/app/@/data'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
 import { init, initDeps, randomAuthenticatedClient, userStartedSpace } from '../@/fixture/server'
 import { SpaceCore } from '../spaces-core'
-import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
 
 describe(import.meta.file, () => {
-  it('should add a new space when recieving a user started space event', async () => {
+  it('should add a new space when receiving a user started space event', async () => {
     const deps = await initDeps()
     const spaceId = SpaceId.generate()
     const client = randomAuthenticatedClient()
 
     await AppServerModule.andThen(init(), userStartedSpace(deps, client, spaceId))
 
-    expect(SpaceCore.toSpaceId(await SpacesCoreServer.getSpaceById(deps.spaceCoreDb, spaceId))).toBe(spaceId)
+    expect(SpaceCore.toSpaceId(await deps.spacesCoreServer.getWithFallback(spaceId))).toBe(spaceId)
   })
 
-  it('should propogate the user started space event to the clients', async () => {
+  it('should propagate the user started space event to the clients', async () => {
     const deps = await initDeps()
     const spaceId = SpaceId.generate()
     const client = randomAuthenticatedClient()

@@ -2,28 +2,29 @@ import { Err, Ok, Result, isErr, pipe } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import * as SpaceCore from '../../space-core'
-import type { ISpacesDb } from './spaces-core-db'
+import * as SpaceCore from '../space-core'
+import type { ISpacesCoreServer } from './spaces-core-server'
 
 export type Config = {
+  t: 'db-conn-kv'
   dbConnKv: IDbConnKv
 }
 
-export const SpacesDb = (deps: Config): ISpacesDb => {
+export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
   const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, SpaceCore.Model>(
-    deps.dbConnKv,
+    config.dbConnKv,
     ['spaces', 'space-by-id'],
     SpaceCore.Model
   )
   const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>(
-    deps.dbConnKv,
+    config.dbConnKv,
     ['spaces', 'space-id-by-user-id'],
     SpaceId
   )
 
   const INDEX_SPACE_IDS_KEY_ALL = 'all'
   const indexSpaceIds = DbConnKv.withNamespace<string, SpaceId[]>(
-    deps.dbConnKv,
+    config.dbConnKv,
     ['spaces', 'space-ids'],
     p.arr(SpaceId)
   )
@@ -96,10 +97,10 @@ export const SpacesDb = (deps: Config): ISpacesDb => {
       const got = await spacesBySpaceId.get(spaceId)
 
       if (isErr(got)) {
-        return Ok(false)
+        return false
       }
 
-      return Ok(Boolean(got.value && eventId in got.value.eventIds))
+      return Boolean(got.value && eventId in got.value.eventIds)
     },
 
     async update(spaceEvent) {
@@ -133,9 +134,12 @@ export const SpacesDb = (deps: Config): ISpacesDb => {
 
     async merge(space) {
       const spaceId = SpaceCore.toSpaceId(space)
+
       const currentSpace = Result.withDefault(await this.get(spaceId), null) ?? SpaceCore.init
+
       const spaceNew = SpaceCore.mergeLeft(space, currentSpace)
-      return await this.upsert(spaceNew)
+
+      return this.upsert(spaceNew)
     }
   }
 }

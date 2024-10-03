@@ -10,7 +10,7 @@ import { smsNoop } from 'gamezilla-app/app/@/server/sms'
 import { GameServer } from '../../game/game.server'
 import { GameDb } from '../../game/space-game-db'
 import { SpaceCore } from '../../spaces-core'
-import { SpacesDb } from '../../spaces-core/spaces-core-server/spaces-core-db'
+import { SpacesCoreServer } from '../../spaces-core/spaces-core-server'
 import { ProfileCache } from '../../spaces-server/profile-cache'
 import * as SpacesServer from '../../spaces.server'
 import type { ServerDeps } from '../../spaces.types'
@@ -81,7 +81,7 @@ export const initDeps = async (): Promise<ServerDeps> => {
       t: 'db-conn-kv',
       dbConnKv
     }),
-    spaceCoreDb: SpacesDb({
+    spacesCoreServer: SpacesCoreServer({
       t: 'db-conn-kv',
       dbConnKv
     }),

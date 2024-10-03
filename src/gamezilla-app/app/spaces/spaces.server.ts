@@ -1,6 +1,6 @@
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { ClientId, SessionId, SpaceId, UserId } from '../@/data'
+import { SpaceId, UserId } from '../@/data'
 import { type Input, type Output, SpaceServerModule } from './@/architecture/space-server'
 import { GameServer } from './game/game.server'
 import { GameDb } from './game/space-game-db'
@@ -8,7 +8,6 @@ import { SpaceGameServer } from './game/space-game.server'
 import { JoinSpaceServer } from './join-space/join-space.server'
 import { ListSpacesServer } from './list-spaces/list-spaces.server'
 import { SpacesCoreServer } from './spaces-core/spaces-core-server'
-import { SpacesDb } from './spaces-core/spaces-core-server/spaces-core-db'
 import { ProfileCache } from './spaces-server/profile-cache'
 import type { ServerModule } from './spaces.types'
 import { StartSpaceServer } from './start-space/start-space.server'
@@ -28,7 +27,7 @@ export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
       t: 'db-conn-kv',
       dbConnKv: ctx.dbConnKv
     }),
-    spaceCoreDb: SpacesDb({
+    spacesCoreServer: SpacesCoreServer({
       t: 'db-conn-kv',
       dbConnKv: ctx.dbConnKv
     }),
@@ -38,22 +37,8 @@ export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
     }),
     gameServer: GameServer.initCtx({
       ctx: {
-        sleep: async () => null,
-        clientId: ClientId.generate(),
-        dbConnKv: ctx.dbConnKv,
-        dbConnSql: ctx.dbConnSql,
-        env: ctx.env,
-        logger: ctx.logger,
-        now: ctx.now,
-        sessionId: SessionId.generate(),
-        sms: ctx.sms,
-        space: {
-          hostId: UserId.generate(),
-          spaceId: SpaceId.generate(),
-          users: {},
-          visibility: 'public'
-        },
-        currentUserId: UserId.generate()
+        ...ctx,
+        space: { hostId: UserId.generate(), spaceId: SpaceId.generate(), users: {}, visibility: 'public' }
       }
     })
   }
@@ -130,7 +115,7 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
 const updateChild: SpaceServerModule['update'] = async (input) => {
   if (
     input.msgCoreEvt &&
-    (await SpacesCoreServer.hasEvent(input.deps.spaceCoreDb, input.msgCoreEvt.spaceId, input.msgCoreEvt.eventId))
+    (await input.deps.spacesCoreServer.hasEvent(input.msgCoreEvt.spaceId, input.msgCoreEvt.eventId))
   ) {
     return {}
   }
@@ -151,7 +136,7 @@ const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgCore
     return {}
   }
 
-  await SpacesCoreServer.update(deps.spaceCoreDb, msgCoreEvt)
+  await deps.spacesCoreServer.update(msgCoreEvt)
 
   return {}
 }

@@ -1,13 +1,13 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Ok, unwrap } from 'gamezilla-app/@/core'
-import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import * as SpaceCore from '../../space-core'
-import { SpacesDb } from './spaces-core-db-impl'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
+import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
+import * as SpaceCore from '../space-core'
+import { SpacesCoreServer } from './spaces-core-server-impl'
 
 const Fixture = async () => {
-  const spacesDb = SpacesDb({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'hash-map' }) })
+  const spacesDb = SpacesCoreServer({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'hash-map' }) })
 
   const spaceId = SpaceId.generate()
   const spaceA = SpaceCore.random({ spaceId })
@@ -71,9 +71,9 @@ describe(import.meta.file, () => {
 
     const after = await f.spacesDb.hasEvent(spaceId, eventId)
 
-    expect(before).toEqual(Ok(false))
+    expect(before).toEqual(false)
     expect(upserted).toEqual(Ok(null))
-    expect(after).toEqual(Ok(true))
+    expect(after).toEqual(true)
   })
 
   test('update', async () => {

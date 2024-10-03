@@ -1,9 +1,9 @@
-import { Sub } from 'gamezilla-app/@/core'
-import { SpaceServerCmd } from '../@/space-server-cmd'
+import { Result, Sub } from 'gamezilla-app/@/core'
 import { SpaceServerModule } from '../@/architecture/space-server'
-import { SpacesCoreServer } from '../spaces-core/spaces-core-server'
+import { SpaceServerCmd } from '../@/space-server-cmd'
 import type { MsgServer } from '../spaces.types'
 import { GameServer } from './game.server'
+import { SpaceCore } from '../spaces-core'
 
 const update: SpaceServerModule['update'] = async (input) => {
   const spaceId = inputToSpaceId(input)
@@ -12,7 +12,7 @@ const update: SpaceServerModule['update'] = async (input) => {
     return {}
   }
 
-  const spaceState = await SpacesCoreServer.getSpaceStarted(input.deps.spaceCoreDb, spaceId)
+  const spaceState = SpaceCore.toSpaceStarted(Result.withDefault(await input.deps.spacesCoreServer.get(spaceId), null))
 
   if (!spaceState?.game) {
     return {}
