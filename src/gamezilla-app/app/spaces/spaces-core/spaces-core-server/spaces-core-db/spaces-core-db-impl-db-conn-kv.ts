@@ -117,6 +117,25 @@ export const SpacesDb = (deps: Config): ISpacesDb => {
 
     async getWithFallback(spaceId) {
       return Result.withDefault(await this.get(spaceId), null) ?? SpaceCore.init
+    },
+
+    async getEvent(spaceId, eventId) {
+      const space = Result.withDefault(await this.get(spaceId), null)
+
+      if (!space) {
+        return Ok(null)
+      }
+
+      const event = SpaceCore.toEventWithMeta(space, eventId)
+
+      return Ok(event)
+    },
+
+    async merge(space) {
+      const spaceId = SpaceCore.toSpaceId(space)
+      const currentSpace = Result.withDefault(await this.get(spaceId), null) ?? SpaceCore.init
+      const spaceNew = SpaceCore.mergeLeft(space, currentSpace)
+      return await this.upsert(spaceNew)
     }
   }
 }

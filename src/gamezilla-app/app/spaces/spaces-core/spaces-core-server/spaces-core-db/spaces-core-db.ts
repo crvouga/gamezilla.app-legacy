@@ -1,6 +1,6 @@
 import type { Task } from 'gamezilla-app/@/core'
 import type { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { EventId, WithEventId } from 'gamezilla-app/app/spaces/@/event'
+import { EventId, WithEventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import type * as SpaceCore from '../../space-core'
 import { SpaceCoreEvent } from '../../space-core-event'
 
@@ -23,4 +23,8 @@ export type ISpacesDb = {
   hasEvent: (spaceId: SpaceId, eventId: EventId) => Task<string, boolean>
 
   update: (spaceEvent: WithEventId<SpaceCoreEvent>) => Task<string, null>
+
+  merge: (space: SpaceCore.Model) => Task<string, null>
+
+  getEvent: (spaceId: SpaceId, eventId: EventId) => Task<string, WithEventMeta<SpaceCoreEvent> | null>
 }
