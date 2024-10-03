@@ -4,9 +4,9 @@ import { Sql } from 'gamezilla-app/@/sql'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
-import type { FlowPack } from '../flow-pack'
-import { FlowPackId } from '../flow-pack-id'
-import { FlowPackName } from '../flow-pack-name'
+import type { FlowPack } from '../pack'
+import { FlowPackId } from '../pack-id'
+import { FlowPackName } from '../pack-name'
 import type { IFlowPackDb, OrderClause, WhereClause } from './flow-pack-db'
 
 const Row = p.obj({

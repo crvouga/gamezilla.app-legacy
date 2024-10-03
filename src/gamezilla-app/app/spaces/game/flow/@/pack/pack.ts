@@ -2,8 +2,8 @@ import { UserId } from 'gamezilla-app/app/@/data'
 import { Posix } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { FlowPuzzleId } from '../flow-puzzle/flow-puzzle-id'
-import { FlowPackId } from './flow-pack-id'
-import { FlowPackName } from './flow-pack-name'
+import { FlowPackId } from './pack-id'
+import { FlowPackName } from './pack-name'
 
 const parser = p.obj({
   id: p.custom(FlowPackId.is, 'Invalid flow pack id'),

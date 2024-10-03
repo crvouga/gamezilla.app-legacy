@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Err, Ok } from 'gamezilla-app/@/core'
 import { SpaceCoreFixture } from 'gamezilla-app/app/spaces/@/fixture/core'
-import { FlowPack } from '../../../@/pack/flow-pack'
+import { FlowPack } from '../../../@/pack/pack'
 import { EditPackNameCore } from './edit-pack-name.core'
 import type { ModelCore, MsgCore } from './edit-pack-name.types'
 

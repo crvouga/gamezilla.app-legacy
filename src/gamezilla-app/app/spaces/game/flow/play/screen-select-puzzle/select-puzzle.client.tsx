@@ -1,9 +1,9 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
-import { FlowPack } from '../../@/pack/flow-pack'
-import { FlowPackPuzzlesGridUI } from '../../@/pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui'
-import { FlowPackPuzzlesGridClient } from '../../@/pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client'
+import { FlowPack } from '../../@/pack/pack'
+import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/flow-pack-puzzles-grid-ui'
+import { FlowPackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/flow-pack-puzzles-grid.client'
 import type { ClientModule } from '../play.types'
 
 const update: ClientModule['update'] = (input) => {

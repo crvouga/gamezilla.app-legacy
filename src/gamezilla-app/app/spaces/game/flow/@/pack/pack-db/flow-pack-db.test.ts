@@ -3,8 +3,8 @@ import { Ok, Result } from 'gamezilla-app/@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
-import { FlowPack } from '../flow-pack'
-import { FlowPackName } from '../flow-pack-name'
+import { FlowPack } from '../pack'
+import { FlowPackName } from '../pack-name'
 import { FlowPackDb } from './flow-pack-db-impl'
 
 const Fixture = async () => {

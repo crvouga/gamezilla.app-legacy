@@ -1,5 +1,5 @@
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { FlowPackListClient } from '../../@/pack/flow-pack-list'
+import { FlowPackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../builder.types'
 import { PackCreateNewClient } from './create-new-pack/create-new-pack.client'
 import { withId } from 'gamezilla-app/app/spaces/@/event'

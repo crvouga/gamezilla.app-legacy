@@ -1,7 +1,7 @@
 import type { ClientCmdTypes } from 'gamezilla-app/app/@/client'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
-import { FlowPackPuzzlesGridTypes } from './pack/flow-pack-puzzles-grid'
-import { FlowPackListTypes } from './pack/flow-pack-list'
+import { FlowPackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
+import { FlowPackListTypes } from './pack/pack-list'
 
 export type FlowClientCmd<T extends ClientCmdTypes> =
   | SpaceClientCmd<T>

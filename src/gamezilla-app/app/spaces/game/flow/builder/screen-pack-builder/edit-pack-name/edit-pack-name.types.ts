@@ -1,8 +1,8 @@
 import { RemoteResult, Result } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
-import { FlowPack } from '../../../@/pack/flow-pack'
-import { FlowPackName } from '../../../@/pack/flow-pack-name'
+import { FlowPack } from '../../../@/pack/pack'
+import { FlowPackName } from '../../../@/pack/pack-name'
 
 export type MsgClient = MsgCore
 

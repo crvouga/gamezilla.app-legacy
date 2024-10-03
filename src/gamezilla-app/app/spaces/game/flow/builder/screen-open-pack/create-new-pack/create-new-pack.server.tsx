@@ -1,8 +1,8 @@
 import { sendToClient } from 'gamezilla-app/app/@/server'
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import type { FlowPack } from '../../../@/pack/flow-pack'
-import { FlowPackId } from '../../../@/pack/flow-pack-id'
-import { FlowPackName } from '../../../@/pack/flow-pack-name'
+import type { FlowPack } from '../../../@/pack/pack'
+import { FlowPackId } from '../../../@/pack/pack-id'
+import { FlowPackName } from '../../../@/pack/pack-name'
 import type { ServerModule } from '../../builder.types'
 
 const update: ServerModule['update'] = async (input) => {

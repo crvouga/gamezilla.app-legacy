@@ -1,7 +1,7 @@
 import { NonEmpty, pipe } from 'gamezilla-app/@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { FlowVariant } from '../../../@/flow'
-import { FlowPack } from '../../../@/pack/flow-pack'
+import { FlowPack } from '../../../@/pack/pack'
 import { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { CoreFixture } from '../../@/fixture.core'

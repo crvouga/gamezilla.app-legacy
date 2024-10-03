@@ -7,8 +7,8 @@ import { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
 import { FlowPuzzleDb } from '../../flow-puzzle/flow-puzzle-db'
 import type { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
 import { FlowServerCtx } from '../../flow-server-ctx'
-import { FlowPack } from '../flow-pack'
-import { FlowPackDb } from '../flow-pack-db'
+import { FlowPack } from '../pack'
+import { FlowPackDb } from '../pack-db'
 import { FlowPackPuzzlesGridServer } from './flow-pack-puzzles-grid.server'
 
 const initial = () => {

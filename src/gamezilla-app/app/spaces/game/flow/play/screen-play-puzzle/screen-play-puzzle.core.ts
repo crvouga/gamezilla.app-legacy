@@ -1,4 +1,4 @@
-import { FlowPack } from '../../@/pack/flow-pack'
+import { FlowPack } from '../../@/pack/pack'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowPuzzleResult } from '../@/puzzle-result'
 import type { CoreModule, MsgCore } from '../play.types'

@@ -1,5 +1,5 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import { FlowPack } from '../../@/pack/flow-pack'
+import { FlowPack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
 
 export type ModelClient = CreateNewPackTypes.ModelClient & {}

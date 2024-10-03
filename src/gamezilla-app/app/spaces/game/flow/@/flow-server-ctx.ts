@@ -1,5 +1,5 @@
 import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space'
-import { IFlowPackDb } from './pack/flow-pack-db'
+import { IFlowPackDb } from './pack/pack-db'
 import { IFlowPuzzleDb } from './flow-puzzle/flow-puzzle-db'
 
 export type FlowServerCtx = SpaceServerCtx & {

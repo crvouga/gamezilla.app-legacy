@@ -1,7 +1,7 @@
 import { UserId } from 'gamezilla-app/app/@/data'
 import { type RemoteResult, Result, NotAsked } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
-import { FlowPack } from '../../../@/pack/flow-pack'
+import { FlowPack } from '../../../@/pack/pack'
 
 //
 //

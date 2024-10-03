@@ -2,7 +2,7 @@ import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { FlowPackListClient } from '../../@/pack/flow-pack-list'
+import { FlowPackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../play.types'
 
 const update: ClientModule['update'] = (input) => {

@@ -10,7 +10,7 @@ import type { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
 import { ListPuzzlesOutput } from '../../flow-puzzle/flow-puzzle-db'
 import type { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
 import { FlowServerCtx } from '../../flow-server-ctx'
-import type { FlowPack } from '../flow-pack'
+import type { FlowPack } from '../pack'
 
 export type ModelClient = {
   request: RequestResponse<string, null>

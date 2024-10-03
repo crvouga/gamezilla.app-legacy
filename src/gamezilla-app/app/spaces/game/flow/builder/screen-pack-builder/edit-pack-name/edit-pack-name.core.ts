@@ -1,7 +1,7 @@
 import { isErr, Loading, NotAsked } from 'gamezilla-app/@/core'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
-import { FlowPack } from '../../../@/pack/flow-pack'
-import { FlowPackName } from '../../../@/pack/flow-pack-name'
+import { FlowPack } from '../../../@/pack/pack'
+import { FlowPackName } from '../../../@/pack/pack-name'
 import type { ModelCore, MsgCore } from './edit-pack-name.types'
 
 const init = (input: { pack: FlowPack }): ModelCore => {

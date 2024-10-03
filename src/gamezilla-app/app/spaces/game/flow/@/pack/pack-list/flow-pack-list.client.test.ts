@@ -4,7 +4,7 @@ import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import type { FlowClientCtx } from '../../flow-client-ctx'
-import { FlowPack } from '../flow-pack'
+import { FlowPack } from '../pack'
 import { FlowPackListClient } from './flow-pack-list.client'
 import { initClient, type ModelClient } from './flow-pack-list.types'
 

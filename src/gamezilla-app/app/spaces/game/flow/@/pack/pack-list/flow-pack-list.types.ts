@@ -7,9 +7,9 @@ import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { FlowClientEvtIn } from '../../flow-client-evt'
 import { FlowServerCtx } from '../../flow-server-ctx'
-import type { FlowPack } from '../flow-pack'
-import type { IFlowPackDb } from '../flow-pack-db'
-import type { FlowPackId } from '../flow-pack-id'
+import type { FlowPack } from '../pack'
+import type { IFlowPackDb } from '../pack-db'
+import type { FlowPackId } from '../pack-id'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 
 //

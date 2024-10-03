@@ -1,6 +1,6 @@
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { SpaceGameFixtureServer } from '../../../../@/testing/server'
-import { FlowPackDb } from '../../../@/pack/flow-pack-db'
+import { FlowPackDb } from '../../../@/pack/pack-db'
 import { FlowPuzzleDb } from '../../../@/flow-puzzle/flow-puzzle-db'
 import { initServer } from '../../builder.types'
 import { BuilderCore } from '../../builder.core'

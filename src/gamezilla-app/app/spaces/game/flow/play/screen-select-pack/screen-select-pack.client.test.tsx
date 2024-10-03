@@ -2,8 +2,8 @@ import { describe, expect, it, test } from 'bun:test'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { EventId, withEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { FlowPack } from '../../@/pack/flow-pack'
-import { FlowPackListClient } from '../../@/pack/flow-pack-list'
+import { FlowPack } from '../../@/pack/pack'
+import { FlowPackListClient } from '../../@/pack/pack-list'
 import { FixtureFlowPlayClient } from '../@/fixture.client'
 
 const Fixture = async () => {
