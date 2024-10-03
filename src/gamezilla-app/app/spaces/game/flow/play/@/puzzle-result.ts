@@ -1,5 +1,5 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../../@/puzzle/puzzle'
 
 export const FlowPuzzleResult = p.or(
   p.obj({

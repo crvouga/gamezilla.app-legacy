@@ -1,7 +1,7 @@
 import type { Paginated, Pagination, UserId } from 'gamezilla-app/app/@/data'
 import type { Task } from 'gamezilla-app/@/core'
-import type { FlowPuzzle } from '../flow-puzzle'
-import type { FlowPuzzleId } from '../flow-puzzle-id'
+import type { FlowPuzzle } from '../puzzle'
+import type { FlowPuzzleId } from '../puzzle-id'
 
 export type WhereClause = {
   createdBy?: {

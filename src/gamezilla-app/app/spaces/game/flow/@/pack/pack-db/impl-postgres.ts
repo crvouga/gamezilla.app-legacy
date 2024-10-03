@@ -3,11 +3,11 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { Sql } from 'gamezilla-app/@/sql'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
-import { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
+import { FlowPuzzleId } from '../../puzzle/puzzle-id'
 import type { FlowPack } from '../pack'
 import { FlowPackId } from '../pack-id'
 import { FlowPackName } from '../pack-name'
-import type { IFlowPackDb, OrderClause, WhereClause } from './flow-pack-db'
+import type { IFlowPackDb, OrderClause, WhereClause } from './interface'
 
 const Row = p.obj({
   flow_pack_id: FlowPackId,

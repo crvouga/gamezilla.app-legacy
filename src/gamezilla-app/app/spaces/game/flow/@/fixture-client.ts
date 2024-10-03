@@ -7,7 +7,7 @@ import { ModelCore, MsgClient, MsgCore, MsgToClient } from '../flow.types'
 import type { FlowClientCtx } from './flow-client-ctx'
 import { FlowPackListTypes } from './pack/pack-list'
 import { FlowPackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
-import { FlowPuzzleListTypes } from './flow-puzzle/flow-puzzle-list'
+import { FlowPuzzleListTypes } from './puzzle/puzzle-list'
 
 export const FixtureFlowClient = async () => {
   const f = await FixtureSpaceClient()

@@ -8,7 +8,7 @@ import {
   type ModelClient,
   type MsgClient,
   type MsgInCmdClient
-} from './flow-pack-puzzles-grid.types'
+} from './pack-puzzles-grid.types'
 import { FlowPack } from '../pack'
 
 const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {

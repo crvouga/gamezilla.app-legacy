@@ -1,1 +1,1 @@
-export * as FlowPackPuzzlesGridTypes from './flow-pack-puzzles-grid.types'
+export * as FlowPackPuzzlesGridTypes from './pack-puzzles-grid.types'

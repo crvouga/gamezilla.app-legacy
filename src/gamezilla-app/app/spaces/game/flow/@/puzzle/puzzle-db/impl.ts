@@ -1,9 +1,9 @@
 import { pipe } from 'gamezilla-app/@/core'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
-import type { IFlowPuzzleDb } from './flow-puzzle-db'
-import { FlowPuzzleDbHashMap } from './flow-puzzle-db-impl-hash-map'
-import { FlowPuzzleDbPostgres } from './flow-puzzle-db-impl-postgres'
+import type { IFlowPuzzleDb } from './interface'
+import { FlowPuzzleDbHashMap } from './impl-hash-map'
+import { FlowPuzzleDbPostgres } from './impl-postgres'
 import { WithSolutions } from './with-solutions'
 
 export type FlowPuzzleDbImpl =

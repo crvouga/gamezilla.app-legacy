@@ -1,6 +1,6 @@
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
-import { FlowPuzzleDb } from './flow-puzzle-db-impl'
+import { FlowPuzzleDb } from './impl'
 
 export const FlowPuzzleDbFixture = async () => {
   const testEnv = await AppServerTestEnv()

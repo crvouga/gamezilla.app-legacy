@@ -1,6 +1,6 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
-import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { DeleteForeverTypes } from './delete-forever'

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { FlowClientCtx } from '../../@/flow-client-ctx'
 import { FlowPack } from '../../@/pack/pack'
-import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import {
   FixtureFlowBuilderClient,
   clickedExitPuzzleButton,

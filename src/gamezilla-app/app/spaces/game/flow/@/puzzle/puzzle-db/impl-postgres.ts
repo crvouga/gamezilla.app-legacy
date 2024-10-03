@@ -6,10 +6,10 @@ import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { Flow } from '../../flow/flow'
 import { FlowVariant } from '../../flow/flow-variant'
-import type { FlowPuzzle } from '../flow-puzzle'
-import { FlowPuzzleId } from '../flow-puzzle-id'
-import { FlowPuzzleName } from '../flow-puzzle-name'
-import type { IFlowPuzzleDb, OrderClause, WhereClause } from './flow-puzzle-db'
+import type { FlowPuzzle } from '../puzzle'
+import { FlowPuzzleId } from '../puzzle-id'
+import { FlowPuzzleName } from '../puzzle-name'
+import type { IFlowPuzzleDb, OrderClause, WhereClause } from './interface'
 
 export const Row = p.obj({
   flow_puzzle_id: p.str,

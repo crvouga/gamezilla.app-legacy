@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { FlowPack } from '../@/pack/pack'
-import { FlowPuzzle } from '../@/flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../@/puzzle/puzzle'
 import { CoreFixture } from './@/fixture.core'
 
 describe(import.meta.file, () => {

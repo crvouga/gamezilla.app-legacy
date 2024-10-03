@@ -6,9 +6,9 @@ import { SpaceClientCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { FlowClientEvtIn } from '../../flow-client-evt'
-import type { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
-import { ListPuzzlesOutput } from '../../flow-puzzle/flow-puzzle-db'
-import type { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
+import type { FlowPuzzle } from '../../puzzle/puzzle'
+import { ListPuzzlesOutput } from '../../puzzle/puzzle-db'
+import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
 import { FlowServerCtx } from '../../flow-server-ctx'
 import type { FlowPack } from '../pack'
 

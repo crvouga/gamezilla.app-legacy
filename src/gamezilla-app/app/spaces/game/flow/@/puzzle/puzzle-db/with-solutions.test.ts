@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from 'gamezilla-app/@/core'
 import { FlowGridShorthand } from '../../flow/flow-variant/flow-grid'
-import { FlowPuzzle } from '../flow-puzzle'
+import { FlowPuzzle } from '../puzzle'
 import { FlowPuzzleDbFixture } from './fixture'
 import { WithSolutions } from './with-solutions'
 

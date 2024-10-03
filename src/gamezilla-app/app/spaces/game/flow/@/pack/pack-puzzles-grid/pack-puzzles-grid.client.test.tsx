@@ -2,10 +2,10 @@ import { describe, expect, it } from 'bun:test'
 import { Posix, RequestResponse, TimeSpan } from 'gamezilla-app/@/core'
 import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
-import { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../../puzzle/puzzle'
 import { FlowPack } from '../pack'
-import { FlowPackPuzzlesGridClient } from './flow-pack-puzzles-grid.client'
-import type { FlowPackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './flow-pack-puzzles-grid.types'
+import { FlowPackPuzzlesGridClient } from './pack-puzzles-grid.client'
+import type { FlowPackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './pack-puzzles-grid.types'
 
 type Input = {
   ctx?: FlowPackGridClientCtx

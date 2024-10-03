@@ -1,5 +1,5 @@
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { ServerModule } from './flow-pack-puzzles-grid.types'
+import type { ServerModule } from './pack-puzzles-grid.types'
 
 const update: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {

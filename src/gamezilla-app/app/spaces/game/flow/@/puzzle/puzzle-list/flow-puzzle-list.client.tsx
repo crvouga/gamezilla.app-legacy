@@ -4,7 +4,7 @@ import { IconPuzzlePiece, Spinner, cn } from 'gamezilla-app/app/@/ui'
 import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
 import { Posix, RequestResponse, Result, TimeSpan, descend, isErr } from 'gamezilla-app/@/core'
-import type { FlowPuzzle } from '../flow-puzzle'
+import type { FlowPuzzle } from '../puzzle'
 import type { ClientModule } from './flow-puzzle-list.types'
 import { FlowVariantUI } from '../../flow/flow-variant'
 

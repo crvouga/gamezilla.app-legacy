@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { PubSub } from 'gamezilla-app/@/core'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import {
   clickedExitPuzzleBuilderButton,
   clickedPuzzleListItem,

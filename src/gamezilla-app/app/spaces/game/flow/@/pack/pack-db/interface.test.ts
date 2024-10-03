@@ -2,10 +2,10 @@ import { describe, expect, it } from 'bun:test'
 import { Ok, Result } from 'gamezilla-app/@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
-import { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
+import { FlowPuzzleId } from '../../puzzle/puzzle-id'
 import { FlowPack } from '../pack'
 import { FlowPackName } from '../pack-name'
-import { FlowPackDb } from './flow-pack-db-impl'
+import { FlowPackDb } from './impl'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()

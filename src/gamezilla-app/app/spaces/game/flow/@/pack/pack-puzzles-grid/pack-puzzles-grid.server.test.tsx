@@ -3,13 +3,13 @@ import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { didSendToClient } from 'gamezilla-app/app/@/server'
 import { randomAuthenticatedClient, type AuthenticatedClient } from 'gamezilla-app/app/spaces/@/fixture/server'
 import { SpaceGameFixtureServer } from 'gamezilla-app/app/spaces/game/@/testing/server'
-import { FlowPuzzle } from '../../flow-puzzle/flow-puzzle'
-import { FlowPuzzleDb } from '../../flow-puzzle/flow-puzzle-db'
-import type { FlowPuzzleId } from '../../flow-puzzle/flow-puzzle-id'
+import { FlowPuzzle } from '../../puzzle/puzzle'
+import { FlowPuzzleDb } from '../../puzzle/puzzle-db'
+import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
 import { FlowServerCtx } from '../../flow-server-ctx'
 import { FlowPack } from '../pack'
 import { FlowPackDb } from '../pack-db'
-import { FlowPackPuzzlesGridServer } from './flow-pack-puzzles-grid.server'
+import { FlowPackPuzzlesGridServer } from './pack-puzzles-grid.server'
 
 const initial = () => {
   return {}

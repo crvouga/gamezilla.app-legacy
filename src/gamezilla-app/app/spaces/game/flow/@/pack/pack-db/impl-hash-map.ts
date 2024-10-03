@@ -1,6 +1,6 @@
 import { Ok, Result } from 'gamezilla-app/@/core'
 import type { FlowPack } from '../pack'
-import type { IFlowPackDb } from './flow-pack-db'
+import type { IFlowPackDb } from './interface'
 
 const db = new Map<string, FlowPack>()
 

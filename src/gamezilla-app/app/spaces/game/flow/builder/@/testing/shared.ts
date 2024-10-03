@@ -1,6 +1,6 @@
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type { Posix } from 'gamezilla-app/@/core'
-import { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { samples } from '../../../@/flow/flow-variant/flow-grid/flow-grid-samples'
 
 export const createFlowPuzzle = (createdAt: Posix, createdBy: UserId) => {

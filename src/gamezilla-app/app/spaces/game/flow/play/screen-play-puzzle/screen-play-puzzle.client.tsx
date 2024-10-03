@@ -4,7 +4,7 @@ import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from 'gamezilla-a
 import { Actions } from 'gamezilla-app/app/@/ui/actions'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { ViewPuzzleNotFound } from '../../@/flow-puzzle/not-found'
+import { ViewPuzzleNotFound } from '../../@/puzzle/not-found'
 import { FlowPlay } from '../../@/flow/flow-play'
 import type { ClientModule } from '../play.types'
 import * as CopyPuzzleClient from './copy-puzzle/copy-puzzle.client'

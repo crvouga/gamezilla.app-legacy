@@ -5,7 +5,7 @@ import { Button, Drawer, IconFloppyDisk, Typography } from 'gamezilla-app/app/@/
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { ViewBottomButtonBarAction } from '../../../../@/game'
-import type { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
+import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { FlowEdit } from '../../../@/flow/flow-edit'
 import type { ClientModule, ModelClient, MsgClient, MsgCore } from '../../builder.types'
 

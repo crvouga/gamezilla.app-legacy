@@ -1,5 +1,5 @@
 import { IContentModeration } from 'gamezilla-app/app/@/content-moderation/content-moderation'
-import { IFlowPuzzleDb } from './flow-puzzle-db'
+import { IFlowPuzzleDb } from './interface'
 
 export const WithContentModeration = (
   flowPuzzleDb: IFlowPuzzleDb,

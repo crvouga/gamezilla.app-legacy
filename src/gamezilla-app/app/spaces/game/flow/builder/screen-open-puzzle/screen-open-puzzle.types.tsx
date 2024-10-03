@@ -1,5 +1,5 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { CreateNewPuzzleTypes } from './create-new'
 
 //

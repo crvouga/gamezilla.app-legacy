@@ -3,7 +3,7 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
-import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
+import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { EditPackNameTypes } from './edit-pack-name'
 import { FlowPlay } from '../../@/flow/flow-play'
 

@@ -1,8 +1,8 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Ok, Posix, Result, TimeSpan, ascend } from 'gamezilla-app/@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
-import { FlowPuzzle } from '../flow-puzzle'
-import { FlowPuzzleName } from '../flow-puzzle-name'
+import { FlowPuzzle } from '../puzzle'
+import { FlowPuzzleName } from '../puzzle-name'
 import { FlowPuzzleDbFixture } from './fixture'
 
 const Fixture = async () => {

@@ -4,7 +4,7 @@ import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
 import { MsgCoreEvt } from './screen-play-puzzle.types'
 import { UserActivity } from '../@/user-activity/user-activity'
 import { Posix } from 'gamezilla-app/@/core'
-import { FlowPuzzleId } from '../../@/flow-puzzle/flow-puzzle-id'
+import { FlowPuzzleId } from '../../@/puzzle/puzzle-id'
 
 const update: ServerModule['update'] = async (input) => {
   return andThen(

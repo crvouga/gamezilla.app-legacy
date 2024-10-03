@@ -1,6 +1,6 @@
 import { Err, isErr, Ok } from 'gamezilla-app/@/core'
-import type { FlowPuzzle } from '../flow-puzzle'
-import type { IFlowPuzzleDb } from './flow-puzzle-db'
+import type { FlowPuzzle } from '../puzzle'
+import type { IFlowPuzzleDb } from './interface'
 
 const db = new Map<string, FlowPuzzle>()
 

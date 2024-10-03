@@ -1,6 +1,6 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
-import { FlowPuzzleId } from '../../../@/flow-puzzle/flow-puzzle-id'
+import { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
 import { Posix } from 'gamezilla-app/@/core'
 
 export const UserStartedPuzzle = p.obj({

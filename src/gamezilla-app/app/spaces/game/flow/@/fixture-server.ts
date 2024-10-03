@@ -6,7 +6,7 @@ import { FlowCore } from '../flow.core'
 import { FlowServer } from '../flow.server'
 import { ModelCore } from '../flow.types'
 import { FlowPackDb } from './pack/pack-db'
-import { FlowPuzzleDb } from './flow-puzzle/flow-puzzle-db'
+import { FlowPuzzleDb } from './puzzle/puzzle-db'
 import type { FlowServerCtx } from './flow-server-ctx'
 
 type Input = Parameters<typeof FlowServer.update>[0]

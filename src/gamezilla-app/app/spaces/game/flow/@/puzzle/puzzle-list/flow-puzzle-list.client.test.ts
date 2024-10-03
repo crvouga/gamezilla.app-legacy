@@ -7,7 +7,7 @@ import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import type { FlowClientCtx } from '../../flow-client-ctx'
-import { FlowPuzzle } from '../flow-puzzle'
+import { FlowPuzzle } from '../puzzle'
 import { FlowPuzzleListClient } from './flow-puzzle-list.client'
 import { type ModelClient, initClient } from './flow-puzzle-list.types'
 
