@@ -3,7 +3,8 @@ import { p } from 'gamezilla-app/@/core/parser'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import type { IVerifySMS } from '../../verify-sms'
 
-export type Deps = {
+export type Config = {
+  t: 'twilio'
   logger: ILogger
 }
 
@@ -27,7 +28,7 @@ if (typeof TWILIO_MESSAGING_SERVICE_SID !== 'string') {
 
 const AUTHORIZATION = `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`
 
-export const VerifySMS = (deps: Deps): IVerifySMS => {
+export const VerifySMS = (deps: Config): IVerifySMS => {
   return {
     async sendCode(input) {
       try {
@@ -41,6 +42,12 @@ export const VerifySMS = (deps: Deps): IVerifySMS => {
 
         deps.logger.debug(`Sending code to ${to} body=${body}`)
 
+        if (typeof fetch === 'undefined') {
+          return Err({
+            t: 'database-error',
+            error: 'fetch is not defined'
+          })
+        }
         const response = await fetch(
           `https://verify.twilio.com/v2/Services/${TWILIO_MESSAGING_SERVICE_SID}/Verifications`,
           {

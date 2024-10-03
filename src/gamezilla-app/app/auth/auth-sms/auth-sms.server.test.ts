@@ -23,15 +23,11 @@ type InputMsg =
 
 const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
   const f = await AppServerFixture()
-  const depsBase = await AuthSMSServer.initDeps(f)
   const deps: Awaited<ReturnType<typeof AuthSMSServer.initDeps>> = {
-    ...depsBase,
-    AccountDb: UserAccountDb({
-      t: 'in-memory',
-      delay: async () => {}
-    }),
-    VerifySMS: input?.VerifySMS ?? depsBase.VerifySMS
+    AccountDb: UserAccountDb({ t: 'in-memory', delay: async () => {} }),
+    VerifySMS: input?.VerifySMS ?? VerifySMS({ t: 'fake-always-ok' })
   }
+
   const updates = function* (msgs: InputMsg[]) {
     for (const msg of msgs) {
       yield AuthSMSServer.update({

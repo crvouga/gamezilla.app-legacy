@@ -5,6 +5,7 @@ import { FlowPuzzleDb } from './flow-puzzle-db-impl'
 export const FlowPuzzleDbFixture = async () => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       const flowPuzzleDb = FlowPuzzleDb({
         t: 'db-conn-sql',

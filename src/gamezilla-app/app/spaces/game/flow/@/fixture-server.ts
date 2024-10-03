@@ -5,8 +5,8 @@ import { FixtureSpaceServer } from 'gamezilla-app/app/spaces/@/fixture/server'
 import { FlowCore } from '../flow.core'
 import { FlowServer } from '../flow.server'
 import { ModelCore } from '../flow.types'
-import { FlowPackDb } from './flow-pack'
-import { FlowPuzzleDb } from './flow-puzzle'
+import { FlowPackDb } from './flow-pack/flow-pack-db'
+import { FlowPuzzleDb } from './flow-puzzle/flow-puzzle-db'
 import type { FlowServerCtx } from './flow-server-ctx'
 
 type Input = Parameters<typeof FlowServer.update>[0]
@@ -19,12 +19,8 @@ export const FixtureFlowServer = async () => {
   const f = await FixtureSpaceServer()
   const ctx: FlowServerCtx = {
     ...f.ctx,
-    flowPackDb: FlowPackDb({
-      t: 'hash-map'
-    }),
-    flowPuzzleDb: FlowPuzzleDb({
-      t: 'hash-map'
-    })
+    flowPackDb: FlowPackDb({ t: 'hash-map' }),
+    flowPuzzleDb: FlowPuzzleDb({ t: 'hash-map' })
   }
 
   const updates = async (outputs: NonEmpty<Output>, inputs: Input[]): Promise<NonEmpty<Output>> => {

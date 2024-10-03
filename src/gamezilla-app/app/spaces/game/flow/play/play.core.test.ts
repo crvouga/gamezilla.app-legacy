@@ -1,8 +1,8 @@
 import { describe, expect, it, test } from 'bun:test'
-import { FlowPack } from '../@/flow-pack'
-import { FlowPuzzle } from '../@/flow-puzzle'
-import { CoreFixture } from './@/fixture.core'
 import { UserId } from 'gamezilla-app/app/@/data'
+import { FlowPack } from '../@/flow-pack/flow-pack'
+import { FlowPuzzle } from '../@/flow-puzzle/flow-puzzle'
+import { CoreFixture } from './@/fixture.core'
 
 describe(import.meta.file, () => {
   it('should be able to open pack from list', async () => {

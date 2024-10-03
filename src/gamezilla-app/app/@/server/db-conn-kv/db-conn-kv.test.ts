@@ -10,6 +10,7 @@ const Fixture = async () => {
   const logger = Logger({ t: 'noop' })
 
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       const dbConnKv = testEnv.dbConnKv
 

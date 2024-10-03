@@ -10,6 +10,7 @@ import { FlowPackDb } from './flow-pack-db-impl'
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       const flowPackDb = FlowPackDb({
         t: 'db-conn-sql',

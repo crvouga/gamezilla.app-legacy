@@ -1,7 +1,12 @@
-import { Ok } from 'gamezilla-app/@/core'
+import { Ok, PhoneNumber } from 'gamezilla-app/@/core'
 import type { IVerifySMS } from '../../verify-sms'
 
-export const VerifySMS = (): IVerifySMS => {
+export type Config = {
+  t: 'fake-always-ok'
+  phoneNumber?: PhoneNumber
+}
+
+export const VerifySMS = (_config: Config): IVerifySMS => {
   return {
     async sendCode() {
       return Ok(null)

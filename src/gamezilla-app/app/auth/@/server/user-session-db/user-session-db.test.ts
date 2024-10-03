@@ -7,6 +7,7 @@ import { unwrap } from 'gamezilla-app/@/core'
 const FixtureVariant = async () => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       return {
         userSessionDb: UserSessionDb({

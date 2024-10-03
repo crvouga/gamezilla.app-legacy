@@ -7,6 +7,7 @@ import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',

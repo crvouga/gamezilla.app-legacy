@@ -5,14 +5,15 @@ import type { IVerifySMS } from '../../verify-sms'
 
 const DEFAULT_CODE = '123'
 
-export type Deps = {
+export type Config = {
+  t: 'fake'
   logger?: ILogger
   delay?: () => Promise<void>
   verificationId?: VerificationId
   code?: string
 }
 
-export const VerifySMS = (deps: Deps): IVerifySMS => {
+export const VerifySMS = (deps: Config): IVerifySMS => {
   const phoneNumbers = new Map<VerificationId, PhoneNumber>()
 
   return {

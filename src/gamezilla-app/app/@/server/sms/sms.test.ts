@@ -9,6 +9,7 @@ const Fixture = async () => {
   const logger = Logger({ t: 'noop' })
   const phoneNumber = unwrap(PhoneNumber.fromString('+14802098698'))
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       const sms = SMS({
         t: 'fake',

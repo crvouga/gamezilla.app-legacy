@@ -2,10 +2,10 @@ import { Err, Ok, PhoneNumber, isErr } from 'gamezilla-app/@/core'
 import type { Verification } from '../../verification'
 import { VerificationAttemptId, type VerificationAttempt } from '../../verification-attempt'
 import type { IVerifySMS } from '../../verify-sms'
-import type { Deps } from './shared'
+import type { Config } from './shared'
 
 export const VerifyCode =
-  (deps: Deps): IVerifySMS['verifyCode'] =>
+  (deps: Config): IVerifySMS['verifyCode'] =>
   async (input) => {
     deps.logger.info(`Verifying code for ${PhoneNumber.toString(input.phoneNumber)}`)
 

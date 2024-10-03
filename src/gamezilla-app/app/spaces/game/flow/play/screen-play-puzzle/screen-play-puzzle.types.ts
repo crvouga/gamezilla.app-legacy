@@ -1,13 +1,13 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import type { GameCoreModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-core'
+import { UserId } from 'gamezilla-app/app/@/data'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
-import { FlowPack } from '../../@/flow-pack'
+import type { GameCoreModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-core'
+import { FlowPack } from '../../@/flow-pack/flow-pack'
+import { FlowPackId } from '../../@/flow-pack/flow-pack-id'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGroupId } from '../../@/flow/flow/flow-group-id'
 import { FlowPuzzleResult } from '../@/puzzle-result'
 import { CopyPuzzleTypes } from './copy-puzzle'
-import { UserId } from 'gamezilla-app/app/@/data'
-import { FlowPackId } from '../../@/flow-pack/flow-pack-id'
 
 export const MsgCore = p.or(
   CopyPuzzleTypes.MsgCore,

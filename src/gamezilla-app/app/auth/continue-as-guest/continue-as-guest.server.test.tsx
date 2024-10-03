@@ -27,6 +27,7 @@ const FixtureDeps = async (): Promise<ServerDeps> => {
   const timeout = () => new Promise((resolve) => resolve(null))
 
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       const accountDb = UserAccountDb({
         t: 'postgres',

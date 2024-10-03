@@ -15,6 +15,7 @@ export const initial = {
 export const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       return {
         ...ctx,

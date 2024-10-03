@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { SpaceGameCoreFixture } from 'gamezilla-app/app/spaces/game/@/testing/sync'
+import { FlowPack } from '../../@/flow-pack/flow-pack'
 import { FlowPackPuzzlesGridUI } from '../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui'
-import { FlowPuzzle } from '../../@/flow-puzzle'
-
-import { FlowPack } from '../../@/flow-pack'
+import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
 import { BuilderCore } from '../builder.core'
 import type { ModelCore } from '../builder.types'
 import { ScreenPackBuilderCore } from './screen-pack-builder.core'

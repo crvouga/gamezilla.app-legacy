@@ -1,10 +1,10 @@
 import { Err, Ok, Posix, TimeSpan, isErr } from 'gamezilla-app/@/core'
 import { VerificationId, type Verification } from '../../verification'
 import type { IVerifySMS } from '../../verify-sms'
-import { Deps } from './shared'
+import { Config } from './shared'
 
 export const SendCode =
-  (deps: Deps): IVerifySMS['sendCode'] =>
+  (deps: Config): IVerifySMS['sendCode'] =>
   async (input) => {
     const now = deps.now()
 

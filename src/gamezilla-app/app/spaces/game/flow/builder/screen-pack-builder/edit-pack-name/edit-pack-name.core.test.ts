@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Err, Ok } from 'gamezilla-app/@/core'
 import { SpaceCoreFixture } from 'gamezilla-app/app/spaces/@/fixture/core'
-import { FlowPack } from '../../../@/flow-pack'
+import { FlowPack } from '../../../@/flow-pack/flow-pack'
 import { EditPackNameCore } from './edit-pack-name.core'
 import type { ModelCore, MsgCore } from './edit-pack-name.types'
 
@@ -9,15 +9,7 @@ const Fixture = async () => {
   const f = await SpaceCoreFixture()
 
   const update = (init: ModelCore, msgs: MsgCore[]) => {
-    return msgs.reduce(
-      (model, msg) =>
-        EditPackNameCore.update({
-          ctx: f.ctx,
-          modelCore: model,
-          msgCore: msg
-        }),
-      init
-    )
+    return msgs.reduce((model, msg) => EditPackNameCore.update({ ctx: f.ctx, modelCore: model, msgCore: msg }), init)
   }
 
   const pack = await FlowPack.random()

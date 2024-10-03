@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from 'gamezilla-app/@/core'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
-import { FlowPuzzle } from '../../@/flow-puzzle'
+import { FlowPack } from '../../@/flow-pack/flow-pack'
+import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
 import { FlowCreateFixtureServer } from '../@/testing/server'
 import type { ModelCore, MsgCore } from '../builder.types'
 import { ScreenPackBuilderCore } from './screen-pack-builder.core'
 import { ScreenPackBuilderServer } from './screen-pack-builder.server'
-import { FlowPack } from '../../@/flow-pack'
 
 const Fixture = async () => {
   const f = await FlowCreateFixtureServer()

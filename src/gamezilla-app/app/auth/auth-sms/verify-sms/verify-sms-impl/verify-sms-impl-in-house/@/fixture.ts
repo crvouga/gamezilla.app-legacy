@@ -8,6 +8,7 @@ import { VerificationAttemptDb } from '../../../verification-attempt'
 import { type IVerificationCodeGenerator, VerificationCodeGenerator } from '../../../verification-code-generator'
 import { type IVerificationDb, VerificationDb } from '../../../verification/verification-db'
 import { VerifySMS } from '../verify-sms-impl-in-house'
+import { Config } from '../shared'
 
 export const VerifySMSInHouseFixture = async (input?: {
   verifyCodeMaxAttempts?: number
@@ -35,7 +36,8 @@ export const VerifySMSInHouseFixture = async (input?: {
   })
   const hashing = input?.hashing ?? Hashing({ t: 'noop' })
 
-  const verifySMS = VerifySMS({
+  const config: Config = {
+    t: 'in-house',
     logger,
     verificationDb,
     verificationAttemptDb,
@@ -48,12 +50,14 @@ export const VerifySMSInHouseFixture = async (input?: {
     sms,
     Translator,
     verificationCodeGenerator
-  })
+  }
+  const verifySMS = VerifySMS(config)
 
   const phoneNumber = unwrap(PhoneNumber.fromString('+1 480-209-8698'))
   const preferredLanguage: LanguageCodeISO_639_1 = 'en'
 
   return {
+    ...config,
     preferredLanguage,
     verificationDb,
     CODE,

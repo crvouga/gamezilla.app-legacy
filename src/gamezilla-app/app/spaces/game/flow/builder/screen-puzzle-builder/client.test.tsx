@@ -1,5 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
+import { PubSub } from 'gamezilla-app/@/core'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
+import { FlowPuzzle } from '../../@/flow-puzzle/flow-puzzle'
 import {
   clickedExitPuzzleBuilderButton,
   clickedPuzzleListItem,
@@ -11,10 +13,8 @@ import {
   testFlowClientCtx
 } from '../@/testing/client'
 import { deriveModelCore } from '../@/testing/game'
-import { ScreenPuzzleBuilderClient } from './client'
-import { PubSub } from 'gamezilla-app/@/core'
 import type { MsgClient } from '../builder.types'
-import { FlowPuzzle } from '../../@/flow-puzzle'
+import { ScreenPuzzleBuilderClient } from './client'
 
 const Fixture = async () => {
   const f = await FixtureFlowBuilderClient()

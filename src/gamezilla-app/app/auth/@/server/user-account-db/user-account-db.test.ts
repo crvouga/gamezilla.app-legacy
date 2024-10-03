@@ -9,6 +9,7 @@ const Fixture = async () => {
   const testEnv = await AppServerTestEnv()
 
   switch (testEnv.t) {
+    case 'all':
     case 'integration': {
       return {
         userAccountDb: UserAccountDb({

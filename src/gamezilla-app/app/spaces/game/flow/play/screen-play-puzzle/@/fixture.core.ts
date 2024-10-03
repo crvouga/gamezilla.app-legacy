@@ -1,13 +1,13 @@
 import { NonEmpty, pipe } from 'gamezilla-app/@/core'
+import { UserId } from 'gamezilla-app/app/@/data'
 import type { FlowVariant } from '../../../@/flow'
-import { FlowPack } from '../../../@/flow-pack'
-import { FlowPuzzle } from '../../../@/flow-puzzle'
+import { FlowPack } from '../../../@/flow-pack/flow-pack'
+import { FlowPuzzle } from '../../../@/flow-puzzle/flow-puzzle'
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { CoreFixture } from '../../@/fixture.core'
 import { FlowPuzzleResult } from '../../@/puzzle-result'
 import { ScreenPlayPuzzleCore } from '../screen-play-puzzle.core'
 import type { ModelCore, MsgCore } from '../screen-play-puzzle.types'
-import { UserId } from 'gamezilla-app/app/@/data'
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await CoreFixture()

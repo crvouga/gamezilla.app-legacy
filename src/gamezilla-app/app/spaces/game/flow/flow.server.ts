@@ -3,28 +3,20 @@ import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { SpaceServerCtx } from '../../@/space'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
-import { FlowPackDb, FlowPackListServer } from './@/flow-pack'
-import { FlowPuzzleDb } from './@/flow-puzzle'
+import { FlowPackDb } from './@/flow-pack/flow-pack-db'
+import { FlowPackListServer } from './@/flow-pack/flow-pack-list'
+import { FlowPackPuzzlesGridServer } from './@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server'
+import { FlowPuzzleDb } from './@/flow-puzzle/flow-puzzle-db'
 import { FlowServerCtx } from './@/flow-server-ctx'
 import { BuilderServer } from './builder/builder.server'
 import type { ServerModule } from './flow.types'
 import { PlayServer } from './play/play.server'
-import { FlowPackPuzzlesGridServer } from './@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server'
 
 export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
   return {
     ...input.ctx,
-    flowPuzzleDb: FlowPuzzleDb({
-      t: 'db-conn-sql',
-      dbConnSql: input.ctx.dbConnSql,
-      logger: Logger({
-        t: 'noop'
-      })
-    }),
-    flowPackDb: FlowPackDb({
-      t: 'db-conn-sql',
-      dbConnSql: input.ctx.dbConnSql
-    })
+    flowPuzzleDb: FlowPuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: Logger({ t: 'noop' }) }),
+    flowPackDb: FlowPackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql })
   }
 }
 

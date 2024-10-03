@@ -24,57 +24,31 @@ import { VerifySMS } from './verify-sms/verify-sms-impl/verify-sms-impl'
 //
 
 const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
-  const verificationDb = VerificationDb({
-    t: 'postgres',
-    dbConnSql: ctx.dbConnSql
+  const accountDb = UserAccountDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
+  const verificationDb = VerificationDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
+  const verificationAttemptDb = VerificationAttemptDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
+  const hashing = Hashing({ t: 'bun' })
+  const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
+  const sms = SMS({ t: 'fake', logger: ILogger.prefix('sms', ctx.logger) })
+  const verifySMSTwilio = VerifySMS({ t: 'twilio', logger: ILogger.prefix('twilio-verify', ctx.logger) })
+  const verifySMSInHouse = VerifySMS({
+    t: 'in-house',
+    logger: ctx.logger,
+    hashing,
+    now: Posix.now,
+    sendCodeDailyLimit: 1000,
+    sendCodeHourlyLimit: 100,
+    verificationAttemptDb,
+    verificationDb,
+    verifyCodeExpiresIn: TimeSpan.minutes(5),
+    verifyCodeMaxAttempts: 3,
+    sms,
+    Translator,
+    verificationCodeGenerator
   })
-
-  const verificationAttemptDb = VerificationAttemptDb({
-    t: 'postgres',
-    dbConnSql: ctx.dbConnSql
-  })
-
-  const hashing = Hashing({
-    t: 'bun'
-  })
-
-  const verificationCodeGenerator = VerificationCodeGenerator({
-    t: 'fake',
-    code: '123'
-  })
-
-  const sms = SMS({
-    t: 'fake',
-    logger: ILogger.prefix('sms', ctx.logger)
-  })
-
-  const verifySMS =
-    ctx.env === 'prod' || true
-      ? VerifySMS({
-          t: 'twilio',
-          logger: ILogger.prefix('twilio-verify', ctx.logger)
-        })
-      : VerifySMS({
-          t: 'in-house',
-          logger: ctx.logger,
-          hashing,
-          now: Posix.now,
-          sendCodeDailyLimit: 1000,
-          sendCodeHourlyLimit: 100,
-          verificationAttemptDb,
-          verificationDb,
-          verifyCodeExpiresIn: TimeSpan.minutes(5),
-          verifyCodeMaxAttempts: 3,
-          sms,
-          Translator,
-          verificationCodeGenerator
-        })
-
+  const verifySMS = ctx.env === 'prod' || true ? verifySMSTwilio : verifySMSInHouse
   return {
-    AccountDb: UserAccountDb({
-      t: 'postgres',
-      dbConnSql: ctx.dbConnSql
-    }),
+    AccountDb: accountDb,
     VerifySMS: verifySMS
   }
 }

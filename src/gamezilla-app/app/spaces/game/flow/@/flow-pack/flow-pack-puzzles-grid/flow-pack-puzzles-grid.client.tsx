@@ -2,7 +2,6 @@ import { isErr, RequestResponse, Result } from 'gamezilla-app/@/core'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
-import type { FlowPack } from '..'
 import {
   ClientModule,
   initClient,
@@ -10,6 +9,7 @@ import {
   type MsgClient,
   type MsgInCmdClient
 } from './flow-pack-puzzles-grid.types'
+import { FlowPack } from '../flow-pack'
 
 const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
   if (!input.ctx.pack) {

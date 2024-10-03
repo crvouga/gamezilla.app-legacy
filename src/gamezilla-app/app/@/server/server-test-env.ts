@@ -16,6 +16,11 @@ export type ITestEnv =
       dbConnSql: IDbConnSql
       dbConnKv: IDbConnKv
     }
+  | {
+      t: 'all'
+      dbConnSql: IDbConnSql
+      dbConnKv: IDbConnKv
+    }
 
 export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   if (process.env.IS_INTEGRATION_TEST !== 'true') {
@@ -64,12 +69,8 @@ export const AppServerFixture = async () => {
   const logger = Logger({ t: 'noop' })
   const ctx: ServerCtx = {
     env: 'test',
-    dbConnKv: await DbConnKv({
-      t: 'hash-map'
-    }),
-    dbConnSql: await DbConnSql({
-      t: 'noop'
-    }),
+    dbConnKv: await DbConnKv({ t: 'hash-map' }),
+    dbConnSql: await DbConnSql({ t: 'noop' }),
     logger,
     now: Posix.now(),
     sms: SMS({ t: 'fake', logger }),
