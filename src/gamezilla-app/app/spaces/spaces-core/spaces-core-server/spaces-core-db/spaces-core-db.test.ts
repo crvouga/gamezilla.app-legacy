@@ -5,12 +5,7 @@ import * as SpaceCore from '../../space-core'
 import { SpacesDb } from './spaces-core-db-impl'
 
 const Fixture = async () => {
-  const spacesDb = SpacesDb({
-    t: 'db-conn-kv',
-    dbConnKv: await DbConnKv({
-      t: 'hash-map'
-    })
-  })
+  const spacesDb = SpacesDb({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'hash-map' }) })
 
   const spaceA = SpaceCore.random()
 
@@ -20,7 +15,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   it('should work', async () => {
     const f = await Fixture()
 
