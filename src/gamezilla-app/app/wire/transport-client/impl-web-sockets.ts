@@ -5,7 +5,7 @@ import {
   type ClientTransportWebSocketImpl,
   type IClientTransport,
   initClientTransport
-} from './transport-client'
+} from './inteface'
 
 const RECONNECT_INTERVAL = 2000
 const MAX_RECONNECT_ATTEMPTS = 6

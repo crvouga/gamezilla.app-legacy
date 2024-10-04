@@ -10,7 +10,7 @@ import {
   type MsgClientToMsgServer,
   type MsgServerToMsgClient
 } from '../transport.core'
-import { initServerTransport, type IServerTransport } from './transport-server'
+import { initServerTransport, type IServerTransport } from './interface'
 
 export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
   server,

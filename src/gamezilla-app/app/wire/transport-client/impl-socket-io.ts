@@ -1,5 +1,5 @@
 import type { MsgClientToMsgServer, MsgServerToMsgClient } from '../transport.core'
-import { type ClientTransportSocketIOImpl, type IClientTransport, initClientTransport } from './transport-client'
+import { type ClientTransportSocketIOImpl, type IClientTransport, initClientTransport } from './inteface'
 
 export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
   codebaseVersionId,

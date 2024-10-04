@@ -7,7 +7,7 @@ import {
   type MsgClientToMsgServer,
   type MsgServerToMsgClient
 } from '../transport.core'
-import { initServerTransport, type IServerTransport } from './transport-server'
+import { initServerTransport, type IServerTransport } from './interface'
 
 type ServerWebSocketData = {
   clientId: ClientId

@@ -1,6 +1,6 @@
-import type { ClientTransportImpl, IClientTransport } from './transport-client'
-import { ClientTransportSocketIO } from './transport-client-impl-socket-io'
-import { ClientTransportWebSockets } from './transport-client-impl-web-sockets'
+import type { ClientTransportImpl, IClientTransport } from './inteface'
+import { ClientTransportSocketIO } from './impl-socket-io'
+import { ClientTransportWebSockets } from './impl-web-sockets'
 
 export const ClientTransport = async <MsgToServer, MsgToClient>({
   codebaseVersionId,
