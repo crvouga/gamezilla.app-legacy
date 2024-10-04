@@ -61,7 +61,7 @@ export const initCtx = async (): Promise<Ctx> => {
     simulateLatency:
       env === 'dev'
         ? async () => {
-            console.log('Simulating latency...')
+            logger.info('Simulating latency...')
             await sleep(TimeSpan.milliseconds(100 + Math.random() * 200))
           }
         : () => {}

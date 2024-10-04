@@ -4,7 +4,6 @@ import { Sql } from 'gamezilla-app/@/sql'
 import postgres from 'postgres'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnSql } from './interface'
-import { logQuery } from './shared'
 
 export type Config = {
   t: 'postgres'
@@ -23,20 +22,19 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       const sql = Sql.to(rawSql, params)
 
       try {
-        const start = Date.now()
+        const start = process.hrtime.bigint()
 
         await config.simulateLatency()
 
         const rows = await client.unsafe(sql)
 
-        const end = Date.now()
+        const end = process.hrtime.bigint()
 
-        logQuery({
-          logger: config.logger,
-          sql: Sql.toLog(rawSql, params),
-          start,
-          end
-        })
+        const durationMs = Number(end - start) / 1e6
+        const durationFormatted = `${durationMs.toFixed(2)}ms`
+        config.logger.debug(
+          `duration=${durationFormatted}\nsql=\n${rawSql}\nparams=${JSON.stringify(params, null, 4).slice(0, 500)}`
+        )
 
         const output: p.Infer<typeof rowParser>[] = []
 

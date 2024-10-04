@@ -32,7 +32,7 @@ export const ViewSpaceCard = (input: { ctx: BaseClientCtx; state: SpaceCoreState
       disabled={!input.onClick}
       className={cn(
         'flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500 p-4',
-        input.onClick && 'hover:opacity-90 active:opacity-70'
+        input.onClick && 'transition-opacity hover:opacity-90 active:opacity-70'
       )}
     >
       <div className='flex w-full items-center justify-start'>
@@ -85,7 +85,11 @@ export const ViewSpaceCard = (input: { ctx: BaseClientCtx; state: SpaceCoreState
               </div>
             )}
           </div>
-          <Typography variant='title' text={input.ctx.t('space-card.people-count', users.length)} />
+          <Typography
+            variant='body'
+            className='truncate text-lg font-normal'
+            text={input.ctx.t('space-card.people-count', users.length)}
+          />
         </div>
       )}
     </button>
