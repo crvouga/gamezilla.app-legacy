@@ -26,10 +26,7 @@ export const UserSessionDb = (impl: Config): IUserSessionDb => {
 
     case 'postgres-with-cache': {
       return WithCache({
-        userSessionDb: ImplPostgres.UserSessionDb({
-          t: 'postgres',
-          dbConnSql: impl.dbConnSql
-        }),
+        userSessionDb: ImplPostgres.UserSessionDb({ t: 'postgres', dbConnSql: impl.dbConnSql }),
         dbConnKv: impl.dbConnKv
       })
     }

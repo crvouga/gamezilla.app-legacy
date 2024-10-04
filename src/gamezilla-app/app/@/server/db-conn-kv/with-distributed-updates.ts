@@ -23,15 +23,17 @@ export type DistributedUpdate =
       e: [string, unknown][]
     }
 
+export type Config = {
+  logger: ILogger
+  dbConnKv: IDbConnKv
+  pubSub: PubSub<DistributedUpdate>
+}
+
 export const withDistributedUpdates = ({
   dbConnKv,
   pubSub,
   logger
-}: {
-  logger: ILogger
-  dbConnKv: IDbConnKv
-  pubSub: PubSub<DistributedUpdate>
-}): IDbConnKv & { unsubscribe: () => void } => {
+}: Config): IDbConnKv & { unsubscribe: () => void } => {
   const unsubscribe = pubSub.sub((update) => {
     switch (update.t) {
       case DistributedUpdateType.SET: {

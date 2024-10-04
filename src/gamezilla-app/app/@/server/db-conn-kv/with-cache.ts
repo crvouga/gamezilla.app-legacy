@@ -2,15 +2,13 @@ import { Result } from 'gamezilla-app/@/core'
 import { ILogger } from '../logger'
 import { IDbConnKv } from './interface'
 
-export const withCache = ({
-  cache,
-  source,
-  logger
-}: {
+export type Config = {
   cache: IDbConnKv
   source: IDbConnKv
   logger: ILogger
-}): IDbConnKv => {
+}
+
+export const withCache = ({ cache, source, logger }: Config): IDbConnKv => {
   return {
     async get(key, parser) {
       const start = process.hrtime.bigint()

@@ -2,13 +2,12 @@ import { isErr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnKv } from './interface'
 
-export const withReducedParsing = ({
-  dbConnKv,
-  verifiedKeys
-}: {
+export type Config = {
   dbConnKv: IDbConnKv
   verifiedKeys: Set<string>
-}): IDbConnKv => {
+}
+
+export const withReducedParsing = ({ dbConnKv, verifiedKeys }: Config): IDbConnKv => {
   return {
     ...dbConnKv,
 
