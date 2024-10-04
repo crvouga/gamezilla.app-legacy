@@ -1,7 +1,7 @@
 import type { PubSub as IPubSub } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnSql } from '../db-conn-sql'
-import type { ILogger } from '../logger/logger'
+import type { ILogger } from '../logger/interface'
 
 export type Config<T> = {
   t: 'postgres'

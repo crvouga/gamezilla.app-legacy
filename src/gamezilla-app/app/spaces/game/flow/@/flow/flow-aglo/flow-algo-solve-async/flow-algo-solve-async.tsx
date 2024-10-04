@@ -1,5 +1,5 @@
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
-import { loggerNoop } from 'gamezilla-app/app/@/server/logger/logger-impl-noop'
+import { loggerNoop } from 'gamezilla-app/app/@/server/logger/impl-noop'
 import type { FlowVariant } from '../../flow-variant'
 import { MsgToMaster, type MsgToWorker } from './flow-algo-solve-async.types'
 

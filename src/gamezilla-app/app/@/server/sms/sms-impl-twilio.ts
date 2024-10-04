@@ -1,5 +1,5 @@
 import { Err, PhoneNumber } from 'gamezilla-app/@/core'
-import type { ILogger } from '../logger/logger'
+import type { ILogger } from '../logger/interface'
 import type { ISMS } from './sms'
 
 export const SMSTwilio = ({ logger }: { logger: ILogger }): ISMS => {

@@ -1,4 +1,4 @@
-import type { ILogger } from '../logger/logger'
+import type { ILogger } from '../logger/interface'
 import type { ISMS } from './sms'
 import { SMSFake } from './sms-impl-fake'
 import { SMSTwilio } from './sms-impl-twilio'

@@ -1,6 +1,6 @@
 import { Result } from 'gamezilla-app/@/core'
 import { ILogger } from '../logger'
-import { IDbConnKv } from './db-conn-kv'
+import { IDbConnKv } from './interface'
 
 export const withCache = ({
   cache,

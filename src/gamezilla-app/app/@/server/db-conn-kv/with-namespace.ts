@@ -1,6 +1,6 @@
 import { type Task } from 'gamezilla-app/@/core'
 import type { Parser } from 'gamezilla-app/@/core/parser/parser'
-import { IDbConnKv } from './db-conn-kv'
+import { IDbConnKv } from './interface'
 
 export const withNamespace = <TKey extends string = string, TValue = unknown>(
   dbConnKv: IDbConnKv,

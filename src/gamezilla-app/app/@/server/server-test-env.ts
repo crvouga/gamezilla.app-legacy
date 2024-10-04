@@ -40,9 +40,10 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   }
 
   const dbConnSql = await DbConnSql({
-    t: 'pg',
+    t: 'postgres',
     databaseUrl: DATABASE_URL,
-    logger: ILogger.prefix('db-conn-sql', logger)
+    logger: ILogger.prefix('db-conn-sql', logger),
+    simulateLatency: async () => {}
   })
 
   const dbConnKv = await DbConnKv({

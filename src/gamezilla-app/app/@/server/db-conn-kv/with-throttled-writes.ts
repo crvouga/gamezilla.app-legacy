@@ -1,6 +1,6 @@
 import { Ok, TimeSpan } from 'gamezilla-app/@/core'
-import type { ILogger } from '../logger/logger'
-import type { IDbConnKv } from './db-conn-kv'
+import type { ILogger } from '../logger/interface'
+import type { IDbConnKv } from './interface'
 
 export const withThrottledWrites = ({
   dbConnKv,

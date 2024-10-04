@@ -3,7 +3,7 @@ import { Ok, Result, TimeSpan, Uuid } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { Logger } from '../logger'
 import { AppServerTestEnv } from '../server-test-env'
-import { DbConnKv } from './db-conn-kv-impl'
+import { DbConnKv } from './impl'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()

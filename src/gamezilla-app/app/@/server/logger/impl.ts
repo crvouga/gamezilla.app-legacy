@@ -1,6 +1,6 @@
-import type { ILogger } from './logger'
-import { LoggerConsole } from './logger-impl-console'
-import { loggerNoop } from './logger-impl-noop'
+import type { ILogger } from './interface'
+import { LoggerConsole } from './impl-console'
+import { loggerNoop } from './impl-noop'
 
 export type Impl =
   | {

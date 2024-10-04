@@ -1,8 +1,8 @@
 import { Err, Ok, Result, isErr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnSql } from '../db-conn-sql'
-import type { ILogger } from '../logger/logger'
-import type { IDbConnKv } from './db-conn-kv'
+import type { ILogger } from '../logger/interface'
+import type { IDbConnKv } from './interface'
 
 const Row = p.obj({
   key: p.str,

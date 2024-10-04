@@ -1,6 +1,6 @@
 import { Ok } from 'gamezilla-app/@/core'
 import type { p } from 'gamezilla-app/@/core/parser'
-import type { IDbConnKv } from './db-conn-kv'
+import type { IDbConnKv } from './interface'
 
 export type Config = {
   map?: Map<string, unknown>

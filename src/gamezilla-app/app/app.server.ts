@@ -5,7 +5,7 @@ import type { ServerInstance } from 'gamezilla-app/@/server'
 import { ServerCmd, type ServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
 import { DbConnKv, type IDbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './@/server/db-conn-sql'
-import { ILogger } from './@/server/logger/logger'
+import { ILogger } from './@/server/logger/interface'
 import { SMS, type ISMS } from './@/server/sms'
 import type { MsgServer, MsgToClient, MsgToServer, MsgToServerMeta } from './app.types'
 import * as AuthServer from './auth/auth.server'
@@ -58,9 +58,10 @@ export const initDeps = async ({
   }
 
   const dbConnSql = await DbConnSql({
-    t: 'pg',
+    t: 'postgres',
     databaseUrl,
-    logger: ILogger.prefix('db-conn-sql', logger)
+    logger: ILogger.prefix('db-conn-sql', logger),
+    simulateLatency: async () => {}
   })
 
   const loggerDbConnKv = ILogger.prefix('db-conn-kv', logger)

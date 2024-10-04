@@ -1,2 +1,2 @@
-export * from './db-conn-kv-impl'
-export * from './db-conn-kv'
+export * from './impl'
+export * from './interface'

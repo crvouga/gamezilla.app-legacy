@@ -2,8 +2,8 @@ import { pipe, Posix } from 'gamezilla-app/@/core'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { ClientId, Profile, SessionId, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { ServerCtx } from 'gamezilla-app/app/@/server'
-import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map'
-import { DbConnSqlNoop } from 'gamezilla-app/app/@/server/db-conn-sql'
+import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
+import { DbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { AppServerFixture } from 'gamezilla-app/app/@/server/server-test-env'
 import { smsNoop } from 'gamezilla-app/app/@/server/sms'
@@ -64,10 +64,10 @@ export const ctx: ServerCtx = {
   sleep: async () => null,
   env: 'test',
   sms: smsNoop,
-  dbConnSql: DbConnSqlNoop(),
+  dbConnSql: await DbConnSql({ t: 'noop' }),
   logger: Logger({ t: 'noop' }),
   now: Posix.now(),
-  dbConnKv: DbConnKv()
+  dbConnKv: await DbConnKv({ t: 'hash-map' })
 }
 
 export const init = () => {
@@ -75,26 +75,17 @@ export const init = () => {
 }
 
 export const initDeps = async (): Promise<ServerDeps> => {
-  const dbConnKv = DbConnKv()
+  const dbConnKv = await DbConnKv({ t: 'hash-map' })
   return {
-    profileCache: ProfileCache({
-      t: 'db-conn-kv',
-      dbConnKv
-    }),
-    spacesCoreServer: SpacesCoreServer({
-      t: 'db-conn-kv',
-      dbConnKv
-    }),
-    gameDb: GameDb({
-      t: 'db-conn-kv',
-      dbConnKv
-    }),
-    gameServer: await GameServer.initCtx({
+    profileCache: ProfileCache({ t: 'db-conn-kv', dbConnKv }),
+    spacesCoreServer: SpacesCoreServer({ t: 'db-conn-kv', dbConnKv }),
+    gameDb: GameDb({ t: 'db-conn-kv', dbConnKv }),
+    gameServer: GameServer.initCtx({
       ctx: {
         sleep: async () => null,
         clientId: ClientId.generate(),
         dbConnKv,
-        dbConnSql: DbConnSqlNoop(),
+        dbConnSql: await DbConnSql({ t: 'noop' }),
         env: 'test',
         logger: Logger({
           t: 'noop'

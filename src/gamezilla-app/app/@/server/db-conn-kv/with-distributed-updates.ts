@@ -1,6 +1,6 @@
 import { type PubSub } from 'gamezilla-app/@/core'
-import type { ILogger } from '../logger/logger'
-import { IDbConnKv } from './db-conn-kv'
+import type { ILogger } from '../logger/interface'
+import { IDbConnKv } from './interface'
 
 const DistributedUpdateType = {
   SET: 0,

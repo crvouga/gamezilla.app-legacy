@@ -1,4 +1,4 @@
-import type { ILogger } from './logger'
+import type { ILogger } from './interface'
 
 export const LoggerConsole = (): ILogger => {
   return {

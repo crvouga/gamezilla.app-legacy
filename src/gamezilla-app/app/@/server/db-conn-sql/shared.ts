@@ -1,4 +1,4 @@
-import type { ILogger } from '../logger/logger'
+import type { ILogger } from '../logger/interface'
 
 export const logQuery = (input: { sql: string; start: number; end: number; logger: ILogger }) => {
   const durationFormatted = `${input.end - input.start}ms`

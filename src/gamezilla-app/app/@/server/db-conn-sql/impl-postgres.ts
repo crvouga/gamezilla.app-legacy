@@ -2,21 +2,26 @@ import { Err, Ok } from 'gamezilla-app/@/core'
 import type { p } from 'gamezilla-app/@/core/parser'
 import { Sql } from 'gamezilla-app/@/sql'
 import postgres from 'postgres'
-import type { ILogger } from '../logger/logger'
-import type { IDbConnSql } from './db-conn-sql'
+import type { ILogger } from '../logger/interface'
+import type { IDbConnSql } from './interface'
 import { logQuery } from './shared'
 
 export type Config = {
+  t: 'postgres'
   databaseUrl: string
   logger: ILogger
+  simulateLatency: () => Promise<void>
 }
 
-export const DbConnPostgres = async (config: Config): Promise<IDbConnSql> => {
+export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const client = postgres(config.databaseUrl)
+
+  await config.simulateLatency()
 
   return {
     async query(rowParser, rawSql, params) {
       const sql = Sql.to(rawSql, params)
+
       try {
         const start = Date.now()
 
