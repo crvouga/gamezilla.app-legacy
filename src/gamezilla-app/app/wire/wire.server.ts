@@ -1,13 +1,13 @@
+import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
+import { isErr, Result } from 'gamezilla-app/@/core'
+import type { Sub } from 'gamezilla-app/@/core/sub'
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import type { ServerCmd, ServerCtx, ServerEvt, WireCmd } from 'gamezilla-app/app/@/server'
-import { Eff, isErr, Result } from 'gamezilla-app/@/core'
-import type { Sub } from 'gamezilla-app/@/core/sub'
-import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
 import { AppServerModule } from '../@/architecture/app-server'
 import type { IDbConnKv } from '../@/server/db-conn-kv'
 import type { IServerTransport } from './transport-server'
 import { type IWireSessionDb, WireSessionDb } from './wire-session-db'
-import type { Client, ModelServer, MsgServer, MsgToClient, MsgToServer } from './wire.types'
+import type { Client, MsgServer, MsgToClient, MsgToServer } from './wire.types'
 
 //
 //
@@ -48,14 +48,8 @@ export const initDeps = async <TMsgToClient, TMsgToServer>(input: {
 //
 //
 
-export const init = async (): Promise<{
-  model: ModelServer
-  eff: Eff<MsgServer>
-}> => {
-  return {
-    model: null,
-    eff: Eff.None
-  }
+export const init = async (_input: { ctx: ServerCtx }) => {
+  return {}
 }
 
 //
@@ -67,7 +61,6 @@ export const init = async (): Promise<{
 
 type Input<TMsgToClient, TMsgToServer> = {
   ctx: ServerCtx
-  model: ModelServer
   //
   msg?: MsgServer | null
   msgClient?: MsgToServer | null

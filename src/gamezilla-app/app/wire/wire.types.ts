@@ -34,8 +34,6 @@ export type MsgClient =
   | { t: 'clicked-try-reconnect' }
   | { t: 'sent-to-server'; toServer: unknown }
 
-export type ModelServer = null
-
 const clientId = p.custom(ClientId.is, 'Invalid client id')
 
 export const Client = p.obj({

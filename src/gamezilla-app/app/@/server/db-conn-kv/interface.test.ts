@@ -190,6 +190,19 @@ describe(`${import.meta.file} ${name}`, () => {
     }
   })
 
+  test('get many empty', async () => {
+    for (const { Fixture } of implementations) {
+      const f = await Fixture()
+
+      const items = [randomItem(), randomItem(), randomItem()]
+      await f.dbConnKv.setMany(items.map((item) => [item.id, item]))
+
+      const got = await f.dbConnKv.getMany([], Item)
+
+      expect(got).toEqual(Ok([]))
+    }
+  })
+
   it('should zap items correctly', async () => {
     for (const { Fixture } of implementations) {
       const f = await Fixture()

@@ -1,7 +1,8 @@
 import type { Sub } from './sub'
 
 export type ProgramImpure<TMsg, TCtx> = {
-  initCtx: () => TCtx
+  initCtx: () => Promise<TCtx>
+  updateCtx: (ctx: TCtx) => TCtx
   init: (input: { ctx: TCtx }) => Promise<{}>
   update: (input: { ctx: TCtx; msg: TMsg }) => Promise<{}>
   subscriptions: (input: { intervalId: string; ctx: TCtx }) => Promise<Sub<TMsg>>
@@ -24,12 +25,12 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
     cleanUpSubscriptions = sub.sub(dispatch)
   }
 
+  const ctx = await program.initCtx()
+
   async function dispatch(msg: TMsg) {
     try {
-      const ctx = await program.initCtx()
-
       await program.update({
-        ctx,
+        ctx: program.updateCtx(ctx),
         msg
       })
 
@@ -40,8 +41,6 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
       })
     }
   }
-
-  const ctx = await program.initCtx()
 
   await program.init({ ctx })
 

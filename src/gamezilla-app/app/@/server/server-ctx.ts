@@ -11,5 +11,5 @@ export type ServerCtx = {
   logger: ILogger
   sms: ISMS
   env: 'prod' | 'test' | 'dev'
-  sleep: (time: TimeSpan) => Promise<null>
+  sleep: (time: TimeSpan) => Promise<unknown>
 }

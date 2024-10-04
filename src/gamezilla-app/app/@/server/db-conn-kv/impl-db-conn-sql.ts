@@ -63,6 +63,9 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     },
 
     async getMany(keys, parser) {
+      if (keys.length <= 0) {
+        return Ok([])
+      }
       try {
         const start = process.hrtime.bigint()
 
