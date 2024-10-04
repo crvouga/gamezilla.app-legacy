@@ -3,7 +3,7 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import * as SpaceCore from '../space-core'
-import type { ISpacesCoreServer } from './spaces-core-server'
+import type { ISpacesCoreServer } from './interface'
 
 export type Config = {
   t: 'db-conn-kv'
@@ -45,6 +45,10 @@ export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
     },
 
     async getByUserId(userId) {
+      if (!userId) {
+        return Ok(null)
+      }
+
       const got = await indexSpaceIdByUserId.get(userId)
 
       if (isErr(got)) {
@@ -54,7 +58,7 @@ export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
       return this.get(got.value)
     },
 
-    async _upsert(space) {
+    async upsert(space) {
       const spaceId = SpaceCore.toSpaceId(space)
 
       if (!spaceId) {
@@ -90,7 +94,12 @@ export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
         return got
       }
 
-      return got
+      return Ok({
+        items: got.value,
+        total: allSpaceIds.length,
+        limit: input.limit,
+        offset: input.offset
+      })
     },
 
     async hasEvent(spaceId, eventId) {
@@ -113,11 +122,7 @@ export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
         model: space
       })
 
-      return this._upsert(spaceNew)
-    },
-
-    async getWithFallback(spaceId) {
-      return Result.withDefault(await this.get(spaceId), null) ?? SpaceCore.init
+      return this.upsert(spaceNew)
     },
 
     async getEvent(spaceId, eventId) {
@@ -139,7 +144,7 @@ export const SpacesCoreServer = (config: Config): ISpacesCoreServer => {
 
       const spaceNew = SpaceCore.mergeLeft(space, currentSpace)
 
-      return this._upsert(spaceNew)
+      return this.upsert(spaceNew)
     }
   }
 }

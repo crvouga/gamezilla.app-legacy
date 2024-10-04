@@ -1,4 +1,5 @@
 import { Result } from 'gamezilla-app/@/core'
+import { Paginated } from 'gamezilla-app/app/@/data'
 import { sendToClient } from 'gamezilla-app/app/@/server'
 import type { SpaceServerModule } from '../@/architecture/space-server'
 import * as Space from '../spaces-core/space-core'
@@ -16,12 +17,10 @@ const update: SpaceServerModule['update'] = async (input) => {
     case 'list-spaces': {
       const listed = await input.deps.spacesCoreServer.list(input.msgClient)
 
-      const spaces = Result.withDefault(listed, [])
+      const spaces = Result.withDefault(listed, Paginated.init())
 
-      const started = spaces.map(Space.startFromLatestSnapshot)
-
-      const userIds = spaces.flatMap(Space.toUserIds)
-
+      const started = spaces.items.map(Space.startFromLatestSnapshot)
+      const userIds = spaces.items.flatMap(Space.toUserIds)
       const profiles = Result.withDefault(await input.deps.profileCache.get(userIds), {})
 
       return {

@@ -1,5 +1,5 @@
-import type { ISpacesCoreServer } from './spaces-core-server'
-import * as ImplDbConnKv from './spaces-core-server-impl-db-conn-kv'
+import type { ISpacesCoreServer } from './interface'
+import * as ImplDbConnKv from './impl-db-conn-kv'
 
 export type Impl = ImplDbConnKv.Config
 

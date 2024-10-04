@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { unwrap } from 'gamezilla-app/@/core'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
@@ -13,7 +14,9 @@ describe(import.meta.file, () => {
 
     await AppServerModule.andThen(init(), userStartedSpace(deps, client, spaceId))
 
-    expect(SpaceCore.toSpaceId(await deps.spacesCoreServer.getWithFallback(spaceId))).toBe(spaceId)
+    const got = unwrap(await deps.spacesCoreServer.get(spaceId)) ?? SpaceCore.init
+
+    expect(SpaceCore.toSpaceId(got)).toBe(spaceId)
   })
 
   it('should propagate the user started space event to the clients', async () => {

@@ -4,7 +4,7 @@ import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import * as SpaceCore from '../space-core'
-import { SpacesCoreServer } from './spaces-core-server-impl'
+import { SpacesCoreServer } from './impl'
 
 const Fixture = async () => {
   const spacesDb = SpacesCoreServer({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'hash-map' }) })
@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
 
     const before = await f.spacesDb.get(spaceId)
 
-    const upserted = await f.spacesDb._upsert(f.spaceA)
+    const upserted = await f.spacesDb.upsert(f.spaceA)
 
     const after = await f.spacesDb.get(spaceId)
 
@@ -39,21 +39,25 @@ describe(import.meta.file, () => {
   it('should be able to list spaces', async () => {
     const f = await Fixture()
 
-    const before = await f.spacesDb.list({
-      limit: 10,
-      offset: 0
-    })
+    const before = unwrap(
+      await f.spacesDb.list({
+        limit: 10,
+        offset: 0
+      })
+    )
 
-    const upserted = await f.spacesDb._upsert(f.spaceA)
+    const upserted = await f.spacesDb.upsert(f.spaceA)
 
-    const after = await f.spacesDb.list({
-      limit: 10,
-      offset: 0
-    })
+    const after = unwrap(
+      await f.spacesDb.list({
+        limit: 10,
+        offset: 0
+      })
+    )
 
-    expect(before).toEqual(Ok([]))
+    expect(before.items).toEqual([])
     expect(upserted).toEqual(Ok(null))
-    expect(after).toEqual(Ok([f.spaceA]))
+    expect(after.items).toEqual([f.spaceA])
   })
 
   test('hasEvent', async () => {
@@ -67,7 +71,7 @@ describe(import.meta.file, () => {
 
     const before = await f.spacesDb.hasEvent(spaceId, eventId)
 
-    const upserted = await f.spacesDb._upsert(f.spaceA)
+    const upserted = await f.spacesDb.upsert(f.spaceA)
 
     const after = await f.spacesDb.hasEvent(spaceId, eventId)
 
@@ -94,9 +98,9 @@ describe(import.meta.file, () => {
 
   test('getWithFallback', async () => {
     const f = await Fixture()
-    const before = await f.spacesDb.getWithFallback(f.spaceId)
-    await f.spacesDb._upsert(f.spaceA)
-    const after = await f.spacesDb.getWithFallback(f.spaceId)
+    const before = unwrap(await f.spacesDb.get(f.spaceId)) ?? SpaceCore.init
+    await f.spacesDb.upsert(f.spaceA)
+    const after = unwrap(await f.spacesDb.get(f.spaceId)) ?? SpaceCore.init
     expect(SpaceCore.deriveState(before).type).toEqual('initial')
     expect(SpaceCore.deriveState(after).type).toEqual('started')
   })

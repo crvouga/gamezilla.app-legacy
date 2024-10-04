@@ -37,7 +37,9 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
         return {}
       }
 
-      const spaceNew = await input.deps.spacesCoreServer.getWithFallback(spaceId)
+      const got = await input.deps.spacesCoreServer.get(spaceId)
+
+      const spaceNew = Result.withDefault(got, null)
 
       if (!spaceNew) {
         return {}
@@ -119,7 +121,9 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async ({ msgCoreEvt,
     return {}
   }
 
-  const space = await deps.spacesCoreServer.getWithFallback(msgCoreEvt.spaceId)
+  const got = await deps.spacesCoreServer.get(msgCoreEvt.spaceId)
+
+  const space = Result.withDefault(got, null) ?? SpaceCore.init
 
   const eventWithMeta = SpaceCore.toEventWithMeta(space, msgCoreEvt.eventId)
 

@@ -13,7 +13,7 @@ import type { IGameDb } from './game/space-game-db'
 import type * as Space from './spaces-core/space-core'
 import type { SpaceCoreEvent } from './spaces-core/space-core-event'
 import type * as Spaces from './spaces-core/spaces-core-client/spaces-core.client'
-import { ISpacesCoreServer } from './spaces-core/spaces-core-server/spaces-core-server'
+import { ISpacesCoreServer } from './spaces-core/spaces-core-server/interface'
 import type { IProfileCache } from './spaces-server/profile-cache'
 
 //
