@@ -10,6 +10,7 @@ const Row = p.obj({
 })
 
 export type Config = {
+  t: 'db-conn-sql'
   dbConnSql: IDbConnSql
   logger: ILogger
 }

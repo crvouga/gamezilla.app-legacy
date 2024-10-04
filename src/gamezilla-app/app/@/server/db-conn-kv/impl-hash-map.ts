@@ -3,6 +3,7 @@ import type { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnKv } from './interface'
 
 export type Config = {
+  t: 'hash-map'
   map?: Map<string, unknown>
 }
 
