@@ -50,7 +50,7 @@ export type ServerDeps = {
   userAccountDb: IUserAccountDb
   userSessionDb: IUserSessionDb
   guestSessionMappingDb: IGuestSessionMappingDb
-  timeout: (timeSpan: TimeSpan) => Promise<unknown>
+  sleep: (timeSpan: TimeSpan) => Promise<unknown>
 }
 
 //

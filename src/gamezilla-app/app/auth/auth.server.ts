@@ -31,7 +31,7 @@ export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
       t: 'postgres',
       dbConnSql: ctx.dbConnSql
     }),
-    timeout: (timeSpan) => new Promise((resolve) => setTimeout(resolve, TimeSpan.toMilliseconds(timeSpan)))
+    sleep: (timeSpan) => new Promise((resolve) => setTimeout(resolve, TimeSpan.toMilliseconds(timeSpan)))
   }
 }
 

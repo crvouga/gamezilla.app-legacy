@@ -43,7 +43,7 @@ const FixtureDeps = async (): Promise<ServerDeps> => {
         dbConnSql: testEnv.dbConnSql
       })
       return {
-        timeout,
+        sleep: timeout,
         userAccountDb: accountDb,
         userSessionDb: sessionDb,
         guestSessionMappingDb
@@ -62,7 +62,7 @@ const FixtureDeps = async (): Promise<ServerDeps> => {
         t: 'hash-map'
       })
       return {
-        timeout,
+        sleep: timeout,
         userAccountDb: accountDb,
         userSessionDb: sessionDb,
         guestSessionMappingDb

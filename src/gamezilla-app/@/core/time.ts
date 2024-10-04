@@ -1,23 +1,7 @@
 import type { Eff } from './eff'
-import type { IO } from './io'
 import { Posix } from './posix'
 import { PubSub, Sub } from './sub'
 import { TimeSpan } from './time-span'
-
-//
-//
-//
-//
-//
-//
-//
-
-const delay =
-  <TMsg>(timeout: number, msg?: TMsg): IO<TMsg | null> =>
-  async () => {
-    await new Promise((resolve) => setTimeout(resolve, timeout))
-    return msg ?? null
-  }
 
 //
 //
@@ -105,7 +89,6 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
 }
 
 export const Time = {
-  delay,
   startTimeout,
   cancelTimeout,
   interval
