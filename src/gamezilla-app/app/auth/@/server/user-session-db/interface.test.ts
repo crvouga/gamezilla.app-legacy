@@ -5,7 +5,7 @@ import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { unwrap } from 'gamezilla-app/@/core'
 
 const Fixture = async (config: Config) => {
-  const userSessionDb = UserSessionDb(config)
+  const userSessionDb = await UserSessionDb(config)
   const userId = UserId.generate()
   const sessions = [
     {

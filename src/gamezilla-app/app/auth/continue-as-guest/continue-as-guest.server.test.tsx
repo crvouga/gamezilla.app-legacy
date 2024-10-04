@@ -29,11 +29,11 @@ const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
   switch (testEnv.t) {
     case 'all':
     case 'integration': {
-      const accountDb = UserAccountDb({
+      const userAccountDb = UserAccountDb({
         t: 'postgres',
         dbConnSql: testEnv.dbConnSql
       })
-      const sessionDb = UserSessionDb({
+      const userSessionDb = await UserSessionDb({
         t: 'postgres-with-cache',
         dbConnSql: testEnv.dbConnSql,
         dbConnKv: testEnv.dbConnKv
@@ -45,18 +45,18 @@ const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
       return {
         ctx: {
           ...f.ctx,
-          userAccountDb: accountDb,
-          userSessionDb: sessionDb,
+          userAccountDb,
+          userSessionDb,
           guestSessionMappingDb
         }
       }
     }
     case 'unit': {
-      const accountDb = UserAccountDb({
+      const userAccountDb = UserAccountDb({
         t: 'in-memory',
         delay: async () => {}
       })
-      const sessionDb = UserSessionDb({
+      const userSessionDb = await UserSessionDb({
         t: 'in-memory',
         delay: async () => {}
       })
@@ -66,8 +66,8 @@ const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
       return {
         ctx: {
           ...f.ctx,
-          userAccountDb: accountDb,
-          userSessionDb: sessionDb,
+          userAccountDb,
+          userSessionDb,
           guestSessionMappingDb
         }
       }

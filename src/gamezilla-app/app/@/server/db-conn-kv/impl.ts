@@ -2,6 +2,7 @@ import * as DbConnSql from './impl-db-conn-sql'
 import * as HashMap from './impl-hash-map'
 import type { IDbConnKv } from './interface'
 import * as WithCache from './with-cache'
+import * as WithDistributedInvalidations from './with-distributed-invalidations'
 import * as WithDistributedUpdates from './with-distributed-updates'
 import * as WithNamespace from './with-namespace'
 import * as WithReducedParsing from './with-reduced-parsing'
@@ -14,6 +15,7 @@ export type Config =
   | (WithDistributedUpdates.Config & { t: 'with-distributed-updates' })
   | (WithReducedParsing.Config & { t: 'with-reduced-parsing' })
   | (WithThrottledWrites.Config & { t: 'with-throttled-writes' })
+  | (WithDistributedInvalidations.Config & { t: 'with-distributed-invalidations' })
 
 export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
   switch (config.t) {
@@ -40,6 +42,10 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     case 'with-throttled-writes': {
       return WithThrottledWrites.withThrottledWrites(config)
     }
+
+    case 'with-distributed-invalidations': {
+      return WithDistributedInvalidations.withDistributedInvalidations(config)
+    }
   }
 }
 
@@ -48,3 +54,4 @@ DbConnKv.withReducedParsing = WithReducedParsing.withReducedParsing
 DbConnKv.withThrottledWrites = WithThrottledWrites.withThrottledWrites
 DbConnKv.withDistributedUpdates = WithDistributedUpdates.withDistributedUpdates
 DbConnKv.withNamespace = WithNamespace.withNamespace
+DbConnKv.withDistributedInvalidations = WithDistributedInvalidations.withDistributedInvalidations

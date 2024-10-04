@@ -2,6 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { Ok, Result, TimeSpan, Uuid } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { Logger } from '../logger'
+import { PubSub } from '../pub-sub'
 import { AppServerTestEnv } from '../server-test-env'
 import { DbConnKv } from './impl'
 
@@ -86,6 +87,25 @@ const implementations: Implementation[] = [
             throttle: TimeSpan.seconds(10)
           }),
           logger: f.logger
+        })
+      }
+    }
+  },
+
+  {
+    name: 'with-distributed-invalidations-for-cache',
+    async Fixture() {
+      const f = await Fixture()
+      return {
+        ...f,
+        dbConnKv: DbConnKv.withCache({
+          source: f.dbConnKv,
+          logger: f.logger,
+          cache: DbConnKv.withDistributedInvalidations({
+            dbConnKv: await DbConnKv({ t: 'hash-map' }),
+            logger: f.logger,
+            pubSub: PubSub({ t: 'in-memory' })
+          })
         })
       }
     }
