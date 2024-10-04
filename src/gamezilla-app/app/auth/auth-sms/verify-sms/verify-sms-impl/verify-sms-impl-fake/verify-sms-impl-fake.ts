@@ -1,5 +1,5 @@
 import { Err, Ok, PhoneNumber } from 'gamezilla-app/@/core'
-import type { ILogger } from 'gamezilla-app/app/@/server/logger/logger'
+import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { VerificationId } from '../../verification'
 import type { IVerifySMS } from '../../verify-sms'
 

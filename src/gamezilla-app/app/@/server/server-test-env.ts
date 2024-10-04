@@ -2,7 +2,7 @@ import { Posix } from 'gamezilla-app/@/core'
 import { ClientId, SessionId } from '../data'
 import { DbConnKv, type IDbConnKv } from './db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './db-conn-sql'
-import { ILogger, Logger } from './logger'
+import { Logger } from './logger'
 import type { ServerCtx } from './server-ctx'
 import { SMS } from './sms'
 
@@ -32,7 +32,7 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
     }
   }
 
-  const logger = ILogger.prefix('integration-test', Logger({ t: 'noop' }))
+  const logger = Logger.prefix('integration-test', Logger({ t: 'noop' }))
   const DATABASE_URL = process.env.DATABASE_URL
 
   if (!DATABASE_URL) {
@@ -42,13 +42,13 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: DATABASE_URL,
-    logger: ILogger.prefix('db-conn-sql', logger),
+    logger: Logger.prefix('db-conn-sql', logger),
     simulateLatency: async () => {}
   })
 
   const dbConnKv = await DbConnKv({
     t: 'db-conn-sql',
-    logger: ILogger.prefix('db-conn-kv', logger),
+    logger: Logger.prefix('db-conn-kv', logger),
     dbConnSql
   })
 

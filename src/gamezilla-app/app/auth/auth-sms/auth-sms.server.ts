@@ -5,7 +5,7 @@ import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { SMS } from 'gamezilla-app/app/@/server/sms'
 import type { IUserAccountDb } from '../@/server/user-account-db'
 import { UserAccountDb } from '../@/server/user-account-db/user-account-db-impl'
@@ -29,8 +29,8 @@ const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   const verificationAttemptDb = VerificationAttemptDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
   const hashing = Hashing({ t: 'bun' })
   const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
-  const sms = SMS({ t: 'fake', logger: ILogger.prefix('sms', ctx.logger) })
-  const verifySMSTwilio = VerifySMS({ t: 'twilio', logger: ILogger.prefix('twilio-verify', ctx.logger) })
+  const sms = SMS({ t: 'fake', logger: Logger.prefix('sms', ctx.logger) })
+  const verifySMSTwilio = VerifySMS({ t: 'twilio', logger: Logger.prefix('twilio-verify', ctx.logger) })
   const verifySMSInHouse = VerifySMS({
     t: 'in-house',
     logger: ctx.logger,

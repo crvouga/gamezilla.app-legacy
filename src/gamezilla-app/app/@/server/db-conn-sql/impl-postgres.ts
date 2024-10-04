@@ -10,7 +10,7 @@ export type Config = {
   t: 'postgres'
   databaseUrl: string
   logger: ILogger
-  simulateLatency: () => Promise<void>
+  simulateLatency: () => Promise<unknown>
 }
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {

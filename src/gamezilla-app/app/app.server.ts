@@ -1,10 +1,10 @@
 import { Posix, Sub, TimeSpan, pipe } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
-import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import type { ServerInstance } from 'gamezilla-app/@/server'
 import { ServerCmd, type ServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
 import { DbConnKv, type IDbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './@/server/db-conn-sql'
+import { Logger } from './@/server/logger'
 import { ILogger } from './@/server/logger/interface'
 import { SMS, type ISMS } from './@/server/sms'
 import type { MsgServer, MsgToClient, MsgToServer, MsgToServerMeta } from './app.types'
@@ -60,49 +60,49 @@ export const initDeps = async ({
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl,
-    logger: ILogger.prefix('db-conn-sql', logger),
-    simulateLatency: async () => {}
+    logger: Logger.prefix('db-conn-sql', logger),
+    simulateLatency: async () => sleep(TimeSpan.milliseconds(3))
   })
 
-  const loggerDbConnKv = ILogger.prefix('db-conn-kv', logger)
+  const loggerDbConnKv = Logger.prefix('db-conn-kv', logger)
 
   const dbConnKv = await pipe(
     DbConnKv({
       t: 'db-conn-sql',
       dbConnSql,
-      logger: ILogger.prefix('postgres', loggerDbConnKv)
-    }),
+      logger: Logger.prefix('postgres', loggerDbConnKv)
+    })
 
-    async (dbConnKv) =>
-      DbConnKv.withThrottledWrites({
-        logger: ILogger.prefix('with-throttled-writes', loggerDbConnKv),
-        dbConnKv: await dbConnKv,
-        throttle: TimeSpan.seconds(5)
-      }),
+    // async (dbConnKv) =>
+    //   DbConnKv.withThrottledWrites({
+    //     logger: Logger.prefix('with-throttled-writes', loggerDbConnKv),
+    //     dbConnKv: await dbConnKv,
+    //     throttle: TimeSpan.seconds(5)
+    //   }),
 
-    async (dbConnKv) =>
-      DbConnKv.withCache({
-        logger: ILogger.prefix('with-cache', loggerDbConnKv),
-        source: await dbConnKv,
-        cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
-      }),
+    // async (dbConnKv) =>
+    //   DbConnKv.withCache({
+    //     logger: Logger.prefix('with-cache', loggerDbConnKv),
+    //     source: await dbConnKv,
+    //     cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
+    //   }),
 
-    async (dbConnKv) =>
-      DbConnKv.withReducedParsing({
-        dbConnKv: await dbConnKv,
-        verifiedKeys: new Set()
-      })
+    // async (dbConnKv) =>
+    //   DbConnKv.withReducedParsing({
+    //     dbConnKv: await dbConnKv,
+    //     verifiedKeys: new Set()
+    //   })
   )
 
   const sms = SMS({
     t: 'twilio',
-    logger: ILogger.prefix('twilio', logger)
+    logger: Logger.prefix('twilio', logger)
   })
 
   const transport = await ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId,
     server,
-    logger: ILogger.prefix('transport', logger)
+    logger: Logger.prefix('transport', logger)
   })
 
   const wire = await WireServer.initDeps({
