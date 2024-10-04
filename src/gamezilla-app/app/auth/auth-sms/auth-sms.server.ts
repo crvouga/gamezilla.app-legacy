@@ -46,7 +46,7 @@ const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
     Translator,
     verificationCodeGenerator
   })
-  const verifySMS = ctx.env === 'prod' || true ? verifySMSTwilio : verifySMSInHouse
+  const verifySMS = ctx.env === 'prod' ? verifySMSTwilio : verifySMSInHouse
   return {
     AccountDb: accountDb,
     VerifySMS: verifySMS

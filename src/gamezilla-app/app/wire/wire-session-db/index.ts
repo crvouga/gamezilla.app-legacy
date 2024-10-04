@@ -1,2 +1,2 @@
-export * from './wire-session-db'
-export * from './wire-session-db-impl'
+export * from './interface'
+export * from './impl'

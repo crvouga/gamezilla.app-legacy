@@ -34,7 +34,7 @@ export const initDeps = async <TMsgToClient, TMsgToServer>(input: {
   return {
     transport: input.transport,
     WireSessionDb: await WireSessionDb({
-      t: 'db-conn-kv',
+      t: 'db-conn-kv-with-fast-cache',
       dbConnKv: input.dbConnKv
     })
   }

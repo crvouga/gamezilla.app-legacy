@@ -3,9 +3,14 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { SessionId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { Client } from '../wire.types'
-import type { IWireSessionDb } from './wire-session-db'
+import type { IWireSessionDb } from './interface'
 
-export const WireSessionDbKv = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IWireSessionDb => {
+export type Config = {
+  t: 'db-conn-kv'
+  dbConnKv: IDbConnKv
+}
+
+export const WireSessionDb = ({ dbConnKv }: Config): IWireSessionDb => {
   const clientsKv = DbConnKv.withNamespace(dbConnKv, ['wire-session-db', 'clients-by-session-id'], Client)
   const sessionIdsKv = DbConnKv.withNamespace(
     dbConnKv,

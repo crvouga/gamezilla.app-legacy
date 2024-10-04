@@ -62,6 +62,11 @@ const Fixtures = async () => {
       dbConnKv: testEnv.dbConnKv,
       dbConnSql: testEnv.dbConnSql
     })
+    configs.push({
+      t: 'postgres-with-fast-cache',
+      dbConnKv: testEnv.dbConnKv,
+      dbConnSql: testEnv.dbConnSql
+    })
   }
   return Promise.all(configs.map(Fixture))
 }
