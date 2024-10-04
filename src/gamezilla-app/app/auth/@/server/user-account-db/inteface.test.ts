@@ -3,7 +3,7 @@ import { Ok, PhoneNumber, Posix, Result } from 'gamezilla-app/@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
-import { UserAccountDb } from './user-account-db-impl'
+import { UserAccountDb } from './impl'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()

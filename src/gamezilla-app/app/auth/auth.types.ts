@@ -8,7 +8,7 @@ import type { IUserAccountDb } from './@/server/user-account-db'
 import type { IUserSessionDb } from './@/server/user-session-db'
 import type * as AuthSMS from './auth-sms/auth-sms.types'
 import type { ContinueAsGuest } from './continue-as-guest'
-import { IGuestSessionMappingDb } from './continue-as-guest/guest-session-mapping-db'
+import { IGuestSessionMappingDb } from './@/server/guest-session-mapping-db'
 import type { Logout } from './logout'
 
 //

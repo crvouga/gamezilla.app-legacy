@@ -7,7 +7,7 @@ import { UserSessionDb } from './@/server/user-session-db'
 import { AuthSMSServer } from './auth-sms/auth-sms.server'
 import type { ServerCtx, MsgToClient, ServerModule } from './auth.types'
 import { ContinueAsGuestServer } from './continue-as-guest/continue-as-guest.server'
-import { GuestSessionMappingDb } from './continue-as-guest/guest-session-mapping-db'
+import { GuestSessionMappingDb } from './@/server/guest-session-mapping-db'
 import { LogoutServer } from './logout/logout.server'
 
 //
@@ -24,7 +24,7 @@ export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> 
       dbConnSql: input.ctx.dbConnSql
     }),
     userSessionDb: UserSessionDb({
-      t: 'postgres-with-db-kv-cache',
+      t: 'postgres-with-cache',
       dbConnSql: input.ctx.dbConnSql,
       dbConnKv: input.ctx.dbConnKv
     }),

@@ -1,8 +1,12 @@
 import { Ok } from 'gamezilla-app/@/core'
-import { IGuestSessionMappingDb } from './guest-session-mapping-db'
+import { IGuestSessionMappingDb } from './interface'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 
-export const GuestSessionMappingDbHashMap = (): IGuestSessionMappingDb => {
+export type Config = {
+  t: 'hash-map'
+}
+
+export const GuestSessionMappingDb = (_config: Config): IGuestSessionMappingDb => {
   const userIdBySessionId = new Map<SessionId, UserId>()
   const sessionIdByUserId = new Map<UserId, SessionId>()
   return {

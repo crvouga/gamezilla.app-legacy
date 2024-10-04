@@ -9,7 +9,7 @@ import * as AuthServer from '../auth.server'
 import type { ServerCtx } from '../auth.types'
 import { ContinueAsGuestServer } from './continue-as-guest.server'
 import type * as ContinueAsGuestTypes from './continue-as-guest.types'
-import { GuestSessionMappingDb } from './guest-session-mapping-db'
+import { GuestSessionMappingDb } from '../@/server/guest-session-mapping-db'
 
 type Input =
   | {
@@ -34,7 +34,7 @@ const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
         dbConnSql: testEnv.dbConnSql
       })
       const sessionDb = UserSessionDb({
-        t: 'postgres-with-db-kv-cache',
+        t: 'postgres-with-cache',
         dbConnSql: testEnv.dbConnSql,
         dbConnKv: testEnv.dbConnKv
       })

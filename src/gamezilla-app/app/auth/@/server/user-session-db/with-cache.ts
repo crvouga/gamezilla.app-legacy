@@ -2,7 +2,7 @@ import { Result, isOk } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import type { IUserSessionDb } from './user-session-db'
+import type { IUserSessionDb } from './interface'
 
 //
 //
@@ -10,13 +10,12 @@ import type { IUserSessionDb } from './user-session-db'
 //
 //
 
-export const UserSessionDbWithDbKvCache = ({
-  SessionDb,
-  dbConnKv
-}: {
+export type Config = {
   dbConnKv: IDbConnKv
-  SessionDb: IUserSessionDb
-}): IUserSessionDb => {
+  userSessionDb: IUserSessionDb
+}
+
+export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb => {
   const userIdBySessionId = DbConnKv.withNamespace<SessionId, UserId>(
     dbConnKv,
     ['auth-session', 'user-id-by-session-id'],
@@ -37,7 +36,7 @@ export const UserSessionDbWithDbKvCache = ({
         return Result.Ok(cachedSessionIds)
       }
 
-      const queried = await SessionDb.findSessionIdsByUserId(userId)
+      const queried = await userSessionDb.findSessionIdsByUserId(userId)
 
       if (isOk(queried)) {
         await sessionIdsByUserId.set(userId, queried.value)
@@ -53,7 +52,7 @@ export const UserSessionDbWithDbKvCache = ({
         return Result.Ok(cachedUserId)
       }
 
-      const queried = await SessionDb.findUserIdBySessionId(sessionId)
+      const queried = await userSessionDb.findUserIdBySessionId(sessionId)
 
       if (isOk(queried) && queried.value) {
         await userIdBySessionId.set(sessionId, queried.value)
@@ -63,7 +62,7 @@ export const UserSessionDbWithDbKvCache = ({
     },
 
     async insert({ sessionId, userId }) {
-      const queried = await SessionDb.insert({
+      const queried = await userSessionDb.insert({
         sessionId,
         userId
       })
@@ -80,7 +79,7 @@ export const UserSessionDbWithDbKvCache = ({
     },
 
     async zapByUserId(userId) {
-      const queried = await SessionDb.zapByUserId(userId)
+      const queried = await userSessionDb.zapByUserId(userId)
 
       if (isOk(queried)) {
         const sessionIds = Result.withDefault(await sessionIdsByUserId.get(userId), []) ?? []
@@ -96,7 +95,7 @@ export const UserSessionDbWithDbKvCache = ({
     },
 
     async zapBySessionId(sessionId) {
-      const queried = await SessionDb.zapBySessionId(sessionId)
+      const queried = await userSessionDb.zapBySessionId(sessionId)
 
       if (isOk(queried)) {
         const userId = Result.withDefault(await userIdBySessionId.get(sessionId), null)

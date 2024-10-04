@@ -1,5 +1,5 @@
 import { Ok, Posix, isErr } from 'gamezilla-app/@/core'
-import { IGuestSessionMappingDb } from './guest-session-mapping-db'
+import { IGuestSessionMappingDb } from './interface'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { p } from 'gamezilla-app/@/core/parser'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
@@ -10,7 +10,12 @@ export const Row = p.obj({
   created_at_posix: p.or(p.str, p.num)
 })
 
-export const GuestSessionMappingDbPostgres = (deps: { dbConnSql: IDbConnSql }): IGuestSessionMappingDb => {
+export type Config = {
+  t: 'postgres'
+  dbConnSql: IDbConnSql
+}
+
+export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
   return {
     async findUserIdBySessionId(sessionId) {
       const query = `
@@ -22,7 +27,7 @@ export const GuestSessionMappingDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
       const vars = {
         session_id: sessionId
       }
-      const queried = await deps.dbConnSql.query(
+      const queried = await config.dbConnSql.query(
         p.obj({
           user_id: UserId
         }),
@@ -48,7 +53,7 @@ export const GuestSessionMappingDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
         session_id: input.sessionId,
         created_at_posix: Posix.now()
       }
-      const inserted = await deps.dbConnSql.query(p.unknown, query, vars)
+      const inserted = await config.dbConnSql.query(p.unknown, query, vars)
       if (isErr(inserted)) {
         return inserted
       }

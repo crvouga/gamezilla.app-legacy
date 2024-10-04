@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
-import { UserSessionDb } from './user-session-db-impl'
+import { UserSessionDb } from './impl'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { unwrap } from 'gamezilla-app/@/core'
 
@@ -11,7 +11,7 @@ const FixtureVariant = async () => {
     case 'integration': {
       return {
         userSessionDb: UserSessionDb({
-          t: 'postgres-with-db-kv-cache',
+          t: 'postgres-with-cache',
           dbConnKv: testEnv.dbConnKv,
           dbConnSql: testEnv.dbConnSql
         })

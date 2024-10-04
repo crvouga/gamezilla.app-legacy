@@ -1,11 +1,16 @@
 import { Ok } from 'gamezilla-app/@/core'
 import type { SessionId, UserId } from 'gamezilla-app/app/@/data'
-import type { IUserSessionDb } from './user-session-db'
+import type { IUserSessionDb } from './interface'
 
 const sessionIdsByUserId = new Map<UserId, SessionId[]>()
 const userIdBySessionId = new Map<SessionId, UserId>()
 
-export const UserSessionDbInMemory = ({ delay }: { delay: () => Promise<void> }): IUserSessionDb => {
+export type Config = {
+  t: 'in-memory'
+  delay: () => Promise<void>
+}
+
+export const UserSessionDb = ({ delay }: Config): IUserSessionDb => {
   return {
     async findSessionIdsByUserId(userId: UserId) {
       await delay()

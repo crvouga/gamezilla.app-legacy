@@ -3,7 +3,7 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { UserId, UserRole } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
-import type { IUserAccountDb } from './user-account-db'
+import type { IUserAccountDb } from './inteface'
 
 export const UserAccountRow = p.obj({
   user_id: p.str,
@@ -30,7 +30,12 @@ const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<str
   return Ok(account)
 }
 
-export const UserAccountDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IUserAccountDb => {
+export type Config = {
+  t: 'postgres'
+  dbConnSql: IDbConnSql
+}
+
+export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
   return {
     async findOneByUserId(input) {
       const queried = await dbConnSql.query(

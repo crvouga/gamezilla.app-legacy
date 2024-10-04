@@ -13,8 +13,10 @@ export type Config = {
   simulateLatency: () => Promise<unknown> | unknown
 }
 
+let client: postgres.Sql<{}>
+
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
-  const client = postgres(config.databaseUrl)
+  client ??= postgres(config.databaseUrl)
 
   return {
     async query(rowParser, rawSql, params) {

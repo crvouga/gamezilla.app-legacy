@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { GuestSessionMappingDb } from './guest-session-mapping-db-impl'
+import { GuestSessionMappingDb } from './impl'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { unwrap } from 'gamezilla-app/@/core'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
