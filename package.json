@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server": "bun --watch src/gamezilla-app/main.server.ts",
+    "server": "bun src/gamezilla-app/main.server.ts",
     "server:build": "bun db:up",
     "db:up": "bun x dbmate -e DATABASE_URL up",
     "db:down": "bun x dbmate -e DATABASE_URL down",

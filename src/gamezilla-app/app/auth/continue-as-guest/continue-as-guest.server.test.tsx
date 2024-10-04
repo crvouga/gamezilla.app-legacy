@@ -179,7 +179,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const userId = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
+    const userId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(userId !== null).toBe(true)
   })
@@ -189,7 +189,7 @@ describe(import.meta.file, () => {
     const sessionId = SessionId.generate()
     const clientId = ClientId.generate()
 
-    const before = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
+    const before = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -201,7 +201,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const afterFirst = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
+    const afterFirst = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -213,7 +213,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const afterSecond = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
+    const afterSecond = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -225,7 +225,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const afterThird = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
+    const afterThird = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(before).toEqual(null)
     expect(afterFirst).toEqual(afterSecond)
@@ -290,7 +290,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const expectedUserId = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
+    const expectedUserId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
       didSendMsgToClient(
@@ -331,7 +331,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const expectedUserId = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
+    const expectedUserId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
       firstOutput.msgEvt?.some((msg) => msg.t === 'auth/client-authenticated' && msg.account.userId === expectedUserId)

@@ -53,7 +53,11 @@ export const update: ServerModule['update'] = async (input) => {
   )
 }
 
-export const toUserIdFromSessionId = async (ctx: ServerCtx, sessionId: SessionId): Promise<UserId | null> => {
+export const getUserIdFromSessionId = async (ctx: ServerCtx, sessionId?: SessionId | null): Promise<UserId | null> => {
+  if (!sessionId) {
+    return null
+  }
+
   const found = await ctx.userSessionDb.findUserIdBySessionId(sessionId)
 
   if (isErr(found)) {

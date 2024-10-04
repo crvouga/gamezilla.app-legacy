@@ -259,7 +259,7 @@ export const updateChild = async ({
   msgEvt: ServerEvt[]
   msgCmd: ServerCmd<MsgToClient>[]
 }> => {
-  const userId = msgClient?.sessionId ? await AuthServer.toUserIdFromSessionId(ctx.auth, msgClient.sessionId) : null
+  const userId = await AuthServer.getUserIdFromSessionId(ctx.auth, msgClient?.sessionId)
 
   const space = await SpaceServer.update({
     deps: ctx.space,
