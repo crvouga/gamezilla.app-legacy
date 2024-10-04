@@ -1,4 +1,4 @@
-import { type Task } from 'gamezilla-app/@/core'
+import { Task } from 'gamezilla-app/@/core'
 import type { Parser } from 'gamezilla-app/@/core/parser/parser'
 import { IDbConnKv } from './interface'
 
@@ -9,9 +9,9 @@ export const withNamespace = <TKey extends string = string, TValue = unknown>(
 ): {
   get: (key: TKey) => Task<string, TValue | null>
   getMany: (keys: TKey[]) => Task<string, TValue[]>
-  set: (key: TKey, value: TValue) => Task<string, null>
   setMany: (entries: [TKey, TValue][]) => Task<string, null>
   zap: (key: TKey) => Task<string, null>
+  set: (key: TKey, value: TValue) => Task<string, null>
 } => {
   const toKey = (key: string) => [...namespace, key].join(':')
   return {

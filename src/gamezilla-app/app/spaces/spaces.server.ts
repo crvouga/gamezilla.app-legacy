@@ -23,18 +23,9 @@ import { SyncServer } from './sync/sync.server'
 
 export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   return {
-    profileCache: ProfileCache({
-      t: 'db-conn-kv',
-      dbConnKv: ctx.dbConnKv
-    }),
-    spacesCoreServer: SpacesCoreServer({
-      t: 'db-conn-kv',
-      dbConnKv: ctx.dbConnKv
-    }),
-    gameDb: GameDb({
-      t: 'db-conn-kv',
-      dbConnKv: ctx.dbConnKv
-    }),
+    profileCache: ProfileCache({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv }),
+    spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv }),
+    gameDb: GameDb({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv }),
     gameServer: GameServer.initCtx({
       ctx: {
         ...ctx,

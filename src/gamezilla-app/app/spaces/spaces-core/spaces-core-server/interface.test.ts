@@ -7,13 +7,18 @@ import * as SpaceCore from '../space-core'
 import { SpacesCoreServer } from './impl'
 
 const Fixture = async () => {
-  const spacesDb = SpacesCoreServer({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'hash-map' }) })
+  const spacesCoreServer = await SpacesCoreServer({
+    t: 'db-conn-kv',
+    dbConnKv: await DbConnKv({
+      t: 'hash-map'
+    })
+  })
 
   const spaceId = SpaceId.generate()
   const spaceA = SpaceCore.random({ spaceId })
 
   return {
-    spacesDb,
+    spacesCoreServer,
     spaceId,
     spaceA
   }
@@ -25,11 +30,11 @@ describe(import.meta.file, () => {
 
     const spaceId = SpaceCore.toSpaceStarted(f.spaceA)?.spaceId ?? null
 
-    const before = await f.spacesDb.get(spaceId)
+    const before = await f.spacesCoreServer.get(spaceId)
 
-    const upserted = await f.spacesDb.upsert(f.spaceA)
+    const upserted = await f.spacesCoreServer.upsert(f.spaceA)
 
-    const after = await f.spacesDb.get(spaceId)
+    const after = await f.spacesCoreServer.get(spaceId)
 
     expect(before).toEqual(Ok(null))
     expect(upserted).toEqual(Ok(null))
@@ -40,16 +45,16 @@ describe(import.meta.file, () => {
     const f = await Fixture()
 
     const before = unwrap(
-      await f.spacesDb.list({
+      await f.spacesCoreServer.list({
         limit: 10,
         offset: 0
       })
     )
 
-    const upserted = await f.spacesDb.upsert(f.spaceA)
+    const upserted = await f.spacesCoreServer.upsert(f.spaceA)
 
     const after = unwrap(
-      await f.spacesDb.list({
+      await f.spacesCoreServer.list({
         limit: 10,
         offset: 0
       })
@@ -69,11 +74,11 @@ describe(import.meta.file, () => {
     const spaceId = SpaceCore.toSpaceStarted(f.spaceA)?.spaceId
     if (!spaceId) throw new Error('spaceId not found')
 
-    const before = await f.spacesDb.hasEvent(spaceId, eventId)
+    const before = await f.spacesCoreServer.hasEvent(spaceId, eventId)
 
-    const upserted = await f.spacesDb.upsert(f.spaceA)
+    const upserted = await f.spacesCoreServer.upsert(f.spaceA)
 
-    const after = await f.spacesDb.hasEvent(spaceId, eventId)
+    const after = await f.spacesCoreServer.hasEvent(spaceId, eventId)
 
     expect(before).toEqual(false)
     expect(upserted).toEqual(Ok(null))
@@ -83,24 +88,24 @@ describe(import.meta.file, () => {
   test('update', async () => {
     const spaceId = SpaceId.generate()
     const f = await Fixture()
-    const before = unwrap(await f.spacesDb.get(spaceId))
-    await f.spacesDb.update(
+    const before = unwrap(await f.spacesCoreServer.get(spaceId))
+    await f.spacesCoreServer.update(
       withId({
         t: 'user-started-space',
         spaceId: spaceId,
         userId: UserId.generate()
       })
     )
-    const after = unwrap(await f.spacesDb.get(spaceId))
+    const after = unwrap(await f.spacesCoreServer.get(spaceId))
     expect(SpaceCore.toSpaceStarted(before)).toEqual(null)
     expect(SpaceCore.toSpaceStarted(after)?.type).toEqual('started')
   })
 
   test('getWithFallback', async () => {
     const f = await Fixture()
-    const before = unwrap(await f.spacesDb.get(f.spaceId)) ?? SpaceCore.init
-    await f.spacesDb.upsert(f.spaceA)
-    const after = unwrap(await f.spacesDb.get(f.spaceId)) ?? SpaceCore.init
+    const before = unwrap(await f.spacesCoreServer.get(f.spaceId)) ?? SpaceCore.init
+    await f.spacesCoreServer.upsert(f.spaceA)
+    const after = unwrap(await f.spacesCoreServer.get(f.spaceId)) ?? SpaceCore.init
     expect(SpaceCore.deriveState(before).type).toEqual('initial')
     expect(SpaceCore.deriveState(after).type).toEqual('started')
   })

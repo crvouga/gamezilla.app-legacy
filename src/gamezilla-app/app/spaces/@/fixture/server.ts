@@ -78,7 +78,7 @@ export const initDeps = async (): Promise<ServerDeps> => {
   const dbConnKv = await DbConnKv({ t: 'hash-map' })
   return {
     profileCache: ProfileCache({ t: 'db-conn-kv', dbConnKv }),
-    spacesCoreServer: SpacesCoreServer({ t: 'db-conn-kv', dbConnKv }),
+    spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv }),
     gameDb: GameDb({ t: 'db-conn-kv', dbConnKv }),
     gameServer: GameServer.initCtx({
       ctx: {
