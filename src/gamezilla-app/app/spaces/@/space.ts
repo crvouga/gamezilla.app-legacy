@@ -1,7 +1,7 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import type { ClientCtx } from 'gamezilla-app/app/@/client'
 import { SpaceId, UserId, type ClientId, type Profile, type SessionId } from 'gamezilla-app/app/@/data'
-import type { ServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
+import type { AppServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
 
 //
 //
@@ -43,7 +43,7 @@ export type SpaceServerEvt = ServerEvt | SpaceEvt
 //
 //
 
-export type SpaceServerCtx = ServerCtx & (SpaceCtx | SpaceReqCtx)
+export type SpaceServerCtx = AppServerCtx & (SpaceCtx | SpaceReqCtx)
 
 // DEPRECATED
 export type SpaceReqCtx = SpaceCtx & {

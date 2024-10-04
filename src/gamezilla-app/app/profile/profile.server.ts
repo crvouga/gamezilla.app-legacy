@@ -1,5 +1,5 @@
 import { type Profile, ProfileAvatar, type UserId, Username } from 'gamezilla-app/app/@/data'
-import { type ServerCmd, type ServerCtx, type ServerEvt, sendToClient } from 'gamezilla-app/app/@/server'
+import { type ServerCmd, type AppServerCtx, type ServerEvt, sendToClient } from 'gamezilla-app/app/@/server'
 import { Err, Ok, Result, isErr } from 'gamezilla-app/@/core'
 import { AppServerModule } from '../@/architecture/app-server'
 import type { ProfileDb } from './profile-db/profile-db'
@@ -21,7 +21,7 @@ import {
 //
 
 type Module = AppServerModule<{
-  Ctx: ServerCtx
+  Ctx: AppServerCtx
   MsgCmdIn: null
   MsgEvtIn: ServerEvt
   Model: null

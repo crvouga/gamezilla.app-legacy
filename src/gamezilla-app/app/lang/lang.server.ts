@@ -1,10 +1,10 @@
 import { Sub } from 'gamezilla-app/@/core'
 import type { AppServerModule } from '../@/architecture/app-server'
-import type { ServerCmd, ServerCtx, ServerEvt } from '../@/server'
+import type { ServerCmd, AppServerCtx, ServerEvt } from '../@/server'
 import type { MsgServer, MsgToClient, MsgToServer } from './lang.types'
 
 type Module = AppServerModule<{
-  Ctx: ServerCtx
+  Ctx: AppServerCtx
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
   Msg: MsgServer

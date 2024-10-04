@@ -1,7 +1,7 @@
 import { Posix, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { IServer, Server } from 'gamezilla-app/@/server'
-import { ServerCmd, type ServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
+import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
 import { CODEBASE_VERSION_ID, SERVER_IMPL } from 'gamezilla-app/config'
 import { DbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql } from './@/server/db-conn-sql'
@@ -9,6 +9,7 @@ import { Logger } from './@/server/logger'
 import { ILogger } from './@/server/logger/interface'
 import { SMS } from './@/server/sms'
 import type { MsgServer, MsgToClient, MsgToServer, MsgToServerMeta } from './app.types'
+import { AuthTypes } from './auth'
 import * as AuthServer from './auth/auth.server'
 import * as LangServer from './lang/lang.server'
 import * as ProfileServer from './profile/profile.server'
@@ -27,7 +28,7 @@ import * as WireServer from './wire/wire.server'
 const sleep = (time: TimeSpan) =>
   new Promise<null>((resolve) => setTimeout(() => resolve(null), TimeSpan.toMilliseconds(time)))
 
-export type Ctx = ServerCtx & {
+export type Ctx = AppServerCtx & {
   transport: IServerTransport<{
     MsgToClient: MsgToClient
     MsgToServer: MsgToServer
@@ -36,7 +37,7 @@ export type Ctx = ServerCtx & {
   profile: ProfileServer.Deps
   space: SpaceServer.Deps
   lang: LangServer.Deps
-  auth: AuthServer.Deps
+  auth: AuthTypes.ServerCtx
   server: IServer
 }
 
@@ -88,7 +89,7 @@ export const initCtx = async (): Promise<Ctx> => {
     dbConnKv
   })
 
-  const ctx: ServerCtx = {
+  const ctx: AppServerCtx = {
     env: process.env.NODE_ENV === 'production' ? 'prod' : 'dev',
     sms,
     dbConnSql,
@@ -102,7 +103,7 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const space = await SpaceServer.initDeps({ ctx })
 
-  const auth = await AuthServer.initDeps({ ctx })
+  const auth = await AuthServer.initCtx({ ctx })
 
   const lang = await LangServer.initDeps({ ctx })
 
@@ -143,7 +144,6 @@ export const init = async (input: { ctx: Ctx }): Promise<{}> => {
   await Promise.all([
     WireServer.init(input),
     SpaceServer.init(input),
-    AuthServer.init(input),
     ProfileServer.init(input),
     LangServer.init(input)
   ])
@@ -271,8 +271,8 @@ export const updateChild = async ({
   })
 
   const auth = await AuthServer.update({
-    deps: ctx.auth,
-    ctx,
+    deps: null,
+    ctx: ctx.auth,
     msgCmd: null,
     msgEvt: msgEvt,
     msgClient: msgClient?.t === 'auth' ? { ...msgClient, ...msgClient.c, userId } : null,

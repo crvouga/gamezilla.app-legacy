@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'bun:test'
+import { isOk } from 'gamezilla-app/@/core'
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
-import { AppServerFixture, AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
+import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
+import { AppServerTestEnv, FixtureAppServer } from 'gamezilla-app/app/@/server/server-test-env'
 import { UserAccountDb } from '../@/server/user-account-db'
 import { UserSessionDb } from '../@/server/user-session-db'
 import * as AuthServer from '../auth.server'
-import type { ServerDeps } from '../auth.types'
+import type { ServerCtx } from '../auth.types'
 import { ContinueAsGuestServer } from './continue-as-guest.server'
 import type * as ContinueAsGuestTypes from './continue-as-guest.types'
 import { GuestSessionMappingDb } from './guest-session-mapping-db'
-import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
-import { isOk } from 'gamezilla-app/@/core'
 
 type Input =
   | {
@@ -22,9 +22,9 @@ type Input =
       msg: ContinueAsGuestTypes.MsgServer
     }
 
-const FixtureDeps = async (): Promise<ServerDeps> => {
+const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
   const testEnv = await AppServerTestEnv()
-  const timeout = () => new Promise((resolve) => resolve(null))
+  const f = await FixtureAppServer()
 
   switch (testEnv.t) {
     case 'all':
@@ -43,10 +43,12 @@ const FixtureDeps = async (): Promise<ServerDeps> => {
         dbConnSql: testEnv.dbConnSql
       })
       return {
-        sleep: timeout,
-        userAccountDb: accountDb,
-        userSessionDb: sessionDb,
-        guestSessionMappingDb
+        ctx: {
+          ...f.ctx,
+          userAccountDb: accountDb,
+          userSessionDb: sessionDb,
+          guestSessionMappingDb
+        }
       }
     }
     case 'unit': {
@@ -62,26 +64,27 @@ const FixtureDeps = async (): Promise<ServerDeps> => {
         t: 'hash-map'
       })
       return {
-        sleep: timeout,
-        userAccountDb: accountDb,
-        userSessionDb: sessionDb,
-        guestSessionMappingDb
+        ctx: {
+          ...f.ctx,
+          userAccountDb: accountDb,
+          userSessionDb: sessionDb,
+          guestSessionMappingDb
+        }
       }
     }
   }
 }
 
 const Fixture = async () => {
-  const f = await AppServerFixture()
-  const deps = await FixtureDeps()
+  const f = await BaseFixture()
 
   const updates = async (msgs: Input[]) => {
     const updates: Awaited<ReturnType<typeof ContinueAsGuestServer.update>>[] = []
     for (const msg of msgs) {
       const update = await ContinueAsGuestServer.update({
         ...msg,
-        ctx: f.ctx,
-        deps
+        deps: null,
+        ctx: f.ctx
       })
       updates.push(update)
     }
@@ -102,7 +105,6 @@ const Fixture = async () => {
 
   return {
     ...f,
-    deps,
     updates,
     update
   }
@@ -177,7 +179,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const userId = await AuthServer.toUserIdFromSessionId(f.deps, sessionId)
+    const userId = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
 
     expect(userId !== null).toBe(true)
   })
@@ -187,7 +189,7 @@ describe(import.meta.file, () => {
     const sessionId = SessionId.generate()
     const clientId = ClientId.generate()
 
-    const before = await AuthServer.toUserIdFromSessionId(f.deps, sessionId)
+    const before = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -199,7 +201,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const afterFirst = await AuthServer.toUserIdFromSessionId(f.deps, sessionId)
+    const afterFirst = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -211,7 +213,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const afterSecond = await AuthServer.toUserIdFromSessionId(f.deps, sessionId)
+    const afterSecond = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -223,7 +225,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const afterThird = await AuthServer.toUserIdFromSessionId(f.deps, sessionId)
+    const afterThird = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
 
     expect(before).toEqual(null)
     expect(afterFirst).toEqual(afterSecond)
@@ -288,7 +290,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const expectedUserId = await AuthServer.toUserIdFromSessionId(f.deps, sessionId)
+    const expectedUserId = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
       didSendMsgToClient(
@@ -329,7 +331,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const expectedUserId = await AuthServer.toUserIdFromSessionId(f.deps, sessionId)
+    const expectedUserId = await AuthServer.toUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
       firstOutput.msgEvt?.some((msg) => msg.t === 'auth/client-authenticated' && msg.account.userId === expectedUserId)

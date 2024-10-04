@@ -1,11 +1,11 @@
 import { pipe, Posix } from 'gamezilla-app/@/core'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { ClientId, Profile, SessionId, SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import type { ServerCtx } from 'gamezilla-app/app/@/server'
+import type { AppServerCtx } from 'gamezilla-app/app/@/server'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { DbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
-import { AppServerFixture } from 'gamezilla-app/app/@/server/server-test-env'
+import { FixtureAppServer } from 'gamezilla-app/app/@/server/server-test-env'
 import { smsNoop } from 'gamezilla-app/app/@/server/sms'
 import { GameServer } from '../../game/game.server'
 import { GameDb } from '../../game/space-game-db'
@@ -18,7 +18,7 @@ import { EventId, withId } from '../event'
 import { SpaceServerCtx } from '../space'
 
 export const FixtureSpaceServer = async () => {
-  const f = await AppServerFixture()
+  const f = await FixtureAppServer()
   const deps = await initDeps()
   const clientA = randomAuthenticatedClient()
   const clientB = randomAuthenticatedClient()
@@ -60,7 +60,7 @@ export const FixtureSpaceServer = async () => {
   }
 }
 
-export const ctx: ServerCtx = {
+export const ctx: AppServerCtx = {
   sleep: async () => null,
   env: 'test',
   sms: smsNoop,

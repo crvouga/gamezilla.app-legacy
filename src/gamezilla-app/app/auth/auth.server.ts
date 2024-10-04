@@ -1,11 +1,11 @@
-import { Sub, TimeSpan, isErr, isOk } from 'gamezilla-app/@/core'
+import { Sub, isErr, isOk } from 'gamezilla-app/@/core'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import type { SessionId, UserId } from 'gamezilla-app/app/@/data'
-import { ServerCmd, sendToClient } from 'gamezilla-app/app/@/server'
+import { ServerCmd, AppServerCtx, sendToClient } from 'gamezilla-app/app/@/server'
 import { UserAccountDb } from './@/server/user-account-db'
 import { UserSessionDb } from './@/server/user-session-db'
 import { AuthSMSServer } from './auth-sms/auth-sms.server'
-import type { MsgToClient, ServerDeps, ServerModule } from './auth.types'
+import type { ServerCtx, MsgToClient, ServerModule } from './auth.types'
 import { ContinueAsGuestServer } from './continue-as-guest/continue-as-guest.server'
 import { GuestSessionMappingDb } from './continue-as-guest/guest-session-mapping-db'
 import { LogoutServer } from './logout/logout.server'
@@ -16,48 +16,29 @@ import { LogoutServer } from './logout/logout.server'
 //
 //
 
-export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
+export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   return {
+    ...input.ctx,
     userAccountDb: UserAccountDb({
       t: 'postgres',
-      dbConnSql: ctx.dbConnSql
+      dbConnSql: input.ctx.dbConnSql
     }),
     userSessionDb: UserSessionDb({
       t: 'postgres-with-db-kv-cache',
-      dbConnSql: ctx.dbConnSql,
-      dbConnKv: ctx.dbConnKv
+      dbConnSql: input.ctx.dbConnSql,
+      dbConnKv: input.ctx.dbConnKv
     }),
     guestSessionMappingDb: GuestSessionMappingDb({
       t: 'postgres',
-      dbConnSql: ctx.dbConnSql
-    }),
-    sleep: (timeSpan) => new Promise((resolve) => setTimeout(resolve, TimeSpan.toMilliseconds(timeSpan)))
-  }
-}
-
-export type Deps = Awaited<ReturnType<typeof initDeps>>
-
-//
-//
-//
-// Model
-//
-//
-//
-
-export const init: ServerModule['init'] = async (input) => {
-  const sms = await AuthSMSServer.init(input)
-
-  return {
-    msgCmd: ServerCmd.tag('sms', sms.msgCmd),
-    msgEvt: []
+      dbConnSql: input.ctx.dbConnSql
+    })
   }
 }
 
 //
 //
 //
-// Update
+//
 //
 //
 //
@@ -72,8 +53,8 @@ export const update: ServerModule['update'] = async (input) => {
   )
 }
 
-export const toUserIdFromSessionId = async (deps: ServerDeps, sessionId: SessionId): Promise<UserId | null> => {
-  const found = await deps.userSessionDb.findUserIdBySessionId(sessionId)
+export const toUserIdFromSessionId = async (ctx: ServerCtx, sessionId: SessionId): Promise<UserId | null> => {
+  const found = await ctx.userSessionDb.findUserIdBySessionId(sessionId)
 
   if (isErr(found)) {
     return null
@@ -104,14 +85,14 @@ const updateChild: ServerModule['update'] = async (input) => {
   }
 }
 
-const updateFromEvent: typeof update = async ({ msgEvt, deps }) => {
-  switch (msgEvt?.t) {
+const updateFromEvent: typeof update = async (input) => {
+  switch (input.msgEvt?.t) {
     case 'wire/client-connected': {
-      const foundUserId = await deps.userSessionDb.findUserIdBySessionId(msgEvt.sessionId)
+      const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(input.msgEvt.sessionId)
 
       const userId = isOk(foundUserId) ? foundUserId.value : null
 
-      const foundAccount = await deps.userAccountDb.findOneByUserId({
+      const foundAccount = await input.ctx.userAccountDb.findOneByUserId({
         userId
       })
 
@@ -122,8 +103,8 @@ const updateFromEvent: typeof update = async ({ msgEvt, deps }) => {
           msgEvt: [
             {
               t: 'auth/client-unauthenticated',
-              clientId: msgEvt.clientId,
-              sessionId: msgEvt.sessionId
+              clientId: input.msgEvt.clientId,
+              sessionId: input.msgEvt.sessionId
             }
           ]
         }
@@ -132,8 +113,8 @@ const updateFromEvent: typeof update = async ({ msgEvt, deps }) => {
       return {
         msgEvt: [
           {
-            clientId: msgEvt.clientId,
-            sessionId: msgEvt.sessionId,
+            clientId: input.msgEvt.clientId,
+            sessionId: input.msgEvt.sessionId,
             account: account,
             t: 'auth/client-authenticated'
           }
@@ -144,7 +125,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, deps }) => {
     case 'auth/client-unauthenticated': {
       return {
         msgCmd: [
-          sendToClient([msgEvt.clientId], {
+          sendToClient([input.msgEvt.clientId], {
             t: 'client-unauthenticated'
           })
         ]
@@ -152,21 +133,21 @@ const updateFromEvent: typeof update = async ({ msgEvt, deps }) => {
     }
 
     case 'auth/client-authenticated': {
-      const msgCmd = sendToClient<MsgToClient>([msgEvt.clientId], {
+      const msgCmd = sendToClient<MsgToClient>([input.msgEvt.clientId], {
         t: 'client-authenticated',
-        account: msgEvt.account,
-        loggedIn: msgEvt.loggedIn ?? false
+        account: input.msgEvt.account,
+        loggedIn: input.msgEvt.loggedIn ?? false
       })
 
-      if (!msgEvt.loggedIn) {
+      if (!input.msgEvt.loggedIn) {
         return {
           msgCmd: [msgCmd]
         }
       }
 
-      const inserted = await deps.userSessionDb.insert({
-        sessionId: msgEvt.sessionId,
-        userId: msgEvt.account.userId
+      const inserted = await input.ctx.userSessionDb.insert({
+        sessionId: input.msgEvt.sessionId,
+        userId: input.msgEvt.account.userId
       })
 
       if (isErr(inserted)) {

@@ -4,7 +4,7 @@ import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, ClientCmd, ClientCtx, ClientEvt } from '../@/client'
 import { UserAccount } from '../@/data/account'
-import type { ServerCmd, ServerCtx, ServerEvt } from '../@/server'
+import type { ServerCmd, AppServerCtx, ServerEvt } from '../@/server'
 import type { WithEventId, WithEventMeta } from './@/event'
 import { GameName } from './game/@/game-name'
 import type { GameServer } from './game/game.server'
@@ -44,7 +44,7 @@ export type ClientModule = AppClientModule<{
 }>
 
 export type ServerModule = AppServerModule<{
-  Ctx: ServerCtx
+  Ctx: AppServerCtx
   MsgCmdIn: null
   MsgEvtIn: ServerEvt
   Model: ModelServer

@@ -59,17 +59,6 @@ const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
 //
 //
 //
-
-const init: ServerModule['init'] = async () => {
-  return {}
-}
-
-//
-//
-//
-//
-//
-//
 //
 
 const update: ServerModule['update'] = async (input) => {
@@ -229,7 +218,6 @@ const subscriptions: ServerModule['subscriptions'] = async () => {
 
 export const AuthSMSServer = {
   initDeps,
-  init,
   update,
   subscriptions
 }

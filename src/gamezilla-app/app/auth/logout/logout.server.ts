@@ -6,10 +6,10 @@ const update: ServerModule['update'] = async (input) => {
   return AppServerModule.andThen({}, () => updateFromClient(input))
 }
 
-const updateFromClient: ServerModule['update'] = async ({ msgClient, deps }) => {
-  switch (msgClient?.t) {
+const updateFromClient: ServerModule['update'] = async (input) => {
+  switch (input.msgClient?.t) {
     case 'logout': {
-      const zapped = await deps.userSessionDb.zapBySessionId(msgClient.sessionId)
+      const zapped = await input.ctx.userSessionDb.zapBySessionId(input.msgClient.sessionId)
 
       if (isErr(zapped)) {
         return {}
@@ -18,7 +18,7 @@ const updateFromClient: ServerModule['update'] = async ({ msgClient, deps }) => 
       return {
         msgEvt: [
           {
-            ...msgClient,
+            ...input.msgClient,
             t: 'auth/client-unauthenticated'
           }
         ]

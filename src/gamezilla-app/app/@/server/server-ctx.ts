@@ -4,7 +4,7 @@ import type { IDbConnSql } from './db-conn-sql/interface'
 import type { ILogger } from './logger/interface'
 import type { ISMS } from './sms'
 
-export type ServerCtx = {
+export type AppServerCtx = {
   dbConnSql: IDbConnSql
   dbConnKv: IDbConnKv
   now: Posix

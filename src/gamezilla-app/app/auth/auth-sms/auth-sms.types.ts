@@ -2,7 +2,7 @@ import type { Iso3166Alpha2Code, PhoneNumber, Posix, Remote, Result } from 'game
 import type { LanguageCodeISO_639_1, TranslatedText } from 'gamezilla-app/@/l18n'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
-import { ServerCmd, ServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
+import { ServerCmd, AppServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
 import { IUserAccountDb } from '../@/server/user-account-db'
 import type { IVerifySMS, SendCodeOutput, VerifyCodeProblem } from './verify-sms'
 
@@ -68,7 +68,7 @@ export type MsgToClient =
     }
 
 export type ServerModule = AppServerModule<{
-  Ctx: ServerCtx
+  Ctx: AppServerCtx
   MsgEvtIn: ServerEvt
   Msg: MsgServer
   MsgCmdOut: ServerCmd<MsgToClient>

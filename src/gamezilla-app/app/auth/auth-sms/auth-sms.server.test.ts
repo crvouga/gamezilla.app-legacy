@@ -3,7 +3,7 @@ import { Ok, PhoneNumber, Result } from 'gamezilla-app/@/core'
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { randomNormalUserAccount } from 'gamezilla-app/app/@/data/account'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
-import { AppServerFixture, randomClient } from 'gamezilla-app/app/@/server/server-test-env'
+import { FixtureAppServer, randomClient } from 'gamezilla-app/app/@/server/server-test-env'
 import type { AuthSMSTypes } from '.'
 import { UserAccountDb } from '../@/server/user-account-db'
 import { AuthSMSServer } from './auth-sms.server'
@@ -22,7 +22,7 @@ type InputMsg =
     }
 
 const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
-  const f = await AppServerFixture()
+  const f = await FixtureAppServer()
   const deps: Awaited<ReturnType<typeof AuthSMSServer.initDeps>> = {
     AccountDb: UserAccountDb({ t: 'in-memory', delay: async () => {} }),
     VerifySMS: input?.VerifySMS ?? VerifySMS({ t: 'fake-always-ok' })

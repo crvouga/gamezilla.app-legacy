@@ -2,7 +2,7 @@ import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-or
 import { isErr, Result } from 'gamezilla-app/@/core'
 import type { Sub } from 'gamezilla-app/@/core/sub'
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
-import type { ServerCmd, ServerCtx, ServerEvt, WireCmd } from 'gamezilla-app/app/@/server'
+import type { ServerCmd, AppServerCtx, ServerEvt, WireCmd } from 'gamezilla-app/app/@/server'
 import { AppServerModule } from '../@/architecture/app-server'
 import type { IDbConnKv } from '../@/server/db-conn-kv'
 import type { IServerTransport } from './transport-server'
@@ -48,7 +48,7 @@ export const initDeps = async <TMsgToClient, TMsgToServer>(input: {
 //
 //
 
-export const init = async (_input: { ctx: ServerCtx }) => {
+export const init = async (_input: { ctx: AppServerCtx }) => {
   return {}
 }
 
@@ -60,7 +60,7 @@ export const init = async (_input: { ctx: ServerCtx }) => {
 //
 
 type Input<TMsgToClient, TMsgToServer> = {
-  ctx: ServerCtx
+  ctx: AppServerCtx
   //
   msg?: MsgServer | null
   msgClient?: MsgToServer | null
@@ -266,7 +266,7 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
   deps,
   msg
 }: {
-  ctx: ServerCtx
+  ctx: AppServerCtx
   msg: TMsgToClient
   sessionIds: SessionId[]
   deps: Deps<TMsgToClient, TMsgToServer>

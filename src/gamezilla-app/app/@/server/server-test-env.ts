@@ -3,7 +3,7 @@ import { ClientId, SessionId } from '../data'
 import { DbConnKv, type IDbConnKv } from './db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './db-conn-sql'
 import { Logger } from './logger'
-import type { ServerCtx } from './server-ctx'
+import type { AppServerCtx } from './server-ctx'
 import { SMS } from './sms'
 
 export type ITestEnv =
@@ -66,9 +66,9 @@ export const randomClient = () => {
   }
 }
 
-export const AppServerFixture = async () => {
+export const FixtureAppServer = async () => {
   const logger = Logger({ t: 'noop' })
-  const ctx: ServerCtx = {
+  const ctx: AppServerCtx = {
     env: 'test',
     dbConnKv: await DbConnKv({ t: 'hash-map' }),
     dbConnSql: await DbConnSql({ t: 'noop' }),

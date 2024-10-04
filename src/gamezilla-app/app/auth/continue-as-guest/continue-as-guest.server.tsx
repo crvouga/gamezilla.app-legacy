@@ -2,28 +2,28 @@ import { Ok, Result, isErr, type Posix, type Task } from 'gamezilla-app/@/core'
 import { UserId, type SessionId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { ServerDeps, ServerModule } from '../auth.types'
+import type { ServerCtx, ServerModule } from '../auth.types'
 import type { ModelServer } from './continue-as-guest.types'
 
 const initModel: ModelServer = null
 
 const continueAsGuest = async ({
-  deps,
+  ctx,
   now,
   sessionId
 }: {
-  deps: ServerDeps
+  ctx: ServerCtx
   sessionId: SessionId
   now: Posix
 }): Task<string, UserAccount> => {
-  const existingGuestUserId = await deps.guestSessionMappingDb.findUserIdBySessionId(sessionId)
+  const existingGuestUserId = await ctx.guestSessionMappingDb.findUserIdBySessionId(sessionId)
 
   if (isErr(existingGuestUserId)) {
     return existingGuestUserId
   }
 
   const existingGuestAccount = Result.withDefault(
-    await deps.userAccountDb.findOneByUserId({
+    await ctx.userAccountDb.findOneByUserId({
       userId: existingGuestUserId.value
     }),
     null
@@ -38,14 +38,14 @@ const continueAsGuest = async ({
 
   const guestAccount: UserAccount = existingGuestAccount ?? newGuestAccount
 
-  await deps.guestSessionMappingDb.insert({
+  await ctx.guestSessionMappingDb.insert({
     guestUserId: guestAccount.userId,
     sessionId: sessionId
   })
 
   const insertedAccount = existingGuestAccount
     ? Ok(null)
-    : await deps.userAccountDb.insert({
+    : await ctx.userAccountDb.insert({
         account: guestAccount
       })
 
@@ -53,7 +53,7 @@ const continueAsGuest = async ({
     return insertedAccount
   }
 
-  const insertedSession = await deps.userSessionDb.insert({
+  const insertedSession = await ctx.userSessionDb.insert({
     userId: guestAccount.userId,
     sessionId
   })
@@ -65,11 +65,11 @@ const continueAsGuest = async ({
   return Ok(guestAccount)
 }
 
-const update: ServerModule['update'] = async ({ msgClient, deps, ctx }) => {
+const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
   switch (msgClient?.t) {
     case 'guest.clicked-continue-as-guest-button': {
       const result = await continueAsGuest({
-        deps,
+        ctx,
         now: ctx.now,
         sessionId: msgClient.sessionId
       })
