@@ -52,8 +52,6 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const logger = Logger.prefix('app', Logger({ t: 'console' }))
 
-  const server = Server({ t: SERVER_IMPL, logger: Logger.prefix('server', logger) })
-
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl,
@@ -78,11 +76,27 @@ export const initCtx = async (): Promise<Ctx> => {
     logger: Logger.prefix('twilio', logger)
   })
 
-  const transport = await ServerTransport<MsgToServer, MsgToClient>({
-    codebaseVersionId: CODEBASE_VERSION_ID,
-    server,
-    logger: Logger.prefix('transport', logger)
+  const server = Server({
+    logger: Logger.prefix('server', logger),
+    t: SERVER_IMPL
   })
+
+  const transport = await ServerTransport<MsgToServer, MsgToClient>(
+    server.t === 'bun'
+      ? {
+          t: 'bun-server-web-sockets',
+          dbConnSql,
+          codebaseVersionId: CODEBASE_VERSION_ID,
+          server,
+          logger: Logger.prefix('transport', logger)
+        }
+      : {
+          t: 'socket-io',
+          codebaseVersionId: CODEBASE_VERSION_ID,
+          server,
+          logger: Logger.prefix('transport', logger)
+        }
+  )
 
   const wire = await WireServer.initDeps({
     transport,

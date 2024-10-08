@@ -1,7 +1,7 @@
-import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { PubSub } from 'gamezilla-app/@/core/sub'
 import type { ServerBun } from 'gamezilla-app/@/server/server-impl-bun/server-impl-bun'
 import type { ServerNode } from 'gamezilla-app/@/server/server-impl-node/server-impl-node'
+import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 
 export type ServerTransportMsg =
   | {
@@ -36,14 +36,6 @@ export type IServerTransport<T extends { MsgToClient: any; MsgToServer: any }> =
     clientId: ClientId
     sessionId: SessionId
   }>
-  topicPublish: PubSub<{
-    topics: string[]
-    msg: T['MsgToClient']
-  }>
-  topicSubscribe: PubSub<{
-    topics: string[]
-    clientId: ClientId
-  }>
   wire: PubSub<ServerTransportMsg>
 }
 
@@ -55,8 +47,6 @@ export const initServerTransport = <MsgToServer, MsgToClient>(): IServerTranspor
     toClient: PubSub.create(),
     toClientBroadcast: PubSub.create(),
     toServer: PubSub.create(),
-    topicPublish: PubSub.create(),
-    topicSubscribe: PubSub.create(),
     wire: PubSub.create()
   }
 }

@@ -3,6 +3,7 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { Config, PubSubTopicBased } from './impl'
 import { AppServerTestEnv } from '../server-test-env'
 import { Result } from 'gamezilla-app/@/core'
+import { Logger } from '../logger'
 
 const Fixture = async <T>(config: Config<T>) => {
   const pubSub = await PubSubTopicBased(config)
@@ -40,7 +41,8 @@ const Fixtures = async () => {
       t: 'postgres',
       dbConnSql: testEnv.dbConnSql,
       decode: (msg) => Result.withDefault(MyEvent.parse(JSON.parse(msg)), null),
-      encode: (msg) => JSON.stringify(msg)
+      encode: (msg) => JSON.stringify(msg),
+      logger: Logger({ t: 'noop' })
     })
   }
 

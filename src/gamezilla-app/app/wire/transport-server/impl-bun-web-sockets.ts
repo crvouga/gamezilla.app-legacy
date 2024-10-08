@@ -1,6 +1,9 @@
 import type { Server, ServerWebSocket, WebSocketHandler } from 'bun'
+import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import type { ServerBun } from 'gamezilla-app/@/server/server-impl-bun/server-impl-bun'
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
+import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
+import { ILogger } from 'gamezilla-app/app/@/server/logger'
 import {
   SESSION_ID_COOKIE_NAME,
   toSetSessionCookie,
@@ -8,20 +11,23 @@ import {
   type MsgServerToMsgClient
 } from '../transport.core'
 import { initServerTransport, type IServerTransport } from './interface'
-import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 
 type ServerWebSocketData = {
   clientId: ClientId
   sessionId: SessionId
 }
 
-export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
-  server,
-  codebaseVersionId
-}: {
+export type Config = {
+  t: 'bun-server-web-sockets'
   codebaseVersionId: string
   server: ServerBun
-}): IServerTransport<{
+  dbConnSql: IDbConnSql
+  logger: ILogger
+}
+
+export const ServerTransport = <MsgToServer, MsgToClient>(
+  config: Config
+): IServerTransport<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
 }> => {
@@ -43,37 +49,26 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
   //
   //
 
-  const clients = LRUCache<ClientId, ServerWebSocket<ServerWebSocketData>>({
-    maxCapacity: 10_000
-  })
-  const clientsBySessionId = LRUCache<SessionId, Set<ClientId>>({
-    maxCapacity: 10_000
-  })
-  const addClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
-    clients.set(ws.data.clientId, ws)
+  const clients = LRUCache<ClientId, ServerWebSocket<ServerWebSocketData>>({ maxCapacity: 10_000 })
 
-    const clientIds = clientsBySessionId.get(ws.data.sessionId)
+  const clientsBySessionId = LRUCache<SessionId, Set<ClientId>>({ maxCapacity: 10_000 })
 
-    if (!clientIds) {
-      const clientIdsNew = new Set<ClientId>()
-      clientIdsNew.add(ws.data.clientId)
-      clientsBySessionId.set(ws.data.sessionId, clientIdsNew)
-      return
-    }
+  const addClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {
+    const clientId = ws.data.clientId
+    const sessionId = ws.data.sessionId
+    clients.set(clientId, ws)
 
-    clientIds.add(ws.data.clientId)
+    const clientIds = clientsBySessionId.get(sessionId) ?? new Set<ClientId>()
+    clientIds.add(clientId)
+    clientsBySessionId.set(sessionId, clientIds)
   }
 
-  const removeClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
-    clients.delete(ws.data.clientId)
+  const removeClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {
+    const clientId = ws.data.clientId
+    const sessionId = ws.data.sessionId
+    clients.delete(clientId)
 
-    const clientIds = clientsBySessionId.get(ws.data.sessionId)
-
-    if (!clientIds) {
-      return
-    }
-
-    clientIds.delete(ws.data.clientId)
+    clientsBySessionId.get(sessionId)?.delete(clientId)
   }
 
   //
@@ -127,16 +122,16 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
   }
 
   const websocket: WebSocketHandler<ServerWebSocketData> = {
-    open(ws: ServerWebSocket<ServerWebSocketData>) {
-      addClient(ws)
+    async open(ws: ServerWebSocket<ServerWebSocketData>) {
+      await addClient(ws)
       transport.wire.pub({
         t: 'client-connected',
         clientId: ws.data.clientId,
         sessionId: ws.data.sessionId
       })
     },
-    close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
-      removeClient(ws)
+    async close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
+      await removeClient(ws)
       transport.wire.pub({
         t: 'client-disconnected',
         clientId: ws.data.clientId,
@@ -146,7 +141,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     message(ws: ServerWebSocket<ServerWebSocketData>, message) {
       const msg = JSON.parse(message.toString()) as MsgClientToMsgServer<MsgToServer> // leap of faith
 
-      if (msg.v !== codebaseVersionId) {
+      if (msg.v !== config.codebaseVersionId) {
         transport.wire.pub({
           t: 'got-bad-msgs',
           reason: 'codebase-version-id-mismatch',
@@ -164,36 +159,12 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     }
   }
 
-  server._registerFetchHandler(onRequest)
-  server._setWebSocketHandler(websocket)
+  config.server._registerFetchHandler(onRequest)
+  config.server._setWebSocketHandler(websocket)
 
   transport.wire.pub({
     t: 'server-started',
     port: Number.NaN
-  })
-
-  //
-  //
-  //
-  // Hook up topics
-  //
-  //
-  //
-
-  transport.topicPublish.sub((msg) => {
-    for (const topic of msg.topics) {
-      server._publish(topic, JSON.stringify(msg.msg))
-    }
-  })
-
-  transport.topicSubscribe.sub((msg) => {
-    const client = clients.get(msg.clientId)
-    if (!client) {
-      return
-    }
-    for (const topic of msg.topics) {
-      client.subscribe(topic)
-    }
   })
 
   //
@@ -204,25 +175,27 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
   //
   //
 
-  const send = (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
-    Promise.resolve().then(() => {
-      switch (ws.readyState) {
-        case 1: {
-          ws.send(JSON.stringify(msg))
-          return
-        }
-        default: {
-          return
-        }
+  const send = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
+    await new Promise((resolve) => resolve(null))
+    config.logger.debug(`sending to client ${ws.data.clientId}`)
+
+    switch (ws.readyState) {
+      case 1: {
+        const encoded = JSON.stringify(msg)
+        ws.send(encoded)
+        return
       }
-    })
+      default: {
+        return
+      }
+    }
   }
 
   transport.toClientBroadcast.sub((msgs) => {
     for (const client of clients.values()) {
       send(client, {
         m: msgs,
-        v: codebaseVersionId
+        v: config.codebaseVersionId
       })
     }
   })
@@ -238,7 +211,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
       send(client, {
         m: toClientSingle.msgs,
-        v: codebaseVersionId
+        v: config.codebaseVersionId
       })
     }
   })

@@ -14,7 +14,7 @@ export const DbConnSql = (_config: Config): IDbConnSql => {
       return Ok(null)
     },
     async listen() {
-      return () => {}
+      return async () => {}
     }
   }
 }

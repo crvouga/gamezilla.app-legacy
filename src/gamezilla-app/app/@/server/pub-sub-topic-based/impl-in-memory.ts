@@ -6,7 +6,7 @@ export type Config<T> = {
   parser: Parser<T>
 }
 
-export const PubSubTopicBased = <TMsg>(_config: Config<T>): IPubSubTopicBased<TMsg> => {
+export const PubSubTopicBased = <TMsg>(_config: Config<TMsg>): IPubSubTopicBased<TMsg> => {
   const subscribesByTopic = new Map<string, Set<(msg: TMsg) => void>>()
   return {
     async pub(topic, msg) {

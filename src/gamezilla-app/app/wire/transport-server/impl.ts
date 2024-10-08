@@ -1,37 +1,24 @@
-import type { ServerInstance } from 'gamezilla-app/@/server'
-import { ILogger } from 'gamezilla-app/app/@/server/logger'
+import * as ImplBunWebSockets from './impl-bun-web-sockets'
+import * as ImplSocketIo from './impl-socket-io'
 import type { IServerTransport } from './interface'
-import { ServerTransportBunWebSockets } from './impl-bun-web-sockets'
-import { ServerTransportSocketIO } from './impl-socket-io'
 
-export const ServerTransport = async <MsgToServer, MsgToClient>({
-  server,
-  codebaseVersionId,
-  logger
-}: {
-  server: ServerInstance
-  codebaseVersionId: string
-  logger: ILogger
-}): Promise<
+export type Config = ImplBunWebSockets.Config | ImplSocketIo.Config
+
+export const ServerTransport = async <MsgToServer, MsgToClient>(
+  config: Config
+): Promise<
   IServerTransport<{
     MsgToServer: MsgToServer
     MsgToClient: MsgToClient
   }>
 > => {
-  switch (server.t) {
-    case 'bun': {
-      return ServerTransportBunWebSockets<MsgToServer, MsgToClient>({
-        codebaseVersionId,
-        server
-      })
+  switch (config.t) {
+    case 'bun-server-web-sockets': {
+      return ImplBunWebSockets.ServerTransport(config)
     }
 
-    case 'node': {
-      return ServerTransportSocketIO<MsgToServer, MsgToClient>({
-        codebaseVersionId,
-        server,
-        logger
-      })
+    case 'socket-io': {
+      return ImplSocketIo.ServerTransport(config)
     }
   }
 }
