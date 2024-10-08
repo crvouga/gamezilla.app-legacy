@@ -8,6 +8,7 @@ import {
   type MsgServerToMsgClient
 } from '../transport.core'
 import { initServerTransport, type IServerTransport } from './interface'
+import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 
 type ServerWebSocketData = {
   clientId: ClientId
@@ -42,8 +43,12 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
   //
   //
 
-  const clients = new Map<ClientId, ServerWebSocket<ServerWebSocketData>>()
-  const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
+  const clients = LRUCache<ClientId, ServerWebSocket<ServerWebSocketData>>({
+    maxCapacity: 10_000
+  })
+  const clientsBySessionId = LRUCache<SessionId, Set<ClientId>>({
+    maxCapacity: 10_000
+  })
   const addClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
     clients.set(ws.data.clientId, ws)
 
