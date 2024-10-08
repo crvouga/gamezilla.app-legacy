@@ -1,7 +1,8 @@
-import { Err, Ok, Result, isErr } from 'gamezilla-app/@/core'
+import { Err, Ok, Result, TimeSpan, isErr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/interface'
+import { withDuration } from '../with-duration'
 import type { IDbConnKv } from './interface'
 
 const Row = p.obj({
@@ -19,17 +20,12 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
   return {
     async get(key, parser) {
       try {
-        const start = process.hrtime.bigint()
-
-        const queried = await config.dbConnSql.query(Row, 'SELECT key, value FROM key_value WHERE key = :key', {
-          key: key
-        })
-
-        const end = process.hrtime.bigint()
-
-        const durationInMicroseconds = (end - start) / BigInt(1000)
-
-        config.logger.info(`duration=${durationInMicroseconds}µs get: key=${key}`)
+        const [queried, duration] = await withDuration(() =>
+          config.dbConnSql.query(Row, 'SELECT key, value FROM key_value WHERE key = :key', {
+            key: key
+          })
+        )
+        config.logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
 
         if (isErr(queried)) {
           return queried
@@ -68,21 +64,13 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
         return Ok([])
       }
       try {
-        const start = process.hrtime.bigint()
-
         const keysStr = keys.map((key) => `'${key}'`).join(', ')
 
-        const queried = await config.dbConnSql.query(
-          Row,
-          `SELECT key, value FROM key_value WHERE key IN (${keysStr})`,
-          {}
+        const [queried, duration] = await withDuration(() =>
+          config.dbConnSql.query(Row, `SELECT key, value FROM key_value WHERE key IN (${keysStr})`, {})
         )
 
-        const end = process.hrtime.bigint()
-
-        const durationInMicroseconds = (end - start) / BigInt(1000)
-
-        config.logger.info(`duration=${durationInMicroseconds}µs get: keys=${keys.join(', ')}`)
+        config.logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: keys=${keys.join(', ')}`)
 
         if (isErr(queried)) {
           return queried
