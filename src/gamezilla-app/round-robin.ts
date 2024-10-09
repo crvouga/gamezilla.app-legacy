@@ -1,6 +1,6 @@
 import http from 'http'
 import { spawn } from 'child_process'
-import { SERVER_PORT_LOCAL } from './config'
+import { SERVER_PORT_LOCAL } from './config-public'
 
 const REPLICA_COUNT = 3
 const START_COMMAND = 'bun server'

@@ -1,4 +1,5 @@
 import { Posix } from 'gamezilla-app/@/core'
+import { DATABASE_URL, REDIS_URL } from 'gamezilla-app/config-private'
 import { ClientId, SessionId } from '../data'
 import { DbConnKv, type IDbConnKv } from './db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './db-conn-sql'
@@ -33,17 +34,6 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   }
 
   const logger = Logger.prefix('integration-test', Logger({ t: 'noop' }))
-  const DATABASE_URL = process.env.DATABASE_URL
-
-  if (!DATABASE_URL) {
-    throw new Error('DATABASE_URL not set')
-  }
-
-  const REDIS_URL = process.env.REDIS_URL
-
-  if (!REDIS_URL) {
-    throw new Error('REDIS_URL not set')
-  }
 
   const dbConnSql = await DbConnSql({
     t: 'postgres',

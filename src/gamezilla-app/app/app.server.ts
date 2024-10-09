@@ -2,7 +2,8 @@ import { Posix, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { IServer, Server } from 'gamezilla-app/@/server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
-import { CODEBASE_VERSION_ID, SERVER_IMPL } from 'gamezilla-app/config'
+import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL } from 'gamezilla-app/config-public'
+import { DATABASE_URL } from 'gamezilla-app/config-private'
 import { DbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql } from './@/server/db-conn-sql'
 import { Logger } from './@/server/logger'
@@ -42,27 +43,18 @@ export type Ctx = AppServerCtx & {
 }
 
 export const initCtx = async (): Promise<Ctx> => {
-  const DATABASE_URL = process.env.DATABASE_URL
-
-  if (!DATABASE_URL) {
-    throw new Error('DATABASE_URL not set')
-  }
-
-  const env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev'
-
   const logger = Logger.prefix('app', Logger({ t: 'console' }))
 
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: DATABASE_URL,
     logger: Logger.prefix('postgres', logger),
-    simulateLatency:
-      env === 'dev'
-        ? async () => {
-            logger.info('Simulating latency...')
-            await sleep(TimeSpan.milliseconds(100 + Math.random() * 200))
-          }
-        : () => {}
+    simulateLatency: IS_PROD
+      ? () => {}
+      : async () => {
+          logger.info('Simulating latency...')
+          await sleep(TimeSpan.milliseconds(100 + Math.random() * 200))
+        }
   })
 
   const REDIS_URL = process.env.REDIS_URL
@@ -110,8 +102,9 @@ export const initCtx = async (): Promise<Ctx> => {
     dbConnKv
   })
 
+  const env = IS_PROD ? 'prod' : 'dev'
   const ctx: AppServerCtx = {
-    env: process.env.NODE_ENV === 'production' ? 'prod' : 'dev',
+    env,
     sms,
     dbConnSql,
     dbConnKv,

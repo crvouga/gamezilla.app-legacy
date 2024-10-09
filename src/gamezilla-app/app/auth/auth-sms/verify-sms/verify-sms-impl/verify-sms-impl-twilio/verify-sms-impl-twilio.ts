@@ -1,29 +1,12 @@
 import { Err, Ok, PhoneNumber, isErr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } from 'gamezilla-app/config-private'
 import type { IVerifySMS } from '../../verify-sms'
 
 export type Config = {
   t: 'twilio'
   logger: ILogger
-}
-
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
-
-if (typeof TWILIO_ACCOUNT_SID !== 'string') {
-  throw new Error('TWILIO_ACCOUNT_SID is required')
-}
-
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN
-
-if (typeof TWILIO_AUTH_TOKEN !== 'string') {
-  throw new Error('TWILIO_AUTH_TOKEN is required')
-}
-
-const TWILIO_MESSAGING_SERVICE_SID = process.env.TWILIO_MESSAGING_SERVICE_SID
-
-if (typeof TWILIO_MESSAGING_SERVICE_SID !== 'string') {
-  throw new Error('TWILIO_MESSAGING_SERVICE_SID is required')
 }
 
 const AUTHORIZATION = `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`
