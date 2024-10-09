@@ -89,20 +89,22 @@ describe(import.meta.file, () => {
 
   it('should find session ids by user id', async () => {
     for (const f of await Fixtures()) {
-      const sessionIds = await f.userSessionDb.findSessionIdsByUserId(f.userId)
+      const userId = UserId.generate()
+      const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
       expect(sessionIds.t).toBe('ok')
-      const expected = f.sessions.filter((s) => s.userId === f.userId).map((s) => s.sessionId)
+      const expected = f.sessions.filter((s) => s.userId === userId).map((s) => s.sessionId)
       expect(unwrap(sessionIds)).toEqual(expected)
     }
   })
 
   it('should be able to zap by user id', async () => {
     for (const f of await Fixtures()) {
-      const before = await f.userSessionDb.findSessionIdsByUserId(f.userId)
-      await f.userSessionDb.zapByUserId(f.userId)
-      const after = await f.userSessionDb.findSessionIdsByUserId(f.userId)
+      const userId = UserId.generate()
+      const before = await f.userSessionDb.findSessionIdsByUserId(userId)
+      await f.userSessionDb.zapByUserId(userId)
+      const after = await f.userSessionDb.findSessionIdsByUserId(userId)
 
-      expect(unwrap(before)).toEqual(f.sessions.filter((s) => s.userId === f.userId).map((s) => s.sessionId))
+      expect(unwrap(before)).toEqual(f.sessions.filter((s) => s.userId === userId).map((s) => s.sessionId))
       expect(after.t).toBe('ok')
       expect(unwrap(after)).toEqual([])
     }
@@ -110,11 +112,12 @@ describe(import.meta.file, () => {
 
   it('should be able to zap by session id', async () => {
     for (const f of await Fixtures()) {
+      const userId = UserId.generate()
       await f.userSessionDb.zapBySessionId(f.sessions[0].sessionId)
-      const sessionIds = await f.userSessionDb.findSessionIdsByUserId(f.userId)
+      const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
       expect(sessionIds.t).toBe('ok')
       const expected = f.sessions
-        .filter((s) => s.userId === f.userId && s.sessionId !== f.sessions[0].sessionId)
+        .filter((s) => s.userId === userId && s.sessionId !== f.sessions[0].sessionId)
         .map((s) => s.sessionId)
       expect(unwrap(sessionIds)).toEqual(expected)
     }

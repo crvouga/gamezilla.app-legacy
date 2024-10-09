@@ -39,6 +39,12 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
     throw new Error('DATABASE_URL not set')
   }
 
+  const REDIS_URL = process.env.REDIS_URL
+
+  if (!REDIS_URL) {
+    throw new Error('REDIS_URL not set')
+  }
+
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: DATABASE_URL,
@@ -47,9 +53,9 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   })
 
   const dbConnKv = await DbConnKv({
-    t: 'db-conn-sql',
+    t: 'redis',
     logger: Logger.prefix('db-conn-kv', logger),
-    dbConnSql
+    redisUrl: REDIS_URL
   })
 
   return {

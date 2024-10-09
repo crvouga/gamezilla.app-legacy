@@ -42,9 +42,9 @@ export type Ctx = AppServerCtx & {
 }
 
 export const initCtx = async (): Promise<Ctx> => {
-  const databaseUrl = process.env.DATABASE_URL
+  const DATABASE_URL = process.env.DATABASE_URL
 
-  if (!databaseUrl) {
+  if (!DATABASE_URL) {
     throw new Error('DATABASE_URL not set')
   }
 
@@ -54,8 +54,8 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const dbConnSql = await DbConnSql({
     t: 'postgres',
-    databaseUrl,
-    logger: Logger.prefix('db-conn-sql', logger),
+    databaseUrl: DATABASE_URL,
+    logger: Logger.prefix('postgres', logger),
     simulateLatency:
       env === 'dev'
         ? async () => {
@@ -65,10 +65,16 @@ export const initCtx = async (): Promise<Ctx> => {
         : () => {}
   })
 
+  const REDIS_URL = process.env.REDIS_URL
+
+  if (!REDIS_URL) {
+    throw new Error('REDIS_URL not set')
+  }
+
   const dbConnKv = await DbConnKv({
-    t: 'db-conn-sql',
-    dbConnSql,
-    logger: Logger.prefix('db-conn-kv', logger)
+    t: 'redis',
+    redisUrl: REDIS_URL,
+    logger: Logger.prefix('redis', logger)
   })
 
   const sms = SMS({

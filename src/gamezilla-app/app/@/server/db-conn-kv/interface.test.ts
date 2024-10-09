@@ -109,6 +109,21 @@ const implementations: Implementation[] = [
         })
       }
     }
+  },
+
+  {
+    name: 'redis',
+    async Fixture() {
+      const f = await Fixture()
+      const REDIS_URL = process.env.REDIS_URL
+      if (!REDIS_URL) {
+        throw new Error('REDIS_URL not set')
+      }
+      return {
+        ...f,
+        dbConnKv: await DbConnKv({ t: 'redis', redisUrl: REDIS_URL, logger: f.logger })
+      }
+    }
   }
 ]
 

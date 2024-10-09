@@ -7,10 +7,12 @@ import * as WithDistributedUpdates from './with-distributed-updates'
 import * as WithNamespace from './with-namespace'
 import * as WithReducedParsing from './with-reduced-parsing'
 import * as WithThrottledWrites from './with-throttled-writes'
+import * as ImplRedis from './impl-redis'
 
 export type Config =
   | HashMap.Config
   | DbConnSql.Config
+  | ImplRedis.Config
   | (WithCache.Config & { t: 'with-cache' })
   | (WithDistributedUpdates.Config & { t: 'with-distributed-updates' })
   | (WithReducedParsing.Config & { t: 'with-reduced-parsing' })
@@ -21,6 +23,10 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
   switch (config.t) {
     case 'hash-map': {
       return HashMap.DbConnKv(config)
+    }
+
+    case 'redis': {
+      return ImplRedis.DbConnKv(config)
     }
 
     case 'db-conn-sql': {
