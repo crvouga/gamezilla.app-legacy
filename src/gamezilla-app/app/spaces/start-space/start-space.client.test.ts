@@ -1,53 +1,89 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 import { didPlaySound, didPushRoute, didSendToServer, didShowToast } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
-import { andThen } from '../../@/architecture/app-client'
-import { Ctx, clickedStartSpaceButton, init } from '../@/fixture/client'
+import { FixtureSpaceClient } from '../@/fixture/client'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 
+const Fixture = async () => {
+  const f = await FixtureSpaceClient()
+  return {
+    ...f
+  }
+}
+
 describe(import.meta.file, () => {
-  it('should show toast when current user starts a space', () => {
-    const ctx = Ctx()
-    const spaceId = SpaceId.generate()
-
-    const started = andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
-
+  test('show toast', async () => {
+    const f = await Fixture()
+    const started = f.update(f.initial, [
+      {
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId: SpaceId.generate()
+        }
+      }
+    ])
     expect(didShowToast(started)).toBe(true)
   })
 
-  it('should start a space for current user after clicking start button', () => {
-    const ctx = Ctx()
+  test('start space', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-
-    const started = andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
-
-    expect(SpacesCoreClient.toSpaceIdByUserId(started.model, ctx.currentUserId)).toEqual(spaceId)
+    const started = f.update(f.initial, [
+      {
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
+      }
+    ])
+    const before = SpacesCoreClient.toSpaceIdByUserId(f.initial.model, f.ctx.currentUserId)
+    const after = SpacesCoreClient.toSpaceIdByUserId(started.model, f.ctx.currentUserId)
+    expect(before).toEqual(null)
+    expect(after).toEqual(spaceId)
   })
 
-  it('should redirect after starting a space', () => {
-    const ctx = Ctx()
-    const spaceId = SpaceId.generate()
-
-    const started = andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
-
-    expect(didPushRoute(started)).toBe(true)
-  })
-
-  it('should play sound after starting space', () => {
-    const ctx = Ctx()
-    const started = andThen(init(ctx), clickedStartSpaceButton(ctx, SpaceId.generate()))
-
+  test('play sound', async () => {
+    const f = await Fixture()
+    const started = f.update(f.initial, [
+      {
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId: SpaceId.generate()
+        }
+      }
+    ])
     expect(didPlaySound(started)).toBe(true)
   })
 
-  it('should send events to the server like user started space', () => {
-    const ctx = Ctx()
-    const output = andThen(init(ctx), clickedStartSpaceButton(ctx, SpaceId.generate()))
+  test('push route', async () => {
+    const f = await Fixture()
+    const spaceId = SpaceId.generate()
+    const started = f.update(f.initial, [
+      {
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
+      }
+    ])
+    expect(didPushRoute(started)).toBe(true)
+  })
 
+  test('send to server', async () => {
+    const f = await Fixture()
+    const spaceId = SpaceId.generate()
+    const started = f.update(f.initial, [
+      {
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
+      }
+    ])
     expect(
       didSendToServer(
-        output,
-        (msg) => msg.t === 'event' && msg.c.t === 'user-started-space' && msg.c.userId === ctx.currentUserId
+        started,
+        (msg) => msg.t === 'event' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId
       )
     ).toBe(true)
   })

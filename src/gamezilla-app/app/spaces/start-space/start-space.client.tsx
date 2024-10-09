@@ -8,17 +8,8 @@ import type { SpaceCoreEvent } from '../spaces-core'
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
-    //
-    (model) =>
-      updateFromSpaceEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateStartSpaceButton({
-        ...input,
-        model
-      })
+    (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => updateStartSpaceButton({ ...input, model })
   )
 }
 
@@ -30,11 +21,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCoreEvt: 
           model,
           msgCmd: [
             playSound(APP_SOUND.navForward),
-            pushRoute({
-              n: 'spaces',
-              t: 'space',
-              spaceId: msgCoreEvt.spaceId
-            }),
+            pushRoute({ n: 'spaces', t: 'space', spaceId: msgCoreEvt.spaceId }),
             showToast(ctx.t('spaces.space-started'))
           ]
         }
@@ -52,38 +39,29 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCoreEvt: 
   }
 }
 
-//
-//
-//
-//
-//
-//
-
 const updateStartSpaceButton: SpaceClientModule['update'] = (input) => {
-  const { ctx, msg, model } = input
-
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'clicked-start-space-button': {
-      if (!ctx.currentUserId) {
+      if (!input.ctx.currentUserId) {
         return {
-          model
+          model: input.model
         }
       }
 
       const spaceEventNew = withId<SpaceCoreEvent>({
         t: 'user-started-space',
-        spaceId: msg.spaceId,
-        userId: ctx.currentUserId
+        spaceId: input.msg.spaceId,
+        userId: input.ctx.currentUserId
       })
 
       return {
-        model,
+        model: input.model,
         msgCoreEvt: [spaceEventNew]
       }
     }
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
@@ -96,12 +74,7 @@ const ViewStartSpaceButton: SpaceClientModule['View'] = (input) => {
       size='lg'
       color='primary'
       renderIconStart={(iconInput) => <IconPlus {...iconInput} />}
-      onClick={() =>
-        input.dispatch({
-          t: 'clicked-start-space-button',
-          spaceId: SpaceId.generate()
-        })
-      }
+      onClick={() => input.dispatch({ t: 'clicked-start-space-button', spaceId: SpaceId.generate() })}
       text={input.ctx.t('spaces.start-space')}
     />
   )
