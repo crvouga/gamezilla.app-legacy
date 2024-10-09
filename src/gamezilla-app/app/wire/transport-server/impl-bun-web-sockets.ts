@@ -186,7 +186,6 @@ export const ServerTransport = <MsgToServer, MsgToClient>(
 
   const send = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
     await new Promise((resolve) => resolve(null))
-    config.logger.debug(`sending to client ${ws.data.clientId}`)
 
     switch (ws.readyState) {
       case 1: {
@@ -201,9 +200,14 @@ export const ServerTransport = <MsgToServer, MsgToClient>(
     }
   }
 
+  const sendWithPub = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
+    send(ws, msg)
+    pubSub.pub(ws.data.clientId, msg)
+  }
+
   transport.toClientBroadcast.sub((msgs) => {
     for (const client of clients.values()) {
-      send(client, {
+      sendWithPub(client, {
         m: msgs,
         v: config.codebaseVersionId
       })
@@ -219,7 +223,7 @@ export const ServerTransport = <MsgToServer, MsgToClient>(
         continue
       }
 
-      send(client, {
+      sendWithPub(client, {
         m: toClientSingle.msgs,
         v: config.codebaseVersionId
       })
