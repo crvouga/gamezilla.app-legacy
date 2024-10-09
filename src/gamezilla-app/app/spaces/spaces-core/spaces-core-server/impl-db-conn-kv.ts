@@ -3,13 +3,14 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import { SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import { Logger } from 'gamezilla-app/app/@/server/logger'
+import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import * as SpaceCore from '../space-core'
 import type { ISpacesCoreServer } from './interface'
 
 export type Config = {
   t: 'db-conn-kv'
   dbConnKv: IDbConnKv
+  logger: ILogger
 }
 
 export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServer> => {
@@ -18,7 +19,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     (dbConnKv) =>
       false
         ? DbConnKv.withThrottledWrites({
-            logger: Logger({ t: 'noop' }),
+            logger: Logger.prefix('spaces-core-server', config.logger),
             dbConnKv: dbConnKv,
             throttle: TimeSpan.seconds(5)
           })
@@ -26,7 +27,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     async (dbConnKv) =>
       false
         ? DbConnKv.withCache({
-            logger: Logger({ t: 'noop' }),
+            logger: Logger.prefix('spaces-core-server', config.logger),
             source: dbConnKv,
             cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
           })
@@ -42,7 +43,6 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     ['spaces', 'space-by-id'],
     SpaceCore.Model
   )
-
   const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>(
     dbConnKv,
     ['spaces', 'space-id-by-user-id'],

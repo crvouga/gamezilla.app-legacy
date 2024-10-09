@@ -78,7 +78,7 @@ export const initDeps = async (): Promise<ServerDeps> => {
   const dbConnKv = await DbConnKv({ t: 'hash-map' })
   return {
     profileCache: ProfileCache({ t: 'db-conn-kv', dbConnKv }),
-    spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv }),
+    spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv, logger: Logger({ t: 'noop' }) }),
     gameDb: GameDb({ t: 'db-conn-kv', dbConnKv }),
     gameServer: GameServer.initCtx({
       ctx: {
@@ -87,9 +87,7 @@ export const initDeps = async (): Promise<ServerDeps> => {
         dbConnKv,
         dbConnSql: await DbConnSql({ t: 'noop' }),
         env: 'test',
-        logger: Logger({
-          t: 'noop'
-        }),
+        logger: Logger({ t: 'noop' }),
         now: Posix.now(),
         sessionId: SessionId.generate(),
         sms: smsNoop,

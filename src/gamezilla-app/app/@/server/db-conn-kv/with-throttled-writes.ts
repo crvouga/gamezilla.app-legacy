@@ -46,7 +46,7 @@ export const withThrottledWrites = ({ dbConnKv, throttle, logger }: Config): IDb
   }
 
   const flush = async () => {
-    logger.info('Flushing throttled writes')
+    logger.debug('Flushing throttled writes')
     for (const [key, timeout] of timeouts.entries()) {
       clearTimeout(timeout)
       const valueToSet = lastValues.get(key)
@@ -58,7 +58,7 @@ export const withThrottledWrites = ({ dbConnKv, throttle, logger }: Config): IDb
       timeouts.delete(key)
       lastValues.delete(key)
     }
-    logger.info('Flushed throttled writes')
+    logger.debug('Flushed throttled writes')
   }
 
   process.on('SIGTERM', () => {

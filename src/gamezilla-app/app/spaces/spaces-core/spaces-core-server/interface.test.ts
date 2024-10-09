@@ -5,13 +5,15 @@ import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import * as SpaceCore from '../space-core'
 import { SpacesCoreServer } from './impl'
+import { Logger } from 'gamezilla-app/app/@/server/logger'
 
 const Fixture = async () => {
   const spacesCoreServer = await SpacesCoreServer({
     t: 'db-conn-kv',
     dbConnKv: await DbConnKv({
       t: 'hash-map'
-    })
+    }),
+    logger: Logger({ t: 'noop' })
   })
 
   const spaceId = SpaceId.generate()
