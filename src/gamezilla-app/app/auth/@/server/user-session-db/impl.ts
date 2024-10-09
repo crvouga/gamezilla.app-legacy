@@ -45,15 +45,17 @@ export const UserSessionDb = async (impl: Config): Promise<IUserSessionDb> => {
         impl.dbConnKv,
 
         async (dbConnKv) =>
-          DbConnKv.withCache({
-            logger: Logger({ t: 'noop' }),
-            source: dbConnKv,
-            cache: DbConnKv.withDistributedInvalidations({
-              logger: Logger({ t: 'noop' }),
-              pubSub: PubSub({ t: 'in-memory' }),
-              dbConnKv: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
-            })
-          }),
+          false
+            ? DbConnKv.withCache({
+                logger: Logger({ t: 'noop' }),
+                source: dbConnKv,
+                cache: DbConnKv.withDistributedInvalidations({
+                  logger: Logger({ t: 'noop' }),
+                  pubSub: PubSub({ t: 'in-memory' }),
+                  dbConnKv: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
+                })
+              })
+            : dbConnKv,
 
         async (dbConnKv) =>
           DbConnKv.withReducedParsing({
