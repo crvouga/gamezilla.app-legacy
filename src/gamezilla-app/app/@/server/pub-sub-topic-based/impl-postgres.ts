@@ -12,6 +12,7 @@ export type Config<T> = {
 
 export const PubSubTopicBased = <TMsg>(config: Config<TMsg>): IPubSubTopicBased<TMsg> => {
   const unlistenByTopic = new Map<string, Set<() => void>>()
+
   return {
     async pub(topic, msg) {
       await config.dbConnSql.notify(topic, config.encode(msg))
