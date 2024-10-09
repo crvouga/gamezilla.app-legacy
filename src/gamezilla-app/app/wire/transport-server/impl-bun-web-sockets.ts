@@ -1,9 +1,9 @@
 import type { Server, ServerWebSocket, WebSocketHandler } from 'bun'
-import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import type { ServerBun } from 'gamezilla-app/@/server/server-impl-bun/server-impl-bun'
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { PubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
 import {
   SESSION_ID_COOKIE_NAME,
   toSetSessionCookie,
@@ -49,26 +49,35 @@ export const ServerTransport = <MsgToServer, MsgToClient>(
   //
   //
 
-  const clients = LRUCache<ClientId, ServerWebSocket<ServerWebSocketData>>({ maxCapacity: 10_000 })
+  const clients = new Map<ClientId, ServerWebSocket<ServerWebSocketData>>()
+  const unlistens = new Map<ClientId, () => void>()
+  const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
 
-  const clientsBySessionId = LRUCache<SessionId, Set<ClientId>>({ maxCapacity: 10_000 })
+  const pubSub = PubSubTopicBased<MsgServerToMsgClient<MsgToClient>>({
+    t: 'postgres',
+    dbConnSql: config.dbConnSql,
+    decode: (msg) => JSON.parse(msg),
+    encode: (msg) => JSON.stringify(msg),
+    logger: config.logger
+  })
 
   const addClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {
-    const clientId = ws.data.clientId
-    const sessionId = ws.data.sessionId
-    clients.set(clientId, ws)
-
-    const clientIds = clientsBySessionId.get(sessionId) ?? new Set<ClientId>()
-    clientIds.add(clientId)
-    clientsBySessionId.set(sessionId, clientIds)
+    clients.set(ws.data.clientId, ws)
+    const clientIds = clientsBySessionId.get(ws.data.sessionId) ?? new Set<ClientId>()
+    clientIds.add(ws.data.clientId)
+    clientsBySessionId.set(ws.data.sessionId, clientIds)
+    unlistens.set(
+      ws.data.clientId,
+      await pubSub.sub(ws.data.clientId, (msg) => {
+        send(ws, msg)
+      })
+    )
   }
 
   const removeClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {
-    const clientId = ws.data.clientId
-    const sessionId = ws.data.sessionId
-    clients.delete(clientId)
-
-    clientsBySessionId.get(sessionId)?.delete(clientId)
+    clients.delete(ws.data.clientId)
+    clientsBySessionId.get(ws.data.sessionId)?.delete(ws.data.clientId)
+    unlistens.get(ws.data.clientId)?.()
   }
 
   //
@@ -183,6 +192,7 @@ export const ServerTransport = <MsgToServer, MsgToClient>(
       case 1: {
         const encoded = JSON.stringify(msg)
         ws.send(encoded)
+        pubSub.pub(ws.data.clientId, msg)
         return
       }
       default: {
