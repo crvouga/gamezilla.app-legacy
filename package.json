@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "server": "bun src/gamezilla-app/main.server.ts",
-    "server:build": "bun test:unit",
+    "server:build": "bun db:up",
     "db:up": "bun x dbmate -e DATABASE_URL up",
     "db:down": "bun x dbmate -e DATABASE_URL down",
     "db:start": "docker-compose -f docker-compose.local.yml up -d",
