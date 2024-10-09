@@ -1,4 +1,4 @@
-import { createAdapter } from '@socket.io/redis-streams-adapter'
+import { createAdapter } from '@socket.io/redis-adapter'
 import { HttpResponse } from 'gamezilla-app/@/server'
 import type { ServerNode } from 'gamezilla-app/@/server/server-impl-node/server-impl-node'
 import { SessionId, type ClientId } from 'gamezilla-app/app/@/data'
@@ -22,8 +22,6 @@ export type Config = {
   redisUrl: string
 }
 
-let redis: Redis
-
 export const ServerTransport = async <MsgToServer, MsgToClient>(
   config: Config
 ): Promise<
@@ -32,9 +30,11 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     MsgToServer: MsgToServer
   }>
 > => {
-  redis ??= new Redis(config.redisUrl)
+  const pubClient = new Redis(config.redisUrl)
+  await pubClient.ping()
 
-  await redis.ping()
+  const subClient = pubClient.duplicate()
+  await subClient.ping()
 
   const transport = initServerTransport<MsgToServer, MsgToClient>()
 
@@ -45,7 +45,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     },
     transports: ['websocket'],
     allowUpgrades: true,
-    adapter: createAdapter(redis)
+    adapter: createAdapter(pubClient, subClient)
   })
 
   config.server.registerHandler(async (request) => {
