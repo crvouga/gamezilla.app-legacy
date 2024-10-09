@@ -11,7 +11,7 @@ export type Config<T> = {
 }
 
 export const PubSubTopicBased = <TMsg>(config: Config<TMsg>): IPubSubTopicBased<TMsg> => {
-  const unlistensByTopic = new Map<string, Set<() => void>>()
+  const unlistenByTopic = new Map<string, Set<() => void>>()
   return {
     async pub(topic, msg) {
       await config.dbConnSql.notify(topic, config.encode(msg))
@@ -32,26 +32,26 @@ export const PubSubTopicBased = <TMsg>(config: Config<TMsg>): IPubSubTopicBased<
           )
         }
       })
-      const unlistens = unlistensByTopic.get(topic) ?? new Set()
+      const unlistens = unlistenByTopic.get(topic) ?? new Set()
       unlistens.add(unlisten)
-      unlistensByTopic.set(topic, unlistens)
+      unlistenByTopic.set(topic, unlistens)
 
       config.logger.debug(`sub: topic=${topic}`)
 
       return async () => {
         await unlisten()
-        const unlistens = unlistensByTopic.get(topic) ?? new Set()
+        const unlistens = unlistenByTopic.get(topic) ?? new Set()
         unlistens.delete(unlisten)
-        unlistensByTopic.set(topic, unlistens)
+        unlistenByTopic.set(topic, unlistens)
         config.logger.debug(`unsub: topic=${topic}`)
       }
     },
     async unsub(topic) {
-      const unlistens = unlistensByTopic.get(topic) ?? []
+      const unlistens = unlistenByTopic.get(topic) ?? []
       for (const unlisten of unlistens) {
         unlisten()
       }
-      unlistensByTopic.delete(topic)
+      unlistenByTopic.delete(topic)
       config.logger.debug(`unsub: topic=${topic}`)
     }
   }
