@@ -16,6 +16,8 @@ let redis: Redis
 export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
   redis ??= new Redis(config.redisUrl)
 
+  await redis.ping()
+
   return {
     async get(key, parser) {
       try {

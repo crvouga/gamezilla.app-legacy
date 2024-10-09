@@ -22,6 +22,8 @@ export type Config = {
   redisUrl: string
 }
 
+let redis: Redis
+
 export const ServerTransport = async <MsgToServer, MsgToClient>(
   config: Config
 ): Promise<
@@ -30,7 +32,9 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     MsgToServer: MsgToServer
   }>
 > => {
-  const redis = new Redis(config.redisUrl)
+  redis ??= new Redis(config.redisUrl)
+
+  await redis.ping()
 
   const transport = initServerTransport<MsgToServer, MsgToClient>()
 
