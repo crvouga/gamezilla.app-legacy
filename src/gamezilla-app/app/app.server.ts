@@ -2,8 +2,8 @@ import { Posix, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { IServer, Server } from 'gamezilla-app/@/server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
+import { DATABASE_URL, REDIS_URL } from 'gamezilla-app/config-private'
 import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL } from 'gamezilla-app/config-public'
-import { DATABASE_URL } from 'gamezilla-app/config-private'
 import { DbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql } from './@/server/db-conn-sql'
 import { Logger } from './@/server/logger'
@@ -56,12 +56,6 @@ export const initCtx = async (): Promise<Ctx> => {
           await sleep(TimeSpan.milliseconds(100 + Math.random() * 200))
         }
   })
-
-  const REDIS_URL = process.env.REDIS_URL
-
-  if (!REDIS_URL) {
-    throw new Error('REDIS_URL not set')
-  }
 
   const dbConnKv = await DbConnKv({
     t: 'redis',

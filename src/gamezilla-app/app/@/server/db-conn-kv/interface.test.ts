@@ -1,6 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Ok, Result, TimeSpan, Uuid } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
+import { REDIS_URL } from 'gamezilla-app/config-private'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { AppServerTestEnv } from '../server-test-env'
@@ -115,10 +116,6 @@ const implementations: Implementation[] = [
     name: 'redis',
     async Fixture() {
       const f = await Fixture()
-      const REDIS_URL = process.env.REDIS_URL
-      if (!REDIS_URL) {
-        throw new Error('REDIS_URL not set')
-      }
       return {
         ...f,
         dbConnKv: await DbConnKv({ t: 'redis', redisUrl: REDIS_URL, logger: f.logger })

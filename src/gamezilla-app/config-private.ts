@@ -1,11 +1,5 @@
 import { IS_PROD } from './config-public'
 
-const IS_CLIENT = typeof window !== 'undefined'
-
-if (IS_CLIENT) {
-  throw new Error('This file is for server-side use only')
-}
-
 const DATABASE_URL_LOCAL = 'postgresql://gamezilla-app:gamezilla-app@localhost:5433/gamezilla-app?sslmode=disable'
 
 export const DATABASE_URL = IS_PROD ? import.meta.env.DATABASE_URL : DATABASE_URL_LOCAL
