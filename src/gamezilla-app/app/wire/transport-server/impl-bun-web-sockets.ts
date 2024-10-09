@@ -191,7 +191,6 @@ export const ServerTransport = <MsgToServer, MsgToClient>(
       case 1: {
         const encoded = JSON.stringify(msg)
         ws.send(encoded)
-        pubSub.pub(ws.data.clientId, msg)
         return
       }
       default: {
