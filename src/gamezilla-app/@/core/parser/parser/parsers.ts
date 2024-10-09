@@ -24,6 +24,12 @@ export const noop = <T>(): Parser<T> => {
   return {
     parse(input) {
       return Ok(input as T)
+    },
+    decode(input) {
+      return JSON.parse(input) as T
+    },
+    encode(input) {
+      return JSON.stringify(input)
     }
   }
 }
@@ -99,6 +105,12 @@ export const obj = <T>(parsers: {
       }
 
       return Ok(result as T)
+    },
+    decode(input) {
+      return JSON.parse(input) as T
+    },
+    encode(input) {
+      return JSON.stringify(input)
     }
   }
 }
@@ -114,6 +126,12 @@ export const str: Parser<string> = {
       ])
     }
     return Ok(input)
+  },
+  decode(input) {
+    return input
+  },
+  encode(input) {
+    return input
   }
 }
 
@@ -128,6 +146,12 @@ export const num: Parser<number> = {
       ])
     }
     return Ok(input)
+  },
+  encode(input) {
+    return String(input)
+  },
+  decode(input) {
+    return Number(input)
   }
 }
 
