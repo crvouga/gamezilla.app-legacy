@@ -100,7 +100,8 @@ export const initCtx = async (): Promise<Ctx> => {
           t: 'socket-io',
           codebaseVersionId: CODEBASE_VERSION_ID,
           server,
-          logger: Logger.prefix('transport', logger)
+          logger: Logger.prefix('transport', logger),
+          redisUrl: REDIS_URL
         }
   )
 

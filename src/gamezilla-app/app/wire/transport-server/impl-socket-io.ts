@@ -1,7 +1,9 @@
+import { createAdapter } from '@socket.io/redis-streams-adapter'
 import { HttpResponse } from 'gamezilla-app/@/server'
 import type { ServerNode } from 'gamezilla-app/@/server/server-impl-node/server-impl-node'
 import { SessionId, type ClientId } from 'gamezilla-app/app/@/data'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { Redis } from 'ioredis'
 import { Server } from 'socket.io'
 import {
   ORIGINS,
@@ -17,29 +19,32 @@ export type Config = {
   logger: ILogger
   codebaseVersionId: string
   server: ServerNode
+  redisUrl: string
 }
 
-export const ServerTransport = async <MsgToServer, MsgToClient>({
-  server,
-  codebaseVersionId
-}: Config): Promise<
+export const ServerTransport = async <MsgToServer, MsgToClient>(
+  config: Config
+): Promise<
   IServerTransport<{
     MsgToClient: MsgToClient
     MsgToServer: MsgToServer
   }>
 > => {
+  const redis = new Redis(config.redisUrl)
+
   const transport = initServerTransport<MsgToServer, MsgToClient>()
 
-  const io = new Server(server.httpServer, {
+  const io = new Server(config.server.httpServer, {
     cors: {
       origin: '*',
       credentials: true
     },
     transports: ['websocket'],
-    allowUpgrades: true
+    allowUpgrades: true,
+    adapter: createAdapter(redis)
   })
 
-  server.registerHandler(async (request) => {
+  config.server.registerHandler(async (request) => {
     if (request.pathname !== '/set-session-cookie') {
       return null
     }
@@ -98,7 +103,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>({
     })
 
     socket.on('to-server', (msg: MsgClientToMsgServer<MsgToServer>, acknowledge: () => void) => {
-      if (msg.v !== codebaseVersionId) {
+      if (msg.v !== config.codebaseVersionId) {
         transport.wire.pub({
           t: 'got-bad-msgs',
           clientId,
@@ -123,7 +128,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>({
       }
 
       const toClient: MsgServerToMsgClient<MsgToClient> = {
-        v: codebaseVersionId,
+        v: config.codebaseVersionId,
         m: msgs.msgs
       }
 
@@ -143,7 +148,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>({
 
   transport.toClientBroadcast.sub((msgs) => {
     const toClient: MsgServerToMsgClient<MsgToClient> = {
-      v: codebaseVersionId,
+      v: config.codebaseVersionId,
       m: msgs
     }
 

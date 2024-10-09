@@ -39,7 +39,7 @@ export const VDOM_IMPL_CURRENT = IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL
 
 export type ServerImpl = 'bun' | 'node'
 
-export const SERVER_IMPL = 'bun' as ServerImpl
+export const SERVER_IMPL = 'node' as ServerImpl
 
 //
 //
