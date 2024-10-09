@@ -24,7 +24,7 @@ export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> 
       dbConnSql: input.ctx.dbConnSql
     }),
     userSessionDb: await UserSessionDb({
-      t: 'postgres-with-fast-cache',
+      t: 'postgres-with-cache',
       dbConnSql: input.ctx.dbConnSql,
       dbConnKv: input.ctx.dbConnKv
     }),

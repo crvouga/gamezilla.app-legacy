@@ -16,17 +16,21 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
   const dbConnKv = await pipe(
     config.dbConnKv,
     (dbConnKv) =>
-      DbConnKv.withThrottledWrites({
-        logger: Logger({ t: 'noop' }),
-        dbConnKv: dbConnKv,
-        throttle: TimeSpan.seconds(5)
-      }),
+      false
+        ? DbConnKv.withThrottledWrites({
+            logger: Logger({ t: 'noop' }),
+            dbConnKv: dbConnKv,
+            throttle: TimeSpan.seconds(5)
+          })
+        : dbConnKv,
     async (dbConnKv) =>
-      DbConnKv.withCache({
-        logger: Logger({ t: 'noop' }),
-        source: dbConnKv,
-        cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
-      }),
+      false
+        ? DbConnKv.withCache({
+            logger: Logger({ t: 'noop' }),
+            source: dbConnKv,
+            cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
+          })
+        : dbConnKv,
     async (dbConnKv) =>
       DbConnKv.withReducedParsing({
         dbConnKv: await dbConnKv,
@@ -74,11 +78,11 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     const allSpaceIds = new Set(Result.withDefault(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? [])
     allSpaceIds.add(spaceId)
 
-    const results = [
-      await indexSpaceIds.set(INDEX_SPACE_IDS_KEY_ALL, Array.from(allSpaceIds)),
-      await spacesBySpaceId.set(spaceId, space),
-      await indexSpaceIdByUserId.setMany(entries)
-    ]
+    const results = await Promise.all([
+      indexSpaceIds.set(INDEX_SPACE_IDS_KEY_ALL, Array.from(allSpaceIds)),
+      spacesBySpaceId.set(spaceId, space),
+      indexSpaceIdByUserId.setMany(entries)
+    ])
 
     return pipe(
       results,
