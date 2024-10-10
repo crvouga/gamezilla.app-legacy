@@ -8,6 +8,7 @@ import { Config, PubSubTopicBased } from './impl'
 const Fixture = async (config: Config) => {
   const pubSub = await PubSubTopicBased(config)
   return {
+    ...config,
     pubSub
   }
 }

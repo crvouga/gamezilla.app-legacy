@@ -113,12 +113,14 @@ const None: Sub<never> = {
   sub: () => () => {}
 }
 
-const flat = <A>(sub: Sub<Iterable<A>>): Sub<A> => {
+const flat = <A>(sub: Sub<A[]>): Sub<A> => {
   return {
     sub: (subscriber) => {
       return sub.sub((a) => {
-        for (const b of a) {
-          subscriber(b)
+        if (a) {
+          for (const b of a) {
+            subscriber(b)
+          }
         }
       })
     }

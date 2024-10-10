@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test'
-import { Result } from 'gamezilla-app/@/core'
+import { unwrapOr } from 'gamezilla-app/@/core'
 import { Profile } from 'gamezilla-app/app/@/data'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
-import { ProfileCache } from './profile-cache-impl'
+import { ProfileCache } from './impl'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()
@@ -19,9 +19,9 @@ describe(import.meta.file, () => {
     const profiles = Profile.indexByUserId([await Profile.random(), await Profile.random(), await Profile.random()])
     const userIds = Object.values(profiles).map((p) => p.userId)
 
-    const before = Result.unwrap(await f.profileCache.get(userIds))
-    const added = Result.unwrap(await f.profileCache.add(profiles))
-    const after = Result.unwrap(await f.profileCache.get(userIds))
+    const before = unwrapOr(await f.profileCache.get(userIds), null)
+    const added = unwrapOr(await f.profileCache.add(profiles), null)
+    const after = unwrapOr(await f.profileCache.get(userIds), null)
 
     expect(before).toEqual({})
     expect(added).toEqual(null)
@@ -33,13 +33,13 @@ describe(import.meta.file, () => {
     const profiles = Profile.indexByUserId([await Profile.random(), await Profile.random(), await Profile.random()])
     const userIds = Object.values(profiles).map((p) => p.userId)
 
-    const got = Result.unwrap(await f.profileCache.get(userIds))
+    const got = unwrapOr(await f.profileCache.get(userIds), null)
     expect(got).toEqual({})
 
-    const added = Result.unwrap(await f.profileCache.add(profiles))
+    const added = unwrapOr(await f.profileCache.add(profiles), null)
     expect(added).toEqual(null)
 
-    const gotAgain = Result.unwrap(await f.profileCache.get(userIds))
+    const gotAgain = unwrapOr(await f.profileCache.get(userIds), null)
     expect(gotAgain).toEqual(profiles)
   })
 })

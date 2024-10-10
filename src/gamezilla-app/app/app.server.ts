@@ -93,6 +93,7 @@ export const initCtx = async (): Promise<Ctx> => {
   })
 
   const env = IS_PROD ? 'prod' : 'dev'
+
   const ctx: AppServerCtx = {
     env,
     sms,
