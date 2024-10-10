@@ -19,42 +19,10 @@ import type { IProfileCache } from './spaces-server/profile-cache'
 //
 //
 //
+// Model
 //
 //
 //
-//
-//
-
-export type ClientModule = AppClientModule<{
-  Ctx: AnonymousClientCtx | ClientCtx
-  MsgCmdIn: never
-  MsgEvtIn: ClientEvt
-  Model: ModelClient
-  Msg: MsgClient
-  MsgCmdOut: ClientCmd<{
-    MsgToServer: MsgToServer
-    MsgClient: MsgClient
-  }>
-  MsgEvtOut: ClientEvt
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  ViewSlot: {
-    bottomBar: null
-  }
-}>
-
-export type ServerModule = AppServerModule<{
-  Ctx: AppServerCtx
-  MsgCmdIn: null
-  MsgEvtIn: ServerEvt
-  Model: ModelServer
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
-  MsgEvtOut: null
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Deps: ServerDeps
-}>
 
 export type ServerDeps = {
   profileCache: IProfileCache
@@ -62,14 +30,6 @@ export type ServerDeps = {
   gameDb: IGameDb
   gameServer: Awaited<ReturnType<(typeof GameServer)['initCtx']>>
 }
-
-//
-//
-//
-// Model
-//
-//
-//
 
 export type ModelServer = null
 
@@ -172,3 +132,43 @@ export type MsgToServerExtra = {
   meta?: Record<string, unknown>
   causedBy?: unknown
 }
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+export type ClientModule = AppClientModule<{
+  Ctx: AnonymousClientCtx | ClientCtx
+  MsgCmdIn: never
+  MsgEvtIn: ClientEvt
+  Model: ModelClient
+  Msg: MsgClient
+  MsgCmdOut: ClientCmd<{
+    MsgToServer: MsgToServer
+    MsgClient: MsgClient
+  }>
+  MsgEvtOut: ClientEvt
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  ViewSlot: {
+    bottomBar: null
+  }
+}>
+
+export type ServerModule = AppServerModule<{
+  Ctx: AppServerCtx
+  MsgCmdIn: null
+  MsgEvtIn: ServerEvt
+  Model: ModelServer
+  Msg: MsgServer
+  MsgCmdOut: ServerCmd<MsgToClient>
+  MsgEvtOut: null
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  Deps: ServerDeps
+}>
