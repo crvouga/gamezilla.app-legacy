@@ -1,13 +1,15 @@
 import { pipe, Posix, sleep, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
+import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import { IServer, Server } from 'gamezilla-app/@/server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
-import { DATABASE_URL, REDIS_URL } from 'gamezilla-app/config-private'
+import { DATABASE_URL } from 'gamezilla-app/config-private'
 import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL } from 'gamezilla-app/config-public'
 import { DbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql } from './@/server/db-conn-sql'
 import { Logger } from './@/server/logger'
 import { ILogger } from './@/server/logger/interface'
+import { ProfileCache } from './@/server/profile-cache'
 import { PubSubTopicBased } from './@/server/pub-sub-topic-based'
 import { SMS } from './@/server/sms'
 import type { MsgServer, MsgToClient, MsgToServer, MsgToServerMeta } from './app.types'
@@ -18,8 +20,6 @@ import * as ProfileServer from './profile/profile.server'
 import * as SpaceServer from './spaces/spaces.server'
 import { ServerTransport, type IServerTransport } from './wire/transport-server'
 import * as WireServer from './wire/wire.server'
-import { ProfileCache } from './@/server/profile-cache'
-import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 
 //
 //
@@ -49,7 +49,7 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const dbConnSql = await DbConnSql({ t: 'postgres', databaseUrl: DATABASE_URL, logger, simulateLatency })
 
-  const dbConnKv = await DbConnKv({ t: 'redis', redisUrl: REDIS_URL, logger, simulateLatency })
+  const dbConnKv = await DbConnKv({ t: 'db-conn-sql', dbConnSql, logger })
 
   const sms = SMS({ t: 'twilio', logger })
 
