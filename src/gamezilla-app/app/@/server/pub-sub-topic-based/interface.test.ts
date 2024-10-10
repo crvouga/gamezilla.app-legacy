@@ -29,27 +29,14 @@ const randomMyEvent = (): MyEvent => ({
 })
 
 const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
-// const decode = (str: string) => Result.unwrapOr(MyEvent.parse(JSON.parse(str)), null)
 
 const Fixtures = async () => {
   const testEnv = await AppServerTestEnv()
-  const configs: Config[] = [
-    {
-      t: 'in-memory'
-    }
-  ]
+  const configs: Config[] = [{ t: 'in-memory' }]
 
   if (testEnv.t === 'integration') {
-    configs.push({
-      t: 'postgres',
-      dbConnSql: testEnv.dbConnSql,
-      logger: Logger({ t: 'noop' })
-    })
-    configs.push({
-      t: 'redis',
-      redisUrl: REDIS_URL,
-      logger: Logger({ t: 'console' })
-    })
+    configs.push({ t: 'postgres', dbConnSql: testEnv.dbConnSql, logger: Logger({ t: 'noop' }) })
+    configs.push({ t: 'redis', redisUrl: REDIS_URL, logger: Logger({ t: 'noop' }) })
   }
 
   return Promise.all(configs.map(Fixture))

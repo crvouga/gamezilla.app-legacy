@@ -48,19 +48,7 @@ export const initDeps: Module['initDeps'] = async () => {
 //
 //
 //
-// model
 //
-//
-//
-
-export const init: Module['init'] = async () => {
-  return {}
-}
-
-//
-//
-//
-// update
 //
 //
 //

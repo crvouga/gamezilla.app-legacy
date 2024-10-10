@@ -1,5 +1,6 @@
+import { Uuid } from 'gamezilla-app/@/core'
 import { Logger, type ILogger } from '../logger'
-import { IPubSub } from '../pub-sub'
+import { IPubSubTopicBased } from '../pub-sub-topic-based'
 import { IDbConnKv } from './interface'
 
 const DistributedUpdateType = {
@@ -33,15 +34,16 @@ const decode = (str: string): DistributedUpdate => {
 export type Config = {
   logger: ILogger
   cache: IDbConnKv
-  pubSub: IPubSub
+  pubSub: IPubSubTopicBased
 }
 
 export const withDistributedInvalidations = async (
   config: Config
 ): Promise<IDbConnKv & { unsubscribe: () => void }> => {
   const logger = Logger.prefix('with-distributed-invalidations', config.logger)
+  const instanceId = Uuid.generate()
 
-  const unsubscribe = await config.pubSub.sub((encoded) => {
+  const unsubscribe = await config.pubSub.sub(instanceId, (encoded) => {
     const update = decode(encoded)
     switch (update.t) {
       case DistributedUpdateType.SET: {
@@ -67,15 +69,15 @@ export const withDistributedInvalidations = async (
     ...config.cache,
     unsubscribe,
     set(key, value) {
-      config.pubSub.pub(encode({ t: DistributedUpdateType.SET, k: key }))
+      config.pubSub.pub(instanceId, encode({ t: DistributedUpdateType.SET, k: key }))
       return config.cache.set(key, value)
     },
     setMany(entries) {
-      config.pubSub.pub(encode({ t: DistributedUpdateType.SET_MANY, k: entries.map((e) => e[0]) }))
+      config.pubSub.pub(instanceId, encode({ t: DistributedUpdateType.SET_MANY, k: entries.map((e) => e[0]) }))
       return config.cache.setMany(entries)
     },
     zap(key) {
-      config.pubSub.pub(encode({ t: DistributedUpdateType.ZAP, k: key }))
+      config.pubSub.pub(instanceId, encode({ t: DistributedUpdateType.ZAP, k: key }))
       return config.cache.zap(key)
     }
   }

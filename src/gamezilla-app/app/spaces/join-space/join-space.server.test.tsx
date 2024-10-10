@@ -9,7 +9,7 @@ describe(import.meta.file, () => {
     const f = await FixtureSpaceServer()
 
     const spaceId = SpaceId.generate()
-    const updated = await AppServerModule.andThen(f.init, userStartedSpace(f.deps, f.clientA, spaceId))
+    const updated = await AppServerModule.andThen({}, userStartedSpace(f.deps, f.clientA, spaceId))
     const output = await AppServerModule.andThen(updated, userJoinedSpace(f.deps, f.clientB, spaceId))
     expect(didSendMsgToClient(output, (msg) => msg.t === 'synced')).toBe(true)
   })

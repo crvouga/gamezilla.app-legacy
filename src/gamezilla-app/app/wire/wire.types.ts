@@ -1,9 +1,11 @@
+import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
 import type { Posix } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
-import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
 import { ClientId, SessionId } from '../@/data'
 import type { ClientTransportEvent } from './transport-client'
-import type { ServerTransportMsg } from './transport-server'
+import type { IServerTransport, ServerTransportMsg } from './transport-server'
+import { IWireSessionDb } from './wire-session-db'
+import { AppServerCtx } from '../@/server'
 
 //
 //
@@ -11,6 +13,14 @@ import type { ServerTransportMsg } from './transport-server'
 //
 //
 //
+
+export type ServerCtx<TMsgToClient, TMsgToServer> = AppServerCtx & {
+  wireSessionDb: IWireSessionDb
+  transport: IServerTransport<{
+    MsgToClient: TMsgToClient
+    MsgToServer: TMsgToServer
+  }>
+}
 
 export type ModelClient = {
   state:

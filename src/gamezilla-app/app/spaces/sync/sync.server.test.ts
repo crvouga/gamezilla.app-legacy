@@ -7,7 +7,6 @@ import {
   clientCore,
   randomAuthenticatedClient,
   initDeps,
-  init,
   userStartedSpace
 } from '../@/fixture/server'
 import { makeSpace } from '../@/fixture/shared'
@@ -18,7 +17,7 @@ describe(import.meta.file, () => {
     const client = randomAuthenticatedClient()
     const spaceId = SpaceId.generate()
     const output = await AppServerModule.andThen(
-      init(),
+      {},
       userStartedSpace(deps, client, spaceId),
       authenticatedClientConnected(deps, client)
     )
@@ -32,7 +31,7 @@ describe(import.meta.file, () => {
       spaceId: SpaceId.generate(),
       hostId: client.userId
     })
-    const output = await AppServerModule.andThen(init(), clientCore(deps, client, clientsSpace))
+    const output = await AppServerModule.andThen({}, clientCore(deps, client, clientsSpace))
 
     expect(didSendMsgToClient(output, (msg) => msg.t === 'synced')).toBe(true)
   })
@@ -41,7 +40,7 @@ describe(import.meta.file, () => {
     const deps = await initDeps()
     const client = randomAuthenticatedClient()
     const spaceId = SpaceId.generate()
-    const output = await AppServerModule.andThen(init(), userStartedSpace(deps, client, spaceId))
+    const output = await AppServerModule.andThen({}, userStartedSpace(deps, client, spaceId))
 
     expect(didSendMsgToClient(output, (msg) => msg.t === 'event' && msg.c.t === 'user-started-space')).toBe(true)
   })

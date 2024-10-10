@@ -23,6 +23,7 @@ export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBase
   return {
     async pub(topic, msg) {
       await publisher.publish(topic, JSON.stringify(msg))
+      await new Promise((resolve) => setTimeout(resolve, 0))
       config.logger.debug(`pub: topic=${topic} msg=${JSON.stringify(msg).slice(0, MAX_MSG_LENGTH)}`)
     },
     async sub(topic, callback) {
@@ -39,6 +40,7 @@ export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBase
         callback(msg)
       })
       config.logger.debug(`sub: topic=${topic}`)
+      await new Promise((resolve) => setTimeout(resolve, 0))
       return async () => {
         await subscriber.unsubscribe(topic)
         subscribers.delete(id)

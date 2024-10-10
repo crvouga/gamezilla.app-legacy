@@ -3,7 +3,6 @@ import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'
-import { PubSub } from 'gamezilla-app/app/@/server/pub-sub'
 import { IPubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
 import * as ImplInMemory from './impl-in-memory'
 import * as ImplPostgres from './impl-postgres'
@@ -35,20 +34,18 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
       const dbConnKv = await pipe(
         config.dbConnKv,
         async (dbConnKv) =>
-          true
-            ? DbConnKv.withCache({
-                ...config,
-                source: dbConnKv,
-                cache: await DbConnKv.withDistributedInvalidations({
-                  ...config,
-                  pubSub: await PubSub({ t: 'in-memory' }),
-                  cache: await DbConnKv({
-                    t: 'hash-map',
-                    map: LRUCache({ maxCapacity: 2000 })
-                  })
-                })
+          DbConnKv.withCache({
+            ...config,
+            source: dbConnKv,
+            cache: await DbConnKv.withDistributedInvalidations({
+              ...config,
+              pubSub: config.pubSub,
+              cache: await DbConnKv({
+                t: 'hash-map',
+                map: LRUCache({ maxCapacity: 2000 })
               })
-            : dbConnKv,
+            })
+          }),
 
         async (dbConnKv) =>
           DbConnKv.withReducedParsing({

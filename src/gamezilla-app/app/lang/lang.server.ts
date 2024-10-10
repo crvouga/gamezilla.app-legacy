@@ -1,6 +1,6 @@
 import { Sub } from 'gamezilla-app/@/core'
 import type { AppServerModule } from '../@/architecture/app-server'
-import type { ServerCmd, AppServerCtx, ServerEvt } from '../@/server'
+import type { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import type { MsgServer, MsgToClient, MsgToServer } from './lang.types'
 
 type Module = AppServerModule<{
@@ -15,10 +15,6 @@ type Module = AppServerModule<{
 }>
 
 export type Deps = null
-
-export const init: Module['init'] = async () => {
-  return {}
-}
 
 export const update: Module['update'] = async () => {
   return {}

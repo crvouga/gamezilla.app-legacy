@@ -18,6 +18,7 @@ import * as AuthServer from './auth/auth.server'
 import * as LangServer from './lang/lang.server'
 import * as ProfileServer from './profile/profile.server'
 import * as SpaceServer from './spaces/spaces.server'
+import { WireTypes } from './wire'
 import { ServerTransport, type IServerTransport } from './wire/transport-server'
 import * as WireServer from './wire/wire.server'
 
@@ -34,7 +35,7 @@ export type Ctx = AppServerCtx & {
     MsgToClient: MsgToClient
     MsgToServer: MsgToServer
   }>
-  wire: WireServer.Deps<MsgToClient, MsgToServer>
+  wire: WireTypes.ServerCtx<MsgToClient, MsgToServer>
   profile: ProfileServer.Deps
   space: SpaceServer.Deps
   lang: LangServer.Deps
@@ -100,12 +101,6 @@ export const initCtx = async (): Promise<Ctx> => {
     )
   })
 
-  const wire = await WireServer.initDeps({
-    transport,
-    dbConnKv,
-    logger
-  })
-
   const env = IS_PROD ? 'prod' : 'dev'
 
   const ctx: AppServerCtx = {
@@ -120,12 +115,10 @@ export const initCtx = async (): Promise<Ctx> => {
     profileCache
   }
 
+  const wire = await WireServer.initCtx({ ctx, transport })
   const profile = await ProfileServer.initDeps({ ctx })
-
   const space = await SpaceServer.initDeps({ ctx })
-
   const auth = await AuthServer.initCtx({ ctx })
-
   const lang = await LangServer.initDeps({ ctx })
 
   return {
@@ -150,25 +143,19 @@ export const updateCtx = (ctx: Ctx): Ctx => {
 //
 //
 //
-// Model
+//
 //
 //
 //
 
-export const init = async (input: { ctx: Ctx }): Promise<{}> => {
-  await Promise.all([
-    WireServer.init(input),
-    SpaceServer.init(input),
-    ProfileServer.init(input),
-    LangServer.init(input)
-  ])
+export const init = async (_input: { ctx: Ctx }): Promise<{}> => {
   return {}
 }
 
 //
 //
 //
-// Update
+//
 //
 //
 //
@@ -295,12 +282,11 @@ export const updateChild = async ({
   })
 
   const wire = await WireServer.update({
-    ctx,
+    ctx: ctx.wire,
     msgCmd: msgCmd?.t === 'wire' ? msgCmd : null,
     msgEvt: msgEvt,
     msgClient: msgClient?.t === 'wire' ? { ...msgClient, ...msgClient.c } : null,
-    msg: msg?.t === 'wire' ? msg.c : null,
-    deps: ctx.wire
+    msg: msg?.t === 'wire' ? msg.c : null
   })
 
   const profile = await ProfileServer.update({

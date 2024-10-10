@@ -38,18 +38,6 @@ export type Deps = Awaited<ReturnType<typeof initDeps>>
 //
 //
 //
-// Model
-//
-//
-//
-
-export const init: ServerModule['init'] = async () => {
-  return {}
-}
-
-//
-//
-//
 // Update
 //
 //

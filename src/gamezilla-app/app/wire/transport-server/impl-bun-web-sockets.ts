@@ -65,7 +65,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     unlistens.set(
       ws.data.clientId,
       await config.pubSub.sub(ws.data.clientId, (msg) => {
-        logger.debug(`recieved msg for clientId=${ws.data.clientId} from other server instance`)
+        logger.debug(`received msg for clientId=${ws.data.clientId} from other server instance`)
         send(ws, JSON.parse(msg))
       })
     )
@@ -114,7 +114,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
               'Set-Cookie': toSetSessionCookie(sessionId)
             }
 
-        logger.debug(`/ws request recieved clientId=${clientId} sessionId=${sessionId}`)
+        logger.debug(`/ws request received clientId=${clientId} sessionId=${sessionId}`)
         server.upgrade(req, { headers, data })
         return
       }
@@ -145,7 +145,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       })
     },
     message(ws: ServerWebSocket<ServerWebSocketData>, message) {
-      logger.debug(`websocket message recieved clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+      logger.debug(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
 
       const msg = JSON.parse(message.toString()) as MsgClientToMsgServer<MsgToServer> // leap of faith
 
@@ -188,8 +188,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
     switch (ws.readyState) {
       case 1: {
-        const encoded = JSON.stringify(msg)
-        ws.send(encoded)
+        ws.send(JSON.stringify(msg))
         return
       }
       default: {

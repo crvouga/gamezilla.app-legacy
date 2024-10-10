@@ -49,11 +49,9 @@ export const FixtureSpaceServer = async () => {
     ...f.ctx,
     space: spaceState
   }
-  const init = SpacesServer.init({ ctx })
 
   return {
     ...f,
-    init,
     deps,
     ctx,
     clientA,
@@ -71,10 +69,6 @@ export const ctx: AppServerCtx = {
   dbConnKv: await DbConnKv({ t: 'hash-map' }),
   pubSub: await PubSubTopicBased({ t: 'noop' }),
   profileCache: await ProfileCache({ t: 'in-memory' })
-}
-
-export const init = () => {
-  return SpacesServer.init({ ctx })
 }
 
 export const initDeps = async (): Promise<ServerDeps> => {

@@ -3,7 +3,7 @@ import { unwrap } from 'gamezilla-app/@/core'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
-import { init, initDeps, randomAuthenticatedClient, userStartedSpace } from '../@/fixture/server'
+import { initDeps, randomAuthenticatedClient, userStartedSpace } from '../@/fixture/server'
 import { SpaceCore } from '../spaces-core'
 
 describe(import.meta.file, () => {
@@ -12,7 +12,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const client = randomAuthenticatedClient()
 
-    await AppServerModule.andThen(init(), userStartedSpace(deps, client, spaceId))
+    await AppServerModule.andThen({}, userStartedSpace(deps, client, spaceId))
 
     const got = unwrap(await deps.spacesCoreServer.get(spaceId)) ?? SpaceCore.init
 
@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const client = randomAuthenticatedClient()
 
-    const started = await AppServerModule.andThen(init(), userStartedSpace(deps, client, spaceId))
+    const started = await AppServerModule.andThen({}, userStartedSpace(deps, client, spaceId))
 
     expect(
       didSendMsgToClient(
