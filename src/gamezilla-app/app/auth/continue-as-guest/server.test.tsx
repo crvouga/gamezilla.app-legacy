@@ -7,8 +7,8 @@ import { UserAccountDb } from '../@/server/user-account-db'
 import { UserSessionDb } from '../@/server/user-session-db'
 import * as AuthServer from '../auth.server'
 import type { ServerCtx } from '../auth.types'
-import { ContinueAsGuestServer } from './continue-as-guest.server'
-import type * as ContinueAsGuestTypes from './continue-as-guest.types'
+import { ContinueAsGuestServer } from './server'
+import type * as ContinueAsGuestTypes from './types'
 import { GuestSessionMappingDb } from '../@/server/guest-session-mapping-db'
 
 type Input =

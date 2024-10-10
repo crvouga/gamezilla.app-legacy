@@ -13,7 +13,7 @@ import {
 import { Button, IconEnvelope, IconMobilePhone, Typography } from 'gamezilla-app/app/@/ui'
 import { AuthSMSClient } from './auth-sms/auth-sms.client'
 import type { ClientModule, ModelClient, MsgClient } from './auth.types'
-import { ContinueAsGuestClient } from './continue-as-guest/continue-as-guest.client'
+import { ContinueAsGuestClient } from './continue-as-guest/client'
 import { LogoutClient } from './logout/logout.client'
 
 //

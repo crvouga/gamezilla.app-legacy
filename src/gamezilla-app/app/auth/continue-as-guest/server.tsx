@@ -3,7 +3,7 @@ import { UserId, type SessionId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { sendToClient } from 'gamezilla-app/app/@/server'
 import type { ServerCtx, ServerModule } from '../auth.types'
-import type { ModelServer } from './continue-as-guest.types'
+import type { ModelServer } from './types'
 
 const initModel: ModelServer = null
 
