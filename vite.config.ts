@@ -4,7 +4,7 @@ import { defineConfig } from 'vite'
 import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
 // @ts-ignore
-import { VDOM_IMPL } from './src/gamezilla-app/public-config'
+import { VDOM_IMPL } from './src/gamezilla-app/config-public'
 
 const vDomPlugin = () => {
   switch (VDOM_IMPL) {
