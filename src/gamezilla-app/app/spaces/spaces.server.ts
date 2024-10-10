@@ -8,7 +8,6 @@ import { SpaceGameServer } from './game/space-game.server'
 import { JoinSpaceServer } from './join-space/join-space.server'
 import { ListSpacesServer } from './list-spaces/list-spaces.server'
 import { SpacesCoreServer } from './spaces-core/spaces-core-server'
-import { ProfileCache } from '../@/server/profile-cache'
 import type { ServerModule } from './spaces.types'
 import { StartSpaceServer } from './start-space/start-space.server'
 import { SyncServer } from './sync/sync.server'
@@ -23,7 +22,6 @@ import { SyncServer } from './sync/sync.server'
 
 export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   return {
-    profileCache: ProfileCache({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv }),
     spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv, logger: ctx.logger }),
     gameDb: GameDb({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv }),
     gameServer: GameServer.initCtx({

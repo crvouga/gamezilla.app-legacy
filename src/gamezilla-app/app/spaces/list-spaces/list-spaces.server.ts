@@ -21,7 +21,7 @@ const update: SpaceServerModule['update'] = async (input) => {
 
       const started = spaces.items.map(Space.startFromLatestSnapshot)
       const userIds = spaces.items.flatMap(Space.toUserIds)
-      const profiles = Result.unwrapOr(await input.deps.profileCache.get(userIds), {})
+      const profiles = Result.unwrapOr(await input.ctx.profileCache.get(userIds), {})
 
       return {
         msgCmd: [

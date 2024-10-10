@@ -3,7 +3,7 @@ import type { ServerBun } from 'gamezilla-app/@/server/server-impl-bun/server-im
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
-import { PubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
+import { IPubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
 import {
   SESSION_ID_COOKIE_NAME,
   toSetSessionCookie,
@@ -23,6 +23,7 @@ export type Config = {
   server: ServerBun
   dbConnSql: IDbConnSql
   logger: ILogger
+  pubSub: IPubSubTopicBased
 }
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
@@ -56,8 +57,6 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   const unlistens = new Map<ClientId, () => void>()
   const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
 
-  const pubSub = await PubSubTopicBased({ t: 'noop' })
-
   const addClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {
     clients.set(ws.data.clientId, ws)
     const clientIds = clientsBySessionId.get(ws.data.sessionId) ?? new Set<ClientId>()
@@ -65,7 +64,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     clientsBySessionId.set(ws.data.sessionId, clientIds)
     unlistens.set(
       ws.data.clientId,
-      await pubSub.sub(ws.data.clientId, (msg) => {
+      await config.pubSub.sub(ws.data.clientId, (msg) => {
         logger.debug(`recieved msg for clientId=${ws.data.clientId} from other server instance`)
         send(ws, JSON.parse(msg))
       })
@@ -201,7 +200,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
   const sendWithPub = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
     send(ws, msg)
-    pubSub.pub(ws.data.clientId, JSON.stringify(msg))
+    config.pubSub.pub(ws.data.clientId, JSON.stringify(msg))
     logger.debug(`sent msg for clientId=${ws.data.clientId} to other server instances`)
   }
 

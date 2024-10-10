@@ -1,4 +1,4 @@
-import { Posix, sleep, Sub, TimeSpan } from 'gamezilla-app/@/core'
+import { pipe, Posix, sleep, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { IServer, Server } from 'gamezilla-app/@/server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
@@ -8,6 +8,7 @@ import { DbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql } from './@/server/db-conn-sql'
 import { Logger } from './@/server/logger'
 import { ILogger } from './@/server/logger/interface'
+import { PubSubTopicBased } from './@/server/pub-sub-topic-based'
 import { SMS } from './@/server/sms'
 import type { MsgServer, MsgToClient, MsgToServer, MsgToServerMeta } from './app.types'
 import { AuthTypes } from './auth'
@@ -17,6 +18,8 @@ import * as ProfileServer from './profile/profile.server'
 import * as SpaceServer from './spaces/spaces.server'
 import { ServerTransport, type IServerTransport } from './wire/transport-server'
 import * as WireServer from './wire/wire.server'
+import { ProfileCache } from './@/server/profile-cache'
+import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 
 //
 //
@@ -42,7 +45,7 @@ export type Ctx = AppServerCtx & {
 export const initCtx = async (): Promise<Ctx> => {
   const logger = Logger({ t: 'console' })
 
-  const simulateLatency = IS_PROD ? sleep : async () => sleep(TimeSpan.milliseconds(2 + Math.random() * 10))
+  const simulateLatency = IS_PROD ? sleep : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
 
   const dbConnSql = await DbConnSql({ t: 'postgres', databaseUrl: DATABASE_URL, logger, simulateLatency })
 
@@ -50,10 +53,9 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const sms = SMS({ t: 'twilio', logger })
 
-  const server = Server({
-    logger,
-    t: SERVER_IMPL
-  })
+  const server = Server({ logger, t: SERVER_IMPL })
+
+  const pubSub = await PubSubTopicBased({ t: 'noop' })
 
   const transport = await ServerTransport<MsgToServer, MsgToClient>(
     server.t === 'bun'
@@ -62,7 +64,8 @@ export const initCtx = async (): Promise<Ctx> => {
           dbConnSql,
           codebaseVersionId: CODEBASE_VERSION_ID,
           server,
-          logger
+          logger,
+          pubSub
         }
       : {
           t: 'socket-io',
@@ -71,6 +74,31 @@ export const initCtx = async (): Promise<Ctx> => {
           logger
         }
   )
+
+  const profileCache = await ProfileCache({
+    t: 'db-conn-kv',
+    dbConnKv: await pipe(
+      dbConnKv,
+      async (dbConnKv) =>
+        DbConnKv.withThrottledWrites({
+          logger,
+          dbConnKv,
+          throttle: TimeSpan.seconds(10)
+        }),
+      async (dbConnKv) =>
+        DbConnKv.withCache({
+          logger,
+          source: await dbConnKv,
+          cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 100_000 }) })
+        }),
+      async (dbConnKv) =>
+        DbConnKv.withReducedParsing({
+          dbConnKv: await dbConnKv,
+          logger,
+          verifiedKeys: new Set()
+        })
+    )
+  })
 
   const wire = await WireServer.initDeps({
     transport,
@@ -87,7 +115,9 @@ export const initCtx = async (): Promise<Ctx> => {
     dbConnKv,
     logger,
     now: Posix.now(),
-    sleep
+    sleep,
+    pubSub,
+    profileCache
   }
 
   const profile = await ProfileServer.initDeps({ ctx })
@@ -99,20 +129,14 @@ export const initCtx = async (): Promise<Ctx> => {
   const lang = await LangServer.initDeps({ ctx })
 
   return {
+    ...ctx,
     server,
-    sleep,
     lang,
     auth,
     space,
     profile,
     wire,
-    transport,
-    sms,
-    logger,
-    dbConnSql,
-    dbConnKv,
-    env,
-    now: Posix.now()
+    transport
   }
 }
 

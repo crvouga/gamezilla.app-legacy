@@ -6,7 +6,7 @@ import { ProfileCache } from './impl'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()
-  const profileCache = ProfileCache({
+  const profileCache = await ProfileCache({
     t: 'db-conn-kv',
     dbConnKv: testEnv.dbConnKv
   })

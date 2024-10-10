@@ -5,13 +5,14 @@ import type { AppServerCtx } from 'gamezilla-app/app/@/server'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { DbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
+import { PubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
 import { FixtureAppServer } from 'gamezilla-app/app/@/server/server-test-env'
 import { smsNoop } from 'gamezilla-app/app/@/server/sms'
+import { ProfileCache } from '../../../@/server/profile-cache'
 import { GameServer } from '../../game/game.server'
 import { GameDb } from '../../game/space-game-db'
 import { SpaceCore } from '../../spaces-core'
 import { SpacesCoreServer } from '../../spaces-core/spaces-core-server'
-import { ProfileCache } from '../../../@/server/profile-cache'
 import * as SpacesServer from '../../spaces.server'
 import type { ServerDeps } from '../../spaces.types'
 import { EventId, withId } from '../event'
@@ -67,7 +68,9 @@ export const ctx: AppServerCtx = {
   dbConnSql: await DbConnSql({ t: 'noop' }),
   logger: Logger({ t: 'noop' }),
   now: Posix.now(),
-  dbConnKv: await DbConnKv({ t: 'hash-map' })
+  dbConnKv: await DbConnKv({ t: 'hash-map' }),
+  pubSub: await PubSubTopicBased({ t: 'noop' }),
+  profileCache: await ProfileCache({ t: 'in-memory' })
 }
 
 export const init = () => {
@@ -77,11 +80,12 @@ export const init = () => {
 export const initDeps = async (): Promise<ServerDeps> => {
   const dbConnKv = await DbConnKv({ t: 'hash-map' })
   return {
-    profileCache: ProfileCache({ t: 'db-conn-kv', dbConnKv }),
     spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv, logger: Logger({ t: 'noop' }) }),
     gameDb: GameDb({ t: 'db-conn-kv', dbConnKv }),
     gameServer: GameServer.initCtx({
       ctx: {
+        profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv }),
+        pubSub: await PubSubTopicBased({ t: 'noop' }),
         sleep: async () => null,
         clientId: ClientId.generate(),
         dbConnKv,

@@ -4,8 +4,10 @@ import { ClientId, SessionId } from '../data'
 import { DbConnKv, type IDbConnKv } from './db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './db-conn-sql'
 import { Logger } from './logger'
+import { PubSubTopicBased } from './pub-sub-topic-based'
 import type { AppServerCtx } from './server-ctx'
 import { SMS } from './sms'
+import { ProfileCache } from './profile-cache'
 
 export type ITestEnv =
   | {
@@ -70,7 +72,9 @@ export const FixtureAppServer = async () => {
     logger,
     now: Posix.now(),
     sms: SMS({ t: 'fake', logger }),
-    sleep: async () => null
+    sleep: async () => null,
+    pubSub: await PubSubTopicBased({ t: 'noop' }),
+    profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) })
   }
   return {
     ctx

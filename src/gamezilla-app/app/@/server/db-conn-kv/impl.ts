@@ -13,6 +13,7 @@ export type Config =
   | HashMap.Config
   | DbConnSql.Config
   | ImplRedis.Config
+  | { t: 'in-memory' }
   | (WithCache.Config & { t: 'with-cache' })
   | (WithDistributedUpdates.Config & { t: 'with-distributed-updates' })
   | (WithReducedParsing.Config & { t: 'with-reduced-parsing' })
@@ -51,6 +52,10 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
     case 'with-distributed-invalidations': {
       return WithDistributedInvalidations.withDistributedInvalidations(config)
+    }
+
+    case 'in-memory': {
+      return HashMap.DbConnKv({ t: 'hash-map', map: new Map() })
     }
   }
 }

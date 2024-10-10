@@ -4,7 +4,7 @@ import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, ClientCmd, ClientCtx, ClientEvt } from '../@/client'
 import { UserAccount } from '../@/data/account'
-import type { ServerCmd, AppServerCtx, ServerEvt } from '../@/server'
+import type { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import type { WithEventId, WithEventMeta } from './@/event'
 import { GameName } from './game/@/game-name'
 import type { GameServer } from './game/game.server'
@@ -14,7 +14,6 @@ import type * as Space from './spaces-core/space-core'
 import type { SpaceCoreEvent } from './spaces-core/space-core-event'
 import type * as Spaces from './spaces-core/spaces-core-client/spaces-core.client'
 import { ISpacesCoreServer } from './spaces-core/spaces-core-server/interface'
-import type { IProfileCache } from '../@/server/profile-cache'
 
 //
 //
@@ -25,7 +24,6 @@ import type { IProfileCache } from '../@/server/profile-cache'
 //
 
 export type ServerDeps = {
-  profileCache: IProfileCache
   spacesCoreServer: ISpacesCoreServer
   gameDb: IGameDb
   gameServer: Awaited<ReturnType<(typeof GameServer)['initCtx']>>
