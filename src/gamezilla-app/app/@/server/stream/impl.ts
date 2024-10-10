@@ -1,6 +1,6 @@
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import * as ImplInMemory from './impl-in-memory'
-import { IStream } from './inteface'
+import { IStream } from './interface'
 
 export type Config<T> = ImplDbConnKv.Config<T> | ImplInMemory.Config<T>
 

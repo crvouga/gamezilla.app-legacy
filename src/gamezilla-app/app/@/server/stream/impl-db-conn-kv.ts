@@ -1,7 +1,7 @@
 import { Ok, Result } from 'gamezilla-app/@/core'
 import { Parser } from 'gamezilla-app/@/core/parser/parser'
 import { DbConnKv, IDbConnKv } from '../db-conn-kv'
-import { IStream } from './inteface'
+import { IStream } from './interface'
 import { p } from 'gamezilla-app/@/core/parser'
 
 export type Config<T> = {
