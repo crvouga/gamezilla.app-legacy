@@ -27,7 +27,7 @@ const LichessRow = p.obj({
 export type LichessRow = p.Infer<typeof LichessRow>
 
 export const toLichessRow = (x: unknown): LichessRow | null => {
-  return Result.withDefault(LichessRow.parse(x), null)
+  return Result.unwrapOr(LichessRow.parse(x), null)
 }
 
 const log = (...args: unknown[]) => {

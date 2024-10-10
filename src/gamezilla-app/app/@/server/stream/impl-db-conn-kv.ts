@@ -18,13 +18,13 @@ export const Stream = <T>(config: Config<T>): IStream<T> => {
   )
   return {
     async append(streamId, event) {
-      const events = Result.withDefault(await eventsByStreamId.get(streamId), null) ?? []
+      const events = Result.unwrapOr(await eventsByStreamId.get(streamId), null) ?? []
       const eventsNew = [...events, event]
       await eventsByStreamId.set(streamId, eventsNew)
       return Ok(null)
     },
     async startingFrom(streamId, fromId) {
-      const events = Result.withDefault(await eventsByStreamId.get(streamId), null) ?? []
+      const events = Result.unwrapOr(await eventsByStreamId.get(streamId), null) ?? []
       const fromIndex = fromId ? events.findIndex((e) => e === fromId) : 0
       const sliced = events.slice(fromIndex)
       return Ok(sliced)

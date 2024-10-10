@@ -30,7 +30,7 @@ export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb =
 
   return {
     async findSessionIdsByUserId(userId: UserId) {
-      const cachedSessionIds = Result.withDefault(await sessionIdsByUserId.get(userId), []) ?? []
+      const cachedSessionIds = Result.unwrapOr(await sessionIdsByUserId.get(userId), []) ?? []
 
       if (cachedSessionIds && cachedSessionIds.length > 0) {
         return Result.Ok(cachedSessionIds)
@@ -46,7 +46,7 @@ export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb =
     },
 
     async findUserIdBySessionId(sessionId: SessionId) {
-      const cachedUserId = Result.withDefault(await userIdBySessionId.get(sessionId), null)
+      const cachedUserId = Result.unwrapOr(await userIdBySessionId.get(sessionId), null)
 
       if (cachedUserId) {
         return Result.Ok(cachedUserId)
@@ -69,7 +69,7 @@ export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb =
 
       if (isOk(queried)) {
         await userIdBySessionId.set(sessionId, userId)
-        const cachedSessionIds = Result.withDefault(await sessionIdsByUserId.get(userId), [])
+        const cachedSessionIds = Result.unwrapOr(await sessionIdsByUserId.get(userId), [])
         if (cachedSessionIds) {
           await sessionIdsByUserId.set(userId, [...cachedSessionIds, sessionId])
         }
@@ -82,7 +82,7 @@ export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb =
       const queried = await userSessionDb.zapByUserId(userId)
 
       if (isOk(queried)) {
-        const sessionIds = Result.withDefault(await sessionIdsByUserId.get(userId), []) ?? []
+        const sessionIds = Result.unwrapOr(await sessionIdsByUserId.get(userId), []) ?? []
 
         await sessionIdsByUserId.zap(userId)
 
@@ -98,7 +98,7 @@ export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb =
       const queried = await userSessionDb.zapBySessionId(sessionId)
 
       if (isOk(queried)) {
-        const userId = Result.withDefault(await userIdBySessionId.get(sessionId), null)
+        const userId = Result.unwrapOr(await userIdBySessionId.get(sessionId), null)
         await userIdBySessionId.zap(sessionId)
 
         if (userId) {

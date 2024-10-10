@@ -1,5 +1,5 @@
 import type { Server, WebSocketHandler } from 'bun'
-import type { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import * as path from 'path'
 import {
   fileExtensionToContentType,
@@ -12,7 +12,8 @@ import {
 type FetchHandler = (req: Request, server: Server) => MaybePromise<Response | undefined | null>
 type MaybePromise<T> = T | Promise<T>
 
-export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
+export const ServerBun = <T>(config: { logger: ILogger }) => {
+  const logger = Logger.prefix('bun', config.logger)
   const httpHandlers: HttpHandler[] = []
   const _fetchHandlers: FetchHandler[] = []
   let webSocketHandler: WebSocketHandler<T>

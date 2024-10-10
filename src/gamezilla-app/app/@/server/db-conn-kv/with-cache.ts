@@ -1,5 +1,5 @@
 import { Result } from 'gamezilla-app/@/core'
-import { ILogger } from '../logger'
+import { ILogger, Logger } from '../logger'
 import { IDbConnKv } from './interface'
 
 export type Config = {
@@ -8,24 +8,25 @@ export type Config = {
   logger: ILogger
 }
 
-export const withCache = ({ cache, source, logger }: Config): IDbConnKv => {
+export const withCache = (config: Config): IDbConnKv => {
+  const logger = Logger.prefix('with-cache', config.logger)
   return {
     async get(key, parser) {
       const start = process.hrtime.bigint()
 
-      const cacheGot = await cache.get(key, parser)
-      const cacheHit = Result.withDefault(cacheGot, null)
+      const cacheGot = await config.cache.get(key, parser)
+      const cacheHit = Result.unwrapOr(cacheGot, null)
       if (cacheHit) {
         const end = process.hrtime.bigint()
         const durationInMicroseconds = (end - start) / BigInt(1000)
-        logger.info(`CACHED duration=${durationInMicroseconds}µs get: key=${key}`)
+        logger.info(`cache hit duration=${durationInMicroseconds}µs get: key=${key}`)
         return cacheGot
       }
-      logger.info(`HITTING SOURCE get: key=${key}`)
-      const sourceGot = await source.get(key, parser)
-      const sourceHit = Result.withDefault(sourceGot, null)
+      logger.info(`source hit get: key=${key}`)
+      const sourceGot = await config.source.get(key, parser)
+      const sourceHit = Result.unwrapOr(sourceGot, null)
       if (sourceHit) {
-        await cache.set(key, sourceHit)
+        await config.cache.set(key, sourceHit)
       }
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
@@ -35,20 +36,20 @@ export const withCache = ({ cache, source, logger }: Config): IDbConnKv => {
     async getMany(keys, parser) {
       const start = process.hrtime.bigint()
 
-      const cacheGot = await cache.getMany(keys, parser)
-      const cacheHit = Result.withDefault(cacheGot, null)
+      const cacheGot = await config.cache.getMany(keys, parser)
+      const cacheHit = Result.unwrapOr(cacheGot, null)
       if (cacheHit) {
         const end = process.hrtime.bigint()
         const durationInMicroseconds = (end - start) / BigInt(1000)
         const keysString = keys.join(', ')
-        logger.info(`CACHED duration=${durationInMicroseconds}µs getMany: keys=${keysString}`)
+        logger.info(`cache hit duration=${durationInMicroseconds}µs getMany: keys=${keysString}`)
         return cacheGot
       }
-      logger.info(`HITTING SOURCE getMany: keys=${keys.join(', ')}`)
-      const sourceGot = await source.getMany(keys, parser)
-      const sourceHit = Result.withDefault(sourceGot, [])
+      logger.info(`source hit getMany: keys=${keys.join(', ')}`)
+      const sourceGot = await config.source.getMany(keys, parser)
+      const sourceHit = Result.unwrapOr(sourceGot, [])
       if (sourceHit.length > 0) {
-        await cache.setMany(sourceHit.map((value, i) => [keys[i], value] as [string, unknown]))
+        await config.cache.setMany(sourceHit.map((value, i) => [keys[i], value] as [string, unknown]))
       }
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
@@ -57,16 +58,16 @@ export const withCache = ({ cache, source, logger }: Config): IDbConnKv => {
       return sourceGot
     },
     async set(key, value) {
-      await source.set(key, value)
-      return cache.set(key, value)
+      await config.source.set(key, value)
+      return config.cache.set(key, value)
     },
     async setMany(entries) {
-      await source.setMany(entries)
-      return cache.setMany(entries)
+      await config.source.setMany(entries)
+      return config.cache.setMany(entries)
     },
     async zap(key) {
-      await source.zap(key)
-      return cache.zap(key)
+      await config.source.zap(key)
+      return config.cache.zap(key)
     }
   }
 }

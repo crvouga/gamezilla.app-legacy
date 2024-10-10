@@ -22,7 +22,7 @@ const continueAsGuest = async ({
     return existingGuestUserId
   }
 
-  const existingGuestAccount = Result.withDefault(
+  const existingGuestAccount = Result.unwrapOr(
     await ctx.userAccountDb.findOneByUserId({
       userId: existingGuestUserId.value
     }),

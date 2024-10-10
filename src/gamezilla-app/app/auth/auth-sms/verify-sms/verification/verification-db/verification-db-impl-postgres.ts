@@ -107,11 +107,11 @@ export const VerificationDbPostgres = (deps: { dbConnSql: IDbConnSql }): IVerifi
 }
 
 const rowToVerification = (row: Row): Verification[] => {
-  const phoneNumber = Result.withDefault(PhoneNumber.fromString(row.phone_number), null)
+  const phoneNumber = Result.unwrapOr(PhoneNumber.fromString(row.phone_number), null)
   if (!phoneNumber) {
     return []
   }
-  const codeHash = Result.withDefault(Hash.parse(row.code_hash), null)
+  const codeHash = Result.unwrapOr(Hash.parse(row.code_hash), null)
   return [
     {
       verificationId: row.verification_id,

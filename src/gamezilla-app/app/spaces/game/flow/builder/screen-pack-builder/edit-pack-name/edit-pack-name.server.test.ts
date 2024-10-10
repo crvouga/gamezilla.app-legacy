@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
         userId: f.pack.createdBy
       })
     })
-    const after = Result.withDefault(await f.ctx.flowPackDb.get(f.pack.id), null)
+    const after = Result.unwrapOr(await f.ctx.flowPackDb.get(f.pack.id), null)
     expect(String(after?.name)).toBe(someNewName)
   })
 

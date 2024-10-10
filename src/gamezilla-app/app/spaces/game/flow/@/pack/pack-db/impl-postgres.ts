@@ -123,7 +123,7 @@ export const FlowPackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IF
 
       const queried = await dbConnSql.query(Row, str, vars)
 
-      const total = Result.withDefault(await this.count(input), 0)
+      const total = Result.unwrapOr(await this.count(input), 0)
 
       const result = Result.mapOk(queried, (rows) => {
         return {

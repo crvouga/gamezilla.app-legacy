@@ -14,26 +14,28 @@ export type Config = {
 }
 
 export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServer> => {
+  const logger = Logger.prefix('spaces-core-server', config.logger)
   const dbConnKv = await pipe(
     config.dbConnKv,
     (dbConnKv) =>
-      false
+      true
         ? DbConnKv.withThrottledWrites({
-            logger: Logger.prefix('spaces-core-server', config.logger),
-            dbConnKv: dbConnKv,
+            logger,
+            dbConnKv,
             throttle: TimeSpan.seconds(5)
           })
         : dbConnKv,
     async (dbConnKv) =>
-      false
+      true
         ? DbConnKv.withCache({
-            logger: Logger.prefix('spaces-core-server', config.logger),
+            logger,
             source: dbConnKv,
             cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
           })
         : dbConnKv,
     async (dbConnKv) =>
       DbConnKv.withReducedParsing({
+        logger,
         dbConnKv: await dbConnKv,
         verifiedKeys: new Set()
       })
@@ -75,7 +77,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
 
     const entries = SpaceCore.toUserIds(space).map((userId): [UserId, SpaceId] => [userId, spaceId])
 
-    const allSpaceIds = new Set(Result.withDefault(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? [])
+    const allSpaceIds = new Set(Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? [])
     allSpaceIds.add(spaceId)
 
     const results = await Promise.all([
@@ -109,7 +111,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     },
 
     async list(input) {
-      const allSpaceIds = Result.withDefault(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? []
+      const allSpaceIds = Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? []
 
       const subset = allSpaceIds.slice(input.offset, input.offset + input.limit)
 
@@ -138,7 +140,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     },
 
     async update(spaceEvent) {
-      const maybeSpace = Result.withDefault(await spacesBySpaceId.get(spaceEvent.spaceId), null)
+      const maybeSpace = Result.unwrapOr(await spacesBySpaceId.get(spaceEvent.spaceId), null)
 
       const space = maybeSpace ?? SpaceCore.init
 
@@ -151,7 +153,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     },
 
     async getEvent(spaceId, eventId) {
-      const space = Result.withDefault(await get(spaceId), null)
+      const space = Result.unwrapOr(await get(spaceId), null)
 
       if (!space) {
         return Ok(null)
@@ -165,7 +167,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     async merge(space) {
       const spaceId = SpaceCore.toSpaceId(space)
 
-      const currentSpace = Result.withDefault(await get(spaceId), null) ?? SpaceCore.init
+      const currentSpace = Result.unwrapOr(await get(spaceId), null) ?? SpaceCore.init
 
       const spaceNew = SpaceCore.mergeLeft(space, currentSpace)
 

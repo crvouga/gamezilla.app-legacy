@@ -1,3 +1,4 @@
+import { Logger } from 'gamezilla-app/app/@/server/logger'
 import * as ImplBunWebSockets from './impl-bun-web-sockets'
 import * as ImplSocketIo from './impl-socket-io'
 import type { IServerTransport } from './interface'
@@ -12,13 +13,14 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     MsgToClient: MsgToClient
   }>
 > => {
+  const logger = Logger.prefix('server-transport', config.logger)
   switch (config.t) {
     case 'bun-server-web-sockets': {
-      return ImplBunWebSockets.ServerTransport(config)
+      return ImplBunWebSockets.ServerTransport({ ...config, logger })
     }
 
     case 'socket-io': {
-      return ImplSocketIo.ServerTransport(config)
+      return ImplSocketIo.ServerTransport({ ...config, logger })
     }
   }
 }

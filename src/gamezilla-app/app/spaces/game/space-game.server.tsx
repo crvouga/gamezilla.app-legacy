@@ -12,7 +12,7 @@ const update: SpaceServerModule['update'] = async (input) => {
     return {}
   }
 
-  const spaceState = SpaceCore.toSpaceStarted(Result.withDefault(await input.deps.spacesCoreServer.get(spaceId), null))
+  const spaceState = SpaceCore.toSpaceStarted(Result.unwrapOr(await input.deps.spacesCoreServer.get(spaceId), null))
 
   if (!spaceState?.game) {
     return {}

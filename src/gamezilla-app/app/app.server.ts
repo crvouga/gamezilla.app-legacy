@@ -43,33 +43,28 @@ export type Ctx = AppServerCtx & {
 }
 
 export const initCtx = async (): Promise<Ctx> => {
-  const logger = Logger.prefix('app', Logger({ t: 'console' }))
+  const logger = Logger({ t: 'console' })
+
+  const simulateLatency = IS_PROD
+    ? () => {}
+    : async () => {
+        logger.info('SIMULATING LATENCY')
+        await sleep(TimeSpan.milliseconds(100 + Math.random() * 200))
+      }
 
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: DATABASE_URL,
-    logger: Logger.prefix('postgres', logger),
-    simulateLatency: IS_PROD
-      ? () => {}
-      : async () => {
-          logger.info('Simulating latency...')
-          await sleep(TimeSpan.milliseconds(100 + Math.random() * 200))
-        }
+    logger,
+    simulateLatency
   })
 
-  const dbConnKv = await DbConnKv({
-    t: 'redis',
-    redisUrl: REDIS_URL,
-    logger: Logger.prefix('redis', logger)
-  })
+  const dbConnKv = await DbConnKv({ t: 'redis', redisUrl: REDIS_URL, logger })
 
-  const sms = SMS({
-    t: 'twilio',
-    logger: Logger.prefix('twilio', logger)
-  })
+  const sms = SMS({ t: 'twilio', logger })
 
   const server = Server({
-    logger: Logger.prefix('server', logger),
+    logger,
     t: SERVER_IMPL
   })
 
@@ -80,20 +75,21 @@ export const initCtx = async (): Promise<Ctx> => {
           dbConnSql,
           codebaseVersionId: CODEBASE_VERSION_ID,
           server,
-          logger: Logger.prefix('transport', logger)
+          logger
         }
       : {
           t: 'socket-io',
           codebaseVersionId: CODEBASE_VERSION_ID,
           server,
-          logger: Logger.prefix('transport', logger),
+          logger,
           redisUrl: REDIS_URL
         }
   )
 
   const wire = await WireServer.initDeps({
     transport,
-    dbConnKv
+    dbConnKv,
+    logger
   })
 
   const env = IS_PROD ? 'prod' : 'dev'

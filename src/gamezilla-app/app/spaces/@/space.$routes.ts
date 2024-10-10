@@ -16,4 +16,4 @@ export const Route = p.or(
 
 export type Route = p.Infer<typeof Route>
 
-export const toRoute = (route: unknown): Route | null => Result.withDefault(Route.parse(route), null)
+export const toRoute = (route: unknown): Route | null => Result.unwrapOr(Route.parse(route), null)

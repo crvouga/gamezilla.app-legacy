@@ -28,7 +28,7 @@ const randomMyEvent = (): MyEvent => ({
 })
 
 const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
-// const decode = (str: string) => Result.withDefault(MyEvent.parse(JSON.parse(str)), null)
+// const decode = (str: string) => Result.unwrapOr(MyEvent.parse(JSON.parse(str)), null)
 
 const Fixtures = async () => {
   const testEnv = await AppServerTestEnv()

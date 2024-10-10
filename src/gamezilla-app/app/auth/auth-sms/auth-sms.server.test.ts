@@ -9,6 +9,7 @@ import { UserAccountDb } from '../@/server/user-account-db'
 import { AuthSMSServer } from './auth-sms.server'
 import type { IVerifySMS } from './verify-sms/verify-sms'
 import { VerifySMS } from './verify-sms/verify-sms-impl/verify-sms-impl'
+import { Logger } from 'gamezilla-app/app/@/server/logger'
 
 type InputMsg =
   | {
@@ -25,7 +26,7 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
   const f = await FixtureAppServer()
   const deps: Awaited<ReturnType<typeof AuthSMSServer.initDeps>> = {
     AccountDb: UserAccountDb({ t: 'in-memory', delay: async () => {} }),
-    VerifySMS: input?.VerifySMS ?? VerifySMS({ t: 'fake-always-ok' })
+    VerifySMS: input?.VerifySMS ?? VerifySMS({ t: 'fake-always-ok', logger: Logger({ t: 'noop' }) })
   }
 
   const updates = function* (msgs: InputMsg[]) {
@@ -87,7 +88,8 @@ describe(import.meta.file, () => {
   it('should output event after successful verification', async () => {
     const f = await Fixture({
       VerifySMS: VerifySMS({
-        t: 'fake-always-ok'
+        t: 'fake-always-ok',
+        logger: Logger({ t: 'noop' })
       })
     })
 
@@ -110,7 +112,8 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       VerifySMS: VerifySMS({
         t: 'fake-always-ok',
-        phoneNumber
+        phoneNumber,
+        logger: Logger({ t: 'noop' })
       })
     })
 
@@ -147,7 +150,8 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       VerifySMS: VerifySMS({
         t: 'fake-always-ok',
-        phoneNumber: account.phoneNumber
+        phoneNumber: account.phoneNumber,
+        logger: Logger({ t: 'noop' })
       })
     })
 

@@ -25,7 +25,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         console.error(counted.error)
       }
 
-      const count = Result.withDefault(counted, 0)
+      const count = Result.unwrapOr(counted, 0)
 
       const puzzleNew = await FlowPuzzle.create({
         count: count,

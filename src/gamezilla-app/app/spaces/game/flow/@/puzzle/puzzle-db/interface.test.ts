@@ -187,7 +187,7 @@ describe(import.meta.file, () => {
       })
     }
     await f.flowPuzzleDb.put(updatedPuzzle)
-    const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
+    const after = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
     expect(after).toEqual(updatedPuzzle)
   })
 
@@ -195,12 +195,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const puzzle = await FlowPuzzle.random()
     await f.flowPuzzleDb.put(puzzle)
-    const before = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
+    const before = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
     await f.flowPuzzleDb.zap({
       id: puzzle.id,
       deletedByUserId: UserId.generate()
     })
-    const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
+    const after = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
     expect(before).toEqual(puzzle)
     expect(after).toBe(null)
   })

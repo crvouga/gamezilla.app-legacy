@@ -26,7 +26,8 @@ export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> 
     userSessionDb: await UserSessionDb({
       t: 'postgres-with-cache',
       dbConnSql: input.ctx.dbConnSql,
-      dbConnKv: input.ctx.dbConnKv
+      dbConnKv: input.ctx.dbConnKv,
+      logger: input.ctx.logger
     }),
     guestSessionMappingDb: GuestSessionMappingDb({
       t: 'postgres',

@@ -33,7 +33,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
   const flowPuzzleName = FlowPuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
 
   const parsedFlow = FlowVariant.Model.parse(row.flow)
-  const flow = Result.withDefault(parsedFlow, null)
+  const flow = Result.unwrapOr(parsedFlow, null)
 
   const createdAt = Posix.init(ensureNumber(row.created_at_posix))
   const createdBy = UserId.is(row.created_by_user_id) ? row.created_by_user_id : null
@@ -41,7 +41,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
   const lastUpdatedBy = UserId.is(row.last_updated_by_user_id) ? row.last_updated_by_user_id : null
 
   const parsedFlowSolutions = p.arr(p.or(FlowVariant.Model, Flow.Model)).parse(row.flow_solutions)
-  const flowSolutions = Result.withDefault(parsedFlowSolutions, [])
+  const flowSolutions = Result.unwrapOr(parsedFlowSolutions, [])
 
   if (flowPuzzleId && flowPuzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
     return {

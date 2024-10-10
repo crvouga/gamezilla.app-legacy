@@ -24,13 +24,14 @@ import { VerifySMS } from './verify-sms/verify-sms-impl/verify-sms-impl'
 //
 
 const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
+  const logger = Logger.prefix('auth-sms', ctx.logger)
   const accountDb = UserAccountDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
   const verificationDb = VerificationDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
   const verificationAttemptDb = VerificationAttemptDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
   const hashing = Hashing({ t: 'bun' })
   const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
-  const sms = SMS({ t: 'fake', logger: Logger.prefix('sms', ctx.logger) })
-  const verifySMSTwilio = VerifySMS({ t: 'twilio', logger: Logger.prefix('twilio-verify', ctx.logger) })
+  const sms = SMS({ t: 'fake', logger })
+  const verifySMSTwilio = VerifySMS({ t: 'twilio', logger })
   const verifySMSInHouse = VerifySMS({
     t: 'in-house',
     logger: ctx.logger,

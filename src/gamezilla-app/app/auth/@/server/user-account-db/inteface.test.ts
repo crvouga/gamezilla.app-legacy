@@ -62,7 +62,7 @@ describe(import.meta.file, () => {
     const found = await f.userAccountDb.findOneByUserId({
       userId: account.userId
     })
-    const maybeAccount = Result.withDefault(found, null)
+    const maybeAccount = Result.unwrapOr(found, null)
     expect(maybeAccount).toEqual(account)
   })
 

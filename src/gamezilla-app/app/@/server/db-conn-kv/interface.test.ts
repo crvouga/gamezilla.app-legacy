@@ -67,7 +67,8 @@ const implementations: Implementation[] = [
         ...f,
         dbConnKv: DbConnKv.withReducedParsing({
           dbConnKv: f.dbConnKv,
-          verifiedKeys: new Set()
+          verifiedKeys: new Set(),
+          logger: f.logger
         })
       }
     }
@@ -102,10 +103,10 @@ const implementations: Implementation[] = [
         dbConnKv: DbConnKv.withCache({
           source: f.dbConnKv,
           logger: f.logger,
-          cache: DbConnKv.withDistributedInvalidations({
-            dbConnKv: await DbConnKv({ t: 'hash-map' }),
+          cache: await DbConnKv.withDistributedInvalidations({
+            cache: await DbConnKv({ t: 'hash-map' }),
             logger: f.logger,
-            pubSub: PubSub({ t: 'in-memory' })
+            pubSub: await PubSub({ t: 'in-memory' })
           })
         })
       }

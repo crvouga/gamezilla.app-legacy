@@ -4,6 +4,7 @@ import { Sql } from 'gamezilla-app/@/sql'
 import postgres from 'postgres'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnSql } from './interface'
+import { Logger } from '../logger'
 
 export type Config = {
   t: 'postgres'
@@ -15,6 +16,7 @@ export type Config = {
 let client: postgres.Sql<{}>
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
+  const logger = Logger.prefix('postgres', config.logger)
   client ??= postgres(config.databaseUrl)
 
   return {
@@ -32,7 +34,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         const durationMs = Number(end - start) / 1e6
         const durationFormatted = `${durationMs.toFixed(2)}ms`
-        config.logger.debug(
+        logger.debug(
           `duration=${durationFormatted}\nsql=\n${rawSql}\nparams=${JSON.stringify(params, null, 4).slice(0, 500)}`
         )
 
@@ -58,7 +60,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         return Ok(output)
       } catch (error) {
-        config.logger.error(`${error} sql=${sql}`)
+        logger.error(`${error} sql=${sql}`)
         return Err(String(error))
       }
     },
@@ -68,7 +70,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         await client.notify(channel, payload)
         return Ok(null)
       } catch (error) {
-        config.logger.error(`${error} channel=${channel} payload=${payload}`)
+        logger.error(`${error} channel=${channel} payload=${payload}`)
         return Err(String(error))
       }
     },

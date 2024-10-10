@@ -39,7 +39,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
 
       const got = await input.deps.spacesCoreServer.get(spaceId)
 
-      const spaceNew = Result.withDefault(got, null)
+      const spaceNew = Result.unwrapOr(got, null)
 
       if (!spaceNew) {
         return {}
@@ -77,7 +77,7 @@ const spacesToProfiles = async (deps: ServerDeps, spaces: Space.Model[]) => {
 
   const got = await deps.profileCache.get(userIds)
 
-  const profiles = Result.withDefault(got, {})
+  const profiles = Result.unwrapOr(got, {})
 
   return profiles
 }
@@ -85,7 +85,7 @@ const spacesToProfiles = async (deps: ServerDeps, spaces: Space.Model[]) => {
 const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
     case 'auth/client-authenticated': {
-      const space = Result.withDefault(await input.deps.spacesCoreServer.getByUserId(input.msgEvt.account.userId), null)
+      const space = Result.unwrapOr(await input.deps.spacesCoreServer.getByUserId(input.msgEvt.account.userId), null)
 
       if (!space) {
         return {}
@@ -123,7 +123,7 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async ({ msgCoreEvt,
 
   const got = await deps.spacesCoreServer.get(msgCoreEvt.spaceId)
 
-  const space = Result.withDefault(got, null) ?? SpaceCore.init
+  const space = Result.unwrapOr(got, null) ?? SpaceCore.init
 
   const eventWithMeta = SpaceCore.toEventWithMeta(space, msgCoreEvt.eventId)
 
@@ -133,7 +133,7 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async ({ msgCoreEvt,
 
   const spaceState = SpaceCore.toSpaceStarted(space)
 
-  const profiles = Result.withDefault(
+  const profiles = Result.unwrapOr(
     await deps.profileCache.get('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
     {}
   )

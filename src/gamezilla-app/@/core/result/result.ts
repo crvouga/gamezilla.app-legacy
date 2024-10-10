@@ -109,7 +109,7 @@ const fromNullable =
     return Ok(value)
   }
 
-const withDefault = <T>(result: ResultInternal<unknown, T>, fallback: T) => {
+export const unwrapOr = <T>(result: ResultInternal<unknown, T>, fallback: T) => {
   switch (result.t) {
     case 'err': {
       return fallback
@@ -160,7 +160,7 @@ export const ResultInternal = {
   mapOk,
   mapErr,
   fromNullable,
-  withDefault,
+  unwrapOr,
   combine,
   unwrap
 }

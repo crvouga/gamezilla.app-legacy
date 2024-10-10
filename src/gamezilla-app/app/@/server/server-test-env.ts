@@ -27,26 +27,20 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   if (process.env.IS_INTEGRATION_TEST !== 'true') {
     return {
       t: 'unit',
-      dbConnKv: await DbConnKv({
-        t: 'hash-map'
-      })
+      dbConnKv: await DbConnKv({ t: 'hash-map' })
     }
   }
 
-  const logger = Logger.prefix('integration-test', Logger({ t: 'noop' }))
+  const logger = Logger({ t: 'noop' })
 
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: DATABASE_URL,
-    logger: Logger.prefix('db-conn-sql', logger),
+    logger,
     simulateLatency: async () => {}
   })
 
-  const dbConnKv = await DbConnKv({
-    t: 'redis',
-    logger: Logger.prefix('db-conn-kv', logger),
-    redisUrl: REDIS_URL
-  })
+  const dbConnKv = await DbConnKv({ t: 'redis', logger, redisUrl: REDIS_URL })
 
   return {
     t: 'integration',

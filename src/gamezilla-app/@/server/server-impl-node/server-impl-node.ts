@@ -1,4 +1,4 @@
-import type { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import * as fs from 'node:fs'
 import * as http from 'node:http'
 import * as path from 'node:path'
@@ -7,7 +7,8 @@ import { fileExtensionToContentType, type HttpHandler, type HttpRequest, type IS
 const removeDuplicateSlashes = (input: string) => {
   return input.replace(/\/{2,}/g, '/')
 }
-export const ServerNode = (input: { logger: ILogger }) => {
+export const ServerNode = (config: { logger: ILogger }) => {
+  const logger = Logger.prefix('node', config.logger)
   const httpServer = new http.Server()
   const handlers: HttpHandler[] = []
   const base: IServer = {
@@ -18,7 +19,7 @@ export const ServerNode = (input: { logger: ILogger }) => {
         console.error('error', error)
       }
 
-      input.logger.info(`Listening on port ${port}`)
+      logger.info(`Listening on port ${port}`)
 
       httpServer.on('request', async (req, res) => {
         const request: HttpRequest = {

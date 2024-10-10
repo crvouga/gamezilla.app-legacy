@@ -4,6 +4,7 @@ import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../with-duration'
 import type { IDbConnKv } from './interface'
+import { Logger } from '../logger'
 
 const Row = p.obj({
   key: p.str,
@@ -17,6 +18,7 @@ export type Config = {
 }
 
 export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
+  const logger = Logger.prefix('db-conn-sql', config.logger)
   return {
     async get(key, parser) {
       try {
@@ -25,7 +27,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
             key: key
           })
         )
-        config.logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
+        logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
 
         if (isErr(queried)) {
           return queried
@@ -45,7 +47,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           case 'err': {
             const errorStr = JSON.stringify(parsed.error, null, 2)
 
-            config.logger.error(`get: not a value: ${key} ${errorStr}`)
+            logger.error(`get: not a value: ${key} ${errorStr}`)
 
             return Ok(null)
           }
@@ -54,7 +56,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           }
         }
       } catch (e) {
-        config.logger.error(`get: ${key} ${String(e)}`)
+        logger.error(`get: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -70,7 +72,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           config.dbConnSql.query(Row, `SELECT key, value FROM key_value WHERE key IN (${keysStr})`, {})
         )
 
-        config.logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: keys=${keys.join(', ')}`)
+        logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: keys=${keys.join(', ')}`)
 
         if (isErr(queried)) {
           return queried
@@ -86,7 +88,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           if (isErr(parsed)) {
             const errorStr = JSON.stringify(parsed.error, null, 2)
 
-            config.logger.error(`get: not a value: ${row.key} ${errorStr}`)
+            logger.error(`get: not a value: ${row.key} ${errorStr}`)
 
             continue
           }
@@ -96,7 +98,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         return Ok(rows)
       } catch (e) {
-        config.logger.error(`get: ${keys.join(', ')} ${String(e)}`)
+        logger.error(`get: ${keys.join(', ')} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -118,7 +120,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         return Ok(null)
       } catch (e) {
-        config.logger.error(`set: ${key} ${String(e)}`)
+        logger.error(`set: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -143,7 +145,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         return Ok(null)
       } catch (e) {
-        config.logger.error(`setMany: ${String(e)}`)
+        logger.error(`setMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -156,7 +158,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         return Result.mapOk(queried, () => null)
       } catch (e) {
-        config.logger.error(`zap: ${key} ${String(e)}`)
+        logger.error(`zap: ${key} ${String(e)}`)
         return Err(String(e))
       }
     }

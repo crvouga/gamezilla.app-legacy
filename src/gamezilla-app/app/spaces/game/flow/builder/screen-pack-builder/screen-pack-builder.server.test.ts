@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
     })
 
     const before = f.pack
-    const after = Result.withDefault(await f.ctx.flowPackDb.get(f.pack.id), null)
+    const after = Result.unwrapOr(await f.ctx.flowPackDb.get(f.pack.id), null)
 
     expect(before.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(true)
     expect(after?.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(false)

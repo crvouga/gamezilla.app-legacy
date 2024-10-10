@@ -8,6 +8,7 @@ import type { IDbConnKv } from '../@/server/db-conn-kv'
 import type { IServerTransport } from './transport-server'
 import { type IWireSessionDb, WireSessionDb } from './wire-session-db'
 import type { Client, MsgServer, MsgToClient, MsgToServer } from './wire.types'
+import { ILogger, Logger } from '../@/server/logger'
 
 //
 //
@@ -29,13 +30,16 @@ export const initDeps = async <TMsgToClient, TMsgToServer>(input: {
     MsgToClient: TMsgToClient
     MsgToServer: TMsgToServer
   }>
+  logger: ILogger
   dbConnKv: IDbConnKv
 }): Promise<Deps<TMsgToClient, TMsgToServer>> => {
+  const logger = Logger.prefix('wire', input.logger)
   return {
     transport: input.transport,
     WireSessionDb: await WireSessionDb({
       t: 'db-conn-kv-with-fast-cache',
-      dbConnKv: input.dbConnKv
+      dbConnKv: input.dbConnKv,
+      logger
     })
   }
 }
@@ -285,7 +289,7 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
 
   const gotClients = await deps.WireSessionDb.clients.findBySessionIds(sessionIds)
 
-  const clients = Result.withDefault(gotClients, [])
+  const clients = Result.unwrapOr(gotClients, [])
 
   for (const client of clients) {
     const clientIds = CappedOrderedDict.valuesNewestFirst(client.clientIds)

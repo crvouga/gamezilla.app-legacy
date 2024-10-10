@@ -14,7 +14,7 @@ const update: SpaceServerModule['update'] = (input) => {
 const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
   switch (input.msgCoreEvt?.t) {
     case 'user-joined-space': {
-      const space = Result.withDefault(await input.deps.spacesCoreServer.get(input.msgCoreEvt.spaceId), null)
+      const space = Result.unwrapOr(await input.deps.spacesCoreServer.get(input.msgCoreEvt.spaceId), null)
 
       if (!space) {
         return {}

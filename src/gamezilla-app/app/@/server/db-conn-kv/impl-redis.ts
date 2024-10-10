@@ -4,6 +4,7 @@ import { Redis } from 'ioredis'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../with-duration'
 import type { IDbConnKv } from './interface'
+import { Logger } from '../logger'
 
 export type Config = {
   t: 'redis'
@@ -14,6 +15,7 @@ export type Config = {
 let redis: Redis
 
 export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
+  const logger = Logger.prefix('redis', config.logger)
   redis ??= new Redis(config.redisUrl)
 
   await redis.ping()
@@ -22,7 +24,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     async get(key, parser) {
       try {
         const [queried, duration] = await withDuration(() => redis.get(key))
-        config.logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
+        logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
 
         if (!queried) {
           return Ok(null)
@@ -36,7 +38,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           case 'err': {
             const errorStr = JSON.stringify(parsed.error, null, 2)
 
-            config.logger.error(`get: not a value: ${key} ${errorStr}`)
+            logger.error(`get: not a value: ${key} ${errorStr}`)
 
             return Ok(null)
           }
@@ -45,7 +47,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           }
         }
       } catch (e) {
-        config.logger.error(`get: ${key} ${String(e)}`)
+        logger.error(`get: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -57,7 +59,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
       try {
         const [queried, duration] = await withDuration(() => redis.mget(keys))
 
-        config.logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms getMany: keys=${keys.join(', ')}`)
+        logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms getMany: keys=${keys.join(', ')}`)
 
         const rows: p.Infer<typeof parser>[] = []
 
@@ -73,7 +75,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           if (isErr(parsed)) {
             const errorStr = JSON.stringify(parsed.error, null, 2)
 
-            config.logger.error(`getMany: not a value: ${row} ${errorStr}`)
+            logger.error(`getMany: not a value: ${row} ${errorStr}`)
 
             continue
           }
@@ -83,7 +85,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         return Ok(rows)
       } catch (e) {
-        config.logger.error(`getMany: ${keys.join(', ')} ${String(e)}`)
+        logger.error(`getMany: ${keys.join(', ')} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -94,7 +96,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         return Ok(null)
       } catch (e) {
-        config.logger.error(`set: ${key} ${String(e)}`)
+        logger.error(`set: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -109,7 +111,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         return Ok(null)
       } catch (e) {
-        config.logger.error(`setMany: ${String(e)}`)
+        logger.error(`setMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -120,7 +122,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         return Ok(null)
       } catch (e) {
-        config.logger.error(`zap: ${key} ${String(e)}`)
+        logger.error(`zap: ${key} ${String(e)}`)
         return Err(String(e))
       }
     }

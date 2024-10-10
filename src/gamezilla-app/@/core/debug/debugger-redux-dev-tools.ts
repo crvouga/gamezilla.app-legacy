@@ -257,7 +257,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
         }
 
       default:
-        return Result.Err(`unhandled case: ${Result.withDefault(Json.stringify(msg), 'unknown')}`)
+        return Result.Err(`unhandled case: ${Result.unwrapOr(Json.stringify(msg), 'unknown')}`)
     }
   }
 }

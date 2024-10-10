@@ -1,13 +1,16 @@
 import { isErr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnKv } from './interface'
+import { ILogger, Logger } from '../logger'
 
 export type Config = {
   dbConnKv: IDbConnKv
   verifiedKeys: Set<string>
+  logger: ILogger
 }
 
-export const withReducedParsing = ({ dbConnKv, verifiedKeys }: Config): IDbConnKv => {
+export const withReducedParsing = ({ dbConnKv, verifiedKeys, ...config }: Config): IDbConnKv => {
+  const logger = Logger.prefix('with-reduced-parsing', config.logger)
   return {
     ...dbConnKv,
 
@@ -21,6 +24,8 @@ export const withReducedParsing = ({ dbConnKv, verifiedKeys }: Config): IDbConnK
       if (isErr(got)) {
         return got
       }
+
+      logger.debug(`verified key: ${key}`)
 
       verifiedKeys.add(key)
 
@@ -39,6 +44,8 @@ export const withReducedParsing = ({ dbConnKv, verifiedKeys }: Config): IDbConnK
       if (isErr(got)) {
         return got
       }
+
+      logger.debug(`verified key: ${key}`)
 
       verifiedKeys.add(key)
 

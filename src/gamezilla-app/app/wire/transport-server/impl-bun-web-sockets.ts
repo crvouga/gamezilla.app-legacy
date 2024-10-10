@@ -2,7 +2,7 @@ import type { Server, ServerWebSocket, WebSocketHandler } from 'bun'
 import type { ServerBun } from 'gamezilla-app/@/server/server-impl-bun/server-impl-bun'
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
-import { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import { PubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
 import { REDIS_URL } from 'gamezilla-app/config-private'
 import {
@@ -34,6 +34,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     MsgToServer: MsgToServer
   }>
 > => {
+  const logger = Logger.prefix('bun-web-sockets', config.logger)
   //
   //
   //
@@ -58,7 +59,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
   const pubSub = await PubSubTopicBased({
     t: 'redis',
-    logger: config.logger,
+    logger: logger,
     redisUrl: REDIS_URL
   })
 

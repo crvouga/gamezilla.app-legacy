@@ -17,11 +17,11 @@ const update: SpaceServerModule['update'] = async (input) => {
     case 'list-spaces': {
       const listed = await input.deps.spacesCoreServer.list(input.msgClient)
 
-      const spaces = Result.withDefault(listed, Paginated.init())
+      const spaces = Result.unwrapOr(listed, Paginated.init())
 
       const started = spaces.items.map(Space.startFromLatestSnapshot)
       const userIds = spaces.items.flatMap(Space.toUserIds)
-      const profiles = Result.withDefault(await input.deps.profileCache.get(userIds), {})
+      const profiles = Result.unwrapOr(await input.deps.profileCache.get(userIds), {})
 
       return {
         msgCmd: [

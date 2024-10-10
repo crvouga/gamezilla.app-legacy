@@ -2,8 +2,8 @@ import { pipe } from 'gamezilla-app/@/core'
 import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
-import { Logger } from 'gamezilla-app/app/@/server/logger'
-import { PubSub } from 'gamezilla-app/app/@/server/pub-sub'
+import { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { IPubSub, PubSub } from 'gamezilla-app/app/@/server/pub-sub'
 import * as ImplInMemory from './impl-in-memory'
 import * as ImplPostgres from './impl-postgres'
 import type { IUserSessionDb } from './interface'
@@ -16,49 +16,56 @@ export type Config =
       t: 'postgres-with-cache'
       dbConnKv: IDbConnKv
       dbConnSql: IDbConnSql
+      logger: ILogger
     }
   | {
       t: 'postgres-with-fast-cache'
       dbConnKv: IDbConnKv
       dbConnSql: IDbConnSql
+      pubSub: IPubSub
+      logger: ILogger
     }
 
-export const UserSessionDb = async (impl: Config): Promise<IUserSessionDb> => {
-  switch (impl.t) {
+export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => {
+  switch (config.t) {
     case 'in-memory': {
-      return ImplInMemory.UserSessionDb(impl)
+      return ImplInMemory.UserSessionDb(config)
     }
 
     case 'postgres': {
-      return ImplPostgres.UserSessionDb(impl)
+      return ImplPostgres.UserSessionDb(config)
     }
 
     case 'postgres-with-cache': {
       return WithCache({
-        userSessionDb: ImplPostgres.UserSessionDb({ t: 'postgres', dbConnSql: impl.dbConnSql }),
-        dbConnKv: impl.dbConnKv
+        userSessionDb: ImplPostgres.UserSessionDb({ t: 'postgres', dbConnSql: config.dbConnSql }),
+        dbConnKv: config.dbConnKv
       })
     }
 
     case 'postgres-with-fast-cache': {
       const dbConnKv = await pipe(
-        impl.dbConnKv,
+        config.dbConnKv,
 
         async (dbConnKv) =>
-          false
+          true
             ? DbConnKv.withCache({
-                logger: Logger({ t: 'noop' }),
+                ...config,
                 source: dbConnKv,
-                cache: DbConnKv.withDistributedInvalidations({
-                  logger: Logger({ t: 'noop' }),
-                  pubSub: PubSub({ t: 'in-memory' }),
-                  dbConnKv: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
+                cache: await DbConnKv.withDistributedInvalidations({
+                  ...config,
+                  pubSub: await PubSub({ t: 'in-memory' }),
+                  cache: await DbConnKv({
+                    t: 'hash-map',
+                    map: LRUCache({ maxCapacity: 2000 })
+                  })
                 })
               })
             : dbConnKv,
 
         async (dbConnKv) =>
           DbConnKv.withReducedParsing({
+            ...config,
             dbConnKv: await dbConnKv,
             verifiedKeys: new Set()
           })
@@ -66,7 +73,7 @@ export const UserSessionDb = async (impl: Config): Promise<IUserSessionDb> => {
 
       return WithCache({
         dbConnKv,
-        userSessionDb: ImplPostgres.UserSessionDb({ t: 'postgres', dbConnSql: impl.dbConnSql })
+        userSessionDb: ImplPostgres.UserSessionDb({ t: 'postgres', dbConnSql: config.dbConnSql })
       })
     }
   }

@@ -14,7 +14,7 @@ export const UserAccountRow = p.obj({
 export type UserAccountRow = p.Infer<typeof UserAccountRow>
 
 const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<string, UserAccount> => {
-  const userId = Result.withDefault(UserId.parse(userAccount.user_id), null)
+  const userId = Result.unwrapOr(UserId.parse(userAccount.user_id), null)
 
   if (!userId) {
     return Err('Invalid account. Missing userId.')
@@ -24,7 +24,7 @@ const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<str
     userId,
     role: userAccount.user_role,
     createdAt: Posix.init(userAccount.created_at_posix),
-    phoneNumber: Result.withDefault(PhoneNumber.fromString(userAccount.phone_number), null)
+    phoneNumber: Result.unwrapOr(PhoneNumber.fromString(userAccount.phone_number), null)
   }
 
   return Ok(account)

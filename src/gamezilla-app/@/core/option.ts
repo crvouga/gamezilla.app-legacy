@@ -34,7 +34,7 @@ const fold =
     }
   }
 
-const withDefault =
+const unwrapOr =
   <T>(fallback: T) =>
   (option: Option<T>): T => {
     switch (option.type) {
@@ -73,7 +73,7 @@ export const Option = {
   None,
   map,
   fold,
-  withDefault,
+  unwrapOr,
   fromNullable,
   fromResult
 }

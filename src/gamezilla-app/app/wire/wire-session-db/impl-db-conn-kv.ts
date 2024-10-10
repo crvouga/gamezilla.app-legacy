@@ -4,10 +4,12 @@ import { SessionId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { Client } from '../wire.types'
 import type { IWireSessionDb } from './interface'
+import { ILogger } from 'gamezilla-app/app/@/server/logger'
 
 export type Config = {
   t: 'db-conn-kv'
   dbConnKv: IDbConnKv
+  logger: ILogger
 }
 
 export const WireSessionDb = ({ dbConnKv }: Config): IWireSessionDb => {

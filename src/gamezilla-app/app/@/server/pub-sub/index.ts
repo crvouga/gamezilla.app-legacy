@@ -1,1 +1,2 @@
-export * from './pub-sub-impl'
+export * from './impl'
+export * from './interface'

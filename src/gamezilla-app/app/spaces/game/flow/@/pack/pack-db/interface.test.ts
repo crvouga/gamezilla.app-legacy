@@ -136,7 +136,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const pack = await FlowPack.random()
     await f.flowPackDb.put(pack)
-    const before = Result.withDefault(await f.flowPackDb.get(pack.id), null)
+    const before = Result.unwrapOr(await f.flowPackDb.get(pack.id), null)
     const updated: FlowPack = {
       ...pack,
       name: await FlowPackName.generate({
@@ -145,7 +145,7 @@ describe(import.meta.file, () => {
       puzzleIds: [FlowPuzzleId.generate(), FlowPuzzleId.generate()]
     }
     await f.flowPackDb.put(updated)
-    const after = Result.withDefault(await f.flowPackDb.get(pack.id), null)
+    const after = Result.unwrapOr(await f.flowPackDb.get(pack.id), null)
     expect(before).toEqual(pack)
     expect(after).toEqual(updated)
   })

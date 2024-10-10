@@ -7,7 +7,7 @@ const DEFAULT_CODE = '123'
 
 export type Config = {
   t: 'fake'
-  logger?: ILogger
+  logger: ILogger
   delay?: () => Promise<void>
   verificationId?: VerificationId
   code?: string
