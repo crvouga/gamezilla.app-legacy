@@ -40,7 +40,12 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
     simulateLatency: async () => {}
   })
 
-  const dbConnKv = await DbConnKv({ t: 'redis', logger, redisUrl: REDIS_URL })
+  const dbConnKv = await DbConnKv({
+    t: 'redis',
+    logger,
+    redisUrl: REDIS_URL,
+    simulateLatency: async () => {}
+  })
 
   return {
     t: 'integration',

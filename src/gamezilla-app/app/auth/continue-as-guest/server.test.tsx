@@ -59,7 +59,7 @@ const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
       })
       const userSessionDb = await UserSessionDb({
         t: 'in-memory',
-        delay: async () => {}
+        simulateLatency: async () => {}
       })
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'hash-map'

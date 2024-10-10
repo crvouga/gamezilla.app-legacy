@@ -4,7 +4,6 @@ import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import { PubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
-import { REDIS_URL } from 'gamezilla-app/config-private'
 import {
   SESSION_ID_COOKIE_NAME,
   toSetSessionCookie,
@@ -57,11 +56,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   const unlistens = new Map<ClientId, () => void>()
   const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
 
-  const pubSub = await PubSubTopicBased({
-    t: 'redis',
-    logger: logger,
-    redisUrl: REDIS_URL
-  })
+  const pubSub = await PubSubTopicBased({ t: 'noop' })
 
   const addClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {
     clients.set(ws.data.clientId, ws)
@@ -71,6 +66,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     unlistens.set(
       ws.data.clientId,
       await pubSub.sub(ws.data.clientId, (msg) => {
+        logger.debug(`recieved msg for clientId=${ws.data.clientId} from other server instance`)
         send(ws, JSON.parse(msg))
       })
     )
@@ -119,10 +115,8 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
               'Set-Cookie': toSetSessionCookie(sessionId)
             }
 
-        server.upgrade(req, {
-          headers,
-          data
-        })
+        logger.debug(`/ws request recieved clientId=${clientId} sessionId=${sessionId}`)
+        server.upgrade(req, { headers, data })
         return
       }
 
@@ -134,6 +128,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
   const websocket: WebSocketHandler<ServerWebSocketData> = {
     async open(ws: ServerWebSocket<ServerWebSocketData>) {
+      logger.debug(`websocket connection opened clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
       await addClient(ws)
       transport.wire.pub({
         t: 'client-connected',
@@ -142,6 +137,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       })
     },
     async close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
+      logger.debug(`websocket connection closed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
       await removeClient(ws)
       transport.wire.pub({
         t: 'client-disconnected',
@@ -150,6 +146,8 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       })
     },
     message(ws: ServerWebSocket<ServerWebSocketData>, message) {
+      logger.debug(`websocket message recieved clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+
       const msg = JSON.parse(message.toString()) as MsgClientToMsgServer<MsgToServer> // leap of faith
 
       if (msg.v !== config.codebaseVersionId) {
@@ -204,6 +202,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   const sendWithPub = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
     send(ws, msg)
     pubSub.pub(ws.data.clientId, JSON.stringify(msg))
+    logger.debug(`sent msg for clientId=${ws.data.clientId} to other server instances`)
   }
 
   transport.toClientBroadcast.sub((msgs) => {

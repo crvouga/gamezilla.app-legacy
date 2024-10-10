@@ -1,4 +1,4 @@
-import { Ok } from 'gamezilla-app/@/core'
+import { Ok, Sleep } from 'gamezilla-app/@/core'
 import type { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { IUserSessionDb } from './interface'
 
@@ -7,23 +7,23 @@ const userIdBySessionId = new Map<SessionId, UserId>()
 
 export type Config = {
   t: 'in-memory'
-  delay: () => Promise<void>
+  simulateLatency: Sleep
 }
 
-export const UserSessionDb = ({ delay }: Config): IUserSessionDb => {
+export const UserSessionDb = (config: Config): IUserSessionDb => {
   return {
     async findSessionIdsByUserId(userId: UserId) {
-      await delay()
+      await config.simulateLatency()
       const sessionIds = sessionIdsByUserId.get(userId)
       return Ok(sessionIds ?? [])
     },
     async findUserIdBySessionId(sessionId: SessionId) {
-      await delay()
+      await config.simulateLatency()
       const userId = userIdBySessionId.get(sessionId)
       return Ok(userId ?? null)
     },
     async insert({ sessionId, userId }) {
-      await delay()
+      await config.simulateLatency()
       const sessionIds = sessionIdsByUserId.get(userId) ?? []
       sessionIds.push(sessionId)
       sessionIdsByUserId.set(userId, sessionIds)
@@ -31,7 +31,7 @@ export const UserSessionDb = ({ delay }: Config): IUserSessionDb => {
       return Ok(null)
     },
     async zapByUserId(userId) {
-      await delay()
+      await config.simulateLatency()
       const sessionIds = sessionIdsByUserId.get(userId) ?? []
       for (const sessionId of sessionIds) {
         userIdBySessionId.delete(sessionId)
@@ -40,7 +40,7 @@ export const UserSessionDb = ({ delay }: Config): IUserSessionDb => {
       return Ok(null)
     },
     async zapBySessionId(sessionId) {
-      await delay()
+      await config.simulateLatency()
       const userId = userIdBySessionId.get(sessionId)
       if (userId) {
         const sessionIds = sessionIdsByUserId.get(userId) ?? []

@@ -19,10 +19,10 @@ export const withCache = (config: Config): IDbConnKv => {
       if (cacheHit) {
         const end = process.hrtime.bigint()
         const durationInMicroseconds = (end - start) / BigInt(1000)
-        logger.info(`cache hit duration=${durationInMicroseconds}µs get: key=${key}`)
+        logger.debug(`cache hit duration=${durationInMicroseconds}µs get: key=${key}`)
         return cacheGot
       }
-      logger.info(`source hit get: key=${key}`)
+      logger.debug(`source hit get: key=${key}`)
       const sourceGot = await config.source.get(key, parser)
       const sourceHit = Result.unwrapOr(sourceGot, null)
       if (sourceHit) {
@@ -30,7 +30,7 @@ export const withCache = (config: Config): IDbConnKv => {
       }
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
-      logger.info(`duration=${durationInMicroseconds}µs get: key=${key}`)
+      logger.debug(`duration=${durationInMicroseconds}µs get: key=${key}`)
       return sourceGot
     },
     async getMany(keys, parser) {
@@ -42,10 +42,10 @@ export const withCache = (config: Config): IDbConnKv => {
         const end = process.hrtime.bigint()
         const durationInMicroseconds = (end - start) / BigInt(1000)
         const keysString = keys.join(', ')
-        logger.info(`cache hit duration=${durationInMicroseconds}µs getMany: keys=${keysString}`)
+        logger.debug(`cache hit duration=${durationInMicroseconds}µs getMany: keys=${keysString}`)
         return cacheGot
       }
-      logger.info(`source hit getMany: keys=${keys.join(', ')}`)
+      logger.debug(`source hit getMany: keys=${keys.join(', ')}`)
       const sourceGot = await config.source.getMany(keys, parser)
       const sourceHit = Result.unwrapOr(sourceGot, [])
       if (sourceHit.length > 0) {
@@ -54,7 +54,7 @@ export const withCache = (config: Config): IDbConnKv => {
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
       const keyString = keys.join(', ')
-      logger.info(`duration=${durationInMicroseconds}µs getMany: keys=${keyString}`)
+      logger.debug(`duration=${durationInMicroseconds}µs getMany: keys=${keyString}`)
       return sourceGot
     },
     async set(key, value) {

@@ -1,7 +1,9 @@
 import { TimeSpan } from './time-span'
 
-export type Sleep = (timeSpan: TimeSpan) => Promise<void>
+export type Sleep = (timeSpan?: TimeSpan) => Promise<unknown>
 
-export const sleep: Sleep = (timeSpan) => {
-  return new Promise((resolve) => setTimeout(resolve, TimeSpan.toMilliseconds(timeSpan)))
+export const sleep: Sleep = async (timeSpan) => {
+  if (timeSpan) {
+    await new Promise((resolve) => setTimeout(resolve, TimeSpan.toMilliseconds(timeSpan)))
+  }
 }

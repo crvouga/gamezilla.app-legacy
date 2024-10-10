@@ -119,7 +119,12 @@ const implementations: Implementation[] = [
       const f = await Fixture()
       return {
         ...f,
-        dbConnKv: await DbConnKv({ t: 'redis', redisUrl: REDIS_URL, logger: f.logger })
+        dbConnKv: await DbConnKv({
+          t: 'redis',
+          simulateLatency: async () => {},
+          redisUrl: REDIS_URL,
+          logger: f.logger
+        })
       }
     }
   }

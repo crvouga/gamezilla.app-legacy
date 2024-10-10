@@ -38,7 +38,11 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
 
     case 'postgres-with-cache': {
       return WithCache({
-        userSessionDb: ImplPostgres.UserSessionDb({ t: 'postgres', dbConnSql: config.dbConnSql }),
+        userSessionDb: ImplPostgres.UserSessionDb({
+          t: 'postgres',
+          dbConnSql: config.dbConnSql,
+          logger: config.logger
+        }),
         dbConnKv: config.dbConnKv
       })
     }
@@ -73,7 +77,11 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
 
       return WithCache({
         dbConnKv,
-        userSessionDb: ImplPostgres.UserSessionDb({ t: 'postgres', dbConnSql: config.dbConnSql })
+        userSessionDb: ImplPostgres.UserSessionDb({
+          t: 'postgres',
+          dbConnSql: config.dbConnSql,
+          logger: config.logger
+        })
       })
     }
   }

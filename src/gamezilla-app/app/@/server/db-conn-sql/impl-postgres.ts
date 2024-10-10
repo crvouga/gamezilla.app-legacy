@@ -1,19 +1,28 @@
-import { Err, Ok } from 'gamezilla-app/@/core'
+import { Err, Ok, Sleep } from 'gamezilla-app/@/core'
 import type { p } from 'gamezilla-app/@/core/parser'
 import { Sql } from 'gamezilla-app/@/sql'
 import postgres from 'postgres'
+import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnSql } from './interface'
-import { Logger } from '../logger'
 
 export type Config = {
   t: 'postgres'
   databaseUrl: string
   logger: ILogger
-  simulateLatency: () => Promise<unknown> | unknown
+  simulateLatency: Sleep
 }
 
 let client: postgres.Sql<{}>
+
+const cleanSql = (str: string) =>
+  str
+    // remove tabs
+    .replace(/\t/g, ' ')
+    // remove newlines
+    .replace(/\n/g, ' ')
+    // remove multiple spaces
+    .replace(/ +/g, ' ')
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
@@ -35,7 +44,10 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         const durationMs = Number(end - start) / 1e6
         const durationFormatted = `${durationMs.toFixed(2)}ms`
         logger.debug(
-          `duration=${durationFormatted}\nsql=\n${rawSql}\nparams=${JSON.stringify(params, null, 4).slice(0, 500)}`
+          `duration=${durationFormatted}\nsql=\n${cleanSql(rawSql)}\nparams=${JSON.stringify(params, null, 4).slice(
+            0,
+            500
+          )}`
         )
 
         const output: p.Infer<typeof rowParser>[] = []

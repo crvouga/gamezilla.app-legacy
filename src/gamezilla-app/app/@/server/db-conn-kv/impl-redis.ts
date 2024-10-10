@@ -1,4 +1,4 @@
-import { Err, Ok, TimeSpan, isErr } from 'gamezilla-app/@/core'
+import { Err, Ok, Sleep, TimeSpan, isErr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { Redis } from 'ioredis'
 import type { ILogger } from '../logger/interface'
@@ -10,6 +10,7 @@ export type Config = {
   t: 'redis'
   logger: ILogger
   redisUrl: string
+  simulateLatency: Sleep
 }
 
 let redis: Redis
@@ -20,8 +21,11 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
   await redis.ping()
 
+  const SIMULATE_LATENCY = TimeSpan.milliseconds(3)
+
   return {
     async get(key, parser) {
+      await config.simulateLatency(SIMULATE_LATENCY)
       try {
         const [queried, duration] = await withDuration(() => redis.get(key))
         logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
@@ -53,6 +57,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     },
 
     async getMany(keys, parser) {
+      await config.simulateLatency(SIMULATE_LATENCY)
       if (keys.length <= 0) {
         return Ok([])
       }
@@ -91,6 +96,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     },
 
     async set(key, value) {
+      await config.simulateLatency(SIMULATE_LATENCY)
       try {
         await redis.set(key, JSON.stringify(value))
 
@@ -102,6 +108,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     },
 
     async setMany(entries) {
+      await config.simulateLatency(SIMULATE_LATENCY)
       if (entries.length === 0) {
         return Ok(null)
       }
@@ -117,6 +124,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     },
 
     async zap(key) {
+      await config.simulateLatency(SIMULATE_LATENCY)
       try {
         await redis.del(key)
 

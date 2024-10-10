@@ -3,6 +3,7 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import type { IUserSessionDb } from './interface'
+import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 
 //
 //
@@ -26,11 +27,15 @@ export type Row = p.Infer<typeof Row>
 export type Config = {
   t: 'postgres'
   dbConnSql: IDbConnSql
+  logger: ILogger
 }
 
-export const UserSessionDb = ({ dbConnSql }: Config): IUserSessionDb => {
+export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb => {
+  const logger = Logger.prefix('user-session-db', config.logger)
+
   return {
     async findSessionIdsByUserId(userId: UserId) {
+      logger.debug(`findSessionIdsByUserId: userId=${userId}`)
       const queried = await dbConnSql.query(
         Row,
         'SELECT * FROM user_session WHERE ended_at IS NULL AND user_id = :user_id',
@@ -43,6 +48,7 @@ export const UserSessionDb = ({ dbConnSql }: Config): IUserSessionDb => {
     },
 
     async findUserIdBySessionId(sessionId: SessionId) {
+      logger.debug(`findUserIdBySessionId: sessionId=${sessionId}`)
       const queried = await dbConnSql.query(
         Row,
         'SELECT * FROM user_session WHERE ended_at IS NULL AND session_id = :session_id',
@@ -58,6 +64,7 @@ export const UserSessionDb = ({ dbConnSql }: Config): IUserSessionDb => {
 
     async insert({ sessionId, userId }) {
       const userSessionId = `user-session:${Uuid.generate()}`
+      logger.debug(`insert: userSessionId=${userSessionId} sessionId=${sessionId} userId=${userId}`)
 
       const queried = await dbConnSql.query(
         Row,
@@ -72,6 +79,7 @@ export const UserSessionDb = ({ dbConnSql }: Config): IUserSessionDb => {
     },
 
     async zapByUserId(userId) {
+      logger.debug(`zapByUserId: userId=${userId}`)
       const queried = await dbConnSql.query(
         Row,
         'UPDATE user_session SET ended_at = :ended_at WHERE user_id = :user_id',
@@ -84,6 +92,7 @@ export const UserSessionDb = ({ dbConnSql }: Config): IUserSessionDb => {
     },
 
     async zapBySessionId(sessionId) {
+      logger.debug(`zapBySessionId: sessionId=${sessionId}`)
       const queried = await dbConnSql.query(
         Row,
         'UPDATE user_session SET ended_at = :ended_at WHERE session_id = :session_id',

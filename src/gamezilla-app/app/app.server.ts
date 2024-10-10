@@ -1,4 +1,4 @@
-import { Posix, Sub, TimeSpan } from 'gamezilla-app/@/core'
+import { Posix, sleep, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { IServer, Server } from 'gamezilla-app/@/server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
@@ -26,9 +26,6 @@ import * as WireServer from './wire/wire.server'
 //
 //
 
-const sleep = (time: TimeSpan) =>
-  new Promise<null>((resolve) => setTimeout(() => resolve(null), TimeSpan.toMilliseconds(time)))
-
 export type Ctx = AppServerCtx & {
   transport: IServerTransport<{
     MsgToClient: MsgToClient
@@ -45,21 +42,11 @@ export type Ctx = AppServerCtx & {
 export const initCtx = async (): Promise<Ctx> => {
   const logger = Logger({ t: 'console' })
 
-  const simulateLatency = IS_PROD
-    ? () => {}
-    : async () => {
-        logger.info('SIMULATING LATENCY')
-        await sleep(TimeSpan.milliseconds(100 + Math.random() * 200))
-      }
+  const simulateLatency = IS_PROD ? sleep : async () => sleep(TimeSpan.milliseconds(2 + Math.random() * 10))
 
-  const dbConnSql = await DbConnSql({
-    t: 'postgres',
-    databaseUrl: DATABASE_URL,
-    logger,
-    simulateLatency
-  })
+  const dbConnSql = await DbConnSql({ t: 'postgres', databaseUrl: DATABASE_URL, logger, simulateLatency })
 
-  const dbConnKv = await DbConnKv({ t: 'redis', redisUrl: REDIS_URL, logger })
+  const dbConnKv = await DbConnKv({ t: 'redis', redisUrl: REDIS_URL, logger, simulateLatency })
 
   const sms = SMS({ t: 'twilio', logger })
 
@@ -81,8 +68,7 @@ export const initCtx = async (): Promise<Ctx> => {
           t: 'socket-io',
           codebaseVersionId: CODEBASE_VERSION_ID,
           server,
-          logger,
-          redisUrl: REDIS_URL
+          logger
         }
   )
 

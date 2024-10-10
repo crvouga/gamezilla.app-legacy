@@ -50,14 +50,15 @@ const Fixtures = async () => {
   const configs: Config[] = [
     {
       t: 'in-memory',
-      delay: async () => {}
+      simulateLatency: async () => {}
     }
   ]
 
   if (testEnv.t === 'integration') {
     configs.push({
       t: 'postgres',
-      dbConnSql: testEnv.dbConnSql
+      dbConnSql: testEnv.dbConnSql,
+      logger: Logger({ t: 'noop' })
     })
     configs.push({
       t: 'postgres-with-cache',

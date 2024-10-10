@@ -1,6 +1,7 @@
 import { Ok, TimeSpan } from 'gamezilla-app/@/core'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnKv } from './interface'
+import { Logger } from '../logger'
 
 export type Config = {
   dbConnKv: IDbConnKv
@@ -8,7 +9,8 @@ export type Config = {
   logger: ILogger
 }
 
-export const withThrottledWrites = ({ dbConnKv, throttle, logger }: Config): IDbConnKv => {
+export const withThrottledWrites = ({ dbConnKv, throttle, ...config }: Config): IDbConnKv => {
+  const logger = Logger.prefix('with-throttled-writes', config.logger)
   const throttleMs = TimeSpan.toMilliseconds(throttle)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
   const lastValues = new Map<string, unknown>()
