@@ -1,18 +1,16 @@
-import { Parser } from 'gamezilla-app/@/core/parser/parser'
 import { Redis } from 'ioredis'
 import { ILogger } from '../logger'
 import { IPubSubTopicBased } from './interface'
 
-export type Config<T> = {
+export type Config = {
   t: 'redis'
-  parser: Parser<T>
   redisUrl: string
   logger: ILogger
 }
 
 const MAX_MSG_LENGTH = 100
 let publisher: Redis
-export const PubSubTopicBased = async <TMsg>(config: Config<TMsg>): Promise<IPubSubTopicBased<TMsg>> => {
+export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBased> => {
   publisher ??= new Redis(config.redisUrl)
   publisher.on('error', (err) => {
     config.logger.error(`publisher error: ${err}`)
@@ -36,20 +34,11 @@ export const PubSubTopicBased = async <TMsg>(config: Config<TMsg>): Promise<IPub
       })
       await subscriber.subscribe(topic)
       subscribers.set(id, subscriber)
-      subscriber.on('message', (subscribedTopic, msg) => {
-        if (subscribedTopic === topic) {
-          const parsed = config.parser.parse(JSON.parse(msg))
-          if (parsed.t === 'ok') {
-            config.logger.debug(`sub: topic=${topic} msg=${JSON.stringify(parsed.value).slice(0, MAX_MSG_LENGTH)}`)
-            callback(parsed.value)
-          } else {
-            config.logger.error(`sub: topic=${topic} msg=${JSON.stringify(parsed.error)}`)
-          }
-        }
+      subscriber.on('message', (_subscribedTopic, msg) => {
+        config.logger.debug(`sub: topic=${topic} msg=${JSON.stringify(msg).slice(0, MAX_MSG_LENGTH)}`)
+        callback(msg)
       })
-
       config.logger.debug(`sub: topic=${topic}`)
-
       return async () => {
         await subscriber.unsubscribe(topic)
         subscribers.delete(id)

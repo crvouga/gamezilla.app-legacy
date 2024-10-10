@@ -3,18 +3,18 @@ import * as ImplPostgres from './impl-postgres'
 import * as ImplRedis from './impl-redis'
 import { IPubSubTopicBased } from './interface'
 
-export type Config<T> = ImplInMemory.Config<T> | ImplPostgres.Config<T> | ImplRedis.Config<T>
+export type Config = ImplInMemory.Config | ImplPostgres.Config | ImplRedis.Config
 
-export const PubSubTopicBased = async <TMsg>(config: Config<TMsg>): Promise<IPubSubTopicBased<TMsg>> => {
+export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBased> => {
   switch (config.t) {
     case 'in-memory': {
-      return ImplInMemory.PubSubTopicBased<TMsg>(config)
+      return ImplInMemory.PubSubTopicBased(config)
     }
     case 'postgres': {
-      return ImplPostgres.PubSubTopicBased<TMsg>(config)
+      return ImplPostgres.PubSubTopicBased(config)
     }
     case 'redis': {
-      return ImplRedis.PubSubTopicBased<TMsg>(config)
+      return ImplRedis.PubSubTopicBased(config)
     }
   }
 }

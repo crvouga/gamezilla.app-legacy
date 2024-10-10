@@ -1,12 +1,11 @@
 import { describe, expect, mock, test } from 'bun:test'
-import { Result } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { REDIS_URL } from 'gamezilla-app/config-private'
 import { Logger } from '../logger'
 import { AppServerTestEnv } from '../server-test-env'
 import { Config, PubSubTopicBased } from './impl'
 
-const Fixture = async <T>(config: Config<T>) => {
+const Fixture = async (config: Config) => {
   const pubSub = await PubSubTopicBased(config)
   return {
     pubSub
@@ -28,12 +27,14 @@ const randomMyEvent = (): MyEvent => ({
   })
 })
 
+const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
+// const decode = (str: string) => Result.withDefault(MyEvent.parse(JSON.parse(str)), null)
+
 const Fixtures = async () => {
   const testEnv = await AppServerTestEnv()
-  const configs: Config<MyEvent>[] = [
+  const configs: Config[] = [
     {
-      t: 'in-memory',
-      parser: MyEvent
+      t: 'in-memory'
     }
   ]
 
@@ -41,13 +42,10 @@ const Fixtures = async () => {
     configs.push({
       t: 'postgres',
       dbConnSql: testEnv.dbConnSql,
-      decode: (msg) => Result.withDefault(MyEvent.parse(JSON.parse(msg)), null),
-      encode: (msg) => JSON.stringify(msg),
       logger: Logger({ t: 'noop' })
     })
     configs.push({
       t: 'redis',
-      parser: MyEvent,
       redisUrl: REDIS_URL,
       logger: Logger({ t: 'console' })
     })
@@ -63,7 +61,7 @@ describe(import.meta.file, () => {
       const topic = Math.random().toString()
       const sub = mock(() => {})
       await f.pubSub.sub(topic, sub)
-      await f.pubSub.pub(topic, myEvent)
+      await f.pubSub.pub(topic, encode(myEvent))
       expect(sub).toHaveBeenCalledTimes(1)
     }
   })
@@ -73,7 +71,7 @@ describe(import.meta.file, () => {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
       const sub = mock(() => {})
-      await f.pubSub.pub(topic, myEvent)
+      await f.pubSub.pub(topic, encode(myEvent))
       await f.pubSub.sub(topic, sub)
       expect(sub).toHaveBeenCalledTimes(0)
     }
@@ -85,10 +83,13 @@ describe(import.meta.file, () => {
       const topic = Math.random().toString()
       const sub = mock(() => {})
       const unsub = await f.pubSub.sub(topic, sub)
-      await f.pubSub.pub(topic, myEvent)
-      expect(sub).toHaveBeenCalledWith(myEvent)
+      expect(sub).toHaveBeenCalledTimes(0)
+      await f.pubSub.pub(topic, encode(myEvent))
+      expect(sub).toHaveBeenCalledTimes(1)
       await unsub()
-      await f.pubSub.pub(topic, myEvent)
+      await f.pubSub.pub(topic, encode(myEvent))
+      await f.pubSub.pub(topic, encode(myEvent))
+      await f.pubSub.pub(topic, encode(myEvent))
       expect(sub).toHaveBeenCalledTimes(1)
     }
   })
@@ -109,7 +110,7 @@ describe(import.meta.file, () => {
 
       await f.pubSub.unsub(topic)
 
-      await f.pubSub.pub(topic, myEvent)
+      await f.pubSub.pub(topic, encode(myEvent))
 
       expect(sub1).toHaveBeenCalledTimes(0)
       expect(sub2).toHaveBeenCalledTimes(0)
@@ -125,11 +126,11 @@ describe(import.meta.file, () => {
       for (let i = 0; i < 10; i++) {
         const topic = Math.random().toString()
         await f.pubSub.sub(topic, () => {})
-        await f.pubSub.pub(topic, myEvent)
+        await f.pubSub.pub(topic, encode(myEvent))
       }
       expect(sub).toHaveBeenCalledTimes(0)
       await f.pubSub.sub(topic, sub)
-      await f.pubSub.pub(topic, myEvent)
+      await f.pubSub.pub(topic, encode(myEvent))
       expect(sub).toHaveBeenCalledTimes(1)
     }
   })

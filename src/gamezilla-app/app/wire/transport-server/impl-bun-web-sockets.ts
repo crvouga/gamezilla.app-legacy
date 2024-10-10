@@ -4,6 +4,7 @@ import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { PubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
+import { REDIS_URL } from 'gamezilla-app/config-private'
 import {
   SESSION_ID_COOKIE_NAME,
   toSetSessionCookie,
@@ -11,8 +12,6 @@ import {
   type MsgServerToMsgClient
 } from '../transport.core'
 import { initServerTransport, type IServerTransport } from './interface'
-import { p } from 'gamezilla-app/@/core/parser'
-import { REDIS_URL } from 'gamezilla-app/config-private'
 
 type ServerWebSocketData = {
   clientId: ClientId
@@ -57,10 +56,9 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   const unlistens = new Map<ClientId, () => void>()
   const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
 
-  const pubSub = await PubSubTopicBased<MsgServerToMsgClient<MsgToClient>>({
+  const pubSub = await PubSubTopicBased({
     t: 'redis',
     logger: config.logger,
-    parser: p.any,
     redisUrl: REDIS_URL
   })
 
@@ -72,7 +70,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     unlistens.set(
       ws.data.clientId,
       await pubSub.sub(ws.data.clientId, (msg) => {
-        send(ws, msg)
+        send(ws, JSON.parse(msg))
       })
     )
   }
@@ -204,7 +202,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
   const sendWithPub = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
     send(ws, msg)
-    pubSub.pub(ws.data.clientId, msg)
+    pubSub.pub(ws.data.clientId, JSON.stringify(msg))
   }
 
   transport.toClientBroadcast.sub((msgs) => {
