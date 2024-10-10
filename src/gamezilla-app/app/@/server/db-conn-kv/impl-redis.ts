@@ -22,7 +22,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     async get(key, parser) {
       try {
         const [queried, duration] = await withDuration(() => redis.get(key))
-        config.logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
+        config.logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
 
         if (!queried) {
           return Ok(null)
@@ -57,7 +57,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
       try {
         const [queried, duration] = await withDuration(() => redis.mget(keys))
 
-        config.logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms getMany: keys=${keys.join(', ')}`)
+        config.logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms getMany: keys=${keys.join(', ')}`)
 
         const rows: p.Infer<typeof parser>[] = []
 

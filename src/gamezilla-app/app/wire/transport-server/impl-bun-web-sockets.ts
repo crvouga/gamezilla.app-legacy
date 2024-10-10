@@ -11,6 +11,8 @@ import {
   type MsgServerToMsgClient
 } from '../transport.core'
 import { initServerTransport, type IServerTransport } from './interface'
+import { p } from 'gamezilla-app/@/core/parser'
+import { REDIS_URL } from 'gamezilla-app/config-private'
 
 type ServerWebSocketData = {
   clientId: ClientId
@@ -25,12 +27,14 @@ export type Config = {
   logger: ILogger
 }
 
-export const ServerTransport = <MsgToServer, MsgToClient>(
+export const ServerTransport = async <MsgToServer, MsgToClient>(
   config: Config
-): IServerTransport<{
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-}> => {
+): Promise<
+  IServerTransport<{
+    MsgToClient: MsgToClient
+    MsgToServer: MsgToServer
+  }>
+> => {
   //
   //
   //
@@ -53,12 +57,11 @@ export const ServerTransport = <MsgToServer, MsgToClient>(
   const unlistens = new Map<ClientId, () => void>()
   const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
 
-  const pubSub = PubSubTopicBased<MsgServerToMsgClient<MsgToClient>>({
-    t: 'postgres',
-    dbConnSql: config.dbConnSql,
-    decode: (msg) => JSON.parse(msg),
-    encode: (msg) => JSON.stringify(msg),
-    logger: config.logger
+  const pubSub = await PubSubTopicBased<MsgServerToMsgClient<MsgToClient>>({
+    t: 'redis',
+    logger: config.logger,
+    parser: p.any,
+    redisUrl: REDIS_URL
   })
 
   const addClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {

@@ -1,9 +1,10 @@
 import { describe, expect, mock, test } from 'bun:test'
-import { p } from 'gamezilla-app/@/core/parser'
-import { Config, PubSubTopicBased } from './impl'
-import { AppServerTestEnv } from '../server-test-env'
 import { Result } from 'gamezilla-app/@/core'
+import { p } from 'gamezilla-app/@/core/parser'
+import { REDIS_URL } from 'gamezilla-app/config-private'
 import { Logger } from '../logger'
+import { AppServerTestEnv } from '../server-test-env'
+import { Config, PubSubTopicBased } from './impl'
 
 const Fixture = async <T>(config: Config<T>) => {
   const pubSub = await PubSubTopicBased(config)
@@ -43,6 +44,12 @@ const Fixtures = async () => {
       decode: (msg) => Result.withDefault(MyEvent.parse(JSON.parse(msg)), null),
       encode: (msg) => JSON.stringify(msg),
       logger: Logger({ t: 'noop' })
+    })
+    configs.push({
+      t: 'redis',
+      parser: MyEvent,
+      redisUrl: REDIS_URL,
+      logger: Logger({ t: 'console' })
     })
   }
 
