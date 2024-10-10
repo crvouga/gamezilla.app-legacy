@@ -17,22 +17,18 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
   const logger = Logger.prefix('spaces-core-server', config.logger)
   const dbConnKv = await pipe(
     config.dbConnKv,
-    (dbConnKv) =>
-      true
-        ? DbConnKv.withThrottledWrites({
-            logger,
-            dbConnKv,
-            throttle: TimeSpan.seconds(10)
-          })
-        : dbConnKv,
     async (dbConnKv) =>
-      true
-        ? DbConnKv.withCache({
-            logger,
-            source: dbConnKv,
-            cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
-          })
-        : dbConnKv,
+      DbConnKv.withThrottledWrites({
+        logger,
+        dbConnKv,
+        throttle: TimeSpan.seconds(10)
+      }),
+    async (dbConnKv) =>
+      DbConnKv.withCache({
+        logger,
+        source: await dbConnKv,
+        cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
+      }),
     async (dbConnKv) =>
       DbConnKv.withReducedParsing({
         logger,
