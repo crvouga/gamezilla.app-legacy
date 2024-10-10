@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'bun:test'
+import { unwrap } from 'gamezilla-app/@/core'
+import { SessionId, UserId } from 'gamezilla-app/app/@/data'
+import { Logger } from 'gamezilla-app/app/@/server/logger'
+import { PubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { Config, UserSessionDb } from './impl'
-import { SessionId, UserId } from 'gamezilla-app/app/@/data'
-import { unwrap } from 'gamezilla-app/@/core'
-import { Logger } from 'gamezilla-app/app/@/server/logger'
-import { PubSub } from 'gamezilla-app/app/@/server/pub-sub'
 
 const Fixture = async (config: Config) => {
   const userSessionDb = await UserSessionDb(config)
@@ -60,17 +60,12 @@ const Fixtures = async () => {
       dbConnSql: testEnv.dbConnSql,
       logger: Logger({ t: 'noop' })
     })
+
     configs.push({
       t: 'postgres-with-cache',
       dbConnKv: testEnv.dbConnKv,
       dbConnSql: testEnv.dbConnSql,
-      logger: Logger({ t: 'noop' })
-    })
-    configs.push({
-      t: 'postgres-with-fast-cache',
-      dbConnKv: testEnv.dbConnKv,
-      dbConnSql: testEnv.dbConnSql,
-      pubSub: await PubSub({ t: 'in-memory' }),
+      pubSub: await PubSubTopicBased({ t: 'in-memory' }),
       logger: Logger({ t: 'noop' })
     })
   }

@@ -37,7 +37,8 @@ const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
         t: 'postgres-with-cache',
         dbConnSql: testEnv.dbConnSql,
         dbConnKv: testEnv.dbConnKv,
-        logger: f.ctx.logger
+        logger: f.ctx.logger,
+        pubSub: f.ctx.pubSub
       })
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',
