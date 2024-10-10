@@ -22,7 +22,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
         ? DbConnKv.withThrottledWrites({
             logger,
             dbConnKv,
-            throttle: TimeSpan.seconds(5)
+            throttle: TimeSpan.seconds(10)
           })
         : dbConnKv,
     async (dbConnKv) =>
@@ -30,7 +30,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
         ? DbConnKv.withCache({
             logger,
             source: dbConnKv,
-            cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
+            cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
           })
         : dbConnKv,
     async (dbConnKv) =>
