@@ -18,7 +18,7 @@ export const withCache = (config: Config): IDbConnKv => {
       const cacheHit = Result.unwrapOr(cacheGot, null)
       if (cacheHit) {
         const end = process.hrtime.bigint()
-        const durationInMicroseconds = (end - start) / BigInt(1000)
+        const durationInMicroseconds = Number((end - start) / BigInt(1000))
         logger.debug(`cache hit duration=${durationInMicroseconds}µs get: key=${key}`)
         return cacheGot
       }
@@ -29,8 +29,8 @@ export const withCache = (config: Config): IDbConnKv => {
         await config.cache.set(key, sourceHit)
       }
       const end = process.hrtime.bigint()
-      const durationInMicroseconds = (end - start) / BigInt(1000)
-      logger.debug(`duration=${durationInMicroseconds}µs get: key=${key}`)
+      const durationInMicroseconds = Number((end - start) / BigInt(1000))
+      logger.debug(`source hit duration=${durationInMicroseconds}µs get: key=${key}`)
       return sourceGot
     },
     async getMany(keys, parser) {
@@ -40,7 +40,7 @@ export const withCache = (config: Config): IDbConnKv => {
       const cacheHit = Result.unwrapOr(cacheGot, null)
       if (cacheHit) {
         const end = process.hrtime.bigint()
-        const durationInMicroseconds = (end - start) / BigInt(1000)
+        const durationInMicroseconds = Number((end - start) / BigInt(1000))
         const keysString = keys.join(', ')
         logger.debug(`cache hit duration=${durationInMicroseconds}µs getMany: keys=${keysString}`)
         return cacheGot
@@ -52,9 +52,9 @@ export const withCache = (config: Config): IDbConnKv => {
         await config.cache.setMany(sourceHit.map((value, i) => [keys[i], value] as [string, unknown]))
       }
       const end = process.hrtime.bigint()
-      const durationInMicroseconds = (end - start) / BigInt(1000)
+      const durationInMicroseconds = Number((end - start) / BigInt(1000))
       const keyString = keys.join(', ')
-      logger.debug(`duration=${durationInMicroseconds}µs getMany: keys=${keyString}`)
+      logger.debug(`source hit duration=${durationInMicroseconds}µs getMany: keys=${keyString}`)
       return sourceGot
     },
     async set(key, value) {
