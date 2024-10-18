@@ -1,1 +1,1 @@
-export * as ScreenOpenPackTypes from './screen-open-pack.types'
+export * as ScreenOpenPackTypes from './types'

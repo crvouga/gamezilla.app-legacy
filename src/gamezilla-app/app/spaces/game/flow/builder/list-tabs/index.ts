@@ -1,1 +1,1 @@
-export * as ListTabs from './list-tabs.types'
+export * as ListTabs from './types'

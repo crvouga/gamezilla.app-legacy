@@ -7,7 +7,7 @@ import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { ViewBottomButtonBarAction } from '../../../../@/game'
 import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { FlowEdit } from '../../../@/flow/flow-edit'
-import type { ClientModule, ModelClient, MsgClient, MsgCore } from '../../builder.types'
+import type { ClientModule, ModelClient, MsgClient, MsgCore } from '../../types'
 
 //
 //

@@ -13,9 +13,9 @@ import { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import type { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
 import { FlowPuzzleListTypes } from '../../../@/puzzle/puzzle-list'
 import { samples } from '../../../@/flow/flow-variant/flow-grid/flow-grid-samples'
-import { BuilderClient } from '../../builder.client'
-import { BuilderCore } from '../../builder.core'
-import * as BuilderTypes from '../../builder.types'
+import { BuilderClient } from '../../client'
+import { BuilderCore } from '../../core'
+import * as BuilderTypes from '../../types'
 
 type Input = {
   ctx?: FlowClientCtx

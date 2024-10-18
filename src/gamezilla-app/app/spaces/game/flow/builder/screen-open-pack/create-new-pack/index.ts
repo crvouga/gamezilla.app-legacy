@@ -1,1 +1,1 @@
-export * as CreateNewPackTypes from './create-new-pack.types'
+export * as CreateNewPackTypes from './types'

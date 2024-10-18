@@ -1,6 +1,6 @@
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { WithEventMeta } from '../../@/event'
-import { BuilderCore } from './builder/builder.core'
+import { BuilderCore } from './builder/core'
 import type { ModelCore, MsgCore } from './flow.types'
 import { PlayCore } from './play/play.core'
 

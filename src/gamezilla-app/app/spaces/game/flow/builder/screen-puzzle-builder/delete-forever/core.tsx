@@ -1,4 +1,4 @@
-import type { UpdateCore } from '../../builder.types'
+import type { UpdateCore } from '../../types'
 
 const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
   switch (msgCore.t) {

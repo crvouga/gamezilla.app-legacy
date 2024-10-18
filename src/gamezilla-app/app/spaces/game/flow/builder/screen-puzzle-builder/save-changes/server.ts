@@ -1,7 +1,7 @@
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { Result } from 'gamezilla-app/@/core'
-import type { ServerModule } from '../../builder.types'
+import type { ServerModule } from '../../types'
 import type { MsgCore } from './types'
 
 const update: ServerModule['update'] = async (input) => {

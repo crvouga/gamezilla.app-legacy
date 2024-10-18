@@ -1,7 +1,7 @@
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
-import type { ModelCore, MsgCore } from '../../builder.types'
+import type { ModelCore, MsgCore } from '../../types'
 
 const updateCore = ({ modelCore, msgCore }: { ctx: SpaceCtx; msgCore: MsgCore; modelCore: ModelCore }): ModelCore => {
   switch (msgCore.t) {

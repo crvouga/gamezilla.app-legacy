@@ -9,10 +9,10 @@ import { FlowVariantUI } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
-import * as BuilderTypes from '../builder.types'
+import * as BuilderTypes from '../types'
 import { toFlow, toStatus } from './core'
 import { DeleteForeverClient } from './delete-forever/client'
-import { EditPuzzleNameClient } from './edit-puzzle-name/edit-puzzle-name.client'
+import { EditPuzzleNameClient } from './edit-puzzle-name/client'
 import { SaveChangesClient } from './save-changes/client'
 
 //

@@ -13,7 +13,7 @@ import {
   testFlowClientCtx
 } from '../@/testing/client'
 import { deriveModelCore } from '../@/testing/game'
-import type { MsgClient } from '../builder.types'
+import type { MsgClient } from '../types'
 import { ScreenPuzzleBuilderClient } from './client'
 
 const Fixture = async () => {

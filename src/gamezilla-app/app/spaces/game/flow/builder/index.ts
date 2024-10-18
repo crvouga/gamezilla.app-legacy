@@ -1,1 +1,1 @@
-export * as BuilderTypes from './builder.types'
+export * as BuilderTypes from './types'

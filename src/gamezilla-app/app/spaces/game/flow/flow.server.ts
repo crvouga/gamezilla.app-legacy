@@ -8,7 +8,7 @@ import { FlowPackListServer } from './@/pack/pack-list'
 import { FlowPackPuzzlesGridServer } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.server'
 import { FlowPuzzleDb } from './@/puzzle/puzzle-db'
 import { FlowServerCtx } from './@/flow-server-ctx'
-import { BuilderServer } from './builder/builder.server'
+import { BuilderServer } from './builder/server'
 import type { ServerModule } from './flow.types'
 import { PlayServer } from './play/play.server'
 
