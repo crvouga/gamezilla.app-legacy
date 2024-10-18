@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
     expect(after).toEqual(Ok(f.spaceA))
   })
 
-  it('should be able to list spaces', async () => {
+  test('list spaces', async () => {
     const f = await Fixture()
 
     const before = unwrap(
@@ -110,5 +110,16 @@ describe(import.meta.file, () => {
     const after = unwrap(await f.spacesCoreServer.get(f.spaceId)) ?? SpaceCore.init
     expect(SpaceCore.deriveState(before).type).toEqual('initial')
     expect(SpaceCore.deriveState(after).type).toEqual('started')
+  })
+
+  test("multiple spaces don't collide", async () => {
+    const f1 = await Fixture()
+    const f2 = await Fixture()
+    await f1.spacesCoreServer.upsert(f1.spaceA)
+    await f2.spacesCoreServer.upsert(f2.spaceA)
+    const after1 = unwrap(await f1.spacesCoreServer.get(f1.spaceId))
+    const after2 = unwrap(await f2.spacesCoreServer.get(f2.spaceId))
+    expect(after1).toEqual(f1.spaceA)
+    expect(after2).toEqual(f2.spaceA)
   })
 })
