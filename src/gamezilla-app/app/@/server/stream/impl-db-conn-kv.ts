@@ -3,6 +3,7 @@ import { Parser } from 'gamezilla-app/@/core/parser/parser'
 import { DbConnKv, IDbConnKv } from '../db-conn-kv'
 import { IStream } from './interface'
 import { p } from 'gamezilla-app/@/core/parser'
+import { EventId } from './event-id'
 
 export type Config<T> = {
   t: 'db-conn-kv'
@@ -11,23 +12,27 @@ export type Config<T> = {
 }
 
 export const Stream = <T>(config: Config<T>): IStream<T> => {
-  const eventsByStreamId = DbConnKv.withNamespace(
+  const eventIdsByStreamId = DbConnKv.withNamespace(
     config.dbConnKv,
-    ['stream', 'events-by-stream-id'],
-    p.arr(config.parser)
+    ['stream', 'event-ids-by-stream-id'],
+    p.arr(EventId.parser)
   )
+  const eventsById = DbConnKv.withNamespace(config.dbConnKv, ['stream', 'events-by-id'], p.arr(config.parser))
   return {
-    async append(streamId, event) {
-      const events = Result.unwrapOr(await eventsByStreamId.get(streamId), null) ?? []
-      const eventsNew = [...events, event]
-      await eventsByStreamId.set(streamId, eventsNew)
+    async append(streamId, eventId, event) {
+      const eventIds = Result.unwrapOr(await eventIdsByStreamId.get(streamId), null) ?? []
+      const eventIdsNew = [...eventIds, eventId]
+      await eventIdsByStreamId.set(streamId, eventIdsNew)
+      const events = Result.unwrapOr(await eventsById.get(eventId), null) ?? []
+      await eventsById.set(eventId, [...events, event])
       return Ok(null)
     },
-    async startingFrom(streamId, fromId) {
-      const events = Result.unwrapOr(await eventsByStreamId.get(streamId), null) ?? []
-      const fromIndex = fromId ? events.findIndex((e) => e === fromId) : 0
-      const sliced = events.slice(fromIndex)
-      return Ok(sliced)
+    async startingFrom(streamId, eventId) {
+      const eventIds = Result.unwrapOr(await eventIdsByStreamId.get(streamId), null) ?? []
+      const index = eventId ? eventIds.indexOf(eventId) : -1
+      const sliced = index === -1 ? eventIds : eventIds.slice(index)
+      const slicedEvents = Result.unwrapOr(await eventsById.getMany(sliced), []).flat()
+      return Ok(slicedEvents)
     }
   }
 }
