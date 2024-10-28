@@ -28,7 +28,7 @@ const View: ClientModule['View'] = (input) => {
   )
 }
 
-const ViewScreen: ClientModule['View'] = (input) => {
+const ViewScreen: typeof View = (input) => {
   switch (input.modelCore.screen.t) {
     case 'screen-select-puzzle': {
       return <ScreenSelectPuzzleClient.View {...input} />

@@ -5,8 +5,18 @@ import { FlowPack } from '../../@/pack/pack'
 import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
 import { FlowPackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
 import type { ClientModule } from '../play.types'
+import { andThen } from '../../../@/architecture/game-client-v2'
 
 const update: ClientModule['update'] = (input) => {
+  return andThen(
+    { model: input.model },
+    (model) => updateMain({ ...input, model }),
+    (model) => updateLoadPuzzles({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model })
+  )
+}
+
+const updateLoadPuzzles: typeof update = (input) => {
   if (
     input.msgEvt?.t === 'space/synced' ||
     input.msgCore?.t === 'user-clicked-open-pack-list-item' ||
@@ -15,9 +25,7 @@ const update: ClientModule['update'] = (input) => {
     const pack: FlowPack | null = 'flowPack' in input.modelCore.screen ? input.modelCore.screen.flowPack : null
 
     if (!pack) {
-      return {
-        model: input.model
-      }
+      return { model: input.model }
     }
 
     return {
@@ -26,6 +34,12 @@ const update: ClientModule['update'] = (input) => {
     }
   }
 
+  return {
+    model: input.model
+  }
+}
+
+const updateFromMsg: typeof update = (input) => {
   switch (input.msg?.t) {
     case 'user-clicked-exit-pack-button':
     case 'user-clicked-open-puzzle-grid-item': {
@@ -36,6 +50,12 @@ const update: ClientModule['update'] = (input) => {
     }
   }
 
+  return {
+    model: input.model
+  }
+}
+
+const updateMain: typeof update = (input) => {
   switch (input.msgCore?.t) {
     case 'user-clicked-exit-pack-button': {
       return {
@@ -43,6 +63,7 @@ const update: ClientModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.navBackwardMin)]
       }
     }
+
     case 'user-clicked-open-puzzle-grid-item': {
       return {
         model: input.model,
@@ -84,6 +105,10 @@ const View: ClientModule['View'] = (input) => {
           }
           puzzleIds={input.modelCore.screen.flowPack.puzzleIds}
           renderCell={(inputCell) => {
+            // if (FlowPackPuzzlesGridClient.isLoading(input.ctx.flowPackPuzzleGrid)) {
+            //   return <FlowPackPuzzlesGridUI.ViewLoadingCell />
+            // }
+
             if (!inputCell.puzzleId) {
               return <FlowPackPuzzlesGridUI.ViewEmptyCell />
             }
@@ -91,10 +116,6 @@ const View: ClientModule['View'] = (input) => {
             const puzzle = input.ctx.flowPuzzles[inputCell.puzzleId]
 
             if (!puzzle) {
-              if (FlowPackPuzzlesGridClient.isLoading(input.ctx.flowPackPuzzleGrid)) {
-                return <FlowPackPuzzlesGridUI.ViewLoadingCell />
-              }
-
               return (
                 <FlowPackPuzzlesGridUI.ViewErrorCell
                   index={inputCell.index}
