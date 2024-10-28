@@ -1,5 +1,5 @@
 import type { CoreModule } from './play.types'
-import { ScreenPlayPuzzleCore } from './screen-play-puzzle/screen-play-puzzle.core'
+import { ScreenPlayPuzzleCore } from './screen-play-puzzle/core'
 
 const initCore: CoreModule['initCore'] = () => {
   return {

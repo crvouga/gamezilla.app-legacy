@@ -1,8 +1,8 @@
 import { describe, test } from 'bun:test'
 import { FixtureFlowPlayServer } from '../@/fixture.server'
 import { GameServerModule } from '../../../@/architecture/game-server-v2'
-import { ScreenPlayPuzzleServer } from './screen-play-puzzle.server'
-import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
+import { ScreenPlayPuzzleServer } from './server'
+import { ScreenPlayPuzzleCore } from './core'
 
 const Fixture = async () => {
   const f = await FixtureFlowPlayServer()

@@ -4,8 +4,8 @@ import { Flow, type FlowVariant } from '../../@/flow'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGrid, FlowGridShorthand } from '../../@/flow/flow-variant/flow-grid'
 import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture.core'
-import { ScreenPlayPuzzleCore } from './screen-play-puzzle.core'
-import type { MsgCore } from './screen-play-puzzle.types'
+import { ScreenPlayPuzzleCore } from './core'
+import type { MsgCore } from './types'
 
 const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await ScreenPuzzlePlayCoreChildFixture(input)
