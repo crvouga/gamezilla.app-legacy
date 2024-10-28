@@ -9,6 +9,7 @@ export const translations: Text = {
   'wire.offline': '오프라인',
   'wire.online': '온라인',
   'wire.try-reconnect': '재연결 시도',
+  'auth.continue-as-guest.errored': '시도하는 동안 오류가 발생했습니다',
   'auth.logout': '로그아웃',
   'auth.logged-in-as-guest': '손님으로 로그인됨',
   'auth.logged-in-with-phone': '전화로 로그인됨',

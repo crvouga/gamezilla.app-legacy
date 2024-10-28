@@ -9,6 +9,7 @@ export const translations: Text = {
   'wire.offline': 'Desconectado',
   'wire.online': 'Conectado',
   'wire.try-reconnect': 'Intentar reconectar',
+  'auth.continue-as-guest.errored': 'Se produjo un error al intentar',
   'auth.logout': 'Cerrar sesión',
   'auth.logged-in-as-guest': 'Conectado como invitado',
   'auth.logged-in-with-phone': 'Conectado con el teléfono',

@@ -9,6 +9,7 @@ export const translations: Text = {
   'wire.offline': 'Offline',
   'wire.online': 'Online',
   'wire.try-reconnect': 'Try reconnect',
+  'auth.continue-as-guest.errored': 'An error occurred while attempting',
   'auth.logout': 'Logout',
   'auth.logged-in-as-guest': 'Logged in as a guest',
   'auth.logged-in-with-phone': 'Logged in with phone',

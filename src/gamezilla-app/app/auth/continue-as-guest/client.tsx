@@ -1,5 +1,5 @@
-import { RequestResponse, isRequesting, NotAsked } from 'gamezilla-app/@/core'
-import { APP_SOUND, playSound, sendToServer } from 'gamezilla-app/app/@/client'
+import { RequestResponse, isRequesting, NotAsked, isErr } from 'gamezilla-app/@/core'
+import { APP_SOUND, playSound, sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { Button, IconUserCircle } from 'gamezilla-app/app/@/ui'
 import type { ClientModule } from '../auth.types'
 import type { ModelClient } from './types'
@@ -32,7 +32,8 @@ const update: ClientModule['update'] = (input) => {
         model: {
           ...input.model,
           guestRequest: RequestResponse.response(input.model.guestRequest, input.ctx.now, input.msgServer.result)
-        }
+        },
+        msgCmd: isErr(input.msgServer.result) ? showErrSm(input.ctx.t('auth.continue-as-guest.errored')) : []
       }
     }
   }
