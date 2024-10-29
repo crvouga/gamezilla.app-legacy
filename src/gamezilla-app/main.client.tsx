@@ -11,6 +11,24 @@ import {
   VDOM_IMPL
 } from 'gamezilla-app/config-public'
 
+declare global {
+  interface Window {
+    toggleDebugger: () => void
+  }
+}
+
+const DEBUG_KEY = 'debug'
+
+window.toggleDebugger = () => {
+  if (localStorage.getItem(DEBUG_KEY)) {
+    localStorage.removeItem(DEBUG_KEY)
+  } else {
+    localStorage.setItem(DEBUG_KEY, 'true')
+  }
+
+  window.location.reload()
+}
+
 const main = async () => {
   const deps = await AppClient.initDeps({
     codebaseVersionId: CODEBASE_VERSION_ID,
@@ -39,7 +57,7 @@ const main = async () => {
 
     crash: (input) => console.error('Crash!', input.error),
 
-    debugger: localStorage.getItem('debug') ? DebuggerReduxDevTools : undefined
+    debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined
   })
 
   await deps.transport.start()
