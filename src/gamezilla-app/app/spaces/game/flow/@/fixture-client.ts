@@ -13,11 +13,11 @@ export const FixtureFlowClient = async () => {
   const f = await FixtureSpaceClient()
   const ctx: FlowClientCtx = {
     ...f.ctx,
-    flowPacks: {},
-    flowPuzzles: {},
-    flowPuzzleList: FlowPuzzleListTypes.initClient,
-    flowPackList: FlowPackListTypes.initClient,
-    flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
+    packs: {},
+    puzzles: {},
+    puzzleList: FlowPuzzleListTypes.initClient,
+    packList: FlowPackListTypes.initClient,
+    packPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
   }
   type Input = {
     ctx?: FlowClientCtx | null

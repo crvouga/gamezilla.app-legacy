@@ -8,13 +8,13 @@ import type { FlowPuzzleId } from './puzzle/puzzle-id'
 import { FlowPuzzleListTypes } from './puzzle/puzzle-list'
 
 export type FlowClientCtx = SpaceClientCtx & {
-  flowPacks: {
-    [flowPackId: FlowPackId]: FlowPack
+  packs: {
+    [id: FlowPackId]: FlowPack
   }
-  flowPuzzles: {
-    [flowPuzzleId: FlowPuzzleId]: FlowPuzzle
+  puzzles: {
+    [id: FlowPuzzleId]: FlowPuzzle
   }
-  flowPuzzleList: FlowPuzzleListTypes.ModelClient
-  flowPackList: FlowPackListTypes.ModelClient
-  flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
+  puzzleList: FlowPuzzleListTypes.ModelClient
+  packList: FlowPackListTypes.ModelClient
+  packPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
 }

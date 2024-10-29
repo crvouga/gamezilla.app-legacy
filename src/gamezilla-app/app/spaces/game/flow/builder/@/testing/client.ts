@@ -90,11 +90,11 @@ export const FixtureFlowBuilderClient = async () => {
   const modelCore = BuilderCore.initCore({ ctx: f.ctx })
   const ctx: FlowClientCtx = {
     ...f.ctx,
-    flowPuzzles: {},
-    flowPacks: {},
-    flowPuzzleList: FlowPuzzleListTypes.initClient,
-    flowPackList: FlowPackListTypes.initClient,
-    flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
+    puzzles: {},
+    packs: {},
+    puzzleList: FlowPuzzleListTypes.initClient,
+    packList: FlowPackListTypes.initClient,
+    packPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
   }
   const init = {
     ctx,
@@ -120,11 +120,11 @@ export const initial = {
 export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
   return {
     ...(await testSpaceClientCtx()),
-    flowPacks: {},
-    flowPuzzles: {},
-    flowPuzzleList: FlowPuzzleListTypes.initClient,
-    flowPackList: FlowPackListTypes.initClient,
-    flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
+    packs: {},
+    puzzles: {},
+    puzzleList: FlowPuzzleListTypes.initClient,
+    packList: FlowPackListTypes.initClient,
+    packPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
   }
 }
 

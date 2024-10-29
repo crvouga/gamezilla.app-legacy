@@ -105,15 +105,15 @@ const View: ClientModule['View'] = (input) => {
           }
           puzzleIds={input.modelCore.screen.flowPack.puzzleIds}
           renderCell={(inputCell) => {
-            // if (FlowPackPuzzlesGridClient.isLoading(input.ctx.flowPackPuzzleGrid)) {
-            //   return <FlowPackPuzzlesGridUI.ViewLoadingCell />
-            // }
+            if (FlowPackPuzzlesGridClient.isLoading(input.ctx.packPuzzleGrid)) {
+              return <FlowPackPuzzlesGridUI.ViewLoadingCell />
+            }
 
             if (!inputCell.puzzleId) {
               return <FlowPackPuzzlesGridUI.ViewEmptyCell />
             }
 
-            const puzzle = input.ctx.flowPuzzles[inputCell.puzzleId]
+            const puzzle = input.ctx.puzzles[inputCell.puzzleId]
 
             if (!puzzle) {
               return (

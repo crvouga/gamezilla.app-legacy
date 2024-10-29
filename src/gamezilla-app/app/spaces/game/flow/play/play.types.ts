@@ -22,7 +22,7 @@ import { ScreenPuzzleTypes } from './screen-play-puzzle'
 //
 //
 
-export type ModelClient = {}
+export type ModelClient = null
 
 export const ModelServer = p.obj({})
 export type ModelServer = p.Infer<typeof ModelServer>

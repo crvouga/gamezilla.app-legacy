@@ -5,7 +5,7 @@ import { ScreenPuzzleClient } from './screen-play-puzzle/client'
 import { ScreenSelectPackClient } from './screen-select-pack/screen-select-pack.client'
 import { ScreenSelectPuzzleClient } from './screen-select-puzzle/client'
 
-const init: ClientModule['init'] = {}
+const init: ClientModule['init'] = null
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

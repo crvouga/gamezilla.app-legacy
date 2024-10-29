@@ -134,7 +134,7 @@ const View: ClientModule['View'] = (input) => {
   //
   const nextPuzzleIndex = puzzleIndex + 1
   const nextPuzzleId = input.modelCore.screen.flowPack.puzzleIds[nextPuzzleIndex]
-  const nextPuzzle = nextPuzzleId ? input.ctx.flowPuzzles[nextPuzzleId] : null
+  const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
 
   const isLastPuzzle = input.modelCore.screen.puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1
 

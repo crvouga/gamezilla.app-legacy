@@ -37,18 +37,6 @@ export const FixtureScreenPlayPuzzleClient = async () => {
   const prevPuzzleIndex = 0
   const nextPuzzleIndex = 2
 
-  f.initial.model = {
-    ...f.initial.model,
-    flowPuzzles: {
-      [puzzle.id]: puzzle,
-      [nextPuzzle.id]: nextPuzzle,
-      [prevPuzzle.id]: prevPuzzle
-    },
-    flowPacks: {
-      [pack.id]: pack
-    }
-  }
-
   const init = f.update(f.initial, [
     {
       msg: {

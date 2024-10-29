@@ -84,7 +84,7 @@ const View: ClientModule['View'] = (input) => {
       <PackListClient.View
         ctx={input.ctx}
         dispatch={(_c) => {}}
-        model={input.ctx.flowPackList}
+        model={input.ctx.packList}
         emits={{
           clickedPackItem(pack) {
             input.dispatch({ t: 'user-clicked-open-pack-list-item', pack })

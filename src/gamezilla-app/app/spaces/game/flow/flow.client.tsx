@@ -168,11 +168,11 @@ const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {
 const updateModePlay: ClientModule['update'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    flowPacks: input.model.flowPacks,
-    flowPuzzles: input.model.flowPuzzles,
-    flowPuzzleList: input.model.flowPuzzleList,
-    flowPackList: input.model.flowPackList,
-    flowPackPuzzleGrid: input.model.flowPackPuzzleGrid
+    packs: input.model.flowPacks,
+    puzzles: input.model.flowPuzzles,
+    puzzleList: input.model.flowPuzzleList,
+    packList: input.model.flowPackList,
+    packPuzzleGrid: input.model.flowPackPuzzleGrid
   }
 
   const updated = PlayClient.update({
@@ -201,11 +201,11 @@ const updateModePlay: ClientModule['update'] = (input) => {
 const updateModeBuilder: ClientModule['update'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    flowPacks: input.model.flowPacks,
-    flowPuzzles: input.model.flowPuzzles,
-    flowPuzzleList: input.model.flowPuzzleList,
-    flowPackList: input.model.flowPackList,
-    flowPackPuzzleGrid: input.model.flowPackPuzzleGrid
+    packs: input.model.flowPacks,
+    puzzles: input.model.flowPuzzles,
+    puzzleList: input.model.flowPuzzleList,
+    packList: input.model.flowPackList,
+    packPuzzleGrid: input.model.flowPackPuzzleGrid
   }
   const updated = BuilderClient.update({
     ctx,
@@ -291,11 +291,11 @@ const updateFromMsg: ClientModule['update'] = (input) => {
 const subscriptions: ClientModule['subscriptions'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    flowPacks: input.model.flowPacks,
-    flowPuzzles: input.model.flowPuzzles,
-    flowPuzzleList: input.model.flowPuzzleList,
-    flowPackList: input.model.flowPackList,
-    flowPackPuzzleGrid: input.model.flowPackPuzzleGrid
+    packs: input.model.flowPacks,
+    puzzles: input.model.flowPuzzles,
+    puzzleList: input.model.flowPuzzleList,
+    packList: input.model.flowPackList,
+    packPuzzleGrid: input.model.flowPackPuzzleGrid
   }
   return Sub.batch<MsgClient>([
     Sub.tag('play', PlayClient.subscriptions({ ctx, modelCore: input.modelCore.play, model: input.model.play })),
@@ -333,11 +333,11 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
 const View: ClientModule['View'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    flowPacks: input.model.flowPacks,
-    flowPuzzles: input.model.flowPuzzles,
-    flowPuzzleList: input.model.flowPuzzleList,
-    flowPackList: input.model.flowPackList,
-    flowPackPuzzleGrid: input.model.flowPackPuzzleGrid
+    packs: input.model.flowPacks,
+    puzzles: input.model.flowPuzzles,
+    puzzleList: input.model.flowPuzzleList,
+    packList: input.model.flowPackList,
+    packPuzzleGrid: input.model.flowPackPuzzleGrid
   }
 
   switch (input.modelCore.mode) {
