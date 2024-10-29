@@ -81,6 +81,7 @@ const View: ClientModule['View'] = (input) => {
   if (input.modelCore.screen.t !== 'screen-select-puzzle') {
     return null
   }
+  const flowPack = input.modelCore.screen.flowPack
   return (
     <div className='flex h-full w-full flex-1 flex-col'>
       <TopBar
@@ -90,7 +91,7 @@ const View: ClientModule['View'] = (input) => {
             t: 'user-clicked-exit-pack-button'
           })
         }
-        title={input.ctx.t('flow-pack-name', input.modelCore.screen.flowPack.name)}
+        title={input.ctx.t('flow-pack-name', flowPack.name)}
       />
       <div className='flex flex-1 flex-col items-center justify-center'>
         <FlowPackPuzzlesGridUI.View
@@ -103,14 +104,14 @@ const View: ClientModule['View'] = (input) => {
               userId: input.ctx.currentUserId
             })
           }
-          puzzleIds={input.modelCore.screen.flowPack.puzzleIds}
+          puzzleIds={flowPack.puzzleIds}
           renderCell={(inputCell) => {
-            if (FlowPackPuzzlesGridClient.isLoading(input.ctx.packPuzzleGrid)) {
-              return <FlowPackPuzzlesGridUI.ViewLoadingCell />
-            }
-
             if (!inputCell.puzzleId) {
               return <FlowPackPuzzlesGridUI.ViewEmptyCell />
+            }
+
+            if (FlowPackPuzzlesGridClient.showLoading(input.ctx.packPuzzleGrid, flowPack.puzzleIds)) {
+              return <FlowPackPuzzlesGridUI.ViewLoadingCell />
             }
 
             const puzzle = input.ctx.puzzles[inputCell.puzzleId]

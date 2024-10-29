@@ -10,6 +10,7 @@ import {
   type MsgInCmdClient
 } from './pack-puzzles-grid.types'
 import { FlowPack } from '../pack'
+import { FlowPuzzleId } from '../../puzzle/puzzle-id'
 
 const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
   if (!input.ctx.pack) {
@@ -106,7 +107,10 @@ const updateFromCmd: ClientModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
     case 'load': {
       return {
-        model: input.model,
+        model: {
+          ...input.model,
+          request: RequestResponse.startedRequest(input.ctx.now)
+        },
         msgCmd: [
           sendToServer({
             t: 'list-puzzles-by-id',
@@ -170,11 +174,15 @@ const load = (pack: FlowPack): MsgInCmdClient => {
 const isLoading = (model: ModelClient): boolean =>
   RequestResponse.isRequesting(model.request) || model.request.t === 'not-asked'
 
+const showLoading = (model: ModelClient, puzzleIds: FlowPuzzleId[]): boolean => {
+  return isLoading(model) && puzzleIds.every((puzzleId) => !(puzzleId in model.puzzles))
+}
+
 export const FlowPackPuzzlesGridClient = {
   initClient,
   load,
   update,
   ViewObserver,
   subscriptions,
-  isLoading
+  showLoading
 }
