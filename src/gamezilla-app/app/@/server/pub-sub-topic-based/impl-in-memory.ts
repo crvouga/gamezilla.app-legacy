@@ -2,8 +2,10 @@ import { IPubSubTopicBased } from './interface'
 
 export type Config = {
   t: 'in-memory'
-  map: Map<string, Set<(msg: string) => void>>
+  map: PubSubTopicBasedMap
 }
+
+export type PubSubTopicBasedMap = Map<string, Set<(msg: string) => void>>
 
 export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
   return {
