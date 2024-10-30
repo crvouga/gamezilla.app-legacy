@@ -1,8 +1,12 @@
 import { Ok, ascend, descend, eq } from 'gamezilla-app/@/core'
 import type { Verification, VerificationId } from '..'
-import type { IVerificationDb } from './verification-db'
+import type { IVerificationDb } from './interface'
 
-export const VerificationDbHashMap = (): IVerificationDb => {
+export type Config = {
+  t: 'hash-map'
+}
+
+export const VerificationDb = (_config: Config): IVerificationDb => {
   const verifications = new Map<VerificationId, Verification>()
 
   return {

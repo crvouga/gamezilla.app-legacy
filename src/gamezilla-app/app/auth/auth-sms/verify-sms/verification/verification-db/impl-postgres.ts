@@ -5,7 +5,7 @@ import { Sql } from 'gamezilla-app/@/sql'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { Verification } from '../verification'
 import { VerificationId } from '../verification-id'
-import type { IVerificationDb, OrderClause, WhereClause } from './verification-db'
+import type { IVerificationDb, OrderClause, WhereClause } from './interface'
 
 export const Row = p.obj({
   verification_id: VerificationId,
@@ -17,7 +17,12 @@ export const Row = p.obj({
 })
 type Row = p.Infer<typeof Row>
 
-export const VerificationDbPostgres = (deps: { dbConnSql: IDbConnSql }): IVerificationDb => {
+export type Config = {
+  t: 'postgres'
+  dbConnSql: IDbConnSql
+}
+
+export const VerificationDb = (config: Config): IVerificationDb => {
   return {
     async find(input) {
       const where = toSqlWhere(input.where)
@@ -34,7 +39,7 @@ export const VerificationDbPostgres = (deps: { dbConnSql: IDbConnSql }): IVerifi
         ...pagination.vars,
         ...order.vars
       }
-      const queried = await deps.dbConnSql.query(Row, query, vars)
+      const queried = await config.dbConnSql.query(Row, query, vars)
 
       if (isErr(queried)) {
         return queried
@@ -44,7 +49,7 @@ export const VerificationDbPostgres = (deps: { dbConnSql: IDbConnSql }): IVerifi
 				SELECT COUNT(*) FROM auth_sms_verification
 				${where.str}
 			`
-      const queriedCount = await deps.dbConnSql.query(
+      const queriedCount = await config.dbConnSql.query(
         p.obj({
           count: p.str
         }),
@@ -99,7 +104,7 @@ export const VerificationDbPostgres = (deps: { dbConnSql: IDbConnSql }): IVerifi
         code_hash: Sql.json(verification.codeHash),
         verified_at_posix: verification.verifiedAt
       }
-      const queried = await deps.dbConnSql.query(p.unknown, query, vars)
+      const queried = await config.dbConnSql.query(p.unknown, query, vars)
 
       return Result.mapOk(queried, () => null)
     }
