@@ -65,7 +65,7 @@ const Fixtures = async () => {
       t: 'postgres-with-cache',
       dbConnKv: testEnv.dbConnKv,
       dbConnSql: testEnv.dbConnSql,
-      pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory' }),
+      pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', map: new Map() }),
       logger: Logger({ t: 'noop' })
     })
   }

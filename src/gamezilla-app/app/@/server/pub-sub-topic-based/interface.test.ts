@@ -32,7 +32,7 @@ const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
 
 const Fixtures = async () => {
   const testEnv = await AppServerTestEnv()
-  const configs: Config[] = [{ t: 'in-memory' }]
+  const configs: Config[] = [{ t: 'in-memory', map: new Map() }]
 
   if (testEnv.t === 'integration') {
     configs.push({ t: 'postgres', dbConnSql: testEnv.dbConnSql, logger: Logger({ t: 'noop' }) })

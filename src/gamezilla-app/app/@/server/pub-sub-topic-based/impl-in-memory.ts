@@ -2,13 +2,13 @@ import { IPubSubTopicBased } from './interface'
 
 export type Config = {
   t: 'in-memory'
+  map: Map<string, Set<(msg: string) => void>>
 }
 
-export const PubSubTopicBased = (_config: Config): IPubSubTopicBased => {
-  const subscribesByTopic = new Map<string, Set<(msg: string) => void>>()
+export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
   return {
     async pub(topic, msg) {
-      const subs = subscribesByTopic.get(topic)
+      const subs = config.map.get(topic)
       if (!subs) {
         return
       }
@@ -18,8 +18,8 @@ export const PubSubTopicBased = (_config: Config): IPubSubTopicBased => {
       await new Promise((resolve) => setTimeout(resolve, 0))
     },
     async sub(topic, callback) {
-      const subs = subscribesByTopic.get(topic) ?? new Set()
-      subscribesByTopic.set(topic, subs)
+      const subs = config.map.get(topic) ?? new Set()
+      config.map.set(topic, subs)
       subs.add(callback)
       await new Promise((resolve) => setTimeout(resolve, 0))
       return async () => {
@@ -28,7 +28,7 @@ export const PubSubTopicBased = (_config: Config): IPubSubTopicBased => {
       }
     },
     async unsub(topic) {
-      subscribesByTopic.delete(topic)
+      config.map.delete(topic)
       await new Promise((resolve) => setTimeout(resolve, 0))
     }
   }

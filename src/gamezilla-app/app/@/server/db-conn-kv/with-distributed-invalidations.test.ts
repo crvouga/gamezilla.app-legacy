@@ -24,22 +24,14 @@ const randomMyEvent = (): MyEvent => ({
 })
 
 const Fixture = async () => {
-  const logger = Logger({ t: 'console' })
+  const logger = Logger({ t: 'noop' })
 
   const pubSubTopicBased = await PubSubTopicBased({
-    t: 'in-memory'
+    t: 'in-memory',
+    map: new Map()
   })
 
-  const pubSub = await PubSub({
-    t: 'pub-sub-topic-based',
-    pubSubTopicBased,
-    topic: 'my-event-cache-invalidation'
-  })
-
-  const source = await DbConnKv({
-    t: 'hash-map',
-    logger: Logger.prefix('source', logger)
-  })
+  const sourceMap = new Map<string, MyEvent>()
 
   const make = async (id: string) => {
     const loggerChild = Logger.prefix(id, logger)
@@ -48,11 +40,19 @@ const Fixture = async () => {
       parser: MyEvent,
       dbConnKv: await DbConnKv({
         t: 'with-cache',
-        source,
+        source: await DbConnKv({
+          t: 'hash-map',
+          logger: Logger.prefix('source', logger),
+          map: sourceMap
+        }),
         logger: loggerChild,
         cache: await DbConnKv({
           t: 'with-distributed-invalidations',
-          pubSub,
+          pubSub: await PubSub({
+            t: 'pub-sub-topic-based',
+            pubSubTopicBased,
+            topic: 'my-event-cache-invalidation'
+          }),
           logger: loggerChild,
           cache: await DbConnKv({
             t: 'hash-map',
@@ -69,7 +69,6 @@ const Fixture = async () => {
 
   return {
     logger: Logger.prefix('test', logger),
-    pubSub,
     instanceA,
     instanceB
   }
