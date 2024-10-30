@@ -4,7 +4,7 @@ import { TopBar, Typography } from 'gamezilla-app/app/@/ui'
 import { type WithEventId, withId } from '../@/event'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import { SpaceCore, type SpaceCoreEvent } from '../spaces-core'
+import { SpaceCore, type MsgCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 import type { MsgClient } from '../spaces.types'
 import { ViewUsersInSpaceList } from './@/game'
@@ -36,7 +36,7 @@ const updateFromMsg: SpaceClientModule['update'] = ({ msg, model, ctx }) => {
         }
       }
 
-      const spaceEventNew = withId<SpaceCoreEvent>({
+      const spaceEventNew = withId<MsgCore>({
         t: 'user-inputted-game',
         game: msg.gameName,
         spaceId: currentUserSpaceId,
@@ -174,7 +174,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
   })
 
   const msgCoreEvtNew = (gameUpdated.msgCore ?? []).map(
-    (c): WithEventId<SpaceCoreEvent> => ({ eventId: c.eventId, spaceId, t: 'game', c })
+    (c): WithEventId<MsgCore> => ({ eventId: c.eventId, spaceId, t: 'game', c })
   )
 
   return {

@@ -2,7 +2,7 @@ import { APP_SOUND, playSound, pushRoute, showToast } from 'gamezilla-app/app/@/
 import { Button, Typography } from 'gamezilla-app/app/@/ui'
 import { withId } from '../@/event'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import type { SpaceCoreEvent } from '../spaces-core'
+import type { MsgCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 
 const update: SpaceClientModule['update'] = (input) => {
@@ -155,7 +155,7 @@ const updateEndSpaceButton: SpaceClientModule['update'] = ({ msg, model, ctx }) 
         }
       }
 
-      const spaceEventNew = withId<SpaceCoreEvent>({
+      const spaceEventNew = withId<MsgCore>({
         t: 'user-ended-space',
         spaceId: currentUserSpaceId,
         userId: ctx.currentUserId

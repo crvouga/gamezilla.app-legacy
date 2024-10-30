@@ -2,7 +2,7 @@ import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { EventId, type WithEventId } from '../../@/event'
 import * as SpaceState from '../space-core-state'
 import * as Space from '../space-core'
-import type { SpaceCoreEvent } from '../space-core-event'
+import type { MsgCore } from '../space-core-event'
 import { p } from 'gamezilla-app/@/core/parser'
 
 //
@@ -188,35 +188,36 @@ export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceSta
 //
 //
 
-type UpdateError = 'space-not-found' | 'already-in-space'
-
-export const updateFromSpaceEvent = ({
+export const update = ({
   model,
-  spaceEvent
+  msgCore
 }: {
   model: Model
-  spaceEvent: WithEventId<SpaceCoreEvent>
+  msgCore: WithEventId<MsgCore>
 }): {
   model: Model
-  err?: UpdateError
 } => {
-  switch (spaceEvent.t) {
+  if (hasEvent(model, msgCore.spaceId, msgCore.eventId)) {
+    return { model }
+  }
+
+  switch (msgCore.t) {
     case 'game': {
       return appendEvent({
         model,
-        msgEvt: spaceEvent
+        msgEvt: msgCore
       })
     }
 
     case 'user-inputted-game': {
       return appendEvent({
         model,
-        msgEvt: spaceEvent
+        msgEvt: msgCore
       })
     }
 
     case 'user-ended-space': {
-      const userIds = Space.toUserIds(model.spaces[spaceEvent.spaceId] ?? Space.init)
+      const userIds = Space.toUserIds(model.spaces[msgCore.spaceId] ?? Space.init)
 
       const spaceIdByUserIdNew = {
         ...model.spaceIdByUserId
@@ -227,7 +228,7 @@ export const updateFromSpaceEvent = ({
 
       const appended = appendEvent({
         model,
-        msgEvt: spaceEvent
+        msgEvt: msgCore
       })
 
       return {
@@ -239,7 +240,7 @@ export const updateFromSpaceEvent = ({
     }
 
     case 'user-joined-space': {
-      const spaceId = model.spaceIdByUserId[spaceEvent.userId]
+      const spaceId = model.spaceIdByUserId[msgCore.userId]
 
       if (spaceId) {
         return {
@@ -247,9 +248,9 @@ export const updateFromSpaceEvent = ({
             ...model,
             errors: {
               ...model.errors,
-              [spaceEvent.eventId]: {
+              [msgCore.eventId]: {
                 t: 'user-already-in-a-space',
-                userId: spaceEvent.userId
+                userId: msgCore.userId
               }
             }
           }
@@ -258,12 +259,12 @@ export const updateFromSpaceEvent = ({
 
       const spaceIdByUserIdNew = {
         ...model.spaceIdByUserId,
-        [spaceEvent.userId]: spaceEvent.spaceId
+        [msgCore.userId]: msgCore.spaceId
       }
 
       const appended = appendEvent({
         model,
-        msgEvt: spaceEvent
+        msgEvt: msgCore
       })
 
       return {
@@ -279,13 +280,13 @@ export const updateFromSpaceEvent = ({
         ...model.spaceIdByUserId
       }
 
-      if (spaceEvent.spaceId === model.spaceIdByUserId[spaceEvent.userId]) {
-        delete spaceIdByUserIdNew[spaceEvent.userId]
+      if (msgCore.spaceId === model.spaceIdByUserId[msgCore.userId]) {
+        delete spaceIdByUserIdNew[msgCore.userId]
       }
 
       const appended = appendEvent({
         model,
-        msgEvt: spaceEvent
+        msgEvt: msgCore
       })
 
       return {
@@ -299,12 +300,12 @@ export const updateFromSpaceEvent = ({
     case 'user-started-space': {
       const spaceIdByUserIdNew = {
         ...model.spaceIdByUserId,
-        [spaceEvent.userId]: spaceEvent.spaceId
+        [msgCore.userId]: msgCore.spaceId
       }
 
       const appended = appendEvent({
         model,
-        msgEvt: spaceEvent
+        msgEvt: msgCore
       })
 
       return {
@@ -322,7 +323,7 @@ const appendEvent = ({
   msgEvt
 }: {
   model: Model
-  msgEvt: WithEventId<SpaceCoreEvent>
+  msgEvt: WithEventId<MsgCore>
 }): {
   model: Model
 } => {

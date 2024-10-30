@@ -11,7 +11,7 @@ import type { GameServer } from './game/game.server'
 import type * as Game from './game/game.types'
 import type { IGameDb } from './game/space-game-db'
 import type * as Space from './spaces-core/space-core'
-import type { SpaceCoreEvent } from './spaces-core/space-core-event'
+import type { MsgCore } from './spaces-core/space-core-event'
 import type * as Spaces from './spaces-core/spaces-core-client/spaces-core.client'
 import { ISpacesCoreServer } from './spaces-core/spaces-core-server/interface'
 
@@ -48,9 +48,7 @@ export type ModelClient = Spaces.Model & {
 //
 //
 
-export type MsgServer =
-  | { t: 'event'; c: WithEventId<SpaceCoreEvent> }
-  | { t: 'game'; spaceId: SpaceId; c: Game.MsgServer }
+export type MsgServer = { t: 'event'; c: WithEventId<MsgCore> } | { t: 'game'; spaceId: SpaceId; c: Game.MsgServer }
 
 export type MsgClient =
   | { t: 'game'; spaceId: SpaceId; c: Game.MsgClient }
@@ -72,7 +70,7 @@ export type MsgToClient = MsgToClientExtra &
   (
     | {
         t: 'event'
-        c: WithEventMeta<SpaceCoreEvent>
+        c: WithEventMeta<MsgCore>
       }
     | {
         t: 'listed-spaces'
@@ -98,7 +96,7 @@ export type MsgToServer = MsgToServerExtra &
   (
     | {
         t: 'event'
-        c: WithEventMeta<SpaceCoreEvent>
+        c: WithEventMeta<MsgCore>
       }
     | {
         t: 'sync'

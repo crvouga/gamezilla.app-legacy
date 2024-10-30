@@ -4,7 +4,7 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { LamportClock, LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { EventId, EventMeta, type WithEventId, type WithEventMeta } from '../@/event'
-import { SpaceCoreEvent } from './space-core-event'
+import { MsgCore } from './space-core-event'
 import * as SpaceState from './space-core-state'
 
 //
@@ -15,7 +15,7 @@ import * as SpaceState from './space-core-state'
 //
 
 export const Model = p.obj({
-  events: p.arr(p.and(EventMeta, SpaceCoreEvent)),
+  events: p.arr(p.and(EventMeta, MsgCore)),
   eventIds: p.dict(EventId, EventId),
   clock: LamportClock,
   snapshots: CappedOrderedDict.parser(EventId, SpaceState.State)
@@ -66,7 +66,7 @@ export const random = (input?: { hostId?: UserId; spaceId?: SpaceId }) => {
 //
 
 export const startFromLatestSnapshot = (model: Model): Model => {
-  const events: WithEventMeta<SpaceCoreEvent>[] = []
+  const events: WithEventMeta<MsgCore>[] = []
   const eventIds: Model['eventIds'] = {}
 
   for (let i = model.events.length - 1; i >= 0; i--) {
@@ -105,7 +105,7 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 //
 //
 
-export const appendEvent = ({ model, event }: { model: Model; event: WithEventId<SpaceCoreEvent> }): Model => {
+export const appendEvent = ({ model, event }: { model: Model; event: WithEventId<MsgCore> }): Model => {
   if (model.eventIds[event.eventId]) {
     return model
   }
@@ -114,7 +114,7 @@ export const appendEvent = ({ model, event }: { model: Model; event: WithEventId
   //
   //
 
-  const newEvent: WithEventMeta<SpaceCoreEvent> = {
+  const newEvent: WithEventMeta<MsgCore> = {
     ...event,
     happenedAt: LamportClock.toCurrentTime(model.clock)
   }
@@ -191,7 +191,7 @@ export const deriveState = (model: Model): SpaceState.State => {
 
   let running = SpaceState.init
 
-  const events: WithEventMeta<SpaceCoreEvent>[] = []
+  const events: WithEventMeta<MsgCore>[] = []
 
   for (let i = model.events.length - 1; i >= 0; i--) {
     const event = model.events[i]

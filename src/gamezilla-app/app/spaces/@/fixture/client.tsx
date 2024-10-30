@@ -8,7 +8,7 @@ import { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { GameName } from '../../game/@/game-name'
-import { SpaceCore, type SpaceCoreEvent } from '../../spaces-core'
+import { SpaceCore, type MsgCore } from '../../spaces-core'
 import * as SpaceClient from '../../spaces.client'
 import type * as SpacesTypes from '../../spaces.types'
 import type { SpaceClientCtx } from '../space'
@@ -378,7 +378,7 @@ export const elapsed = (ctx: ClientCtx, timeSpan: TimeSpan) => (model: SpacesTyp
 
 const toStartedSpace = (spaceId: SpaceId, startedBy: UserId) => {
   return [
-    withId<SpaceCoreEvent>({
+    withId<MsgCore>({
       t: 'user-started-space',
       spaceId,
       userId: startedBy

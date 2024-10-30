@@ -3,7 +3,7 @@ import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import * as Game from '../game/game.types'
 import { GameName } from '../game/@/game-name'
 
-export const SpaceCoreEvent = p.or(
+export const MsgCore = p.or(
   p.obj({
     t: p.l('user-started-space'),
     userId: UserId,
@@ -37,4 +37,4 @@ export const SpaceCoreEvent = p.or(
   })
 )
 
-export type SpaceCoreEvent = p.Infer<typeof SpaceCoreEvent>
+export type MsgCore = p.Infer<typeof MsgCore>

@@ -6,7 +6,7 @@ import type { WithEventId } from '../event'
 import type { Space } from '../space'
 import type { SpaceClientCmd } from '../space-client-cmd'
 import { SpaceClientEvt } from '../space-client-evt'
-import type { SpaceCoreEvent } from '../../spaces-core'
+import type { MsgCore } from '../../spaces-core'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../spaces.types'
 
 type Ctx = BaseClientCtx & {
@@ -23,7 +23,7 @@ export type Input = {
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }> | null
-  msgCoreEvt?: WithEventId<SpaceCoreEvent> | null
+  msgCoreEvt?: WithEventId<MsgCore> | null
 }
 
 export type Output = {
@@ -34,7 +34,7 @@ export type Output = {
     MsgToServer: MsgToServer
   }>[]
   msgEvt?: SpaceClientEvt[]
-  msgCoreEvt?: WithEventId<SpaceCoreEvent>[]
+  msgCoreEvt?: WithEventId<MsgCore>[]
 }
 
 export type SpaceClientModule = {
