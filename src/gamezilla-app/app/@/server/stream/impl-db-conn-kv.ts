@@ -43,6 +43,10 @@ export const Stream = <T>(config: Config<T>): IStream<T> => {
       const sliced = index === -1 ? eventIds : eventIds.slice(index)
       const slicedEvents = unwrapOr(await eventsById.getMany(sliced), []).flat()
       return Ok(slicedEvents)
+    },
+    async has(streamId, eventId) {
+      const eventIds = unwrapOr(await eventIdsByStreamId.get(streamId), null) ?? []
+      return Ok(eventIds.includes(eventId))
     }
   }
 }

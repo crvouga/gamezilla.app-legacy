@@ -4,14 +4,14 @@ const parser = p.brand(p.str, 'EventId')
 
 export type EventId = p.Infer<typeof parser>
 
-const SEPERATOR = '-'
+const SEPARATOR = '-'
 
 const init = (): EventId => {
-  return cast(`1${SEPERATOR}0`)
+  return cast(`1${SEPARATOR}0`)
 }
 
 const is = (id: string): id is EventId => {
-  return id.includes(SEPERATOR) || id === init()
+  return id.includes(SEPARATOR) || id === init()
 }
 
 const cast = (id: string): EventId => {
@@ -22,16 +22,25 @@ const cast = (id: string): EventId => {
 }
 
 const increment = (id: EventId): EventId => {
-  const [milliseconds, sequence] = id.split(SEPERATOR)
+  const [milliseconds, sequence] = id.split(SEPARATOR)
   if (sequence === undefined) {
-    return cast(`${milliseconds}${SEPERATOR}1`)
+    return cast(`${milliseconds}${SEPARATOR}1`)
   }
   const incrementedSequence = (parseInt(sequence, 10) + 1).toString()
-  return cast(`${milliseconds}${SEPERATOR}${incrementedSequence}`)
+  return cast(`${milliseconds}${SEPARATOR}${incrementedSequence}`)
+}
+
+const toComparable = (id: EventId): number => {
+  const milliseconds = id.split(SEPARATOR)[0]
+  if (milliseconds === undefined) {
+    throw new Error(`Invalid EventId: ${id}`)
+  }
+  return parseInt(milliseconds, 10)
 }
 
 export const EventId = {
   parser,
   init,
-  increment
+  increment,
+  toComparable
 }

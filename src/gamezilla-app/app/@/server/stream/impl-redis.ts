@@ -65,6 +65,17 @@ export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
       } catch (error) {
         return Err(`Failed to read from stream: ${error}`)
       }
+    },
+
+    async has(streamId, eventId) {
+      logger.debug(`has: streamId=${streamId} eventId=${eventId}`)
+
+      try {
+        const exists = await redis.exists(streamId, eventId)
+        return Ok(exists === 1)
+      } catch (error) {
+        return Err(`Failed to check if event exists: ${error}`)
+      }
     }
   }
 }

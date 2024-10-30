@@ -13,6 +13,12 @@ const init: LamportClock = {
   _currentTime: LamportTimestamp.fromNumber(0)
 }
 
+const initFromTimestamp = (timestamp: LamportTimestamp): LamportClock => {
+  return {
+    _currentTime: timestamp
+  }
+}
+
 const increment = (clock: LamportClock): LamportClock => {
   return {
     _currentTime: LamportTimestamp.increment(clock._currentTime)
@@ -44,5 +50,6 @@ export const LamportClock = {
   increment,
   update,
   toCurrentTime,
-  toNumber
+  toNumber,
+  initFromTimestamp
 }

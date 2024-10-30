@@ -6,7 +6,6 @@ import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import * as SpaceCore from '../space-core'
 import type { ISpacesCoreServer } from './interface'
-
 export type Config = {
   t: 'db-conn-kv'
   dbConnKv: IDbConnKv
@@ -14,7 +13,7 @@ export type Config = {
 }
 
 export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServer> => {
-  const logger = Logger.prefix('spaces-core-server', config.logger)
+  const logger = Logger.prefix('db-conn-kv', config.logger)
 
   const dbConnKv = await pipe(
     config.dbConnKv,

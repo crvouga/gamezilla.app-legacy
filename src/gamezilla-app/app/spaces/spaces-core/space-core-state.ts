@@ -22,7 +22,7 @@ export const Started = p.and(
   p.obj({
     type: p.l('started'),
     game: p.maybe(Game.ModelCore),
-    latestEvent: EventId
+    latestEventId: EventId
   })
 )
 export type Started = p.Infer<typeof Started>
@@ -31,16 +31,21 @@ export const Ended = p.and(
   Space,
   p.obj({
     type: p.l('ended'),
-    latestEvent: EventId
+    latestEventId: EventId
   })
 )
 export type Ended = p.Infer<typeof Ended>
 
-export const State = p.or(Initial, Started, Ended)
+const StateBase = p.obj({
+  latestEventId: p.maybe(EventId)
+})
+
+export const State = p.and(StateBase, p.or(Initial, Started, Ended))
 export type State = p.Infer<typeof State>
 
 export const init: State = {
-  type: 'initial'
+  type: 'initial',
+  latestEventId: null
 }
 
 //
@@ -82,7 +87,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
             type: 'started',
             game: null,
             hostId: msgSpace.userId,
-            latestEvent: msgSpace.eventId,
+            latestEventId: msgSpace.eventId,
             spaceId: msgSpace.spaceId,
             users: {
               [msgSpace.userId]: msgSpace.userId
@@ -119,7 +124,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
           })
           return {
             ...state,
-            latestEvent: msgSpace.eventId,
+            latestEventId: msgSpace.eventId,
             game: gameNew
           }
         }
@@ -129,7 +134,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
           }
           return {
             ...state,
-            latestEvent: msgSpace.eventId,
+            latestEventId: msgSpace.eventId,
             type: 'ended'
           }
         }
@@ -137,7 +142,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
         case 'user-inputted-game': {
           return {
             ...state,
-            latestEvent: msgSpace.eventId,
+            latestEventId: msgSpace.eventId,
             game: msgSpace.game ? GameGame.initCore({ gameName: msgSpace.game, ctx: { space: state } }) : null
           }
         }
@@ -145,7 +150,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
         case 'user-joined-space': {
           return {
             ...state,
-            latestEvent: msgSpace.eventId,
+            latestEventId: msgSpace.eventId,
             users: {
               ...state.users,
               [msgSpace.userId]: msgSpace.userId
@@ -163,7 +168,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
           delete usersNew[msgSpace.userId]
           return {
             ...state,
-            latestEvent: msgSpace.eventId,
+            latestEventId: msgSpace.eventId,
             users: usersNew
           }
         }
@@ -171,7 +176,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
         case 'user-started-space': {
           return {
             ...state,
-            latestEvent: msgSpace.eventId
+            latestEventId: msgSpace.eventId
           }
         }
       }

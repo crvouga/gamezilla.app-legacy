@@ -151,4 +151,15 @@ describe(import.meta.file, () => {
       expect(eventsAfterDuplicate).toEqual(Ok([myEvent1]))
     }
   })
+
+  test('has event', async () => {
+    for (const f of await Fixtures()) {
+      const myEvent = randomMyEvent(null)
+      const streamId = randomStreamId()
+      const appended = await f.stream.append(streamId, myEvent.id, myEvent)
+      const hasEvent = await f.stream.has(streamId, myEvent.id)
+      expect(appended).toEqual(Ok(null))
+      expect(hasEvent).toEqual(Ok(true))
+    }
+  })
 })

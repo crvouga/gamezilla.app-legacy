@@ -30,6 +30,26 @@ export const init: Model = {
   eventIds: {}
 }
 
+export const initFromSnapshot = (input: { snapshot: SpaceState.State; events: WithEventMeta<MsgCore>[] }): Model => {
+  const initial: Model = { ...init, events: input.events }
+
+  for (const event of input.events) {
+    initial.eventIds[event.eventId] = event.eventId
+  }
+
+  const latestEvent = input.events[input.events.length - 1]
+
+  initial.clock = latestEvent?.happenedAt ? LamportClock.initFromTimestamp(latestEvent.happenedAt) : LamportClock.init
+
+  if (latestEvent) {
+    initial.snapshots = CappedOrderedDict.add(initial.snapshots, latestEvent.eventId, input.snapshot)
+  }
+
+  return {
+    ...initial
+  }
+}
+
 export const isEqual = (left: Model, right: Model) => {
   return eq(deriveState(left), deriveState(right))
 }
@@ -97,6 +117,24 @@ export const startFromLatestSnapshot = (model: Model): Model => {
     clock: model.clock,
     snapshots: init.snapshots
   }
+}
+
+export const toLatestSnapshot = (model: Model): SpaceState.State | null => {
+  for (let i = model.events.length - 1; i >= 0; i--) {
+    const event = model.events[i]
+
+    if (!event) {
+      continue
+    }
+
+    const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId)
+
+    if (snapshot) {
+      return snapshot
+    }
+  }
+
+  return null
 }
 
 //

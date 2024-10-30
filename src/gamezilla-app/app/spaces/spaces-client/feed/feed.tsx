@@ -18,7 +18,7 @@ const View = ({
 }) => {
   const msgEvt =
     spaceState.type === 'started'
-      ? SpacesCoreClient.toEventWithMeta(model, spaceState.spaceId, spaceState.latestEvent)
+      ? SpacesCoreClient.toEventWithMeta(model, spaceState.spaceId, spaceState.latestEventId)
       : null
 
   return (

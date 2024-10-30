@@ -1,7 +1,7 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import * as Game from '../game/game.types'
 import { GameName } from '../game/@/game-name'
+import * as Game from '../game/game.types'
 
 export const MsgCore = p.or(
   p.obj({
