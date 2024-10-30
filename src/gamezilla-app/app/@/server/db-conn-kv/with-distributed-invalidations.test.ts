@@ -5,6 +5,7 @@ import { Logger } from '../logger'
 import { PubSubTopicBased } from '../pub-sub-topic-based'
 import { DbConnKv } from './impl'
 import { withNamespace } from './with-namespace'
+import { PubSub } from '../pub-sub'
 
 const MyEvent = p.obj({
   id: p.str,
@@ -25,8 +26,14 @@ const randomMyEvent = (): MyEvent => ({
 const Fixture = async () => {
   const logger = Logger({ t: 'console' })
 
-  const pubSub = await PubSubTopicBased({
+  const pubSubTopicBased = await PubSubTopicBased({
     t: 'in-memory'
+  })
+
+  const pubSub = await PubSub({
+    t: 'pub-sub-topic-based',
+    pubSubTopicBased,
+    topic: 'my-event-cache-invalidation'
   })
 
   const source = await DbConnKv({
@@ -59,40 +66,98 @@ const Fixture = async () => {
 
   const instanceA = await make('A')
   const instanceB = await make('B')
-  // const instanceC = await make('C')
 
   return {
+    logger: Logger.prefix('test', logger),
     pubSub,
     instanceA,
     instanceB
-    // instanceC
   }
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   test('invalidate set', async () => {
     const f = await Fixture()
 
     const myEvent: MyEvent = randomMyEvent()
-    const myEventNew: MyEvent = { ...randomMyEvent(), id: myEvent.id }
+    const myEventNew: MyEvent = { id: myEvent.id, value: 'Some new value' }
 
     await f.instanceA.set(myEvent.id, myEvent)
-
     const beforeA = await f.instanceA.get(myEvent.id)
     const beforeB = await f.instanceB.get(myEvent.id)
-    // const beforeC = await f.instanceC.get(myEvent.id)
+
+    expect(beforeA).toEqual(Ok(myEvent))
+    expect(beforeB).toEqual(Ok(myEvent))
 
     await f.instanceA.set(myEvent.id, myEventNew)
 
     const afterA = await f.instanceA.get(myEvent.id)
     const afterB = await f.instanceB.get(myEvent.id)
-    // const afterC = await f.instanceC.get(myEvent.id)
+
+    expect(afterA).toEqual(Ok(myEventNew))
+    expect(afterB).toEqual(Ok(myEventNew))
+  })
+
+  test('invalidate zap', async () => {
+    const f = await Fixture()
+
+    const myEvent: MyEvent = randomMyEvent()
+
+    await f.instanceA.set(myEvent.id, myEvent)
+    const beforeA = await f.instanceA.get(myEvent.id)
+    const beforeB = await f.instanceB.get(myEvent.id)
 
     expect(beforeA).toEqual(Ok(myEvent))
     expect(beforeB).toEqual(Ok(myEvent))
-    // expect(beforeC).toEqual(Ok(myEvent))
-    expect(afterA).toEqual(Ok(myEventNew))
-    expect(afterB).toEqual(Ok(myEventNew))
-    // expect(afterC).toEqual(Ok(myEventNew))
+
+    await f.instanceA.zap(myEvent.id)
+
+    const afterA = await f.instanceA.get(myEvent.id)
+    const afterB = await f.instanceB.get(myEvent.id)
+
+    expect(afterA).toEqual(Ok(null))
+    expect(afterB).toEqual(Ok(null))
+  })
+
+  test('invalidate setMany', async () => {
+    const f = await Fixture()
+
+    const myEvent1: MyEvent = randomMyEvent()
+    const myEvent2: MyEvent = randomMyEvent()
+
+    await f.instanceA.set(myEvent1.id, myEvent1)
+    await f.instanceA.set(myEvent2.id, myEvent2)
+
+    const beforeA1 = await f.instanceA.get(myEvent1.id)
+    const beforeA2 = await f.instanceA.get(myEvent2.id)
+
+    const beforeB1 = await f.instanceB.get(myEvent1.id)
+    const beforeB2 = await f.instanceB.get(myEvent2.id)
+
+    expect(beforeA1).toEqual(Ok(myEvent1))
+    expect(beforeA2).toEqual(Ok(myEvent2))
+
+    expect(beforeB1).toEqual(Ok(myEvent1))
+    expect(beforeB2).toEqual(Ok(myEvent2))
+
+    const myEvent1New: MyEvent = { id: myEvent1.id, value: 'Some new value' }
+    const myEvent2New: MyEvent = { id: myEvent2.id, value: 'Some new value' }
+
+    await f.instanceA.setMany([
+      [myEvent1.id, myEvent1New],
+      [myEvent2.id, myEvent2New]
+    ])
+
+    const afterA1 = await f.instanceA.get(myEvent1.id)
+    const afterA2 = await f.instanceA.get(myEvent2.id)
+
+    const afterB1 = await f.instanceB.get(myEvent1.id)
+    const afterB2 = await f.instanceB.get(myEvent2.id)
+
+    expect(afterA1).toEqual(Ok(myEvent1New))
+    expect(afterA2).toEqual(Ok(myEvent2New))
+
+    expect(afterB1).toEqual(Ok(myEvent1New))
+    expect(afterB2).toEqual(Ok(myEvent2New))
   })
 })

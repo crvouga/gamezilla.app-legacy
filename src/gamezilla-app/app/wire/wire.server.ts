@@ -30,7 +30,7 @@ export const initCtx = async <TMsgToClient, TMsgToServer>(input: {
     wireSessionDb: await WireSessionDb({
       t: 'db-conn-kv-with-cache',
       dbConnKv: input.ctx.dbConnKv,
-      pubSub: input.ctx.pubSub,
+      pubSubTopicBased: input.ctx.pubSub,
       logger
     })
   }

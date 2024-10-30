@@ -1,6 +1,5 @@
-import { Uuid } from 'gamezilla-app/@/core'
 import { Logger, type ILogger } from '../logger'
-import { IPubSubTopicBased } from '../pub-sub-topic-based'
+import { IPubSub } from '../pub-sub'
 import { IDbConnKv } from './interface'
 
 const DistributedUpdateType = {
@@ -35,33 +34,30 @@ export type Config = {
   t: 'with-distributed-invalidations'
   logger: ILogger
   cache: IDbConnKv
-  pubSub: IPubSubTopicBased
+  pubSub: IPubSub
 }
 
 export const withDistributedInvalidations = async (
   config: Config
 ): Promise<IDbConnKv & { unsubscribe: () => void }> => {
   const logger = Logger.prefix('with-distributed-invalidations', config.logger)
-  const instanceId = Uuid.generate()
 
-  const unsubscribe = await config.pubSub.sub(instanceId, (encoded) => {
+  const unsubscribe = await config.pubSub.sub(async (encoded) => {
     const update = decode(encoded)
     switch (update.t) {
       case DistributedUpdateType.SET: {
         logger.info(`invalidated key from SET: ${update.k}`)
-        config.cache.zap(update.k)
+        await config.cache.zap(update.k)
         return
       }
       case DistributedUpdateType.SET_MANY: {
         logger.info(`invalidated keys from SET_MANY: ${update.k.join(',')}`)
-        for (const k of update.k) {
-          config.cache.zap(k)
-        }
+        await Promise.all(update.k.map((k) => config.cache.zap(k)))
         return
       }
       case DistributedUpdateType.ZAP: {
         logger.info(`invalidated key from ZAP: ${update.k}`)
-        config.cache.zap(update.k)
+        await config.cache.zap(update.k)
         return
       }
       default: {
@@ -79,16 +75,31 @@ export const withDistributedInvalidations = async (
     getMany(keys, parser) {
       return config.cache.getMany(keys, parser)
     },
-    set(key, value) {
-      config.pubSub.pub(instanceId, encode({ t: DistributedUpdateType.SET, k: key }))
+    async set(key, value) {
+      await config.pubSub.pub(
+        encode({
+          t: DistributedUpdateType.SET,
+          k: key
+        })
+      )
       return config.cache.set(key, value)
     },
-    setMany(entries) {
-      config.pubSub.pub(instanceId, encode({ t: DistributedUpdateType.SET_MANY, k: entries.map((e) => e[0]) }))
+    async setMany(entries) {
+      await config.pubSub.pub(
+        encode({
+          t: DistributedUpdateType.SET_MANY,
+          k: entries.map((e) => e[0])
+        })
+      )
       return config.cache.setMany(entries)
     },
-    zap(key) {
-      config.pubSub.pub(instanceId, encode({ t: DistributedUpdateType.ZAP, k: key }))
+    async zap(key) {
+      await config.pubSub.pub(
+        encode({
+          t: DistributedUpdateType.ZAP,
+          k: key
+        })
+      )
       return config.cache.zap(key)
     }
   }

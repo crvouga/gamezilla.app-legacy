@@ -3,7 +3,7 @@ import { Ok, Result, TimeSpan, Uuid } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { REDIS_URL } from 'gamezilla-app/config-private'
 import { Logger } from '../logger'
-import { PubSubTopicBased } from '../pub-sub-topic-based'
+import { PubSub } from '../pub-sub'
 import { AppServerTestEnv } from '../server-test-env'
 import { DbConnKv } from './impl'
 
@@ -112,7 +112,7 @@ const implementations: Implementation[] = [
             t: 'with-distributed-invalidations',
             cache: await DbConnKv({ t: 'hash-map' }),
             logger: f.logger,
-            pubSub: await PubSubTopicBased({ t: 'in-memory' })
+            pubSub: await PubSub({ t: 'in-memory' })
           })
         })
       }

@@ -5,6 +5,7 @@ import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import { IPubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import type { IWireSessionDb } from './interface'
+import { PubSub } from 'gamezilla-app/app/@/server/pub-sub'
 
 type Config =
   | ImplDbConnKv.Config
@@ -13,7 +14,7 @@ type Config =
       t: 'db-conn-kv-with-cache'
       dbConnKv: IDbConnKv
       logger: ILogger
-      pubSub: IPubSubTopicBased
+      pubSubTopicBased: IPubSubTopicBased
     }
 
 export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => {
@@ -43,8 +44,17 @@ export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => 
             cache: await DbConnKv({
               t: 'with-distributed-invalidations',
               logger,
-              pubSub: config.pubSub,
-              cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
+              pubSub: await PubSub({
+                t: 'pub-sub-topic-based',
+                pubSubTopicBased: config.pubSubTopicBased,
+                topic: 'wire-session-db-cache-invalidation'
+              }),
+              cache: await DbConnKv({
+                t: 'hash-map',
+                map: LRUCache({
+                  maxCapacity: 2000
+                })
+              })
             })
           }),
         async (dbConnKv) =>

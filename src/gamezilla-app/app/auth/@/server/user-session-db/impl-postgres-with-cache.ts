@@ -7,12 +7,13 @@ import { IPubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-base
 import * as ImplPostgres from './impl-postgres'
 import type { IUserSessionDb } from './interface'
 import { WithCache } from './impl-with-cache'
+import { PubSub } from 'gamezilla-app/app/@/server/pub-sub'
 
 export type Config = {
   t: 'postgres-with-cache'
   dbConnKv: IDbConnKv
   dbConnSql: IDbConnSql
-  pubSub: IPubSubTopicBased
+  pubSubTopicBased: IPubSubTopicBased
   logger: ILogger
 }
 
@@ -27,7 +28,11 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
         cache: await DbConnKv({
           ...config,
           t: 'with-distributed-invalidations',
-          pubSub: config.pubSub,
+          pubSub: await PubSub({
+            t: 'pub-sub-topic-based',
+            pubSubTopicBased: config.pubSubTopicBased,
+            topic: 'user-session-db-cache-invalidation'
+          }),
           cache: await DbConnKv({
             t: 'hash-map',
             map: LRUCache({ maxCapacity: 2000 })
