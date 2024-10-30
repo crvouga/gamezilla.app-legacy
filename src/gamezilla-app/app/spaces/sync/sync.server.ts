@@ -1,4 +1,4 @@
-import { Result, unwrapOr } from 'gamezilla-app/@/core'
+import { unwrapOr } from 'gamezilla-app/@/core'
 import { AppServerCtx, broadcast, sendToClient, sendToUser } from 'gamezilla-app/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceCore, SpaceCoreState } from '../spaces-core'
@@ -34,7 +34,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
 
       const got = await input.deps.spacesCoreServer.get(spaceId)
 
-      const spaceNew = Result.unwrapOr(got, null)
+      const spaceNew = unwrapOr(got, null)
 
       if (!spaceNew) {
         return {}
@@ -72,7 +72,7 @@ const spacesToProfiles = async (ctx: AppServerCtx, spaces: Space.Model[]) => {
 
   const got = await ctx.profileCache.get(userIds)
 
-  const profiles = Result.unwrapOr(got, {})
+  const profiles = unwrapOr(got, {})
 
   return profiles
 }
@@ -80,7 +80,7 @@ const spacesToProfiles = async (ctx: AppServerCtx, spaces: Space.Model[]) => {
 const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
     case 'auth/client-authenticated': {
-      const space = Result.unwrapOr(await input.deps.spacesCoreServer.getByUserId(input.msgEvt.account.userId), null)
+      const space = unwrapOr(await input.deps.spacesCoreServer.getByUserId(input.msgEvt.account.userId), null)
 
       if (!space) {
         return {}

@@ -1,4 +1,4 @@
-import { Err, Ok, Result, TimeSpan, isErr, pipe } from 'gamezilla-app/@/core'
+import { Err, Ok, Result, TimeSpan, isErr, pipe, unwrapOr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import { SpaceId, type UserId } from 'gamezilla-app/app/@/data'
@@ -36,6 +36,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
         verifiedKeys: new Set()
       })
   )
+
   const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, SpaceCore.Model>(
     dbConnKv,
     ['spaces', 'space-by-id'],
@@ -89,9 +90,20 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     )
   }
 
+  const hasEvent: ISpacesCoreServer['hasEvent'] = async (spaceId, eventId) => {
+    const got = await spacesBySpaceId.get(spaceId)
+
+    if (isErr(got)) {
+      return false
+    }
+
+    return Boolean(got.value && eventId in got.value.eventIds)
+  }
+
   return {
     get,
     upsert,
+    hasEvent,
     async getByUserId(userId) {
       if (!userId) {
         return Ok(null)
@@ -125,18 +137,12 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
       })
     },
 
-    async hasEvent(spaceId, eventId) {
-      const got = await spacesBySpaceId.get(spaceId)
-
-      if (isErr(got)) {
-        return false
+    async update(spaceEvent) {
+      if (await hasEvent(spaceEvent.spaceId, spaceEvent.eventId)) {
+        return Ok(null)
       }
 
-      return Boolean(got.value && eventId in got.value.eventIds)
-    },
-
-    async update(spaceEvent) {
-      const maybeSpace = Result.unwrapOr(await spacesBySpaceId.get(spaceEvent.spaceId), null)
+      const maybeSpace = unwrapOr(await spacesBySpaceId.get(spaceEvent.spaceId), null)
 
       const space = maybeSpace ?? SpaceCore.init
 
@@ -146,18 +152,6 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
       })
 
       return upsert(spaceNew)
-    },
-
-    async getEvent(spaceId, eventId) {
-      const space = Result.unwrapOr(await get(spaceId), null)
-
-      if (!space) {
-        return Ok(null)
-      }
-
-      const event = SpaceCore.toEventWithMeta(space, eventId)
-
-      return Ok(event)
     },
 
     async merge(space) {

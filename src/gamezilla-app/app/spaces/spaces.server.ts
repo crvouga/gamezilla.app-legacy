@@ -90,13 +90,6 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
 }
 
 const updateChild: SpaceServerModule['update'] = async (input) => {
-  if (
-    input.msgCoreEvt &&
-    (await input.deps.spacesCoreServer.hasEvent(input.msgCoreEvt.spaceId, input.msgCoreEvt.eventId))
-  ) {
-    return {}
-  }
-
   return SpaceServerModule.andThen(
     {},
     () => updateSpacesFromSpaceEvent(input),

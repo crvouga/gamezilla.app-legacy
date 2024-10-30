@@ -1,6 +1,6 @@
 import { Result } from 'gamezilla-app/@/core'
 import type { Paginated, SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { EventId, WithEventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import { EventId, WithEventId } from 'gamezilla-app/app/spaces/@/event'
 import type * as SpaceCore from '../space-core'
 import { SpaceCoreEvent } from '../space-core-event'
 
@@ -27,6 +27,4 @@ export type ISpacesCoreServer = {
   update: (spaceEvent: WithEventId<SpaceCoreEvent>) => Promise<Result<string, null>>
 
   merge: (space: SpaceCore.Model) => Promise<Result<string, null>>
-
-  getEvent: (spaceId: SpaceId, eventId: EventId) => Promise<Result<string, WithEventMeta<SpaceCoreEvent> | null>>
 }
