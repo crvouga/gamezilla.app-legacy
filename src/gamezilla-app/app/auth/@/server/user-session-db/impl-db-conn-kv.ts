@@ -23,13 +23,18 @@ export type Row = p.Infer<typeof isRow>
 //
 //
 
-export const UserSessionDbKV = (input: { dbConn: IDbConnKv }): IUserSessionDb => {
+export type Config = {
+  t: 'db-conn-kv'
+  dbConnKv: IDbConnKv
+}
+
+export const UserSessionDb = (config: Config): IUserSessionDb => {
   const sessionIdsByUserId = DbConnKv.withNamespace(
-    input.dbConn,
+    config.dbConnKv,
     ['auth-session', 'session-ids-by-user-id'],
     p.arr(SessionId)
   )
-  const userIdBySessionId = DbConnKv.withNamespace(input.dbConn, ['auth-session', 'user-id-by-session-id'], UserId)
+  const userIdBySessionId = DbConnKv.withNamespace(config.dbConnKv, ['auth-session', 'user-id-by-session-id'], UserId)
 
   return {
     async findSessionIdsByUserId(userId: UserId) {
