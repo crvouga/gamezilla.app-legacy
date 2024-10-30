@@ -4,11 +4,11 @@ import * as Game from '../game.types'
 import type { IGameDb } from './space-game-db'
 
 export const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {
-  const bySpaceId = DbConnKv.withNamespace<SpaceId, Game.ModelServer>(
+  const bySpaceId = DbConnKv.withNamespace<SpaceId, Game.ModelServer>({
     dbConnKv,
-    ['game', 'game-by-id'],
-    Game.ModelServer
-  )
+    namespace: ['game', 'game-by-id'],
+    parser: Game.ModelServer
+  })
 
   return {
     async getBySpaceId(spaceId) {

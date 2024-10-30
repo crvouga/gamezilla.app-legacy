@@ -29,12 +29,16 @@ export type Config = {
 }
 
 export const UserSessionDb = (config: Config): IUserSessionDb => {
-  const sessionIdsByUserId = DbConnKv.withNamespace(
-    config.dbConnKv,
-    ['auth-session', 'session-ids-by-user-id'],
-    p.arr(SessionId)
-  )
-  const userIdBySessionId = DbConnKv.withNamespace(config.dbConnKv, ['auth-session', 'user-id-by-session-id'], UserId)
+  const sessionIdsByUserId = DbConnKv.withNamespace({
+    dbConnKv: config.dbConnKv,
+    namespace: ['auth-session', 'session-ids-by-user-id'],
+    parser: p.arr(SessionId)
+  })
+  const userIdBySessionId = DbConnKv.withNamespace({
+    dbConnKv: config.dbConnKv,
+    namespace: ['auth-session', 'user-id-by-session-id'],
+    parser: UserId
+  })
 
   return {
     async findSessionIdsByUserId(userId: UserId) {

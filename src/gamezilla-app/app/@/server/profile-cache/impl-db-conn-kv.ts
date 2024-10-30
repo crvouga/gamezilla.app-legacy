@@ -4,7 +4,11 @@ import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import type { IProfileCache } from './interface'
 
 export const ProfileCacheDbKv = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IProfileCache => {
-  const profilesKv = DbConnKv.withNamespace(dbConnKv, ['spaces', 'profile-cache'], Profile)
+  const profilesKv = DbConnKv.withNamespace({
+    dbConnKv,
+    namespace: ['spaces', 'profile-cache'],
+    parser: Profile
+  })
   return {
     async add(profiles) {
       return profilesKv.setMany(Object.entries(profiles))

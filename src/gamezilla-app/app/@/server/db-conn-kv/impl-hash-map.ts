@@ -1,16 +1,20 @@
 import { Ok } from 'gamezilla-app/@/core'
 import type { p } from 'gamezilla-app/@/core/parser'
 import type { IDbConnKv } from './interface'
+import { ILogger, Logger } from '../logger'
 
 export type Config = {
   t: 'hash-map'
   map?: Map<string, unknown>
+  logger?: ILogger
 }
 
-export const DbConnKv = (config?: Config): IDbConnKv => {
+export const DbConnKv = (config: Config): IDbConnKv => {
+  const logger = config.logger ? Logger.prefix('hash-map', config.logger) : null
   const hashMap = config?.map ?? new Map<string, unknown>()
   return {
     async get(key, parser) {
+      logger?.debug(`get: key=${key}`)
       const got = hashMap.get(key) ?? null
 
       const parsed = parser.parse(got)
@@ -24,6 +28,7 @@ export const DbConnKv = (config?: Config): IDbConnKv => {
     },
 
     async getMany<TValue>(keys: string[], parser: p.Parser<TValue>) {
+      logger?.debug(`getMany: keys=${keys.join(', ')}`)
       const rows: TValue[] = []
 
       for (let i = 0; i < keys.length; i++) {
@@ -42,11 +47,13 @@ export const DbConnKv = (config?: Config): IDbConnKv => {
     },
 
     async set(key, value) {
+      logger?.debug(`set: key=${key}`)
       hashMap.set(key, value)
       return Ok(null)
     },
 
     async setMany(entries) {
+      logger?.debug(`setMany: keys=${entries.map((entry) => entry[0]).join(', ')}`)
       for (let i = 0; i < entries.length; i++) {
         hashMap.set(entries[i]![0], entries[i]![1])
       }
@@ -54,6 +61,7 @@ export const DbConnKv = (config?: Config): IDbConnKv => {
     },
 
     async zap(key) {
+      logger?.debug(`zap: key=${key}`)
       hashMap.delete(key)
       return Ok(null)
     }

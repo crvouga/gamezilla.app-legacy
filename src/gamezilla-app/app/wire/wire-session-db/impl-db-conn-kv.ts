@@ -13,12 +13,16 @@ export type Config = {
 }
 
 export const WireSessionDb = ({ dbConnKv }: Config): IWireSessionDb => {
-  const clientsKv = DbConnKv.withNamespace(dbConnKv, ['wire-session-db', 'clients-by-session-id'], Client)
-  const sessionIdsKv = DbConnKv.withNamespace(
+  const clientsKv = DbConnKv.withNamespace({
     dbConnKv,
-    ['wire-session-db', 'session-ids-by-user-id'],
-    p.arr(p.custom(SessionId.is, 'Invalid session id'))
-  )
+    namespace: ['wire-session-db', 'clients-by-session-id'],
+    parser: Client
+  })
+  const sessionIdsKv = DbConnKv.withNamespace({
+    dbConnKv,
+    namespace: ['wire-session-db', 'session-ids-by-user-id'],
+    parser: p.arr(p.custom(SessionId.is, 'Invalid session id'))
+  })
   return {
     clients: {
       async findBySessionIds(sessionIds) {

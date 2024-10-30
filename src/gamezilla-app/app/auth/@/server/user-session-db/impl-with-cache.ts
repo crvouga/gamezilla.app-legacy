@@ -16,17 +16,17 @@ export type Config = {
 }
 
 export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb => {
-  const userIdBySessionId = DbConnKv.withNamespace<SessionId, UserId>(
+  const userIdBySessionId = DbConnKv.withNamespace<SessionId, UserId>({
     dbConnKv,
-    ['auth-session', 'user-id-by-session-id'],
-    UserId
-  )
+    namespace: ['auth-session', 'user-id-by-session-id'],
+    parser: UserId
+  })
 
-  const sessionIdsByUserId = DbConnKv.withNamespace<UserId, SessionId[]>(
+  const sessionIdsByUserId = DbConnKv.withNamespace<UserId, SessionId[]>({
     dbConnKv,
-    ['auth-session', 'session-ids-by-user-id'],
-    p.arr(SessionId)
-  )
+    namespace: ['auth-session', 'session-ids-by-user-id'],
+    parser: p.arr(SessionId)
+  })
 
   return {
     async findSessionIdsByUserId(userId: UserId) {

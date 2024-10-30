@@ -50,25 +50,35 @@ export const withDistributedInvalidations = async (
       case DistributedUpdateType.SET: {
         logger.info(`invalidated key from SET: ${update.k}`)
         config.cache.zap(update.k)
-        break
+        return
       }
       case DistributedUpdateType.SET_MANY: {
         logger.info(`invalidated keys from SET_MANY: ${update.k.join(',')}`)
         for (const k of update.k) {
           config.cache.zap(k)
         }
-        break
+        return
       }
       case DistributedUpdateType.ZAP: {
         logger.info(`invalidated key from ZAP: ${update.k}`)
         config.cache.zap(update.k)
-        break
+        return
+      }
+      default: {
+        logger.error(`unknown update type: ${update}`)
+        const _exhaustiveCheck: never = update
+        return _exhaustiveCheck
       }
     }
   })
   return {
-    ...config.cache,
     unsubscribe,
+    get(key, parser) {
+      return config.cache.get(key, parser)
+    },
+    getMany(keys, parser) {
+      return config.cache.getMany(keys, parser)
+    },
     set(key, value) {
       config.pubSub.pub(instanceId, encode({ t: DistributedUpdateType.SET, k: key }))
       return config.cache.set(key, value)

@@ -3,22 +3,22 @@ import type { ILogger } from './interface'
 export const LoggerConsole = (): ILogger => {
   return {
     info: (msg: string) => {
-      console.log(`[info] ${msg}`)
+      console.log(`[inf] ${msg}`)
     },
     warn: (msg: string) => {
-      console.warn(`[warn] ${msg}`)
+      console.warn(`[wrn] ${msg}`)
     },
     error: (msg: string) => {
-      console.error(`[error] ${msg}`)
+      console.error(`[err] ${msg}`)
     },
     debug: (msg: string) => {
-      console.debug(`[debug] ${msg}`)
+      console.debug(`[dbg] ${msg}`)
     },
     trace: (msg: string) => {
-      console.trace(`[trace] ${msg}`)
+      console.trace(`[trc] ${msg}`)
     },
     fatal: (msg: string) => {
-      console.error(`[fatal] ${msg}`)
+      console.error(`[ftl] ${msg}`)
     }
   }
 }

@@ -15,6 +15,7 @@ export type Config = {
 
 export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServer> => {
   const logger = Logger.prefix('spaces-core-server', config.logger)
+
   const dbConnKv = await pipe(
     config.dbConnKv,
     async (dbConnKv) =>
@@ -40,19 +41,22 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
       })
   )
 
-  const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, SpaceCore.Model>(
+  const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, SpaceCore.Model>({
     dbConnKv,
-    ['spaces', 'space-by-id'],
-    SpaceCore.Model
-  )
-  const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>(
+    namespace: ['spaces', 'space-by-id'],
+    parser: SpaceCore.Model
+  })
+  const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>({
     dbConnKv,
-    ['spaces', 'space-id-by-user-id'],
-    SpaceId
-  )
-
+    namespace: ['spaces', 'space-id-by-user-id'],
+    parser: SpaceId
+  })
+  const indexSpaceIds = DbConnKv.withNamespace<string, SpaceId[]>({
+    dbConnKv,
+    namespace: ['spaces', 'space-ids'],
+    parser: p.arr(SpaceId)
+  })
   const INDEX_SPACE_IDS_KEY_ALL = 'all'
-  const indexSpaceIds = DbConnKv.withNamespace<string, SpaceId[]>(dbConnKv, ['spaces', 'space-ids'], p.arr(SpaceId))
 
   const get: ISpacesCoreServer['get'] = async (spaceId) => {
     if (!spaceId) {
