@@ -25,6 +25,7 @@ export type DistributedUpdate =
     }
 
 export type Config = {
+  t: 'with-distributed-updates'
   logger: ILogger
   dbConnKv: IDbConnKv
   pubSub: PubSub<DistributedUpdate>

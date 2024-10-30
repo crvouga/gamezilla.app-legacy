@@ -49,7 +49,8 @@ const implementations: Implementation[] = [
       const f = await Fixture()
       return {
         ...f,
-        dbConnKv: DbConnKv.withCache({
+        dbConnKv: await DbConnKv({
+          t: 'with-cache',
           cache: await DbConnKv({
             t: 'hash-map'
           }),
@@ -65,7 +66,8 @@ const implementations: Implementation[] = [
       const f = await Fixture()
       return {
         ...f,
-        dbConnKv: DbConnKv.withReducedParsing({
+        dbConnKv: await DbConnKv({
+          t: 'with-reduced-parsing',
           dbConnKv: f.dbConnKv,
           verifiedKeys: new Set(),
           logger: f.logger
@@ -79,11 +81,13 @@ const implementations: Implementation[] = [
       const f = await Fixture()
       return {
         ...f,
-        dbConnKv: DbConnKv.withCache({
+        dbConnKv: await DbConnKv({
+          t: 'with-cache',
           cache: await DbConnKv({
             t: 'hash-map'
           }),
-          source: DbConnKv.withThrottledWrites({
+          source: await DbConnKv({
+            t: 'with-throttled-writes',
             dbConnKv: f.dbConnKv,
             logger: f.logger,
             throttle: TimeSpan.seconds(10)
@@ -100,10 +104,12 @@ const implementations: Implementation[] = [
       const f = await Fixture()
       return {
         ...f,
-        dbConnKv: DbConnKv.withCache({
+        dbConnKv: await DbConnKv({
+          t: 'with-cache',
           source: f.dbConnKv,
           logger: f.logger,
-          cache: await DbConnKv.withDistributedInvalidations({
+          cache: await DbConnKv({
+            t: 'with-distributed-invalidations',
             cache: await DbConnKv({ t: 'hash-map' }),
             logger: f.logger,
             pubSub: await PubSubTopicBased({ t: 'in-memory' })

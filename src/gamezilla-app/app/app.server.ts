@@ -81,19 +81,22 @@ export const initCtx = async (): Promise<Ctx> => {
     dbConnKv: await pipe(
       dbConnKv,
       async (dbConnKv) =>
-        DbConnKv.withThrottledWrites({
+        DbConnKv({
+          t: 'with-throttled-writes',
           logger,
           dbConnKv,
           throttle: TimeSpan.seconds(10)
         }),
       async (dbConnKv) =>
-        DbConnKv.withCache({
+        DbConnKv({
+          t: 'with-cache',
           logger,
           source: await dbConnKv,
           cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 100_000 }) })
         }),
       async (dbConnKv) =>
-        DbConnKv.withReducedParsing({
+        DbConnKv({
+          t: 'with-reduced-parsing',
           dbConnKv: await dbConnKv,
           logger,
           verifiedKeys: new Set()

@@ -4,6 +4,7 @@ import type { IDbConnKv } from './interface'
 import { Logger } from '../logger'
 
 export type Config = {
+  t: 'with-throttled-writes'
   dbConnKv: IDbConnKv
   throttle: TimeSpan
   logger: ILogger

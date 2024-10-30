@@ -4,6 +4,7 @@ import type { IDbConnKv } from './interface'
 import { ILogger, Logger } from '../logger'
 
 export type Config = {
+  t: 'with-reduced-parsing'
   dbConnKv: IDbConnKv
   verifiedKeys: Set<string>
   logger: ILogger

@@ -20,11 +20,13 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
   const dbConnKv = await pipe(
     config.dbConnKv,
     async (dbConnKv) =>
-      DbConnKv.withCache({
+      DbConnKv({
         ...config,
+        t: 'with-cache',
         source: dbConnKv,
-        cache: await DbConnKv.withDistributedInvalidations({
+        cache: await DbConnKv({
           ...config,
+          t: 'with-distributed-invalidations',
           pubSub: config.pubSub,
           cache: await DbConnKv({
             t: 'hash-map',
@@ -34,8 +36,9 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
       }),
 
     async (dbConnKv) =>
-      DbConnKv.withReducedParsing({
+      DbConnKv({
         ...config,
+        t: 'with-reduced-parsing',
         dbConnKv: await dbConnKv,
         verifiedKeys: new Set()
       })

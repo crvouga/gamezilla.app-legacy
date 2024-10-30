@@ -8,17 +8,18 @@ import * as WithNamespace from './with-namespace'
 import * as WithReducedParsing from './with-reduced-parsing'
 import * as WithThrottledWrites from './with-throttled-writes'
 import * as ImplRedis from './impl-redis'
+import * as ImplInMemory from './impl-in-memory'
 
 export type Config =
   | HashMap.Config
   | DbConnSql.Config
   | ImplRedis.Config
-  | { t: 'in-memory' }
-  | (WithCache.Config & { t: 'with-cache' })
-  | (WithDistributedUpdates.Config & { t: 'with-distributed-updates' })
-  | (WithReducedParsing.Config & { t: 'with-reduced-parsing' })
-  | (WithThrottledWrites.Config & { t: 'with-throttled-writes' })
-  | (WithDistributedInvalidations.Config & { t: 'with-distributed-invalidations' })
+  | ImplInMemory.Config
+  | WithCache.Config
+  | WithDistributedUpdates.Config
+  | WithReducedParsing.Config
+  | WithThrottledWrites.Config
+  | WithDistributedInvalidations.Config
 
 export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
   switch (config.t) {
@@ -55,14 +56,9 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     }
 
     case 'in-memory': {
-      return HashMap.DbConnKv({ t: 'hash-map', map: new Map() })
+      return ImplInMemory.DbConnKv(config)
     }
   }
 }
 
-DbConnKv.withCache = WithCache.withCache
-DbConnKv.withReducedParsing = WithReducedParsing.withReducedParsing
-DbConnKv.withThrottledWrites = WithThrottledWrites.withThrottledWrites
-DbConnKv.withDistributedUpdates = WithDistributedUpdates.withDistributedUpdates
 DbConnKv.withNamespace = WithNamespace.withNamespace
-DbConnKv.withDistributedInvalidations = WithDistributedInvalidations.withDistributedInvalidations

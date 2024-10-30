@@ -36,17 +36,20 @@ export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => 
         config.dbConnKv,
 
         async (dbConnKv) =>
-          DbConnKv.withCache({
+          DbConnKv({
+            t: 'with-cache',
             logger,
             source: dbConnKv,
-            cache: await DbConnKv.withDistributedInvalidations({
+            cache: await DbConnKv({
+              t: 'with-distributed-invalidations',
               logger,
               pubSub: config.pubSub,
               cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 2000 }) })
             })
           }),
         async (dbConnKv) =>
-          DbConnKv.withReducedParsing({
+          DbConnKv({
+            t: 'with-reduced-parsing',
             dbConnKv: await dbConnKv,
             verifiedKeys: new Set(),
             logger

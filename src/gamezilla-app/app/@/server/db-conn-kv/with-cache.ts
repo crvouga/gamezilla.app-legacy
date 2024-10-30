@@ -3,6 +3,7 @@ import { ILogger, Logger } from '../logger'
 import { IDbConnKv } from './interface'
 
 export type Config = {
+  t: 'with-cache'
   cache: IDbConnKv
   source: IDbConnKv
   logger: ILogger

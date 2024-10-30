@@ -32,6 +32,7 @@ const decode = (str: string): DistributedUpdate => {
 }
 
 export type Config = {
+  t: 'with-distributed-invalidations'
   logger: ILogger
   cache: IDbConnKv
   pubSub: IPubSubTopicBased
