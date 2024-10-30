@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { NonEmpty, Ok } from 'gamezilla-app/@/core'
+import { NonEmpty, Ok, unwrapOr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { REDIS_URL } from 'gamezilla-app/config-private'
 import { DbConnKv } from '../db-conn-kv'
@@ -61,11 +61,13 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
+const randomStreamId = () => Math.floor(Math.random() * 1_000_000).toString()
+
 describe(import.meta.file, () => {
   test('it works', async () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent(null)
-      const streamId = Math.floor(Math.random() * 1_000_000).toString()
+      const streamId = randomStreamId()
       const before = await f.stream.startingFrom(streamId, EventId.init())
       const appended = await f.stream.append(streamId, myEvent.id, myEvent)
       const after = await f.stream.startingFrom(streamId, EventId.init())
@@ -79,7 +81,7 @@ describe(import.meta.file, () => {
     for (const f of await Fixtures()) {
       const myEvent1 = randomMyEvent(null)
       const myEvent2 = randomMyEvent(myEvent1)
-      const streamId = Math.floor(Math.random() * 1_000_000).toString()
+      const streamId = randomStreamId()
       const appended1 = await f.stream.append(streamId, myEvent1.id, myEvent1)
       const appended2 = await f.stream.append(streamId, myEvent2.id, myEvent2)
       const startingFrom1 = await f.stream.startingFrom(streamId, EventId.init())
@@ -94,7 +96,7 @@ describe(import.meta.file, () => {
   test('starting from non-existent', async () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent(null)
-      const streamId = Math.floor(Math.random() * 1_000_000).toString()
+      const streamId = randomStreamId()
       const startingFrom = await f.stream.startingFrom(streamId, myEvent.id)
       expect(startingFrom).toEqual(Ok([]))
     }
@@ -123,7 +125,7 @@ describe(import.meta.file, () => {
       for (let i = 0; i < 10; i++) {
         myEvents.push(randomMyEvent(NonEmpty.last(myEvents)))
       }
-      const streamId = Math.floor(Math.random() * 1_000_000).toString()
+      const streamId = randomStreamId()
       for (const myEvent of myEvents) {
         await f.stream.append(streamId, myEvent.id, myEvent)
       }
@@ -132,11 +134,11 @@ describe(import.meta.file, () => {
     }
   })
 
-  test.todo('duplicate EventId', async () => {
+  test('error if duplicate events', async () => {
     for (const f of await Fixtures()) {
       const myEvent1 = randomMyEvent(null)
       const duplicateEvent: MyEvent = { ...myEvent1, value: 'duplicate value' }
-      const streamId = Math.floor(Math.random() * 1_000_000).toString()
+      const streamId = randomStreamId()
 
       const appended1 = await f.stream.append(streamId, myEvent1.id, myEvent1)
       const appendedDuplicate = await f.stream.append(streamId, duplicateEvent.id, duplicateEvent)
@@ -144,9 +146,9 @@ describe(import.meta.file, () => {
       const eventsAfterDuplicate = await f.stream.startingFrom(streamId, EventId.init())
 
       expect(appended1).toEqual(Ok(null))
-      expect(appendedDuplicate).toEqual(Ok(null))
-
-      expect(eventsAfterDuplicate).toEqual(Ok([myEvent1, duplicateEvent]))
+      expect(appendedDuplicate.t).toEqual('err')
+      expect(unwrapOr(eventsAfterDuplicate, []).length).toEqual(1)
+      expect(eventsAfterDuplicate).toEqual(Ok([myEvent1]))
     }
   })
 })

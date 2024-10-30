@@ -38,7 +38,9 @@
     "upserted",
     "upserting",
     "vaul",
-    "vdom"
+    "vdom",
+    "xadd",
+    "xrange"
   ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnPaste": true,
