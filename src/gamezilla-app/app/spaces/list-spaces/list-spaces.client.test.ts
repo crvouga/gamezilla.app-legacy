@@ -261,7 +261,7 @@ describe(import.meta.file, () => {
     const space = pipe(SpaceCore.random({ spaceId, hostId }), (model) =>
       SpaceCore.appendEvent({
         model,
-        event: withId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId })
+        msgCore: withId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId })
       })
     )
 

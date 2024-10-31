@@ -32,11 +32,11 @@ export const FixtureSpaceServer = async () => {
   const space = pipe(
     SpaceCore.init,
     (model) =>
-      SpaceCore.appendEvent({ model, event: withId({ t: 'user-started-space', spaceId, userId: userA.userId }) }),
+      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-started-space', spaceId, userId: userA.userId }) }),
     (model) =>
-      SpaceCore.appendEvent({ model, event: withId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
+      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
     (model) =>
-      SpaceCore.appendEvent({ model, event: withId({ t: 'user-joined-space', spaceId, userId: userC.userId }) })
+      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId, userId: userC.userId }) })
   )
 
   const spaceState = SpaceCore.toSpaceStarted(space)

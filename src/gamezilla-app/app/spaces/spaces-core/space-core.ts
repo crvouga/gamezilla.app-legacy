@@ -68,7 +68,7 @@ export const random = (input?: { hostId?: UserId; spaceId?: SpaceId }) => {
     (model) =>
       appendEvent({
         model,
-        event: {
+        msgCore: {
           t: 'user-started-space',
           eventId: EventId.generate(),
           spaceId: input?.spaceId ?? SpaceId.generate(),
@@ -143,9 +143,9 @@ export const toLatestSnapshot = (model: Model): SpaceState.State | null => {
 //
 //
 
-export const appendEvent = ({ model, event }: { model: Model; event: WithEventId<MsgCore> }): Model => {
-  if (model.eventIds[event.eventId]) {
-    return model
+export const appendEvent = (input: { model: Model; msgCore: WithEventId<MsgCore> }): Model => {
+  if (input.model.eventIds[input.msgCore.eventId]) {
+    return input.model
   }
 
   //
@@ -153,30 +153,30 @@ export const appendEvent = ({ model, event }: { model: Model; event: WithEventId
   //
 
   const newEvent: WithEventMeta<MsgCore> = {
-    ...event,
-    happenedAt: LamportClock.toCurrentTime(model.clock)
+    ...input.msgCore,
+    happenedAt: LamportClock.toCurrentTime(input.model.clock)
   }
 
-  let newSnapshots = { ...model.snapshots }
+  let newSnapshots = { ...input.model.snapshots }
 
-  const appended = [...model.events, newEvent]
+  const appended = [...input.model.events, newEvent]
 
   const newEvents = appended.sort(ascend((e) => LamportTimestamp.toNumber(e.happenedAt)))
 
   const newEventIds = {
-    ...model.eventIds,
-    [event.eventId]: event.eventId
+    ...input.model.eventIds,
+    [input.msgCore.eventId]: input.msgCore.eventId
   }
 
   //
   // Remove invalid snapshots
   //
 
-  const newEventIndex = newEvents.findIndex((e) => e.eventId === event.eventId)
+  const newEventIndex = newEvents.findIndex((e) => e.eventId === input.msgCore.eventId)
 
   if (newEventIndex === -1) {
     // This should never happen because we just appended the event
-    return model
+    return input.model
   }
 
   for (let i = newEventIndex; i < newEvents.length; i++) {
@@ -191,19 +191,19 @@ export const appendEvent = ({ model, event }: { model: Model; event: WithEventId
   //
 
   const snapshot = deriveState({
-    clock: model.clock,
+    clock: input.model.clock,
     events: newEvents,
     snapshots: newSnapshots,
     eventIds: newEventIds
   })
 
-  newSnapshots = CappedOrderedDict.add(newSnapshots, event.eventId, snapshot)
+  newSnapshots = CappedOrderedDict.add(newSnapshots, input.msgCore.eventId, snapshot)
 
   //
   //
   //
 
-  const newClock = LamportClock.increment(model.clock)
+  const newClock = LamportClock.increment(input.model.clock)
 
   //
   //

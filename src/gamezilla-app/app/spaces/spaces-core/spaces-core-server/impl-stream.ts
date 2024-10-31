@@ -108,7 +108,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
       const space = maybeSpace ?? SpaceCore.init
 
       const spaceNew = SpaceCore.appendEvent({
-        event,
+        msgCore: event,
         model: space
       })
 

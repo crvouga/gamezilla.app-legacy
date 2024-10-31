@@ -16,15 +16,15 @@ export const makeSpace = ({
     SpaceCore.init,
     //
     (model) =>
-      SpaceCore.appendEvent({ model, event: withId({ t: 'user-started-space', spaceId: spaceId, userId: hostId }) }),
+      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-started-space', spaceId: spaceId, userId: hostId }) }),
 
     (model) =>
       SpaceCore.appendEvent({
         model,
-        event: withId({ t: 'user-inputted-game', spaceId: spaceId, userId: hostId, game: 'connect-four' })
+        msgCore: withId({ t: 'user-inputted-game', spaceId: spaceId, userId: hostId, game: 'connect-four' })
       }),
 
     (model) =>
-      SpaceCore.appendEvent({ model, event: withId({ t: 'user-joined-space', spaceId: spaceId, userId: guestId }) })
+      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId: spaceId, userId: guestId }) })
   )
 }

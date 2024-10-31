@@ -203,16 +203,16 @@ export const update = ({
 
   switch (msgCore.t) {
     case 'game': {
-      return appendEvent({
+      return append({
         model,
-        msgEvt: msgCore
+        msgCore: msgCore
       })
     }
 
     case 'user-inputted-game': {
-      return appendEvent({
+      return append({
         model,
-        msgEvt: msgCore
+        msgCore: msgCore
       })
     }
 
@@ -226,9 +226,9 @@ export const update = ({
         delete spaceIdByUserIdNew[userId]
       }
 
-      const appended = appendEvent({
+      const appended = append({
         model,
-        msgEvt: msgCore
+        msgCore: msgCore
       })
 
       return {
@@ -262,9 +262,9 @@ export const update = ({
         [msgCore.userId]: msgCore.spaceId
       }
 
-      const appended = appendEvent({
+      const appended = append({
         model,
-        msgEvt: msgCore
+        msgCore: msgCore
       })
 
       return {
@@ -284,9 +284,9 @@ export const update = ({
         delete spaceIdByUserIdNew[msgCore.userId]
       }
 
-      const appended = appendEvent({
+      const appended = append({
         model,
-        msgEvt: msgCore
+        msgCore: msgCore
       })
 
       return {
@@ -303,9 +303,9 @@ export const update = ({
         [msgCore.userId]: msgCore.spaceId
       }
 
-      const appended = appendEvent({
+      const appended = append({
         model,
-        msgEvt: msgCore
+        msgCore: msgCore
       })
 
       return {
@@ -318,21 +318,21 @@ export const update = ({
   }
 }
 
-const appendEvent = ({
+const append = ({
   model,
-  msgEvt
+  msgCore
 }: {
   model: Model
-  msgEvt: WithEventId<MsgCore>
+  msgCore: WithEventId<MsgCore>
 }): {
   model: Model
 } => {
-  const spaceId = msgEvt.spaceId
+  const spaceId = msgCore.spaceId
 
   const space = model.spaces[spaceId] ?? Space.init
 
   const spaceNew = Space.appendEvent({
-    event: msgEvt,
+    msgCore: msgCore,
     model: space
   })
 
