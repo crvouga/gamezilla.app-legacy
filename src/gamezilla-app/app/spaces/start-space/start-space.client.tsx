@@ -13,15 +13,15 @@ const update: SpaceClientModule['update'] = (input) => {
   )
 }
 
-const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCoreEvt: msgCoreEvt, ctx }) => {
-  switch (msgCoreEvt?.t) {
+const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCore: msgCore, ctx }) => {
+  switch (msgCore?.t) {
     case 'user-started-space': {
-      if (msgCoreEvt.userId === ctx.currentUserId) {
+      if (msgCore.userId === ctx.currentUserId) {
         return {
           model,
           msgCmd: [
             playSound(APP_SOUND.navForward),
-            pushRoute({ n: 'spaces', t: 'space', spaceId: msgCoreEvt.spaceId }),
+            pushRoute({ n: 'spaces', t: 'space', spaceId: msgCore.spaceId }),
             showToast(ctx.t('spaces.space-started'))
           ]
         }
@@ -56,7 +56,7 @@ const updateStartSpaceButton: SpaceClientModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCoreEvt: [spaceEventNew]
+        msgCore: [spaceEventNew]
       }
     }
     default: {

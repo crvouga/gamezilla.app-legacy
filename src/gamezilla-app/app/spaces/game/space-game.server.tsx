@@ -32,12 +32,12 @@ const update: SpaceServerModule['update'] = async (input) => {
           }
         : null,
     msgEvt: input.msgEvt,
-    msgCore: input.msgCoreEvt?.t === 'game' ? { ...input.msgCoreEvt, ...input.msgCoreEvt.c } : null
+    msgCore: input.msgCore?.t === 'game' ? { ...input.msgCore, ...input.msgCore.c } : null
   })
 
   return {
     msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
-    msgCoreEvt: gameUpdated.msgCore?.map((e) => ({ ...e, spaceId, t: 'game', c: e }))
+    msgCore: gameUpdated.msgCore?.map((e) => ({ ...e, spaceId, t: 'game', c: e }))
   }
 }
 
@@ -50,8 +50,8 @@ const inputToSpaceId = (input: Parameters<SpaceServerModule['update']>[0]) => {
     return input.msgClient.spaceId
   }
 
-  if (input.msgCoreEvt && 'spaceId' in input.msgCoreEvt) {
-    return input.msgCoreEvt.spaceId
+  if (input.msgCore && 'spaceId' in input.msgCore) {
+    return input.msgCore.spaceId
   }
 
   return null

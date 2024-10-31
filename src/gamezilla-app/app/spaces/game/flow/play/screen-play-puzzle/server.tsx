@@ -14,7 +14,7 @@ const update: ServerModule['update'] = async (input) => {
   )
 }
 
-export const msgCoreEvtToUserActivity = (
+export const msgCoreToUserActivity = (
   input: MsgCoreEvt & { puzzleId: FlowPuzzleId; happenedAt: Posix }
 ): UserActivity[] => {
   switch (input.t) {

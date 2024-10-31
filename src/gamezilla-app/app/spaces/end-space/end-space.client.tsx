@@ -41,7 +41,7 @@ const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
 
       return {
         model,
-        msgCoreEvt: [
+        msgCore: [
           withId({
             t: 'user-ended-space',
             spaceId: currentUserSpaceId,
@@ -60,9 +60,9 @@ const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
 }
 
 const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  const { ctx, model, msgCoreEvt: msgCoreEvt } = input
+  const { ctx, model, msgCore: msgCore } = input
 
-  switch (msgCoreEvt?.t) {
+  switch (msgCore?.t) {
     case 'user-ended-space': {
       if (!ctx.currentUserId) {
         return {
@@ -72,7 +72,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
 
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, ctx.currentUserId)
 
-      if (msgCoreEvt.spaceId !== currentUserSpaceId) {
+      if (msgCore.spaceId !== currentUserSpaceId) {
         return {
           model
         }
@@ -89,7 +89,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
           }
         },
         (model) => {
-          if (ctx.currentRoute.t === 'space' && ctx.currentRoute.spaceId === msgCoreEvt.spaceId) {
+          if (ctx.currentRoute.t === 'space' && ctx.currentRoute.spaceId === msgCore.spaceId) {
             return {
               model,
               msgCmd: [
@@ -106,14 +106,14 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
           }
         },
         (model) => {
-          if (msgCoreEvt.userId === ctx.currentUserId) {
+          if (msgCore.userId === ctx.currentUserId) {
             return {
               model,
               msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))]
             }
           }
 
-          const profile = ctx.profiles[msgCoreEvt.userId]
+          const profile = ctx.profiles[msgCore.userId]
 
           if (!profile) {
             return {
@@ -163,7 +163,7 @@ const updateEndSpaceButton: SpaceClientModule['update'] = ({ msg, model, ctx }) 
 
       return {
         model,
-        msgCoreEvt: [spaceEventNew]
+        msgCore: [spaceEventNew]
       }
     }
     default: {

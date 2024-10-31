@@ -25,7 +25,7 @@ export type Input = {
     | null
   msgEvt?: ServerEvt | null
   msgCmd?: SpaceServerCmd<MsgToClient> | null
-  msgCoreEvt?: WithEventId<MsgCore> | null
+  msgCore?: WithEventId<MsgCore> | null
 }
 
 export type MaybePromise<T> = T | Promise<T>
@@ -33,7 +33,7 @@ export type MaybePromise<T> = T | Promise<T>
 export type Output = {
   msgCmd?: SpaceServerCmd<MsgToClient>[]
   msgEvt?: unknown[]
-  msgCoreEvt?: WithEventId<MsgCore>[]
+  msgCore?: WithEventId<MsgCore>[]
 }
 
 export type SpaceServerModule = {
@@ -52,7 +52,7 @@ const andThen = async (
     acc = {
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt)
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore)
     }
   }
 

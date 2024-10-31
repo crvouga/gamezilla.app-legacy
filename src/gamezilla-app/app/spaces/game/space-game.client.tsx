@@ -45,7 +45,7 @@ const updateFromMsg: SpaceClientModule['update'] = ({ msg, model, ctx }) => {
 
       return {
         model,
-        msgCoreEvt: [spaceEventNew]
+        msgCore: [spaceEventNew]
       }
     }
 
@@ -68,7 +68,7 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model, ctx }) => {
       }
       return {
         model,
-        msgCoreEvt: [
+        msgCore: [
           withId({
             t: 'user-inputted-game',
             game: null,
@@ -88,7 +88,7 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model, ctx }) => {
 }
 
 const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  switch (input.msgCoreEvt?.t) {
+  switch (input.msgCore?.t) {
     case 'user-inputted-game': {
       if (!input.ctx.currentUserId) {
         return {
@@ -98,10 +98,10 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
 
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
-      if (input.msgCoreEvt.spaceId === currentUserSpaceId) {
+      if (input.msgCore.spaceId === currentUserSpaceId) {
         return {
           model: input.model,
-          msgCmd: [playSound(input.msgCoreEvt.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)]
+          msgCmd: [playSound(input.msgCore.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)]
         }
       }
       return {
@@ -126,8 +126,8 @@ const inputToSpaceId = (currentUser: UserAccount, input: Parameters<SpaceClientM
     return input.msgServer.spaceId
   }
 
-  if (input.msgCoreEvt && 'spaceId' in input.msgCoreEvt) {
-    return input.msgCoreEvt.spaceId
+  if (input.msgCore && 'spaceId' in input.msgCore) {
+    return input.msgCore.spaceId
   }
 
   const spaceId = input.model.spaceIdByUserId[currentUser.userId] ?? null
@@ -165,7 +165,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
       currentUser: currentUser
     },
     model: modelGame,
-    msgCore: input.msgCoreEvt?.t === 'game' ? { ...input.msgCoreEvt, ...input.msgCoreEvt.c } : null,
+    msgCore: input.msgCore?.t === 'game' ? { ...input.msgCore, ...input.msgCore.c } : null,
     modelCore: spaceState.game,
     msgServer: input.msgServer?.t === 'game' ? input.msgServer.c : null,
     msgCmd: null,
@@ -173,7 +173,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
     msg: input.msg?.t === 'game' ? input.msg.c : null
   })
 
-  const msgCoreEvtNew = (gameUpdated.msgCore ?? []).map(
+  const msgCoreNew = (gameUpdated.msgCore ?? []).map(
     (c): WithEventId<MsgCore> => ({ eventId: c.eventId, spaceId, t: 'game', c })
   )
 
@@ -192,7 +192,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
     ),
     eff: Eff.map(gameUpdated.eff, (c) => ({ t: 'game', c, spaceId })),
     msgEvt: [],
-    msgCoreEvt: msgCoreEvtNew
+    msgCore: msgCoreNew
   }
 }
 

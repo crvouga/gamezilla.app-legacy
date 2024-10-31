@@ -112,15 +112,15 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
 }
 
 const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
-  if (!input.msgCoreEvt) {
+  if (!input.msgCore) {
     return {}
   }
 
-  const got = await input.deps.spacesCoreServer.get(input.msgCoreEvt.spaceId)
+  const got = await input.deps.spacesCoreServer.get(input.msgCore.spaceId)
 
   const space = unwrapOr(got, null) ?? SpaceCore.init
 
-  const eventWithMeta = SpaceCore.toEventWithMeta(space, input.msgCoreEvt.eventId)
+  const eventWithMeta = SpaceCore.toEventWithMeta(space, input.msgCore.eventId)
 
   if (!eventWithMeta) {
     return {}
@@ -154,7 +154,7 @@ const outputSpaceEventsFromServer: SpaceServerModule['update'] = (input) => {
   switch (input.msgClient?.t) {
     case 'event': {
       return {
-        msgCoreEvt: [input.msgClient.c]
+        msgCore: [input.msgClient.c]
       }
     }
   }

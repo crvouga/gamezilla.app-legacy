@@ -42,7 +42,7 @@ const updateFromJoinSpaceButton: SpaceClientModule['update'] = ({ msg, model, ct
 
       return {
         model,
-        msgCoreEvt: [spaceEventNew]
+        msgCore: [spaceEventNew]
       }
     }
     default: {
@@ -54,15 +54,15 @@ const updateFromJoinSpaceButton: SpaceClientModule['update'] = ({ msg, model, ct
 }
 
 const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  const { msgCoreEvt: msgCoreEvt, model, ctx } = input
+  const { msgCore: msgCore, model, ctx } = input
 
   if (!ctx.currentUserId) {
     return { model }
   }
 
-  switch (msgCoreEvt?.t) {
+  switch (msgCore?.t) {
     case 'user-joined-space': {
-      const error = SpacesCoreClient.toErrorByEvenId(model, msgCoreEvt.eventId)
+      const error = SpacesCoreClient.toErrorByEvenId(model, msgCore.eventId)
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
@@ -81,14 +81,14 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
 
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, ctx.currentUserId)
 
-      if (msgCoreEvt.spaceId !== currentUserSpaceId) {
+      if (msgCore.spaceId !== currentUserSpaceId) {
         return {
           model
         }
       }
 
-      if (msgCoreEvt.userId !== ctx.currentUserId) {
-        const username = ctx.profiles[msgCoreEvt.userId]?.username ?? null
+      if (msgCore.userId !== ctx.currentUserId) {
+        const username = ctx.profiles[msgCore.userId]?.username ?? null
         return {
           model,
           msgCmd: [

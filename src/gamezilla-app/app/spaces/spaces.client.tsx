@@ -67,19 +67,19 @@ export const update: ClientModule['update'] = (input) => {
 export const updateLoop = (input: Input, initial?: Output): Output => {
   const acc = initial ?? updateChild(input)
 
-  const [coreEvt, ...coreEvtRest] = acc.msgCoreEvt ?? []
+  const [coreEvt, ...coreEvtRest] = acc.msgCore ?? []
 
   if (coreEvt) {
     const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
-      msgCoreEvt: coreEvt
+      msgCore: coreEvt
     })
 
     return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCoreEvt: Msg.batch(coreEvtRest, updated.msgCoreEvt),
+      msgCore: Msg.batch(coreEvtRest, updated.msgCore),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
     })
@@ -97,7 +97,7 @@ export const updateLoop = (input: Input, initial?: Output): Output => {
     return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt),
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(evtRest, updated.msgEvt)
     })
@@ -115,7 +115,7 @@ export const updateLoop = (input: Input, initial?: Output): Output => {
     return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt),
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
       msgCmd: Msg.batch(cmdRest, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
     })
@@ -141,14 +141,14 @@ const updateChild: SpaceClientModule['update'] = (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCoreEvt: msgCoreEvt, model }) => {
-  if (!msgCoreEvt) {
+const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCore, model }) => {
+  if (!msgCore) {
     return { model }
   }
 
   const updated = SpacesCoreClient.update({
     model,
-    msgCore: msgCoreEvt
+    msgCore: msgCore
   })
 
   return { model: { ...model, ...updated.model } }

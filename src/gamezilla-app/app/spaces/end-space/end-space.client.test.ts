@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
       })
     )
     expect(
-      updated.msgCoreEvt?.some(
+      updated.msgCore?.some(
         (spaceEvent) => spaceEvent.t === 'user-ended-space' && spaceEvent.userId === ctx.currentUserId
       )
     ).toBe(true)

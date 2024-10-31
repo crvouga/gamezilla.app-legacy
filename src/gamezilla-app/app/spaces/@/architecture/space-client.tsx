@@ -23,7 +23,7 @@ export type Input = {
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }> | null
-  msgCoreEvt?: WithEventId<MsgCore> | null
+  msgCore?: WithEventId<MsgCore> | null
 }
 
 export type Output = {
@@ -34,7 +34,7 @@ export type Output = {
     MsgToServer: MsgToServer
   }>[]
   msgEvt?: SpaceClientEvt[]
-  msgCoreEvt?: WithEventId<MsgCore>[]
+  msgCore?: WithEventId<MsgCore>[]
 }
 
 export type SpaceClientModule = {
@@ -52,7 +52,7 @@ const andThen = (acc: Output, ...updates: ((model: ModelClient) => Output)[]): O
       eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt)
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore)
     }
   }
   return acc

@@ -54,17 +54,17 @@ export const update: ServerModule['update'] = async (input) => {
 const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> => {
   const acc = initialAcc ?? (await updateChild(input))
 
-  const [coreEvt, ...coreEvtRest] = acc.msgCoreEvt ?? []
+  const [coreEvt, ...coreEvtRest] = acc.msgCore ?? []
 
   if (coreEvt) {
     const updated = await updateChild({
       deps: input.deps,
       ctx: input.ctx,
-      msgCoreEvt: coreEvt
+      msgCore: coreEvt
     })
 
     return updateLoop(input, {
-      msgCoreEvt: Msg.batch(coreEvtRest, updated.msgCoreEvt),
+      msgCore: Msg.batch(coreEvtRest, updated.msgCore),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: updated.msgEvt
     })
@@ -80,7 +80,7 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
     })
 
     return updateLoop(input, {
-      msgCoreEvt: Msg.batch(acc.msgCoreEvt, updated.msgCoreEvt),
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
       msgCmd: Msg.batch(cmdRest, updated.msgCmd),
       msgEvt: updated.msgEvt
     })
@@ -101,12 +101,12 @@ const updateChild: SpaceServerModule['update'] = async (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgCoreEvt, deps }) => {
-  if (!msgCoreEvt) {
+const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgCore, deps }) => {
+  if (!msgCore) {
     return {}
   }
 
-  await deps.spacesCoreServer.update(msgCoreEvt)
+  await deps.spacesCoreServer.update(msgCore)
 
   return {}
 }
