@@ -197,10 +197,6 @@ export const update = ({
 }): {
   model: Model
 } => {
-  if (hasEvent(model, msgCore.spaceId, msgCore.eventId)) {
-    return { model }
-  }
-
   switch (msgCore.t) {
     case 'game': {
       return append(model, msgCore)
