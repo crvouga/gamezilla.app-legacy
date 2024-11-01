@@ -377,7 +377,6 @@ const updateChild = (input: {
       Eff.tag('routing', routing.eff),
       Eff.tag('sound', sound.eff),
       Eff.tag('spaces', space.eff),
-      Eff.tag('status-bar', statusBar.eff),
       Eff.tag('toast', toast.eff),
       Eff.tag('wire', wire.eff),
       Eff.tag('lang', lang.eff)
@@ -399,6 +398,7 @@ const updateChild = (input: {
       ClientCmd.tag('profile', profile.msgCmd),
       ClientCmd.tag('spaces', space.msgCmd),
       ClientCmd.tag('lang', lang.msgCmd),
+      statusBar.msgCmd,
       routing.msgCmd,
       sound.msgCmd,
       toast.msgCmd

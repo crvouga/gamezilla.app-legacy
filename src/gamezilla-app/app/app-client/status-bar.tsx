@@ -1,7 +1,6 @@
-import type { Eff } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'
+import { APP_SOUND, playSound, type ClientCmd, type StatusBarCmd } from '../@/client'
 import { Drawer } from '../@/ui'
-import type { StatusBarCmd } from '../@/client'
 
 export type Model = {
   isDrawerOpen: boolean
@@ -23,7 +22,7 @@ export const update = (input: {
   msgCmd?: StatusBarCmd | null
 }): {
   model: Model
-  eff?: Eff<Msg>
+  msgCmd?: ClientCmd<never>[]
 } => {
   switch (input.msg?.t) {
     case 'clicked-status-bar': {
@@ -31,7 +30,8 @@ export const update = (input: {
         model: {
           ...input.model,
           isDrawerOpen: true
-        }
+        },
+        msgCmd: [playSound(APP_SOUND.tap)]
       }
     }
 
@@ -40,7 +40,8 @@ export const update = (input: {
         model: {
           ...input.model,
           isDrawerOpen: false
-        }
+        },
+        msgCmd: [playSound(APP_SOUND.tap)]
       }
     }
   }
