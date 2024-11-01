@@ -125,6 +125,10 @@ export const updateLoop = (input: Input, initial?: Output): Output => {
 }
 
 const updateChild: SpaceClientModule['update'] = (input) => {
+  if (input.msgCore && SpacesCoreClient.hasEvent(input.model, input.msgCore.spaceId, input.msgCore.eventId)) {
+    return { model: input.model }
+  }
+
   return SpaceClientModule.andThen(
     { model: input.model },
     (model) => EndSpaceClient.update({ ...input, model }),
