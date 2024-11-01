@@ -12,7 +12,7 @@ import {
   TopBar
 } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '../../../@/game'
 import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
@@ -39,7 +39,7 @@ const ButtonExitBuilder: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.user-clicked-exit-button': {
         return {
           model,
-          msgCore: [withId(msg)]
+          msgCore: [withEventId(msg)]
         }
       }
     }
@@ -90,7 +90,7 @@ const ButtonAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.user-opened-add-puzzle-screen': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.navForwardMin)]
         }
       }
@@ -127,7 +127,7 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.user-clicked-add-puzzle-item': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-added'))]
         }
       }
@@ -135,7 +135,7 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.user-closed-add-puzzle-screen': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.navBackwardMin)]
         }
       }
@@ -196,14 +196,14 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.user-clicked-pack-item': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.navForwardMin)]
         }
       }
       case 'screen-pack-builder.user-changed-slide': {
         return {
           model,
-          msgCore: [withId(msg)]
+          msgCore: [withEventId(msg)]
         }
       }
     }
@@ -296,7 +296,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.puzzle-screen.user-clicked-more-button': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.tap)]
         }
       }
@@ -368,7 +368,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.navBackwardMin)]
         }
       }
@@ -376,14 +376,14 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.got-flow-play-msg': {
         return {
           model,
-          msgCore: [withId(msg)]
+          msgCore: [withEventId(msg)]
         }
       }
 
       case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.tap)]
         }
       }
@@ -391,7 +391,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.tap)]
         }
       }
@@ -399,7 +399,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
       case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
         return {
           model,
-          msgCore: [withId(msg)],
+          msgCore: [withEventId(msg)],
           msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-removed'))]
         }
       }
@@ -620,8 +620,7 @@ const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
       model: input.model,
       msgCore: (updated.msgCore ?? []).map((c) => ({
         c,
-        t: 'got-edit-pack-name-msg',
-        eventId: c.eventId
+        t: 'got-edit-pack-name-msg'
       }))
     }
   },

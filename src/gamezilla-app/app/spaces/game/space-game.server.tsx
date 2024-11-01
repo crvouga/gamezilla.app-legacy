@@ -4,6 +4,7 @@ import { SpaceServerCmd } from '../@/space-server-cmd'
 import type { MsgServer } from '../spaces.types'
 import { GameServer } from './game.server'
 import { SpaceCore } from '../spaces-core'
+import { withEventId } from '../@/event'
 
 const update: SpaceServerModule['update'] = async (input) => {
   const spaceId = inputToSpaceId(input)
@@ -37,7 +38,7 @@ const update: SpaceServerModule['update'] = async (input) => {
 
   return {
     msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
-    msgCore: gameUpdated.msgCore?.map((e) => ({ ...e, spaceId, t: 'game', c: e }))
+    msgCore: gameUpdated.msgCore?.map((e) => withEventId({ ...e, spaceId, t: 'game', c: e }))
   }
 }
 

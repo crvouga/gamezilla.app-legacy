@@ -1,5 +1,5 @@
 import type { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FlowServerCtx } from '../../../@/flow-server-ctx'
 import { EditPackNameCore } from './core'
 import type { ModelCore, MsgCore } from './types'
@@ -22,7 +22,7 @@ const update: ServerModule['update'] = async (input) => {
 
       return {
         msgCore: [
-          withId({
+          withEventId({
             t: 'edit-pack-name.server-persisted-pack',
             result: put,
             userId: input.msgCore.userId

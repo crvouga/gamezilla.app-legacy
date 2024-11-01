@@ -1,9 +1,8 @@
+import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { PackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../types'
 import { PackCreateNewClient } from './create-new-pack/client'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
-import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -28,10 +27,10 @@ export const updateClickedPackItem: ClientModule['update'] = ({ msg, model }) =>
       return {
         model,
         msgCore: [
-          withId({
+          {
             t: 'pack-list.user-clicked-pack-item',
             pack: msg.pack
-          })
+          }
         ],
         msgCmd: [playSound(APP_SOUND.navForwardMin)]
       }

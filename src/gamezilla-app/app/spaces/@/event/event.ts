@@ -28,7 +28,7 @@ export const withEventMeta = <T>(msg: T): WithEventMeta<T> => {
   }
 }
 
-export const withId = <T>(msg: T): WithEventId<T> => {
+export const withEventId = <T>(msg: T): WithEventId<T> => {
   return {
     ...msg,
     eventId: EventId.generate()

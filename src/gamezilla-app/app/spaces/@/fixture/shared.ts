@@ -1,6 +1,6 @@
 import { type SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { pipe } from 'gamezilla-app/@/core'
-import { withId } from '../event'
+import { withEventId } from '../event'
 import { SpaceCore } from '../../spaces-core'
 
 export const makeSpace = ({
@@ -16,15 +16,21 @@ export const makeSpace = ({
     SpaceCore.init,
     //
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-started-space', spaceId: spaceId, userId: hostId }) }),
+      SpaceCore.appendEvent({
+        model,
+        msgCore: withEventId({ t: 'user-started-space', spaceId: spaceId, userId: hostId })
+      }),
 
     (model) =>
       SpaceCore.appendEvent({
         model,
-        msgCore: withId({ t: 'user-inputted-game', spaceId: spaceId, userId: hostId, game: 'connect-four' })
+        msgCore: withEventId({ t: 'user-inputted-game', spaceId: spaceId, userId: hostId, game: 'connect-four' })
       }),
 
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId: spaceId, userId: guestId }) })
+      SpaceCore.appendEvent({
+        model,
+        msgCore: withEventId({ t: 'user-joined-space', spaceId: spaceId, userId: guestId })
+      })
   )
 }

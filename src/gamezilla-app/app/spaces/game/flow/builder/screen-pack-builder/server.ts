@@ -1,6 +1,5 @@
 import { isErr } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 
 import { FlowPackPuzzlesGridServer } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.server'
@@ -20,10 +19,10 @@ const SavePack: Pick<ServerModule, 'update'> = {
 
         return {
           msgCore: [
-            withId({
+            {
               t: 'screen-pack-builder.saved-pack',
               saved
-            })
+            }
           ]
         }
       }
@@ -112,11 +111,7 @@ const EditPackName: Pick<ServerModule, 'update'> = {
           : null
     })
     return {
-      msgCore: (updated.msgCore ?? []).map(({ eventId, ...c }) => ({
-        eventId,
-        c,
-        t: 'got-edit-pack-name-msg'
-      }))
+      msgCore: (updated.msgCore ?? []).map((c) => ({ c, t: 'got-edit-pack-name-msg' }))
     }
   }
 }

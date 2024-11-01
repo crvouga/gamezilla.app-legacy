@@ -1,7 +1,7 @@
 import { Err, isErr } from 'gamezilla-app/@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import type { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
 import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
@@ -28,7 +28,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       }
 
       return {
-        msgCore: [withId(msgCore)]
+        msgCore: [withEventId(msgCore)]
       }
     }
 

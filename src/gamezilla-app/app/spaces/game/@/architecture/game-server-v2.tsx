@@ -1,7 +1,7 @@
 import { NonEmpty, type Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
-import type { EventId, WithEventId } from 'gamezilla-app/app/spaces/@/event'
+import type { WithEventId } from 'gamezilla-app/app/spaces/@/event'
 
 //
 //
@@ -34,7 +34,7 @@ export type Input<T extends GameServerModuleTypes> = {
   deps: T['Deps']
   ctx: T['Ctx']
   modelCore: T['ModelCore']
-  msgCore?: (T['MsgCore'] & { eventId: EventId }) | null
+  msgCore?: WithEventId<T['MsgCore']> | null
   msg?: T['Msg'] | null
   msgClient?:
     | (T['MsgToServer'] & {
@@ -56,7 +56,7 @@ export type Input<T extends GameServerModuleTypes> = {
 export type Output<T extends GameServerModuleTypes> = {
   msgCmd?: T['MsgCmdOut'][]
   msgEvt?: T['MsgEvtOut'][]
-  msgCore?: WithEventId<T['MsgCore']>[]
+  msgCore?: T['MsgCore'][]
 }
 
 export type GameServerModule<T extends GameServerModuleTypes> = {

@@ -2,7 +2,7 @@ import { TimeSpan } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from 'gamezilla-app/app/@/ui'
 import { Actions } from 'gamezilla-app/app/@/ui/actions'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { ViewPuzzleNotFound } from '../../@/puzzle/not-found'
 import { FlowPlay } from '../../@/flow/flow-play'
@@ -32,7 +32,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
     default: {
       return {
         model: input.model,
-        msgCore: [withId(input.msg)]
+        msgCore: [withEventId(input.msg)]
       }
     }
   }

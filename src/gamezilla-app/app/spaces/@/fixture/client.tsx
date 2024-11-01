@@ -6,7 +6,7 @@ import { FixtureAppClient } from 'gamezilla-app/app/@/client/client-test-env'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { GameName } from '../../game/@/game-name'
 import { SpaceCore, type MsgCore } from '../../spaces-core'
 import * as SpaceClient from '../../spaces.client'
@@ -127,14 +127,14 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
     (model) =>
       SpaceCore.appendEvent({
         model,
-        msgCore: withId({ t: 'user-started-space', spaceId, userId: currentUser.userId })
+        msgCore: withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId })
       }),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId, userId: userA.userId }) }),
+      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId }) }),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
+      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId, userId: userC.userId }) }),
+      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId }) }),
     (model) => SpaceCore.toSpaceStarted(model),
     (space) => {
       if (!space) {
@@ -240,7 +240,7 @@ export const userStartedSpace =
       msgServer: {
         t: 'event',
         c: {
-          ...withId({
+          ...withEventId({
             t: 'user-started-space',
             spaceId,
             userId
@@ -284,7 +284,7 @@ export const userJoinedSpace =
       msgServer: {
         t: 'event',
         c: {
-          ...withId({
+          ...withEventId({
             t: 'user-joined-space',
             spaceId: spaceId,
             userId: userId
@@ -329,7 +329,7 @@ export const userLeftSpace = (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) 
     msgServer: {
       t: 'event',
       c: {
-        ...withId({
+        ...withEventId({
           t: 'user-left-space',
           spaceId: spaceId,
           userId: userId
@@ -381,7 +381,7 @@ export const elapsed = (ctx: ClientCtx, timeSpan: TimeSpan) => (model: SpacesTyp
 
 const toStartedSpace = (spaceId: SpaceId, startedBy: UserId) => {
   return [
-    withId<MsgCore>({
+    withEventId<MsgCore>({
       t: 'user-started-space',
       spaceId,
       userId: startedBy
@@ -429,7 +429,7 @@ export const userEndedSpace =
       msgServer: {
         t: 'event',
         c: {
-          ...withId({
+          ...withEventId({
             t: 'user-ended-space',
             spaceId,
             userId
@@ -465,7 +465,7 @@ export const userInputtedGame =
       msgServer: {
         t: 'event',
         c: {
-          ...withId({
+          ...withEventId({
             t: 'user-inputted-game',
             game,
             spaceId,

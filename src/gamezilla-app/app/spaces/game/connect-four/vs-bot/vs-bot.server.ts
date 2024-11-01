@@ -1,6 +1,6 @@
 import { Sub, Time, TimeSpan, isErr } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import * as ConnectFour from '../@/connect-four/connect-four'
@@ -73,7 +73,7 @@ const updateFromMsg: Module['update'] = async (input) => {
         return {}
       }
 
-      const msgCoreNew = withId<MsgCore>({
+      const msgCoreNew = withEventId<MsgCore>({
         t: 'bot-dropped-disc',
         columnIndex
       })

@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound, pushRoute, showToast } from 'gamezilla-app/app/@/client'
 import { Button } from 'gamezilla-app/app/@/ui'
-import { withId } from '../@/event'
+import { withEventId } from '../@/event'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import type { MsgCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
@@ -88,7 +88,7 @@ const updateLeaveSpaceButton: SpaceClientModule['update'] = ({ ctx, model, msg }
         }
       }
 
-      const spaceEventNew = withId<MsgCore>({
+      const spaceEventNew = withEventId<MsgCore>({
         t: 'user-left-space',
         spaceId: currentUserSpaceId,
         userId: ctx.currentUserId

@@ -1,7 +1,7 @@
 import { TimeSpan } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound, type ClientCtx } from 'gamezilla-app/app/@/client'
 import { Button, Dialog, DialogHeader, DialogSurface } from 'gamezilla-app/app/@/ui'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import type { ClientModule, MsgClient } from '../../play.types'
 
 const update: ClientModule['update'] = (input) => {
@@ -10,7 +10,7 @@ const update: ClientModule['update'] = (input) => {
     case 'user-clicked-select-next-pack': {
       return {
         model: input.model,
-        msgCore: [withId(input.msg)]
+        msgCore: [withEventId(input.msg)]
       }
     }
   }

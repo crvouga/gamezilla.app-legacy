@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from 'gamezilla-app/@/core'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId, withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../../@/pack/pack'
 import { FlowCreateFixtureServer } from '../../@/testing/server'
 import { EditPackNameCore } from './core'
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
         ...f.modelCore,
         draft: someNewName
       },
-      msgCore: withId({
+      msgCore: withEventMeta({
         t: 'edit-pack-name.user-clicked-save-button',
         userId: f.pack.createdBy
       })
@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
         ...f.modelCore,
         draft: someNewName
       },
-      msgCore: withId({
+      msgCore: withEventId({
         t: 'edit-pack-name.user-clicked-save-button',
         userId: f.pack.createdBy
       })

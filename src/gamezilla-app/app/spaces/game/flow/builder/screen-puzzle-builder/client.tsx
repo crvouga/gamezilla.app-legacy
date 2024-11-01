@@ -2,7 +2,7 @@ import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from 'gamezilla-app/app/@/ui'
 import { Actions } from 'gamezilla-app/app/@/ui/actions'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { ViewProfileCard } from '../../../@/game/view-profile-card'
 import { FlowVariantUI } from '../../@/flow'
@@ -43,7 +43,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
     case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
       return {
         model,
-        msgCore: [withId(msg)]
+        msgCore: [withEventId(msg)]
       }
     }
 
@@ -51,7 +51,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
       return {
         model,
         msgCore: [
-          withId({
+          withEventId({
             t: 'screen-puzzle-builder.user-clicked-edit-mode-button',
             userId: ctx.currentUserId
           })
@@ -63,7 +63,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
       return {
         model,
         msgCore: [
-          withId({
+          withEventId({
             t: 'screen-puzzle-builder.user-clicked-play-mode-button',
             userId: ctx.currentUserId
           })

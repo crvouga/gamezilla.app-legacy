@@ -1,7 +1,6 @@
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { Loading, Ok } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound, sendToServer, showToast } from 'gamezilla-app/app/@/client'
 import { Button, IconPlus } from 'gamezilla-app/app/@/ui'
-import { Ok, Loading } from 'gamezilla-app/@/core'
 import type { ClientModule } from '../../types'
 
 const update: ClientModule['update'] = (input) => {
@@ -29,11 +28,11 @@ const update: ClientModule['update'] = (input) => {
       return {
         model,
         msgCore: [
-          withId({
+          {
             t: 'user-created-pack',
             created: msgServer.created,
             userId: input.ctx.currentUserId
-          })
+          }
         ]
       }
     }

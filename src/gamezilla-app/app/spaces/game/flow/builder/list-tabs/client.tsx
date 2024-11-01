@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Avatar, Tabs, TopBar } from 'gamezilla-app/app/@/ui'
 import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { ViewSpaceHostChip } from '../../../@/game'
 import type { ClientModule } from '../types'
 import { ScreenOpenPackClient } from '../screen-open-pack/client'
@@ -51,7 +51,7 @@ const updateListTab: ClientModule['update'] = (input) => {
     case 'user-clicked-back-button': {
       return {
         model: input.model,
-        msgCore: [withId(msg)]
+        msgCore: [withEventId(msg)]
       }
     }
 

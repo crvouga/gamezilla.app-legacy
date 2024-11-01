@@ -1,13 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import { Err } from 'gamezilla-app/@/core'
-import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didShowErrorSm } from 'gamezilla-app/app/@/client'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowPack } from '../../../@/pack/pack'
 import { EditPackNameClient } from './client'
 import { EditPackNameCore } from './core'
 import type { MsgCore } from './types'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 
 const Fixture = async () => {
   const f = await FixtureSpaceClient()
@@ -55,11 +54,10 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = EditPackNameClient.update({
       ...f,
-      msgCore: withId({
+      msgCore: withEventId({
         t: 'edit-pack-name.server-persisted-pack',
         result: Err('something errored'),
-        userId: f.ctx.space.hostId,
-        happenedAt: LamportTimestamp.fromNumber(0)
+        userId: f.ctx.space.hostId
       })
     })
     expect(didShowErrorSm(output)).toBe(true)

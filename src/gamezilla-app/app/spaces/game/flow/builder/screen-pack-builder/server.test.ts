@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from 'gamezilla-app/@/core'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId, withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { FlowCreateFixtureServer } from '../@/testing/server'
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
 
     const puzzle = await FlowPuzzle.random()
 
-    const msgCore = withId<MsgCore>({
+    const msgCore = withEventId<MsgCore>({
       t: 'screen-pack-builder.user-clicked-add-puzzle-item',
       puzzle: puzzle,
       userId: puzzle.createdBy
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
 
     await ScreenPackBuilderServer.update({
       ...f,
-      msgCore: withId({
+      msgCore: withEventMeta({
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
         puzzleIndex: 0,
         userId: f.pack.createdBy

@@ -1,10 +1,9 @@
+import { Sub } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPuzzleListClient } from '../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../types'
 import { CreateNewPuzzleClient } from './create-new/client'
-import { Sub } from 'gamezilla-app/@/core'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -30,10 +29,10 @@ const updateOpenPuzzle: ClientModule['update'] = (input) => {
       return {
         model,
         msgCore: [
-          withId({
+          {
             t: 'builder-open-puzzle.clicked-puzzle-list-item',
             puzzle: msg.puzzle
-          })
+          }
         ]
       }
     }

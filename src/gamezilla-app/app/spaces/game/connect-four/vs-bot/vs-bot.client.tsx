@@ -3,7 +3,7 @@ import { APP_SOUND, type ClientCmd, playSound } from 'gamezilla-app/app/@/client
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { type WithEventId, withId } from 'gamezilla-app/app/spaces/@/event'
+import { type WithEventId, withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
@@ -195,7 +195,7 @@ const updateFromMsg =
       }
 
       default: {
-        const msgCore = withId(msg)
+        const msgCore = withEventId(msg)
         return {
           model,
           msgCore: [msgCore]

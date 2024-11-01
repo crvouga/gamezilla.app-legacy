@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound, showErrSm, showToast } from 'gamezilla-app/app/@/client'
 import { Button, TopBar } from 'gamezilla-app/app/@/ui'
-import { withId } from '../@/event'
+import { withEventId } from '../@/event'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { ViewGameHeader, ViewUsersInSpaceList } from '../game/@/game'
 import { CoverArt } from '../game/game-cover-art'
@@ -34,7 +34,7 @@ const updateFromJoinSpaceButton: SpaceClientModule['update'] = ({ msg, model, ct
         }
       }
 
-      const spaceEventNew = withId<MsgCore>({
+      const spaceEventNew = withEventId<MsgCore>({
         t: 'user-joined-space',
         spaceId: msg.spaceId,
         userId: currentUserId

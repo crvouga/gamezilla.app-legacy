@@ -71,7 +71,7 @@ export type Output<T extends GameClientModuleTypes> = {
   eff?: Eff<T['Msg']>
   msgCmd?: T['MsgCmdOut'][]
   msgEvt?: T['MsgEvtOut'][]
-  msgCore?: WithEventId<T['MsgCore']>[]
+  msgCore?: T['MsgCore'][]
 }
 
 export type GameClientModule<T extends GameClientModuleTypes> = {
@@ -141,7 +141,7 @@ const tagOutput = <
   eff?: Eff<{ t: TTag; c: T['Msg'] }>
   msgCmd?: TTaggedCmd[]
   msgEvt?: T['MsgEvtOut'][]
-  msgCore?: WithEventId<{ t: TTag; c: T['MsgCore'] }>[]
+  msgCore?: { t: TTag; c: T['MsgCore'] }[]
 } => {
   return {
     model: {
@@ -151,15 +151,10 @@ const tagOutput = <
     msgCmd: output.msgCmd ? tagCmd(output.msgCmd) : [],
     eff: Eff.tag(tag, output.eff),
     msgEvt: output.msgEvt,
-    msgCore: output.msgCore?.map((c) => {
-      const eventId = c.eventId
-      c.eventId = undefined
-      return {
-        eventId,
-        c,
-        t: tag
-      }
-    })
+    msgCore: output.msgCore?.map((c) => ({
+      c,
+      t: tag
+    }))
   }
 }
 

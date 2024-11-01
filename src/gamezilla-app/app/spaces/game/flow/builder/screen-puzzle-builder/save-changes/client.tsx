@@ -3,7 +3,7 @@ import type { Translator } from 'gamezilla-app/@/l18n/generated'
 import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from 'gamezilla-app/app/@/client'
 import { Button, Drawer, IconFloppyDisk, Typography } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { ViewBottomButtonBarAction } from '../../../../@/game'
 import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { FlowEdit } from '../../../@/flow/flow-edit'
@@ -169,7 +169,7 @@ const exitBuilder: ClientModule['update'] = (input) => {
       ...input.model,
       puzzleBuilderOpened: null
     },
-    msgCore: [withId(msgCore)]
+    msgCore: [withEventId(msgCore)]
   }
 }
 

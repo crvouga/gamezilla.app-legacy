@@ -1,6 +1,5 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { PackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../play.types'
@@ -35,7 +34,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
     case 'user-clicked-open-pack-list-item': {
       return {
         model: input.model,
-        msgCore: [withId(input.msg)]
+        msgCore: [input.msg]
       }
     }
     default: {

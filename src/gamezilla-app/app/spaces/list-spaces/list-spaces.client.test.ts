@@ -4,7 +4,7 @@ import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import { APP_SOUND, didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from 'gamezilla-app/app/@/ui'
-import { withId } from '../@/event'
+import { withEventId } from '../@/event'
 import { FixtureSpaceClient } from '../@/fixture/client'
 import { SpaceCore } from '../spaces-core'
 import * as SpaceClient from '../spaces.client'
@@ -261,7 +261,7 @@ describe(import.meta.file, () => {
     const space = pipe(SpaceCore.random({ spaceId, hostId }), (model) =>
       SpaceCore.appendEvent({
         model,
-        msgCore: withId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId })
+        msgCore: withEventId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId })
       })
     )
 

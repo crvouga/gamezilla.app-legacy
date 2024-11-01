@@ -2,7 +2,7 @@ import { type ClientCtx, showErrSm } from 'gamezilla-app/app/@/client'
 import { Button, Drawer, DrawerHeader, TextField } from 'gamezilla-app/app/@/ui'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { ModelCore, MsgClient, MsgCore } from './types'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { isErr } from 'gamezilla-app/@/core'
 
 type ClientModule = GameClientModule<{
@@ -23,7 +23,7 @@ const update: ClientModule['update'] = (input) => {
     case 'edit-pack-name.user-inputted-draft-name': {
       return {
         model: input.model,
-        msgCore: [withId(input.msg)]
+        msgCore: [withEventId(input.msg)]
       }
     }
   }

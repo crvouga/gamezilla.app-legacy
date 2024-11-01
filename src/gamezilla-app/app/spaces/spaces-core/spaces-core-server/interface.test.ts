@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { Ok, unwrap } from 'gamezilla-app/@/core'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import { EventMeta, withId } from 'gamezilla-app/app/spaces/@/event'
+import { EventMeta, withEventId } from 'gamezilla-app/app/spaces/@/event'
 import * as SpaceCore from '../space-core'
 import { Config, SpacesCoreServer } from './impl'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
@@ -117,7 +117,7 @@ describe(import.meta.file, () => {
     for (const f of await Fixtures()) {
       const before = unwrap(await f.spacesCoreServer.get(spaceId))
       await f.spacesCoreServer.update(
-        withId({
+        withEventId({
           t: 'user-started-space',
           spaceId: spaceId,
           userId: UserId.generate()

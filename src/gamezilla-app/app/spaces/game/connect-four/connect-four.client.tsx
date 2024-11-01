@@ -1,6 +1,6 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { APP_SOUND, ClientCmd, playSound } from 'gamezilla-app/app/@/client'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
@@ -76,7 +76,7 @@ const updateFromMsg =
       case 'user-changed-mode': {
         return {
           model,
-          msgCore: [withId(msg)]
+          msgCore: [withEventId(msg)]
         }
       }
 

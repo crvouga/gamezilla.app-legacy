@@ -2,7 +2,7 @@ import { Eff, Posix, Sub, unwrap } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconScrewdriverWrench } from 'gamezilla-app/app/@/ui'
-import { withId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import { SpaceClientCmd } from '../../@/space-client-cmd'
@@ -267,7 +267,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
 const updateFromMsg: ClientModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'msgCore': {
-      const msgCore = withId(input.msg.c)
+      const msgCore = withEventId(input.msg.c)
       return { model: input.model, msgCore: [msgCore] }
     }
 

@@ -15,7 +15,7 @@ import { SpaceCore } from '../../spaces-core'
 import { SpacesCoreServer } from '../../spaces-core/spaces-core-server'
 import * as SpacesServer from '../../spaces.server'
 import type { ServerDeps } from '../../spaces.types'
-import { EventId, withId } from '../event'
+import { EventId, withEventId } from '../event'
 import { SpaceServerCtx } from '../space'
 
 export const FixtureSpaceServer = async () => {
@@ -32,11 +32,14 @@ export const FixtureSpaceServer = async () => {
   const space = pipe(
     SpaceCore.init,
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-started-space', spaceId, userId: userA.userId }) }),
+      SpaceCore.appendEvent({
+        model,
+        msgCore: withEventId({ t: 'user-started-space', spaceId, userId: userA.userId })
+      }),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
+      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withId({ t: 'user-joined-space', spaceId, userId: userC.userId }) })
+      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId }) })
   )
 
   const spaceState = SpaceCore.toSpaceStarted(space)
