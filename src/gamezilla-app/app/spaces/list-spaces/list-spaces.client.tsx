@@ -91,14 +91,11 @@ const update: SpaceClientModule['update'] = (input) => {
 
   switch (input.msgServer?.t) {
     case 'listed-spaces': {
-      const merged = Spaces.mergeMany({
-        model: input.model,
-        spaces: input.msgServer.spaces
-      })
+      const merged = input.msgServer.spaces.reduce(Spaces.merge, input.model)
       return {
         model: {
           ...input.model,
-          spaceIdByUserId: merged.spaceIdByUserId,
+          indexSpaceIdByUserId: merged.indexSpaceIdByUserId,
           spaces: merged.spaces,
           listSpacesRequest: RequestResponse.response(input.model.listSpacesRequest, input.ctx.now, Ok(null))
         }
@@ -133,7 +130,7 @@ const View: SpaceClientModule['View'] = (input) => {
     return null
   }
 
-  const currentUserSpaceId = input.model.spaceIdByUserId[input.ctx.currentUserId]
+  const currentUserSpaceId = input.model.indexSpaceIdByUserId[input.ctx.currentUserId]
 
   const spaces = toSpaces(input.model)
 

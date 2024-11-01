@@ -311,22 +311,20 @@ export const toUserIds = (model: Model): UserId[] => {
 }
 
 export const mergeLeft = (left: Model, right: Model): Model => {
-  const eventsNew: Model['events'] = [...left.events, ...right.events].sort(
-    ascend((e) => LamportTimestamp.toNumber(e.happenedAt))
-  )
+  const withoutLeft = right.events.filter((e) => !left.eventIds[e.eventId])
 
-  const distinctEvents = eventsNew.filter(
-    (event, index, self) => index === self.findIndex((e) => e.eventId === event.eventId)
-  )
+  const eventsNew: Model['events'] = [...left.events, ...withoutLeft]
 
-  const snapshots = CappedOrderedDict.mergeLeft(left.snapshots, right.snapshots)
+  eventsNew.sort(ascend((e) => LamportTimestamp.toNumber(e.happenedAt)))
 
-  const clock = LamportClock.update(left.clock, right.clock)
+  const snapshotsNew = CappedOrderedDict.mergeLeft(left.snapshots, right.snapshots)
+
+  const clockNew = LamportClock.update(left.clock, right.clock)
 
   return {
-    clock,
-    events: distinctEvents,
-    snapshots,
+    clock: clockNew,
+    events: eventsNew,
+    snapshots: snapshotsNew,
     eventIds: {
       ...left.eventIds,
       ...right.eventIds

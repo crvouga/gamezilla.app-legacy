@@ -110,10 +110,7 @@ const updateCore: SpaceClientModule['update'] = (input) => {
   switch (msgServer?.t) {
     case 'synced':
     case 'current-user-space': {
-      const merged = SpacesCoreClient.mergeOne({
-        model,
-        space: msgServer.space
-      })
+      const merged = SpacesCoreClient.merge(model, msgServer.space)
       return {
         model: {
           ...model,

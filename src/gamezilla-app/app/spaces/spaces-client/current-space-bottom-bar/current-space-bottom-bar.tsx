@@ -39,7 +39,7 @@ const update: SpaceClientModule['update'] = ({ model, msg, ctx }) => {
 }
 
 const View = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: ModelClient; dispatch: (msg: MsgClient) => void }) => {
-  const userSpaceId = model.spaceIdByUserId[ctx.currentUserId]
+  const userSpaceId = model.indexSpaceIdByUserId[ctx.currentUserId]
 
   if (!userSpaceId) {
     return null

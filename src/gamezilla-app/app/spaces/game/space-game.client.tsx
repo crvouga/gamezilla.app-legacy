@@ -130,7 +130,7 @@ const inputToSpaceId = (currentUser: UserAccount, input: Parameters<SpaceClientM
     return input.msgCore.spaceId
   }
 
-  const spaceId = input.model.spaceIdByUserId[currentUser.userId] ?? null
+  const spaceId = input.model.indexSpaceIdByUserId[currentUser.userId] ?? null
 
   return spaceId
 }
