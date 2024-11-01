@@ -16,7 +16,7 @@ import { SpaceClient } from './spaces-client/space.client'
 import * as SpacesCoreClient from './spaces-core/spaces-core-client/spaces-core.client'
 import type { ClientModule, ModelClient } from './spaces.types'
 import { StartSpaceClient } from './start-space/start-space.client'
-import { SyncClient } from './sync/sync.client'
+import { SyncClient } from './sync/client'
 
 //
 //

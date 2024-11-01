@@ -10,7 +10,7 @@ import { ListSpacesServer } from './list-spaces/list-spaces.server'
 import { SpacesCoreServer } from './spaces-core/spaces-core-server'
 import type { ServerModule } from './spaces.types'
 import { StartSpaceServer } from './start-space/start-space.server'
-import { SyncServer } from './sync/sync.server'
+import { SyncServer } from './sync/server'
 
 //
 //
