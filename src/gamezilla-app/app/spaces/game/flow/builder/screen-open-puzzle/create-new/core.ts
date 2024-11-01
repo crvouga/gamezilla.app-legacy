@@ -12,7 +12,6 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
       const flowPuzzleNew = msgCore.created.value
       return {
         ...modelCore,
-        listTab: modelCore.listTab,
         screen: {
           t: 'screen-puzzle-builder'
         },

@@ -8,8 +8,8 @@ import type { ModelCore, UpdateCore } from './types'
 
 const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
   return {
-    ...ScreenMainMenuCore.initCore,
     screen: { t: 'screen-main-menu' },
+
     packBuilder: null,
     openPuzzle: null,
     puzzleBuilder: null,

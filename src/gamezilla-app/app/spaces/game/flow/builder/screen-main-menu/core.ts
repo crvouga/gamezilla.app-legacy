@@ -1,20 +1,30 @@
 import type { UpdateCore } from '../types'
-import type { ModelCore } from './types'
-
-const initCore: ModelCore = {
-  listTab: 'puzzles'
-}
 
 const updateCore: UpdateCore = (input) => {
   switch (input.msgCore.t) {
-    case 'user-changed-list-tab': {
-      return {
-        ...input.modelCore,
-        listTab: input.msgCore.listTab
+    case 'screen-main-menu.user-clicked-option': {
+      switch (input.msgCore.option) {
+        case 'packs': {
+          return {
+            ...input.modelCore,
+            screen: {
+              t: 'screen-pack-builder'
+            }
+          }
+        }
+
+        case 'puzzles': {
+          return {
+            ...input.modelCore,
+            screen: {
+              t: 'screen-puzzle-builder'
+            }
+          }
+        }
       }
     }
 
-    case 'user-clicked-back-button': {
+    case 'screen-main-menu.user-clicked-back-button': {
       return {
         ...input.modelCore,
         event: {
@@ -31,6 +41,5 @@ const updateCore: UpdateCore = (input) => {
 }
 
 export const ScreenMainMenuCore = {
-  initCore,
   updateCore
 }

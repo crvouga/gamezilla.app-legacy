@@ -333,6 +333,7 @@ export const View: Client['View'] = (input) => {
           title={input.ctx.t('chess')}
           ctx={input.ctx}
           renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
+          onBack={() => input.dispatch({ t: 'game-main-menu/clicked-exit-game-button' })}
           dispatch={input.dispatch}
           buttons={[
             GameMainMenu.buttons.playComputer({

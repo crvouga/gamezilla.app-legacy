@@ -5,34 +5,36 @@
 
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
+import { GameMainMenu } from '../../../@/game'
 
-export const LIST_TABS = ['puzzles', 'packs'] as const
+export const OPTION = ['puzzles', 'packs'] as const
 
-export const ListTab = p.enumeration(LIST_TABS)
+export const Option = p.enumeration(OPTION)
 
-export type ListTab = p.Infer<typeof ListTab>
+export type Option = p.Infer<typeof Option>
 
 //
 //
 //
 //
 
-export type MsgClient = MsgCore
+export type MsgClient = MsgCore | GameMainMenu.Msg
 
 export const MsgCore = p.or(
   p.obj({
-    t: p.l('user-changed-list-tab'),
-    listTab: ListTab,
+    t: p.l('screen-main-menu.user-clicked-back-button'),
     userId: UserId
   }),
   p.obj({
-    t: p.l('user-clicked-back-button'),
-    userId: UserId
+    t: p.l('screen-main-menu.user-clicked-option'),
+    userId: UserId,
+    option: Option
+  }),
+
+  p.obj({
+    t: p.l('screen-main-menu.user-clicked-back-button'),
+    userId: UserId,
+    option: Option
   })
 )
 export type MsgCore = p.Infer<typeof MsgCore>
-
-export const ModelCore = p.obj({
-  listTab: ListTab
-})
-export type ModelCore = p.Infer<typeof ModelCore>

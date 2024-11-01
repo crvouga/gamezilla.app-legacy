@@ -81,8 +81,10 @@ export const View = ({
   renderCoverArt,
   buttons,
   ctx,
-  dispatch
+  dispatch,
+  onBack
 }: {
+  onBack: () => void
   ctx: SpaceClientCtx
   title: TranslatedText
   dispatch: (msg: Msg) => void
@@ -93,11 +95,7 @@ export const View = ({
     return (
       <LayoutGameCoverArtHeader
         ctx={ctx}
-        onBack={() =>
-          dispatch({
-            t: 'game-main-menu/clicked-exit-game-button'
-          })
-        }
+        onBack={onBack}
         title={title}
         renderCoverArt={renderCoverArt}
         renderContent={() => (
@@ -118,11 +116,7 @@ export const View = ({
   return (
     <LayoutGameCoverArtHeader
       ctx={ctx}
-      onBack={() =>
-        dispatch({
-          t: 'game-main-menu/clicked-exit-game-button'
-        })
-      }
+      onBack={onBack}
       title={title}
       renderCoverArt={renderCoverArt}
       renderContent={() => (

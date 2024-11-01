@@ -9,7 +9,7 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
         screen: {
           t: 'screen-main-menu'
         },
-        listTab: 'puzzles'
+        option: 'puzzles'
       }
     }
     default: {

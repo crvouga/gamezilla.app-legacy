@@ -87,7 +87,7 @@ describe(import.meta.file, () => {
 
     const modelCore = deriveModelCore(ctx)(output)
 
-    expect(modelCore.screen.t === 'screen-main-menu').toBe(true)
+    expect(modelCore.screen.t === 'screen-open-puzzle-builder').toBe(true)
   })
 
   it('should open save prompt when exiting with unsaved changes', async () => {

@@ -14,7 +14,6 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 
       return {
         ...modelCore,
-        listTab: modelCore.listTab,
         screen: modelCore.screen,
         packBuilder: modelCore.packBuilder,
         puzzleBuilder: {

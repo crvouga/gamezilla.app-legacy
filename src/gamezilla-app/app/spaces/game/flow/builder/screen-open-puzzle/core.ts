@@ -8,7 +8,7 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
     case 'builder-open-puzzle.clicked-puzzle-list-item': {
       return {
         ...modelCore,
-        listTab: 'puzzles',
+        option: 'puzzles',
         packBuilder: modelCore.packBuilder,
         screen: {
           t: 'screen-puzzle-builder'

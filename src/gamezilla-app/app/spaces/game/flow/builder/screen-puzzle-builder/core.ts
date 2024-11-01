@@ -147,9 +147,8 @@ const updateCoreMain = ({
       return {
         ...modelCore,
         screen: {
-          t: 'screen-main-menu'
-        },
-        listTab: 'puzzles'
+          t: 'screen-open-puzzle-builder'
+        }
       }
     }
 

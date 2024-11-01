@@ -1,37 +1,28 @@
 import { describe, expect, it } from 'bun:test'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
+import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { EventId } from 'gamezilla-app/app/spaces/@/event'
-import type { FlowClientCtx } from '../../@/flow-client-ctx'
 import { initial, testFlowClientCtx } from '../@/testing/client'
 import { BuilderClient } from '../client'
-import type { ModelClient } from '../types'
-
 import { BuilderCore } from '../core'
-import type { ListTab } from './types'
-import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
-
-const userChangedListTab = (ctx: FlowClientCtx, listTab: ListTab) => (model: ModelClient) => {
-  return BuilderClient.update({
-    ctx,
-    model,
-    modelCore: BuilderCore.initCore({
-      ctx
-    }),
-    msgCore: {
-      t: 'user-changed-list-tab',
-      userId: ctx.currentUserId,
-      eventId: EventId.generate(),
-      listTab,
-      happenedAt: LamportTimestamp.fromNumber(0)
-    }
-  })
-}
 
 describe(import.meta.file, () => {
   it('play a sound when changing list tabs', async () => {
     const ctx = await testFlowClientCtx()
-    const output = andThen(initial, userChangedListTab(ctx, 'packs'))
+    const output = andThen(initial, (model) =>
+      BuilderClient.update({
+        ctx,
+        model,
+        modelCore: BuilderCore.initCore({
+          ctx
+        }),
+        msgCore: withEventMeta({
+          t: 'screen-main-menu.user-clicked-option',
+          userId: ctx.currentUserId,
+          option: 'packs'
+        })
+      })
+    )
     expect(didPlaySound(output)).toBe(true)
   })
 })

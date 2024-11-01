@@ -192,16 +192,14 @@ const Screen = p.or(
 )
 type Screen = p.Infer<typeof Screen>
 
-export const BaseModelCore = p.obj({
+export const ModelCore = p.obj({
   screen: Screen,
   puzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
   openPuzzle: p.maybe(ScreenOpenPuzzleTypes.ModelCore),
   packBuilder: p.maybe(ScreenPackBuilderTypes.ModelCore),
   openPack: p.maybe(ScreenOpenPackTypes.ModelCore)
 })
-type BaseModelCore = p.Infer<typeof BaseModelCore>
 
-export const ModelCore = p.and(BaseModelCore, ScreenMainMenu.ModelCore)
 export type ModelCore = p.Infer<typeof ModelCore>
 
 export type UpdateCore = (input: {

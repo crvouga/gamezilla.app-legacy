@@ -91,6 +91,7 @@ export const View = ({
       <GameMainMenu.View
         dispatch={dispatch}
         title={ctx.t('tic-tac-toe')}
+        onBack={() => dispatch({ t: 'game-main-menu/clicked-exit-game-button' })}
         ctx={ctx}
         renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
         buttons={[

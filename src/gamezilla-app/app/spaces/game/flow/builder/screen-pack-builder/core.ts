@@ -39,7 +39,7 @@ updates.push(({ modelCore, msgCore }) => {
         screen: {
           t: 'screen-main-menu'
         },
-        listTab: 'packs'
+        option: 'packs'
       }
     }
     default: {

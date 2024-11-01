@@ -253,6 +253,7 @@ export const view = ({
           dispatch={() => {
             //
           }}
+          onBack={() => {}}
           buttons={[
             GameMainMenu.buttons.playComputer({
               ctx,

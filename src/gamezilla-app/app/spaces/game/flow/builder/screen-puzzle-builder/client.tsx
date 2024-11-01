@@ -59,6 +59,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.navBackwardMin)]
       }
     }
+
     case 'screen-puzzle-builder.user-clicked-play-mode-button': {
       return {
         model,
@@ -71,6 +72,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.navForwardMin)]
       }
     }
+
     case 'screen-puzzle-builder.user-clicked-more-button': {
       return {
         model: {
@@ -80,6 +82,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.tap)]
       }
     }
+
     case 'screen-puzzle-builder.user-closed-more-drawer': {
       return {
         model: {
@@ -89,6 +92,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.tap)]
       }
     }
+
     default: {
       return {
         model
@@ -191,11 +195,7 @@ const View: BuilderTypes.ClientModule['View'] = (input) => {
     <>
       <TopBar
         ctx={input.ctx}
-        onBack={() =>
-          input.dispatch({
-            t: 'screen-puzzle-builder.user-clicked-exit-button'
-          })
-        }
+        onBack={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' })}
         title={input.ctx.t('flow-puzzle-name', input.modelCore.puzzleBuilder.puzzle.name)}
       />
       <ViewMode {...input} />
