@@ -2,7 +2,7 @@ import { APP_SOUND, playSound, showErrSm, showToast } from 'gamezilla-app/app/@/
 import { Button } from 'gamezilla-app/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { withEventId } from '../@/event'
-import { GameCoverArtLayout, ViewUsersInSpaceList } from '../game/@/game'
+import { LayoutGameCoverArtHeader, ViewUsersInSpaceList } from '../game/@/game'
 import { GameCoverArt } from '../game/game-cover-art'
 import type { MsgCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
@@ -121,7 +121,7 @@ const View: SpaceClientModule['View'] = (input) => {
 
   return (
     <div className='flex h-full w-full flex-col overflow-hidden'>
-      <GameCoverArtLayout
+      <LayoutGameCoverArtHeader
         ctx={input.ctx}
         onBack={() =>
           input.dispatch({

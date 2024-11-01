@@ -1,7 +1,7 @@
 import { cn } from 'gamezilla-app/app/@/ui'
 import type { VDomChildren } from 'gamezilla-app/@/vdom'
 
-export const GameLayout = ({
+export const LayoutGame = ({
   children,
   isSpectating,
   className

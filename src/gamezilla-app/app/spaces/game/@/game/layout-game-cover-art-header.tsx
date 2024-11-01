@@ -3,7 +3,7 @@ import { Translator } from 'gamezilla-app/@/l18n/generated'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import { cn, TopBar } from 'gamezilla-app/app/@/ui'
 
-export const GameCoverArtLayout = (input: {
+export const LayoutGameCoverArtHeader = (input: {
   title: TranslatedText
   renderCoverArt?: (input: { key: string; className: string }) => VDom
   onBack: () => void

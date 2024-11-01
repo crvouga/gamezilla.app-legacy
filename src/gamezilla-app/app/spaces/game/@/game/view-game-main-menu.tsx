@@ -3,7 +3,7 @@ import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconRobot, IconUsers, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { type SpaceClientCmd, type SpaceClientCmdTypes, exitGame, openUserDetails } from '../../../@/space-client-cmd'
-import { GameCoverArtLayout } from './view-game-header'
+import { LayoutGameCoverArtHeader } from './layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from './view-users-in-space-list'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
 import { Translator } from 'gamezilla-app/@/l18n/generated'
@@ -91,7 +91,7 @@ export const View = ({
 }) => {
   if (ctx.currentUserId !== ctx.space.hostId) {
     return (
-      <GameCoverArtLayout
+      <LayoutGameCoverArtHeader
         ctx={ctx}
         onBack={() =>
           dispatch({
@@ -116,7 +116,7 @@ export const View = ({
   }
 
   return (
-    <GameCoverArtLayout
+    <LayoutGameCoverArtHeader
       ctx={ctx}
       onBack={() =>
         dispatch({

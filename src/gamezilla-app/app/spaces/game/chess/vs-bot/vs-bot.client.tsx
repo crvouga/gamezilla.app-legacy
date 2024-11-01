@@ -2,7 +2,7 @@ import { type Eff, Sub, andThen, exhaustive, isErr, pipe } from 'gamezilla-app/@
 import { type ClientCmd, sendToServer } from 'gamezilla-app/app/@/client'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
+import { LayoutGame, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { VsBotSetup } from 'gamezilla-app/app/spaces/game/@/vs-bot'
 import { Chess } from '../@/chess'
 import { Chessboard, CoverArt, PlayerIcon } from '../@/chess-ui'
@@ -416,7 +416,7 @@ export const View = ({
   const bottomSlot = boardOrientation === model.coreModel.userColor ? userSlot : botSlot
 
   return (
-    <GameLayout>
+    <LayoutGame>
       <div className='flex w-full flex-1 flex-col items-center justify-center'>
         {topSlot}
 
@@ -449,7 +449,7 @@ export const View = ({
           onClick={onClose}
         />
       </ViewBottomButtonBar>
-    </GameLayout>
+    </LayoutGame>
   )
 }
 

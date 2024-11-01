@@ -3,7 +3,7 @@ import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from 'gamezil
 import { Actions } from 'gamezilla-app/app/@/ui/actions'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { withEventId } from 'gamezilla-app/app/spaces/@/event'
-import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
+import { LayoutGame, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { ViewProfileCard } from '../../../@/game/view-profile-card'
 import { FlowVariantUI } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
@@ -332,7 +332,7 @@ const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
   }
 
   return (
-    <GameLayout isSpectating>
+    <LayoutGame isSpectating>
       <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll'>
         <ViewProfileCard
           ctx={input.ctx}
@@ -341,7 +341,7 @@ const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
         />
         <FlowVariantUI.View disabled model={toFlow(input.modelCore.puzzleBuilder)} />
       </div>
-    </GameLayout>
+    </LayoutGame>
   )
 }
 

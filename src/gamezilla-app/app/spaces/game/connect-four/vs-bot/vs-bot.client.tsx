@@ -6,7 +6,7 @@ import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/g
 import { type WithEventId, withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
+import { LayoutGame, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import {
   IconBotHappy,
   IconBotLevel1,
@@ -416,7 +416,7 @@ const View: Module['View'] = (input) => {
   const isSpectating = input.ctx.currentUserId !== input.modelCore.playingUserId
 
   return (
-    <GameLayout isSpectating={isSpectating}>
+    <LayoutGame isSpectating={isSpectating}>
       <div className='flex w-full flex-1 flex-col items-center justify-center gap-1'>
         <VsBotGame.VsBotPlayerSection {...vsBotGameinput} />
 
@@ -487,7 +487,7 @@ const View: Module['View'] = (input) => {
           />
         </ViewBottomButtonBar>
       )}
-    </GameLayout>
+    </LayoutGame>
   )
 }
 

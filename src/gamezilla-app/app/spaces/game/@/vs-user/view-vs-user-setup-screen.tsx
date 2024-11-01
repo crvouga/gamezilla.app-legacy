@@ -2,7 +2,7 @@ import type { VDom } from 'gamezilla-app/@/vdom'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Avatar, Button, IconQuestionMark, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { GameCoverArtLayout } from '../game/view-game-header'
+import { LayoutGameCoverArtHeader } from '../game/layout-game-cover-art-header'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
 
 type IconProps = { className: string }
@@ -149,7 +149,7 @@ export const VsUserSetupScreen = ({
 }) => {
   return (
     <div className='flex h-full w-full flex-1 flex-col overflow-hidden'>
-      <GameCoverArtLayout
+      <LayoutGameCoverArtHeader
         ctx={ctx}
         onBack={onQuit}
         title={title}

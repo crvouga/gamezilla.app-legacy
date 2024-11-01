@@ -15,7 +15,7 @@ import {
 } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
+import { LayoutGame, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { Chess } from '../@/chess'
 import { Chessboard } from '../@/chess-ui/chessboard'
 import { CHESS_SOUND } from '../@/chess/chess-sounds'
@@ -249,7 +249,7 @@ export const View = ({
   const isSpectating = ctx.currentUserId !== ctx.space.hostId
   const nextEloRating = toNextEloRating(model)
   return (
-    <GameLayout isSpectating={isSpectating}>
+    <LayoutGame isSpectating={isSpectating}>
       <ViewStatusBar model={model} />
 
       {/* top heads up */}
@@ -350,7 +350,7 @@ export const View = ({
       ) : (
         <></>
       )}
-    </GameLayout>
+    </LayoutGame>
   )
 }
 

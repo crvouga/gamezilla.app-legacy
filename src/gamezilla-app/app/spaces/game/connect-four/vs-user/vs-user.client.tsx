@@ -14,7 +14,7 @@ import {
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { GameLayout, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
+import { LayoutGame, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { VsUserSetupScreen } from 'gamezilla-app/app/spaces/game/@/vs-user'
 import { type PlayerType, toTurn } from '../@/connect-four'
 import { PlayerIcon, ViewColumns } from '../@/connect-four-ui'
@@ -222,7 +222,7 @@ const View: Module['View'] = (input) => {
       const currentUserPlayerType = toPlayerType(input.ctx.currentUserId, input.modelCore)
 
       return (
-        <GameLayout isSpectating={currentUserPlayerType === null}>
+        <LayoutGame isSpectating={currentUserPlayerType === null}>
           <div className='flex w-full flex-1 flex-col items-center justify-center gap-2'>
             <div className='flex w-full items-center gap-2 px-2'>
               <PlayerSlot playerType='player-one' modelCore={input.modelCore} ctx={input.ctx} />
@@ -323,7 +323,7 @@ const View: Module['View'] = (input) => {
             }
             open={input.model.openedModal === 'confirm-resign'}
           />
-        </GameLayout>
+        </LayoutGame>
       )
     }
   }
