@@ -4,13 +4,13 @@ import { PackCreateNewCore } from './create-new-pack/core'
 
 const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'pack-list.user-clicked-pack-item': {
+    case 'screen-pack-builder-open.user-clicked-pack-item': {
       return {
         ...modelCore,
         screen: {
           t: 'screen-pack-builder'
         },
-        packBuilder: ScreenPackBuilderCore.init({
+        screenPackBuilder: ScreenPackBuilderCore.init({
           pack: msgCore.pack
         })
       }
@@ -33,6 +33,6 @@ const updateCore: UpdateCore = (input) => {
   )
 }
 
-export const ScreenOpenPackCore = {
+export const ScreenPackBuilderOpenCore = {
   update: updateCore
 }

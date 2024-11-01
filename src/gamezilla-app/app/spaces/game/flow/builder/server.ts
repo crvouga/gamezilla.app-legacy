@@ -4,8 +4,8 @@ import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { FlowPackListServer } from '../@/pack/pack-list'
 import { FlowPuzzleListServer } from '../@/puzzle/puzzle-list'
 import { initServer, type ServerModule } from './types'
-import { ScreenOpenPackServer } from './screen-open-pack/server'
-import { ScreenOpenPuzzleServer } from './screen-open-puzzle/server'
+import { ScreenPackBuilderOpenServer } from './screen-pack-builder-open/server'
+import { ScreenPuzzleBuilderOpenServer } from './screen-puzzle-builder-open/server'
 import { ScreenPackBuilderServer } from './screen-pack-builder/server'
 import { ScreenPuzzleBuilderServer } from './screen-puzzle-builder/server'
 
@@ -13,8 +13,8 @@ const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen(
     {},
     () => ScreenPuzzleBuilderServer.update(input),
-    () => ScreenOpenPuzzleServer.update(input),
-    () => ScreenOpenPackServer.update(input),
+    () => ScreenPuzzleBuilderOpenServer.update(input),
+    () => ScreenPackBuilderOpenServer.update(input),
     () => ScreenPackBuilderServer.update(input),
     () => updateFlowPackList(input),
     () => updateFlowPuzzleList(input)

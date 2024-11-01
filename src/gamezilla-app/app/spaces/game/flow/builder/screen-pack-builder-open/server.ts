@@ -6,6 +6,6 @@ const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen({}, () => PackCreateNewServer.update(input))
 }
 
-export const ScreenOpenPackServer = {
+export const ScreenPackBuilderOpenServer = {
   update
 }

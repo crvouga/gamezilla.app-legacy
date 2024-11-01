@@ -8,7 +8,7 @@ const updateCore: UpdateCore = (input) => {
           return {
             ...input.modelCore,
             screen: {
-              t: 'screen-pack-builder'
+              t: 'screen-pack-builder-open'
             }
           }
         }
@@ -17,7 +17,7 @@ const updateCore: UpdateCore = (input) => {
           return {
             ...input.modelCore,
             screen: {
-              t: 'screen-puzzle-builder'
+              t: 'screen-puzzle-builder-open'
             }
           }
         }

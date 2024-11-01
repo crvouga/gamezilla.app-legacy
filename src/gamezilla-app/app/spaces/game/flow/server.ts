@@ -9,7 +9,7 @@ import { FlowPackPuzzlesGridServer } from './@/pack/pack-puzzles-grid/pack-puzzl
 import { FlowPuzzleDb } from './@/puzzle/puzzle-db'
 import { FlowServerCtx } from './@/flow-server-ctx'
 import { BuilderServer } from './builder/server'
-import type { ServerModule } from './flow.types'
+import type { ServerModule } from './types'
 import { PlayServer } from './play/play.server'
 
 export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {

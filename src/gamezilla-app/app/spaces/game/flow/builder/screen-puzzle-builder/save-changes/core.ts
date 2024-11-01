@@ -8,16 +8,16 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
         return modelCore
       }
 
-      if (!modelCore.puzzleBuilder) {
+      if (!modelCore.screenPuzzleBuilder) {
         return modelCore
       }
 
       return {
         ...modelCore,
         screen: modelCore.screen,
-        packBuilder: modelCore.packBuilder,
-        puzzleBuilder: {
-          ...modelCore.puzzleBuilder,
+        screenPackBuilder: modelCore.screenPackBuilder,
+        screenPuzzleBuilder: {
+          ...modelCore.screenPuzzleBuilder,
           puzzle: msgCore.saved.value
         }
       }

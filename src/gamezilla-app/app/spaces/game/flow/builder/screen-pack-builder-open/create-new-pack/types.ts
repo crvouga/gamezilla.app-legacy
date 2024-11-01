@@ -25,17 +25,17 @@ export type ModelServer = Record<string, unknown>
 //
 
 export type MsgClient = {
-  t: 'pack-create-new.clicked-create-button'
+  t: 'create-new-pack.clicked-create-button'
 }
 
-export type MsgToServer = { t: 'pack-create-new.clicked-create-button' }
+export type MsgToServer = { t: 'create-new-pack.clicked-create-button' }
 
 export type MsgServer = {
   t: 'noop'
 }
 
 export type MsgToClient = {
-  t: 'pack-create-new.created-pack'
+  t: 'create-new-pack.created-pack'
   created: Result<string, FlowPack>
 }
 

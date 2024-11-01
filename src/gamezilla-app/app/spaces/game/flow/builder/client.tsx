@@ -4,23 +4,58 @@ import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/g
 import { PackListClient } from '../@/pack/pack-list'
 import { FlowPuzzleListClient } from '../@/puzzle/puzzle-list'
 import { ScreenMainMenuClient } from './screen-main-menu/client'
-import { ScreenOpenPackClient } from './screen-open-pack/client'
-import { ScreenOpenPuzzleClient } from './screen-open-puzzle/client'
+import { ScreenPackBuilderOpenClient } from './screen-pack-builder-open/client'
+import { ScreenPuzzleBuilderOpenClient } from './screen-puzzle-builder-open/client'
 import { ScreenPackBuilderClient } from './screen-pack-builder/client'
 import { ScreenPuzzleBuilderClient } from './screen-puzzle-builder/client'
 import { initClient, type ClientModule } from './types'
+import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => updateFlowPuzzleList({ ...input, model }),
     (model) => updateFlowPackList({ ...input, model }),
-    (model) => ScreenOpenPackClient.update({ ...input, model }),
+    (model) => ScreenPackBuilderOpenClient.update({ ...input, model }),
     (model) => ScreenPackBuilderClient.update({ ...input, model }),
     (model) => ScreenPuzzleBuilderClient.update({ ...input, model }),
-    (model) => ScreenOpenPuzzleClient.update({ ...input, model }),
-    (model) => ScreenMainMenuClient.update({ ...input, model })
+    (model) => ScreenPuzzleBuilderOpenClient.update({ ...input, model }),
+    (model) => ScreenMainMenuClient.update({ ...input, model }),
+    (model) => updateGotMsgCore({ ...input, model }),
+    (model) => updateBackButton({ ...input, model })
   )
+}
+
+const updateBackButton: ClientModule['update'] = (input) => {
+  switch (input.msgCore?.t) {
+    case 'user-clicked-back-button': {
+      return {
+        model: input.model,
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+      }
+    }
+    default: {
+      return {
+        model: input.model
+      }
+    }
+  }
+}
+
+const updateGotMsgCore: ClientModule['update'] = (input) => {
+  switch (input.msg?.t) {
+    case 'got-msg-core': {
+      return {
+        model: input.model,
+        msgCore: [input.msg.c]
+      }
+    }
+    default: {
+      return {
+        model: input.model
+      }
+    }
+  }
 }
 
 const updateFlowPackList: ClientModule['update'] = (input) => {
@@ -82,9 +117,7 @@ const updateFlowPuzzleList: ClientModule['update'] = (input) => {
 }
 
 const View: ClientModule['View'] = (input) => {
-  const { modelCore } = input
-
-  switch (modelCore.screen.t) {
+  switch (input.modelCore.screen.t) {
     case 'screen-main-menu': {
       return <ScreenMainMenuClient.View {...input} />
     }
@@ -97,12 +130,12 @@ const View: ClientModule['View'] = (input) => {
       return <ScreenPackBuilderClient.View {...input} />
     }
 
-    case 'screen-open-pack-builder': {
-      return <ScreenOpenPackClient.View {...input} />
+    case 'screen-pack-builder-open': {
+      return <ScreenPackBuilderOpenClient.View {...input} />
     }
 
-    case 'screen-open-puzzle-builder': {
-      return <ScreenOpenPuzzleClient.View {...input} />
+    case 'screen-puzzle-builder-open': {
+      return <ScreenPuzzleBuilderOpenClient.View {...input} />
     }
   }
 }
@@ -114,7 +147,7 @@ const ViewFeedItem: ClientModule['ViewFeedItem'] = () => {
 const subscriptions: ClientModule['subscriptions'] = (input) => {
   return Sub.batch([
     //
-    ScreenOpenPuzzleClient.subscriptions(input),
+    ScreenPuzzleBuilderOpenClient.subscriptions(input),
     ScreenPackBuilderClient.subscriptions(input),
     Sub.tag(
       'flow-pack-list',

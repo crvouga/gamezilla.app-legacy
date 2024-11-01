@@ -55,7 +55,7 @@ const View: ClientModule['View'] = (input) => {
 const updateFormButtons: ClientModule['update'] = (input) => {
   const { modelCore, msgCore, msg, model } = input
 
-  const puzzleBuilder = modelCore.puzzleBuilder
+  const puzzleBuilder = modelCore.screenPuzzleBuilder
 
   if (!puzzleBuilder) {
     return { model }
@@ -162,7 +162,7 @@ const ViewFormButtons: ClientModule['View'] = (input) => {
         loading={isLoading(input.model.puzzleEditNameRequest)}
         disabled={
           input.modelCore.screen.t !== 'screen-puzzle-builder' ||
-          input.model.puzzleEditNameDraft === input.modelCore.puzzleBuilder?.puzzle.name
+          input.model.puzzleEditNameDraft === input.modelCore.screenPuzzleBuilder?.puzzle.name
         }
         onClick={() =>
           input.dispatch({
@@ -189,7 +189,7 @@ const updateDrawer: ClientModule['update'] = (input) => {
         model: {
           ...model,
           puzzleBuilderOpened: 'edit-name',
-          puzzleEditNameDraft: modelCore.puzzleBuilder?.puzzle.name ?? ''
+          puzzleEditNameDraft: modelCore.screenPuzzleBuilder?.puzzle.name ?? ''
         }
       }
     }

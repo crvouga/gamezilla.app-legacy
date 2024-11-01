@@ -18,7 +18,7 @@ export type Option = p.Infer<typeof Option>
 //
 //
 
-export type MsgClient = MsgCore | GameMainMenu.Msg
+export type MsgClient = GameMainMenu.Msg
 
 export const MsgCore = p.or(
   p.obj({
@@ -27,12 +27,6 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('screen-main-menu.user-clicked-option'),
-    userId: UserId,
-    option: Option
-  }),
-
-  p.obj({
-    t: p.l('screen-main-menu.user-clicked-back-button'),
     userId: UserId,
     option: Option
   })

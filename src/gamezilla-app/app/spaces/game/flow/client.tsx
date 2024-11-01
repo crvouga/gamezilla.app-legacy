@@ -17,7 +17,7 @@ import { FlowPackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import { FlowPackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
 import { FlowPuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderClient } from './builder/client'
-import type { ClientModule, MsgClient, MsgToServer } from './flow.types'
+import type { ClientModule, MsgClient, MsgToServer } from './types'
 import { PlayClient } from './play/play.client'
 
 const init: ClientModule['init'] = {
@@ -266,7 +266,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
 
 const updateFromMsg: ClientModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'msgCore': {
+    case 'got-msg-core': {
       const msgCore = withEventId(input.msg.c)
       return { model: input.model, msgCore: [msgCore] }
     }
@@ -356,7 +356,7 @@ const View: ClientModule['View'] = (input) => {
               description: ctx.t('flow.play-description'),
               onClick: () => {
                 input.dispatch({
-                  t: 'msgCore',
+                  t: 'got-msg-core',
                   c: {
                     t: 'user-changed-mode',
                     mode: 'play',
@@ -371,7 +371,7 @@ const View: ClientModule['View'] = (input) => {
               description: ctx.t('flow.builder-description'),
               onClick: () => {
                 input.dispatch({
-                  t: 'msgCore',
+                  t: 'got-msg-core',
                   c: {
                     t: 'user-changed-mode',
                     mode: 'builder',

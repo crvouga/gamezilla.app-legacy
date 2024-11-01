@@ -3,7 +3,7 @@ import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/g
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'
-import { FlowClient } from './flow/flow.client'
+import { FlowClient } from './flow/client'
 import type { ClientModule } from './game.types'
 
 //

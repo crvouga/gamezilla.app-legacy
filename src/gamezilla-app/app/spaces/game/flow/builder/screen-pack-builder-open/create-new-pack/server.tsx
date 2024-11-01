@@ -11,7 +11,7 @@ const update: ServerModule['update'] = async (input) => {
 
 const updateFromClient: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
-    case 'pack-create-new.clicked-create-button': {
+    case 'create-new-pack.clicked-create-button': {
       const counted = await input.ctx.flowPackDb.count({
         where: {
           createdBy: input.msgClient.userId
@@ -39,7 +39,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       return {
         msgCmd: [
           sendToClient(input.msgClient, {
-            t: 'pack-create-new.created-pack',
+            t: 'create-new-pack.created-pack',
             created: put
           })
         ]

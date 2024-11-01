@@ -5,7 +5,7 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
     case 'user-deleted-puzzle': {
       return {
         ...modelCore,
-        puzzleBuilder: null,
+        screenPuzzleBuilder: null,
         screen: {
           t: 'screen-main-menu'
         },

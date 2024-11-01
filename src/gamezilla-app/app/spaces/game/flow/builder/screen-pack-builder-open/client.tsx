@@ -3,41 +3,27 @@ import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/g
 import { PackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../types'
 import { PackCreateNewClient } from './create-new-pack/client'
+import { TopBar } from 'gamezilla-app/app/@/ui'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    //
-    (model) =>
-      updateClickedPackItem({
-        ...input,
-        model
-      }),
-    (model) =>
-      PackCreateNewClient.update({
-        ...input,
-        model
-      })
+    (model) => updateMain({ ...input, model }),
+    (model) => PackCreateNewClient.update({ ...input, model })
   )
 }
 
-export const updateClickedPackItem: ClientModule['update'] = ({ msg, model }) => {
-  switch (msg?.t) {
-    case 'pack-list.clicked-pack-item': {
+export const updateMain: ClientModule['update'] = (input) => {
+  switch (input.msgCore?.t) {
+    case 'screen-pack-builder-open.user-clicked-pack-item': {
       return {
-        model,
-        msgCore: [
-          {
-            t: 'pack-list.user-clicked-pack-item',
-            pack: msg.pack
-          }
-        ],
+        model: input.model,
         msgCmd: [playSound(APP_SOUND.navForwardMin)]
       }
     }
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
@@ -46,6 +32,19 @@ export const updateClickedPackItem: ClientModule['update'] = ({ msg, model }) =>
 const View: ClientModule['View'] = (input) => {
   return (
     <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
+      <TopBar
+        onBack={() =>
+          input.dispatch({
+            t: 'got-msg-core',
+            c: {
+              t: 'user-clicked-back-button',
+              userId: input.ctx.currentUserId
+            }
+          })
+        }
+        ctx={input.ctx}
+        title={input.ctx.t('flow.pack-builder')}
+      />
       <PackListClient.View
         {...input}
         dispatch={(c) =>
@@ -61,8 +60,12 @@ const View: ClientModule['View'] = (input) => {
         emits={{
           clickedPackItem: (pack) =>
             input.dispatch({
-              t: 'pack-list.clicked-pack-item',
-              pack
+              t: 'got-msg-core',
+              c: {
+                t: 'screen-pack-builder-open.user-clicked-pack-item',
+                pack,
+                userId: input.ctx.currentUserId
+              }
             })
         }}
       />
@@ -70,7 +73,7 @@ const View: ClientModule['View'] = (input) => {
   )
 }
 
-export const ScreenOpenPackClient = {
+export const ScreenPackBuilderOpenClient = {
   View,
   update
 }

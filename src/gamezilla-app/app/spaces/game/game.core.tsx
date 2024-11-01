@@ -2,7 +2,7 @@ import type { EventMeta } from 'gamezilla-app/app/spaces/@/event'
 import type { SpaceCtx } from '../@/space'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
-import { FlowCore } from './flow/flow.core'
+import { FlowCore } from './flow/core'
 import type { ModelCore, MsgCore } from './game.types'
 
 export const initCore = (input: { gameName: GameName; ctx: SpaceCtx }): ModelCore => {

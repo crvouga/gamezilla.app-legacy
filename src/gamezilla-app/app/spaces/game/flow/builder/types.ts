@@ -14,11 +14,12 @@ import type { FlowPuzzle } from '../@/puzzle/puzzle'
 import type { FlowPuzzleId } from '../@/puzzle/puzzle-id'
 import { FlowPuzzleListTypes } from '../@/puzzle/puzzle-list'
 import { FlowServerCtx } from '../@/flow-server-ctx'
-import { ScreenOpenPackTypes } from './screen-open-pack'
-import { ScreenOpenPuzzleTypes } from './screen-open-puzzle'
+import { ScreenPackBuilderOpenTypes } from './screen-pack-builder-open'
+import { ScreenPuzzleBuilderOpenTypes } from './screen-puzzle-builder-open'
 import { ScreenPackBuilderTypes } from './screen-pack-builder'
 import { ScreenPuzzleBuilderTypes } from './screen-puzzle-builder'
 import { ScreenMainMenu } from './screen-main-menu'
+import { UserId } from 'gamezilla-app/app/@/data'
 
 //
 //
@@ -79,16 +80,16 @@ type BaseModelClient = {
 }
 
 export type ModelClient = BaseModelClient &
-  ScreenOpenPuzzleTypes.ModelClient &
+  ScreenPuzzleBuilderOpenTypes.ModelClient &
   ScreenPuzzleBuilderTypes.ModelClient &
   ScreenPackBuilderTypes.ModelClient &
-  ScreenOpenPackTypes.ModelClient
+  ScreenPackBuilderOpenTypes.ModelClient
 
 export const initClient: ClientModule['init'] = {
-  ...ScreenOpenPuzzleTypes.initClient,
+  ...ScreenPuzzleBuilderOpenTypes.initClient,
   ...ScreenPuzzleBuilderTypes.initClient,
   ...ScreenPackBuilderTypes.initClient,
-  ...ScreenOpenPackTypes.initClient,
+  ...ScreenPackBuilderOpenTypes.initClient,
   flowPuzzleList: FlowPuzzleListTypes.initClient,
   flowPackList: FlowPackListTypes.initClient,
   packs: {},
@@ -120,19 +121,20 @@ export type MsgClient =
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgClient }
   | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgClient }
   | BaseMsgClient
-  | ScreenOpenPuzzleTypes.MsgClient
+  | ScreenPuzzleBuilderOpenTypes.MsgClient
   | ScreenPuzzleBuilderTypes.MsgClient
   | ScreenMainMenu.MsgClient
   | ScreenPackBuilderTypes.MsgClient
-  | ScreenOpenPackTypes.MsgClient
+  | ScreenPackBuilderOpenTypes.MsgClient
+  | { t: 'got-msg-core'; c: MsgCore }
 
 export type MsgServer =
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgServer }
   | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgServer }
-  | ScreenOpenPuzzleTypes.MsgServer
+  | ScreenPuzzleBuilderOpenTypes.MsgServer
   | ScreenPuzzleBuilderTypes.MsgServer
   | ScreenPackBuilderTypes.MsgServer
-  | ScreenOpenPackTypes.MsgServer
+  | ScreenPackBuilderOpenTypes.MsgServer
 
 export type MsgToServer =
   | {
@@ -141,9 +143,9 @@ export type MsgToServer =
     }
   | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgToServer }
   | ScreenPuzzleBuilderTypes.MsgToServer
-  | ScreenOpenPuzzleTypes.MsgToServer
+  | ScreenPuzzleBuilderOpenTypes.MsgToServer
   | ScreenPackBuilderTypes.MsgToServer
-  | ScreenOpenPackTypes.MsgToServer
+  | ScreenPackBuilderOpenTypes.MsgToServer
 
 export type MsgToClient =
   | {
@@ -152,9 +154,9 @@ export type MsgToClient =
     }
   | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgToClient }
   | ScreenPuzzleBuilderTypes.MsgToClient
-  | ScreenOpenPuzzleTypes.MsgToClient
+  | ScreenPuzzleBuilderOpenTypes.MsgToClient
   | ScreenPackBuilderTypes.MsgToClient
-  | ScreenOpenPackTypes.MsgToClient
+  | ScreenPackBuilderOpenTypes.MsgToClient
 
 //
 //
@@ -167,21 +169,25 @@ export type MsgToClient =
 export const MsgCore = p.or(
   ScreenMainMenu.MsgCore,
   ScreenPuzzleBuilderTypes.MsgCore,
-  ScreenOpenPuzzleTypes.MsgCore,
+  ScreenPuzzleBuilderOpenTypes.MsgCore,
   ScreenPackBuilderTypes.MsgCore,
-  ScreenOpenPackTypes.MsgCore
+  ScreenPackBuilderOpenTypes.MsgCore,
+  p.obj({
+    t: p.l('user-clicked-back-button'),
+    userId: UserId
+  })
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
-const Screen = p.or(
+export const Screen = p.or(
   p.obj({
     t: p.l('screen-main-menu')
   }),
   p.obj({
-    t: p.l('screen-open-puzzle-builder')
+    t: p.l('screen-puzzle-builder-open')
   }),
   p.obj({
-    t: p.l('screen-open-pack-builder')
+    t: p.l('screen-pack-builder-open')
   }),
   p.obj({
     t: p.l('screen-puzzle-builder')
@@ -190,14 +196,14 @@ const Screen = p.or(
     t: p.l('screen-pack-builder')
   })
 )
-type Screen = p.Infer<typeof Screen>
+export type Screen = p.Infer<typeof Screen>
 
 export const ModelCore = p.obj({
   screen: Screen,
-  puzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
-  openPuzzle: p.maybe(ScreenOpenPuzzleTypes.ModelCore),
-  packBuilder: p.maybe(ScreenPackBuilderTypes.ModelCore),
-  openPack: p.maybe(ScreenOpenPackTypes.ModelCore)
+  screenPuzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
+  screenPuzzleBuilderOpen: p.maybe(ScreenPuzzleBuilderOpenTypes.ModelCore),
+  screenPackBuilder: p.maybe(ScreenPackBuilderTypes.ModelCore),
+  screenPackBuilderOpen: p.maybe(ScreenPackBuilderOpenTypes.ModelCore)
 })
 
 export type ModelCore = p.Infer<typeof ModelCore>

@@ -34,12 +34,10 @@ export const initServer: ModelServer = null
 //
 //
 
-export type MsgClient =
-  | MsgCore
-  | {
-      t: 'screen-pack-builder.flow-pack-grid'
-      c: FlowPackPuzzlesGridTypes.MsgClient
-    }
+export type MsgClient = {
+  t: 'screen-pack-builder.flow-pack-grid'
+  c: FlowPackPuzzlesGridTypes.MsgClient
+}
 
 export type MsgServer = {
   t: 'screen-pack-builder.flow-pack-grid'
@@ -98,10 +96,6 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('got-edit-pack-name-msg'),
     c: EditPackNameTypes.MsgCore
-  }),
-  p.obj({
-    t: p.l('screen-pack-builder.user-clicked-exit-button'),
-    userId: UserId
   }),
   p.obj({
     t: p.l('screen-pack-builder.saved-pack'),

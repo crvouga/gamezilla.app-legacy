@@ -6,7 +6,7 @@ import type { ModelCore, MsgCore } from '../../types'
 const updateCore = ({ modelCore, msgCore }: { ctx: SpaceCtx; msgCore: MsgCore; modelCore: ModelCore }): ModelCore => {
   switch (msgCore.t) {
     case 'user-edited-puzzle-name': {
-      const puzzleBuilder = modelCore.puzzleBuilder
+      const puzzleBuilder = modelCore.screenPuzzleBuilder
       if (!puzzleBuilder) {
         return modelCore
       }
@@ -26,7 +26,7 @@ const updateCore = ({ modelCore, msgCore }: { ctx: SpaceCtx; msgCore: MsgCore; m
       }
       return {
         ...modelCore,
-        puzzleBuilder: {
+        screenPuzzleBuilder: {
           ...puzzleBuilder,
           puzzle: puzzleNew
         }

@@ -11,11 +11,11 @@ const SavePack: Pick<ServerModule, 'update'> = {
   async update(input) {
     switch (input.msgCore?.t) {
       case 'screen-pack-builder.user-clicked-add-puzzle-item': {
-        if (!input.modelCore.packBuilder) {
+        if (!input.modelCore.screenPackBuilder) {
           return {}
         }
 
-        const saved = await input.ctx.flowPackDb.put(input.modelCore.packBuilder.pack)
+        const saved = await input.ctx.flowPackDb.put(input.modelCore.screenPackBuilder.pack)
 
         return {
           msgCore: [
@@ -36,7 +36,7 @@ const SavePack: Pick<ServerModule, 'update'> = {
 
 const PuzzleGrid: Pick<ServerModule, 'update'> = {
   async update(input) {
-    const pack = input.modelCore.packBuilder?.pack
+    const pack = input.modelCore.screenPackBuilder?.pack
 
     if (!pack) {
       return {}
@@ -79,7 +79,7 @@ const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
           modelCore: input.modelCore,
           msgCore: input.msgCore
         })
-        const packNew = modelCoreNew.packBuilder?.pack
+        const packNew = modelCoreNew.screenPackBuilder?.pack
         if (!packNew) {
           return {}
         }
@@ -96,12 +96,12 @@ const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
 
 const EditPackName: Pick<ServerModule, 'update'> = {
   async update(input) {
-    if (!input.modelCore.packBuilder) {
+    if (!input.modelCore.screenPackBuilder) {
       return {}
     }
     const updated = await EditPackNameServer.update({
       ...input,
-      modelCore: input.modelCore.packBuilder.editPackName,
+      modelCore: input.modelCore.screenPackBuilder.editPackName,
       msgCore:
         input.msgCore?.t === 'got-edit-pack-name-msg'
           ? {

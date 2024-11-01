@@ -1,19 +1,19 @@
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import type { UpdateCore } from '../types'
-import { CreateNewPuzzleCore } from './create-new/core'
+import { CreateNewPuzzleCore } from './create-new-puzzle/core'
 
 const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'builder-open-puzzle.clicked-puzzle-list-item': {
+    case 'screen-puzzle-builder-open.clicked-puzzle-list-item': {
       return {
         ...modelCore,
         option: 'puzzles',
-        packBuilder: modelCore.packBuilder,
+        screenPackBuilder: modelCore.screenPackBuilder,
         screen: {
           t: 'screen-puzzle-builder'
         },
-        puzzleBuilder: {
+        screenPuzzleBuilder: {
           t: 'puzzle-builder',
           edit: FlowEdit.init({
             flow: msgCore.puzzle.flow
@@ -44,4 +44,4 @@ const updateCore: UpdateCore = (input) => {
   )
 }
 
-export const ScreenOpenPuzzleCore = { updateCore }
+export const ScreenPuzzleBuilderOpenCore = { updateCore }

@@ -12,7 +12,7 @@ const update: ServerModule['update'] = async (input) => {
 
 const updateFromClient: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
-    case 'puzzle-create.user-clicked-create-button': {
+    case 'create-new-puzzle.user-clicked-create-button': {
       const counted = await input.ctx.flowPuzzleDb.count({
         where: {
           createdBy: {
@@ -44,7 +44,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       const created = await input.ctx.flowPuzzleDb.put(puzzleNew)
 
       const msgCore: MsgCore = {
-        t: 'user-created-puzzle',
+        t: 'create-new-puzzle.user-created-puzzle',
         created: Result.mapOk(created, () => puzzleNew),
         userId: input.msgClient.userId
       }

@@ -8,7 +8,7 @@ import { GameServerModule } from './@/architecture/game-server-v2'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
 import { FlowServerCtx } from './flow/@/flow-server-ctx'
-import * as Flow from './flow/flow.types'
+import * as Flow from './flow/types'
 //
 //
 //

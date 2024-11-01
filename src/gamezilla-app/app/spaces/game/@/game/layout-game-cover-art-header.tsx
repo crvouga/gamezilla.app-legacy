@@ -19,7 +19,7 @@ export const LayoutGameCoverArtHeader = (input: {
       <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
         {renderCoverArt_({
           key: input.title,
-          className: 'w-28 h-28 overflow-hidden rounded-lg border border-white/20'
+          className: 'w-28 h-28 overflow-hidden rounded-lg'
         })}
         {input.renderContent()}
       </div>
@@ -32,7 +32,7 @@ const renderDefaultCoverArt = (input: { key: string; className: string }) => {
     <div
       key={input.key}
       className={cn(
-        'flex items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-neutral-800 p-4 text-neutral-300',
+        'flex items-center justify-center overflow-hidden rounded-lg  bg-neutral-800 p-4 text-neutral-300',
         input.className
       )}
     >

@@ -4,7 +4,7 @@ import type { SpaceServerCtx } from '../@/space'
 import { SpaceServerCmd } from '../@/space-server-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFourServer } from './connect-four/connect-four.server'
-import { FlowServer } from './flow/flow.server'
+import { FlowServer } from './flow/server'
 import type { GameServerCtx, ServerModule } from './game.types'
 
 const initCtx = (input: { ctx: SpaceServerCtx }): GameServerCtx => {

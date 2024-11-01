@@ -12,7 +12,7 @@ import {
   serverListedPuzzlesOk,
   testFlowClientCtx
 } from '../@/testing/client'
-import { deriveModelCore } from '../@/testing/game'
+import { deriveModelCore } from '../@/testing/core'
 import type { MsgClient } from '../types'
 import { ScreenPuzzleBuilderClient } from './client'
 
@@ -24,8 +24,12 @@ const Fixture = async () => {
   const init = f.update(f.init, [
     {
       msg: {
-        t: 'builder-open-puzzle.clicked-puzzle-list-item',
-        puzzle: flowPuzzle
+        t: 'got-msg-core',
+        c: {
+          t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
+          puzzle: flowPuzzle,
+          userId: f.ctx.currentUserId
+        }
       }
     }
   ])
@@ -65,10 +69,10 @@ describe(import.meta.file, () => {
       serverListedPuzzlesOk(ctx, [puzzle]),
       clickedPuzzleListItem(ctx, puzzle)
     )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.screen.t === 'screen-puzzle-builder' && modelCore.puzzleBuilder?.puzzle.id === puzzle.id).toBe(
-      true
-    )
+    const modelCore = deriveModelCore(ctx, output)
+    expect(
+      modelCore.screen.t === 'screen-puzzle-builder' && modelCore.screenPuzzleBuilder?.puzzle.id === puzzle.id
+    ).toBe(true)
   })
 
   it('should exit puzzle builder after clicking exit button', async () => {
@@ -82,12 +86,12 @@ describe(import.meta.file, () => {
 
     const output = GameClientModule.andThen(
       openedBuilder,
-      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx)(openedBuilder))
+      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx, openedBuilder))
     )
 
-    const modelCore = deriveModelCore(ctx)(output)
+    const modelCore = deriveModelCore(ctx, output)
 
-    expect(modelCore.screen.t === 'screen-open-puzzle-builder').toBe(true)
+    expect(modelCore.screen.t === 'screen-puzzle-builder-open').toBe(true)
   })
 
   it('should open save prompt when exiting with unsaved changes', async () => {
@@ -103,15 +107,15 @@ describe(import.meta.file, () => {
 
     const madeEdit = GameClientModule.andThen(
       openedBuilder,
-      puzzleBuilderPressDownRandomNode(ctx, deriveModelCore(ctx)(openedBuilder))
+      puzzleBuilderPressDownRandomNode(ctx, deriveModelCore(ctx, openedBuilder))
     )
 
     const output = GameClientModule.andThen(
       madeEdit,
-      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx)(madeEdit))
+      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx, madeEdit))
     )
 
-    const modelCore = deriveModelCore(ctx)(output)
+    const modelCore = deriveModelCore(ctx, output)
 
     expect(
       modelCore.screen.t === 'screen-puzzle-builder' && output.model.puzzleBuilderOpened === 'unsaved-changes'

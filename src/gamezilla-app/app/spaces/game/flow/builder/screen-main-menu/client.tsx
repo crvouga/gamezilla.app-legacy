@@ -1,25 +1,19 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
-import { IconPuzzlePiece } from 'gamezilla-app/app/@/ui'
-import { withEventId } from 'gamezilla-app/app/spaces/@/event'
+import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from 'gamezilla-app/app/@/ui'
 import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { GameMainMenu } from '../../../@/game'
-import { FlowCoverArt } from '../../@/flow-cover-art'
 import type { ClientModule } from '../types'
 
 const update: ClientModule['update'] = (input) => {
-  return andThen(
-    { model: input.model },
-    (model) => updateListTab({ ...input, model }),
-    (model) => updateUserChangedListTab({ ...input, model })
-  )
+  return andThen({ model: input.model }, (model) => updateFromMsgCore({ ...input, model }))
 }
 
-const updateUserChangedListTab: ClientModule['update'] = (input) => {
+const updateFromMsgCore: ClientModule['update'] = (input) => {
   switch (input.msgCore?.t) {
     case 'screen-main-menu.user-clicked-option': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)]
       }
     }
 
@@ -38,30 +32,6 @@ const updateUserChangedListTab: ClientModule['update'] = (input) => {
   }
 }
 
-const updateListTab: ClientModule['update'] = (input) => {
-  const { msg } = input
-
-  if (!msg) {
-    return { model: input.model }
-  }
-
-  switch (msg.t) {
-    case 'screen-main-menu.user-clicked-option':
-    case 'screen-main-menu.user-clicked-back-button': {
-      return {
-        model: input.model,
-        msgCore: [withEventId(msg)]
-      }
-    }
-
-    default: {
-      return {
-        model: input.model
-      }
-    }
-  }
-}
-
 const View: ClientModule['View'] = (input) => {
   return (
     <GameMainMenu.View
@@ -69,33 +39,48 @@ const View: ClientModule['View'] = (input) => {
       dispatch={(c) => input.dispatch(c)}
       onBack={() =>
         input.dispatch({
-          t: 'screen-main-menu.user-clicked-back-button',
-          userId: input.ctx.currentUserId
+          t: 'got-msg-core',
+          c: {
+            t: 'screen-main-menu.user-clicked-back-button',
+            userId: input.ctx.currentUserId
+          }
         })
       }
-      renderCoverArt={(input) => <FlowCoverArt {...input} key={input.key} />}
+      renderCoverArt={(input) => (
+        <div {...input} key={input.key}>
+          <div className='h-full w-full p-4'>
+            <IconScrewdriverWrench className='h-full w-full' />
+          </div>
+        </div>
+      )}
       title={input.ctx.t('flow.builder')}
       buttons={[
         {
           renderIcon: (input) => <IconPuzzlePiece {...input} />,
           title: input.ctx.t('flow.puzzles'),
-          description: input.ctx.t('flow.play-description'),
+          description: input.ctx.t('flow.open-puzzle-description'),
           onClick: () =>
             input.dispatch({
-              t: 'screen-main-menu.user-clicked-option',
-              option: 'puzzles',
-              userId: input.ctx.currentUserId
+              t: 'got-msg-core',
+              c: {
+                t: 'screen-main-menu.user-clicked-option',
+                option: 'puzzles',
+                userId: input.ctx.currentUserId
+              }
             })
         },
         {
-          renderIcon: (input) => <IconPuzzlePiece {...input} />,
-          title: input.ctx.t('flow.puzzles'),
-          description: input.ctx.t('flow.play-description'),
+          renderIcon: (input) => <IconBox {...input} />,
+          title: input.ctx.t('flow.packs'),
+          description: input.ctx.t('flow.open-pack-description'),
           onClick: () =>
             input.dispatch({
-              t: 'screen-main-menu.user-clicked-option',
-              option: 'puzzles',
-              userId: input.ctx.currentUserId
+              t: 'got-msg-core',
+              c: {
+                t: 'screen-main-menu.user-clicked-option',
+                option: 'packs',
+                userId: input.ctx.currentUserId
+              }
             })
         }
       ]}

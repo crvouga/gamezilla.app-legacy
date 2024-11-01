@@ -7,7 +7,7 @@ const update: ClientModule['update'] = (input) => {
   const { msgCore, model, msg, ctx } = input
 
   switch (msg?.t) {
-    case 'puzzle-create.user-clicked-create-button': {
+    case 'create-new-puzzle.user-clicked-create-button': {
       return {
         model: {
           ...model,
@@ -17,7 +17,7 @@ const update: ClientModule['update'] = (input) => {
         msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
-            t: 'puzzle-create.user-clicked-create-button'
+            t: 'create-new-puzzle.user-clicked-create-button'
           })
         ]
       }
@@ -47,7 +47,7 @@ const update: ClientModule['update'] = (input) => {
   }
 
   switch (msgCore?.t) {
-    case 'user-created-puzzle': {
+    case 'create-new-puzzle.user-created-puzzle': {
       if (isErr(msgCore.created)) {
         return {
           model: {
@@ -107,7 +107,7 @@ const ViewCreateFab: ClientModule['View'] = (input) => {
       renderIconStart={(iconInput) => <IconPlus {...iconInput} />}
       onClick={() =>
         input.dispatch({
-          t: 'puzzle-create.user-clicked-create-button'
+          t: 'create-new-puzzle.user-clicked-create-button'
         })
       }
     />

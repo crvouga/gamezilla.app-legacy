@@ -5,6 +5,7 @@ import { FlowPack } from '../../@/pack/pack'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import {
   FixtureFlowBuilderClient,
+  FixureUpdateInput,
   clickedExitPuzzleButton,
   clickedOpenPuzzlePickerButton,
   clickedPuzzleGridItem,
@@ -16,11 +17,12 @@ import {
   serverCreatedPack,
   testFlowClientCtx
 } from '../@/testing/client'
-import { deriveModelCore } from '../@/testing/game'
+import { deriveModelCore } from '../@/testing/core'
 import { BuilderCore } from '../core'
 import type { ModelClient, ModelCore } from '../types'
 import { ScreenPackBuilderClient } from './client'
 import { ScreenPackBuilderCore } from './core'
+import { Ok } from 'gamezilla-app/@/core'
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
   return ScreenPackBuilderClient.update({
@@ -28,8 +30,11 @@ const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
     model,
     modelCore: BuilderCore.initCore({ ctx }),
     msg: {
-      t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
-      userId: ctx.currentUserId
+      t: 'got-msg-core',
+      c: {
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+        userId: ctx.currentUserId
+      }
     }
   })
 }
@@ -40,8 +45,11 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
     model,
     modelCore: BuilderCore.initCore({ ctx }),
     msg: {
-      t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
-      userId: ctx.currentUserId
+      t: 'got-msg-core',
+      c: {
+        t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
+        userId: ctx.currentUserId
+      }
     }
   })
 }
@@ -66,12 +74,32 @@ export const Fixture = async () => {
   }
   const modelCore: ModelCore = {
     ...f.modelCore,
-    packBuilder: ScreenPackBuilderCore.init({
+    screenPackBuilder: ScreenPackBuilderCore.init({
       pack
     })
   }
+
+  const inputsOpenPackBuilder: FixureUpdateInput[] = [
+    {
+      msgServer: {
+        t: 'create-new-pack.created-pack',
+        created: Ok(pack)
+      }
+    },
+    {
+      msg: {
+        t: 'got-msg-core',
+        c: {
+          t: 'screen-pack-builder.user-opened-add-puzzle-screen',
+          userId: f.ctx.currentUserId
+        }
+      }
+    }
+  ]
+
   return {
     ...f,
+    inputsOpenPackBuilder,
     pack,
     puzzle,
     model,
@@ -91,10 +119,10 @@ describe(import.meta.file, () => {
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0)
     )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.packBuilder?.screen.t === 'screen-puzzle' && modelCore.packBuilder.screen.puzzleIndex === 0).toBe(
-      true
-    )
+    const modelCore = deriveModelCore(ctx, output)
+    expect(
+      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' && modelCore.screenPackBuilder.screen.puzzleIndex === 0
+    ).toBe(true)
   })
 
   it('should open puzzle picker when user clicks add puzzle button', async () => {
@@ -104,8 +132,8 @@ describe(import.meta.file, () => {
       serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx)
     )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.packBuilder?.screen.t === 'screen-add-puzzle').toBe(true)
+    const modelCore = deriveModelCore(ctx, output)
+    expect(modelCore.screenPackBuilder?.screen.t === 'screen-add-puzzle').toBe(true)
   })
 
   it('should close puzzle picker when user clicks closes', async () => {
@@ -116,8 +144,8 @@ describe(import.meta.file, () => {
       clickedOpenPuzzlePickerButton(ctx),
       closedPuzzlePickerDrawer(ctx)
     )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.packBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+    const modelCore = deriveModelCore(ctx, output)
+    expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
 
   it('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
@@ -128,8 +156,8 @@ describe(import.meta.file, () => {
       serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedPuzzlePickerItem(ctx, puzzle)
     )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.packBuilder && FlowPack.includes(modelCore.packBuilder.pack, puzzle.id)).toBe(true)
+    const modelCore = deriveModelCore(ctx, output)
+    expect(modelCore.screenPackBuilder && FlowPack.includes(modelCore.screenPackBuilder.pack, puzzle.id)).toBe(true)
   })
 
   it('should close puzzle picker after adding a puzzle to the pack', async () => {
@@ -141,8 +169,8 @@ describe(import.meta.file, () => {
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle)
     )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.packBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+    const modelCore = deriveModelCore(ctx, output)
+    expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
 
   it('should go back to grid after exiting puzzle', async () => {
@@ -156,25 +184,49 @@ describe(import.meta.file, () => {
       clickedPuzzleGridItem(ctx, puzzle, 0),
       clickedExitPuzzleButton(ctx)
     )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.packBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+    const modelCore = deriveModelCore(ctx, output)
+    expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
 
   it('should open the more drawer after clicking "more" button', async () => {
-    const ctx = await testFlowClientCtx()
-    const puzzle = await createFlowPuzzle(ctx)
-    const output = andThen(
-      initial,
-      serverCreatedPack(ctx, await createFlowPack(ctx)),
-      clickedOpenPuzzlePickerButton(ctx),
-      clickedPuzzlePickerItem(ctx, puzzle),
-      clickedPuzzleGridItem(ctx, puzzle, 0),
-      clickedMoreButton(ctx)
-    )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.packBuilder?.screen.t === 'screen-puzzle' && modelCore.packBuilder?.screen.opened === 'more').toBe(
-      true
-    )
+    const f = await Fixture()
+    const output = f.update(f.init, [
+      ...f.inputsOpenPackBuilder,
+      {
+        msg: {
+          t: 'got-msg-core',
+          c: {
+            t: 'screen-pack-builder.user-clicked-add-puzzle-item',
+            puzzle: f.puzzle,
+            userId: f.ctx.currentUserId
+          }
+        }
+      },
+      {
+        msg: {
+          t: 'got-msg-core',
+          c: {
+            t: 'screen-pack-builder.user-clicked-pack-item',
+            puzzle: f.puzzle,
+            puzzleIndex: f.pack.puzzleIds.indexOf(f.puzzle.id)
+          }
+        }
+      },
+      {
+        msg: {
+          t: 'got-msg-core',
+          c: {
+            t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+            userId: f.ctx.currentUserId
+          }
+        }
+      }
+    ])
+
+    expect(
+      output.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
+        output.modelCore.screenPackBuilder?.screen.opened === 'more'
+    ).toBe(true)
   })
 
   it('should close the more drawer', async () => {
@@ -189,25 +241,32 @@ describe(import.meta.file, () => {
       clickedMoreButton(ctx),
       closedMoreDrawer(ctx)
     )
-    const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.packBuilder?.screen.t === 'screen-puzzle' && modelCore.packBuilder?.screen.opened === null).toBe(
-      true
-    )
+    const modelCore = deriveModelCore(ctx, output)
+    expect(
+      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' && modelCore.screenPackBuilder?.screen.opened === null
+    ).toBe(true)
   })
 
   it('should should remove puzzle from pack clicking remove from pack button', async () => {
     const f = await Fixture()
-    const output = ScreenPackBuilderClient.update({
-      ...f,
-      msg: {
-        t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
-        userId: f.ctx.currentUserId,
-        puzzleIndex: f.pack.puzzleIds.indexOf(f.puzzle.id)
+    const puzzleIndex = f.pack.puzzleIds.indexOf(f.puzzle.id)
+    const output = f.update(f.init, [
+      ...f.inputsOpenPackBuilder,
+
+      {
+        msg: {
+          t: 'got-msg-core',
+          c: {
+            t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+            userId: f.ctx.currentUserId,
+            puzzleIndex
+          }
+        }
       }
-    })
-    expect(
-      output.msgCore?.some((msg) => msg.t === 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button')
-    ).toBe(true)
+    ])
+    expect(puzzleIndex).toBe(0)
+    expect(output.modelCore.screenPackBuilder).toBeTruthy()
+    expect(output.modelCore.screenPackBuilder?.pack.puzzleIds.includes(f.puzzle.id)).toBe(false)
   })
 
   it('should update pack when pack changes in model sync', async () => {
@@ -223,7 +282,7 @@ describe(import.meta.file, () => {
       ...f,
       modelCore: {
         ...f.modelCore,
-        packBuilder: ScreenPackBuilderCore.init({
+        screenPackBuilder: ScreenPackBuilderCore.init({
           pack: updatedPack
         })
       }

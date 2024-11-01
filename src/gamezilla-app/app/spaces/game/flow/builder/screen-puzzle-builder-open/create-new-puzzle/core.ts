@@ -5,7 +5,7 @@ import { FlowPlay } from '../../../@/flow/flow-play'
 
 const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
   switch (msgCore.t) {
-    case 'user-created-puzzle': {
+    case 'create-new-puzzle.user-created-puzzle': {
       if (isErr(msgCore.created)) {
         return modelCore
       }
@@ -15,8 +15,8 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
         screen: {
           t: 'screen-puzzle-builder'
         },
-        packBuilder: modelCore.packBuilder,
-        puzzleBuilder: {
+        screenPackBuilder: modelCore.screenPackBuilder,
+        screenPuzzleBuilder: {
           t: 'puzzle-builder',
           mode: {
             t: 'edit'

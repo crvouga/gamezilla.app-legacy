@@ -106,18 +106,18 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
 
   switch (msgCore?.t) {
     case 'screen-puzzle-builder.got-flow-ui-play-msg': {
-      if (modelCore.puzzleBuilder?.mode.t !== 'play') {
+      if (modelCore.screenPuzzleBuilder?.mode.t !== 'play') {
         return {
           model
         }
       }
-      const flow = toFlow(modelCore.puzzleBuilder)
+      const flow = toFlow(modelCore.screenPuzzleBuilder)
       const updated = FlowPlay.update({
         msg: msgCore.c,
-        model: modelCore.puzzleBuilder.play,
+        model: modelCore.screenPuzzleBuilder.play,
         ctx: {
           flowPuzzle: {
-            ...modelCore.puzzleBuilder.puzzle,
+            ...modelCore.screenPuzzleBuilder.puzzle,
             flow
           }
         }
@@ -129,15 +129,15 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
       }
     }
     case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
-      if (modelCore.puzzleBuilder?.mode.t !== 'edit') {
+      if (modelCore.screenPuzzleBuilder?.mode.t !== 'edit') {
         return {
           model
         }
       }
       const updated = FlowEdit.update({
-        model: modelCore.puzzleBuilder.edit,
+        model: modelCore.screenPuzzleBuilder.edit,
         msg: msgCore.c,
-        flow: modelCore.puzzleBuilder.puzzle.flow
+        flow: modelCore.screenPuzzleBuilder.puzzle.flow
       })
 
       if (!updated.msgCmd) {
@@ -181,7 +181,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
 const View: BuilderTypes.ClientModule['View'] = (input) => {
   const { ctx } = input
 
-  if (!input.modelCore.puzzleBuilder) {
+  if (!input.modelCore.screenPuzzleBuilder) {
     return null
   }
 
@@ -196,7 +196,7 @@ const View: BuilderTypes.ClientModule['View'] = (input) => {
       <TopBar
         ctx={input.ctx}
         onBack={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' })}
-        title={input.ctx.t('flow-puzzle-name', input.modelCore.puzzleBuilder.puzzle.name)}
+        title={input.ctx.t('flow-puzzle-name', input.modelCore.screenPuzzleBuilder.puzzle.name)}
       />
       <ViewMode {...input} />
       <ViewMoreDrawer {...input} />
@@ -208,7 +208,7 @@ const View: BuilderTypes.ClientModule['View'] = (input) => {
 const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
   const { model, modelCore, dispatch } = input
 
-  const puzzleBuilder = modelCore.puzzleBuilder
+  const puzzleBuilder = modelCore.screenPuzzleBuilder
 
   if (!puzzleBuilder) {
     return null
@@ -266,7 +266,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
 
     case 'play': {
       const flow = toFlow(puzzleBuilder)
-      const status = modelCore.puzzleBuilder ? toStatus(modelCore.puzzleBuilder) : 'solving'
+      const status = modelCore.screenPuzzleBuilder ? toStatus(modelCore.screenPuzzleBuilder) : 'solving'
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
           <FlowLayout
@@ -327,7 +327,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
 }
 
 const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
-  if (!input.modelCore.puzzleBuilder) {
+  if (!input.modelCore.screenPuzzleBuilder) {
     return null
   }
 
@@ -339,7 +339,7 @@ const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
           profile={input.ctx.profiles[input.ctx.space.hostId]}
           subtitle={input.ctx.t('app.editor')}
         />
-        <FlowVariantUI.View disabled model={toFlow(input.modelCore.puzzleBuilder)} />
+        <FlowVariantUI.View disabled model={toFlow(input.modelCore.screenPuzzleBuilder)} />
       </div>
     </LayoutGame>
   )

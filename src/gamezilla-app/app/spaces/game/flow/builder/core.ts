@@ -1,39 +1,76 @@
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
 import { ScreenMainMenuCore } from './screen-main-menu/core'
-import { ScreenOpenPackCore } from './screen-open-pack/core'
-import { ScreenOpenPuzzleCore } from './screen-open-puzzle/core'
+import { ScreenPackBuilderOpenCore } from './screen-pack-builder-open/core'
+import { ScreenPuzzleBuilderOpenCore } from './screen-puzzle-builder-open/core'
 import { ScreenPackBuilderCore } from './screen-pack-builder/core'
 import { ScreenPuzzleBuilderCore } from './screen-puzzle-builder/core'
-import type { ModelCore, UpdateCore } from './types'
+import type { ModelCore, Screen, UpdateCore } from './types'
 
 const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
   return {
     screen: { t: 'screen-main-menu' },
+    screenPackBuilder: null,
+    screenPuzzleBuilderOpen: null,
+    screenPuzzleBuilder: null,
+    screenPackBuilderOpen: null
+  }
+}
 
-    packBuilder: null,
-    openPuzzle: null,
-    puzzleBuilder: null,
-    openPack: null
+export const toPreviousScreen = (screen: Screen): Screen => {
+  switch (screen.t) {
+    case 'screen-main-menu': {
+      return {
+        t: 'screen-main-menu'
+      }
+    }
+    case 'screen-pack-builder': {
+      return {
+        t: 'screen-pack-builder-open'
+      }
+    }
+    case 'screen-pack-builder-open': {
+      return {
+        t: 'screen-main-menu'
+      }
+    }
+    case 'screen-puzzle-builder': {
+      return {
+        t: 'screen-puzzle-builder-open'
+      }
+    }
+    case 'screen-puzzle-builder-open': {
+      return {
+        t: 'screen-main-menu'
+      }
+    }
+  }
+}
+
+const updateBackButton: UpdateCore = (input) => {
+  switch (input.msgCore.t) {
+    case 'user-clicked-back-button': {
+      return {
+        ...input.modelCore,
+        screen: toPreviousScreen(input.modelCore.screen)
+      }
+    }
+    default: {
+      return input.modelCore
+    }
   }
 }
 
 const updates: UpdateCore[] = [
   ScreenPuzzleBuilderCore.updateCore,
-  ScreenOpenPuzzleCore.updateCore,
+  ScreenPuzzleBuilderOpenCore.updateCore,
   ScreenPackBuilderCore.update,
-  ScreenOpenPackCore.update,
-  ScreenMainMenuCore.updateCore
+  ScreenPackBuilderOpenCore.update,
+  ScreenMainMenuCore.updateCore,
+  updateBackButton
 ]
 
 const updateCore: UpdateCore = (input) => {
-  return updates.reduce(
-    (acc, updateCore) =>
-      updateCore({
-        ...input,
-        modelCore: acc
-      }),
-    input.modelCore
-  )
+  return updates.reduce((acc, updateCore) => updateCore({ ...input, modelCore: acc }), input.modelCore)
 }
 
 export const BuilderCore = {

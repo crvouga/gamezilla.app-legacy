@@ -19,7 +19,7 @@ const Fixture = async () => {
   await f.ctx.flowPuzzleDb.put(puzzle)
   const modelCore: ModelCore = {
     ...f.modelCore,
-    packBuilder: ScreenPackBuilderCore.init({
+    screenPackBuilder: ScreenPackBuilderCore.init({
       pack
     })
   }

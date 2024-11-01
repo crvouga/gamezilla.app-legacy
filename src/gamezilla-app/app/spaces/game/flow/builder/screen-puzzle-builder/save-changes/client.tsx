@@ -59,11 +59,11 @@ const updateExitBuilder: ClientModule['update'] = (input) => {
 
   switch (msg?.t) {
     case 'screen-puzzle-builder.user-clicked-exit-button': {
-      if (!modelCore.puzzleBuilder) {
+      if (!modelCore.screenPuzzleBuilder) {
         return exitBuilderWithSound(input)
       }
 
-      if (FlowEdit.isUnsavedChanges(modelCore.puzzleBuilder.edit, modelCore.puzzleBuilder.puzzle.flow)) {
+      if (FlowEdit.isUnsavedChanges(modelCore.screenPuzzleBuilder.edit, modelCore.screenPuzzleBuilder.puzzle.flow)) {
         return {
           model: {
             ...model,
@@ -174,7 +174,7 @@ const exitBuilder: ClientModule['update'] = (input) => {
 }
 
 const saveChanges: ClientModule['update'] = ({ model, modelCore }) => {
-  const puzzleBuilder = modelCore.puzzleBuilder
+  const puzzleBuilder = modelCore.screenPuzzleBuilder
 
   if (!puzzleBuilder) {
     return { model }

@@ -13,9 +13,7 @@ describe(import.meta.file, () => {
       BuilderClient.update({
         ctx,
         model,
-        modelCore: BuilderCore.initCore({
-          ctx
-        }),
+        modelCore: BuilderCore.initCore({ ctx }),
         msgCore: withEventMeta({
           t: 'screen-main-menu.user-clicked-option',
           userId: ctx.currentUserId,

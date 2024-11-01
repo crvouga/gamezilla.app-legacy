@@ -62,7 +62,7 @@ export type ModelServer = p.Infer<typeof ModelServer>
 
 export type MsgClient =
   | GameMainMenu.Msg
-  | { t: 'msgCore'; c: MsgCore }
+  | { t: 'got-msg-core'; c: MsgCore }
   | { t: 'builder'; c: BuilderTypes.MsgClient }
   | { t: 'play'; c: PlayTypes.MsgClient }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgClient }
