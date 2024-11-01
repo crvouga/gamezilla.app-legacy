@@ -17,8 +17,8 @@ updates.push(({ modelCore, msgCore }) => {
 
       return {
         ...modelCore,
-        opened: {
-          t: 'pack-builder'
+        screen: {
+          t: 'screen-pack-builder'
         },
         packBuilder: init({
           pack: msgCore.created.value
@@ -36,8 +36,8 @@ updates.push(({ modelCore, msgCore }) => {
     case 'screen-pack-builder.user-clicked-exit-button': {
       return {
         ...modelCore,
-        opened: {
-          t: 'list'
+        screen: {
+          t: 'screen-main-menu'
         },
         listTab: 'packs'
       }

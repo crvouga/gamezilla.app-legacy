@@ -1,15 +1,15 @@
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
-import type { ModelCore, UpdateCore } from './types'
-import { ListTabsCore } from './list-tabs/core'
+import { ScreenMainMenuCore } from './screen-main-menu/core'
 import { ScreenOpenPackCore } from './screen-open-pack/core'
-import { ScreenPackBuilderCore } from './screen-pack-builder/core'
 import { ScreenOpenPuzzleCore } from './screen-open-puzzle/core'
+import { ScreenPackBuilderCore } from './screen-pack-builder/core'
 import { ScreenPuzzleBuilderCore } from './screen-puzzle-builder/core'
+import type { ModelCore, UpdateCore } from './types'
 
 const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
   return {
-    ...ListTabsCore.initCore,
-    opened: { t: 'list' },
+    ...ScreenMainMenuCore.initCore,
+    screen: { t: 'screen-main-menu' },
     packBuilder: null,
     openPuzzle: null,
     puzzleBuilder: null,
@@ -22,7 +22,7 @@ const updates: UpdateCore[] = [
   ScreenOpenPuzzleCore.updateCore,
   ScreenPackBuilderCore.update,
   ScreenOpenPackCore.update,
-  ListTabsCore.updateCore
+  ScreenMainMenuCore.updateCore
 ]
 
 const updateCore: UpdateCore = (input) => {

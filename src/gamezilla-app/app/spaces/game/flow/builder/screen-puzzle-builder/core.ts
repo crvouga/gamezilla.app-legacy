@@ -146,8 +146,8 @@ const updateCoreMain = ({
 
       return {
         ...modelCore,
-        opened: {
-          t: 'list'
+        screen: {
+          t: 'screen-main-menu'
         },
         listTab: 'puzzles'
       }

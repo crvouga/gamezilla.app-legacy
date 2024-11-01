@@ -10,8 +10,8 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
         ...modelCore,
         listTab: 'puzzles',
         packBuilder: modelCore.packBuilder,
-        opened: {
-          t: 'puzzle-builder'
+        screen: {
+          t: 'screen-puzzle-builder'
         },
         puzzleBuilder: {
           t: 'puzzle-builder',

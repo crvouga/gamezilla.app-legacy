@@ -7,8 +7,8 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
     case 'pack-list.user-clicked-pack-item': {
       return {
         ...modelCore,
-        opened: {
-          t: 'pack-builder'
+        screen: {
+          t: 'screen-pack-builder'
         },
         packBuilder: ScreenPackBuilderCore.init({
           pack: msgCore.pack

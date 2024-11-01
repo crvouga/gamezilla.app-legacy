@@ -14,11 +14,11 @@ import type { FlowPuzzle } from '../@/puzzle/puzzle'
 import type { FlowPuzzleId } from '../@/puzzle/puzzle-id'
 import { FlowPuzzleListTypes } from '../@/puzzle/puzzle-list'
 import { FlowServerCtx } from '../@/flow-server-ctx'
-import { ListTabs } from './list-tabs'
 import { ScreenOpenPackTypes } from './screen-open-pack'
 import { ScreenOpenPuzzleTypes } from './screen-open-puzzle'
 import { ScreenPackBuilderTypes } from './screen-pack-builder'
 import { ScreenPuzzleBuilderTypes } from './screen-puzzle-builder'
+import { ScreenMainMenu } from './screen-main-menu'
 
 //
 //
@@ -122,7 +122,7 @@ export type MsgClient =
   | BaseMsgClient
   | ScreenOpenPuzzleTypes.MsgClient
   | ScreenPuzzleBuilderTypes.MsgClient
-  | ListTabs.MsgClient
+  | ScreenMainMenu.MsgClient
   | ScreenPackBuilderTypes.MsgClient
   | ScreenOpenPackTypes.MsgClient
 
@@ -165,7 +165,7 @@ export type MsgToClient =
 //
 
 export const MsgCore = p.or(
-  ListTabs.MsgCore,
+  ScreenMainMenu.MsgCore,
   ScreenPuzzleBuilderTypes.MsgCore,
   ScreenOpenPuzzleTypes.MsgCore,
   ScreenPackBuilderTypes.MsgCore,
@@ -173,11 +173,27 @@ export const MsgCore = p.or(
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
-const Open = p.or(p.obj({ t: p.l('list') }), p.obj({ t: p.l('puzzle-builder') }), p.obj({ t: p.l('pack-builder') }))
-type Open = p.Infer<typeof Open>
+const Screen = p.or(
+  p.obj({
+    t: p.l('screen-main-menu')
+  }),
+  p.obj({
+    t: p.l('screen-open-puzzle-builder')
+  }),
+  p.obj({
+    t: p.l('screen-open-pack-builder')
+  }),
+  p.obj({
+    t: p.l('screen-puzzle-builder')
+  }),
+  p.obj({
+    t: p.l('screen-pack-builder')
+  })
+)
+type Screen = p.Infer<typeof Screen>
 
 export const BaseModelCore = p.obj({
-  opened: Open,
+  screen: Screen,
   puzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
   openPuzzle: p.maybe(ScreenOpenPuzzleTypes.ModelCore),
   packBuilder: p.maybe(ScreenPackBuilderTypes.ModelCore),
@@ -185,7 +201,7 @@ export const BaseModelCore = p.obj({
 })
 type BaseModelCore = p.Infer<typeof BaseModelCore>
 
-export const ModelCore = p.and(BaseModelCore, ListTabs.ModelCore)
+export const ModelCore = p.and(BaseModelCore, ScreenMainMenu.ModelCore)
 export type ModelCore = p.Infer<typeof ModelCore>
 
 export type UpdateCore = (input: {

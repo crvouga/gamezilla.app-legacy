@@ -55,7 +55,9 @@ describe(import.meta.file, () => {
 
     const modelCore = deriveModelCore(ctx)(output)
 
-    expect(modelCore.opened.t === 'puzzle-builder' && modelCore.puzzleBuilder?.puzzle.id === puzzle.id).toBe(true)
+    expect(modelCore.screen.t === 'screen-puzzle-builder' && modelCore.puzzleBuilder?.puzzle.id === puzzle.id).toBe(
+      true
+    )
   })
 
   it('should play a sound when clicking a puzzle in the list', async () => {

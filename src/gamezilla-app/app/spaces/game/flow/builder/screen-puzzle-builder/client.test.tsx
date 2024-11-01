@@ -66,7 +66,9 @@ describe(import.meta.file, () => {
       clickedPuzzleListItem(ctx, puzzle)
     )
     const modelCore = deriveModelCore(ctx)(output)
-    expect(modelCore.opened.t === 'puzzle-builder' && modelCore.puzzleBuilder?.puzzle.id === puzzle.id).toBe(true)
+    expect(modelCore.screen.t === 'screen-puzzle-builder' && modelCore.puzzleBuilder?.puzzle.id === puzzle.id).toBe(
+      true
+    )
   })
 
   it('should exit puzzle builder after clicking exit button', async () => {
@@ -85,7 +87,7 @@ describe(import.meta.file, () => {
 
     const modelCore = deriveModelCore(ctx)(output)
 
-    expect(modelCore.opened.t === 'list').toBe(true)
+    expect(modelCore.screen.t === 'screen-main-menu').toBe(true)
   })
 
   it('should open save prompt when exiting with unsaved changes', async () => {
@@ -111,7 +113,9 @@ describe(import.meta.file, () => {
 
     const modelCore = deriveModelCore(ctx)(output)
 
-    expect(modelCore.opened.t === 'puzzle-builder' && output.model.puzzleBuilderOpened === 'unsaved-changes').toBe(true)
+    expect(
+      modelCore.screen.t === 'screen-puzzle-builder' && output.model.puzzleBuilderOpened === 'unsaved-changes'
+    ).toBe(true)
   })
 
   test('render hint button', async () => {

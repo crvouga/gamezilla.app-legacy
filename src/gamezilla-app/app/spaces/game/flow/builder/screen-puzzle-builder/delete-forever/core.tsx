@@ -6,8 +6,8 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
       return {
         ...modelCore,
         puzzleBuilder: null,
-        opened: {
-          t: 'list'
+        screen: {
+          t: 'screen-main-menu'
         },
         listTab: 'puzzles'
       }

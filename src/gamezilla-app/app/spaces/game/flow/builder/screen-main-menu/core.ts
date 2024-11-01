@@ -30,7 +30,7 @@ const updateCore: UpdateCore = (input) => {
   }
 }
 
-export const ListTabsCore = {
+export const ScreenMainMenuCore = {
   initCore,
   updateCore
 }

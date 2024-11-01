@@ -161,7 +161,7 @@ const ViewFormButtons: ClientModule['View'] = (input) => {
         text={input.ctx.t('app.save')}
         loading={isLoading(input.model.puzzleEditNameRequest)}
         disabled={
-          input.modelCore.opened.t !== 'puzzle-builder' ||
+          input.modelCore.screen.t !== 'screen-puzzle-builder' ||
           input.model.puzzleEditNameDraft === input.modelCore.puzzleBuilder?.puzzle.name
         }
         onClick={() =>

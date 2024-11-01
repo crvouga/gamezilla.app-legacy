@@ -121,7 +121,7 @@ describe(import.meta.file, () => {
         userId: f.currentUserId
       }
     ])
-    expect(modelCore.opened.t !== 'puzzle-builder').toBe(true)
+    expect(modelCore.screen.t !== 'screen-puzzle-builder').toBe(true)
   })
 
   it("should be able to open 'more' drawer", async () => {

@@ -13,8 +13,8 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
       return {
         ...modelCore,
         listTab: modelCore.listTab,
-        opened: {
-          t: 'puzzle-builder'
+        screen: {
+          t: 'screen-puzzle-builder'
         },
         packBuilder: modelCore.packBuilder,
         puzzleBuilder: {

@@ -119,7 +119,7 @@ const View: ClientModule['View'] = (input) => {
   )
 }
 
-export const ListTabsClient = {
+export const ScreenMainMenuClient = {
   update,
   View
 }

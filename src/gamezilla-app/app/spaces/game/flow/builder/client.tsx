@@ -1,14 +1,14 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
-import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { PackListClient } from '../@/pack/pack-list'
 import { FlowPuzzleListClient } from '../@/puzzle/puzzle-list'
-import { initClient, type ClientModule } from './types'
-import { ListTabsClient } from './list-tabs/client'
+import { ScreenMainMenuClient } from './screen-main-menu/client'
 import { ScreenOpenPackClient } from './screen-open-pack/client'
-import { ScreenPackBuilderClient } from './screen-pack-builder/client'
 import { ScreenOpenPuzzleClient } from './screen-open-puzzle/client'
+import { ScreenPackBuilderClient } from './screen-pack-builder/client'
 import { ScreenPuzzleBuilderClient } from './screen-puzzle-builder/client'
+import { initClient, type ClientModule } from './types'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -19,7 +19,7 @@ const update: ClientModule['update'] = (input) => {
     (model) => ScreenPackBuilderClient.update({ ...input, model }),
     (model) => ScreenPuzzleBuilderClient.update({ ...input, model }),
     (model) => ScreenOpenPuzzleClient.update({ ...input, model }),
-    (model) => ListTabsClient.update({ ...input, model })
+    (model) => ScreenMainMenuClient.update({ ...input, model })
   )
 }
 
@@ -84,17 +84,25 @@ const updateFlowPuzzleList: ClientModule['update'] = (input) => {
 const View: ClientModule['View'] = (input) => {
   const { modelCore } = input
 
-  switch (modelCore.opened.t) {
-    case 'puzzle-builder': {
+  switch (modelCore.screen.t) {
+    case 'screen-main-menu': {
+      return <ScreenMainMenuClient.View {...input} />
+    }
+
+    case 'screen-puzzle-builder': {
       return <ScreenPuzzleBuilderClient.View {...input} />
     }
 
-    case 'pack-builder': {
+    case 'screen-pack-builder': {
       return <ScreenPackBuilderClient.View {...input} />
     }
 
-    case 'list': {
-      return <ListTabsClient.View {...input} />
+    case 'screen-open-pack-builder': {
+      return <ScreenOpenPackClient.View {...input} />
+    }
+
+    case 'screen-open-puzzle-builder': {
+      return <ScreenOpenPuzzleClient.View {...input} />
     }
   }
 }
