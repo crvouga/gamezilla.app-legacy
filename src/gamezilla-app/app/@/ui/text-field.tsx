@@ -43,7 +43,7 @@ export const TextField = (input: {
           input.onChange(e.currentTarget.value)
         }}
         className={cn(
-          'flex appearance-none items-center gap-2 rounded-md border border-neutral-600 bg-neutral-800 p-3 py-4 text-xl outline-none',
+          'flex appearance-none items-center gap-2 rounded-md border  bg-neutral-800 p-3 py-4 text-xl outline-none',
           input.error && 'border border-red-500 text-red-500',
           !input.error && ' ring-blue-600 focus-within:ring-2'
         )}

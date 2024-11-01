@@ -67,7 +67,7 @@ const ViewTopBar: SpaceClientModule['View'] = (input) => {
   const peopleCount = Object.keys(input.ctx.space.users).length
 
   return (
-    <div className='flex h-12 w-full items-center gap-2 border-b border-neutral-600 px-4'>
+    <div className='flex h-12 w-full items-center gap-2 border-b  px-4'>
       <IconButton
         onClick={() =>
           input.dispatch({

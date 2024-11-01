@@ -8,7 +8,7 @@ import { SpaceCore, type MsgCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 import type { MsgClient } from '../spaces.types'
 import { ViewUsersInSpaceList } from './@/game'
-import { CoverArt } from './game-cover-art'
+import { GameCoverArt } from './game-cover-art'
 import { GameClient } from './game.client'
 import { gameNameList } from './game.types'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
@@ -354,9 +354,9 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
                   gameName
                 })
               }
-              className='flex overflow-hidden rounded-lg border border-neutral-600'
+              className='flex overflow-hidden rounded-lg border '
             >
-              <CoverArt gameName={gameName} />
+              <GameCoverArt gameName={gameName} />
             </button>
 
             <Typography

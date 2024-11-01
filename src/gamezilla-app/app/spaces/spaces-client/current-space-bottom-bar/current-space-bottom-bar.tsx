@@ -1,7 +1,7 @@
 import { APP_SOUND, type ClientCtx, playSound, pushRoute } from 'gamezilla-app/app/@/client'
 import { Avatar, Button, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
-import { CoverArt } from '../../game/game-cover-art'
+import { GameCoverArt } from '../../game/game-cover-art'
 import * as SpacesCoreClient from '../../spaces-core/spaces-core-client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../spaces.types'
 
@@ -53,10 +53,6 @@ const View = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: ModelClient; di
 
   const hostProfile = ctx.profiles[space.hostId]
 
-  if (!hostProfile) {
-    return null
-  }
-
   const userCount = Object.values(space.users).length
 
   return (
@@ -76,8 +72,8 @@ const View = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: ModelClient; di
             {!space.game ? (
               <Avatar src={hostProfile?.avatarUrl} alt='Host Avatar' className='h-14 w-14' />
             ) : (
-              <div className='h-14 w-14 overflow-hidden rounded border border-neutral-600'>
-                <CoverArt gameName={space.game.t} />
+              <div className='h-14 w-14 overflow-hidden rounded border '>
+                <GameCoverArt gameName={space.game.t} />
               </div>
             )}
           </div>
@@ -86,9 +82,13 @@ const View = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: ModelClient; di
             <Typography
               variant='title'
               className='truncate text-left text-lg font-normal'
-              text={ctx.t('spaces.current-space', {
-                hostUsername: hostProfile.username
-              })}
+              text={
+                hostProfile
+                  ? ctx.t('spaces.current-space', {
+                      hostUsername: hostProfile.username
+                    })
+                  : ctx.t('spaces.space')
+              }
             />
             <Typography
               variant='subtitle'

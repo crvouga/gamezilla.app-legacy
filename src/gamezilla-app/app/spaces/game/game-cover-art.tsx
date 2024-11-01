@@ -2,7 +2,7 @@ import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four-cover-art'
 import * as Flow from './flow/flow-cover-art'
 
-export const CoverArt = (input: { gameName: GameName }) => {
+export const GameCoverArt = (input: { gameName: GameName }) => {
   switch (input.gameName) {
     case 'connect-four': {
       return <ConnectFour.CoverArt />

@@ -1,25 +1,17 @@
 import { APP_SOUND, playSound, showErrSm, showToast } from 'gamezilla-app/app/@/client'
-import { Button, TopBar } from 'gamezilla-app/app/@/ui'
-import { withEventId } from '../@/event'
+import { Button } from 'gamezilla-app/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import { ViewGameHeader, ViewUsersInSpaceList } from '../game/@/game'
-import { CoverArt } from '../game/game-cover-art'
+import { withEventId } from '../@/event'
+import { GameCoverArtLayout, ViewUsersInSpaceList } from '../game/@/game'
+import { GameCoverArt } from '../game/game-cover-art'
 import type { MsgCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFromSpaceEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromJoinSpaceButton({
-        ...input,
-        model
-      })
+    (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => updateFromJoinSpaceButton({ ...input, model })
   )
 }
 
@@ -115,67 +107,55 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
 }
 
 const View: SpaceClientModule['View'] = (input) => {
-  if (!input.ctx.space || !input.ctx.currentUser) {
+  const space = input.ctx.space
+  const currentUser = input.ctx.currentUser
+  if (!space || !currentUser) {
     return null
   }
 
-  const spaceState = SpacesCoreClient.toSpaceState(input.model, input.ctx.space.spaceId)
+  const spaceState = SpacesCoreClient.toSpaceState(input.model, space.spaceId)
 
   if (spaceState.type !== 'started') {
     return null
   }
 
   return (
-    <div className='flex h-full w-full flex-col'>
-      <TopBar
+    <div className='flex h-full w-full flex-col overflow-hidden'>
+      <GameCoverArtLayout
+        ctx={input.ctx}
         onBack={() =>
           input.dispatch({
             t: 'clicked-go-home-button'
           })
         }
-        ctx={input.ctx}
-        center
-        title={input.ctx.t('spaces.space')}
-      />
-
-      <div className='flex w-full flex-1 flex-col overflow-y-scroll'>
-        {spaceState.game && (
-          <ViewGameHeader
-            ctx={input.ctx}
-            onBack={() =>
+        title={spaceState.game ? input.ctx.t(spaceState.game.t) : input.ctx.t('spaces.space')}
+        renderCoverArt={(inputCoverArt) =>
+          spaceState.game && (
+            <div {...inputCoverArt}>
+              <GameCoverArt gameName={spaceState.game.t} />
+            </div>
+          )
+        }
+        renderContent={() => (
+          <ViewUsersInSpaceList
+            ctx={{
+              ...input.ctx,
+              space: space,
+              currentUserId: currentUser.userId,
+              currentUserRole: currentUser.role,
+              currentUser
+            }}
+            onOpenUserDetails={(userId) =>
               input.dispatch({
-                t: 'clicked-go-home-button'
+                t: 'clicked-user',
+                userId
               })
-            }
-            title={input.ctx.t(spaceState.game.t)}
-            renderCoverArt={(inputCoverArt) =>
-              spaceState.game && (
-                <div {...inputCoverArt}>
-                  <CoverArt gameName={spaceState.game.t} />
-                </div>
-              )
             }
           />
         )}
+      />
 
-        <ViewUsersInSpaceList
-          ctx={{
-            ...input.ctx,
-            space: input.ctx.space,
-            currentUserId: input.ctx.currentUser.userId,
-            currentUserRole: input.ctx.currentUser.role,
-            currentUser: input.ctx.currentUser
-          }}
-          onOpenUserDetails={(userId) =>
-            input.dispatch({
-              t: 'clicked-user',
-              userId
-            })
-          }
-        />
-      </div>
-
-      <div className='flex flex-row gap-4 border-t border-neutral-600 p-4'>
+      <div className='flex flex-row gap-4 border-t  p-4'>
         <Button
           className='flex-1'
           variant='contained'

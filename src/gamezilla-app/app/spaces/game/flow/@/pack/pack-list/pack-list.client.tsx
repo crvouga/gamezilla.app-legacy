@@ -168,7 +168,7 @@ const FlowPackListItem = ({
   return (
     <button
       type='button'
-      className='flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden border-b border-neutral-800 px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50'
+      className='flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden border-b  px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50'
       onClick={onClick}
     >
       {false && <IconBox className='h-9 w-9 shrink-0' />}

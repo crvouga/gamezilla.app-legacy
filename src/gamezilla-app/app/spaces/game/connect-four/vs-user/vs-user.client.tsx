@@ -484,7 +484,7 @@ const PlayerSlot = ({
   ctx: SpaceClientCtx
 }) => {
   return (
-    <div className='flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-600 p-2'>
+    <div className='flex flex-1 items-center gap-2 overflow-hidden rounded border  p-2'>
       <PlayerIcon className='h-8 w-8' playerType={playerType} />
       <Avatar className='h-8 w-8' alt='' src={ctx.profiles[modelCore.players[playerType]]?.avatarUrl} />
       <p className='text-neutral-300'>{ctx.profiles[modelCore.players[playerType]]?.username ?? '...'}</p>

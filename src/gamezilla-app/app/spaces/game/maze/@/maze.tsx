@@ -183,7 +183,7 @@ const viewBox = [
 
 export const CoverArt = () => {
   return (
-    <svg viewBox={viewBox} width='100%' className='border border-neutral-600'>
+    <svg viewBox={viewBox} width='100%' className='border '>
       <rect x={coverArtMaze.lower.x} y={coverArtMaze.lower.y} width='100%' height='100%' fill={'#000'} />
       {coverArtMaze.edges.map(([a, b]) => (
         <g key={[a.x, a.y, b.x, b.y].join('-')} strokeWidth='0.1' stroke={'#fff'}>

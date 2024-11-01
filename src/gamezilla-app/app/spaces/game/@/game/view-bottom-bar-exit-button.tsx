@@ -3,7 +3,7 @@ import { Button, IconArrowLeftOnRect } from 'gamezilla-app/app/@/ui'
 
 export const ViewBottomBarExitButton = (input: { onClick: () => void; ctx: ClientCtx }) => {
   return (
-    <div className='flex w-full items-center gap-4 border-t border-neutral-600 p-4'>
+    <div className='flex w-full items-center gap-4 border-t  p-4'>
       <Button
         onClick={input.onClick}
         className='flex-1'

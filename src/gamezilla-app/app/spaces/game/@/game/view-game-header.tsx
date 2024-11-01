@@ -3,27 +3,26 @@ import { Translator } from 'gamezilla-app/@/l18n/generated'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import { cn, TopBar } from 'gamezilla-app/app/@/ui'
 
-export const ViewGameHeader = ({
-  title,
-  renderCoverArt = renderDefaultCoverArt,
-  onBack,
-  ctx
-}: {
+export const GameCoverArtLayout = (input: {
   title: TranslatedText
   renderCoverArt?: (input: { key: string; className: string }) => VDom
   onBack: () => void
   ctx: {
     t: Translator
   }
+  renderContent: VDom
 }) => {
+  const renderCoverArt_ = input.renderCoverArt || renderDefaultCoverArt
   return (
-    <div className='flex w-full flex-col items-center gap-4 pb-4'>
-      <TopBar ctx={ctx} onBack={onBack} title={title} center />
-
-      {renderCoverArt({
-        key: title,
-        className: 'w-28 h-28 overflow-hidden rounded-lg border border-white/20'
-      })}
+    <div className='flex h-full w-full flex-1 flex-col items-center gap-4 pb-4'>
+      <TopBar ctx={input.ctx} onBack={input.onBack} title={input.title} center />
+      <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
+        {renderCoverArt_({
+          key: input.title,
+          className: 'w-28 h-28 overflow-hidden rounded-lg border border-white/20'
+        })}
+        {input.renderContent()}
+      </div>
     </div>
   )
 }

@@ -2,7 +2,7 @@ import type { VDom } from 'gamezilla-app/@/vdom'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Avatar, Button, Drawer, IconQuestionMark, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { ViewGameHeader } from '../../game/view-game-header'
+import { GameCoverArtLayout } from '../../game/view-game-header'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
 
@@ -140,38 +140,54 @@ export const View = ({
 
   return (
     <div className='flex w-full flex-1 flex-col'>
-      <ViewGameHeader ctx={ctx} onBack={onQuit} renderCoverArt={renderCoverArt} title={title} />
+      <GameCoverArtLayout
+        ctx={ctx}
+        onBack={onQuit}
+        renderCoverArt={renderCoverArt}
+        title={title}
+        renderContent={() => (
+          <div className='flex w-full flex-col gap-2 p-4'>
+            <div className='grid w-full grid-cols-7'>
+              <PlayerIcons player={playerOneProp} ctx={ctx} />
+              <div className='col-span-1 grid place-items-center'>
+                <Typography
+                  className=' flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black'
+                  variant='title'
+                  text={ctx.t('game.vs')}
+                />
+              </div>
+              <PlayerIcons player={playerTwoProp} ctx={ctx} />
+            </div>
 
-      <div className='flex w-full flex-col gap-2 p-4'>
-        <div className='grid w-full grid-cols-7'>
-          <PlayerIcons player={playerOneProp} ctx={ctx} />
-          <div className='col-span-1 grid place-items-center'>
-            <Typography
-              className=' flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black'
-              variant='title'
-              text={ctx.t('game.vs')}
-            />
+            <div className='grid w-full grid-cols-7'>
+              <PlayerLabels player={playerOneProp} ctx={ctx} />
+              <div className='col-span-1' />
+              <PlayerLabels player={playerTwoProp} ctx={ctx} />
+            </div>
+
+            <div className='mt-2 grid w-full grid-cols-7'>
+              <PlayerButtons
+                onSwapSides={onSwapSides}
+                dispatch={dispatch}
+                human={human}
+                player={playerOneProp}
+                ctx={ctx}
+              />
+              <div className='col-span-1' />
+              <PlayerButtons
+                onSwapSides={onSwapSides}
+                dispatch={dispatch}
+                human={human}
+                player={playerTwoProp}
+                ctx={ctx}
+              />
+            </div>
           </div>
-          <PlayerIcons player={playerTwoProp} ctx={ctx} />
-        </div>
-
-        <div className='grid w-full grid-cols-7'>
-          <PlayerLabels player={playerOneProp} ctx={ctx} />
-          <div className='col-span-1' />
-          <PlayerLabels player={playerTwoProp} ctx={ctx} />
-        </div>
-
-        <div className='mt-2 grid w-full grid-cols-7'>
-          <PlayerButtons onSwapSides={onSwapSides} dispatch={dispatch} human={human} player={playerOneProp} ctx={ctx} />
-          <div className='col-span-1' />
-          <PlayerButtons onSwapSides={onSwapSides} dispatch={dispatch} human={human} player={playerTwoProp} ctx={ctx} />
-        </div>
-      </div>
-
-      <div className='flex flex-1 items-center justify-center' />
+        )}
+      />
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className='flex items-center gap-4 border-t border-neutral-600 p-4'>
+        <div className='flex items-center gap-4 border-t  p-4'>
           <Button
             disabled={!canStartGame}
             variant='contained'

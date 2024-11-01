@@ -3,7 +3,7 @@ import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconRobot, IconUsers, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { type SpaceClientCmd, type SpaceClientCmdTypes, exitGame, openUserDetails } from '../../../@/space-client-cmd'
-import { ViewGameHeader } from './view-game-header'
+import { GameCoverArtLayout } from './view-game-header'
 import { ViewUsersInSpaceList } from './view-users-in-space-list'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
 import { Translator } from 'gamezilla-app/@/l18n/generated'
@@ -91,44 +91,41 @@ export const View = ({
 }) => {
   if (ctx.currentUserId !== ctx.space.hostId) {
     return (
-      <div className='flex h-full w-full flex-col p-4'>
-        <ViewGameHeader
-          ctx={ctx}
-          onBack={() =>
-            dispatch({
-              t: 'game-main-menu/clicked-exit-game-button'
-            })
-          }
-          title={title}
-          renderCoverArt={renderCoverArt}
-        />
-        <ViewUsersInSpaceList
-          onOpenUserDetails={(userId) =>
-            dispatch({
-              t: 'game-main-menu/clicked-open-user-details-button',
-              userId
-            })
-          }
-          ctx={ctx}
-        />
-      </div>
+      <GameCoverArtLayout
+        ctx={ctx}
+        onBack={() =>
+          dispatch({
+            t: 'game-main-menu/clicked-exit-game-button'
+          })
+        }
+        title={title}
+        renderCoverArt={renderCoverArt}
+        renderContent={() => (
+          <ViewUsersInSpaceList
+            onOpenUserDetails={(userId) =>
+              dispatch({
+                t: 'game-main-menu/clicked-open-user-details-button',
+                userId
+              })
+            }
+            ctx={ctx}
+          />
+        )}
+      />
     )
   }
 
   return (
-    <div className='flex h-full w-full flex-col overflow-y-hidden'>
-      <div className='flex w-full flex-1 flex-col items-center overflow-y-scroll'>
-        <ViewGameHeader
-          ctx={ctx}
-          onBack={() =>
-            dispatch({
-              t: 'game-main-menu/clicked-exit-game-button'
-            })
-          }
-          title={title}
-          renderCoverArt={renderCoverArt}
-        />
-
+    <GameCoverArtLayout
+      ctx={ctx}
+      onBack={() =>
+        dispatch({
+          t: 'game-main-menu/clicked-exit-game-button'
+        })
+      }
+      title={title}
+      renderCoverArt={renderCoverArt}
+      renderContent={() => (
         <div className='flex w-full flex-col p-4'>
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (
             <button
@@ -147,8 +144,8 @@ export const View = ({
             </button>
           ))}
         </div>
-      </div>
-    </div>
+      )}
+    />
   )
 }
 

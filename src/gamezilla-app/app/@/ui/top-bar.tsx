@@ -16,10 +16,7 @@ export const TopBar = (input: {
 }) => {
   return (
     <div
-      className={cn(
-        'flex h-16 w-full shrink-0 items-center truncate border-b border-neutral-600 px-4',
-        input.center && 'text-center'
-      )}
+      className={cn('flex h-16 w-full shrink-0 items-center truncate border-b  px-4', input.center && 'text-center')}
     >
       {input.onBack && (
         <IconButton

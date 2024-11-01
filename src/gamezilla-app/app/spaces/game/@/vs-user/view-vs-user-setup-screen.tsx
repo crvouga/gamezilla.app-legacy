@@ -2,7 +2,7 @@ import type { VDom } from 'gamezilla-app/@/vdom'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Avatar, Button, IconQuestionMark, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { ViewGameHeader } from '../game/view-game-header'
+import { GameCoverArtLayout } from '../game/view-game-header'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
 
 type IconProps = { className: string }
@@ -149,14 +149,16 @@ export const VsUserSetupScreen = ({
 }) => {
   return (
     <div className='flex h-full w-full flex-1 flex-col overflow-hidden'>
-      <div className='flex w-full flex-1 flex-col overflow-y-scroll'>
-        <ViewGameHeader ctx={ctx} onBack={onQuit} title={title} renderCoverArt={renderCoverArt} />
-
-        <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />
-      </div>
+      <GameCoverArtLayout
+        ctx={ctx}
+        onBack={onQuit}
+        title={title}
+        renderCoverArt={renderCoverArt}
+        renderContent={() => <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />}
+      />
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className='flex w-full items-center gap-4 border-t border-neutral-600 p-4'>
+        <div className='flex w-full items-center gap-4 border-t  p-4'>
           <Button
             disabled={!canStartGame}
             variant='contained'

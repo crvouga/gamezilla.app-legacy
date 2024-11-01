@@ -1,7 +1,7 @@
 import type { BaseClientCtx } from 'gamezilla-app/app/@/client'
 import { Avatar, cn, Typography } from 'gamezilla-app/app/@/ui'
 import { ViewSpaceHostChip, ViewYouChip } from '../game/@/game'
-import { CoverArt } from '../game/game-cover-art'
+import { GameCoverArt } from '../game/game-cover-art'
 import type { SpaceCoreState } from '../spaces-core'
 
 const MAX_AVATAR_COUNT = 3
@@ -46,7 +46,7 @@ export const ViewSpaceCard = (input: { ctx: BaseClientCtx; state: SpaceCoreState
       {gameName && (
         <div className='flex items-center justify-start gap-2'>
           <div className='h-12 w-12 overflow-hidden rounded border-2 border-white/40'>
-            <CoverArt gameName={gameName} />
+            <GameCoverArt gameName={gameName} />
           </div>
           <Typography variant='title' className='truncate text-lg font-normal' text={input.ctx.t(gameName)} />
         </div>
