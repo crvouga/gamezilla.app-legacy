@@ -14,10 +14,9 @@ export const TopBar = (input: {
   }
   onBack: (() => void) | false
 }) => {
+  const isCenter = input.center || true
   return (
-    <div
-      className={cn('flex h-16 w-full shrink-0 items-center truncate border-b  px-4', input.center && 'text-center')}
-    >
+    <div className={cn('flex h-16 w-full shrink-0 items-center truncate border-b  px-4', isCenter && 'text-center')}>
       {input.onBack && (
         <IconButton
           onClick={input.onBack}
@@ -40,7 +39,7 @@ export const TopBar = (input: {
         )}
       </div>
 
-      {input.center && input.onBack && <IconButtonEmpty />}
+      {isCenter && input.onBack && <IconButtonEmpty />}
     </div>
   )
 }
