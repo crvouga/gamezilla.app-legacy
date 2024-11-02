@@ -15,12 +15,15 @@ const initial = {
   model: initClient
 }
 
-const userObservedEndOfList = (ctx: SpaceClientCtx) => (model: ModelClient) => {
+const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
   return FlowPuzzleListClient.update({
     ctx,
     model,
-    msg: {
-      t: 'flow-puzzle-list.user-observed-end-of-list'
+    msgCmd: {
+      t: 'flow-puzzle-list',
+      c: {
+        t: 'load'
+      }
     }
   })
 }
@@ -66,15 +69,15 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
 }
 
 describe(import.meta.file, () => {
-  it('should it be requesting when the user observes the end of the list', async () => {
+  it('should it be requesting when the load cmd inputs', async () => {
     const ctx = await testSpaceClientCtx()
-    const output = andThen(initial, userObservedEndOfList(ctx))
+    const output = andThen(initial, loadCmd(ctx))
     expect(isRequesting(output.model.request)).toBe(true)
   })
 
   it('should send a list puzzles message to server when the user observes the end of the list', async () => {
     const ctx = await testSpaceClientCtx()
-    const output = andThen(initial, userObservedEndOfList(ctx))
+    const output = andThen(initial, loadCmd(ctx))
     expect(didSendToServer(output, (msg) => msg.t === 'flow-puzzle-list.list-puzzles')).toBe(true)
   })
 
@@ -108,7 +111,7 @@ describe(import.meta.file, () => {
 
   it('should show error after no server response', async () => {
     const ctx = await testFlowClientCtx()
-    const output = andThen(initial, userObservedEndOfList(ctx), elapsed(ctx, TimeSpan.minutes(5)))
+    const output = andThen(initial, loadCmd(ctx), elapsed(ctx, TimeSpan.minutes(5)))
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true)
   })
 })

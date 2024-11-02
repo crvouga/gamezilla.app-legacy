@@ -43,6 +43,17 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
     }
   }
 
+  switch (input.msg?.t) {
+    case 'flow-puzzle-list.time-passed': {
+      return {
+        model: {
+          ...input.model,
+          request: RequestResponse.timePassed(input.model.request, input.ctx.now)
+        }
+      }
+    }
+  }
+
   switch (input.msgServer?.t) {
     case 'flow-puzzle-list.listed-puzzle': {
       const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
