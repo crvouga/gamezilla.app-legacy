@@ -268,7 +268,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
       const flow = toFlow(puzzleBuilder)
       const status = modelCore.screenPuzzleBuilder ? toStatus(modelCore.screenPuzzleBuilder) : 'solving'
       return (
-        <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
+        <div className='flex h-full max-h-full w-full flex-col items-center justify-center overflow-hidden'>
           <FlowLayout
             top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
             middle={

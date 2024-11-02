@@ -2,7 +2,7 @@ import { VDomChildren } from 'gamezilla-app/@/vdom'
 
 export const FlowLayout = (input: { top: VDomChildren; middle: VDomChildren; bottom: VDomChildren }) => {
   return (
-    <div className='flex h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
+    <div className='flex h-full max-h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
       <div className='flex flex-1 flex-col justify-end'>{input.top}</div>
 
       {input.middle}

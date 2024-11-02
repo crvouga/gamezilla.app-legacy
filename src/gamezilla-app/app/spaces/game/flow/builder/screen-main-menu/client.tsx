@@ -57,8 +57,8 @@ const View: ClientModule['View'] = (input) => {
       buttons={[
         {
           renderIcon: (input) => <IconPuzzlePiece {...input} />,
-          title: input.ctx.t('flow.puzzles'),
-          description: input.ctx.t('flow.open-puzzle-description'),
+          title: input.ctx.t('flow.open-puzzle-builder-title'),
+          description: input.ctx.t('flow.open-puzzle-builder-description'),
           onClick: () =>
             input.dispatch({
               t: 'got-msg-core',
@@ -71,8 +71,8 @@ const View: ClientModule['View'] = (input) => {
         },
         {
           renderIcon: (input) => <IconBox {...input} />,
-          title: input.ctx.t('flow.packs'),
-          description: input.ctx.t('flow.open-pack-description'),
+          title: input.ctx.t('flow.open-pack-builder-title'),
+          description: input.ctx.t('flow.open-pack-builder-description'),
           onClick: () =>
             input.dispatch({
               t: 'got-msg-core',
