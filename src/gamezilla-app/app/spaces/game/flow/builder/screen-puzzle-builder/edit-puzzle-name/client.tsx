@@ -4,8 +4,9 @@ import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from 'game
 import { isLoading, isOk, Loading } from 'gamezilla-app/@/core'
 import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ClientModule } from '../../types'
-import { editNameValidationErrorToString } from './types'
+import { editNameValidationErrorToString, MsgClient, MsgToServer } from './types'
 import type { VDomChildren } from 'gamezilla-app/@/vdom'
+import { FlowClientCmd } from '../../../@/flow-client-cmd'
 
 //
 //
@@ -53,19 +54,17 @@ const View: ClientModule['View'] = (input) => {
 //
 
 const updateFormButtons: ClientModule['update'] = (input) => {
-  const { modelCore, msgCore, msg, model } = input
-
-  const puzzleBuilder = modelCore.screenPuzzleBuilder
+  const puzzleBuilder = input.modelCore.screenPuzzleBuilder
 
   if (!puzzleBuilder) {
-    return { model }
+    return { model: input.model }
   }
 
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'puzzle.edit-name.user-clicked-cancel-button': {
       return {
         model: {
-          ...model,
+          ...input.model,
           puzzleBuilderOpened: 'more',
           puzzleEditNameValidationError: null
         }
@@ -73,12 +72,12 @@ const updateFormButtons: ClientModule['update'] = (input) => {
     }
 
     case 'puzzle.edit-name.user-clicked-save-button': {
-      const newName = model.puzzleEditNameDraft ?? ''
+      const newName = input.model.puzzleEditNameDraft ?? ''
 
       if (newName.length === 0) {
         return {
           model: {
-            ...model,
+            ...input.model,
             puzzleEditNameValidationError: 'name-cannot-be-empty'
           },
           msgCmd: [playSound(APP_SOUND.alertErrorSm)]
@@ -87,7 +86,7 @@ const updateFormButtons: ClientModule['update'] = (input) => {
 
       return {
         model: {
-          ...model,
+          ...input.model,
           puzzleEditNameRequest: Loading,
           puzzleEditNameValidationError: null
         },
@@ -101,45 +100,54 @@ const updateFormButtons: ClientModule['update'] = (input) => {
         ]
       }
     }
-
-    default: {
-      break
-    }
   }
 
-  switch (msgCore?.t) {
+  switch (input.msgCore?.t) {
     case 'user-edited-puzzle-name': {
       const puzzlesNew = {
-        ...model.puzzles
+        ...input.ctx.puzzles
       }
-      const puzzle = puzzlesNew[msgCore.flowPuzzleId]
+      const puzzle = puzzlesNew[input.msgCore.flowPuzzleId]
 
-      if (puzzle && FlowPuzzleName.is(msgCore.newName)) {
-        puzzlesNew[msgCore.flowPuzzleId] = {
+      if (puzzle && FlowPuzzleName.is(input.msgCore.newName)) {
+        puzzlesNew[input.msgCore.flowPuzzleId] = {
           ...puzzle,
-          name: msgCore.newName
+          name: input.msgCore.newName
         }
       }
 
+      const msgCmd: FlowClientCmd<{
+        MsgClient: MsgClient
+        MsgToServer: MsgToServer
+      }>[] = [
+        ...(isOk(input.msgCore.edited)
+          ? showCreatedSm<{
+              MsgClient: MsgClient
+              MsgToServer: MsgToServer
+            }>(input.ctx.t('flow.saved-name'))
+          : showErrSm<{
+              MsgClient: MsgClient
+              MsgToServer: MsgToServer
+            }>(input.ctx.t('app.something-went-wrong'))),
+        {
+          t: 'flow.new-puzzles',
+          puzzles: puzzlesNew,
+          causedBy: input
+        }
+      ]
+
       return {
         model: {
-          ...model,
-          puzzles: puzzlesNew,
-          puzzleEditNameRequest: msgCore.edited,
+          ...input.model,
+          puzzleEditNameRequest: input.msgCore.edited,
           puzzleBuilderOpened: null
         },
-        msgCmd: isOk(msgCore.edited)
-          ? showCreatedSm(input.ctx.t('flow.saved-name'))
-          : showErrSm(input.ctx.t('app.something-went-wrong'))
+        msgCmd
       }
-    }
-
-    default: {
-      break
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 const ViewFormButtons: ClientModule['View'] = (input) => {

@@ -93,9 +93,9 @@ const updateList: ClientModule['update'] = (input) => {
 
   switch (input.msgServer?.t) {
     case 'listed-packs': {
-      const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
+      const packs: FlowPack[] = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
 
-      const packsNew = puzzles.reduce((acc, puzzle) => {
+      const packsNew = packs.reduce((acc, puzzle) => {
         acc[puzzle.id] = puzzle
         return acc
       }, input.model.packs)

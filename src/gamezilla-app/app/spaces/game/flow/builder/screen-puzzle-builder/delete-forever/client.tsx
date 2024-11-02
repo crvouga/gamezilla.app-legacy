@@ -3,6 +3,7 @@ import { APP_SOUND, playSound, sendToServer, showCreatedSm } from 'gamezilla-app
 import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { ClientModule } from '../../types'
+import { MsgClient, MsgToServer } from './types'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -80,18 +81,25 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
 
   switch (msgCore?.t) {
     case 'user-deleted-puzzle': {
-      const puzzlesNew = {
-        ...model.puzzles
-      }
-      delete puzzlesNew[msgCore.flowPuzzleId]
       return {
         model: {
           ...model,
-          puzzles: puzzlesNew,
           puzzleDeleteForeverRequest: msgCore.deleted,
           puzzleBuilderOpened: null
         },
-        msgCmd: showCreatedSm(input.ctx.t('flow.puzzle-deleted'))
+        msgCmd: [
+          ...showCreatedSm<{
+            MsgClient: MsgClient
+            MsgToServer: MsgToServer
+          }>(input.ctx.t('flow.puzzle-deleted')),
+          {
+            t: 'flow.remove-puzzles',
+            puzzles: {
+              [msgCore.flowPuzzleId]: msgCore.flowPuzzleId
+            },
+            causedBy: input
+          }
+        ]
       }
     }
 

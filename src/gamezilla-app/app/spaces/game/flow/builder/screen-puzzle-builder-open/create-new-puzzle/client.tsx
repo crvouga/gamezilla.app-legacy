@@ -1,7 +1,9 @@
-import { Posix, Result, Sub, Time, TimeSpan, isErr, isLoading, Loading } from 'gamezilla-app/@/core'
+import { isErr, isLoading, Loading, Posix, Result, Sub, Time, TimeSpan } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from 'gamezilla-app/app/@/client'
 import { Button, IconPlus } from 'gamezilla-app/app/@/ui'
+import { FlowClientCmd } from '../../../@/flow-client-cmd'
 import { ClientModule } from '../../types'
+import { MsgClient, MsgToServer } from './types'
 
 const update: ClientModule['update'] = (input) => {
   const { msgCore, model, msg, ctx } = input
@@ -16,7 +18,10 @@ const update: ClientModule['update'] = (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendToServer({
+          sendToServer<{
+            MsgClient: MsgClient
+            MsgToServer: MsgToServer
+          }>({
             t: 'create-new-puzzle.user-clicked-create-button'
           })
         ]
@@ -33,7 +38,10 @@ const update: ClientModule['update'] = (input) => {
             ...model,
             puzzleCreateRequest: Result.Err(ctx.t('app.something-went-wrong'))
           },
-          msgCmd: showErrSm(input.ctx.t('app.something-went-wrong'))
+          msgCmd: showErrSm<{
+            MsgClient: MsgClient
+            MsgToServer: MsgToServer
+          }>(input.ctx.t('app.something-went-wrong'))
         }
       }
       return {
@@ -54,22 +62,38 @@ const update: ClientModule['update'] = (input) => {
             ...model,
             puzzleCreateRequest: msgCore.created
           },
-          msgCmd: showErrSm(input.ctx.t('app.something-went-wrong'))
+          msgCmd: showErrSm<{
+            MsgClient: MsgClient
+            MsgToServer: MsgToServer
+          }>(input.ctx.t('app.something-went-wrong'))
         }
       }
 
       const puzzleNew = msgCore.created.value
 
+      const msgCmd: FlowClientCmd<{
+        MsgClient: MsgClient
+        MsgToServer: MsgToServer
+      }>[] = [
+        ...showCreatedSm<{
+          MsgClient: MsgClient
+          MsgToServer: MsgToServer
+        }>(input.ctx.t('flow.puzzle-created')),
+        {
+          t: 'flow.new-puzzles',
+          puzzles: {
+            [puzzleNew.id]: puzzleNew
+          },
+          causedBy: input
+        }
+      ]
+
       return {
         model: {
           ...model,
-          puzzleCreateRequest: Result.mapOk(msgCore.created, () => null),
-          puzzles: {
-            ...model.puzzles,
-            [puzzleNew.id]: puzzleNew
-          }
+          puzzleCreateRequest: Result.mapOk(msgCore.created, () => null)
         },
-        msgCmd: showCreatedSm(input.ctx.t('flow.puzzle-created'))
+        msgCmd
       }
     }
 

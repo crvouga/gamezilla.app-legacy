@@ -15,19 +15,19 @@ import { FlowPackListTypes, PackListClient } from './@/pack/pack-list'
 import { FlowPackName } from './@/pack/pack-name'
 import { FlowPackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import { FlowPackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
-import { FlowPuzzleListTypes } from './@/puzzle/puzzle-list'
+import { FlowPuzzleListClient, FlowPuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderClient } from './builder/client'
-import type { ClientModule, MsgClient, MsgToServer } from './types'
+import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
 import { PlayClient } from './play/play.client'
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,
   play: PlayClient.init,
-  flowPuzzles: {},
-  flowPacks: {},
-  flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.initClient,
-  flowPuzzleList: FlowPuzzleListTypes.initClient,
-  flowPackList: FlowPackListTypes.initClient
+  puzzles: {},
+  packs: {},
+  packPuzzleGrid: FlowPackPuzzlesGridTypes.initClient,
+  puzzleList: FlowPuzzleListTypes.initClient,
+  packList: FlowPackListTypes.initClient
 }
 
 const update = (
@@ -97,19 +97,46 @@ const updateChild: ClientModule['update'] = (input) => {
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
     (model) => updateModePlay({ ...input, model }),
     (model) => updateModeBuilder({ ...input, model }),
     (model) => updateFlowPackList({ ...input, model }),
-    (model) => updateFlowPackPuzzlesGrid({ ...input, model })
+    (model) => updateFlowPackPuzzlesGrid({ ...input, model }),
+    (model) => updateFlowPuzzleList({ ...input, model })
   )
+}
+
+const updateFlowPuzzleList: ClientModule['update'] = (input) => {
+  const updated = FlowPuzzleListClient.update({
+    ctx: input.ctx,
+    model: {
+      ...input.model.packList,
+      puzzles: input.model.puzzles
+    },
+    msg: input.msg?.t === 'flow-puzzle-list' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'flow-puzzle-list' ? input.msgCmd : null,
+    msgEvt: input.msgEvt,
+    msgServer: input.msgServer?.t === 'flow-puzzle-list' ? input.msgServer.c : null
+  })
+
+  return {
+    model: {
+      ...input.model,
+      puzzleList: updated.model,
+      puzzles: updated.model.puzzles
+    },
+    eff: Eff.tag('flow-puzzle-list', updated.eff),
+    msgCmd: FlowClientCmd.tag('flow-puzzle-list', updated.msgCmd),
+    msgEvt: []
+  }
 }
 
 const updateFlowPackList: ClientModule['update'] = (input) => {
   const updated = PackListClient.update({
     ctx: input.ctx,
     model: {
-      ...input.model.flowPackList,
-      packs: input.model.flowPacks
+      ...input.model.packList,
+      packs: input.model.packs
     },
     msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'flow-pack-list' ? input.msgCmd : null,
@@ -120,8 +147,8 @@ const updateFlowPackList: ClientModule['update'] = (input) => {
   return {
     model: {
       ...input.model,
-      flowPackList: updated.model,
-      flowPacks: updated.model.packs
+      packList: updated.model,
+      packs: updated.model.packs
     },
     eff: Eff.tag('flow-pack-list', updated.eff),
     msgCmd: FlowClientCmd.tag('flow-pack-list', updated.msgCmd),
@@ -144,8 +171,8 @@ const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {
       }
     },
     model: {
-      ...input.model.flowPackPuzzleGrid,
-      puzzles: input.model.flowPuzzles
+      ...input.model.packPuzzleGrid,
+      puzzles: input.model.puzzles
     },
     msg: input.msg?.t === 'flow-pack-puzzles-grid' ? input.msg.c : null,
     msgServer: input.msgServer?.t === 'flow-pack-puzzles-grid' ? input.msgServer.c : null,
@@ -155,8 +182,8 @@ const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {
   return {
     model: {
       ...input.model,
-      flowPackPuzzleGrid: updated.model,
-      flowPuzzles: updated.model.puzzles
+      packPuzzleGrid: updated.model,
+      puzzles: updated.model.puzzles
     },
     eff: Eff.tag('flow-pack-puzzles-grid', updated.eff),
     msgEvt: [],
@@ -168,11 +195,11 @@ const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {
 const updateModePlay: ClientModule['update'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    packs: input.model.flowPacks,
-    puzzles: input.model.flowPuzzles,
-    puzzleList: input.model.flowPuzzleList,
-    packList: input.model.flowPackList,
-    packPuzzleGrid: input.model.flowPackPuzzleGrid
+    packs: input.model.packs,
+    puzzles: input.model.puzzles,
+    puzzleList: input.model.puzzleList,
+    packList: input.model.packList,
+    packPuzzleGrid: input.model.packPuzzleGrid
   }
 
   const updated = PlayClient.update({
@@ -201,20 +228,17 @@ const updateModePlay: ClientModule['update'] = (input) => {
 const updateModeBuilder: ClientModule['update'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    packs: input.model.flowPacks,
-    puzzles: input.model.flowPuzzles,
-    puzzleList: input.model.flowPuzzleList,
-    packList: input.model.flowPackList,
-    packPuzzleGrid: input.model.flowPackPuzzleGrid
+    packs: input.model.packs,
+    puzzles: input.model.puzzles,
+    puzzleList: input.model.puzzleList,
+    packList: input.model.packList,
+    packPuzzleGrid: input.model.packPuzzleGrid
   }
+
   const updated = BuilderClient.update({
     ctx,
     modelCore: input.modelCore.builder,
-    model: {
-      ...input.model.builder,
-      packs: input.model.flowPacks,
-      puzzles: input.model.flowPuzzles
-    },
+    model: input.model.builder,
     msgCmd: null,
     msgEvt: input.msgEvt,
     msgServer: input.msgServer?.t === 'builder' ? input.msgServer.c : null,
@@ -224,14 +248,12 @@ const updateModeBuilder: ClientModule['update'] = (input) => {
 
   return {
     eff: Eff.tag('builder', updated.eff),
-    msgCmd: SpaceClientCmd.tag('builder', updated.msgCmd),
+    msgCmd: FlowClientCmd.tag('builder', updated.msgCmd),
     msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'builder' })),
     msgEvt: [],
     model: {
       ...input.model,
-      builder: updated.model,
-      flowPacks: updated.model.packs,
-      flowPuzzles: updated.model.puzzles
+      builder: updated.model
     }
   }
 }
@@ -279,6 +301,59 @@ const updateFromMsg: ClientModule['update'] = (input) => {
   }
 }
 
+const updateFromCmd: ClientModule['update'] = (input) => {
+  switch (input.msgCmd?.t) {
+    case 'flow.new-packs': {
+      return {
+        model: {
+          ...input.model,
+          packs: {
+            ...input.model.packs,
+            ...input.msgCmd.packs
+          }
+        }
+      }
+    }
+    case 'flow.new-puzzles': {
+      return {
+        model: {
+          ...input.model,
+          puzzles: {
+            ...input.model.puzzles,
+            ...input.msgCmd.puzzles
+          }
+        }
+      }
+    }
+
+    case 'flow.remove-puzzles': {
+      const puzzlesNew: ModelClient['puzzles'] = { ...input.model.puzzles }
+      for (const id of Object.values(input.msgCmd.puzzles)) {
+        delete puzzlesNew[id]
+      }
+      return {
+        model: {
+          ...input.model,
+          puzzles: puzzlesNew
+        }
+      }
+    }
+
+    case 'flow-pack-list':
+    case 'flow-pack-puzzles-grid': {
+      return {
+        model: input.model
+      }
+    }
+
+    default: {
+      return {
+        model: input.model
+      }
+    }
+  }
+}
+
 //
 //
 //
@@ -291,11 +366,11 @@ const updateFromMsg: ClientModule['update'] = (input) => {
 const subscriptions: ClientModule['subscriptions'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    packs: input.model.flowPacks,
-    puzzles: input.model.flowPuzzles,
-    puzzleList: input.model.flowPuzzleList,
-    packList: input.model.flowPackList,
-    packPuzzleGrid: input.model.flowPackPuzzleGrid
+    packs: input.model.packs,
+    puzzles: input.model.puzzles,
+    puzzleList: input.model.puzzleList,
+    packList: input.model.packList,
+    packPuzzleGrid: input.model.packPuzzleGrid
   }
   return Sub.batch<MsgClient>([
     Sub.tag('play', PlayClient.subscriptions({ ctx, modelCore: input.modelCore.play, model: input.model.play })),
@@ -318,7 +393,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
             puzzleIds: []
           }
         },
-        model: input.model.flowPackPuzzleGrid
+        model: input.model.packPuzzleGrid
       })
     )
   ])
@@ -333,11 +408,11 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
 const View: ClientModule['View'] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    packs: input.model.flowPacks,
-    puzzles: input.model.flowPuzzles,
-    puzzleList: input.model.flowPuzzleList,
-    packList: input.model.flowPackList,
-    packPuzzleGrid: input.model.flowPackPuzzleGrid
+    packs: input.model.packs,
+    puzzles: input.model.puzzles,
+    puzzleList: input.model.puzzleList,
+    packList: input.model.packList,
+    packPuzzleGrid: input.model.packPuzzleGrid
   }
 
   switch (input.modelCore.mode) {
@@ -391,11 +466,7 @@ const View: ClientModule['View'] = (input) => {
           ctx={ctx}
           dispatch={(c) => input.dispatch({ t: 'builder', c })}
           modelCore={input.modelCore.builder}
-          model={{
-            ...input.model.builder,
-            packs: input.model.flowPacks,
-            puzzles: input.model.flowPuzzles
-          }}
+          model={input.model.builder}
         />
       )
     }

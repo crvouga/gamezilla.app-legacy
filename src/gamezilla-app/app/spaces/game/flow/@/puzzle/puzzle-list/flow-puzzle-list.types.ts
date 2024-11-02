@@ -28,6 +28,7 @@ export type ClientModule = AppClientModule<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>
+  MsgCmdIn: MsgInCmdClient
   MsgEvtOut: SpaceClientEvt
   ViewSlot: {
     fab: null
@@ -76,4 +77,11 @@ export type MsgToServer = {
 export type MsgToClient = {
   t: 'flow-puzzle-list.listed-puzzle'
   listed: ListPuzzlesOutput
+}
+
+export type MsgInCmdClient = {
+  t: 'flow-puzzle-list'
+  c: {
+    t: 'load'
+  }
 }

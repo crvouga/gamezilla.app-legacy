@@ -9,11 +9,11 @@ const update: ClientModule['update'] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromMsgCore({ ...input, model }),
-    (model) => updatePackListLoad({ ...input, model })
+    (model) => updateLoadPacks({ ...input, model })
   )
 }
 
-const updatePackListLoad: ClientModule['update'] = (input) => {
+const updateLoadPacks: ClientModule['update'] = (input) => {
   if (
     input.msgEvt?.t === 'flow.user-changed-mode' ||
     input.msgEvt?.t === 'space/synced' ||

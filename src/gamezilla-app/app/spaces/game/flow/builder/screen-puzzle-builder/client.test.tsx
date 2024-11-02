@@ -9,7 +9,6 @@ import {
   FixtureFlowBuilderClient,
   initial,
   puzzleBuilderPressDownRandomNode,
-  serverListedPuzzlesOk,
   testFlowClientCtx
 } from '../@/testing/client'
 import { deriveModelCore } from '../@/testing/core'
@@ -64,11 +63,7 @@ describe(import.meta.file, () => {
   it('should open puzzle builder on list item click', async () => {
     const ctx = await testFlowClientCtx()
     const puzzle = await createFlowPuzzle(ctx)
-    const output = GameClientModule.andThen(
-      initial,
-      serverListedPuzzlesOk(ctx, [puzzle]),
-      clickedPuzzleListItem(ctx, puzzle)
-    )
+    const output = GameClientModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
     const modelCore = deriveModelCore(ctx, output)
     expect(
       modelCore.screen.t === 'screen-puzzle-builder' && modelCore.screenPuzzleBuilder?.puzzle.id === puzzle.id
@@ -78,11 +73,7 @@ describe(import.meta.file, () => {
   it('should exit puzzle builder after clicking exit button', async () => {
     const ctx = await testFlowClientCtx()
     const puzzle = await createFlowPuzzle(ctx)
-    const openedBuilder = GameClientModule.andThen(
-      initial,
-      serverListedPuzzlesOk(ctx, [puzzle]),
-      clickedPuzzleListItem(ctx, puzzle)
-    )
+    const openedBuilder = GameClientModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
 
     const output = GameClientModule.andThen(
       openedBuilder,
@@ -99,11 +90,7 @@ describe(import.meta.file, () => {
 
     const puzzle = await createFlowPuzzle(ctx)
 
-    const openedBuilder = GameClientModule.andThen(
-      initial,
-      serverListedPuzzlesOk(ctx, [puzzle]),
-      clickedPuzzleListItem(ctx, puzzle)
-    )
+    const openedBuilder = GameClientModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
 
     const madeEdit = GameClientModule.andThen(
       openedBuilder,

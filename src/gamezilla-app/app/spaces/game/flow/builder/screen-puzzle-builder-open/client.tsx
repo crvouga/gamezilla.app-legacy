@@ -10,8 +10,24 @@ const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => CreateNewPuzzleClient.update({ ...input, model }),
-    (model) => updateMain({ ...input, model })
+    (model) => updateMain({ ...input, model }),
+    (model) => updateLoadPuzzles({ ...input, model })
   )
+}
+
+const updateLoadPuzzles: ClientModule['update'] = (input) => {
+  if (
+    (input.msgCore?.t === 'screen-main-menu.user-clicked-option' && input.msgCore.option === 'puzzles') ||
+    input.msgEvt?.t === 'space/synced'
+  ) {
+    return {
+      model: input.model,
+      msgCmd: [FlowPuzzleListClient.load()]
+    }
+  }
+  return {
+    model: input.model
+  }
 }
 
 const updateMain: ClientModule['update'] = (input) => {
@@ -47,13 +63,11 @@ const View: ClientModule['View'] = (input) => {
       />
       <FlowPuzzleListClient.View
         ctx={input.ctx}
-        dispatch={(c) =>
-          input.dispatch({
-            t: 'flow-puzzle-list',
-            c
-          })
-        }
-        model={input.model.flowPuzzleList}
+        dispatch={(_c) => {}}
+        model={{
+          ...input.ctx.puzzleList,
+          puzzles: input.ctx.puzzles
+        }}
         emits={{
           clickedPuzzleItem: (puzzle) =>
             input.dispatch({

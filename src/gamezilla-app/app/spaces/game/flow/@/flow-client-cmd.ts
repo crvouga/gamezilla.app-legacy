@@ -1,12 +1,39 @@
 import type { ClientCmdTypes } from 'gamezilla-app/app/@/client'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
-import { FlowPackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
+import { FlowPack } from './pack/pack'
+import { FlowPackId } from './pack/pack-id'
 import { FlowPackListTypes } from './pack/pack-list'
+import { FlowPackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
+import { FlowPuzzle } from './puzzle/puzzle'
+import { FlowPuzzleId } from './puzzle/puzzle-id'
+import { FlowPuzzleListTypes } from './puzzle/puzzle-list'
 
 export type FlowClientCmd<T extends ClientCmdTypes> =
   | SpaceClientCmd<T>
   | FlowPackListTypes.MsgInCmdClient
   | FlowPackPuzzlesGridTypes.MsgInCmdClient
+  | FlowPuzzleListTypes.MsgInCmdClient
+  | {
+      t: 'flow.new-puzzles'
+      puzzles: {
+        [puzzleId: FlowPuzzleId]: FlowPuzzle
+      }
+      causedBy: unknown
+    }
+  | {
+      t: 'flow.remove-puzzles'
+      puzzles: {
+        [puzzleId: FlowPuzzleId]: FlowPuzzleId
+      }
+      causedBy: unknown
+    }
+  | {
+      t: 'flow.new-packs'
+      packs: {
+        [packId: FlowPackId]: FlowPack
+      }
+      causedBy: unknown
+    }
 
 export type FlowClientCmdLocal = FlowClientCmd<ClientCmdTypes>
 
@@ -16,6 +43,10 @@ const toSpaceClientCmd = <T extends ClientCmdTypes>(
   return (cmds ?? []).flatMap((cmd): SpaceClientCmd<T>[] => {
     switch (cmd.t) {
       case 'flow-pack-puzzles-grid':
+      case 'flow.new-packs':
+      case 'flow.remove-puzzles':
+      case 'flow.new-puzzles':
+      case 'flow-puzzle-list':
       case 'flow-pack-list': {
         return []
       }
@@ -29,7 +60,11 @@ const toSpaceClientCmd = <T extends ClientCmdTypes>(
 const toFlowClientCmd = <T extends ClientCmdTypes>(cmds: FlowClientCmd<T>[] | undefined | null): FlowClientCmd<T>[] => {
   return (cmds ?? []).flatMap((cmd): FlowClientCmd<T>[] => {
     switch (cmd.t) {
+      case 'flow.new-packs':
+      case 'flow.remove-puzzles':
+      case 'flow.new-puzzles':
       case 'flow-pack-puzzles-grid':
+      case 'flow-puzzle-list':
       case 'flow-pack-list': {
         return [cmd]
       }
@@ -55,7 +90,11 @@ const tag = <T extends ClientCmdTypes, Tag extends string>(
       MsgToServer: { t: Tag; c: T['MsgToServer'] }
     }>[] => {
       switch (msgCmd.t) {
+        case 'flow.new-packs':
+        case 'flow.remove-puzzles':
+        case 'flow.new-puzzles':
         case 'flow-pack-puzzles-grid':
+        case 'flow-puzzle-list':
         case 'flow-pack-list': {
           return [msgCmd]
         }

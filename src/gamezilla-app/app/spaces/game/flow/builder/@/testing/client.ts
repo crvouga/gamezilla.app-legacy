@@ -239,29 +239,6 @@ export const clickedExitPuzzleBuilderButton =
     })
   }
 
-export const serverListedPuzzlesOk =
-  (ctx: FlowClientCtx, puzzles: FlowPuzzle[]) => (model: BuilderTypes.ModelClient) => {
-    return BuilderClient.update({
-      ctx: ctx,
-      model,
-      modelCore: BuilderCore.initCore({
-        ctx
-      }),
-      msgServer: {
-        t: 'flow-puzzle-list',
-        c: {
-          t: 'flow-puzzle-list.listed-puzzle',
-          listed: Ok({
-            items: puzzles,
-            limit: 10,
-            offset: 0,
-            total: puzzles.length
-          })
-        }
-      }
-    })
-  }
-
 export const puzzleBuilderPressDownRandomNode =
   (ctx: FlowClientCtx, modelCore: BuilderTypes.ModelCore) => (model: BuilderTypes.ModelClient) => {
     const puzzleBuilder = modelCore.screenPuzzleBuilder

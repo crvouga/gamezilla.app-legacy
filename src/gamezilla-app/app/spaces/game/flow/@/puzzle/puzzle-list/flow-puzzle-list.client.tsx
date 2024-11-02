@@ -5,7 +5,7 @@ import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
 import { Posix, RequestResponse, Result, TimeSpan, descend, isErr } from 'gamezilla-app/@/core'
 import type { FlowPuzzle } from '../puzzle'
-import type { ClientModule } from './flow-puzzle-list.types'
+import type { ClientModule, MsgInCmdClient } from './flow-puzzle-list.types'
 import { FlowVariantUI } from '../../flow/flow-variant'
 
 const update: ClientModule['update'] = (input) => {
@@ -13,8 +13,8 @@ const update: ClientModule['update'] = (input) => {
 }
 
 const updatePuzzleList: ClientModule['update'] = (input) => {
-  switch (input.msg?.t) {
-    case 'flow-puzzle-list.user-observed-end-of-list': {
+  switch (input.msgCmd?.c.t) {
+    case 'load': {
       return {
         model: {
           ...input.model,
@@ -39,16 +39,6 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
             }
           })
         ]
-      }
-    }
-
-    case 'flow-puzzle-list.time-passed': {
-      const requestNew = RequestResponse.timePassed(input.model.request, input.ctx.now)
-      return {
-        model: {
-          ...input.model,
-          request: requestNew
-        }
       }
     }
   }
@@ -83,6 +73,23 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
   }
 
   return { model: input.model }
+}
+
+const load = (): MsgInCmdClient => {
+  return {
+    t: 'flow-puzzle-list',
+    c: {
+      t: 'load'
+    }
+  }
+}
+
+const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean => {
+  return (
+    output.msgCmd?.some(
+      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-puzzle-list' && cmd.c.t === 'load'
+    ) ?? false
+  )
 }
 
 const View: ClientModule['View'] = (input) => {
@@ -150,5 +157,7 @@ const FlowPuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Flow
 
 export const FlowPuzzleListClient = {
   update,
-  View
+  View,
+  didLoad,
+  load
 }

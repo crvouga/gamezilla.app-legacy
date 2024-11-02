@@ -25,15 +25,15 @@ import { PlayTypes } from './play'
 //
 
 export type ModelClient = {
-  flowPuzzles: {
-    [flowPuzzleId: FlowPuzzleId]: FlowPuzzle
+  puzzles: {
+    [puzzleId: FlowPuzzleId]: FlowPuzzle
   }
-  flowPacks: {
-    [flowPackId: FlowPackId]: FlowPack
+  packs: {
+    [packId: FlowPackId]: FlowPack
   }
-  flowPuzzleList: FlowPuzzleListTypes.ModelClient
-  flowPackList: FlowPackListTypes.ModelClient
-  flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
+  puzzleList: FlowPuzzleListTypes.ModelClient
+  packList: FlowPackListTypes.ModelClient
+  packPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
   builder: BuilderTypes.ModelClient
   play: PlayTypes.ModelClient
 }
@@ -67,24 +67,28 @@ export type MsgClient =
   | { t: 'play'; c: PlayTypes.MsgClient }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgClient }
   | { t: 'flow-pack-puzzles-grid'; c: FlowPackPuzzlesGridTypes.MsgClient }
+  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgClient }
 
 export type MsgServer =
   | { t: 'builder'; c: BuilderTypes.MsgServer }
   | { t: 'play'; c: PlayTypes.MsgServer }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgServer }
   | { t: 'flow-pack-puzzles-grid'; c: FlowPackPuzzlesGridTypes.MsgServer }
+  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgServer }
 
 export type MsgToServer =
   | { t: 'builder'; c: BuilderTypes.MsgToServer }
   | { t: 'play'; c: PlayTypes.MsgToServer }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgToServer }
   | { t: 'flow-pack-puzzles-grid'; c: FlowPackPuzzlesGridTypes.MsgToServer }
+  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgToServer }
 
 export type MsgToClient =
   | { t: 'builder'; c: BuilderTypes.MsgToClient }
   | { t: 'play'; c: PlayTypes.MsgToClient }
   | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgToClient }
   | { t: 'flow-pack-puzzles-grid'; c: FlowPackPuzzlesGridTypes.MsgToClient }
+  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgToClient }
 
 const MODE = ['builder', 'play'] as const
 export const Mode = p.enumeration(MODE)

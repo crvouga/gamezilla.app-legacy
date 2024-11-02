@@ -140,13 +140,8 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
         <div className='h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll'>
           <FlowPuzzleListClient.View
             ctx={input.ctx}
-            dispatch={(c) =>
-              input.dispatch({
-                t: 'flow-puzzle-list',
-                c
-              })
-            }
-            model={input.model.flowPuzzleList}
+            dispatch={(_c) => {}}
+            model={input.ctx.puzzleList}
             emits={{
               clickedPuzzleItem: (puzzle) =>
                 input.dispatch({
@@ -226,7 +221,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
                 const puzzleId = packBuilder.pack.puzzleIds[inputCell.index]
 
                 if (puzzleId) {
-                  const puzzle = puzzleId ? input.model.puzzles[puzzleId] : null
+                  const puzzle = puzzleId ? input.ctx.puzzles[puzzleId] : null
 
                   if (!puzzle) {
                     return <FlowPackPuzzlesGridUI.ViewLoadingCell />
@@ -425,11 +420,11 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
     const screen = input.modelCore.screenPackBuilder.screen
 
     const previousPuzzleId = pack.puzzleIds[screen.puzzleIndex - 1]
-    const previousPuzzle = previousPuzzleId ? input.model.puzzles[previousPuzzleId] : null
+    const previousPuzzle = previousPuzzleId ? input.ctx.puzzles[previousPuzzleId] : null
     const canGoPrevious = Boolean(previousPuzzle)
 
     const nextPuzzleId = pack.puzzleIds[screen.puzzleIndex + 1]
-    const nextPuzzle = nextPuzzleId ? input.model.puzzles[nextPuzzleId] : null
+    const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
     const canGoNext = Boolean(nextPuzzle)
 
     return (
@@ -539,7 +534,7 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
       model: {
         ...FlowPackPuzzlesGridClient.initClient,
         ...input.model.packBuilder?.flowPackPuzzleGrid,
-        puzzles: input.model.puzzles
+        puzzles: input.ctx.puzzles
       },
       msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
       msgCmd: input.msgCmd,
@@ -551,7 +546,7 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
       model: {
         ...input.model,
         puzzles: {
-          ...input.model.puzzles,
+          ...input.ctx.puzzles,
           ...updated.model?.puzzles
         },
         packBuilder: {
@@ -642,15 +637,19 @@ const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
 }
 
 const updateRecordPack: ClientModule['update'] = (input) => {
-  if (input.modelCore.screenPackBuilder?.pack) {
+  const hasMsg = input.msgCore || input.msgCmd || input.msgEvt || input.msgServer || input.msg
+  if (hasMsg && input.modelCore.screenPackBuilder?.pack) {
     return {
-      model: {
-        ...input.model,
-        packs: {
-          ...input.model.packs,
-          [input.modelCore.screenPackBuilder.pack.id]: input.modelCore.screenPackBuilder.pack
+      model: input.model,
+      msgCmd: [
+        {
+          t: 'flow.new-packs',
+          packs: {
+            [input.modelCore.screenPackBuilder.pack.id]: input.modelCore.screenPackBuilder.pack
+          },
+          causedBy: input
         }
-      }
+      ]
     }
   }
   return { model: input.model }

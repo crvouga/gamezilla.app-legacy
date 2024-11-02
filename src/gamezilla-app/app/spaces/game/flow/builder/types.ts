@@ -1,25 +1,21 @@
 import { p } from 'gamezilla-app/@/core/parser'
+import { UserId } from 'gamezilla-app/app/@/data'
+import type { SpaceCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import type { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import type { SpaceCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
-import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
-import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { FlowClientCmd } from '../@/flow-client-cmd'
 import type { FlowClientCtx } from '../@/flow-client-ctx'
 import { FlowClientEvtIn } from '../@/flow-client-evt'
 import { FlowCoreEvent } from '../@/flow-core-event'
-import type { FlowPack } from '../@/pack/pack'
+import { FlowServerCtx } from '../@/flow-server-ctx'
 import { FlowPackListTypes } from '../@/pack/pack-list'
 import { FlowPackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
-import type { FlowPuzzle } from '../@/puzzle/puzzle'
-import type { FlowPuzzleId } from '../@/puzzle/puzzle-id'
-import { FlowPuzzleListTypes } from '../@/puzzle/puzzle-list'
-import { FlowServerCtx } from '../@/flow-server-ctx'
-import { ScreenPackBuilderOpenTypes } from './screen-pack-builder-open'
-import { ScreenPuzzleBuilderOpenTypes } from './screen-puzzle-builder-open'
-import { ScreenPackBuilderTypes } from './screen-pack-builder'
-import { ScreenPuzzleBuilderTypes } from './screen-puzzle-builder'
 import { ScreenMainMenu } from './screen-main-menu'
-import { UserId } from 'gamezilla-app/app/@/data'
+import { ScreenPackBuilderTypes } from './screen-pack-builder'
+import { ScreenPackBuilderOpenTypes } from './screen-pack-builder-open'
+import { ScreenPuzzleBuilderTypes } from './screen-puzzle-builder'
+import { ScreenPuzzleBuilderOpenTypes } from './screen-puzzle-builder-open'
 
 //
 //
@@ -38,7 +34,7 @@ export type ClientModule = GameClientModule<{
   MsgCore: MsgCore
   ModelCore: ModelCore
   Ctx: FlowClientCtx
-  MsgCmdOut: SpaceClientCmd<{
+  MsgCmdOut: FlowClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
@@ -68,14 +64,6 @@ export type ServerModule = GameServerModule<{
 //
 
 type BaseModelClient = {
-  puzzles: {
-    [puzzleId: FlowPuzzleId]: FlowPuzzle
-  }
-  packs: {
-    [packId: string]: FlowPack
-  }
-  flowPuzzleList: FlowPuzzleListTypes.ModelClient
-  flowPackList: FlowPackListTypes.ModelClient
   puzzleBuilderOpened?: 'more' | 'edit-name' | 'delete-forever' | 'unsaved-changes' | null
 }
 
@@ -89,11 +77,7 @@ export const initClient: ClientModule['init'] = {
   ...ScreenPuzzleBuilderOpenTypes.initClient,
   ...ScreenPuzzleBuilderTypes.initClient,
   ...ScreenPackBuilderTypes.initClient,
-  ...ScreenPackBuilderOpenTypes.initClient,
-  flowPuzzleList: FlowPuzzleListTypes.initClient,
-  flowPackList: FlowPackListTypes.initClient,
-  packs: {},
-  puzzles: {}
+  ...ScreenPackBuilderOpenTypes.initClient
 }
 
 export const ModelServer = p.obj({
@@ -118,8 +102,6 @@ type BaseMsgClient = { t: 'time-passed' }
 //
 
 export type MsgClient =
-  | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgClient }
-  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgClient }
   | BaseMsgClient
   | ScreenPuzzleBuilderOpenTypes.MsgClient
   | ScreenPuzzleBuilderTypes.MsgClient
@@ -129,30 +111,18 @@ export type MsgClient =
   | { t: 'got-msg-core'; c: MsgCore }
 
 export type MsgServer =
-  | { t: 'flow-pack-list'; c: FlowPackListTypes.MsgServer }
-  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgServer }
   | ScreenPuzzleBuilderOpenTypes.MsgServer
   | ScreenPuzzleBuilderTypes.MsgServer
   | ScreenPackBuilderTypes.MsgServer
   | ScreenPackBuilderOpenTypes.MsgServer
 
 export type MsgToServer =
-  | {
-      t: 'flow-pack-list'
-      c: FlowPackListTypes.MsgToServer
-    }
-  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgToServer }
   | ScreenPuzzleBuilderTypes.MsgToServer
   | ScreenPuzzleBuilderOpenTypes.MsgToServer
   | ScreenPackBuilderTypes.MsgToServer
   | ScreenPackBuilderOpenTypes.MsgToServer
 
 export type MsgToClient =
-  | {
-      t: 'flow-pack-list'
-      c: FlowPackListTypes.MsgToClient
-    }
-  | { t: 'flow-puzzle-list'; c: FlowPuzzleListTypes.MsgToClient }
   | ScreenPuzzleBuilderTypes.MsgToClient
   | ScreenPuzzleBuilderOpenTypes.MsgToClient
   | ScreenPackBuilderTypes.MsgToClient

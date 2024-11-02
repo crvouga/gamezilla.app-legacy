@@ -36,13 +36,16 @@ const updatePuzzles: ClientModule['update'] = ({ msgCore, model }) => {
       const puzzleNew = msgCore.saved.value
 
       return {
-        model: {
-          ...model,
-          puzzles: {
-            ...model.puzzles,
-            [puzzleNew.id]: puzzleNew
+        model,
+        msgCmd: [
+          {
+            t: 'flow.new-puzzles',
+            puzzles: {
+              [puzzleNew.id]: puzzleNew
+            },
+            causedBy: { msgCore }
           }
-        }
+        ]
       }
     }
 
