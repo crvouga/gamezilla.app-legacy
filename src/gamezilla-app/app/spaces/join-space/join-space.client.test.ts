@@ -19,7 +19,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgServer: {
-          t: 'event',
+          t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -44,7 +44,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgServer: {
-          t: 'event',
+          t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
       },
       {
         msgServer: {
-          t: 'event',
+          t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-joined-space',
             spaceId: f.spaceId,
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgServer: {
-          t: 'event',
+          t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -95,7 +95,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgServer: {
-          t: 'event',
+          t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -126,7 +126,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgServer: {
-          t: 'event',
+          t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: spaceA,

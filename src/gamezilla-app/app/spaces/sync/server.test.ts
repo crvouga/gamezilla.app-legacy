@@ -42,6 +42,6 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const output = await AppServerModule.andThen({}, userStartedSpace(deps, client, spaceId))
 
-    expect(didSendMsgToClient(output, (msg) => msg.t === 'event' && msg.c.t === 'user-started-space')).toBe(true)
+    expect(didSendMsgToClient(output, (msg) => msg.t === 'got-msg-core' && msg.c.t === 'user-started-space')).toBe(true)
   })
 })

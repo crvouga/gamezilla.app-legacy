@@ -123,7 +123,7 @@ export const userStartedSpace = (deps: ServerDeps, client: AuthenticatedClient, 
     ctx,
     deps,
     msgClient: {
-      t: 'event',
+      t: 'got-msg-core',
       clientId: client.clientId,
       sessionId: client.sessionId,
       c: {
@@ -142,7 +142,7 @@ export const userJoinedSpace = (deps: ServerDeps, client: AuthenticatedClient, s
     ctx,
     deps,
     msgClient: {
-      t: 'event',
+      t: 'got-msg-core',
       clientId: client.clientId,
       sessionId: client.sessionId,
       c: {

@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
     expect(
       didSendToServer(
         started,
-        (msg) => msg.t === 'event' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId
+        (msg) => msg.t === 'got-msg-core' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId
       )
     ).toBe(true)
   })

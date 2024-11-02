@@ -48,7 +48,9 @@ export type ModelClient = Spaces.Model & {
 //
 //
 
-export type MsgServer = { t: 'event'; c: WithEventId<MsgCore> } | { t: 'game'; spaceId: SpaceId; c: Game.MsgServer }
+export type MsgServer =
+  | { t: 'got-msg-core'; c: WithEventId<MsgCore> }
+  | { t: 'game'; spaceId: SpaceId; c: Game.MsgServer }
 
 export type MsgClient =
   | { t: 'game'; spaceId: SpaceId; c: Game.MsgClient }
@@ -69,7 +71,7 @@ export type MsgClient =
 export type MsgToClient = MsgToClientExtra &
   (
     | {
-        t: 'event'
+        t: 'got-msg-core'
         c: WithEventMeta<MsgCore>
       }
     | {
@@ -95,7 +97,7 @@ export type MsgToClient = MsgToClientExtra &
 export type MsgToServer = MsgToServerExtra &
   (
     | {
-        t: 'event'
+        t: 'got-msg-core'
         c: WithEventMeta<MsgCore>
       }
     | {

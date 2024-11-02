@@ -111,7 +111,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-server' &&
-          msgCmd.c.toServer?.t === 'event' &&
+          msgCmd.c.toServer?.t === 'got-msg-core' &&
           msgCmd.c.toServer?.c.t === 'user-joined-space'
       )
     ).toBe(true)
@@ -127,7 +127,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-server' &&
-          msgCmd.c.toServer?.t === 'event' &&
+          msgCmd.c.toServer?.t === 'got-msg-core' &&
           msgCmd.c.toServer?.c.t === 'user-ended-space'
       )
     ).toBe(true)

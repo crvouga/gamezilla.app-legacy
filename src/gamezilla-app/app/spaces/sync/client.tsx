@@ -15,7 +15,7 @@ const update: SpaceClientModule['update'] = (input) => {
 
 const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
   switch (input.msgServer?.t) {
-    case 'event': {
+    case 'got-msg-core': {
       return {
         model: input.model,
         msgCore: [input.msgServer.c]
@@ -43,7 +43,7 @@ const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgCo
 
   return {
     model,
-    msgCmd: [sendToServer({ t: 'event', c: spaceEventWithMeta, profiles })]
+    msgCmd: [sendToServer({ t: 'got-msg-core', c: spaceEventWithMeta, profiles })]
   }
 }
 

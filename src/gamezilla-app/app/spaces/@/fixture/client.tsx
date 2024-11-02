@@ -238,7 +238,7 @@ export const userStartedSpace =
       ctx,
       model,
       msgServer: {
-        t: 'event',
+        t: 'got-msg-core',
         c: {
           ...withEventId({
             t: 'user-started-space',
@@ -282,7 +282,7 @@ export const userJoinedSpace =
       ctx,
       model,
       msgServer: {
-        t: 'event',
+        t: 'got-msg-core',
         c: {
           ...withEventId({
             t: 'user-joined-space',
@@ -327,7 +327,7 @@ export const userLeftSpace = (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) 
     ctx,
     model,
     msgServer: {
-      t: 'event',
+      t: 'got-msg-core',
       c: {
         ...withEventId({
           t: 'user-left-space',
@@ -427,7 +427,7 @@ export const userEndedSpace =
       ctx,
       model,
       msgServer: {
-        t: 'event',
+        t: 'got-msg-core',
         c: {
           ...withEventId({
             t: 'user-ended-space',
@@ -463,7 +463,7 @@ export const userInputtedGame =
       ctx,
       model,
       msgServer: {
-        t: 'event',
+        t: 'got-msg-core',
         c: {
           ...withEventId({
             t: 'user-inputted-game',

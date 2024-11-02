@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
     expect(
       didSendMsgToClient(
         started,
-        (msg) => msg.t === 'event' && msg.c.t === 'user-started-space' && msg.c.spaceId === spaceId
+        (msg) => msg.t === 'got-msg-core' && msg.c.t === 'user-started-space' && msg.c.spaceId === spaceId
       )
     ).toBe(true)
   })

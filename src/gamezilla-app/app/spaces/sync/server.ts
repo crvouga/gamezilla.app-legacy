@@ -134,7 +134,7 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
   )
 
   const toClient: MsgToClient = {
-    t: 'event',
+    t: 'got-msg-core',
     c: eventWithMeta,
     profiles
   }
@@ -152,7 +152,7 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
 
 const outputSpaceEventsFromServer: SpaceServerModule['update'] = (input) => {
   switch (input.msgClient?.t) {
-    case 'event': {
+    case 'got-msg-core': {
       return {
         msgCore: [input.msgClient.c]
       }
