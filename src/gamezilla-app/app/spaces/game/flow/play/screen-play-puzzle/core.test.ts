@@ -3,7 +3,7 @@ import { UserId } from 'gamezilla-app/app/@/data'
 import { Flow, type FlowVariant } from '../../@/flow'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGrid, FlowGridShorthand } from '../../@/flow/flow-variant/flow-grid'
-import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture.core'
+import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture/core'
 import { ScreenPlayPuzzleCore } from './core'
 import type { MsgCore } from './types'
 

@@ -2,7 +2,7 @@ import { APP_SOUND, copyToClipboard, playSound, showToast, type ClientCtx } from
 import { IconCopy } from 'gamezilla-app/app/@/ui'
 import type { ActionInput } from 'gamezilla-app/app/@/ui/actions'
 import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'
-import type { ClientModule, MsgClient } from '../../play.types'
+import type { ClientModule, MsgClient } from '../../types'
 import { FlowPlay } from '../../../@/flow/flow-play'
 
 export const update: ClientModule['update'] = (input) => {

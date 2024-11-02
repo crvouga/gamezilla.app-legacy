@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { FixtureScreenPlayPuzzleClient } from '../@/fixture.client'
+import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
 import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { didCopyToClipboard, didPlaySound, didShowToast } from 'gamezilla-app/app/@/client'
 import { UserRole } from 'gamezilla-app/app/@/data'

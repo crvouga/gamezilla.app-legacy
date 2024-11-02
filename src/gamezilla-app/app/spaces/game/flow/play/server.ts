@@ -1,6 +1,6 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import { ServerModule } from './play.types'
+import { ServerModule } from './types'
 import { ScreenPlayPuzzleServer } from './screen-play-puzzle/server'
 
 const init: ServerModule['init'] = async () => {

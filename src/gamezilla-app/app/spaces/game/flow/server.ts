@@ -10,7 +10,7 @@ import { FlowPuzzleDb } from './@/puzzle/puzzle-db'
 import { FlowServerCtx } from './@/flow-server-ctx'
 import { BuilderServer } from './builder/server'
 import type { ServerModule } from './types'
-import { PlayServer } from './play/play.server'
+import { PlayServer } from './play/server'
 import { FlowPuzzleListServer } from './@/puzzle/puzzle-list'
 
 export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {

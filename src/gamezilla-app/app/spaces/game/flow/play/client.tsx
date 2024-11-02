@@ -1,8 +1,8 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import type { ClientModule } from './play.types'
+import type { ClientModule } from './types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/client'
-import { ScreenSelectPackClient } from './screen-select-pack/screen-select-pack.client'
+import { ScreenSelectPackClient } from './screen-select-pack/client'
 import { ScreenSelectPuzzleClient } from './screen-select-puzzle/client'
 
 const init: ClientModule['init'] = null

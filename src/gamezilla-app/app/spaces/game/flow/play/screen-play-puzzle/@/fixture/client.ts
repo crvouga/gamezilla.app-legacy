@@ -1,10 +1,10 @@
 import { UserId } from 'gamezilla-app/app/@/data'
 import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { FlowPack } from '../../../@/pack/pack'
-import { FlowPuzzle } from '../../../@/puzzle/puzzle'
-import { FlowPlay } from '../../../@/flow/flow-play'
-import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../@/fixture.client'
-import { FlowPuzzleResult } from '../../@/puzzle-result'
+import { FlowPack } from '../../../../@/pack/pack'
+import { FlowPuzzle } from '../../../../@/puzzle/puzzle'
+import { FlowPlay } from '../../../../@/flow/flow-play'
+import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/fixture.client'
+import { FlowPuzzleResult } from '../../../@/puzzle-result'
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) => {
   const userId = UserId.generate()

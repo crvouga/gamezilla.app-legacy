@@ -17,7 +17,7 @@ import type { Text as Text14 } from '../../../app/spaces/game/@/game-name/game-n
 import type { Text as Text15 } from '../../../app/spaces/game/@/game.$l18n'
 import type { Text as Text16 } from '../../../app/spaces/game/@/game/chips.$l18n'
 import type { Text as Text17 } from '../../../app/spaces/game/@/game/view-game-main-menu.$l18n'
-import type { Text as Text18 } from '../../../app/spaces/game/flow/play/screen-play-puzzle/copy-puzzle/copy-puzzle.$l18n'
+import type { Text as Text18 } from '../../../app/spaces/game/flow/play/screen-play-puzzle/copy-puzzle/$l18n'
 import type { Text as Text19 } from '../../../app/spaces/game/flow/builder/screen-pack-builder-open/create-new-pack/$l18n'
 import type { Text as Text20 } from '../../../app/spaces/game/flow/builder/screen-pack-builder-open/$l18n'
 import type { Text as Text21 } from '../../../app/spaces/game/flow/builder/screen-main-menu/$l18n'

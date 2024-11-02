@@ -1,8 +1,8 @@
 import { NonEmpty } from 'gamezilla-app/@/core'
 import type { WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { SpaceCoreFixture } from 'gamezilla-app/app/spaces/@/fixture/core'
-import { PlayCore } from '../play.core'
-import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../play.types'
+import { PlayCore } from '../core'
+import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'
 
 export type FixtureUpdateInput = {
   msg?: MsgClient

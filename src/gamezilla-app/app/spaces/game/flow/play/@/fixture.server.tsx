@@ -1,9 +1,9 @@
 import { NonEmpty } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { FixtureFlowServer } from '../../@/fixture-server'
-import { PlayCore } from '../play.core'
-import { PlayServer } from '../play.server'
-import type { ModelCore } from '../play.types'
+import { PlayCore } from '../core'
+import { PlayServer } from '../server'
+import type { ModelCore } from '../types'
 
 type Input = Partial<Parameters<typeof PlayServer.update>[0]>
 

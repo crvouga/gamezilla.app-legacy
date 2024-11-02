@@ -18,7 +18,7 @@ import { FlowPackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/pack-puzzl
 import { FlowPuzzleListClient, FlowPuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderClient } from './builder/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
-import { PlayClient } from './play/play.client'
+import { PlayClient } from './play/client'
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,

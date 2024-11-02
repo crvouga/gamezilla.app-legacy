@@ -1,9 +1,9 @@
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowPuzzleResult } from '../@/puzzle-result'
-import type { CoreModule, MsgCore } from '../play.types'
-import * as CopyPuzzleCore from './copy-puzzle/copy-puzzle.core'
-import { LastPuzzleCore } from './last-puzzle/last-puzzle.core'
+import type { CoreModule, MsgCore } from '../types'
+import * as CopyPuzzleCore from './copy-puzzle/core'
+import { LastPuzzleCore } from './last-puzzle/core'
 import type { ModelCore, MsgCoreEvt } from './types'
 
 const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {

@@ -1,4 +1,4 @@
-import type { CoreModule } from '../../play.types'
+import type { CoreModule } from '../../types'
 
 export const updateCore: CoreModule['updateCore'] = (input) => {
   switch (input.msgCore.t) {

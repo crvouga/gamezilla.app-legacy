@@ -2,7 +2,7 @@ import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import { PackListClient } from '../../@/pack/pack-list'
-import type { ClientModule } from '../play.types'
+import type { ClientModule } from '../types'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

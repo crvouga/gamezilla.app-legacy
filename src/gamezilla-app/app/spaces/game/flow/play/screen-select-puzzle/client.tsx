@@ -4,7 +4,7 @@ import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
 import { FlowPackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
-import type { ClientModule } from '../play.types'
+import type { ClientModule } from '../types'
 import { andThen } from '../../../@/architecture/game-client-v2'
 
 const update: ClientModule['update'] = (input) => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { ScreenPuzzlePlayCoreChildFixture } from '../@/fixture.core'
+import { ScreenPuzzlePlayCoreChildFixture } from '../@/fixture/core'
 
 const Fixture = async () => {
   const f = ScreenPuzzlePlayCoreChildFixture()

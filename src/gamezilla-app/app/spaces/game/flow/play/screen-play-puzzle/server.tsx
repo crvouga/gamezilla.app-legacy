@@ -1,5 +1,5 @@
 import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-server-v2'
-import { ServerModule } from '../play.types'
+import { ServerModule } from '../types'
 import { ScreenPlayPuzzleCore } from './core'
 import { MsgCoreEvt } from './types'
 import { UserActivity } from '../@/user-activity/user-activity'

@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { Flow } from '../../@/flow'
-import { FixtureScreenPlayPuzzleClient } from './@/fixture.client'
+import { FixtureScreenPlayPuzzleClient } from './@/fixture/client'
 import { UserId } from 'gamezilla-app/app/@/data'
 
 const Fixture = async () => {

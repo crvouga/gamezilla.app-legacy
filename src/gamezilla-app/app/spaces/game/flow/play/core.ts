@@ -1,4 +1,4 @@
-import type { CoreModule } from './play.types'
+import type { CoreModule } from './types'
 import { ScreenPlayPuzzleCore } from './screen-play-puzzle/core'
 
 const initCore: CoreModule['initCore'] = () => {

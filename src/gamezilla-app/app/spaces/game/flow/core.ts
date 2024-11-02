@@ -2,7 +2,7 @@ import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { WithEventMeta } from '../../@/event'
 import { BuilderCore } from './builder/core'
 import type { ModelCore, MsgCore } from './types'
-import { PlayCore } from './play/play.core'
+import { PlayCore } from './play/core'
 
 const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
   return {
