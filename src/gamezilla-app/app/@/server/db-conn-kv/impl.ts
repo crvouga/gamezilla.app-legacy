@@ -1,4 +1,4 @@
-import * as DbConnSql from './impl-db-conn-sql'
+import * as DbConnSql from './impl-postgres'
 import * as HashMap from './impl-hash-map'
 import type { IDbConnKv } from './interface'
 import * as WithCache from './with-cache'
