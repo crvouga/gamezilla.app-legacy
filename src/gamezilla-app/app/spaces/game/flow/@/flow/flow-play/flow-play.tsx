@@ -603,27 +603,31 @@ export const View = (input: {
   const flow = toFlow(input)
 
   return (
-    <div className='relative flex max-h-full w-full items-center justify-center overflow-hidden'>
-      <FlowVariantUI.View
-        disabled={input.disabled}
-        model={flow}
-        showCoordinates={false}
-        isDragging={input.model.status.t === 'dragging'}
-        onDraggedOver={(nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId })}
-        onPressDown={(nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId })}
-        onPressUp={(nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId })}
-        onLeave={() => input.dispatch({ t: 'user-dragging-left' })}
-        autocompleteEdge={
-          input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
-            ? {
-                ...input.model.status.autocompleteEdge,
-                groupId: input.model.status.activeGroupId
-              }
-            : null
-        }
-        isGroupActive={(groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId}
-        usedHints={FlowHint.toUsedHints(input.model)}
-      />
+    <div className='relative h-fit w-full'>
+      <div className='relative flex max-h-full w-full items-center justify-center overflow-hidden'>
+        <FlowVariantUI.View
+          disabled={input.disabled}
+          model={flow}
+          showCoordinates={false}
+          isDragging={input.model.status.t === 'dragging'}
+          onDraggedOver={(nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId })}
+          onPressDown={(nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId })}
+          onPressUp={(nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId })}
+          onLeave={() => input.dispatch({ t: 'user-dragging-left' })}
+          autocompleteEdge={
+            input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
+              ? {
+                  ...input.model.status.autocompleteEdge,
+                  groupId: input.model.status.activeGroupId
+                }
+              : null
+          }
+          isGroupActive={(groupId) =>
+            input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId
+          }
+          usedHints={FlowHint.toUsedHints(input.model)}
+        />
+      </div>
       <CheckmarkAnimation open={Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation)} />
     </div>
   )
