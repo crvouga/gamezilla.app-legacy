@@ -3,7 +3,7 @@ import { SpaceClientCmd } from '../@/space-client-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'
 import { FlowClient } from './flow/client'
-import type { ClientModule } from './game.types'
+import type { ClientModule } from './types'
 
 //
 //
@@ -204,7 +204,7 @@ const ViewFeedItem: ClientModule['ViewFeedItem'] = (input) => {
   }
 }
 
-export const GameClient = {
+export const GamesClient = {
   init,
   subscriptions,
   update,

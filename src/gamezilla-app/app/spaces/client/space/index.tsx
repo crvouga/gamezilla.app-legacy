@@ -2,15 +2,15 @@ import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import type { SpaceId } from 'gamezilla-app/app/@/data'
 import { Button, IconButton, IconHome, IconUserGroup, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
+import * as SpacesCoreClient from '../../core/client/spaces-core.client'
 import { EndSpaceClient } from '../../end-space/end-space.client'
+import { GameClient } from '../../game/client'
 import { JoinSpaceClient } from '../../join-space/client'
 import { LeaveSpaceClient } from '../../leave-space/client'
+import type { ModelClient, MsgClient } from '../../types'
 import { Feed } from '../feed'
 import { Modals } from '../modals'
-import * as SpacesCoreClient from '../../core/client/spaces-core.client'
-import type { ModelClient, MsgClient } from '../../types'
-import { SpaceGameClient } from '../../games/games.client'
-import { SpaceClientCtx } from '../../@/space-client-ctx'
 
 const View = (input: { model: ModelClient; ctx: AppClientCtx; dispatch: (m: MsgClient) => void; spaceId: SpaceId }) => {
   const spaceState = SpacesCoreClient.toSpaceState(input.model, input.spaceId)
@@ -51,7 +51,7 @@ const View = (input: { model: ModelClient; ctx: AppClientCtx; dispatch: (m: MsgC
           {false && <Feed.View spaceState={spaceState} ctx={spaceCtx} model={input.model} dispatch={input.dispatch} />}
 
           <div className='flex w-full flex-1 flex-col overflow-hidden'>
-            <SpaceGameClient.View {...input} ctx={spaceCtx} />
+            <GameClient.View {...input} ctx={spaceCtx} />
           </div>
         </div>
       )

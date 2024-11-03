@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound, showErrSm, showToast } from 'gamezilla-app/app/@/client'
 import { Button } from 'gamezilla-app/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import { GameCoverArt } from '../games/game-cover-art'
+import { GameCoverArt } from '../games/cover-art'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import { ViewUsersInSpaceList } from '../games/@/game/users-in-space-list'
 import { LayoutGameCoverArtHeader } from '../games/@/game/layout-game-cover-art-header'

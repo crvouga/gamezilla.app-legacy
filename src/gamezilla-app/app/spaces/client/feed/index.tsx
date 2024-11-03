@@ -1,5 +1,5 @@
 import { FeedItem } from '../../@/feed-item'
-import { GameClient } from '../../games/game.client'
+import { GamesClient } from '../../games/client'
 import type { MsgCore, SpaceCoreState } from '../../core'
 import * as SpacesCoreClient from '../../core/client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../types'
@@ -43,7 +43,7 @@ const ViewFeedItem = ({
         return null
       }
       return (
-        <GameClient.ViewFeedItem
+        <GamesClient.ViewFeedItem
           ctx={ctx}
           msgCore={{
             ...msgEvt,

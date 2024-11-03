@@ -3,7 +3,7 @@ import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { type Input, type Output, SpaceServerModule } from './@/architecture/space-server'
 import { Space } from './@/space'
 import { SpacesCoreServer } from './core/server'
-import { GamesServer } from './games/games.server'
+import { GameServer } from './game/server'
 import { JoinSpaceServer } from './join-space/server'
 import { ListSpacesServer } from './list-spaces/server'
 import { StartSpaceServer } from './start-space/server'
@@ -18,7 +18,7 @@ import type { ServerModule } from './types'
 //
 //
 
-export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
+export const initCtx: ServerModule['initDeps'] = async ({ ctx }) => {
   return {
     spacesCoreServer: await SpacesCoreServer({
       t: 'db-conn-kv',
@@ -31,11 +31,11 @@ export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
     //   dbConnKv: ctx.dbConnKv,
     //   logger: ctx.logger
     // }),
-    games: GamesServer.initCtx({ ctx: { ...ctx, space: Space.random() } })
+    games: GameServer.initCtx({ ctx: { ...ctx, space: Space.random() } })
   }
 }
 
-export type Deps = Awaited<ReturnType<typeof initDeps>>
+export type Deps = Awaited<ReturnType<typeof initCtx>>
 
 //
 //
@@ -99,7 +99,7 @@ const updateChild: SpaceServerModule['update'] = async (input) => {
     () => SyncServer.update(input),
     () => StartSpaceServer.update(input),
     () => JoinSpaceServer.update(input),
-    () => GamesServer.update(input)
+    () => GameServer.update(input)
   )
 }
 
@@ -122,5 +122,5 @@ const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgCore
 //
 
 export const subscriptions: ServerModule['subscriptions'] = async (input) => {
-  return GamesServer.subscriptions(input)
+  return GameServer.subscriptions(input)
 }

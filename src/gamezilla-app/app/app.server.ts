@@ -119,7 +119,7 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const wire = await WireServer.initCtx({ ctx, transport })
   const profile = await ProfileServer.initDeps({ ctx })
-  const space = await SpaceServer.initDeps({ ctx })
+  const space = await SpaceServer.initCtx({ ctx })
   const auth = await AuthServer.initCtx({ ctx })
 
   return {

@@ -10,8 +10,8 @@ import type * as Spaces from './core/client/spaces-core.client'
 import { ISpacesCoreServer } from './core/server/interface'
 import type * as Space from './core/space-core'
 import { GameName } from './games/@/game-name'
-import type * as Game from './games/game.types'
-import * as GamesTypes from './games/game.types'
+import type * as Game from './games/types'
+import * as GamesTypes from './games/types'
 import { MsgCore } from './core'
 
 //

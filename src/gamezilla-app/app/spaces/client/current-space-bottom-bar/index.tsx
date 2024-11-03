@@ -1,7 +1,7 @@
 import { APP_SOUND, type AppClientCtx, playSound, pushRoute } from 'gamezilla-app/app/@/client'
 import { Avatar, Button, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
-import { GameCoverArt } from '../../games/game-cover-art'
+import { GameCoverArt } from '../../games/cover-art'
 import * as SpacesCoreClient from '../../core/client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../types'
 

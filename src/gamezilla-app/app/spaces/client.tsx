@@ -4,13 +4,13 @@ import { isAnonymous } from '../@/client'
 import { type Input, type Output, SpaceClientModule } from './@/architecture/space-client'
 import { SpaceClientCmd } from './@/space-client-cmd'
 import { SpaceClientEvt } from './@/space-client-evt'
-import { SpaceClient } from './client/space'
 import { CurrentSpaceBottomBar } from './client/current-space-bottom-bar'
 import { GoHome } from './client/go-home'
 import { Modals } from './client/modals'
+import { SpaceClient } from './client/space'
 import * as SpacesCoreClient from './core/client/spaces-core.client'
 import { EndSpaceClient } from './end-space/end-space.client'
-import { SpaceGameClient } from './games/games.client'
+import { GameClient } from './game/client'
 import { JoinSpaceClient } from './join-space/client'
 import { LeaveSpaceClient } from './leave-space/client'
 import { ListSpacesClient } from './list-spaces/client'
@@ -133,7 +133,7 @@ const updateChild: SpaceClientModule['update'] = (input) => {
     { model: input.model },
     (model) => EndSpaceClient.update({ ...input, model }),
     (model) => LeaveSpaceClient.update({ ...input, model }),
-    (model) => SpaceGameClient.update({ ...input, model }),
+    (model) => GameClient.update({ ...input, model }),
     (model) => updateSpacesFromSpaceEvent({ ...input, model }),
     (model) => SyncClient.update({ ...input, model }),
     (model) => StartSpaceClient.update({ ...input, model }),
@@ -169,7 +169,7 @@ const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCore, mode
 //
 
 export const subscriptions: ClientModule['subscriptions'] = (input) => {
-  return SpaceGameClient.subscriptions(input)
+  return GameClient.subscriptions(input)
 }
 
 //

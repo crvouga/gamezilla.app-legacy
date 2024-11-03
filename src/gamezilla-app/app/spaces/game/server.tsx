@@ -1,15 +1,15 @@
 import { Result, Sub } from 'gamezilla-app/@/core'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceServerCmd } from '../@/space-server-cmd'
-import type { MsgServer } from '../types'
-import { GameServer } from './game.server'
-import { SpaceCore } from '../core'
-import { GamesServerCtx } from './games.types'
 import { SpaceServerCtx } from '../@/space-server-ctx'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { SpaceCore } from '../core'
+import { GamesServer } from '../games/server'
+import type { MsgServer } from '../types'
+import { GamesServerCtx } from './types'
 
 const initCtx = (input: { ctx: SpaceServerCtx }): GamesServerCtx => {
-  const gameCtx = GameServer.initCtx(input)
+  const gameCtx = GamesServer.initCtx(input)
   return {
     ...input.ctx,
     ...gameCtx
@@ -33,7 +33,7 @@ const updateGame: SpaceServerModule['update'] = async (input) => {
     return {}
   }
 
-  const updated = await GameServer.update({
+  const updated = await GamesServer.update({
     deps: null,
     ctx: { ...input.deps.games, ...input.ctx, space: spaceState },
     msg: input.msg?.t === 'game' ? input.msg.c : null,
@@ -78,7 +78,7 @@ const subscriptions: SpaceServerModule['subscriptions'] = async (_input) => {
   return Sub.batch(batch)
 }
 
-export const GamesServer = {
+export const GameServer = {
   initCtx,
   subscriptions,
   update

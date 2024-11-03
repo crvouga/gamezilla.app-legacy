@@ -1,6 +1,6 @@
 import type { BaseClientCtx } from 'gamezilla-app/app/@/client'
 import { Avatar, cn, Typography } from 'gamezilla-app/app/@/ui'
-import { GameCoverArt } from '../../games/game-cover-art'
+import { GameCoverArt } from '../../games/cover-art'
 import type { SpaceCoreState } from '../../core'
 import { ViewSpaceHostChip, ViewYouChip } from '../../games/@/game/users-in-space-list'
 

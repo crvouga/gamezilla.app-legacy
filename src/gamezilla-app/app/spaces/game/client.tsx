@@ -7,11 +7,11 @@ import { SpaceClientModule } from '../@/architecture/space-client'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { MsgCore, SpaceCore } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
+import { ViewUsersInSpaceList } from '../games/@/game/users-in-space-list'
+import { GamesClient } from '../games/client'
+import { GameCoverArt } from '../games/cover-art'
+import { gameNameList } from '../games/types'
 import type { MsgClient } from '../types'
-import { ViewUsersInSpaceList } from './@/game/users-in-space-list'
-import { GameCoverArt } from './game-cover-art'
-import { GameClient } from './game.client'
-import { gameNameList } from './game.types'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
@@ -154,9 +154,9 @@ const updateGame: SpaceClientModule['update'] = (input) => {
     return { model: input.model }
   }
 
-  const modelGame = input.model.games[spaceId] ?? GameClient.init(spaceState.game.t)
+  const modelGame = input.model.games[spaceId] ?? GamesClient.init(spaceState.game.t)
 
-  const gameUpdated = GameClient.update({
+  const gameUpdated = GamesClient.update({
     ctx: {
       ...input.ctx,
       space: spaceState,
@@ -247,9 +247,9 @@ const subscriptionsCurrentUserGame: SpaceClientModule['subscriptions'] = (input)
     return Sub.None
   }
 
-  const gameModel = input.model.games[spaceId] ?? GameClient.init(modelCore.t)
+  const gameModel = input.model.games[spaceId] ?? GamesClient.init(modelCore.t)
 
-  const gameSub = GameClient.subscriptions({
+  const gameSub = GamesClient.subscriptions({
     ctx: { ...clientCtx, space: spaceState },
     modelCore: modelCore,
     model: gameModel
@@ -283,7 +283,7 @@ const View: SpaceClientModule['View'] = (input) => {
 
   if (space.game) {
     return (
-      <GameClient.View
+      <GamesClient.View
         modelCore={space.game}
         ctx={{
           ...ctx,
@@ -299,7 +299,7 @@ const View: SpaceClientModule['View'] = (input) => {
             c
           })
         }
-        model={model.games[ctx.space.spaceId] ?? GameClient.init(space.game.t)}
+        model={model.games[ctx.space.spaceId] ?? GamesClient.init(space.game.t)}
       />
     )
   }
@@ -386,7 +386,7 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
 //
 //
 
-export const SpaceGameClient = {
+export const GameClient = {
   View,
   update,
   subscriptions

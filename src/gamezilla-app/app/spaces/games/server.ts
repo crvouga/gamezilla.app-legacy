@@ -4,7 +4,7 @@ import { SpaceServerCmd } from '../@/space-server-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFourServer } from './connect-four/connect-four.server'
 import { FlowServer } from './flow/server'
-import type { GameServerCtx, ServerModule } from './game.types'
+import type { GameServerCtx, ServerModule } from './types'
 import { SpaceServerCtx } from '../@/space-server-ctx'
 
 const initCtx = (input: { ctx: SpaceServerCtx }): GameServerCtx => {
@@ -116,7 +116,7 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
   }
 }
 
-export const GameServer = {
+export const GamesServer = {
   init,
   update,
   subscriptions,

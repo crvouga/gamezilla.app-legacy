@@ -13,7 +13,7 @@ import { smsNoop } from 'gamezilla-app/app/@/server/sms'
 import { ProfileCache } from '../../../@/server/profile-cache'
 import { SpaceCore } from '../../core'
 import { SpacesCoreServer } from '../../core/server'
-import { GameServer } from '../../games/game.server'
+import { GamesServer } from '../../games/server'
 import * as SpacesServer from '../../server'
 import type { ServerDeps } from '../../types'
 import { SpaceServerCtx } from '../space-server-ctx'
@@ -87,7 +87,7 @@ export const initDeps = async (): Promise<ServerDeps> => {
   const dbConnKv = await DbConnKv({ t: 'hash-map' })
   return {
     spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv, logger: Logger({ t: 'noop' }) }),
-    games: GameServer.initCtx({
+    games: GamesServer.initCtx({
       ctx: {
         ...ctx,
         space: {
