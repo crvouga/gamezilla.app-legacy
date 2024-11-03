@@ -90,13 +90,13 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
 
     const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId)
 
-    events.unshift(event)
+    events.push(event)
     eventIds[event.eventId] = event.eventId
 
     if (snapshot) {
       return {
         eventIds: eventIds,
-        events: events,
+        events: events.reverse(),
         clock: model.clock,
         snapshots: snapshots,
         initial: snapshot
@@ -105,7 +105,7 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
   }
 
   return {
-    events: events,
+    events: events.reverse(),
     eventIds: eventIds,
     clock: model.clock,
     snapshots: snapshots,
