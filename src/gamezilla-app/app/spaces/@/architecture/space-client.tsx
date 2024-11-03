@@ -6,8 +6,8 @@ import type { WithEventId } from '../event'
 import type { Space } from '../space'
 import type { SpaceClientCmd } from '../space-client-cmd'
 import { SpaceClientEvt } from '../space-client-evt'
-import type { MsgCore } from '../../spaces-core'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../spaces.types'
+import type { MsgCore } from '../../core'
+import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../types'
 
 type Ctx = BaseClientCtx & {
   space?: Space

@@ -1,0 +1,102 @@
+import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
+import { TopBar } from 'gamezilla-app/app/@/ui'
+import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
+import { PackListClient } from '../../@/pack/pack-list'
+import type { ClientModule } from '../types'
+
+const update: ClientModule['update'] = (input) => {
+  return GameClientModule.andThen(
+    { model: input.model },
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateLoadPacks({ ...input, model })
+  )
+}
+
+const updateLoadPacks: ClientModule['update'] = (input) => {
+  if (
+    input.msgEvt?.t === 'flow.user-changed-mode' ||
+    input.msgEvt?.t === 'space/synced' ||
+    input.msgCore?.t === 'user-clicked-exit-pack-button' ||
+    input.msgCore?.t === 'user-clicked-select-next-pack'
+  ) {
+    return {
+      model: input.model,
+      msgCmd: [PackListClient.load()]
+    }
+  }
+
+  return { model: input.model }
+}
+
+const updateFromMsg: ClientModule['update'] = (input) => {
+  switch (input.msg?.t) {
+    case 'user-clicked-open-pack-list-item': {
+      return {
+        model: input.model,
+        msgCore: [input.msg]
+      }
+    }
+    default: {
+      return {
+        model: input.model
+      }
+    }
+  }
+}
+
+const updateFromMsgCore: ClientModule['update'] = (input) => {
+  switch (input.msgCore?.t) {
+    case 'user-clicked-open-pack-list-item': {
+      return {
+        model: input.model,
+        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+      }
+    }
+    case 'user-clicked-exit-play-mode-button': {
+      return {
+        model: input.model,
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+      }
+    }
+    default: {
+      return {
+        model: input.model
+      }
+    }
+  }
+}
+
+const View: ClientModule['View'] = (input) => {
+  // const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
+
+  return (
+    <div className='flex h-full w-full flex-1 flex-col'>
+      <TopBar
+        ctx={input.ctx}
+        onBack={() =>
+          input.dispatch({
+            t: 'user-clicked-exit-play-mode-button',
+            userId: input.ctx.currentUserId
+          })
+        }
+        title={input.ctx.t('flow.play')}
+      />
+      <PackListClient.View
+        ctx={input.ctx}
+        dispatch={(_c) => {}}
+        model={input.ctx.packList}
+        emits={{
+          clickedPackItem(pack) {
+            input.dispatch({ t: 'user-clicked-open-pack-list-item', pack })
+          }
+        }}
+      />
+    </div>
+  )
+}
+
+export const ScreenSelectPackClient = {
+  update,
+  View
+}

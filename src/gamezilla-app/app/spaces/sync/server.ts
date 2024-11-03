@@ -1,9 +1,9 @@
 import { unwrapOr } from 'gamezilla-app/@/core'
 import { AppServerCtx, broadcast, sendToClient, sendToUser } from 'gamezilla-app/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
-import { SpaceCore, SpaceCoreState } from '../spaces-core'
-import * as Space from '../spaces-core/space-core'
-import type { MsgToClient } from '../spaces.types'
+import { SpaceCore, SpaceCoreState } from '../core'
+import * as Space from '../core/space-core'
+import type { MsgToClient } from '../types'
 
 const update: SpaceServerModule['update'] = async (input) => {
   return SpaceServerModule.andThen(

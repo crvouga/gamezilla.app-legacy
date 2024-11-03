@@ -1,7 +1,7 @@
 import type * as Auth from './auth/auth.types'
 import type * as Lang from './lang/lang.types'
 import type * as Profile from './profile/profile.types'
-import type * as Spaces from './spaces/spaces.types'
+import type * as Spaces from './spaces/types'
 import type * as Wire from './wire/types'
 import type { ClientId, SessionId, UserId } from './@/data'
 import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'

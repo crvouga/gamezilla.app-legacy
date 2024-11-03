@@ -21,7 +21,7 @@ import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './app.typ
 import * as AuthClient from './auth/auth.client'
 import * as LangClient from './lang/lang.client'
 import * as ProfileClient from './profile/profile.client'
-import * as SpaceClient from './spaces/spaces.client'
+import * as SpaceClient from './spaces/client'
 import { ClientTransport, type IClientTransport } from './wire/transport/client'
 import * as WireClient from './wire/client'
 
@@ -731,12 +731,7 @@ const ViewBottomNavBar = (input: {
       <SpaceClient.ViewCurrentSpaceBar
         ctx={input.ctx}
         model={input.model.spaces}
-        dispatch={(c) =>
-          input.dispatch({
-            t: 'spaces',
-            c
-          })
-        }
+        dispatch={(c) => input.dispatch({ t: 'spaces', c })}
       />
       <div className='flex h-16 w-full items-center justify-center border-t '>
         {items.map((item) => {
