@@ -41,6 +41,7 @@ export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => 
           })
         })
       }),
+
     async (dbConnKv) =>
       DbConnKv({
         t: 'with-reduced-parsing',

@@ -200,7 +200,6 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
           toClientPayload[clientId].msgs.push(msgCmdChild.msg)
         }
       }
-      console.log('toClientPayload', toClientPayload)
       input.ctx.transport.toClient.pub(toClientPayload)
       return {}
     }
