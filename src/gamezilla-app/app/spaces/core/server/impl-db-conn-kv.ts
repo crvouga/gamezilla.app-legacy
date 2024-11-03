@@ -6,6 +6,7 @@ import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import * as SpaceCore from '../space-core'
 import type { ISpacesCoreServer } from './interface'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
 export type Config = {
   t: 'db-conn-kv'
   dbConnKv: IDbConnKv
@@ -103,7 +104,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
       return false
     }
 
-    return Boolean(got.value && eventId in got.value.eventIds)
+    return Boolean(got.value && eventId in got.value._eventIds)
   }
 
   return {
@@ -152,10 +153,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
 
       const space = maybeSpace ?? SpaceCore.init
 
-      const spaceNew = SpaceCore.appendEvent({
-        msgCore: spaceEvent,
-        model: space
-      })
+      const spaceNew = EventSourced.appendEvent(SpaceCore.config, space, spaceEvent)
 
       return upsert(spaceNew)
     },
@@ -165,7 +163,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
 
       const currentSpace = Result.unwrapOr(await get(spaceId), null) ?? SpaceCore.init
 
-      const spaceNew = SpaceCore.mergeLeft(space, currentSpace)
+      const spaceNew = EventSourced.mergeLeft(space, currentSpace)
 
       return upsert(spaceNew)
     }

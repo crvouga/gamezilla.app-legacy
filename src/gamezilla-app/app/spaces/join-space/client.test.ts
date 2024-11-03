@@ -1,9 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
 import { didShowErrorSm, didShowToast } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
-import { withEventMeta } from '../@/event'
 import { FixtureSpaceClient } from '../@/fixture/client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
+import { withEventMeta } from 'gamezilla-app/@/event-sourced/event'
 
 const Fixture = async () => {
   const f = await FixtureSpaceClient()

@@ -1,10 +1,10 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Space } from 'gamezilla-app/app/spaces/@/space'
-import { EventId, type EventMeta } from '../@/event'
 import * as GameGame from '../games/game.core'
 import * as Game from '../games/game.types'
-import type { MsgCore } from './event'
+import { EventId, WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { MsgCore } from './event'
 
 //
 //
@@ -74,23 +74,23 @@ export const toUserIds = (state: State): UserId[] => {
 //
 //
 
-export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCore & EventMeta }): State => {
+export const updateCore = (state: State, msgCore: WithEventMeta<MsgCore>): State => {
   switch (state.type) {
     case 'ended': {
       return state
     }
 
     case 'initial': {
-      switch (msgSpace.t) {
+      switch (msgCore.t) {
         case 'user-started-space': {
           return {
             type: 'started',
             game: null,
-            hostId: msgSpace.userId,
-            latestEventId: msgSpace.eventId,
-            spaceId: msgSpace.spaceId,
+            hostId: msgCore.userId,
+            latestEventId: msgCore.eventId,
+            spaceId: msgCore.spaceId,
             users: {
-              [msgSpace.userId]: msgSpace.userId
+              [msgCore.userId]: msgCore.userId
             },
             visibility: 'public'
           }
@@ -102,12 +102,12 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
     }
 
     case 'started': {
-      switch (msgSpace.t) {
+      switch (msgCore.t) {
         case 'game': {
           const game =
             state.game ??
             GameGame.initCore({
-              gameName: msgSpace.c.t,
+              gameName: msgCore.c.t,
               ctx: {
                 space: state
               }
@@ -118,23 +118,23 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
             },
             modelCore: game,
             msgCore: {
-              ...msgSpace,
-              ...msgSpace.c
+              ...msgCore,
+              ...msgCore.c
             }
           })
           return {
             ...state,
-            latestEventId: msgSpace.eventId,
+            latestEventId: msgCore.eventId,
             game: gameNew
           }
         }
         case 'user-ended-space': {
-          if (msgSpace.userId !== state.hostId) {
+          if (msgCore.userId !== state.hostId) {
             return state
           }
           return {
             ...state,
-            latestEventId: msgSpace.eventId,
+            latestEventId: msgCore.eventId,
             type: 'ended'
           }
         }
@@ -142,33 +142,33 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
         case 'user-inputted-game': {
           return {
             ...state,
-            latestEventId: msgSpace.eventId,
-            game: msgSpace.game ? GameGame.initCore({ gameName: msgSpace.game, ctx: { space: state } }) : null
+            latestEventId: msgCore.eventId,
+            game: msgCore.game ? GameGame.initCore({ gameName: msgCore.game, ctx: { space: state } }) : null
           }
         }
 
         case 'user-joined-space': {
           return {
             ...state,
-            latestEventId: msgSpace.eventId,
+            latestEventId: msgCore.eventId,
             users: {
               ...state.users,
-              [msgSpace.userId]: msgSpace.userId
+              [msgCore.userId]: msgCore.userId
             }
           }
         }
 
         case 'user-left-space': {
-          if (msgSpace.userId === state.hostId) {
+          if (msgCore.userId === state.hostId) {
             return state
           }
           const usersNew = {
             ...state.users
           }
-          delete usersNew[msgSpace.userId]
+          delete usersNew[msgCore.userId]
           return {
             ...state,
-            latestEventId: msgSpace.eventId,
+            latestEventId: msgCore.eventId,
             users: usersNew
           }
         }
@@ -176,7 +176,7 @@ export const updateCore = ({ state, msgSpace }: { state: State; msgSpace: MsgCor
         case 'user-started-space': {
           return {
             ...state,
-            latestEventId: msgSpace.eventId
+            latestEventId: msgCore.eventId
           }
         }
       }

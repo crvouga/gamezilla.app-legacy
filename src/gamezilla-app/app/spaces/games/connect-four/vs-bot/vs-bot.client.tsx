@@ -3,7 +3,7 @@ import { APP_SOUND, type AppClientCmd, playSound } from 'gamezilla-app/app/@/cli
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from 'gamezilla-app/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
-import { type WithEventId, withEventId } from 'gamezilla-app/app/spaces/@/event'
+import { type WithEventId, withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'

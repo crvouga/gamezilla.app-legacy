@@ -2,7 +2,7 @@ import { type AppClientCtx, showErrSm } from 'gamezilla-app/app/@/client'
 import { Button, Drawer, DrawerHeader, TextField } from 'gamezilla-app/app/@/ui'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import type { ModelCore, MsgClient, MsgCore } from './types'
-import { withEventId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { isErr } from 'gamezilla-app/@/core'
 
 type ClientModule = GameClientModule<{

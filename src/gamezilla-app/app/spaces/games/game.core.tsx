@@ -1,4 +1,4 @@
-import type { EventMeta } from 'gamezilla-app/app/spaces/@/event'
+import type { EventMeta } from 'gamezilla-app/@/event-sourced/event'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
 import { FlowCore } from './flow/core'

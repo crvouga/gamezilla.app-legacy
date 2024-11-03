@@ -1,6 +1,6 @@
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { APP_SOUND, playSound, pushRoute, showToast } from 'gamezilla-app/app/@/client'
 import { Button } from 'gamezilla-app/app/@/ui'
-import { withEventId } from '../@/event'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import type { MsgCore } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'

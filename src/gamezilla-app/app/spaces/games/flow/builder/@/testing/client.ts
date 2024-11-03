@@ -1,6 +1,6 @@
 import { NonEmpty, Ok } from 'gamezilla-app/@/core'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
-import { EventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import { EventId, WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { testSpaceClientCtx } from 'gamezilla-app/app/spaces/games/@/testing/client'
 import { Flow } from '../../../@/flow'

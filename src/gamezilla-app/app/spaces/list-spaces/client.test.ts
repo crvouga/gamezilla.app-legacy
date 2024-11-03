@@ -4,10 +4,11 @@ import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import { APP_SOUND, didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from 'gamezilla-app/app/@/ui'
-import { withEventId } from '../@/event'
 import { FixtureSpaceClient } from '../@/fixture/client'
 import { SpaceCore } from '../core'
 import * as SpaceClient from '../client'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureSpaceClient(input)
@@ -259,13 +260,14 @@ describe(import.meta.file, () => {
     const hostId = f.currentUser.userId
 
     const space = pipe(SpaceCore.random({ spaceId, hostId }), (model) =>
-      SpaceCore.appendEvent({
+      EventSourced.appendEvent(
+        SpaceCore.config,
         model,
-        msgCore: withEventId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId })
-      })
+        withEventId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId } as const)
+      )
     )
 
-    const listedSpace = SpaceCore.startFromLatestSnapshot(space)
+    const listedSpace = EventSourced.startFromLatestSnapshot(space)
     const updated = f.update(f.initial, [
       { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
       { msg: { t: 'game', c: { t: 'flow', c: { t: 'game-main-menu/clicked-exit-game-button' } }, spaceId } },

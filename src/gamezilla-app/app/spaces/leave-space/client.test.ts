@@ -12,7 +12,7 @@ import {
   userStartedSpace
 } from '../@/fixture/client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
-import { withEventMeta } from '../@/event'
+import { withEventMeta } from 'gamezilla-app/@/event-sourced/event'
 
 const Fixture = async () => {
   const f = await FixtureSpaceClient()

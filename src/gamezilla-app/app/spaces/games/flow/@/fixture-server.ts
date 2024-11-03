@@ -1,6 +1,6 @@
 import { NonEmpty } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
-import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import { withEventMeta } from 'gamezilla-app/@/event-sourced/event'
 import { FixtureSpaceServer } from 'gamezilla-app/app/spaces/@/fixture/server'
 import { FlowCore } from '../core'
 import { FlowServer } from '../server'

@@ -2,13 +2,14 @@ import { describe, expect, it, test } from 'bun:test'
 import { Ok, unwrap } from 'gamezilla-app/@/core'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import { EventMeta, withEventId } from 'gamezilla-app/app/spaces/@/event'
+import { EventMeta, withEventId } from 'gamezilla-app/@/event-sourced/event'
 import * as SpaceCore from '../space-core'
 import { Config, SpacesCoreServer } from './impl'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { Stream } from 'gamezilla-app/app/@/server/stream/impl'
-import { MsgCore } from '../event'
 import { p } from 'gamezilla-app/@/core/parser'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { MsgCore } from '../event'
 
 const Fixture = async (config: Config) => {
   const spacesCoreServer = await SpacesCoreServer(config)
@@ -94,7 +95,7 @@ describe(import.meta.file, () => {
 
   test('hasEvent', async () => {
     for (const f of await Fixtures()) {
-      const eventId = Object.values(f.spaceA.eventIds)[0]
+      const eventId = Object.values(f.spaceA._eventIds)[0]
       if (!eventId) throw new Error('eventId not found')
 
       const spaceId = SpaceCore.toSpaceStarted(f.spaceA)?.spaceId
@@ -134,8 +135,8 @@ describe(import.meta.file, () => {
       const before = unwrap(await f.spacesCoreServer.get(f.spaceId)) ?? SpaceCore.init
       await f.spacesCoreServer.upsert(f.spaceA)
       const after = unwrap(await f.spacesCoreServer.get(f.spaceId)) ?? SpaceCore.init
-      expect(SpaceCore.deriveState(before).type).toEqual('initial')
-      expect(SpaceCore.deriveState(after).type).toEqual('started')
+      expect(EventSourced.deriveState(SpaceCore.config, before).type).toEqual('initial')
+      expect(EventSourced.deriveState(SpaceCore.config, after).type).toEqual('started')
     }
   })
 

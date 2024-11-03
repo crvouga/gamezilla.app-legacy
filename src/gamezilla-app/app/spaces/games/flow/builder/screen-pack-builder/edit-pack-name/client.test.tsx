@@ -6,7 +6,7 @@ import { FlowPack } from '../../../@/pack/pack'
 import { EditPackNameClient } from './client'
 import { EditPackNameCore } from './core'
 import type { MsgCore } from './types'
-import { withEventId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 
 const Fixture = async () => {
   const f = await FixtureSpaceClient()

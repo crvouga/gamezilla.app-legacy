@@ -1,4 +1,4 @@
-import type { WithEventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import type { WithEventId, WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
 import { AppClientCmd, type ClientEvt } from 'gamezilla-app/app/@/client'
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
-import { EventId } from 'gamezilla-app/app/spaces/@/event'
+import { EventId } from 'gamezilla-app/@/event-sourced/event'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { FixtureFlowPlayClient } from '../@/fixture.client'

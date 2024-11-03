@@ -1,10 +1,10 @@
-import type { WithEventId } from '../../@/event'
 import { FeedItem } from '../../@/feed-item'
 import { GameClient } from '../../games/game.client'
 import type { MsgCore, SpaceCoreState } from '../../core'
 import * as SpacesCoreClient from '../../core/client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../types'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
+import { WithEventId } from 'gamezilla-app/@/event-sourced/event'
 
 const View = ({
   spaceState,

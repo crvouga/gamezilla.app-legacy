@@ -1,4 +1,5 @@
 import { Result } from 'gamezilla-app/@/core'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
 import { Paginated } from 'gamezilla-app/app/@/data'
 import { sendToClient } from 'gamezilla-app/app/@/server'
 import type { SpaceServerModule } from '../@/architecture/space-server'
@@ -19,7 +20,7 @@ const update: SpaceServerModule['update'] = async (input) => {
 
       const spaces = Result.unwrapOr(listed, Paginated.init())
 
-      const started = spaces.items.map(Space.startFromLatestSnapshot)
+      const started = spaces.items.map(EventSourced.startFromLatestSnapshot)
       const userIds = spaces.items.flatMap(Space.toUserIds)
       const profiles = Result.unwrapOr(await input.ctx.profileCache.get(userIds), {})
 

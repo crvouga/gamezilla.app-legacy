@@ -1,12 +1,12 @@
 import { Result } from 'gamezilla-app/@/core'
 import type { Paginated, SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { EventId, WithEventId } from 'gamezilla-app/app/spaces/@/event'
+import { EventId, WithEventId } from 'gamezilla-app/@/event-sourced/event'
 import type * as SpaceCore from '../space-core'
 import { MsgCore } from '../event'
 
 export type SpacesCoreServerWhereAnd = {
-  spaceId?: SpaceId
-  userId?: UserId
+  equalsSpaceId?: SpaceId
+  equalsUserId?: UserId
 }
 
 export type ISpacesCoreServer = {

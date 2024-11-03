@@ -1,14 +1,15 @@
 import { isErr, Ok, unwrapOr } from 'gamezilla-app/@/core'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import { EventId } from 'gamezilla-app/app/@/server/stream/event-id'
 import { IStream } from 'gamezilla-app/app/@/server/stream/interface'
-import { WithEventMeta } from '../../@/event'
-import * as SpaceCore from '../space-core'
 import { MsgCore } from '../event'
+import * as SpaceCore from '../space-core'
 import * as SpaceCoreState from '../space-state'
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import type { ISpacesCoreServer } from './interface'
+import { WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
 
 export type Config = {
   t: 'stream'
@@ -57,10 +58,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
       return Ok(null)
     }
 
-    const model = SpaceCore.initFromSnapshot({
-      events,
-      snapshot
-    })
+    const model = EventSourced.initFromSnapshot(snapshot, events)
 
     return Ok(model)
   }
@@ -68,7 +66,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
   const upsert: ISpacesCoreServer['upsert'] = async (space) => {
     await implDbConnKb.upsert(space)
 
-    const snapshot = SpaceCore.deriveState(space)
+    const snapshot = EventSourced.deriveState(SpaceCore.config, space)
 
     const spaceId = 'spaceId' in snapshot ? snapshot.spaceId : null
 
@@ -78,7 +76,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
 
     await snapshots.set(spaceId, snapshot)
 
-    await Promise.all(space.events.map((event) => config.stream.append(spaceId, event.eventId, event)))
+    await Promise.all(space._events.map((event) => config.stream.append(spaceId, event.eventId, event)))
 
     return Ok(null)
   }
@@ -107,10 +105,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
 
       const space = maybeSpace ?? SpaceCore.init
 
-      const spaceNew = SpaceCore.appendEvent({
-        msgCore: event,
-        model: space
-      })
+      const spaceNew = EventSourced.appendEvent(SpaceCore.config, space, event)
 
       return upsert(spaceNew)
     },
@@ -119,7 +114,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
 
       const currentSpace = unwrapOr(await get(spaceId), null) ?? SpaceCore.init
 
-      const spaceNew = SpaceCore.mergeLeft(space, currentSpace)
+      const spaceNew = EventSourced.mergeLeft(space, currentSpace)
 
       return upsert(spaceNew)
     }

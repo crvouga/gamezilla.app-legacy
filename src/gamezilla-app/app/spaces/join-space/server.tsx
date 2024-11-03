@@ -1,7 +1,7 @@
 import { Result } from 'gamezilla-app/@/core'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
 import { sendToUser } from 'gamezilla-app/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
-import { SpaceCore } from '../core'
 
 const update: SpaceServerModule['update'] = (input) => {
   return SpaceServerModule.andThen(
@@ -20,7 +20,7 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
         return {}
       }
 
-      const started = SpaceCore.startFromLatestSnapshot(space)
+      const started = EventSourced.startFromLatestSnapshot(space)
 
       return {
         msgCmd: [

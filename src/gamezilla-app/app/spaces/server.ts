@@ -20,7 +20,17 @@ import type { ServerModule } from './types'
 
 export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   return {
-    spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv, logger: ctx.logger }),
+    spacesCoreServer: await SpacesCoreServer({
+      t: 'db-conn-kv',
+      dbConnKv: ctx.dbConnKv,
+      logger: ctx.logger
+    }),
+    // spacesCoreServer: await SpacesCoreServer({
+    //   t: 'stream',
+    //   stream: await Stream({ t: 'in-memory', parser: WithEventMeta(MsgCore) }),
+    //   dbConnKv: ctx.dbConnKv,
+    //   logger: ctx.logger
+    // }),
     games: GamesServer.initCtx({ ctx: { ...ctx, space: Space.random() } })
   }
 }

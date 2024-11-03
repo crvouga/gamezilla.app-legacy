@@ -6,12 +6,13 @@ import { FixtureAppClient } from 'gamezilla-app/app/@/client/client-test-env'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
-import { withEventId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { GameName } from '../../games/@/game-name'
 import { SpaceCore, type MsgCore } from '../../core'
 import * as SpaceClient from '../../client'
 import type * as SpacesTypes from '../../types'
 import { SpaceClientCtx } from '../space-client-ctx'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
 
 //
 //
@@ -125,16 +126,29 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
   const space = pipe(
     SpaceCore.init,
     (model) =>
-      SpaceCore.appendEvent({
+      EventSourced.appendEvent(
+        SpaceCore.config,
         model,
-        msgCore: withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId })
-      }),
+        withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const)
+      ),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId }) }),
+      EventSourced.appendEvent(
+        SpaceCore.config,
+        model,
+        withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const)
+      ),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
+      EventSourced.appendEvent(
+        SpaceCore.config,
+        model,
+        withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)
+      ),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId }) }),
+      EventSourced.appendEvent(
+        SpaceCore.config,
+        model,
+        withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)
+      ),
     (model) => SpaceCore.toSpaceStarted(model),
     (space) => {
       if (!space) {
@@ -289,7 +303,7 @@ export const userJoinedSpace =
             spaceId: spaceId,
             userId: userId
           }),
-          happenedAt: pipe(space.clock, LamportClock.increment, LamportClock.toCurrentTime)
+          happenedAt: pipe(space._clock, LamportClock.increment, LamportClock.toCurrentTime)
         }
       }
     })
@@ -335,7 +349,7 @@ export const userLeftSpace =
             spaceId: spaceId,
             userId: userId
           }),
-          happenedAt: pipe(space.clock, LamportClock.increment, LamportClock.toCurrentTime)
+          happenedAt: pipe(space._clock, LamportClock.increment, LamportClock.toCurrentTime)
         }
       }
     })
@@ -387,14 +401,7 @@ const toStartedSpace = (spaceId: SpaceId, startedBy: UserId) => {
       spaceId,
       userId: startedBy
     })
-  ].reduce(
-    (model, msgEvt) =>
-      SpaceCore.appendEvent({
-        model,
-        msgCore: msgEvt
-      }),
-    SpaceCore.init
-  )
+  ].reduce((model, msgEvt) => EventSourced.appendEvent(SpaceCore.config, model, msgEvt), SpaceCore.init)
 }
 
 export const serverListedSpaces =
@@ -472,7 +479,7 @@ export const userInputtedGame =
             spaceId,
             userId
           }),
-          happenedAt: pipe(space.clock, LamportClock.increment, LamportClock.toCurrentTime)
+          happenedAt: pipe(space._clock, LamportClock.increment, LamportClock.toCurrentTime)
         }
       }
     })

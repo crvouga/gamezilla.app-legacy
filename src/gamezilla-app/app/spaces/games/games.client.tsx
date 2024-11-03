@@ -1,17 +1,17 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
+import { WithEventId, withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { APP_SOUND, type AppClientCtx, playSound } from 'gamezilla-app/app/@/client'
+import { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { TopBar, Typography } from 'gamezilla-app/app/@/ui'
-import { type WithEventId, withEventId } from '../@/event'
-import { SpaceClientCmd } from '../@/space-client-cmd'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import { SpaceCore, type MsgCore } from '../core'
+import { SpaceClientCmd } from '../@/space-client-cmd'
+import { MsgCore, SpaceCore } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import type { MsgClient } from '../types'
+import { ViewUsersInSpaceList } from './@/game/users-in-space-list'
 import { GameCoverArt } from './game-cover-art'
 import { GameClient } from './game.client'
 import { gameNameList } from './game.types'
-import { UserAccount } from 'gamezilla-app/app/@/data/account'
-import { ViewUsersInSpaceList } from './@/game/users-in-space-list'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
@@ -188,7 +188,14 @@ const updateGame: SpaceClientModule['update'] = (input) => {
     ),
     eff: Eff.map(gameUpdated.eff, (c) => ({ t: 'game', c, spaceId })),
     msgEvt: [],
-    msgCore: (gameUpdated.msgCore ?? []).map((c): WithEventId<MsgCore> => withEventId({ spaceId, t: 'game', c }))
+    msgCore: (gameUpdated.msgCore ?? []).map(
+      (c): WithEventId<MsgCore> =>
+        withEventId({
+          spaceId,
+          t: 'game',
+          c
+        })
+    )
   }
 }
 

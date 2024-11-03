@@ -1,6 +1,6 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import { APP_SOUND, AppClientCmd, playSound } from 'gamezilla-app/app/@/client'
-import { withEventId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import type { SpaceClientCmd } from '../../@/space-client-cmd'

@@ -1,4 +1,5 @@
 import { unwrapOr } from 'gamezilla-app/@/core'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
 import { AppServerCtx, broadcast, sendToClient, sendToUser } from 'gamezilla-app/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceCore, SpaceCoreState } from '../core'
@@ -42,7 +43,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
 
       const profiles = await spacesToProfiles(input.ctx, [spaceNew])
 
-      const starting = Space.startFromLatestSnapshot(spaceNew)
+      const starting = EventSourced.startFromLatestSnapshot(spaceNew)
 
       return {
         msgCmd: [
@@ -63,11 +64,14 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
 
 const spacesToProfiles = async (ctx: AppServerCtx, spaces: Space.Model[]) => {
   const userIds = spaces.flatMap((space) => {
-    const state = Space.deriveState(space)
-    if (state.type === 'started') {
-      return Object.values(state.users)
+    const state = EventSourced.deriveState(SpaceCore.config, space)
+    switch (state.type) {
+      case 'started':
+        return SpaceCoreState.toUserIds(state)
+
+      default:
+        return []
     }
-    return []
   })
 
   const got = await ctx.profileCache.get(userIds)
@@ -88,7 +92,7 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
 
       const profiles = await spacesToProfiles(input.ctx, [space])
 
-      const started = Space.startFromLatestSnapshot(space)
+      const started = EventSourced.startFromLatestSnapshot(space)
 
       return {
         msgCmd: [
@@ -120,7 +124,7 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
 
   const space = unwrapOr(got, null) ?? SpaceCore.init
 
-  const eventWithMeta = SpaceCore.toEventWithMeta(space, input.msgCore.eventId)
+  const eventWithMeta = EventSourced.toEventWithMeta(space, input.msgCore.eventId)
 
   if (!eventWithMeta) {
     return {}

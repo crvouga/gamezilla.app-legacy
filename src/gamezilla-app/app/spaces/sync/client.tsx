@@ -1,6 +1,6 @@
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
 import { addProfiles, sendToServer } from 'gamezilla-app/app/@/client'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import { SpaceCore } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 
 const update: SpaceClientModule['update'] = (input) => {
@@ -84,7 +84,7 @@ const updateCore: SpaceClientModule['update'] = (input) => {
         }
       }
 
-      const started = SpaceCore.startFromLatestSnapshot(currentUserSpace)
+      const started = EventSourced.startFromLatestSnapshot(currentUserSpace)
 
       return {
         model: {

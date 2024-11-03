@@ -1,28 +1,16 @@
 import { APP_SOUND, playSound, pushRoute, showToast } from 'gamezilla-app/app/@/client'
 import { Button, Typography } from 'gamezilla-app/app/@/ui'
-import { withEventId } from '../@/event'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import type { MsgCore } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateEndSpaceButton({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromSpaceEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromAppEvent({
-        ...input,
-        model
-      })
+    (model) => updateEndSpaceButton({ ...input, model }),
+    (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => updateFromAppEvent({ ...input, model })
   )
 }
 

@@ -20,17 +20,17 @@ export const WithEventMeta = <T>(parser: p.Parser<T>) => {
   return p.and(parser, EventMeta)
 }
 
-export const withEventMeta = <T>(msg: T): WithEventMeta<T> => {
+export const withEventMeta = <T>(event: T): WithEventMeta<T> => {
   return {
-    ...msg,
+    ...event,
     happenedAt: LamportTimestamp.fromNumber(0),
     eventId: EventId.generate()
   }
 }
 
-export const withEventId = <T>(msg: T): WithEventId<T> => {
+export const withEventId = <T>(event: T): WithEventId<T> => {
   return {
-    ...msg,
+    ...event,
     eventId: EventId.generate()
   }
 }

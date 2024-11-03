@@ -5,14 +5,14 @@ import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, AppClientCmd, AppClientCtx, ClientEvt } from '../@/client'
 import { UserAccount } from '../@/data/account'
 import type { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
-import type { WithEventId, WithEventMeta } from './@/event'
+import type { WithEventId, WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
 import type * as Spaces from './core/client/spaces-core.client'
-import type { MsgCore } from './core/event'
 import { ISpacesCoreServer } from './core/server/interface'
 import type * as Space from './core/space-core'
 import { GameName } from './games/@/game-name'
 import type * as Game from './games/game.types'
 import * as GamesTypes from './games/game.types'
+import { MsgCore } from './core'
 
 //
 //

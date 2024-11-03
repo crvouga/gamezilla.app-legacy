@@ -4,9 +4,9 @@ import { SpaceServerCmd } from '../@/space-server-cmd'
 import type { MsgServer } from '../types'
 import { GameServer } from './game.server'
 import { SpaceCore } from '../core'
-import { withEventId } from '../@/event'
 import { GamesServerCtx } from './games.types'
 import { SpaceServerCtx } from '../@/space-server-ctx'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 
 const initCtx = (input: { ctx: SpaceServerCtx }): GamesServerCtx => {
   const gameCtx = GameServer.initCtx(input)

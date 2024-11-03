@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from 'gamezilla-app/@/core'
-import { withEventId, withEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId, withEventMeta } from 'gamezilla-app/@/event-sourced/event'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { FlowCreateFixtureServer } from '../@/testing/server'

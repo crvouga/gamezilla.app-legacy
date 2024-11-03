@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
-import { withEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import { withEventMeta } from 'gamezilla-app/@/event-sourced/event'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleClient()

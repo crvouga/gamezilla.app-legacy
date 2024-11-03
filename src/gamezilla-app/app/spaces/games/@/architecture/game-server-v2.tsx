@@ -1,7 +1,7 @@
 import { NonEmpty, type Sub } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
-import type { WithEventId } from 'gamezilla-app/app/spaces/@/event'
+import type { WithEventId } from 'gamezilla-app/@/event-sourced/event'
 
 //
 //

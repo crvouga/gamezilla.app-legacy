@@ -1,9 +1,10 @@
-import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { EventId, type WithEventId } from '../../@/event'
-import * as SpaceState from '../space-state'
-import * as Space from '../space-core'
-import type { MsgCore } from '../event'
 import { p } from 'gamezilla-app/@/core/parser'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { EventId, WithEventId } from 'gamezilla-app/@/event-sourced/event'
+import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
+import { SpaceCore } from '..'
+import type { MsgCore } from '../event'
+import * as SpaceState from '../space-state'
 
 //
 //
@@ -19,7 +20,7 @@ export const SpaceError = p.obj({
 export type SpaceError = p.Infer<typeof SpaceError>
 
 export const Model = p.obj({
-  spaces: p.dict(SpaceId, Space.Model),
+  spaces: p.dict(SpaceId, SpaceCore.Model),
   indexSpaceIdByUserId: p.dict(UserId, SpaceId),
   errors: p.dict(EventId, SpaceError)
 })
@@ -51,7 +52,7 @@ export const listSpaces = ({
     spaceId?: SpaceId
   }
   sort?: 'newest' | 'oldest'
-}): Space.Model[] => {
+}): SpaceCore.Model[] => {
   if (whereAnd?.spaceId) {
     const space = model.spaces[whereAnd.spaceId]
 
@@ -62,7 +63,7 @@ export const listSpaces = ({
     return [space]
   }
 
-  const spaces: Space.Model[] = []
+  const spaces: SpaceCore.Model[] = []
 
   let i = -1
   for (const spaceId in model.spaces) {
@@ -78,7 +79,7 @@ export const listSpaces = ({
       continue
     }
 
-    const spaceState = Space.deriveState(spaceModel)
+    const spaceState = EventSourced.deriveState(SpaceCore.config, spaceModel)
 
     switch (spaceState.type) {
       case 'ended': {
@@ -88,7 +89,7 @@ export const listSpaces = ({
         break
       }
       case 'started': {
-        const started = Space.startFromLatestSnapshot(spaceModel)
+        const started = EventSourced.startFromLatestSnapshot(spaceModel)
         spaces.push(started)
         break
       }
@@ -106,7 +107,7 @@ export const toSpaceIdByUserId = (model: Model, userId: UserId | null | undefine
   return userId ? model.indexSpaceIdByUserId[userId] ?? null : null
 }
 
-export const toSpace = (model: Model, spaceId: SpaceId): Space.Model | null => {
+export const toSpace = (model: Model, spaceId: SpaceId): SpaceCore.Model | null => {
   return model.spaces[spaceId] ?? null
 }
 
@@ -116,10 +117,10 @@ export const toErrorByEvenId = (model: Model, eventId: EventId): SpaceError | nu
 
 export const hasEvent = (model: Model, spaceId: SpaceId, eventId: EventId): boolean => {
   const space = toSpace(model, spaceId)
-  return Boolean(space && Space.hasEvent(space, eventId))
+  return Boolean(space && EventSourced.hasEvent(space, eventId))
 }
 
-export const toSpaceByUserId = ({ model, userId }: { model: Model; userId: UserId }): Space.Model | null => {
+export const toSpaceByUserId = ({ model, userId }: { model: Model; userId: UserId }): SpaceCore.Model | null => {
   const spaceId = model.indexSpaceIdByUserId[userId]
 
   if (!spaceId) {
@@ -146,7 +147,7 @@ export const toEventWithMeta = (model: Model, spaceId: SpaceId, msgEvtId?: Event
     return null
   }
 
-  return Space.toEventWithMeta(space, msgEvtId)
+  return EventSourced.toEventWithMeta(space, msgEvtId)
 }
 
 export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined): SpaceState.State => {
@@ -160,7 +161,7 @@ export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined)
     return SpaceState.init
   }
 
-  const spaceState = Space.deriveState(spaceModel)
+  const spaceState = EventSourced.deriveState(SpaceCore.config, spaceModel)
 
   return spaceState
 }
@@ -176,7 +177,7 @@ export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceSta
     return null
   }
 
-  const spaceState = Space.toSpaceStarted(spaceModel)
+  const spaceState = SpaceCore.toSpaceStarted(spaceModel)
 
   return spaceState
 }
@@ -207,7 +208,7 @@ export const update = ({
     }
 
     case 'user-ended-space': {
-      const userIds = Space.toUserIds(model.spaces[msgCore.spaceId] ?? Space.init)
+      const userIds = SpaceCore.toUserIds(model.spaces[msgCore.spaceId] ?? SpaceCore.init)
 
       const spaceIdByUserIdNew = {
         ...model.indexSpaceIdByUserId
@@ -304,12 +305,9 @@ const append = (
 } => {
   const spaceId = msgCore.spaceId
 
-  const space = model.spaces[spaceId] ?? Space.init
+  const space = model.spaces[spaceId] ?? SpaceCore.init
 
-  const spaceNew = Space.appendEvent({
-    msgCore: msgCore,
-    model: space
-  })
+  const spaceNew = EventSourced.appendEvent(SpaceCore.config, space, msgCore)
 
   return {
     model: {
@@ -322,14 +320,14 @@ const append = (
   }
 }
 
-export const merge = (model: Model, space: Space.Model): Model => {
-  const spaceId = Space.toSpaceId(space)
+export const merge = (model: Model, space: SpaceCore.Model): Model => {
+  const spaceId = SpaceCore.toSpaceId(space)
 
   const maybeCurrentSpace = spaceId ? model.spaces[spaceId] : null
 
-  const currentSpace = maybeCurrentSpace ?? Space.init
+  const currentSpace = maybeCurrentSpace ?? SpaceCore.init
 
-  const spaceNew = Space.mergeLeft(currentSpace, space)
+  const spaceNew = EventSourced.mergeLeft(currentSpace, space)
 
   const indexSpaceIdByUserIdNew = updateIndexSpaceIdByUserId(model.indexSpaceIdByUserId, spaceNew)
 
@@ -349,9 +347,9 @@ export const merge = (model: Model, space: Space.Model): Model => {
 
 const updateIndexSpaceIdByUserId = (
   spaceIdByUserId: Model['indexSpaceIdByUserId'],
-  space: Space.Model
+  space: SpaceCore.Model
 ): Model['indexSpaceIdByUserId'] => {
-  const spaceState = Space.toSpaceStarted(space)
+  const spaceState = SpaceCore.toSpaceStarted(space)
 
   if (!spaceState) {
     return spaceIdByUserId

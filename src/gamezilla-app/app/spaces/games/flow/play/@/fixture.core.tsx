@@ -1,5 +1,5 @@
 import { NonEmpty } from 'gamezilla-app/@/core'
-import type { WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
+import type { WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
 import { SpaceCoreFixture } from 'gamezilla-app/app/spaces/@/fixture/core'
 import { PlayCore } from '../core'
 import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'

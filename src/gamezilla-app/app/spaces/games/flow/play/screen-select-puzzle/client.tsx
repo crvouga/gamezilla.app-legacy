@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
-import { withEventId } from 'gamezilla-app/app/spaces/@/event'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
 import { FlowPackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'

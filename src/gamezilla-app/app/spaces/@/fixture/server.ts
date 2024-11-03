@@ -1,4 +1,6 @@
 import { pipe, Posix } from 'gamezilla-app/@/core'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { EventId, withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { ClientId, Profile, SessionId, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { AppServerCtx } from 'gamezilla-app/app/@/server'
@@ -14,7 +16,6 @@ import { SpacesCoreServer } from '../../core/server'
 import { GameServer } from '../../games/game.server'
 import * as SpacesServer from '../../server'
 import type { ServerDeps } from '../../types'
-import { EventId, withEventId } from '../event'
 import { SpaceServerCtx } from '../space-server-ctx'
 
 export const FixtureSpaceServer = async () => {
@@ -31,14 +32,23 @@ export const FixtureSpaceServer = async () => {
   const space = pipe(
     SpaceCore.init,
     (model) =>
-      SpaceCore.appendEvent({
+      EventSourced.appendEvent(
+        SpaceCore.config,
         model,
-        msgCore: withEventId({ t: 'user-started-space', spaceId, userId: userA.userId })
-      }),
+        withEventId({ t: 'user-started-space', spaceId, userId: userA.userId } as const)
+      ),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId }) }),
+      EventSourced.appendEvent(
+        SpaceCore.config,
+        model,
+        withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)
+      ),
     (model) =>
-      SpaceCore.appendEvent({ model, msgCore: withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId }) })
+      EventSourced.appendEvent(
+        SpaceCore.config,
+        model,
+        withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)
+      )
   )
 
   const spaceState = SpaceCore.toSpaceStarted(space)
