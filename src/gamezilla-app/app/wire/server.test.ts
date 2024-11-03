@@ -50,15 +50,7 @@ describe(import.meta.file, () => {
 
     const before = await f.ctx.wireSessionDb.findBySessionIds([sessionId])
 
-    await f.update({}, [
-      {
-        msg: {
-          t: 'client-connected',
-          clientId,
-          sessionId
-        }
-      }
-    ])
+    await f.update({}, [{ msg: { t: 'client-connected', clientId, sessionId } }])
 
     const after = await f.ctx.wireSessionDb.findBySessionIds([sessionId])
 
@@ -77,21 +69,8 @@ describe(import.meta.file, () => {
     const before = await f.ctx.wireSessionDb.findByUserIds([user.userId])
 
     await f.update({}, [
-      {
-        msg: {
-          t: 'client-connected',
-          clientId,
-          sessionId
-        }
-      },
-      {
-        msgEvt: {
-          t: 'auth/client-authenticated',
-          user,
-          clientId,
-          sessionId
-        }
-      }
+      { msg: { t: 'client-connected', clientId, sessionId } },
+      { msgEvt: { t: 'auth/client-authenticated', user, clientId, sessionId } }
     ])
 
     const after = await f.ctx.wireSessionDb.findByUserIds([user.userId])
@@ -120,23 +99,8 @@ describe(import.meta.file, () => {
     })
 
     await f.update({}, [
-      {
-        msg: {
-          t: 'client-connected',
-          clientId,
-          sessionId
-        }
-      },
-      {
-        msgCmd: {
-          t: 'wire',
-          c: {
-            t: 'send-to-client',
-            clientIds: [clientId],
-            msg
-          }
-        }
-      }
+      { msg: { t: 'client-connected', clientId, sessionId } },
+      { msgCmd: { t: 'wire', c: { t: 'send-to-client', clientIds: [clientId], msg } } }
     ])
 
     const expected: ToClientPayload<unknown>[] = [{ [clientId]: { clientId, msgs: [msg] } }]
