@@ -109,6 +109,12 @@ const updateLeaveSpaceButton: SpaceClientModule['update'] = ({ ctx, model, msg }
 }
 
 const ViewLeaveSpaceButton: SpaceClientModule['View'] = (input) => {
+  const userSpaceId = input.ctx.currentUserId ? input.model.indexSpaceIdByUserId[input.ctx.currentUserId] : null
+
+  if (!userSpaceId) {
+    return null
+  }
+
   return (
     <Button
       color='danger'
@@ -117,7 +123,8 @@ const ViewLeaveSpaceButton: SpaceClientModule['View'] = (input) => {
       text={input.ctx.t('spaces.leave')}
       onClick={() =>
         input.dispatch({
-          t: 'clicked-leave-space-button'
+          t: 'clicked-leave-space-button',
+          spaceId: userSpaceId
         })
       }
     />

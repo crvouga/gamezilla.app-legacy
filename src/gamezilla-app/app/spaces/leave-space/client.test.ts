@@ -49,7 +49,8 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'clicked-leave-space-button'
+          t: 'clicked-leave-space-button',
+          spaceId: spaceId
         }
       }
     ])
@@ -104,7 +105,7 @@ describe(import.meta.file, () => {
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       userJoinedSpace(ctx, ctx.currentUserId, spaceId),
-      clickedLeaveSpaceButton(ctx)
+      clickedLeaveSpaceButton(ctx, spaceId)
     )
 
     expect(SpacesCoreClient.toSpaceIdByUserId(updated.model, ctx.currentUserId)).toEqual(null)
@@ -120,7 +121,7 @@ describe(import.meta.file, () => {
       userJoinedSpace(ctx, ctx.currentUserId, spaceId)
     )
 
-    const left = andThen(joined, clickedLeaveSpaceButton(ctx))
+    const left = andThen(joined, clickedLeaveSpaceButton(ctx, spaceId))
 
     expect(didPlaySound(left)).toBe(true)
   })

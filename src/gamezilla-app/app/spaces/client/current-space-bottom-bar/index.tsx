@@ -110,10 +110,12 @@ const View = ({
           {ctx.currentUserId === space.hostId && (
             <Button
               color='danger'
+              variant='text'
               text={ctx.t('spaces.end')}
               onClick={() =>
                 dispatch({
-                  t: 'clicked-end-space-button'
+                  t: 'clicked-end-space-button',
+                  spaceId: userSpaceId
                 })
               }
               size='sm'
@@ -123,10 +125,12 @@ const View = ({
           {ctx.currentUserId !== space.hostId && (
             <Button
               color='danger'
+              variant='text'
               text={ctx.t('spaces.leave')}
               onClick={() =>
                 dispatch({
-                  t: 'clicked-leave-space-button'
+                  t: 'clicked-leave-space-button',
+                  spaceId: userSpaceId
                 })
               }
               size='sm'

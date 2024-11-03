@@ -56,8 +56,8 @@ export type MsgClient =
   | { t: 'clicked-go-home-button' }
   | { t: 'clicked-game-tile'; gameName: GameName }
   | { t: 'clicked-join-space-button'; spaceId: SpaceId }
-  | { t: 'clicked-end-space-button' }
-  | { t: 'clicked-leave-space-button' }
+  | { t: 'clicked-end-space-button'; spaceId: SpaceId }
+  | { t: 'clicked-leave-space-button'; spaceId: SpaceId }
   | { t: 'clicked-start-space-button'; spaceId: SpaceId }
   | { t: 'closed-modal' }
   | { t: 'clicked-people-button' }

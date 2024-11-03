@@ -111,7 +111,8 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'clicked-leave-space-button'
+          t: 'clicked-leave-space-button',
+          spaceId: f.spaceId
         }
       }
     ])

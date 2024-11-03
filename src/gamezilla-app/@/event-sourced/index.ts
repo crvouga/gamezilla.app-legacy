@@ -98,7 +98,7 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
         eventIds: eventIds,
         events: events,
         clock: model.clock,
-        snapshots: snapshots,
+        snapshots: CappedOrderedDict.add(snapshots, event.eventId, snapshot),
         initial: snapshot
       }
     }
@@ -113,7 +113,7 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
   }
 }
 
-const toLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TState>): TState | null => {
+const toLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TState>): TState => {
   for (let i = model.events.length - 1; i >= 0; i--) {
     const event = model.events[i]
 
@@ -128,7 +128,7 @@ const toLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TState>): 
     }
   }
 
-  return null
+  return model.initial
 }
 
 //

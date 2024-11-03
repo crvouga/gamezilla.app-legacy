@@ -163,6 +163,10 @@ const updateEndSpaceButton: SpaceClientModule['update'] = ({ msg, model, ctx }) 
 }
 
 export const ViewEndSpaceButton: SpaceClientModule['View'] = (input) => {
+  const userSpaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+  if (!userSpaceId) {
+    return null
+  }
   return (
     <Button
       color='danger'
@@ -171,7 +175,8 @@ export const ViewEndSpaceButton: SpaceClientModule['View'] = (input) => {
       text={input.ctx.t('spaces.end')}
       onClick={() =>
         input.dispatch({
-          t: 'clicked-end-space-button'
+          t: 'clicked-end-space-button',
+          spaceId: userSpaceId
         })
       }
     />

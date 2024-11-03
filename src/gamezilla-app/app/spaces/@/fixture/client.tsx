@@ -355,12 +355,13 @@ export const userLeftSpace =
     })
   }
 
-export const clickedLeaveSpaceButton = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const clickedLeaveSpaceButton = (ctx: AppClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
     msg: {
-      t: 'clicked-leave-space-button'
+      t: 'clicked-leave-space-button',
+      spaceId
     }
   })
 }
@@ -448,12 +449,13 @@ export const userEndedSpace =
     })
   }
 
-export const userClickedEndSpaceButton = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const userClickedEndSpaceButton = (ctx: AppClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
     msg: {
-      t: 'clicked-end-space-button'
+      t: 'clicked-end-space-button',
+      spaceId
     }
   })
 }

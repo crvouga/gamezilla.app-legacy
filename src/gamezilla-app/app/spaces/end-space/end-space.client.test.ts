@@ -13,14 +13,17 @@ describe(import.meta.file, () => {
     const updated = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
-      userClickedEndSpaceButton({
-        ...ctx,
-        currentRoute: {
-          n: 'spaces',
-          t: 'space',
-          spaceId
-        }
-      })
+      userClickedEndSpaceButton(
+        {
+          ...ctx,
+          currentRoute: {
+            n: 'spaces',
+            t: 'space',
+            spaceId
+          }
+        },
+        spaceId
+      )
     )
 
     expect(didPushRoute(updated)).toBe(true)
@@ -36,13 +39,16 @@ describe(import.meta.file, () => {
       {
         model: updated.model
       },
-      userClickedEndSpaceButton({
-        ...ctx,
-        currentRoute: {
-          n: 'spaces',
-          t: 'space-list'
-        }
-      })
+      userClickedEndSpaceButton(
+        {
+          ...ctx,
+          currentRoute: {
+            n: 'spaces',
+            t: 'space-list'
+          }
+        },
+        spaceId
+      )
     )
 
     expect(didPushRoute(output)).toBe(false)
@@ -54,7 +60,7 @@ describe(import.meta.file, () => {
     const updated = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
-      userClickedEndSpaceButton(ctx)
+      userClickedEndSpaceButton(ctx, spaceId)
     )
     expect(didPlaySound(updated)).toBe(true)
   })
