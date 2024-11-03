@@ -1,10 +1,10 @@
-import { Task, isOk } from 'gamezilla-app/@/core'
+import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
+import { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { WireSession } from '../wire-session'
+import type { IWireSessionDb } from './interface'
 import { p } from 'gamezilla-app/@/core/parser'
 import { SessionId } from 'gamezilla-app/app/@/data'
-import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import { Client } from '../wire.types'
-import type { IWireSessionDb } from './interface'
-import { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { isErr, unwrapOr } from 'gamezilla-app/@/core'
 
 export type Config = {
   t: 'db-conn-kv'
@@ -12,37 +12,53 @@ export type Config = {
   logger: ILogger
 }
 
-export const WireSessionDb = ({ dbConnKv }: Config): IWireSessionDb => {
-  const clientsKv = DbConnKv.withNamespace({
-    dbConnKv,
-    namespace: ['wire-session-db', 'clients-by-session-id'],
-    parser: Client
+export const WireSessionDb = (config: Config): IWireSessionDb => {
+  const wireSessionBySessionId = DbConnKv.withNamespace({
+    dbConnKv: config.dbConnKv,
+    namespace: ['wire-session-db', 'wire-sessions-by-session-id'],
+    parser: WireSession
   })
-  const sessionIdsKv = DbConnKv.withNamespace({
-    dbConnKv,
-    namespace: ['wire-session-db', 'session-ids-by-user-id'],
-    parser: p.arr(p.custom(SessionId.is, 'Invalid session id'))
+
+  const indexSessionIdsByUserId = DbConnKv.withNamespace({
+    dbConnKv: config.dbConnKv,
+    namespace: ['wire-session-db', 'index-session-ids-by-user-id'],
+    parser: p.arr(SessionId)
   })
+
   return {
-    clients: {
-      async findBySessionIds(sessionIds) {
-        const got = await Promise.all(sessionIds.map((sessionId) => clientsKv.get(sessionId)))
-        const clients = got.flatMap((x) => (isOk(x) ? x.value ?? [] : []))
-        return Task.ok(clients)
-      },
-      async set(sessionId, client) {
-        return Task.p(clientsKv.set(sessionId, client), () => Task.ok(null))
-      }
+    async findBySessionIds(sessionIds) {
+      const got = await wireSessionBySessionId.getMany(sessionIds)
+      return got
     },
-    sessionIds: {
-      async findByUserIds(userIds) {
-        const got = await Promise.all(userIds.map((userId) => sessionIdsKv.get(userId)))
-        const sessionIds = got.flatMap((x) => (isOk(x) ? x.value ?? [] : []))
-        return Task.ok(sessionIds)
-      },
-      async set(userId, sessionId) {
-        return Task.p(sessionIdsKv.set(userId, sessionId), () => Task.ok(null))
+
+    async findByUserIds(userIds) {
+      const sessionIds = unwrapOr(await indexSessionIdsByUserId.getMany(userIds), []).flat()
+      const got = await wireSessionBySessionId.getMany(sessionIds)
+      return got
+    },
+
+    async put(wireSessions) {
+      const put = await wireSessionBySessionId.setMany(
+        wireSessions.map((wireSession) => [wireSession.sessionId, wireSession])
+      )
+
+      if (isErr(put)) {
+        return put
       }
+
+      await Promise.all(
+        wireSessions.map(async (wireSession) => {
+          if (wireSession.userId) {
+            const sessionIds = unwrapOr(await indexSessionIdsByUserId.getMany([wireSession.userId]), []).flat()
+            if (!sessionIds.includes(wireSession.sessionId)) {
+              const sessionIdsNew = [...sessionIds, wireSession.sessionId]
+              await indexSessionIdsByUserId.set(wireSession.userId, sessionIdsNew)
+            }
+          }
+        })
+      )
+
+      return put
     }
   }
 }

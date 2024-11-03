@@ -19,8 +19,8 @@ import * as LangServer from './lang/lang.server'
 import * as ProfileServer from './profile/profile.server'
 import * as SpaceServer from './spaces/spaces.server'
 import { WireTypes } from './wire'
-import { ServerTransport, type IServerTransport } from './wire/transport-server'
-import * as WireServer from './wire/wire.server'
+import * as WireServer from './wire/server'
+import { ServerTransport, type IServerTransport } from './wire/transport/server'
 
 //
 //
@@ -193,10 +193,7 @@ const logMsg = ({
   const obj = { ...msg, ...msgEvt, ...msgCmd }
 
   const sentMsgType =
-    msgCmd?.c.t === 'send-to-client' ||
-    msgCmd?.c.t === 'send-to-session' ||
-    msgCmd?.c.t === 'send-to-user' ||
-    msgCmd?.c.t === 'broadcast'
+    msgCmd?.c.t === 'send-to-client' || msgCmd?.c.t === 'send-to-user' || msgCmd?.c.t === 'broadcast'
       ? Msg.toMsgType(msgCmd.c.msg)
       : null
 

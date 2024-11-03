@@ -22,8 +22,8 @@ import * as AuthClient from './auth/auth.client'
 import * as LangClient from './lang/lang.client'
 import * as ProfileClient from './profile/profile.client'
 import * as SpaceClient from './spaces/spaces.client'
-import { ClientTransport, type IClientTransport } from './wire/transport-client'
-import * as WireClient from './wire/wire.client'
+import { ClientTransport, type IClientTransport } from './wire/transport/client'
+import * as WireClient from './wire/client'
 
 //
 //

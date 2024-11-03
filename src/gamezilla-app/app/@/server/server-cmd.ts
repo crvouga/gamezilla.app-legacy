@@ -26,11 +26,6 @@ export type WireCmd<MsgToClient> = {
         msg: MsgToClient
       }
     | {
-        t: 'send-to-session'
-        sessionIds: SessionId[]
-        msg: MsgToClient
-      }
-    | {
         t: 'topic-publish'
         topics: string[]
         msg: MsgToClient
@@ -132,17 +127,6 @@ export const didSendMsgToClient = <MsgToClient>(
   return output.msgCmd?.some((cmd) => cmd.t === 'wire' && 'msg' in cmd.c && predicate(cmd.c.msg)) ?? false
 }
 
-export const sendToSession = <MsgToClient>(sessionIds: SessionId[], msg: MsgToClient): ServerCmd<MsgToClient> => {
-  return {
-    t: 'wire',
-    c: {
-      t: 'send-to-session',
-      sessionIds,
-      msg
-    }
-  }
-}
-
 export const sendToUser = <MsgToClient>(userIds: UserId[], msg: MsgToClient): ServerCmd<MsgToClient> => {
   return {
     t: 'wire',
@@ -168,7 +152,6 @@ const mapOne = <A, B>(fn: (a: A) => B, msgCmd: ServerCmd<A>): ServerCmd<B> => {
     case 'wire': {
       switch (msgCmd.c.t) {
         case 'send-to-user':
-        case 'send-to-session':
         case 'send-to-client':
         case 'topic-publish':
         case 'broadcast': {

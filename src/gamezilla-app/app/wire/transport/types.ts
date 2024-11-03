@@ -1,5 +1,5 @@
 import { IS_PROD } from 'gamezilla-app/config-public'
-import type { SessionId } from '../@/data'
+import type { SessionId } from 'gamezilla-app/app/@/data'
 
 export type MsgServerToMsgClient<MsgToClient> = {
   m: MsgToClient[]

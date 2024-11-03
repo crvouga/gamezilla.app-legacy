@@ -1,4 +1,4 @@
-import type { MsgClientToMsgServer, MsgServerToMsgClient } from '../transport.core'
+import type { MsgClientToMsgServer, MsgServerToMsgClient } from '../types'
 import {
   type ClientTransportCommand,
   type ClientTransportEvent,

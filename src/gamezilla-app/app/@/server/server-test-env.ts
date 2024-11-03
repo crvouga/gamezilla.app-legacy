@@ -4,32 +4,25 @@ import { ClientId, SessionId } from '../data'
 import { DbConnKv, type IDbConnKv } from './db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './db-conn-sql'
 import { Logger } from './logger'
-import { PubSubTopicBased } from './pub-sub-topic-based'
+import { IPubSubTopicBased, PubSubTopicBased } from './pub-sub-topic-based'
 import type { AppServerCtx } from './server-ctx'
 import { SMS } from './sms'
 import { ProfileCache } from './profile-cache'
 
-export type ITestEnv =
-  | {
-      t: 'unit'
-      dbConnKv: IDbConnKv
-    }
-  | {
-      t: 'integration'
-      dbConnSql: IDbConnSql
-      dbConnKv: IDbConnKv
-    }
-  | {
-      t: 'all'
-      dbConnSql: IDbConnSql
-      dbConnKv: IDbConnKv
-    }
+export type ITestEnv = {
+  t: 'unit' | 'integration' | 'all'
+  dbConnKv: IDbConnKv
+  pubSubTopicBased: IPubSubTopicBased
+  dbConnSql: IDbConnSql
+}
 
 export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   if (process.env.IS_INTEGRATION_TEST !== 'true') {
     return {
       t: 'unit',
-      dbConnKv: await DbConnKv({ t: 'hash-map' })
+      dbConnKv: await DbConnKv({ t: 'hash-map' }),
+      pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', map: new Map() }),
+      dbConnSql: await DbConnSql({ t: 'noop' })
     }
   }
 
@@ -49,10 +42,13 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
     simulateLatency: async () => {}
   })
 
+  const pubSubTopicBased = await PubSubTopicBased({ t: 'redis', logger, redisUrl: REDIS_URL })
+
   return {
     t: 'integration',
     dbConnSql,
-    dbConnKv
+    dbConnKv,
+    pubSubTopicBased
   }
 }
 

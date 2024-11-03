@@ -1,13 +1,14 @@
 import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
-import { isErr, Result, unwrapOr } from 'gamezilla-app/@/core'
+import { unwrapOr } from 'gamezilla-app/@/core'
 import type { Sub } from 'gamezilla-app/@/core/sub'
-import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
+import type { ClientId } from 'gamezilla-app/app/@/data'
 import type { AppServerCtx, ServerCmd, ServerEvt, WireCmd } from 'gamezilla-app/app/@/server'
 import { AppServerModule } from '../@/architecture/app-server'
 import { Logger } from '../@/server/logger'
-import type { IServerTransport } from './transport-server'
+import type { IServerTransport } from './transport/server'
+import type { MsgServer, MsgToClient, MsgToServer, ServerCtx } from './types'
+import { WireSession } from './wire-session'
 import { WireSessionDb } from './wire-session-db'
-import type { Client, MsgServer, MsgToClient, MsgToServer, ServerCtx } from './wire.types'
 
 //
 //
@@ -28,7 +29,7 @@ export const initCtx = async <TMsgToClient, TMsgToServer>(input: {
     ...input.ctx,
     transport: input.transport,
     wireSessionDb: await WireSessionDb({
-      t: 'db-conn-kv-with-cache',
+      t: 'cached-db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
       pubSubTopicBased: input.ctx.pubSub,
       logger
@@ -74,29 +75,18 @@ const updateFromMsg: typeof update = async (input) => {
   if (!input.msg) {
     return {}
   }
+
   switch (input.msg.t) {
     case 'client-connected': {
-      const gotExisting = await input.ctx.wireSessionDb.clients.findBySessionIds([input.msg.sessionId])
+      const got = await input.ctx.wireSessionDb.findBySessionIds([input.msg.sessionId])
 
-      const maybeExisting: Client | null = gotExisting.t === 'ok' ? gotExisting.value[0] ?? null : null
+      const maybeSession: WireSession | null = got.t === 'ok' ? got.value[0] ?? null : null
 
-      const existing: Client = maybeExisting ?? {
-        clientIds: CappedOrderedDict.init({
-          maxSize: 10
-        }),
-        sessionId: input.msg.sessionId
-      }
+      const session: WireSession = maybeSession ?? WireSession.init(input.msg.sessionId)
 
-      const clientNew: Client = {
-        sessionId: input.msg.sessionId,
-        clientIds: CappedOrderedDict.add(existing.clientIds, input.msg.clientId, input.msg.clientId)
-      }
+      const sessionNew = WireSession.addClientId(session, input.msg.clientId)
 
-      const set = await input.ctx.wireSessionDb.clients.set(input.msg.sessionId, clientNew)
-
-      if (isErr(set)) {
-        return {}
-      }
+      await input.ctx.wireSessionDb.put([sessionNew])
 
       return {
         msgEvt: [
@@ -135,20 +125,12 @@ const updateFromMsg: typeof update = async (input) => {
 }
 
 const updateFromEvent: typeof update = async (input) => {
-  if (!input.msgEvt) {
-    return {}
-  }
-  switch (input.msgEvt.t) {
+  switch (input.msgEvt?.t) {
     case 'auth/client-authenticated': {
-      const sessionIds = unwrapOr(
-        await input.ctx.wireSessionDb.sessionIds.findByUserIds([input.msgEvt.account.userId]),
-        []
-      )
-
-      const sessionIdsNew = Array.from(new Set([...sessionIds, input.msgEvt.sessionId]))
-
-      await input.ctx.wireSessionDb.sessionIds.set(input.msgEvt.account.userId, sessionIdsNew)
-
+      const wireSessions = unwrapOr(await input.ctx.wireSessionDb.findByUserIds([input.msgEvt.account.userId]), [])
+      const userId = input.msgEvt.account.userId
+      const wireSessionsNew = wireSessions.map((wireSession) => WireSession.addUserId(wireSession, userId))
+      await input.ctx.wireSessionDb.put(wireSessionsNew)
       return {}
     }
     default: {
@@ -195,24 +177,32 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
     }
 
     case 'send-to-user': {
-      const gotSessionIds = await input.ctx.wireSessionDb.sessionIds.findByUserIds(msgCmdChild.userIds)
+      const wireSessions = unwrapOr(await input.ctx.wireSessionDb.findByUserIds(msgCmdChild.userIds), [])
 
-      const sessionIds = gotSessionIds.t === 'ok' ? gotSessionIds.value : []
+      const toClientPayload: {
+        [clientId: ClientId]: {
+          clientId: ClientId
+          msgs: TMsgToClient[]
+        }
+      } = {}
 
-      sendToSession({
-        ctx: input.ctx,
-        sessionIds,
-        msg: msgCmdChild.msg
-      })
-      return {}
-    }
+      for (const wireSession of wireSessions) {
+        const clientIds = CappedOrderedDict.valuesNewestFirst(wireSession.clientIds)
 
-    case 'send-to-session': {
-      sendToSession({
-        ctx: input.ctx,
-        sessionIds: msgCmdChild.sessionIds,
-        msg: msgCmdChild.msg
-      })
+        if (clientIds.length === 0) {
+          input.ctx.logger.warn(`send to user error. no client ids for sessionId=${wireSession.sessionId}`)
+          continue
+        }
+
+        for (const clientId of clientIds) {
+          toClientPayload[clientId] = {
+            clientId,
+            msgs: [msgCmdChild.msg]
+          }
+        }
+      }
+
+      input.ctx.transport.toClient.pub(toClientPayload)
       return {}
     }
 
@@ -224,50 +214,6 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
       return {}
     }
   }
-}
-
-const sendToSession = async <TMsgToClient, TMsgToServer>({
-  ctx,
-  sessionIds,
-  msg
-}: {
-  ctx: ServerCtx<TMsgToClient, TMsgToServer>
-  msg: TMsgToClient
-  sessionIds: SessionId[]
-}) => {
-  const toClientPayload: {
-    [clientId: ClientId]: {
-      clientId: ClientId
-      msgs: TMsgToClient[]
-    }
-  } = {}
-
-  if (sessionIds.length === 0) {
-    ctx.logger.warn('send to session failed. no sessionIds provided')
-    return
-  }
-
-  const gotClients = await ctx.wireSessionDb.clients.findBySessionIds(sessionIds)
-
-  const clients = Result.unwrapOr(gotClients, [])
-
-  for (const client of clients) {
-    const clientIds = CappedOrderedDict.valuesNewestFirst(client.clientIds)
-
-    if (clientIds.length === 0) {
-      ctx.logger.warn(`send to session failed. no client ids for sessionId=${client.sessionId}`)
-      continue
-    }
-
-    for (const clientId of clientIds) {
-      toClientPayload[clientId] = {
-        clientId,
-        msgs: [...(toClientPayload[clientId]?.msgs ?? []), msg]
-      }
-    }
-  }
-
-  ctx.transport.toClient.pub(toClientPayload)
 }
 
 export const subscriptions = <TMsgToServer, TMsgToClient>({

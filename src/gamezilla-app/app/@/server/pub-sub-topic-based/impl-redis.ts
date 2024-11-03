@@ -10,11 +10,15 @@ export type Config = {
 
 const MAX_MSG_LENGTH = 100
 let publisher: Redis
+let hasSubscribed = false
 export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBased> => {
   publisher ??= new Redis(config.redisUrl)
-  publisher.on('error', (err) => {
-    config.logger.error(`publisher error: ${err}`)
-  })
+  if (!hasSubscribed) {
+    publisher.on('error', (err) => {
+      config.logger.error(`publisher error: ${err}`)
+    })
+    hasSubscribed = true
+  }
   await publisher.ping()
 
   let runningSubscriberId = 0

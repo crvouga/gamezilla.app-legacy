@@ -1,1 +1,1 @@
-export * as WireTypes from './wire.types'
+export * as WireTypes from './types'

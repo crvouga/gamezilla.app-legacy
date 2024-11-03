@@ -1,7 +1,9 @@
-import type { Brand } from 'gamezilla-app/@/core/brand'
+import { p } from 'gamezilla-app/@/core/parser'
 import { Result } from '../../../@/core/result'
 
-export type ClientId = Brand<string, 'ClientId'>
+const parser = p.brand(p.str, 'ClientId')
+
+export type ClientId = p.Infer<typeof parser>
 
 const is = (id: unknown): id is ClientId => {
   return typeof id === 'string'
@@ -49,6 +51,7 @@ const generate = (): ClientId => {
 }
 
 export const ClientId = {
+  ...parser,
   is,
   decode,
   generate

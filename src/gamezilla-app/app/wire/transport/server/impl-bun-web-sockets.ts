@@ -9,7 +9,7 @@ import {
   toSetSessionCookie,
   type MsgClientToMsgServer,
   type MsgServerToMsgClient
-} from '../transport.core'
+} from '../types'
 import { initServerTransport, type IServerTransport } from './interface'
 
 type ServerWebSocketData = {
