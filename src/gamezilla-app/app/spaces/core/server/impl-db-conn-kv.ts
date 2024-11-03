@@ -104,7 +104,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
       return false
     }
 
-    return Boolean(got.value && eventId in got.value._eventIds)
+    return Boolean(got.value && eventId in got.value.eventIds)
   }
 
   return {

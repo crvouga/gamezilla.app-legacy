@@ -76,7 +76,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
 
     await snapshots.set(spaceId, snapshot)
 
-    await Promise.all(space._events.map((event) => config.stream.append(spaceId, event.eventId, event)))
+    await Promise.all(space.events.map((event) => config.stream.append(spaceId, event.eventId, event)))
 
     return Ok(null)
   }

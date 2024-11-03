@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
         output,
         (msg) =>
           msg.t === 'listed-spaces' &&
-          msg.spaces.some((space) => space._events.some((event) => event.spaceId === spaceId))
+          msg.spaces.some((space) => space.events.some((event) => event.spaceId === spaceId))
       )
     ).toBe(true)
   })

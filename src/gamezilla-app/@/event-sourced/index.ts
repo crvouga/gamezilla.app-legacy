@@ -5,11 +5,11 @@ import { LamportClock, LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { EventId, EventMeta, type WithEventId, type WithEventMeta } from './event'
 
 export type EventSourced<TEvent, TState> = {
-  _clock: LamportClock
-  _events: WithEventMeta<TEvent>[]
-  _eventIds: Record<EventId, EventId>
-  _snapshots: CappedOrderedDict<EventId, TState>
-  _initial: TState
+  clock: LamportClock
+  events: WithEventMeta<TEvent>[]
+  eventIds: Record<EventId, EventId>
+  snapshots: CappedOrderedDict<EventId, TState>
+  initial: TState
 }
 
 export type EventSourcedConfig<TEvent, TState> = {
@@ -21,11 +21,11 @@ const parser = <TEvent, TState>(
   stateParser: p.Parser<TState>
 ): p.Parser<EventSourced<TEvent, TState>> => {
   return p.obj({
-    _events: p.arr(p.and(EventMeta, eventParser)),
-    _eventIds: p.dict(EventId, EventId),
-    _clock: LamportClock,
-    _snapshots: CappedOrderedDict.parser(EventId, stateParser),
-    _initial: stateParser
+    events: p.arr(p.and(EventMeta, eventParser)),
+    eventIds: p.dict(EventId, EventId),
+    clock: LamportClock,
+    snapshots: CappedOrderedDict.parser(EventId, stateParser),
+    initial: stateParser
   })
 }
 
@@ -33,11 +33,11 @@ const SNAPSHOTS_MAX_SIZE = 10
 
 const init = <TEvent, TState>(initial: TState): EventSourced<TEvent, TState> => {
   return {
-    _clock: LamportClock.init,
-    _events: [],
-    _snapshots: CappedOrderedDict.init({ maxSize: SNAPSHOTS_MAX_SIZE }),
-    _eventIds: {},
-    _initial: initial
+    clock: LamportClock.init,
+    events: [],
+    snapshots: CappedOrderedDict.init({ maxSize: SNAPSHOTS_MAX_SIZE }),
+    eventIds: {},
+    initial: initial
   }
 }
 
@@ -47,19 +47,19 @@ const initFromSnapshot = <TEvent, TState>(
 ): EventSourced<TEvent, TState> => {
   const initial: EventSourced<TEvent, TState> = {
     ...init(snapshot),
-    _events: events
+    events: events
   }
 
   for (const event of events) {
-    initial._eventIds[event.eventId] = event.eventId
+    initial.eventIds[event.eventId] = event.eventId
   }
 
   const latestEvent = events[events.length - 1]
 
-  initial._clock = latestEvent?.happenedAt ? LamportClock.initFromTimestamp(latestEvent.happenedAt) : LamportClock.init
+  initial.clock = latestEvent?.happenedAt ? LamportClock.initFromTimestamp(latestEvent.happenedAt) : LamportClock.init
 
   if (latestEvent) {
-    initial._snapshots = CappedOrderedDict.add(initial._snapshots, latestEvent.eventId, snapshot)
+    initial.snapshots = CappedOrderedDict.add(initial.snapshots, latestEvent.eventId, snapshot)
   }
 
   return initial
@@ -75,53 +75,53 @@ const isSameState = <TEvent, TState>(
 
 const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TState>): EventSourced<TEvent, TState> => {
   const events: WithEventMeta<TEvent>[] = []
-  const eventIds: EventSourced<TEvent, TState>['_eventIds'] = {}
+  const eventIds: EventSourced<TEvent, TState>['eventIds'] = {}
 
-  const snapshots: EventSourced<TEvent, TState>['_snapshots'] = CappedOrderedDict.init({
+  const snapshots: EventSourced<TEvent, TState>['snapshots'] = CappedOrderedDict.init({
     maxSize: SNAPSHOTS_MAX_SIZE
   })
 
-  for (let i = model._events.length - 1; i >= 0; i--) {
-    const event = model._events[i]
+  for (let i = model.events.length - 1; i >= 0; i--) {
+    const event = model.events[i]
 
     if (!event) {
       continue
     }
 
-    const snapshot = CappedOrderedDict.get(model._snapshots, event.eventId)
+    const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId)
 
     events.unshift(event)
     eventIds[event.eventId] = event.eventId
 
     if (snapshot) {
       return {
-        _eventIds: eventIds,
-        _events: events,
-        _clock: model._clock,
-        _snapshots: snapshots,
-        _initial: snapshot
+        eventIds: eventIds,
+        events: events,
+        clock: model.clock,
+        snapshots: snapshots,
+        initial: snapshot
       }
     }
   }
 
   return {
-    _events: events,
-    _eventIds: eventIds,
-    _clock: model._clock,
-    _snapshots: snapshots,
-    _initial: model._initial
+    events: events,
+    eventIds: eventIds,
+    clock: model.clock,
+    snapshots: snapshots,
+    initial: model.initial
   }
 }
 
 const toLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TState>): TState | null => {
-  for (let i = model._events.length - 1; i >= 0; i--) {
-    const event = model._events[i]
+  for (let i = model.events.length - 1; i >= 0; i--) {
+    const event = model.events[i]
 
     if (!event) {
       continue
     }
 
-    const snapshot = CappedOrderedDict.get(model._snapshots, event.eventId)
+    const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId)
 
     if (snapshot) {
       return snapshot
@@ -142,7 +142,7 @@ const appendEvent = <TEvent, TState>(
   model: EventSourced<TEvent, TState>,
   event: WithEventId<TEvent>
 ): EventSourced<TEvent, TState> => {
-  if (model._eventIds[event.eventId]) {
+  if (model.eventIds[event.eventId]) {
     return model
   }
 
@@ -152,17 +152,17 @@ const appendEvent = <TEvent, TState>(
 
   const newEvent: WithEventMeta<TEvent> = {
     ...event,
-    happenedAt: LamportClock.toCurrentTime(model._clock)
+    happenedAt: LamportClock.toCurrentTime(model.clock)
   }
 
-  let newSnapshots = { ...model._snapshots }
+  let newSnapshots = { ...model.snapshots }
 
-  const appended = [...model._events, newEvent]
+  const appended = [...model.events, newEvent]
 
   const newEvents = appended.sort(ascend((e) => LamportTimestamp.toNumber(e.happenedAt)))
 
   const newEventIds = {
-    ...model._eventIds,
+    ...model.eventIds,
     [event.eventId]: event.eventId
   }
 
@@ -189,11 +189,11 @@ const appendEvent = <TEvent, TState>(
   //
 
   const snapshot = toState(config, {
-    _clock: model._clock,
-    _events: newEvents,
-    _snapshots: newSnapshots,
-    _eventIds: newEventIds,
-    _initial: model._initial
+    clock: model.clock,
+    events: newEvents,
+    snapshots: newSnapshots,
+    eventIds: newEventIds,
+    initial: model.initial
   })
 
   newSnapshots = CappedOrderedDict.add(newSnapshots, event.eventId, snapshot)
@@ -202,17 +202,17 @@ const appendEvent = <TEvent, TState>(
   //
   //
 
-  const newClock = LamportClock.increment(model._clock)
+  const newClock = LamportClock.increment(model.clock)
 
   //
   //
 
   const modelNew: EventSourced<TEvent, TState> = {
-    _snapshots: newSnapshots,
-    _clock: newClock,
-    _events: newEvents,
-    _eventIds: newEventIds,
-    _initial: model._initial
+    snapshots: newSnapshots,
+    clock: newClock,
+    events: newEvents,
+    eventIds: newEventIds,
+    initial: model.initial
   }
 
   //
@@ -226,17 +226,17 @@ const toState = <TEvent, TState>(
   config: EventSourcedConfig<TEvent, TState>,
   model: EventSourced<TEvent, TState>
 ): TState => {
-  let state = model._initial
+  let state = model.initial
   const events: WithEventMeta<TEvent>[] = []
 
-  for (let i = model._events.length - 1; i >= 0; i--) {
-    const event = model._events[i]
+  for (let i = model.events.length - 1; i >= 0; i--) {
+    const event = model.events[i]
 
     if (!event) {
       continue
     }
 
-    const snapshot = CappedOrderedDict.get(model._snapshots, event.eventId)
+    const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId)
 
     if (snapshot) {
       state = snapshot
@@ -254,7 +254,7 @@ const toState = <TEvent, TState>(
 }
 
 const toEvent = <TEvent, TState>(model: EventSourced<TEvent, TState>, eventId: EventId) => {
-  const event = model._events.find((e) => e.eventId === eventId)
+  const event = model.events.find((e) => e.eventId === eventId)
 
   if (!event) {
     return null
@@ -264,32 +264,32 @@ const toEvent = <TEvent, TState>(model: EventSourced<TEvent, TState>, eventId: E
 }
 
 const hasEvent = <TEvent, TState>(model: EventSourced<TEvent, TState>, eventId: EventId) => {
-  return model._events.some((e) => e.eventId === eventId)
+  return model.events.some((e) => e.eventId === eventId)
 }
 
 const mergeLeft = <TEvent, TState>(
   left: EventSourced<TEvent, TState>,
   right: EventSourced<TEvent, TState>
 ): EventSourced<TEvent, TState> => {
-  const withoutLeft = right._events.filter((e) => !left._eventIds[e.eventId])
+  const withoutLeft = right.events.filter((e) => !left.eventIds[e.eventId])
 
-  const eventsNew = [...left._events, ...withoutLeft]
+  const eventsNew = [...left.events, ...withoutLeft]
 
   eventsNew.sort(ascend((e) => LamportTimestamp.toNumber(e.happenedAt)))
 
-  const snapshotsNew = CappedOrderedDict.mergeLeft(left._snapshots, right._snapshots)
+  const snapshotsNew = CappedOrderedDict.mergeLeft(left.snapshots, right.snapshots)
 
-  const clockNew = LamportClock.update(left._clock, right._clock)
+  const clockNew = LamportClock.update(left.clock, right.clock)
 
   return {
-    _clock: clockNew,
-    _events: eventsNew,
-    _snapshots: snapshotsNew,
-    _eventIds: {
-      ...left._eventIds,
-      ...right._eventIds
+    clock: clockNew,
+    events: eventsNew,
+    snapshots: snapshotsNew,
+    eventIds: {
+      ...left.eventIds,
+      ...right.eventIds
     },
-    _initial: left._initial
+    initial: left.initial
   }
 }
 

@@ -303,7 +303,7 @@ export const userJoinedSpace =
             spaceId: spaceId,
             userId: userId
           }),
-          happenedAt: pipe(space._clock, LamportClock.increment, LamportClock.toCurrentTime)
+          happenedAt: pipe(space.clock, LamportClock.increment, LamportClock.toCurrentTime)
         }
       }
     })
@@ -349,7 +349,7 @@ export const userLeftSpace =
             spaceId: spaceId,
             userId: userId
           }),
-          happenedAt: pipe(space._clock, LamportClock.increment, LamportClock.toCurrentTime)
+          happenedAt: pipe(space.clock, LamportClock.increment, LamportClock.toCurrentTime)
         }
       }
     })
@@ -479,7 +479,7 @@ export const userInputtedGame =
             spaceId,
             userId
           }),
-          happenedAt: pipe(space._clock, LamportClock.increment, LamportClock.toCurrentTime)
+          happenedAt: pipe(space.clock, LamportClock.increment, LamportClock.toCurrentTime)
         }
       }
     })

@@ -95,7 +95,7 @@ describe(import.meta.file, () => {
 
   test('hasEvent', async () => {
     for (const f of await Fixtures()) {
-      const eventId = Object.values(f.spaceA._eventIds)[0]
+      const eventId = Object.values(f.spaceA.eventIds)[0]
       if (!eventId) throw new Error('eventId not found')
 
       const spaceId = SpaceCore.toSpaceStarted(f.spaceA)?.spaceId
