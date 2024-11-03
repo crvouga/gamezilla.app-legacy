@@ -2,7 +2,6 @@ import { RemoteResult, type RequestResponse } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import type { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
-import type { SpaceClientCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { FlowClientEvtIn } from '../../flow-client-evt'
@@ -11,6 +10,8 @@ import type { FlowPack } from '../pack'
 import type { IFlowPackDb } from '../pack-db'
 import type { FlowPackId } from '../pack-id'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 
 //
 //

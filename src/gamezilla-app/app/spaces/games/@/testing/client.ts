@@ -1,8 +1,8 @@
 import { PhoneNumber, Posix } from 'gamezilla-app/@/core'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { ProfileAvatar, Username, type SpaceId, type UserId } from 'gamezilla-app/app/@/data'
-import type { SpaceClientCtx } from '../../../@/space'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 const currentUserId = 'test-user-id' as UserId
 

@@ -1,5 +1,6 @@
 import { Sub, type Eff } from 'gamezilla-app/@/core'
-import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 import { initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-user.types'
 
 //
@@ -39,7 +40,7 @@ export const update = ({
 export const updateFromClient = ({
   model
 }: {
-  ctx: SpaceReqCtx
+  ctx: SpaceServerCtx
   msg: MsgToServer
   model: Model
 }): {

@@ -1,4 +1,4 @@
-import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ModelCore, MsgCore } from '../../types'

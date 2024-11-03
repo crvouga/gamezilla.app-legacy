@@ -9,7 +9,7 @@ import {
   isAnonymous,
   preloadSound,
   type AnonymousClientCtx,
-  type ClientCtx,
+  type AppClientCtx,
   type ClientEvt
 } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from 'gamezilla-app/app/@/ui'
@@ -165,7 +165,7 @@ export const init = (input: {
   }
 }
 
-const toClientCtx = (input: { model: ModelClient; ctx: Ctx }): ClientCtx | AnonymousClientCtx => {
+const toClientCtx = (input: { model: ModelClient; ctx: Ctx }): AppClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
     ...input.ctx,
     t: Translator(input.model.lang.lang),
@@ -485,7 +485,7 @@ export const View = (input: { ctx: Ctx; model: ModelClient; dispatch: (msg: MsgC
 }
 
 const ViewRoute = (input: {
-  ctx: ClientCtx | AnonymousClientCtx
+  ctx: AppClientCtx | AnonymousClientCtx
   model: ModelClient
   dispatch: (m: MsgClient) => void
 }) => {
@@ -695,7 +695,7 @@ const ViewStatusBar: typeof View = (input) => {
 }
 
 const ViewBottomNavBar = (input: {
-  ctx: ClientCtx | AnonymousClientCtx
+  ctx: AppClientCtx | AnonymousClientCtx
   model: ModelClient
   dispatch: (m: MsgClient) => void
 }) => {

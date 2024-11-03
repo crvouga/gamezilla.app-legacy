@@ -1,4 +1,4 @@
-import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
 import { IFlowPackDb } from './pack/pack-db'
 import { IFlowPuzzleDb } from './puzzle/puzzle-db'
 

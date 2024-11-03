@@ -1,4 +1,3 @@
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { ActionButton, IconArrowLeftOnRect } from 'gamezilla-app/app/@/ui'
 import { Eff, Keyboard, Sub, pipe } from 'gamezilla-app/@/core'
 import { Maze } from './@/maze'
@@ -11,6 +10,7 @@ import {
   type MsgToClient,
   initShared
 } from './maze.types'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 
 //
 //

@@ -5,8 +5,22 @@ import type { MsgServer } from '../types'
 import { GameServer } from './game.server'
 import { SpaceCore } from '../core'
 import { withEventId } from '../@/event'
+import { GamesServerCtx } from './games.types'
+import { SpaceServerCtx } from '../@/space-server-ctx'
+
+const initCtx = (input: { ctx: SpaceServerCtx }): GamesServerCtx => {
+  const gameCtx = GameServer.initCtx(input)
+  return {
+    ...input.ctx,
+    ...gameCtx
+  }
+}
 
 const update: SpaceServerModule['update'] = async (input) => {
+  return SpaceServerModule.andThen({}, () => updateGame(input))
+}
+
+const updateGame: SpaceServerModule['update'] = async (input) => {
   const spaceId = inputToSpaceId(input)
 
   if (!spaceId) {
@@ -19,9 +33,9 @@ const update: SpaceServerModule['update'] = async (input) => {
     return {}
   }
 
-  const gameUpdated = await GameServer.update({
+  const updated = await GameServer.update({
     deps: null,
-    ctx: { ...input.deps.gameServer, ...input.ctx, space: spaceState },
+    ctx: { ...input.deps.games, ...input.ctx, space: spaceState },
     msg: input.msg?.t === 'game' ? input.msg.c : null,
     modelCore: spaceState.game,
     msgClient:
@@ -37,8 +51,8 @@ const update: SpaceServerModule['update'] = async (input) => {
   })
 
   return {
-    msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
-    msgCore: gameUpdated.msgCore?.map((e) => withEventId({ ...e, spaceId, t: 'game', c: e }))
+    msgCmd: SpaceServerCmd.map(updated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
+    msgCore: updated.msgCore?.map((e) => withEventId({ ...e, spaceId, t: 'game', c: e }))
   }
 }
 
@@ -64,7 +78,8 @@ const subscriptions: SpaceServerModule['subscriptions'] = async (_input) => {
   return Sub.batch(batch)
 }
 
-export const SpaceGameServer = {
+export const GamesServer = {
+  initCtx,
   subscriptions,
   update
 }

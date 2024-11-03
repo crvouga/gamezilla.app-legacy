@@ -1,10 +1,11 @@
 import type { VDom } from 'gamezilla-app/@/vdom'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Avatar, Button, Drawer, IconQuestionMark, Typography } from 'gamezilla-app/app/@/ui'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
+
 import { LayoutGameCoverArtHeader } from '../../game/layout-game-cover-art-header'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //

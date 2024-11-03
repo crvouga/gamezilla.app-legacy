@@ -5,7 +5,6 @@ import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from 'gamezil
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
 import { type WithEventId, withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import {
@@ -28,6 +27,7 @@ import {
   type MsgToServer,
   updateCore
 } from './vs-bot.types'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -44,7 +44,7 @@ type Module = GameClientModule<{
   MsgToServer: MsgToServer
   ModelCore: ModelCore
   MsgCore: MsgCore
-  Ctx: SpaceClientCtx & { onQuit: () => void }
+  Ctx: SpaceClientCtx
   MsgCmdOut: ClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
@@ -317,7 +317,7 @@ export const toGameOver = (columns: ConnectFour.Columns): VsBotGame.GameOver => 
 const View: Module['View'] = (input) => {
   const vsBotSetupinput: VsBotSetup.VsBotSetupinput = {
     ctx: input.ctx,
-    onQuit: input.ctx.onQuit,
+    onQuit: () => {},
     title: input.ctx.t('chess'),
     renderCoverArt: (input) => <CoverArt {...input} />,
     canStartGame: input.modelCore.playingUserId !== null,

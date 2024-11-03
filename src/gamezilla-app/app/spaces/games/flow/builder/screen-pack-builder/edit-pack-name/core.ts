@@ -1,5 +1,5 @@
 import { isErr, Loading, NotAsked } from 'gamezilla-app/@/core'
-import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import { FlowPack } from '../../../@/pack/pack'
 import { FlowPackName } from '../../../@/pack/pack-name'
 import type { ModelCore, MsgCore } from './types'

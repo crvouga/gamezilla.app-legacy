@@ -14,7 +14,7 @@ import {
   cn
 } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
+
 import { Chess } from '../@/chess'
 import { Chessboard } from '../@/chess-ui/chessboard'
 import { CHESS_SOUND } from '../@/chess/chess-sounds'
@@ -36,6 +36,7 @@ import {
 import { Translator } from 'gamezilla-app/@/l18n/generated'
 import { LayoutGame } from '../../@/game/layout-game'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //

@@ -1,4 +1,4 @@
-import type { AnonymousClientCtx, ClientCtx } from 'gamezilla-app/app/@/client'
+import type { AnonymousClientCtx, AppClientCtx } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import {
   Avatar,
@@ -12,7 +12,7 @@ import {
 import type { ModelClient, MsgClient } from '../profile.types'
 
 export const ViewProfileScreen = (input: {
-  ctx: ClientCtx | AnonymousClientCtx
+  ctx: AppClientCtx | AnonymousClientCtx
   userId: UserId
   model: ModelClient
   dispatch: (msg: MsgClient) => void

@@ -1,6 +1,6 @@
 import { Err, isErr, Ok, type Result } from 'gamezilla-app/@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
-import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import type { VsBotSetup } from 'gamezilla-app/app/spaces/games/@/vs-bot'
 import {
   type BotLevel,

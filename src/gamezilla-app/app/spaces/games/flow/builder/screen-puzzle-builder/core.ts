@@ -1,4 +1,4 @@
-import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import { FlowVariant } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'

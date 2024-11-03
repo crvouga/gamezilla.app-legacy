@@ -12,11 +12,10 @@ import { ProfileCache } from '../../../@/server/profile-cache'
 import { SpaceCore } from '../../core'
 import { SpacesCoreServer } from '../../core/server'
 import { GameServer } from '../../games/game.server'
-import { GameDb } from '../../games/space-game-db'
 import * as SpacesServer from '../../server'
 import type { ServerDeps } from '../../types'
 import { EventId, withEventId } from '../event'
-import { SpaceServerCtx } from '../space'
+import { SpaceServerCtx } from '../space-server-ctx'
 
 export const FixtureSpaceServer = async () => {
   const f = await FixtureAppServer()
@@ -78,27 +77,15 @@ export const initDeps = async (): Promise<ServerDeps> => {
   const dbConnKv = await DbConnKv({ t: 'hash-map' })
   return {
     spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv, logger: Logger({ t: 'noop' }) }),
-    gameDb: GameDb({ t: 'db-conn-kv', dbConnKv }),
-    gameServer: GameServer.initCtx({
+    games: GameServer.initCtx({
       ctx: {
-        profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv }),
-        pubSub: await PubSubTopicBased({ t: 'noop' }),
-        sleep: async () => null,
-        clientId: ClientId.generate(),
-        dbConnKv,
-        dbConnSql: await DbConnSql({ t: 'noop' }),
-        env: 'test',
-        logger: Logger({ t: 'noop' }),
-        now: Posix.now(),
-        sessionId: SessionId.generate(),
-        sms: smsNoop,
+        ...ctx,
         space: {
           hostId: UserId.generate(),
           spaceId: SpaceId.generate(),
           users: {},
           visibility: 'public'
-        },
-        currentUserId: UserId.generate()
+        }
       }
     })
   }

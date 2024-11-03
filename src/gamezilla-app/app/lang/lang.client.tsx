@@ -4,7 +4,7 @@ import {
   APP_SOUND,
   type AnonymousClientCtx,
   type ClientCmd,
-  type ClientCtx,
+  type AppClientCtx,
   type ClientEvt,
   back,
   closeStatusBar,
@@ -25,7 +25,7 @@ import type { ModelClient, MsgClient, MsgToClient, MsgToServer, TranslationLoadi
 //
 
 type Module = AppClientModule<{
-  Ctx: AnonymousClientCtx | ClientCtx
+  Ctx: AnonymousClientCtx | AppClientCtx
   Model: ModelClient
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient

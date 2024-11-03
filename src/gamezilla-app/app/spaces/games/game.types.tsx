@@ -1,5 +1,4 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import { SpaceClientCtx, SpaceServerCtx, SpaceServerEvt } from '../@/space'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { SpaceClientEvt } from '../@/space-client-evt'
 import { SpaceServerCmd } from '../@/space-server-cmd'
@@ -9,10 +8,14 @@ import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
 import { FlowServerCtx } from './flow/@/flow-server-ctx'
 import * as Flow from './flow/types'
+import { SpaceServerEvt } from '../@/space-server-evt'
+import { SpaceServerCtx } from '../@/space-server-ctx'
+import { SpaceClientCtx } from '../@/space-client-ctx'
+
 //
 //
 //
-// Model
+//
 //
 //
 //
@@ -34,7 +37,7 @@ export type ModelServer = p.Infer<typeof ModelServer>
 //
 //
 //
-// Msg
+//
 //
 //
 //

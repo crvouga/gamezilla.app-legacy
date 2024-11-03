@@ -1,7 +1,7 @@
 import { NonEmpty, PhoneNumber, Posix, pipe, type TimeSpan } from 'gamezilla-app/@/core'
 import { LamportClock, LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
-import { routeChanged, type ClientCtx } from 'gamezilla-app/app/@/client'
+import { routeChanged, type AppClientCtx } from 'gamezilla-app/app/@/client'
 import { FixtureAppClient } from 'gamezilla-app/app/@/client/client-test-env'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
@@ -11,7 +11,7 @@ import { GameName } from '../../games/@/game-name'
 import { SpaceCore, type MsgCore } from '../../core'
 import * as SpaceClient from '../../client'
 import type * as SpacesTypes from '../../types'
-import type { SpaceClientCtx } from '../space'
+import { SpaceClientCtx } from '../space-client-ctx'
 
 //
 //
@@ -20,7 +20,7 @@ import type { SpaceClientCtx } from '../space'
 //
 //
 
-export const Ctx = (): ClientCtx => {
+export const Ctx = (): AppClientCtx => {
   const currentUserId = UserId.generate()
   return {
     navigatorLanguage: 'en',
@@ -45,7 +45,7 @@ export const Ctx = (): ClientCtx => {
 
 export const SoaceClientFixture = async () => {
   const currentUserId = UserId.generate()
-  const ctx: ClientCtx = {
+  const ctx: AppClientCtx = {
     navigatorLanguage: 'en',
     t: Translator('en'),
     currentRoute: {
@@ -204,7 +204,7 @@ export const FixtureSpaceClient = async (input?: { currentRoute?: Route }) => {
   }
 }
 
-export const init = (ctx: ClientCtx) => {
+export const init = (ctx: AppClientCtx) => {
   return SpaceClient.init({ ctx, stored: null })
 }
 
@@ -215,7 +215,7 @@ export const init = (ctx: ClientCtx) => {
 //
 //
 
-export const serverConnected = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const serverConnected = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -233,7 +233,7 @@ export const serverConnected = (ctx: ClientCtx) => (model: SpacesTypes.ModelClie
 //
 
 export const userStartedSpace =
-  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+  (ctx: AppClientCtx, userId: UserId, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,
@@ -251,7 +251,7 @@ export const userStartedSpace =
     })
   }
 
-export const clickedStartSpaceButton = (ctx: ClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+export const clickedStartSpaceButton = (ctx: AppClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -270,7 +270,7 @@ export const clickedStartSpaceButton = (ctx: ClientCtx, spaceId: SpaceId) => (mo
 //
 
 export const userJoinedSpace =
-  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+  (ctx: AppClientCtx, userId: UserId, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
     const space = model.spaces[spaceId]
     if (!space) {
       return {
@@ -295,7 +295,7 @@ export const userJoinedSpace =
     })
   }
 
-export const clickedJoinSpaceButton = (ctx: ClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+export const clickedJoinSpaceButton = (ctx: AppClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -314,33 +314,34 @@ export const clickedJoinSpaceButton = (ctx: ClientCtx, spaceId: SpaceId) => (mod
 //
 //
 
-export const userLeftSpace = (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
-  const space = model.spaces[spaceId]
+export const userLeftSpace =
+  (ctx: AppClientCtx, userId: UserId, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+    const space = model.spaces[spaceId]
 
-  if (!space) {
-    return {
-      model
-    }
-  }
-
-  return SpaceClient.update({
-    ctx,
-    model,
-    msgServer: {
-      t: 'got-msg-core',
-      c: {
-        ...withEventId({
-          t: 'user-left-space',
-          spaceId: spaceId,
-          userId: userId
-        }),
-        happenedAt: pipe(space.clock, LamportClock.increment, LamportClock.toCurrentTime)
+    if (!space) {
+      return {
+        model
       }
     }
-  })
-}
 
-export const clickedLeaveSpaceButton = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: 'got-msg-core',
+        c: {
+          ...withEventId({
+            t: 'user-left-space',
+            spaceId: spaceId,
+            userId: userId
+          }),
+          happenedAt: pipe(space.clock, LamportClock.increment, LamportClock.toCurrentTime)
+        }
+      }
+    })
+  }
+
+export const clickedLeaveSpaceButton = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -358,7 +359,7 @@ export const clickedLeaveSpaceButton = (ctx: ClientCtx) => (model: SpacesTypes.M
 //
 //
 
-export const changeRoute = (ctx: ClientCtx, route: Route) => (model: SpacesTypes.ModelClient) => {
+export const changeRoute = (ctx: AppClientCtx, route: Route) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -366,7 +367,7 @@ export const changeRoute = (ctx: ClientCtx, route: Route) => (model: SpacesTypes
   })
 }
 
-export const elapsed = (ctx: ClientCtx, timeSpan: TimeSpan) => (model: SpacesTypes.ModelClient) => {
+export const elapsed = (ctx: AppClientCtx, timeSpan: TimeSpan) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx: {
       ...ctx,
@@ -397,7 +398,7 @@ const toStartedSpace = (spaceId: SpaceId, startedBy: UserId) => {
 }
 
 export const serverListedSpaces =
-  (ctx: ClientCtx, spaceIds: SpaceId[] = [SpaceId.generate(), SpaceId.generate(), SpaceId.generate()]) =>
+  (ctx: AppClientCtx, spaceIds: SpaceId[] = [SpaceId.generate(), SpaceId.generate(), SpaceId.generate()]) =>
   (model: SpacesTypes.ModelClient) => {
     return SpaceClient.update({
       ctx,
@@ -410,7 +411,7 @@ export const serverListedSpaces =
     })
   }
 
-export const clickSpaceCard = (ctx: ClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+export const clickSpaceCard = (ctx: AppClientCtx, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -422,7 +423,7 @@ export const clickSpaceCard = (ctx: ClientCtx, spaceId: SpaceId) => (model: Spac
 }
 
 export const userEndedSpace =
-  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
+  (ctx: AppClientCtx, userId: UserId, spaceId: SpaceId) => (model: SpacesTypes.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,
@@ -440,7 +441,7 @@ export const userEndedSpace =
     })
   }
 
-export const userClickedEndSpaceButton = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const userClickedEndSpaceButton = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -451,7 +452,7 @@ export const userClickedEndSpaceButton = (ctx: ClientCtx) => (model: SpacesTypes
 }
 
 export const userInputtedGame =
-  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId, game: GameName | null) => (model: SpacesTypes.ModelClient) => {
+  (ctx: AppClientCtx, userId: UserId, spaceId: SpaceId, game: GameName | null) => (model: SpacesTypes.ModelClient) => {
     const space = model.spaces[spaceId]
     if (!space) {
       return {
@@ -477,7 +478,7 @@ export const userInputtedGame =
     })
   }
 
-export const clickedGameTile = (ctx: ClientCtx, gameName: GameName) => (model: SpacesTypes.ModelClient) => {
+export const clickedGameTile = (ctx: AppClientCtx, gameName: GameName) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -489,7 +490,7 @@ export const clickedGameTile = (ctx: ClientCtx, gameName: GameName) => (model: S
 }
 
 export const gotMsgServer =
-  (ctx: ClientCtx, msgServer: SpacesTypes.MsgToClient) => (model: SpacesTypes.ModelClient) => {
+  (ctx: AppClientCtx, msgServer: SpacesTypes.MsgToClient) => (model: SpacesTypes.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,
@@ -497,7 +498,7 @@ export const gotMsgServer =
     })
   }
 
-export const gotSpace = (ctx: ClientCtx, space: SpaceCore.Model) => (model: SpacesTypes.ModelClient) => {
+export const gotSpace = (ctx: AppClientCtx, space: SpaceCore.Model) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -508,7 +509,7 @@ export const gotSpace = (ctx: ClientCtx, space: SpaceCore.Model) => (model: Spac
   })
 }
 
-export const gotCurrentUsersSpace = (ctx: ClientCtx, space: SpaceCore.Model) => (model: SpacesTypes.ModelClient) => {
+export const gotCurrentUsersSpace = (ctx: AppClientCtx, space: SpaceCore.Model) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -520,7 +521,7 @@ export const gotCurrentUsersSpace = (ctx: ClientCtx, space: SpaceCore.Model) => 
   })
 }
 
-export const clickedPeopleButton = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const clickedPeopleButton = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -530,7 +531,7 @@ export const clickedPeopleButton = (ctx: ClientCtx) => (model: SpacesTypes.Model
   })
 }
 
-export const clickedUser = (ctx: ClientCtx, userId: UserId) => (model: SpacesTypes.ModelClient) => {
+export const clickedUser = (ctx: AppClientCtx, userId: UserId) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -541,7 +542,7 @@ export const clickedUser = (ctx: ClientCtx, userId: UserId) => (model: SpacesTyp
   })
 }
 
-export const loggedOut = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const loggedOut = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -551,7 +552,7 @@ export const loggedOut = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) =>
   })
 }
 
-export const clickedGoHomeButton = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const clickedGoHomeButton = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -561,7 +562,7 @@ export const clickedGoHomeButton = (ctx: ClientCtx) => (model: SpacesTypes.Model
   })
 }
 
-export const clickedCurrentSpaceBottomBar = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const clickedCurrentSpaceBottomBar = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
@@ -571,7 +572,7 @@ export const clickedCurrentSpaceBottomBar = (ctx: ClientCtx) => (model: SpacesTy
   })
 }
 
-export const clickedUserPreviewLink = (ctx: ClientCtx) => (model: SpacesTypes.ModelClient) => {
+export const clickedUserPreviewLink = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,

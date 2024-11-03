@@ -1,11 +1,11 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
-import type { ClientCtx } from 'gamezilla-app/app/@/client'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { GameMainMenu } from '../@/game/game-main-menu'
 import { CoverArt } from './@/gomoku/gomoku-ui'
 import type { ModelClient, ModelServer, MsgClient, MsgToClient } from './gomoku.types'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 
 //
 //
@@ -142,7 +142,7 @@ export const mergeWithServer = ({
   clientModel,
   serverModel
 }: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
   clientModel: ModelClient
   serverModel: ModelServer
 }): ModelClient => {
@@ -208,7 +208,7 @@ export const mergeWithServer = ({
 //
 //
 
-export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
+export const subscriptions = (ctx: AppClientCtx, model: Model): Sub<Msg> => {
   switch (model.t) {
     case 'vs-bot': {
       return Sub.tag('vs-bot', VsBot.subscriptions(ctx, model.c))
@@ -239,7 +239,7 @@ export const view = ({
   dispatch
 }: {
   model: Model
-  ctx: ClientCtx
+  ctx: AppClientCtx
   spaceCtx: SpaceClientCtx
   dispatch: (m: Msg) => void
 }) => {

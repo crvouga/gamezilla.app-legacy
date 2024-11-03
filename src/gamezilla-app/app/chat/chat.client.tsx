@@ -1,4 +1,4 @@
-import type { ClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
+import type { AppClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 import { Browser, Eff, pipe } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
@@ -164,7 +164,7 @@ export const updateFromEvent = ({
 export const View = (_input: {
   model: ModelClient
   dispatch: (m: Msg) => void
-  ctx: ClientCtx
+  ctx: AppClientCtx
   userSearch: {
     onInput: (searchText: string) => void
     loading: boolean
@@ -179,7 +179,7 @@ export const ViewChat = (_input: { model: ModelClient; dispatch: (m: Msg) => voi
 }
 
 export const ViewChatNew = (_input: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
   model: ModelClient
   dispatch: (m: Msg) => void
   userSearch: {
@@ -190,6 +190,6 @@ export const ViewChatNew = (_input: {
   return <div>ViewChat</div>
 }
 
-export const ViewChatList = (_input: { ctx: ClientCtx; model: ModelClient; dispatch: (m: Msg) => void }) => {
+export const ViewChatList = (_input: { ctx: AppClientCtx; model: ModelClient; dispatch: (m: Msg) => void }) => {
   return <div>View </div>
 }

@@ -1,16 +1,14 @@
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
-import { SpaceId, UserId } from '../@/data'
 import { type Input, type Output, SpaceServerModule } from './@/architecture/space-server'
-import { GameServer } from './games/game.server'
-import { GameDb } from './games/space-game-db'
-import { SpaceGameServer } from './games/space-game.server'
+import { Space } from './@/space'
+import { SpacesCoreServer } from './core/server'
+import { GamesServer } from './games/games.server'
 import { JoinSpaceServer } from './join-space/server'
 import { ListSpacesServer } from './list-spaces/server'
-import { SpacesCoreServer } from './core/server'
-import type { ServerModule } from './types'
 import { StartSpaceServer } from './start-space/server'
 import { SyncServer } from './sync/server'
+import type { ServerModule } from './types'
 
 //
 //
@@ -23,13 +21,7 @@ import { SyncServer } from './sync/server'
 export const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   return {
     spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv, logger: ctx.logger }),
-    gameDb: GameDb({ t: 'db-conn-kv', dbConnKv: ctx.dbConnKv }),
-    gameServer: GameServer.initCtx({
-      ctx: {
-        ...ctx,
-        space: { hostId: UserId.generate(), spaceId: SpaceId.generate(), users: {}, visibility: 'public' }
-      }
-    })
+    games: GamesServer.initCtx({ ctx: { ...ctx, space: Space.random() } })
   }
 }
 
@@ -97,7 +89,7 @@ const updateChild: SpaceServerModule['update'] = async (input) => {
     () => SyncServer.update(input),
     () => StartSpaceServer.update(input),
     () => JoinSpaceServer.update(input),
-    () => SpaceGameServer.update(input)
+    () => GamesServer.update(input)
   )
 }
 
@@ -120,5 +112,5 @@ const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgCore
 //
 
 export const subscriptions: ServerModule['subscriptions'] = async (input) => {
-  return SpaceGameServer.subscriptions(input)
+  return GamesServer.subscriptions(input)
 }

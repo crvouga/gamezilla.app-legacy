@@ -1,9 +1,10 @@
-import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'
 import type { Mode, ModelServer, MsgServer, MsgToServer } from './gomoku.types'
+import { SpaceServerEvt } from '../../@/space-server-evt'
+import { SpaceServerCtx } from '../../@/space-server-ctx'
 
 //
 //
@@ -95,7 +96,7 @@ export const updateFromClient = ({
   msg,
   model
 }: {
-  ctx: SpaceReqCtx
+  ctx: SpaceServerCtx
   msg: MsgToServer
   model: Model
 }): {

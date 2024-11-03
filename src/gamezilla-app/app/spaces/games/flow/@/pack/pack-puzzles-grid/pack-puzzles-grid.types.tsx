@@ -2,7 +2,6 @@ import { NotAsked } from 'gamezilla-app/@/core'
 import type { RequestResponse } from 'gamezilla-app/@/core/request-response'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
-import { SpaceClientCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { FlowClientEvtIn } from '../../flow-client-evt'
@@ -11,6 +10,8 @@ import { ListPuzzlesOutput } from '../../puzzle/puzzle-db'
 import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
 import { FlowServerCtx } from '../../flow-server-ctx'
 import type { FlowPack } from '../pack'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 
 export type ModelClient = {
   request: RequestResponse<string, null>

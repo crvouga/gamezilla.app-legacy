@@ -1,6 +1,6 @@
 import { type SpaceId, type UserId } from 'gamezilla-app/app/@/data'
-import type { SpaceServerCtx } from '../../../@/space'
 import { FixtureAppServer } from 'gamezilla-app/app/@/server/server-test-env'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
 
 export const SpaceGameFixtureServer = async () => {
   const f = await FixtureAppServer()

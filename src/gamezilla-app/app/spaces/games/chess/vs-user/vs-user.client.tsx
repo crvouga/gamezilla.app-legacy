@@ -1,8 +1,8 @@
 import { Eff, Option, Sub, exhaustive, isErr } from 'gamezilla-app/@/core'
-import type { ClientCtx } from 'gamezilla-app/app/@/client'
+import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Button, IconArrowLeftOnRect } from 'gamezilla-app/app/@/ui'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
+
 import { Chess } from '../@/chess'
 import {
   type CoreModel,
@@ -12,6 +12,7 @@ import {
   type MsgToClient,
   initCore
 } from './vs-user.types'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -405,7 +406,7 @@ export const View = ({
   dispatch,
   onQuit
 }: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
   model: Model
   dispatch: (msg: Msg) => void
   onQuit: () => void

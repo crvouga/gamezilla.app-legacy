@@ -1,7 +1,6 @@
-import type { ClientCtx } from 'gamezilla-app/app/@/client'
+import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import type { SpaceId } from 'gamezilla-app/app/@/data'
 import { Button, IconButton, IconHome, IconUserGroup, Typography } from 'gamezilla-app/app/@/ui'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientModule } from '../@/architecture/space-client'
 import { EndSpaceClient } from '../end-space/end-space.client'
 import { JoinSpaceClient } from '../join-space/client'
@@ -10,9 +9,10 @@ import { Feed } from './feed'
 import { Modals } from './modals'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../types'
-import { SpaceGameClient } from '../games/space-game.client'
+import { SpaceGameClient } from '../games/games.client'
+import { SpaceClientCtx } from '../@/space-client-ctx'
 
-const View = (input: { model: ModelClient; ctx: ClientCtx; dispatch: (m: MsgClient) => void; spaceId: SpaceId }) => {
+const View = (input: { model: ModelClient; ctx: AppClientCtx; dispatch: (m: MsgClient) => void; spaceId: SpaceId }) => {
   const spaceState = SpacesCoreClient.toSpaceState(input.model, input.spaceId)
 
   switch (spaceState.type) {
@@ -100,7 +100,7 @@ const ViewTopBar: SpaceClientModule['View'] = (input) => {
   )
 }
 
-const ViewSpaceNotFound = (input: { ctx: ClientCtx; dispatch: (m: MsgClient) => void }) => {
+const ViewSpaceNotFound = (input: { ctx: AppClientCtx; dispatch: (m: MsgClient) => void }) => {
   return (
     <div className='flex flex-1 flex-col items-center justify-center gap-4'>
       <Typography variant='title' text={input.ctx.t('spaces.space-not-found')} />

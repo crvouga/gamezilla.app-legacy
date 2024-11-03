@@ -1,4 +1,4 @@
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 import { FlowPack } from './pack/pack'
 import { FlowPackId } from './pack/pack-id'
 import { FlowPackListTypes } from './pack/pack-list'

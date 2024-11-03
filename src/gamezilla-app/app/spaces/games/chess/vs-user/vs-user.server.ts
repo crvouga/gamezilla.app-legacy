@@ -1,9 +1,10 @@
 import { Sub, Time, type Eff } from 'gamezilla-app/@/core'
 import { TimeSpan } from 'gamezilla-app/@/core/time-span'
-import type { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import * as Board from '../@/chess/chess-core'
 import { initCore, type ModelServer, type MsgServer, type MsgToClient, type MsgToServer } from './vs-user.types'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 
 //
 //

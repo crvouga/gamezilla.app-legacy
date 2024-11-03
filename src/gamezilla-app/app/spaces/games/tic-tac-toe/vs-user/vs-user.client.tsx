@@ -1,5 +1,4 @@
 import { type ClientCmd, sendToServer } from 'gamezilla-app/app/@/client'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { VsUserSetupScreen } from 'gamezilla-app/app/spaces/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'
 import { CoverArt, PlayerTypeIcon } from '../@/tic-tic-toe/tic-tac-toe-ui'
@@ -13,6 +12,7 @@ import {
   type Res,
   initCoreModel
 } from './vs-user.types'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //

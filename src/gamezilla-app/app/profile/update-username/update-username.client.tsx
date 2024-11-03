@@ -2,7 +2,7 @@ import { RequestResponse } from 'gamezilla-app/@/core'
 import {
   AnonymousClientCtx,
   ClientCmd,
-  ClientCtx,
+  AppClientCtx,
   ClientEvt,
   pushRoute,
   sendToServer
@@ -11,7 +11,7 @@ import { Button, TextField, TopBar } from 'gamezilla-app/app/@/ui'
 import { ModelClient, MsgClient, MsgToServer } from './update-username.types'
 
 export const init = <TModel extends ModelClient>(input: {
-  ctx: ClientCtx | AnonymousClientCtx
+  ctx: AppClientCtx | AnonymousClientCtx
   model: TModel
 }): { model: TModel } => {
   return {
@@ -32,7 +32,7 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
   msg?: TMsg | null
   model: TModel
   msgEvt?: ClientEvt | null
-  ctx: ClientCtx | AnonymousClientCtx
+  ctx: AppClientCtx | AnonymousClientCtx
 }): {
   model: TModel
   msgCmd?: ClientCmd<{
@@ -93,7 +93,7 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
 
 export const View = (input: {
   model: ModelClient
-  ctx: ClientCtx | AnonymousClientCtx
+  ctx: AppClientCtx | AnonymousClientCtx
   dispatch: (m: MsgClient) => void
 }) => {
   return (

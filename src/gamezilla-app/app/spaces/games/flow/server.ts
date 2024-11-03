@@ -1,7 +1,6 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-server-v2'
-import { SpaceServerCtx } from '../../@/space'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import { FlowPackDb } from './@/pack/pack-db'
 import { FlowPackListServer } from './@/pack/pack-list'
@@ -12,6 +11,7 @@ import { BuilderServer } from './builder/server'
 import type { ServerModule } from './types'
 import { PlayServer } from './play/server'
 import { FlowPuzzleListServer } from './@/puzzle/puzzle-list'
+import { SpaceServerCtx } from '../../@/space-server-ctx'
 
 export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
   return {

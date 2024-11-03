@@ -1,7 +1,7 @@
-import { type SpaceClientCtx, spaceToProfiles } from 'gamezilla-app/app/spaces/@/space'
 import type { BaseClientCtx } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Avatar, IconCrown, Typography } from 'gamezilla-app/app/@/ui'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 export const ViewUsersInSpaceList = ({
   ctx,
@@ -10,7 +10,7 @@ export const ViewUsersInSpaceList = ({
   ctx: SpaceClientCtx
   onOpenUserDetails: (userId: UserId) => void
 }) => {
-  const profiles = spaceToProfiles(ctx, ctx.space)
+  const profiles = SpaceClientCtx.toProfiles(ctx)
   return (
     <section className='flex w-full flex-col gap-3 py-4'>
       <Typography variant='title' className='px-4' text={ctx.t('app.people')} />

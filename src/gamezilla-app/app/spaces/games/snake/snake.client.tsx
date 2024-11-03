@@ -1,6 +1,6 @@
 import { Eff, Keyboard, Option, type Result, type Sub, exhaustive, isErr } from 'gamezilla-app/@/core'
-import type { ClientCtx } from 'gamezilla-app/app/@/client'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { AppClientCtx } from 'gamezilla-app/app/@/client'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { Direction } from './@/direction'
 import {
   type CoreModel,
@@ -177,7 +177,7 @@ export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
 //
 //
 
-export const View = ({ model, dispatch }: { ctx: ClientCtx; model: Model; dispatch: (msg: Msg) => void }) => {
+export const View = ({ model, dispatch }: { ctx: AppClientCtx; model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.gameStatus.type === 'GameSetup') {
     return <div />
   }

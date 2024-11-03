@@ -1,4 +1,4 @@
-import type { ClientCtx } from 'gamezilla-app/app/@/client'
+import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import { type ModelClient, type MsgClient, type ModelServer, type MsgToClient, initShared } from './vs-user.types'
 
@@ -127,6 +127,6 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = (_input: { dispatch: (m: Msg) => void; ctx: ClientCtx; model: Model; onCancel: () => void }) => {
+export const View = (_input: { dispatch: (m: Msg) => void; ctx: AppClientCtx; model: Model; onCancel: () => void }) => {
   return <div />
 }

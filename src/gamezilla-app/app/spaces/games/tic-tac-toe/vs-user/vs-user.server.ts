@@ -1,8 +1,8 @@
 import { Sub, Time, isErr } from 'gamezilla-app/@/core'
 import { TimeSpan } from 'gamezilla-app/@/core/time-span'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
-import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+
+import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { toOpposite, toTurn, type PlayerType } from '../@/tic-tic-toe/tic-tac-toe'
 import * as Round from './vs-user-round'
 import {
@@ -26,6 +26,8 @@ import {
   type MsgToServer,
   type Res
 } from './vs-user.types'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 
 //
 //
@@ -92,7 +94,7 @@ export const update = (
 }
 
 export const updateFromClient = (
-  ctx: SpaceReqCtx,
+  _ctx: SpaceServerCtx,
   msg: MsgToServer,
   model: Model
 ): {
@@ -106,7 +108,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, ['InputPlayer_Done', result])]
+          msgCmd: [sendToClient([], ['InputPlayer_Done', result])]
         }
       }
 
@@ -129,7 +131,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, ['StopPlaying_Done', result])]
+          msgCmd: [sendToClient([], ['StopPlaying_Done', result])]
         }
       }
 
@@ -151,7 +153,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, ['StartGame_Done', result])]
+          msgCmd: [sendToClient([], ['StartGame_Done', result])]
         }
       }
 
@@ -173,7 +175,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, ['resign_Done', result])]
+          msgCmd: [sendToClient([], ['resign_Done', result])]
         }
       }
 
@@ -195,7 +197,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, ['input-move-done', result])]
+          msgCmd: [sendToClient([], ['input-move-done', result])]
         }
       }
 
@@ -217,7 +219,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, ['NewGame_Done', result])]
+          msgCmd: [sendToClient([], ['NewGame_Done', result])]
         }
       }
 
@@ -240,7 +242,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, ['InputBestOutOf_Done', result])]
+          msgCmd: [sendToClient([], ['InputBestOutOf_Done', result])]
         }
       }
 
@@ -263,7 +265,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, res)]
+          msgCmd: [sendToClient([], res)]
         }
       }
 
@@ -285,7 +287,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, res)]
+          msgCmd: [sendToClient([], res)]
         }
       }
 
@@ -307,7 +309,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, res)]
+          msgCmd: [sendToClient([], res)]
         }
       }
 
@@ -329,7 +331,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient(ctx, res)]
+          msgCmd: [sendToClient([], res)]
         }
       }
 

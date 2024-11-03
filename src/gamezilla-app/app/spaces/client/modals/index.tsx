@@ -1,7 +1,7 @@
 import { APP_SOUND, openProfile, playSound } from 'gamezilla-app/app/@/client'
 import { Avatar, Button, Drawer, Typography } from 'gamezilla-app/app/@/ui'
 import { SpaceClientModule } from '../../@/architecture/space-client'
-import type { SpaceClientCtx } from '../../@/space'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { ViewSpaceHostChip, ViewUsersInSpaceList, ViewYouChip } from '../../games/@/game/users-in-space-list'
 
 const update: SpaceClientModule['update'] = (input) => {

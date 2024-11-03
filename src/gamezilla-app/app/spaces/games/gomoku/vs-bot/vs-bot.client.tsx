@@ -1,4 +1,4 @@
-import type { ClientCtx } from 'gamezilla-app/app/@/client'
+import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { Eff, Sub, isErr } from 'gamezilla-app/@/core'
 import {
   type ModelClient,
@@ -36,7 +36,7 @@ export const update = ({
   msg,
   model
 }: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
   msg: Msg
   model: Model
 }): {
@@ -77,7 +77,7 @@ export const updateFromServer = ({
   model,
   ctx
 }: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
   msg: MsgToClient
   model: Model
 }): {
@@ -101,7 +101,7 @@ export const mergeWithServer = ({
   serverModel,
   clientModel
 }: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
   clientModel: ModelClient
   serverModel: ModelServer
 }): ModelClient => {
@@ -116,7 +116,7 @@ export const mergeWithServer = ({
 //
 //
 
-export const subscriptions = (_ctx: ClientCtx, model: Model): Sub<Msg> => {
+export const subscriptions = (_ctx: AppClientCtx, model: Model): Sub<Msg> => {
   switch (model.type) {
     case 'game': {
       return Sub.None
@@ -136,6 +136,6 @@ export const subscriptions = (_ctx: ClientCtx, model: Model): Sub<Msg> => {
 //
 //
 
-export const View = (_input: { model: Model; ctx: ClientCtx; dispatch: (m: Msg) => void; onBack: () => void }) => {
+export const View = (_input: { model: Model; ctx: AppClientCtx; dispatch: (m: Msg) => void; onBack: () => void }) => {
   return <div />
 }

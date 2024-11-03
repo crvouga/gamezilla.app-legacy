@@ -1,5 +1,5 @@
 import { TimeSpan } from 'gamezilla-app/@/core'
-import { APP_SOUND, playSound, type ClientCtx } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, playSound, type AppClientCtx } from 'gamezilla-app/app/@/client'
 import { Button, Dialog, DialogHeader, DialogSurface } from 'gamezilla-app/app/@/ui'
 import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import type { ClientModule, MsgClient } from '../../types'
@@ -32,7 +32,7 @@ const update: ClientModule['update'] = (input) => {
   }
 }
 
-const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgClient) => void; ctx: ClientCtx }) => {
+const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgClient) => void; ctx: AppClientCtx }) => {
   return (
     <Dialog
       delay={TimeSpan.seconds(1)}

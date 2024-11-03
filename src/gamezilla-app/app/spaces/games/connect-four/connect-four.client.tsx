@@ -2,15 +2,15 @@ import { Sub } from 'gamezilla-app/@/core'
 import { APP_SOUND, ClientCmd, playSound } from 'gamezilla-app/app/@/client'
 import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import type { SpaceClientCmd } from '../../@/space-client-cmd'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { SpaceClientEvt } from '../../@/space-client-evt'
+import { GameMainMenu } from '../@/game/game-main-menu'
 import { CoverArt } from './@/connect-four-ui/connect-four-cover-art'
 import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './connect-four.types'
 import { VsBot } from './vs-bot/vs-bot.client'
 import { VsUser } from './vs-user/vs-user.client'
-import { GameMainMenu } from '../@/game/game-main-menu'
 
 //
 //
@@ -152,10 +152,7 @@ const updateChild =
 
       case 'vs-bot': {
         const updated = VsBot.update({
-          ctx: {
-            ...input.ctx,
-            onQuit: () => {}
-          },
+          ctx: input.ctx,
           msg: msg?.t === 'vs-bot' ? msg.c : null,
           msgEvt: msgEvt,
           msgCmd: null,
@@ -253,10 +250,7 @@ const View: Module['View'] = (input) => {
     case 'vs-bot': {
       return (
         <VsBot.View
-          ctx={{
-            ...input.ctx,
-            onQuit
-          }}
+          ctx={input.ctx}
           dispatch={(c) =>
             input.dispatch({
               t: 'vs-bot',
@@ -322,10 +316,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
         case 'vs-bot': {
           return (
             <VsBot.ViewFeedItem
-              ctx={{
-                ...ctx,
-                onQuit: () => {}
-              }}
+              ctx={ctx}
               msgCore={msgCore.c}
               modelCore={modelCore.c}
               dispatch={(c) =>
@@ -394,10 +385,7 @@ const subscriptions: Module['subscriptions'] = (input) => {
           ...input,
           model: model?.t === 'vs-bot' ? model.c : VsBot.init,
           modelCore: modelCore.c,
-          ctx: {
-            ...input.ctx,
-            onQuit: () => {}
-          }
+          ctx: input.ctx
         })
       )
     }

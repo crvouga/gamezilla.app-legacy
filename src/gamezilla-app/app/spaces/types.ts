@@ -2,18 +2,17 @@ import type { RequestResponse } from 'gamezilla-app/@/core'
 import type { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
-import type { AnonymousClientCtx, ClientCmd, ClientCtx, ClientEvt } from '../@/client'
+import type { AnonymousClientCtx, ClientCmd, AppClientCtx, ClientEvt } from '../@/client'
 import { UserAccount } from '../@/data/account'
 import type { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import type { WithEventId, WithEventMeta } from './@/event'
-import { GameName } from './games/@/game-name'
-import type { GameServer } from './games/game.server'
-import type * as Game from './games/game.types'
-import type { IGameDb } from './games/space-game-db'
-import type * as Space from './core/space-core'
-import type { MsgCore } from './core/event'
 import type * as Spaces from './core/client/spaces-core.client'
+import type { MsgCore } from './core/event'
 import { ISpacesCoreServer } from './core/server/interface'
+import type * as Space from './core/space-core'
+import { GameName } from './games/@/game-name'
+import type * as Game from './games/game.types'
+import * as GamesTypes from './games/game.types'
 
 //
 //
@@ -25,8 +24,7 @@ import { ISpacesCoreServer } from './core/server/interface'
 
 export type ServerDeps = {
   spacesCoreServer: ISpacesCoreServer
-  gameDb: IGameDb
-  gameServer: Awaited<ReturnType<(typeof GameServer)['initCtx']>>
+  games: GamesTypes.GameServerCtx
 }
 
 export type ModelServer = null
@@ -141,7 +139,7 @@ export type MsgToServerExtra = {
 //
 
 export type ClientModule = AppClientModule<{
-  Ctx: AnonymousClientCtx | ClientCtx
+  Ctx: AnonymousClientCtx | AppClientCtx
   MsgCmdIn: never
   MsgEvtIn: ClientEvt
   Model: ModelClient

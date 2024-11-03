@@ -1,7 +1,8 @@
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { makeSpace } from './shared'
-import type { SpaceCtx } from '../space'
+
 import { SpaceCore } from '../../core'
+import { SpaceCtx } from '../space-ctx'
 
 export const SpaceCoreFixture = async () => {
   const spaceId = SpaceId.generate()

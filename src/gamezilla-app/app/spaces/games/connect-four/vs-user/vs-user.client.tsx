@@ -1,5 +1,5 @@
 import { Sub } from 'gamezilla-app/@/core'
-import type { ClientCmd, ClientCtx } from 'gamezilla-app/app/@/client'
+import type { ClientCmd, AppClientCtx } from 'gamezilla-app/app/@/client'
 import {
   Avatar,
   Button,
@@ -11,7 +11,6 @@ import {
   IconSpinner,
   IconXMark
 } from 'gamezilla-app/app/@/ui'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { VsUserSetupScreen } from 'gamezilla-app/app/spaces/games/@/vs-user'
@@ -31,6 +30,7 @@ import {
 } from './vs-user.types'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
 import { LayoutGame } from '../../@/game/layout-game'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -336,7 +336,7 @@ const ViewGameOverMessage = ({
   dispatch
 }: {
   modelCore: StateGameOver
-  ctx: ClientCtx
+  ctx: AppClientCtx
   dispatch: (msg: MsgCore) => void
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, modelCore)

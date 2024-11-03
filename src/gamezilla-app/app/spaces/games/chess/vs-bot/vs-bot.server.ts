@@ -1,5 +1,5 @@
 import { Eff, Sub, pipe } from 'gamezilla-app/@/core'
-import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
+
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { Chess } from '../@/chess'
 import {
@@ -11,6 +11,8 @@ import {
   type MsgToClient,
   type MsgToServer
 } from './vs-bot.types'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
 
 //
 //
@@ -70,7 +72,7 @@ export const update = ({
 export const updateFromClient = (input: {
   msg: MsgToServer
   model: Model
-  ctx: SpaceReqCtx
+  ctx: SpaceServerCtx
 }): {
   model: Model
   eff?: Eff<Msg>

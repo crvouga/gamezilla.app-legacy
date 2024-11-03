@@ -1,6 +1,5 @@
 import { Sub } from 'gamezilla-app/@/core'
 import type { ClientCmd } from 'gamezilla-app/app/@/client'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { GameClient } from 'gamezilla-app/app/spaces/games/@/architecture/game-client'
 import { SpaceClientEvt } from '../../@/space-client-evt'
 import { GameMainMenu } from '../@/game/game-main-menu'
@@ -8,6 +7,7 @@ import { CoverArt } from './@/tic-tic-toe/tic-tac-toe-ui'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 
 type Client = GameClient<{
   ModelClient: ModelClient

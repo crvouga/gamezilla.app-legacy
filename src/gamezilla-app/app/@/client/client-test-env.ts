@@ -2,13 +2,13 @@ import { PhoneNumber, Posix } from 'gamezilla-app/@/core'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import { TestRender } from 'gamezilla-app/@/vdom/test-render'
 import { UserId } from '../data'
-import type { ClientCtx } from './client-ctx'
+import type { AppClientCtx } from './client-ctx'
 import { Translator } from './translator'
 import { VDOM_IMPL_TEST } from 'gamezilla-app/config-public'
 
 export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {
   const currentUserId = UserId.generate()
-  const ctx: ClientCtx = {
+  const ctx: AppClientCtx = {
     currentRoute: input?.currentRoute ?? {
       n: 'auth-login',
       t: 'login'

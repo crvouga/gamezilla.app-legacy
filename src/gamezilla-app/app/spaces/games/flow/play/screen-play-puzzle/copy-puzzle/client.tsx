@@ -1,4 +1,4 @@
-import { APP_SOUND, copyToClipboard, playSound, showToast, type ClientCtx } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, copyToClipboard, playSound, showToast, type AppClientCtx } from 'gamezilla-app/app/@/client'
 import { IconCopy } from 'gamezilla-app/app/@/ui'
 import type { ActionInput } from 'gamezilla-app/app/@/ui/actions'
 import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'
@@ -62,7 +62,7 @@ export const viewButtonAction = ({
   ctx,
   dispatch
 }: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
   dispatch: (m: MsgClient) => void
 }): ActionInput | null => {
   if (ctx.currentUserRole !== 'super') {

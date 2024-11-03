@@ -1,7 +1,7 @@
 import { eq, memoize } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { History } from 'gamezilla-app/@/history'
-import { APP_SOUND, ClientCtx } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, AppClientCtx } from 'gamezilla-app/app/@/client'
 import {
   Button,
   Drawer,
@@ -477,7 +477,7 @@ export const toFlowMemoized = memoize({
 //
 //
 
-export const View = (input: { ctx: ClientCtx; model: Model; dispatch: (m: Msg) => void }) => {
+export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg) => void }) => {
   const { model, dispatch } = input
   return (
     <FlowLayout

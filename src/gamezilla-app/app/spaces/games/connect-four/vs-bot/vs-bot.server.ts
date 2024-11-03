@@ -1,8 +1,9 @@
 import { Sub, Time, TimeSpan, isErr } from 'gamezilla-app/@/core'
-import { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-server-v2'
 import { withEventId } from 'gamezilla-app/app/spaces/@/event'
-import type { SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
+import { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-server-v2'
 import * as ConnectFour from '../@/connect-four/connect-four'
 import {
   type ModelCore,

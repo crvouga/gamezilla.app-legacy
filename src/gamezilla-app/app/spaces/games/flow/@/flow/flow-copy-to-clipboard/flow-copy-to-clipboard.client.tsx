@@ -1,5 +1,12 @@
 import { p } from 'gamezilla-app/@/core/parser'
-import { APP_SOUND, ClientCmd, copyToClipboard, playSound, showToast, type ClientCtx } from 'gamezilla-app/app/@/client'
+import {
+  APP_SOUND,
+  ClientCmd,
+  copyToClipboard,
+  playSound,
+  showToast,
+  type AppClientCtx
+} from 'gamezilla-app/app/@/client'
 import { IconCopy } from 'gamezilla-app/app/@/ui'
 import type { ActionInput } from 'gamezilla-app/app/@/ui/actions'
 import { FlowVariant } from '..'
@@ -18,7 +25,7 @@ export type MsgClient = p.Infer<typeof MsgClient>
 const update = <TModel,>(input: {
   msg: MsgClient | { t: string & {} }
   model: TModel
-  ctx: ClientCtx
+  ctx: AppClientCtx
   flow: FlowVariant.Model
 }): {
   model: TModel
@@ -51,7 +58,7 @@ const update = <TModel,>(input: {
   }
 }
 
-const viewAction = ({ ctx, dispatch }: { ctx: ClientCtx; dispatch: (m: MsgClient) => void }): ActionInput[] => {
+const viewAction = ({ ctx, dispatch }: { ctx: AppClientCtx; dispatch: (m: MsgClient) => void }): ActionInput[] => {
   return [
     {
       icon: (input) => <IconCopy {...input} />,

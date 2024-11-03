@@ -1,13 +1,11 @@
-import { Eff, Result, Sub } from 'gamezilla-app/@/core'
+import { Eff, Ok, Sub } from 'gamezilla-app/@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
-import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { SpaceServerCtx } from '../../@/space-server-ctx'
+import { SpaceServerEvt } from '../../@/space-server-evt'
 import type { ModelServer, MsgServer, MsgToClient, MsgToServer } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'
-
-const { Err, Ok } = Result
 
 //
 //
@@ -76,7 +74,7 @@ export const updateFromClient = ({
   model,
   ctx
 }: {
-  ctx: SpaceReqCtx
+  ctx: SpaceServerCtx
   msg: MsgToServer
   model: Model
 }): {
@@ -85,18 +83,6 @@ export const updateFromClient = ({
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
   if (msg.t === 'input-mode') {
-    if (ctx.currentUserId !== ctx.space.hostId) {
-      return {
-        model,
-        msgCmd: [
-          sendToClient([ctx.clientId], {
-            ...msg,
-            result: Err('must-be-host')
-          })
-        ]
-      }
-    }
-
     const modelNew: ModelServer = initMode({
       mode: msg.mode,
       userId: ctx.space.hostId

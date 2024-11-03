@@ -1,4 +1,4 @@
-import { APP_SOUND, type ClientCtx, playSound, pushRoute } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, type AppClientCtx, playSound, pushRoute } from 'gamezilla-app/app/@/client'
 import { Avatar, Button, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
 import { GameCoverArt } from '../../games/game-cover-art'
@@ -38,7 +38,15 @@ const update: SpaceClientModule['update'] = ({ model, msg, ctx }) => {
   }
 }
 
-const View = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: ModelClient; dispatch: (msg: MsgClient) => void }) => {
+const View = ({
+  ctx,
+  model,
+  dispatch
+}: {
+  ctx: AppClientCtx
+  model: ModelClient
+  dispatch: (msg: MsgClient) => void
+}) => {
   const userSpaceId = model.indexSpaceIdByUserId[ctx.currentUserId]
 
   if (!userSpaceId) {

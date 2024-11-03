@@ -1,19 +1,19 @@
 import { describe, expect, test } from 'bun:test'
-import { APP_SOUND, ClientCtx, ClientEvt, SoundCmd, playSound } from '../@/client'
+import { APP_SOUND, AppClientCtx, ClientEvt, SoundCmd, playSound } from '../@/client'
 import { FixtureAppClient } from '../@/client/client-test-env'
 import * as Sound from './sound'
 
 type Input =
   | {
-      ctx?: ClientCtx
+      ctx?: AppClientCtx
       msg: Sound.Msg
     }
   | {
-      ctx?: ClientCtx
+      ctx?: AppClientCtx
       msgCmd: SoundCmd
     }
   | {
-      ctx?: ClientCtx
+      ctx?: AppClientCtx
       msgEvt: ClientEvt
     }
 

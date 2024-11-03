@@ -6,7 +6,7 @@ import { initServer } from '../../types'
 import { BuilderCore } from '../../core'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { FlowServerCtx } from '../../../@/flow-server-ctx'
-import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
 
 export const initial = {
   model: initServer

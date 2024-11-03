@@ -2,7 +2,6 @@ import { NonEmpty, Ok } from 'gamezilla-app/@/core'
 import { LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import { EventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { testSpaceClientCtx } from 'gamezilla-app/app/spaces/games/@/testing/client'
 import { Flow } from '../../../@/flow'
 import type { FlowClientCtx } from '../../../@/flow-client-ctx'
@@ -16,6 +15,7 @@ import { FlowPuzzleListTypes } from '../../../@/puzzle/puzzle-list'
 import { BuilderClient } from '../../client'
 import { BuilderCore } from '../../core'
 import * as BuilderTypes from '../../types'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 export type FixureUpdateInput = {
   ctx?: FlowClientCtx

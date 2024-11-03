@@ -1,6 +1,6 @@
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 export type PlayerType = 'player-one' | 'player-two'
 

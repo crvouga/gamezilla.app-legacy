@@ -1,7 +1,6 @@
 import { NotAsked, type RequestResponse } from 'gamezilla-app/@/core'
 import type { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import type { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
-import type { SpaceClientCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
@@ -10,6 +9,8 @@ import { FlowServerCtx } from '../../flow-server-ctx'
 import type { FlowPuzzle } from '../puzzle'
 import type { ListPuzzlesInput, ListPuzzlesOutput } from '../puzzle-db'
 import type { FlowPuzzleId } from '../puzzle-id'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 
 //
 //

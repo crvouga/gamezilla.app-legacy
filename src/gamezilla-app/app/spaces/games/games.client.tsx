@@ -1,5 +1,5 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
-import { APP_SOUND, type ClientCtx, playSound } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, type AppClientCtx, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar, Typography } from 'gamezilla-app/app/@/ui'
 import { type WithEventId, withEventId } from '../@/event'
 import { SpaceClientCmd } from '../@/space-client-cmd'
@@ -209,7 +209,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule['subscriptions'] = (input)
     return Sub.None
   }
 
-  const clientCtx: ClientCtx = {
+  const clientCtx: AppClientCtx = {
     ...input.ctx,
     currentUserId: input.ctx.currentUser.userId,
     currentUserRole: input.ctx.currentUser.role,

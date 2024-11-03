@@ -1,5 +1,5 @@
 import type { WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import { UserId } from 'gamezilla-app/app/@/data'
 import * as VsBot from './vs-bot/vs-bot.types'
 import * as VsUser from './vs-user/vs-user.types'

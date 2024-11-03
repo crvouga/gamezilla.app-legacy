@@ -1,6 +1,7 @@
 import { Eff, Sub, andThen, pipe } from 'gamezilla-app/@/core'
-import type { SpaceReqCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { handleBotMove, initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-bot.types'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
 
 //
 //
@@ -43,12 +44,7 @@ export const update = ({
   }
 }
 
-type updateFromClient = (input: {
-  ctx: SpaceReqCtx
-
-  msg: MsgToServer
-  model: Model
-}) => {
+type updateFromClient = (input: { ctx: SpaceServerCtx; msg: MsgToServer; model: Model }) => {
   model: Model
   eff?: Eff<Msg>
 }

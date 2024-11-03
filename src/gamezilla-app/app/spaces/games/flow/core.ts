@@ -1,4 +1,4 @@
-import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import type { WithEventMeta } from '../../@/event'
 import { BuilderCore } from './builder/core'
 import type { ModelCore, MsgCore } from './types'

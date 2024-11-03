@@ -1,5 +1,5 @@
 import type { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import type { SpaceCtx } from '../../../@/space'
+import type { SpaceCtx } from '../../../@/space-ctx'
 
 const hostUserId = 'test-user-id' as UserId
 

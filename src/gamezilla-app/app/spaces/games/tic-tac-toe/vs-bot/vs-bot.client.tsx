@@ -1,7 +1,6 @@
 import type { Eff, Posix } from 'gamezilla-app/@/core'
-import { type ClientCmd, type ClientCtx, sendToServer } from 'gamezilla-app/app/@/client'
+import { type ClientCmd, type AppClientCtx, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from 'gamezilla-app/app/@/ui'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import {
   IconBotCute,
   IconBotLevel1,
@@ -21,6 +20,7 @@ import {
   initCoreModel
 } from './vs-bot.types'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -96,7 +96,7 @@ export const updateFromServer = ({
   model,
   ctx
 }: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
   msg: MsgToClient
   model: Model
 }): {

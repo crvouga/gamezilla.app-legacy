@@ -1,4 +1,4 @@
-import type { ClientCtx } from 'gamezilla-app/app/@/client'
+import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Eff, RemoteResult, Sub, exhaustive, isErr, pipe } from 'gamezilla-app/@/core'
 import { Mic } from './mic'
@@ -166,7 +166,15 @@ const toLifecycleEff = ({
 //
 //
 
-export const ViewPage = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: Model; dispatch: (msg: Msg) => void }) => {
+export const ViewPage = ({
+  ctx,
+  model,
+  dispatch
+}: {
+  ctx: AppClientCtx
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
   const user = model.users[ctx.currentUserId]
 
   if (!user) {
@@ -182,7 +190,7 @@ export const ViewPage = ({ ctx, model, dispatch }: { ctx: ClientCtx; model: Mode
   return null
 }
 
-const ViewNotInParty = (_input: { ctx: ClientCtx; model: Model; dispatch: (msg: Msg) => void }) => {
+const ViewNotInParty = (_input: { ctx: AppClientCtx; model: Model; dispatch: (msg: Msg) => void }) => {
   return <div>View</div>
 }
 
@@ -190,7 +198,7 @@ export const ViewBanner = ({
   model,
   ctx
 }: {
-  ctx: ClientCtx
+  ctx: AppClientCtx
 
   model: Model
   dispatch: (msg: Msg) => void

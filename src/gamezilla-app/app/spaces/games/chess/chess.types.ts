@@ -1,6 +1,6 @@
 import type { RemoteResult, Result } from 'gamezilla-app/@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
-import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space'
+import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import type * as Puzzle from './puzzle/puzzle.types'
 import type * as VsBot from './vs-bot/vs-bot.types'
 import type * as VsUser from './vs-user/vs-user.types'

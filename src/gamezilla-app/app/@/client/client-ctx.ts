@@ -31,7 +31,7 @@ export const isAnonymous = (ctx: BaseClientCtx): ctx is AnonymousClientCtx => {
   return ctx.currentUserId === null
 }
 
-export type ClientCtx = BaseClientCtx & {
+export type AppClientCtx = BaseClientCtx & {
   currentUser: UserAccount
   currentUserId: UserId
   currentUserRole: UserRole

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'bun:test'
 import { Err, Ok, Posix, RequestResponse, TimeSpan, isRequesting } from 'gamezilla-app/@/core'
 import { andThen } from 'gamezilla-app/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import { FlowVariant, FlowVariantDimensions } from '../../flow'
@@ -10,6 +9,7 @@ import type { FlowClientCtx } from '../../flow-client-ctx'
 import { FlowPuzzle } from '../puzzle'
 import { FlowPuzzleListClient } from './flow-puzzle-list.client'
 import { type ModelClient, initClient } from './flow-puzzle-list.types'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 const initial = {
   model: initClient

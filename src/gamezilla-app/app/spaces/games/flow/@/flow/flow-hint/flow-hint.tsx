@@ -1,6 +1,6 @@
 import { eq } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
-import type { ClientCtx } from 'gamezilla-app/app/@/client'
+import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { IconLightbulb } from 'gamezilla-app/app/@/ui'
 import type { ActionInput } from 'gamezilla-app/app/@/ui/actions'
 import type { FlowPuzzle } from '../../puzzle/puzzle'
@@ -193,7 +193,7 @@ export const toFlow = (input: { model: Model; flow: FlowVariant.Model }): FlowVa
 export const viewHintAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
-  ctx: ClientCtx & Ctx
+  ctx: AppClientCtx & Ctx
   disabled: boolean
 }): ActionInput => {
   return {

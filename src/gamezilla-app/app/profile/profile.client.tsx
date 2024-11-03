@@ -4,7 +4,7 @@ import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import {
   type AnonymousClientCtx,
   type ClientCmd,
-  type ClientCtx,
+  type AppClientCtx,
   type ClientEvt,
   type ProfileCmd,
   back,
@@ -28,7 +28,7 @@ import * as UpdateUsernameClient from './update-username/update-username.client'
 //
 //
 
-type Ctx = ClientCtx | AnonymousClientCtx
+type Ctx = AppClientCtx | AnonymousClientCtx
 
 type ClientModule = AppClientModule<{
   Model: ModelClient

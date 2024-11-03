@@ -1,7 +1,8 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import type { EventMeta, WithEventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import type { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
+import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 
 //
 //
@@ -38,7 +39,7 @@ export type GameServer<T extends GameServerTypes> = {
   }>
 
   update: (input: {
-    ctx: SpaceServerCtx | SpaceReqCtx
+    ctx: SpaceServerCtx
     state: T['ModelCore']
     model?: T['ModelServer'] | null
     //

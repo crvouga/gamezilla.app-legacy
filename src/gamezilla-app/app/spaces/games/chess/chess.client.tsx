@@ -1,7 +1,7 @@
 import { Eff, RemoteResult, Sub, isErr } from 'gamezilla-app/@/core'
 import { APP_SOUND, ClientCmd, playSound, preloadSound, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconPuzzlePiece } from 'gamezilla-app/app/@/ui'
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
+
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import type { GameClient } from 'gamezilla-app/app/spaces/games/@/architecture/game-client'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
@@ -13,6 +13,7 @@ import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServ
 import * as Puzzle from './puzzle/puzzle.client'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 
 //
 //

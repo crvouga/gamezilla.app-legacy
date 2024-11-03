@@ -1,8 +1,8 @@
-import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconRobot, Avatar, Transition, cn, Typography } from 'gamezilla-app/app/@/ui'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import type { VDom, VDomChildren } from 'gamezilla-app/@/vdom'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -54,7 +54,7 @@ export type GameOver =
       t: 'draw'
     }
 
-type input = {
+type Input = {
   ctx: SpaceClientCtx
   model?: Model
   gameOver: GameOver | null
@@ -188,7 +188,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
   }
 }
 
-export const ViewGameOverOverlay = (input: input & { isSpectating: boolean }) => {
+export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) => {
   const { gameOver } = input
 
   return (
@@ -244,7 +244,7 @@ export const ViewGameOverOverlay = (input: input & { isSpectating: boolean }) =>
   )
 }
 
-const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: input & { winner: PlayerType }) => {
+const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { winner: PlayerType }) => {
   const humanSlot = (
     <>
       <Avatar className='h-16 w-16' src={ctx.profiles[human.userId]?.avatarUrl} />
@@ -302,7 +302,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: input & { win
   )
 }
 
-const Draw = (input: input) => {
+const Draw = (input: Input) => {
   const humanSlot = (
     <>
       <Avatar src={input.ctx.profiles[input.ctx.currentUserId]?.avatarUrl} />

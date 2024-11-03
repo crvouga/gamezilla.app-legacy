@@ -1,6 +1,5 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
-import type { SpaceCtx, SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import type { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-core'
@@ -14,6 +13,8 @@ import type { FlowPackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { FlowServerCtx } from '../@/flow-server-ctx'
 import { FlowPuzzleResult } from './@/puzzle-result'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
+import { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
+import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 
 //
 //
