@@ -135,8 +135,8 @@ describe(import.meta.file, () => {
       const before = unwrap(await f.spacesCoreServer.get(f.spaceId)) ?? SpaceCore.init
       await f.spacesCoreServer.upsert(f.spaceA)
       const after = unwrap(await f.spacesCoreServer.get(f.spaceId)) ?? SpaceCore.init
-      expect(EventSourced.deriveState(SpaceCore.config, before).type).toEqual('initial')
-      expect(EventSourced.deriveState(SpaceCore.config, after).type).toEqual('started')
+      expect(EventSourced.toState(SpaceCore.config, before).type).toEqual('initial')
+      expect(EventSourced.toState(SpaceCore.config, after).type).toEqual('started')
     }
   })
 

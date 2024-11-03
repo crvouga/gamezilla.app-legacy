@@ -64,7 +64,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
 
 const spacesToProfiles = async (ctx: AppServerCtx, spaces: Space.Model[]) => {
   const userIds = spaces.flatMap((space) => {
-    const state = EventSourced.deriveState(SpaceCore.config, space)
+    const state = EventSourced.toState(SpaceCore.config, space)
     switch (state.type) {
       case 'started':
         return SpaceCoreState.toUserIds(state)
@@ -124,7 +124,7 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
 
   const space = unwrapOr(got, null) ?? SpaceCore.init
 
-  const eventWithMeta = EventSourced.toEventWithMeta(space, input.msgCore.eventId)
+  const eventWithMeta = EventSourced.toEvent(space, input.msgCore.eventId)
 
   if (!eventWithMeta) {
     return {}

@@ -66,7 +66,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
   const upsert: ISpacesCoreServer['upsert'] = async (space) => {
     await implDbConnKb.upsert(space)
 
-    const snapshot = EventSourced.deriveState(SpaceCore.config, space)
+    const snapshot = EventSourced.toState(SpaceCore.config, space)
 
     const spaceId = 'spaceId' in snapshot ? snapshot.spaceId : null
 

@@ -79,7 +79,7 @@ export const listSpaces = ({
       continue
     }
 
-    const spaceState = EventSourced.deriveState(SpaceCore.config, spaceModel)
+    const spaceState = EventSourced.toState(SpaceCore.config, spaceModel)
 
     switch (spaceState.type) {
       case 'ended': {
@@ -147,7 +147,7 @@ export const toEventWithMeta = (model: Model, spaceId: SpaceId, msgEvtId?: Event
     return null
   }
 
-  return EventSourced.toEventWithMeta(space, msgEvtId)
+  return EventSourced.toEvent(space, msgEvtId)
 }
 
 export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined): SpaceState.State => {
@@ -161,7 +161,7 @@ export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined)
     return SpaceState.init
   }
 
-  const spaceState = EventSourced.deriveState(SpaceCore.config, spaceModel)
+  const spaceState = EventSourced.toState(SpaceCore.config, spaceModel)
 
   return spaceState
 }

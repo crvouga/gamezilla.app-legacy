@@ -32,7 +32,7 @@ export const random = (input?: { hostId?: UserId; spaceId?: SpaceId }) => {
 }
 
 export const toSpaceId = (model: Model): SpaceId | null => {
-  const state = EventSourced.deriveState(config, model)
+  const state = EventSourced.toState(config, model)
 
   switch (state.type) {
     case 'ended':
@@ -49,7 +49,7 @@ export const toSpaceStarted = (model: Model | null | undefined): SpaceState.Star
   if (!model) {
     return null
   }
-  const state = EventSourced.deriveState(config, model)
+  const state = EventSourced.toState(config, model)
 
   switch (state.type) {
     case 'started': {
@@ -62,5 +62,5 @@ export const toSpaceStarted = (model: Model | null | undefined): SpaceState.Star
 }
 
 export const toUserIds = (model: Model): UserId[] => {
-  return SpaceState.toUserIds(EventSourced.deriveState(config, model))
+  return SpaceState.toUserIds(EventSourced.toState(config, model))
 }
