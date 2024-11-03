@@ -80,7 +80,7 @@ const spacesToProfiles = async (ctx: AppServerCtx, spaces: Space.Model[]) => {
 const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
     case 'auth/client-authenticated': {
-      const space = unwrapOr(await input.deps.spacesCoreServer.getByUserId(input.msgEvt.account.userId), null)
+      const space = unwrapOr(await input.deps.spacesCoreServer.getByUserId(input.msgEvt.user.userId), null)
 
       if (!space) {
         return {}
@@ -96,7 +96,7 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
             t: 'current-user-space',
             space: started,
             profiles,
-            currentUser: input.msgEvt.account,
+            currentUser: input.msgEvt.user,
             causedBy: {
               msgEvt: input.msgEvt
             }

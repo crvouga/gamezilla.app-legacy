@@ -96,7 +96,7 @@ const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
           {
             t: 'auth/client-authenticated',
             clientId: msgClient.clientId,
-            account: result.value,
+            user: result.value,
             sessionId: msgClient.sessionId,
             loggedIn: true
           }

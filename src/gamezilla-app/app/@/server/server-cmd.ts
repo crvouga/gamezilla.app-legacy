@@ -1,4 +1,4 @@
-import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
+import type { ClientId, UserId } from 'gamezilla-app/app/@/data'
 
 //
 //

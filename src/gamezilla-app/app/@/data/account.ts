@@ -8,7 +8,7 @@ export type UserAccount = {
   role: 'guest' | 'normal' | 'super'
 }
 
-export const randomUserAccount = (input?: {
+const random = (input?: {
   userId?: UserId
   createdAt?: Posix
   phoneNumber?: PhoneNumber
@@ -22,11 +22,16 @@ export const randomUserAccount = (input?: {
   }
 }
 
-export const randomNormalUserAccount = (input?: { userId?: UserId; createdAt?: Posix; phoneNumber?: PhoneNumber }) => {
+const randomNormal = (input?: { userId?: UserId; createdAt?: Posix; phoneNumber?: PhoneNumber }) => {
   return {
     userId: input?.userId ?? UserId.generate(),
     createdAt: input?.createdAt ?? Posix.now(),
     phoneNumber: PhoneNumber.random(),
     role: 'normal'
   } satisfies UserAccount
+}
+
+export const UserAccount = {
+  random,
+  randomNormal
 }

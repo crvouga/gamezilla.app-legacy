@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok, PhoneNumber, Result } from 'gamezilla-app/@/core'
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
-import { randomNormalUserAccount } from 'gamezilla-app/app/@/data/account'
+import { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
+import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { FixtureAppServer, randomClient } from 'gamezilla-app/app/@/server/server-test-env'
 import type { AuthSMSTypes } from '.'
 import { UserAccountDb } from '../@/server/user-account-db'
 import { AuthSMSServer } from './auth-sms.server'
 import type { IVerifySMS } from './verify-sms/verify-sms'
 import { VerifySMS } from './verify-sms/verify-sms-impl/verify-sms-impl'
-import { Logger } from 'gamezilla-app/app/@/server/logger'
 
 type InputMsg =
   | {
@@ -145,7 +145,7 @@ describe(import.meta.file, () => {
   })
 
   it('should not create account if it already exists', async () => {
-    const account = randomNormalUserAccount()
+    const account = UserAccount.randomNormal()
 
     const f = await Fixture({
       VerifySMS: VerifySMS({

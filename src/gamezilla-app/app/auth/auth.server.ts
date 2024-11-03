@@ -121,7 +121,7 @@ const updateFromEvent: typeof update = async (input) => {
           {
             clientId: input.msgEvt.clientId,
             sessionId: input.msgEvt.sessionId,
-            account: account,
+            user: account,
             t: 'auth/client-authenticated'
           }
         ]
@@ -141,7 +141,7 @@ const updateFromEvent: typeof update = async (input) => {
     case 'auth/client-authenticated': {
       const msgCmd = sendToClient<MsgToClient>([input.msgEvt.clientId], {
         t: 'client-authenticated',
-        account: input.msgEvt.account,
+        account: input.msgEvt.user,
         loggedIn: input.msgEvt.loggedIn ?? false
       })
 
@@ -153,7 +153,7 @@ const updateFromEvent: typeof update = async (input) => {
 
       const inserted = await input.ctx.userSessionDb.insert({
         sessionId: input.msgEvt.sessionId,
-        userId: input.msgEvt.account.userId
+        userId: input.msgEvt.user.userId
       })
 
       if (isErr(inserted)) {

@@ -3,7 +3,7 @@ import type { AppServerModule } from '../@/architecture/app-server'
 import type { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import type { MsgServer, MsgToClient, MsgToServer } from './lang.types'
 
-type Module = AppServerModule<{
+type ServerModule = AppServerModule<{
   Ctx: AppServerCtx
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
@@ -11,19 +11,16 @@ type Module = AppServerModule<{
   MsgEvtIn: ServerEvt
   MsgCmdOut: ServerCmd<MsgToClient>
   MsgEvtOut: null
-  Deps: null
 }>
 
-export type Deps = null
-
-export const update: Module['update'] = async () => {
+export const update: ServerModule['update'] = async () => {
   return {}
 }
 
-export const subscriptions: Module['subscriptions'] = async () => {
+export const subscriptions: ServerModule['subscriptions'] = async () => {
   return Sub.None
 }
 
-export const initDeps: Module['initDeps'] = async () => {
+export const initDeps: ServerModule['initDeps'] = async () => {
   return null
 }

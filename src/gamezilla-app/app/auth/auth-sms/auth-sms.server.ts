@@ -185,7 +185,7 @@ const updateVerifyCode: ServerModule['update'] = async ({ msgClient, deps, ctx }
           {
             ...msgClient,
             t: 'auth/client-authenticated',
-            account: verified.value,
+            user: verified.value,
             loggedIn: true
           }
         ]

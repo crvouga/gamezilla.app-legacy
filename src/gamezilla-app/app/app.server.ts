@@ -38,7 +38,6 @@ export type Ctx = AppServerCtx & {
   wire: WireTypes.ServerCtx<MsgToClient, MsgToServer>
   profile: ProfileServer.Deps
   space: SpaceServer.Deps
-  lang: LangServer.Deps
   auth: AuthTypes.ServerCtx
   server: IServer
 }
@@ -66,7 +65,7 @@ export const initCtx = async (): Promise<Ctx> => {
           codebaseVersionId: CODEBASE_VERSION_ID,
           server,
           logger,
-          pubSub
+          pubSubTopicBased: pubSub
         }
       : {
           t: 'socket-io',
@@ -122,12 +121,10 @@ export const initCtx = async (): Promise<Ctx> => {
   const profile = await ProfileServer.initDeps({ ctx })
   const space = await SpaceServer.initDeps({ ctx })
   const auth = await AuthServer.initCtx({ ctx })
-  const lang = await LangServer.initDeps({ ctx })
 
   return {
     ...ctx,
     server,
-    lang,
     auth,
     space,
     profile,
@@ -299,7 +296,7 @@ export const updateChild = async ({
   })
 
   const lang = await LangServer.update({
-    deps: ctx.lang,
+    deps: null,
     ctx,
     msgCmd: null,
     msgEvt: msgEvt,
@@ -337,8 +334,8 @@ export const updateChild = async ({
 export const subscriptions = async (input: { ctx: Ctx }): Promise<Sub<MsgServer>> => {
   return Sub.batch([
     Sub.tag('spaces', await SpaceServer.subscriptions({ ctx: input.ctx, deps: input.ctx.space })),
-    Sub.tag('wire', WireServer.subscriptions({ transport: input.ctx.transport })),
-    Sub.tag('lang', await LangServer.subscriptions({ ctx: input.ctx, deps: input.ctx.lang })),
+    Sub.tag('wire', WireServer.subscriptions({ ctx: input.ctx.wire })),
+    Sub.tag('lang', await LangServer.subscriptions({ ctx: input.ctx, deps: null })),
     Sub.flat(
       Sub.map(input.ctx.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map((c): MsgServer => ({ t: '→', sessionId, clientId, c }))

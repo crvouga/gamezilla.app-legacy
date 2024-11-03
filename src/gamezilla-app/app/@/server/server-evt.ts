@@ -16,7 +16,7 @@ export type ServerEvt =
     }
   | {
       t: 'auth/client-authenticated'
-      account: UserAccount
+      user: UserAccount
       sessionId: SessionId
       clientId: ClientId
       loggedIn?: boolean

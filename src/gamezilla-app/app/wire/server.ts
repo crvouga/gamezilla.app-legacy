@@ -57,11 +57,6 @@ type Output = {
   msgCmd?: ServerCmd<MsgToClient>[]
 }
 
-//
-//
-//
-//
-
 export const update = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClient, TMsgToServer>): Promise<Output> => {
   return AppServerModule.andThen(
     {},
@@ -127,9 +122,10 @@ const updateFromMsg: typeof update = async (input) => {
 const updateFromEvent: typeof update = async (input) => {
   switch (input.msgEvt?.t) {
     case 'auth/client-authenticated': {
-      const wireSessions = unwrapOr(await input.ctx.wireSessionDb.findByUserIds([input.msgEvt.account.userId]), [])
-      const userId = input.msgEvt.account.userId
+      const wireSessions = unwrapOr(await input.ctx.wireSessionDb.findBySessionIds([input.msgEvt.sessionId]), [])
+      const userId = input.msgEvt.user.userId
       const wireSessionsNew = wireSessions.map((wireSession) => WireSession.addUserId(wireSession, userId))
+
       await input.ctx.wireSessionDb.put(wireSessionsNew)
       return {}
     }
@@ -179,6 +175,11 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
     case 'send-to-user': {
       const wireSessions = unwrapOr(await input.ctx.wireSessionDb.findByUserIds(msgCmdChild.userIds), [])
 
+      if (wireSessions.length === 0) {
+        input.ctx.logger.warn(`send to user error. no wire sessions for userIds=${msgCmdChild.userIds}`)
+        return {}
+      }
+
       const toClientPayload: {
         [clientId: ClientId]: {
           clientId: ClientId
@@ -187,6 +188,7 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
       } = {}
 
       for (const wireSession of wireSessions) {
+        console.log('wireSession', wireSession)
         const clientIds = CappedOrderedDict.valuesNewestFirst(wireSession.clientIds)
 
         if (clientIds.length === 0) {
@@ -195,13 +197,11 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
         }
 
         for (const clientId of clientIds) {
-          toClientPayload[clientId] = {
-            clientId,
-            msgs: [msgCmdChild.msg]
-          }
+          toClientPayload[clientId] = toClientPayload[clientId] ?? { clientId, msgs: [] }
+          toClientPayload[clientId].msgs.push(msgCmdChild.msg)
         }
       }
-
+      console.log('toClientPayload', toClientPayload)
       input.ctx.transport.toClient.pub(toClientPayload)
       return {}
     }
@@ -216,13 +216,8 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
   }
 }
 
-export const subscriptions = <TMsgToServer, TMsgToClient>({
-  transport
-}: {
-  transport: IServerTransport<{
-    MsgToClient: TMsgToClient
-    MsgToServer: TMsgToServer
-  }>
+export const subscriptions = <TMsgToServer, TMsgToClient>(input: {
+  ctx: ServerCtx<TMsgToClient, TMsgToServer>
 }): Sub<MsgServer> => {
-  return transport.wire
+  return input.ctx.transport.wire
 }

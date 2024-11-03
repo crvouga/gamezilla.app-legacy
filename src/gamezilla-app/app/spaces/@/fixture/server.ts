@@ -164,7 +164,7 @@ export const authenticatedClientConnected = (deps: ServerDeps, client: Authentic
       t: 'auth/client-authenticated',
       clientId: client.clientId,
       sessionId: client.sessionId,
-      account: {
+      user: {
         createdAt: Posix.now(),
         role: 'guest',
         userId: client.userId,

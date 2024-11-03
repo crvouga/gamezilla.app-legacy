@@ -23,7 +23,7 @@ export type Config = {
   server: ServerBun
   dbConnSql: IDbConnSql
   logger: ILogger
-  pubSub: IPubSubTopicBased
+  pubSubTopicBased: IPubSubTopicBased
 }
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
@@ -64,7 +64,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     clientsBySessionId.set(ws.data.sessionId, clientIds)
     unlistens.set(
       ws.data.clientId,
-      await config.pubSub.sub(ws.data.clientId, (msg) => {
+      await config.pubSubTopicBased.sub(ws.data.clientId, (msg) => {
         logger.debug(`received msg for clientId=${ws.data.clientId} from other server instance`)
         send(ws, JSON.parse(msg))
       })
@@ -184,8 +184,6 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   //
 
   const send = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
-    await new Promise((resolve) => resolve(null))
-
     switch (ws.readyState) {
       case 1: {
         ws.send(JSON.stringify(msg))
@@ -199,7 +197,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
   const sendWithPub = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
     send(ws, msg)
-    config.pubSub.pub(ws.data.clientId, JSON.stringify(msg))
+    config.pubSubTopicBased.pub(ws.data.clientId, JSON.stringify(msg))
     logger.debug(`sent msg for clientId=${ws.data.clientId} to other server instances`)
   }
 

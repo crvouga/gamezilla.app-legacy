@@ -14,7 +14,10 @@ export type ServerTransportMsg =
       clientId: ClientId
       sessionId: SessionId
     }
-  | { t: 'server-started'; port: number }
+  | {
+      t: 'server-started'
+      port: number
+    }
   | {
       t: 'got-bad-msgs'
       reason: 'unknown-msg-type' | 'codebase-version-id-mismatch'
@@ -23,19 +26,23 @@ export type ServerTransportMsg =
       msgs: unknown[]
     }
 
-export type IServerTransport<T extends { MsgToClient: any; MsgToServer: any }> = {
-  toClient: PubSub<{
-    [clientId: ClientId]: {
-      clientId: ClientId
-      msgs: T['MsgToClient'][]
-    }
-  }>
-  toClientBroadcast: PubSub<T['MsgToClient'][]>
-  toServer: PubSub<{
-    msgs: T['MsgToServer'][]
+export type ToClientPayload<TMsgToClient> = {
+  [clientId: ClientId]: {
     clientId: ClientId
-    sessionId: SessionId
-  }>
+    msgs: TMsgToClient[]
+  }
+}
+
+export type ToServerPayload<TMsgToServer> = {
+  msgs: TMsgToServer[]
+  clientId: ClientId
+  sessionId: SessionId
+}
+
+export type IServerTransport<T extends { MsgToClient: any; MsgToServer: any }> = {
+  toClient: PubSub<ToClientPayload<T['MsgToClient']>>
+  toClientBroadcast: PubSub<T['MsgToClient'][]>
+  toServer: PubSub<ToServerPayload<T['MsgToServer']>>
   wire: PubSub<ServerTransportMsg>
 }
 
