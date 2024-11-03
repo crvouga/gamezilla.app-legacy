@@ -188,7 +188,6 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
       } = {}
 
       for (const wireSession of wireSessions) {
-        console.log('wireSession', wireSession)
         const clientIds = CappedOrderedDict.valuesNewestFirst(wireSession.clientIds)
 
         if (clientIds.length === 0) {
