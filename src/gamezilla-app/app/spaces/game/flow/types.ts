@@ -105,7 +105,7 @@ export type Mode = p.Infer<typeof Mode>
 export const MsgCore = p.or(
   p.obj({
     t: p.l('user-changed-mode'),
-    mode: p.or(Mode, p.l(null)),
+    mode: p.or(Mode, p.l('none')),
     userId: UserId
   }),
   p.obj({
@@ -120,7 +120,7 @@ export const MsgCore = p.or(
 export type MsgCore = p.Infer<typeof MsgCore>
 
 export const ModelCore = p.obj({
-  mode: p.or(Mode, p.l(null)),
+  mode: p.or(Mode, p.l('none')),
   play: PlayTypes.ModelCore,
   builder: BuilderTypes.ModelCore
 })

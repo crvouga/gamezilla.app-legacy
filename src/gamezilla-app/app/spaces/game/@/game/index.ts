@@ -1,4 +1,4 @@
-export * as GameMainMenu from './view-game-main-menu'
+export * as GameMainMenu from './game-main-menu'
 export * from './view-bottom-button-bar'
 export * from './layout-game-cover-art-header'
 export * from './layout-game'

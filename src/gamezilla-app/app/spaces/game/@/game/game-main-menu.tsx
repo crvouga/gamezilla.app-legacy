@@ -95,7 +95,7 @@ export const View = ({
     return (
       <LayoutGameCoverArtHeader
         ctx={ctx}
-        onBack={onBack}
+        onBack={false}
         title={title}
         renderCoverArt={renderCoverArt}
         renderContent={() => (

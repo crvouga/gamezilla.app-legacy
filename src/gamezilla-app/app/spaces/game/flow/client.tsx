@@ -19,6 +19,7 @@ import { FlowPuzzleListClient, FlowPuzzleListTypes } from './@/puzzle/puzzle-lis
 import { BuilderClient } from './builder/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
 import { PlayClient } from './play/client'
+import { FlowPack } from './@/pack/pack'
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,
@@ -381,18 +382,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
     Sub.tag(
       'flow-pack-puzzles-grid',
       FlowPackPuzzlesGridClient.subscriptions({
-        ctx: {
-          ...ctx,
-          pack: {
-            createdAt: Posix.now(),
-            createdBy: ctx.currentUserId,
-            id: FlowPackId.generate(),
-            lastUpdatedAt: Posix.now(),
-            lastUpdatedBy: ctx.currentUserId,
-            name: unwrap(FlowPackName.parse('New Pack')),
-            puzzleIds: []
-          }
-        },
+        ctx: { ...ctx, pack: FlowPack.randomSync() },
         model: input.model.packPuzzleGrid
       })
     )
@@ -416,7 +406,7 @@ const View: ClientModule['View'] = (input) => {
   }
 
   switch (input.modelCore.mode) {
-    case null: {
+    case 'none': {
       return (
         <GameMainMenu.View
           renderCoverArt={(input) => <FlowCoverArt {...input} key={input.key} />}

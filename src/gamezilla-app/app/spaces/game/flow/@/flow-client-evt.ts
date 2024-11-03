@@ -5,7 +5,7 @@ export type FlowClientEvtIn = SpaceClientEvt | FlowClientEvt
 
 export type FlowClientEvt = {
   t: 'flow.user-changed-mode'
-  mode: 'play' | 'builder' | null
+  mode: 'play' | 'builder' | 'none'
   userId: UserId
 }
 

@@ -6,7 +6,7 @@ import { cn, TopBar } from 'gamezilla-app/app/@/ui'
 export const LayoutGameCoverArtHeader = (input: {
   title: TranslatedText
   renderCoverArt?: (input: { key: string; className: string }) => VDom
-  onBack: () => void
+  onBack: (() => void) | false
   ctx: {
     t: Translator
   }

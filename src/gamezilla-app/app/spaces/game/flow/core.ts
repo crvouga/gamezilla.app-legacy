@@ -6,7 +6,7 @@ import { PlayCore } from './play/core'
 
 const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
   return {
-    mode: null,
+    mode: 'none',
     builder: BuilderCore.initCore(input),
     play: PlayCore.initCore(input)
   }
@@ -33,7 +33,7 @@ const updateCore = ({
         case 'user-clicked-exit-mode-button': {
           return {
             ...modelCore,
-            mode: null
+            mode: 'none'
           }
         }
       }
@@ -55,7 +55,7 @@ const updateCore = ({
         case 'user-clicked-exit-mode-button': {
           return {
             ...modelCore,
-            mode: null
+            mode: 'none'
           }
         }
       }

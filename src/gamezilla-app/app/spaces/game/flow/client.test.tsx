@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
         msgCore: withEventMeta({
           t: 'user-changed-mode',
           userId: f.ctx.currentUserId,
-          mode: null
+          mode: 'none'
         })
       }
     ])

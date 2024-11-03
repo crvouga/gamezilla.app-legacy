@@ -1,5 +1,5 @@
 import { UserId } from 'gamezilla-app/app/@/data'
-import { Posix } from 'gamezilla-app/@/core'
+import { Posix, unwrap } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { FlowPuzzleId } from '../puzzle/puzzle-id'
 import { FlowPackId } from './pack-id'
@@ -69,6 +69,19 @@ const canGoNext = (pack: FlowPack, puzzleIndex: number): boolean => {
   return puzzleIndex < pack.puzzleIds.length - 1
 }
 
+const randomSync = (input?: { createdBy?: UserId; puzzleIds?: FlowPuzzleId[] }): FlowPack => {
+  const createdBy = input?.createdBy ?? UserId.generate()
+  return {
+    createdAt: Posix.now(),
+    createdBy: createdBy,
+    id: FlowPackId.generate(),
+    lastUpdatedAt: Posix.now(),
+    lastUpdatedBy: createdBy,
+    name: unwrap(FlowPackName.parse(`Pack 0`)),
+    puzzleIds: input?.puzzleIds ?? []
+  }
+}
+
 const random = async (input?: { createdBy?: UserId; puzzleIds?: FlowPuzzleId[] }): Promise<FlowPack> => {
   const createdBy = input?.createdBy ?? UserId.generate()
   return {
@@ -86,6 +99,7 @@ const random = async (input?: { createdBy?: UserId; puzzleIds?: FlowPuzzleId[] }
 
 export const FlowPack = {
   ...parser,
+  randomSync,
   create,
   add,
   includes,
