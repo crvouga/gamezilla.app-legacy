@@ -13,7 +13,6 @@ import {
 } from 'gamezilla-app/app/@/ui'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '../../../@/game'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
 import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
@@ -22,6 +21,7 @@ import { FlowPuzzleListClient } from '../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../types'
 import { ScreenPackBuilderCore } from './core'
 import { EditPackNameClient } from './edit-pack-name/client'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
 
 //
 //

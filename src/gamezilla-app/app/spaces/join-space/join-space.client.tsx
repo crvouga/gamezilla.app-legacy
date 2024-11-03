@@ -2,10 +2,11 @@ import { APP_SOUND, playSound, showErrSm, showToast } from 'gamezilla-app/app/@/
 import { Button } from 'gamezilla-app/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { withEventId } from '../@/event'
-import { LayoutGameCoverArtHeader, ViewUsersInSpaceList } from '../game/@/game'
 import { GameCoverArt } from '../game/game-cover-art'
 import type { MsgCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
+import { ViewUsersInSpaceList } from '../game/@/game/users-in-space-list'
+import { LayoutGameCoverArtHeader } from '../game/@/game/layout-game-cover-art-header'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

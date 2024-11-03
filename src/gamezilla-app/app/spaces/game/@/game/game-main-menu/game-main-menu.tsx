@@ -2,9 +2,14 @@ import type { VDom } from 'gamezilla-app/@/vdom'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconRobot, IconUsers, Typography } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { type SpaceClientCmd, type SpaceClientCmdTypes, exitGame, openUserDetails } from '../../../@/space-client-cmd'
-import { LayoutGameCoverArtHeader } from './layout-game-cover-art-header'
-import { ViewUsersInSpaceList } from './view-users-in-space-list'
+import {
+  type SpaceClientCmd,
+  type SpaceClientCmdTypes,
+  exitGame,
+  openUserDetails
+} from '../../../../@/space-client-cmd'
+import { LayoutGameCoverArtHeader } from '../layout-game-cover-art-header'
+import { ViewUsersInSpaceList } from '../users-in-space-list'
 import { TranslatedText } from 'gamezilla-app/@/l18n'
 import { Translator } from 'gamezilla-app/@/l18n/generated'
 

@@ -5,7 +5,7 @@
 
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
-import { GameMainMenu } from '../../../@/game'
+import { GameMainMenu } from '../../../@/game/game-main-menu'
 
 export const OPTION = ['puzzles', 'packs'] as const
 

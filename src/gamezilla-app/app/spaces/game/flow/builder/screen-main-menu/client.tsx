@@ -1,8 +1,8 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from 'gamezilla-app/app/@/ui'
 import { andThen } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { GameMainMenu } from '../../../@/game'
 import type { ClientModule } from '../types'
+import { GameMainMenu } from '../../../@/game/game-main-menu'
 
 const update: ClientModule['update'] = (input) => {
   return andThen({ model: input.model }, (model) => updateFromMsgCore({ ...input, model }))

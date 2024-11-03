@@ -2,11 +2,12 @@ import { Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { APP_SOUND, type ClientCmd, playSound } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from 'gamezilla-app/app/@/ui'
-import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
 import { type WithEventId, withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { LayoutGame, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
+import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
+import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
 import {
   IconBotHappy,
   IconBotLevel1,
@@ -14,6 +15,7 @@ import {
   VsBotGame,
   VsBotSetup
 } from 'gamezilla-app/app/spaces/game/@/vs-bot'
+import { LayoutGame } from '../../@/game/layout-game'
 import * as ConnectFour from '../@/connect-four'
 import { CoverArt, PlayerOneIcon, PlayerTwoIcon, ViewColumns } from '../@/connect-four-ui'
 import { ALL_BOT_LEVELS, type BotLevel } from './bot-level'
@@ -26,7 +28,6 @@ import {
   type MsgToServer,
   updateCore
 } from './vs-bot.types'
-import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 
 //
 //

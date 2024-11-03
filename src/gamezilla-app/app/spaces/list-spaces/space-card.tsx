@@ -1,8 +1,8 @@
 import type { BaseClientCtx } from 'gamezilla-app/app/@/client'
 import { Avatar, cn, Typography } from 'gamezilla-app/app/@/ui'
-import { ViewSpaceHostChip, ViewYouChip } from '../game/@/game'
 import { GameCoverArt } from '../game/game-cover-art'
 import type { SpaceCoreState } from '../spaces-core'
+import { ViewSpaceHostChip, ViewYouChip } from '../game/@/game/users-in-space-list'
 
 const MAX_AVATAR_COUNT = 3
 

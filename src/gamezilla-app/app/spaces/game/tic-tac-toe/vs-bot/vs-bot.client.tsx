@@ -2,7 +2,6 @@ import type { Eff, Posix } from 'gamezilla-app/@/core'
 import { type ClientCmd, type ClientCtx, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { IconBotCute, IconBotLevel1, IconBotScary, VsBotGame, VsBotSetup } from 'gamezilla-app/app/spaces/game/@/vs-bot'
 import { type BotLevel, allBotLevels, toStatus, toTurn } from '../@/tic-tic-toe/tic-tac-toe'
 import { CoverArt, PlayerTypeIcon, ViewBoard, gameTheme } from '../@/tic-tic-toe/tic-tac-toe-ui'
@@ -15,6 +14,7 @@ import {
   handle,
   initCoreModel
 } from './vs-bot.types'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
 
 //
 //

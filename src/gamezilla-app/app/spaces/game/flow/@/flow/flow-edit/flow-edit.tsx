@@ -11,7 +11,6 @@ import {
   IconExpand,
   IconXMark
 } from 'gamezilla-app/app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '../../../../@/game'
 import { FlowLayout } from '../flow-ui/flow-layout'
 import * as FlowUI from '../flow-ui/flow-ui'
 import * as FlowVariant from '../flow-variant/flow-variant'
@@ -21,6 +20,7 @@ import * as Flow from '../flow/flow'
 import { FlowGroupId } from '../flow/flow-group-id'
 import { FlowNodeId } from '../flow/flow-node-id'
 import { FlowTerminal } from '../flow/flow-terminal'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
 
 //
 //

@@ -4,13 +4,13 @@ import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import type { SpaceClientCmd } from '../../@/space-client-cmd'
 import { SpaceClientEvt } from '../../@/space-client-evt'
 import { CoverArt } from './@/connect-four-ui/connect-four-cover-art'
 import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './connect-four.types'
 import { VsBot } from './vs-bot/vs-bot.client'
 import { VsUser } from './vs-user/vs-user.client'
+import { GameMainMenu } from '../@/game/game-main-menu'
 
 //
 //
@@ -56,11 +56,7 @@ const init: Module['init'] = { t: null }
 const update: Module['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) =>
-      GameMainMenu.update({
-        ...input,
-        model
-      }),
+    (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateChild(model)(input),
     (model) => updateFromMsg(model)(input),
     (model) => updateFromMsgCore(model)(input)

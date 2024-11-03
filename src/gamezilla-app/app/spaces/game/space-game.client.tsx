@@ -7,11 +7,11 @@ import { SpaceClientModule } from '../@/architecture/space-client'
 import { SpaceCore, type MsgCore } from '../spaces-core'
 import * as SpacesCoreClient from '../spaces-core/spaces-core-client/spaces-core.client'
 import type { MsgClient } from '../spaces.types'
-import { ViewUsersInSpaceList } from './@/game'
 import { GameCoverArt } from './game-cover-art'
 import { GameClient } from './game.client'
 import { gameNameList } from './game.types'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
+import { ViewUsersInSpaceList } from './@/game/users-in-space-list'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

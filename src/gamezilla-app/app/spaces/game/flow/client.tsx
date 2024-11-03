@@ -4,7 +4,6 @@ import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconScrewdriverWrench } from 'gamezilla-app/app/@/ui'
 import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { GameMainMenu } from 'gamezilla-app/app/spaces/game/@/game'
 import { SpaceClientCmd } from '../../@/space-client-cmd'
 import { FlowClientCmd } from './@/flow-client-cmd'
 import type { FlowClientCtx } from './@/flow-client-ctx'
@@ -20,6 +19,7 @@ import { BuilderClient } from './builder/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
 import { PlayClient } from './play/client'
 import { FlowPack } from './@/pack/pack'
+import { GameMainMenu } from '../@/game/game-main-menu'
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,

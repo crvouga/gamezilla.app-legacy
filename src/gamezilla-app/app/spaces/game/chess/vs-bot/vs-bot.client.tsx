@@ -2,7 +2,6 @@ import { type Eff, Sub, andThen, exhaustive, isErr, pipe } from 'gamezilla-app/@
 import { type ClientCmd, sendToServer } from 'gamezilla-app/app/@/client'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from 'gamezilla-app/app/@/ui'
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
-import { LayoutGame, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { VsBotSetup } from 'gamezilla-app/app/spaces/game/@/vs-bot'
 import { Chess } from '../@/chess'
 import { Chessboard, CoverArt, PlayerIcon } from '../@/chess-ui'
@@ -18,6 +17,8 @@ import {
   updateCore
 } from './vs-bot.types'
 import { ChessBotLevel } from '../@/chess-bot-level/chess-bot-level'
+import { LayoutGame } from '../../@/game/layout-game'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
 
 //
 //

@@ -14,7 +14,6 @@ import {
 import type { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 import { GameClientModule } from 'gamezilla-app/app/spaces/game/@/architecture/game-client-v2'
-import { LayoutGame, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/spaces/game/@/game'
 import { VsUserSetupScreen } from 'gamezilla-app/app/spaces/game/@/vs-user'
 import { type PlayerType, toTurn } from '../@/connect-four'
 import { PlayerIcon, ViewColumns } from '../@/connect-four-ui'
@@ -30,6 +29,8 @@ import {
   type StateGameOver,
   toPlayerType
 } from './vs-user.types'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
+import { LayoutGame } from '../../@/game/layout-game'
 
 //
 //

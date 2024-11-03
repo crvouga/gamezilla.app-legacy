@@ -1,33 +1,17 @@
 import { APP_SOUND, openProfile, playSound } from 'gamezilla-app/app/@/client'
 import { Avatar, Button, Drawer, Typography } from 'gamezilla-app/app/@/ui'
-import type { SpaceClientCtx } from '../../@/space'
 import { SpaceClientModule } from '../../@/architecture/space-client'
-import { ViewSpaceHostChip, ViewUsersInSpaceList, ViewYouChip } from '../../game/@/game'
+import type { SpaceClientCtx } from '../../@/space'
+import { ViewSpaceHostChip, ViewUsersInSpaceList, ViewYouChip } from '../../game/@/game/users-in-space-list'
 
 const update: SpaceClientModule['update'] = (input) => {
   const { model } = input
   return SpaceClientModule.andThen(
     { model },
-    (model) =>
-      updateModals({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromCmd({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateUserPreview({
-        ...input,
-        model
-      })
+    (model) => updateModals({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateUserPreview({ ...input, model })
   )
 }
 
@@ -148,11 +132,7 @@ const View: SpaceClientModule['View'] = (input) => {
         position='bottom'
         id='users'
         open={input.model.modal === 'users'}
-        onClose={() =>
-          input.dispatch({
-            t: 'closed-modal'
-          })
-        }
+        onClose={() => input.dispatch({ t: 'closed-modal' })}
       >
         <ViewUsersInSpaceList
           onOpenUserDetails={(userId) =>

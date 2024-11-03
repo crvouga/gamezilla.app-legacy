@@ -15,7 +15,7 @@ import type { Text as Text37 } from '../../../app/spaces/end-space/end-space.$l1
 import type { Text as Text14 } from '../../../app/spaces/game/@/game-name/game-name.$l18n'
 import type { Text as Text15 } from '../../../app/spaces/game/@/game.$l18n'
 import type { Text as Text16 } from '../../../app/spaces/game/@/game/chips.$l18n'
-import type { Text as Text17 } from '../../../app/spaces/game/@/game/game-main-menu.$l18n'
+import type { Text as Text17 } from '../../../app/spaces/game/@/game/game-main-menu/game-main-menu.$l18n'
 import type { Text as Text13 } from '../../../app/spaces/game/chess/@/chess-bot-level/chess-bot-level.$l18n'
 import type { Text as Text12 } from '../../../app/spaces/game/chess/@/chess.$l18n'
 import type { Text as Text11 } from '../../../app/spaces/game/connect-four/@/connect-four.$l18n'
