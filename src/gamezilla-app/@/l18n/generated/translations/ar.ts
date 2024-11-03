@@ -52,12 +52,26 @@ export const translations: Text = {
   'auth-email.send-login-link': 'إرسال رابط تسجيل الدخول',
   'auth-email.email-address': 'عنوان البريد الإلكتروني',
   'auth-email.please-enter-valid-email-address': 'الرجاء إدخال عنوان بريد إلكتروني صالح',
-  'spaces.see-profile': 'مشاهدة الملف الشخصي',
   'spaces.current-user-left': 'ترك الفضاء',
   'spaces.other-user-left': (username) => `${username} \u062A\u0631\u0643 \u0627\u0644\u0641\u0636\u0627\u0621`,
   'spaces.leave': 'غادر',
   'spaces.start-space': 'بدء المساحة',
   'spaces.space-started': 'بدأت المساحة',
+  'spaces.end': 'نهاية',
+  'spaces.end-space': 'انهاء المساحة',
+  'spaces.ended-space-host': 'تم انهاء المساحة من قبل المضيف',
+  'spaces.ended-space-current-user': 'انهاء المساحة',
+  'spaces.ended-space-other-user': (username) =>
+    `${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
+  'spaces.space-ended': 'تم انهاء المساحة',
+  'spaces.space': 'الفضاء',
+  'spaces.join-space': 'انضم إلى المساحة',
+  'spaces.current-user-joined-space': 'انضم إلى الفضاء',
+  'spaces.other-user-joined-space': (username) =>
+    username
+      ? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
+      : '\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
+  "spaces.you're-already-in-a-space": 'أنت بالفعل في مساحة',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -174,25 +188,11 @@ export const translations: Text = {
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'space-game-flow-edit.editing': 'تحرير',
   'flow-play.no-hints-available': 'لا تتوفر تلميحات',
-  'spaces.end': 'نهاية',
-  'spaces.end-space': 'انهاء المساحة',
-  'spaces.ended-space-host': 'تم انهاء المساحة من قبل المضيف',
-  'spaces.ended-space-current-user': 'انهاء المساحة',
-  'spaces.ended-space-other-user': (username) =>
-    `${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
-  'spaces.space-ended': 'تم انهاء المساحة',
-  'spaces.space': 'الفضاء',
-  'spaces.join-space': 'انضم إلى المساحة',
-  'spaces.current-user-joined-space': 'انضم إلى الفضاء',
-  'spaces.other-user-joined-space': (username) =>
-    username
-      ? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
-      : '\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
-  "spaces.you're-already-in-a-space": 'أنت بالفعل في مساحة',
-  'space-card.live': 'حي',
-  'space-card.people-count': (count) => `${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
+  'spaces.see-profile': 'مشاهدة الملف الشخصي',
   'spaces.spaces': 'الفضاءات',
   'spaces.no-spaces': 'لا توجد مساحات',
+  'space-card.live': 'حي',
+  'space-card.people-count': (count) => `${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
   'spaces.space-not-found': 'الفضاء غير موجود',
   'spaces.go-home': 'اذهب إلى الصفحة الرئيسية',
   'spaces.current-user-ended-space': 'انتهى الفضاء',

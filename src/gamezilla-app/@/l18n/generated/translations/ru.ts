@@ -53,13 +53,27 @@ export const translations: Text = {
   'auth-email.send-login-link': 'Отправить ссылку для входа',
   'auth-email.email-address': 'Адрес электронной почты',
   'auth-email.please-enter-valid-email-address': 'Пожалуйста, введите действительный адрес электронной почты',
-  'spaces.see-profile': 'Посмотреть профиль',
   'spaces.current-user-left': 'Покинул пространство',
   'spaces.other-user-left': (username) =>
     `${username} \u043F\u043E\u043A\u0438\u043D\u0443\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
   'spaces.leave': 'Покинуть',
   'spaces.start-space': 'Начать пространство',
   'spaces.space-started': 'Пространство началось',
+  'spaces.end': 'Конец',
+  'spaces.end-space': 'Завершить пространство',
+  'spaces.ended-space-host': 'Пространство завершено хостом',
+  'spaces.ended-space-current-user': 'Пространство завершено',
+  'spaces.ended-space-other-user': (username) =>
+    `${username} \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
+  'spaces.space-ended': 'Пространство завершено',
+  'spaces.space': 'Пространство',
+  'spaces.join-space': 'Присоединиться к пространству',
+  'spaces.current-user-joined-space': 'Присоединился к пространству',
+  'spaces.other-user-joined-space': (username) =>
+    username
+      ? `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`
+      : '\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443',
+  "spaces.you're-already-in-a-space": 'Вы уже находитесь в пространстве',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -176,25 +190,11 @@ export const translations: Text = {
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'space-game-flow-edit.editing': 'редактирование',
   'flow-play.no-hints-available': 'Подсказки отсутствуют',
-  'spaces.end': 'Конец',
-  'spaces.end-space': 'Завершить пространство',
-  'spaces.ended-space-host': 'Пространство завершено хостом',
-  'spaces.ended-space-current-user': 'Пространство завершено',
-  'spaces.ended-space-other-user': (username) =>
-    `${username} \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
-  'spaces.space-ended': 'Пространство завершено',
-  'spaces.space': 'Пространство',
-  'spaces.join-space': 'Присоединиться к пространству',
-  'spaces.current-user-joined-space': 'Присоединился к пространству',
-  'spaces.other-user-joined-space': (username) =>
-    username
-      ? `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`
-      : '\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443',
-  "spaces.you're-already-in-a-space": 'Вы уже находитесь в пространстве',
-  'space-card.live': 'Прямой эфир',
-  'space-card.people-count': (count) => `${count.toLocaleString()} \u0447\u0435\u043B\u043E\u0432\u0435\u043A`,
+  'spaces.see-profile': 'Посмотреть профиль',
   'spaces.spaces': 'Пространства',
   'spaces.no-spaces': 'Нет пространств',
+  'space-card.live': 'Прямой эфир',
+  'space-card.people-count': (count) => `${count.toLocaleString()} \u0447\u0435\u043B\u043E\u0432\u0435\u043A`,
   'spaces.space-not-found': 'Пространство не найдено',
   'spaces.go-home': 'Иди домой',
   'spaces.current-user-ended-space': 'Пространство закончено',
