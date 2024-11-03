@@ -246,7 +246,7 @@ const toState = <TEvent, TState>(
     events.push(event)
   }
 
-  for (let i = 0; i < events.length; i++) {
+  for (let i = events.length - 1; i >= 0; i--) {
     state = config.reducer(state, events[i]!)
   }
 
