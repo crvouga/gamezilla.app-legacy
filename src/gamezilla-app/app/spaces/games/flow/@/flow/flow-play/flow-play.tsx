@@ -1,7 +1,7 @@
 import { pipe, TimeSpan } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { Translator } from 'gamezilla-app/@/l18n/generated'
-import { APP_SOUND, ClientCmd, playSound, showToast } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, AppClientCmd, playSound, showToast } from 'gamezilla-app/app/@/client'
 import { IconCheckmark, Transition } from 'gamezilla-app/app/@/ui'
 import { ActionInput, Actions } from 'gamezilla-app/app/@/ui/actions'
 import type { FlowPuzzle } from '../../puzzle/puzzle'
@@ -255,7 +255,7 @@ export type Event =
 export const eventsToClientCmd = (
   { t }: { t: Translator },
   events?: Event[] | null
-): ClientCmd<{
+): AppClientCmd<{
   MsgClient: never
   MsgToServer: never
 }>[] => {

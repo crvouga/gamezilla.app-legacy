@@ -1,5 +1,5 @@
 import { Sub, TimeSpan } from 'gamezilla-app/@/core'
-import { APP_SOUND, type ClientCmd, playSound } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, type AppClientCmd, playSound } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from 'gamezilla-app/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
@@ -45,7 +45,7 @@ type Module = GameClientModule<{
   ModelCore: ModelCore
   MsgCore: MsgCore
   Ctx: SpaceClientCtx
-  MsgCmdOut: ClientCmd<{
+  MsgCmdOut: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
@@ -209,7 +209,7 @@ const updateSound = (
   currentUserId: UserId,
   modelCore: ModelCore,
   msgCore: WithEventId<MsgCore>
-): ClientCmd<{
+): AppClientCmd<{
   MsgToServer: MsgToServer
   MsgClient: MsgClient
 }>[] => {

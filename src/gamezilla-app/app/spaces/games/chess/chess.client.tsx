@@ -1,5 +1,5 @@
 import { Eff, RemoteResult, Sub, isErr } from 'gamezilla-app/@/core'
-import { APP_SOUND, ClientCmd, playSound, preloadSound, sendToServer } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconPuzzlePiece } from 'gamezilla-app/app/@/ui'
 
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
@@ -158,7 +158,7 @@ export const update: Client['update'] = (input) => {
                 }
               },
               eff: Eff.tag('puzzle', updated?.eff ?? Eff.None),
-              msgCmd: ClientCmd.tag('puzzle', updated.msgCmd)
+              msgCmd: AppClientCmd.tag('puzzle', updated.msgCmd)
             }
           }
           return {
@@ -298,7 +298,7 @@ export const update: Client['update'] = (input) => {
               }
             },
             eff: Eff.tag('puzzle', updated?.eff ?? Eff.None),
-            msgCmd: ClientCmd.tag('puzzle', updated.msgCmd)
+            msgCmd: AppClientCmd.tag('puzzle', updated.msgCmd)
           }
         }
       }

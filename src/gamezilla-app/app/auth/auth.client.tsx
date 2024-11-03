@@ -3,7 +3,7 @@ import { Msg } from 'gamezilla-app/@/core/msg'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import {
   APP_SOUND,
-  ClientCmd,
+  AppClientCmd,
   playSound,
   pushRoute,
   replaceRoute,
@@ -40,7 +40,7 @@ export const init: ClientModule['init'] = (input) => {
     },
     eff: Eff.batch(Eff.tag('sms', sms.eff)),
     msgEvt: Msg.batch(sms.msgEvt),
-    msgCmd: Msg.batch(ClientCmd.tag('sms', sms.msgCmd))
+    msgCmd: Msg.batch(AppClientCmd.tag('sms', sms.msgCmd))
   }
 }
 
@@ -79,7 +79,7 @@ const updateChild: ClientModule['update'] = (input) => {
       ...input.model,
       sms: updated.model
     },
-    msgCmd: ClientCmd.tag('sms', updated.msgCmd),
+    msgCmd: AppClientCmd.tag('sms', updated.msgCmd),
     eff: Eff.tag('sms', updated.eff),
     msgEvt: updated.msgEvt
   }

@@ -1,7 +1,7 @@
 import { RequestResponse } from 'gamezilla-app/@/core'
 import {
   AnonymousClientCtx,
-  ClientCmd,
+  AppClientCmd,
   AppClientCtx,
   ClientEvt,
   pushRoute,
@@ -35,7 +35,7 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
   ctx: AppClientCtx | AnonymousClientCtx
 }): {
   model: TModel
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>[]

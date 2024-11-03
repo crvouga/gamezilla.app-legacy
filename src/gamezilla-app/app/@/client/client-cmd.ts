@@ -15,7 +15,7 @@ export type ClientCmdTypes = {
   MsgToServer: unknown
 }
 
-export type ClientCmd<T extends ClientCmdTypes> =
+export type AppClientCmd<T extends ClientCmdTypes> =
   | WireCmd<T>
   | ToastCmd
   | RouteCmd
@@ -39,7 +39,7 @@ export type AuthCmd = {
   }
 }
 
-export const logout = <T extends ClientCmdTypes>(): ClientCmd<T> => {
+export const logout = <T extends ClientCmdTypes>(): AppClientCmd<T> => {
   return {
     t: 'auth',
     c: {
@@ -60,7 +60,7 @@ export type StatusBarCmd = {
   }
 }
 
-export const closeStatusBar = <T extends ClientCmdTypes>(): ClientCmd<T> => {
+export const closeStatusBar = <T extends ClientCmdTypes>(): AppClientCmd<T> => {
   return {
     t: 'status-bar',
     c: {
@@ -93,11 +93,11 @@ export type ProfileCmd =
       }
     }
 
-export const addProfiles = <T extends ClientCmdTypes>(profiles: { [userId: UserId]: Profile }): ClientCmd<T> => {
+export const addProfiles = <T extends ClientCmdTypes>(profiles: { [userId: UserId]: Profile }): AppClientCmd<T> => {
   return { t: 'profile', c: { t: 'add-profiles', profiles } }
 }
 
-export const openProfile = <T extends ClientCmdTypes>(userId: UserId): ClientCmd<T> => {
+export const openProfile = <T extends ClientCmdTypes>(userId: UserId): AppClientCmd<T> => {
   return { t: 'profile', c: { t: 'open-profile', userId } }
 }
 
@@ -151,7 +151,7 @@ export type PlatformCmd<Msg> = {
       }
 }
 
-export const focusView = <T extends ClientCmdTypes>(viewId: string): ClientCmd<T> => {
+export const focusView = <T extends ClientCmdTypes>(viewId: string): AppClientCmd<T> => {
   return { t: 'platform', c: { t: 'focus', viewId: viewId } }
 }
 
@@ -159,7 +159,7 @@ export const startTimeout = <T extends ClientCmdTypes>(
   timeoutId: string | number,
   duration: TimeSpan,
   msg: T['MsgClient']
-): ClientCmd<T> => {
+): AppClientCmd<T> => {
   return {
     t: 'platform',
     c: {
@@ -171,7 +171,7 @@ export const startTimeout = <T extends ClientCmdTypes>(
   }
 }
 
-export const cancelTimeout = <T extends ClientCmdTypes>(timeoutId: string | number): ClientCmd<T> => {
+export const cancelTimeout = <T extends ClientCmdTypes>(timeoutId: string | number): AppClientCmd<T> => {
   return {
     t: 'platform',
     c: {
@@ -181,7 +181,7 @@ export const cancelTimeout = <T extends ClientCmdTypes>(timeoutId: string | numb
   }
 }
 
-export const copyToClipboard = <T extends ClientCmdTypes>(text: string): ClientCmd<T> => {
+export const copyToClipboard = <T extends ClientCmdTypes>(text: string): AppClientCmd<T> => {
   return {
     t: 'platform',
     c: {
@@ -229,7 +229,7 @@ export type WireCmd<T extends ClientCmdTypes> = {
 /**
  * A msgCmd creator for sending a messages to the server.
  */
-export const sendToServer = <T extends ClientCmdTypes>(msg: T['MsgToServer']): ClientCmd<T> => {
+export const sendToServer = <T extends ClientCmdTypes>(msg: T['MsgToServer']): AppClientCmd<T> => {
   return {
     t: 'wire',
     c: {
@@ -283,7 +283,7 @@ export const showToast = <T extends ClientCmdTypes>(
   text: TranslatedText,
   variant?: 'error' | 'info',
   duration?: TimeSpan
-): ClientCmd<T> => {
+): AppClientCmd<T> => {
   return {
     t: 'toast',
     c: {
@@ -319,7 +319,7 @@ export const didShowToast = <T>(
   )
 }
 
-export const showCreatedSm = <T extends ClientCmdTypes>(text: TranslatedText): ClientCmd<T>[] => {
+export const showCreatedSm = <T extends ClientCmdTypes>(text: TranslatedText): AppClientCmd<T>[] => {
   return [
     {
       t: 'toast',
@@ -342,7 +342,7 @@ export const showErrSm = <T extends ClientCmdTypes>(
   text: TranslatedText,
   errorMsg?: string,
   duration?: TimeSpan
-): ClientCmd<T>[] => {
+): AppClientCmd<T>[] => {
   return [
     {
       t: 'toast',
@@ -487,7 +487,7 @@ export const countPlaySoundCmd = <T>(
   )
 }
 
-export const preloadSound = <T extends ClientCmdTypes>(src: string[]): ClientCmd<T> => {
+export const preloadSound = <T extends ClientCmdTypes>(src: string[]): AppClientCmd<T> => {
   return {
     t: 'sound',
     c: {
@@ -527,7 +527,7 @@ export type RouteCmd = {
       }
 }
 
-export const pushRoute = <T extends ClientCmdTypes>(route: Route, playSound?: boolean): ClientCmd<T> => {
+export const pushRoute = <T extends ClientCmdTypes>(route: Route, playSound?: boolean): AppClientCmd<T> => {
   return {
     t: 'routing',
     c: {
@@ -557,7 +557,7 @@ export const didPushRoute = <T>(
   )
 }
 
-export const replaceRoute = <T extends ClientCmdTypes>(route: Route, playSound?: boolean): ClientCmd<T> => {
+export const replaceRoute = <T extends ClientCmdTypes>(route: Route, playSound?: boolean): AppClientCmd<T> => {
   return {
     t: 'routing',
     c: {
@@ -572,7 +572,7 @@ export const didReplaceRoute = <T extends ClientCmdTypes>(
   {
     msgCmd
   }: {
-    msgCmd?: ClientCmd<T>[]
+    msgCmd?: AppClientCmd<T>[]
   },
   route?: Route
 ): boolean => {
@@ -589,7 +589,7 @@ export const didReplaceRoute = <T extends ClientCmdTypes>(
   )
 }
 
-export const back = <T extends ClientCmdTypes>(reason?: string): ClientCmd<T> => {
+export const back = <T extends ClientCmdTypes>(reason?: string): AppClientCmd<T> => {
   return {
     t: 'routing',
     c: {
@@ -611,8 +611,8 @@ export const back = <T extends ClientCmdTypes>(reason?: string): ClientCmd<T> =>
 
 const tagOne = <Tag extends string, T extends ClientCmdTypes>(
   t: Tag,
-  msgCmd: ClientCmd<T>
-): ClientCmd<{
+  msgCmd: AppClientCmd<T>
+): AppClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
   MsgToServer: { t: Tag; c: T['MsgToServer'] }
 }> => {
@@ -644,7 +644,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
           }
         }
         default: {
-          return msgCmd as ClientCmd<{
+          return msgCmd as AppClientCmd<{
             MsgClient: {
               t: Tag
               c: T['MsgClient']
@@ -674,7 +674,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
         }
 
         default: {
-          return msgCmd as ClientCmd<{
+          return msgCmd as AppClientCmd<{
             MsgClient: {
               t: Tag
               c: T['MsgClient']
@@ -696,8 +696,8 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 
 const tag = <Tag extends string, T extends ClientCmdTypes>(
   tag: Tag,
-  msgCmd?: (ClientCmd<T> | null | undefined)[] | null | undefined | null
-): ClientCmd<{
+  msgCmd?: (AppClientCmd<T> | null | undefined)[] | null | undefined | null
+): AppClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
   MsgToServer: { t: Tag; c: T['MsgToServer'] }
 }>[] => {
@@ -705,10 +705,10 @@ const tag = <Tag extends string, T extends ClientCmdTypes>(
 }
 
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
-  msgCmd: ClientCmd<A>[],
+  msgCmd: AppClientCmd<A>[],
   toServerMap: (a: A['MsgToServer']) => B['MsgToServer'],
   clientMsgMap: (b: A['MsgClient']) => B['MsgClient']
-): ClientCmd<B>[] => {
+): AppClientCmd<B>[] => {
   return msgCmd.map((msgCmd) => {
     switch (msgCmd.t) {
       case 'wire': {
@@ -761,7 +761,7 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
     }
   })
 }
-export const ClientCmd = {
+export const AppClientCmd = {
   tagOne,
   tag,
   map

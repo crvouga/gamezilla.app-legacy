@@ -19,7 +19,7 @@ import {
   replaceRoute,
   sendToServer,
   showToast,
-  type ClientCmd
+  type AppClientCmd
 } from 'gamezilla-app/app/@/client/client-cmd'
 import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from 'gamezilla-app/app/@/ui'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './auth-sms.types'
@@ -41,7 +41,7 @@ type Module = AppClientModule<{
   Ctx: BaseClientCtx
   MsgCmdIn: null
   MsgEvtIn: ClientEvt
-  MsgCmdOut: ClientCmd<{
+  MsgCmdOut: AppClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>

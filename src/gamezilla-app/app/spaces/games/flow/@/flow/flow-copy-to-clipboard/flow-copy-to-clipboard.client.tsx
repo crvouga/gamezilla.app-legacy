@@ -1,7 +1,7 @@
 import { p } from 'gamezilla-app/@/core/parser'
 import {
   APP_SOUND,
-  ClientCmd,
+  AppClientCmd,
   copyToClipboard,
   playSound,
   showToast,
@@ -29,7 +29,7 @@ const update = <TModel,>(input: {
   flow: FlowVariant.Model
 }): {
   model: TModel
-  msgCmd?: ClientCmd<never>[]
+  msgCmd?: AppClientCmd<never>[]
 } => {
   switch (input.msg?.t) {
     case 'user-clicked-copy-to-clipboard': {

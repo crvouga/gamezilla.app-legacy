@@ -5,7 +5,7 @@ import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import type { VDom } from 'gamezilla-app/@/vdom'
 import {
   APP_SOUND,
-  ClientCmd,
+  AppClientCmd,
   isAnonymous,
   preloadSound,
   type AnonymousClientCtx,
@@ -140,15 +140,15 @@ export const init = (input: {
   const initialEff = Eff.batch<MsgClient>([routing.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
 
   const initialCmd = batchMsgs<
-    ClientCmd<{
+    AppClientCmd<{
       MsgToServer: MsgToServer
       MsgClient: MsgClient
     }>
   >(
-    ClientCmd.tag('spaces', space.msgCmd),
-    ClientCmd.tag('profile', profile.msgCmd),
-    ClientCmd.tag('auth', auth.msgCmd),
-    ClientCmd.tag('lang', lang.msgCmd),
+    AppClientCmd.tag('spaces', space.msgCmd),
+    AppClientCmd.tag('profile', profile.msgCmd),
+    AppClientCmd.tag('auth', auth.msgCmd),
+    AppClientCmd.tag('lang', lang.msgCmd),
     preloadSound(Object.values(APP_SOUND))
   )
 
@@ -221,7 +221,7 @@ type Output = {
   model: ModelClient
   eff: Eff<MsgClient>
   msgEvt: ClientEvt[]
-  msgCmd: ClientCmd<{
+  msgCmd: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>[]
@@ -272,7 +272,7 @@ const updateChild = (input: {
   msg?: MsgClient
   msgServer?: MsgToClient
   msgEvt?: ClientEvt
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
@@ -393,11 +393,11 @@ const updateChild = (input: {
       lang.msgEvt
     ),
 
-    msgCmd: Msg.batch<ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>>(
-      ClientCmd.tag('auth', auth.msgCmd),
-      ClientCmd.tag('profile', profile.msgCmd),
-      ClientCmd.tag('spaces', space.msgCmd),
-      ClientCmd.tag('lang', lang.msgCmd),
+    msgCmd: Msg.batch<AppClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>>(
+      AppClientCmd.tag('auth', auth.msgCmd),
+      AppClientCmd.tag('profile', profile.msgCmd),
+      AppClientCmd.tag('spaces', space.msgCmd),
+      AppClientCmd.tag('lang', lang.msgCmd),
       statusBar.msgCmd,
       routing.msgCmd,
       sound.msgCmd,

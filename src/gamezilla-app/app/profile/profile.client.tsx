@@ -3,7 +3,7 @@ import { TranslatedText } from 'gamezilla-app/@/l18n'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import {
   type AnonymousClientCtx,
-  type ClientCmd,
+  type AppClientCmd,
   type AppClientCtx,
   type ClientEvt,
   type ProfileCmd,
@@ -38,7 +38,7 @@ type ClientModule = AppClientModule<{
   Ctx: Ctx
   MsgCmdIn: ProfileCmd
   MsgEvtIn: ClientEvt
-  MsgCmdOut: ClientCmd<{
+  MsgCmdOut: AppClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>

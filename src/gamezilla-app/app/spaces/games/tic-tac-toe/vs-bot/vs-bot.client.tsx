@@ -1,5 +1,5 @@
 import type { Eff, Posix } from 'gamezilla-app/@/core'
-import { type ClientCmd, type AppClientCtx, sendToServer } from 'gamezilla-app/app/@/client'
+import { type AppClientCmd, type AppClientCtx, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from 'gamezilla-app/app/@/ui'
 import {
   IconBotCute,
@@ -61,7 +61,7 @@ export const update = ({
   model: Model
 
   eff?: Eff<Msg>
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>[]

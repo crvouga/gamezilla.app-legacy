@@ -1,5 +1,5 @@
 import { Sub } from 'gamezilla-app/@/core'
-import type { ClientCmd } from 'gamezilla-app/app/@/client'
+import type { AppClientCmd } from 'gamezilla-app/app/@/client'
 import type { GameClient } from 'gamezilla-app/app/spaces/games/@/architecture/game-client'
 import { SpaceClientEvt } from '../../@/space-client-evt'
 import { GameMainMenu } from '../@/game/game-main-menu'
@@ -17,7 +17,7 @@ type Client = GameClient<{
   MsgCore: null
   ModelCore: null
   ClientCtx: SpaceClientCtx
-  ClientCmd: ClientCmd<{
+  ClientCmd: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>

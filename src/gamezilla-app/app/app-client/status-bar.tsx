@@ -1,5 +1,5 @@
 import type { VDom } from 'gamezilla-app/@/vdom'
-import { APP_SOUND, playSound, type ClientCmd, type StatusBarCmd } from '../@/client'
+import { APP_SOUND, playSound, type AppClientCmd, type StatusBarCmd } from '../@/client'
 import { Drawer } from '../@/ui'
 
 export type Model = {
@@ -22,7 +22,7 @@ export const update = (input: {
   msgCmd?: StatusBarCmd | null
 }): {
   model: Model
-  msgCmd?: ClientCmd<never>[]
+  msgCmd?: AppClientCmd<never>[]
 } => {
   switch (input.msg?.t) {
     case 'clicked-status-bar': {

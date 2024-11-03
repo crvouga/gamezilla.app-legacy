@@ -1,5 +1,5 @@
 import type { WithEventId, WithEventMeta } from 'gamezilla-app/app/spaces/@/event'
-import { ClientCmd, type ClientEvt } from 'gamezilla-app/app/@/client'
+import { AppClientCmd, type ClientEvt } from 'gamezilla-app/app/@/client'
 import { Eff, Sub } from 'gamezilla-app/@/core'
 import type { VDom } from 'gamezilla-app/@/vdom'
 
@@ -20,7 +20,7 @@ export type GameClientTypes = {
 type Output<T extends GameClientTypes> = {
   model: T['ModelClient']
   eff?: Eff<T['MsgClient']>
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgClient: T['MsgClient']
     MsgToServer: T['MsgToServer']
   }>[]
@@ -33,7 +33,7 @@ export type InMsg<T extends GameClientTypes> =
   | ({ variant: 'event' } & ClientEvt)
 
 export type OutMsg<T extends GameClientTypes> =
-  | ({ variant: 'msgCmd' } & ClientCmd<T>)
+  | ({ variant: 'msgCmd' } & AppClientCmd<T>)
   | ({ variant: 'game-event' } & WithEventId<T['MsgCore']>)
 
 export type GameClient<T extends GameClientTypes> = {
@@ -96,7 +96,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
           c: initial.model
         },
         eff: Eff.tag(tag, initial.eff),
-        msgCmd: ClientCmd.tag(tag, initial.msgCmd)
+        msgCmd: AppClientCmd.tag(tag, initial.msgCmd)
       }
     },
 
@@ -117,7 +117,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
           c: updated.model
         },
         eff: Eff.tag(tag, updated.eff),
-        msgCmd: ClientCmd.tag(tag, updated.msgCmd),
+        msgCmd: AppClientCmd.tag(tag, updated.msgCmd),
         msgCore: updated.msgCore
           ? updated.msgCore.map(
               (
@@ -201,7 +201,7 @@ const chain = <T extends GameClientTypes>(
   initial: Output<T>,
   ...updaters: ((input: T['ModelClient']) => Output<T>)[]
 ): Output<T> => {
-  const msgCmd: ClientCmd<{
+  const msgCmd: AppClientCmd<{
     MsgClient: T['MsgClient']
     MsgToServer: T['MsgToServer']
   }>[] = initial.msgCmd ?? []
@@ -262,7 +262,7 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
       c: output.model
     },
     eff: output.eff ? Eff.tag(tag, output.eff) : undefined,
-    msgCmd: output.msgCmd ? output.msgCmd.map((msgCmd) => ClientCmd.tagOne(tag, msgCmd)) : undefined,
+    msgCmd: output.msgCmd ? output.msgCmd.map((msgCmd) => AppClientCmd.tagOne(tag, msgCmd)) : undefined,
     msgCore: output.msgCore
       ? output.msgCore.map((msgCore) => ({
           eventId: msgCore.eventId,

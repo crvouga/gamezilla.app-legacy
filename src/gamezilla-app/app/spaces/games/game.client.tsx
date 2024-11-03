@@ -1,5 +1,4 @@
 import { Eff, Sub } from 'gamezilla-app/@/core'
-import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'
@@ -9,7 +8,7 @@ import type { ClientModule } from './game.types'
 //
 //
 //
-// Model
+//
 //
 //
 //
@@ -39,7 +38,7 @@ const init = (gameName: GameName): ClientModule['init'] => {
 //
 //
 //
-// Update
+//
 //
 //
 //
@@ -54,23 +53,17 @@ const update: ClientModule['update'] = (input) => {
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgServer: input.msgServer?.t === 'connect-four' ? input.msgServer.c : null,
-        msgCore:
-          input.msgCore?.t === 'connect-four'
-            ? {
-                ...input.msgCore,
-                ...input.msgCore.c
-              }
-            : null,
+        msgCore: input.msgCore?.t === 'connect-four' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null
       })
 
-      const tagged = GameClientModule.tagOutput(
-        'connect-four',
-        (msgCmd) => SpaceClientCmd.tag('connect-four', msgCmd),
-        updated
-      )
-
-      return tagged
+      return {
+        model: { t: 'connect-four', c: updated.model },
+        eff: Eff.tag('connect-four', updated.eff),
+        msgCmd: SpaceClientCmd.tag('connect-four', updated.msgCmd),
+        msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'connect-four' })),
+        msgEvt: updated.msgEvt
+      }
     }
 
     case 'flow': {
@@ -81,21 +74,12 @@ const update: ClientModule['update'] = (input) => {
         msgCmd: null,
         msgEvt: input.msgEvt,
         msgServer: input.msgServer?.t === 'flow' ? input.msgServer.c : null,
-        msgCore:
-          input.msgCore?.t === 'flow'
-            ? {
-                ...input.msgCore,
-                ...input.msgCore.c
-              }
-            : null,
+        msgCore: input.msgCore?.t === 'flow' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null
       })
 
       return {
-        model: {
-          t: 'flow',
-          c: updated.model
-        },
+        model: { t: 'flow', c: updated.model },
         eff: Eff.tag('flow', updated.eff),
         msgCmd: SpaceClientCmd.tag('flow', updated.msgCmd),
         msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'flow' })),
@@ -108,7 +92,7 @@ const update: ClientModule['update'] = (input) => {
 //
 //
 //
-// Subscriptions
+//
 //
 //
 //
@@ -144,7 +128,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
 //
 //
 //
-// View
+//
 //
 //
 //

@@ -1,5 +1,5 @@
-import { Sub } from 'gamezilla-app/@/core'
-import { APP_SOUND, ClientCmd, playSound } from 'gamezilla-app/app/@/client'
+import { Eff, Sub } from 'gamezilla-app/@/core'
+import { APP_SOUND, AppClientCmd, playSound } from 'gamezilla-app/app/@/client'
 import { withEventId } from 'gamezilla-app/app/spaces/@/event'
 import { FeedItem } from 'gamezilla-app/app/spaces/@/feed-item'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
@@ -156,43 +156,40 @@ const updateChild =
           msg: msg?.t === 'vs-bot' ? msg.c : null,
           msgEvt: msgEvt,
           msgCmd: null,
-          msgCore:
-            msgCore?.t === 'vs-bot'
-              ? {
-                  ...msgCore,
-                  ...msgCore.c
-                }
-              : null,
+          msgCore: msgCore?.t === 'vs-bot' ? { ...msgCore, ...msgCore.c } : null,
           msgServer: msgServer?.t === 'vs-bot' ? msgServer.c : null,
           model: model.t === 'vs-bot' ? model.c : VsBot.init,
           modelCore: modelCore.c
         })
 
-        return GameClientModule.tagOutput('vs-bot', (msgCmd) => ClientCmd.tag('vs-bot', msgCmd), updated)
+        return {
+          model: { t: 'vs-bot', c: updated.model },
+          eff: Eff.tag('vs-bot', updated.eff),
+          msgCmd: AppClientCmd.tag('vs-bot', updated.msgCmd),
+          msgCore: updated.msgCore?.map((c) => ({ c, t: 'vs-bot' })),
+          msgEvt: updated.msgEvt
+        }
       }
 
       case 'vs-user': {
         const updated = VsUser.update({
-          ctx: {
-            ...input.ctx,
-            onQuit: () => {}
-          },
+          ctx: { ...input.ctx, onQuit: () => {} },
           model: model.t === 'vs-user' ? model.c : VsUser.init,
           msg: msg?.t === 'vs-user' ? msg.c : null,
           msgCmd: null,
           msgEvt: msgEvt,
-          msgCore:
-            msgCore?.t === 'vs-user'
-              ? {
-                  ...msgCore,
-                  ...msgCore.c
-                }
-              : null,
+          msgCore: msgCore?.t === 'vs-user' ? { ...msgCore, ...msgCore.c } : null,
           msgServer: msgServer?.t === 'vs-user' ? msgServer.c : null,
           modelCore: modelCore.c
         })
 
-        return GameClientModule.tagOutput('vs-user', (msgCmd) => ClientCmd.tag('vs-user', msgCmd), updated)
+        return {
+          model: { t: 'vs-user', c: updated.model },
+          eff: Eff.tag('vs-user', updated.eff),
+          msgCmd: AppClientCmd.tag('vs-user', updated.msgCmd),
+          msgCore: updated.msgCore?.map((c) => ({ c, t: 'vs-user' })),
+          msgEvt: updated.msgEvt
+        }
       }
     }
   }

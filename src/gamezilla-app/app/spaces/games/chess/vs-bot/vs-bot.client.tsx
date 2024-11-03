@@ -1,5 +1,5 @@
 import { type Eff, Sub, andThen, exhaustive, isErr, pipe } from 'gamezilla-app/@/core'
-import { type ClientCmd, sendToServer } from 'gamezilla-app/app/@/client'
+import { type AppClientCmd, sendToServer } from 'gamezilla-app/app/@/client'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from 'gamezilla-app/app/@/ui'
 
 import { VsBotSetup } from 'gamezilla-app/app/spaces/games/@/vs-bot'
@@ -56,7 +56,7 @@ export const update = ({
 }): {
   model: ModelClient
   eff?: Eff<MsgClient>
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>[]

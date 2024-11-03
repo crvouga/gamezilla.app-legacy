@@ -1,6 +1,6 @@
 import { Eff, andThen, isErr, pipe } from 'gamezilla-app/@/core'
 import type { VDomChildren } from 'gamezilla-app/@/vdom'
-import { APP_SOUND, type ClientCmd, playSound, sendToServer } from 'gamezilla-app/app/@/client'
+import { APP_SOUND, type AppClientCmd, playSound, sendToServer } from 'gamezilla-app/app/@/client'
 import {
   Avatar,
   IconArrowCircle,
@@ -65,7 +65,7 @@ export const update = (input: {
 }): {
   model: ModelClient
   eff?: Eff<MsgClient>
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>[]
@@ -125,7 +125,7 @@ export const updateMain = ({
 }): {
   model: ModelClient
   eff?: Eff<MsgClient>
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>[]
@@ -151,7 +151,7 @@ export const updateFromServer = (input: {
 }): {
   model: ModelClient
   eff?: Eff<MsgClient>
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>[]
@@ -168,7 +168,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
   model: ModelClient
 }): {
   model: ModelClient
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>[]

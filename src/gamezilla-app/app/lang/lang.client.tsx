@@ -3,7 +3,7 @@ import { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n'
 import {
   APP_SOUND,
   type AnonymousClientCtx,
-  type ClientCmd,
+  type AppClientCmd,
   type AppClientCtx,
   type ClientEvt,
   back,
@@ -32,7 +32,7 @@ type Module = AppClientModule<{
   Msg: MsgClient
   MsgCmdIn: null
   MsgEvtIn: ClientEvt
-  MsgCmdOut: ClientCmd<{
+  MsgCmdOut: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>

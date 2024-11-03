@@ -1,4 +1,4 @@
-import { ClientCmd } from 'gamezilla-app/app/@/client'
+import { AppClientCmd } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
 
 export type SpaceClientCmdTypes = {
@@ -7,7 +7,7 @@ export type SpaceClientCmdTypes = {
 }
 
 export type SpaceClientCmd<T extends SpaceClientCmdTypes> =
-  | ClientCmd<T>
+  | AppClientCmd<T>
   | { t: 'space/exit-game' }
   | { t: 'space/open-user-details'; userId: UserId }
 
@@ -34,7 +34,7 @@ const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
           return msgCmd
         }
         default: {
-          return ClientCmd.tagOne(t, msgCmd)
+          return AppClientCmd.tagOne(t, msgCmd)
         }
       }
     }) ?? []
@@ -54,14 +54,16 @@ const map = <A extends SpaceClientCmdTypes, B extends SpaceClientCmdTypes>(
           return [msgCmd]
         }
         default: {
-          return ClientCmd.map([msgCmd], msgToServer, msgClient)
+          return AppClientCmd.map([msgCmd], msgToServer, msgClient)
         }
       }
     }) ?? []
   )
 }
 
-const toClientCmd = <T extends SpaceClientCmdTypes>(msgCmd: SpaceClientCmd<T>[] | undefined | null): ClientCmd<T>[] => {
+const toClientCmd = <T extends SpaceClientCmdTypes>(
+  msgCmd: SpaceClientCmd<T>[] | undefined | null
+): AppClientCmd<T>[] => {
   return (
     msgCmd?.flatMap((msgCmd) => {
       switch (msgCmd.t) {

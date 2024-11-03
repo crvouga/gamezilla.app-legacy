@@ -1,7 +1,7 @@
 import type { RemoteResult, TimeSpan } from 'gamezilla-app/@/core'
 import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
-import type { AnonymousClientCtx, AuthCmd, ClientCmd, AppClientCtx, ClientEvt } from '../@/client'
+import type { AnonymousClientCtx, AuthCmd, AppClientCmd, AppClientCtx, ClientEvt } from '../@/client'
 import type { UserAccount } from '../@/data/account'
 import type { ServerCmd, AppServerCtx, ServerEvt } from '../@/server'
 import type { IUserAccountDb } from './@/server/user-account-db'
@@ -87,7 +87,7 @@ export type ClientModule = AppClientModule<{
   Ctx: AnonymousClientCtx | AppClientCtx
   MsgCmdIn: AuthCmd
   MsgEvtIn: ClientEvt
-  MsgCmdOut: ClientCmd<{
+  MsgCmdOut: AppClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>

@@ -1,5 +1,5 @@
 import { Sub } from 'gamezilla-app/@/core'
-import type { ClientCmd, AppClientCtx } from 'gamezilla-app/app/@/client'
+import type { AppClientCmd, AppClientCtx } from 'gamezilla-app/app/@/client'
 import {
   Avatar,
   Button,
@@ -50,7 +50,7 @@ type Module = GameClientModule<{
   Ctx: SpaceClientCtx & { onQuit: () => void }
   MsgCmdIn: null
   MsgEvtIn: SpaceClientEvt
-  MsgCmdOut: ClientCmd<{
+  MsgCmdOut: AppClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>

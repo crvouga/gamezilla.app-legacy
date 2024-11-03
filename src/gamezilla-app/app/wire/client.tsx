@@ -1,6 +1,6 @@
 import type { Eff, Sub } from 'gamezilla-app/@/core'
 import { Translator } from 'gamezilla-app/@/l18n/generated'
-import { type ClientCmd, type ClientEvt, showToast } from 'gamezilla-app/app/@/client'
+import { type AppClientCmd, type ClientEvt, showToast } from 'gamezilla-app/app/@/client'
 import { ListItemButton, Typography, cn } from '../@/ui'
 import type { IClientTransport } from './transport/client'
 import type { ModelClient, MsgClient, MsgToClient } from './types'
@@ -45,7 +45,7 @@ export const update = <TMsgToClient extends Record<string, unknown>, TMsgToServe
   }
   msg?: MsgClient | null
   msgServer?: MsgToClient | null
-  msgCmd?: ClientCmd<{
+  msgCmd?: AppClientCmd<{
     MsgClient: MsgClient
     MsgToServer: TMsgToServer
   }> | null
