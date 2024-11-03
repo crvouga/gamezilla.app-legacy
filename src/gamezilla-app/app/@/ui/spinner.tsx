@@ -8,7 +8,7 @@ export const Spinner = (input: { className?: string }) => {
     <IconSpinner
       aria-label='Loading...'
       data-testid={SPINNER_TEST_ID}
-      className={cn('animate-spin', input.className ? input.className : 'h-12 w-12')}
+      className={cn('animate-spin', input.className ? input.className : 'size-16')}
     />
   )
 }
