@@ -458,27 +458,13 @@ export const View = (input: { ctx: Ctx; model: ModelClient; dispatch: (msg: MsgC
 
         <AuthClient.ViewModals
           ctx={clientCtx}
-          dispatch={(c) =>
-            input.dispatch({
-              t: 'auth',
-              c
-            })
-          }
+          dispatch={(c) => input.dispatch({ t: 'auth', c })}
           model={input.model.auth}
         />
 
         <Portal.Exit portalId='modals' />
 
-        <Toast.View
-          ctx={clientCtx}
-          model={input.model.toast}
-          dispatch={(c) =>
-            input.dispatch({
-              t: 'toast',
-              c
-            })
-          }
-        />
+        <Toast.View ctx={clientCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
       </div>
     </div>
   )
