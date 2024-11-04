@@ -117,7 +117,8 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
       }
       const inserted = await dbConnSql.query(
         p.unknown,
-        `INSERT INTO user_account (
+        `
+        INSERT INTO user_account (
 					phone_number,
 					user_role,
 					user_id,         
