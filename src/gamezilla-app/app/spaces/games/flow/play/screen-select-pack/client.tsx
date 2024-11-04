@@ -3,11 +3,13 @@ import { TopBar } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { PackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../types'
+import { LayoutGameCoverArtHeader } from '../../../@/game/layout-game-cover-art-header'
+import { ViewUsersInSpaceList } from '../../../@/game/users-in-space-list'
+import { FlowCoverArt } from '../../@/flow-cover-art'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
-    (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromMsgCore({ ...input, model }),
     (model) => updateLoadPacks({ ...input, model })
   )
@@ -27,22 +29,6 @@ const updateLoadPacks: ClientModule['update'] = (input) => {
   }
 
   return { model: input.model }
-}
-
-const updateFromMsg: ClientModule['update'] = (input) => {
-  switch (input.msg?.t) {
-    case 'user-clicked-open-pack-list-item': {
-      return {
-        model: input.model,
-        msgCore: [input.msg]
-      }
-    }
-    default: {
-      return {
-        model: input.model
-      }
-    }
-  }
 }
 
 const updateFromMsgCore: ClientModule['update'] = (input) => {
@@ -68,16 +54,38 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
 }
 
 const View: ClientModule['View'] = (input) => {
-  // const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
-
+  if (input.ctx.currentUserId !== input.ctx.space.hostId) {
+    return (
+      <LayoutGameCoverArtHeader
+        ctx={input.ctx}
+        onBack={false}
+        title={input.ctx.t('flow.play')}
+        renderCoverArt={(props) => <FlowCoverArt {...props} />}
+        renderContent={() => (
+          <ViewUsersInSpaceList
+            onOpenUserDetails={(userId) =>
+              input.dispatch({
+                t: 'game-main-menu/clicked-open-user-details-button',
+                userId
+              })
+            }
+            ctx={input.ctx}
+          />
+        )}
+      />
+    )
+  }
   return (
     <div className='flex h-full w-full flex-1 flex-col'>
       <TopBar
         ctx={input.ctx}
         onBack={() =>
           input.dispatch({
-            t: 'user-clicked-exit-play-mode-button',
-            userId: input.ctx.currentUserId
+            t: 'got-msg-core',
+            c: {
+              t: 'user-clicked-exit-play-mode-button',
+              userId: input.ctx.currentUserId
+            }
           })
         }
         title={input.ctx.t('flow.play')}
@@ -88,7 +96,7 @@ const View: ClientModule['View'] = (input) => {
         model={input.ctx.packList}
         emits={{
           clickedPackItem(pack) {
-            input.dispatch({ t: 'user-clicked-open-pack-list-item', pack })
+            input.dispatch({ t: 'got-msg-core', c: { t: 'user-clicked-open-pack-list-item', pack } })
           }
         }}
       />

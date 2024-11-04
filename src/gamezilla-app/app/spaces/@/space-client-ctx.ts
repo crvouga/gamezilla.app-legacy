@@ -27,7 +27,12 @@ const toHostTitle = (ctx: SpaceClientCtx) => {
   return `${host.username}'s space`
 }
 
+const isCurrentUserGuest = (ctx: SpaceClientCtx) => {
+  return ctx.currentUserId !== ctx.space.hostId
+}
+
 export const SpaceClientCtx = {
   toProfiles,
-  toHostTitle
+  toHostTitle,
+  isCurrentUserGuest
 }

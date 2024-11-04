@@ -73,7 +73,10 @@ export const viewButtonAction = ({
     label: ctx.t('app.copy'),
     onClick: () =>
       dispatch({
-        t: 'user-clicked-copy-to-clipboard'
+        t: 'got-msg-core',
+        c: {
+          t: 'user-clicked-copy-to-clipboard'
+        }
       })
   }
 }

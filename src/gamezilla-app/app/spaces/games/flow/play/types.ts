@@ -15,6 +15,7 @@ import { FlowPuzzleResult } from './@/puzzle-result'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
 import { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
+import { GameMainMenu } from '../../@/game/game-main-menu'
 
 //
 //
@@ -35,7 +36,12 @@ export type ModelServer = p.Infer<typeof ModelServer>
 //
 //
 
-export type MsgClient = MsgCore
+export type MsgClient =
+  | GameMainMenu.Msg
+  | {
+      t: 'got-msg-core'
+      c: MsgCore
+    }
 
 export type MsgServer = {
   t: 'noop'

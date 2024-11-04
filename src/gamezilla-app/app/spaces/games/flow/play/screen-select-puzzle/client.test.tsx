@@ -15,8 +15,11 @@ const Fixture = async () => {
   const initial = f.update(f.initial, [
     {
       msg: {
-        t: 'user-clicked-open-pack-list-item',
-        pack
+        t: 'got-msg-core',
+        c: {
+          t: 'user-clicked-open-pack-list-item',
+          pack
+        }
       }
     }
   ])
@@ -47,7 +50,7 @@ describe(import.meta.file, () => {
     const exitButton = r.getByRole('button', f.ctx.t('app.exit'))
     exitButton?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toEqual('user-clicked-exit-pack-button')
+    expect(msg).toEqual({ t: 'got-msg-core', c: { t: 'user-clicked-exit-pack-button' } })
   })
 
   it('should exit to pack list on exit button pack click', async () => {
@@ -55,7 +58,10 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'user-clicked-exit-pack-button'
+          t: 'got-msg-core',
+          c: {
+            t: 'user-clicked-exit-pack-button'
+          }
         }
       }
     ])
@@ -81,9 +87,12 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'user-clicked-open-puzzle-grid-item',
-          flowPuzzle: { t: 'got', c: f.puzzle },
-          puzzleIndex: 0
+          t: 'got-msg-core',
+          c: {
+            t: 'user-clicked-open-puzzle-grid-item',
+            flowPuzzle: { t: 'got', c: f.puzzle },
+            puzzleIndex: 0
+          }
         }
       }
     ])

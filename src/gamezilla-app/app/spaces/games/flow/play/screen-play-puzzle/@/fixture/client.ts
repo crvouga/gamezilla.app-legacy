@@ -40,15 +40,21 @@ export const FixtureScreenPlayPuzzleClient = async () => {
   const init = f.update(f.initial, [
     {
       msg: {
-        t: 'user-clicked-open-pack-list-item',
-        pack
+        t: 'got-msg-core',
+        c: {
+          t: 'user-clicked-open-pack-list-item',
+          pack
+        }
       }
     },
     {
       msg: {
-        t: 'user-clicked-open-puzzle-grid-item',
-        flowPuzzle: { t: 'got', c: puzzle },
-        puzzleIndex
+        t: 'got-msg-core',
+        c: {
+          t: 'user-clicked-open-puzzle-grid-item',
+          flowPuzzle: { t: 'got', c: puzzle },
+          puzzleIndex
+        }
       }
     }
   ])

@@ -32,8 +32,11 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msg: {
-          t: 'user-clicked-open-pack-list-item',
-          pack
+          t: 'got-msg-core',
+          c: {
+            t: 'user-clicked-open-pack-list-item',
+            pack
+          }
         }
       }
     ])

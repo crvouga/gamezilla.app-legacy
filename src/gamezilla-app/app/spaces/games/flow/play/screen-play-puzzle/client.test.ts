@@ -41,7 +41,10 @@ describe(import.meta.file, () => {
     const updated = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-exit-puzzle'
+          t: 'got-msg-core',
+          c: {
+            t: 'user-clicked-exit-puzzle'
+          }
         }
       }
     ])
@@ -65,7 +68,7 @@ describe(import.meta.file, () => {
     const nextButton = r.getByRole('button', f.ctx.t('app.next'))
     nextButton?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toBe('user-clicked-next-puzzle')
+    expect(msg.t === 'got-msg-core' && msg.c.t === 'user-clicked-next-puzzle').toBe(true)
   })
 
   it('should render next puzzle after clicking next puzzle button', async () => {
@@ -73,9 +76,12 @@ describe(import.meta.file, () => {
     const updated = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-next-puzzle',
-          nextPuzzle: f.nextPuzzle,
-          nextPuzzleIndex: f.nextPuzzleIndex
+          t: 'got-msg-core',
+          c: {
+            t: 'user-clicked-next-puzzle',
+            nextPuzzle: f.nextPuzzle,
+            nextPuzzleIndex: f.nextPuzzleIndex
+          }
         }
       }
     ])
@@ -102,9 +108,12 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-next-puzzle',
-          nextPuzzle: f.nextPuzzle,
-          nextPuzzleIndex: f.nextPuzzleIndex
+          t: 'got-msg-core',
+          c: {
+            t: 'user-clicked-next-puzzle',
+            nextPuzzle: f.nextPuzzle,
+            nextPuzzleIndex: f.nextPuzzleIndex
+          }
         }
       },
       ...f.completePuzzleMsgs
@@ -180,7 +189,7 @@ describe(import.meta.file, () => {
     const btn = r.getByRole('button', f.ctx.t('app.reset'))
     btn?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toBe('user-clicked-reset-puzzle')
+    expect(msg).toEqual({ t: 'got-msg-core', c: { t: 'user-clicked-reset-puzzle' } })
   })
 
   test('reset button sound', async () => {
@@ -206,7 +215,9 @@ describe(import.meta.file, () => {
     const btn = r.getByRole('button', f.ctx.t('game.hint'))
     btn?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toBe('got-flow-play-msg')
+    expect(msg.t).toBe('got-msg-core')
+    if (msg.t !== 'got-msg-core') return
+    expect(msg.c.t).toBe('got-flow-play-msg')
   })
 
   test('not render hint button when puzzle is solved', async () => {

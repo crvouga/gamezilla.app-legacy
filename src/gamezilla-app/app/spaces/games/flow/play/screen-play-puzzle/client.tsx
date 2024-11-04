@@ -2,40 +2,21 @@ import { TimeSpan } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from 'gamezilla-app/app/@/ui'
 import { Actions } from 'gamezilla-app/app/@/ui/actions'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
-import { ViewPuzzleNotFound } from '../../@/puzzle/not-found'
 import { FlowPlay } from '../../@/flow/flow-play'
+import { ViewPuzzleNotFound } from '../../@/puzzle/not-found'
 import type { ClientModule } from '../types'
 import * as CopyPuzzleClient from './copy-puzzle/client'
-import { LastPuzzleClient } from './last-puzzle/client'
 import { ScreenPlayPuzzleCore } from './core'
+import { LastPuzzleClient } from './last-puzzle/client'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsgCore({ ...input, model }),
-    (model) => updateFromMsg({ ...input, model }),
     (model) => CopyPuzzleClient.update({ ...input, model }),
     (model) => LastPuzzleClient.update({ ...input, model })
   )
-}
-
-const updateFromMsg: ClientModule['update'] = (input) => {
-  switch (input.msg?.t) {
-    case undefined: {
-      return {
-        model: input.model
-      }
-    }
-
-    default: {
-      return {
-        model: input.model,
-        msgCore: [withEventId(input.msg)]
-      }
-    }
-  }
 }
 
 const updateFromMsgCore: ClientModule['update'] = (input) => {
@@ -151,7 +132,10 @@ const View: ClientModule['View'] = (input) => {
         ctx={input.ctx}
         onBack={() =>
           input.dispatch({
-            t: 'user-clicked-exit-puzzle'
+            t: 'got-msg-core',
+            c: {
+              t: 'user-clicked-exit-puzzle'
+            }
           })
         }
         title={input.ctx.t('flow.level', puzzleIndex + 1)}
@@ -164,9 +148,12 @@ const View: ClientModule['View'] = (input) => {
             model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
             dispatch={(c) =>
               input.dispatch({
-                t: 'got-flow-play-msg',
-                c,
-                userId: input.ctx.currentUserId
+                t: 'got-msg-core',
+                c: {
+                  t: 'got-flow-play-msg',
+                  c,
+                  userId: input.ctx.currentUserId
+                }
               })
             }
             showSolvedAnimation
@@ -188,7 +175,10 @@ const View: ClientModule['View'] = (input) => {
             open={isSolvedPuzzleDialogOpen}
             onClose={() =>
               input.dispatch({
-                t: 'user-closed-puzzle-complete-dialog'
+                t: 'got-msg-core',
+                c: {
+                  t: 'user-closed-puzzle-complete-dialog'
+                }
               })
             }
           >
@@ -199,16 +189,19 @@ const View: ClientModule['View'] = (input) => {
                 text={input.ctx.t('flow.next-puzzle')}
                 onClick={() =>
                   input.dispatch({
-                    t: 'user-clicked-next-puzzle',
-                    nextPuzzle: nextPuzzle
-                      ? {
-                          t: 'got',
-                          c: nextPuzzle
-                        }
-                      : {
-                          t: 'not-found'
-                        },
-                    nextPuzzleIndex
+                    t: 'got-msg-core',
+                    c: {
+                      t: 'user-clicked-next-puzzle',
+                      nextPuzzle: nextPuzzle
+                        ? {
+                            t: 'got',
+                            c: nextPuzzle
+                          }
+                        : {
+                            t: 'not-found'
+                          },
+                      nextPuzzleIndex
+                    }
                   })
                 }
               />
@@ -219,11 +212,7 @@ const View: ClientModule['View'] = (input) => {
       <Actions.View
         id='screen-play-puzzle-bottom-bar'
         ctx={input.ctx}
-        onToggle={() =>
-          input.dispatch({
-            t: 'user-toggled-action-buttons-drawer'
-          })
-        }
+        onToggle={() => input.dispatch({ t: 'got-msg-core', c: { t: 'user-toggled-action-buttons-drawer' } })}
         open={input.modelCore.screen.opened === 'action-drawer'}
         buttons={[
           Actions.next({
@@ -233,16 +222,19 @@ const View: ClientModule['View'] = (input) => {
             color: 'success',
             onClick: () =>
               input.dispatch({
-                t: 'user-clicked-next-puzzle',
-                nextPuzzle: nextPuzzle
-                  ? {
-                      t: 'got',
-                      c: nextPuzzle
-                    }
-                  : {
-                      t: 'not-found'
-                    },
-                nextPuzzleIndex
+                t: 'got-msg-core',
+                c: {
+                  t: 'user-clicked-next-puzzle',
+                  nextPuzzle: nextPuzzle
+                    ? {
+                        t: 'got',
+                        c: nextPuzzle
+                      }
+                    : {
+                        t: 'not-found'
+                      },
+                  nextPuzzleIndex
+                }
               })
           }),
 
@@ -253,9 +245,12 @@ const View: ClientModule['View'] = (input) => {
                 disabled: false,
                 dispatch: (c) =>
                   input.dispatch({
-                    t: 'got-flow-play-msg',
-                    c,
-                    userId: input.ctx.currentUserId
+                    t: 'got-msg-core',
+                    c: {
+                      t: 'got-flow-play-msg',
+                      c,
+                      userId: input.ctx.currentUserId
+                    }
                   })
               })
             : null,
@@ -265,7 +260,10 @@ const View: ClientModule['View'] = (input) => {
             hidden: flowPuzzle.t === 'not-found',
             onClick: () =>
               input.dispatch({
-                t: 'user-clicked-reset-puzzle'
+                t: 'got-msg-core',
+                c: {
+                  t: 'user-clicked-reset-puzzle'
+                }
               })
           }),
 

@@ -1,18 +1,16 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { andThen } from '../../../@/architecture/game-client-v2'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
 import { FlowPackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
 import type { ClientModule } from '../types'
-import { andThen } from '../../../@/architecture/game-client-v2'
 
 const update: ClientModule['update'] = (input) => {
   return andThen(
     { model: input.model },
     (model) => updateMain({ ...input, model }),
-    (model) => updateLoadPuzzles({ ...input, model }),
-    (model) => updateFromMsg({ ...input, model })
+    (model) => updateLoadPuzzles({ ...input, model })
   )
 }
 
@@ -31,22 +29,6 @@ const updateLoadPuzzles: typeof update = (input) => {
     return {
       model: input.model,
       msgCmd: [FlowPackPuzzlesGridClient.load(pack)]
-    }
-  }
-
-  return {
-    model: input.model
-  }
-}
-
-const updateFromMsg: typeof update = (input) => {
-  switch (input.msg?.t) {
-    case 'user-clicked-exit-pack-button':
-    case 'user-clicked-open-puzzle-grid-item': {
-      return {
-        model: input.model,
-        msgCore: [withEventId(input.msg)]
-      }
     }
   }
 
@@ -87,7 +69,9 @@ const View: ClientModule['View'] = (input) => {
     <div className='flex h-full w-full flex-1 flex-col'>
       <TopBar
         ctx={input.ctx}
-        onBack={isSpectating ? false : () => input.dispatch({ t: 'user-clicked-exit-pack-button' })}
+        onBack={
+          isSpectating ? false : () => input.dispatch({ t: 'got-msg-core', c: { t: 'user-clicked-exit-pack-button' } })
+        }
         title={input.ctx.t('flow-pack-name', flowPack.name)}
       />
       <div className='flex flex-1 flex-col items-center justify-center'>
@@ -96,9 +80,12 @@ const View: ClientModule['View'] = (input) => {
           slideIndex={input.modelCore.screen.slideIndex}
           onSlideIndexChanged={(slideIndex) =>
             input.dispatch({
-              t: 'user-changed-slides',
-              slideIndex,
-              userId: input.ctx.currentUserId
+              t: 'got-msg-core',
+              c: {
+                t: 'user-changed-slides',
+                slideIndex,
+                userId: input.ctx.currentUserId
+              }
             })
           }
           puzzleIds={flowPack.puzzleIds}
@@ -119,11 +106,14 @@ const View: ClientModule['View'] = (input) => {
                   index={inputCell.index}
                   onClick={() =>
                     input.dispatch({
-                      t: 'user-clicked-open-puzzle-grid-item',
-                      flowPuzzle: {
-                        t: 'not-found'
-                      },
-                      puzzleIndex: inputCell.index
+                      t: 'got-msg-core',
+                      c: {
+                        t: 'user-clicked-open-puzzle-grid-item',
+                        flowPuzzle: {
+                          t: 'not-found'
+                        },
+                        puzzleIndex: inputCell.index
+                      }
                     })
                   }
                 />
@@ -135,9 +125,12 @@ const View: ClientModule['View'] = (input) => {
                 index={inputCell.index}
                 onClick={() =>
                   input.dispatch({
-                    t: 'user-clicked-open-puzzle-grid-item',
-                    flowPuzzle: { t: 'got', c: puzzle },
-                    puzzleIndex: inputCell.index
+                    t: 'got-msg-core',
+                    c: {
+                      t: 'user-clicked-open-puzzle-grid-item',
+                      flowPuzzle: { t: 'got', c: puzzle },
+                      puzzleIndex: inputCell.index
+                    }
                   })
                 }
               />
