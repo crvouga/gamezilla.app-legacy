@@ -7,6 +7,9 @@ const config: Config = {
     extend: {
       borderColor: {
         DEFAULT: '#3f3f46'
+      },
+      textColor: {
+        secondary: '#d1d5db'
       }
     }
   }

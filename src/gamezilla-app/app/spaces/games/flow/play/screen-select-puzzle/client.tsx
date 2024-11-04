@@ -1,6 +1,7 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
-import { TopBar } from 'gamezilla-app/app/@/ui'
+import { cn, TopBar } from 'gamezilla-app/app/@/ui'
 import { andThen } from '../../../@/architecture/game-client-v2'
+import { LayoutGame } from '../../../@/game/layout-game'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
 import { FlowPackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
@@ -64,9 +65,9 @@ const View: ClientModule['View'] = (input) => {
     return null
   }
   const flowPack = input.modelCore.screen.flowPack
-  const isSpectating = input.ctx.space.hostId !== input.ctx.currentUserId
+  const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
   return (
-    <div className='flex h-full w-full flex-1 flex-col'>
+    <LayoutGame ctx={input.ctx} isSpectating={isSpectating} className='flex h-full w-full flex-1 flex-col'>
       <TopBar
         ctx={input.ctx}
         onBack={
@@ -74,7 +75,12 @@ const View: ClientModule['View'] = (input) => {
         }
         title={input.ctx.t('flow-pack-name', flowPack.name)}
       />
-      <div className='flex flex-1 flex-col items-center justify-center'>
+      <div
+        className={cn(
+          'flex w-full flex-1 flex-col items-center justify-center',
+          isSpectating && 'pointer-events-none select-none'
+        )}
+      >
         <FlowPackPuzzlesGridUI.View
           id='pack-puzzle-grid'
           slideIndex={input.modelCore.screen.slideIndex}
@@ -138,7 +144,7 @@ const View: ClientModule['View'] = (input) => {
           }}
         />
       </div>
-    </div>
+    </LayoutGame>
   )
 }
 

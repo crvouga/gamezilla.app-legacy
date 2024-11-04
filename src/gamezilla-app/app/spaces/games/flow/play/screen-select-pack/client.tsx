@@ -1,11 +1,10 @@
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
-import { TopBar } from 'gamezilla-app/app/@/ui'
+import { IconGamepad, TopBar } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
-import { PackListClient } from '../../@/pack/pack-list'
-import type { ClientModule } from '../types'
 import { LayoutGameCoverArtHeader } from '../../../@/game/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/game/users-in-space-list'
-import { FlowCoverArt } from '../../@/flow-cover-art'
+import { PackListClient } from '../../@/pack/pack-list'
+import type { ClientModule } from '../types'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -60,7 +59,13 @@ const View: ClientModule['View'] = (input) => {
         ctx={input.ctx}
         onBack={false}
         title={input.ctx.t('flow.play')}
-        renderCoverArt={(props) => <FlowCoverArt {...props} />}
+        renderCoverArt={(input) => (
+          <div {...input}>
+            <div className='h-full w-full p-4'>
+              <IconGamepad className='h-full w-full' />
+            </div>
+          </div>
+        )}
         renderContent={() => (
           <ViewUsersInSpaceList
             onOpenUserDetails={(userId) =>
@@ -75,6 +80,7 @@ const View: ClientModule['View'] = (input) => {
       />
     )
   }
+
   return (
     <div className='flex h-full w-full flex-1 flex-col'>
       <TopBar

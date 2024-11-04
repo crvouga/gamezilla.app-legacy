@@ -88,7 +88,8 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model }) => {
           ...model,
           modalPreviewUserId: msgCmd.userId,
           modal: 'user-preview'
-        }
+        },
+        msgCmd: [playSound(APP_SOUND.tap)]
       }
     }
     default: {

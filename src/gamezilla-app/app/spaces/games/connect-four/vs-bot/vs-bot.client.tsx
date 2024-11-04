@@ -417,7 +417,7 @@ const View: Module['View'] = (input) => {
   const isSpectating = input.ctx.currentUserId !== input.modelCore.playingUserId
 
   return (
-    <LayoutGame isSpectating={isSpectating}>
+    <LayoutGame ctx={input.ctx} isSpectating={isSpectating}>
       <div className='flex w-full flex-1 flex-col items-center justify-center gap-1'>
         <VsBotGame.VsBotPlayerSection {...vsBotGameinput} />
 

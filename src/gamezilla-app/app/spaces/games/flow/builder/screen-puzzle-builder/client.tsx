@@ -1,10 +1,10 @@
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from 'gamezilla-app/app/@/ui'
 import { Actions, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
-import { ViewProfileCard } from '../../../@/game/profile-card'
+import { ProfileCard } from '../../../@/game/profile-card'
 import { FlowVariantUI } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
@@ -332,9 +332,9 @@ const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
   }
 
   return (
-    <LayoutGame isSpectating>
+    <LayoutGame ctx={input.ctx} isSpectating>
       <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll'>
-        <ViewProfileCard
+        <ProfileCard
           ctx={input.ctx}
           profile={input.ctx.profiles[input.ctx.space.hostId]}
           subtitle={input.ctx.t('app.editor')}

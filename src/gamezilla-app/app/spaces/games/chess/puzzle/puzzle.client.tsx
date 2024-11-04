@@ -251,7 +251,7 @@ export const View = ({
   const isSpectating = ctx.currentUserId !== ctx.space.hostId
   const nextEloRating = toNextEloRating(model)
   return (
-    <LayoutGame isSpectating={isSpectating}>
+    <LayoutGame ctx={ctx} isSpectating={isSpectating}>
       <ViewStatusBar model={model} />
 
       {/* top heads up */}

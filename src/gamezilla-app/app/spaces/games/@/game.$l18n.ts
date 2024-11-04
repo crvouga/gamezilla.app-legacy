@@ -13,10 +13,12 @@ export type Text = {
   'game.play-again': string
   'game.loser': string
   'game.vs': string
+  'game.player': string
 }
 
 export const translations: Translations<Text> = {
   en: {
+    'game.player': 'Player',
     'game.hint': 'Hint',
     'game.start-game': 'Start Game',
     'game.start-playing': 'Start Playing',
@@ -31,6 +33,7 @@ export const translations: Translations<Text> = {
     'game.vs': 'vs'
   },
   ar: {
+    'game.player': 'اللاعب',
     'game.hint': 'ملحوظة',
     'game.start-game': 'بدء اللعبة',
     'game.start-playing': 'بدء اللعب',
@@ -45,6 +48,7 @@ export const translations: Translations<Text> = {
     'game.vs': 'ضد'
   },
   de: {
+    'game.player': 'Spieler',
     'game.hint': 'Hinweis',
     'game.start-game': 'Spiel starten',
     'game.start-playing': 'Spiel starten',
@@ -59,6 +63,7 @@ export const translations: Translations<Text> = {
     'game.vs': 'vs'
   },
   es: {
+    'game.player': 'Jugador',
     'game.hint': 'Sugerencia',
     'game.start-game': 'Comenzar juego',
     'game.start-playing': 'Comenzar a jugar',
@@ -73,6 +78,7 @@ export const translations: Translations<Text> = {
     'game.vs': 'vs'
   },
   fr: {
+    'game.player': 'Joueur',
     'game.hint': 'Indice',
     'game.start-game': 'Démarrer le jeu',
     'game.start-playing': 'Commencer à jouer',
@@ -87,6 +93,7 @@ export const translations: Translations<Text> = {
     'game.vs': 'vs'
   },
   it: {
+    'game.player': 'Giocatore',
     'game.hint': 'Suggerimento',
     'game.start-game': 'Inizia gioco',
     'game.start-playing': 'Inizia a giocare',
@@ -101,6 +108,7 @@ export const translations: Translations<Text> = {
     'game.vs': 'vs'
   },
   ja: {
+    'game.player': 'プレイヤー',
     'game.hint': 'ヒント',
     'game.start-game': 'ゲームを開始',
     'game.start-playing': 'プレイを開始',
@@ -115,6 +123,7 @@ export const translations: Translations<Text> = {
     'game.vs': '対'
   },
   ko: {
+    'game.player': '플레이어',
     'game.hint': '힌트',
     'game.start-game': '게임 시작',
     'game.start-playing': '플레이 시작',
@@ -129,6 +138,7 @@ export const translations: Translations<Text> = {
     'game.vs': '대'
   },
   pt: {
+    'game.player': 'Jogador',
     'game.hint': 'Dica',
     'game.start-game': 'Iniciar jogo',
     'game.start-playing': 'Começar a jogar',
@@ -143,6 +153,7 @@ export const translations: Translations<Text> = {
     'game.vs': 'vs'
   },
   ru: {
+    'game.player': 'Игрок',
     'game.hint': 'Подсказка',
     'game.start-game': 'Начать игру',
     'game.start-playing': 'Начать играть',
@@ -157,6 +168,7 @@ export const translations: Translations<Text> = {
     'game.vs': 'против'
   },
   zh: {
+    'game.player': '玩家',
     'game.hint': '提示',
     'game.start-game': '开始游戏',
     'game.start-playing': '开始游戏',
@@ -171,6 +183,7 @@ export const translations: Translations<Text> = {
     'game.vs': '对'
   },
   hi: {
+    'game.player': 'खिलाड़ी',
     'game.hint': 'संकेत',
     'game.start-game': 'खेल शुरू करें',
     'game.start-playing': 'खेलना शुरू करें',

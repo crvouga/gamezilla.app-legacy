@@ -11,9 +11,12 @@ import {
   IconSpinner,
   IconXMark
 } from 'gamezilla-app/app/@/ui'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
+import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 import { SpaceClientEvt } from 'gamezilla-app/app/spaces/@/space-client-evt'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { VsUserSetupScreen } from 'gamezilla-app/app/spaces/games/@/vs-user'
+import { LayoutGame } from '../../@/game/layout-game'
 import { type PlayerType, toTurn } from '../@/connect-four'
 import { PlayerIcon, ViewColumns } from '../@/connect-four-ui'
 import { CoverArt } from '../@/connect-four-ui/connect-four-cover-art'
@@ -28,9 +31,6 @@ import {
   type StateGameOver,
   toPlayerType
 } from './vs-user.types'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
-import { LayoutGame } from '../../@/game/layout-game'
-import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -223,7 +223,7 @@ const View: Module['View'] = (input) => {
       const currentUserPlayerType = toPlayerType(input.ctx.currentUserId, input.modelCore)
 
       return (
-        <LayoutGame isSpectating={currentUserPlayerType === null}>
+        <LayoutGame ctx={input.ctx} isSpectating={currentUserPlayerType === null}>
           <div className='flex w-full flex-1 flex-col items-center justify-center gap-2'>
             <div className='flex w-full items-center gap-2 px-2'>
               <PlayerSlot playerType='player-one' modelCore={input.modelCore} ctx={input.ctx} />

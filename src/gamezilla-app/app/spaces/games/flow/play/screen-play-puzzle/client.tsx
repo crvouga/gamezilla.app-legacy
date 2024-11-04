@@ -9,6 +9,8 @@ import type { ClientModule } from '../types'
 import * as CopyPuzzleClient from './copy-puzzle/client'
 import { ScreenPlayPuzzleCore } from './core'
 import { LastPuzzleClient } from './last-puzzle/client'
+import { LayoutGame } from '../../../@/game/layout-game'
+import { ProfileCard } from '../../../@/game/profile-card'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -123,6 +125,36 @@ const View: ClientModule['View'] = (input) => {
 
   const checkmarkDuration = TimeSpan.seconds(1 / 2)
 
+  const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
+
+  if (isSpectating) {
+    return (
+      <LayoutGame ctx={input.ctx} isSpectating>
+        <TopBar ctx={input.ctx} onBack={false} title={input.ctx.t('flow.level', puzzleIndex + 1)} />
+        <div className='relative flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
+          {flowPuzzle.t === 'got' && (
+            <>
+              <ProfileCard
+                ctx={input.ctx}
+                profile={input.ctx.profiles[input.ctx.space.hostId]}
+                subtitle={input.ctx.t('game.player')}
+              />
+              <FlowPlay.View
+                disabled
+                key={flowPuzzle.c.id}
+                flow={flowPuzzle.c.flow}
+                model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
+                dispatch={(_) => {}}
+                showSolvedAnimation
+              />
+            </>
+          )}
+
+          {flowPuzzle.t === 'not-found' && <ViewPuzzleNotFound ctx={input.ctx} />}
+        </div>
+      </LayoutGame>
+    )
+  }
   return (
     <div
       className='flex w-full flex-1 flex-col overflow-y-scroll'
@@ -130,31 +162,17 @@ const View: ClientModule['View'] = (input) => {
     >
       <TopBar
         ctx={input.ctx}
-        onBack={() =>
-          input.dispatch({
-            t: 'got-msg-core',
-            c: {
-              t: 'user-clicked-exit-puzzle'
-            }
-          })
-        }
+        onBack={() => input.dispatch({ t: 'got-msg-core', c: { t: 'user-clicked-exit-puzzle' } })}
         title={input.ctx.t('flow.level', puzzleIndex + 1)}
       />
-      <div className='relative flex flex-1 flex-col items-center justify-center overflow-hidden'>
+      <div className='relative flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
         {flowPuzzle.t === 'got' && (
           <FlowPlay.View
             key={flowPuzzle.c.id}
             flow={flowPuzzle.c.flow}
             model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
             dispatch={(c) =>
-              input.dispatch({
-                t: 'got-msg-core',
-                c: {
-                  t: 'got-flow-play-msg',
-                  c,
-                  userId: input.ctx.currentUserId
-                }
-              })
+              input.dispatch({ t: 'got-msg-core', c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId } })
             }
             showSolvedAnimation
           />

@@ -418,7 +418,7 @@ export const View = ({
   const bottomSlot = boardOrientation === model.coreModel.userColor ? userSlot : botSlot
 
   return (
-    <LayoutGame>
+    <LayoutGame ctx={ctx}>
       <div className='flex w-full flex-1 flex-col items-center justify-center'>
         {topSlot}
 

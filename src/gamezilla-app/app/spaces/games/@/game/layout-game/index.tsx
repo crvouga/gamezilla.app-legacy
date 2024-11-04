@@ -1,11 +1,17 @@
 import { cn } from 'gamezilla-app/app/@/ui'
 import type { VDomChildren } from 'gamezilla-app/@/vdom'
+import { Translator } from 'gamezilla-app/@/l18n/generated'
 
 export const LayoutGame = ({
   children,
   isSpectating,
-  className
+  className,
+  ctx,
+  ...props
 }: {
+  ctx: {
+    t: Translator
+  }
   className?: string
   isSpectating?: boolean
   children?: VDomChildren
@@ -17,10 +23,11 @@ export const LayoutGame = ({
         isSpectating && 'border-8 border-t-0 border-blue-500',
         className
       )}
+      {...props}
     >
       {isSpectating && (
         <div className='flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white'>
-          You are spectating
+          {ctx.t('game.you-are-spectating')}
         </div>
       )}
       {children}
