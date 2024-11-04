@@ -33,7 +33,6 @@ const ViewIconButton: SpaceClientModule['View'] = (input) => {
         })
       }
       label={input.ctx.t('spaces.home')}
-      className='-ml-2'
       renderIcon={(inputIcon) => <IconHome {...inputIcon} />}
     />
   )

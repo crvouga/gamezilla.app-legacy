@@ -1,9 +1,9 @@
 import { APP_SOUND, openProfile, playSound } from 'gamezilla-app/app/@/client'
-import { Avatar, Button, Drawer, IconButton, IconUserGroup, Transition, Typography } from 'gamezilla-app/app/@/ui'
+import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from 'gamezilla-app/app/@/ui'
+import { Badge } from 'gamezilla-app/app/@/ui/badge'
 import { SpaceClientModule } from '../../@/architecture/space-client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { ViewSpaceHostChip, ViewUsersInSpaceList, ViewYouChip } from '../../games/@/game/users-in-space-list'
-import { Badge } from 'gamezilla-app/app/@/ui/badge'
 
 const update: SpaceClientModule['update'] = (input) => {
   const { model } = input

@@ -64,12 +64,16 @@ const ViewTopBar: SpaceClientModule['View'] = (input) => {
   const isHost = input.ctx.space?.hostId === input.ctx.currentUserId
   return (
     <div className='flex h-12 w-full items-center gap-2 border-b px-4'>
-      <GoHome.ViewIconButton {...input} />
-      <People.ViewIconButton {...input} />
+      <div className='-ml-2'>
+        <GoHome.ViewIconButton {...input} />
+      </div>
+      <div className='-ml-2'>
+        <People.ViewIconButton {...input} />
+      </div>
 
       <div className='flex-1' />
 
-      <div className='-mr-2 p-2'>
+      <div className='-mr-4 p-2'>
         {isHost ? (
           <EndSpaceClient.ViewEndSpaceButton {...input} />
         ) : (
