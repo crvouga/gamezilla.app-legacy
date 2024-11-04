@@ -337,7 +337,7 @@ describe(import.meta.file, () => {
       {
         t: 'got-flow-play-msg',
         c: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         },
         userId: UserId.generate()
       }

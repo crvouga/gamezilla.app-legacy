@@ -3,12 +3,12 @@ import { p } from 'gamezilla-app/@/core/parser'
 import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { IconLightbulb } from 'gamezilla-app/app/@/ui'
 import type { ActionInput } from 'gamezilla-app/app/@/ui/actions'
-import type { FlowPuzzle } from '../../puzzle/puzzle'
-import { Flow } from '../flow'
-import type { FlowVariant } from '../flow-variant'
-import { FlowGroupId } from '../flow/flow-group-id'
-import { FlowNodeId } from '../flow/flow-node-id'
-import { FlowTerminal } from '../flow/flow-terminal'
+import type { FlowPuzzle } from '../../../puzzle/puzzle'
+import { Flow } from '../../flow'
+import type { FlowVariant } from '../../flow-variant'
+import { FlowGroupId } from '../../flow/flow-group-id'
+import { FlowNodeId } from '../../flow/flow-node-id'
+import { FlowTerminal } from '../../flow/flow-terminal'
 
 type Ctx = {
   flowPuzzle: FlowPuzzle
@@ -23,7 +23,7 @@ export type Model = p.Infer<typeof Model>
 
 export const Msg = p.or(
   p.obj({
-    t: p.l('user-clicked-hint')
+    t: p.l('user-clicked-use-hint')
   })
 )
 export type Msg = p.Infer<typeof Msg>
@@ -59,7 +59,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
   events?: Event[]
 } => {
   switch (input.msg.t) {
-    case 'user-clicked-hint': {
+    case 'user-clicked-use-hint': {
       const flow = toFlow({
         flow: input.ctx.flowPuzzle.flow,
         model: input.model
@@ -190,7 +190,7 @@ export const toFlow = (input: { model: Model; flow: FlowVariant.Model }): FlowVa
   }
 }
 
-export const viewHintAction = (input: {
+export const viewUseHintAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
   ctx: AppClientCtx & Ctx
@@ -199,10 +199,7 @@ export const viewHintAction = (input: {
   return {
     icon: (input) => <IconLightbulb {...input} />,
     label: input.ctx.t('game.hint'),
-    onClick: () =>
-      input.dispatch({
-        t: 'user-clicked-hint'
-      }),
+    onClick: () => input.dispatch({ t: 'user-clicked-use-hint' }),
     disabled: input.disabled
   }
 }

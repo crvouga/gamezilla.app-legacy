@@ -1,8 +1,8 @@
 import { describe, expect, it, test } from 'bun:test'
-import { FlowPuzzle } from '../../puzzle/puzzle'
-import { FixtureFlowClient } from '../../fixture-client'
-import { Flow } from '../flow'
-import { FlowGridShorthand } from '../flow-variant/flow-grid'
+import { FlowPuzzle } from '../../../puzzle/puzzle'
+import { FixtureFlowClient } from '../../../fixture-client'
+import { Flow } from '../../flow'
+import { FlowGridShorthand } from '../../flow-variant/flow-grid'
 import * as FlowHint from './flow-hint'
 
 const Fixture = async (input?: { ctxFlowPuzzle?: FlowPuzzle }) => {
@@ -61,7 +61,7 @@ describe(import.meta.file, () => {
     const after = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])
@@ -88,12 +88,12 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       },
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])
@@ -118,7 +118,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])
@@ -139,17 +139,17 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       },
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       },
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])
@@ -172,7 +172,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])
@@ -209,7 +209,7 @@ describe(import.meta.file, () => {
       [
         {
           msg: {
-            t: 'user-clicked-hint'
+            t: 'user-clicked-use-hint'
           }
         }
       ]
@@ -230,7 +230,7 @@ describe(import.meta.file, () => {
     const after = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])
@@ -252,7 +252,7 @@ describe(import.meta.file, () => {
     const updated = f.update(f.init, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])
@@ -291,7 +291,7 @@ describe(import.meta.file, () => {
     const updated = f.update(initial, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])
@@ -312,7 +312,7 @@ describe(import.meta.file, () => {
         ])
       })
     })
-    const viewed = FlowHint.viewHintAction({
+    const viewed = FlowHint.viewUseHintAction({
       ctx: f.ctx,
       dispatch: () => {},
       model: f.init,
@@ -347,7 +347,7 @@ describe(import.meta.file, () => {
     const output = f.update(init, [
       {
         msg: {
-          t: 'user-clicked-hint'
+          t: 'user-clicked-use-hint'
         }
       }
     ])

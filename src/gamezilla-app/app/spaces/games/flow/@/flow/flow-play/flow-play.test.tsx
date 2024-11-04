@@ -376,7 +376,7 @@ describe(import.meta.file, () => {
 
     const model = f.update(f.init, [
       {
-        t: 'user-clicked-hint'
+        t: 'user-clicked-use-hint'
       }
     ]).model
 
@@ -468,7 +468,7 @@ describe(import.meta.file, () => {
     })
     const before = f.update(f.init, [
       {
-        t: 'user-clicked-hint'
+        t: 'user-clicked-use-hint'
       }
     ])
     const after = f.update(before.model, [
@@ -504,7 +504,7 @@ describe(import.meta.file, () => {
     })
     const output = f.update(f.init, [
       {
-        t: 'user-clicked-hint'
+        t: 'user-clicked-use-hint'
       }
     ])
     expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)

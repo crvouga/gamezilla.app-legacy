@@ -7,7 +7,7 @@ import { ActionInput, Actions } from 'gamezilla-app/app/@/ui/actions'
 import type { FlowPuzzle } from '../../puzzle/puzzle'
 import { FlowAlgoDrawPipes } from '../flow-algo/flow-algo-draw-pipes'
 import { FlowAlgoSolve } from '../flow-algo/flow-algo-solve'
-import { FlowHint } from '../flow-hint'
+import { FlowHint } from './flow-hint'
 import type { FlowVariant } from '../flow-variant'
 import * as FlowVariantUI from '../flow-variant/flow-variant-ui'
 import * as Flow from '../flow/flow'
@@ -633,7 +633,7 @@ export const View = (input: {
   )
 }
 
-export const viewHintAction = FlowHint.viewHintAction
+export const viewHintAction = FlowHint.viewUseHintAction
 
 export const viewResetAction = (input: {
   flowPuzzle: FlowPuzzle
@@ -658,7 +658,7 @@ export const viewResetAction = (input: {
   })
 }
 
-export const defaultCheckmarkAnimationDuration = TimeSpan.seconds(1 / 2)
+const defaultCheckmarkAnimationDuration = TimeSpan.seconds(1 / 2)
 
 const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null | undefined }) => {
   const duration = input.duration ?? defaultCheckmarkAnimationDuration
