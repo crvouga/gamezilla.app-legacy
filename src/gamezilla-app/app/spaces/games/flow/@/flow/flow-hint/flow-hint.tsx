@@ -77,8 +77,8 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
       const terminalFlowModel = Flow.toTerminalByGroupId(flow, nextHintGroupId)
 
       const solution =
-        input.ctx.flowPuzzle.flowSolutions.length > 0 && eq(terminalFlowPuzzle, terminalFlowModel)
-          ? input.ctx.flowPuzzle.flowSolutions[0]
+        input.ctx.flowPuzzle.solutions.length > 0 && eq(terminalFlowPuzzle, terminalFlowModel)
+          ? input.ctx.flowPuzzle.solutions[0]
           : null
 
       if (!solution) {

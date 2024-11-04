@@ -17,7 +17,7 @@ const parser = p.obj({
   lastUpdatedAt: Posix,
   lastUpdatedBy: UserId,
   flow: FlowVariant.Model,
-  flowSolutions: p.arr(Flow.Model)
+  solutions: p.arr(Flow.Model)
 })
 
 export type FlowPuzzle = p.Infer<typeof parser>
@@ -39,7 +39,7 @@ const create = async (input: {
     createdBy: input.createdBy,
     lastUpdatedAt: input.createdAt,
     lastUpdatedBy: input.createdBy,
-    flowSolutions: solution ? [solution] : []
+    solutions: solution ? [solution] : []
   }
 }
 
@@ -67,7 +67,7 @@ const random = async (input?: {
     lastUpdatedAt: Posix.now(),
     lastUpdatedBy: createdBy,
     id: FlowPuzzleId.generate(),
-    flowSolutions: solution ? [solution] : [],
+    solutions: solution ? [solution] : [],
     flow
   }
 }

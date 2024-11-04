@@ -14,7 +14,7 @@ const Fixture = async () => {
       [' ', 'A']
     ])
   })
-  puzzleWithEmptySolutions.flowSolutions = []
+  puzzleWithEmptySolutions.solutions = []
 
   return {
     ...f,
@@ -29,8 +29,8 @@ describe(import.meta.file, () => {
     const before = Result.unwrap(await f.flowPuzzleDb.get(f.puzzleWithEmptySolutions.id))
     await f.withSolutions.put(f.puzzleWithEmptySolutions)
     const after = Result.unwrap(await f.flowPuzzleDb.get(f.puzzleWithEmptySolutions.id))
-    expect((before?.flowSolutions.length ?? 0) === 0).toBe(true)
-    expect((after?.flowSolutions.length ?? 0) > 0).toBe(true)
+    expect((before?.solutions.length ?? 0) === 0).toBe(true)
+    expect((after?.solutions.length ?? 0) > 0).toBe(true)
   })
 
   it.todo('should assoc solutions before get', async () => {
@@ -38,8 +38,8 @@ describe(import.meta.file, () => {
     const before = Result.unwrap(await f.withSolutions.get(f.puzzleWithEmptySolutions.id))
     await f.flowPuzzleDb.put(f.puzzleWithEmptySolutions)
     const after = Result.unwrap(await f.withSolutions.get(f.puzzleWithEmptySolutions.id))
-    expect((before?.flowSolutions.length ?? 0) === 0).toBe(true)
-    expect((after?.flowSolutions.length ?? 0) > 0).toBe(true)
+    expect((before?.solutions.length ?? 0) === 0).toBe(true)
+    expect((after?.solutions.length ?? 0) > 0).toBe(true)
   })
 
   it.todo('should assoc solutions before list', async () => {
@@ -81,7 +81,7 @@ describe(import.meta.file, () => {
     expect(before?.items.length === 0).toBe(true)
     expect(after?.items.length === 1).toBe(true)
     for (const item of after?.items ?? []) {
-      expect(item?.flowSolutions.length > 0).toBe(true)
+      expect(item?.solutions.length > 0).toBe(true)
     }
   })
 })

@@ -17,7 +17,7 @@ export const WithSolutions = (flowPuzzleDb: IFlowPuzzleDb): IFlowPuzzleDb => {
       if (isErr(listed)) return listed
 
       const promises = listed.value.items.map(async (puzzle) => {
-        if (puzzle.flowSolutions.length > 0) return puzzle
+        if (puzzle.solutions.length > 0) return puzzle
 
         const solution = await FlowAlgoSolveAsync.solve(puzzle.flow)
 
@@ -25,7 +25,7 @@ export const WithSolutions = (flowPuzzleDb: IFlowPuzzleDb): IFlowPuzzleDb => {
 
         const withSolution: typeof puzzle = {
           ...puzzle,
-          flowSolutions: [solution]
+          solutions: [solution]
         }
 
         return withSolution
@@ -49,7 +49,7 @@ export const WithSolutions = (flowPuzzleDb: IFlowPuzzleDb): IFlowPuzzleDb => {
 
       if (!got.value) return got
 
-      if (got.value.flowSolutions.length > 0) return got
+      if (got.value.solutions.length > 0) return got
 
       const solution = await FlowAlgoSolveAsync.solve(got.value.flow)
 
@@ -57,7 +57,7 @@ export const WithSolutions = (flowPuzzleDb: IFlowPuzzleDb): IFlowPuzzleDb => {
 
       const withSolution: typeof got.value = {
         ...got.value,
-        flowSolutions: [solution]
+        solutions: [solution]
       }
 
       return Ok(withSolution)
@@ -66,7 +66,7 @@ export const WithSolutions = (flowPuzzleDb: IFlowPuzzleDb): IFlowPuzzleDb => {
       const solution = await FlowAlgoSolveAsync.solve(puzzle.flow)
       const withSolution: typeof puzzle = {
         ...puzzle,
-        flowSolutions: solution ? [solution] : []
+        solutions: solution ? [solution] : []
       }
       const output = await flowPuzzleDb.put(withSolution)
       return output

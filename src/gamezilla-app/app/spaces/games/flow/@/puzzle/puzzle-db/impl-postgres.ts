@@ -52,7 +52,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
       createdBy,
       lastUpdatedAt,
       lastUpdatedBy,
-      flowSolutions
+      solutions: flowSolutions
     }
   }
   console.error(
@@ -291,7 +291,7 @@ export const FlowPuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql
           flow_puzzle_id: flowPuzzle.id,
           flow_puzzle_name: flowPuzzle.name,
           flow: Sql.json(flowPuzzle.flow),
-          flow_solutions: Sql.json(flowPuzzle.flowSolutions),
+          flow_solutions: Sql.json(flowPuzzle.solutions),
           created_at_posix: flowPuzzle.createdAt,
           created_by_user_id: flowPuzzle.createdBy,
           last_updated_at_posix: flowPuzzle.lastUpdatedAt,
