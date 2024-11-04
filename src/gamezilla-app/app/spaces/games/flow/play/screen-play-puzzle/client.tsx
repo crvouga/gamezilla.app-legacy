@@ -3,14 +3,14 @@ import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from 'gamezilla-app/app/@/ui'
 import { Actions } from 'gamezilla-app/app/@/ui/actions'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
+import { LayoutGame } from '../../../@/game/layout-game'
+import { ProfileCard } from '../../../@/game/profile-card'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { ViewPuzzleNotFound } from '../../@/puzzle/not-found'
 import type { ClientModule } from '../types'
 import * as CopyPuzzleClient from './copy-puzzle/client'
 import { ScreenPlayPuzzleCore } from './core'
 import { LastPuzzleClient } from './last-puzzle/client'
-import { LayoutGame } from '../../../@/game/layout-game'
-import { ProfileCard } from '../../../@/game/profile-card'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -144,7 +144,7 @@ const View: ClientModule['View'] = (input) => {
                 key={flowPuzzle.c.id}
                 flow={flowPuzzle.c.flow}
                 model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
-                dispatch={(_) => {}}
+                dispatch={() => {}}
                 showSolvedAnimation
               />
             </>
