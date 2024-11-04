@@ -1,15 +1,15 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Ok, unwrap } from 'gamezilla-app/@/core'
-import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
-import { EventMeta, withEventId } from 'gamezilla-app/@/event-sourced/event'
-import * as SpaceCore from '../space-core'
-import { Config, SpacesCoreServer } from './impl'
-import { Logger } from 'gamezilla-app/app/@/server/logger'
-import { Stream } from 'gamezilla-app/app/@/server/stream/impl'
 import { p } from 'gamezilla-app/@/core/parser'
 import { EventSourced } from 'gamezilla-app/@/event-sourced'
-import { MsgCore } from '../event'
+import { EventMeta, withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
+import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
+import { Logger } from 'gamezilla-app/app/@/server/logger'
+import { Stream } from 'gamezilla-app/app/@/server/stream/impl'
+import * as SpaceCore from '../space-core'
+import { SpaceEvent } from '../space-event'
+import { Config, SpacesCoreServer } from './impl'
 
 const Fixture = async (config: Config) => {
   const spacesCoreServer = await SpacesCoreServer(config)
@@ -44,7 +44,7 @@ const Fixtures = async () => {
       logger: Logger({ t: 'noop' }),
       stream: await Stream({
         t: 'in-memory',
-        parser: p.and(MsgCore, EventMeta)
+        parser: p.and(SpaceEvent, EventMeta)
       })
     })
   }

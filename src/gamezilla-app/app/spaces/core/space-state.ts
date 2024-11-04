@@ -4,7 +4,7 @@ import { Space } from 'gamezilla-app/app/spaces/@/space'
 import * as GameGame from '../games/core'
 import * as Game from '../games/types'
 import { EventId, WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
-import { MsgCore } from './event'
+import { SpaceEvent } from './space-event'
 
 //
 //
@@ -74,7 +74,7 @@ export const toUserIds = (state: State): UserId[] => {
 //
 //
 
-export const updateCore = (state: State, msgCore: WithEventMeta<MsgCore>): State => {
+export const updateCore = (state: State, msgCore: WithEventMeta<SpaceEvent>): State => {
   switch (state.type) {
     case 'ended': {
       return state

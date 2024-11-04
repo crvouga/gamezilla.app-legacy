@@ -6,7 +6,7 @@ import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import { ViewUsersInSpaceList } from '../games/@/game/users-in-space-list'
 import { LayoutGameCoverArtHeader } from '../games/@/game/layout-game-cover-art-header'
 import { withEventId } from 'gamezilla-app/@/event-sourced/event'
-import { MsgCore } from '../core'
+import { SpaceEvent } from '../core'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
@@ -27,7 +27,7 @@ const updateFromJoinSpaceButton: SpaceClientModule['update'] = ({ msg, model, ct
         }
       }
 
-      const spaceEventNew = withEventId<MsgCore>({
+      const spaceEventNew = withEventId<SpaceEvent>({
         t: 'user-joined-space',
         spaceId: msg.spaceId,
         userId: currentUserId

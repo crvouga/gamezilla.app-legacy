@@ -1,6 +1,6 @@
 import { FeedItem } from '../../@/feed-item'
 import { GamesClient } from '../../games/client'
-import type { MsgCore, SpaceCoreState } from '../../core'
+import type { SpaceEvent, SpaceCoreState } from '../../core'
 import * as SpacesCoreClient from '../../core/client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../types'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
@@ -34,7 +34,7 @@ const ViewFeedItem = ({
   state
 }: {
   ctx: SpaceClientCtx
-  msgEvt: WithEventId<MsgCore>
+  msgEvt: WithEventId<SpaceEvent>
   state: SpaceCoreState.Started
 }) => {
   switch (msgEvt.t) {

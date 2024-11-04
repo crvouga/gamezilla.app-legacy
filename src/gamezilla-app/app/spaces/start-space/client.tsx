@@ -4,7 +4,7 @@ import { Button, IconPlus } from 'gamezilla-app/app/@/ui'
 
 import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import type { MsgCore } from '../core'
+import type { SpaceEvent } from '../core'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
@@ -49,7 +49,7 @@ const updateStartSpaceButton: SpaceClientModule['update'] = (input) => {
         }
       }
 
-      const spaceEventNew = withEventId<MsgCore>({
+      const spaceEventNew = withEventId<SpaceEvent>({
         t: 'user-started-space',
         spaceId: input.msg.spaceId,
         userId: input.ctx.currentUserId

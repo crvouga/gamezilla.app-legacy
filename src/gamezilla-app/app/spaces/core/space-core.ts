@@ -3,15 +3,15 @@ import { p } from 'gamezilla-app/@/core/parser'
 import { EventSourced, EventSourcedConfig } from 'gamezilla-app/@/event-sourced'
 import { EventId } from 'gamezilla-app/@/event-sourced/event'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { MsgCore } from './event'
+import { SpaceEvent } from './space-event'
 import * as SpaceState from './space-state'
 
-export const Model = EventSourced.parser(MsgCore, SpaceState.State)
+export const Model = EventSourced.parser(SpaceEvent, SpaceState.State)
 export type Model = p.Infer<typeof Model>
 
 export const init: Model = EventSourced.init(SpaceState.init)
 
-export const config: EventSourcedConfig<MsgCore, SpaceState.State> = {
+export const config: EventSourcedConfig<SpaceEvent, SpaceState.State> = {
   reducer: SpaceState.updateCore
 }
 

@@ -5,7 +5,7 @@ import type { AppServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
 import type { MsgServer, MsgToClient, MsgToServer, ServerDeps } from '../../types'
 import type { Space } from '../space'
 import type { SpaceServerCmd } from '../space-server-cmd'
-import { MsgCore } from '../../core'
+import { SpaceEvent } from '../../core'
 import { WithEventId } from 'gamezilla-app/@/event-sourced/event'
 
 type Ctx = AppServerCtx & {
@@ -25,7 +25,7 @@ export type Input = {
     | null
   msgEvt?: ServerEvt | null
   msgCmd?: SpaceServerCmd<MsgToClient> | null
-  msgCore?: WithEventId<MsgCore> | null
+  msgCore?: WithEventId<SpaceEvent> | null
 }
 
 export type MaybePromise<T> = T | Promise<T>
@@ -33,7 +33,7 @@ export type MaybePromise<T> = T | Promise<T>
 export type Output = {
   msgCmd?: SpaceServerCmd<MsgToClient>[]
   msgEvt?: unknown[]
-  msgCore?: WithEventId<MsgCore>[]
+  msgCore?: WithEventId<SpaceEvent>[]
 }
 
 export type SpaceServerModule = {

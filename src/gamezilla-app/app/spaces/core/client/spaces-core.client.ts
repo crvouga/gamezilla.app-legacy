@@ -3,7 +3,7 @@ import { EventSourced } from 'gamezilla-app/@/event-sourced'
 import { EventId, WithEventId } from 'gamezilla-app/@/event-sourced/event'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { SpaceCore } from '..'
-import type { MsgCore } from '../event'
+import type { SpaceEvent } from '../space-event'
 import * as SpaceState from '../space-state'
 
 //
@@ -194,7 +194,7 @@ export const update = ({
   msgCore
 }: {
   model: Model
-  msgCore: WithEventId<MsgCore>
+  msgCore: WithEventId<SpaceEvent>
 }): {
   model: Model
 } => {
@@ -299,7 +299,7 @@ export const update = ({
 
 const append = (
   model: Model,
-  msgCore: WithEventId<MsgCore>
+  msgCore: WithEventId<SpaceEvent>
 ): {
   model: Model
 } => {

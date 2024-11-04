@@ -12,7 +12,7 @@ import type * as Space from './core/space-core'
 import { GameName } from './games/@/game-name'
 import type * as Game from './games/types'
 import * as GamesTypes from './games/types'
-import { MsgCore } from './core'
+import { SpaceEvent } from './core'
 
 //
 //
@@ -47,7 +47,7 @@ export type ModelClient = Spaces.Model & {
 //
 
 export type MsgServer =
-  | { t: 'got-msg-core'; c: WithEventId<MsgCore> }
+  | { t: 'got-msg-core'; c: WithEventId<SpaceEvent> }
   | { t: 'game'; spaceId: SpaceId; c: Game.MsgServer }
 
 export type MsgClient =
@@ -70,7 +70,7 @@ export type MsgToClient = MsgToClientExtra &
   (
     | {
         t: 'got-msg-core'
-        c: WithEventMeta<MsgCore>
+        c: WithEventMeta<SpaceEvent>
       }
     | {
         t: 'listed-spaces'
@@ -96,7 +96,7 @@ export type MsgToServer = MsgToServerExtra &
   (
     | {
         t: 'got-msg-core'
-        c: WithEventMeta<MsgCore>
+        c: WithEventMeta<SpaceEvent>
       }
     | {
         t: 'sync'

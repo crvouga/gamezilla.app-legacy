@@ -7,7 +7,7 @@ import type { SpaceClientCmd } from '../space-client-cmd'
 import { SpaceClientEvt } from '../space-client-evt'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../types'
 import { WithEventId } from 'gamezilla-app/@/event-sourced/event'
-import { MsgCore } from '../../core'
+import { SpaceEvent } from '../../core'
 
 type Ctx = BaseClientCtx & {
   space?: Space
@@ -23,7 +23,7 @@ export type Input = {
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }> | null
-  msgCore?: WithEventId<MsgCore> | null
+  msgCore?: WithEventId<SpaceEvent> | null
 }
 
 export type Output = {
@@ -34,7 +34,7 @@ export type Output = {
     MsgToServer: MsgToServer
   }>[]
   msgEvt?: SpaceClientEvt[]
-  msgCore?: WithEventId<MsgCore>[]
+  msgCore?: WithEventId<SpaceEvent>[]
 }
 
 export type SpaceClientModule = {

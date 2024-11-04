@@ -4,7 +4,7 @@ import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import { EventId } from 'gamezilla-app/app/@/server/stream/event-id'
 import { IStream } from 'gamezilla-app/app/@/server/stream/interface'
-import { MsgCore } from '../event'
+import { SpaceEvent } from '../space-event'
 import * as SpaceCore from '../space-core'
 import * as SpaceCoreState from '../space-state'
 import * as ImplDbConnKv from './impl-db-conn-kv'
@@ -14,7 +14,7 @@ import { WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
 export type Config = {
   t: 'stream'
   dbConnKv: IDbConnKv
-  stream: IStream<WithEventMeta<MsgCore>>
+  stream: IStream<WithEventMeta<SpaceEvent>>
   logger: ILogger
 }
 

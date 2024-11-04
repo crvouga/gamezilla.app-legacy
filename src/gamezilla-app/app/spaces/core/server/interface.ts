@@ -2,7 +2,7 @@ import { Result } from 'gamezilla-app/@/core'
 import type { Paginated, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { EventId, WithEventId } from 'gamezilla-app/@/event-sourced/event'
 import type * as SpaceCore from '../space-core'
-import { MsgCore } from '../event'
+import { SpaceEvent } from '../space-event'
 
 export type SpacesCoreServerWhereAnd = {
   equalsSpaceId?: SpaceId
@@ -24,7 +24,7 @@ export type ISpacesCoreServer = {
 
   hasEvent: (spaceId: SpaceId, eventId: EventId) => Promise<boolean>
 
-  update: (spaceEvent: WithEventId<MsgCore>) => Promise<Result<string, null>>
+  update: (spaceEvent: WithEventId<SpaceEvent>) => Promise<Result<string, null>>
 
   merge: (space: SpaceCore.Model) => Promise<Result<string, null>>
 }
