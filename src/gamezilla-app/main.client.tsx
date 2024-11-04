@@ -1,7 +1,7 @@
 import { Program } from 'gamezilla-app/@/core'
 import { DebuggerReduxDevTools } from 'gamezilla-app/@/core/debug'
 import { Render } from 'gamezilla-app/@/vdom'
-import * as AppClient from 'gamezilla-app/app/app.client'
+import * as AppClient from 'gamezilla-app/app/client'
 import {
   CODEBASE_VERSION_ID,
   IS_PROD,
