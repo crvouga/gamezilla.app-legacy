@@ -23,6 +23,7 @@
     "Premoves",
     "Propgation",
     "pscale",
+    "registrator",
     "snabbdom",
     "sslmode",
     "Supabase",

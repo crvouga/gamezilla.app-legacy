@@ -1,6 +1,6 @@
 import * as ImplInMemory from './impl-in-memory'
 import * as ImplPostgres from './impl-postgres'
-import type { IUserAccountDb } from './inteface'
+import type { IUserAccountDb } from './interface'
 
 export type Impl = ImplInMemory.Config | ImplPostgres.Config
 

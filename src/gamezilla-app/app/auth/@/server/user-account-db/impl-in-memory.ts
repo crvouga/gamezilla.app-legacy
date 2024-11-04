@@ -1,7 +1,7 @@
 import { Err, Ok, PhoneNumber } from 'gamezilla-app/@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
-import type { IUserAccountDb } from './inteface'
+import type { IUserAccountDb } from './interface'
 
 export type Config = {
   t: 'in-memory'
