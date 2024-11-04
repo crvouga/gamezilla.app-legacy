@@ -114,7 +114,7 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
     >
       <div
         key={statusToKey(input.status)}
-        className='absolute inset-0 flex items-center justify-center gap-1 text-neutral-300'
+        className='absolute inset-0 flex items-center justify-center gap-1 text-secondary'
       >
         <ViewStatusBarContent {...input} />
       </div>

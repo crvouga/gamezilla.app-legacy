@@ -31,7 +31,7 @@ export const TopBar = (input: {
 
         {input.subtitle && (
           <Typography
-            className='truncate px-2 text-xs text-neutral-300'
+            className='truncate px-2 text-xs text-secondary'
             role='heading'
             variant='subtitle'
             text={input.subtitle}

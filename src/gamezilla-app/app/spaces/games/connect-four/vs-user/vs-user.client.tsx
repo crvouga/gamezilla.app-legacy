@@ -451,7 +451,7 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({ ctx, modelCore }: { ctx: SpaceClientCtx; modelCore: StateGame | StateGameOver }) => {
   if (modelCore.type === 'game-over') {
-    return <p className='flex items-center justify-center text-neutral-300'>Game Over</p>
+    return <p className='flex items-center justify-center text-secondary'>Game Over</p>
   }
 
   const turn = toTurn(modelCore.columns)
@@ -460,7 +460,7 @@ const Feedback = ({ ctx, modelCore }: { ctx: SpaceClientCtx; modelCore: StateGam
 
   if (currentUserPlayerType !== turn) {
     return (
-      <p className='flex items-center justify-center gap-2 text-center text-neutral-300'>
+      <p className='flex items-center justify-center gap-2 text-center text-secondary'>
         <PlayerIcon className='h-4 w-4' playerType={turn} />
         Turn
       </p>
@@ -488,7 +488,7 @@ const PlayerSlot = ({
     <div className='flex flex-1 items-center gap-2 overflow-hidden rounded border  p-2'>
       <PlayerIcon className='h-8 w-8' playerType={playerType} />
       <Avatar className='h-8 w-8' alt='' src={ctx.profiles[modelCore.players[playerType]]?.avatarUrl} />
-      <p className='text-neutral-300'>{ctx.profiles[modelCore.players[playerType]]?.username ?? '...'}</p>
+      <p className='text-secondary'>{ctx.profiles[modelCore.players[playerType]]?.username ?? '...'}</p>
     </div>
   )
 }

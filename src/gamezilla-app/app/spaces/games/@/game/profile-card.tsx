@@ -20,7 +20,7 @@ export const ProfileCard = ({
       <div className='flex flex-1 flex-col gap-0.5'>
         {profile && <Typography variant='body' text={ctx.t('username', profile.username)} />}
 
-        {subtitle && <Typography className='text-neutral-300' variant='caption' text={subtitle} />}
+        {subtitle && <Typography className='text-secondary' variant='caption' text={subtitle} />}
       </div>
     </div>
   )

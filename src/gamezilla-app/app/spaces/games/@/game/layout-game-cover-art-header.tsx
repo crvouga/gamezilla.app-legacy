@@ -32,7 +32,7 @@ const renderDefaultCoverArt = (input: { key: string; className: string }) => {
     <div
       key={input.key}
       className={cn(
-        'flex items-center justify-center overflow-hidden rounded-lg  bg-neutral-800 p-4 text-neutral-300',
+        'flex items-center justify-center overflow-hidden rounded-lg  bg-neutral-800 p-4 text-secondary',
         input.className
       )}
     >

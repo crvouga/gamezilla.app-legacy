@@ -251,7 +251,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
         <Avatar className='h-14 w-14' src={ctx.profiles[player.userId]?.avatarUrl} />
       ) : (
         <div role='button' className='grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-800'>
-          <IconQuestionMark className='h-10 w-10 text-neutral-300' />
+          <IconQuestionMark className='h-10 w-10 text-secondary' />
         </div>
       )}
       {player.renderIcon({
@@ -268,10 +268,10 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp
     <div className='col-span-3 grid grid-cols-2 place-items-center'>
       <Typography
         variant='label'
-        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-neutral-300'
+        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-secondary'
         text={player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?')}
       />
-      <Typography variant='label' className='text-center text-sm text-neutral-300' text={player.playerLabel} />
+      <Typography variant='label' className='text-center text-sm text-secondary' text={player.playerLabel} />
     </div>
   )
 }

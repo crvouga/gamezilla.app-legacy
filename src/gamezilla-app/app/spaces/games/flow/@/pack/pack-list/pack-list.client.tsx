@@ -174,11 +174,11 @@ const FlowPackListItem = ({
       {false && <IconBox className='h-9 w-9 shrink-0' />}
       <div className='flex flex-1 flex-col overflow-hidden'>
         <p className='overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold'>{pack.name}</p>
-        <p className='text-sm text-neutral-300'>
+        <p className='text-sm text-secondary'>
           {TimeSpan.humanFriendlyString(Posix.diff(pack.lastUpdatedAt, ctx.now))}
         </p>
       </div>
-      <p className='flex shrink-0 text-sm text-neutral-300'>{plural(pack.puzzleIds, 'puzzle', 'puzzles')}</p>
+      <p className='flex shrink-0 text-sm text-secondary'>{plural(pack.puzzleIds, 'puzzle', 'puzzles')}</p>
     </button>
   )
 }

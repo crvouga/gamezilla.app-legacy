@@ -82,7 +82,7 @@ export const View = ({
       <button
         type='button'
         aria-label='open status bar'
-        className='flex w-full items-center gap-2 border-b  p-0.5 px-2 text-xs text-neutral-300'
+        className='flex w-full items-center gap-2 border-b  p-0.5 px-2 text-xs text-secondary'
         onClick={() =>
           dispatch({
             t: 'clicked-status-bar'

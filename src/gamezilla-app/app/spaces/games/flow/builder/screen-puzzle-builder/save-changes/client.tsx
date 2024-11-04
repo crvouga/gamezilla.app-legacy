@@ -253,7 +253,7 @@ const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
       position='bottom'
     >
       <Typography className='px-4 pt-4 text-3xl font-bold' variant='title' text={input.ctx.t('app.save-changes?')} />
-      <Typography className='p-4 text-neutral-300' variant='body' text={input.ctx.t('app.save-changes-warning')} />
+      <Typography className='p-4 text-secondary' variant='body' text={input.ctx.t('app.save-changes-warning')} />
       <div className='flex w-full flex-col gap-4 p-4'>
         <Button
           className='w-full'

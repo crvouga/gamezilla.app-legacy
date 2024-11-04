@@ -260,7 +260,7 @@ export const View = ({
           <Avatar src={ctx.profiles[ctx.space.hostId]?.avatarUrl} className='h-10 w-10' alt='' />
 
           <div className='flex flex-1 flex-col justify-center'>
-            <p className='-mb-1/2 text-xs text-neutral-300'>Rating</p>
+            <p className='-mb-1/2 text-xs text-secondary'>Rating</p>
             <div className='flex items-center gap-1'>
               <p className='text-xl font-semibold'>{model.profile?.eloRating ?? '...'}</p>
 
@@ -279,7 +279,7 @@ export const View = ({
 
           <div className='flex items-center justify-end gap-2'>
             <TickingClock sec={durationMs ? Math.floor(durationMs / 1_000) : 0} />
-            <p className='font-mono text-lg font-bold  text-neutral-300'>
+            <p className='font-mono text-lg font-bold  text-secondary'>
               {durationMs ? formatDuration(durationMs) : '-:--'}
             </p>
           </div>
@@ -332,14 +332,14 @@ export const View = ({
         </div>
         <div className='grid w-full grid-cols-2 px-2 py-1'>
           <div className='flex items-center justify-start gap-1 text-xs '>
-            <p className='text-neutral-300'>Puzzle Rating</p>
+            <p className='text-secondary'>Puzzle Rating</p>
             <p>{model.t === 'loading' ? '...' : model.puzzle.rating}</p>
           </div>
 
           <div className='flex flex-1 items-center justify-end gap-1 text-right text-xs'>
-            <p className='text-neutral-300'>Moved</p>
+            <p className='text-secondary'>Moved</p>
             <p className='text-inherit'>{model.t === 'loading' ? '0' : model.moves?.length ?? '0'}</p>
-            <p className='text-neutral-300'>out of</p>
+            <p className='text-secondary'>out of</p>
             <p className='text-inherit'>{model.t === 'loading' ? '0' : model.puzzle?.moves?.length ?? '0'}</p>
           </div>
         </div>

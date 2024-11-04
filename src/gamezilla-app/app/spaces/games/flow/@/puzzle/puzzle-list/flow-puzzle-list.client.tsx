@@ -160,7 +160,7 @@ const FlowPuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Flow
       </div>
       <div className='overflow-hidden'>
         <p className='flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold'>{puzzle.name}</p>
-        <p className='text-xs text-neutral-300'>{TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}</p>
+        <p className='text-xs text-secondary'>{TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}</p>
       </div>
     </button>
   )

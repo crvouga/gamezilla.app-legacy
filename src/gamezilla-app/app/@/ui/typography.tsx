@@ -15,7 +15,7 @@ const variantClasses: { [variant in TypographyVariant]: string } = {
 export type TypographyColor = 'inherit' | 'text-primary' | 'text-secondary'
 
 const colorClasses: { [color in TypographyColor]: string } = {
-  'text-secondary': 'text-neutral-300',
+  'text-secondary': 'text-secondary',
   'text-primary': 'text-white',
   inherit: 'text-inherit'
 }

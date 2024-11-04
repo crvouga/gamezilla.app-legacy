@@ -102,7 +102,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
         <Avatar className='h-14 w-14' src={ctx.profiles[player.userId]?.avatarUrl} alt='' />
       ) : (
         <div role='button' className='grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-800'>
-          <IconQuestionMark className='h-10 w-10 text-neutral-300' />
+          <IconQuestionMark className='h-10 w-10 text-secondary' />
         </div>
       )}
 
@@ -115,7 +115,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
   return (
-    <div className='col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm text-neutral-300'>
+    <div className='col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm text-secondary'>
       <p className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'>
         {player.userId ? ctx.profiles[player.userId]?.username ?? '...' : '?'}
       </p>
