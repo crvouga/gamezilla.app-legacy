@@ -9,7 +9,7 @@ import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
 import { FlowServerCtx } from '../../flow-server-ctx'
 import { FlowPack } from '../pack'
 import { FlowPackDb } from '../pack-db'
-import { PackPuzzlesGridServer } from './pack-puzzles-grid.server'
+import { PackPuzzlesGridServer } from './server'
 
 const initial = () => {
   return {}

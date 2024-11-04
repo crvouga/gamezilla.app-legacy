@@ -4,8 +4,8 @@ import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowPuzzle } from '../../puzzle/puzzle'
 import { FlowPack } from '../pack'
-import { PackPuzzlesGridClient } from './pack-puzzles-grid.client'
-import type { FlowPackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './pack-puzzles-grid.types'
+import { PackPuzzlesGridClient } from './client'
+import type { FlowPackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
 
 type Input = {
   ctx?: FlowPackGridClientCtx

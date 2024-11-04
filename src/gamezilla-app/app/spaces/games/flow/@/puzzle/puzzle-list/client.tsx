@@ -5,7 +5,7 @@ import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
 import { Posix, RequestResponse, Result, TimeSpan, descend, isErr } from 'gamezilla-app/@/core'
 import type { FlowPuzzle } from '../puzzle'
-import type { ClientModule, MsgInCmdClient } from './flow-puzzle-list.types'
+import type { ClientModule, MsgInCmdClient } from './types'
 import { FlowVariantUI } from '../../flow/flow-variant'
 
 const update: ClientModule['update'] = (input) => {

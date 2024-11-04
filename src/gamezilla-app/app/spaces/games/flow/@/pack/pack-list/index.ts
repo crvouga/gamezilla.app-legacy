@@ -1,3 +1,3 @@
-export * from './pack-list.client'
-export * from './pack-list.server'
-export * as PackListTypes from './pack-list.types'
+export * from './client'
+export * from './server'
+export * as PackListTypes from './types'

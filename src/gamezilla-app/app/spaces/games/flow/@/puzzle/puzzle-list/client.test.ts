@@ -7,8 +7,8 @@ import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import type { FlowClientCtx } from '../../flow-client-ctx'
 import { FlowPuzzle } from '../puzzle'
-import { PuzzleListClient } from './flow-puzzle-list.client'
-import { type ModelClient, initClient } from './flow-puzzle-list.types'
+import { PuzzleListClient } from './client'
+import { type ModelClient, initClient } from './types'
 import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 const initial = {

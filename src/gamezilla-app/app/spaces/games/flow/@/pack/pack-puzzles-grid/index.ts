@@ -1,1 +1,1 @@
-export * as PackPuzzlesGridTypes from './pack-puzzles-grid.types'
+export * as PackPuzzlesGridTypes from './types'

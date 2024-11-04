@@ -4,7 +4,7 @@ import { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import { FlowPackDb } from './@/pack/pack-db'
 import { PackListServer } from './@/pack/pack-list'
-import { PackPuzzlesGridServer } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.server'
+import { PackPuzzlesGridServer } from './@/pack/pack-puzzles-grid/server'
 import { FlowPuzzleDb } from './@/puzzle/puzzle-db'
 import { FlowServerCtx } from './@/flow-server-ctx'
 import { BuilderServer } from './builder/server'

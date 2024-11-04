@@ -4,7 +4,7 @@ import { sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { IconBox, Spinner, cn } from 'gamezilla-app/app/@/ui'
 import { EmptyState } from 'gamezilla-app/app/@/ui/empty-state'
 import type { FlowPack } from '../pack'
-import { initClient, MsgInCmdClient, type ClientModule, type ModelClient } from './pack-list.types'
+import { initClient, MsgInCmdClient, type ClientModule, type ModelClient } from './types'
 import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 const init = (input: { ctx: SpaceClientCtx; packs: ModelClient['packs'] }): ReturnType<ClientModule['update']> => {

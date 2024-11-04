@@ -2,13 +2,7 @@ import { isErr, RequestResponse, Result } from 'gamezilla-app/@/core'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'
-import {
-  ClientModule,
-  initClient,
-  type ModelClient,
-  type MsgClient,
-  type MsgInCmdClient
-} from './pack-puzzles-grid.types'
+import { ClientModule, initClient, type ModelClient, type MsgClient, type MsgInCmdClient } from './types'
 import { FlowPack } from '../pack'
 import { FlowPuzzleId } from '../../puzzle/puzzle-id'
 

@@ -2,7 +2,7 @@ import { isErr } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 
-import { PackPuzzlesGridServer } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.server'
+import { PackPuzzlesGridServer } from '../../@/pack/pack-puzzles-grid/server'
 import type { ServerModule } from '../types'
 import { EditPackNameServer } from './edit-pack-name/server'
 import { ScreenPackBuilderCore } from './core'

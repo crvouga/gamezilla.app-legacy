@@ -1,3 +1,3 @@
-export * from './flow-puzzle-list.client'
-export * as PuzzleListTypes from './flow-puzzle-list.types'
-export * from './flow-puzzle-list.server'
+export * from './client'
+export * as PuzzleListTypes from './types'
+export * from './server'

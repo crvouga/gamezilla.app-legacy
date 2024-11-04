@@ -3,8 +3,8 @@ import { cn, TopBar } from 'gamezilla-app/app/@/ui'
 import { andThen } from '../../../@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { FlowPack } from '../../@/pack/pack'
-import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
-import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
+import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
+import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
 import type { ClientModule } from '../types'
 
 const update: ClientModule['update'] = (input) => {
