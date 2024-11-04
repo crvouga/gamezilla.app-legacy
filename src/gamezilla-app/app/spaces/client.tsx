@@ -6,7 +6,7 @@ import { SpaceClientCmd } from './@/space-client-cmd'
 import { SpaceClientEvt } from './@/space-client-evt'
 import { CurrentSpaceBottomBar } from './client/current-space-bottom-bar'
 import { GoHome } from './client/go-home'
-import { Modals } from './client/modals'
+import { People } from './client/people'
 import { SpaceClient } from './client/space'
 import * as SpacesCoreClient from './core/client/spaces-core.client'
 import { EndSpaceClient } from './end-space/end-space.client'
@@ -150,7 +150,7 @@ const updateChild: SpaceClientModule['update'] = (input) => {
     (model) => ListSpacesClient.update({ ...input, model }),
     (model) => GoHome.update({ ...input, model }),
     (model) => CurrentSpaceBottomBar.update({ ...input, model }),
-    (model) => Modals.update({ ...input, model })
+    (model) => People.update({ ...input, model })
   )
 }
 

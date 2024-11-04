@@ -1,4 +1,6 @@
 import { NonEmpty, PhoneNumber, Posix, pipe, type TimeSpan } from 'gamezilla-app/@/core'
+import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { withEventId } from 'gamezilla-app/@/event-sourced/event'
 import { LamportClock, LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
 import type { Route } from 'gamezilla-app/@/routing/generated/routes'
 import { routeChanged, type AppClientCtx } from 'gamezilla-app/app/@/client'
@@ -6,13 +8,11 @@ import { FixtureAppClient } from 'gamezilla-app/app/@/client/client-test-env'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
-import { GameName } from '../../games/@/game-name'
-import { SpaceCore, type SpaceEvent } from '../../core'
 import * as SpaceClient from '../../client'
+import { SpaceCore, type SpaceEvent } from '../../core'
+import { GameName } from '../../games/@/game-name'
 import type * as SpacesTypes from '../../types'
 import { SpaceClientCtx } from '../space-client-ctx'
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
 
 //
 //
@@ -577,16 +577,6 @@ export const clickedCurrentSpaceBottomBar = (ctx: AppClientCtx) => (model: Space
     model,
     msg: {
       t: 'clicked-current-space-bottom-bar'
-    }
-  })
-}
-
-export const clickedUserPreviewLink = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
-  return SpaceClient.update({
-    ctx,
-    model,
-    msg: {
-      t: 'clicked-preview-user-link'
     }
   })
 }

@@ -1,5 +1,5 @@
 import { APP_SOUND, openProfile, playSound } from 'gamezilla-app/app/@/client'
-import { Avatar, Button, Drawer, Typography } from 'gamezilla-app/app/@/ui'
+import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from 'gamezilla-app/app/@/ui'
 import { SpaceClientModule } from '../../@/architecture/space-client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { ViewSpaceHostChip, ViewUsersInSpaceList, ViewYouChip } from '../../games/@/game/users-in-space-list'
@@ -8,7 +8,7 @@ const update: SpaceClientModule['update'] = (input) => {
   const { model } = input
   return SpaceClientModule.andThen(
     { model },
-    (model) => updateModals({ ...input, model }),
+    (model) => updatePeopleModals({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateUserPreview({ ...input, model })
@@ -26,7 +26,7 @@ const updateUserPreview: SpaceClientModule['update'] = ({ msg, model }) => {
 
       return {
         model,
-        msgCmd: [playSound(APP_SOUND.tap), openProfile(model.modalPreviewUserId)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin), openProfile(model.modalPreviewUserId)]
       }
     }
 
@@ -38,14 +38,15 @@ const updateUserPreview: SpaceClientModule['update'] = ({ msg, model }) => {
   }
 }
 
-const updateModals: SpaceClientModule['update'] = ({ msg, model }) => {
+const updatePeopleModals: SpaceClientModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'closed-modal': {
       return {
         model: {
           ...model,
           modal: null
-        }
+        },
+        msgCmd: [playSound(APP_SOUND.tap)]
       }
     }
 
@@ -54,7 +55,8 @@ const updateModals: SpaceClientModule['update'] = ({ msg, model }) => {
         model: {
           ...model,
           modal: 'users'
-        }
+        },
+        msgCmd: [playSound(APP_SOUND.tap)]
       }
     }
 
@@ -64,9 +66,11 @@ const updateModals: SpaceClientModule['update'] = ({ msg, model }) => {
           ...model,
           modalPreviewUserId: msg.userId,
           modal: 'user-preview'
-        }
+        },
+        msgCmd: [playSound(APP_SOUND.tap)]
       }
     }
+
     default: {
       return {
         model
@@ -196,7 +200,28 @@ const View: SpaceClientModule['View'] = (input) => {
   )
 }
 
-export const Modals = {
+const ViewIconButton: SpaceClientModule['View'] = (input) => {
+  if (!input.ctx.space || !input.ctx.currentUserId) {
+    return null
+  }
+
+  const peopleCount = Object.keys(input.ctx.space.users).length
+
+  return (
+    <IconButton
+      onClick={() =>
+        input.dispatch({
+          t: 'clicked-people-button'
+        })
+      }
+      label={input.ctx.t('spaces.people-count', peopleCount)}
+      renderIcon={(inputIcon) => <IconUserGroup {...inputIcon} />}
+    />
+  )
+}
+
+export const People = {
   update,
+  ViewIconButton,
   View
 }

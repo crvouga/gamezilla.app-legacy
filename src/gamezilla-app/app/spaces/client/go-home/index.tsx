@@ -1,5 +1,6 @@
 import { APP_SOUND, playSound, pushRoute } from 'gamezilla-app/app/@/client'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
+import { IconButton, IconHome } from 'gamezilla-app/app/@/ui'
 
 const update: SpaceClientModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
@@ -23,6 +24,22 @@ const update: SpaceClientModule['update'] = ({ msg, model }) => {
   }
 }
 
+const ViewIconButton: SpaceClientModule['View'] = (input) => {
+  return (
+    <IconButton
+      onClick={() =>
+        input.dispatch({
+          t: 'clicked-go-home-button'
+        })
+      }
+      label={input.ctx.t('spaces.home')}
+      className='-ml-2'
+      renderIcon={(inputIcon) => <IconHome {...inputIcon} />}
+    />
+  )
+}
+
 export const GoHome = {
-  update
+  update,
+  ViewIconButton
 }

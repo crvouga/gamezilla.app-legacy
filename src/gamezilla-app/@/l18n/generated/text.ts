@@ -37,7 +37,7 @@ import type { Text as Text34 } from '../../../app/spaces/games/flow/@/pack/pack-
 import type { Text as Text35 } from '../../../app/spaces/games/flow/@/flow/flow-edit/flow-edit.$l18n'
 import type { Text as Text36 } from '../../../app/spaces/games/flow/@/flow/flow-copy-to-clipboard/flow-copy-to-clipboard.$l18n'
 import type { Text as Text37 } from '../../../app/spaces/games/flow/@/flow/flow-play/flow-play.$l18n'
-import type { Text as Text38 } from '../../../app/spaces/client/modals/$l18n'
+import type { Text as Text38 } from '../../../app/spaces/client/people/$l18n'
 import type { Text as Text39 } from '../../../app/spaces/list-spaces/$l18n'
 import type { Text as Text40 } from '../../../app/spaces/list-spaces/space-card/$l18n'
 import type { Text as Text41 } from '../../../app/spaces/@/$l18n'
