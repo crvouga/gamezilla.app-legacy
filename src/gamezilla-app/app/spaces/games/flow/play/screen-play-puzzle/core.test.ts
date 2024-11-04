@@ -102,9 +102,9 @@ describe(import.meta.file, () => {
     expect(before.flowPlay).not.toEqual(after.flowPlay)
     expect(after.flowPlay).toEqual(
       FlowPlay.init({
-        ctx: {
+        ctx: FlowPlay.initCtx({
           flowPuzzle: f.nextPuzzle.c
-        }
+        })
       })
     )
   })
@@ -115,7 +115,7 @@ describe(import.meta.file, () => {
     const after = f.update(before, f.solvePuzzleMsgs)
     const afterFlow = FlowPlay.toFlow({
       flow: f.puzzle.flow,
-      model: after.flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: f.puzzle } })
+      model: after.flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: f.puzzle }) })
     })
 
     expect(ScreenPlayPuzzleCore.toStatus(before)).toBe('solving')
@@ -232,9 +232,9 @@ describe(import.meta.file, () => {
     ])
     expect(before.flowPlay).toEqual(
       FlowPlay.init({
-        ctx: {
+        ctx: FlowPlay.initCtx({
           flowPuzzle: f.puzzle
-        }
+        })
       })
     )
   })

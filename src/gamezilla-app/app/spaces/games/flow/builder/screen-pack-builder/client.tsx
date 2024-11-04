@@ -369,9 +369,9 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           return { model: input.model }
         }
         const updated = FlowPlay.update({
-          ctx: {
+          ctx: FlowPlay.initCtx({
             flowPuzzle
-          },
+          }),
           model: flowPlay,
           msg: input.msgCore.c
         })

@@ -23,8 +23,16 @@ import { FlowTerminal } from '../flow/flow-terminal'
 //
 //
 
-type Ctx = {
+export type Ctx = FlowHint.Ctx & {
   flowPuzzle: FlowPuzzle
+}
+
+export const initCtx = <TCtx,>(input: { flowPuzzle: FlowPuzzle } & TCtx): Ctx & TCtx => {
+  return {
+    ...input,
+    ...FlowHint.initCtx({ flowPuzzle: input.flowPuzzle }),
+    flowPuzzle: input.flowPuzzle
+  }
 }
 
 const Idle = p.obj({ t: p.l('idle') })
@@ -88,7 +96,7 @@ export const toStatus = (input: { flow: FlowVariant.Model; model: Model }) => {
 }
 
 export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
-  const initial = init({ ctx: input })
+  const initial = init({ ctx: initCtx({ ...input }) })
 
   const terminal = Flow.randomTerminal(input.flowPuzzle.flow)
 
@@ -650,10 +658,7 @@ export const viewResetAction = (input: {
   const disabled = Flow.isPipesEmpty(flow)
   return Actions.reset({
     ctx: input.ctx,
-    onClick: () =>
-      input.dispatch({
-        t: 'user-clicked-reset'
-      }),
+    onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
     disabled
   })
 }

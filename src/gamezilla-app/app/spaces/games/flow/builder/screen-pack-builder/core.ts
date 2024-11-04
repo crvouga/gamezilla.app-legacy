@@ -128,9 +128,9 @@ updates.push(({ modelCore, msgCore }) => {
             puzzleIndex: msgCore.puzzleIndex,
             puzzle: msgCore.puzzle,
             play: FlowPlay.init({
-              ctx: {
+              ctx: FlowPlay.initCtx({
                 flowPuzzle: msgCore.puzzle
-              }
+              })
             })
           }
         }
@@ -211,9 +211,9 @@ updates.push(({ modelCore, msgCore }) => {
       const screen = modelCore.screenPackBuilder.screen
 
       const updated = FlowPlay.update({
-        ctx: {
+        ctx: FlowPlay.initCtx({
           flowPuzzle: screen.puzzle
-        },
+        }),
         model: screen.play,
         msg: msgCore.c
       })
@@ -262,9 +262,9 @@ updates.push(({ modelCore, msgCore }) => {
               modelCore.screenPackBuilder.pack.puzzleIds.length - 1
             ),
             play: FlowPlay.init({
-              ctx: {
+              ctx: FlowPlay.initCtx({
                 flowPuzzle: msgCore.nextPuzzle
-              }
+              })
             }),
             puzzle: msgCore.nextPuzzle
           }
@@ -302,9 +302,9 @@ updates.push(({ modelCore, msgCore }) => {
               modelCore.screenPackBuilder.pack.puzzleIds.length - 1
             ),
             play: FlowPlay.init({
-              ctx: {
+              ctx: FlowPlay.initCtx({
                 flowPuzzle: msgCore.previousPuzzle
-              }
+              })
             }),
             puzzle: msgCore.previousPuzzle
           }

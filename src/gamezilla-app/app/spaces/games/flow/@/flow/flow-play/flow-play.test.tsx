@@ -8,10 +8,13 @@ import { FlowGridShorthand } from '../flow-variant/flow-grid/flow-grid-shorthand
 import { toStatus } from './flow-play'
 
 const Fixture = async ({ ctxFlow }: { ctxFlow: FlowVariant.Model }) => {
-  const ctxflowPuzzle = await FlowPuzzle.random({
+  const ctxFlowPuzzle = await FlowPuzzle.random({
     flow: ctxFlow
   })
-  const ctx = { flowPuzzle: ctxflowPuzzle }
+  const ctx: FlowPlay.Ctx = FlowPlay.initCtx({
+    flowPuzzle: ctxFlowPuzzle
+  })
+
   const init = FlowPlay.init({ ctx })
 
   const update = (init: FlowPlay.Model, msgs: FlowPlay.Msg[]) => {

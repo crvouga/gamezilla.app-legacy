@@ -84,14 +84,15 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
         }
       }
       const flowPlay =
-        input.modelCore.screen.flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: input.modelCore.screen.puzzleResult.c } })
+        input.modelCore.screen.flowPlay ??
+        FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: input.modelCore.screen.puzzleResult.c }) })
 
       const output = FlowPlay.update({
         msg: input.msgCore.c,
         model: flowPlay,
-        ctx: {
+        ctx: FlowPlay.initCtx({
           flowPuzzle: input.modelCore.screen.puzzleResult.c
-        }
+        })
       })
 
       return {
@@ -143,7 +144,7 @@ const View: ClientModule['View'] = (input) => {
                 disabled
                 key={flowPuzzle.c.id}
                 flow={flowPuzzle.c.flow}
-                model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
+                model={flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: flowPuzzle.c }) })}
                 dispatch={() => {}}
                 showSolvedAnimation
               />
@@ -170,7 +171,7 @@ const View: ClientModule['View'] = (input) => {
           <FlowPlay.View
             key={flowPuzzle.c.id}
             flow={flowPuzzle.c.flow}
-            model={flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } })}
+            model={flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: flowPuzzle.c }) })}
             dispatch={(c) =>
               input.dispatch({ t: 'got-msg-core', c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId } })
             }
@@ -258,8 +259,8 @@ const View: ClientModule['View'] = (input) => {
 
           flowPuzzle.t === 'got' && !isSolved
             ? FlowPlay.viewHintAction({
-                model: flowPlay ?? FlowPlay.init({ ctx: { flowPuzzle: flowPuzzle.c } }),
-                ctx: { ...input.ctx, flowPuzzle: flowPuzzle.c },
+                model: flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: flowPuzzle.c }) }),
+                ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: flowPuzzle.c }),
                 disabled: false,
                 dispatch: (c) =>
                   input.dispatch({

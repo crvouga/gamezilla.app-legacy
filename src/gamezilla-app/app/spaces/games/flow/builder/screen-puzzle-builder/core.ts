@@ -56,12 +56,12 @@ const updateCoreMain = ({
       const updated = FlowPlay.update({
         model: modelCore.screenPuzzleBuilder.play,
         msg: msgCore.c,
-        ctx: {
+        ctx: FlowPlay.initCtx({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
             flow: flow
           }
-        }
+        })
       })
 
       return {
@@ -118,14 +118,14 @@ const updateCoreMain = ({
         return modelCore
       }
       const initial = FlowPlay.init({
-        ctx: {
+        ctx: FlowPlay.initCtx({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
             flow: FlowEdit.toFlowMemoized({
               model: modelCore.screenPuzzleBuilder.edit
             })
           }
-        }
+        })
       })
       return {
         ...modelCore,

@@ -25,9 +25,9 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
             flow: flowPuzzleNew.flow
           }),
           play: FlowPlay.init({
-            ctx: {
+            ctx: FlowPlay.initCtx({
               flowPuzzle: flowPuzzleNew
-            }
+            })
           }),
           puzzle: flowPuzzleNew
         }

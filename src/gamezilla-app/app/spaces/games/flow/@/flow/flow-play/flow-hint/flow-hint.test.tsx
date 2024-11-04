@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
-import { FlowPuzzle } from '../../../puzzle/puzzle'
 import { FixtureFlowClient } from '../../../fixture-client'
+import { FlowPuzzle } from '../../../puzzle/puzzle'
 import { Flow } from '../../flow'
 import { FlowGridShorthand } from '../../flow-variant/flow-grid'
 import * as FlowHint from './flow-hint'
@@ -8,7 +8,7 @@ import * as FlowHint from './flow-hint'
 const Fixture = async (input?: { ctxFlowPuzzle?: FlowPuzzle }) => {
   const f = await FixtureFlowClient()
 
-  const ctxflowPuzzle =
+  const ctxFlowPuzzle =
     input?.ctxFlowPuzzle ??
     (await FlowPuzzle.random({
       flow: FlowGridShorthand.toGrid([
@@ -17,9 +17,9 @@ const Fixture = async (input?: { ctxFlowPuzzle?: FlowPuzzle }) => {
       ])
     }))
 
-  const ctx = {
-    flowPuzzle: ctxflowPuzzle
-  }
+  const ctx = FlowHint.initCtx({
+    flowPuzzle: ctxFlowPuzzle
+  })
 
   type Input = {
     msg: FlowHint.Msg
@@ -34,7 +34,7 @@ const Fixture = async (input?: { ctxFlowPuzzle?: FlowPuzzle }) => {
     }
     for (const input of inputs) {
       output = FlowHint.update({
-        ctx: input.ctx ?? ctx,
+        ctx: FlowHint.initCtx({ ...(input.ctx ?? ctx) }),
         model: output.model,
         msg: input.msg
       })
@@ -333,7 +333,7 @@ describe(import.meta.file, () => {
     })
 
     const init = FlowHint.init({
-      ctx: {
+      ctx: FlowHint.initCtx({
         flowPuzzle: await FlowPuzzle.random({
           flow: FlowGridShorthand.toGrid([
             [' ', ' ', 'A'],
@@ -341,7 +341,7 @@ describe(import.meta.file, () => {
             ['A', ' ', ' ']
           ])
         })
-      }
+      })
     })
 
     const output = f.update(init, [

@@ -1,4 +1,4 @@
-import { eq } from 'gamezilla-app/@/core'
+import { Eff, eq, Err, Result } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { IconLightbulb } from 'gamezilla-app/app/@/ui'
@@ -10,8 +10,18 @@ import { FlowGroupId } from '../../flow/flow-group-id'
 import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowTerminal } from '../../flow/flow-terminal'
 
-type Ctx = {
+export type FindSolutions = (input: { flow: FlowVariant.Model }) => Promise<Result<string, Flow.Model[]>>
+
+export type Ctx = {
   flowPuzzle: FlowPuzzle
+  findSolutions: FindSolutions
+}
+
+export const initCtx = (input: { flowPuzzle: FlowPuzzle; findSolutions?: FindSolutions }): Ctx => {
+  return {
+    findSolutions: input.findSolutions ?? (async (_input) => Err('not implemented')),
+    flowPuzzle: input.flowPuzzle
+  }
 }
 
 export const Model = p.obj({
@@ -24,6 +34,10 @@ export type Model = p.Infer<typeof Model>
 export const Msg = p.or(
   p.obj({
     t: p.l('user-clicked-use-hint')
+  }),
+  p.obj({
+    t: p.l('found-solutions'),
+    found: Result.parser(p.str, p.arr(Flow.Model))
   })
 )
 export type Msg = p.Infer<typeof Msg>
@@ -51,14 +65,18 @@ export type Event =
 export const update = <TModel extends Model, TMsg extends { t: string & {} }>(input: {
   msg: Msg | TMsg
   model: TModel
-  ctx: {
-    flowPuzzle: FlowPuzzle
-  }
+  ctx: Ctx
 }): {
   model: TModel
   events?: Event[]
+  eff?: Eff<Msg>
 } => {
   switch (input.msg.t) {
+    case 'found-solutions': {
+      return {
+        model: input.model
+      }
+    }
     case 'user-clicked-use-hint': {
       const flow = toFlow({
         flow: input.ctx.flowPuzzle.flow,
@@ -84,6 +102,10 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
       if (!solution) {
         return {
           model: input.model,
+          async eff(dispatch) {
+            const found = await input.ctx.findSolutions({ flow: input.ctx.flowPuzzle.flow })
+            dispatch({ t: 'found-solutions', found })
+          },
           events: [
             {
               t: 'no-hints'

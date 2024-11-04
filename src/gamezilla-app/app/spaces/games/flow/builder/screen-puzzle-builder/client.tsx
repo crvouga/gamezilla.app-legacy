@@ -115,12 +115,12 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
       const updated = FlowPlay.update({
         msg: msgCore.c,
         model: modelCore.screenPuzzleBuilder.play,
-        ctx: {
+        ctx: FlowPlay.initCtx({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
             flow
           }
-        }
+        })
       })
 
       return {
@@ -287,7 +287,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
                 onToggle={() => {}}
                 buttons={[
                   FlowPlay.viewHintAction({
-                    ctx: { ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } },
+                    ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } }),
                     dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
                     model: puzzleBuilder.play,
                     disabled: status === 'solved'

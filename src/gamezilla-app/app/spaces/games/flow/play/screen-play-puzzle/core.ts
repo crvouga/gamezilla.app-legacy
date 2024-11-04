@@ -31,17 +31,17 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
       const flowPlay =
         modelCore.flowPlay ??
         FlowPlay.init({
-          ctx: {
+          ctx: FlowPlay.initCtx({
             flowPuzzle: modelCore.puzzleResult.c
-          }
+          })
         })
 
       const flowPlayNew = FlowPlay.update({
         msg: msgCore.c,
         model: flowPlay,
-        ctx: {
+        ctx: FlowPlay.initCtx({
           flowPuzzle: modelCore.puzzleResult.c
-        }
+        })
       })
 
       const didSolve = flowPlayNew.events?.some((e) => e.t === 'solved')
@@ -99,9 +99,9 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
           return {
             ...modelCore,
             flowPlay: FlowPlay.init({
-              ctx: {
+              ctx: FlowPlay.initCtx({
                 flowPuzzle: msgCore.nextPuzzle.c
-              }
+              })
             }),
             opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
             puzzleResult: msgCore.nextPuzzle,
@@ -117,9 +117,9 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
           return {
             ...modelCore,
             flowPlay: FlowPlay.init({
-              ctx: {
+              ctx: FlowPlay.initCtx({
                 flowPuzzle: msgCore.prevPuzzle.c
-              }
+              })
             }),
             opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
             puzzleResult: msgCore.prevPuzzle,
@@ -144,9 +144,9 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
       return {
         ...modelCore,
         flowPlay: FlowPlay.init({
-          ctx: {
+          ctx: FlowPlay.initCtx({
             flowPuzzle: modelCore.puzzleResult.c
-          }
+          })
         })
       }
     }
@@ -195,9 +195,9 @@ const initCore = (input: { flowPack: FlowPack; flowPuzzle: FlowPuzzleResult; puz
     flowPlay:
       input.flowPuzzle.t === 'got'
         ? FlowPlay.init({
-            ctx: {
+            ctx: FlowPlay.initCtx({
               flowPuzzle: input.flowPuzzle.c
-            }
+            })
           })
         : null,
     opened: null,
