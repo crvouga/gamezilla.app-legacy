@@ -8,7 +8,7 @@ export type Config = {
   logger: ILogger
 }
 
-const MAX_MSG_LENGTH = 100
+const MAX_MSG_LOG_LENGTH = 100
 let publisher: Redis
 let hasSubscribed = false
 export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBased> => {
@@ -28,7 +28,7 @@ export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBase
     async pub(topic, msg) {
       await publisher.publish(topic, JSON.stringify(msg))
       await new Promise((resolve) => setTimeout(resolve, 0))
-      config.logger.debug(`pub: topic=${topic} msg=${JSON.stringify(msg).slice(0, MAX_MSG_LENGTH)}`)
+      config.logger.debug(`pub: topic=${topic} msg=${JSON.stringify(msg).slice(0, MAX_MSG_LOG_LENGTH)}`)
     },
     async sub(topic, callback) {
       const id = runningSubscriberId
@@ -40,7 +40,7 @@ export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBase
       await subscriber.subscribe(topic)
       subscribers.set(id, subscriber)
       subscriber.on('message', (_subscribedTopic, msg) => {
-        config.logger.debug(`sub: topic=${topic} msg=${JSON.stringify(msg).slice(0, MAX_MSG_LENGTH)}`)
+        config.logger.debug(`sub: topic=${topic} msg=${JSON.stringify(msg).slice(0, MAX_MSG_LOG_LENGTH)}`)
         callback(msg)
       })
       config.logger.debug(`sub: topic=${topic}`)
