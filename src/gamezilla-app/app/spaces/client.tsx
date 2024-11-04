@@ -54,7 +54,16 @@ export const init: ClientModule['init'] = ({ ctx }) => {
 //
 
 export const update: ClientModule['update'] = (input) => {
-  const updated = updateLoop(input)
+  const updated = updateLoop({
+    ...input,
+    ctx: {
+      ...input.ctx,
+      profiles: {
+        ...input.ctx.profiles,
+        ...input.msgServer?.profiles
+      }
+    }
+  })
 
   return {
     model: updated.model,
