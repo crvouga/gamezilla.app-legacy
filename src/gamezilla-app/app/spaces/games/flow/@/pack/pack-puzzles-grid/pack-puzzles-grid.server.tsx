@@ -32,6 +32,6 @@ const update: ServerModule['update'] = async (input) => {
   return {}
 }
 
-export const FlowPackPuzzlesGridServer = {
+export const PackPuzzlesGridServer = {
   update
 }

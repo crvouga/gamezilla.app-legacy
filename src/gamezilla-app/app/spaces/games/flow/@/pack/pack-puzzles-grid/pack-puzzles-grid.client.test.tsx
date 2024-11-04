@@ -4,7 +4,7 @@ import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowPuzzle } from '../../puzzle/puzzle'
 import { FlowPack } from '../pack'
-import { FlowPackPuzzlesGridClient } from './pack-puzzles-grid.client'
+import { PackPuzzlesGridClient } from './pack-puzzles-grid.client'
 import type { FlowPackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './pack-puzzles-grid.types'
 
 type Input = {
@@ -29,7 +29,7 @@ const Fixture = async () => {
   }
 
   const updates = (initial: ModelClient, msgs: Input[]) => {
-    const outputs: ReturnType<typeof FlowPackPuzzlesGridClient.update>[] = [
+    const outputs: ReturnType<typeof PackPuzzlesGridClient.update>[] = [
       {
         model: initial
       }
@@ -38,7 +38,7 @@ const Fixture = async () => {
     let model = initial
 
     for (const msg of msgs) {
-      const outputNew = FlowPackPuzzlesGridClient.update({
+      const outputNew = PackPuzzlesGridClient.update({
         ctx,
         model,
         ...msg
@@ -60,7 +60,7 @@ const Fixture = async () => {
   }
 
   const init = {
-    model: FlowPackPuzzlesGridClient.initClient
+    model: PackPuzzlesGridClient.initClient
   }
 
   return {

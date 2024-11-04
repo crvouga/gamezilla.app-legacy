@@ -2,7 +2,7 @@ import { Result } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { FlowPack } from '../../@/pack/pack'
-import { FlowPackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
+import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { EditPackNameTypes } from './edit-pack-name'
 import { FlowPlay } from '../../@/flow/flow-play'
@@ -15,13 +15,13 @@ import { FlowPlay } from '../../@/flow/flow-play'
 
 export type ModelClient = {
   packBuilder: {
-    flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
+    flowPackPuzzleGrid: PackPuzzlesGridTypes.ModelClient
   }
 }
 
 export const initClient: ModelClient = {
   packBuilder: {
-    flowPackPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
+    flowPackPuzzleGrid: PackPuzzlesGridTypes.initClient
   }
 }
 
@@ -36,22 +36,22 @@ export const initServer: ModelServer = null
 
 export type MsgClient = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: FlowPackPuzzlesGridTypes.MsgClient
+  c: PackPuzzlesGridTypes.MsgClient
 }
 
 export type MsgServer = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: FlowPackPuzzlesGridTypes.MsgServer
+  c: PackPuzzlesGridTypes.MsgServer
 }
 
 export type MsgToServer = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: FlowPackPuzzlesGridTypes.MsgToServer
+  c: PackPuzzlesGridTypes.MsgToServer
 }
 
 export type MsgToClient = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: FlowPackPuzzlesGridTypes.MsgToClient
+  c: PackPuzzlesGridTypes.MsgToClient
 }
 
 //

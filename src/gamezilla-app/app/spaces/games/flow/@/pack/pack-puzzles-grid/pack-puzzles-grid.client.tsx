@@ -178,7 +178,7 @@ const showLoading = (model: ModelClient, puzzleIds: FlowPuzzleId[]): boolean => 
   return isLoading(model) && puzzleIds.every((puzzleId) => !(puzzleId in model.puzzles))
 }
 
-export const FlowPackPuzzlesGridClient = {
+export const PackPuzzlesGridClient = {
   initClient,
   load,
   update,

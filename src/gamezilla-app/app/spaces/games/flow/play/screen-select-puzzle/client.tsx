@@ -3,8 +3,8 @@ import { cn, TopBar } from 'gamezilla-app/app/@/ui'
 import { andThen } from '../../../@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { FlowPack } from '../../@/pack/pack'
-import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
-import { FlowPackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
+import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
+import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
 import type { ClientModule } from '../types'
 
 const update: ClientModule['update'] = (input) => {
@@ -29,7 +29,7 @@ const updateLoadPuzzles: typeof update = (input) => {
 
     return {
       model: input.model,
-      msgCmd: [FlowPackPuzzlesGridClient.load(pack)]
+      msgCmd: [PackPuzzlesGridClient.load(pack)]
     }
   }
 
@@ -81,7 +81,7 @@ const View: ClientModule['View'] = (input) => {
           isSpectating && 'pointer-events-none select-none'
         )}
       >
-        <FlowPackPuzzlesGridUI.View
+        <PackPuzzlesGridUI.View
           id='pack-puzzle-grid'
           slideIndex={input.modelCore.screen.slideIndex}
           onSlideIndexChanged={(slideIndex) =>
@@ -97,18 +97,18 @@ const View: ClientModule['View'] = (input) => {
           puzzleIds={flowPack.puzzleIds}
           renderCell={(inputCell) => {
             if (!inputCell.puzzleId) {
-              return <FlowPackPuzzlesGridUI.ViewEmptyCell />
+              return <PackPuzzlesGridUI.ViewEmptyCell />
             }
 
-            if (FlowPackPuzzlesGridClient.showLoading(input.ctx.packPuzzleGrid, flowPack.puzzleIds)) {
-              return <FlowPackPuzzlesGridUI.ViewLoadingCell />
+            if (PackPuzzlesGridClient.showLoading(input.ctx.packPuzzleGrid, flowPack.puzzleIds)) {
+              return <PackPuzzlesGridUI.ViewLoadingCell />
             }
 
             const puzzle = input.ctx.puzzles[inputCell.puzzleId]
 
             if (!puzzle) {
               return (
-                <FlowPackPuzzlesGridUI.ViewErrorCell
+                <PackPuzzlesGridUI.ViewErrorCell
                   index={inputCell.index}
                   onClick={() =>
                     input.dispatch({
@@ -127,7 +127,7 @@ const View: ClientModule['View'] = (input) => {
             }
 
             return (
-              <FlowPackPuzzlesGridUI.ViewPuzzleCell
+              <PackPuzzlesGridUI.ViewPuzzleCell
                 index={inputCell.index}
                 onClick={() =>
                   input.dispatch({

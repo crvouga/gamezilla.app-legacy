@@ -10,11 +10,11 @@ import type { FlowClientCtx } from './@/flow-client-ctx'
 import { FlowClientEvt } from './@/flow-client-evt'
 import { CoverArt } from './@/flow-cover-art'
 import { FlowPackId } from './@/pack/pack-id'
-import { FlowPackListTypes, PackListClient } from './@/pack/pack-list'
+import { PackListTypes, PackListClient } from './@/pack/pack-list'
 import { FlowPackName } from './@/pack/pack-name'
-import { FlowPackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
-import { FlowPackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
-import { FlowPuzzleListClient, FlowPuzzleListTypes } from './@/puzzle/puzzle-list'
+import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
+import { PackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
+import { PuzzleListClient, PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderClient } from './builder/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
 import { PlayClient } from './play/client'
@@ -26,9 +26,9 @@ const init: ClientModule['init'] = {
   play: PlayClient.init,
   puzzles: {},
   packs: {},
-  packPuzzleGrid: FlowPackPuzzlesGridTypes.initClient,
-  puzzleList: FlowPuzzleListTypes.initClient,
-  packList: FlowPackListTypes.initClient
+  packPuzzleGrid: PackPuzzlesGridTypes.initClient,
+  puzzleList: PuzzleListTypes.initClient,
+  packList: PackListTypes.initClient
 }
 
 const update = (
@@ -101,14 +101,14 @@ const updateChild: ClientModule['update'] = (input) => {
     (model) => updateFromCmd({ ...input, model }),
     (model) => updateModePlay({ ...input, model }),
     (model) => updateModeBuilder({ ...input, model }),
-    (model) => updateFlowPackList({ ...input, model }),
-    (model) => updateFlowPackPuzzlesGrid({ ...input, model }),
-    (model) => updateFlowPuzzleList({ ...input, model })
+    (model) => updatePackList({ ...input, model }),
+    (model) => updatePackPuzzlesGrid({ ...input, model }),
+    (model) => updatePuzzleList({ ...input, model })
   )
 }
 
-const updateFlowPuzzleList: ClientModule['update'] = (input) => {
-  const updated = FlowPuzzleListClient.update({
+const updatePuzzleList: ClientModule['update'] = (input) => {
+  const updated = PuzzleListClient.update({
     ctx: input.ctx,
     model: {
       ...input.model.packList,
@@ -132,7 +132,7 @@ const updateFlowPuzzleList: ClientModule['update'] = (input) => {
   }
 }
 
-const updateFlowPackList: ClientModule['update'] = (input) => {
+const updatePackList: ClientModule['update'] = (input) => {
   const updated = PackListClient.update({
     ctx: input.ctx,
     model: {
@@ -157,8 +157,8 @@ const updateFlowPackList: ClientModule['update'] = (input) => {
   }
 }
 
-const updateFlowPackPuzzlesGrid: ClientModule['update'] = (input) => {
-  const updated = FlowPackPuzzlesGridClient.update({
+const updatePackPuzzlesGrid: ClientModule['update'] = (input) => {
+  const updated = PackPuzzlesGridClient.update({
     ctx: {
       ...input.ctx,
       pack: {
@@ -381,7 +381,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
     ),
     Sub.tag(
       'flow-pack-puzzles-grid',
-      FlowPackPuzzlesGridClient.subscriptions({
+      PackPuzzlesGridClient.subscriptions({
         ctx: { ...ctx, pack: FlowPack.randomSync() },
         model: input.model.packPuzzleGrid
       })

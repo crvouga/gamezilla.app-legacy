@@ -1,7 +1,7 @@
 import { Sub } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
-import { FlowPuzzleListClient } from '../../@/puzzle/puzzle-list'
+import { PuzzleListClient } from '../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../types'
 import { CreateNewPuzzleClient } from './create-new-puzzle/client'
 import { TopBar } from 'gamezilla-app/app/@/ui'
@@ -22,7 +22,7 @@ const updateLoadPuzzles: ClientModule['update'] = (input) => {
   ) {
     return {
       model: input.model,
-      msgCmd: [FlowPuzzleListClient.load()]
+      msgCmd: [PuzzleListClient.load()]
     }
   }
   return {
@@ -61,7 +61,7 @@ const View: ClientModule['View'] = (input) => {
         ctx={input.ctx}
         title={input.ctx.t('flow.puzzle-builder')}
       />
-      <FlowPuzzleListClient.View
+      <PuzzleListClient.View
         ctx={input.ctx}
         dispatch={(_c) => {}}
         model={{

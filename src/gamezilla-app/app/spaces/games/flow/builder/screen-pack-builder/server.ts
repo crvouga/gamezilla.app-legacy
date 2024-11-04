@@ -2,7 +2,7 @@ import { isErr } from 'gamezilla-app/@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 
-import { FlowPackPuzzlesGridServer } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.server'
+import { PackPuzzlesGridServer } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.server'
 import type { ServerModule } from '../types'
 import { EditPackNameServer } from './edit-pack-name/server'
 import { ScreenPackBuilderCore } from './core'
@@ -47,7 +47,7 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
       pack
     }
 
-    const updated = await FlowPackPuzzlesGridServer.update({
+    const updated = await PackPuzzlesGridServer.update({
       ctx,
       msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
       msgCmd: input.msgCmd,

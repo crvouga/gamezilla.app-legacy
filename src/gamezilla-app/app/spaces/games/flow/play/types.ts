@@ -9,7 +9,7 @@ import type { FlowClientCtx } from '../@/flow-client-ctx'
 import { FlowClientEvtIn } from '../@/flow-client-evt'
 import { FlowCoreEvent } from '../@/flow-core-event'
 import { FlowPack } from '../@/pack/pack'
-import type { FlowPackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
+import type { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { FlowServerCtx } from '../@/flow-server-ctx'
 import { FlowPuzzleResult } from './@/puzzle-result'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
@@ -123,7 +123,7 @@ export type ClientModule = GameClientModule<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient
   }>
-  MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient
+  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdClient
 }>
 
 export type ServerModule = GameServerModule<{

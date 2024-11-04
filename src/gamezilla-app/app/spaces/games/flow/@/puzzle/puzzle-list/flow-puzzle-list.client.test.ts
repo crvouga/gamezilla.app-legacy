@@ -7,7 +7,7 @@ import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import type { FlowClientCtx } from '../../flow-client-ctx'
 import { FlowPuzzle } from '../puzzle'
-import { FlowPuzzleListClient } from './flow-puzzle-list.client'
+import { PuzzleListClient } from './flow-puzzle-list.client'
 import { type ModelClient, initClient } from './flow-puzzle-list.types'
 import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
@@ -16,7 +16,7 @@ const initial = {
 }
 
 const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
-  return FlowPuzzleListClient.update({
+  return PuzzleListClient.update({
     ctx,
     model,
     msgCmd: {
@@ -29,7 +29,7 @@ const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
 }
 
 const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
-  return FlowPuzzleListClient.update({
+  return PuzzleListClient.update({
     ctx,
     model,
     msgServer: {
@@ -45,7 +45,7 @@ const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: FlowPuzzle[]) => (mo
 }
 
 const serverListedPuzzlesErr = (ctx: FlowClientCtx, error: string) => (model: ModelClient) => {
-  return FlowPuzzleListClient.update({
+  return PuzzleListClient.update({
     ctx,
     model,
     msgServer: {
@@ -56,7 +56,7 @@ const serverListedPuzzlesErr = (ctx: FlowClientCtx, error: string) => (model: Mo
 }
 
 const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
-  return FlowPuzzleListClient.update({
+  return PuzzleListClient.update({
     ctx: {
       ...ctx,
       now: Posix.future(ctx.now, timeSpan)

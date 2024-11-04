@@ -27,6 +27,6 @@ const updateListPuzzles: ServerModule['update'] = async (input) => {
   }
 }
 
-export const FlowPuzzleListServer = {
+export const PuzzleListServer = {
   update
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { SpaceGameCoreFixture } from 'gamezilla-app/app/spaces/games/@/testing/sync'
 import { FlowPack } from '../../@/pack/pack'
-import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
+import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { BuilderCore } from '../core'
 import type { ModelCore } from '../types'
@@ -292,7 +292,7 @@ describe(import.meta.file, () => {
 
   it('should be on the correct slide index after exiting the puzzle screen', async () => {
     const f = await Fixture({
-      puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
     })
 
     const puzzle = f.puzzles[f.puzzles.length - 1]
@@ -311,16 +311,14 @@ describe(import.meta.file, () => {
       }
     ])
 
-    const expected = FlowPackPuzzlesGridUI.toSlideIndex(
-      modelCore.screenPackBuilder?.pack.puzzleIds.indexOf(puzzle.id) ?? 0
-    )
+    const expected = PackPuzzlesGridUI.toSlideIndex(modelCore.screenPackBuilder?.pack.puzzleIds.indexOf(puzzle.id) ?? 0)
     const actual = ScreenPackBuilderCore.toSlideIndex(modelCore.screenPackBuilder)
     expect(actual).toBe(expected)
   })
 
   it('should allow user to change slide', async () => {
     const f = await Fixture({
-      puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
     })
 
     const modelCore = f.updateModelCore([
@@ -336,9 +334,9 @@ describe(import.meta.file, () => {
 
   it('should prevent slide index from going out of bounds', async () => {
     const f = await Fixture({
-      puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
     })
-    const expectedSlide = FlowPackPuzzlesGridUI.toSlideIndex(FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1)
+    const expectedSlide = PackPuzzlesGridUI.toSlideIndex(PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1)
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-changed-slide',
@@ -351,7 +349,7 @@ describe(import.meta.file, () => {
 
   it('should be on the correct slide when closing the add puzzle screen', async () => {
     const f = await Fixture({
-      puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
     })
 
     const modelCore = f.updateModelCore([
@@ -375,9 +373,9 @@ describe(import.meta.file, () => {
 
   it('should open the correct level when opening puzzle screen', async () => {
     const f = await Fixture({
-      puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
     })
-    const indexNextPage = FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+    const indexNextPage = PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',

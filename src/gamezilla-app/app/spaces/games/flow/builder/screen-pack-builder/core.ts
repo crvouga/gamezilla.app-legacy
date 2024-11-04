@@ -1,6 +1,6 @@
 import { isErr } from 'gamezilla-app/@/core'
 import { FlowPack } from '../../@/pack/pack'
-import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
+import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
 import type { UpdateCore } from '../types'
 import { EditPackNameCore } from './edit-pack-name/core'
 import type { ModelCore } from './types'
@@ -157,7 +157,7 @@ updates.push(({ modelCore, msgCore }) => {
         return modelCore
       }
 
-      const slideIndex = FlowPackPuzzlesGridUI.toSlideIndex(puzzleIndex)
+      const slideIndex = PackPuzzlesGridUI.toSlideIndex(puzzleIndex)
 
       return {
         ...modelCore,
@@ -396,7 +396,7 @@ updates.push((input) => {
     ...input.modelCore,
     screenPackBuilder: {
       ...input.modelCore.screenPackBuilder,
-      slideIndex: FlowPackPuzzlesGridUI.clampSlideIndex(
+      slideIndex: PackPuzzlesGridUI.clampSlideIndex(
         input.modelCore.screenPackBuilder.slideIndex,
         input.modelCore.screenPackBuilder.pack.puzzleIds.length
       )

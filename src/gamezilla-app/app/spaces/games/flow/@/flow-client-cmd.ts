@@ -2,17 +2,17 @@ import type { ClientCmdTypes } from 'gamezilla-app/app/@/client'
 import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { FlowPack } from './pack/pack'
 import { FlowPackId } from './pack/pack-id'
-import { FlowPackListTypes } from './pack/pack-list'
-import { FlowPackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
+import { PackListTypes } from './pack/pack-list'
+import { PackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
 import { FlowPuzzle } from './puzzle/puzzle'
 import { FlowPuzzleId } from './puzzle/puzzle-id'
-import { FlowPuzzleListTypes } from './puzzle/puzzle-list'
+import { PuzzleListTypes } from './puzzle/puzzle-list'
 
 export type FlowClientCmd<T extends ClientCmdTypes> =
   | SpaceClientCmd<T>
-  | FlowPackListTypes.MsgInCmdClient
-  | FlowPackPuzzlesGridTypes.MsgInCmdClient
-  | FlowPuzzleListTypes.MsgInCmdClient
+  | PackListTypes.MsgInCmdClient
+  | PackPuzzlesGridTypes.MsgInCmdClient
+  | PuzzleListTypes.MsgInCmdClient
   | {
       t: 'flow.new-puzzles'
       puzzles: {

@@ -1,11 +1,11 @@
 import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 import { FlowPack } from './pack/pack'
 import { FlowPackId } from './pack/pack-id'
-import { FlowPackListTypes } from './pack/pack-list'
-import { FlowPackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
+import { PackListTypes } from './pack/pack-list'
+import { PackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
 import type { FlowPuzzle } from './puzzle/puzzle'
 import type { FlowPuzzleId } from './puzzle/puzzle-id'
-import { FlowPuzzleListTypes } from './puzzle/puzzle-list'
+import { PuzzleListTypes } from './puzzle/puzzle-list'
 
 export type FlowClientCtx = SpaceClientCtx & {
   packs: {
@@ -14,7 +14,7 @@ export type FlowClientCtx = SpaceClientCtx & {
   puzzles: {
     [id: FlowPuzzleId]: FlowPuzzle
   }
-  puzzleList: FlowPuzzleListTypes.ModelClient
-  packList: FlowPackListTypes.ModelClient
-  packPuzzleGrid: FlowPackPuzzlesGridTypes.ModelClient
+  puzzleList: PuzzleListTypes.ModelClient
+  packList: PackListTypes.ModelClient
+  packPuzzleGrid: PackPuzzlesGridTypes.ModelClient
 }

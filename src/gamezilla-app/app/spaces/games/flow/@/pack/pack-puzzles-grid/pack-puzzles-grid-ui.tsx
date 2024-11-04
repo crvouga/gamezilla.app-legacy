@@ -150,7 +150,7 @@ const ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number 
   )
 }
 
-export const FlowPackPuzzlesGridUI = {
+export const PackPuzzlesGridUI = {
   PER_SLIDE_ITEM_COUNT,
   ROW_COUNT,
   COLUMN_COUNT,

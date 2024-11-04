@@ -118,7 +118,7 @@ const View: ClientModule['View'] = (input) => {
         )}
 
         {puzzles.sort(descend((puzzle) => Posix.toNumber(puzzle.lastUpdatedAt))).map((puzzle) => (
-          <FlowPuzzleListItem
+          <PuzzleListItem
             now={ctx.now}
             key={puzzle.id}
             puzzle={puzzle}
@@ -147,7 +147,7 @@ const View: ClientModule['View'] = (input) => {
   )
 }
 
-const FlowPuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: FlowPuzzle; onClick: () => void }) => {
+const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: FlowPuzzle; onClick: () => void }) => {
   return (
     <button
       key={puzzle.id}
@@ -166,7 +166,7 @@ const FlowPuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Flow
   )
 }
 
-export const FlowPuzzleListClient = {
+export const PuzzleListClient = {
   update,
   View,
   didLoad,

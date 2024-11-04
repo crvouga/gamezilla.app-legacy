@@ -3,14 +3,14 @@ import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import { FlowPackDb } from './@/pack/pack-db'
-import { FlowPackListServer } from './@/pack/pack-list'
-import { FlowPackPuzzlesGridServer } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.server'
+import { PackListServer } from './@/pack/pack-list'
+import { PackPuzzlesGridServer } from './@/pack/pack-puzzles-grid/pack-puzzles-grid.server'
 import { FlowPuzzleDb } from './@/puzzle/puzzle-db'
 import { FlowServerCtx } from './@/flow-server-ctx'
 import { BuilderServer } from './builder/server'
 import type { ServerModule } from './types'
 import { PlayServer } from './play/server'
-import { FlowPuzzleListServer } from './@/puzzle/puzzle-list'
+import { PuzzleListServer } from './@/puzzle/puzzle-list'
 import { SpaceServerCtx } from '../../@/space-server-ctx'
 
 export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
@@ -30,14 +30,14 @@ const update: ServerModule['update'] = async (input) => {
     {},
     () => updatePlay(input),
     () => updateBuilder(input),
-    () => updateFlowPackList(input),
-    () => updateFlowPackPuzzlesGrid(input),
-    () => updateFlowPuzzleList(input)
+    () => updatePackList(input),
+    () => updatePackPuzzlesGrid(input),
+    () => updatePuzzleList(input)
   )
 }
 
-const updateFlowPackList: ServerModule['update'] = async (input) => {
-  const updated = await FlowPackListServer.update({
+const updatePackList: ServerModule['update'] = async (input) => {
+  const updated = await PackListServer.update({
     ...input,
     msgClient: input.msgClient?.t === 'flow-pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null
@@ -49,8 +49,8 @@ const updateFlowPackList: ServerModule['update'] = async (input) => {
   }
 }
 
-const updateFlowPuzzleList: ServerModule['update'] = async (input) => {
-  const updated = await FlowPuzzleListServer.update({
+const updatePuzzleList: ServerModule['update'] = async (input) => {
+  const updated = await PuzzleListServer.update({
     ...input,
     msgClient: input.msgClient?.t === 'flow-puzzle-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msg: input.msg?.t === 'flow-puzzle-list' ? input.msg.c : null
@@ -62,8 +62,8 @@ const updateFlowPuzzleList: ServerModule['update'] = async (input) => {
   }
 }
 
-const updateFlowPackPuzzlesGrid: ServerModule['update'] = async (input) => {
-  const updated = await FlowPackPuzzlesGridServer.update({
+const updatePackPuzzlesGrid: ServerModule['update'] = async (input) => {
+  const updated = await PackPuzzlesGridServer.update({
     ...input,
     msg: input.msg?.t === 'flow-pack-puzzles-grid' ? input.msg.c : null,
     msgClient: input.msgClient?.t === 'flow-pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,

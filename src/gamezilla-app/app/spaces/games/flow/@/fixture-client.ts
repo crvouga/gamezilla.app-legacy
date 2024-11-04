@@ -5,9 +5,9 @@ import { FlowClient } from '../client'
 import { FlowCore } from '../core'
 import { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'
 import type { FlowClientCtx } from './flow-client-ctx'
-import { FlowPackListTypes } from './pack/pack-list'
-import { FlowPackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
-import { FlowPuzzleListTypes } from './puzzle/puzzle-list'
+import { PackListTypes } from './pack/pack-list'
+import { PackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
+import { PuzzleListTypes } from './puzzle/puzzle-list'
 
 export const FixtureFlowClient = async () => {
   const f = await FixtureSpaceClient()
@@ -15,9 +15,9 @@ export const FixtureFlowClient = async () => {
     ...f.ctx,
     packs: {},
     puzzles: {},
-    puzzleList: FlowPuzzleListTypes.initClient,
-    packList: FlowPackListTypes.initClient,
-    packPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
+    puzzleList: PuzzleListTypes.initClient,
+    packList: PackListTypes.initClient,
+    packPuzzleGrid: PackPuzzlesGridTypes.initClient
   }
   type Input = {
     ctx?: FlowClientCtx | null

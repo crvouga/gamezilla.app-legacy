@@ -15,9 +15,9 @@ import { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
-import { FlowPackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
-import { FlowPackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
-import { FlowPuzzleListClient } from '../../@/puzzle/puzzle-list'
+import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid-ui'
+import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/pack-puzzles-grid.client'
+import { PuzzleListClient } from '../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../types'
 import { ScreenPackBuilderCore } from './core'
 import { EditPackNameClient } from './edit-pack-name/client'
@@ -79,7 +79,7 @@ const ButtonAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
 
   View(input) {
     return (
-      <FlowPackPuzzlesGridUI.ViewAddCell
+      <PackPuzzlesGridUI.ViewAddCell
         onClick={() =>
           input.dispatch({
             t: 'got-msg-core',
@@ -138,7 +138,7 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
           }
         />
         <div className='h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll'>
-          <FlowPuzzleListClient.View
+          <PuzzleListClient.View
             ctx={input.ctx}
             dispatch={(_c) => {}}
             model={input.ctx.puzzleList}
@@ -203,7 +203,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
             title={input.ctx.t('flow-pack-name', packBuilder.pack.name)}
           />
           <div className='flex w-full flex-1 flex-col items-center justify-center'>
-            <FlowPackPuzzlesGridUI.View
+            <PackPuzzlesGridUI.View
               id={packBuilder.pack.id}
               slideIndex={ScreenPackBuilderCore.toSlideIndex(packBuilder)}
               puzzleIds={packBuilder.pack.puzzleIds}
@@ -224,11 +224,11 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
                   const puzzle = puzzleId ? input.ctx.puzzles[puzzleId] : null
 
                   if (!puzzle) {
-                    return <FlowPackPuzzlesGridUI.ViewLoadingCell />
+                    return <PackPuzzlesGridUI.ViewLoadingCell />
                   }
 
                   return (
-                    <FlowPackPuzzlesGridUI.ViewPuzzleCell
+                    <PackPuzzlesGridUI.ViewPuzzleCell
                       onClick={() =>
                         input.dispatch({
                           t: 'got-msg-core',
@@ -248,7 +248,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
                   return <ButtonAddPuzzle.View {...input} />
                 }
 
-                return <FlowPackPuzzlesGridUI.ViewEmptyCell />
+                return <PackPuzzlesGridUI.ViewEmptyCell />
               }}
             />
           </div>
@@ -526,13 +526,13 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
       }
     }
 
-    const updated = FlowPackPuzzlesGridClient.update({
+    const updated = PackPuzzlesGridClient.update({
       ctx: {
         ...input.ctx,
         pack
       },
       model: {
-        ...FlowPackPuzzlesGridClient.initClient,
+        ...PackPuzzlesGridClient.initClient,
         ...input.model.packBuilder?.flowPackPuzzleGrid,
         puzzles: input.ctx.puzzles
       },
@@ -566,7 +566,7 @@ const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
     }
     return Sub.tag(
       'screen-pack-builder.flow-pack-grid',
-      FlowPackPuzzlesGridClient.subscriptions({
+      PackPuzzlesGridClient.subscriptions({
         ctx: {
           ...input.ctx,
           pack
@@ -676,7 +676,7 @@ export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View' | 'su
   View(input) {
     return (
       <div className='flex h-full w-full flex-col'>
-        <FlowPackPuzzlesGridClient.ViewObserver
+        <PackPuzzlesGridClient.ViewObserver
           dispatch={(c) =>
             input.dispatch({
               t: 'screen-pack-builder.flow-pack-grid',

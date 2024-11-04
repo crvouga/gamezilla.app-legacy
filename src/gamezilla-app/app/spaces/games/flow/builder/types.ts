@@ -8,8 +8,8 @@ import type { FlowClientCtx } from '../@/flow-client-ctx'
 import { FlowClientEvtIn } from '../@/flow-client-evt'
 import { FlowCoreEvent } from '../@/flow-core-event'
 import { FlowServerCtx } from '../@/flow-server-ctx'
-import { FlowPackListTypes } from '../@/pack/pack-list'
-import { FlowPackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
+import { PackListTypes } from '../@/pack/pack-list'
+import { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { ScreenMainMenu } from './screen-main-menu'
 import { ScreenPackBuilderTypes } from './screen-pack-builder'
 import { ScreenPackBuilderOpenTypes } from './screen-pack-builder-open'
@@ -40,7 +40,7 @@ export type ClientModule = GameClientModule<{
     MsgClient: MsgClient
   }>
   MsgEvtIn: FlowClientEvtIn
-  MsgCmdIn: FlowPackPuzzlesGridTypes.MsgInCmdClient
+  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdClient
 }>
 
 export type ServerModule = GameServerModule<{
@@ -82,12 +82,12 @@ export const initClient: ClientModule['init'] = {
 }
 
 export const ModelServer = p.obj({
-  flowPackList: FlowPackListTypes.ModelServer
+  flowPackList: PackListTypes.ModelServer
 })
 export type ModelServer = p.Infer<typeof ModelServer>
 
 export const initServer: ServerModule['init'] = {
-  flowPackList: FlowPackListTypes.initServer
+  flowPackList: PackListTypes.initServer
 }
 
 //

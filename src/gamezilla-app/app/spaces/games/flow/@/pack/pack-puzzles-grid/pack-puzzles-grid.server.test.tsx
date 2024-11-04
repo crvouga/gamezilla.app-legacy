@@ -9,14 +9,14 @@ import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
 import { FlowServerCtx } from '../../flow-server-ctx'
 import { FlowPack } from '../pack'
 import { FlowPackDb } from '../pack-db'
-import { FlowPackPuzzlesGridServer } from './pack-puzzles-grid.server'
+import { PackPuzzlesGridServer } from './pack-puzzles-grid.server'
 
 const initial = () => {
   return {}
 }
 
 const userObversedGrid = (ctx: FlowServerCtx, client: AuthenticatedClient, puzzleIds: FlowPuzzleId[]) => () => {
-  return FlowPackPuzzlesGridServer.update({
+  return PackPuzzlesGridServer.update({
     ctx,
     deps: null,
     msgClient: {

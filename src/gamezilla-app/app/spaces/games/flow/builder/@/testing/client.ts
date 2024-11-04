@@ -7,11 +7,11 @@ import { Flow } from '../../../@/flow'
 import type { FlowClientCtx } from '../../../@/flow-client-ctx'
 import { samples } from '../../../@/flow/flow-variant/flow-grid/flow-grid-samples'
 import { FlowPack } from '../../../@/pack/pack'
-import { FlowPackListTypes } from '../../../@/pack/pack-list'
-import { FlowPackPuzzlesGridTypes } from '../../../@/pack/pack-puzzles-grid'
+import { PackListTypes } from '../../../@/pack/pack-list'
+import { PackPuzzlesGridTypes } from '../../../@/pack/pack-puzzles-grid'
 import { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import type { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
-import { FlowPuzzleListTypes } from '../../../@/puzzle/puzzle-list'
+import { PuzzleListTypes } from '../../../@/puzzle/puzzle-list'
 import { BuilderClient } from '../../client'
 import { BuilderCore } from '../../core'
 import * as BuilderTypes from '../../types'
@@ -95,9 +95,9 @@ export const FixtureFlowBuilderClient = async () => {
     ...f.ctx,
     puzzles: {},
     packs: {},
-    puzzleList: FlowPuzzleListTypes.initClient,
-    packList: FlowPackListTypes.initClient,
-    packPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
+    puzzleList: PuzzleListTypes.initClient,
+    packList: PackListTypes.initClient,
+    packPuzzleGrid: PackPuzzlesGridTypes.initClient
   }
   const init = {
     ctx,
@@ -125,9 +125,9 @@ export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
     ...(await testSpaceClientCtx()),
     packs: {},
     puzzles: {},
-    puzzleList: FlowPuzzleListTypes.initClient,
-    packList: FlowPackListTypes.initClient,
-    packPuzzleGrid: FlowPackPuzzlesGridTypes.initClient
+    puzzleList: PuzzleListTypes.initClient,
+    packList: PackListTypes.initClient,
+    packPuzzleGrid: PackPuzzlesGridTypes.initClient
   }
 }
 

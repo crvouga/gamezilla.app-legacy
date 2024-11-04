@@ -134,12 +134,7 @@ const View: ClientModule['View'] = (input) => {
         )}
 
         {packs.sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt))).map((pack) => (
-          <FlowPackListItem
-            ctx={input.ctx}
-            key={pack.id}
-            pack={pack}
-            onClick={() => input.emits?.clickedPackItem(pack)}
-          />
+          <PackListItem ctx={input.ctx} key={pack.id} pack={pack} onClick={() => input.emits?.clickedPackItem(pack)} />
         ))}
 
         <div
@@ -154,7 +149,7 @@ const View: ClientModule['View'] = (input) => {
   )
 }
 
-const FlowPackListItem = ({
+const PackListItem = ({
   pack,
   onClick,
   ctx
