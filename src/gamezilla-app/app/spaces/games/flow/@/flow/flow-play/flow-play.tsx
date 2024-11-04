@@ -5,8 +5,8 @@ import { APP_SOUND, AppClientCmd, playSound, showToast } from 'gamezilla-app/app
 import { IconCheckmark, Transition } from 'gamezilla-app/app/@/ui'
 import { ActionInput, Actions } from 'gamezilla-app/app/@/ui/actions'
 import type { FlowPuzzle } from '../../puzzle/puzzle'
-import { FlowAlgoDrawPipes } from '../flow-aglo/flow-algo-draw-pipes'
-import { FlowAlgoSolve } from '../flow-aglo/flow-algo-solve'
+import { FlowAlgoDrawPipes } from '../flow-algo/flow-algo-draw-pipes'
+import { FlowAlgoSolve } from '../flow-algo/flow-algo-solve'
 import { FlowHint } from '../flow-hint'
 import type { FlowVariant } from '../flow-variant'
 import * as FlowVariantUI from '../flow-variant/flow-variant-ui'
@@ -249,7 +249,7 @@ export type Event =
       t: 'solved'
     }
   | {
-      t: 'resetted'
+      t: 'reset'
     }
 
 export const eventsToClientCmd = (
@@ -278,7 +278,7 @@ export const eventsToClientCmd = (
           return playSound(APP_SOUND.navForwardMin)
         }
 
-        case 'resetted': {
+        case 'reset': {
           return playSound(APP_SOUND.navTransitionLeft)
         }
 
@@ -361,7 +361,7 @@ const updateReset: typeof update = ({ model, msg }) => {
         model: pipe(model, resetPipes, FlowHint.resetUsedHints),
         events: [
           {
-            t: 'resetted'
+            t: 'reset'
           }
         ]
       }

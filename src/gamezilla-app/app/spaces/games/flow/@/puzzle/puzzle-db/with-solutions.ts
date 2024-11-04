@@ -1,6 +1,6 @@
 import { Ok, isErr } from 'gamezilla-app/@/core'
 import type { IFlowPuzzleDb } from './interface'
-import { FlowAlgoSolveAsync } from '../../flow/flow-aglo/flow-algo-solve-async'
+import { FlowAlgoSolveAsync } from '../../flow/flow-algo/flow-algo-solve-async'
 
 export const SKIP_QUERIES = true
 

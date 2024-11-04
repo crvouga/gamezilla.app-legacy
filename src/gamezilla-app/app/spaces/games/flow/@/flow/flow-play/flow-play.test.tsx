@@ -492,7 +492,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-reset'
       }
     ])
-    expect(output.events?.some((e) => e.t === 'resetted')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'reset')).toBe(true)
   })
 
   test('not output solved is no', async () => {

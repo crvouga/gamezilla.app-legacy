@@ -5,11 +5,11 @@ import { Flow } from '../flow'
 import { FlowGridShorthand } from '../flow-variant/flow-grid'
 import * as FlowHint from './flow-hint'
 
-const Fixture = async (input?: { ctxflowPuzzle?: FlowPuzzle }) => {
+const Fixture = async (input?: { ctxFlowPuzzle?: FlowPuzzle }) => {
   const f = await FixtureFlowClient()
 
   const ctxflowPuzzle =
-    input?.ctxflowPuzzle ??
+    input?.ctxFlowPuzzle ??
     (await FlowPuzzle.random({
       flow: FlowGridShorthand.toGrid([
         ['A', ' '],
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
 
   test('hint multiple terminals', async () => {
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([
           ['A', 'B'],
           [' ', ' '],
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
 
   test('output use hint event', async () => {
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([
           ['A', 'B'],
           [' ', ' '],
@@ -127,7 +127,7 @@ describe(import.meta.file, () => {
 
   test('output solved event', async () => {
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([
           ['A', 'B', 'C'],
           [' ', ' ', ' '],
@@ -159,7 +159,7 @@ describe(import.meta.file, () => {
 
   it('should not create branching in pipes after using a hint', async () => {
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([
           ['A', 'a', 'a', ' '],
           [' ', ' ', 'a', ' '],
@@ -187,7 +187,7 @@ describe(import.meta.file, () => {
 
   it.todo('should work even with flipped terminal', async () => {
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([
           ['A', ' ', ' '],
           [' ', ' ', ' '],
@@ -245,7 +245,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ']
     ])
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: before
       })
     })
@@ -268,7 +268,7 @@ describe(import.meta.file, () => {
 
   it('should NOT branch pipelines after using hint', async () => {
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([
           ['A', ' ', ' '],
           [' ', ' ', ' '],
@@ -304,7 +304,7 @@ describe(import.meta.file, () => {
 
   it.todo('should disable hint button if puzzle is solved', async () => {
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([
           ['A', 'B'],
           ['a', 'b'],
@@ -323,7 +323,7 @@ describe(import.meta.file, () => {
 
   it('should never change the positions of the terminals when using a hint', async () => {
     const f = await Fixture({
-      ctxflowPuzzle: await FlowPuzzle.random({
+      ctxFlowPuzzle: await FlowPuzzle.random({
         flow: FlowGridShorthand.toGrid([
           ['A', ' ', ' '],
           [' ', ' ', ' '],
