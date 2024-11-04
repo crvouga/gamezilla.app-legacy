@@ -56,7 +56,7 @@ export const Button = ({
 
         combo === 'contained-default' && 'border-2 border-blue-500/40  text-blue-500 ring-blue-500',
 
-        combo === 'text-danger' && 'text-red-500',
+        combo === 'text-danger' && 'font-bold text-red-500',
 
         combo === 'outlined-default' && 'border  text-inherit text-neutral-300',
 

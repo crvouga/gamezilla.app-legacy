@@ -171,7 +171,7 @@ const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCore, mode
 //
 //
 //
-// Subscriptions
+//
 //
 //
 //
@@ -185,7 +185,7 @@ export const subscriptions: ClientModule['subscriptions'] = (input) => {
 //
 //
 //
-// View
+//
 //
 //
 //

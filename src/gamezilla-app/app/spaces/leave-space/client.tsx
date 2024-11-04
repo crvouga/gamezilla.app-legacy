@@ -118,7 +118,7 @@ const ViewLeaveSpaceButton: SpaceClientModule['View'] = (input) => {
   return (
     <Button
       color='danger'
-      variant='contained'
+      variant='text'
       size='sm'
       text={input.ctx.t('spaces.leave')}
       onClick={() =>

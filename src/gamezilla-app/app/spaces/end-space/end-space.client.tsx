@@ -170,7 +170,7 @@ export const ViewEndSpaceButton: SpaceClientModule['View'] = (input) => {
   return (
     <Button
       color='danger'
-      variant='contained'
+      variant='text'
       size='xs'
       text={input.ctx.t('spaces.end')}
       onClick={() =>
