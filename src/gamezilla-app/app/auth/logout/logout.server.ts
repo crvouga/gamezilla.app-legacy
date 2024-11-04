@@ -1,6 +1,6 @@
 import { isErr } from 'gamezilla-app/@/core'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
-import type { ServerModule } from '../auth.types'
+import type { ServerModule } from '../types'
 
 const update: ServerModule['update'] = async (input) => {
   return AppServerModule.andThen({}, () => updateFromClient(input))

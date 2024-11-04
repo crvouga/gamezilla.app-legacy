@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { didPlaySound, didPushRoute } from '../@/client'
 import { FixtureAuthClient } from './@/fixture/client'
-import * as AuthClient from './auth.client'
+import * as AuthClient from './client'
 
 const Fixture = async () => {
   const f = await FixtureAuthClient()

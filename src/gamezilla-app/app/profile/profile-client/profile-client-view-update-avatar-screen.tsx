@@ -1,7 +1,7 @@
 import { AnonymousClientCtx, AppClientCtx } from 'gamezilla-app/app/@/client'
 import { ProfileAvatar } from 'gamezilla-app/app/@/data'
 import { Avatar, TextField, TopBar } from 'gamezilla-app/app/@/ui'
-import type { ModelClient, MsgClient } from '../profile.types'
+import type { ModelClient, MsgClient } from '../types'
 
 export const ViewUpdateAvatarScreen = (input: {
   model: ModelClient

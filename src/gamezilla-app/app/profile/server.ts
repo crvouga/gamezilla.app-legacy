@@ -11,7 +11,7 @@ import {
   type ProfileCore,
   type Req,
   profileCoreToProfile
-} from './profile.types'
+} from './types'
 
 //
 //

@@ -1,1 +1,1 @@
-export * as AuthTypes from './auth.types'
+export * as AuthTypes from './types'

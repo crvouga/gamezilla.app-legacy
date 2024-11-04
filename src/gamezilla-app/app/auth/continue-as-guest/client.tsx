@@ -1,7 +1,7 @@
 import { RequestResponse, isRequesting, NotAsked, isErr } from 'gamezilla-app/@/core'
 import { APP_SOUND, playSound, sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { Button, IconUserCircle } from 'gamezilla-app/app/@/ui'
-import type { ClientModule } from '../auth.types'
+import type { ClientModule } from '../types'
 import type { ModelClient } from './types'
 
 const initModel: ModelClient = {

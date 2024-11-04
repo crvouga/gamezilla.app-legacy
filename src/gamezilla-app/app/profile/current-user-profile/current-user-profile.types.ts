@@ -1,4 +1,4 @@
-import { ProfileCore } from '../profile.types'
+import { ProfileCore } from '../types'
 
 export type ModelClient = {}
 

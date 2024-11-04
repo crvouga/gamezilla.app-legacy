@@ -1,5 +1,5 @@
 import { PhoneNumber } from 'gamezilla-app/@/core'
-import { ClientId, SessionId, UserId } from '../@/data'
+import { ClientId, SessionId, UserId } from '../../@/data'
 
 export type Evt =
   | {

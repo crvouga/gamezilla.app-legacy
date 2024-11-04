@@ -9,7 +9,7 @@ import {
   TopBar,
   Typography
 } from 'gamezilla-app/app/@/ui'
-import type { ModelClient, MsgClient } from '../profile.types'
+import type { ModelClient, MsgClient } from '../types'
 
 export const ViewProfileScreen = (input: {
   ctx: AppClientCtx | AnonymousClientCtx

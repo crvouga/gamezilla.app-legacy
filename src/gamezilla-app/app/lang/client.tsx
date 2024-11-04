@@ -14,7 +14,7 @@ import {
 import type { AppClientModule } from '../@/architecture/app-client'
 import { translatorSubscriptions } from '../@/client/translator'
 import { IconCheckmarkCircle, IconCheckmarkCircleEmpty, IconLanguage, ListItemButton, Spinner, TopBar } from '../@/ui'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer, TranslationLoading } from './lang.types'
+import type { ModelClient, MsgClient, MsgToClient, MsgToServer, TranslationLoading } from './types'
 
 //
 //

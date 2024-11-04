@@ -4,8 +4,8 @@ import { andThen } from 'gamezilla-app/app/@/architecture/app-client'
 import { didPlaySound, didSendToServer, type AnonymousClientCtx } from 'gamezilla-app/app/@/client'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { UserId } from 'gamezilla-app/app/@/data'
-import * as AuthClient from '../auth.client'
-import type { ModelClient } from '../auth.types'
+import * as AuthClient from '../client'
+import type { ModelClient } from '../types'
 
 const ctx: AnonymousClientCtx = {
   currentRoute: {

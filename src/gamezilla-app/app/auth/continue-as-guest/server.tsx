@@ -2,7 +2,7 @@ import { Ok, Result, isErr, type Posix, type Task } from 'gamezilla-app/@/core'
 import { UserId, type SessionId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { sendToClient } from 'gamezilla-app/app/@/server'
-import type { ServerCtx, ServerModule } from '../auth.types'
+import type { ServerCtx, ServerModule } from '../types'
 import type { ModelServer } from './types'
 
 const initModel: ModelServer = null

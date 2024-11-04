@@ -17,7 +17,7 @@ import { ProfileAvatar, type UserId } from 'gamezilla-app/app/@/data'
 import { Avatar, Button, IconChevronRight, TopBar, Typography } from 'gamezilla-app/app/@/ui'
 import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'
 import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './profile.types'
+import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import * as UpdateUsernameClient from './update-username/update-username.client'
 
 //

@@ -1,7 +1,7 @@
 import { Ok, NotAsked } from 'gamezilla-app/@/core'
 import { APP_SOUND, type BaseClientCtx, playSound, sendToServer, showToast } from 'gamezilla-app/app/@/client'
 import { ConfirmationDrawer } from 'gamezilla-app/app/@/ui'
-import type { ClientModule, ModelClient, MsgClient } from '../auth.types'
+import type { ClientModule, ModelClient, MsgClient } from '../types'
 
 //
 //

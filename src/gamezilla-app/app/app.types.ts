@@ -1,25 +1,25 @@
-import type * as Auth from './auth/auth.types'
-import type * as Lang from './lang/lang.types'
-import type * as Profile from './profile/profile.types'
-import type * as Spaces from './spaces/types'
-import type * as Wire from './wire/types'
 import type { ClientId, SessionId, UserId } from './@/data'
 import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
+import { AuthTypes } from './auth'
+import { LangTypes } from './lang'
+import { ProfileTypes } from './profile'
+import { SpacesTypes } from './spaces'
+import { WireTypes } from './wire'
 
 //
 //
 //
-// Model
+//
 //
 //
 //
 
 export type ModelClient = {
-  auth: Auth.ModelClient
-  spaces: Spaces.ModelClient
-  profile: Profile.ModelClient
-  wire: Wire.ModelClient
-  lang: Lang.ModelClient
+  auth: AuthTypes.ModelClient
+  spaces: SpacesTypes.ModelClient
+  profile: ProfileTypes.ModelClient
+  wire: WireTypes.ModelClient
+  lang: LangTypes.ModelClient
   routing: Routing.Model
   toast: Toast.Model
   sound: Sound.Model
@@ -30,18 +30,18 @@ export type ModelClient = {
 //
 //
 //
-// Msg
+//
 //
 //
 //
 
 export type MsgServer =
   | ({ t: '→'; c: MsgToServer } & MsgToServerMeta)
-  | { t: 'wire'; c: Wire.MsgServer }
-  | { t: 'spaces'; c: Spaces.MsgServer }
-  | { t: 'profile'; c: Profile.MsgServer }
-  | { t: 'auth'; c: Auth.MsgServer }
-  | { t: 'lang'; c: Lang.MsgServer }
+  | { t: 'wire'; c: WireTypes.MsgServer }
+  | { t: 'spaces'; c: SpacesTypes.MsgServer }
+  | { t: 'profile'; c: ProfileTypes.MsgServer }
+  | { t: 'auth'; c: AuthTypes.MsgServer }
+  | { t: 'lang'; c: LangTypes.MsgServer }
 
 export type MsgClient =
   | { t: '→'; c: MsgToClient }
@@ -50,25 +50,25 @@ export type MsgClient =
   | { t: 'sound'; c: Sound.Msg }
   | { t: 'platform'; c: Platform.Msg }
   | { t: 'status-bar'; c: StatusBar.Msg }
-  | { t: 'wire'; c: Wire.MsgClient }
-  | { t: 'spaces'; c: Spaces.MsgClient }
-  | { t: 'auth'; c: Auth.MsgClient }
-  | { t: 'profile'; c: Profile.MsgClient }
-  | { t: 'lang'; c: Lang.MsgClient }
+  | { t: 'wire'; c: WireTypes.MsgClient }
+  | { t: 'spaces'; c: SpacesTypes.MsgClient }
+  | { t: 'auth'; c: AuthTypes.MsgClient }
+  | { t: 'profile'; c: ProfileTypes.MsgClient }
+  | { t: 'lang'; c: LangTypes.MsgClient }
 
 export type MsgToServer =
-  | { t: 'spaces'; c: Spaces.MsgToServer }
-  | { t: 'auth'; c: Auth.MsgToServer }
-  | { t: 'profile'; c: Profile.MsgToServer }
-  | { t: 'wire'; c: Wire.MsgToServer }
-  | { t: 'lang'; c: Lang.MsgToServer }
+  | { t: 'spaces'; c: SpacesTypes.MsgToServer }
+  | { t: 'auth'; c: AuthTypes.MsgToServer }
+  | { t: 'profile'; c: ProfileTypes.MsgToServer }
+  | { t: 'wire'; c: WireTypes.MsgToServer }
+  | { t: 'lang'; c: LangTypes.MsgToServer }
 
 export type MsgToClient =
-  | { t: 'spaces'; c: Spaces.MsgToClient }
-  | { t: 'auth'; c: Auth.MsgToClient }
-  | { t: 'profile'; c: Profile.MsgToClient }
-  | { t: 'wire'; c: Wire.MsgToClient }
-  | { t: 'lang'; c: Lang.MsgToClient }
+  | { t: 'spaces'; c: SpacesTypes.MsgToClient }
+  | { t: 'auth'; c: AuthTypes.MsgToClient }
+  | { t: 'profile'; c: ProfileTypes.MsgToClient }
+  | { t: 'wire'; c: WireTypes.MsgToClient }
+  | { t: 'lang'; c: LangTypes.MsgToClient }
 
 //
 //
