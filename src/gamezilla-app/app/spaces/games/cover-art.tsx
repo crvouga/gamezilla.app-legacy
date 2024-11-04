@@ -1,6 +1,6 @@
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four-cover-art'
-import * as Flow from './flow/flow-cover-art'
+import * as Flow from './flow/cover-art'
 
 export const GameCoverArt = (input: { gameName: GameName }) => {
   switch (input.gameName) {

@@ -8,7 +8,7 @@ import { SpaceClientCmd } from '../../@/space-client-cmd'
 import { FlowClientCmd } from './@/flow-client-cmd'
 import type { FlowClientCtx } from './@/flow-client-ctx'
 import { FlowClientEvt } from './@/flow-client-evt'
-import { FlowCoverArt } from './@/flow-cover-art'
+import { CoverArt } from './@/flow-cover-art'
 import { FlowPackId } from './@/pack/pack-id'
 import { FlowPackListTypes, PackListClient } from './@/pack/pack-list'
 import { FlowPackName } from './@/pack/pack-name'
@@ -409,7 +409,7 @@ const View: ClientModule['View'] = (input) => {
     case 'none': {
       return (
         <GameMainMenu.View
-          renderCoverArt={(input) => <FlowCoverArt {...input} key={input.key} />}
+          renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
           ctx={ctx}
           title={ctx.t('flow')}
           dispatch={input.dispatch}
