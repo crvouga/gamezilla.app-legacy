@@ -26,6 +26,7 @@ const init: ClientModule['init'] = {
   play: PlayClient.init,
   puzzles: {},
   packs: {},
+  solutions: {},
   packPuzzleGrid: PackPuzzlesGridTypes.initClient,
   puzzleList: PuzzleListTypes.initClient,
   packList: PackListTypes.initClient
@@ -315,6 +316,7 @@ const updateFromCmd: ClientModule['update'] = (input) => {
         }
       }
     }
+
     case 'flow.new-puzzles': {
       return {
         model: {
@@ -344,6 +346,18 @@ const updateFromCmd: ClientModule['update'] = (input) => {
     case 'flow-pack-puzzles-grid': {
       return {
         model: input.model
+      }
+    }
+
+    case 'flow.new-solutions': {
+      return {
+        model: {
+          ...input.model,
+          solutions: {
+            ...input.model.solutions,
+            ...input.msgCmd.solutions
+          }
+        }
       }
     }
 

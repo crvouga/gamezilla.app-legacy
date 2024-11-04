@@ -18,6 +18,8 @@ import type { FlowPuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderTypes } from './builder'
 import { PlayTypes } from './play'
+import { FlowId } from './@/flow/flow/flow-id'
+import { Flow } from './@/flow'
 
 //
 //
@@ -31,6 +33,9 @@ export type ModelClient = {
   }
   packs: {
     [packId: FlowPackId]: FlowPack
+  }
+  solutions: {
+    [flowId: FlowId]: Flow.Model[]
   }
   puzzleList: PuzzleListTypes.ModelClient
   packList: PackListTypes.ModelClient

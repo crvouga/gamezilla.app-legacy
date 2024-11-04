@@ -7,6 +7,8 @@ import { PackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
 import { FlowPuzzle } from './puzzle/puzzle'
 import { FlowPuzzleId } from './puzzle/puzzle-id'
 import { PuzzleListTypes } from './puzzle/puzzle-list'
+import { FlowId } from './flow/flow/flow-id'
+import { Flow } from './flow/flow'
 
 export type FlowClientCmd<T extends ClientCmdTypes> =
   | SpaceClientCmd<T>
@@ -34,6 +36,13 @@ export type FlowClientCmd<T extends ClientCmdTypes> =
       }
       causedBy: unknown
     }
+  | {
+      t: 'flow.new-solutions'
+      solutions: {
+        [flowId: FlowId]: Flow.Model[]
+      }
+      causedBy: unknown
+    }
 
 export type FlowClientCmdLocal = FlowClientCmd<ClientCmdTypes>
 
@@ -47,6 +56,7 @@ const toSpaceClientCmd = <T extends ClientCmdTypes>(
       case 'flow.remove-puzzles':
       case 'flow.new-puzzles':
       case 'flow-puzzle-list':
+      case 'flow.new-solutions':
       case 'flow-pack-list': {
         return []
       }
@@ -65,6 +75,7 @@ const toFlowClientCmd = <T extends ClientCmdTypes>(cmds: FlowClientCmd<T>[] | un
       case 'flow.new-puzzles':
       case 'flow-pack-puzzles-grid':
       case 'flow-puzzle-list':
+      case 'flow.new-solutions':
       case 'flow-pack-list': {
         return [cmd]
       }
@@ -95,6 +106,7 @@ const tag = <T extends ClientCmdTypes, Tag extends string>(
         case 'flow.new-puzzles':
         case 'flow-pack-puzzles-grid':
         case 'flow-puzzle-list':
+        case 'flow.new-solutions':
         case 'flow-pack-list': {
           return [msgCmd]
         }
