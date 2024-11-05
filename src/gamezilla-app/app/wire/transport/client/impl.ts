@@ -1,4 +1,4 @@
-import type { ClientTransportImpl, IClientTransport } from './inteface'
+import type { ClientTransportImpl, IClientTransport } from './interface'
 import { ClientTransportSocketIO } from './impl-socket-io'
 import { ClientTransportWebSockets } from './impl-web-sockets'
 
