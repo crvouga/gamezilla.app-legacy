@@ -1,4 +1,4 @@
-import type { MsgClientToMsgServer, MsgServerToMsgClient } from '../types'
+import { WEB_SOCKET_ENDPOINT, type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
 import {
   type ClientTransportCommand,
   type ClientTransportEvent,
@@ -217,10 +217,10 @@ const toWebsocketServerUrl = (baseServerUrl: string) => {
       baseServerUrlObj.protocol = 'ws'
     }
 
-    baseServerUrlObj.pathname = '/ws'
+    baseServerUrlObj.pathname = WEB_SOCKET_ENDPOINT
 
     return baseServerUrlObj.toString()
   } catch (e) {
-    return '/ws'
+    return WEB_SOCKET_ENDPOINT
   }
 }

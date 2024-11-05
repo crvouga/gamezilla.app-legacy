@@ -7,6 +7,7 @@ import { IPubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-base
 import {
   SESSION_ID_COOKIE_NAME,
   toSetSessionCookie,
+  WEB_SOCKET_ENDPOINT,
   type MsgClientToMsgServer,
   type MsgServerToMsgClient
 } from '../types'
@@ -89,7 +90,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     const url = new URL(req.url)
 
     switch (url.pathname) {
-      case '/ws': {
+      case WEB_SOCKET_ENDPOINT: {
         const maybeSessionIdCookie = req.headers
           ?.get('cookie')
           ?.split(';')
@@ -114,7 +115,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
               'Set-Cookie': toSetSessionCookie(sessionId)
             }
 
-        logger.debug(`/ws request received clientId=${clientId} sessionId=${sessionId}`)
+        logger.debug(`${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId}`)
         server.upgrade(req, { headers, data })
         return
       }

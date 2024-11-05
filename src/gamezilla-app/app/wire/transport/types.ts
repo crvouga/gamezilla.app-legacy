@@ -23,3 +23,5 @@ export const toSetSessionCookie = (sessionId: SessionId) => {
 
   return baseCookie
 }
+
+export const WEB_SOCKET_ENDPOINT = '/ws'
