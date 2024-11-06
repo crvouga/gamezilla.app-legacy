@@ -1,4 +1,4 @@
-import { Sub, unwrapOr } from 'gamezilla-app/@/core'
+import { Posix, Sub, Time, unwrapOr } from 'gamezilla-app/@/core'
 import { AppServerCtx } from '../@/server'
 import { ServerInstance } from '../@/server/server-instance/server-instance'
 import { ServerInstanceDb } from '../@/server/server-instance/server-instance-db'
@@ -38,22 +38,7 @@ export const update: ServerModule['update'] = async (input) => {
         }
 
         case 'server/stopping': {
-          const got = unwrapOr(await input.ctx.serverInstanceDb.get(input.ctx.serverInstanceId), null)
-
-          if (!got) {
-            return {}
-          }
-
-          const serverInstanceNew: ServerInstance = {
-            ...got,
-            stoppedAt: input.msg.c.stoppedAt
-          }
-
-          await input.ctx.serverInstanceDb.put(serverInstanceNew)
-
-          input.ctx.logger.info('recorded server instance stopped')
-
-          return {}
+          return updateServerStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
         }
       }
     }
@@ -61,32 +46,54 @@ export const update: ServerModule['update'] = async (input) => {
     case 'got-runtime-event': {
       switch (input.msg.c.t) {
         case 'stopping': {
-          const got = unwrapOr(await input.ctx.serverInstanceDb.get(input.ctx.serverInstanceId), null)
-
-          if (!got) {
-            return {}
-          }
-
-          const serverInstanceNew: ServerInstance = {
-            ...got,
-            stoppedAt: input.msg.c.stoppedAt
-          }
-
-          await input.ctx.serverInstanceDb.put(serverInstanceNew)
-
-          input.ctx.logger.info('recorded server instance stopped')
-
-          return {}
+          return updateServerStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
         }
       }
     }
+
+    case 'heartbeat': {
+      const got = unwrapOr(await input.ctx.serverInstanceDb.get(input.ctx.serverInstanceId), null)
+
+      if (!got) {
+        return {}
+      }
+
+      const serverInstanceNew: ServerInstance = {
+        ...got,
+        lastHeartbeatAt: input.msg.at
+      }
+
+      await input.ctx.serverInstanceDb.put(serverInstanceNew)
+
+      return {}
+    }
   }
+  return {}
+}
+
+const updateServerStopped = async (input: { stoppedAt: Posix; ctx: ServerCtx }) => {
+  const got = unwrapOr(await input.ctx.serverInstanceDb.get(input.ctx.serverInstanceId), null)
+
+  if (!got) {
+    return {}
+  }
+
+  const serverInstanceNew: ServerInstance = {
+    ...got,
+    stoppedAt: input.stoppedAt
+  }
+
+  await input.ctx.serverInstanceDb.put(serverInstanceNew)
+
+  input.ctx.logger.info('recorded server instance stopped')
+
   return {}
 }
 
 export const subscriptions: ServerModule['subscriptions'] = async (input) => {
   return Sub.batch<MsgServer>([
     Sub.tag('got-server-event', input.ctx.server.events),
-    Sub.tag('got-runtime-event', input.ctx.runtime.events)
+    Sub.tag('got-runtime-event', input.ctx.runtime.events),
+    Time.interval('server-instance-heartbeat', ServerInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at }))
   ])
 }

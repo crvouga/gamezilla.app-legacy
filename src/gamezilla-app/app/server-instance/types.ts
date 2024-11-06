@@ -5,6 +5,7 @@ import { AnonymousClientCtx, AppClientCmd, ClientEvt } from '../@/client'
 import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import { IServerInstanceDb } from '../@/server/server-instance/server-instance-db'
 import { RuntimeEvent } from 'gamezilla-app/@/runtime'
+import { Posix } from 'gamezilla-app/@/core'
 
 export type ModelClient = { t: 'noop' }
 
@@ -12,7 +13,10 @@ export type MsgToServer = { t: 'noop' }
 
 export type MsgToClient = { t: 'noop' }
 
-export type MsgServer = { t: 'got-server-event'; c: ServerEvent } | { t: 'got-runtime-event'; c: RuntimeEvent }
+export type MsgServer =
+  | { t: 'got-server-event'; c: ServerEvent }
+  | { t: 'got-runtime-event'; c: RuntimeEvent }
+  | { t: 'heartbeat'; at: Posix }
 
 export type MsgClient = { t: 'noop' }
 
