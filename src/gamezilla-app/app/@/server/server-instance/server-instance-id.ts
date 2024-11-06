@@ -14,7 +14,7 @@ const separator = ':'
 
 const generate = () => {
   const id = Uuid.generate()
-  const randomIntegers = Math.floor(Math.random() * 1000)
+  const randomIntegers = Math.floor(Math.random() * 1_000_000_000)
   const serverInstanceId = `${namespace}${separator}${id}${randomIntegers}`
   return serverInstanceId as ServerInstanceId
 }
