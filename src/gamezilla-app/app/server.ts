@@ -52,7 +52,7 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const runtime = Runtime({
     t: 'process',
-    shutoffFGracePeriod: TimeSpan.seconds(3),
+    shutoffFGracePeriod: TimeSpan.seconds(1),
     logger
   })
 
