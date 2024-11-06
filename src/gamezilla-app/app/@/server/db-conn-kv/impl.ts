@@ -9,6 +9,7 @@ import * as WithReducedParsing from './with-reduced-parsing'
 import * as WithThrottledWrites from './with-throttled-writes'
 import * as ImplRedis from './impl-redis'
 import * as ImplInMemory from './impl-in-memory'
+import { Logger } from '../logger'
 
 export type Config =
   | HashMap.Config
@@ -21,7 +22,9 @@ export type Config =
   | WithThrottledWrites.Config
   | WithDistributedInvalidations.Config
 
-export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
+export const DbConnKv = async (configInput: Config): Promise<IDbConnKv> => {
+  const logger = Logger.prefix('db-conn-kv', configInput.logger ?? Logger({ t: 'noop' }))
+  const config: Config = { ...configInput, logger }
   switch (config.t) {
     case 'hash-map': {
       return HashMap.DbConnKv(config)

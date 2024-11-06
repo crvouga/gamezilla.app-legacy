@@ -18,7 +18,7 @@ export type Config = {
 }
 
 export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
-  const logger = Logger.prefix('db-conn-sql', config.logger)
+  const logger = Logger.prefix('postgres', config.logger)
   return {
     async get(key, parser) {
       try {
