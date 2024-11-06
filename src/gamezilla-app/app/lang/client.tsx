@@ -1,43 +1,9 @@
 import { LocalStorage } from 'gamezilla-app/@/core'
 import { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n'
-import {
-  APP_SOUND,
-  type AnonymousClientCtx,
-  type AppClientCmd,
-  type AppClientCtx,
-  type ClientEvt,
-  back,
-  closeStatusBar,
-  playSound,
-  pushRoute
-} from 'gamezilla-app/app/@/client'
-import type { AppClientModule } from '../@/architecture/app-client'
+import { APP_SOUND, back, closeStatusBar, playSound, pushRoute } from 'gamezilla-app/app/@/client'
 import { translatorSubscriptions } from '../@/client/translator'
 import { IconCheckmarkCircle, IconCheckmarkCircleEmpty, IconLanguage, ListItemButton, Spinner, TopBar } from '../@/ui'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer, TranslationLoading } from './types'
-
-//
-//
-//
-//
-//
-//
-//
-
-type Module = AppClientModule<{
-  Ctx: AnonymousClientCtx | AppClientCtx
-  Model: ModelClient
-  MsgToServer: MsgToServer
-  MsgToClient: MsgToClient
-  Msg: MsgClient
-  MsgCmdIn: null
-  MsgEvtIn: ClientEvt
-  MsgCmdOut: AppClientCmd<{
-    MsgToServer: MsgToServer
-    MsgClient: MsgClient
-  }>
-  MsgEvtOut: null
-}>
+import type { ClientModule, TranslationLoading } from './types'
 
 //
 //
@@ -49,7 +15,7 @@ type Module = AppClientModule<{
 
 const LANG_STORAGE_KEY = 'lang'
 
-export const init: Module['init'] = ({ stored, ctx }) => {
+export const init: ClientModule['init'] = ({ stored, ctx }) => {
   const storedLang = stored?.[LANG_STORAGE_KEY]
 
   const initialLang = LanguageCodeISO_639_1.is(storedLang) ? storedLang : ctx.navigatorLanguage
@@ -70,7 +36,7 @@ export const init: Module['init'] = ({ stored, ctx }) => {
 //
 //
 
-export const update: Module['update'] = ({ model, ctx, msg }) => {
+export const update: ClientModule['update'] = ({ model, ctx, msg }) => {
   switch (msg?.t) {
     case 'translator.loaded': {
       const loadingNew: TranslationLoading = {
@@ -158,7 +124,7 @@ export const update: Module['update'] = ({ model, ctx, msg }) => {
 //
 //
 
-export const subscriptions: Module['subscriptions'] = () => {
+export const subscriptions: ClientModule['subscriptions'] = () => {
   return translatorSubscriptions
 }
 
@@ -170,7 +136,7 @@ export const subscriptions: Module['subscriptions'] = () => {
 //
 //
 
-export const ViewStatusBarDrawer: Module['View'] = ({ model, ctx, dispatch }) => {
+export const ViewStatusBarDrawer: ClientModule['View'] = ({ model, ctx, dispatch }) => {
   return (
     <ListItemButton
       icon={(input) => <IconLanguage {...input} />}
@@ -185,7 +151,7 @@ export const ViewStatusBarDrawer: Module['View'] = ({ model, ctx, dispatch }) =>
   )
 }
 
-export const View: Module['View'] = (input) => {
+export const View: ClientModule['View'] = (input) => {
   switch (input.ctx.currentRoute.n) {
     case 'lang': {
       switch (input.ctx.currentRoute.t) {
@@ -203,7 +169,7 @@ export const View: Module['View'] = (input) => {
   }
 }
 
-const ViewChooseLang: Module['View'] = (input) => {
+const ViewChooseLang: ClientModule['View'] = (input) => {
   return (
     <div className='relative flex h-full w-full flex-col overflow-hidden'>
       <TopBar

@@ -6,7 +6,9 @@ const parser = p.obj({
   serverInstanceId: ServerInstanceId,
   startedAt: Posix,
   stoppedAt: p.maybe(Posix),
-  lastHeartbeatAt: Posix
+  lastHeartbeatAt: Posix,
+  ipAddress: p.maybe(p.str),
+  port: p.maybe(p.num)
 })
 
 export type ServerInstance = p.Infer<typeof parser>
@@ -18,7 +20,9 @@ const random = (): ServerInstance => {
     serverInstanceId: ServerInstanceId.generate(),
     startedAt: Posix.now(),
     stoppedAt: null,
-    lastHeartbeatAt: Posix.now()
+    lastHeartbeatAt: Posix.now(),
+    ipAddress: null,
+    port: null
   }
 }
 

@@ -1,6 +1,10 @@
 import type { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
 import type { TranslatorMsg } from '../@/client/translator'
 import type { Posix } from 'gamezilla-app/@/core'
+import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
+import { AppServerModule } from '../@/architecture/app-server'
+import { AppClientModule } from '../@/architecture/app-client'
+import { AnonymousClientCtx, AppClientCmd, ClientEvt } from '../@/client'
 
 export type TranslationLoading = {
   startedAt: Posix
@@ -31,3 +35,28 @@ export type MsgClient =
       t: 'choose-lang.clicked-lang'
       lang: LanguageCodeISO_639_1
     }
+
+export type ServerModule = AppServerModule<{
+  Ctx: AppServerCtx
+  MsgToServer: MsgToServer
+  MsgToClient: MsgToClient
+  Msg: MsgServer
+  MsgEvtIn: ServerEvt
+  MsgCmdOut: ServerCmd<MsgToClient>
+  MsgEvtOut: null
+}>
+
+export type ClientModule = AppClientModule<{
+  Ctx: AnonymousClientCtx
+  Model: ModelClient
+  MsgToServer: MsgToServer
+  MsgToClient: MsgToClient
+  Msg: MsgClient
+  MsgCmdIn: null
+  MsgEvtIn: ClientEvt
+  MsgCmdOut: AppClientCmd<{
+    MsgToServer: MsgToServer
+    MsgClient: MsgClient
+  }>
+  MsgEvtOut: null
+}>
