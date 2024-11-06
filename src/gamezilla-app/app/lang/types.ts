@@ -1,10 +1,10 @@
-import type { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
-import type { TranslatorMsg } from '../@/client/translator'
 import type { Posix } from 'gamezilla-app/@/core'
-import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
-import { AppServerModule } from '../@/architecture/app-server'
+import type { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
 import { AppClientModule } from '../@/architecture/app-client'
+import { AppServerModule } from '../@/architecture/app-server'
 import { AnonymousClientCtx, AppClientCmd, ClientEvt } from '../@/client'
+import type { TranslatorMsg } from '../@/client/translator'
+import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 
 export type TranslationLoading = {
   startedAt: Posix

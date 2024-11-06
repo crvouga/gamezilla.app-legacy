@@ -16,16 +16,14 @@ export type BaseClientCtx = {
   t: Translator
   currentRoute: Route
   now: Posix
-  currentUserId?: UserId | null
-  currentUserRole?: UserRole
-  currentUser?: UserAccount
   profiles: { [userId: UserId]: Profile }
   documentVisibilityState: DocumentVisibilityState
+  currentUser?: UserAccount | null
+  currentUserId?: UserId | null
+  currentUserRole?: UserRole | null
 }
 
-export type AnonymousClientCtx = BaseClientCtx & {
-  currentUserId: null
-}
+export type AnonymousClientCtx = BaseClientCtx
 
 export const isAnonymous = (ctx: BaseClientCtx): ctx is AnonymousClientCtx => {
   return ctx.currentUserId === null
@@ -35,4 +33,8 @@ export type AppClientCtx = BaseClientCtx & {
   currentUser: UserAccount
   currentUserId: UserId
   currentUserRole: UserRole
+}
+
+export const isAppClientCtx = (ctx: BaseClientCtx): ctx is AppClientCtx => {
+  return ctx.currentUserId !== null && ctx.currentUser !== null && ctx.currentUserRole !== null
 }

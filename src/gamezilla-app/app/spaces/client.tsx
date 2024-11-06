@@ -1,6 +1,6 @@
 import { Eff, NotAsked } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
-import { isAnonymous } from '../@/client'
+import { isAppClientCtx } from '../@/client'
 import { type Input, type Output, SpaceClientModule } from './@/architecture/space-client'
 import { SpaceClientCmd } from './@/space-client-cmd'
 import { SpaceClientEvt } from './@/space-client-evt'
@@ -205,18 +205,17 @@ export const View: ClientModule['View'] = (input) => {
           )
         }
         case 'space': {
-          if (isAnonymous(input.ctx)) {
-            return null
+          if (isAppClientCtx(input.ctx)) {
+            return (
+              <SpaceClient.View
+                spaceId={input.ctx.currentRoute.spaceId}
+                ctx={input.ctx}
+                dispatch={input.dispatch}
+                model={input.model}
+              />
+            )
           }
-
-          return (
-            <SpaceClient.View
-              spaceId={input.ctx.currentRoute.spaceId}
-              ctx={input.ctx}
-              dispatch={input.dispatch}
-              model={input.model}
-            />
-          )
+          return null
         }
         default: {
           return null

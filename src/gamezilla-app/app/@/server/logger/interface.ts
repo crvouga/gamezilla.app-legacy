@@ -1,8 +1,8 @@
 export type ILogger = {
-  info: (msg: string) => void
-  warn: (msg: string) => void
-  error: (msg: string) => void
-  debug: (msg: string) => void
-  trace: (msg: string) => void
-  fatal: (msg: string) => void
+  info: (msg: unknown) => void
+  warn: (msg: unknown) => void
+  error: (msg: unknown) => void
+  debug: (msg: unknown) => void
+  trace: (msg: unknown) => void
+  fatal: (msg: unknown) => void
 }

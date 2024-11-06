@@ -1,6 +1,6 @@
 import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
-import { ServerBun } from './server-impl-bun/server-impl-bun'
-import { ServerNode } from './server-impl-node/server-impl-node'
+import { ServerBun } from './impl-bun'
+import { ServerNode } from './impl-node'
 
 type Config =
   | {

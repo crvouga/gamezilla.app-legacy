@@ -1,4 +1,4 @@
-import { PhoneNumber } from 'gamezilla-app/@/core'
+import { PhoneNumber, Posix } from 'gamezilla-app/@/core'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from '../data/account'
 
@@ -31,4 +31,14 @@ export type ServerEvt =
       sessionId: SessionId
       clientId: ClientId
       phoneNumber: PhoneNumber
+    }
+  | {
+      t: 'server/started'
+      ipAddress: string
+      port: number
+      startedAt: Posix
+    }
+  | {
+      t: 'server/stopping'
+      stoppedAt: Posix
     }

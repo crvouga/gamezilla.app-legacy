@@ -1,5 +1,5 @@
 import { HttpResponse } from 'gamezilla-app/@/server'
-import type { ServerNode } from 'gamezilla-app/@/server/server-impl-node/server-impl-node'
+import type { ServerNode } from 'gamezilla-app/@/server/impl-node'
 import { SessionId, type ClientId } from 'gamezilla-app/app/@/data'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { Server } from 'socket.io'

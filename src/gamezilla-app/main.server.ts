@@ -16,7 +16,7 @@ const main = async () => {
 
   await ctx.server.start(SERVER_PORT)
 
-  console.log({ CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, TRANSPORT_IMPL })
+  ctx.logger.info({ CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, TRANSPORT_IMPL })
 }
 
 main()

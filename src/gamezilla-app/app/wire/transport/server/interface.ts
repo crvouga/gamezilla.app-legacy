@@ -1,6 +1,6 @@
 import { PubSub } from 'gamezilla-app/@/core/sub'
-import type { ServerBun } from 'gamezilla-app/@/server/server-impl-bun/server-impl-bun'
-import type { ServerNode } from 'gamezilla-app/@/server/server-impl-node/server-impl-node'
+import type { ServerBun } from 'gamezilla-app/@/server/impl-bun'
+import type { ServerNode } from 'gamezilla-app/@/server/impl-node'
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 
 export type ServerTransportMsg =

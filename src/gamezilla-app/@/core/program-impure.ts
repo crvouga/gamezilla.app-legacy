@@ -44,7 +44,7 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
 
   await program.init({ ctx })
 
-  updateSubscriptions(ctx)
+  await updateSubscriptions(ctx)
 }
 
 export const ProgramImpure = {

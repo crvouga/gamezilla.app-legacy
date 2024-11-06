@@ -166,7 +166,8 @@ export const update = async (input: { msg: MsgServer; ctx: Ctx }): Promise<{}> =
   const updated = await updateChild({
     ctx: input.ctx,
     msg: input.msg,
-    msgClient: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null
+    msgClient: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null,
+    msgEvt: input.msg.t === 'got-server-evt' ? input.msg.c : null
   })
 
   await updateLoop(input.ctx, updated)
@@ -181,9 +182,9 @@ const logMsg = ({
   logger
 }: {
   logger: ILogger
-  msg?: MsgServer
-  msgEvt?: ServerEvt
-  msgCmd?: ServerCmd<MsgToClient>
+  msg?: MsgServer | null
+  msgEvt?: ServerEvt | null
+  msgCmd?: ServerCmd<MsgToClient> | null
 }) => {
   const prefix = msg ? '[msg]' : msgEvt ? '[evt]' : '[cmd]'
 
@@ -250,10 +251,10 @@ export const updateChild = async ({
   msgCmd
 }: {
   ctx: Ctx
-  msg?: MsgServer
+  msg?: MsgServer | null
   msgClient?: (MsgToServer & MsgToServerMeta) | null
-  msgEvt?: ServerEvt
-  msgCmd?: ServerCmd<MsgToClient>
+  msgEvt?: ServerEvt | null
+  msgCmd?: ServerCmd<MsgToClient> | null
 }): Promise<{
   msgEvt: ServerEvt[]
   msgCmd: ServerCmd<MsgToClient>[]
@@ -335,7 +336,7 @@ export const subscriptions = async (input: { ctx: Ctx }): Promise<Sub<MsgServer>
   return Sub.batch([
     Sub.tag('spaces', await SpaceServer.subscriptions({ ctx: input.ctx, deps: input.ctx.space })),
     Sub.tag('wire', WireServer.subscriptions({ ctx: input.ctx.wire })),
-    Sub.tag('lang', await LangServer.subscriptions({ ctx: input.ctx, deps: null })),
+    Sub.tag('got-server-evt', input.ctx.server.events),
     Sub.flat(
       Sub.map(input.ctx.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map((c): MsgServer => ({ t: '→', sessionId, clientId, c }))

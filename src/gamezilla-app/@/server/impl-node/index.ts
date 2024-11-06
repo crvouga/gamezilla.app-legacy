@@ -1,8 +1,10 @@
+import { Posix, PubSub } from 'gamezilla-app/@/core'
 import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import * as fs from 'node:fs'
 import * as http from 'node:http'
 import * as path from 'node:path'
-import { fileExtensionToContentType, type HttpHandler, type HttpRequest, type IServer } from '../server'
+import { fileExtensionToContentType, ServerEvent, type HttpHandler, type HttpRequest, type IServer } from '../server'
+import { getIpAddress } from '../ip-address'
 
 const removeDuplicateSlashes = (input: string) => {
   return input.replace(/\/{2,}/g, '/')
@@ -11,10 +13,19 @@ export const ServerNode = (config: { logger: ILogger }) => {
   const logger = Logger.prefix('node', config.logger)
   const httpServer = new http.Server()
   const handlers: HttpHandler[] = []
+  const events: PubSub<ServerEvent> = PubSub.create()
+
   const base: IServer = {
+    events,
     async start(port) {
       try {
         await new Promise<void>((r) => httpServer.listen(port, r))
+        events.pub({
+          t: 'server/started',
+          ipAddress: getIpAddress(),
+          port,
+          startedAt: Posix.now()
+        })
       } catch (error) {
         console.error('error', error)
       }

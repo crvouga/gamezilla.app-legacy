@@ -6,7 +6,8 @@ import type { VDom } from 'gamezilla-app/@/vdom'
 import {
   APP_SOUND,
   AppClientCmd,
-  isAnonymous,
+  BaseClientCtx,
+  isAppClientCtx,
   preloadSound,
   type AnonymousClientCtx,
   type AppClientCtx,
@@ -17,13 +18,14 @@ import type { ServerImpl } from 'gamezilla-app/config-public'
 import { Translator } from './@/client/translator'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import * as AuthClient from './auth/client'
 import * as LangClient from './lang/client'
 import * as ProfileClient from './profile/client'
+import * as ServerInstance from './server-instance/client'
 import * as SpaceClient from './spaces/client'
-import { ClientTransport, type IClientTransport } from './wire/transport/client'
+import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import * as WireClient from './wire/client'
+import { ClientTransport, type IClientTransport } from './wire/transport/client'
 
 //
 //
@@ -123,6 +125,7 @@ export const init = (input: {
   const sound = Sound.init({ ctx, stored: input.deps.stored })
   const platform = Platform.init({ stored: input.deps.stored })
   const statusBar = StatusBar.init({ stored: input.deps.stored })
+  const serverInstance = ServerInstance.init({ ctx, stored: input.deps.stored })
 
   const initialModel: ModelClient = {
     statusBar: statusBar.model,
@@ -134,10 +137,16 @@ export const init = (input: {
     spaces: space.model,
     auth: auth.model,
     profile: profile.model,
-    lang: lang.model
+    lang: lang.model,
+    serverInstance: serverInstance.model
   }
 
-  const initialEff = Eff.batch<MsgClient>([routing.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
+  const initialEff = Eff.batch<MsgClient>([
+    routing.eff,
+    Eff.tag('auth', auth.eff),
+    Eff.tag('lang', lang.eff),
+    Eff.tag('server-instance', serverInstance.eff)
+  ])
 
   const initialCmd = batchMsgs<
     AppClientCmd<{
@@ -149,6 +158,7 @@ export const init = (input: {
     AppClientCmd.tag('profile', profile.msgCmd),
     AppClientCmd.tag('auth', auth.msgCmd),
     AppClientCmd.tag('lang', lang.msgCmd),
+    AppClientCmd.tag('server-instance', serverInstance.msgCmd),
     preloadSound(Object.values(APP_SOUND))
   )
 
@@ -164,6 +174,12 @@ export const init = (input: {
     eff: updated.eff
   }
 }
+
+//
+//
+//
+//
+//
 
 const toClientCtx = (input: { model: ModelClient; ctx: Ctx }): AppClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
@@ -356,6 +372,15 @@ const updateChild = (input: {
     ctx: clientCtx
   })
 
+  const serverInstance = ServerInstance.update({
+    model: input.model.serverInstance,
+    msg: input.msg?.t === 'server-instance' ? input.msg.c : null,
+    msgCmd: null,
+    msgServer: input.msgServer?.t === 'server-instance' ? input.msgServer.c : null,
+    msgEvt: input.msgEvt,
+    ctx: clientCtx
+  })
+
   return {
     model: {
       auth: auth.model,
@@ -367,7 +392,8 @@ const updateChild = (input: {
       statusBar: statusBar.model,
       toast: toast.model,
       wire: wire.model,
-      lang: lang.model
+      lang: lang.model,
+      serverInstance: serverInstance.model
     },
 
     eff: Eff.batch<MsgClient>([
@@ -379,7 +405,8 @@ const updateChild = (input: {
       Eff.tag('spaces', space.eff),
       Eff.tag('toast', toast.eff),
       Eff.tag('wire', wire.eff),
-      Eff.tag('lang', lang.eff)
+      Eff.tag('lang', lang.eff),
+      Eff.tag('server-instance', serverInstance.eff)
     ]),
 
     msgEvt: Msg.batch<ClientEvt>(
@@ -398,6 +425,7 @@ const updateChild = (input: {
       AppClientCmd.tag('profile', profile.msgCmd),
       AppClientCmd.tag('spaces', space.msgCmd),
       AppClientCmd.tag('lang', lang.msgCmd),
+      AppClientCmd.tag('server-instance', serverInstance.msgCmd),
       statusBar.msgCmd,
       routing.msgCmd,
       sound.msgCmd,
@@ -681,13 +709,14 @@ const ViewStatusBar: typeof View = (input) => {
 }
 
 const ViewBottomNavBar = (input: {
-  ctx: AppClientCtx | AnonymousClientCtx
+  ctx: AppClientCtx | BaseClientCtx
   model: ModelClient
   dispatch: (m: MsgClient) => void
 }) => {
-  if (isAnonymous(input.ctx)) {
+  if (!isAppClientCtx(input.ctx)) {
     return null
   }
+
   const items: {
     route: Route
     label: TranslatedText

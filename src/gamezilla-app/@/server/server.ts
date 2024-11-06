@@ -1,3 +1,5 @@
+import { Posix, Sub } from '../core'
+
 export type HttpRequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'CONNECT' | 'TRACE'
 
 export type HttpRequest = {
@@ -16,10 +18,18 @@ export type HttpResponse = {
 
 export type HttpHandler = (request: HttpRequest) => Promise<HttpResponse | null | undefined>
 
+export type ServerEvent = {
+  t: 'server/started'
+  ipAddress: string
+  port: number
+  startedAt: Posix
+}
+
 export type IServer = {
   start: (port: number) => Promise<void>
   serveSinglePageApp: (input: { directory: string; indexFile: string }) => void
   registerHandler: (handler: HttpHandler) => void
+  events: Sub<ServerEvent>
 }
 
 export const stringToHttpRequestMethod = (input: string): HttpRequestMethod => {

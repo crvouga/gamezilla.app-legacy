@@ -3,11 +3,14 @@ import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import * as path from 'path'
 import {
   fileExtensionToContentType,
+  ServerEvent,
   stringToHttpRequestMethod,
   type HttpHandler,
   type HttpRequest,
   type IServer
 } from '../server'
+import { Posix, PubSub } from 'gamezilla-app/@/core'
+import { getIpAddress } from '../ip-address'
 
 type FetchHandler = (req: Request, server: Server) => MaybePromise<Response | undefined | null>
 type MaybePromise<T> = T | Promise<T>
@@ -19,7 +22,10 @@ export const ServerBun = <T>(config: { logger: ILogger }) => {
   let webSocketHandler: WebSocketHandler<T>
   let server: Server
 
+  const events: PubSub<ServerEvent> = PubSub.create()
+
   const base: IServer = {
+    events,
     async start(port) {
       server = Bun.serve({
         port: port,
@@ -64,6 +70,14 @@ export const ServerBun = <T>(config: { logger: ILogger }) => {
         },
         websocket: webSocketHandler
       })
+
+      events.pub({
+        t: 'server/started',
+        ipAddress: getIpAddress(),
+        port,
+        startedAt: Posix.now()
+      })
+
       logger.info(`Listening on port ${port}`)
     },
     registerHandler(handler) {

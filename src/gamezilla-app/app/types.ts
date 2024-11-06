@@ -1,8 +1,10 @@
 import type { ClientId, SessionId, UserId } from './@/data'
+import { ServerEvt } from './@/server'
 import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import { AuthTypes } from './auth'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
+import { ServerInstanceTypes } from './server-instance'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 
@@ -25,6 +27,7 @@ export type ModelClient = {
   sound: Sound.Model
   platform: Platform.Model
   statusBar: StatusBar.Model
+  serverInstance: ServerInstanceTypes.ModelClient
 }
 
 //
@@ -37,11 +40,13 @@ export type ModelClient = {
 
 export type MsgServer =
   | ({ t: '→'; c: MsgToServer } & MsgToServerMeta)
+  | { t: 'got-server-evt'; c: ServerEvt }
   | { t: 'wire'; c: WireTypes.MsgServer }
   | { t: 'spaces'; c: SpacesTypes.MsgServer }
   | { t: 'profile'; c: ProfileTypes.MsgServer }
   | { t: 'auth'; c: AuthTypes.MsgServer }
   | { t: 'lang'; c: LangTypes.MsgServer }
+  | { t: 'server-instance'; c: ServerInstanceTypes.MsgServer }
 
 export type MsgClient =
   | { t: '→'; c: MsgToClient }
@@ -55,6 +60,7 @@ export type MsgClient =
   | { t: 'auth'; c: AuthTypes.MsgClient }
   | { t: 'profile'; c: ProfileTypes.MsgClient }
   | { t: 'lang'; c: LangTypes.MsgClient }
+  | { t: 'server-instance'; c: ServerInstanceTypes.MsgClient }
 
 export type MsgToServer =
   | { t: 'spaces'; c: SpacesTypes.MsgToServer }
@@ -62,6 +68,7 @@ export type MsgToServer =
   | { t: 'profile'; c: ProfileTypes.MsgToServer }
   | { t: 'wire'; c: WireTypes.MsgToServer }
   | { t: 'lang'; c: LangTypes.MsgToServer }
+  | { t: 'server-instance'; c: ServerInstanceTypes.MsgToServer }
 
 export type MsgToClient =
   | { t: 'spaces'; c: SpacesTypes.MsgToClient }
@@ -69,6 +76,7 @@ export type MsgToClient =
   | { t: 'profile'; c: ProfileTypes.MsgToClient }
   | { t: 'wire'; c: WireTypes.MsgToClient }
   | { t: 'lang'; c: LangTypes.MsgToClient }
+  | { t: 'server-instance'; c: ServerInstanceTypes.MsgToClient }
 
 //
 //
