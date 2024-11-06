@@ -1,16 +1,18 @@
 import { Ok, TimeSpan } from 'gamezilla-app/@/core'
+import { IRuntime } from 'gamezilla-app/@/runtime'
+import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnKv } from './interface'
-import { Logger } from '../logger'
 
 export type Config = {
   t: 'with-throttled-writes'
   dbConnKv: IDbConnKv
   throttle: TimeSpan
   logger: ILogger
+  runtime: IRuntime
 }
 
-export const withThrottledWrites = ({ dbConnKv, throttle, ...config }: Config): IDbConnKv => {
+export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: Config): IDbConnKv => {
   const logger = Logger.prefix('with-throttled-writes', config.logger)
   const throttleMs = TimeSpan.toMilliseconds(throttle)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
@@ -64,13 +66,13 @@ export const withThrottledWrites = ({ dbConnKv, throttle, ...config }: Config): 
     logger.debug('Flushed throttled writes')
   }
 
-  process.on('SIGTERM', () => {
-    flush()
-    process.exit(0)
-  })
-  process.on('SIGINT', () => {
-    flush()
-    process.exit(0)
+  runtime.events.sub(async (event) => {
+    switch (event.t) {
+      case 'stopping': {
+        flush()
+        break
+      }
+    }
   })
 
   return {

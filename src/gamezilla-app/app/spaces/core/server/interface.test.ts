@@ -10,6 +10,7 @@ import { Stream } from 'gamezilla-app/app/@/server/stream/impl'
 import * as SpaceCore from '../space-core'
 import { SpaceEvent } from '../space-event'
 import { Config, SpacesCoreServer } from './impl'
+import { Runtime } from 'gamezilla-app/@/runtime'
 
 const Fixture = async (config: Config) => {
   const spacesCoreServer = await SpacesCoreServer(config)
@@ -29,7 +30,8 @@ const Fixtures = async () => {
       dbConnKv: await DbConnKv({
         t: 'hash-map'
       }),
-      logger: Logger({ t: 'noop' })
+      logger: Logger({ t: 'noop' }),
+      runtime: Runtime({ t: 'noop' })
     }
   ]
 
@@ -45,7 +47,8 @@ const Fixtures = async () => {
       stream: await Stream({
         t: 'in-memory',
         parser: p.and(SpaceEvent, EventMeta)
-      })
+      }),
+      runtime: Runtime({ t: 'noop' })
     })
   }
 

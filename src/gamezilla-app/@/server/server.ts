@@ -18,12 +18,17 @@ export type HttpResponse = {
 
 export type HttpHandler = (request: HttpRequest) => Promise<HttpResponse | null | undefined>
 
-export type ServerEvent = {
-  t: 'server/started'
-  ipAddress: string
-  port: number
-  startedAt: Posix
-}
+export type ServerEvent =
+  | {
+      t: 'server/started'
+      ipAddress: string
+      port: number
+      startedAt: Posix
+    }
+  | {
+      t: 'server/stopping'
+      stoppedAt: Posix
+    }
 
 export type IServer = {
   start: (port: number) => Promise<void>

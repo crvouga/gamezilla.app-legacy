@@ -7,10 +7,13 @@ import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import * as SpaceCore from '../space-core'
 import type { ISpacesCoreServer } from './interface'
 import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { IRuntime } from 'gamezilla-app/@/runtime'
+
 export type Config = {
   t: 'db-conn-kv'
   dbConnKv: IDbConnKv
   logger: ILogger
+  runtime: IRuntime
 }
 
 export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServer> => {
@@ -23,7 +26,8 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
         t: 'with-throttled-writes',
         logger,
         dbConnKv,
-        throttle: TimeSpan.seconds(10)
+        throttle: TimeSpan.seconds(10),
+        runtime: config.runtime
       }),
     async (dbConnKv) =>
       DbConnKv({

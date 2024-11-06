@@ -30,7 +30,7 @@ type Module = AppServerModule<{
   MsgEvtOut: null
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Deps: Deps
+  Deps: ServerCtx
 }>
 //
 //
@@ -39,7 +39,7 @@ type Module = AppServerModule<{
 //
 //
 
-export type Deps = {}
+export type ServerCtx = {}
 
 export const initDeps: Module['initDeps'] = async () => {
   return {}

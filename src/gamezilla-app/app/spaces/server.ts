@@ -23,7 +23,8 @@ export const initCtx: ServerModule['initDeps'] = async ({ ctx }) => {
     spacesCoreServer: await SpacesCoreServer({
       t: 'db-conn-kv',
       dbConnKv: ctx.dbConnKv,
-      logger: ctx.logger
+      logger: ctx.logger,
+      runtime: ctx.runtime
     }),
     // spacesCoreServer: await SpacesCoreServer({
     //   t: 'stream',
@@ -35,7 +36,7 @@ export const initCtx: ServerModule['initDeps'] = async ({ ctx }) => {
   }
 }
 
-export type Deps = Awaited<ReturnType<typeof initCtx>>
+export type ServerCtx = Awaited<ReturnType<typeof initCtx>>
 
 //
 //

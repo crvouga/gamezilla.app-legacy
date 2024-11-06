@@ -1,13 +1,16 @@
 import { Posix } from 'gamezilla-app/@/core'
+import { Runtime } from 'gamezilla-app/@/runtime'
+import { Server } from 'gamezilla-app/@/server'
 import { DATABASE_URL, REDIS_URL } from 'gamezilla-app/config-private'
 import { ClientId, SessionId } from '../data'
 import { DbConnKv, type IDbConnKv } from './db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './db-conn-sql'
 import { Logger } from './logger'
+import { ProfileCache } from './profile-cache'
 import { IPubSubTopicBased, PubSubTopicBased } from './pub-sub-topic-based'
 import type { AppServerCtx } from './server-ctx'
+import { ServerInstanceId } from './server-instance/server-instance-id'
 import { SMS } from './sms'
-import { ProfileCache } from './profile-cache'
 
 export type ITestEnv = {
   t: 'unit' | 'integration' | 'all'
@@ -70,7 +73,10 @@ export const FixtureAppServer = async () => {
     sms: SMS({ t: 'fake', logger }),
     sleep: async () => null,
     pubSub: await PubSubTopicBased({ t: 'noop' }),
-    profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) })
+    profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) }),
+    runtime: Runtime({ t: 'noop' }),
+    server: Server({ t: 'bun', logger }),
+    serverInstanceId: ServerInstanceId.generate()
   }
   return {
     ctx

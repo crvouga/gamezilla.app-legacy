@@ -1,6 +1,7 @@
 import { pipe, Posix, sleep, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
+import { Runtime } from 'gamezilla-app/@/runtime'
 import { IServer, Server } from 'gamezilla-app/@/server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
 import { DATABASE_URL } from 'gamezilla-app/config-private'
@@ -11,13 +12,16 @@ import { Logger } from './@/server/logger'
 import { ILogger } from './@/server/logger/interface'
 import { ProfileCache } from './@/server/profile-cache'
 import { PubSubTopicBased } from './@/server/pub-sub-topic-based'
+import { ServerInstanceId } from './@/server/server-instance/server-instance-id'
 import { SMS } from './@/server/sms'
-import type { MsgServer, MsgToClient, MsgToServer, MsgToServerMeta } from './types'
 import { AuthTypes } from './auth'
 import * as AuthServer from './auth/server'
 import * as LangServer from './lang/server'
 import * as ProfileServer from './profile/server'
+import { ServerInstanceTypes } from './server-instance'
+import * as ServerInstanceServer from './server-instance/server'
 import * as SpaceServer from './spaces/server'
+import type { MsgServer, MsgToClient, MsgToServer, MsgToServerMeta } from './types'
 import { WireTypes } from './wire'
 import * as WireServer from './wire/server'
 import { ServerTransport, type IServerTransport } from './wire/transport/server'
@@ -36,14 +40,21 @@ export type Ctx = AppServerCtx & {
     MsgToServer: MsgToServer
   }>
   wire: WireTypes.ServerCtx<MsgToClient, MsgToServer>
-  profile: ProfileServer.Deps
-  space: SpaceServer.Deps
+  profile: ProfileServer.ServerCtx
+  space: SpaceServer.ServerCtx
   auth: AuthTypes.ServerCtx
   server: IServer
+  serverInstance: ServerInstanceTypes.ServerCtx
 }
 
 export const initCtx = async (): Promise<Ctx> => {
   const logger = Logger({ t: 'console' })
+
+  const runtime = Runtime({
+    t: 'process',
+    shutoffFGracePeriod: TimeSpan.seconds(3),
+    logger
+  })
 
   const simulateLatency = IS_PROD ? sleep : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
 
@@ -53,7 +64,10 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const sms = SMS({ t: 'twilio', logger })
 
-  const server = Server({ logger, t: SERVER_IMPL })
+  const server = Server({
+    logger,
+    t: SERVER_IMPL
+  })
 
   const pubSub = await PubSubTopicBased({ t: 'noop' })
 
@@ -84,7 +98,8 @@ export const initCtx = async (): Promise<Ctx> => {
           t: 'with-throttled-writes',
           logger,
           dbConnKv,
-          throttle: TimeSpan.seconds(10)
+          throttle: TimeSpan.seconds(10),
+          runtime
         }),
       async (dbConnKv) =>
         DbConnKv({
@@ -114,16 +129,21 @@ export const initCtx = async (): Promise<Ctx> => {
     now: Posix.now(),
     sleep,
     pubSub,
-    profileCache
+    profileCache,
+    server,
+    runtime,
+    serverInstanceId: ServerInstanceId.generate()
   }
 
   const wire = await WireServer.initCtx({ ctx, transport })
   const profile = await ProfileServer.initDeps({ ctx })
   const space = await SpaceServer.initCtx({ ctx })
   const auth = await AuthServer.initCtx({ ctx })
+  const serverInstance = await ServerInstanceServer.initCtx({ ctx })
 
   return {
     ...ctx,
+    serverInstance,
     server,
     auth,
     space,
@@ -166,8 +186,7 @@ export const update = async (input: { msg: MsgServer; ctx: Ctx }): Promise<{}> =
   const updated = await updateChild({
     ctx: input.ctx,
     msg: input.msg,
-    msgClient: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null,
-    msgEvt: input.msg.t === 'got-server-evt' ? input.msg.c : null
+    msgClient: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null
   })
 
   await updateLoop(input.ctx, updated)
@@ -243,13 +262,7 @@ const updateLoop = async (
   return acc
 }
 
-export const updateChild = async ({
-  ctx,
-  msg,
-  msgClient,
-  msgEvt,
-  msgCmd
-}: {
+export const updateChild = async (input: {
   ctx: Ctx
   msg?: MsgServer | null
   msgClient?: (MsgToServer & MsgToServerMeta) | null
@@ -259,51 +272,62 @@ export const updateChild = async ({
   msgEvt: ServerEvt[]
   msgCmd: ServerCmd<MsgToClient>[]
 }> => {
-  const userId = await AuthServer.getUserIdFromSessionId(ctx.auth, msgClient?.sessionId)
+  const userId = await AuthServer.getUserIdFromSessionId(input.ctx.auth, input.msgClient?.sessionId)
 
-  const space = await SpaceServer.update({
-    deps: ctx.space,
-    ctx,
-    msgCmd: null,
-    msgEvt: msgEvt,
-    msgClient: msgClient?.t === 'spaces' ? { ...msgClient, ...msgClient.c, userId } : null,
-    msg: msg?.t === 'spaces' ? msg.c : null
-  })
+  const [space, auth, wire, profile, lang, _serverInstance] = await Promise.all([
+    SpaceServer.update({
+      deps: input.ctx.space,
+      ctx: input.ctx,
+      msgCmd: null,
+      msgEvt: input.msgEvt,
+      msgClient: input.msgClient?.t === 'spaces' ? { ...input.msgClient, ...input.msgClient.c, userId } : null,
+      msg: input.msg?.t === 'spaces' ? input.msg.c : null
+    }),
 
-  const auth = await AuthServer.update({
-    deps: null,
-    ctx: ctx.auth,
-    msgCmd: null,
-    msgEvt: msgEvt,
-    msgClient: msgClient?.t === 'auth' ? { ...msgClient, ...msgClient.c, userId } : null,
-    msg: msg?.t === 'auth' ? msg.c : null
-  })
+    AuthServer.update({
+      deps: null,
+      ctx: input.ctx.auth,
+      msgCmd: null,
+      msgEvt: input.msgEvt,
+      msgClient: input.msgClient?.t === 'auth' ? { ...input.msgClient, ...input.msgClient.c, userId } : null,
+      msg: input.msg?.t === 'auth' ? input.msg.c : null
+    }),
 
-  const wire = await WireServer.update({
-    ctx: ctx.wire,
-    msgCmd: msgCmd?.t === 'wire' ? msgCmd : null,
-    msgEvt: msgEvt,
-    msgClient: msgClient?.t === 'wire' ? { ...msgClient, ...msgClient.c } : null,
-    msg: msg?.t === 'wire' ? msg.c : null
-  })
+    WireServer.update({
+      ctx: input.ctx.wire,
+      msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
+      msgEvt: input.msgEvt,
+      msgClient: input.msgClient?.t === 'wire' ? { ...input.msgClient, ...input.msgClient.c } : null,
+      msg: input.msg?.t === 'wire' ? input.msg.c : null
+    }),
 
-  const profile = await ProfileServer.update({
-    deps: ctx.profile,
-    ctx,
-    msgCmd: null,
-    msgEvt: msgEvt,
-    msgClient: msgClient?.t === 'profile' ? { ...msgClient, ...msgClient.c } : null,
-    msg: msg?.t === 'profile' ? msg.c : null
-  })
+    ProfileServer.update({
+      deps: input.ctx.profile,
+      ctx: input.ctx,
+      msgCmd: null,
+      msgEvt: input.msgEvt,
+      msgClient: input.msgClient?.t === 'profile' ? { ...input.msgClient, ...input.msgClient.c } : null,
+      msg: input.msg?.t === 'profile' ? input.msg.c : null
+    }),
 
-  const lang = await LangServer.update({
-    deps: null,
-    ctx,
-    msgCmd: null,
-    msgEvt: msgEvt,
-    msgClient: msgClient?.t === 'lang' ? { ...msgClient, ...msgClient.c } : null,
-    msg: msg?.t === 'lang' ? msg.c : null
-  })
+    LangServer.update({
+      deps: null,
+      ctx: input.ctx,
+      msgCmd: null,
+      msgEvt: input.msgEvt,
+      msgClient: input.msgClient?.t === 'lang' ? { ...input.msgClient, ...input.msgClient.c } : null,
+      msg: input.msg?.t === 'lang' ? input.msg.c : null
+    }),
+
+    ServerInstanceServer.update({
+      ctx: input.ctx.serverInstance,
+      deps: null,
+      msg: input.msg?.t === 'server-instance' ? input.msg.c : null,
+      msgClient: input.msgClient?.t === 'server-instance' ? { ...input.msgClient, ...input.msgClient.c } : null,
+      msgCmd: null,
+      msgEvt: input.msgEvt
+    })
+  ])
 
   return {
     msgCmd: Msg.batch<ServerCmd<MsgToClient>>(
@@ -336,7 +360,7 @@ export const subscriptions = async (input: { ctx: Ctx }): Promise<Sub<MsgServer>
   return Sub.batch([
     Sub.tag('spaces', await SpaceServer.subscriptions({ ctx: input.ctx, deps: input.ctx.space })),
     Sub.tag('wire', WireServer.subscriptions({ ctx: input.ctx.wire })),
-    Sub.tag('got-server-evt', input.ctx.server.events),
+    Sub.tag('server-instance', await ServerInstanceServer.subscriptions({ ctx: input.ctx.serverInstance, deps: null })),
     Sub.flat(
       Sub.map(input.ctx.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map((c): MsgServer => ({ t: '→', sessionId, clientId, c }))

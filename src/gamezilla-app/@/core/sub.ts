@@ -1,9 +1,9 @@
 export type Sub<Msg> = {
-  sub: (subscriber: (msg: Msg) => void) => () => void
+  sub: (subscriber: (msg: Msg) => Promise<unknown> | unknown) => () => void
 }
 
 export type Pub<Msg> = {
-  pub: (msg: Msg) => void
+  pub: (msg: Msg) => Promise<void>
   isSubbed: () => boolean
   once: (subscriber?: (msg: Msg) => void) => Promise<Msg>
 }
@@ -12,7 +12,7 @@ export type PubSub<Msg> = Pub<Msg> & Sub<Msg>
 
 const create = <Msg>(): PubSub<Msg> => {
   let runningId = 0
-  const subscribers = new Map<number, (msg: Msg) => void>()
+  const subscribers = new Map<number, (msg: Msg) => Promise<unknown> | unknown>()
   const queue: Msg[] = []
   return {
     isSubbed() {
@@ -26,17 +26,13 @@ const create = <Msg>(): PubSub<Msg> => {
         subscribers.delete(id)
       }
     },
-    pub(msg: Msg) {
+    async pub(msg: Msg) {
       if (subscribers.size === 0) {
         queue.push(msg)
         return
       }
       queue.push(msg)
-      for (const subscriber of subscribers.values()) {
-        for (const msg of queue) {
-          subscriber(msg)
-        }
-      }
+      await Promise.all(Array.from(subscribers.values()).flatMap((subscriber) => queue.map((msg) => subscriber(msg))))
       queue.length = 0
     },
     once(subscriber) {
@@ -142,7 +138,7 @@ const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {
 const toPub = <Msg>(pubSub: PubSub<Msg>): Pub<Msg> => {
   return {
     pub(msg) {
-      pubSub.pub(msg)
+      return pubSub.pub(msg)
     },
     once(subscriber) {
       return pubSub.once(subscriber)

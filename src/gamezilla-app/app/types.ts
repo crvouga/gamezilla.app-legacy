@@ -1,5 +1,4 @@
 import type { ClientId, SessionId, UserId } from './@/data'
-import { ServerEvt } from './@/server'
 import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import { AuthTypes } from './auth'
 import { LangTypes } from './lang'
@@ -40,7 +39,6 @@ export type ModelClient = {
 
 export type MsgServer =
   | ({ t: '→'; c: MsgToServer } & MsgToServerMeta)
-  | { t: 'got-server-evt'; c: ServerEvt }
   | { t: 'wire'; c: WireTypes.MsgServer }
   | { t: 'spaces'; c: SpacesTypes.MsgServer }
   | { t: 'profile'; c: ProfileTypes.MsgServer }

@@ -17,6 +17,9 @@ import { GamesServer } from '../../games/server'
 import * as SpacesServer from '../../server'
 import type { ServerDeps } from '../../types'
 import { SpaceServerCtx } from '../space-server-ctx'
+import { Runtime } from 'gamezilla-app/@/runtime'
+import { Server } from 'gamezilla-app/@/server'
+import { ServerInstanceId } from 'gamezilla-app/app/@/server/server-instance/server-instance-id'
 
 export const FixtureSpaceServer = async () => {
   const f = await FixtureAppServer()
@@ -80,13 +83,21 @@ export const ctx: AppServerCtx = {
   now: Posix.now(),
   dbConnKv: await DbConnKv({ t: 'hash-map' }),
   pubSub: await PubSubTopicBased({ t: 'noop' }),
-  profileCache: await ProfileCache({ t: 'in-memory' })
+  profileCache: await ProfileCache({ t: 'in-memory' }),
+  runtime: Runtime({ t: 'noop' }),
+  server: Server({ t: 'bun', logger: Logger({ t: 'noop' }) }),
+  serverInstanceId: ServerInstanceId.generate()
 }
 
 export const initDeps = async (): Promise<ServerDeps> => {
   const dbConnKv = await DbConnKv({ t: 'hash-map' })
   return {
-    spacesCoreServer: await SpacesCoreServer({ t: 'db-conn-kv', dbConnKv, logger: Logger({ t: 'noop' }) }),
+    spacesCoreServer: await SpacesCoreServer({
+      t: 'db-conn-kv',
+      dbConnKv,
+      logger: Logger({ t: 'noop' }),
+      runtime: Runtime({ t: 'noop' })
+    }),
     games: GamesServer.initCtx({
       ctx: {
         ...ctx,

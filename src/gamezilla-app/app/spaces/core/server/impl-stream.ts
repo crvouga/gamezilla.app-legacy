@@ -1,6 +1,7 @@
 import { isErr, Ok, unwrapOr } from 'gamezilla-app/@/core'
 import { EventSourced } from 'gamezilla-app/@/event-sourced'
 import { WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { IRuntime } from 'gamezilla-app/@/runtime'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
@@ -17,13 +18,15 @@ export type Config = {
   dbConnKv: IDbConnKv
   stream: IStream<WithEventMeta<SpaceEvent>>
   logger: ILogger
+  runtime: IRuntime
 }
 
 export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServer> => {
   const implDbConnKb = await ImplDbConnKv.SpacesCoreServer({
     t: 'db-conn-kv',
     dbConnKv: config.dbConnKv,
-    logger: Logger.prefix('db-conn-kv', config.logger)
+    logger: Logger.prefix('db-conn-kv', config.logger),
+    runtime: config.runtime
   })
 
   const snapshots = DbConnKv.withNamespace<SpaceId, SpaceCoreState.State>({

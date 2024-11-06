@@ -6,6 +6,7 @@ import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { AppServerTestEnv } from '../server-test-env'
 import { DbConnKv } from './impl'
+import { Runtime } from 'gamezilla-app/@/runtime'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()
@@ -90,7 +91,8 @@ const implementations: Implementation[] = [
             t: 'with-throttled-writes',
             dbConnKv: f.dbConnKv,
             logger: f.logger,
-            throttle: TimeSpan.seconds(10)
+            throttle: TimeSpan.seconds(10),
+            runtime: Runtime({ t: 'noop' })
           }),
           logger: f.logger
         })
