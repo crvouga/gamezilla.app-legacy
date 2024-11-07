@@ -2,9 +2,10 @@ import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-or
 import { unwrapOr } from 'gamezilla-app/@/core'
 import type { Sub } from 'gamezilla-app/@/core/sub'
 import type { ClientId } from 'gamezilla-app/app/@/data'
-import type { AppServerCtx, ServerCmd, ServerEvt, WireCmd } from 'gamezilla-app/app/@/server'
+import { AppServerCtx, ServerCmd, ServerEvt, WireCmd } from 'gamezilla-app/app/@/server'
 import { AppServerModule } from '../@/architecture/app-server'
 import { Logger } from '../@/server/logger'
+import { ServerInstanceServer } from './server-instance/server'
 import type { IServerTransport } from './transport/server'
 import type { MsgServer, MsgToClient, MsgToServer, ServerCtx } from './types'
 import { WireSession } from './wire-session'
@@ -28,6 +29,7 @@ export const initCtx = async <TMsgToClient, TMsgToServer>(input: {
   return {
     ...input.ctx,
     transport: input.transport,
+    serverInstance: await ServerInstanceServer.initCtx({ ctx: input.ctx }),
     wireSessionDb: await WireSessionDb({
       t: 'cached-db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
@@ -62,8 +64,25 @@ export const update = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
     {},
     () => updateFromMsg(input),
     () => updateFromCmd(input),
-    () => updateFromEvent(input)
+    () => updateFromEvent(input),
+    () => updateChild(input)
   )
+}
+
+const updateChild: typeof update = async (input) => {
+  const updated = await ServerInstanceServer.update({
+    msgCmd: input.msgCmd,
+    msgEvt: input.msgEvt,
+    ctx: input.ctx.serverInstance,
+    msg: input.msg?.t === 'got-server-instance-msg' ? input.msg.c : null,
+    msgClient: null,
+    deps: {}
+  })
+
+  return {
+    msgEvt: [],
+    msgCmd: ServerCmd.tag('got-server-instance-msg', updated.msgCmd)
+  }
 }
 
 const updateFromMsg: typeof update = async (input) => {
@@ -72,6 +91,9 @@ const updateFromMsg: typeof update = async (input) => {
   }
 
   switch (input.msg.t) {
+    case 'got-server-instance-msg': {
+      return {}
+    }
     case 'client-connected': {
       const got = await input.ctx.wireSessionDb.findBySessionIds([input.msg.sessionId])
 

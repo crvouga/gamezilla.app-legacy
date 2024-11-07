@@ -1,6 +1,5 @@
-import { pipe, Posix, sleep, Sub, TimeSpan } from 'gamezilla-app/@/core'
+import { Posix, sleep, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
-import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import { Runtime } from 'gamezilla-app/@/runtime'
 import { IWebServer, WebServer } from 'gamezilla-app/@/web-server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
@@ -18,8 +17,6 @@ import { AuthTypes } from './auth'
 import * as AuthServer from './auth/server'
 import * as LangServer from './lang/server'
 import * as ProfileServer from './profile/server'
-import { ServerInstanceTypes } from './server-instance'
-import * as ServerInstanceServer from './server-instance/server'
 import * as SpaceServer from './spaces/server'
 import type { MsgServer, MsgToClient, MsgToServer, MsgToServerMeta } from './types'
 import { WireTypes } from './wire'
@@ -44,7 +41,6 @@ export type Ctx = AppServerCtx & {
   space: SpaceServer.ServerCtx
   auth: AuthTypes.ServerCtx
   server: IWebServer
-  serverInstance: ServerInstanceTypes.ServerCtx
 }
 
 export const initCtx = async (): Promise<Ctx> => {
@@ -56,13 +52,25 @@ export const initCtx = async (): Promise<Ctx> => {
     logger
   })
 
-  const simulateLatency = IS_PROD ? sleep : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
+  const simulateLatency = IS_PROD ? async () => {} : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
 
-  const dbConnSql = await DbConnSql({ t: 'postgres', databaseUrl: DATABASE_URL, logger, simulateLatency })
+  const dbConnSql = await DbConnSql({
+    t: 'postgres',
+    databaseUrl: DATABASE_URL,
+    logger,
+    simulateLatency
+  })
 
-  const dbConnKv = await DbConnKv({ t: 'db-conn-sql', dbConnSql, logger })
+  const dbConnKv = await DbConnKv({
+    t: 'postgres',
+    dbConnSql,
+    logger
+  })
 
-  const sms = SMS({ t: 'twilio', logger })
+  const sms = SMS({
+    t: 'twilio',
+    logger
+  })
 
   const server = WebServer({
     logger,
@@ -90,32 +98,10 @@ export const initCtx = async (): Promise<Ctx> => {
   )
 
   const profileCache = await ProfileCache({
-    t: 'db-conn-kv',
-    dbConnKv: await pipe(
-      dbConnKv,
-      async (dbConnKv) =>
-        DbConnKv({
-          t: 'with-throttled-writes',
-          logger,
-          dbConnKv,
-          throttle: TimeSpan.seconds(10),
-          runtime
-        }),
-      async (dbConnKv) =>
-        DbConnKv({
-          t: 'with-cache',
-          logger,
-          source: await dbConnKv,
-          cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 100_000 }) })
-        }),
-      async (dbConnKv) =>
-        DbConnKv({
-          t: 'with-reduced-parsing',
-          dbConnKv: await dbConnKv,
-          logger,
-          verifiedKeys: new Set()
-        })
-    )
+    t: 'cached-db-conn-kv',
+    dbConnKv,
+    logger,
+    runtime
   })
 
   const env = IS_PROD ? 'prod' : 'dev'
@@ -139,11 +125,9 @@ export const initCtx = async (): Promise<Ctx> => {
   const profile = await ProfileServer.initDeps({ ctx })
   const space = await SpaceServer.initCtx({ ctx })
   const auth = await AuthServer.initCtx({ ctx })
-  const serverInstance = await ServerInstanceServer.initCtx({ ctx })
 
   return {
     ...ctx,
-    serverInstance,
     server,
     auth,
     space,
@@ -274,7 +258,7 @@ export const updateChild = async (input: {
 }> => {
   const userId = await AuthServer.getUserIdFromSessionId(input.ctx.auth, input.msgClient?.sessionId)
 
-  const [space, auth, wire, profile, lang, _serverInstance] = await Promise.all([
+  const [space, auth, wire, profile, lang] = await Promise.all([
     SpaceServer.update({
       deps: input.ctx.space,
       ctx: input.ctx,
@@ -317,15 +301,6 @@ export const updateChild = async (input: {
       msgEvt: input.msgEvt,
       msgClient: input.msgClient?.t === 'lang' ? { ...input.msgClient, ...input.msgClient.c } : null,
       msg: input.msg?.t === 'lang' ? input.msg.c : null
-    }),
-
-    ServerInstanceServer.update({
-      ctx: input.ctx.serverInstance,
-      deps: null,
-      msg: input.msg?.t === 'server-instance' ? input.msg.c : null,
-      msgClient: input.msgClient?.t === 'server-instance' ? { ...input.msgClient, ...input.msgClient.c } : null,
-      msgCmd: null,
-      msgEvt: input.msgEvt
     })
   ])
 
@@ -360,7 +335,6 @@ export const subscriptions = async (input: { ctx: Ctx }): Promise<Sub<MsgServer>
   return Sub.batch([
     Sub.tag('spaces', await SpaceServer.subscriptions({ ctx: input.ctx, deps: input.ctx.space })),
     Sub.tag('wire', WireServer.subscriptions({ ctx: input.ctx.wire })),
-    Sub.tag('server-instance', await ServerInstanceServer.subscriptions({ ctx: input.ctx.serverInstance, deps: null })),
     Sub.flat(
       Sub.map(input.ctx.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map((c): MsgServer => ({ t: '→', sessionId, clientId, c }))

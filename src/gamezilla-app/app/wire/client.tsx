@@ -1,9 +1,17 @@
 import type { Eff, Sub } from 'gamezilla-app/@/core'
 import { Translator } from 'gamezilla-app/@/l18n/generated'
-import { type AppClientCmd, type ClientEvt, showToast } from 'gamezilla-app/app/@/client'
+import {
+  AnonymousClientCtx,
+  type AppClientCmd,
+  AppClientCtx,
+  type ClientEvt,
+  showToast
+} from 'gamezilla-app/app/@/client'
 import { ListItemButton, Typography, cn } from '../@/ui'
 import type { IClientTransport } from './transport/client'
 import type { ModelClient, MsgClient, MsgToClient } from './types'
+import { andThen } from 'gamezilla-app/@/core/utils/and-then'
+import { ServerInstanceClient } from './server-instance/client'
 
 //
 //
@@ -13,13 +21,20 @@ import type { ModelClient, MsgClient, MsgToClient } from './types'
 //
 //
 
-export const init = (_input: { stored: Record<string, unknown> | null }): { model: ModelClient } => {
+export const init = (input: {
+  ctx: AppClientCtx | AnonymousClientCtx
+  stored: Record<string, unknown> | null
+}): { model: ModelClient } => {
+  const serverInstance = ServerInstanceClient.init({
+    ctx: input.ctx
+  })
   return {
     model: {
       state: {
         t: 'server-connecting'
       },
-      serverTime: null
+      serverTime: null,
+      serverInstance: serverInstance.model
     }
   }
 }
@@ -31,6 +46,12 @@ export const init = (_input: { stored: Record<string, unknown> | null }): { mode
 //
 //
 //
+
+type Output = {
+  model: ModelClient
+  msgEvt?: ClientEvt[]
+  eff?: Eff<MsgClient>
+}
 
 export const update = <TMsgToClient extends Record<string, unknown>, TMsgToServer extends Record<string, unknown>>({
   msg,
@@ -54,39 +75,13 @@ export const update = <TMsgToClient extends Record<string, unknown>, TMsgToServe
     MsgToServer: TMsgToServer
     MsgToClient: TMsgToClient
   }>
-}): {
-  model: ModelClient
-  msgEvt?: ClientEvt[]
-  eff?: Eff<MsgClient>
-} => {
-  if (msg) {
-    return updateFromMsg({
-      ctx,
-      msg,
-      model,
-      transport
-    })
-  }
-
-  if (msgServer) {
-    return updateFromServer({
-      ctx,
-      model,
-      msgServer,
-      transport
-    })
-  }
-
-  if (msgCmd) {
-    return updateFromCmd({
-      ctx,
-      msgCmd,
-      model,
-      transport
-    })
-  }
-
-  return { model }
+}): Output => {
+  return andThen<ModelClient, Output>(
+    { model },
+    (model) => updateFromMsg({ ctx, msg, model, transport }),
+    (model) => updateFromServer({ ctx, model, msgServer, transport }),
+    (model) => updateFromCmd({ ctx, msgCmd, model, transport })
+  )
 }
 
 const updateFromMsg: typeof update = ({ msg, model, transport }) => {
@@ -95,6 +90,10 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
   }
 
   switch (msg.t) {
+    case 'got-server-instance-msg': {
+      return { model }
+    }
+
     case 'server-connect-error': {
       return {
         model: {
@@ -172,6 +171,9 @@ const updateFromServer: typeof update = ({ ctx, model, msgServer }) => {
   }
 
   switch (msgServer.t) {
+    case 'got-server-instance-msg': {
+      return { model }
+    }
     case 'server-restarted': {
       return {
         model,

@@ -14,11 +14,11 @@ export const ClientTransport = async <MsgToServer, MsgToClient>(
 > => {
   switch (config.t) {
     case 'standard-web-sockets': {
-      return ClientTransport<MsgToServer, MsgToClient>(config)
+      return ImplWebSockets.ClientTransport<MsgToServer, MsgToClient>(config)
     }
 
     case 'socket.io': {
-      return ClientTransport<MsgToServer, MsgToClient>(config)
+      return ImplSocketIo.ClientTransport<MsgToServer, MsgToClient>(config)
     }
   }
 }

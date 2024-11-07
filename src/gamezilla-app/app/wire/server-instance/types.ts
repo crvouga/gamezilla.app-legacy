@@ -1,11 +1,11 @@
-import { WebServerEvent } from 'gamezilla-app/@/web-server'
-import { AppClientModule } from '../@/architecture/app-client'
-import { AppServerModule } from '../@/architecture/app-server'
-import { AnonymousClientCtx, AppClientCmd, ClientEvt } from '../@/client'
-import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
-import { IServerInstanceDb } from '../@/server/server-instance/server-instance-db'
-import { RuntimeEvent } from 'gamezilla-app/@/runtime'
 import { Posix } from 'gamezilla-app/@/core'
+import { RuntimeEvent } from 'gamezilla-app/@/runtime'
+import { WebServerEvent } from 'gamezilla-app/@/web-server'
+import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
+import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
+import { AnonymousClientCtx, AppClientCmd, AppClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
+import { AppServerCtx, ServerCmd, ServerEvt } from 'gamezilla-app/app/@/server'
+import { IServerInstanceDb } from 'gamezilla-app/app/@/server/server-instance/server-instance-db'
 
 export type ModelClient = { t: 'noop' }
 
@@ -14,7 +14,7 @@ export type MsgToServer = { t: 'noop' }
 export type MsgToClient = { t: 'noop' }
 
 export type MsgServer =
-  | { t: 'got-server-event'; c: WebServerEvent }
+  | { t: 'got-web-server-event'; c: WebServerEvent }
   | { t: 'got-runtime-event'; c: RuntimeEvent }
   | { t: 'heartbeat'; at: Posix }
 
@@ -34,12 +34,13 @@ export type ServerModule = AppServerModule<{
 }>
 
 export type ClientModule = AppClientModule<{
-  Ctx: AnonymousClientCtx
+  Ctx: AnonymousClientCtx | AppClientCtx
   Model: ModelClient
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
-  Msg: MsgClient
+  Msg: MsgServer
   MsgEvtIn: ClientEvt
+  MsgEvtOut: null
   MsgCmdOut: AppClientCmd<{
     MsgToServer: MsgToServer
     MsgClient: MsgClient

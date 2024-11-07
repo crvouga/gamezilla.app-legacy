@@ -25,7 +25,7 @@ export const andThen = <TModel, TOutput extends { model: TModel }>(
         }
         default: {
           if (Array.isArray(acc[key]) && Array.isArray(value)) {
-            // @ts-ignore
+            // @ts-expect-error
             acc[key] = acc[key].concat(value)
           }
           break

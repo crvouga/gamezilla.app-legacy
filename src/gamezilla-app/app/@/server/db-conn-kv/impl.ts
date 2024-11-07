@@ -1,5 +1,8 @@
-import * as DbConnSql from './impl-postgres'
-import * as HashMap from './impl-hash-map'
+import { Logger } from '../logger'
+import * as ImplHashMap from './impl-hash-map'
+import * as ImplInMemory from './impl-in-memory'
+import * as ImplPostgres from './impl-postgres'
+import * as ImplRedis from './impl-redis'
 import type { IDbConnKv } from './interface'
 import * as WithCache from './with-cache'
 import * as WithDistributedInvalidations from './with-distributed-invalidations'
@@ -7,13 +10,10 @@ import * as WithDistributedUpdates from './with-distributed-updates'
 import * as WithNamespace from './with-namespace'
 import * as WithReducedParsing from './with-reduced-parsing'
 import * as WithThrottledWrites from './with-throttled-writes'
-import * as ImplRedis from './impl-redis'
-import * as ImplInMemory from './impl-in-memory'
-import { Logger } from '../logger'
 
 export type Config =
-  | HashMap.Config
-  | DbConnSql.Config
+  | ImplHashMap.Config
+  | ImplPostgres.Config
   | ImplRedis.Config
   | ImplInMemory.Config
   | WithCache.Config
@@ -27,15 +27,15 @@ export const DbConnKv = async (configInput: Config): Promise<IDbConnKv> => {
   const config: Config = { ...configInput, logger }
   switch (config.t) {
     case 'hash-map': {
-      return HashMap.DbConnKv(config)
+      return ImplHashMap.DbConnKv(config)
     }
 
     case 'redis': {
       return ImplRedis.DbConnKv(config)
     }
 
-    case 'db-conn-sql': {
-      return DbConnSql.DbConnKv(config)
+    case 'postgres': {
+      return ImplPostgres.DbConnKv(config)
     }
 
     case 'with-cache': {

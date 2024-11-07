@@ -3,9 +3,14 @@ import { Profile } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import type { IProfileCache } from './interface'
 
-export const ProfileCacheDbKv = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IProfileCache => {
+export type Config = {
+  t: 'db-conn-kv'
+  dbConnKv: IDbConnKv
+}
+
+export const ProfileCache = (config: Config): IProfileCache => {
   const profilesKv = DbConnKv.withNamespace({
-    dbConnKv,
+    dbConnKv: config.dbConnKv,
     namespace: ['spaces', 'profile-cache'],
     parser: Profile
   })

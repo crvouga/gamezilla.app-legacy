@@ -1,10 +1,10 @@
 import { Posix, Sub, Time, unwrapOr } from 'gamezilla-app/@/core'
-import { AppServerCtx } from '../@/server'
-import { ServerInstance } from '../@/server/server-instance/server-instance'
-import { ServerInstanceDb } from '../@/server/server-instance/server-instance-db'
+import { AppServerCtx } from 'gamezilla-app/app/@/server'
+import { ServerInstance } from 'gamezilla-app/app/@/server/server-instance/server-instance'
+import { ServerInstanceDb } from 'gamezilla-app/app/@/server/server-instance/server-instance-db'
 import type { MsgServer, ServerCtx, ServerModule } from './types'
 
-export const initCtx = (input: { ctx: AppServerCtx }): ServerCtx => {
+const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   const serverInstanceDb = ServerInstanceDb({
     t: 'db-conn-kv',
     dbConnKv: input.ctx.dbConnKv
@@ -16,9 +16,9 @@ export const initCtx = (input: { ctx: AppServerCtx }): ServerCtx => {
   }
 }
 
-export const update: ServerModule['update'] = async (input) => {
+const update: ServerModule['update'] = async (input) => {
   switch (input.msg?.t) {
-    case 'got-server-event': {
+    case 'got-web-server-event': {
       switch (input.msg.c.t) {
         case 'web-server/started': {
           const serverInstanceNew: ServerInstance = {
@@ -90,10 +90,18 @@ const updateServerStopped = async (input: { stoppedAt: Posix; ctx: ServerCtx }) 
   return {}
 }
 
-export const subscriptions: ServerModule['subscriptions'] = async (input) => {
+const subscriptions: ServerModule['subscriptions'] = async (input) => {
   return Sub.batch<MsgServer>([
-    Sub.tag('got-server-event', input.ctx.server.events),
+    Sub.tag('got-web-server-event', input.ctx.server.events),
     Sub.tag('got-runtime-event', input.ctx.runtime.events),
-    Time.interval('server-instance-heartbeat', ServerInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at }))
+    Time.interval(INTERVAL_ID, ServerInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at }))
   ])
+}
+
+const INTERVAL_ID = 'server-instance-heartbeat'
+
+export const ServerInstanceServer = {
+  initCtx,
+  update,
+  subscriptions
 }

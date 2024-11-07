@@ -16,18 +16,31 @@ export const initCtx = async (): Promise<Ctx> => {
     databaseUrl: DATABASE_URL,
     logger
   })
-  const dbConnKv = await DbConnKv({ t: 'db-conn-sql', logger, dbConnSql })
-  const serverInstanceDb = ServerInstanceDb({ t: 'db-conn-kv', dbConnKv })
+  const dbConnKv = await DbConnKv({
+    t: 'postgres',
+    logger,
+    dbConnSql
+  })
+  const serverInstanceDb = ServerInstanceDb({
+    t: 'db-conn-kv',
+    dbConnKv
+  })
   return {
     logger,
     serverInstanceDb
   }
 }
 
-export const handler = async (ctx: Ctx, request: Request): Promise<Response> => {
+export const respond = async (ctx: Ctx, request: Request): Promise<Response> => {
   ctx.logger.info(`${request.method} ${request.url}`)
 
-  const response = new Response('Hello')
+  const response = new Response('Hello', {
+    headers: {
+      'content-type': 'text/plain',
+      redirect: 'https://www.google.com'
+    },
+    status: 200
+  })
 
   return response
 }
