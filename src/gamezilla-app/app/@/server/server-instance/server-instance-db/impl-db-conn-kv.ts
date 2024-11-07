@@ -1,9 +1,9 @@
+import { isErr, Ok, Posix, TimeSpan, unwrapOr } from 'gamezilla-app/@/core'
 import { p } from 'gamezilla-app/@/core/parser'
 import { DbConnKv, IDbConnKv } from '../../db-conn-kv'
 import { ServerInstance } from '../server-instance'
 import { ServerInstanceId } from '../server-instance-id'
 import { IServerInstanceDb } from './interface'
-import { isErr, Ok, unwrapOr } from 'gamezilla-app/@/core'
 
 export type Config = {
   t: 'db-conn-kv'
@@ -47,7 +47,16 @@ export const ServerInstanceDb = (config: Config): IServerInstanceDb => {
     }
     return byId.set(serverInstance.serverInstanceId, serverInstance)
   }
+  const listAlive: IServerInstanceDb['listAlive'] = async (input) => {
+    const listed = unwrapOr(await list(), [])
+    const alive = listed.filter((serverInstance) => {
+      const heartrate = Posix.diff(serverInstance.lastHeartbeatAt, Posix.now())
+      return TimeSpan.lte(heartrate, input.minimalHeartrate)
+    })
+    return Ok(alive)
+  }
   return {
+    listAlive,
     list,
     get,
     put

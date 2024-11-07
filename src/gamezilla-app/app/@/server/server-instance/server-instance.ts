@@ -15,14 +15,15 @@ export type ServerInstance = p.Infer<typeof parser>
 
 const HEARTBEAT = TimeSpan.minutes(1)
 
-const random = (): ServerInstance => {
+const random = (overrides?: Partial<ServerInstance>): ServerInstance => {
   return {
     serverInstanceId: ServerInstanceId.generate(),
     startedAt: Posix.now(),
     stoppedAt: null,
     lastHeartbeatAt: Posix.now(),
     ipAddress: null,
-    port: null
+    port: null,
+    ...overrides
   }
 }
 

@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "load-balancer": "bun src/gamezilla-app/main.load-balancer.ts",
     "server": "bun src/gamezilla-app/main.server.ts",
     "server:build": "bun db:up",
     "db:up": "bun x dbmate -e DATABASE_URL up",
