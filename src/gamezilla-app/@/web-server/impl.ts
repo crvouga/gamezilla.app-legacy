@@ -1,6 +1,6 @@
 import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
-import { ServerBun } from './impl-bun'
-import { ServerNode } from './impl-node'
+import { WebServerBun } from './impl-bun'
+import { WebServerNode } from './impl-node'
 
 type Config =
   | {
@@ -12,17 +12,17 @@ type Config =
       logger: ILogger
     }
 
-export const Server = (config: Config) => {
+export const WebServer = (config: Config) => {
   const logger = Logger.prefix('server', config.logger)
   switch (config.t) {
     case 'bun': {
-      return ServerBun<unknown>({ ...config, logger })
+      return WebServerBun<unknown>({ ...config, logger })
     }
 
     case 'node': {
-      return ServerNode({ ...config, logger })
+      return WebServerNode({ ...config, logger })
     }
   }
 }
 
-export type ServerInstance = ReturnType<typeof Server>
+export type WebServer = ReturnType<typeof WebServer>

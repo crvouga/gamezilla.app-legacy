@@ -1,6 +1,6 @@
 import type { Posix, TimeSpan } from 'gamezilla-app/@/core'
 import { IRuntime } from 'gamezilla-app/@/runtime'
-import { IServer } from 'gamezilla-app/@/server'
+import { IWebServer } from 'gamezilla-app/@/web-server'
 import type { IDbConnKv } from './db-conn-kv'
 import type { IDbConnSql } from './db-conn-sql/interface'
 import type { ILogger } from './logger/interface'
@@ -20,6 +20,6 @@ export type AppServerCtx = {
   pubSub: IPubSubTopicBased
   profileCache: IProfileCache
   serverInstanceId: ServerInstanceId
-  server: IServer
+  server: IWebServer
   runtime: IRuntime
 }

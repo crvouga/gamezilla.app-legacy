@@ -1,5 +1,5 @@
 import type { Server, ServerWebSocket, WebSocketHandler } from 'bun'
-import type { ServerBun } from 'gamezilla-app/@/server/impl-bun'
+import type { WebServerBun } from 'gamezilla-app/@/web-server/impl-bun'
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
@@ -21,7 +21,7 @@ type ServerWebSocketData = {
 export type Config = {
   t: 'bun-server-web-sockets'
   codebaseVersionId: string
-  server: ServerBun
+  webServer: WebServerBun
   dbConnSql: IDbConnSql
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
@@ -168,10 +168,10 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     }
   }
 
-  config.server.registerHandler((request, maybeServer) => {
+  config.webServer.registerHandler((request, maybeServer) => {
     return onRequest(request, maybeServer as Server)
   })
-  config.server._setWebSocketHandler(websocket)
+  config.webServer._setWebSocketHandler(websocket)
 
   transport.wire.pub({
     t: 'server-started',

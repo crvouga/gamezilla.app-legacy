@@ -1,13 +1,15 @@
 import type { MsgClientToMsgServer, MsgServerToMsgClient } from '../types'
-import { type ClientTransportSocketIOImpl, type IClientTransport, initClientTransport } from './interface'
+import { type IClientTransport, initClientTransport } from './interface'
 
-export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
-  codebaseVersionId,
-  impl
-}: {
+export type Config = {
+  t: 'socket.io'
   codebaseVersionId: string
-  impl: ClientTransportSocketIOImpl
-}): Promise<
+  serverUrl: string
+}
+
+export const ClientTransport = async <MsgToServer, MsgToClient>(
+  config: Config
+): Promise<
   IClientTransport<{
     MsgToServer: MsgToServer
     MsgToClient: MsgToClient
@@ -18,11 +20,11 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
   const transport = initClientTransport<MsgToServer, MsgToClient>()
 
   const start = async () => {
-    await fetch(`${impl.serverUrl.toString()}/set-session-cookie`, {
+    await fetch(`${config.serverUrl.toString()}/set-session-cookie`, {
       credentials: 'include'
     })
 
-    const socket = io(impl.serverUrl.toString(), {
+    const socket = io(config.serverUrl.toString(), {
       transports: ['websocket'],
       withCredentials: true
     })
@@ -48,7 +50,7 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
     const sendToServer = (msgs: MsgToServer[]) => {
       const toServer: MsgClientToMsgServer<MsgToServer> = {
         m: msgs,
-        v: codebaseVersionId
+        v: config.codebaseVersionId
       }
 
       socket.emit('to-server', toServer, (err: unknown) => {
@@ -64,7 +66,7 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
     })
 
     socket.on('to-client', (msg: MsgServerToMsgClient<MsgToClient>) => {
-      if (msg.v !== codebaseVersionId) {
+      if (msg.v !== config.codebaseVersionId) {
         console.warn('Codebase version mismatch')
       }
       transport.toClient.pub(msg.m)

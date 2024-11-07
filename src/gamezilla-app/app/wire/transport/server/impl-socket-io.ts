@@ -1,5 +1,5 @@
-import { parseCookies } from 'gamezilla-app/@/server/cookies'
-import type { ServerNode } from 'gamezilla-app/@/server/impl-node'
+import { parseCookies } from 'gamezilla-app/@/web-server/cookies'
+import type { WebServerNode } from 'gamezilla-app/@/web-server/impl-node'
 import { SessionId, type ClientId } from 'gamezilla-app/app/@/data'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { Server } from 'socket.io'
@@ -16,7 +16,7 @@ export type Config = {
   t: 'socket-io'
   logger: ILogger
   codebaseVersionId: string
-  server: ServerNode
+  webServer: WebServerNode
 }
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
@@ -29,7 +29,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 > => {
   const transport = initServerTransport<MsgToServer, MsgToClient>()
 
-  const io = new Server(config.server.httpServer, {
+  const io = new Server(config.webServer.httpServer, {
     cors: {
       origin: '*',
       credentials: true
@@ -38,7 +38,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     allowUpgrades: true
   })
 
-  config.server.registerHandler(async (request) => {
+  config.webServer.registerHandler(async (request) => {
     const url = new URL(request.url)
     if (url.pathname !== '/set-session-cookie') {
       return null

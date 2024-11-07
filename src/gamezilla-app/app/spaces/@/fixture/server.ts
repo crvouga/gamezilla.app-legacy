@@ -18,7 +18,7 @@ import * as SpacesServer from '../../server'
 import type { ServerDeps } from '../../types'
 import { SpaceServerCtx } from '../space-server-ctx'
 import { Runtime } from 'gamezilla-app/@/runtime'
-import { Server } from 'gamezilla-app/@/server'
+import { WebServer } from 'gamezilla-app/@/web-server'
 import { ServerInstanceId } from 'gamezilla-app/app/@/server/server-instance/server-instance-id'
 
 export const FixtureSpaceServer = async () => {
@@ -85,7 +85,7 @@ export const ctx: AppServerCtx = {
   pubSub: await PubSubTopicBased({ t: 'noop' }),
   profileCache: await ProfileCache({ t: 'in-memory' }),
   runtime: Runtime({ t: 'noop' }),
-  server: Server({ t: 'bun', logger: Logger({ t: 'noop' }) }),
+  server: WebServer({ t: 'bun', logger: Logger({ t: 'noop' }) }),
   serverInstanceId: ServerInstanceId.generate()
 }
 

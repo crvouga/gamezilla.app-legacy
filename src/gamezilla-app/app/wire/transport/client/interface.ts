@@ -1,9 +1,15 @@
 import { PubSub } from 'gamezilla-app/@/core/sub'
 
 export type ClientTransportEvent =
-  | { t: 'server-connected' }
-  | { t: 'server-disconnected' }
-  | { t: 'server-connect-error' }
+  | {
+      t: 'server-connected'
+    }
+  | {
+      t: 'server-disconnected'
+    }
+  | {
+      t: 'server-connect-error'
+    }
   | {
       t: 'got-bad-msgs'
       reason: 'codebase-version-mismatch'
@@ -30,16 +36,4 @@ export const initClientTransport = <MsgToServer, MsgToClient>(): IClientTranspor
     msgCmd: PubSub.create(),
     start: async () => {}
   }
-}
-
-export type ClientTransportImpl = ClientTransportWebSocketImpl | ClientTransportSocketIOImpl
-
-export type ClientTransportWebSocketImpl = {
-  t: 'web-sockets'
-  serverUrl: string
-}
-
-export type ClientTransportSocketIOImpl = {
-  t: 'socket-io'
-  serverUrl: string
 }

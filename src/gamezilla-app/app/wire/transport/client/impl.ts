@@ -1,32 +1,24 @@
-import type { ClientTransportImpl, IClientTransport } from './interface'
-import { ClientTransportSocketIO } from './impl-socket-io'
-import { ClientTransportWebSockets } from './impl-web-sockets'
+import * as ImplSocketIo from './impl-socket-io'
+import * as ImplWebSockets from './impl-standard-web-sockets'
+import type { IClientTransport } from './interface'
 
-export const ClientTransport = async <MsgToServer, MsgToClient>({
-  codebaseVersionId,
-  impl
-}: {
-  codebaseVersionId: string
-  impl: ClientTransportImpl
-}): Promise<
+export type Config = ImplSocketIo.Config | ImplWebSockets.Config
+
+export const ClientTransport = async <MsgToServer, MsgToClient>(
+  config: Config
+): Promise<
   IClientTransport<{
     MsgToServer: MsgToServer
     MsgToClient: MsgToClient
   }>
 > => {
-  switch (impl.t) {
-    case 'web-sockets': {
-      return ClientTransportWebSockets<MsgToServer, MsgToClient>({
-        codebaseVersionId,
-        impl
-      })
+  switch (config.t) {
+    case 'standard-web-sockets': {
+      return ClientTransport<MsgToServer, MsgToClient>(config)
     }
 
-    case 'socket-io': {
-      return ClientTransportSocketIO<MsgToServer, MsgToClient>({
-        codebaseVersionId,
-        impl
-      })
+    case 'socket.io': {
+      return ClientTransport<MsgToServer, MsgToClient>(config)
     }
   }
 }

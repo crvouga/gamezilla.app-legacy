@@ -1,4 +1,4 @@
-import { ServerEvent } from 'gamezilla-app/@/server'
+import { WebServerEvent } from 'gamezilla-app/@/web-server'
 import { AppClientModule } from '../@/architecture/app-client'
 import { AppServerModule } from '../@/architecture/app-server'
 import { AnonymousClientCtx, AppClientCmd, ClientEvt } from '../@/client'
@@ -14,7 +14,7 @@ export type MsgToServer = { t: 'noop' }
 export type MsgToClient = { t: 'noop' }
 
 export type MsgServer =
-  | { t: 'got-server-event'; c: ServerEvent }
+  | { t: 'got-server-event'; c: WebServerEvent }
   | { t: 'got-runtime-event'; c: RuntimeEvent }
   | { t: 'heartbeat'; at: Posix }
 

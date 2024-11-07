@@ -1,85 +1,27 @@
 import { WEB_SOCKET_ENDPOINT, type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
 import {
+  initClientTransport,
   type ClientTransportCommand,
   type ClientTransportEvent,
-  type ClientTransportWebSocketImpl,
-  type IClientTransport,
-  initClientTransport
+  type IClientTransport
 } from './interface'
 
 const RECONNECT_INTERVAL = 2000
 const MAX_RECONNECT_ATTEMPTS = 6
 
-type Model<MsgToServer> = {
-  reconnectAttempts: number
-  isConnected: boolean
-  isDocumentHidden: boolean
-  queue: MsgClientToMsgServer<MsgToServer>[]
-}
-
-export const init = <MsgToServer>(): Model<MsgToServer> => ({
-  reconnectAttempts: 0,
-  isConnected: false,
-  isDocumentHidden: false,
-  queue: []
-})
-
-export const update = <MsgToServer>({
-  model,
-  evt,
-  cmd
-}: {
-  model: Model<MsgToServer>
-  evt?: ClientTransportEvent
-  cmd?: ClientTransportCommand
-}): Model<MsgToServer> => {
-  const msg = evt ?? cmd
-  if (!msg) {
-    return model
-  }
-  switch (msg.t) {
-    case 'try-reconnect': {
-      return {
-        ...model,
-        reconnectAttempts: 0
-      }
-    }
-
-    case 'got-bad-msgs': {
-      return model
-    }
-
-    case 'server-connect-error': {
-      return model
-    }
-
-    case 'server-connected': {
-      return {
-        ...model,
-        isConnected: true
-      }
-    }
-
-    case 'server-disconnected': {
-      return {
-        ...model,
-        isConnected: false
-      }
-    }
-  }
-}
-
-export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
-  codebaseVersionId,
-  impl
-}: {
+export type Config = {
+  t: 'standard-web-sockets'
   codebaseVersionId: string
-  impl: ClientTransportWebSocketImpl
-}): IClientTransport<{
+  serverUrl: string
+}
+
+export const ClientTransport = <MsgToServer, MsgToClient>(
+  config: Config
+): IClientTransport<{
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
 }> => {
-  const serverUrl = toWebsocketServerUrl(impl.serverUrl.toString())
+  const serverUrl = toWebsocketServerUrl(config.serverUrl.toString())
 
   const transport = initClientTransport<MsgToServer, MsgToClient>()
 
@@ -140,7 +82,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
       isConnected = true
       const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>
 
-      if (msg.v !== codebaseVersionId) {
+      if (msg.v !== config.codebaseVersionId) {
         transport.msgEvt.pub({
           t: 'got-bad-msgs',
           reason: 'codebase-version-mismatch'
@@ -181,7 +123,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
   transport.toServer.sub((msgs) => {
     send({
       m: msgs,
-      v: codebaseVersionId
+      v: config.codebaseVersionId
     })
   })
 
@@ -198,6 +140,65 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
   return {
     ...transport,
     start: connect
+  }
+}
+
+type Model<MsgToServer> = {
+  reconnectAttempts: number
+  isConnected: boolean
+  isDocumentHidden: boolean
+  queue: MsgClientToMsgServer<MsgToServer>[]
+}
+
+export const init = <MsgToServer>(): Model<MsgToServer> => ({
+  reconnectAttempts: 0,
+  isConnected: false,
+  isDocumentHidden: false,
+  queue: []
+})
+
+export const update = <MsgToServer>({
+  model,
+  evt,
+  cmd
+}: {
+  model: Model<MsgToServer>
+  evt?: ClientTransportEvent
+  cmd?: ClientTransportCommand
+}): Model<MsgToServer> => {
+  const msg = evt ?? cmd
+  if (!msg) {
+    return model
+  }
+  switch (msg.t) {
+    case 'try-reconnect': {
+      return {
+        ...model,
+        reconnectAttempts: 0
+      }
+    }
+
+    case 'got-bad-msgs': {
+      return model
+    }
+
+    case 'server-connect-error': {
+      return model
+    }
+
+    case 'server-connected': {
+      return {
+        ...model,
+        isConnected: true
+      }
+    }
+
+    case 'server-disconnected': {
+      return {
+        ...model,
+        isConnected: false
+      }
+    }
   }
 }
 

@@ -1,6 +1,4 @@
 import { PubSub } from 'gamezilla-app/@/core/sub'
-import type { ServerBun } from 'gamezilla-app/@/server/impl-bun'
-import type { ServerNode } from 'gamezilla-app/@/server/impl-node'
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 
 export type ServerTransportMsg =
@@ -56,23 +54,4 @@ export const initServerTransport = <MsgToServer, MsgToClient>(): IServerTranspor
     toServer: PubSub.create(),
     wire: PubSub.create()
   }
-}
-
-//
-//
-//
-//
-//
-//
-
-export type ServerTransportImpl = ServerTransportWebSocketImpl | ServerTransportSocketIOImpl
-
-export type ServerTransportWebSocketImpl = {
-  t: 'bun-web-sockets'
-  server: ServerBun
-}
-
-export type ServerTransportSocketIOImpl = {
-  t: 'socket-io'
-  server: ServerNode
 }

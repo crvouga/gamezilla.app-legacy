@@ -1,17 +1,17 @@
 import path from 'node:path'
 import { IFileSystem } from '../file-system'
-import { IServer } from './server'
+import { IWebServer } from './server'
 import { fileExtensionToContentType } from './content-type'
 
 export type Config = {
-  server: IServer
+  webServer: IWebServer
   fileSystem: IFileSystem
   directory: string
   indexFile: string
 }
 
 export const withSinglePageApp = (config: Config) => {
-  config.server.registerHandler(async (req) => {
+  config.webServer.registerHandler(async (req) => {
     try {
       const url = new URL(req.url)
 

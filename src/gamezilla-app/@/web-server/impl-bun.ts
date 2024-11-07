@@ -2,22 +2,22 @@ import type { Server, WebSocketHandler } from 'bun'
 import { Posix, PubSub } from 'gamezilla-app/@/core'
 import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import { getIpAddress } from './ip-address'
-import { ServerEvent, type Handler, type IServer } from './server'
+import { WebServerEvent, type Handler, type IWebServer } from './server'
 
 export type Config = {
   t: 'bun'
   logger: ILogger
 }
 
-export const ServerBun = <T>(config: Config) => {
+export const WebServerBun = <T>(config: Config) => {
   const logger = Logger.prefix('bun', config.logger)
   const handlers: Handler[] = []
   let webSocketHandler: WebSocketHandler<T>
   let server: Server
 
-  const events: PubSub<ServerEvent> = PubSub.create()
+  const events: PubSub<WebServerEvent> = PubSub.create()
 
-  const base: IServer = {
+  const base: IWebServer = {
     events,
     async start(port) {
       server = Bun.serve({
@@ -38,7 +38,7 @@ export const ServerBun = <T>(config: Config) => {
       })
 
       events.pub({
-        t: 'server/started',
+        t: 'web-server/started',
         ipAddress: getIpAddress(),
         port,
         startedAt: Posix.now()
@@ -63,4 +63,4 @@ export const ServerBun = <T>(config: Config) => {
   } as const
 }
 
-export type ServerBun = ReturnType<typeof ServerBun>
+export type WebServerBun = ReturnType<typeof WebServerBun>

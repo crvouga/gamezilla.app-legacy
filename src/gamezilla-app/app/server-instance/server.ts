@@ -20,7 +20,7 @@ export const update: ServerModule['update'] = async (input) => {
   switch (input.msg?.t) {
     case 'got-server-event': {
       switch (input.msg.c.t) {
-        case 'server/started': {
+        case 'web-server/started': {
           const serverInstanceNew: ServerInstance = {
             ipAddress: input.msg.c.ipAddress,
             lastHeartbeatAt: input.msg.c.startedAt,
@@ -37,7 +37,7 @@ export const update: ServerModule['update'] = async (input) => {
           return {}
         }
 
-        case 'server/stopping': {
+        case 'web-server/stopping': {
           return updateServerStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
         }
       }

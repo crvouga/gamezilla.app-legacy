@@ -43,34 +43,39 @@ export type Deps = {
   stored: Record<string, unknown>
 }
 
-export const initDeps = async ({
-  serverUrl,
-  codebaseVersionId,
-  serverImpl
-}: {
+export const initDeps = async (input: {
   serverImpl: ServerImpl
   serverUrl: string
   codebaseVersionId: string
 }): Promise<Deps> => {
-  const transport = await ClientTransport<MsgToServer, MsgToClient>({
-    impl:
-      serverImpl === 'node'
-        ? {
-            t: 'socket-io',
-            serverUrl
-          }
-        : {
-            t: 'web-sockets',
-            serverUrl
-          },
-    codebaseVersionId
-  })
+  const transport = await ClientTransport<MsgToServer, MsgToClient>(toClientTransportConfig(input))
 
   const stored = {}
 
   return {
     transport,
     stored
+  }
+}
+
+const toClientTransportConfig = (input: {
+  serverImpl: ServerImpl
+  codebaseVersionId: string
+  serverUrl: string
+}): Parameters<typeof ClientTransport>[0] => {
+  switch (input.serverImpl) {
+    case 'bun': {
+      return {
+        ...input,
+        t: 'standard-web-sockets'
+      }
+    }
+    case 'node': {
+      return {
+        ...input,
+        t: 'socket.io'
+      }
+    }
   }
 }
 

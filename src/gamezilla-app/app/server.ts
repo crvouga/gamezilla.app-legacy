@@ -2,7 +2,7 @@ import { pipe, Posix, sleep, Sub, TimeSpan } from 'gamezilla-app/@/core'
 import { Msg } from 'gamezilla-app/@/core/msg'
 import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
 import { Runtime } from 'gamezilla-app/@/runtime'
-import { IServer, Server } from 'gamezilla-app/@/server'
+import { IWebServer, WebServer } from 'gamezilla-app/@/web-server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from 'gamezilla-app/app/@/server'
 import { DATABASE_URL } from 'gamezilla-app/config-private'
 import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL } from 'gamezilla-app/config-public'
@@ -43,7 +43,7 @@ export type Ctx = AppServerCtx & {
   profile: ProfileServer.ServerCtx
   space: SpaceServer.ServerCtx
   auth: AuthTypes.ServerCtx
-  server: IServer
+  server: IWebServer
   serverInstance: ServerInstanceTypes.ServerCtx
 }
 
@@ -64,7 +64,7 @@ export const initCtx = async (): Promise<Ctx> => {
 
   const sms = SMS({ t: 'twilio', logger })
 
-  const server = Server({
+  const server = WebServer({
     logger,
     t: SERVER_IMPL
   })
@@ -77,14 +77,14 @@ export const initCtx = async (): Promise<Ctx> => {
           t: 'bun-server-web-sockets',
           dbConnSql,
           codebaseVersionId: CODEBASE_VERSION_ID,
-          server,
+          webServer: server,
           logger,
           pubSubTopicBased: pubSub
         }
       : {
           t: 'socket-io',
           codebaseVersionId: CODEBASE_VERSION_ID,
-          server,
+          webServer: server,
           logger
         }
   )

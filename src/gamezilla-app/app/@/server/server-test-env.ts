@@ -1,6 +1,6 @@
 import { Posix } from 'gamezilla-app/@/core'
 import { Runtime } from 'gamezilla-app/@/runtime'
-import { Server } from 'gamezilla-app/@/server'
+import { WebServer } from 'gamezilla-app/@/web-server'
 import { DATABASE_URL, REDIS_URL } from 'gamezilla-app/config-private'
 import { ClientId, SessionId } from '../data'
 import { DbConnKv, type IDbConnKv } from './db-conn-kv'
@@ -75,7 +75,7 @@ export const FixtureAppServer = async () => {
     pubSub: await PubSubTopicBased({ t: 'noop' }),
     profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) }),
     runtime: Runtime({ t: 'noop' }),
-    server: Server({ t: 'bun', logger }),
+    server: WebServer({ t: 'bun', logger }),
     serverInstanceId: ServerInstanceId.generate()
   }
   return {

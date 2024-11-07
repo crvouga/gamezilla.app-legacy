@@ -2,26 +2,26 @@ import { Posix, PubSub } from 'gamezilla-app/@/core'
 import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import * as http from 'node:http'
 import { getIpAddress } from './ip-address'
-import { ServerEvent, type Handler, type IServer } from './server'
+import { WebServerEvent, type Handler, type IWebServer } from './server'
 
 export type Config = {
   t: 'node'
   logger: ILogger
 }
 
-export const ServerNode = (config: Config) => {
+export const WebServerNode = (config: Config) => {
   const logger = Logger.prefix('node', config.logger)
   const httpServer = new http.Server()
   const handlers: Handler[] = []
-  const events: PubSub<ServerEvent> = PubSub.create()
+  const events: PubSub<WebServerEvent> = PubSub.create()
 
-  const base: IServer = {
+  const base: IWebServer = {
     events,
     async start(port) {
       try {
         await new Promise<void>((r) => httpServer.listen(port, r))
         events.pub({
-          t: 'server/started',
+          t: 'web-server/started',
           ipAddress: getIpAddress(),
           port,
           startedAt: Posix.now()
@@ -55,7 +55,7 @@ export const ServerNode = (config: Config) => {
   } as const
 }
 
-export type ServerNode = ReturnType<typeof ServerNode>
+export type WebServerNode = ReturnType<typeof WebServerNode>
 
 async function incomingMessageToFetchRequest(incomingMessage: http.IncomingMessage): Promise<Request> {
   const url = `${incomingMessage.headers['host']}${incomingMessage.url}`
