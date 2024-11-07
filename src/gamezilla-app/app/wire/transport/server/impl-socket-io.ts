@@ -1,4 +1,4 @@
-import { HttpResponse } from 'gamezilla-app/@/server'
+import { parseCookies } from 'gamezilla-app/@/server/cookies'
 import type { ServerNode } from 'gamezilla-app/@/server/impl-node'
 import { SessionId, type ClientId } from 'gamezilla-app/app/@/data'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
@@ -39,38 +39,34 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   })
 
   config.server.registerHandler(async (request) => {
-    if (request.pathname !== '/set-session-cookie') {
+    const url = new URL(request.url)
+    if (url.pathname !== '/set-session-cookie') {
       return null
     }
-    const origin = Array.isArray(ORIGINS) ? ORIGINS.join(', ') : request.headers.origin ?? '*'
-    const maybeSessionId = request.cookies[SESSION_ID_COOKIE_NAME]
+    const origin = Array.isArray(ORIGINS) ? ORIGINS.join(', ') : request.headers.get('Origin') ?? '*'
+    const cookies = parseCookies(request)
+    const maybeSessionId = cookies[SESSION_ID_COOKIE_NAME]
     const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate()
 
-    const headersBase = {
-      'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Allow-Credentials': 'true',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none';"
+    const headersBase = [
+      ['Access-Control-Allow-Origin', origin],
+      ['Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'],
+      ['Access-Control-Allow-Headers', 'Content-Type'],
+      ['Access-Control-Allow-Credentials', 'true'],
+      ['Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'],
+      ['Content-Security-Policy', "default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none';"]
+    ] as const
+
+    const res = new Response('Ok', {
+      status: 200
+    })
+
+    for (const [key, value] of headersBase) {
+      res.headers.append(key, value)
     }
 
-    if (sessionId === maybeSessionId) {
-      const res: HttpResponse = {
-        status: 200,
-        headers: headersBase,
-        body: 'OK'
-      }
-      return res
-    }
-
-    const res: HttpResponse = {
-      status: 200,
-      headers: {
-        ...headersBase,
-        'Set-Cookie': toSetSessionCookie(sessionId)
-      },
-      body: 'OK'
+    if (sessionId !== maybeSessionId) {
+      res.headers.append('Set-Cookie', toSetSessionCookie(sessionId))
     }
 
     return res

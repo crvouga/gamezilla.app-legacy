@@ -168,7 +168,9 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     }
   }
 
-  config.server._registerFetchHandler(onRequest)
+  config.server.registerHandler((request, maybeServer) => {
+    return onRequest(request, maybeServer as Server)
+  })
   config.server._setWebSocketHandler(websocket)
 
   transport.wire.pub({

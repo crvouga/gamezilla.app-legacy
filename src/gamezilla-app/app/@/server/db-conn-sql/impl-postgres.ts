@@ -10,7 +10,7 @@ export type Config = {
   t: 'postgres'
   databaseUrl: string
   logger: ILogger
-  simulateLatency: Sleep
+  simulateLatency?: Sleep
 }
 
 let client: postgres.Sql<{}>
@@ -35,7 +35,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       try {
         const start = process.hrtime.bigint()
 
-        await config.simulateLatency()
+        await config.simulateLatency?.()
 
         const rows = await client.unsafe(sql)
 
