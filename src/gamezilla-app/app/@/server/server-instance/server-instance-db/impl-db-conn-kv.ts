@@ -49,10 +49,14 @@ export const ServerInstanceDb = (config: Config): IServerInstanceDb => {
   }
   const listAlive: IServerInstanceDb['listAlive'] = async (input) => {
     const listed = unwrapOr(await list(), [])
-    const alive = listed.filter((serverInstance) => {
-      const heartrate = Posix.diff(serverInstance.lastHeartbeatAt, Posix.now())
-      return TimeSpan.lte(heartrate, input.minimalHeartrate)
-    })
+    const alive = listed
+      .filter((serverInstance) => {
+        const heartRate = Posix.diff(serverInstance.lastHeartbeatAt, Posix.now())
+        return TimeSpan.lte(heartRate, input.minimalHeartRate)
+      })
+      .filter((serverInstance) => {
+        return serverInstance.stoppedAt === null
+      })
     return Ok(alive)
   }
   return {

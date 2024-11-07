@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
   })
 
   test('list alive', async () => {
-    const MINIMAL_HEARTRATE = TimeSpan.minutes(1.5)
+    const MINIMAL_HEART_RATE = TimeSpan.minutes(1.5)
     for (const f of await Fixtures()) {
       const before = await f.serverInstanceDb.list()
 
@@ -74,13 +74,13 @@ describe(import.meta.file, () => {
         await f.serverInstanceDb.put(
           ServerInstance.random({
             startedAt: Posix.past(Posix.now(), TimeSpan.hours(1)),
-            lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.add(MINIMAL_HEARTRATE, TimeSpan.minutes(1)))
+            lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.add(MINIMAL_HEART_RATE, TimeSpan.minutes(1)))
           })
         )
       }
 
       const after = await f.serverInstanceDb.listAlive({
-        minimalHeartrate: MINIMAL_HEARTRATE
+        minimalHeartRate: MINIMAL_HEART_RATE
       })
       expect(before).toEqual(Ok([]))
       expect(after).toEqual(Ok(expected))

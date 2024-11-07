@@ -32,12 +32,12 @@ export const initCtx = async (config: { logger: ILogger }): Promise<Ctx> => {
   }
 }
 
-const MINIMAL_HEARTRATE = TimeSpan.minutes(1.5)
+const MINIMAL_HEART_RATE = TimeSpan.minutes(1.5)
 
 export const respond = async (ctx: Ctx, request: Request): Promise<Response> => {
   ctx.logger.info(`${request.method} ${request.url}`)
 
-  const alive = unwrapOr(await ctx.serverInstanceDb.listAlive({ minimalHeartrate: MINIMAL_HEARTRATE }), [])
+  const alive = unwrapOr(await ctx.serverInstanceDb.listAlive({ minimalHeartRate: MINIMAL_HEART_RATE }), [])
 
   if (!NonEmpty.is(alive)) {
     return new Response('No servers available', {

@@ -6,5 +6,5 @@ export type IServerInstanceDb = {
   get: (serverId: ServerInstanceId) => Promise<Result<string, ServerInstance | null>>
   put: (serverInstance: ServerInstance) => Promise<Result<string, null>>
   list: () => Promise<Result<string, ServerInstance[]>>
-  listAlive: (input: { minimalHeartrate: TimeSpan }) => Promise<Result<string, ServerInstance[]>>
+  listAlive: (input: { minimalHeartRate: TimeSpan }) => Promise<Result<string, ServerInstance[]>>
 }
