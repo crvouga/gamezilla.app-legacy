@@ -1,3 +1,4 @@
+import { assert } from '@/assert'
 import { CappedOrderedDict } from '@/capped-ordered-dict/capped-ordered-dict'
 import { ascend, eq } from '@/core'
 import { p } from '@/core/parser'
@@ -84,6 +85,8 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
   for (let i = model.events.length - 1; i >= 0; i--) {
     const event = model.events[i]
 
+    assert(event, 'Event should not be null')
+
     if (!event) {
       continue
     }
@@ -116,6 +119,8 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
 const toLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TState>): TState => {
   for (let i = model.events.length - 1; i >= 0; i--) {
     const event = model.events[i]
+
+    assert(event, 'Event should not be null')
 
     if (!event) {
       continue
@@ -173,7 +178,7 @@ const appendEvent = <TEvent, TState>(
   const newEventIndex = newEvents.findIndex((e) => e.eventId === event.eventId)
 
   if (newEventIndex === -1) {
-    // This should never happen because we just appended the event
+    assert(false, 'Event should be found because it was just appended')
     return model
   }
 
@@ -233,6 +238,7 @@ const toState = <TEvent, TState>(
     const event = model.events[i]
 
     if (!event) {
+      assert(false, 'Event should not be null')
       continue
     }
 
