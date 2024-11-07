@@ -15,7 +15,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 > => {
   const logger = Logger.prefix('server-transport', config.logger)
   switch (config.t) {
-    case 'bun-server-web-sockets': {
+    case 'bun-web-sockets': {
       return ImplBunWebSockets.ServerTransport({ ...config, logger })
     }
 

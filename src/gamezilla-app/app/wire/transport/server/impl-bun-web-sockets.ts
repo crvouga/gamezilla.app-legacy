@@ -19,7 +19,7 @@ type ServerWebSocketData = {
 }
 
 export type Config = {
-  t: 'bun-server-web-sockets'
+  t: 'bun-web-sockets'
   codebaseVersionId: string
   webServer: WebServerBun
   dbConnSql: IDbConnSql

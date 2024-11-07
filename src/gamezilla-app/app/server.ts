@@ -74,7 +74,7 @@ export const initCtx = async (): Promise<Ctx> => {
   const transport = await ServerTransport<MsgToServer, MsgToClient>(
     server.t === 'bun'
       ? {
-          t: 'bun-server-web-sockets',
+          t: 'bun-web-sockets',
           dbConnSql,
           codebaseVersionId: CODEBASE_VERSION_ID,
           webServer: server,
