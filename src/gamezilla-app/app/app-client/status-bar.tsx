@@ -1,4 +1,4 @@
-import type { VDom } from 'gamezilla-app/@/vdom'
+import type { VDom } from '@/vdom'
 import { APP_SOUND, playSound, type AppClientCmd, type StatusBarCmd } from '../@/client'
 import { Drawer } from '../@/ui'
 

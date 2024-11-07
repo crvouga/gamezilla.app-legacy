@@ -1,5 +1,5 @@
-import { type Eff, type Result, exhaustive, isErr } from 'gamezilla-app/@/core'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import { type Eff, type Result, exhaustive, isErr } from '@/core'
+import { Translator } from '@/l18n/generated'
 import type { RouteCmd } from 'gamezilla-app/app/@/client'
 import { AlertError, AlertSuccess, Button, TextField, TopBar } from 'gamezilla-app/app/@/ui'
 

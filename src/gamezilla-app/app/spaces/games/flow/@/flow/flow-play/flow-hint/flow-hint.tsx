@@ -1,5 +1,5 @@
-import { Eff, eq, Err, Result } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Eff, eq, Err, Result } from '@/core'
+import { p } from '@/core/parser'
 import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { IconLightbulb } from 'gamezilla-app/app/@/ui'
 import type { ActionInput } from 'gamezilla-app/app/@/ui/actions'

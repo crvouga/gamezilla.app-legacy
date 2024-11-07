@@ -1,4 +1,4 @@
-import type { Translations } from 'gamezilla-app/@/l18n'
+import type { Translations } from '@/l18n'
 
 export type Text = {
   'space-card.live': string

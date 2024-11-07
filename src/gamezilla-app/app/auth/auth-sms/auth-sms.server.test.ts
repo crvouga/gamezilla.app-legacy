@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, PhoneNumber, Result } from 'gamezilla-app/@/core'
+import { Ok, PhoneNumber, Result } from '@/core'
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'

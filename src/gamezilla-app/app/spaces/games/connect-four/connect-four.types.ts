@@ -1,9 +1,9 @@
-import type { WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import type { WithEventMeta } from '@/event-sourced/event'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import { UserId } from 'gamezilla-app/app/@/data'
 import * as VsBot from './vs-bot/vs-bot.types'
 import * as VsUser from './vs-user/vs-user.types'
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { GameMainMenu } from '../@/game/game-main-menu'
 
 //

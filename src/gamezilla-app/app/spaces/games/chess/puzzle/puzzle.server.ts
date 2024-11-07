@@ -1,5 +1,5 @@
-import { type Eff, Err, Ok, Result, Sub, Time, andThen, eq, pipe } from 'gamezilla-app/@/core'
-import { TimeSpan } from 'gamezilla-app/@/core/time-span'
+import { type Eff, Err, Ok, Result, Sub, Time, andThen, eq, pipe } from '@/core'
+import { TimeSpan } from '@/core/time-span'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 

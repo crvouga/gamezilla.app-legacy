@@ -1,5 +1,5 @@
-import { Err, Ok, PhoneNumber, isErr } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Err, Ok, PhoneNumber, isErr } from '@/core'
+import { p } from '@/core/parser'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } from 'gamezilla-app/config-private'
 import type { IVerifySMS } from '../../verify-sms'

@@ -1,5 +1,5 @@
-import { Posix } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Posix } from '@/core'
+import { p } from '@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { Flow } from '../flow/flow'
 import { FlowAlgoSolve } from '../flow/flow-algo/flow-algo-solve'

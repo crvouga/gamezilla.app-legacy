@@ -1,7 +1,7 @@
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { IconRobot, Avatar, Transition, cn, Typography } from 'gamezilla-app/app/@/ui'
 import type { PlayerType, VsBotInput } from '../vs-bot'
-import type { VDom, VDomChildren } from 'gamezilla-app/@/vdom'
+import type { VDom, VDomChildren } from '@/vdom'
 import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'
 
 //

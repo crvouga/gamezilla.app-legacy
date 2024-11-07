@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { VerificationAttempt } from '../verification-attempt'
 import { VerificationAttemptDb } from './verification-attempt-db-impl'
-import { unwrap } from 'gamezilla-app/@/core'
+import { unwrap } from '@/core'
 import { VerificationId } from '../../verification/verification-id'
 
 const Fixture = async () => {

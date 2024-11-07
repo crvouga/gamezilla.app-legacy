@@ -1,5 +1,5 @@
 import { ActionButton, IconArrowLeftOnRect } from 'gamezilla-app/app/@/ui'
-import { Eff, Keyboard, Sub, pipe } from 'gamezilla-app/@/core'
+import { Eff, Keyboard, Sub, pipe } from '@/core'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
 import {

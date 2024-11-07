@@ -1,4 +1,4 @@
-import { PubSub } from 'gamezilla-app/@/core/sub'
+import { PubSub } from '@/core/sub'
 import type { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 
 export type ServerTransportMsg =

@@ -7,7 +7,7 @@ import {
   type UserId,
   type Username
 } from 'gamezilla-app/app/@/data'
-import type { RemoteResult, Result } from 'gamezilla-app/@/core'
+import type { RemoteResult, Result } from '@/core'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
 //
 //

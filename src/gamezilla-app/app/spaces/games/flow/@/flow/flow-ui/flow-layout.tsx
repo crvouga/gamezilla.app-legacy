@@ -1,4 +1,4 @@
-import { VDomChildren } from 'gamezilla-app/@/vdom'
+import { VDomChildren } from '@/vdom'
 
 export const FlowLayout = (input: { top: VDomChildren; middle: VDomChildren; bottom: VDomChildren }) => {
   return (

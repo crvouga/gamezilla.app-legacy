@@ -1,5 +1,5 @@
-import { Browser, Eff } from 'gamezilla-app/@/core'
-import type { Route } from 'gamezilla-app/@/routing/generated/routes'
+import { Browser, Eff } from '@/core'
+import type { Route } from '@/routing/generated/routes'
 import { APP_SOUND, playSound, type ClientEvt, type RouteCmd, type SoundCmd } from 'gamezilla-app/app/@/client'
 
 //

@@ -1,6 +1,6 @@
-import { TranslatedText } from 'gamezilla-app/@/l18n'
-import type { Translator } from 'gamezilla-app/@/l18n/generated'
-import type { VDom, VDomChildren } from 'gamezilla-app/@/vdom'
+import { TranslatedText } from '@/l18n'
+import type { Translator } from '@/l18n/generated'
+import type { VDom, VDomChildren } from '@/vdom'
 import {
   Drawer,
   IconArrowCircle,

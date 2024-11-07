@@ -1,4 +1,4 @@
-import { Ok } from 'gamezilla-app/@/core'
+import { Ok } from '@/core'
 import type { ISMS } from './sms'
 
 export const smsNoop: ISMS = {

@@ -1,13 +1,13 @@
-import { Err, Ok, Result, TimeSpan, isErr, pipe, unwrapOr } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
-import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
+import { Err, Ok, Result, TimeSpan, isErr, pipe, unwrapOr } from '@/core'
+import { p } from '@/core/parser'
+import { LRUCache } from '@/least-recently-used-cache'
 import { SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv, type IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import * as SpaceCore from '../space-core'
 import type { ISpacesCoreServer } from './interface'
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
-import { IRuntime } from 'gamezilla-app/@/runtime'
+import { EventSourced } from '@/event-sourced'
+import { IRuntime } from '@/runtime'
 
 export type Config = {
   t: 'db-conn-kv'

@@ -1,4 +1,4 @@
-import { Err, Ok, PhoneNumber } from 'gamezilla-app/@/core'
+import { Err, Ok, PhoneNumber } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import type { IUserAccountDb } from './interface'

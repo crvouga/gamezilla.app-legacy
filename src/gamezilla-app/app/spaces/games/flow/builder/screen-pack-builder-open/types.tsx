@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { FlowPack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
 import { UserId } from 'gamezilla-app/app/@/data'

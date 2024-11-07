@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, Posix, TimeSpan, ascend, descend, unwrap } from 'gamezilla-app/@/core'
+import { Ok, Posix, TimeSpan, ascend, descend, unwrap } from '@/core'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { Verification } from '../verification'
 import { VerificationDb } from './impl'

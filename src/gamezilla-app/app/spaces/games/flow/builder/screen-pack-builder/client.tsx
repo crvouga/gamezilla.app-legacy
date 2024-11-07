@@ -1,4 +1,4 @@
-import { Eff, Sub } from 'gamezilla-app/@/core'
+import { Eff, Sub } from '@/core'
 import { APP_SOUND, playSound, showToast } from 'gamezilla-app/app/@/client'
 import {
   Button,

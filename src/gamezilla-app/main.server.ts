@@ -1,4 +1,4 @@
-import { ProgramImpure } from 'gamezilla-app/@/core/program-impure'
+import { ProgramImpure } from '@/core/program-impure'
 import * as AppServer from 'gamezilla-app/app/server'
 import { MsgServer } from 'gamezilla-app/app/types'
 import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, SERVER_PORT, TRANSPORT_IMPL } from 'gamezilla-app/config-public'

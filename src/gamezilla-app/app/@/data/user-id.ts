@@ -1,6 +1,6 @@
-import { Uuid } from 'gamezilla-app/@/core'
-import type { Brand } from 'gamezilla-app/@/core/brand'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Uuid } from '@/core'
+import type { Brand } from '@/core/brand'
+import { p } from '@/core/parser'
 
 export type UserId = Brand<string, 'UserId'>
 

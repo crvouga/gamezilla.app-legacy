@@ -1,4 +1,4 @@
-import type { Result } from 'gamezilla-app/@/core'
+import type { Result } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type { ProfileCore } from '../types'
 

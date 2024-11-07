@@ -1,4 +1,4 @@
-import type { VDom } from 'gamezilla-app/@/vdom'
+import type { VDom } from '@/vdom'
 import {
   IconBotCute,
   IconBotLevel1,

@@ -1,5 +1,5 @@
-import { RemoteResult, type RequestResponse } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { RemoteResult, type RequestResponse } from '@/core'
+import { p } from '@/core/parser'
 import type { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import type { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import type { SpaceClientCmd } from 'gamezilla-app/app/spaces/@/space-client-cmd'

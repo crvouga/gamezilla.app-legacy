@@ -3,7 +3,7 @@
 //
 //
 
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { GameMainMenu } from '../../../@/game/game-main-menu'
 

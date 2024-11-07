@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Posix, RequestResponse, TimeSpan } from 'gamezilla-app/@/core'
+import { Posix, RequestResponse, TimeSpan } from '@/core'
 import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowPuzzle } from '../../puzzle/puzzle'

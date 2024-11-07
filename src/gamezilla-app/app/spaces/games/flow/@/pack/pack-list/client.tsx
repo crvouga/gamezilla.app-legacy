@@ -1,4 +1,4 @@
-import { NotAsked, Posix, RequestResponse, Result, TimeSpan, descend, isErr } from 'gamezilla-app/@/core'
+import { NotAsked, Posix, RequestResponse, Result, TimeSpan, descend, isErr } from '@/core'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { IconBox, Spinner, cn } from 'gamezilla-app/app/@/ui'

@@ -1,5 +1,5 @@
-import { Sub, Time, type Eff } from 'gamezilla-app/@/core'
-import { TimeSpan } from 'gamezilla-app/@/core/time-span'
+import { Sub, Time, type Eff } from '@/core'
+import { TimeSpan } from '@/core/time-span'
 
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import * as Board from '../@/chess/chess-core'

@@ -1,5 +1,5 @@
-import type { Posix } from 'gamezilla-app/@/core'
-import type { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
+import type { Posix } from '@/core'
+import type { LanguageCodeISO_639_1 } from '@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
 import { AppClientModule } from '../@/architecture/app-client'
 import { AppServerModule } from '../@/architecture/app-server'
 import { AnonymousClientCtx, AppClientCmd, ClientEvt } from '../@/client'

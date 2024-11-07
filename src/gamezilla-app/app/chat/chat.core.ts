@@ -1,4 +1,4 @@
-import type { Browser, Eff, RemoteResult, Result } from 'gamezilla-app/@/core'
+import type { Browser, Eff, RemoteResult, Result } from '@/core'
 import type { ChatId } from './chat-id'
 import type { ChatMessageId } from './chat-message-id'
 import type { ChatUserJoinId } from './chat-user-join-id'

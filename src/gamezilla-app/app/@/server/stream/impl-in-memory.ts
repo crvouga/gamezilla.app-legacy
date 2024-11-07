@@ -1,4 +1,4 @@
-import { Parser } from 'gamezilla-app/@/core/parser/parser'
+import { Parser } from '@/core/parser/parser'
 import { DbConnKv } from '../db-conn-kv'
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import { IStream } from './interface'

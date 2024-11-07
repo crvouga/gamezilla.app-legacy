@@ -1,4 +1,4 @@
-import { Err, type NonEmpty, Ok, type Posix, type RemoteResult, type Result } from 'gamezilla-app/@/core'
+import { Err, type NonEmpty, Ok, type Posix, type RemoteResult, type Result } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import { Chess } from '../@/chess'

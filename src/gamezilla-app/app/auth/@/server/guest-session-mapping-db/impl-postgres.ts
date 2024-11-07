@@ -1,7 +1,7 @@
-import { Ok, Posix, isErr } from 'gamezilla-app/@/core'
+import { Ok, Posix, isErr } from '@/core'
 import { IGuestSessionMappingDb } from './interface'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 
 export const Row = p.obj({

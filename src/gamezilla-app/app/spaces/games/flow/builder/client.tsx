@@ -1,4 +1,4 @@
-import { Sub } from 'gamezilla-app/@/core'
+import { Sub } from '@/core'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { ScreenMainMenuClient } from './screen-main-menu/client'

@@ -1,4 +1,4 @@
-import type { PhoneNumber, Task } from 'gamezilla-app/@/core'
+import type { PhoneNumber, Task } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 

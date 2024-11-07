@@ -1,8 +1,8 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Ok, unwrap } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
-import { EventMeta, withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { Ok, unwrap } from '@/core'
+import { p } from '@/core/parser'
+import { EventSourced } from '@/event-sourced'
+import { EventMeta, withEventId } from '@/event-sourced/event'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
@@ -10,7 +10,7 @@ import { Stream } from 'gamezilla-app/app/@/server/stream/impl'
 import * as SpaceCore from '../space-core'
 import { SpaceEvent } from '../space-event'
 import { Config, SpacesCoreServer } from './impl'
-import { Runtime } from 'gamezilla-app/@/runtime'
+import { Runtime } from '@/runtime'
 
 const Fixture = async (config: Config) => {
   const spacesCoreServer = await SpacesCoreServer(config)

@@ -1,5 +1,5 @@
-import { p } from 'gamezilla-app/@/core/parser'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import { p } from '@/core/parser'
+import { Translator } from '@/l18n/generated'
 import { IconXMark, Slider } from 'gamezilla-app/app/@/ui'
 
 export const Model = p.obj({

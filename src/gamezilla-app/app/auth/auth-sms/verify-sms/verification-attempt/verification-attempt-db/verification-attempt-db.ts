@@ -1,4 +1,4 @@
-import type { Task } from 'gamezilla-app/@/core'
+import type { Task } from '@/core'
 import type { VerificationId } from '../../verification/verification-id'
 import type { VerificationAttempt } from '../verification-attempt'
 

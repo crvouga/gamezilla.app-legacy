@@ -1,4 +1,4 @@
-import { Err } from 'gamezilla-app/@/core'
+import { Err } from '@/core'
 import type { IVerificationDb } from './interface'
 
 export type Config = {

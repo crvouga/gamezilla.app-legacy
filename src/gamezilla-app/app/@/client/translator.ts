@@ -1,6 +1,6 @@
-import { PubSub } from 'gamezilla-app/@/core'
-import type { LanguageCodeISO_639_1, TranslatedText } from 'gamezilla-app/@/l18n'
-import { loadTranslator, type Translator } from 'gamezilla-app/@/l18n/generated'
+import { PubSub } from '@/core'
+import type { LanguageCodeISO_639_1, TranslatedText } from '@/l18n'
+import { loadTranslator, type Translator } from '@/l18n/generated'
 
 const state: {
   lastLoaded: LanguageCodeISO_639_1 | null

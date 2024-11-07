@@ -3,7 +3,7 @@ import { ServerModule } from '../types'
 import { ScreenPlayPuzzleCore } from './core'
 import { MsgCoreEvt } from './types'
 import { UserActivity } from '../@/user-activity/user-activity'
-import { Posix } from 'gamezilla-app/@/core'
+import { Posix } from '@/core'
 import { FlowPuzzleId } from '../../@/puzzle/puzzle-id'
 
 const update: ServerModule['update'] = async (input) => {

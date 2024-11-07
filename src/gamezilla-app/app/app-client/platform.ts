@@ -1,4 +1,4 @@
-import { Browser, type Eff, type Sub, Time } from 'gamezilla-app/@/core'
+import { Browser, type Eff, type Sub, Time } from '@/core'
 import type { PlatformCmd } from '../@/client'
 
 export type Model = {

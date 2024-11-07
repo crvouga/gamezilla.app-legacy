@@ -1,4 +1,4 @@
-import { Posix, RequestResponse } from 'gamezilla-app/@/core'
+import { Posix, RequestResponse } from '@/core'
 import { Username } from 'gamezilla-app/app/@/data'
 
 export type ModelClient = {

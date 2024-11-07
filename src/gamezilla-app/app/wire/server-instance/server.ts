@@ -1,4 +1,4 @@
-import { Posix, Sub, Time, unwrapOr } from 'gamezilla-app/@/core'
+import { Posix, Sub, Time, unwrapOr } from '@/core'
 import { AppServerCtx } from 'gamezilla-app/app/@/server'
 import { ServerInstance } from 'gamezilla-app/app/@/server/server-instance/server-instance'
 import { ServerInstanceDb } from 'gamezilla-app/app/@/server/server-instance/server-instance-db'

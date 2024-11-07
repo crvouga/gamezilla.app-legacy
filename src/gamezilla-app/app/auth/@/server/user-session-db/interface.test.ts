@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { unwrap } from 'gamezilla-app/@/core'
+import { unwrap } from '@/core'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { PubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'

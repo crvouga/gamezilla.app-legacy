@@ -1,4 +1,4 @@
-import { Posix, PubSub } from 'gamezilla-app/@/core'
+import { Posix, PubSub } from '@/core'
 import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import * as http from 'node:http'
 import { getIpAddress } from './ip-address'

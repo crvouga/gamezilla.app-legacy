@@ -1,4 +1,4 @@
-import { pipe } from 'gamezilla-app/@/core'
+import { pipe } from '@/core'
 import { FlowGridShorthand, FlowGridUI } from './flow/flow-variant/flow-grid'
 
 const grid1 = pipe(

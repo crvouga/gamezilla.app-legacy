@@ -1,4 +1,4 @@
-import { RequestResponse } from 'gamezilla-app/@/core'
+import { RequestResponse } from '@/core'
 import {
   AnonymousClientCtx,
   AppClientCmd,

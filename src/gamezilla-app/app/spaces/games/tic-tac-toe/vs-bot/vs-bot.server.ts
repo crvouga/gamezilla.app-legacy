@@ -1,4 +1,4 @@
-import { Err, Ok, Sub, andThen, pipe, type Eff } from 'gamezilla-app/@/core'
+import { Err, Ok, Sub, andThen, pipe, type Eff } from '@/core'
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { TicTacToe } from '../@/tic-tic-toe'
 import {

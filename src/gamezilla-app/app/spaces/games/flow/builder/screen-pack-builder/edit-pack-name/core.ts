@@ -1,4 +1,4 @@
-import { isErr, Loading, NotAsked } from 'gamezilla-app/@/core'
+import { isErr, Loading, NotAsked } from '@/core'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import { FlowPack } from '../../../@/pack/pack'
 import { FlowPackName } from '../../../@/pack/pack-name'

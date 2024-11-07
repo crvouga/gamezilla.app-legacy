@@ -1,4 +1,4 @@
-import type { PhoneNumber, Posix, Task } from 'gamezilla-app/@/core'
+import type { PhoneNumber, Posix, Task } from '@/core'
 import type { Paginated } from 'gamezilla-app/app/@/data'
 import type { Verification, VerificationId } from '..'
 

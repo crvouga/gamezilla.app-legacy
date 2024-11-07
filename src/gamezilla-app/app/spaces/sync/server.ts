@@ -1,5 +1,5 @@
-import { unwrapOr } from 'gamezilla-app/@/core'
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { unwrapOr } from '@/core'
+import { EventSourced } from '@/event-sourced'
 import { AppServerCtx, broadcast, sendToClient, sendToUser } from 'gamezilla-app/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceCore, SpaceCoreState } from '../core'

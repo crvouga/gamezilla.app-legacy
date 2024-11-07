@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, Posix, RequestResponse, TimeSpan, isRequesting } from 'gamezilla-app/@/core'
+import { Err, Ok, Posix, RequestResponse, TimeSpan, isRequesting } from '@/core'
 import { andThen } from 'gamezilla-app/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { testSpaceClientCtx } from '../../../../@/testing/client'

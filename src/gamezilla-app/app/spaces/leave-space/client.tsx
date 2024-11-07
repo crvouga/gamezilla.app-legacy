@@ -1,4 +1,4 @@
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { withEventId } from '@/event-sourced/event'
 import { APP_SOUND, playSound, pushRoute, showToast } from 'gamezilla-app/app/@/client'
 import { Button } from 'gamezilla-app/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'

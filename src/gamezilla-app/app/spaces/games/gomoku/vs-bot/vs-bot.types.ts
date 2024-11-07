@@ -1,5 +1,5 @@
 import type { UserId } from 'gamezilla-app/app/@/data'
-import { Err, Ok, type Result } from 'gamezilla-app/@/core'
+import { Err, Ok, type Result } from '@/core'
 import {
   type Board,
   type BotLevel,

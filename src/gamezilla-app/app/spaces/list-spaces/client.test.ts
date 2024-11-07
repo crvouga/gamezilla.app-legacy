@@ -1,14 +1,14 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk, pipe } from 'gamezilla-app/@/core'
-import type { Route } from 'gamezilla-app/@/routing/generated/routes'
+import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk, pipe } from '@/core'
+import type { Route } from '@/routing/generated/routes'
 import { APP_SOUND, didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from 'gamezilla-app/app/@/ui'
 import { FixtureSpaceClient } from '../@/fixture/client'
 import { SpaceCore } from '../core'
 import * as SpaceClient from '../client'
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { EventSourced } from '@/event-sourced'
+import { withEventId } from '@/event-sourced/event'
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureSpaceClient(input)

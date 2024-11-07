@@ -1,7 +1,7 @@
-import { Eff, type Sub } from 'gamezilla-app/@/core'
-import { Msg } from 'gamezilla-app/@/core/msg'
-import type { VDom } from 'gamezilla-app/@/vdom'
-import { WithEventId } from 'gamezilla-app/@/event-sourced/event'
+import { Eff, type Sub } from '@/core'
+import { Msg } from '@/core/msg'
+import type { VDom } from '@/vdom'
+import { WithEventId } from '@/event-sourced/event'
 
 //
 //

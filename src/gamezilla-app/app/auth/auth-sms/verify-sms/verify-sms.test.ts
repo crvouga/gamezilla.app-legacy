@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { PhoneNumber, isErr, unwrap } from 'gamezilla-app/@/core'
+import { PhoneNumber, isErr, unwrap } from '@/core'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { Config, VerifySMS } from './verify-sms-impl'

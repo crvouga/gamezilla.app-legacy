@@ -1,5 +1,5 @@
-import { Err, Ok, Sleep, TimeSpan, isErr } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Err, Ok, Sleep, TimeSpan, isErr } from '@/core'
+import { p } from '@/core/parser'
 import { Redis } from 'ioredis'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../with-duration'

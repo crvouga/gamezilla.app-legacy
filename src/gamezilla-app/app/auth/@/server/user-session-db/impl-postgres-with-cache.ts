@@ -1,5 +1,5 @@
-import { pipe } from 'gamezilla-app/@/core'
-import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
+import { pipe } from '@/core'
+import { LRUCache } from '@/least-recently-used-cache'
 import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'

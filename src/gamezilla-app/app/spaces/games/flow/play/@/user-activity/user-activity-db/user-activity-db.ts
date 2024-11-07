@@ -1,4 +1,4 @@
-import { Result } from 'gamezilla-app/@/core'
+import { Result } from '@/core'
 import { UserActivity } from '../user-activity'
 
 export type IUserActivityDb = {

@@ -1,4 +1,4 @@
-import { Polymorphic } from 'gamezilla-app/@/polymorphism/polymorphic-function'
+import { Polymorphic } from '@/polymorphism/polymorphic-function'
 
 export type ShotRule = { t: 'hitting-streak' } | { t: 'chain-fire' } | { t: 'count'; count: 1 | 2 | 3 | 4 | 5 | 6 }
 

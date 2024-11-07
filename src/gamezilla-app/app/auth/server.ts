@@ -1,4 +1,4 @@
-import { Sub, isErr, isOk } from 'gamezilla-app/@/core'
+import { Sub, isErr, isOk } from '@/core'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import type { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { ServerCmd, AppServerCtx, sendToClient } from 'gamezilla-app/app/@/server'

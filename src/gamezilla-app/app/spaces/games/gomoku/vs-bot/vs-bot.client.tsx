@@ -1,5 +1,5 @@
 import type { AppClientCtx } from 'gamezilla-app/app/@/client'
-import { Eff, Sub, isErr } from 'gamezilla-app/@/core'
+import { Eff, Sub, isErr } from '@/core'
 import {
   type ModelClient,
   type MsgClient,

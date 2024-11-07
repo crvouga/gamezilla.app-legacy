@@ -1,4 +1,4 @@
-import { Ok, NotAsked } from 'gamezilla-app/@/core'
+import { Ok, NotAsked } from '@/core'
 import { APP_SOUND, type BaseClientCtx, playSound, sendToServer, showToast } from 'gamezilla-app/app/@/client'
 import { ConfirmationDrawer } from 'gamezilla-app/app/@/ui'
 import type { ClientModule, ModelClient, MsgClient } from '../types'

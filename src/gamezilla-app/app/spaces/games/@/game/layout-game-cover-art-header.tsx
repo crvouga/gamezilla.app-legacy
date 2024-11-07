@@ -1,6 +1,6 @@
-import { TranslatedText } from 'gamezilla-app/@/l18n'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
-import type { VDom } from 'gamezilla-app/@/vdom'
+import { TranslatedText } from '@/l18n'
+import { Translator } from '@/l18n/generated'
+import type { VDom } from '@/vdom'
 import { cn, TopBar } from 'gamezilla-app/app/@/ui'
 
 export const LayoutGameCoverArtHeader = (input: {

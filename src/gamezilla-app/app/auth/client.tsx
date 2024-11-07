@@ -1,5 +1,5 @@
-import { Eff, NotAsked, Sub } from 'gamezilla-app/@/core'
-import { Msg } from 'gamezilla-app/@/core/msg'
+import { Eff, NotAsked, Sub } from '@/core'
+import { Msg } from '@/core/msg'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import {
   APP_SOUND,

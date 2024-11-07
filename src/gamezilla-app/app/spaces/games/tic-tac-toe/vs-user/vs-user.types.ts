@@ -1,4 +1,4 @@
-import { Result, isErr } from 'gamezilla-app/@/core'
+import { Result, isErr } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import * as TicTacToe from '../@/tic-tic-toe/tic-tac-toe'
 import * as Round from './vs-user-round'

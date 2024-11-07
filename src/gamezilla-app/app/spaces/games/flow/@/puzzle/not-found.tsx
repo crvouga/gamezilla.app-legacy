@@ -1,4 +1,4 @@
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import { Translator } from '@/l18n/generated'
 import { IconExclamationCircle, Typography } from 'gamezilla-app/app/@/ui'
 
 export const ViewPuzzleNotFound = (input: { ctx: { t: Translator } }) => {

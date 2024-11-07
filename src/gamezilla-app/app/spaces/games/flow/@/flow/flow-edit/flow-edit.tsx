@@ -1,6 +1,6 @@
-import { eq, memoize } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
-import { History } from 'gamezilla-app/@/history'
+import { eq, memoize } from '@/core'
+import { p } from '@/core/parser'
+import { History } from '@/history'
 import { APP_SOUND, AppClientCtx } from 'gamezilla-app/app/@/client'
 import {
   Button,

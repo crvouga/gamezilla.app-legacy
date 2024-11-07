@@ -1,5 +1,5 @@
-import { eq, memoize, pipe } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { eq, memoize, pipe } from '@/core'
+import { p } from '@/core/parser'
 import { FlowEdgeId } from './flow-edge-id'
 import { FlowGroupId } from './flow-group-id'
 import { FlowNodeId } from './flow-node-id'

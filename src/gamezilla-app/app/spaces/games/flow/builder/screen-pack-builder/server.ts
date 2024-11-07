@@ -1,4 +1,4 @@
-import { isErr } from 'gamezilla-app/@/core'
+import { isErr } from '@/core'
 import { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 

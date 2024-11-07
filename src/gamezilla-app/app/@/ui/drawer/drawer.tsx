@@ -1,4 +1,4 @@
-import type { VDom, VDomChildren } from 'gamezilla-app/@/vdom'
+import type { VDom, VDomChildren } from '@/vdom'
 import type { PrivateDrawerinput } from './drawer-shared'
 import { DrawerWebComponent } from './drawer-web-component'
 

@@ -1,7 +1,7 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
-import { Posix } from 'gamezilla-app/@/core'
+import { Posix } from '@/core'
 
 export const UserStartedPuzzle = p.obj({
   t: p.l('user-started-puzzle'),

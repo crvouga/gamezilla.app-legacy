@@ -1,6 +1,6 @@
-import { TimeSpan, type UnitInterval, eq } from 'gamezilla-app/@/core'
-import { TranslatedText } from 'gamezilla-app/@/l18n'
-import type { Route } from 'gamezilla-app/@/routing/generated/routes'
+import { TimeSpan, type UnitInterval, eq } from '@/core'
+import { TranslatedText } from '@/l18n'
+import type { Route } from '@/routing/generated/routes'
 import type { Profile, UserId } from '../data'
 
 //

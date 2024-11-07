@@ -1,6 +1,6 @@
 import type { AppClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
-import { Browser, Eff, pipe } from 'gamezilla-app/@/core'
-import type { VDom } from 'gamezilla-app/@/vdom'
+import { Browser, Eff, pipe } from '@/core'
+import type { VDom } from '@/vdom'
 import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
 
 //

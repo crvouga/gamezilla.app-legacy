@@ -1,5 +1,5 @@
-import { parseCookies } from 'gamezilla-app/@/web-server/cookies'
-import type { WebServerNode } from 'gamezilla-app/@/web-server/impl-node'
+import { parseCookies } from '@/web-server/cookies'
+import type { WebServerNode } from '@/web-server/impl-node'
 import { SessionId, type ClientId } from 'gamezilla-app/app/@/data'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { Server } from 'socket.io'

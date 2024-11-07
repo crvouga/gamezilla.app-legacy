@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { PubSub } from 'gamezilla-app/@/core'
+import { PubSub } from '@/core'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import {

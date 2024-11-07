@@ -1,4 +1,4 @@
-import type { RequestResponse, Result } from 'gamezilla-app/@/core'
+import type { RequestResponse, Result } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 
 export type ModelClient = {

@@ -1,4 +1,4 @@
-import { PhoneNumber, Posix } from 'gamezilla-app/@/core'
+import { PhoneNumber, Posix } from '@/core'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { ProfileAvatar, Username, type SpaceId, type UserId } from 'gamezilla-app/app/@/data'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'

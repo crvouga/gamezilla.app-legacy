@@ -1,4 +1,4 @@
-import { isErr, RequestResponse, Result } from 'gamezilla-app/@/core'
+import { isErr, RequestResponse, Result } from '@/core'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { IntersectionObserverEmitter } from 'gamezilla-app/app/@/ui/intersection-observer'

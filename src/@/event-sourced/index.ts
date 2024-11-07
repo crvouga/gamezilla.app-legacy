@@ -1,7 +1,7 @@
-import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
-import { ascend, eq } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
-import { LamportClock, LamportTimestamp } from 'gamezilla-app/@/lamport-clock'
+import { CappedOrderedDict } from '@/capped-ordered-dict/capped-ordered-dict'
+import { ascend, eq } from '@/core'
+import { p } from '@/core/parser'
+import { LamportClock, LamportTimestamp } from '@/lamport-clock'
 import { EventId, EventMeta, type WithEventId, type WithEventMeta } from './event'
 
 export type EventSourced<TEvent, TState> = {

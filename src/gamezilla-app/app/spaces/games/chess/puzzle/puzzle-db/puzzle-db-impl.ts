@@ -1,5 +1,5 @@
-import { Err, NonEmpty, Ok, Result, Uuid } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Err, NonEmpty, Ok, Result, Uuid } from '@/core'
+import { p } from '@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { type MoveInput, uciMoveToMoveInput } from '../../@/chess'

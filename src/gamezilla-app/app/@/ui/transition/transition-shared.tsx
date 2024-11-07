@@ -1,4 +1,4 @@
-import { PubSub } from 'gamezilla-app/@/core'
+import { PubSub } from '@/core'
 
 export type Transitioninput = {
   id: string

@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { FlowGroupId } from './flow-group-id'
 import { FlowNodeId } from './flow-node-id'
 

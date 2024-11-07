@@ -1,5 +1,5 @@
-import { NonEmpty, PubSub } from 'gamezilla-app/@/core'
-import type { WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { NonEmpty, PubSub } from '@/core'
+import type { WithEventMeta } from '@/event-sourced/event'
 import { FixtureFlowClient } from '../../@/fixture-client'
 import { PlayClient } from '../client'
 import { PlayCore } from '../core'

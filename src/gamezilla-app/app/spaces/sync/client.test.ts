@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { andThen } from 'gamezilla-app/app/@/architecture/app-client'
 import { addProfiles } from 'gamezilla-app/app/@/client'
 import { type Profile, SpaceId, UserId, Username } from 'gamezilla-app/app/@/data'
-import { eq } from 'gamezilla-app/@/core'
+import { eq } from '@/core'
 import {
   Ctx,
   clickedJoinSpaceButton,

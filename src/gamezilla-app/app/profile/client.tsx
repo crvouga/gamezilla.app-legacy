@@ -1,5 +1,5 @@
-import { Loading, Sub, isErr } from 'gamezilla-app/@/core'
-import { TranslatedText } from 'gamezilla-app/@/l18n'
+import { Loading, Sub, isErr } from '@/core'
+import { TranslatedText } from '@/l18n'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import {
   type AnonymousClientCtx,

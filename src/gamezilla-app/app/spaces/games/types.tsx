@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { SpaceClientEvt } from '../@/space-client-evt'
 import { SpaceServerCmd } from '../@/space-server-cmd'

@@ -1,4 +1,4 @@
-import { TimeSpan } from 'gamezilla-app/@/core'
+import { TimeSpan } from '@/core'
 import { APP_SOUND, playSound, type AppClientCtx } from 'gamezilla-app/app/@/client'
 import { Button, Dialog, DialogHeader, DialogSurface } from 'gamezilla-app/app/@/ui'
 import type { ClientModule, MsgClient } from '../../types'

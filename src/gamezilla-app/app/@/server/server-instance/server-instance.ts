@@ -1,6 +1,6 @@
-import { Posix, TimeSpan } from 'gamezilla-app/@/core'
+import { Posix, TimeSpan } from '@/core'
 import { ServerInstanceId } from './server-instance-id'
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 
 const parser = p.obj({
   serverInstanceId: ServerInstanceId,

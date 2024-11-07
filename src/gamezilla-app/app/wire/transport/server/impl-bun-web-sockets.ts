@@ -1,5 +1,5 @@
 import type { Server, ServerWebSocket, WebSocketHandler } from 'bun'
-import type { WebServerBun } from 'gamezilla-app/@/web-server/impl-bun'
+import type { WebServerBun } from '@/web-server/impl-bun'
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'

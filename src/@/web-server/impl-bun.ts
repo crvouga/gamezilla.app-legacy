@@ -1,5 +1,5 @@
 import type { Server, WebSocketHandler } from 'bun'
-import { Posix, PubSub } from 'gamezilla-app/@/core'
+import { Posix, PubSub } from '@/core'
 import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import { getIpAddress } from './ip-address'
 import { WebServerEvent, type Handler, type IWebServer } from './interface'

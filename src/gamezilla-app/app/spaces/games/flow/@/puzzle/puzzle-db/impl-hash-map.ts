@@ -1,4 +1,4 @@
-import { Err, isErr, Ok } from 'gamezilla-app/@/core'
+import { Err, isErr, Ok } from '@/core'
 import type { FlowPuzzle } from '../puzzle'
 import type { IFlowPuzzleDb } from './interface'
 

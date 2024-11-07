@@ -3,7 +3,7 @@ import { AppServerTestEnv } from '../../server-test-env'
 import { Config } from './impl'
 import { ServerInstanceDb } from './impl-db-conn-kv'
 import { ServerInstance } from '../server-instance'
-import { Ok, Posix, TimeSpan } from 'gamezilla-app/@/core'
+import { Ok, Posix, TimeSpan } from '@/core'
 
 const Fixture = (config: Config) => {
   const serverInstanceDb = ServerInstanceDb(config)

@@ -1,4 +1,4 @@
-import { Sub } from 'gamezilla-app/@/core'
+import { Sub } from '@/core'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import type { ClientModule } from './types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/client'

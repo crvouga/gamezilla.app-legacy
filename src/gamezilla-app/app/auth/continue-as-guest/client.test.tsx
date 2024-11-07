@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, Posix, isRequesting, isResponseErr, isResponseOk } from 'gamezilla-app/@/core'
+import { Err, Ok, Posix, isRequesting, isResponseErr, isResponseOk } from '@/core'
 import { andThen } from 'gamezilla-app/app/@/architecture/app-client'
 import { didPlaySound, didSendToServer, type AnonymousClientCtx } from 'gamezilla-app/app/@/client'
 import { Translator } from 'gamezilla-app/app/@/client/translator'

@@ -3,7 +3,7 @@ import { Config, WireSessionDb } from './impl'
 import { Logger } from 'gamezilla-app/app/@/server/logger'
 import { describe, expect, test } from 'bun:test'
 import { WireSession } from '../wire-session'
-import { Ok } from 'gamezilla-app/@/core'
+import { Ok } from '@/core'
 
 const Fixture = async (config: Config) => {
   const wireSessionDb = await WireSessionDb(config)

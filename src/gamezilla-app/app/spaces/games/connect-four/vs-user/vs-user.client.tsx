@@ -1,4 +1,4 @@
-import { Sub } from 'gamezilla-app/@/core'
+import { Sub } from '@/core'
 import type { AppClientCmd, AppClientCtx } from 'gamezilla-app/app/@/client'
 import {
   Avatar,

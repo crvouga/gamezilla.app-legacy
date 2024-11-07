@@ -1,5 +1,5 @@
 import type { Profile, UserId } from 'gamezilla-app/app/@/data'
-import type { Task } from 'gamezilla-app/@/core'
+import type { Task } from '@/core'
 
 export type IProfileCache = {
   add: (profiles: { [userId: UserId]: Profile }) => Task<string, null>

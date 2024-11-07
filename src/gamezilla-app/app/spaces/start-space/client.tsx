@@ -2,7 +2,7 @@ import { APP_SOUND, playSound, pushRoute, showToast } from 'gamezilla-app/app/@/
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { Button, IconPlus } from 'gamezilla-app/app/@/ui'
 
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { withEventId } from '@/event-sourced/event'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import type { SpaceEvent } from '../core'
 

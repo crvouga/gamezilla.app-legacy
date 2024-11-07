@@ -1,6 +1,6 @@
 import { Chess } from 'chess.js'
 
-import type { VDom } from 'gamezilla-app/@/vdom'
+import type { VDom } from '@/vdom'
 import {
   type Color,
   type Model,

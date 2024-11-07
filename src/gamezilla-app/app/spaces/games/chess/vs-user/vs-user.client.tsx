@@ -1,4 +1,4 @@
-import { Eff, Option, Sub, exhaustive, isErr } from 'gamezilla-app/@/core'
+import { Eff, Option, Sub, exhaustive, isErr } from '@/core'
 import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Button, IconArrowLeftOnRect } from 'gamezilla-app/app/@/ui'

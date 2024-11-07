@@ -1,4 +1,4 @@
-import { isErr, isLoading, Loading, Posix, Result, Sub, Time, TimeSpan } from 'gamezilla-app/@/core'
+import { isErr, isLoading, Loading, Posix, Result, Sub, Time, TimeSpan } from '@/core'
 import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from 'gamezilla-app/app/@/client'
 import { Button, IconPlus } from 'gamezilla-app/app/@/ui'
 import { FlowClientCmd } from '../../../@/flow-client-cmd'

@@ -1,5 +1,5 @@
-import { NonEmpty } from 'gamezilla-app/@/core'
-import { withEventMeta, WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { NonEmpty } from '@/core'
+import { withEventMeta, WithEventMeta } from '@/event-sourced/event'
 import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowClient } from '../client'
 import { FlowCore } from '../core'

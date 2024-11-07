@@ -1,7 +1,7 @@
-import type { VDomChildren } from 'gamezilla-app/@/vdom'
+import type { VDomChildren } from '@/vdom'
 import { cn } from './cn'
-import { TimeSpan } from 'gamezilla-app/@/core'
-import { styles } from 'gamezilla-app/@/vdom/style'
+import { TimeSpan } from '@/core'
+import { styles } from '@/vdom/style'
 
 export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
   const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null

@@ -1,5 +1,5 @@
-import { Result, Sub } from 'gamezilla-app/@/core'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { Result, Sub } from '@/core'
+import { withEventId } from '@/event-sourced/event'
 import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceServerCmd } from '../@/space-server-cmd'
 import { SpaceServerCtx } from '../@/space-server-ctx'

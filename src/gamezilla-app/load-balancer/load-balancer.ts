@@ -1,4 +1,4 @@
-import { NonEmpty, TimeSpan, unwrapOr } from 'gamezilla-app/@/core'
+import { NonEmpty, TimeSpan, unwrapOr } from '@/core'
 import { DbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { DbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'

@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
-import { withEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { withEventMeta } from '@/event-sourced/event'
 import { didCopyToClipboard, didPlaySound, didShowToast } from 'gamezilla-app/app/@/client'
 import { UserRole } from 'gamezilla-app/app/@/data'
 import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'

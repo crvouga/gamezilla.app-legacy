@@ -1,5 +1,5 @@
 import type { UserId } from 'gamezilla-app/app/@/data'
-import { Result } from 'gamezilla-app/@/core'
+import { Result } from '@/core'
 import type { Position } from './@/battleship/position'
 import type { ShotRule } from './@/battleship/shot-rule'
 

@@ -1,4 +1,4 @@
-import { Ok, Sleep } from 'gamezilla-app/@/core'
+import { Ok, Sleep } from '@/core'
 import type { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { IUserSessionDb } from './interface'
 

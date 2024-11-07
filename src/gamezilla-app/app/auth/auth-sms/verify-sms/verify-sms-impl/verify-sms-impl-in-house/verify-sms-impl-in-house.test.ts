@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { PhoneNumber, Posix, TimeSpan, eq, isErr, isOk, unwrap } from 'gamezilla-app/@/core'
-import { Hashing } from 'gamezilla-app/@/hashing'
+import { PhoneNumber, Posix, TimeSpan, eq, isErr, isOk, unwrap } from '@/core'
+import { Hashing } from '@/hashing'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { VerificationDb } from '../../verification/verification-db'
 import { VerifySMSInHouseFixture } from './@/fixture'

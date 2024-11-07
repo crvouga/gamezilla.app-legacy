@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { NonEmpty, Ok, unwrapOr } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { NonEmpty, Ok, unwrapOr } from '@/core'
+import { p } from '@/core/parser'
 import { REDIS_URL } from 'gamezilla-app/config-private'
 import { DbConnKv } from '../db-conn-kv'
 import { Logger } from '../logger'

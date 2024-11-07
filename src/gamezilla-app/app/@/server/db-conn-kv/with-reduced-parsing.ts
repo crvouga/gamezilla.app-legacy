@@ -1,5 +1,5 @@
-import { isErr } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { isErr } from '@/core'
+import { p } from '@/core/parser'
 import type { IDbConnKv } from './interface'
 import { ILogger, Logger } from '../logger'
 

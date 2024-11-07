@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isOk } from 'gamezilla-app/@/core'
+import { isOk } from '@/core'
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
 import { AppServerTestEnv, FixtureAppServer } from 'gamezilla-app/app/@/server/server-test-env'

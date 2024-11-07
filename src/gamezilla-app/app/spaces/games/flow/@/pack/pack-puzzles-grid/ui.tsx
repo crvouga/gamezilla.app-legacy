@@ -1,4 +1,4 @@
-import type { VDom } from 'gamezilla-app/@/vdom'
+import type { VDom } from '@/vdom'
 import { IconPlus, Swiper } from 'gamezilla-app/app/@/ui'
 import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
 

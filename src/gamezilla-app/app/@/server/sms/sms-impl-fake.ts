@@ -1,4 +1,4 @@
-import { Ok, PhoneNumber } from 'gamezilla-app/@/core'
+import { Ok, PhoneNumber } from '@/core'
 import type { ISMS } from './sms'
 import type { ILogger } from '../logger'
 

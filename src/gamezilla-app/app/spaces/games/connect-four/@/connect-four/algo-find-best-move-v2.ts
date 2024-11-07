@@ -1,5 +1,5 @@
 import { type ChildrenFn, Minimax, type ScoreFn } from 'gamezilla-app/app/spaces/games/@/minimax'
-import { Ok, type Result } from 'gamezilla-app/@/core'
+import { Ok, type Result } from '@/core'
 import { type Columns, MAX_COLUMN_HEIGHT, type PlayerType, opposite, toStatus } from './connect-four'
 
 export type BestMoveProblem = 'no_move_available'

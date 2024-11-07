@@ -1,4 +1,4 @@
-import { eq, isErr, Option, Result } from 'gamezilla-app/@/core'
+import { eq, isErr, Option, Result } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Chess } from '../@/chess'
 import * as Clock from '../@/chess/chess-clock'

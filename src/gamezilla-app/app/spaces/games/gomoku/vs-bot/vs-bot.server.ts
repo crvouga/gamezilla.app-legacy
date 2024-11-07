@@ -1,4 +1,4 @@
-import { Eff, Sub, andThen, pipe } from 'gamezilla-app/@/core'
+import { Eff, Sub, andThen, pipe } from '@/core'
 import { handleBotMove, initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-bot.types'
 import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'

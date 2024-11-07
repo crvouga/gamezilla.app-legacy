@@ -1,4 +1,4 @@
-import { eq, memoize, Random } from 'gamezilla-app/@/core'
+import { eq, memoize, Random } from '@/core'
 import { Direction, Position } from './position'
 
 //

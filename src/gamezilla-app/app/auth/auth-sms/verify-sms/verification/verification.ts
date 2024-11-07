@@ -1,5 +1,5 @@
-import { PhoneNumber, Posix, TimeSpan } from 'gamezilla-app/@/core'
-import { type Hash, Hashing } from 'gamezilla-app/@/hashing'
+import { PhoneNumber, Posix, TimeSpan } from '@/core'
+import { type Hash, Hashing } from '@/hashing'
 import { VerificationId } from './verification-id'
 
 export type Verification = {

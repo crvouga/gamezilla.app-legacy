@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { SpaceCtx } from 'gamezilla-app/app/spaces/@/space-ctx'
 import type { GameCoreModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-core'

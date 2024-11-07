@@ -1,4 +1,4 @@
-import { Msg } from 'gamezilla-app/@/core/msg'
+import { Msg } from '@/core/msg'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { type Input, type Output, SpaceServerModule } from './@/architecture/space-server'
 import { Space } from './@/space'

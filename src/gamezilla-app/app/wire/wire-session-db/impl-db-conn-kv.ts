@@ -2,9 +2,9 @@ import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { WireSession } from '../wire-session'
 import type { IWireSessionDb } from './interface'
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { SessionId } from 'gamezilla-app/app/@/data'
-import { isErr, unwrapOr } from 'gamezilla-app/@/core'
+import { isErr, unwrapOr } from '@/core'
 
 export type Config = {
   t: 'db-conn-kv'

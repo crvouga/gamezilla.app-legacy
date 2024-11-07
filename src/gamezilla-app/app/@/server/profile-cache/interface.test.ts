@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { unwrapOr } from 'gamezilla-app/@/core'
+import { unwrapOr } from '@/core'
 import { Profile } from 'gamezilla-app/app/@/data'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { ProfileCache } from './impl'

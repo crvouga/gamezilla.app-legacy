@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { Flow } from '../../flow'
 import { FlowGroupId } from '../../flow/flow-group-id'
 import * as FlowGridDimensions from './flow-grid-dimensions'

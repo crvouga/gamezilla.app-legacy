@@ -1,12 +1,12 @@
-import { Posix, Result, isErr } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
-import { Sql } from 'gamezilla-app/@/sql'
+import { Posix, Result, isErr } from '@/core'
+import { p } from '@/core/parser'
+import { Sql } from '@/sql'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { VerificationId } from '../../verification/verification-id'
 import { VerificationAttemptId } from '../verification-attempt-id'
 import type { IVerificationAttemptDb, WhereClause } from './verification-attempt-db'
 import type { VerificationAttempt } from '../verification-attempt'
-import { Hash } from 'gamezilla-app/@/hashing'
+import { Hash } from '@/hashing'
 
 export const Row = p.obj({
   verification_attempt_id: VerificationAttemptId,

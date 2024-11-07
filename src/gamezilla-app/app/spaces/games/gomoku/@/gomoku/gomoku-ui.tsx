@@ -1,4 +1,4 @@
-import { Hex } from 'gamezilla-app/@/core'
+import { Hex } from '@/core'
 import { cn } from 'gamezilla-app/app/@/ui'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
 import type { Position } from './gomoku-position'

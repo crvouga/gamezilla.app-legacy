@@ -1,4 +1,4 @@
-import type { VDomChildren } from 'gamezilla-app/@/vdom'
+import type { VDomChildren } from '@/vdom'
 import './transition-element'
 import { type Transitioninput, transitionSub } from './transition-shared'
 

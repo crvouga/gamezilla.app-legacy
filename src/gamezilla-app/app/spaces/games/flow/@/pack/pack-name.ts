@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { getWords } from 'gamezilla-app/app/@/data/words'
 
 const parser = p.brand(p.str, 'FlowPackName')

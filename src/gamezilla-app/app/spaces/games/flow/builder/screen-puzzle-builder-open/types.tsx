@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { CreateNewPuzzleTypes } from './create-new-puzzle'
 import { UserId } from 'gamezilla-app/app/@/data'

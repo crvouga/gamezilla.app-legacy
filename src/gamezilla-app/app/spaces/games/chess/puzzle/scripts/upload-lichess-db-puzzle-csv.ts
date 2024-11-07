@@ -1,5 +1,5 @@
-import { Result } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Result } from '@/core'
+import { p } from '@/core/parser'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { PuzzleDb, type PuzzleRow } from '../puzzle-db/puzzle-db-impl'
 

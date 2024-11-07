@@ -1,4 +1,4 @@
-import { Eff, Ok, Sub } from 'gamezilla-app/@/core'
+import { Eff, Ok, Sub } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { SpaceServerCtx } from '../../@/space-server-ctx'

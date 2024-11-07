@@ -1,5 +1,5 @@
-import type { TranslatedText } from 'gamezilla-app/@/l18n'
-import type { Translator } from 'gamezilla-app/@/l18n/generated'
+import type { TranslatedText } from '@/l18n'
+import type { Translator } from '@/l18n/generated'
 import { cn } from './cn'
 import { IconButton, IconButtonEmpty } from './icon-button'
 import { IconArrowLeft } from './icon'

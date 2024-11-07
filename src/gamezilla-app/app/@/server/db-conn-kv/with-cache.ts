@@ -1,4 +1,4 @@
-import { Result } from 'gamezilla-app/@/core'
+import { Result } from '@/core'
 import { ILogger, Logger } from '../logger'
 import { IDbConnKv } from './interface'
 

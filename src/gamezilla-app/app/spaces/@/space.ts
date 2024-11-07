@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 
 const parser = p.obj({

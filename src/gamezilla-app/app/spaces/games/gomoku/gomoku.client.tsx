@@ -1,4 +1,4 @@
-import { Eff, Sub } from 'gamezilla-app/@/core'
+import { Eff, Sub } from '@/core'
 import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { GameMainMenu } from '../@/game/game-main-menu'
 import { CoverArt } from './@/gomoku/gomoku-ui'

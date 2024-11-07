@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, PhoneNumber, Posix, Result } from 'gamezilla-app/@/core'
+import { Ok, PhoneNumber, Posix, Result } from '@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'

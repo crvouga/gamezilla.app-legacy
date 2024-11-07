@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, Result } from 'gamezilla-app/@/core'
+import { Ok, Result } from '@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 import { FlowPuzzleId } from '../../puzzle/puzzle-id'

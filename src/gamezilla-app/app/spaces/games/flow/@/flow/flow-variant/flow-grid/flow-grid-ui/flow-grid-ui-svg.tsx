@@ -1,7 +1,7 @@
 import { IconCheckmark, cn } from 'gamezilla-app/app/@/ui'
 import { Flow, FlowUI } from '../../../flow'
 import * as FlowGrid from '../flow-grid'
-import type { VDom } from 'gamezilla-app/@/vdom'
+import type { VDom } from '@/vdom'
 import { FlowNodeId } from '../../../flow/flow-node-id'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;

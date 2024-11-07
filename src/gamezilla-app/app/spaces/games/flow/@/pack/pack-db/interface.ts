@@ -1,4 +1,4 @@
-import type { Task } from 'gamezilla-app/@/core'
+import type { Task } from '@/core'
 import type { Paginated, Pagination, UserId } from 'gamezilla-app/app/@/data'
 import type { FlowPack } from '../pack'
 import type { FlowPackId } from '../pack-id'

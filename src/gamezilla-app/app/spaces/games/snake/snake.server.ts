@@ -1,4 +1,4 @@
-import { Eff, Result, Sub, Time } from 'gamezilla-app/@/core'
+import { Eff, Result, Sub, Time } from '@/core'
 import * as Snake from './@/snake'
 import {
   type CoreModel,

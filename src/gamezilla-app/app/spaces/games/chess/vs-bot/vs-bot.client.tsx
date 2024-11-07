@@ -1,4 +1,4 @@
-import { type Eff, Sub, andThen, exhaustive, isErr, pipe } from 'gamezilla-app/@/core'
+import { type Eff, Sub, andThen, exhaustive, isErr, pipe } from '@/core'
 import { type AppClientCmd, sendToServer } from 'gamezilla-app/app/@/client'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from 'gamezilla-app/app/@/ui'
 

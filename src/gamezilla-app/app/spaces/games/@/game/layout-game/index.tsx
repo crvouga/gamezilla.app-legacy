@@ -1,6 +1,6 @@
 import { cn } from 'gamezilla-app/app/@/ui'
-import type { VDomChildren } from 'gamezilla-app/@/vdom'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import type { VDomChildren } from '@/vdom'
+import { Translator } from '@/l18n/generated'
 
 export const LayoutGame = ({
   children,

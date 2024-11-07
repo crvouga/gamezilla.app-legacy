@@ -1,12 +1,12 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Ok, Result, TimeSpan, Uuid } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Ok, Result, TimeSpan, Uuid } from '@/core'
+import { p } from '@/core/parser'
 import { REDIS_URL } from 'gamezilla-app/config-private'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { AppServerTestEnv } from '../server-test-env'
 import { DbConnKv } from './impl'
-import { Runtime } from 'gamezilla-app/@/runtime'
+import { Runtime } from '@/runtime'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()

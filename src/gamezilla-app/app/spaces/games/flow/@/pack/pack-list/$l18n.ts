@@ -1,4 +1,4 @@
-import type { Translations } from 'gamezilla-app/@/l18n'
+import type { Translations } from '@/l18n'
 
 export type Text = {
   'flow.no-packs': string

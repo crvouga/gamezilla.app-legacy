@@ -1,4 +1,4 @@
-import { isErr } from 'gamezilla-app/@/core'
+import { isErr } from '@/core'
 import type { UpdateCore } from '../../types'
 import { FlowEdit } from '../../../@/flow/flow-edit'
 import { FlowPlay } from '../../../@/flow/flow-play'

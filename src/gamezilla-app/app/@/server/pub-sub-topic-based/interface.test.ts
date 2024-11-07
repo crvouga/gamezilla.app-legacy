@@ -1,5 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { REDIS_URL } from 'gamezilla-app/config-private'
 import { Logger } from '../logger'
 import { AppServerTestEnv } from '../server-test-env'

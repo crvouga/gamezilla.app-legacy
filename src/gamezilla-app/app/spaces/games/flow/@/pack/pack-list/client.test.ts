@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, Posix, RequestResponse, TimeSpan } from 'gamezilla-app/@/core'
+import { Err, Ok, Posix, RequestResponse, TimeSpan } from '@/core'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'

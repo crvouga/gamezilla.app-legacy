@@ -1,4 +1,4 @@
-import { PhoneNumber } from 'gamezilla-app/@/core'
+import { PhoneNumber } from '@/core'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from '../data/account'
 

@@ -1,6 +1,6 @@
-import { Sub, type Transition } from 'gamezilla-app/@/core'
+import { Sub, type Transition } from '@/core'
 
-import type { VDom } from 'gamezilla-app/@/vdom'
+import type { VDom } from '@/vdom'
 import type { ColumnIndex, Columns, PlayerType, Win } from '../../connect-four'
 
 export type ViewColumnsinput = {

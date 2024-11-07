@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { unwrap } from 'gamezilla-app/@/core'
+import { unwrap } from '@/core'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { didSendMsgToClient } from 'gamezilla-app/app/@/server'

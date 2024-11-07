@@ -1,5 +1,5 @@
-import type { Eff, Sub } from 'gamezilla-app/@/core'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import type { Eff, Sub } from '@/core'
+import { Translator } from '@/l18n/generated'
 import {
   AnonymousClientCtx,
   type AppClientCmd,
@@ -10,7 +10,7 @@ import {
 import { ListItemButton, Typography, cn } from '../@/ui'
 import type { IClientTransport } from './transport/client'
 import type { ModelClient, MsgClient, MsgToClient } from './types'
-import { andThen } from 'gamezilla-app/@/core/utils/and-then'
+import { andThen } from '@/core/utils/and-then'
 import { ServerInstanceClient } from './server-instance/client'
 
 //

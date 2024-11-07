@@ -1,4 +1,4 @@
-import type { Translations } from 'gamezilla-app/@/l18n'
+import type { Translations } from '@/l18n'
 import { Username } from './username'
 
 export type Text = {

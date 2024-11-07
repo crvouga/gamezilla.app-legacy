@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { FixtureFlowBuilderClient } from '../@/testing/client'
-import { withEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { withEventMeta } from '@/event-sourced/event'
 
 describe(import.meta.file, () => {
   test('open puzzle builder', async () => {

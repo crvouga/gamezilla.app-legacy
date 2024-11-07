@@ -1,4 +1,4 @@
-import type { Translations } from 'gamezilla-app/@/l18n'
+import type { Translations } from '@/l18n'
 import * as ChessBotLevelTypes from './chess-bot-level.types'
 
 type ChessBotLevel = ChessBotLevelTypes.ChessBotLevel

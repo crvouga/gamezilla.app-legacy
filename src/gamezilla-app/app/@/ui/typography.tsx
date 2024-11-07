@@ -1,4 +1,4 @@
-import type { TranslatedText } from 'gamezilla-app/@/l18n'
+import type { TranslatedText } from '@/l18n'
 import { cn } from './cn'
 import type { AriaRole } from 'react'
 

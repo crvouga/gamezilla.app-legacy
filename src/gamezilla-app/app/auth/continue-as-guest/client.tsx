@@ -1,4 +1,4 @@
-import { RequestResponse, isRequesting, NotAsked, isErr } from 'gamezilla-app/@/core'
+import { RequestResponse, isRequesting, NotAsked, isErr } from '@/core'
 import { APP_SOUND, playSound, sendToServer, showErrSm } from 'gamezilla-app/app/@/client'
 import { Button, IconUserCircle } from 'gamezilla-app/app/@/ui'
 import type { ClientModule } from '../types'

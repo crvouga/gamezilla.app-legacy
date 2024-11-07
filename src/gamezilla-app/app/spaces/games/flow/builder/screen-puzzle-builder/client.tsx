@@ -1,4 +1,4 @@
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { withEventId } from '@/event-sourced/event'
 import { APP_SOUND, playSound } from 'gamezilla-app/app/@/client'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from 'gamezilla-app/app/@/ui'
 import { Actions, ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'

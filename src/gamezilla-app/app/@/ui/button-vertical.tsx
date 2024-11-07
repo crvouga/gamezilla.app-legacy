@@ -1,4 +1,4 @@
-import type { VDomChildren } from 'gamezilla-app/@/vdom'
+import type { VDomChildren } from '@/vdom'
 
 export const ButtonVertical = ({
   children,

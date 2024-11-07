@@ -1,5 +1,5 @@
-import { p } from 'gamezilla-app/@/core/parser'
-import { initContract, initServer } from 'gamezilla-app/@/rpc/rpc'
+import { p } from '@/core/parser'
+import { initContract, initServer } from '@/rpc/rpc'
 import { FlowVariant } from '../../flow-variant'
 import { Flow } from '../../flow'
 

@@ -1,4 +1,4 @@
-import { Ok, RequestResponse, startedRequest } from 'gamezilla-app/@/core'
+import { Ok, RequestResponse, startedRequest } from '@/core'
 import { APP_SOUND, playSound, pushRoute, sendToServer } from 'gamezilla-app/app/@/client'
 import type { SpaceId } from 'gamezilla-app/app/@/data'
 import { IconGamepad, Spinner, TopBar } from 'gamezilla-app/app/@/ui'

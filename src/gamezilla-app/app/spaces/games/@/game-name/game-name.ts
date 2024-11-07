@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 
 export const GAME_NAME = ['connect-four', 'flow', 'tic-tac-toe', 'gomoku', 'chess'] as const
 

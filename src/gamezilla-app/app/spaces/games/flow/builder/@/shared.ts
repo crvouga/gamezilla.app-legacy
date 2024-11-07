@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 
 export const MsgCore = p.or(

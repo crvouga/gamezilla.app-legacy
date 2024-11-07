@@ -1,4 +1,4 @@
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { EventSourced } from '@/event-sourced'
 import { addProfiles, sendToServer } from 'gamezilla-app/app/@/client'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'

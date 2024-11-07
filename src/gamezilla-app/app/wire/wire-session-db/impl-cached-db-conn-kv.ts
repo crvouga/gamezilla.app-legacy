@@ -1,4 +1,4 @@
-import { LRUCache } from 'gamezilla-app/@/least-recently-used-cache'
+import { LRUCache } from '@/least-recently-used-cache'
 import { DbConnKv, IDbConnKv } from 'gamezilla-app/app/@/server/db-conn-kv'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import { PubSub } from 'gamezilla-app/app/@/server/pub-sub'

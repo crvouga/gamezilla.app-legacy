@@ -1,4 +1,4 @@
-import { RemoteResult, isLoading } from 'gamezilla-app/@/core'
+import { RemoteResult, isLoading } from '@/core'
 import { APP_SOUND, playSound, sendToServer, showCreatedSm } from 'gamezilla-app/app/@/client'
 import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from 'gamezilla-app/app/@/ui'
 import { GameClientModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'

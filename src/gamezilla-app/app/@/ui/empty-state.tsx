@@ -1,6 +1,6 @@
-import type { VDom } from 'gamezilla-app/@/vdom'
+import type { VDom } from '@/vdom'
 import { Typography } from './typography'
-import { TranslatedText } from 'gamezilla-app/@/l18n'
+import { TranslatedText } from '@/l18n'
 
 export const EMPTY_STATE_TEST_ID = 'empty-state'
 

@@ -1,4 +1,4 @@
-import { isErr } from 'gamezilla-app/@/core'
+import { isErr } from '@/core'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import type { ServerModule } from '../types'
 

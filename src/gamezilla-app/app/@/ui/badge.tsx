@@ -1,4 +1,4 @@
-import { VDomChildren } from 'gamezilla-app/@/vdom'
+import { VDomChildren } from '@/vdom'
 import { Transition } from './transition'
 
 export const Badge = (input: { badgeContent: VDomChildren; children: VDomChildren; id: string }) => {

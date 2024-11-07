@@ -1,5 +1,5 @@
-import { Result, Uuid } from 'gamezilla-app/@/core'
-import type { Brand } from 'gamezilla-app/@/core/brand'
+import { Result, Uuid } from '@/core'
+import type { Brand } from '@/core/brand'
 
 export type PartyId = Brand<string, 'PartyId'>
 

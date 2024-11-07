@@ -1,5 +1,5 @@
-import { Eff, Sub } from 'gamezilla-app/@/core'
-import { WithEventId, withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { Eff, Sub } from '@/core'
+import { WithEventId, withEventId } from '@/event-sourced/event'
 import { APP_SOUND, type AppClientCtx, playSound } from 'gamezilla-app/app/@/client'
 import { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { TopBar, Typography } from 'gamezilla-app/app/@/ui'

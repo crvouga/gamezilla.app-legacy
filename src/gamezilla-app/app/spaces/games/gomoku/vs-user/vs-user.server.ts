@@ -1,4 +1,4 @@
-import { Sub, type Eff } from 'gamezilla-app/@/core'
+import { Sub, type Eff } from '@/core'
 import { SpaceServerCtx } from 'gamezilla-app/app/spaces/@/space-server-ctx'
 import { SpaceServerEvt } from 'gamezilla-app/app/spaces/@/space-server-evt'
 import { initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-user.types'

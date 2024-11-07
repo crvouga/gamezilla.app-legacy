@@ -1,6 +1,6 @@
-import type { Brand } from 'gamezilla-app/@/core/brand'
-import { p } from 'gamezilla-app/@/core/parser'
-import { Result } from 'gamezilla-app/@/core/result'
+import type { Brand } from '@/core/brand'
+import { p } from '@/core/parser'
+import { Result } from '@/core/result'
 
 export type SessionId = Brand<string, 'SessionId'>
 

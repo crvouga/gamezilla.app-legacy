@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { GuestSessionMappingDb } from './impl'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
-import { unwrap } from 'gamezilla-app/@/core'
+import { unwrap } from '@/core'
 import { AppServerTestEnv } from 'gamezilla-app/app/@/server/server-test-env'
 
 const Fixture = async () => {

@@ -1,5 +1,5 @@
 import type { SessionId } from 'gamezilla-app/app/@/data'
-import type { EmailAddress } from 'gamezilla-app/@/core'
+import type { EmailAddress } from '@/core'
 
 export type SocialLoginState =
   | {

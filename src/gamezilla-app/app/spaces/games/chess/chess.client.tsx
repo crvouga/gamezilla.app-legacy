@@ -1,4 +1,4 @@
-import { Eff, RemoteResult, Sub, isErr } from 'gamezilla-app/@/core'
+import { Eff, RemoteResult, Sub, isErr } from '@/core'
 import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconPuzzlePiece } from 'gamezilla-app/app/@/ui'
 

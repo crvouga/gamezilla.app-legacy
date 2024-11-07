@@ -1,4 +1,4 @@
-import { isErr } from 'gamezilla-app/@/core'
+import { isErr } from '@/core'
 import type { UpdateCore } from '../../types'
 
 const updateCore: UpdateCore = ({ modelCore, msgCore }) => {

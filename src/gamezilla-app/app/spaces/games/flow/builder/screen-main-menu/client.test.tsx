@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
-import { withEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { withEventMeta } from '@/event-sourced/event'
 import { andThen } from 'gamezilla-app/app/spaces/games/@/architecture/game-client-v2'
 import { initial, testFlowClientCtx } from '../@/testing/client'
 import { BuilderClient } from '../client'

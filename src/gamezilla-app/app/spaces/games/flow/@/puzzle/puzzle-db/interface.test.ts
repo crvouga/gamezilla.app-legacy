@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Ok, Posix, Result, TimeSpan, ascend } from 'gamezilla-app/@/core'
+import { Ok, Posix, Result, TimeSpan, ascend } from '@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { FlowPuzzle } from '../puzzle'
 import { FlowPuzzleName } from '../puzzle-name'

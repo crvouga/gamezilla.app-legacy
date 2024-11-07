@@ -1,4 +1,4 @@
-import { Sub } from 'gamezilla-app/@/core'
+import { Sub } from '@/core'
 import type { AppClientCmd } from 'gamezilla-app/app/@/client'
 import type { GameClient } from 'gamezilla-app/app/spaces/games/@/architecture/game-client'
 import { SpaceClientEvt } from '../../@/space-client-evt'

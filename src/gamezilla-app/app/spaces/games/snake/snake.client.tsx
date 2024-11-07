@@ -1,4 +1,4 @@
-import { Eff, Keyboard, Option, type Result, type Sub, exhaustive, isErr } from 'gamezilla-app/@/core'
+import { Eff, Keyboard, Option, type Result, type Sub, exhaustive, isErr } from '@/core'
 import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { Direction } from './@/direction'

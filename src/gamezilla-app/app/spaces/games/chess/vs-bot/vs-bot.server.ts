@@ -1,4 +1,4 @@
-import { Eff, Sub, pipe } from 'gamezilla-app/@/core'
+import { Eff, Sub, pipe } from '@/core'
 
 import type { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'
 import { Chess } from '../@/chess'

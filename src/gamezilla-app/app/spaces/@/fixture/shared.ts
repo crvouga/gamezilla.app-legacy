@@ -1,8 +1,8 @@
 import { type SpaceId, UserId } from 'gamezilla-app/app/@/data'
-import { pipe } from 'gamezilla-app/@/core'
-import { withEventId } from '../../../../@/event-sourced/event'
+import { pipe } from '@/core'
+import { withEventId } from '@/event-sourced/event'
 import { SpaceCore } from '../../core'
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { EventSourced } from '@/event-sourced'
 
 export const makeSpace = ({
   spaceId,

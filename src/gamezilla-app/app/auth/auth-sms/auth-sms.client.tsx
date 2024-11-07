@@ -1,15 +1,4 @@
-import {
-  Iso3166Alpha2Code,
-  NotAsked,
-  PhoneNumber,
-  Posix,
-  RemoteResult,
-  Sub,
-  Time,
-  TimeSpan,
-  Uuid,
-  isErr
-} from 'gamezilla-app/@/core'
+import { Iso3166Alpha2Code, NotAsked, PhoneNumber, Posix, RemoteResult, Sub, Time, TimeSpan, Uuid, isErr } from '@/core'
 import { AppClientModule, andThen } from 'gamezilla-app/app/@/architecture/app-client'
 import { APP_SOUND, type BaseClientCtx, type ClientEvt } from 'gamezilla-app/app/@/client'
 import {

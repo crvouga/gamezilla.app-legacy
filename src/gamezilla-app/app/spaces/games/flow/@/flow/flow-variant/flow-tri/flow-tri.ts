@@ -1,4 +1,4 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { Flow } from '../../flow'
 import * as FlowTriDimensions from './flow-tri-dimensions'
 import { FlowNodeId } from '../../flow/flow-node-id'

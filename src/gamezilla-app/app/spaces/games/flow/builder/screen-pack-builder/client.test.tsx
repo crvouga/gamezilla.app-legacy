@@ -22,7 +22,7 @@ import { BuilderCore } from '../core'
 import type { ModelClient, ModelCore } from '../types'
 import { ScreenPackBuilderClient } from './client'
 import { ScreenPackBuilderCore } from './core'
-import { Ok } from 'gamezilla-app/@/core'
+import { Ok } from '@/core'
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
   return ScreenPackBuilderClient.update({

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { Ok } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { Ok } from '@/core'
+import { p } from '@/core/parser'
 import { Logger } from '../logger'
 import { PubSubTopicBased } from '../pub-sub-topic-based'
 import { DbConnKv } from './impl'

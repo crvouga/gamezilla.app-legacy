@@ -1,8 +1,8 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import { FlowGridDimensions } from './flow-grid'
 import { FlowHexDimensions } from './flow-hex'
 import { FlowTriDimensions } from './flow-tri'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import { Translator } from '@/l18n/generated'
 
 export const Model = p.or(FlowGridDimensions.Model, FlowHexDimensions.Model, FlowTriDimensions.Model)
 

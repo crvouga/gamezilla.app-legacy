@@ -1,6 +1,6 @@
 import { type Profile, ProfileAvatar, type UserId, Username } from 'gamezilla-app/app/@/data'
 import { type ServerCmd, type AppServerCtx, type ServerEvt, sendToClient } from 'gamezilla-app/app/@/server'
-import { Err, Ok, Result, isErr } from 'gamezilla-app/@/core'
+import { Err, Ok, Result, isErr } from '@/core'
 import { AppServerModule } from '../@/architecture/app-server'
 import type { ProfileDb } from './profile-db/profile-db'
 import { createProfileDb } from './profile-db/profile-db-impl.postgres'

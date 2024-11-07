@@ -1,4 +1,4 @@
-import type { Brand } from 'gamezilla-app/@/core/brand'
+import type { Brand } from '@/core/brand'
 import type * as Board from './chess-core'
 
 export type Clock = {

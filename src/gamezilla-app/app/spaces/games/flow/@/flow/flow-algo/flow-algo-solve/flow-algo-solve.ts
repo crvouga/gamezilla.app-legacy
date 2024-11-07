@@ -1,5 +1,5 @@
-import { ascend } from 'gamezilla-app/@/core'
-import { MinHeap } from 'gamezilla-app/@/min-heap/min-heap'
+import { ascend } from '@/core'
+import { MinHeap } from '@/min-heap/min-heap'
 import { FlowVariant } from '../..'
 import { Flow } from '../../../flow'
 import { FlowGroupId } from '../../flow/flow-group-id'

@@ -1,5 +1,5 @@
-import { NotAsked, Posix, type RemoteResult, Result } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { NotAsked, Posix, type RemoteResult, Result } from '@/core'
+import { p } from '@/core/parser'
 import { UserId } from 'gamezilla-app/app/@/data'
 import { FlowPuzzle } from '../../../@/puzzle/puzzle'
 

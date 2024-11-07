@@ -1,4 +1,4 @@
-import { NonEmpty, pipe } from 'gamezilla-app/@/core'
+import { NonEmpty, pipe } from '@/core'
 import { UserId } from 'gamezilla-app/app/@/data'
 import type { FlowVariant } from '../../../../@/flow'
 import { FlowPack } from '../../../../@/pack/pack'

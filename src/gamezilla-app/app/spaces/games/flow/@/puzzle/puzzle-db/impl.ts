@@ -1,4 +1,4 @@
-import { pipe } from 'gamezilla-app/@/core'
+import { pipe } from '@/core'
 import type { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import type { IFlowPuzzleDb } from './interface'

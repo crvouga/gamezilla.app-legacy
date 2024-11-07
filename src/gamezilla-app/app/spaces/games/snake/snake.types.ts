@@ -1,4 +1,4 @@
-import { type Keyboard, Option, Result } from 'gamezilla-app/@/core'
+import { type Keyboard, Option, Result } from '@/core'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import type * as Direction from './@/direction'
 import * as Snake from './@/snake'

@@ -1,12 +1,12 @@
-import { Eff, type Sub } from 'gamezilla-app/@/core'
-import { Msg } from 'gamezilla-app/@/core/msg'
-import type { VDom } from 'gamezilla-app/@/vdom'
+import { Eff, type Sub } from '@/core'
+import { Msg } from '@/core/msg'
+import type { VDom } from '@/vdom'
 import type { BaseClientCtx } from 'gamezilla-app/app/@/client'
 import type { Space } from '../space'
 import type { SpaceClientCmd } from '../space-client-cmd'
 import { SpaceClientEvt } from '../space-client-evt'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../types'
-import { WithEventId } from 'gamezilla-app/@/event-sourced/event'
+import { WithEventId } from '@/event-sourced/event'
 import { SpaceEvent } from '../../core'
 
 type Ctx = BaseClientCtx & {

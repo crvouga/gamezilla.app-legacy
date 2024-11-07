@@ -1,5 +1,5 @@
-import { Sub, Time, isErr } from 'gamezilla-app/@/core'
-import { TimeSpan } from 'gamezilla-app/@/core/time-span'
+import { Sub, Time, isErr } from '@/core'
+import { TimeSpan } from '@/core/time-span'
 import { sendToClient } from 'gamezilla-app/app/@/server'
 
 import { SpaceServerCmd } from 'gamezilla-app/app/spaces/@/space-server-cmd'

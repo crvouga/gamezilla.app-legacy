@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { Ok, pipe } from 'gamezilla-app/@/core'
+import { Ok, pipe } from '@/core'
 import { ClientId, SessionId } from '../@/data'
 import { UserAccount } from '../@/data/account'
 import { FixtureAppServer } from '../@/server/server-test-env'

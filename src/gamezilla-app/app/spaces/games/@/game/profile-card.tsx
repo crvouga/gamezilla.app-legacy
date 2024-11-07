@@ -1,5 +1,5 @@
-import { TranslatedText } from 'gamezilla-app/@/l18n'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import { TranslatedText } from '@/l18n'
+import { Translator } from '@/l18n/generated'
 import type { Profile } from 'gamezilla-app/app/@/data'
 import { Avatar, Typography } from 'gamezilla-app/app/@/ui'
 

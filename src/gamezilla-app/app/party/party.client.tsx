@@ -1,6 +1,6 @@
 import type { AppClientCtx } from 'gamezilla-app/app/@/client'
 import type { UserId } from 'gamezilla-app/app/@/data'
-import { Eff, RemoteResult, Sub, exhaustive, isErr, pipe } from 'gamezilla-app/@/core'
+import { Eff, RemoteResult, Sub, exhaustive, isErr, pipe } from '@/core'
 import { Mic } from './mic'
 import type { ModelClient, MsgClient, MsgToClient } from './party.types'
 

@@ -1,5 +1,5 @@
-import type { Iso3166Alpha2Code, PhoneNumber, Posix, Remote, Result } from 'gamezilla-app/@/core'
-import type { LanguageCodeISO_639_1, TranslatedText } from 'gamezilla-app/@/l18n'
+import type { Iso3166Alpha2Code, PhoneNumber, Posix, Remote, Result } from '@/core'
+import type { LanguageCodeISO_639_1, TranslatedText } from '@/l18n'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { ServerCmd, AppServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'

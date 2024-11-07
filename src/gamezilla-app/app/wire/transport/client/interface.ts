@@ -1,4 +1,4 @@
-import { PubSub } from 'gamezilla-app/@/core/sub'
+import { PubSub } from '@/core/sub'
 
 export type ClientTransportEvent =
   | {

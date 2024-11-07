@@ -1,5 +1,5 @@
-import { Err, Ok, PhoneNumber, Posix, Sub, TimeSpan, isErr, type Task } from 'gamezilla-app/@/core'
-import { Hashing } from 'gamezilla-app/@/hashing'
+import { Err, Ok, PhoneNumber, Posix, Sub, TimeSpan, isErr, type Task } from '@/core'
+import { Hashing } from '@/hashing'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { Translator } from 'gamezilla-app/app/@/client/translator'
 import { UserId } from 'gamezilla-app/app/@/data'

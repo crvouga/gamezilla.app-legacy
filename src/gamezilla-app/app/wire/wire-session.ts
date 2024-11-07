@@ -1,6 +1,6 @@
-import { CappedOrderedDict } from 'gamezilla-app/@/capped-ordered-dict/capped-ordered-dict'
-import { pipe } from 'gamezilla-app/@/core'
-import { p } from 'gamezilla-app/@/core/parser'
+import { CappedOrderedDict } from '@/capped-ordered-dict/capped-ordered-dict'
+import { pipe } from '@/core'
+import { p } from '@/core/parser'
 import { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 
 const parser = p.obj({

@@ -1,6 +1,6 @@
-import { Eff, type Sub } from 'gamezilla-app/@/core'
-import { Msg } from 'gamezilla-app/@/core/msg'
-import type { VDom } from 'gamezilla-app/@/vdom'
+import { Eff, type Sub } from '@/core'
+import { Msg } from '@/core/msg'
+import type { VDom } from '@/vdom'
 
 //
 //

@@ -1,5 +1,5 @@
-import { type Sub } from 'gamezilla-app/@/core'
-import { Msg } from 'gamezilla-app/@/core/msg'
+import { type Sub } from '@/core'
+import { Msg } from '@/core/msg'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
 
 //

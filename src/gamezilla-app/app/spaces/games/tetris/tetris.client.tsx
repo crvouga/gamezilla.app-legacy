@@ -1,4 +1,4 @@
-import { Eff, Keyboard, Option, type Sub, exhaustive, isErr } from 'gamezilla-app/@/core'
+import { Eff, Keyboard, Option, type Sub, exhaustive, isErr } from '@/core'
 import * as Board from './@/board'
 import type * as Direction from './@/direction'
 import * as Piece from './@/piece'

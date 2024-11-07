@@ -4,7 +4,7 @@ import type { SpaceEvent, SpaceCoreState } from '../../core'
 import * as SpacesCoreClient from '../../core/client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../types'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
-import { WithEventId } from 'gamezilla-app/@/event-sourced/event'
+import { WithEventId } from '@/event-sourced/event'
 
 const View = ({
   spaceState,

@@ -1,8 +1,8 @@
-import { Browser, Eff, Posix, Sub, batchMsgs, eq } from 'gamezilla-app/@/core'
-import { Msg } from 'gamezilla-app/@/core/msg'
-import { LanguageCodeISO_639_1, type TranslatedText } from 'gamezilla-app/@/l18n'
-import type { Route } from 'gamezilla-app/@/routing/generated/routes'
-import type { VDom } from 'gamezilla-app/@/vdom'
+import { Browser, Eff, Posix, Sub, batchMsgs, eq } from '@/core'
+import { Msg } from '@/core/msg'
+import { LanguageCodeISO_639_1, type TranslatedText } from '@/l18n'
+import type { Route } from '@/routing/generated/routes'
+import type { VDom } from '@/vdom'
 import {
   APP_SOUND,
   AppClientCmd,

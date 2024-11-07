@@ -1,5 +1,5 @@
 import * as ChessJS from 'chess.js'
-import { Err, type IO, Ok, type Result, exhaustive } from 'gamezilla-app/@/core'
+import { Err, type IO, Ok, type Result, exhaustive } from '@/core'
 import { ChessBotLevel } from '../chess-bot-level/chess-bot-level'
 
 export type BestMoveInputResult = Result<BestMoveInputProblem, MoveInput>

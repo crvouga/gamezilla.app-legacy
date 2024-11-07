@@ -1,5 +1,5 @@
 import type { GameServerModule } from 'gamezilla-app/app/spaces/games/@/architecture/game-server-v2'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { withEventId } from '@/event-sourced/event'
 import { FlowServerCtx } from '../../../@/flow-server-ctx'
 import { EditPackNameCore } from './core'
 import type { ModelCore, MsgCore } from './types'

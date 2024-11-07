@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, PhoneNumber, eq } from 'gamezilla-app/@/core'
-import type { Route } from 'gamezilla-app/@/routing/generated/routes'
+import { Err, Ok, PhoneNumber, eq } from '@/core'
+import type { Route } from '@/routing/generated/routes'
 import { didPushRoute } from 'gamezilla-app/app/@/client'
 import { FixtureAppClient } from 'gamezilla-app/app/@/client/client-test-env'
 import type { AuthSMSTypes } from '.'

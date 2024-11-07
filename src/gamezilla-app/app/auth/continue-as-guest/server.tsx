@@ -1,4 +1,4 @@
-import { Ok, Result, isErr, type Posix, type Task } from 'gamezilla-app/@/core'
+import { Ok, Result, isErr, type Posix, type Task } from '@/core'
 import { UserId, type SessionId } from 'gamezilla-app/app/@/data'
 import type { UserAccount } from 'gamezilla-app/app/@/data/account'
 import { sendToClient } from 'gamezilla-app/app/@/server'

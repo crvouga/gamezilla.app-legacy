@@ -1,4 +1,4 @@
-import { Ok } from 'gamezilla-app/@/core'
+import { Ok } from '@/core'
 import { IGuestSessionMappingDb } from './interface'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 

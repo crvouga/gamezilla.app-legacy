@@ -1,4 +1,4 @@
-import { Eff, Transition, easeAttrs } from 'gamezilla-app/@/core'
+import { Eff, Transition, easeAttrs } from '@/core'
 import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT, type Win, findWins, winToId } from '../../connect-four'
 import './columns-element'
 import { ViewColumnsCanvas } from './columns-ui-canvas'

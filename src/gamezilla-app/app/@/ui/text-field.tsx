@@ -1,7 +1,7 @@
-import type { VDom } from 'gamezilla-app/@/vdom'
+import type { VDom } from '@/vdom'
 import { IconXMark } from './icon'
 import { cn } from './cn'
-import { TranslatedText } from 'gamezilla-app/@/l18n'
+import { TranslatedText } from '@/l18n'
 
 export const TextField = (input: {
   startIcon?: VDom

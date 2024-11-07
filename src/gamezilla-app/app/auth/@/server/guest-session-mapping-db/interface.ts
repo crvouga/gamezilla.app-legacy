@@ -1,4 +1,4 @@
-import { Task } from 'gamezilla-app/@/core'
+import { Task } from '@/core'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 
 export type IGuestSessionMappingDb = {

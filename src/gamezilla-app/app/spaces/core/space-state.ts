@@ -1,9 +1,9 @@
-import { p } from 'gamezilla-app/@/core/parser'
+import { p } from '@/core/parser'
 import type { UserId } from 'gamezilla-app/app/@/data'
 import { Space } from 'gamezilla-app/app/spaces/@/space'
 import * as GameGame from '../games/core'
 import * as Game from '../games/types'
-import { EventId, WithEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { EventId, WithEventMeta } from '@/event-sourced/event'
 import { SpaceEvent } from './space-event'
 
 //

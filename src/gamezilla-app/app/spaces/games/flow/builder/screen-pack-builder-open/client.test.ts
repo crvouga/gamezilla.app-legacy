@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { didPlaySound } from 'gamezilla-app/app/@/client'
-import { withEventMeta } from 'gamezilla-app/@/event-sourced/event'
+import { withEventMeta } from '@/event-sourced/event'
 import { FlowPack } from '../../@/pack/pack'
 import { FixtureFlowBuilderClient } from '../@/testing/client'
 

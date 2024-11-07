@@ -1,5 +1,5 @@
-import { Result } from 'gamezilla-app/@/core'
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { Result } from '@/core'
+import { EventSourced } from '@/event-sourced'
 import { sendToUser } from 'gamezilla-app/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
 

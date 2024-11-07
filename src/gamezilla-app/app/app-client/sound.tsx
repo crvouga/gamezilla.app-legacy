@@ -1,5 +1,5 @@
-import { Err, Ok, TimeSpan, UnitInterval, type Result } from 'gamezilla-app/@/core'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import { Err, Ok, TimeSpan, UnitInterval, type Result } from '@/core'
+import { Translator } from '@/l18n/generated'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { APP_SOUND, BaseClientCtx, playSound, type ClientEvt, type SoundCmd } from 'gamezilla-app/app/@/client'
 import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from 'gamezilla-app/app/@/ui'

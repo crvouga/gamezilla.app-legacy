@@ -1,4 +1,4 @@
-import { Loading, Ok } from 'gamezilla-app/@/core'
+import { Loading, Ok } from '@/core'
 import { APP_SOUND, playSound, sendToServer, showToast } from 'gamezilla-app/app/@/client'
 import { Button, IconPlus } from 'gamezilla-app/app/@/ui'
 import type { ClientModule } from '../../types'

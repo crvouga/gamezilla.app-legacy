@@ -1,4 +1,4 @@
-import type { Posix } from 'gamezilla-app/@/core'
+import type { Posix } from '@/core'
 import { AppServerCtx } from '../@/server'
 import type { ClientTransportEvent } from './transport/client'
 import type { IServerTransport, ServerTransportMsg } from './transport/server'

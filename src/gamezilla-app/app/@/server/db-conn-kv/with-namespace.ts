@@ -1,5 +1,5 @@
-import { Task } from 'gamezilla-app/@/core'
-import type { Parser } from 'gamezilla-app/@/core/parser/parser'
+import { Task } from '@/core'
+import type { Parser } from '@/core/parser/parser'
 import { IDbConnKv } from './interface'
 
 export const withNamespace = <TKey extends string = string, TValue = unknown>(config: {

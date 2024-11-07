@@ -1,5 +1,5 @@
-import { LocalStorage } from 'gamezilla-app/@/core'
-import { LanguageCodeISO_639_1 } from 'gamezilla-app/@/l18n'
+import { LocalStorage } from '@/core'
+import { LanguageCodeISO_639_1 } from '@/l18n'
 import { APP_SOUND, back, closeStatusBar, playSound, pushRoute } from 'gamezilla-app/app/@/client'
 import { translatorSubscriptions } from '../@/client/translator'
 import { IconCheckmarkCircle, IconCheckmarkCircleEmpty, IconLanguage, ListItemButton, Spinner, TopBar } from '../@/ui'

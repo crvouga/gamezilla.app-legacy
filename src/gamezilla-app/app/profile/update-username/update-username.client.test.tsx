@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { FixtureAppClient } from 'gamezilla-app/app/@/client/client-test-env'
 import { init, View } from './update-username.client'
 import { ModelClient, MsgClient } from './update-username.types'
-import { PubSub } from 'gamezilla-app/@/core'
+import { PubSub } from '@/core'
 
 const Fixture = async () => {
   const f = await FixtureAppClient()

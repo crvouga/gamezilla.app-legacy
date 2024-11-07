@@ -1,4 +1,4 @@
-import type { Eff, Posix } from 'gamezilla-app/@/core'
+import type { Eff, Posix } from '@/core'
 import { type AppClientCmd, type AppClientCtx, sendToServer } from 'gamezilla-app/app/@/client'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from 'gamezilla-app/app/@/ui'
 import {

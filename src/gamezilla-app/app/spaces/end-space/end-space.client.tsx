@@ -3,7 +3,7 @@ import { Button, Typography } from 'gamezilla-app/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import type { SpaceEvent } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
-import { withEventId } from 'gamezilla-app/@/event-sourced/event'
+import { withEventId } from '@/event-sourced/event'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

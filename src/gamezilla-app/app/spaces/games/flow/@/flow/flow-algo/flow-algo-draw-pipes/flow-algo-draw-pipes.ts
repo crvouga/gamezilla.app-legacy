@@ -1,5 +1,5 @@
-import { pipe } from 'gamezilla-app/@/core'
-import { MinHeap } from 'gamezilla-app/@/min-heap/min-heap'
+import { pipe } from '@/core'
+import { MinHeap } from '@/min-heap/min-heap'
 import { Flow } from '../../../flow'
 import { FlowVariant } from '../..'
 import { FlowGroupId } from '../../flow/flow-group-id'

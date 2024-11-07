@@ -1,4 +1,4 @@
-import type { Task } from 'gamezilla-app/@/core'
+import type { Task } from '@/core'
 import { SessionId, UserId } from 'gamezilla-app/app/@/data'
 import { WireSession } from '../wire-session'
 

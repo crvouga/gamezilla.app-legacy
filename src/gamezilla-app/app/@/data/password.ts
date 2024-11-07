@@ -1,5 +1,5 @@
-import { Result } from 'gamezilla-app/@/core'
-import type { Brand } from 'gamezilla-app/@/core/brand'
+import { Result } from '@/core'
+import type { Brand } from '@/core/brand'
 
 export type Password = Brand<string, 'Password'>
 

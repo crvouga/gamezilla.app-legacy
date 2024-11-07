@@ -1,5 +1,5 @@
-import { Eff, andThen, isErr, pipe } from 'gamezilla-app/@/core'
-import type { VDomChildren } from 'gamezilla-app/@/vdom'
+import { Eff, andThen, isErr, pipe } from '@/core'
+import type { VDomChildren } from '@/vdom'
 import { APP_SOUND, type AppClientCmd, playSound, sendToServer } from 'gamezilla-app/app/@/client'
 import {
   Avatar,
@@ -33,7 +33,7 @@ import {
   toPlayerColor,
   updateCore
 } from './puzzle.types'
-import { Translator } from 'gamezilla-app/@/l18n/generated'
+import { Translator } from '@/l18n/generated'
 import { LayoutGame } from '../../@/game/layout-game'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'gamezilla-app/app/@/ui/actions'
 import { SpaceClientCtx } from 'gamezilla-app/app/spaces/@/space-client-ctx'

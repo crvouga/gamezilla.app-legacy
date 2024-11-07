@@ -1,5 +1,5 @@
-import { Result } from 'gamezilla-app/@/core'
-import { EventSourced } from 'gamezilla-app/@/event-sourced'
+import { Result } from '@/core'
+import { EventSourced } from '@/event-sourced'
 import { Paginated } from 'gamezilla-app/app/@/data'
 import { sendToClient } from 'gamezilla-app/app/@/server'
 import type { SpaceServerModule } from '../@/architecture/space-server'

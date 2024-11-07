@@ -8,9 +8,9 @@ import {
   Typography,
   cn
 } from 'gamezilla-app/app/@/ui'
-import type { VDom, VDomChildren } from 'gamezilla-app/@/vdom'
-import type { Translator } from 'gamezilla-app/@/l18n/generated'
-import { TranslatedText } from 'gamezilla-app/@/l18n'
+import type { VDom, VDomChildren } from '@/vdom'
+import type { Translator } from '@/l18n/generated'
+import { TranslatedText } from '@/l18n'
 
 type BottomBarButtonAction = {
   label: TranslatedText

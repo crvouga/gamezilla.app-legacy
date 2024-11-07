@@ -1,5 +1,5 @@
 import type { UserId } from 'gamezilla-app/app/@/data'
-import { Ok } from 'gamezilla-app/@/core'
+import { Ok } from '@/core'
 import type { ProfileCore } from '../types'
 import type { ProfileDb } from './profile-db'
 

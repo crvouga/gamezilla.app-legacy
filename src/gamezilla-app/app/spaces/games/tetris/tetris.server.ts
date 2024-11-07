@@ -1,5 +1,5 @@
-import { Eff, type Sub, Time, isErr } from 'gamezilla-app/@/core'
-import { TimeSpan } from 'gamezilla-app/@/core/time-span'
+import { Eff, type Sub, Time, isErr } from '@/core'
+import { TimeSpan } from '@/core/time-span'
 import {
   type ModelServer,
   type MsgServer,
