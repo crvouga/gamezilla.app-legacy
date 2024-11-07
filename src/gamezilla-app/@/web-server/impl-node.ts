@@ -2,7 +2,7 @@ import { Posix, PubSub } from 'gamezilla-app/@/core'
 import { Logger, type ILogger } from 'gamezilla-app/app/@/server/logger'
 import * as http from 'node:http'
 import { getIpAddress } from './ip-address'
-import { WebServerEvent, type Handler, type IWebServer } from './server'
+import { WebServerEvent, type Handler, type IWebServer } from './interface'
 
 export type Config = {
   t: 'node'

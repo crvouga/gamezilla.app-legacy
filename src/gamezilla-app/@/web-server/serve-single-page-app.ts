@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { IFileSystem } from '../file-system'
-import { IWebServer } from './server'
+import { IWebServer } from './interface'
 import { fileExtensionToContentType } from './content-type'
 
 export type Config = {
