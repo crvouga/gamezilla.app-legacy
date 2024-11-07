@@ -189,7 +189,8 @@ export const update = <MsgToServer>({
     case 'server-connected': {
       return {
         ...model,
-        isConnected: true
+        isConnected: true,
+        reconnectAttempts: 0
       }
     }
 
