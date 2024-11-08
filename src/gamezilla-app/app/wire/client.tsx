@@ -1,17 +1,11 @@
 import type { Eff, Sub } from '@/core'
-import { Translator } from '@/l18n/generated'
-import {
-  AnonymousClientCtx,
-  type AppClientCmd,
-  AppClientCtx,
-  type ClientEvt,
-  showToast
-} from 'gamezilla-app/app/@/client'
-import { ListItemButton, Typography, cn } from '../@/ui'
-import type { IClientTransport } from './transport/client'
-import type { ModelClient, MsgClient, MsgToClient } from './types'
 import { andThen } from '@/core/utils/and-then'
+import { Translator } from '@/l18n/generated'
+import { type AppClientCmd, type ClientEvt, showToast } from 'gamezilla-app/app/@/client'
+import { ListItemButton, Typography, cn } from '../@/ui'
 import { ServerInstanceClient } from './server-instance/client'
+import type { IClientTransport } from './transport/client'
+import type { ClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
 
 //
 //
@@ -21,12 +15,9 @@ import { ServerInstanceClient } from './server-instance/client'
 //
 //
 
-export const init = (input: {
-  ctx: AppClientCtx | AnonymousClientCtx
-  stored: Record<string, unknown> | null
-}): { model: ModelClient } => {
+export const init = (input: { ctx: ClientCtx; stored: Record<string, unknown> | null }): { model: ModelClient } => {
   const serverInstance = ServerInstanceClient.init({
-    ctx: input.ctx
+    ctx: { ...input.ctx, rpc: input.ctx.rpc.serverInstance }
   })
   return {
     model: {

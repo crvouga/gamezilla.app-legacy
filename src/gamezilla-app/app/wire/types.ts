@@ -4,6 +4,8 @@ import type { ClientTransportEvent } from './transport/client'
 import type { IServerTransport, ServerTransportMsg } from './transport/server'
 import { IWireSessionDb } from './wire-session-db'
 import { ServerInstanceTypes } from './server-instance'
+import { RPC } from '@/rpc'
+import { AnonymousClientCtx, AppClientCtx } from '../@/client'
 
 //
 //
@@ -68,3 +70,17 @@ export type MsgServer = ServerTransportMsg | { t: 'got-server-instance-msg'; c: 
 export type MsgToServer = { t: null } | { t: 'got-server-instance-msg'; c: ServerInstanceTypes.MsgToServer }
 
 export type MsgToClient = { t: 'server-restarted' } | { t: 'got-server-instance-msg'; c: ServerInstanceTypes.MsgClient }
+
+//
+//
+//
+//
+//
+
+export const rpcContract = RPC.initContract({
+  serverInstance: ServerInstanceTypes.rpcContract
+})
+
+export type ClientCtx = (AppClientCtx | AnonymousClientCtx) & {
+  rpc: RPC.Client<typeof rpcContract>
+}

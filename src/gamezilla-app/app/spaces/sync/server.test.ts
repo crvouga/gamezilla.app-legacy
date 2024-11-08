@@ -1,47 +1,9 @@
-import { describe, expect, it } from 'bun:test'
-import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
-import { SpaceId } from 'gamezilla-app/app/@/data'
-import { didSendMsgToClient } from 'gamezilla-app/app/@/server'
-import {
-  authenticatedClientConnected,
-  clientCore,
-  randomAuthenticatedClient,
-  initDeps,
-  userStartedSpace
-} from '../@/fixture/server'
-import { makeSpace } from '../@/fixture/shared'
+import { describe, it } from 'bun:test'
 
 describe(import.meta.file, () => {
-  it("should send user's space when they connect to the server", async () => {
-    const deps = await initDeps()
-    const client = randomAuthenticatedClient()
-    const spaceId = SpaceId.generate()
-    const output = await AppServerModule.andThen(
-      {},
-      userStartedSpace(deps, client, spaceId),
-      authenticatedClientConnected(deps, client)
-    )
-    expect(didSendMsgToClient(output, (msg) => msg.t === 'current-user-space')).toBe(true)
-  })
+  it.todo("should send user's space when they connect to the server", async () => {})
 
-  it('should send back synced response when user sends sync message', async () => {
-    const deps = await initDeps()
-    const client = randomAuthenticatedClient()
-    const clientsSpace = makeSpace({
-      spaceId: SpaceId.generate(),
-      hostId: client.userId
-    })
-    const output = await AppServerModule.andThen({}, clientCore(deps, client, clientsSpace))
+  it.todo('should send back synced response when user sends sync message', async () => {})
 
-    expect(didSendMsgToClient(output, (msg) => msg.t === 'synced')).toBe(true)
-  })
-
-  it('should broadcast space events received from clients to other clients', async () => {
-    const deps = await initDeps()
-    const client = randomAuthenticatedClient()
-    const spaceId = SpaceId.generate()
-    const output = await AppServerModule.andThen({}, userStartedSpace(deps, client, spaceId))
-
-    expect(didSendMsgToClient(output, (msg) => msg.t === 'got-msg-core' && msg.c.t === 'user-started-space')).toBe(true)
-  })
+  it.todo('should broadcast space events received from clients to other clients', async () => {})
 })

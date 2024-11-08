@@ -27,7 +27,7 @@ const updateGame: SpaceServerModule['update'] = async (input) => {
     return {}
   }
 
-  const spaceState = SpaceCore.toSpaceStarted(Result.unwrapOr(await input.deps.spacesCoreServer.get(spaceId), null))
+  const spaceState = SpaceCore.toSpaceStarted(Result.unwrapOr(await input.ctx.spacesCoreServer.get(spaceId), null))
 
   if (!spaceState?.game) {
     return {}
@@ -35,7 +35,7 @@ const updateGame: SpaceServerModule['update'] = async (input) => {
 
   const updated = await GamesServer.update({
     deps: null,
-    ctx: { ...input.deps.games, ...input.ctx, space: spaceState },
+    ctx: { ...input.ctx.games, space: spaceState },
     msg: input.msg?.t === 'game' ? input.msg.c : null,
     modelCore: spaceState.game,
     msgClient:

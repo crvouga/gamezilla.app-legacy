@@ -2,7 +2,8 @@ import { Posix, Sub, Time, unwrapOr } from '@/core'
 import { AppServerCtx } from 'gamezilla-app/app/@/server'
 import { ServerInstance } from 'gamezilla-app/app/@/server/server-instance/server-instance'
 import { ServerInstanceDb } from 'gamezilla-app/app/@/server/server-instance/server-instance-db'
-import type { MsgServer, ServerCtx, ServerModule } from './types'
+import { rpcContract, type MsgServer, type ServerCtx, type ServerModule } from './types'
+import { RPC } from '@/rpc'
 
 const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   const serverInstanceDb = ServerInstanceDb({
@@ -100,8 +101,23 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
 
 const INTERVAL_ID = 'server-instance-heartbeat'
 
+const rpc = (input: { ctx: ServerCtx }) => {
+  return RPC.initServer(rpcContract, {
+    listAlive: async () => {
+      const listed = await input.ctx.serverInstanceDb.listAlive({
+        minimalHeartRate: ServerInstance.HEARTBEAT
+      })
+      const serverInstances = unwrapOr(listed, [])
+      return {
+        serverInstances
+      }
+    }
+  })
+}
+
 export const ServerInstanceServer = {
   initCtx,
   update,
-  subscriptions
+  subscriptions,
+  rpc
 }

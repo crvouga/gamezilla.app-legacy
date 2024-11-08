@@ -8,7 +8,8 @@ import { JoinSpaceServer } from './join-space/server'
 import { ListSpacesServer } from './list-spaces/server'
 import { StartSpaceServer } from './start-space/server'
 import { SyncServer } from './sync/server'
-import type { ServerModule } from './types'
+import type { ServerCtx, ServerModule } from './types'
+import { AppServerCtx } from '../@/server'
 
 //
 //
@@ -18,13 +19,15 @@ import type { ServerModule } from './types'
 //
 //
 
-export const initCtx: ServerModule['initDeps'] = async ({ ctx }) => {
+export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   return {
+    ...input.ctx,
+
     spacesCoreServer: await SpacesCoreServer({
       t: 'db-conn-kv',
-      dbConnKv: ctx.dbConnKv,
-      logger: ctx.logger,
-      runtime: ctx.runtime
+      dbConnKv: input.ctx.dbConnKv,
+      logger: input.ctx.logger,
+      runtime: input.ctx.runtime
     }),
     // spacesCoreServer: await SpacesCoreServer({
     //   t: 'stream',
@@ -32,11 +35,9 @@ export const initCtx: ServerModule['initDeps'] = async ({ ctx }) => {
     //   dbConnKv: ctx.dbConnKv,
     //   logger: ctx.logger
     // }),
-    games: GameServer.initCtx({ ctx: { ...ctx, space: Space.random() } })
+    games: GameServer.initCtx({ ctx: { ...input.ctx, space: Space.random() } })
   }
 }
-
-export type ServerCtx = Awaited<ReturnType<typeof initCtx>>
 
 //
 //
@@ -61,7 +62,6 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
 
   if (coreEvt) {
     const updated = await updateChild({
-      deps: input.deps,
       ctx: input.ctx,
       msgCore: coreEvt
     })
@@ -77,7 +77,6 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
 
   if (cmd) {
     const updated = await updateChild({
-      deps: input.deps,
       ctx: input.ctx,
       msgCmd: cmd
     })
@@ -104,12 +103,12 @@ const updateChild: SpaceServerModule['update'] = async (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async ({ msgCore, deps }) => {
-  if (!msgCore) {
+const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
+  if (!input.msgCore) {
     return {}
   }
 
-  await deps.spacesCoreServer.update(msgCore)
+  await input.ctx.spacesCoreServer.update(input.msgCore)
 
   return {}
 }

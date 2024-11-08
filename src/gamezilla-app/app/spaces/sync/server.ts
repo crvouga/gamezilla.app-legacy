@@ -25,7 +25,7 @@ const updateProfileCache: SpaceServerModule['update'] = async (input) => {
 const updateFromClient: SpaceServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'sync': {
-      await input.deps.spacesCoreServer.merge(input.msgClient.space)
+      await input.ctx.spacesCoreServer.merge(input.msgClient.space)
 
       const spaceId = Space.toSpaceId(input.msgClient.space)
 
@@ -33,7 +33,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
         return {}
       }
 
-      const got = await input.deps.spacesCoreServer.get(spaceId)
+      const got = await input.ctx.spacesCoreServer.get(spaceId)
 
       const spaceNew = unwrapOr(got, null)
 
@@ -84,7 +84,7 @@ const spacesToProfiles = async (ctx: AppServerCtx, spaces: Space.Model[]) => {
 const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
     case 'auth/client-authenticated': {
-      const space = unwrapOr(await input.deps.spacesCoreServer.getByUserId(input.msgEvt.user.userId), null)
+      const space = unwrapOr(await input.ctx.spacesCoreServer.getByUserId(input.msgEvt.user.userId), null)
 
       if (!space) {
         return {}
@@ -120,7 +120,7 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
     return {}
   }
 
-  const got = await input.deps.spacesCoreServer.get(input.msgCore.spaceId)
+  const got = await input.ctx.spacesCoreServer.get(input.msgCore.spaceId)
 
   const space = unwrapOr(got, null) ?? SpaceCore.init
 

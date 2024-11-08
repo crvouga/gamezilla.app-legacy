@@ -16,7 +16,7 @@ import * as Space from '../core/space-core'
 const update: SpaceServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-spaces': {
-      const listed = await input.deps.spacesCoreServer.list(input.msgClient)
+      const listed = await input.ctx.spacesCoreServer.list(input.msgClient)
 
       const spaces = Result.unwrapOr(listed, Paginated.init())
 

@@ -1,10 +1,13 @@
 import { Posix } from '@/core'
+import { p } from '@/core/parser'
+import { RPC } from '@/rpc'
 import { RuntimeEvent } from '@/runtime'
 import { WebServerEvent } from '@/web-server'
 import { AppClientModule } from 'gamezilla-app/app/@/architecture/app-client'
 import { AppServerModule } from 'gamezilla-app/app/@/architecture/app-server'
 import { AnonymousClientCtx, AppClientCmd, AppClientCtx, ClientEvt } from 'gamezilla-app/app/@/client'
 import { AppServerCtx, ServerCmd, ServerEvt } from 'gamezilla-app/app/@/server'
+import { ServerInstance } from 'gamezilla-app/app/@/server/server-instance/server-instance'
 import { IServerInstanceDb } from 'gamezilla-app/app/@/server/server-instance/server-instance-db'
 
 export type ModelClient = { t: 'noop' }
@@ -20,6 +23,10 @@ export type MsgServer =
 
 export type MsgClient = { t: 'noop' }
 
+export type ClientCtx = (AnonymousClientCtx | AppClientCtx) & {
+  rpc: RPC.Client<typeof rpcContract>
+}
+
 export type ServerCtx = AppServerCtx & {
   serverInstanceDb: IServerInstanceDb
 }
@@ -34,7 +41,7 @@ export type ServerModule = AppServerModule<{
 }>
 
 export type ClientModule = AppClientModule<{
-  Ctx: AnonymousClientCtx | AppClientCtx
+  Ctx: ClientCtx
   Model: ModelClient
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
@@ -46,3 +53,12 @@ export type ClientModule = AppClientModule<{
     MsgClient: MsgClient
   }>
 }>
+
+export const rpcContract = RPC.initContract({
+  listAlive: {
+    input: p.obj({}),
+    output: p.obj({
+      serverInstances: p.arr(ServerInstance)
+    })
+  }
+})

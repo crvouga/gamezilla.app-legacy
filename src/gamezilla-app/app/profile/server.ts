@@ -1,17 +1,10 @@
-import { type Profile, ProfileAvatar, type UserId, Username } from 'gamezilla-app/app/@/data'
-import { type ServerCmd, type AppServerCtx, type ServerEvt, sendToClient } from 'gamezilla-app/app/@/server'
 import { Err, Ok, Result, isErr } from '@/core'
+import { type Profile, ProfileAvatar, type UserId, Username } from 'gamezilla-app/app/@/data'
+import { AppServerCtx, sendToClient } from 'gamezilla-app/app/@/server'
 import { AppServerModule } from '../@/architecture/app-server'
 import type { ProfileDb } from './profile-db/profile-db'
 import { createProfileDb } from './profile-db/profile-db-impl.postgres'
-import {
-  type MsgServer,
-  type MsgToClient,
-  type MsgToServer,
-  type ProfileCore,
-  type Req,
-  profileCoreToProfile
-} from './types'
+import { type ProfileCore, type Req, ServerCtx, ServerModule, profileCoreToProfile } from './types'
 
 //
 //
@@ -20,40 +13,13 @@ import {
 //
 //
 
-type Module = AppServerModule<{
-  Ctx: AppServerCtx
-  MsgCmdIn: null
-  MsgEvtIn: ServerEvt
-  Model: null
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
-  MsgEvtOut: null
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Deps: ServerCtx
-}>
-//
-//
-//
-//
-//
-//
-
-export type ServerCtx = {}
-
-export const initDeps: Module['initDeps'] = async () => {
-  return {}
+export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
+  return {
+    ...input.ctx
+  }
 }
 
-//
-//
-//
-//
-//
-//
-//
-
-export const update: Module['update'] = async (input) => {
+export const update: ServerModule['update'] = async (input) => {
   return AppServerModule.andThen(
     {},
     () => updateFromMsg(input),
@@ -62,7 +28,7 @@ export const update: Module['update'] = async (input) => {
   )
 }
 
-const updateFromMsg: Module['update'] = async ({ msg }) => {
+const updateFromMsg: ServerModule['update'] = async ({ msg }) => {
   if (!msg) {
     return {}
   }
@@ -79,7 +45,7 @@ const updateFromMsg: Module['update'] = async ({ msg }) => {
   }
 }
 
-const updateFromClient: Module['update'] = async ({ msgClient, ctx }) => {
+const updateFromClient: ServerModule['update'] = async ({ msgClient, ctx }) => {
   if (!msgClient) {
     return {}
   }
@@ -117,7 +83,7 @@ const updateFromClient: Module['update'] = async ({ msgClient, ctx }) => {
   }
 }
 
-const updateFromEvent: Module['update'] = async ({ msgEvt, ctx }) => {
+const updateFromEvent: ServerModule['update'] = async ({ msgEvt, ctx }) => {
   if (!msgEvt) {
     return {}
   }

@@ -21,7 +21,7 @@ export const FixtureFlowPlayServer = async () => {
       return outputs
     }
     const lastOutput = NonEmpty.last(outputs)
-    const nextOutput = await PlayServer.update({ modelCore: lastOutput.modelCore, ...f, ...input })
+    const nextOutput = await PlayServer.update({ modelCore: lastOutput.modelCore, deps: null, ...f, ...input })
     const msgCore = Msg.batch(input.msgCore, nextOutput.msgCore)
     const nextModelCore = msgCore.reduce(
       (modelCore, msgCore) => PlayCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),

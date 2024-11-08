@@ -1,19 +1,18 @@
 import { type Sub } from '@/core'
 import { Msg } from '@/core/msg'
+import { WithEventId } from '@/event-sourced/event'
 import type { ClientId, SessionId, UserId } from 'gamezilla-app/app/@/data'
-import type { AppServerCtx, ServerEvt } from 'gamezilla-app/app/@/server'
-import type { MsgServer, MsgToClient, MsgToServer, ServerDeps } from '../../types'
+import type { ServerEvt } from 'gamezilla-app/app/@/server'
+import { SpaceEvent } from '../../core'
+import type { MsgServer, MsgToClient, MsgToServer, ServerCtx } from '../../types'
 import type { Space } from '../space'
 import type { SpaceServerCmd } from '../space-server-cmd'
-import { SpaceEvent } from '../../core'
-import { WithEventId } from '@/event-sourced/event'
 
-type Ctx = AppServerCtx & {
+type Ctx = ServerCtx & {
   space?: Space
 }
 
 export type Input = {
-  deps: ServerDeps
   ctx: Ctx
   msg?: MsgServer | null
   msgClient?:
@@ -37,9 +36,9 @@ export type Output = {
 }
 
 export type SpaceServerModule = {
-  init: (input: { ctx: Ctx; deps: ServerDeps }) => MaybePromise<Output>
+  init: (input: { ctx: Ctx }) => MaybePromise<Output>
   update: (input: Input) => MaybePromise<Output>
-  subscriptions: (input: { ctx: Ctx; deps: ServerDeps }) => MaybePromise<Sub<MsgServer>>
+  subscriptions: (input: { ctx: Ctx }) => MaybePromise<Sub<MsgServer>>
 }
 
 const andThen = async (

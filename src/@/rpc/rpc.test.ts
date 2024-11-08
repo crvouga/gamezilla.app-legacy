@@ -24,7 +24,7 @@ const childRpcServer = RPC.initServer(childRpcContract, {
 })
 
 const rpcContract = RPC.initContract({
-  //   child: childRpcContract,
+  child: childRpcContract,
   foo: {
     input: p.obj({
       name: p.str,
@@ -45,7 +45,7 @@ const rpcContract = RPC.initContract({
 })
 
 const rpcServer = RPC.initServer(rpcContract, {
-  //   child: childRpcServer,
+  child: childRpcServer,
   async bar(input) {
     return {
       message: `Hi, ${input.name}`

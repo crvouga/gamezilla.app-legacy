@@ -7,9 +7,10 @@ import { AppServerModule } from '../@/architecture/app-server'
 import { Logger } from '../@/server/logger'
 import { ServerInstanceServer } from './server-instance/server'
 import type { IServerTransport } from './transport/server'
-import type { MsgServer, MsgToClient, MsgToServer, ServerCtx } from './types'
+import { rpcContract, type MsgServer, type MsgToClient, type MsgToServer, type ServerCtx } from './types'
 import { WireSession } from './wire-session'
 import { WireSessionDb } from './wire-session-db'
+import { RPC } from '@/rpc'
 
 //
 //
@@ -240,4 +241,10 @@ export const subscriptions = <TMsgToServer, TMsgToClient>(input: {
   ctx: ServerCtx<TMsgToClient, TMsgToServer>
 }): Sub<MsgServer> => {
   return input.ctx.transport.wire
+}
+
+export const rpc = <TMsgToClient, TMsgToServer>(input: { ctx: ServerCtx<TMsgToClient, TMsgToServer> }) => {
+  return RPC.initServer(rpcContract, {
+    serverInstance: ServerInstanceServer.rpc({ ctx: input.ctx.serverInstance })
+  })
 }

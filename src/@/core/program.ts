@@ -13,6 +13,8 @@ type MaybePromise<T> = T | Promise<T>
 export type Program<TModel, TMsg, TCtx> = {
   initCtx: () => MaybePromise<TCtx>
 
+  updateCtx: (ctx: TCtx) => MaybePromise<TCtx>
+
   init: (input: { ctx: TCtx }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
 
   update: (input: { ctx: TCtx; msg: TMsg; model: TModel }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
@@ -85,12 +87,14 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
   let isUpdating = false
   const queue: TMsg[] = []
 
+  const ctx = await program.initCtx()
+
   async function dispatch(msg: TMsg) {
     if (!model) {
       return
     }
     try {
-      const ctx = await program.initCtx()
+      const ctxNew = await program.updateCtx(ctx)
 
       // This is so we don't overwrite ongoing updates
       if (isUpdating) {
@@ -100,16 +104,16 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
 
       isUpdating = true
       const updated = await program.update({
-        ctx,
+        ctx: ctxNew,
         msg,
         model
       })
       isUpdating = false
 
       model = updated.model
-      updateUI(model, ctx)
+      updateUI(model, ctxNew)
       updateEff(updated.eff)
-      updateSubscriptions(model, ctx)
+      updateSubscriptions(model, ctxNew)
       updateDebugger?.(model, msg)
 
       if (queue.length > 0) {
@@ -126,8 +130,6 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
     }
   }
 
-  const ctx = await program.initCtx()
-
   const init = await program.init({ ctx })
 
   model = init.model
@@ -136,7 +138,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
   updateSubscriptions(model, ctx)
 
   const updateDebugger = await program.debugger?.(model, async function debuggerSetModel(modelNew) {
-    const ctx = await program.initCtx()
+    const ctxNew = await program.updateCtx(ctx)
 
     // @ts-expect-error
     model = modelNew
@@ -147,7 +149,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
 
     program.render?.({
       model,
-      ctx,
+      ctx: ctxNew,
       dispatch
     })
   })

@@ -1,3 +1,4 @@
+import type { RemoteResult, Result } from '@/core'
 import {
   type ClientId,
   type Profile,
@@ -7,7 +8,8 @@ import {
   type UserId,
   type Username
 } from 'gamezilla-app/app/@/data'
-import type { RemoteResult, Result } from '@/core'
+import { AppServerModule } from '../@/architecture/app-server'
+import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
 //
 //
@@ -111,3 +113,18 @@ export type Req =
   | { t: 'delete-forever'; query: string }
 
 export type Res = Req & { result: Result<string, Profile[]> }
+
+export type ServerCtx = AppServerCtx
+
+export type ServerModule = AppServerModule<{
+  Ctx: ServerCtx
+  MsgCmdIn: null
+  MsgEvtIn: ServerEvt
+  Model: null
+  Msg: MsgServer
+  MsgCmdOut: ServerCmd<MsgToClient>
+  MsgEvtOut: null
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  Deps: null
+}>

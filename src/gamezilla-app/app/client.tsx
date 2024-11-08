@@ -14,7 +14,7 @@ import {
   type ClientEvt
 } from 'gamezilla-app/app/@/client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from 'gamezilla-app/app/@/ui'
-import type { ServerImpl } from 'gamezilla-app/config-public'
+import { CODEBASE_VERSION_ID, SERVER_IMPL, SERVER_URL, type ServerImpl } from 'gamezilla-app/config-public'
 import { Translator } from './@/client/translator'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
@@ -22,10 +22,19 @@ import * as AuthClient from './auth/client'
 import * as LangClient from './lang/client'
 import * as ProfileClient from './profile/client'
 
+import { RPC } from '@/rpc'
+import { WebClient } from '@/web-client'
 import * as SpaceClient from './spaces/client'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
+import {
+  rpcContract,
+  type ClientCtx,
+  type ModelClient,
+  type MsgClient,
+  type MsgToClient,
+  type MsgToServer
+} from './types'
 import * as WireClient from './wire/client'
-import { ClientTransport, type IClientTransport } from './wire/transport/client'
+import { ClientTransport } from './wire/transport/client'
 
 //
 //
@@ -34,29 +43,6 @@ import { ClientTransport, type IClientTransport } from './wire/transport/client'
 //
 //
 //
-
-export type Deps = {
-  transport: IClientTransport<{
-    MsgToServer: MsgToServer
-    MsgToClient: MsgToClient
-  }>
-  stored: Record<string, unknown>
-}
-
-export const initDeps = async (input: {
-  serverImpl: ServerImpl
-  serverUrl: string
-  codebaseVersionId: string
-}): Promise<Deps> => {
-  const transport = await ClientTransport<MsgToServer, MsgToClient>(toClientTransportConfig(input))
-
-  const stored = {}
-
-  return {
-    transport,
-    stored
-  }
-}
 
 const toClientTransportConfig = (input: {
   serverImpl: ServerImpl
@@ -89,23 +75,41 @@ const toClientTransportConfig = (input: {
 //
 //
 
-export type Ctx = {
-  now: Posix
-  location: Browser.Location
-  navigatorLanguage: LanguageCodeISO_639_1
-}
+export const initCtx = async (): Promise<ClientCtx> => {
+  const transport = await ClientTransport<MsgToServer, MsgToClient>(
+    toClientTransportConfig({
+      codebaseVersionId: CODEBASE_VERSION_ID,
+      serverImpl: SERVER_IMPL,
+      serverUrl: SERVER_URL
+    })
+  )
 
-export const initCtx = (): Ctx => {
+  const webClient = WebClient({
+    t: 'fetch',
+    fetch: fetch as Fetch
+  })
+
+  const rpc = RPC.initClient(webClient, rpcContract)
+
   return {
+    rpc,
+    stored: {},
+    transport,
     now: Posix.now(),
     location: Browser.location(),
     navigatorLanguage: LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
   }
 }
 
+export const updateCtx = (ctx: ClientCtx): ClientCtx => {
+  return {
+    ...ctx,
+    now: Posix.now()
+  }
+}
+
 export const init = (input: {
-  deps: Deps
-  ctx: Ctx
+  ctx: ClientCtx
 }): {
   model: ModelClient
   eff?: Eff<MsgClient>
@@ -121,15 +125,21 @@ export const init = (input: {
     profiles: {}
   }
 
-  const lang = LangClient.init({ ctx, stored: input.deps.stored })
-  const toast = Toast.init({ stored: input.deps.stored, ctx })
-  const wire = WireClient.init({ ctx, stored: input.deps.stored })
-  const auth = AuthClient.init({ stored: input.deps.stored, ctx })
-  const space = SpaceClient.init({ ctx, stored: input.deps.stored })
-  const profile = ProfileClient.init({ ctx, stored: input.deps.stored })
-  const sound = Sound.init({ ctx, stored: input.deps.stored })
-  const platform = Platform.init({ stored: input.deps.stored })
-  const statusBar = StatusBar.init({ stored: input.deps.stored })
+  const lang = LangClient.init({ ctx, stored: input.ctx.stored })
+  const toast = Toast.init({ stored: input.ctx.stored, ctx })
+  const wire = WireClient.init({
+    ctx: {
+      ...ctx,
+      rpc: input.ctx.rpc.wire
+    },
+    stored: input.ctx.stored
+  })
+  const auth = AuthClient.init({ stored: input.ctx.stored, ctx })
+  const space = SpaceClient.init({ ctx, stored: input.ctx.stored })
+  const profile = ProfileClient.init({ ctx, stored: input.ctx.stored })
+  const sound = Sound.init({ ctx, stored: input.ctx.stored })
+  const platform = Platform.init({ stored: input.ctx.stored })
+  const statusBar = StatusBar.init({ stored: input.ctx.stored })
 
   const initialModel: ModelClient = {
     statusBar: statusBar.model,
@@ -160,7 +170,7 @@ export const init = (input: {
     preloadSound(Object.values(APP_SOUND))
   )
 
-  const updated = updateLoop(input.deps, input.ctx, {
+  const updated = updateLoop(input.ctx, {
     model: initialModel,
     eff: initialEff,
     msgCmd: initialCmd,
@@ -179,7 +189,7 @@ export const init = (input: {
 //
 //
 
-const toClientCtx = (input: { model: ModelClient; ctx: Ctx }): AppClientCtx | AnonymousClientCtx => {
+const toClientCtx = (input: { model: ModelClient; ctx: ClientCtx }): AppClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
     ...input.ctx,
     t: Translator(input.model.lang.lang),
@@ -209,10 +219,9 @@ const toClientCtx = (input: { model: ModelClient; ctx: Ctx }): AppClientCtx | An
 //
 
 export const update = (input: {
-  ctx: Ctx
+  ctx: ClientCtx
   msg: MsgClient
   model: ModelClient
-  deps: Deps
 }): {
   model: ModelClient
   eff?: Eff<MsgClient>
@@ -222,11 +231,10 @@ export const update = (input: {
     ctx: input.ctx,
     model: input.model,
     msg: input.msg,
-    msgServer: msgServer,
-    deps: input.deps
+    msgServer: msgServer
   })
 
-  const updated = updateLoop(input.deps, input.ctx, updatedFromMsg)
+  const updated = updateLoop(input.ctx, updatedFromMsg)
 
   return updated
 }
@@ -241,17 +249,16 @@ type Output = {
   }>[]
 }
 
-const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
+const updateLoop = (ctx: ClientCtx, acc: Output): Output => {
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
   if (msgCmd) {
     const updatedCmd = updateChild({
-      deps,
       ctx,
       model: acc.model,
       msgCmd
     })
-    return updateLoop(deps, ctx, {
+    return updateLoop(ctx, {
       model: updatedCmd.model,
       msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -263,12 +270,11 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
 
   if (msgEvt) {
     const updatedEvt = updateChild({
-      deps,
       ctx,
       model: acc.model,
       msgEvt
     })
-    return updateLoop(deps, ctx, {
+    return updateLoop(ctx, {
       model: updatedEvt.model,
       msgCmd: Msg.batch(msgCmdRest, updatedEvt.msgCmd),
       eff: Eff.batch([acc.eff, updatedEvt.eff]),
@@ -280,8 +286,7 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
 }
 
 const updateChild = (input: {
-  deps: Deps
-  ctx: Ctx
+  ctx: ClientCtx
   model: ModelClient
   msg?: MsgClient
   msgServer?: MsgToClient
@@ -332,7 +337,7 @@ const updateChild = (input: {
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
     msgServer: input.msgServer?.t === 'wire' ? input.msgServer.c : null,
     msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
-    transport: input.deps.transport
+    transport: input.ctx.transport
   })
 
   const sound = Sound.update({
@@ -431,14 +436,14 @@ const updateChild = (input: {
 //
 //
 
-export const subscriptions = (input: { ctx: Ctx; deps: Deps; model: ModelClient }) => {
+export const subscriptions = (input: { ctx: ClientCtx; model: ModelClient }): Sub<MsgClient> => {
   const ctx = toClientCtx(input)
 
   return Sub.batch<MsgClient>([
-    Sub.tag('→', Sub.flat(input.deps.transport.toClient)),
+    Sub.tag('→', Sub.flat(input.ctx.transport.toClient)),
     Sub.tag('platform', Platform.subscriptions),
     Sub.tag('routing', Routing.subscriptions),
-    Sub.tag('wire', WireClient.subscriptions({ transport: input.deps.transport })),
+    Sub.tag('wire', WireClient.subscriptions({ transport: input.ctx.transport })),
     Sub.tag('lang', LangClient.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('toast', Toast.subscriptions({ ctx, model: input.model.toast })),
     Sub.tag('auth', AuthClient.subscriptions({ ctx, model: input.model.auth })),
@@ -454,7 +459,7 @@ export const subscriptions = (input: { ctx: Ctx; deps: Deps; model: ModelClient 
 //
 //
 
-export const View = (input: { ctx: Ctx; model: ModelClient; dispatch: (msg: MsgClient) => void }) => {
+export const View = (input: { ctx: ClientCtx; model: ModelClient; dispatch: (msg: MsgClient) => void }) => {
   const clientCtx = toClientCtx(input)
 
   return (

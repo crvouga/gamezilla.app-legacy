@@ -1,12 +1,13 @@
 import { ProgramImpure } from '@/core/program-impure'
-import * as AppServer from 'gamezilla-app/app/server'
-import { MsgServer } from 'gamezilla-app/app/types'
+import { RPC } from '@/rpc'
+import { AppServer } from 'gamezilla-app/app/server'
 import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, SERVER_PORT, TRANSPORT_IMPL } from 'gamezilla-app/config-public'
+import { AppTypes } from './app'
 
 const main = async () => {
   const ctx = await AppServer.initCtx()
 
-  await ProgramImpure.run<MsgServer, AppServer.Ctx>({
+  await ProgramImpure.run<AppTypes.MsgServer, AppTypes.ServerCtx>({
     initCtx: async () => ctx,
     updateCtx: AppServer.updateCtx,
     init: AppServer.init,
@@ -15,6 +16,10 @@ const main = async () => {
   })
 
   await ctx.server.start(SERVER_PORT)
+
+  const rpc = AppServer.rpc({ ctx })
+
+  RPC.attachServer(ctx.server, AppTypes.rpcContract, rpc)
 
   ctx.logger.info({ CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, TRANSPORT_IMPL })
 }

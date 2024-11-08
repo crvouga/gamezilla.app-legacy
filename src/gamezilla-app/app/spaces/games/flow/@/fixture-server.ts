@@ -19,6 +19,7 @@ export const FixtureFlowServer = async () => {
   const f = await FixtureSpaceServer()
   const ctx: FlowServerCtx = {
     ...f.ctx,
+
     flowPackDb: FlowPackDb({ t: 'hash-map' }),
     flowPuzzleDb: FlowPuzzleDb({ t: 'hash-map' })
   }

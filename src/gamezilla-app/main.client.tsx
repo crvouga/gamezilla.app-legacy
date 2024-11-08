@@ -2,21 +2,10 @@ import { Program } from '@/core'
 import { DebuggerReduxDevTools } from '@/core/debug'
 import { Render } from '@/vdom'
 import * as AppClient from 'gamezilla-app/app/client'
-import {
-  CODEBASE_VERSION_ID,
-  IS_PROD,
-  SERVER_IMPL,
-  SERVER_URL,
-  TRANSPORT_IMPL,
-  VDOM_IMPL
-} from 'gamezilla-app/config-public'
+import { CODEBASE_VERSION_ID, IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from 'gamezilla-app/config-public'
 
 const main = async () => {
-  const deps = await AppClient.initDeps({
-    codebaseVersionId: CODEBASE_VERSION_ID,
-    serverImpl: SERVER_IMPL,
-    serverUrl: SERVER_URL
-  })
+  const ctx = await AppClient.initCtx()
 
   const root = document.getElementById('root')
 
@@ -27,13 +16,15 @@ const main = async () => {
   const render = await Render(VDOM_IMPL, root)
 
   await Program.run({
-    initCtx: AppClient.initCtx,
+    initCtx: () => ctx,
 
-    init: (input) => AppClient.init({ ...input, deps }),
+    updateCtx: (ctx) => AppClient.updateCtx(ctx),
 
-    update: (input) => AppClient.update({ ...input, deps }),
+    init: (input) => AppClient.init(input),
 
-    subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
+    update: (input) => AppClient.update(input),
+
+    subscriptions: (input) => AppClient.subscriptions(input),
 
     render: (input) => render(<AppClient.View {...input} />),
 
@@ -42,7 +33,7 @@ const main = async () => {
     debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined
   })
 
-  await deps.transport.start()
+  await ctx.transport.start()
 
   console.log({ CODEBASE_VERSION_ID, IS_PROD, TRANSPORT_IMPL, VDOM_IMPL })
 }

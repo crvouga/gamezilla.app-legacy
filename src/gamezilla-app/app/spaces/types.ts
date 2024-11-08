@@ -1,18 +1,18 @@
 import type { RequestResponse } from '@/core'
+import type { WithEventId, WithEventMeta } from '@/event-sourced/event'
 import type { Profile, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, AppClientCmd, AppClientCtx, ClientEvt } from '../@/client'
 import { UserAccount } from '../@/data/account'
 import type { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
-import type { WithEventId, WithEventMeta } from '@/event-sourced/event'
+import { SpaceEvent } from './core'
 import type * as Spaces from './core/client/spaces-core.client'
 import { ISpacesCoreServer } from './core/server/interface'
 import type * as Space from './core/space-core'
 import { GameName } from './games/@/game-name'
 import type * as Game from './games/types'
 import * as GamesTypes from './games/types'
-import { SpaceEvent } from './core'
 
 //
 //
@@ -22,7 +22,7 @@ import { SpaceEvent } from './core'
 //
 //
 
-export type ServerDeps = {
+export type ServerCtx = AppServerCtx & {
   spacesCoreServer: ISpacesCoreServer
   games: GamesTypes.GameServerCtx
 }
@@ -157,7 +157,7 @@ export type ClientModule = AppClientModule<{
 }>
 
 export type ServerModule = AppServerModule<{
-  Ctx: AppServerCtx
+  Ctx: ServerCtx
   MsgCmdIn: null
   MsgEvtIn: ServerEvt
   Model: ModelServer
@@ -166,5 +166,5 @@ export type ServerModule = AppServerModule<{
   MsgEvtOut: null
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Deps: ServerDeps
+  Deps: null
 }>

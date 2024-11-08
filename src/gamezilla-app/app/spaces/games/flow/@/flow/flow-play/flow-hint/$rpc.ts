@@ -1,7 +1,7 @@
 import { p } from '@/core/parser'
-import { initContract, attachServer } from '@/rpc/rpc'
-import { FlowVariant } from '../../flow-variant'
+import { initContract } from '@/rpc/rpc'
 import { Flow } from '../../flow'
+import { FlowVariant } from '../../flow-variant'
 
 export const contract = initContract({
   findSolutions: {
@@ -11,14 +11,5 @@ export const contract = initContract({
     output: p.obj({
       solutions: p.arr(Flow.Model)
     })
-  }
-})
-
-export const rpc = attachServer(contract, {
-  findSolutions: async (input) => {
-    console.log('findSolutions', input)
-    return {
-      solutions: []
-    }
   }
 })

@@ -1,10 +1,17 @@
+import { Browser, Posix } from '@/core'
+import { LanguageCodeISO_639_1 } from '@/l18n'
+import { RPC } from '@/rpc'
+import { IWebServer } from '@/web-server'
 import type { ClientId, SessionId, UserId } from './@/data'
+import { AppServerCtx } from './@/server'
 import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import { AuthTypes } from './auth'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
+import { IClientTransport } from './wire/transport/client'
+import { IServerTransport } from './wire/transport/server'
 
 //
 //
@@ -79,3 +86,47 @@ export type MsgToServerMeta = {
   clientId: ClientId
   userId?: UserId | null
 }
+
+//
+//
+//
+//
+//
+
+export const rpcContract = RPC.initContract({
+  wire: WireTypes.rpcContract
+})
+
+//
+//
+//
+//
+
+export type ServerCtx = AppServerCtx & {
+  transport: IServerTransport<{
+    MsgToClient: MsgToClient
+    MsgToServer: MsgToServer
+  }>
+  wire: WireTypes.ServerCtx<MsgToClient, MsgToServer>
+  profile: ProfileTypes.ServerCtx
+  space: SpacesTypes.ServerCtx
+  auth: AuthTypes.ServerCtx
+  server: IWebServer
+}
+
+export type ClientCtx = {
+  now: Posix
+  rpc: RPC.Client<typeof rpcContract>
+  location: Browser.Location
+  navigatorLanguage: LanguageCodeISO_639_1
+  transport: IClientTransport<{
+    MsgToServer: MsgToServer
+    MsgToClient: MsgToClient
+  }>
+  stored: Record<string, unknown>
+}
+
+//
+//
+//
+//
