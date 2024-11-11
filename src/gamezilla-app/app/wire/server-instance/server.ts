@@ -103,7 +103,7 @@ const INTERVAL_ID = 'server-instance-heartbeat'
 
 const rpc = (input: { ctx: ServerCtx }) => {
   return RPC.initServer(rpcContract, {
-    listAlive: async () => {
+    async listAlive() {
       const listed = await input.ctx.serverInstanceDb.listAlive({
         minimalHeartRate: ServerInstance.HEARTBEAT
       })
