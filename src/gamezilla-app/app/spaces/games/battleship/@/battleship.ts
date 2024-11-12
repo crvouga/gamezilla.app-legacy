@@ -58,11 +58,11 @@ type ShootInput = { ammo: Ammo; target: Ship; shotCount: number }
 
 const shoot = Polymorphic<(input: ShootInput, model: Model) => Model>()
 
-shoot.implementDefault((_input, model) => {
+shoot.implDefault((_input, model) => {
   return model
 })
 
-shoot.implement(
+shoot.impl(
   (
     input
   ): input is ShootInput & {
@@ -77,7 +77,7 @@ shoot.implement(
   }
 )
 
-shoot.implement(
+shoot.impl(
   (
     input
   ): input is ShootInput & {
@@ -92,7 +92,7 @@ shoot.implement(
   }
 )
 
-shoot.implement(
+shoot.impl(
   (
     input
   ): input is ShootInput & {
@@ -107,7 +107,7 @@ shoot.implement(
   }
 )
 
-shoot.implement(
+shoot.impl(
   (
     input
   ): input is ShootInput & {

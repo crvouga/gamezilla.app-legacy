@@ -29,7 +29,7 @@ export const Polymorphic = <TFunction extends (variant: any, ...args: any[]) => 
     return handled
   }
 
-  run.implement = <TVariant extends Variant, TImplOutput extends TOutput | Variant>(
+  run.impl = <TVariant extends Variant, TImplOutput extends TOutput | Variant>(
     predicate: (variant: Variant) => variant is TVariant,
     implementation: (variant: TVariant, ...args: RestParameters) => TImplOutput
   ) => {
@@ -39,7 +39,7 @@ export const Polymorphic = <TFunction extends (variant: any, ...args: any[]) => 
     })
   }
 
-  run.implementDefault = (implementation: TFunction) => {
+  run.implDefault = (implementation: TFunction) => {
     handleNotImplemented = implementation
   }
 

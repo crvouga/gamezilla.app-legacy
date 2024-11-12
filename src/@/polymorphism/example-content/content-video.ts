@@ -9,7 +9,7 @@ export type Video = {
 
 const isVideo = (content: Content): content is Video => content.Content === 'video'
 
-renderHTML.implement(isVideo, (video) => {
+renderHTML.impl(isVideo, (video) => {
   return `
         <div>
             <h1>${video.title}</h1>

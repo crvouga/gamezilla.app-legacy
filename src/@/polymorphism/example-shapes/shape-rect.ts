@@ -9,11 +9,11 @@ export type Rect = {
 
 const isRect = (shape: Shape): shape is Rect => shape.Shape === 'rect' && 'Shape2D' in shape && shape.Shape2D === 'rect'
 
-area.implement(isRect, (shape) => shape.width * shape.height)
+area.impl(isRect, (shape) => shape.width * shape.height)
 
-perimeter.implement(isRect, (shape) => 2 * (shape.width + shape.height))
+perimeter.impl(isRect, (shape) => 2 * (shape.width + shape.height))
 
-scale.implement(isRect, (shape, scaleBy) =>
+scale.impl(isRect, (shape, scaleBy) =>
   Rect({
     width: shape.width * scaleBy,
     height: shape.height * scaleBy

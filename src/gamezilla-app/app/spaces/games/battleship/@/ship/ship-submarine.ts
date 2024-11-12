@@ -10,7 +10,7 @@ const is = (ship: Ship): ship is ShipSubmarine => {
   return ship.Ship === 'Submarine'
 }
 
-placeShip.implement(is, (_submarine, model) => {
+placeShip.impl(is, (_submarine, model) => {
   return model
 })
 

@@ -1,9 +1,10 @@
-import { Result } from '@/core'
+import { unwrapOr } from '@/core'
 import { EventSourced } from '@/event-sourced'
 import { Paginated } from 'gamezilla-app/app/@/data'
 import { sendToClient } from 'gamezilla-app/app/@/server'
 import type { SpaceServerModule } from '../@/architecture/space-server'
 import * as Space from '../core/space-core'
+import { Polymorphic } from '@/polymorphism/polymorphic-function'
 
 //
 //
@@ -13,16 +14,16 @@ import * as Space from '../core/space-core'
 //
 //
 
+Polymorphic()
+
 const update: SpaceServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-spaces': {
       const listed = await input.ctx.spacesCoreServer.list(input.msgClient)
-
-      const spaces = Result.unwrapOr(listed, Paginated.init())
-
+      const spaces = unwrapOr(listed, Paginated.init())
       const started = spaces.items.map(EventSourced.startFromLatestSnapshot)
       const userIds = spaces.items.flatMap(Space.toUserIds)
-      const profiles = Result.unwrapOr(await input.ctx.profileCache.get(userIds), {})
+      const profiles = unwrapOr(await input.ctx.profileCache.get(userIds), {})
 
       return {
         msgCmd: [

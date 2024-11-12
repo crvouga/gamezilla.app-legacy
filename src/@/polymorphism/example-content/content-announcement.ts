@@ -8,7 +8,7 @@ export type Announcement = {
 
 const isAnnouncement = (content: Content): content is Announcement => content.Content === 'announcement'
 
-renderHTML.implement(isAnnouncement, (announcement) => {
+renderHTML.impl(isAnnouncement, (announcement) => {
   return `
         <div>
             <h1>${announcement.title}</h1>

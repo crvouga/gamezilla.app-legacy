@@ -15,11 +15,11 @@ export const signUpWithEmailAndPassword = Polymorphic<
   ) => Promise<Result<string, null>>
 >()
 
-signUpWithEmailAndPassword.implementDefault(async () => Result.Err('Not implemented'))
+signUpWithEmailAndPassword.implDefault(async () => Result.Err('Not implemented'))
 
 export const logout = Polymorphic<(auth: AuthProvider) => Promise<Result<string, null>>>()
 
-logout.implementDefault(async () => Result.Err('Not implemented'))
+logout.implDefault(async () => Result.Err('Not implemented'))
 
 export const loginWithEmailAndPassword = Polymorphic<
   (
@@ -31,8 +31,8 @@ export const loginWithEmailAndPassword = Polymorphic<
   ) => Promise<Result<string, null>>
 >()
 
-loginWithEmailAndPassword.implementDefault(async () => Result.Err('Not implemented'))
+loginWithEmailAndPassword.implDefault(async () => Result.Err('Not implemented'))
 
 export const loginWithGoogle = Polymorphic<(auth: AuthProvider) => Promise<Result<string, null>>>()
 
-loginWithGoogle.implementDefault(async () => Result.Err('Not implemented'))
+loginWithGoogle.implDefault(async () => Result.Err('Not implemented'))

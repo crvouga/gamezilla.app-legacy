@@ -8,7 +8,7 @@ export type BlogPost = {
 
 const isBlogPost = (content: Content): content is BlogPost => content.Content === 'blog-post'
 
-renderHTML.implement(isBlogPost, (blogPost) => {
+renderHTML.impl(isBlogPost, (blogPost) => {
   return `
     <div>
         <h1>${blogPost.title}</h1>

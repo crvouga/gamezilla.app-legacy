@@ -4,9 +4,9 @@ export type ShotRule = { t: 'hitting-streak' } | { t: 'chain-fire' } | { t: 'cou
 
 export const toDescription_ = Polymorphic<(rule: ShotRule) => string>()
 
-toDescription_.implementDefault((rule) => rule.t)
+toDescription_.implDefault((rule) => rule.t)
 
-toDescription_.implement(
+toDescription_.impl(
   (rule): rule is { t: 'count'; count: 1 | 2 | 3 | 4 | 5 | 6 } => rule.t === 'count',
   (rule) => {
     const word = pluralize(rule.count, 'time', 'times')

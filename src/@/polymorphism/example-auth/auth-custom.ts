@@ -7,7 +7,7 @@ type CustomAuthProvider = {
 
 const isCustomAuthProvider = (auth: AuthProvider): auth is CustomAuthProvider => auth.Auth === 'custom'
 
-signUpWithEmailAndPassword.implement(isCustomAuthProvider, async (_auth, _input) => {
+signUpWithEmailAndPassword.impl(isCustomAuthProvider, async (_auth, _input) => {
   return Result.Err('Not implemented')
 })
 
