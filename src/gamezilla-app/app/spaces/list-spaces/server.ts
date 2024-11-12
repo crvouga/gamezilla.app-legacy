@@ -4,7 +4,6 @@ import { Paginated } from 'gamezilla-app/app/@/data'
 import { sendToClient } from 'gamezilla-app/app/@/server'
 import type { SpaceServerModule } from '../@/architecture/space-server'
 import * as Space from '../core/space-core'
-import { Polymorphic } from '@/polymorphism/polymorphic-function'
 
 //
 //
@@ -13,8 +12,6 @@ import { Polymorphic } from '@/polymorphism/polymorphic-function'
 //
 //
 //
-
-Polymorphic()
 
 const update: SpaceServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {

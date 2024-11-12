@@ -82,7 +82,7 @@ export const isResponseErr = <TError, TValue>(
 
 export const response = <TError, TValue>(
   request: RequestResponse<TError, TValue>,
-  responsedAt: Posix,
+  respondedAt: Posix,
   result: Result<TError, TValue>
 ): RequestResponse<TError, TValue> => {
   if (request.t === 'not-asked') {
@@ -90,8 +90,8 @@ export const response = <TError, TValue>(
   }
   return {
     ...result,
-    requestedAt: responsedAt,
-    respondedAt: responsedAt,
+    requestedAt: respondedAt,
+    respondedAt: respondedAt,
     lifeSpan: request.lifeSpan,
     requestId: request.requestId
   }
@@ -114,10 +114,10 @@ export const timePassed = <TError, TValue>(
 
 const subscriptions = <TError, TValue, TMsg>(
   request: RequestResponse<TError, TValue>,
-  elasped: () => TMsg
+  elapsed: () => TMsg
 ): Sub<TMsg> => {
   if (isRequesting(request)) {
-    return Time.interval('', TimeSpan.seconds(1), elasped)
+    return Time.interval('', TimeSpan.seconds(1), elapsed)
   }
   return Sub.None
 }
