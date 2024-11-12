@@ -4,7 +4,7 @@ import { didPlaySound, didPushRoute, didShowToast } from 'gamezilla-app/app/@/cl
 import { SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import {
   Ctx,
-  FixtureSpaceClient,
+  FixtureSpacesClient,
   clickedLeaveSpaceButton,
   init,
   userJoinedSpace,
@@ -15,7 +15,7 @@ import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import { withEventMeta } from '@/event-sourced/event'
 
 const Fixture = async () => {
-  const f = await FixtureSpaceClient()
+  const f = await FixtureSpacesClient()
   return {
     ...f
   }

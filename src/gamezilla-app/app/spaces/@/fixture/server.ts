@@ -63,6 +63,10 @@ export const FixtureSpaceServer = async () => {
     // })
   }
 
+  const updates = (input) => {
+    SpaceServer
+  }
+
   return {
     ...f,
     ctx,

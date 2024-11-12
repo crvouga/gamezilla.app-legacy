@@ -1,17 +1,17 @@
-import { describe, expect, it, test } from 'bun:test'
 import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk, pipe } from '@/core'
+import { EventSourced } from '@/event-sourced'
+import { withEventId } from '@/event-sourced/event'
 import type { Route } from '@/routing/generated/routes'
+import { describe, expect, it, test } from 'bun:test'
 import { APP_SOUND, didPlaySound, didPushRoute } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
 import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from 'gamezilla-app/app/@/ui'
-import { FixtureSpaceClient } from '../@/fixture/client'
+import { FixtureSpacesClient } from '../@/fixture/client'
+import { SpacesClient } from '../client'
 import { SpaceCore } from '../core'
-import * as SpaceClient from '../client'
-import { EventSourced } from '@/event-sourced'
-import { withEventId } from '@/event-sourced/event'
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
-  const f = await FixtureSpaceClient(input)
+  const f = await FixtureSpacesClient(input)
 
   return {
     ...f
@@ -26,7 +26,7 @@ describe(import.meta.file, () => {
         t: 'space-list'
       }
     })
-    const output = SpaceClient.init({
+    const output = SpacesClient.init({
       ctx: f.ctx
     })
     expect(
@@ -41,7 +41,7 @@ describe(import.meta.file, () => {
         t: 'space-list'
       }
     })
-    const output = SpaceClient.init({
+    const output = SpacesClient.init({
       ctx: f.ctx
     })
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toServer?.t === 'list-spaces')).toBe(true)

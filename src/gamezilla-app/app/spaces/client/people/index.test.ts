@@ -2,11 +2,11 @@ import { describe, expect, it, test } from 'bun:test'
 import { didOpenProfile, didPlaySound } from 'gamezilla-app/app/@/client/client-cmd'
 import { UserId } from 'gamezilla-app/app/@/data/user-id'
 import { People } from '.'
-import { FixtureSpaceClient } from '../../@/fixture/client'
+import { FixtureSpacesClient } from '../../@/fixture/client'
 import { openUserDetails } from '../../@/space-client-cmd'
 
 const Fixture = async () => {
-  const f = await FixtureSpaceClient()
+  const f = await FixtureSpacesClient()
   return {
     ...f
   }
@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
   })
 
   it('should navigate to preview users profile page when clicked', async () => {
-    const f = await FixtureSpaceClient()
+    const f = await FixtureSpacesClient()
     const someUserId = UserId.generate()
     const output = f.update(f.initial, [
       {
@@ -103,7 +103,7 @@ describe(import.meta.file, () => {
   })
 
   it('should play sound when clicking preview user link', async () => {
-    const f = await FixtureSpaceClient()
+    const f = await FixtureSpacesClient()
     const someUserId = UserId.generate()
     const output = f.update(f.initial, [
       {
@@ -122,7 +122,7 @@ describe(import.meta.file, () => {
   })
 
   it('should not navigate after clicking preview user link if preview is not open', async () => {
-    const f = await FixtureSpaceClient()
+    const f = await FixtureSpacesClient()
     const someUserId = UserId.generate()
     const output = f.update(f.initial, [
       {
@@ -139,7 +139,7 @@ describe(import.meta.file, () => {
   })
 
   test('play sound open people modal', async () => {
-    const f = await FixtureSpaceClient()
+    const f = await FixtureSpacesClient()
     const output = f.update(f.initial, [
       {
         msg: {
@@ -151,7 +151,7 @@ describe(import.meta.file, () => {
   })
 
   test('play sound close modal', async () => {
-    const f = await FixtureSpaceClient()
+    const f = await FixtureSpacesClient()
     const output = f.update(f.initial, [
       {
         msg: {
@@ -163,7 +163,7 @@ describe(import.meta.file, () => {
   })
 
   test('play sound open user details modal', async () => {
-    const f = await FixtureSpaceClient()
+    const f = await FixtureSpacesClient()
     const someUserId = UserId.generate()
     const output = f.update(f.initial, [
       {

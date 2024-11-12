@@ -19,12 +19,12 @@ import { makeSpace } from '../@/fixture/shared'
 import { SpaceCore } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 
-const hasExcatlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
+const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
 }
 
 describe(import.meta.file, () => {
-  it('should record profiles when recieved from server', async () => {
+  it('should record profiles when received from server', async () => {
     const someProfile: Profile = {
       userId: UserId.generate(),
       avatarUrl: 'some url',
@@ -49,7 +49,7 @@ describe(import.meta.file, () => {
       })
     )
 
-    expect(hasExcatlyOne(updated.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(someProfiles)))).toBe(true)
+    expect(hasExactlyOne(updated.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(someProfiles)))).toBe(true)
   })
 
   it('should merge space recieved from server', () => {
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
     const ctx = Ctx()
     const output = andThen(init(ctx), clickedStartSpaceButton(ctx, SpaceId.generate()), serverConnected(ctx))
     expect(
-      hasExcatlyOne(
+      hasExactlyOne(
         output.msgCmd ?? [],
         (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-server' && msgCmd.c.toServer?.t === 'sync'
       )
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
     )
 
     expect(
-      hasExcatlyOne(
+      hasExactlyOne(
         output?.msgCmd ?? [],
         (msgCmd) =>
           msgCmd.t === 'wire' &&
@@ -122,7 +122,7 @@ describe(import.meta.file, () => {
     const output = andThen(init(ctx), userEndedSpace(ctx, UserId.generate(), SpaceId.generate()))
 
     expect(
-      hasExcatlyOne(
+      hasExactlyOne(
         output.msgCmd ?? [],
         (msgCmd) =>
           msgCmd.t === 'wire' &&

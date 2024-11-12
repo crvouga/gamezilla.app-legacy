@@ -19,7 +19,7 @@ import { AppServerCtx } from '../@/server'
 //
 //
 
-export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
+const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   return {
     ...input.ctx,
 
@@ -47,7 +47,7 @@ export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> 
 //
 //
 
-export const update: ServerModule['update'] = async (input) => {
+const update: ServerModule['update'] = async (input) => {
   const updated = await updateLoop(input)
 
   return {
@@ -121,6 +121,12 @@ const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async (input) =>
 //
 //
 
-export const subscriptions: ServerModule['subscriptions'] = async (input) => {
+const subscriptions: ServerModule['subscriptions'] = async (input) => {
   return GameServer.subscriptions(input)
+}
+
+export const SpacesServer = {
+  initCtx,
+  update,
+  subscriptions
 }

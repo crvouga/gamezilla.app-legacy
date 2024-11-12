@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 import { didPlaySound, didPushRoute, didSendToServer, didShowToast } from 'gamezilla-app/app/@/client'
 import { SpaceId } from 'gamezilla-app/app/@/data'
-import { FixtureSpaceClient } from '../@/fixture/client'
+import { FixtureSpacesClient } from '../@/fixture/client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 
 const Fixture = async () => {
-  const f = await FixtureSpaceClient()
+  const f = await FixtureSpacesClient()
   return {
     ...f
   }

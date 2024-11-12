@@ -2,7 +2,9 @@ import { Browser, Eff, Posix, Sub, batchMsgs, eq } from '@/core'
 import { Msg } from '@/core/msg'
 import { LanguageCodeISO_639_1, type TranslatedText } from '@/l18n'
 import type { Route } from '@/routing/generated/routes'
+import { RPC } from '@/rpc'
 import type { VDom } from '@/vdom'
+import { WebClient } from '@/web-client'
 import {
   APP_SOUND,
   AppClientCmd,
@@ -21,10 +23,7 @@ import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import * as AuthClient from './auth/client'
 import * as LangClient from './lang/client'
 import * as ProfileClient from './profile/client'
-
-import { RPC } from '@/rpc'
-import { WebClient } from '@/web-client'
-import * as SpaceClient from './spaces/client'
+import { SpacesClient } from './spaces/client'
 import {
   rpcContract,
   type ClientCtx,
@@ -135,7 +134,7 @@ export const init = (input: {
     stored: input.ctx.stored
   })
   const auth = AuthClient.init({ stored: input.ctx.stored, ctx })
-  const space = SpaceClient.init({ ctx, stored: input.ctx.stored })
+  const space = SpacesClient.init({ ctx, stored: input.ctx.stored })
   const profile = ProfileClient.init({ ctx, stored: input.ctx.stored })
   const sound = Sound.init({ ctx, stored: input.ctx.stored })
   const platform = Platform.init({ stored: input.ctx.stored })
@@ -298,7 +297,7 @@ const updateChild = (input: {
 }): Output => {
   const clientCtx = toClientCtx(input)
 
-  const space = SpaceClient.update({
+  const space = SpacesClient.update({
     ctx: clientCtx,
     model: input.model.spaces,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
@@ -447,7 +446,7 @@ export const subscriptions = (input: { ctx: ClientCtx; model: ModelClient }): Su
     Sub.tag('lang', LangClient.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('toast', Toast.subscriptions({ ctx, model: input.model.toast })),
     Sub.tag('auth', AuthClient.subscriptions({ ctx, model: input.model.auth })),
-    Sub.tag('spaces', SpaceClient.subscriptions({ ctx, model: input.model.spaces }))
+    Sub.tag('spaces', SpacesClient.subscriptions({ ctx, model: input.model.spaces }))
   ])
 }
 
@@ -583,7 +582,7 @@ const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
 
     case 'spaces': {
       return (
-        <SpaceClient.View
+        <SpacesClient.View
           dispatch={(m) =>
             input.dispatch({
               t: 'spaces',
@@ -735,7 +734,7 @@ const ViewBottomNavBar = (input: {
 
   return (
     <div className='flex w-full shrink-0 flex-col items-center justify-center'>
-      <SpaceClient.ViewCurrentSpaceBar
+      <SpacesClient.ViewCurrentSpaceBar
         ctx={input.ctx}
         model={input.model.spaces}
         dispatch={(c) => input.dispatch({ t: 'spaces', c })}

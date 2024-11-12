@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Err } from '@/core'
 import { didShowErrorSm } from 'gamezilla-app/app/@/client'
-import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
+import { FixtureSpacesClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowPack } from '../../../@/pack/pack'
 import { EditPackNameClient } from './client'
 import { EditPackNameCore } from './core'
@@ -9,7 +9,7 @@ import type { MsgCore } from './types'
 import { withEventId } from '@/event-sourced/event'
 
 const Fixture = async () => {
-  const f = await FixtureSpaceClient()
+  const f = await FixtureSpacesClient()
 
   const pack = await FlowPack.random()
 

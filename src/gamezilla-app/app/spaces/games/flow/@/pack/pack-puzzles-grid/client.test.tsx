@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Posix, RequestResponse, TimeSpan } from '@/core'
 import { didSendToServer, didShowErrorSm } from 'gamezilla-app/app/@/client'
-import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
+import { FixtureSpacesClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowPuzzle } from '../../puzzle/puzzle'
 import { FlowPack } from '../pack'
 import { PackPuzzlesGridClient } from './client'
@@ -14,7 +14,7 @@ type Input = {
 }
 
 const Fixture = async () => {
-  const f = await FixtureSpaceClient()
+  const f = await FixtureSpacesClient()
   const puzzle = await FlowPuzzle.random({
     createdBy: f.ctx.currentUserId
   })

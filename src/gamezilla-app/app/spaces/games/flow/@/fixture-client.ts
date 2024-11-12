@@ -1,6 +1,6 @@
 import { NonEmpty } from '@/core'
 import { withEventMeta, WithEventMeta } from '@/event-sourced/event'
-import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
+import { FixtureSpacesClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { FlowClient } from '../client'
 import { FlowCore } from '../core'
 import { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'
@@ -10,7 +10,7 @@ import { PackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
 import { PuzzleListTypes } from './puzzle/puzzle-list'
 
 export const FixtureFlowClient = async () => {
-  const f = await FixtureSpaceClient()
+  const f = await FixtureSpacesClient()
   const ctx: FlowClientCtx = {
     ...f.ctx,
     packs: {},

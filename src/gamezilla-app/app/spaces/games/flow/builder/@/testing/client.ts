@@ -1,7 +1,7 @@
 import { NonEmpty, Ok } from '@/core'
 import { LamportTimestamp } from '@/lamport-clock'
 import { EventId, WithEventMeta } from '@/event-sourced/event'
-import { FixtureSpaceClient } from 'gamezilla-app/app/spaces/@/fixture/client'
+import { FixtureSpacesClient } from 'gamezilla-app/app/spaces/@/fixture/client'
 import { testSpaceClientCtx } from 'gamezilla-app/app/spaces/games/@/testing/client'
 import { Flow } from '../../../@/flow'
 import type { FlowClientCtx } from '../../../@/flow-client-ctx'
@@ -88,7 +88,7 @@ const update = (
 }
 
 export const FixtureFlowBuilderClient = async () => {
-  const f = await FixtureSpaceClient()
+  const f = await FixtureSpacesClient()
   const model = BuilderTypes.initClient
   const modelCore = BuilderCore.initCore({ ctx: f.ctx })
   const ctx: FlowClientCtx = {

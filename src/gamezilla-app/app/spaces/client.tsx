@@ -26,7 +26,7 @@ import type { ClientModule, ModelClient } from './types'
 //
 //
 
-export const init: ClientModule['init'] = ({ ctx }) => {
+const init: ClientModule['init'] = ({ ctx }) => {
   const model: ModelClient = {
     ...SpacesCoreClient.init,
     games: {},
@@ -53,7 +53,7 @@ export const init: ClientModule['init'] = ({ ctx }) => {
 //
 //
 
-export const update: ClientModule['update'] = (input) => {
+const update: ClientModule['update'] = (input) => {
   const updated = updateLoop({
     ...input,
     ctx: {
@@ -73,7 +73,7 @@ export const update: ClientModule['update'] = (input) => {
   }
 }
 
-export const updateLoop = (input: Input, initial?: Output): Output => {
+const updateLoop = (input: Input, initial?: Output): Output => {
   const acc = initial ?? updateChild(input)
 
   const [coreEvt, ...coreEvtRest] = acc.msgCore ?? []
@@ -177,7 +177,7 @@ const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCore, mode
 //
 //
 
-export const subscriptions: ClientModule['subscriptions'] = (input) => {
+const subscriptions: ClientModule['subscriptions'] = (input) => {
   return GameClient.subscriptions(input)
 }
 
@@ -191,7 +191,7 @@ export const subscriptions: ClientModule['subscriptions'] = (input) => {
 //
 //
 
-export const View: ClientModule['View'] = (input) => {
+const View: ClientModule['View'] = (input) => {
   switch (input.ctx.currentRoute.n) {
     case 'spaces': {
       switch (input.ctx.currentRoute.t) {
@@ -228,4 +228,13 @@ export const View: ClientModule['View'] = (input) => {
   }
 }
 
-export const ViewCurrentSpaceBar = CurrentSpaceBottomBar.View
+const ViewCurrentSpaceBar = CurrentSpaceBottomBar.View
+
+export const SpacesClient = {
+  init,
+  update,
+  updateLoop,
+  subscriptions,
+  View,
+  ViewCurrentSpaceBar
+}

@@ -17,7 +17,7 @@ import { SMS } from './@/server/sms'
 import * as AuthServer from './auth/server'
 import * as LangServer from './lang/server'
 import * as ProfileServer from './profile/server'
-import * as SpaceServer from './spaces/server'
+import { SpacesServer } from './spaces/server'
 import {
   rpcContract,
   ServerCtx,
@@ -117,7 +117,7 @@ const initCtx = async (): Promise<ServerCtx> => {
 
   const wire = await WireServer.initCtx({ ctx, transport })
   const profile = await ProfileServer.initCtx({ ctx })
-  const space = await SpaceServer.initCtx({ ctx })
+  const space = await SpacesServer.initCtx({ ctx })
   const auth = await AuthServer.initCtx({ ctx })
 
   return {
@@ -253,7 +253,7 @@ const updateChild = async (input: {
   const userId = await AuthServer.getUserIdFromSessionId(input.ctx.auth, input.msgClient?.sessionId)
 
   const [space, auth, wire, profile, lang] = await Promise.all([
-    SpaceServer.update({
+    SpacesServer.update({
       deps: null,
       ctx: input.ctx.space,
       msgCmd: null,
@@ -327,7 +327,7 @@ const updateChild = async (input: {
 
 const subscriptions = async (input: { ctx: ServerCtx }): Promise<Sub<MsgServer>> => {
   return Sub.batch([
-    Sub.tag('spaces', await SpaceServer.subscriptions({ ctx: input.ctx.space, deps: null })),
+    Sub.tag('spaces', await SpacesServer.subscriptions({ ctx: input.ctx.space, deps: null })),
     Sub.tag('wire', WireServer.subscriptions({ ctx: input.ctx.wire })),
     Sub.flat(
       Sub.map(input.ctx.transport.toServer, ({ sessionId, clientId, msgs }) =>
