@@ -4,6 +4,10 @@ import { withEventId } from '@/event-sourced/event'
 import { ClientId, Profile, SessionId, SpaceId, UserId } from 'gamezilla-app/app/@/data'
 import { FixtureAppServer } from 'gamezilla-app/app/@/server/server-test-env'
 import { SpaceCore } from '../../core'
+import { SpacesCoreServer } from '../../core/server'
+import { GamesServer } from '../../games/server'
+import { SpacesServer } from '../../server'
+import { ServerCtx } from '../../types'
 import { SpaceServerCtx } from '../space-server-ctx'
 
 export const FixtureSpaceServer = async () => {
@@ -48,30 +52,51 @@ export const FixtureSpaceServer = async () => {
   const ctx: SpaceServerCtx = {
     ...f.ctx,
     space: spaceState
-    // spacesCoreServer: await SpacesCoreServer({
-    //   t: 'db-conn-kv',
-    //   dbConnKv: f.ctx.dbConnKv,
-    //   logger: f.ctx.logger,
-    //   runtime: f.ctx.runtime
-    // }),
-    // games: await GamesServer.initCtx({
-    //   ...f.ctx,
-    //   ctx: {
-    //     ...f.ctx,
-    //     space: spaceState
-    //   }
-    // })
   }
 
-  const updates = (input) => {
-    SpaceServer
+  const serverCtx: ServerCtx = {
+    ...f.ctx,
+    spacesCoreServer: await SpacesCoreServer({
+      t: 'db-conn-kv',
+      dbConnKv: f.ctx.dbConnKv,
+      logger: f.ctx.logger,
+      runtime: f.ctx.runtime
+    }),
+    games: await GamesServer.initCtx({
+      ...f.ctx,
+      ctx: {
+        ...f.ctx,
+        space: spaceState
+      }
+    })
+  }
+
+  type Input = Partial<Parameters<typeof SpacesServer.update>[0]>
+  type Output = Awaited<ReturnType<typeof SpacesServer.update>>
+
+  const updates = async (inputs: Input[]) => {
+    const outputs: Output[] = []
+    for (const input of inputs) {
+      const output = await SpacesServer.update({
+        ...input,
+        ctx: input.ctx ?? serverCtx,
+        deps: null
+      })
+      outputs.push(output)
+    }
+    return outputs
+  }
+  const update = async (inputs: Input[]): Promise<Output> => {
+    const outputs = await updates(inputs)
+    return outputs[outputs.length - 1] ?? {}
   }
 
   return {
     ...f,
     ctx,
     clientA,
-    clientB
+    clientB,
+    update
   }
 }
 
