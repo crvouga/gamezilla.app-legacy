@@ -94,6 +94,7 @@ export const FixtureSpaceServer = async () => {
   return {
     ...f,
     ctx,
+    serverCtx,
     clientA,
     clientB,
     update
