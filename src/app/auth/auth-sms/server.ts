@@ -9,12 +9,12 @@ import { Logger } from '~/app/@/server/logger'
 import { SMS } from '~/app/@/server/sms'
 import type { IUserAccountDb } from '../@/server/user-account-db'
 import { UserAccountDb } from '../@/server/user-account-db/impl'
-import type { ServerModule } from './auth-sms.types'
+import type { ServerModule } from './types'
 import { VerificationAttemptDb } from './verify-sms/verification-attempt'
 import { VerificationCodeGenerator } from './verify-sms/verification-code-generator'
 import { VerificationDb } from './verify-sms/verification/verification-db'
-import { verifyCodeProblemToString, type IVerifySMS, type VerifyCodeProblem } from './verify-sms/verify-sms'
-import { VerifySMS } from './verify-sms/verify-sms-impl/verify-sms-impl'
+import { verifyCodeProblemToString, type IVerifySMS, type VerifyCodeProblem } from './verify-sms/interface'
+import { VerifySMS } from './verify-sms/impl/impl'
 
 //
 //

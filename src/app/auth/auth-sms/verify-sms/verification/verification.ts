@@ -6,9 +6,9 @@ export type Verification = {
   verificationId: VerificationId
   codeHash: Hash | null
   phoneNumber: PhoneNumber
-  createdAt: Posix
-  expiresAt: Posix
-  verifiedAt: Posix | null
+  createdAtPosix: Posix
+  expiresAtPosix: Posix
+  verifiedAtPosix: Posix | null
 }
 
 const random = async (input?: { createdAt?: Posix; codeHash?: Hash | null }): Promise<Verification> => {
@@ -24,9 +24,9 @@ const random = async (input?: { createdAt?: Posix; codeHash?: Hash | null }): Pr
     verificationId: VerificationId.generate(),
     codeHash,
     phoneNumber: PhoneNumber.random(),
-    createdAt,
-    expiresAt: Posix.future(createdAt, TimeSpan.minutes(1)),
-    verifiedAt: null
+    createdAtPosix: createdAt,
+    expiresAtPosix: Posix.future(createdAt, TimeSpan.minutes(1)),
+    verifiedAtPosix: null
   }
 }
 

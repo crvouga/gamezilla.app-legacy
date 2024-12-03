@@ -1,1 +1,1 @@
-export * as AuthSMSTypes from './auth-sms.types'
+export * as AuthSMSTypes from './types'

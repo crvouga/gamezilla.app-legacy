@@ -13,7 +13,7 @@ import type { ClientModule, ModelClient, MsgClient } from '../types'
 
 const update: ClientModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'logout-drawer.clicked-confirm': {
+    case 'logout-drawer-clicked-confirm': {
       return {
         model: {
           ...input.model,
@@ -22,9 +22,7 @@ const update: ClientModule['update'] = (input) => {
           }
         },
         msgCmd: [
-          sendToServer({
-            t: 'logout'
-          }),
+          sendToServer({ t: 'user-clicked-confirm-logout-button' }),
           showToast(input.ctx.t('auth.current-user-logged-out')),
           playSound(APP_SOUND.navBackwardMin)
         ],
@@ -36,8 +34,8 @@ const update: ClientModule['update'] = (input) => {
       }
     }
 
-    case 'logout-drawer.closed':
-    case 'logout-drawer.clicked-cancel': {
+    case 'logout-drawer-closed':
+    case 'logout-drawer-clicked-cancel': {
       const currentUserId = input.model.currentUser.t === 'logged-in' ? input.model.currentUser.account.userId : null
 
       if (!currentUserId) {
@@ -104,8 +102,8 @@ const View = ({
   return (
     <ConfirmationDrawer
       open={model.opened === 'logged-out'}
-      title={ctx.t('auth.logout-of-gamezill.app')}
-      body={ctx.t('auth.logout-of-gamezill.app-body')}
+      title={ctx.t('auth.logout-of-gamezilla.app')}
+      body={ctx.t('auth.logout-of-gamezilla.app-body')}
       confirmText={ctx.t('auth.logout')}
       cancelText={ctx.t('app.cancel')}
       id='logout'
@@ -113,17 +111,17 @@ const View = ({
       position='bottom'
       onClose={() =>
         dispatch({
-          t: 'logout-drawer.closed'
+          t: 'logout-drawer-closed'
         })
       }
       onCancel={() =>
         dispatch({
-          t: 'logout-drawer.clicked-cancel'
+          t: 'logout-drawer-clicked-cancel'
         })
       }
       onConfirm={() =>
         dispatch({
-          t: 'logout-drawer.clicked-confirm'
+          t: 'logout-drawer-clicked-confirm'
         })
       }
     />

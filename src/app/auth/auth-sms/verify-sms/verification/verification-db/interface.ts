@@ -6,7 +6,7 @@ export type WhereClause = {
   verificationId?: {
     '='?: VerificationId
   }
-  createdAt?: {
+  createdAtPosix?: {
     '<='?: Posix
     '>='?: Posix
   }
@@ -21,10 +21,11 @@ export type OrderClause = {
 
 export type IVerificationDb = {
   find(input: {
-    where?: WhereClause
-    order?: OrderClause
-    limit?: number
-    offset?: number
+    where: WhereClause
+    order: OrderClause
+    limit: number
+    offset: number
   }): Task<string, Paginated<Verification>>
   put(verification: Verification): Task<string, null>
+  zap(verificationId: VerificationId): Task<string, null>
 }

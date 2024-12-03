@@ -1,6 +1,6 @@
 import { Ok, PhoneNumber } from '~/@/core'
 import { ILogger } from '~/app/@/server/logger'
-import type { IVerifySMS } from '../../verify-sms'
+import type { IVerifySMS } from '../../interface'
 
 export type Config = {
   t: 'fake-always-ok'

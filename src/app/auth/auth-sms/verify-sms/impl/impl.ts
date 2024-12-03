@@ -1,9 +1,9 @@
 import { Logger } from '~/app/@/server/logger'
-import type { IVerifySMS } from '../verify-sms'
-import * as ImplFake from './verify-sms-impl-fake'
-import * as ImplFakeAlwaysOk from './verify-sms-impl-fake-always-ok'
-import * as ImplInHouse from './verify-sms-impl-in-house'
-import * as ImplTwilio from './verify-sms-impl-twilio'
+import type { IVerifySMS } from '../interface'
+import * as ImplFake from './impl-fake'
+import * as ImplFakeAlwaysOk from './impl-fake-always-ok'
+import * as ImplInHouse from './impl-in-house'
+import * as ImplTwilio from './impl-twilio'
 
 export type Config = ImplInHouse.Config | ImplFake.Config | ImplTwilio.Config | ImplFakeAlwaysOk.Config
 

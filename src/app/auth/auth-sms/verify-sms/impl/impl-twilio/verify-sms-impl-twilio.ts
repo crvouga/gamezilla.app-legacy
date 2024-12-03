@@ -2,7 +2,7 @@ import { Err, Ok, PhoneNumber, isErr } from '~/@/core'
 import { p } from '~/@/core/parser'
 import type { ILogger } from '~/app/@/server/logger'
 import { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } from '~/config-private'
-import type { IVerifySMS } from '../../verify-sms'
+import type { IVerifySMS } from '../../interface'
 
 export type Config = {
   t: 'twilio'

@@ -19,14 +19,14 @@ export const VerificationDb = (_config: Config): IVerificationDb => {
           return true
         })
         .filter((v) => {
-          if (input.where?.createdAt?.['<=']) {
-            return v.createdAt <= input.where?.createdAt?.['<=']
+          if (input.where?.createdAtPosix?.['<=']) {
+            return v.createdAtPosix <= input.where?.createdAtPosix?.['<=']
           }
           return true
         })
         .filter((v) => {
-          if (input.where?.createdAt?.['>=']) {
-            return v.createdAt >= input.where?.createdAt?.['>=']
+          if (input.where?.createdAtPosix?.['>=']) {
+            return v.createdAtPosix >= input.where?.createdAtPosix?.['>=']
           }
           return true
         })
@@ -39,11 +39,11 @@ export const VerificationDb = (_config: Config): IVerificationDb => {
 
       switch (input.order?.createdAt) {
         case 'asc': {
-          filtered.sort(ascend((v) => v.createdAt))
+          filtered.sort(ascend((v) => v.createdAtPosix))
           break
         }
         case 'desc': {
-          filtered.sort(descend((v) => v.createdAt))
+          filtered.sort(descend((v) => v.createdAtPosix))
           break
         }
       }
@@ -60,6 +60,10 @@ export const VerificationDb = (_config: Config): IVerificationDb => {
     },
     async put(verification) {
       verifications.set(verification.verificationId, verification)
+      return Ok(null)
+    },
+    async zap(verificationId) {
+      verifications.delete(verificationId)
       return Ok(null)
     }
   }

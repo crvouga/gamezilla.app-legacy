@@ -1,7 +1,7 @@
 import { Err, Ok, PhoneNumber, isErr } from '~/@/core'
 import type { Verification } from '../../verification'
 import { VerificationAttemptId, type VerificationAttempt } from '../../verification-attempt'
-import type { IVerifySMS } from '../../verify-sms'
+import type { IVerifySMS } from '../../interface'
 import type { Config } from './shared'
 
 export const VerifyCode =
@@ -17,7 +17,9 @@ export const VerifyCode =
       },
       order: {
         createdAt: 'desc'
-      }
+      },
+      limit: 1,
+      offset: 0
     })
 
     if (isErr(found)) {
@@ -35,13 +37,13 @@ export const VerifyCode =
       })
     }
 
-    if (verification.verifiedAt) {
+    if (verification.verifiedAtPosix) {
       return Err({
         t: 'verification-already-verified'
       })
     }
 
-    if (deps.now() >= verification.expiresAt) {
+    if (deps.now() >= verification.expiresAtPosix) {
       return Err({
         t: 'verification-expired'
       })
@@ -55,7 +57,9 @@ export const VerifyCode =
       },
       order: {
         createdAt: 'desc'
-      }
+      },
+      limit: 1,
+      offset: 0
     })
 
     if (isErr(foundLatestVerification)) {
@@ -133,7 +137,7 @@ export const VerifyCode =
 
     const verificationNew: Verification = {
       ...verification,
-      verifiedAt: deps.now()
+      verifiedAtPosix: deps.now()
     }
 
     await deps.verificationDb.put(verificationNew)

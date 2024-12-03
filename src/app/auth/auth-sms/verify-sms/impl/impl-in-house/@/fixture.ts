@@ -7,7 +7,7 @@ import { SMSFake } from '~/app/@/server/sms/sms-impl-fake'
 import { VerificationAttemptDb } from '../../../verification-attempt'
 import { type IVerificationCodeGenerator, VerificationCodeGenerator } from '../../../verification-code-generator'
 import { type IVerificationDb, VerificationDb } from '../../../verification/verification-db'
-import { VerifySMS } from '../verify-sms-impl-in-house'
+import { VerifySMS } from '../impl'
 import { Config } from '../shared'
 
 export const VerifySMSInHouseFixture = async (input?: {

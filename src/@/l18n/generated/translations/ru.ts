@@ -50,8 +50,8 @@ export const translations: Text = {
   'auth.or': 'или',
   'auth.sign-in-to': 'Войти в',
   'auth.logged-in': 'Вошел',
-  'auth.logout-of-gamezill.app': 'Выйти из gamezilla.app',
-  'auth.logout-of-gamezill.app-body': 'Вы уверены, что хотите выйти?',
+  'auth.logout-of-gamezilla.app': 'Выйти из gamezilla.app',
+  'auth.logout-of-gamezilla.app-body': 'Вы уверены, что хотите выйти?',
   'auth.continue-with-email': 'Продолжить с электронной почтой',
   'spaces.current-user-left': 'Покинул пространство',
   'spaces.other-user-left': (username) =>

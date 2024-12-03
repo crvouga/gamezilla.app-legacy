@@ -48,8 +48,8 @@ export const translations: Text = {
   'auth.or': 'または',
   'auth.sign-in-to': 'サインイン',
   'auth.logged-in': 'ログインしました',
-  'auth.logout-of-gamezill.app': 'gamezilla.appからログアウト',
-  'auth.logout-of-gamezill.app-body': '本当にログアウトしますか？',
+  'auth.logout-of-gamezilla.app': 'gamezilla.appからログアウト',
+  'auth.logout-of-gamezilla.app-body': '本当にログアウトしますか？',
   'auth.continue-with-email': 'メールで続行',
   'spaces.current-user-left': 'スペースを離れました',
   'spaces.other-user-left': (username) =>

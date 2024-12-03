@@ -359,7 +359,9 @@ describe(import.meta.file, () => {
       },
       order: {
         createdAt: 'desc'
-      }
+      },
+      limit: 1,
+      offset: 0
     })
 
     const codeHash = unwrap(found).items[0]?.codeHash?.value

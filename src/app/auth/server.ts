@@ -4,11 +4,11 @@ import type { SessionId, UserId } from '~/app/@/data'
 import { ServerCmd, AppServerCtx, sendToClient } from '~/app/@/server'
 import { UserAccountDb } from './@/server/user-account-db'
 import { UserSessionDb } from './@/server/user-session-db'
-import { AuthSMSServer } from './auth-sms/auth-sms.server'
+import { AuthSMSServer } from './auth-sms/server'
 import type { ServerCtx, MsgToClient, ServerModule } from './types'
 import { ContinueAsGuestServer } from './continue-as-guest/server'
 import { GuestSessionMappingDb } from './@/server/guest-session-mapping-db'
-import { LogoutServer } from './logout/logout.server'
+import { LogoutServer } from './logout/server'
 
 //
 //

@@ -22,8 +22,8 @@ import {
   type AppClientCmd
 } from '~/app/@/client/client-cmd'
 import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from '~/app/@/ui'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './auth-sms.types'
-import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/verify-sms'
+import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
+import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
 
 //
 //

@@ -50,8 +50,8 @@ export const translations: Text = {
   'auth.or': 'या',
   'auth.sign-in-to': 'में साइन इन करें',
   'auth.logged-in': 'लॉग इन',
-  'auth.logout-of-gamezill.app': 'gamezilla.app से लॉग आउट करें',
-  'auth.logout-of-gamezill.app-body': 'क्या आप वाकई लॉग आउट करना चाहते हैं?',
+  'auth.logout-of-gamezilla.app': 'gamezilla.app से लॉग आउट करें',
+  'auth.logout-of-gamezilla.app-body': 'क्या आप वाकई लॉग आउट करना चाहते हैं?',
   'auth.continue-with-email': 'ईमेल के साथ जारी रखें',
   'spaces.current-user-left': 'अंतरिक्ष छोड़ दिया',
   'spaces.other-user-left': (username) =>

@@ -7,9 +7,9 @@ import { Logger } from '~/app/@/server/logger'
 import { FixtureAppServer, randomClient } from '~/app/@/server/server-test-env'
 import type { AuthSMSTypes } from '.'
 import { UserAccountDb } from '../@/server/user-account-db'
-import { AuthSMSServer } from './auth-sms.server'
-import type { IVerifySMS } from './verify-sms/verify-sms'
-import { VerifySMS } from './verify-sms/verify-sms-impl/verify-sms-impl'
+import { AuthSMSServer } from './server'
+import type { IVerifySMS } from './verify-sms/interface'
+import { VerifySMS } from './verify-sms/impl/impl'
 
 type InputMsg =
   | {

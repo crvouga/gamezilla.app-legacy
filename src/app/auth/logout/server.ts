@@ -8,7 +8,7 @@ const update: ServerModule['update'] = async (input) => {
 
 const updateFromClient: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
-    case 'logout': {
+    case 'user-clicked-confirm-logout-button': {
       const zapped = await input.ctx.userSessionDb.zapBySessionId(input.msgClient.sessionId)
 
       if (isErr(zapped)) {

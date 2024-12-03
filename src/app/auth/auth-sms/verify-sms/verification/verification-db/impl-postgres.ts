@@ -99,10 +99,19 @@ export const VerificationDb = (config: Config): IVerificationDb => {
       const vars = {
         verification_id: verification.verificationId,
         phone_number: PhoneNumber.toString(verification.phoneNumber),
-        created_at_posix: verification.createdAt,
-        expires_at_posix: verification.expiresAt,
+        created_at_posix: verification.createdAtPosix,
+        expires_at_posix: verification.expiresAtPosix,
         code_hash: Sql.json(verification.codeHash),
-        verified_at_posix: verification.verifiedAt
+        verified_at_posix: verification.verifiedAtPosix
+      }
+      const queried = await config.dbConnSql.query(p.unknown, query, vars)
+
+      return Result.mapOk(queried, () => null)
+    },
+    async zap(verificationId) {
+      const query = `DELETE FROM auth_sms_verification WHERE verification_id = :verification_id`
+      const vars = {
+        verification_id: verificationId
       }
       const queried = await config.dbConnSql.query(p.unknown, query, vars)
 
@@ -122,9 +131,9 @@ const rowToVerification = (row: Row): Verification[] => {
       verificationId: row.verification_id,
       codeHash,
       phoneNumber,
-      createdAt: Posix.init(row.created_at_posix),
-      expiresAt: Posix.init(row.expires_at_posix),
-      verifiedAt: row.verified_at_posix ? Posix.init(row.verified_at_posix) : null
+      createdAtPosix: Posix.init(row.created_at_posix),
+      expiresAtPosix: Posix.init(row.expires_at_posix),
+      verifiedAtPosix: row.verified_at_posix ? Posix.init(row.verified_at_posix) : null
     }
   ]
 }
@@ -160,14 +169,14 @@ const toSqlWhere = (where?: WhereClause) => {
     vars['phone_number'] = PhoneNumber.toString(where?.phoneNumber['='])
   }
 
-  if (where?.createdAt?.['<=']) {
+  if (where?.createdAtPosix?.['<=']) {
     clauses.push(`:lte_created_at_posix >= created_at_posix `)
-    vars['lte_created_at_posix'] = where?.createdAt['<=']
+    vars['lte_created_at_posix'] = where?.createdAtPosix['<=']
   }
 
-  if (where?.createdAt?.['>=']) {
+  if (where?.createdAtPosix?.['>=']) {
     clauses.push(`created_at_posix >= :gte_created_at_posix`)
-    vars['gte_created_at_posix'] = where?.createdAt['>=']
+    vars['gte_created_at_posix'] = where?.createdAtPosix['>=']
   }
 
   const str = clauses.length > 0 ? `WHERE ${clauses.join(' AND ')}` : ''

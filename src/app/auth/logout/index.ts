@@ -1,1 +1,1 @@
-export * as Logout from './logout.core'
+export * as Logout from './types'

@@ -11,10 +11,10 @@ import {
   type BaseClientCtx
 } from '~/app/@/client'
 import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/app/@/ui'
-import { AuthSMSClient } from './auth-sms/auth-sms.client'
+import { AuthSMSClient } from './auth-sms/client'
 import type { ClientModule, ModelClient, MsgClient } from './types'
 import { ContinueAsGuestClient } from './continue-as-guest/client'
-import { LogoutClient } from './logout/logout.client'
+import { LogoutClient } from './logout/client'
 
 //
 //
@@ -121,13 +121,11 @@ const updateFromMsg: ClientModule['update'] = (input) => {
 }
 
 const updateFromServer: ClientModule['update'] = (input) => {
-  const { model, msgServer } = input
-
-  switch (msgServer?.t) {
+  switch (input.msgServer?.t) {
     case 'client-unauthenticated': {
       return {
         model: {
-          ...model,
+          ...input.model,
           currentUser: {
             t: 'logged-out'
           }
@@ -143,16 +141,16 @@ const updateFromServer: ClientModule['update'] = (input) => {
     case 'client-authenticated': {
       return {
         model: {
-          ...model,
+          ...input.model,
           currentUser: {
             t: 'logged-in',
-            account: msgServer.account
+            account: input.msgServer.account
           }
         },
         msgEvt: [
           {
-            ...msgServer,
-            account: msgServer.account,
+            ...input.msgServer,
+            account: input.msgServer.account,
             t: 'auth/authenticated'
           }
         ]
@@ -161,7 +159,7 @@ const updateFromServer: ClientModule['update'] = (input) => {
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }

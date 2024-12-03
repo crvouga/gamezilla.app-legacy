@@ -59,6 +59,18 @@ describe(import.meta.url, () => {
     expect(actual).toBe(className)
   })
 
+  test('border and border-color are independent of each other', () => {
+    const className = 'border-2 border-blue-500/40'
+    const actual = cn(className)
+    expect(actual).toBe(className)
+  })
+
+  test('bg-gradient and bg-clip are independent of each other', () => {
+    const className = 'bg-gradient-to-b bg-clip-text'
+    const actual = cn(className)
+    expect(actual).toBe(className)
+  })
+
   test('text alignment and text color are independent of each other reversed', () => {
     const className = 'text-center text-white'
     const actual = cn(className)

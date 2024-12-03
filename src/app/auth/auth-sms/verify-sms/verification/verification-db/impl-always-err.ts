@@ -13,6 +13,9 @@ export const VerificationDb = (config: Config): IVerificationDb => {
     },
     async put() {
       return Err(config.error)
+    },
+    async zap() {
+      return Err(config.error)
     }
   }
 }

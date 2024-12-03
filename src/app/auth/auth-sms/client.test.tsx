@@ -4,7 +4,7 @@ import type { Route } from '~/@/routing/generated/routes'
 import { didPushRoute } from '~/app/@/client'
 import { FixtureAppClient } from '~/app/@/client/client-test-env'
 import type { AuthSMSTypes } from '.'
-import { AuthSMSClient } from './auth-sms.client'
+import { AuthSMSClient } from './client'
 
 type Msg =
   | {

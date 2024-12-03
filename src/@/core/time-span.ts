@@ -26,8 +26,12 @@ const days = (durationDays: number): TimeSpan => {
   return hours(durationDays * 24)
 }
 
-const fromWeeks = (durationWeeks: number): TimeSpan => {
+const weeks = (durationWeeks: number): TimeSpan => {
   return days(durationWeeks * 7)
+}
+
+const years = (durationYears: number): TimeSpan => {
+  return days(durationYears * 365)
 }
 
 const toMilliseconds = (timeSpan: TimeSpan): number => {
@@ -169,7 +173,8 @@ export const TimeSpan = {
   minutes,
   hours,
   days,
-  fromWeeks,
+  years,
+  weeks,
   //
   //
   //

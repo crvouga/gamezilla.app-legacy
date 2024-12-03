@@ -1,6 +1,6 @@
 import { Err, Ok, Posix, TimeSpan, isErr } from '~/@/core'
 import { VerificationId, type Verification } from '../../verification'
-import type { IVerifySMS } from '../../verify-sms'
+import type { IVerifySMS } from '../../interface'
 import { Config } from './shared'
 
 export const SendCode =
@@ -10,13 +10,18 @@ export const SendCode =
 
     const lastDayVerifications = await deps.verificationDb.find({
       where: {
-        createdAt: {
+        createdAtPosix: {
           '<=': now,
           '>=': Posix.past(now, TimeSpan.days(1))
         },
         phoneNumber: {
           '=': input.phoneNumber
         }
+      },
+      limit: 1000,
+      offset: 0,
+      order: {
+        createdAt: 'desc'
       }
     })
 
@@ -35,14 +40,19 @@ export const SendCode =
 
     const lastHourVerifications = await deps.verificationDb.find({
       where: {
-        createdAt: {
+        createdAtPosix: {
           '<=': now,
           '>=': Posix.past(now, TimeSpan.hours(1))
         },
         phoneNumber: {
           '=': input.phoneNumber
         }
-      }
+      },
+      order: {
+        createdAt: 'desc'
+      },
+      limit: 1000,
+      offset: 0
     })
 
     if (isErr(lastHourVerifications)) {
@@ -64,10 +74,10 @@ export const SendCode =
 
     const verificationNew: Verification = {
       phoneNumber: input.phoneNumber,
-      createdAt,
-      expiresAt: Posix.future(createdAt, deps.verifyCodeExpiresIn),
+      createdAtPosix: createdAt,
+      expiresAtPosix: Posix.future(createdAt, deps.verifyCodeExpiresIn),
       verificationId: VerificationId.generate(),
-      verifiedAt: null,
+      verifiedAtPosix: null,
       codeHash: await deps.hashing.hash({
         algo: {
           t: 'sha256'
