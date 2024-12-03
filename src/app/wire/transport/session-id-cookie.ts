@@ -1,4 +1,4 @@
-import { IS_PROD } from 'config-public'
+import { IS_PROD } from '~/config-public'
 import type { SessionId } from '~/app/@/data'
 
 export const ORIGINS = IS_PROD ? 'https://gamezilla.app' : true

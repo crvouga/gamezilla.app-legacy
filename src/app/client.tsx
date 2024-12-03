@@ -16,7 +16,7 @@ import {
   type ClientEvt
 } from '~/app/@/client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from '~/app/@/ui'
-import { CODEBASE_VERSION_ID, SERVER_IMPL, SERVER_URL, type ServerImpl } from 'config-public'
+import { CODEBASE_VERSION_ID, SERVER_IMPL, SERVER_URL, type ServerImpl } from '~/config-public'
 import { Translator } from './@/client/translator'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'

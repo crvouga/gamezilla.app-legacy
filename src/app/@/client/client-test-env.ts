@@ -4,7 +4,7 @@ import { TestRender } from '~/@/vdom/test-render'
 import { UserId } from '../data'
 import type { AppClientCtx } from './client-ctx'
 import { Translator } from './translator'
-import { VDOM_IMPL_TEST } from 'config-public'
+import { VDOM_IMPL_TEST } from '~/config-public'
 
 export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {
   const currentUserId = UserId.generate()

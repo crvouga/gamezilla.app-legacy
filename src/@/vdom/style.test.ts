@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'bun:test'
-import { camelStringToKehabString, styles } from './style'
+import { camelStringToKebabString, styles } from './style'
 
 describe(import.meta.file, () => {
-  it('should convert kehab-case to camelCase', () => {
-    const kehab = 'transition-delay'
+  it('should convert kebab-case to camelCase', () => {
+    const kebab = 'transition-delay'
     const camel = 'transitionDelay'
-    expect(camelStringToKehabString(camel)).toBe(kehab)
+    expect(camelStringToKebabString(camel)).toBe(kebab)
   })
-  it('should convert camelCase to kehab-case', () => {
-    const kehab = 'transition-delay'
+  it('should convert camelCase to kebab-case', () => {
+    const kebab = 'transition-delay'
     const camel = 'transitionDelay'
-    expect(camelStringToKehabString(camel)).toBe(kehab)
+    expect(camelStringToKebabString(camel)).toBe(kebab)
   })
-  it('should convert kehab-case to camelCase when rendering with React', () => {
+  it('should convert kebab-case to camelCase when rendering with React', () => {
     expect(
       styles(
         {
@@ -25,7 +25,7 @@ describe(import.meta.file, () => {
     })
   })
 
-  it('should not convert kehab-case to camelCase when rendering with Inferno', () => {
+  it('should not convert kebab-case to camelCase when rendering with Inferno', () => {
     expect(
       styles(
         {

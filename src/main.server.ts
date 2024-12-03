@@ -3,7 +3,7 @@ import { FileSystem } from '~/@/file-system'
 import { withRPC } from '~/@/rpc/rpc'
 import { withSinglePageApp } from '~/@/web-server/with-single-page-app'
 import { AppServer } from '~/app/server'
-import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, SERVER_PORT, TRANSPORT_IMPL } from 'config-public'
+import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, SERVER_PORT, TRANSPORT_IMPL } from '~/config-public'
 import { AppTypes } from './app'
 
 const main = async () => {

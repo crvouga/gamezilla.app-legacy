@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Ok, Result, TimeSpan, Uuid } from '~/@/core'
 import { p } from '~/@/core/parser'
-import { REDIS_URL } from 'config-private'
+import { REDIS_URL } from '~/config-private'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { AppServerTestEnv } from '../server-test-env'

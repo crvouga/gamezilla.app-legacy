@@ -1,40 +1,40 @@
-import { VDOM_IMPL_CURRENT } from 'config-public'
+import { VDOM_IMPL_CURRENT } from '~/config-public'
 import { Inferno } from 'inferno'
 import { VDomImpl } from './vdom-impl'
 
-export type StylesObjectKehab = Inferno.HTMLAttributes<HTMLDivElement>['style']
+export type StylesObjectKebab = Inferno.HTMLAttributes<HTMLDivElement>['style']
 export type StylesObjectCamel = React.CSSProperties
-export type StylesObject = StylesObjectKehab | StylesObjectCamel
+export type StylesObject = StylesObjectKebab | StylesObjectCamel
 
-export const camelStringToKehabString = (camelString: string): string => {
+export const camelStringToKebabString = (camelString: string): string => {
   return camelString.replace(/([A-Z])/g, '-$1').toLowerCase()
 }
 
-export const kehabStringToCamelString = (kehabString: string): string => {
-  return kehabString.replace(/-([a-z])/g, (g) => g[1]!.toUpperCase())
+export const kebabStringToCamelString = (kebabString: string): string => {
+  return kebabString.replace(/-([a-z])/g, (g) => g[1]!.toUpperCase())
 }
 
-const kehabObjectToCamelObject = (kehabObject: StylesObjectKehab): StylesObjectCamel => {
+const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectCamel => {
   const camelObject: StylesObjectCamel = {}
 
-  if (typeof kehabObject !== 'object') {
+  if (typeof kebabObject !== 'object') {
     return camelObject
   }
 
-  for (const kehabKey in kehabObject) {
-    const kehabValue =
+  for (const kebabKey in kebabObject) {
+    const kebabValue =
       // @ts-ignore
-      kehabObject[kehabKey]
-    const camelKey = kehabStringToCamelString(kehabKey)
+      kebabObject[kebabKey]
+    const camelKey = kebabStringToCamelString(kebabKey)
     // @ts-ignore
-    camelObject[camelKey] = kehabValue
+    camelObject[camelKey] = kebabValue
   }
 
   return camelObject
 }
 
 export const styles = (
-  stylesObject: StylesObjectKehab,
+  stylesObject: StylesObjectKebab,
   vdomImpl: VDomImpl = VDOM_IMPL_CURRENT
 ): Record<string, unknown> => {
   switch (vdomImpl) {
@@ -44,7 +44,7 @@ export const styles = (
     }
     case 'react-with-compiler':
     case 'react': {
-      return kehabObjectToCamelObject(stylesObject) as Record<string, unknown>
+      return kebabObjectToCamelObject(stylesObject) as Record<string, unknown>
     }
   }
 }

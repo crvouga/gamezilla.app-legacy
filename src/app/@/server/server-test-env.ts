@@ -1,7 +1,7 @@
 import { Posix } from '~/@/core'
 import { Runtime } from '~/@/runtime'
 import { WebServer } from '~/@/web-server'
-import { DATABASE_URL, REDIS_URL } from 'config-private'
+import { DATABASE_URL, REDIS_URL } from '~/config-private'
 import { ClientId, SessionId } from '../data'
 import { DbConnKv, type IDbConnKv } from './db-conn-kv'
 import { DbConnSql, type IDbConnSql } from './db-conn-sql'

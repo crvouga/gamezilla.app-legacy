@@ -53,9 +53,8 @@
 
     "allowJs": false,
     //
-    "baseUrl": "./src",
     "paths": {
-      "~/*": ["*"]
+      "~/*": ["./src/*"]
     },
     "skipLibCheck": true
     // "resolveJsonModule": true
