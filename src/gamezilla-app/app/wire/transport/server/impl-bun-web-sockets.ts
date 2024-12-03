@@ -115,6 +115,8 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
               'Set-Cookie': toSetSessionCookie(sessionId)
             }
 
+        debugger
+
         logger.debug(
           `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${JSON.stringify(
             headers

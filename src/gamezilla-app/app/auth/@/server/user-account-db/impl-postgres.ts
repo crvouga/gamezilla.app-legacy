@@ -38,6 +38,10 @@ export type Config = {
 export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
   return {
     async findOneByUserId(input) {
+      if (!UserId.is(input.userId)) {
+        return Ok(null)
+      }
+
       const queried = await dbConnSql.query(
         UserAccountRow,
         `
