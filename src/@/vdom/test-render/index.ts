@@ -1,2 +1,2 @@
-export * from './test-render'
-export * from './test-render-impl'
+export * from './interface'
+export * from './impl'

@@ -1,7 +1,7 @@
 import { render, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { VDom } from '../vdom'
-import type { ITestRender, TestNode } from './test-render'
+import type { ITestRender, TestNode } from './interface'
 
 export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
   const rendered = render(vdom)
