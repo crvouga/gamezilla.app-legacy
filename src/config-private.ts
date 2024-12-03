@@ -1,5 +1,9 @@
 import { IS_PROD } from './config-public'
 
+if (typeof window !== 'undefined') {
+  throw new Error('Detected client-side code within config-private.ts')
+}
+
 const DATABASE_URL_LOCAL = 'postgresql://gamezilla-app:gamezilla-app@localhost:5433/gamezilla-app?sslmode=disable'
 
 export const DATABASE_URL = IS_PROD ? import.meta.env.DATABASE_URL : DATABASE_URL_LOCAL
