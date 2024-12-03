@@ -1,11 +1,11 @@
 import type { VDom, VDomChildren } from '~/@/vdom'
-import type { PrivateDrawerinput } from './drawer-shared'
+import type { PrivateDrawerInput } from './drawer-shared'
 import { DrawerWebComponent } from './drawer-web-component'
 
-export type Drawerinput = PrivateDrawerinput & {
+export type DrawerInput = PrivateDrawerInput & {
   children?: VDomChildren
 }
 
-export const Drawer = (input: Drawerinput): VDom => {
+export const Drawer = (input: DrawerInput): VDom => {
   return <DrawerWebComponent {...input} />
 }

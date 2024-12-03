@@ -1,10 +1,10 @@
 import { Portal } from '../../portal'
 import { cn } from '../../cn'
-import type { Drawerinput } from '../drawer-shared'
+import type { DrawerInput } from '../drawer-shared'
 import './drawer-element'
 import { drawerSub } from './drawer-shared'
 
-export const DrawerWebComponent = (input: Drawerinput) => {
+export const DrawerWebComponent = (input: DrawerInput) => {
   drawerSub.pub({ type: 'input', ...input })
   return (
     <Portal.Entrance portalId='modals'>

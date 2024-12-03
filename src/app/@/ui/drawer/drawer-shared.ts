@@ -1,12 +1,12 @@
 import type { VDomChildren } from '~/@/vdom'
 
-export type PrivateDrawerinput = {
+export type PrivateDrawerInput = {
   id: string
   onClose: () => void
   open: boolean
   position: 'bottom' | 'top'
 }
 
-export type Drawerinput = PrivateDrawerinput & {
+export type DrawerInput = PrivateDrawerInput & {
   children?: VDomChildren
 }

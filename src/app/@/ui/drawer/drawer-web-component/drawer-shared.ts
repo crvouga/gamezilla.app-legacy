@@ -1,7 +1,7 @@
 import { PubSub } from '~/@/core'
-import type { PrivateDrawerinput } from '../drawer-shared'
+import type { PrivateDrawerInput } from '../drawer-shared'
 
-export type DrawerEvent = PrivateDrawerinput & {
+export type DrawerEvent = PrivateDrawerInput & {
   type: 'input'
 }
 

@@ -1,9 +1,9 @@
 import { TranslatedText } from '~/@/l18n'
 import { Button } from './button'
-import { Drawer, type Drawerinput } from './drawer'
+import { Drawer, type DrawerInput } from './drawer'
 import { Typography } from './typography'
 
-type input = Drawerinput & {
+type input = DrawerInput & {
   title: TranslatedText
   body: TranslatedText
   variant?: 'danger'
