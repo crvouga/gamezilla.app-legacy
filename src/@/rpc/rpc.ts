@@ -79,7 +79,15 @@ export const initServer = <T extends Base>(_contract: T, handlers: Server<T>): S
   return handlers
 }
 
-export const attachServer = <T extends Base>(webServer: IWebServer, contract: T, handlers: Server<T>) => {
+export const withRPC = <T extends Base>({
+  contract,
+  handlers,
+  webServer
+}: {
+  webServer: IWebServer
+  contract: T
+  handlers: Server<T>
+}) => {
   const handleRequest = async (contract: Contract<any>, handlers: Server<any>, path: string[], request: Request) => {
     const endpointName = path[0]
     if (!endpointName) {

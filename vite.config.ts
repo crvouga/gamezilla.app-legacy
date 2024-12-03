@@ -38,7 +38,7 @@ export default defineConfig({
     'process.env': process.env
   },
   server: {
-    hmr: false`bu`
+    hmr: false
   },
   root: 'src',
   build: {

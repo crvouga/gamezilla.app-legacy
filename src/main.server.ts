@@ -1,5 +1,7 @@
 import { ProgramImpure } from '@/core/program-impure'
-import { RPC } from '@/rpc'
+import { FileSystem } from '@/file-system'
+import { withRPC } from '@/rpc/rpc'
+import { withSinglePageApp } from '@/web-server/with-single-page-app'
 import { AppServer } from 'app/server'
 import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, SERVER_PORT, TRANSPORT_IMPL } from 'config-public'
 import { AppTypes } from './app'
@@ -19,9 +21,25 @@ const main = async () => {
 
   const rpc = AppServer.rpc({ ctx })
 
-  RPC.attachServer(ctx.server, AppTypes.rpcContract, rpc)
+  withRPC({
+    webServer: ctx.server,
+    contract: AppTypes.rpcContract,
+    handlers: rpc
+  })
 
-  ctx.logger.info({ CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL, TRANSPORT_IMPL })
+  withSinglePageApp({
+    webServer: ctx.server,
+    directory: 'dist',
+    fileSystem: FileSystem({ t: 'bun' }),
+    indexFile: 'index.html'
+  })
+
+  ctx.logger.info({
+    CODEBASE_VERSION_ID,
+    IS_PROD,
+    SERVER_IMPL,
+    TRANSPORT_IMPL
+  })
 }
 
 main()
