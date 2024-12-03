@@ -330,7 +330,7 @@ const subscriptions = async (input: { ctx: ServerCtx }): Promise<Sub<MsgServer>>
     Sub.tag('spaces', await SpacesServer.subscriptions({ ctx: input.ctx.space, deps: null })),
     Sub.tag('wire', WireServer.subscriptions({ ctx: input.ctx.wire })),
     Sub.flat(
-      Sub.map(input.ctx.transport.toServer, ({ sessionId, clientId, msgs }) =>
+      Sub.map(input.ctx.transport.fromClient, ({ sessionId, clientId, msgs }) =>
         msgs.map((c): MsgServer => ({ t: '→', sessionId, clientId, c }))
       )
     )

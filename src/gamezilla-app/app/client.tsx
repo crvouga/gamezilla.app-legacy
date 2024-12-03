@@ -439,7 +439,7 @@ export const subscriptions = (input: { ctx: ClientCtx; model: ModelClient }): Su
   const ctx = toClientCtx(input)
 
   return Sub.batch<MsgClient>([
-    Sub.tag('→', Sub.flat(input.ctx.transport.toClient)),
+    Sub.tag('→', Sub.flat(input.ctx.transport.fromServer)),
     Sub.tag('platform', Platform.subscriptions),
     Sub.tag('routing', Routing.subscriptions),
     Sub.tag('wire', WireClient.subscriptions({ transport: input.ctx.transport })),

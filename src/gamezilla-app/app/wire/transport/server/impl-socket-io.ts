@@ -1,16 +1,11 @@
-import { parseCookies } from '@/web-server/cookies'
+import { toCookies } from '@/web-server/cookies'
 import type { WebServerNode } from '@/web-server/impl-node'
 import { SessionId, type ClientId } from 'gamezilla-app/app/@/data'
 import type { ILogger } from 'gamezilla-app/app/@/server/logger'
 import { Server } from 'socket.io'
-import {
-  ORIGINS,
-  SESSION_ID_COOKIE_NAME,
-  toSetSessionCookie,
-  type MsgClientToMsgServer,
-  type MsgServerToMsgClient
-} from '../types'
+import { type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
 import { initServerTransport, type IServerTransport } from './interface'
+import { ORIGINS, SESSION_ID_COOKIE_NAME, toSetSessionCookie } from '../session-id-cookie'
 
 export type Config = {
   t: 'socket-io'
@@ -44,7 +39,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       return null
     }
     const origin = Array.isArray(ORIGINS) ? ORIGINS.join(', ') : request.headers.get('Origin') ?? '*'
-    const cookies = parseCookies(request)
+    const cookies = toCookies(request)
     const maybeSessionId = cookies[SESSION_ID_COOKIE_NAME]
     const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate()
 
@@ -80,9 +75,9 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       return acc
     }, {})
 
-    const probablySessionId = cookies[SESSION_ID_COOKIE_NAME]
+    const maybeSessionId = cookies[SESSION_ID_COOKIE_NAME]
 
-    const sessionId = SessionId.is(probablySessionId) ? probablySessionId : SessionId.generate()
+    const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate()
 
     const clientId = socket.id as ClientId
 
@@ -102,7 +97,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
           sessionId
         })
       }
-      transport.toServer.pub({
+      transport.fromClient.pub({
         msgs: msg.m,
         clientId: clientId,
         sessionId: sessionId

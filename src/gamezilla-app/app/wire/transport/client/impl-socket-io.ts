@@ -69,7 +69,7 @@ export const ClientTransport = async <MsgToServer, MsgToClient>(
       if (msg.v !== config.codebaseVersionId) {
         console.warn('Codebase version mismatch')
       }
-      transport.toClient.pub(msg.m)
+      transport.fromServer.pub(msg.m)
     })
 
     transport.msgCmd.sub((msgCmd) => {

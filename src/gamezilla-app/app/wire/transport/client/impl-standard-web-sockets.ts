@@ -1,4 +1,5 @@
-import { WEB_SOCKET_ENDPOINT, type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
+import { WEB_SOCKET_ENDPOINT } from '../session-id-cookie'
+import { type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
 import {
   initClientTransport,
   type ClientTransportCommand,
@@ -88,7 +89,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
           reason: 'codebase-version-mismatch'
         })
       }
-      transport.toClient.pub(msg.m)
+      transport.fromServer.pub(msg.m)
     }
   }
 
@@ -157,38 +158,45 @@ export const init = <MsgToServer>(): Model<MsgToServer> => ({
   queue: []
 })
 
-export const update = <MsgToServer>({
-  model,
-  evt,
-  cmd
-}: {
+export const update = <MsgToServer>(input: {
+  codebaseVersionId: string
   model: Model<MsgToServer>
   evt?: ClientTransportEvent
   cmd?: ClientTransportCommand
+  msg?: { t: 'to-server'; msgs: MsgToServer[] }
 }): Model<MsgToServer> => {
-  const msg = evt ?? cmd
+  const msg = input.evt ?? input.cmd ?? input.msg
   if (!msg) {
-    return model
+    return input.model
   }
   switch (msg.t) {
+    case 'to-server': {
+      return {
+        ...input.model,
+        queue: input.model.queue.concat({
+          m: msg.msgs,
+          v: input.codebaseVersionId
+        })
+      }
+    }
     case 'try-reconnect': {
       return {
-        ...model,
+        ...input.model,
         reconnectAttempts: 0
       }
     }
 
     case 'got-bad-msgs': {
-      return model
+      return input.model
     }
 
     case 'server-connect-error': {
-      return model
+      return input.model
     }
 
     case 'server-connected': {
       return {
-        ...model,
+        ...input.model,
         isConnected: true,
         reconnectAttempts: 0
       }
@@ -196,7 +204,7 @@ export const update = <MsgToServer>({
 
     case 'server-disconnected': {
       return {
-        ...model,
+        ...input.model,
         isConnected: false
       }
     }

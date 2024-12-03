@@ -40,7 +40,7 @@ export type ToServerPayload<TMsgToServer> = {
 export type IServerTransport<T extends { MsgToClient: any; MsgToServer: any }> = {
   toClient: PubSub<ToClientPayload<T['MsgToClient']>>
   toClientBroadcast: PubSub<T['MsgToClient'][]>
-  toServer: PubSub<ToServerPayload<T['MsgToServer']>>
+  fromClient: PubSub<ToServerPayload<T['MsgToServer']>>
   wire: PubSub<ServerTransportMsg>
 }
 
@@ -51,7 +51,7 @@ export const initServerTransport = <MsgToServer, MsgToClient>(): IServerTranspor
   return {
     toClient: PubSub.create(),
     toClientBroadcast: PubSub.create(),
-    toServer: PubSub.create(),
+    fromClient: PubSub.create(),
     wire: PubSub.create()
   }
 }

@@ -1,17 +1,12 @@
-import type { Server, ServerWebSocket, WebSocketHandler } from 'bun'
+import type { Server, ServerWebSocket } from 'bun'
 import type { WebServerBun } from '@/web-server/impl-bun'
 import { ClientId, SessionId } from 'gamezilla-app/app/@/data'
 import { IDbConnSql } from 'gamezilla-app/app/@/server/db-conn-sql'
 import { ILogger, Logger } from 'gamezilla-app/app/@/server/logger'
 import { IPubSubTopicBased } from 'gamezilla-app/app/@/server/pub-sub-topic-based'
-import {
-  SESSION_ID_COOKIE_NAME,
-  toSetSessionCookie,
-  WEB_SOCKET_ENDPOINT,
-  type MsgClientToMsgServer,
-  type MsgServerToMsgClient
-} from '../types'
+import { type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
 import { initServerTransport, type IServerTransport } from './interface'
+import { SESSION_ID_COOKIE_NAME, toSetSessionCookie, WEB_SOCKET_ENDPOINT } from '../session-id-cookie'
 
 type ServerWebSocketData = {
   clientId: ClientId
@@ -86,53 +81,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   //
   //
 
-  const onRequest = (req: Request, server: Server) => {
-    const url = new URL(req.url)
-
-    switch (url.pathname) {
-      case WEB_SOCKET_ENDPOINT: {
-        const maybeSessionIdCookie = req.headers
-          ?.get('cookie')
-          ?.split(';')
-          ?.map((cookie) => cookie.trim())
-          ?.find((cookie) => cookie.startsWith(`${SESSION_ID_COOKIE_NAME}=`))
-          ?.split('=')
-
-        const maybeSessionId = maybeSessionIdCookie ? maybeSessionIdCookie[1] : null
-
-        const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate()
-
-        const clientId = ClientId.generate()
-
-        const data: ServerWebSocketData = {
-          clientId,
-          sessionId
-        }
-
-        const headers: Record<string, string> = maybeSessionId
-          ? {}
-          : {
-              'Set-Cookie': toSetSessionCookie(sessionId)
-            }
-
-        debugger
-
-        logger.debug(
-          `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${JSON.stringify(
-            headers
-          )}`
-        )
-        server.upgrade(req, { headers, data })
-        return
-      }
-
-      default: {
-        return null
-      }
-    }
-  }
-
-  const websocket: WebSocketHandler<ServerWebSocketData> = {
+  config.webServer._setWebSocketHandler({
     async open(ws: ServerWebSocket<ServerWebSocketData>) {
       logger.debug(`websocket connection opened clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
       await addClient(ws)
@@ -166,22 +115,57 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
         })
       }
 
-      transport.toServer.pub({
+      transport.fromClient.pub({
         clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
         msgs: msg.m
       })
     }
-  }
+  })
 
   config.webServer.registerHandler((request, maybeServer) => {
-    return onRequest(request, maybeServer as Server)
-  })
-  config.webServer._setWebSocketHandler(websocket)
+    const server = maybeServer as Server
+    const url = new URL(request.url)
 
-  transport.wire.pub({
-    t: 'server-started',
-    port: Number.NaN
+    switch (url.pathname) {
+      case WEB_SOCKET_ENDPOINT: {
+        const maybeSessionIdCookie = request.headers
+          ?.get('cookie')
+          ?.split(';')
+          ?.map((cookie) => cookie.trim())
+          ?.find((cookie) => cookie.startsWith(`${SESSION_ID_COOKIE_NAME}=`))
+          ?.split('=')
+
+        const maybeSessionId = maybeSessionIdCookie ? maybeSessionIdCookie[1] : null
+
+        const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate()
+
+        const clientId = ClientId.generate()
+
+        const data: ServerWebSocketData = {
+          clientId,
+          sessionId
+        }
+
+        const headers: Record<string, string> = maybeSessionId
+          ? {}
+          : {
+              'Set-Cookie': toSetSessionCookie(sessionId)
+            }
+
+        logger.debug(
+          `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${JSON.stringify(
+            headers
+          )}`
+        )
+        server.upgrade(request, { headers, data })
+        return
+      }
+
+      default: {
+        return null
+      }
+    }
   })
 
   //
@@ -241,6 +225,11 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   //
   //
   //
+
+  transport.wire.pub({
+    t: 'server-started',
+    port: Number.NaN
+  })
 
   return transport
 }
