@@ -47,7 +47,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        app: './main.html'
+        app: './src/main.html'
       }
     }
   }
