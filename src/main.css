@@ -2,21 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: #3f3f46;
-  }
-}
-
-@theme {
-  --font-display: 'Inter', 'sans-serif';
-  --secondary: #d1d5db;
-}
-
 /*
 
 Remove arrows from number input
