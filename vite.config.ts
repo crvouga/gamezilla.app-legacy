@@ -1,5 +1,4 @@
 import preact from '@preact/preset-vite'
-import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 // @ts-expect-error
@@ -33,7 +32,7 @@ const vDomPlugin = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vDomPlugin(), tsconfigPaths(), tailwindcss()],
+  plugins: [vDomPlugin(), tsconfigPaths()],
   define: {
     'process.env': process.env
   },
