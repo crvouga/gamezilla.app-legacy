@@ -38,17 +38,11 @@ export default defineConfig({
     'process.env': process.env
   },
   server: {
-    hmr: false,
-    open: '/main.html'
+    hmr: false`bu`
   },
   root: 'src',
   build: {
     outDir: '../dist',
-    emptyOutDir: true,
-    rollupOptions: {
-      input: {
-        app: './src/main.html'
-      }
-    }
+    emptyOutDir: true
   }
 })
