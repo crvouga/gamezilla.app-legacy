@@ -1,9 +1,9 @@
-import { AppServerTestEnv } from 'app/@/server/server-test-env'
+import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Config, WireSessionDb } from './impl'
-import { Logger } from 'app/@/server/logger'
+import { Logger } from '~/app/@/server/logger'
 import { describe, expect, test } from 'bun:test'
 import { WireSession } from '../wire-session'
-import { Ok } from '@/core'
+import { Ok } from '~/@/core'
 
 const Fixture = async (config: Config) => {
   const wireSessionDb = await WireSessionDb(config)

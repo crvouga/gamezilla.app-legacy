@@ -1,4 +1,4 @@
-import { FixtureAppClient } from 'app/@/client/client-test-env'
+import { FixtureAppClient } from '~/app/@/client/client-test-env'
 import * as AuthClient from '../../client'
 
 export const FixtureAuthClient = async () => {

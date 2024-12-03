@@ -1,4 +1,4 @@
-import { GameServerModule } from 'app/spaces/games/@/architecture/game-server-v2'
+import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import type { ServerModule } from '../types'
 import { DeleteForeverServer } from './delete-forever/server'
 import { EditPuzzleNameServer } from './edit-puzzle-name/server'

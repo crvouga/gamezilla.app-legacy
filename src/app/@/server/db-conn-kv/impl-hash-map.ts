@@ -1,5 +1,5 @@
-import { Ok } from '@/core'
-import type { p } from '@/core/parser'
+import { Ok } from '~/@/core'
+import type { p } from '~/@/core/parser'
 import type { IDbConnKv } from './interface'
 import { ILogger, Logger } from '../logger'
 

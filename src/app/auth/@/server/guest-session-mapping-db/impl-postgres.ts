@@ -1,8 +1,8 @@
-import { Ok, Posix, isErr } from '@/core'
+import { Ok, Posix, isErr } from '~/@/core'
 import { IGuestSessionMappingDb } from './interface'
-import { SessionId, UserId } from 'app/@/data'
-import { p } from '@/core/parser'
-import { IDbConnSql } from 'app/@/server/db-conn-sql'
+import { SessionId, UserId } from '~/app/@/data'
+import { p } from '~/@/core/parser'
+import { IDbConnSql } from '~/app/@/server/db-conn-sql'
 
 export const Row = p.obj({
   user_id: UserId,

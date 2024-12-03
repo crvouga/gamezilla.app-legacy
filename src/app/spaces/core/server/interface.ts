@@ -1,6 +1,6 @@
-import { Result } from '@/core'
-import type { Paginated, SpaceId, UserId } from 'app/@/data'
-import { EventId, WithEventId } from '@/event-sourced/event'
+import { Result } from '~/@/core'
+import type { Paginated, SpaceId, UserId } from '~/app/@/data'
+import { EventId, WithEventId } from '~/@/event-sourced/event'
 import type * as SpaceCore from '../space-core'
 import { SpaceEvent } from '../space-event'
 

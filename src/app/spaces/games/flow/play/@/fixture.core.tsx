@@ -1,6 +1,6 @@
-import { NonEmpty } from '@/core'
-import type { WithEventMeta } from '@/event-sourced/event'
-import { SpaceCoreFixture } from 'app/spaces/@/fixture/core'
+import { NonEmpty } from '~/@/core'
+import type { WithEventMeta } from '~/@/event-sourced/event'
+import { SpaceCoreFixture } from '~/app/spaces/@/fixture/core'
 import { PlayCore } from '../core'
 import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'
 

@@ -1,11 +1,5 @@
-import type { VDom } from '@/vdom'
-import {
-  IconBotCute,
-  IconBotLevel1,
-  IconBotLevel4,
-  IconBotScary,
-  IconBotSimple
-} from 'app/spaces/games/@/vs-bot'
+import type { VDom } from '~/@/vdom'
+import { IconBotCute, IconBotLevel1, IconBotLevel4, IconBotScary, IconBotSimple } from '~/app/spaces/games/@/vs-bot'
 import * as ChessBotLevelTypes from './chess-bot-level.types'
 
 export type ChessBotLevel = ChessBotLevelTypes.ChessBotLevel

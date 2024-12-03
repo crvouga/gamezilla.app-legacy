@@ -1,4 +1,4 @@
-import { SpaceId, UserId } from 'app/@/data'
+import { SpaceId, UserId } from '~/app/@/data'
 
 export type SpaceEvt =
   | {

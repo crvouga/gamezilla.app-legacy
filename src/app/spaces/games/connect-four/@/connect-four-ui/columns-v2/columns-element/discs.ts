@@ -1,4 +1,4 @@
-import { easeAttrs } from '@/core'
+import { easeAttrs } from '~/@/core'
 import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT } from '../../../connect-four'
 import type { SvgIds } from './shared'
 

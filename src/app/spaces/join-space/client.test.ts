@@ -1,7 +1,7 @@
-import { withEventMeta } from '@/event-sourced/event'
+import { withEventMeta } from '~/@/event-sourced/event'
 import { describe, expect, it, test } from 'bun:test'
-import { didShowErrorSm, didShowToast } from 'app/@/client'
-import { Profile, SpaceId } from 'app/@/data'
+import { didShowErrorSm, didShowToast } from '~/app/@/client'
+import { Profile, SpaceId } from '~/app/@/data'
 import { FixtureSpacesClient } from '../@/fixture/client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 

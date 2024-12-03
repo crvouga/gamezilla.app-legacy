@@ -1,4 +1,4 @@
-import type { ClientId, UserId } from 'app/@/data'
+import type { ClientId, UserId } from '~/app/@/data'
 
 //
 //

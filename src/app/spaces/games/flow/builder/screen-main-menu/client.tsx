@@ -1,6 +1,6 @@
-import { APP_SOUND, playSound } from 'app/@/client'
-import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from 'app/@/ui'
-import { andThen } from 'app/spaces/games/@/architecture/game-client-v2'
+import { APP_SOUND, playSound } from '~/app/@/client'
+import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/app/@/ui'
+import { andThen } from '~/app/spaces/games/@/architecture/game-client-v2'
 import type { ClientModule } from '../types'
 import { GameMainMenu } from '../../../@/game/game-main-menu'
 

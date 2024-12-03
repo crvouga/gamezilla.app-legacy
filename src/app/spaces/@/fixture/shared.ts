@@ -1,8 +1,8 @@
-import { type SpaceId, UserId } from 'app/@/data'
-import { pipe } from '@/core'
-import { withEventId } from '@/event-sourced/event'
+import { type SpaceId, UserId } from '~/app/@/data'
+import { pipe } from '~/@/core'
+import { withEventId } from '~/@/event-sourced/event'
 import { SpaceCore } from '../../core'
-import { EventSourced } from '@/event-sourced'
+import { EventSourced } from '~/@/event-sourced'
 
 export const makeSpace = ({
   spaceId,

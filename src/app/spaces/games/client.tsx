@@ -1,4 +1,4 @@
-import { Eff, Sub } from '@/core'
+import { Eff, Sub } from '~/@/core'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'

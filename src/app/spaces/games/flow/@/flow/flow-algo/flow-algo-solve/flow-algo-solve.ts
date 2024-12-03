@@ -1,5 +1,5 @@
-import { ascend } from '@/core'
-import { MinHeap } from '@/min-heap/min-heap'
+import { ascend } from '~/@/core'
+import { MinHeap } from '~/@/min-heap/min-heap'
 import { FlowVariant } from '../..'
 import { Flow } from '../..'
 import { FlowGroupId } from '../../flow/flow-group-id'

@@ -1,5 +1,5 @@
-import { AppClientCtx } from 'app/@/client'
-import { Profile, UserId } from 'app/@/data'
+import { AppClientCtx } from '~/app/@/client'
+import { Profile, UserId } from '~/app/@/data'
 import { SpaceCtx } from './space-ctx'
 
 export type SpaceClientCtx = AppClientCtx & SpaceCtx

@@ -1,5 +1,5 @@
-import type { ILogger } from 'app/@/server/logger'
-import { loggerNoop } from 'app/@/server/logger/impl-noop'
+import type { ILogger } from '~/app/@/server/logger'
+import { loggerNoop } from '~/app/@/server/logger/impl-noop'
 import type { FlowVariant } from '../../flow-variant'
 import { MsgToMaster, type MsgToWorker } from './flow-algo-solve-async.types'
 

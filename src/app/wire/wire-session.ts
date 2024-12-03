@@ -1,7 +1,7 @@
-import { CappedOrderedDict } from '@/capped-ordered-dict/capped-ordered-dict'
-import { pipe } from '@/core'
-import { p } from '@/core/parser'
-import { ClientId, SessionId, UserId } from 'app/@/data'
+import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
+import { pipe } from '~/@/core'
+import { p } from '~/@/core/parser'
+import { ClientId, SessionId, UserId } from '~/app/@/data'
 
 const parser = p.obj({
   clientIds: CappedOrderedDict.parser(ClientId, ClientId),

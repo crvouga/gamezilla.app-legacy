@@ -1,19 +1,13 @@
-import { Sub, TimeSpan } from '@/core'
-import { APP_SOUND, type AppClientCmd, playSound } from 'app/@/client'
-import type { UserId } from 'app/@/data'
-import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from 'app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'app/@/ui/actions'
-import { type WithEventId, withEventId } from '@/event-sourced/event'
-import { FeedItem } from 'app/spaces/@/feed-item'
-import { SpaceClientEvt } from 'app/spaces/@/space-client-evt'
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
-import {
-  IconBotHappy,
-  IconBotLevel1,
-  IconBotLevel4,
-  VsBotGame,
-  VsBotSetup
-} from 'app/spaces/games/@/vs-bot'
+import { Sub, TimeSpan } from '~/@/core'
+import { APP_SOUND, type AppClientCmd, playSound } from '~/app/@/client'
+import type { UserId } from '~/app/@/data'
+import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/app/@/ui'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { type WithEventId, withEventId } from '~/@/event-sourced/event'
+import { FeedItem } from '~/app/spaces/@/feed-item'
+import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
+import { IconBotHappy, IconBotLevel1, IconBotLevel4, VsBotGame, VsBotSetup } from '~/app/spaces/games/@/vs-bot'
 import { LayoutGame } from '../../@/game/layout-game'
 import * as ConnectFour from '../@/connect-four'
 import { CoverArt, PlayerOneIcon, PlayerTwoIcon, ViewColumns } from '../@/connect-four-ui'
@@ -27,7 +21,7 @@ import {
   type MsgToServer,
   updateCore
 } from './vs-bot.types'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //

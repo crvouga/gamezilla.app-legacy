@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok } from '@/core'
-import { SpaceCoreFixture } from 'app/spaces/@/fixture/core'
+import { Err, Ok } from '~/@/core'
+import { SpaceCoreFixture } from '~/app/spaces/@/fixture/core'
 import { FlowPack } from '../../../@/pack/pack'
 import { EditPackNameCore } from './core'
 import type { ModelCore, MsgCore } from './types'

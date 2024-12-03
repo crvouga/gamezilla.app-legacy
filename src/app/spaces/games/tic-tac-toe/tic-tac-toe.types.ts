@@ -1,4 +1,4 @@
-import { Err, type Result } from '@/core'
+import { Err, type Result } from '~/@/core'
 import { GameMainMenu } from '../@/game/game-main-menu'
 import type * as VsBot from './vs-bot/vs-bot.types'
 import type * as VsUser from './vs-user/vs-user.types'

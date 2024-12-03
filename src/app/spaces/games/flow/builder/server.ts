@@ -1,5 +1,5 @@
-import { Sub } from '@/core'
-import { GameServerModule } from 'app/spaces/games/@/architecture/game-server-v2'
+import { Sub } from '~/@/core'
+import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { ScreenPackBuilderOpenServer } from './screen-pack-builder-open/server'
 import { ScreenPackBuilderServer } from './screen-pack-builder/server'
 import { ScreenPuzzleBuilderOpenServer } from './screen-puzzle-builder-open/server'

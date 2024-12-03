@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { FixtureSpaceServer } from '../@/fixture/server'
-import { withEventMeta } from '@/event-sourced/event'
-import { ClientId, SessionId, SpaceId, UserId } from 'app/@/data'
-import { unwrap } from '@/core'
+import { withEventMeta } from '~/@/event-sourced/event'
+import { ClientId, SessionId, SpaceId, UserId } from '~/app/@/data'
+import { unwrap } from '~/@/core'
 import { SpaceCore } from '../core'
-import { didSendMsgToClient } from 'app/@/server'
+import { didSendMsgToClient } from '~/app/@/server'
 
 const Fixture = async () => {
   const f = await FixtureSpaceServer()

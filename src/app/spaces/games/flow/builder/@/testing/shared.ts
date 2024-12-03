@@ -1,5 +1,5 @@
-import type { UserId } from 'app/@/data'
-import type { Posix } from '@/core'
+import type { UserId } from '~/app/@/data'
+import type { Posix } from '~/@/core'
 import { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { samples } from '../../../@/flow/flow-variant/flow-grid/flow-grid-samples'
 

@@ -1,6 +1,6 @@
-import { LamportTimestamp } from '@/lamport-clock/lamport-timestamp'
+import { LamportTimestamp } from '~/@/lamport-clock/lamport-timestamp'
 import { EventId } from './event-id'
-import { p } from '@/core/parser'
+import { p } from '~/@/core/parser'
 
 export const EventMeta = p.obj({
   happenedAt: LamportTimestamp,

@@ -1,5 +1,5 @@
-import type { UserId } from 'app/@/data'
-import { type Keyboard, type NonEmpty, Result, dissoc } from '@/core'
+import type { UserId } from '~/app/@/data'
+import { type Keyboard, type NonEmpty, Result, dissoc } from '~/@/core'
 import { Maze } from './@/maze'
 import { Direction, Position } from './@/position'
 

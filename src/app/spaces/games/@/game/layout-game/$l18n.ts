@@ -1,4 +1,4 @@
-import { Translations } from '@/l18n'
+import { Translations } from '~/@/l18n'
 
 export type Text = {
   'game.you-are-spectating': string

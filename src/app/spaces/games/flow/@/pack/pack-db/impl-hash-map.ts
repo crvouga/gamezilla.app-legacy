@@ -1,4 +1,4 @@
-import { Ok, Result } from '@/core'
+import { Ok, Result } from '~/@/core'
 import type { FlowPack } from '../pack'
 import type { IFlowPackDb } from './interface'
 

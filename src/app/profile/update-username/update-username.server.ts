@@ -1,4 +1,4 @@
-import { ServerCmd } from 'app/@/server'
+import { ServerCmd } from '~/app/@/server'
 import { ProfileDb } from '../profile-db/profile-db'
 import { MsgServer, MsgToClient, MsgToServer } from './update-username.types'
 

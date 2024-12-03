@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { Result } from '@/core'
-import { withEventId, withEventMeta } from '@/event-sourced/event'
+import { Result } from '~/@/core'
+import { withEventId, withEventMeta } from '~/@/event-sourced/event'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { FlowCreateFixtureServer } from '../@/testing/server'

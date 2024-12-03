@@ -1,7 +1,7 @@
-import type { WithEventId, WithEventMeta } from '@/event-sourced/event'
-import { AppClientCmd, type ClientEvt } from 'app/@/client'
-import { Eff, Sub } from '@/core'
-import type { VDom } from '@/vdom'
+import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
+import { AppClientCmd, type ClientEvt } from '~/app/@/client'
+import { Eff, Sub } from '~/@/core'
+import type { VDom } from '~/@/vdom'
 
 export type GameClientTypes = {
   //

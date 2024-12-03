@@ -1,5 +1,5 @@
-import { Eff, NotAsked } from '@/core'
-import { Msg } from '@/core/msg'
+import { Eff, NotAsked } from '~/@/core'
+import { Msg } from '~/@/core/msg'
 import { isAppClientCtx } from '../@/client'
 import { type Input, type Output, SpaceClientModule } from './@/architecture/space-client'
 import { SpaceClientCmd } from './@/space-client-cmd'

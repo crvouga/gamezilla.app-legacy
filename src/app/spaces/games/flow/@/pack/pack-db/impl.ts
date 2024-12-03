@@ -1,4 +1,4 @@
-import type { IDbConnSql } from 'app/@/server/db-conn-sql'
+import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
 import type { IFlowPackDb } from './interface'
 import { FlowPackDbHashMap } from './impl-hash-map'
 import { FlowPackDbPostgres } from './impl-postgres'

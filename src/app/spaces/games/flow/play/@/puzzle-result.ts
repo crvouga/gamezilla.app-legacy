@@ -1,4 +1,4 @@
-import { p } from '@/core/parser'
+import { p } from '~/@/core/parser'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 
 export const FlowPuzzleResult = p.or(

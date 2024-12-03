@@ -1,5 +1,5 @@
-import { Eff, Sub } from '@/core'
-import { APP_SOUND, playSound, showToast } from 'app/@/client'
+import { Eff, Sub } from '~/@/core'
+import { APP_SOUND, playSound, showToast } from '~/app/@/client'
 import {
   Button,
   Drawer,
@@ -10,9 +10,9 @@ import {
   IconEllipsisVertical,
   ListItemButton,
   TopBar
-} from 'app/@/ui'
-import { SpaceClientCmd } from 'app/spaces/@/space-client-cmd'
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
+} from '~/app/@/ui'
+import { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
@@ -21,7 +21,7 @@ import { PuzzleListClient } from '../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../types'
 import { ScreenPackBuilderCore } from './core'
 import { EditPackNameClient } from './edit-pack-name/client'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'app/@/ui/actions'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 
 //
 //

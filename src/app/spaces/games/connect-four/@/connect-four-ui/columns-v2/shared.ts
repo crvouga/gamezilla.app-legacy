@@ -1,5 +1,5 @@
-import { PubSub } from '@/core'
-import type { VDom } from '@/vdom'
+import { PubSub } from '~/@/core'
+import type { VDom } from '~/@/vdom'
 import type { ColumnIndex, Columns, PlayerType } from '../../connect-four'
 
 export type Columnsinput = {

@@ -1,6 +1,6 @@
-import type { AppClientCtx } from 'app/@/client'
-import type { UserId } from 'app/@/data'
-import { Eff, RemoteResult, Sub, exhaustive, isErr, pipe } from '@/core'
+import type { AppClientCtx } from '~/app/@/client'
+import type { UserId } from '~/app/@/data'
+import { Eff, RemoteResult, Sub, exhaustive, isErr, pipe } from '~/@/core'
 import { Mic } from './mic'
 import type { ModelClient, MsgClient, MsgToClient } from './party.types'
 

@@ -1,5 +1,5 @@
-import type { VDom } from '@/vdom'
-import { IconPlus, Swiper } from 'app/@/ui'
+import type { VDom } from '~/@/vdom'
+import { IconPlus, Swiper } from '~/app/@/ui'
 import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
 
 const COLUMN_COUNT = 5

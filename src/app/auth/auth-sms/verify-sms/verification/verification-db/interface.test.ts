@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, Posix, TimeSpan, ascend, descend, unwrap } from '@/core'
-import { AppServerTestEnv } from 'app/@/server/server-test-env'
+import { Ok, Posix, TimeSpan, ascend, descend, unwrap } from '~/@/core'
+import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Verification } from '../verification'
 import { VerificationDb } from './impl'
 

@@ -1,5 +1,5 @@
-import type { Browser, RemoteResult, Result } from '@/core'
-import type { UserId, Username } from 'app/@/data'
+import type { Browser, RemoteResult, Result } from '~/@/core'
+import type { UserId, Username } from '~/app/@/data'
 
 type SearchResult = {
   t: 'profile'

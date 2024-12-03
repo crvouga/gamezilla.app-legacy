@@ -1,5 +1,5 @@
-import { Hex } from '@/core'
-import { cn } from 'app/@/ui'
+import { Hex } from '~/@/core'
+import { cn } from '~/app/@/ui'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
 import type { Position } from './gomoku-position'
 

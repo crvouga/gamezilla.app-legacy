@@ -1,6 +1,6 @@
-import { type Sub } from '@/core'
-import { Msg } from '@/core/msg'
-import type { ClientId, SessionId, UserId } from 'app/@/data'
+import { type Sub } from '~/@/core'
+import { Msg } from '~/@/core/msg'
+import type { ClientId, SessionId, UserId } from '~/app/@/data'
 
 //
 //

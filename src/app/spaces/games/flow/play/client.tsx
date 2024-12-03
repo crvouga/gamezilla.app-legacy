@@ -1,5 +1,5 @@
-import { Sub } from '@/core'
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
+import { Sub } from '~/@/core'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import type { ClientModule } from './types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/client'
 import { ScreenSelectPackClient } from './screen-select-pack/client'

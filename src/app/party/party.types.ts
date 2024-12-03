@@ -1,5 +1,5 @@
-import type { PartyId, UserId } from 'app/@/data'
-import { type RemoteResult, Result, dissoc, filterObject } from '@/core'
+import type { PartyId, UserId } from '~/app/@/data'
+import { type RemoteResult, Result, dissoc, filterObject } from '~/@/core'
 import type { MicLoadResult, MicUnloadResult } from './mic'
 const { Err, Ok } = Result
 

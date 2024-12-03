@@ -1,5 +1,5 @@
-import { NonEmpty } from '@/core'
-import { Msg } from '@/core/msg'
+import { NonEmpty } from '~/@/core'
+import { Msg } from '~/@/core/msg'
 import { FixtureFlowServer } from '../../@/fixture-server'
 import { PlayCore } from '../core'
 import { PlayServer } from '../server'

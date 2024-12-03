@@ -1,5 +1,5 @@
-import { Err, Ok, Result, TimeSpan, isErr } from '@/core'
-import { p } from '@/core/parser'
+import { Err, Ok, Result, TimeSpan, isErr } from '~/@/core'
+import { p } from '~/@/core/parser'
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../with-duration'

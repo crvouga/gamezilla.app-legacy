@@ -3,8 +3,8 @@
 //
 //
 
-import { p } from '@/core/parser'
-import { UserId } from 'app/@/data'
+import { p } from '~/@/core/parser'
+import { UserId } from '~/app/@/data'
 import { GameMainMenu } from '../../../@/game/game-main-menu'
 
 export const OPTION = ['puzzles', 'packs'] as const

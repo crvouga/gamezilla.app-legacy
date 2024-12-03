@@ -1,5 +1,5 @@
-import { Translator } from '@/l18n/generated'
-import { IconExclamationCircle, Typography } from 'app/@/ui'
+import { Translator } from '~/@/l18n/generated'
+import { IconExclamationCircle, Typography } from '~/app/@/ui'
 
 export const ViewPuzzleNotFound = (input: { ctx: { t: Translator } }) => {
   return (

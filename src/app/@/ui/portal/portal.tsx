@@ -1,4 +1,4 @@
-import { createPortal, type VDomChildren } from '@/vdom'
+import { createPortal, type VDomChildren } from '~/@/vdom'
 
 const getExit = (portalId: string): HTMLElement | null => {
   if (typeof document === 'undefined') {

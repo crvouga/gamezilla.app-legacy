@@ -1,5 +1,5 @@
-import { Posix, PubSub } from '@/core'
-import { Logger, type ILogger } from 'app/@/server/logger'
+import { Posix, PubSub } from '~/@/core'
+import { Logger, type ILogger } from '~/app/@/server/logger'
 import * as http from 'node:http'
 import { getIpAddress } from './ip-address'
 import { WebServerEvent, type Handler, type IWebServer } from './interface'

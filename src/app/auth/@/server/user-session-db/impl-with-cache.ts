@@ -1,7 +1,7 @@
-import { Result, isOk } from '@/core'
-import { p } from '@/core/parser'
-import { SessionId, UserId } from 'app/@/data'
-import { DbConnKv, type IDbConnKv } from 'app/@/server/db-conn-kv'
+import { Result, isOk } from '~/@/core'
+import { p } from '~/@/core/parser'
+import { SessionId, UserId } from '~/app/@/data'
+import { DbConnKv, type IDbConnKv } from '~/app/@/server/db-conn-kv'
 import type { IUserSessionDb } from './interface'
 
 //

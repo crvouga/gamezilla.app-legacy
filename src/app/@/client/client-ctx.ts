@@ -1,8 +1,8 @@
-import type { UserId, UserRole, Username } from 'app/@/data'
-import type { Posix } from '@/core'
-import type { LanguageCodeISO_639_1 } from '@/l18n'
-import type { Translator } from '@/l18n/generated'
-import type { Route } from '@/routing/generated/routes'
+import type { UserId, UserRole, Username } from '~/app/@/data'
+import type { Posix } from '~/@/core'
+import type { LanguageCodeISO_639_1 } from '~/@/l18n'
+import type { Translator } from '~/@/l18n/generated'
+import type { Route } from '~/@/routing/generated/routes'
 import { UserAccount } from '../data/account'
 
 type Profile = {

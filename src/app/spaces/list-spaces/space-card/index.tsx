@@ -1,5 +1,5 @@
-import type { BaseClientCtx } from 'app/@/client'
-import { Avatar, cn, Typography } from 'app/@/ui'
+import type { BaseClientCtx } from '~/app/@/client'
+import { Avatar, cn, Typography } from '~/app/@/ui'
 import { GameCoverArt } from '../../games/cover-art'
 import type { SpaceCoreState } from '../../core'
 import { ViewSpaceHostChip, ViewYouChip } from '../../games/@/game/users-in-space-list'

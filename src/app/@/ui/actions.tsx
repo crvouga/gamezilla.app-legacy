@@ -1,6 +1,6 @@
-import { TranslatedText } from '@/l18n'
-import type { Translator } from '@/l18n/generated'
-import type { VDom, VDomChildren } from '@/vdom'
+import { TranslatedText } from '~/@/l18n'
+import type { Translator } from '~/@/l18n/generated'
+import type { VDom, VDomChildren } from '~/@/vdom'
 import {
   Drawer,
   IconArrowCircle,
@@ -14,7 +14,7 @@ import {
   Spinner,
   Typography,
   cn
-} from 'app/@/ui'
+} from '~/app/@/ui'
 
 export type ActionInput = {
   label: TranslatedText

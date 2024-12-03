@@ -1,4 +1,4 @@
-import { PubSub } from '@/core/sub'
+import { PubSub } from '~/@/core/sub'
 
 export type ClientTransportEvent =
   | {

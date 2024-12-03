@@ -1,6 +1,6 @@
-import { Browser, Eff } from '@/core'
-import type { Route } from '@/routing/generated/routes'
-import { APP_SOUND, playSound, type ClientEvt, type RouteCmd, type SoundCmd } from 'app/@/client'
+import { Browser, Eff } from '~/@/core'
+import type { Route } from '~/@/routing/generated/routes'
+import { APP_SOUND, playSound, type ClientEvt, type RouteCmd, type SoundCmd } from '~/app/@/client'
 
 //
 //

@@ -7,10 +7,10 @@ import {
   Spinner,
   Typography,
   cn
-} from 'app/@/ui'
-import type { VDom, VDomChildren } from '@/vdom'
-import type { Translator } from '@/l18n/generated'
-import { TranslatedText } from '@/l18n'
+} from '~/app/@/ui'
+import type { VDom, VDomChildren } from '~/@/vdom'
+import type { Translator } from '~/@/l18n/generated'
+import { TranslatedText } from '~/@/l18n'
 
 type BottomBarButtonAction = {
   label: TranslatedText

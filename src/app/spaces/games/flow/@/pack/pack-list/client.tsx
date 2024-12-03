@@ -1,11 +1,11 @@
-import { NotAsked, Posix, RequestResponse, Result, TimeSpan, descend, isErr } from '@/core'
-import { AppClientModule } from 'app/@/architecture/app-client'
-import { sendToServer, showErrSm } from 'app/@/client'
-import { IconBox, Spinner, cn } from 'app/@/ui'
-import { EmptyState } from 'app/@/ui/empty-state'
+import { NotAsked, Posix, RequestResponse, Result, TimeSpan, descend, isErr } from '~/@/core'
+import { AppClientModule } from '~/app/@/architecture/app-client'
+import { sendToServer, showErrSm } from '~/app/@/client'
+import { IconBox, Spinner, cn } from '~/app/@/ui'
+import { EmptyState } from '~/app/@/ui/empty-state'
 import type { FlowPack } from '../pack'
 import { initClient, MsgInCmdClient, type ClientModule, type ModelClient } from './types'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 const init = (input: { ctx: SpaceClientCtx; packs: ModelClient['packs'] }): ReturnType<ClientModule['update']> => {
   return {
@@ -169,11 +169,11 @@ const PackListItem = ({
       {false && <IconBox className='h-9 w-9 shrink-0' />}
       <div className='flex flex-1 flex-col overflow-hidden'>
         <p className='overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold'>{pack.name}</p>
-        <p className='text-sm text-secondary'>
+        <p className='text-secondary text-sm'>
           {TimeSpan.humanFriendlyString(Posix.diff(pack.lastUpdatedAt, ctx.now))}
         </p>
       </div>
-      <p className='flex shrink-0 text-sm text-secondary'>{plural(pack.puzzleIds, 'puzzle', 'puzzles')}</p>
+      <p className='text-secondary flex shrink-0 text-sm'>{plural(pack.puzzleIds, 'puzzle', 'puzzles')}</p>
     </button>
   )
 }

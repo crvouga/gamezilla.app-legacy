@@ -1,4 +1,4 @@
-import { ServerCmd } from 'app/@/server'
+import { ServerCmd } from '~/app/@/server'
 
 //
 //

@@ -1,4 +1,4 @@
-import { p } from '@/core/parser'
+import { p } from '~/@/core/parser'
 import { FlowVariant } from '../../flow-variant'
 
 export const MsgToWorker = p.or(

@@ -1,7 +1,7 @@
-import { p } from '@/core/parser'
-import { UserId } from 'app/@/data'
+import { p } from '~/@/core/parser'
+import { UserId } from '~/app/@/data'
 import { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
-import { Posix } from '@/core'
+import { Posix } from '~/@/core'
 
 export const UserStartedPuzzle = p.obj({
   t: p.l('user-started-puzzle'),

@@ -1,4 +1,4 @@
-import type { VDomImpl } from '@/vdom'
+import type { VDomImpl } from '~/@/vdom'
 
 //
 //

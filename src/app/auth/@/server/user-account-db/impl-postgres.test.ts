@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { UserId } from 'app/@/data'
+import type { UserId } from '~/app/@/data'
 import { UserAccountRow } from './impl-postgres'
 
 describe(import.meta.file, () => {

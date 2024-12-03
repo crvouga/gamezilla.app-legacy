@@ -1,5 +1,5 @@
-import { p } from '@/core/parser'
-import { Result } from '@/core/result'
+import { p } from '~/@/core/parser'
+import { Result } from '~/@/core/result'
 
 const parser = p.brand(p.str, 'ClientId')
 

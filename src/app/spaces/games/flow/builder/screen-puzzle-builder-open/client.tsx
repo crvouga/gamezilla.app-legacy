@@ -1,10 +1,10 @@
-import { Sub } from '@/core'
-import { APP_SOUND, playSound } from 'app/@/client'
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
+import { Sub } from '~/@/core'
+import { APP_SOUND, playSound } from '~/app/@/client'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { PuzzleListClient } from '../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../types'
 import { CreateNewPuzzleClient } from './create-new-puzzle/client'
-import { TopBar } from 'app/@/ui'
+import { TopBar } from '~/app/@/ui'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

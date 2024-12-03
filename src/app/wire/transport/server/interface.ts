@@ -1,5 +1,5 @@
-import { PubSub } from '@/core/sub'
-import type { ClientId, SessionId } from 'app/@/data'
+import { PubSub } from '~/@/core/sub'
+import type { ClientId, SessionId } from '~/app/@/data'
 
 export type ServerTransportMsg =
   | {

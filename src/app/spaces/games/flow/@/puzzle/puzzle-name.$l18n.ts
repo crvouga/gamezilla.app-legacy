@@ -1,4 +1,4 @@
-import type { Translations } from '@/l18n'
+import type { Translations } from '~/@/l18n'
 import type { FlowPuzzleName } from './puzzle-name'
 
 export type Text = {

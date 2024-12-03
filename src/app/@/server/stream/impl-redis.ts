@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from '@/core'
+import { Err, Ok, Result } from '~/@/core'
 import { Redis } from 'ioredis'
 import { ILogger, Logger } from '../logger'
 import { IStream } from './interface'

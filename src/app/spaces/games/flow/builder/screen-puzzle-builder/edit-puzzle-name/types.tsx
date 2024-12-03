@@ -1,9 +1,9 @@
-import { type RemoteResult, Result, NotAsked } from '@/core'
+import { type RemoteResult, Result, NotAsked } from '~/@/core'
 import { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
-import { UserId } from 'app/@/data'
-import { p } from '@/core/parser'
-import { TranslatedText } from '@/l18n'
-import { Translator } from '@/l18n/generated'
+import { UserId } from '~/app/@/data'
+import { p } from '~/@/core/parser'
+import { TranslatedText } from '~/@/l18n'
+import { Translator } from '~/@/l18n/generated'
 
 //
 //

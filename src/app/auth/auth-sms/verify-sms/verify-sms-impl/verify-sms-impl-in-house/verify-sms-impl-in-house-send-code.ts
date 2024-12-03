@@ -1,4 +1,4 @@
-import { Err, Ok, Posix, TimeSpan, isErr } from '@/core'
+import { Err, Ok, Posix, TimeSpan, isErr } from '~/@/core'
 import { VerificationId, type Verification } from '../../verification'
 import type { IVerifySMS } from '../../verify-sms'
 import { Config } from './shared'

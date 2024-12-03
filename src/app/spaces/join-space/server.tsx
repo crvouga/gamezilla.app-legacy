@@ -1,6 +1,6 @@
-import { Result } from '@/core'
-import { EventSourced } from '@/event-sourced'
-import { sendToUser } from 'app/@/server'
+import { Result } from '~/@/core'
+import { EventSourced } from '~/@/event-sourced'
+import { sendToUser } from '~/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'
 
 const update: SpaceServerModule['update'] = (input) => {

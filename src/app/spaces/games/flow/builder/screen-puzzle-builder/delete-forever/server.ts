@@ -1,5 +1,5 @@
-import { GameServerModule } from 'app/spaces/games/@/architecture/game-server-v2'
-import { withEventId } from '@/event-sourced/event'
+import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
+import { withEventId } from '~/@/event-sourced/event'
 import type { ServerModule } from '../../types'
 import type { MsgCore } from './types'
 

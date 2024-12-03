@@ -1,9 +1,9 @@
-import { AppClientModule } from 'app/@/architecture/app-client'
-import { sendToServer, showErrSm } from 'app/@/client'
-import { IconPuzzlePiece, Spinner, cn } from 'app/@/ui'
-import { EmptyState } from 'app/@/ui/empty-state'
-import { IntersectionObserverEmitter } from 'app/@/ui/intersection-observer'
-import { Posix, RequestResponse, Result, TimeSpan, descend, isErr } from '@/core'
+import { AppClientModule } from '~/app/@/architecture/app-client'
+import { sendToServer, showErrSm } from '~/app/@/client'
+import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
+import { EmptyState } from '~/app/@/ui/empty-state'
+import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
+import { Posix, RequestResponse, Result, TimeSpan, descend, isErr } from '~/@/core'
 import type { FlowPuzzle } from '../puzzle'
 import type { ClientModule, MsgInCmdClient } from './types'
 import { FlowVariantUI } from '../../flow/flow-variant'
@@ -160,7 +160,7 @@ const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: FlowPuzz
       </div>
       <div className='overflow-hidden'>
         <p className='flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold'>{puzzle.name}</p>
-        <p className='text-xs text-secondary'>{TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}</p>
+        <p className='text-secondary text-xs'>{TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}</p>
       </div>
     </button>
   )

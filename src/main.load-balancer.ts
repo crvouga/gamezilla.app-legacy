@@ -1,4 +1,4 @@
-import { WebServer } from '@/web-server'
+import { WebServer } from '~/@/web-server'
 import { Logger } from './app/@/server/logger'
 import { SERVER_PORT } from './config-public'
 import { LoadBalancer } from './load-balancer'

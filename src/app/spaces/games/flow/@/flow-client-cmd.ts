@@ -1,5 +1,5 @@
-import type { ClientCmdTypes } from 'app/@/client'
-import { SpaceClientCmd } from 'app/spaces/@/space-client-cmd'
+import type { ClientCmdTypes } from '~/app/@/client'
+import { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
 import { FlowPack } from './pack/pack'
 import { FlowPackId } from './pack/pack-id'
 import { PackListTypes } from './pack/pack-list'

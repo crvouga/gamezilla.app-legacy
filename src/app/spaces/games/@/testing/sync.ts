@@ -1,4 +1,4 @@
-import type { SpaceId, UserId } from 'app/@/data'
+import type { SpaceId, UserId } from '~/app/@/data'
 import type { SpaceCtx } from '../../../@/space-ctx'
 
 const hostUserId = 'test-user-id' as UserId

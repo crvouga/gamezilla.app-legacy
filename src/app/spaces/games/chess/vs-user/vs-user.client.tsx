@@ -1,7 +1,7 @@
-import { Eff, Option, Sub, exhaustive, isErr } from '@/core'
-import type { AppClientCtx } from 'app/@/client'
-import type { UserId } from 'app/@/data'
-import { Button, IconArrowLeftOnRect } from 'app/@/ui'
+import { Eff, Option, Sub, exhaustive, isErr } from '~/@/core'
+import type { AppClientCtx } from '~/app/@/client'
+import type { UserId } from '~/app/@/data'
+import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
 
 import { Chess } from '../@/chess'
 import {
@@ -12,7 +12,7 @@ import {
   type MsgToClient,
   initCore
 } from './vs-user.types'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //

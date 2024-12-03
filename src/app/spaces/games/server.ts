@@ -1,5 +1,5 @@
-import { Sub } from '@/core'
-import { GameServerModule } from 'app/spaces/games/@/architecture/game-server-v2'
+import { Sub } from '~/@/core'
+import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceServerCmd } from '../@/space-server-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFourServer } from './connect-four/connect-four.server'

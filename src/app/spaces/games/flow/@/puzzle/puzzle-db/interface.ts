@@ -1,5 +1,5 @@
-import type { Paginated, Pagination, UserId } from 'app/@/data'
-import type { Task } from '@/core'
+import type { Paginated, Pagination, UserId } from '~/app/@/data'
+import type { Task } from '~/@/core'
 import type { FlowPuzzle } from '../puzzle'
 import type { FlowPuzzleId } from '../puzzle-id'
 

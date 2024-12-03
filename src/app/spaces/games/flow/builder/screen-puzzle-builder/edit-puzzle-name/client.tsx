@@ -1,11 +1,11 @@
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
-import { APP_SOUND, playSound, sendToServer, showErrSm, showCreatedSm } from 'app/@/client'
-import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from 'app/@/ui'
-import { isLoading, isOk, Loading } from '@/core'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
+import { APP_SOUND, playSound, sendToServer, showErrSm, showCreatedSm } from '~/app/@/client'
+import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
+import { isLoading, isOk, Loading } from '~/@/core'
 import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ClientModule } from '../../types'
 import { editNameValidationErrorToString, MsgClient, MsgToServer } from './types'
-import type { VDomChildren } from '@/vdom'
+import type { VDomChildren } from '~/@/vdom'
 import { FlowClientCmd } from '../../../@/flow-client-cmd'
 
 //

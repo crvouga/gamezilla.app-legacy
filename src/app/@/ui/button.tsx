@@ -1,5 +1,5 @@
-import { TranslatedText } from '@/l18n'
-import type { VDom } from '@/vdom'
+import { TranslatedText } from '~/@/l18n'
+import type { VDom } from '~/@/vdom'
 import { Spinner } from './spinner'
 import { cn } from './cn'
 
@@ -58,7 +58,7 @@ export const Button = ({
 
         combo === 'text-danger' && 'font-bold text-red-500',
 
-        combo === 'outlined-default' && 'border  text-inherit text-secondary',
+        combo === 'outlined-default' && 'text-secondary  border text-inherit',
 
         combo === 'soft-primary' && 'bg-blue-500/20 text-blue-200',
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { andThen } from 'app/@/architecture/app-client'
-import { didPlaySound, didPushRoute, didShowToast } from 'app/@/client'
-import { SpaceId, UserId } from 'app/@/data'
+import { andThen } from '~/app/@/architecture/app-client'
+import { didPlaySound, didPushRoute, didShowToast } from '~/app/@/client'
+import { SpaceId, UserId } from '~/app/@/data'
 import {
   Ctx,
   FixtureSpacesClient,
@@ -12,7 +12,7 @@ import {
   userStartedSpace
 } from '../@/fixture/client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
-import { withEventMeta } from '@/event-sourced/event'
+import { withEventMeta } from '~/@/event-sourced/event'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()

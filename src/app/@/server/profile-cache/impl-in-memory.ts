@@ -1,4 +1,4 @@
-import { DbConnKv } from 'app/@/server/db-conn-kv'
+import { DbConnKv } from '~/app/@/server/db-conn-kv'
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import type { IProfileCache } from './interface'
 

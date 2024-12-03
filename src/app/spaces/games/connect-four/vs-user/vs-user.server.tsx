@@ -1,9 +1,9 @@
-import type { GameServerModule } from 'app/spaces/games/@/architecture/game-server-v2'
-import type { SpaceServerCmd } from 'app/spaces/@/space-server-cmd'
-import { Sub } from '@/core'
+import type { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
+import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
+import { Sub } from '~/@/core'
 import type { MsgCore, ModelCore, ModelServer, MsgServer, MsgToClient, MsgToServer } from './vs-user.types'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
-import { SpaceServerEvt } from 'app/spaces/@/space-server-evt'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 
 //
 //

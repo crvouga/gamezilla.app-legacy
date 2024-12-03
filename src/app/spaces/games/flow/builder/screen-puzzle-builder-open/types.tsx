@@ -1,7 +1,7 @@
-import { p } from '@/core/parser'
+import { p } from '~/@/core/parser'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { CreateNewPuzzleTypes } from './create-new-puzzle'
-import { UserId } from 'app/@/data'
+import { UserId } from '~/app/@/data'
 
 //
 //

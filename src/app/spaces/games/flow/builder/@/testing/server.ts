@@ -1,12 +1,12 @@
-import { AppServerTestEnv } from 'app/@/server/server-test-env'
+import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { SpaceGameFixtureServer } from '../../../../@/testing/server'
 import { FlowPackDb } from '../../../@/pack/pack-db'
 import { FlowPuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { initServer } from '../../types'
 import { BuilderCore } from '../../core'
-import { Logger } from 'app/@/server/logger'
+import { Logger } from '~/app/@/server/logger'
 import { FlowServerCtx } from '../../../@/flow-server-ctx'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 
 export const initial = {
   model: initServer

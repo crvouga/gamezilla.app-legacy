@@ -1,8 +1,8 @@
-import { pipe } from '@/core'
-import { p } from '@/core/parser'
-import { EventSourced, EventSourcedConfig } from '@/event-sourced'
-import { EventId } from '@/event-sourced/event'
-import { SpaceId, UserId } from 'app/@/data'
+import { pipe } from '~/@/core'
+import { p } from '~/@/core/parser'
+import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
+import { EventId } from '~/@/event-sourced/event'
+import { SpaceId, UserId } from '~/app/@/data'
 import { SpaceEvent } from './space-event'
 import * as SpaceState from './space-state'
 

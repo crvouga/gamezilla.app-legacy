@@ -1,7 +1,7 @@
-import { eq, memoize } from '@/core'
-import { p } from '@/core/parser'
-import { History } from '@/history'
-import { APP_SOUND, AppClientCtx } from 'app/@/client'
+import { eq, memoize } from '~/@/core'
+import { p } from '~/@/core/parser'
+import { History } from '~/@/history'
+import { APP_SOUND, AppClientCtx } from '~/app/@/client'
 import {
   Button,
   Drawer,
@@ -10,7 +10,7 @@ import {
   IconArrowRotateRight,
   IconExpand,
   IconXMark
-} from 'app/@/ui'
+} from '~/app/@/ui'
 import { FlowLayout } from '../flow-ui/flow-layout'
 import * as FlowUI from '../flow-ui/flow-ui'
 import * as FlowVariant from '../flow-variant/flow-variant'
@@ -20,7 +20,7 @@ import * as Flow from '../flow/flow'
 import { FlowGroupId } from '../flow/flow-group-id'
 import { FlowNodeId } from '../flow/flow-node-id'
 import { FlowTerminal } from '../flow/flow-terminal'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'app/@/ui/actions'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 
 //
 //

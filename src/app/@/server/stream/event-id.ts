@@ -1,4 +1,4 @@
-import { p } from '@/core/parser'
+import { p } from '~/@/core/parser'
 
 const parser = p.brand(p.str, 'EventId')
 

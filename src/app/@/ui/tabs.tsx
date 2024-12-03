@@ -1,4 +1,4 @@
-import { TranslatedText } from '@/l18n'
+import { TranslatedText } from '~/@/l18n'
 import { cn } from './cn'
 
 export const Tabs = <TTab extends string>({

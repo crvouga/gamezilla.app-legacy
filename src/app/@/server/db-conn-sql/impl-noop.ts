@@ -1,4 +1,4 @@
-import { Ok } from '@/core'
+import { Ok } from '~/@/core'
 import type { IDbConnSql } from './interface'
 
 export type Config = {

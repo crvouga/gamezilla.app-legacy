@@ -1,6 +1,6 @@
-import { NotAsked, Result, type RemoteResult } from '@/core'
-import { p } from '@/core/parser'
-import { UserId } from 'app/@/data'
+import { NotAsked, Result, type RemoteResult } from '~/@/core'
+import { p } from '~/@/core/parser'
+import { UserId } from '~/app/@/data'
 import { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
 
 export type ModelClient = {

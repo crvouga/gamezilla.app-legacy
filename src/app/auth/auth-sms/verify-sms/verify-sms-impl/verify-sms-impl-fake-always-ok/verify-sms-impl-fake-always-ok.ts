@@ -1,5 +1,5 @@
-import { Ok, PhoneNumber } from '@/core'
-import { ILogger } from 'app/@/server/logger'
+import { Ok, PhoneNumber } from '~/@/core'
+import { ILogger } from '~/app/@/server/logger'
 import type { IVerifySMS } from '../../verify-sms'
 
 export type Config = {

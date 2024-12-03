@@ -1,6 +1,6 @@
-import { Eff, type Sub } from '@/core'
-import { Msg } from '@/core/msg'
-import type { VDom } from '@/vdom'
+import { Eff, type Sub } from '~/@/core'
+import { Msg } from '~/@/core/msg'
+import type { VDom } from '~/@/vdom'
 
 //
 //

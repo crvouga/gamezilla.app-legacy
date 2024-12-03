@@ -1,5 +1,5 @@
-import { p } from '@/core/parser'
-import { initContract } from '@/rpc/rpc'
+import { p } from '~/@/core/parser'
+import { initContract } from '~/@/rpc/rpc'
 import { Flow } from '../../flow'
 import { FlowVariant } from '../../flow-variant'
 

@@ -1,4 +1,4 @@
-import type { RemoteResult, Result } from '@/core'
+import type { RemoteResult, Result } from '~/@/core'
 import {
   type ClientId,
   type Profile,
@@ -7,7 +7,7 @@ import {
   type ProfileAvatarStyle,
   type UserId,
   type Username
-} from 'app/@/data'
+} from '~/app/@/data'
 import { AppServerModule } from '../@/architecture/app-server'
 import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import * as UpdateUsernameTypes from './update-username/update-username.types'

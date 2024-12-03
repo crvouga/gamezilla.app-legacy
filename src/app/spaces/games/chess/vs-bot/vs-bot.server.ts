@@ -1,6 +1,6 @@
-import { Eff, Sub, pipe } from '@/core'
+import { Eff, Sub, pipe } from '~/@/core'
 
-import type { SpaceServerCmd } from 'app/spaces/@/space-server-cmd'
+import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { Chess } from '../@/chess'
 import {
   botMoved,
@@ -11,8 +11,8 @@ import {
   type MsgToClient,
   type MsgToServer
 } from './vs-bot.types'
-import { SpaceServerEvt } from 'app/spaces/@/space-server-evt'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 
 //
 //

@@ -1,6 +1,6 @@
-import { type SpaceId, type UserId } from 'app/@/data'
-import { FixtureAppServer } from 'app/@/server/server-test-env'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
+import { type SpaceId, type UserId } from '~/app/@/data'
+import { FixtureAppServer } from '~/app/@/server/server-test-env'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 
 export const SpaceGameFixtureServer = async () => {
   const f = await FixtureAppServer()

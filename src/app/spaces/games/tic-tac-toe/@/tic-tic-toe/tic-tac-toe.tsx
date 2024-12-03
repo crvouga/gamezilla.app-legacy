@@ -1,4 +1,4 @@
-import { Err, Ok, type Result, memoize } from '@/core'
+import { Err, Ok, type Result, memoize } from '~/@/core'
 
 //
 //

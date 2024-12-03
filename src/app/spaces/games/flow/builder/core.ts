@@ -1,4 +1,4 @@
-import type { SpaceCtx } from 'app/spaces/@/space-ctx'
+import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import { ScreenMainMenuCore } from './screen-main-menu/core'
 import { ScreenPackBuilderOpenCore } from './screen-pack-builder-open/core'
 import { ScreenPuzzleBuilderOpenCore } from './screen-puzzle-builder-open/core'

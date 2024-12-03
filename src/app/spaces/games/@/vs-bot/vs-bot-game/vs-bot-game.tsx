@@ -1,8 +1,8 @@
-import type { UserId } from 'app/@/data'
-import { IconRobot, Avatar, Transition, cn, Typography } from 'app/@/ui'
+import type { UserId } from '~/app/@/data'
+import { IconRobot, Avatar, Transition, cn, Typography } from '~/app/@/ui'
 import type { PlayerType, VsBotInput } from '../vs-bot'
-import type { VDom, VDomChildren } from '@/vdom'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import type { VDom, VDomChildren } from '~/@/vdom'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -114,7 +114,7 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
     >
       <div
         key={statusToKey(input.status)}
-        className='absolute inset-0 flex items-center justify-center gap-1 text-secondary'
+        className='text-secondary absolute inset-0 flex items-center justify-center gap-1'
       >
         <ViewStatusBarContent {...input} />
       </div>

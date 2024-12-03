@@ -1,5 +1,5 @@
-import { NonEmpty, pipe } from '@/core'
-import { UserId } from 'app/@/data'
+import { NonEmpty, pipe } from '~/@/core'
+import { UserId } from '~/app/@/data'
 import type { FlowVariant } from '../../../../@/flow'
 import { FlowPack } from '../../../../@/pack/pack'
 import { FlowPuzzle } from '../../../../@/puzzle/puzzle'

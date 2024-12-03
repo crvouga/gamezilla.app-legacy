@@ -1,7 +1,7 @@
-import { Err, isErr, Ok, type Result } from '@/core'
-import type { UserId } from 'app/@/data'
-import type { SpaceCtx } from 'app/spaces/@/space-ctx'
-import type { VsBotSetup } from 'app/spaces/games/@/vs-bot'
+import { Err, isErr, Ok, type Result } from '~/@/core'
+import type { UserId } from '~/app/@/data'
+import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
+import type { VsBotSetup } from '~/app/spaces/games/@/vs-bot'
 import {
   type BotLevel,
   emptyBoard,

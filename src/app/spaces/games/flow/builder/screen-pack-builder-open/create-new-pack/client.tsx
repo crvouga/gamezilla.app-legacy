@@ -1,6 +1,6 @@
-import { Loading, Ok } from '@/core'
-import { APP_SOUND, playSound, sendToServer, showToast } from 'app/@/client'
-import { Button, IconPlus } from 'app/@/ui'
+import { Loading, Ok } from '~/@/core'
+import { APP_SOUND, playSound, sendToServer, showToast } from '~/app/@/client'
+import { Button, IconPlus } from '~/app/@/ui'
 import type { ClientModule } from '../../types'
 
 const update: ClientModule['update'] = (input) => {

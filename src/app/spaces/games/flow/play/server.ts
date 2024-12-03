@@ -1,5 +1,5 @@
-import { Sub } from '@/core'
-import { GameServerModule } from 'app/spaces/games/@/architecture/game-server-v2'
+import { Sub } from '~/@/core'
+import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { ServerModule } from './types'
 import { ScreenPlayPuzzleServer } from './screen-play-puzzle/server'
 

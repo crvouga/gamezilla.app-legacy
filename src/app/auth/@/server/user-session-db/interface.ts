@@ -1,5 +1,5 @@
-import type { Result } from '@/core'
-import type { SessionId, UserId } from 'app/@/data'
+import type { Result } from '~/@/core'
+import type { SessionId, UserId } from '~/app/@/data'
 
 export type IUserSessionDb = {
   findSessionIdsByUserId: (userId: UserId) => Promise<Result<string, SessionId[]>>

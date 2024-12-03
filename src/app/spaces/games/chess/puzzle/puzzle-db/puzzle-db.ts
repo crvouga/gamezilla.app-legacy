@@ -1,5 +1,5 @@
-import type { Result } from '@/core'
-import type { UserId } from 'app/@/data'
+import type { Result } from '~/@/core'
+import type { UserId } from '~/app/@/data'
 import type { Puzzle, PuzzleInteraction } from '../puzzle.types'
 
 export type PuzzleDb = {

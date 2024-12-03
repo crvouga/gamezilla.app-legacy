@@ -1,5 +1,5 @@
-import { AppServerTestEnv } from 'app/@/server/server-test-env'
-import { Logger } from 'app/@/server/logger'
+import { AppServerTestEnv } from '~/app/@/server/server-test-env'
+import { Logger } from '~/app/@/server/logger'
 import { FlowPuzzleDb } from './impl'
 
 export const FlowPuzzleDbFixture = async () => {

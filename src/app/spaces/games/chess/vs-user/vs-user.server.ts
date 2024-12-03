@@ -1,10 +1,10 @@
-import { Sub, Time, type Eff } from '@/core'
-import { TimeSpan } from '@/core/time-span'
+import { Sub, Time, type Eff } from '~/@/core'
+import { TimeSpan } from '~/@/core/time-span'
 
-import type { SpaceServerCmd } from 'app/spaces/@/space-server-cmd'
+import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import * as Board from '../@/chess/chess-core'
 import { initCore, type ModelServer, type MsgServer, type MsgToClient, type MsgToServer } from './vs-user.types'
-import { SpaceServerEvt } from 'app/spaces/@/space-server-evt'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 
 //
 //

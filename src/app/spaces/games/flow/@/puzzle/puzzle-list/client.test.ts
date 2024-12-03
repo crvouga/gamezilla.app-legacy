@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, Posix, RequestResponse, TimeSpan, isRequesting } from '@/core'
-import { andThen } from 'app/@/architecture/app-client'
-import { didSendToServer, didShowErrorSm } from 'app/@/client'
+import { Err, Ok, Posix, RequestResponse, TimeSpan, isRequesting } from '~/@/core'
+import { andThen } from '~/app/@/architecture/app-client'
+import { didSendToServer, didShowErrorSm } from '~/app/@/client'
 import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import { FlowVariant, FlowVariantDimensions } from '../../flow'
@@ -9,7 +9,7 @@ import type { FlowClientCtx } from '../../flow-client-ctx'
 import { FlowPuzzle } from '../puzzle'
 import { PuzzleListClient } from './client'
 import { type ModelClient, initClient } from './types'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 const initial = {
   model: initClient

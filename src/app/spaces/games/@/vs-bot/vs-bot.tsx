@@ -1,6 +1,6 @@
-import type { VDom } from '@/vdom'
-import { TranslatedText } from '@/l18n'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import type { VDom } from '~/@/vdom'
+import { TranslatedText } from '~/@/l18n'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 export type PlayerType = 'player-one' | 'player-two'
 

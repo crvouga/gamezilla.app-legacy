@@ -1,5 +1,5 @@
-import { UserId } from 'app/@/data'
-import { withEventMeta } from '@/event-sourced/event'
+import { UserId } from '~/app/@/data'
+import { withEventMeta } from '~/@/event-sourced/event'
 import { FlowPack } from '../../../../@/pack/pack'
 import { FlowPuzzle } from '../../../../@/puzzle/puzzle'
 import { FlowPlay } from '../../../../@/flow/flow-play'

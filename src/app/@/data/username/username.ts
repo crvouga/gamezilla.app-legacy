@@ -1,5 +1,5 @@
-import { Err, Ok, type Result } from '@/core'
-import type { Brand } from '@/core/brand'
+import { Err, Ok, type Result } from '~/@/core'
+import type { Brand } from '~/@/core/brand'
 import { getWords } from '../words'
 
 export type Username = Brand<string, 'Username'>

@@ -1,5 +1,5 @@
-import type { IntRange } from '@/core'
-import type { Brand } from '@/core/brand'
+import type { IntRange } from '~/@/core'
+import type { Brand } from '~/@/core/brand'
 
 //
 //

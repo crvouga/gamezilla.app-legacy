@@ -1,5 +1,5 @@
-import { cn } from 'app/@/ui'
-import { Canvas } from 'app/@/ui/canvas'
+import { cn } from '~/app/@/ui'
+import { Canvas } from '~/app/@/ui/canvas'
 import { FlowUI } from '../../../flow'
 import { FlowNodeId } from '../../../flow/flow-node-id'
 import * as FlowGrid from '../flow-grid'

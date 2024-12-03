@@ -1,7 +1,7 @@
-import { Eff, Sub, andThen, pipe } from '@/core'
+import { Eff, Sub, andThen, pipe } from '~/@/core'
 import { handleBotMove, initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-bot.types'
-import { SpaceServerEvt } from 'app/spaces/@/space-server-evt'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 
 //
 //

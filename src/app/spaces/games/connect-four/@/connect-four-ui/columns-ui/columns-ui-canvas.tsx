@@ -1,4 +1,4 @@
-import { rescale } from '@/core'
+import { rescale } from '~/@/core'
 import { COLUMN_COUNT, type Columns, isColumnIndex, MAX_COLUMN_HEIGHT } from '../../connect-four'
 import { gameTheme } from '../shared'
 import type { ViewColumnsinput } from './shared'

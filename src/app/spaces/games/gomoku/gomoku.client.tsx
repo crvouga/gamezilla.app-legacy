@@ -1,5 +1,5 @@
-import { Eff, Sub } from '@/core'
-import type { AppClientCtx } from 'app/@/client'
+import { Eff, Sub } from '~/@/core'
+import type { AppClientCtx } from '~/app/@/client'
 import { GameMainMenu } from '../@/game/game-main-menu'
 import { CoverArt } from './@/gomoku/gomoku-ui'
 import type { ModelClient, ModelServer, MsgClient, MsgToClient } from './gomoku.types'

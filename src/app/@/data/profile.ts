@@ -1,4 +1,4 @@
-import { p } from '@/core/parser'
+import { p } from '~/@/core/parser'
 import { UserId } from './user-id'
 import { Username } from './username'
 import { ProfileAvatar } from './profile-avatar'

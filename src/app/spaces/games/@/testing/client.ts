@@ -1,8 +1,8 @@
-import { PhoneNumber, Posix } from '@/core'
-import { Translator } from 'app/@/client/translator'
-import { ProfileAvatar, Username, type SpaceId, type UserId } from 'app/@/data'
-import { UserAccount } from 'app/@/data/account'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { PhoneNumber, Posix } from '~/@/core'
+import { Translator } from '~/app/@/client/translator'
+import { ProfileAvatar, Username, type SpaceId, type UserId } from '~/app/@/data'
+import { UserAccount } from '~/app/@/data/account'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 const currentUserId = 'test-user-id' as UserId
 

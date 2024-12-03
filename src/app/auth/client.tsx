@@ -1,6 +1,6 @@
-import { Eff, NotAsked, Sub } from '@/core'
-import { Msg } from '@/core/msg'
-import { AppClientModule } from 'app/@/architecture/app-client'
+import { Eff, NotAsked, Sub } from '~/@/core'
+import { Msg } from '~/@/core/msg'
+import { AppClientModule } from '~/app/@/architecture/app-client'
 import {
   APP_SOUND,
   AppClientCmd,
@@ -9,8 +9,8 @@ import {
   replaceRoute,
   showToast,
   type BaseClientCtx
-} from 'app/@/client'
-import { Button, IconEnvelope, IconMobilePhone, Typography } from 'app/@/ui'
+} from '~/app/@/client'
+import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/app/@/ui'
 import { AuthSMSClient } from './auth-sms/auth-sms.client'
 import type { ClientModule, ModelClient, MsgClient } from './types'
 import { ContinueAsGuestClient } from './continue-as-guest/client'
@@ -322,7 +322,7 @@ const ViewLoginScreen: ClientModule['View'] = (input) => {
           <div className='flex w-full items-center justify-center py-1'>
             <Typography
               variant='body'
-              className='text-base font-bold uppercase text-secondary'
+              className='text-secondary text-base font-bold uppercase'
               text={input.ctx.t('auth.or')}
             />
           </div>

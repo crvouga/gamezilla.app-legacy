@@ -1,6 +1,6 @@
-import { Err, Ok, PhoneNumber } from '@/core'
-import type { UserId } from 'app/@/data'
-import type { UserAccount } from 'app/@/data/account'
+import { Err, Ok, PhoneNumber } from '~/@/core'
+import type { UserId } from '~/app/@/data'
+import type { UserAccount } from '~/app/@/data/account'
 import type { IUserAccountDb } from './interface'
 
 export type Config = {

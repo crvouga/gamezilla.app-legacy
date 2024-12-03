@@ -1,5 +1,5 @@
-import { p } from '@/core/parser'
-import { SpaceId, UserId } from 'app/@/data'
+import { p } from '~/@/core/parser'
+import { SpaceId, UserId } from '~/app/@/data'
 import { GameName } from '../games/@/game-name'
 import * as Game from '../games/types'
 

@@ -1,5 +1,5 @@
-import { p } from '@/core/parser'
-import { UserId } from 'app/@/data'
+import { p } from '~/@/core/parser'
+import { UserId } from '~/app/@/data'
 
 export const MsgCore = p.or(
   p.obj({

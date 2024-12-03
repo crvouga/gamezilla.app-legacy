@@ -1,14 +1,6 @@
-import type { AnonymousClientCtx, AppClientCtx } from 'app/@/client'
-import type { UserId } from 'app/@/data'
-import {
-  Avatar,
-  Button,
-  IconArrowLeftOnRect,
-  IconSpinner,
-  IconUserPen,
-  TopBar,
-  Typography
-} from 'app/@/ui'
+import type { AnonymousClientCtx, AppClientCtx } from '~/app/@/client'
+import type { UserId } from '~/app/@/data'
+import { Avatar, Button, IconArrowLeftOnRect, IconSpinner, IconUserPen, TopBar, Typography } from '~/app/@/ui'
 import type { ModelClient, MsgClient } from '../types'
 
 export const ViewProfileScreen = (input: {

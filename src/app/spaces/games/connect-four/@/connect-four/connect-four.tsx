@@ -1,5 +1,5 @@
-import { Err, Ok, type Result, eq, isSubset, unique } from '@/core'
-import { p } from '@/core/parser'
+import { Err, Ok, type Result, eq, isSubset, unique } from '~/@/core'
+import { p } from '~/@/core/parser'
 
 //
 //

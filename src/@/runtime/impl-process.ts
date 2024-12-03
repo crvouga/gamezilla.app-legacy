@@ -1,4 +1,4 @@
-import { ILogger, Logger } from 'app/@/server/logger'
+import { ILogger, Logger } from '~/app/@/server/logger'
 import { Posix, PubSub, sleep, TimeSpan } from '../core'
 import { IRuntime, RuntimeEvent } from './interface'
 

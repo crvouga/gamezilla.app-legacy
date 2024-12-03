@@ -1,5 +1,5 @@
-import type { Result } from '@/core'
-import type { UserId } from 'app/@/data'
+import type { Result } from '~/@/core'
+import type { UserId } from '~/app/@/data'
 import type { ProfileCore } from '../types'
 
 export type ProfileDb = {

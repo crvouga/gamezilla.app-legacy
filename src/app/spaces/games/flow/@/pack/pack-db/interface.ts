@@ -1,5 +1,5 @@
-import type { Task } from '@/core'
-import type { Paginated, Pagination, UserId } from 'app/@/data'
+import type { Task } from '~/@/core'
+import type { Paginated, Pagination, UserId } from '~/app/@/data'
 import type { FlowPack } from '../pack'
 import type { FlowPackId } from '../pack-id'
 

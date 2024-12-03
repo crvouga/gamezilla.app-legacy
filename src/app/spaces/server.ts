@@ -1,5 +1,5 @@
-import { Msg } from '@/core/msg'
-import { SpaceServerCmd } from 'app/spaces/@/space-server-cmd'
+import { Msg } from '~/@/core/msg'
+import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { type Input, type Output, SpaceServerModule } from './@/architecture/space-server'
 import { Space } from './@/space'
 import { SpacesCoreServer } from './core/server'

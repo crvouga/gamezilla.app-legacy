@@ -1,4 +1,4 @@
-import type { Translations } from '@/l18n'
+import type { Translations } from '~/@/l18n'
 
 export type Text = {
   'verify-sms.code-message': (code: string) => string

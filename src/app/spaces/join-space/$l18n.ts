@@ -1,5 +1,5 @@
-import type { Translations } from '@/l18n'
-import { Username } from 'app/@/data'
+import type { Translations } from '~/@/l18n'
+import { Username } from '~/app/@/data'
 
 export type Text = {
   'spaces.join-space': string

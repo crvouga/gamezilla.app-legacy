@@ -1,4 +1,4 @@
-import { type PubSub } from '@/core'
+import { type PubSub } from '~/@/core'
 import type { ILogger } from '../logger/interface'
 import { IDbConnKv } from './interface'
 import { Logger } from '../logger'

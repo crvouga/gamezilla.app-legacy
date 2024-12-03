@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { UserId } from 'app/@/data'
-import { SpaceGameCoreFixture } from 'app/spaces/games/@/testing/sync'
+import { UserId } from '~/app/@/data'
+import { SpaceGameCoreFixture } from '~/app/spaces/games/@/testing/sync'
 import { FlowPack } from '../../@/pack/pack'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'

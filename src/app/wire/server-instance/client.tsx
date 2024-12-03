@@ -1,4 +1,4 @@
-import { Sub } from '@/core'
+import { Sub } from '~/@/core'
 import type { ClientModule } from './types'
 
 const init: ClientModule['init'] = (_input) => {

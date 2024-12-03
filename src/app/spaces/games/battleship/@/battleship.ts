@@ -1,4 +1,4 @@
-import { Polymorphic } from '@/polymorphism/polymorphic-function'
+import { Polymorphic } from '~/@/polymorphism/polymorphic-function'
 
 type Torpedo = {
   type: 'Torpedo'

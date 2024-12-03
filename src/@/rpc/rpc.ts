@@ -1,6 +1,6 @@
-import { Err, isErr, Ok, Result } from '@/core'
-import { IWebClient } from '@/web-client'
-import { IWebServer } from '@/web-server'
+import { Err, isErr, Ok, Result } from '~/@/core'
+import { IWebClient } from '~/@/web-client'
+import { IWebServer } from '~/@/web-server'
 import { p } from '../core/parser'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>

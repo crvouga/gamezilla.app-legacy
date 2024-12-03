@@ -1,6 +1,6 @@
-import { AnonymousClientCtx, AppClientCtx } from 'app/@/client'
-import { ProfileAvatar } from 'app/@/data'
-import { Avatar, TextField, TopBar } from 'app/@/ui'
+import { AnonymousClientCtx, AppClientCtx } from '~/app/@/client'
+import { ProfileAvatar } from '~/app/@/data'
+import { Avatar, TextField, TopBar } from '~/app/@/ui'
 import type { ModelClient, MsgClient } from '../types'
 
 export const ViewUpdateAvatarScreen = (input: {

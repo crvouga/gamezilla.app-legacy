@@ -1,7 +1,7 @@
-import { NonEmpty, type Sub } from '@/core'
-import { Msg } from '@/core/msg'
-import type { ClientId, SessionId, UserId } from 'app/@/data'
-import type { WithEventId } from '@/event-sourced/event'
+import { NonEmpty, type Sub } from '~/@/core'
+import { Msg } from '~/@/core/msg'
+import type { ClientId, SessionId, UserId } from '~/app/@/data'
+import type { WithEventId } from '~/@/event-sourced/event'
 
 //
 //

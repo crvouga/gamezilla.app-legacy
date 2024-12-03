@@ -1,4 +1,4 @@
-import { IContentModeration } from 'app/@/content-moderation/content-moderation'
+import { IContentModeration } from '~/app/@/content-moderation/content-moderation'
 import { IFlowPuzzleDb } from './interface'
 
 export const WithContentModeration = (

@@ -1,5 +1,5 @@
-import { UserId } from 'app/@/data'
-import { SpaceClientEvt } from 'app/spaces/@/space-client-evt'
+import { UserId } from '~/app/@/data'
+import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
 
 export type FlowClientEvtIn = SpaceClientEvt | FlowClientEvt
 

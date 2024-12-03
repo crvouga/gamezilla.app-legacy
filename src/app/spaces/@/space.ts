@@ -1,5 +1,5 @@
-import { p } from '@/core/parser'
-import { SpaceId, UserId } from 'app/@/data'
+import { p } from '~/@/core/parser'
+import { SpaceId, UserId } from '~/app/@/data'
 
 const parser = p.obj({
   visibility: p.enumeration(['public', 'private']),

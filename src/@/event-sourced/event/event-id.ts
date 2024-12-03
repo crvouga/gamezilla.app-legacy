@@ -1,6 +1,6 @@
-import { Err, Ok, type Result } from '@/core'
-import type { Brand } from '@/core/brand'
-import { p } from '@/core/parser'
+import { Err, Ok, type Result } from '~/@/core'
+import type { Brand } from '~/@/core/brand'
+import { p } from '~/@/core/parser'
 
 export type EventId = Brand<string, 'EventId'>
 

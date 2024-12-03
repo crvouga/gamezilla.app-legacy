@@ -1,9 +1,9 @@
-import { APP_SOUND, playSound, pushRoute, showToast } from 'app/@/client'
-import { Button, Typography } from 'app/@/ui'
+import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/client'
+import { Button, Typography } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import type { SpaceEvent } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
-import { withEventId } from '@/event-sourced/event'
+import { withEventId } from '~/@/event-sourced/event'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

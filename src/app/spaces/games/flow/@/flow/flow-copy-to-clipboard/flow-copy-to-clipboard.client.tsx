@@ -1,14 +1,7 @@
-import { p } from '@/core/parser'
-import {
-  APP_SOUND,
-  AppClientCmd,
-  copyToClipboard,
-  playSound,
-  showToast,
-  type AppClientCtx
-} from 'app/@/client'
-import { IconCopy } from 'app/@/ui'
-import type { ActionInput } from 'app/@/ui/actions'
+import { p } from '~/@/core/parser'
+import { APP_SOUND, AppClientCmd, copyToClipboard, playSound, showToast, type AppClientCtx } from '~/app/@/client'
+import { IconCopy } from '~/app/@/ui'
+import type { ActionInput } from '~/app/@/ui/actions'
 import { FlowVariant } from '..'
 import { FlowGridShorthand } from '../flow-variant/flow-grid'
 

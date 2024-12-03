@@ -1,4 +1,4 @@
-import type { Translations } from '@/l18n'
+import type { Translations } from '~/@/l18n'
 import { BotLevel } from './tic-tic-toe/tic-tac-toe'
 
 export type Text = {

@@ -1,5 +1,5 @@
-import { Ok, TimeSpan } from '@/core'
-import { IRuntime } from '@/runtime'
+import { Ok, TimeSpan } from '~/@/core'
+import { IRuntime } from '~/@/runtime'
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnKv } from './interface'

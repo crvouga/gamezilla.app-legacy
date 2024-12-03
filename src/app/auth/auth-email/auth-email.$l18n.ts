@@ -1,4 +1,4 @@
-import type { Translations } from '@/l18n'
+import type { Translations } from '~/@/l18n'
 
 export type Text = {
   'auth-email.login-with-email': string

@@ -1,13 +1,13 @@
-import { Loading, Result, isErr, isOk } from '@/core'
-import type { Translator } from '@/l18n/generated'
-import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from 'app/@/client'
-import { Button, Drawer, IconFloppyDisk, Typography } from 'app/@/ui'
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
-import { withEventId } from '@/event-sourced/event'
+import { Loading, Result, isErr, isOk } from '~/@/core'
+import type { Translator } from '~/@/l18n/generated'
+import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/app/@/client'
+import { Button, Drawer, IconFloppyDisk, Typography } from '~/app/@/ui'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
+import { withEventId } from '~/@/event-sourced/event'
 import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { FlowEdit } from '../../../@/flow/flow-edit'
 import type { ClientModule, ModelClient, MsgClient, MsgCore } from '../../types'
-import { ViewBottomButtonBarAction } from 'app/@/ui/actions'
+import { ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 
 //
 //
@@ -253,7 +253,7 @@ const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
       position='bottom'
     >
       <Typography className='px-4 pt-4 text-3xl font-bold' variant='title' text={input.ctx.t('app.save-changes?')} />
-      <Typography className='p-4 text-secondary' variant='body' text={input.ctx.t('app.save-changes-warning')} />
+      <Typography className='text-secondary p-4' variant='body' text={input.ctx.t('app.save-changes-warning')} />
       <div className='flex w-full flex-col gap-4 p-4'>
         <Button
           className='w-full'

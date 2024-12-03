@@ -1,8 +1,8 @@
-import { type Eff, Sub, andThen, exhaustive, isErr, pipe } from '@/core'
-import { type AppClientCmd, sendToServer } from 'app/@/client'
-import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from 'app/@/ui'
+import { type Eff, Sub, andThen, exhaustive, isErr, pipe } from '~/@/core'
+import { type AppClientCmd, sendToServer } from '~/app/@/client'
+import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'
 
-import { VsBotSetup } from 'app/spaces/games/@/vs-bot'
+import { VsBotSetup } from '~/app/spaces/games/@/vs-bot'
 import { Chess } from '../@/chess'
 import { Chessboard, CoverArt, PlayerIcon } from '../@/chess-ui'
 import {
@@ -18,8 +18,8 @@ import {
 } from './vs-bot.types'
 import { ChessBotLevel } from '../@/chess-bot-level/chess-bot-level'
 import { LayoutGame } from '../../@/game/layout-game'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'app/@/ui/actions'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //

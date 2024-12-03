@@ -1,5 +1,5 @@
-import { eq, isErr, Option, Result } from '@/core'
-import type { UserId } from 'app/@/data'
+import { eq, isErr, Option, Result } from '~/@/core'
+import type { UserId } from '~/app/@/data'
 import { Chess } from '../@/chess'
 import * as Clock from '../@/chess/chess-clock'
 

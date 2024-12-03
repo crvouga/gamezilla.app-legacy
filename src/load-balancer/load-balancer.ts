@@ -1,9 +1,9 @@
-import { NonEmpty, TimeSpan, unwrapOr } from '@/core'
-import { DbConnKv } from 'app/@/server/db-conn-kv'
-import { DbConnSql } from 'app/@/server/db-conn-sql'
-import { ILogger, Logger } from 'app/@/server/logger'
-import { IServerInstanceDb, ServerInstanceDb } from 'app/@/server/server-instance/server-instance-db'
-import { DATABASE_URL } from 'config-private'
+import { NonEmpty, TimeSpan, unwrapOr } from '~/@/core'
+import { DbConnKv } from '~/app/@/server/db-conn-kv'
+import { DbConnSql } from '~/app/@/server/db-conn-sql'
+import { ILogger, Logger } from '~/app/@/server/logger'
+import { IServerInstanceDb, ServerInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
+import { DATABASE_URL } from '~/config-private'
 
 export type Ctx = {
   logger: ILogger

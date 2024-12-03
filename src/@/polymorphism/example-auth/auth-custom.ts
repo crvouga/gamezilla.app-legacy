@@ -1,4 +1,4 @@
-import { Result } from '@/core'
+import { Result } from '~/@/core'
 import { type AuthProvider, signUpWithEmailAndPassword } from './auth'
 
 type CustomAuthProvider = {

@@ -1,5 +1,5 @@
-import { Ok, Sleep } from '@/core'
-import type { SessionId, UserId } from 'app/@/data'
+import { Ok, Sleep } from '~/@/core'
+import type { SessionId, UserId } from '~/app/@/data'
 import type { IUserSessionDb } from './interface'
 
 const sessionIdsByUserId = new Map<UserId, SessionId[]>()

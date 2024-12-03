@@ -1,11 +1,11 @@
-import type { VDom } from '@/vdom'
-import type { UserId } from 'app/@/data'
-import { Avatar, Button, Drawer, IconQuestionMark, Typography } from 'app/@/ui'
+import type { VDom } from '~/@/vdom'
+import type { UserId } from '~/app/@/data'
+import { Avatar, Button, Drawer, IconQuestionMark, Typography } from '~/app/@/ui'
 
 import { LayoutGameCoverArtHeader } from '../../game/layout-game-cover-art-header'
 import type { PlayerType, VsBotInput } from '../vs-bot'
-import { TranslatedText } from '@/l18n'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { TranslatedText } from '~/@/l18n'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -251,7 +251,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
         <Avatar className='h-14 w-14' src={ctx.profiles[player.userId]?.avatarUrl} />
       ) : (
         <div role='button' className='grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-800'>
-          <IconQuestionMark className='h-10 w-10 text-secondary' />
+          <IconQuestionMark className='text-secondary h-10 w-10' />
         </div>
       )}
       {player.renderIcon({
@@ -268,10 +268,10 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp
     <div className='col-span-3 grid grid-cols-2 place-items-center'>
       <Typography
         variant='label'
-        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-secondary'
+        className='text-secondary w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm'
         text={player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?')}
       />
-      <Typography variant='label' className='text-center text-sm text-secondary' text={player.playerLabel} />
+      <Typography variant='label' className='text-secondary text-center text-sm' text={player.playerLabel} />
     </div>
   )
 }

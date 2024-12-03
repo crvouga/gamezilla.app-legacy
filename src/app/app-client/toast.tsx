@@ -1,9 +1,9 @@
-import { Posix, Sub, Time, TimeSpan } from '@/core'
-import { TranslatedText } from '@/l18n'
-import { Translator } from '@/l18n/generated'
-import { AppClientModule } from 'app/@/architecture/app-client'
-import { APP_SOUND, type SoundCmd, playSound, type ToastCmd } from 'app/@/client'
-import { IconXMark, Show, Transition, cn } from 'app/@/ui'
+import { Posix, Sub, Time, TimeSpan } from '~/@/core'
+import { TranslatedText } from '~/@/l18n'
+import { Translator } from '~/@/l18n/generated'
+import { AppClientModule } from '~/app/@/architecture/app-client'
+import { APP_SOUND, type SoundCmd, playSound, type ToastCmd } from '~/app/@/client'
+import { IconXMark, Show, Transition, cn } from '~/app/@/ui'
 
 //
 //

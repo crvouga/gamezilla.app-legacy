@@ -1,4 +1,4 @@
-import { TranslatedText } from '@/l18n'
+import { TranslatedText } from '~/@/l18n'
 import { Button } from './button'
 import { Drawer, type Drawerinput } from './drawer'
 import { Typography } from './typography'

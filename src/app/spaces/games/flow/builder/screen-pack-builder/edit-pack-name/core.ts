@@ -1,5 +1,5 @@
-import { isErr, Loading, NotAsked } from '@/core'
-import type { SpaceCtx } from 'app/spaces/@/space-ctx'
+import { isErr, Loading, NotAsked } from '~/@/core'
+import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import { FlowPack } from '../../../@/pack/pack'
 import { FlowPackName } from '../../../@/pack/pack-name'
 import type { ModelCore, MsgCore } from './types'

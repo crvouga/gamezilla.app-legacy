@@ -1,6 +1,6 @@
-import { type RemoteResult, Result } from '@/core'
-import { p } from '@/core/parser'
-import { UserId } from 'app/@/data'
+import { type RemoteResult, Result } from '~/@/core'
+import { p } from '~/@/core/parser'
+import { UserId } from '~/app/@/data'
 import { FlowPuzzle } from '../../../@/puzzle/puzzle'
 
 //

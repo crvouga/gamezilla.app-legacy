@@ -1,4 +1,4 @@
-import type { Translations } from '@/l18n'
+import type { Translations } from '~/@/l18n'
 import { BotLevel } from '../vs-bot/bot-level'
 
 export type Text = {

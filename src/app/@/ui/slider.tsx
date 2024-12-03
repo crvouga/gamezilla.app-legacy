@@ -1,4 +1,4 @@
-import { TranslatedText } from '@/l18n'
+import { TranslatedText } from '~/@/l18n'
 import { Typography } from './typography'
 
 export const Slider = ({

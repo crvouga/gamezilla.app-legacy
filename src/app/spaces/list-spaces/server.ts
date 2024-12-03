@@ -1,7 +1,7 @@
-import { unwrapOr } from '@/core'
-import { EventSourced } from '@/event-sourced'
-import { Paginated } from 'app/@/data'
-import { sendToClient } from 'app/@/server'
+import { unwrapOr } from '~/@/core'
+import { EventSourced } from '~/@/event-sourced'
+import { Paginated } from '~/app/@/data'
+import { sendToClient } from '~/app/@/server'
 import type { SpaceServerModule } from '../@/architecture/space-server'
 import * as Space from '../core/space-core'
 

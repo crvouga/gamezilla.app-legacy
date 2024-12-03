@@ -1,7 +1,7 @@
-import { type Eff, type Result, exhaustive, isErr } from '@/core'
-import { Translator } from '@/l18n/generated'
-import type { RouteCmd } from 'app/@/client'
-import { AlertError, AlertSuccess, Button, TextField, TopBar } from 'app/@/ui'
+import { type Eff, type Result, exhaustive, isErr } from '~/@/core'
+import { Translator } from '~/@/l18n/generated'
+import type { RouteCmd } from '~/app/@/client'
+import { AlertError, AlertSuccess, Button, TextField, TopBar } from '~/app/@/ui'
 
 //
 //

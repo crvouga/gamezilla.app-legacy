@@ -1,4 +1,4 @@
-import type { Task } from '@/core'
+import type { Task } from '~/@/core'
 
 export type IWireMsgDb<TMsg> = {
   add: (msgId: string) => Task<string, null>

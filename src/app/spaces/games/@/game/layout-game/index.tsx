@@ -1,6 +1,6 @@
-import { cn } from 'app/@/ui'
-import type { VDomChildren } from '@/vdom'
-import { Translator } from '@/l18n/generated'
+import { cn } from '~/app/@/ui'
+import type { VDomChildren } from '~/@/vdom'
+import { Translator } from '~/@/l18n/generated'
 
 export const LayoutGame = ({
   children,

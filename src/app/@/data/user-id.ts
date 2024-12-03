@@ -1,6 +1,6 @@
-import { Uuid } from '@/core'
-import type { Brand } from '@/core/brand'
-import { p } from '@/core/parser'
+import { Uuid } from '~/@/core'
+import type { Brand } from '~/@/core/brand'
+import { p } from '~/@/core/parser'
 
 export type UserId = Brand<string, 'UserId'>
 

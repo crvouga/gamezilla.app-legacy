@@ -1,4 +1,4 @@
-import { NonEmpty } from '@/core'
+import { NonEmpty } from '~/@/core'
 import { Flow } from '../../../flow'
 import { FlowGroupId } from '../../../flow/flow-group-id'
 import { FlowNodeId } from '../../../flow/flow-node-id'

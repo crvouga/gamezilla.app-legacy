@@ -1,5 +1,5 @@
-import { isErr } from '@/core'
-import { AppServerModule } from 'app/@/architecture/app-server'
+import { isErr } from '~/@/core'
+import { AppServerModule } from '~/app/@/architecture/app-server'
 import type { ServerModule } from '../types'
 
 const update: ServerModule['update'] = async (input) => {

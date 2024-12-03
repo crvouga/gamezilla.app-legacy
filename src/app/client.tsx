@@ -1,10 +1,10 @@
-import { Browser, Eff, Posix, Sub, batchMsgs, eq } from '@/core'
-import { Msg } from '@/core/msg'
-import { LanguageCodeISO_639_1, type TranslatedText } from '@/l18n'
-import type { Route } from '@/routing/generated/routes'
-import { RPC } from '@/rpc'
-import type { VDom } from '@/vdom'
-import { WebClient } from '@/web-client'
+import { Browser, Eff, Posix, Sub, batchMsgs, eq } from '~/@/core'
+import { Msg } from '~/@/core/msg'
+import { LanguageCodeISO_639_1, type TranslatedText } from '~/@/l18n'
+import type { Route } from '~/@/routing/generated/routes'
+import { RPC } from '~/@/rpc'
+import type { VDom } from '~/@/vdom'
+import { WebClient } from '~/@/web-client'
 import {
   APP_SOUND,
   AppClientCmd,
@@ -14,8 +14,8 @@ import {
   type AnonymousClientCtx,
   type AppClientCtx,
   type ClientEvt
-} from 'app/@/client'
-import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from 'app/@/ui'
+} from '~/app/@/client'
+import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from '~/app/@/ui'
 import { CODEBASE_VERSION_ID, SERVER_IMPL, SERVER_URL, type ServerImpl } from 'config-public'
 import { Translator } from './@/client/translator'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'

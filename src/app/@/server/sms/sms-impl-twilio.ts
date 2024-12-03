@@ -1,4 +1,4 @@
-import { Err, PhoneNumber } from '@/core'
+import { Err, PhoneNumber } from '~/@/core'
 import type { ILogger } from '../logger/interface'
 import type { ISMS } from './sms'
 import { Logger } from '../logger'

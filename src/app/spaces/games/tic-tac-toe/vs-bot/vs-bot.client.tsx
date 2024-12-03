@@ -1,13 +1,7 @@
-import type { Eff, Posix } from '@/core'
-import { type AppClientCmd, type AppClientCtx, sendToServer } from 'app/@/client'
-import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from 'app/@/ui'
-import {
-  IconBotCute,
-  IconBotLevel1,
-  IconBotScary,
-  VsBotGame,
-  VsBotSetup
-} from 'app/spaces/games/@/vs-bot'
+import type { Eff, Posix } from '~/@/core'
+import { type AppClientCmd, type AppClientCtx, sendToServer } from '~/app/@/client'
+import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/app/@/ui'
+import { IconBotCute, IconBotLevel1, IconBotScary, VsBotGame, VsBotSetup } from '~/app/spaces/games/@/vs-bot'
 import { type BotLevel, allBotLevels, toStatus, toTurn } from '../@/tic-tic-toe/tic-tac-toe'
 import { CoverArt, PlayerTypeIcon, ViewBoard, gameTheme } from '../@/tic-tic-toe/tic-tac-toe-ui'
 import {
@@ -19,8 +13,8 @@ import {
   handle,
   initCoreModel
 } from './vs-bot.types'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'app/@/ui/actions'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //

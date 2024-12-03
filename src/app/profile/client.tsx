@@ -1,6 +1,6 @@
-import { Loading, Sub, isErr } from '@/core'
-import { TranslatedText } from '@/l18n'
-import { AppClientModule } from 'app/@/architecture/app-client'
+import { Loading, Sub, isErr } from '~/@/core'
+import { TranslatedText } from '~/@/l18n'
+import { AppClientModule } from '~/app/@/architecture/app-client'
 import {
   type AnonymousClientCtx,
   type AppClientCmd,
@@ -12,9 +12,9 @@ import {
   pushRoute,
   replaceRoute,
   sendToServer
-} from 'app/@/client'
-import { ProfileAvatar, type UserId } from 'app/@/data'
-import { Avatar, Button, IconChevronRight, TopBar, Typography } from 'app/@/ui'
+} from '~/app/@/client'
+import { ProfileAvatar, type UserId } from '~/app/@/data'
+import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
 import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'
 import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'

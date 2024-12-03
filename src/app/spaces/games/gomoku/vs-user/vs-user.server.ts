@@ -1,6 +1,6 @@
-import { Sub, type Eff } from '@/core'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
-import { SpaceServerEvt } from 'app/spaces/@/space-server-evt'
+import { Sub, type Eff } from '~/@/core'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 import { initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-user.types'
 
 //

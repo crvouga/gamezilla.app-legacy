@@ -1,5 +1,5 @@
-import type { SessionId } from 'app/@/data'
-import type { EmailAddress } from '@/core'
+import type { SessionId } from '~/app/@/data'
+import type { EmailAddress } from '~/@/core'
 
 export type SocialLoginState =
   | {

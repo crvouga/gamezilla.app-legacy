@@ -1,10 +1,10 @@
-import type { VDom } from '@/vdom'
-import type { UserId } from 'app/@/data'
-import { Avatar, Button, IconQuestionMark, Typography } from 'app/@/ui'
+import type { VDom } from '~/@/vdom'
+import type { UserId } from '~/app/@/data'
+import { Avatar, Button, IconQuestionMark, Typography } from '~/app/@/ui'
 
 import { LayoutGameCoverArtHeader } from '../game/layout-game-cover-art-header'
-import { TranslatedText } from '@/l18n'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { TranslatedText } from '~/@/l18n'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 type IconProps = { className: string }
 
@@ -102,7 +102,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
         <Avatar className='h-14 w-14' src={ctx.profiles[player.userId]?.avatarUrl} alt='' />
       ) : (
         <div role='button' className='grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-800'>
-          <IconQuestionMark className='h-10 w-10 text-secondary' />
+          <IconQuestionMark className='text-secondary h-10 w-10' />
         </div>
       )}
 
@@ -115,7 +115,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
   return (
-    <div className='col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm text-secondary'>
+    <div className='text-secondary col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm'>
       <p className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'>
         {player.userId ? ctx.profiles[player.userId]?.username ?? '...' : '?'}
       </p>

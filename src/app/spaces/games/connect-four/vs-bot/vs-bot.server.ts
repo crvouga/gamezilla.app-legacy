@@ -1,9 +1,9 @@
-import { Sub, Time, TimeSpan, isErr } from '@/core'
-import { withEventId } from '@/event-sourced/event'
-import type { SpaceServerCmd } from 'app/spaces/@/space-server-cmd'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
-import { SpaceServerEvt } from 'app/spaces/@/space-server-evt'
-import { GameServerModule } from 'app/spaces/games/@/architecture/game-server-v2'
+import { Sub, Time, TimeSpan, isErr } from '~/@/core'
+import { withEventId } from '~/@/event-sourced/event'
+import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import * as ConnectFour from '../@/connect-four/connect-four'
 import {
   type ModelCore,

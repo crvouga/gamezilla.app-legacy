@@ -1,4 +1,4 @@
-import type { UserId } from 'app/@/data'
+import type { UserId } from '~/app/@/data'
 
 export type Settings = {
   userId: UserId

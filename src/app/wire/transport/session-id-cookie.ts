@@ -1,5 +1,5 @@
 import { IS_PROD } from 'config-public'
-import type { SessionId } from 'app/@/data'
+import type { SessionId } from '~/app/@/data'
 
 export const ORIGINS = IS_PROD ? 'https://gamezilla.app' : true
 export const SESSION_ID_COOKIE_NAME = 'gamezilla-app-session-id'

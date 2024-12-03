@@ -1,5 +1,5 @@
-import { ActionButton, IconArrowLeftOnRect } from 'app/@/ui'
-import { Eff, Keyboard, Sub, pipe } from '@/core'
+import { ActionButton, IconArrowLeftOnRect } from '~/app/@/ui'
+import { Eff, Keyboard, Sub, pipe } from '~/@/core'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
 import {

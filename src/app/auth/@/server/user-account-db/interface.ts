@@ -1,6 +1,6 @@
-import type { PhoneNumber, Task } from '@/core'
-import type { UserId } from 'app/@/data'
-import type { UserAccount } from 'app/@/data/account'
+import type { PhoneNumber, Task } from '~/@/core'
+import type { UserId } from '~/app/@/data'
+import type { UserAccount } from '~/app/@/data/account'
 
 export type IUserAccountDb = {
   findOneByPhoneNumber: (input: { phoneNumber: PhoneNumber }) => Task<string, UserAccount | null>

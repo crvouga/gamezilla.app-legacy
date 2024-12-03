@@ -1,6 +1,6 @@
-import { RequestResponse, isRequesting, NotAsked, isErr } from '@/core'
-import { APP_SOUND, playSound, sendToServer, showErrSm } from 'app/@/client'
-import { Button, IconUserCircle } from 'app/@/ui'
+import { RequestResponse, isRequesting, NotAsked, isErr } from '~/@/core'
+import { APP_SOUND, playSound, sendToServer, showErrSm } from '~/app/@/client'
+import { Button, IconUserCircle } from '~/app/@/ui'
 import type { ClientModule } from '../types'
 import type { ModelClient } from './types'
 

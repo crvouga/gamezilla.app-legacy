@@ -1,6 +1,6 @@
-import { Eff, andThen, isErr, pipe } from '@/core'
-import type { VDomChildren } from '@/vdom'
-import { APP_SOUND, type AppClientCmd, playSound, sendToServer } from 'app/@/client'
+import { Eff, andThen, isErr, pipe } from '~/@/core'
+import type { VDomChildren } from '~/@/vdom'
+import { APP_SOUND, type AppClientCmd, playSound, sendToServer } from '~/app/@/client'
 import {
   Avatar,
   IconArrowCircle,
@@ -12,8 +12,8 @@ import {
   IconXMark,
   Spinner,
   cn
-} from 'app/@/ui'
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
+} from '~/app/@/ui'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 
 import { Chess } from '../@/chess'
 import { Chessboard } from '../@/chess-ui/chessboard'
@@ -33,10 +33,10 @@ import {
   toPlayerColor,
   updateCore
 } from './puzzle.types'
-import { Translator } from '@/l18n/generated'
+import { Translator } from '~/@/l18n/generated'
 import { LayoutGame } from '../../@/game/layout-game'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'app/@/ui/actions'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -260,7 +260,7 @@ export const View = ({
           <Avatar src={ctx.profiles[ctx.space.hostId]?.avatarUrl} className='h-10 w-10' alt='' />
 
           <div className='flex flex-1 flex-col justify-center'>
-            <p className='-mb-1/2 text-xs text-secondary'>Rating</p>
+            <p className='-mb-1/2 text-secondary text-xs'>Rating</p>
             <div className='flex items-center gap-1'>
               <p className='text-xl font-semibold'>{model.profile?.eloRating ?? '...'}</p>
 
@@ -279,7 +279,7 @@ export const View = ({
 
           <div className='flex items-center justify-end gap-2'>
             <TickingClock sec={durationMs ? Math.floor(durationMs / 1_000) : 0} />
-            <p className='font-mono text-lg font-bold  text-secondary'>
+            <p className='text-secondary font-mono text-lg  font-bold'>
               {durationMs ? formatDuration(durationMs) : '-:--'}
             </p>
           </div>

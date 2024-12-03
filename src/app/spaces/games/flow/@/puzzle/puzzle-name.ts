@@ -1,6 +1,6 @@
-import { getWords } from 'app/@/data/words'
-import type { Brand } from '@/core/brand'
-import { p } from '@/core/parser'
+import { getWords } from '~/app/@/data/words'
+import type { Brand } from '~/@/core/brand'
+import { p } from '~/@/core/parser'
 
 export type FlowPuzzleName = Brand<string, 'FlowPuzzleName'>
 

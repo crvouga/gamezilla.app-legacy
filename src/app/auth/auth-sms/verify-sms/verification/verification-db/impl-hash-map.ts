@@ -1,4 +1,4 @@
-import { Ok, ascend, descend, eq } from '@/core'
+import { Ok, ascend, descend, eq } from '~/@/core'
 import type { Verification, VerificationId } from '..'
 import type { IVerificationDb } from './interface'
 

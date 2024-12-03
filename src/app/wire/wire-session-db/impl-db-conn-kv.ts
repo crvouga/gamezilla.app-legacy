@@ -1,10 +1,10 @@
-import { DbConnKv, IDbConnKv } from 'app/@/server/db-conn-kv'
-import { ILogger } from 'app/@/server/logger'
+import { DbConnKv, IDbConnKv } from '~/app/@/server/db-conn-kv'
+import { ILogger } from '~/app/@/server/logger'
 import { WireSession } from '../wire-session'
 import type { IWireSessionDb } from './interface'
-import { p } from '@/core/parser'
-import { SessionId } from 'app/@/data'
-import { isErr, unwrapOr } from '@/core'
+import { p } from '~/@/core/parser'
+import { SessionId } from '~/app/@/data'
+import { isErr, unwrapOr } from '~/@/core'
 
 export type Config = {
   t: 'db-conn-kv'

@@ -1,9 +1,9 @@
-import { andThen } from 'app/spaces/games/@/architecture/game-server-v2'
+import { andThen } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { ServerModule } from '../types'
 import { ScreenPlayPuzzleCore } from './core'
 import { MsgCoreEvt } from './types'
 import { UserActivity } from '../@/user-activity/user-activity'
-import { Posix } from '@/core'
+import { Posix } from '~/@/core'
 import { FlowPuzzleId } from '../../@/puzzle/puzzle-id'
 
 const update: ServerModule['update'] = async (input) => {

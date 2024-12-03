@@ -1,5 +1,5 @@
-import { Posix } from '@/core'
-import { type Hash, Hashing } from '@/hashing'
+import { Posix } from '~/@/core'
+import { type Hash, Hashing } from '~/@/hashing'
 import { VerificationAttemptId } from './verification-attempt-id'
 import { VerificationId } from '../verification'
 

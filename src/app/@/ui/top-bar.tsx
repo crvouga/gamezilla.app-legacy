@@ -1,5 +1,5 @@
-import type { TranslatedText } from '@/l18n'
-import type { Translator } from '@/l18n/generated'
+import type { TranslatedText } from '~/@/l18n'
+import type { Translator } from '~/@/l18n/generated'
 import { cn } from './cn'
 import { IconButton, IconButtonEmpty } from './icon-button'
 import { IconArrowLeft } from './icon'
@@ -31,7 +31,7 @@ export const TopBar = (input: {
 
         {input.subtitle && (
           <Typography
-            className='truncate px-2 text-xs text-secondary'
+            className='text-secondary truncate px-2 text-xs'
             role='heading'
             variant='subtitle'
             text={input.subtitle}

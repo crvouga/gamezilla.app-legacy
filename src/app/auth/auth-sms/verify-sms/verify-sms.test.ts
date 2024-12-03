@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { PhoneNumber, isErr, unwrap } from '@/core'
-import { Logger } from 'app/@/server/logger'
-import { AppServerTestEnv } from 'app/@/server/server-test-env'
+import { PhoneNumber, isErr, unwrap } from '~/@/core'
+import { Logger } from '~/app/@/server/logger'
+import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Config, VerifySMS } from './verify-sms-impl'
 import { VerifySMSInHouseFixture } from './verify-sms-impl/verify-sms-impl-in-house/@/fixture'
 

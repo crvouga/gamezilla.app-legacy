@@ -1,7 +1,7 @@
-import { Ok, Result, isErr, type Posix, type Task } from '@/core'
-import { UserId, type SessionId } from 'app/@/data'
-import type { UserAccount } from 'app/@/data/account'
-import { sendToClient } from 'app/@/server'
+import { Ok, Result, isErr, type Posix, type Task } from '~/@/core'
+import { UserId, type SessionId } from '~/app/@/data'
+import type { UserAccount } from '~/app/@/data/account'
+import { sendToClient } from '~/app/@/server'
 import type { ServerCtx, ServerModule } from '../types'
 import type { ModelServer } from './types'
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, PhoneNumber, Posix, Result } from '@/core'
-import { UserId } from 'app/@/data'
-import type { UserAccount } from 'app/@/data/account'
-import { AppServerTestEnv } from 'app/@/server/server-test-env'
+import { Ok, PhoneNumber, Posix, Result } from '~/@/core'
+import { UserId } from '~/app/@/data'
+import type { UserAccount } from '~/app/@/data/account'
+import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { UserAccountDb } from './impl'
 
 const Fixture = async () => {

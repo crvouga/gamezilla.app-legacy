@@ -1,11 +1,11 @@
-import { APP_SOUND, playSound, showErrSm, showToast } from 'app/@/client'
-import { Button } from 'app/@/ui'
+import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/client'
+import { Button } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { GameCoverArt } from '../games/cover-art'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import { ViewUsersInSpaceList } from '../games/@/game/users-in-space-list'
 import { LayoutGameCoverArtHeader } from '../games/@/game/layout-game-cover-art-header'
-import { withEventId } from '@/event-sourced/event'
+import { withEventId } from '~/@/event-sourced/event'
 import { SpaceEvent } from '../core'
 
 const update: SpaceClientModule['update'] = (input) => {

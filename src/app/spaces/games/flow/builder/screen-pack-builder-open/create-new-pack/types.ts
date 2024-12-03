@@ -1,6 +1,6 @@
-import { UserId } from 'app/@/data'
-import { type RemoteResult, Result, NotAsked } from '@/core'
-import { p } from '@/core/parser'
+import { UserId } from '~/app/@/data'
+import { type RemoteResult, Result, NotAsked } from '~/@/core'
+import { p } from '~/@/core/parser'
 import { FlowPack } from '../../../@/pack/pack'
 
 //

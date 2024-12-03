@@ -1,5 +1,5 @@
-import { TranslatedText } from '@/l18n'
-import type { VDom } from '@/vdom'
+import { TranslatedText } from '~/@/l18n'
+import type { VDom } from '~/@/vdom'
 import { Typography } from './typography'
 import { cn } from './cn'
 

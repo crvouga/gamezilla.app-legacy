@@ -1,8 +1,8 @@
-import { Err, Ok, PhoneNumber, Posix, Result, isErr } from '@/core'
-import { p } from '@/core/parser'
-import { UserId, UserRole } from 'app/@/data'
-import type { UserAccount } from 'app/@/data/account'
-import type { IDbConnSql } from 'app/@/server/db-conn-sql'
+import { Err, Ok, PhoneNumber, Posix, Result, isErr } from '~/@/core'
+import { p } from '~/@/core/parser'
+import { UserId, UserRole } from '~/app/@/data'
+import type { UserAccount } from '~/app/@/data/account'
+import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
 import type { IUserAccountDb } from './interface'
 
 export const UserAccountRow = p.obj({

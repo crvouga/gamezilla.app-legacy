@@ -1,5 +1,5 @@
-import { type AppClientCmd, sendToServer } from 'app/@/client'
-import { VsUserSetupScreen } from 'app/spaces/games/@/vs-user'
+import { type AppClientCmd, sendToServer } from '~/app/@/client'
+import { VsUserSetupScreen } from '~/app/spaces/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'
 import { CoverArt, PlayerTypeIcon } from '../@/tic-tic-toe/tic-tac-toe-ui'
 import * as Round from './vs-user-round'
@@ -12,7 +12,7 @@ import {
   type Res,
   initCoreModel
 } from './vs-user.types'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //

@@ -1,5 +1,5 @@
-import type { Task } from '@/core'
-import { SessionId, UserId } from 'app/@/data'
+import type { Task } from '~/@/core'
+import { SessionId, UserId } from '~/app/@/data'
 import { WireSession } from '../wire-session'
 
 export type IWireSessionDb = {

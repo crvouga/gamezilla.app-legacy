@@ -1,5 +1,5 @@
-import type { UserId } from 'app/@/data'
-import { Err, Ok, type Result } from '@/core'
+import type { UserId } from '~/app/@/data'
+import { Err, Ok, type Result } from '~/@/core'
 import {
   type Board,
   type BotLevel,

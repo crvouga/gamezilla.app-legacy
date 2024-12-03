@@ -1,6 +1,6 @@
-import type { VDom } from '@/vdom'
+import type { VDom } from '~/@/vdom'
 import { cn } from './cn'
-import { TranslatedText } from '@/l18n'
+import { TranslatedText } from '~/@/l18n'
 
 export const Select = <T,>({
   onChange,

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { PhoneNumber, Posix, TimeSpan, eq, isErr, isOk, unwrap } from '@/core'
-import { Hashing } from '@/hashing'
-import { Translator } from 'app/@/client/translator'
+import { PhoneNumber, Posix, TimeSpan, eq, isErr, isOk, unwrap } from '~/@/core'
+import { Hashing } from '~/@/hashing'
+import { Translator } from '~/app/@/client/translator'
 import { VerificationDb } from '../../verification/verification-db'
 import { VerifySMSInHouseFixture } from './@/fixture'
 

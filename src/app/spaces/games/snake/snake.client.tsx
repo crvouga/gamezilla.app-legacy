@@ -1,5 +1,5 @@
-import { Eff, Keyboard, Option, type Result, type Sub, exhaustive, isErr } from '@/core'
-import type { AppClientCtx } from 'app/@/client'
+import { Eff, Keyboard, Option, type Result, type Sub, exhaustive, isErr } from '~/@/core'
+import type { AppClientCtx } from '~/app/@/client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { Direction } from './@/direction'
 import {

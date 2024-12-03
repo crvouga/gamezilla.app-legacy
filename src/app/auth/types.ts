@@ -1,4 +1,4 @@
-import type { RemoteResult, TimeSpan } from '@/core'
+import type { RemoteResult, TimeSpan } from '~/@/core'
 import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, AuthCmd, AppClientCmd, AppClientCtx, ClientEvt } from '../@/client'

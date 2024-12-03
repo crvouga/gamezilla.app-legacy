@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test'
-import { FixtureAppClient } from 'app/@/client/client-test-env'
+import { FixtureAppClient } from '~/app/@/client/client-test-env'
 import { init, View } from './update-username.client'
 import { ModelClient, MsgClient } from './update-username.types'
-import { PubSub } from '@/core'
+import { PubSub } from '~/@/core'
 
 const Fixture = async () => {
   const f = await FixtureAppClient()

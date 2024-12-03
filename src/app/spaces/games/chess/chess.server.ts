@@ -1,5 +1,5 @@
-import { Sub } from '@/core'
-import type { GameServer } from 'app/spaces/games/@/architecture/game-server'
+import { Sub } from '~/@/core'
+import type { GameServer } from '~/app/spaces/games/@/architecture/game-server'
 import type { ModelServer, ModelCore, MsgServer, MsgCore, MsgToClient, MsgToServer } from './chess.types'
 
 //

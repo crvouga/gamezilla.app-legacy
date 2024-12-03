@@ -1,5 +1,5 @@
-import type { Task } from '@/core'
-import type { Parser } from '@/core/parser/parser'
+import type { Task } from '~/@/core'
+import type { Parser } from '~/@/core/parser/parser'
 
 export type IDbConnKv = {
   get: <TValue>(key: string, parser: Parser<TValue>) => Task<string, TValue | null>

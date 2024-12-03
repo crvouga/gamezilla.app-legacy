@@ -1,7 +1,7 @@
-import { TranslatedText } from '@/l18n'
-import { Translator } from '@/l18n/generated'
-import type { VDom } from '@/vdom'
-import { cn, TopBar } from 'app/@/ui'
+import { TranslatedText } from '~/@/l18n'
+import { Translator } from '~/@/l18n/generated'
+import type { VDom } from '~/@/vdom'
+import { cn, TopBar } from '~/app/@/ui'
 
 export const LayoutGameCoverArtHeader = (input: {
   title: TranslatedText
@@ -32,7 +32,7 @@ const renderDefaultCoverArt = (input: { key: string; className: string }) => {
     <div
       key={input.key}
       className={cn(
-        'flex items-center justify-center overflow-hidden rounded-lg  bg-neutral-800 p-4 text-secondary',
+        'text-secondary flex items-center justify-center overflow-hidden  rounded-lg bg-neutral-800 p-4',
         input.className
       )}
     >

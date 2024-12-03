@@ -1,4 +1,4 @@
-import type { VDom } from '@/vdom'
+import type { VDom } from '~/@/vdom'
 
 type Truthy<T> = T extends null | undefined | false | '' | 0 ? never : T
 

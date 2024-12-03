@@ -1,7 +1,7 @@
-import { p } from '@/core/parser'
+import { p } from '~/@/core/parser'
 import { FlowPack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
-import { UserId } from 'app/@/data'
+import { UserId } from '~/app/@/data'
 
 export type ModelClient = CreateNewPackTypes.ModelClient & {}
 

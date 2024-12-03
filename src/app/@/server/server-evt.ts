@@ -1,5 +1,5 @@
-import { PhoneNumber } from '@/core'
-import type { ClientId, SessionId, UserId } from 'app/@/data'
+import { PhoneNumber } from '~/@/core'
+import type { ClientId, SessionId, UserId } from '~/app/@/data'
 import type { UserAccount } from '../data/account'
 
 export type ServerEvt =

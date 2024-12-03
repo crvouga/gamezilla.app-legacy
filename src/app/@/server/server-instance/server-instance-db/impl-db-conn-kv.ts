@@ -1,5 +1,5 @@
-import { isErr, Ok, Posix, TimeSpan, unwrapOr } from '@/core'
-import { p } from '@/core/parser'
+import { isErr, Ok, Posix, TimeSpan, unwrapOr } from '~/@/core'
+import { p } from '~/@/core/parser'
 import { DbConnKv, IDbConnKv } from '../../db-conn-kv'
 import { ServerInstance } from '../server-instance'
 import { ServerInstanceId } from '../server-instance-id'

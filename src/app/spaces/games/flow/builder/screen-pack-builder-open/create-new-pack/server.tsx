@@ -1,5 +1,5 @@
-import { sendToClient } from 'app/@/server'
-import { GameServerModule } from 'app/spaces/games/@/architecture/game-server-v2'
+import { sendToClient } from '~/app/@/server'
+import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import type { FlowPack } from '../../../@/pack/pack'
 import { FlowPackId } from '../../../@/pack/pack-id'
 import { FlowPackName } from '../../../@/pack/pack-name'

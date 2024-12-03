@@ -1,5 +1,5 @@
-import { Err, Ok, PhoneNumber } from '@/core'
-import type { ILogger } from 'app/@/server/logger'
+import { Err, Ok, PhoneNumber } from '~/@/core'
+import type { ILogger } from '~/app/@/server/logger'
 import { VerificationId } from '../../verification'
 import type { IVerifySMS } from '../../verify-sms'
 

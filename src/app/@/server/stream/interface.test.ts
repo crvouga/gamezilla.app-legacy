@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { NonEmpty, Ok, unwrapOr } from '@/core'
-import { p } from '@/core/parser'
+import { NonEmpty, Ok, unwrapOr } from '~/@/core'
+import { p } from '~/@/core/parser'
 import { REDIS_URL } from 'config-private'
 import { DbConnKv } from '../db-conn-kv'
 import { Logger } from '../logger'

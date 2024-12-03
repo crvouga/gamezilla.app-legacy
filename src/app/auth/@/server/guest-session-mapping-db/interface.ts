@@ -1,5 +1,5 @@
-import { Task } from '@/core'
-import { SessionId, UserId } from 'app/@/data'
+import { Task } from '~/@/core'
+import { SessionId, UserId } from '~/app/@/data'
 
 export type IGuestSessionMappingDb = {
   findUserIdBySessionId: (sessionId: SessionId) => Task<string, UserId | null>

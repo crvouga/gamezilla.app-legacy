@@ -1,4 +1,4 @@
-import { easeAttrs, eq } from '@/core'
+import { easeAttrs, eq } from '~/@/core'
 import {
   COLUMN_COUNT,
   type ColumnIndex,

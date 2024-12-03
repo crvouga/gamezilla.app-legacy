@@ -1,5 +1,5 @@
-import { Sub } from '@/core'
-import type { AppClientCmd, AppClientCtx } from 'app/@/client'
+import { Sub } from '~/@/core'
+import type { AppClientCmd, AppClientCtx } from '~/app/@/client'
 import {
   Avatar,
   Button,
@@ -10,12 +10,12 @@ import {
   IconFlag,
   IconSpinner,
   IconXMark
-} from 'app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from 'app/@/ui/actions'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
-import { SpaceClientEvt } from 'app/spaces/@/space-client-evt'
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
-import { VsUserSetupScreen } from 'app/spaces/games/@/vs-user'
+} from '~/app/@/ui'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
+import { VsUserSetupScreen } from '~/app/spaces/games/@/vs-user'
 import { LayoutGame } from '../../@/game/layout-game'
 import { type PlayerType, toTurn } from '../@/connect-four'
 import { PlayerIcon, ViewColumns } from '../@/connect-four-ui'
@@ -451,7 +451,7 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({ ctx, modelCore }: { ctx: SpaceClientCtx; modelCore: StateGame | StateGameOver }) => {
   if (modelCore.type === 'game-over') {
-    return <p className='flex items-center justify-center text-secondary'>Game Over</p>
+    return <p className='text-secondary flex items-center justify-center'>Game Over</p>
   }
 
   const turn = toTurn(modelCore.columns)
@@ -460,7 +460,7 @@ const Feedback = ({ ctx, modelCore }: { ctx: SpaceClientCtx; modelCore: StateGam
 
   if (currentUserPlayerType !== turn) {
     return (
-      <p className='flex items-center justify-center gap-2 text-center text-secondary'>
+      <p className='text-secondary flex items-center justify-center gap-2 text-center'>
         <PlayerIcon className='h-4 w-4' playerType={turn} />
         Turn
       </p>

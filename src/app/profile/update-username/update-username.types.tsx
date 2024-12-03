@@ -1,5 +1,5 @@
-import { Posix, RequestResponse } from '@/core'
-import { Username } from 'app/@/data'
+import { Posix, RequestResponse } from '~/@/core'
+import { Username } from '~/app/@/data'
 
 export type ModelClient = {
   'profile.update-username.username'?: string

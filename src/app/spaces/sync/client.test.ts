@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
-import { andThen } from 'app/@/architecture/app-client'
-import { addProfiles } from 'app/@/client'
-import { type Profile, SpaceId, UserId, Username } from 'app/@/data'
-import { eq } from '@/core'
+import { andThen } from '~/app/@/architecture/app-client'
+import { addProfiles } from '~/app/@/client'
+import { type Profile, SpaceId, UserId, Username } from '~/app/@/data'
+import { eq } from '~/@/core'
 import {
   Ctx,
   clickedJoinSpaceButton,

@@ -1,6 +1,6 @@
-import { TimeSpan } from '@/core'
-import { APP_SOUND, playSound, type AppClientCtx } from 'app/@/client'
-import { Button, Dialog, DialogHeader, DialogSurface } from 'app/@/ui'
+import { TimeSpan } from '~/@/core'
+import { APP_SOUND, playSound, type AppClientCtx } from '~/app/@/client'
+import { Button, Dialog, DialogHeader, DialogSurface } from '~/app/@/ui'
 import type { ClientModule, MsgClient } from '../../types'
 
 const update: ClientModule['update'] = (input) => {

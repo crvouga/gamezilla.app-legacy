@@ -1,7 +1,7 @@
-import type { BaseClientCtx } from 'app/@/client'
-import type { UserId } from 'app/@/data'
-import { Avatar, IconCrown, Typography } from 'app/@/ui'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import type { BaseClientCtx } from '~/app/@/client'
+import type { UserId } from '~/app/@/data'
+import { Avatar, IconCrown, Typography } from '~/app/@/ui'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 export const ViewUsersInSpaceList = ({
   ctx,

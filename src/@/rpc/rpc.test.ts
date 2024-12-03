@@ -1,8 +1,8 @@
-import { p } from '@/core/parser'
+import { p } from '~/@/core/parser'
 import * as RPC from './rpc'
-import { WebServer } from '@/web-server'
-import { WebClient } from '@/web-client'
-import { Logger } from 'app/@/server/logger'
+import { WebServer } from '~/@/web-server'
+import { WebClient } from '~/@/web-client'
+import { Logger } from '~/app/@/server/logger'
 
 const childRpcContract = RPC.initContract({
   baz: {
@@ -67,7 +67,7 @@ const rpcServer = RPC.initServer(rpcContract, {
 const webServer = WebServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
 const webClient = WebClient({ t: 'fetch', fetch: fetch as Fetch })
 
-RPC.attachServer(webServer, rpcContract, rpcServer)
+RPC.withRPC({ webServer, contract: rpcContract, handlers: rpcServer })
 
 const rpcClient = RPC.initClient(webClient, rpcContract)
 

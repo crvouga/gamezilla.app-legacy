@@ -1,5 +1,5 @@
-import { APP_SOUND, playSound } from 'app/@/client'
-import { cn, TopBar } from 'app/@/ui'
+import { APP_SOUND, playSound } from '~/app/@/client'
+import { cn, TopBar } from '~/app/@/ui'
 import { andThen } from '../../../@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { FlowPack } from '../../@/pack/pack'

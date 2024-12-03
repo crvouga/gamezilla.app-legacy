@@ -1,9 +1,9 @@
-import { Program } from '@/core'
-import { DebuggerReduxDevTools } from '@/core/debug'
-import { Render } from '@/vdom'
-import * as AppClient from 'app/client'
-import { CODEBASE_VERSION_ID, IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from 'config-public'
-import "./main.css"
+import { Program } from '~/@/core'
+import { DebuggerReduxDevTools } from '~/@/core/debug'
+import { Render } from '~/@/vdom'
+import * as AppClient from './app/client'
+import { CODEBASE_VERSION_ID, IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from './config-public'
+import './main.css'
 
 const main = async () => {
   const ctx = await AppClient.initCtx()

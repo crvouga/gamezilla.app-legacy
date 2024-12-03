@@ -1,6 +1,6 @@
-import { RemoteResult, Result } from '@/core'
-import { p } from '@/core/parser'
-import { UserId } from 'app/@/data'
+import { RemoteResult, Result } from '~/@/core'
+import { p } from '~/@/core/parser'
+import { UserId } from '~/app/@/data'
 import { FlowPack } from '../../../@/pack/pack'
 import { FlowPackName } from '../../../@/pack/pack-name'
 

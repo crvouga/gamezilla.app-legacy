@@ -1,5 +1,5 @@
-import { Err, Ok, Sub, andThen, pipe, type Eff } from '@/core'
-import type { SpaceServerCmd } from 'app/spaces/@/space-server-cmd'
+import { Err, Ok, Sub, andThen, pipe, type Eff } from '~/@/core'
+import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { TicTacToe } from '../@/tic-tic-toe'
 import {
   initCoreModel,
@@ -9,8 +9,8 @@ import {
   type MsgToClient,
   type MsgToServer
 } from './vs-bot.types'
-import { SpaceServerEvt } from 'app/spaces/@/space-server-evt'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 
 //
 //

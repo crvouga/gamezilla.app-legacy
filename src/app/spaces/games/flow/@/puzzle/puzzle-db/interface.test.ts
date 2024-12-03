@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Ok, Posix, Result, TimeSpan, ascend } from '@/core'
-import { UserId } from 'app/@/data'
+import { Ok, Posix, Result, TimeSpan, ascend } from '~/@/core'
+import { UserId } from '~/app/@/data'
 import { FlowPuzzle } from '../puzzle'
 import { FlowPuzzleName } from '../puzzle-name'
 import { FlowPuzzleDbFixture } from './fixture'

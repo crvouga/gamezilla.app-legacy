@@ -1,5 +1,5 @@
-import { p } from '@/core/parser'
-import { getWords } from 'app/@/data/words'
+import { p } from '~/@/core/parser'
+import { getWords } from '~/app/@/data/words'
 
 const parser = p.brand(p.str, 'FlowPackName')
 

@@ -1,6 +1,6 @@
-import { APP_SOUND, playSound, pushRoute } from 'app/@/client'
+import { APP_SOUND, playSound, pushRoute } from '~/app/@/client'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
-import { IconButton, IconHome } from 'app/@/ui'
+import { IconButton, IconHome } from '~/app/@/ui'
 
 const update: SpaceClientModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {

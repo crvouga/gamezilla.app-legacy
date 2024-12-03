@@ -1,4 +1,4 @@
-import { Err, NonEmpty, Ok, Random, type Result } from '@/core'
+import { Err, NonEmpty, Ok, Random, type Result } from '~/@/core'
 import { Direction, Position } from './gomoku-position'
 
 export type Board = {

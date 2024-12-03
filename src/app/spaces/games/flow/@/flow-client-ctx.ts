@@ -1,4 +1,4 @@
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { FlowPack } from './pack/pack'
 import { FlowPackId } from './pack/pack-id'
 import { PackListTypes } from './pack/pack-list'

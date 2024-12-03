@@ -1,7 +1,7 @@
-import { RemoteResult, isLoading } from '@/core'
-import { APP_SOUND, playSound, sendToServer, showCreatedSm } from 'app/@/client'
-import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from 'app/@/ui'
-import { GameClientModule } from 'app/spaces/games/@/architecture/game-client-v2'
+import { RemoteResult, isLoading } from '~/@/core'
+import { APP_SOUND, playSound, sendToServer, showCreatedSm } from '~/app/@/client'
+import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from '~/app/@/ui'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import type { ClientModule } from '../../types'
 import { MsgClient, MsgToServer } from './types'
 

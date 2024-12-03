@@ -1,8 +1,8 @@
-import { Eff, Sub } from '@/core'
-import type { EventMeta, WithEventId, WithEventMeta } from '@/event-sourced/event'
-import { SpaceServerCmd } from 'app/spaces/@/space-server-cmd'
-import { SpaceServerCtx } from 'app/spaces/@/space-server-ctx'
-import { SpaceServerEvt } from 'app/spaces/@/space-server-evt'
+import { Eff, Sub } from '~/@/core'
+import type { EventMeta, WithEventId, WithEventMeta } from '~/@/event-sourced/event'
+import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 
 //
 //

@@ -1,9 +1,9 @@
-import { TranslatedText } from '@/l18n'
-import { Translator } from '@/l18n/generated'
-import type { VDom } from '@/vdom'
-import type { UserId } from 'app/@/data'
-import { IconRobot, IconUsers, Typography } from 'app/@/ui'
-import { SpaceClientCtx } from 'app/spaces/@/space-client-ctx'
+import { TranslatedText } from '~/@/l18n'
+import { Translator } from '~/@/l18n/generated'
+import type { VDom } from '~/@/vdom'
+import type { UserId } from '~/app/@/data'
+import { IconRobot, IconUsers, Typography } from '~/app/@/ui'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import {
   type SpaceClientCmd,
   type SpaceClientCmdTypes,

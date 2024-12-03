@@ -1,4 +1,4 @@
-import { Profile, UserId } from 'app/@/data'
+import { Profile, UserId } from '~/app/@/data'
 
 export type ModelClientBase = {
   'profile.profiles'?: {
