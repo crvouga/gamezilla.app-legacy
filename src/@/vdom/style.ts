@@ -1,4 +1,4 @@
-import { VDOM_IMPL_CURRENT } from 'gamezilla-app/config-public'
+import { VDOM_IMPL_CURRENT } from 'config-public'
 import { Inferno } from 'inferno'
 import { VDomImpl } from './vdom-impl'
 

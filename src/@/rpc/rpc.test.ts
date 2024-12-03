@@ -2,7 +2,7 @@ import { p } from '@/core/parser'
 import * as RPC from './rpc'
 import { WebServer } from '@/web-server'
 import { WebClient } from '@/web-client'
-import { Logger } from 'gamezilla-app/app/@/server/logger'
+import { Logger } from 'app/@/server/logger'
 
 const childRpcContract = RPC.initContract({
   baz: {

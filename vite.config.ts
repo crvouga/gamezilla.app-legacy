@@ -1,13 +1,12 @@
-// @ts-ignore
-import { VDOM_IMPL } from './src/gamezilla-app/config-public'
 import preact from '@preact/preset-vite'
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import tailwindcss from '@tailwindcss/vite';
 
 const vDomPlugin = () => {
+  const { VDOM_IMPL } = require('./src/config-public')
   switch (VDOM_IMPL) {
     case 'inferno': {
       return inferno()
@@ -34,13 +33,22 @@ const vDomPlugin = () => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vDomPlugin(), tsconfigPaths(), tailwindcss()],
-  define: { 'process.env': process.env },
+  define: {
+    'process.env': process.env
+  },
   server: {
-    hmr: false
+    hmr: false,
+    open: '/main.html',
   },
   root: 'src',
   build: {
     outDir: '../dist',
-    emptyOutDir: true
-  }
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        app: './main.html',
+      },
+    },
+  },
+  
 })

@@ -1,4 +1,4 @@
-import { ILogger } from 'gamezilla-app/app/@/server/logger'
+import { ILogger } from 'app/@/server/logger'
 import { PubSub } from '../core'
 import { IRuntime, RuntimeEvent } from './interface'
 
