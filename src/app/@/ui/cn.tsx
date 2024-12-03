@@ -14,11 +14,20 @@ export const cn = (...classes: ClassNameValue[]): string => {
       return []
     })
     .reduce<string[]>((acc, c) => {
-      const filtered = acc
-        .filter((a) => toClassPrefix(a) !== toClassPrefix(c))
-        .filter((a) => (isSizeClass(a) ? !isSizeClass(c) : true))
-      const accNew = [...filtered, c]
-      return accNew
+      const filtered = acc.filter((a) => {
+        if (isSizeClass(a)) {
+          return !isSizeClass(c)
+        }
+        if (isAlignmentClass(a)) {
+          return !isAlignmentClass(c)
+        }
+        if (isAlignmentClass(c)) {
+          return !isAlignmentClass(a)
+        }
+        return toClassPrefix(a) !== toClassPrefix(c)
+      })
+      filtered.push(c)
+      return filtered
     }, [])
     .join(' ')
 
@@ -29,6 +38,11 @@ export const cn = (...classes: ClassNameValue[]): string => {
 
 const TAILWIND_SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl']
 const TAILWIND_SIZES_SET = new Set(TAILWIND_SIZES)
+const TAILWIND_ALIGNMENT = ['left', 'center', 'right', 'justify']
+
+const isAlignmentClass = (className: string): boolean => {
+  return TAILWIND_ALIGNMENT.some((alignment) => className.includes(alignment))
+}
 
 const isSizeClass = (className: string): boolean => {
   return TAILWIND_SIZES.some((size) => className.includes(size))

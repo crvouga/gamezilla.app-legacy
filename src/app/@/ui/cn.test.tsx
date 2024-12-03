@@ -47,6 +47,24 @@ describe(import.meta.url, () => {
     expect(result).toBe(overrideClass)
   })
 
+  test('text alignment and text size are independent of each other', () => {
+    const className = 'text-left text-lg'
+    const actual = cn(className)
+    expect(actual).toBe(className)
+  })
+
+  test('text alignment and text color are independent of each other', () => {
+    const className = 'text-white text-center'
+    const actual = cn(className)
+    expect(actual).toBe(className)
+  })
+
+  test('text alignment and text color are independent of each other reversed', () => {
+    const className = 'text-center text-white'
+    const actual = cn(className)
+    expect(actual).toBe(className)
+  })
+
   test('ignore empty string', () => {
     const initialClass = 'h-10'
     const overrideClass = ''
