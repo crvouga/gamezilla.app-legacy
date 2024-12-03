@@ -2,6 +2,7 @@ import preact from '@preact/preset-vite'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+// @ts-expect-error
 import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -38,7 +39,7 @@ export default defineConfig({
   },
   server: {
     hmr: false,
-    open: '/main.html',
+    open: '/main.html'
   },
   root: 'src',
   build: {
@@ -46,9 +47,8 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        app: './main.html',
-      },
-    },
-  },
-  
+        app: './main.html'
+      }
+    }
+  }
 })

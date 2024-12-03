@@ -20,7 +20,6 @@
     "noImplicitThis": true,
     "strictBindCallApply": true,
     "noPropertyAccessFromIndexSignature": false,
-
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": false,
     // Linter Checks
@@ -59,10 +58,5 @@
     // "resolveJsonModule": true
   },
   "exclude": ["node_modules"],
-  "include": ["global.d.ts", "node_modules/inferno/dist/index.d.ts", "src/**/*"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "include": ["vite.config.ts", "node_modules/inferno/dist/index.d.ts", "src/**/*"]
 }
