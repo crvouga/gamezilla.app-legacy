@@ -22,7 +22,7 @@ export const IS_TEST = process.env.NODE_ENV === 'test'
 //
 //
 
-export const VDOM_IMPL: VDomImpl = 'preact' as VDomImpl
+export const VDOM_IMPL: VDomImpl = 'inferno' as VDomImpl
 
 export const VDOM_IMPL_TEST: VDomImpl = 'react-with-compiler' as VDomImpl
 
@@ -79,4 +79,4 @@ export const SERVER_PORT = Number(process.env?.PORT ?? SERVER_PORT_LOCAL)
 //
 //
 
-export const CODEBASE_VERSION_ID = '1'
+export const CODEBASE_VERSION_ID = ''
