@@ -473,7 +473,13 @@ const ViewSendCode: Module['View'] = (input) => {
         title={input.ctx.t('auth-sms.login-with-phone')}
       />
 
-      <div className='flex w-full flex-col gap-6 p-4 py-6'>
+      <form
+        className='flex w-full flex-col gap-6 p-4 py-6'
+        onSubmit={(e) => {
+          e.preventDefault()
+          input.dispatch({ t: 'user-clicked-send-code-button' })
+        }}
+      >
         {true && (
           <Select
             id='countryCode'
@@ -511,6 +517,8 @@ const ViewSendCode: Module['View'] = (input) => {
           }}
         />
 
+        <div className='w-full'></div>
+
         <Button
           text={input.ctx.t('auth-sms.send-code')}
           className='w-full'
@@ -518,13 +526,9 @@ const ViewSendCode: Module['View'] = (input) => {
           color='primary'
           size='lg'
           loading={input.model.sendCode.t === 'loading'}
-          onClick={() => {
-            input.dispatch({
-              t: 'user-clicked-send-code-button'
-            })
-          }}
+          type='submit'
         />
-      </div>
+      </form>
 
       {isErr(input.model.sendCode) && (
         <div className='w-full p-4'>
@@ -559,7 +563,17 @@ const ViewVerifyCode: Module['View'] = (input) => {
         title={input.ctx.t('auth-sms.login-with-phone')}
       />
 
-      <div className='flex w-full flex-col gap-6 p-4 py-6'>
+      <form
+        className='flex w-full flex-col gap-6 p-4 py-6'
+        onSubmit={(e) => {
+          e.preventDefault()
+          input.dispatch({
+            t: 'user-clicked-verify-code-button',
+            phoneNumber,
+            inputtedCode: input.model.inputtedCode
+          })
+        }}
+      >
         <Typography
           role='status'
           className='text-lg'
@@ -585,21 +599,18 @@ const ViewVerifyCode: Module['View'] = (input) => {
             })
           }}
         />
+
+        <div className='w-full'></div>
+
         <Button
           className='w-full'
           text={input.ctx.t('auth-sms.verify-code')}
           color='primary'
           size='lg'
           loading={input.model.verifyCode.t === 'loading' || input.model.verifyCode.t === 'ok'}
-          onClick={() => {
-            input.dispatch({
-              t: 'user-clicked-verify-code-button',
-              phoneNumber,
-              inputtedCode: input.model.inputtedCode
-            })
-          }}
+          type='submit'
         />
-      </div>
+      </form>
 
       {isErr(input.model.verifyCode) && (
         <div className='w-full p-4'>

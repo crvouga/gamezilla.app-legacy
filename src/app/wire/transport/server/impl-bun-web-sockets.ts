@@ -147,7 +147,8 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
             headers
           )}`
         )
-        server.upgrade(request, { headers, data })
+        console.log('headers', headers)
+        server.upgrade(request, { headers: undefined, data })
         return
       }
 
