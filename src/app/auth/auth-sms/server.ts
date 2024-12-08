@@ -31,7 +31,6 @@ const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
   const hashing = Hashing({ t: 'bun' })
   const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
   const sms = SMS({ t: 'fake', logger })
-  const verifySMSTwilio = VerifySMS({ t: 'twilio', logger })
   const verifySMSInHouse = VerifySMS({
     t: 'in-house',
     logger: ctx.logger,
@@ -47,6 +46,7 @@ const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
     Translator,
     verificationCodeGenerator
   })
+  const verifySMSTwilio = VerifySMS({ t: 'twilio', logger })
   const verifySMS = ctx.env === 'prod' ? verifySMSTwilio : verifySMSInHouse
   return {
     AccountDb: accountDb,
