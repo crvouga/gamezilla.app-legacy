@@ -5,7 +5,7 @@ import { Runtime } from '~/@/runtime'
 import { WebServer } from '~/@/web-server'
 import { ServerCmd, type AppServerCtx, type ServerEvt } from '~/app/@/server'
 import { DATABASE_URL } from '~/config-private'
-import { CODEBASE_VERSION_ID, IS_PROD, SERVER_IMPL } from '~/config-public'
+import { IS_PROD, SERVER_IMPL } from '~/config-public'
 import { DbConnKv } from './@/server/db-conn-kv'
 import { DbConnSql } from './@/server/db-conn-sql'
 import { Logger } from './@/server/logger'
@@ -66,7 +66,7 @@ const initCtx = async (): Promise<ServerCtx> => {
     logger
   })
 
-  const server = WebServer({
+  const webServer = WebServer({
     logger,
     t: SERVER_IMPL
   })
@@ -74,19 +74,16 @@ const initCtx = async (): Promise<ServerCtx> => {
   const pubSub = await PubSubTopicBased({ t: 'noop' })
 
   const transport = await ServerTransport<MsgToServer, MsgToClient>(
-    server.t === 'bun'
+    webServer.t === 'bun'
       ? {
           t: 'bun-web-sockets',
           dbConnSql,
-          codebaseVersionId: CODEBASE_VERSION_ID,
-          webServer: server,
+          webServer,
           logger,
           pubSubTopicBased: pubSub
         }
       : {
-          t: 'socket-io',
-          codebaseVersionId: CODEBASE_VERSION_ID,
-          webServer: server,
+          t: 'noop',
           logger
         }
   )
@@ -110,7 +107,7 @@ const initCtx = async (): Promise<ServerCtx> => {
     sleep,
     pubSub,
     profileCache,
-    server,
+    webServer,
     runtime,
     serverInstanceId: ServerInstanceId.generate()
   }
@@ -122,7 +119,7 @@ const initCtx = async (): Promise<ServerCtx> => {
 
   return {
     ...ctx,
-    server,
+    webServer: webServer,
     auth,
     space,
     profile,

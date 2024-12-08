@@ -31,6 +31,18 @@ export const VDOM_IMPL_CURRENT = IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL
 //
 //
 //
+// Transport
+//
+//
+//
+
+export type TransportImpl = 'bun-web-sockets' | 'noop'
+
+export const TRANSPORT_IMPL: TransportImpl = 'bun-web-sockets' as string as TransportImpl
+
+//
+//
+//
 // Server
 //
 //
@@ -38,19 +50,7 @@ export const VDOM_IMPL_CURRENT = IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL
 
 export type ServerImpl = 'bun' | 'node'
 
-export const SERVER_IMPL = 'bun' as ServerImpl
-
-//
-//
-//
-// Transport
-//
-//
-//
-
-export type TransportImpl = 'bun-web-sockets' | 'socket.io'
-
-export const TRANSPORT_IMPL = SERVER_IMPL === 'bun' ? 'bun-web-sockets' : 'socket.io'
+export const SERVER_IMPL: ServerImpl = TRANSPORT_IMPL === 'bun-web-sockets' ? 'bun' : 'node'
 
 //
 //
@@ -78,5 +78,3 @@ export const SERVER_PORT = Number(process.env?.PORT ?? SERVER_PORT_LOCAL)
 //
 //
 //
-
-export const CODEBASE_VERSION_ID = ''

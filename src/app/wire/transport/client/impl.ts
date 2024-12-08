@@ -1,8 +1,8 @@
-import * as ImplSocketIo from './impl-socket-io'
+import { ILogger } from '~/app/@/server/logger'
 import * as ImplWebSockets from './impl-standard-web-sockets'
-import type { IClientTransport } from './interface'
+import { initClientTransport, type IClientTransport } from './interface'
 
-export type Config = ImplSocketIo.Config | ImplWebSockets.Config
+export type Config = ImplWebSockets.Config | { t: 'noop'; logger: ILogger }
 
 export const ClientTransport = async <MsgToServer, MsgToClient>(
   config: Config
@@ -16,9 +16,9 @@ export const ClientTransport = async <MsgToServer, MsgToClient>(
     case 'standard-web-sockets': {
       return ImplWebSockets.ClientTransport<MsgToServer, MsgToClient>(config)
     }
-
-    case 'socket.io': {
-      return ImplSocketIo.ClientTransport<MsgToServer, MsgToClient>(config)
+    case 'noop': {
+      config.logger.warn('ClientTransport noop not implemented')
+      return initClientTransport<MsgToServer, MsgToClient>()
     }
   }
 }

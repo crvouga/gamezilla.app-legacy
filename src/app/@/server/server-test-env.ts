@@ -75,7 +75,7 @@ export const FixtureAppServer = async () => {
     pubSub: await PubSubTopicBased({ t: 'noop' }),
     profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) }),
     runtime: Runtime({ t: 'noop' }),
-    server: WebServer({ t: 'bun', logger }),
+    webServer: WebServer({ t: 'bun', logger }),
     serverInstanceId: ServerInstanceId.generate()
   }
   return {

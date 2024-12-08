@@ -111,7 +111,7 @@ export type ServerCtx = AppServerCtx & {
   profile: ProfileTypes.ServerCtx
   space: SpacesTypes.ServerCtx
   auth: AuthTypes.ServerCtx
-  server: IWebServer
+  webServer: IWebServer
 }
 
 export type ClientCtx = {

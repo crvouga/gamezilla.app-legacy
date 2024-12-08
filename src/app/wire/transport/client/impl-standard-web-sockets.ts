@@ -12,7 +12,6 @@ const MAX_RECONNECT_ATTEMPTS = 6
 
 export type Config = {
   t: 'standard-web-sockets'
-  codebaseVersionId: string
   serverUrl: string
 }
 
@@ -83,12 +82,6 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
       isConnected = true
       const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>
 
-      if (msg.v !== config.codebaseVersionId) {
-        transport.msgEvt.pub({
-          t: 'got-bad-msgs',
-          reason: 'codebase-version-mismatch'
-        })
-      }
       transport.fromServer.pub(msg.m)
     }
   }
@@ -123,8 +116,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
 
   transport.toServer.sub((msgs) => {
     send({
-      m: msgs,
-      v: config.codebaseVersionId
+      m: msgs
     })
   })
 
@@ -174,8 +166,7 @@ export const update = <MsgToServer>(input: {
       return {
         ...input.model,
         queue: input.model.queue.concat({
-          m: msg.msgs,
-          v: input.codebaseVersionId
+          m: msg.msgs
         })
       }
     }

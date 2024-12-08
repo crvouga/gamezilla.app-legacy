@@ -16,7 +16,7 @@ import {
   type ClientEvt
 } from '~/app/@/client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from '~/app/@/ui'
-import { CODEBASE_VERSION_ID, SERVER_IMPL, SERVER_URL, type ServerImpl } from '~/config-public'
+import { SERVER_IMPL, SERVER_URL, type ServerImpl } from '~/config-public'
 import { Translator } from './@/client/translator'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
@@ -34,6 +34,7 @@ import {
 } from './types'
 import * as WireClient from './wire/client'
 import { ClientTransport } from './wire/transport/client'
+import { ILogger, Logger } from './@/server/logger'
 
 //
 //
@@ -45,8 +46,8 @@ import { ClientTransport } from './wire/transport/client'
 
 const toClientTransportConfig = (input: {
   serverImpl: ServerImpl
-  codebaseVersionId: string
   serverUrl: string
+  logger: ILogger
 }): Parameters<typeof ClientTransport>[0] => {
   switch (input.serverImpl) {
     case 'bun': {
@@ -58,7 +59,7 @@ const toClientTransportConfig = (input: {
     case 'node': {
       return {
         ...input,
-        t: 'socket.io'
+        t: 'noop'
       }
     }
   }
@@ -75,11 +76,13 @@ const toClientTransportConfig = (input: {
 //
 
 export const initCtx = async (): Promise<ClientCtx> => {
+  const logger = Logger({ t: 'console' })
+
   const transport = await ClientTransport<MsgToServer, MsgToClient>(
     toClientTransportConfig({
-      codebaseVersionId: CODEBASE_VERSION_ID,
       serverImpl: SERVER_IMPL,
-      serverUrl: SERVER_URL
+      serverUrl: SERVER_URL,
+      logger
     })
   )
 

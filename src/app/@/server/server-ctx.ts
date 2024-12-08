@@ -20,6 +20,6 @@ export type AppServerCtx = {
   pubSub: IPubSubTopicBased
   profileCache: IProfileCache
   serverInstanceId: ServerInstanceId
-  server: IWebServer
+  webServer: IWebServer
   runtime: IRuntime
 }

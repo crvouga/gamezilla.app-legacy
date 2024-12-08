@@ -15,7 +15,6 @@ type ServerWebSocketData = {
 
 export type Config = {
   t: 'bun-web-sockets'
-  codebaseVersionId: string
   webServer: WebServerBun
   dbConnSql: IDbConnSql
   logger: ILogger
@@ -105,16 +104,6 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
       const msg = JSON.parse(message.toString()) as MsgClientToMsgServer<MsgToServer> // leap of faith
 
-      if (msg.v !== config.codebaseVersionId) {
-        transport.wire.pub({
-          t: 'got-bad-msgs',
-          reason: 'codebase-version-id-mismatch',
-          clientId: ws.data.clientId,
-          sessionId: ws.data.sessionId,
-          msgs: msg.m
-        })
-      }
-
       transport.fromClient.pub({
         clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
@@ -197,8 +186,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   transport.toClientBroadcast.sub((msgs) => {
     for (const client of clients.values()) {
       sendWithPub(client, {
-        m: msgs,
-        v: config.codebaseVersionId
+        m: msgs
       })
     }
   })
@@ -213,8 +201,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       }
 
       sendWithPub(client, {
-        m: toClientSingle.msgs,
-        v: config.codebaseVersionId
+        m: toClientSingle.msgs
       })
     }
   })

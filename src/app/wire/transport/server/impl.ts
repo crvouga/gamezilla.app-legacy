@@ -1,9 +1,8 @@
-import { Logger } from '~/app/@/server/logger'
+import { ILogger, Logger } from '~/app/@/server/logger'
 import * as ImplBunWebSockets from './impl-bun-web-sockets'
-import * as ImplSocketIo from './impl-socket-io'
-import type { IServerTransport } from './interface'
+import { initServerTransport, type IServerTransport } from './interface'
 
-export type Config = ImplBunWebSockets.Config | ImplSocketIo.Config
+export type Config = ImplBunWebSockets.Config | { t: 'noop'; logger: ILogger }
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
   config: Config
@@ -18,9 +17,9 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     case 'bun-web-sockets': {
       return ImplBunWebSockets.ServerTransport({ ...config, logger })
     }
-
-    case 'socket-io': {
-      return ImplSocketIo.ServerTransport({ ...config, logger })
+    case 'noop': {
+      config.logger.warn('ServerTransport noop not implemented')
+      return initServerTransport<MsgToServer, MsgToClient>()
     }
   }
 }

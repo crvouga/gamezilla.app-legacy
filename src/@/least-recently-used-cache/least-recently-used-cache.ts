@@ -1299,6 +1299,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
    * Return a generator yielding `[key, value]` pairs,
    * in order from most recently used to least recently used.
    */
+  // @ts-ignore
   *entries() {
     for (const i of this.#indexes()) {
       if (
@@ -1333,6 +1334,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
    * Return a generator yielding the keys in the cache,
    * in order from most recently used to least recently used.
    */
+  // @ts-ignore
   *keys() {
     for (const i of this.#indexes()) {
       const k = this.#keyList[i]
@@ -1361,6 +1363,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
    * Return a generator yielding the values in the cache,
    * in order from most recently used to least recently used.
    */
+  // @ts-ignore
   *values() {
     for (const i of this.#indexes()) {
       const v = this.#valList[i]
@@ -1389,6 +1392,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
    * Iterating over the cache itself yields the same results as
    * {@link _LRUCache.entries}
    */
+  // @ts-ignore
   [Symbol.iterator]() {
     return this.entries()
   }
@@ -1421,6 +1425,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
    * fn(value, key, cache).  Does not update age or recenty of use.
    * Does not iterate over stale values.
    */
+  // @ts-ignore
   forEach(fn: (v: V, k: K, self: _LRUCache<K, V, FC>) => any, thisp: any = this) {
     for (const i of this.#indexes()) {
       const v = this.#valList[i]
@@ -2217,5 +2222,6 @@ export const LRUCache = <K extends {}, V extends {}, FC = unknown>({
 }: {
   maxCapacity: number
 }): Map<K, V> => {
+  // @ts-ignore
   return new _LRUCache<K, V, FC>({ max: maxCapacity })
 }

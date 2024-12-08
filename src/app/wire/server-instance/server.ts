@@ -93,7 +93,7 @@ const updateServerStopped = async (input: { stoppedAt: Posix; ctx: ServerCtx }) 
 
 const subscriptions: ServerModule['subscriptions'] = async (input) => {
   return Sub.batch<MsgServer>([
-    Sub.tag('got-web-server-event', input.ctx.server.events),
+    Sub.tag('got-web-server-event', input.ctx.webServer.events),
     Sub.tag('got-runtime-event', input.ctx.runtime.events),
     Time.interval(INTERVAL_ID, ServerInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at }))
   ])
