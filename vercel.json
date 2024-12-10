@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run client:build",
+  "buildCommand": "bun client:build",
   "outputDirectory": "dist",
   "rewrites": [
     {
