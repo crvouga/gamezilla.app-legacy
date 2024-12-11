@@ -22,7 +22,7 @@ export const IS_TEST = process.env.NODE_ENV === 'test'
 //
 //
 
-export const VDOM_IMPL: VDomImpl = 'inferno' as VDomImpl
+export const VDOM_IMPL: VDomImpl = 'react-with-compiler' as VDomImpl
 
 export const VDOM_IMPL_TEST: VDomImpl = 'react-with-compiler' as VDomImpl
 
