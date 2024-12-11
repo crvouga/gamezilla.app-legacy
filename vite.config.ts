@@ -21,11 +21,7 @@ const vDomPlugin = () => {
     }
 
     case 'react-with-compiler': {
-      return react({
-        babel: {
-          plugins: [['babel-plugin-react-compiler', {}]]
-        }
-      })
+      return react({ babel: { plugins: [['babel-plugin-react-compiler', {}]] } })
     }
   }
 }
