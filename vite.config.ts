@@ -1,7 +1,7 @@
 import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-// @ts-expect-error
+// @ts-ignore
 import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
