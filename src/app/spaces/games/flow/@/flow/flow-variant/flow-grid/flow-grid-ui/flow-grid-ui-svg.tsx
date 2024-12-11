@@ -28,7 +28,10 @@ const View = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
     input.onLeave?.()
   }
 
-  const onTouchMove = (e: TouchEvent) => {
+  const onTouchMove = (e: unknown) => {
+    if (!(e instanceof TouchEvent)) {
+      return
+    }
     const nodeId = touchEventToNodeId(e)
 
     if (!nodeId) {

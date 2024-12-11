@@ -73,6 +73,7 @@ const Container = (input: {
 }) => {
   onContainer(input)
   return (
+    // @ts-ignore
     <swiper-container
       id={input.id}
       slides-per-view='auto'
@@ -83,11 +84,13 @@ const Container = (input: {
       slide={input.slideIndex}
     >
       {input.children}
+      {/* @ts-ignore */}
     </swiper-container>
   )
 }
 
 const Slide = (input: { children?: VDomChildren; className?: string }) => {
+  // @ts-ignore
   return <swiper-slide className={input.className}>{input.children}</swiper-slide>
 }
 

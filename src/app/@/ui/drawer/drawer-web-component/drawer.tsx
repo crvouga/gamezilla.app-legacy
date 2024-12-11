@@ -8,6 +8,7 @@ export const DrawerWebComponent = (input: DrawerInput) => {
   drawerSub.pub({ type: 'input', ...input })
   return (
     <Portal.Entrance portalId='modals'>
+      {/* @ts-ignore */}
       <drawer-element id={input.id} position={input.position}>
         <div
           className={cn(
@@ -17,6 +18,7 @@ export const DrawerWebComponent = (input: DrawerInput) => {
         >
           {input.children}
         </div>
+        {/* @ts-ignore */}
       </drawer-element>
     </Portal.Entrance>
   )
