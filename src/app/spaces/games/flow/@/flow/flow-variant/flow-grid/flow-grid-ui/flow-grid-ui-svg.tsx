@@ -29,9 +29,6 @@ const View = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
   }
 
   const onTouchMove = (e: unknown) => {
-    if (!(e instanceof TouchEvent)) {
-      return
-    }
     const nodeId = touchEventToNodeId(e)
 
     if (!nodeId) {
@@ -297,12 +294,29 @@ const pipelineToSvgPathData = (pipeline: Iterable<FlowGrid.PipeJoined>): string 
   return path
 }
 
-const touchEventToNodeId = (msgCore: TouchEvent): FlowNodeId | null => {
-  const touch = msgCore.touches[0]
+const touchEventToNodeId = (e: unknown): FlowNodeId | null => {
+  if (typeof e !== 'object') {
+    return null
+  }
+
+  if (!e) {
+    return null
+  }
+
+  if (!('touches' in e && e.touches instanceof TouchList)) {
+    return null
+  }
+
+  if (!('currentTarget' in e)) {
+    return null
+  }
+
+  const touch = e.touches[0]
+
   if (!touch) {
     return null
   }
-  const svg = msgCore.currentTarget
+  const svg = e.currentTarget
   if (!(svg instanceof SVGSVGElement)) {
     return null
   }
