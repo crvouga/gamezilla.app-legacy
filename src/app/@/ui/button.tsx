@@ -75,11 +75,7 @@ export const Button = ({
         loading && 'cursor-wait opacity-70'
       )}
       role='button'
-      onClick={(msgEvt) => {
-        onClick?.({
-          stopPropagation: () => msgEvt.stopPropagation()
-        })
-      }}
+      onClick={(e) => onClick?.({ stopPropagation: () => e.stopPropagation() })}
     >
       <div className={cn('flex h-full w-full items-center justify-center', loading && 'text-transparent')}>
         {renderIconStart?.({
