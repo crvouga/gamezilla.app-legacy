@@ -1,4 +1,4 @@
-import type { VDomImpl } from '~/@/vdom'
+import { ALL_VDOM_IMPLS, type VDomImpl } from './@/vdom'
 
 //
 //
@@ -22,7 +22,7 @@ export const IS_TEST = process.env.NODE_ENV === 'test'
 //
 //
 
-export const VDOM_IMPL: VDomImpl = 'inferno' as VDomImpl
+export const VDOM_IMPL: VDomImpl = ALL_VDOM_IMPLS[Math.floor(Math.random() * ALL_VDOM_IMPLS.length)] ?? 'inferno'
 
 export const VDOM_IMPL_TEST: VDomImpl = 'react-with-compiler' as VDomImpl
 

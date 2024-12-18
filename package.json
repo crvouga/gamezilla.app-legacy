@@ -14,6 +14,7 @@
     "client:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/main.client.tsx",
     "client:serve": "bun x serve -s dist -p 3001",
     "cloc": "bun x cloc src",
+    "db": "export $(grep -v '^#' .env | xargs) && psql \"$DATABASE_URL\"",
     "db:down": "bun x dbmate -e DATABASE_URL down",
     "db:dump": "bun x dbmate dump",
     "db:new": "bun x dbmate new",

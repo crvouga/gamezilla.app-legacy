@@ -1,12 +1,12 @@
 import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-// @ts-ignore
+// @ts-expect-error vite-plugin-inferno missing types
 import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import { VDOM_IMPL } from './src/config-public'
 
 const vDomPlugin = () => {
-  const { VDOM_IMPL } = require('./src/config-public')
   switch (VDOM_IMPL) {
     case 'inferno': {
       return inferno()
@@ -28,7 +28,7 @@ const vDomPlugin = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vDomPlugin(), tsconfigPaths()],
+  plugins: [tsconfigPaths(), vDomPlugin()],
   define: {
     'process.env': process.env
   },
