@@ -5,81 +5,6 @@ import { FlowGroupId } from './flow-group-id'
 import { FlowNodeId } from './flow-node-id'
 import { FlowTerminal } from './flow-terminal'
 
-export const isSameTerminalsByGroupId = (a: Model['terminalsByGroupId'], b: Model['terminalsByGroupId']): boolean => {
-  if (Object.keys(a).length !== Object.keys(b).length) {
-    return false
-  }
-  for (const groupId in a) {
-    const terminalA = a[groupId as FlowGroupId]
-    if (!terminalA) {
-      return false
-    }
-    const terminalB = b[groupId as FlowGroupId]
-    if (!terminalB) {
-      return false
-    }
-    if (!FlowTerminal.isSame(terminalA, terminalB)) {
-      return false
-    }
-  }
-  return true
-}
-
-export const toFlowEdgeId = (edge: Edge): FlowEdgeId => {
-  return FlowEdgeId.init(edge.sourceId, edge.targetId)
-}
-
-export const hasFlowEdgeId = (model: Model, edgeId: string): edgeId is FlowEdgeId => {
-  return edgeId in model.edges
-}
-
-export const toReversedPipesBySourceId = (
-  model: Pick<Model, 'pipesBySourceId' | 'edges'>
-): Model['pipesBySourceId'] => {
-  const reversed: Model['pipesBySourceId'] = {}
-  for (const sourceId in model.pipesBySourceId) {
-    const pipe = model.pipesBySourceId[sourceId as FlowNodeId]
-    if (!pipe) {
-      continue
-    }
-    const edge = toEdge(model, pipe.edgeId)
-    if (!edge) {
-      continue
-    }
-    reversed[edge.targetId] = {
-      edgeId: toFlowEdgeId({
-        sourceId: edge.targetId,
-        targetId: edge.sourceId
-      }),
-      groupId: pipe.groupId
-    }
-  }
-  return reversed
-}
-
-export const isSamePipesBySourceId = (
-  left: Pick<Model, 'pipesBySourceId' | 'edges'>,
-  right: Pick<Model, 'pipesBySourceId' | 'edges'>
-): boolean => {
-  const isEqual = eq(left.pipesBySourceId, right.pipesBySourceId)
-  const reversedB = toReversedPipesBySourceId(right)
-  const isEqualReversed = eq(left.pipesBySourceId, reversedB)
-  const isSame = isEqual || isEqualReversed
-  return isSame
-}
-
-export const isSame = (left: Model, right: Model): boolean => {
-  const isSameNodes = eq(left.nodes, right.nodes)
-  const isSameEdges = eq(left.edges, right.edges)
-  const isSameTerminals = isSameTerminalsByGroupId(left.terminalsByGroupId, right.terminalsByGroupId)
-  const isSamePipes = isSamePipesBySourceId(left, right)
-  return isSamePipes && isSameNodes && isSameEdges && isSameTerminals
-}
-
-export const countNodes = (model: Model): number => {
-  return Object.keys(model.nodes).length
-}
-
 /**
  * Represents a connection between two nodes.
  */
@@ -212,6 +137,81 @@ export const addNode = (model: Model, node: Node): Model => {
     ...modelNew,
     nodeHash
   }
+}
+
+export const isSameTerminalsByGroupId = (a: Model['terminalsByGroupId'], b: Model['terminalsByGroupId']): boolean => {
+  if (Object.keys(a).length !== Object.keys(b).length) {
+    return false
+  }
+  for (const groupId in a) {
+    const terminalA = a[groupId as FlowGroupId]
+    if (!terminalA) {
+      return false
+    }
+    const terminalB = b[groupId as FlowGroupId]
+    if (!terminalB) {
+      return false
+    }
+    if (!FlowTerminal.isSame(terminalA, terminalB)) {
+      return false
+    }
+  }
+  return true
+}
+
+export const toFlowEdgeId = (edge: Edge): FlowEdgeId => {
+  return FlowEdgeId.init(edge.sourceId, edge.targetId)
+}
+
+export const hasFlowEdgeId = (model: Model, edgeId: string): edgeId is FlowEdgeId => {
+  return edgeId in model.edges
+}
+
+export const toReversedPipesBySourceId = (
+  model: Pick<Model, 'pipesBySourceId' | 'edges'>
+): Model['pipesBySourceId'] => {
+  const reversed: Model['pipesBySourceId'] = {}
+  for (const sourceId in model.pipesBySourceId) {
+    const pipe = model.pipesBySourceId[sourceId as FlowNodeId]
+    if (!pipe) {
+      continue
+    }
+    const edge = toEdge(model, pipe.edgeId)
+    if (!edge) {
+      continue
+    }
+    reversed[edge.targetId] = {
+      edgeId: toFlowEdgeId({
+        sourceId: edge.targetId,
+        targetId: edge.sourceId
+      }),
+      groupId: pipe.groupId
+    }
+  }
+  return reversed
+}
+
+export const isSamePipesBySourceId = (
+  left: Pick<Model, 'pipesBySourceId' | 'edges'>,
+  right: Pick<Model, 'pipesBySourceId' | 'edges'>
+): boolean => {
+  const isEqual = eq(left.pipesBySourceId, right.pipesBySourceId)
+  const reversedB = toReversedPipesBySourceId(right)
+  const isEqualReversed = eq(left.pipesBySourceId, reversedB)
+  const isSame = isEqual || isEqualReversed
+  return isSame
+}
+
+export const isSame = (left: Model, right: Model): boolean => {
+  const isSameNodes = eq(left.nodes, right.nodes)
+  const isSameEdges = eq(left.edges, right.edges)
+  const isSameTerminals = isSameTerminalsByGroupId(left.terminalsByGroupId, right.terminalsByGroupId)
+  const isSamePipes = isSamePipesBySourceId(left, right)
+  return isSamePipes && isSameNodes && isSameEdges && isSameTerminals
+}
+
+export const countNodes = (model: Model): number => {
+  return Object.keys(model.nodes).length
 }
 
 export const deriveEdgeHash = (edges: Model['edges']): string | number => {
