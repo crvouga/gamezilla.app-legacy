@@ -26,8 +26,8 @@ export const ConfirmationDialog = ({
   return (
     <div
       className={cn('absolute left-0 top-0 grid h-full w-full place-items-center', open ? 'block' : 'hidden')}
-      onClick={(msgEvt) => {
-        if (msgEvt.target !== msgEvt.currentTarget) {
+      onClick={(e) => {
+        if (e.target !== e.currentTarget) {
           return
         }
         onClose()
@@ -39,8 +39,8 @@ export const ConfirmationDialog = ({
         <div className='flex w-full items-center gap-4'>
           <Button
             variant='outlined'
-            onClick={(msgEvt) => {
-              msgEvt.stopPropagation()
+            onClick={(e) => {
+              e.stopPropagation()
               onCancel()
             }}
             className='flex-1'
@@ -50,8 +50,8 @@ export const ConfirmationDialog = ({
           <Button
             variant='contained'
             color='danger'
-            onClick={(msgEvt) => {
-              msgEvt.stopPropagation()
+            onClick={(e) => {
+              e.stopPropagation()
               onConfirm()
             }}
             className='flex-1'
