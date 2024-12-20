@@ -1,4 +1,4 @@
-type ClassNameValue = string | null | undefined | 0 | 0n | false
+type ClassNameValue = string | null | false | undefined
 
 export type Cn = (...classes: ClassNameValue[]) => string
 
