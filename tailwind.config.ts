@@ -6,9 +6,6 @@ const config: Config = {
     extend: {
       borderColor: {
         DEFAULT: '#3f3f46'
-      },
-      text: {
-        secondary: '#d1d5db'
       }
     }
   },

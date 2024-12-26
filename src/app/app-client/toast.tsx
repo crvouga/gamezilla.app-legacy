@@ -309,43 +309,45 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
         e.preventDefault()
       }}
     >
-      <div
-        className={cn(
-          'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl',
-          input.toast.variant === 'info' && ' bg-neutral-600',
-          input.toast.variant === 'error' && 'border-red-400 bg-red-500'
-        )}
-        key={input.toast.toastId}
-      >
-        {input.toast.text}
-        {errorMsg && (
-          <>
-            <button
-              type='button'
-              className='font-bold'
-              onClick={() =>
-                input.dispatch({
-                  t: 'clicked-see-error',
-                  errorMsg: errorMsg,
-                  toastId: input.toast.toastId
-                })
-              }
-            >
-              See Error
-            </button>
-          </>
-        )}
-        <button
-          type='button'
-          onClick={() =>
-            input.dispatch({
-              t: 'clicked-dismiss-button',
-              toastId: input.toast.toastId
-            })
-          }
+      <div className='bg-black'>
+        <div
+          className={cn(
+            'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
+            input.toast.variant === 'info' && ' bg-paper',
+            input.toast.variant === 'error' && 'border-red-400 bg-red-500'
+          )}
+          key={input.toast.toastId}
         >
-          <IconXMark className='h-5 w-5' />
-        </button>
+          {input.toast.text}
+          {errorMsg && (
+            <>
+              <button
+                type='button'
+                className='font-bold'
+                onClick={() =>
+                  input.dispatch({
+                    t: 'clicked-see-error',
+                    errorMsg: errorMsg,
+                    toastId: input.toast.toastId
+                  })
+                }
+              >
+                See Error
+              </button>
+            </>
+          )}
+          <button
+            type='button'
+            onClick={() =>
+              input.dispatch({
+                t: 'clicked-dismiss-button',
+                toastId: input.toast.toastId
+              })
+            }
+          >
+            <IconXMark className='h-5 w-5' />
+          </button>
+        </div>
       </div>
     </div>
   )

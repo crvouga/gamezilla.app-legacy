@@ -103,7 +103,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
           opacity: 0;
         }
         .darken-background {
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: rgba(0, 0, 0, 0.8);
         }
         .visible {
           opacity: 1;

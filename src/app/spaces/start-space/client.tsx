@@ -71,9 +71,10 @@ const updateStartSpaceButton: SpaceClientModule['update'] = (input) => {
 const ViewStartSpaceButton: SpaceClientModule['View'] = (input) => {
   return (
     <Button
-      fab
+      rounded
       size='lg'
       color='primary'
+      variant='contained'
       iconStart={(iconInput) => <IconPlus {...iconInput} />}
       onClick={() => input.dispatch({ t: 'clicked-start-space-button', spaceId: SpaceId.generate() })}
       text={input.ctx.t('spaces.start-space')}

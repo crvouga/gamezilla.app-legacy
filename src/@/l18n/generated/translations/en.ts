@@ -46,7 +46,7 @@ export const translations: Text = {
   'auth.continue-as-guest': 'Continue as guest',
   'auth.continue-with-phone': 'Continue with phone',
   'auth.or': 'or',
-  'auth.sign-in-to': 'Sign in to',
+  'auth.sign-in-to': 'Log in to',
   'auth.logged-in': 'Logged in',
   'auth.logout-of-gamezilla.app': 'Logout of gamezilla.app?',
   'auth.logout-of-gamezilla.app-body': 'This will log you out of the app. Are you sure?',

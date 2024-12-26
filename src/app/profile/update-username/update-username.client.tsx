@@ -11,7 +11,7 @@ export const init = <TModel extends ModelClient>(input: {
     model: {
       ...input.model,
       'profile.update-username.username': input.ctx.currentUserId
-        ? input.ctx.profiles[input.ctx.currentUserId]?.username ?? ''
+        ? (input.ctx.profiles[input.ctx.currentUserId]?.username ?? '')
         : ''
     }
   }
@@ -101,7 +101,7 @@ export const View = (input: {
         <TextField
           id='username'
           label={input.ctx.t('username-title')}
-          value={input.model['profile.update-username.username']}
+          value={input.model['profile.update-username.username'] ?? ''}
           onChange={(username) => input.dispatch({ t: 'profile.update-username.inputted-username', username })}
         />
         <div className='w-full pt-4'>

@@ -2,7 +2,8 @@ import type { BaseClientCtx } from '~/app/@/client'
 import { Avatar, cn, Typography } from '~/app/@/ui'
 import { GameCoverArt } from '../../games/cover-art'
 import type { SpaceCoreState } from '../../core'
-import { ViewSpaceHostChip, ViewYouChip } from '../../games/@/game/users-in-space-list'
+import { ViewHostChip } from '../../games/@/game/users-in-space-list/host-chip'
+import { ViewYouChip } from '../../games/@/game/users-in-space-list/you-chip'
 
 const MAX_AVATAR_COUNT = 3
 
@@ -64,7 +65,7 @@ export const ViewSpaceCard = (input: { ctx: BaseClientCtx; state: SpaceCoreState
             />
           )}
         </div>
-        <ViewSpaceHostChip ctx={input.ctx} />
+        <ViewHostChip ctx={input.ctx} />
         {input.ctx.currentUserId === host?.userId && <ViewYouChip ctx={input.ctx} />}
       </div>
 

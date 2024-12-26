@@ -3,7 +3,9 @@ import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from '~
 import { Badge } from '~/app/@/ui/badge'
 import { SpaceClientModule } from '../../@/architecture/space-client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
-import { ViewSpaceHostChip, ViewUsersInSpaceList, ViewYouChip } from '../../games/@/game/users-in-space-list'
+import { ViewUsersInSpaceList } from '../../games/@/game/users-in-space-list'
+import { ViewYouChip } from '../../games/@/game/users-in-space-list/you-chip'
+import { ViewHostChip } from '../../games/@/game/users-in-space-list/host-chip'
 
 const update: SpaceClientModule['update'] = (input) => {
   const { model } = input
@@ -135,7 +137,7 @@ const View: SpaceClientModule['View'] = (input) => {
   return (
     <>
       <Drawer
-        position='bottom'
+        position='top'
         id='users'
         open={input.model.modal === 'users'}
         onClose={() => input.dispatch({ t: 'closed-modal' })}
@@ -150,8 +152,9 @@ const View: SpaceClientModule['View'] = (input) => {
           ctx={spaceCtx}
         />
       </Drawer>
+
       <Drawer
-        position='bottom'
+        position='top'
         id='user-preview'
         open={input.model.modal === 'user-preview'}
         onClose={() =>
@@ -180,7 +183,7 @@ const View: SpaceClientModule['View'] = (input) => {
             />
             {modalProfile && <Typography variant='title' text={input.ctx.t('username', modalProfile.username)} />}
             <div className='flex items-center gap-2'>
-              {spaceCtx.space.hostId === input.model.modalPreviewUserId && <ViewSpaceHostChip ctx={input.ctx} />}
+              {spaceCtx.space.hostId === input.model.modalPreviewUserId && <ViewHostChip ctx={input.ctx} />}
               {spaceCtx.currentUserId === input.model.modalPreviewUserId && <ViewYouChip ctx={input.ctx} />}
             </div>
           </button>

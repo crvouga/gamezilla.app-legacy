@@ -9,7 +9,7 @@ export const TextField = (input: {
   autoFocus?: boolean
   id: string
   label: TranslatedText
-  value?: string | number
+  value: string | number
   error?: boolean
   helperText?: TranslatedText | null
   min?: number
@@ -19,53 +19,58 @@ export const TextField = (input: {
   onChange: (value: string) => void
 }) => {
   return (
-    <div className='flex w-full flex-col gap-1'>
+    <label className='flex w-full flex-col gap-1'>
       <label htmlFor={input.id} className={cn('text-base', input.error && 'text-red-500')}>
         {input.label}
       </label>
 
-      <input
-        role='textbox'
-        aria-label={input.label}
-        id={input.id}
-        autoFocus={input.autoFocus}
-        type={input.type}
-        value={input.value}
-        min={input.min}
-        max={input.max}
-        auto-complete='off'
-        auto-capitalize='off'
-        auto-correct='off'
-        auto-save='off'
-        step={input.step}
-        onInput={(e) => {
-          e.preventDefault()
-          input.onChange(e.currentTarget.value)
-        }}
+      <div
         className={cn(
-          'flex appearance-none items-center gap-2 rounded-md border  bg-neutral-800 p-3 py-4 text-xl outline-none',
-          input.error && 'border border-red-500 text-red-500',
+          'w-full h-fit flex flex-row border-2 bg-neutral-800 rounded-md overflow-hidden',
+          input.error && 'border-2 border-red-500 text-red-500',
           !input.error && ' ring-blue-600 focus-within:ring-2'
         )}
-        style={{
-          background: 'transparent !important'
-        }}
-      />
-      {input.onClear && input.value && input.value?.toString().length > 0 && (
-        <button
-          className='rounded-md outline-none ring-blue-600 focus:ring-2'
-          aria-label='Clear input'
-          onClick={(e) => {
+      >
+        <input
+          role='textbox'
+          aria-label={input.label}
+          id={input.id}
+          autoFocus={input.autoFocus}
+          type={input.type}
+          value={input.value}
+          min={input.min}
+          max={input.max}
+          auto-complete='off'
+          auto-capitalize='off'
+          auto-correct='off'
+          auto-save='off'
+          step={input.step}
+          onInput={(e) => {
             e.preventDefault()
-            document.getElementById(input.id)?.focus()
-            input.onClear?.()
+            input.onChange(e.currentTarget.value)
           }}
-        >
-          <IconXMark className='h-6 w-6' />
-        </button>
-      )}
+          className='flex flex-1 appearance-none items-center gap-2 p-3 py-4 text-xl outline-none bg-transparent'
+          style={{
+            background: 'transparent !important'
+          }}
+        />
+        {input.onClear && input.value && input.value?.toString().length > 0 && (
+          <button
+            className='rounded-md outline-none ring-blue-600 focus:ring-2 px-3'
+            aria-label='Clear input'
+            type='button'
+            onClick={(e) => {
+              e.preventDefault()
+              document.getElementById(input.id)?.focus()
+              input.onClear?.()
+            }}
+          >
+            <IconXMark className='h-6 w-6' />
+          </button>
+        )}
+      </div>
 
       {input.helperText && <div className={cn('text-sm', input.error && 'text-red-500')}>{input.helperText}</div>}
-    </div>
+    </label>
   )
 }

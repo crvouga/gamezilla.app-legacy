@@ -109,7 +109,7 @@ const ViewAddCell = (input: { onClick: () => void }) => {
   return (
     <button
       onClick={input.onClick}
-      className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2  bg-neutral-800 hover:opacity-90 active:opacity-80'
+      className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2 bg-paper hover:opacity-90 active:opacity-80'
     >
       <IconPlus className='h-8 w-8' />
     </button>
@@ -120,7 +120,7 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
   return (
     <button
       onClick={onClick}
-      className='flex h-full w-full items-center justify-center overflow-hidden rounded  bg-neutral-800 text-xl font-bold hover:opacity-90 active:opacity-80'
+      className='flex h-full w-full items-center justify-center overflow-hidden rounded bg-paper text-xl font-bold hover:opacity-90 active:opacity-80'
     >
       {index + 1}
     </button>
@@ -128,14 +128,12 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
 }
 
 const ViewEmptyCell = () => {
-  return (
-    <div className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2  bg-neutral-950 opacity-70' />
-  )
+  return <div className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70' />
 }
 
 const ViewLoadingCell = () => {
   return (
-    <div className='flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded bg-neutral-800 opacity-70' />
+    <div className='flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded bg-paper opacity-70' />
   )
 }
 
@@ -143,7 +141,7 @@ const ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number 
   return (
     <button
       onClick={onClick}
-      className='flex h-full w-full items-center justify-center overflow-hidden rounded  bg-orange-500/50 text-xl font-bold hover:opacity-90 active:opacity-80'
+      className='flex h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold hover:opacity-90 active:opacity-80'
     >
       {index + 1}
     </button>

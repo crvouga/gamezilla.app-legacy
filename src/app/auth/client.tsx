@@ -299,7 +299,6 @@ const ViewLoginScreen: ClientModule['View'] = (input) => {
             <Button
               onClick={() => input.dispatch({ t: 'user-clicked-login-with-email' })}
               color='default'
-              variant='soft'
               size='lg'
               className='w-full'
               iconStart={(iconInput) => <IconEnvelope {...iconInput} />}

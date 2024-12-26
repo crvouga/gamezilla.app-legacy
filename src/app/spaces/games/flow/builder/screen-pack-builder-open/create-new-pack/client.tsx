@@ -56,7 +56,7 @@ const update: ClientModule['update'] = (input) => {
 const ViewCreateFab: ClientModule['View'] = (input) => {
   return (
     <Button
-      fab
+      rounded
       text={input.ctx.t('flow.create-pack')}
       variant='contained'
       color='primary'

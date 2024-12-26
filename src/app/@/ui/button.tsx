@@ -9,14 +9,14 @@ export type ButtonColor = 'primary' | 'danger' | 'default'
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
-type VariantColor = `${ButtonVariant}-${ButtonColor}`
+type Combo = `${ButtonVariant}-${ButtonColor}`
 
 export type ButtonEvent = {
   stopPropagation: () => void
 }
 
-export const Button = (input: {
-  fab?: boolean
+type ButtonInput = {
+  rounded?: boolean
   text?: TranslatedText
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
@@ -27,44 +27,20 @@ export const Button = (input: {
   color?: ButtonColor
   size?: ButtonSize
   loading?: boolean
-}) => {
-  const combo: VariantColor = `${input.variant ?? 'soft'}-${input.color ?? 'primary'}`
+}
 
+export const Button = (input: ButtonInput) => {
   return (
     <button
       disabled={input.disabled || input.loading}
       type={input.type}
       className={cn(
         input.className,
-        'relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden rounded font-semibold outline-none focus:ring-2',
-
-        combo === 'contained-primary' && 'bg-blue-600 text-white ring-blue-500',
-
-        combo === 'contained-danger' && 'bg-red-600 text-white ring-red-500',
-
-        combo === 'contained-default' && 'border-2 border-blue-500/40  text-blue-500 ring-blue-500',
-
-        combo === 'text-danger' && 'font-bold text-red-500',
-
-        combo === 'outlined-default' && 'text-secondary border text-inherit',
-
-        combo === 'soft-primary' && 'bg-blue-500/20 text-blue-200',
-
-        combo === 'soft-danger' && 'bg-red-500/20 text-red-200',
-
-        combo === 'soft-default' && 'bg-secondary/20 text-secondary',
-
-        !input.disabled && combo === 'text-primary' && 'text-blue-500',
-
-        input.fab && 'rounded-3xl',
-
-        input.size === 'lg' && 'px-4 py-3 text-xl',
-        input.size === 'md' && 'px-4 py-2 text-lg',
-        input.size === 'sm' && 'text-md  px-4 py-1',
-        input.size === 'xs' && 'px-3 py-1 text-sm',
-
+        BASE_CLASS,
+        toColorClass(input),
+        toSizeClass(input),
+        input.rounded && 'rounded-3xl',
         input.disabled && 'cursor-not-allowed opacity-60',
-        !input.disabled && !input.loading && ' active:opacity-70',
         input.loading && 'cursor-wait opacity-70'
       )}
       role='button'
@@ -82,4 +58,50 @@ export const Button = (input: {
       )}
     </button>
   )
+}
+
+const BASE_CLASS =
+  'relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden rounded font-semibold'
+
+const toSizeClass = (input: ButtonInput): string => {
+  switch (input.size ?? 'lg') {
+    case 'lg':
+      return 'px-4 py-3 text-xl'
+    case 'md':
+      return 'px-4 py-2 text-lg'
+    case 'sm':
+      return 'text-md  px-4 py-1'
+    case 'xs':
+      return 'px-3 py-1 text-sm'
+  }
+}
+
+const toColorClass = (input: ButtonInput): string => {
+  const combo: Combo = `${input.variant ?? 'outlined'}-${input.color ?? 'primary'}`
+  switch (combo) {
+    case 'contained-primary':
+      return 'bg-blue-600 text-white ring-blue-500'
+    case 'contained-danger':
+      return 'bg-red-600 text-white ring-red-500'
+    case 'contained-default':
+      return 'border-2 border-blue-500/50  text-blue-500 ring-blue-500'
+    case 'text-danger':
+      return 'font-bold text-red-500'
+    case 'outlined-default':
+      return 'text-secondary border-2 text-inherit'
+    case 'soft-primary':
+      return 'bg-blue-500/20 text-blue-200'
+    case 'soft-danger':
+      return 'bg-red-500/20 text-red-200'
+    case 'soft-default':
+      return 'bg-secondary/20 text-secondary'
+    case 'text-primary':
+      return 'text-blue-500'
+    case 'outlined-danger':
+      return 'border-2 border-red-500/50 text-red-500'
+    case 'outlined-primary':
+      return 'border-2 border-blue-500/50 text-blue-500'
+    case 'text-default':
+      return 'text-secondary'
+  }
 }

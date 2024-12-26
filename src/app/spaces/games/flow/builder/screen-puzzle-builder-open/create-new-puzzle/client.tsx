@@ -126,7 +126,7 @@ const ViewCreateFab: ClientModule['View'] = (input) => {
       text={input.ctx.t('flow.create-puzzle')}
       variant='contained'
       color='primary'
-      fab
+      rounded
       loading={input.model.puzzleCreateRequest.t === 'loading'}
       iconStart={(iconInput) => <IconPlus {...iconInput} />}
       onClick={() =>

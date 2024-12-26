@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+.bg-surface {
+  @apply bg-black;
+}
+
+.bg-paper {
+  @apply bg-white/20;
+}
+
+.border-paper {
+  @apply border-white/20;
+}
+
+.text-secondary {
+  @apply text-neutral-300;
+}
+
 /*
 
 Remove arrows from number input
@@ -30,7 +46,9 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  transition: background-color 600000s 0s, color 600000s 0s;
+  transition:
+    background-color 600000s 0s,
+    color 600000s 0s;
 }
 Ø input[data-autocompleted] {
   background-color: transparent !important;

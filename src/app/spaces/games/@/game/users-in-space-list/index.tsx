@@ -1,7 +1,8 @@
-import type { BaseClientCtx } from '~/app/@/client'
 import type { UserId } from '~/app/@/data'
-import { Avatar, IconCrown, Typography } from '~/app/@/ui'
+import { Avatar, Typography } from '~/app/@/ui'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { ViewHostChip } from './host-chip'
+import { ViewYouChip } from './you-chip'
 
 export const ViewUsersInSpaceList = ({
   ctx,
@@ -25,7 +26,7 @@ export const ViewUsersInSpaceList = ({
             >
               <Avatar src={profile.avatarUrl} />
               <p>{profile.username}</p>
-              {profile.userId === ctx.space.hostId && <ViewSpaceHostChip ctx={ctx} />}
+              {profile.userId === ctx.space.hostId && <ViewHostChip ctx={ctx} />}
               {profile.userId === ctx.currentUserId && <ViewYouChip ctx={ctx} />}
             </button>
           )
@@ -33,17 +34,4 @@ export const ViewUsersInSpaceList = ({
       </div>
     </section>
   )
-}
-
-export const ViewSpaceHostChip = (input: { ctx: BaseClientCtx }) => {
-  return (
-    <div className='flex items-center gap-1 rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs font-semibold'>
-      <IconCrown className='h-4 w-4 text-yellow-300' />
-      {input.ctx.t('host')}
-    </div>
-  )
-}
-
-export const ViewYouChip = (input: { ctx: BaseClientCtx }) => {
-  return <div className='rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs'>{input.ctx.t('you')}</div>
 }

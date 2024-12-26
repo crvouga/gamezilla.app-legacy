@@ -503,6 +503,7 @@ const ViewSendCode: Module['View'] = (input) => {
           type='tel'
           startIcon={<IconMobilePhone className='h-5 w-5' />}
           error={typeof input.model.phoneNumberError === 'string'}
+          value={input.model.inputtedPhoneNumber}
           helperText={input.model.phoneNumberError}
           onChange={(value) => {
             input.dispatch({
@@ -587,6 +588,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
           helperText={typeof input.model.inputtedCodeError === 'string' ? input.model.inputtedCodeError : null}
           autoFocus
           type='tel'
+          value={input.model.inputtedCode}
           onChange={(value) => {
             input.dispatch({
               t: 'inputted-code',
@@ -606,6 +608,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
           className='w-full'
           text={input.ctx.t('auth-sms.verify-code')}
           color='primary'
+          variant='contained'
           size='lg'
           loading={input.model.verifyCode.t === 'loading' || input.model.verifyCode.t === 'ok'}
           type='submit'
