@@ -15,39 +15,27 @@ export type ButtonEvent = {
   stopPropagation: () => void
 }
 
-export const Button = ({
-  type,
-  renderIconStart,
-  className = '',
-  onClick,
-  variant = 'contained',
-  color = 'default',
-  size = 'lg',
-  disabled = false,
-  loading = false,
-  text,
-  fab = false
-}: {
+export const Button = (input: {
   fab?: boolean
   text?: TranslatedText
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
   className?: string
   onClick?: (msgEvt: ButtonEvent) => void
-  renderIconStart?: (input: { className?: string }) => VDom
+  iconStart?: (input: { className?: string }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
   size?: ButtonSize
   loading?: boolean
 }) => {
-  const combo: VariantColor = `${variant}-${color}`
+  const combo: VariantColor = `${input.variant ?? 'soft'}-${input.color ?? 'primary'}`
 
   return (
     <button
-      disabled={disabled || loading}
-      type={type}
+      disabled={input.disabled || input.loading}
+      type={input.type}
       className={cn(
-        className,
+        input.className,
         'relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden rounded font-semibold outline-none focus:ring-2',
 
         combo === 'contained-primary' && 'bg-blue-600 text-white ring-blue-500',
@@ -62,28 +50,32 @@ export const Button = ({
 
         combo === 'soft-primary' && 'bg-blue-500/20 text-blue-200',
 
-        !disabled && combo === 'text-primary' && 'text-blue-500',
+        combo === 'soft-danger' && 'bg-red-500/20 text-red-200',
 
-        fab && 'rounded-3xl',
+        combo === 'soft-default' && 'bg-secondary/20 text-secondary',
 
-        size === 'lg' && 'px-4 py-3 text-xl',
-        size === 'md' && 'px-4 py-2 text-lg',
-        size === 'sm' && 'text-md  px-4 py-1',
-        size === 'xs' && 'px-3 py-1 text-sm',
-        disabled && 'cursor-not-allowed opacity-60',
-        !disabled && !loading && ' active:opacity-70',
-        loading && 'cursor-wait opacity-70'
+        !input.disabled && combo === 'text-primary' && 'text-blue-500',
+
+        input.fab && 'rounded-3xl',
+
+        input.size === 'lg' && 'px-4 py-3 text-xl',
+        input.size === 'md' && 'px-4 py-2 text-lg',
+        input.size === 'sm' && 'text-md  px-4 py-1',
+        input.size === 'xs' && 'px-3 py-1 text-sm',
+
+        input.disabled && 'cursor-not-allowed opacity-60',
+        !input.disabled && !input.loading && ' active:opacity-70',
+        input.loading && 'cursor-wait opacity-70'
       )}
       role='button'
-      onClick={(e) => onClick?.({ stopPropagation: () => e.stopPropagation() })}
+      onClick={(e) => input.onClick?.({ stopPropagation: () => e.stopPropagation() })}
     >
-      <div className={cn('flex h-full w-full items-center justify-center', loading && 'text-transparent')}>
-        {renderIconStart?.({
-          className: 'mr-2 w-7 h-7'
-        })}
-        {text}
+      <div className={cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent')}>
+        {input.iconStart?.({ className: 'mr-2 w-7 h-7' })}
+        {input.text}
       </div>
-      {loading && (
+
+      {input.loading && (
         <div className='absolute inset-0 flex items-center justify-center'>
           <Spinner className='h-7 w-7' />
         </div>

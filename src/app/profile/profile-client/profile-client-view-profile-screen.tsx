@@ -33,7 +33,7 @@ export const ViewProfileScreen = (input: {
               })
             }
             className='w-full'
-            renderIconStart={(iconInput) => <IconUserPen {...iconInput} />}
+            iconStart={(iconInput) => <IconUserPen {...iconInput} />}
             text={input.ctx.t('profile.update-profile')}
           />
           <Button
@@ -43,7 +43,7 @@ export const ViewProfileScreen = (input: {
               })
             }
             className='w-full'
-            renderIconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
+            iconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
             text={input.ctx.t('auth.logout')}
           />
           <div className='w-full p-4' />

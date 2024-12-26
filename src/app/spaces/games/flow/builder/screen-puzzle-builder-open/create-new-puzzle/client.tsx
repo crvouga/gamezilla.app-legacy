@@ -128,7 +128,7 @@ const ViewCreateFab: ClientModule['View'] = (input) => {
       color='primary'
       fab
       loading={input.model.puzzleCreateRequest.t === 'loading'}
-      renderIconStart={(iconInput) => <IconPlus {...iconInput} />}
+      iconStart={(iconInput) => <IconPlus {...iconInput} />}
       onClick={() =>
         input.dispatch({
           t: 'create-new-puzzle.user-clicked-create-button'

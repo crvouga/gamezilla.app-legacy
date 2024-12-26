@@ -419,7 +419,7 @@ export const View = ({
           <Button
             className='flex-1'
             onClick={onQuit}
-            renderIconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
+            iconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
             text={ctx.t('app.exit')}
           />
           <Button variant='contained' color='primary' className='flex-1' text={ctx.t('game.start-game')} />

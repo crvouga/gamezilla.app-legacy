@@ -25,11 +25,11 @@ export const Typography = (input: {
   variant: TypographyVariant
   className?: string
   role?: AriaRole
-  color?: 'inherit' | 'text-primary' | 'text-secondary'
+  color?: 'inherit' | 'text-primary' | 'text-secondary' | null
 }) => {
   return (
     <div
-      className={cn(variantClasses[input.variant], colorClasses[input.color ?? 'inherit'], input.className)}
+      className={cn(variantClasses[input.variant], input.color ? colorClasses[input.color] : null, input.className)}
       role={input.role}
       aria-label={input.text}
     >

@@ -38,7 +38,7 @@ const ButtonExitBuilder: Pick<ClientModule, 'update' | 'View'> = {
   View(input) {
     return (
       <Button
-        renderIconStart={(inputIcons) => <IconArrowLeftOnRect {...inputIcons} />}
+        iconStart={(inputIcons) => <IconArrowLeftOnRect {...inputIcons} />}
         className='w-full'
         text={input.ctx.t('app.exit')}
         onClick={() =>

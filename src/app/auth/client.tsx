@@ -281,38 +281,28 @@ const ViewLoginScreen: ClientModule['View'] = (input) => {
       <div className='flex flex-1 flex-col items-center justify-center gap-8 p-4'>
         <div className='flex w-full flex-col items-start justify-center'>
           <Typography text={input.ctx.t('auth.sign-in-to')} variant='title' />
-          <Typography
-            text={input.ctx.t('app.gamezilla-app')}
-            variant='title'
-            className='bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent'
-          />
+          <span className='bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent'>
+            {input.ctx.t('app.gamezilla-app')}
+          </span>
         </div>
 
         <div className='flex w-full flex-col gap-6'>
-          {true && (
-            <Button
-              onClick={() =>
-                input.dispatch({
-                  t: 'user-clicked-login-with-phone'
-                })
-              }
-              size='lg'
-              className='w-full'
-              renderIconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
-              text={input.ctx.t('auth.continue-with-phone')}
-            />
-          )}
+          <Button
+            onClick={() => input.dispatch({ t: 'user-clicked-login-with-phone' })}
+            size='lg'
+            className='w-full'
+            iconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
+            text={input.ctx.t('auth.continue-with-phone')}
+          />
 
           {false && (
             <Button
-              onClick={() =>
-                input.dispatch({
-                  t: 'user-clicked-login-with-email'
-                })
-              }
+              onClick={() => input.dispatch({ t: 'user-clicked-login-with-email' })}
+              color='default'
+              variant='soft'
               size='lg'
               className='w-full'
-              renderIconStart={(iconInput) => <IconEnvelope {...iconInput} />}
+              iconStart={(iconInput) => <IconEnvelope {...iconInput} />}
               text={input.ctx.t('auth.continue-with-email')}
             />
           )}
