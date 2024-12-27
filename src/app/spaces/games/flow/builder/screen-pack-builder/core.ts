@@ -406,12 +406,7 @@ updates.push((input) => {
 
 const update: UpdateCore = (input) => {
   return updates.reduce(
-    (modelCore, updateCore) =>
-      updateCore({
-        ctx: input.ctx,
-        msgCore: input.msgCore,
-        modelCore
-      }),
+    (modelCore, updateCore) => updateCore({ ctx: input.ctx, msgCore: input.msgCore, modelCore }),
     input.modelCore
   )
 }
