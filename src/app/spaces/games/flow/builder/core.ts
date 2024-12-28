@@ -6,7 +6,7 @@ import { ScreenPackBuilderCore } from './screen-pack-builder/core'
 import { ScreenPuzzleBuilderCore } from './screen-puzzle-builder/core'
 import type { ModelCore, Screen, UpdateCore } from './types'
 
-const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
+const init = (_input: { ctx: SpaceCtx }): ModelCore => {
   return {
     screen: { t: 'screen-main-menu' },
     screenPackBuilder: null,
@@ -16,7 +16,7 @@ const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
   }
 }
 
-export const toPreviousScreen = (screen: Screen): Screen => {
+const toPreviousScreen = (screen: Screen): Screen => {
   switch (screen.t) {
     case 'screen-main-menu': {
       return {
@@ -65,15 +65,15 @@ const updates: UpdateCore[] = [
   ScreenPuzzleBuilderOpenCore.updateCore,
   ScreenPackBuilderCore.update,
   ScreenPackBuilderOpenCore.update,
-  ScreenMainMenuCore.updateCore,
+  ScreenMainMenuCore.update,
   updateBackButton
 ]
 
-const updateCore: UpdateCore = (input) => {
-  return updates.reduce((acc, updateCore) => updateCore({ ...input, modelCore: acc }), input.modelCore)
+const update: UpdateCore = (input) => {
+  return updates.reduce((acc, update) => update({ ...input, modelCore: acc }), input.modelCore)
 }
 
 export const BuilderCore = {
-  initCore,
-  updateCore
+  init,
+  update
 }

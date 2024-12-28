@@ -1,9 +1,9 @@
 import type { UpdateCore } from '../../types'
 
-const update: UpdateCore = ({ modelCore, msgCore }) => {
-  switch (msgCore.t) {
+const update: UpdateCore = (input) => {
+  switch (input.msgCore.t) {
     default: {
-      return modelCore
+      return input.modelCore
     }
   }
 }

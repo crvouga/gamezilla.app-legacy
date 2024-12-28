@@ -7,7 +7,7 @@ import { PlayCore } from './play/core'
 const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
   return {
     mode: 'none',
-    builder: BuilderCore.initCore(input),
+    builder: BuilderCore.init(input),
     play: PlayCore.initCore(input)
   }
 }
@@ -45,7 +45,7 @@ const updateCore = ({
     }
 
     case 'builder': {
-      const updated = BuilderCore.updateCore({
+      const updated = BuilderCore.update({
         ctx,
         msgCore: msgCore.c,
         modelCore: modelCore.builder
@@ -75,7 +75,7 @@ const updateCore = ({
         ...modelCore,
         mode: msgCore.mode,
         play: PlayCore.initCore({ ctx }),
-        builder: BuilderCore.initCore({ ctx })
+        builder: BuilderCore.init({ ctx })
       }
     }
   }

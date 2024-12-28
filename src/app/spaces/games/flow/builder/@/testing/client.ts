@@ -34,7 +34,7 @@ const toModelCore = (
 ): BuilderTypes.ModelCore => {
   return msgCores.reduce(
     (modelCore, msgCore) =>
-      BuilderCore.updateCore({
+      BuilderCore.update({
         ctx,
         modelCore,
         msgCore
@@ -90,7 +90,7 @@ const update = (
 export const FixtureFlowBuilderClient = async () => {
   const f = await FixtureSpacesClient()
   const model = BuilderTypes.initClient
-  const modelCore = BuilderCore.initCore({ ctx: f.ctx })
+  const modelCore = BuilderCore.init({ ctx: f.ctx })
   const ctx: FlowClientCtx = {
     ...f.ctx,
     puzzles: {},
@@ -135,7 +135,7 @@ export const clickedPackCreateNewButton = (ctx: FlowClientCtx) => (model: Builde
   return BuilderClient.update({
     model,
     ctx,
-    modelCore: BuilderCore.initCore({ ctx }),
+    modelCore: BuilderCore.init({ ctx }),
     msg: {
       t: 'create-new-pack.clicked-create-button'
     }
@@ -146,7 +146,7 @@ export const userCreatedPack = (ctx: FlowClientCtx, pack: FlowPack) => (model: B
   return BuilderClient.update({
     model,
     ctx: ctx,
-    modelCore: BuilderCore.initCore({
+    modelCore: BuilderCore.init({
       ctx
     }),
     msgCore: {
@@ -163,7 +163,7 @@ export const clickedPackItem = (ctx: FlowClientCtx, pack: FlowPack) => (model: B
   return BuilderClient.update({
     model,
     ctx: ctx,
-    modelCore: BuilderCore.initCore({
+    modelCore: BuilderCore.init({
       ctx
     }),
     msg: {
@@ -178,7 +178,7 @@ export const clickedPackItem = (ctx: FlowClientCtx, pack: FlowPack) => (model: B
 }
 
 export const clickedOpenPuzzlePickerButton =
-  (ctx: FlowClientCtx, modelCore: BuilderTypes.ModelCore = BuilderCore.initCore({ ctx })) =>
+  (ctx: FlowClientCtx, modelCore: BuilderTypes.ModelCore = BuilderCore.init({ ctx })) =>
   (model: BuilderTypes.ModelClient) => {
     return BuilderClient.update({
       model,
@@ -204,7 +204,7 @@ export const closedPuzzlePickerDrawer = (ctx: FlowClientCtx) => (model: BuilderT
       }
     },
     ctx,
-    modelCore: BuilderCore.initCore({
+    modelCore: BuilderCore.init({
       ctx
     })
   })
@@ -222,12 +222,12 @@ export const clickedPuzzleListItem = (ctx: FlowClientCtx, puzzle: FlowPuzzle) =>
       }
     },
     ctx,
-    modelCore: BuilderCore.initCore({ ctx })
+    modelCore: BuilderCore.init({ ctx })
   })
 }
 
 export const clickedExitPuzzleBuilderButton =
-  (ctx: FlowClientCtx, modelCore: BuilderTypes.ModelCore = BuilderCore.initCore({ ctx })) =>
+  (ctx: FlowClientCtx, modelCore: BuilderTypes.ModelCore = BuilderCore.init({ ctx })) =>
   (model: BuilderTypes.ModelClient) => {
     return BuilderClient.update({
       model,
@@ -269,7 +269,7 @@ export const puzzleBuilderPressDownRandomNode =
         }
       },
       ctx,
-      modelCore: BuilderCore.initCore({
+      modelCore: BuilderCore.init({
         ctx
       })
     })
@@ -287,7 +287,7 @@ export const puzzleBuilderUserSavedChanges =
         userId: ctx.currentUserId
       },
       ctx,
-      modelCore: BuilderCore.initCore({
+      modelCore: BuilderCore.init({
         ctx
       })
     })
@@ -306,7 +306,7 @@ export const clickedPuzzlePickerItem =
         }
       },
       ctx,
-      modelCore: BuilderCore.initCore({
+      modelCore: BuilderCore.init({
         ctx
       })
     })
@@ -323,7 +323,7 @@ export const clickedExitPuzzleButton = (ctx: FlowClientCtx) => (model: BuilderTy
       }
     },
     ctx,
-    modelCore: BuilderCore.initCore({
+    modelCore: BuilderCore.init({
       ctx
     })
   })
@@ -342,7 +342,7 @@ export const clickedPuzzleGridItem =
         }
       },
       ctx,
-      modelCore: BuilderCore.initCore({
+      modelCore: BuilderCore.init({
         ctx
       })
     })
@@ -352,7 +352,7 @@ export const serverCreatedPack = (ctx: FlowClientCtx, pack: FlowPack) => (model:
   return BuilderClient.update({
     model,
     ctx: ctx,
-    modelCore: BuilderCore.initCore({
+    modelCore: BuilderCore.init({
       ctx
     }),
     msgServer: {

@@ -50,7 +50,7 @@ export const FlowCreateFixtureServer = async () => {
   const f = await SpaceGameFixtureServer()
   const ctx = await initCtx(f.ctx)
   const model = initServer
-  const modelCore = BuilderCore.initCore({ ctx })
+  const modelCore = BuilderCore.init({ ctx })
   return {
     ...f,
     ctx,

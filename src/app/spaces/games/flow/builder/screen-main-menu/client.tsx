@@ -64,7 +64,7 @@ const View: ClientModule['View'] = (input) => {
               t: 'got-msg-core',
               c: {
                 t: 'screen-main-menu.user-clicked-option',
-                option: 'puzzles',
+                option: 'puzzle-builder',
                 userId: input.ctx.currentUserId
               }
             })
@@ -78,7 +78,7 @@ const View: ClientModule['View'] = (input) => {
               t: 'got-msg-core',
               c: {
                 t: 'screen-main-menu.user-clicked-option',
-                option: 'packs',
+                option: 'pack-builder',
                 userId: input.ctx.currentUserId
               }
             })

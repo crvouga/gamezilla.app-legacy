@@ -81,16 +81,8 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
 }
 
 const updates = [update, ScreenPlayPuzzleCore.updateCore]
-const updateCore: CoreModule['updateCore'] = ({ modelCore, msgCore, ctx }) => {
-  return updates.reduce(
-    (acc, update) =>
-      update({
-        modelCore: acc,
-        msgCore,
-        ctx
-      }),
-    modelCore
-  )
+const updateCore: CoreModule['updateCore'] = (input) => {
+  return updates.reduce((modelCore, update) => update({ ...input, modelCore }), input.modelCore)
 }
 
 export const PlayCore = {

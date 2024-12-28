@@ -1,30 +1,30 @@
 import { isErr } from '~/@/core'
 import type { UpdateCore } from '../../types'
 
-const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
-  switch (msgCore.t) {
+const updateCore: UpdateCore = (input) => {
+  switch (input.msgCore.t) {
     case 'screen-puzzle-builder.saved-puzzle': {
-      if (isErr(msgCore.saved)) {
-        return modelCore
+      if (isErr(input.msgCore.saved)) {
+        return input.modelCore
       }
 
-      if (!modelCore.screenPuzzleBuilder) {
-        return modelCore
+      if (!input.modelCore.screenPuzzleBuilder) {
+        return input.modelCore
       }
 
       return {
-        ...modelCore,
-        screen: modelCore.screen,
-        screenPackBuilder: modelCore.screenPackBuilder,
+        ...input.modelCore,
+        screen: input.modelCore.screen,
+        screenPackBuilder: input.modelCore.screenPackBuilder,
         screenPuzzleBuilder: {
-          ...modelCore.screenPuzzleBuilder,
-          puzzle: msgCore.saved.value
+          ...input.modelCore.screenPuzzleBuilder,
+          puzzle: input.msgCore.saved.value
         }
       }
     }
 
     default: {
-      return modelCore
+      return input.modelCore
     }
   }
 }

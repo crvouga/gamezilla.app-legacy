@@ -39,7 +39,7 @@ const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Flow
     createdBy,
     puzzleIds: puzzles.map((puzzle) => puzzle.id)
   })
-  const init = BuilderCore.initCore({ ctx: f.ctx })
+  const init = BuilderCore.init({ ctx: f.ctx })
   const modelCore: ModelCore = {
     ...init,
     screenPackBuilder: ScreenPackBuilderCore.init({ pack })

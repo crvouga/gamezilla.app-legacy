@@ -1,10 +1,10 @@
 import type { UpdateCore } from '../types'
 
-const updateCore: UpdateCore = (input) => {
+const update: UpdateCore = (input) => {
   switch (input.msgCore.t) {
     case 'screen-main-menu.user-clicked-option': {
       switch (input.msgCore.option) {
-        case 'packs': {
+        case 'pack-builder': {
           return {
             ...input.modelCore,
             screen: {
@@ -13,7 +13,7 @@ const updateCore: UpdateCore = (input) => {
           }
         }
 
-        case 'puzzles': {
+        case 'puzzle-builder': {
           return {
             ...input.modelCore,
             screen: {
@@ -41,5 +41,5 @@ const updateCore: UpdateCore = (input) => {
 }
 
 export const ScreenMainMenuCore = {
-  updateCore
+  update
 }
