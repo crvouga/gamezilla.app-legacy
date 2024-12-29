@@ -1,6 +1,6 @@
 import { p } from '~/@/core/parser'
 import { UserId } from '~/app/@/data'
-import { FlowPuzzle } from '../../@/puzzle/puzzle'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { DeleteForeverTypes } from './delete-forever'
@@ -65,7 +65,7 @@ type Mode = p.Infer<typeof Mode>
 
 export const ModelCore = p.obj({
   t: p.l('puzzle-builder'),
-  puzzle: FlowPuzzle,
+  puzzle: Puzzle,
   mode: Mode,
   play: FlowPlay.Model,
   edit: FlowEdit.Model

@@ -1,5 +1,5 @@
 import { p } from '~/@/core/parser'
-import { FlowPack } from '../../@/pack/pack'
+import { Pack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
 import { UserId } from '~/app/@/data'
 
@@ -15,7 +15,7 @@ export const MsgCore = p.or(
   CreateNewPackTypes.MsgCore,
   p.obj({
     t: p.l('screen-pack-builder-open.user-clicked-pack-item'),
-    pack: FlowPack,
+    pack: Pack,
     userId: UserId
   })
 )

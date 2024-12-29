@@ -182,7 +182,7 @@ export const translations: Text = {
   'flow.puzzles': '퍼즐',
   'flow.puzzle-not-found': '퍼즐을 찾을 수 없습니다',
   'flow.no-puzzles': '퍼즐이 없습니다',
-  'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
+  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-packs': '팩 없음',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'space-game-flow-edit.editing': '편집',

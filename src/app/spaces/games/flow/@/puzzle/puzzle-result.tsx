@@ -1,19 +1,19 @@
 import { p } from '~/@/core/parser'
 import { Translator } from '~/@/l18n/generated'
 import { IconExclamationCircle, Typography } from '~/app/@/ui'
-import { FlowPuzzle } from './puzzle'
+import { Puzzle } from './puzzle'
 
 const parser = p.or(
   p.obj({
     t: p.l('got'),
-    c: FlowPuzzle
+    c: Puzzle
   }),
   p.obj({
     t: p.l('not-found')
   })
 )
 
-export type FlowPuzzleResult = p.Infer<typeof parser>
+export type PuzzleResult = p.Infer<typeof parser>
 
 const ViewNotFound = (input: { ctx: { t: Translator } }) => {
   return (
@@ -26,7 +26,7 @@ const ViewNotFound = (input: { ctx: { t: Translator } }) => {
   )
 }
 
-export const FlowPuzzleResult = {
+export const PuzzleResult = {
   ...parser,
   ViewNotFound
 }

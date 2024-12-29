@@ -1,13 +1,13 @@
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Logger } from '~/app/@/server/logger'
-import { FlowPuzzleDb } from './impl'
+import { PuzzleDb } from './impl'
 
-export const FlowPuzzleDbFixture = async () => {
+export const PuzzleDbFixture = async () => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
     case 'all':
     case 'integration': {
-      const flowPuzzleDb = FlowPuzzleDb({
+      const flowPuzzleDb = PuzzleDb({
         t: 'db-conn-sql',
         dbConnSql: testEnv.dbConnSql,
         logger: Logger({
@@ -20,7 +20,7 @@ export const FlowPuzzleDbFixture = async () => {
       }
     }
     case 'unit': {
-      const flowPuzzleDb = FlowPuzzleDb({
+      const flowPuzzleDb = PuzzleDb({
         t: 'hash-map'
       })
       return {

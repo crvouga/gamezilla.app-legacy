@@ -179,7 +179,7 @@ export const translations: Text = {
   'flow.puzzles': '拼图',
   'flow.puzzle-not-found': '找不到拼图',
   'flow.no-puzzles': '没有拼图',
-  'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
+  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-packs': '没有包',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'space-game-flow-edit.editing': '编辑',

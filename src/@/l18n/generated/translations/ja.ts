@@ -185,7 +185,7 @@ export const translations: Text = {
   'flow.puzzles': 'パズル',
   'flow.puzzle-not-found': 'パズルが見つかりません',
   'flow.no-puzzles': 'パズルなし',
-  'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
+  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-packs': 'パックなし',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'space-game-flow-edit.editing': '編集',

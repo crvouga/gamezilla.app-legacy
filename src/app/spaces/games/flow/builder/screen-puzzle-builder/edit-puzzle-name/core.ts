@@ -1,6 +1,6 @@
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
-import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
-import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
+import type { Puzzle } from '../../../@/puzzle/puzzle'
+import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ModelCore, MsgCore } from '../../types'
 
 const updateCore = ({ modelCore, msgCore }: { ctx: SpaceCtx; msgCore: MsgCore; modelCore: ModelCore }): ModelCore => {
@@ -17,10 +17,10 @@ const updateCore = ({ modelCore, msgCore }: { ctx: SpaceCtx; msgCore: MsgCore; m
       if (msgCore.edited.t === 'err') {
         return modelCore
       }
-      if (!FlowPuzzleName.is(msgCore.newName)) {
+      if (!PuzzleName.is(msgCore.newName)) {
         return modelCore
       }
-      const puzzleNew: FlowPuzzle = {
+      const puzzleNew: Puzzle = {
         ...puzzleBuilder.puzzle,
         name: msgCore.newName
       }

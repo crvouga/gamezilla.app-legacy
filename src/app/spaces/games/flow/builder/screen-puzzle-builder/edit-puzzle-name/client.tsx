@@ -2,7 +2,7 @@ import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-
 import { APP_SOUND, playSound, sendToServer, showErrSm, showCreatedSm } from '~/app/@/client'
 import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
 import { isLoading, isOk, Loading } from '~/@/core'
-import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
+import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ClientModule } from '../../types'
 import { editNameValidationErrorToString, MsgClient, MsgToServer } from './types'
 import type { VDomChildren } from '~/@/vdom'
@@ -109,7 +109,7 @@ const updateFormButtons: ClientModule['update'] = (input) => {
       }
       const puzzle = puzzlesNew[input.msgCore.flowPuzzleId]
 
-      if (puzzle && FlowPuzzleName.is(input.msgCore.newName)) {
+      if (puzzle && PuzzleName.is(input.msgCore.newName)) {
         puzzlesNew[input.msgCore.flowPuzzleId] = {
           ...puzzle,
           name: input.msgCore.newName

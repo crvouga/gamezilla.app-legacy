@@ -1,8 +1,8 @@
 import { sendToClient } from '~/app/@/server'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
-import type { FlowPack } from '../../../@/pack/pack'
-import { FlowPackId } from '../../../@/pack/pack-id'
-import { FlowPackName } from '../../../@/pack/pack-name'
+import type { Pack } from '../../../@/pack/pack'
+import { PackId } from '../../../@/pack/pack-id'
+import { PackName } from '../../../@/pack/pack-name'
 import type { ServerModule } from '../../types'
 
 const update: ServerModule['update'] = async (input) => {
@@ -22,13 +22,13 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         return {}
       }
 
-      const packNew: FlowPack = {
+      const packNew: Pack = {
         createdAt: input.ctx.now,
         createdBy: input.msgClient.userId,
-        id: FlowPackId.generate(),
+        id: PackId.generate(),
         lastUpdatedAt: input.ctx.now,
         lastUpdatedBy: input.msgClient.userId,
-        name: await FlowPackName.generate({
+        name: await PackName.generate({
           count: counted.value
         }),
         puzzleIds: []

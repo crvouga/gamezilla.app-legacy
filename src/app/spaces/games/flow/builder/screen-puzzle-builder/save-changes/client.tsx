@@ -4,7 +4,7 @@ import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/
 import { Button, Drawer, IconFloppyDisk, Typography } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { withEventId } from '~/@/event-sourced/event'
-import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
+import type { Puzzle } from '../../../@/puzzle/puzzle'
 import { FlowEdit } from '../../../@/flow/flow-edit'
 import type { ClientModule, ModelClient, MsgClient, MsgCore } from '../../types'
 import { ViewBottomButtonBarAction } from '~/app/@/ui/actions'
@@ -183,7 +183,7 @@ const saveChanges: ClientModule['update'] = ({ model, modelCore }) => {
     return { model }
   }
 
-  const puzzleNew: FlowPuzzle = {
+  const puzzleNew: Puzzle = {
     ...puzzleBuilder.puzzle,
     flow: FlowEdit.toFlowMemoized({
       model: puzzleBuilder.edit

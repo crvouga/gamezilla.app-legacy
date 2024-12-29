@@ -180,7 +180,7 @@ export const translations: Text = {
   'flow.puzzles': 'Quebra-cabeças',
   'flow.puzzle-not-found': 'Quebra-cabeça não encontrado',
   'flow.no-puzzles': 'Sem quebra-cabeças',
-  'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
+  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-packs': 'Sem pacotes',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'space-game-flow-edit.editing': 'Edição',

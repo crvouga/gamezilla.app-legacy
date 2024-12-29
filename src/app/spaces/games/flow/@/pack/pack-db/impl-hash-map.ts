@@ -1,10 +1,10 @@
 import { Ok, Result } from '~/@/core'
-import type { FlowPack } from '../pack'
-import type { IFlowPackDb } from './interface'
+import type { Pack } from '../pack'
+import type { IPackDb } from './interface'
 
-const db = new Map<string, FlowPack>()
+const db = new Map<string, Pack>()
 
-export const FlowPackDbHashMap = (): IFlowPackDb => {
+export const PackDbHashMap = (): IPackDb => {
   return {
     async get(id) {
       return Ok(db.get(id) ?? null)

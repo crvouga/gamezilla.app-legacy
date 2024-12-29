@@ -6,12 +6,12 @@ import { FlowAlgoSolve } from '../flow/flow-algo/flow-algo-solve'
 import { FlowAlgoSolveAsync } from '../flow/flow-algo/flow-algo-solve-async'
 import { FlowGridShorthand } from '../flow/flow-variant/flow-grid/flow-grid-shorthand'
 import * as FlowVariant from '../flow/flow-variant/flow-variant'
-import { FlowPuzzleId } from './puzzle-id'
-import { FlowPuzzleName } from './puzzle-name'
+import { PuzzleId } from './puzzle-id'
+import { PuzzleName } from './puzzle-name'
 
 const parser = p.obj({
-  id: FlowPuzzleId,
-  name: FlowPuzzleName,
+  id: PuzzleId,
+  name: PuzzleName,
   createdAt: Posix,
   createdBy: UserId,
   lastUpdatedAt: Posix,
@@ -20,21 +20,21 @@ const parser = p.obj({
   solutions: p.arr(Flow.Model)
 })
 
-export type FlowPuzzle = p.Infer<typeof parser>
+export type Puzzle = p.Infer<typeof parser>
 
 const create = async (input: {
   count: number
   flow: FlowVariant.Model
   createdAt: Posix
   createdBy: UserId
-}): Promise<FlowPuzzle> => {
+}): Promise<Puzzle> => {
   const solution = await FlowAlgoSolveAsync.solve(input.flow)
   return {
     flow: input.flow,
-    name: await FlowPuzzleName.generate({
+    name: await PuzzleName.generate({
       count: input.count
     }),
-    id: FlowPuzzleId.generate(),
+    id: PuzzleId.generate(),
     createdAt: input.createdAt,
     createdBy: input.createdBy,
     lastUpdatedAt: input.createdAt,
@@ -43,11 +43,7 @@ const create = async (input: {
   }
 }
 
-const random = async (input?: {
-  flow?: FlowVariant.Model
-  createdBy?: UserId
-  createdAt?: Posix
-}): Promise<FlowPuzzle> => {
+const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; createdAt?: Posix }): Promise<Puzzle> => {
   const createdBy = input?.createdBy ?? UserId.generate()
   const createdAt = input?.createdAt ?? Posix.now()
   const flow =
@@ -61,12 +57,12 @@ const random = async (input?: {
   return {
     createdAt,
     createdBy,
-    name: await FlowPuzzleName.generate({
+    name: await PuzzleName.generate({
       count: 0
     }),
     lastUpdatedAt: Posix.now(),
     lastUpdatedBy: createdBy,
-    id: FlowPuzzleId.generate(),
+    id: PuzzleId.generate(),
     solutions: solution ? [solution] : [],
     flow
   }
@@ -79,7 +75,7 @@ const next = <T>(iter: Iterable<T>): T | undefined => {
   return undefined
 }
 
-export const FlowPuzzle = {
+export const Puzzle = {
   ...parser,
   create,
   random

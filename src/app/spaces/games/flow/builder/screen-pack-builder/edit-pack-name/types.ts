@@ -1,8 +1,8 @@
 import { RemoteResult, Result } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { UserId } from '~/app/@/data'
-import { FlowPack } from '../../../@/pack/pack'
-import { FlowPackName } from '../../../@/pack/pack-name'
+import { Pack } from '../../../@/pack/pack'
+import { PackName } from '../../../@/pack/pack-name'
 
 export type MsgClient = MsgCore
 
@@ -13,10 +13,10 @@ export const EditPackNameValidationError = p.obj({
 })
 
 export const ModelCore = p.obj({
-  pack: FlowPack,
+  pack: Pack,
   draft: p.str,
   result: RemoteResult.parser(p.str, p.unknown),
-  rollback: FlowPackName,
+  rollback: PackName,
   validationError: p.or(EditPackNameValidationError, p.l(null))
 })
 export type ModelCore = p.Infer<typeof ModelCore>

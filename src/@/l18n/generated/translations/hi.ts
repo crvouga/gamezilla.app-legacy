@@ -187,7 +187,7 @@ export const translations: Text = {
   'flow.puzzles': 'पहेलियाँ',
   'flow.puzzle-not-found': 'पहेली नहीं मिली',
   'flow.no-puzzles': 'कोई पहेली नहीं',
-  'flow-puzzle-name': (flowPuzzleName) => `${flowPuzzleName}`,
+  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-packs': 'कोई पैक नहीं',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'space-game-flow-edit.editing': 'संपादन',

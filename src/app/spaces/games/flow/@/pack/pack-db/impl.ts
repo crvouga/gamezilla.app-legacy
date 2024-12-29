@@ -1,7 +1,7 @@
 import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
-import type { IFlowPackDb } from './interface'
-import { FlowPackDbHashMap } from './impl-hash-map'
-import { FlowPackDbPostgres } from './impl-postgres'
+import type { IPackDb } from './interface'
+import { PackDbHashMap } from './impl-hash-map'
+import { PackDbPostgres } from './impl-postgres'
 
 export type Impl =
   | {
@@ -12,13 +12,13 @@ export type Impl =
       dbConnSql: IDbConnSql
     }
 
-export const FlowPackDb = (impl: Impl): IFlowPackDb => {
+export const PackDb = (impl: Impl): IPackDb => {
   switch (impl.t) {
     case 'hash-map': {
-      return FlowPackDbHashMap()
+      return PackDbHashMap()
     }
     case 'db-conn-sql': {
-      return FlowPackDbPostgres(impl)
+      return PackDbPostgres(impl)
     }
   }
 }

@@ -1,33 +1,29 @@
 import { describe, expect, it } from 'bun:test'
 import { UserId } from '~/app/@/data'
 import { SpaceGameCoreFixture } from '~/app/spaces/games/@/testing/sync'
-import { FlowPack } from '../../@/pack/pack'
+import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
-import { FlowPuzzle } from '../../@/puzzle/puzzle'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import { BuilderCore } from '../core'
 import type { ModelCore } from '../types'
 import { ScreenPackBuilderCore } from './core'
 import type { MsgCore } from './types'
 
-const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: FlowPuzzle }) => {
+const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzzle }) => {
   const f = await SpaceGameCoreFixture()
   const createdBy = UserId.generate()
 
-  const puzzlesPromises = [
-    FlowPuzzle.random({ createdBy }),
-    FlowPuzzle.random({ createdBy }),
-    FlowPuzzle.random({ createdBy })
-  ]
+  const puzzlesPromises = [Puzzle.random({ createdBy }), Puzzle.random({ createdBy }), Puzzle.random({ createdBy })]
 
   for (let i = 0; i < (input?.puzzleCount ?? 0); i++) {
     puzzlesPromises.push(
-      FlowPuzzle.random({
+      Puzzle.random({
         createdBy
       })
     )
   }
 
-  const puzzles = (await Promise.all(puzzlesPromises)) as [FlowPuzzle, FlowPuzzle, FlowPuzzle, ...FlowPuzzle[]]
+  const puzzles = (await Promise.all(puzzlesPromises)) as [Puzzle, Puzzle, Puzzle, ...Puzzle[]]
 
   if (input?.appendDuplicatesOf) {
     for (let i = 0; i < 3; i++) {
@@ -35,7 +31,7 @@ const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Flow
     }
   }
 
-  const pack = await FlowPack.random({
+  const pack = await Pack.random({
     createdBy,
     puzzleIds: puzzles.map((puzzle) => puzzle.id)
   })
@@ -185,7 +181,7 @@ describe(import.meta.file, () => {
         userId: f.currentUserId,
         nextPuzzleResult: {
           t: 'got',
-          c: await FlowPuzzle.random({
+          c: await Puzzle.random({
             createdBy: f.currentUserId
           })
         }
@@ -231,7 +227,7 @@ describe(import.meta.file, () => {
         userId: f.currentUserId,
         previousPuzzleResult: {
           t: 'got',
-          c: await FlowPuzzle.random({
+          c: await Puzzle.random({
             createdBy: f.currentUserId
           })
         }
@@ -287,7 +283,7 @@ describe(import.meta.file, () => {
 
   it('should be able to add new puzzle', async () => {
     const f = await Fixture()
-    const newPuzzle = await FlowPuzzle.random({
+    const newPuzzle = await Puzzle.random({
       createdBy: f.currentUserId
     })
     const modelCore = f.updateModelCore([
@@ -400,7 +396,7 @@ describe(import.meta.file, () => {
   })
 
   it('should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack', async () => {
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
     const f = await Fixture({
       appendDuplicatesOf: puzzle
     })
@@ -420,7 +416,7 @@ describe(import.meta.file, () => {
   })
 
   it('should not open pack item if puzzle is not at index given', async () => {
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
     const f = await Fixture({
       appendDuplicatesOf: puzzle
     })

@@ -1,11 +1,11 @@
 import { describe, expect, it, test } from 'bun:test'
 import { PubSub } from '~/@/core'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
-import { FlowPuzzle } from '../../@/puzzle/puzzle'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import {
   clickedExitPuzzleBuilderButton,
   clickedPuzzleListItem,
-  createFlowPuzzle,
+  createPuzzle,
   FixtureFlowBuilderClient,
   initial,
   puzzleBuilderPressDownRandomNode,
@@ -18,7 +18,7 @@ import { ScreenPuzzleBuilderClient } from './client'
 const Fixture = async () => {
   const f = await FixtureFlowBuilderClient()
 
-  const flowPuzzle = await FlowPuzzle.random({})
+  const flowPuzzle = await Puzzle.random({})
 
   const init = f.update(f.init, [
     {
@@ -62,7 +62,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
   it('should open puzzle builder on list item click', async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = await createFlowPuzzle(ctx)
+    const puzzle = await createPuzzle(ctx)
     const output = GameClientModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
     const modelCore = deriveModelCore(ctx, output)
     expect(
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
 
   it('should exit puzzle builder after clicking exit button', async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = await createFlowPuzzle(ctx)
+    const puzzle = await createPuzzle(ctx)
     const openedBuilder = GameClientModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
 
     const output = GameClientModule.andThen(
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
   it('should open save prompt when exiting with unsaved changes', async () => {
     const ctx = await testFlowClientCtx()
 
-    const puzzle = await createFlowPuzzle(ctx)
+    const puzzle = await createPuzzle(ctx)
 
     const openedBuilder = GameClientModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
 

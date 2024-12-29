@@ -1,5 +1,5 @@
 import { type RemoteResult, Result, NotAsked } from '~/@/core'
-import { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
+import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { UserId } from '~/app/@/data'
 import { p } from '~/@/core/parser'
 import { TranslatedText } from '~/@/l18n'
@@ -60,7 +60,7 @@ export type MsgServer = { t: 'noop' }
 export type MsgToServer = {
   t: 'puzzle.edit-name.user-clicked-save-button'
   newName: string
-  flowPuzzleId: FlowPuzzleId
+  flowPuzzleId: PuzzleId
 }
 
 export type MsgToClient = {
@@ -76,7 +76,7 @@ export type MsgToClient = {
 export const MsgCore = p.obj({
   t: p.l('user-edited-puzzle-name'),
   edited: Result.parser(p.str, p.l(null)),
-  flowPuzzleId: FlowPuzzleId,
+  flowPuzzleId: PuzzleId,
   newName: p.str,
   userId: UserId
 })

@@ -2,7 +2,7 @@ import { APP_SOUND, playSound } from '~/app/@/client'
 import { cn, TopBar } from '~/app/@/ui'
 import { andThen } from '../../../@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
-import { FlowPack } from '../../@/pack/pack'
+import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { ClientModule } from '../types'
@@ -26,7 +26,7 @@ const updateLoadPuzzlesForPack: typeof update = (input) => {
       ? PlayCore.updateCore({ ctx: input.ctx, modelCore: input.modelCore, msgCore: input.msgCore })
       : input.modelCore
 
-    const pack: FlowPack | null = 'flowPack' in modelCore.screen ? modelCore.screen.flowPack : null
+    const pack: Pack | null = 'flowPack' in modelCore.screen ? modelCore.screen.flowPack : null
 
     if (!pack) {
       return { model: input.model }

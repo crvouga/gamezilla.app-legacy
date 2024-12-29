@@ -1,12 +1,12 @@
 import { withEventMeta } from '~/@/event-sourced/event'
 import { UserId } from '~/app/@/data'
 import { FlowPlay } from '../../../../@/flow/flow-play'
-import { FlowPack } from '../../../../@/pack/pack'
-import { FlowPuzzleResult } from '../../../../@/puzzle/puzzle-result'
-import { FlowPuzzle } from '../../../../@/puzzle/puzzle'
+import { Pack } from '../../../../@/pack/pack'
+import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
+import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/fixture.client'
 
-const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) => {
+const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
   const userId = UserId.generate()
   return FlowPlay.toSolutionMsgs({
     flow: puzzle.flow
@@ -23,14 +23,14 @@ const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) => {
 
 export const FixtureScreenPlayPuzzleClient = async () => {
   const f = await FixtureFlowPlayClient()
-  const puzzle = await FlowPuzzle.random()
-  const nextPuzzle = await FlowPuzzle.random()
-  const prevPuzzle = await FlowPuzzle.random()
+  const puzzle = await Puzzle.random()
+  const nextPuzzle = await Puzzle.random()
+  const prevPuzzle = await Puzzle.random()
 
-  const nextPuzzleResult: FlowPuzzleResult = { t: 'got', c: nextPuzzle }
-  const prevPuzzleResult: FlowPuzzleResult = { t: 'got', c: prevPuzzle }
+  const nextPuzzleResult: PuzzleResult = { t: 'got', c: nextPuzzle }
+  const prevPuzzleResult: PuzzleResult = { t: 'got', c: prevPuzzle }
 
-  const pack = await FlowPack.random({
+  const pack = await Pack.random({
     puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id]
   })
   const puzzleIndex = 1

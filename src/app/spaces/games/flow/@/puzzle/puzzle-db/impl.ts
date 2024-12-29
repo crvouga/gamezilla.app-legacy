@@ -1,12 +1,12 @@
 import { pipe } from '~/@/core'
 import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
 import type { ILogger } from '~/app/@/server/logger'
-import type { IFlowPuzzleDb } from './interface'
-import { FlowPuzzleDbHashMap } from './impl-hash-map'
-import { FlowPuzzleDbPostgres } from './impl-postgres'
+import type { IPuzzleDb } from './interface'
+import { PuzzleDbHashMap } from './impl-hash-map'
+import { PuzzleDbPostgres } from './impl-postgres'
 import { WithSolutions } from './with-solutions'
 
-export type FlowPuzzleDbImpl =
+export type PuzzleDbImpl =
   | { t: 'hash-map' }
   | {
       t: 'db-conn-sql'
@@ -14,17 +14,17 @@ export type FlowPuzzleDbImpl =
       logger: ILogger
     }
 
-const FlowPuzzleDbBase = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
+const PuzzleDbBase = (impl: PuzzleDbImpl): IPuzzleDb => {
   switch (impl.t) {
     case 'hash-map': {
-      return FlowPuzzleDbHashMap()
+      return PuzzleDbHashMap()
     }
     case 'db-conn-sql': {
-      return FlowPuzzleDbPostgres(impl)
+      return PuzzleDbPostgres(impl)
     }
   }
 }
 
-export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
-  return pipe(FlowPuzzleDbBase(impl), WithSolutions)
+export const PuzzleDb = (impl: PuzzleDbImpl): IPuzzleDb => {
+  return pipe(PuzzleDbBase(impl), WithSolutions)
 }

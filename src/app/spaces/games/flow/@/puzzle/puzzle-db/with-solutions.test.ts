@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from '~/@/core'
 import { FlowGridShorthand } from '../../flow/flow-variant/flow-grid'
-import { FlowPuzzle } from '../puzzle'
-import { FlowPuzzleDbFixture } from './fixture'
+import { Puzzle } from '../puzzle'
+import { PuzzleDbFixture } from './fixture'
 import { WithSolutions } from './with-solutions'
 
 const Fixture = async () => {
-  const f = await FlowPuzzleDbFixture()
+  const f = await PuzzleDbFixture()
 
-  const puzzleWithEmptySolutions = await FlowPuzzle.random({
+  const puzzleWithEmptySolutions = await Puzzle.random({
     flow: FlowGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A']

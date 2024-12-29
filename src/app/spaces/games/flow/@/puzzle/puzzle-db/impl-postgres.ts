@@ -6,10 +6,10 @@ import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
 import type { ILogger } from '~/app/@/server/logger'
 import { Flow } from '../../flow/flow'
 import { FlowVariant } from '../../flow/flow-variant'
-import type { FlowPuzzle } from '../puzzle'
-import { FlowPuzzleId } from '../puzzle-id'
-import { FlowPuzzleName } from '../puzzle-name'
-import type { IFlowPuzzleDb, OrderClause, WhereClause } from './interface'
+import type { Puzzle } from '../puzzle'
+import { PuzzleId } from '../puzzle-id'
+import { PuzzleName } from '../puzzle-name'
+import type { IPuzzleDb, OrderClause, WhereClause } from './interface'
 
 export const Row = p.obj({
   flow_puzzle_id: p.str,
@@ -28,9 +28,9 @@ const ensureNumber = (x: string | number): number => {
   return typeof x === 'string' ? Number.parseFloat(x) : x
 }
 
-const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
-  const flowPuzzleId = FlowPuzzleId.is(row.flow_puzzle_id) ? row.flow_puzzle_id : null
-  const flowPuzzleName = FlowPuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
+const rowToPuzzle = (row: Row): Puzzle | null => {
+  const flowPuzzleId = PuzzleId.is(row.flow_puzzle_id) ? row.flow_puzzle_id : null
+  const puzzleName = PuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
 
   const parsedFlow = FlowVariant.Model.parse(row.flow)
   const flow = Result.unwrapOr(parsedFlow, null)
@@ -43,10 +43,10 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
   const parsedFlowSolutions = p.arr(p.or(FlowVariant.Model, Flow.Model)).parse(row.flow_solutions)
   const flowSolutions = Result.unwrapOr(parsedFlowSolutions, [])
 
-  if (flowPuzzleId && flowPuzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
+  if (flowPuzzleId && puzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
     return {
       id: flowPuzzleId,
-      name: flowPuzzleName,
+      name: puzzleName,
       flow: flow,
       createdAt,
       createdBy,
@@ -130,7 +130,7 @@ const toSqlPagination = (input: { pagination: Pagination }) => {
   }
 }
 
-export const FlowPuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: IDbConnSql }): IFlowPuzzleDb => {
+export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: IDbConnSql }): IPuzzleDb => {
   return {
     async get(flowPuzzleId) {
       const queried = await dbConnSql.query(
@@ -154,15 +154,15 @@ export const FlowPuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql
         return queried
       }
 
-      const queriedFlowPuzzle = queried.value.map(async (row): Promise<FlowPuzzle[]> => {
-        const flowPuzzle = rowToFlowPuzzle(row)
+      const queriedPuzzle = queried.value.map(async (row): Promise<Puzzle[]> => {
+        const flowPuzzle = rowToPuzzle(row)
         if (!flowPuzzle) {
           return []
         }
         return [flowPuzzle]
       })
 
-      const awaited = await Promise.all(queriedFlowPuzzle)
+      const awaited = await Promise.all(queriedPuzzle)
 
       const flowPuzzles = awaited.flat()
 
@@ -234,15 +234,15 @@ export const FlowPuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql
         return queriedCount
       }
 
-      const queriedFlowPuzzle = queried.value.map(async (row): Promise<FlowPuzzle[]> => {
-        const flowPuzzle = rowToFlowPuzzle(row)
+      const queriedPuzzle = queried.value.map(async (row): Promise<Puzzle[]> => {
+        const flowPuzzle = rowToPuzzle(row)
         if (!flowPuzzle) {
           return []
         }
         return [flowPuzzle]
       })
 
-      const awaited = await Promise.all(queriedFlowPuzzle)
+      const awaited = await Promise.all(queriedPuzzle)
 
       const flowPuzzles = awaited.flat()
 

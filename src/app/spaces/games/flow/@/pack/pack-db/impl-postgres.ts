@@ -3,16 +3,16 @@ import { p } from '~/@/core/parser'
 import { Sql } from '~/@/sql'
 import { UserId } from '~/app/@/data'
 import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
-import { FlowPuzzleId } from '../../puzzle/puzzle-id'
-import type { FlowPack } from '../pack'
-import { FlowPackId } from '../pack-id'
-import { FlowPackName } from '../pack-name'
-import type { IFlowPackDb, OrderClause, WhereClause } from './interface'
+import { PuzzleId } from '../../puzzle/puzzle-id'
+import type { Pack } from '../pack'
+import { PackId } from '../pack-id'
+import { PackName } from '../pack-name'
+import type { IPackDb, OrderClause, WhereClause } from './interface'
 
 const Row = p.obj({
-  flow_pack_id: FlowPackId,
-  flow_pack_name: FlowPackName,
-  flow_puzzle_ids: p.arr(FlowPuzzleId),
+  flow_pack_id: PackId,
+  flow_pack_name: PackName,
+  flow_puzzle_ids: p.arr(PuzzleId),
   created_at_posix: p.or(p.num, p.str),
   created_by_user_id: UserId,
   last_updated_at_posix: p.or(p.num, p.str),
@@ -23,7 +23,7 @@ const Row = p.obj({
 
 type Row = p.Infer<typeof Row>
 
-const rowToFlowPack = (row: Row): FlowPack | null => {
+const rowToPack = (row: Row): Pack | null => {
   return {
     createdAt: Posix.init(row.created_at_posix),
     createdBy: row.created_by_user_id,
@@ -73,13 +73,13 @@ const ensureNumber = (maybeNumber: unknown): number => {
   return 0
 }
 
-export const FlowPackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IFlowPackDb => {
+export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackDb => {
   return {
     async get(id) {
       const queried = await dbConnSql.query(Row, 'SELECT * FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id', {
         flow_pack_id: id
       })
-      return Result.mapOk(queried, (row) => (row[0] ? rowToFlowPack(row[0]) : null))
+      return Result.mapOk(queried, (row) => (row[0] ? rowToPack(row[0]) : null))
     },
 
     async count(input) {
@@ -129,7 +129,7 @@ export const FlowPackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IF
         return {
           ...input.pagination,
           items: rows.flatMap((row) => {
-            const pack = rowToFlowPack(row)
+            const pack = rowToPack(row)
             return pack ? [pack] : []
           }),
           total

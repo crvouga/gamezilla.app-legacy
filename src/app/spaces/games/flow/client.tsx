@@ -10,10 +10,10 @@ import { FlowClientCmd } from './@/client/cmd'
 import type { FlowClientCtx } from './@/client/ctx'
 import { FlowClientEvt } from './@/client/evt'
 import { CoverArt } from './@/cover-art'
-import { FlowPack } from './@/pack/pack'
-import { FlowPackId } from './@/pack/pack-id'
+import { Pack } from './@/pack/pack'
+import { PackId } from './@/pack/pack-id'
 import { PackListClient, PackListTypes } from './@/pack/pack-list'
-import { FlowPackName } from './@/pack/pack-name'
+import { PackName } from './@/pack/pack-name'
 import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import { PackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/client'
 import { PuzzleListClient, PuzzleListTypes } from './@/puzzle/puzzle-list'
@@ -165,10 +165,10 @@ const updatePackPuzzlesGrid: ClientModule['update'] = (input) => {
       pack: {
         createdAt: Posix.now(),
         createdBy: input.ctx.currentUserId,
-        id: FlowPackId.generate(),
+        id: PackId.generate(),
         lastUpdatedAt: Posix.now(),
         lastUpdatedBy: input.ctx.currentUserId,
-        name: unwrap(FlowPackName.parse('New Pack')),
+        name: unwrap(PackName.parse('New Pack')),
         puzzleIds: []
       }
     },
@@ -396,7 +396,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
     Sub.tag(
       'flow-pack-puzzles-grid',
       PackPuzzlesGridClient.subscriptions({
-        ctx: { ...ctx, pack: FlowPack.randomSync() },
+        ctx: { ...ctx, pack: Pack.randomSync() },
         model: input.model.packPuzzleGrid
       })
     )

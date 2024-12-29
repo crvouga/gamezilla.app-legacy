@@ -4,10 +4,10 @@ import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import { SpaceServerCtx } from '../../@/space-server-ctx'
 import { FlowServerCtx } from './@/server/ctx'
-import { FlowPackDb } from './@/pack/pack-db'
+import { PackDb } from './@/pack/pack-db'
 import { PackListServer } from './@/pack/pack-list'
 import { PackPuzzlesGridServer } from './@/pack/pack-puzzles-grid/server'
-import { FlowPuzzleDb } from './@/puzzle/puzzle-db'
+import { PuzzleDb } from './@/puzzle/puzzle-db'
 import { PuzzleListServer } from './@/puzzle/puzzle-list'
 import { BuilderServer } from './builder/server'
 import { PlayServer } from './play/server'
@@ -16,8 +16,8 @@ import type { ServerModule } from './types'
 export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
   return {
     ...input.ctx,
-    flowPuzzleDb: FlowPuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: Logger({ t: 'noop' }) }),
-    flowPackDb: FlowPackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql })
+    flowPuzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: Logger({ t: 'noop' }) }),
+    flowPackDb: PackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql })
   }
 }
 

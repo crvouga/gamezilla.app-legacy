@@ -3,19 +3,19 @@ import { AppServerModule } from '~/app/@/architecture/app-server'
 import { didSendToClient } from '~/app/@/server'
 import { randomAuthenticatedClient, type AuthenticatedClient } from '~/app/spaces/@/fixture/server'
 import { SpaceGameFixtureServer } from '~/app/spaces/games/@/testing/server'
-import { FlowPuzzle } from '../../puzzle/puzzle'
-import { FlowPuzzleDb } from '../../puzzle/puzzle-db'
-import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
+import { Puzzle } from '../../puzzle/puzzle'
+import { PuzzleDb } from '../../puzzle/puzzle-db'
+import type { PuzzleId } from '../../puzzle/puzzle-id'
 import { FlowServerCtx } from '../../server/ctx'
-import { FlowPack } from '../pack'
-import { FlowPackDb } from '../pack-db'
+import { Pack } from '../pack'
+import { PackDb } from '../pack-db'
 import { PackPuzzlesGridServer } from './server'
 
 const initial = () => {
   return {}
 }
 
-const userObversedGrid = (ctx: FlowServerCtx, client: AuthenticatedClient, puzzleIds: FlowPuzzleId[]) => () => {
+const userObversedGrid = (ctx: FlowServerCtx, client: AuthenticatedClient, puzzleIds: PuzzleId[]) => () => {
   return PackPuzzlesGridServer.update({
     ctx,
     deps: null,
@@ -32,16 +32,16 @@ const Fixture = async () => {
   const f = await SpaceGameFixtureServer()
   const ctx: FlowServerCtx = {
     ...f.ctx,
-    flowPackDb: FlowPackDb({
+    flowPackDb: PackDb({
       t: 'hash-map'
     }),
-    flowPuzzleDb: FlowPuzzleDb({
+    flowPuzzleDb: PuzzleDb({
       t: 'hash-map'
     })
   }
   const client = randomAuthenticatedClient()
-  const puzzle = await FlowPuzzle.random()
-  const somePack = await FlowPack.create({
+  const puzzle = await Puzzle.random()
+  const somePack = await Pack.create({
     createdBy: client.userId,
     now: f.ctx.now,
     puzzleIds: [puzzle.id]

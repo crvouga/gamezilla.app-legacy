@@ -1,8 +1,8 @@
 import { Err, isErr, Ok } from '~/@/core'
-import type { FlowPuzzle } from '../puzzle'
-import type { IFlowPuzzleDb } from './interface'
+import type { Puzzle } from '../puzzle'
+import type { IPuzzleDb } from './interface'
 
-const db = new Map<string, FlowPuzzle>()
+const db = new Map<string, Puzzle>()
 
 const calls = {
   get: 0,
@@ -14,7 +14,7 @@ const calls = {
 
 const ERROR_EVERY = Number.POSITIVE_INFINITY
 
-export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
+export const PuzzleDbHashMap = (): IPuzzleDb => {
   return {
     async get(id) {
       calls.get++

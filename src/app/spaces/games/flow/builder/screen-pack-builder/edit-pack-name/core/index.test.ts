@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Err, Ok } from '~/@/core'
 import { SpaceCoreFixture } from '~/app/spaces/@/fixture/core'
-import { FlowPack } from '../../../../@/pack/pack'
+import { Pack } from '../../../../@/pack/pack'
 import { EditPackNameCore } from '../core'
 import type { ModelCore, MsgCore } from '../types'
 
@@ -12,7 +12,7 @@ const Fixture = async () => {
     return msgs.reduce((model, msg) => EditPackNameCore.update({ ctx: f.ctx, modelCore: model, msgCore: msg }), init)
   }
 
-  const pack = await FlowPack.random()
+  const pack = await Pack.random()
 
   return {
     ...f,

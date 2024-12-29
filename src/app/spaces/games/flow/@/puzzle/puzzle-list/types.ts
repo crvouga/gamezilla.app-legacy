@@ -6,9 +6,9 @@ import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { FlowClientEvtIn } from '../../client/evt'
 import { FlowServerCtx } from '../../server/ctx'
-import type { FlowPuzzle } from '../puzzle'
+import type { Puzzle } from '../puzzle'
 import type { ListPuzzlesInput, ListPuzzlesOutput } from '../puzzle-db'
-import type { FlowPuzzleId } from '../puzzle-id'
+import type { PuzzleId } from '../puzzle-id'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 
@@ -35,7 +35,7 @@ export type ClientModule = AppClientModule<{
     fab: null
   }
   ViewEmit: {
-    clickedPuzzleItem: FlowPuzzle
+    clickedPuzzleItem: Puzzle
   }
 }>
 
@@ -56,7 +56,7 @@ export type ServerModule = AppServerModule<{
 
 export type ModelClient = {
   request: RequestResponse<string, null>
-  puzzles: { [id: FlowPuzzleId]: FlowPuzzle }
+  puzzles: { [id: PuzzleId]: Puzzle }
 }
 
 export const initClient: ModelClient = {

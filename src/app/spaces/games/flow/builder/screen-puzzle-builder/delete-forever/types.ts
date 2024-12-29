@@ -1,7 +1,7 @@
 import { NotAsked, Result, type RemoteResult } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { UserId } from '~/app/@/data'
-import { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
+import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 
 export type ModelClient = {
   puzzleDeleteForeverRequest: RemoteResult<string, null>
@@ -38,7 +38,7 @@ export type MsgServer = { t: 'noop' }
 export const MsgCore = p.obj({
   t: p.l('user-deleted-puzzle'),
   deleted: Result.parser(p.str, p.l(null)),
-  flowPuzzleId: FlowPuzzleId,
+  flowPuzzleId: PuzzleId,
   userId: UserId
 })
 export type MsgCore = p.Infer<typeof MsgCore>

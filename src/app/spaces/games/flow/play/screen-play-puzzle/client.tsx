@@ -10,7 +10,7 @@ import type { ClientModule } from '../types'
 import * as CopyPuzzleClient from './copy-puzzle/client'
 import { ScreenPlayPuzzleCore } from './core'
 import { LastPuzzleClient } from './last-puzzle/client'
-import { FlowPuzzleResult } from '../../@/puzzle/puzzle-result'
+import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -151,7 +151,7 @@ const View: ClientModule['View'] = (input) => {
             </>
           )}
 
-          {flowPuzzle.t === 'not-found' && <FlowPuzzleResult.ViewNotFound ctx={input.ctx} />}
+          {flowPuzzle.t === 'not-found' && <PuzzleResult.ViewNotFound ctx={input.ctx} />}
         </div>
       </LayoutGame>
     )
@@ -179,7 +179,7 @@ const View: ClientModule['View'] = (input) => {
           />
         )}
 
-        {flowPuzzle.t === 'not-found' && <FlowPuzzleResult.ViewNotFound ctx={input.ctx} />}
+        {flowPuzzle.t === 'not-found' && <PuzzleResult.ViewNotFound ctx={input.ctx} />}
 
         {isLastPuzzle ? (
           <LastPuzzleClient.View

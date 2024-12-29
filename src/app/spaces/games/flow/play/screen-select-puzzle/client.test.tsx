@@ -2,14 +2,14 @@ import { describe, expect, it, test } from 'bun:test'
 import { LamportTimestamp } from '~/@/lamport-clock'
 import { didPlaySound } from '~/app/@/client'
 import { EventId, withEventMeta } from '~/@/event-sourced/event'
-import { FlowPack } from '../../@/pack/pack'
-import { FlowPuzzle } from '../../@/puzzle/puzzle'
+import { Pack } from '../../@/pack/pack'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import { FixtureFlowPlayClient } from '../@/fixture.client'
 
 const Fixture = async () => {
   const f = await FixtureFlowPlayClient()
-  const puzzle = await FlowPuzzle.random()
-  const pack = await FlowPack.random({
+  const puzzle = await Puzzle.random()
+  const pack = await Pack.random({
     puzzleIds: [puzzle.id]
   })
   const initial = f.update(f.initial, [

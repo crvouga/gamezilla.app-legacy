@@ -1,7 +1,7 @@
 import { UserId } from '~/app/@/data'
 import { type RemoteResult, Result, NotAsked } from '~/@/core'
 import { p } from '~/@/core/parser'
-import { FlowPack } from '../../../@/pack/pack'
+import { Pack } from '../../../@/pack/pack'
 
 //
 //
@@ -36,7 +36,7 @@ export type MsgServer = {
 
 export type MsgToClient = {
   t: 'create-new-pack.created-pack'
-  created: Result<string, FlowPack>
+  created: Result<string, Pack>
 }
 
 //
@@ -47,7 +47,7 @@ export type MsgToClient = {
 
 export const MsgCore = p.obj({
   t: p.l('user-created-pack'),
-  created: Result.parser(p.str, FlowPack),
+  created: Result.parser(p.str, Pack),
   userId: UserId
 })
 

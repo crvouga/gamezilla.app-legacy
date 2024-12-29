@@ -1,12 +1,12 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Ok, Posix, Result, TimeSpan, ascend } from '~/@/core'
 import { UserId } from '~/app/@/data'
-import { FlowPuzzle } from '../puzzle'
-import { FlowPuzzleName } from '../puzzle-name'
-import { FlowPuzzleDbFixture } from './fixture'
+import { Puzzle } from '../puzzle'
+import { PuzzleName } from '../puzzle-name'
+import { PuzzleDbFixture } from './fixture'
 
 const Fixture = async () => {
-  const f = await FlowPuzzleDbFixture()
+  const f = await PuzzleDbFixture()
   return {
     ...f
   }
@@ -15,7 +15,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
   it('should be able to insert', async () => {
     const f = await Fixture()
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
     const inserted = await f.flowPuzzleDb.put(puzzle)
     expect(inserted.t).toBe('ok')
   })
@@ -23,7 +23,7 @@ describe(import.meta.file, () => {
   it('should be ok', async () => {
     const f = await Fixture()
 
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
     const before = await f.flowPuzzleDb.get(puzzle.id)
     const inserted = await f.flowPuzzleDb.put(puzzle)
     const after = await f.flowPuzzleDb.get(puzzle.id)
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
   it('should be able to insert puzzles', async () => {
     const f = await Fixture()
 
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
     const before = await f.flowPuzzleDb.get(puzzle.id)
     await f.flowPuzzleDb.put(puzzle)
     const after = await f.flowPuzzleDb.get(puzzle.id)
@@ -48,11 +48,11 @@ describe(import.meta.file, () => {
   it('should be able to list puzzles by created by', async () => {
     const f = await Fixture()
 
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
     await f.flowPuzzleDb.put(puzzle)
 
     for (let i = 0; i < 3; i++) {
-      await f.flowPuzzleDb.put(await FlowPuzzle.random())
+      await f.flowPuzzleDb.put(await Puzzle.random())
     }
 
     const listed = await f.flowPuzzleDb.list({
@@ -79,13 +79,13 @@ describe(import.meta.file, () => {
   it('should be able to list puzzles by id', async () => {
     const f = await Fixture()
 
-    const puzzleA = await FlowPuzzle.random()
+    const puzzleA = await Puzzle.random()
     await f.flowPuzzleDb.put(puzzleA)
-    const puzzleB = await FlowPuzzle.random()
+    const puzzleB = await Puzzle.random()
     await f.flowPuzzleDb.put(puzzleB)
 
     for (let i = 0; i < 1; i++) {
-      await f.flowPuzzleDb.put(await FlowPuzzle.random())
+      await f.flowPuzzleDb.put(await Puzzle.random())
     }
 
     const listed = await f.flowPuzzleDb.list({
@@ -117,13 +117,13 @@ describe(import.meta.file, () => {
     const createdBy = UserId.generate()
     for (let i = 0; i < EXPECTED_COUNT; i++) {
       await f.flowPuzzleDb.put(
-        await FlowPuzzle.random({
+        await Puzzle.random({
           createdBy
         })
       )
     }
     for (let i = 0; i < 1; i++) {
-      await f.flowPuzzleDb.put(await FlowPuzzle.random())
+      await f.flowPuzzleDb.put(await Puzzle.random())
     }
 
     const counted = await f.flowPuzzleDb.count({
@@ -138,11 +138,11 @@ describe(import.meta.file, () => {
 
   it('should paginate correctly', async () => {
     const f = await Fixture()
-    const puzzles: FlowPuzzle[] = []
+    const puzzles: Puzzle[] = []
     const createdBy = UserId.generate()
     let createdAt = Posix.now()
     for (let i = 0; i < 5; i++) {
-      const puzzle = await FlowPuzzle.random({
+      const puzzle = await Puzzle.random({
         createdBy,
         createdAt
       })
@@ -178,11 +178,11 @@ describe(import.meta.file, () => {
 
   it('should update existing record when upserting', async () => {
     const f = await Fixture()
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
     await f.flowPuzzleDb.put(puzzle)
     const updatedPuzzle = {
       ...puzzle,
-      name: await FlowPuzzleName.generate({
+      name: await PuzzleName.generate({
         count: 1
       })
     }
@@ -193,7 +193,7 @@ describe(import.meta.file, () => {
 
   it('should be able to zap records', async () => {
     const f = await Fixture()
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
     await f.flowPuzzleDb.put(puzzle)
     const before = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
     await f.flowPuzzleDb.zap({

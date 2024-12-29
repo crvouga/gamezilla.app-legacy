@@ -1,10 +1,10 @@
 import { isErr, Loading, NotAsked } from '~/@/core'
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
-import { FlowPack } from '../../../../@/pack/pack'
-import { FlowPackName } from '../../../../@/pack/pack-name'
+import { Pack } from '../../../../@/pack/pack'
+import { PackName } from '../../../../@/pack/pack-name'
 import type { ModelCore, MsgCore } from '../types'
 
-const init = (input: { pack: FlowPack }): ModelCore => {
+const init = (input: { pack: Pack }): ModelCore => {
   return {
     pack: input.pack,
     rollback: input.pack.name,
@@ -21,7 +21,7 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 }): TModel => {
   switch (input.msgCore.t) {
     case 'edit-pack-name.user-clicked-save-button': {
-      const parsed = FlowPackName.parse(input.modelCore.draft)
+      const parsed = PackName.parse(input.modelCore.draft)
 
       if (isErr(parsed)) {
         return input.modelCore

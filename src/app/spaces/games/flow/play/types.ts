@@ -12,9 +12,9 @@ import type { FlowClientCtx } from '../@/client/ctx'
 import { FlowClientEvtIn } from '../@/client/evt'
 import { FlowCoreEvent } from '../@/core/event'
 import { FlowServerCtx } from '../@/server/ctx'
-import { FlowPack } from '../@/pack/pack'
+import { Pack } from '../@/pack/pack'
 import type { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
-import { FlowPuzzleResult } from '../@/puzzle/puzzle-result'
+import { PuzzleResult } from '../@/puzzle/puzzle-result'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
 
 //
@@ -66,14 +66,14 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('user-clicked-open-pack-list-item'),
-    pack: FlowPack
+    pack: Pack
   }),
   p.obj({
     t: p.l('user-clicked-exit-pack-button')
   }),
   p.obj({
     t: p.l('user-clicked-open-puzzle-grid-item'),
-    flowPuzzle: FlowPuzzleResult,
+    flowPuzzle: PuzzleResult,
     puzzleIndex: p.num
   }),
   p.obj({
@@ -92,7 +92,7 @@ const Screen = p.or(
   }),
   p.obj({
     t: p.l('screen-select-puzzle'),
-    flowPack: FlowPack,
+    flowPack: Pack,
     slideIndex: p.num
   }),
   ScreenPuzzleTypes.ModelCore

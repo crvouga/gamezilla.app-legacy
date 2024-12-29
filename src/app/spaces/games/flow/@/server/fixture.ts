@@ -6,8 +6,8 @@ import { FlowCore } from '../../core'
 import { FlowServer } from '../../server'
 import { ModelCore } from '../../types'
 import type { FlowServerCtx } from './ctx'
-import { FlowPackDb } from '../pack/pack-db'
-import { FlowPuzzleDb } from '../puzzle/puzzle-db'
+import { PackDb } from '../pack/pack-db'
+import { PuzzleDb } from '../puzzle/puzzle-db'
 
 type Input = Parameters<typeof FlowServer.update>[0]
 
@@ -20,8 +20,8 @@ export const FixtureFlowServer = async () => {
   const ctx: FlowServerCtx = {
     ...f.ctx,
 
-    flowPackDb: FlowPackDb({ t: 'hash-map' }),
-    flowPuzzleDb: FlowPuzzleDb({ t: 'hash-map' })
+    flowPackDb: PackDb({ t: 'hash-map' }),
+    flowPuzzleDb: PuzzleDb({ t: 'hash-map' })
   }
 
   const updates = async (outputs: NonEmpty<Output>, inputs: Input[]): Promise<NonEmpty<Output>> => {

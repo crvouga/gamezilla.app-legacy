@@ -1,10 +1,7 @@
 import { IContentModeration } from '~/app/@/content-moderation/content-moderation'
-import { IFlowPuzzleDb } from './interface'
+import { IPuzzleDb } from './interface'
 
-export const WithContentModeration = (
-  flowPuzzleDb: IFlowPuzzleDb,
-  contentModeration: IContentModeration
-): IFlowPuzzleDb => {
+export const WithContentModeration = (flowPuzzleDb: IPuzzleDb, contentModeration: IContentModeration): IPuzzleDb => {
   contentModeration.isBad('test')
   return flowPuzzleDb
 }

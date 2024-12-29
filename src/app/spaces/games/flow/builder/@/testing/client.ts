@@ -6,11 +6,11 @@ import { testSpaceClientCtx } from '~/app/spaces/games/@/testing/client'
 import { Flow } from '../../../@/flow'
 import type { FlowClientCtx } from '../../../@/client/ctx'
 import { samples } from '../../../@/flow/flow-variant/flow-grid/flow-grid-samples'
-import { FlowPack } from '../../../@/pack/pack'
+import { Pack } from '../../../@/pack/pack'
 import { PackListTypes } from '../../../@/pack/pack-list'
 import { PackPuzzlesGridTypes } from '../../../@/pack/pack-puzzles-grid'
-import { FlowPuzzle } from '../../../@/puzzle/puzzle'
-import type { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
+import { Puzzle } from '../../../@/puzzle/puzzle'
+import type { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { PuzzleListTypes } from '../../../@/puzzle/puzzle-list'
 import { BuilderClient } from '../../client'
 import { BuilderCore } from '../../core'
@@ -142,7 +142,7 @@ export const clickedPackCreateNewButton = (ctx: FlowClientCtx) => (model: Builde
   })
 }
 
-export const userCreatedPack = (ctx: FlowClientCtx, pack: FlowPack) => (model: BuilderTypes.ModelClient) => {
+export const userCreatedPack = (ctx: FlowClientCtx, pack: Pack) => (model: BuilderTypes.ModelClient) => {
   return BuilderClient.update({
     model,
     ctx: ctx,
@@ -159,7 +159,7 @@ export const userCreatedPack = (ctx: FlowClientCtx, pack: FlowPack) => (model: B
   })
 }
 
-export const clickedPackItem = (ctx: FlowClientCtx, pack: FlowPack) => (model: BuilderTypes.ModelClient) => {
+export const clickedPackItem = (ctx: FlowClientCtx, pack: Pack) => (model: BuilderTypes.ModelClient) => {
   return BuilderClient.update({
     model,
     ctx: ctx,
@@ -210,7 +210,7 @@ export const closedPuzzlePickerDrawer = (ctx: FlowClientCtx) => (model: BuilderT
   })
 }
 
-export const clickedPuzzleListItem = (ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: BuilderTypes.ModelClient) => {
+export const clickedPuzzleListItem = (ctx: FlowClientCtx, puzzle: Puzzle) => (model: BuilderTypes.ModelClient) => {
   return BuilderClient.update({
     model,
     msg: {
@@ -276,7 +276,7 @@ export const puzzleBuilderPressDownRandomNode =
   }
 
 export const puzzleBuilderUserSavedChanges =
-  (ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: BuilderTypes.ModelClient) => {
+  (ctx: FlowClientCtx, puzzle: Puzzle) => (model: BuilderTypes.ModelClient) => {
     return BuilderClient.update({
       model,
       msgCore: {
@@ -293,24 +293,23 @@ export const puzzleBuilderUserSavedChanges =
     })
   }
 
-export const clickedPuzzlePickerItem =
-  (ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: BuilderTypes.ModelClient) => {
-    return BuilderClient.update({
-      model,
-      msg: {
-        t: 'got-msg-core',
-        c: {
-          t: 'screen-pack-builder.user-clicked-add-puzzle-item',
-          puzzle,
-          userId: ctx.currentUserId
-        }
-      },
-      ctx,
-      modelCore: BuilderCore.init({
-        ctx
-      })
+export const clickedPuzzlePickerItem = (ctx: FlowClientCtx, puzzle: Puzzle) => (model: BuilderTypes.ModelClient) => {
+  return BuilderClient.update({
+    model,
+    msg: {
+      t: 'got-msg-core',
+      c: {
+        t: 'screen-pack-builder.user-clicked-add-puzzle-item',
+        puzzle,
+        userId: ctx.currentUserId
+      }
+    },
+    ctx,
+    modelCore: BuilderCore.init({
+      ctx
     })
-  }
+  })
+}
 
 export const clickedExitPuzzleButton = (ctx: FlowClientCtx) => (model: BuilderTypes.ModelClient) => {
   return BuilderClient.update({
@@ -330,7 +329,7 @@ export const clickedExitPuzzleButton = (ctx: FlowClientCtx) => (model: BuilderTy
 }
 
 export const clickedPuzzleGridItem =
-  (ctx: FlowClientCtx, puzzle: FlowPuzzle, puzzleIndex: number) => (model: BuilderTypes.ModelClient) => {
+  (ctx: FlowClientCtx, puzzle: Puzzle, puzzleIndex: number) => (model: BuilderTypes.ModelClient) => {
     return BuilderClient.update({
       model,
       msg: {
@@ -348,7 +347,7 @@ export const clickedPuzzleGridItem =
     })
   }
 
-export const serverCreatedPack = (ctx: FlowClientCtx, pack: FlowPack) => (model: BuilderTypes.ModelClient) => {
+export const serverCreatedPack = (ctx: FlowClientCtx, pack: Pack) => (model: BuilderTypes.ModelClient) => {
   return BuilderClient.update({
     model,
     ctx: ctx,
@@ -362,8 +361,8 @@ export const serverCreatedPack = (ctx: FlowClientCtx, pack: FlowPack) => (model:
   })
 }
 
-export function createFlowPuzzle(ctx: SpaceClientCtx) {
-  return FlowPuzzle.create({
+export function createPuzzle(ctx: SpaceClientCtx) {
+  return Puzzle.create({
     count: 1,
     createdAt: ctx.now,
     createdBy: ctx.currentUserId,
@@ -371,8 +370,8 @@ export function createFlowPuzzle(ctx: SpaceClientCtx) {
   })
 }
 
-export function createFlowPack(ctx: SpaceClientCtx, puzzleIds: FlowPuzzleId[] = []) {
-  return FlowPack.create({
+export function createPack(ctx: SpaceClientCtx, puzzleIds: PuzzleId[] = []) {
+  return Pack.create({
     now: ctx.now,
     puzzleIds,
     count: 1,

@@ -15,8 +15,8 @@ import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { PackPuzzlesGridClient } from '../../../@/pack/pack-puzzles-grid/client'
 import { PackPuzzlesGridUI } from '../../../@/pack/pack-puzzles-grid/ui'
-import { FlowPuzzleResult } from '../../../@/puzzle/puzzle-result'
-import { FlowPuzzle } from '../../../@/puzzle/puzzle'
+import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
+import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleListClient } from '../../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../../types'
 import { ScreenPackBuilderCore } from '../core'
@@ -389,7 +389,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           return { model: input.model }
         }
 
-        const flowPuzzle: FlowPuzzle | null =
+        const flowPuzzle: Puzzle | null =
           input.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
           input.modelCore.screenPackBuilder.screen.puzzleResult.t === 'got'
             ? input.modelCore.screenPackBuilder.screen.puzzleResult.c
@@ -483,7 +483,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
               showSolvedAnimation
             />
           ) : (
-            <FlowPuzzleResult.ViewNotFound ctx={input.ctx} />
+            <PuzzleResult.ViewNotFound ctx={input.ctx} />
           )}
         </div>
 

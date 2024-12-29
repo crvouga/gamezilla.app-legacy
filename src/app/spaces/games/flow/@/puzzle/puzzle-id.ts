@@ -2,12 +2,12 @@ import { Uuid } from '~/@/core'
 import type { Brand } from '~/@/core/brand'
 import { p } from '~/@/core/parser'
 
-export type FlowPuzzleId = Brand<string, 'FlowPuzzleId'>
+export type PuzzleId = Brand<string, 'PuzzleId'>
 
 const namespace = 'flow-puzzle'
 const separator = ':'
 
-const is = (flowPuzzleId: unknown): flowPuzzleId is FlowPuzzleId => {
+const is = (flowPuzzleId: unknown): flowPuzzleId is PuzzleId => {
   return typeof flowPuzzleId === 'string'
 }
 
@@ -24,7 +24,7 @@ const generate = () => {
   throw new Error('impossible condition. generated invalid id.')
 }
 
-export const FlowPuzzleId = {
+export const PuzzleId = {
   ...parser,
   generate,
 

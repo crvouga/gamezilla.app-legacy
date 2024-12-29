@@ -1,6 +1,6 @@
 import type { VDom } from '~/@/vdom'
 import { IconPlus, Swiper } from '~/app/@/ui'
-import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
+import type { PuzzleId } from '../../puzzle/puzzle-id'
 
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6
@@ -21,8 +21,8 @@ const clampSlideIndex = (slideIndex: number, itemCount: number): number => {
 
 const ViewPackPuzzleGridSlide = (input: {
   slideIndex: number
-  puzzleIds: FlowPuzzleId[]
-  renderCell: (input: { x: number; y: number; index: number; puzzleId: FlowPuzzleId | null; empty: boolean }) => VDom
+  puzzleIds: PuzzleId[]
+  renderCell: (input: { x: number; y: number; index: number; puzzleId: PuzzleId | null; empty: boolean }) => VDom
 }) => {
   const columns: VDom[] = []
   const indexOffset = input.slideIndex * (COLUMN_COUNT * ROW_COUNT)
@@ -73,8 +73,8 @@ const View = (input: {
   id: string
   slideIndex: number
   onSlideIndexChanged: (index: number) => void
-  puzzleIds: FlowPuzzleId[]
-  renderCell: (input: { x: number; y: number; empty: boolean; puzzleId: FlowPuzzleId | null; index: number }) => VDom
+  puzzleIds: PuzzleId[]
+  renderCell: (input: { x: number; y: number; empty: boolean; puzzleId: PuzzleId | null; index: number }) => VDom
 }) => {
   const slides: VDom[] = []
 

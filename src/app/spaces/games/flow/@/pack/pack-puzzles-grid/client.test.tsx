@@ -2,22 +2,22 @@ import { describe, expect, it } from 'bun:test'
 import { Posix, RequestResponse, TimeSpan } from '~/@/core'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
-import { FlowPuzzle } from '../../puzzle/puzzle'
-import { FlowPack } from '../pack'
+import { Puzzle } from '../../puzzle/puzzle'
+import { Pack } from '../pack'
 import { PackPuzzlesGridClient } from './client'
-import type { FlowPackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
+import type { PackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
 
 type Input = {
-  ctx?: FlowPackGridClientCtx
+  ctx?: PackGridClientCtx
   msg?: MsgClient
   msgServer?: MsgToClient
 }
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
-  const puzzle = await FlowPuzzle.random({ createdBy: f.ctx.currentUserId })
-  const pack = await FlowPack.random({ puzzleIds: [puzzle.id], createdBy: f.ctx.currentUserId })
-  const ctx: FlowPackGridClientCtx = {
+  const puzzle = await Puzzle.random({ createdBy: f.ctx.currentUserId })
+  const pack = await Pack.random({ puzzleIds: [puzzle.id], createdBy: f.ctx.currentUserId })
+  const ctx: PackGridClientCtx = {
     ...f.ctx,
     pack
   }
@@ -67,7 +67,7 @@ const Fixture = async () => {
   }
 }
 
-const msgServerListedByPuzzlesByIdOk = (puzzles: FlowPuzzle[]): Input => ({
+const msgServerListedByPuzzlesByIdOk = (puzzles: Puzzle[]): Input => ({
   msgServer: {
     t: 'listed-puzzles-by-id',
     listed: {

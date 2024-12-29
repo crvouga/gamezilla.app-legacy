@@ -4,7 +4,7 @@ import { Translator } from '~/@/l18n/generated'
 import { APP_SOUND, AppClientCmd, playSound, showToast } from '~/app/@/client'
 import { IconCheckmark, Transition } from '~/app/@/ui'
 import { ActionInput, Actions } from '~/app/@/ui/actions'
-import type { FlowPuzzle } from '../../puzzle/puzzle'
+import type { Puzzle } from '../../puzzle/puzzle'
 import { FlowAlgoDrawPipes } from '../flow-algo/flow-algo-draw-pipes'
 import { FlowAlgoSolve } from '../flow-algo/flow-algo-solve'
 import { FlowHint } from './flow-hint'
@@ -24,10 +24,10 @@ import { FlowTerminal } from '../flow/flow-terminal'
 //
 
 export type Ctx = FlowHint.Ctx & {
-  flowPuzzle: FlowPuzzle
+  flowPuzzle: Puzzle
 }
 
-export const initCtx = <TCtx,>(input: { flowPuzzle: FlowPuzzle } & TCtx): Ctx & TCtx => {
+export const initCtx = <TCtx,>(input: { flowPuzzle: Puzzle } & TCtx): Ctx & TCtx => {
   return {
     ...input,
     ...FlowHint.initCtx({ flowPuzzle: input.flowPuzzle }),
@@ -95,7 +95,7 @@ export const toStatus = (input: { flow: FlowVariant.Model; model: Model }) => {
   return 'solving'
 }
 
-export const random = (input: { flowPuzzle: FlowPuzzle }): Model => {
+export const random = (input: { flowPuzzle: Puzzle }): Model => {
   const initial = init({ ctx: initCtx({ ...input }) })
 
   const terminal = Flow.randomTerminal(input.flowPuzzle.flow)
@@ -641,7 +641,7 @@ export const View = (input: {
 export const viewHintAction = FlowHint.viewUseHintAction
 
 export const viewResetAction = (input: {
-  flowPuzzle: FlowPuzzle
+  flowPuzzle: Puzzle
   model: Model
   dispatch: (m: Msg) => void
   ctx: {

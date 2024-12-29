@@ -1,11 +1,11 @@
 import type { ClientCmdTypes } from '~/app/@/client'
 import { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
-import { FlowPack } from '../pack/pack'
-import { FlowPackId } from '../pack/pack-id'
+import { Pack } from '../pack/pack'
+import { PackId } from '../pack/pack-id'
 import { PackListTypes } from '../pack/pack-list'
 import { PackPuzzlesGridTypes } from '../pack/pack-puzzles-grid'
-import { FlowPuzzle } from '../puzzle/puzzle'
-import { FlowPuzzleId } from '../puzzle/puzzle-id'
+import { Puzzle } from '../puzzle/puzzle'
+import { PuzzleId } from '../puzzle/puzzle-id'
 import { PuzzleListTypes } from '../puzzle/puzzle-list'
 import { FlowId } from '../flow/flow/flow-id'
 import { Flow } from '../flow/flow'
@@ -18,21 +18,21 @@ export type FlowClientCmd<T extends ClientCmdTypes> =
   | {
       t: 'flow.new-puzzles'
       puzzles: {
-        [puzzleId: FlowPuzzleId]: FlowPuzzle
+        [puzzleId: PuzzleId]: Puzzle
       }
       causedBy: unknown
     }
   | {
       t: 'flow.remove-puzzles'
       puzzles: {
-        [puzzleId: FlowPuzzleId]: FlowPuzzleId
+        [puzzleId: PuzzleId]: PuzzleId
       }
       causedBy: unknown
     }
   | {
       t: 'flow.new-packs'
       packs: {
-        [packId: FlowPackId]: FlowPack
+        [packId: PackId]: Pack
       }
       causedBy: unknown
     }

@@ -9,12 +9,12 @@ import { GameMainMenu } from '../@/game/game-main-menu'
 import { FlowClientCmd, FlowClientCmdLocal } from './@/client/cmd'
 import { FlowClientEvtIn } from './@/client/evt'
 import { FlowServerCtx } from './@/server/ctx'
-import { FlowPack } from './@/pack/pack'
-import type { FlowPackId } from './@/pack/pack-id'
+import { Pack } from './@/pack/pack'
+import type { PackId } from './@/pack/pack-id'
 import { PackListTypes } from './@/pack/pack-list'
 import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
-import type { FlowPuzzle } from './@/puzzle/puzzle'
-import type { FlowPuzzleId } from './@/puzzle/puzzle-id'
+import type { Puzzle } from './@/puzzle/puzzle'
+import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderTypes } from './builder'
 import { PlayTypes } from './play'
@@ -29,10 +29,10 @@ import { Flow } from './@/flow'
 
 export type ModelClient = {
   puzzles: {
-    [puzzleId: FlowPuzzleId]: FlowPuzzle
+    [puzzleId: PuzzleId]: Puzzle
   }
   packs: {
-    [packId: FlowPackId]: FlowPack
+    [packId: PackId]: Pack
   }
   solutions: {
     [flowId: FlowId]: Flow.Model[]

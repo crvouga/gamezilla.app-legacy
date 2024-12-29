@@ -1,8 +1,8 @@
 import { isErr, RequestResponse, Result } from '~/@/core'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from '~/app/@/client'
-import { FlowPuzzleId } from '../../puzzle/puzzle-id'
-import { FlowPack } from '../pack'
+import { PuzzleId } from '../../puzzle/puzzle-id'
+import { Pack } from '../pack'
 import { ClientModule, initClient, type ModelClient, type MsgInCmdClient } from './types'
 
 const update: ClientModule['update'] = (input) => {
@@ -141,7 +141,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
   return subscriptionsRequest(input)
 }
 
-const load = (pack: FlowPack): MsgInCmdClient => {
+const load = (pack: Pack): MsgInCmdClient => {
   return {
     t: 'flow-pack-puzzles-grid',
     c: {
@@ -154,7 +154,7 @@ const load = (pack: FlowPack): MsgInCmdClient => {
 const isLoading = (model: ModelClient): boolean =>
   RequestResponse.isRequesting(model.request) || model.request.t === 'not-asked'
 
-const shouldShowLoading = (model: ModelClient, puzzleIds: FlowPuzzleId[]): boolean => {
+const shouldShowLoading = (model: ModelClient, puzzleIds: PuzzleId[]): boolean => {
   return isLoading(model) && puzzleIds.every((puzzleId) => !(puzzleId in model.puzzles))
 }
 

@@ -4,7 +4,7 @@ import { ScreenPlayPuzzleCore } from './core'
 import { MsgCoreEvt } from './types'
 import { UserActivity } from '../@/user-activity/user-activity'
 import { Posix } from '~/@/core'
-import { FlowPuzzleId } from '../../@/puzzle/puzzle-id'
+import { PuzzleId } from '../../@/puzzle/puzzle-id'
 
 const update: ServerModule['update'] = async (input) => {
   return andThen(
@@ -15,7 +15,7 @@ const update: ServerModule['update'] = async (input) => {
 }
 
 export const msgCoreToUserActivity = (
-  input: MsgCoreEvt & { puzzleId: FlowPuzzleId; happenedAt: Posix }
+  input: MsgCoreEvt & { puzzleId: PuzzleId; happenedAt: Posix }
 ): UserActivity[] => {
   switch (input.t) {
     case 'user-completed-puzzle': {

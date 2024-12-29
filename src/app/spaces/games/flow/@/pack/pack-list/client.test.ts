@@ -4,7 +4,7 @@ import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import type { FlowClientCtx } from '../../client/ctx'
-import { FlowPack } from '../pack'
+import { Pack } from '../pack'
 import { PackListClient } from './client'
 import { initClient, type ModelClient } from './types'
 
@@ -36,7 +36,7 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
 }
 
 const serverListedPacksOk =
-  (ctx: FlowClientCtx, ...packs: FlowPack[]) =>
+  (ctx: FlowClientCtx, ...packs: Pack[]) =>
   (model: ModelClient) => {
     return PackListClient.update({
       ctx: ctx,
@@ -85,7 +85,7 @@ describe(import.meta.file, () => {
 
   it('should add packs listed from server', async () => {
     const ctx = await testFlowClientCtx()
-    const pack = await FlowPack.create({
+    const pack = await Pack.create({
       createdBy: ctx.currentUserId,
       now: ctx.now,
       puzzleIds: []

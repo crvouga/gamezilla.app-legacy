@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { LamportTimestamp } from '~/@/lamport-clock'
 import { didPlaySound } from '~/app/@/client'
 import { EventId, withEventMeta } from '~/@/event-sourced/event'
-import { FlowPack } from '../../@/pack/pack'
+import { Pack } from '../../@/pack/pack'
 import { PackListClient } from '../../@/pack/pack-list'
 import { FixtureFlowPlayClient } from '../@/fixture.client'
 
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
 
   it('should show pack screen after opening pack', async () => {
     const f = await Fixture()
-    const pack = await FlowPack.random()
+    const pack = await Pack.random()
     const updated = f.update(f.initial, [
       {
         msg: {
@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
 
   it('should make a sound when opening a pack', async () => {
     const f = await Fixture()
-    const pack = await FlowPack.random()
+    const pack = await Pack.random()
     const updated = f.update(f.initial, [
       {
         msgCore: {

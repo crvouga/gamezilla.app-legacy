@@ -3,7 +3,7 @@ import { Err } from '~/@/core'
 import { withEventId } from '~/@/event-sourced/event'
 import { didShowErrorSm } from '~/app/@/client'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
-import { FlowPack } from '../../../../@/pack/pack'
+import { Pack } from '../../../../@/pack/pack'
 import { EditPackNameClient } from '../client'
 import { EditPackNameCore } from '../core'
 import type { MsgCore } from '../types'
@@ -11,7 +11,7 @@ import type { MsgCore } from '../types'
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
 
-  const pack = await FlowPack.random()
+  const pack = await Pack.random()
 
   const modelCore = EditPackNameCore.init({ pack })
   const model = null

@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'bun:test'
 import { didPlaySound } from '~/app/@/client'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { FlowPack } from '../../@/pack/pack'
+import { Pack } from '../../@/pack/pack'
 import { FixtureFlowBuilderClient } from '../@/testing/client'
 
 describe(import.meta.file, () => {
   test('open pack builder', async () => {
     const f = await FixtureFlowBuilderClient()
-    const pack = await FlowPack.random({
+    const pack = await Pack.random({
       createdBy: f.ctx.currentUserId
     })
     const output = f.update(f.init, [
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
 
   test('play sound', async () => {
     const f = await FixtureFlowBuilderClient()
-    const pack = await FlowPack.random({
+    const pack = await Pack.random({
       createdBy: f.ctx.currentUserId
     })
     const output = f.update(f.init, [

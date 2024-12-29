@@ -5,22 +5,22 @@ import { AppServerModule } from '~/app/@/architecture/app-server'
 import { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { FlowClientEvtIn } from '../../client/evt'
-import type { FlowPuzzle } from '../../puzzle/puzzle'
+import type { Puzzle } from '../../puzzle/puzzle'
 import { ListPuzzlesOutput } from '../../puzzle/puzzle-db'
-import type { FlowPuzzleId } from '../../puzzle/puzzle-id'
+import type { PuzzleId } from '../../puzzle/puzzle-id'
 import { FlowServerCtx } from '../../server/ctx'
-import type { FlowPack } from '../pack'
+import type { Pack } from '../pack'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
-import { FlowPackId } from '../pack-id'
+import { PackId } from '../pack-id'
 
 export type ModelClient = {
   request: RequestResponse<string, null>
   requests: {
-    [packId: FlowPackId]: RequestResponse<string, null>
+    [packId: PackId]: RequestResponse<string, null>
   }
   puzzles: {
-    [puzzleId: FlowPuzzleId]: FlowPuzzle
+    [puzzleId: PuzzleId]: Puzzle
   }
 }
 
@@ -52,7 +52,7 @@ export type MsgToClient = {
 
 export type MsgToServer = {
   t: 'list-puzzles-by-id'
-  puzzleIds: FlowPuzzleId[]
+  puzzleIds: PuzzleId[]
   causedBy: unknown
 }
 
@@ -60,16 +60,16 @@ export type MsgInCmdClient = {
   t: 'flow-pack-puzzles-grid'
   c: {
     t: 'load'
-    pack: FlowPack
+    pack: Pack
   }
 }
 
-export type FlowPackGridClientCtx = SpaceClientCtx & {
-  pack: FlowPack
+export type PackGridClientCtx = SpaceClientCtx & {
+  pack: Pack
 }
 
 export type ClientModule = AppClientModule<{
-  Ctx: FlowPackGridClientCtx
+  Ctx: PackGridClientCtx
   Model: ModelClient
   Msg: MsgClient
   MsgEvtIn: FlowClientEvtIn

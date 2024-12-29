@@ -1,19 +1,19 @@
 import { Uuid } from '~/@/core'
 import { p } from '~/@/core/parser'
 
-const parser = p.brand(p.str, 'FlowPackId')
+const parser = p.brand(p.str, 'PackId')
 
-export type FlowPackId = p.Infer<typeof parser>
+export type PackId = p.Infer<typeof parser>
 
 const generate = () => {
-  return `flow-pack:${Uuid.generate()}` as FlowPackId
+  return `flow-pack:${Uuid.generate()}` as PackId
 }
 
-const is = (flowPackId: unknown): flowPackId is FlowPackId => {
+const is = (flowPackId: unknown): flowPackId is PackId => {
   return typeof flowPackId === 'string'
 }
 
-export const FlowPackId = {
+export const PackId = {
   ...parser,
   is,
   generate

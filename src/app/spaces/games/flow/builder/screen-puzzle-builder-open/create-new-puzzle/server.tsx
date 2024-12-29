@@ -2,7 +2,7 @@ import { Result, isErr } from '~/@/core'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
 import { FlowVariant, FlowVariantDimensions } from '../../../@/flow'
-import { FlowPuzzle } from '../../../@/puzzle/puzzle'
+import { Puzzle } from '../../../@/puzzle/puzzle'
 import type { ServerModule } from '../../types'
 import type { MsgCore } from './types'
 
@@ -27,7 +27,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
 
       const count = Result.unwrapOr(counted, 0)
 
-      const puzzleNew = await FlowPuzzle.create({
+      const puzzleNew = await Puzzle.create({
         count: count,
         createdAt: input.ctx.now,
         createdBy: input.msgClient.userId,

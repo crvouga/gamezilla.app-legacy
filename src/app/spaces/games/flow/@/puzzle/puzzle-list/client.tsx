@@ -4,7 +4,7 @@ import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
 import { Posix, RequestResponse, Result, TimeSpan, descend, isErr } from '~/@/core'
-import type { FlowPuzzle } from '../puzzle'
+import type { Puzzle } from '../puzzle'
 import type { ClientModule, MsgInCmdClient } from './types'
 import { FlowVariantUI } from '../../flow/flow-variant'
 
@@ -147,7 +147,7 @@ const View: ClientModule['View'] = (input) => {
   )
 }
 
-const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: FlowPuzzle; onClick: () => void }) => {
+const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Puzzle; onClick: () => void }) => {
   return (
     <button
       key={puzzle.id}

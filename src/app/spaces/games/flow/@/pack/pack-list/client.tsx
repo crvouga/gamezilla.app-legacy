@@ -3,7 +3,7 @@ import { AppClientModule } from '~/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from '~/app/@/client'
 import { IconBox, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
-import type { FlowPack } from '../pack'
+import type { Pack } from '../pack'
 import { initClient, MsgInCmdClient, type ClientModule, type ModelClient } from './types'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
@@ -93,7 +93,7 @@ const updateList: ClientModule['update'] = (input) => {
 
   switch (input.msgServer?.t) {
     case 'listed-packs': {
-      const packs: FlowPack[] = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
+      const packs: Pack[] = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
 
       const packsNew = packs.reduce((acc, puzzle) => {
         acc[puzzle.id] = puzzle
@@ -157,7 +157,7 @@ const PackListItem = ({
   ctx: {
     now: Posix
   }
-  pack: FlowPack
+  pack: Pack
   onClick: () => void
 }) => {
   return (

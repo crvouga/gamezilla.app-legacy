@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from '~/@/core'
 import { withEventId, withEventMeta } from '~/@/event-sourced/event'
-import { FlowPack } from '../../@/pack/pack'
-import { FlowPuzzle } from '../../@/puzzle/puzzle'
+import { Pack } from '../../@/pack/pack'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import { FlowCreateFixtureServer } from '../@/testing/server'
 import type { ModelCore, MsgCore } from '../types'
 import { ScreenPackBuilderCore } from './core'
@@ -10,8 +10,8 @@ import { ScreenPackBuilderServer } from './server'
 
 const Fixture = async () => {
   const f = await FlowCreateFixtureServer()
-  const puzzle = await FlowPuzzle.random()
-  const pack = await FlowPack.random({
+  const puzzle = await Puzzle.random()
+  const pack = await Pack.random({
     createdBy: puzzle.createdBy,
     puzzleIds: [puzzle.id]
   })
@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
   it('should save pack after user adds a new puzzle', async () => {
     const f = await Fixture()
 
-    const puzzle = await FlowPuzzle.random()
+    const puzzle = await Puzzle.random()
 
     const msgCore = withEventId<MsgCore>({
       t: 'screen-pack-builder.user-clicked-add-puzzle-item',

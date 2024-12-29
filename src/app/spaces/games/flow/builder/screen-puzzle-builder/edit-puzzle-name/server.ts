@@ -2,9 +2,9 @@ import { Err, isErr } from '~/@/core'
 import type { UserId } from '~/app/@/data'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
-import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
-import type { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
-import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
+import type { Puzzle } from '../../../@/puzzle/puzzle'
+import type { PuzzleId } from '../../../@/puzzle/puzzle-id'
+import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import { FlowServerCtx } from '../../../@/server/ctx'
 import type { ServerModule } from '../../types'
 import type { MsgCore } from './types'
@@ -38,12 +38,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
   }
 }
 
-const patchName = async (input: {
-  flowPuzzleId: FlowPuzzleId
-  newName: string
-  userId: UserId
-  ctx: FlowServerCtx
-}) => {
+const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userId: UserId; ctx: FlowServerCtx }) => {
   const { flowPuzzleId, newName, userId, ctx } = input
 
   const result = await ctx.flowPuzzleDb.get(flowPuzzleId)
@@ -64,11 +59,11 @@ const patchName = async (input: {
 
   const newNameFinal = typeof newName === 'string' && newName.length > 0 ? newName : puzzle.name
 
-  if (!FlowPuzzleName.is(newNameFinal)) {
+  if (!PuzzleName.is(newNameFinal)) {
     return Err('Invalid name')
   }
 
-  const patched: FlowPuzzle = {
+  const patched: Puzzle = {
     ...puzzle,
     name: newNameFinal,
     lastUpdatedBy: userId

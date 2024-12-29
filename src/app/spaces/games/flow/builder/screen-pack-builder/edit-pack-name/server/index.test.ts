@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from '~/@/core'
 import { withEventId, withEventMeta } from '~/@/event-sourced/event'
-import { FlowPack } from '../../../../@/pack/pack'
+import { Pack } from '../../../../@/pack/pack'
 import { FlowCreateFixtureServer } from '../../../@/testing/server'
 import { EditPackNameCore } from '../core'
 import { EditPackNameServer } from '../server'
 
 const Fixture = async () => {
   const f = await FlowCreateFixtureServer()
-  const pack = await FlowPack.random()
+  const pack = await Pack.random()
   await f.ctx.flowPackDb.put(pack)
   const modelCore = EditPackNameCore.init({ pack })
 

@@ -2,10 +2,10 @@ import { Result } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { UserId } from '~/app/@/data'
 import { FlowPlay } from '../../@/flow/flow-play'
-import { FlowPack } from '../../@/pack/pack'
+import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
-import { FlowPuzzleResult } from '../../@/puzzle/puzzle-result'
-import { FlowPuzzle } from '../../@/puzzle/puzzle'
+import { PuzzleResult } from '../../@/puzzle/puzzle-result'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import { EditPackNameTypes } from './edit-pack-name'
 
 //
@@ -71,7 +71,7 @@ export const Screen = p.or(
   p.obj({
     t: p.l('screen-puzzle'),
     puzzleIndex: p.num,
-    puzzleResult: FlowPuzzleResult,
+    puzzleResult: PuzzleResult,
     play: p.maybe(FlowPlay.Model),
     opened: p.maybe(p.l('more'))
   })
@@ -80,14 +80,14 @@ export const Screen = p.or(
 type Screen = p.Infer<typeof Screen>
 
 export const ModelCore = p.obj({
-  pack: FlowPack,
+  pack: Pack,
   screen: Screen,
   slideIndex: p.num,
   editPackName: EditPackNameTypes.ModelCore
 })
 
 export type ModelCore = {
-  pack: FlowPack
+  pack: Pack
   screen: Screen
   slideIndex: number
   editPackName: EditPackNameTypes.ModelCore
@@ -100,7 +100,7 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('screen-pack-builder.saved-pack'),
-    saved: Result.parser(p.str, FlowPack)
+    saved: Result.parser(p.str, Pack)
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-opened-add-puzzle-screen'),
@@ -111,12 +111,12 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-clicked-add-puzzle-item'),
-    puzzle: FlowPuzzle,
+    puzzle: Puzzle,
     userId: UserId
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-clicked-pack-item'),
-    puzzleResult: FlowPuzzleResult,
+    puzzleResult: PuzzleResult,
     puzzleIndex: p.num
   }),
   p.obj({
@@ -135,12 +135,12 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle'),
     userId: UserId,
-    nextPuzzleResult: FlowPuzzleResult
+    nextPuzzleResult: PuzzleResult
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button'),
     userId: UserId,
-    previousPuzzleResult: FlowPuzzleResult
+    previousPuzzleResult: PuzzleResult
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-more-button'),

@@ -1,7 +1,7 @@
 import { NotAsked, Posix, type RemoteResult, Result } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { UserId } from '~/app/@/data'
-import { FlowPuzzle } from '../../../@/puzzle/puzzle'
+import { Puzzle } from '../../../@/puzzle/puzzle'
 
 //
 //
@@ -36,7 +36,7 @@ export type MsgToServer = { t: 'create-new-puzzle.user-clicked-create-button' }
 
 export type MsgToClient = {
   t: 'created-puzzle'
-  created: Result<string, FlowPuzzle>
+  created: Result<string, Puzzle>
 }
 
 //
@@ -47,7 +47,7 @@ export type MsgToClient = {
 
 export const MsgCore = p.obj({
   t: p.l('create-new-puzzle.user-created-puzzle'),
-  created: Result.parser(p.str, FlowPuzzle),
+  created: Result.parser(p.str, Puzzle),
   userId: UserId
 })
 export type MsgCore = p.Infer<typeof MsgCore>

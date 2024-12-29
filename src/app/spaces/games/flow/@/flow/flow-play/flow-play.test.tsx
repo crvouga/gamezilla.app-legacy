@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { FlowPlay } from '.'
-import { FlowPuzzle } from '../../puzzle/puzzle'
+import { Puzzle } from '../../puzzle/puzzle'
 import { Flow } from '../flow'
 import type { FlowVariant } from '../flow-variant'
 import { FlowGrid } from '../flow-variant/flow-grid'
@@ -8,11 +8,11 @@ import { FlowGridShorthand } from '../flow-variant/flow-grid/flow-grid-shorthand
 import { toStatus } from './flow-play'
 
 const Fixture = async ({ ctxFlow }: { ctxFlow: FlowVariant.Model }) => {
-  const ctxFlowPuzzle = await FlowPuzzle.random({
+  const ctxPuzzle = await Puzzle.random({
     flow: ctxFlow
   })
   const ctx: FlowPlay.Ctx = FlowPlay.initCtx({
-    flowPuzzle: ctxFlowPuzzle
+    flowPuzzle: ctxPuzzle
   })
 
   const init = FlowPlay.init({ ctx })

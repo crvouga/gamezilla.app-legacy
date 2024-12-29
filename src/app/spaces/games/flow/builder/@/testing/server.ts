@@ -1,7 +1,7 @@
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { SpaceGameFixtureServer } from '../../../../@/testing/server'
-import { FlowPackDb } from '../../../@/pack/pack-db'
-import { FlowPuzzleDb } from '../../../@/puzzle/puzzle-db'
+import { PackDb } from '../../../@/pack/pack-db'
+import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { initServer } from '../../types'
 import { BuilderCore } from '../../core'
 import { Logger } from '~/app/@/server/logger'
@@ -19,11 +19,11 @@ export const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
     case 'integration': {
       return {
         ...ctx,
-        flowPackDb: FlowPackDb({
+        flowPackDb: PackDb({
           t: 'db-conn-sql',
           dbConnSql: testEnv.dbConnSql
         }),
-        flowPuzzleDb: FlowPuzzleDb({
+        flowPuzzleDb: PuzzleDb({
           t: 'db-conn-sql',
           dbConnSql: testEnv.dbConnSql,
           logger: Logger({
@@ -35,10 +35,10 @@ export const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
     case 'unit': {
       return {
         ...ctx,
-        flowPackDb: FlowPackDb({
+        flowPackDb: PackDb({
           t: 'hash-map'
         }),
-        flowPuzzleDb: FlowPuzzleDb({
+        flowPuzzleDb: PuzzleDb({
           t: 'hash-map'
         })
       }

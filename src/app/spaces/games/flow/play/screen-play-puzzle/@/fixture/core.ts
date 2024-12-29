@@ -2,24 +2,24 @@ import { NonEmpty, pipe } from '~/@/core'
 import { UserId } from '~/app/@/data'
 import type { FlowVariant } from '../../../../@/flow'
 import { FlowPlay } from '../../../../@/flow/flow-play'
-import { FlowPack } from '../../../../@/pack/pack'
-import { FlowPuzzleResult } from '../../../../@/puzzle/puzzle-result'
-import { FlowPuzzle } from '../../../../@/puzzle/puzzle'
+import { Pack } from '../../../../@/pack/pack'
+import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
+import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { CoreFixture } from '../../../@/fixture.core'
 import { ScreenPlayPuzzleCore } from '../../core'
 import type { ModelCore, MsgCore } from '../../types'
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.Model }) => {
   const f = await CoreFixture()
-  const puzzle = await FlowPuzzle.random(input)
+  const puzzle = await Puzzle.random(input)
   const puzzleIndex = 1
-  const prevPuzzle = await FlowPuzzle.random()
-  const prevPuzzleResult: FlowPuzzleResult = { t: 'got', c: prevPuzzle }
+  const prevPuzzle = await Puzzle.random()
+  const prevPuzzleResult: PuzzleResult = { t: 'got', c: prevPuzzle }
   const prevPuzzleIndex = 0
-  const nextPuzzle = await FlowPuzzle.random()
-  const nextPuzzleResult: FlowPuzzleResult = { t: 'got', c: nextPuzzle }
+  const nextPuzzle = await Puzzle.random()
+  const nextPuzzleResult: PuzzleResult = { t: 'got', c: nextPuzzle }
   const nextPuzzleIndex = 2
-  const pack = await FlowPack.random({
+  const pack = await Pack.random({
     puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id]
   })
 

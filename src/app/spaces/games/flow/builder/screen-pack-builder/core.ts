@@ -1,12 +1,12 @@
 import { isErr } from '~/@/core'
-import { FlowPack } from '../../@/pack/pack'
+import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { UpdateCore } from '../types'
 import { EditPackNameCore } from './edit-pack-name/core'
 import type { ModelCore } from './types'
 import { FlowPlay } from '../../@/flow/flow-play'
 
-const init = ({ pack }: { pack: FlowPack }): ModelCore => {
+const init = ({ pack }: { pack: Pack }): ModelCore => {
   return {
     editPackName: EditPackNameCore.init({ pack }),
     pack,
@@ -59,7 +59,7 @@ updates.push(({ modelCore, msgCore }) => {
         ...modelCore,
         screenPackBuilder: {
           ...modelCore.screenPackBuilder,
-          pack: FlowPack.add(modelCore.screenPackBuilder.pack, msgCore.puzzle.id),
+          pack: Pack.add(modelCore.screenPackBuilder.pack, msgCore.puzzle.id),
           screen: {
             t: 'screen-puzzle-grid',
             slideIndex: 0
@@ -410,7 +410,7 @@ updates.push(({ modelCore, msgCore }) => {
 
       const pack = modelCore.screenPackBuilder.pack
 
-      const packNew = FlowPack.remove(pack, msgCore.puzzleIndex)
+      const packNew = Pack.remove(pack, msgCore.puzzleIndex)
 
       return {
         ...modelCore,

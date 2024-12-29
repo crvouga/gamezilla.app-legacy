@@ -3,7 +3,7 @@ import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-
 import { didPlaySound, didShowToast } from '~/app/@/client'
 import {
   clickedPackCreateNewButton,
-  createFlowPack,
+  createPack,
   FixtureFlowBuilderClient,
   initial,
   testFlowClientCtx,
@@ -26,7 +26,7 @@ describe(import.meta.file, () => {
 
   it('should play a sound after user created a pack', async () => {
     const ctx = await testFlowClientCtx()
-    const pack = await createFlowPack(ctx)
+    const pack = await createPack(ctx)
     const output = GameClientModule.andThen(initial, userCreatedPack(ctx, pack))
 
     expect(didPlaySound(output)).toBe(true)
@@ -34,7 +34,7 @@ describe(import.meta.file, () => {
 
   it('should show toast after server created current users pack', async () => {
     const ctx = await testFlowClientCtx()
-    const pack = await createFlowPack(ctx)
+    const pack = await createPack(ctx)
     const output = GameClientModule.andThen(initial, userCreatedPack(ctx, pack))
     expect(didShowToast(output)).toBe(true)
   })

@@ -4,9 +4,9 @@ import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import type { GameCoreModule } from '~/app/spaces/games/@/architecture/game-core'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGroupId } from '../../@/flow/flow/flow-group-id'
-import { FlowPack } from '../../@/pack/pack'
-import { FlowPackId } from '../../@/pack/pack-id'
-import { FlowPuzzleResult } from '../../@/puzzle/puzzle-result'
+import { Pack } from '../../@/pack/pack'
+import { PackId } from '../../@/pack/pack-id'
+import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { CopyPuzzleTypes } from './copy-puzzle'
 
 export const MsgCore = p.or(
@@ -21,12 +21,12 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('user-clicked-next-puzzle'),
-    nextPuzzle: FlowPuzzleResult,
+    nextPuzzle: PuzzleResult,
     nextPuzzleIndex: p.num
   }),
   p.obj({
     t: p.l('user-clicked-prev-puzzle'),
-    prevPuzzle: FlowPuzzleResult,
+    prevPuzzle: PuzzleResult,
     prevPuzzleIndex: p.num
   }),
   p.obj({
@@ -49,7 +49,7 @@ export const MsgCoreEvt = p.or(
   p.obj({
     t: p.l('user-completed-puzzle'),
     userId: UserId,
-    packId: FlowPackId,
+    packId: PackId,
     puzzleIndex: p.num
   }),
   p.obj({
@@ -62,8 +62,8 @@ export type MsgCoreEvt = p.Infer<typeof MsgCoreEvt>
 
 export const ModelCore = p.obj({
   t: p.l('screen-play-puzzle'),
-  flowPack: FlowPack,
-  puzzleResult: FlowPuzzleResult,
+  flowPack: Pack,
+  puzzleResult: PuzzleResult,
   flowPlay: p.or(FlowPlay.Model, p.l(null)),
   puzzleIndex: p.num,
   opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),

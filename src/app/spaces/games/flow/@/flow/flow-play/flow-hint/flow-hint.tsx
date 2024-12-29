@@ -3,7 +3,7 @@ import { p } from '~/@/core/parser'
 import type { AppClientCtx } from '~/app/@/client'
 import { IconLightbulb } from '~/app/@/ui'
 import type { ActionInput } from '~/app/@/ui/actions'
-import type { FlowPuzzle } from '../../../puzzle/puzzle'
+import type { Puzzle } from '../../../puzzle/puzzle'
 import { Flow } from '../../flow'
 import type { FlowVariant } from '../../flow-variant'
 import { FlowGroupId } from '../../flow/flow-group-id'
@@ -13,11 +13,11 @@ import { FlowTerminal } from '../../flow/flow-terminal'
 export type FindSolutions = (input: { flow: FlowVariant.Model }) => Promise<Result<string, Flow.Model[]>>
 
 export type Ctx = {
-  flowPuzzle: FlowPuzzle
+  flowPuzzle: Puzzle
   findSolutions: FindSolutions
 }
 
-export const initCtx = (input: { flowPuzzle: FlowPuzzle; findSolutions?: FindSolutions }): Ctx => {
+export const initCtx = (input: { flowPuzzle: Puzzle; findSolutions?: FindSolutions }): Ctx => {
   return {
     findSolutions: input.findSolutions ?? (async (_input) => Err('not implemented')),
     flowPuzzle: input.flowPuzzle
@@ -91,11 +91,11 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
         }
       }
 
-      const terminalFlowPuzzle = Flow.toTerminalByGroupId(input.ctx.flowPuzzle.flow, nextHintGroupId)
+      const terminalPuzzle = Flow.toTerminalByGroupId(input.ctx.flowPuzzle.flow, nextHintGroupId)
       const terminalFlowModel = Flow.toTerminalByGroupId(flow, nextHintGroupId)
 
       const solution =
-        input.ctx.flowPuzzle.solutions.length > 0 && eq(terminalFlowPuzzle, terminalFlowModel)
+        input.ctx.flowPuzzle.solutions.length > 0 && eq(terminalPuzzle, terminalFlowModel)
           ? input.ctx.flowPuzzle.solutions[0]
           : null
 

@@ -1,6 +1,6 @@
 import { FlowPlay } from '../../@/flow/flow-play'
-import { FlowPack } from '../../@/pack/pack'
-import { FlowPuzzleResult } from '../../@/puzzle/puzzle-result'
+import { Pack } from '../../@/pack/pack'
+import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { CoreModule, MsgCore } from '../types'
 import * as CopyPuzzleCore from './copy-puzzle/core'
 import { LastPuzzleCore } from './last-puzzle/core'
@@ -189,7 +189,7 @@ const updateCoreMain: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
   }
 }
 
-const initCore = (input: { flowPack: FlowPack; flowPuzzle: FlowPuzzleResult; puzzleIndex: number }): ModelCore => {
+const initCore = (input: { flowPack: Pack; flowPuzzle: PuzzleResult; puzzleIndex: number }): ModelCore => {
   return {
     ...input,
     flowPlay:

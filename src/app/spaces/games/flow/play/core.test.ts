@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data'
-import { FlowPack } from '../@/pack/pack'
-import { FlowPuzzle } from '../@/puzzle/puzzle'
+import { Pack } from '../@/pack/pack'
+import { Puzzle } from '../@/puzzle/puzzle'
 import { CoreFixture } from './@/fixture.core'
 
 describe(import.meta.file, () => {
@@ -11,7 +11,7 @@ describe(import.meta.file, () => {
     const after = f.update(before, [
       {
         t: 'user-clicked-open-pack-list-item',
-        pack: await FlowPack.random()
+        pack: await Pack.random()
       }
     ])
 
@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
     const before = f.update(f.init, [
       {
         t: 'user-clicked-open-pack-list-item',
-        pack: await FlowPack.random()
+        pack: await Pack.random()
       }
     ])
     const after = f.update(before, [
@@ -38,8 +38,8 @@ describe(import.meta.file, () => {
 
   it('should open puzzle from pack', async () => {
     const f = await CoreFixture()
-    const puzzle = await FlowPuzzle.random()
-    const pack = await FlowPack.random({
+    const puzzle = await Puzzle.random()
+    const pack = await Pack.random({
       puzzleIds: [puzzle.id]
     })
 
@@ -69,8 +69,8 @@ describe(import.meta.file, () => {
 
   test('user changed slides', async () => {
     const f = await CoreFixture()
-    const puzzle = await FlowPuzzle.random()
-    const pack = await FlowPack.random({
+    const puzzle = await Puzzle.random()
+    const pack = await Pack.random({
       puzzleIds: [puzzle.id]
     })
 

@@ -1,8 +1,8 @@
 import type { Translations } from '~/@/l18n'
-import type { FlowPackName } from './pack-name'
+import type { PackName } from './pack-name'
 
 export type Text = {
-  'flow-pack-name': (flowPackName: FlowPackName) => string
+  'flow-pack-name': (flowPackName: PackName) => string
 }
 
 export const translations: Translations<Text> = {

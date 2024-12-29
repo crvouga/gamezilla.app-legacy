@@ -6,7 +6,7 @@ import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import type { FlowClientCtx } from '../../client/ctx'
-import { FlowPuzzle } from '../puzzle'
+import { Puzzle } from '../puzzle'
 import { PuzzleListClient } from './client'
 import { type ModelClient, initClient } from './types'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
@@ -28,7 +28,7 @@ const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
   })
 }
 
-const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
+const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: Puzzle[]) => (model: ModelClient) => {
   return PuzzleListClient.update({
     ctx,
     model,
@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
 
   it('should record puzzles recieved from server', async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = await FlowPuzzle.create({
+    const puzzle = await Puzzle.create({
       count: 1,
       createdAt: ctx.now,
       createdBy: ctx.currentUserId,

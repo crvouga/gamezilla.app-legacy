@@ -6,9 +6,9 @@ import type { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { FlowClientEvtIn } from '../../client/evt'
 import { FlowServerCtx } from '../../server/ctx'
-import type { FlowPack } from '../pack'
-import type { IFlowPackDb } from '../pack-db'
-import type { FlowPackId } from '../pack-id'
+import type { Pack } from '../pack'
+import type { IPackDb } from '../pack-db'
+import type { PackId } from '../pack-id'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
@@ -36,7 +36,7 @@ export type ClientModule = AppClientModule<{
     fab: null
   }
   ViewEmit: {
-    clickedPackItem: FlowPack
+    clickedPackItem: Pack
   }
 }>
 
@@ -57,7 +57,7 @@ export type ServerModule = AppServerModule<{
 
 export type ModelClient = {
   request: RequestResponse<string, null>
-  packs: { [id: FlowPackId]: FlowPack }
+  packs: { [id: PackId]: Pack }
 }
 
 export const initClient: ModelClient = {
@@ -90,9 +90,9 @@ export type MsgToClient = {
   listed: ListPackOutput
 }
 
-export type ListPackInput = Parameters<IFlowPackDb['list']>[0]
+export type ListPackInput = Parameters<IPackDb['list']>[0]
 
-export type ListPackOutput = Awaited<ReturnType<IFlowPackDb['list']>>
+export type ListPackOutput = Awaited<ReturnType<IPackDb['list']>>
 
 export type MsgInCmdClient = {
   t: 'flow-pack-list'

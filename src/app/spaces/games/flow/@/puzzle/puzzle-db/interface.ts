@@ -1,14 +1,14 @@
 import type { Paginated, Pagination, UserId } from '~/app/@/data'
 import type { Task } from '~/@/core'
-import type { FlowPuzzle } from '../puzzle'
-import type { FlowPuzzleId } from '../puzzle-id'
+import type { Puzzle } from '../puzzle'
+import type { PuzzleId } from '../puzzle-id'
 
 export type WhereClause = {
   createdBy?: {
     equals: UserId
   }
   puzzleId?: {
-    in: FlowPuzzleId[]
+    in: PuzzleId[]
   }
 }
 
@@ -23,12 +23,12 @@ export type ListPuzzlesInput = {
   order: OrderClause
 }
 
-export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb['list']>>
+export type ListPuzzlesOutput = Awaited<ReturnType<IPuzzleDb['list']>>
 
-export type IFlowPuzzleDb = {
+export type IPuzzleDb = {
   count: (input: Omit<ListPuzzlesInput, 'pagination' | 'order'>) => Task<string, number>
-  list: (input: ListPuzzlesInput) => Task<string, Paginated<FlowPuzzle>>
-  get: (id: FlowPuzzleId) => Task<string, FlowPuzzle | null>
-  put: (input: FlowPuzzle) => Task<string, null>
-  zap: (input: { id: FlowPuzzleId; deletedByUserId: UserId }) => Task<string, null>
+  list: (input: ListPuzzlesInput) => Task<string, Paginated<Puzzle>>
+  get: (id: PuzzleId) => Task<string, Puzzle | null>
+  put: (input: Puzzle) => Task<string, null>
+  zap: (input: { id: PuzzleId; deletedByUserId: UserId }) => Task<string, null>
 }

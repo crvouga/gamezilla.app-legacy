@@ -1,7 +1,7 @@
 import { type RemoteResult, Result } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { UserId } from '~/app/@/data'
-import { FlowPuzzle } from '../../../@/puzzle/puzzle'
+import { Puzzle } from '../../../@/puzzle/puzzle'
 
 //
 //
@@ -39,11 +39,11 @@ export type MsgServer = { t: 'noop' }
 export type MsgToServer =
   | {
       t: 'screen-puzzle-builder.save-changes.user-clicked-save-button'
-      puzzle: FlowPuzzle
+      puzzle: Puzzle
     }
   | {
       t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit'
-      puzzle: FlowPuzzle
+      puzzle: Puzzle
     }
 
 export type MsgToClient = { t: 'noop' }
@@ -54,7 +54,7 @@ export type MsgToClient = { t: 'noop' }
 
 export const MsgCore = p.obj({
   t: p.l('screen-puzzle-builder.saved-puzzle'),
-  saved: Result.parser(p.str, FlowPuzzle),
+  saved: Result.parser(p.str, Puzzle),
   userId: UserId
 })
 export type MsgCore = p.Infer<typeof MsgCore>
