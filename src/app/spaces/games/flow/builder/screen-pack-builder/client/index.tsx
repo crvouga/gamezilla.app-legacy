@@ -15,7 +15,7 @@ import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { PackPuzzlesGridClient } from '../../../@/pack/pack-puzzles-grid/client'
 import { PackPuzzlesGridUI } from '../../../@/pack/pack-puzzles-grid/ui'
-import { FlowPuzzleResult } from '../../../@/puzzle-result'
+import { FlowPuzzleResult } from '../../../@/puzzle/puzzle-result'
 import { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleListClient } from '../../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../../types'

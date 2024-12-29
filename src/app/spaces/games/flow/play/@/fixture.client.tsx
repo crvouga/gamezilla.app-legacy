@@ -1,6 +1,6 @@
 import { NonEmpty, PubSub } from '~/@/core'
 import type { WithEventMeta } from '~/@/event-sourced/event'
-import { FixtureFlowClient } from '../../@/fixture-client'
+import { FixtureFlowClient } from '../../@/client/fixture'
 import { PlayClient } from '../client'
 import { PlayCore } from '../core'
 import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'

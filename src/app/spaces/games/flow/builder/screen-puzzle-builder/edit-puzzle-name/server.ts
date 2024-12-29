@@ -5,7 +5,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import type { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import type { FlowPuzzleId } from '../../../@/puzzle/puzzle-id'
 import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
-import { FlowServerCtx } from '../../../@/flow-server-ctx'
+import { FlowServerCtx } from '../../../@/server/ctx'
 import type { ServerModule } from '../../types'
 import type { MsgCore } from './types'
 

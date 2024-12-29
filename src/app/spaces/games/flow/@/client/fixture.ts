@@ -1,13 +1,13 @@
 import { NonEmpty } from '~/@/core'
 import { withEventMeta, WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
-import { FlowClient } from '../client'
-import { FlowCore } from '../core'
-import { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'
-import type { FlowClientCtx } from './flow-client-ctx'
-import { PackListTypes } from './pack/pack-list'
-import { PackPuzzlesGridTypes } from './pack/pack-puzzles-grid'
-import { PuzzleListTypes } from './puzzle/puzzle-list'
+import { FlowClient } from '../../client'
+import { FlowCore } from '../../core'
+import { ModelCore, MsgClient, MsgCore, MsgToClient } from '../../types'
+import type { FlowClientCtx } from './ctx'
+import { PackListTypes } from '../pack/pack-list'
+import { PackPuzzlesGridTypes } from '../pack/pack-puzzles-grid'
+import { PuzzleListTypes } from '../puzzle/puzzle-list'
 
 export const FixtureFlowClient = async () => {
   const f = await FixtureSpacesClient()

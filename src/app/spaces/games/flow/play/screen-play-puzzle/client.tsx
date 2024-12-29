@@ -10,7 +10,7 @@ import type { ClientModule } from '../types'
 import * as CopyPuzzleClient from './copy-puzzle/client'
 import { ScreenPlayPuzzleCore } from './core'
 import { LastPuzzleClient } from './last-puzzle/client'
-import { FlowPuzzleResult } from '../../@/puzzle-result'
+import { FlowPuzzleResult } from '../../@/puzzle/puzzle-result'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

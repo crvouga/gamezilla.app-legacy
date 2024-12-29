@@ -1,7 +1,7 @@
 import { isErr, isLoading, Loading, Posix, Result, Sub, Time, TimeSpan } from '~/@/core'
 import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/app/@/client'
 import { Button, IconPlus } from '~/app/@/ui'
-import { FlowClientCmd } from '../../../@/flow-client-cmd'
+import { FlowClientCmd } from '../../../@/client/cmd'
 import { ClientModule } from '../../types'
 import { MsgClient, MsgToServer } from './types'
 

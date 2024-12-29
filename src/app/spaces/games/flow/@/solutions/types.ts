@@ -7,8 +7,8 @@ import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 import { FlowVariant } from '../flow'
-import { FlowClientEvtIn } from '../flow-client-evt'
-import { FlowServerCtx } from '../flow-server-ctx'
+import { FlowClientEvtIn } from '../client/evt'
+import { FlowServerCtx } from '../server/ctx'
 
 export type ModelClient = {
   request: RequestResponse<string, null>

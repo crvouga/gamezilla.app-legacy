@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/core'
 import { Msg } from '~/@/core/msg'
-import { FixtureFlowServer } from '../../@/fixture-server'
+import { FixtureFlowServer } from '../../@/server/fixture'
 import { PlayCore } from '../core'
 import { PlayServer } from '../server'
 import type { ModelCore } from '../types'

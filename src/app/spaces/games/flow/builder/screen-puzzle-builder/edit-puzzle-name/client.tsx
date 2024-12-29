@@ -6,7 +6,7 @@ import { FlowPuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ClientModule } from '../../types'
 import { editNameValidationErrorToString, MsgClient, MsgToServer } from './types'
 import type { VDomChildren } from '~/@/vdom'
-import { FlowClientCmd } from '../../../@/flow-client-cmd'
+import { FlowClientCmd } from '../../../@/client/cmd'
 
 //
 //

@@ -1,7 +1,7 @@
 import { p } from '~/@/core/parser'
 import { Translator } from '~/@/l18n/generated'
 import { IconExclamationCircle, Typography } from '~/app/@/ui'
-import { FlowPuzzle } from './puzzle/puzzle'
+import { FlowPuzzle } from './puzzle'
 
 const parser = p.or(
   p.obj({

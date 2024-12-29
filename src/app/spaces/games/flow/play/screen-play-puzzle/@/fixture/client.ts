@@ -2,7 +2,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { UserId } from '~/app/@/data'
 import { FlowPlay } from '../../../../@/flow/flow-play'
 import { FlowPack } from '../../../../@/pack/pack'
-import { FlowPuzzleResult } from '../../../../@/puzzle-result'
+import { FlowPuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { FlowPuzzle } from '../../../../@/puzzle/puzzle'
 import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/fixture.client'
 

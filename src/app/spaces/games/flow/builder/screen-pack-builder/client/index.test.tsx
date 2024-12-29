@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok } from '~/@/core'
 import { andThen } from '~/app/spaces/games/@/architecture/game-client-v2'
-import type { FlowClientCtx } from '../../../@/flow-client-ctx'
+import type { FlowClientCtx } from '../../../@/client/ctx'
 import { FlowPack } from '../../../@/pack/pack'
 import { FlowPuzzle } from '../../../@/puzzle/puzzle'
 import {

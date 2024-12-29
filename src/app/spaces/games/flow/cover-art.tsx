@@ -1,1 +1,1 @@
-export { CoverArt as CoverArt } from './@/flow-cover-art'
+export { CoverArt as CoverArt } from './@/cover-art'

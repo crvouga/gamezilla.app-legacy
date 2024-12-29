@@ -2,12 +2,12 @@ import { NonEmpty } from '~/@/core'
 import { Msg } from '~/@/core/msg'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpaceServer } from '~/app/spaces/@/fixture/server'
-import { FlowCore } from '../core'
-import { FlowServer } from '../server'
-import { ModelCore } from '../types'
-import { FlowPackDb } from './pack/pack-db'
-import { FlowPuzzleDb } from './puzzle/puzzle-db'
-import type { FlowServerCtx } from './flow-server-ctx'
+import { FlowCore } from '../../core'
+import { FlowServer } from '../../server'
+import { ModelCore } from '../../types'
+import type { FlowServerCtx } from './ctx'
+import { FlowPackDb } from '../pack/pack-db'
+import { FlowPuzzleDb } from '../puzzle/puzzle-db'
 
 type Input = Parameters<typeof FlowServer.update>[0]
 

@@ -4,7 +4,7 @@ import { UserId } from '~/app/@/data'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowPack } from '../../@/pack/pack'
 import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
-import { FlowPuzzleResult } from '../../@/puzzle-result'
+import { FlowPuzzleResult } from '../../@/puzzle/puzzle-result'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { EditPackNameTypes } from './edit-pack-name'
 

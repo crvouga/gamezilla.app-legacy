@@ -1,4 +1,4 @@
-import type { FlowClientCtx } from '../../../@/flow-client-ctx'
+import type { FlowClientCtx } from '../../../@/client/ctx'
 import { BuilderCore } from '../../core'
 import type { MsgCore } from '../../types'
 

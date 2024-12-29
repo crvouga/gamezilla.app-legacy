@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { FixtureFlowClient } from '../../../fixture-client'
+import { FixtureFlowClient } from '../../../client/fixture'
 import { FlowPuzzle } from '../../../puzzle/puzzle'
 import { Flow } from '../../flow'
 import { FlowGridShorthand } from '../../flow-variant/flow-grid'

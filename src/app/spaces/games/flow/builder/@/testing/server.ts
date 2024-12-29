@@ -5,7 +5,7 @@ import { FlowPuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { initServer } from '../../types'
 import { BuilderCore } from '../../core'
 import { Logger } from '~/app/@/server/logger'
-import { FlowServerCtx } from '../../../@/flow-server-ctx'
+import { FlowServerCtx } from '../../../@/server/ctx'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 
 export const initial = {
