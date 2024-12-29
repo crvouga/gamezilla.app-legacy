@@ -1,10 +1,11 @@
-import { NonEmpty, pipe } from '~/@/core'
+import { NonEmpty } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { UserId } from '~/app/@/data'
 import type { FlowVariant } from '../../../../@/flow'
 import { FlowPlay } from '../../../../@/flow/flow-play'
 import { Pack } from '../../../../@/pack/pack'
-import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
+import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { CoreFixture } from '../../../@/fixture.core'
 import { ScreenPlayPuzzleCore } from '../../core'
 import type { ModelCore, MsgCore } from '../../types'
@@ -36,18 +37,14 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
   ])
 
   const userId = UserId.generate()
-  const solvePuzzleMsgs = pipe(
-    FlowPlay.toSolutionMsgs({
-      flow: puzzle.flow
-    }),
-    (msgs) =>
-      msgs.map(
-        (c): MsgCore => ({
-          userId,
-          t: 'got-flow-play-msg',
-          c
-        })
-      )
+  const solvePuzzleMsgs = pipe(FlowPlay.toSolutionMsgs(puzzle), (msgs) =>
+    msgs.map(
+      (c): MsgCore => ({
+        userId,
+        t: 'got-flow-play-msg',
+        c
+      })
+    )
   )
 
   return {

@@ -1,6 +1,7 @@
-import { NonEmpty, PhoneNumber, Posix, pipe, type TimeSpan } from '~/@/core'
+import { NonEmpty, PhoneNumber, Posix, type TimeSpan } from '~/@/core'
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
+import { pipe } from '~/@/function/pipe'
 import { LamportClock, LamportTimestamp } from '~/@/lamport-clock'
 import type { Route } from '~/@/routing/generated/routes'
 import { routeChanged, type AppClientCtx } from '~/app/@/client'

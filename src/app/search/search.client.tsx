@@ -1,5 +1,6 @@
 import { matchSort } from '~/@/array/match-sort'
-import { Browser, Eff, pipe } from '~/@/core'
+import { Browser, Eff } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom'
 import { type AppClientCmd, type ClientEvt, sendToServer } from '~/app/@/client'
 import { IconMagnifyingGlass, IconXMark } from '~/app/@/ui'

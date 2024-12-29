@@ -1,4 +1,4 @@
-import { pipe } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { FlowGridShorthand, FlowGridUI } from '../flow/flow-variant/flow-grid'
 
 const grid1 = pipe(

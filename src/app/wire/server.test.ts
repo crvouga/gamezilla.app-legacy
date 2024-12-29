@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { Ok, pipe } from '~/@/core'
+import { Ok } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { ClientId, SessionId } from '../@/data'
 import { UserAccount } from '../@/data/account'
 import { FixtureAppServer } from '../@/server/server-test-env'

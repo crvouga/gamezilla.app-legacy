@@ -1,4 +1,5 @@
-import { eq, memoize, Random } from '~/@/core'
+import { eq, Random } from '~/@/core'
+import { memoize } from '~/@/function/memoize'
 import { Direction, Position } from './position'
 
 //

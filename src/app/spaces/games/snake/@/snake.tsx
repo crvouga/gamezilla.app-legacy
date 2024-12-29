@@ -1,5 +1,6 @@
-import { List, NonNegInt, pipe } from '~/@/core'
+import { List, NonNegInt } from '~/@/core'
 import { TimeSpan } from '~/@/core/time-span'
+import { pipe } from '~/@/function/pipe'
 import { Direction } from './direction'
 import { Position } from './position'
 
@@ -139,7 +140,7 @@ export const step = (model: Model): Model => {
     Position.equals(position, model.food)
   )
 
-  const foodNew = isSnakeEatingFood ? shuffle(toEmptyPositions(model))[0] ?? model.food : model.food
+  const foodNew = isSnakeEatingFood ? (shuffle(toEmptyPositions(model))[0] ?? model.food) : model.food
 
   const tailLengthNew = isSnakeEatingFood ? NonNegInt.inc(model.tailLength) : model.tailLength
 

@@ -1,4 +1,4 @@
-import { type Eff, Err, Ok, Result, Sub, Time, eq, pipe } from '~/@/core'
+import { type Eff, Err, Ok, Result, Sub, Time, eq } from '~/@/core'
 import { TimeSpan } from '~/@/core/time-span'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { UserId } from '~/app/@/data'
@@ -18,6 +18,7 @@ import {
   initCore,
   transitionLoadingToStarted
 } from './puzzle.types'
+import { pipe } from '~/@/function/pipe'
 
 //
 //

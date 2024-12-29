@@ -1,4 +1,4 @@
-import { pipe } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { p } from '~/@/core/parser'
 import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
 import { EventId } from '~/@/event-sourced/event'

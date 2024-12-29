@@ -1,4 +1,5 @@
-import { Iter, Random, Set, pipe, type NonNegInt } from '~/@/core'
+import { Iter, Random, Set, type NonNegInt } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { Position } from './position'
 
 export type Model = {

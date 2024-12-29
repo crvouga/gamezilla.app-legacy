@@ -10,7 +10,7 @@ import { IO } from '../io'
 import * as Json from '../json'
 import { Msg } from '../msg'
 import { Result, isErr } from '../result'
-import { pipe } from '../utils/pipe'
+import { pipe } from '../../function/pipe'
 import type { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from './debugger'
 
 type Unsubscribe = () => void

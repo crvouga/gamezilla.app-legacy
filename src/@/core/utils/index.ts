@@ -1,5 +1,4 @@
 export * from './debounce'
 export * from './edit-distance'
-export * from './memoize'
 export * from './exhaustive'
 export * from './rescale'

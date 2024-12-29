@@ -1,4 +1,4 @@
-import { pipe } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { ClientId, Profile, SessionId, SpaceId, UserId } from '~/app/@/data'

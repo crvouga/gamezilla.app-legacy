@@ -1,4 +1,4 @@
-import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk, pipe } from '~/@/core'
+import { Posix, RequestResponse, TimeSpan, isRequesting, isResponseOk } from '~/@/core'
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import type { Route } from '~/@/routing/generated/routes'
@@ -9,6 +9,7 @@ import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from '~/app/@/ui'
 import { FixtureSpacesClient } from '../@/fixture/client'
 import { SpacesClient } from '../client'
 import { SpaceCore } from '../core'
+import { pipe } from '~/@/function/pipe'
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureSpacesClient(input)

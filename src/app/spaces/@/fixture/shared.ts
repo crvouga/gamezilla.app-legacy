@@ -1,5 +1,5 @@
 import { type SpaceId, UserId } from '~/app/@/data'
-import { pipe } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { withEventId } from '~/@/event-sourced/event'
 import { SpaceCore } from '../../core'
 import { EventSourced } from '~/@/event-sourced'

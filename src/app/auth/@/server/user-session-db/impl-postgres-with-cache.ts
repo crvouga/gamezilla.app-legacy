@@ -1,4 +1,4 @@
-import { pipe } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { DbConnKv, IDbConnKv } from '~/@/db-conn-kv'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { LRUCache } from '~/@/least-recently-used-cache'

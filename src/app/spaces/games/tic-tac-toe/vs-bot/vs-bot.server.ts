@@ -1,4 +1,5 @@
-import { Err, Ok, Sub, pipe, type Eff } from '~/@/core'
+import { Err, Ok, Sub, type Eff } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'

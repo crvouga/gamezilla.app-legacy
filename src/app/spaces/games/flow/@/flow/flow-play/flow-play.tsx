@@ -1,5 +1,6 @@
-import { pipe, TimeSpan } from '~/@/core'
+import { TimeSpan } from '~/@/core'
 import { p } from '~/@/core/parser'
+import { pipe } from '~/@/function/pipe'
 import { Translator } from '~/@/l18n/generated'
 import { APP_SOUND, AppClientCmd, playSound, showToast } from '~/app/@/client'
 import { IconCheckmark, Transition } from '~/app/@/ui'
@@ -7,13 +8,13 @@ import { ActionInput, Actions } from '~/app/@/ui/actions'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { FlowAlgoDrawPipes } from '../flow-algo/flow-algo-draw-pipes'
 import { FlowAlgoSolve } from '../flow-algo/flow-algo-solve'
-import { FlowHint } from './flow-hint'
 import type { FlowVariant } from '../flow-variant'
 import * as FlowVariantUI from '../flow-variant/flow-variant-ui'
 import * as Flow from '../flow/flow'
 import { FlowGroupId } from '../flow/flow-group-id'
 import { FlowNodeId } from '../flow/flow-node-id'
 import { FlowTerminal } from '../flow/flow-terminal'
+import { FlowHint } from './flow-hint'
 
 //
 //

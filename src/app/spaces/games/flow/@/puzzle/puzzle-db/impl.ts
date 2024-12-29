@@ -1,4 +1,4 @@
-import { pipe } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { ILogger } from '~/@/logger'
 import type { IPuzzleDb } from './interface'

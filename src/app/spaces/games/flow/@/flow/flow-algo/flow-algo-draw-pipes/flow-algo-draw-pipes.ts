@@ -1,4 +1,4 @@
-import { pipe } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { MinHeap } from '~/@/min-heap/min-heap'
 import { Flow } from '../..'
 import { FlowVariant } from '../..'

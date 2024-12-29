@@ -1,5 +1,5 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
-import { pipe } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { p } from '~/@/core/parser'
 import { ClientId, SessionId, UserId } from '~/app/@/data'
 

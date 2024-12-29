@@ -1,5 +1,7 @@
+import { Eff, Keyboard, Sub } from '~/@/core'
+import { pipe } from '~/@/function/pipe'
 import { ActionButton, IconArrowLeftOnRect } from '~/app/@/ui'
-import { Eff, Keyboard, Sub, pipe } from '~/@/core'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
 import {
@@ -10,7 +12,6 @@ import {
   type MsgToClient,
   initShared
 } from './maze.types'
-import { SpaceClientCtx } from '../../@/space-client-ctx'
 
 //
 //
