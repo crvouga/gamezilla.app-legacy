@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'bun:test'
 import { Err, Ok, Posix, RequestResponse, TimeSpan, isRequesting } from '~/@/core'
-import { andThen } from '~/app/@/architecture/app-client'
+
+import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
-import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import type { FlowClientCtx } from '../../client/ctx'
+import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import { Puzzle } from '../puzzle'
 import { PuzzleListClient } from './client'
 import { type ModelClient, initClient } from './types'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 const initial = {
   model: initClient
@@ -71,13 +72,13 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
 describe(import.meta.file, () => {
   it('should it be requesting when the load cmd inputs', async () => {
     const ctx = await testSpaceClientCtx()
-    const output = andThen(initial, loadCmd(ctx))
+    const output = AppClientModule.andThen(initial, loadCmd(ctx))
     expect(isRequesting(output.model.request)).toBe(true)
   })
 
   it('should send a list puzzles message to server when the user observes the end of the list', async () => {
     const ctx = await testSpaceClientCtx()
-    const output = andThen(initial, loadCmd(ctx))
+    const output = AppClientModule.andThen(initial, loadCmd(ctx))
     expect(didSendToServer(output, (msg) => msg.t === 'flow-puzzle-list.list-puzzles')).toBe(true)
   })
 
@@ -97,7 +98,7 @@ describe(import.meta.file, () => {
       })
     })
 
-    const output = andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))
+    const output = AppClientModule.andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))
 
     expect(Object.values(output.model.puzzles)).not.toEqual([])
   })
@@ -105,13 +106,13 @@ describe(import.meta.file, () => {
   it('should show error when recieving list error fro server', async () => {
     const ctx = await testFlowClientCtx()
     const error = 'Something went wrong'
-    const output = andThen(initial, serverListedPuzzlesErr(ctx, error))
+    const output = AppClientModule.andThen(initial, serverListedPuzzlesErr(ctx, error))
     expect(didShowErrorSm(output)).toBe(true)
   })
 
   it('should show error after no server response', async () => {
     const ctx = await testFlowClientCtx()
-    const output = andThen(initial, loadCmd(ctx), elapsed(ctx, TimeSpan.minutes(5)))
+    const output = AppClientModule.andThen(initial, loadCmd(ctx), elapsed(ctx, TimeSpan.minutes(5)))
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true)
   })
 })

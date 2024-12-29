@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import { Err, Ok, Posix, isRequesting, isResponseErr, isResponseOk } from '~/@/core'
-import { andThen } from '~/app/@/architecture/app-client'
 import { didPlaySound, didSendToServer, type AnonymousClientCtx } from '~/app/@/client'
 import { Translator } from '~/app/@/client/translator'
 import { UserId } from '~/app/@/data'
 import * as AuthClient from '../client'
 import type { ModelClient } from '../types'
+import { AppClientModule } from '~/app/@/architecture/app-client'
 
 const ctx: AnonymousClientCtx = {
   currentRoute: {
@@ -51,7 +51,7 @@ const continueAsGuestResultedErr = () => (model: ModelClient) =>
 
 describe(import.meta.file, () => {
   it('should request to continue as guest when button is clicked', () => {
-    const output = andThen(
+    const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
         stored: {}
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
   })
 
   it('should request to continue as guest when button is clicked', () => {
-    const output = andThen(
+    const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
         stored: {}
@@ -75,7 +75,7 @@ describe(import.meta.file, () => {
   })
 
   it('should resolve request as ok when resulted in ok', () => {
-    const output = andThen(
+    const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
         stored: {}
@@ -87,7 +87,7 @@ describe(import.meta.file, () => {
   })
 
   it('should resolve request as err when resulted in err', () => {
-    const output = andThen(
+    const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
         stored: {}
@@ -99,7 +99,7 @@ describe(import.meta.file, () => {
   })
 
   it('should play sound after continuing as guest', () => {
-    const output = andThen(
+    const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
         stored: {}

@@ -1,4 +1,4 @@
-import { type Eff, Sub, andThen, exhaustive, isErr, pipe } from '~/@/core'
+import { type Eff, Sub, exhaustive, isErr, pipe } from '~/@/core'
 import { type AppClientCmd, sendToServer } from '~/app/@/client'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'
 
@@ -150,27 +150,27 @@ export const updateFromServer = (input: {
   eff?: Eff<MsgClient>
 } => {
   return pipe(
-    updateFromServerMain(input),
-    andThen((model) => {
-      if (input.model.coreModel.type !== 'game-over' && model.coreModel.type === 'game-over') {
-        return {
-          model: {
-            ...model,
-            openedModal: 'game-over'
-          }
-        }
-      }
+    updateFromServerMain(input)
+    // andThen((model) => {
+    //   if (input.model.coreModel.type !== 'game-over' && model.coreModel.type === 'game-over') {
+    //     return {
+    //       model: {
+    //         ...model,
+    //         openedModal: 'game-over'
+    //       }
+    //     }
+    //   }
 
-      if (input.model.coreModel.type !== 'game' && model.coreModel.type === 'game') {
-        return {
-          model
-        }
-      }
+    //   if (input.model.coreModel.type !== 'game' && model.coreModel.type === 'game') {
+    //     return {
+    //       model
+    //     }
+    //   }
 
-      return {
-        model
-      }
-    })
+    //   return {
+    //     model
+    //   }
+    // })
   )
 }
 
@@ -306,12 +306,7 @@ export const View = ({
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
-        dispatch={(c) =>
-          dispatch({
-            t: 'vs-bot-setup',
-            c
-          })
-        }
+        dispatch={(c) => dispatch({ t: 'vs-bot-setup', c })}
         title={ctx.t('chess')}
         renderCoverArt={(input) => {
           return <CoverArt {...input} />

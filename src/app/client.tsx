@@ -1,4 +1,4 @@
-import { Browser, Eff, Posix, Sub, batchMsgs, eq } from '~/@/core'
+import { Browser, Eff, Posix, Sub, eq } from '~/@/core'
 import { Msg } from '~/@/core/msg'
 import { LanguageCodeISO_639_1, type TranslatedText } from '~/@/l18n'
 import type { Route } from '~/@/routing/generated/routes'
@@ -17,6 +17,7 @@ import {
 } from '~/app/@/client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from '~/app/@/ui'
 import { SERVER_IMPL, SERVER_URL, type ServerImpl } from '~/config-public'
+import { ILogger, Logger } from '../@/logger'
 import { Translator } from './@/client/translator'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
@@ -34,7 +35,6 @@ import {
 } from './types'
 import * as WireClient from './wire/client'
 import { ClientTransport } from './wire/transport/client'
-import { ILogger, Logger } from '../@/logger'
 
 //
 //
@@ -158,7 +158,7 @@ export const init = (input: {
 
   const initialEff = Eff.batch<MsgClient>([routing.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
 
-  const initialCmd = batchMsgs<
+  const initialCmd = Msg.batch<
     AppClientCmd<{
       MsgToServer: MsgToServer
       MsgClient: MsgClient

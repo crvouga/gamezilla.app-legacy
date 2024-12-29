@@ -1,7 +1,7 @@
-import { Eff, Sub, andThen, pipe } from '~/@/core'
-import { handleBotMove, initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-bot.types'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { Eff, Sub } from '~/@/core'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { handleBotMove, initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-bot.types'
 
 //
 //
@@ -44,30 +44,16 @@ export const update = ({
   }
 }
 
-type updateFromClient = (input: { ctx: SpaceServerCtx; msg: MsgToServer; model: Model }) => {
+type UpdateFromClient = (input: { ctx: SpaceServerCtx; msg: MsgToServer; model: Model }) => {
   model: Model
   eff?: Eff<Msg>
 }
 
-export const updateFromClient: updateFromClient = (input) => {
-  return pipe(
-    input,
-    andThen((model) =>
-      updateFromClient_({
-        ...input,
-        model
-      })
-    ),
-    andThen((model) =>
-      updateBotMove({
-        ...input,
-        model
-      })
-    )
-  )
+export const updateFromClient: UpdateFromClient = (input) => {
+  return updateBotMove(input)
 }
 
-const updateBotMove: updateFromClient = ({ model }) => {
+const updateBotMove: UpdateFromClient = ({ model }) => {
   const handled = handleBotMove(model)
 
   if (handled.t === 'err') {
@@ -81,16 +67,6 @@ const updateBotMove: updateFromClient = ({ model }) => {
 
   return {
     model: modelNew
-  }
-}
-
-const updateFromClient_: updateFromClient = ({ msg, model }) => {
-  switch (msg.t) {
-    default: {
-      return {
-        model
-      }
-    }
   }
 }
 

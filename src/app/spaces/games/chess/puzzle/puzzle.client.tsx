@@ -1,4 +1,4 @@
-import { Eff, andThen, isErr, pipe } from '~/@/core'
+import { Eff, isErr } from '~/@/core'
 import type { VDomChildren } from '~/@/vdom'
 import { APP_SOUND, type AppClientCmd, playSound, sendToServer } from '~/app/@/client'
 import {
@@ -15,6 +15,10 @@ import {
 } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 
+import { Translator } from '~/@/l18n/generated'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { LayoutGame } from '../../@/game/layout-game'
 import { Chess } from '../@/chess'
 import { Chessboard } from '../@/chess-ui/chessboard'
 import { CHESS_SOUND } from '../@/chess/chess-sounds'
@@ -33,10 +37,6 @@ import {
   toPlayerColor,
   updateCore
 } from './puzzle.types'
-import { Translator } from '~/@/l18n/generated'
-import { LayoutGame } from '../../@/game/layout-game'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -156,7 +156,7 @@ export const updateFromServer = (input: {
     MsgClient: MsgClient
   }>[]
 } => {
-  return pipe(updateFromServerMain(input), andThen(watch))
+  return updateFromServerMain(input)
 }
 
 export const updateFromServerMain: typeof updateFromServer = ({
@@ -209,15 +209,6 @@ export const mergeWithServer = ({ client, server }: { client?: ModelClient; serv
     ...client,
     ...server
   }
-}
-
-const watch = (
-  model: ModelClient
-): {
-  model: ModelClient
-  eff?: Eff<MsgClient>
-} => {
-  return { model }
 }
 
 //
@@ -338,9 +329,9 @@ export const View = ({
 
           <div className='flex flex-1 items-center justify-end gap-1 text-right text-xs'>
             <p className='text-secondary'>Moved</p>
-            <p className='text-inherit'>{model.t === 'loading' ? '0' : model.moves?.length ?? '0'}</p>
+            <p className='text-inherit'>{model.t === 'loading' ? '0' : (model.moves?.length ?? '0')}</p>
             <p className='text-secondary'>out of</p>
-            <p className='text-inherit'>{model.t === 'loading' ? '0' : model.puzzle?.moves?.length ?? '0'}</p>
+            <p className='text-inherit'>{model.t === 'loading' ? '0' : (model.puzzle?.moves?.length ?? '0')}</p>
           </div>
         </div>
       </div>

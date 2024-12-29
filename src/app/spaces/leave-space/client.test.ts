@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { andThen } from '~/app/@/architecture/app-client'
+import { withEventMeta } from '~/@/event-sourced/event'
+import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didPlaySound, didPushRoute, didShowToast } from '~/app/@/client'
 import { SpaceId, UserId } from '~/app/@/data'
 import {
@@ -12,7 +13,6 @@ import {
   userStartedSpace
 } from '../@/fixture/client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
-import { withEventMeta } from '~/@/event-sourced/event'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
@@ -62,13 +62,13 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const userId = UserId.generate()
 
-    const joined = andThen(
+    const joined = AppClientModule.andThen(
       init(ctx),
       userStartedSpace(ctx, ctx.currentUserId, spaceId),
       userJoinedSpace(ctx, userId, spaceId)
     )
 
-    const output = andThen(
+    const output = AppClientModule.andThen(
       {
         model: joined.model
       },
@@ -82,13 +82,13 @@ describe(import.meta.file, () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const joined = andThen(
+    const joined = AppClientModule.andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       userJoinedSpace(ctx, ctx.currentUserId, spaceId)
     )
 
-    const output = andThen(
+    const output = AppClientModule.andThen(
       {
         model: joined.model
       },
@@ -101,7 +101,7 @@ describe(import.meta.file, () => {
   it('user is not in space after leaving', () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
-    const updated = andThen(
+    const updated = AppClientModule.andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       userJoinedSpace(ctx, ctx.currentUserId, spaceId),
@@ -115,13 +115,13 @@ describe(import.meta.file, () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const joined = andThen(
+    const joined = AppClientModule.andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       userJoinedSpace(ctx, ctx.currentUserId, spaceId)
     )
 
-    const left = andThen(joined, clickedLeaveSpaceButton(ctx, spaceId))
+    const left = AppClientModule.andThen(joined, clickedLeaveSpaceButton(ctx, spaceId))
 
     expect(didPlaySound(left)).toBe(true)
   })

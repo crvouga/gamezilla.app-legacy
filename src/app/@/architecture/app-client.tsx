@@ -155,7 +155,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   }) => VDom
 }
 
-export const andThen = <T extends AppClientModuleTypes>(
+const andThen = <T extends AppClientModuleTypes>(
   acc: Output<T>,
   ...updates: ((model: T['Model']) => Output<T>)[]
 ): Output<T> => {

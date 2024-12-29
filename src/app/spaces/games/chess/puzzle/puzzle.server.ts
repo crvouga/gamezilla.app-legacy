@@ -1,9 +1,11 @@
-import { type Eff, Err, Ok, Result, Sub, Time, andThen, eq, pipe } from '~/@/core'
+import { type Eff, Err, Ok, Result, Sub, Time, eq, pipe } from '~/@/core'
 import { TimeSpan } from '~/@/core/time-span'
-import type { UserId } from '~/app/@/data'
 import type { IDbConnSql } from '~/@/db-conn-sql'
+import type { UserId } from '~/app/@/data'
 
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 import type { ChessMsgCore } from '../@/chess/chess-shared'
 import { EloRating } from './elo-rating'
 import { PuzzleDb } from './puzzle-db'
@@ -16,8 +18,6 @@ import {
   initCore,
   transitionLoadingToStarted
 } from './puzzle.types'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 
 //
 //
@@ -102,16 +102,7 @@ export const update = (input: {
   eff?: Eff<MsgServer>
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-  return pipe(
-    updateMain(input),
-    andThen((model) =>
-      watchPutInteraction({
-        ctx: input.ctx,
-        modelPrev: input.model,
-        model
-      })
-    )
-  )
+  return pipe(updateMain(input))
 }
 const updateMain: typeof update = ({ msg, model, ctx }) => {
   switch (msg.t) {
@@ -286,27 +277,19 @@ export const updateFromClient = (input: {
   eff?: Eff<MsgServer>
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-  return pipe(
-    input,
-    andThen((model) =>
-      updateFromClientMain({
-        ...input,
-        model
-      })
-    )
-    // andThen((model) =>
-    //   watchPutInteraction({ ...input, modelPrev: input.model, model })
-    // ),
-    // andThen((model) =>
-    //   watchPutProfile({ ...input, modelPrev: input.model, model })
-    // ),
-    // andThen((model) =>
-    //   watchGetPuzzles({ ...input, modelPrev: input.model, model })
-    // )
-  )
+  return updateFromClientMain({ ...input })
+  // andThen((model) =>
+  //   watchPutInteraction({ ...input, modelPrev: input.model, model })
+  // ),
+  // andThen((model) =>
+  //   watchPutProfile({ ...input, modelPrev: input.model, model })
+  // ),
+  // andThen((model) =>
+  //   watchGetPuzzles({ ...input, modelPrev: input.model, model })
+  // )
 }
 
-const watchPutInteraction = ({
+export const watchPutInteraction = ({
   modelPrev,
   model,
   ctx

@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { andThen } from '~/app/@/architecture/app-client'
+import { eq } from '~/@/core'
+import { AppClientModule } from '~/app/@/architecture/app-client'
 import { addProfiles } from '~/app/@/client'
 import { type Profile, SpaceId, UserId, Username } from '~/app/@/data'
-import { eq } from '~/@/core'
 import {
-  Ctx,
   clickedJoinSpaceButton,
   clickedStartSpaceButton,
+  Ctx,
   gotCurrentUsersSpace,
   gotMsgServer,
   gotSpace,
@@ -39,7 +39,7 @@ describe(import.meta.file, () => {
 
     const ctx = Ctx()
 
-    const updated = andThen(
+    const updated = AppClientModule.andThen(
       init(ctx),
       //
       gotMsgServer(ctx, {
@@ -59,7 +59,7 @@ describe(import.meta.file, () => {
     })
     const ctx = Ctx()
 
-    const output = andThen(init(ctx), gotSpace(ctx, someSpace))
+    const output = AppClientModule.andThen(init(ctx), gotSpace(ctx, someSpace))
 
     const listed = SpacesCoreClient.listSpaces({
       model: output.model,
@@ -79,14 +79,18 @@ describe(import.meta.file, () => {
       hostId: ctx.currentUserId
     })
 
-    const updated = andThen(init(ctx), gotCurrentUsersSpace(ctx, someStartedSpace))
+    const updated = AppClientModule.andThen(init(ctx), gotCurrentUsersSpace(ctx, someStartedSpace))
 
     expect(SpacesCoreClient.toSpaceIdByUserId(updated.model, ctx.currentUserId) === spaceId).toBe(true)
   })
 
   it("should sync current user's space when server connects if in space", () => {
     const ctx = Ctx()
-    const output = andThen(init(ctx), clickedStartSpaceButton(ctx, SpaceId.generate()), serverConnected(ctx))
+    const output = AppClientModule.andThen(
+      init(ctx),
+      clickedStartSpaceButton(ctx, SpaceId.generate()),
+      serverConnected(ctx)
+    )
     expect(
       hasExactlyOne(
         output.msgCmd ?? [],
@@ -98,7 +102,7 @@ describe(import.meta.file, () => {
   it('should send events to the server like user joined space', () => {
     const spaceId = SpaceId.generate()
     const ctx = Ctx()
-    const output = andThen(
+    const output = AppClientModule.andThen(
       init(ctx),
       //
       userStartedSpace(ctx, UserId.generate(), spaceId),
@@ -119,7 +123,7 @@ describe(import.meta.file, () => {
 
   it('should send events to the server like user ended space', () => {
     const ctx = Ctx()
-    const output = andThen(init(ctx), userEndedSpace(ctx, UserId.generate(), SpaceId.generate()))
+    const output = AppClientModule.andThen(init(ctx), userEndedSpace(ctx, UserId.generate(), SpaceId.generate()))
 
     expect(
       hasExactlyOne(

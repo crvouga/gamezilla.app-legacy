@@ -1,5 +1,7 @@
-import { Err, Ok, Sub, andThen, pipe, type Eff } from '~/@/core'
+import { Err, Ok, Sub, pipe, type Eff } from '~/@/core'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 import { TicTacToe } from '../@/tic-tic-toe'
 import {
   initCoreModel,
@@ -9,8 +11,6 @@ import {
   type MsgToClient,
   type MsgToServer
 } from './vs-bot.types'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 
 //
 //
@@ -121,23 +121,23 @@ export const updateFromClient = (input: {
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
   return pipe(
-    input,
-    andThen((model) =>
-      updateFromClientMain({
-        ...input,
-        model
-      })
-    ),
-    andThen((model) =>
-      watchBotMove({
-        model,
-        modelPrev: input.model
-      })
-    )
+    input
+    // andThen((model) =>
+    //   updateFromClientMain({
+    //     ...input,
+    //     model
+    //   })
+    // ),
+    // andThen((model) =>
+    //   watchBotMove({
+    //     model,
+    //     modelPrev: input.model
+    //   })
+    // )
   )
 }
 
-const watchBotMove = ({
+export const watchBotMove = ({
   model,
   modelPrev
 }: {
@@ -155,7 +155,7 @@ const watchBotMove = ({
   return { model }
 }
 
-const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+export const updateFromClientMain: typeof updateFromClient = ({ model }) => {
   // const handled = handle({ ctx, model, msg });
   return { model }
   // const res: Res = { ...msg, result: handled };

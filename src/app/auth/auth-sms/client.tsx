@@ -10,7 +10,7 @@ import {
   Uuid,
   isErr
 } from '~/@/core'
-import { AppClientModule, andThen } from '~/app/@/architecture/app-client'
+import { AppClientModule } from '~/app/@/architecture/app-client'
 import { APP_SOUND, type BaseClientCtx, type ClientEvt } from '~/app/@/client'
 import {
   focusView,
@@ -97,23 +97,11 @@ const PHONE_NUMBER_INPUT_VIEW_ID = 'phoneNumberInput'
 //
 
 const update: Module['update'] = (input) => {
-  return andThen(
+  return AppClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromServer({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateAutoFocus({
-        ...input,
-        model
-      })
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromServer({ ...input, model }),
+    (model) => updateAutoFocus({ ...input, model })
   )
 }
 
