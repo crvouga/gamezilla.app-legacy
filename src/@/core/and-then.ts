@@ -1,4 +1,4 @@
-import { Eff } from '../eff'
+import { Eff } from './eff'
 
 export const andThen = <TModel, TOutput extends { model: TModel }>(
   initial: TOutput,

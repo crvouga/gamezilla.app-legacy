@@ -1,5 +1,5 @@
 import type { Eff, Sub } from '~/@/core'
-import { andThen } from '~/@/core/utils/and-then'
+import { andThen } from '~/@/core/and-then'
 import { Translator } from '~/@/l18n/generated'
 import { type AppClientCmd, type ClientEvt, showToast } from '~/app/@/client'
 import { ListItemButton, Typography, cn } from '../@/ui'
