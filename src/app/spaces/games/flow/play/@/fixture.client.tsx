@@ -32,8 +32,8 @@ export const FixtureFlowPlayClient = async () => {
     for (const input of inputs) {
       const lastOutput = NonEmpty.last(outputs)
       const nextOutput = PlayClient.update({
-        model: lastOutput.model,
         ctx: f.ctx,
+        model: lastOutput.model,
         modelCore: lastOutput.modelCore,
         ...input
       })

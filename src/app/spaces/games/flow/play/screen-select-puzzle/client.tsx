@@ -3,25 +3,30 @@ import { cn, TopBar } from '~/app/@/ui'
 import { andThen } from '../../../@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { FlowPack } from '../../@/pack/pack'
-import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
+import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { ClientModule } from '../types'
+import { PlayCore } from '../core'
 
 const update: ClientModule['update'] = (input) => {
   return andThen(
     { model: input.model },
     (model) => updateMain({ ...input, model }),
-    (model) => updateLoadPuzzles({ ...input, model })
+    (model) => updateLoadPuzzlesForPack({ ...input, model })
   )
 }
 
-const updateLoadPuzzles: typeof update = (input) => {
+const updateLoadPuzzlesForPack: typeof update = (input) => {
   if (
     input.msgEvt?.t === 'space/synced' ||
     input.msgCore?.t === 'user-clicked-open-pack-list-item' ||
     input.msgCore?.t === 'user-clicked-exit-puzzle'
   ) {
-    const pack: FlowPack | null = 'flowPack' in input.modelCore.screen ? input.modelCore.screen.flowPack : null
+    const modelCore = input.msgCore
+      ? PlayCore.updateCore({ ctx: input.ctx, modelCore: input.modelCore, msgCore: input.msgCore })
+      : input.modelCore
+
+    const pack: FlowPack | null = 'flowPack' in modelCore.screen ? modelCore.screen.flowPack : null
 
     if (!pack) {
       return { model: input.model }

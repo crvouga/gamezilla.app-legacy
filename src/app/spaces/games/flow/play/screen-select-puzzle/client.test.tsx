@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { LamportTimestamp } from '~/@/lamport-clock'
 import { didPlaySound } from '~/app/@/client'
-import { EventId } from '~/@/event-sourced/event'
+import { EventId, withEventMeta } from '~/@/event-sourced/event'
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { FixtureFlowPlayClient } from '../@/fixture.client'
@@ -97,6 +97,9 @@ describe(import.meta.file, () => {
       }
     ])
     expect(output.modelCore.screen.t).toBe('screen-play-puzzle')
+    expect(output.modelCore.screen.t === 'screen-play-puzzle' && output.modelCore.screen.puzzleResult.t === 'got').toBe(
+      true
+    )
     if (output.modelCore.screen.t === 'screen-play-puzzle' && output.modelCore.screen.puzzleResult.t === 'got') {
       expect(output.modelCore.screen.puzzleResult.c).toEqual(f.puzzle)
     }
@@ -116,5 +119,19 @@ describe(import.meta.file, () => {
       }
     ])
     expect(didPlaySound(output)).toBe(true)
+  })
+
+  test('load puzzles for pack after user opens pack', async () => {
+    const f = await Fixture()
+    const output = f.update(f.initial, [
+      {
+        msgCore: withEventMeta({
+          t: 'user-clicked-open-pack-list-item',
+          pack: f.pack
+        })
+      }
+    ])
+
+    expect(output.msgCmd?.some((m) => m.t === 'flow-pack-puzzles-grid' && m.c.t === 'load')).toBe(true)
   })
 })
