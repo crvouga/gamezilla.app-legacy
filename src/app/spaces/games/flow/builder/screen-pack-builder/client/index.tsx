@@ -472,7 +472,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           }
         />
 
-        <div className='w-full flex-1 overflow-y-auto flex flex-col'>
+        <div className='w-full flex-1 flex flex-col items-center justify-center'>
           {screen.puzzleResult.t === 'got' && screen.play ? (
             <FlowPlay.View
               dispatch={(c) =>

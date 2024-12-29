@@ -108,7 +108,7 @@ const View = ({
   onPressDown,
   onDraggedOver,
   onPressUp
-}: FlowUI.FlowViewinput<FlowGrid.Model>) => {
+}: FlowUI.FlowViewInput<FlowGrid.Model>) => {
   return (
     <Canvas
       className={cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab')}

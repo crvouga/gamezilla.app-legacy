@@ -1,10 +1,10 @@
-import type { FlowViewinput } from '../flow-ui/flow-ui'
+import type { FlowViewInput } from '../flow-ui/flow-ui'
 import { FlowGridUI } from './flow-grid'
 import { FlowHexUI } from './flow-hex'
 import { FlowTriUI } from './flow-tri'
 import type { Model } from './flow-variant'
 
-export const View = (input: FlowViewinput<Model>) => {
+export const View = (input: FlowViewInput<Model>) => {
   switch (input.model.t) {
     case 'flow-grid': {
       return <FlowGridUI.View {...input} model={input.model} />

@@ -150,7 +150,7 @@ export const Color = {
   }
 }
 
-export type FlowViewinput<TModel> = {
+export type FlowViewInput<TModel> = {
   disabled?: boolean
   className?: string
   model: TModel

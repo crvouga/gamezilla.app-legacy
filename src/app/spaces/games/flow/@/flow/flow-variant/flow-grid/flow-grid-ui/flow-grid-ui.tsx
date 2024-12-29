@@ -7,7 +7,7 @@ type FlowGridUIImpl = 'svg' | 'canvas'
 
 const IMPL = 'svg' as FlowGridUIImpl
 
-const View = (input: FlowUI.FlowViewinput<FlowGrid.Model>) => {
+const View = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
   switch (IMPL) {
     case 'svg': {
       return <FlowGridUISvg.View {...input} />
