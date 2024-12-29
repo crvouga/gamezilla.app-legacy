@@ -1,7 +1,7 @@
 import { type AppClientCtx, showErrSm } from '~/app/@/client'
 import { Button, Drawer, DrawerHeader, TextField } from '~/app/@/ui'
 import type { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
-import type { ModelCore, MsgClient, MsgCore } from './types'
+import type { ModelCore, MsgClient, MsgCore } from '../types'
 import { withEventId } from '~/@/event-sourced/event'
 import { isErr } from '~/@/core'
 

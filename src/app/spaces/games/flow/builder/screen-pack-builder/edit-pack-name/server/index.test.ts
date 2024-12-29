@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from '~/@/core'
 import { withEventId, withEventMeta } from '~/@/event-sourced/event'
-import { FlowPack } from '../../../@/pack/pack'
-import { FlowCreateFixtureServer } from '../../@/testing/server'
-import { EditPackNameCore } from './core'
-import { EditPackNameServer } from './server'
+import { FlowPack } from '../../../../@/pack/pack'
+import { FlowCreateFixtureServer } from '../../../@/testing/server'
+import { EditPackNameCore } from '../core'
+import { EditPackNameServer } from '../server'
 
 const Fixture = async () => {
   const f = await FlowCreateFixtureServer()

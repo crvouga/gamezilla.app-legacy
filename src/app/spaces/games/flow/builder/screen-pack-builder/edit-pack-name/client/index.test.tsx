@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import { Err } from '~/@/core'
+import { withEventId } from '~/@/event-sourced/event'
 import { didShowErrorSm } from '~/app/@/client'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
-import { FlowPack } from '../../../@/pack/pack'
-import { EditPackNameClient } from './client'
-import { EditPackNameCore } from './core'
-import type { MsgCore } from './types'
-import { withEventId } from '~/@/event-sourced/event'
+import { FlowPack } from '../../../../@/pack/pack'
+import { EditPackNameClient } from '../client'
+import { EditPackNameCore } from '../core'
+import type { MsgCore } from '../types'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()

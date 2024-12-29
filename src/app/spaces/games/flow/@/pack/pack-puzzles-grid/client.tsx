@@ -5,6 +5,16 @@ import { FlowPuzzleId } from '../../puzzle/puzzle-id'
 import { FlowPack } from '../pack'
 import { ClientModule, initClient, type ModelClient, type MsgInCmdClient } from './types'
 
+const update: ClientModule['update'] = (input) => {
+  return AppClientModule.andThen(
+    { model: input.model },
+    (model) => updateServerListedPuzzles({ ...input, model }),
+    (model) => updateFetchMissingPuzzles({ ...input, model }),
+    (model) => updateRequest({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model })
+  )
+}
+
 const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
   if (!input.ctx.pack) {
     return { model: input.model }
@@ -37,18 +47,18 @@ const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
       sendToServer({
         t: 'list-puzzles-by-id',
         puzzleIds: input.ctx.pack.puzzleIds,
-        causedBy: { msgClient: input.msgServer, msgServer: input.msgServer, msgCmd: input.msgCmd, msgEvt: input.msgEvt }
+        causedBy: { ...input, model: undefined }
       })
     ]
   }
 }
 
 const updateServerListedPuzzles: ClientModule['update'] = (input) => {
-  const { model, msgServer } = input
+  const { msgServer } = input
   switch (msgServer?.t) {
     case 'listed-puzzles-by-id': {
       return AppClientModule.andThen(
-        { model },
+        { model: input.model },
         (model) => {
           if (isErr(msgServer.listed)) {
             return {
@@ -125,16 +135,6 @@ const subscriptionsRequest: ClientModule['subscriptions'] = (input) => {
   return RequestResponse.subscriptions(input.model.request, () => ({
     t: 'elapsed'
   }))
-}
-
-const update: ClientModule['update'] = (input) => {
-  return AppClientModule.andThen(
-    { model: input.model },
-    (model) => updateServerListedPuzzles({ ...input, model }),
-    (model) => updateFetchMissingPuzzles({ ...input, model }),
-    (model) => updateRequest({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model })
-  )
 }
 
 const subscriptions: ClientModule['subscriptions'] = (input) => {

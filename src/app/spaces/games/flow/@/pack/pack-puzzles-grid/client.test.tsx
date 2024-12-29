@@ -15,14 +15,8 @@ type Input = {
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
-  const puzzle = await FlowPuzzle.random({
-    createdBy: f.ctx.currentUserId
-  })
-  const pack = await FlowPack.random({
-    puzzleIds: [puzzle.id],
-    createdBy: f.ctx.currentUserId
-  })
-
+  const puzzle = await FlowPuzzle.random({ createdBy: f.ctx.currentUserId })
+  const pack = await FlowPack.random({ puzzleIds: [puzzle.id], createdBy: f.ctx.currentUserId })
   const ctx: FlowPackGridClientCtx = {
     ...f.ctx,
     pack
