@@ -104,8 +104,7 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
       onClick={input.onClick}
       className={cn(
         'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm transition-opacity',
-        !isDisabled && 'active:opacity-50',
-        input.disabled && 'cursor-not-allowed opacity-50',
+        'enabled:active:opacity-50 disabled:opacity-50 disabled:cursor-not-allowed',
         input.color === 'danger' && 'font-bold text-red-500',
         input.color === 'success' && 'font-bold text-green-500',
         input.hidden ? 'hidden' : '',
