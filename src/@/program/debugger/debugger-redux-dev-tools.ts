@@ -5,12 +5,12 @@
  *
  * @since 0.5.0
  */
-import type { ProgramDebugger } from '..'
-import { IO } from '../io'
-import * as Json from '../json'
-import { Msg } from '../msg'
-import { Result, isErr } from '../result'
+
+import { IO, isErr, Result } from '~/@/core'
+import { Msg } from '~/@/core/msg'
+import * as Json from '../../core/json'
 import { pipe } from '../../function/pipe'
+import { ProgramDebugger } from '../program'
 import type { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from './debugger'
 
 type Unsubscribe = () => void

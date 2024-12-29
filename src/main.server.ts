@@ -1,9 +1,9 @@
-import { ProgramImpure } from '~/@/core/program-impure'
 import { FileSystem } from '~/@/file-system'
 import { withRPC } from '~/@/rpc/rpc'
 import { withSinglePageApp } from '~/@/web-server/with-single-page-app'
 import { AppServer } from '~/app/server'
 import { IS_PROD, SERVER_IMPL, SERVER_PORT, TRANSPORT_IMPL } from '~/config-public'
+import { ProgramImpure } from './@/program/program-impure'
 import { AppTypes } from './app'
 
 const main = async () => {
