@@ -1,4 +1,4 @@
-import { type Eff, Sub, exhaustive, isErr } from '~/@/core'
+import { type Eff, Sub, isErr } from '~/@/core'
 import { pipe } from '~/@/function/pipe'
 import { type AppClientCmd, sendToServer } from '~/app/@/client'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'
@@ -20,6 +20,7 @@ import {
   isBotTurn,
   updateCore
 } from './vs-bot.types'
+import { exhaustive } from '~/@/function/exhaustive'
 
 //
 //

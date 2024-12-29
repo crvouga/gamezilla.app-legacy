@@ -1,6 +1,7 @@
 import * as ChessJS from 'chess.js'
-import { Err, type IO, Ok, type Result, exhaustive } from '~/@/core'
+import { Err, type IO, Ok, type Result } from '~/@/core'
 import { ChessBotLevel } from '../chess-bot-level/chess-bot-level'
+import { exhaustive } from '~/@/function/exhaustive'
 
 export type BestMoveInputResult = Result<BestMoveInputProblem, MoveInput>
 export type BestMoveInputProblem = 'failed_to_calculate_best_move'
@@ -718,16 +719,19 @@ export const moveMany = (moveInputs: MoveInput[], model: Model) => {
         didCapture: boolean
       }
     >
-  >((acc, moveInput) => {
-    if (acc.t === 'err') {
-      return acc
-    }
-    const moved = move(moveInput, acc.value)
-    if (moved.t === 'err') {
-      return moved
-    }
-    return Ok(moved.value)
-  }, Ok({ ...model, didCapture: false }))
+  >(
+    (acc, moveInput) => {
+      if (acc.t === 'err') {
+        return acc
+      }
+      const moved = move(moveInput, acc.value)
+      if (moved.t === 'err') {
+        return moved
+      }
+      return Ok(moved.value)
+    },
+    Ok({ ...model, didCapture: false })
+  )
 }
 
 export const toLegalMoveInputs = (model: Model): MoveInput[] => {

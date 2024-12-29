@@ -1,12 +1,13 @@
-import { Eff, Keyboard, Option, type Sub, exhaustive, isErr } from '~/@/core'
+import { Eff, Keyboard, Option, type Sub, isErr } from '~/@/core'
+import { exhaustive } from '~/@/function/exhaustive'
 import * as Board from './@/board'
 import type * as Direction from './@/direction'
 import * as Piece from './@/piece'
 import * as Position from './@/position'
 import {
   type ModelClient,
-  type MsgClient,
   type ModelServer,
+  type MsgClient,
   type MsgToClient,
   columnCount,
   initShared,

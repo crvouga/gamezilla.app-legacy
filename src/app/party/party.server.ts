@@ -1,5 +1,6 @@
-import { Eff, exhaustive, isErr } from '~/@/core'
+import { Eff, isErr } from '~/@/core'
 import { type Res, type ModelServer, type MsgServer, type MsgToServer, handle } from './party.types'
+import { exhaustive } from '~/@/function/exhaustive'
 
 //
 //

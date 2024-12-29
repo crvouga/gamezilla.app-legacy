@@ -1,4 +1,4 @@
-import { editDistance } from '../core/utils/edit-distance'
+import { editDistance } from '../string/edit-distance'
 import { ascend } from './sorting'
 
 export const matchSort = <T>(items: T[], toValue: (item: T) => string, value: string): T[] => {
