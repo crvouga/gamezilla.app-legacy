@@ -1,4 +1,5 @@
-import { easeAttrs, eq } from '~/@/core'
+import { easeAttrs } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import {
   COLUMN_COUNT,
   type ColumnIndex,
@@ -6,8 +7,8 @@ import {
   MAX_COLUMN_HEIGHT,
   type PlayerType,
   type Win,
-  isColumnIndex,
-  findWins
+  findWins,
+  isColumnIndex
 } from '../../connect-four'
 import { gameTheme } from '../shared'
 

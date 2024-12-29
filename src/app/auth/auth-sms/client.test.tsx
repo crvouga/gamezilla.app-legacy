@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, PhoneNumber, eq } from '~/@/core'
+import { Err, Ok, PhoneNumber } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import type { Route } from '~/@/routing/generated/routes'
 import { didPushRoute } from '~/app/@/client'
 import { FixtureAppClient } from '~/app/@/client/client-test-env'

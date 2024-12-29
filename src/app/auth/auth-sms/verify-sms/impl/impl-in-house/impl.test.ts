@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { PhoneNumber, Posix, TimeSpan, eq, isErr, isOk, unwrap } from '~/@/core'
+import { PhoneNumber, Posix, TimeSpan, isErr, isOk, unwrap } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import { Hashing } from '~/@/hashing'
 import { Translator } from '~/app/@/client/translator'
 import { VerificationDb } from '../../verification/verification-db'

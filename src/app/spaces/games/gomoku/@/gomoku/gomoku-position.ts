@@ -1,4 +1,4 @@
-import { rescale } from '~/@/core'
+import { rescale } from '~/@/math/rescale'
 
 export type Position = {
   x: number

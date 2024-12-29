@@ -1,7 +1,8 @@
-import { Ok, eq } from '~/@/core'
+import { ascend, descend } from '~/@/array/sorting'
+import { Ok } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import type { Verification, VerificationId } from '..'
 import type { IVerificationDb } from './interface'
-import { ascend, descend } from '~/@/array/sorting'
 
 export type Config = {
   t: 'hash-map'

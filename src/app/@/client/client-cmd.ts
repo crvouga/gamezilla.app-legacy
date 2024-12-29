@@ -1,4 +1,5 @@
-import { TimeSpan, type UnitInterval, eq } from '~/@/core'
+import { TimeSpan, type UnitInterval } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import { TranslatedText } from '~/@/l18n'
 import type { Route } from '~/@/routing/generated/routes'
 import type { Profile, UserId } from '../data'

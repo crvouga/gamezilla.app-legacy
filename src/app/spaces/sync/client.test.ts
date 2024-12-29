@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { eq } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { addProfiles } from '~/app/@/client'
 import { type Profile, SpaceId, UserId, Username } from '~/app/@/data'

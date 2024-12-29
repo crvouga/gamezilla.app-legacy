@@ -1,6 +1,6 @@
 import { assert } from '~/@/assert'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
-import { eq } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import { p } from '~/@/core/parser'
 import { LamportClock, LamportTimestamp } from '~/@/lamport-clock'
 import { EventId, EventMeta, type WithEventId, type WithEventMeta } from './event'

@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { eq } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import { FlowGrid, FlowGridDimensions } from '.'
 import { Flow } from '../../flow'
 

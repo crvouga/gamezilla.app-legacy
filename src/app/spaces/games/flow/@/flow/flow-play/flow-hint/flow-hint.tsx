@@ -1,4 +1,4 @@
-import { Eff, eq, Err, Result } from '~/@/core'
+import { Eff, Err, Result } from '~/@/core'
 import { p } from '~/@/core/parser'
 import type { AppClientCtx } from '~/app/@/client'
 import { IconLightbulb } from '~/app/@/ui'
@@ -9,6 +9,7 @@ import type { FlowVariant } from '../../flow-variant'
 import { FlowGroupId } from '../../flow/flow-group-id'
 import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowTerminal } from '../../flow/flow-terminal'
+import { eq } from '~/@/equals/equals'
 
 export type FindSolutions = (input: { flow: FlowVariant.Model }) => Promise<Result<string, Flow.Model[]>>
 

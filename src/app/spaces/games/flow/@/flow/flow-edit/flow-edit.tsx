@@ -1,4 +1,4 @@
-import { eq } from '~/@/core'
+import { eq } from '~/@/equals/equals'
 import { p } from '~/@/core/parser'
 import { memoize } from '~/@/function/memoize'
 import { History } from '~/@/history'
