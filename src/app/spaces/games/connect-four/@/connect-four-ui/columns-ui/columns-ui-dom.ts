@@ -1,4 +1,3 @@
-import { easeAttrs } from '~/@/core'
 import { eq } from '~/@/equals/equals'
 import {
   COLUMN_COUNT,
@@ -11,6 +10,7 @@ import {
   isColumnIndex
 } from '../../connect-four'
 import { gameTheme } from '../shared'
+import { easeAttrs } from '~/@/animation'
 
 export type ConnectFourUI = ReturnType<typeof create>
 

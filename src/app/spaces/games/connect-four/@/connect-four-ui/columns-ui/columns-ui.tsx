@@ -1,9 +1,10 @@
-import { Eff, Transition, easeAttrs } from '~/@/core'
+import { Eff, Transition } from '~/@/core'
 import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT, type Win, findWins, winToId } from '../../connect-four'
 import './columns-element'
 import { ViewColumnsCanvas } from './columns-ui-canvas'
 import { ViewColumnsSvg } from './columns-ui-svg'
 import { type Disc, type Model as SharedModel, type ViewColumnsinput, toDiscs } from './shared'
+import { easeAttrs } from '~/@/animation'
 
 const discEnter = async (disc: Disc) => {
   const { y, id } = disc

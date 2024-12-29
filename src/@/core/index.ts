@@ -1,4 +1,3 @@
-export * from './animation'
 export * from './browser'
 export * from './eff'
 export * from './email-address'
