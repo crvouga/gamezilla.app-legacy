@@ -17,7 +17,8 @@ const update: ClientModule['update'] = (input) => {
 
 const updateLoadPuzzles: ClientModule['update'] = (input) => {
   if (
-    (input.msgCore?.t === 'screen-main-menu.user-clicked-option' && input.msgCore.option === 'puzzle-builder') ||
+    (input.msgCore?.t === 'flow.builder.screen-main-menu.user-clicked-option' &&
+      input.msgCore.option === 'puzzle-builder') ||
     input.msgEvt?.t === 'space/synced'
   ) {
     return {

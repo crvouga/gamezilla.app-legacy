@@ -237,45 +237,41 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
               onSlideIndexChanged={(newSlideIndex) =>
                 input.dispatch({
                   t: 'got-msg-core',
-                  c: {
-                    t: 'screen-pack-builder.user-changed-slide',
-                    newSlideIndex,
-                    userId: input.ctx.currentUserId
-                  }
+                  c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId }
                 })
               }
               renderCell={(inputCell) => {
-                const puzzleId = packBuilder.pack.puzzleIds[inputCell.index]
-
-                if (puzzleId) {
-                  const puzzle = puzzleId ? input.ctx.puzzles[puzzleId] : null
-
-                  if (!puzzle) {
-                    return <PackPuzzlesGridUI.ViewLoadingCell />
-                  }
-
-                  return (
-                    <PackPuzzlesGridUI.ViewPuzzleCell
-                      onClick={() =>
-                        input.dispatch({
-                          t: 'got-msg-core',
-                          c: {
-                            t: 'screen-pack-builder.user-clicked-pack-item',
-                            puzzle,
-                            puzzleIndex: inputCell.index
-                          }
-                        })
-                      }
-                      index={inputCell.index}
-                    />
-                  )
-                }
-
                 if (inputCell.index === packBuilder.pack.puzzleIds.length) {
                   return <ButtonAddPuzzle.View {...input} />
                 }
 
-                return <PackPuzzlesGridUI.ViewEmptyCell />
+                if (!inputCell.puzzleId) {
+                  return <PackPuzzlesGridUI.ViewEmptyCell />
+                }
+
+                if (PackPuzzlesGridClient.shouldShowLoading(input.ctx.packPuzzleGrid, packBuilder.pack.puzzleIds)) {
+                  return <PackPuzzlesGridUI.ViewLoadingCell />
+                }
+
+                const puzzleId = packBuilder.pack.puzzleIds[inputCell.index]
+
+                const puzzle = puzzleId ? input.ctx.puzzles[puzzleId] : null
+
+                return (
+                  <PackPuzzlesGridUI.ViewPuzzleCell
+                    onClick={() =>
+                      input.dispatch({
+                        t: 'got-msg-core',
+                        c: {
+                          t: 'screen-pack-builder.user-clicked-pack-item',
+                          puzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
+                          puzzleIndex: inputCell.index
+                        }
+                      })
+                    }
+                    index={inputCell.index}
+                  />
+                )
               }}
             />
           </div>

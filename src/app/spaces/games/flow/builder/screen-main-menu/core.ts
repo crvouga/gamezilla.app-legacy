@@ -2,7 +2,7 @@ import type { UpdateCore } from '../types'
 
 const update: UpdateCore = (input) => {
   switch (input.msgCore.t) {
-    case 'screen-main-menu.user-clicked-option': {
+    case 'flow.builder.screen-main-menu.user-clicked-option': {
       switch (input.msgCore.option) {
         case 'pack-builder': {
           return {

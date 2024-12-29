@@ -15,7 +15,7 @@ describe(import.meta.file, () => {
         model,
         modelCore: BuilderCore.init({ ctx }),
         msgCore: withEventMeta({
-          t: 'screen-main-menu.user-clicked-option',
+          t: 'flow.builder.screen-main-menu.user-clicked-option',
           userId: ctx.currentUserId,
           option: 'pack-builder'
         })

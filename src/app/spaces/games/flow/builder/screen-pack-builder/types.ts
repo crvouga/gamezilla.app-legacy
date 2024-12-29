@@ -6,6 +6,7 @@ import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { EditPackNameTypes } from './edit-pack-name'
 import { FlowPlay } from '../../@/flow/flow-play'
+import { FlowPuzzleResult } from '../../play/@/puzzle-result'
 
 //
 //
@@ -115,7 +116,7 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-clicked-pack-item'),
-    puzzle: FlowPuzzle,
+    puzzle: FlowPuzzleResult,
     puzzleIndex: p.num
   }),
   p.obj({

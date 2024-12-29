@@ -213,7 +213,7 @@ describe(import.meta.file, () => {
           t: 'got-msg-core',
           c: {
             t: 'screen-pack-builder.user-clicked-pack-item',
-            puzzle: f.puzzle,
+            puzzle: { t: 'got', c: f.puzzle },
             puzzleIndex: f.pack.puzzleIds.indexOf(f.puzzle.id)
           }
         }

@@ -103,7 +103,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[0],
+        puzzle: { t: 'got', c: f.puzzles[0] },
         puzzleIndex: 0
       }
     ])
@@ -119,7 +119,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[0],
+        puzzle: { t: 'got', c: f.puzzles[0] },
         puzzleIndex: 0
       },
       {
@@ -137,7 +137,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[0],
+        puzzle: { t: 'got', c: f.puzzles[0] },
         puzzleIndex: 0
       },
       {
@@ -155,7 +155,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[0],
+        puzzle: { t: 'got', c: f.puzzles[0] },
         puzzleIndex: 0
       },
       {
@@ -175,7 +175,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[0],
+        puzzle: { t: 'got', c: f.puzzles[0] },
         puzzleIndex: 0
       },
       {
@@ -197,7 +197,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[1],
+        puzzle: { t: 'got', c: f.puzzles[1] },
         puzzleIndex: 1
       },
       {
@@ -217,7 +217,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[1],
+        puzzle: { t: 'got', c: f.puzzles[1] },
         puzzleIndex: 1
       },
       {
@@ -239,7 +239,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[1],
+        puzzle: { t: 'got', c: f.puzzles[1] },
         puzzleIndex: 1
       },
       {
@@ -302,7 +302,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle,
+        puzzle: { t: 'got', c: puzzle },
         puzzleIndex: f.puzzles.length - 1
       },
       {
@@ -379,7 +379,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[indexNextPage] as FlowPuzzle,
+        puzzle: { t: 'got', c: f.puzzles[indexNextPage]! },
         puzzleIndex: indexNextPage
       }
     ])
@@ -398,7 +398,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: f.puzzles[f.puzzles.length - 1] as FlowPuzzle,
+        puzzle: { t: 'got', c: f.puzzles[f.puzzles.length - 1]! },
         puzzleIndex: f.puzzles.length - 1
       }
     ])
@@ -422,7 +422,7 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzle: puzzleLast,
+        puzzle: { t: 'got', c: puzzleLast },
         puzzleIndex: 0
       }
     ])

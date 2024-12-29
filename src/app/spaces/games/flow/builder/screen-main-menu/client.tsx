@@ -10,7 +10,7 @@ const update: ClientModule['update'] = (input) => {
 
 const updateFromMsgCore: ClientModule['update'] = (input) => {
   switch (input.msgCore?.t) {
-    case 'screen-main-menu.user-clicked-option': {
+    case 'flow.builder.screen-main-menu.user-clicked-option': {
       return {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.navForwardMin)]
@@ -63,7 +63,7 @@ const View: ClientModule['View'] = (input) => {
             input.dispatch({
               t: 'got-msg-core',
               c: {
-                t: 'screen-main-menu.user-clicked-option',
+                t: 'flow.builder.screen-main-menu.user-clicked-option',
                 option: 'puzzle-builder',
                 userId: input.ctx.currentUserId
               }
@@ -77,7 +77,7 @@ const View: ClientModule['View'] = (input) => {
             input.dispatch({
               t: 'got-msg-core',
               c: {
-                t: 'screen-main-menu.user-clicked-option',
+                t: 'flow.builder.screen-main-menu.user-clicked-option',
                 option: 'pack-builder',
                 userId: input.ctx.currentUserId
               }

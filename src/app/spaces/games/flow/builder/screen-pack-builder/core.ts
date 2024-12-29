@@ -114,24 +114,32 @@ updates.push(({ modelCore, msgCore }) => {
 
       const puzzleId = modelCore.screenPackBuilder.pack.puzzleIds[msgCore.puzzleIndex]
 
-      if (puzzleId !== msgCore.puzzle.id) {
-        return modelCore
-      }
+      switch (msgCore.puzzle.t) {
+        case 'not-found': {
+          return modelCore
+        }
 
-      return {
-        ...modelCore,
-        screenPackBuilder: {
-          ...modelCore.screenPackBuilder,
-          screen: {
-            opened: null,
-            t: 'screen-puzzle',
-            puzzleIndex: msgCore.puzzleIndex,
-            puzzle: msgCore.puzzle,
-            play: FlowPlay.init({
-              ctx: FlowPlay.initCtx({
-                flowPuzzle: msgCore.puzzle
-              })
-            })
+        case 'got': {
+          if (puzzleId !== msgCore.puzzle.c.id) {
+            return modelCore
+          }
+
+          return {
+            ...modelCore,
+            screenPackBuilder: {
+              ...modelCore.screenPackBuilder,
+              screen: {
+                opened: null,
+                t: 'screen-puzzle',
+                puzzleIndex: msgCore.puzzleIndex,
+                puzzle: msgCore.puzzle.c,
+                play: FlowPlay.init({
+                  ctx: FlowPlay.initCtx({
+                    flowPuzzle: msgCore.puzzle.c
+                  })
+                })
+              }
+            }
           }
         }
       }

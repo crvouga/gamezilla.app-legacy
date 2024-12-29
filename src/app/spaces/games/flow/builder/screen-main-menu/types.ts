@@ -26,7 +26,7 @@ export const MsgCore = p.or(
     userId: UserId
   }),
   p.obj({
-    t: p.l('screen-main-menu.user-clicked-option'),
+    t: p.l('flow.builder.screen-main-menu.user-clicked-option'),
     userId: UserId,
     option: Option
   })
