@@ -1,4 +1,5 @@
-import { Set, List, NonNegInt } from '~/@/core'
+import { List, Set } from '~/@/core'
+import { NonNegInt } from '~/@/math/non-neg-int'
 
 export type Position = {
   x: NonNegInt

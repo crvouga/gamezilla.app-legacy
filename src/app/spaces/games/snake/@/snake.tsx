@@ -1,6 +1,7 @@
-import { List, NonNegInt } from '~/@/core'
+import { List } from '~/@/core'
 import { TimeSpan } from '~/@/core/time-span'
 import { pipe } from '~/@/function/pipe'
+import { NonNegInt } from '~/@/math/non-neg-int'
 import { Direction } from './direction'
 import { Position } from './position'
 

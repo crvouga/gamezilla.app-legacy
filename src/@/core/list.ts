@@ -1,4 +1,5 @@
-import { NonNegInt, Num } from './num'
+import { NonNegInt } from '../math/non-neg-int'
+import { Num } from '../math/num'
 
 export type List<T> = {
   _type: 'List'

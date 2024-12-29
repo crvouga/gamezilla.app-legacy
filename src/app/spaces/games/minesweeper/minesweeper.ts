@@ -1,5 +1,6 @@
-import { Iter, Random, Set, type NonNegInt } from '~/@/core'
+import { Iter, Random, Set } from '~/@/core'
 import { pipe } from '~/@/function/pipe'
+import { NonNegInt } from '~/@/math/non-neg-int'
 import { Position } from './position'
 
 export type Model = {

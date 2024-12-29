@@ -1,4 +1,4 @@
-import type { NonNegInt } from './num'
+import { NonNegInt } from '../math/non-neg-int'
 
 export type Iter<T> = Iterable<T> & {
   Iter: 'Iter'

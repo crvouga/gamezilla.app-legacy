@@ -1,4 +1,4 @@
-import { waitForElementById } from '~/@/core/dom'
+import { waitForElementById } from '~/@/dom/dom'
 import type { VDomChildren } from '~/@/vdom'
 
 if (typeof window !== 'undefined') {

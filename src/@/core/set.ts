@@ -1,5 +1,5 @@
-import { Num } from './num'
-import { NonNegInt } from './num/non-neg-int'
+import { NonNegInt } from '../math/non-neg-int'
+import { Num } from '../math/num'
 
 export type Set<T> = {
   _type: 'Set'
