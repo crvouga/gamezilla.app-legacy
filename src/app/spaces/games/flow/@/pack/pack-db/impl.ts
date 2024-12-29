@@ -1,4 +1,4 @@
-import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
+import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { IPackDb } from './interface'
 import { PackDbHashMap } from './impl-hash-map'
 import { PackDbPostgres } from './impl-postgres'

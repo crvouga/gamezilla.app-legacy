@@ -1,4 +1,4 @@
-import { IDbConnSql } from '~/app/@/server/db-conn-sql'
+import { IDbConnSql } from '~/@/db-conn-sql'
 import type { IVerificationAttemptDb } from './verification-attempt-db'
 import { VerificationAttemptDbHashMap } from './verification-attempt-db-impl-hash-map'
 import { VerificationAttemptDbPostgres } from './verification-attempt-db-impl-postgres'

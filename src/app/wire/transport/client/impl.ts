@@ -1,4 +1,4 @@
-import { ILogger } from '~/app/@/server/logger'
+import { ILogger } from '~/@/logger'
 import * as ImplWebSockets from './impl-standard-web-sockets'
 import { initClientTransport, type IClientTransport } from './interface'
 

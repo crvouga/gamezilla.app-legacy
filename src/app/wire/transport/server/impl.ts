@@ -1,4 +1,4 @@
-import { ILogger, Logger } from '~/app/@/server/logger'
+import { ILogger, Logger } from '~/@/logger'
 import * as ImplBunWebSockets from './impl-bun-web-sockets'
 import { initServerTransport, type IServerTransport } from './interface'
 

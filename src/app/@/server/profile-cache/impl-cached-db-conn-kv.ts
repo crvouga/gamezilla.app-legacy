@@ -1,8 +1,8 @@
 import { TimeSpan, pipe } from '~/@/core'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { IRuntime } from '~/@/runtime'
-import { DbConnKv, type IDbConnKv } from '~/app/@/server/db-conn-kv'
-import { ILogger, Logger } from '../logger'
+import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { ILogger, Logger } from '../../../../@/logger'
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import type { IProfileCache } from './interface'
 

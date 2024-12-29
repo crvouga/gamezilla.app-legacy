@@ -1,6 +1,6 @@
 import { Ok, isErr } from '~/@/core'
 import { Profile } from '~/app/@/data'
-import { DbConnKv, type IDbConnKv } from '~/app/@/server/db-conn-kv'
+import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import type { IProfileCache } from './interface'
 
 export type Config = {

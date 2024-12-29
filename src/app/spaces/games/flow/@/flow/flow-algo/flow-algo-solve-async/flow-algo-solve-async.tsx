@@ -1,5 +1,5 @@
-import type { ILogger } from '~/app/@/server/logger'
-import { loggerNoop } from '~/app/@/server/logger/impl-noop'
+import type { ILogger } from '~/@/logger'
+import { loggerNoop } from '~/@/logger/impl-noop'
 import type { FlowVariant } from '../../flow-variant'
 import { MsgToMaster, type MsgToWorker } from './flow-algo-solve-async.types'
 
@@ -42,9 +42,12 @@ export const solve = async (
   const solution = await Promise.race([
     solutionPromise,
     new Promise<FlowVariant.Model | null>((resolve) => {
-      setTimeout(() => {
-        resolve(null)
-      }, 1000 * 60 * 2)
+      setTimeout(
+        () => {
+          resolve(null)
+        },
+        1000 * 60 * 2
+      )
     })
   ])
 

@@ -1,5 +1,5 @@
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
-import { Logger } from '~/app/@/server/logger'
+import { Logger } from '~/@/logger'
 import { PuzzleDb } from './impl'
 
 export const PuzzleDbFixture = async () => {

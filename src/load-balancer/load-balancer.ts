@@ -1,7 +1,7 @@
 import { NonEmpty, TimeSpan, unwrapOr } from '~/@/core'
-import { DbConnKv } from '~/app/@/server/db-conn-kv'
-import { DbConnSql } from '~/app/@/server/db-conn-sql'
-import { ILogger, Logger } from '~/app/@/server/logger'
+import { DbConnKv } from '~/@/db-conn-kv'
+import { DbConnSql } from '~/@/db-conn-sql'
+import { ILogger, Logger } from '~/@/logger'
 import { IServerInstanceDb, ServerInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
 import { DATABASE_URL } from '~/config-private'
 

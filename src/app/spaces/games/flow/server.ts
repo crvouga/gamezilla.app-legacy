@@ -1,5 +1,5 @@
 import { Sub } from '~/@/core'
-import { Logger } from '~/app/@/server/logger'
+import { Logger } from '~/@/logger'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceServerCmd } from '../../@/space-server-cmd'
 import { SpaceServerCtx } from '../../@/space-server-ctx'

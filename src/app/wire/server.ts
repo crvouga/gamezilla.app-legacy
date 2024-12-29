@@ -4,7 +4,7 @@ import type { Sub } from '~/@/core/sub'
 import type { ClientId } from '~/app/@/data'
 import { AppServerCtx, ServerCmd, ServerEvt, WireCmd } from '~/app/@/server'
 import { AppServerModule } from '../@/architecture/app-server'
-import { Logger } from '../@/server/logger'
+import { Logger } from '../../@/logger'
 import { ServerInstanceServer } from './server-instance/server'
 import type { IServerTransport } from './transport/server'
 import { rpcContract, type MsgServer, type MsgToClient, type MsgToServer, type ServerCtx } from './types'
@@ -98,7 +98,7 @@ const updateFromMsg: typeof update = async (input) => {
     case 'client-connected': {
       const got = await input.ctx.wireSessionDb.findBySessionIds([input.msg.sessionId])
 
-      const maybeSession: WireSession | null = got.t === 'ok' ? got.value[0] ?? null : null
+      const maybeSession: WireSession | null = got.t === 'ok' ? (got.value[0] ?? null) : null
 
       const session: WireSession = maybeSession ?? WireSession.init(input.msg.sessionId)
 

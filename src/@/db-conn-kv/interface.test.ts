@@ -4,7 +4,7 @@ import { p } from '~/@/core/parser'
 import { REDIS_URL } from '~/config-private'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
-import { AppServerTestEnv } from '../server-test-env'
+import { AppServerTestEnv } from '../../app/@/server/server-test-env'
 import { DbConnKv } from './impl'
 import { Runtime } from '~/@/runtime'
 

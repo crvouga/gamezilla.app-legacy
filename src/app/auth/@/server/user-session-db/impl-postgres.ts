@@ -1,9 +1,9 @@
 import { Result, Uuid } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { SessionId, UserId } from '~/app/@/data'
-import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
+import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { IUserSessionDb } from './interface'
-import { ILogger, Logger } from '~/app/@/server/logger'
+import { ILogger, Logger } from '~/@/logger'
 
 //
 //

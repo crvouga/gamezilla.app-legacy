@@ -1,5 +1,5 @@
-import { DbConnKv, IDbConnKv } from '~/app/@/server/db-conn-kv'
-import { ILogger } from '~/app/@/server/logger'
+import { DbConnKv, IDbConnKv } from '~/@/db-conn-kv'
+import { ILogger } from '~/@/logger'
 import { WireSession } from '../wire-session'
 import type { IWireSessionDb } from './interface'
 import { p } from '~/@/core/parser'

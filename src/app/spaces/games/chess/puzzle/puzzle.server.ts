@@ -1,7 +1,7 @@
 import { type Eff, Err, Ok, Result, Sub, Time, andThen, eq, pipe } from '~/@/core'
 import { TimeSpan } from '~/@/core/time-span'
 import type { UserId } from '~/app/@/data'
-import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
+import type { IDbConnSql } from '~/@/db-conn-sql'
 
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import type { ChessMsgCore } from '../@/chess/chess-shared'

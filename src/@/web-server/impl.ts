@@ -1,4 +1,4 @@
-import { Logger, type ILogger } from '~/app/@/server/logger'
+import { Logger, type ILogger } from '~/@/logger'
 import { WebServerBun } from './impl-bun'
 import { WebServerNode } from './impl-node'
 

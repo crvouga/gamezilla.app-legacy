@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { unwrap } from '~/@/core'
 import { SessionId, UserId } from '~/app/@/data'
-import { Logger } from '~/app/@/server/logger'
-import { PubSubTopicBased } from '~/app/@/server/pub-sub-topic-based'
+import { Logger } from '~/@/logger'
+import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Config, UserSessionDb } from './impl'
 

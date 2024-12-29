@@ -1,6 +1,6 @@
 import { pipe } from '~/@/core'
-import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
-import type { ILogger } from '~/app/@/server/logger'
+import type { IDbConnSql } from '~/@/db-conn-sql'
+import type { ILogger } from '~/@/logger'
 import type { IPuzzleDb } from './interface'
 import { PuzzleDbHashMap } from './impl-hash-map'
 import { PuzzleDbPostgres } from './impl-postgres'

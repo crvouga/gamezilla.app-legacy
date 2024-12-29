@@ -1,6 +1,6 @@
 import type { Server, WebSocketHandler } from 'bun'
 import { Posix, PubSub } from '~/@/core'
-import { Logger, type ILogger } from '~/app/@/server/logger'
+import { Logger, type ILogger } from '~/@/logger'
 import { getIpAddress } from './ip-address'
 import { WebServerEvent, type Handler, type IWebServer } from './interface'
 

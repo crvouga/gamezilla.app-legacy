@@ -1,4 +1,4 @@
-import { Logger } from '~/app/@/server/logger'
+import { Logger } from '~/@/logger'
 import * as ImplNoop from './impl-noop'
 import * as ImplProcess from './impl-process'
 import { IRuntime } from './interface'

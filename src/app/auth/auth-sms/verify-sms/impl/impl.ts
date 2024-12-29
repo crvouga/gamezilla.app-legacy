@@ -1,4 +1,4 @@
-import { Logger } from '~/app/@/server/logger'
+import { Logger } from '~/@/logger'
 import type { IVerifySMS } from '../interface'
 import * as ImplFake from './impl-fake'
 import * as ImplFakeAlwaysOk from './impl-fake-always-ok'

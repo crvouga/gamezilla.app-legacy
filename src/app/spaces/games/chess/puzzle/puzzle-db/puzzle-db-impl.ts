@@ -1,7 +1,7 @@
 import { Err, NonEmpty, Ok, Result, Uuid } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { UserId } from '~/app/@/data'
-import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
+import type { IDbConnSql } from '~/@/db-conn-sql'
 import { type MoveInput, uciMoveToMoveInput } from '../../@/chess'
 import { EloRating } from '../elo-rating'
 import { type Puzzle, type PuzzleInteraction, type PuzzleProfile, initQuery } from '../puzzle.types'

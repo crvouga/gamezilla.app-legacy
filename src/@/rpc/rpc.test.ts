@@ -2,7 +2,7 @@ import { p } from '~/@/core/parser'
 import * as RPC from './rpc'
 import { WebServer } from '~/@/web-server'
 import { WebClient } from '~/@/web-client'
-import { Logger } from '~/app/@/server/logger'
+import { Logger } from '~/@/logger'
 
 const childRpcContract = RPC.initContract({
   baz: {

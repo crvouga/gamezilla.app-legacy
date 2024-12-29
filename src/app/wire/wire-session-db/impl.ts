@@ -1,4 +1,4 @@
-import { Logger } from '~/app/@/server/logger'
+import { Logger } from '~/@/logger'
 import * as ImplCachedDbConnKv from './impl-cached-db-conn-kv'
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import type { IWireSessionDb } from './interface'

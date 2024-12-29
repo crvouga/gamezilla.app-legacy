@@ -4,7 +4,7 @@ import { PackDb } from '../../../@/pack/pack-db'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { initServer } from '../../types'
 import { BuilderCore } from '../../core'
-import { Logger } from '~/app/@/server/logger'
+import { Logger } from '~/@/logger'
 import { FlowServerCtx } from '../../../@/server/ctx'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 

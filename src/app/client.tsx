@@ -34,7 +34,7 @@ import {
 } from './types'
 import * as WireClient from './wire/client'
 import { ClientTransport } from './wire/transport/client'
-import { ILogger, Logger } from './@/server/logger'
+import { ILogger, Logger } from '../@/logger'
 
 //
 //

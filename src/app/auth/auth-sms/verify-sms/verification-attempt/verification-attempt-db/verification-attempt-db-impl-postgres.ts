@@ -1,7 +1,7 @@
 import { Posix, Result, isErr } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { Sql } from '~/@/sql'
-import type { IDbConnSql } from '~/app/@/server/db-conn-sql'
+import type { IDbConnSql } from '~/@/db-conn-sql'
 import { VerificationId } from '../../verification/verification-id'
 import { VerificationAttemptId } from '../verification-attempt-id'
 import type { IVerificationAttemptDb, WhereClause } from './verification-attempt-db'

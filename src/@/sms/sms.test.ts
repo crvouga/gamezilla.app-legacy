@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { SMS } from './sms-impl'
-import { AppServerTestEnv } from '../server-test-env'
+import { AppServerTestEnv } from '../../app/@/server/server-test-env'
 import { Logger } from '../logger'
 import { PhoneNumber, isOk, unwrap } from '~/@/core'
 
