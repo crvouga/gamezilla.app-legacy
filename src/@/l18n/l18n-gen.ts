@@ -87,8 +87,6 @@ async function generateLanguageFiles(files: string[]) {
           }
         }
       }
-
-      console.log(`Successfully merged translations from: ${file}`)
     } catch (error) {
       console.error(`Error processing file "${file}":`, error)
 
@@ -126,7 +124,6 @@ export const translations: Text = ${translationsForLanguageString}
       const outputPath = path.join(OUTPUT_TRANSLATIONS_DIR, `${code}.ts`)
       try {
         await fs.writeFile(outputPath, content, 'utf-8')
-        console.log(`Generated translation file: ${outputPath}`)
       } catch (error) {
         console.error(`Error writing translation file "${outputPath}":`, error)
       }

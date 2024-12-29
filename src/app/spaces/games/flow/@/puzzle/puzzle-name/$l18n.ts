@@ -1,5 +1,5 @@
 import type { Translations } from '~/@/l18n'
-import type { PuzzleName } from './puzzle-name'
+import type { PuzzleName } from '.'
 
 export type Text = {
   'flow-puzzle-name': (puzzleName: PuzzleName) => string
