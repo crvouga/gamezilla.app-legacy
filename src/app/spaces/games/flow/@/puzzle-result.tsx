@@ -1,7 +1,21 @@
+import { p } from '~/@/core/parser'
 import { Translator } from '~/@/l18n/generated'
 import { IconExclamationCircle, Typography } from '~/app/@/ui'
+import { FlowPuzzle } from './puzzle/puzzle'
 
-export const ViewPuzzleNotFound = (input: { ctx: { t: Translator } }) => {
+const parser = p.or(
+  p.obj({
+    t: p.l('got'),
+    c: FlowPuzzle
+  }),
+  p.obj({
+    t: p.l('not-found')
+  })
+)
+
+export type FlowPuzzleResult = p.Infer<typeof parser>
+
+const ViewNotFound = (input: { ctx: { t: Translator } }) => {
   return (
     <div className='flex w-full flex-1 flex-col items-center justify-center gap-10'>
       <div className='flex w-full flex-col items-center justify-center gap-4 opacity-80'>
@@ -10,4 +24,9 @@ export const ViewPuzzleNotFound = (input: { ctx: { t: Translator } }) => {
       </div>
     </div>
   )
+}
+
+export const FlowPuzzleResult = {
+  ...parser,
+  ViewNotFound
 }

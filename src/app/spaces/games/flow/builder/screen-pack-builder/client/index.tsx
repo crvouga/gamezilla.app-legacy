@@ -12,14 +12,16 @@ import {
 } from '~/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
-import { FlowPlay } from '../../@/flow/flow-play'
-import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
-import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
-import { PuzzleListClient } from '../../@/puzzle/puzzle-list'
-import type { ClientModule } from '../types'
-import { ScreenPackBuilderCore } from './core'
-import { EditPackNameClient } from './edit-pack-name/client'
-import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
+import { FlowPlay } from '../../../@/flow/flow-play'
+import { FlowLayout } from '../../../@/flow/flow-ui/flow-layout'
+import { PackPuzzlesGridClient } from '../../../@/pack/pack-puzzles-grid/client'
+import { PackPuzzlesGridUI } from '../../../@/pack/pack-puzzles-grid/ui'
+import { FlowPuzzleResult } from '../../../@/puzzle-result'
+import { FlowPuzzle } from '../../../@/puzzle/puzzle'
+import { PuzzleListClient } from '../../../@/puzzle/puzzle-list'
+import type { ClientModule } from '../../types'
+import { ScreenPackBuilderCore } from '../core'
+import { EditPackNameClient } from '../edit-pack-name/client'
 
 //
 //
@@ -264,7 +266,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
                         t: 'got-msg-core',
                         c: {
                           t: 'screen-pack-builder.user-clicked-pack-item',
-                          puzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
+                          puzzleResult: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
                           puzzleIndex: inputCell.index
                         }
                       })
@@ -383,18 +385,23 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           input.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle'
             ? input.modelCore.screenPackBuilder.screen.play
             : null
-        const flowPuzzle =
-          input.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle'
-            ? input.modelCore.screenPackBuilder.screen.puzzle
-            : null
 
-        if (!flowPlay || !flowPuzzle) {
+        if (!flowPlay) {
           return { model: input.model }
         }
+
+        const flowPuzzle: FlowPuzzle | null =
+          input.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
+          input.modelCore.screenPackBuilder.screen.puzzleResult.t === 'got'
+            ? input.modelCore.screenPackBuilder.screen.puzzleResult.c
+            : null
+
+        if (!flowPuzzle) {
+          return { model: input.model }
+        }
+
         const updated = FlowPlay.update({
-          ctx: FlowPlay.initCtx({
-            flowPuzzle
-          }),
+          ctx: FlowPlay.initCtx({ flowPuzzle }),
           model: flowPlay,
           msg: input.msgCore.c
         })
@@ -455,7 +462,9 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
         <TopBar
           ctx={input.ctx}
           title={input.ctx.t('flow.level', screen.puzzleIndex + 1)}
-          subtitle={input.ctx.t('flow-puzzle-name', screen.puzzle.name)}
+          subtitle={
+            screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null
+          }
           onBack={() =>
             input.dispatch({
               t: 'got-msg-core',
@@ -470,20 +479,24 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
         <FlowLayout
           top={null}
           middle={
-            <FlowPlay.View
-              dispatch={(c) =>
-                input.dispatch({
-                  t: 'got-msg-core',
-                  c: {
-                    t: 'screen-pack-builder.got-flow-play-msg',
-                    c
-                  }
-                })
-              }
-              flow={screen.puzzle.flow}
-              model={screen.play}
-              showSolvedAnimation
-            />
+            screen.puzzleResult.t === 'got' && screen.play ? (
+              <FlowPlay.View
+                dispatch={(c) =>
+                  input.dispatch({
+                    t: 'got-msg-core',
+                    c: {
+                      t: 'screen-pack-builder.got-flow-play-msg',
+                      c
+                    }
+                  })
+                }
+                flow={screen.puzzleResult.c.flow}
+                model={screen.play}
+                showSolvedAnimation
+              />
+            ) : (
+              <FlowPuzzleResult.ViewNotFound ctx={input.ctx} />
+            )
           }
           bottom={
             <ViewBottomButtonBar>
@@ -492,16 +505,14 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
                 label={input.ctx.t('app.prev')}
                 disabled={!canGoPrevious}
                 onClick={() => {
-                  if (previousPuzzle) {
-                    input.dispatch({
-                      t: 'got-msg-core',
-                      c: {
-                        t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
-                        userId: input.ctx.currentUserId,
-                        previousPuzzle
-                      }
-                    })
-                  }
+                  input.dispatch({
+                    t: 'got-msg-core',
+                    c: {
+                      t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+                      userId: input.ctx.currentUserId,
+                      previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' }
+                    }
+                  })
                 }}
               />
 
@@ -510,16 +521,14 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
                 label={input.ctx.t('app.next')}
                 disabled={!canGoNext}
                 onClick={() => {
-                  if (nextPuzzle) {
-                    input.dispatch({
-                      t: 'got-msg-core',
-                      c: {
-                        t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-                        userId: input.ctx.currentUserId,
-                        nextPuzzle
-                      }
-                    })
-                  }
+                  input.dispatch({
+                    t: 'got-msg-core',
+                    c: {
+                      t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
+                      userId: input.ctx.currentUserId,
+                      nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' }
+                    }
+                  })
                 }}
               />
 

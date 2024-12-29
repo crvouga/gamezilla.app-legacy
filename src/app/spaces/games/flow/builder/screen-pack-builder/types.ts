@@ -1,12 +1,12 @@
 import { Result } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { UserId } from '~/app/@/data'
+import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowPack } from '../../@/pack/pack'
 import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
+import { FlowPuzzleResult } from '../../@/puzzle-result'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { EditPackNameTypes } from './edit-pack-name'
-import { FlowPlay } from '../../@/flow/flow-play'
-import { FlowPuzzleResult } from '../../@/puzzle-result'
 
 //
 //
@@ -71,8 +71,8 @@ export const Screen = p.or(
   p.obj({
     t: p.l('screen-puzzle'),
     puzzleIndex: p.num,
-    puzzle: FlowPuzzle,
-    play: FlowPlay.Model,
+    puzzleResult: FlowPuzzleResult,
+    play: p.maybe(FlowPlay.Model),
     opened: p.maybe(p.l('more'))
   })
 )
@@ -116,7 +116,7 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-clicked-pack-item'),
-    puzzle: FlowPuzzleResult,
+    puzzleResult: FlowPuzzleResult,
     puzzleIndex: p.num
   }),
   p.obj({
@@ -135,12 +135,12 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle'),
     userId: UserId,
-    nextPuzzle: FlowPuzzle
+    nextPuzzleResult: FlowPuzzleResult
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button'),
     userId: UserId,
-    previousPuzzle: FlowPuzzle
+    previousPuzzleResult: FlowPuzzleResult
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-more-button'),

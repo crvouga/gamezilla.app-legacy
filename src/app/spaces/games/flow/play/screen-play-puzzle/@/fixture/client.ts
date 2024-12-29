@@ -1,10 +1,10 @@
-import { UserId } from '~/app/@/data'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { FlowPack } from '../../../../@/pack/pack'
-import { FlowPuzzle } from '../../../../@/puzzle/puzzle'
+import { UserId } from '~/app/@/data'
 import { FlowPlay } from '../../../../@/flow/flow-play'
-import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/fixture.client'
+import { FlowPack } from '../../../../@/pack/pack'
 import { FlowPuzzleResult } from '../../../../@/puzzle-result'
+import { FlowPuzzle } from '../../../../@/puzzle/puzzle'
+import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/fixture.client'
 
 const toCompletePuzzleMsgs = (puzzle: FlowPuzzle) => {
   const userId = UserId.generate()

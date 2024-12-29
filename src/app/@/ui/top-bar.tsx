@@ -7,7 +7,7 @@ import { Typography } from './typography'
 
 export const TopBar = (input: {
   title: TranslatedText
-  subtitle?: TranslatedText
+  subtitle?: TranslatedText | null
   center?: boolean
   ctx: {
     t: Translator

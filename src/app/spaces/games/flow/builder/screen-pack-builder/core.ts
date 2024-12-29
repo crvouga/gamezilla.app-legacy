@@ -6,7 +6,25 @@ import { EditPackNameCore } from './edit-pack-name/core'
 import type { ModelCore } from './types'
 import { FlowPlay } from '../../@/flow/flow-play'
 
+const init = ({ pack }: { pack: FlowPack }): ModelCore => {
+  return {
+    editPackName: EditPackNameCore.init({ pack }),
+    pack,
+    slideIndex: 0,
+    screen: {
+      t: 'screen-puzzle-grid'
+    }
+  }
+}
+
 const updates: UpdateCore[] = []
+
+const update: UpdateCore = (input) => {
+  return updates.reduce(
+    (modelCore, updateCore) => updateCore({ ctx: input.ctx, msgCore: input.msgCore, modelCore }),
+    input.modelCore
+  )
+}
 
 updates.push(({ modelCore, msgCore }) => {
   switch (msgCore.t) {
@@ -114,32 +132,27 @@ updates.push(({ modelCore, msgCore }) => {
 
       const puzzleId = modelCore.screenPackBuilder.pack.puzzleIds[msgCore.puzzleIndex]
 
-      switch (msgCore.puzzle.t) {
-        case 'not-found': {
-          return modelCore
-        }
+      if (msgCore.puzzleResult.t === 'got' && msgCore.puzzleResult.c.id !== puzzleId) {
+        return modelCore
+      }
 
-        case 'got': {
-          if (puzzleId !== msgCore.puzzle.c.id) {
-            return modelCore
-          }
-
-          return {
-            ...modelCore,
-            screenPackBuilder: {
-              ...modelCore.screenPackBuilder,
-              screen: {
-                opened: null,
-                t: 'screen-puzzle',
-                puzzleIndex: msgCore.puzzleIndex,
-                puzzle: msgCore.puzzle.c,
-                play: FlowPlay.init({
-                  ctx: FlowPlay.initCtx({
-                    flowPuzzle: msgCore.puzzle.c
+      return {
+        ...modelCore,
+        screenPackBuilder: {
+          ...modelCore.screenPackBuilder,
+          screen: {
+            opened: null,
+            t: 'screen-puzzle',
+            puzzleIndex: msgCore.puzzleIndex,
+            puzzleResult: msgCore.puzzleResult,
+            play:
+              msgCore.puzzleResult.t === 'got'
+                ? FlowPlay.init({
+                    ctx: FlowPlay.initCtx({
+                      flowPuzzle: msgCore.puzzleResult.c
+                    })
                   })
-                })
-              }
-            }
+                : null
           }
         }
       }
@@ -218,13 +231,20 @@ updates.push(({ modelCore, msgCore }) => {
 
       const screen = modelCore.screenPackBuilder.screen
 
-      const updated = FlowPlay.update({
-        ctx: FlowPlay.initCtx({
-          flowPuzzle: screen.puzzle
-        }),
-        model: screen.play,
-        msg: msgCore.c
-      })
+      if (!screen.play) {
+        return modelCore
+      }
+
+      const updatedPlay =
+        screen.puzzleResult.t === 'got'
+          ? FlowPlay.update({
+              ctx: FlowPlay.initCtx({
+                flowPuzzle: screen.puzzleResult.c
+              }),
+              model: screen.play,
+              msg: msgCore.c
+            })
+          : { model: screen.play }
 
       return {
         ...modelCore,
@@ -234,8 +254,8 @@ updates.push(({ modelCore, msgCore }) => {
             opened: null,
             t: 'screen-puzzle',
             puzzleIndex: modelCore.screenPackBuilder.screen.puzzleIndex,
-            puzzle: modelCore.screenPackBuilder.screen.puzzle,
-            play: updated.model
+            puzzleResult: modelCore.screenPackBuilder.screen.puzzleResult,
+            play: updatedPlay.model
           }
         }
       }
@@ -253,10 +273,15 @@ updates.push(({ modelCore, msgCore }) => {
 
   switch (msgCore.t) {
     case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
-      const indexOfNextPuzzle = modelCore.screenPackBuilder.pack.puzzleIds.indexOf(msgCore.nextPuzzle.id)
-      if (indexOfNextPuzzle === -1) {
+      const doesPackIncludePuzzle =
+        msgCore.nextPuzzleResult.t === 'got'
+          ? modelCore.screenPackBuilder.pack.puzzleIds.includes(msgCore.nextPuzzleResult.c.id)
+          : false
+
+      if (!doesPackIncludePuzzle) {
         return modelCore
       }
+
       return {
         ...modelCore,
         screenPackBuilder: {
@@ -269,12 +294,15 @@ updates.push(({ modelCore, msgCore }) => {
               0,
               modelCore.screenPackBuilder.pack.puzzleIds.length - 1
             ),
-            play: FlowPlay.init({
-              ctx: FlowPlay.initCtx({
-                flowPuzzle: msgCore.nextPuzzle
-              })
-            }),
-            puzzle: msgCore.nextPuzzle
+            play:
+              msgCore.nextPuzzleResult.t === 'got'
+                ? FlowPlay.init({
+                    ctx: FlowPlay.initCtx({
+                      flowPuzzle: msgCore.nextPuzzleResult.c
+                    })
+                  })
+                : modelCore.screenPackBuilder.screen.play,
+            puzzleResult: msgCore.nextPuzzleResult
           }
         }
       }
@@ -293,8 +321,11 @@ updates.push(({ modelCore, msgCore }) => {
 
   switch (msgCore.t) {
     case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
-      const indexOfPreviousPuzzle = modelCore.screenPackBuilder.pack.puzzleIds.indexOf(msgCore.previousPuzzle.id)
-      if (indexOfPreviousPuzzle === -1) {
+      const doesPackIncludePuzzle =
+        msgCore.previousPuzzleResult.t === 'got'
+          ? modelCore.screenPackBuilder.pack.puzzleIds.includes(msgCore.previousPuzzleResult.c.id)
+          : false
+      if (!doesPackIncludePuzzle) {
         return modelCore
       }
       return {
@@ -309,12 +340,15 @@ updates.push(({ modelCore, msgCore }) => {
               0,
               modelCore.screenPackBuilder.pack.puzzleIds.length - 1
             ),
-            play: FlowPlay.init({
-              ctx: FlowPlay.initCtx({
-                flowPuzzle: msgCore.previousPuzzle
-              })
-            }),
-            puzzle: msgCore.previousPuzzle
+            play:
+              msgCore.previousPuzzleResult.t === 'got'
+                ? FlowPlay.init({
+                    ctx: FlowPlay.initCtx({
+                      flowPuzzle: msgCore.previousPuzzleResult.c
+                    })
+                  })
+                : modelCore.screenPackBuilder.screen.play,
+            puzzleResult: msgCore.previousPuzzleResult
           }
         }
       }
@@ -411,24 +445,6 @@ updates.push((input) => {
     }
   }
 })
-
-const update: UpdateCore = (input) => {
-  return updates.reduce(
-    (modelCore, updateCore) => updateCore({ ctx: input.ctx, msgCore: input.msgCore, modelCore }),
-    input.modelCore
-  )
-}
-
-const init = ({ pack }: { pack: FlowPack }): ModelCore => {
-  return {
-    editPackName: EditPackNameCore.init({ pack }),
-    pack,
-    slideIndex: 0,
-    screen: {
-      t: 'screen-puzzle-grid'
-    }
-  }
-}
 
 const toSlideIndex = (modelCore?: ModelCore | null | undefined): number => {
   return modelCore?.slideIndex ?? 0

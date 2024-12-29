@@ -6,11 +6,11 @@ import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-
 import { LayoutGame } from '../../../@/game/layout-game'
 import { ProfileCard } from '../../../@/game/profile-card'
 import { FlowPlay } from '../../@/flow/flow-play'
-import { ViewPuzzleNotFound } from '../../@/puzzle/not-found'
 import type { ClientModule } from '../types'
 import * as CopyPuzzleClient from './copy-puzzle/client'
 import { ScreenPlayPuzzleCore } from './core'
 import { LastPuzzleClient } from './last-puzzle/client'
+import { FlowPuzzleResult } from '../../@/puzzle-result'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -151,7 +151,7 @@ const View: ClientModule['View'] = (input) => {
             </>
           )}
 
-          {flowPuzzle.t === 'not-found' && <ViewPuzzleNotFound ctx={input.ctx} />}
+          {flowPuzzle.t === 'not-found' && <FlowPuzzleResult.ViewNotFound ctx={input.ctx} />}
         </div>
       </LayoutGame>
     )
@@ -179,7 +179,7 @@ const View: ClientModule['View'] = (input) => {
           />
         )}
 
-        {flowPuzzle.t === 'not-found' && <ViewPuzzleNotFound ctx={input.ctx} />}
+        {flowPuzzle.t === 'not-found' && <FlowPuzzleResult.ViewNotFound ctx={input.ctx} />}
 
         {isLastPuzzle ? (
           <LastPuzzleClient.View

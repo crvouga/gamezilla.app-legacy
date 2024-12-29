@@ -337,7 +337,7 @@ export const clickedPuzzleGridItem =
         t: 'got-msg-core',
         c: {
           t: 'screen-pack-builder.user-clicked-pack-item',
-          puzzle: { t: 'got', c: puzzle },
+          puzzleResult: { t: 'got', c: puzzle },
           puzzleIndex
         }
       },
