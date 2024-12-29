@@ -1,7 +1,8 @@
-import { NonEmpty, type Sub } from '~/@/core'
+import { NonEmpty } from '~/@/array/non-empty'
+import { type Sub } from '~/@/core'
 import { Msg } from '~/@/core/msg'
-import type { ClientId, SessionId, UserId } from '~/app/@/data'
 import type { WithEventId } from '~/@/event-sourced/event'
+import type { ClientId, SessionId, UserId } from '~/app/@/data'
 
 //
 //
@@ -104,7 +105,7 @@ const tagOutput = <
   msgCore?: WithEventId<{ t: TTag; c: T['MsgCore'] }>[]
 } => {
   return {
-    msgCmd: output.msgCmd ? tagCmd(output.msgCmd) ?? [] : [],
+    msgCmd: output.msgCmd ? (tagCmd(output.msgCmd) ?? []) : [],
     msgEvt: output.msgEvt,
     msgCore: output.msgCore?.map((c) => ({
       eventId: c.eventId,

@@ -1,10 +1,9 @@
-import { type Keyboard, type NonEmpty, Result } from '~/@/core'
+import { NonEmpty } from '~/@/array/non-empty'
+import { Err, Ok, type Keyboard, type Result } from '~/@/core'
 import { dissoc } from '~/@/object/dissoc'
 import type { UserId } from '~/app/@/data'
 import { Maze } from './@/maze'
 import { Direction, Position } from './@/position'
-
-const { Err, Ok } = Result
 
 //
 //

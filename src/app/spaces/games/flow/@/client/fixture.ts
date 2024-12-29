@@ -1,4 +1,4 @@
-import { NonEmpty } from '~/@/core'
+import { NonEmpty } from '~/@/array/non-empty'
 import { withEventMeta, WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
 import { FlowClient } from '../../client'

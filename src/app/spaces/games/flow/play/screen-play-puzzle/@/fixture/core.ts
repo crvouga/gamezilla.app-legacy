@@ -1,4 +1,4 @@
-import { NonEmpty } from '~/@/core'
+import { NonEmpty } from '~/@/array/non-empty'
 import { pipe } from '~/@/function/pipe'
 import { UserId } from '~/app/@/data'
 import type { FlowVariant } from '../../../../@/flow'

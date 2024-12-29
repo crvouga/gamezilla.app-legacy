@@ -1,4 +1,4 @@
-import { NonEmpty } from '~/@/core'
+import { NonEmpty } from '~/@/array/non-empty'
 import { Msg } from '~/@/core/msg'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpaceServer } from '~/app/spaces/@/fixture/server'

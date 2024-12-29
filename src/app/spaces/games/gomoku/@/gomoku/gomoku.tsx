@@ -1,5 +1,6 @@
-import { Err, NonEmpty, Ok, Random, type Result } from '~/@/core'
+import { Err, Ok, Random, type Result } from '~/@/core'
 import { Direction, Position } from './gomoku-position'
+import { NonEmpty } from '~/@/array/non-empty'
 
 export type Board = {
   [x: number]: {

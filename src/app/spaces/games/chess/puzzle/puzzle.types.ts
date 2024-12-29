@@ -1,4 +1,5 @@
-import { Err, type NonEmpty, Ok, type Posix, type RemoteResult, type Result } from '~/@/core'
+import { NonEmpty } from '~/@/array/non-empty'
+import { Err, Ok, type Posix, type RemoteResult, type Result } from '~/@/core'
 import type { UserId } from '~/app/@/data'
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import { Chess } from '../@/chess'

@@ -1,4 +1,4 @@
-import { NonEmpty } from '~/@/core'
+import { NonEmpty } from '~/@/array/non-empty'
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import { SpaceCoreFixture } from '~/app/spaces/@/fixture/core'
 import { PlayCore } from '../core'

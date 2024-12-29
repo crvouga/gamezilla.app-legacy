@@ -1,5 +1,6 @@
+import { NonEmpty } from '~/@/array/non-empty'
+import { Err, Ok, type Result } from '~/@/core'
 import type { UserId } from '~/app/@/data'
-import { Err, type NonEmpty, Ok, type Result } from '~/@/core'
 import {
   type Board,
   type MoveProblem,

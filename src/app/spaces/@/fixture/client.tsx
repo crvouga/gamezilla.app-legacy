@@ -1,4 +1,5 @@
-import { NonEmpty, PhoneNumber, Posix, type TimeSpan } from '~/@/core'
+import { NonEmpty } from '~/@/array/non-empty'
+import { PhoneNumber, Posix, type TimeSpan } from '~/@/core'
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'

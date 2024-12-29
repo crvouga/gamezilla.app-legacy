@@ -1,10 +1,12 @@
-import { NonEmpty, Ok } from '~/@/core'
-import { LamportTimestamp } from '~/@/lamport-clock'
+import { NonEmpty } from '~/@/array/non-empty'
+import { Ok } from '~/@/core'
 import { EventId, WithEventMeta } from '~/@/event-sourced/event'
+import { LamportTimestamp } from '~/@/lamport-clock'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { testSpaceClientCtx } from '~/app/spaces/games/@/testing/client'
-import { Flow } from '../../../@/flow'
 import type { FlowClientCtx } from '../../../@/client/ctx'
+import { Flow } from '../../../@/flow'
 import { samples } from '../../../@/flow/flow-variant/flow-grid/flow-grid-samples'
 import { Pack } from '../../../@/pack/pack'
 import { PackListTypes } from '../../../@/pack/pack-list'
@@ -15,7 +17,6 @@ import { PuzzleListTypes } from '../../../@/puzzle/puzzle-list'
 import { BuilderClient } from '../../client'
 import { BuilderCore } from '../../core'
 import * as BuilderTypes from '../../types'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 export type FixureUpdateInput = {
   ctx?: FlowClientCtx
