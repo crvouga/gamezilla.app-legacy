@@ -13,7 +13,6 @@ import {
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { FlowPlay } from '../../../@/flow/flow-play'
-import { FlowLayout } from '../../../@/flow/flow-ui/flow-layout'
 import { PackPuzzlesGridClient } from '../../../@/pack/pack-puzzles-grid/client'
 import { PackPuzzlesGridUI } from '../../../@/pack/pack-puzzles-grid/ui'
 import { FlowPuzzleResult } from '../../../@/puzzle-result'
@@ -458,7 +457,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
     const canGoNext = Boolean(nextPuzzle)
 
     return (
-      <div className='flex h-full w-full flex-col overflow-hidden'>
+      <div className='flex w-full flex-1 flex-col overflow-hidden'>
         <TopBar
           ctx={input.ctx}
           title={input.ctx.t('flow.level', screen.puzzleIndex + 1)}
@@ -468,74 +467,61 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           onBack={() =>
             input.dispatch({
               t: 'got-msg-core',
-              c: {
-                t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
-                userId: input.ctx.currentUserId
-              }
+              c: { t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle', userId: input.ctx.currentUserId }
             })
           }
         />
 
-        <FlowLayout
-          top={null}
-          middle={
-            screen.puzzleResult.t === 'got' && screen.play ? (
-              <FlowPlay.View
-                dispatch={(c) =>
-                  input.dispatch({
-                    t: 'got-msg-core',
-                    c: {
-                      t: 'screen-pack-builder.got-flow-play-msg',
-                      c
-                    }
-                  })
+        <div className='w-full flex-1 overflow-y-auto flex flex-col'>
+          {screen.puzzleResult.t === 'got' && screen.play ? (
+            <FlowPlay.View
+              dispatch={(c) =>
+                input.dispatch({ t: 'got-msg-core', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
+              }
+              flow={screen.puzzleResult.c.flow}
+              model={screen.play}
+              showSolvedAnimation
+            />
+          ) : (
+            <FlowPuzzleResult.ViewNotFound ctx={input.ctx} />
+          )}
+        </div>
+
+        <ViewBottomButtonBar>
+          <ViewBottomButtonBarAction
+            icon={(input) => <IconChevronLeft {...input} />}
+            label={input.ctx.t('app.prev')}
+            disabled={!canGoPrevious}
+            onClick={() => {
+              input.dispatch({
+                t: 'got-msg-core',
+                c: {
+                  t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+                  userId: input.ctx.currentUserId,
+                  previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' }
                 }
-                flow={screen.puzzleResult.c.flow}
-                model={screen.play}
-                showSolvedAnimation
-              />
-            ) : (
-              <FlowPuzzleResult.ViewNotFound ctx={input.ctx} />
-            )
-          }
-          bottom={
-            <ViewBottomButtonBar>
-              <ViewBottomButtonBarAction
-                icon={(input) => <IconChevronLeft {...input} />}
-                label={input.ctx.t('app.prev')}
-                disabled={!canGoPrevious}
-                onClick={() => {
-                  input.dispatch({
-                    t: 'got-msg-core',
-                    c: {
-                      t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
-                      userId: input.ctx.currentUserId,
-                      previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' }
-                    }
-                  })
-                }}
-              />
+              })
+            }}
+          />
 
-              <ViewBottomButtonBarAction
-                icon={(input) => <IconChevronRight {...input} />}
-                label={input.ctx.t('app.next')}
-                disabled={!canGoNext}
-                onClick={() => {
-                  input.dispatch({
-                    t: 'got-msg-core',
-                    c: {
-                      t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-                      userId: input.ctx.currentUserId,
-                      nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' }
-                    }
-                  })
-                }}
-              />
+          <ViewBottomButtonBarAction
+            icon={(input) => <IconChevronRight {...input} />}
+            label={input.ctx.t('app.next')}
+            disabled={!canGoNext}
+            onClick={() => {
+              input.dispatch({
+                t: 'got-msg-core',
+                c: {
+                  t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
+                  userId: input.ctx.currentUserId,
+                  nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' }
+                }
+              })
+            }}
+          />
 
-              <ScreenPuzzleMore.View {...input} />
-            </ViewBottomButtonBar>
-          }
-        />
+          <ScreenPuzzleMore.View {...input} />
+        </ViewBottomButtonBar>
       </div>
     )
   }

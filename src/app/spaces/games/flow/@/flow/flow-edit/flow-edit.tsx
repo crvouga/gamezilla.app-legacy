@@ -478,7 +478,6 @@ export const toFlowMemoized = memoize({
 //
 
 export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg) => void }) => {
-  const { model, dispatch } = input
   return (
     <FlowLayout
       top={
@@ -488,10 +487,10 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
       }
       middle={
         <FlowVariantUI.View
-          model={toFlow({ model })}
-          onDraggedOver={(nodeId) => dispatch({ t: 'dragged-over', nodeId })}
-          onPressDown={(nodeId) => dispatch({ t: 'pressed-down-node', nodeId })}
-          onPressUp={(nodeId) => dispatch({ t: 'pressed-up-node', nodeId })}
+          model={toFlow(input)}
+          onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
+          onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
+          onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
         />
       }
       bottom={
@@ -500,19 +499,15 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
             <ViewBottomButtonBarAction
               icon={(input) => <IconArrowRotateLeft {...input} />}
               label={input.ctx.t('app.undo')}
-              onClick={() =>
-                dispatch({
-                  t: 'clicked-undo'
-                })
-              }
-              disabled={!History.canUndo(model.form)}
+              onClick={() => input.dispatch({ t: 'clicked-undo' })}
+              disabled={!History.canUndo(input.model.form)}
             />
             <ViewBottomButtonBarAction
               icon={(input) => <IconArrowRotateRight {...input} />}
               label={input.ctx.t('app.redo')}
-              disabled={!History.canRedo(model.form)}
+              disabled={!History.canRedo(input.model.form)}
               onClick={() =>
-                dispatch({
+                input.dispatch({
                   t: 'clicked-redo'
                 })
               }
@@ -520,9 +515,9 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
             <ViewBottomButtonBarAction
               icon={(input) => <IconXMark {...input} />}
               label={input.ctx.t('app.clear')}
-              disabled={!canClear(model)}
+              disabled={!canClear(input.model)}
               onClick={() =>
-                dispatch({
+                input.dispatch({
                   t: 'clicked-clear'
                 })
               }
@@ -531,16 +526,16 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
               icon={(input) => <IconExpand {...input} />}
               label={input.ctx.t('app.dimensions')}
               onClick={() =>
-                dispatch({
+                input.dispatch({
                   t: 'dimensions-form.clicked-open'
                 })
               }
             />
           </ViewBottomButtonBar>
           <Drawer
-            open={model.opened === 'dimensions'}
+            open={input.model.opened === 'dimensions'}
             onClose={() =>
-              dispatch({
+              input.dispatch({
                 t: 'dimensions-form.closed'
               })
             }
@@ -549,7 +544,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
           >
             <DrawerHeader
               onClose={() =>
-                dispatch({
+                input.dispatch({
                   t: 'dimensions-form.closed'
                 })
               }
@@ -557,9 +552,9 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
 
             <FlowVariantDimensions.ViewForm
               ctx={input.ctx}
-              form={model.dimensions}
+              form={input.model.dimensions}
               onInput={(dimensions) =>
-                dispatch({
+                input.dispatch({
                   t: 'dimensions-form.inputted',
                   dimensions
                 })
@@ -571,7 +566,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
                 text={input.ctx.t('app.cancel')}
                 className='flex-1'
                 onClick={() =>
-                  dispatch({
+                  input.dispatch({
                     t: 'dimensions-form.clicked-cancel'
                   })
                 }
@@ -581,9 +576,9 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
                 className='flex-1'
                 variant='contained'
                 color='primary'
-                disabled={!canSubmitDimensionsForm(model)}
+                disabled={!canSubmitDimensionsForm(input.model)}
                 onClick={() =>
-                  dispatch({
+                  input.dispatch({
                     t: 'dimensions-form.clicked-save'
                   })
                 }

@@ -85,7 +85,7 @@ const View = ({
 }
 
 export const ViewBottomButtonBar = ({ children }: { children: VDomChildren }) => {
-  return <div className='flex w-full items-center border-t '>{children}</div>
+  return <div className='flex w-full items-center border-t shrink-0'>{children}</div>
 }
 
 export const ViewBottomButtonBarAction = (input: ActionInput) => {
