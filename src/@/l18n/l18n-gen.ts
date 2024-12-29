@@ -62,29 +62,54 @@ async function generateLanguageFiles(files: string[]) {
   }
 
   for (const file of files) {
-    const relativePath = path.relative(path.dirname(DIR_PATH), file)
+    try {
+      let relativePath = path.relative(__dirname, file)
 
-    const importPath = relativePath.replace(/\\/g, '/')
+      relativePath = relativePath.split(path.sep).join('/')
 
-    const translationsModule = await import(importPath)
-
-    const translations = translationsModule.translations
-
-    if (!translations) {
-      throw new Error(`The file "${file}" does not export a "translations" object.`)
-    }
-
-    for (const code of LanguageCodeISO_639_1.ALL) {
-      for (const key in translations[code]) {
-        translationsAll[code][key] = translations[code][key]
+      if (!relativePath.startsWith('.') && !relativePath.startsWith('/')) {
+        relativePath = `./${relativePath}`
       }
+
+      const translationsModule = await import(relativePath)
+
+      const translations = translationsModule.translations
+
+      if (!translations) {
+        throw new Error(`The file "${file}" does not export a "translations" object.`)
+      }
+
+      for (const code of LanguageCodeISO_639_1.ALL) {
+        if (translations[code]) {
+          translationsAll[code] = {
+            ...translationsAll[code],
+            ...translations[code]
+          }
+        }
+      }
+
+      console.log(`Successfully merged translations from: ${file}`)
+    } catch (error) {
+      console.error(`Error processing file "${file}":`, error)
+
+      continue
     }
   }
 
-  if (!(await fs.exists(OUTPUT_TRANSLATIONS_DIR))) {
-    await fs.mkdir(OUTPUT_TRANSLATIONS_DIR, {
-      recursive: true
-    })
+  try {
+    const exists = await fs
+      .stat(OUTPUT_TRANSLATIONS_DIR)
+      .then(() => true)
+      .catch(() => false)
+    if (!exists) {
+      await fs.mkdir(OUTPUT_TRANSLATIONS_DIR, { recursive: true })
+      console.log(`Created output directory: ${OUTPUT_TRANSLATIONS_DIR}`)
+    } else {
+      console.log(`Output directory already exists: ${OUTPUT_TRANSLATIONS_DIR}`)
+    }
+  } catch (error) {
+    console.error(`Error ensuring output directory exists:`, error)
+    throw error
   }
 
   await Promise.all(
@@ -93,15 +118,22 @@ async function generateLanguageFiles(files: string[]) {
       const translationsForLanguageString = serialize(translationsForLanguage)
 
       const content = `${DISCLAIMER}
-import type { Text } from '../text';
+import type { Text } from '../text'
 
-export const translations: Text = ${translationsForLanguageString};`
+export const translations: Text = ${translationsForLanguageString}
+`
 
-      await fs.writeFile(path.join(OUTPUT_TRANSLATIONS_DIR, `${code}.ts`), content)
+      const outputPath = path.join(OUTPUT_TRANSLATIONS_DIR, `${code}.ts`)
+      try {
+        await fs.writeFile(outputPath, content, 'utf-8')
+        console.log(`Generated translation file: ${outputPath}`)
+      } catch (error) {
+        console.error(`Error writing translation file "${outputPath}":`, error)
+      }
     })
   )
 
-  console.log(`Generated language-specific translation files in: ${OUTPUT_TRANSLATIONS_DIR}`)
+  console.log(`\nGenerated language-specific translation files in: ${OUTPUT_TRANSLATIONS_DIR}`)
 }
 
 async function generateIndexFile() {
