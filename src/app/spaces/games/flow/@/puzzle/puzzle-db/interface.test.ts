@@ -1,9 +1,10 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Ok, Posix, Result, TimeSpan, ascend } from '~/@/core'
+import { Ok, Posix, Result, TimeSpan } from '~/@/core'
 import { UserId } from '~/app/@/data'
 import { Puzzle } from '../puzzle'
 import { PuzzleName } from '../puzzle-name'
 import { PuzzleDbFixture } from './fixture'
+import { ascend } from '~/@/array/sorting'
 
 const Fixture = async () => {
   const f = await PuzzleDbFixture()

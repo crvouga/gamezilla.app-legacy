@@ -1,9 +1,10 @@
 import { assert } from '~/@/assert'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
-import { ascend, eq } from '~/@/core'
+import { eq } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { LamportClock, LamportTimestamp } from '~/@/lamport-clock'
 import { EventId, EventMeta, type WithEventId, type WithEventMeta } from './event'
+import { ascend } from '../array/sorting'
 
 export type EventSourced<TEvent, TState> = {
   clock: LamportClock

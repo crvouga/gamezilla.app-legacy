@@ -1,7 +1,8 @@
+import { matchSort } from '~/@/array/match-sort'
+import { Browser, Eff, pipe } from '~/@/core'
+import type { VDom } from '~/@/vdom'
 import { type AppClientCmd, type ClientEvt, sendToServer } from '~/app/@/client'
 import { IconMagnifyingGlass, IconXMark } from '~/app/@/ui'
-import { Browser, Eff, matchSort, pipe } from '~/@/core'
-import type { VDom } from '~/@/vdom'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './search.types'
 
 //
