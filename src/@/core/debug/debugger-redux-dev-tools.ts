@@ -473,7 +473,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
   const COUNT_LIMIT = 10
 
   return function updateDebugger(model: any, msg: any) {
-    const actionType = Msg.toMsgType(msg)
+    const actionType = Msg.toType(msg)
 
     if (blockList.has(actionType)) {
       return
@@ -502,7 +502,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
 
     const action = {
       type: actionType,
-      payload: Msg.toMsgPayload(msg, {})
+      payload: Msg.toPayload(msg, {})
     }
 
     connection.send(action, model)

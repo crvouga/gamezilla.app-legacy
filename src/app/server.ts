@@ -186,10 +186,10 @@ const logMsg = ({
 
   const sentMsgType =
     msgCmd?.c.t === 'send-to-client' || msgCmd?.c.t === 'send-to-user' || msgCmd?.c.t === 'broadcast'
-      ? Msg.toMsgType(msgCmd.c.msg)
+      ? Msg.toType(msgCmd.c.msg)
       : null
 
-  const log = [prefix, Msg.toMsgType(obj)]
+  const log = [prefix, Msg.toType(obj)]
 
   if (sentMsgType) {
     log.push(`sent ${sentMsgType}`)

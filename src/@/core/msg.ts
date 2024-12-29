@@ -27,7 +27,7 @@ export type AnyMsg = Record<string, unknown> & {
   c?: unknown
 }
 
-export const isAnyMsg = (msg: unknown): msg is AnyMsg => {
+const isAny = (msg: unknown): msg is AnyMsg => {
   return typeof msg === 'object' && msg !== null && 't' in msg
 }
 
@@ -36,28 +36,28 @@ const hasNamespace = (msg: unknown): msg is { n: string } =>
 
 const toNamespace = (msg: unknown): string => (hasNamespace(msg) ? msg.n : '')
 
-export const toMsgType = (msg: unknown): string => {
+const toType = (msg: unknown): string => {
   const namespace = toNamespace(msg)
-  if (namespace && isAnyMsg(msg)) {
+  if (namespace && isAny(msg)) {
     return `${namespace}.${msg.t}`
   }
-  if (!isAnyMsg(msg)) {
+  if (!isAny(msg)) {
     return String(msg)
   }
 
-  if (isAnyMsg(msg.c)) {
-    return `${msg.t}.${toMsgType(msg.c)}`
+  if (isAny(msg.c)) {
+    return `${msg.t}.${toType(msg.c)}`
   }
   return msg.t
 }
 
-export const toMsgPayload = (msg: unknown, acc: Record<string, unknown> = {}): Record<string, unknown> => {
-  if (!isAnyMsg(msg)) {
+const toPayload = (msg: unknown, acc: Record<string, unknown> = {}): Record<string, unknown> => {
+  if (!isAny(msg)) {
     return acc
   }
   const { t, c, ...payload } = msg
-  if (isAnyMsg(msg.c)) {
-    return toMsgPayload(msg.c, {
+  if (isAny(msg.c)) {
+    return toPayload(msg.c, {
       ...acc,
       ...payload
     })
@@ -67,7 +67,7 @@ export const toMsgPayload = (msg: unknown, acc: Record<string, unknown> = {}): R
 
 export const Msg = {
   batch,
-  isAnyMsg,
-  toMsgType,
-  toMsgPayload
+  isAny,
+  toType,
+  toPayload
 }
