@@ -1,10 +1,9 @@
 import { isErr, RequestResponse, Result } from '~/@/core'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from '~/app/@/client'
-import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
-import { ClientModule, initClient, type ModelClient, type MsgClient, type MsgInCmdClient } from './types'
-import { FlowPack } from '../pack'
 import { FlowPuzzleId } from '../../puzzle/puzzle-id'
+import { FlowPack } from '../pack'
+import { ClientModule, initClient, type ModelClient, type MsgInCmdClient } from './types'
 
 const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
   if (!input.ctx.pack) {
@@ -138,19 +137,6 @@ const update: ClientModule['update'] = (input) => {
   )
 }
 
-const ViewObserver = (input: { dispatch: (msg: MsgClient) => void }) => {
-  return (
-    <IntersectionObserverEmitter
-      id='flow-pack-grid'
-      onVisible={() =>
-        input.dispatch({
-          t: 'user-observed-grid'
-        })
-      }
-    />
-  )
-}
-
 const subscriptions: ClientModule['subscriptions'] = (input) => {
   return subscriptionsRequest(input)
 }
@@ -176,7 +162,7 @@ export const PackPuzzlesGridClient = {
   initClient,
   load,
   update,
-  ViewObserver,
+
   subscriptions,
   shouldShowLoading
 }
