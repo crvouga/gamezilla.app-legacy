@@ -1,6 +1,6 @@
 import { FlowPack } from '../../@/pack/pack'
 import { FlowPlay } from '../../@/flow/flow-play'
-import { FlowPuzzleResult } from '../@/puzzle-result'
+import { FlowPuzzleResult } from '../../@/puzzle-result'
 import type { CoreModule, MsgCore } from '../types'
 import * as CopyPuzzleCore from './copy-puzzle/core'
 import { LastPuzzleCore } from './last-puzzle/core'

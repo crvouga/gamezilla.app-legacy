@@ -6,7 +6,7 @@ import { FlowPack } from '../../@/pack/pack'
 import { FlowPackId } from '../../@/pack/pack-id'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGroupId } from '../../@/flow/flow/flow-group-id'
-import { FlowPuzzleResult } from '../@/puzzle-result'
+import { FlowPuzzleResult } from '../../@/puzzle-result'
 import { CopyPuzzleTypes } from './copy-puzzle'
 
 export const MsgCore = p.or(

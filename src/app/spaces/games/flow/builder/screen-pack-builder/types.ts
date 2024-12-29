@@ -6,7 +6,7 @@ import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
 import { FlowPuzzle } from '../../@/puzzle/puzzle'
 import { EditPackNameTypes } from './edit-pack-name'
 import { FlowPlay } from '../../@/flow/flow-play'
-import { FlowPuzzleResult } from '../../play/@/puzzle-result'
+import { FlowPuzzleResult } from '../../@/puzzle-result'
 
 //
 //
