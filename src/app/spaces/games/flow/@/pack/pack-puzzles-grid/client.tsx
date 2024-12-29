@@ -168,7 +168,7 @@ const load = (pack: FlowPack): MsgInCmdClient => {
 const isLoading = (model: ModelClient): boolean =>
   RequestResponse.isRequesting(model.request) || model.request.t === 'not-asked'
 
-const showLoading = (model: ModelClient, puzzleIds: FlowPuzzleId[]): boolean => {
+const shouldShowLoading = (model: ModelClient, puzzleIds: FlowPuzzleId[]): boolean => {
   return isLoading(model) && puzzleIds.every((puzzleId) => !(puzzleId in model.puzzles))
 }
 
@@ -178,5 +178,5 @@ export const PackPuzzlesGridClient = {
   update,
   ViewObserver,
   subscriptions,
-  showLoading
+  shouldShowLoading
 }

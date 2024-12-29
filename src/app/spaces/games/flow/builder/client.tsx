@@ -82,7 +82,7 @@ const ViewFeedItem: ClientModule['ViewFeedItem'] = () => {
 }
 
 const subscriptions: ClientModule['subscriptions'] = (input) => {
-  return Sub.batch([ScreenPuzzleBuilderOpenClient.subscriptions(input), ScreenPackBuilderClient.subscriptions(input)])
+  return Sub.batch([ScreenPuzzleBuilderOpenClient.subscriptions(input)])
 }
 
 export const BuilderClient: ClientModule = {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { Ok } from '~/@/core'
 import { andThen } from '~/app/spaces/games/@/architecture/game-client-v2'
 import type { FlowClientCtx } from '../../@/flow-client-ctx'
 import { FlowPack } from '../../@/pack/pack'
@@ -22,7 +23,6 @@ import { BuilderCore } from '../core'
 import type { ModelClient, ModelCore } from '../types'
 import { ScreenPackBuilderClient } from './client'
 import { ScreenPackBuilderCore } from './core'
-import { Ok } from '~/@/core'
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
   return ScreenPackBuilderClient.update({

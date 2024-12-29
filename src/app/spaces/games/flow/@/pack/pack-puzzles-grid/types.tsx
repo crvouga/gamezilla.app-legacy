@@ -12,9 +12,13 @@ import { FlowServerCtx } from '../../flow-server-ctx'
 import type { FlowPack } from '../pack'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { FlowPackId } from '../pack-id'
 
 export type ModelClient = {
   request: RequestResponse<string, null>
+  requests: {
+    [packId: FlowPackId]: RequestResponse<string, null>
+  }
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle
   }
@@ -22,6 +26,7 @@ export type ModelClient = {
 
 export const initClient: ModelClient = {
   request: NotAsked,
+  requests: {},
   puzzles: {}
 }
 

@@ -1,4 +1,3 @@
-import { Eff, Sub } from '~/@/core'
 import { APP_SOUND, playSound, showToast } from '~/app/@/client'
 import {
   Button,
@@ -11,17 +10,16 @@ import {
   ListItemButton,
   TopBar
 } from '~/app/@/ui'
-import { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
+import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
-import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
 import { PuzzleListClient } from '../../@/puzzle/puzzle-list'
 import type { ClientModule } from '../types'
 import { ScreenPackBuilderCore } from './core'
 import { EditPackNameClient } from './edit-pack-name/client'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
 
 //
 //
@@ -169,16 +167,45 @@ const ScreenAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
 
 const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
   update(input) {
-    switch (input.msgCore?.t) {
-      case 'screen-pack-builder.user-clicked-pack-item': {
-        return {
-          model: input.model,
-          msgCmd: [playSound(APP_SOUND.navForwardMin)]
+    return GameClientModule.andThen(
+      { model: input.model },
+      (model) => {
+        switch (input.msgCore?.t) {
+          case 'screen-pack-builder.user-clicked-pack-item': {
+            return {
+              model,
+              msgCmd: [playSound(APP_SOUND.navForwardMin)]
+            }
+          }
+          default: {
+            return { model }
+          }
         }
-      }
-    }
+      },
+      (model) => {
+        if (
+          input.msgEvt?.t === 'space/synced' ||
+          input.msgCore?.t === 'screen-pack-builder-open.user-clicked-pack-item'
+        ) {
+          const modelCore = input.msgCore
+            ? ScreenPackBuilderCore.update({ ctx: input.ctx, modelCore: input.modelCore, msgCore: input.msgCore })
+            : input.modelCore
 
-    return { model: input.model }
+          const pack = modelCore.screenPackBuilder?.pack ?? null
+
+          if (!pack) {
+            return { model }
+          }
+
+          return {
+            model,
+            msgCmd: [PackPuzzlesGridClient.load(pack)]
+          }
+        }
+
+        return { model }
+      }
+    )
   },
   View(input) {
     const packBuilder = input.modelCore.screenPackBuilder
@@ -516,74 +543,6 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
 //
 //
 
-const PackPuzzleGrid: Pick<ClientModule, 'update' | 'subscriptions'> = {
-  update(input) {
-    const pack = input.modelCore.screenPackBuilder?.pack ?? null
-
-    if (!pack) {
-      return {
-        model: input.model
-      }
-    }
-
-    const updated = PackPuzzlesGridClient.update({
-      ctx: {
-        ...input.ctx,
-        pack
-      },
-      model: {
-        ...PackPuzzlesGridClient.initClient,
-        ...input.model.packBuilder?.flowPackPuzzleGrid,
-        puzzles: input.ctx.puzzles
-      },
-      msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
-      msgCmd: input.msgCmd,
-      msgEvt: input.msgEvt,
-      msgServer: input.msgServer?.t === 'screen-pack-builder.flow-pack-grid' ? input.msgServer.c : null
-    })
-
-    return {
-      model: {
-        ...input.model,
-        puzzles: {
-          ...input.ctx.puzzles,
-          ...updated.model?.puzzles
-        },
-        packBuilder: {
-          ...input.model.packBuilder,
-          flowPackPuzzleGrid: updated.model
-        }
-      },
-      eff: Eff.tag('screen-pack-builder.flow-pack-grid', updated.eff),
-      msgCmd: SpaceClientCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
-      msgEvt: updated.msgEvt
-    }
-  },
-  subscriptions(input) {
-    const pack = input.modelCore.screenPackBuilder?.pack
-    if (!pack) {
-      return Sub.None
-    }
-    return Sub.tag(
-      'screen-pack-builder.flow-pack-grid',
-      PackPuzzlesGridClient.subscriptions({
-        ctx: {
-          ...input.ctx,
-          pack
-        },
-        model: input.model.packBuilder.flowPackPuzzleGrid
-      })
-    )
-  }
-}
-
-//
-//
-//
-//
-//
-//
-
 const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
   update(input) {
     if (!input.modelCore.screenPackBuilder) {
@@ -595,13 +554,7 @@ const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
       ...input,
       modelCore: input.modelCore.screenPackBuilder.editPackName,
       msg: input.msgCore?.t === 'got-edit-pack-name-msg' ? input.msgCore.c : null,
-      msgCore:
-        input.msgCore?.t === 'got-edit-pack-name-msg'
-          ? {
-              ...input.msgCore,
-              ...input.msgCore.c
-            }
-          : null
+      msgCore: input.msgCore?.t === 'got-edit-pack-name-msg' ? { ...input.msgCore, ...input.msgCore.c } : null
     })
     return {
       model: input.model,
@@ -655,7 +608,7 @@ const updateRecordPack: ClientModule['update'] = (input) => {
   return { model: input.model }
 }
 
-export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View' | 'subscriptions'> = {
+export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View'> = {
   update(input) {
     return GameClientModule.andThen(
       {
@@ -666,7 +619,6 @@ export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View' | 'su
       (model) => ButtonAddPuzzle.update({ ...input, model }),
       (model) => ScreenPuzzleGrid.update({ ...input, model }),
       (model) => ScreenPuzzlePlay.update({ ...input, model }),
-      (model) => PackPuzzleGrid.update({ ...input, model }),
       (model) => ScreenPuzzleMore.update({ ...input, model }),
       (model) => EditPackName.update({ ...input, model }),
       (model) => updateRecordPack({ ...input, model })
@@ -674,42 +626,22 @@ export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View' | 'su
   },
 
   View(input) {
-    return (
-      <div className='flex h-full w-full flex-col'>
-        <PackPuzzlesGridClient.ViewObserver
-          dispatch={(c) =>
-            input.dispatch({
-              t: 'screen-pack-builder.flow-pack-grid',
-              c
-            })
-          }
-        />
-        <ViewScreen {...input} />
-      </div>
-    )
-  },
+    switch (input.modelCore.screenPackBuilder?.screen.t) {
+      case 'screen-add-puzzle': {
+        return <ScreenAddPuzzle.View {...input} />
+      }
 
-  subscriptions(input) {
-    return PackPuzzleGrid.subscriptions(input)
-  }
-}
+      case 'screen-puzzle-grid': {
+        return <ScreenPuzzleGrid.View {...input} />
+      }
 
-const ViewScreen: ClientModule['View'] = (input) => {
-  switch (input.modelCore.screenPackBuilder?.screen.t) {
-    case 'screen-add-puzzle': {
-      return <ScreenAddPuzzle.View {...input} />
-    }
+      case 'screen-puzzle': {
+        return <ScreenPuzzlePlay.View {...input} />
+      }
 
-    case 'screen-puzzle-grid': {
-      return <ScreenPuzzleGrid.View {...input} />
-    }
-
-    case 'screen-puzzle': {
-      return <ScreenPuzzlePlay.View {...input} />
-    }
-
-    default: {
-      return null
+      default: {
+        return null
+      }
     }
   }
 }

@@ -105,31 +105,11 @@ const View: ClientModule['View'] = (input) => {
               return <PackPuzzlesGridUI.ViewEmptyCell />
             }
 
-            if (PackPuzzlesGridClient.showLoading(input.ctx.packPuzzleGrid, flowPack.puzzleIds)) {
+            if (PackPuzzlesGridClient.shouldShowLoading(input.ctx.packPuzzleGrid, flowPack.puzzleIds)) {
               return <PackPuzzlesGridUI.ViewLoadingCell />
             }
 
             const puzzle = input.ctx.puzzles[inputCell.puzzleId]
-
-            if (!puzzle) {
-              return (
-                <PackPuzzlesGridUI.ViewErrorCell
-                  index={inputCell.index}
-                  onClick={() =>
-                    input.dispatch({
-                      t: 'got-msg-core',
-                      c: {
-                        t: 'user-clicked-open-puzzle-grid-item',
-                        flowPuzzle: {
-                          t: 'not-found'
-                        },
-                        puzzleIndex: inputCell.index
-                      }
-                    })
-                  }
-                />
-              )
-            }
 
             return (
               <PackPuzzlesGridUI.ViewPuzzleCell
@@ -139,7 +119,7 @@ const View: ClientModule['View'] = (input) => {
                     t: 'got-msg-core',
                     c: {
                       t: 'user-clicked-open-puzzle-grid-item',
-                      flowPuzzle: { t: 'got', c: puzzle },
+                      flowPuzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
                       puzzleIndex: inputCell.index
                     }
                   })
