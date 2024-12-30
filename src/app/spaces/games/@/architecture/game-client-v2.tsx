@@ -111,7 +111,7 @@ export type InferInput<T extends GameClientModule<any>> = T extends GameClientMo
 //
 //
 
-export const andThen = <T extends GameClientModuleTypes>(
+const andThen = <T extends GameClientModuleTypes>(
   acc: Output<T>,
   ...updates: ((model: T['Model']) => Output<T>)[]
 ): Output<T> => {

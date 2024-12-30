@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { didPlaySound } from '~/app/@/client'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { andThen } from '~/app/spaces/games/@/architecture/game-client-v2'
+import { didPlaySound } from '~/app/@/client'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { initial, testFlowClientCtx } from '../@/testing/client'
 import { BuilderClient } from '../client'
 import { BuilderCore } from '../core'
@@ -9,7 +9,7 @@ import { BuilderCore } from '../core'
 describe(import.meta.file, () => {
   it('play a sound when changing list tabs', async () => {
     const ctx = await testFlowClientCtx()
-    const output = andThen(initial, (model) =>
+    const output = GameClientModule.andThen(initial, (model) =>
       BuilderClient.update({
         ctx,
         model,

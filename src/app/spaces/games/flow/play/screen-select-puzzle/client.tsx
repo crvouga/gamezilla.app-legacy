@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound } from '~/app/@/client'
 import { cn, TopBar } from '~/app/@/ui'
-import { andThen } from '../../../@/architecture/game-client-v2'
+import { GameClientModule } from '../../../@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
@@ -9,7 +9,7 @@ import type { ClientModule } from '../types'
 import { PlayCore } from '../core'
 
 const update: ClientModule['update'] = (input) => {
-  return andThen(
+  return GameClientModule.andThen(
     { model: input.model },
     (model) => updateMain({ ...input, model }),
     (model) => updateLoadPuzzlesForPack({ ...input, model })

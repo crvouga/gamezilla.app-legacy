@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok } from '~/@/result'
-import { andThen } from '~/app/spaces/games/@/architecture/game-client-v2'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import type { FlowClientCtx } from '../../../@/client/ctx'
 import { Pack } from '../../../@/pack/pack'
 import { Puzzle } from '../../../@/puzzle/puzzle'
@@ -118,7 +118,7 @@ describe(import.meta.file, () => {
     const ctx = await testFlowClientCtx()
     const puzzle = await createPuzzle(ctx)
 
-    const output = andThen(
+    const output = GameClientModule.andThen(
       initial,
       serverCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
@@ -133,14 +133,18 @@ describe(import.meta.file, () => {
 
   it('should open puzzle picker when user clicks add puzzle button', async () => {
     const ctx = await testFlowClientCtx()
-    const output = andThen(initial, serverCreatedPack(ctx, await createPack(ctx)), clickedOpenPuzzlePickerButton(ctx))
+    const output = GameClientModule.andThen(
+      initial,
+      serverCreatedPack(ctx, await createPack(ctx)),
+      clickedOpenPuzzlePickerButton(ctx)
+    )
     const modelCore = deriveModelCore(ctx, output)
     expect(modelCore.screenPackBuilder?.screen.t === 'screen-add-puzzle').toBe(true)
   })
 
   it('should close puzzle picker when user clicks closes', async () => {
     const ctx = await testFlowClientCtx()
-    const output = andThen(
+    const output = GameClientModule.andThen(
       initial,
       serverCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
@@ -153,7 +157,11 @@ describe(import.meta.file, () => {
   it('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
     const ctx = await testFlowClientCtx()
     const puzzle = await createPuzzle(ctx)
-    const output = andThen(initial, serverCreatedPack(ctx, await createPack(ctx)), clickedPuzzlePickerItem(ctx, puzzle))
+    const output = GameClientModule.andThen(
+      initial,
+      serverCreatedPack(ctx, await createPack(ctx)),
+      clickedPuzzlePickerItem(ctx, puzzle)
+    )
     const modelCore = deriveModelCore(ctx, output)
     expect(modelCore.screenPackBuilder && Pack.includes(modelCore.screenPackBuilder.pack, puzzle.id)).toBe(true)
   })
@@ -161,7 +169,7 @@ describe(import.meta.file, () => {
   it('should close puzzle picker after adding a puzzle to the pack', async () => {
     const ctx = await testFlowClientCtx()
     const puzzle = await createPuzzle(ctx)
-    const output = andThen(
+    const output = GameClientModule.andThen(
       initial,
       serverCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
@@ -174,7 +182,7 @@ describe(import.meta.file, () => {
   it('should go back to grid after exiting puzzle', async () => {
     const ctx = await testFlowClientCtx()
     const puzzle = await createPuzzle(ctx)
-    const output = andThen(
+    const output = GameClientModule.andThen(
       initial,
       serverCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
@@ -230,7 +238,7 @@ describe(import.meta.file, () => {
   it('should close the more drawer', async () => {
     const ctx = await testFlowClientCtx()
     const puzzle = await createPuzzle(ctx)
-    const output = andThen(
+    const output = GameClientModule.andThen(
       initial,
       serverCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),

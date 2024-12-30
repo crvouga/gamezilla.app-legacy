@@ -1,11 +1,11 @@
 import { APP_SOUND, playSound } from '~/app/@/client'
 import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/app/@/ui'
-import { andThen } from '~/app/spaces/games/@/architecture/game-client-v2'
-import type { ClientModule } from '../types'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { GameMainMenu } from '../../../@/game/game-main-menu'
+import type { ClientModule } from '../types'
 
 const update: ClientModule['update'] = (input) => {
-  return andThen({ model: input.model }, (model) => updateFromMsgCore({ ...input, model }))
+  return GameClientModule.andThen({ model: input.model }, (model) => updateFromMsgCore({ ...input, model }))
 }
 
 const updateFromMsgCore: ClientModule['update'] = (input) => {
