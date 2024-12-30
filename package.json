@@ -43,7 +43,10 @@
     "semi": false,
     "singleQuote": true,
     "tabWidth": 2,
-    "trailingComma": "none"
+    "trailingComma": "none",
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.8",
