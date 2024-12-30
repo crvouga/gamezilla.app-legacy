@@ -1,4 +1,4 @@
-import { Task } from '~/@/core'
+import { Task } from '~/@/promise/task'
 import { SessionId, UserId } from '~/app/@/data'
 
 export type IGuestSessionMappingDb = {

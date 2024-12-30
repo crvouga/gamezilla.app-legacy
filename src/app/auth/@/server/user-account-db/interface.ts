@@ -1,4 +1,4 @@
-import type { Task } from '~/@/core'
+import type { Task } from '~/@/promise/task'
 import { PhoneNumber } from '~/@/phone-number'
 import type { UserId } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'

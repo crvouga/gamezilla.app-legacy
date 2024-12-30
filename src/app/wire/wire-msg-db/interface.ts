@@ -1,4 +1,4 @@
-import type { Task } from '~/@/core'
+import type { Task } from '~/@/promise/task'
 
 export type IWireMsgDb<TMsg> = {
   add: (msgId: string) => Task<string, null>

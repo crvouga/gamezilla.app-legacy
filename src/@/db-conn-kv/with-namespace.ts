@@ -1,4 +1,4 @@
-import { Task } from '~/@/core'
+import { Task } from '~/@/promise/task'
 import type { Parser } from '~/@/core/parser/parser'
 import { IDbConnKv } from './interface'
 

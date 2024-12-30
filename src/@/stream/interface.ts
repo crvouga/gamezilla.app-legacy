@@ -1,4 +1,4 @@
-import { Task } from '~/@/core'
+import { Task } from '~/@/promise/task'
 import { EventId } from './event-id'
 
 export type IStream<TValue> = {

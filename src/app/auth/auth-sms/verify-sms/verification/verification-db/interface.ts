@@ -1,4 +1,4 @@
-import type { Task } from '~/@/core'
+import type { Task } from '~/@/promise/task'
 import type { Paginated } from '~/app/@/data'
 import type { Verification, VerificationId } from '..'
 import { Posix } from '~/@/time/posix'

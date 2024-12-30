@@ -1,4 +1,4 @@
-import type { Task } from '~/@/core'
+import type { Task } from '~/@/promise/task'
 import type { Paginated, Pagination, UserId } from '~/app/@/data'
 import type { Pack } from '../pack'
 import type { PackId } from '../pack-id'

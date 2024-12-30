@@ -1,4 +1,4 @@
-import type { Task } from '~/@/core'
+import type { Task } from '~/@/promise/task'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
 import { PhoneNumber } from '~/@/phone-number'
