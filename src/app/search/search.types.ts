@@ -1,4 +1,5 @@
-import type { Browser, RemoteResult, Result } from '~/@/core'
+import { Browser } from '~/@/browser'
+import type { RemoteResult, Result } from '~/@/core'
 import type { UserId, Username } from '~/app/@/data'
 
 type SearchResult = {

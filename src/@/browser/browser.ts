@@ -1,7 +1,7 @@
-import type { Eff } from '../eff'
-import type { IO } from '../io'
-import { Result } from '../result'
-import { PubSub, Sub } from '../sub'
+import type { Eff } from '../core/eff'
+import type { IO } from '../core/io'
+import { Result } from '../core/result'
+import { PubSub, Sub } from '../core/sub'
 
 //
 //

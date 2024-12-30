@@ -1,8 +1,9 @@
 import type { AppClientCtx, ClientEvt } from '~/app/@/client'
-import { Browser, Eff } from '~/@/core'
+import { Eff } from '~/@/core'
 import type { VDom } from '~/@/vdom'
 import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
 import { pipe } from '~/@/function/pipe'
+import { Browser } from '~/@/browser'
 
 //
 //

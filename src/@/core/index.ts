@@ -1,4 +1,3 @@
-export * from './browser'
 export * from './eff'
 export * from './io'
 export * from './Iso-3166-alpha-2-code'

@@ -1,4 +1,4 @@
-import { LocalStorage } from '~/@/core'
+import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { APP_SOUND, back, closeStatusBar, playSound, pushRoute } from '~/app/@/client'
 import { translatorSubscriptions } from '../@/client/translator'

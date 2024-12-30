@@ -1,4 +1,5 @@
-import { Eff, Keyboard, Sub } from '~/@/core'
+import { Keyboard } from '~/@/browser'
+import { Eff, Sub } from '~/@/core'
 import { pipe } from '~/@/function/pipe'
 import { ActionButton, IconArrowLeftOnRect } from '~/app/@/ui'
 import { SpaceClientCtx } from '../../@/space-client-ctx'

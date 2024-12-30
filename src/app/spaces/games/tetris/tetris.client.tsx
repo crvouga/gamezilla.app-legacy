@@ -1,4 +1,4 @@
-import { Eff, Keyboard, Option, type Sub, isErr } from '~/@/core'
+import { Eff, Option, type Sub, isErr } from '~/@/core'
 import { exhaustive } from '~/@/function/exhaustive'
 import * as Board from './@/board'
 import type * as Direction from './@/direction'
@@ -15,6 +15,7 @@ import {
   toGhostPiece,
   toPiece
 } from './tetris.types'
+import { Keyboard } from '~/@/browser'
 
 //
 //

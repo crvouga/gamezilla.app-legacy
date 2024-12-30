@@ -1,4 +1,3 @@
-import { Browser } from '~/@/core'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
@@ -13,6 +12,7 @@ import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 import { IClientTransport } from './wire/transport/client'
 import { IServerTransport } from './wire/transport/server'
+import { Browser } from '~/@/browser'
 
 //
 //
