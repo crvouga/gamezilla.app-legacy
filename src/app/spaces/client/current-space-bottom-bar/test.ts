@@ -3,7 +3,7 @@ import { describe, expect, it } from 'bun:test'
 import { SpaceId } from '~/app/@/data/space-id'
 import { SpaceClientModule } from '../../@/architecture/space-client'
 import { clickedCurrentSpaceBottomBar, clickedStartSpaceButton, Ctx, init } from '../../@/fixture/client'
-import * as SpacesCoreClient from '../../core/client/spaces-core.client'
+import { SpacesCoreClient } from '../../core/client'
 
 describe(import.meta.file, () => {
   it('should open current space when clicking current space bottom bar', async () => {

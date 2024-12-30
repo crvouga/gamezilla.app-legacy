@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { addProfiles, sendToServer } from '~/app/@/client/client-cmd'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import * as SpacesCoreClient from '../core/client/spaces-core.client'
+import { SpacesCoreClient } from '../core/client'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

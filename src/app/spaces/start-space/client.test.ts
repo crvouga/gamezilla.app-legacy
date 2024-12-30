@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { didPlaySound, didPushRoute, didSendToServer, didShowToast } from '~/app/@/client/client-cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesClient } from '../@/fixture/client'
-import * as SpacesCoreClient from '../core/client/spaces-core.client'
+import { SpacesCoreClient } from '../core/client'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()

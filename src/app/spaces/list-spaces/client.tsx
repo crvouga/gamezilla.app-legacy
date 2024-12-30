@@ -5,7 +5,7 @@ import type { SpaceId } from '~/app/@/data/space-id'
 import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import type { SpaceClientModule } from '../@/architecture/space-client'
-import * as Spaces from '../core/client/spaces-core.client'
+import { SpacesCoreClient } from '../core/client'
 import { SpaceCoreState } from '../core/space-state'
 import { StartSpaceClient } from '../start-space/client'
 import { ViewSpaceCard } from './space-card'
@@ -85,7 +85,7 @@ const update: SpaceClientModule['update'] = (input) => {
 
   switch (input.msgServer?.t) {
     case 'listed-spaces': {
-      const merged = input.msgServer.spaces.reduce(Spaces.merge, input.model)
+      const merged = input.msgServer.spaces.reduce(SpacesCoreClient.merge, input.model)
       return {
         model: {
           ...input.model,
@@ -108,10 +108,10 @@ const update: SpaceClientModule['update'] = (input) => {
 //
 //
 
-const toSpaces = (model: Spaces.Model) => {
+const toSpaces = (model: SpacesCoreClient.Model) => {
   const spaces: SpaceCoreState.Started[] = []
   for (const spaceId in model.spaces) {
-    const started = Spaces.toSpaceStarted(model, spaceId as SpaceId)
+    const started = SpacesCoreClient.toSpaceStarted(model, spaceId as SpaceId)
     if (started) {
       spaces.push(started)
     }

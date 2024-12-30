@@ -2,7 +2,7 @@ import { APP_SOUND, playSound, pushRoute } from '~/app/@/client/client-cmd'
 import { AppClientCtx } from '~/app/@/client/client-ctx'
 import { Avatar, Button, Typography } from '~/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
-import * as SpacesCoreClient from '../../core/client/spaces-core.client'
+import { SpacesCoreClient } from '../../core/client'
 import { GameCoverArt } from '../../games/cover-art'
 import type { ModelClient, MsgClient } from '../../types'
 

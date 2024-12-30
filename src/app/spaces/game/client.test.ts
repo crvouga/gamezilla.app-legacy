@@ -4,7 +4,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { exitGame } from '../@/space-client-cmd'
 import { Ctx, clickedGameTile, clickedStartSpaceButton, init } from '../@/fixture/client'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import * as SpacesCoreClient from '../core/client/spaces-core.client'
+import { SpacesCoreClient } from '../core/client'
 import { SpacesClient } from '../client'
 import { didPlaySound } from '~/app/@/client/client-cmd'
 

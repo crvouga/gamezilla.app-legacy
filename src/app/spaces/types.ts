@@ -12,7 +12,7 @@ import { UserId } from '../@/data/user-id'
 import { ServerCmd } from '../@/server/server-cmd'
 import { AppServerCtx } from '../@/server/server-ctx'
 import { ServerEvt } from '../@/server/server-evt'
-import type * as Spaces from './core/client/spaces-core.client'
+import { SpacesCoreClient } from './core/client'
 import { ISpacesCoreServer } from './core/server/interface'
 import { SpaceCore } from './core/space-core'
 import { SpaceEvent } from './core/space-event'
@@ -35,7 +35,7 @@ export type ServerCtx = AppServerCtx & {
 
 export type ModelServer = null
 
-export type ModelClient = Spaces.Model & {
+export type ModelClient = SpacesCoreClient.Model & {
   games: {
     [spaceId: SpaceId]: Game.ModelClient
   }

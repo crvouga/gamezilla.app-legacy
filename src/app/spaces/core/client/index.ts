@@ -1,1 +1,1 @@
-export * from './spaces-core.client'
+export * as SpacesCoreClient from './spaces-core.client'
