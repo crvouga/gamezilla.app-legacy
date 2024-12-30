@@ -1,4 +1,4 @@
-import { Err, Ok } from '../../core/result'
+import { Err, Ok } from '../../result/result'
 import type { Parser, ParserError } from './parser-types'
 
 export function and<A>(a: Parser<A>): Parser<A>

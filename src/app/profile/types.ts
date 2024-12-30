@@ -1,4 +1,4 @@
-import type { RemoteResult, Result } from '~/@/core'
+import type { RemoteResult, Result } from '~/@/result'
 import {
   type ClientId,
   type Profile,

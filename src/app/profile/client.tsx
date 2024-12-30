@@ -1,4 +1,4 @@
-import { Loading, isErr } from '~/@/core'
+import { Loading, isErr } from '~/@/result'
 import { TranslatedText } from '~/@/l18n'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import {

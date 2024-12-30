@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from '~/@/core'
+import { Err, Ok, Result } from '~/@/result'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { eq } from '~/@/equals/equals'
 import { pipe } from '~/@/function/pipe'

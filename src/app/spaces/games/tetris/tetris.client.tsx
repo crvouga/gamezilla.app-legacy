@@ -1,5 +1,5 @@
 import { Keyboard } from '~/@/browser'
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import * as Board from './@/board'

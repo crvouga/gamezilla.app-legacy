@@ -1,4 +1,4 @@
-import { NotAsked, Result, type RemoteResult } from '~/@/core'
+import { NotAsked, Result, type RemoteResult } from '~/@/result'
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'

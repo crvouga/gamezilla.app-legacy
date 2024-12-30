@@ -1,4 +1,4 @@
-import { Ok, isErr } from '~/@/core'
+import { Ok, isErr } from '~/@/result'
 import { Profile } from '~/app/@/data'
 import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import type { IProfileCache } from './interface'

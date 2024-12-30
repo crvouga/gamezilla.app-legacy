@@ -1,4 +1,4 @@
-import { Result } from '../core'
+import { Result } from '../result'
 import { Query } from './query'
 
 export type QueryableDb<TRow> = {

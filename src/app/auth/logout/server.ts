@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import { AppServerModule } from '~/app/@/architecture/app-server'
 import type { ServerModule } from '../types'
 

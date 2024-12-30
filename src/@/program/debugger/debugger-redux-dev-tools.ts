@@ -6,7 +6,7 @@
  * @since 0.5.0
  */
 
-import { isErr, Result } from '~/@/core'
+import { isErr, Result } from '~/@/result'
 import { Msg } from '~/@/msg/msg'
 import { pipe } from '../../function/pipe'
 import { Json } from '../../json/json'

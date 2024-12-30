@@ -1,4 +1,4 @@
-import { Err, Ok } from '~/@/core'
+import { Err, Ok } from '~/@/result'
 import type { ILogger } from '~/@/logger'
 import { VerificationId } from '../../verification'
 import type { IVerifySMS } from '../../interface'

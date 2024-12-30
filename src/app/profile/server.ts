@@ -1,4 +1,4 @@
-import { Err, Ok, Result, isErr } from '~/@/core'
+import { Err, Ok, Result, isErr } from '~/@/result'
 import { type Profile, ProfileAvatar, type UserId, Username } from '~/app/@/data'
 import { AppServerCtx, sendToClient } from '~/app/@/server'
 import { AppServerModule } from '../@/architecture/app-server'

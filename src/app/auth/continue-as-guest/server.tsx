@@ -1,4 +1,4 @@
-import { Ok, Result, isErr } from '~/@/core'
+import { Ok, Result, isErr } from '~/@/result'
 import { UserId, type SessionId } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'
 import { sendToClient } from '~/app/@/server'

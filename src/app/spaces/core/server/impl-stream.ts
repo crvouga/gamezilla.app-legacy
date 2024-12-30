@@ -1,4 +1,4 @@
-import { isErr, Ok, unwrapOr } from '~/@/core'
+import { isErr, Ok, unwrapOr } from '~/@/result'
 import { EventSourced } from '~/@/event-sourced'
 import { WithEventMeta } from '~/@/event-sourced/event'
 import { IRuntime } from '~/@/runtime'

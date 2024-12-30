@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { withEventId } from '~/@/event-sourced/event'
 import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceServerCmd } from '../@/space-server-cmd'

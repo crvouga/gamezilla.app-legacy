@@ -1,4 +1,4 @@
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import type { SessionId, UserId } from '~/app/@/data'
 import type { IUserSessionDb } from './interface'
 import { Sleep } from '~/@/promise/sleep'

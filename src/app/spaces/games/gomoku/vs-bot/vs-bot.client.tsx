@@ -1,5 +1,5 @@
 import type { AppClientCtx } from '~/app/@/client'
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import {
   type ModelClient,
   type MsgClient,

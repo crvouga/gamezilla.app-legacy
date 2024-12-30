@@ -1,4 +1,4 @@
-import { Err, Ok, isErr } from '~/@/core'
+import { Err, Ok, isErr } from '~/@/result'
 import { p } from '~/@/parser'
 import { Redis } from 'ioredis'
 import type { ILogger } from '../logger/interface'

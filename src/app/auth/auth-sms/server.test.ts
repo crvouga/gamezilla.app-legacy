@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, Result } from '~/@/core'
+import { Ok, Result } from '~/@/result'
 import type { ClientId, SessionId } from '~/app/@/data'
 import { UserAccount } from '~/app/@/data/account'
 import { didSendMsgToClient } from '~/app/@/server'

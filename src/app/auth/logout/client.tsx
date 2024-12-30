@@ -1,4 +1,4 @@
-import { Ok, NotAsked } from '~/@/core'
+import { Ok, NotAsked } from '~/@/result'
 import { APP_SOUND, type BaseClientCtx, playSound, sendToServer, showToast } from '~/app/@/client'
 import { ConfirmationDrawer } from '~/app/@/ui'
 import type { ClientModule, ModelClient, MsgClient } from '../types'

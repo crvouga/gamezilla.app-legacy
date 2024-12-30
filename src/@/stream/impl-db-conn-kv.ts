@@ -1,4 +1,4 @@
-import { Err, Ok, unwrapOr } from '~/@/core'
+import { Err, Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
 import { Parser } from '~/@/parser/parser'
 import { DbConnKv, IDbConnKv } from '../db-conn-kv'

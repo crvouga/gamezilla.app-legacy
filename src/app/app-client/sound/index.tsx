@@ -1,4 +1,4 @@
-import { Err, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/result'
 import { Translator } from '~/@/l18n/generated'
 import { UnitInterval } from '~/@/range/unit-interval'
 import { TimeSpan } from '~/@/time/time-span'

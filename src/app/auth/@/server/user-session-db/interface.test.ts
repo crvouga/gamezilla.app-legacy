@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { unwrap } from '~/@/core'
+import { unwrap } from '~/@/result'
 import { SessionId, UserId } from '~/app/@/data'
 import { Logger } from '~/@/logger'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'

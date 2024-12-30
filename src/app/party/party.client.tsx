@@ -1,4 +1,4 @@
-import { RemoteResult, isErr } from '~/@/core'
+import { RemoteResult, isErr } from '~/@/result'
 import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
 import { Eff } from '~/@/program/eff'

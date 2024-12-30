@@ -1,4 +1,4 @@
-import { Err, Ok, isErr } from '~/@/core'
+import { Err, Ok, isErr } from '~/@/result'
 import { Hashing } from '~/@/hashing'
 import { AppServerModule } from '~/app/@/architecture/app-server'
 import { Translator } from '~/app/@/client/translator'

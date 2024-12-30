@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { ServerInstance } from '../server-instance'
 import { ServerInstanceId } from '../server-instance-id'
 import { TimeSpan } from '~/@/time/time-span'

@@ -1,5 +1,5 @@
 import { Keyboard } from '~/@/browser'
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { Option } from '~/@/option/option'
 import * as Board from './@/board'
 import * as Direction from './@/direction'

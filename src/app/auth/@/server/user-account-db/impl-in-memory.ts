@@ -1,4 +1,4 @@
-import { Err, Ok } from '~/@/core'
+import { Err, Ok } from '~/@/result'
 import type { UserId } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'
 import type { IUserAccountDb } from './interface'

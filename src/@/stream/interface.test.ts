@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { Ok, unwrapOr } from '~/@/core'
+import { Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
 import { REDIS_URL } from '~/config-private'
 import { AppServerTestEnv } from '../../app/@/server/server-test-env'

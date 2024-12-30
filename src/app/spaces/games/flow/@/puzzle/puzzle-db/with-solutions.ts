@@ -1,4 +1,4 @@
-import { Ok, isErr } from '~/@/core'
+import { Ok, isErr } from '~/@/result'
 import type { IPuzzleDb } from './interface'
 import { FlowAlgoSolveAsync } from '../../flow/flow-algo/flow-algo-solve-async'
 

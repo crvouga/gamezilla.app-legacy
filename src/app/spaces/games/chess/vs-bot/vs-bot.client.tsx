@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import { pipe } from '~/@/function/pipe'
 import { type AppClientCmd, sendToServer } from '~/app/@/client'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'

@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { EventSourced } from '~/@/event-sourced'
 import { sendToUser } from '~/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'

@@ -1,4 +1,4 @@
-import { Ok, Result, isErr } from '~/@/core'
+import { Ok, Result, isErr } from '~/@/result'
 import { p } from '~/@/parser'
 import { Hash } from '~/@/hashing'
 import { Sql } from '~/@/sql'

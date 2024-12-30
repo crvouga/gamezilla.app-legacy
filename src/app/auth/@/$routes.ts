@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { p } from '~/@/parser'
 import { PhoneNumber } from '~/@/phone-number'
 

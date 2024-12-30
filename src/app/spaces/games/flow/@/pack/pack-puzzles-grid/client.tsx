@@ -1,4 +1,4 @@
-import { isErr, Result } from '~/@/core'
+import { isErr, Result } from '~/@/result'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from '~/app/@/client'
 import { PuzzleId } from '../../puzzle/puzzle-id'

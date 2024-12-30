@@ -1,4 +1,4 @@
-import { type Result, isErr } from '~/@/core'
+import { type Result, isErr } from '~/@/result'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Translator } from '~/@/l18n/generated'
 import { Eff } from '~/@/program/eff'

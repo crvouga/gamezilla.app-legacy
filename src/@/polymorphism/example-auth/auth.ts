@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { Polymorphic } from '../polymorphic-function'
 
 export type AuthProvider = {

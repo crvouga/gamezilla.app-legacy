@@ -1,4 +1,4 @@
-import { isErr, isOk } from '~/@/core'
+import { isErr, isOk } from '~/@/result'
 import { AppServerModule } from '~/app/@/architecture/app-server'
 import type { SessionId, UserId } from '~/app/@/data'
 import { ServerCmd, AppServerCtx, sendToClient } from '~/app/@/server'

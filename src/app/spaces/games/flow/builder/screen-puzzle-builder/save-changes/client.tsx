@@ -1,4 +1,4 @@
-import { Loading, Result, isErr, isOk } from '~/@/core'
+import { Loading, Result, isErr, isOk } from '~/@/result'
 import type { Translator } from '~/@/l18n/generated'
 import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/app/@/client'
 import { Button, Drawer, IconFloppyDisk, Typography } from '~/app/@/ui'

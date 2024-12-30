@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import type { Brand } from '~/@/brand/brand'
 import { p } from '~/@/parser'
 

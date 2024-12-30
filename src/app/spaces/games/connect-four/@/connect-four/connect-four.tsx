@@ -1,6 +1,6 @@
 import { isSubset } from '~/@/array/is-subset'
 import { unique } from '~/@/array/unique'
-import { Err, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/result'
 import { p } from '~/@/parser'
 import { eq } from '~/@/equals/equals'
 

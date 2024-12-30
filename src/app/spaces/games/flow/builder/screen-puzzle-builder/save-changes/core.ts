@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import type { UpdateCore } from '../../types'
 
 const updateCore: UpdateCore = (input) => {

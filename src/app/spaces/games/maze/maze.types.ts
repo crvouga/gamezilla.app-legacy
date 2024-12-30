@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Keyboard } from '~/@/browser'
-import { Err, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/result'
 import { dissoc } from '~/@/object/dissoc'
 import type { UserId } from '~/app/@/data'
 import { Maze } from './@/maze'

@@ -1,4 +1,4 @@
-import type { Result } from '~/@/core'
+import type { Result } from '~/@/result'
 import { PhoneNumber } from '../phone-number'
 
 export type ISMS = {

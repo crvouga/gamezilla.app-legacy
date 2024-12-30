@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err } from '~/@/core'
+import { Err } from '~/@/result'
 import { withEventId } from '~/@/event-sourced/event'
 import { didShowErrorSm } from '~/app/@/client'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'

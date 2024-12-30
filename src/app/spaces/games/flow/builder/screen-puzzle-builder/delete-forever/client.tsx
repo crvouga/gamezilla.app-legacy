@@ -1,4 +1,4 @@
-import { RemoteResult, isLoading } from '~/@/core'
+import { RemoteResult, isLoading } from '~/@/result'
 import { APP_SOUND, playSound, sendToServer, showCreatedSm } from '~/app/@/client'
 import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'

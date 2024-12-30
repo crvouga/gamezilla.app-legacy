@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { ascend, descend } from '~/@/array/sorting'
-import { Ok, unwrap } from '~/@/core'
+import { Ok, unwrap } from '~/@/result'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Verification } from '../verification'
 import { VerificationDb } from './impl'

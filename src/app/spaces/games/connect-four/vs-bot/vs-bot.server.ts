@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import { withEventId } from '~/@/event-sourced/event'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'

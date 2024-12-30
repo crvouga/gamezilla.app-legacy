@@ -1,4 +1,4 @@
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import { IRuntime } from '~/@/runtime'
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'

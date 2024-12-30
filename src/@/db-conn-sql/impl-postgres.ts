@@ -1,4 +1,4 @@
-import { Err, Ok } from '~/@/core'
+import { Err, Ok } from '~/@/result'
 import type { p } from '~/@/parser'
 import { Sql } from '~/@/sql'
 import postgres from 'postgres'

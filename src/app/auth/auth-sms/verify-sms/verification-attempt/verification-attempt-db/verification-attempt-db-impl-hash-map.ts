@@ -1,4 +1,4 @@
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import type { IVerificationAttemptDb } from './verification-attempt-db'
 import { VerificationAttemptId } from '../verification-attempt-id'
 import { VerificationAttempt } from '../verification-attempt'

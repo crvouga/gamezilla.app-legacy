@@ -1,4 +1,4 @@
-import { Err, Ok, isErr } from '~/@/core'
+import { Err, Ok, isErr } from '~/@/result'
 import type { Verification } from '../../verification'
 import { VerificationAttemptId, type VerificationAttempt } from '../../verification-attempt'
 import type { IVerifySMS } from '../../interface'

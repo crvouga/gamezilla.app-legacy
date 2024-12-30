@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { FixtureSpaceServer } from '../@/fixture/server'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { ClientId, SessionId, SpaceId, UserId } from '~/app/@/data'
-import { unwrap } from '~/@/core'
+import { unwrap } from '~/@/result'
 import { SpaceCore } from '../core'
 import { didSendMsgToClient } from '~/app/@/server'
 

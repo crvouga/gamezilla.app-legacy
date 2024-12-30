@@ -1,5 +1,5 @@
 import { SpaceId } from '~/app/@/data'
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { p } from '~/@/parser'
 
 export const Route = p.or(

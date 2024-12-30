@@ -1,5 +1,5 @@
 import type { PartyId, UserId } from '~/app/@/data'
-import { type RemoteResult, Result } from '~/@/core'
+import { type RemoteResult, Result } from '~/@/result'
 import type { MicLoadResult, MicUnloadResult } from './mic'
 import { dissoc } from '~/@/object/dissoc'
 import { filterObject } from '~/@/object/filter-object'

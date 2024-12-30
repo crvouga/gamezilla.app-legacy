@@ -1,4 +1,4 @@
-import { unwrapOr } from '~/@/core'
+import { unwrapOr } from '~/@/result'
 import { EventSourced } from '~/@/event-sourced'
 import { AppServerCtx, broadcast, sendToClient, sendToUser } from '~/app/@/server'
 import { SpaceServerModule } from '../@/architecture/space-server'

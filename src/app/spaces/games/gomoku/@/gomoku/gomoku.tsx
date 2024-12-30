@@ -1,4 +1,4 @@
-import { Err, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/result'
 import { Direction, Position } from './gomoku-position'
 import { NonEmpty } from '~/@/array/non-empty'
 import { Random } from '~/@/random/random'

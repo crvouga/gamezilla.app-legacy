@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { p } from '~/@/parser'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { Sql } from '~/@/sql'

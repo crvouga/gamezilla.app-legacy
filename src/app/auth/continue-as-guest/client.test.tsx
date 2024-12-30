@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok } from '~/@/core'
+import { Err, Ok } from '~/@/result'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didPlaySound, didSendToServer, type AnonymousClientCtx } from '~/app/@/client'
 import { Translator } from '~/app/@/client/translator'

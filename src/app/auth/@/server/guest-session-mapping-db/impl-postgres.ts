@@ -1,4 +1,4 @@
-import { Ok, isErr } from '~/@/core'
+import { Ok, isErr } from '~/@/result'
 import { IGuestSessionMappingDb } from './interface'
 import { SessionId, UserId } from '~/app/@/data'
 import { p } from '~/@/parser'

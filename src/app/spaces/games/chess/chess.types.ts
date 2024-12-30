@@ -1,4 +1,4 @@
-import type { RemoteResult, Result } from '~/@/core'
+import type { RemoteResult, Result } from '~/@/result'
 import type { UserId } from '~/app/@/data'
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import type * as Puzzle from './puzzle/puzzle.types'

@@ -3,7 +3,7 @@ import { Config, WireSessionDb } from './impl'
 import { Logger } from '~/@/logger'
 import { describe, expect, test } from 'bun:test'
 import { WireSession } from '../wire-session'
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 
 const Fixture = async (config: Config) => {
   const wireSessionDb = await WireSessionDb(config)

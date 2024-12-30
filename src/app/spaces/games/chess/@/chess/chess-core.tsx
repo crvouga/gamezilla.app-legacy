@@ -1,5 +1,5 @@
 import * as ChessJS from 'chess.js'
-import { Err, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/result'
 import { ChessBotLevel } from '../chess-bot-level/chess-bot-level'
 import { exhaustive } from '~/@/function/exhaustive'
 import { IO } from '~/@/program/io'

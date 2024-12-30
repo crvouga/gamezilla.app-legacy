@@ -1,4 +1,4 @@
-import { Err, Ok, type Loading, type NotAsked, type Result } from '../core'
+import { Err, Ok, type Loading, type NotAsked, type Result } from '../result'
 import { Sub } from '../program/sub'
 import { Posix } from '../time/posix'
 import { Time } from '../time/time'

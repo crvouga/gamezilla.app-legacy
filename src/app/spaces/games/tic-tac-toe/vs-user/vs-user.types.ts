@@ -1,4 +1,4 @@
-import { Result, isErr } from '~/@/core'
+import { Result, isErr } from '~/@/result'
 import type { UserId } from '~/app/@/data'
 import * as TicTacToe from '../@/tic-tic-toe/tic-tac-toe'
 import * as Round from './vs-user-round'

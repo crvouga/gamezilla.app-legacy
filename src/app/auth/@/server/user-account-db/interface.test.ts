@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, Result } from '~/@/core'
+import { Ok, Result } from '~/@/result'
 import { UserId } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'

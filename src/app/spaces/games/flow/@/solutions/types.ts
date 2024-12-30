@@ -1,4 +1,4 @@
-import { NotAsked, Result } from '~/@/core'
+import { NotAsked, Result } from '~/@/result'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'

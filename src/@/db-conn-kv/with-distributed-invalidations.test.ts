@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import { p } from '~/@/parser'
 import { Logger } from '../logger'
 import { PubSubTopicBased } from '../pub-sub-topic-based'

@@ -1,4 +1,4 @@
-import { RemoteResult, Result } from '~/@/core'
+import { RemoteResult, Result } from '~/@/result'
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data'
 import { Pack } from '../../../@/pack/pack'

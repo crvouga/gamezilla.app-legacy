@@ -1,4 +1,4 @@
-import { Ok, Result } from '~/@/core'
+import { Ok, Result } from '~/@/result'
 import type { Pack } from '../pack'
 import type { IPackDb } from './interface'
 

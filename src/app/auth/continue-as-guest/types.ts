@@ -1,4 +1,4 @@
-import type { Result } from '~/@/core'
+import type { Result } from '~/@/result'
 import { RequestResponse } from '~/@/request-response/request-response'
 import type { UserId } from '~/app/@/data'
 

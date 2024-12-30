@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { FlowGridShorthand } from '../../flow/flow-variant/flow-grid'
 import { Puzzle } from '../puzzle'
 import { PuzzleDbFixture } from './fixture'

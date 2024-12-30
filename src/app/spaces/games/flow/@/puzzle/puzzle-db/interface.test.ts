@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { ascend } from '~/@/array/sorting'
-import { Ok, Result } from '~/@/core'
+import { Ok, Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { UserId } from '~/app/@/data'

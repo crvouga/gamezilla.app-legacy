@@ -1,4 +1,4 @@
-import { Err, Ok } from '~/@/core'
+import { Err, Ok } from '~/@/result'
 import { pipe } from '~/@/function/pipe'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'

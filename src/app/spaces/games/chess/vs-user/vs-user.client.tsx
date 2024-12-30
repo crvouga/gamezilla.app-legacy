@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import type { AppClientCtx } from '~/app/@/client'

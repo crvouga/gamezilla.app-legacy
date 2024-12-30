@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isErr, isOk, unwrap } from '~/@/core'
+import { isErr, isOk, unwrap } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import { Hashing } from '~/@/hashing'
 import { Posix } from '~/@/time/posix'

@@ -1,4 +1,4 @@
-import { Err, Ok, Result, isErr, unwrapOr } from '~/@/core'
+import { Err, Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
 import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import { EventSourced } from '~/@/event-sourced'

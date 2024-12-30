@@ -1,4 +1,4 @@
-import { Result, isOk } from '~/@/core'
+import { Result, isOk } from '~/@/result'
 import { p } from '~/@/parser'
 import { SessionId, UserId } from '~/app/@/data'
 import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'

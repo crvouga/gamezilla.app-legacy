@@ -1,4 +1,4 @@
-import { unwrap } from '~/@/core'
+import { unwrap } from '~/@/result'
 import { Msg } from '~/@/msg/msg'
 import { withEventId } from '~/@/event-sourced/event'
 import { Posix } from '~/@/time/posix'

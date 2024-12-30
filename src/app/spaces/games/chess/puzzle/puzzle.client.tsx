@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import type { VDomChildren } from '~/@/vdom'
 import { APP_SOUND, type AppClientCmd, playSound, sendToServer } from '~/app/@/client'
 import {

@@ -1,4 +1,4 @@
-import { isErr, Loading, NotAsked } from '~/@/core'
+import { isErr, Loading, NotAsked } from '~/@/result'
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import { Pack } from '../../../../@/pack/pack'
 import { PackName } from '../../../../@/pack/pack-name'

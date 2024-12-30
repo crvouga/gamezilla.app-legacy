@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import type { UpdateCore } from '../../types'
 import { FlowEdit } from '../../../@/flow/flow-edit'
 import { FlowPlay } from '../../../@/flow/flow-play'

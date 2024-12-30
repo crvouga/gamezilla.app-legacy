@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import { p } from '~/@/parser'
 import type { IDbConnKv } from './interface'
 import { ILogger, Logger } from '../logger'

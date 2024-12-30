@@ -1,7 +1,7 @@
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { APP_SOUND, playSound, sendToServer, showErrSm, showCreatedSm } from '~/app/@/client'
 import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
-import { isLoading, isOk, Loading } from '~/@/core'
+import { isLoading, isOk, Loading } from '~/@/result'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ClientModule } from '../../types'
 import { editNameValidationErrorToString, MsgClient, MsgToServer } from './types'

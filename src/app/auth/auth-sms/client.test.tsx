@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok } from '~/@/core'
+import { Err, Ok } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import type { Route } from '~/@/routing/generated/routes'
 import { didPushRoute } from '~/app/@/client'

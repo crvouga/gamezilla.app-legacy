@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import { pipe } from '~/@/function/pipe'
 import { ClientId, SessionId } from '../@/data'
 import { UserAccount } from '../@/data/account'

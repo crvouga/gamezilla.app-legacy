@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isErr, unwrap } from '~/@/core'
+import { isErr, unwrap } from '~/@/result'
 import { Logger } from '~/@/logger'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Config, VerifySMS } from './impl'

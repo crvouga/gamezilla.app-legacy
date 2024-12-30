@@ -1,4 +1,4 @@
-import { Err, isErr, Ok } from '~/@/core'
+import { Err, isErr, Ok } from '~/@/result'
 import type { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
 

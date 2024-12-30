@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { UserActivity } from '../user-activity'
 
 export type IUserActivityDb = {

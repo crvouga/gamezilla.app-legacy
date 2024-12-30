@@ -1,4 +1,4 @@
-import type { Remote, Result } from '~/@/core'
+import type { Remote, Result } from '~/@/result'
 import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { AppServerModule } from '~/app/@/architecture/app-server'
 import type { UserAccount } from '~/app/@/data/account'

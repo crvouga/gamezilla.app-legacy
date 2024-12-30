@@ -4,7 +4,7 @@ import { WireSession } from '../wire-session'
 import type { IWireSessionDb } from './interface'
 import { p } from '~/@/parser'
 import { SessionId } from '~/app/@/data'
-import { isErr, unwrapOr } from '~/@/core'
+import { isErr, unwrapOr } from '~/@/result'
 
 export type Config = {
   t: 'db-conn-kv'

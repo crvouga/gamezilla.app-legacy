@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data'
 import { FlowPlay } from '../../@/flow/flow-play'

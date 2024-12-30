@@ -1,4 +1,4 @@
-import { Err, Result } from '~/@/core'
+import { Err, Result } from '~/@/result'
 import { p } from '~/@/parser'
 import type { AppClientCtx } from '~/app/@/client'
 import { IconLightbulb } from '~/app/@/ui'

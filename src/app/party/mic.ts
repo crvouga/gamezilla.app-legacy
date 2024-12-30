@@ -1,4 +1,4 @@
-import { Err, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/result'
 import { IO } from '~/@/program/io'
 
 export type MicLoadResult = Result<string, null>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok } from '~/@/core'
+import { Err, Ok } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client'

@@ -1,5 +1,5 @@
 import { type ChildrenFn, Minimax, type ScoreFn } from '~/app/spaces/games/@/minimax'
-import { Ok, type Result } from '~/@/core'
+import { Ok, type Result } from '~/@/result'
 import { type Columns, MAX_COLUMN_HEIGHT, type PlayerType, opposite, toStatus } from './connect-four'
 
 export type BestMoveProblem = 'no_move_available'

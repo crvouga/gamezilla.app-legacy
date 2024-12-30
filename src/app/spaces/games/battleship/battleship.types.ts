@@ -1,5 +1,5 @@
 import type { UserId } from '~/app/@/data'
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import type { Position } from './@/battleship/position'
 import type { ShotRule } from './@/battleship/shot-rule'
 

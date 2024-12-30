@@ -1,4 +1,4 @@
-import type { RemoteResult, Result } from '~/@/core'
+import type { RemoteResult, Result } from '~/@/result'
 import type { ChatId } from './chat-id'
 import type { ChatMessageId } from './chat-message-id'
 import type { ChatUserJoinId } from './chat-user-join-id'

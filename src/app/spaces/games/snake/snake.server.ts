@@ -1,4 +1,4 @@
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { Time } from '~/@/time/time'
 import * as Snake from './@/snake'
 import {

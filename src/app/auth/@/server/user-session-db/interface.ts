@@ -1,4 +1,4 @@
-import type { Result } from '~/@/core'
+import type { Result } from '~/@/result'
 import type { SessionId, UserId } from '~/app/@/data'
 
 export type IUserSessionDb = {

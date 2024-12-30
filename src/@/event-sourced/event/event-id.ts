@@ -1,4 +1,4 @@
-import { Err, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/result'
 import type { Brand } from '~/@/brand/brand'
 import { p } from '~/@/parser'
 

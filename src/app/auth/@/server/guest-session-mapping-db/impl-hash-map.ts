@@ -1,4 +1,4 @@
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import { IGuestSessionMappingDb } from './interface'
 import { SessionId, UserId } from '~/app/@/data'
 

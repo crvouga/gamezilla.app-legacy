@@ -1,4 +1,4 @@
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import type { ISMS } from './sms'
 import type { ILogger } from '../logger'
 import { PhoneNumber } from '../phone-number'

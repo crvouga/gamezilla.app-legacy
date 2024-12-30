@@ -1,4 +1,4 @@
-import { NotAsked } from '~/@/core'
+import { NotAsked } from '~/@/result'
 import { Msg } from '~/@/msg/msg'
 import { isAppClientCtx } from '../@/client'
 import { type Input, type Output, SpaceClientModule } from './@/architecture/space-client'

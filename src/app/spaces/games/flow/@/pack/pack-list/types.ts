@@ -1,4 +1,4 @@
-import { RemoteResult } from '~/@/core'
+import { RemoteResult } from '~/@/result'
 import { p } from '~/@/parser'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'

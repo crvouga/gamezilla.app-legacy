@@ -1,4 +1,4 @@
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import type { UserId } from '~/app/@/data'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerCtx } from '../../@/space-server-ctx'

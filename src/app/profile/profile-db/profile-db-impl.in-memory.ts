@@ -1,5 +1,5 @@
 import type { UserId } from '~/app/@/data'
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import type { ProfileCore } from '../types'
 import type { ProfileDb } from './profile-db'
 

@@ -1,5 +1,5 @@
 import { ascend, descend } from '~/@/array/sorting'
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import type { Verification, VerificationId } from '..'
 import type { IVerificationDb } from './interface'

@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 

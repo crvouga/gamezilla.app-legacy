@@ -1,4 +1,4 @@
-import { Ok, Result, isErr } from '~/@/core'
+import { Ok, Result, isErr } from '~/@/result'
 import { p } from '~/@/parser'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { ILogger } from '~/@/logger'

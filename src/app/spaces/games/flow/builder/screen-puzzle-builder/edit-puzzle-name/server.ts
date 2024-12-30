@@ -1,4 +1,4 @@
-import { Err, isErr } from '~/@/core'
+import { Err, isErr } from '~/@/result'
 import type { UserId } from '~/app/@/data'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'

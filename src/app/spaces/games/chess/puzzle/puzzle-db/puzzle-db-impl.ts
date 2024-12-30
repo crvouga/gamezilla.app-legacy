@@ -1,5 +1,5 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { Err, Ok, Result } from '~/@/core'
+import { Err, Ok, Result } from '~/@/result'
 import { p } from '~/@/parser'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { UserId } from '~/app/@/data'

@@ -1,4 +1,4 @@
-import { NotAsked } from '~/@/core'
+import { NotAsked } from '~/@/result'
 import { Msg } from '~/@/msg/msg'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import {

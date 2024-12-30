@@ -1,4 +1,4 @@
-import { Err, isErr, Ok, Result } from '~/@/core'
+import { Err, isErr, Ok, Result } from '~/@/result'
 import { IWebClient } from '~/@/web-client'
 import { IWebServer } from '~/@/web-server'
 import { p } from '~/@/parser'

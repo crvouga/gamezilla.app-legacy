@@ -1,5 +1,5 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import { EventId, WithEventMeta } from '~/@/event-sourced/event'
 import { LamportTimestamp } from '~/@/lamport-clock'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'

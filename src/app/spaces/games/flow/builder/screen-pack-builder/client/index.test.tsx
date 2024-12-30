@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok } from '~/@/core'
+import { Ok } from '~/@/result'
 import { andThen } from '~/app/spaces/games/@/architecture/game-client-v2'
 import type { FlowClientCtx } from '../../../@/client/ctx'
 import { Pack } from '../../../@/pack/pack'

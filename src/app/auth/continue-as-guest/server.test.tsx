@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isOk } from '~/@/core'
+import { isOk } from '~/@/result'
 import { ClientId, SessionId } from '~/app/@/data'
 import { didSendMsgToClient } from '~/app/@/server'
 import { AppServerTestEnv, FixtureAppServer } from '~/app/@/server/server-test-env'

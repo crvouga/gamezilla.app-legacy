@@ -1,4 +1,4 @@
-import { isErr } from '~/@/core'
+import { isErr } from '~/@/result'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { UpdateCore } from '../types'

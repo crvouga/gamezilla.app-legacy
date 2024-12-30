@@ -1,4 +1,4 @@
-import { unwrap } from '~/@/core'
+import { unwrap } from '~/@/result'
 import { Hashing, type IHashing } from '~/@/hashing'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Logger } from '~/@/logger'

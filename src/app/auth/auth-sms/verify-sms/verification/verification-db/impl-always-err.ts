@@ -1,4 +1,4 @@
-import { Err } from '~/@/core'
+import { Err } from '~/@/result'
 import type { IVerificationDb } from './interface'
 
 export type Config = {

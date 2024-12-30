@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Result } from '~/@/core'
+import { Result } from '~/@/result'
 import { withEventId, withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../../../@/pack/pack'
 import { FlowCreateFixtureServer } from '../../../@/testing/server'

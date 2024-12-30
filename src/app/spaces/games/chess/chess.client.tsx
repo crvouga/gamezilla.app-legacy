@@ -1,4 +1,4 @@
-import { RemoteResult, isErr } from '~/@/core'
+import { RemoteResult, isErr } from '~/@/result'
 import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from '~/app/@/client'
 import { IconPuzzlePiece } from '~/app/@/ui'
 

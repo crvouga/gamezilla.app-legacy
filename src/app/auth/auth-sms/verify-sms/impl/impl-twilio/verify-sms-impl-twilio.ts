@@ -1,4 +1,4 @@
-import { Err, Ok, isErr } from '~/@/core'
+import { Err, Ok, isErr } from '~/@/result'
 import { p } from '~/@/parser'
 import type { ILogger } from '~/@/logger'
 import { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } from '~/config-private'

@@ -1,4 +1,4 @@
-import { Err, Ok, Result, isErr } from '~/@/core'
+import { Err, Ok, Result, isErr } from '~/@/result'
 import { p } from '~/@/parser'
 import { UserId, UserRole } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'

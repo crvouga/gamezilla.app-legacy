@@ -1,5 +1,5 @@
 import { Keyboard } from '~/@/browser'
-import { type Result, isErr } from '~/@/core'
+import { type Result, isErr } from '~/@/result'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import type { AppClientCtx } from '~/app/@/client'

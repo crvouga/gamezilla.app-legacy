@@ -1,4 +1,4 @@
-import { NotAsked, isErr } from '~/@/core'
+import { NotAsked, isErr } from '~/@/result'
 import { APP_SOUND, playSound, sendToServer, showErrSm } from '~/app/@/client'
 import { Button, IconUserCircle } from '~/app/@/ui'
 import type { ClientModule } from '../types'

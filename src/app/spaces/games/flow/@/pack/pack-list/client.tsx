@@ -1,5 +1,5 @@
 import { descend } from '~/@/array/sorting'
-import { NotAsked, Result, isErr } from '~/@/core'
+import { NotAsked, Result, isErr } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'

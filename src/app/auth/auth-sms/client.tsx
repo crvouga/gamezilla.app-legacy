@@ -1,4 +1,4 @@
-import { NotAsked, RemoteResult, isErr } from '~/@/core'
+import { NotAsked, RemoteResult, isErr } from '~/@/result'
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { PhoneNumber } from '~/@/phone-number'
 import { Posix } from '~/@/time/posix'

@@ -1,4 +1,4 @@
-import { isErr, Result } from '~/@/core'
+import { isErr, Result } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import { Option } from '~/@/option/option'
 import type { UserId } from '~/app/@/data'

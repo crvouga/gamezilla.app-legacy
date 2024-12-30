@@ -1,4 +1,4 @@
-import type { Result } from '~/@/core'
+import type { Result } from '~/@/result'
 import type { UserId } from '~/app/@/data'
 import type { Puzzle, PuzzleInteraction } from '../puzzle.types'
 

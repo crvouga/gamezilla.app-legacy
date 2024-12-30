@@ -1,4 +1,4 @@
-import { Err, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/result'
 import { memoize } from '~/@/function/memoize'
 
 //

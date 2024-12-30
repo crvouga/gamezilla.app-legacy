@@ -1,4 +1,4 @@
-import { isErr, isLoading, Loading, Result } from '~/@/core'
+import { isErr, isLoading, Loading, Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok } from '~/@/core'
+import { Err, Ok } from '~/@/result'
 import { SpaceCoreFixture } from '~/app/spaces/@/fixture/core'
 import { Pack } from '../../../../@/pack/pack'
 import { EditPackNameCore } from '../core'

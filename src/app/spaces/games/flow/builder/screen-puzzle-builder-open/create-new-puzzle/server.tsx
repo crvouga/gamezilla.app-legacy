@@ -1,4 +1,4 @@
-import { Result, isErr } from '~/@/core'
+import { Result, isErr } from '~/@/result'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
 import { FlowVariant, FlowVariantDimensions } from '../../../@/flow'

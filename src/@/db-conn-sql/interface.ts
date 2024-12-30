@@ -1,4 +1,4 @@
-import type { Result } from '~/@/core'
+import type { Result } from '~/@/result'
 import type { p } from '~/@/parser'
 import type { Sql } from '~/@/sql'
 

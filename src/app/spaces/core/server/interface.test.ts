@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Ok, unwrap } from '~/@/core'
+import { Ok, unwrap } from '~/@/result'
 import { p } from '~/@/parser'
 import { EventSourced } from '~/@/event-sourced'
 import { EventMeta, withEventId } from '~/@/event-sourced/event'

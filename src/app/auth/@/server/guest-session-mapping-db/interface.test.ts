@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { GuestSessionMappingDb } from './impl'
 import { SessionId, UserId } from '~/app/@/data'
-import { unwrap } from '~/@/core'
+import { unwrap } from '~/@/result'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 
 const Fixture = async () => {
