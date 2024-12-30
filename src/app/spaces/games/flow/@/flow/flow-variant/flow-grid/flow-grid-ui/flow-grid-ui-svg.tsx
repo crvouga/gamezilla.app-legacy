@@ -84,7 +84,7 @@ const ViewGrid = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
         width={input.model.width}
         height={input.model.height}
         fill='url(#grid)'
-        stroke='green'
+        stroke={input.borderless ? 'black' : 'green'}
         strokeWidth='0.02'
       />
     </>

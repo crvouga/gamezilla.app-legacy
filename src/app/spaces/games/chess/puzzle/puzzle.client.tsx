@@ -277,7 +277,7 @@ export const View = ({
           </div>
         </div>
 
-        <div className='relative flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-800'>
+        <div className='bg-paper relative flex aspect-square w-full items-center justify-end overflow-hidden'>
           <Chessboard
             id='puzzle-chess-board'
             orientation={model.t === 'loading' ? undefined : toPlayerColor(model.puzzle)}
@@ -317,7 +317,7 @@ export const View = ({
             }}
           />
           {model.t === 'loading' && (
-            <div className='absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50'>
+            <div className='absolute left-0 top-0 z-20 grid h-full w-full place-items-center bg-black/50'>
               <Spinner />
             </div>
           )}
@@ -527,7 +527,7 @@ const ViewStatusBar = (input: { model: ModelClient }) => {
 
   if (input.model.t === 'solved-with-hint') {
     return (
-      <div className='flex w-full items-center justify-center gap-2 bg-neutral-800 p-2 text-white'>
+      <div className='bg-paper flex w-full items-center justify-center gap-2 p-2 text-white'>
         <IconCheckmarkCircle className='h-6 w-6' />
         <p className='text-xl'>Solved with hint</p>
       </div>

@@ -3,15 +3,19 @@
 @tailwind utilities;
 
 .bg-surface {
-  @apply bg-black;
+  @apply bg-neutral-950;
+}
+
+.border-surface {
+  @apply border-neutral-950;
 }
 
 .bg-paper {
-  @apply bg-white/20;
+  @apply bg-white/15;
 }
 
 .border-paper {
-  @apply border-white/20;
+  @apply border-white/15;
 }
 
 .text-secondary {

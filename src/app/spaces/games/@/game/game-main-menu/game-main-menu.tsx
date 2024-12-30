@@ -128,7 +128,7 @@ export const View = ({
         <div className='flex w-full flex-col p-4'>
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (
             <button
-              className='mb-6 flex w-full items-center rounded bg-neutral-800 p-6 active:opacity-70'
+              className='bg-paper mb-6 flex w-full items-center rounded p-6 active:opacity-70'
               onClick={onClick}
               key={`${index} ${title}`}
             >

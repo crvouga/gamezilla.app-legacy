@@ -155,6 +155,7 @@ export type FlowViewInput<TModel> = {
   className?: string
   model: TModel
   isDragging?: boolean
+  borderless?: boolean
   disableHighlight?: boolean
   autocompleteEdge?:
     | (Edge & {

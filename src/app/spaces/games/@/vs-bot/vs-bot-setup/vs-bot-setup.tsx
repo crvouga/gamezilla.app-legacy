@@ -249,7 +249,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
       ) : player.userId ? (
         <Avatar className='h-14 w-14' src={ctx.profiles[player.userId]?.avatarUrl} />
       ) : (
-        <div role='button' className='grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-800'>
+        <div role='button' className='bg-paper grid h-14 w-14 place-items-center overflow-hidden rounded-full'>
           <IconQuestionMark className='text-secondary h-10 w-10' />
         </div>
       )}

@@ -19,7 +19,7 @@ export const EmptyState = ({
       <div className='flex flex-col items-center justify-center gap-3'>
         <Typography variant='title' text={label} />
 
-        <div className='flex aspect-square flex-col items-center justify-center rounded-full bg-neutral-800 p-7'>
+        <div className='bg-paper flex aspect-square flex-col items-center justify-center rounded-full p-7'>
           {renderIcon({
             className: 'h-14 w-14'
           })}

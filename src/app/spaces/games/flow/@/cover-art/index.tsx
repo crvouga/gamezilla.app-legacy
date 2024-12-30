@@ -25,7 +25,9 @@ const grid2 = pipe(
 
 const grid = false ? grid2 : grid1
 
-const gridView = <FlowGridUI.View model={grid} disabled disableHighlight className='aspect-square bg-black' />
+const gridView = (
+  <FlowGridUI.View model={grid} disabled borderless disableHighlight className='aspect-square bg-black' />
+)
 
 export const CoverArt = (input: { className?: string }) => {
   return <div {...input}>{gridView}</div>

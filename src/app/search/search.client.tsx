@@ -134,7 +134,7 @@ export const View = ({
       <div className='flex h-full w-full flex-col'>
         {/* input */}
         <div className='w-full p-4'>
-          <div className='flex w-full items-center gap-2 rounded-full bg-neutral-800 px-4 py-2'>
+          <div className='bg-paper flex w-full items-center gap-2 rounded-full px-4 py-2'>
             <IconMagnifyingGlass className='h-6 w-6' />
             <input
               id={searchInputId}
@@ -166,7 +166,7 @@ export const View = ({
             <li key={result.userId}>
               <button
                 type='button'
-                className='flex w-full items-center gap-4 p-4 hover:bg-neutral-800'
+                className='hover:bg-paper flex w-full items-center gap-4 p-4'
                 onClick={() =>
                   dispatch({
                     t: 'clicked-result',
