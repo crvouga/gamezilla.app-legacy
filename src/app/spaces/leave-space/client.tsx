@@ -1,23 +1,15 @@
 import { withEventId } from '~/@/event-sourced/event'
+import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/client/client-cmd'
 import { Button } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import type { SpaceEvent } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
-import { playSound, APP_SOUND, showToast, pushRoute } from '~/app/@/client/client-cmd'
+import type { SpaceEvent } from '../core/space-event'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFromSpaceEvent({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateLeaveSpaceButton({
-        ...input,
-        model
-      })
+    (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => updateLeaveSpaceButton({ ...input, model })
   )
 }
 

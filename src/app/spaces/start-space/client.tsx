@@ -3,7 +3,7 @@ import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/client/clien
 import { SpaceId } from '~/app/@/data/space-id'
 import { Button, IconPlus } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
-import type { SpaceEvent } from '../core'
+import type { SpaceEvent } from '../core/space-event'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
