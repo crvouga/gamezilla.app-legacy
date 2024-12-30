@@ -7,8 +7,8 @@ import type { UserId } from '~/app/@/data/user-id'
 import type { ServerEvt } from '~/app/@/server/server-evt'
 import { SpaceEvent } from '../../core/space-event'
 import type { MsgServer, MsgToClient, MsgToServer, ServerCtx } from '../../types'
-import type { Space } from '../space'
-import type { SpaceServerCmd } from '../space-server-cmd'
+import type { Space } from '../space/space'
+import type { SpaceServerCmd } from '../space-server/cmd'
 
 type Ctx = ServerCtx & {
   space?: Space

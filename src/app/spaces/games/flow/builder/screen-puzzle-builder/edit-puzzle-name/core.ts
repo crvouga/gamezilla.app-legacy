@@ -1,4 +1,4 @@
-import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
+import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ModelCore, MsgCore } from '../../types'

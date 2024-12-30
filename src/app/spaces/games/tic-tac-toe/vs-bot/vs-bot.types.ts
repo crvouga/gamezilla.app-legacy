@@ -1,6 +1,6 @@
 import { Err, isErr, Ok, type Result } from '~/@/result'
 import type { UserId } from '~/app/@/data/user-id'
-import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
+import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import type { VsBotSetup } from '~/app/spaces/games/@/vs-bot'
 import {
   type BotLevel,

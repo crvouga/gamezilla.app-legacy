@@ -41,7 +41,7 @@ import type { Text as Text38 } from '../../../app/spaces/games/flow/@/flow/flow-
 import type { Text as Text39 } from '../../../app/spaces/client/people/$l18n'
 import type { Text as Text40 } from '../../../app/spaces/list-spaces/$l18n'
 import type { Text as Text41 } from '../../../app/spaces/list-spaces/space-card/$l18n'
-import type { Text as Text42 } from '../../../app/spaces/@/$l18n'
+import type { Text as Text42 } from '../../../app/spaces/@/client/$l18n'
 import type { Text as Text43 } from '../../../app/lang/$l18n'
 import type { Text as Text44 } from '../../../app/profile/$l18n'
 import type { Text as Text45 } from '../../../app/profile/update-username/update-username.$l18n'

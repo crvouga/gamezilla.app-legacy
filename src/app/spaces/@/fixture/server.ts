@@ -12,7 +12,7 @@ import { SpaceCore } from '../../core/space-core'
 import { GamesServer } from '../../games/server'
 import { SpacesServer } from '../../server'
 import { ServerCtx } from '../../types'
-import { SpaceServerCtx } from '../space-server-ctx'
+import { SpaceServerCtx } from '../space-server/ctx'
 
 export const FixtureSpaceServer = async () => {
   const f = await FixtureAppServer()

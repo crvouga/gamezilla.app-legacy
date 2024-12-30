@@ -1,6 +1,6 @@
 import { isErr } from '~/@/result'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
+import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
 
 import { PackPuzzlesGridServer } from '../../@/pack/pack-puzzles-grid/server'
 import type { ServerModule } from '../types'

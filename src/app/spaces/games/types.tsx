@@ -1,16 +1,16 @@
 import { p } from '~/@/parser'
-import { SpaceClientCmd } from '../@/space-client-cmd'
-import { SpaceClientEvt } from '../@/space-client-evt'
-import { SpaceServerCmd } from '../@/space-server-cmd'
+import { SpaceClientCmd } from '../@/space-client/cmd'
+import { SpaceClientEvt } from '../@/space-client/evt'
+import { SpaceServerCmd } from '../@/space-server/cmd'
 import { GameClientModule } from './@/architecture/game-client-v2'
 import { GameServerModule } from './@/architecture/game-server-v2'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
 import { FlowServerCtx } from './flow/@/server/ctx'
 import * as Flow from './flow/types'
-import { SpaceServerEvt } from '../@/space-server-evt'
-import { SpaceServerCtx } from '../@/space-server-ctx'
-import { SpaceClientCtx } from '../@/space-client-ctx'
+import { SpaceServerEvt } from '../@/space-server/evt'
+import { SpaceServerCtx } from '../@/space-server/ctx'
+import { SpaceClientCtx } from '../@/space-client/ctx'
 
 //
 //

@@ -3,7 +3,7 @@ import { didOpenProfile, didPlaySound } from '~/app/@/client/client-cmd'
 import { UserId } from '~/app/@/data/user-id'
 import { People } from '.'
 import { FixtureSpacesClient } from '../../@/fixture/client'
-import { openUserDetails } from '../../@/space-client-cmd'
+import { openUserDetails } from '../../@/space-client/cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()

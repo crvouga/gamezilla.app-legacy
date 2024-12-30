@@ -2,7 +2,7 @@ import { Keyboard } from '~/@/browser'
 import { type Result, isErr } from '~/@/result'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
-import { SpaceClientCtx } from '../../@/space-client-ctx'
+import { SpaceClientCtx } from '../../@/space-client/ctx'
 import { Direction } from './@/direction'
 import {
   type CoreModel,

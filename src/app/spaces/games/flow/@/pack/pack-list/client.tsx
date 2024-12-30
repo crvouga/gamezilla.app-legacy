@@ -7,7 +7,7 @@ import { AppClientModule } from '~/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from '~/app/@/client/client-cmd'
 import { IconBox, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import type { Pack } from '../pack'
 import { MsgInCmdClient, initClient, type ClientModule, type ModelClient } from './types'
 

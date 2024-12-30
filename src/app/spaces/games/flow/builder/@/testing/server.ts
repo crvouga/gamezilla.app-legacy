@@ -6,7 +6,7 @@ import { initServer } from '../../types'
 import { BuilderCore } from '../../core'
 import { Logger } from '~/@/logger'
 import { FlowServerCtx } from '../../../@/server/ctx'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
 
 export const initial = {
   model: initServer

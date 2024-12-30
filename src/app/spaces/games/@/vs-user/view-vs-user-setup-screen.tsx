@@ -4,7 +4,7 @@ import { Avatar, Button, IconQuestionMark, Typography } from '~/app/@/ui'
 
 import { LayoutGameCoverArtHeader } from '../game/layout-game-cover-art-header'
 import { TranslatedText } from '~/@/l18n'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 
 type IconProps = { className: string }
 

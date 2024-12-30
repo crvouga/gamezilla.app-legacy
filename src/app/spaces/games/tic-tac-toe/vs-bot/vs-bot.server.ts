@@ -1,8 +1,8 @@
 import { Err, Ok } from '~/@/result'
 import { pipe } from '~/@/function/pipe'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
 import { TicTacToe } from '../@/tic-tic-toe'
 import {
   initCoreModel,

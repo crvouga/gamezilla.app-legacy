@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { SpaceClientCmd } from '../@/space-client-cmd'
+import { SpaceClientCmd } from '../@/space-client/cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'
 import { FlowClient } from './flow/client'

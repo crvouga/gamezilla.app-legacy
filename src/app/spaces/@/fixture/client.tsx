@@ -20,7 +20,7 @@ import { SpaceCore } from '../../core/space-core'
 import { type SpaceEvent } from '../../core/space-event'
 import { GameName } from '../../games/@/game-name'
 import type * as SpacesTypes from '../../types'
-import { SpaceClientCtx } from '../space-client-ctx'
+import { SpaceClientCtx } from '../space-client/ctx'
 
 //
 //

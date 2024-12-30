@@ -1,9 +1,9 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import type { EventMeta, WithEventId, WithEventMeta } from '~/@/event-sourced/event'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
 
 //
 //

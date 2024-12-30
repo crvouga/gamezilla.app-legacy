@@ -3,7 +3,7 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { pipe } from '~/@/function/pipe'
 import { ActionButton, IconArrowLeftOnRect } from '~/app/@/ui'
-import { SpaceClientCtx } from '../../@/space-client-ctx'
+import { SpaceClientCtx } from '../../@/space-client/ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
 import {

@@ -1,4 +1,4 @@
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { Pack } from '../pack/pack'
 import { PackId } from '../pack/pack-id'
 import { PackListTypes } from '../pack/pack-list'

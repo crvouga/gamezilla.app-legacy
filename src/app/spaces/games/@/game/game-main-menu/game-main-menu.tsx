@@ -3,13 +3,13 @@ import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { IconRobot, IconUsers, Typography } from '~/app/@/ui'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import {
   type SpaceClientCmd,
   type SpaceClientCmdTypes,
   exitGame,
   openUserDetails
-} from '../../../../@/space-client-cmd'
+} from '../../../../@/space-client/cmd'
 import { LayoutGameCoverArtHeader } from '../layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../users-in-space-list'
 

@@ -6,7 +6,7 @@ import { Sub } from '~/@/sub'
 import { AppClientCtx } from '~/app/@/client/client-ctx'
 import type { UserId } from '~/app/@/data/user-id'
 import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { Chess } from '../@/chess'
 import {
   type CoreModel,

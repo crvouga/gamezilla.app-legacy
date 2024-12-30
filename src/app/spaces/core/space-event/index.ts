@@ -1,8 +1,8 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceId } from '~/app/@/data/space-id'
-import { GameName } from '../games/@/game-name'
-import * as Game from '../games/types'
+import { GameName } from '../../games/@/game-name'
+import * as Game from '../../games/types'
 
 export const SpaceEvent = p.or(
   p.obj({

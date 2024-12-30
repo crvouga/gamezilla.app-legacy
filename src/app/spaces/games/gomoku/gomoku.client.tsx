@@ -6,7 +6,7 @@ import { CoverArt } from './@/gomoku/gomoku-ui'
 import type { ModelClient, ModelServer, MsgClient, MsgToClient } from './gomoku.types'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
-import { SpaceClientCtx } from '../../@/space-client-ctx'
+import { SpaceClientCtx } from '../../@/space-client/ctx'
 import { AppClientCtx } from '~/app/@/client/client-ctx'
 
 //

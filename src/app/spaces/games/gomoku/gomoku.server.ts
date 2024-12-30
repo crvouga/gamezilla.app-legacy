@@ -4,8 +4,8 @@ import { Sub } from '~/@/sub'
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'
 import type { Mode, ModelServer, MsgServer, MsgToServer } from './gomoku.types'
-import { SpaceServerEvt } from '../../@/space-server-evt'
-import { SpaceServerCtx } from '../../@/space-server-ctx'
+import { SpaceServerEvt } from '../../@/space-server/evt'
+import { SpaceServerCtx } from '../../@/space-server/ctx'
 
 //
 //

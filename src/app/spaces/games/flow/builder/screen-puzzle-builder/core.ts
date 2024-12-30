@@ -1,4 +1,4 @@
-import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
+import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { FlowVariant } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'

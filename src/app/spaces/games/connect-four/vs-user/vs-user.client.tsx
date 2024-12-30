@@ -11,8 +11,8 @@ import {
   IconXMark
 } from '~/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
-import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { VsUserSetupScreen } from '~/app/spaces/games/@/vs-user'
 import { LayoutGame } from '../../@/game/layout-game'

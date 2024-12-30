@@ -1,9 +1,9 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { pipe } from '~/@/function/pipe'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
 import { Chess } from '../@/chess'
 import {
   botMoved,

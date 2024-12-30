@@ -6,7 +6,7 @@ import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 
 const currentUserId = 'test-user-id' as UserId
 

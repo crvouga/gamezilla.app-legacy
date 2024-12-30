@@ -1,11 +1,11 @@
 import { Sub } from '~/@/sub'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
-import { SpaceServerCmd } from '../@/space-server-cmd'
+import { SpaceServerCmd } from '../@/space-server/cmd'
 import { GameName } from './@/game-name'
 import { ConnectFourServer } from './connect-four/connect-four.server'
 import { FlowServer } from './flow/server'
 import type { GameServerCtx, ServerModule } from './types'
-import { SpaceServerCtx } from '../@/space-server-ctx'
+import { SpaceServerCtx } from '../@/space-server/ctx'
 
 const initCtx = (input: { ctx: SpaceServerCtx }): GameServerCtx => {
   return {
