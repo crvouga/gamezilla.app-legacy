@@ -1,4 +1,3 @@
-import { AppServerCtx } from '../@/server'
 import type { ClientTransportEvent } from './transport/client'
 import type { IServerTransport, ServerTransportMsg } from './transport/server'
 import { IWireSessionDb } from './wire-session-db'
@@ -6,6 +5,7 @@ import { ServerInstanceTypes } from './server-instance'
 import { RPC } from '~/@/rpc'
 import { AnonymousClientCtx, AppClientCtx } from '../@/client'
 import { Posix } from '~/@/time/posix'
+import { AppServerCtx } from '../@/server/server-ctx'
 
 //
 //
@@ -16,12 +16,10 @@ import { Posix } from '~/@/time/posix'
 
 export type ServerCtx<TMsgToClient, TMsgToServer> = AppServerCtx & {
   wireSessionDb: IWireSessionDb
-
   transport: IServerTransport<{
     MsgToClient: TMsgToClient
     MsgToServer: TMsgToServer
   }>
-
   serverInstance: ServerInstanceTypes.ServerCtx
 }
 

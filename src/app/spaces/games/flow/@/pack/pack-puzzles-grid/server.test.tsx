@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { AppServerModule } from '~/app/@/architecture/app-server'
-import { didSendToClient } from '~/app/@/server'
+import { didSendToClient } from '~/app/@/server/server-cmd'
 import { randomAuthenticatedClient, type AuthenticatedClient } from '~/app/spaces/@/fixture/server'
 import { SpaceGameFixtureServer } from '~/app/spaces/games/@/testing/server'
 import { Puzzle } from '../../puzzle/puzzle'

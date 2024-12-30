@@ -1,7 +1,7 @@
 import { isErr } from '~/@/result'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import { sendToClient } from '~/app/@/server'
+import { sendToClient } from '~/app/@/server/server-cmd'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'

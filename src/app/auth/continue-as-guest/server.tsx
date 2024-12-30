@@ -1,6 +1,6 @@
 import { Ok, Result, isErr } from '~/@/result'
 import type { UserAccount } from '~/app/@/data/account'
-import { sendToClient } from '~/app/@/server'
+import { sendToClient } from '~/app/@/server/server-cmd'
 import type { ServerCtx, ServerModule } from '../types'
 import type { ModelServer } from './types'
 import { Posix } from '~/@/time/posix'

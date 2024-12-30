@@ -2,7 +2,6 @@ import { describe, expect, it } from 'bun:test'
 import { isOk } from '~/@/result'
 import { SessionId } from '~/app/@/data/session-id'
 import { ClientId } from '~/app/@/data/client-id'
-import { didSendMsgToClient } from '~/app/@/server'
 import { AppServerTestEnv, FixtureAppServer } from '~/app/@/server/server-test-env'
 import { UserAccountDb } from '../@/server/user-account-db'
 import { UserSessionDb } from '../@/server/user-session-db'
@@ -11,6 +10,7 @@ import type { ServerCtx } from '../types'
 import { ContinueAsGuestServer } from './server'
 import type * as ContinueAsGuestTypes from './types'
 import { GuestSessionMappingDb } from '../@/server/guest-session-mapping-db'
+import { didSendMsgToClient } from '~/app/@/server/server-cmd'
 
 type Input =
   | {

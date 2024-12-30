@@ -1,12 +1,4 @@
-import { ServerCmd } from '~/app/@/server'
-
-//
-//
-//
-//
-//
-//
-//
+import { ServerCmd } from '~/app/@/server/server-cmd'
 
 export type SpaceServerCmd<MsgToClient> = ServerCmd<MsgToClient> | { t: 'send-to-space'; msg: MsgToClient }
 

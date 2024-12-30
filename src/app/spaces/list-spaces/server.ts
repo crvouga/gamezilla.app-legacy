@@ -1,9 +1,9 @@
 import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { Paginated } from '~/app/@/data/pagination'
-import { sendToClient } from '~/app/@/server'
 import type { SpaceServerModule } from '../@/architecture/space-server'
 import * as Space from '../core/space-core'
+import { sendToClient } from '~/app/@/server/server-cmd'
 
 //
 //

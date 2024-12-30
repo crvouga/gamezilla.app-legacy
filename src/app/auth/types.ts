@@ -3,7 +3,6 @@ import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, AuthCmd, AppClientCmd, AppClientCtx, ClientEvt } from '../@/client'
 import type { UserAccount } from '../@/data/account'
-import type { ServerCmd, AppServerCtx, ServerEvt } from '../@/server'
 import type { IUserAccountDb } from './@/server/user-account-db'
 import type { IUserSessionDb } from './@/server/user-session-db'
 import type * as AuthSMS from './auth-sms/types'
@@ -11,6 +10,9 @@ import type { ContinueAsGuest } from './continue-as-guest'
 import { IGuestSessionMappingDb } from './@/server/guest-session-mapping-db'
 import type { Logout } from './logout'
 import { TimeSpan } from '~/@/time/time-span'
+import { AppServerCtx } from '../@/server/server-ctx'
+import { ServerEvt } from '../@/server/server-evt'
+import { ServerCmd } from '../@/server/server-cmd'
 
 //
 //

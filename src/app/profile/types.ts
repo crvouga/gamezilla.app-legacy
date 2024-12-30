@@ -5,8 +5,10 @@ import { Profile } from '../@/data/profile'
 import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
-import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
+import { ServerEvt } from '../@/server/server-evt'
+import { ServerCmd } from '../@/server/server-cmd'
+import { AppServerCtx } from '../@/server/server-ctx'
 //
 //
 //
