@@ -1,4 +1,4 @@
-import { Random } from '~/@/core'
+import { Random } from '~/@/random/random'
 import { eq } from '~/@/equals/equals'
 import { memoize } from '~/@/function/memoize'
 import { Direction, Position } from './position'

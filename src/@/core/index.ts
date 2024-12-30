@@ -1,7 +1,6 @@
 export * from './eff'
 export * from './io'
 export * from './Iso-3166-alpha-2-code'
-export * from './random'
 export * from './request-response'
 export * from './result'
 export * from './sleep'

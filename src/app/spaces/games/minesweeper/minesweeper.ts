@@ -1,4 +1,4 @@
-import { Random } from '~/@/core'
+import { Random } from '~/@/random/random'
 import { pipe } from '~/@/function/pipe'
 import { NonNegInt } from '~/@/math/non-neg-int'
 import { Set } from '~/@/set/set'
