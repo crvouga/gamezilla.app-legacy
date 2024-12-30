@@ -8,8 +8,8 @@
 
 import { IO, isErr, Result } from '~/@/core'
 import { Msg } from '~/@/msg/msg'
-import * as Json from '../../core/json'
 import { pipe } from '../../function/pipe'
+import { Json } from '../../json/json'
 import { ProgramDebugger } from '../program'
 import type { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from './debugger'
 

@@ -1,4 +1,4 @@
-import { Result } from './result'
+import { Result } from '../core/result'
 
 export type Json = boolean | number | string | null | JsonArray | JsonRecord
 
@@ -10,7 +10,7 @@ export interface JsonRecord {
 
 export type Problem = { message: string }
 
-export const parse = (s: string): Result<Problem, Json> => {
+const parse = (s: string): Result<Problem, Json> => {
   try {
     const parsed: Json = JSON.parse(s)
 
@@ -22,7 +22,7 @@ export const parse = (s: string): Result<Problem, Json> => {
   }
 }
 
-export const stringify = (json: Json): Result<Problem, string> => {
+const stringify = (json: Json): Result<Problem, string> => {
   try {
     const stringified: string = JSON.stringify(json)
 
@@ -32,4 +32,9 @@ export const stringify = (json: Json): Result<Problem, string> => {
     const message = String(error)
     return Result.Err({ message })
   }
+}
+
+export const Json = {
+  parse,
+  stringify
 }
