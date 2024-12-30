@@ -1,5 +1,3 @@
-import type { Eff } from '../eff'
-
 /**
  *
  *
@@ -7,6 +5,8 @@ import type { Eff } from '../eff'
  *
  *
  **/
+
+import { Eff } from '../core'
 
 export type Id = string | number | null | undefined | boolean
 

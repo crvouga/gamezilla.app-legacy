@@ -1,7 +1,7 @@
-import { Sub, type Transition } from '~/@/core'
-
+import { Sub } from '~/@/core'
 import type { VDom } from '~/@/vdom'
 import type { ColumnIndex, Columns, PlayerType, Win } from '../../connect-four'
+import { Transition } from '~/@/transition'
 
 export type ViewColumnsinput = {
   columns: Columns
