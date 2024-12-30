@@ -151,7 +151,7 @@ export const View = ({
               <PlayerIcons player={playerOneProp} ctx={ctx} />
               <div className='col-span-1 grid place-items-center'>
                 <Typography
-                  className=' flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black'
+                  className='flex h-full flex-1 flex-col items-center justify-center text-3xl font-black'
                   variant='title'
                   text={ctx.t('game.vs')}
                 />
@@ -187,7 +187,7 @@ export const View = ({
       />
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className='flex items-center gap-4 border-t  p-4'>
+        <div className='flex items-center gap-4 border-t p-4'>
           <Button
             disabled={!canStartGame}
             variant='contained'
@@ -267,7 +267,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp
     <div className='col-span-3 grid grid-cols-2 place-items-center'>
       <Typography
         variant='label'
-        className='text-secondary w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm'
+        className='text-secondary w-full overflow-hidden text-center text-sm text-ellipsis whitespace-nowrap'
         text={player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?')}
       />
       <Typography variant='label' className='text-secondary text-center text-sm' text={player.playerLabel} />

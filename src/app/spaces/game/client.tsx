@@ -362,13 +362,13 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
                   gameName
                 })
               }
-              className='flex overflow-hidden rounded-lg border aspect-square '
+              className='flex aspect-square overflow-hidden rounded-lg border'
             >
               <GameCoverArt gameName={gameName} />
             </button>
 
             <Typography
-              className='mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold'
+              className='mt-2 w-full overflow-hidden text-center text-sm font-semibold text-ellipsis whitespace-nowrap'
               variant='label'
               text={input.ctx.t(gameName)}
             />

@@ -395,7 +395,7 @@ export const Chessboard = (input: Chessboardinput) => {
         e.preventDefault()
         e.stopPropagation()
       }}
-      className='touch-none select-none overflow-visible'
+      className='touch-none overflow-visible select-none'
       preserveAspectRatio='xMinYMin meet'
       onMouseLeave={onDragCancel(input)}
       onTouchCancel={onDragCancel(input)}
@@ -427,10 +427,10 @@ export const Chessboard = (input: Chessboardinput) => {
                 input.model?.previousMove?.from === square
                   ? 'orange'
                   : input.model?.previousMove?.to === square
-                  ? 'yellow'
-                  : checker.color === 'white'
-                  ? THEME.lightChecker
-                  : THEME.darkChecker
+                    ? 'yellow'
+                    : checker.color === 'white'
+                      ? THEME.lightChecker
+                      : THEME.darkChecker
               }
             />
           )

@@ -164,7 +164,7 @@ const View: SpaceClientModule['View'] = (input) => {
       </div>
 
       {!currentUserSpaceId && (
-        <div className='absolute bottom-6 right-4'>
+        <div className='absolute right-4 bottom-6'>
           <StartSpaceClient.ViewStartSpaceButton {...input} />
         </div>
       )}

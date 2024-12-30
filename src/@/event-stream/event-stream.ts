@@ -49,11 +49,5 @@ export type IEventStream<TEventId extends string, TEvent, TIndexName extends str
   has: (instance: TInstance, msgEvtId: TEventId) => Promise<boolean>
 }
 
-export type EventStreamInferInstance<T extends IEventStream<any, any, any, any>> = T extends IEventStream<
-  any,
-  any,
-  any,
-  infer TInstance
->
-  ? TInstance
-  : never
+export type EventStreamInferInstance<T extends IEventStream<any, any, any, any>> =
+  T extends IEventStream<any, any, any, infer TInstance> ? TInstance : never

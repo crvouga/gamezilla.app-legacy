@@ -612,7 +612,7 @@ export const View = (input: {
   const flow = toFlow(input)
 
   return (
-    <div className='relative max-h-full w-full flex items-center justify-center'>
+    <div className='relative flex max-h-full w-full items-center justify-center'>
       <FlowVariantUI.View
         disabled={input.disabled}
         model={flow}

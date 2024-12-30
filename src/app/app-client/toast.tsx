@@ -283,7 +283,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
   return (
     <div
       id={String(input.toast.toastId)}
-      className='pointer-events-none absolute left-0 top-0 z-40 w-full overflow-visible p-4'
+      className='pointer-events-none absolute top-0 left-0 z-40 w-full overflow-visible p-4'
       //
       onMouseDown={() =>
         input.dispatch({
@@ -319,7 +319,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
         <div
           className={cn(
             'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
-            input.toast.variant === 'info' && ' bg-paper',
+            input.toast.variant === 'info' && 'bg-paper',
             input.toast.variant === 'error' && 'border-red-400 bg-red-500'
           )}
           key={input.toast.toastId}

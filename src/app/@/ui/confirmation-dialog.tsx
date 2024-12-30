@@ -25,7 +25,7 @@ export const ConfirmationDialog = ({
 }) => {
   return (
     <div
-      className={cn('absolute left-0 top-0 grid h-full w-full place-items-center', open ? 'block' : 'hidden')}
+      className={cn('absolute top-0 left-0 grid h-full w-full place-items-center', open ? 'block' : 'hidden')}
       onClick={(e) => {
         if (e.target !== e.currentTarget) {
           return
@@ -33,7 +33,7 @@ export const ConfirmationDialog = ({
         onClose()
       }}
     >
-      <div className='flex w-80 flex-col gap-6 rounded-lg bg-surface p-6'>
+      <div className='bg-surface flex w-80 flex-col gap-6 rounded-lg p-6'>
         <Typography variant='title' text={title} />
 
         <div className='flex w-full items-center gap-4'>

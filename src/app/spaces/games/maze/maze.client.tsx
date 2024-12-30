@@ -271,7 +271,7 @@ const ViewJoystick = ({
 }) => {
   return (
     <div>
-      <svg width='100%' viewBox='-1 -1 2 2' className='touch-none select-none overflow-hidden'>
+      <svg width='100%' viewBox='-1 -1 2 2' className='touch-none overflow-hidden select-none'>
         <defs>
           <clipPath id='cut-off-bottom'>
             <circle x='0' y='0' r={1} />

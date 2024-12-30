@@ -470,12 +470,12 @@ export const View = (input: { ctx: ClientCtx; model: ModelClient; dispatch: (msg
 
   return (
     <div
-      className='fixed left-1/2 top-1/2 flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-black text-white'
+      className='fixed top-1/2 left-1/2 flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-black text-white'
       style={{
         transform: 'translate(-50%, -50%)'
       }}
     >
-      <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border '>
+      <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border'>
         <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
 
         <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
@@ -746,7 +746,7 @@ const ViewBottomNavBar = (input: {
         model={input.model.spaces}
         dispatch={(c) => input.dispatch({ t: 'spaces', c })}
       />
-      <div className='flex h-16 w-full items-center justify-center border-t '>
+      <div className='flex h-16 w-full items-center justify-center border-t'>
         {items.map((item) => {
           const isSelected = eq(item.route, input.model.routing.currentRoute)
           return (
@@ -763,7 +763,7 @@ const ViewBottomNavBar = (input: {
                 })
               }
               className={cn(
-                'flex flex-1 flex-col items-center justify-center pb-2 pt-1',
+                'flex flex-1 flex-col items-center justify-center pt-1 pb-2',
                 isSelected ? 'text-blue-500' : 'text-opacity-50'
               )}
             >

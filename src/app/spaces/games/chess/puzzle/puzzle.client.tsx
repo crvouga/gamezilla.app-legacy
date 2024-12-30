@@ -257,12 +257,12 @@ export const View = ({
               <p className='text-xl font-semibold'>{model.profile?.eloRating ?? '...'}</p>
 
               {model.t === 'solved' && !model.hasLost && nextEloRating && (
-                <div className='rounded-xl text-lg  font-semibold text-green-500'>
+                <div className='rounded-xl text-lg font-semibold text-green-500'>
                   +{nextEloRating - model.profile.eloRating}
                 </div>
               )}
               {model.t !== 'loading' && model.hasLost && nextEloRating && (
-                <div className='rounded-xl  text-lg   font-semibold text-red-500'>
+                <div className='rounded-xl text-lg font-semibold text-red-500'>
                   {nextEloRating - model.profile.eloRating}
                 </div>
               )}
@@ -271,7 +271,7 @@ export const View = ({
 
           <div className='flex items-center justify-end gap-2'>
             <TickingClock sec={durationMs ? Math.floor(durationMs / 1_000) : 0} />
-            <p className='text-secondary font-mono text-lg  font-bold'>
+            <p className='text-secondary font-mono text-lg font-bold'>
               {durationMs ? formatDuration(durationMs) : '-:--'}
             </p>
           </div>
@@ -317,13 +317,13 @@ export const View = ({
             }}
           />
           {model.t === 'loading' && (
-            <div className='absolute left-0 top-0 z-20 grid h-full w-full place-items-center bg-black/50'>
+            <div className='absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50'>
               <Spinner />
             </div>
           )}
         </div>
         <div className='grid w-full grid-cols-2 px-2 py-1'>
-          <div className='flex items-center justify-start gap-1 text-xs '>
+          <div className='flex items-center justify-start gap-1 text-xs'>
             <p className='text-secondary'>Puzzle Rating</p>
             <p>{model.t === 'loading' ? '...' : model.puzzle.rating}</p>
           </div>

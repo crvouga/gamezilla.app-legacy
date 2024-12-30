@@ -6,7 +6,7 @@ export const Badge = (input: { badgeContent: VDomChildren; children: VDomChildre
     <div className='relative h-fit w-fit'>
       <Transition onEnter={onEnterGrow} id={input.id} mode='in-out' onExit={onExitShrink}>
         {input.badgeContent && (
-          <div className='size-5 absolute right-0.5 top-0.5 flex shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white'>
+          <div className='absolute top-0.5 right-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white'>
             {input.badgeContent}
           </div>
         )}

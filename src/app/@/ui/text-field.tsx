@@ -26,9 +26,9 @@ export const TextField = (input: {
 
       <div
         className={cn(
-          'w-full h-fit flex flex-row border-2 bg-neutral-800 rounded-md overflow-hidden',
+          'flex h-fit w-full flex-row overflow-hidden rounded-md border-2 bg-neutral-800',
           input.error && 'border-2 border-red-500 text-red-500',
-          !input.error && ' ring-blue-600 focus-within:ring-2'
+          !input.error && 'ring-blue-600 focus-within:ring-2'
         )}
       >
         <input
@@ -49,14 +49,14 @@ export const TextField = (input: {
             e.preventDefault()
             input.onChange(e.currentTarget.value)
           }}
-          className='flex flex-1 appearance-none items-center gap-2 p-3 py-4 text-xl outline-none bg-transparent'
+          className='flex flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none'
           style={{
             background: 'transparent !important'
           }}
         />
         {input.onClear && input.value && input.value?.toString().length > 0 && (
           <button
-            className='rounded-md outline-none ring-blue-600 focus:ring-2 px-3'
+            className='rounded-md px-3 ring-blue-600 outline-none focus:ring-2'
             aria-label='Clear input'
             type='button'
             onClick={(e) => {

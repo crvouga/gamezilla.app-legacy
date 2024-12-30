@@ -12,7 +12,7 @@ export const DrawerWebComponent = (input: DrawerInput) => {
       <drawer-element id={input.id} position={input.position}>
         <div
           className={cn(
-            'h-fit max-h-full w-full overflow-hidden border  bg-surface',
+            'bg-surface h-fit max-h-full w-full overflow-hidden border',
             input.position === 'bottom' ? 'rounded-t-2xl' : 'rounded-b-2xl'
           )}
         >

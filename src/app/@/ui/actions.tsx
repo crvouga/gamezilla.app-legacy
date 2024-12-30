@@ -53,7 +53,7 @@ const View = ({
   const firstButtons = cleanedButtons.slice(0, limit)
   const lastButtons = cleanedButtons.slice(limit)
   return (
-    <div className='flex w-full items-center border-t '>
+    <div className='flex w-full items-center border-t'>
       {firstButtons.map((button) => (
         <ViewBottomButtonBarAction {...button} key={button.label} />
       ))}
@@ -85,7 +85,7 @@ const View = ({
 }
 
 export const ViewBottomButtonBar = ({ children }: { children: VDomChildren }) => {
-  return <div className='flex w-full items-center border-t shrink-0'>{children}</div>
+  return <div className='flex w-full shrink-0 items-center border-t'>{children}</div>
 }
 
 export const ViewBottomButtonBarAction = (input: ActionInput) => {
@@ -104,7 +104,7 @@ export const ViewBottomButtonBarAction = (input: ActionInput) => {
       onClick={input.onClick}
       className={cn(
         'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm transition-opacity',
-        'enabled:active:opacity-50 disabled:opacity-50 disabled:cursor-not-allowed',
+        'enabled:active:opacity-50 disabled:cursor-not-allowed disabled:opacity-50',
         input.color === 'danger' && 'font-bold text-red-500',
         input.color === 'success' && 'font-bold text-green-500',
         input.hidden ? 'hidden' : '',

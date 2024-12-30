@@ -116,7 +116,7 @@ const View: ClientModule['View'] = (input) => {
 
   return (
     <div className='relative flex h-full w-full flex-col gap-2 overflow-hidden'>
-      <div className='border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll border-t '>
+      <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll border-1 border-t'>
         {shouldShowEmptyState && (
           <EmptyState label={ctx.t('flow.no-puzzles')} renderIcon={(input) => <IconPuzzlePiece {...input} />} />
         )}
@@ -146,7 +146,7 @@ const View: ClientModule['View'] = (input) => {
         />
       </div>
 
-      <div className='absolute bottom-6 right-4 bg-black'>{input.slots?.fab(null)}</div>
+      <div className='absolute right-4 bottom-6 bg-black'>{input.slots?.fab(null)}</div>
     </div>
   )
 }
@@ -156,14 +156,14 @@ const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Puzzle; 
     <button
       key={puzzle.id}
       type='button'
-      className='box-border flex w-full items-center gap-4 border-b  text-left hover:bg-neutral-900 active:opacity-50'
+      className='box-border flex w-full items-center gap-4 border-b text-left hover:bg-neutral-900 active:opacity-50'
       onClick={onClick}
     >
-      <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden border-r '>
+      <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden border-r'>
         <FlowVariantUI.View disabled model={puzzle.flow} />
       </div>
       <div className='overflow-hidden'>
-        <p className='flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold'>{puzzle.name}</p>
+        <p className='flex-nowrap overflow-hidden text-base font-bold text-ellipsis whitespace-nowrap'>{puzzle.name}</p>
         <p className='text-secondary text-xs'>{TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}</p>
       </div>
     </button>

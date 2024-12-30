@@ -5,11 +5,14 @@ export const toCookies = (request: Request): Record<string, string> => {
     return {}
   }
 
-  return cookieHeader.split(';').reduce((cookies, cookie) => {
-    const [name, value] = cookie.split('=').map((part) => part.trim())
-    if (name && value) {
-      cookies[name] = decodeURIComponent(value)
-    }
-    return cookies
-  }, {} as Record<string, string>)
+  return cookieHeader.split(';').reduce(
+    (cookies, cookie) => {
+      const [name, value] = cookie.split('=').map((part) => part.trim())
+      if (name && value) {
+        cookies[name] = decodeURIComponent(value)
+      }
+      return cookies
+    },
+    {} as Record<string, string>
+  )
 }

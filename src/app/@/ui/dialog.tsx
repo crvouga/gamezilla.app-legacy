@@ -13,7 +13,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
       role='dialog'
       style={style}
       className={cn(
-        'absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out',
+        'absolute top-0 left-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out',
         input.open ? 'scale-100 opacity-100' : 'pointer-events-none scale-0 opacity-0'
       )}
       onClick={(e) => {
@@ -41,7 +41,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
 
 export const DialogSurface = (input: { children: VDomChildren }) => {
   return (
-    <div className='flex w-80 flex-col gap-6 rounded-lg border  bg-surface p-6 shadow-2xl drop-shadow-2xl'>
+    <div className='bg-surface flex w-80 flex-col gap-6 rounded-lg border p-6 shadow-2xl drop-shadow-2xl'>
       {input.children}
     </div>
   )

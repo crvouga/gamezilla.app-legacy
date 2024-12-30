@@ -70,8 +70,8 @@ export const ViewColumnsSvg = ({
               disabled || !onClick
                 ? undefined
                 : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
-                ? 'cursor-not-allowed'
-                : 'cursor-pointer'
+                  ? 'cursor-not-allowed'
+                  : 'cursor-pointer'
             )}
             onMouseOver={() => {
               if (!disabled && isColumnIndex(columnIndex) && onHover) {

@@ -254,7 +254,7 @@ const View: Module['View'] = (input) => {
                 }
               />
               {input.modelCore.type === 'game-over' && (
-                <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50'>
+                <div className='absolute top-0 left-0 flex h-full w-full items-center justify-center bg-black/50'>
                   <ViewGameOverMessage dispatch={input.dispatch} ctx={input.ctx} modelCore={input.modelCore} />
                 </div>
               )}
@@ -485,7 +485,7 @@ const PlayerSlot = ({
   ctx: SpaceClientCtx
 }) => {
   return (
-    <div className='flex flex-1 items-center gap-2 overflow-hidden rounded border  p-2'>
+    <div className='flex flex-1 items-center gap-2 overflow-hidden rounded border p-2'>
       <PlayerIcon className='h-8 w-8' playerType={playerType} />
       <Avatar className='h-8 w-8' alt='' src={ctx.profiles[modelCore.players[playerType]]?.avatarUrl} />
       <p className='text-secondary'>{ctx.profiles[modelCore.players[playerType]]?.username ?? '...'}</p>

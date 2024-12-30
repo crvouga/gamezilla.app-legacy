@@ -105,14 +105,14 @@ const getUintArray = (max: number) =>
   !isPosInt(max)
     ? null
     : max <= Math.pow(2, 8)
-    ? Uint8Array
-    : max <= Math.pow(2, 16)
-    ? Uint16Array
-    : max <= Math.pow(2, 32)
-    ? Uint32Array
-    : max <= Number.MAX_SAFE_INTEGER
-    ? ZeroArray
-    : null
+      ? Uint8Array
+      : max <= Math.pow(2, 16)
+        ? Uint16Array
+        : max <= Math.pow(2, 32)
+          ? Uint32Array
+          : max <= Number.MAX_SAFE_INTEGER
+            ? ZeroArray
+            : null
 /* c8 ignore stop */
 
 class ZeroArray extends Array<number> {
@@ -1585,10 +1585,10 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
         this.#size === 0
           ? this.#tail
           : this.#free.length !== 0
-          ? this.#free.pop()
-          : this.#size === this.#max
-          ? this.#evict(false)
-          : this.#size
+            ? this.#free.pop()
+            : this.#size === this.#max
+              ? this.#evict(false)
+              : this.#size
       ) as Index
       this.#keyList[index] = k
       this.#valList[index] = v
@@ -1933,8 +1933,8 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
     fetchOptions: unknown extends FC
       ? LRUCache.FetchOptions<K, V, FC>
       : FC extends undefined | void
-      ? LRUCache.FetchOptionsNoContext<K, V>
-      : LRUCache.FetchOptionsWithContext<K, V, FC>
+        ? LRUCache.FetchOptionsNoContext<K, V>
+        : LRUCache.FetchOptionsWithContext<K, V, FC>
   ): Promise<undefined | V>
   // this overload not allowed if context is required
   fetch(
@@ -1942,8 +1942,8 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
     fetchOptions?: unknown extends FC
       ? LRUCache.FetchOptions<K, V, FC>
       : FC extends undefined | void
-      ? LRUCache.FetchOptionsNoContext<K, V>
-      : never
+        ? LRUCache.FetchOptionsNoContext<K, V>
+        : never
   ): Promise<undefined | V>
   async fetch(k: K, fetchOptions: LRUCache.FetchOptions<K, V, FC> = {}): Promise<undefined | V> {
     const {

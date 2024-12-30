@@ -240,7 +240,7 @@ export const View = (input: {
   const status = toStatus(input.model.board)
 
   return (
-    <div className='flex h-full w-full flex-col '>
+    <div className='flex h-full w-full flex-col'>
       <div className='flex flex-1 flex-col items-center justify-center'>
         <VsBotGame.VsBotPlayerSection {...vsBotGameinput} />
 

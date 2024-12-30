@@ -32,14 +32,14 @@ export const ViewSpaceCard = (input: { ctx: BaseClientCtx; state: SpaceCoreState
       onClick={input.onClick}
       disabled={!input.onClick}
       className={cn(
-        'flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500 p-4',
+        'flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-500 p-4',
         input.onClick && 'transition-opacity hover:opacity-90 active:opacity-70'
       )}
     >
       <div className='flex w-full items-center justify-start'>
         <Typography
           variant='label'
-          className='block flex-1 text-left text-lg font-bold uppercase text-white'
+          className='block flex-1 text-left text-lg font-bold text-white uppercase'
           text={input.ctx.t('space-card.live')}
         />
       </div>

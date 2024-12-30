@@ -65,7 +65,7 @@ const View = ({
 
   return (
     <div className='flex w-full flex-col items-center justify-center overflow-hidden text-inherit'>
-      <div className='h-1 w-full bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500' />
+      <div className='h-1 w-full bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-500' />
       <div className='flex w-full items-center overflow-hidden text-inherit'>
         <button
           type='button'
@@ -80,7 +80,7 @@ const View = ({
             {!space.game ? (
               <Avatar src={hostProfile?.avatarUrl} alt='Host Avatar' className='h-14 w-14' />
             ) : (
-              <div className='h-14 w-14 overflow-hidden rounded border '>
+              <div className='h-14 w-14 overflow-hidden rounded border'>
                 <GameCoverArt gameName={space.game.t} />
               </div>
             )}

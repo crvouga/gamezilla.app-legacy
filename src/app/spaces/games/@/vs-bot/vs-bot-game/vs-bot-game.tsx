@@ -348,7 +348,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
   const profile = ctx.profiles[human.userId]
   const humanSlot = (
     <>
-      <Avatar className='h-6 w-6 ' src={ctx.profiles[human.userId]?.avatarUrl} />
+      <Avatar className='h-6 w-6' src={ctx.profiles[human.userId]?.avatarUrl} />
       {profile && <Typography className='truncate' variant='body' text={ctx.t('username', profile.username)} />}
     </>
   )
@@ -391,7 +391,7 @@ const Slot = ({ active, children }: { active: boolean; children: VDomChildren })
   return (
     <div
       className={cn(
-        'flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2  bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
+        'flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2 bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
         active && 'border-b-blue-500'
       )}
     >
