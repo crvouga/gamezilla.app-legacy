@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 
 export type EventId = Brand<string, 'EventId'>
 
-const namespace = 'space-event'
+const namespace = 'event'
 const separator = ':'
 const namespaceWithSeparator = `${namespace}${separator}`
 
