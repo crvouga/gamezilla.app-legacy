@@ -7,7 +7,7 @@ import type { ModelServer, MsgServer, MsgToClient, MsgToServer } from './tic-tac
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

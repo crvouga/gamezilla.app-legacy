@@ -1,4 +1,4 @@
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import type { AppClientCmd, AppClientCtx } from '~/app/@/client'
 import {
   Avatar,

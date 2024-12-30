@@ -1,4 +1,4 @@
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import type { AppClientCmd } from '~/app/@/client'
 import type { GameClient } from '~/app/spaces/games/@/architecture/game-client'
 import { SpaceClientEvt } from '../../@/space-client-evt'

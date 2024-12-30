@@ -8,7 +8,7 @@ import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../typ
 import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceEvent } from '../../core'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 type Ctx = BaseClientCtx & {
   space?: Space

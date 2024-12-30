@@ -9,7 +9,7 @@ import type { ServerCtx, MsgToClient, ServerModule } from './types'
 import { ContinueAsGuestServer } from './continue-as-guest/server'
 import { GuestSessionMappingDb } from './@/server/guest-session-mapping-db'
 import { LogoutServer } from './logout/server'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

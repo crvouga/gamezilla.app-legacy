@@ -38,7 +38,7 @@ import { ClientTransport } from './wire/transport/client'
 import { Posix } from '~/@/time/posix'
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

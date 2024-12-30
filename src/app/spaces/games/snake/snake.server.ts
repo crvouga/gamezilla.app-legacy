@@ -17,7 +17,7 @@ import {
   startGame
 } from './snake.types'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

@@ -1,6 +1,6 @@
 import * as http from 'node:http'
 import { Logger, type ILogger } from '~/@/logger'
-import { PubSub } from '../program/sub'
+import { PubSub } from '../sub'
 import { Posix } from '../time/posix'
 import { WebServerEvent, type Handler, type IWebServer } from './interface'
 import { getIpAddress } from './ip-address'

@@ -1,4 +1,4 @@
-import type { Sub } from '../program/sub'
+import type { Sub } from '../sub'
 
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowRight' | 'ArrowLeft'
 

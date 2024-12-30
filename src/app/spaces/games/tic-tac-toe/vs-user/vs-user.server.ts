@@ -28,7 +28,7 @@ import {
   type MsgToServer,
   type Res
 } from './vs-user.types'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

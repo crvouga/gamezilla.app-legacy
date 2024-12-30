@@ -1,4 +1,4 @@
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Posix } from '~/@/time/posix'

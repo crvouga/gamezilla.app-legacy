@@ -1,4 +1,4 @@
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import { Logger } from '~/@/logger'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceServerCmd } from '../../@/space-server-cmd'

@@ -1,4 +1,4 @@
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import type { ClientModule } from './types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/client'

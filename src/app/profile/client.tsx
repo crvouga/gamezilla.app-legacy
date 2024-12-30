@@ -19,7 +19,7 @@ import { ViewProfileScreen } from './profile-client/profile-client-view-profile-
 import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import * as UpdateUsernameClient from './update-username/update-username.client'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

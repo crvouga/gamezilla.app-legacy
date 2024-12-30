@@ -1,4 +1,4 @@
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import { type WithEventId, withEventId } from '~/@/event-sourced/event'
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, type AppClientCmd, playSound } from '~/app/@/client'

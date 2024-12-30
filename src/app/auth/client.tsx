@@ -16,7 +16,7 @@ import type { ClientModule, ModelClient, MsgClient } from './types'
 import { ContinueAsGuestClient } from './continue-as-guest/client'
 import { LogoutClient } from './logout/client'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

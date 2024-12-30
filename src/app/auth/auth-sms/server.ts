@@ -19,7 +19,7 @@ import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { PhoneNumber } from '~/@/phone-number'
 import { Task } from '~/@/promise/task'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

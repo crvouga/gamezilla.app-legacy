@@ -19,7 +19,7 @@ import {
 import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from '~/app/@/ui'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

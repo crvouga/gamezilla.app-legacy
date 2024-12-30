@@ -1,5 +1,5 @@
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import type { AppClientCtx } from '~/app/@/client'
 import { GameMainMenu } from '../@/game/game-main-menu'
 import { CoverArt } from './@/gomoku/gomoku-ui'

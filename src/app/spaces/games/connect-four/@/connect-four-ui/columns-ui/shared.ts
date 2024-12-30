@@ -1,4 +1,4 @@
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom'
 import type { ColumnIndex, Columns, PlayerType, Win } from '../../connect-four'
 import { Transition } from '~/@/transition'

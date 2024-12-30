@@ -1,5 +1,5 @@
 import { ILogger } from '~/@/logger'
-import { PubSub } from '../program/sub'
+import { PubSub } from '../sub'
 import { IRuntime, RuntimeEvent } from './interface'
 
 export type Config = {

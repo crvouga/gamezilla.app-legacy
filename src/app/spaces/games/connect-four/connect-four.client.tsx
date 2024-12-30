@@ -1,5 +1,5 @@
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import { APP_SOUND, AppClientCmd, playSound } from '~/app/@/client'
 import { withEventId } from '~/@/event-sourced/event'
 import { FeedItem } from '~/app/spaces/@/feed-item'

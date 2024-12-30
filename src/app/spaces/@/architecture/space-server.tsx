@@ -1,4 +1,4 @@
-import { type Sub } from '~/@/program/sub'
+import { type Sub } from '~/@/sub'
 import { Msg } from '~/@/msg/msg'
 import { WithEventId } from '~/@/event-sourced/event'
 import type { ClientId, SessionId, UserId } from '~/app/@/data'

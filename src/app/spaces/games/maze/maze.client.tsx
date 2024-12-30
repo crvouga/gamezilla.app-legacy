@@ -1,6 +1,6 @@
 import { Keyboard } from '~/@/browser'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import { pipe } from '~/@/function/pipe'
 import { ActionButton, IconArrowLeftOnRect } from '~/app/@/ui'
 import { SpaceClientCtx } from '../../@/space-client-ctx'

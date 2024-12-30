@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/program/sub'
+import { PubSub } from '~/@/sub'
 import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { loadTranslator, type Translator } from '~/@/l18n/generated'
 

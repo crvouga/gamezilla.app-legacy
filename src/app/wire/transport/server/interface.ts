@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/program/sub'
+import { PubSub } from '~/@/sub'
 import type { ClientId, SessionId } from '~/app/@/data'
 
 export type ServerTransportMsg =

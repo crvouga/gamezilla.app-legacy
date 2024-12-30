@@ -1,4 +1,4 @@
-import { Sub } from '../program/sub'
+import { Sub } from '../sub'
 import { Posix } from '../time/posix'
 
 export type RuntimeEvent = {

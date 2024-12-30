@@ -1,5 +1,5 @@
 import { ILogger, Logger } from '~/@/logger'
-import { PubSub } from '../program/sub'
+import { PubSub } from '../sub'
 import { sleep } from '../promise/sleep'
 import { Posix } from '../time/posix'
 import { TimeSpan } from '../time/time-span'

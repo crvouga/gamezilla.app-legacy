@@ -18,7 +18,7 @@ import {
   toPiece
 } from './tetris.types'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

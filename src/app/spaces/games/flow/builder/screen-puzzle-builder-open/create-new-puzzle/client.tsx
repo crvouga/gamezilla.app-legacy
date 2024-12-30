@@ -7,7 +7,7 @@ import { Button, IconPlus } from '~/app/@/ui'
 import { FlowClientCmd } from '../../../@/client/cmd'
 import { ClientModule } from '../../types'
 import { MsgClient, MsgToServer } from './types'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 const update: ClientModule['update'] = (input) => {
   const { msgCore, model, msg, ctx } = input

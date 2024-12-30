@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/program/sub'
+import { PubSub } from '~/@/sub'
 
 export type IntersectionObserverEmitterinput = {
   onVisible?: () => void

@@ -1,4 +1,4 @@
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'

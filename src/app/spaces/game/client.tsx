@@ -12,7 +12,7 @@ import { GameCoverArt } from '../games/cover-art'
 import { gameNameList } from '../games/types'
 import type { MsgClient } from '../types'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

@@ -16,7 +16,7 @@ import {
   type MsgToServer,
   isBotTurn
 } from './vs-bot.types'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

@@ -2,7 +2,7 @@ import { Msg } from '~/@/msg/msg'
 import type { VDom } from '~/@/vdom'
 import { WithEventId } from '~/@/event-sourced/event'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

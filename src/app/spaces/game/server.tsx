@@ -7,7 +7,7 @@ import { SpaceCore } from '../core'
 import { GamesServer } from '../games/server'
 import type { MsgServer } from '../types'
 import { GamesServerCtx } from './types'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 const initCtx = (input: { ctx: SpaceServerCtx }): GamesServerCtx => {
   const gameCtx = GamesServer.initCtx(input)

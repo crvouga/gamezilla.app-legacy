@@ -6,7 +6,7 @@ import type { AppClientCtx } from '~/app/@/client'
 import type { UserId } from '~/app/@/data'
 import { Mic } from './mic'
 import type { ModelClient, MsgClient, MsgToClient } from './party.types'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //

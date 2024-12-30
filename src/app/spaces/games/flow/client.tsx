@@ -22,7 +22,7 @@ import { BuilderClient } from './builder/client'
 import { PlayClient } from './play/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,

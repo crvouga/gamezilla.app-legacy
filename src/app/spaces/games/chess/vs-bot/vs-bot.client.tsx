@@ -22,7 +22,7 @@ import {
 } from './vs-bot.types'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Eff } from '~/@/program/eff'
-import { Sub } from '~/@/program/sub'
+import { Sub } from '~/@/sub'
 
 //
 //
