@@ -6,7 +6,7 @@ import { UserAccount } from '~/app/@/data/account'
 import { TopBar, Typography } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { SpaceClientCmd } from '../@/space-client-cmd'
-import { SpaceCore, SpaceEvent } from '../core'
+import { SpaceEvent } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import { ViewUsersInSpaceList } from '../games/@/game/users-in-space-list'
 import { GamesClient } from '../games/client'
@@ -14,6 +14,7 @@ import { GameCoverArt } from '../games/cover-art'
 import { gameNameList } from '../games/types'
 import type { MsgClient } from '../types'
 import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { SpaceCore } from '../core/space-core'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

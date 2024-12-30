@@ -15,7 +15,7 @@ import { ServerEvt } from '../@/server/server-evt'
 import { SpaceEvent } from './core'
 import type * as Spaces from './core/client/spaces-core.client'
 import { ISpacesCoreServer } from './core/server/interface'
-import type * as Space from './core/space-core'
+import { SpaceCore } from './core/space-core'
 import { GameName } from './games/@/game-name'
 import type * as Game from './games/types'
 import * as GamesTypes from './games/types'
@@ -80,15 +80,15 @@ export type MsgToClient = MsgToClientExtra &
       }
     | {
         t: 'listed-spaces'
-        spaces: Space.Model[]
+        spaces: SpaceCore.Model[]
       }
     | {
         t: 'synced'
-        space: Space.Model
+        space: SpaceCore.Model
       }
     | {
         t: 'current-user-space'
-        space: Space.Model
+        space: SpaceCore.Model
         currentUser: UserAccount
       }
     | {
@@ -106,7 +106,7 @@ export type MsgToServer = MsgToServerExtra &
       }
     | {
         t: 'sync'
-        space: Space.Model
+        space: SpaceCore.Model
       }
     | {
         t: 'list-spaces'

@@ -18,7 +18,7 @@ import {
   userStartedSpace
 } from '../@/fixture/client'
 import { makeSpace } from '../@/fixture/shared'
-import { SpaceCore } from '../core'
+import { SpaceCore } from '../core/space-core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import { addProfiles } from '~/app/@/client/client-cmd'
 

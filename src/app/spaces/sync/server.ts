@@ -3,10 +3,9 @@ import { unwrapOr } from '~/@/result'
 import { broadcast, sendToClient, sendToUser } from '~/app/@/server/server-cmd'
 import { AppServerCtx } from '~/app/@/server/server-ctx'
 import { SpaceServerModule } from '../@/architecture/space-server'
-import { SpaceCore } from '../core'
-import * as Space from '../core/space-core'
-import type { MsgToClient } from '../types'
+import { SpaceCore } from '../core/space-core'
 import { SpaceCoreState } from '../core/space-state'
+import type { MsgToClient } from '../types'
 
 const update: SpaceServerModule['update'] = async (input) => {
   return SpaceServerModule.andThen(
@@ -29,7 +28,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
     case 'sync': {
       await input.ctx.spacesCoreServer.merge(input.msgClient.space)
 
-      const spaceId = Space.toSpaceId(input.msgClient.space)
+      const spaceId = SpaceCore.toSpaceId(input.msgClient.space)
 
       if (!spaceId) {
         return {}
@@ -64,7 +63,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
   }
 }
 
-const spacesToProfiles = async (ctx: AppServerCtx, spaces: Space.Model[]) => {
+const spacesToProfiles = async (ctx: AppServerCtx, spaces: SpaceCore.Model[]) => {
   const userIds = spaces.flatMap((space) => {
     const state = EventSourced.toState(SpaceCore.config, space)
     switch (state.type) {

@@ -4,8 +4,8 @@ import { pipe } from '~/@/function/pipe'
 import { p } from '~/@/parser'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceEvent } from './space-event'
-import { SpaceCoreState } from './space-state'
+import { SpaceEvent } from '../space-event'
+import { SpaceCoreState } from '../space-state'
 
 export const Model = EventSourced.parser(SpaceEvent, SpaceCoreState.State)
 export type Model = p.Infer<typeof Model>

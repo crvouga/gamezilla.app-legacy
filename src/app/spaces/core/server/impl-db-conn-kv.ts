@@ -9,7 +9,7 @@ import { IRuntime } from '~/@/runtime'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { type UserId } from '~/app/@/data/user-id'
-import * as SpaceCore from '../space-core'
+import { SpaceCore } from '../space-core'
 import type { ISpacesCoreServer } from './interface'
 
 export type Config = {

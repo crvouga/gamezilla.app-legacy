@@ -3,7 +3,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { didSendMsgToClient } from '~/app/@/server/server-cmd'
 import { FixtureSpaceServer } from '../@/fixture/server'
-import { SpaceCore } from '../core'
+import { SpaceCore } from '../core/space-core'
 
 const Fixture = async () => {
   const f = await FixtureSpaceServer()

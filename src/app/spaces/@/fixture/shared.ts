@@ -3,7 +3,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceCore } from '../../core'
+import { SpaceCore } from '../../core/space-core'
 
 export const makeSpace = ({
   spaceId,

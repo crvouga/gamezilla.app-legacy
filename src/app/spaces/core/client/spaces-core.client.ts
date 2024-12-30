@@ -3,7 +3,7 @@ import { EventId, WithEventId } from '~/@/event-sourced/event'
 import { p } from '~/@/parser'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceCore } from '..'
+import { SpaceCore } from '../space-core'
 import type { SpaceEvent } from '../space-event'
 import { SpaceCoreState } from '../space-state'
 

@@ -1,9 +1,9 @@
 import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { Paginated } from '~/app/@/data/pagination'
-import type { SpaceServerModule } from '../@/architecture/space-server'
-import * as Space from '../core/space-core'
 import { sendToClient } from '~/app/@/server/server-cmd'
+import type { SpaceServerModule } from '../@/architecture/space-server'
+import { SpaceCore } from '../core/space-core'
 
 //
 //
@@ -19,7 +19,7 @@ const update: SpaceServerModule['update'] = async (input) => {
       const listed = await input.ctx.spacesCoreServer.list(input.msgClient)
       const spaces = unwrapOr(listed, Paginated.init())
       const started = spaces.items.map(EventSourced.startFromLatestSnapshot)
-      const userIds = spaces.items.flatMap(Space.toUserIds)
+      const userIds = spaces.items.flatMap(SpaceCore.toUserIds)
       const profiles = unwrapOr(await input.ctx.profileCache.get(userIds), {})
 
       return {

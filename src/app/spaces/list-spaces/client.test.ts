@@ -11,7 +11,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from '~/app/@/ui'
 import { FixtureSpacesClient } from '../@/fixture/client'
 import { SpacesClient } from '../client'
-import { SpaceCore } from '../core'
+import { SpaceCore } from '../core/space-core'
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureSpacesClient(input)

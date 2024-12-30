@@ -1,9 +1,8 @@
-import { UserId } from '~/app/@/data/user-id'
 import { SpaceId } from '~/app/@/data/space-id'
-import { makeSpace } from './shared'
-
-import { SpaceCore } from '../../core'
+import { UserId } from '~/app/@/data/user-id'
+import { SpaceCore } from '../../core/space-core'
 import { SpaceCtx } from '../space-ctx'
+import { makeSpace } from './shared'
 
 export const SpaceCoreFixture = async () => {
   const spaceId = SpaceId.generate()
