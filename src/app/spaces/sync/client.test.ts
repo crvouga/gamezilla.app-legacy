@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { eq } from '~/@/equals/equals'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { addProfiles } from '~/app/@/client'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -21,6 +20,7 @@ import {
 import { makeSpace } from '../@/fixture/shared'
 import { SpaceCore } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
+import { addProfiles } from '~/app/@/client/client-cmd'
 
 const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1

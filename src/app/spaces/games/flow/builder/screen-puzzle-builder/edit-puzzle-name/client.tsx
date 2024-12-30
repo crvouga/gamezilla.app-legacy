@@ -1,12 +1,12 @@
-import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
-import { APP_SOUND, playSound, sendToServer, showErrSm, showCreatedSm } from '~/app/@/client'
-import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
 import { isLoading, isOk, Loading } from '~/@/result'
+import type { VDomChildren } from '~/@/vdom'
+import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/app/@/client/client-cmd'
+import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
+import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
+import { FlowClientCmd } from '../../../@/client/cmd'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ClientModule } from '../../types'
 import { editNameValidationErrorToString, MsgClient, MsgToServer } from './types'
-import type { VDomChildren } from '~/@/vdom'
-import { FlowClientCmd } from '../../../@/client/cmd'
 
 //
 //
@@ -19,21 +19,9 @@ const update: ClientModule['update'] = (input) => {
   const { model } = input
   return GameClientModule.andThen(
     { model },
-    (model) =>
-      updateDraftNameInput({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateDrawer({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFormButtons({
-        ...input,
-        model
-      })
+    (model) => updateDraftNameInput({ ...input, model }),
+    (model) => updateDrawer({ ...input, model }),
+    (model) => updateFormButtons({ ...input, model })
   )
 }
 

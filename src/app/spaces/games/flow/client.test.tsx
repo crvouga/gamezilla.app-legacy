@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { countPlaySoundCmd } from '~/app/@/client'
-import { FixtureFlowClient } from './@/client/fixture'
 import { withEventMeta } from '~/@/event-sourced/event'
+import { countPlaySoundCmd } from '~/app/@/client/client-cmd'
+import { FixtureFlowClient } from './@/client/fixture'
 
 const Fixture = async () => {
   const f = await FixtureFlowClient()

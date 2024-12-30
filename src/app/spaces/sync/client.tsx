@@ -1,5 +1,5 @@
 import { EventSourced } from '~/@/event-sourced'
-import { addProfiles, sendToServer } from '~/app/@/client'
+import { addProfiles, sendToServer } from '~/app/@/client/client-cmd'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 

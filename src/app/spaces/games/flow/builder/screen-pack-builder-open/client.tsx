@@ -1,9 +1,9 @@
-import { APP_SOUND, playSound } from '~/app/@/client'
+import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
+import { TopBar } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { PackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../types'
 import { PackCreateNewClient } from './create-new-pack/client'
-import { TopBar } from '~/app/@/ui'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

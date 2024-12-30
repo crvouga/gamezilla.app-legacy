@@ -1,8 +1,10 @@
-import { unwrap } from '~/@/result'
-import { Msg } from '~/@/msg/msg'
+import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
+import { Msg } from '~/@/msg/msg'
+import { unwrap } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { APP_SOUND, playSound } from '~/app/@/client'
+import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
 import { IconGamepad, IconScrewdriverWrench } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { SpaceClientCmd } from '../../@/space-client-cmd'
@@ -21,8 +23,6 @@ import { PuzzleListClient, PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderClient } from './builder/client'
 import { PlayClient } from './play/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,

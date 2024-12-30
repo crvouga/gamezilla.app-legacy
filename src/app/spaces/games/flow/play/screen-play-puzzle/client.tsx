@@ -1,5 +1,5 @@
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, playSound } from '~/app/@/client'
+import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from '~/app/@/ui'
 import { Actions } from '~/app/@/ui/actions'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'

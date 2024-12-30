@@ -1,8 +1,8 @@
-import { type Result, isErr } from '~/@/result'
+import { Eff } from '~/@/eff'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Translator } from '~/@/l18n/generated'
-import { Eff } from '~/@/eff'
-import type { RouteCmd } from '~/app/@/client'
+import { type Result, isErr } from '~/@/result'
+import { RouteCmd } from '~/app/@/client/client-cmd'
 import { AlertError, AlertSuccess, Button, TextField, TopBar } from '~/app/@/ui'
 
 //

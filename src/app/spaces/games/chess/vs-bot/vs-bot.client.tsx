@@ -1,6 +1,9 @@
-import { isErr } from '~/@/result'
+import { Eff } from '~/@/eff'
+import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
-import { type AppClientCmd, sendToServer } from '~/app/@/client'
+import { isErr } from '~/@/result'
+import { Sub } from '~/@/sub'
+import { AppClientCmd, sendToServer } from '~/app/@/client/client-cmd'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
@@ -20,9 +23,6 @@ import {
   isBotTurn,
   updateCore
 } from './vs-bot.types'
-import { exhaustive } from '~/@/function/exhaustive'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
 
 //
 //

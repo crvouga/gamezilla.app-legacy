@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok } from '~/@/result'
 import { eq } from '~/@/equals/equals'
+import { PhoneNumber } from '~/@/phone-number'
+import { Err, Ok } from '~/@/result'
 import type { Route } from '~/@/routing/generated/routes'
-import { didPushRoute } from '~/app/@/client'
+import { didPushRoute } from '~/app/@/client/client-cmd'
 import { FixtureAppClient } from '~/app/@/client/client-test-env'
 import type { AuthSMSTypes } from '.'
 import { AuthSMSClient } from './client'
-import { PhoneNumber } from '~/@/phone-number'
 
 type Msg =
   | {

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { didPlaySound, didPushRoute } from '~/app/@/client'
+import { didPlaySound, didPushRoute } from '~/app/@/client/client-cmd'
 import { SpaceId } from '~/app/@/data/space-id'
-import { clickedStartSpaceButton, Ctx, init, userClickedEndSpaceButton } from '../@/fixture/client'
 import { SpaceClientModule } from '../@/architecture/space-client'
+import { clickedStartSpaceButton, Ctx, init, userClickedEndSpaceButton } from '../@/fixture/client'
 import { EndSpaceClient } from './end-space.client'
 
 describe(import.meta.file, () => {

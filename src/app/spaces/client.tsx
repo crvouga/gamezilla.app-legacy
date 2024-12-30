@@ -1,6 +1,7 @@
-import { NotAsked } from '~/@/result'
+import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
-import { isAppClientCtx } from '../@/client'
+import { NotAsked } from '~/@/result'
+import { isAppClientCtx } from '../@/client/client-ctx'
 import { type Input, type Output, SpaceClientModule } from './@/architecture/space-client'
 import { SpaceClientCmd } from './@/space-client-cmd'
 import { SpaceClientEvt } from './@/space-client-evt'
@@ -17,7 +18,6 @@ import { ListSpacesClient } from './list-spaces/client'
 import { StartSpaceClient } from './start-space/client'
 import { SyncClient } from './sync/client'
 import type { ClientModule, ModelClient } from './types'
-import { Eff } from '~/@/eff'
 
 //
 //

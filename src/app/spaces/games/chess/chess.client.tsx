@@ -1,10 +1,12 @@
+import { Eff } from '~/@/eff'
 import { RemoteResult, isErr } from '~/@/result'
-import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from '~/app/@/client'
+import { Sub } from '~/@/sub'
+import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from '~/app/@/client/client-cmd'
 import { IconPuzzlePiece } from '~/app/@/ui'
-
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
 import type { GameClient } from '~/app/spaces/games/@/architecture/game-client'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { SpaceClientEvt } from '../../@/space-client-evt'
 import { GameMainMenu } from '../@/game/game-main-menu'
 import { CoverArt } from './@/chess-ui'
@@ -13,9 +15,6 @@ import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServ
 import * as Puzzle from './puzzle/puzzle.client'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
-import { SpaceClientCtx } from '../../@/space-client-ctx'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
 
 //
 //

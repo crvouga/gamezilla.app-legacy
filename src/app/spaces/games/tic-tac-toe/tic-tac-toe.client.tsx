@@ -1,13 +1,13 @@
 import { Sub } from '~/@/sub'
-import type { AppClientCmd } from '~/app/@/client'
+import { AppClientCmd } from '~/app/@/client/client-cmd'
 import type { GameClient } from '~/app/spaces/games/@/architecture/game-client'
+import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { SpaceClientEvt } from '../../@/space-client-evt'
 import { GameMainMenu } from '../@/game/game-main-menu'
 import { CoverArt } from './@/tic-tic-toe/tic-tac-toe-ui'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
-import { SpaceClientCtx } from '../../@/space-client-ctx'
 
 type Client = GameClient<{
   ModelClient: ModelClient

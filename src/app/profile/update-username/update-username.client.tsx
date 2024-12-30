@@ -1,7 +1,9 @@
 import { RequestResponse } from '~/@/request-response/request-response'
-import { AnonymousClientCtx, AppClientCmd, AppClientCtx, ClientEvt, pushRoute, sendToServer } from '~/app/@/client'
 import { Button, TextField, TopBar } from '~/app/@/ui'
 import { ModelClient, MsgClient, MsgToServer } from './update-username.types'
+import { AppClientCmd, pushRoute, sendToServer } from '~/app/@/client/client-cmd'
+import { AppClientCtx, AnonymousClientCtx } from '~/app/@/client/client-ctx'
+import { ClientEvt } from '~/app/@/client/client-event'
 
 export const init = <TModel extends ModelClient>(input: {
   ctx: AppClientCtx | AnonymousClientCtx

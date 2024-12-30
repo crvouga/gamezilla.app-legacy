@@ -1,8 +1,7 @@
-import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/client'
+import { withEventId } from '~/@/event-sourced/event'
+import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/client/client-cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Button, IconPlus } from '~/app/@/ui'
-
-import { withEventId } from '~/@/event-sourced/event'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import type { SpaceEvent } from '../core'
 

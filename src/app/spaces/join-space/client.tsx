@@ -1,4 +1,3 @@
-import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/client'
 import { Button } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { GameCoverArt } from '../games/cover-art'
@@ -7,6 +6,7 @@ import { ViewUsersInSpaceList } from '../games/@/game/users-in-space-list'
 import { LayoutGameCoverArtHeader } from '../games/@/game/layout-game-cover-art-header'
 import { withEventId } from '~/@/event-sourced/event'
 import { SpaceEvent } from '../core'
+import { showErrSm, playSound, APP_SOUND, showToast } from '~/app/@/client/client-cmd'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

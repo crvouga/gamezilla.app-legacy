@@ -1,9 +1,11 @@
-import { Err, Ok, type Result } from '~/@/result'
 import { Translator } from '~/@/l18n/generated'
 import { UnitInterval } from '~/@/range/unit-interval'
+import { Err, Ok, type Result } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { APP_SOUND, BaseClientCtx, playSound, type ClientEvt, type SoundCmd } from '~/app/@/client'
+import { APP_SOUND, SoundCmd, playSound } from '~/app/@/client/client-cmd'
+import { BaseClientCtx } from '~/app/@/client/client-ctx'
+import { ClientEvt } from '~/app/@/client/client-event'
 import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~/app/@/ui'
 
 //

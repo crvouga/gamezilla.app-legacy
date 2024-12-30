@@ -1,9 +1,9 @@
-import type { BaseClientCtx } from '~/app/@/client'
+import { BaseClientCtx } from '~/app/@/client/client-ctx'
 import { Avatar, cn, Typography } from '~/app/@/ui'
-import { GameCoverArt } from '../../games/cover-art'
 import type { SpaceCoreState } from '../../core'
 import { ViewHostChip } from '../../games/@/game/users-in-space-list/host-chip'
 import { ViewYouChip } from '../../games/@/game/users-in-space-list/you-chip'
+import { GameCoverArt } from '../../games/cover-art'
 
 const MAX_AVATAR_COUNT = 3
 

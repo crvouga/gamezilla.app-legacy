@@ -1,10 +1,10 @@
 import { describe, expect, it, test } from 'bun:test'
 import { LamportTimestamp } from '~/@/lamport-clock'
-import { didPlaySound } from '~/app/@/client'
 import { EventId, withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FixtureFlowPlayClient } from '../@/fixture.client'
+import { didPlaySound } from '~/app/@/client/client-cmd'
 
 const Fixture = async () => {
   const f = await FixtureFlowPlayClient()

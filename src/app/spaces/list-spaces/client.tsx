@@ -1,5 +1,6 @@
+import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { APP_SOUND, playSound, pushRoute, sendToServer } from '~/app/@/client'
+import { APP_SOUND, playSound, pushRoute, sendToServer } from '~/app/@/client/client-cmd'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
@@ -8,7 +9,6 @@ import type { SpaceCoreState } from '../core'
 import * as Spaces from '../core/client/spaces-core.client'
 import { StartSpaceClient } from '../start-space/client'
 import { ViewSpaceCard } from './space-card'
-import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 
 //
 //
@@ -78,14 +78,7 @@ const update: SpaceClientModule['update'] = (input) => {
     case 'clicked-space-card': {
       return {
         model: input.model,
-        msgCmd: [
-          pushRoute({
-            n: 'spaces',
-            t: 'space',
-            spaceId: input.msg.spaceId
-          }),
-          playSound(APP_SOUND.navForwardMin)
-        ]
+        msgCmd: [pushRoute({ n: 'spaces', t: 'space', spaceId: input.msg.spaceId }), playSound(APP_SOUND.navForwardMin)]
       }
     }
   }

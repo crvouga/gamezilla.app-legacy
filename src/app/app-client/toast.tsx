@@ -1,12 +1,12 @@
-import { Sub } from '~/@/sub'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { APP_SOUND, type SoundCmd, playSound, type ToastCmd } from '~/app/@/client'
 import { IconXMark, Show, Transition, cn } from '~/app/@/ui'
+import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../@/client/client-cmd'
 
 //
 //

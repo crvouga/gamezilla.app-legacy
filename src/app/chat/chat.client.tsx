@@ -1,9 +1,10 @@
-import type { AppClientCtx, ClientEvt } from '~/app/@/client'
-import { Eff } from '~/@/eff'
-import type { VDom } from '~/@/vdom'
-import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
-import { pipe } from '~/@/function/pipe'
 import { Browser } from '~/@/browser'
+import { Eff } from '~/@/eff'
+import { pipe } from '~/@/function/pipe'
+import type { VDom } from '~/@/vdom'
+import { AppClientCtx } from '../@/client/client-ctx'
+import { ClientEvt } from '../@/client/client-event'
+import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
 
 //
 //

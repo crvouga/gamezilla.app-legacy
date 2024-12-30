@@ -1,10 +1,10 @@
 import { withEventMeta } from '~/@/event-sourced/event'
 import { describe, expect, it, test } from 'bun:test'
-import { didShowErrorSm, didShowToast } from '~/app/@/client'
 import { FixtureSpacesClient } from '../@/fixture/client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Profile } from '~/app/@/data/profile'
+import { didShowToast, didShowErrorSm } from '~/app/@/client/client-cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()

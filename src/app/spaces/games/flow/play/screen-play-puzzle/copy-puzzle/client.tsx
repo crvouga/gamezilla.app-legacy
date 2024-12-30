@@ -1,9 +1,10 @@
-import { APP_SOUND, copyToClipboard, playSound, showToast, type AppClientCtx } from '~/app/@/client'
+import { APP_SOUND, copyToClipboard, playSound, showToast } from '~/app/@/client/client-cmd'
+import { AppClientCtx } from '~/app/@/client/client-ctx'
 import { IconCopy } from '~/app/@/ui'
 import type { ActionInput } from '~/app/@/ui/actions'
+import { FlowPlay } from '../../../@/flow/flow-play'
 import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'
 import type { ClientModule, MsgClient } from '../../types'
-import { FlowPlay } from '../../../@/flow/flow-play'
 
 export const update: ClientModule['update'] = (input) => {
   switch (input.msgCore?.t) {

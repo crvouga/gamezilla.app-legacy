@@ -1,4 +1,3 @@
-import { APP_SOUND, playSound } from '~/app/@/client'
 import { cn, TopBar } from '~/app/@/ui'
 import { GameClientModule } from '../../../@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
@@ -7,6 +6,7 @@ import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { ClientModule } from '../types'
 import { PlayCore } from '../core'
+import { playSound, APP_SOUND } from '~/app/@/client/client-cmd'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

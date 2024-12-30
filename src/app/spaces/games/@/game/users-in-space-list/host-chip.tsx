@@ -1,4 +1,4 @@
-import type { BaseClientCtx } from '~/app/@/client'
+import { BaseClientCtx } from '~/app/@/client/client-ctx'
 import { IconCrown } from '~/app/@/ui'
 import { Chip } from '~/app/@/ui/chip'
 

@@ -1,5 +1,4 @@
 import { Sub } from '~/@/sub'
-import type { AppClientCmd, AppClientCtx } from '~/app/@/client'
 import {
   Avatar,
   Button,
@@ -31,6 +30,8 @@ import {
   type StateGameOver,
   toPlayerType
 } from './vs-user.types'
+import { AppClientCmd } from '~/app/@/client/client-cmd'
+import { AppClientCtx } from '~/app/@/client/client-ctx'
 
 //
 //

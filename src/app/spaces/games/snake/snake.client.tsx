@@ -2,7 +2,6 @@ import { Keyboard } from '~/@/browser'
 import { type Result, isErr } from '~/@/result'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
-import type { AppClientCtx } from '~/app/@/client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { Direction } from './@/direction'
 import {
@@ -15,6 +14,7 @@ import {
 } from './snake.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
+import { AppClientCtx } from '~/app/@/client/client-ctx'
 
 //
 //

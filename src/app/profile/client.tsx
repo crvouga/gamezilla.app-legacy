@@ -2,19 +2,10 @@ import { TranslatedText } from '~/@/l18n'
 import { Loading, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import {
-  type AnonymousClientCtx,
-  type AppClientCmd,
-  type AppClientCtx,
-  type ClientEvt,
-  type ProfileCmd,
-  back,
-  logout,
-  pushRoute,
-  replaceRoute,
-  sendToServer
-} from '~/app/@/client'
 import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
+import { AppClientCmd, ProfileCmd, back, logout, pushRoute, replaceRoute, sendToServer } from '../@/client/client-cmd'
+import { AnonymousClientCtx, AppClientCtx } from '../@/client/client-ctx'
+import { ClientEvt } from '../@/client/client-event'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'

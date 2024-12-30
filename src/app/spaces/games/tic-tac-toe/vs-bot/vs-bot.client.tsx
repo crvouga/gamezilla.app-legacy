@@ -1,6 +1,5 @@
 import type { Eff } from '~/@/eff'
 import { Posix } from '~/@/time/posix'
-import { type AppClientCmd, type AppClientCtx, sendToServer } from '~/app/@/client'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
@@ -16,6 +15,8 @@ import {
   handle,
   initCoreModel
 } from './vs-bot.types'
+import { AppClientCmd, sendToServer } from '~/app/@/client/client-cmd'
+import { AppClientCtx } from '~/app/@/client/client-ctx'
 
 //
 //

@@ -1,4 +1,4 @@
-import type { BaseClientCtx } from '~/app/@/client'
+import { BaseClientCtx } from '~/app/@/client/client-ctx'
 import { Chip } from '~/app/@/ui/chip'
 
 export const ViewYouChip = (input: { ctx: BaseClientCtx }) => {

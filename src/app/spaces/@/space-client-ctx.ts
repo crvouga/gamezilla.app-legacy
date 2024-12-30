@@ -1,4 +1,4 @@
-import { AppClientCtx } from '~/app/@/client'
+import { AppClientCtx } from '~/app/@/client/client-ctx'
 import { Profile } from '~/app/@/data/profile'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceCtx } from './space-ctx'

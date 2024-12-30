@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'bun:test'
+import { RequestResponse } from '~/@/request-response/request-response'
 import { Err, Ok } from '~/@/result'
+import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { didSendToServer, didShowErrorSm } from '~/app/@/client'
+import { didSendToServer, didShowErrorSm } from '~/app/@/client/client-cmd'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import type { FlowClientCtx } from '../../client/ctx'
 import { Pack } from '../pack'
 import { PackListClient } from './client'
 import { initClient, type ModelClient } from './types'
-import { Posix } from '~/@/time/posix'
-import { RequestResponse } from '~/@/request-response/request-response'
 
 const initial = {
   model: initClient

@@ -1,18 +1,19 @@
+import { Eff } from '~/@/eff'
 import { WithEventId, withEventId } from '~/@/event-sourced/event'
-import { APP_SOUND, type AppClientCtx, playSound } from '~/app/@/client'
+import { Sub } from '~/@/sub'
+import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
 import { UserAccount } from '~/app/@/data/account'
 import { TopBar, Typography } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { SpaceClientCmd } from '../@/space-client-cmd'
-import { SpaceEvent, SpaceCore } from '../core'
+import { SpaceCore, SpaceEvent } from '../core'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 import { ViewUsersInSpaceList } from '../games/@/game/users-in-space-list'
 import { GamesClient } from '../games/client'
 import { GameCoverArt } from '../games/cover-art'
 import { gameNameList } from '../games/types'
 import type { MsgClient } from '../types'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
+import { AppClientCtx } from '~/app/@/client/client-ctx'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

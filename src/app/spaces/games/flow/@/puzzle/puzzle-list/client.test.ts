@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'bun:test'
+import { isRequesting, RequestResponse } from '~/@/request-response/request-response'
 import { Err, Ok } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { didSendToServer, didShowErrorSm } from '~/app/@/client'
+import { didSendToServer, didShowErrorSm } from '~/app/@/client/client-cmd'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
@@ -12,7 +13,6 @@ import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import { Puzzle } from '../puzzle'
 import { PuzzleListClient } from './client'
 import { type ModelClient, initClient } from './types'
-import { isRequesting, RequestResponse } from '~/@/request-response/request-response'
 
 const initial = {
   model: initClient

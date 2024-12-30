@@ -1,7 +1,7 @@
-import type { ClientEvt } from '~/app/@/client'
-import { UserId } from '~/app/@/data/user-id'
-import { SpaceId } from '~/app/@/data/space-id'
+import type { ClientEvt } from '~/app/@/client/client-event'
 import { UserAccount } from '~/app/@/data/account'
+import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 
 type SpaceEvt =
   | {

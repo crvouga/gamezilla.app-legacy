@@ -1,5 +1,5 @@
 import { Loading, Ok } from '~/@/result'
-import { APP_SOUND, playSound, sendToServer, showToast } from '~/app/@/client'
+import { APP_SOUND, playSound, sendToServer, showToast } from '~/app/@/client/client-cmd'
 import { Button, IconPlus } from '~/app/@/ui'
 import type { ClientModule } from '../../types'
 

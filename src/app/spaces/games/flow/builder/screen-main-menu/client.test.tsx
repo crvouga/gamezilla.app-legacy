@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/client'
+import { didPlaySound } from '~/app/@/client/client-cmd'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { initial, testFlowClientCtx } from '../@/testing/client'
 import { BuilderClient } from '../client'

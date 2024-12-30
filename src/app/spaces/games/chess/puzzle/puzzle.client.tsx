@@ -1,6 +1,5 @@
 import { isErr } from '~/@/result'
 import type { VDomChildren } from '~/@/vdom'
-import { APP_SOUND, type AppClientCmd, playSound, sendToServer } from '~/app/@/client'
 import {
   Avatar,
   IconArrowCircle,
@@ -15,7 +14,9 @@ import {
 } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 
+import { Eff } from '~/@/eff'
 import { Translator } from '~/@/l18n/generated'
+import { APP_SOUND, AppClientCmd, playSound, sendToServer } from '~/app/@/client/client-cmd'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { LayoutGame } from '../../@/game/layout-game'
@@ -37,7 +38,6 @@ import {
   toPlayerColor,
   updateCore
 } from './puzzle.types'
-import { Eff } from '~/@/eff'
 
 //
 //

@@ -1,7 +1,9 @@
-import { isErr } from '~/@/result'
+import { Eff } from '~/@/eff'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
-import type { AppClientCtx } from '~/app/@/client'
+import { isErr } from '~/@/result'
+import { Sub } from '~/@/sub'
+import { AppClientCtx } from '~/app/@/client/client-ctx'
 import type { UserId } from '~/app/@/data/user-id'
 import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
@@ -14,8 +16,6 @@ import {
   type MsgToClient,
   initCore
 } from './vs-user.types'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
 
 //
 //

@@ -1,9 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
-import { didPlaySound } from '~/app/@/client'
 import { withEventMeta } from '~/@/event-sourced/event'
+import { didPlaySound } from '~/app/@/client/client-cmd'
+import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../../@/flow'
 import { FixtureScreenPlayPuzzleClient } from './@/fixture/client'
-import { UserId } from '~/app/@/data/user-id'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleClient()

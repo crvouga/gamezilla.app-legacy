@@ -1,8 +1,9 @@
-import { APP_SOUND, type AppClientCtx, playSound, pushRoute } from '~/app/@/client'
+import { APP_SOUND, playSound, pushRoute } from '~/app/@/client/client-cmd'
+import { AppClientCtx } from '~/app/@/client/client-ctx'
 import { Avatar, Button, Typography } from '~/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
-import { GameCoverArt } from '../../games/cover-art'
 import * as SpacesCoreClient from '../../core/client/spaces-core.client'
+import { GameCoverArt } from '../../games/cover-art'
 import type { ModelClient, MsgClient } from '../../types'
 
 const update: SpaceClientModule['update'] = ({ model, msg, ctx }) => {

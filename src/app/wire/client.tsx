@@ -1,12 +1,13 @@
 import { andThen } from '~/@/update/and-then'
 import { Translator } from '~/@/l18n/generated'
-import { type AppClientCmd, type ClientEvt, showToast } from '~/app/@/client'
 import { ListItemButton, Typography, cn } from '../@/ui'
 import { ServerInstanceClient } from './server-instance/client'
 import type { IClientTransport } from './transport/client'
 import type { ClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
+import { AppClientCmd, showToast } from '../@/client/client-cmd'
+import { ClientEvt } from '../@/client/client-event'
 
 //
 //

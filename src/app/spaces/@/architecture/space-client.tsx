@@ -1,6 +1,5 @@
 import { Msg } from '~/@/msg/msg'
 import type { VDom } from '~/@/vdom'
-import type { BaseClientCtx } from '~/app/@/client'
 import type { Space } from '../space'
 import type { SpaceClientCmd } from '../space-client-cmd'
 import { SpaceClientEvt } from '../space-client-evt'
@@ -9,6 +8,7 @@ import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceEvent } from '../../core'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
+import { BaseClientCtx } from '~/app/@/client/client-ctx'
 
 type Ctx = BaseClientCtx & {
   space?: Space

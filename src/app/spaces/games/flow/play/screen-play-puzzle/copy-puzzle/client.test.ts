@@ -1,10 +1,10 @@
 import { describe, expect, it, test } from 'bun:test'
-import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didCopyToClipboard, didPlaySound, didShowToast } from '~/app/@/client'
+import { didCopyToClipboard, didPlaySound, didShowToast } from '~/app/@/client/client-cmd'
 import { UserRole } from '~/app/@/data/user-role'
-import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'
 import { Flow } from '../../../@/flow'
+import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'
+import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
 
 const Fixture = async (input?: { currentUserRole: UserRole }) => {
   const f = await FixtureScreenPlayPuzzleClient()
