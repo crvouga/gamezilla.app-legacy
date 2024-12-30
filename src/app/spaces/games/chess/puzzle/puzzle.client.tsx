@@ -37,7 +37,7 @@ import {
   toPlayerColor,
   updateCore
 } from './puzzle.types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 
 //
 //

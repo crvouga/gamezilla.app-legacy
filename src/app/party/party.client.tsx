@@ -1,7 +1,7 @@
 import { RemoteResult, isErr } from '~/@/result'
 import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import type { AppClientCtx } from '~/app/@/client'
 import type { UserId } from '~/app/@/data'
 import { Mic } from './mic'

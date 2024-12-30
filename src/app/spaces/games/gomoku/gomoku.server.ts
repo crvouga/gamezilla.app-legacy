@@ -1,5 +1,5 @@
 import type { UserId } from '~/app/@/data'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'

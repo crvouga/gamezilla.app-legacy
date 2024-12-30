@@ -14,7 +14,7 @@ import {
   type MsgToClient,
   initCore
 } from './vs-user.types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

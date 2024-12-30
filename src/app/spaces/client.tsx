@@ -17,7 +17,7 @@ import { ListSpacesClient } from './list-spaces/client'
 import { StartSpaceClient } from './start-space/client'
 import { SyncClient } from './sync/client'
 import type { ClientModule, ModelClient } from './types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 
 //
 //

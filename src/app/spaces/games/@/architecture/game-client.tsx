@@ -1,6 +1,6 @@
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import { AppClientCmd, type ClientEvt } from '~/app/@/client'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom'
 

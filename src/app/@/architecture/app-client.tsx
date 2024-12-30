@@ -1,5 +1,5 @@
 import { Msg } from '~/@/msg/msg'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom'
 

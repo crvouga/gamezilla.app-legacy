@@ -1,4 +1,4 @@
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { pipe } from '~/@/function/pipe'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'

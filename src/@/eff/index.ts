@@ -1,4 +1,4 @@
-import type { IO } from './io'
+import type { IO } from '../io'
 
 export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void
 

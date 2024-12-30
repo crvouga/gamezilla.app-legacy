@@ -1,4 +1,4 @@
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import type { AppClientCtx } from '~/app/@/client'
 import { GameMainMenu } from '../@/game/game-main-menu'

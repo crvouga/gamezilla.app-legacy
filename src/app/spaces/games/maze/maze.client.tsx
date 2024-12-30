@@ -1,5 +1,5 @@
 import { Keyboard } from '~/@/browser'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { pipe } from '~/@/function/pipe'
 import { ActionButton, IconArrowLeftOnRect } from '~/app/@/ui'

@@ -6,7 +6,7 @@ import { SpaceServerEvt } from '../../@/space-server-evt'
 import type { ModelServer, MsgServer, MsgToClient, MsgToServer } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

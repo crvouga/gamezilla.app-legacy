@@ -1,4 +1,4 @@
-import { Eff } from '../program/eff'
+import { Eff } from '../eff'
 
 export type Id = string | number | null | undefined | boolean
 

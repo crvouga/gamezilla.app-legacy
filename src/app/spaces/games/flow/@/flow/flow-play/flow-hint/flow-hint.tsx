@@ -10,7 +10,7 @@ import { FlowGroupId } from '../../flow/flow-group-id'
 import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowTerminal } from '../../flow/flow-terminal'
 import { eq } from '~/@/equals/equals'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 
 export type FindSolutions = (input: { flow: FlowVariant.Model }) => Promise<Result<string, Flow.Model[]>>
 

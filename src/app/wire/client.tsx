@@ -5,7 +5,7 @@ import { ListItemButton, Typography, cn } from '../@/ui'
 import { ServerInstanceClient } from './server-instance/client'
 import type { IClientTransport } from './transport/client'
 import type { ClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

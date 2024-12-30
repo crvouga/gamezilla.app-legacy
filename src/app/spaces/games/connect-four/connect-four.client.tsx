@@ -1,4 +1,4 @@
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { APP_SOUND, AppClientCmd, playSound } from '~/app/@/client'
 import { withEventId } from '~/@/event-sourced/event'

@@ -1,5 +1,5 @@
-import type { Eff } from '../program/eff'
-import type { IO } from '../program/io'
+import type { Eff } from '../eff'
+import type { IO } from '../io'
 import { Result } from '../result'
 import { PubSub, Sub } from '../sub'
 

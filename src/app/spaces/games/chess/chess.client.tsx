@@ -14,7 +14,7 @@ import * as Puzzle from './puzzle/puzzle.client'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

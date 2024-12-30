@@ -4,7 +4,7 @@ import type { ChatMessageId } from './chat-message-id'
 import type { ChatUserJoinId } from './chat-user-join-id'
 import type { UserId } from '~/app/@/data'
 import { Browser } from '~/@/browser'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 
 //
 //

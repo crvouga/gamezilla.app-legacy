@@ -15,7 +15,7 @@ import { AuthSMSClient } from './auth-sms/client'
 import type { ClientModule, ModelClient, MsgClient } from './types'
 import { ContinueAsGuestClient } from './continue-as-guest/client'
 import { LogoutClient } from './logout/client'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

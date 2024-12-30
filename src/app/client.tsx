@@ -37,7 +37,7 @@ import * as WireClient from './wire/client'
 import { ClientTransport } from './wire/transport/client'
 import { Posix } from '~/@/time/posix'
 import { Browser } from '~/@/browser'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

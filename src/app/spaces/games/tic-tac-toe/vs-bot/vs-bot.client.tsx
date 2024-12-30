@@ -1,4 +1,4 @@
-import type { Eff } from '~/@/program/eff'
+import type { Eff } from '~/@/eff'
 import { Posix } from '~/@/time/posix'
 import { type AppClientCmd, type AppClientCtx, sendToServer } from '~/app/@/client'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/app/@/ui'

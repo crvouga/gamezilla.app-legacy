@@ -1,5 +1,5 @@
 import type { AppClientCtx } from '~/app/@/client'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { type ModelClient, type MsgClient, type ModelServer, type MsgToClient, initShared } from './vs-user.types'
 

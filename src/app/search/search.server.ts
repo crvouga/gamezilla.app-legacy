@@ -1,4 +1,4 @@
-import type { Eff } from '~/@/program/eff'
+import type { Eff } from '~/@/eff'
 import type { ModelServer, MsgServer, MsgToServer } from './search.types'
 
 type Model = ModelServer

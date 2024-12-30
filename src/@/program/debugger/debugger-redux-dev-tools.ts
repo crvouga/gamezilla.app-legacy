@@ -12,7 +12,7 @@ import { pipe } from '../../function/pipe'
 import { Json } from '../../json/json'
 import { ProgramDebugger } from '../program'
 import type { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from './debugger'
-import { IO } from '../io'
+import { IO } from '../../io'
 
 type Unsubscribe = () => void
 

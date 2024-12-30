@@ -7,7 +7,7 @@ import { SpaceClientEvt } from '../space-client-evt'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../types'
 import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceEvent } from '../../core'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 type Ctx = BaseClientCtx & {

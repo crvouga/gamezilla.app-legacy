@@ -11,7 +11,7 @@ import { GamesClient } from '../games/client'
 import { GameCoverArt } from '../games/cover-art'
 import { gameNameList } from '../games/types'
 import type { MsgClient } from '../types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 const update: SpaceClientModule['update'] = (input) => {

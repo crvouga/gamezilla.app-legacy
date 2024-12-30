@@ -16,7 +16,7 @@ import {
   initCoreModel,
   startGame
 } from './snake.types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

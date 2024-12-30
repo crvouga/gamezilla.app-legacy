@@ -1,4 +1,4 @@
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { type ModelServer, type MsgServer, type MsgToServer, type Res, handle, initShared, tick } from './maze.types'

@@ -4,7 +4,7 @@ import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'
 import { FlowClient } from './flow/client'
 import type { ClientModule } from './types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 
 //
 //

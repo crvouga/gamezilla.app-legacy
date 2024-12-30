@@ -1,4 +1,4 @@
-import { IO } from '../program/io'
+import { IO } from '../io'
 import { Result } from '../result'
 
 export type CopyResult = Result<Problem, null>

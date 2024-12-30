@@ -1,5 +1,5 @@
 import { Err, Ok, type Result } from '~/@/result'
-import { IO } from '~/@/program/io'
+import { IO } from '~/@/io'
 
 export type MicLoadResult = Result<string, null>
 

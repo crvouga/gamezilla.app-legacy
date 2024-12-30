@@ -21,7 +21,7 @@ import {
   updateCore
 } from './vs-bot.types'
 import { exhaustive } from '~/@/function/exhaustive'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

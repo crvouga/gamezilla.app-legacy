@@ -12,7 +12,7 @@ import {
   mouseMove,
   tick
 } from './tetris.types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

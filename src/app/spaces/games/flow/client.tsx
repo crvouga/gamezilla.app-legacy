@@ -21,7 +21,7 @@ import { PuzzleListClient, PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderClient } from './builder/client'
 import { PlayClient } from './play/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 const init: ClientModule['init'] = {

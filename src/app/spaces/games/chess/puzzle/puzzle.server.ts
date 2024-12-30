@@ -20,7 +20,7 @@ import {
   initCore,
   transitionLoadingToStarted
 } from './puzzle.types'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 //

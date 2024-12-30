@@ -1,7 +1,7 @@
 import { Browser } from '~/@/browser'
 import { Time } from '~/@/time/time'
 import type { PlatformCmd } from '../@/client'
-import { Eff } from '~/@/program/eff'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 export type Model = {
