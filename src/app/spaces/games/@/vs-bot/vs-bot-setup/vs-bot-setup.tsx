@@ -187,7 +187,7 @@ export const View = ({
       />
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className='flex items-center gap-4 border-t p-4'>
+        <div className='flex items-center gap-4 p-4'>
           <Button
             disabled={!canStartGame}
             variant='contained'
@@ -267,7 +267,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp
     <div className='col-span-3 grid grid-cols-2 place-items-center'>
       <Typography
         variant='label'
-        className='text-secondary w-full overflow-hidden text-center text-sm text-ellipsis whitespace-nowrap'
+        className='text-secondary w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm'
         text={player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?')}
       />
       <Typography variant='label' className='text-secondary text-center text-sm' text={player.playerLabel} />

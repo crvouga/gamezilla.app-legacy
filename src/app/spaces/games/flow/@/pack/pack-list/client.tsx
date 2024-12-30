@@ -132,7 +132,7 @@ const View: ClientModule['View'] = (input) => {
 
   return (
     <div className='relative flex w-full flex-1 flex-col gap-2 overflow-hidden'>
-      <div className='relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-scroll border-t border-t-neutral-800'>
+      <div className='relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-scroll border-t-neutral-800'>
         {shouldShowEmptyState && (
           <EmptyState label={input.ctx.t('flow.no-packs')} renderIcon={(input) => <IconBox {...input} />} />
         )}
@@ -148,7 +148,7 @@ const View: ClientModule['View'] = (input) => {
         </div>
       </div>
 
-      <div className='absolute right-4 bottom-6 bg-black'>{input.slots?.fab?.(null)}</div>
+      <div className='absolute bottom-6 right-4 bg-black'>{input.slots?.fab?.(null)}</div>
     </div>
   )
 }
@@ -167,12 +167,12 @@ const PackListItem = ({
   return (
     <button
       type='button'
-      className='flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden border-b px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50'
+      className='flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50'
       onClick={onClick}
     >
       {false && <IconBox className='h-9 w-9 shrink-0' />}
       <div className='flex flex-1 flex-col overflow-hidden'>
-        <p className='overflow-hidden text-lg font-bold text-ellipsis whitespace-nowrap'>{pack.name}</p>
+        <p className='overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold'>{pack.name}</p>
         <p className='text-secondary text-sm'>
           {TimeSpan.humanFriendlyString(Posix.diff(pack.lastUpdatedAt, ctx.now))}
         </p>

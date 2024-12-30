@@ -63,7 +63,7 @@ const View = (input: { model: ModelClient; ctx: AppClientCtx; dispatch: (m: MsgC
 const ViewTopBar: SpaceClientModule['View'] = (input) => {
   const isHost = input.ctx.space?.hostId === input.ctx.currentUserId
   return (
-    <div className='flex h-12 w-full items-center gap-2 border-b px-4'>
+    <div className='flex h-12 w-full items-center gap-2 px-4'>
       <div className='-ml-2'>
         <GoHome.ViewIconButton {...input} />
       </div>

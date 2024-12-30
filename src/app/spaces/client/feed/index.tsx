@@ -23,7 +23,7 @@ const View = ({
       : null
 
   return (
-    <div className='flex h-6 w-full items-center justify-center border-b p-1'>
+    <div className='flex h-6 w-full items-center justify-center p-1'>
       {spaceState.type === 'started' && msgEvt ? <ViewFeedItem ctx={ctx} msgEvt={msgEvt} state={spaceState} /> : null}
     </div>
   )

@@ -418,7 +418,7 @@ export const View = ({
     return (
       <div>
         <div className='flex-1' />
-        <div className='flex items-center gap-4 border-t p-4'>
+        <div className='flex items-center gap-4 p-4'>
           <Button
             className='flex-1'
             onClick={onQuit}

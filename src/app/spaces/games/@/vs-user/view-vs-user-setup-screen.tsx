@@ -116,12 +116,12 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
   return (
     <div className='text-secondary col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm'>
-      <p className='w-full overflow-hidden text-center text-ellipsis whitespace-nowrap'>
+      <p className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'>
         {player.userId ? (ctx.profiles[player.userId]?.username ?? '...') : '?'}
       </p>
 
       <Typography
-        className='w-full overflow-hidden text-center text-ellipsis whitespace-nowrap'
+        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'
         text={player.label}
         variant='body'
       />
@@ -159,7 +159,7 @@ export const VsUserSetupScreen = ({
       />
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className='flex w-full items-center gap-4 border-t p-4'>
+        <div className='flex w-full items-center gap-4 p-4'>
           <Button
             disabled={!canStartGame}
             variant='contained'
