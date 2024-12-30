@@ -1,5 +1,5 @@
 import { Browser } from '~/@/browser'
-import { Eff } from '~/@/core'
+import { Eff } from '~/@/program/eff'
 import type { Route } from '~/@/routing/generated/routes'
 import { APP_SOUND, playSound, type ClientEvt, type RouteCmd, type SoundCmd } from '~/app/@/client'
 

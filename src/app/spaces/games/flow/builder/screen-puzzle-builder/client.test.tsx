@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { PubSub } from '~/@/core'
+import { PubSub } from '~/@/program/sub'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import {

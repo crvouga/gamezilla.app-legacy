@@ -1,7 +1,8 @@
 import { Browser } from '~/@/browser'
-import { type Eff, type Sub } from '~/@/core'
 import { Time } from '~/@/time/time'
 import type { PlatformCmd } from '../@/client'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState

@@ -1,4 +1,4 @@
-import { Sub } from '~/@/core'
+import { Sub } from '~/@/program/sub'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { ScreenPackBuilderOpenServer } from './screen-pack-builder-open/server'
 import { ScreenPackBuilderServer } from './screen-pack-builder/server'

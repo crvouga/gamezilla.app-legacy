@@ -1,11 +1,11 @@
-import { Sub, type Eff } from '~/@/core'
 import { TimeSpan } from '~/@/time/time-span'
-
 import { Time } from '~/@/time/time'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 import * as Board from '../@/chess/chess-core'
 import { initCore, type ModelServer, type MsgServer, type MsgToClient, type MsgToServer } from './vs-user.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

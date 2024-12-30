@@ -1,6 +1,6 @@
 import { matchSort } from '~/@/array/match-sort'
 import { Browser } from '~/@/browser'
-import { Eff } from '~/@/core'
+import { Eff } from '~/@/program/eff'
 import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom'
 import { type AppClientCmd, type ClientEvt, sendToServer } from '~/app/@/client'

@@ -1,12 +1,4 @@
-/**
- *
- *
- *
- *
- *
- **/
-
-import { Eff } from '../core'
+import { Eff } from '../program/eff'
 
 export type Id = string | number | null | undefined | boolean
 

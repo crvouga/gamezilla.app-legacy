@@ -1,4 +1,4 @@
-import { Eff, type Sub, isErr } from '~/@/core'
+import { isErr } from '~/@/core'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import {
@@ -12,6 +12,8 @@ import {
   mouseMove,
   tick
 } from './tetris.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

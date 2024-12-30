@@ -1,4 +1,4 @@
-import { Eff, NotAsked } from '~/@/core'
+import { NotAsked } from '~/@/core'
 import { Msg } from '~/@/msg/msg'
 import { isAppClientCtx } from '../@/client'
 import { type Input, type Output, SpaceClientModule } from './@/architecture/space-client'
@@ -17,6 +17,7 @@ import { ListSpacesClient } from './list-spaces/client'
 import { StartSpaceClient } from './start-space/client'
 import { SyncClient } from './sync/client'
 import type { ClientModule, ModelClient } from './types'
+import { Eff } from '~/@/program/eff'
 
 //
 //

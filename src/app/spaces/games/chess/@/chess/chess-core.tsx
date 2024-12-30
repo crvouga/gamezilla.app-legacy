@@ -1,7 +1,8 @@
 import * as ChessJS from 'chess.js'
-import { Err, type IO, Ok, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/core'
 import { ChessBotLevel } from '../chess-bot-level/chess-bot-level'
 import { exhaustive } from '~/@/function/exhaustive'
+import { IO } from '~/@/program/io'
 
 export type BestMoveInputResult = Result<BestMoveInputProblem, MoveInput>
 export type BestMoveInputProblem = 'failed_to_calculate_best_move'

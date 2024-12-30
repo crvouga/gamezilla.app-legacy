@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/core'
+import { PubSub } from '~/@/program/sub'
 import type { VDom } from '~/@/vdom'
 import type { ColumnIndex, Columns, PlayerType } from '../../connect-four'
 

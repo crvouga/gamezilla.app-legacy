@@ -1,4 +1,5 @@
-import { Eff, Sub } from '~/@/core'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 import { handleBotMove, initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-bot.types'

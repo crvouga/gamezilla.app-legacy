@@ -1,4 +1,4 @@
-import { Eff, Sub, unwrap } from '~/@/core'
+import { unwrap } from '~/@/core'
 import { Msg } from '~/@/msg/msg'
 import { withEventId } from '~/@/event-sourced/event'
 import { Posix } from '~/@/time/posix'
@@ -21,6 +21,8 @@ import { PuzzleListClient, PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { BuilderClient } from './builder/client'
 import { PlayClient } from './play/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,

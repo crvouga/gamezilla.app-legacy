@@ -1,4 +1,3 @@
-import { Eff, Sub } from '~/@/core'
 import { Msg } from '~/@/msg/msg'
 import { eq } from '~/@/equals/equals'
 import { LanguageCodeISO_639_1, type TranslatedText } from '~/@/l18n'
@@ -38,6 +37,8 @@ import * as WireClient from './wire/client'
 import { ClientTransport } from './wire/transport/client'
 import { Posix } from '~/@/time/posix'
 import { Browser } from '~/@/browser'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

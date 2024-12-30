@@ -1,4 +1,4 @@
-import { Result, Sub } from '~/@/core'
+import { Result } from '~/@/core'
 import { withEventId } from '~/@/event-sourced/event'
 import { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceServerCmd } from '../@/space-server-cmd'
@@ -7,6 +7,7 @@ import { SpaceCore } from '../core'
 import { GamesServer } from '../games/server'
 import type { MsgServer } from '../types'
 import { GamesServerCtx } from './types'
+import { Sub } from '~/@/program/sub'
 
 const initCtx = (input: { ctx: SpaceServerCtx }): GamesServerCtx => {
   const gameCtx = GamesServer.initCtx(input)

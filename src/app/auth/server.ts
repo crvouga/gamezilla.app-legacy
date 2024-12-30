@@ -1,4 +1,4 @@
-import { Sub, isErr, isOk } from '~/@/core'
+import { isErr, isOk } from '~/@/core'
 import { AppServerModule } from '~/app/@/architecture/app-server'
 import type { SessionId, UserId } from '~/app/@/data'
 import { ServerCmd, AppServerCtx, sendToClient } from '~/app/@/server'
@@ -9,6 +9,7 @@ import type { ServerCtx, MsgToClient, ServerModule } from './types'
 import { ContinueAsGuestServer } from './continue-as-guest/server'
 import { GuestSessionMappingDb } from './@/server/guest-session-mapping-db'
 import { LogoutServer } from './logout/server'
+import { Sub } from '~/@/program/sub'
 
 //
 //

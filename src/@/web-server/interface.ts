@@ -1,4 +1,4 @@
-import { Sub } from '../core'
+import { Sub } from '../program/sub'
 import { Posix } from '../time/posix'
 
 type MaybePromise<T> = Promise<T> | T

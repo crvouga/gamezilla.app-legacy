@@ -1,5 +1,5 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { PubSub } from '~/@/core'
+import { PubSub } from '~/@/program/sub'
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureFlowClient } from '../../@/client/fixture'
 import { PlayClient } from '../client'

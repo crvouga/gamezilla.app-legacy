@@ -1,4 +1,4 @@
-import { type Eff, Err, Ok, Result, Sub } from '~/@/core'
+import { Err, Ok, Result } from '~/@/core'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { eq } from '~/@/equals/equals'
 import { pipe } from '~/@/function/pipe'
@@ -20,6 +20,8 @@ import {
   initCore,
   transitionLoadingToStarted
 } from './puzzle.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

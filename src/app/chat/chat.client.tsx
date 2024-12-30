@@ -1,5 +1,5 @@
 import type { AppClientCtx, ClientEvt } from '~/app/@/client'
-import { Eff } from '~/@/core'
+import { Eff } from '~/@/program/eff'
 import type { VDom } from '~/@/vdom'
 import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
 import { pipe } from '~/@/function/pipe'

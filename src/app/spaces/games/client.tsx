@@ -1,9 +1,10 @@
-import { Eff, Sub } from '~/@/core'
+import { Sub } from '~/@/program/sub'
 import { SpaceClientCmd } from '../@/space-client-cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.client'
 import { FlowClient } from './flow/client'
 import type { ClientModule } from './types'
+import { Eff } from '~/@/program/eff'
 
 //
 //

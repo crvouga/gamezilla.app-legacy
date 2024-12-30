@@ -1,4 +1,4 @@
-import { Err, Ok, Sub, type Eff } from '~/@/core'
+import { Err, Ok } from '~/@/core'
 import { pipe } from '~/@/function/pipe'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
@@ -12,6 +12,8 @@ import {
   type MsgToClient,
   type MsgToServer
 } from './vs-bot.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

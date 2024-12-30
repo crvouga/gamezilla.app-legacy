@@ -1,4 +1,4 @@
-import type { Eff } from '~/@/core'
+import { Eff } from '~/@/program/eff'
 import type { ModelServer, MsgServer, MsgToServer } from './chat.core'
 
 export const init: { model: ModelServer } = { model: null }

@@ -1,4 +1,3 @@
-import { Eff, Sub } from '~/@/core'
 import { WithEventId, withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, type AppClientCtx, playSound } from '~/app/@/client'
 import { UserAccount } from '~/app/@/data/account'
@@ -12,6 +11,8 @@ import { GamesClient } from '../games/client'
 import { GameCoverArt } from '../games/cover-art'
 import { gameNameList } from '../games/types'
 import type { MsgClient } from '../types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

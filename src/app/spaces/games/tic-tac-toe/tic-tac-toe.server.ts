@@ -1,4 +1,4 @@
-import { Eff, Ok, Sub } from '~/@/core'
+import { Ok } from '~/@/core'
 import type { UserId } from '~/app/@/data'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerCtx } from '../../@/space-server-ctx'
@@ -6,6 +6,8 @@ import { SpaceServerEvt } from '../../@/space-server-evt'
 import type { ModelServer, MsgServer, MsgToClient, MsgToServer } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

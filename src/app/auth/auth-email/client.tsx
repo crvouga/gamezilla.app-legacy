@@ -1,6 +1,7 @@
-import { type Eff, type Result, isErr } from '~/@/core'
+import { type Result, isErr } from '~/@/core'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Translator } from '~/@/l18n/generated'
+import { Eff } from '~/@/program/eff'
 import type { RouteCmd } from '~/app/@/client'
 import { AlertError, AlertSuccess, Button, TextField, TopBar } from '~/app/@/ui'
 

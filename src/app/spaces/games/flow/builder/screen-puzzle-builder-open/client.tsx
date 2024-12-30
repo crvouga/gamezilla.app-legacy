@@ -1,4 +1,4 @@
-import { Sub } from '~/@/core'
+import { Sub } from '~/@/program/sub'
 import { APP_SOUND, playSound } from '~/app/@/client'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { PuzzleListClient } from '../../@/puzzle/puzzle-list'

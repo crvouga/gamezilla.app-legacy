@@ -1,4 +1,4 @@
-import { Eff, RemoteResult, Sub, isErr } from '~/@/core'
+import { RemoteResult, isErr } from '~/@/core'
 import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from '~/app/@/client'
 import { IconPuzzlePiece } from '~/app/@/ui'
 
@@ -14,6 +14,8 @@ import * as Puzzle from './puzzle/puzzle.client'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

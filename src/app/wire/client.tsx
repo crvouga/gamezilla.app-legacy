@@ -1,11 +1,12 @@
-import type { Eff, Sub } from '~/@/core'
-import { andThen } from '~/@/core/and-then'
+import { andThen } from '~/@/program/and-then'
 import { Translator } from '~/@/l18n/generated'
 import { type AppClientCmd, type ClientEvt, showToast } from '~/app/@/client'
 import { ListItemButton, Typography, cn } from '../@/ui'
 import { ServerInstanceClient } from './server-instance/client'
 import type { IClientTransport } from './transport/client'
 import type { ClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

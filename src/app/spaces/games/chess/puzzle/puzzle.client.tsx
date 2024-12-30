@@ -1,4 +1,4 @@
-import { Eff, isErr } from '~/@/core'
+import { isErr } from '~/@/core'
 import type { VDomChildren } from '~/@/vdom'
 import { APP_SOUND, type AppClientCmd, playSound, sendToServer } from '~/app/@/client'
 import {
@@ -37,6 +37,7 @@ import {
   toPlayerColor,
   updateCore
 } from './puzzle.types'
+import { Eff } from '~/@/program/eff'
 
 //
 //

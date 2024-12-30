@@ -1,6 +1,7 @@
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import { AppClientCmd, type ClientEvt } from '~/app/@/client'
-import { Eff, Sub } from '~/@/core'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 import type { VDom } from '~/@/vdom'
 
 export type GameClientTypes = {

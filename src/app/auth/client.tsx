@@ -1,4 +1,4 @@
-import { Eff, NotAsked, Sub } from '~/@/core'
+import { NotAsked } from '~/@/core'
 import { Msg } from '~/@/msg/msg'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import {
@@ -15,6 +15,8 @@ import { AuthSMSClient } from './auth-sms/client'
 import type { ClientModule, ModelClient, MsgClient } from './types'
 import { ContinueAsGuestClient } from './continue-as-guest/client'
 import { LogoutClient } from './logout/client'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

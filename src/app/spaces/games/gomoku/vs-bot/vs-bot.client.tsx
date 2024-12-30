@@ -1,5 +1,5 @@
 import type { AppClientCtx } from '~/app/@/client'
-import { Eff, Sub, isErr } from '~/@/core'
+import { isErr } from '~/@/core'
 import {
   type ModelClient,
   type MsgClient,
@@ -8,6 +8,8 @@ import {
   handle,
   initShared
 } from './vs-bot.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

@@ -1,4 +1,3 @@
-import { Eff, type Sub } from '~/@/core'
 import { Msg } from '~/@/msg/msg'
 import type { VDom } from '~/@/vdom'
 import type { BaseClientCtx } from '~/app/@/client'
@@ -8,6 +7,8 @@ import { SpaceClientEvt } from '../space-client-evt'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../types'
 import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceEvent } from '../../core'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 type Ctx = BaseClientCtx & {
   space?: Space

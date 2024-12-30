@@ -1,4 +1,4 @@
-import { isErr, isLoading, Loading, Result, Sub } from '~/@/core'
+import { isErr, isLoading, Loading, Result } from '~/@/core'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
@@ -7,6 +7,7 @@ import { Button, IconPlus } from '~/app/@/ui'
 import { FlowClientCmd } from '../../../@/client/cmd'
 import { ClientModule } from '../../types'
 import { MsgClient, MsgToServer } from './types'
+import { Sub } from '~/@/program/sub'
 
 const update: ClientModule['update'] = (input) => {
   const { msgCore, model, msg, ctx } = input

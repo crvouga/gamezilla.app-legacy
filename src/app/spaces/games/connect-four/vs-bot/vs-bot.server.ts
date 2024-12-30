@@ -1,4 +1,4 @@
-import { Sub, isErr } from '~/@/core'
+import { isErr } from '~/@/core'
 import { withEventId } from '~/@/event-sourced/event'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
@@ -16,6 +16,7 @@ import {
   type MsgToServer,
   isBotTurn
 } from './vs-bot.types'
+import { Sub } from '~/@/program/sub'
 
 //
 //

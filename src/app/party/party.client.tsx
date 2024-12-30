@@ -1,10 +1,12 @@
-import { Eff, RemoteResult, Sub, isErr } from '~/@/core'
+import { RemoteResult, isErr } from '~/@/core'
+import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
+import { Eff } from '~/@/program/eff'
 import type { AppClientCtx } from '~/app/@/client'
 import type { UserId } from '~/app/@/data'
 import { Mic } from './mic'
 import type { ModelClient, MsgClient, MsgToClient } from './party.types'
-import { exhaustive } from '~/@/function/exhaustive'
+import { Sub } from '~/@/program/sub'
 
 //
 //

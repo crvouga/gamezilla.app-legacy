@@ -1,4 +1,4 @@
-import { Sub, unwrapOr } from '~/@/core'
+import { unwrapOr } from '~/@/core'
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
@@ -6,6 +6,7 @@ import { AppServerCtx } from '~/app/@/server'
 import { ServerInstance } from '~/app/@/server/server-instance/server-instance'
 import { ServerInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
 import { rpcContract, type MsgServer, type ServerCtx, type ServerModule } from './types'
+import { Sub } from '~/@/program/sub'
 
 const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   const serverInstanceDb = ServerInstanceDb({

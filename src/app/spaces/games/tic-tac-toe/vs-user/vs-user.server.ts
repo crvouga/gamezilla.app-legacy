@@ -1,4 +1,4 @@
-import { Sub, isErr } from '~/@/core'
+import { isErr } from '~/@/core'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { sendToClient } from '~/app/@/server'
@@ -28,6 +28,7 @@ import {
   type MsgToServer,
   type Res
 } from './vs-user.types'
+import { Sub } from '~/@/program/sub'
 
 //
 //

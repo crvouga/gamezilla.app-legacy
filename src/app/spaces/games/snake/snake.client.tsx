@@ -1,5 +1,5 @@
 import { Keyboard } from '~/@/browser'
-import { Eff, type Result, type Sub, isErr } from '~/@/core'
+import { type Result, isErr } from '~/@/core'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import type { AppClientCtx } from '~/app/@/client'
@@ -13,6 +13,8 @@ import {
   type MsgToClient,
   initCoreModel
 } from './snake.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

@@ -1,4 +1,4 @@
-import { Eff, Result, Sub } from '~/@/core'
+import { Result } from '~/@/core'
 import { Time } from '~/@/time/time'
 import * as Snake from './@/snake'
 import {
@@ -16,6 +16,8 @@ import {
   initCoreModel,
   startGame
 } from './snake.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

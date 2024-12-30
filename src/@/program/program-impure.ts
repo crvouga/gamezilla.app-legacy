@@ -1,4 +1,4 @@
-import { Sub } from '../core'
+import { Sub } from './sub'
 
 export type ProgramImpure<TMsg, TCtx> = {
   initCtx: () => Promise<TCtx>

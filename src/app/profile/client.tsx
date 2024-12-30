@@ -1,4 +1,4 @@
-import { Loading, Sub, isErr } from '~/@/core'
+import { Loading, isErr } from '~/@/core'
 import { TranslatedText } from '~/@/l18n'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import {
@@ -19,6 +19,7 @@ import { ViewProfileScreen } from './profile-client/profile-client-view-profile-
 import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import * as UpdateUsernameClient from './update-username/update-username.client'
+import { Sub } from '~/@/program/sub'
 
 //
 //

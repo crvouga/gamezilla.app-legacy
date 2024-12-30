@@ -1,4 +1,4 @@
-import { Eff, Sub, isErr } from '~/@/core'
+import { isErr } from '~/@/core'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import type { AppClientCtx } from '~/app/@/client'
@@ -14,6 +14,8 @@ import {
   type MsgToClient,
   initCore
 } from './vs-user.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

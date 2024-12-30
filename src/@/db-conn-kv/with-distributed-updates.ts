@@ -1,7 +1,7 @@
-import { type PubSub } from '~/@/core'
+import { type PubSub } from '~/@/program/sub'
+import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import { IDbConnKv } from './interface'
-import { Logger } from '../logger'
 
 const DistributedUpdateType = {
   SET: 0,

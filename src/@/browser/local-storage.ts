@@ -1,4 +1,4 @@
-import type { Eff } from '../core/eff'
+import type { Eff } from '../program/eff'
 import { Result } from '../core/result'
 
 export type PutResult = Result<'failed_put_item_in_local_storage', null>

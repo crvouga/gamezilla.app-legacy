@@ -1,4 +1,4 @@
-import { NotAsked, RemoteResult, Sub, isErr } from '~/@/core'
+import { NotAsked, RemoteResult, isErr } from '~/@/core'
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { PhoneNumber } from '~/@/phone-number'
 import { Posix } from '~/@/time/posix'
@@ -19,6 +19,7 @@ import {
 import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from '~/app/@/ui'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
+import { Sub } from '~/@/program/sub'
 
 //
 //

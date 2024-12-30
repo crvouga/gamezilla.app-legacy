@@ -1,5 +1,5 @@
 import { Keyboard } from '~/@/browser'
-import { Eff, type Sub, isErr } from '~/@/core'
+import { isErr } from '~/@/core'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import * as Board from './@/board'
@@ -17,6 +17,8 @@ import {
   toGhostPiece,
   toPiece
 } from './tetris.types'
+import { Eff } from '~/@/program/eff'
+import { Sub } from '~/@/program/sub'
 
 //
 //

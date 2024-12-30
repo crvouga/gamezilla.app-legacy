@@ -6,12 +6,13 @@
  * @since 0.5.0
  */
 
-import { IO, isErr, Result } from '~/@/core'
+import { isErr, Result } from '~/@/core'
 import { Msg } from '~/@/msg/msg'
 import { pipe } from '../../function/pipe'
 import { Json } from '../../json/json'
 import { ProgramDebugger } from '../program'
 import type { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from './debugger'
+import { IO } from '../io'
 
 type Unsubscribe = () => void
 
