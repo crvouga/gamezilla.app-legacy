@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { getWords } from '~/app/@/data/words'
 
 const parser = p.brand(p.str, 'PackName')

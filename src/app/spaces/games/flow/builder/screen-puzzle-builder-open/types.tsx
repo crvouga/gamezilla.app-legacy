@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { CreateNewPuzzleTypes } from './create-new-puzzle'
 import { UserId } from '~/app/@/data'

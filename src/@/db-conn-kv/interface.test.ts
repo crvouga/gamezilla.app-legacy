@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Ok, Result } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { REDIS_URL } from '~/config-private'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'

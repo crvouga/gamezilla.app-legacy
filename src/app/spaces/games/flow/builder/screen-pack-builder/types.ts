@@ -1,5 +1,5 @@
 import { Result } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { Pack } from '../../@/pack/pack'

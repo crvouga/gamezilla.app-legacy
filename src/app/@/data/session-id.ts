@@ -1,5 +1,5 @@
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Result } from '~/@/core/result'
 
 export type SessionId = Brand<string, 'SessionId'>

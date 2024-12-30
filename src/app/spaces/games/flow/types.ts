@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'

@@ -1,4 +1,4 @@
-import { p } from '../core/parser'
+import { p } from '~/@/parser'
 import { HashValue } from './hash-value'
 import { HashingAlgo } from './hashing-algo'
 

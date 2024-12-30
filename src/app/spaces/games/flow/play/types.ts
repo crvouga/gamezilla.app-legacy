@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data'
 import { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'

@@ -1,5 +1,5 @@
 import { Ok, Result, isErr } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Hash } from '~/@/hashing'
 import { Sql } from '~/@/sql'
 import { IDbConnSql } from '~/@/db-conn-sql'

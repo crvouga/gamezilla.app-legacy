@@ -1,5 +1,5 @@
 import { RemoteResult, Result } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data'
 import { Pack } from '../../../@/pack/pack'
 import { PackName } from '../../../@/pack/pack-name'

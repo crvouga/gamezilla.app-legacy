@@ -1,5 +1,5 @@
 import { Err, Ok, Result, isErr, unwrapOr } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import { EventSourced } from '~/@/event-sourced'
 import { pipe } from '~/@/function/pipe'

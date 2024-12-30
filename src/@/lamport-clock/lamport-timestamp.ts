@@ -1,4 +1,4 @@
-import { p } from '../core/parser'
+import { p } from '~/@/parser'
 
 const parser = p.obj({
   _type: p.l('LamportTimestamp'),

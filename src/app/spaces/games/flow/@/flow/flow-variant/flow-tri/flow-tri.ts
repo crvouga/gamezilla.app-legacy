@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Flow } from '../../flow'
 import * as FlowTriDimensions from './flow-tri-dimensions'
 import { FlowNodeId } from '../../flow/flow-node-id'

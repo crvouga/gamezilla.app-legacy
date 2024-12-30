@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 
 const ALL_USER_ROLES = ['super', 'normal', 'guest'] as const
 

@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import * as RPC from './rpc'
 import { WebServer } from '~/@/web-server'
 import { WebClient } from '~/@/web-client'

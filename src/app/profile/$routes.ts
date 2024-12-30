@@ -1,5 +1,5 @@
 import { Result } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { UserId } from '../@/data'
 
 const Route = p.or(

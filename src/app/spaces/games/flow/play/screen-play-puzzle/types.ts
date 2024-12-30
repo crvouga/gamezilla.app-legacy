@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data'
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import type { GameCoreModule } from '~/app/spaces/games/@/architecture/game-core'

@@ -1,5 +1,5 @@
 import { NotAsked, type RemoteResult, Result } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data'
 import { Puzzle } from '../../../@/puzzle/puzzle'

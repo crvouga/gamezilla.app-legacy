@@ -1,5 +1,5 @@
 import { pipe } from '~/@/function/pipe'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
 import { EventId } from '~/@/event-sourced/event'
 import { SpaceId, UserId } from '~/app/@/data'

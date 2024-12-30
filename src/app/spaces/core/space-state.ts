@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import type { UserId } from '~/app/@/data'
 import { Space } from '~/app/spaces/@/space'
 import * as GameGame from '../games/core'

@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { SpaceId, UserId } from '~/app/@/data'
 
 const parser = p.obj({

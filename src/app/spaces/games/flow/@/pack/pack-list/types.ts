@@ -1,5 +1,5 @@
 import { RemoteResult } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'

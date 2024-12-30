@@ -1,6 +1,6 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { pipe } from '~/@/function/pipe'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { ClientId, SessionId, UserId } from '~/app/@/data'
 
 const parser = p.obj({

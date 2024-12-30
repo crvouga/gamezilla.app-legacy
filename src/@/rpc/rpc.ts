@@ -1,7 +1,7 @@
 import { Err, isErr, Ok, Result } from '~/@/core'
 import { IWebClient } from '~/@/web-client'
 import { IWebServer } from '~/@/web-server'
-import { p } from '../core/parser'
+import { p } from '~/@/parser'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
 
@@ -16,16 +16,16 @@ export type Client<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
     ? (input: p.Infer<T[K]['input']>) => Promise<Result<string, p.Infer<T[K]['output']>>>
     : T[K] extends Contract<any>
-    ? Client<T[K]>
-    : never
+      ? Client<T[K]>
+      : never
 }
 
 export type Server<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
     ? (input: p.Infer<T[K]['input']>) => Promise<p.Infer<T[K]['output']>>
     : T[K] extends Contract<any>
-    ? Server<T[K]>
-    : never
+      ? Server<T[K]>
+      : never
 }
 
 export const initContract = <TEndpoints extends Record<string, Endpoint<any, any> | Contract<any>>>(

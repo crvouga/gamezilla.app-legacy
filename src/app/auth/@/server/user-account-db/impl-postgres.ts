@@ -1,5 +1,5 @@
 import { Err, Ok, Result, isErr } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { UserId, UserRole } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'
 import type { IDbConnSql } from '~/@/db-conn-sql'

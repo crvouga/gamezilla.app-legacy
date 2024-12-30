@@ -2,7 +2,7 @@ import { DbConnKv, IDbConnKv } from '~/@/db-conn-kv'
 import { ILogger } from '~/@/logger'
 import { WireSession } from '../wire-session'
 import type { IWireSessionDb } from './interface'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { SessionId } from '~/app/@/data'
 import { isErr, unwrapOr } from '~/@/core'
 

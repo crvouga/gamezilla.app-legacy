@@ -1,6 +1,6 @@
 import { Err, Ok, unwrapOr } from '~/@/core'
-import { p } from '~/@/core/parser'
-import { Parser } from '~/@/core/parser/parser'
+import { p } from '~/@/parser'
+import { Parser } from '~/@/parser/parser'
 import { DbConnKv, IDbConnKv } from '../db-conn-kv'
 import { EventId } from './event-id'
 import { IStream } from './interface'

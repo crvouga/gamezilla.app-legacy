@@ -1,5 +1,5 @@
 import { Task } from '~/@/promise/task'
-import type { Parser } from '~/@/core/parser/parser'
+import type { Parser } from '~/@/parser/parser'
 import { IDbConnKv } from './interface'
 
 export const withNamespace = <TKey extends string = string, TValue = unknown>(config: {

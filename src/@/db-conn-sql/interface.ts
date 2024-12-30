@@ -1,5 +1,5 @@
 import type { Result } from '~/@/core'
-import type { p } from '~/@/core/parser'
+import type { p } from '~/@/parser'
 import type { Sql } from '~/@/sql'
 
 export type DbConnSqlNotification = {

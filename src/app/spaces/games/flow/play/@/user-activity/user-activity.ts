@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'

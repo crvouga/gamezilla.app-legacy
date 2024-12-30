@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { p } from '.'
-import { Ok } from '../result'
+import { p } from './index'
+import { Ok } from '../core'
 
 describe(import.meta.file, () => {
   it('should be ok parsing json', async () => {

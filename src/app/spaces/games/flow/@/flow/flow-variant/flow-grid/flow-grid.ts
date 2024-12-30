@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Flow } from '../../flow'
 import { FlowGroupId } from '../../flow/flow-group-id'
 import * as FlowGridDimensions from './flow-grid-dimensions'
@@ -299,7 +299,7 @@ export const yieldTerminals = function* (model: Model): Generator<Terminal> {
       continue
     }
 
-    const end = terminal.endId ? toNode(model, terminal.endId) ?? null : null
+    const end = terminal.endId ? (toNode(model, terminal.endId) ?? null) : null
 
     yield { ...terminal, start, end }
   }

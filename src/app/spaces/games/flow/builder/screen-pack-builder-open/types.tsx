@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Pack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
 import { UserId } from '~/app/@/data'

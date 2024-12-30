@@ -1,5 +1,5 @@
 import type { Task } from '~/@/promise/task'
-import type { Parser } from '~/@/core/parser/parser'
+import type { Parser } from '~/@/parser/parser'
 
 export type IDbConnKv = {
   get: <TValue>(key: string, parser: Parser<TValue>) => Task<string, TValue | null>

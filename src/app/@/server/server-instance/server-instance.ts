@@ -1,6 +1,6 @@
 import { Posix } from '~/@/time/posix'
 import { ServerInstanceId } from './server-instance-id'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { TimeSpan } from '~/@/time/time-span'
 
 const parser = p.obj({

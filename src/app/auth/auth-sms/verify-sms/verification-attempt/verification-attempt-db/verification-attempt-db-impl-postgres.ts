@@ -1,5 +1,5 @@
 import { Result, isErr } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Sql } from '~/@/sql'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { VerificationId } from '../../verification/verification-id'

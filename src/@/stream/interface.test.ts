@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok, unwrapOr } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { REDIS_URL } from '~/config-private'
 import { AppServerTestEnv } from '../../app/@/server/server-test-env'
 import { NonEmpty } from '../array/non-empty'

@@ -1,6 +1,6 @@
 // https://en.wikipedia.org/wiki/Lamport_timestamp
 
-import { p } from '../core/parser'
+import { p } from '~/@/parser'
 import { LamportTimestamp } from './lamport-timestamp'
 
 const parser = p.obj({

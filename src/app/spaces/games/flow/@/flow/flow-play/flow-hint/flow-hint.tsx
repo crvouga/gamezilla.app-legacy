@@ -1,5 +1,5 @@
 import { Err, Result } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import type { AppClientCtx } from '~/app/@/client'
 import { IconLightbulb } from '~/app/@/ui'
 import type { ActionInput } from '~/app/@/ui/actions'

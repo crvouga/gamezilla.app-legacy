@@ -1,5 +1,5 @@
 import { eq } from '~/@/equals/equals'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { memoize } from '~/@/function/memoize'
 import { History } from '~/@/history'
 import { APP_SOUND, AppClientCtx } from '~/app/@/client'

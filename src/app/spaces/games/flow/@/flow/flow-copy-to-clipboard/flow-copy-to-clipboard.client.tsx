@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { APP_SOUND, AppClientCmd, copyToClipboard, playSound, showToast, type AppClientCtx } from '~/app/@/client'
 import { IconCopy } from '~/app/@/ui'
 import type { ActionInput } from '~/app/@/ui/actions'

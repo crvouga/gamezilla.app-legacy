@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { EventSourced } from '~/@/event-sourced'
 import { EventId, WithEventId } from '~/@/event-sourced/event'
 import { SpaceId, UserId } from '~/app/@/data'
@@ -104,7 +104,7 @@ export const listSpaces = ({
 }
 
 export const toSpaceIdByUserId = (model: Model, userId: UserId | null | undefined): SpaceId | null => {
-  return userId ? model.indexSpaceIdByUserId[userId] ?? null : null
+  return userId ? (model.indexSpaceIdByUserId[userId] ?? null) : null
 }
 
 export const toSpace = (model: Model, spaceId: SpaceId): SpaceCore.Model | null => {

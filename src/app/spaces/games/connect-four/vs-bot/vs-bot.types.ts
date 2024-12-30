@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { EventId, type WithEventId } from '~/@/event-sourced/event'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'

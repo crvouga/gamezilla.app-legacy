@@ -1,7 +1,7 @@
 import { type RemoteResult, Result, NotAsked } from '~/@/core'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { UserId } from '~/app/@/data'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 

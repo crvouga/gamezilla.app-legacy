@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 
 export const MsgCore = p.or(
   p.obj({

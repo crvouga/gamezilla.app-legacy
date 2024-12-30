@@ -1,5 +1,5 @@
 import { Result } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { SessionId, UserId } from '~/app/@/data'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { IUserSessionDb } from './interface'

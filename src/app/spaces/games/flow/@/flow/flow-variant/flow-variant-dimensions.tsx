@@ -1,4 +1,4 @@
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { FlowGridDimensions } from './flow-grid'
 import { FlowHexDimensions } from './flow-hex'
 import { FlowTriDimensions } from './flow-tri'

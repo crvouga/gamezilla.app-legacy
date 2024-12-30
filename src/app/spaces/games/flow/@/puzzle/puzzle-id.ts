@@ -1,6 +1,6 @@
 import { Uuid } from '~/@/uuid/uuid'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 
 export type PuzzleId = Brand<string, 'PuzzleId'>
 

@@ -1,5 +1,5 @@
 import { Err, Ok, isErr } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { Redis } from 'ioredis'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../with-duration'

@@ -1,4 +1,4 @@
-import { p } from '../core/parser'
+import { p } from '~/@/parser'
 
 export const Color = p.enumeration(['red', 'black'])
 export type Color = p.Infer<typeof Color>

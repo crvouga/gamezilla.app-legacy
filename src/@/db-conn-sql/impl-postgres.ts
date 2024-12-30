@@ -1,5 +1,5 @@
 import { Err, Ok } from '~/@/core'
-import type { p } from '~/@/core/parser'
+import type { p } from '~/@/parser'
 import { Sql } from '~/@/sql'
 import postgres from 'postgres'
 import { Logger } from '../logger'

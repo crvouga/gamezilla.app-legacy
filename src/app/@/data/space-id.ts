@@ -1,6 +1,6 @@
 import { Result } from '~/@/core'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 
 export type SpaceId = Brand<string, 'SpaceId'>
 

@@ -1,5 +1,5 @@
 import { Posix } from '~/@/time/posix'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import { RPC } from '~/@/rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { WebServerEvent } from '~/@/web-server'

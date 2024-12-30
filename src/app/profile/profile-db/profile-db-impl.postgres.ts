@@ -1,7 +1,7 @@
 import { ProfileAvatar, UserId, Username } from '~/app/@/data'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { Err, Ok, Result, isErr } from '~/@/core'
-import { p } from '~/@/core/parser'
+import { p } from '~/@/parser'
 import type { ProfileCore } from '../types'
 import type { ProfileDb } from './profile-db'
 
