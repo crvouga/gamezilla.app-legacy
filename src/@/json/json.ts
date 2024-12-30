@@ -1,4 +1,4 @@
-import { Result } from '../core/result'
+import { Result } from '../core'
 
 export type Json = boolean | number | string | null | JsonArray | JsonRecord
 

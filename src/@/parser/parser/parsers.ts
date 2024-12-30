@@ -1,5 +1,5 @@
 import type { Brand } from '../../brand/brand'
-import { Err, Ok } from '../../core/result/result'
+import { Err, Ok } from '../../core/result'
 import type { Parser, ParserError } from './parser-types'
 
 const errorToString = (error: ParserError): string => {

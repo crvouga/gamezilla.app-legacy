@@ -1,4 +1,4 @@
-import { Result } from '../core/result'
+import { Result } from '../core'
 
 export type Task<TErr, TVal> = Promise<Result<TErr, TVal>>
 

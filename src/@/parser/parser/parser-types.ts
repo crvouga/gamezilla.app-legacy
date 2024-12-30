@@ -1,4 +1,4 @@
-import type { ResultInternal } from '../../core/result/result'
+import type { ResultInternal } from '../../core/result'
 
 export type ParserError = {
   message: string

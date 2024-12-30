@@ -1,6 +1,6 @@
 import { Iso3166Alpha2Code } from '../country/iso-3166-alpha-2-code'
 import { p } from '~/@/parser'
-import { Result } from '../core/result'
+import { Result } from '../core'
 import { phone } from './phone'
 
 const parser = p.obj({

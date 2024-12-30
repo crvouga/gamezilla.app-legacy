@@ -1,6 +1,6 @@
 import type { Eff } from '../program/eff'
 import type { IO } from '../program/io'
-import { Result } from '../core/result'
+import { Result } from '../core'
 import { PubSub, Sub } from '../program/sub'
 
 //

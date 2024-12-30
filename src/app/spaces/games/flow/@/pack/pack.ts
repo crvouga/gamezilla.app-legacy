@@ -1,10 +1,10 @@
 import { unwrap } from '~/@/core'
 import { p } from '~/@/parser'
+import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data'
 import { PuzzleId } from '../puzzle/puzzle-id'
 import { PackId } from './pack-id'
 import { PackName } from './pack-name'
-import { Posix } from '~/@/time/posix'
 
 const parser = p.obj({
   id: p.custom(PackId.is, 'Invalid flow pack id'),

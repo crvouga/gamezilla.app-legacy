@@ -1,6 +1,6 @@
-import { Posix } from '../time/posix'
-import { Err, Ok, type Loading, type NotAsked, type Result } from '../core/result'
+import { Err, Ok, type Loading, type NotAsked, type Result } from '../core'
 import { Sub } from '../program/sub'
+import { Posix } from '../time/posix'
 import { Time } from '../time/time'
 import { TimeSpan } from '../time/time-span'
 import { Uuid } from '../uuid/uuid'

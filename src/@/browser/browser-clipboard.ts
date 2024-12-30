@@ -1,5 +1,5 @@
 import { IO } from '../program/io'
-import { Result } from '../core/result'
+import { Result } from '../core'
 
 export type CopyResult = Result<Problem, null>
 

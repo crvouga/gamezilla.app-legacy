@@ -1,5 +1,5 @@
-import { p } from '~/@/parser'
 import { Translator } from '~/@/l18n/generated'
+import { p } from '~/@/parser'
 import { IconExclamationCircle, Typography } from '~/app/@/ui'
 import { Puzzle } from './puzzle'
 
