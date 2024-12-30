@@ -86,22 +86,22 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
     }
   }
 
-  const closeTimeout: ReturnType<typeof setTimeout> | null = null
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      isDocumentHidden = true
-      if (ws) {
-        ws.close()
-        isConnected = false
-      }
-      if (closeTimeout) {
-        clearTimeout(closeTimeout)
-      }
-    } else {
-      isDocumentHidden = false
-      connect()
-    }
-  })
+  // const closeTimeout: ReturnType<typeof setTimeout> | null = null
+  // document.addEventListener('visibilitychange', () => {
+  //   if (document.hidden) {
+  //     isDocumentHidden = true
+  //     if (ws) {
+  //       ws.close()
+  //       isConnected = false
+  //     }
+  //     if (closeTimeout) {
+  //       clearTimeout(closeTimeout)
+  //     }
+  //   } else {
+  //     isDocumentHidden = false
+  //     connect()
+  //   }
+  // })
 
   const send = (msg: MsgClientToMsgServer<MsgToServer>) => {
     if (!isConnected) {
