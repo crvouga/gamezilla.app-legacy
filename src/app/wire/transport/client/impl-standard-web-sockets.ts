@@ -82,7 +82,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
       isConnected = true
       const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>
 
-      transport.fromServer.pub(msg.m)
+      transport.fromServer.pub(msg)
     }
   }
 
@@ -115,9 +115,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
   }
 
   transport.toServer.sub((msgs) => {
-    send({
-      m: msgs
-    })
+    send(msgs)
   })
 
   transport.msgCmd.sub((msgCmd) => {
@@ -165,9 +163,7 @@ export const update = <MsgToServer>(input: {
     case 'to-server': {
       return {
         ...input.model,
-        queue: input.model.queue.concat({
-          m: msg.msgs
-        })
+        queue: input.model.queue.concat(msg.msgs)
       }
     }
     case 'try-reconnect': {

@@ -1,7 +1,3 @@
-export type MsgServerToMsgClient<MsgToClient> = {
-  m: MsgToClient[]
-}
+export type MsgServerToMsgClient<MsgToClient> = MsgToClient[]
 
-export type MsgClientToMsgServer<MsgToServer> = {
-  m: MsgToServer[]
-}
+export type MsgClientToMsgServer<MsgToServer> = MsgToServer[]

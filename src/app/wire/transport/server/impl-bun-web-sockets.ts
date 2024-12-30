@@ -108,7 +108,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       transport.fromClient.pub({
         clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
-        msgs: msg.m
+        msgs: msg
       })
     }
   })
@@ -187,9 +187,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
   transport.toClientBroadcast.sub((msgs) => {
     for (const client of clients.values()) {
-      sendWithPub(client, {
-        m: msgs
-      })
+      sendWithPub(client, msgs)
     }
   })
 
@@ -202,9 +200,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
         continue
       }
 
-      sendWithPub(client, {
-        m: toClientSingle.msgs
-      })
+      sendWithPub(client, toClientSingle.msgs)
     }
   })
 
