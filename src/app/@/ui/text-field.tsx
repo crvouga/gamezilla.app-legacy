@@ -1,4 +1,4 @@
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { IconXMark } from './icon'
 import { cn } from './cn'
 import { TranslatedText } from '~/@/l18n'

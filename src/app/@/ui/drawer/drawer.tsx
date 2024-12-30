@@ -1,4 +1,4 @@
-import type { VDom, VDomChildren } from '~/@/vdom'
+import type { VDom, VDomChildren } from '~/@/vdom/vdom'
 import type { PrivateDrawerInput } from './drawer-shared'
 import { DrawerWebComponent } from './drawer-web-component'
 

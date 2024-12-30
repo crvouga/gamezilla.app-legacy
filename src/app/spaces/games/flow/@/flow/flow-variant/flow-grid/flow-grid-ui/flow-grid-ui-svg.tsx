@@ -1,8 +1,8 @@
+import type { VDom } from '~/@/vdom/vdom'
 import { IconCheckmark, cn } from '~/app/@/ui'
 import { Flow, FlowUI } from '../../../flow'
-import * as FlowGrid from '../flow-grid'
-import type { VDom } from '~/@/vdom'
 import { FlowNodeId } from '../../../flow/flow-node-id'
+import * as FlowGrid from '../flow-grid'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33

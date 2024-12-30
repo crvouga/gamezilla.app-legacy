@@ -1,7 +1,7 @@
 import { Msg } from '~/@/msg/msg'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 
 //
 //

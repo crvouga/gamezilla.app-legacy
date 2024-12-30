@@ -1,5 +1,5 @@
 import { isErr } from '~/@/result'
-import type { VDomChildren } from '~/@/vdom'
+import type { VDomChildren } from '~/@/vdom/vdom'
 import {
   Avatar,
   IconArrowCircle,

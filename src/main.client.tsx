@@ -1,6 +1,6 @@
-import { Render } from '~/@/vdom'
 import { DebuggerReduxDevTools } from './@/program/debugger'
 import { Program } from './@/program/program'
+import { Render } from './@/vdom/render'
 import * as AppClient from './app/client'
 import { IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from './config-public'
 import './main.css'

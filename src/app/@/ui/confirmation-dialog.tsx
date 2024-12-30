@@ -1,4 +1,4 @@
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { Button } from './button'
 import { cn } from './cn'
 import { TranslatedText } from '~/@/l18n'
@@ -25,7 +25,7 @@ export const ConfirmationDialog = ({
 }) => {
   return (
     <div
-      className={cn('absolute top-0 left-0 grid h-full w-full place-items-center', open ? 'block' : 'hidden')}
+      className={cn('absolute left-0 top-0 grid h-full w-full place-items-center', open ? 'block' : 'hidden')}
       onClick={(e) => {
         if (e.target !== e.currentTarget) {
           return

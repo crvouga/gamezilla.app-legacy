@@ -1,4 +1,4 @@
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { IconBotCute, IconBotLevel1, IconBotLevel4, IconBotScary, IconBotSimple } from '~/app/spaces/games/@/vs-bot'
 import * as ChessBotLevelTypes from './chess-bot-level.types'
 

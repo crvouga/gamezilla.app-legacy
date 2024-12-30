@@ -1,5 +1,5 @@
 import { Msg } from '~/@/msg/msg'
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import type { Space } from '../space/space'
 import type { SpaceClientCmd } from '../space-client/cmd'
 import { SpaceClientEvt } from '../space-client/evt'

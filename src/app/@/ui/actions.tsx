@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
-import type { VDom, VDomChildren } from '~/@/vdom'
+import type { VDom, VDomChildren } from '~/@/vdom/vdom'
 import {
   Drawer,
   IconArrowCircle,

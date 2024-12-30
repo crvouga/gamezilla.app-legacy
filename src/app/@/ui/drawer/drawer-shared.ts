@@ -1,4 +1,4 @@
-import type { VDomChildren } from '~/@/vdom'
+import type { VDomChildren } from '~/@/vdom/vdom'
 
 export type PrivateDrawerInput = {
   id: string

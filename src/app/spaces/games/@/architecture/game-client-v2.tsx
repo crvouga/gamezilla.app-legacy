@@ -1,5 +1,5 @@
 import { Msg } from '~/@/msg/msg'
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { WithEventId } from '~/@/event-sourced/event'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'

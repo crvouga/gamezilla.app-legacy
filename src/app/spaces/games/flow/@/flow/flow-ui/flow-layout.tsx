@@ -1,4 +1,4 @@
-import { VDomChildren } from '~/@/vdom'
+import { VDomChildren } from '~/@/vdom/vdom'
 
 export const FlowLayout = (input: { top: VDomChildren; middle: VDomChildren; bottom: VDomChildren }) => {
   return (

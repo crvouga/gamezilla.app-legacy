@@ -1,4 +1,4 @@
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { TranslatedText } from '~/@/l18n'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 

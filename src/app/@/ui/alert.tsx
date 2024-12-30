@@ -1,4 +1,4 @@
-import type { VDomChildren } from '~/@/vdom'
+import type { VDomChildren } from '~/@/vdom/vdom'
 import { IconExclamationCircle, IconInfoCircle } from './icon'
 import { IconCheckmarkCircle } from './icon/icon-checkmark-circle'
 import { cn } from './cn'

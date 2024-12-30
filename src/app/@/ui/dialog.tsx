@@ -1,4 +1,4 @@
-import type { VDomChildren } from '~/@/vdom'
+import type { VDomChildren } from '~/@/vdom/vdom'
 import { cn } from './cn'
 import { styles } from '~/@/vdom/style'
 import { TimeSpan } from '~/@/time/time-span'
@@ -13,7 +13,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
       role='dialog'
       style={style}
       className={cn(
-        'absolute top-0 left-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out',
+        'absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out',
         input.open ? 'scale-100 opacity-100' : 'pointer-events-none scale-0 opacity-0'
       )}
       onClick={(e) => {

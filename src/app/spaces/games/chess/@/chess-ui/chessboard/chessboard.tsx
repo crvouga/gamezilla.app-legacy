@@ -1,6 +1,6 @@
 import { Chess } from 'chess.js'
 
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import {
   type Color,
   type Model,
@@ -395,7 +395,7 @@ export const Chessboard = (input: Chessboardinput) => {
         e.preventDefault()
         e.stopPropagation()
       }}
-      className='touch-none overflow-visible select-none'
+      className='touch-none select-none overflow-visible'
       preserveAspectRatio='xMinYMin meet'
       onMouseLeave={onDragCancel(input)}
       onTouchCancel={onDragCancel(input)}

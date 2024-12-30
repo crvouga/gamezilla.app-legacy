@@ -1,5 +1,5 @@
 import { waitForElementById } from '~/@/dom/dom'
-import type { VDomChildren } from '~/@/vdom'
+import type { VDomChildren } from '~/@/vdom/vdom'
 
 if (typeof window !== 'undefined') {
   import('swiper/element/bundle').then(({ register }) => {

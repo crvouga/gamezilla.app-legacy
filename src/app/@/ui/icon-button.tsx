@@ -1,4 +1,4 @@
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
 
 export const IconButton = (input: {

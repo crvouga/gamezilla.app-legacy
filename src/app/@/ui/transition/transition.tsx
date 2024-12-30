@@ -1,4 +1,4 @@
-import type { VDomChildren } from '~/@/vdom'
+import type { VDomChildren } from '~/@/vdom/vdom'
 import './transition-element'
 import { type Transitioninput, transitionSub } from './transition-shared'
 

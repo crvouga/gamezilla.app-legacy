@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { Spinner } from './spinner'
 import { cn } from './cn'
 

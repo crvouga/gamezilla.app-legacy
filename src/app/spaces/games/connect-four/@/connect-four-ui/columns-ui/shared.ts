@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import type { ColumnIndex, Columns, PlayerType, Win } from '../../connect-four'
 import { Transition } from '~/@/transition'
 

@@ -8,7 +8,7 @@ import {
   Typography,
   cn
 } from '~/app/@/ui'
-import type { VDom, VDomChildren } from '~/@/vdom'
+import type { VDom, VDomChildren } from '~/@/vdom/vdom'
 import type { Translator } from '~/@/l18n/generated'
 import { TranslatedText } from '~/@/l18n'
 

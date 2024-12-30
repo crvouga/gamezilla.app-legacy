@@ -1,4 +1,4 @@
-import type { VDomChildren } from '~/@/vdom'
+import type { VDomChildren } from '~/@/vdom/vdom'
 import './intersection-observer-element'
 import { type IntersectionObserverEmitterinput, sub } from './intersection-observer-shared'
 

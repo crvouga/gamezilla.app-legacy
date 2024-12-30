@@ -1,9 +1,6 @@
+import { setCreatePortal } from './create-portal'
 import type { VDom } from './vdom'
 import type { VDomImpl } from './vdom-impl'
-
-export type CreatePortal = (vDom: VDom, container: Element) => VDom
-
-export let createPortal: CreatePortal | null = null
 
 export type Render = (vDom: VDom) => void
 
@@ -11,7 +8,7 @@ export const Render = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Ren
   switch (vDomImpl) {
     case 'inferno': {
       const Inferno = await import('inferno')
-      createPortal = Inferno.createPortal
+      setCreatePortal(Inferno.createPortal)
       return (vDom) => {
         Inferno.render(vDom, root)
       }
@@ -25,16 +22,15 @@ export const Render = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Ren
         import('react')
       ])
       const reactRoot = ReactDOMClient.createRoot(root)
-      createPortal = ReactDOM.createPortal
+      setCreatePortal(ReactDOM.createPortal)
       return (vDom) => {
-        // @ts-ignore
         reactRoot.render(<React.StrictMode>{vDom}</React.StrictMode>)
       }
     }
 
     case 'preact': {
       const [Preact, PreactCompat] = await Promise.all([import('preact'), import('preact/compat')])
-      createPortal = PreactCompat.createPortal
+      setCreatePortal(PreactCompat.createPortal)
       return (vDom) => {
         Preact.render(vDom, root)
       }

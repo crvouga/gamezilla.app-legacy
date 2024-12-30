@@ -1,4 +1,4 @@
-import { VDomChildren } from '~/@/vdom'
+import { VDomChildren } from '~/@/vdom/vdom'
 
 export const Chip = (input: { children: VDomChildren }) => {
   return (

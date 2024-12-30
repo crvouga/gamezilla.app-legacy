@@ -1,4 +1,4 @@
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { IconPlus, Swiper } from '~/app/@/ui'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
 

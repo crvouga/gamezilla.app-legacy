@@ -1,4 +1,4 @@
-import type { VDom } from '~/@/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { APP_SOUND, AppClientCmd, playSound, StatusBarCmd } from '../@/client/client-cmd'
 import { Drawer } from '../@/ui'
 
