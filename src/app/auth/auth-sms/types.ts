@@ -1,4 +1,4 @@
-import type { Iso3166Alpha2Code, Remote, Result } from '~/@/core'
+import type { Remote, Result } from '~/@/core'
 import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { AppServerModule } from '~/app/@/architecture/app-server'
 import type { UserAccount } from '~/app/@/data/account'
@@ -7,6 +7,7 @@ import { IUserAccountDb } from '../@/server/user-account-db'
 import type { IVerifySMS, SendCodeOutput, VerifyCodeProblem } from './verify-sms'
 import { Posix } from '~/@/time/posix'
 import { PhoneNumber } from '~/@/phone-number'
+import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 
 export type ModelClient = {
   //

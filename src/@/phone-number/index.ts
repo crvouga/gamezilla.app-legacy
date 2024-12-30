@@ -1,4 +1,4 @@
-import { Iso3166Alpha2Code } from '../core/Iso-3166-alpha-2-code'
+import { Iso3166Alpha2Code } from '../country/iso-3166-alpha-2-code'
 import { p } from '../core/parser'
 import { Result } from '../core/result'
 import { phone } from './phone'
