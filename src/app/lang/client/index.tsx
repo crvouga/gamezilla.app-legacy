@@ -1,9 +1,16 @@
 import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
-import { APP_SOUND, back, closeStatusBar, playSound, pushRoute } from '../@/client/client-cmd'
-import { translatorSubscriptions } from '../@/client/translator'
-import { IconCheckmarkCircle, IconCheckmarkCircleEmpty, IconLanguage, ListItemButton, Spinner, TopBar } from '../@/ui'
-import type { ClientModule, TranslationLoading } from './types'
+import { APP_SOUND, back, closeStatusBar, playSound, pushRoute } from '../../@/client/client-cmd'
+import { translatorSubscriptions } from '../../@/client/translator'
+import {
+  IconCheckmarkCircle,
+  IconCheckmarkCircleEmpty,
+  IconLanguage,
+  ListItemButton,
+  Spinner,
+  TopBar
+} from '../../@/ui'
+import type { ClientModule, TranslationLoading } from '../types'
 
 //
 //
