@@ -1,10 +1,11 @@
-import { Err, Ok, Sleep } from '~/@/core'
+import { Err, Ok } from '~/@/core'
 import type { p } from '~/@/core/parser'
 import { Sql } from '~/@/sql'
 import postgres from 'postgres'
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnSql } from './interface'
+import { Sleep } from '../promise/sleep'
 
 export type Config = {
   t: 'postgres'

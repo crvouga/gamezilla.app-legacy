@@ -1,4 +1,4 @@
-import { Err, Ok, Sleep, isErr } from '~/@/core'
+import { Err, Ok, isErr } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { Redis } from 'ioredis'
 import type { ILogger } from '../logger/interface'
@@ -6,6 +6,7 @@ import { withDuration } from '../with-duration'
 import type { IDbConnKv } from './interface'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
+import { Sleep } from '../promise/sleep'
 
 export type Config = {
   t: 'redis'

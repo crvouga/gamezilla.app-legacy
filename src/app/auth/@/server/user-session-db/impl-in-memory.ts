@@ -1,6 +1,7 @@
-import { Ok, Sleep } from '~/@/core'
+import { Ok } from '~/@/core'
 import type { SessionId, UserId } from '~/app/@/data'
 import type { IUserSessionDb } from './interface'
+import { Sleep } from '~/@/promise/sleep'
 
 const sessionIdsByUserId = new Map<UserId, SessionId[]>()
 const userIdBySessionId = new Map<SessionId, UserId>()

@@ -1,4 +1,4 @@
-import { sleep, Sub } from '~/@/core'
+import { Sub } from '~/@/core'
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
@@ -30,6 +30,7 @@ import {
 } from './types'
 import * as WireServer from './wire/server'
 import { ServerTransport } from './wire/transport/server'
+import { sleep } from '~/@/promise/sleep'
 
 //
 //
