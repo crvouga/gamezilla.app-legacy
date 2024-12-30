@@ -1,6 +1,7 @@
 import { Keyboard } from '~/@/browser'
-import { Eff, Option, type Result, type Sub, isErr } from '~/@/core'
+import { Eff, type Result, type Sub, isErr } from '~/@/core'
 import { exhaustive } from '~/@/function/exhaustive'
+import { Option } from '~/@/option/option'
 import type { AppClientCtx } from '~/app/@/client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { Direction } from './@/direction'

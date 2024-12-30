@@ -1,5 +1,6 @@
 import { Keyboard } from '~/@/browser'
-import { Option, Result } from '~/@/core'
+import { Result } from '~/@/core'
+import { Option } from '~/@/option/option'
 import type { UserId } from '~/app/@/data'
 import type * as Direction from './@/direction'
 import * as Snake from './@/snake'

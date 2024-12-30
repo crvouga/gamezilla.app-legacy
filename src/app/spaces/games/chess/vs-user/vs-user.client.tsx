@@ -1,5 +1,6 @@
-import { Eff, Option, Sub, isErr } from '~/@/core'
+import { Eff, Sub, isErr } from '~/@/core'
 import { exhaustive } from '~/@/function/exhaustive'
+import { Option } from '~/@/option/option'
 import type { AppClientCtx } from '~/app/@/client'
 import type { UserId } from '~/app/@/data'
 import { Button, IconArrowLeftOnRect } from '~/app/@/ui'

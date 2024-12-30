@@ -1,5 +1,5 @@
 import { Keyboard } from '~/@/browser'
-import { Option } from '~/@/core'
+import { Option } from '~/@/option/option'
 import type { Position } from './position'
 
 export type Direction = 'left' | 'up' | 'right' | 'down'

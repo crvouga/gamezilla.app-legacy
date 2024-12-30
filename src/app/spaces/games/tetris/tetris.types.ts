@@ -1,5 +1,6 @@
 import { Keyboard } from '~/@/browser'
-import { type Option, Result } from '~/@/core'
+import { Result } from '~/@/core'
+import { Option } from '~/@/option/option'
 import * as Board from './@/board'
 import * as Direction from './@/direction'
 import * as Piece from './@/piece'

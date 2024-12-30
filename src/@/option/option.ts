@@ -1,4 +1,4 @@
-import type { Result } from './result'
+import type { Result } from '../core/result'
 
 export type Option<T> = Some<T> | None
 
