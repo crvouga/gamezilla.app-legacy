@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import { Pack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 
 export type ModelClient = CreateNewPackTypes.ModelClient & {}
 

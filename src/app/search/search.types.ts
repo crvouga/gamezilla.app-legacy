@@ -1,6 +1,7 @@
 import { Browser } from '~/@/browser'
 import type { RemoteResult, Result } from '~/@/result'
-import type { UserId, Username } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
+import type { Username } from '~/app/@/data/username'
 
 type SearchResult = {
   t: 'profile'

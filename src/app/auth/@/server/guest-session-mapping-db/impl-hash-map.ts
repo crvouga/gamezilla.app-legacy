@@ -1,6 +1,7 @@
 import { Ok } from '~/@/result'
 import { IGuestSessionMappingDb } from './interface'
-import { SessionId, UserId } from '~/app/@/data'
+import { SessionId } from '~/app/@/data/session-id'
+import { UserId } from '~/app/@/data/user-id'
 
 export type Config = {
   t: 'hash-map'

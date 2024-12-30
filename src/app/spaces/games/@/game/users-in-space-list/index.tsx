@@ -1,4 +1,4 @@
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Typography } from '~/app/@/ui'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { ViewHostChip } from './host-chip'

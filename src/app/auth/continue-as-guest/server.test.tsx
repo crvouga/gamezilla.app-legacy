@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { isOk } from '~/@/result'
-import { ClientId, SessionId } from '~/app/@/data'
+import { SessionId } from '~/app/@/data/session-id'
+import { ClientId } from '~/app/@/data/client-id'
 import { didSendMsgToClient } from '~/app/@/server'
 import { AppServerTestEnv, FixtureAppServer } from '~/app/@/server/server-test-env'
 import { UserAccountDb } from '../@/server/user-account-db'

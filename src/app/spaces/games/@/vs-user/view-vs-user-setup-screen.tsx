@@ -1,5 +1,5 @@
 import type { VDom } from '~/@/vdom'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, IconQuestionMark, Typography } from '~/app/@/ui'
 
 import { LayoutGameCoverArtHeader } from '../game/layout-game-cover-art-header'
@@ -117,7 +117,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp
   return (
     <div className='text-secondary col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm'>
       <p className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'>
-        {player.userId ? ctx.profiles[player.userId]?.username ?? '...' : '?'}
+        {player.userId ? (ctx.profiles[player.userId]?.username ?? '...') : '?'}
       </p>
 
       <Typography

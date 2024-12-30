@@ -1,6 +1,6 @@
-import { Result } from '~/@/result'
 import { p } from '~/@/parser'
-import { UserId } from '../@/data'
+import { Result } from '~/@/result'
+import { UserId } from '~/app/@/data/user-id'
 
 const Route = p.or(
   p.obj({

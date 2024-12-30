@@ -1,5 +1,5 @@
 import { p } from '~/@/parser'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'

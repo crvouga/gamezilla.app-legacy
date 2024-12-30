@@ -2,7 +2,7 @@ import type { RemoteResult, Result } from '~/@/result'
 import type { ChatId } from './chat-id'
 import type { ChatMessageId } from './chat-message-id'
 import type { ChatUserJoinId } from './chat-user-join-id'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 

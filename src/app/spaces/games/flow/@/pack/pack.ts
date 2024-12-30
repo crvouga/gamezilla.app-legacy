@@ -1,7 +1,7 @@
 import { unwrap } from '~/@/result'
 import { p } from '~/@/parser'
 import { Posix } from '~/@/time/posix'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../puzzle/puzzle-id'
 import { PackId } from './pack-id'
 import { PackName } from './pack-name'

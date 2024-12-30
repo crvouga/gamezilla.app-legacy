@@ -1,5 +1,5 @@
 import { AppClientCmd } from '~/app/@/client'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 
 export type SpaceClientCmdTypes = {
   MsgClient: any

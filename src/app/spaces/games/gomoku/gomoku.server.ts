@@ -1,4 +1,4 @@
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import * as VsBot from './vs-bot/vs-bot.server'

@@ -1,6 +1,6 @@
 import type { Result } from '~/@/result'
 import { RequestResponse } from '~/@/request-response/request-response'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 
 export type ModelClient = {
   guestRequest: RequestResponse<string, UserId>

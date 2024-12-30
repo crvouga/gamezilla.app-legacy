@@ -1,8 +1,11 @@
+import { Browser } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
 import { IWebServer } from '~/@/web-server'
-import type { ClientId, SessionId, UserId } from './@/data'
+import { ClientId } from './@/data/client-id'
+import { SessionId } from './@/data/session-id'
+import { UserId } from './@/data/user-id'
 import { AppServerCtx } from './@/server'
 import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import { AuthTypes } from './auth'
@@ -12,7 +15,6 @@ import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 import { IClientTransport } from './wire/transport/client'
 import { IServerTransport } from './wire/transport/server'
-import { Browser } from '~/@/browser'
 
 //
 //

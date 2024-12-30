@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { SpaceGameCoreFixture } from '~/app/spaces/games/@/testing/sync'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'

@@ -2,7 +2,10 @@ import { describe, expect, it } from 'bun:test'
 import { eq } from '~/@/equals/equals'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { addProfiles } from '~/app/@/client'
-import { type Profile, SpaceId, UserId, Username } from '~/app/@/data'
+import { Profile } from '~/app/@/data/profile'
+import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
+import { Username } from '~/app/@/data/username'
 import {
   clickedJoinSpaceButton,
   clickedStartSpaceButton,

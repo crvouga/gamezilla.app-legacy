@@ -1,5 +1,5 @@
 import { Ok } from '~/@/result'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerCtx } from '../../@/space-server-ctx'
 import { SpaceServerEvt } from '../../@/space-server-evt'

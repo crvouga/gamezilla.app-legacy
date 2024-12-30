@@ -1,4 +1,4 @@
-import { Profile } from '~/app/@/data'
+import { Profile } from '~/app/@/data/profile'
 
 export type ModelClient = {}
 

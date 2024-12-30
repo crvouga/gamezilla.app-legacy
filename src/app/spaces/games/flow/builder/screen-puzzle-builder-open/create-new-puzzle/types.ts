@@ -1,7 +1,7 @@
 import { NotAsked, type RemoteResult, Result } from '~/@/result'
 import { p } from '~/@/parser'
 import { Posix } from '~/@/time/posix'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 
 //

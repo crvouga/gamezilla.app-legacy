@@ -1,7 +1,7 @@
 import { isErr, Result } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import { Option } from '~/@/option/option'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Chess } from '../@/chess'
 import * as Clock from '../@/chess/chess-clock'
 

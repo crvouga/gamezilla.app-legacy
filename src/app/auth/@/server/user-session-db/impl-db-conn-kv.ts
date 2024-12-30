@@ -1,6 +1,7 @@
 import { Result } from '~/@/result'
 import { p } from '~/@/parser'
-import { SessionId, UserId } from '~/app/@/data'
+import { SessionId } from '~/app/@/data/session-id'
+import { UserId } from '~/app/@/data/user-id'
 import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import type { IUserSessionDb } from './interface'
 

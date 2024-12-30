@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { UserRole } from '~/app/@/data'
+import { UserRole } from '~/app/@/data/user-role'
 import { FixtureFlowClient } from '../../client/fixture'
 
 const Fixture = async (input?: { currentUserRole: UserRole }) => {

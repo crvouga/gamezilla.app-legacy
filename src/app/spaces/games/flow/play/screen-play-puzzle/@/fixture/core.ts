@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { pipe } from '~/@/function/pipe'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import type { FlowVariant } from '../../../../@/flow'
 import { FlowPlay } from '../../../../@/flow/flow-play'
 import { Pack } from '../../../../@/pack/pack'

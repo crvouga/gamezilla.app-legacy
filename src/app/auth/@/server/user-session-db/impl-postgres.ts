@@ -1,6 +1,7 @@
 import { Result } from '~/@/result'
 import { p } from '~/@/parser'
-import { SessionId, UserId } from '~/app/@/data'
+import { SessionId } from '~/app/@/data/session-id'
+import { UserId } from '~/app/@/data/user-id'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { IUserSessionDb } from './interface'
 import { ILogger, Logger } from '~/@/logger'

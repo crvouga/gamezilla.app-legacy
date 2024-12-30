@@ -2,7 +2,9 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { type Sub } from '~/@/sub'
 import { Msg } from '~/@/msg/msg'
 import type { WithEventId } from '~/@/event-sourced/event'
-import type { ClientId, SessionId, UserId } from '~/app/@/data'
+import type { ClientId } from '~/app/@/data/client-id'
+import type { SessionId } from '~/app/@/data/session-id'
+import type { UserId } from '~/app/@/data/user-id'
 
 //
 //

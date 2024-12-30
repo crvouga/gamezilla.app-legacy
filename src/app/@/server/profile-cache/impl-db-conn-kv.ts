@@ -1,5 +1,5 @@
 import { Ok, isErr } from '~/@/result'
-import { Profile } from '~/app/@/data'
+import { Profile } from '~/app/@/data/profile'
 import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import type { IProfileCache } from './interface'
 

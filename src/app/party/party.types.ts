@@ -1,8 +1,9 @@
-import type { PartyId, UserId } from '~/app/@/data'
 import { type RemoteResult, Result } from '~/@/result'
 import type { MicLoadResult, MicUnloadResult } from './mic'
 import { dissoc } from '~/@/object/dissoc'
 import { filterObject } from '~/@/object/filter-object'
+import { PartyId } from '../@/data/party-id'
+import { UserId } from '../@/data/user-id'
 const { Err, Ok } = Result
 
 //

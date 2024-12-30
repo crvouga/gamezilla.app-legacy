@@ -1,5 +1,5 @@
 import type { AppClientCtx } from '~/app/@/client'
-import type { SpaceId } from '~/app/@/data'
+import type { SpaceId } from '~/app/@/data/space-id'
 import { Button, Typography } from '~/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
 import { SpaceClientCtx } from '../../@/space-client-ctx'

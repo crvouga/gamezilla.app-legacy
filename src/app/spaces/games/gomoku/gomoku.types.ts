@@ -1,5 +1,5 @@
 import type { Result } from '~/@/result'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import type * as VsBot from './vs-bot/vs-bot.types'
 import type * as VsUser from './vs-user/vs-user.types'
 

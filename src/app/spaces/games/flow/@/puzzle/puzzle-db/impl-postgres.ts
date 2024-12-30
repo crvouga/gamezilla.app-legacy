@@ -4,13 +4,14 @@ import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { ILogger } from '~/@/logger'
 import { Sql } from '~/@/sql'
 import { Posix } from '~/@/time/posix'
-import { UserId, type Pagination } from '~/app/@/data'
 import { Flow } from '../../flow/flow'
 import { FlowVariant } from '../../flow/flow-variant'
 import type { Puzzle } from '../puzzle'
 import { PuzzleId } from '../puzzle-id'
 import { PuzzleName } from '../puzzle-name'
 import type { IPuzzleDb, OrderClause, WhereClause } from './interface'
+import { UserId } from '~/app/@/data/user-id'
+import { Pagination } from '~/@/query/query'
 
 export const Row = p.obj({
   flow_puzzle_id: p.str,

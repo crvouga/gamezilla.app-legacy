@@ -1,4 +1,5 @@
-import { type SpaceId, type UserId } from '~/app/@/data'
+import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 import { FixtureAppServer } from '~/app/@/server/server-test-env'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
 

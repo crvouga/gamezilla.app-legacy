@@ -1,6 +1,6 @@
 import { Result } from '~/@/result'
 import { p } from '~/@/parser'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'

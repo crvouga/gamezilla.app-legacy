@@ -1,5 +1,6 @@
 import type { ClientEvt } from '~/app/@/client'
-import { SpaceId, UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
+import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/account'
 
 type SpaceEvt =

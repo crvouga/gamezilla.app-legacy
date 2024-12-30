@@ -1,6 +1,6 @@
 import type { Task } from '~/@/promise/task'
 import { PhoneNumber } from '~/@/phone-number'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import type { UserAccount } from '~/app/@/data/account'
 
 export type IUserAccountDb = {

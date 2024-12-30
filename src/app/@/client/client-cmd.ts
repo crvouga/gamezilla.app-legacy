@@ -1,9 +1,10 @@
 import { eq } from '~/@/equals/equals'
 import { TranslatedText } from '~/@/l18n'
+import { UnitInterval } from '~/@/range/unit-interval'
 import type { Route } from '~/@/routing/generated/routes'
 import { TimeSpan } from '~/@/time/time-span'
-import type { Profile, UserId } from '../data'
-import { UnitInterval } from '~/@/range/unit-interval'
+import type { Profile } from '../data/profile'
+import type { UserId } from '../data/user-id'
 
 //
 //

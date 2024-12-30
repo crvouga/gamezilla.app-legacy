@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import type { Profile } from '~/app/@/data'
+import type { Profile } from '~/app/@/data/profile'
 import { Avatar, Typography } from '~/app/@/ui'
 
 export const ProfileCard = ({

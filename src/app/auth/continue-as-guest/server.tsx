@@ -1,11 +1,12 @@
 import { Ok, Result, isErr } from '~/@/result'
-import { UserId, type SessionId } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'
 import { sendToClient } from '~/app/@/server'
 import type { ServerCtx, ServerModule } from '../types'
 import type { ModelServer } from './types'
 import { Posix } from '~/@/time/posix'
 import { Task } from '~/@/promise/task'
+import { SessionId } from '~/app/@/data/session-id'
+import { UserId } from '~/app/@/data/user-id'
 
 const initModel: ModelServer = null
 

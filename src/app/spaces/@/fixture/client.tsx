@@ -1,23 +1,24 @@
 import { NonEmpty } from '~/@/array/non-empty'
-
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { LamportClock, LamportTimestamp } from '~/@/lamport-clock'
+import { PhoneNumber } from '~/@/phone-number'
 import type { Route } from '~/@/routing/generated/routes'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { routeChanged, type AppClientCtx } from '~/app/@/client'
 import { FixtureAppClient } from '~/app/@/client/client-test-env'
 import { Translator } from '~/app/@/client/translator'
-import { Profile, SpaceId, UserId } from '~/app/@/data'
 import { UserAccount } from '~/app/@/data/account'
+import { Profile } from '~/app/@/data/profile'
+import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 import { SpacesClient } from '../../client'
 import { SpaceCore, type SpaceEvent } from '../../core'
 import { GameName } from '../../games/@/game-name'
 import type * as SpacesTypes from '../../types'
 import { SpaceClientCtx } from '../space-client-ctx'
-import { PhoneNumber } from '~/@/phone-number'
 
 //
 //

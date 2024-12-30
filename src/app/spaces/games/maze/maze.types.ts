@@ -2,7 +2,7 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { Keyboard } from '~/@/browser'
 import { Err, Ok, type Result } from '~/@/result'
 import { dissoc } from '~/@/object/dissoc'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Maze } from './@/maze'
 import { Direction, Position } from './@/position'
 

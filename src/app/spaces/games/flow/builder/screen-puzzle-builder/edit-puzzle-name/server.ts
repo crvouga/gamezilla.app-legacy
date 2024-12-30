@@ -1,5 +1,5 @@
 import { Err, isErr } from '~/@/result'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
 import type { Puzzle } from '../../../@/puzzle/puzzle'

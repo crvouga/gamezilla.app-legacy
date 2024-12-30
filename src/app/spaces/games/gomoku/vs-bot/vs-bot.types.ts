@@ -1,4 +1,4 @@
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Err, Ok, type Result } from '~/@/result'
 import {
   type Board,

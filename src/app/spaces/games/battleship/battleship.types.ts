@@ -1,4 +1,4 @@
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Result } from '~/@/result'
 import type { Position } from './@/battleship/position'
 import type { ShotRule } from './@/battleship/shot-rule'

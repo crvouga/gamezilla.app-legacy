@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { didCopyToClipboard, didPlaySound, didShowToast } from '~/app/@/client'
-import { UserRole } from '~/app/@/data'
+import { UserRole } from '~/app/@/data/user-role'
 import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'
 import { Flow } from '../../../@/flow'
 

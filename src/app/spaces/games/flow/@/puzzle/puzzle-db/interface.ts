@@ -1,5 +1,7 @@
-import type { Paginated, Pagination, UserId } from '~/app/@/data'
 import type { Task } from '~/@/promise/task'
+import { Pagination } from '~/@/query/query'
+import { Paginated } from '~/app/@/data/pagination'
+import { UserId } from '~/app/@/data/user-id'
 import type { Puzzle } from '../puzzle'
 import type { PuzzleId } from '../puzzle-id'
 

@@ -1,5 +1,5 @@
 import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/client'
-import { SpaceId } from '~/app/@/data'
+import { SpaceId } from '~/app/@/data/space-id'
 import { Button, IconPlus } from '~/app/@/ui'
 
 import { withEventId } from '~/@/event-sourced/event'

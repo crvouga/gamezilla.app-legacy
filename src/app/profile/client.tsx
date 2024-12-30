@@ -1,5 +1,6 @@
-import { Loading, isErr } from '~/@/result'
 import { TranslatedText } from '~/@/l18n'
+import { Loading, isErr } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import {
   type AnonymousClientCtx,
@@ -13,13 +14,13 @@ import {
   replaceRoute,
   sendToServer
 } from '~/app/@/client'
-import { ProfileAvatar, type UserId } from '~/app/@/data'
 import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
+import { ProfileAvatar } from '../@/data/profile-avatar'
+import { UserId } from '../@/data/user-id'
 import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'
 import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import * as UpdateUsernameClient from './update-username/update-username.client'
-import { Sub } from '~/@/sub'
 
 //
 //

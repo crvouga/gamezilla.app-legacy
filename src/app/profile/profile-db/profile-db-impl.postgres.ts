@@ -1,9 +1,11 @@
-import { ProfileAvatar, UserId, Username } from '~/app/@/data'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { Err, Ok, Result, isErr } from '~/@/result'
 import { p } from '~/@/parser'
 import type { ProfileCore } from '../types'
 import type { ProfileDb } from './profile-db'
+import { UserId } from '~/app/@/data/user-id'
+import { Username } from '~/app/@/data/username'
+import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 
 const ProfileRow = p.obj({
   user_id: p.str,

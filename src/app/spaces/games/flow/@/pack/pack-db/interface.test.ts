@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok, Result } from '~/@/result'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import { Pack } from '../pack'

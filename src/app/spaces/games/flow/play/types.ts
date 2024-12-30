@@ -1,5 +1,5 @@
 import { p } from '~/@/parser'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'

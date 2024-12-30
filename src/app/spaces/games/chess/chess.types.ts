@@ -1,5 +1,5 @@
 import type { RemoteResult, Result } from '~/@/result'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import type * as Puzzle from './puzzle/puzzle.types'
 import type * as VsBot from './vs-bot/vs-bot.types'

@@ -1,6 +1,6 @@
 import { RemoteResult, Result } from '~/@/result'
 import { p } from '~/@/parser'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../../@/pack/pack'
 import { PackName } from '../../../@/pack/pack-name'
 

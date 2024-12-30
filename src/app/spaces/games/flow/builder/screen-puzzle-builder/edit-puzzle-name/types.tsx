@@ -1,6 +1,6 @@
 import { type RemoteResult, Result, NotAsked } from '~/@/result'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { p } from '~/@/parser'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'

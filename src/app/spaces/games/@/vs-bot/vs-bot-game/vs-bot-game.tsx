@@ -1,4 +1,4 @@
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { IconRobot, Avatar, Transition, cn, Typography } from '~/app/@/ui'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import type { VDom, VDomChildren } from '~/@/vdom'

@@ -1,6 +1,6 @@
 import { p } from '~/@/parser'
 import { Posix } from '~/@/time/posix'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../flow/flow'
 import { FlowAlgoSolve } from '../flow/flow-algo/flow-algo-solve'
 import { FlowAlgoSolveAsync } from '../flow/flow-algo/flow-algo-solve-async'

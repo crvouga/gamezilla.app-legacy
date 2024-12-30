@@ -1,6 +1,6 @@
 import type { Route } from '~/@/routing/generated/routes'
 import type { UserAccount } from '../data/account'
-import { Profile } from '../data'
+import { Profile } from '../data/profile'
 
 export type ClientEvt =
   | {

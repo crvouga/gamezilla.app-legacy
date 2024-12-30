@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../@/pack/pack'
 import { Puzzle } from '../@/puzzle/puzzle'
 import { CoreFixture } from './@/fixture.core'

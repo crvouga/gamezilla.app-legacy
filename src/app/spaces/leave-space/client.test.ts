@@ -2,7 +2,8 @@ import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didPlaySound, didPushRoute, didShowToast } from '~/app/@/client'
-import { SpaceId, UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
+import { SpaceId } from '~/app/@/data/space-id'
 import {
   Ctx,
   FixtureSpacesClient,

@@ -1,11 +1,10 @@
+import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, Drawer, IconQuestionMark, Typography } from '~/app/@/ui'
-
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { LayoutGameCoverArtHeader } from '../../game/layout-game-cover-art-header'
 import type { PlayerType, VsBotInput } from '../vs-bot'
-import { TranslatedText } from '~/@/l18n'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //

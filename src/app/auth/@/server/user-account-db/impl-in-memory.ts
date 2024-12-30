@@ -1,5 +1,5 @@
 import { Err, Ok } from '~/@/result'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import type { UserAccount } from '~/app/@/data/account'
 import type { IUserAccountDb } from './interface'
 import { PhoneNumber } from '~/@/phone-number'

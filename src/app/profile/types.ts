@@ -1,14 +1,10 @@
 import type { RemoteResult, Result } from '~/@/result'
-import {
-  type ClientId,
-  type Profile,
-  ProfileAvatar,
-  type ProfileAvatarSeed,
-  type ProfileAvatarStyle,
-  type UserId,
-  type Username
-} from '~/app/@/data'
 import { AppServerModule } from '../@/architecture/app-server'
+import { ClientId } from '../@/data/client-id'
+import { Profile } from '../@/data/profile'
+import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
+import { UserId } from '../@/data/user-id'
+import { Username } from '../@/data/username'
 import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
 //

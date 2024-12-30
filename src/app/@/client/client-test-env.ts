@@ -1,11 +1,11 @@
+import { PhoneNumber } from '~/@/phone-number'
 import type { Route } from '~/@/routing/generated/routes'
+import { Posix } from '~/@/time/posix'
 import { TestRender } from '~/@/vdom/test-render'
-import { UserId } from '../data'
+import { VDOM_IMPL_TEST } from '~/config-public'
+import { UserId } from '../data/user-id'
 import type { AppClientCtx } from './client-ctx'
 import { Translator } from './translator'
-import { VDOM_IMPL_TEST } from '~/config-public'
-import { Posix } from '~/@/time/posix'
-import { PhoneNumber } from '~/@/phone-number'
 
 export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {
   const currentUserId = UserId.generate()

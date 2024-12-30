@@ -1,8 +1,11 @@
 import { PhoneNumber } from '~/@/phone-number'
 import { Posix } from '~/@/time/posix'
 import { Translator } from '~/app/@/client/translator'
-import { ProfileAvatar, Username, type SpaceId, type UserId } from '~/app/@/data'
 import { UserAccount } from '~/app/@/data/account'
+import { ProfileAvatar } from '~/app/@/data/profile-avatar'
+import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
+import { Username } from '~/app/@/data/username'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 const currentUserId = 'test-user-id' as UserId

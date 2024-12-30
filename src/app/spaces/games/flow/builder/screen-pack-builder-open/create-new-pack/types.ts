@@ -1,4 +1,4 @@
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { type RemoteResult, Result, NotAsked } from '~/@/result'
 import { p } from '~/@/parser'
 import { Pack } from '../../../@/pack/pack'

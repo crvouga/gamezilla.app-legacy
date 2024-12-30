@@ -1,6 +1,6 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { Posix } from '~/@/time/posix'
-import { Username } from '~/app/@/data'
+import { Username } from '~/app/@/data/username'
 
 export type ModelClient = {
   'profile.update-username.username'?: string

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { SpaceId } from '~/app/@/data'
+import { SpaceId } from '~/app/@/data/space-id'
 import { SpaceClientModule } from '../../@/architecture/space-client'
 import { clickedGoHomeButton, clickedStartSpaceButton, Ctx, init } from '../../@/fixture/client'
 

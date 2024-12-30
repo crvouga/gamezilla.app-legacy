@@ -1,5 +1,5 @@
 import { AnonymousClientCtx, AppClientCtx } from '~/app/@/client'
-import { ProfileAvatar } from '~/app/@/data'
+import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { Avatar, TextField, TopBar } from '~/app/@/ui'
 import type { ModelClient, MsgClient } from '../types'
 

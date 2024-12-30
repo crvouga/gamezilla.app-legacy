@@ -1,11 +1,12 @@
-import { Err, Ok, Result, isErr } from '~/@/result'
-import { p } from '~/@/parser'
-import { UserId, UserRole } from '~/app/@/data'
-import type { UserAccount } from '~/app/@/data/account'
 import type { IDbConnSql } from '~/@/db-conn-sql'
-import type { IUserAccountDb } from './interface'
-import { Posix } from '~/@/time/posix'
+import { p } from '~/@/parser'
 import { PhoneNumber } from '~/@/phone-number'
+import { Err, Ok, Result, isErr } from '~/@/result'
+import { Posix } from '~/@/time/posix'
+import type { UserAccount } from '~/app/@/data/account'
+import { UserId } from '~/app/@/data/user-id'
+import { UserRole } from '~/app/@/data/user-role'
+import type { IUserAccountDb } from './interface'
 
 export const UserAccountRow = p.obj({
   user_id: p.str,

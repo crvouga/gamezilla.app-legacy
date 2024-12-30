@@ -1,5 +1,5 @@
 import { RequestResponse } from '~/@/request-response/request-response'
-import { ProfileAvatarSeed, ProfileAvatarStyle } from '~/app/@/data'
+import { ProfileAvatarSeed, ProfileAvatarStyle } from '~/app/@/data/profile-avatar'
 
 export type ModelClient = {
   'profile.update-avatar.avatar-seed'?: ProfileAvatarSeed

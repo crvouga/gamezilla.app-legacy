@@ -1,6 +1,6 @@
 import { Ok } from '~/@/result'
 import { APP_SOUND, playSound, pushRoute, sendToServer } from '~/app/@/client'
-import type { SpaceId } from '~/app/@/data'
+import type { SpaceId } from '~/app/@/data/space-id'
 import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import type { SpaceClientModule } from '../@/architecture/space-client'

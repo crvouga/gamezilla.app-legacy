@@ -1,9 +1,12 @@
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
-import type { Profile, SpaceId, UserId } from '~/app/@/data'
+import { RequestResponse } from '~/@/request-response/request-response'
 import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, AppClientCmd, AppClientCtx, ClientEvt } from '../@/client'
 import { UserAccount } from '../@/data/account'
+import { Profile } from '../@/data/profile'
+import { SpaceId } from '../@/data/space-id'
+import { UserId } from '../@/data/user-id'
 import type { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
 import { SpaceEvent } from './core'
 import type * as Spaces from './core/client/spaces-core.client'
@@ -12,7 +15,6 @@ import type * as Space from './core/space-core'
 import { GameName } from './games/@/game-name'
 import type * as Game from './games/types'
 import * as GamesTypes from './games/types'
-import { RequestResponse } from '~/@/request-response/request-response'
 
 //
 //

@@ -1,5 +1,7 @@
 import { PhoneNumber } from '~/@/phone-number'
-import { ClientId, SessionId, UserId } from '../../@/data'
+import { ClientId } from '~/app/@/data/client-id'
+import { SessionId } from '~/app/@/data/session-id'
+import { UserId } from '~/app/@/data/user-id'
 
 export type Evt =
   | {

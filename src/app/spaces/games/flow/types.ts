@@ -1,5 +1,5 @@
 import { p } from '~/@/parser'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import { SpaceClientCtx } from '../../@/space-client-ctx'

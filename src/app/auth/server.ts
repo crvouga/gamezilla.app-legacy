@@ -1,6 +1,7 @@
 import { isErr, isOk } from '~/@/result'
 import { AppServerModule } from '~/app/@/architecture/app-server'
-import type { SessionId, UserId } from '~/app/@/data'
+import type { SessionId } from '~/app/@/data/session-id'
+import type { UserId } from '~/app/@/data/user-id'
 import { ServerCmd, AppServerCtx, sendToClient } from '~/app/@/server'
 import { UserAccountDb } from './@/server/user-account-db'
 import { UserSessionDb } from './@/server/user-session-db'

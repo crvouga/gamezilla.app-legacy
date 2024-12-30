@@ -1,6 +1,6 @@
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import * as VsBot from './vs-bot/vs-bot.types'
 import * as VsUser from './vs-user/vs-user.types'
 import { p } from '~/@/parser'

@@ -1,5 +1,5 @@
 import { Result, isErr } from '~/@/result'
-import type { UserId } from '~/app/@/data'
+import type { UserId } from '~/app/@/data/user-id'
 import * as TicTacToe from '../@/tic-tic-toe/tic-tac-toe'
 import * as Round from './vs-user-round'
 

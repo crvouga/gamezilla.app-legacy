@@ -4,7 +4,7 @@
 //
 
 import { p } from '~/@/parser'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { GameMainMenu } from '../../../@/game/game-main-menu'
 
 export const OPTION = ['puzzle-builder', 'pack-builder'] as const

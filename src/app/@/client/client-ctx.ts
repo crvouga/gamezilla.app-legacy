@@ -2,8 +2,10 @@ import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
 import type { Route } from '~/@/routing/generated/routes'
 import { Posix } from '~/@/time/posix'
-import type { UserId, UserRole, Username } from '~/app/@/data'
 import { UserAccount } from '../data/account'
+import { UserId } from '../data/user-id'
+import { Username } from '../data/username'
+import { UserRole } from '../data/user-role'
 
 type Profile = {
   userId: UserId

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { didPlaySound, didPushRoute, didSendToServer, didShowToast } from '~/app/@/client'
-import { SpaceId } from '~/app/@/data'
+import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesClient } from '../@/fixture/client'
 import * as SpacesCoreClient from '../core/client/spaces-core.client'
 

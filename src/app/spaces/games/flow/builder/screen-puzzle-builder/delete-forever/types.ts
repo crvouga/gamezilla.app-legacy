@@ -1,6 +1,6 @@
 import { NotAsked, Result, type RemoteResult } from '~/@/result'
 import { p } from '~/@/parser'
-import { UserId } from '~/app/@/data'
+import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 
 export type ModelClient = {
