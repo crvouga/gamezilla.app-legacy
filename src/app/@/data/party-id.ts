@@ -1,5 +1,6 @@
-import { Result, Uuid } from '~/@/core'
+import { Result } from '~/@/core'
 import type { Brand } from '~/@/core/brand'
+import { Uuid } from '~/@/uuid/uuid'
 
 export type PartyId = Brand<string, 'PartyId'>
 

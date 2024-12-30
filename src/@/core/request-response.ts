@@ -3,7 +3,7 @@ import { Err, Ok, type Loading, type NotAsked, type Result } from './result'
 import { Sub } from './sub'
 import { Time } from '../time/time'
 import { TimeSpan } from '../time/time-span'
-import { Uuid } from './uuid'
+import { Uuid } from '../uuid/uuid'
 
 //
 //

@@ -1,4 +1,4 @@
-import { Uuid } from '~/@/core'
+import { Uuid } from '~/@/uuid/uuid'
 import { p } from '~/@/core/parser'
 
 const parser = p.brand(p.str, 'VerificationId')

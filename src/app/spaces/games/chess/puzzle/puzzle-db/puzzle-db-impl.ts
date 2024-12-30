@@ -1,5 +1,5 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { Err, Ok, Result, Uuid } from '~/@/core'
+import { Err, Ok, Result } from '~/@/core'
 import { p } from '~/@/core/parser'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { UserId } from '~/app/@/data'
@@ -7,6 +7,7 @@ import { type MoveInput, uciMoveToMoveInput } from '../../@/chess'
 import { EloRating } from '../elo-rating'
 import { type Puzzle, type PuzzleInteraction, type PuzzleProfile, initQuery } from '../puzzle.types'
 import { splitEvery } from '../utils'
+import { Uuid } from '~/@/uuid/uuid'
 
 //
 //

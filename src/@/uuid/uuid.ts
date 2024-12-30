@@ -1,4 +1,4 @@
-import type { Brand } from './brand'
+import type { Brand } from '../core/brand'
 
 export type Uuid = Brand<string, 'Uuid'>
 
