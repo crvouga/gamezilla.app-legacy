@@ -45,8 +45,8 @@ import type { Text as Text42 } from '../../../app/spaces/@/$l18n'
 import type { Text as Text43 } from '../../../app/lang/$l18n'
 import type { Text as Text44 } from '../../../app/profile/$l18n'
 import type { Text as Text45 } from '../../../app/profile/update-username/update-username.$l18n'
-import type { Text as Text46 } from '../../../app/@/app.$l18n'
-import type { Text as Text47 } from '../../../app/@/data/username/username.$l18n'
+import type { Text as Text46 } from '../../../app/@/data/username/username.$l18n'
+import type { Text as Text47 } from '../../../app/@/client/$l18n'
 import type { Text as Text48 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
