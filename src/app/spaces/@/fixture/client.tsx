@@ -1,5 +1,5 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { PhoneNumber } from '~/@/core'
+
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
@@ -17,6 +17,7 @@ import { SpaceCore, type SpaceEvent } from '../../core'
 import { GameName } from '../../games/@/game-name'
 import type * as SpacesTypes from '../../types'
 import { SpaceClientCtx } from '../space-client-ctx'
+import { PhoneNumber } from '~/@/phone-number'
 
 //
 //

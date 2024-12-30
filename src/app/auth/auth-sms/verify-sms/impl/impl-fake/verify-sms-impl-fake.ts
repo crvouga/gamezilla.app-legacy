@@ -1,7 +1,8 @@
-import { Err, Ok, PhoneNumber } from '~/@/core'
+import { Err, Ok } from '~/@/core'
 import type { ILogger } from '~/@/logger'
 import { VerificationId } from '../../verification'
 import type { IVerifySMS } from '../../interface'
+import { PhoneNumber } from '~/@/phone-number'
 
 const DEFAULT_CODE = '123'
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, PhoneNumber, Result } from '~/@/core'
+import { Ok, Result } from '~/@/core'
 import type { ClientId, SessionId } from '~/app/@/data'
 import { UserAccount } from '~/app/@/data/account'
 import { didSendMsgToClient } from '~/app/@/server'
@@ -10,6 +10,7 @@ import { UserAccountDb } from '../@/server/user-account-db'
 import { AuthSMSServer } from './server'
 import type { IVerifySMS } from './verify-sms/interface'
 import { VerifySMS } from './verify-sms/impl/impl'
+import { PhoneNumber } from '~/@/phone-number'
 
 type InputMsg =
   | {

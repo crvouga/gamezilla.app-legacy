@@ -1,7 +1,8 @@
-import { Err, Ok, PhoneNumber } from '~/@/core'
+import { Err, Ok } from '~/@/core'
 import type { UserId } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'
 import type { IUserAccountDb } from './interface'
+import { PhoneNumber } from '~/@/phone-number'
 
 export type Config = {
   t: 'in-memory'
@@ -13,7 +14,7 @@ export const UserAccountDb = (config: Config): IUserAccountDb => {
   return {
     async findOneByUserId(input) {
       await config.delay()
-      return Ok(input.userId ? accounts.get(input.userId) ?? null : null)
+      return Ok(input.userId ? (accounts.get(input.userId) ?? null) : null)
     },
 
     async findOneByPhoneNumber(input) {

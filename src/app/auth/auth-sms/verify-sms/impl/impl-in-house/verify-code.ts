@@ -1,8 +1,9 @@
-import { Err, Ok, PhoneNumber, isErr } from '~/@/core'
+import { Err, Ok, isErr } from '~/@/core'
 import type { Verification } from '../../verification'
 import { VerificationAttemptId, type VerificationAttempt } from '../../verification-attempt'
 import type { IVerifySMS } from '../../interface'
 import type { Config } from './shared'
+import { PhoneNumber } from '~/@/phone-number'
 
 export const VerifyCode =
   (deps: Config): IVerifySMS['verifyCode'] =>

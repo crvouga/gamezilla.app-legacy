@@ -1,4 +1,4 @@
-import { PhoneNumber, unwrap } from '~/@/core'
+import { unwrap } from '~/@/core'
 import { Hashing, type IHashing } from '~/@/hashing'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Logger } from '~/@/logger'
@@ -11,6 +11,7 @@ import { VerifySMS } from '../impl'
 import { Config } from '../shared'
 import { TimeSpan } from '~/@/time/time-span'
 import { Posix } from '~/@/time/posix'
+import { PhoneNumber } from '~/@/phone-number'
 
 export const VerifySMSInHouseFixture = async (input?: {
   verifyCodeMaxAttempts?: number

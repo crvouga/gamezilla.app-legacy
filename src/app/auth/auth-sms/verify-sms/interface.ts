@@ -1,6 +1,7 @@
-import type { PhoneNumber, Task } from '~/@/core'
+import type { Task } from '~/@/core'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
+import { PhoneNumber } from '~/@/phone-number'
 
 export type VerifyCodeProblem =
   | {

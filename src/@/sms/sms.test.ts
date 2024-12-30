@@ -2,7 +2,8 @@ import { describe, expect, it } from 'bun:test'
 import { SMS } from './sms-impl'
 import { AppServerTestEnv } from '../../app/@/server/server-test-env'
 import { Logger } from '../logger'
-import { PhoneNumber, isOk, unwrap } from '~/@/core'
+import { isOk, unwrap } from '~/@/core'
+import { PhoneNumber } from '../phone-number'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()

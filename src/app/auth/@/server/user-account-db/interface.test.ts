@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import { Ok, PhoneNumber, Result } from '~/@/core'
+import { Ok, Result } from '~/@/core'
 import { UserId } from '~/app/@/data'
 import type { UserAccount } from '~/app/@/data/account'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { UserAccountDb } from './impl'
 import { Posix } from '~/@/time/posix'
+import { PhoneNumber } from '~/@/phone-number'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()

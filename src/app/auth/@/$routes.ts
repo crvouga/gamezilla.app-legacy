@@ -1,5 +1,6 @@
-import { PhoneNumber, Result } from '~/@/core'
+import { Result } from '~/@/core'
 import { p } from '~/@/core/parser'
+import { PhoneNumber } from '~/@/phone-number'
 
 const Route = p.or(
   p.obj({

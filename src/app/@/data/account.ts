@@ -1,6 +1,6 @@
-import { PhoneNumber } from '~/@/core'
 import { Posix } from '~/@/time/posix'
 import { UserId } from './user-id'
+import { PhoneNumber } from '~/@/phone-number'
 
 export type UserAccount = {
   userId: UserId

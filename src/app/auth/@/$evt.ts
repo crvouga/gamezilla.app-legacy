@@ -1,4 +1,4 @@
-import { PhoneNumber } from '~/@/core'
+import { PhoneNumber } from '~/@/phone-number'
 import { ClientId, SessionId, UserId } from '../../@/data'
 
 export type Evt =

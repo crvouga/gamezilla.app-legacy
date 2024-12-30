@@ -1,6 +1,6 @@
-import { Iso3166Alpha2Code } from '../Iso-3166-alpha-2-code'
-import { p } from '../parser'
-import { Result } from '../result'
+import { Iso3166Alpha2Code } from '../core/Iso-3166-alpha-2-code'
+import { p } from '../core/parser'
+import { Result } from '../core/result'
 import { phone } from './phone'
 
 const parser = p.obj({
@@ -38,10 +38,10 @@ const fromStringDeriveCountry = (phoneNumber: string): Result<Problem, PhoneNumb
   const country = Iso3166Alpha2Code.is(result.countryCode)
     ? result.countryCode
     : Iso3166Alpha2Code.is(result.countryIso2)
-    ? result.countryIso2
-    : Iso3166Alpha2Code.is(result.countryIso3)
-    ? result.countryIso3
-    : null
+      ? result.countryIso2
+      : Iso3166Alpha2Code.is(result.countryIso3)
+        ? result.countryIso3
+        : null
 
   if (!country) {
     return Result.Err('invalid_phone_number')
@@ -88,10 +88,10 @@ const fromString = (phoneNumber: unknown, maybeCountryCode?: Iso3166Alpha2Code):
   const country = Iso3166Alpha2Code.is(result.countryCode)
     ? result.countryCode
     : Iso3166Alpha2Code.is(result.countryIso2)
-    ? result.countryIso2
-    : Iso3166Alpha2Code.is(result.countryIso3)
-    ? result.countryIso3
-    : null
+      ? result.countryIso2
+      : Iso3166Alpha2Code.is(result.countryIso3)
+        ? result.countryIso3
+        : null
 
   if (!country) {
     return Result.Err('invalid_phone_number')

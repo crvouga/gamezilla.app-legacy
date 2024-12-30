@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import { PhoneNumber, isErr, unwrap } from '~/@/core'
+import { isErr, unwrap } from '~/@/core'
 import { Logger } from '~/@/logger'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Config, VerifySMS } from './impl'
 import { VerifySMSInHouseFixture } from './impl/impl-in-house/@/fixture'
+import { PhoneNumber } from '~/@/phone-number'
 
 const Fixture = (config: Config) => {
   const verifySMS = VerifySMS(config)

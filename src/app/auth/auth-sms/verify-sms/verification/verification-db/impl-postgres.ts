@@ -1,4 +1,4 @@
-import { Ok, PhoneNumber, Result, isErr } from '~/@/core'
+import { Ok, Result, isErr } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { Hash } from '~/@/hashing'
 import { Sql } from '~/@/sql'
@@ -7,6 +7,7 @@ import { Verification } from '../verification'
 import { VerificationId } from '../verification-id'
 import type { IVerificationDb, OrderClause, WhereClause } from './interface'
 import { Posix } from '~/@/time/posix'
+import { PhoneNumber } from '~/@/phone-number'
 
 export const Row = p.obj({
   verification_id: VerificationId,

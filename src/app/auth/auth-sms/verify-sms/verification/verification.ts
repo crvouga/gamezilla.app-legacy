@@ -1,8 +1,8 @@
-import { PhoneNumber } from '~/@/core'
 import { type Hash, Hashing } from '~/@/hashing'
 import { Posix } from '~/@/time/posix'
 import { VerificationId } from './verification-id'
 import { TimeSpan } from '~/@/time/time-span'
+import { PhoneNumber } from '~/@/phone-number'
 
 export type Verification = {
   verificationId: VerificationId

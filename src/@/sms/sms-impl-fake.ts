@@ -1,6 +1,7 @@
-import { Ok, PhoneNumber } from '~/@/core'
+import { Ok } from '~/@/core'
 import type { ISMS } from './sms'
 import type { ILogger } from '../logger'
+import { PhoneNumber } from '../phone-number'
 
 export const SMSFake = ({
   logger

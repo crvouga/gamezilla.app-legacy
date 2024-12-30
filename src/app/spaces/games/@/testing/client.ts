@@ -1,4 +1,4 @@
-import { PhoneNumber } from '~/@/core'
+import { PhoneNumber } from '~/@/phone-number'
 import { Posix } from '~/@/time/posix'
 import { Translator } from '~/app/@/client/translator'
 import { ProfileAvatar, Username, type SpaceId, type UserId } from '~/app/@/data'

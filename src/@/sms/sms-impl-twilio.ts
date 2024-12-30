@@ -1,7 +1,8 @@
-import { Err, PhoneNumber } from '~/@/core'
+import { Err } from '~/@/core'
 import type { ILogger } from '../logger/interface'
 import type { ISMS } from './sms'
 import { Logger } from '../logger'
+import { PhoneNumber } from '../phone-number'
 
 export const SMSTwilio = (config: { logger: ILogger }): ISMS => {
   const logger = Logger.prefix('twilio', config.logger)
