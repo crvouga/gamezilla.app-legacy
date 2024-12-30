@@ -9,7 +9,7 @@ import { EventId } from '~/@/stream/event-id'
 import { IStream } from '~/@/stream/interface'
 import * as SpaceCore from '../space-core'
 import { SpaceEvent } from '../space-event'
-import * as SpaceCoreState from '../space-state'
+import { SpaceCoreState } from '../space-state'
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import type { ISpacesCoreServer } from './interface'
 

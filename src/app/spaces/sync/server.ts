@@ -3,9 +3,10 @@ import { unwrapOr } from '~/@/result'
 import { broadcast, sendToClient, sendToUser } from '~/app/@/server/server-cmd'
 import { AppServerCtx } from '~/app/@/server/server-ctx'
 import { SpaceServerModule } from '../@/architecture/space-server'
-import { SpaceCore, SpaceCoreState } from '../core'
+import { SpaceCore } from '../core'
 import * as Space from '../core/space-core'
 import type { MsgToClient } from '../types'
+import { SpaceCoreState } from '../core/space-state'
 
 const update: SpaceServerModule['update'] = async (input) => {
   return SpaceServerModule.andThen(

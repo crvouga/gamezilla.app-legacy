@@ -1,10 +1,11 @@
 import { FeedItem } from '../../@/feed-item'
 import { GamesClient } from '../../games/client'
-import type { SpaceEvent, SpaceCoreState } from '../../core'
+import type { SpaceEvent } from '../../core'
 import * as SpacesCoreClient from '../../core/client/spaces-core.client'
 import type { ModelClient, MsgClient } from '../../types'
 import { SpaceClientCtx } from '../../@/space-client-ctx'
 import { WithEventId } from '~/@/event-sourced/event'
+import { SpaceCoreState } from '../../core/space-state'
 
 const View = ({
   spaceState,

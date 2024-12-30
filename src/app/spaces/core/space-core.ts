@@ -1,19 +1,19 @@
-import { pipe } from '~/@/function/pipe'
-import { p } from '~/@/parser'
 import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
 import { EventId } from '~/@/event-sourced/event'
-import { UserId } from '~/app/@/data/user-id'
+import { pipe } from '~/@/function/pipe'
+import { p } from '~/@/parser'
 import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 import { SpaceEvent } from './space-event'
-import * as SpaceState from './space-state'
+import { SpaceCoreState } from './space-state'
 
-export const Model = EventSourced.parser(SpaceEvent, SpaceState.State)
+export const Model = EventSourced.parser(SpaceEvent, SpaceCoreState.State)
 export type Model = p.Infer<typeof Model>
 
-export const init: Model = EventSourced.init(SpaceState.init)
+export const init: Model = EventSourced.init(SpaceCoreState.init)
 
-export const config: EventSourcedConfig<SpaceEvent, SpaceState.State> = {
-  reducer: SpaceState.updateCore
+export const config: EventSourcedConfig<SpaceEvent, SpaceCoreState.State> = {
+  reducer: SpaceCoreState.updateCore
 }
 
 export const isEqual = (left: Model, right: Model) => EventSourced.isSameState(config, left, right)
@@ -46,7 +46,7 @@ export const toSpaceId = (model: Model): SpaceId | null => {
   }
 }
 
-export const toSpaceStarted = (model: Model | null | undefined): SpaceState.Started | null => {
+export const toSpaceStarted = (model: Model | null | undefined): SpaceCoreState.Started | null => {
   if (!model) {
     return null
   }
@@ -63,5 +63,5 @@ export const toSpaceStarted = (model: Model | null | undefined): SpaceState.Star
 }
 
 export const toUserIds = (model: Model): UserId[] => {
-  return SpaceState.toUserIds(EventSourced.toState(config, model))
+  return SpaceCoreState.toUserIds(EventSourced.toState(config, model))
 }

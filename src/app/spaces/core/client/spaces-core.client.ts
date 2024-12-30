@@ -1,11 +1,11 @@
-import { p } from '~/@/parser'
 import { EventSourced } from '~/@/event-sourced'
 import { EventId, WithEventId } from '~/@/event-sourced/event'
-import { UserId } from '~/app/@/data/user-id'
+import { p } from '~/@/parser'
 import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 import { SpaceCore } from '..'
 import type { SpaceEvent } from '../space-event'
-import * as SpaceState from '../space-state'
+import { SpaceCoreState } from '../space-state'
 
 //
 //
@@ -151,15 +151,15 @@ export const toEventWithMeta = (model: Model, spaceId: SpaceId, msgEvtId?: Event
   return EventSourced.toEvent(space, msgEvtId)
 }
 
-export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined): SpaceState.State => {
+export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined): SpaceCoreState.State => {
   if (!spaceId) {
-    return SpaceState.init
+    return SpaceCoreState.init
   }
 
   const spaceModel = model.spaces[spaceId]
 
   if (!spaceModel) {
-    return SpaceState.init
+    return SpaceCoreState.init
   }
 
   const spaceState = EventSourced.toState(SpaceCore.config, spaceModel)
@@ -167,7 +167,7 @@ export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined)
   return spaceState
 }
 
-export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceState.Started | null => {
+export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceCoreState.Started | null => {
   if (!spaceId) {
     return null
   }
@@ -360,7 +360,7 @@ const updateIndexSpaceIdByUserId = (
 
   spaceIdByUserIdNew[spaceState.hostId] = spaceState.spaceId
 
-  for (const userId of SpaceState.toUserIds(spaceState)) {
+  for (const userId of SpaceCoreState.toUserIds(spaceState)) {
     spaceIdByUserIdNew[userId] = spaceState.spaceId
   }
 
