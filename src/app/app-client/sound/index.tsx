@@ -1,5 +1,6 @@
-import { Err, Ok, UnitInterval, type Result } from '~/@/core'
+import { Err, Ok, type Result } from '~/@/core'
 import { Translator } from '~/@/l18n/generated'
+import { UnitInterval } from '~/@/range/unit-interval'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { APP_SOUND, BaseClientCtx, playSound, type ClientEvt, type SoundCmd } from '~/app/@/client'

@@ -1,4 +1,4 @@
-import type { Brand } from './brand'
+import type { Brand } from '../core/brand'
 
 /**
  * Represents a unit interval, a number between 0 and 1
