@@ -1,5 +1,5 @@
 import { Eff, Sub } from '~/@/core'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import { eq } from '~/@/equals/equals'
 import { LanguageCodeISO_639_1, type TranslatedText } from '~/@/l18n'
 import type { Route } from '~/@/routing/generated/routes'

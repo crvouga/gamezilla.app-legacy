@@ -1,5 +1,5 @@
 import { type Sub } from '~/@/core'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import type { ClientId, SessionId, UserId } from '~/app/@/data'
 
 //

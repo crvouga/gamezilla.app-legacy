@@ -1,5 +1,5 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpaceServer } from '~/app/spaces/@/fixture/server'
 import { FlowCore } from '../../core'

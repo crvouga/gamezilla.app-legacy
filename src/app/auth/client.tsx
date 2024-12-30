@@ -1,5 +1,5 @@
 import { Eff, NotAsked, Sub } from '~/@/core'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import {
   APP_SOUND,

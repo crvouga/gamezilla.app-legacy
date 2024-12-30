@@ -7,7 +7,7 @@
  */
 
 import { IO, isErr, Result } from '~/@/core'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import * as Json from '../../core/json'
 import { pipe } from '../../function/pipe'
 import { ProgramDebugger } from '../program'

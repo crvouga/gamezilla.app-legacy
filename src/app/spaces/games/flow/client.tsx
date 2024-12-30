@@ -1,5 +1,5 @@
 import { Eff, Sub, unwrap } from '~/@/core'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import { withEventId } from '~/@/event-sourced/event'
 import { Posix } from '~/@/time/posix'
 import { APP_SOUND, playSound } from '~/app/@/client'

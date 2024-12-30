@@ -1,5 +1,5 @@
 import { sleep, Sub } from '~/@/core'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'

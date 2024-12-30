@@ -1,5 +1,5 @@
 import { Eff, type Sub } from '~/@/core'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import type { VDom } from '~/@/vdom'
 import { WithEventId } from '~/@/event-sourced/event'
 

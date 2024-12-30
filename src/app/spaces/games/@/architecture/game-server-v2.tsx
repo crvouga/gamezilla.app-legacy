@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { type Sub } from '~/@/core'
-import { Msg } from '~/@/core/msg'
+import { Msg } from '~/@/msg/msg'
 import type { WithEventId } from '~/@/event-sourced/event'
 import type { ClientId, SessionId, UserId } from '~/app/@/data'
 
