@@ -1,5 +1,5 @@
 import { Result } from '~/@/core'
-import type { Brand } from '~/@/core/brand'
+import type { Brand } from '~/@/brand/brand'
 import { p } from '~/@/core/parser'
 
 export type SpaceId = Brand<string, 'SpaceId'>

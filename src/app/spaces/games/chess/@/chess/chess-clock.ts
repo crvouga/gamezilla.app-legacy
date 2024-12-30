@@ -1,4 +1,4 @@
-import type { Brand } from '~/@/core/brand'
+import type { Brand } from '~/@/brand/brand'
 import type * as Board from './chess-core'
 
 export type Clock = {

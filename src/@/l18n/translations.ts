@@ -1,4 +1,4 @@
-import { Brand } from '../core/brand'
+import { Brand } from '../brand/brand'
 import { LanguageCodeISO_639_1 } from './lang-code-iso-639-1/lang-code-iso-639-1'
 
 export type TranslationText = {
