@@ -1,4 +1,4 @@
-import { Set } from '~/@/core'
+import { Set } from '~/@/set/set'
 import type { Pos2d } from '../pos-2d/pos-2d'
 
 export type Model<TPlayerType extends string> = {

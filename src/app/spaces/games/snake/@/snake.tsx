@@ -1,9 +1,9 @@
-import { List } from '~/@/core'
 import { TimeSpan } from '~/@/time/time-span'
 import { pipe } from '~/@/function/pipe'
 import { NonNegInt } from '~/@/math/non-neg-int'
 import { Direction } from './direction'
 import { Position } from './position'
+import { List } from '~/@/list/list'
 
 //
 //

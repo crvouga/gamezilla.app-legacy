@@ -1,6 +1,6 @@
 // source: https://stackoverflow.com/questions/16801687/javascript-random-ordering-with-seed
 
-import { Iter } from './iter'
+import { Iter } from '../iter/iter'
 
 const mulberry32 = (a: number) => {
   return () => {
