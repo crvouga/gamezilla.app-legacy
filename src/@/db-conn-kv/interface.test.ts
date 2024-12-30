@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Ok, Result, TimeSpan, Uuid } from '~/@/core'
+import { Ok, Result, Uuid } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { REDIS_URL } from '~/config-private'
 import { Logger } from '../logger'
@@ -7,6 +7,7 @@ import { PubSub } from '../pub-sub'
 import { AppServerTestEnv } from '../../app/@/server/server-test-env'
 import { DbConnKv } from './impl'
 import { Runtime } from '~/@/runtime'
+import { TimeSpan } from '../time/time-span'
 
 const Fixture = async () => {
   const testEnv = await AppServerTestEnv()

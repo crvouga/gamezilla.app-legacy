@@ -1,4 +1,5 @@
-import { Eff, Result, Sub, Time } from '~/@/core'
+import { Eff, Result, Sub } from '~/@/core'
+import { Time } from '~/@/time/time'
 import * as Snake from './@/snake'
 import {
   type CoreModel,

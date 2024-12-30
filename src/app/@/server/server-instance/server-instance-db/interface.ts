@@ -1,6 +1,7 @@
-import { Result, TimeSpan } from '~/@/core'
+import { Result } from '~/@/core'
 import { ServerInstance } from '../server-instance'
 import { ServerInstanceId } from '../server-instance-id'
+import { TimeSpan } from '~/@/time/time-span'
 
 export type IServerInstanceDb = {
   get: (serverId: ServerInstanceId) => Promise<Result<string, ServerInstance | null>>

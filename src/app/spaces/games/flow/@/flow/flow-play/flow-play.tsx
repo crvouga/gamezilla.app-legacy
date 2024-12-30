@@ -1,7 +1,7 @@
-import { TimeSpan } from '~/@/core'
 import { p } from '~/@/core/parser'
 import { pipe } from '~/@/function/pipe'
 import { Translator } from '~/@/l18n/generated'
+import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, AppClientCmd, playSound, showToast } from '~/app/@/client'
 import { IconCheckmark, Transition } from '~/app/@/ui'
 import { ActionInput, Actions } from '~/app/@/ui/actions'

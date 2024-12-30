@@ -1,10 +1,10 @@
-import type { Posix } from '~/@/core'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
 import { AppClientModule } from '../@/architecture/app-client'
 import { AppServerModule } from '../@/architecture/app-server'
 import { AnonymousClientCtx, AppClientCmd, ClientEvt } from '../@/client'
 import type { TranslatorMsg } from '../@/client/translator'
 import { AppServerCtx, ServerCmd, ServerEvt } from '../@/server'
+import { Posix } from '~/@/time/posix'
 
 export type TranslationLoading = {
   startedAt: Posix

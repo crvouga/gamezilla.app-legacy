@@ -1,8 +1,8 @@
-import { Posix } from './posix'
+import { Posix } from '../time/posix'
 import { Err, Ok, type Loading, type NotAsked, type Result } from './result'
 import { Sub } from './sub'
-import { Time } from './time'
-import { TimeSpan } from './time-span'
+import { Time } from '../time/time'
+import { TimeSpan } from '../time/time-span'
 import { Uuid } from './uuid'
 
 //

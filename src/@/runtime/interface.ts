@@ -1,4 +1,5 @@
-import { Posix, Sub } from '../core'
+import { Sub } from '../core'
+import { Posix } from '../time/posix'
 
 export type RuntimeEvent = {
   t: 'stopping'

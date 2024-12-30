@@ -3,7 +3,9 @@ import { AppServerTestEnv } from '../../server-test-env'
 import { Config } from './impl'
 import { ServerInstanceDb } from './impl-db-conn-kv'
 import { ServerInstance } from '../server-instance'
-import { Ok, Posix, TimeSpan, unwrap } from '~/@/core'
+import { Ok, unwrap } from '~/@/core'
+import { TimeSpan } from '~/@/time/time-span'
+import { Posix } from '~/@/time/posix'
 
 const Fixture = (config: Config) => {
   const serverInstanceDb = ServerInstanceDb(config)

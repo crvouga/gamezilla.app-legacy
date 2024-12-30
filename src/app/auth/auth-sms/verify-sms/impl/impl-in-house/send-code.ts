@@ -1,7 +1,9 @@
-import { Err, Ok, Posix, TimeSpan, isErr } from '~/@/core'
-import { VerificationId, type Verification } from '../../verification'
+import { Err, Ok, isErr } from '~/@/core'
 import type { IVerifySMS } from '../../interface'
+import { VerificationId, type Verification } from '../../verification'
 import { Config } from './shared'
+import { TimeSpan } from '~/@/time/time-span'
+import { Posix } from '~/@/time/posix'
 
 export const SendCode =
   (deps: Config): IVerifySMS['sendCode'] =>

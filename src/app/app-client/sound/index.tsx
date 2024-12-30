@@ -1,5 +1,6 @@
-import { Err, Ok, TimeSpan, UnitInterval, type Result } from '~/@/core'
+import { Err, Ok, UnitInterval, type Result } from '~/@/core'
 import { Translator } from '~/@/l18n/generated'
+import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { APP_SOUND, BaseClientCtx, playSound, type ClientEvt, type SoundCmd } from '~/app/@/client'
 import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~/app/@/ui'

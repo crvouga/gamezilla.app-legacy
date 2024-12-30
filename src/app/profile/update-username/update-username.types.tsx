@@ -1,4 +1,5 @@
-import { Posix, RequestResponse } from '~/@/core'
+import { RequestResponse } from '~/@/core'
+import { Posix } from '~/@/time/posix'
 import { Username } from '~/app/@/data'
 
 export type ModelClient = {

@@ -1,6 +1,7 @@
-import type { PhoneNumber, Posix, Task } from '~/@/core'
+import type { PhoneNumber, Task } from '~/@/core'
 import type { Paginated } from '~/app/@/data'
 import type { Verification, VerificationId } from '..'
+import { Posix } from '~/@/time/posix'
 
 export type WhereClause = {
   verificationId?: {

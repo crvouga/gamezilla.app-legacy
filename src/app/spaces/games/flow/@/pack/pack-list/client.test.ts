@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, Posix, RequestResponse, TimeSpan } from '~/@/core'
+import { Err, Ok, RequestResponse } from '~/@/core'
+import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
@@ -7,6 +8,7 @@ import type { FlowClientCtx } from '../../client/ctx'
 import { Pack } from '../pack'
 import { PackListClient } from './client'
 import { initClient, type ModelClient } from './types'
+import { Posix } from '~/@/time/posix'
 
 const initial = {
   model: initClient

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { EventStreamInMemory } from '.'
-import { Posix } from '../core'
+import { Posix } from '../time/posix'
 
 //
 //

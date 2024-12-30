@@ -1,4 +1,4 @@
-import { Posix } from '~/@/core'
+import { Posix } from '~/@/time/posix'
 import { p } from '~/@/core/parser'
 import { RPC } from '~/@/rpc'
 import { RuntimeEvent } from '~/@/runtime'

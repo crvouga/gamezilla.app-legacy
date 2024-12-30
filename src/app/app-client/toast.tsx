@@ -1,6 +1,9 @@
-import { Posix, Sub, Time, TimeSpan } from '~/@/core'
+import { Sub } from '~/@/core'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { Posix } from '~/@/time/posix'
+import { Time } from '~/@/time/time'
+import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { APP_SOUND, type SoundCmd, playSound, type ToastCmd } from '~/app/@/client'
 import { IconXMark, Show, Transition, cn } from '~/app/@/ui'
@@ -13,7 +16,10 @@ import { IconXMark, Show, Transition, cn } from '~/app/@/ui'
 //
 //
 
-type Ctx = { now: Posix; t: Translator }
+type Ctx = {
+  now: Posix
+  t: Translator
+}
 
 type Module = AppClientModule<{
   Model: Model

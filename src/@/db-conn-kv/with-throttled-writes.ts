@@ -1,8 +1,9 @@
-import { Ok, TimeSpan } from '~/@/core'
+import { Ok } from '~/@/core'
 import { IRuntime } from '~/@/runtime'
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnKv } from './interface'
+import { TimeSpan } from '../time/time-span'
 
 export type Config = {
   t: 'with-throttled-writes'

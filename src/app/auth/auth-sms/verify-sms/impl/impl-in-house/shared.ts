@@ -1,4 +1,3 @@
-import type { Posix, TimeSpan } from '~/@/core'
 import type { IHashing } from '~/@/hashing'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
@@ -7,6 +6,8 @@ import type { ISMS } from '~/@/sms'
 import type { IVerificationAttemptDb } from '../../verification-attempt'
 import type { IVerificationCodeGenerator } from '../../verification-code-generator'
 import type { IVerificationDb } from '../../verification/verification-db'
+import { TimeSpan } from '~/@/time/time-span'
+import { Posix } from '~/@/time/posix'
 
 export type Config = {
   t: 'in-house'

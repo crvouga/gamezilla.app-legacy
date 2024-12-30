@@ -1,4 +1,4 @@
-import { TimeSpan } from '~/@/core'
+import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, playSound } from '~/app/@/client'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from '~/app/@/ui'
 import { Actions } from '~/app/@/ui/actions'
@@ -6,11 +6,11 @@ import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-
 import { LayoutGame } from '../../../@/game/layout-game'
 import { ProfileCard } from '../../../@/game/profile-card'
 import { FlowPlay } from '../../@/flow/flow-play'
+import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { ClientModule } from '../types'
 import * as CopyPuzzleClient from './copy-puzzle/client'
 import { ScreenPlayPuzzleCore } from './core'
 import { LastPuzzleClient } from './last-puzzle/client'
-import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'bun:test'
-import { Posix, RequestResponse, TimeSpan } from '~/@/core'
+import { RequestResponse } from '~/@/core'
+import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
 import { Puzzle } from '../../puzzle/puzzle'
 import { Pack } from '../pack'
 import { PackPuzzlesGridClient } from './client'
-import type { PackGridClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
+import type { ModelClient, MsgClient, MsgToClient, PackGridClientCtx } from './types'
 
 type Input = {
   ctx?: PackGridClientCtx

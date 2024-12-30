@@ -1,8 +1,9 @@
 import type { Server, WebSocketHandler } from 'bun'
-import { Posix, PubSub } from '~/@/core'
+import { PubSub } from '~/@/core'
 import { Logger, type ILogger } from '~/@/logger'
-import { getIpAddress } from './ip-address'
+import { Posix } from '../time/posix'
 import { WebServerEvent, type Handler, type IWebServer } from './interface'
+import { getIpAddress } from './ip-address'
 
 export type Config = {
   t: 'bun'

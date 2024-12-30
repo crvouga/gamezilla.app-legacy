@@ -1,7 +1,7 @@
 import { p } from '~/@/core/parser'
+import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
-import { Posix } from '~/@/core'
 
 export const UserStartedPuzzle = p.obj({
   t: p.l('user-started-puzzle'),

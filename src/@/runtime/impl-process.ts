@@ -1,6 +1,8 @@
 import { ILogger, Logger } from '~/@/logger'
-import { Posix, PubSub, sleep, TimeSpan } from '../core'
+import { PubSub, sleep } from '../core'
 import { IRuntime, RuntimeEvent } from './interface'
+import { TimeSpan } from '../time/time-span'
+import { Posix } from '../time/posix'
 
 export type Config = {
   t: 'process'

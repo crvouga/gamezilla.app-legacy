@@ -1,10 +1,11 @@
-import type { Iso3166Alpha2Code, PhoneNumber, Posix, Remote, Result } from '~/@/core'
+import type { Iso3166Alpha2Code, PhoneNumber, Remote, Result } from '~/@/core'
 import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { AppServerModule } from '~/app/@/architecture/app-server'
 import type { UserAccount } from '~/app/@/data/account'
 import { ServerCmd, AppServerCtx, ServerEvt } from '~/app/@/server'
 import { IUserAccountDb } from '../@/server/user-account-db'
 import type { IVerifySMS, SendCodeOutput, VerifyCodeProblem } from './verify-sms'
+import { Posix } from '~/@/time/posix'
 
 export type ModelClient = {
   //

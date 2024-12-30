@@ -1,6 +1,7 @@
-import { Eff, Sub, Time } from '~/@/core'
-import { TimeSpan } from '~/@/core/time-span'
+import { Eff, Sub } from '~/@/core'
+import { TimeSpan } from '~/@/time/time-span'
 import { type ModelServer, type MsgServer, type MsgToServer, type Res, handle, initShared, tick } from './maze.types'
+import { Time } from '~/@/time/time'
 
 //
 //

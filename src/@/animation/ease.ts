@@ -1,4 +1,4 @@
-import { Posix } from '../core'
+import { Posix } from '../time/posix'
 
 export type Easing =
   | { type: 'ease-out-bounce'; n1?: number; d1?: number }

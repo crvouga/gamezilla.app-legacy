@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, Posix, RequestResponse, TimeSpan, isRequesting } from '~/@/core'
+import { Err, Ok, RequestResponse, isRequesting } from '~/@/core'
 
+import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'

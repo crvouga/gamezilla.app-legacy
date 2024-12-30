@@ -1,10 +1,12 @@
-import { Sub, TimeSpan } from '~/@/core'
+import { Sub } from '~/@/core'
+import { type WithEventId, withEventId } from '~/@/event-sourced/event'
+import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, type AppClientCmd, playSound } from '~/app/@/client'
 import type { UserId } from '~/app/@/data'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
-import { type WithEventId, withEventId } from '~/@/event-sourced/event'
 import { FeedItem } from '~/app/spaces/@/feed-item'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { IconBotHappy, IconBotLevel1, IconBotLevel4, VsBotGame, VsBotSetup } from '~/app/spaces/games/@/vs-bot'
@@ -21,7 +23,6 @@ import {
   type MsgToServer,
   updateCore
 } from './vs-bot.types'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 
 //
 //
@@ -509,7 +510,7 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
 }
 
 const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
-  const username = 'userId' in input.msgCore ? input.ctx.profiles[input.msgCore.userId]?.username ?? null : null
+  const username = 'userId' in input.msgCore ? (input.ctx.profiles[input.msgCore.userId]?.username ?? null) : null
 
   switch (input.msgCore.t) {
     case 'bot-dropped-disc': {

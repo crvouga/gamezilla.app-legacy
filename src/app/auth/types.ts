@@ -1,4 +1,4 @@
-import type { RemoteResult, TimeSpan } from '~/@/core'
+import type { RemoteResult } from '~/@/core'
 import type { AppClientModule } from '../@/architecture/app-client'
 import type { AppServerModule } from '../@/architecture/app-server'
 import type { AnonymousClientCtx, AuthCmd, AppClientCmd, AppClientCtx, ClientEvt } from '../@/client'
@@ -10,6 +10,7 @@ import type * as AuthSMS from './auth-sms/types'
 import type { ContinueAsGuest } from './continue-as-guest'
 import { IGuestSessionMappingDb } from './@/server/guest-session-mapping-db'
 import type { Logout } from './logout'
+import { TimeSpan } from '~/@/time/time-span'
 
 //
 //

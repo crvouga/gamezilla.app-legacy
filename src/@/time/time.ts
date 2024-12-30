@@ -1,6 +1,6 @@
-import type { Eff } from './eff'
+import type { Eff } from '../core/eff'
+import { PubSub, Sub } from '../core/sub'
 import { Posix } from './posix'
-import { PubSub, Sub } from './sub'
 import { TimeSpan } from './time-span'
 
 //

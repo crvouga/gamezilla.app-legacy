@@ -1,5 +1,5 @@
-import { Posix } from '~/@/core'
 import { p } from '~/@/core/parser'
+import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data'
 import { Flow } from '../flow/flow'
 import { FlowAlgoSolve } from '../flow/flow-algo/flow-algo-solve'

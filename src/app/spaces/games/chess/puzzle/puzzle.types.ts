@@ -1,10 +1,11 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { Err, Ok, type Posix, type RemoteResult, type Result } from '~/@/core'
+import { Err, Ok, type RemoteResult, type Result } from '~/@/core'
 import type { UserId } from '~/app/@/data'
 import type { SpaceCtx } from '~/app/spaces/@/space-ctx'
 import { Chess } from '../@/chess'
 import { EloRating } from './elo-rating'
 import { zip } from './utils'
+import { Posix } from '~/@/time/posix'
 
 export const maxRating = 3212
 export const minRating = 545

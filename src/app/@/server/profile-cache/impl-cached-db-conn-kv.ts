@@ -1,11 +1,11 @@
-import { TimeSpan } from '~/@/core'
+import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { pipe } from '~/@/function/pipe'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { IRuntime } from '~/@/runtime'
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { TimeSpan } from '~/@/time/time-span'
 import { ILogger, Logger } from '../../../../@/logger'
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import type { IProfileCache } from './interface'
-import { pipe } from '~/@/function/pipe'
 
 export type Config = {
   t: 'cached-db-conn-kv'

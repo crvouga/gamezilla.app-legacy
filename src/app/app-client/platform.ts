@@ -1,5 +1,6 @@
-import { Browser, type Eff, type Sub, Time } from '~/@/core'
+import { Browser, type Eff, type Sub } from '~/@/core'
 import type { PlatformCmd } from '../@/client'
+import { Time } from '~/@/time/time'
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState

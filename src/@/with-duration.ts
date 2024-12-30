@@ -1,4 +1,4 @@
-import { TimeSpan } from '~/@/core'
+import { TimeSpan } from './time/time-span'
 
 export const withDuration = async <T>(fn: () => Promise<T>): Promise<[T, TimeSpan]> => {
   const start = Date.now()

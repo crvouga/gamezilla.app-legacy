@@ -1,4 +1,4 @@
-import { Posix } from '~/@/core'
+import { Posix } from '~/@/time/posix'
 import { Runtime } from '~/@/runtime'
 import { WebServer } from '~/@/web-server'
 import { DATABASE_URL, REDIS_URL } from '~/config-private'

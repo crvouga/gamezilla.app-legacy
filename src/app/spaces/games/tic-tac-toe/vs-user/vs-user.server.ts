@@ -1,8 +1,10 @@
-import { Sub, Time, isErr } from '~/@/core'
-import { TimeSpan } from '~/@/core/time-span'
+import { Sub, isErr } from '~/@/core'
+import { Time } from '~/@/time/time'
+import { TimeSpan } from '~/@/time/time-span'
 import { sendToClient } from '~/app/@/server'
-
 import { SpaceServerCmd } from '~/app/spaces/@/space-server-cmd'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
+import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 import { toOpposite, toTurn, type PlayerType } from '../@/tic-tic-toe/tic-tac-toe'
 import * as Round from './vs-user-round'
 import {
@@ -26,8 +28,6 @@ import {
   type MsgToServer,
   type Res
 } from './vs-user.types'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server-ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 
 //
 //

@@ -1,4 +1,4 @@
-import { p } from './parser'
+import { p } from '../core/parser'
 import { TimeSpan } from './time-span'
 
 const parser = p.brand(p.num, 'Posix')

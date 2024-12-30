@@ -1,7 +1,7 @@
+import { Posix } from '~/@/time/posix'
 import type { UserId } from '~/app/@/data'
-import type { Posix } from '~/@/core'
-import { Puzzle } from '../../../@/puzzle/puzzle'
 import { samples } from '../../../@/flow/flow-variant/flow-grid/flow-grid-samples'
+import { Puzzle } from '../../../@/puzzle/puzzle'
 
 export const createPuzzle = (createdAt: Posix, createdBy: UserId) => {
   return Puzzle.create({

@@ -1,5 +1,6 @@
-import { Eff, type Sub, Time, isErr } from '~/@/core'
-import { TimeSpan } from '~/@/core/time-span'
+import { Eff, type Sub, isErr } from '~/@/core'
+import { Time } from '~/@/time/time'
+import { TimeSpan } from '~/@/time/time-span'
 import {
   type ModelServer,
   type MsgServer,

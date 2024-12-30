@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, Posix, isRequesting, isResponseErr, isResponseOk } from '~/@/core'
+import { Err, Ok, isRequesting, isResponseErr, isResponseOk } from '~/@/core'
+import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didPlaySound, didSendToServer, type AnonymousClientCtx } from '~/app/@/client'
 import { Translator } from '~/app/@/client/translator'
 import { UserId } from '~/app/@/data'
 import * as AuthClient from '../client'
 import type { ModelClient } from '../types'
-import { AppClientModule } from '~/app/@/architecture/app-client'
+import { Posix } from '~/@/time/posix'
 
 const ctx: AnonymousClientCtx = {
   currentRoute: {

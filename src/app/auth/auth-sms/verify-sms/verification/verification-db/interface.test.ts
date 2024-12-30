@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import { ascend, descend } from '~/@/array/sorting'
-import { Ok, Posix, TimeSpan, unwrap } from '~/@/core'
+import { Ok, unwrap } from '~/@/core'
 import { AppServerTestEnv } from '~/app/@/server/server-test-env'
 import { Verification } from '../verification'
 import { VerificationDb } from './impl'
+import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
 
 const FixtureVariant = async () => {
   //

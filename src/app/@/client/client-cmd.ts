@@ -1,7 +1,8 @@
-import { TimeSpan, type UnitInterval } from '~/@/core'
+import { type UnitInterval } from '~/@/core'
 import { eq } from '~/@/equals/equals'
 import { TranslatedText } from '~/@/l18n'
 import type { Route } from '~/@/routing/generated/routes'
+import { TimeSpan } from '~/@/time/time-span'
 import type { Profile, UserId } from '../data'
 
 //

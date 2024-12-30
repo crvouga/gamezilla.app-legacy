@@ -1,7 +1,7 @@
 import type { VDomChildren } from '~/@/vdom'
 import { cn } from './cn'
-import { TimeSpan } from '~/@/core'
 import { styles } from '~/@/vdom/style'
+import { TimeSpan } from '~/@/time/time-span'
 
 export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
   const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null

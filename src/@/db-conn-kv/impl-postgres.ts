@@ -1,10 +1,11 @@
-import { Err, Ok, Result, TimeSpan, isErr } from '~/@/core'
+import { Err, Ok, Result, isErr } from '~/@/core'
 import { p } from '~/@/core/parser'
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../with-duration'
 import type { IDbConnKv } from './interface'
 import { Logger } from '../logger'
+import { TimeSpan } from '../time/time-span'
 
 const Row = p.obj({
   key: p.str,
