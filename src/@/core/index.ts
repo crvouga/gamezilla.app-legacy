@@ -1,6 +1,5 @@
 export * from './browser'
 export * from './eff'
-export * from './email-address'
 export * from './io'
 export * from './Iso-3166-alpha-2-code'
 export * from './iter'
