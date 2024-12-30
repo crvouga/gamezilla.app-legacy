@@ -34,15 +34,13 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
         return {}
       }
 
-      const got = await input.ctx.spacesCoreServer.get(spaceId)
-
-      const spaceNew = unwrapOr(got, null)
+      const spaceNew = unwrapOr(await input.ctx.spacesCoreServer.get(spaceId), null)
 
       if (!spaceNew) {
         return {}
       }
 
-      const profiles = await spacesToProfiles(input.ctx, [spaceNew])
+      const profiles = await getAssociatedProfiles(input.ctx, [spaceNew])
 
       const starting = EventSourced.startFromLatestSnapshot(spaceNew)
 
@@ -63,7 +61,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
   }
 }
 
-const spacesToProfiles = async (ctx: AppServerCtx, spaces: SpaceCore.Model[]) => {
+const getAssociatedProfiles = async (ctx: AppServerCtx, spaces: SpaceCore.Model[]) => {
   const userIds = spaces.flatMap((space) => {
     const state = EventSourced.toState(SpaceCore.config, space)
     switch (state.type) {
@@ -91,7 +89,7 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
         return {}
       }
 
-      const profiles = await spacesToProfiles(input.ctx, [space])
+      const profiles = await getAssociatedProfiles(input.ctx, [space])
 
       const started = EventSourced.startFromLatestSnapshot(space)
 
