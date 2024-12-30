@@ -1,4 +1,4 @@
-import { NotAsked, Result, type RequestResponse } from '~/@/core'
+import { NotAsked, Result } from '~/@/core'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
@@ -9,6 +9,7 @@ import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
 import { FlowVariant } from '../flow'
 import { FlowClientEvtIn } from '../client/evt'
 import { FlowServerCtx } from '../server/ctx'
+import { RequestResponse } from '~/@/request-response/request-response'
 
 export type ModelClient = {
   request: RequestResponse<string, null>

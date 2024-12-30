@@ -1,4 +1,4 @@
-import { RequestResponse } from '~/@/core'
+import { RequestResponse } from '~/@/request-response/request-response'
 import { Posix } from '~/@/time/posix'
 import { Username } from '~/app/@/data'
 

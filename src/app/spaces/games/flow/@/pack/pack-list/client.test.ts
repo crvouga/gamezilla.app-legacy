@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, RequestResponse } from '~/@/core'
+import { Err, Ok } from '~/@/core'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client'
@@ -9,6 +9,7 @@ import { Pack } from '../pack'
 import { PackListClient } from './client'
 import { initClient, type ModelClient } from './types'
 import { Posix } from '~/@/time/posix'
+import { RequestResponse } from '~/@/request-response/request-response'
 
 const initial = {
   model: initClient

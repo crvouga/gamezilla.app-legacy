@@ -1,9 +1,10 @@
-import { isErr, RequestResponse, Result } from '~/@/core'
+import { isErr, Result } from '~/@/core'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { sendToServer, showErrSm } from '~/app/@/client'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import { Pack } from '../pack'
 import { ClientModule, initClient, type ModelClient, type MsgInCmdClient } from './types'
+import { RequestResponse } from '~/@/request-response/request-response'
 
 const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(

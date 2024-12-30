@@ -1,4 +1,4 @@
-import { Ok, RequestResponse, startedRequest } from '~/@/core'
+import { Ok } from '~/@/core'
 import { APP_SOUND, playSound, pushRoute, sendToServer } from '~/app/@/client'
 import type { SpaceId } from '~/app/@/data'
 import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
@@ -8,6 +8,7 @@ import type { SpaceCoreState } from '../core'
 import * as Spaces from '../core/client/spaces-core.client'
 import { StartSpaceClient } from '../start-space/client'
 import { ViewSpaceCard } from './space-card'
+import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 
 //
 //

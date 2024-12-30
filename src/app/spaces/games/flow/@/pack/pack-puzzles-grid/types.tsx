@@ -1,5 +1,5 @@
 import { NotAsked } from '~/@/core'
-import type { RequestResponse } from '~/@/core/request-response'
+import type { RequestResponse } from '~/@/request-response/request-response'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { AppServerModule } from '~/app/@/architecture/app-server'
 import { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'

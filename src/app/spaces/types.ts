@@ -1,4 +1,3 @@
-import type { RequestResponse } from '~/@/core'
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import type { Profile, SpaceId, UserId } from '~/app/@/data'
 import type { AppClientModule } from '../@/architecture/app-client'
@@ -13,6 +12,7 @@ import type * as Space from './core/space-core'
 import { GameName } from './games/@/game-name'
 import type * as Game from './games/types'
 import * as GamesTypes from './games/types'
+import { RequestResponse } from '~/@/request-response/request-response'
 
 //
 //

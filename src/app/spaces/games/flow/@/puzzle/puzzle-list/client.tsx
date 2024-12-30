@@ -3,13 +3,14 @@ import { sendToServer, showErrSm } from '~/app/@/client'
 import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
-import { RequestResponse, Result, isErr } from '~/@/core'
+import { Result, isErr } from '~/@/core'
 import type { Puzzle } from '../puzzle'
 import type { ClientModule, MsgInCmdClient } from './types'
 import { FlowVariantUI } from '../../flow/flow-variant'
 import { descend } from '~/@/array/sorting'
 import { TimeSpan } from '~/@/time/time-span'
 import { Posix } from '~/@/time/posix'
+import { RequestResponse } from '~/@/request-response/request-response'
 
 const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen({ model: input.model }, (model) => updatePuzzleList({ ...input, model }))

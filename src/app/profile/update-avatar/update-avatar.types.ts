@@ -1,4 +1,4 @@
-import { RequestResponse } from '~/@/core'
+import { RequestResponse } from '~/@/request-response/request-response'
 import { ProfileAvatarSeed, ProfileAvatarStyle } from '~/app/@/data'
 
 export type ModelClient = {

@@ -1,4 +1,4 @@
-import { RemoteResult, type RequestResponse } from '~/@/core'
+import { RemoteResult } from '~/@/core'
 import { p } from '~/@/core/parser'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'
@@ -12,6 +12,7 @@ import type { PackId } from '../pack-id'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client-evt'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { RequestResponse } from '~/@/request-response/request-response'
 
 //
 //

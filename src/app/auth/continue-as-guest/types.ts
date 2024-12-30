@@ -1,4 +1,5 @@
-import type { RequestResponse, Result } from '~/@/core'
+import type { Result } from '~/@/core'
+import { RequestResponse } from '~/@/request-response/request-response'
 import type { UserId } from '~/app/@/data'
 
 export type ModelClient = {

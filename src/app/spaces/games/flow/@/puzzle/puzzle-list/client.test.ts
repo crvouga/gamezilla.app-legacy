@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok, RequestResponse, isRequesting } from '~/@/core'
-
+import { Err, Ok } from '~/@/core'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
@@ -13,6 +12,7 @@ import { FlowVariant, FlowVariantDimensions } from '../../flow'
 import { Puzzle } from '../puzzle'
 import { PuzzleListClient } from './client'
 import { type ModelClient, initClient } from './types'
+import { isRequesting, RequestResponse } from '~/@/request-response/request-response'
 
 const initial = {
   model: initClient

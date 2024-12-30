@@ -1,4 +1,4 @@
-import { NotAsked, type RequestResponse } from '~/@/core'
+import { NotAsked } from '~/@/core'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client-cmd'
@@ -11,6 +11,7 @@ import type { ListPuzzlesInput, ListPuzzlesOutput } from '../puzzle-db'
 import type { PuzzleId } from '../puzzle-id'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client-ctx'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server-evt'
+import { RequestResponse } from '~/@/request-response/request-response'
 
 //
 //

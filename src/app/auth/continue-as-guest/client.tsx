@@ -1,8 +1,9 @@
-import { RequestResponse, isRequesting, NotAsked, isErr } from '~/@/core'
+import { NotAsked, isErr } from '~/@/core'
 import { APP_SOUND, playSound, sendToServer, showErrSm } from '~/app/@/client'
 import { Button, IconUserCircle } from '~/app/@/ui'
 import type { ClientModule } from '../types'
 import type { ModelClient } from './types'
+import { isRequesting, RequestResponse } from '~/@/request-response/request-response'
 
 const initModel: ModelClient = {
   guestRequest: NotAsked

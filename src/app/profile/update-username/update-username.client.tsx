@@ -1,4 +1,4 @@
-import { RequestResponse } from '~/@/core'
+import { RequestResponse } from '~/@/request-response/request-response'
 import { AnonymousClientCtx, AppClientCmd, AppClientCtx, ClientEvt, pushRoute, sendToServer } from '~/app/@/client'
 import { Button, TextField, TopBar } from '~/app/@/ui'
 import { ModelClient, MsgClient, MsgToServer } from './update-username.types'
