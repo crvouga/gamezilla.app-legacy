@@ -16,9 +16,8 @@ import { SpacesCoreClient } from './core/client'
 import { ISpacesCoreServer } from './core/server/interface'
 import { SpaceCore } from './core/space-core'
 import { SpaceEvent } from './core/space-event'
+import { GamesTypes } from './games'
 import { GameName } from './games/@/game-name'
-import type * as Game from './games/types'
-import * as GamesTypes from './games/types'
 
 //
 //
@@ -37,7 +36,7 @@ export type ModelServer = null
 
 export type ModelClient = SpacesCoreClient.Model & {
   games: {
-    [spaceId: SpaceId]: Game.ModelClient
+    [spaceId: SpaceId]: GamesTypes.ModelClient
   }
   modalPreviewUserId: UserId | null
   modal: null | 'user-preview' | 'users'
@@ -54,10 +53,10 @@ export type ModelClient = SpacesCoreClient.Model & {
 
 export type MsgServer =
   | { t: 'got-msg-core'; c: WithEventId<SpaceEvent> }
-  | { t: 'game'; spaceId: SpaceId; c: Game.MsgServer }
+  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgServer }
 
 export type MsgClient =
-  | { t: 'game'; spaceId: SpaceId; c: Game.MsgClient }
+  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgClient }
   | { t: 'time-passed' }
   | { t: 'clicked-go-home-button' }
   | { t: 'clicked-game-tile'; gameName: GameName }
@@ -94,7 +93,7 @@ export type MsgToClient = MsgToClientExtra &
     | {
         t: 'game'
         spaceId: SpaceId
-        c: Game.MsgToClient
+        c: GamesTypes.MsgToClient
       }
   )
 
@@ -119,7 +118,7 @@ export type MsgToServer = MsgToServerExtra &
     | {
         t: 'game'
         spaceId: SpaceId
-        c: Game.MsgToServer
+        c: GamesTypes.MsgToServer
       }
   )
 
