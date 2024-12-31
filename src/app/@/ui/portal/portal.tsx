@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+import { createPortal } from '~/@/vdom/render'
 import { VDomChildren } from '~/@/vdom/vdom'
 
 const getExit = (portalId: string): HTMLElement | null => {
