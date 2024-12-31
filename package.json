@@ -10,7 +10,7 @@
     "check-imports": "bun scripts/check-imports.ts",
     "cir-deps": "bun server:cir-deps && bun client:cir-deps",
     "client": "vite",
-    "client:build": "vite build",
+    "client:build": "vite build && cp -R public/* dist/",
     "client:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/main.client.tsx",
     "client:serve": "bun x serve -s dist -p 3001",
     "cloc": "bun x cloc src",
