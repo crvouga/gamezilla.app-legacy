@@ -175,27 +175,23 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         return
       }
 
-      switch (this.input.open) {
-        case true: {
-          this.content.classList.add('open')
-          this.root.classList.remove('pointer-events-none')
-          this.root.classList.add('darken-background')
-          this.backdrop.classList.add('visible')
-          this.root.tabIndex = 0
-          this.tabIndex = 0
-          this.ariaHidden = 'false'
-          break
-        }
-        case false: {
-          this.ariaHidden = 'true'
-          this.tabIndex = -1
-          this.root.tabIndex = -1
-          this.backdrop.classList.remove('visible')
-          this.content.classList.remove('open')
-          this.root.classList.remove('darken-background')
-          this.root.classList.add('pointer-events-none')
-          break
-        }
+      if (this.input.open) {
+        this.content.classList.add('open')
+        this.root.classList.remove('pointer-events-none')
+        this.root.classList.add('darken-background')
+        this.backdrop.classList.add('visible')
+        this.root.tabIndex = 0
+        this.tabIndex = 0
+        this.ariaHidden = 'false'
+      } else {
+        this.blur()
+        this.ariaHidden = 'true'
+        this.tabIndex = -1
+        this.root.tabIndex = -1
+        this.backdrop.classList.remove('visible')
+        this.content.classList.remove('open')
+        this.root.classList.remove('darken-background')
+        this.root.classList.add('pointer-events-none')
       }
 
       switch (this.input.position) {
