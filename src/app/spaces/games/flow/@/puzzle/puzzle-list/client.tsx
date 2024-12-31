@@ -156,13 +156,13 @@ const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Puzzle; 
     <button
       key={puzzle.id}
       type='button'
-      className='box-border flex w-full items-center gap-4 text-left hover:bg-neutral-900 active:opacity-50'
+      className='box-border flex w-full items-center text-left hover:bg-neutral-900 active:opacity-50'
       onClick={onClick}
     >
       <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>
         <FlowVariantUI.View disabled model={puzzle.flow} />
       </div>
-      <div className='overflow-hidden truncate pr-4'>
+      <div className='overflow-hidden truncate px-4'>
         <p className='flex-nowrap overflow-hidden truncate text-ellipsis whitespace-nowrap text-base font-bold'>
           {puzzle.name}
         </p>
