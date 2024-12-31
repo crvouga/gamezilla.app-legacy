@@ -80,94 +80,74 @@ export type Msg =
 export const update: Module['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromCmd({
-        ...input,
-        model
-      }),
-    (model) =>
-      updateFromEvent({
-        ...input,
-        model
-      })
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model })
   )
 }
 
-const updateFromMsg: Module['update'] = ({ msg, model }) => {
-  if (!msg) {
-    return { model }
+const updateFromMsg: Module['update'] = (input) => {
+  if (!input.msg) {
+    return { model: input.model }
   }
 
-  switch (msg.t) {
+  switch (input.msg.t) {
     case 'toggle-mute': {
-      if (model.muted) {
+      if (input.model.muted) {
         return {
-          model: {
-            ...model,
-            muted: false
-          },
+          model: { ...input.model, muted: false },
           msgCmd: [playSound(APP_SOUND.stateChangeUp)]
         }
       }
+
       return {
         model: {
-          ...model,
-          muted: !model.muted
+          ...input.model,
+          muted: !input.model.muted
         }
       }
     }
     case 'played-sound': {
-      return {
-        model
-      }
+      return { model: input.model }
     }
     case 'preloaded-sounds': {
-      return {
-        model
-      }
+      return { model: input.model }
     }
   }
 }
 
-const updateFromEvent: Module['update'] = ({ model, msgEvt }) => {
-  if (!msgEvt) {
-    return { model }
+const updateFromEvent: Module['update'] = (input) => {
+  if (!input.msgEvt) {
+    return { model: input.model }
   }
 
-  switch (msgEvt.t) {
+  switch (input.msgEvt.t) {
     case 'platform/document-visibility-changed': {
       return {
         model: {
-          ...model,
-          muted: msgEvt.state === 'hidden'
+          ...input.model,
+          muted: input.msgEvt.state === 'hidden'
         }
       }
     }
 
     default: {
-      return {
-        model
-      }
+      return { model: input.model }
     }
   }
 }
 
-export const updateFromCmd: Module['update'] = ({ model, msgCmd, ctx }) => {
-  if (!msgCmd) {
-    return { model }
+export const updateFromCmd: Module['update'] = (input) => {
+  if (!input.msgCmd) {
+    return { model: input.model }
   }
 
-  const soundCmd = msgCmd.c
+  const soundCmd = input.msgCmd.c
 
   switch (soundCmd.t) {
     case 'preload': {
       return {
-        model,
+        model: input.model,
         eff: async (dispatch) => {
           const preloaded = await preloadSoundsEffect(soundCmd.src)
           dispatch({
@@ -179,23 +159,18 @@ export const updateFromCmd: Module['update'] = ({ model, msgCmd, ctx }) => {
       }
     }
     case 'play': {
-      if (model.muted) {
-        return {
-          model
-        }
+      if (input.model.muted) {
+        return { model: input.model }
       }
 
-      if (ctx.documentVisibilityState === 'hidden') {
-        return {
-          model
-        }
+      if (input.ctx.documentVisibilityState === 'hidden') {
+        return { model: input.model }
       }
 
       return {
-        model,
-        eff: async (dispatch) => {
+        model: input.model,
+        async eff(dispatch) {
           const { delay } = soundCmd
-
           if (delay) {
             await new Promise((r) => setTimeout(r, TimeSpan.toMilliseconds(delay)))
           }
@@ -272,14 +247,17 @@ const nextUserGesture = async () => {
     document.body.addEventListener('touchstart', handler)
   })
 }
-
-let _audioContext: AudioContext
 let _didUserGesture = false
-const getAudioContext = async () => {
+export const _awaitUserGesture = async () => {
   if (!_didUserGesture) {
     await nextUserGesture()
     _didUserGesture = true
   }
+}
+
+let _audioContext: AudioContext
+const getAudioContext = async () => {
+  // await awaitUserGesture()
 
   if (!_audioContext) {
     _audioContext = new (MyAudioContext())()
