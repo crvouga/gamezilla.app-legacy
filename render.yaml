@@ -22,6 +22,10 @@ services:
       - key: VITE_SERVER_URL
         sync: true
 
+      - key: VITE_VDOM_IMPL
+        sync: true
+        value: 'inferno'
+
   - type: web
     name: server
     runtime: node

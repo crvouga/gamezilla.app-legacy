@@ -1,7 +1,6 @@
 import type { SessionId } from '~/app/@/data/session-id'
 import { IS_PROD } from '~/config-public'
 
-export const ORIGINS = IS_PROD ? 'https://gamezilla.app' : true
 export const SESSION_ID_COOKIE_NAME = 'gamezilla-app-session-id'
 const MAX_AGE = 31536000
 
