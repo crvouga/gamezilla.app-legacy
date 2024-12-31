@@ -162,9 +162,13 @@ const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Puzzle; 
       <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>
         <FlowVariantUI.View disabled model={puzzle.flow} />
       </div>
-      <div className='overflow-hidden'>
-        <p className='flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold'>{puzzle.name}</p>
-        <p className='text-secondary text-xs'>{TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}</p>
+      <div className='overflow-hidden truncate pr-4'>
+        <p className='flex-nowrap overflow-hidden truncate text-ellipsis whitespace-nowrap text-base font-bold'>
+          {puzzle.name}
+        </p>
+        <p className='text-secondary truncate text-xs'>
+          {TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}
+        </p>
       </div>
     </button>
   )
