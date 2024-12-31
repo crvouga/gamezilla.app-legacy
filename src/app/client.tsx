@@ -468,7 +468,7 @@ export const View = (input: { ctx: ClientCtx; model: ModelClient; dispatch: (msg
         transform: 'translate(-50%, -50%)'
       }}
     >
-      <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border'>
+      <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded min-[520px]:border'>
         <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
 
         <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
