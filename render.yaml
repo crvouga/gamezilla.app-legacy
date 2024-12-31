@@ -10,7 +10,6 @@ databases:
         description: everywhere
     postgresMajorVersion: '16'
     diskSizeGB: 15
-
 services:
   - type: web
     name: client
@@ -22,15 +21,12 @@ services:
       - type: rewrite
         source: /<*>
         destination: /index.html
-
     envVars:
       - key: VITE_SERVER_URL
         sync: true
-
       - key: VITE_VDOM_IMPL
         sync: true
         value: 'inferno'
-
   - type: web
     name: server
     runtime: node
@@ -50,5 +46,4 @@ services:
     region: oregon
     buildCommand: bun server:build
     startCommand: bun server
-
 version: '1'
