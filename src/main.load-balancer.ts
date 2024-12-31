@@ -1,7 +1,7 @@
 import { WebServer } from '~/@/web-server'
 import { Logger } from './@/logger'
-import { SERVER_PORT } from './config-public'
 import { LoadBalancer } from './load-balancer'
+import { SERVER_PORT } from './config-private'
 
 const main = async () => {
   const logger = Logger({

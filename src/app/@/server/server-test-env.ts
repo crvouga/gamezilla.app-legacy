@@ -21,7 +21,7 @@ export type ITestEnv = {
 }
 
 export const AppServerTestEnv = async (): Promise<ITestEnv> => {
-  if (process.env.IS_INTEGRATION_TEST !== 'true') {
+  if (import.meta.env.IS_INTEGRATION_TEST !== 'true') {
     return {
       t: 'unit',
       dbConnKv: await DbConnKv({ t: 'hash-map' }),

@@ -2,7 +2,7 @@ import { DebuggerReduxDevTools } from './@/program/debugger'
 import { Program } from './@/program/program'
 import { Render } from './@/vdom/render'
 import * as AppClient from './app/client'
-import { IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from './config-public'
+import { IS_PROD, SERVER_URL, TRANSPORT_IMPL, VDOM_IMPL } from './config-public'
 import './main.css'
 
 const main = async () => {
@@ -36,7 +36,12 @@ const main = async () => {
 
   await ctx.transport.start()
 
-  console.log({ IS_PROD, TRANSPORT_IMPL, VDOM_IMPL })
+  console.log({
+    IS_PROD,
+    TRANSPORT_IMPL,
+    VDOM_IMPL,
+    SERVER_URL
+  })
 }
 
 declare global {

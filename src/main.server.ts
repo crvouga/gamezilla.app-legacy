@@ -2,9 +2,10 @@ import { FileSystem } from '~/@/file-system'
 import { withRPC } from '~/@/rpc/rpc'
 import { withSinglePageApp } from '~/@/web-server/with-single-page-app'
 import { AppServer } from '~/app/server'
-import { IS_PROD, SERVER_IMPL, SERVER_PORT, TRANSPORT_IMPL } from '~/config-public'
+import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config-public'
 import { ProgramImpure } from './@/program/program-impure'
 import { AppTypes } from './app'
+import { SERVER_PORT } from './config-private'
 
 const main = async () => {
   const ctx = await AppServer.initCtx()
@@ -37,7 +38,8 @@ const main = async () => {
   ctx.logger.info({
     IS_PROD,
     SERVER_IMPL,
-    TRANSPORT_IMPL
+    TRANSPORT_IMPL,
+    SERVER_PORT
   })
 }
 

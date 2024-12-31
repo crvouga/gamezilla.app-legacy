@@ -28,17 +28,5 @@ const vDomPlugin = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), vDomPlugin()],
-  define: {
-    'process.env': process.env
-  },
-  server: {
-    hmr: false
-  },
-  root: 'src',
-  build: {
-    outDir: '../dist',
-    emptyOutDir: true
-  },
-  publicDir: 'public' // This is the default, but ensure it's correctly set
+  plugins: [tsconfigPaths(), vDomPlugin()]
 })

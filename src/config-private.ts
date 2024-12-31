@@ -1,20 +1,10 @@
-import { IS_PROD } from './config-public'
-
-const DATABASE_URL_LOCAL = 'postgresql://gamezilla-app:gamezilla-app@localhost:5433/gamezilla-app?sslmode=disable'
-
-export const DATABASE_URL = IS_PROD ? import.meta.env.DATABASE_URL : DATABASE_URL_LOCAL
+export const DATABASE_URL = import.meta.env.DATABASE_URL
 
 if (!DATABASE_URL) {
   throw new Error('DATABASE_URL is not set')
 }
 
-const REDIS_URL_LOCAL = 'redis://localhost:6379'
-
-export const REDIS_URL = IS_PROD ? import.meta.env.REDIS_URL : REDIS_URL_LOCAL
-
-if (!REDIS_URL) {
-  throw new Error('REDIS_URL is not set')
-}
+export const REDIS_URL = 'redis://localhost:6379'
 
 export const TWILIO_ACCOUNT_SID = import.meta.env.TWILIO_ACCOUNT_SID
 
@@ -33,3 +23,11 @@ export const TWILIO_MESSAGING_SERVICE_SID = import.meta.env.TWILIO_MESSAGING_SER
 if (!TWILIO_MESSAGING_SERVICE_SID) {
   throw new Error('TWILIO_MESSAGING_SERVICE_SID is not set')
 }
+
+const PORT = import.meta.env?.PORT
+
+if (!PORT) {
+  throw new Error('PORT is not set')
+}
+
+export const SERVER_PORT = Number(PORT)
