@@ -1,11 +1,12 @@
 import type { Server, ServerWebSocket } from 'bun'
-import type { WebServerBun } from '~/@/web-server/impl-bun'
-import { SessionId } from '~/app/@/data/session-id'
-import { ClientId } from '~/app/@/data/client-id'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
-import { SESSION_ID_COOKIE_NAME, toSetSessionCookie, WEB_SOCKET_ENDPOINT } from '../session-id-cookie'
+import type { WebServerBun } from '~/@/web-server/impl-bun'
+import { ClientId } from '~/app/@/data/client-id'
+import { SessionId } from '~/app/@/data/session-id'
+import { SessionIdCookie } from '../session-id-cookie'
+import { WEB_SOCKET_ENDPOINT } from '../shared'
 import { type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
 import { initServerTransport, type IServerTransport } from './interface'
 
@@ -20,6 +21,7 @@ export type Config = {
   dbConnSql: IDbConnSql
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
+  isProd: boolean
 }
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
@@ -119,16 +121,13 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
     switch (url.pathname) {
       case WEB_SOCKET_ENDPOINT: {
-        const maybeSessionIdCookie = request.headers
-          ?.get('cookie')
-          ?.split(';')
-          ?.map((cookie) => cookie.trim())
-          ?.find((cookie) => cookie.startsWith(`${SESSION_ID_COOKIE_NAME}=`))
-          ?.split('=')
+        const cookies = request.headers?.get('cookie')?.split(';')
 
-        const maybeSessionId = maybeSessionIdCookie ? maybeSessionIdCookie[1] : null
+        const maybeSessionId = SessionIdCookie.fromCookies({
+          cookies: cookies?.join(';') ?? ''
+        })
 
-        const sessionId = SessionId.is(maybeSessionId) ? maybeSessionId : SessionId.generate()
+        const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
 
         const clientId = ClientId.generate()
 
@@ -140,7 +139,10 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
         const headers: Record<string, string> = maybeSessionId
           ? {}
           : {
-              'Set-Cookie': toSetSessionCookie(sessionId)
+              'Set-Cookie': SessionIdCookie.toSetCookie({
+                sessionId,
+                isProd: config.isProd
+              })
             }
 
         logger.debug(

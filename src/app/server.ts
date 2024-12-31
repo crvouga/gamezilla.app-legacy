@@ -85,7 +85,8 @@ const initCtx = async (): Promise<ServerCtx> => {
           dbConnSql,
           webServer,
           logger,
-          pubSubTopicBased: pubSub
+          pubSubTopicBased: pubSub,
+          isProd: IS_PROD
         }
       : {
           t: 'noop',

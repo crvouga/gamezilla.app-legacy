@@ -1,6 +1,4 @@
-import { FileSystem } from '~/@/file-system'
 import { withRPC } from '~/@/rpc/rpc'
-import { withSinglePageApp } from '~/@/web-server/with-single-page-app'
 import { AppServer } from '~/app/server'
 import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config-public'
 import { ProgramImpure } from './@/program/program-impure'
@@ -26,13 +24,6 @@ const main = async () => {
     webServer: ctx.webServer,
     contract: AppTypes.rpcContract,
     handlers: rpc
-  })
-
-  withSinglePageApp({
-    webServer: ctx.webServer,
-    directory: 'dist',
-    fileSystem: FileSystem({ t: 'bun' }),
-    indexFile: 'index.html'
   })
 
   ctx.logger.info({

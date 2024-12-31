@@ -1,4 +1,4 @@
-import { WEB_SOCKET_ENDPOINT } from '../session-id-cookie'
+import { WEB_SOCKET_ENDPOINT } from '../shared'
 import { type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
 import {
   initClientTransport,
