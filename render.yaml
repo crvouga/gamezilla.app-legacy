@@ -18,6 +18,11 @@ services:
     repo: https://github.com/crvouga/gamezilla.app
     buildCommand: bun client:build
     staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /<*>
+        destination: /index.html
+
     envVars:
       - key: VITE_SERVER_URL
         sync: true
