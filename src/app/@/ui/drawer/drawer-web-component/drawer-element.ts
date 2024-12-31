@@ -184,7 +184,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         this.tabIndex = 0
         this.ariaHidden = 'false'
       } else {
-        this.blur()
+        this.blur() // this prevents console error when setting ariaHidden to true
         this.ariaHidden = 'true'
         this.tabIndex = -1
         this.root.tabIndex = -1
