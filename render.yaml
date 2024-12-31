@@ -20,7 +20,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_SERVER_URL
-        sync: false
+        sync: true
 
   - type: web
     name: server
