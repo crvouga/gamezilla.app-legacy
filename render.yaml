@@ -23,7 +23,7 @@ services:
         fromService:
           type: web
           name: server
-          property: url
+          property: host
 
   - type: web
     name: server
