@@ -31,11 +31,7 @@ const Fixture = async () => {
       model: init
     }
     for (const input of inputs) {
-      output = Sound.update({
-        ctx: input.ctx ?? f.ctx,
-        model: output.model,
-        ...input
-      })
+      output = Sound.update({ ctx: input.ctx ?? f.ctx, model: output.model, ...input })
     }
 
     return output

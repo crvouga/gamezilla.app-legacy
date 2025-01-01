@@ -40,14 +40,12 @@ type Module = AppClientModule<{
 
 export type Model = {
   muted: boolean
-  isDocumentVisible: boolean
 }
 
 export const init: Module['init'] = () => {
   return {
     model: {
-      muted: false,
-      isDocumentVisible: false
+      muted: false
     }
   }
 }
@@ -107,9 +105,11 @@ const updateFromMsg: Module['update'] = (input) => {
         }
       }
     }
+
     case 'played-sound': {
       return { model: input.model }
     }
+
     case 'preloaded-sounds': {
       return { model: input.model }
     }
@@ -148,13 +148,9 @@ export const updateFromCmd: Module['update'] = (input) => {
     case 'preload': {
       return {
         model: input.model,
-        eff: async (dispatch) => {
+        async eff(dispatch) {
           const preloaded = await preloadSoundsEffect(soundCmd.src)
-          dispatch({
-            t: 'preloaded-sounds',
-            src: soundCmd.src,
-            result: preloaded
-          })
+          dispatch({ t: 'preloaded-sounds', src: soundCmd.src, result: preloaded })
         }
       }
     }
@@ -175,11 +171,7 @@ export const updateFromCmd: Module['update'] = (input) => {
             await new Promise((r) => setTimeout(r, TimeSpan.toMilliseconds(delay)))
           }
           const played = await playSoundEffect(soundCmd.src, soundCmd.volume ?? UnitInterval.init(1))
-          dispatch({
-            t: 'played-sound',
-            src: soundCmd.src,
-            result: played
-          })
+          dispatch({ t: 'played-sound', src: soundCmd.src, result: played })
         }
       }
     }
@@ -230,7 +222,7 @@ export const ViewStatusBarDrawer = (input: {
 const MyAudioContext = (): typeof window.AudioContext => {
   return (
     window.AudioContext ||
-    // @ts-ignore
+    // @ts-expect-error - webkitAudioContext is not in the types
     window.webkitAudioContext
   )
 }
@@ -243,21 +235,24 @@ const nextUserGesture = async () => {
       document.body.removeEventListener('touchstart', handler)
     }
 
-    document.body.addEventListener('click', handler)
-    document.body.addEventListener('touchstart', handler)
+    document.body.addEventListener('click', handler, { once: true })
+    document.body.addEventListener('touchstart', handler, { once: true })
   })
 }
+
 let _didUserGesture = false
-export const _awaitUserGesture = async () => {
+const awaitUserGesture = async () => {
   if (!_didUserGesture) {
     await nextUserGesture()
     _didUserGesture = true
+    return false
   }
+  return true
 }
 
 let _audioContext: AudioContext
-const getAudioContext = async () => {
-  // await awaitUserGesture()
+const getAudioContext = async (): Promise<AudioContext | null> => {
+  await awaitUserGesture()
 
   if (!_audioContext) {
     _audioContext = new (MyAudioContext())()
@@ -277,18 +272,24 @@ const preloadSoundEffect = async (src: string) => {
   const response = await fetch(src)
   const arrayBuffer = await response.arrayBuffer()
   const audioContext = await getAudioContext()
+  if (!audioContext) {
+    return Err('No audio context')
+  }
   const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
   audioBuffers.set(src, audioBuffer)
   return Ok(null)
 }
 
-const playSoundEffect = async (src: string, volume: number): Promise<Result<string, null>> => {
+const playSoundEffect = async (src: string, volume: UnitInterval): Promise<Result<string, null>> => {
   const audioBuffer = audioBuffers.get(src)
 
   if (!audioBuffer) {
     return Err(`Sound not loaded. src: ${src}`)
   }
   const audioContext = await getAudioContext()
+  if (!audioContext) {
+    return Err('No audio context')
+  }
   const sourceNode = audioContext.createBufferSource()
   sourceNode.buffer = audioBuffer
   const gainNode = audioContext.createGain()
