@@ -4,7 +4,7 @@ import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from '~/app/@
 import { Actions, ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
-import { ProfileCard } from '../../../@/game/profile-card'
+import { ProfileListItem } from '../../../@/game/profile-list-item'
 import { FlowVariantUI } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
@@ -334,7 +334,7 @@ const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
   return (
     <LayoutGame ctx={input.ctx} isSpectating>
       <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll'>
-        <ProfileCard
+        <ProfileListItem
           ctx={input.ctx}
           profile={input.ctx.profiles[input.ctx.space.hostId]}
           subtitle={input.ctx.t('app.editor')}

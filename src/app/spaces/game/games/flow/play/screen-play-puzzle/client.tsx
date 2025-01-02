@@ -4,7 +4,7 @@ import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from '~/app/@/ui'
 import { Actions } from '~/app/@/ui/actions'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
-import { ProfileCard } from '../../../@/game/profile-card'
+import { ProfileListItem } from '../../../@/game/profile-list-item'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { ClientModule } from '../types'
@@ -90,9 +90,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
       const output = FlowPlay.update({
         msg: input.msgCore.c,
         model: flowPlay,
-        ctx: FlowPlay.initCtx({
-          flowPuzzle: input.modelCore.screen.puzzleResult.c
-        })
+        ctx: FlowPlay.initCtx({ flowPuzzle: input.modelCore.screen.puzzleResult.c })
       })
 
       return {
@@ -135,7 +133,7 @@ const View: ClientModule['View'] = (input) => {
         <div className='relative flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
           {flowPuzzle.t === 'got' && (
             <>
-              <ProfileCard
+              <ProfileListItem
                 ctx={input.ctx}
                 profile={input.ctx.profiles[input.ctx.space.hostId]}
                 subtitle={input.ctx.t('game.player')}
