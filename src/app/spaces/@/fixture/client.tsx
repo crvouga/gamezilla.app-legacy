@@ -559,16 +559,6 @@ export const clickedUser = (ctx: AppClientCtx, userId: UserId) => (model: Spaces
   })
 }
 
-export const loggedOut = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
-  return SpacesClient.update({
-    ctx,
-    model,
-    msgEvt: {
-      t: 'auth-evt.unauthenticated'
-    }
-  })
-}
-
 export const clickedGoHomeButton = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient) => {
   return SpacesClient.update({
     ctx,

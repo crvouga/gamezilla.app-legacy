@@ -1,58 +1,85 @@
 import { describe, expect, it } from 'bun:test'
-import { AppClientModule } from '~/app/@/architecture/app-client'
+import { didPlaySound } from '~/app/@/client/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { exitGame } from '~/app/spaces/@/space-client/cmd'
-import { Ctx, clickedGameTile, clickedStartSpaceButton, init } from '../@/fixture/client'
-import { SpaceClientModule } from '../@/architecture/space-client'
+import { FixtureSpacesClient } from '../@/fixture/client'
 import { SpacesCoreClient } from '../core/client'
-import { SpacesClient } from '../client'
-import { didPlaySound } from '~/app/@/client/cmd'
+import { GameName } from './games/@/game-name'
+import { NonEmpty } from '~/@/array/non-empty'
+
+const Fixture = async () => {
+  const f = await FixtureSpacesClient()
+
+  return {
+    ...f
+  }
+}
 
 describe(import.meta.file, () => {
-  it('should play a sound after inputting a game', () => {
-    const ctx = Ctx()
+  it('should play a sound after inputting a game', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-    const started = AppClientModule.andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
-    const output = AppClientModule.andThen(
+    const output = f.update(f.initial, [
       {
-        model: started.model
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
       },
-      clickedGameTile(ctx, 'connect-four')
-    )
+      {
+        msg: {
+          t: 'clicked-game-tile',
+          gameName: 'flow'
+        }
+      }
+    ])
     expect(didPlaySound(output)).toBe(true)
   })
 
-  it('should be able to start game', () => {
-    const ctx = Ctx()
+  it('should be able to start game', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-
-    const output = SpaceClientModule.andThen(
-      init(ctx),
-      clickedStartSpaceButton(ctx, spaceId),
-      clickedGameTile(ctx, 'connect-four')
-    )
-
+    const gameNameExpected: GameName = 'flow'
+    const output = f.update(f.initial, [
+      {
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-game-tile',
+          gameName: gameNameExpected
+        }
+      }
+    ])
     const gameName = SpacesCoreClient.toSpaceStarted(output.model, spaceId)?.game?.t
-    expect(gameName).toBe('connect-four')
+    expect(gameName).toBe(gameNameExpected)
   })
 
-  it('should exit game for corresponding cmd', () => {
-    const ctx = Ctx()
+  it('should exit game for corresponding cmd', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
+    const outputs = f.updates(f.initial, [
+      {
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-game-tile',
+          gameName: 'flow'
+        }
+      },
+      {
+        msgCmd: exitGame()
+      }
+    ])
 
-    const output = SpaceClientModule.andThen(
-      init(ctx),
-      clickedStartSpaceButton(ctx, spaceId),
-      clickedGameTile(ctx, 'connect-four'),
-      (model) =>
-        SpacesClient.updateLoop({
-          model,
-          ctx,
-          msgCmd: exitGame()
-        })
-    )
-
-    const gameName = SpacesCoreClient.toSpaceStarted(output.model, spaceId)?.game?.t ?? null
+    const gameName = SpacesCoreClient.toSpaceStarted(NonEmpty.last(outputs).model, spaceId)?.game?.t ?? null
 
     expect(gameName).toBeNull()
   })

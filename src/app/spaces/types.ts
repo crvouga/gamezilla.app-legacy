@@ -18,6 +18,7 @@ import { SpaceCore } from './core/space-core'
 import { SpaceEvent } from './core/space-event'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
+import { SpaceClientCmd } from './@/space-client/cmd'
 
 //
 //
@@ -145,7 +146,10 @@ export type MsgToServerExtra = {
 
 export type ClientModule = AppClientModule<{
   Ctx: AnonymousClientCtx | AppClientCtx
-  MsgCmdIn: never
+  MsgCmdIn: SpaceClientCmd<{
+    MsgToServer: MsgToServer
+    MsgClient: MsgClient
+  }>
   MsgEvtIn: ClientEvt
   Model: ModelClient
   Msg: MsgClient

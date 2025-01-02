@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
     expect(hasExactlyOne(updated.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(someProfiles)))).toBe(true)
   })
 
-  it('should merge space recieved from server', () => {
+  it('should merge space received from server', () => {
     const someSpace = makeSpace({
       spaceId: SpaceId.generate(),
       hostId: UserId.generate()
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
     expect(listed.some((space) => SpaceCore.isEqual(space, someSpace))).toBe(true)
   })
 
-  it("should merge current user's space when recieved from server", () => {
+  it("should merge current user's space when received from server", () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
