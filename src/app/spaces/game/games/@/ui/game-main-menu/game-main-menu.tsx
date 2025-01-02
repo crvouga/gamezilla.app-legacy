@@ -22,11 +22,11 @@ import { ViewUsersInSpaceList } from '../users-in-space-list'
 
 export type Msg =
   | {
-      t: 'game-main-menu/clicked-open-user-details-button'
+      t: 'game-main-menu.clicked-open-user-details-button'
       userId: UserId
     }
   | {
-      t: 'game-main-menu/clicked-exit-game-button'
+      t: 'game-main-menu.clicked-exit-game-button'
     }
 
 export const update = <TModel, TMsg, T extends SpaceClientCmdTypes>({
@@ -44,14 +44,14 @@ export const update = <TModel, TMsg, T extends SpaceClientCmdTypes>({
   }
 
   switch (msg?.t) {
-    case 'game-main-menu/clicked-exit-game-button': {
+    case 'game-main-menu.clicked-exit-game-button': {
       return {
         model,
         msgCmd: [exitGame()]
       }
     }
 
-    case 'game-main-menu/clicked-open-user-details-button': {
+    case 'game-main-menu.clicked-open-user-details-button': {
       return {
         model,
         msgCmd: [openUserDetails(msg.userId)]
@@ -107,7 +107,7 @@ export const View = ({
           <ViewUsersInSpaceList
             onOpenUserDetails={(userId) =>
               dispatch({
-                t: 'game-main-menu/clicked-open-user-details-button',
+                t: 'game-main-menu.clicked-open-user-details-button',
                 userId
               })
             }

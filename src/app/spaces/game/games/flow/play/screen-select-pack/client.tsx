@@ -70,7 +70,7 @@ const View: ClientModule['View'] = (input) => {
           <ViewUsersInSpaceList
             onOpenUserDetails={(userId) =>
               input.dispatch({
-                t: 'game-main-menu/clicked-open-user-details-button',
+                t: 'game-main-menu.clicked-open-user-details-button',
                 userId
               })
             }

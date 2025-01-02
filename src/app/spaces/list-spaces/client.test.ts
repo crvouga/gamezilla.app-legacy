@@ -273,7 +273,7 @@ describe(import.meta.file, () => {
     const listedSpace = EventSourced.startFromLatestSnapshot(space)
     const updated = f.update(f.initial, [
       { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
-      { msg: { t: 'game', c: { t: 'flow', c: { t: 'game-main-menu/clicked-exit-game-button' } }, spaceId } },
+      { msg: { t: 'game', c: { t: 'flow', c: { t: 'game-main-menu.clicked-exit-game-button' } }, spaceId } },
       { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
       { msgServer: { t: 'current-user-space', currentUser: f.currentUser, space: listedSpace } }
     ])

@@ -430,7 +430,7 @@ const View: ClientModule['View'] = (input) => {
           ctx={ctx}
           title={ctx.t('flow')}
           dispatch={input.dispatch}
-          onBack={() => input.dispatch({ t: 'game-main-menu/clicked-exit-game-button' })}
+          onBack={() => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' })}
           buttons={[
             {
               renderIcon: (input) => <IconGamepad {...input} />,
