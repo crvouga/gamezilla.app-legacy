@@ -84,7 +84,7 @@ const updatePeopleModals: SpaceClientModule['update'] = ({ msg, model }) => {
 
 const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model }) => {
   switch (msgCmd?.t) {
-    case 'space/open-user-details': {
+    case 'space-cmd.open-user-details': {
       return {
         model: {
           ...model,

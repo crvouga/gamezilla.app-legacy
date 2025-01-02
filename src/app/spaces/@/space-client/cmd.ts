@@ -8,15 +8,15 @@ export type SpaceClientCmdTypes = {
 
 export type SpaceClientCmd<T extends SpaceClientCmdTypes> =
   | AppClientCmd<T>
-  | { t: 'space/exit-game' }
-  | { t: 'space/open-user-details'; userId: UserId }
+  | { t: 'space-cmd.exit-game' }
+  | { t: 'space-cmd.open-user-details'; userId: UserId }
 
 export const exitGame = <T extends SpaceClientCmdTypes>(): SpaceClientCmd<T> => {
-  return { t: 'space/exit-game' }
+  return { t: 'space-cmd.exit-game' }
 }
 
 export const openUserDetails = <T extends SpaceClientCmdTypes>(userId: UserId): SpaceClientCmd<T> => {
-  return { t: 'space/open-user-details', userId }
+  return { t: 'space-cmd.open-user-details', userId }
 }
 
 const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
@@ -29,8 +29,8 @@ const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
   return (
     cmds?.map((msgCmd) => {
       switch (msgCmd.t) {
-        case 'space/open-user-details':
-        case 'space/exit-game': {
+        case 'space-cmd.open-user-details':
+        case 'space-cmd.exit-game': {
           return msgCmd
         }
         default: {
@@ -49,8 +49,8 @@ const map = <A extends SpaceClientCmdTypes, B extends SpaceClientCmdTypes>(
   return (
     msgCmd?.flatMap((msgCmd): SpaceClientCmd<B>[] => {
       switch (msgCmd.t) {
-        case 'space/open-user-details':
-        case 'space/exit-game': {
+        case 'space-cmd.open-user-details':
+        case 'space-cmd.exit-game': {
           return [msgCmd]
         }
         default: {
@@ -67,8 +67,8 @@ const toClientCmd = <T extends SpaceClientCmdTypes>(
   return (
     msgCmd?.flatMap((msgCmd) => {
       switch (msgCmd.t) {
-        case 'space/open-user-details':
-        case 'space/exit-game': {
+        case 'space-cmd.open-user-details':
+        case 'space-cmd.exit-game': {
           return []
         }
         default: {
@@ -85,8 +85,8 @@ const toSpaceClientCmd = <T extends SpaceClientCmdTypes>(
   return (
     msgCmd?.flatMap((msgCmd) => {
       switch (msgCmd.t) {
-        case 'space/open-user-details':
-        case 'space/exit-game': {
+        case 'space-cmd.open-user-details':
+        case 'space-cmd.exit-game': {
           return [msgCmd]
         }
         default: {
