@@ -6,20 +6,19 @@ import { SpacesCoreClient } from '../../core/client'
 import { GameCoverArt } from '../../game/games/cover-art'
 import type { ModelClient, MsgClient } from '../../types'
 
-const update: SpaceClientModule['update'] = ({ model, msg, ctx }) => {
-  switch (msg?.t) {
+const update: SpaceClientModule['update'] = (input) => {
+  switch (input.msg?.t) {
     case 'clicked-current-space-bottom-bar': {
-      const { currentUserId } = ctx
-      const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, currentUserId)
+      const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
       if (!currentUsersSpaceId) {
         return {
-          model
+          model: input.model
         }
       }
 
       return {
-        model,
+        model: input.model,
         msgCmd: [
           playSound(APP_SOUND.navForwardMin),
           pushRoute({
@@ -33,34 +32,26 @@ const update: SpaceClientModule['update'] = ({ model, msg, ctx }) => {
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
 }
 
-const View = ({
-  ctx,
-  model,
-  dispatch
-}: {
-  ctx: AppClientCtx
-  model: ModelClient
-  dispatch: (msg: MsgClient) => void
-}) => {
-  const userSpaceId = model.indexSpaceIdByUserId[ctx.currentUserId]
+const View = (input: { ctx: AppClientCtx; model: ModelClient; dispatch: (msg: MsgClient) => void }) => {
+  const userSpaceId = input.model.indexSpaceIdByUserId[input.ctx.currentUserId]
 
   if (!userSpaceId) {
     return null
   }
 
-  const space = SpacesCoreClient.toSpaceStarted(model, userSpaceId)
+  const space = SpacesCoreClient.toSpaceStarted(input.model, userSpaceId)
 
   if (!space) {
     return null
   }
 
-  const hostProfile = ctx.profiles[space.hostId]
+  const hostProfile = input.ctx.profiles[space.hostId]
 
   const userCount = Object.values(space.users).length
 
@@ -71,17 +62,13 @@ const View = ({
         <button
           type='button'
           className='flex flex-1 items-center gap-3 overflow-hidden'
-          onClick={() =>
-            dispatch({
-              t: 'clicked-current-space-bottom-bar'
-            })
-          }
+          onClick={() => input.dispatch({ t: 'clicked-current-space-bottom-bar' })}
         >
           <div className='p-2'>
             {!space.game ? (
-              <Avatar src={hostProfile?.avatarUrl} alt='Host Avatar' className='h-14 w-14' />
+              <Avatar src={hostProfile?.avatarUrl} alt='Host Avatar' className='size-14' />
             ) : (
-              <div className='h-14 w-14 overflow-hidden rounded border'>
+              <div className='size-14 overflow-hidden rounded border'>
                 <GameCoverArt gameName={space.game.t} />
               </div>
             )}
@@ -93,28 +80,28 @@ const View = ({
               className='truncate text-left text-lg font-normal'
               text={
                 hostProfile
-                  ? ctx.t('spaces.current-space', {
+                  ? input.ctx.t('spaces.current-space', {
                       hostUsername: hostProfile.username
                     })
-                  : ctx.t('spaces.space')
+                  : input.ctx.t('spaces.space')
               }
             />
             <Typography
               variant='subtitle'
               className='truncate text-left'
-              text={ctx.t('space-card.people-count', userCount)}
+              text={input.ctx.t('space-card.people-count', userCount)}
             />
           </div>
         </button>
 
         <div className='pr-4'>
-          {ctx.currentUserId === space.hostId && (
+          {input.ctx.currentUserId === space.hostId && (
             <Button
               color='danger'
               variant='text'
-              text={ctx.t('spaces.end')}
+              text={input.ctx.t('spaces.end')}
               onClick={() =>
-                dispatch({
+                input.dispatch({
                   t: 'clicked-end-space-button',
                   spaceId: userSpaceId
                 })
@@ -123,13 +110,13 @@ const View = ({
             />
           )}
 
-          {ctx.currentUserId !== space.hostId && (
+          {input.ctx.currentUserId !== space.hostId && (
             <Button
               color='danger'
               variant='text'
-              text={ctx.t('spaces.leave')}
+              text={input.ctx.t('spaces.leave')}
               onClick={() =>
-                dispatch({
+                input.dispatch({
                   t: 'clicked-leave-space-button',
                   spaceId: userSpaceId
                 })
