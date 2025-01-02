@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from '~/app/@/ui'
-import { Actions, ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { ProfileListItem } from '../../../@/game/profile-list-item'
@@ -215,7 +215,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
   }
 
   const more = (
-    <ViewBottomButtonBarAction
+    <Actions.Button
       icon={(input) => <IconEllipsisVertical {...input} />}
       label={input.ctx.t('app.more')}
       onClick={() =>
@@ -243,10 +243,10 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
             />
           </div>
 
-          <ViewBottomButtonBar>
+          <Actions.Root>
             <SaveChangesClient.ViewActionButtons {...input} model={model} />
 
-            <ViewBottomButtonBarAction
+            <Actions.Button
               icon={(input) => <IconPlay {...input} />}
               label={input.ctx.t('flow.play-mode')}
               classNames={{
@@ -259,7 +259,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
               }
             />
             {more}
-          </ViewBottomButtonBar>
+          </Actions.Root>
         </div>
       )
     }
@@ -303,10 +303,10 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
             }
           />
 
-          <ViewBottomButtonBar>
+          <Actions.Root>
             <SaveChangesClient.ViewActionButtons {...input} model={model} />
 
-            <ViewBottomButtonBarAction
+            <Actions.Button
               icon={(input) => <IconPen {...input} />}
               label={input.ctx.t('flow.edit-mode')}
               classNames={{
@@ -319,7 +319,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
               }
             />
             {more}
-          </ViewBottomButtonBar>
+          </Actions.Root>
         </div>
       )
     }

@@ -1,7 +1,7 @@
 import { APP_SOUND, copyToClipboard, playSound, showToast } from '~/app/@/client/cmd'
 import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconCopy } from '~/app/@/ui'
-import type { ActionInput } from '~/app/@/ui/actions'
+import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'
 import type { ClientModule, MsgClient } from '../../types'
@@ -65,7 +65,7 @@ export const viewButtonAction = ({
 }: {
   ctx: AppClientCtx
   dispatch: (m: MsgClient) => void
-}): ActionInput | null => {
+}): BottomButtonInput | null => {
   if (ctx.currentUserRole !== 'super') {
     return null
   }

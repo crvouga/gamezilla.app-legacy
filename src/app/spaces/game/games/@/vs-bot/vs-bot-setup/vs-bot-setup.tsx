@@ -80,7 +80,7 @@ type PlayerProp =
       onStopPlaying: () => void
     }
 
-export type VsBotSetupinput = VsBotInput & {
+export type VsBotSetupInput = VsBotInput & {
   human: {
     player: PlayerType
     userId: UserId | null
@@ -88,7 +88,7 @@ export type VsBotSetupinput = VsBotInput & {
   canStartGame: boolean
 }
 
-type Input = VsBotSetupinput & { model: Model; dispatch: (m: Msg) => void }
+type Input = VsBotSetupInput & { model: Model; dispatch: (m: Msg) => void }
 
 export const View = ({
   dispatch,

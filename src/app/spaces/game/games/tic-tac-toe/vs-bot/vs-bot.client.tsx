@@ -1,7 +1,7 @@
 import type { Eff } from '~/@/eff'
 import { Posix } from '~/@/time/posix'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { IconBotCute, IconBotLevel1, IconBotScary, VsBotGame, VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { type BotLevel, allBotLevels, toStatus, toTurn } from '../@/tic-tic-toe/tic-tac-toe'
@@ -143,7 +143,7 @@ export const View = (input: {
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const vsBotinput: VsBotSetup.VsBotSetupinput = {
+  const vsBotinput: VsBotSetup.VsBotSetupInput = {
     bot: {
       label: input.ctx.t('tic-tac-toe.bot-level', input.model.botLevel),
       renderIcon: (iconinput) =>
@@ -227,7 +227,7 @@ export const View = (input: {
     )
   }
 
-  const vsBotGameinput: VsBotGame.VsBotGameinput = {
+  const vsBotGameInput: VsBotGame.VsBotGameInput = {
     ...vsBotinput,
     human: {
       ...vsBotinput.human,
@@ -243,7 +243,7 @@ export const View = (input: {
   return (
     <div className='flex h-full w-full flex-col'>
       <div className='flex flex-1 flex-col items-center justify-center'>
-        <VsBotGame.VsBotPlayerSection {...vsBotGameinput} />
+        <VsBotGame.VsBotPlayerSection {...vsBotGameInput} />
 
         <LoadingBar
           className='w-full'
@@ -262,8 +262,8 @@ export const View = (input: {
         />
       </div>
 
-      <ViewBottomButtonBar>
-        <ViewBottomButtonBarAction
+      <Actions.Root>
+        <Actions.Button
           icon={(input) => <IconArrowLeftOnRect {...input} />}
           label={input.ctx.t('app.exit')}
           onClick={() =>
@@ -272,7 +272,7 @@ export const View = (input: {
             })
           }
         />
-        <ViewBottomButtonBarAction
+        <Actions.Button
           icon={(input) => <IconRightLeft {...input} />}
           label={input.ctx.t('game.swap-sides')}
           onClick={() =>
@@ -281,7 +281,7 @@ export const View = (input: {
             })
           }
         />
-        <ViewBottomButtonBarAction
+        <Actions.Button
           icon={(input) => <IconArrowRotateLeft {...input} />}
           label={input.ctx.t('app.restart')}
           onClick={() =>
@@ -290,7 +290,7 @@ export const View = (input: {
             })
           }
         />
-      </ViewBottomButtonBar>
+      </Actions.Root>
     </div>
   )
 }

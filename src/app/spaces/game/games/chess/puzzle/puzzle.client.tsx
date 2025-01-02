@@ -17,7 +17,7 @@ import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-cl
 import { Eff } from '~/@/eff'
 import { Translator } from '~/@/l18n/generated'
 import { APP_SOUND, AppClientCmd, playSound, sendToServer } from '~/app/@/client/cmd'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { LayoutGame } from '../../@/game/layout-game'
 import { Chess } from '../@/chess'
@@ -330,17 +330,17 @@ export const View = ({
 
           <div className='flex flex-1 items-center justify-end gap-1 text-right text-xs'>
             <p className='text-secondary'>Moved</p>
-            <p className='text-inherit'>{model.t === 'loading' ? '0' : model.moves?.length ?? '0'}</p>
+            <p className='text-inherit'>{model.t === 'loading' ? '0' : (model.moves?.length ?? '0')}</p>
             <p className='text-secondary'>out of</p>
-            <p className='text-inherit'>{model.t === 'loading' ? '0' : model.puzzle?.moves?.length ?? '0'}</p>
+            <p className='text-inherit'>{model.t === 'loading' ? '0' : (model.puzzle?.moves?.length ?? '0')}</p>
           </div>
         </div>
       </div>
 
       {!isSpectating ? (
-        <ViewBottomButtonBar>
+        <Actions.Root>
           <BottomBarActions ctx={ctx} model={model} onClose={onClose} dispatch={dispatch} />
-        </ViewBottomButtonBar>
+        </Actions.Root>
       ) : (
         <></>
       )}
@@ -398,15 +398,11 @@ export const BottomBarActions = ({
   }
 }): VDomChildren => {
   const exit = (
-    <ViewBottomButtonBarAction
-      icon={(input) => <IconArrowLeftOnRect {...input} />}
-      label={ctx.t('app.exit')}
-      onClick={onClose}
-    />
+    <Actions.Button icon={(input) => <IconArrowLeftOnRect {...input} />} label={ctx.t('app.exit')} onClick={onClose} />
   )
 
   const hint = (
-    <ViewBottomButtonBarAction
+    <Actions.Button
       icon={(input) => <IconLightbulb {...input} />}
       label={ctx.t('game.hint')}
       disabled={isNoMoreHints(model) || model.t === 'loading'}
@@ -419,7 +415,7 @@ export const BottomBarActions = ({
   )
 
   const retry = (
-    <ViewBottomButtonBarAction
+    <Actions.Button
       icon={(input) => <IconArrowRotateLeft {...input} />}
       label={ctx.t('app.retry')}
       onClick={() =>
@@ -432,7 +428,7 @@ export const BottomBarActions = ({
   )
 
   const skip = (
-    <ViewBottomButtonBarAction
+    <Actions.Button
       icon={(input) => <IconArrowRight {...input} />}
       label={ctx.t('app.skip')}
       onClick={() =>
@@ -444,7 +440,7 @@ export const BottomBarActions = ({
   )
 
   const next = (
-    <ViewBottomButtonBarAction
+    <Actions.Button
       icon={(input) => <IconArrowCircle {...input} />}
       label={ctx.t('app.next')}
       color='success'

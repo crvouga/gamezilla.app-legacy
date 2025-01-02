@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, AppClientCmd, playSound, showToast } from '~/app/@/client/cmd'
 import { IconCheckmark, Transition } from '~/app/@/ui'
-import { ActionInput, Actions } from '~/app/@/ui/actions'
+import { BottomButtonInput, Actions } from '~/app/@/ui/bottom-buttons'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { FlowAlgoDrawPipes } from '../flow-algo/flow-algo-draw-pipes'
 import { FlowAlgoSolve } from '../flow-algo/flow-algo-solve'
@@ -648,7 +648,7 @@ export const viewResetAction = (input: {
   ctx: {
     t: Translator
   }
-}): ActionInput => {
+}): BottomButtonInput => {
   const flow = toFlow({
     model: input.model,
     flow: input.flowPuzzle.flow

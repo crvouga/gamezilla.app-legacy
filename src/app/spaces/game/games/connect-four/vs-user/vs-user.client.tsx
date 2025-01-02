@@ -10,7 +10,7 @@ import {
   IconSpinner,
   IconXMark
 } from '~/app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
@@ -262,9 +262,9 @@ const View: Module['View'] = (input) => {
             </div>
           </div>
 
-          <ViewBottomButtonBar>
+          <Actions.Root>
             {input.modelCore.type === 'game' && (
-              <ViewBottomButtonBarAction
+              <Actions.Button
                 icon={(input) => <IconFlag {...input} />}
                 label={input.ctx.t('app.resign')}
                 onClick={() => {
@@ -278,7 +278,7 @@ const View: Module['View'] = (input) => {
 
             {input.modelCore.type === 'game-over' && input.ctx.currentUserId === input.ctx.space.hostId && (
               <>
-                <ViewBottomButtonBarAction
+                <Actions.Button
                   icon={(input) => <IconArrowLeftOnRect {...input} />}
                   label={input.ctx.t('app.exit')}
                   onClick={() => {
@@ -289,7 +289,7 @@ const View: Module['View'] = (input) => {
                   }}
                 />
 
-                <ViewBottomButtonBarAction
+                <Actions.Button
                   icon={(input) => <IconArrowRotateLeft {...input} />}
                   label={input.ctx.t('game.rematch')}
                   onClick={() => {
@@ -301,7 +301,7 @@ const View: Module['View'] = (input) => {
                 />
               </>
             )}
-          </ViewBottomButtonBar>
+          </Actions.Root>
 
           <ConfirmationDialog
             headerIcon={<IconFlag className='h-10 w-10' />}

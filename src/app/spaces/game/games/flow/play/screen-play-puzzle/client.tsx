@@ -1,7 +1,7 @@
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from '~/app/@/ui'
-import { Actions } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { ProfileListItem } from '../../../@/game/profile-list-item'

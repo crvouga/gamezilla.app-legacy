@@ -4,7 +4,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, AppClientCmd, playSound } from '~/app/@/client/cmd'
 import type { UserId } from '~/app/@/data/user-id'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { FeedItem } from '~/app/spaces/@/feed-item'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
@@ -310,7 +310,7 @@ export const toGameOver = (columns: ConnectFour.Columns): VsBotGame.GameOver => 
 }
 
 const View: Module['View'] = (input) => {
-  const vsBotSetupinput: VsBotSetup.VsBotSetupinput = {
+  const vsBotSetupInput: VsBotSetup.VsBotSetupInput = {
     ctx: input.ctx,
     onQuit: () => {},
     title: input.ctx.t('chess'),
@@ -392,17 +392,17 @@ const View: Module['View'] = (input) => {
             c
           })
         }
-        {...vsBotSetupinput}
+        {...vsBotSetupInput}
       />
     )
   }
 
   const status = ConnectFour.toStatus(input.modelCore.columns)
 
-  const vsBotGameinput: VsBotGame.VsBotGameinput = {
-    ...vsBotSetupinput,
+  const vsBotGameInput: VsBotGame.VsBotGameInput = {
+    ...vsBotSetupInput,
     human: {
-      ...vsBotSetupinput.human,
+      ...vsBotSetupInput.human,
       userId: input.modelCore.playingUserId
     },
     isSpectating: input.ctx.currentUserId !== input.modelCore.playingUserId,
@@ -414,9 +414,9 @@ const View: Module['View'] = (input) => {
   return (
     <LayoutGame ctx={input.ctx} isSpectating={isSpectating}>
       <div className='flex w-full flex-1 flex-col items-center justify-center gap-1'>
-        <VsBotGame.VsBotPlayerSection {...vsBotGameinput} />
+        <VsBotGame.VsBotPlayerSection {...vsBotGameInput} />
 
-        <VsBotGame.ViewStatusBar {...vsBotSetupinput} status={toVsBotStatus(status)} />
+        <VsBotGame.ViewStatusBar {...vsBotSetupInput} status={toVsBotStatus(status)} />
 
         <div className='relative flex w-full flex-col items-center justify-center overflow-hidden'>
           <ViewColumns
@@ -433,7 +433,7 @@ const View: Module['View'] = (input) => {
           />
           {input.model && (
             <VsBotGame.ViewGameOverOverlay
-              {...vsBotGameinput}
+              {...vsBotGameInput}
               model={input.model.vsBotGame}
               onPlayAgain={() =>
                 input.dispatch({
@@ -448,40 +448,25 @@ const View: Module['View'] = (input) => {
       </div>
 
       {input.ctx.currentUserId === input.modelCore.playingUserId && (
-        <ViewBottomButtonBar>
-          <ViewBottomButtonBarAction
+        <Actions.Root>
+          <Actions.Button
             icon={(input) => <IconArrowLeftOnRect {...input} />}
             label={input.ctx.t('app.exit')}
-            onClick={() =>
-              input.dispatch({
-                t: 'user-stopped-game',
-                userId: input.ctx.currentUserId
-              })
-            }
+            onClick={() => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId })}
           />
 
-          <ViewBottomButtonBarAction
+          <Actions.Button
             icon={(input) => <IconRightLeft {...input} />}
             label={input.ctx.t('game.swap-sides')}
-            onClick={() =>
-              input.dispatch({
-                t: 'user-swapped-sides',
-                userId: input.ctx.currentUserId
-              })
-            }
+            onClick={() => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId })}
           />
 
-          <ViewBottomButtonBarAction
+          <Actions.Button
             icon={(input) => <IconArrowRotateLeft {...input} />}
             label={input.ctx.t('app.restart')}
-            onClick={() =>
-              input.dispatch({
-                t: 'user-restarted-game',
-                userId: input.ctx.currentUserId
-              })
-            }
+            onClick={() => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId })}
           />
-        </ViewBottomButtonBar>
+        </Actions.Root>
       )}
     </LayoutGame>
   )
@@ -510,7 +495,7 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
 }
 
 const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
-  const username = 'userId' in input.msgCore ? input.ctx.profiles[input.msgCore.userId]?.username ?? null : null
+  const username = 'userId' in input.msgCore ? (input.ctx.profiles[input.msgCore.userId]?.username ?? null) : null
 
   switch (input.msgCore.t) {
     case 'bot-dropped-disc': {

@@ -13,7 +13,7 @@ import {
   IconExpand,
   IconXMark
 } from '~/app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { FlowLayout } from '../flow-ui/flow-layout'
 import * as FlowUI from '../flow-ui/flow-ui'
 import * as FlowVariant from '../flow-variant/flow-variant'
@@ -497,14 +497,14 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
       }
       bottom={
         <>
-          <ViewBottomButtonBar>
-            <ViewBottomButtonBarAction
+          <Actions.Root>
+            <Actions.Button
               icon={(input) => <IconArrowRotateLeft {...input} />}
               label={input.ctx.t('app.undo')}
               onClick={() => input.dispatch({ t: 'clicked-undo' })}
               disabled={!History.canUndo(input.model.form)}
             />
-            <ViewBottomButtonBarAction
+            <Actions.Button
               icon={(input) => <IconArrowRotateRight {...input} />}
               label={input.ctx.t('app.redo')}
               disabled={!History.canRedo(input.model.form)}
@@ -514,7 +514,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
                 })
               }
             />
-            <ViewBottomButtonBarAction
+            <Actions.Button
               icon={(input) => <IconXMark {...input} />}
               label={input.ctx.t('app.clear')}
               disabled={!canClear(input.model)}
@@ -524,7 +524,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
                 })
               }
             />
-            <ViewBottomButtonBarAction
+            <Actions.Button
               icon={(input) => <IconExpand {...input} />}
               label={input.ctx.t('app.dimensions')}
               onClick={() =>
@@ -533,7 +533,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
                 })
               }
             />
-          </ViewBottomButtonBar>
+          </Actions.Root>
           <Drawer
             open={input.model.opened === 'dimensions'}
             onClose={() =>

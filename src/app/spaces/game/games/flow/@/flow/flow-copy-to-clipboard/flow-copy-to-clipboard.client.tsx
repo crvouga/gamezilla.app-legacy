@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { APP_SOUND, AppClientCmd, copyToClipboard, playSound, showToast } from '~/app/@/client/cmd'
 import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconCopy } from '~/app/@/ui'
-import type { ActionInput } from '~/app/@/ui/actions'
+import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { FlowVariant } from '..'
 import { FlowGridShorthand } from '../flow-variant/flow-grid'
 
@@ -52,7 +52,13 @@ const update = <TModel,>(input: {
   }
 }
 
-const viewAction = ({ ctx, dispatch }: { ctx: AppClientCtx; dispatch: (m: MsgClient) => void }): ActionInput[] => {
+const viewAction = ({
+  ctx,
+  dispatch
+}: {
+  ctx: AppClientCtx
+  dispatch: (m: MsgClient) => void
+}): BottomButtonInput[] => {
   return [
     {
       icon: (input) => <IconCopy {...input} />,

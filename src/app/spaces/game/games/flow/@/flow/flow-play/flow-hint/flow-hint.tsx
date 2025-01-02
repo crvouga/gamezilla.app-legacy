@@ -1,17 +1,16 @@
-import { Err, Result } from '~/@/result'
+import { Eff } from '~/@/eff'
+import { eq } from '~/@/equals/equals'
 import { p } from '~/@/parser'
-
+import { Err, Result } from '~/@/result'
+import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconLightbulb } from '~/app/@/ui'
-import type { ActionInput } from '~/app/@/ui/actions'
+import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import type { Puzzle } from '../../../puzzle/puzzle'
 import { Flow } from '../../flow'
 import type { FlowVariant } from '../../flow-variant'
 import { FlowGroupId } from '../../flow/flow-group-id'
 import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowTerminal } from '../../flow/flow-terminal'
-import { eq } from '~/@/equals/equals'
-import { Eff } from '~/@/eff'
-import { AppClientCtx } from '~/app/@/client/ctx'
 
 export type FindSolutions = (input: { flow: FlowVariant.Model }) => Promise<Result<string, Flow.Model[]>>
 
@@ -220,7 +219,7 @@ export const viewUseHintAction = (input: {
   dispatch: (msg: Msg) => void
   ctx: AppClientCtx & Ctx
   disabled: boolean
-}): ActionInput => {
+}): BottomButtonInput => {
   return {
     icon: (input) => <IconLightbulb {...input} />,
     label: input.ctx.t('game.hint'),

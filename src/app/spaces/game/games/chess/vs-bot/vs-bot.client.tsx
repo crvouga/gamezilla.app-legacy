@@ -5,7 +5,7 @@ import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppClientCmd, sendToServer } from '~/app/@/client/cmd'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { LayoutGame } from '../../@/game/layout-game'
@@ -442,13 +442,13 @@ export const View = ({
         />
         {bottomSlot}
       </div>
-      <ViewBottomButtonBar>
-        <ViewBottomButtonBarAction
+      <Actions.Root>
+        <Actions.Button
           icon={(input) => <IconArrowLeftOnRect {...input} />}
           label={ctx.t('app.exit')}
           onClick={onClose}
         />
-      </ViewBottomButtonBar>
+      </Actions.Root>
     </LayoutGame>
   )
 }

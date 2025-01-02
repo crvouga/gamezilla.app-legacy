@@ -10,7 +10,7 @@ import {
   ListItemButton,
   TopBar
 } from '~/app/@/ui'
-import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
+import { Actions } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { FlowPlay } from '../../../@/flow/flow-play'
 import { PackPuzzlesGridClient } from '../../../@/pack/pack-puzzles-grid/client'
@@ -320,7 +320,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
 
     return (
       <>
-        <ViewBottomButtonBarAction
+        <Actions.Button
           icon={(input) => <IconEllipsisVertical {...input} />}
           label={ctx.t('app.more')}
           onClick={() =>
@@ -487,8 +487,8 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           )}
         </div>
 
-        <ViewBottomButtonBar>
-          <ViewBottomButtonBarAction
+        <Actions.Root>
+          <Actions.Button
             icon={(input) => <IconChevronLeft {...input} />}
             label={input.ctx.t('app.prev')}
             disabled={!canGoPrevious}
@@ -504,7 +504,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
             }}
           />
 
-          <ViewBottomButtonBarAction
+          <Actions.Button
             icon={(input) => <IconChevronRight {...input} />}
             label={input.ctx.t('app.next')}
             disabled={!canGoNext}
@@ -521,7 +521,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           />
 
           <ScreenPuzzleMore.View {...input} />
-        </ViewBottomButtonBar>
+        </Actions.Root>
       </div>
     )
   }

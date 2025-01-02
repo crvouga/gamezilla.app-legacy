@@ -75,7 +75,7 @@ type Input = {
   onPlayAgain?: () => void
 }
 
-export type VsBotGameinput = VsBotInput & {
+export type VsBotGameInput = VsBotInput & {
   turn: PlayerType | null
   human: {
     player: PlayerType
@@ -344,7 +344,7 @@ const Draw = (input: Input) => {
   )
 }
 
-export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn }: VsBotGameinput) => {
+export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn }: VsBotGameInput) => {
   const profile = ctx.profiles[human.userId]
   const humanSlot = (
     <>
