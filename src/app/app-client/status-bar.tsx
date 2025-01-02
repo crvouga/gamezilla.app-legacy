@@ -94,7 +94,7 @@ export const View = ({
 
       <Drawer
         position='top'
-        id='drawer'
+        id='status-bar-drawer'
         open={model.isDrawerOpen}
         onClose={() =>
           dispatch({

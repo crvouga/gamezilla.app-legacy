@@ -21,6 +21,7 @@ import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
 import type { ClientModule } from '../../types'
 import { ScreenPackBuilderCore } from '../core'
 import { EditPackNameClient } from '../edit-pack-name/client'
+import { BoardLayout } from '../../../@/flow/ui/layout'
 
 //
 //
@@ -472,56 +473,60 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           }
         />
 
-        <div className='flex w-full flex-1 flex-col items-center justify-center'>
-          {screen.puzzleResult.t === 'got' && screen.play ? (
-            <FlowPlay.View
-              dispatch={(c) =>
-                input.dispatch({ t: 'got-msg-core', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
-              }
-              flow={screen.puzzleResult.c.flow}
-              model={screen.play}
-              showSolvedAnimation
-            />
-          ) : (
-            <PuzzleResult.ViewNotFound ctx={input.ctx} />
-          )}
-        </div>
-
-        <BottomButtons.Root>
-          <BottomButtons.Button
-            icon={(input) => <IconChevronLeft {...input} />}
-            label={input.ctx.t('app.prev')}
-            disabled={!canGoPrevious}
-            onClick={() => {
-              input.dispatch({
-                t: 'got-msg-core',
-                c: {
-                  t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
-                  userId: input.ctx.currentUserId,
-                  previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' }
+        <BoardLayout
+          top={null}
+          board={
+            screen.puzzleResult.t === 'got' && screen.play ? (
+              <FlowPlay.View
+                dispatch={(c) =>
+                  input.dispatch({ t: 'got-msg-core', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
                 }
-              })
-            }}
-          />
+                flow={screen.puzzleResult.c.flow}
+                model={screen.play}
+                showSolvedAnimation
+              />
+            ) : (
+              <PuzzleResult.ViewNotFound ctx={input.ctx} />
+            )
+          }
+          bottom={
+            <BottomButtons.Root>
+              <BottomButtons.Button
+                icon={(input) => <IconChevronLeft {...input} />}
+                label={input.ctx.t('app.prev')}
+                disabled={!canGoPrevious}
+                onClick={() => {
+                  input.dispatch({
+                    t: 'got-msg-core',
+                    c: {
+                      t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+                      userId: input.ctx.currentUserId,
+                      previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' }
+                    }
+                  })
+                }}
+              />
 
-          <BottomButtons.Button
-            icon={(input) => <IconChevronRight {...input} />}
-            label={input.ctx.t('app.next')}
-            disabled={!canGoNext}
-            onClick={() => {
-              input.dispatch({
-                t: 'got-msg-core',
-                c: {
-                  t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-                  userId: input.ctx.currentUserId,
-                  nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' }
-                }
-              })
-            }}
-          />
+              <BottomButtons.Button
+                icon={(input) => <IconChevronRight {...input} />}
+                label={input.ctx.t('app.next')}
+                disabled={!canGoNext}
+                onClick={() => {
+                  input.dispatch({
+                    t: 'got-msg-core',
+                    c: {
+                      t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
+                      userId: input.ctx.currentUserId,
+                      nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' }
+                    }
+                  })
+                }}
+              />
 
-          <ScreenPuzzleMore.View {...input} />
-        </BottomButtons.Root>
+              <ScreenPuzzleMore.View {...input} />
+            </BottomButtons.Root>
+          }
+        />
       </div>
     )
   }
