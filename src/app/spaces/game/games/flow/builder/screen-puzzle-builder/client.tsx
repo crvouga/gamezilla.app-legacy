@@ -269,39 +269,43 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
       const status = modelCore.screenPuzzleBuilder ? toStatus(modelCore.screenPuzzleBuilder) : 'solving'
       return (
         <div className='flex h-full max-h-full w-full flex-col items-center justify-center overflow-hidden'>
-          <BoardLayout
-            top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
-            board={
-              <FlowPlay.View
-                model={puzzleBuilder.play}
-                flow={flow}
-                dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
-                showSolvedAnimation
-              />
-            }
-            bottom={
-              <BottomButtons.View
-                ctx={input.ctx}
-                id='hint-button'
-                open={false}
-                onToggle={() => {}}
-                buttons={[
-                  FlowPlay.viewHintAction({
-                    ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } }),
-                    dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
-                    model: puzzleBuilder.play,
-                    disabled: status === 'solved'
-                  }),
-                  FlowPlay.viewResetAction({
-                    ctx: input.ctx,
-                    dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
-                    flowPuzzle: { ...puzzleBuilder.puzzle, flow },
-                    model: puzzleBuilder.play
-                  })
-                ]}
-              />
-            }
-          />
+          <div className='flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
+            <BoardLayout
+              top={
+                <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>
+              }
+              board={
+                <FlowPlay.View
+                  model={puzzleBuilder.play}
+                  flow={flow}
+                  dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
+                  showSolvedAnimation
+                />
+              }
+              bottom={
+                <BottomButtons.View
+                  ctx={input.ctx}
+                  id='hint-button'
+                  open={false}
+                  onToggle={() => {}}
+                  buttons={[
+                    FlowPlay.viewHintAction({
+                      ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } }),
+                      dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
+                      model: puzzleBuilder.play,
+                      disabled: status === 'solved'
+                    }),
+                    FlowPlay.viewResetAction({
+                      ctx: input.ctx,
+                      dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
+                      flowPuzzle: { ...puzzleBuilder.puzzle, flow },
+                      model: puzzleBuilder.play
+                    })
+                  ]}
+                />
+              }
+            />
+          </div>
 
           <BottomButtons.Root>
             <SaveChangesClient.ViewActionButtons {...input} model={model} />

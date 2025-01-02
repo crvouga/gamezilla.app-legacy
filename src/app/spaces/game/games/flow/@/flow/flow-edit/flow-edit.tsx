@@ -18,11 +18,11 @@ import { BoardLayout } from '../ui/layout'
 import * as FlowUI from '../ui/color'
 import * as FlowVariant from '../flow-variant/variant'
 import * as FlowVariantDimensions from '../flow-variant/variant-dimensions'
-import * as FlowVariantUI from '../flow-variant/variant-board'
 import * as Flow from '../flow/flow'
 import { FlowGroupId } from '../flow/flow-group-id'
 import { FlowNodeId } from '../flow/flow-node-id'
 import { FlowTerminal } from '../flow/flow-terminal'
+import { VariantBoard } from '../flow-variant'
 
 //
 //
@@ -488,7 +488,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
         </div>
       }
       board={
-        <FlowVariantUI.View
+        <VariantBoard.View
           model={toFlow(input)}
           onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
           onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}

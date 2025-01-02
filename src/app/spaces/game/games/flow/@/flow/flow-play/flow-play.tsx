@@ -9,8 +9,7 @@ import { PrebuiltBottomButtons } from '../../../../@/ui/prebuilt-bottom-buttons'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { FlowAlgoDrawPipes } from '../flow-algo/flow-algo-draw-pipes'
 import { FlowAlgoSolve } from '../flow-algo/flow-algo-solve'
-import type { Variant } from '../flow-variant'
-import * as FlowVariantUI from '../flow-variant/variant-board'
+import { VariantBoard, type Variant } from '../flow-variant'
 import * as Flow from '../flow/flow'
 import { FlowGroupId } from '../flow/flow-group-id'
 import { FlowNodeId } from '../flow/flow-node-id'
@@ -614,7 +613,7 @@ export const View = (input: {
 
   return (
     <div className='relative flex max-h-full w-full items-center justify-center'>
-      <FlowVariantUI.View
+      <VariantBoard.View
         disabled={input.disabled}
         model={flow}
         showCoordinates={false}

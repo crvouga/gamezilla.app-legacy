@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
+import { VariantBoard } from '.'
 import { BoardInput } from '../ui/board'
 import { FlowGridShorthand } from './flow-grid'
 import type * as FlowVariant from './variant'
-import * as FlowVariantUI from './variant-board'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
@@ -15,7 +15,7 @@ const Fixture = async () => {
     model: flow
   }
   const render = (input: BoardInput<FlowVariant.Model>) => {
-    return f.render(<FlowVariantUI.View {...input} />)
+    return f.render(<VariantBoard.View {...input} />)
   }
   return {
     ...f,
@@ -24,7 +24,7 @@ const Fixture = async () => {
   }
 }
 describe(import.meta.file, () => {
-  test('render hint checkmarks', async () => {
+  test('render hint checkmark', async () => {
     const f = await Fixture()
     f.render(f.input)
     expect(true).toBe(true)
