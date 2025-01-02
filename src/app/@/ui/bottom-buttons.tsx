@@ -40,7 +40,7 @@ const View = ({
   const firstButtons = cleanedButtons.slice(0, limit)
   const lastButtons = cleanedButtons.slice(limit)
   return (
-    <div className='flex w-full items-center'>
+    <BottomButtons.Root>
       {firstButtons.map((button) => (
         <BottomButtons.Button {...button} key={button.label} />
       ))}
@@ -67,12 +67,12 @@ const View = ({
           </Drawer>
         </>
       )}
-    </div>
+    </BottomButtons.Root>
   )
 }
 
 const Root = ({ children }: { children: VDomChildren }) => {
-  return <div className='flex w-full shrink-0 items-center'>{children}</div>
+  return <div className='flex h-16 w-full shrink-0 items-center'>{children}</div>
 }
 
 const Button = (input: BottomButtonInput) => {
@@ -90,7 +90,7 @@ const Button = (input: BottomButtonInput) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm transition-opacity',
+        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm',
         'enabled:active:opacity-50 disabled:cursor-not-allowed disabled:opacity-50',
         input.color === 'danger' && 'font-bold text-red-500',
         input.color === 'success' && 'font-bold text-green-500',
@@ -101,24 +101,19 @@ const Button = (input: BottomButtonInput) => {
     >
       <div
         className={cn(
-          'flex h-full w-full flex-col items-center justify-center gap-0.5 truncate transition-opacity',
+          'flex h-full w-full flex-col items-center justify-center gap-0.5 truncate',
           input.loading ? 'opacity-0' : 'opacity-100'
         )}
       >
-        {input.icon({
-          className: 'h-7 w-7'
-        })}
+        {input.icon({ className: 'size-7' })}
         <Typography variant='label' text={input.label} className={cn('truncate', input.classNames?.label)} />
       </div>
 
-      <div
-        className={cn(
-          'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity',
-          input.loading ? 'opacity-100' : 'opacity-0'
-        )}
-      >
-        <Spinner className='h-8 w-8' />
-      </div>
+      {input.loading && (
+        <div className={'absolute inset-0 flex h-full w-full items-center justify-center'}>
+          <Spinner className='h-8 w-8' />
+        </div>
+      )}
     </button>
   )
 }
