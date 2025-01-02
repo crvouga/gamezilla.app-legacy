@@ -1,4 +1,4 @@
-import { BaseClientCtx } from '~/app/@/client/client-ctx'
+import { BaseClientCtx } from '~/app/@/client/ctx'
 import { Avatar, cn, Typography } from '~/app/@/ui'
 import { SpaceCoreState } from '../../core/space-state'
 import { ViewHostChip } from '../../games/@/game/users-in-space-list/host-chip'
@@ -39,7 +39,7 @@ export const ViewSpaceCard = (input: { ctx: BaseClientCtx; state: SpaceCoreState
       <div className='flex w-full items-center justify-start'>
         <Typography
           variant='label'
-          className='block flex-1 text-left text-lg font-bold text-white uppercase'
+          className='block flex-1 text-left text-lg font-bold uppercase text-white'
           text={input.ctx.t('space-card.live')}
         />
       </div>

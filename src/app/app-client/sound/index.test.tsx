@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
-import { ClientEvt } from '~/app/@/client/client-evt'
-import { APP_SOUND, SoundCmd, playSound } from '../../@/client/client-cmd'
-import { FixtureAppClient } from '../../@/client/client-test-env'
+import { AppClientCtx } from '~/app/@/client/ctx'
+import { ClientEvt } from '~/app/@/client/evt'
+import { APP_SOUND, SoundCmd, playSound } from '../../@/client/cmd'
+import { FixtureAppClient } from '../../@/client/fixture'
 import * as Sound from './index'
 
 type Input =

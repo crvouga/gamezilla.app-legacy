@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/client/client-cmd'
+import { didPlaySound } from '~/app/@/client/cmd'
 import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../../@/flow'
 import { FixtureScreenPlayPuzzleClient } from './@/fixture/client'

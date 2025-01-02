@@ -1,7 +1,7 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { isErr, Result } from '~/@/result'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { sendToServer, showErrSm } from '~/app/@/client/client-cmd'
+import { sendToServer, showErrSm } from '~/app/@/client/cmd'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import { Pack } from '../pack'
 import { ClientModule, initClient, type ModelClient, type MsgInCmdClient } from './types'

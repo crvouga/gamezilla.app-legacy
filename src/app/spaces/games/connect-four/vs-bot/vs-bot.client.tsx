@@ -1,7 +1,7 @@
 import { type WithEventId, withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, AppClientCmd, playSound } from '~/app/@/client/client-cmd'
+import { APP_SOUND, AppClientCmd, playSound } from '~/app/@/client/cmd'
 import type { UserId } from '~/app/@/data/user-id'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/app/@/ui'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
@@ -510,7 +510,7 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
 }
 
 const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
-  const username = 'userId' in input.msgCore ? (input.ctx.profiles[input.msgCore.userId]?.username ?? null) : null
+  const username = 'userId' in input.msgCore ? input.ctx.profiles[input.msgCore.userId]?.username ?? null : null
 
   switch (input.msgCore.t) {
     case 'bot-dropped-disc': {

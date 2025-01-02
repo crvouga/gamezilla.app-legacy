@@ -1,6 +1,6 @@
 import { isLoading, isOk, Loading } from '~/@/result'
 import type { VDomChildren } from '~/@/vdom/vdom'
-import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/app/@/client/cmd'
 import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { FlowClientCmd } from '../../../@/client/cmd'

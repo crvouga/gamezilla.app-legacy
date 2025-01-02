@@ -1,5 +1,5 @@
 import type { VDom } from '~/@/vdom/vdom'
-import { APP_SOUND, AppClientCmd, playSound, StatusBarCmd } from '../@/client/client-cmd'
+import { APP_SOUND, AppClientCmd, playSound, StatusBarCmd } from '../@/client/cmd'
 import { Drawer } from '../@/ui'
 
 export type Model = {

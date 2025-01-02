@@ -1,6 +1,6 @@
 import { NotAsked, Ok } from '~/@/result'
-import { APP_SOUND, playSound, sendToServer, showToast } from '~/app/@/client/client-cmd'
-import { BaseClientCtx } from '~/app/@/client/client-ctx'
+import { APP_SOUND, playSound, sendToServer, showToast } from '~/app/@/client/cmd'
+import { BaseClientCtx } from '~/app/@/client/ctx'
 import { ConfirmationDrawer } from '~/app/@/ui'
 import type { ClientModule, ModelClient, MsgClient } from '../types'
 

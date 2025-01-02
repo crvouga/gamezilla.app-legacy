@@ -4,8 +4,8 @@ import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom/vdom'
 import { IconMagnifyingGlass, IconXMark } from '~/app/@/ui'
-import { AppClientCmd, sendToServer } from '../@/client/client-cmd'
-import { ClientEvt } from '../@/client/client-evt'
+import { AppClientCmd, sendToServer } from '../@/client/cmd'
+import { ClientEvt } from '../@/client/evt'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './search.types'
 
 //

@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from '~/app/@/ui'
 import { Actions, ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'

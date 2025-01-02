@@ -2,8 +2,8 @@ import { eq } from '~/@/equals/equals'
 import { memoize } from '~/@/function/memoize'
 import { History } from '~/@/history'
 import { p } from '~/@/parser'
-import { APP_SOUND } from '~/app/@/client/client-cmd'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { APP_SOUND } from '~/app/@/client/cmd'
+import { AppClientCtx } from '~/app/@/client/ctx'
 import {
   Button,
   Drawer,

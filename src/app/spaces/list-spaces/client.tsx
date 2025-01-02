@@ -1,6 +1,6 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { APP_SOUND, playSound, pushRoute, sendToServer } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound, pushRoute, sendToServer } from '~/app/@/client/cmd'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'

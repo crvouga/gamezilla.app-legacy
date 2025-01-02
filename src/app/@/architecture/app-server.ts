@@ -1,5 +1,5 @@
-import { type Sub } from '~/@/sub'
 import { Msg } from '~/@/msg/msg'
+import { type Sub } from '~/@/sub'
 import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
@@ -132,7 +132,7 @@ const andThen = async <T extends AppServerModuleTypes>(
   accPromise: MaybePromise<Output<T>>,
   ...updates: (() => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
-  let acc = await accPromise
+  let acc: Output<T> = await accPromise
   for (const update of updates) {
     const updated = await update()
     acc = {

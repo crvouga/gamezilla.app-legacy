@@ -16,7 +16,7 @@ import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-
 
 import { Eff } from '~/@/eff'
 import { Translator } from '~/@/l18n/generated'
-import { APP_SOUND, AppClientCmd, playSound, sendToServer } from '~/app/@/client/client-cmd'
+import { APP_SOUND, AppClientCmd, playSound, sendToServer } from '~/app/@/client/cmd'
 import { ViewBottomButtonBar, ViewBottomButtonBarAction } from '~/app/@/ui/actions'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { LayoutGame } from '../../@/game/layout-game'
@@ -330,9 +330,9 @@ export const View = ({
 
           <div className='flex flex-1 items-center justify-end gap-1 text-right text-xs'>
             <p className='text-secondary'>Moved</p>
-            <p className='text-inherit'>{model.t === 'loading' ? '0' : (model.moves?.length ?? '0')}</p>
+            <p className='text-inherit'>{model.t === 'loading' ? '0' : model.moves?.length ?? '0'}</p>
             <p className='text-secondary'>out of</p>
-            <p className='text-inherit'>{model.t === 'loading' ? '0' : (model.puzzle?.moves?.length ?? '0')}</p>
+            <p className='text-inherit'>{model.t === 'loading' ? '0' : model.puzzle?.moves?.length ?? '0'}</p>
           </div>
         </div>
       </div>

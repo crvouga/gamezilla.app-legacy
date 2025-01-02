@@ -1,6 +1,6 @@
 import { isRequesting, RequestResponse } from '~/@/request-response/request-response'
 import { isErr, NotAsked } from '~/@/result'
-import { APP_SOUND, playSound, sendToServer, showErrSm } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound, sendToServer, showErrSm } from '~/app/@/client/cmd'
 import { Button, IconUserCircle } from '~/app/@/ui'
 import type { ClientModule } from '../types'
 import type { ModelClient } from './types'

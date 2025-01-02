@@ -1,6 +1,6 @@
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
-import { type AppClientCtx } from '~/app/@/client/client-ctx'
+import { APP_SOUND, playSound } from '~/app/@/client/cmd'
+import { type AppClientCtx } from '~/app/@/client/ctx'
 import { Button, Dialog, DialogHeader, DialogSurface } from '~/app/@/ui'
 import type { ClientModule, MsgClient } from '../../types'
 

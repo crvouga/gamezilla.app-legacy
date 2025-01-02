@@ -1,4 +1,4 @@
-import { pushRoute, playSound, APP_SOUND } from '~/app/@/client/client-cmd'
+import { pushRoute, playSound, APP_SOUND } from '~/app/@/client/cmd'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
 import { IconButton, IconHome } from '~/app/@/ui'
 

@@ -20,7 +20,7 @@ import {
 import { makeSpace } from '../@/fixture/shared'
 import { SpaceCore } from '../core/space-core'
 import { SpacesCoreClient } from '../core/client'
-import { addProfiles } from '~/app/@/client/client-cmd'
+import { addProfiles } from '~/app/@/client/cmd'
 
 const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1

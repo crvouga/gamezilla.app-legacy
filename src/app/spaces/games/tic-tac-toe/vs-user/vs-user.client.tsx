@@ -1,4 +1,4 @@
-import { type AppClientCmd, sendToServer } from '~/app/@/client/client-cmd'
+import { type AppClientCmd, sendToServer } from '~/app/@/client/cmd'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { VsUserSetupScreen } from '~/app/spaces/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'

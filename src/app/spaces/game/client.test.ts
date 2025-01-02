@@ -6,7 +6,7 @@ import { Ctx, clickedGameTile, clickedStartSpaceButton, init } from '../@/fixtur
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { SpacesCoreClient } from '../core/client'
 import { SpacesClient } from '../client'
-import { didPlaySound } from '~/app/@/client/client-cmd'
+import { didPlaySound } from '~/app/@/client/cmd'
 
 describe(import.meta.file, () => {
   it('should play a sound after inputting a game', () => {

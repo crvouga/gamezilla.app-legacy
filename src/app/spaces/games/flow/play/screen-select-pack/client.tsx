@@ -1,4 +1,4 @@
-import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { IconGamepad, TopBar } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { LayoutGameCoverArtHeader } from '../../../@/game/layout-game-cover-art-header'

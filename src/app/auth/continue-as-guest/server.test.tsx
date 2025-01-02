@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { isOk } from '~/@/result'
 import { SessionId } from '~/app/@/data/session-id'
 import { ClientId } from '~/app/@/data/client-id'
-import { AppServerTestEnv, FixtureAppServer } from '~/app/@/server/server-test-env'
+import { AppServerTestEnv, FixtureAppServer } from '~/app/@/server/fixture'
 import { UserAccountDb } from '../@/server/user-account-db'
 import { UserSessionDb } from '../@/server/user-session-db'
 import * as AuthServer from '../server'
@@ -10,7 +10,7 @@ import type { ServerCtx } from '../types'
 import { ContinueAsGuestServer } from './server'
 import type * as ContinueAsGuestTypes from './types'
 import { GuestSessionMappingDb } from '../@/server/guest-session-mapping-db'
-import { didSendMsgToClient } from '~/app/@/server/server-cmd'
+import { didSendMsgToClient } from '~/app/@/server/cmd'
 
 type Input =
   | {

@@ -6,7 +6,7 @@ import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { ClientModule } from '../types'
 import { PlayCore } from '../core'
-import { playSound, APP_SOUND } from '~/app/@/client/client-cmd'
+import { playSound, APP_SOUND } from '~/app/@/client/cmd'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(

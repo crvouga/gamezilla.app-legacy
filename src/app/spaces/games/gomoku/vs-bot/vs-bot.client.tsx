@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { AppClientCtx } from '~/app/@/client/ctx'
 import {
   type ModelClient,
   type ModelServer,

@@ -1,4 +1,4 @@
-import { AppServerTestEnv } from '~/app/@/server/server-test-env'
+import { AppServerTestEnv } from '~/app/@/server/fixture'
 import { SpaceGameFixtureServer } from '../../../../@/testing/server'
 import { PackDb } from '../../../@/pack/pack-db'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'

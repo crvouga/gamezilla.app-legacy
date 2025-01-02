@@ -4,7 +4,7 @@ import { Posix } from '~/@/time/posix'
 import { TestRender } from '~/@/vdom/test-render'
 import { VDOM_IMPL_TEST } from '~/config-public'
 import { UserId } from '../data/user-id'
-import type { AppClientCtx } from './client-ctx'
+import type { AppClientCtx } from './ctx'
 import { Translator } from './translator'
 
 export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {

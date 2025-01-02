@@ -10,8 +10,8 @@ import { ContinueAsGuestServer } from './continue-as-guest/server'
 import { GuestSessionMappingDb } from './@/server/guest-session-mapping-db'
 import { LogoutServer } from './logout/server'
 import { Sub } from '~/@/sub'
-import { AppServerCtx } from '../@/server/server-ctx'
-import { sendToClient, ServerCmd } from '../@/server/server-cmd'
+import { AppServerCtx } from '../@/server/ctx'
+import { sendToClient, ServerCmd } from '../@/server/cmd'
 
 //
 //

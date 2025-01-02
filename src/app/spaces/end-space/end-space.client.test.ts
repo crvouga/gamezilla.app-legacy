@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { didPlaySound, didPushRoute } from '~/app/@/client/client-cmd'
+import { didPlaySound, didPushRoute } from '~/app/@/client/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { clickedStartSpaceButton, Ctx, init, userClickedEndSpaceButton } from '../@/fixture/client'

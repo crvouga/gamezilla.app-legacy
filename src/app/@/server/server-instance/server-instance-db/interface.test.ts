@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'bun:test'
-import { AppServerTestEnv } from '../../server-test-env'
+import { Ok, unwrap } from '~/@/result'
+import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
+import { AppServerTestEnv } from '../../fixture'
+import { ServerInstance } from '../server-instance'
 import { Config } from './impl'
 import { ServerInstanceDb } from './impl-db-conn-kv'
-import { ServerInstance } from '../server-instance'
-import { Ok, unwrap } from '~/@/result'
-import { TimeSpan } from '~/@/time/time-span'
-import { Posix } from '~/@/time/posix'
 
 const Fixture = (config: Config) => {
   const serverInstanceDb = ServerInstanceDb(config)

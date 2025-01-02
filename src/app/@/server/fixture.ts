@@ -10,7 +10,7 @@ import { SMS } from '../../../@/sms'
 import { ClientId } from '../data/client-id'
 import { SessionId } from '../data/session-id'
 import { ProfileCache } from './profile-cache'
-import type { AppServerCtx } from './server-ctx'
+import type { AppServerCtx } from './ctx'
 import { ServerInstanceId } from './server-instance/server-instance-id'
 
 export type ITestEnv = {

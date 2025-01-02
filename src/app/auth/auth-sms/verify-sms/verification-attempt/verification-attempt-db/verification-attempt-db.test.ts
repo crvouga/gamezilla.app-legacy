@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { AppServerTestEnv } from '~/app/@/server/server-test-env'
+import { AppServerTestEnv } from '~/app/@/server/fixture'
 import { VerificationAttempt } from '../verification-attempt'
 import { VerificationAttemptDb } from './verification-attempt-db-impl'
 import { unwrap } from '~/@/result'

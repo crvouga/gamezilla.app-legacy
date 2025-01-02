@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { unwrapOr } from '~/@/result'
 import { Profile } from '~/app/@/data/profile'
-import { AppServerTestEnv } from '~/app/@/server/server-test-env'
+import { AppServerTestEnv } from '~/app/@/server/fixture'
 import { ProfileCache } from './impl'
 
 const Fixture = async () => {

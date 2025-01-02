@@ -4,7 +4,7 @@ import { pipe } from '~/@/function/pipe'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import type { UserId } from '~/app/@/data/user-id'
-import { AppClientCtx } from '../@/client/client-ctx'
+import { AppClientCtx } from '../@/client/ctx'
 import { Mic } from './mic'
 import type { ModelClient, MsgClient, MsgToClient } from './party.types'
 

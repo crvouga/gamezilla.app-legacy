@@ -2,13 +2,13 @@ import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-co
 import { Posix } from '~/@/time/posix'
 import { AppClientModule } from '../@/architecture/app-client'
 import { AppServerModule } from '../@/architecture/app-server'
-import { AppClientCmd } from '../@/client/client-cmd'
-import { AnonymousClientCtx } from '../@/client/client-ctx'
-import { ClientEvt } from '../@/client/client-evt'
+import { AppClientCmd } from '../@/client/cmd'
+import { AnonymousClientCtx } from '../@/client/ctx'
+import { ClientEvt } from '../@/client/evt'
 import type { TranslatorMsg } from '../@/client/translator'
-import { ServerCmd } from '../@/server/server-cmd'
-import { AppServerCtx } from '../@/server/server-ctx'
-import { ServerEvt } from '../@/server/server-evt'
+import { ServerCmd } from '../@/server/cmd'
+import { AppServerCtx } from '../@/server/ctx'
+import { ServerEvt } from '../@/server/evt'
 
 export type TranslationLoading = {
   startedAt: Posix

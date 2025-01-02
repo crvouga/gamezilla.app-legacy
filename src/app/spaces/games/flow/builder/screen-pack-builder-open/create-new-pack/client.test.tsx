@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { didPlaySound, didShowToast } from '~/app/@/client/client-cmd'
+import { didPlaySound, didShowToast } from '~/app/@/client/cmd'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import {
   clickedPackCreateNewButton,

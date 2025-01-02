@@ -8,7 +8,7 @@ import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceEvent } from '../../core/space-event'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { BaseClientCtx } from '~/app/@/client/client-ctx'
+import { BaseClientCtx } from '~/app/@/client/ctx'
 
 type Ctx = BaseClientCtx & {
   space?: Space

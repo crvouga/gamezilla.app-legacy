@@ -1,4 +1,4 @@
-import { AppClientCmd } from '~/app/@/client/client-cmd'
+import { AppClientCmd } from '~/app/@/client/cmd'
 import type { UserId } from '~/app/@/data/user-id'
 
 export type SpaceClientCmdTypes = {

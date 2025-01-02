@@ -11,7 +11,7 @@ import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowTerminal } from '../../flow/flow-terminal'
 import { eq } from '~/@/equals/equals'
 import { Eff } from '~/@/eff'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { AppClientCtx } from '~/app/@/client/ctx'
 
 export type FindSolutions = (input: { flow: FlowVariant.Model }) => Promise<Result<string, Flow.Model[]>>
 

@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
 import { NotAsked } from '~/@/result'
-import { isAppClientCtx } from '../@/client/client-ctx'
+import { isAppClientCtx } from '../@/client/ctx'
 import { type Input, type Output, SpaceClientModule } from './@/architecture/space-client'
 import { SpaceClientCmd } from './@/space-client/cmd'
 import { SpaceClientEvt } from './@/space-client/evt'

@@ -7,7 +7,7 @@ import type { ModelClient, ModelServer, MsgClient, MsgToClient } from './gomoku.
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
 import { SpaceClientCtx } from '../../@/space-client/ctx'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { AppClientCtx } from '~/app/@/client/ctx'
 
 //
 //

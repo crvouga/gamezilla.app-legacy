@@ -3,9 +3,9 @@ import { UnitInterval } from '~/@/range/unit-interval'
 import { Err, Ok, type Result } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { APP_SOUND, SoundCmd, playSound } from '~/app/@/client/client-cmd'
-import { BaseClientCtx } from '~/app/@/client/client-ctx'
-import { ClientEvt } from '~/app/@/client/client-evt'
+import { APP_SOUND, SoundCmd, playSound } from '~/app/@/client/cmd'
+import { BaseClientCtx } from '~/app/@/client/ctx'
+import { ClientEvt } from '~/app/@/client/evt'
 import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~/app/@/ui'
 
 //

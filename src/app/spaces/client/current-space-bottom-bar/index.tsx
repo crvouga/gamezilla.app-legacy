@@ -1,5 +1,5 @@
-import { APP_SOUND, playSound, pushRoute } from '~/app/@/client/client-cmd'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { APP_SOUND, playSound, pushRoute } from '~/app/@/client/cmd'
+import { AppClientCtx } from '~/app/@/client/ctx'
 import { Avatar, Button, Typography } from '~/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
 import { SpacesCoreClient } from '../../core/client'

@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { AppClientCmd } from '~/app/@/client/client-cmd'
+import { AppClientCmd } from '~/app/@/client/cmd'
 import type { GameClient } from '~/app/spaces/games/@/architecture/game-client'
 import { SpaceClientCtx } from '../../@/space-client/ctx'
 import { SpaceClientEvt } from '../../@/space-client/evt'

@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { EventId, withEventMeta } from '~/@/event-sourced/event'
 import { LamportTimestamp } from '~/@/lamport-clock'
-import { didPlaySound } from '~/app/@/client/client-cmd'
+import { didPlaySound } from '~/app/@/client/cmd'
 import { Pack } from '../../@/pack/pack'
 import { PackListClient } from '../../@/pack/pack-list'
 import { FixtureFlowPlayClient } from '../@/fixture.client'

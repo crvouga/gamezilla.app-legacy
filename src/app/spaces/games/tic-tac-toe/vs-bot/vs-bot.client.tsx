@@ -15,8 +15,8 @@ import {
   handle,
   initCoreModel
 } from './vs-bot.types'
-import { AppClientCmd, sendToServer } from '~/app/@/client/client-cmd'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { AppClientCmd, sendToServer } from '~/app/@/client/cmd'
+import { AppClientCtx } from '~/app/@/client/ctx'
 
 //
 //

@@ -2,7 +2,7 @@ import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
-import type { PlatformCmd } from '../@/client/client-cmd'
+import type { PlatformCmd } from '../@/client/cmd'
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState

@@ -6,7 +6,7 @@ import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { IconXMark, Show, Transition, cn } from '~/app/@/ui'
-import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../@/client/client-cmd'
+import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../@/client/cmd'
 
 //
 //
@@ -283,7 +283,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
   return (
     <div
       id={String(input.toast.toastId)}
-      className='pointer-events-none absolute top-0 left-0 z-40 w-full overflow-visible p-4'
+      className='pointer-events-none absolute left-0 top-0 z-40 w-full overflow-visible p-4'
       //
       onMouseDown={() =>
         input.dispatch({

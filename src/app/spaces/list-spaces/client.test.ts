@@ -6,7 +6,7 @@ import { RequestResponse, isRequesting, isResponseOk } from '~/@/request-respons
 import type { Route } from '~/@/routing/generated/routes'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, didPlaySound, didPushRoute } from '~/app/@/client/client-cmd'
+import { APP_SOUND, didPlaySound, didPushRoute } from '~/app/@/client/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from '~/app/@/ui'
 import { FixtureSpacesClient } from '../@/fixture/client'

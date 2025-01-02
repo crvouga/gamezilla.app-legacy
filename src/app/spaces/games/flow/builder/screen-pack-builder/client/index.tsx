@@ -1,4 +1,4 @@
-import { APP_SOUND, playSound, showToast } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound, showToast } from '~/app/@/client/cmd'
 import {
   Button,
   Drawer,

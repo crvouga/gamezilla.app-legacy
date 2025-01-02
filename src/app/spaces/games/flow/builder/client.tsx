@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { ScreenMainMenuClient } from './screen-main-menu/client'
 import { ScreenPackBuilderOpenClient } from './screen-pack-builder-open/client'

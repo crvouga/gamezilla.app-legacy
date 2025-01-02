@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from '~/app/@/client/client-cmd'
+import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from '~/app/@/client/cmd'
 import { IconPuzzlePiece } from '~/app/@/ui'
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
 import type { GameClient } from '~/app/spaces/games/@/architecture/game-client'

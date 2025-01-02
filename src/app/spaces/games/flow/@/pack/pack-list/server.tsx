@@ -1,5 +1,5 @@
 import { AppServerModule } from '~/app/@/architecture/app-server'
-import { sendToClient } from '~/app/@/server/server-cmd'
+import { sendToClient } from '~/app/@/server/cmd'
 import type { ServerModule } from './types'
 
 const update: ServerModule['update'] = async (input) => {

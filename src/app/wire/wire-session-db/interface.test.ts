@@ -1,4 +1,4 @@
-import { AppServerTestEnv } from '~/app/@/server/server-test-env'
+import { AppServerTestEnv } from '~/app/@/server/fixture'
 import { Config, WireSessionDb } from './impl'
 import { Logger } from '~/@/logger'
 import { describe, expect, test } from 'bun:test'

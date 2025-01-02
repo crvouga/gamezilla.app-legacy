@@ -16,9 +16,9 @@ import {
   sendToServer,
   showToast,
   type AppClientCmd
-} from '~/app/@/client/client-cmd'
-import { BaseClientCtx } from '~/app/@/client/client-ctx'
-import { ClientEvt } from '~/app/@/client/client-evt'
+} from '~/app/@/client/cmd'
+import { BaseClientCtx } from '~/app/@/client/ctx'
+import { ClientEvt } from '~/app/@/client/evt'
 import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from '~/app/@/ui'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'

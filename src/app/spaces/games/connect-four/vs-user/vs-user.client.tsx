@@ -30,8 +30,8 @@ import {
   type StateGameOver,
   toPlayerType
 } from './vs-user.types'
-import { AppClientCmd } from '~/app/@/client/client-cmd'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { AppClientCmd } from '~/app/@/client/cmd'
+import { AppClientCtx } from '~/app/@/client/ctx'
 
 //
 //
@@ -255,7 +255,7 @@ const View: Module['View'] = (input) => {
                 }
               />
               {input.modelCore.type === 'game-over' && (
-                <div className='absolute top-0 left-0 flex h-full w-full items-center justify-center bg-black/50'>
+                <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50'>
                   <ViewGameOverMessage dispatch={input.dispatch} ctx={input.ctx} modelCore={input.modelCore} />
                 </div>
               )}

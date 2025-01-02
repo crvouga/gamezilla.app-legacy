@@ -1,8 +1,8 @@
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import type { Route } from '~/@/routing/generated/routes'
-import { APP_SOUND, playSound, type RouteCmd, type SoundCmd } from '~/app/@/client/client-cmd'
-import { ClientEvt } from '../@/client/client-evt'
+import { APP_SOUND, playSound, type RouteCmd, type SoundCmd } from '~/app/@/client/cmd'
+import { ClientEvt } from '../@/client/evt'
 
 //
 //

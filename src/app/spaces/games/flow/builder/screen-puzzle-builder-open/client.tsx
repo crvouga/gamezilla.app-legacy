@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { APP_SOUND, playSound } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { TopBar } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { PuzzleListClient } from '../../@/puzzle/puzzle-list'

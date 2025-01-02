@@ -4,7 +4,7 @@ import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Logger } from '~/@/logger'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
-import { AppServerTestEnv } from '~/app/@/server/server-test-env'
+import { AppServerTestEnv } from '~/app/@/server/fixture'
 import { Config, UserSessionDb } from './impl'
 
 const Fixture = async (config: Config) => {

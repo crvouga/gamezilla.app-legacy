@@ -1,4 +1,4 @@
-import { APP_SOUND, openProfile, playSound } from '~/app/@/client/client-cmd'
+import { APP_SOUND, openProfile, playSound } from '~/app/@/client/cmd'
 import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from '~/app/@/ui'
 import { Badge } from '~/app/@/ui/badge'
 import { SpaceClientModule } from '../../@/architecture/space-client'

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventId } from '~/@/event-sourced/event'
 import { Err } from '~/@/result'
-import { didShowErrorSm } from '~/app/@/client/client-cmd'
+import { didShowErrorSm } from '~/app/@/client/cmd'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
 import { Pack } from '../../../../@/pack/pack'
 import { EditPackNameClient } from '../client'

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { didPlaySound, didPushRoute } from '../@/client/client-cmd'
+import { didPlaySound, didPushRoute } from '../@/client/cmd'
 import { FixtureAuthClient } from './@/fixture/client'
 import * as AuthClient from './client'
 

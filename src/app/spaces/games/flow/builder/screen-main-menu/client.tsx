@@ -2,7 +2,7 @@ import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/games/@/architecture/game-client-v2'
 import { GameMainMenu } from '../../../@/game/game-main-menu'
 import type { ClientModule } from '../types'
-import { playSound, APP_SOUND } from '~/app/@/client/client-cmd'
+import { playSound, APP_SOUND } from '~/app/@/client/cmd'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen({ model: input.model }, (model) => updateFromMsgCore({ ...input, model }))

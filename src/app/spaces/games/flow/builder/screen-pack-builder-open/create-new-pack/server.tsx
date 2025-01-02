@@ -1,4 +1,4 @@
-import { sendToClient } from '~/app/@/server/server-cmd'
+import { sendToClient } from '~/app/@/server/cmd'
 import { GameServerModule } from '~/app/spaces/games/@/architecture/game-server-v2'
 import type { Pack } from '../../../@/pack/pack'
 import { PackId } from '../../../@/pack/pack-id'

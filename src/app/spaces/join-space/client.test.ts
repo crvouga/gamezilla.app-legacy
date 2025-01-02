@@ -4,7 +4,7 @@ import { FixtureSpacesClient } from '../@/fixture/client'
 import { SpacesCoreClient } from '../core/client'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Profile } from '~/app/@/data/profile'
-import { didShowToast, didShowErrorSm } from '~/app/@/client/client-cmd'
+import { didShowToast, didShowErrorSm } from '~/app/@/client/cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()

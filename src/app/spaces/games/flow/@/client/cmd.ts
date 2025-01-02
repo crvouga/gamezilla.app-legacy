@@ -1,4 +1,4 @@
-import type { ClientCmdTypes } from '~/app/@/client/client-cmd'
+import type { ClientCmdTypes } from '~/app/@/client/cmd'
 import { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
 import { Flow } from '../flow/flow'
 import { FlowId } from '../flow/flow/flow-id'

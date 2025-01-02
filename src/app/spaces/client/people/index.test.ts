@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { didOpenProfile, didPlaySound } from '~/app/@/client/client-cmd'
+import { didOpenProfile, didPlaySound } from '~/app/@/client/cmd'
 import { UserId } from '~/app/@/data/user-id'
 import { People } from '.'
 import { FixtureSpacesClient } from '../../@/fixture/client'

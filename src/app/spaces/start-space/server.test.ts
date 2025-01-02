@@ -5,7 +5,7 @@ import { ClientId } from '~/app/@/data/client-id'
 import { SessionId } from '~/app/@/data/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { didSendMsgToClient } from '~/app/@/server/server-cmd'
+import { didSendMsgToClient } from '~/app/@/server/cmd'
 import { FixtureSpaceServer } from '../@/fixture/server'
 import { SpaceCore } from '../core/space-core'
 

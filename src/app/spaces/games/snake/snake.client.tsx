@@ -14,7 +14,7 @@ import {
 } from './snake.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { AppClientCtx } from '~/app/@/client/client-ctx'
+import { AppClientCtx } from '~/app/@/client/ctx'
 
 //
 //

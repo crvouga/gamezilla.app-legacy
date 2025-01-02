@@ -13,7 +13,7 @@ import {
   userStartedSpace
 } from '../@/fixture/client'
 import { SpacesCoreClient } from '../core/client'
-import { didPushRoute, didShowToast, didPlaySound } from '~/app/@/client/client-cmd'
+import { didPushRoute, didShowToast, didPlaySound } from '~/app/@/client/cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()

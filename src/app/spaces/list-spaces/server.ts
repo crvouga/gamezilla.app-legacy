@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { Paginated } from '~/app/@/data/pagination'
-import { sendToClient } from '~/app/@/server/server-cmd'
+import { sendToClient } from '~/app/@/server/cmd'
 import type { SpaceServerModule } from '../@/architecture/space-server'
 import { SpaceCore } from '../core/space-core'
 

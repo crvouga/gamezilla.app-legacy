@@ -6,8 +6,8 @@ import type { IClientTransport } from './transport/client'
 import type { ClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { AppClientCmd, showToast } from '../@/client/client-cmd'
-import { ClientEvt } from '../@/client/client-evt'
+import { AppClientCmd, showToast } from '../@/client/cmd'
+import { ClientEvt } from '../@/client/evt'
 
 //
 //

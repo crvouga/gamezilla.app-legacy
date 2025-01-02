@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/client/client-cmd'
+import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/client/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Button, IconPlus } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'

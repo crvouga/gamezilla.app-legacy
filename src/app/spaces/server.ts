@@ -1,6 +1,6 @@
 import { Msg } from '~/@/msg/msg'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { AppServerCtx } from '../@/server/server-ctx'
+import { AppServerCtx } from '../@/server/ctx'
 import { type Input, type Output, SpaceServerModule } from './@/architecture/space-server'
 import { Space } from './@/space/space'
 import { SpacesCoreServer } from './core/server'

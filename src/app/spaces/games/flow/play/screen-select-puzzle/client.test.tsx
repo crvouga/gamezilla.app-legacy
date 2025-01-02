@@ -4,7 +4,7 @@ import { EventId, withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FixtureFlowPlayClient } from '../@/fixture.client'
-import { didPlaySound } from '~/app/@/client/client-cmd'
+import { didPlaySound } from '~/app/@/client/cmd'
 
 const Fixture = async () => {
   const f = await FixtureFlowPlayClient()
