@@ -1,8 +1,7 @@
 import { Keyboard } from '~/@/browser'
 import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
 import { pipe } from '~/@/function/pipe'
-import { ActionButton, IconArrowLeftOnRect } from '~/app/@/ui'
+import { Sub } from '~/@/sub'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
@@ -13,7 +12,7 @@ import {
   type MsgClient,
   type MsgToClient,
   initShared
-} from './maze.types'
+} from './types'
 
 //
 //
@@ -234,20 +233,7 @@ export const View = ({ model, ctx, dispatch }: { ctx: SpaceClientCtx; model: Mod
             fill='#000'
             stroke='#bcbcbc'
           />
-          <div>
-            <ActionButton
-              icon={<IconArrowLeftOnRect className='h-6 w-6' />}
-              label={ctx.t('app.exit')}
-              onClick={() =>
-                dispatch([
-                  'stop-game',
-                  {
-                    userId: ctx.currentUserId
-                  }
-                ])
-              }
-            />
-          </div>
+         
         </>
       )}
     </div>

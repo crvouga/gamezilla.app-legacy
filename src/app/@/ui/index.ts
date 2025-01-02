@@ -1,4 +1,3 @@
-export * from './action-button'
 export * from './alert'
 export * from './avatar'
 export * from './box'
