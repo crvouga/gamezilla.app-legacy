@@ -346,6 +346,6 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
   return result
 }
 
-export const FlowGridUISvg = {
+export const FlowGridBoardSvg = {
   View
 }

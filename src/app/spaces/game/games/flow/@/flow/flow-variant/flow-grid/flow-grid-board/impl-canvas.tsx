@@ -283,6 +283,6 @@ const View = ({
   )
 }
 
-export const FlowGridUICanvas = {
+export const FlowGridBoardCanvas = {
   View
 }

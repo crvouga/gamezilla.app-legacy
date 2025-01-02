@@ -213,7 +213,7 @@ const saveChanges: ClientModule['update'] = ({ model, modelCore }) => {
 //
 //
 
-export const ViewActionButtons = ({
+export const ViewBottomButtons = ({
   model,
   dispatch,
   ctx
@@ -292,7 +292,7 @@ const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
 }
 
 export const SaveChangesClient = {
-  ViewActionButtons,
+  ViewBottomButtons,
   update,
   ViewUnsavedChangesDrawer
 }

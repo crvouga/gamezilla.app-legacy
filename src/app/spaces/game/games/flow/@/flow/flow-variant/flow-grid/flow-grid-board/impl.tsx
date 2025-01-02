@@ -1,7 +1,7 @@
 import { BoardInput } from '../../../ui/board'
 import type * as FlowGrid from '../flow-grid'
-import { FlowGridUICanvas } from './impl-canvas'
-import { FlowGridUISvg } from './impl-svg'
+import { FlowGridBoardCanvas } from './impl-canvas'
+import { FlowGridBoardSvg } from './impl-svg'
 
 type FlowGridUIImpl = 'svg' | 'canvas'
 
@@ -10,11 +10,11 @@ const IMPL = 'svg' as FlowGridUIImpl
 const View = (input: BoardInput<FlowGrid.Model>) => {
   switch (IMPL) {
     case 'svg': {
-      return <FlowGridUISvg.View {...input} />
+      return <FlowGridBoardSvg.View {...input} />
     }
 
     case 'canvas': {
-      return <FlowGridUICanvas.View {...input} />
+      return <FlowGridBoardCanvas.View {...input} />
     }
   }
 }
