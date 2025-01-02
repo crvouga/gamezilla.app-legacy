@@ -2,7 +2,7 @@ import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import type { Route } from '~/@/routing/generated/routes'
 import { APP_SOUND, playSound, type RouteCmd, type SoundCmd } from '~/app/@/client/client-cmd'
-import { ClientEvt } from '../@/client/client-event'
+import { ClientEvt } from '../@/client/client-evt'
 
 //
 //
@@ -119,7 +119,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
         },
         msgEvt: [
           {
-            t: 'routing/route-changed',
+            t: 'routing-evt.route-changed',
             route: msg.route
           }
         ]

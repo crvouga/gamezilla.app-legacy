@@ -1,4 +1,4 @@
-import type { ClientEvt } from '~/app/@/client/client-event'
+import type { ClientEvt } from '~/app/@/client/client-evt'
 import { UserAccount } from '~/app/@/data/account'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'

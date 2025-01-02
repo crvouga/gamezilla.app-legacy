@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
         model,
         ctx,
         msgEvt: {
-          t: 'auth/unauthenticated'
+          t: 'auth-evt.unauthenticated'
         }
       })
     )

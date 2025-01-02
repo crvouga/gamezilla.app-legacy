@@ -18,7 +18,7 @@ import {
   type AppClientCmd
 } from '~/app/@/client/client-cmd'
 import { BaseClientCtx } from '~/app/@/client/client-ctx'
-import { ClientEvt } from '~/app/@/client/client-event'
+import { ClientEvt } from '~/app/@/client/client-evt'
 import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from '~/app/@/ui'
 import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
@@ -105,7 +105,7 @@ const update: Module['update'] = (input) => {
 
 const updateAutoFocus: Module['update'] = (input) => {
   switch (input.msgEvt?.t) {
-    case 'routing/route-changed': {
+    case 'routing-evt.route-changed': {
       switch (input.msgEvt.route.t) {
         case 'login-sms-request': {
           return {

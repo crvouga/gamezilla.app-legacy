@@ -127,7 +127,7 @@ const updateFromServer: ClientModule['update'] = (input) => {
         },
         msgEvt: [
           {
-            t: 'auth/unauthenticated'
+            t: 'auth-evt.unauthenticated'
           }
         ]
       }
@@ -146,7 +146,7 @@ const updateFromServer: ClientModule['update'] = (input) => {
           {
             ...input.msgServer,
             account: input.msgServer.account,
-            t: 'auth/authenticated'
+            t: 'auth-evt.authenticated'
           }
         ]
       }
@@ -170,7 +170,7 @@ const updateRedirect: ClientModule['update'] = (input) => {
   }
 
   switch (input.msgEvt.t) {
-    case 'auth/authenticated': {
+    case 'auth-evt.authenticated': {
       if (!input.msgEvt.loggedIn) {
         return {
           model: input.model
@@ -195,7 +195,7 @@ const updateRedirect: ClientModule['update'] = (input) => {
       }
     }
 
-    case 'routing/route-changed': {
+    case 'routing-evt.route-changed': {
       if (input.model.currentUser.t === 'logged-in' && input.ctx.currentRoute.n === 'auth-login') {
         return {
           model: input.model,

@@ -18,7 +18,7 @@ const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
   const { ctx, model, msgEvt } = input
 
   switch (msgEvt?.t) {
-    case 'auth/unauthenticated': {
+    case 'auth-evt.unauthenticated': {
       const { currentUserId } = ctx
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, currentUserId)
       if (!currentUserId || !currentUserSpaceId) {

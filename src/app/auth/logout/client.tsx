@@ -29,7 +29,7 @@ const update: ClientModule['update'] = (input) => {
         ],
         msgEvt: [
           {
-            t: 'auth/unauthenticated'
+            t: 'auth-evt.unauthenticated'
           }
         ]
       }
@@ -69,7 +69,7 @@ const update: ClientModule['update'] = (input) => {
   }
 
   switch (input.msgEvt?.t) {
-    case 'auth/unauthenticated': {
+    case 'auth-evt.unauthenticated': {
       return {
         model: {
           ...input.model,

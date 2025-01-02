@@ -3,7 +3,7 @@ import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppClientCtx } from '../@/client/client-ctx'
-import { ClientEvt } from '../@/client/client-event'
+import { ClientEvt } from '../@/client/client-evt'
 import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
 
 //

@@ -5,7 +5,7 @@ import { AppClientModule } from '~/app/@/architecture/app-client'
 import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
 import { AppClientCmd, ProfileCmd, back, logout, pushRoute, replaceRoute, sendToServer } from '../@/client/client-cmd'
 import { AnonymousClientCtx, AppClientCtx } from '../@/client/client-ctx'
-import { ClientEvt } from '../@/client/client-event'
+import { ClientEvt } from '../@/client/client-evt'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'
@@ -132,7 +132,7 @@ const updateFromEvent: ClientModule['update'] = (input) => {
   }
 
   switch (msgEvt.t) {
-    case 'routing/route-changed': {
+    case 'routing-evt.route-changed': {
       if (msgEvt.route.n === 'profile' && msgEvt.route.t === 'profile') {
         return loadProfile(msgEvt.route.userId, model)
       }
@@ -178,7 +178,7 @@ const updateFromServer: ClientModule['update'] = (input) => {
         model: modelNew,
         msgEvt: [
           {
-            t: 'profile/current-user-profile',
+            t: 'profile-evt.current-user-profile',
             profile
           }
         ]

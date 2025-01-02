@@ -7,7 +7,7 @@ import type { ClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { AppClientCmd, showToast } from '../@/client/client-cmd'
-import { ClientEvt } from '../@/client/client-event'
+import { ClientEvt } from '../@/client/client-evt'
 
 //
 //
@@ -109,7 +109,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
         },
         msgEvt: [
           {
-            t: 'wire/server-connected'
+            t: 'wire-evt.server-connected'
           }
         ]
       }

@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing/route-changed',
+          t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
             t: 'space-list'
@@ -71,7 +71,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing/route-changed',
+          t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
             t: 'space-list'
@@ -96,7 +96,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing/route-changed',
+          t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
             t: 'space-list'
@@ -119,7 +119,7 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing/route-changed',
+          t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
             t: 'space-list'
@@ -157,7 +157,7 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing/route-changed',
+          t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
             t: 'space-list'
@@ -192,7 +192,7 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing/route-changed',
+          t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
             t: 'space-list'
@@ -227,7 +227,7 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing/route-changed',
+          t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
             t: 'space-list'
@@ -291,7 +291,7 @@ describe(import.meta.file, () => {
     const initial = f.update(f.initial, [{ msgServer: { t: 'listed-spaces', spaces: [] } }])
 
     const updated = f.update(initial, [
-      { msgEvt: { t: 'routing/route-changed', route: { n: 'spaces', t: 'space-list' } } }
+      { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } }
     ])
     expect(f.view(initial).getByTestId(SPINNER_TEST_ID)).toBeFalsy()
     expect(f.view(updated).getByTestId(SPINNER_TEST_ID)).toBeTruthy()
@@ -301,7 +301,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const initial = f.update(f.initial, [{ msgServer: { t: 'listed-spaces', spaces: [] } }])
     const updated = f.update(initial, [
-      { msgEvt: { t: 'routing/route-changed', route: { n: 'spaces', t: 'space-list' } } }
+      { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } }
     ])
     expect(f.view(initial).getByTestId(EMPTY_STATE_TEST_ID)).toBeTruthy()
     expect(f.view(updated).getByTestId(EMPTY_STATE_TEST_ID)).toBeFalsy()

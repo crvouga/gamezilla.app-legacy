@@ -57,7 +57,7 @@ describe(import.meta.file, () => {
       },
       {
         msgEvt: {
-          t: 'routing/route-changed',
+          t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
             t: 'space-list'

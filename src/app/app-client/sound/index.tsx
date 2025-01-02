@@ -5,7 +5,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { APP_SOUND, SoundCmd, playSound } from '~/app/@/client/client-cmd'
 import { BaseClientCtx } from '~/app/@/client/client-ctx'
-import { ClientEvt } from '~/app/@/client/client-event'
+import { ClientEvt } from '~/app/@/client/client-evt'
 import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~/app/@/ui'
 
 //
@@ -122,7 +122,7 @@ const updateFromEvent: Module['update'] = (input) => {
   }
 
   switch (input.msgEvt.t) {
-    case 'platform/document-visibility-changed': {
+    case 'platform-evt.document-visibility-changed': {
       return {
         model: {
           ...input.model,

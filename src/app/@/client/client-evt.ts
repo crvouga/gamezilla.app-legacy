@@ -4,36 +4,33 @@ import { Profile } from '../data/profile'
 
 export type ClientEvt =
   | {
-      t: 'auth/authenticated'
+      t: 'auth-evt.authenticated'
       account: UserAccount
       loggedIn?: boolean
     }
   | {
-      t: 'auth/unauthenticated'
+      t: 'auth-evt.unauthenticated'
     }
   | {
-      t: 'wire/server-connected'
+      t: 'wire-evt.server-connected'
     }
   | {
-      t: 'routing/route-changed'
+      t: 'routing-evt.route-changed'
       route: Route
     }
   | {
-      t: 'platform/document-visibility-changed'
+      t: 'platform-evt.document-visibility-changed'
       state: DocumentVisibilityState
     }
   | {
-      t: 'time/elapsed'
-    }
-  | {
-      t: 'profile/current-user-profile'
+      t: 'profile-evt.current-user-profile'
       profile: Profile
     }
 
 export const routeChanged = (route: Route): ClientEvt => {
-  return { t: 'routing/route-changed', route }
+  return { t: 'routing-evt.route-changed', route }
 }
 
 export const serverConnected = (): ClientEvt => {
-  return { t: 'wire/server-connected' }
+  return { t: 'wire-evt.server-connected' }
 }

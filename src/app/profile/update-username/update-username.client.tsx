@@ -3,7 +3,7 @@ import { Button, TextField, TopBar } from '~/app/@/ui'
 import { ModelClient, MsgClient, MsgToServer } from './update-username.types'
 import { AppClientCmd, pushRoute, sendToServer } from '~/app/@/client/client-cmd'
 import { AppClientCtx, AnonymousClientCtx } from '~/app/@/client/client-ctx'
-import { ClientEvt } from '~/app/@/client/client-event'
+import { ClientEvt } from '~/app/@/client/client-evt'
 
 export const init = <TModel extends ModelClient>(input: {
   ctx: AppClientCtx | AnonymousClientCtx
@@ -13,7 +13,7 @@ export const init = <TModel extends ModelClient>(input: {
     model: {
       ...input.model,
       'profile.update-username.username': input.ctx.currentUserId
-        ? (input.ctx.profiles[input.ctx.currentUserId]?.username ?? '')
+        ? input.ctx.profiles[input.ctx.currentUserId]?.username ?? ''
         : ''
     }
   }
@@ -71,11 +71,11 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
   }
 
   switch (input.msgEvt?.t) {
-    case 'profile/current-user-profile': {
+    case 'profile-evt.current-user-profile': {
       return init({ ctx: input.ctx, model: input.model })
     }
 
-    case 'routing/route-changed': {
+    case 'routing-evt.route-changed': {
       if (input.msgEvt.route.t === 'profile-edit-username') {
         return init({ ctx: input.ctx, model: input.model })
       }

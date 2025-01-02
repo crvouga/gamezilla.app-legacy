@@ -3,7 +3,7 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppClientCmd } from '~/app/@/client/client-cmd'
-import { ClientEvt } from '~/app/@/client/client-event'
+import { ClientEvt } from '~/app/@/client/client-evt'
 
 export type GameClientTypes = {
   //

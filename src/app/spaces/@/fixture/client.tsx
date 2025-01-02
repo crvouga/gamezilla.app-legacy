@@ -8,7 +8,7 @@ import type { Route } from '~/@/routing/generated/routes'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientCtx } from '~/app/@/client/client-ctx'
-import { routeChanged } from '~/app/@/client/client-event'
+import { routeChanged } from '~/app/@/client/client-evt'
 import { FixtureAppClient } from '~/app/@/client/client-test-env'
 import { Translator } from '~/app/@/client/translator'
 import { UserAccount } from '~/app/@/data/account'
@@ -242,7 +242,7 @@ export const serverConnected = (ctx: AppClientCtx) => (model: SpacesTypes.ModelC
     ctx,
     model,
     msgEvt: {
-      t: 'wire/server-connected'
+      t: 'wire-evt.server-connected'
     }
   })
 }
@@ -564,7 +564,7 @@ export const loggedOut = (ctx: AppClientCtx) => (model: SpacesTypes.ModelClient)
     ctx,
     model,
     msgEvt: {
-      t: 'auth/unauthenticated'
+      t: 'auth-evt.unauthenticated'
     }
   })
 }

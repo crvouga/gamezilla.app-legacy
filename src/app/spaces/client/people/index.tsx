@@ -104,7 +104,7 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model }) => {
 
 const updateFromEvent: SpaceClientModule['update'] = ({ msgEvt, model }) => {
   switch (msgEvt?.t) {
-    case 'routing/route-changed': {
+    case 'routing-evt.route-changed': {
       return {
         model: {
           ...model,

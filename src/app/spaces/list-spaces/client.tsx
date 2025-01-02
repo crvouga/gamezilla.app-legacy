@@ -51,7 +51,7 @@ const init: SpaceClientModule['init'] = ({ model, ctx }) => {
 
 const update: SpaceClientModule['update'] = (input) => {
   switch (input.msgEvt?.t) {
-    case 'routing/route-changed': {
+    case 'routing-evt.route-changed': {
       if (input.msgEvt.route.t === 'space-list') {
         return sendListSpacesRequest(input)
       }
@@ -60,7 +60,7 @@ const update: SpaceClientModule['update'] = (input) => {
       }
     }
 
-    case 'wire/server-connected': {
+    case 'wire-evt.server-connected': {
       return sendListSpacesRequest(input)
     }
   }
@@ -157,7 +157,7 @@ const View: SpaceClientModule['View'] = (input) => {
       </div>
 
       {!currentUserSpaceId && (
-        <div className='absolute right-4 bottom-6'>
+        <div className='absolute bottom-6 right-4'>
           <StartSpaceClient.ViewStartSpaceButton {...input} />
         </div>
       )}
