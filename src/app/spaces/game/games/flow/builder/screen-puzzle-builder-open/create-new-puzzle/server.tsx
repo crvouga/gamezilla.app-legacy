@@ -1,7 +1,7 @@
 import { Result, isErr } from '~/@/result'
 import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
-import { FlowVariant, FlowVariantDimensions } from '../../../@/flow'
+import { Variant, VariantDimensions } from '../../../@/flow'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import type { ServerModule } from '../../types'
 import type { MsgCore } from './types'
@@ -31,9 +31,9 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         count: count,
         createdAt: input.ctx.now,
         createdBy: input.msgClient.userId,
-        flow: FlowVariant.init({
+        flow: Variant.init({
           terminalsByGroupId: {},
-          dimensions: FlowVariantDimensions.init({
+          dimensions: VariantDimensions.init({
             t: 'flow-grid',
             height: 8,
             width: 8

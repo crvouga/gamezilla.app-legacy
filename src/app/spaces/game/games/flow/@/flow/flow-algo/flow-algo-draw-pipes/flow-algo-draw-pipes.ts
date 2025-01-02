@@ -1,7 +1,7 @@
 import { pipe } from '~/@/function/pipe'
 import { MinHeap } from '~/@/min-heap/min-heap'
 import { Flow } from '../..'
-import { FlowVariant } from '../..'
+import { Variant } from '../..'
 import { FlowGroupId } from '../../flow/flow-group-id'
 import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowEdgeId } from '../../flow/flow-edge-id'
@@ -15,7 +15,7 @@ type Pipeline = FlowNodeId[]
 /**
  * Starts
  */
-export const startDrawPipes = (model: FlowVariant.Model, groupId: FlowGroupId, newNodeId: FlowNodeId): Flow.Model => {
+export const startDrawPipes = (model: Variant.Model, groupId: FlowGroupId, newNodeId: FlowNodeId): Flow.Model => {
   const terminal = Flow.toTerminalByGroupId(model, groupId)
 
   if (!terminal) {
@@ -38,7 +38,7 @@ export const startDrawPipes = (model: FlowVariant.Model, groupId: FlowGroupId, n
 /**
  * Algorithm that draws pipes from the inputted group id to the inputted node id
  */
-export const drawPipes = (model: FlowVariant.Model, groupId: FlowGroupId, nodeIdNew: FlowNodeId): Flow.Model => {
+export const drawPipes = (model: Variant.Model, groupId: FlowGroupId, nodeIdNew: FlowNodeId): Flow.Model => {
   const newNodeGroupId = Flow.findGroupIdByFlowNodeId(model, nodeIdNew)
 
   if (newNodeGroupId && newNodeGroupId !== groupId) {
@@ -74,7 +74,7 @@ export const drawPipes = (model: FlowVariant.Model, groupId: FlowGroupId, nodeId
       }
 
       const shortest = findShortestEmptyPipelineAStar(
-        (nodeId) => 1 - 1 / FlowVariant.distance(model, nodeId, nodeIdNew),
+        (nodeId) => 1 - 1 / Variant.distance(model, nodeId, nodeIdNew),
         model,
         startNodeId,
         nodeIdNew

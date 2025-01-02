@@ -7,12 +7,12 @@ import { IconLightbulb } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import type { Puzzle } from '../../../puzzle/puzzle'
 import { Flow } from '../../flow'
-import type { FlowVariant } from '../../flow-variant'
+import type { Variant } from '../../flow-variant'
 import { FlowGroupId } from '../../flow/flow-group-id'
 import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowTerminal } from '../../flow/flow-terminal'
 
-export type FindSolutions = (input: { flow: FlowVariant.Model }) => Promise<Result<string, Flow.Model[]>>
+export type FindSolutions = (input: { flow: Variant.Model }) => Promise<Result<string, Flow.Model[]>>
 
 export type Ctx = {
   flowPuzzle: Puzzle
@@ -206,7 +206,7 @@ export const toUsedHints = (
   return model.usedHints
 }
 
-export const toFlow = (input: { model: Model; flow: FlowVariant.Model }): FlowVariant.Model => {
+export const toFlow = (input: { model: Model; flow: Variant.Model }): Variant.Model => {
   return {
     ...input.flow,
     pipesBySourceId: input.model.pipesBySourceId,

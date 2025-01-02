@@ -1,19 +1,16 @@
 import type { ILogger } from '~/@/logger'
 import { loggerNoop } from '~/@/logger/impl-noop'
-import type { FlowVariant } from '../../flow-variant'
+import type { Variant } from '../../flow-variant'
 import { MsgToMaster, type MsgToWorker } from './flow-algo-solve-async.types'
 
-export const solve = async (
-  model: FlowVariant.Model,
-  logger: ILogger = loggerNoop
-): Promise<FlowVariant.Model | null> => {
+export const solve = async (model: Variant.Model, logger: ILogger = loggerNoop): Promise<Variant.Model | null> => {
   logger.info('Solving puzzle with worker')
 
   const url = new URL('flow-algo-solve-async.worker.ts', import.meta.url).href
 
   const worker = new Worker(url)
 
-  const solutionPromise = new Promise<FlowVariant.Model | null>((resolve) => {
+  const solutionPromise = new Promise<Variant.Model | null>((resolve) => {
     worker.onmessage = (event: MessageEvent<unknown>) => {
       const parsed = MsgToMaster.parse(event.data)
       if (parsed.t === 'err') {
@@ -41,7 +38,7 @@ export const solve = async (
 
   const solution = await Promise.race([
     solutionPromise,
-    new Promise<FlowVariant.Model | null>((resolve) => {
+    new Promise<Variant.Model | null>((resolve) => {
       setTimeout(
         () => {
           resolve(null)

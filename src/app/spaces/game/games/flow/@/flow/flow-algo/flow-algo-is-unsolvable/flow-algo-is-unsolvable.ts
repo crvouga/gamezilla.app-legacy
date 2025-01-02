@@ -1,8 +1,8 @@
-import { Flow, FlowVariant } from '../..'
+import { Flow, Variant } from '../..'
 import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowTerminal } from '../../flow/flow-terminal'
 
-const isSplittingTerminal = (model: FlowVariant.Model, terminal: FlowTerminal): boolean => {
+const isSplittingTerminal = (model: Variant.Model, terminal: FlowTerminal): boolean => {
   if (!terminal.endId) {
     return false
   }
@@ -53,7 +53,7 @@ const isSplittingTerminal = (model: FlowVariant.Model, terminal: FlowTerminal): 
   return false
 }
 
-const isUnsolvableDueToSplittingTerminal = (model: FlowVariant.Model): boolean => {
+const isUnsolvableDueToSplittingTerminal = (model: Variant.Model): boolean => {
   const terminals = Flow.toTerminals(model)
   for (const terminal of terminals) {
     if (isSplittingTerminal(model, terminal)) {
@@ -63,7 +63,7 @@ const isUnsolvableDueToSplittingTerminal = (model: FlowVariant.Model): boolean =
   return false
 }
 
-export const isUnsolvable = (model: FlowVariant.Model): boolean => {
+export const isUnsolvable = (model: Variant.Model): boolean => {
   if (isUnsolvableDueToSplittingTerminal(model)) {
     return true
   }

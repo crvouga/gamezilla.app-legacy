@@ -1,17 +1,17 @@
 import { ascend } from '~/@/array/sorting'
 import { MinHeap } from '~/@/min-heap/min-heap'
-import { Flow, FlowVariant } from '../..'
+import { Flow, Variant } from '../..'
 import { FlowGroupId } from '../../flow/flow-group-id'
 import { FlowNodeId } from '../../flow/flow-node-id'
 import { FlowTerminal } from '../../flow/flow-terminal'
 import { FlowAlgoIsUnsolvable } from '../flow-algo-is-unsolvable'
 
-const toDirection = (model: FlowVariant.Model, sourceId: FlowNodeId, targetId: FlowNodeId): string => {
-  const distance = FlowVariant.distance(model, sourceId, targetId)
+const toDirection = (model: Variant.Model, sourceId: FlowNodeId, targetId: FlowNodeId): string => {
+  const distance = Variant.distance(model, sourceId, targetId)
   return `${sourceId}${targetId}${distance}`
 }
 
-const countTurns = (model: FlowVariant.Model, path: Flow.Edge[]): number => {
+const countTurns = (model: Variant.Model, path: Flow.Edge[]): number => {
   let turns = 0
   let prevDirection = ''
   for (let i = 0; i < path.length; i++) {
@@ -26,13 +26,8 @@ const countTurns = (model: FlowVariant.Model, path: Flow.Edge[]): number => {
   return turns
 }
 
-const toHeuristic = (
-  model: FlowVariant.Model,
-  currentNode: FlowNodeId,
-  endNode: FlowNodeId,
-  path: Flow.Edge[]
-): number => {
-  const distanceHeuristic = FlowVariant.distance(model, currentNode, endNode)
+const toHeuristic = (model: Variant.Model, currentNode: FlowNodeId, endNode: FlowNodeId, path: Flow.Edge[]): number => {
+  const distanceHeuristic = Variant.distance(model, currentNode, endNode)
   const turnsHeuristic = countTurns(model, path)
   return distanceHeuristic + turnsHeuristic * 1.5
 }
@@ -44,7 +39,7 @@ const normalizePath = (path: Flow.Edge[]): string => {
 // const MAX_ITERATIONS = 5000;
 
 const toPossiblePipelines = function* (
-  model: FlowVariant.Model,
+  model: Variant.Model,
   groupId: FlowGroupId,
   startId: FlowNodeId,
   endId: FlowNodeId
@@ -65,7 +60,7 @@ const toPossiblePipelines = function* (
     currentNode: startId,
     visited: new Set([startId]),
     cost: 0,
-    heuristic: FlowVariant.distance(model, startId, endId)
+    heuristic: Variant.distance(model, startId, endId)
   })
 
   while (!minHeap.isEmpty()) {
@@ -113,7 +108,7 @@ const toPossiblePipelines = function* (
   }
 }
 
-const drawPipeline = (model: FlowVariant.Model, terminal: FlowTerminal, path: Flow.Edge[]): FlowVariant.Model => {
+const drawPipeline = (model: Variant.Model, terminal: FlowTerminal, path: Flow.Edge[]): Variant.Model => {
   const pipesBySourceId = { ...model.pipesBySourceId }
 
   for (const edge of path) {
@@ -129,7 +124,7 @@ const drawPipeline = (model: FlowVariant.Model, terminal: FlowTerminal, path: Fl
   }
 }
 
-const solveStep = function* (model: FlowVariant.Model, disconnectedTerminals: FlowTerminal[]): Iterable<Flow.Model> {
+const solveStep = function* (model: Variant.Model, disconnectedTerminals: FlowTerminal[]): Iterable<Flow.Model> {
   if (FlowAlgoIsUnsolvable.isUnsolvable(model)) {
     return
   }
@@ -155,14 +150,14 @@ const solveStep = function* (model: FlowVariant.Model, disconnectedTerminals: Fl
   }
 }
 
-const toTerminalDistance = (model: FlowVariant.Model, terminal: FlowTerminal): number => {
+const toTerminalDistance = (model: Variant.Model, terminal: FlowTerminal): number => {
   if (!terminal.endId) {
     return Number.POSITIVE_INFINITY
   }
-  return FlowVariant.distance(model, terminal.startId, terminal.endId)
+  return Variant.distance(model, terminal.startId, terminal.endId)
 }
 
-export const solutions = function* (model: FlowVariant.Model): Iterable<Flow.Model> {
+export const solutions = function* (model: Variant.Model): Iterable<Flow.Model> {
   const cleared = Flow.removeAllPipelines(model)
   const disconnectedTerminals = Flow.toTerminals(cleared)
 
@@ -171,7 +166,7 @@ export const solutions = function* (model: FlowVariant.Model): Iterable<Flow.Mod
   yield* solveStep(cleared, disconnectedTerminals)
 }
 
-export const solve = (model: FlowVariant.Model): Flow.Model | null => {
+export const solve = (model: Variant.Model): Flow.Model | null => {
   for (const solution of solutions(model)) {
     return solution
   }

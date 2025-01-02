@@ -8,7 +8,7 @@ import { sendToServer, showErrSm } from '~/app/@/client/cmd'
 import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
-import { FlowVariantUI } from '../../flow/flow-variant'
+import { VariantBoard } from '../../flow/flow-variant'
 import type { Puzzle } from '../puzzle'
 import type { ClientModule, MsgInCmdClient } from './types'
 
@@ -160,7 +160,7 @@ const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Puzzle; 
       onClick={onClick}
     >
       <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>
-        <FlowVariantUI.View disabled model={puzzle.flow} />
+        <VariantBoard.View disabled model={puzzle.flow} />
       </div>
       <div className='overflow-hidden truncate px-4'>
         <p className='flex-nowrap overflow-hidden truncate text-ellipsis whitespace-nowrap text-base font-bold'>

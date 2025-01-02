@@ -1,5 +1,5 @@
 import { pipe } from '~/@/function/pipe'
-import { FlowGridShorthand, FlowGridUI } from '../flow/flow-variant/flow-grid'
+import { FlowGridShorthand, FlowGridBoard } from '../flow/flow-variant/flow-grid'
 
 const grid1 = pipe(
   FlowGridShorthand.init([
@@ -26,7 +26,7 @@ const grid2 = pipe(
 const grid = false ? grid2 : grid1
 
 const gridView = (
-  <FlowGridUI.View model={grid} disabled borderless disableHighlight className='aspect-square bg-black' />
+  <FlowGridBoard.View model={grid} disabled borderless disableHighlight className='aspect-square bg-black' />
 )
 
 export const CoverArt = (input: { className?: string }) => {

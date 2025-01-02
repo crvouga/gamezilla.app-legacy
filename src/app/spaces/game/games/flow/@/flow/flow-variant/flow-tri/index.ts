@@ -1,3 +1,3 @@
 export * as FlowTri from './flow-tri'
-export * as FlowTriUI from './flow-tri-ui'
+export * as FlowTriBoard from './flow-tri-board'
 export * as FlowTriDimensions from './flow-tri-dimensions'

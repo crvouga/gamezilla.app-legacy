@@ -5,7 +5,7 @@ import type { ILogger } from '~/@/logger'
 import { Sql } from '~/@/sql'
 import { Posix } from '~/@/time/posix'
 import { Flow } from '../../flow/flow'
-import { FlowVariant } from '../../flow/flow-variant'
+import { Variant } from '../../flow/flow-variant'
 import type { Puzzle } from '../puzzle'
 import { PuzzleId } from '../puzzle-id'
 import { PuzzleName } from '../puzzle-name'
@@ -34,7 +34,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   const flowPuzzleId = PuzzleId.is(row.flow_puzzle_id) ? row.flow_puzzle_id : null
   const puzzleName = PuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
 
-  const parsedFlow = FlowVariant.Model.parse(row.flow)
+  const parsedFlow = Variant.Model.parse(row.flow)
   const flow = Result.unwrapOr(parsedFlow, null)
 
   const createdAt = Posix.init(ensureNumber(row.created_at_posix))
@@ -42,7 +42,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   const lastUpdatedAt = Posix.init(ensureNumber(row.last_updated_at_posix))
   const lastUpdatedBy = UserId.is(row.last_updated_by_user_id) ? row.last_updated_by_user_id : null
 
-  const parsedFlowSolutions = p.arr(p.or(FlowVariant.Model, Flow.Model)).parse(row.flow_solutions)
+  const parsedFlowSolutions = p.arr(p.or(Variant.Model, Flow.Model)).parse(row.flow_solutions)
   const flowSolutions = Result.unwrapOr(parsedFlowSolutions, [])
 
   if (flowPuzzleId && puzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {

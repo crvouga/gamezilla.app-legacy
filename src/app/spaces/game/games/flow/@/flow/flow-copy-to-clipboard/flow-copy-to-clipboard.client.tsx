@@ -3,7 +3,7 @@ import { APP_SOUND, AppClientCmd, copyToClipboard, playSound, showToast } from '
 import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconCopy } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
-import { FlowVariant } from '..'
+import { Variant } from '..'
 import { FlowGridShorthand } from '../flow-variant/flow-grid'
 
 export const MsgClient = p.or(
@@ -20,7 +20,7 @@ const update = <TModel,>(input: {
   msg: MsgClient | { t: string & {} }
   model: TModel
   ctx: AppClientCtx
-  flow: FlowVariant.Model
+  flow: Variant.Model
 }): {
   model: TModel
   msgCmd?: AppClientCmd<never>[]

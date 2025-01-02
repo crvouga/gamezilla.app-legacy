@@ -6,7 +6,7 @@ import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { FlowVariant } from '../flow'
+import { Variant } from '../flow'
 import { FlowClientEvtIn } from '../client/evt'
 import { FlowServerCtx } from '../server/ctx'
 import { RequestResponse } from '~/@/request-response/request-response'
@@ -27,19 +27,19 @@ export type MsgServer = { t: 'solutions.noop' }
 
 export type MsgToServer = {
   t: 'solutions.find-solutions'
-  flow: FlowVariant.Model
+  flow: Variant.Model
 }
 
 export type MsgToClient = {
   t: 'solutions.found-solutions'
-  found: Result<string, FlowVariant.Model[]>
+  found: Result<string, Variant.Model[]>
 }
 
 export type MsgInCmdClient = {
   t: 'solutions'
   c: {
     t: 'find'
-    flow: FlowVariant.Model
+    flow: Variant.Model
   }
 }
 

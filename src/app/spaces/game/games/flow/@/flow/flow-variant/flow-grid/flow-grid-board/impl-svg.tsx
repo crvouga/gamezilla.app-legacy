@@ -2,6 +2,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { IconCheckmark, cn } from '~/app/@/ui'
 import { Flow, FlowUI } from '../../../flow'
 import { FlowNodeId } from '../../../flow/flow-node-id'
+import { BoardInput } from '../../../ui/board'
 import * as FlowGrid from '../flow-grid'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
@@ -11,7 +12,7 @@ const EDGE_STROKE_WIDTH = 0.3
 let lastDraggedOver: FlowNodeId | null = null
 let isCurrentDeviceTouch = false
 
-const View = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
+const View = (input: BoardInput<FlowGrid.Model>) => {
   const draggedOver = (nodeId: FlowNodeId) => {
     if (!input.isDragging || lastDraggedOver === nodeId) {
       return
@@ -69,7 +70,7 @@ const View = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
   )
 }
 
-const ViewGrid = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
+const ViewGrid = (input: BoardInput<FlowGrid.Model>) => {
   return (
     <>
       <defs>
@@ -91,7 +92,7 @@ const ViewGrid = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
   )
 }
 
-const ViewPipelines = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
+const ViewPipelines = (input: BoardInput<FlowGrid.Model>) => {
   return (
     <g transform='translate(0.5, 0.5)'>
       {map(FlowGrid.yieldTerminals(input.model), (terminal) => {
@@ -102,7 +103,7 @@ const ViewPipelines = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
 }
 
 const ViewPipeline = (
-  input: FlowUI.FlowViewInput<FlowGrid.Model> & {
+  input: BoardInput<FlowGrid.Model> & {
     terminal: FlowGrid.Terminal
   }
 ) => {
@@ -187,7 +188,7 @@ const WithPadding = (input: {
   })
 }
 
-const ViewAutocompleteEdge = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
+const ViewAutocompleteEdge = (input: BoardInput<FlowGrid.Model>) => {
   return (
     input.autocompleteEdge && (
       <g transform='translate(0.5, 0.5)'>
@@ -205,7 +206,7 @@ const ViewAutocompleteEdge = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
   )
 }
 
-const ViewCoordinates = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
+const ViewCoordinates = (input: BoardInput<FlowGrid.Model>) => {
   return (
     input.showCoordinates && (
       <g transform='translate(0, 1)'>
@@ -222,7 +223,7 @@ const ViewCoordinates = (input: FlowUI.FlowViewInput<FlowGrid.Model>) => {
 }
 
 const ViewClickable = (
-  input: FlowUI.FlowViewInput<FlowGrid.Model> & {
+  input: BoardInput<FlowGrid.Model> & {
     draggedOver?: (nodeId: FlowNodeId) => void
   }
 ) => {
@@ -244,7 +245,7 @@ const ViewClickable = (
 }
 
 const ViewClickableNode = (
-  input: Pick<FlowUI.FlowViewInput<FlowGrid.Model>, 'onPressDown' | 'onPressUp'> & {
+  input: Pick<BoardInput<FlowGrid.Model>, 'onPressDown' | 'onPressUp'> & {
     node: FlowGrid.Node
     draggedOver?: (nodeId: FlowNodeId) => void
   }

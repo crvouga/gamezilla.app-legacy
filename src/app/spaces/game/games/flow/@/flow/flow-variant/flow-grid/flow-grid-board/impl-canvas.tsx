@@ -2,6 +2,7 @@ import { cn } from '~/app/@/ui'
 import { Canvas } from '~/app/@/ui/canvas'
 import { FlowUI } from '../../../flow'
 import { FlowNodeId } from '../../../flow/flow-node-id'
+import { BoardInput } from '../../../ui/board'
 import * as FlowGrid from '../flow-grid'
 
 const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
@@ -99,7 +100,7 @@ const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
   }
 }
 
-let previouseMouseMove: FlowNodeId | null = null
+let previousMouseMove: FlowNodeId | null = null
 
 const View = ({
   model,
@@ -108,7 +109,7 @@ const View = ({
   onPressDown,
   onDraggedOver,
   onPressUp
-}: FlowUI.FlowViewInput<FlowGrid.Model>) => {
+}: BoardInput<FlowGrid.Model>) => {
   return (
     <Canvas
       className={cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab')}
@@ -191,10 +192,10 @@ const View = ({
             x: xIndex,
             y: yIndex
           })
-          if (previouseMouseMove === nodeId) {
+          if (previousMouseMove === nodeId) {
             return
           }
-          previouseMouseMove = nodeId
+          previousMouseMove = nodeId
           onDraggedOver?.(nodeId)
         }
       }}
@@ -274,7 +275,7 @@ const View = ({
             y: yIndex
           })
 
-          previouseMouseMove = nodeId
+          previousMouseMove = nodeId
           onDraggedOver?.(nodeId)
         }
       }}

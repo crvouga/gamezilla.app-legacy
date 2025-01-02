@@ -1,3 +1,3 @@
-export * as FlowVariant from './flow-variant'
-export * as FlowVariantDimensions from './flow-variant-dimensions'
-export * as FlowVariantUI from './flow-variant-ui'
+export * as Variant from './variant'
+export * as VariantDimensions from './variant-dimensions'
+export * as VariantBoard from './variant-board'

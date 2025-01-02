@@ -9,7 +9,7 @@ import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import type { FlowClientCtx } from '../../client/ctx'
-import { FlowVariant, FlowVariantDimensions } from '../../flow'
+import { Variant, VariantDimensions } from '../../flow'
 import { Puzzle } from '../puzzle'
 import { PuzzleListClient } from './client'
 import { type ModelClient, initClient } from './types'
@@ -90,8 +90,8 @@ describe(import.meta.file, () => {
       count: 1,
       createdAt: ctx.now,
       createdBy: ctx.currentUserId,
-      flow: FlowVariant.init({
-        dimensions: FlowVariantDimensions.init({
+      flow: Variant.init({
+        dimensions: VariantDimensions.init({
           t: 'flow-grid',
           height: 5,
           width: 5

@@ -1,13 +1,13 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
-import { Flow, type FlowVariant } from '../../@/flow'
+import { Flow, type Variant } from '../../@/flow'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { FlowGrid, FlowGridShorthand } from '../../@/flow/flow-variant/flow-grid'
 import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture/core'
 import { ScreenPlayPuzzleCore } from './core'
 import type { MsgCore } from './types'
 
-const Fixture = async (input?: { flow?: FlowVariant.Model }) => {
+const Fixture = async (input?: { flow?: Variant.Model }) => {
   const f = await ScreenPuzzlePlayCoreChildFixture(input)
 
   return {

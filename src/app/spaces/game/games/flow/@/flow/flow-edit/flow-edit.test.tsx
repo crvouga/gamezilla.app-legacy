@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { FlowEdit } from '.'
 import { Puzzle } from '../../puzzle/puzzle'
-import { FlowVariantDimensions } from '../flow-variant'
+import { VariantDimensions } from '../flow-variant'
 
 const Fixture = async () => {
   const puzzle = await Puzzle.random()
@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
       },
       {
         t: 'dimensions-form.inputted',
-        dimensions: FlowVariantDimensions.init({
+        dimensions: VariantDimensions.init({
           t: 'flow-grid',
           height: 0,
           width: 0

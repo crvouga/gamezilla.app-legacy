@@ -1,7 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { pipe } from '~/@/function/pipe'
 import { UserId } from '~/app/@/data/user-id'
-import type { FlowVariant } from '../../../../@/flow'
+import type { Variant } from '../../../../@/flow'
 import { FlowPlay } from '../../../../@/flow/flow-play'
 import { Pack } from '../../../../@/pack/pack'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
@@ -10,7 +10,7 @@ import { CoreFixture } from '../../../@/core/fixture'
 import { ScreenPlayPuzzleCore } from '../../core'
 import type { ModelCore, MsgCore } from '../../types'
 
-export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.Model }) => {
+export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: Variant.Model }) => {
   const f = await CoreFixture()
   const puzzle = await Puzzle.random(input)
   const puzzleIndex = 1
@@ -61,7 +61,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: FlowVariant.M
   }
 }
 
-export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: FlowVariant.Model }) => {
+export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: Variant.Model }) => {
   const f = await ScreenPuzzlePlayCoreFixture(input)
 
   const updates = (

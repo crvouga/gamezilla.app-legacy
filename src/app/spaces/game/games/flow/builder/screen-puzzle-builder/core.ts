@@ -1,5 +1,5 @@
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
-import { FlowVariant } from '../../@/flow'
+import { Variant } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import * as BuilderTypes from '../types'
@@ -15,7 +15,7 @@ export const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
   })
 }
 
-export const toFlow = (modelCore: ModelCore): FlowVariant.Model => {
+export const toFlow = (modelCore: ModelCore): Variant.Model => {
   switch (modelCore.mode.t) {
     case 'edit': {
       return FlowEdit.toFlow({

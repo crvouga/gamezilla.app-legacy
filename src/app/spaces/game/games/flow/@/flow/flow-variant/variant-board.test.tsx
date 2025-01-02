@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
-import type { FlowViewInput } from '../flow-ui/flow-ui'
+import { BoardInput } from '../ui/board'
 import { FlowGridShorthand } from './flow-grid'
-import type * as FlowVariant from './flow-variant'
-import * as FlowVariantUI from './flow-variant-ui'
+import type * as FlowVariant from './variant'
+import * as FlowVariantUI from './variant-board'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
@@ -11,10 +11,10 @@ const Fixture = async () => {
     ['A', ' '],
     [' ', 'A']
   ])
-  const input: FlowViewInput<FlowVariant.Model> = {
+  const input: BoardInput<FlowVariant.Model> = {
     model: flow
   }
-  const render = (input: FlowViewInput<FlowVariant.Model>) => {
+  const render = (input: BoardInput<FlowVariant.Model>) => {
     return f.render(<FlowVariantUI.View {...input} />)
   }
   return {

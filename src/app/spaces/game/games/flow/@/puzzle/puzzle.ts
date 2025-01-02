@@ -5,7 +5,7 @@ import { Flow } from '../flow/flow'
 import { FlowAlgoSolve } from '../flow/flow-algo/flow-algo-solve'
 import { FlowAlgoSolveAsync } from '../flow/flow-algo/flow-algo-solve-async'
 import { FlowGridShorthand } from '../flow/flow-variant/flow-grid/flow-grid-shorthand'
-import * as FlowVariant from '../flow/flow-variant/flow-variant'
+import * as FlowVariant from '../flow/flow-variant/variant'
 import { PuzzleId } from './puzzle-id'
 import { PuzzleName } from './puzzle-name'
 

@@ -9,8 +9,8 @@ import { PrebuiltBottomButtons } from '../../../../@/ui/prebuilt-bottom-buttons'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { FlowAlgoDrawPipes } from '../flow-algo/flow-algo-draw-pipes'
 import { FlowAlgoSolve } from '../flow-algo/flow-algo-solve'
-import type { FlowVariant } from '../flow-variant'
-import * as FlowVariantUI from '../flow-variant/flow-variant-ui'
+import type { Variant } from '../flow-variant'
+import * as FlowVariantUI from '../flow-variant/variant-board'
 import * as Flow from '../flow/flow'
 import { FlowGroupId } from '../flow/flow-group-id'
 import { FlowNodeId } from '../flow/flow-node-id'
@@ -75,7 +75,7 @@ export const init = (input: { ctx: Ctx }): Model => {
   }
 }
 
-export const toStatus = (input: { flow: FlowVariant.Model; model: Model }) => {
+export const toStatus = (input: { flow: Variant.Model; model: Model }) => {
   const flow = toFlow(input)
 
   if (input.model.status.t === 'dragging') {
@@ -167,7 +167,7 @@ export const isShowingHint = (_model: Model): boolean => {
   return false
 }
 
-export const toSolutionMsgs = ({ flow }: { flow: FlowVariant.Model }): Msg[] => {
+export const toSolutionMsgs = ({ flow }: { flow: Variant.Model }): Msg[] => {
   const solutions = FlowAlgoSolve.solutions(flow)
 
   const solution = first(solutions)
@@ -584,7 +584,7 @@ const updateDragging = ({
   }
 }
 
-export const toFlow = ({ model, flow }: { flow: FlowVariant.Model; model: Model }): FlowVariant.Model => {
+export const toFlow = ({ model, flow }: { flow: Variant.Model; model: Model }): Variant.Model => {
   const derived = FlowHint.toFlow({
     flow,
     model
@@ -604,7 +604,7 @@ export const toFlow = ({ model, flow }: { flow: FlowVariant.Model; model: Model 
 //
 
 export const View = (input: {
-  flow: FlowVariant.Model
+  flow: Variant.Model
   model: Model
   dispatch: (m: Msg) => void
   disabled?: boolean

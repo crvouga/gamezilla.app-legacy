@@ -2,12 +2,12 @@ import { describe, expect, it, test } from 'bun:test'
 import { FlowPlay } from '.'
 import { Puzzle } from '../../puzzle/puzzle'
 import { Flow } from '../flow'
-import type { FlowVariant } from '../flow-variant'
+import type { Variant } from '../flow-variant'
 import { FlowGrid } from '../flow-variant/flow-grid'
 import { FlowGridShorthand } from '../flow-variant/flow-grid/flow-grid-shorthand'
 import { toStatus } from './flow-play'
 
-const Fixture = async ({ ctxFlow }: { ctxFlow: FlowVariant.Model }) => {
+const Fixture = async ({ ctxFlow }: { ctxFlow: Variant.Model }) => {
   const ctxPuzzle = await Puzzle.random({
     flow: ctxFlow
   })

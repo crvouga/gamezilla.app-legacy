@@ -5,10 +5,10 @@ import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
-import { FlowVariantUI } from '../../@/flow'
+import { VariantBoard } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
-import { FlowLayout } from '../../@/flow/flow-ui/flow-layout'
+import { FlowLayout } from '../../@/flow/ui/layout'
 import * as BuilderTypes from '../types'
 import { toFlow, toStatus } from './core'
 import { DeleteForeverClient } from './delete-forever/client'
@@ -339,7 +339,7 @@ const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
           profile={input.ctx.profiles[input.ctx.space.hostId]}
           subtitle={input.ctx.t('app.editor')}
         />
-        <FlowVariantUI.View disabled model={toFlow(input.modelCore.screenPuzzleBuilder)} />
+        <VariantBoard.View disabled model={toFlow(input.modelCore.screenPuzzleBuilder)} />
       </div>
     </LayoutGame>
   )
