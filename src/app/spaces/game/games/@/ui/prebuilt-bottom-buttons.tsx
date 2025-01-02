@@ -1,21 +1,6 @@
-import { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
-import type { VDom } from '~/@/vdom/vdom'
 import { IconArrowCircle, IconArrowLeftOnRect, IconArrowRotateLeft, IconChevronLeft, IconLightbulb } from '~/app/@/ui'
-
-export type BottomButtonInput = {
-  label: TranslatedText
-  disabled?: boolean
-  icon: (input: { className: string }) => VDom
-  classNames?: {
-    button?: string
-    label?: string
-  }
-  onClick: () => void
-  loading?: boolean
-  color?: 'danger' | 'success' | 'inherit'
-  hidden?: boolean
-}
+import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 
 type PrebuiltBottomButtonInput = Partial<BottomButtonInput> & {
   onClick: () => void

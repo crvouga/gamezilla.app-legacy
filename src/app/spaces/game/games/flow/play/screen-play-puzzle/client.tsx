@@ -4,6 +4,7 @@ import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
+import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
@@ -232,7 +233,7 @@ const View: ClientModule['View'] = (input) => {
         onToggle={() => input.dispatch({ t: 'got-msg-core', c: { t: 'user-toggled-action-buttons-drawer' } })}
         open={input.modelCore.screen.opened === 'action-drawer'}
         buttons={[
-          BottomButtons.next({
+          PrebuiltBottomButtons.next({
             ...input,
             disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
             hidden: !isSolved && flowPuzzle.t !== 'not-found',
@@ -272,7 +273,7 @@ const View: ClientModule['View'] = (input) => {
               })
             : null,
 
-          BottomButtons.reset({
+          PrebuiltBottomButtons.reset({
             ...input,
             hidden: flowPuzzle.t === 'not-found',
             onClick: () =>
