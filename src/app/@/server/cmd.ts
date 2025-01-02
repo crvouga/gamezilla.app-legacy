@@ -72,6 +72,27 @@ export const broadcast = <MsgToClient>(msg: MsgToClient): ServerCmd<MsgToClient>
   }
 }
 
+export const didBroadcast = <MsgToClient, TCmd>(
+  output: {
+    msgCmd?: (WireCmd<MsgToClient> | TCmd)[] | null
+  },
+  predicate: (msg: MsgToClient) => boolean
+): boolean => {
+  return (
+    ((output.msgCmd?.length ?? 0) > 0 &&
+      output.msgCmd?.some(
+        (cmd) =>
+          typeof cmd === 'object' &&
+          cmd &&
+          't' in cmd &&
+          cmd.t === 'wire' &&
+          cmd.c.t === 'broadcast' &&
+          predicate(cmd.c.msg)
+      )) ??
+    false
+  )
+}
+
 export const sendToClient = <MsgToClient>(
   clientIdInput: ClientId | ClientId[] | { clientId: ClientId } | { clientIds: ClientId[] },
   msg: MsgToClient

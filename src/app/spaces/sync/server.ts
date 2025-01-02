@@ -67,7 +67,6 @@ const getAssociatedProfiles = async (ctx: AppServerCtx, spaces: SpaceCore.Model[
     switch (state.type) {
       case 'started':
         return SpaceCoreState.toUserIds(state)
-
       default:
         return []
     }
