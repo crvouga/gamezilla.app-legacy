@@ -5,7 +5,7 @@ import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-se
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { GameMainMenu } from '../@/game/game-main-menu'
+import { GameMainMenu } from '../@/ui/game-main-menu'
 import { FlowClientCmd, FlowClientCmdLocal } from './@/client/cmd'
 import { FlowClientEvtIn } from './@/client/evt'
 import { FlowServerCtx } from './@/server/ctx'

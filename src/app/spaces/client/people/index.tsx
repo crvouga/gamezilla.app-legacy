@@ -3,9 +3,9 @@ import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from '~
 import { Badge } from '~/app/@/ui/badge'
 import { SpaceClientModule } from '../../@/architecture/space-client'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { ViewUsersInSpaceList } from '~/app/spaces/game/games/@/game/users-in-space-list'
-import { ViewHostChip } from '~/app/spaces/game/games/@/game/users-in-space-list/host-chip'
-import { ViewYouChip } from '~/app/spaces/game/games/@/game/users-in-space-list/you-chip'
+import { ViewUsersInSpaceList } from '~/app/spaces/game/games/@/ui/users-in-space-list'
+import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
+import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
 
 const update: SpaceClientModule['update'] = (input) => {
   const { model } = input

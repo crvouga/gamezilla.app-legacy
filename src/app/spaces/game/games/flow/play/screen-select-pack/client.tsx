@@ -1,8 +1,8 @@
 import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { IconGamepad, TopBar } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
-import { LayoutGameCoverArtHeader } from '../../../@/game/layout-game-cover-art-header'
-import { ViewUsersInSpaceList } from '../../../@/game/users-in-space-list'
+import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
+import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
 import { PackListClient } from '../../@/pack/pack-list'
 import type { ClientModule } from '../types'
 

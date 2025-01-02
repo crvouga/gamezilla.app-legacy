@@ -8,7 +8,7 @@ import type { GameClient } from '~/app/spaces/game/games/@/architecture/game-cli
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
-import { GameMainMenu } from '../@/game/game-main-menu'
+import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/chess-ui'
 import { CHESS_SOUND } from './@/chess/chess-sounds'
 import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './chess.types'

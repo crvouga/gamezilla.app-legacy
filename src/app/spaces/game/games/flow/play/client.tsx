@@ -4,7 +4,7 @@ import type { ClientModule } from './types'
 import { ScreenPuzzleClient } from './screen-play-puzzle/client'
 import { ScreenSelectPackClient } from './screen-select-pack/client'
 import { ScreenSelectPuzzleClient } from './screen-select-puzzle/client'
-import { GameMainMenu } from '../../@/game/game-main-menu'
+import { GameMainMenu } from '../../@/ui/game-main-menu'
 
 const init: ClientModule['init'] = null
 

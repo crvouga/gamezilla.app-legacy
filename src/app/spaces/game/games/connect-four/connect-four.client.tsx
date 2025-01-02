@@ -7,7 +7,7 @@ import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-cl
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
-import { GameMainMenu } from '../@/game/game-main-menu'
+import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/connect-four-ui/connect-four-cover-art'
 import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './connect-four.types'
 import { VsBot } from './vs-bot/vs-bot.client'

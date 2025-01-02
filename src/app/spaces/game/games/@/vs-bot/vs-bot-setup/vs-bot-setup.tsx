@@ -3,7 +3,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, Drawer, IconQuestionMark, Typography } from '~/app/@/ui'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { LayoutGameCoverArtHeader } from '../../game/layout-game-cover-art-header'
+import { LayoutGameCoverArtHeader } from '../../ui/layout-game-cover-art-header'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 
 //

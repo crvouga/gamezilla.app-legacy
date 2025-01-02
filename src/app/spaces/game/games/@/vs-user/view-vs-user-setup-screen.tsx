@@ -2,7 +2,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, IconQuestionMark, Typography } from '~/app/@/ui'
 
-import { LayoutGameCoverArtHeader } from '../game/layout-game-cover-art-header'
+import { LayoutGameCoverArtHeader } from '../ui/layout-game-cover-art-header'
 import { TranslatedText } from '~/@/l18n'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 

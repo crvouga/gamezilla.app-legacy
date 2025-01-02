@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
-import { GameMainMenu } from '../@/game/game-main-menu'
+import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/gomoku/gomoku-ui'
 import type { ModelClient, ModelServer, MsgClient, MsgToClient } from './gomoku.types'
 import * as VsBot from './vs-bot/vs-bot.client'

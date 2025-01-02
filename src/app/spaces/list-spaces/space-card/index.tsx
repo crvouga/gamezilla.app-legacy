@@ -1,7 +1,7 @@
 import { BaseClientCtx } from '~/app/@/client/ctx'
 import { Avatar, cn, Typography } from '~/app/@/ui'
-import { ViewHostChip } from '~/app/spaces/game/games/@/game/users-in-space-list/host-chip'
-import { ViewYouChip } from '~/app/spaces/game/games/@/game/users-in-space-list/you-chip'
+import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
+import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
 import { SpaceCoreState } from '../../core/space-state'
 

@@ -1,6 +1,6 @@
 import { cn, TopBar } from '~/app/@/ui'
 import { GameClientModule } from '../../../@/architecture/game-client-v2'
-import { LayoutGame } from '../../../@/game/layout-game'
+import { LayoutGame } from '../../../@/ui/layout-game'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridClient } from '../../@/pack/pack-puzzles-grid/client'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'

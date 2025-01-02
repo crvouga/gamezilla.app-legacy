@@ -4,7 +4,7 @@ import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import type * as Puzzle from './puzzle/puzzle.types'
 import type * as VsBot from './vs-bot/vs-bot.types'
 import type * as VsUser from './vs-user/vs-user.types'
-import { GameMainMenu } from '../@/game/game-main-menu'
+import { GameMainMenu } from '../@/ui/game-main-menu'
 
 export type ModelClient = {
   mode:
