@@ -1,13 +1,13 @@
 import { VDomChildren } from '~/@/vdom/vdom'
 
-export const FlowLayout = (input: { top: VDomChildren; middle: VDomChildren; bottom: VDomChildren }) => {
+export const BoardLayout = (input: { top: VDomChildren; board: VDomChildren; bottom: VDomChildren }) => {
   return (
-    <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
-      <div className='flex flex-1 flex-col justify-end'>{input.top}</div>
+    <div className='flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
+      <div className='flex flex-1 shrink-0 flex-col justify-end'>{input.top}</div>
 
-      {input.middle}
+      <div className='w-full grow-0 overflow-hidden'>{input.board}</div>
 
-      <div className='flex w-full flex-1 flex-col justify-end'>{input.bottom}</div>
+      <div className='flex w-full flex-1 shrink-0 flex-col justify-end'>{input.bottom}</div>
     </div>
   )
 }

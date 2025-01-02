@@ -14,7 +14,7 @@ import {
   IconXMark
 } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
-import { FlowLayout } from '../ui/layout'
+import { BoardLayout } from '../ui/layout'
 import * as FlowUI from '../ui/color'
 import * as FlowVariant from '../flow-variant/variant'
 import * as FlowVariantDimensions from '../flow-variant/variant-dimensions'
@@ -481,13 +481,13 @@ export const toFlowMemoized = memoize({
 
 export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg) => void }) => {
   return (
-    <FlowLayout
+    <BoardLayout
       top={
         <div className='flex flex-col items-center justify-end'>
           <ViewStatus {...input} />
         </div>
       }
-      middle={
+      board={
         <FlowVariantUI.View
           model={toFlow(input)}
           onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}

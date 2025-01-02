@@ -8,7 +8,7 @@ import { ProfileListItem } from '../../../@/ui/profile-list-item'
 import { VariantBoard } from '../../@/flow'
 import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
-import { FlowLayout } from '../../@/flow/ui/layout'
+import { BoardLayout } from '../../@/flow/ui/layout'
 import * as BuilderTypes from '../types'
 import { toFlow, toStatus } from './core'
 import { DeleteForeverClient } from './delete-forever/client'
@@ -269,9 +269,9 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
       const status = modelCore.screenPuzzleBuilder ? toStatus(modelCore.screenPuzzleBuilder) : 'solving'
       return (
         <div className='flex h-full max-h-full w-full flex-col items-center justify-center overflow-hidden'>
-          <FlowLayout
+          <BoardLayout
             top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
-            middle={
+            board={
               <FlowPlay.View
                 model={puzzleBuilder.play}
                 flow={flow}
