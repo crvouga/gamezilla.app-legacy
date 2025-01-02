@@ -1,19 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import { withEventMeta } from '~/@/event-sourced/event'
-import { AppClientModule } from '~/app/@/architecture/app-client'
-import { UserId } from '~/app/@/data/user-id'
+import { withEventMetaAt } from '~/@/event-sourced/event'
+import { didPlaySound, didPushRoute, didShowToast } from '~/app/@/client/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
-import {
-  Ctx,
-  FixtureSpacesClient,
-  clickedLeaveSpaceButton,
-  init,
-  userJoinedSpace,
-  userLeftSpace,
-  userStartedSpace
-} from '../@/fixture/client'
+import { UserId } from '~/app/@/data/user-id'
+import { FixtureSpacesClient, userJoinedSpace, userLeftSpace, userStartedSpace } from '../@/fixture/client'
 import { SpacesCoreClient } from '../core/client'
-import { didPushRoute, didShowToast, didPlaySound } from '~/app/@/client/cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
@@ -28,26 +19,8 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
 
     const output = f.update(f.initial, [
-      {
-        msgServer: {
-          t: 'got-msg-core',
-          c: withEventMeta({
-            t: 'user-started-space',
-            spaceId: spaceId,
-            userId: f.userA.userId
-          })
-        }
-      },
-      {
-        msgServer: {
-          t: 'got-msg-core',
-          c: withEventMeta({
-            t: 'user-joined-space',
-            spaceId: spaceId,
-            userId: f.ctx.currentUserId
-          })
-        }
-      },
+      userStartedSpace(0, f.userA.userId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUserId, spaceId),
       {
         msg: {
           t: 'clicked-leave-space-button',
@@ -58,72 +31,70 @@ describe(import.meta.file, () => {
     expect(didPushRoute(output, (x) => x.t === 'space-list')).toBe(true)
   })
 
-  it('should only redirect to list screen for the user leaving the space', () => {
-    const ctx = Ctx()
+  it('should only redirect to list screen for the user leaving the space', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
     const userId = UserId.generate()
 
-    const joined = AppClientModule.andThen(
-      init(ctx),
-      userStartedSpace(ctx, ctx.currentUserId, spaceId),
-      userJoinedSpace(ctx, userId, spaceId)
-    )
-
-    const output = AppClientModule.andThen(
+    const output = f.update(f.initial, [
+      userStartedSpace(0, f.ctx.currentUserId, spaceId),
+      userJoinedSpace(1, userId, spaceId),
       {
-        model: joined.model
-      },
-      userLeftSpace(ctx, userId, spaceId)
-    )
+        msgServer: {
+          t: 'got-msg-core',
+          c: withEventMetaAt(2, {
+            t: 'user-left-space',
+            spaceId,
+            userId
+          })
+        }
+      }
+    ])
 
     expect(didPushRoute(output)).toBe(false)
   })
 
-  it('should show some toast after leaving a space', () => {
-    const ctx = Ctx()
+  it('should show some toast after leaving a space', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-
-    const joined = AppClientModule.andThen(
-      init(ctx),
-      userStartedSpace(ctx, UserId.generate(), spaceId),
-      userJoinedSpace(ctx, ctx.currentUserId, spaceId)
-    )
-
-    const output = AppClientModule.andThen(
-      {
-        model: joined.model
-      },
-      userLeftSpace(ctx, ctx.currentUserId, spaceId)
-    )
-
+    const output = f.update(f.initial, [
+      userStartedSpace(0, f.ctx.currentUserId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUserId, spaceId),
+      userLeftSpace(2, f.ctx.currentUserId, spaceId)
+    ])
     expect(didShowToast(output)).toBe(true)
   })
 
-  it('user is not in space after leaving', () => {
-    const ctx = Ctx()
+  it('user is not in space after leaving', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-    const updated = AppClientModule.andThen(
-      init(ctx),
-      userStartedSpace(ctx, UserId.generate(), spaceId),
-      userJoinedSpace(ctx, ctx.currentUserId, spaceId),
-      clickedLeaveSpaceButton(ctx, spaceId)
-    )
-
-    expect(SpacesCoreClient.toSpaceIdByUserId(updated.model, ctx.currentUserId)).toEqual(null)
+    const output = f.update(f.initial, [
+      userStartedSpace(0, f.ctx.currentUserId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUserId, spaceId),
+      {
+        msg: {
+          t: 'clicked-leave-space-button',
+          spaceId
+        }
+      }
+    ])
+    const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
+    expect(currentUserSpaceId).toEqual(null)
   })
 
-  it('should play sound after leaving', () => {
-    const ctx = Ctx()
+  it('should play sound after leaving', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-
-    const joined = AppClientModule.andThen(
-      init(ctx),
-      userStartedSpace(ctx, UserId.generate(), spaceId),
-      userJoinedSpace(ctx, ctx.currentUserId, spaceId)
-    )
-
-    const left = AppClientModule.andThen(joined, clickedLeaveSpaceButton(ctx, spaceId))
-
-    expect(didPlaySound(left)).toBe(true)
+    const output = f.update(f.initial, [
+      userStartedSpace(0, f.ctx.currentUserId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUserId, spaceId),
+      {
+        msg: {
+          t: 'clicked-leave-space-button',
+          spaceId
+        }
+      }
+    ])
+    expect(didPlaySound(output)).toBe(true)
   })
 })

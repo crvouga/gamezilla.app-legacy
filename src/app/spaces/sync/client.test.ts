@@ -1,33 +1,31 @@
 import { describe, expect, it } from 'bun:test'
 import { eq } from '~/@/equals/equals'
-import { AppClientModule } from '~/app/@/architecture/app-client'
+import { withEventMetaAt } from '~/@/event-sourced/event'
+import { addProfiles } from '~/app/@/client/cmd'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
-import {
-  clickedJoinSpaceButton,
-  clickedStartSpaceButton,
-  Ctx,
-  gotCurrentUsersSpace,
-  gotMsgServer,
-  gotSpace,
-  init,
-  serverConnected,
-  userEndedSpace,
-  userStartedSpace
-} from '../@/fixture/client'
+import { FixtureSpacesClient } from '../@/fixture/client'
 import { makeSpace } from '../@/fixture/shared'
-import { SpaceCore } from '../core/space-core'
 import { SpacesCoreClient } from '../core/client'
-import { addProfiles } from '~/app/@/client/cmd'
+import { SpaceCore } from '../core/space-core'
 
 const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
 }
 
+const Fixture = async () => {
+  const f = await FixtureSpacesClient()
+  return {
+    ...f
+  }
+}
+
 describe(import.meta.file, () => {
   it('should record profiles when received from server', async () => {
+    const f = await Fixture()
+
     const someProfile: Profile = {
       userId: UserId.generate(),
       avatarUrl: 'some url',
@@ -40,29 +38,34 @@ describe(import.meta.file, () => {
       [someProfile.userId]: someProfile
     }
 
-    const ctx = Ctx()
-
-    const updated = AppClientModule.andThen(
-      init(ctx),
-      //
-      gotMsgServer(ctx, {
-        t: 'listed-spaces',
-        spaces: [],
-        profiles: someProfiles
-      })
-    )
-
-    expect(hasExactlyOne(updated.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(someProfiles)))).toBe(true)
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'listed-spaces',
+          spaces: [],
+          profiles: someProfiles
+        }
+      }
+    ])
+    expect(hasExactlyOne(output.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(someProfiles)))).toBe(true)
   })
 
-  it('should merge space received from server', () => {
+  it('should merge space received from server', async () => {
+    const f = await Fixture()
+
     const someSpace = makeSpace({
       spaceId: SpaceId.generate(),
       hostId: UserId.generate()
     })
-    const ctx = Ctx()
 
-    const output = AppClientModule.andThen(init(ctx), gotSpace(ctx, someSpace))
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'synced',
+          space: someSpace
+        }
+      }
+    ])
 
     const listed = SpacesCoreClient.listSpaces({
       model: output.model,
@@ -73,27 +76,45 @@ describe(import.meta.file, () => {
     expect(listed.some((space) => SpaceCore.isEqual(space, someSpace))).toBe(true)
   })
 
-  it("should merge current user's space when received from server", () => {
-    const ctx = Ctx()
+  it("should merge current user's space when received from server", async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-
     const someStartedSpace = makeSpace({
       spaceId,
-      hostId: ctx.currentUserId
+      hostId: f.ctx.currentUserId
     })
 
-    const updated = AppClientModule.andThen(init(ctx), gotCurrentUsersSpace(ctx, someStartedSpace))
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'current-user-space',
+          space: someStartedSpace,
+          currentUser: f.ctx.currentUser
+        }
+      }
+    ])
 
-    expect(SpacesCoreClient.toSpaceIdByUserId(updated.model, ctx.currentUserId) === spaceId).toBe(true)
+    const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
+
+    expect(currentUserSpaceId).toEqual(spaceId)
   })
 
-  it("should sync current user's space when server connects if in space", () => {
-    const ctx = Ctx()
-    const output = AppClientModule.andThen(
-      init(ctx),
-      clickedStartSpaceButton(ctx, SpaceId.generate()),
-      serverConnected(ctx)
-    )
+  it("should sync current user's space when server connects if in space", async () => {
+    const f = await Fixture()
+    const output = f.update(f.initial, [
+      {
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId: SpaceId.generate()
+        }
+      },
+      {
+        msgEvt: {
+          t: 'wire-evt.server-connected'
+        }
+      }
+    ])
+
     expect(
       hasExactlyOne(
         output.msgCmd ?? [],
@@ -102,15 +123,27 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it('should send events to the server like user joined space', () => {
+  it('should send events to the server like user joined space', async () => {
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-    const ctx = Ctx()
-    const output = AppClientModule.andThen(
-      init(ctx),
-      //
-      userStartedSpace(ctx, UserId.generate(), spaceId),
-      clickedJoinSpaceButton(ctx, spaceId)
-    )
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'got-msg-core',
+          c: withEventMetaAt(0, {
+            t: 'user-started-space',
+            spaceId,
+            userId: UserId.generate()
+          })
+        }
+      },
+      {
+        msg: {
+          t: 'clicked-join-space-button',
+          spaceId
+        }
+      }
+    ])
 
     expect(
       hasExactlyOne(
@@ -124,9 +157,21 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it('should send events to the server like user ended space', () => {
-    const ctx = Ctx()
-    const output = AppClientModule.andThen(init(ctx), userEndedSpace(ctx, UserId.generate(), SpaceId.generate()))
+  it('should send events to the server like user ended space', async () => {
+    const f = await Fixture()
+    const spaceId = SpaceId.generate()
+    const output = f.update(f.initial, [
+      {
+        msgServer: {
+          t: 'got-msg-core',
+          c: withEventMetaAt(0, {
+            t: 'user-ended-space',
+            spaceId,
+            userId: UserId.generate()
+          })
+        }
+      }
+    ])
 
     expect(
       hasExactlyOne(

@@ -1,24 +1,34 @@
 import { describe, expect, it } from 'bun:test'
-
 import { SpaceId } from '~/app/@/data/space-id'
-import { SpaceClientModule } from '../../@/architecture/space-client'
-import { clickedCurrentSpaceBottomBar, clickedStartSpaceButton, Ctx, init } from '../../@/fixture/client'
+import { FixtureSpacesClient } from '../../@/fixture/client'
 import { SpacesCoreClient } from '../../core/client'
+
+const Fixture = async () => {
+  const f = await FixtureSpacesClient()
+  return {
+    ...f
+  }
+}
 
 describe(import.meta.file, () => {
   it('should open current space when clicking current space bottom bar', async () => {
-    const ctx = Ctx()
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-
-    const started = await SpaceClientModule.andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
-
-    const output = await SpaceClientModule.andThen(
+    const output = f.update(f.initial, [
       {
-        model: started.model
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
       },
-      clickedCurrentSpaceBottomBar(ctx)
-    )
-    const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(output.model, ctx.currentUserId)
+      {
+        msg: {
+          t: 'clicked-current-space-bottom-bar'
+        }
+      }
+    ])
+
+    const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
 
     expect(
       output.msgCmd?.some(
@@ -32,17 +42,22 @@ describe(import.meta.file, () => {
   })
 
   it('should play a sound when clicking current space bottom bar', async () => {
-    const ctx = Ctx()
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
 
-    const started = await SpaceClientModule.andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
-
-    const output = await SpaceClientModule.andThen(
+    const output = f.update(f.initial, [
       {
-        model: started.model
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
       },
-      clickedCurrentSpaceBottomBar(ctx)
-    )
+      {
+        msg: {
+          t: 'clicked-current-space-bottom-bar'
+        }
+      }
+    ])
 
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)
   })

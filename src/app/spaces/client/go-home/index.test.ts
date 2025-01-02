@@ -1,50 +1,51 @@
 import { describe, expect, it } from 'bun:test'
 import { SpaceId } from '~/app/@/data/space-id'
-import { SpaceClientModule } from '../../@/architecture/space-client'
-import { clickedGoHomeButton, clickedStartSpaceButton, Ctx, init } from '../../@/fixture/client'
+import { FixtureSpacesClient } from '../../@/fixture/client'
+
+const Fixture = async () => {
+  const f = FixtureSpacesClient()
+  return {
+    ...f
+  }
+}
 
 describe(import.meta.file, () => {
   it('should go to list screen when clicking go home button', async () => {
-    const ctx = Ctx()
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-
-    const started = await SpaceClientModule.andThen(
-      init(ctx),
-      clickedStartSpaceButton(ctx, spaceId)
-      //
-    )
-
-    const output = await SpaceClientModule.andThen(
+    const output = f.update(f.initial, [
       {
-        model: started.model
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
       },
-      clickedGoHomeButton(ctx)
-      //
-    )
+      {
+        msg: {
+          t: 'clicked-go-home-button'
+        }
+      }
+    ])
 
-    expect(
-      output.msgCmd?.some(
-        (msgCmd) => msgCmd.t === 'routing' && msgCmd.c.t === 'push' && msgCmd.c.route.t === 'space-list'
-      )
-    ).toBe(true)
+    expect(output.msgCmd?.some((m) => m.t === 'routing' && m.c.t === 'push' && m.c.route.t === 'space-list')).toBe(true)
   })
 
   it('should play a sound when clicking go home button', async () => {
-    const ctx = Ctx()
+    const f = await Fixture()
     const spaceId = SpaceId.generate()
-
-    const startedSpace = await SpaceClientModule.andThen(
-      init(ctx),
-      clickedStartSpaceButton(ctx, spaceId)
-      //
-    )
-    const output = await SpaceClientModule.andThen(
+    const output = f.update(f.initial, [
       {
-        model: startedSpace.model
+        msg: {
+          t: 'clicked-start-space-button',
+          spaceId
+        }
       },
-      clickedGoHomeButton(ctx)
-      //
-    )
+      {
+        msg: {
+          t: 'clicked-go-home-button'
+        }
+      }
+    ])
 
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)
   })

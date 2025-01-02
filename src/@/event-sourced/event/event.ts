@@ -28,6 +28,14 @@ export const withEventMeta = <T>(event: T): WithEventMeta<T> => {
   }
 }
 
+export const withEventMetaAt = <T>(happenedAt: number, event: T): WithEventMeta<T> => {
+  return {
+    ...event,
+    happenedAt: LamportTimestamp.fromNumber(happenedAt),
+    eventId: EventId.generate()
+  }
+}
+
 export const withEventId = <T>(event: T): WithEventId<T> => {
   return {
     ...event,
