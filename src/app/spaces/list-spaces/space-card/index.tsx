@@ -1,9 +1,9 @@
 import { BaseClientCtx } from '~/app/@/client/ctx'
 import { Avatar, cn, Typography } from '~/app/@/ui'
+import { ViewHostChip } from '~/app/spaces/game/games/@/game/users-in-space-list/host-chip'
+import { ViewYouChip } from '~/app/spaces/game/games/@/game/users-in-space-list/you-chip'
+import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
 import { SpaceCoreState } from '../../core/space-state'
-import { ViewHostChip } from '../../games/@/game/users-in-space-list/host-chip'
-import { ViewYouChip } from '../../games/@/game/users-in-space-list/you-chip'
-import { GameCoverArt } from '../../games/cover-art'
 
 const MAX_AVATAR_COUNT = 3
 

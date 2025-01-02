@@ -57,18 +57,6 @@ export const translations: Text = {
   'spaces.leave': 'Verlassen',
   'spaces.start-space': 'Raum starten',
   'spaces.space-started': 'Raum gestartet',
-  'spaces.end': 'Ende',
-  'spaces.end-space': 'Raum beenden',
-  'spaces.ended-space-host': 'Raum beendet vom Gastgeber',
-  'spaces.ended-space-current-user': 'Raum beendet',
-  'spaces.ended-space-other-user': (username) => `${username} Raum beendet`,
-  'spaces.space-ended': 'Raum beendet',
-  'spaces.space': 'Raum',
-  'spaces.join-space': 'Raum beitreten',
-  'spaces.current-user-joined-space': 'Raum beigetreten',
-  'spaces.other-user-joined-space': (username) =>
-    username ? `${username} ist dem Raum beigetreten` : 'Raum beigetreten',
-  "spaces.you're-already-in-a-space": 'Du bist bereits in einem Raum',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -187,6 +175,18 @@ export const translations: Text = {
   'flow.puzzle-not-found': 'Rätsel nicht gefunden',
   'space-game-flow-edit.editing': 'Bearbeiten',
   'flow-play.no-hints-available': 'Keine Hinweise verfügbar',
+  'spaces.end': 'Ende',
+  'spaces.end-space': 'Raum beenden',
+  'spaces.ended-space-host': 'Raum beendet vom Gastgeber',
+  'spaces.ended-space-current-user': 'Raum beendet',
+  'spaces.ended-space-other-user': (username) => `${username} Raum beendet`,
+  'spaces.space-ended': 'Raum beendet',
+  'spaces.space': 'Raum',
+  'spaces.join-space': 'Raum beitreten',
+  'spaces.current-user-joined-space': 'Raum beigetreten',
+  'spaces.other-user-joined-space': (username) =>
+    username ? `${username} ist dem Raum beigetreten` : 'Raum beigetreten',
+  "spaces.you're-already-in-a-space": 'Du bist bereits in einem Raum',
   'spaces.see-profile': 'Profil anzeigen',
   'spaces.spaces': 'Räume',
   'spaces.no-spaces': 'Keine Räume',

@@ -1,9 +1,9 @@
+import { EventId, WithEventMeta } from '~/@/event-sourced/event'
 import { p } from '~/@/parser'
 import type { UserId } from '~/app/@/data/user-id'
 import { Space } from '~/app/spaces/@/space/space'
-import * as GameGame from '../../games/core'
-import * as Game from '../../games/types'
-import { EventId, WithEventMeta } from '~/@/event-sourced/event'
+import * as GameGame from '../../game/games/core'
+import * as Game from '../../game/games/types'
 import { SpaceEvent } from '../space-event'
 
 //

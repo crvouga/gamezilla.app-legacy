@@ -54,18 +54,6 @@ export const translations: Text = {
   'spaces.leave': '离开',
   'spaces.start-space': '开始空间',
   'spaces.space-started': '空间已开始',
-  'spaces.end': '结束',
-  'spaces.end-space': '结束空间',
-  'spaces.ended-space-host': '空间已结束',
-  'spaces.ended-space-current-user': '空间已结束',
-  'spaces.ended-space-other-user': (username) => `${username} \u5DF2\u7ED3\u675F\u7A7A\u95F4`,
-  'spaces.space-ended': '空间已结束',
-  'spaces.space': '空间',
-  'spaces.join-space': '加入空间',
-  'spaces.current-user-joined-space': '加入空间',
-  'spaces.other-user-joined-space': (username) =>
-    username ? `${username}\u52A0\u5165\u7A7A\u95F4` : '\u52A0\u5165\u7A7A\u95F4',
-  "spaces.you're-already-in-a-space": '您已经在一个空间中',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -184,6 +172,18 @@ export const translations: Text = {
   'flow.puzzle-not-found': '找不到拼图',
   'space-game-flow-edit.editing': '编辑',
   'flow-play.no-hints-available': '没有提示',
+  'spaces.end': '结束',
+  'spaces.end-space': '结束空间',
+  'spaces.ended-space-host': '空间已结束',
+  'spaces.ended-space-current-user': '空间已结束',
+  'spaces.ended-space-other-user': (username) => `${username} \u5DF2\u7ED3\u675F\u7A7A\u95F4`,
+  'spaces.space-ended': '空间已结束',
+  'spaces.space': '空间',
+  'spaces.join-space': '加入空间',
+  'spaces.current-user-joined-space': '加入空间',
+  'spaces.other-user-joined-space': (username) =>
+    username ? `${username}\u52A0\u5165\u7A7A\u95F4` : '\u52A0\u5165\u7A7A\u95F4',
+  "spaces.you're-already-in-a-space": '您已经在一个空间中',
   'spaces.see-profile': '查看个人资料',
   'spaces.spaces': '空间',
   'spaces.no-spaces': '没有空间',

@@ -57,21 +57,6 @@ export const translations: Text = {
   'spaces.leave': '去る',
   'spaces.start-space': 'スペースを開始',
   'spaces.space-started': 'スペースが開始されました',
-  'spaces.end': '終了',
-  'spaces.end-space': 'スペースを終了',
-  'spaces.ended-space-host': 'ホストによってスペースが終了しました',
-  'spaces.ended-space-current-user': 'スペースが終了しました',
-  'spaces.ended-space-other-user': (username) =>
-    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`,
-  'spaces.space-ended': 'スペースが終了しました',
-  'spaces.space': 'スペース',
-  'spaces.join-space': 'スペースに参加',
-  'spaces.current-user-joined-space': 'スペースに参加しました',
-  'spaces.other-user-joined-space': (username) =>
-    username
-      ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`
-      : '\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F',
-  "spaces.you're-already-in-a-space": 'すでにスペースにいます',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -190,6 +175,21 @@ export const translations: Text = {
   'flow.puzzle-not-found': 'パズルが見つかりません',
   'space-game-flow-edit.editing': '編集',
   'flow-play.no-hints-available': 'ヒントはありません',
+  'spaces.end': '終了',
+  'spaces.end-space': 'スペースを終了',
+  'spaces.ended-space-host': 'ホストによってスペースが終了しました',
+  'spaces.ended-space-current-user': 'スペースが終了しました',
+  'spaces.ended-space-other-user': (username) =>
+    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`,
+  'spaces.space-ended': 'スペースが終了しました',
+  'spaces.space': 'スペース',
+  'spaces.join-space': 'スペースに参加',
+  'spaces.current-user-joined-space': 'スペースに参加しました',
+  'spaces.other-user-joined-space': (username) =>
+    username
+      ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`
+      : '\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F',
+  "spaces.you're-already-in-a-space": 'すでにスペースにいます',
   'spaces.see-profile': 'プロフィールを見る',
   'spaces.spaces': 'スペース',
   'spaces.no-spaces': 'スペースなし',

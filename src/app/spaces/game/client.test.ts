@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { SpaceId } from '~/app/@/data/space-id'
-import { exitGame } from '../@/space-client/cmd'
+import { exitGame } from '~/app/spaces/@/space-client/cmd'
 import { Ctx, clickedGameTile, clickedStartSpaceButton, init } from '../@/fixture/client'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { SpacesCoreClient } from '../core/client'

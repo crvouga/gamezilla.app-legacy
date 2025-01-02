@@ -3,7 +3,7 @@ import { AppClientCtx } from '~/app/@/client/ctx'
 import { Avatar, Button, Typography } from '~/app/@/ui'
 import type { SpaceClientModule } from '../../@/architecture/space-client'
 import { SpacesCoreClient } from '../../core/client'
-import { GameCoverArt } from '../../games/cover-art'
+import { GameCoverArt } from '../../game/games/cover-art'
 import type { ModelClient, MsgClient } from '../../types'
 
 const update: SpaceClientModule['update'] = ({ model, msg, ctx }) => {

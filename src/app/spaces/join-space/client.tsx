@@ -4,9 +4,9 @@ import { Button } from '~/app/@/ui'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { SpacesCoreClient } from '../core/client'
 import { SpaceEvent } from '../core/space-event'
-import { LayoutGameCoverArtHeader } from '../games/@/game/layout-game-cover-art-header'
-import { ViewUsersInSpaceList } from '../games/@/game/users-in-space-list'
-import { GameCoverArt } from '../games/cover-art'
+import { LayoutGameCoverArtHeader } from '../game/games/@/game/layout-game-cover-art-header'
+import { ViewUsersInSpaceList } from '../game/games/@/game/users-in-space-list'
+import { GameCoverArt } from '../game/games/cover-art'
 
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(

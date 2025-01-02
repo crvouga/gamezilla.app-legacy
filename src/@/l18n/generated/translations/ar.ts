@@ -57,21 +57,6 @@ export const translations: Text = {
   'spaces.leave': 'غادر',
   'spaces.start-space': 'بدء المساحة',
   'spaces.space-started': 'بدأت المساحة',
-  'spaces.end': 'نهاية',
-  'spaces.end-space': 'انهاء المساحة',
-  'spaces.ended-space-host': 'تم انهاء المساحة من قبل المضيف',
-  'spaces.ended-space-current-user': 'انهاء المساحة',
-  'spaces.ended-space-other-user': (username) =>
-    `${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
-  'spaces.space-ended': 'تم انهاء المساحة',
-  'spaces.space': 'الفضاء',
-  'spaces.join-space': 'انضم إلى المساحة',
-  'spaces.current-user-joined-space': 'انضم إلى الفضاء',
-  'spaces.other-user-joined-space': (username) =>
-    username
-      ? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
-      : '\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
-  "spaces.you're-already-in-a-space": 'أنت بالفعل في مساحة',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -190,6 +175,21 @@ export const translations: Text = {
   'flow.puzzle-not-found': 'اللغز غير موجود',
   'space-game-flow-edit.editing': 'تحرير',
   'flow-play.no-hints-available': 'لا تتوفر تلميحات',
+  'spaces.end': 'نهاية',
+  'spaces.end-space': 'انهاء المساحة',
+  'spaces.ended-space-host': 'تم انهاء المساحة من قبل المضيف',
+  'spaces.ended-space-current-user': 'انهاء المساحة',
+  'spaces.ended-space-other-user': (username) =>
+    `${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
+  'spaces.space-ended': 'تم انهاء المساحة',
+  'spaces.space': 'الفضاء',
+  'spaces.join-space': 'انضم إلى المساحة',
+  'spaces.current-user-joined-space': 'انضم إلى الفضاء',
+  'spaces.other-user-joined-space': (username) =>
+    username
+      ? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
+      : '\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
+  "spaces.you're-already-in-a-space": 'أنت بالفعل في مساحة',
   'spaces.see-profile': 'مشاهدة الملف الشخصي',
   'spaces.spaces': 'الفضاءات',
   'spaces.no-spaces': 'لا توجد مساحات',

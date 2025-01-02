@@ -1,10 +1,10 @@
 import { WithEventId } from '~/@/event-sourced/event'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { FeedItem } from '../../@/feed-item'
-import { SpaceClientCtx } from '../../@/space-client/ctx'
 import { SpacesCoreClient } from '../../core/client'
 import type { SpaceEvent } from '../../core/space-event'
 import { SpaceCoreState } from '../../core/space-state'
-import { GamesClient } from '../../games/client'
+import { GamesClient } from '../../game/games/client'
 import type { ModelClient, MsgClient } from '../../types'
 
 const View = ({

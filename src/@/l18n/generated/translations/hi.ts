@@ -59,21 +59,6 @@ export const translations: Text = {
   'spaces.leave': 'छोड़ना',
   'spaces.start-space': 'स्थान शुरू करें',
   'spaces.space-started': 'स्थान शुरू हो गया',
-  'spaces.end': 'समाप्त',
-  'spaces.end-space': 'स्थान समाप्त करें',
-  'spaces.ended-space-host': 'स्थान मेज़बान द्वारा समाप्त',
-  'spaces.ended-space-current-user': 'स्थान समाप्त',
-  'spaces.ended-space-other-user': (username) =>
-    `${username} \u0928\u0947 \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924 \u0915\u093F\u092F\u093E`,
-  'spaces.space-ended': 'स्थान समाप्त',
-  'spaces.space': 'स्थान',
-  'spaces.join-space': 'स्थान जोड़ें',
-  'spaces.current-user-joined-space': 'स्थान जुड़ गया',
-  'spaces.other-user-joined-space': (username) =>
-    username
-      ? `${username} \u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E`
-      : '\u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E',
-  "spaces.you're-already-in-a-space": 'आप पहले से ही एक स्थान में हैं',
   'tic-tac-toe.bot-level': (botLevel) => {
     switch (botLevel) {
       case 'Easy':
@@ -192,6 +177,21 @@ export const translations: Text = {
   'flow.puzzle-not-found': 'पहेली नहीं मिली',
   'space-game-flow-edit.editing': 'संपादन',
   'flow-play.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
+  'spaces.end': 'समाप्त',
+  'spaces.end-space': 'स्थान समाप्त करें',
+  'spaces.ended-space-host': 'स्थान मेज़बान द्वारा समाप्त',
+  'spaces.ended-space-current-user': 'स्थान समाप्त',
+  'spaces.ended-space-other-user': (username) =>
+    `${username} \u0928\u0947 \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924 \u0915\u093F\u092F\u093E`,
+  'spaces.space-ended': 'स्थान समाप्त',
+  'spaces.space': 'स्थान',
+  'spaces.join-space': 'स्थान जोड़ें',
+  'spaces.current-user-joined-space': 'स्थान जुड़ गया',
+  'spaces.other-user-joined-space': (username) =>
+    username
+      ? `${username} \u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E`
+      : '\u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E',
+  "spaces.you're-already-in-a-space": 'आप पहले से ही एक स्थान में हैं',
   'spaces.see-profile': 'प्रोफ़ाइल देखें',
   'spaces.spaces': 'स्थान',
   'spaces.no-spaces': 'कोई स्थान नहीं',

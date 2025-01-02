@@ -1,4 +1,4 @@
-import { SpaceServerCtx } from '../@/space-server/ctx'
-import * as GameTypes from '../games/types'
+import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
+import * as GameTypes from '../game/games/types'
 
 export type GamesServerCtx = SpaceServerCtx & GameTypes.GameServerCtx

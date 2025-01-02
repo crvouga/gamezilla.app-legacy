@@ -2,10 +2,10 @@ import { APP_SOUND, openProfile, playSound } from '~/app/@/client/cmd'
 import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from '~/app/@/ui'
 import { Badge } from '~/app/@/ui/badge'
 import { SpaceClientModule } from '../../@/architecture/space-client'
-import { SpaceClientCtx } from '../../@/space-client/ctx'
-import { ViewUsersInSpaceList } from '../../games/@/game/users-in-space-list'
-import { ViewHostChip } from '../../games/@/game/users-in-space-list/host-chip'
-import { ViewYouChip } from '../../games/@/game/users-in-space-list/you-chip'
+import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { ViewUsersInSpaceList } from '~/app/spaces/game/games/@/game/users-in-space-list'
+import { ViewHostChip } from '~/app/spaces/game/games/@/game/users-in-space-list/host-chip'
+import { ViewYouChip } from '~/app/spaces/game/games/@/game/users-in-space-list/you-chip'
 
 const update: SpaceClientModule['update'] = (input) => {
   const { model } = input

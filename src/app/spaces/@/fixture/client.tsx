@@ -18,7 +18,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { SpacesClient } from '../../client'
 import { SpaceCore } from '../../core/space-core'
 import { type SpaceEvent } from '../../core/space-event'
-import { GameName } from '../../games/@/game-name'
+import { GameName } from '~/app/spaces/game/games/@/game-name'
 import type * as SpacesTypes from '../../types'
 import { SpaceClientCtx } from '../space-client/ctx'
 
