@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from '~/app/@/ui'
-import { Actions } from '~/app/@/ui/bottom-buttons'
+import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { ProfileListItem } from '../../../@/game/profile-list-item'
@@ -215,7 +215,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
   }
 
   const more = (
-    <Actions.Button
+    <BottomButtons.Button
       icon={(input) => <IconEllipsisVertical {...input} />}
       label={input.ctx.t('app.more')}
       onClick={() =>
@@ -243,10 +243,10 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
             />
           </div>
 
-          <Actions.Root>
+          <BottomButtons.Root>
             <SaveChangesClient.ViewActionButtons {...input} model={model} />
 
-            <Actions.Button
+            <BottomButtons.Button
               icon={(input) => <IconPlay {...input} />}
               label={input.ctx.t('flow.play-mode')}
               classNames={{
@@ -259,7 +259,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
               }
             />
             {more}
-          </Actions.Root>
+          </BottomButtons.Root>
         </div>
       )
     }
@@ -280,7 +280,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
               />
             }
             bottom={
-              <Actions.View
+              <BottomButtons.View
                 ctx={input.ctx}
                 id='hint-button'
                 open={false}
@@ -303,10 +303,10 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
             }
           />
 
-          <Actions.Root>
+          <BottomButtons.Root>
             <SaveChangesClient.ViewActionButtons {...input} model={model} />
 
-            <Actions.Button
+            <BottomButtons.Button
               icon={(input) => <IconPen {...input} />}
               label={input.ctx.t('flow.edit-mode')}
               classNames={{
@@ -319,7 +319,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
               }
             />
             {more}
-          </Actions.Root>
+          </BottomButtons.Root>
         </div>
       )
     }

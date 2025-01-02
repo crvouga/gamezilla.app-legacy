@@ -737,6 +737,7 @@ const ViewBottomNavBar = (input: {
         model={input.model.spaces}
         dispatch={(c) => input.dispatch({ t: 'spaces', c })}
       />
+
       <div className='flex h-16 w-full items-center justify-center'>
         {items.map((item) => {
           const isSelected = eq(item.route, input.model.routing.currentRoute)

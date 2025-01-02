@@ -4,7 +4,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, AppClientCmd, playSound } from '~/app/@/client/cmd'
 import type { UserId } from '~/app/@/data/user-id'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/app/@/ui'
-import { Actions } from '~/app/@/ui/bottom-buttons'
+import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { FeedItem } from '~/app/spaces/@/feed-item'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
@@ -448,25 +448,25 @@ const View: Module['View'] = (input) => {
       </div>
 
       {input.ctx.currentUserId === input.modelCore.playingUserId && (
-        <Actions.Root>
-          <Actions.Button
+        <BottomButtons.Root>
+          <BottomButtons.Button
             icon={(input) => <IconArrowLeftOnRect {...input} />}
             label={input.ctx.t('app.exit')}
             onClick={() => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId })}
           />
 
-          <Actions.Button
+          <BottomButtons.Button
             icon={(input) => <IconRightLeft {...input} />}
             label={input.ctx.t('game.swap-sides')}
             onClick={() => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId })}
           />
 
-          <Actions.Button
+          <BottomButtons.Button
             icon={(input) => <IconArrowRotateLeft {...input} />}
             label={input.ctx.t('app.restart')}
             onClick={() => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId })}
           />
-        </Actions.Root>
+        </BottomButtons.Root>
       )}
     </LayoutGame>
   )

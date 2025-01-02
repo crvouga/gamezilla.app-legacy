@@ -1,7 +1,7 @@
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from '~/app/@/ui'
-import { Actions } from '~/app/@/ui/bottom-buttons'
+import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/game/layout-game'
 import { ProfileListItem } from '../../../@/game/profile-list-item'
@@ -226,13 +226,13 @@ const View: ClientModule['View'] = (input) => {
           </Dialog>
         )}
       </div>
-      <Actions.View
+      <BottomButtons.View
         id='screen-play-puzzle-bottom-bar'
         ctx={input.ctx}
         onToggle={() => input.dispatch({ t: 'got-msg-core', c: { t: 'user-toggled-action-buttons-drawer' } })}
         open={input.modelCore.screen.opened === 'action-drawer'}
         buttons={[
-          Actions.next({
+          BottomButtons.next({
             ...input,
             disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
             hidden: !isSolved && flowPuzzle.t !== 'not-found',
@@ -272,7 +272,7 @@ const View: ClientModule['View'] = (input) => {
               })
             : null,
 
-          Actions.reset({
+          BottomButtons.reset({
             ...input,
             hidden: flowPuzzle.t === 'not-found',
             onClick: () =>

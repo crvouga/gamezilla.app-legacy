@@ -7,7 +7,6 @@ import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconChevronLeft,
-  IconChevronRight,
   IconEllipsisVertical,
   IconLightbulb,
   ListItemButton,
@@ -55,12 +54,12 @@ const View = ({
   return (
     <div className='flex w-full items-center'>
       {firstButtons.map((button) => (
-        <Actions.Button {...button} key={button.label} />
+        <BottomButtons.Button {...button} key={button.label} />
       ))}
 
       {lastButtons.length > 0 && (
         <>
-          <Actions.Button
+          <BottomButtons.Button
             icon={(input) => <IconEllipsisVertical {...input} />}
             label={ctx.t('app.more')}
             onClick={onToggle}
@@ -84,11 +83,11 @@ const View = ({
   )
 }
 
-export const Root = ({ children }: { children: VDomChildren }) => {
+const Root = ({ children }: { children: VDomChildren }) => {
   return <div className='flex w-full shrink-0 items-center'>{children}</div>
 }
 
-export const Button = (input: BottomButtonInput) => {
+const Button = (input: BottomButtonInput) => {
   const isDisabled = input.disabled || input.loading
   if (input.hidden) return null
   return (
@@ -144,21 +143,11 @@ type PrebuiltBottomButtonInput = Partial<BottomButtonInput> & {
   hidden?: boolean
 }
 
-export const ViewBottomButtonBarActionExit = (input: PrebuiltBottomButtonInput) => {
-  return (
-    <Actions.Button {...input} icon={(input) => <IconArrowLeftOnRect {...input} />} label={input.ctx.t('app.exit')} />
-  )
-}
-
 const exit = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
   icon: (input) => <IconArrowLeftOnRect {...input} />,
   label: input.ctx.t('app.exit')
 })
-
-export const ViewBottomButtonBarActionNext = (input: PrebuiltBottomButtonInput) => {
-  return <Actions.Button {...input} icon={(input) => <IconChevronRight {...input} />} label={input.ctx.t('app.next')} />
-}
 
 const next = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
@@ -167,21 +156,11 @@ const next = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   label: input.ctx.t('app.next')
 })
 
-export const ViewBottomButtonBarActionReset = (input: PrebuiltBottomButtonInput) => {
-  return (
-    <Actions.Button {...input} icon={(input) => <IconArrowRotateLeft {...input} />} label={input.ctx.t('app.reset')} />
-  )
-}
-
 const reset = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
   icon: (input) => <IconArrowRotateLeft {...input} />,
   label: input.ctx.t('app.reset')
 })
-
-export const ViewBottomButtonBarActionPrev = (input: PrebuiltBottomButtonInput) => {
-  return <Actions.Button {...input} icon={(input) => <IconChevronLeft {...input} />} label={input.ctx.t('app.prev')} />
-}
 
 const prev = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
@@ -189,17 +168,13 @@ const prev = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   label: input.ctx.t('app.prev')
 })
 
-export const ViewBottomButtonBarActionHint = (input: PrebuiltBottomButtonInput) => {
-  return <Actions.Button {...input} icon={(input) => <IconLightbulb {...input} />} label={input.ctx.t('game.hint')} />
-}
-
 const hint = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
   icon: (input) => <IconLightbulb {...input} />,
   label: input.ctx.t('game.hint')
 })
 
-export const Actions = {
+export const BottomButtons = {
   exit,
   next,
   reset,

@@ -17,7 +17,7 @@ import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-cl
 import { Eff } from '~/@/eff'
 import { Translator } from '~/@/l18n/generated'
 import { APP_SOUND, AppClientCmd, playSound, sendToServer } from '~/app/@/client/cmd'
-import { Actions } from '~/app/@/ui/bottom-buttons'
+import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { LayoutGame } from '../../@/game/layout-game'
 import { Chess } from '../@/chess'
@@ -338,9 +338,9 @@ export const View = ({
       </div>
 
       {!isSpectating ? (
-        <Actions.Root>
+        <BottomButtons.Root>
           <BottomBarActions ctx={ctx} model={model} onClose={onClose} dispatch={dispatch} />
-        </Actions.Root>
+        </BottomButtons.Root>
       ) : (
         <></>
       )}
@@ -398,11 +398,15 @@ export const BottomBarActions = ({
   }
 }): VDomChildren => {
   const exit = (
-    <Actions.Button icon={(input) => <IconArrowLeftOnRect {...input} />} label={ctx.t('app.exit')} onClick={onClose} />
+    <BottomButtons.Button
+      icon={(input) => <IconArrowLeftOnRect {...input} />}
+      label={ctx.t('app.exit')}
+      onClick={onClose}
+    />
   )
 
   const hint = (
-    <Actions.Button
+    <BottomButtons.Button
       icon={(input) => <IconLightbulb {...input} />}
       label={ctx.t('game.hint')}
       disabled={isNoMoreHints(model) || model.t === 'loading'}
@@ -415,7 +419,7 @@ export const BottomBarActions = ({
   )
 
   const retry = (
-    <Actions.Button
+    <BottomButtons.Button
       icon={(input) => <IconArrowRotateLeft {...input} />}
       label={ctx.t('app.retry')}
       onClick={() =>
@@ -428,7 +432,7 @@ export const BottomBarActions = ({
   )
 
   const skip = (
-    <Actions.Button
+    <BottomButtons.Button
       icon={(input) => <IconArrowRight {...input} />}
       label={ctx.t('app.skip')}
       onClick={() =>
@@ -440,7 +444,7 @@ export const BottomBarActions = ({
   )
 
   const next = (
-    <Actions.Button
+    <BottomButtons.Button
       icon={(input) => <IconArrowCircle {...input} />}
       label={ctx.t('app.next')}
       color='success'

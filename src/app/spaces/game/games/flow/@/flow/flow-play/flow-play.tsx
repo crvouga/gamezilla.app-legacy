@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, AppClientCmd, playSound, showToast } from '~/app/@/client/cmd'
 import { IconCheckmark, Transition } from '~/app/@/ui'
-import { BottomButtonInput, Actions } from '~/app/@/ui/bottom-buttons'
+import { BottomButtonInput, BottomButtons } from '~/app/@/ui/bottom-buttons'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { FlowAlgoDrawPipes } from '../flow-algo/flow-algo-draw-pipes'
 import { FlowAlgoSolve } from '../flow-algo/flow-algo-solve'
@@ -654,7 +654,7 @@ export const viewResetAction = (input: {
     flow: input.flowPuzzle.flow
   })
   const disabled = Flow.isPipesEmpty(flow)
-  return Actions.reset({
+  return BottomButtons.reset({
     ctx: input.ctx,
     onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
     disabled

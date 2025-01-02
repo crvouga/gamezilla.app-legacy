@@ -1,7 +1,7 @@
 import type { Eff } from '~/@/eff'
 import { Posix } from '~/@/time/posix'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/app/@/ui'
-import { Actions } from '~/app/@/ui/bottom-buttons'
+import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { IconBotCute, IconBotLevel1, IconBotScary, VsBotGame, VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { type BotLevel, allBotLevels, toStatus, toTurn } from '../@/tic-tic-toe/tic-tac-toe'
@@ -262,8 +262,8 @@ export const View = (input: {
         />
       </div>
 
-      <Actions.Root>
-        <Actions.Button
+      <BottomButtons.Root>
+        <BottomButtons.Button
           icon={(input) => <IconArrowLeftOnRect {...input} />}
           label={input.ctx.t('app.exit')}
           onClick={() =>
@@ -272,7 +272,7 @@ export const View = (input: {
             })
           }
         />
-        <Actions.Button
+        <BottomButtons.Button
           icon={(input) => <IconRightLeft {...input} />}
           label={input.ctx.t('game.swap-sides')}
           onClick={() =>
@@ -281,7 +281,7 @@ export const View = (input: {
             })
           }
         />
-        <Actions.Button
+        <BottomButtons.Button
           icon={(input) => <IconArrowRotateLeft {...input} />}
           label={input.ctx.t('app.restart')}
           onClick={() =>
@@ -290,7 +290,7 @@ export const View = (input: {
             })
           }
         />
-      </Actions.Root>
+      </BottomButtons.Root>
     </div>
   )
 }

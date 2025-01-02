@@ -7,7 +7,7 @@ import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-cl
 import { FlowEdit } from '../../../@/flow/flow-edit'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
 import type { ClientModule, ModelClient, MsgClient, MsgCore } from '../../types'
-import { Actions } from '~/app/@/ui/bottom-buttons'
+import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 
 //
 //
@@ -226,7 +226,7 @@ export const ViewActionButtons = ({
 }) => {
   return (
     <>
-      <Actions.Button
+      <BottomButtons.Button
         icon={(input) => <IconFloppyDisk {...input} />}
         label={ctx.t('app.save')}
         onClick={() =>
