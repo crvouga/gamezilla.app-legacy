@@ -6,7 +6,7 @@ import { FlowPlay } from '../../../../@/flow/flow-play'
 import { Pack } from '../../../../@/pack/pack'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
-import { CoreFixture } from '../../../@/fixture.core'
+import { CoreFixture } from '../../../@/core/fixture'
 import { ScreenPlayPuzzleCore } from '../../core'
 import type { ModelCore, MsgCore } from '../../types'
 

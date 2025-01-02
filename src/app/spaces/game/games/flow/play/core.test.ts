@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../@/pack/pack'
 import { Puzzle } from '../@/puzzle/puzzle'
-import { CoreFixture } from './@/fixture.core'
+import { CoreFixture } from './@/core/fixture'
 
 describe(import.meta.file, () => {
   it('should be able to open pack from list', async () => {

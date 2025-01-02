@@ -1,9 +1,9 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Msg } from '~/@/msg/msg'
-import { FixtureFlowServer } from '../../@/server/fixture'
-import { PlayCore } from '../core'
-import { PlayServer } from '../server'
-import type { ModelCore } from '../types'
+import { FixtureFlowServer } from '../../../@/server/fixture'
+import { PlayCore } from '../../core'
+import { PlayServer } from '../../server'
+import type { ModelCore } from '../../types'
 
 type Input = Partial<Parameters<typeof PlayServer.update>[0]>
 

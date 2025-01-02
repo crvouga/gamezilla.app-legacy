@@ -1,8 +1,8 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import { SpaceCoreFixture } from '~/app/spaces/@/fixture/core'
-import { PlayCore } from '../core'
-import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'
+import { PlayCore } from '../../core'
+import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../../types'
 
 export type FixtureUpdateInput = {
   msg?: MsgClient

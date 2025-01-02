@@ -1,10 +1,10 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { PubSub } from '~/@/sub'
 import type { WithEventMeta } from '~/@/event-sourced/event'
-import { FixtureFlowClient } from '../../@/client/fixture'
-import { PlayClient } from '../client'
-import { PlayCore } from '../core'
-import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../types'
+import { FixtureFlowClient } from '../../../@/client/fixture'
+import { PlayClient } from '../../client'
+import { PlayCore } from '../../core'
+import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../../types'
 
 export type FixtureUpdateInput = {
   msg?: MsgClient

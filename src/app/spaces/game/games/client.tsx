@@ -99,16 +99,14 @@ const update: ClientModule['update'] = (input) => {
 //
 
 const subscriptions: ClientModule['subscriptions'] = (input) => {
-  const { modelCore, model } = input
-
-  switch (modelCore.t) {
+  switch (input.modelCore.t) {
     case 'connect-four': {
       return Sub.tag(
         'connect-four',
         ConnectFour.subscriptions({
           ctx: input.ctx,
-          modelCore: modelCore.c,
-          model: model.t === 'connect-four' ? model.c : ConnectFour.init
+          modelCore: input.modelCore.c,
+          model: input.model.t === 'connect-four' ? input.model.c : ConnectFour.init
         })
       )
     }
@@ -118,8 +116,8 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
         'flow',
         FlowClient.subscriptions({
           ctx: input.ctx,
-          modelCore: modelCore.c,
-          model: model.t === 'flow' ? model.c : FlowClient.init
+          modelCore: input.modelCore.c,
+          model: input.model.t === 'flow' ? input.model.c : FlowClient.init
         })
       )
     }
@@ -135,21 +133,14 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
 //
 
 const View: ClientModule['View'] = (input) => {
-  const { model, ctx, modelCore, dispatch } = input
-
-  switch (modelCore.t) {
+  switch (input.modelCore.t) {
     case 'connect-four': {
       return (
         <ConnectFour.View
-          ctx={ctx}
-          dispatch={(c) =>
-            dispatch({
-              t: 'connect-four',
-              c
-            })
-          }
-          modelCore={modelCore.c}
-          model={model?.t === 'connect-four' ? model.c : ConnectFour.init}
+          ctx={input.ctx}
+          dispatch={(c) => input.dispatch({ t: 'connect-four', c })}
+          modelCore={input.modelCore.c}
+          model={input.model?.t === 'connect-four' ? input.model.c : ConnectFour.init}
         />
       )
     }
@@ -157,15 +148,10 @@ const View: ClientModule['View'] = (input) => {
     case 'flow': {
       return (
         <FlowClient.View
-          ctx={ctx}
-          dispatch={(c) => {
-            dispatch({
-              t: 'flow',
-              c
-            })
-          }}
-          modelCore={modelCore.c}
-          model={model.t === 'flow' ? model.c : FlowClient.init}
+          ctx={input.ctx}
+          dispatch={(c) => input.dispatch({ t: 'flow', c })}
+          modelCore={input.modelCore.c}
+          model={input.model.t === 'flow' ? input.model.c : FlowClient.init}
         />
       )
     }
@@ -173,23 +159,16 @@ const View: ClientModule['View'] = (input) => {
 }
 
 const ViewFeedItem: ClientModule['ViewFeedItem'] = (input) => {
-  const { msgCore, modelCore, ctx, dispatch } = input
-
-  switch (modelCore.t) {
+  switch (input.modelCore.t) {
     case 'connect-four': {
-      switch (msgCore.t) {
+      switch (input.msgCore.t) {
         case 'connect-four': {
           return (
             <ConnectFour.ViewFeedItem
-              ctx={ctx}
-              msgCore={msgCore.c}
-              modelCore={modelCore.c}
-              dispatch={(c) =>
-                dispatch({
-                  t: 'connect-four',
-                  c
-                })
-              }
+              ctx={input.ctx}
+              msgCore={input.msgCore.c}
+              modelCore={input.modelCore.c}
+              dispatch={(c) => input.dispatch({ t: 'connect-four', c })}
             />
           )
         }

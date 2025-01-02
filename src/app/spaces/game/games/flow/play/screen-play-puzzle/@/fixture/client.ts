@@ -4,7 +4,7 @@ import { FlowPlay } from '../../../../@/flow/flow-play'
 import { Pack } from '../../../../@/pack/pack'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
-import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/fixture.client'
+import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/client/fixture'
 
 const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
   const userId = UserId.generate()
