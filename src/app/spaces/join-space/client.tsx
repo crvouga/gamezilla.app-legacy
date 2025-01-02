@@ -11,112 +11,110 @@ import { GameCoverArt } from '../game/games/cover-art'
 const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
-    (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => updateFromMsgCore({ ...input, model }),
     (model) => updateFromJoinSpaceButton({ ...input, model })
   )
 }
 
-const updateFromJoinSpaceButton: SpaceClientModule['update'] = ({ msg, model, ctx }) => {
-  switch (msg?.t) {
+const updateFromJoinSpaceButton: SpaceClientModule['update'] = (input) => {
+  switch (input.msg?.t) {
     case 'clicked-join-space-button': {
-      const currentUserId = ctx.currentUserId
-
-      if (!currentUserId) {
+      if (!input.ctx.currentUserId) {
         return {
-          model
+          model: input.model
         }
       }
 
       const spaceEventNew = withEventId<SpaceEvent>({
         t: 'user-joined-space',
-        spaceId: msg.spaceId,
-        userId: currentUserId
+        spaceId: input.msg.spaceId,
+        userId: input.ctx.currentUserId
       })
 
       return {
-        model,
+        model: input.model,
         msgCore: [spaceEventNew]
       }
     }
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
 }
 
-const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
-  const { msgCore: msgCore, model, ctx } = input
-
-  if (!ctx.currentUserId) {
-    return { model }
-  }
-
-  switch (msgCore?.t) {
+const updateFromMsgCore: SpaceClientModule['update'] = (input) => {
+  switch (input.msgCore?.t) {
     case 'user-joined-space': {
-      const error = SpacesCoreClient.toErrorByEvenId(model, msgCore.eventId)
+      const error = SpacesCoreClient.toErrorByEvenId(input.model, input.msgCore.eventId)
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
-          if (error.userId === ctx.currentUserId) {
+          if (error.userId === input.ctx.currentUserId) {
             return {
-              model,
-              msgCmd: showErrSm(ctx.t("spaces.you're-already-in-a-space"))
+              model: input.model,
+              msgCmd: showErrSm(input.ctx.t("spaces.you're-already-in-a-space"))
             }
           }
 
           return {
-            model
+            model: input.model
           }
         }
       }
 
-      const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
-      if (msgCore.spaceId !== currentUserSpaceId) {
+      if (input.msgCore.spaceId !== currentUserSpaceId) {
         return {
-          model
+          model: input.model
         }
       }
 
-      if (msgCore.userId !== ctx.currentUserId) {
-        const username = ctx.profiles[msgCore.userId]?.username ?? null
+      if (input.msgCore.userId !== input.ctx.currentUserId) {
+        const username = input.ctx.profiles[input.msgCore.userId]?.username ?? null
         return {
-          model,
+          model: input.model,
           msgCmd: [
             playSound(APP_SOUND.navForward),
             username
-              ? showToast(ctx.t('spaces.other-user-joined-space', username))
-              : showToast(ctx.t('spaces.current-user-joined-space'))
+              ? showToast(input.ctx.t('spaces.other-user-joined-space', username))
+              : showToast(input.ctx.t('spaces.current-user-joined-space'))
           ]
         }
       }
 
       return {
-        model,
-        msgCmd: [playSound(APP_SOUND.navForward), showToast(ctx.t('spaces.current-user-joined-space'))]
+        model: input.model,
+        msgCmd: [playSound(APP_SOUND.navForward), showToast(input.ctx.t('spaces.current-user-joined-space'))]
       }
     }
 
     default: {
       return {
-        model
+        model: input.model
       }
     }
   }
 }
 
 const View: SpaceClientModule['View'] = (input) => {
-  const space = input.ctx.space
   const currentUser = input.ctx.currentUser
-  if (!space || !currentUser) {
+
+  if (!currentUser) {
     return null
   }
 
-  const spaceState = SpacesCoreClient.toSpaceState(input.model, space.spaceId)
+  const space = input.ctx.space
 
-  if (spaceState.type !== 'started') {
+  if (!space) {
+    return null
+  }
+
+  const spaceState = SpacesCoreClient.toSpaceStarted(input.model, space?.spaceId)
+
+  if (!spaceState) {
     return null
   }
 
@@ -161,30 +159,13 @@ const View: SpaceClientModule['View'] = (input) => {
           className='flex-1'
           variant='contained'
           color='primary'
-          onClick={() => {
-            const spaceId = input.ctx.space?.spaceId
-            if (!spaceId) {
-              return
-            }
-            input.dispatch({
-              t: 'clicked-join-space-button',
-              spaceId
-            })
-          }}
+          onClick={() => input.dispatch({ t: 'clicked-join-space-button', spaceId: space.spaceId })}
           text={input.ctx.t('spaces.join-space')}
         />
       </div>
     </div>
   )
 }
-
-//
-//
-//
-//
-//
-//
-//
 
 export const JoinSpaceClient = {
   View,
