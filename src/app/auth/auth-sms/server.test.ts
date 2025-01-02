@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(updated.msgEvt?.some((msgEvt) => msgEvt.t === 'auth/client-authenticated')).toBe(true)
+    expect(updated.msgEvt?.some((msgEvt) => msgEvt.t === 'auth-evt.client-authenticated')).toBe(true)
   })
 
   it('should create a new account if no account exists', async () => {

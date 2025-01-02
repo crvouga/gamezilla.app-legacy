@@ -195,7 +195,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
 
 const load = (): MsgInCmdClient => {
   return {
-    t: 'flow-pack-list',
+    t: 'flow-cmd.pack-list',
     c: {
       t: 'load'
     }
@@ -205,7 +205,7 @@ const load = (): MsgInCmdClient => {
 const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean => {
   return (
     output.msgCmd?.some(
-      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-pack-list' && cmd.c.t === 'load'
+      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-cmd.pack-list' && cmd.c.t === 'load'
     ) ?? false
   )
 }

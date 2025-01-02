@@ -6,30 +6,30 @@ import { PhoneNumber } from '~/@/phone-number'
 
 export type ServerEvt =
   | {
-      t: 'wire/client-connected'
+      t: 'wire-evt.client-connected'
       clientId: ClientId
       sessionId: SessionId
       userId?: UserId
     }
   | {
-      t: 'wire/client-disconnected'
+      t: 'wire-evt.client-disconnected'
       clientId: ClientId
       sessionId: SessionId
     }
   | {
-      t: 'auth/client-authenticated'
+      t: 'auth-evt.client-authenticated'
       user: UserAccount
       sessionId: SessionId
       clientId: ClientId
       loggedIn?: boolean
     }
   | {
-      t: 'auth/client-unauthenticated'
+      t: 'auth-evt.client-unauthenticated'
       sessionId: SessionId
       clientId: ClientId
     }
   | {
-      t: 'auth/client-authenticated-with-sms'
+      t: 'auth-evt.client-authenticated-with-sms'
       sessionId: SessionId
       clientId: ClientId
       phoneNumber: PhoneNumber

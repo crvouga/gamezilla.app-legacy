@@ -51,7 +51,7 @@ export const updateFromEvent = ({
   eff?: Eff<MsgServer>
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-  if (msg.t === 'space/user-left-space') {
+  if (msg.t === 'space-evt.user-left-space') {
     switch (model.type) {
       case 'setup': {
         const { userId } = msg

@@ -16,8 +16,8 @@ const update: ClientModule['update'] = (input) => {
 
 const updateLoadPacks: ClientModule['update'] = (input) => {
   if (
-    input.msgEvt?.t === 'flow.user-changed-mode' ||
-    input.msgEvt?.t === 'space/synced' ||
+    input.msgEvt?.t === 'flow-evt.user-changed-mode' ||
+    input.msgEvt?.t === 'space-evt.synced' ||
     input.msgCore?.t === 'user-clicked-exit-pack-button' ||
     input.msgCore?.t === 'user-clicked-select-next-pack'
   ) {

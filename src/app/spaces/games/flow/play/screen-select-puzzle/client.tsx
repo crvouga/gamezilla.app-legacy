@@ -18,7 +18,7 @@ const update: ClientModule['update'] = (input) => {
 
 const updateLoadPuzzlesForPack: typeof update = (input) => {
   if (
-    input.msgEvt?.t === 'space/synced' ||
+    input.msgEvt?.t === 'space-evt.synced' ||
     input.msgCore?.t === 'user-clicked-open-pack-list-item' ||
     input.msgCore?.t === 'user-clicked-exit-puzzle'
   ) {

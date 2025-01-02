@@ -39,7 +39,7 @@ const updatePuzzles: ClientModule['update'] = ({ msgCore, model }) => {
         model,
         msgCmd: [
           {
-            t: 'flow.new-puzzles',
+            t: 'flow-cmd.add-puzzles',
             puzzles: {
               [puzzleNew.id]: puzzleNew
             },

@@ -96,7 +96,7 @@ const updateChild: ServerModule['update'] = async (input) => {
 
 const updateFromEvent: typeof update = async (input) => {
   switch (input.msgEvt?.t) {
-    case 'wire/client-connected': {
+    case 'wire-evt.client-connected': {
       const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(input.msgEvt.sessionId)
 
       const userId = isOk(foundUserId) ? foundUserId.value : null
@@ -111,7 +111,7 @@ const updateFromEvent: typeof update = async (input) => {
         return {
           msgEvt: [
             {
-              t: 'auth/client-unauthenticated',
+              t: 'auth-evt.client-unauthenticated',
               clientId: input.msgEvt.clientId,
               sessionId: input.msgEvt.sessionId
             }
@@ -125,13 +125,13 @@ const updateFromEvent: typeof update = async (input) => {
             clientId: input.msgEvt.clientId,
             sessionId: input.msgEvt.sessionId,
             user: account,
-            t: 'auth/client-authenticated'
+            t: 'auth-evt.client-authenticated'
           }
         ]
       }
     }
 
-    case 'auth/client-unauthenticated': {
+    case 'auth-evt.client-unauthenticated': {
       return {
         msgCmd: [
           sendToClient([input.msgEvt.clientId], {
@@ -141,7 +141,7 @@ const updateFromEvent: typeof update = async (input) => {
       }
     }
 
-    case 'auth/client-authenticated': {
+    case 'auth-evt.client-authenticated': {
       const msgCmd = sendToClient<MsgToClient>([input.msgEvt.clientId], {
         t: 'client-authenticated',
         account: input.msgEvt.user,

@@ -93,7 +93,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
             MsgToServer: MsgToServer
           }>(input.ctx.t('flow.puzzle-deleted')),
           {
-            t: 'flow.remove-puzzles',
+            t: 'flow-cmd.remove-puzzles',
             puzzles: {
               [msgCore.flowPuzzleId]: msgCore.flowPuzzleId
             },

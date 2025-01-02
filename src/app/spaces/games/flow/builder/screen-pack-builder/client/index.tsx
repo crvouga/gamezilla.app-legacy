@@ -185,7 +185,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
       },
       (model) => {
         if (
-          input.msgEvt?.t === 'space/synced' ||
+          input.msgEvt?.t === 'space-evt.synced' ||
           input.msgCore?.t === 'screen-pack-builder-open.user-clicked-pack-item'
         ) {
           const modelCore = input.msgCore
@@ -587,7 +587,7 @@ const updateRecordPack: ClientModule['update'] = (input) => {
       model: input.model,
       msgCmd: [
         {
-          t: 'flow.new-packs',
+          t: 'flow-cmd.new-packs',
           packs: {
             [input.modelCore.screenPackBuilder.pack.id]: input.modelCore.screenPackBuilder.pack
           },

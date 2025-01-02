@@ -61,7 +61,7 @@ export const updateFromEvent = ({
   model: Model
   eff?: Eff<Msg>
 } => {
-  if (msg.t === 'space/user-left-space') {
+  if (msg.t === 'space-evt.user-left-space') {
     return { model: init(model) }
   }
 

@@ -5,17 +5,17 @@ import { UserId } from '~/app/@/data/user-id'
 
 type SpaceEvt =
   | {
-      t: 'space/user-left-space'
+      t: 'space-evt.user-left-space'
       spaceId: SpaceId
       userId: UserId
     }
   | {
-      t: 'space/user-joined-space'
+      t: 'space-evt.user-joined-space'
       spaceId: SpaceId
       userId: UserId
     }
   | {
-      t: 'space/synced'
+      t: 'space-evt.synced'
     }
 
 type SpaceClientEvtBase = {
@@ -27,9 +27,9 @@ export type SpaceClientEvt = SpaceClientEvtBase & (ClientEvt | SpaceEvt)
 const toSpaceClientEvt = (evt?: SpaceClientEvt[] | null): SpaceClientEvt[] => {
   return (evt ?? []).flatMap((evt): SpaceEvt[] => {
     switch (evt.t) {
-      case 'space/user-joined-space':
-      case 'space/user-left-space':
-      case 'space/synced': {
+      case 'space-evt.user-joined-space':
+      case 'space-evt.user-left-space':
+      case 'space-evt.synced': {
         return [evt]
       }
       default: {
@@ -42,9 +42,9 @@ const toSpaceClientEvt = (evt?: SpaceClientEvt[] | null): SpaceClientEvt[] => {
 const toClientEvt = (evt?: SpaceClientEvt[] | null): ClientEvt[] => {
   return (evt ?? []).flatMap((evt): ClientEvt[] => {
     switch (evt.t) {
-      case 'space/user-joined-space':
-      case 'space/user-left-space':
-      case 'space/synced': {
+      case 'space-evt.user-joined-space':
+      case 'space-evt.user-left-space':
+      case 'space-evt.synced': {
         return []
       }
       default: {

@@ -82,7 +82,7 @@ const getAssociatedProfiles = async (ctx: AppServerCtx, spaces: SpaceCore.Model[
 
 const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
-    case 'auth/client-authenticated': {
+    case 'auth-evt.client-authenticated': {
       const space = unwrapOr(await input.ctx.spacesCoreServer.getByUserId(input.msgEvt.user.userId), null)
 
       if (!space) {

@@ -26,7 +26,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
         },
         msgCmd: [
           sendToServer({
-            t: 'flow-puzzle-list.list-puzzles',
+            t: 'flow-cmd.puzzle-list.list-puzzles',
             input: {
               order: {
                 lastUpdatedAt: 'desc'
@@ -48,7 +48,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
   }
 
   switch (input.msg?.t) {
-    case 'flow-puzzle-list.time-passed': {
+    case 'flow-cmd.puzzle-list.time-passed': {
       return {
         model: {
           ...input.model,
@@ -59,7 +59,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
   }
 
   switch (input.msgServer?.t) {
-    case 'flow-puzzle-list.listed-puzzle': {
+    case 'flow-cmd.puzzle-list.listed-puzzle': {
       const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
 
       const puzzlesNew = {
@@ -92,7 +92,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
 
 const load = (): MsgInCmdClient => {
   return {
-    t: 'flow-puzzle-list',
+    t: 'flow-cmd.puzzle-list',
     c: {
       t: 'load'
     }
@@ -102,7 +102,7 @@ const load = (): MsgInCmdClient => {
 const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean => {
   return (
     output.msgCmd?.some(
-      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-puzzle-list' && cmd.c.t === 'load'
+      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-cmd.puzzle-list' && cmd.c.t === 'load'
     ) ?? false
   )
 }
@@ -140,7 +140,7 @@ const View: ClientModule['View'] = (input) => {
           id='puzzle-builder-list'
           onVisible={() =>
             dispatch({
-              t: 'flow-puzzle-list.user-observed-end-of-list'
+              t: 'flow-cmd.puzzle-list.user-observed-end-of-list'
             })
           }
         />

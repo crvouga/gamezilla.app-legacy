@@ -100,7 +100,7 @@ const updateFromMsg: typeof update = async (input) => {
     case 'client-connected': {
       const got = await input.ctx.wireSessionDb.findBySessionIds([input.msg.sessionId])
 
-      const maybeSession: WireSession | null = got.t === 'ok' ? (got.value[0] ?? null) : null
+      const maybeSession: WireSession | null = got.t === 'ok' ? got.value[0] ?? null : null
 
       const session: WireSession = maybeSession ?? WireSession.init(input.msg.sessionId)
 
@@ -111,7 +111,7 @@ const updateFromMsg: typeof update = async (input) => {
       return {
         msgEvt: [
           {
-            t: 'wire/client-connected',
+            t: 'wire-evt.client-connected',
             clientId: input.msg.clientId,
             sessionId: input.msg.sessionId
           }
@@ -123,7 +123,7 @@ const updateFromMsg: typeof update = async (input) => {
       return {
         msgEvt: [
           {
-            t: 'wire/client-disconnected',
+            t: 'wire-evt.client-disconnected',
             clientId: input.msg.clientId,
             sessionId: input.msg.sessionId
           }
@@ -146,7 +146,7 @@ const updateFromMsg: typeof update = async (input) => {
 
 const updateFromEvent: typeof update = async (input) => {
   switch (input.msgEvt?.t) {
-    case 'auth/client-authenticated': {
+    case 'auth-evt.client-authenticated': {
       const wireSessions = unwrapOr(await input.ctx.wireSessionDb.findBySessionIds([input.msgEvt.sessionId]), [])
       const userId = input.msgEvt.user.userId
       const wireSessionsNew = wireSessions.map((wireSession) => WireSession.addUserId(wireSession, userId))

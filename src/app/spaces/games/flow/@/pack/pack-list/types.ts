@@ -96,7 +96,7 @@ export type ListPackInput = Parameters<IPackDb['list']>[0]
 export type ListPackOutput = Awaited<ReturnType<IPackDb['list']>>
 
 export type MsgInCmdClient = {
-  t: 'flow-pack-list'
+  t: 'flow-cmd.pack-list'
   c: {
     t: 'load'
   }

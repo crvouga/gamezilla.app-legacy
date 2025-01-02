@@ -19,7 +19,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         msgEvt: [
           {
             ...input.msgClient,
-            t: 'auth/client-unauthenticated'
+            t: 'auth-evt.client-unauthenticated'
           }
         ]
       }

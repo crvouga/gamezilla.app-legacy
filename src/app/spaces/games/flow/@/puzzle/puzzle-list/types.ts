@@ -67,22 +67,24 @@ export const initClient: ModelClient = {
 
 export type ModelServer = null
 
-export type MsgClient = { t: 'flow-puzzle-list.user-observed-end-of-list' } | { t: 'flow-puzzle-list.time-passed' }
+export type MsgClient =
+  | { t: 'flow-cmd.puzzle-list.user-observed-end-of-list' }
+  | { t: 'flow-cmd.puzzle-list.time-passed' }
 
-export type MsgServer = { t: 'flow-puzzle-list.noop' }
+export type MsgServer = { t: 'flow-cmd.puzzle-list.noop' }
 
 export type MsgToServer = {
-  t: 'flow-puzzle-list.list-puzzles'
+  t: 'flow-cmd.puzzle-list.list-puzzles'
   input: ListPuzzlesInput
 }
 
 export type MsgToClient = {
-  t: 'flow-puzzle-list.listed-puzzle'
+  t: 'flow-cmd.puzzle-list.listed-puzzle'
   listed: ListPuzzlesOutput
 }
 
 export type MsgInCmdClient = {
-  t: 'flow-puzzle-list'
+  t: 'flow-cmd.puzzle-list'
   c: {
     t: 'load'
   }

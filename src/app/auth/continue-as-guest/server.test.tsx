@@ -158,7 +158,7 @@ describe(import.meta.file, () => {
     expect(
       output.msgEvt?.some(
         (msgEvt) =>
-          msgEvt.t === 'auth/client-authenticated' &&
+          msgEvt.t === 'auth-evt.client-authenticated' &&
           msgEvt.clientId === clientId &&
           msgEvt.sessionId === sessionId &&
           msgEvt.loggedIn
@@ -337,10 +337,12 @@ describe(import.meta.file, () => {
     const expectedUserId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
-      firstOutput.msgEvt?.some((msg) => msg.t === 'auth/client-authenticated' && msg.user.userId === expectedUserId)
+      firstOutput.msgEvt?.some((msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId)
     ).toBe(true)
     expect(
-      secondOutput.msgEvt?.some((msg) => msg.t === 'auth/client-authenticated' && msg.user.userId === expectedUserId)
+      secondOutput.msgEvt?.some(
+        (msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId
+      )
     ).toBe(true)
   })
 })

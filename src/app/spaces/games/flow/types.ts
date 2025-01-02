@@ -71,30 +71,30 @@ export type MsgClient =
   | { t: 'got-msg-core'; c: MsgCore }
   | { t: 'builder'; c: BuilderTypes.MsgClient }
   | { t: 'play'; c: PlayTypes.MsgClient }
-  | { t: 'flow-pack-list'; c: PackListTypes.MsgClient }
-  | { t: 'flow-pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgClient }
-  | { t: 'flow-puzzle-list'; c: PuzzleListTypes.MsgClient }
+  | { t: 'flow-cmd.pack-list'; c: PackListTypes.MsgClient }
+  | { t: 'flow-cmd.pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgClient }
+  | { t: 'flow-cmd.puzzle-list'; c: PuzzleListTypes.MsgClient }
 
 export type MsgServer =
   | { t: 'builder'; c: BuilderTypes.MsgServer }
   | { t: 'play'; c: PlayTypes.MsgServer }
-  | { t: 'flow-pack-list'; c: PackListTypes.MsgServer }
-  | { t: 'flow-pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgServer }
-  | { t: 'flow-puzzle-list'; c: PuzzleListTypes.MsgServer }
+  | { t: 'flow-cmd.pack-list'; c: PackListTypes.MsgServer }
+  | { t: 'flow-cmd.pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgServer }
+  | { t: 'flow-cmd.puzzle-list'; c: PuzzleListTypes.MsgServer }
 
 export type MsgToServer =
   | { t: 'builder'; c: BuilderTypes.MsgToServer }
   | { t: 'play'; c: PlayTypes.MsgToServer }
-  | { t: 'flow-pack-list'; c: PackListTypes.MsgToServer }
-  | { t: 'flow-pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToServer }
-  | { t: 'flow-puzzle-list'; c: PuzzleListTypes.MsgToServer }
+  | { t: 'flow-cmd.pack-list'; c: PackListTypes.MsgToServer }
+  | { t: 'flow-cmd.pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToServer }
+  | { t: 'flow-cmd.puzzle-list'; c: PuzzleListTypes.MsgToServer }
 
 export type MsgToClient =
   | { t: 'builder'; c: BuilderTypes.MsgToClient }
   | { t: 'play'; c: PlayTypes.MsgToClient }
-  | { t: 'flow-pack-list'; c: PackListTypes.MsgToClient }
-  | { t: 'flow-pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToClient }
-  | { t: 'flow-puzzle-list'; c: PuzzleListTypes.MsgToClient }
+  | { t: 'flow-cmd.pack-list'; c: PackListTypes.MsgToClient }
+  | { t: 'flow-cmd.pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToClient }
+  | { t: 'flow-cmd.puzzle-list'; c: PuzzleListTypes.MsgToClient }
 
 const MODE = ['builder', 'play'] as const
 export const Mode = p.enumeration(MODE)

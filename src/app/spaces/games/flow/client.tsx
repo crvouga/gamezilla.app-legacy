@@ -118,10 +118,10 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
       ...input.model.packList,
       puzzles: input.model.puzzles
     },
-    msg: input.msg?.t === 'flow-puzzle-list' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'flow-puzzle-list' ? input.msgCmd : null,
+    msg: input.msg?.t === 'flow-cmd.puzzle-list' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'flow-cmd.puzzle-list' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgServer: input.msgServer?.t === 'flow-puzzle-list' ? input.msgServer.c : null
+    msgServer: input.msgServer?.t === 'flow-cmd.puzzle-list' ? input.msgServer.c : null
   })
 
   return {
@@ -130,8 +130,8 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
       puzzleList: updated.model,
       puzzles: updated.model.puzzles
     },
-    eff: Eff.tag('flow-puzzle-list', updated.eff),
-    msgCmd: FlowClientCmd.tag('flow-puzzle-list', updated.msgCmd),
+    eff: Eff.tag('flow-cmd.puzzle-list', updated.eff),
+    msgCmd: FlowClientCmd.tag('flow-cmd.puzzle-list', updated.msgCmd),
     msgEvt: []
   }
 }
@@ -143,10 +143,10 @@ const updatePackList: ClientModule['update'] = (input) => {
       ...input.model.packList,
       packs: input.model.packs
     },
-    msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'flow-pack-list' ? input.msgCmd : null,
+    msg: input.msg?.t === 'flow-cmd.pack-list' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'flow-cmd.pack-list' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgServer: input.msgServer?.t === 'flow-pack-list' ? input.msgServer.c : null
+    msgServer: input.msgServer?.t === 'flow-cmd.pack-list' ? input.msgServer.c : null
   })
 
   return {
@@ -155,8 +155,8 @@ const updatePackList: ClientModule['update'] = (input) => {
       packList: updated.model,
       packs: updated.model.packs
     },
-    eff: Eff.tag('flow-pack-list', updated.eff),
-    msgCmd: FlowClientCmd.tag('flow-pack-list', updated.msgCmd),
+    eff: Eff.tag('flow-cmd.pack-list', updated.eff),
+    msgCmd: FlowClientCmd.tag('flow-cmd.pack-list', updated.msgCmd),
     msgEvt: []
   }
 }
@@ -179,10 +179,10 @@ const updatePackPuzzlesGrid: ClientModule['update'] = (input) => {
       ...input.model.packPuzzleGrid,
       puzzles: input.model.puzzles
     },
-    msg: input.msg?.t === 'flow-pack-puzzles-grid' ? input.msg.c : null,
-    msgServer: input.msgServer?.t === 'flow-pack-puzzles-grid' ? input.msgServer.c : null,
+    msg: input.msg?.t === 'flow-cmd.pack-puzzles-grid' ? input.msg.c : null,
+    msgServer: input.msgServer?.t === 'flow-cmd.pack-puzzles-grid' ? input.msgServer.c : null,
     msgEvt: input.msgEvt,
-    msgCmd: input.msgCmd?.t === 'flow-pack-puzzles-grid' ? input.msgCmd : null
+    msgCmd: input.msgCmd?.t === 'flow-cmd.pack-puzzles-grid' ? input.msgCmd : null
   })
   return {
     model: {
@@ -190,9 +190,9 @@ const updatePackPuzzlesGrid: ClientModule['update'] = (input) => {
       packPuzzleGrid: updated.model,
       puzzles: updated.model.puzzles
     },
-    eff: Eff.tag('flow-pack-puzzles-grid', updated.eff),
+    eff: Eff.tag('flow-cmd.pack-puzzles-grid', updated.eff),
     msgEvt: [],
-    msgCmd: SpaceClientCmd.tag('flow-pack-puzzles-grid', updated.msgCmd),
+    msgCmd: SpaceClientCmd.tag('flow-cmd.pack-puzzles-grid', updated.msgCmd),
     msgCore: []
   }
 }
@@ -275,7 +275,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
         msgEvt: [
           {
-            t: 'flow.user-changed-mode',
+            t: 'flow-evt.user-changed-mode',
             mode: input.msgCore.mode,
             userId: input.msgCore.userId
           }
@@ -308,7 +308,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
 
 const updateFromCmd: ClientModule['update'] = (input) => {
   switch (input.msgCmd?.t) {
-    case 'flow.new-packs': {
+    case 'flow-cmd.new-packs': {
       return {
         model: {
           ...input.model,
@@ -320,7 +320,7 @@ const updateFromCmd: ClientModule['update'] = (input) => {
       }
     }
 
-    case 'flow.new-puzzles': {
+    case 'flow-cmd.add-puzzles': {
       return {
         model: {
           ...input.model,
@@ -332,7 +332,7 @@ const updateFromCmd: ClientModule['update'] = (input) => {
       }
     }
 
-    case 'flow.remove-puzzles': {
+    case 'flow-cmd.remove-puzzles': {
       const puzzlesNew: ModelClient['puzzles'] = { ...input.model.puzzles }
       for (const id of Object.values(input.msgCmd.puzzles)) {
         delete puzzlesNew[id]
@@ -345,14 +345,14 @@ const updateFromCmd: ClientModule['update'] = (input) => {
       }
     }
 
-    case 'flow-pack-list':
-    case 'flow-pack-puzzles-grid': {
+    case 'flow-cmd.pack-list':
+    case 'flow-cmd.pack-puzzles-grid': {
       return {
         model: input.model
       }
     }
 
-    case 'flow.new-solutions': {
+    case 'flow-cmd.add-solutions': {
       return {
         model: {
           ...input.model,
@@ -397,7 +397,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
       BuilderClient.subscriptions({ ctx, modelCore: input.modelCore.builder, model: input.model.builder })
     ),
     Sub.tag(
-      'flow-pack-puzzles-grid',
+      'flow-cmd.pack-puzzles-grid',
       PackPuzzlesGridClient.subscriptions({
         ctx: { ...ctx, pack: Pack.randomSync() },
         model: input.model.packPuzzleGrid

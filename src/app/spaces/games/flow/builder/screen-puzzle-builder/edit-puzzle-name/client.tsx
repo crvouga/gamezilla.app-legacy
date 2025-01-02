@@ -118,7 +118,7 @@ const updateFormButtons: ClientModule['update'] = (input) => {
               MsgToServer: MsgToServer
             }>(input.ctx.t('app.something-went-wrong'))),
         {
-          t: 'flow.new-puzzles',
+          t: 'flow-cmd.add-puzzles',
           puzzles: puzzlesNew,
           causedBy: input
         }

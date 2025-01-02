@@ -23,7 +23,7 @@ const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
     ctx,
     model,
     msgCmd: {
-      t: 'flow-puzzle-list',
+      t: 'flow-cmd.puzzle-list',
       c: {
         t: 'load'
       }
@@ -36,7 +36,7 @@ const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: Puzzle[]) => (model:
     ctx,
     model,
     msgServer: {
-      t: 'flow-puzzle-list.listed-puzzle',
+      t: 'flow-cmd.puzzle-list.listed-puzzle',
       listed: Ok({
         items: puzzles,
         limit: 25,
@@ -52,7 +52,7 @@ const serverListedPuzzlesErr = (ctx: FlowClientCtx, error: string) => (model: Mo
     ctx,
     model,
     msgServer: {
-      t: 'flow-puzzle-list.listed-puzzle',
+      t: 'flow-cmd.puzzle-list.listed-puzzle',
       listed: Err(error)
     }
   })
@@ -66,7 +66,7 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
     },
     model,
     msg: {
-      t: 'flow-puzzle-list.time-passed'
+      t: 'flow-cmd.puzzle-list.time-passed'
     }
   })
 }
@@ -81,7 +81,7 @@ describe(import.meta.file, () => {
   it('should send a list puzzles message to server when the user observes the end of the list', async () => {
     const ctx = await testSpaceClientCtx()
     const output = AppClientModule.andThen(initial, loadCmd(ctx))
-    expect(didSendToServer(output, (msg) => msg.t === 'flow-puzzle-list.list-puzzles')).toBe(true)
+    expect(didSendToServer(output, (msg) => msg.t === 'flow-cmd.puzzle-list.list-puzzles')).toBe(true)
   })
 
   it('should record puzzles recieved from server', async () => {

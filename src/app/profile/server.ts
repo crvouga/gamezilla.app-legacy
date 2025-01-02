@@ -93,7 +93,7 @@ const updateFromEvent: ServerModule['update'] = async ({ msgEvt, ctx }) => {
   }
 
   switch (msgEvt.t) {
-    case 'auth/client-authenticated': {
+    case 'auth-evt.client-authenticated': {
       const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql })
       const result = await findElseInsertNew({
         ProfileDb,

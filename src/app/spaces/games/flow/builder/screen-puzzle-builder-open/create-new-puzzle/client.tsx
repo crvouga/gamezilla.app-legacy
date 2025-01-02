@@ -84,7 +84,7 @@ const update: ClientModule['update'] = (input) => {
           MsgToServer: MsgToServer
         }>(input.ctx.t('flow.puzzle-created')),
         {
-          t: 'flow.new-puzzles',
+          t: 'flow-cmd.add-puzzles',
           puzzles: {
             [puzzleNew.id]: puzzleNew
           },

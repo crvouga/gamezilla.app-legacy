@@ -144,7 +144,7 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
 
 const load = (pack: Pack): MsgInCmdClient => {
   return {
-    t: 'flow-pack-puzzles-grid',
+    t: 'flow-cmd.pack-puzzles-grid',
     c: {
       t: 'load',
       pack

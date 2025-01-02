@@ -4,7 +4,7 @@ import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 export type FlowClientEvtIn = SpaceClientEvt | FlowClientEvt
 
 export type FlowClientEvt = {
-  t: 'flow.user-changed-mode'
+  t: 'flow-evt.user-changed-mode'
   mode: 'play' | 'builder' | 'none'
   userId: UserId
 }
@@ -12,7 +12,7 @@ export type FlowClientEvt = {
 const toFlowClientEvt = (evt: FlowClientEvtIn[] | null | undefined): FlowClientEvt[] => {
   return (evt ?? []).flatMap((evt): FlowClientEvt[] => {
     switch (evt.t) {
-      case 'flow.user-changed-mode': {
+      case 'flow-evt.user-changed-mode': {
         return [evt]
       }
       default: {
@@ -25,7 +25,7 @@ const toFlowClientEvt = (evt: FlowClientEvtIn[] | null | undefined): FlowClientE
 const toSpaceClientEvt = (evt: FlowClientEvtIn[] | null | undefined): SpaceClientEvt[] => {
   return (evt ?? []).flatMap((evt): SpaceClientEvt[] => {
     switch (evt.t) {
-      case 'flow.user-changed-mode': {
+      case 'flow-evt.user-changed-mode': {
         return []
       }
       default: {

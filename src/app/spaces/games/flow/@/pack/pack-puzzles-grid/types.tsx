@@ -57,7 +57,7 @@ export type MsgToServer = {
 }
 
 export type MsgInCmdClient = {
-  t: 'flow-pack-puzzles-grid'
+  t: 'flow-cmd.pack-puzzles-grid'
   c: {
     t: 'load'
     pack: Pack

@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
 
     await f.update({}, [
       { msg: { t: 'client-connected', clientId, sessionId } },
-      { msgEvt: { t: 'auth/client-authenticated', user, clientId, sessionId } }
+      { msgEvt: { t: 'auth-evt.client-authenticated', user, clientId, sessionId } }
     ])
 
     const after = await f.ctx.wireSessionDb.findByUserIds([user.userId])
@@ -126,7 +126,7 @@ describe(import.meta.file, () => {
 
     await f.update({}, [
       { msg: { t: 'client-connected', clientId, sessionId } },
-      { msgEvt: { t: 'auth/client-authenticated', clientId, sessionId, user } },
+      { msgEvt: { t: 'auth-evt.client-authenticated', clientId, sessionId, user } },
       { msgCmd: { t: 'wire', c: { t: 'send-to-user', userIds: [user.userId], msg } } }
     ])
 

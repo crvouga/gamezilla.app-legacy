@@ -39,12 +39,12 @@ const update: ServerModule['update'] = async (input) => {
 const updatePackList: ServerModule['update'] = async (input) => {
   const updated = await PackListServer.update({
     ...input,
-    msgClient: input.msgClient?.t === 'flow-pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
-    msg: input.msg?.t === 'flow-pack-list' ? input.msg.c : null
+    msgClient: input.msgClient?.t === 'flow-cmd.pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msg: input.msg?.t === 'flow-cmd.pack-list' ? input.msg.c : null
   })
 
   return {
-    msgCmd: SpaceServerCmd.tag('flow-pack-list', updated.msgCmd),
+    msgCmd: SpaceServerCmd.tag('flow-cmd.pack-list', updated.msgCmd),
     msgEvt: updated.msgEvt
   }
 }
@@ -52,12 +52,12 @@ const updatePackList: ServerModule['update'] = async (input) => {
 const updatePuzzleList: ServerModule['update'] = async (input) => {
   const updated = await PuzzleListServer.update({
     ...input,
-    msgClient: input.msgClient?.t === 'flow-puzzle-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
-    msg: input.msg?.t === 'flow-puzzle-list' ? input.msg.c : null
+    msgClient: input.msgClient?.t === 'flow-cmd.puzzle-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msg: input.msg?.t === 'flow-cmd.puzzle-list' ? input.msg.c : null
   })
 
   return {
-    msgCmd: SpaceServerCmd.tag('flow-puzzle-list', updated.msgCmd),
+    msgCmd: SpaceServerCmd.tag('flow-cmd.puzzle-list', updated.msgCmd),
     msgEvt: updated.msgEvt
   }
 }
@@ -65,13 +65,14 @@ const updatePuzzleList: ServerModule['update'] = async (input) => {
 const updatePackPuzzlesGrid: ServerModule['update'] = async (input) => {
   const updated = await PackPuzzlesGridServer.update({
     ...input,
-    msg: input.msg?.t === 'flow-pack-puzzles-grid' ? input.msg.c : null,
-    msgClient: input.msgClient?.t === 'flow-pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msg: input.msg?.t === 'flow-cmd.pack-puzzles-grid' ? input.msg.c : null,
+    msgClient:
+      input.msgClient?.t === 'flow-cmd.pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,
     deps: null
   })
 
   return {
-    msgCmd: SpaceServerCmd.tag('flow-pack-puzzles-grid', updated.msgCmd),
+    msgCmd: SpaceServerCmd.tag('flow-cmd.pack-puzzles-grid', updated.msgCmd),
     msgEvt: updated.msgEvt
   }
 }

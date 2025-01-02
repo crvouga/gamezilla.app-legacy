@@ -32,11 +32,10 @@ async function generateRouteTypeFile(files: string[]) {
     imports.push(`import { Evt as Evt${index} } from "../../${importPath.replace('.ts', '')}";`)
     typeRefs.push(`Evt${index}`)
   }
-
+  const typeRefsFinal = typeRefs.length === 0 ? ['{t: "noop"}'] : typeRefs
   const content = `${DISCLAIMER}
 ${imports.join('\n')}
-
-export type Evt = ${typeRefs.join(' | ')};
+export type Evt = ${typeRefsFinal.join(' | ')};
 
 `
 
