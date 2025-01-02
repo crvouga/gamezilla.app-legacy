@@ -1,21 +1,21 @@
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
-import { LanguageCodeISO_639_1, type TranslatedText } from '~/@/l18n'
+import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
 import type { Route } from '~/@/routing/generated/routes'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import type { VDom } from '~/@/vdom/vdom'
 import { WebClient } from '~/@/web-client'
-import { IconGamepad, IconUserCircle, LoadingState, Portal, cn } from '~/app/@/ui'
+import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
 import { SERVER_IMPL, SERVER_URL, type ServerImpl } from '~/config-public'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppClientCmd, preloadSound } from './@/client/cmd'
 import { AnonymousClientCtx, AppClientCtx, BaseClientCtx, isAppClientCtx } from './@/client/ctx'
 import { ClientEvt } from './@/client/evt'
 import { Translator } from './@/client/translator'
+import { BottomButtons } from './@/ui/bottom-buttons'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import * as AuthClient from './auth/client'
@@ -702,69 +702,68 @@ const ViewBottomNavBar = (input: {
   model: ModelClient
   dispatch: (m: MsgClient) => void
 }) => {
-  if (!isAppClientCtx(input.ctx)) {
+  const { currentUserId } = input.ctx
+
+  if (!currentUserId) {
     return null
   }
 
-  const items: {
-    route: Route
-    label: TranslatedText
-    icon: VDom
-  }[] = [
-    {
-      route: {
-        n: 'spaces',
-        t: 'space-list'
-      },
-      label: input.ctx.t('spaces.spaces'),
-      icon: <IconGamepad className='h-7 w-7' />
-    },
-    {
-      route: {
-        n: 'profile',
-        t: 'profile',
-        userId: input.ctx.currentUserId
-      },
-      label: input.ctx.t('profile.profile'),
-      icon: <IconUserCircle className='h-7 w-7' />
-    }
-  ]
+  const routeSpace: Route = {
+    n: 'spaces',
+    t: 'space-list'
+  }
 
+  const routeProfile: Route = {
+    n: 'profile',
+    t: 'profile',
+    userId: currentUserId
+  }
   return (
     <div className='flex w-full shrink-0 flex-col items-center justify-center'>
-      <SpacesClient.ViewCurrentSpaceBar
-        ctx={input.ctx}
-        model={input.model.spaces}
-        dispatch={(c) => input.dispatch({ t: 'spaces', c })}
-      />
+      {isAppClientCtx(input.ctx) && (
+        <SpacesClient.ViewCurrentSpaceBar
+          ctx={input.ctx}
+          model={input.model.spaces}
+          dispatch={(c) => input.dispatch({ t: 'spaces', c })}
+        />
+      )}
 
-      <div className='flex h-16 w-full items-center justify-center'>
-        {items.map((item) => {
-          const isSelected = eq(item.route, input.model.routing.currentRoute)
-          return (
-            <button
-              type='button'
-              key={item.route.n}
-              onClick={() =>
-                input.dispatch({
-                  t: 'routing',
-                  c: {
-                    t: 'clicked-link',
-                    route: item.route
-                  }
-                })
-              }
-              className={cn(
-                'flex flex-1 flex-col items-center justify-center pb-2 pt-1',
-                isSelected ? 'text-blue-500' : 'text-opacity-50'
-              )}
-            >
-              {item.icon}
-              <div className='mt-0.5 text-xs text-inherit'>{item.label}</div>
-            </button>
-          )
-        })}
-      </div>
+      <BottomButtons.View
+        ctx={input.ctx}
+        id='app-bottom-nav'
+        onToggle={() => {}}
+        open={false}
+        buttons={[
+          {
+            label: input.ctx.t('spaces.spaces'),
+            icon: (input) => <IconGamepad {...input} />,
+            color: eq(input.model.routing.currentRoute, routeSpace) ? 'selected' : 'inherit',
+            onClick() {
+              input.dispatch({
+                t: 'routing',
+                c: {
+                  t: 'clicked-link',
+                  route: routeSpace
+                }
+              })
+            }
+          },
+          {
+            label: input.ctx.t('profile.profile'),
+            icon: (input) => <IconUserCircle {...input} />,
+            color: eq(input.model.routing.currentRoute, routeProfile) ? 'selected' : 'inherit',
+            onClick() {
+              input.dispatch({
+                t: 'routing',
+                c: {
+                  t: 'clicked-link',
+                  route: routeProfile
+                }
+              })
+            }
+          }
+        ]}
+      />
     </div>
   )
 }

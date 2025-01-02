@@ -13,7 +13,7 @@ export type BottomButtonInput = {
   }
   onClick: () => void
   loading?: boolean
-  color?: 'danger' | 'success' | 'inherit'
+  color?: 'danger' | 'success' | 'inherit' | 'selected'
   hidden?: boolean
 }
 
@@ -94,6 +94,7 @@ const Button = (input: BottomButtonInput) => {
         'enabled:active:opacity-50 disabled:cursor-not-allowed disabled:opacity-50',
         input.color === 'danger' && 'font-bold text-red-500',
         input.color === 'success' && 'font-bold text-green-500',
+        input.color === 'selected' && 'font-bold text-blue-500',
         input.hidden ? 'hidden' : '',
         input.classNames?.button
       )}

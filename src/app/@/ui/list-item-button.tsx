@@ -15,7 +15,7 @@ export const ListItemButton = ({
   end?: () => VDom
   label: TranslatedText
   onClick?: () => void
-  color?: 'default' | 'danger' | 'warning' | 'success' | 'inherit'
+  color?: 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
 }) => {
   return (
     <button
