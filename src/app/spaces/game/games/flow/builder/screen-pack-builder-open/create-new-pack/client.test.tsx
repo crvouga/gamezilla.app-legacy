@@ -10,8 +10,8 @@ import {
   userCreatedPack
 } from '../../@/testing/client'
 
-export const Fixture = () => {
-  const f = FixtureFlowBuilderClient()
+export const Fixture = async () => {
+  const f = await FixtureFlowBuilderClient()
   return { ...f }
 }
 

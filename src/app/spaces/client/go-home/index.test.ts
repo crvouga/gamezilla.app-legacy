@@ -3,14 +3,14 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesClient } from '../../@/fixture/client'
 
 const Fixture = async () => {
-  const f = FixtureSpacesClient()
+  const f = await FixtureSpacesClient()
   return {
     ...f
   }
 }
 
 describe(import.meta.file, () => {
-  it('should go to list screen when clicking go home button', async () => {
+  it('should go to list screen after clicking go home button', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
@@ -27,10 +27,11 @@ describe(import.meta.file, () => {
       }
     ])
 
-    expect(output.msgCmd?.some((m) => m.t === 'routing' && m.c.t === 'push' && m.c.route.t === 'space-list')).toBe(true)
+    const didPush = output.msgCmd?.some((m) => m.t === 'routing' && m.c.t === 'push' && m.c.route.t === 'space-list')
+    expect(didPush).toBe(true)
   })
 
-  it('should play a sound when clicking go home button', async () => {
+  it('should play a sound after clicking go home button', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
