@@ -116,6 +116,7 @@ export const translations: Text = {
   'prebuilt-bottom-buttons.next': 'अगला',
   'prebuilt-bottom-buttons.prev': 'पिछला',
   'prebuilt-bottom-buttons.reset': 'रीसेट',
+  'prebuilt-bottom-buttons.hint': 'सुझाव',
   'game.you-are-spectating': 'आप दर्शक हैं',
   host: 'मेज़बान',
   you: 'तुम',

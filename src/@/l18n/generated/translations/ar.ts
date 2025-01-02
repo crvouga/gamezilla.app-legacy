@@ -114,6 +114,7 @@ export const translations: Text = {
   'prebuilt-bottom-buttons.next': 'التالى',
   'prebuilt-bottom-buttons.prev': 'سابق',
   'prebuilt-bottom-buttons.reset': 'إعادة تعيين',
+  'prebuilt-bottom-buttons.hint': 'تلميح',
   'game.you-are-spectating': 'أنت تشاهد',
   host: 'المضيف',
   you: 'أنت',

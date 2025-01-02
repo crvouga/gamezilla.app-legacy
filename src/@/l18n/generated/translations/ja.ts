@@ -114,6 +114,7 @@ export const translations: Text = {
   'prebuilt-bottom-buttons.next': '次',
   'prebuilt-bottom-buttons.prev': '前',
   'prebuilt-bottom-buttons.reset': 'リセット',
+  'prebuilt-bottom-buttons.hint': 'ヒント',
   'game.you-are-spectating': 'あなたは観戦しています',
   host: 'ホスト',
   you: 'あなた',

@@ -112,6 +112,7 @@ export const translations: Text = {
   'prebuilt-bottom-buttons.next': '다음',
   'prebuilt-bottom-buttons.prev': '이전',
   'prebuilt-bottom-buttons.reset': '재설정',
+  'prebuilt-bottom-buttons.hint': '힌트',
   'game.you-are-spectating': '당신은 관전 중입니다',
   host: '호스트',
   you: '당신',

@@ -111,6 +111,7 @@ export const translations: Text = {
   'prebuilt-bottom-buttons.next': '下一个',
   'prebuilt-bottom-buttons.prev': '以前',
   'prebuilt-bottom-buttons.reset': '重启',
+  'prebuilt-bottom-buttons.hint': '提示',
   'game.you-are-spectating': '您正在观看',
   host: '主持人',
   you: '你',

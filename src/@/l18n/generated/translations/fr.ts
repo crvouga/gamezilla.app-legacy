@@ -112,6 +112,7 @@ export const translations: Text = {
   'prebuilt-bottom-buttons.next': 'Suivant',
   'prebuilt-bottom-buttons.prev': 'Précédent',
   'prebuilt-bottom-buttons.reset': 'Réinitialiser',
+  'prebuilt-bottom-buttons.hint': 'Astuce',
   'game.you-are-spectating': 'Vous regardez',
   host: 'Hôte',
   you: 'Vous',
