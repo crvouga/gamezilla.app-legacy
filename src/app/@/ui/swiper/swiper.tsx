@@ -16,8 +16,8 @@ const Container = (input: SwiperInput) => {
 const Slide = (input: { children?: VDomChildren; className?: string }) => {
   return (
     // @ts-expect-error
-    <swiper-slide>
-      <div className={input.className}>{input.children}</div>
+    <swiper-slide className={input.className}>
+      {input.children}
       {/* @ts-expect-error */}
     </swiper-slide>
   )
