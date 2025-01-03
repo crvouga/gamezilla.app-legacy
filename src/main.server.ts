@@ -1,4 +1,3 @@
-import path from 'node:path'
 import { withRPC } from '~/@/rpc/rpc'
 import { AppServer } from '~/app/server'
 import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config-public'
@@ -33,26 +32,26 @@ const main = async () => {
     fileSystem: FileSystem({ t: 'bun' }),
     webServer: ctx.webServer,
     directory: './dist',
-    indexFile: 'index.html',
-    toHeaders(filePath) {
-      if (filePath.includes('.gz')) {
-        return {
-          'Content-Encoding': 'gzip'
-        } as Record<string, string>
-      }
-      return {}
-    },
-    toFilePath(pathname) {
-      if (pathname.includes('favicon.ico')) {
-        return pathname
-      }
-      return `${pathname}.gz`
-    },
-    toExtname(filePath) {
-      const withoutGz = filePath.endsWith('.gz') ? filePath.slice(0, -3) : filePath
-      const ext = path.extname(withoutGz)
-      return ext
-    }
+    indexFile: 'index.html'
+    // toHeaders(filePath) {
+    //   if (filePath.includes('.gz')) {
+    //     return {
+    //       'Content-Encoding': 'gzip'
+    //     } as Record<string, string>
+    //   }
+    //   return {}
+    // },
+    // toFilePath(pathname) {
+    //   if (pathname.includes('favicon.ico')) {
+    //     return pathname
+    //   }
+    //   return `${pathname}.gz`
+    // },
+    // toExtname(filePath) {
+    //   const withoutGz = filePath.endsWith('.gz') ? filePath.slice(0, -3) : filePath
+    //   const ext = path.extname(withoutGz)
+    //   return ext
+    // }
   })
 
   ctx.logger.info({
