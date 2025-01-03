@@ -3,7 +3,7 @@ import { Translator } from '~/@/l18n/generated'
 import { p } from '~/@/parser'
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, AppClientCmd, playSound, showToast } from '~/app/@/client/cmd'
-import { IconCheckmark, Transition } from '~/app/@/ui'
+import { IconCheckmark, Portal, Transition } from '~/app/@/ui'
 import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { PrebuiltBottomButtons } from '../../../../@/ui/prebuilt-bottom-buttons'
 import type { Puzzle } from '../../puzzle/puzzle'
@@ -612,7 +612,7 @@ export const View = (input: {
   const flow = toFlow(input)
 
   return (
-    <div className='relative flex h-full w-full items-center justify-center'>
+    <>
       <VariantBoard.View
         disabled={input.disabled}
         model={flow}
@@ -634,8 +634,10 @@ export const View = (input: {
         usedHints={FlowHint.toUsedHints(input.model)}
       />
 
-      <CheckmarkAnimation open={Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation)} />
-    </div>
+      <Portal.Entrance portalId='app-root'>
+        <CheckmarkAnimation open={Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation)} />
+      </Portal.Entrance>
+    </>
   )
 }
 

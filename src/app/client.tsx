@@ -479,7 +479,7 @@ export const View = (input: { ctx: ClientCtx; model: ModelClient; dispatch: (msg
           model={input.model.auth}
         />
 
-        <Portal.Exit portalId='modals' />
+        <Portal.Exit portalId='app-root' />
 
         <Toast.View ctx={clientCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
       </div>

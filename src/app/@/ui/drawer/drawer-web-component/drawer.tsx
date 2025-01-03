@@ -7,7 +7,7 @@ import { drawerSub } from './drawer-shared'
 export const DrawerWebComponent = (input: DrawerInput) => {
   drawerSub.pub({ type: 'input', ...input })
   return (
-    <Portal.Entrance portalId='modals'>
+    <Portal.Entrance portalId='app-root'>
       {/* @ts-ignore */}
       <drawer-element id={input.id} position={input.position}>
         <div
