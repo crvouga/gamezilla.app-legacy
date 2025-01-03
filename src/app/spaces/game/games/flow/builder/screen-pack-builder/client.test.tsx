@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok } from '~/@/result'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
-import type { FlowClientCtx } from '../../../@/client/ctx'
-import { Pack } from '../../../@/pack/pack'
-import { Puzzle } from '../../../@/puzzle/puzzle'
+import type { FlowClientCtx } from '../../@/client/ctx'
+import { Pack } from '../../@/pack/pack'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import {
   FixtureFlowBuilderClient,
   FixureUpdateInput,
@@ -17,12 +17,12 @@ import {
   initial,
   serverCreatedPack,
   testFlowClientCtx
-} from '../../@/testing/client'
-import { deriveModelCore } from '../../@/testing/core'
-import { BuilderCore } from '../../core'
-import type { ModelClient, ModelCore } from '../../types'
-import { ScreenPackBuilderClient } from '../client'
-import { ScreenPackBuilderCore } from '../core'
+} from '../@/testing/client'
+import { deriveModelCore } from '../@/testing/core'
+import { BuilderCore } from '../core'
+import type { ModelClient, ModelCore } from '../types'
+import { ScreenPackBuilderClient } from './client'
+import { ScreenPackBuilderCore } from './core'
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
   return ScreenPackBuilderClient.update({
