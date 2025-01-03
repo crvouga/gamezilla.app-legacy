@@ -12,6 +12,7 @@ export const renderRuntimeErrors = () => {
   })
 
   function showError(errorMsg: unknown, url?: unknown, lineNumber?: unknown, column?: unknown) {
+    console.log('Error:', errorMsg, url, lineNumber, column)
     const errorDiv = document.createElement('div')
     errorDiv.style.color = 'red'
     errorDiv.style.position = 'fixed'
