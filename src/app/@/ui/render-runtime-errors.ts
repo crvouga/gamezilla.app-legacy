@@ -4,11 +4,11 @@
  */
 export const renderRuntimeErrors = () => {
   window.onerror = (errorMsg, url, lineNumber, column, _errorObj) => {
-    showError(errorMsg, url, lineNumber, column)
+    showError(`onerror ${errorMsg}`, url, lineNumber, column)
   }
 
   window.addEventListener('unhandledrejection', (msgEvt) => {
-    showError(msgEvt.reason.toString())
+    showError(`unhandledrejection: ${msgEvt.reason.toString()}`)
   })
 
   function showError(errorMsg: unknown, url?: unknown, lineNumber?: unknown, column?: unknown) {
