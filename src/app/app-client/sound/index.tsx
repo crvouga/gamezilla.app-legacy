@@ -269,32 +269,40 @@ const preloadSoundsEffect = async (src: string[]) => {
 }
 
 const preloadSoundEffect = async (src: string) => {
-  const response = await fetch(src)
-  const arrayBuffer = await response.arrayBuffer()
-  const audioContext = await getAudioContext()
-  if (!audioContext) {
-    return Err('No audio context')
+  try {
+    const response = await fetch(src)
+    const arrayBuffer = await response.arrayBuffer()
+    const audioContext = await getAudioContext()
+    if (!audioContext) {
+      return Err('No audio context')
+    }
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+    audioBuffers.set(src, audioBuffer)
+    return Ok(null)
+  } catch (e) {
+    return Err(String(e))
   }
-  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-  audioBuffers.set(src, audioBuffer)
-  return Ok(null)
 }
 
 const playSoundEffect = async (src: string, volume: UnitInterval): Promise<Result<string, null>> => {
-  const audioContext = await getAudioContext()
-  if (!audioContext) {
-    return Err('No audio context')
+  try {
+    const audioContext = await getAudioContext()
+    if (!audioContext) {
+      return Err('No audio context')
+    }
+    const audioBuffer = audioBuffers.get(src)
+    if (audioBuffer) {
+      return playSoundEffect_(audioContext, audioBuffer, volume)
+    }
+    const response = await fetch(src)
+    const arrayBuffer = await response.arrayBuffer()
+    const audioBufferNew = await audioContext.decodeAudioData(arrayBuffer)
+    audioBuffers.set(src, audioBufferNew)
+    // return playSoundEffect_(audioContext, audioBufferNew, volume)
+    return Ok(null)
+  } catch (e) {
+    return Err(String(e))
   }
-  const audioBuffer = audioBuffers.get(src)
-  if (audioBuffer) {
-    return playSoundEffect_(audioContext, audioBuffer, volume)
-  }
-  const response = await fetch(src)
-  const arrayBuffer = await response.arrayBuffer()
-  const audioBufferNew = await audioContext.decodeAudioData(arrayBuffer)
-  audioBuffers.set(src, audioBufferNew)
-  // return playSoundEffect_(audioContext, audioBufferNew, volume)
-  return Ok(null)
 }
 
 const playSoundEffect_ = async (
@@ -302,15 +310,19 @@ const playSoundEffect_ = async (
   audioBuffer: AudioBuffer,
   volume: UnitInterval
 ): Promise<Result<string, null>> => {
-  const sourceNode = audioContext.createBufferSource()
-  sourceNode.buffer = audioBuffer
-  const gainNode = audioContext.createGain()
-  gainNode.gain.value = volume
+  try {
+    const sourceNode = audioContext.createBufferSource()
+    sourceNode.buffer = audioBuffer
+    const gainNode = audioContext.createGain()
+    gainNode.gain.value = volume
 
-  sourceNode.connect(gainNode)
-  gainNode.connect(audioContext.destination)
+    sourceNode.connect(gainNode)
+    gainNode.connect(audioContext.destination)
 
-  sourceNode.start(0)
+    sourceNode.start(0)
 
-  return Ok(null)
+    return Ok(null)
+  } catch (e) {
+    return Err(String(e))
+  }
 }
