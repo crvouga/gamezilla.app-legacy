@@ -293,7 +293,8 @@ const playSoundEffect = async (src: string, volume: UnitInterval): Promise<Resul
   const arrayBuffer = await response.arrayBuffer()
   const audioBufferNew = await audioContext.decodeAudioData(arrayBuffer)
   audioBuffers.set(src, audioBufferNew)
-  return playSoundEffect_(audioContext, audioBufferNew, volume)
+  // return playSoundEffect_(audioContext, audioBufferNew, volume)
+  return Ok(null)
 }
 
 const playSoundEffect_ = async (
