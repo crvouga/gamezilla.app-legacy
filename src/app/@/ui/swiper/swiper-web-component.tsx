@@ -1,14 +1,15 @@
 import { SwiperInput, swiperInput } from './shared'
 
-class SwiperContainer extends HTMLElement {
-  previousActiveIndex: number
-  swiper: HTMLElement | null = null
-  props: SwiperInput | null = null
+if (typeof window !== 'undefined' && 'customElements' in window) {
+  class SwiperContainer extends HTMLElement {
+    previousActiveIndex: number
+    swiper: HTMLElement | null = null
+    props: SwiperInput | null = null
 
-  constructor() {
-    super()
-    this.attachShadow({ mode: 'open' })
-    this.shadowRoot!.innerHTML = `
+    constructor() {
+      super()
+      this.attachShadow({ mode: 'open' })
+      this.shadowRoot!.innerHTML = `
       <style>
         :host {
           display: block;
@@ -36,67 +37,63 @@ class SwiperContainer extends HTMLElement {
       </div>
     `
 
-    this._onScroll = this._onScroll.bind(this)
-    this.previousActiveIndex = 0
-  }
+      this._onScroll = this._onScroll.bind(this)
+      this.previousActiveIndex = 0
+    }
 
-  connectedCallback() {
-    this.swiper = this.shadowRoot!.querySelector('.swiper')
-    this.swiper?.addEventListener('scroll', this._onScroll)
-    this._updateInitialSlide()
-    console.log('connected', this.props)
-    swiperInput.sub((input) => {
-      console.log('sub', input)
-      if (input.id === this.id) {
-        this.props = input
+    connectedCallback() {
+      this.swiper = this.shadowRoot!.querySelector('.swiper')
+      if (!this.swiper) {
+        throw new Error('swiper element not found')
       }
-    })
-  }
-
-  disconnectedCallback() {
-    this.swiper?.removeEventListener('scroll', this._onScroll)
-  }
-
-  static get observedAttributes() {
-    return ['initial-slide']
-  }
-
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    if (name === 'initial-slide' && oldValue !== newValue) {
+      this.swiper.addEventListener('scroll', this._onScroll)
       this._updateInitialSlide()
+
+      swiperInput.sub((input) => {
+        if (input.id === this.id) {
+          this.props = input
+        }
+      })
+    }
+
+    disconnectedCallback() {
+      this.swiper?.removeEventListener('scroll', this._onScroll)
+    }
+
+    _updateInitialSlide() {
+      const initialSlide = this.props?.slideIndex ?? 0
+      const slides = Array.from(this.querySelectorAll('swiper-slide'))
+      if (slides[initialSlide]) {
+        slides[initialSlide].scrollIntoView({ behavior: 'smooth' })
+        this.previousActiveIndex = initialSlide
+      }
+    }
+
+    _onScroll() {
+      const slides = Array.from(this.querySelectorAll('swiper-slide'))
+      const swiperBounds = this.swiper?.getBoundingClientRect()
+      console.log('_onScroll')
+      console.log('swiperBounds', swiperBounds)
+      console.log('slides', slides)
+
+      if (!swiperBounds) return
+
+      const activeIndex = slides.findIndex((slide) => {
+        const bounds = slide.getBoundingClientRect()
+        return Math.round(bounds.left) === Math.round(swiperBounds.left)
+      })
+      if (activeIndex !== -1 && activeIndex !== this.previousActiveIndex) {
+        this.props?.onSlideIndexChanged(activeIndex)
+        this.previousActiveIndex = activeIndex
+      }
     }
   }
 
-  _updateInitialSlide() {
-    const initialSlide = parseInt(this.getAttribute('initial-slide') ?? '0', 10)
-    const slides = Array.from(this.querySelectorAll('swiper-slide'))
-    if (slides[initialSlide]) {
-      slides[initialSlide].scrollIntoView({ behavior: 'smooth' })
-      this.previousActiveIndex = initialSlide
-    }
-  }
-
-  _onScroll() {
-    const slides = Array.from(this.querySelectorAll('swiper-slide'))
-    const swiperBounds = this.swiper?.getBoundingClientRect()
-    if (!swiperBounds) return
-
-    const activeIndex = slides.findIndex((slide) => {
-      const bounds = slide.getBoundingClientRect()
-      return Math.round(bounds.left) === Math.round(swiperBounds.left)
-    })
-    if (activeIndex !== -1 && activeIndex !== this.previousActiveIndex) {
-      this.props?.onSlideIndexChanged(activeIndex)
-      this.previousActiveIndex = activeIndex
-    }
-  }
-}
-
-class SwiperSlide extends HTMLElement {
-  constructor() {
-    super()
-    this.attachShadow({ mode: 'open' })
-    this.shadowRoot!.innerHTML = `
+  class SwiperSlide extends HTMLElement {
+    constructor() {
+      super()
+      this.attachShadow({ mode: 'open' })
+      this.shadowRoot!.innerHTML = `
       <style>
         :host {
           display: block;
@@ -104,8 +101,9 @@ class SwiperSlide extends HTMLElement {
       </style>
       <slot></slot>
     `
+    }
   }
-}
 
-customElements.define('swiper-container', SwiperContainer)
-customElements.define('swiper-slide', SwiperSlide)
+  customElements.define('swiper-container', SwiperContainer)
+  customElements.define('swiper-slide', SwiperSlide)
+}
