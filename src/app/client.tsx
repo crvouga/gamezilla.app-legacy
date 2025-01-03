@@ -11,7 +11,7 @@ import { WebClient } from '~/@/web-client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
 import { SERVER_IMPL, SERVER_URL, type ServerImpl } from '~/config-public'
 import { ILogger, Logger } from '../@/logger'
-import { APP_SOUND, AppClientCmd, preloadSound } from './@/client/cmd'
+import { AppClientCmd } from './@/client/cmd'
 import { AnonymousClientCtx, AppClientCtx, BaseClientCtx, isAppClientCtx } from './@/client/ctx'
 import { ClientEvt } from './@/client/evt'
 import { Translator } from './@/client/translator'
@@ -164,9 +164,9 @@ export const init = (input: {
     AppClientCmd.tag('spaces', space.msgCmd),
     AppClientCmd.tag('profile', profile.msgCmd),
     AppClientCmd.tag('auth', auth.msgCmd),
-    AppClientCmd.tag('lang', lang.msgCmd),
+    AppClientCmd.tag('lang', lang.msgCmd)
 
-    preloadSound(Object.values(APP_SOUND))
+    // preloadSound(Object.values(APP_SOUND))
   )
 
   const updated = updateLoop(input.ctx, {

@@ -1,7 +1,10 @@
 import { waitForElementById } from '~/@/dom/dom'
 import type { VDomChildren } from '~/@/vdom/vdom'
 
-if (typeof window !== 'undefined') {
+let _isLoaded = false
+const load = () => {
+  if (_isLoaded) return
+  _isLoaded = true
   import('swiper/element/bundle').then(({ register }) => {
     register()
   })
@@ -71,6 +74,7 @@ const Container = (input: {
   className?: string
   slideIndex: number
 }) => {
+  load()
   onContainer(input)
   return (
     // @ts-ignore
