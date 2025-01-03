@@ -1,5 +1,4 @@
 import path from 'node:path'
-import { ICompress } from '../compress'
 import { IFileSystem } from '../file-system'
 import { fileExtensionToContentType } from './content-type'
 import { IWebServer } from './interface'
@@ -7,52 +6,45 @@ import { IWebServer } from './interface'
 export type Config = {
   webServer: IWebServer
   fileSystem: IFileSystem
-  compress: ICompress
   directory: string
   indexFile: string
+  toExtname?: (filePath: string) => string
+  toFilePath?: (pathname: string) => string
+  toHeaders?: (filePath: string) => Record<string, string>
 }
-
 export const withSinglePageApp = (config: Config) => {
+  const toExtname = config.toExtname ?? path.extname
+  const toFilePath = config.toFilePath ?? ((pathname) => pathname)
+  const toHeaders = config.toHeaders ?? (() => ({}))
+
   const respond = async (req: Request): Promise<Response> => {
     try {
       const url = new URL(req.url)
-
       const pathname = decodeURIComponent(url.pathname)
-      const filePath = path.join(config.directory, pathname === '/' ? config.indexFile : pathname)
-      const ext = path.extname(filePath)
-      const contentType = fileExtensionToContentType(ext)
+      let filePath = toFilePath(path.join(config.directory, pathname === '/' ? config.indexFile : pathname))
 
-      const doesExist = await config.fileSystem.exists(filePath)
+      let file: ReadableStream<ArrayBufferView | ArrayBufferLike>
 
-      if (!doesExist) {
-        const filePathIndex = path.join(config.directory, config.indexFile)
-        const extIndex = path.extname(filePathIndex)
-        const contentTypeIndex = fileExtensionToContentType(extIndex)
-        const fileIndex = await config.fileSystem.read(filePathIndex)
-        return new Response(fileIndex, {
-          headers: {
-            'Content-Type': contentTypeIndex
-          },
-          status: 200
-        })
+      try {
+        file = await config.fileSystem.read(filePath)
+      } catch {
+        filePath = toFilePath(path.join(config.directory, config.indexFile))
+        file = await config.fileSystem.read(filePath)
       }
 
-      const file = await config.fileSystem.read(filePath)
+      const ext = toExtname(filePath)
+      const contentType = fileExtensionToContentType(ext)
       return new Response(file, {
         headers: {
+          ...toHeaders(filePath),
           'Content-Type': contentType
         },
         status: 200
       })
     } catch (e) {
-      return new Response(`Server Error. ${String(e)}`, {
-        status: 500
-      })
+      return new Response(`Server Error: ${String(e)}`, { status: 500 })
     }
   }
 
-  config.webServer.registerHandler(async (req) => {
-    const response = await respond(req)
-    return config.compress.gzipResponse(response)
-  })
+  config.webServer.registerHandler(respond)
 }

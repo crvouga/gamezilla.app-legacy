@@ -1,7 +1,7 @@
+import path from 'node:path'
 import { withRPC } from '~/@/rpc/rpc'
 import { AppServer } from '~/app/server'
 import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config-public'
-import { Compress } from './@/compress'
 import { FileSystem } from './@/file-system'
 import { ProgramImpure } from './@/program/program-impure'
 import { withSinglePageApp } from './@/web-server/with-single-page-app'
@@ -31,10 +31,31 @@ const main = async () => {
 
   withSinglePageApp({
     fileSystem: FileSystem({ t: 'bun' }),
-    compress: Compress({ t: 'bun' }),
     webServer: ctx.webServer,
     directory: './dist',
-    indexFile: 'index.html'
+    indexFile: 'index.html',
+    toHeaders(filePath) {
+      if (filePath.includes('.gz')) {
+        return {
+          'Content-Encoding': 'gzip'
+        } as Record<string, string>
+      }
+      return {}
+    },
+    toFilePath(pathname) {
+      if (pathname.endsWith('.gz')) {
+        return pathname
+      }
+      if (pathname.includes('wav')) {
+        return pathname
+      }
+      return pathname + '.gz'
+    },
+    toExtname(filePath) {
+      const withoutGz = filePath.endsWith('.gz') ? filePath.slice(0, -3) : filePath
+      const ext = path.extname(withoutGz)
+      return ext
+    }
   })
 
   ctx.logger.info({
