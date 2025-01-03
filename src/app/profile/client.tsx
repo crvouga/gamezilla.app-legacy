@@ -3,43 +3,13 @@ import { Loading, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
-import { AppClientCmd, ProfileCmd, back, logout, pushRoute, replaceRoute, sendToServer } from '../@/client/cmd'
-import { AnonymousClientCtx, AppClientCtx } from '../@/client/ctx'
-import { ClientEvt } from '../@/client/evt'
+import { back, logout, pushRoute, replaceRoute, sendToServer } from '../@/client/cmd'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'
 import { ViewUpdateAvatarScreen } from './profile-client/profile-client-view-update-avatar-screen'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
+import type { ClientModule, ModelClient } from './types'
 import * as UpdateUsernameClient from './update-username/update-username.client'
-
-//
-//
-//
-//
-//
-//
-//
-
-type Ctx = AppClientCtx | AnonymousClientCtx
-
-type ClientModule = AppClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Ctx: Ctx
-  MsgCmdIn: ProfileCmd
-  MsgEvtIn: ClientEvt
-  MsgCmdOut: AppClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>
-  MsgEvtOut: ClientEvt
-  ViewSlot: {
-    bottomBar: null
-  }
-}>
 
 //
 //
@@ -456,7 +426,7 @@ export const View: ClientModule['View'] = (input) => {
         }
 
         case 'profile-edit': {
-          return <ViewUpdateScreen ctx={input.ctx} dispatch={input.dispatch} />
+          return <ViewUpdateScreen {...input} />
         }
 
         case 'profile-edit-avatar': {
@@ -478,7 +448,7 @@ export const View: ClientModule['View'] = (input) => {
   }
 }
 
-const ViewUpdateScreen = (input: { ctx: Ctx; dispatch: (m: MsgClient) => void }) => {
+const ViewUpdateScreen: typeof View = (input) => {
   if (!input.ctx.currentUserId) {
     return null
   }

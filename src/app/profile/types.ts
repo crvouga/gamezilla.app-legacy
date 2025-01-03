@@ -1,14 +1,18 @@
 import type { RemoteResult, Result } from '~/@/result'
+import { AppClientModule } from '../@/architecture/app-client'
 import { AppServerModule } from '../@/architecture/app-server'
+import { AppClientCmd, ProfileCmd } from '../@/client/cmd'
+import { AnonymousClientCtx, AppClientCtx } from '../@/client/ctx'
+import { ClientEvt } from '../@/client/evt'
 import { ClientId } from '../@/data/client-id'
 import { Profile } from '../@/data/profile'
 import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
-import * as UpdateUsernameTypes from './update-username/update-username.types'
-import { ServerEvt } from '../@/server/evt'
 import { ServerCmd } from '../@/server/cmd'
 import { AppServerCtx } from '../@/server/ctx'
+import { ServerEvt } from '../@/server/evt'
+import * as UpdateUsernameTypes from './update-username/update-username.types'
 //
 //
 //
@@ -125,4 +129,24 @@ export type ServerModule = AppServerModule<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   Deps: null
+}>
+
+export type ClientCtx = AppClientCtx | AnonymousClientCtx
+
+export type ClientModule = AppClientModule<{
+  Model: ModelClient
+  Msg: MsgClient
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  Ctx: ClientCtx
+  MsgCmdIn: ProfileCmd
+  MsgEvtIn: ClientEvt
+  MsgCmdOut: AppClientCmd<{
+    MsgClient: MsgClient
+    MsgToServer: MsgToServer
+  }>
+  MsgEvtOut: ClientEvt
+  ViewSlot: {
+    bottomBar: null
+  }
 }>
