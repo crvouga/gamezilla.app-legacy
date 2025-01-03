@@ -20,4 +20,4 @@ export type ServerImpl = 'bun' | 'node'
 
 export const SERVER_IMPL: ServerImpl = TRANSPORT_IMPL === 'bun-web-sockets' ? 'bun' : 'node'
 
-export const SERVER_URL = String(import.meta.env?.VITE_SERVER_URL)
+export const SERVER_URL = import.meta.env?.VITE_SERVER_URL ? String(import.meta.env?.VITE_SERVER_URL) : ''

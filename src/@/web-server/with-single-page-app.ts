@@ -15,9 +15,9 @@ export type Config = {
 export const withSinglePageApp = (config: Config) => {
   const toExtname = config.toExtname ?? path.extname
   const toFilePath = config.toFilePath ?? ((pathname) => pathname)
-  const toHeaders = config.toHeaders ?? (() => ({}))
+  const toHeaders: (filePath: string) => Record<string, string> = config.toHeaders ?? (() => ({}))
 
-  const respond = async (req: Request): Promise<Response> => {
+  config.webServer.registerHandler(async (req) => {
     try {
       const url = new URL(req.url)
       const pathname = decodeURIComponent(url.pathname)
@@ -34,17 +34,14 @@ export const withSinglePageApp = (config: Config) => {
 
       const ext = toExtname(filePath)
       const contentType = fileExtensionToContentType(ext)
+      const headers = toHeaders(filePath)
+      headers['Content-Type'] = contentType
       return new Response(file, {
-        headers: {
-          ...toHeaders(filePath),
-          'Content-Type': contentType
-        },
+        headers,
         status: 200
       })
     } catch (e) {
       return new Response(`Server Error: ${String(e)}`, { status: 500 })
     }
-  }
-
-  config.webServer.registerHandler(respond)
+  })
 }
