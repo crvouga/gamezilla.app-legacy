@@ -139,7 +139,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
         const headers: Record<string, string> = maybeSessionId
           ? {}
           : {
-              'Set-Cookie': SessionIdCookie.toSetCookie({
+              'Set-Cookie': SessionIdCookie.toSetCookieHeaderValue({
                 sessionId,
                 isProd: config.isProd
               })
