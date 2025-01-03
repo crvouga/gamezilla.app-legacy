@@ -232,13 +232,11 @@ const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
             title={input.ctx.t('flow-pack-name', packBuilder.pack.name)}
           />
           <div className='flex w-full flex-1 flex-col items-center justify-center'>
-            slideIndex={ScreenPackBuilderCore.toSlideIndex(packBuilder)}
             <PackPuzzlesGridUI.View
               id={packBuilder.pack.id}
               slideIndex={ScreenPackBuilderCore.toSlideIndex(packBuilder)}
               puzzleIds={packBuilder.pack.puzzleIds}
               onSlideIndexChanged={(newSlideIndex) => {
-                console.log('newSlideIndex', newSlideIndex)
                 input.dispatch({
                   t: 'got-msg-core',
                   c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId }
