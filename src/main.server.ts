@@ -1,11 +1,12 @@
 import { withRPC } from '~/@/rpc/rpc'
 import { AppServer } from '~/app/server'
 import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config-public'
+import { Compress } from './@/compress'
+import { FileSystem } from './@/file-system'
 import { ProgramImpure } from './@/program/program-impure'
+import { withSinglePageApp } from './@/web-server/with-single-page-app'
 import { AppTypes } from './app'
 import { SERVER_PORT } from './config-private'
-import { withSinglePageApp } from './@/web-server/with-single-page-app'
-import { FileSystem } from './@/file-system'
 
 const main = async () => {
   const ctx = await AppServer.initCtx()
@@ -29,10 +30,11 @@ const main = async () => {
   })
 
   withSinglePageApp({
-    directory: './dist',
     fileSystem: FileSystem({ t: 'bun' }),
-    indexFile: 'index.html',
-    webServer: ctx.webServer
+    compress: Compress({ t: 'bun' }),
+    webServer: ctx.webServer,
+    directory: './dist',
+    indexFile: 'index.html'
   })
 
   ctx.logger.info({

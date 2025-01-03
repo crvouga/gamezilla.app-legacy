@@ -1,17 +1,19 @@
 import path from 'node:path'
+import { ICompress } from '../compress'
 import { IFileSystem } from '../file-system'
-import { IWebServer } from './interface'
 import { fileExtensionToContentType } from './content-type'
+import { IWebServer } from './interface'
 
 export type Config = {
   webServer: IWebServer
   fileSystem: IFileSystem
+  compress: ICompress
   directory: string
   indexFile: string
 }
 
 export const withSinglePageApp = (config: Config) => {
-  config.webServer.registerHandler(async (req) => {
+  const respond = async (req: Request): Promise<Response> => {
     try {
       const url = new URL(req.url)
 
@@ -27,24 +29,18 @@ export const withSinglePageApp = (config: Config) => {
         const extIndex = path.extname(filePathIndex)
         const contentTypeIndex = fileExtensionToContentType(extIndex)
         const fileIndex = await config.fileSystem.read(filePathIndex)
-        const buf = await Bun.readableStreamToArrayBuffer(fileIndex)
-        const compressed = Bun.gzipSync(buf)
-        return new Response(compressed, {
+        return new Response(fileIndex, {
           headers: {
-            'Content-Type': contentTypeIndex,
-            'Content-Encoding': 'gzip'
+            'Content-Type': contentTypeIndex
           },
           status: 200
         })
       }
 
       const file = await config.fileSystem.read(filePath)
-      const buf = await Bun.readableStreamToArrayBuffer(file)
-      const compressed = Bun.gzipSync(buf)
-      return new Response(compressed, {
+      return new Response(file, {
         headers: {
-          'Content-Type': contentType,
-          'Content-Encoding': 'gzip'
+          'Content-Type': contentType
         },
         status: 200
       })
@@ -53,5 +49,10 @@ export const withSinglePageApp = (config: Config) => {
         status: 500
       })
     }
+  }
+
+  config.webServer.registerHandler(async (req) => {
+    const response = await respond(req)
+    return config.compress.gzipResponse(response)
   })
 }
