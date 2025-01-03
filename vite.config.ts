@@ -29,5 +29,11 @@ const vDomPlugin = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), vDomPlugin(), compression()]
+  plugins: [
+    tsconfigPaths(),
+    vDomPlugin(),
+    compression({
+      include: /\.(html|xml|css|json|js|mjs|svg|yaml|yml|toml|wav)$/
+    })
+  ]
 })

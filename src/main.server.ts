@@ -43,16 +43,10 @@ const main = async () => {
       return {}
     },
     toFilePath(pathname) {
-      if (pathname.includes('.gz')) {
-        return pathname
-      }
-      if (pathname.includes('wav')) {
-        return pathname
-      }
       if (pathname.includes('favicon.ico')) {
         return pathname
       }
-      return pathname + '.gz'
+      return `${pathname}.gz`
     },
     toExtname(filePath) {
       const withoutGz = filePath.endsWith('.gz') ? filePath.slice(0, -3) : filePath
