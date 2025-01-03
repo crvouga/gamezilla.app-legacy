@@ -1,6 +1,6 @@
 import { SwiperInput, swiperInput } from './shared'
 
-class SwiperElement extends HTMLElement {
+class SwiperContainer extends HTMLElement {
   previousActiveIndex: number
   swiper: HTMLElement | null = null
   props: SwiperInput | null = null
@@ -17,17 +17,18 @@ class SwiperElement extends HTMLElement {
         }
 
         .swiper {
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch; /* Enables momentum scrolling on touch devices */
           display: flex;
           overflow-x: auto;
           scroll-snap-type: x mandatory;
-          -webkit-overflow-scrolling: touch;
-          gap: 1rem;
+          gap: 0; /* Remove gap to prevent spacing between slides */
         }
 
         ::slotted(swiper-slide) {
           flex-shrink: 0;
           scroll-snap-align: center;
-          width: 100%;
+          width: 100%; /* Each slide occupies the full width of the container */
         }
       </style>
       <div class="swiper">
@@ -43,7 +44,9 @@ class SwiperElement extends HTMLElement {
     this.swiper = this.shadowRoot!.querySelector('.swiper')
     this.swiper?.addEventListener('scroll', this._onScroll)
     this._updateInitialSlide()
+    console.log('connected', this.props)
     swiperInput.sub((input) => {
+      console.log('sub', input)
       if (input.id === this.id) {
         this.props = input
       }
@@ -80,38 +83,29 @@ class SwiperElement extends HTMLElement {
 
     const activeIndex = slides.findIndex((slide) => {
       const bounds = slide.getBoundingClientRect()
-      return bounds.left >= swiperBounds.left && bounds.right <= swiperBounds.right
+      return Math.round(bounds.left) === Math.round(swiperBounds.left)
     })
-
     if (activeIndex !== -1 && activeIndex !== this.previousActiveIndex) {
-      this.dispatchEvent(
-        new CustomEvent('swiperslidechange', {
-          detail: { activeIndex }
-        })
-      )
+      this.props?.onSlideIndexChanged(activeIndex)
       this.previousActiveIndex = activeIndex
     }
   }
 }
 
-declare global {
-  namespace inferno.createElement.JSX {
-    interface IntrinsicElements {
-      'swiper-element': {
-        id: string
-        children: unknown
-      }
-    }
-  }
-
-  namespace JSX {
-    interface IntrinsicElements {
-      'swiper-element': {
-        id: string
-        children: unknown
-      }
-    }
+class SwiperSlide extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.shadowRoot!.innerHTML = `
+      <style>
+        :host {
+          display: block;
+        }
+      </style>
+      <slot></slot>
+    `
   }
 }
 
-customElements.define('swiper-element', SwiperElement)
+customElements.define('swiper-container', SwiperContainer)
+customElements.define('swiper-slide', SwiperSlide)
