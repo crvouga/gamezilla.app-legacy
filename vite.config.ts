@@ -1,4 +1,3 @@
-import { compression } from 'vite-plugin-compression2'
 import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
@@ -31,9 +30,9 @@ const vDomPlugin = () => {
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
-    vDomPlugin(),
-    compression({
-      include: /\.(html|xml|css|json|js|mjs|svg|yaml|yml|toml|wav)$/
-    })
+    vDomPlugin()
+    // compression({
+    //   include: /\.(html|xml|css|json|js|mjs|svg|yaml|yml|toml|wav)$/
+    // })
   ]
 })
