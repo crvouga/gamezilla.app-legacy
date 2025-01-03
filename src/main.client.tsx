@@ -1,4 +1,5 @@
 import { DebuggerReduxDevTools } from './@/program/debugger'
+import { DebuggerConsole } from './@/program/debugger/debugger-console'
 import { Program } from './@/program/program'
 import { Render } from './@/vdom/render'
 import { renderRuntimeErrors } from './app/@/ui/render-runtime-errors'
@@ -34,7 +35,7 @@ const main = async () => {
 
     crash: (input) => console.error('Crash!', input.error),
 
-    debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined
+    debugger: DebuggerConsole // localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined
   })
 
   await ctx.transport.start()
