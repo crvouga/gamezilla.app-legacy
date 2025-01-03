@@ -10,7 +10,7 @@ import { FlowEdit } from '../../@/flow/flow-edit'
 import { FlowPlay } from '../../@/flow/flow-play'
 import { BoardLayout } from '../../@/flow/ui/layout'
 import * as BuilderTypes from '../types'
-import { toFlow, toStatus } from './core'
+import { ScreenPuzzleBuilderCore } from './core'
 import { DeleteForeverClient } from './delete-forever/client'
 import { EditPuzzleNameClient } from './edit-puzzle-name/client'
 import { SaveChangesClient } from './save-changes/client'
@@ -111,7 +111,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
           model
         }
       }
-      const flow = toFlow(modelCore.screenPuzzleBuilder)
+      const flow = ScreenPuzzleBuilderCore.toFlow(modelCore.screenPuzzleBuilder)
       const updated = FlowPlay.update({
         msg: msgCore.c,
         model: modelCore.screenPuzzleBuilder.play,
@@ -259,8 +259,10 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
     }
 
     case 'play': {
-      const flow = toFlow(puzzleBuilder)
-      const status = modelCore.screenPuzzleBuilder ? toStatus(modelCore.screenPuzzleBuilder) : 'solving'
+      const flow = ScreenPuzzleBuilderCore.toFlow(puzzleBuilder)
+      const status = modelCore.screenPuzzleBuilder
+        ? ScreenPuzzleBuilderCore.toStatus(modelCore.screenPuzzleBuilder)
+        : 'solving'
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
           <BoardLayout
@@ -327,7 +329,7 @@ const ViewSpectating: BuilderTypes.ClientModule['View'] = (input) => {
           profile={input.ctx.profiles[input.ctx.space.hostId]}
           subtitle={input.ctx.t('app.editor')}
         />
-        <VariantBoard.View disabled model={toFlow(input.modelCore.screenPuzzleBuilder)} />
+        <VariantBoard.View disabled model={ScreenPuzzleBuilderCore.toFlow(input.modelCore.screenPuzzleBuilder)} />
       </div>
     </LayoutGame>
   )

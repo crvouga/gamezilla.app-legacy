@@ -8,14 +8,14 @@ import { EditPuzzleNameCore } from './edit-puzzle-name/core'
 import { SaveChangesCore } from './save-changes/core'
 import { ModelCore } from './types'
 
-export const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
+const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
   return FlowPlay.toStatus({
     model: modelCore.play,
     flow: toFlow(modelCore)
   })
 }
 
-export const toFlow = (modelCore: ModelCore): Variant.Model => {
+const toFlow = (modelCore: ModelCore): Variant.Model => {
   switch (modelCore.mode.t) {
     case 'edit': {
       return FlowEdit.toFlow({
@@ -170,5 +170,7 @@ const updateCore: typeof updateCoreMain = (input) => {
 }
 
 export const ScreenPuzzleBuilderCore = {
-  updateCore
+  updateCore,
+  toFlow,
+  toStatus
 }
