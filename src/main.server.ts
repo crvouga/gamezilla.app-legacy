@@ -1,9 +1,7 @@
 import { withRPC } from '~/@/rpc/rpc'
 import { AppServer } from '~/app/server'
 import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config-public'
-import { FileSystem } from './@/file-system'
 import { ProgramImpure } from './@/program/program-impure'
-import { withSinglePageApp } from './@/web-server/with-single-page-app'
 import { AppTypes } from './app'
 import { SERVER_PORT } from './config-private'
 
@@ -26,32 +24,6 @@ const main = async () => {
     webServer: ctx.webServer,
     contract: AppTypes.rpcContract,
     handlers: rpc
-  })
-
-  withSinglePageApp({
-    fileSystem: FileSystem({ t: 'bun' }),
-    webServer: ctx.webServer,
-    directory: './dist',
-    indexFile: 'index.html'
-    // toHeaders(filePath) {
-    //   if (filePath.includes('.gz')) {
-    //     return {
-    //       'Content-Encoding': 'gzip'
-    //     } as Record<string, string>
-    //   }
-    //   return {}
-    // },
-    // toFilePath(pathname) {
-    //   if (pathname.includes('favicon.ico')) {
-    //     return pathname
-    //   }
-    //   return `${pathname}.gz`
-    // },
-    // toExtname(filePath) {
-    //   const withoutGz = filePath.endsWith('.gz') ? filePath.slice(0, -3) : filePath
-    //   const ext = path.extname(withoutGz)
-    //   return ext
-    // }
   })
 
   ctx.logger.info({

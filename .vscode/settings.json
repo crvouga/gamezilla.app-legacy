@@ -26,6 +26,7 @@
     "Premoves",
     "Propgation",
     "pscale",
+    "psql",
     "registrator",
     "snabbdom",
     "sslmode",
