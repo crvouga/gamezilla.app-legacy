@@ -73,14 +73,18 @@ const toSeed = (seedString: string) => {
 }
 
 const toUrl = ({ seed, style }: { style: ProfileAvatarStyle; seed: string }) => {
-  const BASE_URL = 'https://api.dicebear.com/7.x'
-  const FILE_TYPE = 'svg'
-  const url = new URL(`${BASE_URL}/${style}/${FILE_TYPE}`)
-  url.searchParams.append('seed', seed)
+  try {
+    const BASE_URL = 'https://api.dicebear.com/7.x'
+    const FILE_TYPE = 'svg'
+    const url = new URL(`${BASE_URL}/${style}/${FILE_TYPE}`)
+    url.searchParams.append('seed', seed)
 
-  const str = url.toString()
+    const str = url.toString()
 
-  return str
+    return str
+  } catch (error) {
+    return ''
+  }
 }
 
 const parseUrl = (

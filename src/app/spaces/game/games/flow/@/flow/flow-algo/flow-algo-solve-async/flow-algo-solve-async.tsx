@@ -6,7 +6,14 @@ import { MsgToMaster, type MsgToWorker } from './flow-algo-solve-async.types'
 export const solve = async (model: Variant.Model, logger: ILogger = loggerNoop): Promise<Variant.Model | null> => {
   logger.info('Solving puzzle with worker')
 
-  const url = new URL('flow-algo-solve-async.worker.ts', import.meta.url).href
+  let url
+
+  try {
+    url = new URL('flow-algo-solve-async.worker.ts', import.meta.url).href
+  } catch (e) {
+    console.error(e)
+    return null
+  }
 
   const worker = new Worker(url)
 

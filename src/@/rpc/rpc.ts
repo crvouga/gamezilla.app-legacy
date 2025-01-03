@@ -129,9 +129,13 @@ export const withRPC = <T extends Base>({
   }
 
   webServer.registerHandler(async (request) => {
-    const url = new URL(request.url)
-    const path = url.pathname.replace('/rpc/', '').split('/')
+    try {
+      const url = new URL(request.url)
+      const path = url.pathname.replace('/rpc/', '').split('/')
 
-    return handleRequest(contract, handlers, path, request)
+      return handleRequest(contract, handlers, path, request)
+    } catch (error) {
+      return new Response(JSON.stringify({ error: String(error) }), { status: 400 })
+    }
   })
 }
