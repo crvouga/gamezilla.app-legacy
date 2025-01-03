@@ -1,5 +1,5 @@
-import { Redis } from 'ioredis'
 import { ILogger } from '../logger'
+import { IRedis, newRedis } from '../redis'
 import { IPubSubTopicBased } from './interface'
 
 export type Config = {
@@ -9,10 +9,10 @@ export type Config = {
 }
 
 const MAX_MSG_LOG_LENGTH = 100
-let publisher: Redis
+let publisher: IRedis
 let hasSubscribed = false
 export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBased> => {
-  publisher ??= new Redis(config.redisUrl)
+  publisher ??= newRedis(config.redisUrl)
   if (!hasSubscribed) {
     publisher.on('error', (err) => {
       config.logger.error(`publisher error: ${err}`)
@@ -22,7 +22,7 @@ export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBase
   await publisher.ping()
 
   let runningSubscriberId = 0
-  const subscribers = new Map<number, Redis>()
+  const subscribers = new Map<number, IRedis>()
 
   return {
     async pub(topic, msg) {
@@ -33,7 +33,7 @@ export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBase
     async sub(topic, callback) {
       const id = runningSubscriberId
       runningSubscriberId++
-      const subscriber = new Redis(config.redisUrl)
+      const subscriber = newRedis(config.redisUrl)
       subscriber.on('error', (err) => {
         config.logger.error(`subscriber error: ${err}`)
       })

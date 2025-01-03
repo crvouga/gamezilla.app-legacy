@@ -1,12 +1,12 @@
-import { Err, Ok, isErr } from '~/@/result'
+import { Logger } from '~/@/logger'
+import type { ILogger } from '~/@/logger/interface'
 import { p } from '~/@/parser'
-import { Redis } from 'ioredis'
-import type { ILogger } from '../logger/interface'
-import { withDuration } from '../time/with-duration'
+import { Sleep } from '~/@/promise/sleep'
+import { Err, Ok, isErr } from '~/@/result'
+import { TimeSpan } from '~/@/time/time-span'
+import { withDuration } from '~/@/time/with-duration'
+import { IRedis, newRedis } from '../redis'
 import type { IDbConnKv } from './interface'
-import { Logger } from '../logger'
-import { TimeSpan } from '../time/time-span'
-import { Sleep } from '../promise/sleep'
 
 export type Config = {
   t: 'redis'
@@ -15,11 +15,11 @@ export type Config = {
   simulateLatency: Sleep
 }
 
-let redis: Redis
+let redis: IRedis
 
 export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
   const logger = Logger.prefix('redis', config.logger)
-  redis ??= new Redis(config.redisUrl)
+  redis ??= newRedis(config.redisUrl)
 
   await redis.ping()
 
