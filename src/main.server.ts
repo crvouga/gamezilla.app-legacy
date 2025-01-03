@@ -4,6 +4,8 @@ import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config-public'
 import { ProgramImpure } from './@/program/program-impure'
 import { AppTypes } from './app'
 import { SERVER_PORT } from './config-private'
+import { withSinglePageApp } from './@/web-server/with-single-page-app'
+import { FileSystem } from './@/file-system'
 
 const main = async () => {
   const ctx = await AppServer.initCtx()
@@ -24,6 +26,13 @@ const main = async () => {
     webServer: ctx.webServer,
     contract: AppTypes.rpcContract,
     handlers: rpc
+  })
+
+  withSinglePageApp({
+    directory: './dist',
+    fileSystem: FileSystem({ t: 'bun' }),
+    indexFile: 'index.html',
+    webServer: ctx.webServer
   })
 
   ctx.logger.info({
