@@ -3,7 +3,7 @@ import { Program } from './@/program/program'
 import { Render } from './@/vdom/render'
 import * as AppClient from './app/client'
 import { IS_PROD, SERVER_URL, TRANSPORT_IMPL, VDOM_IMPL } from './config-public'
-import './main.css'
+import './main.client.css'
 
 const main = async () => {
   const ctx = await AppClient.initCtx()

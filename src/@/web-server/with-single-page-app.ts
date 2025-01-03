@@ -27,19 +27,24 @@ export const withSinglePageApp = (config: Config) => {
         const extIndex = path.extname(filePathIndex)
         const contentTypeIndex = fileExtensionToContentType(extIndex)
         const fileIndex = await config.fileSystem.read(filePathIndex)
-        return new Response(fileIndex, {
+        const buf = await Bun.readableStreamToArrayBuffer(fileIndex)
+        const compressed = Bun.gzipSync(buf)
+        return new Response(compressed, {
           headers: {
-            'Content-Type': contentTypeIndex
+            'Content-Type': contentTypeIndex,
+            'Content-Encoding': 'gzip'
           },
           status: 200
         })
       }
 
       const file = await config.fileSystem.read(filePath)
-
-      return new Response(file, {
+      const buf = await Bun.readableStreamToArrayBuffer(file)
+      const compressed = Bun.gzipSync(buf)
+      return new Response(compressed, {
         headers: {
-          'Content-Type': contentType
+          'Content-Type': contentType,
+          'Content-Encoding': 'gzip'
         },
         status: 200
       })
