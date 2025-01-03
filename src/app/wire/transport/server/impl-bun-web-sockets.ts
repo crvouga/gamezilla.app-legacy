@@ -136,13 +136,6 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
           sessionId
         }
 
-        console.log({
-          clientId,
-          sessionId,
-          maybeSessionId,
-          data
-        })
-
         const headers = new Headers()
 
         if (!maybeSessionId) {
