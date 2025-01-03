@@ -1,11 +1,14 @@
 import { DebuggerReduxDevTools } from './@/program/debugger'
 import { Program } from './@/program/program'
 import { Render } from './@/vdom/render'
+import { renderRuntimeErrors } from './app/@/ui/render-runtime-errors'
 import * as AppClient from './app/client'
 import { IS_PROD, SERVER_URL, TRANSPORT_IMPL, VDOM_IMPL } from './config-public'
 import './main.client.css'
 
 const main = async () => {
+  renderRuntimeErrors()
+
   const ctx = await AppClient.initCtx()
 
   const root = document.getElementById('root')
