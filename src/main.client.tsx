@@ -1,4 +1,3 @@
-import { DebuggerReduxDevTools } from './@/program/debugger'
 import { DebuggerConsole } from './@/program/debugger/debugger-console'
 import { Program } from './@/program/program'
 import { Render } from './@/vdom/render'

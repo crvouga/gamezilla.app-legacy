@@ -187,13 +187,13 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
     case 'send-to-server': {
       return {
         model,
-        eff: (dispatch) => {
+        eff: (_dispatch) => {
           if (wireCmd.toServer) {
             transport.toServer.pub([wireCmd.toServer])
-            dispatch({
-              t: 'sent-to-server',
-              toServer: wireCmd.toServer
-            })
+            // dispatch({
+            //   t: 'sent-to-server',
+            //   toServer: wireCmd.toServer
+            // })
           }
         }
       }
