@@ -24,10 +24,9 @@ export const withSinglePageApp = (config: Config) => {
       let filePath = toFilePath(path.join(config.directory, pathname === '/' ? config.indexFile : pathname))
 
       let file: ReadableStream<ArrayBufferView | ArrayBufferLike>
-
-      try {
+      if (await config.fileSystem.exists(filePath)) {
         file = await config.fileSystem.read(filePath)
-      } catch {
+      } else {
         filePath = toFilePath(path.join(config.directory, config.indexFile))
         file = await config.fileSystem.read(filePath)
       }
