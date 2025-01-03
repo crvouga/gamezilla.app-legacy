@@ -136,22 +136,29 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
           sessionId
         }
 
-        const headers: Record<string, string> = maybeSessionId
-          ? {}
-          : {
-              'Set-Cookie': SessionIdCookie.toSetCookieHeaderValue({
-                sessionId,
-                isProd: config.isProd
-              })
-            }
+        console.log({
+          clientId,
+          sessionId,
+          maybeSessionId,
+          data
+        })
+
+        const headers = new Headers()
+
+        if (!maybeSessionId) {
+          headers.append(
+            'Set-Cookie',
+            SessionIdCookie.toSetCookieHeaderValue({
+              sessionId,
+              isProd: config.isProd
+            })
+          )
+        }
 
         logger.debug(
-          `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${JSON.stringify(
-            headers
-          )}`
+          `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${headers.toJSON()}`
         )
-        console.log('headers', headers)
-        server.upgrade(request, { headers: undefined, data })
+        server.upgrade(request, { headers, data })
         return
       }
 
