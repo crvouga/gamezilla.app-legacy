@@ -31,7 +31,7 @@
     "pretty": "bun x prettier --write .",
     "preview": "bun client:build && bun client:serve",
     "server": "bun src/main.server.ts",
-    "server:build": "bun client:build && bun db:up",
+    "server:build": "bun db:up",
     "server:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/main.server.ts",
     "tc": "bun x tsc --noEmit --watch",
     "test:int": "IS_INTEGRATION_TEST=true bun test",
