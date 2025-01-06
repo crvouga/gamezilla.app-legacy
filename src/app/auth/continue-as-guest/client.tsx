@@ -1,4 +1,4 @@
-import { isRequesting, RequestResponse } from '~/@/request-response/request-response'
+import { isRequesting, isResponseOk, RequestResponse } from '~/@/request-response/request-response'
 import { isErr, NotAsked } from '~/@/result'
 import { APP_SOUND, playSound, sendToServer, showErrSm } from '~/app/@/client/cmd'
 import { Button, IconUserCircle } from '~/app/@/ui'
@@ -27,6 +27,19 @@ const update: ClientModule['update'] = (input) => {
     }
   }
 
+  switch (input.msgEvt?.t) {
+    case 'auth-evt.authenticated': {
+      return {
+        model: {
+          ...input.model,
+          guestRequest: {
+            t: 'not-asked',
+          },
+        },
+      }
+    }
+  }
+
   switch (input.msgServer?.t) {
     case 'guest.continue-as-guest-result': {
       return {
@@ -47,14 +60,10 @@ const update: ClientModule['update'] = (input) => {
 const ViewButton: ClientModule['View'] = (input) => {
   return (
     <Button
-      onClick={() =>
-        input.dispatch({
-          t: 'guest.clicked-continue-as-guest-button',
-        })
-      }
+      onClick={() => input.dispatch({ t: 'guest.clicked-continue-as-guest-button' })}
       iconStart={(iconInput) => <IconUserCircle {...iconInput} />}
       text={input.ctx.t('auth.continue-as-guest')}
-      loading={isRequesting(input.model.guestRequest)}
+      loading={isRequesting(input.model.guestRequest) || isResponseOk(input.model.guestRequest)}
     />
   )
 }
