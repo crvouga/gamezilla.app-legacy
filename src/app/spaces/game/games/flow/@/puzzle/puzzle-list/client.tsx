@@ -10,7 +10,7 @@ import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
 import { VariantBoard } from '../../flow/flow-variant'
 import type { Puzzle } from '../puzzle'
-import type { ClientModule, MsgInCmdClient } from './types'
+import type { ClientModule, ModelClient, MsgInCmdClient } from './types'
 
 const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen({ model: input.model }, (model) => updatePuzzleList({ ...input, model }))
@@ -26,7 +26,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
         },
         msgCmd: [
           sendToServer({
-            t: 'flow-cmd.puzzle-list.list-puzzles',
+            t: 'list-puzzles',
             input: {
               order: {
                 lastUpdatedAt: 'desc'
@@ -48,7 +48,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
   }
 
   switch (input.msg?.t) {
-    case 'flow-cmd.puzzle-list.time-passed': {
+    case 'time-passed': {
       return {
         model: {
           ...input.model,
@@ -59,7 +59,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
   }
 
   switch (input.msgServer?.t) {
-    case 'flow-cmd.puzzle-list.listed-puzzle': {
+    case 'listed-puzzle': {
       const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
 
       const puzzlesNew = {
@@ -138,11 +138,7 @@ const View: ClientModule['View'] = (input) => {
 
         <IntersectionObserverEmitter
           id='puzzle-builder-list'
-          onVisible={() =>
-            dispatch({
-              t: 'flow-cmd.puzzle-list.user-observed-end-of-list'
-            })
-          }
+          onVisible={() => dispatch({ t: 'user-observed-end-of-list' })}
         />
       </div>
 
@@ -174,9 +170,14 @@ const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Puzzle; 
   )
 }
 
+const isLoading = (model: ModelClient): boolean => {
+  return model.request.t === 'loading'
+}
+
 export const PuzzleListClient = {
   update,
   View,
   didLoad,
-  load
+  load,
+  isLoading
 }

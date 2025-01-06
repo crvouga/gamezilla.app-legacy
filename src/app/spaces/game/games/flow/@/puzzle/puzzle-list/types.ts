@@ -17,6 +17,44 @@ import { RequestResponse } from '~/@/request-response/request-response'
 //
 //
 //
+
+export type ModelClient = {
+  request: RequestResponse<string, null>
+  puzzles: { [id: PuzzleId]: Puzzle }
+}
+
+export const initClient: ModelClient = {
+  request: NotAsked,
+  puzzles: {}
+}
+
+export type ModelServer = null
+
+export type MsgClient = { t: 'user-observed-end-of-list' } | { t: 'time-passed' }
+
+export type MsgServer = { t: 'noop' }
+
+export type MsgToServer = {
+  t: 'list-puzzles'
+  input: ListPuzzlesInput
+}
+
+export type MsgToClient = {
+  t: 'listed-puzzle'
+  listed: ListPuzzlesOutput
+}
+
+export type MsgInCmdClient = {
+  t: 'flow-cmd.puzzle-list'
+  c: {
+    t: 'load'
+  }
+}
+
+//
+//
+//
+//
 //
 
 export type ClientModule = AppClientModule<{
@@ -49,43 +87,3 @@ export type ServerModule = AppServerModule<{
   Ctx: FlowServerCtx
   MsgEvtIn: SpaceServerEvt
 }>
-
-//
-//
-//
-//
-
-export type ModelClient = {
-  request: RequestResponse<string, null>
-  puzzles: { [id: PuzzleId]: Puzzle }
-}
-
-export const initClient: ModelClient = {
-  request: NotAsked,
-  puzzles: {}
-}
-
-export type ModelServer = null
-
-export type MsgClient =
-  | { t: 'flow-cmd.puzzle-list.user-observed-end-of-list' }
-  | { t: 'flow-cmd.puzzle-list.time-passed' }
-
-export type MsgServer = { t: 'flow-cmd.puzzle-list.noop' }
-
-export type MsgToServer = {
-  t: 'flow-cmd.puzzle-list.list-puzzles'
-  input: ListPuzzlesInput
-}
-
-export type MsgToClient = {
-  t: 'flow-cmd.puzzle-list.listed-puzzle'
-  listed: ListPuzzlesOutput
-}
-
-export type MsgInCmdClient = {
-  t: 'flow-cmd.puzzle-list'
-  c: {
-    t: 'load'
-  }
-}
