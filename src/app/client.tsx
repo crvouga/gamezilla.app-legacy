@@ -16,6 +16,7 @@ import { AnonymousClientCtx, AppClientCtx, BaseClientCtx, isAppClientCtx } from 
 import { ClientEvt } from './@/client/evt'
 import { Translator } from './@/client/translator'
 import { BottomButtons } from './@/ui/bottom-buttons'
+import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import * as AuthClient from './auth/client'
 import * as LangClient from './lang/client'
@@ -35,37 +36,8 @@ import { ClientTransport } from './wire/transport/client'
 //
 //
 //
-// Transport
 //
-//
-//
-
-const toClientTransportConfig = (input: {
-  serverImpl: ServerImpl
-  serverUrl: string
-  logger: ILogger
-}): Parameters<typeof ClientTransport>[0] => {
-  switch (input.serverImpl) {
-    case 'bun': {
-      return {
-        ...input,
-        t: 'standard-web-sockets',
-      }
-    }
-    case 'node': {
-      return {
-        ...input,
-        t: 'noop',
-      }
-    }
-  }
-}
-
-//
-//
-//
-//
-// Model
+// Ctx
 //
 //
 //
@@ -100,18 +72,63 @@ export const initCtx = async (): Promise<ClientCtx> => {
 }
 
 export const updateCtx = (ctx: ClientCtx): ClientCtx => {
-  return {
-    ...ctx,
-    now: Posix.now(),
+  ctx.now = Posix.now()
+  return ctx
+}
+
+type Ctx = AppClientCtx | AnonymousClientCtx
+
+const toClientCtx = (input: { model: ModelClient; ctx: ClientCtx }): Ctx => {
+  const anonymousCtx: AnonymousClientCtx = {
+    ...input.ctx,
+    t: Translator(input.model.lang.lang),
+    profiles: input.model.profile.profiles,
+    now: input.ctx.now,
+    documentVisibilityState: input.model.platform.documentVisibilityState,
+    currentRoute: input.model.routing.currentRoute,
+    currentUserId: null,
+  }
+  if (input.model.auth.currentUser.t === 'logged-in') {
+    return {
+      ...anonymousCtx,
+      currentUser: input.model.auth.currentUser.account,
+      currentUserRole: input.model.auth.currentUser.account.role,
+      currentUserId: input.model.auth.currentUser.account.userId,
+    }
+  }
+  return anonymousCtx
+}
+
+const toClientTransportConfig = (input: {
+  serverImpl: ServerImpl
+  serverUrl: string
+  logger: ILogger
+}): Parameters<typeof ClientTransport>[0] => {
+  switch (input.serverImpl) {
+    case 'bun': {
+      return {
+        ...input,
+        t: 'standard-web-sockets',
+      }
+    }
+    case 'node': {
+      return {
+        ...input,
+        t: 'noop',
+      }
+    }
   }
 }
 
-export const init = (input: {
-  ctx: ClientCtx
-}): {
-  model: ModelClient
-  eff?: Eff<MsgClient>
-} => {
+//
+//
+//
+// Init
+//
+//
+//
+
+export const init = (input: { ctx: ClientCtx }): { model: ModelClient; eff?: Eff<MsgClient> } => {
   const routing = Routing.init({ location: input.ctx.location })
 
   const ctx: AnonymousClientCtx = {
@@ -148,12 +165,7 @@ export const init = (input: {
 
   const initialEff = Eff.batch<MsgClient>([routing.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
 
-  const initialCmd = Msg.batch<
-    AppClientCmd<{
-      MsgToServer: MsgToServer
-      MsgClient: MsgClient
-    }>
-  >(
+  const initialCmd = Msg.batch<AppClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>>(
     AppClientCmd.tag('spaces', space.msgCmd),
     AppClientCmd.tag('profile', profile.msgCmd),
     AppClientCmd.tag('auth', auth.msgCmd),
@@ -161,44 +173,9 @@ export const init = (input: {
     preloadSound(Object.values(APP_SOUND)),
   )
 
-  const updated = updateLoop(input.ctx, {
-    model: initialModel,
-    eff: initialEff,
-    msgCmd: initialCmd,
-    msgEvt: [],
-  })
+  const updated = updateLoop(input.ctx, { model: initialModel, eff: initialEff, msgCmd: initialCmd, msgEvt: [] })
 
-  return {
-    model: updated.model,
-    eff: updated.eff,
-  }
-}
-
-//
-//
-//
-//
-//
-
-const toClientCtx = (input: { model: ModelClient; ctx: ClientCtx }): AppClientCtx | AnonymousClientCtx => {
-  const anonymousCtx: AnonymousClientCtx = {
-    ...input.ctx,
-    t: Translator(input.model.lang.lang),
-    profiles: input.model.profile.profiles,
-    now: input.ctx.now,
-    documentVisibilityState: input.model.platform.documentVisibilityState,
-    currentRoute: input.model.routing.currentRoute,
-    currentUserId: null,
-  }
-  if (input.model.auth.currentUser.t === 'logged-in') {
-    return {
-      ...anonymousCtx,
-      currentUser: input.model.auth.currentUser.account,
-      currentUserRole: input.model.auth.currentUser.account.role,
-      currentUserId: input.model.auth.currentUser.account.userId,
-    }
-  }
-  return anonymousCtx
+  return updated
 }
 
 //
@@ -213,19 +190,17 @@ export const update = (input: {
   ctx: ClientCtx
   msg: MsgClient
   model: ModelClient
-}): {
-  model: ModelClient
-  eff?: Eff<MsgClient>
-} => {
+}): { model: ModelClient; eff?: Eff<MsgClient> } => {
   const msgServer = input.msg.t === '→' ? input.msg.c : undefined
-  const updatedFromMsg = updateChild({
+
+  const updatedChild = updateChild({
     ctx: input.ctx,
     model: input.model,
     msg: input.msg,
     msgServer: msgServer,
   })
 
-  const updated = updateLoop(input.ctx, updatedFromMsg)
+  const updated = updateLoop(input.ctx, updatedChild)
 
   return updated
 }
@@ -537,7 +512,14 @@ const ViewRouteLoggedOut: typeof ViewRoute = (input) => {
     case 'spaces':
     case 'profile':
     case 'lang': {
-      return <></>
+      return (
+        <IntersectionObserverEmitter
+          id='app-intersection-observer'
+          onVisible={() =>
+            input.dispatch({ t: 'routing', c: { t: 'clicked-link', route: { t: 'login', n: 'auth-login' } } })
+          }
+        />
+      )
     }
   }
 }
@@ -582,7 +564,14 @@ const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
 
     case 'lang':
     case 'auth-login': {
-      return <></>
+      return (
+        <IntersectionObserverEmitter
+          id='app-intersection-observer'
+          onVisible={() =>
+            input.dispatch({ t: 'routing', c: { t: 'clicked-link', route: { n: 'spaces', t: 'space-list' } } })
+          }
+        />
+      )
     }
   }
 }
@@ -596,58 +585,30 @@ const ViewStatusBar: typeof View = (input) => {
   return (
     <StatusBar.View
       model={input.model.statusBar}
-      dispatch={(c) =>
-        input.dispatch({
-          t: 'status-bar',
-          c,
-        })
-      }
+      dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
       slots={{
-        barLeft: (
-          <>
-            <WireClient.ViewStatusBar ctx={clientCtx} model={input.model.wire} />
-          </>
-        ),
+        barLeft: <WireClient.ViewStatusBar ctx={clientCtx} model={input.model.wire} />,
 
-        barRight: (
-          <>
-            <Sound.ViewStatusBar model={input.model.sound} />
-          </>
-        ),
+        barRight: <Sound.ViewStatusBar model={input.model.sound} />,
 
         drawerContent: (
           <>
             <WireClient.ViewStatusBarDrawer
               model={input.model.wire}
-              dispatch={(c) =>
-                input.dispatch({
-                  t: 'wire',
-                  c,
-                })
-              }
+              dispatch={(c) => input.dispatch({ t: 'wire', c })}
               ctx={clientCtx}
             />
 
             <LangClient.ViewStatusBarDrawer
               ctx={clientCtx}
-              dispatch={(c) =>
-                input.dispatch({
-                  t: 'lang',
-                  c,
-                })
-              }
+              dispatch={(c) => input.dispatch({ t: 'lang', c })}
               model={input.model.lang}
             />
 
             <Sound.ViewStatusBarDrawer
               ctx={clientCtx}
               model={input.model.sound}
-              dispatch={(c) =>
-                input.dispatch({
-                  t: 'sound',
-                  c,
-                })
-              }
+              dispatch={(c) => input.dispatch({ t: 'sound', c })}
             />
           </>
         ),
@@ -698,13 +659,7 @@ const ViewBottomNavBar = (input: {
             icon: (input) => <IconGamepad {...input} />,
             color: eq(input.model.routing.currentRoute, routeSpace) ? 'selected' : 'inherit',
             onClick() {
-              input.dispatch({
-                t: 'routing',
-                c: {
-                  t: 'clicked-link',
-                  route: routeSpace,
-                },
-              })
+              input.dispatch({ t: 'routing', c: { t: 'clicked-link', route: routeSpace } })
             },
           },
           {
@@ -712,13 +667,7 @@ const ViewBottomNavBar = (input: {
             icon: (input) => <IconUserCircle {...input} />,
             color: eq(input.model.routing.currentRoute, routeProfile) ? 'selected' : 'inherit',
             onClick() {
-              input.dispatch({
-                t: 'routing',
-                c: {
-                  t: 'clicked-link',
-                  route: routeProfile,
-                },
-              })
+              input.dispatch({ t: 'routing', c: { t: 'clicked-link', route: routeProfile } })
             },
           },
         ]}

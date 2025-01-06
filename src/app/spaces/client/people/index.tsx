@@ -45,20 +45,14 @@ const updatePeopleModals: SpaceClientModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'closed-modal': {
       return {
-        model: {
-          ...model,
-          modal: null,
-        },
+        model: { ...model, modal: null },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     case 'clicked-people-button': {
       return {
-        model: {
-          ...model,
-          modal: 'users',
-        },
+        model: { ...model, modal: 'users' },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }

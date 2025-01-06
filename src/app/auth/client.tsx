@@ -180,13 +180,7 @@ const updateRedirect: ClientModule['update'] = (input) => {
       return {
         model: input.model,
         msgCmd: [
-          replaceRoute(
-            {
-              n: 'spaces',
-              t: 'space-list',
-            },
-            false,
-          ),
+          replaceRoute({ n: 'spaces', t: 'space-list' }, false),
           playSound(APP_SOUND.celebration),
           input.msgEvt.account.role === 'guest'
             ? showToast(input.ctx.t('auth.logged-in-as-guest'))

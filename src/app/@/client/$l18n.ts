@@ -1,6 +1,7 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
+  'app.screen-not-found': string
   'app.gamezilla-app': string
   'app.something-went-wrong': string
   'app.exit': string
@@ -42,6 +43,7 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   en: {
+    'app.screen-not-found': 'Screen not found',
     'app.back': 'Back',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Something went wrong',
@@ -81,6 +83,7 @@ export const translations: Translations<Text> = {
     'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`,
   },
   ar: {
+    'app.screen-not-found': 'الشاشة غير موجودة',
     'app.back': 'عودة',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'حدث خطأ ما',
@@ -120,6 +123,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'حفظ التغييرات؟',
   },
   de: {
+    'app.screen-not-found': 'Bildschirm nicht gefunden',
     'app.back': 'Zurück',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Etwas ist schief gelaufen',
@@ -159,6 +163,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Änderungen speichern?',
   },
   es: {
+    'app.screen-not-found': 'Pantalla no encontrada',
     'app.back': 'Atrás',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Algo salió mal',
@@ -198,6 +203,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '¿Guardar cambios?',
   },
   fr: {
+    'app.screen-not-found': 'Écran non trouvé',
     'app.back': 'Retour',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': "Quelque chose s'est mal passé",
@@ -237,6 +243,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Enregistrer les modifications?',
   },
   it: {
+    'app.screen-not-found': 'Schermo non trovato',
     'app.back': 'Indietro',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Qualcosa è andato storto',
@@ -276,6 +283,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvare le modifiche?',
   },
   ja: {
+    'app.screen-not-found': '画面が見つかりません',
     'app.back': '戻る',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '何かがうまくいかなかった',
@@ -315,6 +323,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '変更を保存しますか？',
   },
   ko: {
+    'app.screen-not-found': '화면을 찾을 수 없습니다',
     'app.back': '뒤로',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '문제가 발생했습니다',
@@ -354,6 +363,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '변경 사항 저장?',
   },
   pt: {
+    'app.screen-not-found': 'Tela não encontrada',
     'app.back': 'Voltar',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Algo deu errado',
@@ -393,6 +403,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvar alterações?',
   },
   ru: {
+    'app.screen-not-found': 'Экран не найден',
     'app.back': 'Назад',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Что-то пошло не так',
@@ -432,6 +443,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Сохранить изменения?',
   },
   zh: {
+    'app.screen-not-found': '找不到屏幕',
     'app.back': '返回',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '出了点问题',
@@ -471,6 +483,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '保存更改？',
   },
   hi: {
+    'app.screen-not-found': 'स्क्रीन नहीं मिली',
     'app.back': 'वापस',
     'app.gamezilla-app': 'गेमजिला.एप',
     'app.something-went-wrong': 'कुछ गलत हो गया',

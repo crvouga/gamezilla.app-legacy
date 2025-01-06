@@ -1,14 +1,56 @@
-import { Ok, Result, isErr } from '~/@/result'
-import type { UserAccount } from '~/app/@/data/account'
-import { sendToClient } from '~/app/@/server/cmd'
-import type { ServerCtx, ServerModule } from '../types'
-import type { ModelServer } from './types'
-import { Posix } from '~/@/time/posix'
 import { Task } from '~/@/promise/task'
+import { Ok, Result, isErr } from '~/@/result'
+import { Posix } from '~/@/time/posix'
+import type { UserAccount } from '~/app/@/data/account'
 import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
+import { sendToClient } from '~/app/@/server/cmd'
+import type { ServerCtx, ServerModule } from '../types'
 
-const initModel: ModelServer = null
+const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
+  switch (msgClient?.t) {
+    case 'guest.clicked-continue-as-guest-button': {
+      const result = await continueAsGuest({
+        ctx,
+        now: ctx.now,
+        sessionId: msgClient.sessionId,
+      })
+
+      if (isErr(result)) {
+        return {
+          msgCmd: [
+            sendToClient(msgClient, {
+              t: 'guest.continue-as-guest-result',
+              result: result,
+            }),
+          ],
+        }
+      }
+
+      return {
+        msgCmd: [
+          sendToClient(msgClient, {
+            t: 'guest.continue-as-guest-result',
+            result: Ok(result.value.userId),
+          }),
+        ],
+        msgEvt: [
+          {
+            t: 'auth-evt.client-authenticated',
+            clientId: msgClient.clientId,
+            user: result.value,
+            sessionId: msgClient.sessionId,
+            loggedIn: true,
+          },
+        ],
+      }
+    }
+
+    default: {
+      return {}
+    }
+  }
+}
 
 const continueAsGuest = async ({
   ctx,
@@ -68,52 +110,6 @@ const continueAsGuest = async ({
   return Ok(guestAccount)
 }
 
-const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
-  switch (msgClient?.t) {
-    case 'guest.clicked-continue-as-guest-button': {
-      const result = await continueAsGuest({
-        ctx,
-        now: ctx.now,
-        sessionId: msgClient.sessionId,
-      })
-
-      if (isErr(result)) {
-        return {
-          msgCmd: [
-            sendToClient(msgClient, {
-              t: 'guest.continue-as-guest-result',
-              result: result,
-            }),
-          ],
-        }
-      }
-
-      return {
-        msgCmd: [
-          sendToClient(msgClient, {
-            t: 'guest.continue-as-guest-result',
-            result: Ok(result.value.userId),
-          }),
-        ],
-        msgEvt: [
-          {
-            t: 'auth-evt.client-authenticated',
-            clientId: msgClient.clientId,
-            user: result.value,
-            sessionId: msgClient.sessionId,
-            loggedIn: true,
-          },
-        ],
-      }
-    }
-
-    default: {
-      return {}
-    }
-  }
-}
-
 export const ContinueAsGuestServer = {
-  initModel,
   update,
 }
