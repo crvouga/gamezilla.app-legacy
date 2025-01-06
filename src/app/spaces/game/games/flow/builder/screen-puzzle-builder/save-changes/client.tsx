@@ -5,7 +5,7 @@ import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/
 import { Button, Drawer, IconFloppyDisk, Typography } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
-import { FlowEdit } from '../../../@/flow/flow-edit'
+import { FlowEdit } from '../../../@/flow/edit'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
 import type { ClientModule, ModelClient, MsgClient, MsgCore } from '../../types'
 

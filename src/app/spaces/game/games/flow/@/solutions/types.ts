@@ -1,3 +1,4 @@
+import { RequestResponse } from '~/@/request-response/request-response'
 import { NotAsked, Result } from '~/@/result'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'
@@ -6,10 +7,9 @@ import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { Variant } from '../flow'
 import { FlowClientEvtIn } from '../client/evt'
+import { Variant } from '../flow/variant'
 import { FlowServerCtx } from '../server/ctx'
-import { RequestResponse } from '~/@/request-response/request-response'
 
 export type ModelClient = {
   request: RequestResponse<string, null>

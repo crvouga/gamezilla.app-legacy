@@ -1,5 +1,5 @@
 import { pipe } from '~/@/function/pipe'
-import { FlowGridShorthand, FlowGridBoard } from '../flow/flow-variant/flow-grid'
+import { FlowGridShorthand, FlowGridBoard } from '../flow/variant/grid'
 
 const grid1 = pipe(
   FlowGridShorthand.init([

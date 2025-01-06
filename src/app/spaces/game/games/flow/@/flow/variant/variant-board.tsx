@@ -1,0 +1,21 @@
+import type { BoardInput } from '../ui/board'
+import { FlowGridBoard } from './grid'
+import { FlowHexBoard } from './hex'
+import { FlowTriBoard } from './tri'
+import type { Model } from './variant'
+
+export const View = (input: BoardInput<Model>) => {
+  switch (input.model.t) {
+    case 'flow-grid': {
+      return <FlowGridBoard.View {...input} model={input.model} />
+    }
+
+    case 'flow-hex': {
+      return <FlowHexBoard.View {...input} model={input.model} />
+    }
+
+    case 'flow-tri': {
+      return <FlowTriBoard.View {...input} model={input.model} />
+    }
+  }
+}

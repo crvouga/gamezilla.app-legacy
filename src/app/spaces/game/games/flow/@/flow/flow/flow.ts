@@ -2,10 +2,10 @@ import { eq } from '~/@/equals/equals'
 import { p } from '~/@/parser'
 import { memoize } from '~/@/function/memoize'
 import { pipe } from '~/@/function/pipe'
-import { FlowEdgeId } from './flow-edge-id'
-import { FlowGroupId } from './flow-group-id'
-import { FlowNodeId } from './flow-node-id'
-import { FlowTerminal } from './flow-terminal'
+import { FlowEdgeId } from './edge-id'
+import { FlowGroupId } from './group-id'
+import { FlowNodeId } from './node-id'
+import { FlowTerminal } from './terminal'
 
 /**
  * Represents a connection between two nodes.

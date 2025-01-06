@@ -10,7 +10,7 @@ import {
 } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '../../../../@/architecture/game-client-v2'
-import { FlowPlay } from '../../../@/flow/flow-play'
+import { FlowPlay } from '../../../@/flow/play'
 import { BoardLayout } from '../../../@/flow/ui/layout'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'

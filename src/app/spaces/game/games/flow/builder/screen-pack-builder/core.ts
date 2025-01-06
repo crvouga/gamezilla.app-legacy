@@ -4,7 +4,7 @@ import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { UpdateCore } from '../types'
 import { EditPackNameCore } from './edit-pack-name/core'
 import type { ModelCore } from './types'
-import { FlowPlay } from '../../@/flow/flow-play'
+import { FlowPlay } from '../../@/flow/play'
 
 const init = ({ pack }: { pack: Pack }): ModelCore => {
   return {

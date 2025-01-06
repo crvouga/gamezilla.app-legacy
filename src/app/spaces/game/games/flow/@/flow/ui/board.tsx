@@ -1,6 +1,6 @@
 import type { Edge } from '../flow/flow'
-import { FlowGroupId } from '../flow/flow-group-id'
-import { FlowNodeId } from '../flow/flow-node-id'
+import { FlowGroupId } from '../flow/group-id'
+import { FlowNodeId } from '../flow/node-id'
 
 export type BoardInput<TModel> = {
   disabled?: boolean

@@ -2,8 +2,8 @@ import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { didCopyToClipboard, didPlaySound, didShowToast } from '~/app/@/client/cmd'
 import { UserRole } from '~/app/@/data/user-role'
-import { Flow } from '../../../@/flow'
-import { FlowGridShorthand } from '../../../@/flow/flow-variant/flow-grid'
+import { Flow } from '../../../@/flow/flow'
+import { FlowGridShorthand } from '../../../@/flow/variant/grid'
 import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
 
 const Fixture = async (input?: { currentUserRole: UserRole }) => {

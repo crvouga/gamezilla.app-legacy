@@ -6,7 +6,7 @@ import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-cl
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
-import { FlowPlay } from '../../@/flow/flow-play'
+import { FlowPlay } from '../../@/flow/play'
 import { BoardLayout } from '../../@/flow/ui/layout'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { ClientModule } from '../types'

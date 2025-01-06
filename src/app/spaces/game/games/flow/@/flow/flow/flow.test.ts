@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { Flow } from '..'
-import { FlowGrid, FlowGridShorthand } from '../flow-variant/flow-grid'
+import { Flow } from '../flow'
+import { FlowGrid, FlowGridShorthand } from '../variant/grid'
 
 describe(import.meta.file, () => {
   test('isSolved 3x3 with A terminals and A pipes', () => {
