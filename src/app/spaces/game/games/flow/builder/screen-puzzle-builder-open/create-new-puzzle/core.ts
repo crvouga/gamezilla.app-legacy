@@ -1,7 +1,7 @@
 import { isErr } from '~/@/result'
 import type { UpdateCore } from '../../types'
-import { FlowEdit } from '../../../@/flow/edit'
-import { FlowPlay } from '../../../@/flow/play'
+import { FlowEdit } from '../../../@/edit'
+import { FlowPlay } from '../../../@/play'
 
 const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
   switch (msgCore.t) {

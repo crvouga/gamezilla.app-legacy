@@ -1,7 +1,7 @@
 import { Result, isErr } from '~/@/result'
 import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
-import { Variant, VariantDimensions } from '../../../@/flow/variant'
+import { Variant, VariantDimensions } from '../../../@/variant'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import type { ServerModule } from '../../types'
 import type { MsgCore } from './types'

@@ -2,8 +2,8 @@ import { APP_SOUND, copyToClipboard, playSound, showToast } from '~/app/@/client
 import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconCopy } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
-import { FlowPlay } from '../../../@/flow/play'
-import { FlowGridShorthand } from '../../../@/flow/variant/grid'
+import { FlowPlay } from '../../../@/play'
+import { FlowGridShorthand } from '../../../@/variant/grid'
 import type { ClientModule, MsgClient } from '../../types'
 
 export const update: ClientModule['update'] = (input) => {

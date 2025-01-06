@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { FlowPlay } from '.'
-import { Puzzle } from '../../puzzle/puzzle'
+import { Puzzle } from '../puzzle/puzzle'
 import { Flow } from '../flow'
 import type { Variant } from '../variant'
 import { FlowGrid } from '../variant/grid'

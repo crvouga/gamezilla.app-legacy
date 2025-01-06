@@ -8,7 +8,7 @@ import { sendToServer, showErrSm } from '~/app/@/client/cmd'
 import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
-import { VariantBoard } from '../../flow/variant'
+import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
 import type { ClientModule, ModelClient, MsgInCmdClient } from './types'
 
