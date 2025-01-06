@@ -16,6 +16,10 @@ const main = async () => {
     subscriptions: AppServer.subscriptions,
   })
 
+  ctx.webServer.registerHandler((_req) => {
+    return new Response('Hello from gamezilla.app server', { status: 200, headers: { 'content-type': 'text/plain' } })
+  })
+
   await ctx.webServer.start(SERVER_PORT)
 
   const rpc = AppServer.rpc({ ctx })
