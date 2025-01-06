@@ -429,10 +429,7 @@ export const View = (input: { ctx: ClientCtx; model: ModelClient; dispatch: (msg
   const clientCtx = toClientCtx(input)
 
   return (
-    <div
-      className='fixed left-1/2 top-1/2 flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-black text-white'
-      style={{ transform: 'translate(-50%, -50%)' }}
-    >
+    <div className='fixed left-1/2 top-1/2 flex h-[100dvh] w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-black text-white'>
       <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded min-[520px]:border'>
         <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
 
@@ -462,16 +459,7 @@ const ViewRoute = (input: {
   switch (input.model.routing.currentRoute.n) {
     case 'lang': {
       return (
-        <LangClient.View
-          ctx={input.ctx}
-          dispatch={(c) =>
-            input.dispatch({
-              t: 'lang',
-              c,
-            })
-          }
-          model={input.model.lang}
-        />
+        <LangClient.View ctx={input.ctx} dispatch={(c) => input.dispatch({ t: 'lang', c })} model={input.model.lang} />
       )
     }
 
@@ -497,16 +485,7 @@ const ViewRouteLoggedOut: typeof ViewRoute = (input) => {
   switch (input.ctx.currentRoute.n) {
     case 'auth-login': {
       return (
-        <AuthClient.View
-          model={input.model.auth}
-          ctx={input.ctx}
-          dispatch={(c) =>
-            input.dispatch({
-              t: 'auth',
-              c,
-            })
-          }
-        />
+        <AuthClient.View model={input.model.auth} ctx={input.ctx} dispatch={(c) => input.dispatch({ t: 'auth', c })} />
       )
     }
     case 'spaces':
@@ -529,12 +508,7 @@ const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
     case 'profile': {
       return (
         <ProfileClient.View
-          dispatch={(m) =>
-            input.dispatch({
-              t: 'profile',
-              c: m,
-            })
-          }
+          dispatch={(m) => input.dispatch({ t: 'profile', c: m })}
           model={input.model.profile}
           ctx={input.ctx}
           slots={{
@@ -547,12 +521,7 @@ const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
     case 'spaces': {
       return (
         <SpacesClient.View
-          dispatch={(m) =>
-            input.dispatch({
-              t: 'spaces',
-              c: m,
-            })
-          }
+          dispatch={(m) => input.dispatch({ t: 'spaces', c: m })}
           model={input.model.spaces}
           ctx={input.ctx}
           slots={{
@@ -622,9 +591,7 @@ const ViewBottomNavBar = (input: {
   model: ModelClient
   dispatch: (m: MsgClient) => void
 }) => {
-  const { currentUserId } = input.ctx
-
-  if (!currentUserId) {
+  if (!input.ctx.currentUserId) {
     return null
   }
 
@@ -636,7 +603,7 @@ const ViewBottomNavBar = (input: {
   const routeProfile: Route = {
     n: 'profile',
     t: 'profile',
-    userId: currentUserId,
+    userId: input.ctx.currentUserId,
   }
   return (
     <div className='flex w-full shrink-0 flex-col items-center justify-center'>
