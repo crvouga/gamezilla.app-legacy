@@ -1,4 +1,4 @@
-export const IS_PROD = import.meta.env?.PROD
+export const IS_PROD = Boolean(import.meta.env?.PROD)
 
 export const IS_INTEGRATION_TEST = import.meta.env?.IS_INTEGRATION_TEST === 'true'
 
