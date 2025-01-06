@@ -1,4 +1,4 @@
-import type { StoreModule, Store } from './immutable-store'
+import type { Store, StoreModule } from './immutable-store'
 
 export type MapEntry<TKey extends string | number, TValue> = Store<TKey, TValue> & {
   key: TKey
@@ -96,10 +96,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       const json: {
         [key: string | number]: MapEntry<TKey, TValue>[]
       } = {}
-      for (const [key, entries] of mapsByNamespace.entries()) {
-        // @ts-expect-error
-        json[key] = entries
-      }
+
       return json
     },
     startingAt(now) {

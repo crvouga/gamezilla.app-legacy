@@ -43,14 +43,13 @@
     "suppressImplicitAnyIndexErrors": false,
     "noStrictGenericChecks": false,
     // if TS 5.x+
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
     "types": ["bun-types", "vite/client", "inferno", "preact", "react"],
     "jsx": "preserve",
     // "jsxImportSource": "vue",
-
     "allowJs": false,
     //
     "paths": {
