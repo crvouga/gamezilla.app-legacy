@@ -183,69 +183,69 @@ const View: ClientModule['View'] = (input) => {
             <PuzzleResult.ViewNotFound ctx={input.ctx} />
           )
         }
-        bottom={
-          <BottomButtons.View
-            id='screen-play-puzzle-bottom-bar'
-            ctx={input.ctx}
-            onToggle={() => input.dispatch({ t: 'got-msg-core', c: { t: 'user-toggled-action-buttons-drawer' } })}
-            open={input.modelCore.screen.opened === 'action-drawer'}
-            buttons={[
-              PrebuiltBottomButtons.next({
-                ...input,
-                disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
-                hidden: !isSolved && flowPuzzle.t !== 'not-found',
-                color: 'success',
-                onClick: () =>
+        bottom={null}
+      />
+
+      <BottomButtons.View
+        id='screen-play-puzzle-bottom-bar'
+        ctx={input.ctx}
+        onToggle={() => input.dispatch({ t: 'got-msg-core', c: { t: 'user-toggled-action-buttons-drawer' } })}
+        open={input.modelCore.screen.opened === 'action-drawer'}
+        buttons={[
+          PrebuiltBottomButtons.next({
+            ...input,
+            disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
+            hidden: !isSolved && flowPuzzle.t !== 'not-found',
+            color: 'success',
+            onClick: () =>
+              input.dispatch({
+                t: 'got-msg-core',
+                c: {
+                  t: 'user-clicked-next-puzzle',
+                  nextPuzzle: nextPuzzle
+                    ? {
+                        t: 'got',
+                        c: nextPuzzle
+                      }
+                    : {
+                        t: 'not-found'
+                      },
+                  nextPuzzleIndex
+                }
+              })
+          }),
+
+          flowPuzzle.t === 'got' && !isSolved
+            ? FlowPlay.viewHintAction({
+                model: flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: flowPuzzle.c }) }),
+                ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: flowPuzzle.c }),
+                disabled: false,
+                dispatch: (c) =>
                   input.dispatch({
                     t: 'got-msg-core',
                     c: {
-                      t: 'user-clicked-next-puzzle',
-                      nextPuzzle: nextPuzzle
-                        ? {
-                            t: 'got',
-                            c: nextPuzzle
-                          }
-                        : {
-                            t: 'not-found'
-                          },
-                      nextPuzzleIndex
+                      t: 'got-flow-play-msg',
+                      c,
+                      userId: input.ctx.currentUserId
                     }
                   })
-              }),
+              })
+            : null,
 
-              flowPuzzle.t === 'got' && !isSolved
-                ? FlowPlay.viewHintAction({
-                    model: flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: flowPuzzle.c }) }),
-                    ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: flowPuzzle.c }),
-                    disabled: false,
-                    dispatch: (c) =>
-                      input.dispatch({
-                        t: 'got-msg-core',
-                        c: {
-                          t: 'got-flow-play-msg',
-                          c,
-                          userId: input.ctx.currentUserId
-                        }
-                      })
-                  })
-                : null,
+          PrebuiltBottomButtons.reset({
+            ...input,
+            hidden: flowPuzzle.t === 'not-found',
+            onClick: () =>
+              input.dispatch({
+                t: 'got-msg-core',
+                c: {
+                  t: 'user-clicked-reset-puzzle'
+                }
+              })
+          }),
 
-              PrebuiltBottomButtons.reset({
-                ...input,
-                hidden: flowPuzzle.t === 'not-found',
-                onClick: () =>
-                  input.dispatch({
-                    t: 'got-msg-core',
-                    c: {
-                      t: 'user-clicked-reset-puzzle'
-                    }
-                  })
-              }),
-
-              flowPuzzle.t === 'not-found' ? null : CopyPuzzleClient.viewButtonAction(input)
-            ]}
-          />
-        }
+          flowPuzzle.t === 'not-found' ? null : CopyPuzzleClient.viewButtonAction(input)
+        ]}
       />
 
       <ViewSolvedModal {...input} />
