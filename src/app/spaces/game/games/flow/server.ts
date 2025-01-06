@@ -17,12 +17,12 @@ export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
   return {
     ...input.ctx,
     flowPuzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: Logger({ t: 'noop' }) }),
-    flowPackDb: PackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql })
+    flowPackDb: PackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql }),
   }
 }
 
 const init: ServerModule['init'] = {
-  t: 'none'
+  t: 'none',
 }
 
 const update: ServerModule['update'] = async (input) => {
@@ -32,7 +32,7 @@ const update: ServerModule['update'] = async (input) => {
     () => updateBuilder(input),
     () => updatePackList(input),
     () => updatePackPuzzlesGrid(input),
-    () => updatePuzzleList(input)
+    () => updatePuzzleList(input),
   )
 }
 
@@ -40,12 +40,12 @@ const updatePackList: ServerModule['update'] = async (input) => {
   const updated = await PackListServer.update({
     ...input,
     msgClient: input.msgClient?.t === 'flow-cmd.pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
-    msg: input.msg?.t === 'flow-cmd.pack-list' ? input.msg.c : null
+    msg: input.msg?.t === 'flow-cmd.pack-list' ? input.msg.c : null,
   })
 
   return {
     msgCmd: SpaceServerCmd.tag('flow-cmd.pack-list', updated.msgCmd),
-    msgEvt: updated.msgEvt
+    msgEvt: updated.msgEvt,
   }
 }
 
@@ -53,12 +53,12 @@ const updatePuzzleList: ServerModule['update'] = async (input) => {
   const updated = await PuzzleListServer.update({
     ...input,
     msgClient: input.msgClient?.t === 'flow-cmd.puzzle-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
-    msg: input.msg?.t === 'flow-cmd.puzzle-list' ? input.msg.c : null
+    msg: input.msg?.t === 'flow-cmd.puzzle-list' ? input.msg.c : null,
   })
 
   return {
     msgCmd: SpaceServerCmd.tag('flow-cmd.puzzle-list', updated.msgCmd),
-    msgEvt: updated.msgEvt
+    msgEvt: updated.msgEvt,
   }
 }
 
@@ -68,12 +68,12 @@ const updatePackPuzzlesGrid: ServerModule['update'] = async (input) => {
     msg: input.msg?.t === 'flow-cmd.pack-puzzles-grid' ? input.msg.c : null,
     msgClient:
       input.msgClient?.t === 'flow-cmd.pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,
-    deps: null
+    deps: null,
   })
 
   return {
     msgCmd: SpaceServerCmd.tag('flow-cmd.pack-puzzles-grid', updated.msgCmd),
-    msgEvt: updated.msgEvt
+    msgEvt: updated.msgEvt,
   }
 }
 
@@ -84,13 +84,13 @@ const updateBuilder: ServerModule['update'] = async (input) => {
     msgClient: input.msgClient?.t === 'builder' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'builder' ? input.msg.c : null,
-    deps: null
+    deps: null,
   })
 
   return {
     msgCmd: SpaceServerCmd.tag('builder', updated.msgCmd),
     msgCore: updated.msgCore?.map((c) => ({ ...c, t: 'builder', c })),
-    msgEvt: updated.msgEvt
+    msgEvt: updated.msgEvt,
   }
 }
 
@@ -103,13 +103,13 @@ const updatePlay: ServerModule['update'] = async (input) => {
     msgClient: input.msgClient?.t === 'play' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msgCore: input.msgCore?.t === 'play' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'play' ? input.msg.c : null,
-    deps: null
+    deps: null,
   })
 
   return {
     msgCmd: SpaceServerCmd.tag('play', updated.msgCmd),
     msgCore: updated.msgCore?.map((c) => ({ ...c, t: 'play', c })),
-    msgEvt: updated.msgEvt
+    msgEvt: updated.msgEvt,
   }
 }
 
@@ -121,5 +121,5 @@ export const FlowServer = {
   init,
   subscriptions,
   update,
-  initCtx
+  initCtx,
 }

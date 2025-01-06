@@ -74,7 +74,7 @@ export const subscriptions: Client['subscriptions'] = () => {
 export const View = ({
   ctx,
   model,
-  dispatch
+  dispatch,
 }: {
   ctx: SpaceClientCtx
   model: ModelClient
@@ -83,7 +83,7 @@ export const View = ({
   const onQuit = () =>
     dispatch({
       t: 'input-mode',
-      mode: 'none'
+      mode: 'none',
     })
 
   if (model.t === 'none') {
@@ -100,17 +100,17 @@ export const View = ({
             onClick: () =>
               dispatch({
                 t: 'input-mode',
-                mode: 'vs-user'
-              })
+                mode: 'vs-user',
+              }),
           }),
           GameMainMenu.buttons.playComputer({
             ctx,
             onClick: () =>
               dispatch({
                 t: 'input-mode',
-                mode: 'vs-bot'
-              })
-          })
+                mode: 'vs-bot',
+              }),
+          }),
         ]}
       />
     )
@@ -125,7 +125,7 @@ export const View = ({
         dispatch={(c) =>
           dispatch({
             t: 'vs-user',
-            c
+            c,
           })
         }
       />
@@ -141,7 +141,7 @@ export const View = ({
         dispatch={(c) =>
           dispatch({
             t: 'vs-bot',
-            c
+            c,
           })
         }
       />

@@ -24,7 +24,7 @@ export const SpaceClientFixture = async () => {
     t: Translator('en'),
     currentRoute: {
       n: 'spaces',
-      t: 'space-list'
+      t: 'space-list',
     },
     documentVisibilityState: 'visible',
     now: Posix.now(),
@@ -35,8 +35,8 @@ export const SpaceClientFixture = async () => {
       createdAt: Posix.now(),
       phoneNumber: PhoneNumber.random(),
       role: 'normal',
-      userId: currentUserId
-    }
+      userId: currentUserId,
+    },
   }
 
   type Msg =
@@ -57,7 +57,7 @@ export const SpaceClientFixture = async () => {
           const output = SpacesClient.update({
             ctx,
             model: initial,
-            msg: msg.c
+            msg: msg.c,
           })
           outputs.push(output)
           break
@@ -66,7 +66,7 @@ export const SpaceClientFixture = async () => {
           const output = SpacesClient.update({
             ctx,
             model: initial,
-            msgServer: msg.c
+            msgServer: msg.c,
           })
           outputs.push(output)
           break
@@ -78,7 +78,7 @@ export const SpaceClientFixture = async () => {
 
   return {
     ctx,
-    updates
+    updates,
   }
 }
 
@@ -92,7 +92,7 @@ export const FixtureSpacesClient = async (input?: { currentRoute?: Route }) => {
     userId: f.ctx.currentUserId,
     createdAt: Posix.now(),
     phoneNumber: PhoneNumber.random(),
-    role: 'normal'
+    role: 'normal',
   }
   const userA = await Profile.random()
   const userB = await Profile.random()
@@ -106,25 +106,25 @@ export const FixtureSpacesClient = async (input?: { currentRoute?: Route }) => {
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const)
+        withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const)
+        withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)
+        withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)
+        withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const),
       ),
     (model) => SpaceCore.toSpaceStarted(model),
     (space) => {
@@ -132,14 +132,14 @@ export const FixtureSpacesClient = async (input?: { currentRoute?: Route }) => {
         throw new Error('Invalid fixture. Space is not started.')
       }
       return space
-    }
+    },
   )
 
   const ctx: SpaceClientCtx = {
     ...f.ctx,
     currentRoute: {
       n: 'spaces',
-      t: 'space-list'
+      t: 'space-list',
     },
     currentUserId: currentUser.userId,
     currentUserRole: 'normal',
@@ -149,10 +149,10 @@ export const FixtureSpacesClient = async (input?: { currentRoute?: Route }) => {
       [currentUser.userId]: { ...(await Profile.random()), userId: currentUser.userId },
       [userA.userId]: userA,
       [userB.userId]: userB,
-      [userC.userId]: userC
+      [userC.userId]: userC,
     },
     space,
-    currentUser
+    currentUser,
   }
 
   const updates = (initial: Output, inputs: FixtureInput[]): NonEmpty<Output> => {
@@ -162,7 +162,7 @@ export const FixtureSpacesClient = async (input?: { currentRoute?: Route }) => {
       const output = SpacesClient.update({
         ...input,
         ctx: input.ctx ?? ctx,
-        model: lastOutput.model
+        model: lastOutput.model,
       })
       outputs.push(output)
     }
@@ -189,7 +189,7 @@ export const FixtureSpacesClient = async (input?: { currentRoute?: Route }) => {
     userC,
     updates,
     update,
-    view
+    view,
   }
 }
 
@@ -200,9 +200,9 @@ export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: Sp
       c: withEventMetaAt(happenedAt, {
         t: 'user-started-space',
         spaceId,
-        userId
-      })
-    }
+        userId,
+      }),
+    },
   }
 }
 
@@ -213,9 +213,9 @@ export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: Space
       c: withEventMetaAt(happenedAt, {
         t: 'user-left-space',
         spaceId,
-        userId
-      })
-    }
+        userId,
+      }),
+    },
   }
 }
 
@@ -226,8 +226,8 @@ export const userJoinedSpace = (happenedAt: number, userId: UserId, spaceId: Spa
       c: withEventMetaAt(happenedAt, {
         t: 'user-joined-space',
         spaceId,
-        userId
-      })
-    }
+        userId,
+      }),
+    },
   }
 }

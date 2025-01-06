@@ -24,9 +24,9 @@ const sendListSpacesRequest: SpaceClientModule['update'] = ({ model, ctx }) => {
   return {
     model: {
       ...model,
-      listSpacesRequest: startedRequest(ctx.now)
+      listSpacesRequest: startedRequest(ctx.now),
     },
-    msgCmd: [sendToServer({ t: 'list-spaces', limit: 100, offset: 0 })]
+    msgCmd: [sendToServer({ t: 'list-spaces', limit: 100, offset: 0 })],
   }
 }
 
@@ -56,7 +56,7 @@ const update: SpaceClientModule['update'] = (input) => {
         return sendListSpacesRequest(input)
       }
       return {
-        model: input.model
+        model: input.model,
       }
     }
 
@@ -70,15 +70,18 @@ const update: SpaceClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          listSpacesRequest: RequestResponse.timePassed(input.model.listSpacesRequest, input.ctx.now)
-        }
+          listSpacesRequest: RequestResponse.timePassed(input.model.listSpacesRequest, input.ctx.now),
+        },
       }
     }
 
     case 'clicked-space-card': {
       return {
         model: input.model,
-        msgCmd: [pushRoute({ n: 'spaces', t: 'space', spaceId: input.msg.spaceId }), playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [
+          pushRoute({ n: 'spaces', t: 'space', spaceId: input.msg.spaceId }),
+          playSound(APP_SOUND.navForwardMin),
+        ],
       }
     }
   }
@@ -91,8 +94,8 @@ const update: SpaceClientModule['update'] = (input) => {
           ...input.model,
           indexSpaceIdByUserId: merged.indexSpaceIdByUserId,
           spaces: merged.spaces,
-          listSpacesRequest: RequestResponse.response(input.model.listSpacesRequest, input.ctx.now, Ok(null))
-        }
+          listSpacesRequest: RequestResponse.response(input.model.listSpacesRequest, input.ctx.now, Ok(null)),
+        },
       }
     }
   }
@@ -168,5 +171,5 @@ const View: SpaceClientModule['View'] = (input) => {
 export const ListSpacesClient = {
   init,
   update,
-  View
+  View,
 }

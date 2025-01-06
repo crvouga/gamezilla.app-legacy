@@ -47,7 +47,7 @@ export const init = <T>(toId?: Config<T>['toId'], items?: T[]): Model<T> => {
     return {
       id: toId(item),
       state: 'entered',
-      item
+      item,
     }
   })
 }
@@ -70,7 +70,7 @@ export type Msg = { t: 'entered'; ids: Id[] } | { t: 'exited'; ids: Id[] }
 export function watch<T>(config: Config<T>, model: Model<T>, list?: T[]): { model: Model<T>; eff?: Eff<Msg> } {
   if (!list) {
     return {
-      model: init(config.toId, [])
+      model: init(config.toId, []),
     }
   }
 
@@ -92,7 +92,7 @@ export function watch<T>(config: Config<T>, model: Model<T>, list?: T[]): { mode
       exiting.set(key, {
         id: key,
         item: prevItem.item,
-        state: 'entering'
+        state: 'entering',
       })
     }
   }
@@ -102,7 +102,7 @@ export function watch<T>(config: Config<T>, model: Model<T>, list?: T[]): { mode
       entering.set(key, {
         id: key,
         item: nextItem,
-        state: 'exiting'
+        state: 'exiting',
       })
     }
   }
@@ -146,14 +146,14 @@ export function watch<T>(config: Config<T>, model: Model<T>, list?: T[]): { mode
     if (exiting.size > 0) {
       dispatch({
         t: 'exited',
-        ids: Array.from(exiting.values()).map((x) => x.id)
+        ids: Array.from(exiting.values()).map((x) => x.id),
       })
     }
 
     if (entering.size > 0) {
       dispatch({
         t: 'entered',
-        ids: Array.from(entering.values()).map((x) => x.id)
+        ids: Array.from(entering.values()).map((x) => x.id),
       })
     }
   }
@@ -170,7 +170,7 @@ export function watch<T>(config: Config<T>, model: Model<T>, list?: T[]): { mode
       modelNew.push({
         id: item.id,
         state: 'exiting',
-        item: item.item
+        item: item.item,
       })
       continue
     }
@@ -183,7 +183,7 @@ export function watch<T>(config: Config<T>, model: Model<T>, list?: T[]): { mode
 
   return {
     model: modelNew,
-    eff
+    eff,
   }
 }
 
@@ -196,7 +196,7 @@ export function update<T>(model: Model<T>, msg?: Msg): Model<T> {
       if (msg.ids.some((y) => x.id === y)) {
         return {
           ...x,
-          state: 'entered'
+          state: 'entered',
         }
       }
       return x
@@ -239,7 +239,7 @@ export function waitForElementById(htmlId: Id, parentHtmlId?: string, maxWait = 
 
     observer.observe(parentElement, {
       childList: true,
-      subtree: true
+      subtree: true,
     })
   })
 }

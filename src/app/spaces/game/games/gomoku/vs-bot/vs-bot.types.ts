@@ -9,7 +9,7 @@ import {
   move,
   toBestMove,
   toOppositeStone,
-  toTurn
+  toTurn,
 } from '../@/gomoku/gomoku'
 import type { Position } from '../@/gomoku/gomoku-position'
 
@@ -47,7 +47,7 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
     type: 'setup',
     userId,
     userStone: 'white',
-    botLevel: 'Medium'
+    botLevel: 'Medium',
   }
 }
 
@@ -100,7 +100,7 @@ export type Problem =
 export const handle = ({
   ctx,
   msg,
-  model
+  model,
 }: {
   ctx: { currentUserId: UserId }
   msg: Req
@@ -116,7 +116,7 @@ export const handle = ({
       }
       return Ok({
         ...model,
-        botLevel: msg.botLevel
+        botLevel: msg.botLevel,
       })
     }
 
@@ -129,7 +129,7 @@ export const handle = ({
       }
       return Ok({
         ...model,
-        userStone: msg.userStone
+        userStone: msg.userStone,
       })
     }
 
@@ -142,7 +142,7 @@ export const handle = ({
       }
       return Ok({
         ...model,
-        userId: ctx.currentUserId
+        userId: ctx.currentUserId,
       })
     }
 
@@ -155,7 +155,7 @@ export const handle = ({
       }
       return Ok({
         ...model,
-        userId: null
+        userId: null,
       })
     }
 
@@ -172,7 +172,7 @@ export const handle = ({
         botLevel: model.botLevel,
         userId: model.userId,
         userStone: model.userStone,
-        visual: {}
+        visual: {},
       })
     }
 
@@ -188,7 +188,7 @@ export const handle = ({
       const moved = move({
         position: msg.position,
         stone: model.userStone,
-        board: model.board
+        board: model.board,
       })
 
       if (moved.t === 'err') {
@@ -197,7 +197,7 @@ export const handle = ({
 
       return Ok({
         ...model,
-        board: moved.value
+        board: moved.value,
       })
     }
 
@@ -212,7 +212,7 @@ export const handle = ({
         type: 'setup',
         botLevel: model.botLevel,
         userId: model.userId,
-        userStone: model.userStone
+        userStone: model.userStone,
       })
     }
 
@@ -225,7 +225,7 @@ export const handle = ({
       }
       return Ok({
         ...model,
-        board: initBoard
+        board: initBoard,
       })
     }
 
@@ -239,7 +239,7 @@ export const handle = ({
       return Ok({
         ...model,
         board: initBoard,
-        userStone: toOppositeStone(model.userStone)
+        userStone: toOppositeStone(model.userStone),
       })
     }
   }
@@ -260,7 +260,7 @@ export const handleBotMove = (model: Model): Result<Problem, Model> => {
 
   const position = toBestMove({
     stone: botStone,
-    board: model.board
+    board: model.board,
   })
 
   if (!position) {
@@ -270,7 +270,7 @@ export const handleBotMove = (model: Model): Result<Problem, Model> => {
   const moved = move({
     stone: botStone,
     position,
-    board: model.board
+    board: model.board,
   })
 
   if (moved.t === 'err') {

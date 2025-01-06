@@ -14,9 +14,9 @@ export const init = <TPlayerType extends string>(allPlayerTypes: readonly TPlaye
     players: allPlayerTypes.reduce<Model<TPlayerType>['players']>((acc, player) => {
       return {
         ...acc,
-        [player]: initPlayer(player)
+        [player]: initPlayer(player),
       }
-    }, {})
+    }, {}),
   }
 }
 
@@ -33,18 +33,18 @@ export const submarine = (): Ship => {
       [
         {
           x: 0,
-          y: 0
+          y: 0,
         },
         {
           x: 0,
-          y: 1
+          y: 1,
         },
         {
           x: 0,
-          y: 2
-        }
-      ]
-    )
+          y: 2,
+        },
+      ],
+    ),
   }
 }
 
@@ -60,20 +60,20 @@ const initPlayer = <TPlayerType extends string>(allPlayerTypes: TPlayerType): Pl
   return {
     playerType: allPlayerTypes,
     ships: [],
-    shots: {}
+    shots: {},
   }
 }
 
 export const placeShip = <TPlayerType extends string>(
   model: Model<TPlayerType>,
   _player: TPlayerType,
-  _ship: Ship
+  _ship: Ship,
 ): Model<TPlayerType> => {
   return {
     ...model,
     players: {
-      ...model.players
-    }
+      ...model.players,
+    },
   }
 }
 

@@ -7,9 +7,9 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
         ...modelCore,
         screenPuzzleBuilder: null,
         screen: {
-          t: 'screen-main-menu'
+          t: 'screen-main-menu',
         },
-        option: 'puzzles'
+        option: 'puzzles',
       }
     }
     default: {
@@ -19,5 +19,5 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 }
 
 export const DeleteForeverCore = {
-  updateCore
+  updateCore,
 }

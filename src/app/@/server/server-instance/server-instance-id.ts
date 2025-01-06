@@ -22,5 +22,5 @@ const generate = () => {
 export const ServerInstanceId = {
   ...parser,
   generate,
-  is
+  is,
 }

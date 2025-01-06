@@ -16,13 +16,13 @@ export const WireSessionDb = (config: Config): IWireSessionDb => {
   const wireSessionBySessionId = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['wire-session-db', 'wire-sessions-by-session-id'],
-    parser: WireSession
+    parser: WireSession,
   })
 
   const indexSessionIdsByUserId = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['wire-session-db', 'index-session-ids-by-user-id'],
-    parser: p.arr(SessionId)
+    parser: p.arr(SessionId),
   })
 
   return {
@@ -39,7 +39,7 @@ export const WireSessionDb = (config: Config): IWireSessionDb => {
 
     async put(wireSessions) {
       const put = await wireSessionBySessionId.setMany(
-        wireSessions.map((wireSession) => [wireSession.sessionId, wireSession])
+        wireSessions.map((wireSession) => [wireSession.sessionId, wireSession]),
       )
 
       if (isErr(put)) {
@@ -55,10 +55,10 @@ export const WireSessionDb = (config: Config): IWireSessionDb => {
               await indexSessionIdsByUserId.set(wireSession.userId, sessionIdsNew)
             }
           }
-        })
+        }),
       )
 
       return put
-    }
+    },
   }
 }

@@ -9,8 +9,8 @@ export type Model = {
 export const init = (_input: { stored: Record<string, unknown> | null }): { model: Model } => {
   return {
     model: {
-      isDrawerOpen: false
-    }
+      isDrawerOpen: false,
+    },
   }
 }
 
@@ -29,9 +29,9 @@ export const update = (input: {
       return {
         model: {
           ...input.model,
-          isDrawerOpen: true
+          isDrawerOpen: true,
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
@@ -39,9 +39,9 @@ export const update = (input: {
       return {
         model: {
           ...input.model,
-          isDrawerOpen: false
+          isDrawerOpen: false,
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
   }
@@ -53,8 +53,8 @@ export const update = (input: {
           return {
             model: {
               ...input.model,
-              isDrawerOpen: false
-            }
+              isDrawerOpen: false,
+            },
           }
         }
       }
@@ -67,7 +67,7 @@ export const update = (input: {
 export const View = ({
   model,
   dispatch,
-  slots
+  slots,
 }: {
   slots: {
     barLeft: VDom
@@ -98,7 +98,7 @@ export const View = ({
         open={model.isDrawerOpen}
         onClose={() =>
           dispatch({
-            t: 'closed-status-bar-drawer'
+            t: 'closed-status-bar-drawer',
           })
         }
       >

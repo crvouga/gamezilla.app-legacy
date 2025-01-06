@@ -41,7 +41,7 @@ const prefix = (prefix: string, logger: ILogger): ILogger => {
     },
     warn(msg) {
       logger.warn(`[${prefix}] ${msg}`)
-    }
+    },
   }
 }
 

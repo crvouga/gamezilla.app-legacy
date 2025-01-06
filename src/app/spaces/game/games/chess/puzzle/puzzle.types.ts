@@ -73,7 +73,7 @@ type Hint = 'from' | 'from-and-to'
 
 const hintToNextHint: { [key in Hint]: Hint } = {
   from: 'from-and-to',
-  'from-and-to': 'from-and-to'
+  'from-and-to': 'from-and-to',
 }
 
 export const isNoMoreHints = (model: CoreModel): boolean => {
@@ -89,11 +89,11 @@ export const isIncorrect = (model: CoreModel): boolean => {
 }
 
 export const initQuery: PuzzleQuery = {
-  ratingRange: [1000, 1500]
+  ratingRange: [1000, 1500],
 }
 
 export const initCore: CoreModel = {
-  t: 'loading'
+  t: 'loading',
 }
 
 export type PuzzleQuery = {
@@ -193,8 +193,8 @@ export type MsgToClient =
 export const toOpponentColor = (puzzle: Puzzle): Chess.Color => {
   return Chess.toTurn(
     Chess.initFromFen({
-      fen: puzzle.fen
-    })
+      fen: puzzle.fen,
+    }),
   )
 }
 
@@ -270,14 +270,14 @@ const didSolvePuzzle = (puzzle: Puzzle, playerMoves: Chess.MoveInput[]): boolean
   return (
     puzzle.moves.length === playerMoves.length &&
     zip(puzzle.moves, playerMoves).every(([puzzleMove, playerMoves]) =>
-      Chess.isMoveEqual(puzzleMove.correctMove, playerMoves)
+      Chess.isMoveEqual(puzzleMove.correctMove, playerMoves),
     )
   )
 }
 
 const didFailPuzzle = (puzzle: Puzzle, playerMoves: Chess.MoveInput[]): boolean => {
   return zip(puzzle.moves, playerMoves).some(
-    ([puzzleMove, playerMove]) => !Chess.isMoveEqual(puzzleMove.correctMove, playerMove)
+    ([puzzleMove, playerMove]) => !Chess.isMoveEqual(puzzleMove.correctMove, playerMove),
   )
 }
 
@@ -289,7 +289,7 @@ type CoreCtx = SpaceCtx & {
 export const updateCore = ({
   ctx,
   msg,
-  model
+  model,
 }: {
   ctx: CoreCtx
   msg: Req
@@ -322,7 +322,7 @@ export const updateCore = ({
       const modelNew: CoreModel = {
         ...model,
         moves: [...model.moves, msg.moveInput],
-        hint: null
+        hint: null,
       }
 
       if (didSolvePuzzle(model.puzzle, modelNew.moves) && model.hasUsedHint) {
@@ -331,7 +331,7 @@ export const updateCore = ({
           t: 'solved-with-hint',
           endedAt: ctx.now,
           hasLost: true,
-          hasUsedHint: true
+          hasUsedHint: true,
         })
       }
 
@@ -339,7 +339,7 @@ export const updateCore = ({
         return Ok({
           ...modelNew,
           t: 'solved',
-          endedAt: ctx.now
+          endedAt: ctx.now,
         })
       }
 
@@ -348,7 +348,7 @@ export const updateCore = ({
           ...modelNew,
           t: 'incorrect',
           hasLost: true,
-          endedAt: ctx.now
+          endedAt: ctx.now,
         })
       }
 
@@ -359,7 +359,7 @@ export const updateCore = ({
       return Ok({
         ...model,
         hint: model.hint ? hintToNextHint[model.hint] : 'from',
-        hasUsedHint: true
+        hasUsedHint: true,
       })
     }
   }
@@ -369,8 +369,8 @@ export const updateCore = ({
       return Ok(
         transitionNextPuzzle({
           ctx,
-          model
-        })
+          model,
+        }),
       )
     }
   }
@@ -380,8 +380,8 @@ export const updateCore = ({
       return Ok(
         transitionNextPuzzle({
           ctx,
-          model
-        })
+          model,
+        }),
       )
     }
   }
@@ -391,8 +391,8 @@ export const updateCore = ({
       return Ok(
         transitionNextPuzzle({
           ctx,
-          model
-        })
+          model,
+        }),
       )
     }
 
@@ -400,8 +400,8 @@ export const updateCore = ({
       return Ok(
         transitionNextPuzzle({
           ctx,
-          model
-        })
+          model,
+        }),
       )
     }
 
@@ -410,7 +410,7 @@ export const updateCore = ({
         ...model,
         moves: [],
         t: 'started',
-        hasLost: true
+        hasLost: true,
       })
     }
   }
@@ -429,13 +429,13 @@ const transitionNextPuzzle = ({ model, ctx }: { ctx: CoreCtx; model: CoreModel }
     return {
       ...model,
       puzzle: puzzleNew,
-      t: 'loading'
+      t: 'loading',
     }
   }
 
   const profileNew: PuzzleProfile = {
     ...model.profile,
-    eloRating: toNextEloRating(model) ?? model.profile.eloRating
+    eloRating: toNextEloRating(model) ?? model.profile.eloRating,
   }
 
   return {
@@ -447,7 +447,7 @@ const transitionNextPuzzle = ({ model, ctx }: { ctx: CoreCtx; model: CoreModel }
     moves: [],
     profile: profileNew,
     puzzle: puzzleNew,
-    queue: queueNew
+    queue: queueNew,
   }
 }
 
@@ -460,7 +460,7 @@ export const toNextEloRating = (model: CoreModel): EloRating | null => {
     return EloRating.toNextRating({
       endGame: 'lost',
       opponentRating: model.puzzle.rating,
-      playerRating: model.profile.eloRating
+      playerRating: model.profile.eloRating,
     })
   }
 
@@ -472,7 +472,7 @@ export const toNextEloRating = (model: CoreModel): EloRating | null => {
     return EloRating.toNextRating({
       endGame: 'win',
       opponentRating: model.puzzle.rating,
-      playerRating: model.profile.eloRating
+      playerRating: model.profile.eloRating,
     })
   }
 
@@ -480,7 +480,7 @@ export const toNextEloRating = (model: CoreModel): EloRating | null => {
     return EloRating.toNextRating({
       endGame: 'lost',
       opponentRating: model.puzzle.rating,
-      playerRating: model.profile.eloRating
+      playerRating: model.profile.eloRating,
     })
   }
 
@@ -508,7 +508,7 @@ export const transitionLoadingToStarted = ({ model, ctx }: { ctx: { now: Posix }
         puzzle,
         moves: [],
         startedAt: ctx.now,
-        t: 'started'
+        t: 'started',
       }
     }
 
@@ -525,7 +525,7 @@ export const transitionLoadingToStarted = ({ model, ctx }: { ctx: { now: Posix }
       puzzle: head,
       moves: [],
       startedAt: ctx.now,
-      t: 'started'
+      t: 'started',
     }
   }
 

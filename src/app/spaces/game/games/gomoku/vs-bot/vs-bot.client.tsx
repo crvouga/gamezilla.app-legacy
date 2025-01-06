@@ -8,7 +8,7 @@ import {
   type MsgClient,
   type MsgToClient,
   handle,
-  initShared
+  initShared,
 } from './vs-bot.types'
 
 //
@@ -36,7 +36,7 @@ export type Msg = MsgClient
 export const update = ({
   ctx,
   msg,
-  model
+  model,
 }: {
   ctx: AppClientCtx
   msg: Msg
@@ -50,25 +50,25 @@ export const update = ({
       const result = handle({
         ctx,
         msg,
-        model
+        model,
       })
 
       if (isErr(result)) {
         return {
           model,
-          eff: Eff.None
+          eff: Eff.None,
         }
       }
 
       const merged = mergeWithServer({
         ctx,
         serverModel: result.value,
-        clientModel: model
+        clientModel: model,
       })
 
       return {
         model: merged,
-        eff: Eff.None
+        eff: Eff.None,
       }
     }
   }
@@ -77,7 +77,7 @@ export const update = ({
 export const updateFromServer = ({
   msg,
   model,
-  ctx
+  ctx,
 }: {
   ctx: AppClientCtx
   msg: MsgToClient
@@ -93,7 +93,7 @@ export const updateFromServer = ({
   const merged = mergeWithServer({
     ctx,
     clientModel: model,
-    serverModel: msg.result.value
+    serverModel: msg.result.value,
   })
 
   return { model: merged }
@@ -101,7 +101,7 @@ export const updateFromServer = ({
 
 export const mergeWithServer = ({
   serverModel,
-  clientModel
+  clientModel,
 }: {
   ctx: AppClientCtx
   clientModel: ModelClient

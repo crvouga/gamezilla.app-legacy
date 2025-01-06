@@ -17,14 +17,14 @@ const Fixtures = async () => {
     {
       t: 'db-conn-kv',
       dbConnKv: testEnv.dbConnKv,
-      logger
+      logger,
     },
     {
       t: 'cached-db-conn-kv',
       dbConnKv: testEnv.dbConnKv,
       logger,
-      pubSubTopicBased: testEnv.pubSubTopicBased
-    }
+      pubSubTopicBased: testEnv.pubSubTopicBased,
+    },
   ]
 
   return Promise.all(configs.map(Fixture))

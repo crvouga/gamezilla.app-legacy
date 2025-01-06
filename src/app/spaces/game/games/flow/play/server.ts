@@ -5,7 +5,7 @@ import { ScreenPlayPuzzleServer } from './screen-play-puzzle/server'
 
 const init: ServerModule['init'] = async () => {
   return {
-    model: {}
+    model: {},
   }
 }
 
@@ -20,5 +20,5 @@ const subscriptions: ServerModule['subscriptions'] = async () => {
 export const PlayServer = {
   init,
   update,
-  subscriptions
+  subscriptions,
 }

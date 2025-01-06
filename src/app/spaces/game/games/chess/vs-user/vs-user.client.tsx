@@ -14,7 +14,7 @@ import {
   type ModelServer,
   type MsgClient,
   type MsgToClient,
-  initCore
+  initCore,
 } from './vs-user.types'
 
 //
@@ -28,7 +28,7 @@ import {
 export type Model = ModelClient
 
 export const init = ({
-  userId
+  userId,
 }: {
   userId?: UserId | null
 }): {
@@ -37,12 +37,12 @@ export const init = ({
   return {
     model: {
       coreModel: initCore({
-        userId: userId ?? 'none'
+        userId: userId ?? 'none',
       }),
       openedMenuId: Option.None,
       openedModal: 'none',
-      isFlipped: false
-    }
+      isFlipped: false,
+    },
   }
 }
 
@@ -68,8 +68,8 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
       return {
         model: {
           ...model,
-          openedMenuId: Option.Some(msg[1])
-        }
+          openedMenuId: Option.Some(msg[1]),
+        },
       }
     }
 
@@ -77,8 +77,8 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
       return {
         model: {
           ...model,
-          openedMenuId: Option.None
-        }
+          openedMenuId: Option.None,
+        },
       }
     }
 
@@ -86,8 +86,8 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
       return {
         model: {
           ...model,
-          isFlipped: !model.isFlipped
-        }
+          isFlipped: !model.isFlipped,
+        },
       }
     }
 
@@ -95,8 +95,8 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
       return {
         model: {
           ...model,
-          openedModal: msg[1]
-        }
+          openedModal: msg[1],
+        },
       }
     }
 
@@ -104,8 +104,8 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
       return {
         model: {
           ...model,
-          openedModal: 'none'
-        }
+          openedModal: 'none',
+        },
       }
     }
 
@@ -119,7 +119,7 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -128,11 +128,11 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
 export const updateFromServer = (
   { ctx }: { ctx: SpaceClientCtx },
   msg: MsgToClient,
-  _model: Model
+  _model: Model,
 ): [Model, Eff<Msg>] => {
   const model: Model = {
     ..._model,
-    openedMenuId: Option.None
+    openedMenuId: Option.None,
   }
 
   switch (msg[0]) {
@@ -143,9 +143,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          coreModel: msg[1].value
+          coreModel: msg[1].value,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -163,9 +163,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          coreModel: coreModelNew
+          coreModel: coreModelNew,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -179,9 +179,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          coreModel
+          coreModel,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -195,9 +195,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          coreModel
+          coreModel,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -217,9 +217,9 @@ export const updateFromServer = (
           return [
             {
               ...model,
-              openedModal: 'AskedToDraw'
+              openedModal: 'AskedToDraw',
             },
-            Eff.None
+            Eff.None,
           ]
         }
 
@@ -240,9 +240,9 @@ export const updateFromServer = (
         return [
           {
             ...model,
-            coreModel
+            coreModel,
           },
-          Eff.None
+          Eff.None,
         ]
       }
 
@@ -253,18 +253,18 @@ export const updateFromServer = (
         return [
           {
             ...model,
-            coreModel
+            coreModel,
           },
-          Eff.None
+          Eff.None,
         ]
       }
 
       return [
         {
           ...model,
-          coreModel
+          coreModel,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -284,18 +284,18 @@ export const updateFromServer = (
         return [
           {
             ...model,
-            coreModel
+            coreModel,
           },
-          Eff.None
+          Eff.None,
         ]
       }
 
       return [
         {
           ...model,
-          coreModel
+          coreModel,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -319,9 +319,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          coreModel: coreModelNew
+          coreModel: coreModelNew,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -335,9 +335,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          coreModel: coreModelNew
+          coreModel: coreModelNew,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -345,9 +345,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          openedModal: 'game-over'
+          openedModal: 'game-over',
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -361,9 +361,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          coreModel
+          coreModel,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -371,9 +371,9 @@ export const updateFromServer = (
       return [
         {
           ...model,
-          coreModel: msg[1]
+          coreModel: msg[1],
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -407,7 +407,7 @@ export const View = ({
   ctx,
   model,
   dispatch,
-  onQuit
+  onQuit,
 }: {
   ctx: AppClientCtx
   model: Model
@@ -558,6 +558,6 @@ export const mergeWithServer = ({ client, server }: { client?: ModelClient; serv
     isFlipped: clientModel.isFlipped,
     openedMenuId: clientModel.openedMenuId,
     openedModal: clientModel.openedModal,
-    coreModel: server
+    coreModel: server,
   }
 }

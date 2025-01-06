@@ -64,7 +64,7 @@ export type Toast = {
 
 export const init: Module['init'] = () => {
   return {
-    model: { runningId: 0, hold: {} }
+    model: { runningId: 0, hold: {} },
   }
 }
 
@@ -91,7 +91,7 @@ export const update: Module['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model })
+    (model) => updateFromCmd({ ...input, model }),
   )
 }
 
@@ -107,16 +107,16 @@ const updateFromMsg: Module['update'] = (input) => {
       return {
         model: {
           ...model,
-          toast: null
+          toast: null,
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     case 'time-passed': {
       if (!model.toast) {
         return {
-          model
+          model,
         }
       }
 
@@ -126,13 +126,13 @@ const updateFromMsg: Module['update'] = (input) => {
         return {
           model: {
             ...model,
-            toast: null
-          }
+            toast: null,
+          },
         }
       }
 
       return {
-        model
+        model,
       }
     }
 
@@ -142,22 +142,22 @@ const updateFromMsg: Module['update'] = (input) => {
           ...model,
           hold: {
             ...model.hold,
-            [msg.toast.toastId]: msg.toast
-          }
-        }
+            [msg.toast.toastId]: msg.toast,
+          },
+        },
       }
     }
 
     case 'pressed-up-on-toast': {
       const holdNew = {
-        ...model.hold
+        ...model.hold,
       }
       delete holdNew[msg.toast.toastId]
       return {
         model: {
           ...model,
-          hold: holdNew
-        }
+          hold: holdNew,
+        },
       }
     }
 
@@ -167,9 +167,9 @@ const updateFromMsg: Module['update'] = (input) => {
           ...model,
           errorModal: {
             errorMsg: msg.errorMsg,
-            toastId: msg.toastId
-          }
-        }
+            toastId: msg.toastId,
+          },
+        },
       }
     }
   }
@@ -192,15 +192,15 @@ const updateFromCmd: Module['update'] = (input) => {
         duration: toastCmd.duration ?? TimeSpan.seconds(2),
         variant: toastCmd.toastVariant ?? 'info',
         createdAt: ctx.now,
-        errorMsg: toastCmd.errorMsg ?? null
+        errorMsg: toastCmd.errorMsg ?? null,
       }
 
       return {
         model: {
           ...model,
           runningId: model.runningId + 1,
-          toast: toastNew
-        }
+          toast: toastNew,
+        },
       }
     }
   }
@@ -216,7 +216,7 @@ const updateFromCmd: Module['update'] = (input) => {
 export const subscriptions: Module['subscriptions'] = ({ model }) => {
   if (model.toast) {
     return Time.interval('toasts', model.toast.duration, () => ({
-      t: 'time-passed'
+      t: 'time-passed',
     }))
   }
 
@@ -246,17 +246,17 @@ const onEnter = async (node: HTMLElement) => {
   await node?.animate(
     [
       {
-        transform: 'translateY(-150%)'
+        transform: 'translateY(-150%)',
       },
       {
-        transform: 'translateY(0%)'
-      }
+        transform: 'translateY(0%)',
+      },
     ],
     {
       duration: 200,
       easing: 'ease-in-out',
-      fill: 'both'
-    }
+      fill: 'both',
+    },
   ).finished
 }
 
@@ -264,17 +264,17 @@ const onExit = async (node: HTMLElement) => {
   await node?.animate(
     [
       {
-        transform: 'translateY(0%)'
+        transform: 'translateY(0%)',
       },
       {
-        transform: 'translateY(-150%)'
-      }
+        transform: 'translateY(-150%)',
+      },
     ],
     {
       duration: 200,
       easing: 'ease-in-out',
-      fill: 'both'
-    }
+      fill: 'both',
+    },
   ).finished
 }
 
@@ -288,26 +288,26 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
       onMouseDown={() =>
         input.dispatch({
           t: 'pressed-down-on-toast',
-          toast: input.toast
+          toast: input.toast,
         })
       }
       onMouseUp={() =>
         input.dispatch({
           t: 'pressed-up-on-toast',
-          toast: input.toast
+          toast: input.toast,
         })
       }
       //
       onTouchStart={() =>
         input.dispatch({
           t: 'pressed-down-on-toast',
-          toast: input.toast
+          toast: input.toast,
         })
       }
       onTouchEnd={() =>
         input.dispatch({
           t: 'pressed-up-on-toast',
-          toast: input.toast
+          toast: input.toast,
         })
       }
       //
@@ -320,7 +320,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
           className={cn(
             'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
             input.toast.variant === 'info' && 'bg-paper',
-            input.toast.variant === 'error' && 'border-red-400 bg-red-500'
+            input.toast.variant === 'error' && 'border-red-400 bg-red-500',
           )}
           key={input.toast.toastId}
         >
@@ -334,7 +334,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
                   input.dispatch({
                     t: 'clicked-see-error',
                     errorMsg: errorMsg,
-                    toastId: input.toast.toastId
+                    toastId: input.toast.toastId,
                   })
                 }
               >
@@ -347,7 +347,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
             onClick={() =>
               input.dispatch({
                 t: 'clicked-dismiss-button',
-                toastId: input.toast.toastId
+                toastId: input.toast.toastId,
               })
             }
           >

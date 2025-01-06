@@ -23,7 +23,7 @@ export const init: ClientModule['init'] = ({ ctx }) => {
   const initialModel: ModelClient = {
     profiles: {},
     requests: {},
-    draft: {}
+    draft: {},
   }
 
   const model = initialModel
@@ -51,12 +51,12 @@ export const update: ClientModule['update'] = (input) => {
         ctx: input.ctx,
         msg: input.msg && 'n' in input?.msg && input.msg.n === 'profile.update-username' ? input.msg : null,
         model,
-        msgEvt: input.msgEvt
+        msgEvt: input.msgEvt,
       }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
-    (model) => updateFromMsg({ ...input, model })
+    (model) => updateFromMsg({ ...input, model }),
   )
 }
 
@@ -74,9 +74,9 @@ const updateFromCmd: ClientModule['update'] = (input) => {
           ...model,
           profiles: {
             ...model.profiles,
-            ...msgCmd.c.profiles
-          }
-        }
+            ...msgCmd.c.profiles,
+          },
+        },
       }
     }
     case 'open-profile': {
@@ -86,9 +86,9 @@ const updateFromCmd: ClientModule['update'] = (input) => {
           pushRoute({
             t: 'profile',
             n: 'profile',
-            userId: msgCmd.c.userId
-          })
-        ]
+            userId: msgCmd.c.userId,
+          }),
+        ],
       }
     }
   }
@@ -107,13 +107,13 @@ const updateFromEvent: ClientModule['update'] = (input) => {
         return loadProfile(msgEvt.route.userId, model)
       }
       return {
-        model
+        model,
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -130,7 +130,7 @@ const updateFromServer: ClientModule['update'] = (input) => {
     case 'current-user-profile': {
       if (isErr(msgServer.result)) {
         return {
-          model
+          model,
         }
       }
 
@@ -140,8 +140,8 @@ const updateFromServer: ClientModule['update'] = (input) => {
         ...model,
         profiles: {
           ...model.profiles,
-          [profile.userId]: profile
-        }
+          [profile.userId]: profile,
+        },
       }
 
       return {
@@ -149,9 +149,9 @@ const updateFromServer: ClientModule['update'] = (input) => {
         msgEvt: [
           {
             t: 'profile-evt.current-user-profile',
-            profile
-          }
-        ]
+            profile,
+          },
+        ],
       }
     }
 
@@ -166,26 +166,26 @@ const updateFromServer: ClientModule['update'] = (input) => {
             ...model,
             requests: {
               ...model.requests,
-              [msgServer.t]: msgServer.result
-            }
-          }
+              [msgServer.t]: msgServer.result,
+            },
+          },
         }
       }
 
       const profilesNew = msgServer.result.value.reduce<ModelClient['profiles']>((acc, profile) => {
         return {
           ...acc,
-          [profile.userId]: profile
+          [profile.userId]: profile,
         }
       }, model.profiles)
 
       const modelNew: ModelClient = {
         ...model,
-        profiles: profilesNew
+        profiles: profilesNew,
       }
 
       return {
-        model: modelNew
+        model: modelNew,
       }
     }
   }
@@ -209,9 +209,9 @@ const updateFromMsg: ClientModule['update'] = (input) => {
           ...model,
           draft: {
             ...model.draft,
-            username: msg.username
-          }
-        }
+            username: msg.username,
+          },
+        },
       }
     }
 
@@ -221,9 +221,9 @@ const updateFromMsg: ClientModule['update'] = (input) => {
           ...model,
           draft: {
             ...model.draft,
-            avatarSeed: ProfileAvatar.toSeed(msg.seed)
-          }
-        }
+            avatarSeed: ProfileAvatar.toSeed(msg.seed),
+          },
+        },
       }
     }
 
@@ -233,9 +233,9 @@ const updateFromMsg: ClientModule['update'] = (input) => {
           ...model,
           draft: {
             ...model.draft,
-            avatarStyle: msg.style
-          }
-        }
+            avatarStyle: msg.style,
+          },
+        },
       }
     }
 
@@ -244,9 +244,9 @@ const updateFromMsg: ClientModule['update'] = (input) => {
         model: {
           ...model,
           draft: {
-            ...model.draft
-          }
-        }
+            ...model.draft,
+          },
+        },
       }
     }
 
@@ -255,7 +255,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
         case 'profile': {
           return {
             model,
-            msgCmd: [back()]
+            msgCmd: [back()],
           }
         }
 
@@ -266,9 +266,9 @@ const updateFromMsg: ClientModule['update'] = (input) => {
               replaceRoute({
                 n: 'profile',
                 t: 'profile',
-                userId: ctx.currentUserId
-              })
-            ]
+                userId: ctx.currentUserId,
+              }),
+            ],
           }
         }
 
@@ -278,9 +278,9 @@ const updateFromMsg: ClientModule['update'] = (input) => {
             msgCmd: [
               replaceRoute({
                 n: 'profile',
-                t: 'profile-edit'
-              })
-            ]
+                t: 'profile-edit',
+              }),
+            ],
           }
         }
 
@@ -290,9 +290,9 @@ const updateFromMsg: ClientModule['update'] = (input) => {
             msgCmd: [
               replaceRoute({
                 n: 'profile',
-                t: 'profile-edit'
-              })
-            ]
+                t: 'profile-edit',
+              }),
+            ],
           }
         }
       }
@@ -301,7 +301,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
     case 'clicked-logout-button': {
       return {
         model,
-        msgCmd: [logout()]
+        msgCmd: [logout()],
       }
     }
 
@@ -312,11 +312,11 @@ const updateFromMsg: ClientModule['update'] = (input) => {
           pushRoute(
             {
               n: 'profile',
-              t: 'profile-edit-username'
+              t: 'profile-edit-username',
             },
-            true
-          )
-        ]
+            true,
+          ),
+        ],
       }
     }
 
@@ -327,11 +327,11 @@ const updateFromMsg: ClientModule['update'] = (input) => {
           pushRoute(
             {
               n: 'profile',
-              t: 'profile-edit'
+              t: 'profile-edit',
             },
-            true
-          )
-        ]
+            true,
+          ),
+        ],
       }
     }
 
@@ -343,11 +343,11 @@ const updateFromMsg: ClientModule['update'] = (input) => {
           pushRoute(
             {
               n: 'profile',
-              t: 'profile-edit-avatar'
+              t: 'profile-edit-avatar',
             },
-            true
-          )
-        ]
+            true,
+          ),
+        ],
       }
     }
 
@@ -358,11 +358,11 @@ const updateFromMsg: ClientModule['update'] = (input) => {
           requests: {
             ...model.requests,
             [msg.t]: {
-              t: 'loading'
-            }
-          }
+              t: 'loading',
+            },
+          },
         },
-        toServer: [msg]
+        toServer: [msg],
       }
     }
   }
@@ -374,15 +374,15 @@ const loadProfile = (userId: UserId, model: ModelClient): ReturnType<ClientModul
       ...model,
       requests: {
         ...model.requests,
-        'find-one': Loading
-      }
+        'find-one': Loading,
+      },
     },
     msgCmd: [
       sendToServer({
         t: 'find-one',
-        userId
-      })
-    ]
+        userId,
+      }),
+    ],
   }
 }
 
@@ -467,8 +467,8 @@ const ViewUpdateScreen: typeof View = (input) => {
           input.dispatch({
             t: 'clicked-back-button',
             from: {
-              t: 'profile-update'
-            }
+              t: 'profile-update',
+            },
           })
         }
         title={input.ctx.t('profile.update-profile')}
@@ -481,7 +481,7 @@ const ViewUpdateScreen: typeof View = (input) => {
           alt='profile avatar'
           onClick={() =>
             input.dispatch({
-              t: 'clicked-avatar'
+              t: 'clicked-avatar',
             })
           }
         />
@@ -493,7 +493,7 @@ const ViewUpdateScreen: typeof View = (input) => {
           className='block'
           onClick={() =>
             input.dispatch({
-              t: 'clicked-change-avatar-button'
+              t: 'clicked-change-avatar-button',
             })
           }
           text={input.ctx.t('profile.update-avatar')}
@@ -503,7 +503,7 @@ const ViewUpdateScreen: typeof View = (input) => {
       <ViewField
         onClick={() =>
           input.dispatch({
-            t: 'clicked-update-username-button'
+            t: 'clicked-update-username-button',
           })
         }
         label={input.ctx.t('username-title')}
@@ -516,7 +516,7 @@ const ViewUpdateScreen: typeof View = (input) => {
 const ViewField = ({
   label,
   value,
-  onClick
+  onClick,
 }: {
   label: TranslatedText
   value: TranslatedText

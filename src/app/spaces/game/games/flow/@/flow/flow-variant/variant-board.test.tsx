@@ -9,10 +9,10 @@ const Fixture = async () => {
   const f = await FixtureSpacesClient()
   const flow = FlowGridShorthand.toGrid([
     ['A', ' '],
-    [' ', 'A']
+    [' ', 'A'],
   ])
   const input: BoardInput<FlowVariant.Model> = {
-    model: flow
+    model: flow,
   }
   const render = (input: BoardInput<FlowVariant.Model>) => {
     return f.render(<VariantBoard.View {...input} />)
@@ -20,7 +20,7 @@ const Fixture = async () => {
   return {
     ...f,
     render,
-    input
+    input,
   }
 }
 describe(import.meta.file, () => {

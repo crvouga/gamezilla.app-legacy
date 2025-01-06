@@ -9,7 +9,7 @@ import { FixtureFlowPlayClient } from '../@/client/fixture'
 const Fixture = async () => {
   const f = await FixtureFlowPlayClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -35,10 +35,10 @@ describe(import.meta.file, () => {
           t: 'got-msg-core',
           c: {
             t: 'user-clicked-open-pack-list-item',
-            pack
-          }
-        }
-      }
+            pack,
+          },
+        },
+      },
     ])
     const r = f.render(updated)
     expect(r.getByRole('heading', pack.name)).toBeTruthy()
@@ -53,9 +53,9 @@ describe(import.meta.file, () => {
           t: 'user-clicked-open-pack-list-item',
           pack,
           eventId: EventId.generate(),
-          happenedAt: LamportTimestamp.fromNumber(0)
-        }
-      }
+          happenedAt: LamportTimestamp.fromNumber(0),
+        },
+      },
     ])
     expect(didPlaySound(updated)).toBe(true)
   })
@@ -69,9 +69,9 @@ describe(import.meta.file, () => {
       {
         msgCore: withEventMeta({
           t: 'user-clicked-exit-play-mode-button',
-          userId: f.ctx.currentUserId
-        })
-      }
+          userId: f.ctx.currentUserId,
+        }),
+      },
     ])
 
     expect(didPlaySound(output)).toBe(true)
@@ -84,9 +84,9 @@ describe(import.meta.file, () => {
       {
         msgCore: withEventMeta({
           t: 'user-clicked-exit-pack-button',
-          userId: f.ctx.currentUserId
-        })
-      }
+          userId: f.ctx.currentUserId,
+        }),
+      },
     ])
 
     expect(PackListClient.didLoad(output)).toBe(true)
@@ -99,9 +99,9 @@ describe(import.meta.file, () => {
       {
         msgCore: withEventMeta({
           t: 'user-clicked-select-next-pack',
-          userId: f.ctx.currentUserId
-        })
-      }
+          userId: f.ctx.currentUserId,
+        }),
+      },
     ])
 
     expect(PackListClient.didLoad(output)).toBe(true)

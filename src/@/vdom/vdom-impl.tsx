@@ -19,5 +19,5 @@ const from = (s: unknown): VDomImpl | null => {
 
 export const VDomImpl = {
   from,
-  of
+  of,
 }

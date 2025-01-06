@@ -8,7 +8,7 @@ import { SpaceCore } from '../core/space-core'
 const Fixture = async () => {
   const f = await FixtureSpaceServer()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -21,9 +21,9 @@ describe(import.meta.file, () => {
           ...f.clientA,
           t: 'list-spaces',
           limit: 10,
-          offset: 0
-        }
-      }
+          offset: 0,
+        },
+      },
     ])
     expect(didSendMsgToClient(output, (msg) => msg.t === 'listed-spaces')).toBe(true)
   })
@@ -38,25 +38,25 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId,
-            userId: f.clientA.userId
-          })
-        }
+            userId: f.clientA.userId,
+          }),
+        },
       },
       {
         msgClient: {
           ...f.clientB,
           t: 'list-spaces',
           limit: 10,
-          offset: 0
-        }
-      }
+          offset: 0,
+        },
+      },
     ])
     expect(
       didSendMsgToClient(
         output,
         (msg) =>
-          msg.t === 'listed-spaces' && msg.spaces.map(SpaceCore.toSpaceStarted).some((s) => s?.spaceId === spaceId)
-      )
+          msg.t === 'listed-spaces' && msg.spaces.map(SpaceCore.toSpaceStarted).some((s) => s?.spaceId === spaceId),
+      ),
     ).toBe(true)
   })
 })

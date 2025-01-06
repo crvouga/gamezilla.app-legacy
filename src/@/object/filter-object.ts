@@ -4,7 +4,7 @@ type Entry<T> = {
 
 export const filterObject = <T extends object>(
   obj: T,
-  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean
+  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean,
 ): T => {
   const filtered = (Object.entries(obj) as Entry<T>[]).filter(predicate)
   return Object.fromEntries(filtered) as T

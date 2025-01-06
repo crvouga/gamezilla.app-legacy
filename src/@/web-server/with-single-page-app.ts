@@ -37,7 +37,7 @@ export const withSinglePageApp = (config: Config) => {
       headers['Content-Type'] = contentType
       return new Response(file, {
         headers,
-        status: 200
+        status: 200,
       })
     } catch (e) {
       return new Response(`Server Error: ${String(e)}`, { status: 500 })

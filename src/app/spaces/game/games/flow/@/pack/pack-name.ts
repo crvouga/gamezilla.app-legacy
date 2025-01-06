@@ -19,5 +19,5 @@ const is = (name: unknown): name is PackName => {
 export const PackName = {
   ...parser,
   generate,
-  is
+  is,
 }

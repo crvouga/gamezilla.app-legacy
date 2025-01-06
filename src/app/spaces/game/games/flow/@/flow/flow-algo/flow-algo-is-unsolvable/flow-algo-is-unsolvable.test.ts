@@ -8,7 +8,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'B', 'C'],
       [' ', ' ', ' '],
-      ['A', 'B', 'C']
+      ['A', 'B', 'C'],
     ])
     expect(FlowAlgoIsUnsolvable.isUnsolvable(grid)).toBe(false)
   })
@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'B', 'A'],
       [' ', ' ', ' '],
-      ['C', 'B', 'C']
+      ['C', 'B', 'C'],
     ])
     expect(FlowAlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)
   })
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
       ['B', ' ', ' ', ' ', ' ', ' ', ' ', 'B'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      ['A', ' ', ' ', 'D', ' ', ' ', ' ', 'C']
+      ['A', ' ', ' ', 'D', ' ', ' ', ' ', 'C'],
     ])
     expect(FlowAlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)
   })

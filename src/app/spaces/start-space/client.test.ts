@@ -7,7 +7,7 @@ import { SpacesCoreClient } from '../core/client'
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -18,9 +18,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId: SpaceId.generate()
-        }
-      }
+          spaceId: SpaceId.generate(),
+        },
+      },
     ])
     expect(didShowToast(started)).toBe(true)
   })
@@ -32,9 +32,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
-      }
+          spaceId,
+        },
+      },
     ])
     const before = SpacesCoreClient.toSpaceIdByUserId(f.initial.model, f.ctx.currentUserId)
     const after = SpacesCoreClient.toSpaceIdByUserId(started.model, f.ctx.currentUserId)
@@ -48,9 +48,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId: SpaceId.generate()
-        }
-      }
+          spaceId: SpaceId.generate(),
+        },
+      },
     ])
     expect(didPlaySound(started)).toBe(true)
   })
@@ -62,9 +62,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
-      }
+          spaceId,
+        },
+      },
     ])
     expect(didPushRoute(started)).toBe(true)
   })
@@ -76,15 +76,15 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
-      }
+          spaceId,
+        },
+      },
     ])
     expect(
       didSendToServer(
         started,
-        (msg) => msg.t === 'got-msg-core' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId
-      )
+        (msg) => msg.t === 'got-msg-core' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId,
+      ),
     ).toBe(true)
   })
 })

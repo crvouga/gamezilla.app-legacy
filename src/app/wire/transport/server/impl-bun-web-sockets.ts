@@ -25,7 +25,7 @@ export type Config = {
 }
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
-  config: Config
+  config: Config,
 ): Promise<
   IServerTransport<{
     MsgToClient: MsgToClient
@@ -65,7 +65,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       await config.pubSubTopicBased.sub(ws.data.clientId, (msg) => {
         logger.debug(`received msg for clientId=${ws.data.clientId} from other server instance`)
         send(ws, JSON.parse(msg))
-      })
+      }),
     )
   }
 
@@ -90,7 +90,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       transport.wire.pub({
         t: 'client-connected',
         clientId: ws.data.clientId,
-        sessionId: ws.data.sessionId
+        sessionId: ws.data.sessionId,
       })
     },
     async close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
@@ -99,7 +99,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       transport.wire.pub({
         t: 'client-disconnected',
         clientId: ws.data.clientId,
-        sessionId: ws.data.sessionId
+        sessionId: ws.data.sessionId,
       })
     },
     message(ws: ServerWebSocket<ServerWebSocketData>, message) {
@@ -110,9 +110,9 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
       transport.fromClient.pub({
         clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
-        msgs: msg
+        msgs: msg,
       })
-    }
+    },
   })
 
   config.webServer.registerHandler((request, maybeServer) => {
@@ -125,7 +125,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
           const cookies = request.headers?.get('cookie')?.split(';')
 
           const maybeSessionId = SessionIdCookie.fromCookies({
-            cookies: cookies?.join(';') ?? ''
+            cookies: cookies?.join(';') ?? '',
           })
 
           const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
@@ -134,7 +134,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
           const data: ServerWebSocketData = {
             clientId,
-            sessionId
+            sessionId,
           }
 
           const headers = new Headers()
@@ -144,13 +144,13 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
               'Set-Cookie',
               SessionIdCookie.toSetCookieHeaderValue({
                 sessionId,
-                isProd: config.isProd
-              })
+                isProd: config.isProd,
+              }),
             )
           }
 
           logger.debug(
-            `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${headers.toJSON()}`
+            `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${headers.toJSON()}`,
           )
           server.upgrade(request, { headers, data })
           return
@@ -219,7 +219,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
   transport.wire.pub({
     t: 'server-started',
-    port: Number.NaN
+    port: Number.NaN,
   })
 
   return transport

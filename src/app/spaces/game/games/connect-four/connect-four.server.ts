@@ -34,7 +34,7 @@ type ServerModule = GameServerModule<{
 //
 
 const init: ServerModule['init'] = {
-  t: null
+  t: null,
 }
 
 //
@@ -64,5 +64,5 @@ const subscriptions: ServerModule['subscriptions'] = async (_input) => {
 export const ConnectFourServer = {
   init,
   update,
-  subscriptions
+  subscriptions,
 }

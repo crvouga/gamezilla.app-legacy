@@ -12,7 +12,7 @@ export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {
   const ctx: AppClientCtx = {
     currentRoute: input?.currentRoute ?? {
       n: 'auth-login',
-      t: 'login'
+      t: 'login',
     },
     currentUserId,
     currentUserRole: 'normal',
@@ -25,14 +25,14 @@ export const FixtureAppClient = async (input?: { currentRoute?: Route }) => {
       userId: currentUserId,
       createdAt: Posix.now(),
       phoneNumber: PhoneNumber.random(),
-      role: 'normal'
-    }
+      role: 'normal',
+    },
   }
 
   const render = await TestRender(VDOM_IMPL_TEST)
 
   return {
     ctx,
-    render
+    render,
   }
 }

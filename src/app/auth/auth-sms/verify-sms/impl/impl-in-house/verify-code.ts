@@ -13,20 +13,20 @@ export const VerifyCode =
     const found = await deps.verificationDb.find({
       where: {
         phoneNumber: {
-          '=': input.phoneNumber
-        }
+          '=': input.phoneNumber,
+        },
       },
       order: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       limit: 1,
-      offset: 0
+      offset: 0,
     })
 
     if (isErr(found)) {
       return Err({
         t: 'database-error',
-        error: found.error
+        error: found.error,
       })
     }
 
@@ -34,39 +34,39 @@ export const VerifyCode =
 
     if (!verification) {
       return Err({
-        t: 'verification-not-found'
+        t: 'verification-not-found',
       })
     }
 
     if (verification.verifiedAtPosix) {
       return Err({
-        t: 'verification-already-verified'
+        t: 'verification-already-verified',
       })
     }
 
     if (deps.now() >= verification.expiresAtPosix) {
       return Err({
-        t: 'verification-expired'
+        t: 'verification-expired',
       })
     }
 
     const foundLatestVerification = await deps.verificationDb.find({
       where: {
         phoneNumber: {
-          '=': verification.phoneNumber
-        }
+          '=': verification.phoneNumber,
+        },
       },
       order: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       limit: 1,
-      offset: 0
+      offset: 0,
     })
 
     if (isErr(foundLatestVerification)) {
       return Err({
         t: 'database-error',
-        error: foundLatestVerification.error
+        error: foundLatestVerification.error,
       })
     }
 
@@ -74,7 +74,7 @@ export const VerifyCode =
 
     if (latestVerification?.verificationId !== verification.verificationId) {
       return Err({
-        t: 'verification-expired-not-latest-verification'
+        t: 'verification-expired-not-latest-verification',
       })
     }
 
@@ -83,62 +83,62 @@ export const VerifyCode =
     const previousAttempts = await deps.verificationAttemptDb.find({
       where: {
         verificationId: {
-          '=': verificationId
-        }
-      }
+          '=': verificationId,
+        },
+      },
     })
 
     if (isErr(previousAttempts)) {
       deps.logger.error(`Error checking previous attempts for ${verificationId}`)
       return Err({
         t: 'database-error',
-        error: previousAttempts.error
+        error: previousAttempts.error,
       })
     }
     deps.logger.info(`Previous attempts for ${verificationId}: ${previousAttempts.value.length}`)
 
     if (previousAttempts.value.length >= deps.verifyCodeMaxAttempts) {
       return Err({
-        t: 'verification-expired-too-many-failed-attempts'
+        t: 'verification-expired-too-many-failed-attempts',
       })
     }
 
     const codeHash = await deps.hashing.hash({
       algo: {
-        t: 'sha256'
+        t: 'sha256',
       },
-      password: input.code
+      password: input.code,
     })
 
     const newAttempt: VerificationAttempt = {
       verificationAttemptId: VerificationAttemptId.generate(),
       codeHash,
       createdAt: deps.now(),
-      verificationId: verificationId
+      verificationId: verificationId,
     }
 
     await deps.verificationAttemptDb.insert(newAttempt)
 
     if (!verification.codeHash) {
       return Err({
-        t: 'verification-not-found'
+        t: 'verification-not-found',
       })
     }
 
     const isCorrect = await deps.hashing.check({
       hash: verification.codeHash,
-      password: input.code
+      password: input.code,
     })
 
     if (!isCorrect) {
       return Err({
-        t: 'code-incorrect'
+        t: 'code-incorrect',
       })
     }
 
     const verificationNew: Verification = {
       ...verification,
-      verifiedAtPosix: deps.now()
+      verifiedAtPosix: deps.now(),
     }
 
     await deps.verificationDb.put(verificationNew)

@@ -17,9 +17,9 @@ describe(import.meta.file, () => {
         msgCore: withEventMeta({
           t: 'flow.builder.screen-main-menu.user-clicked-option',
           userId: ctx.currentUserId,
-          option: 'pack-builder'
-        })
-      })
+          option: 'pack-builder',
+        }),
+      }),
     )
     expect(didPlaySound(output)).toBe(true)
   })

@@ -4,7 +4,7 @@ import type { ModelServer, MsgServer, MsgToServer } from './chat.core'
 export const init: { model: ModelServer } = { model: null }
 
 export const updateFromClient = ({
-  model
+  model,
 }: {
   msg: MsgToServer
   model: ModelServer
@@ -16,7 +16,7 @@ export const updateFromClient = ({
 }
 
 export const update = ({
-  model
+  model,
 }: {
   msg: MsgServer
   model: ModelServer

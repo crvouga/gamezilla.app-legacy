@@ -14,15 +14,15 @@ const Fixture = async () => {
       return {
         verificationAttemptDb: VerificationAttemptDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnSql
-        })
+          dbConnSql: testEnv.dbConnSql,
+        }),
       }
     }
     case 'unit': {
       return {
         verificationAttemptDb: VerificationAttemptDb({
-          t: 'hash-map'
-        })
+          t: 'hash-map',
+        }),
       }
     }
   }
@@ -42,17 +42,17 @@ describe(import.meta.file, () => {
     const before = await f.verificationAttemptDb.find({
       where: {
         verificationId: {
-          '=': verificationAttempt.verificationId
-        }
-      }
+          '=': verificationAttempt.verificationId,
+        },
+      },
     })
     await f.verificationAttemptDb.insert(verificationAttempt)
     const after = await f.verificationAttemptDb.find({
       where: {
         verificationId: {
-          '=': verificationAttempt.verificationId
-        }
-      }
+          '=': verificationAttempt.verificationId,
+        },
+      },
     })
     expect(unwrap(before)[0] ?? null).toBe(null)
     expect(unwrap(after)[0]).toEqual(verificationAttempt)
@@ -65,9 +65,9 @@ describe(import.meta.file, () => {
     const result = await f.verificationAttemptDb.find({
       where: {
         verificationId: {
-          '=': verificationAttempt.verificationId
-        }
-      }
+          '=': verificationAttempt.verificationId,
+        },
+      },
     })
     expect(unwrap(result)[0]).toEqual(verificationAttempt)
   })
@@ -79,9 +79,9 @@ describe(import.meta.file, () => {
     const result = await f.verificationAttemptDb.find({
       where: {
         verificationId: {
-          '=': VerificationId.generate()
-        }
-      }
+          '=': VerificationId.generate(),
+        },
+      },
     })
     expect(unwrap(result)[0] ?? null).toBe(null)
   })

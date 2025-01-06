@@ -16,10 +16,10 @@ export type Verification = {
 const random = async (input?: { createdAt?: Posix; codeHash?: Hash | null }): Promise<Verification> => {
   const createdAt = input?.createdAt ?? Posix.now()
   const codeHashArbitrary = await Hashing({
-    t: 'noop'
+    t: 'noop',
   }).hash({
     algo: { t: 'sha256' },
-    password: '123'
+    password: '123',
   })
   const codeHash = input?.codeHash === undefined ? codeHashArbitrary : input.codeHash
   return {
@@ -28,10 +28,10 @@ const random = async (input?: { createdAt?: Posix; codeHash?: Hash | null }): Pr
     phoneNumber: PhoneNumber.random(),
     createdAtPosix: createdAt,
     expiresAtPosix: Posix.future(createdAt, TimeSpan.minutes(1)),
-    verifiedAtPosix: null
+    verifiedAtPosix: null,
   }
 }
 
 export const Verification = {
-  random
+  random,
 }

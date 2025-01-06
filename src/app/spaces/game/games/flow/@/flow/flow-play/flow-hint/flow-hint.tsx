@@ -22,25 +22,25 @@ export type Ctx = {
 export const initCtx = (input: { flowPuzzle: Puzzle; findSolutions?: FindSolutions }): Ctx => {
   return {
     findSolutions: input.findSolutions ?? (async (_input) => Err('not implemented')),
-    flowPuzzle: input.flowPuzzle
+    flowPuzzle: input.flowPuzzle,
   }
 }
 
 export const Model = p.obj({
   pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
   terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
-  usedHints: p.partialDict(FlowGroupId, FlowGroupId)
+  usedHints: p.partialDict(FlowGroupId, FlowGroupId),
 })
 export type Model = p.Infer<typeof Model>
 
 export const Msg = p.or(
   p.obj({
-    t: p.l('user-clicked-use-hint')
+    t: p.l('user-clicked-use-hint'),
   }),
   p.obj({
     t: p.l('found-solutions'),
-    found: Result.parser(p.str, p.arr(Flow.Model))
-  })
+    found: Result.parser(p.str, p.arr(Flow.Model)),
+  }),
 )
 export type Msg = p.Infer<typeof Msg>
 
@@ -48,7 +48,7 @@ export const init = (input: { ctx: Ctx }): Model => {
   return {
     pipesBySourceId: {},
     usedHints: {},
-    terminalsByGroupId: input.ctx.flowPuzzle.flow.terminalsByGroupId
+    terminalsByGroupId: input.ctx.flowPuzzle.flow.terminalsByGroupId,
   }
 }
 
@@ -76,20 +76,20 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
   switch (input.msg.t) {
     case 'found-solutions': {
       return {
-        model: input.model
+        model: input.model,
       }
     }
     case 'user-clicked-use-hint': {
       const flow = toFlow({
         flow: input.ctx.flowPuzzle.flow,
-        model: input.model
+        model: input.model,
       })
 
       const nextHintGroupId = toNextHintGroupId(flow)
 
       if (!nextHintGroupId) {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -110,9 +110,9 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
           },
           events: [
             {
-              t: 'no-hints'
-            }
-          ]
+              t: 'no-hints',
+            },
+          ],
         }
       }
 
@@ -127,17 +127,17 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
         pipesBySourceId: addedSolution.pipesBySourceId,
         terminalsByGroupId: {
           ...input.model.terminalsByGroupId,
-          [nextHintGroupId]: solutionTerminal ?? input.model.terminalsByGroupId[nextHintGroupId]
+          [nextHintGroupId]: solutionTerminal ?? input.model.terminalsByGroupId[nextHintGroupId],
         },
         usedHints: {
           ...input.model.usedHints,
-          [nextHintGroupId]: nextHintGroupId
-        }
+          [nextHintGroupId]: nextHintGroupId,
+        },
       }
 
       const flowNew = toFlow({
         flow,
-        model: modelNew
+        model: modelNew,
       })
 
       if (Flow.isSolved(flowNew)) {
@@ -145,13 +145,13 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
           model: modelNew,
           events: [
             {
-              t: 'solved'
+              t: 'solved',
             },
             {
               t: 'used-hint',
-              groupId: nextHintGroupId
-            }
-          ]
+              groupId: nextHintGroupId,
+            },
+          ],
         }
       }
 
@@ -160,15 +160,15 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
         events: [
           {
             t: 'used-hint',
-            groupId: nextHintGroupId
-          }
-        ]
+            groupId: nextHintGroupId,
+          },
+        ],
       }
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -194,12 +194,12 @@ export const isAnyShowingHint = (model: Model): boolean => {
 export const resetUsedHints = <TModel extends Model>(model: TModel): TModel => {
   return {
     ...model,
-    usedHints: {}
+    usedHints: {},
   }
 }
 
 export const toUsedHints = (
-  model: Model
+  model: Model,
 ): {
   [flowGroupId in FlowGroupId]?: FlowGroupId
 } => {
@@ -210,7 +210,7 @@ export const toFlow = (input: { model: Model; flow: Variant.Model }): Variant.Mo
   return {
     ...input.flow,
     pipesBySourceId: input.model.pipesBySourceId,
-    terminalsByGroupId: input.model.terminalsByGroupId
+    terminalsByGroupId: input.model.terminalsByGroupId,
   }
 }
 
@@ -224,6 +224,6 @@ export const viewUseHintAction = (input: {
     icon: (input) => <IconLightbulb {...input} />,
     label: input.ctx.t('game.hint'),
     onClick: () => input.dispatch({ t: 'user-clicked-use-hint' }),
-    disabled: input.disabled
+    disabled: input.disabled,
   }
 }

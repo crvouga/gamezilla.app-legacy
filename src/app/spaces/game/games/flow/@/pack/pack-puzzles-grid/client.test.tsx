@@ -21,14 +21,14 @@ const Fixture = async () => {
   const pack = await Pack.random({ puzzleIds: [puzzle.id], createdBy: f.ctx.currentUserId })
   const ctx: PackGridClientCtx = {
     ...f.ctx,
-    pack
+    pack,
   }
 
   const updates = (initial: ModelClient, msgs: Input[]) => {
     const outputs: ReturnType<typeof PackPuzzlesGridClient.update>[] = [
       {
-        model: initial
-      }
+        model: initial,
+      },
     ]
 
     let model = initial
@@ -37,7 +37,7 @@ const Fixture = async () => {
       const outputNew = PackPuzzlesGridClient.update({
         ctx,
         model,
-        ...msg
+        ...msg,
       })
       model = outputNew.model
       outputs.push(outputNew)
@@ -56,7 +56,7 @@ const Fixture = async () => {
   }
 
   const init = {
-    model: PackPuzzlesGridClient.initClient
+    model: PackPuzzlesGridClient.initClient,
   }
 
   return {
@@ -65,7 +65,7 @@ const Fixture = async () => {
     pack,
     puzzle,
     ctx,
-    update
+    update,
   }
 }
 
@@ -78,11 +78,11 @@ const msgServerListedByPuzzlesByIdOk = (puzzles: Puzzle[]): Input => ({
         items: puzzles,
         limit: puzzles.length,
         offset: 0,
-        total: puzzles.length
-      }
+        total: puzzles.length,
+      },
     },
-    causedBy: null
-  }
+    causedBy: null,
+  },
 })
 
 const isSubset = <T,>(subArray: T[], superArray: T[]): boolean => {
@@ -99,9 +99,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init.model, [
       {
         msg: {
-          t: 'user-observed-grid'
-        }
-      }
+          t: 'user-observed-grid',
+        },
+      },
     ])
     expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(true)
   })
@@ -112,9 +112,9 @@ describe(import.meta.file, () => {
       msgServerListedByPuzzlesByIdOk([f.puzzle]),
       {
         msg: {
-          t: 'user-observed-grid'
-        }
-      }
+          t: 'user-observed-grid',
+        },
+      },
     ])
     expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(false)
   })
@@ -124,9 +124,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init.model, [
       {
         msg: {
-          t: 'elapsed'
-        }
-      }
+          t: 'elapsed',
+        },
+      },
     ])
     expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(true)
   })
@@ -136,12 +136,12 @@ describe(import.meta.file, () => {
     const output = f.update(f.init.model, [
       {
         msg: {
-          t: 'user-observed-grid'
-        }
-      }
+          t: 'user-observed-grid',
+        },
+      },
     ])
     expect(
-      didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id' && areEqualSets(msg.puzzleIds, f.pack.puzzleIds))
+      didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id' && areEqualSets(msg.puzzleIds, f.pack.puzzleIds)),
     ).toBe(true)
   })
 
@@ -159,11 +159,11 @@ describe(import.meta.file, () => {
           t: 'listed-puzzles-by-id',
           listed: {
             t: 'err',
-            error: 'Some error'
+            error: 'Some error',
           },
-          causedBy: null
-        }
-      }
+          causedBy: null,
+        },
+      },
     ])
 
     expect(didShowErrorSm(output, f.ctx.t('app.something-went-wrong'))).toBe(true)
@@ -174,9 +174,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init.model, [
       {
         msg: {
-          t: 'user-observed-grid'
-        }
-      }
+          t: 'user-observed-grid',
+        },
+      },
     ])
     expect(RequestResponse.isRequesting(output.model.request)).toBe(true)
   })
@@ -186,10 +186,10 @@ describe(import.meta.file, () => {
     const output = f.update(f.init.model, [
       {
         msg: {
-          t: 'user-observed-grid'
-        }
+          t: 'user-observed-grid',
+        },
       },
-      msgServerListedByPuzzlesByIdOk([f.puzzle])
+      msgServerListedByPuzzlesByIdOk([f.puzzle]),
     ])
     expect(RequestResponse.isOk(output.model.request)).toBe(true)
   })
@@ -199,18 +199,18 @@ describe(import.meta.file, () => {
     const output = f.update(f.init.model, [
       {
         msg: {
-          t: 'user-observed-grid'
-        }
+          t: 'user-observed-grid',
+        },
       },
       {
         ctx: {
           ...f.ctx,
-          now: Posix.future(f.ctx.now, TimeSpan.minutes(5))
+          now: Posix.future(f.ctx.now, TimeSpan.minutes(5)),
         },
         msg: {
-          t: 'elapsed'
-        }
-      }
+          t: 'elapsed',
+        },
+      },
     ])
     expect(RequestResponse.isTimedOut(output.model.request)).toBe(true)
   })

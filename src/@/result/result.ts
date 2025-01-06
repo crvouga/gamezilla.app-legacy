@@ -16,7 +16,7 @@ export type Err<T> = { readonly t: 'err'; readonly error: T }
 
 const is = <TError, TValue>(
   isErr: (x: unknown) => x is TError,
-  isOk: (x: unknown) => x is TValue
+  isOk: (x: unknown) => x is TValue,
 ): ((x: unknown) => x is ResultInternal<TError, TValue>) => {
   return (x): x is ResultInternal<TError, TValue> => {
     if (x === undefined) {
@@ -162,7 +162,7 @@ export const ResultInternal = {
   fromNullable,
   unwrapOr,
   combine,
-  unwrap
+  unwrap,
 }
 
 //
@@ -199,14 +199,14 @@ export const isNotAsked = <TError, TValue>(result: RemoteResultInternal<TError, 
 }
 
 export const isPending = <TError, TValue>(
-  result: RemoteResultInternal<TError, TValue>
+  result: RemoteResultInternal<TError, TValue>,
 ): result is NotAsked | Loading => {
   return isNotAsked(result) || isLoading(result)
 }
 
 export const remoteResultMap = <E, A, B>(
   result: RemoteResultInternal<E, A>,
-  mapper: (a: A) => B
+  mapper: (a: A) => B,
 ): RemoteResultInternal<E, B> => {
   switch (result.t) {
     case 'not-asked':
@@ -225,5 +225,5 @@ export const RemoteResultInternal = {
   NotAsked,
   Err,
   Ok,
-  is
+  is,
 }

@@ -12,7 +12,7 @@ export type Seconds = Brand<number, 'Seconds'>
 
 export const tick = ({
   turn,
-  clock
+  clock,
 }: {
   turn: Board.Color
   clock: Clock
@@ -27,7 +27,7 @@ export const tick = ({
     return {
       type: 'TimeIsUp',
       clock,
-      timeIsUp: 'w'
+      timeIsUp: 'w',
     }
   }
 
@@ -35,7 +35,7 @@ export const tick = ({
     return {
       type: 'TimeIsUp',
       clock,
-      timeIsUp: 'b'
+      timeIsUp: 'b',
     }
   }
 
@@ -43,21 +43,21 @@ export const tick = ({
     preset: clock.preset,
     times: {
       ...clock.times,
-      [turn]: toSeconds(clock.times[turn] - 1)
-    }
+      [turn]: toSeconds(clock.times[turn] - 1),
+    },
   }
 
   if (clockNew.times[turn] === 0) {
     return {
       type: 'TimeIsUp',
       clock: clockNew,
-      timeIsUp: turn
+      timeIsUp: turn,
     }
   }
 
   return {
     type: 'Ticked',
-    clock: clockNew
+    clock: clockNew,
   }
 }
 
@@ -74,13 +74,13 @@ export type Preset = 'Bullet' | 'Blitz' | 'Fast'
 export const presets: { [preset in Preset]: Preset } = {
   Bullet: 'Bullet',
   Blitz: 'Blitz',
-  Fast: 'Fast'
+  Fast: 'Fast',
 }
 
 export const presetToSeconds: { [preset in Preset]: Seconds } = {
   Bullet: toSeconds(60 * 1),
   Blitz: toSeconds(60 * 3),
-  Fast: toSeconds(60 * 10)
+  Fast: toSeconds(60 * 10),
 }
 
 export const presetToClock = (preset: Preset): Clock => {
@@ -89,8 +89,8 @@ export const presetToClock = (preset: Preset): Clock => {
     preset,
     times: {
       w: seconds,
-      b: seconds
-    }
+      b: seconds,
+    },
   }
 }
 

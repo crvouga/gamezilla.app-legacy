@@ -7,7 +7,7 @@ import { FixtureSpaceServer } from '../@/fixture/server'
 const Fixture = async () => {
   const f = await FixtureSpaceServer()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -23,9 +23,9 @@ describe(import.meta.file, () => {
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
-            userId: f.clientA.userId
-          })
-        }
+            userId: f.clientA.userId,
+          }),
+        },
       },
       {
         msgClient: {
@@ -34,10 +34,10 @@ describe(import.meta.file, () => {
           c: withEventMetaAt(1, {
             t: 'user-joined-space',
             spaceId,
-            userId: f.clientB.userId
-          })
-        }
-      }
+            userId: f.clientB.userId,
+          }),
+        },
+      },
     ])
 
     expect(didSendMsgToClient(output, (m) => m.t === 'synced')).toBe(true)

@@ -31,11 +31,11 @@ export const Polymorphic = <TFunction extends (variant: any, ...args: any[]) => 
 
   run.impl = <TVariant extends Variant, TImplOutput extends TOutput | Variant>(
     predicate: (variant: Variant) => variant is TVariant,
-    implementation: (variant: TVariant, ...args: RestParameters) => TImplOutput
+    implementation: (variant: TVariant, ...args: RestParameters) => TImplOutput,
   ) => {
     implementations.push({
       predicate,
-      implementation
+      implementation,
     })
   }
 

@@ -9,20 +9,20 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', 'B', 'C'],
       [' ', ' ', ' '],
-      ['A', 'B', 'C']
+      ['A', 'B', 'C'],
     ])
 
     const solution = await FlowAlgoSolveAsync.solve(
       flow,
       Logger({
-        t: 'noop'
-      })
+        t: 'noop',
+      }),
     )
 
     const expected = FlowGridShorthand.toGrid([
       ['A', 'B', 'C'],
       ['a', 'b', 'c'],
-      ['A', 'B', 'C']
+      ['A', 'B', 'C'],
     ])
 
     expect(solution).toBeTruthy()

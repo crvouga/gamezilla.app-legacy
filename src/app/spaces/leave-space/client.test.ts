@@ -9,7 +9,7 @@ import { SpacesCoreClient } from '../core/client'
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -24,9 +24,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-leave-space-button',
-          spaceId: spaceId
-        }
-      }
+          spaceId: spaceId,
+        },
+      },
     ])
     expect(didPushRoute(output, (x) => x.t === 'space-list')).toBe(true)
   })
@@ -45,10 +45,10 @@ describe(import.meta.file, () => {
           c: withEventMetaAt(2, {
             t: 'user-left-space',
             spaceId,
-            userId
-          })
-        }
-      }
+            userId,
+          }),
+        },
+      },
     ])
 
     expect(didPushRoute(output)).toBe(false)
@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       userStartedSpace(0, f.ctx.currentUserId, spaceId),
       userJoinedSpace(1, f.ctx.currentUserId, spaceId),
-      userLeftSpace(2, f.ctx.currentUserId, spaceId)
+      userLeftSpace(2, f.ctx.currentUserId, spaceId),
     ])
     expect(didShowToast(output)).toBe(true)
   })
@@ -74,9 +74,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-leave-space-button',
-          spaceId
-        }
-      }
+          spaceId,
+        },
+      },
     ])
     const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
     expect(currentUserSpaceId).toEqual(null)
@@ -91,9 +91,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-leave-space-button',
-          spaceId
-        }
-      }
+          spaceId,
+        },
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })

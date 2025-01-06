@@ -10,15 +10,15 @@ const update: SpaceClientModule['update'] = ({ msg, model }) => {
         msgCmd: [
           pushRoute({
             n: 'spaces',
-            t: 'space-list'
+            t: 'space-list',
           }),
-          playSound(APP_SOUND.navBackwardMin)
-        ]
+          playSound(APP_SOUND.navBackwardMin),
+        ],
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -29,7 +29,7 @@ const ViewIconButton: SpaceClientModule['View'] = (input) => {
     <IconButton
       onClick={() =>
         input.dispatch({
-          t: 'clicked-go-home-button'
+          t: 'clicked-go-home-button',
         })
       }
       label={input.ctx.t('spaces.home')}
@@ -40,5 +40,5 @@ const ViewIconButton: SpaceClientModule['View'] = (input) => {
 
 export const GoHome = {
   update,
-  ViewIconButton
+  ViewIconButton,
 }

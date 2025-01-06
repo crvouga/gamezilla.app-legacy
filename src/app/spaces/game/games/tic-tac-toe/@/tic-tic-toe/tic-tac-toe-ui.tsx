@@ -8,7 +8,7 @@ import {
   type Slot,
   allPositions,
   toSlot,
-  toWins
+  toWins,
 } from './tic-tac-toe'
 
 export const gameTheme = {
@@ -16,7 +16,7 @@ export const gameTheme = {
   line: '#0DA192',
   cross: '#545454',
   naught: '#F2EBD3',
-  text: '#fff'
+  text: '#fff',
 }
 
 const scale = 1_000
@@ -65,7 +65,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
           }
 
           return <g key={key} />
-        })
+        }),
       )}
 
       <ViewWins board={board} />
@@ -142,7 +142,7 @@ export function drawCross(node: HTMLElement) {
       continue
     }
     draw(line, {
-      duration: DRAW_DURATION
+      duration: DRAW_DURATION,
     })
   }
 }
@@ -158,7 +158,7 @@ export function undrawCross(node: HTMLElement) {
       continue
     }
     undraw(line, {
-      duration: UNDRAW_DURATION
+      duration: UNDRAW_DURATION,
     })
   }
 }
@@ -171,7 +171,7 @@ export function onEnterWin(node: HTMLElement) {
   }
   draw(node, {
     duration: 200,
-    delay: 300
+    delay: 300,
   })
 }
 
@@ -180,7 +180,7 @@ export function onExitWin(node: HTMLElement) {
     return
   }
   undraw(node, {
-    duration: UNDRAW_DURATION
+    duration: UNDRAW_DURATION,
   })
 }
 
@@ -192,18 +192,18 @@ function draw(node: SVGCircleElement | SVGLineElement | SVGRectElement, option?:
   node.animate(
     [
       {
-        strokeDashoffset: length
+        strokeDashoffset: length,
       },
       {
-        strokeDashoffset: 0
-      }
+        strokeDashoffset: 0,
+      },
     ],
     {
       easing: 'ease-in-out',
       fill: 'both',
       duration: option?.duration ?? 1000,
-      delay: option?.delay ?? 0
-    }
+      delay: option?.delay ?? 0,
+    },
   )
 }
 
@@ -215,18 +215,18 @@ function undraw(node: SVGCircleElement | SVGLineElement | SVGRectElement, option
   node.animate(
     [
       {
-        strokeDashoffset: 0
+        strokeDashoffset: 0,
       },
       {
-        strokeDashoffset: length
-      }
+        strokeDashoffset: length,
+      },
     ],
     {
       easing: 'ease-in-out',
       fill: 'both',
       duration: option?.duration ?? 1000,
-      delay: option?.delay ?? 0
-    }
+      delay: option?.delay ?? 0,
+    },
   )
 }
 
@@ -240,7 +240,7 @@ const lines = [
   { x1: 1, y1: 0, x2: 1, y2: 3 },
   { x1: 2, y1: 0, x2: 2, y2: 3 },
   { x1: 0, y1: 1, x2: 3, y2: 1 },
-  { x1: 0, y1: 2, x2: 3, y2: 2 }
+  { x1: 0, y1: 2, x2: 3, y2: 2 },
 ]
 
 export const ViewSlot = ({
@@ -249,7 +249,7 @@ export const ViewSlot = ({
   cy,
   r,
   color,
-  strokeWidth
+  strokeWidth,
 }: {
   color?: string
   strokeWidth?: number
@@ -275,7 +275,7 @@ const Cross = ({
   cy,
   r,
   color = gameTheme.cross,
-  strokeWidth = 0.1
+  strokeWidth = 0.1,
 }: {
   color?: string
   r: number
@@ -298,7 +298,7 @@ const Naught = ({
   cy,
   r,
   color = gameTheme.naught,
-  strokeWidth = 0.1
+  strokeWidth = 0.1,
 }: {
   color?: string
   strokeWidth?: number
@@ -322,12 +322,12 @@ export const CoverArt = (input: { className?: string }) => {
     [{ row: 0, column: 0 }, 'X'],
     [{ row: 0, column: 1 }, Empty],
     [{ row: 1, column: 0 }, Empty],
-    [{ row: 1, column: 1 }, 'O']
+    [{ row: 1, column: 1 }, 'O'],
   ]
 
   const LINES = [
     { x1: 1, y1: 0, x2: 1, y2: 3 },
-    { x1: 0, y1: 1, x2: 3, y2: 1 }
+    { x1: 0, y1: 1, x2: 3, y2: 1 },
   ] as const
 
   return (

@@ -27,5 +27,5 @@ const derive = (flow: Flow.Model): FlowId => {
 
 export const FlowId = {
   ...parser,
-  derive
+  derive,
 }

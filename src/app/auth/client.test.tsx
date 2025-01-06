@@ -7,7 +7,7 @@ const Fixture = async () => {
   const f = await FixtureAuthClient()
 
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
     const output = AuthClient.update({
       ctx: f.ctx,
       model: f.initial.model,
-      msg: { t: 'user-clicked-login-with-phone' }
+      msg: { t: 'user-clicked-login-with-phone' },
     })
     expect(didPlaySound(output)).toBe(true)
     expect(didPushRoute(output, (route) => route.n === 'auth-login' && route.t === 'login-sms-request')).toBe(true)
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
     const output = AuthClient.update({
       ctx: f.ctx,
       model: f.initial.model,
-      msg: { t: 'user-clicked-login-with-email' }
+      msg: { t: 'user-clicked-login-with-email' },
     })
     expect(didPlaySound(output)).toBe(true)
     expect(didPushRoute(output, (route) => route.n === 'auth-login' && route.t === 'login-email-send-link')).toBe(true)

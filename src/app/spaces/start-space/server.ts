@@ -16,5 +16,5 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = ({ msgCore }) => {
 }
 
 export const StartSpaceServer = {
-  update
+  update,
 }

@@ -11,7 +11,7 @@ describe(import.meta.file, () => {
   it('should replace named parameter with string', async () => {
     const expected = "SELECT * FROM users WHERE name = 'John'"
     const actual = Sql.to('SELECT * FROM users WHERE name = :name', {
-      name: 'John'
+      name: 'John',
     })
     expect(actual).toBe(expected)
   })
@@ -19,7 +19,7 @@ describe(import.meta.file, () => {
   it('should handle SQL injection attempt', async () => {
     const expected = "SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'"
     const actual = Sql.to('SELECT * FROM users WHERE id = :id', {
-      id: "1' OR '1' = '1"
+      id: "1' OR '1' = '1",
     })
     expect(actual).toBe(expected)
   })
@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
   it('should prevent SQL injection', async () => {
     const expected = "SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'"
     const actual = Sql.to('SELECT * FROM users WHERE id = :id', {
-      id: "1' OR '1' = '1"
+      id: "1' OR '1' = '1",
     })
     expect(actual).toBe(expected)
   })
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
     const expected = "SELECT * FROM users WHERE id = 2 AND name = 'John'"
     const actual = Sql.to('SELECT * FROM users WHERE id = :id AND name = :name', {
       id: 2,
-      name: 'John'
+      name: 'John',
     })
     expect(actual).toBe(expected)
   })
@@ -44,7 +44,7 @@ describe(import.meta.file, () => {
   it('should handle variables not in query', async () => {
     const expected = 'SELECT * FROM users'
     const actual = Sql.to('SELECT * FROM users', {
-      id: 3
+      id: 3,
     })
     expect(actual).toBe(expected)
   })
@@ -64,7 +64,7 @@ describe(import.meta.file, () => {
   it('should handle non-string parameter values', async () => {
     const expected = 'SELECT * FROM users WHERE age > 30'
     const actual = Sql.to('SELECT * FROM users WHERE age > :age', {
-      age: 30
+      age: 30,
     })
     expect(actual).toBe(expected)
   })
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
   it('should handle non-string parameter names', async () => {
     const expected = 'SELECT * FROM users WHERE age > 30'
     const actual = Sql.to('SELECT * FROM users WHERE age > :age', {
-      age: 30
+      age: 30,
     })
     expect(actual).toBe(expected)
   })
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
   it('should handle parameter names with underscores', async () => {
     const expected = "SELECT * FROM users WHERE first_name = 'John'"
     const actual = Sql.to('SELECT * FROM users WHERE first_name = :first_name', {
-      first_name: 'John'
+      first_name: 'John',
     })
     expect(actual).toBe(expected)
   })
@@ -91,8 +91,8 @@ describe(import.meta.file, () => {
       'SELECT * FROM users WHERE phone_number = :phone_number AND phone_number_country = :phone_number_country',
       {
         phone_number: '555-555-5555',
-        phone_number_country: 'US'
-      }
+        phone_number_country: 'US',
+      },
     )
     expect(actual).toBe(expected)
   })
@@ -100,8 +100,8 @@ describe(import.meta.file, () => {
   it('should handle json columns', async () => {
     expect(
       Sql.to("SELECT * FROM users WHERE meta->>'email' = :email", {
-        email: 'it@email.com'
-      })
+        email: 'it@email.com',
+      }),
     ).toBe("SELECT * FROM users WHERE meta->>'email' = 'it@email.com'")
   })
 
@@ -109,15 +109,15 @@ describe(import.meta.file, () => {
     const jsonData = {
       key: 'value',
       nested: {
-        anotherKey: 'anotherValue'
-      }
+        anotherKey: 'anotherValue',
+      },
     }
 
     const sqlQuery = 'INSERT INTO users_data (user_id, data) VALUES (:user_id, :data)'
 
     const variables: Sql.Vars = {
       user_id: 1,
-      data: Sql.json(jsonData)
+      data: Sql.json(jsonData),
     }
 
     const expectedResult = `INSERT INTO users_data (user_id, data) VALUES (1, '{"key":"value","nested":{"anotherKey":"anotherValue"}}')`
@@ -130,7 +130,7 @@ describe(import.meta.file, () => {
   it('should be safe against SQL injection', async () => {
     const sqlQuery = 'SELECT * FROM users WHERE id = :id'
     const variables: Sql.Vars = {
-      id: "1' OR '1' = '1"
+      id: "1' OR '1' = '1",
     }
 
     const expectedResult = "SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'"
@@ -144,7 +144,7 @@ describe(import.meta.file, () => {
     const maliciousInput = "1'; DELETE FROM users --"
     const query = 'SELECT * FROM users WHERE name = :name'
     const variables: Sql.Vars = {
-      name: maliciousInput
+      name: maliciousInput,
     }
 
     const safeQuery = Sql.to(query, variables)
@@ -156,7 +156,7 @@ describe(import.meta.file, () => {
     const maliciousInput = "1' OR '1' = '1"
     const query = 'SELECT * FROM users WHERE id = :id'
     const variables: Sql.Vars = {
-      id: maliciousInput
+      id: maliciousInput,
     }
 
     const safeQuery = Sql.to(query, variables)
@@ -167,7 +167,7 @@ describe(import.meta.file, () => {
     const maliciousInput = '1 UNION SELECT password, 1, 2, 3 FROM admins --'
     const query = 'SELECT * FROM users WHERE id = :id'
     const variables: Sql.Vars = {
-      id: maliciousInput
+      id: maliciousInput,
     }
 
     const safeQuery = Sql.to(query, variables)
@@ -178,7 +178,7 @@ describe(import.meta.file, () => {
     const maliciousInput = '1; DELETE FROM users'
     const query = 'SELECT * FROM users WHERE id = :id'
     const variables: Sql.Vars = {
-      id: maliciousInput
+      id: maliciousInput,
     }
 
     const safeQuery = Sql.to(query, variables)
@@ -189,7 +189,7 @@ describe(import.meta.file, () => {
     const maliciousInput = 'admin%00'
     const query = 'SELECT * FROM users WHERE username = :username'
     const variables: Sql.Vars = {
-      username: maliciousInput
+      username: maliciousInput,
     }
 
     const safeQuery = Sql.to(query, variables)
@@ -200,7 +200,7 @@ describe(import.meta.file, () => {
     const maliciousInput = 1
     const query = 'SELECT * FROM users WHERE id = :id'
     const variables: Sql.Vars = {
-      id: maliciousInput
+      id: maliciousInput,
     }
 
     const safeQuery = Sql.to(query, variables)
@@ -211,7 +211,7 @@ describe(import.meta.file, () => {
     const maliciousInput = '1 --'
     const query = 'SELECT * FROM users WHERE id = :id'
     const variables: Sql.Vars = {
-      id: maliciousInput
+      id: maliciousInput,
     }
 
     const safeQuery = Sql.to(query, variables)
@@ -223,7 +223,7 @@ describe(import.meta.file, () => {
 
     const actual = Sql.to('INSERT INTO users (name, emails) VALUES (:name, ARRAY[:emails])', {
       name: 'John',
-      emails: Sql.commas(['email@email.com', 'email@email.com'])
+      emails: Sql.commas(['email@email.com', 'email@email.com']),
     })
 
     expect(actual).toBe(expected)
@@ -232,7 +232,7 @@ describe(import.meta.file, () => {
   it('should be able to handle "IN" clause', async () => {
     const expected = 'SELECT * FROM users WHERE id IN (1, 2, 3)'
     const actual = Sql.to('SELECT * FROM users WHERE id IN (:ids)', {
-      ids: Sql.commas([1, 2, 3])
+      ids: Sql.commas([1, 2, 3]),
     })
     expect(actual).toBe(expected)
   })

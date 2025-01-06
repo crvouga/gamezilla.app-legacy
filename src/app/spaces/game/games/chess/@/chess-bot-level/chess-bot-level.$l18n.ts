@@ -24,7 +24,7 @@ export const translations: Translations<Text> = {
         default:
           return 'Unknown'
       }
-    }
+    },
   },
   ar: {
     'chess.bot-level': (botLevel) => {
@@ -42,7 +42,7 @@ export const translations: Translations<Text> = {
         default:
           return 'غير معروف'
       }
-    }
+    },
   },
   de: {
     'chess.bot-level': (botLevel) => {
@@ -60,7 +60,7 @@ export const translations: Translations<Text> = {
         default:
           return 'Unbekannt'
       }
-    }
+    },
   },
   es: {
     'chess.bot-level': (botLevel) => {
@@ -78,7 +78,7 @@ export const translations: Translations<Text> = {
         default:
           return 'Desconocido'
       }
-    }
+    },
   },
   fr: {
     'chess.bot-level': (botLevel) => {
@@ -96,7 +96,7 @@ export const translations: Translations<Text> = {
         default:
           return 'Inconnu'
       }
-    }
+    },
   },
   hi: {
     'chess.bot-level': (botLevel) => {
@@ -114,7 +114,7 @@ export const translations: Translations<Text> = {
         default:
           return 'अज्ञात'
       }
-    }
+    },
   },
   it: {
     'chess.bot-level': (botLevel) => {
@@ -132,7 +132,7 @@ export const translations: Translations<Text> = {
         default:
           return 'Sconosciuto'
       }
-    }
+    },
   },
   ja: {
     'chess.bot-level': (botLevel) => {
@@ -150,7 +150,7 @@ export const translations: Translations<Text> = {
         default:
           return '不明'
       }
-    }
+    },
   },
   ko: {
     'chess.bot-level': (botLevel) => {
@@ -168,7 +168,7 @@ export const translations: Translations<Text> = {
         default:
           return '알 수 없음'
       }
-    }
+    },
   },
   pt: {
     'chess.bot-level': (botLevel) => {
@@ -186,7 +186,7 @@ export const translations: Translations<Text> = {
         default:
           return 'Desconhecido'
       }
-    }
+    },
   },
   ru: {
     'chess.bot-level': (botLevel) => {
@@ -204,7 +204,7 @@ export const translations: Translations<Text> = {
         default:
           return 'Неизвестно'
       }
-    }
+    },
   },
   zh: {
     'chess.bot-level': (botLevel) => {
@@ -222,6 +222,6 @@ export const translations: Translations<Text> = {
         default:
           return '未知'
       }
-    }
-  }
+    },
+  },
 }

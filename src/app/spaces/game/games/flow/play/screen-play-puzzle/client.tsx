@@ -19,7 +19,7 @@ const update: ClientModule['update'] = (input) => {
     { model: input.model },
     (model) => updateFromMsgCore({ ...input, model }),
     (model) => CopyPuzzleClient.update({ ...input, model }),
-    (model) => LastPuzzleClient.update({ ...input, model })
+    (model) => LastPuzzleClient.update({ ...input, model }),
   )
 }
 
@@ -27,62 +27,62 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
   switch (input.msgCore?.t) {
     case 'user-clicked-open-pack-list-item': {
       return {
-        model: input.model
+        model: input.model,
       }
     }
 
     case 'user-clicked-reset-puzzle': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navTransitionLeft)]
+        msgCmd: [playSound(APP_SOUND.navTransitionLeft)],
       }
     }
 
     case 'user-clicked-exit-puzzle': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
 
     case 'user-clicked-next-puzzle': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
 
     case 'user-clicked-prev-puzzle': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
 
     case 'user-closed-puzzle-complete-dialog': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
 
     case 'user-toggled-action-buttons-drawer': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     case 'got-flow-play-msg': {
       if (input.modelCore.screen.t !== 'screen-play-puzzle') {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
       if (input.modelCore.screen.puzzleResult.t === 'not-found') {
         return {
-          model: input.model
+          model: input.model,
         }
       }
       const flowPlay =
@@ -92,17 +92,17 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
       const output = FlowPlay.update({
         msg: input.msgCore.c,
         model: flowPlay,
-        ctx: FlowPlay.initCtx({ flowPuzzle: input.modelCore.screen.puzzleResult.c })
+        ctx: FlowPlay.initCtx({ flowPuzzle: input.modelCore.screen.puzzleResult.c }),
       })
 
       return {
         model: input.model,
-        msgCmd: FlowPlay.eventsToClientCmd(input.ctx, output.events)
+        msgCmd: FlowPlay.eventsToClientCmd(input.ctx, output.events),
       }
     }
   }
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
@@ -205,14 +205,14 @@ const View: ClientModule['View'] = (input) => {
                   nextPuzzle: nextPuzzle
                     ? {
                         t: 'got',
-                        c: nextPuzzle
+                        c: nextPuzzle,
                       }
                     : {
-                        t: 'not-found'
+                        t: 'not-found',
                       },
-                  nextPuzzleIndex
-                }
-              })
+                  nextPuzzleIndex,
+                },
+              }),
           }),
 
           flowPuzzle.t === 'got' && !isSolved
@@ -226,9 +226,9 @@ const View: ClientModule['View'] = (input) => {
                     c: {
                       t: 'got-flow-play-msg',
                       c,
-                      userId: input.ctx.currentUserId
-                    }
-                  })
+                      userId: input.ctx.currentUserId,
+                    },
+                  }),
               })
             : null,
 
@@ -239,12 +239,12 @@ const View: ClientModule['View'] = (input) => {
               input.dispatch({
                 t: 'got-msg-core',
                 c: {
-                  t: 'user-clicked-reset-puzzle'
-                }
-              })
+                  t: 'user-clicked-reset-puzzle',
+                },
+              }),
           }),
 
-          flowPuzzle.t === 'not-found' ? null : CopyPuzzleClient.viewButtonAction(input)
+          flowPuzzle.t === 'not-found' ? null : CopyPuzzleClient.viewButtonAction(input),
         ]}
       />
 
@@ -284,8 +284,8 @@ const ViewSolvedModal: ClientModule['View'] = (input) => {
         input.dispatch({
           t: 'got-msg-core',
           c: {
-            t: 'user-closed-puzzle-complete-dialog'
-          }
+            t: 'user-closed-puzzle-complete-dialog',
+          },
         })
       }
     >
@@ -302,13 +302,13 @@ const ViewSolvedModal: ClientModule['View'] = (input) => {
                 nextPuzzle: nextPuzzle
                   ? {
                       t: 'got',
-                      c: nextPuzzle
+                      c: nextPuzzle,
                     }
                   : {
-                      t: 'not-found'
+                      t: 'not-found',
                     },
-                nextPuzzleIndex
-              }
+                nextPuzzleIndex,
+              },
             })
           }
         />
@@ -319,5 +319,5 @@ const ViewSolvedModal: ClientModule['View'] = (input) => {
 
 export const ScreenPuzzleClient = {
   View,
-  update
+  update,
 }

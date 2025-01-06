@@ -15,7 +15,7 @@ import {
   replaceRoute,
   sendToServer,
   showToast,
-  type AppClientCmd
+  type AppClientCmd,
 } from '~/app/@/client/cmd'
 import { BaseClientCtx } from '~/app/@/client/ctx'
 import { ClientEvt } from '~/app/@/client/evt'
@@ -69,8 +69,8 @@ const init: Module['init'] = () => {
       sendCode: NotAsked,
 
       verifiedCodeAt: null,
-      verifyCode: RemoteResult.NotAsked
-    }
+      verifyCode: RemoteResult.NotAsked,
+    },
   }
 }
 
@@ -99,7 +99,7 @@ const update: Module['update'] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
-    (model) => updateAutoFocus({ ...input, model })
+    (model) => updateAutoFocus({ ...input, model }),
   )
 }
 
@@ -110,27 +110,27 @@ const updateAutoFocus: Module['update'] = (input) => {
         case 'login-sms-request': {
           return {
             model: input.model,
-            msgCmd: [focusView(PHONE_NUMBER_INPUT_VIEW_ID)]
+            msgCmd: [focusView(PHONE_NUMBER_INPUT_VIEW_ID)],
           }
         }
 
         case 'login-sms-verify': {
           return {
             model: input.model,
-            msgCmd: [focusView(CODE_INPUT_VIEW_ID)]
+            msgCmd: [focusView(CODE_INPUT_VIEW_ID)],
           }
         }
 
         default: {
           return {
-            model: input.model
+            model: input.model,
           }
         }
       }
     }
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -145,9 +145,9 @@ const updateFromMsg: Module['update'] = (input) => {
           msgCmd: [
             replaceRoute({
               n: 'auth-login',
-              t: 'login-sms-request'
-            })
-          ]
+              t: 'login-sms-request',
+            }),
+          ],
         }
       }
 
@@ -156,9 +156,9 @@ const updateFromMsg: Module['update'] = (input) => {
         msgCmd: [
           replaceRoute({
             n: 'auth-login',
-            t: 'login'
-          })
-        ]
+            t: 'login',
+          }),
+        ],
       }
     }
 
@@ -167,8 +167,8 @@ const updateFromMsg: Module['update'] = (input) => {
         model: {
           ...input.model,
           inputtedPhoneNumber: input.msg.phoneNumber,
-          phoneNumberError: null
-        }
+          phoneNumberError: null,
+        },
       }
     }
 
@@ -177,8 +177,8 @@ const updateFromMsg: Module['update'] = (input) => {
         model: {
           ...input.model,
           inputtedPhoneNumber: '',
-          phoneNumberError: null
-        }
+          phoneNumberError: null,
+        },
       }
     }
 
@@ -186,8 +186,8 @@ const updateFromMsg: Module['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          countryCodeInput: input.msg.countryCode
-        }
+          countryCodeInput: input.msg.countryCode,
+        },
       }
     }
 
@@ -198,9 +198,9 @@ const updateFromMsg: Module['update'] = (input) => {
         return {
           model: {
             ...input.model,
-            phoneNumberError: input.ctx.t('auth-sms.invalid-phone-number')
+            phoneNumberError: input.ctx.t('auth-sms.invalid-phone-number'),
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorSm), focusView(PHONE_NUMBER_INPUT_VIEW_ID)]
+          msgCmd: [playSound(APP_SOUND.alertErrorSm), focusView(PHONE_NUMBER_INPUT_VIEW_ID)],
         }
       }
 
@@ -208,16 +208,16 @@ const updateFromMsg: Module['update'] = (input) => {
         model: {
           ...input.model,
           sendCode: RemoteResult.Loading,
-          sentCodeAt: input.ctx.now
+          sentCodeAt: input.ctx.now,
         },
         msgCmd: [
           sendToServer({
             t: 'user-clicked-send-code-button',
             phoneNumber: phoneNumber.value,
-            preferredLanguage: input.ctx.navigatorLanguage
+            preferredLanguage: input.ctx.navigatorLanguage,
           }),
-          playSound(APP_SOUND.tap)
-        ]
+          playSound(APP_SOUND.tap),
+        ],
       }
     }
 
@@ -226,8 +226,8 @@ const updateFromMsg: Module['update'] = (input) => {
         model: {
           ...input.model,
           inputtedCode: input.msg.inputtedCode,
-          inputtedCodeError: null
-        }
+          inputtedCodeError: null,
+        },
       }
     }
 
@@ -236,8 +236,8 @@ const updateFromMsg: Module['update'] = (input) => {
         model: {
           ...input.model,
           inputtedCode: '',
-          inputtedCodeError: null
-        }
+          inputtedCodeError: null,
+        },
       }
     }
 
@@ -246,32 +246,32 @@ const updateFromMsg: Module['update'] = (input) => {
         return {
           model: {
             ...input.model,
-            inputtedCodeError: input.ctx.t('auth-sms.please-enter-code')
+            inputtedCodeError: input.ctx.t('auth-sms.please-enter-code'),
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorSm), focusView(CODE_INPUT_VIEW_ID)]
+          msgCmd: [playSound(APP_SOUND.alertErrorSm), focusView(CODE_INPUT_VIEW_ID)],
         }
       }
 
       return {
         model: {
           ...input.model,
-          verifyCode: RemoteResult.Loading
+          verifyCode: RemoteResult.Loading,
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
             t: 'user-clicked-verify-code-button',
             inputtedCode: input.model.inputtedCode,
-            phoneNumber: input.msg.phoneNumber
-          })
-        ]
+            phoneNumber: input.msg.phoneNumber,
+          }),
+        ],
       }
     }
 
     case 'time-passed': {
       return AppClientModule.andThen(
         {
-          model: input.model
+          model: input.model,
         },
         (model) => {
           if (
@@ -284,14 +284,14 @@ const updateFromMsg: Module['update'] = (input) => {
                 ...model,
                 sendCode: RemoteResult.Err({
                   t: 'database-error',
-                  error: input.ctx.t('app.something-went-wrong')
-                })
+                  error: input.ctx.t('app.something-went-wrong'),
+                }),
               },
-              msgCmd: [playSound(APP_SOUND.alertErrorMd)]
+              msgCmd: [playSound(APP_SOUND.alertErrorMd)],
             }
           }
           return {
-            model
+            model,
           }
         },
         (model) => {
@@ -305,23 +305,23 @@ const updateFromMsg: Module['update'] = (input) => {
                 ...model,
                 verifyCode: RemoteResult.Err({
                   t: 'database-error',
-                  error: 'Timed out. Server took too long to response'
-                })
+                  error: 'Timed out. Server took too long to response',
+                }),
               },
-              msgCmd: [playSound(APP_SOUND.alertErrorMd)]
+              msgCmd: [playSound(APP_SOUND.alertErrorMd)],
             }
           }
 
           return {
-            model
+            model,
           }
-        }
+        },
       )
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -336,9 +336,9 @@ const updateFromServer: Module['update'] = (input) => {
         return {
           model: {
             ...model,
-            sendCode: msgServer.sent
+            sendCode: msgServer.sent,
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorMd)]
+          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         }
       }
 
@@ -349,22 +349,22 @@ const updateFromServer: Module['update'] = (input) => {
           ...model,
           sendCode: msgServer.sent,
           verifyCode: RemoteResult.NotAsked,
-          inputtedCode: ''
+          inputtedCode: '',
         },
         msgCmd: [
           pushRoute({
             n: 'auth-login',
             t: 'login-sms-verify',
-            phoneNumber: msgServer.phoneNumber
+            phoneNumber: msgServer.phoneNumber,
           }),
           showToast(
             input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(msgServer.phoneNumber)),
             'info',
-            TimeSpan.seconds(4)
+            TimeSpan.seconds(4),
           ),
           focusView(CODE_INPUT_VIEW_ID),
-          playSound(APP_SOUND.navForwardMin)
-        ]
+          playSound(APP_SOUND.navForwardMin),
+        ],
       }
     }
 
@@ -373,22 +373,22 @@ const updateFromServer: Module['update'] = (input) => {
         return {
           model: {
             ...model,
-            verifyCode: msgServer.verified
+            verifyCode: msgServer.verified,
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorMd)]
+          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         }
       }
       return {
         model: {
           ...model,
-          verifyCode: msgServer.verified
-        }
+          verifyCode: msgServer.verified,
+        },
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -408,7 +408,7 @@ const subscriptions: Module['subscriptions'] = (input) => {
   if (input.model.sendCode.t === 'loading' || input.model.verifyCode.t === 'loading') {
     return Time.interval(INTERVAL_ID, TimeSpan.milliseconds(1000), (now) => ({
       t: 'time-passed',
-      now
+      now,
     }))
   }
 
@@ -452,7 +452,7 @@ const ViewSendCode: Module['View'] = (input) => {
       <TopBar
         onBack={() =>
           input.dispatch({
-            t: 'clicked-back-button'
+            t: 'clicked-back-button',
           })
         }
         ctx={input.ctx}
@@ -473,7 +473,7 @@ const ViewSendCode: Module['View'] = (input) => {
             onChange={(countryCodeNew) => {
               input.dispatch({
                 t: 'inputted-country-code',
-                countryCode: countryCodeNew
+                countryCode: countryCodeNew,
               })
             }}
             value={input.model.countryCodeInput}
@@ -494,12 +494,12 @@ const ViewSendCode: Module['View'] = (input) => {
           onChange={(value) => {
             input.dispatch({
               t: 'inputted-phone-number',
-              phoneNumber: value
+              phoneNumber: value,
             })
           }}
           onClear={() => {
             input.dispatch({
-              t: 'clicked-phone-number-clear'
+              t: 'clicked-phone-number-clear',
             })
           }}
         />
@@ -522,7 +522,7 @@ const ViewSendCode: Module['View'] = (input) => {
           <AlertError
             text={sendCodeProblemToString({
               problem: input.model.sendCode.error,
-              t: input.ctx.t
+              t: input.ctx.t,
             })}
           />
         </div>
@@ -543,7 +543,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
       <TopBar
         onBack={() =>
           input.dispatch({
-            t: 'clicked-back-button'
+            t: 'clicked-back-button',
           })
         }
         ctx={input.ctx}
@@ -557,7 +557,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
           input.dispatch({
             t: 'user-clicked-verify-code-button',
             phoneNumber,
-            inputtedCode: input.model.inputtedCode
+            inputtedCode: input.model.inputtedCode,
           })
         }}
       >
@@ -578,12 +578,12 @@ const ViewVerifyCode: Module['View'] = (input) => {
           onChange={(value) => {
             input.dispatch({
               t: 'inputted-code',
-              inputtedCode: value
+              inputtedCode: value,
             })
           }}
           onClear={() => {
             input.dispatch({
-              t: 'clicked-code-clear'
+              t: 'clicked-code-clear',
             })
           }}
         />
@@ -606,7 +606,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
           <AlertError
             text={verifyCodeProblemToString({
               problem: input.model.verifyCode.error,
-              t: input.ctx.t
+              t: input.ctx.t,
             })}
           />
         </div>
@@ -619,5 +619,5 @@ export const AuthSMSClient = {
   init,
   update,
   subscriptions,
-  View
+  View,
 }

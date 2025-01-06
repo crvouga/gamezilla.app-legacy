@@ -9,7 +9,7 @@ export type Set<T> = {
 export const empty = <T>(): Set<T> => {
   return {
     _type: 'Set',
-    _elements: {}
+    _elements: {},
   }
 }
 
@@ -20,8 +20,8 @@ const singleton = <T>(toKey: ToKey<T>, element: T): Set<T> => {
   return {
     _type: 'Set',
     _elements: {
-      [key]: element
-    }
+      [key]: element,
+    },
   }
 }
 
@@ -43,7 +43,7 @@ const add = <T>(toKey: ToKey<T>, element: T, set: Set<T>): Set<T> => {
   const key = toKey(element)
   return {
     ...set,
-    [key]: element
+    [key]: element,
   }
 }
 
@@ -52,14 +52,14 @@ const remove = <T>(toKey: ToKey<T>, element: T, set: Set<T>): Set<T> => {
   const { [key]: _removed, ...rest } = set._elements
   return {
     ...set,
-    _elements: rest
+    _elements: rest,
   }
 }
 
 const union = <T>(a: Set<T>, b: Set<T>): Set<T> => {
   return {
     ...a,
-    ...b
+    ...b,
   }
 }
 
@@ -129,5 +129,5 @@ export const Set = {
   isEmpty,
   isMember,
   eq,
-  empty
+  empty,
 }

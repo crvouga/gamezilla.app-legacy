@@ -10,7 +10,7 @@ const range = ({ lower, upper }: { lower: Position; upper: Position }): Position
     for (let y = lower.y; y < upper.y; y++) {
       positions.push({
         x,
-        y
+        y,
       })
     }
   }
@@ -49,5 +49,5 @@ export const Position = {
   scale,
   equals,
   map,
-  distance
+  distance,
 }

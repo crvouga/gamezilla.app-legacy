@@ -12,7 +12,7 @@ export const UserAccountRow = p.obj({
   user_id: p.str,
   created_at_posix: p.or(p.str, p.num),
   user_role: UserRole,
-  phone_number: p.maybe(p.str)
+  phone_number: p.maybe(p.str),
 })
 export type UserAccountRow = p.Infer<typeof UserAccountRow>
 
@@ -27,7 +27,7 @@ const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<str
     userId,
     role: userAccount.user_role,
     createdAt: Posix.init(userAccount.created_at_posix),
-    phoneNumber: Result.unwrapOr(PhoneNumber.fromString(userAccount.phone_number), null)
+    phoneNumber: Result.unwrapOr(PhoneNumber.fromString(userAccount.phone_number), null),
   }
 
   return Ok(account)
@@ -59,8 +59,8 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 					user_id = :user_id
 				`,
         {
-          user_id: input.userId
-        }
+          user_id: input.userId,
+        },
       )
 
       if (isErr(queried)) {
@@ -74,7 +74,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
       }
 
       const account = toAccount({
-        userAccount: row
+        userAccount: row,
       })
 
       return account
@@ -95,8 +95,8 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 					phone_number = :phone_number
 				`,
         {
-          phone_number: PhoneNumber.toString(input.phoneNumber)
-        }
+          phone_number: PhoneNumber.toString(input.phoneNumber),
+        },
       )
 
       if (isErr(queried)) {
@@ -110,7 +110,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
       }
 
       const account = toAccount({
-        userAccount: row
+        userAccount: row,
       })
 
       return account
@@ -120,7 +120,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         created_at_posix: input.account.createdAt,
         user_id: input.account.userId,
         user_role: input.account.role,
-        phone_number: input.account.phoneNumber ? PhoneNumber.toString(input.account.phoneNumber) : null
+        phone_number: input.account.phoneNumber ? PhoneNumber.toString(input.account.phoneNumber) : null,
       }
       const inserted = await dbConnSql.query(
         p.unknown,
@@ -137,9 +137,9 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 					:user_id,
 					:created_at_posix
 				)`,
-        row
+        row,
       )
       return Result.mapOk(inserted, () => null)
-    }
+    },
   }
 }

@@ -61,13 +61,13 @@ export const toPrevious = (round: Round): RoundOver | { type: 'none' } => {
 
     case 'RoundStarted': {
       return {
-        type: 'none'
+        type: 'none',
       }
     }
 
     case 'RoundStarting': {
       return {
-        type: 'none'
+        type: 'none',
       }
     }
   }
@@ -116,7 +116,7 @@ export const mapCurrent = (round: Round, updater: (current: Round) => Round): Ro
     case 'RoundOver': {
       return {
         ...round,
-        next: mapCurrent(round.next, updater)
+        next: mapCurrent(round.next, updater),
       }
     }
 
@@ -141,14 +141,14 @@ export const toScore = (round: Round): Score => {
         case 'Tie': {
           return {
             ...nextScore,
-            Tie: nextScore.Tie + 1
+            Tie: nextScore.Tie + 1,
           }
         }
 
         case 'Win': {
           return {
             ...nextScore,
-            [round.roundOver.winner]: nextScore[round.roundOver.winner] + 1
+            [round.roundOver.winner]: nextScore[round.roundOver.winner] + 1,
           }
         }
 
@@ -162,7 +162,7 @@ export const toScore = (round: Round): Score => {
       return {
         X: 0,
         O: 0,
-        Tie: 0
+        Tie: 0,
       }
     }
 
@@ -170,7 +170,7 @@ export const toScore = (round: Round): Score => {
       return {
         X: 0,
         O: 0,
-        Tie: 0
+        Tie: 0,
       }
     }
   }
@@ -187,7 +187,7 @@ export type GameOver =
 
 export const toGameOver = ({
   maxRoundCount,
-  round
+  round,
 }: {
   maxRoundCount: number
   round: Round
@@ -198,14 +198,14 @@ export const toGameOver = ({
   if (score.X >= winCount) {
     return {
       type: 'Winner',
-      winner: 'X'
+      winner: 'X',
     }
   }
 
   if (score.O >= winCount) {
     return {
       type: 'Winner',
-      winner: 'O'
+      winner: 'O',
     }
   }
 

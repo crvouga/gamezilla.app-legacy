@@ -9,7 +9,7 @@ import { makeSpace } from '../@/fixture/shared'
 const Fixture = async () => {
   const f = await FixtureSpaceServer()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -25,17 +25,17 @@ describe(import.meta.file, () => {
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
-            userId: f.clientA.userId
-          })
-        }
+            userId: f.clientA.userId,
+          }),
+        },
       },
       {
         msgEvt: {
           ...f.clientA,
           t: 'auth-evt.client-authenticated',
-          user: UserAccount.random({ userId: f.clientA.userId })
-        }
-      }
+          user: UserAccount.random({ userId: f.clientA.userId }),
+        },
+      },
     ])
 
     expect(didSendMsgToClient(output, (m) => m.t === 'current-user-space')).toBe(true)
@@ -52,9 +52,9 @@ describe(import.meta.file, () => {
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
-            userId: f.clientA.userId
-          })
-        }
+            userId: f.clientA.userId,
+          }),
+        },
       },
       {
         msgClient: {
@@ -62,10 +62,10 @@ describe(import.meta.file, () => {
           t: 'sync',
           space: makeSpace({
             spaceId,
-            hostId: f.clientA.userId
-          })
-        }
-      }
+            hostId: f.clientA.userId,
+          }),
+        },
+      },
     ])
 
     expect(didSendMsgToClient(output, (m) => m.t === 'synced')).toBe(true)
@@ -82,10 +82,10 @@ describe(import.meta.file, () => {
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
-            userId: f.clientA.userId
-          })
-        }
-      }
+            userId: f.clientA.userId,
+          }),
+        },
+      },
     ])
 
     expect(didBroadcast(output, (m) => m.t === 'got-msg-core' && m.c.t === 'user-started-space')).toBe(true)

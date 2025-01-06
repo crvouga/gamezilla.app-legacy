@@ -30,12 +30,12 @@ export const VerifySMSInHouseFixture = async (input?: {
     input?.codeGenerator ??
     VerificationCodeGenerator({
       t: 'fake',
-      code: CODE
+      code: CODE,
     })
   const logger = Logger({ t: 'noop' })
   const verificationDb = input?.verificationDb ?? VerificationDb({ t: 'hash-map' })
   const verificationAttemptDb = VerificationAttemptDb({
-    t: 'hash-map'
+    t: 'hash-map',
   })
   const hashing = input?.hashing ?? Hashing({ t: 'noop' })
 
@@ -52,7 +52,7 @@ export const VerifySMSInHouseFixture = async (input?: {
     verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
     sms,
     Translator,
-    verificationCodeGenerator
+    verificationCodeGenerator,
   }
   const verifySMS = VerifySMS(config)
 
@@ -67,6 +67,6 @@ export const VerifySMSInHouseFixture = async (input?: {
     WRONG_CODE,
     phoneNumber,
     verifySMS,
-    sms
+    sms,
   }
 }

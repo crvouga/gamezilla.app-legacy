@@ -65,7 +65,7 @@ const isFlowClientCmdInternal = <T extends ClientCmdTypes>(cmd: FlowClientCmd<T>
 export type FlowClientCmdLocal = FlowClientCmd<ClientCmdTypes>
 
 const toSpaceClientCmd = <T extends ClientCmdTypes>(
-  cmds: FlowClientCmd<T>[] | undefined | null
+  cmds: FlowClientCmd<T>[] | undefined | null,
 ): SpaceClientCmd<T>[] => {
   return (cmds ?? []).flatMap((cmd): SpaceClientCmd<T>[] => {
     if (isFlowClientCmdInternal(cmd)) {
@@ -86,14 +86,14 @@ const toFlowClientCmd = <T extends ClientCmdTypes>(cmds: FlowClientCmd<T>[] | un
 
 const tag = <T extends ClientCmdTypes, Tag extends string>(
   t: Tag,
-  cmds?: FlowClientCmd<T>[]
+  cmds?: FlowClientCmd<T>[],
 ): FlowClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
   MsgToServer: { t: Tag; c: T['MsgToServer'] }
 }>[] => {
   return (cmds ?? []).flatMap(
     (
-      msgCmd
+      msgCmd,
     ): FlowClientCmd<{
       MsgClient: { t: Tag; c: T['MsgClient'] }
       MsgToServer: { t: Tag; c: T['MsgToServer'] }
@@ -102,12 +102,12 @@ const tag = <T extends ClientCmdTypes, Tag extends string>(
         return [msgCmd]
       }
       return SpaceClientCmd.tag(t, [msgCmd])
-    }
+    },
   )
 }
 
 export const FlowClientCmd = {
   toSpaceClientCmd,
   toFlowClientCmd,
-  tag
+  tag,
 }

@@ -8,7 +8,7 @@ import { UserId } from '../@/data/user-id'
 const parser = p.obj({
   clientIds: CappedOrderedDict.parser(ClientId, ClientId),
   sessionId: SessionId,
-  userId: p.maybe(UserId)
+  userId: p.maybe(UserId),
 })
 
 export type WireSession = p.Infer<typeof parser>
@@ -16,10 +16,10 @@ export type WireSession = p.Infer<typeof parser>
 const init = (sessionId: SessionId): WireSession => {
   return {
     clientIds: CappedOrderedDict.init({
-      maxSize: 10
+      maxSize: 10,
     }),
     sessionId,
-    userId: null
+    userId: null,
   }
 }
 
@@ -27,7 +27,7 @@ const addClientId = (wireSession: WireSession, clientId: ClientId): WireSession 
   return {
     sessionId: wireSession.sessionId,
     clientIds: CappedOrderedDict.add(wireSession.clientIds, clientId, clientId),
-    userId: wireSession.userId
+    userId: wireSession.userId,
   }
 }
 
@@ -35,7 +35,7 @@ const addUserId = (wireSession: WireSession, userId: UserId): WireSession => {
   return {
     sessionId: wireSession.sessionId,
     clientIds: wireSession.clientIds,
-    userId
+    userId,
   }
 }
 
@@ -44,7 +44,7 @@ const random = (): WireSession => {
     init(SessionId.generate()),
     (wireSession) => addClientId(wireSession, ClientId.generate()),
     (wireSession) => addClientId(wireSession, ClientId.generate()),
-    (wireSession) => addUserId(wireSession, UserId.generate())
+    (wireSession) => addUserId(wireSession, UserId.generate()),
   )
 }
 
@@ -53,5 +53,5 @@ export const WireSession = {
   init,
   addClientId,
   addUserId,
-  random
+  random,
 }

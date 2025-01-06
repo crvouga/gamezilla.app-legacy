@@ -19,6 +19,6 @@ export const createProfileDb = (): ProfileDb => {
     insertOne: async (profile) => {
       profiles.set(profile.userId, profile)
       return Ok(null)
-    }
+    },
   }
 }

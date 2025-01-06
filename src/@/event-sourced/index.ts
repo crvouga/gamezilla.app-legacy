@@ -20,14 +20,14 @@ export type EventSourcedConfig<TEvent, TState> = {
 
 const parser = <TEvent, TState>(
   eventParser: p.Parser<TEvent>,
-  stateParser: p.Parser<TState>
+  stateParser: p.Parser<TState>,
 ): p.Parser<EventSourced<TEvent, TState>> => {
   return p.obj({
     events: p.arr(p.and(EventMeta, eventParser)),
     eventIds: p.dict(EventId, EventId),
     clock: LamportClock,
     snapshots: CappedOrderedDict.parser(EventId, stateParser),
-    initial: stateParser
+    initial: stateParser,
   })
 }
 
@@ -39,17 +39,17 @@ const init = <TEvent, TState>(initial: TState): EventSourced<TEvent, TState> => 
     events: [],
     snapshots: CappedOrderedDict.init({ maxSize: SNAPSHOTS_MAX_SIZE }),
     eventIds: {},
-    initial: initial
+    initial: initial,
   }
 }
 
 const initFromSnapshot = <TEvent, TState>(
   snapshot: TState,
-  events: WithEventMeta<TEvent>[]
+  events: WithEventMeta<TEvent>[],
 ): EventSourced<TEvent, TState> => {
   const initial: EventSourced<TEvent, TState> = {
     ...init(snapshot),
-    events: events
+    events: events,
   }
 
   for (const event of events) {
@@ -70,7 +70,7 @@ const initFromSnapshot = <TEvent, TState>(
 const isSameState = <TEvent, TState>(
   config: EventSourcedConfig<TEvent, TState>,
   left: EventSourced<TEvent, TState>,
-  right: EventSourced<TEvent, TState>
+  right: EventSourced<TEvent, TState>,
 ) => {
   return eq(toState(config, left), toState(config, right))
 }
@@ -80,7 +80,7 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
   const eventIds: EventSourced<TEvent, TState>['eventIds'] = {}
 
   const snapshots: EventSourced<TEvent, TState>['snapshots'] = CappedOrderedDict.init({
-    maxSize: SNAPSHOTS_MAX_SIZE
+    maxSize: SNAPSHOTS_MAX_SIZE,
   })
 
   for (let i = model.events.length - 1; i >= 0; i--) {
@@ -103,7 +103,7 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
         events: events,
         clock: model.clock,
         snapshots: CappedOrderedDict.add(snapshots, event.eventId, snapshot),
-        initial: snapshot
+        initial: snapshot,
       }
     }
   }
@@ -113,7 +113,7 @@ const startFromLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TSt
     eventIds: eventIds,
     clock: model.clock,
     snapshots: snapshots,
-    initial: model.initial
+    initial: model.initial,
   }
 }
 
@@ -146,7 +146,7 @@ const toLatestSnapshot = <TEvent, TState>(model: EventSourced<TEvent, TState>): 
 const appendEvent = <TEvent, TState>(
   config: EventSourcedConfig<TEvent, TState>,
   model: EventSourced<TEvent, TState>,
-  event: WithEventId<TEvent>
+  event: WithEventId<TEvent>,
 ): EventSourced<TEvent, TState> => {
   if (model.eventIds[event.eventId]) {
     return model
@@ -158,7 +158,7 @@ const appendEvent = <TEvent, TState>(
 
   const newEvent: WithEventMeta<TEvent> = {
     ...event,
-    happenedAt: LamportClock.toCurrentTime(model.clock)
+    happenedAt: LamportClock.toCurrentTime(model.clock),
   }
 
   let newSnapshots = { ...model.snapshots }
@@ -169,7 +169,7 @@ const appendEvent = <TEvent, TState>(
 
   const newEventIds = {
     ...model.eventIds,
-    [event.eventId]: event.eventId
+    [event.eventId]: event.eventId,
   }
 
   //
@@ -199,7 +199,7 @@ const appendEvent = <TEvent, TState>(
     events: newEvents,
     snapshots: newSnapshots,
     eventIds: newEventIds,
-    initial: model.initial
+    initial: model.initial,
   })
 
   newSnapshots = CappedOrderedDict.add(newSnapshots, event.eventId, snapshot)
@@ -218,7 +218,7 @@ const appendEvent = <TEvent, TState>(
     clock: newClock,
     events: newEvents,
     eventIds: newEventIds,
-    initial: model.initial
+    initial: model.initial,
   }
 
   //
@@ -230,7 +230,7 @@ const appendEvent = <TEvent, TState>(
 
 const toState = <TEvent, TState>(
   config: EventSourcedConfig<TEvent, TState>,
-  model: EventSourced<TEvent, TState>
+  model: EventSourced<TEvent, TState>,
 ): TState => {
   let state = model.initial
   const events: WithEventMeta<TEvent>[] = []
@@ -276,7 +276,7 @@ const hasEvent = <TEvent, TState>(model: EventSourced<TEvent, TState>, eventId: 
 
 const mergeLeft = <TEvent, TState>(
   left: EventSourced<TEvent, TState>,
-  right: EventSourced<TEvent, TState>
+  right: EventSourced<TEvent, TState>,
 ): EventSourced<TEvent, TState> => {
   const withoutLeft = right.events.filter((e) => !left.eventIds[e.eventId])
 
@@ -294,9 +294,9 @@ const mergeLeft = <TEvent, TState>(
     snapshots: snapshotsNew,
     eventIds: {
       ...left.eventIds,
-      ...right.eventIds
+      ...right.eventIds,
     },
-    initial: left.initial
+    initial: left.initial,
   }
 }
 
@@ -311,5 +311,5 @@ export const EventSourced = {
   toState,
   toEvent,
   hasEvent,
-  mergeLeft
+  mergeLeft,
 }

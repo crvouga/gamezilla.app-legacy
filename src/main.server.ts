@@ -13,7 +13,7 @@ const main = async () => {
     updateCtx: AppServer.updateCtx,
     init: AppServer.init,
     update: AppServer.update,
-    subscriptions: AppServer.subscriptions
+    subscriptions: AppServer.subscriptions,
   })
 
   await ctx.webServer.start(SERVER_PORT)
@@ -23,14 +23,14 @@ const main = async () => {
   withRPC({
     webServer: ctx.webServer,
     contract: AppTypes.rpcContract,
-    handlers: rpc
+    handlers: rpc,
   })
 
   ctx.logger.info({
     IS_PROD,
     SERVER_IMPL,
     TRANSPORT_IMPL,
-    SERVER_PORT
+    SERVER_PORT,
   })
 }
 

@@ -10,7 +10,7 @@ import type { ModelClient, MsgClient } from '../../types'
 const View = ({
   spaceState,
   ctx,
-  model
+  model,
 }: {
   spaceState: SpaceCoreState.State
   dispatch: (m: MsgClient) => void
@@ -32,7 +32,7 @@ const View = ({
 const ViewFeedItem = ({
   ctx,
   msgEvt,
-  state
+  state,
 }: {
   ctx: SpaceClientCtx
   msgEvt: WithEventId<SpaceEvent>
@@ -48,7 +48,7 @@ const ViewFeedItem = ({
           ctx={ctx}
           msgCore={{
             ...msgEvt,
-            ...msgEvt.c
+            ...msgEvt.c,
           }}
           modelCore={state.game}
           dispatch={(_msg) => {
@@ -93,5 +93,5 @@ const ViewFeedItem = ({
 }
 
 export const Feed = {
-  View
+  View,
 }

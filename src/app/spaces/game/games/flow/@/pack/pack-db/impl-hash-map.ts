@@ -13,13 +13,13 @@ export const PackDbHashMap = (): IPackDb => {
     async count(input) {
       const listed = await this.list({
         order: {
-          createdAt: 'asc'
+          createdAt: 'asc',
         },
         pagination: {
           limit: 0,
-          offset: 0
+          offset: 0,
         },
-        where: input.where
+        where: input.where,
       })
 
       return Result.mapOk(listed, (l) => l.total)
@@ -34,7 +34,7 @@ export const PackDbHashMap = (): IPackDb => {
         total: filtered.length,
         items: sliced,
         limit: input.pagination.limit,
-        offset: input.pagination.offset
+        offset: input.pagination.offset,
       })
     },
 
@@ -46,6 +46,6 @@ export const PackDbHashMap = (): IPackDb => {
     async zap({ id }) {
       db.delete(id)
       return Ok(null)
-    }
+    },
   }
 }

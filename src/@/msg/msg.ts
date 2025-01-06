@@ -63,7 +63,7 @@ const toPayload = (msg: unknown, acc: Record<string, unknown> = {}): Record<stri
   if (isAny(msg.c)) {
     return toPayload(msg.c, {
       ...acc,
-      ...payload
+      ...payload,
     })
   }
   return { ...acc, ...payload }
@@ -73,5 +73,5 @@ export const Msg = {
   batch,
   isAny,
   toType,
-  toPayload
+  toPayload,
 }

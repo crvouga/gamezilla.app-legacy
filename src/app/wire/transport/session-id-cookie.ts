@@ -29,5 +29,5 @@ const toSetCookieHeaderValue = (input: { sessionId: SessionId; isProd: boolean }
 
 export const SessionIdCookie = {
   fromCookies,
-  toSetCookieHeaderValue
+  toSetCookieHeaderValue,
 }

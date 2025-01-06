@@ -26,5 +26,5 @@ const getLangFromNavigator = (): LanguageCodeISO_639_1 | null => {
 export const LanguageCodeISO_639_1 = {
   ALL,
   is,
-  getLangFromNavigator
+  getLangFromNavigator,
 }

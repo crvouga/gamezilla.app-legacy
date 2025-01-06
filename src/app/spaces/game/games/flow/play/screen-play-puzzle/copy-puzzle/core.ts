@@ -7,8 +7,8 @@ export const updateCore: CoreModule['updateCore'] = (input) => {
         ...input.modelCore,
         screen: {
           ...input.modelCore.screen,
-          opened: null
-        }
+          opened: null,
+        },
       }
     }
     default: {

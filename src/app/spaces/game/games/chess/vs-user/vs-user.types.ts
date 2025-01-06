@@ -78,7 +78,7 @@ export const initCore = ({ userId }: { userId: UserId | 'none' }): CoreModel => 
     type: 'setup',
     w: userId,
     b: 'none',
-    clockPreset: 'Blitz'
+    clockPreset: 'Blitz',
   }
 }
 
@@ -165,23 +165,23 @@ export const inputMove = ({ userId, ...moveInput }: InputMove[1], model: CoreMod
       w: model.w,
       board: boardNew,
       clock: model.clock,
-      gameOver: gameOver
+      gameOver: gameOver,
     }
 
     return Ok({
       ...modelNew,
-      didCapture: boardNew.didCapture
+      didCapture: boardNew.didCapture,
     })
   }
 
   const modelNew: CoreModel = {
     ...model,
-    board: boardNew
+    board: boardNew,
   }
 
   return Ok({
     ...modelNew,
-    didCapture: boardNew.didCapture
+    didCapture: boardNew.didCapture,
   })
 }
 
@@ -194,7 +194,7 @@ export type InputPlayer = [
   {
     color: Chess.Color
     userId: UserId | 'none'
-  }
+  },
 ]
 
 export type InputPlayer_Done = ['InputPlayer_Done', Result<InputPlayerProblem, CoreModel>]
@@ -222,7 +222,7 @@ export const inputPlayer = ({ userId, color }: InputPlayer[1], model: CoreModel)
   return Ok({
     ...model,
     [targetColor]: targetPlayer,
-    [otherColor]: otherPlayerNew
+    [otherColor]: otherPlayerNew,
   })
 }
 
@@ -264,7 +264,7 @@ export const inputClock = ({ clockPreset, userId }: InputClock[1], model: CoreMo
 
   return Ok({
     ...model,
-    clockPreset
+    clockPreset,
   })
 }
 
@@ -334,8 +334,8 @@ export const startGame = ({ userId }: StartGame[1], model: CoreModel): StartGame
     board: Chess.init(),
     clock: Clock.presetToClock(model.clockPreset),
     drawAgreement: {
-      type: 'NotAsking'
-    }
+      type: 'NotAsking',
+    },
   })
 }
 
@@ -359,8 +359,8 @@ export const requestToDraw = (color: Chess.Color, model: CoreModel): RequestToDr
     ...model,
     drawAgreement: {
       type: 'Asking',
-      asker: color
-    }
+      asker: color,
+    },
   }
   return Ok(modelNew)
 }
@@ -381,8 +381,8 @@ export const respondToDraw = (drawResponse: RespondToDraw[1], model: CoreModel):
     const modelNew: CoreModel = {
       ...model,
       drawAgreement: {
-        type: 'NotAsking'
-      }
+        type: 'NotAsking',
+      },
     }
     return Ok(modelNew)
   }
@@ -394,8 +394,8 @@ export const respondToDraw = (drawResponse: RespondToDraw[1], model: CoreModel):
     board: model.board,
     clock: model.clock,
     gameOver: {
-      type: 'DrawByAgreement'
-    }
+      type: 'DrawByAgreement',
+    },
   }
 
   return Ok(modelNew)
@@ -431,8 +431,8 @@ export const cancelDraw = ({ userId }: CancelDraw[1], model: CoreModel): CancelD
   const modelNew: CoreModel = {
     ...model,
     drawAgreement: {
-      type: 'NotAsking'
-    }
+      type: 'NotAsking',
+    },
   }
 
   return Ok(modelNew)
@@ -462,8 +462,8 @@ export const resign = (color: Resign[1], model: CoreModel): Resign_Done[1] => {
     clock: model.clock,
     gameOver: {
       type: 'resignation',
-      resigner: color
-    }
+      resigner: color,
+    },
   }
 
   return Ok(modelNew)
@@ -485,7 +485,7 @@ export const NewGame = (model: CoreModel): NewGame_Done[1] => {
     type: 'setup',
     b: model.b,
     w: model.w,
-    clockPreset: model.clock.preset
+    clockPreset: model.clock.preset,
   }
 
   return Ok(modelNew)
@@ -524,13 +524,13 @@ export const clockTicked = (model: CoreModel): CoreModel => {
       clock: ticked.clock,
       gameOver: {
         type: 'WinOnTime',
-        winner: Chess.toOppositeColor(loser)
-      }
+        winner: Chess.toOppositeColor(loser),
+      },
     }
   }
 
   return {
     ...model,
-    clock: ticked.clock
+    clock: ticked.clock,
   }
 }

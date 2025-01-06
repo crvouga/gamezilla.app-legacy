@@ -6,7 +6,7 @@ import type { ClientModule } from '../types'
 import type { ModelClient } from './types'
 
 const initModel: ModelClient = {
-  guestRequest: NotAsked
+  guestRequest: NotAsked,
 }
 
 const update: ClientModule['update'] = (input) => {
@@ -15,14 +15,14 @@ const update: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          guestRequest: RequestResponse.startedRequest(input.ctx.now)
+          guestRequest: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
-            t: 'guest.clicked-continue-as-guest-button'
-          })
-        ]
+            t: 'guest.clicked-continue-as-guest-button',
+          }),
+        ],
       }
     }
   }
@@ -32,15 +32,15 @@ const update: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          guestRequest: RequestResponse.response(input.model.guestRequest, input.ctx.now, input.msgServer.result)
+          guestRequest: RequestResponse.response(input.model.guestRequest, input.ctx.now, input.msgServer.result),
         },
-        msgCmd: isErr(input.msgServer.result) ? showErrSm(input.ctx.t('auth.continue-as-guest.errored')) : []
+        msgCmd: isErr(input.msgServer.result) ? showErrSm(input.ctx.t('auth.continue-as-guest.errored')) : [],
       }
     }
   }
 
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
@@ -49,7 +49,7 @@ const ViewButton: ClientModule['View'] = (input) => {
     <Button
       onClick={() =>
         input.dispatch({
-          t: 'guest.clicked-continue-as-guest-button'
+          t: 'guest.clicked-continue-as-guest-button',
         })
       }
       iconStart={(iconInput) => <IconUserCircle {...iconInput} />}
@@ -62,5 +62,5 @@ const ViewButton: ClientModule['View'] = (input) => {
 export const ContinueAsGuestClient = {
   initModel,
   update,
-  ViewButton
+  ViewButton,
 }

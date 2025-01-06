@@ -9,7 +9,7 @@ export const Transition = ({
   onAppear,
   children,
   className,
-  mode
+  mode,
 }: Transitioninput & {
   children?: VDomChildren
 }) => {
@@ -20,7 +20,7 @@ export const Transition = ({
     onExit,
     onAppear,
     className: className,
-    mode
+    mode,
   })
   // @ts-ignore
   return <transition-element id={id}>{children}</transition-element>

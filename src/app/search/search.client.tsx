@@ -17,7 +17,7 @@ import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './search.
 //
 
 export const init = ({
-  stored
+  stored,
 }: {
   stored: ModelClient | null
 }): {
@@ -25,15 +25,15 @@ export const init = ({
 } => {
   if (stored) {
     return {
-      model: stored
+      model: stored,
     }
   }
   return {
     model: {
       searchText: '',
       searchResults: {},
-      requests: {}
-    }
+      requests: {},
+    },
   }
 }
 
@@ -51,7 +51,7 @@ const searchInputId = 'search-input'
 
 export const update = ({
   msg,
-  model
+  model,
 }: {
   msg: Msg
   model: ModelClient
@@ -72,15 +72,15 @@ export const update = ({
     return {
       model: {
         ...model,
-        searchText: ''
+        searchText: '',
       },
       eff: pipe(
         Browser.focus(searchInputId),
         Eff.perform((result) => ({
           t: 'focus-done',
-          result
-        }))
-      )
+          result,
+        })),
+      ),
     }
   }
 
@@ -88,8 +88,8 @@ export const update = ({
     return {
       model: {
         ...model,
-        searchText: msg.searchText
-      }
+        searchText: msg.searchText,
+      },
     }
   }
 
@@ -101,7 +101,7 @@ export const update = ({
 }
 
 export const updateFromServer = ({
-  model
+  model,
 }: {
   msg: MsgToClient
   model: ModelClient
@@ -120,7 +120,7 @@ export const updateFromServer = ({
 export const View = ({
   model,
   dispatch,
-  viewBottomBar
+  viewBottomBar,
 }: {
   model: ModelClient
   dispatch: (msg: Msg) => void
@@ -144,7 +144,7 @@ export const View = ({
               onChange={(msgEvt) =>
                 dispatch({
                   t: 'inputted-search-text',
-                  searchText: msgEvt.currentTarget.value
+                  searchText: msgEvt.currentTarget.value,
                 })
               }
             />
@@ -152,7 +152,7 @@ export const View = ({
               type='button'
               onClick={() =>
                 dispatch({
-                  t: 'clicked-clear'
+                  t: 'clicked-clear',
                 })
               }
             >
@@ -170,7 +170,7 @@ export const View = ({
                 onClick={() =>
                   dispatch({
                     t: 'clicked-result',
-                    userId: result.userId
+                    userId: result.userId,
                   })
                 }
               >

@@ -12,7 +12,7 @@ import { PackListClient } from './client'
 import { initClient, type ModelClient } from './types'
 
 const initial = {
-  model: initClient
+  model: initClient,
 }
 
 const observedEndOfList = (ctx: FlowClientCtx) => (model: ModelClient) => {
@@ -20,8 +20,8 @@ const observedEndOfList = (ctx: FlowClientCtx) => (model: ModelClient) => {
     ctx,
     model,
     msg: {
-      t: 'user-observed-end-of-list'
-    }
+      t: 'user-observed-end-of-list',
+    },
   })
 }
 
@@ -29,12 +29,12 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
   return PackListClient.update({
     ctx: {
       ...ctx,
-      now: Posix.future(ctx.now, timeSpan)
+      now: Posix.future(ctx.now, timeSpan),
     },
     model,
     msg: {
-      t: 'elapsed'
-    }
+      t: 'elapsed',
+    },
   })
 }
 
@@ -50,9 +50,9 @@ const serverListedPacksOk =
           items: packs,
           limit: 25,
           offset: 0,
-          total: packs.length
-        })
-      }
+          total: packs.length,
+        }),
+      },
     })
   }
 
@@ -62,8 +62,8 @@ const serverListedPacksErr = (ctx: FlowClientCtx, errorMessage: string) => (mode
     model,
     msgServer: {
       t: 'listed-packs',
-      listed: Err(errorMessage)
-    }
+      listed: Err(errorMessage),
+    },
   })
 }
 
@@ -91,7 +91,7 @@ describe(import.meta.file, () => {
     const pack = await Pack.create({
       createdBy: ctx.currentUserId,
       now: ctx.now,
-      puzzleIds: []
+      puzzleIds: [],
     })
     const output = AppClientModule.andThen(initial, serverListedPacksOk(ctx, pack))
     expect(Object.values(output.model.packs)).toEqual([pack])

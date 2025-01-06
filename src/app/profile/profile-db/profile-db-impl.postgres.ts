@@ -11,7 +11,7 @@ const ProfileRow = p.obj({
   user_id: p.str,
   username: p.str,
   avatar_seed: p.maybe(p.str),
-  avatar_style: p.maybe(p.str)
+  avatar_style: p.maybe(p.str),
 })
 
 type ProfileRow = p.Infer<typeof ProfileRow>
@@ -33,7 +33,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
 
   const avatarUrl = ProfileAvatar.toUrl({
     seed: avatarSeed,
-    style: avatarStyle
+    style: avatarStyle,
   })
 
   return Ok({
@@ -41,7 +41,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
     avatarUrl: avatarUrl,
     username: row.username,
     avatarSeed: avatarSeed,
-    avatarStyle: avatarStyle
+    avatarStyle: avatarStyle,
   })
 }
 
@@ -61,7 +61,7 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
       `
 
       const queried = await dbConn.query(ProfileRow, sql, {
-        user_id: userId
+        user_id: userId,
       })
 
       if (isErr(queried)) {
@@ -81,7 +81,7 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
         user_id: profile.userId,
         username: profile.username,
         avatar_seed: profile.avatarSeed,
-        avatar_style: profile.avatarStyle
+        avatar_style: profile.avatarStyle,
       }
 
       const inserted = await dbConn.query(
@@ -100,7 +100,7 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
           :avatar_style
         )
         `,
-        rowNew
+        rowNew,
       )
 
       if (isErr(inserted)) {
@@ -108,6 +108,6 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
       }
 
       return Ok(null)
-    }
+    },
   }
 }

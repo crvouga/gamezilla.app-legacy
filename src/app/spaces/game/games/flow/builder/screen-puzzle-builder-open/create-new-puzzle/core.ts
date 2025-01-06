@@ -13,24 +13,24 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
       return {
         ...modelCore,
         screen: {
-          t: 'screen-puzzle-builder'
+          t: 'screen-puzzle-builder',
         },
         screenPackBuilder: modelCore.screenPackBuilder,
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
           mode: {
-            t: 'edit'
+            t: 'edit',
           },
           edit: FlowEdit.init({
-            flow: flowPuzzleNew.flow
+            flow: flowPuzzleNew.flow,
           }),
           play: FlowPlay.init({
             ctx: FlowPlay.initCtx({
-              flowPuzzle: flowPuzzleNew
-            })
+              flowPuzzle: flowPuzzleNew,
+            }),
           }),
-          puzzle: flowPuzzleNew
-        }
+          puzzle: flowPuzzleNew,
+        },
       }
     }
 

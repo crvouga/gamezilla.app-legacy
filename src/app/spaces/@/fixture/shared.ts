@@ -8,7 +8,7 @@ import { SpaceCore } from '../../core/space-core'
 export const makeSpace = ({
   spaceId,
   guestId = UserId.generate(),
-  hostId
+  hostId,
 }: {
   spaceId: SpaceId
   hostId: UserId
@@ -20,19 +20,19 @@ export const makeSpace = ({
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-started-space', spaceId: spaceId, userId: hostId } as const)
+        withEventId({ t: 'user-started-space', spaceId: spaceId, userId: hostId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-inputted-game', spaceId: spaceId, userId: hostId, game: 'connect-four' } as const)
+        withEventId({ t: 'user-inputted-game', spaceId: spaceId, userId: hostId, game: 'connect-four' } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId: spaceId, userId: guestId } as const)
-      )
+        withEventId({ t: 'user-joined-space', spaceId: spaceId, userId: guestId } as const),
+      ),
   )
 }

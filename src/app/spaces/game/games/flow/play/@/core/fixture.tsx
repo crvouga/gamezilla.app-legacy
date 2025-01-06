@@ -23,7 +23,7 @@ export const CoreFixture = async () => {
     const updated = PlayCore.updateCore({
       ctx: f.ctx,
       modelCore,
-      msgCore
+      msgCore,
     })
 
     return [modelCore, ...updates(updated, rest)]
@@ -34,13 +34,13 @@ export const CoreFixture = async () => {
   }
 
   const init = PlayCore.initCore({
-    ctx: f.ctx
+    ctx: f.ctx,
   })
 
   return {
     init,
     f,
     updates,
-    update
+    update,
   }
 }

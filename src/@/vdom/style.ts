@@ -35,7 +35,7 @@ const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectC
 
 export const styles = (
   stylesObject: StylesObjectKebab,
-  vdomImpl: VDomImpl = VDOM_IMPL_CURRENT
+  vdomImpl: VDomImpl = VDOM_IMPL_CURRENT,
 ): Record<string, unknown> => {
   switch (vdomImpl) {
     case 'inferno':

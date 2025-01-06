@@ -18,5 +18,5 @@ const is = (edgeId: unknown): edgeId is FlowEdgeId => {
 export const FlowEdgeId = {
   init,
   is,
-  ...parser
+  ...parser,
 }

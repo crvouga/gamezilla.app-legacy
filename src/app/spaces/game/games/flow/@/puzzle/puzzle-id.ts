@@ -28,5 +28,5 @@ export const PuzzleId = {
   ...parser,
   generate,
 
-  is
+  is,
 }

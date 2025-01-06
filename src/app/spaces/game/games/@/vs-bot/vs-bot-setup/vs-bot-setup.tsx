@@ -21,7 +21,7 @@ export type Model = {
 }
 
 export const init: Model = {
-  opened: null
+  opened: null,
 }
 
 //
@@ -39,14 +39,14 @@ export const update = (model: Model, msg: Msg): Model => {
     case 'clicked-change-bot': {
       return {
         ...model,
-        opened: 'change-bot'
+        opened: 'change-bot',
       }
     }
 
     case 'closed-modal': {
       return {
         ...model,
-        opened: null
+        opened: null,
       }
     }
   }
@@ -104,7 +104,7 @@ export const View = ({
   playerTwo,
   canStartGame,
   onStartGame,
-  onSwapSides
+  onSwapSides,
 }: Input) => {
   const playerOneProp: PlayerProp =
     human.player === 'player-one'
@@ -112,14 +112,14 @@ export const View = ({
           ...playerOne,
           t: 'user',
           userId: human.userId,
-          playerLabel: playerOne.label
+          playerLabel: playerOne.label,
         }
       : {
           ...playerOne,
           t: 'bot',
           botLabel: bot.label,
           playerLabel: playerOne.label,
-          renderBotIcon: bot.renderIcon
+          renderBotIcon: bot.renderIcon,
         }
 
   const playerTwoProp: PlayerProp =
@@ -128,14 +128,14 @@ export const View = ({
           ...playerTwo,
           t: 'user',
           userId: human.userId,
-          playerLabel: playerTwo.label
+          playerLabel: playerTwo.label,
         }
       : {
           ...playerTwo,
           t: 'bot',
           botLabel: bot.label,
           playerLabel: playerTwo.label,
-          renderBotIcon: bot.renderIcon
+          renderBotIcon: bot.renderIcon,
         }
 
   return (
@@ -205,7 +205,7 @@ export const View = ({
         open={model.opened === 'change-bot'}
         onClose={() =>
           dispatch({
-            t: 'closed-modal'
+            t: 'closed-modal',
           })
         }
       >
@@ -216,7 +216,7 @@ export const View = ({
               const onClick = () => {
                 botLevel.onSelect()
                 dispatch({
-                  t: 'closed-modal'
+                  t: 'closed-modal',
                 })
               }
               return (
@@ -226,7 +226,7 @@ export const View = ({
                   onClick={onClick}
                 >
                   {botLevel.renderIcon({
-                    className: 'w-10 h-10'
+                    className: 'w-10 h-10',
                   })}
                   {botLevel.label}
                 </button>
@@ -244,7 +244,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
     <div className='col-span-3 grid grid-cols-2 place-items-center'>
       {player.t === 'bot' ? (
         player.renderBotIcon({
-          className: 'h-14 w-14'
+          className: 'h-14 w-14',
         })
       ) : player.userId ? (
         <Avatar className='h-14 w-14' src={ctx.profiles[player.userId]?.avatarUrl} />
@@ -254,7 +254,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
         </div>
       )}
       {player.renderIcon({
-        className: 'w-14 h-14'
+        className: 'w-14 h-14',
       })}
     </div>
   )
@@ -280,7 +280,7 @@ const PlayerButtons = ({
   player,
   ctx,
   onSwapSides,
-  dispatch
+  dispatch,
 }: {
   onSwapSides: () => void
   human: { userId: UserId | null }
@@ -315,7 +315,7 @@ const PlayerButtons = ({
         <Button
           onClick={() =>
             dispatch({
-              t: 'clicked-change-bot'
+              t: 'clicked-change-bot',
             })
           }
           className='w-full'

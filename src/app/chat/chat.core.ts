@@ -71,7 +71,7 @@ export type MsgClient =
       'clicked-user-selected-delete-button',
       {
         userId: UserId
-      }
+      },
     ]
   | ['clicked-user-search-clear-button']
   | ['focused', Browser.FocusResult]
@@ -105,7 +105,7 @@ export type MsgServer = Res
 export type MsgToClient = Res
 
 export const updateFromClient = ({
-  msg
+  msg,
 }: {
   msg: MsgToServer
   model: ModelServer
@@ -117,7 +117,7 @@ export const updateFromClient = ({
       return {
         eff: () => {
           //
-        }
+        },
       }
     }
   }

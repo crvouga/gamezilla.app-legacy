@@ -46,8 +46,8 @@ export const topicPublish = <MsgToClient>(topics: string[], msg: MsgToClient): S
     c: {
       t: 'topic-publish',
       topics,
-      msg
-    }
+      msg,
+    },
   }
 }
 
@@ -57,8 +57,8 @@ export const topicSubscribe = <MsgToClient>(topics: string[], clientIds: ClientI
     c: {
       t: 'topic-subscribe',
       topics,
-      clientIds
-    }
+      clientIds,
+    },
   }
 }
 
@@ -67,8 +67,8 @@ export const broadcast = <MsgToClient>(msg: MsgToClient): ServerCmd<MsgToClient>
     t: 'wire',
     c: {
       t: 'broadcast',
-      msg
-    }
+      msg,
+    },
   }
 }
 
@@ -76,7 +76,7 @@ export const didBroadcast = <MsgToClient, TCmd>(
   output: {
     msgCmd?: (WireCmd<MsgToClient> | TCmd)[] | null
   },
-  predicate: (msg: MsgToClient) => boolean
+  predicate: (msg: MsgToClient) => boolean,
 ): boolean => {
   return (
     ((output.msgCmd?.length ?? 0) > 0 &&
@@ -87,7 +87,7 @@ export const didBroadcast = <MsgToClient, TCmd>(
           't' in cmd &&
           cmd.t === 'wire' &&
           cmd.c.t === 'broadcast' &&
-          predicate(cmd.c.msg)
+          predicate(cmd.c.msg),
       )) ??
     false
   )
@@ -95,7 +95,7 @@ export const didBroadcast = <MsgToClient, TCmd>(
 
 export const sendToClient = <MsgToClient>(
   clientIdInput: ClientId | ClientId[] | { clientId: ClientId } | { clientIds: ClientId[] },
-  msg: MsgToClient
+  msg: MsgToClient,
 ): ServerCmd<MsgToClient> => {
   const clientIds: ClientId[] = []
 
@@ -114,8 +114,8 @@ export const sendToClient = <MsgToClient>(
     c: {
       t: 'send-to-client',
       clientIds,
-      msg
-    }
+      msg,
+    },
   }
 }
 
@@ -124,7 +124,7 @@ export const didSendToClient = <MsgToClient, TCmd>(
     msgCmd?: (WireCmd<MsgToClient> | TCmd)[] | null
   },
   clientId: ClientId,
-  predicate: (msg: MsgToClient) => boolean
+  predicate: (msg: MsgToClient) => boolean,
 ): boolean => {
   return (
     ((output.msgCmd?.length ?? 0) > 0 &&
@@ -136,7 +136,7 @@ export const didSendToClient = <MsgToClient, TCmd>(
           cmd.t === 'wire' &&
           cmd.c.t === 'send-to-client' &&
           cmd.c.clientIds.includes(clientId) &&
-          predicate(cmd.c.msg)
+          predicate(cmd.c.msg),
       )) ??
     false
   )
@@ -144,7 +144,7 @@ export const didSendToClient = <MsgToClient, TCmd>(
 
 export const didSendMsgToClient = <MsgToClient>(
   output: { msgCmd?: ServerCmd<MsgToClient>[] | null },
-  predicate: (msg: MsgToClient) => boolean
+  predicate: (msg: MsgToClient) => boolean,
 ): boolean => {
   return output.msgCmd?.some((cmd) => cmd.t === 'wire' && 'msg' in cmd.c && predicate(cmd.c.msg)) ?? false
 }
@@ -155,8 +155,8 @@ export const sendToUser = <MsgToClient>(userIds: UserId[], msg: MsgToClient): Se
     c: {
       t: 'send-to-user',
       userIds,
-      msg
-    }
+      msg,
+    },
   }
 }
 
@@ -181,8 +181,8 @@ const mapOne = <A, B>(fn: (a: A) => B, msgCmd: ServerCmd<A>): ServerCmd<B> => {
             t: 'wire',
             c: {
               ...msgCmd.c,
-              msg: fn(msgCmd.c.msg)
-            }
+              msg: fn(msgCmd.c.msg),
+            },
           }
         }
         case 'topic-subscribe': {
@@ -191,8 +191,8 @@ const mapOne = <A, B>(fn: (a: A) => B, msgCmd: ServerCmd<A>): ServerCmd<B> => {
             c: {
               t: 'topic-subscribe',
               clientIds: msgCmd.c.clientIds,
-              topics: msgCmd.c.topics
-            }
+              topics: msgCmd.c.topics,
+            },
           }
         }
       }
@@ -211,5 +211,5 @@ const tag = <T extends string, A>(tag: T, commands?: ServerCmd<A>[]): ServerCmd<
 export const ServerCmd = {
   mapOne,
   map,
-  tag
+  tag,
 }

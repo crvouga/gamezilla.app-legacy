@@ -29,13 +29,13 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         onExit: async () => {},
         onAppear: async () => {},
         className: '',
-        mode: 'in-out'
+        mode: 'in-out',
       }
     }
 
     connectedCallback() {
       this.observer.observe(this, {
-        childList: true
+        childList: true,
       })
       this.unsubscribe = transitionSub.sub((msgEvt) => {
         if (msgEvt.id === this.getAttribute('id')) {

@@ -42,7 +42,7 @@ export const toDiscs = (columns: Columns): Disc[] => {
           id: `${player}-${x}-${y}`,
           x,
           y,
-          player
+          player,
         }
         discs.push(disc)
       }

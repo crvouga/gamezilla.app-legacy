@@ -7,7 +7,7 @@ import {
   type SpaceClientCmd,
   type SpaceClientCmdTypes,
   exitGame,
-  openUserDetails
+  openUserDetails,
 } from '~/app/spaces/@/space-client/cmd'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { LayoutGameCoverArtHeader } from '../layout-game-cover-art-header'
@@ -31,7 +31,7 @@ export type Msg =
 
 export const update = <TModel, TMsg, T extends SpaceClientCmdTypes>({
   msg,
-  model
+  model,
 }: {
   model: TModel
   msg?: Msg | TMsg | null
@@ -47,21 +47,21 @@ export const update = <TModel, TMsg, T extends SpaceClientCmdTypes>({
     case 'game-main-menu.clicked-exit-game-button': {
       return {
         model,
-        msgCmd: [exitGame()]
+        msgCmd: [exitGame()],
       }
     }
 
     case 'game-main-menu.clicked-open-user-details-button': {
       return {
         model,
-        msgCmd: [openUserDetails(msg.userId)]
+        msgCmd: [openUserDetails(msg.userId)],
       }
     }
 
     default: {
       return {
         model,
-        msgCmd: []
+        msgCmd: [],
       }
     }
   }
@@ -87,7 +87,7 @@ export const View = ({
   buttons,
   ctx,
   dispatch,
-  onBack
+  onBack,
 }: {
   onBack: () => void
   ctx: SpaceClientCtx
@@ -108,7 +108,7 @@ export const View = ({
             onOpenUserDetails={(userId) =>
               dispatch({
                 t: 'game-main-menu.clicked-open-user-details-button',
-                userId
+                userId,
               })
             }
             ctx={ctx}
@@ -133,7 +133,7 @@ export const View = ({
               key={`${index} ${title}`}
             >
               {renderIcon({
-                className: 'aspect-square w-12 h-12 mr-4'
+                className: 'aspect-square w-12 h-12 mr-4',
               })}
               <div className='flex flex-1 flex-col gap-1 text-left'>
                 <Typography variant='title' text={title} />
@@ -154,7 +154,7 @@ export const buttons = {
       ...input,
       renderIcon: (input) => <IconUsers {...input} />,
       title: input.ctx.t('game.play-friend-title'),
-      description: input.ctx.t('game.play-friend-description')
+      description: input.ctx.t('game.play-friend-description'),
     }
   },
 
@@ -163,7 +163,7 @@ export const buttons = {
       ...input,
       renderIcon: (input) => <IconRobot {...input} />,
       title: input.ctx.t('game.play-computer-title'),
-      description: input.ctx.t('game.play-computer-description')
+      description: input.ctx.t('game.play-computer-description'),
     }
-  }
+  },
 }

@@ -8,7 +8,7 @@ import { openUserDetails } from '~/app/spaces/@/space-client/cmd'
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -24,9 +24,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-people-button'
-        }
-      }
+          t: 'clicked-people-button',
+        },
+      },
     ])
     expect(output.model.modal === 'users').toBe(true)
   })
@@ -38,9 +38,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-user',
-          userId: someUserId
-        }
-      }
+          userId: someUserId,
+        },
+      },
     ])
     expect(output.model.modal === 'user-preview' && output.model.modalPreviewUserId === someUserId).toBe(true)
   })
@@ -52,18 +52,18 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-user',
-          userId: someUserId
-        }
+          userId: someUserId,
+        },
       },
       {
         msgEvt: {
           t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
-      }
+            t: 'space-list',
+          },
+        },
+      },
     ])
     expect(output.model.modal === null).toBe(true)
   })
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
     const output = People.update({
       model: f.initial.model,
       ctx: f.ctx,
-      msgCmd: openUserDetails(someUserId)
+      msgCmd: openUserDetails(someUserId),
     })
 
     expect(output.model.modal === 'user-preview' && output.model.modalPreviewUserId === someUserId).toBe(true)
@@ -89,14 +89,14 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-user',
-          userId: someUserId
-        }
+          userId: someUserId,
+        },
       },
       {
         msg: {
-          t: 'clicked-preview-user-link'
-        }
-      }
+          t: 'clicked-preview-user-link',
+        },
+      },
     ])
 
     expect(didOpenProfile(output, someUserId)).toBe(true)
@@ -109,14 +109,14 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-user',
-          userId: someUserId
-        }
+          userId: someUserId,
+        },
       },
       {
         msg: {
-          t: 'clicked-preview-user-link'
-        }
-      }
+          t: 'clicked-preview-user-link',
+        },
+      },
     ])
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)
   })
@@ -127,14 +127,14 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-preview-user-link'
-        }
-      }
+          t: 'clicked-preview-user-link',
+        },
+      },
     ])
     expect(
       output.msgCmd?.some(
-        (msgCmd) => msgCmd.t === 'profile' && msgCmd.c.t === 'open-profile' && msgCmd.c.userId === someUserId
-      )
+        (msgCmd) => msgCmd.t === 'profile' && msgCmd.c.t === 'open-profile' && msgCmd.c.userId === someUserId,
+      ),
     ).toBe(false)
   })
 
@@ -143,9 +143,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-people-button'
-        }
-      }
+          t: 'clicked-people-button',
+        },
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -155,9 +155,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'closed-modal'
-        }
-      }
+          t: 'closed-modal',
+        },
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -169,9 +169,9 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-user',
-          userId: someUserId
-        }
-      }
+          userId: someUserId,
+        },
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })

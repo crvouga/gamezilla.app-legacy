@@ -76,7 +76,7 @@ export type MsgToClient = { t: 'server-restarted' } | { t: 'got-server-instance-
 //
 
 export const rpcContract = RPC.initContract({
-  serverInstance: ServerInstanceTypes.rpcContract
+  serverInstance: ServerInstanceTypes.rpcContract,
 })
 
 export type ClientCtx = (AppClientCtx | AnonymousClientCtx) & {

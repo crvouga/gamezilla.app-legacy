@@ -23,7 +23,7 @@ export const tie: Columns = [
   [p2, p1, p2, p1, p2, p1],
   [p1, p2, p1, p2, p1, p2],
   [p1, p2, p1, p2, p1, p2],
-  [p1, p2, p1, p2, p1, p2]
+  [p1, p2, p1, p2, p1, p2],
 ]
 
 const winner = p1
@@ -112,7 +112,7 @@ describe(import.meta.file, () => {
       [p1, p1, p2, p1],
       [p2, p2, p1, p1, p2],
       [p1, p2, p2],
-      [p1, p1, p1, p1]
+      [p1, p1, p1, p1],
     ]
 
     const wins = findWins(columns)

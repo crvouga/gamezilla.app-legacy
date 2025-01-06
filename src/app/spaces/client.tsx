@@ -33,16 +33,16 @@ const init: ClientModule['init'] = ({ ctx }) => {
     games: {},
     modal: null,
     modalPreviewUserId: null,
-    listSpacesRequest: NotAsked
+    listSpacesRequest: NotAsked,
   }
   const listSpaces = ListSpacesClient.init({ ctx, model })
   return {
     model: {
       ...model,
-      ...listSpaces.model
+      ...listSpaces.model,
     },
     eff: Eff.batch([listSpaces.eff]),
-    msgCmd: SpaceClientCmd.toClientCmd(listSpaces.msgCmd)
+    msgCmd: SpaceClientCmd.toClientCmd(listSpaces.msgCmd),
   }
 }
 
@@ -61,16 +61,16 @@ const update: ClientModule['update'] = (input) => {
       ...input.ctx,
       profiles: {
         ...input.ctx.profiles,
-        ...input.msgServer?.profiles
-      }
-    }
+        ...input.msgServer?.profiles,
+      },
+    },
   })
 
   return {
     model: updated.model,
     eff: updated.eff,
     msgCmd: SpaceClientCmd.toClientCmd(updated.msgCmd),
-    msgEvt: SpaceClientEvt.toClientEvt(updated.msgEvt)
+    msgEvt: SpaceClientEvt.toClientEvt(updated.msgEvt),
   }
 }
 
@@ -83,7 +83,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
     const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
-      msgCore: coreEvt
+      msgCore: coreEvt,
     })
 
     return updateLoop(input, {
@@ -91,7 +91,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
       eff: Eff.batch(acc.eff, updated.eff),
       msgCore: Msg.batch(coreEvtRest, updated.msgCore),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
     })
   }
 
@@ -101,7 +101,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
     const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
-      msgEvt: evt
+      msgEvt: evt,
     })
 
     return updateLoop(input, {
@@ -109,7 +109,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
       eff: Eff.batch(acc.eff, updated.eff),
       msgCore: Msg.batch(acc.msgCore, updated.msgCore),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(evtRest, updated.msgEvt)
+      msgEvt: Msg.batch(evtRest, updated.msgEvt),
     })
   }
 
@@ -119,7 +119,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
     const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
-      msgCmd: cmd
+      msgCmd: cmd,
     })
 
     return updateLoop(input, {
@@ -127,7 +127,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
       eff: Eff.batch(acc.eff, updated.eff),
       msgCore: Msg.batch(acc.msgCore, updated.msgCore),
       msgCmd: Msg.batch(cmdRest, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
     })
   }
 
@@ -151,7 +151,7 @@ const updateChild: SpaceClientModule['update'] = (input) => {
     (model) => ListSpacesClient.update({ ...input, model }),
     (model) => GoHome.update({ ...input, model }),
     (model) => CurrentSpaceBottomBar.update({ ...input, model }),
-    (model) => People.update({ ...input, model })
+    (model) => People.update({ ...input, model }),
   )
 }
 
@@ -162,7 +162,7 @@ const updateSpacesFromSpaceEvent: SpaceClientModule['update'] = ({ msgCore, mode
 
   const updated = SpacesCoreClient.update({
     model,
-    msgCore: msgCore
+    msgCore: msgCore,
   })
 
   return { model: { ...model, ...updated.model } }
@@ -237,5 +237,5 @@ export const SpacesClient = {
   updateLoop,
   subscriptions,
   View,
-  ViewCurrentSpaceBar
+  ViewCurrentSpaceBar,
 }

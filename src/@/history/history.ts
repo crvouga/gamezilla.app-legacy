@@ -18,7 +18,7 @@ export type History<T> = {
 const init = <T>(present: T): History<T> => ({
   _past: [],
   _present: present,
-  _future: []
+  _future: [],
 })
 
 /**
@@ -28,7 +28,7 @@ const push = <T>(history: History<T>, newPresent: T): History<T> => {
   return {
     _past: [...history._past, history._present],
     _present: newPresent,
-    _future: []
+    _future: [],
   }
 }
 
@@ -48,7 +48,7 @@ const undo = <T>(history: History<T>): History<T> => {
   return {
     _past: newPast,
     _present: newPresent,
-    _future: newFuture
+    _future: newFuture,
   }
 }
 
@@ -68,7 +68,7 @@ const redo = <T>(history: History<T>): History<T> => {
   return {
     _past: newPast,
     _present: newPresent,
-    _future: newFuture
+    _future: newFuture,
   }
 }
 
@@ -97,7 +97,7 @@ const parser = <T>(value: p.Parser<T>): p.Parser<History<T>> => {
   return p.obj({
     _past: p.arr(value),
     _present: value,
-    _future: p.arr(value)
+    _future: p.arr(value),
   })
 }
 
@@ -109,5 +109,5 @@ export const History = {
   redo,
   present,
   canRedo,
-  canUndo
+  canUndo,
 }

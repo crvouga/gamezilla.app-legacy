@@ -10,7 +10,7 @@ import {
   positionToSquare,
   sanToSquare,
   squareToChecker,
-  toLowercaseSquare
+  toLowercaseSquare,
 } from '../../chess'
 
 //
@@ -52,7 +52,7 @@ for (let x = 0; x < 8; x++) {
       id: `${x},${y}`,
       x,
       y,
-      color
+      color,
     })
   }
 }
@@ -67,7 +67,7 @@ for (let x = 0; x < 8; x++) {
 const THEME = {
   lightChecker: '#f0d9b5',
   darkChecker: '#b58863',
-  legalMoveDot: 'green'
+  legalMoveDot: 'green',
 }
 
 //
@@ -194,9 +194,9 @@ const updateDropZoneUI = (orientation: Color) => {
   const square = positionToSquare(
     {
       x: roundedX,
-      y: roundedY
+      y: roundedY,
     },
-    orientation
+    orientation,
   )
 
   const dropzoneId = square ? toDropZoneId(square) : null
@@ -217,7 +217,7 @@ const setLegalMoveDotsFill = (input: Chessboardinput, fill: string) => {
     return
   }
   const legalMoves = instance.moves({
-    square: toLowercaseSquare(sourceSquare)
+    square: toLowercaseSquare(sourceSquare),
   })
   for (const legalMove of legalMoves) {
     const square = sanToSquare(legalMove)
@@ -285,15 +285,15 @@ const onDragEnd = (input: Chessboardinput) => () => {
   const target = positionToSquare(
     {
       x: Math.floor(roundedX / stepX),
-      y: Math.floor(roundedY / stepY)
+      y: Math.floor(roundedY / stepY),
     },
-    input.orientation ?? 'w'
+    input.orientation ?? 'w',
   )
 
   if (input.onPieceDrop && source && target) {
     const isValidDrop = input.onPieceDrop({
       source,
-      target
+      target,
     })
 
     if (!isValidDrop) {
@@ -327,7 +327,7 @@ const onPieceDragStart =
       input.input.isPieceDraggable &&
       !input.input.isPieceDraggable({
         square,
-        piece: input.piece
+        piece: input.piece,
       })
     ) {
       return
@@ -343,7 +343,7 @@ const onPieceDragStart =
     touched = {
       node: target,
       piece: input.piece,
-      source: input.source
+      source: input.source,
     }
 
     // make sure piece is rendered on top of other pieces
@@ -491,8 +491,8 @@ export const Chessboard = (input: Chessboardinput) => {
                 piece,
                 source: {
                   x,
-                  y
-                }
+                  y,
+                },
               })}
               // @ts-ignore
               onTouchStart={onPieceDragStart({
@@ -500,8 +500,8 @@ export const Chessboard = (input: Chessboardinput) => {
                 piece,
                 source: {
                   x,
-                  y
-                }
+                  y,
+                },
               })}
               viewBox='0 0 45 45'
             >
@@ -988,5 +988,5 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
         style='opacity:1; fill:#000000; fill-opacity:1; fill-rule:nonzero; stroke:#000000; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:miter; stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;'
       />
     </g>
-  )
+  ),
 }

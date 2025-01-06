@@ -80,5 +80,5 @@ export const Eff = {
   tag,
   chain,
   map,
-  of
+  of,
 }

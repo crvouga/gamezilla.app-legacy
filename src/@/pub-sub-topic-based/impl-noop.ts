@@ -10,6 +10,6 @@ export const PubSubTopicBased = (_config: Config): IPubSubTopicBased => {
     async sub(_topic, _callback) {
       return async () => {}
     },
-    async unsub(_topic) {}
+    async unsub(_topic) {},
   }
 }

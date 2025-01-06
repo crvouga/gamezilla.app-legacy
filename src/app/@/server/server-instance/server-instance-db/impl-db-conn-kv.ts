@@ -16,13 +16,13 @@ export const ServerInstanceDb = (config: Config): IServerInstanceDb => {
   const byId = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['server-instance-by-id'],
-    parser: ServerInstance
+    parser: ServerInstance,
   })
   const ALL_IDS_KEY = 'all'
   const indexAllIds = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['server-instance-ids'],
-    parser: p.arr(ServerInstanceId)
+    parser: p.arr(ServerInstanceId),
   })
   const list: IServerInstanceDb['list'] = async () => {
     const got = await indexAllIds.get(ALL_IDS_KEY)
@@ -65,6 +65,6 @@ export const ServerInstanceDb = (config: Config): IServerInstanceDb => {
     listAlive,
     list,
     get,
-    put
+    put,
   }
 }

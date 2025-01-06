@@ -24,7 +24,7 @@ export function waitForElementById(htmlId: string | number, parentHtmlId?: strin
 
     observer.observe(parentElement, {
       childList: true,
-      subtree: true
+      subtree: true,
     })
   })
 }

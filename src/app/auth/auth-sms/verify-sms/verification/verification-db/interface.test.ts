@@ -16,15 +16,15 @@ const FixtureVariant = async () => {
       return {
         verificationDb: VerificationDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnSql
-        })
+          dbConnSql: testEnv.dbConnSql,
+        }),
       }
     }
     case 'unit': {
       return {
         verificationDb: VerificationDb({
-          t: 'hash-map'
-        })
+          t: 'hash-map',
+        }),
       }
     }
   }
@@ -42,7 +42,7 @@ const Fixture = async () => {
 
     for (let i = 0; i < count; i++) {
       const verification = await Verification.random({
-        createdAt: runningCreatedAt
+        createdAt: runningCreatedAt,
       })
       await f.verificationDb.put(verification)
       verifications.push(verification)
@@ -69,7 +69,7 @@ const Fixture = async () => {
     now,
     cleanUp,
     inserted,
-    insertVerifications
+    insertVerifications,
   }
 }
 
@@ -90,27 +90,27 @@ describe(import.meta.file, () => {
     const before = await f.verificationDb.find({
       where: {
         verificationId: {
-          '=': verification.verificationId
-        }
+          '=': verification.verificationId,
+        },
       },
       limit: 1,
       offset: 0,
       order: {
-        createdAt: 'asc'
-      }
+        createdAt: 'asc',
+      },
     })
     await f.verificationDb.put(verification)
     const after = await f.verificationDb.find({
       where: {
         verificationId: {
-          '=': verification.verificationId
-        }
+          '=': verification.verificationId,
+        },
       },
       limit: 1,
       offset: 0,
       order: {
-        createdAt: 'asc'
-      }
+        createdAt: 'asc',
+      },
     })
     await f.cleanUp()
     expect(unwrap(before).items[0] ?? null).toEqual(null)
@@ -124,31 +124,31 @@ describe(import.meta.file, () => {
     const before = await f.verificationDb.find({
       where: {
         verificationId: {
-          '=': verification.verificationId
-        }
+          '=': verification.verificationId,
+        },
       },
       limit: 1,
       offset: 0,
       order: {
-        createdAt: 'asc'
-      }
+        createdAt: 'asc',
+      },
     })
     const verificationNew: Verification = {
       ...verification,
-      verifiedAtPosix: Posix.now()
+      verifiedAtPosix: Posix.now(),
     }
     await f.verificationDb.put(verificationNew)
     const after = await f.verificationDb.find({
       where: {
         verificationId: {
-          '=': verification.verificationId
-        }
+          '=': verification.verificationId,
+        },
       },
       limit: 1,
       offset: 0,
       order: {
-        createdAt: 'asc'
-      }
+        createdAt: 'asc',
+      },
     })
     await f.cleanUp()
     expect(unwrap(before).items[0]).toEqual(verification)
@@ -162,14 +162,14 @@ describe(import.meta.file, () => {
     const found = await f.verificationDb.find({
       where: {
         phoneNumber: {
-          '=': verification.phoneNumber
-        }
+          '=': verification.phoneNumber,
+        },
       },
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       limit: 1000,
-      offset: 0
+      offset: 0,
     })
     await f.cleanUp()
     expect(unwrap(found).items[0]).toEqual(verification)
@@ -181,12 +181,12 @@ describe(import.meta.file, () => {
 
     await f.insertVerifications({
       start: Posix.past(now, TimeSpan.milliseconds(20)),
-      end: Posix.past(now, TimeSpan.milliseconds(10))
+      end: Posix.past(now, TimeSpan.milliseconds(10)),
     })
 
     await f.insertVerifications({
       start: Posix.future(now, TimeSpan.milliseconds(10)),
-      end: Posix.future(now, TimeSpan.milliseconds(20))
+      end: Posix.future(now, TimeSpan.milliseconds(20)),
     })
 
     const start = now
@@ -194,21 +194,21 @@ describe(import.meta.file, () => {
     const expected = await f.insertVerifications({
       start,
       end,
-      count: 1
+      count: 1,
     })
 
     const found = await f.verificationDb.find({
       where: {
         createdAtPosix: {
           '<=': end,
-          '>=': start
-        }
+          '>=': start,
+        },
       },
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       limit: 1000,
-      offset: 0
+      offset: 0,
     })
     const actual = unwrap(found).items.sort(ascend((v) => v.createdAtPosix))
     await f.cleanUp()
@@ -224,7 +224,7 @@ describe(import.meta.file, () => {
     const expected = await f.insertVerifications({
       start,
       end,
-      count: 1
+      count: 1,
     })
     const found = await f.verificationDb.find({
       limit: LIMIT,
@@ -232,12 +232,12 @@ describe(import.meta.file, () => {
       where: {
         createdAtPosix: {
           '<=': end,
-          '>=': start
-        }
+          '>=': start,
+        },
       },
       order: {
-        createdAt: 'asc'
-      }
+        createdAt: 'asc',
+      },
     })
     const actual = unwrap(found).items
     const expectedIds = new Set(expected.slice(0, LIMIT).map((v) => v.verificationId))
@@ -256,21 +256,21 @@ describe(import.meta.file, () => {
     const expected = await f.insertVerifications({
       start,
       end,
-      count: 8
+      count: 8,
     })
 
     const found = await f.verificationDb.find({
       where: {
         createdAtPosix: {
           '<=': end,
-          '>=': start
-        }
+          '>=': start,
+        },
       },
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       offset: OFFSET,
-      limit: LIMIT
+      limit: LIMIT,
     })
 
     const actual = unwrap(found).items
@@ -290,21 +290,21 @@ describe(import.meta.file, () => {
     const expected = await f.insertVerifications({
       start,
       end,
-      count: 6
+      count: 6,
     })
 
     const found = await f.verificationDb.find({
       where: {
         createdAtPosix: {
           '<=': end,
-          '>=': start
-        }
+          '>=': start,
+        },
       },
       order: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       offset: 3,
-      limit: 5
+      limit: 5,
     })
     const actual = unwrap(found).items
     await f.cleanUp()
@@ -319,7 +319,7 @@ describe(import.meta.file, () => {
     const expected = await f.insertVerifications({
       start,
       end,
-      count: 10
+      count: 10,
     })
 
     expected.sort(ascend((v) => v.createdAtPosix))
@@ -328,14 +328,14 @@ describe(import.meta.file, () => {
       where: {
         createdAtPosix: {
           '<=': end,
-          '>=': start
-        }
+          '>=': start,
+        },
       },
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       limit: 1000,
-      offset: 0
+      offset: 0,
     })
 
     const actual = unwrap(found).items
@@ -351,7 +351,7 @@ describe(import.meta.file, () => {
     const expected = await f.insertVerifications({
       start,
       end,
-      count: 10
+      count: 10,
     })
 
     expected.sort(descend((v) => v.createdAtPosix))
@@ -360,14 +360,14 @@ describe(import.meta.file, () => {
       where: {
         createdAtPosix: {
           '<=': end,
-          '>=': start
-        }
+          '>=': start,
+        },
       },
       order: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       limit: 1000,
-      offset: 0
+      offset: 0,
     })
 
     const actual = unwrap(found).items
@@ -378,20 +378,20 @@ describe(import.meta.file, () => {
   it('should allow code hash to be null', async () => {
     const f = await Fixture()
     const verification = await Verification.random({
-      codeHash: null
+      codeHash: null,
     })
     const put = await f.verificationDb.put(verification)
     const found = await f.verificationDb.find({
       where: {
         verificationId: {
-          '=': verification.verificationId
-        }
+          '=': verification.verificationId,
+        },
       },
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       limit: 1,
-      offset: 0
+      offset: 0,
     })
     expect(put.t).toBe('ok')
     await f.cleanUp()

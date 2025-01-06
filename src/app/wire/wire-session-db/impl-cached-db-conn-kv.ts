@@ -22,14 +22,14 @@ export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => 
     pubSub: await PubSub({
       t: 'pub-sub-topic-based',
       pubSubTopicBased: config.pubSubTopicBased,
-      topic: 'wire-session-db-cache-invalidation'
+      topic: 'wire-session-db-cache-invalidation',
     }),
     cache: await DbConnKv({
       t: 'hash-map',
       map: LRUCache({
-        maxCapacity: 2000
-      })
-    })
+        maxCapacity: 2000,
+      }),
+    }),
   })
 
   const dbConnKv = await DbConnKv({
@@ -38,10 +38,10 @@ export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => 
       t: 'with-cache',
       logger,
       source: config.dbConnKv,
-      cache
+      cache,
     }),
     verifiedKeys: new Set(),
-    logger
+    logger,
   })
 
   return ImplDbConnKv.WireSessionDb({ t: 'db-conn-kv', dbConnKv, logger })

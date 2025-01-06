@@ -16,5 +16,5 @@ const is = (flowPackId: unknown): flowPackId is PackId => {
 export const PackId = {
   ...parser,
   is,
-  generate
+  generate,
 }

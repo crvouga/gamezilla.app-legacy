@@ -78,7 +78,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes?': 'Save changes?',
-    'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`
+    'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`,
   },
   ar: {
     'app.back': 'عودة',
@@ -117,7 +117,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '؟',
     'app.save-changes-warning': `سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.`,
-    'app.save-changes?': 'حفظ التغييرات؟'
+    'app.save-changes?': 'حفظ التغييرات؟',
   },
   de: {
     'app.back': 'Zurück',
@@ -156,7 +156,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Ihre Änderungen gehen verloren, wenn Sie sie nicht vor dem Verlassen speichern.`,
-    'app.save-changes?': 'Änderungen speichern?'
+    'app.save-changes?': 'Änderungen speichern?',
   },
   es: {
     'app.back': 'Atrás',
@@ -195,7 +195,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Se perderán los cambios si no los guarda antes de salir.`,
-    'app.save-changes?': '¿Guardar cambios?'
+    'app.save-changes?': '¿Guardar cambios?',
   },
   fr: {
     'app.back': 'Retour',
@@ -234,7 +234,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Vos modifications seront perdues si vous ne les enregistrez pas avant de quitter.`,
-    'app.save-changes?': 'Enregistrer les modifications?'
+    'app.save-changes?': 'Enregistrer les modifications?',
   },
   it: {
     'app.back': 'Indietro',
@@ -273,7 +273,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Le tue modifiche andranno perse se non le salvi prima di uscire.`,
-    'app.save-changes?': 'Salvare le modifiche?'
+    'app.save-changes?': 'Salvare le modifiche?',
   },
   ja: {
     'app.back': '戻る',
@@ -312,7 +312,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '？',
     'app.save-changes-warning': `終了する前に保存しないと、変更が失われます。`,
-    'app.save-changes?': '変更を保存しますか？'
+    'app.save-changes?': '変更を保存しますか？',
   },
   ko: {
     'app.back': '뒤로',
@@ -351,7 +351,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `저장하지 않으면 종료하기 전에 변경 사항이 손실됩니다.`,
-    'app.save-changes?': '변경 사항 저장?'
+    'app.save-changes?': '변경 사항 저장?',
   },
   pt: {
     'app.back': 'Voltar',
@@ -390,7 +390,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Suas alterações serão perdidas se você não salvá-las antes de sair.`,
-    'app.save-changes?': 'Salvar alterações?'
+    'app.save-changes?': 'Salvar alterações?',
   },
   ru: {
     'app.back': 'Назад',
@@ -429,7 +429,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Ваши изменения будут потеряны, если вы не сохраните их перед выходом.`,
-    'app.save-changes?': 'Сохранить изменения?'
+    'app.save-changes?': 'Сохранить изменения?',
   },
   zh: {
     'app.back': '返回',
@@ -468,7 +468,7 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '？',
     'app.save-changes-warning': `如果在退出之前不保存更改，您的更改将丢失。`,
-    'app.save-changes?': '保存更改？'
+    'app.save-changes?': '保存更改？',
   },
   hi: {
     'app.back': 'वापस',
@@ -507,6 +507,6 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `आपके परिवर्तन खो जाएंगे अगर आप उन्हें बाहर निकलने से पहले सहेजते नहीं हैं।`,
-    'app.save-changes?': 'परिवर्तन सहेजें?'
-  }
+    'app.save-changes?': 'परिवर्तन सहेजें?',
+  },
 }

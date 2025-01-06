@@ -54,5 +54,5 @@ export const SessionId = {
   ...parser,
   generate,
   decode,
-  is
+  is,
 }

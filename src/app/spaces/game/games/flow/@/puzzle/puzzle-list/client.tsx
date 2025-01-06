@@ -22,27 +22,27 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          request: RequestResponse.startedRequest(input.ctx.now)
+          request: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
           sendToServer({
             t: 'flow-cmd.puzzle-list.list-puzzles',
             input: {
               order: {
-                lastUpdatedAt: 'desc'
+                lastUpdatedAt: 'desc',
               },
               pagination: {
                 limit: 25,
-                offset: 0
+                offset: 0,
               },
               where: {
                 createdBy: {
-                  equals: input.ctx.space.hostId
-                }
-              }
-            }
-          })
-        ]
+                  equals: input.ctx.space.hostId,
+                },
+              },
+            },
+          }),
+        ],
       }
     }
   }
@@ -52,8 +52,8 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          request: RequestResponse.timePassed(input.model.request, input.ctx.now)
-        }
+          request: RequestResponse.timePassed(input.model.request, input.ctx.now),
+        },
       }
     }
   }
@@ -63,7 +63,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
       const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
 
       const puzzlesNew = {
-        ...input.model.puzzles
+        ...input.model.puzzles,
       }
       for (const puzzle of puzzles) {
         puzzlesNew[puzzle.id] = puzzle
@@ -75,11 +75,11 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
           request: RequestResponse.response(
             input.model.request,
             input.ctx.now,
-            Result.mapOk(input.msgServer.listed, () => null)
+            Result.mapOk(input.msgServer.listed, () => null),
           ),
-          puzzles: puzzlesNew
+          puzzles: puzzlesNew,
         },
-        msgCmd: isErr(input.msgServer.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : []
+        msgCmd: isErr(input.msgServer.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : [],
       }
     }
     default: {
@@ -94,15 +94,15 @@ const load = (): MsgInCmdClient => {
   return {
     t: 'flow-cmd.puzzle-list',
     c: {
-      t: 'load'
-    }
+      t: 'load',
+    },
   }
 }
 
 const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean => {
   return (
     output.msgCmd?.some(
-      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-cmd.puzzle-list' && cmd.c.t === 'load'
+      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-cmd.puzzle-list' && cmd.c.t === 'load',
     ) ?? false
   )
 }
@@ -140,7 +140,7 @@ const View: ClientModule['View'] = (input) => {
           id='puzzle-builder-list'
           onVisible={() =>
             dispatch({
-              t: 'flow-cmd.puzzle-list.user-observed-end-of-list'
+              t: 'flow-cmd.puzzle-list.user-observed-end-of-list',
             })
           }
         />
@@ -178,5 +178,5 @@ export const PuzzleListClient = {
   update,
   View,
   didLoad,
-  load
+  load,
 }

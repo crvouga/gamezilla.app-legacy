@@ -85,7 +85,7 @@ export type Req =
       {
         userId: UserId
         direction: Direction | 'none'
-      }
+      },
     ]
   | ['input-seed', { userId: UserId; seed: string }]
 
@@ -125,7 +125,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
 
       const modelNew: CoreModel = {
         ...model,
-        seed: msg[1].seed
+        seed: msg[1].seed,
       }
 
       return Ok(modelNew)
@@ -148,12 +148,12 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
         players: mapValues(
           (val) => ({
             userId: val.userId,
-            color: val.color
+            color: val.color,
           }),
-          model.players
+          model.players,
         ),
         seed: model.seed,
-        upper: model.upper
+        upper: model.upper,
       }
 
       return Ok(modelNew)
@@ -182,9 +182,9 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
           ...model.players,
           [msg[1].userId]: {
             color: nextColor,
-            userId: msg[1].userId
-          }
-        }
+            userId: msg[1].userId,
+          },
+        },
       }
       return Ok(modelNew)
     }
@@ -196,7 +196,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
 
       const modelNew: CoreModel = {
         ...model,
-        players: dissoc(model.players, msg[1].userId)
+        players: dissoc(model.players, msg[1].userId),
       }
 
       return Ok(modelNew)
@@ -219,13 +219,13 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
           color: player.color,
           position: {
             x: 0,
-            y: 0
+            y: 0,
           },
-          direction: 'none'
+          direction: 'none',
         }
         return {
           ...byId,
-          [player.userId]: playerNew
+          [player.userId]: playerNew,
         }
       }, {})
 
@@ -234,7 +234,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
         seed: model.seed,
         lower: model.lower,
         upper: model.upper,
-        players: playersNew
+        players: playersNew,
       }
 
       return Ok(modelNew)
@@ -260,9 +260,9 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
           ...model.players,
           [player.userId]: {
             ...player,
-            direction: msg[1].direction
-          }
-        }
+            direction: msg[1].direction,
+          },
+        },
       }
 
       return Ok(modelNew)
@@ -279,7 +279,7 @@ export const tick = (model: CoreModel): CoreModel => {
 
   const modelNew: CoreModel = {
     ...model,
-    players: mapValues((player) => mapPlayer(maze, player), model.players)
+    players: mapValues((player) => mapPlayer(maze, player), model.players),
   }
 
   return modelNew
@@ -294,13 +294,13 @@ const mapPlayer = (maze: Maze, player: Player): Player => {
 
   const playerNew: Player = {
     ...player,
-    position: positionNew
+    position: positionNew,
   }
 
   if (!Maze.hasEdge([player.position, playerNew.position], maze) || !Maze.hasVertex(playerNew.position, maze)) {
     return {
       ...player,
-      direction: 'none'
+      direction: 'none',
     }
   }
 
@@ -333,12 +333,12 @@ export const initShared = ({ userId }: { userId?: UserId }): CoreModel => {
       ? {
           [userId]: {
             color: colorSeq[0],
-            userId
-          }
+            userId,
+          },
         }
       : {},
     seed: 'some arbitrary seed',
     lower: { x: -10, y: -10 },
-    upper: { x: 10, y: 10 }
+    upper: { x: 10, y: 10 },
   }
 }

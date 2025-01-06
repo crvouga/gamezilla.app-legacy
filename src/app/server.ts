@@ -29,7 +29,7 @@ import {
   type MsgServer,
   type MsgToClient,
   type MsgToServer,
-  type MsgToServerMeta
+  type MsgToServerMeta,
 } from './types'
 import * as WireServer from './wire/server'
 import { ServerTransport } from './wire/transport/server'
@@ -48,7 +48,7 @@ const initCtx = async (): Promise<ServerCtx> => {
   const runtime = Runtime({
     t: 'process',
     shutoffFGracePeriod: TimeSpan.seconds(1),
-    logger
+    logger,
   })
 
   const simulateLatency = IS_PROD ? async () => {} : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
@@ -57,23 +57,23 @@ const initCtx = async (): Promise<ServerCtx> => {
     t: 'postgres',
     databaseUrl: DATABASE_URL,
     logger,
-    simulateLatency
+    simulateLatency,
   })
 
   const dbConnKv = await DbConnKv({
     t: 'postgres',
     dbConnSql,
-    logger
+    logger,
   })
 
   const sms = SMS({
     t: 'twilio',
-    logger
+    logger,
   })
 
   const webServer = WebServer({
     logger,
-    t: SERVER_IMPL
+    t: SERVER_IMPL,
   })
 
   const pubSub = await PubSubTopicBased({ t: 'noop' })
@@ -86,19 +86,19 @@ const initCtx = async (): Promise<ServerCtx> => {
           webServer,
           logger,
           pubSubTopicBased: pubSub,
-          isProd: IS_PROD
+          isProd: IS_PROD,
         }
       : {
           t: 'noop',
-          logger
-        }
+          logger,
+        },
   )
 
   const profileCache = await ProfileCache({
     t: 'cached-db-conn-kv',
     dbConnKv,
     logger,
-    runtime
+    runtime,
   })
 
   const env = IS_PROD ? 'prod' : 'dev'
@@ -115,7 +115,7 @@ const initCtx = async (): Promise<ServerCtx> => {
     profileCache,
     webServer,
     runtime,
-    serverInstanceId: ServerInstanceId.generate()
+    serverInstanceId: ServerInstanceId.generate(),
   }
 
   const wire = await WireServer.initCtx({ ctx, transport })
@@ -130,14 +130,14 @@ const initCtx = async (): Promise<ServerCtx> => {
     space,
     profile,
     wire,
-    transport
+    transport,
   }
 }
 
 const updateCtx = (ctx: ServerCtx): ServerCtx => {
   return {
     ...ctx,
-    now: Posix.now()
+    now: Posix.now(),
   }
 }
 
@@ -167,7 +167,7 @@ const update = async (input: { msg: MsgServer; ctx: ServerCtx }): Promise<{}> =>
   const updated = await updateChild({
     ctx: input.ctx,
     msg: input.msg,
-    msgClient: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null
+    msgClient: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null,
   })
 
   await updateLoop(input.ctx, updated)
@@ -179,7 +179,7 @@ const logMsg = ({
   msg,
   msgEvt,
   msgCmd,
-  logger
+  logger,
 }: {
   logger: ILogger
   msg?: MsgServer | null
@@ -209,7 +209,7 @@ const updateLoop = async (
   acc: {
     msgEvt: ServerEvt[]
     msgCmd: ServerCmd<MsgToClient>[]
-  }
+  },
 ): Promise<{
   msgEvt: ServerEvt[]
   msgCmd: ServerCmd<MsgToClient>[]
@@ -223,7 +223,7 @@ const updateLoop = async (
 
     return updateLoop(ctx, {
       msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt)
+      msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt),
     })
   }
 
@@ -236,7 +236,7 @@ const updateLoop = async (
 
     return updateLoop(ctx, {
       msgCmd: Msg.batch(msgCmdRest, updatedEvent.msgCmd),
-      msgEvt: Msg.batch(msgEvtRest, updatedEvent.msgEvt)
+      msgEvt: Msg.batch(msgEvtRest, updatedEvent.msgEvt),
     })
   }
 
@@ -262,7 +262,7 @@ const updateChild = async (input: {
       msgCmd: null,
       msgEvt: input.msgEvt,
       msgClient: input.msgClient?.t === 'spaces' ? { ...input.msgClient, ...input.msgClient.c, userId } : null,
-      msg: input.msg?.t === 'spaces' ? input.msg.c : null
+      msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     }),
 
     AuthServer.update({
@@ -271,7 +271,7 @@ const updateChild = async (input: {
       msgCmd: null,
       msgEvt: input.msgEvt,
       msgClient: input.msgClient?.t === 'auth' ? { ...input.msgClient, ...input.msgClient.c, userId } : null,
-      msg: input.msg?.t === 'auth' ? input.msg.c : null
+      msg: input.msg?.t === 'auth' ? input.msg.c : null,
     }),
 
     WireServer.update({
@@ -279,7 +279,7 @@ const updateChild = async (input: {
       msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
       msgEvt: input.msgEvt,
       msgClient: input.msgClient?.t === 'wire' ? { ...input.msgClient, ...input.msgClient.c } : null,
-      msg: input.msg?.t === 'wire' ? input.msg.c : null
+      msg: input.msg?.t === 'wire' ? input.msg.c : null,
     }),
 
     ProfileServer.update({
@@ -288,7 +288,7 @@ const updateChild = async (input: {
       msgCmd: null,
       msgEvt: input.msgEvt,
       msgClient: input.msgClient?.t === 'profile' ? { ...input.msgClient, ...input.msgClient.c } : null,
-      msg: input.msg?.t === 'profile' ? input.msg.c : null
+      msg: input.msg?.t === 'profile' ? input.msg.c : null,
     }),
 
     LangServer.update({
@@ -297,8 +297,8 @@ const updateChild = async (input: {
       msgCmd: null,
       msgEvt: input.msgEvt,
       msgClient: input.msgClient?.t === 'lang' ? { ...input.msgClient, ...input.msgClient.c } : null,
-      msg: input.msg?.t === 'lang' ? input.msg.c : null
-    })
+      msg: input.msg?.t === 'lang' ? input.msg.c : null,
+    }),
   ])
 
   return {
@@ -307,7 +307,7 @@ const updateChild = async (input: {
       ServerCmd.tag('auth', auth.msgCmd),
       ServerCmd.tag('wire', wire.msgCmd),
       ServerCmd.tag('profile', profile.msgCmd),
-      ServerCmd.tag('lang', lang.msgCmd)
+      ServerCmd.tag('lang', lang.msgCmd),
     ),
     msgEvt: Msg.batch<ServerEvt>(
       //
@@ -315,8 +315,8 @@ const updateChild = async (input: {
       space.msgEvt,
       wire.msgEvt,
       profile.msgEvt,
-      lang.msgEvt
-    )
+      lang.msgEvt,
+    ),
   }
 }
 
@@ -334,15 +334,15 @@ const subscriptions = async (input: { ctx: ServerCtx }): Promise<Sub<MsgServer>>
     Sub.tag('wire', WireServer.subscriptions({ ctx: input.ctx.wire })),
     Sub.flat(
       Sub.map(input.ctx.transport.fromClient, ({ sessionId, clientId, msgs }) =>
-        msgs.map((c): MsgServer => ({ t: '→', sessionId, clientId, c }))
-      )
-    )
+        msgs.map((c): MsgServer => ({ t: '→', sessionId, clientId, c })),
+      ),
+    ),
   ])
 }
 
 const rpc = (input: { ctx: ServerCtx }) => {
   return RPC.initServer(rpcContract, {
-    wire: WireServer.rpc({ ctx: input.ctx.wire })
+    wire: WireServer.rpc({ ctx: input.ctx.wire }),
   })
 }
 
@@ -352,5 +352,5 @@ export const AppServer = {
   init,
   update,
   subscriptions,
-  rpc
+  rpc,
 }

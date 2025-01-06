@@ -17,7 +17,7 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureSpacesClient(input)
 
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -26,14 +26,14 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       currentRoute: {
         n: 'spaces',
-        t: 'space-list'
-      }
+        t: 'space-list',
+      },
     })
     const output = SpacesClient.init({
-      ctx: f.ctx
+      ctx: f.ctx,
     })
     expect(
-      isRequesting(output.model.listSpacesRequest) && output.model.listSpacesRequest.requestedAt === f.ctx.now
+      isRequesting(output.model.listSpacesRequest) && output.model.listSpacesRequest.requestedAt === f.ctx.now,
     ).toBe(true)
   })
 
@@ -41,11 +41,11 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       currentRoute: {
         n: 'spaces',
-        t: 'space-list'
-      }
+        t: 'space-list',
+      },
     })
     const output = SpacesClient.init({
-      ctx: f.ctx
+      ctx: f.ctx,
     })
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toServer?.t === 'list-spaces')).toBe(true)
   })
@@ -58,10 +58,10 @@ describe(import.meta.file, () => {
           t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
-      }
+            t: 'space-list',
+          },
+        },
+      },
     ])
     expect(output.model.listSpacesRequest.t === 'loading').toBe(true)
   })
@@ -74,19 +74,19 @@ describe(import.meta.file, () => {
           t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
+            t: 'space-list',
+          },
+        },
       },
       {
         ctx: {
           ...f.ctx,
-          now: Posix.future(f.ctx.now, TimeSpan.minutes(5))
+          now: Posix.future(f.ctx.now, TimeSpan.minutes(5)),
         },
         msg: {
-          t: 'time-passed'
-        }
-      }
+          t: 'time-passed',
+        },
+      },
     ])
     expect(RequestResponse.didRequestTimeout(output.model.listSpacesRequest)).toBe(true)
   })
@@ -99,17 +99,17 @@ describe(import.meta.file, () => {
           t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
+            t: 'space-list',
+          },
+        },
       },
       {
         msgServer: {
           t: 'listed-spaces',
           spaces: [SpaceCore.random(), SpaceCore.random(), SpaceCore.random()],
-          causedBy: null
-        }
-      }
+          causedBy: null,
+        },
+      },
     ])
     expect(isResponseOk(output.model.listSpacesRequest)).toBe(true)
   })
@@ -122,26 +122,26 @@ describe(import.meta.file, () => {
           t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
+            t: 'space-list',
+          },
+        },
       },
       {
         ctx: {
           ...f.ctx,
-          now: Posix.future(f.ctx.now, TimeSpan.minutes(5))
+          now: Posix.future(f.ctx.now, TimeSpan.minutes(5)),
         },
         msg: {
-          t: 'time-passed'
-        }
+          t: 'time-passed',
+        },
       },
       {
         msgServer: {
           t: 'listed-spaces',
           spaces: [SpaceCore.random(), SpaceCore.random(), SpaceCore.random()],
-          causedBy: null
-        }
-      }
+          causedBy: null,
+        },
+      },
     ])
 
     expect(isResponseOk(updated.model.listSpacesRequest)).toBe(true)
@@ -160,23 +160,23 @@ describe(import.meta.file, () => {
           t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
+            t: 'space-list',
+          },
+        },
       },
       {
         msgServer: {
           t: 'listed-spaces',
           spaces: [space],
-          causedBy: null
-        }
+          causedBy: null,
+        },
       },
       {
         msg: {
           t: 'clicked-space-card',
-          spaceId
-        }
-      }
+          spaceId,
+        },
+      },
     ])
 
     expect(didPushRoute(updated)).toBe(true)
@@ -195,23 +195,23 @@ describe(import.meta.file, () => {
           t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
+            t: 'space-list',
+          },
+        },
       },
       {
         msgServer: {
           t: 'listed-spaces',
           spaces: [space],
-          causedBy: null
-        }
+          causedBy: null,
+        },
       },
       {
         msg: {
           t: 'clicked-space-card',
-          spaceId
-        }
-      }
+          spaceId,
+        },
+      },
     ])
 
     expect(didPlaySound(updated, APP_SOUND.navForwardMin)).toBe(true)
@@ -230,28 +230,28 @@ describe(import.meta.file, () => {
           t: 'routing-evt.route-changed',
           route: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
+            t: 'space-list',
+          },
+        },
       },
       {
         msgServer: {
           t: 'listed-spaces',
           spaces: [space],
-          causedBy: null
-        }
+          causedBy: null,
+        },
       },
       {
         msg: {
           t: 'clicked-space-card',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
-          t: 'clicked-go-home-button'
-        }
-      }
+          t: 'clicked-go-home-button',
+        },
+      },
     ])
     expect(didPlaySound(updated, APP_SOUND.navBackwardMin)).toBe(true)
   })
@@ -266,8 +266,8 @@ describe(import.meta.file, () => {
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId } as const)
-      )
+        withEventId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId } as const),
+      ),
     )
 
     const listedSpace = EventSourced.startFromLatestSnapshot(space)
@@ -275,7 +275,7 @@ describe(import.meta.file, () => {
       { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
       { msg: { t: 'game', c: { t: 'flow', c: { t: 'game-main-menu.clicked-exit-game-button' } }, spaceId } },
       { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
-      { msgServer: { t: 'current-user-space', currentUser: f.currentUser, space: listedSpace } }
+      { msgServer: { t: 'current-user-space', currentUser: f.currentUser, space: listedSpace } },
     ])
 
     const before = SpaceCore.toSpaceStarted(space)
@@ -291,7 +291,7 @@ describe(import.meta.file, () => {
     const initial = f.update(f.initial, [{ msgServer: { t: 'listed-spaces', spaces: [] } }])
 
     const updated = f.update(initial, [
-      { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } }
+      { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } },
     ])
     expect(f.view(initial).getByTestId(SPINNER_TEST_ID)).toBeFalsy()
     expect(f.view(updated).getByTestId(SPINNER_TEST_ID)).toBeTruthy()
@@ -301,7 +301,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const initial = f.update(f.initial, [{ msgServer: { t: 'listed-spaces', spaces: [] } }])
     const updated = f.update(initial, [
-      { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } }
+      { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } },
     ])
     expect(f.view(initial).getByTestId(EMPTY_STATE_TEST_ID)).toBeTruthy()
     expect(f.view(updated).getByTestId(EMPTY_STATE_TEST_ID)).toBeFalsy()

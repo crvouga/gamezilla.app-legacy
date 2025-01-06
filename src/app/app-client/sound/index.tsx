@@ -45,8 +45,8 @@ export type Model = {
 export const init: Module['init'] = () => {
   return {
     model: {
-      muted: false
-    }
+      muted: false,
+    },
   }
 }
 
@@ -80,7 +80,7 @@ export const update: Module['update'] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model })
+    (model) => updateFromEvent({ ...input, model }),
   )
 }
 
@@ -94,15 +94,15 @@ const updateFromMsg: Module['update'] = (input) => {
       if (input.model.muted) {
         return {
           model: { ...input.model, muted: false },
-          msgCmd: [playSound(APP_SOUND.stateChangeUp)]
+          msgCmd: [playSound(APP_SOUND.stateChangeUp)],
         }
       }
 
       return {
         model: {
           ...input.model,
-          muted: !input.model.muted
-        }
+          muted: !input.model.muted,
+        },
       }
     }
 
@@ -126,8 +126,8 @@ const updateFromEvent: Module['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          muted: input.msgEvt.state === 'hidden'
-        }
+          muted: input.msgEvt.state === 'hidden',
+        },
       }
     }
 
@@ -151,7 +151,7 @@ export const updateFromCmd: Module['update'] = (input) => {
         async eff(dispatch) {
           const preloaded = await preloadSoundsEffect(soundCmd.src)
           dispatch({ t: 'preloaded-sounds', src: soundCmd.src, result: preloaded })
-        }
+        },
       }
     }
     case 'play': {
@@ -172,7 +172,7 @@ export const updateFromCmd: Module['update'] = (input) => {
           }
           const played = await playSoundEffect(soundCmd.src, soundCmd.volume ?? UnitInterval.init(1))
           dispatch({ t: 'played-sound', src: soundCmd.src, result: played })
-        }
+        },
       }
     }
   }
@@ -197,7 +197,7 @@ export const ViewStatusBarDrawer = (input: {
     <ListItemButton
       onClick={() =>
         input.dispatch({
-          t: 'toggle-mute'
+          t: 'toggle-mute',
         })
       }
       icon={(inputIcon) => (input.model.muted ? <IconVolumeXMark {...inputIcon} /> : <IconVolumeHigh {...inputIcon} />)}
@@ -308,7 +308,7 @@ const playSoundEffect = async (src: string, volume: UnitInterval): Promise<Resul
 const playSoundEffect_ = async (
   audioContext: AudioContext,
   audioBuffer: AudioBuffer,
-  volume: UnitInterval
+  volume: UnitInterval,
 ): Promise<Result<string, null>> => {
   try {
     const sourceNode = audioContext.createBufferSource()

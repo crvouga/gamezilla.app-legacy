@@ -19,7 +19,7 @@ const Row = p.obj({
   last_updated_at_posix: p.or(p.num, p.str),
   last_updated_by_user_id: UserId,
   deleted_at_posix: p.maybe(p.or(p.num, p.str)),
-  deleted_by_user_id: p.maybe(UserId)
+  deleted_by_user_id: p.maybe(UserId),
 })
 
 type Row = p.Infer<typeof Row>
@@ -32,7 +32,7 @@ const rowToPack = (row: Row): Pack | null => {
     lastUpdatedAt: Posix.init(row.last_updated_at_posix),
     lastUpdatedBy: row.last_updated_by_user_id,
     name: row.flow_pack_name,
-    puzzleIds: row.flow_puzzle_ids
+    puzzleIds: row.flow_puzzle_ids,
   }
 }
 
@@ -78,7 +78,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
   return {
     async get(id) {
       const queried = await dbConnSql.query(Row, 'SELECT * FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id', {
-        flow_pack_id: id
+        flow_pack_id: id,
       })
       return Result.mapOk(queried, (row) => (row[0] ? rowToPack(row[0]) : null))
     },
@@ -96,10 +96,10 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
 
       const queried = await dbConnSql.query(
         p.obj({
-          count: p.or(p.num, p.str)
+          count: p.or(p.num, p.str),
         }),
         str,
-        vars
+        vars,
       )
 
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
@@ -112,7 +112,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
       const vars = {
         ...sqlWhere.vars,
         ...sqlOrder.vars,
-        ...sqlPagination.vars
+        ...sqlPagination.vars,
       }
 
       const str = `
@@ -133,7 +133,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
             const pack = rowToPack(row)
             return pack ? [pack] : []
           }),
-          total
+          total,
         }
       })
 
@@ -179,8 +179,8 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
           last_updated_at_posix: input.lastUpdatedAt,
           last_updated_by_user_id: input.lastUpdatedBy,
           deleted_at_posix: null,
-          deleted_by_user_id: null
-        }
+          deleted_by_user_id: null,
+        },
       )
       return Result.mapOk(queried, () => input)
     },
@@ -190,10 +190,10 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
         p.unknown,
         'DELETE FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id',
         {
-          flow_pack_id: input.id
-        }
+          flow_pack_id: input.id,
+        },
       )
       return Result.mapOk(queried, () => null)
-    }
+    },
   }
 }

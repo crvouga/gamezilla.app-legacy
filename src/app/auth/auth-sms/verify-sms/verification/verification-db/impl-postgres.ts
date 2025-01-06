@@ -15,7 +15,7 @@ export const Row = p.obj({
   phone_number: p.str,
   created_at_posix: p.str,
   expires_at_posix: p.str,
-  verified_at_posix: p.maybe(p.str)
+  verified_at_posix: p.maybe(p.str),
 })
 type Row = p.Infer<typeof Row>
 
@@ -39,7 +39,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
       const vars = {
         ...where.vars,
         ...pagination.vars,
-        ...order.vars
+        ...order.vars,
       }
       const queried = await config.dbConnSql.query(Row, query, vars)
 
@@ -53,10 +53,10 @@ export const VerificationDb = (config: Config): IVerificationDb => {
 			`
       const queriedCount = await config.dbConnSql.query(
         p.obj({
-          count: p.str
+          count: p.str,
         }),
         queryCount,
-        vars
+        vars,
       )
 
       if (isErr(queriedCount)) {
@@ -71,7 +71,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         items,
         limit: input.limit ?? Infinity,
         offset: input.offset ?? 0,
-        total
+        total,
       })
     },
     async put(verification) {
@@ -104,7 +104,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         created_at_posix: verification.createdAtPosix,
         expires_at_posix: verification.expiresAtPosix,
         code_hash: Sql.json(verification.codeHash),
-        verified_at_posix: verification.verifiedAtPosix
+        verified_at_posix: verification.verifiedAtPosix,
       }
       const queried = await config.dbConnSql.query(p.unknown, query, vars)
 
@@ -113,12 +113,12 @@ export const VerificationDb = (config: Config): IVerificationDb => {
     async zap(verificationId) {
       const query = `DELETE FROM auth_sms_verification WHERE verification_id = :verification_id`
       const vars = {
-        verification_id: verificationId
+        verification_id: verificationId,
       }
       const queried = await config.dbConnSql.query(p.unknown, query, vars)
 
       return Result.mapOk(queried, () => null)
-    }
+    },
   }
 }
 
@@ -135,8 +135,8 @@ const rowToVerification = (row: Row): Verification[] => {
       phoneNumber,
       createdAtPosix: Posix.init(row.created_at_posix),
       expiresAtPosix: Posix.init(row.expires_at_posix),
-      verifiedAtPosix: row.verified_at_posix ? Posix.init(row.verified_at_posix) : null
-    }
+      verifiedAtPosix: row.verified_at_posix ? Posix.init(row.verified_at_posix) : null,
+    },
   ]
 }
 
@@ -153,7 +153,7 @@ const toSqlOrder = (order?: OrderClause) => {
 
   return {
     str,
-    vars
+    vars,
   }
 }
 
@@ -185,6 +185,6 @@ const toSqlWhere = (where?: WhereClause) => {
 
   return {
     str,
-    vars
+    vars,
   }
 }

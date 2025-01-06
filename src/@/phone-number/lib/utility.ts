@@ -23,7 +23,7 @@ export function findCountryPhoneDataByCountry(country: string) {
 
   return (
     countryPhoneData.find(
-      (countryPhoneDatum) => country.toUpperCase() === countryPhoneDatum.country_name.toUpperCase()
+      (countryPhoneDatum) => country.toUpperCase() === countryPhoneDatum.country_name.toUpperCase(),
     ) || null
   )
 }
@@ -31,7 +31,7 @@ export function findCountryPhoneDataByCountry(country: string) {
 export function findExactCountryPhoneData(
   phoneNumber: string,
   validateMobilePrefix: boolean,
-  countryPhoneDatum: CountryPhoneDataItem
+  countryPhoneDatum: CountryPhoneDataItem,
 ) {
   // check if the phone number length match any one of the length config
   const phoneNumberLengthMatched = countryPhoneDatum.phone_number_lengths.some((length) => {
@@ -66,7 +66,7 @@ export function findExactCountryPhoneData(
 export function findPossibleCountryPhoneData(
   phoneNumber: string,
   validateMobilePrefix: boolean,
-  countryPhoneDatum: CountryPhoneDataItem
+  countryPhoneDatum: CountryPhoneDataItem,
 ) {
   // check if the phone number length match any one of the length config
   const phoneNumberLengthMatched = countryPhoneDatum.phone_number_lengths.some((length) => {
@@ -128,7 +128,7 @@ export function findCountryPhoneDataByPhoneNumber(phoneNumber: string, validateM
 
   return {
     exactCountryPhoneData,
-    possibleCountryPhoneData
+    possibleCountryPhoneData,
   }
 }
 
@@ -147,7 +147,7 @@ export function validatePhoneISO3166(
   phone: string,
   countryPhoneDatum: CountryPhoneDataItem,
   validateMobilePrefix: boolean,
-  plusSign: boolean
+  plusSign: boolean,
 ) {
   if (!countryPhoneDatum.phone_number_lengths) {
     return false

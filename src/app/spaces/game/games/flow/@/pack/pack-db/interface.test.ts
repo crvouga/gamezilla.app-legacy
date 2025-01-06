@@ -14,21 +14,21 @@ const Fixture = async () => {
     case 'integration': {
       const flowPackDb = PackDb({
         t: 'db-conn-sql',
-        dbConnSql: testEnv.dbConnSql
+        dbConnSql: testEnv.dbConnSql,
       })
 
       return {
-        flowPackDb
+        flowPackDb,
       }
     }
 
     case 'unit': {
       const flowPackDb = PackDb({
-        t: 'hash-map'
+        t: 'hash-map',
       })
 
       return {
-        flowPackDb
+        flowPackDb,
       }
     }
   }
@@ -58,15 +58,15 @@ describe(import.meta.file, () => {
     await f.flowPackDb.put(pack)
     const listed = await f.flowPackDb.list({
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       pagination: {
         limit: 10,
-        offset: 0
+        offset: 0,
       },
       where: {
-        createdBy: pack.createdBy
-      }
+        createdBy: pack.createdBy,
+      },
     })
     expect(listed.t).toBe('ok')
     if (listed.t === 'ok') {
@@ -79,7 +79,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const createdBy = UserId.generate()
     const pack = await Pack.random({
-      createdBy
+      createdBy,
     })
     await f.flowPackDb.put(pack)
 
@@ -90,15 +90,15 @@ describe(import.meta.file, () => {
 
     const listed = await f.flowPackDb.list({
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       pagination: {
         limit: 10,
-        offset: 0
+        offset: 0,
       },
       where: {
-        createdBy: pack.createdBy
-      }
+        createdBy: pack.createdBy,
+      },
     })
     expect(listed.t).toBe('ok')
     if (listed.t === 'ok') {
@@ -113,8 +113,8 @@ describe(import.meta.file, () => {
     await f.flowPackDb.put(pack)
     const count = await f.flowPackDb.count({
       where: {
-        createdBy: pack.createdBy
-      }
+        createdBy: pack.createdBy,
+      },
     })
     expect(count).toEqual(Ok(1))
   })
@@ -125,7 +125,7 @@ describe(import.meta.file, () => {
     await f.flowPackDb.put(pack)
     const zapped = await f.flowPackDb.zap({
       deletedBy: pack.createdBy,
-      id: pack.id
+      id: pack.id,
     })
     const after = await f.flowPackDb.get(pack.id)
     expect(zapped).toEqual(Ok(null))
@@ -140,9 +140,9 @@ describe(import.meta.file, () => {
     const updated: Pack = {
       ...pack,
       name: await PackName.generate({
-        count: 1
+        count: 1,
       }),
-      puzzleIds: [PuzzleId.generate(), PuzzleId.generate()]
+      puzzleIds: [PuzzleId.generate(), PuzzleId.generate()],
     }
     await f.flowPackDb.put(updated)
     const after = Result.unwrapOr(await f.flowPackDb.get(pack.id), null)

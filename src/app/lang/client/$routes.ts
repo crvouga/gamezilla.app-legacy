@@ -3,7 +3,7 @@ import { p } from '~/@/parser'
 
 const Route = p.obj({
   n: p.l('lang'),
-  t: p.l('choose-lang')
+  t: p.l('choose-lang'),
 })
 
 export type Route = p.Infer<typeof Route>

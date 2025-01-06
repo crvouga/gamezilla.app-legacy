@@ -16,21 +16,21 @@ import { SpaceCoreState } from '../space-state'
 
 export const SpaceError = p.obj({
   t: p.l('user-already-in-a-space'),
-  userId: UserId
+  userId: UserId,
 })
 export type SpaceError = p.Infer<typeof SpaceError>
 
 export const Model = p.obj({
   spaces: p.dict(SpaceId, SpaceCore.Model),
   indexSpaceIdByUserId: p.dict(UserId, SpaceId),
-  errors: p.dict(EventId, SpaceError)
+  errors: p.dict(EventId, SpaceError),
 })
 export type Model = p.Infer<typeof Model>
 
 export const init: Model = {
   spaces: {},
   indexSpaceIdByUserId: {},
-  errors: {}
+  errors: {},
 }
 
 //
@@ -44,7 +44,7 @@ export const listSpaces = ({
   model,
   limit,
   offset,
-  whereAnd
+  whereAnd,
 }: {
   model: Model
   limit: number
@@ -192,7 +192,7 @@ export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceCor
 
 export const update = ({
   model,
-  msgCore
+  msgCore,
 }: {
   model: Model
   msgCore: WithEventId<SpaceEvent>
@@ -212,7 +212,7 @@ export const update = ({
       const userIds = SpaceCore.toUserIds(model.spaces[msgCore.spaceId] ?? SpaceCore.init)
 
       const spaceIdByUserIdNew = {
-        ...model.indexSpaceIdByUserId
+        ...model.indexSpaceIdByUserId,
       }
       for (const userId of userIds) {
         delete spaceIdByUserIdNew[userId]
@@ -223,8 +223,8 @@ export const update = ({
       return {
         model: {
           ...appended.model,
-          indexSpaceIdByUserId: spaceIdByUserIdNew
-        }
+          indexSpaceIdByUserId: spaceIdByUserIdNew,
+        },
       }
     }
 
@@ -239,16 +239,16 @@ export const update = ({
               ...model.errors,
               [msgCore.eventId]: {
                 t: 'user-already-in-a-space',
-                userId: msgCore.userId
-              }
-            }
-          }
+                userId: msgCore.userId,
+              },
+            },
+          },
         }
       }
 
       const spaceIdByUserIdNew = {
         ...model.indexSpaceIdByUserId,
-        [msgCore.userId]: msgCore.spaceId
+        [msgCore.userId]: msgCore.spaceId,
       }
 
       const appended = append(model, msgCore)
@@ -256,14 +256,14 @@ export const update = ({
       return {
         model: {
           ...appended.model,
-          indexSpaceIdByUserId: spaceIdByUserIdNew
-        }
+          indexSpaceIdByUserId: spaceIdByUserIdNew,
+        },
       }
     }
 
     case 'user-left-space': {
       const spaceIdByUserIdNew = {
-        ...model.indexSpaceIdByUserId
+        ...model.indexSpaceIdByUserId,
       }
 
       if (msgCore.spaceId === model.indexSpaceIdByUserId[msgCore.userId]) {
@@ -275,15 +275,15 @@ export const update = ({
       return {
         model: {
           ...appended.model,
-          indexSpaceIdByUserId: spaceIdByUserIdNew
-        }
+          indexSpaceIdByUserId: spaceIdByUserIdNew,
+        },
       }
     }
 
     case 'user-started-space': {
       const spaceIdByUserIdNew = {
         ...model.indexSpaceIdByUserId,
-        [msgCore.userId]: msgCore.spaceId
+        [msgCore.userId]: msgCore.spaceId,
       }
 
       const appended = append(model, msgCore)
@@ -291,8 +291,8 @@ export const update = ({
       return {
         model: {
           ...appended.model,
-          indexSpaceIdByUserId: spaceIdByUserIdNew
-        }
+          indexSpaceIdByUserId: spaceIdByUserIdNew,
+        },
       }
     }
   }
@@ -300,7 +300,7 @@ export const update = ({
 
 const append = (
   model: Model,
-  msgCore: WithEventId<SpaceEvent>
+  msgCore: WithEventId<SpaceEvent>,
 ): {
   model: Model
 } => {
@@ -315,9 +315,9 @@ const append = (
       ...model,
       spaces: {
         ...model.spaces,
-        [spaceId]: spaceNew
-      }
-    }
+        [spaceId]: spaceNew,
+      },
+    },
   }
 }
 
@@ -335,20 +335,20 @@ export const merge = (model: Model, space: SpaceCore.Model): Model => {
   const spacesNew: Model['spaces'] = spaceId
     ? {
         ...model.spaces,
-        [spaceId]: spaceNew
+        [spaceId]: spaceNew,
       }
     : model.spaces
 
   return {
     ...model,
     spaces: spacesNew,
-    indexSpaceIdByUserId: indexSpaceIdByUserIdNew
+    indexSpaceIdByUserId: indexSpaceIdByUserIdNew,
   }
 }
 
 const updateIndexSpaceIdByUserId = (
   spaceIdByUserId: Model['indexSpaceIdByUserId'],
-  space: SpaceCore.Model
+  space: SpaceCore.Model,
 ): Model['indexSpaceIdByUserId'] => {
   const spaceState = SpaceCore.toSpaceStarted(space)
 

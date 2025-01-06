@@ -5,7 +5,7 @@ import { IconXMark, Slider } from '~/app/@/ui'
 export const Model = p.obj({
   t: p.l('flow-grid'),
   width: p.num,
-  height: p.num
+  height: p.num,
 })
 
 export type Model = p.Infer<typeof Model>
@@ -14,14 +14,14 @@ export const init = (model: { width: number; height: number }): Model => {
   return {
     t: 'flow-grid',
     width: model.width,
-    height: model.height
+    height: model.height,
   }
 }
 
 export const ViewForm = ({
   form,
   onInput,
-  ctx
+  ctx,
 }: {
   form: Model
   onInput: (dimensions: Model) => void
@@ -44,7 +44,7 @@ export const ViewForm = ({
           onInput={(width) =>
             onInput({
               ...form,
-              width
+              width,
             })
           }
           value={form.width}
@@ -57,7 +57,7 @@ export const ViewForm = ({
           onInput={(height) =>
             onInput({
               ...form,
-              height
+              height,
             })
           }
           value={form.height}

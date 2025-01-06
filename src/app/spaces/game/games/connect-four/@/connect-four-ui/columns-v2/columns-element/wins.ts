@@ -16,7 +16,7 @@ const angleBetween = (a: Pos2, b: Pos2): number => {
 export function syncWins({
   parentNode,
   prevColumns,
-  columns
+  columns,
 }: {
   prevColumns: Columns | null
   parentNode: SVGElement
@@ -32,7 +32,7 @@ export function syncWins({
   for (const win of additions) {
     enterWin({
       win,
-      parentNode
+      parentNode,
     })
   }
 
@@ -41,7 +41,7 @@ export function syncWins({
 
     if (node instanceof SVGRectElement) {
       exitWin({
-        node
+        node,
       })
     }
   }
@@ -97,17 +97,17 @@ export async function enterWin({ win, parentNode }: { win: Win; parentNode: SVGE
   const animation = node.animate(
     [
       {
-        strokeDashoffset: length
+        strokeDashoffset: length,
       },
       {
-        strokeDashoffset: 0
-      }
+        strokeDashoffset: 0,
+      },
     ],
     {
       duration: 500,
       easing: 'ease-in-out',
-      fill: 'both'
-    }
+      fill: 'both',
+    },
   )
 
   await animation.finished
@@ -127,17 +127,17 @@ export async function exitWin({ node }: { node: SVGRectElement }) {
   const animation = node.animate(
     [
       {
-        strokeDashoffset: 0
+        strokeDashoffset: 0,
       },
       {
-        strokeDashoffset: length
-      }
+        strokeDashoffset: length,
+      },
     ],
     {
       duration: 500,
       easing: 'ease-in-out',
-      fill: 'both'
-    }
+      fill: 'both',
+    },
   )
 
   await animation.finished

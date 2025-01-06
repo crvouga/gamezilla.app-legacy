@@ -9,7 +9,7 @@ import { Posix } from '~/@/time/posix'
 export const Row = p.obj({
   user_id: UserId,
   session_id: SessionId,
-  created_at_posix: p.or(p.str, p.num)
+  created_at_posix: p.or(p.str, p.num),
 })
 
 export type Config = {
@@ -27,14 +27,14 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
 				ORDER BY created_at_posix DESC
 			`
       const vars = {
-        session_id: sessionId
+        session_id: sessionId,
       }
       const queried = await config.dbConnSql.query(
         p.obj({
-          user_id: UserId
+          user_id: UserId,
         }),
         query,
-        vars
+        vars,
       )
 
       if (isErr(queried)) {
@@ -53,13 +53,13 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
       const vars = {
         user_id: input.guestUserId,
         session_id: input.sessionId,
-        created_at_posix: Posix.now()
+        created_at_posix: Posix.now(),
       }
       const inserted = await config.dbConnSql.query(p.unknown, query, vars)
       if (isErr(inserted)) {
         return inserted
       }
       return Ok(null)
-    }
+    },
   }
 }

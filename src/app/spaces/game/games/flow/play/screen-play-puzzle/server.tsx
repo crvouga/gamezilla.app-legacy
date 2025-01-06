@@ -10,12 +10,12 @@ const update: ServerModule['update'] = async (input) => {
   return GameServerModule.andThen(
     {},
     //
-    () => recordUserActivity(input)
+    () => recordUserActivity(input),
   )
 }
 
 export const msgCoreToUserActivity = (
-  input: MsgCoreEvt & { puzzleId: PuzzleId; happenedAt: Posix }
+  input: MsgCoreEvt & { puzzleId: PuzzleId; happenedAt: Posix },
 ): UserActivity[] => {
   switch (input.t) {
     case 'user-completed-puzzle': {
@@ -24,8 +24,8 @@ export const msgCoreToUserActivity = (
           t: 'user-solved-puzzle',
           happenedAt: Posix.now(),
           puzzleId: input.puzzleId,
-          userId: input.userId
-        }
+          userId: input.userId,
+        },
       ]
     }
     case 'user-used-hint': {
@@ -34,8 +34,8 @@ export const msgCoreToUserActivity = (
           t: 'user-used-hint',
           happenedAt: Posix.now(),
           puzzleId: input.puzzleId,
-          userId: input.userId
-        }
+          userId: input.userId,
+        },
       ]
     }
   }
@@ -64,5 +64,5 @@ const recordUserActivity: ServerModule['update'] = async (input) => {
 }
 
 export const ScreenPlayPuzzleServer = {
-  update
+  update,
 }

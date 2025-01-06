@@ -21,7 +21,7 @@ const LichessRow = p.obj({
   NbPlays: p.str,
   Themes: p.str,
   GameUrl: p.str,
-  OpeningTags: p.str
+  OpeningTags: p.str,
 })
 
 export type LichessRow = p.Infer<typeof LichessRow>
@@ -37,7 +37,7 @@ const log = (...args: unknown[]) => {
 export const uploadLichessDbPuzzleCsv = async ({
   dbConn,
   lichessDbPuzzleCsvPath,
-  batchSize = 10_000
+  batchSize = 10_000,
 }: {
   dbConn: IDbConnSql
   lichessDbPuzzleCsvPath: string
@@ -80,7 +80,7 @@ export const uploadLichessDbPuzzleCsv = async ({
 
     const inserted = await PuzzleDb.puzzles.replace({
       dbConn,
-      rows: batch
+      rows: batch,
     })
 
     log(`${inserted.t} - ${batch.length} rows -`)
@@ -95,7 +95,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   if (batch.length > 0) {
     const inserted = await PuzzleDb.puzzles.replace({
       dbConn,
-      rows: batch
+      rows: batch,
     })
 
     if (inserted.t === 'err') {
@@ -122,6 +122,6 @@ const lichessRowToRow = (lichessRow: LichessRow): PuzzleRow => {
     popularity: Popularity,
     number_of_plays: NbPlays,
     themes: Themes,
-    game_url: GameUrl
+    game_url: GameUrl,
   }
 }

@@ -9,7 +9,7 @@ import { FlowServerCtx } from '../../../@/server/ctx'
 import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
 
 export const initial = {
-  model: initServer
+  model: initServer,
 }
 
 export const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
@@ -21,26 +21,26 @@ export const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
         ...ctx,
         flowPackDb: PackDb({
           t: 'db-conn-sql',
-          dbConnSql: testEnv.dbConnSql
+          dbConnSql: testEnv.dbConnSql,
         }),
         flowPuzzleDb: PuzzleDb({
           t: 'db-conn-sql',
           dbConnSql: testEnv.dbConnSql,
           logger: Logger({
-            t: 'noop'
-          })
-        })
+            t: 'noop',
+          }),
+        }),
       }
     }
     case 'unit': {
       return {
         ...ctx,
         flowPackDb: PackDb({
-          t: 'hash-map'
+          t: 'hash-map',
         }),
         flowPuzzleDb: PuzzleDb({
-          t: 'hash-map'
-        })
+          t: 'hash-map',
+        }),
       }
     }
   }
@@ -55,6 +55,6 @@ export const FlowCreateFixtureServer = async () => {
     ...f,
     ctx,
     model,
-    modelCore
+    modelCore,
   }
 }

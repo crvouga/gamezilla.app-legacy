@@ -11,12 +11,11 @@ import { WebClient } from '~/@/web-client'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
 import { SERVER_IMPL, SERVER_URL, type ServerImpl } from '~/config-public'
 import { ILogger, Logger } from '../@/logger'
-import { AppClientCmd } from './@/client/cmd'
+import { APP_SOUND, AppClientCmd, preloadSound } from './@/client/cmd'
 import { AnonymousClientCtx, AppClientCtx, BaseClientCtx, isAppClientCtx } from './@/client/ctx'
 import { ClientEvt } from './@/client/evt'
 import { Translator } from './@/client/translator'
 import { BottomButtons } from './@/ui/bottom-buttons'
-import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import * as AuthClient from './auth/client'
 import * as LangClient from './lang/client'
@@ -28,7 +27,7 @@ import {
   type ModelClient,
   type MsgClient,
   type MsgToClient,
-  type MsgToServer
+  type MsgToServer,
 } from './types'
 import * as WireClient from './wire/client'
 import { ClientTransport } from './wire/transport/client'
@@ -50,13 +49,13 @@ const toClientTransportConfig = (input: {
     case 'bun': {
       return {
         ...input,
-        t: 'standard-web-sockets'
+        t: 'standard-web-sockets',
       }
     }
     case 'node': {
       return {
         ...input,
-        t: 'noop'
+        t: 'noop',
       }
     }
   }
@@ -79,13 +78,13 @@ export const initCtx = async (): Promise<ClientCtx> => {
     toClientTransportConfig({
       serverImpl: SERVER_IMPL,
       serverUrl: SERVER_URL,
-      logger
-    })
+      logger,
+    }),
   )
 
   const webClient = WebClient({
     t: 'fetch',
-    fetch: fetch as Fetch
+    fetch: fetch as Fetch,
   })
 
   const rpc = RPC.initClient(webClient, rpcContract)
@@ -96,14 +95,14 @@ export const initCtx = async (): Promise<ClientCtx> => {
     transport,
     now: Posix.now(),
     location: Browser.location(),
-    navigatorLanguage: LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
+    navigatorLanguage: LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en',
   }
 }
 
 export const updateCtx = (ctx: ClientCtx): ClientCtx => {
   return {
     ...ctx,
-    now: Posix.now()
+    now: Posix.now(),
   }
 }
 
@@ -121,18 +120,12 @@ export const init = (input: {
     t: Translator(input.ctx.navigatorLanguage),
     currentUserId: null,
     documentVisibilityState: 'visible',
-    profiles: {}
+    profiles: {},
   }
 
   const lang = LangClient.init({ ctx, stored: input.ctx.stored })
   const toast = Toast.init({ stored: input.ctx.stored, ctx })
-  const wire = WireClient.init({
-    ctx: {
-      ...ctx,
-      rpc: input.ctx.rpc.wire
-    },
-    stored: input.ctx.stored
-  })
+  const wire = WireClient.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: input.ctx.stored })
   const auth = AuthClient.init({ stored: input.ctx.stored, ctx })
   const space = SpacesClient.init({ ctx, stored: input.ctx.stored })
   const profile = ProfileClient.init({ ctx, stored: input.ctx.stored })
@@ -150,7 +143,7 @@ export const init = (input: {
     spaces: space.model,
     auth: auth.model,
     profile: profile.model,
-    lang: lang.model
+    lang: lang.model,
   }
 
   const initialEff = Eff.batch<MsgClient>([routing.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
@@ -164,21 +157,20 @@ export const init = (input: {
     AppClientCmd.tag('spaces', space.msgCmd),
     AppClientCmd.tag('profile', profile.msgCmd),
     AppClientCmd.tag('auth', auth.msgCmd),
-    AppClientCmd.tag('lang', lang.msgCmd)
-
-    // preloadSound(Object.values(APP_SOUND))
+    AppClientCmd.tag('lang', lang.msgCmd),
+    preloadSound(Object.values(APP_SOUND)),
   )
 
   const updated = updateLoop(input.ctx, {
     model: initialModel,
     eff: initialEff,
     msgCmd: initialCmd,
-    msgEvt: []
+    msgEvt: [],
   })
 
   return {
     model: updated.model,
-    eff: updated.eff
+    eff: updated.eff,
   }
 }
 
@@ -196,14 +188,14 @@ const toClientCtx = (input: { model: ModelClient; ctx: ClientCtx }): AppClientCt
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
     currentRoute: input.model.routing.currentRoute,
-    currentUserId: null
+    currentUserId: null,
   }
   if (input.model.auth.currentUser.t === 'logged-in') {
     return {
       ...anonymousCtx,
       currentUser: input.model.auth.currentUser.account,
       currentUserRole: input.model.auth.currentUser.account.role,
-      currentUserId: input.model.auth.currentUser.account.userId
+      currentUserId: input.model.auth.currentUser.account.userId,
     }
   }
   return anonymousCtx
@@ -230,7 +222,7 @@ export const update = (input: {
     ctx: input.ctx,
     model: input.model,
     msg: input.msg,
-    msgServer: msgServer
+    msgServer: msgServer,
   })
 
   const updated = updateLoop(input.ctx, updatedFromMsg)
@@ -255,13 +247,13 @@ const updateLoop = (ctx: ClientCtx, acc: Output): Output => {
     const updatedCmd = updateChild({
       ctx,
       model: acc.model,
-      msgCmd
+      msgCmd,
     })
     return updateLoop(ctx, {
       model: updatedCmd.model,
       msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt)
+      msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt),
     })
   }
 
@@ -271,13 +263,13 @@ const updateLoop = (ctx: ClientCtx, acc: Output): Output => {
     const updatedEvt = updateChild({
       ctx,
       model: acc.model,
-      msgEvt
+      msgEvt,
     })
     return updateLoop(ctx, {
       model: updatedEvt.model,
       msgCmd: Msg.batch(msgCmdRest, updatedEvt.msgCmd),
       eff: Eff.batch([acc.eff, updatedEvt.eff]),
-      msgEvt: Msg.batch(msgEvtRest, updatedEvt.msgEvt)
+      msgEvt: Msg.batch(msgEvtRest, updatedEvt.msgEvt),
     })
   }
 
@@ -303,7 +295,7 @@ const updateChild = (input: {
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     msgServer: input.msgServer?.t === 'spaces' ? input.msgServer.c : null,
     msgEvt: input.msgEvt,
-    msgCmd: null
+    msgCmd: null,
   })
 
   const profile = ProfileClient.update({
@@ -312,7 +304,7 @@ const updateChild = (input: {
     msg: input.msg?.t === 'profile' ? input.msg.c : null,
     msgServer: input.msgServer?.t === 'profile' ? input.msgServer.c : null,
     msgEvt: input.msgEvt,
-    msgCmd: input.msgCmd?.t === 'profile' ? input.msgCmd : null
+    msgCmd: input.msgCmd?.t === 'profile' ? input.msgCmd : null,
   })
 
   const auth = AuthClient.update({
@@ -321,13 +313,13 @@ const updateChild = (input: {
     msg: input.msg?.t === 'auth' ? input.msg.c : null,
     msgServer: input.msgServer?.t === 'auth' ? input.msgServer.c : null,
     msgEvt: input.msgEvt,
-    msgCmd: input.msgCmd?.t === 'auth' ? input.msgCmd : null
+    msgCmd: input.msgCmd?.t === 'auth' ? input.msgCmd : null,
   })
 
   const routing = Routing.update({
     model: input.model.routing,
     msg: input.msg?.t === 'routing' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'routing' ? input.msgCmd : null
+    msgCmd: input.msgCmd?.t === 'routing' ? input.msgCmd : null,
   })
 
   const wire = WireClient.update({
@@ -336,33 +328,33 @@ const updateChild = (input: {
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
     msgServer: input.msgServer?.t === 'wire' ? input.msgServer.c : null,
     msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
-    transport: input.ctx.transport
+    transport: input.ctx.transport,
   })
 
   const sound = Sound.update({
     model: input.model.sound,
     msg: input.msg?.t === 'sound' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'sound' ? input.msgCmd : null,
-    ctx: clientCtx
+    ctx: clientCtx,
   })
 
   const platform = Platform.update({
     model: input.model.platform,
     msg: input.msg?.t === 'platform' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'platform' ? input.msgCmd : null
+    msgCmd: input.msgCmd?.t === 'platform' ? input.msgCmd : null,
   })
 
   const statusBar = StatusBar.update({
     model: input.model.statusBar,
     msg: input.msg?.t === 'status-bar' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'status-bar' ? input.msgCmd : null
+    msgCmd: input.msgCmd?.t === 'status-bar' ? input.msgCmd : null,
   })
 
   const toast = Toast.update({
     model: input.model.toast,
     msg: input.msg?.t === 'toast' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'toast' ? input.msgCmd : null,
-    ctx: clientCtx
+    ctx: clientCtx,
   })
 
   const lang = LangClient.update({
@@ -371,7 +363,7 @@ const updateChild = (input: {
     msgCmd: null,
     msgServer: input.msgServer?.t === 'lang' ? input.msgServer.c : null,
     msgEvt: input.msgEvt,
-    ctx: clientCtx
+    ctx: clientCtx,
   })
 
   return {
@@ -385,7 +377,7 @@ const updateChild = (input: {
       statusBar: statusBar.model,
       toast: toast.model,
       wire: wire.model,
-      lang: lang.model
+      lang: lang.model,
     },
 
     eff: Eff.batch<MsgClient>([
@@ -397,7 +389,7 @@ const updateChild = (input: {
       Eff.tag('spaces', space.eff),
       Eff.tag('toast', toast.eff),
       Eff.tag('wire', wire.eff),
-      Eff.tag('lang', lang.eff)
+      Eff.tag('lang', lang.eff),
     ]),
 
     msgEvt: Msg.batch<ClientEvt>(
@@ -408,7 +400,7 @@ const updateChild = (input: {
       space.msgEvt,
       toast.msgEvt,
       wire.msgEvt,
-      lang.msgEvt
+      lang.msgEvt,
     ),
 
     msgCmd: Msg.batch<AppClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>>(
@@ -420,8 +412,8 @@ const updateChild = (input: {
       statusBar.msgCmd,
       routing.msgCmd,
       sound.msgCmd,
-      toast.msgCmd
-    )
+      toast.msgCmd,
+    ),
   }
 }
 
@@ -446,7 +438,7 @@ export const subscriptions = (input: { ctx: ClientCtx; model: ModelClient }): Su
     Sub.tag('lang', LangClient.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('toast', Toast.subscriptions({ ctx, model: input.model.toast })),
     Sub.tag('auth', AuthClient.subscriptions({ ctx, model: input.model.auth })),
-    Sub.tag('spaces', SpacesClient.subscriptions({ ctx, model: input.model.spaces }))
+    Sub.tag('spaces', SpacesClient.subscriptions({ ctx, model: input.model.spaces })),
   ])
 }
 
@@ -500,7 +492,7 @@ const ViewRoute = (input: {
           dispatch={(c) =>
             input.dispatch({
               t: 'lang',
-              c
+              c,
             })
           }
           model={input.model.lang}
@@ -536,7 +528,7 @@ const ViewRouteLoggedOut: typeof ViewRoute = (input) => {
           dispatch={(c) =>
             input.dispatch({
               t: 'auth',
-              c
+              c,
             })
           }
         />
@@ -545,15 +537,7 @@ const ViewRouteLoggedOut: typeof ViewRoute = (input) => {
     case 'spaces':
     case 'profile':
     case 'lang': {
-      return (
-        <ViewRedirect
-          dispatch={input.dispatch}
-          route={{
-            n: 'auth-login',
-            t: 'login'
-          }}
-        />
-      )
+      return <></>
     }
   }
 }
@@ -566,13 +550,13 @@ const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
           dispatch={(m) =>
             input.dispatch({
               t: 'profile',
-              c: m
+              c: m,
             })
           }
           model={input.model.profile}
           ctx={input.ctx}
           slots={{
-            bottomBar: () => <ViewBottomNavBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
+            bottomBar: () => <ViewBottomNavBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />,
           }}
         />
       )
@@ -584,13 +568,13 @@ const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
           dispatch={(m) =>
             input.dispatch({
               t: 'spaces',
-              c: m
+              c: m,
             })
           }
           model={input.model.spaces}
           ctx={input.ctx}
           slots={{
-            bottomBar: () => <ViewBottomNavBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
+            bottomBar: () => <ViewBottomNavBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />,
           }}
         />
       )
@@ -598,40 +582,15 @@ const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
 
     case 'lang':
     case 'auth-login': {
-      return (
-        <ViewRedirect
-          dispatch={input.dispatch}
-          route={{
-            n: 'spaces',
-            t: 'space-list'
-          }}
-        />
-      )
+      return <></>
     }
   }
-}
-
-const ViewRedirect = (input: { route: Route; dispatch: (m: MsgClient) => void }) => {
-  return (
-    <IntersectionObserverEmitter
-      id='redirect'
-      onVisible={() =>
-        input.dispatch({
-          t: 'routing',
-          c: {
-            t: 'clicked-link',
-            route: input.route
-          }
-        })
-      }
-    />
-  )
 }
 
 const ViewStatusBar: typeof View = (input) => {
   const clientCtx = toClientCtx({
     model: input.model,
-    ctx: input.ctx
+    ctx: input.ctx,
   })
 
   return (
@@ -640,7 +599,7 @@ const ViewStatusBar: typeof View = (input) => {
       dispatch={(c) =>
         input.dispatch({
           t: 'status-bar',
-          c
+          c,
         })
       }
       slots={{
@@ -663,7 +622,7 @@ const ViewStatusBar: typeof View = (input) => {
               dispatch={(c) =>
                 input.dispatch({
                   t: 'wire',
-                  c
+                  c,
                 })
               }
               ctx={clientCtx}
@@ -674,7 +633,7 @@ const ViewStatusBar: typeof View = (input) => {
               dispatch={(c) =>
                 input.dispatch({
                   t: 'lang',
-                  c
+                  c,
                 })
               }
               model={input.model.lang}
@@ -686,12 +645,12 @@ const ViewStatusBar: typeof View = (input) => {
               dispatch={(c) =>
                 input.dispatch({
                   t: 'sound',
-                  c
+                  c,
                 })
               }
             />
           </>
-        )
+        ),
       }}
     />
   )
@@ -710,13 +669,13 @@ const ViewBottomNavBar = (input: {
 
   const routeSpace: Route = {
     n: 'spaces',
-    t: 'space-list'
+    t: 'space-list',
   }
 
   const routeProfile: Route = {
     n: 'profile',
     t: 'profile',
-    userId: currentUserId
+    userId: currentUserId,
   }
   return (
     <div className='flex w-full shrink-0 flex-col items-center justify-center'>
@@ -743,10 +702,10 @@ const ViewBottomNavBar = (input: {
                 t: 'routing',
                 c: {
                   t: 'clicked-link',
-                  route: routeSpace
-                }
+                  route: routeSpace,
+                },
               })
-            }
+            },
           },
           {
             label: input.ctx.t('profile.profile'),
@@ -757,11 +716,11 @@ const ViewBottomNavBar = (input: {
                 t: 'routing',
                 c: {
                   t: 'clicked-link',
-                  route: routeProfile
-                }
+                  route: routeProfile,
+                },
               })
-            }
-          }
+            },
+          },
         ]}
       />
     </div>

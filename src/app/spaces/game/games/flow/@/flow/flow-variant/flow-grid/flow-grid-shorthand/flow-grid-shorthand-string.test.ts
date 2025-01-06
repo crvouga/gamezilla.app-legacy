@@ -12,7 +12,7 @@ describe(import.meta.file, () => {
     const expected = FlowGridShorthand.init([
       ['A', 'B', 'C'],
       [' ', 'B', 'C'],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
     const actual = FlowGridShorthandString.numberStringToShorthand(stringShorthand)
 
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
       [' ', 'C', ' ', 'C', 'D'],
       [' ', 'E', ' ', 'E', 'E'],
       ['F', ' ', 'G', ' ', 'H'],
-      ['F', ' ', 'G', ' ', 'H']
+      ['F', ' ', 'G', ' ', 'H'],
     ])
     const actual = FlowGridShorthandString.numberStringToShorthand(stringShorthand)
 
@@ -62,7 +62,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', 'D', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', 'E', ' ', ' ', ' ', ' ', ' '],
-      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const actual = FlowGridShorthandString.numberStringToShorthand(stringShorthand)
 

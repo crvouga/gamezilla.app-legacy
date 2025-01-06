@@ -21,29 +21,29 @@ export type IEventStream<TEventId extends string, TEvent, TIndexName extends str
   startingAt: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    msgEvtId: TEventId
+    msgEvtId: TEventId,
   ) => Promise<TInstance>
   endingAt: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    msgEvtId: TEventId
+    msgEvtId: TEventId,
   ) => Promise<TInstance>
   append: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    msgEvt: TEvent
+    msgEvt: TEvent,
   ) => Promise<TInstance>
   latest: (config: IEventStreamConfig<TEventId, TEvent, TIndexName>, instance: TInstance) => Promise<TEvent | null>
   mergeLeft: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     left: TInstance,
-    right: TInstance
+    right: TInstance,
   ) => Promise<TInstance>
   subset: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
     indexName: TIndexName,
-    targetIndexVal: string
+    targetIndexVal: string,
   ) => Promise<TInstance>
   toIterable: (instance: TInstance) => AsyncIterable<TEvent>
   has: (instance: TInstance, msgEvtId: TEventId) => Promise<boolean>

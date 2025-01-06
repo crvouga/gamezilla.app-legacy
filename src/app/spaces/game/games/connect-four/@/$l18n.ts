@@ -22,7 +22,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'Red',
-    'connect-four.yellow': 'Yellow'
+    'connect-four.yellow': 'Yellow',
   },
   ar: {
     'connect-four.bot-level': (botLevel) => {
@@ -38,7 +38,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'أحمر',
-    'connect-four.yellow': 'أصفر'
+    'connect-four.yellow': 'أصفر',
   },
   de: {
     'connect-four.bot-level': (botLevel) => {
@@ -54,7 +54,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'Rot',
-    'connect-four.yellow': 'Gelb'
+    'connect-four.yellow': 'Gelb',
   },
   es: {
     'connect-four.bot-level': (botLevel) => {
@@ -70,7 +70,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'Rojo',
-    'connect-four.yellow': 'Amarillo'
+    'connect-four.yellow': 'Amarillo',
   },
   fr: {
     'connect-four.bot-level': (botLevel) => {
@@ -86,7 +86,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'Rouge',
-    'connect-four.yellow': 'Jaune'
+    'connect-four.yellow': 'Jaune',
   },
   hi: {
     'connect-four.bot-level': (botLevel) => {
@@ -102,7 +102,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'लाल',
-    'connect-four.yellow': 'पीला'
+    'connect-four.yellow': 'पीला',
   },
   it: {
     'connect-four.bot-level': (botLevel) => {
@@ -118,7 +118,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'Rosso',
-    'connect-four.yellow': 'Giallo'
+    'connect-four.yellow': 'Giallo',
   },
   ja: {
     'connect-four.bot-level': (botLevel) => {
@@ -134,7 +134,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': '赤',
-    'connect-four.yellow': '黄色'
+    'connect-four.yellow': '黄色',
   },
   ko: {
     'connect-four.bot-level': (botLevel) => {
@@ -150,7 +150,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': '빨강',
-    'connect-four.yellow': '노랑'
+    'connect-four.yellow': '노랑',
   },
   pt: {
     'connect-four.bot-level': (botLevel) => {
@@ -166,7 +166,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'Vermelho',
-    'connect-four.yellow': 'Amarelo'
+    'connect-four.yellow': 'Amarelo',
   },
   ru: {
     'connect-four.bot-level': (botLevel) => {
@@ -182,7 +182,7 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': 'Красный',
-    'connect-four.yellow': 'Желтый'
+    'connect-four.yellow': 'Желтый',
   },
   zh: {
     'connect-four.bot-level': (botLevel) => {
@@ -198,6 +198,6 @@ export const translations: Translations<Text> = {
       }
     },
     'connect-four.red': '红色',
-    'connect-four.yellow': '黄色'
-  }
+    'connect-four.yellow': '黄色',
+  },
 }

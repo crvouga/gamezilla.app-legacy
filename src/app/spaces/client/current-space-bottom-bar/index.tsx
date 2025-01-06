@@ -13,7 +13,7 @@ const update: SpaceClientModule['update'] = (input) => {
 
       if (!currentUsersSpaceId) {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -24,15 +24,15 @@ const update: SpaceClientModule['update'] = (input) => {
           pushRoute({
             n: 'spaces',
             t: 'space',
-            spaceId: currentUsersSpaceId
-          })
-        ]
+            spaceId: currentUsersSpaceId,
+          }),
+        ],
       }
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -81,7 +81,7 @@ const View = (input: { ctx: AppClientCtx; model: ModelClient; dispatch: (msg: Ms
               text={
                 hostProfile
                   ? input.ctx.t('spaces.current-space', {
-                      hostUsername: hostProfile.username
+                      hostUsername: hostProfile.username,
                     })
                   : input.ctx.t('spaces.space')
               }
@@ -103,7 +103,7 @@ const View = (input: { ctx: AppClientCtx; model: ModelClient; dispatch: (msg: Ms
               onClick={() =>
                 input.dispatch({
                   t: 'clicked-end-space-button',
-                  spaceId: userSpaceId
+                  spaceId: userSpaceId,
                 })
               }
               size='sm'
@@ -118,7 +118,7 @@ const View = (input: { ctx: AppClientCtx; model: ModelClient; dispatch: (msg: Ms
               onClick={() =>
                 input.dispatch({
                   t: 'clicked-leave-space-button',
-                  spaceId: userSpaceId
+                  spaceId: userSpaceId,
                 })
               }
               size='sm'
@@ -132,5 +132,5 @@ const View = (input: { ctx: AppClientCtx; model: ModelClient; dispatch: (msg: Ms
 
 export const CurrentSpaceBottomBar = {
   update,
-  View
+  View,
 }

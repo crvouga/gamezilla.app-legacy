@@ -14,7 +14,7 @@ const update: SpaceClientModule['update'] = (input) => {
     (model) => updatePeopleModals({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateUserPreview({ ...input, model })
+    (model) => updateUserPreview({ ...input, model }),
   )
 }
 
@@ -23,19 +23,19 @@ const updateUserPreview: SpaceClientModule['update'] = ({ msg, model }) => {
     case 'clicked-preview-user-link': {
       if (!model.modalPreviewUserId) {
         return {
-          model
+          model,
         }
       }
 
       return {
         model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin), openProfile(model.modalPreviewUserId)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin), openProfile(model.modalPreviewUserId)],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -47,9 +47,9 @@ const updatePeopleModals: SpaceClientModule['update'] = ({ msg, model }) => {
       return {
         model: {
           ...model,
-          modal: null
+          modal: null,
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
@@ -57,9 +57,9 @@ const updatePeopleModals: SpaceClientModule['update'] = ({ msg, model }) => {
       return {
         model: {
           ...model,
-          modal: 'users'
+          modal: 'users',
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
@@ -68,15 +68,15 @@ const updatePeopleModals: SpaceClientModule['update'] = ({ msg, model }) => {
         model: {
           ...model,
           modalPreviewUserId: msg.userId,
-          modal: 'user-preview'
+          modal: 'user-preview',
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -89,14 +89,14 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model }) => {
         model: {
           ...model,
           modalPreviewUserId: msgCmd.userId,
-          modal: 'user-preview'
+          modal: 'user-preview',
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -108,13 +108,13 @@ const updateFromEvent: SpaceClientModule['update'] = ({ msgEvt, model }) => {
       return {
         model: {
           ...model,
-          modal: null
-        }
+          modal: null,
+        },
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -130,7 +130,7 @@ const View: SpaceClientModule['View'] = (input) => {
     currentUserId: input.ctx.currentUser.userId,
     currentUserRole: input.ctx.currentUser.role,
     space: input.ctx.space,
-    currentUser: input.ctx.currentUser
+    currentUser: input.ctx.currentUser,
   }
 
   const modalProfile = input.model.modalPreviewUserId ? input.ctx.profiles[input.model.modalPreviewUserId] : null
@@ -146,7 +146,7 @@ const View: SpaceClientModule['View'] = (input) => {
           onOpenUserDetails={(userId) =>
             input.dispatch({
               t: 'clicked-user',
-              userId
+              userId,
             })
           }
           ctx={spaceCtx}
@@ -159,7 +159,7 @@ const View: SpaceClientModule['View'] = (input) => {
         open={input.model.modal === 'user-preview'}
         onClose={() =>
           input.dispatch({
-            t: 'closed-modal'
+            t: 'closed-modal',
           })
         }
       >
@@ -169,7 +169,7 @@ const View: SpaceClientModule['View'] = (input) => {
             className='flex w-full flex-col items-center justify-center gap-2 p-4'
             onClick={() =>
               input.dispatch({
-                t: 'clicked-preview-user-link'
+                t: 'clicked-preview-user-link',
               })
             }
           >
@@ -192,7 +192,7 @@ const View: SpaceClientModule['View'] = (input) => {
             <Button
               onClick={() =>
                 input.dispatch({
-                  t: 'clicked-preview-user-link'
+                  t: 'clicked-preview-user-link',
                 })
               }
               className='w-full'
@@ -217,7 +217,7 @@ const ViewIconButton: SpaceClientModule['View'] = (input) => {
       <IconButton
         onClick={() =>
           input.dispatch({
-            t: 'clicked-people-button'
+            t: 'clicked-people-button',
           })
         }
         label={input.ctx.t('spaces.people-count', peopleCount)}
@@ -230,5 +230,5 @@ const ViewIconButton: SpaceClientModule['View'] = (input) => {
 export const People = {
   update,
   ViewIconButton,
-  View
+  View,
 }

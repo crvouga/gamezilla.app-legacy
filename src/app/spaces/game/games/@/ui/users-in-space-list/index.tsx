@@ -6,7 +6,7 @@ import { ViewYouChip } from './you-chip'
 
 export const ViewUsersInSpaceList = ({
   ctx,
-  onOpenUserDetails
+  onOpenUserDetails,
 }: {
   ctx: SpaceClientCtx
   onOpenUserDetails: (userId: UserId) => void

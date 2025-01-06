@@ -16,6 +16,6 @@ export const VerificationDb = (config: Config): IVerificationDb => {
     },
     async zap() {
       return Err(config.error)
-    }
+    },
   }
 }

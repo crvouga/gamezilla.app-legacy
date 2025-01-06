@@ -19,6 +19,6 @@ export const GuestSessionMappingDb = (_config: Config): IGuestSessionMappingDb =
       userIdBySessionId.set(input.sessionId, input.guestUserId)
       sessionIdByUserId.set(input.guestUserId, input.sessionId)
       return Ok(null)
-    }
+    },
   }
 }

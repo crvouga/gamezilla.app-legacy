@@ -31,6 +31,6 @@ export const withNamespace = <TKey extends string = string, TValue = unknown>(co
     },
     zap(key) {
       return config.dbConnKv.zap(toKey(key))
-    }
+    },
   }
 }

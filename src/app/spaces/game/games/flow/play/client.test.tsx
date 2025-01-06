@@ -4,7 +4,7 @@ import { FixtureFlowPlayClient } from './@/client/fixture'
 const Fixture = async () => {
   const f = await FixtureFlowPlayClient()
   return {
-    ...f
+    ...f,
   }
 }
 

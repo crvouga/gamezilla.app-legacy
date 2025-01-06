@@ -9,7 +9,7 @@ import {
   FixtureFlowBuilderClient,
   initial,
   puzzleBuilderPressDownRandomNode,
-  testFlowClientCtx
+  testFlowClientCtx,
 } from '../@/testing/client'
 import { deriveModelCore } from '../@/testing/core'
 import type { MsgClient } from '../types'
@@ -27,10 +27,10 @@ const Fixture = async () => {
         c: {
           t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
           puzzle: flowPuzzle,
-          userId: f.ctx.currentUserId
-        }
-      }
-    }
+          userId: f.ctx.currentUserId,
+        },
+      },
+    },
   ])
 
   const renderMsg = PubSub.create<MsgClient>()
@@ -41,7 +41,7 @@ const Fixture = async () => {
         dispatch={renderMsg.pub}
         model={input.model}
         modelCore={input.modelCore}
-      />
+      />,
     )
   }
 
@@ -51,11 +51,11 @@ const Fixture = async () => {
       ...init,
       ctx: f.ctx,
       model: init.model,
-      modelCore: init.modelCore
+      modelCore: init.modelCore,
     },
     flowPuzzle,
     renderMsg,
-    render
+    render,
   }
 }
 
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
     const output = GameClientModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
     const modelCore = deriveModelCore(ctx, output)
     expect(
-      modelCore.screen.t === 'screen-puzzle-builder' && modelCore.screenPuzzleBuilder?.puzzle.id === puzzle.id
+      modelCore.screen.t === 'screen-puzzle-builder' && modelCore.screenPuzzleBuilder?.puzzle.id === puzzle.id,
     ).toBe(true)
   })
 
@@ -77,7 +77,7 @@ describe(import.meta.file, () => {
 
     const output = GameClientModule.andThen(
       openedBuilder,
-      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx, openedBuilder))
+      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx, openedBuilder)),
     )
 
     const modelCore = deriveModelCore(ctx, output)
@@ -94,18 +94,18 @@ describe(import.meta.file, () => {
 
     const madeEdit = GameClientModule.andThen(
       openedBuilder,
-      puzzleBuilderPressDownRandomNode(ctx, deriveModelCore(ctx, openedBuilder))
+      puzzleBuilderPressDownRandomNode(ctx, deriveModelCore(ctx, openedBuilder)),
     )
 
     const output = GameClientModule.andThen(
       madeEdit,
-      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx, madeEdit))
+      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx, madeEdit)),
     )
 
     const modelCore = deriveModelCore(ctx, output)
 
     expect(
-      modelCore.screen.t === 'screen-puzzle-builder' && output.model.puzzleBuilderOpened === 'unsaved-changes'
+      modelCore.screen.t === 'screen-puzzle-builder' && output.model.puzzleBuilderOpened === 'unsaved-changes',
     ).toBe(true)
   })
 
@@ -114,9 +114,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'screen-puzzle-builder.user-clicked-play-mode-button'
-        }
-      }
+          t: 'screen-puzzle-builder.user-clicked-play-mode-button',
+        },
+      },
     ])
     const r = f.render(output)
     expect(r.getByRole('button', f.ctx.t('game.hint'))).toBeTruthy()
@@ -127,9 +127,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'screen-puzzle-builder.user-clicked-play-mode-button'
-        }
-      }
+          t: 'screen-puzzle-builder.user-clicked-play-mode-button',
+        },
+      },
     ])
     const r = f.render(output)
     expect(r.getByRole('button', f.ctx.t('app.reset'))).toBeTruthy()

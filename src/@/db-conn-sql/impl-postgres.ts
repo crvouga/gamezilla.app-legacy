@@ -47,8 +47,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         logger.debug(
           `duration=${durationFormatted}\nsql=\n${cleanSql(rawSql)}\nparams=${JSON.stringify(params, null, 4).slice(
             0,
-            500
-          )}`
+            500,
+          )}`,
         )
 
         const output: p.Infer<typeof rowParser>[] = []
@@ -92,13 +92,13 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       const listening = await client.listen(channel, (payload) => {
         callback({
           channel: channel,
-          payload: payload
+          payload: payload,
         })
       })
 
       return async () => {
         await listening.unlisten()
       }
-    }
+    },
   }
 }

@@ -10,7 +10,7 @@ const Fixture = async () => {
   const f = await FixtureFlowPlayClient()
   const puzzle = await Puzzle.random()
   const pack = await Pack.random({
-    puzzleIds: [puzzle.id]
+    puzzleIds: [puzzle.id],
   })
   const initial = f.update(f.initial, [
     {
@@ -18,16 +18,16 @@ const Fixture = async () => {
         t: 'got-msg-core',
         c: {
           t: 'user-clicked-open-pack-list-item',
-          pack
-        }
-      }
-    }
+          pack,
+        },
+      },
+    },
   ])
   return {
     ...f,
     initial,
     pack,
-    puzzle
+    puzzle,
   }
 }
 
@@ -60,10 +60,10 @@ describe(import.meta.file, () => {
         msg: {
           t: 'got-msg-core',
           c: {
-            t: 'user-clicked-exit-pack-button'
-          }
-        }
-      }
+            t: 'user-clicked-exit-pack-button',
+          },
+        },
+      },
     ])
     expect(output.modelCore.screen.t).toBe('screen-select-pack')
   })
@@ -75,9 +75,9 @@ describe(import.meta.file, () => {
         msgCore: {
           t: 'user-clicked-exit-pack-button',
           eventId: EventId.generate(),
-          happenedAt: LamportTimestamp.fromNumber(1)
-        }
-      }
+          happenedAt: LamportTimestamp.fromNumber(1),
+        },
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -91,14 +91,14 @@ describe(import.meta.file, () => {
           c: {
             t: 'user-clicked-open-puzzle-grid-item',
             flowPuzzle: { t: 'got', c: f.puzzle },
-            puzzleIndex: 0
-          }
-        }
-      }
+            puzzleIndex: 0,
+          },
+        },
+      },
     ])
     expect(output.modelCore.screen.t).toBe('screen-play-puzzle')
     expect(output.modelCore.screen.t === 'screen-play-puzzle' && output.modelCore.screen.puzzleResult.t === 'got').toBe(
-      true
+      true,
     )
     if (output.modelCore.screen.t === 'screen-play-puzzle' && output.modelCore.screen.puzzleResult.t === 'got') {
       expect(output.modelCore.screen.puzzleResult.c).toEqual(f.puzzle)
@@ -114,9 +114,9 @@ describe(import.meta.file, () => {
           flowPuzzle: { t: 'got', c: f.puzzle },
           eventId: EventId.generate(),
           happenedAt: LamportTimestamp.fromNumber(1),
-          puzzleIndex: 0
-        }
-      }
+          puzzleIndex: 0,
+        },
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -127,9 +127,9 @@ describe(import.meta.file, () => {
       {
         msgCore: withEventMeta({
           t: 'user-clicked-open-pack-list-item',
-          pack: f.pack
-        })
-      }
+          pack: f.pack,
+        }),
+      },
     ])
 
     expect(output.msgCmd?.some((m) => m.t === 'flow-cmd.pack-puzzles-grid' && m.c.t === 'load')).toBe(true)

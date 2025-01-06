@@ -13,6 +13,6 @@ export const toCookies = (request: Request): Record<string, string> => {
       }
       return cookies
     },
-    {} as Record<string, string>
+    {} as Record<string, string>,
   )
 }

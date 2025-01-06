@@ -11,7 +11,7 @@ import { ModelCore } from './types'
 const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
   return FlowPlay.toStatus({
     model: modelCore.play,
-    flow: toFlow(modelCore)
+    flow: toFlow(modelCore),
   })
 }
 
@@ -19,16 +19,16 @@ const toFlow = (modelCore: ModelCore): Variant.Model => {
   switch (modelCore.mode.t) {
     case 'edit': {
       return FlowEdit.toFlow({
-        model: modelCore.edit
+        model: modelCore.edit,
       })
     }
 
     case 'play': {
       return FlowPlay.toFlow({
         flow: FlowEdit.toFlow({
-          model: modelCore.edit
+          model: modelCore.edit,
         }),
-        model: modelCore.play
+        model: modelCore.play,
       })
     }
   }
@@ -37,7 +37,7 @@ const toFlow = (modelCore: ModelCore): Variant.Model => {
 const updateCoreMain = ({
   modelCore,
   msgCore,
-  ctx
+  ctx,
 }: {
   ctx: SpaceCtx
   msgCore: BuilderTypes.MsgCore
@@ -50,7 +50,7 @@ const updateCoreMain = ({
       }
 
       const flow = FlowEdit.toFlowMemoized({
-        model: modelCore.screenPuzzleBuilder.edit
+        model: modelCore.screenPuzzleBuilder.edit,
       })
 
       const updated = FlowPlay.update({
@@ -59,17 +59,17 @@ const updateCoreMain = ({
         ctx: FlowPlay.initCtx({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
-            flow: flow
-          }
-        })
+            flow: flow,
+          },
+        }),
       })
 
       return {
         ...modelCore,
         screenPuzzleBuilder: {
           ...modelCore.screenPuzzleBuilder,
-          play: updated.model
-        }
+          play: updated.model,
+        },
       }
     }
 
@@ -81,15 +81,15 @@ const updateCoreMain = ({
       const updated = FlowEdit.update({
         model: modelCore.screenPuzzleBuilder.edit,
         msg: msgCore.c,
-        flow: modelCore.screenPuzzleBuilder.puzzle.flow
+        flow: modelCore.screenPuzzleBuilder.puzzle.flow,
       })
 
       return {
         ...modelCore,
         screenPuzzleBuilder: {
           ...modelCore.screenPuzzleBuilder,
-          edit: updated.model
-        }
+          edit: updated.model,
+        },
       }
     }
 
@@ -107,9 +107,9 @@ const updateCoreMain = ({
         screenPuzzleBuilder: {
           ...modelCore.screenPuzzleBuilder,
           mode: {
-            t: 'edit'
-          }
-        }
+            t: 'edit',
+          },
+        },
       }
     }
 
@@ -122,20 +122,20 @@ const updateCoreMain = ({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
             flow: FlowEdit.toFlowMemoized({
-              model: modelCore.screenPuzzleBuilder.edit
-            })
-          }
-        })
+              model: modelCore.screenPuzzleBuilder.edit,
+            }),
+          },
+        }),
       })
       return {
         ...modelCore,
         screenPuzzleBuilder: {
           ...modelCore.screenPuzzleBuilder,
           mode: {
-            t: 'play'
+            t: 'play',
           },
-          play: initial
-        }
+          play: initial,
+        },
       }
     }
 
@@ -147,8 +147,8 @@ const updateCoreMain = ({
       return {
         ...modelCore,
         screen: {
-          t: 'screen-puzzle-builder-open'
-        }
+          t: 'screen-puzzle-builder-open',
+        },
       }
     }
 
@@ -162,7 +162,7 @@ const updates: (typeof updateCoreMain)[] = [
   updateCoreMain,
   DeleteForeverCore.updateCore,
   EditPuzzleNameCore.updateCore,
-  SaveChangesCore.updateCore
+  SaveChangesCore.updateCore,
 ]
 
 const updateCore: typeof updateCoreMain = (input) => {
@@ -172,5 +172,5 @@ const updateCore: typeof updateCoreMain = (input) => {
 export const ScreenPuzzleBuilderCore = {
   updateCore,
   toFlow,
-  toStatus
+  toStatus,
 }

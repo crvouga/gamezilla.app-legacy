@@ -54,11 +54,11 @@ export const init: Client['init'] = ({ model }) => {
   return {
     model: {
       mode: {
-        t: 'none'
+        t: 'none',
       },
-      requests: {}
+      requests: {},
     },
-    msgCmd: [preloadSound(Object.values(CHESS_SOUND))]
+    msgCmd: [preloadSound(Object.values(CHESS_SOUND))],
   }
 }
 
@@ -77,7 +77,7 @@ export const update: Client['update'] = (input) => {
     (model) =>
       GameMainMenu.update({
         msg: input.msg,
-        model
+        model,
       }),
     (model) => {
       const { msg, ctx } = input
@@ -89,10 +89,10 @@ export const update: Client['update'] = (input) => {
               ...model,
               requests: {
                 ...model.requests,
-                [msg.t]: RemoteResult.Loading
-              }
+                [msg.t]: RemoteResult.Loading,
+              },
             },
-            msgCmd: [sendToServer(msg)]
+            msgCmd: [sendToServer(msg)],
           }
         }
 
@@ -105,15 +105,15 @@ export const update: Client['update'] = (input) => {
                 ...model,
                 mode: {
                   t: 'vs-user',
-                  c: updated.model
-                }
+                  c: updated.model,
+                },
               },
-              eff: Eff.tag('vs-user', updated.eff)
+              eff: Eff.tag('vs-user', updated.eff),
             }
           }
 
           return {
-            model
+            model,
           }
         }
 
@@ -122,7 +122,7 @@ export const update: Client['update'] = (input) => {
             const updated = VsBot.update({
               msg: msg.c,
               model: model.mode.c,
-              ctx
+              ctx,
             })
 
             return {
@@ -130,15 +130,15 @@ export const update: Client['update'] = (input) => {
                 ...model,
                 mode: {
                   t: 'vs-bot',
-                  c: updated.model
-                }
+                  c: updated.model,
+                },
               },
-              eff: Eff.tag('vs-bot', updated.eff)
+              eff: Eff.tag('vs-bot', updated.eff),
             }
           }
 
           return {
-            model
+            model,
           }
         }
 
@@ -147,7 +147,7 @@ export const update: Client['update'] = (input) => {
             const updated = Puzzle.update({
               ctx,
               model: model.mode.c,
-              msg: msg.c
+              msg: msg.c,
             })
 
             return {
@@ -155,21 +155,21 @@ export const update: Client['update'] = (input) => {
                 ...model,
                 mode: {
                   t: 'puzzle',
-                  c: updated.model
-                }
+                  c: updated.model,
+                },
               },
               eff: Eff.tag('puzzle', updated?.eff ?? Eff.None),
-              msgCmd: AppClientCmd.tag('puzzle', updated.msgCmd)
+              msgCmd: AppClientCmd.tag('puzzle', updated.msgCmd),
             }
           }
           return {
-            model
+            model,
           }
         }
 
         default: {
           return {
-            model
+            model,
           }
         }
       }
@@ -179,7 +179,7 @@ export const update: Client['update'] = (input) => {
 
       if (!msgServer) {
         return {
-          model
+          model,
         }
       }
 
@@ -187,7 +187,7 @@ export const update: Client['update'] = (input) => {
         case 'input-mode': {
           return GameClientModule.andThen(
             {
-              model
+              model,
             },
             (model) => {
               const { result } = msgServer
@@ -196,18 +196,18 @@ export const update: Client['update'] = (input) => {
                 ...model,
                 requests: {
                   ...model.requests,
-                  [msgServer.t]: RemoteResult.map(result, () => null)
-                }
+                  [msgServer.t]: RemoteResult.map(result, () => null),
+                },
               }
 
               if (isErr(result)) {
                 return {
-                  model: modelNew
+                  model: modelNew,
                 }
               }
 
               return {
-                model: modelNew
+                model: modelNew,
               }
             },
 
@@ -215,14 +215,14 @@ export const update: Client['update'] = (input) => {
               if (model.mode.t === 'none') {
                 return {
                   model,
-                  msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+                  msgCmd: [playSound(APP_SOUND.navBackwardMin)],
                 }
               }
               return {
                 model,
-                msgCmd: [playSound(APP_SOUND.navForwardMin)]
+                msgCmd: [playSound(APP_SOUND.navForwardMin)],
               }
-            }
+            },
           )
         }
 
@@ -230,10 +230,10 @@ export const update: Client['update'] = (input) => {
           if (model?.mode?.t === 'vs-user') {
             const [child, eff] = VsUser.updateFromServer(
               {
-                ctx
+                ctx,
               },
               msgServer.c,
-              model.mode.c
+              model.mode.c,
             )
 
             return {
@@ -241,15 +241,15 @@ export const update: Client['update'] = (input) => {
                 ...model,
                 mode: {
                   t: 'vs-user',
-                  c: child
-                }
+                  c: child,
+                },
               },
-              eff: Eff.tag('vs-user', eff)
+              eff: Eff.tag('vs-user', eff),
             }
           }
 
           return {
-            model
+            model,
           }
         }
 
@@ -257,7 +257,7 @@ export const update: Client['update'] = (input) => {
           if (model?.mode?.t === 'vs-bot') {
             const updated = VsBot.updateFromServer({
               msg: msgServer.c,
-              model: model.mode.c
+              model: model.mode.c,
             })
 
             return {
@@ -265,29 +265,29 @@ export const update: Client['update'] = (input) => {
                 ...model,
                 mode: {
                   t: 'vs-bot',
-                  c: updated.model
-                }
+                  c: updated.model,
+                },
               },
-              eff: Eff.tag('vs-bot', updated.eff)
+              eff: Eff.tag('vs-bot', updated.eff),
             }
           }
 
           return {
-            model
+            model,
           }
         }
 
         case 'puzzle': {
           if (model?.mode?.t !== 'puzzle') {
             return {
-              model
+              model,
             }
           }
 
           const updated = Puzzle.updateFromServer({
             ctx,
             model: model.mode.c,
-            msg: msgServer.c
+            msg: msgServer.c,
           })
 
           return {
@@ -295,15 +295,15 @@ export const update: Client['update'] = (input) => {
               ...model,
               mode: {
                 t: 'puzzle',
-                c: updated.model
-              }
+                c: updated.model,
+              },
             },
             eff: Eff.tag('puzzle', updated?.eff ?? Eff.None),
-            msgCmd: AppClientCmd.tag('puzzle', updated.msgCmd)
+            msgCmd: AppClientCmd.tag('puzzle', updated.msgCmd),
           }
         }
       }
-    }
+    },
   )
 }
 
@@ -344,8 +344,8 @@ export const View: Client['View'] = (input) => {
                 input.dispatch({
                   t: 'input-mode',
                   mode: 'vs-bot',
-                  userId: input.ctx.currentUserId
-                })
+                  userId: input.ctx.currentUserId,
+                }),
             }),
             GameMainMenu.buttons.playFriend({
               ctx: input.ctx,
@@ -353,8 +353,8 @@ export const View: Client['View'] = (input) => {
                 input.dispatch({
                   t: 'input-mode',
                   mode: 'vs-user',
-                  userId: input.ctx.currentUserId
-                })
+                  userId: input.ctx.currentUserId,
+                }),
             }),
             {
               title: input.ctx.t('chess.puzzle-title'),
@@ -364,9 +364,9 @@ export const View: Client['View'] = (input) => {
                 input.dispatch({
                   t: 'input-mode',
                   mode: 'puzzle',
-                  userId: input.ctx.currentUserId
-                })
-            }
+                  userId: input.ctx.currentUserId,
+                }),
+            },
           ]}
         />
       )

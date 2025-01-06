@@ -15,7 +15,7 @@ import { BotLevel } from './bot-level'
 //
 
 export const ModelServer = p.obj({
-  botStartedFindingMoveAt: p.maybe(Posix)
+  botStartedFindingMoveAt: p.maybe(Posix),
 })
 export type ModelServer = p.Infer<typeof ModelServer>
 
@@ -57,61 +57,61 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('user-dropped-disc'),
     columnIndex: ConnectFour.ColumnIndex,
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-left'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('bot-dropped-disc'),
-    columnIndex: ConnectFour.ColumnIndex
+    columnIndex: ConnectFour.ColumnIndex,
   }),
   p.obj({
     t: p.l('user-started-playing'),
     userId: UserId,
-    playerType: ConnectFour.PlayerType
+    playerType: ConnectFour.PlayerType,
   }),
   p.obj({
     t: p.l('user-stopped-playing'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-started-game'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-stopped-game'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-swapped-sides'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-changed-bot-level'),
     botLevel: BotLevel,
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('time-passed'),
-    now: Posix
+    now: Posix,
   }),
   p.obj({
     t: p.l('user-restarted-game'),
-    userId: UserId
-  })
+    userId: UserId,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
 const EventErr = p.or(
   p.obj({
-    t: p.l('not-playing')
+    t: p.l('not-playing'),
   }),
   p.obj({
     t: p.l('move'),
-    c: ConnectFour.MoveProblem
-  })
+    c: ConnectFour.MoveProblem,
+  }),
 )
 type EventErr = p.Infer<typeof EventErr>
 
@@ -130,7 +130,7 @@ export const StateSetup = p.obj({
   type: p.l('setup'),
   userPlayerType: ConnectFour.PlayerType,
   botLevel: BotLevel,
-  playingUserId: p.maybe(UserId)
+  playingUserId: p.maybe(UserId),
 })
 
 export type StateSetup = p.Infer<typeof StateSetup>
@@ -140,7 +140,7 @@ export const StateGame = p.obj({
   userPlayerType: ConnectFour.PlayerType,
   botLevel: BotLevel,
   playingUserId: UserId,
-  columns: ConnectFour.Columns
+  columns: ConnectFour.Columns,
 })
 export type StateGame = p.Infer<typeof StateGame>
 
@@ -150,10 +150,10 @@ const BaseModelCore = p.obj({
     p.and(
       MsgCore,
       p.obj({
-        error: EventErr
-      })
-    )
-  )
+        error: EventErr,
+      }),
+    ),
+  ),
 })
 
 export const ModelCore = p.and(BaseModelCore, p.or(StateSetup, StateGame))
@@ -165,13 +165,13 @@ export const initCore = (input: SpaceCtx): ModelCore => {
     botLevel: 'Medium',
     userPlayerType: 'player-one',
     playingUserId: input.space.hostId,
-    errors: {}
+    errors: {},
   }
 }
 
 export const updateCore = ({
   modelCore,
-  msgCore
+  msgCore,
 }: {
   modelCore: ModelCore
   msgCore: WithEventId<MsgCore>
@@ -183,40 +183,40 @@ export const updateCore = ({
           return {
             ...modelCore,
             playingUserId: msgCore.userId,
-            userPlayerType: msgCore.playerType
+            userPlayerType: msgCore.playerType,
           }
         }
 
         case 'user-stopped-playing': {
           if (modelCore.playingUserId !== msgCore.userId) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
           return {
             ...modelCore,
-            playingUserId: null
+            playingUserId: null,
           }
         }
 
         case 'user-swapped-sides': {
           if (modelCore.playingUserId !== msgCore.userId) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
           return {
             ...modelCore,
-            userPlayerType: ConnectFour.opposite[modelCore.userPlayerType]
+            userPlayerType: ConnectFour.opposite[modelCore.userPlayerType],
           }
         }
 
         case 'user-started-game': {
           if (modelCore.playingUserId !== msgCore.userId) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
@@ -224,25 +224,25 @@ export const updateCore = ({
             ...modelCore,
             type: 'game',
             playingUserId: modelCore.playingUserId,
-            columns: ConnectFour.EMPTY_COLUMNS
+            columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
         case 'user-changed-bot-level': {
           if (modelCore.playingUserId !== msgCore.userId) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
           return {
             ...modelCore,
-            botLevel: msgCore.botLevel
+            botLevel: msgCore.botLevel,
           }
         }
 
         case 'bot-dropped-disc': {
           return addError(modelCore, msgCore, {
-            t: 'not-playing'
+            t: 'not-playing',
           })
         }
 
@@ -260,20 +260,20 @@ export const updateCore = ({
           if (moved.t === 'err') {
             return addError(modelCore, msgCore, {
               t: 'move',
-              c: moved.error
+              c: moved.error,
             })
           }
 
           return {
             ...modelCore,
-            columns: moved.value
+            columns: moved.value,
           }
         }
 
         case 'user-dropped-disc': {
           if (modelCore.playingUserId !== msgCore.userId) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
@@ -282,13 +282,13 @@ export const updateCore = ({
           if (moved.t === 'err') {
             return addError(modelCore, msgCore, {
               t: 'move',
-              c: moved.error
+              c: moved.error,
             })
           }
 
           return {
             ...modelCore,
-            columns: moved.value
+            columns: moved.value,
           }
         }
 
@@ -299,7 +299,7 @@ export const updateCore = ({
               type: 'setup',
               botLevel: modelCore.botLevel,
               userPlayerType: modelCore.userPlayerType,
-              playingUserId: null
+              playingUserId: null,
             }
           }
           return modelCore
@@ -308,7 +308,7 @@ export const updateCore = ({
         case 'user-stopped-game': {
           if (msgCore.userId !== modelCore.playingUserId) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
@@ -317,34 +317,34 @@ export const updateCore = ({
             type: 'setup',
             botLevel: modelCore.botLevel,
             userPlayerType: modelCore.userPlayerType,
-            playingUserId: modelCore.playingUserId
+            playingUserId: modelCore.playingUserId,
           }
         }
 
         case 'user-swapped-sides': {
           if (msgCore.userId !== modelCore.playingUserId) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
           return {
             ...modelCore,
             userPlayerType: ConnectFour.opposite[modelCore.userPlayerType],
-            columns: ConnectFour.EMPTY_COLUMNS
+            columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
         case 'user-restarted-game': {
           if (msgCore.userId !== modelCore.playingUserId) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
           return {
             ...modelCore,
-            columns: ConnectFour.EMPTY_COLUMNS
+            columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
@@ -363,9 +363,9 @@ const addError = (modelCore: ModelCore, msgCore: WithEventId<MsgCore>, error: Ev
       ...modelCore.errors,
       [msgCore.eventId]: {
         ...msgCore,
-        error
-      }
-    }
+        error,
+      },
+    },
   }
 }
 
@@ -390,25 +390,25 @@ export const toGameOver = (model: ModelCore): GameOver | { type: null } => {
       switch (status.type) {
         case 'Playing': {
           return {
-            type: null
+            type: null,
           }
         }
         case 'Tie': {
           return {
-            type: 'Tie'
+            type: 'Tie',
           }
         }
 
         case 'Winner': {
           return {
             type: 'Winner',
-            winner: status.winner
+            winner: status.winner,
           }
         }
 
         default: {
           return {
-            type: null
+            type: null,
           }
         }
       }
@@ -416,7 +416,7 @@ export const toGameOver = (model: ModelCore): GameOver | { type: null } => {
 
     case 'setup': {
       return {
-        type: null
+        type: null,
       }
     }
   }

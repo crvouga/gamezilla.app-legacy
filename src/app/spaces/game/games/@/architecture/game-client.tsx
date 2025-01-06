@@ -75,7 +75,7 @@ export type GameClient<T extends GameClientTypes> = {
  */
 export const tag = <T extends string, Types extends GameClientTypes>(
   tag: T,
-  client: GameClient<Types>
+  client: GameClient<Types>,
 ): GameClient<{
   ModelClient: { t: T; c: Types['ModelClient'] }
   MsgClient: { t: T; c: Types['MsgClient'] }
@@ -90,15 +90,15 @@ export const tag = <T extends string, Types extends GameClientTypes>(
       const initial = client.init({
         ctx: input.ctx,
         modelCore: input.modelCore.c,
-        model: input.model?.c
+        model: input.model?.c,
       })
       return {
         model: {
           t: tag,
-          c: initial.model
+          c: initial.model,
         },
         eff: Eff.tag(tag, initial.eff),
-        msgCmd: AppClientCmd.tag(tag, initial.msgCmd)
+        msgCmd: AppClientCmd.tag(tag, initial.msgCmd),
       }
     },
 
@@ -111,19 +111,19 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         msgServer: input.msgServer?.t === tag ? input.msgServer?.c : undefined,
         ctx: input.ctx,
         modelCore: input.modelCore.c,
-        modelCoreBefore: input.modelCoreBefore.c
+        modelCoreBefore: input.modelCoreBefore.c,
       })
       return {
         model: {
           t: tag,
-          c: updated.model
+          c: updated.model,
         },
         eff: Eff.tag(tag, updated.eff),
         msgCmd: AppClientCmd.tag(tag, updated.msgCmd),
         msgCore: updated.msgCore
           ? updated.msgCore.map(
               (
-                msgCore
+                msgCore,
               ): WithEventMeta<{
                 t: T
                 c: WithEventMeta<Types['MsgCore']>
@@ -134,11 +134,11 @@ export const tag = <T extends string, Types extends GameClientTypes>(
                 c: {
                   ...msgCore,
                   msgEvtId: msgCore.msgEvtId,
-                  happenedAt: msgCore.happenedAt
-                }
-              })
+                  happenedAt: msgCore.happenedAt,
+                },
+              }),
             )
-          : undefined
+          : undefined,
       }
     },
 
@@ -149,8 +149,8 @@ export const tag = <T extends string, Types extends GameClientTypes>(
           ctx: input.ctx,
           intervalId: input.intervalId,
           modelCore: input.modelCore.c,
-          model: input.model?.c
-        })
+          model: input.model?.c,
+        }),
       )
     },
 
@@ -162,7 +162,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
           dispatch={(m) =>
             input.dispatch({
               t: tag,
-              c: m
+              c: m,
             })
           }
           model={input.model?.c}
@@ -175,11 +175,11 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         return client.ViewFeedItem({
           ctx: input.ctx,
           msgEvt: input.msgEvt.c,
-          modelCore: input.modelCore.c
+          modelCore: input.modelCore.c,
         })
       }
       return null
-    }
+    },
   }
 }
 
@@ -242,13 +242,13 @@ const chain = <T extends GameClientTypes>(
     model,
     eff: Eff.batch(eff),
     msgCore: msgCores,
-    msgCmd
+    msgCmd,
   }
 }
 
 const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
   tag: TTag,
-  output: Output<TTypes>
+  output: Output<TTypes>,
 ): Output<{
   ModelClient: { t: TTag; c: TTypes['ModelClient'] }
   MsgClient: { t: TTag; c: TTypes['MsgClient'] }
@@ -261,7 +261,7 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
   return {
     model: {
       t: tag,
-      c: output.model
+      c: output.model,
     },
     eff: output.eff ? Eff.tag(tag, output.eff) : undefined,
     msgCmd: output.msgCmd ? output.msgCmd.map((msgCmd) => AppClientCmd.tagOne(tag, msgCmd)) : undefined,
@@ -270,14 +270,14 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
           eventId: msgCore.eventId,
           happenedAt: msgCore.happenedAt,
           t: tag,
-          c: msgCore
+          c: msgCore,
         }))
-      : undefined
+      : undefined,
   }
 }
 
 export const GameClient = {
   tag,
   tagOutput,
-  chain
+  chain,
 }

@@ -6,7 +6,7 @@ import { phone } from './phone'
 const parser = p.obj({
   _country: Iso3166Alpha2Code,
   _validPhoneNumber: p.str,
-  _opaque: p.l('PhoneNumber')
+  _opaque: p.l('PhoneNumber'),
 })
 
 export type PhoneNumber = p.Infer<typeof parser>
@@ -18,7 +18,7 @@ const fromStringDeriveCountry = (phoneNumber: string): Result<Problem, PhoneNumb
 
   for (const countryCodeCandiate of Iso3166Alpha2Code.all) {
     const result = phone(phoneNumber, {
-      country: countryCodeCandiate
+      country: countryCodeCandiate,
     })
 
     if (!result.isValid) {
@@ -28,7 +28,7 @@ const fromStringDeriveCountry = (phoneNumber: string): Result<Problem, PhoneNumb
   }
 
   const result = phone(phoneNumber, {
-    country: countryCode
+    country: countryCode,
   })
 
   if (!result.isValid) {
@@ -50,7 +50,7 @@ const fromStringDeriveCountry = (phoneNumber: string): Result<Problem, PhoneNumb
   return Result.Ok({
     _opaque: 'PhoneNumber',
     _validPhoneNumber: result.phoneNumber,
-    _country: country
+    _country: country,
   })
 }
 
@@ -61,7 +61,7 @@ const fromString = (phoneNumber: unknown, maybeCountryCode?: Iso3166Alpha2Code):
 
   if (maybeCountryCode) {
     const result = phone(phoneNumber, {
-      country: maybeCountryCode
+      country: maybeCountryCode,
     })
 
     if (!result.isValid) {
@@ -71,7 +71,7 @@ const fromString = (phoneNumber: unknown, maybeCountryCode?: Iso3166Alpha2Code):
     return Result.Ok({
       _opaque: 'PhoneNumber',
       _validPhoneNumber: result.phoneNumber,
-      _country: maybeCountryCode
+      _country: maybeCountryCode,
     })
   }
 
@@ -100,7 +100,7 @@ const fromString = (phoneNumber: unknown, maybeCountryCode?: Iso3166Alpha2Code):
   return Result.Ok({
     _opaque: 'PhoneNumber',
     _validPhoneNumber: result.phoneNumber,
-    _country: country
+    _country: country,
   })
 }
 
@@ -148,7 +148,7 @@ const countries = [
   { code: 'US', format: '10000000000' },
   { code: 'GB', format: '20000000000' },
   { code: 'DE', format: '30000000000' },
-  { code: 'IN', format: '40000000000' }
+  { code: 'IN', format: '40000000000' },
 ] as const
 
 const random = (): PhoneNumber => {
@@ -178,5 +178,5 @@ export const PhoneNumber = {
   toCountry,
   fromString,
   unsafeParse,
-  format
+  format,
 }

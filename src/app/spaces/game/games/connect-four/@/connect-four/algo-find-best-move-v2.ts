@@ -17,7 +17,7 @@ const COLUMN_INDEX_ORDER = [3, 4, 2, 5, 1, 6, 0]
 export const findBestMove = ({
   maximizingPlayer,
   columns,
-  maxDepth
+  maxDepth,
 }: {
   maxDepth: number
   maximizingPlayer: PlayerType
@@ -44,7 +44,7 @@ export const findBestMove = ({
       children.push({
         columns: columnsNew,
         turn: opposite[modelCore.turn],
-        lastMoveColumnIndex: columnIndex
+        lastMoveColumnIndex: columnIndex,
       })
     }
 
@@ -72,19 +72,19 @@ export const findBestMove = ({
     parentState: {
       columns,
       turn: maximizingPlayer,
-      lastMoveColumnIndex: null
-    }
+      lastMoveColumnIndex: null,
+    },
   })
 
   const bestMove = bestChildState?.lastMoveColumnIndex ?? null
 
   return Ok({
-    columnIndex: bestMove
+    columnIndex: bestMove,
   })
 }
 
 export const ConnectFourBotWorker = {
-  findBestMove
+  findBestMove,
 }
 
 export type ConnectFourBotWorker = typeof ConnectFourBotWorker

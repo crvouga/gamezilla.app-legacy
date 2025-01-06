@@ -19,19 +19,19 @@ const update: ClientModule['update'] = (input) => {
         model: {
           ...input.model,
           currentUser: {
-            t: 'logged-out'
-          }
+            t: 'logged-out',
+          },
         },
         msgCmd: [
           sendToServer({ t: 'user-clicked-confirm-logout-button' }),
           showToast(input.ctx.t('auth.current-user-logged-out')),
-          playSound(APP_SOUND.navBackwardMin)
+          playSound(APP_SOUND.navBackwardMin),
         ],
         msgEvt: [
           {
-            t: 'auth-evt.unauthenticated'
-          }
-        ]
+            t: 'auth-evt.unauthenticated',
+          },
+        ],
       }
     }
 
@@ -41,7 +41,7 @@ const update: ClientModule['update'] = (input) => {
 
       if (!currentUserId) {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -49,9 +49,9 @@ const update: ClientModule['update'] = (input) => {
         model: {
           ...input.model,
           logout: NotAsked,
-          opened: null
+          opened: null,
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
   }
@@ -61,9 +61,9 @@ const update: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          opened: 'logged-out'
+          opened: 'logged-out',
         },
-        msgCmd: [playSound(APP_SOUND.alertErrorSm)]
+        msgCmd: [playSound(APP_SOUND.alertErrorSm)],
       }
     }
   }
@@ -74,8 +74,8 @@ const update: ClientModule['update'] = (input) => {
         model: {
           ...input.model,
           logout: Ok(null),
-          opened: null
-        }
+          opened: null,
+        },
       }
     }
   }
@@ -94,7 +94,7 @@ const update: ClientModule['update'] = (input) => {
 const View = ({
   model,
   dispatch,
-  ctx
+  ctx,
 }: {
   ctx: BaseClientCtx
   model: ModelClient
@@ -112,17 +112,17 @@ const View = ({
       position='bottom'
       onClose={() =>
         dispatch({
-          t: 'logout-drawer-closed'
+          t: 'logout-drawer-closed',
         })
       }
       onCancel={() =>
         dispatch({
-          t: 'logout-drawer-clicked-cancel'
+          t: 'logout-drawer-clicked-cancel',
         })
       }
       onConfirm={() =>
         dispatch({
-          t: 'logout-drawer-clicked-confirm'
+          t: 'logout-drawer-clicked-confirm',
         })
       }
     />
@@ -131,5 +131,5 @@ const View = ({
 
 export const LogoutClient = {
   View,
-  update
+  update,
 }

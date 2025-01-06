@@ -17,7 +17,7 @@ const parser = p.obj({
   lastUpdatedAt: Posix,
   lastUpdatedBy: UserId,
   flow: FlowVariant.Model,
-  solutions: p.arr(Flow.Model)
+  solutions: p.arr(Flow.Model),
 })
 
 export type Puzzle = p.Infer<typeof parser>
@@ -32,14 +32,14 @@ const create = async (input: {
   return {
     flow: input.flow,
     name: await PuzzleName.generate({
-      count: input.count
+      count: input.count,
     }),
     id: PuzzleId.generate(),
     createdAt: input.createdAt,
     createdBy: input.createdBy,
     lastUpdatedAt: input.createdAt,
     lastUpdatedBy: input.createdBy,
-    solutions: solution ? [solution] : []
+    solutions: solution ? [solution] : [],
   }
 }
 
@@ -50,7 +50,7 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
     input?.flow ??
     FlowGridShorthand.toGrid([
       ['A', ' '],
-      [' ', 'A']
+      [' ', 'A'],
     ])
   const solutions = FlowAlgoSolve.solutions(flow)
   const solution = next(solutions)
@@ -58,13 +58,13 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
     createdAt,
     createdBy,
     name: await PuzzleName.generate({
-      count: 0
+      count: 0,
     }),
     lastUpdatedAt: Posix.now(),
     lastUpdatedBy: createdBy,
     id: PuzzleId.generate(),
     solutions: solution ? [solution] : [],
-    flow
+    flow,
   }
 }
 
@@ -78,5 +78,5 @@ const next = <T>(iter: Iterable<T>): T | undefined => {
 export const Puzzle = {
   ...parser,
   create,
-  random
+  random,
 }

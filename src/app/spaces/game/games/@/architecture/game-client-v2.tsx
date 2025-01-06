@@ -122,7 +122,7 @@ const andThen = <T extends GameClientModuleTypes>(
       eff: Eff.batch(acc.eff, updated.eff),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore)
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
     }
   }
 
@@ -132,11 +132,11 @@ const andThen = <T extends GameClientModuleTypes>(
 const tagOutput = <
   TTag extends string,
   T extends GameClientModuleTypes,
-  TTaggedCmd extends GameClientModuleTypes['MsgCmdOut']
+  TTaggedCmd extends GameClientModuleTypes['MsgCmdOut'],
 >(
   tag: TTag,
   tagCmd: (msgCmd: T['MsgCmdOut'][]) => TTaggedCmd[],
-  output: Output<T>
+  output: Output<T>,
 ): {
   model: { t: TTag; c: T['Model'] }
   eff?: Eff<{ t: TTag; c: T['Msg'] }>
@@ -147,19 +147,19 @@ const tagOutput = <
   return {
     model: {
       t: tag,
-      c: output.model
+      c: output.model,
     },
     msgCmd: output.msgCmd ? tagCmd(output.msgCmd) : [],
     eff: Eff.tag(tag, output.eff),
     msgEvt: output.msgEvt,
     msgCore: output.msgCore?.map((c) => ({
       c,
-      t: tag
-    }))
+      t: tag,
+    })),
   }
 }
 
 export const GameClientModule = {
   andThen,
-  tagOutput
+  tagOutput,
 }

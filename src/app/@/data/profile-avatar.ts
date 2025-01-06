@@ -44,7 +44,7 @@ const STYLES: { [style in ProfileAvatarStyle]: ProfileAvatarStyle } = {
   personas: 'personas',
   'pixel-art': 'pixel-art',
   'pixel-art-neutral': 'pixel-art-neutral',
-  'fun-emoji': 'fun-emoji'
+  'fun-emoji': 'fun-emoji',
 }
 
 const ALL_STYLES = Object.keys(STYLES) as ProfileAvatarStyle[]
@@ -88,7 +88,7 @@ const toUrl = ({ seed, style }: { style: ProfileAvatarStyle; seed: string }) => 
 }
 
 const parseUrl = (
-  avatarUrl?: string
+  avatarUrl?: string,
 ): {
   seed: ProfileAvatarSeed
   style: ProfileAvatarStyle
@@ -97,7 +97,7 @@ const parseUrl = (
     if (!avatarUrl) {
       return {
         style: toStyle('adventurer'),
-        seed: toSeed('')
+        seed: toSeed(''),
       }
     }
 
@@ -106,17 +106,17 @@ const parseUrl = (
     if (style && seed) {
       return {
         style: toStyle(style),
-        seed: toSeed(seed)
+        seed: toSeed(seed),
       }
     }
     return {
       style: toStyle('adventurer'),
-      seed: toSeed('')
+      seed: toSeed(''),
     }
   } catch (error) {
     return {
       style: toStyle('adventurer'),
-      seed: toSeed('')
+      seed: toSeed(''),
     }
   }
 }
@@ -154,5 +154,5 @@ export const ProfileAvatar = {
   toStyle,
   formatStyle,
   ALL_STYLES,
-  STYLES
+  STYLES,
 }

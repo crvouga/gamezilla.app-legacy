@@ -261,5 +261,5 @@ export const translations: Text = {
   ko: 'Coreano',
   pt: 'Portoghese',
   ru: 'Russo',
-  zh: 'Cinese'
+  zh: 'Cinese',
 }

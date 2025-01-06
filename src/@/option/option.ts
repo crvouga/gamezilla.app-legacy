@@ -75,5 +75,5 @@ export const Option = {
   fold,
   unwrapOr,
   fromNullable,
-  fromResult
+  fromResult,
 }

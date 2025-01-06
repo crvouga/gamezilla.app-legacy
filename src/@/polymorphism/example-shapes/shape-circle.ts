@@ -15,11 +15,11 @@ perimeter.impl(isCircle, (shape) => 2 * Math.PI * shape.radius)
 
 scale.impl(isCircle, (shape, scaleBy) => ({
   ...shape,
-  radius: shape.radius * scaleBy
+  radius: shape.radius * scaleBy,
 }))
 
 export const Circle = (input: { radius: number }): Circle => ({
   ...input,
   Shape2D: 'circle',
-  Shape: 'circle'
+  Shape: 'circle',
 })

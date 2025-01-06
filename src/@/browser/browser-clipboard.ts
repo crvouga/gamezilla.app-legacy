@@ -13,7 +13,7 @@ export const copy =
       return Result.Ok(null)
     } catch {
       return Result.Err({
-        message: 'Failed to copy to clipboard.'
+        message: 'Failed to copy to clipboard.',
       })
     }
   }

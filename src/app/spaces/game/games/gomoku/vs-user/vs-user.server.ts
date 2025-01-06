@@ -27,7 +27,7 @@ export const init = initShared
 export type Msg = MsgServer
 
 export const update = ({
-  model
+  model,
 }: {
   msg: Msg
   model: Model
@@ -39,7 +39,7 @@ export const update = ({
 }
 
 export const updateFromClient = ({
-  model
+  model,
 }: {
   ctx: SpaceServerCtx
   msg: MsgToServer
@@ -53,7 +53,7 @@ export const updateFromClient = ({
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   msg: SpaceServerEvt
   model: Model

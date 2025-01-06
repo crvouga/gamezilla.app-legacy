@@ -13,7 +13,7 @@ export const Row = p.obj({
   verification_attempt_id: VerificationAttemptId,
   verification_id: VerificationId,
   inputted_code_hash: p.json,
-  created_at_posix: p.or(p.str, p.num)
+  created_at_posix: p.or(p.str, p.num),
 })
 type Row = p.Infer<typeof Row>
 
@@ -38,7 +38,7 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
         verification_attempt_id: input.verificationAttemptId,
         verification_id: input.verificationId,
         inputted_code_hash: Sql.json(input.codeHash),
-        created_at_posix: input.createdAt
+        created_at_posix: input.createdAt,
       }
       const queried = await deps.dbConnSql.query(p.unknown, query, vars)
       return Result.mapOk(queried, () => null)
@@ -60,7 +60,7 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
       const queried = await deps.dbConnSql.query(Row, query, where.vars)
 
       return Result.mapOk(queried, (rows) => rows.flatMap(rowToVerificationAttempt))
-    }
+    },
   }
 }
 
@@ -74,8 +74,8 @@ const rowToVerificationAttempt = (row: Row): VerificationAttempt[] => {
       verificationAttemptId: row.verification_attempt_id,
       verificationId: row.verification_id,
       codeHash: codeHash.value,
-      createdAt: Posix.init(row.created_at_posix)
-    }
+      createdAt: Posix.init(row.created_at_posix),
+    },
   ]
 }
 
@@ -92,6 +92,6 @@ const toSqlWhere = (where: WhereClause) => {
 
   return {
     str,
-    vars
+    vars,
   }
 }

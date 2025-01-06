@@ -22,7 +22,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'صليب',
-    'tic-tac-toe.naught': 'دائرة'
+    'tic-tac-toe.naught': 'دائرة',
   },
   de: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -38,7 +38,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'Kreuz',
-    'tic-tac-toe.naught': 'Kreis'
+    'tic-tac-toe.naught': 'Kreis',
   },
   en: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -54,7 +54,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'Cross',
-    'tic-tac-toe.naught': 'Naught'
+    'tic-tac-toe.naught': 'Naught',
   },
   es: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -70,7 +70,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'Cruz',
-    'tic-tac-toe.naught': 'Círculo'
+    'tic-tac-toe.naught': 'Círculo',
   },
   fr: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -86,7 +86,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'Croix',
-    'tic-tac-toe.naught': 'Rond'
+    'tic-tac-toe.naught': 'Rond',
   },
   it: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -102,7 +102,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'Croce',
-    'tic-tac-toe.naught': 'Cerchio'
+    'tic-tac-toe.naught': 'Cerchio',
   },
   ja: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -118,7 +118,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'クロス',
-    'tic-tac-toe.naught': 'ノート'
+    'tic-tac-toe.naught': 'ノート',
   },
   pt: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -134,7 +134,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'Cruz',
-    'tic-tac-toe.naught': 'Círculo'
+    'tic-tac-toe.naught': 'Círculo',
   },
   ru: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -150,7 +150,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'Крест',
-    'tic-tac-toe.naught': 'Нолик'
+    'tic-tac-toe.naught': 'Нолик',
   },
   zh: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -166,7 +166,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': '交叉',
-    'tic-tac-toe.naught': '零'
+    'tic-tac-toe.naught': '零',
   },
   hi: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -182,7 +182,7 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': 'क्रॉस',
-    'tic-tac-toe.naught': 'नॉट'
+    'tic-tac-toe.naught': 'नॉट',
   },
   ko: {
     'tic-tac-toe.bot-level': (botLevel) => {
@@ -198,6 +198,6 @@ export const translations: Translations<Text> = {
       }
     },
     'tic-tac-toe.cross': '크로스',
-    'tic-tac-toe.naught': '놋'
-  }
+    'tic-tac-toe.naught': '놋',
+  },
 }

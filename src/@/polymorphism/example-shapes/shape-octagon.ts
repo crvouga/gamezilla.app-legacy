@@ -15,11 +15,11 @@ perimeter.impl(isOctagon, (shape) => 8 * shape.side)
 
 scale.impl(isOctagon, (shape, scaleBy) => ({
   ...shape,
-  side: shape.side * scaleBy
+  side: shape.side * scaleBy,
 }))
 
 export const Octagon = (input: { side: number }): Octagon => ({
   ...input,
   Shape2D: 'octagon',
-  Shape: 'octagon'
+  Shape: 'octagon',
 })

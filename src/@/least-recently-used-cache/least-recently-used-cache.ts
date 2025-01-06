@@ -75,7 +75,7 @@ if (typeof AC === 'undefined') {
         'You may disable this with LRU_CACHE_IGNORE_AC_WARNING=1 in the env.',
       'NO_ABORT_CONTROLLER',
       'ENOTSUP',
-      warnACPolyfill
+      warnACPolyfill,
     )
   }
 }
@@ -142,7 +142,7 @@ class Stack {
     max: number,
     HeapCls: {
       new (n: number): NumberArray
-    }
+    },
   ) {
     /* c8 ignore start */
     if (!Stack.#constructing) {
@@ -476,7 +476,7 @@ export namespace LRUCache {
   export type Fetcher<K, V, FC = unknown> = (
     key: K,
     staleValue: V | undefined,
-    options: FetcherOptions<K, V, FC>
+    options: FetcherOptions<K, V, FC>,
   ) => Promise<V | undefined | void> | V | undefined | void
 
   /**
@@ -907,12 +907,12 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
         k: K,
         index: number | undefined,
         options: LRUCache.FetchOptions<K, V, FC>,
-        context: any
+        context: any,
       ): BackgroundFetch<V> => c.#backgroundFetch(k, index as Index | undefined, options, context),
       moveToTail: (index: number): void => c.#moveToTail(index as Index),
       indexes: (options?: { allowStale: boolean }) => c.#indexes(options),
       rindexes: (options?: { allowStale: boolean }) => c.#rindexes(options),
-      isStale: (index: number | undefined) => c.#isStale(index as Index)
+      isStale: (index: number | undefined) => c.#isStale(index as Index),
     }
   }
 
@@ -982,7 +982,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
       noDeleteOnStaleGet,
       allowStaleOnFetchRejection,
       allowStaleOnFetchAbort,
-      ignoreFetchAbort
+      ignoreFetchAbort,
     } = options
 
     if (max !== 0 && !isPosInt(max)) {
@@ -1179,7 +1179,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
   #setItemTTL: (
     index: Index,
     ttl: LRUCache.Milliseconds,
-    start?: LRUCache.Milliseconds
+    start?: LRUCache.Milliseconds,
     // ignore because we never call this if we're not already in TTL mode
     /* c8 ignore start */
   ) => void = () => {}
@@ -1214,7 +1214,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
           throw new TypeError(
             'invalid size value (must be positive integer). ' +
               'When maxSize or maxEntrySize is used, sizeCalculation ' +
-              'or size must be set.'
+              'or size must be set.',
           )
         }
       }
@@ -1242,12 +1242,12 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
     k: K,
     v: V | BackgroundFetch<V>,
     size?: LRUCache.Size,
-    sizeCalculation?: LRUCache.SizeCalculator<K, V>
+    sizeCalculation?: LRUCache.SizeCalculator<K, V>,
   ) => LRUCache.Size = (
     _k: K,
     _v: V | BackgroundFetch<V>,
     size?: LRUCache.Size,
-    sizeCalculation?: LRUCache.SizeCalculator<K, V>
+    sizeCalculation?: LRUCache.SizeCalculator<K, V>,
   ) => {
     if (size || sizeCalculation) {
       throw new TypeError('cannot set size without setting maxSize or maxEntrySize on cache')
@@ -1455,7 +1455,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
   purgeStale() {
     let deleted = false
     for (const i of this.#rindexes({
-      allowStale: true
+      allowStale: true,
     })) {
       if (this.#isStale(i)) {
         this.delete(this.#keyList[i] as K)
@@ -1500,14 +1500,14 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
   dump() {
     const arr: [K, LRUCache.Entry<V>][] = []
     for (const i of this.#indexes({
-      allowStale: true
+      allowStale: true,
     })) {
       const key = this.#keyList[i]
       const v = this.#valList[i]
       const value: V | undefined = this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
       if (value === undefined || key === undefined) continue
       const entry: LRUCache.Entry<V> = {
-        value
+        value,
       }
       if (this.#ttls && this.#starts) {
         entry.ttl = this.#ttls[i]
@@ -1562,7 +1562,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
       start,
       noDisposeOnSet = this.noDisposeOnSet,
       sizeCalculation = this.sizeCalculation,
-      status
+      status,
     } = setOptions
     let { noUpdateTTL = this.noUpdateTTL } = setOptions
 
@@ -1773,7 +1773,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
     k: K,
     index: Index | undefined,
     options: LRUCache.FetchOptions<K, V, FC>,
-    context: any
+    context: any,
   ): BackgroundFetch<V> {
     const v = index === undefined ? undefined : this.#valList[index]
     if (this.#isBackgroundFetch(v)) {
@@ -1784,13 +1784,13 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
     const { signal } = options
     // when/if our AC signals, then stop listening to theirs.
     signal?.addEventListener('abort', () => ac.abort(signal.reason), {
-      signal: ac.signal
+      signal: ac.signal,
     })
 
     const fetchOpts = {
       signal: ac.signal,
       options,
-      context
+      context,
     }
 
     const cb = (v: V | undefined, updateCache = false): V | undefined => {
@@ -1889,14 +1889,14 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
     const bf: BackgroundFetch<V> = Object.assign(p, {
       __abortController: ac,
       __staleWhileFetching: v,
-      __returned: undefined
+      __returned: undefined,
     })
 
     if (index === undefined) {
       // internal, don't expose status.
       this.set(k, bf, {
         ...fetchOpts.options,
-        status: undefined
+        status: undefined,
       })
       index = this.#keyMap.get(k)
     } else {
@@ -1934,7 +1934,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
       ? LRUCache.FetchOptions<K, V, FC>
       : FC extends undefined | void
         ? LRUCache.FetchOptionsNoContext<K, V>
-        : LRUCache.FetchOptionsWithContext<K, V, FC>
+        : LRUCache.FetchOptionsWithContext<K, V, FC>,
   ): Promise<undefined | V>
   // this overload not allowed if context is required
   fetch(
@@ -1943,7 +1943,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
       ? LRUCache.FetchOptions<K, V, FC>
       : FC extends undefined | void
         ? LRUCache.FetchOptionsNoContext<K, V>
-        : never
+        : never,
   ): Promise<undefined | V>
   async fetch(k: K, fetchOptions: LRUCache.FetchOptions<K, V, FC> = {}): Promise<undefined | V> {
     const {
@@ -1965,7 +1965,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
       context,
       forceRefresh = false,
       status,
-      signal
+      signal,
     } = fetchOptions
 
     if (!this.#hasFetchMethod) {
@@ -1974,7 +1974,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
         allowStale,
         updateAgeOnGet,
         noDeleteOnStaleGet,
-        status
+        status,
       })
     }
 
@@ -1992,7 +1992,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
       allowStaleOnFetchAbort,
       ignoreFetchAbort,
       status,
-      signal
+      signal,
     }
 
     let index = this.#keyMap.get(k)
@@ -2049,7 +2049,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
       allowStale = this.allowStale,
       updateAgeOnGet = this.updateAgeOnGet,
       noDeleteOnStaleGet = this.noDeleteOnStaleGet,
-      status
+      status,
     } = getOptions
     const index = this.#keyMap.get(k)
     if (index !== undefined) {
@@ -2176,7 +2176,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
    */
   clear() {
     for (const index of this.#rindexes({
-      allowStale: true
+      allowStale: true,
     })) {
       const v = this.#valList[index]
       if (this.#isBackgroundFetch(v)) {
@@ -2218,7 +2218,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
 }
 
 export const LRUCache = <K extends {}, V extends {}, FC = unknown>({
-  maxCapacity
+  maxCapacity,
 }: {
   maxCapacity: number
 }): Map<K, V> => {

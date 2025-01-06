@@ -26,7 +26,7 @@ const initConstant = (value: number): Model => {
     from: value,
     to: value,
     easing: { type: 'linear' },
-    delayMs: 0
+    delayMs: 0,
   }
 }
 
@@ -100,7 +100,7 @@ const step = (now: Posix, model: Model): Model => {
   if (progress >= 1) {
     return {
       ...model,
-      value: model.to
+      value: model.to,
     }
   }
   const range = Math.abs(model.to - model.from)
@@ -116,7 +116,7 @@ const init = ({
   durationMs,
   startMs,
   delayMs = 0,
-  easing = { type: 'linear' }
+  easing = { type: 'linear' },
 }: {
   easing?: Easing
   delayMs?: number
@@ -132,7 +132,7 @@ const init = ({
     from,
     to,
     easing,
-    delayMs
+    delayMs,
   }
 }
 
@@ -140,7 +140,7 @@ export const Ease = {
   init,
   initConstant,
   step,
-  ease
+  ease,
 }
 
 type AttributeEaseConfig = {
@@ -199,9 +199,9 @@ export const easeAttrs = async (node: Node, attributes: Attributes): Promise<voi
           (c.to - c.from) *
             ease(
               c.easing || {
-                type: 'linear'
+                type: 'linear',
               },
-              progress
+              progress,
             )
         clamped = Math.min(c.max || Number.POSITIVE_INFINITY, Math.max(c.min || Number.NEGATIVE_INFINITY, eased))
         node.setAttribute(keys[i]!, String(clamped))

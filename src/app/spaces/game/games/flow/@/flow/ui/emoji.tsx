@@ -17,7 +17,7 @@ const COLOR_TO_EMOJI: { [key in Color]: Emoji } = {
   purple: '🟣',
   pink: '🌸',
   rose: '🌹',
-  fuchsia: '💜'
+  fuchsia: '💜',
 }
 
 const colorToEmoji = (color: Color): Emoji => {
@@ -60,7 +60,7 @@ const EMOJI_TO_COLOR_MAP: { [key in Emoji]: Color } = {
   '🟣': 'purple',
   '🌸': 'pink',
   '🌹': 'rose',
-  '💜': 'fuchsia'
+  '💜': 'fuchsia',
 }
 
 const ALL_EMOJI = Object.keys(EMOJI_TO_COLOR_MAP) as Emoji[]
@@ -82,5 +82,5 @@ export const Emoji = {
   fromColor: colorToEmoji,
   toColor: emojiToColor,
   all: ALL_EMOJI,
-  toHex: emojiToHex
+  toHex: emojiToHex,
 }

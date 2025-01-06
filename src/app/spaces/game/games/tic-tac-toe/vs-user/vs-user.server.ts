@@ -26,7 +26,7 @@ import {
   type MsgServer,
   type MsgToClient,
   type MsgToServer,
-  type Res
+  type Res,
 } from './vs-user.types'
 import { Sub } from '~/@/sub'
 
@@ -54,7 +54,7 @@ export type Msg = MsgServer
 
 export const update = (
   msg: Msg,
-  model: Model
+  model: Model,
 ): {
   model: Model
   msgCmd: SpaceServerCmd<MsgToClient>[]
@@ -70,9 +70,9 @@ export const update = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['RoundCountDown_Done', result]
-          }
-        ]
+            msg: ['RoundCountDown_Done', result],
+          },
+        ],
       }
     }
 
@@ -86,9 +86,9 @@ export const update = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['MoveCountDown_Done', result]
-          }
-        ]
+            msg: ['MoveCountDown_Done', result],
+          },
+        ],
       }
     }
   }
@@ -97,7 +97,7 @@ export const update = (
 export const updateFromClient = (
   _ctx: SpaceServerCtx,
   msg: MsgToServer,
-  model: Model
+  model: Model,
 ): {
   model: Model
   msgCmd: SpaceServerCmd<MsgToClient>[]
@@ -109,7 +109,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['InputPlayer_Done', result])]
+          msgCmd: [sendToClient([], ['InputPlayer_Done', result])],
         }
       }
 
@@ -120,9 +120,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['InputPlayer_Done', result]
-          }
-        ]
+            msg: ['InputPlayer_Done', result],
+          },
+        ],
       }
     }
 
@@ -132,7 +132,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['StopPlaying_Done', result])]
+          msgCmd: [sendToClient([], ['StopPlaying_Done', result])],
         }
       }
 
@@ -142,9 +142,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['StopPlaying_Done', result]
-          }
-        ]
+            msg: ['StopPlaying_Done', result],
+          },
+        ],
       }
     }
 
@@ -154,7 +154,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['StartGame_Done', result])]
+          msgCmd: [sendToClient([], ['StartGame_Done', result])],
         }
       }
 
@@ -164,9 +164,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['StartGame_Done', result]
-          }
-        ]
+            msg: ['StartGame_Done', result],
+          },
+        ],
       }
     }
 
@@ -176,7 +176,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['resign_Done', result])]
+          msgCmd: [sendToClient([], ['resign_Done', result])],
         }
       }
 
@@ -186,9 +186,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['resign_Done', result]
-          }
-        ]
+            msg: ['resign_Done', result],
+          },
+        ],
       }
     }
 
@@ -198,7 +198,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['input-move-done', result])]
+          msgCmd: [sendToClient([], ['input-move-done', result])],
         }
       }
 
@@ -208,9 +208,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['input-move-done', result]
-          }
-        ]
+            msg: ['input-move-done', result],
+          },
+        ],
       }
     }
 
@@ -220,7 +220,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['NewGame_Done', result])]
+          msgCmd: [sendToClient([], ['NewGame_Done', result])],
         }
       }
 
@@ -231,9 +231,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['NewGame_Done', result]
-          }
-        ]
+            msg: ['NewGame_Done', result],
+          },
+        ],
       }
     }
 
@@ -243,7 +243,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['InputBestOutOf_Done', result])]
+          msgCmd: [sendToClient([], ['InputBestOutOf_Done', result])],
         }
       }
 
@@ -253,9 +253,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: ['InputBestOutOf_Done', result]
-          }
-        ]
+            msg: ['InputBestOutOf_Done', result],
+          },
+        ],
       }
     }
 
@@ -266,7 +266,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], res)]
+          msgCmd: [sendToClient([], res)],
         }
       }
 
@@ -275,9 +275,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: res
-          }
-        ]
+            msg: res,
+          },
+        ],
       }
     }
 
@@ -288,7 +288,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], res)]
+          msgCmd: [sendToClient([], res)],
         }
       }
 
@@ -297,9 +297,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: res
-          }
-        ]
+            msg: res,
+          },
+        ],
       }
     }
 
@@ -310,7 +310,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], res)]
+          msgCmd: [sendToClient([], res)],
         }
       }
 
@@ -319,9 +319,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: res
-          }
-        ]
+            msg: res,
+          },
+        ],
       }
     }
 
@@ -332,7 +332,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], res)]
+          msgCmd: [sendToClient([], res)],
         }
       }
 
@@ -341,9 +341,9 @@ export const updateFromClient = (
         msgCmd: [
           {
             t: 'send-to-space',
-            msg: res
-          }
-        ]
+            msg: res,
+          },
+        ],
       }
     }
   }
@@ -351,7 +351,7 @@ export const updateFromClient = (
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   msg: SpaceServerEvt
   model: Model
@@ -366,7 +366,7 @@ export const updateFromEvent = ({
 
     if (player === 'none') {
       return {
-        model
+        model,
       }
     }
 
@@ -379,7 +379,7 @@ export const updateFromEvent = ({
       X: model.X,
       O: model.O,
       [player]: 'none',
-      [other]: model[other]
+      [other]: model[other],
     }
 
     return {
@@ -387,14 +387,14 @@ export const updateFromEvent = ({
       msgCmd: [
         {
           t: 'send-to-space',
-          msg: ['player-left', modelNew]
-        }
-      ]
+          msg: ['player-left', modelNew],
+        },
+      ],
     }
   }
 
   return {
-    model
+    model,
   }
 }
 
@@ -425,7 +425,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
           return Time.interval(
             `${intervalId}-move-count-down-${turn}`,
             TimeSpan.seconds(1),
-            (): Msg => ['MoveCountDown']
+            (): Msg => ['MoveCountDown'],
           )
         }
 

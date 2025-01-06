@@ -8,18 +8,18 @@ const update: ClientModule['update'] = (input) => {
   switch (input.msgCore?.t) {
     case 'user-closed-puzzle-complete-dialog': {
       return {
-        model: input.model
+        model: input.model,
       }
     }
     case 'user-clicked-select-next-pack': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
   }
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
@@ -32,8 +32,8 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgClient) 
         input.dispatch({
           t: 'got-msg-core',
           c: {
-            t: 'user-closed-puzzle-complete-dialog'
-          }
+            t: 'user-closed-puzzle-complete-dialog',
+          },
         })
       }
     >
@@ -46,8 +46,8 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgClient) 
             input.dispatch({
               t: 'got-msg-core',
               c: {
-                t: 'user-clicked-select-next-pack'
-              }
+                t: 'user-clicked-select-next-pack',
+              },
             })
           }
         />
@@ -58,5 +58,5 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgClient) 
 
 export const LastPuzzleClient = {
   View,
-  update
+  update,
 }

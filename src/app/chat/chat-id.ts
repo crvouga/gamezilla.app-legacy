@@ -14,5 +14,5 @@ const is = (id: unknown): id is ChatId => {
 
 export const ChatId = {
   generate,
-  is
+  is,
 }

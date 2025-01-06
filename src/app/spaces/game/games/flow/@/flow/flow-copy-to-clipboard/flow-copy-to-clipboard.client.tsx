@@ -8,11 +8,11 @@ import { FlowGridShorthand } from '../flow-variant/flow-grid'
 
 export const MsgClient = p.or(
   p.obj({
-    t: p.l('user-clicked-copy-to-clipboard')
+    t: p.l('user-clicked-copy-to-clipboard'),
   }),
   p.obj({
-    t: p.l('copied-to-clipboard')
-  })
+    t: p.l('copied-to-clipboard'),
+  }),
 )
 export type MsgClient = p.Infer<typeof MsgClient>
 
@@ -29,7 +29,7 @@ const update = <TModel,>(input: {
     case 'user-clicked-copy-to-clipboard': {
       if (input.flow.t !== 'flow-grid') {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -42,19 +42,19 @@ const update = <TModel,>(input: {
         msgCmd: [
           playSound(APP_SOUND.refreshFeed),
           showToast(input.ctx.t('app.copied-to-clipboard')),
-          copyToClipboard(encoded)
-        ]
+          copyToClipboard(encoded),
+        ],
       }
     }
   }
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
 const viewAction = ({
   ctx,
-  dispatch
+  dispatch,
 }: {
   ctx: AppClientCtx
   dispatch: (m: MsgClient) => void
@@ -65,13 +65,13 @@ const viewAction = ({
       label: ctx.t('flow.copy-puzzle-to-clipboard'),
       onClick: () =>
         dispatch({
-          t: 'user-clicked-copy-to-clipboard'
-        })
-    }
+          t: 'user-clicked-copy-to-clipboard',
+        }),
+    },
   ]
 }
 
 export const FlowCopyToClipboardClient = {
   update,
-  viewAction
+  viewAction,
 }

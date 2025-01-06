@@ -14,7 +14,7 @@ export type ModelClient = {
 }
 
 export const initClient: ModelClient = {
-  packCreateNewRequest: NotAsked
+  packCreateNewRequest: NotAsked,
 }
 
 export type ModelServer = Record<string, unknown>
@@ -48,7 +48,7 @@ export type MsgToClient = {
 export const MsgCore = p.obj({
   t: p.l('user-created-pack'),
   created: Result.parser(p.str, Pack),
-  userId: UserId
+  userId: UserId,
 })
 
 export type MsgCore = p.Infer<typeof MsgCore>

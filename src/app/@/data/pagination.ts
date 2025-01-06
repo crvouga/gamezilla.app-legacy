@@ -17,10 +17,10 @@ const init = <T>(): Paginated<T> => {
     limit: 0,
     offset: 0,
     items: [],
-    total: 0
+    total: 0,
   }
 }
 
 export const Paginated = {
-  init
+  init,
 }

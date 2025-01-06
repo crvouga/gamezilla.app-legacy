@@ -97,7 +97,7 @@ export type MsgToServerMeta = {
 //
 
 export const rpcContract = RPC.initContract({
-  wire: WireTypes.rpcContract
+  wire: WireTypes.rpcContract,
 })
 
 //

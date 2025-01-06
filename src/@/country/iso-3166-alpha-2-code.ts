@@ -259,12 +259,12 @@ const ISO_3166_ALPHA_2_MAPPINGS = {
   YT: 'Mayotte',
   ZA: 'South Africa',
   ZM: 'Zambia',
-  ZW: 'Zimbabwe'
+  ZW: 'Zimbabwe',
 } as const
 
 const parser = p.custom((input: unknown): input is keyof typeof ISO_3166_ALPHA_2_MAPPINGS => {
   return Boolean(
-    typeof input === 'string' && ISO_3166_ALPHA_2_MAPPINGS[input as keyof typeof ISO_3166_ALPHA_2_MAPPINGS]
+    typeof input === 'string' && ISO_3166_ALPHA_2_MAPPINGS[input as keyof typeof ISO_3166_ALPHA_2_MAPPINGS],
   )
 }, 'Iso3166Alpha2Code')
 
@@ -346,5 +346,5 @@ export const Iso3166Alpha2Code = {
   is,
   toNameWithEmoji,
   getNavigatorCountry,
-  all
+  all,
 }

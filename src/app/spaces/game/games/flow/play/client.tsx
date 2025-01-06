@@ -15,7 +15,7 @@ const update: ClientModule['update'] = (input) => {
     (model) => ScreenSelectPackClient.update({ ...input, model }),
     (model) => ScreenSelectPuzzleClient.update({ ...input, model }),
     (model) => updateGotMsgCore({ ...input, model }),
-    (model) => GameMainMenu.update({ ...input, model })
+    (model) => GameMainMenu.update({ ...input, model }),
   )
 }
 
@@ -24,7 +24,7 @@ const updateGotMsgCore: ClientModule['update'] = (input) => {
     case 'got-msg-core': {
       return {
         model: input.model,
-        msgCore: [input.msg.c]
+        msgCore: [input.msg.c],
       }
     }
   }
@@ -73,5 +73,5 @@ export const PlayClient = {
   update,
   subscriptions,
   View,
-  ViewFeedItem
+  ViewFeedItem,
 }

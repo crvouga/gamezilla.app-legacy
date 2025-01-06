@@ -109,7 +109,7 @@ export const initCoreModel = ({ X, O }: { X: SetupModel['X']; O: SetupModel['O']
     O,
     X,
     maxRoundCount: 3,
-    moveTimeLimit: 5
+    moveTimeLimit: 5,
   }
 }
 
@@ -199,7 +199,7 @@ export const inputPlayer = ({ userId, playerType }: InputPlayer[1], model: CoreM
   const modelNew: CoreModel = {
     ...model,
     [playerType]: userId,
-    [TicTacToe.toOpposite(playerType)]: otherPlayerNew
+    [TicTacToe.toOpposite(playerType)]: otherPlayerNew,
   }
 
   return Ok(modelNew)
@@ -224,7 +224,7 @@ export const stopPlaying = ({ userId }: StopPlaying[1], model: CoreModel): StopP
   const modelNew: CoreModel = {
     ...model,
     X: isPlayingX ? 'none' : model.X,
-    O: isPlayingO ? 'none' : model.O
+    O: isPlayingO ? 'none' : model.O,
   }
 
   return Ok(modelNew)
@@ -269,8 +269,8 @@ export const startGame = ({ userId }: StartGame[1], model: CoreModel): StartGame
     maxRoundCount: model.maxRoundCount,
     round: {
       type: 'RoundStarting',
-      countDown: 3
-    }
+      countDown: 3,
+    },
   }
 
   return Ok(modelNew)
@@ -302,11 +302,11 @@ export const resign = ({ userId }: Resign[1], model: CoreModel): Resign_Done[1] 
     type: 'game-over',
     gameOver: {
       type: 'resignation',
-      resigner
+      resigner,
     },
     rematch: {
-      type: 'NotAsking'
-    }
+      type: 'NotAsking',
+    },
   }
 
   return Ok(modelNew)
@@ -344,7 +344,7 @@ export const inputMove = ({ userId, position }: InputMove[1], model: CoreModel):
   const result = TicTacToe.move({
     board,
     player: playerType,
-    position
+    position,
   })
 
   if (isErr(result)) {
@@ -361,8 +361,8 @@ export const inputMove = ({ userId, position }: InputMove[1], model: CoreModel):
       round: Round.mapCurrent(model.round, () => ({
         type: 'RoundStarted',
         board: boardNew,
-        moveCountDown: model.moveTimeLimit
-      }))
+        moveCountDown: model.moveTimeLimit,
+      })),
     }
 
     return Ok(modelNew)
@@ -376,9 +376,9 @@ export const inputMove = ({ userId, position }: InputMove[1], model: CoreModel):
       board: boardNew,
       next: {
         type: 'RoundStarting',
-        countDown: initCountDown
-      }
-    }))
+        countDown: initCountDown,
+      },
+    })),
   }
 
   const gameOver = Round.toGameOver(modelNew)
@@ -396,8 +396,8 @@ export const inputMove = ({ userId, position }: InputMove[1], model: CoreModel):
     X: modelNew.X,
     round: modelNew.round,
     rematch: {
-      type: 'NotAsking'
-    }
+      type: 'NotAsking',
+    },
   })
 }
 
@@ -426,8 +426,8 @@ export const moveCountDown = (model: CoreModel): MoveCountDown_Done[1] => {
       round: Round.mapCurrent(model.round, () => ({
         type: 'RoundStarted',
         board,
-        moveCountDown: moveCountDownNew
-      }))
+        moveCountDown: moveCountDownNew,
+      })),
     }
 
     return Ok(modelNew)
@@ -450,9 +450,9 @@ export const moveCountDown = (model: CoreModel): MoveCountDown_Done[1] => {
   const result = inputMove(
     {
       userId: model[turn],
-      position: randomPosition
+      position: randomPosition,
     },
-    model
+    model,
   )
 
   return result
@@ -483,7 +483,7 @@ export const NewGame = ({ userId }: NewGame[1], model: CoreModel): NewGame_Done[
     moveTimeLimit: model.moveTimeLimit,
     O: model.O,
     X: model.X,
-    maxRoundCount: model.maxRoundCount
+    maxRoundCount: model.maxRoundCount,
   }
 
   return Ok(modelNew)
@@ -527,7 +527,7 @@ export const inputBestOutOf = ({ userId, bestOutOf }: InputBestOutOf[1], model: 
 
   const modelNew: CoreModel = {
     ...model,
-    maxRoundCount: bestOutOf
+    maxRoundCount: bestOutOf,
   }
 
   return Ok(modelNew)
@@ -587,8 +587,8 @@ export const roundCountDown = (model: CoreModel): RoundCountDown_Done[1] => {
       round: Round.mapCurrent(model.round, () => ({
         type: 'RoundStarted',
         board: TicTacToe.emptyBoard,
-        moveCountDown: model.moveTimeLimit
-      }))
+        moveCountDown: model.moveTimeLimit,
+      })),
     }
 
     return Ok(modelNew)
@@ -598,8 +598,8 @@ export const roundCountDown = (model: CoreModel): RoundCountDown_Done[1] => {
     ...model,
     round: Round.mapCurrent(model.round, () => ({
       type: 'RoundStarting',
-      countDown: countDownNew
-    }))
+      countDown: countDownNew,
+    })),
   }
 
   return Ok(modelNew)
@@ -631,8 +631,8 @@ export const rematchAsk = ({ userId }: RematchAsk[1], model: CoreModel): Rematch
       ...model,
       rematch: {
         type: 'Asking',
-        asker: 'O'
-      }
+        asker: 'O',
+      },
     })
   }
 
@@ -641,8 +641,8 @@ export const rematchAsk = ({ userId }: RematchAsk[1], model: CoreModel): Rematch
       ...model,
       rematch: {
         type: 'Asking',
-        asker: 'X'
-      }
+        asker: 'X',
+      },
     })
   }
 
@@ -748,7 +748,7 @@ export const rematchAccept = ({ userId }: RematchAccept[1], model: CoreModel): R
     X: model.X,
     round: {
       type: 'RoundStarting',
-      countDown: 3
-    }
+      countDown: 3,
+    },
   })
 }

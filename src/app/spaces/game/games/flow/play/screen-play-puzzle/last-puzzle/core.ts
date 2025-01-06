@@ -6,8 +6,8 @@ const updateCore: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
       return {
         ...modelCore,
         screen: {
-          t: 'screen-select-pack'
-        }
+          t: 'screen-select-pack',
+        },
       }
     }
     default: {
@@ -17,5 +17,5 @@ const updateCore: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
 }
 
 export const LastPuzzleCore = {
-  updateCore
+  updateCore,
 }

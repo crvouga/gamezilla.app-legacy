@@ -18,8 +18,8 @@ const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzz
   for (let i = 0; i < (input?.puzzleCount ?? 0); i++) {
     puzzlesPromises.push(
       Puzzle.random({
-        createdBy
-      })
+        createdBy,
+      }),
     )
   }
 
@@ -33,12 +33,12 @@ const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzz
 
   const pack = await Pack.random({
     createdBy,
-    puzzleIds: puzzles.map((puzzle) => puzzle.id)
+    puzzleIds: puzzles.map((puzzle) => puzzle.id),
   })
   const init = BuilderCore.init({ ctx: f.ctx })
   const modelCore: ModelCore = {
     ...init,
-    screenPackBuilder: ScreenPackBuilderCore.init({ pack })
+    screenPackBuilder: ScreenPackBuilderCore.init({ pack }),
   }
 
   const updateModelCore = (msgs: MsgCore[]): ModelCore => {
@@ -47,11 +47,11 @@ const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzz
         ScreenPackBuilderCore.update({
           ctx: f.ctx,
           modelCore,
-          msgCore
+          msgCore,
         }),
       {
-        ...modelCore
-      }
+        ...modelCore,
+      },
     )
   }
 
@@ -61,7 +61,7 @@ const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzz
     currentUserId: createdBy,
     pack,
     puzzles,
-    modelCore
+    modelCore,
   }
 }
 
@@ -73,8 +73,8 @@ describe(import.meta.file, () => {
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
         userId: f.currentUserId,
-        puzzleIndex: 0
-      }
+        puzzleIndex: 0,
+      },
     ])
 
     expect(modelCore.screenPackBuilder?.pack.puzzleIds.includes(f.puzzles[0].id)).toBe(false)
@@ -86,8 +86,8 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
 
     expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
@@ -100,14 +100,14 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
-        puzzleIndex: 0
-      }
+        puzzleIndex: 0,
+      },
     ])
 
     expect(
       modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
         modelCore.screenPackBuilder.screen.puzzleResult.t === 'got' &&
-        modelCore.screenPackBuilder.screen.puzzleResult.c.id === f.puzzles[0].id
+        modelCore.screenPackBuilder.screen.puzzleResult.c.id === f.puzzles[0].id,
     ).toBe(true)
   })
 
@@ -117,15 +117,16 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
-        puzzleIndex: 0
+        puzzleIndex: 0,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
     expect(
-      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' && modelCore.screenPackBuilder?.screen.opened === 'more'
+      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
+        modelCore.screenPackBuilder?.screen.opened === 'more',
     ).toBe(true)
   })
 
@@ -135,15 +136,15 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
-        puzzleIndex: 0
+        puzzleIndex: 0,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
     expect(
-      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' && modelCore.screenPackBuilder?.screen.opened === null
+      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' && modelCore.screenPackBuilder?.screen.opened === null,
     ).toBe(true)
   })
 
@@ -153,18 +154,18 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
-        puzzleIndex: 0
+        puzzleIndex: 0,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
         userId: f.currentUserId,
-        nextPuzzleResult: { t: 'got', c: f.puzzles[1] }
-      }
+        nextPuzzleResult: { t: 'got', c: f.puzzles[1] },
+      },
     ])
     expect(
       modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
         modelCore.screenPackBuilder?.screen.puzzleResult.t === 'got' &&
-        modelCore.screenPackBuilder?.screen.puzzleResult.c.id === f.puzzles[1].id
+        modelCore.screenPackBuilder?.screen.puzzleResult.c.id === f.puzzles[1].id,
     ).toBe(true)
   })
 
@@ -174,7 +175,7 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
-        puzzleIndex: 0
+        puzzleIndex: 0,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
@@ -182,14 +183,15 @@ describe(import.meta.file, () => {
         nextPuzzleResult: {
           t: 'got',
           c: await Puzzle.random({
-            createdBy: f.currentUserId
-          })
-        }
-      }
+            createdBy: f.currentUserId,
+          }),
+        },
+      },
     ])
 
     expect(
-      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' && modelCore.screenPackBuilder?.screen.puzzleIndex === 0
+      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
+        modelCore.screenPackBuilder?.screen.puzzleIndex === 0,
     ).toBe(true)
   })
 
@@ -199,18 +201,18 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[1] },
-        puzzleIndex: 1
+        puzzleIndex: 1,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
         userId: f.currentUserId,
-        previousPuzzleResult: { t: 'got', c: f.puzzles[0] }
-      }
+        previousPuzzleResult: { t: 'got', c: f.puzzles[0] },
+      },
     ])
     expect(
       modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
         modelCore.screenPackBuilder?.screen.puzzleResult.t === 'got' &&
-        modelCore.screenPackBuilder?.screen.puzzleResult.c.id === f.puzzles[0].id
+        modelCore.screenPackBuilder?.screen.puzzleResult.c.id === f.puzzles[0].id,
     ).toBe(true)
   })
 
@@ -220,7 +222,7 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[1] },
-        puzzleIndex: 1
+        puzzleIndex: 1,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
@@ -228,15 +230,15 @@ describe(import.meta.file, () => {
         previousPuzzleResult: {
           t: 'got',
           c: await Puzzle.random({
-            createdBy: f.currentUserId
-          })
-        }
-      }
+            createdBy: f.currentUserId,
+          }),
+        },
+      },
     ])
     expect(
       modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
         modelCore.screenPackBuilder?.screen.puzzleResult.t === 'got' &&
-        modelCore.screenPackBuilder?.screen.puzzleResult.c.id === f.puzzles[1].id
+        modelCore.screenPackBuilder?.screen.puzzleResult.c.id === f.puzzles[1].id,
     ).toBe(true)
   })
 
@@ -246,12 +248,12 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[1] },
-        puzzleIndex: 1
+        puzzleIndex: 1,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
     expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
@@ -261,8 +263,8 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-opened-add-puzzle-screen',
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
     expect(modelCore.screenPackBuilder?.screen.t === 'screen-add-puzzle').toBe(true)
   })
@@ -272,11 +274,11 @@ describe(import.meta.file, () => {
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-opened-add-puzzle-screen',
-        userId: f.currentUserId
+        userId: f.currentUserId,
       },
       {
-        t: 'screen-pack-builder.user-closed-add-puzzle-screen'
-      }
+        t: 'screen-pack-builder.user-closed-add-puzzle-screen',
+      },
     ])
     expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
@@ -284,21 +286,21 @@ describe(import.meta.file, () => {
   it('should be able to add new puzzle', async () => {
     const f = await Fixture()
     const newPuzzle = await Puzzle.random({
-      createdBy: f.currentUserId
+      createdBy: f.currentUserId,
     })
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-add-puzzle-item',
         puzzle: newPuzzle,
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
     expect(modelCore.screenPackBuilder?.pack.puzzleIds.includes(newPuzzle.id)).toBe(true)
   })
 
   it('should be on the correct slide index after exiting the puzzle screen', async () => {
     const f = await Fixture({
-      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
     const puzzle = f.puzzles[f.puzzles.length - 1]
@@ -309,12 +311,12 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: puzzle },
-        puzzleIndex: f.puzzles.length - 1
+        puzzleIndex: f.puzzles.length - 1,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
 
     const expected = PackPuzzlesGridUI.toSlideIndex(modelCore.screenPackBuilder?.pack.puzzleIds.indexOf(puzzle.id) ?? 0)
@@ -324,15 +326,15 @@ describe(import.meta.file, () => {
 
   it('should allow user to change slide', async () => {
     const f = await Fixture({
-      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 1,
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
     expect(ScreenPackBuilderCore.toSlideIndex(f.modelCore.screenPackBuilder)).toBe(0)
     expect(ScreenPackBuilderCore.toSlideIndex(modelCore.screenPackBuilder)).toBe(1)
@@ -340,37 +342,37 @@ describe(import.meta.file, () => {
 
   it('should prevent slide index from going out of bounds', async () => {
     const f = await Fixture({
-      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
     const expectedSlide = PackPuzzlesGridUI.toSlideIndex(PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1)
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 100000,
-        userId: f.currentUserId
-      }
+        userId: f.currentUserId,
+      },
     ])
     expect(ScreenPackBuilderCore.toSlideIndex(modelCore.screenPackBuilder)).toBe(expectedSlide)
   })
 
   it('should be on the correct slide when closing the add puzzle screen', async () => {
     const f = await Fixture({
-      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 1,
-        userId: f.currentUserId
+        userId: f.currentUserId,
       },
       {
         t: 'screen-pack-builder.user-opened-add-puzzle-screen',
-        userId: f.currentUserId
+        userId: f.currentUserId,
       },
       {
-        t: 'screen-pack-builder.user-closed-add-puzzle-screen'
-      }
+        t: 'screen-pack-builder.user-closed-add-puzzle-screen',
+      },
     ])
 
     expect(ScreenPackBuilderCore.toSlideIndex(f.modelCore.screenPackBuilder)).toBe(0)
@@ -379,46 +381,46 @@ describe(import.meta.file, () => {
 
   it('should open the correct level when opening puzzle screen', async () => {
     const f = await Fixture({
-      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
+      puzzleCount: PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
     const indexNextPage = PackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[indexNextPage]! },
-        puzzleIndex: indexNextPage
-      }
+        puzzleIndex: indexNextPage,
+      },
     ])
     expect(
       modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
-        modelCore.screenPackBuilder?.screen.puzzleIndex === indexNextPage
+        modelCore.screenPackBuilder?.screen.puzzleIndex === indexNextPage,
     ).toBe(true)
   })
 
   it('should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack', async () => {
     const puzzle = await Puzzle.random()
     const f = await Fixture({
-      appendDuplicatesOf: puzzle
+      appendDuplicatesOf: puzzle,
     })
 
     const modelCore = f.updateModelCore([
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[f.puzzles.length - 1]! },
-        puzzleIndex: f.puzzles.length - 1
-      }
+        puzzleIndex: f.puzzles.length - 1,
+      },
     ])
 
     expect(
       modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
-        modelCore.screenPackBuilder?.screen.puzzleIndex === f.puzzles.length - 1
+        modelCore.screenPackBuilder?.screen.puzzleIndex === f.puzzles.length - 1,
     ).toBe(true)
   })
 
   it('should not open pack item if puzzle is not at index given', async () => {
     const puzzle = await Puzzle.random()
     const f = await Fixture({
-      appendDuplicatesOf: puzzle
+      appendDuplicatesOf: puzzle,
     })
 
     const puzzleLast = f.puzzles[f.puzzles.length - 1]
@@ -429,8 +431,8 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: puzzleLast },
-        puzzleIndex: 0
-      }
+        puzzleIndex: 0,
+      },
     ])
 
     expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
@@ -442,8 +444,8 @@ describe(import.meta.file, () => {
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'not-found' },
-        puzzleIndex: 0
-      }
+        puzzleIndex: 0,
+      },
     ])
     expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle').toBe(true)
   })

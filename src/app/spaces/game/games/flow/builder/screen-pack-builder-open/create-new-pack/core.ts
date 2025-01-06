@@ -9,5 +9,5 @@ const update: UpdateCore = (input) => {
 }
 
 export const PackCreateNewCore = {
-  update
+  update,
 }

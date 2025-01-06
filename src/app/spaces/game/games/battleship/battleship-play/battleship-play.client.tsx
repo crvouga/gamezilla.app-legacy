@@ -10,5 +10,5 @@ const View = (input: { modelCore: ModelCore }) => {
 }
 
 export const BattleshipPlay = {
-  View
+  View,
 }

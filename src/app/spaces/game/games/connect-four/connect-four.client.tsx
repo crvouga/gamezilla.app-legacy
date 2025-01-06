@@ -60,7 +60,7 @@ const update: Module['update'] = (input) => {
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateChild(model)(input),
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromMsgCore(model)(input)
+    (model) => updateFromMsgCore(model)(input),
   )
 }
 
@@ -73,13 +73,13 @@ const updateFromMsg =
       case 'user-changed-mode': {
         return {
           model,
-          msgCore: [withEventId(msg)]
+          msgCore: [withEventId(msg)],
         }
       }
 
       default: {
         return {
-          model
+          model,
         }
       }
     }
@@ -92,7 +92,7 @@ const updateFromMsgCore =
 
     if (!msgCore) {
       return {
-        model
+        model,
       }
     }
 
@@ -102,9 +102,9 @@ const updateFromMsgCore =
           case 'none': {
             return {
               model: {
-                t: null
+                t: null,
               },
-              msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+              msgCmd: [playSound(APP_SOUND.navBackwardMin)],
             }
           }
 
@@ -112,9 +112,9 @@ const updateFromMsgCore =
             return {
               model: {
                 t: 'vs-bot',
-                c: VsBot.init
+                c: VsBot.init,
               },
-              msgCmd: [playSound(APP_SOUND.navForwardMin)]
+              msgCmd: [playSound(APP_SOUND.navForwardMin)],
             }
           }
 
@@ -122,9 +122,9 @@ const updateFromMsgCore =
             return {
               model: {
                 t: 'vs-user',
-                c: VsUser.init
+                c: VsUser.init,
               },
-              msgCmd: [playSound(APP_SOUND.navForwardMin)]
+              msgCmd: [playSound(APP_SOUND.navForwardMin)],
             }
           }
         }
@@ -133,7 +133,7 @@ const updateFromMsgCore =
       case 'vs-bot':
       case 'vs-user': {
         return {
-          model
+          model,
         }
       }
     }
@@ -147,7 +147,7 @@ const updateChild =
     switch (modelCore.t) {
       case 'none': {
         return {
-          model
+          model,
         }
       }
 
@@ -160,7 +160,7 @@ const updateChild =
           msgCore: msgCore?.t === 'vs-bot' ? { ...msgCore, ...msgCore.c } : null,
           msgServer: msgServer?.t === 'vs-bot' ? msgServer.c : null,
           model: model.t === 'vs-bot' ? model.c : VsBot.init,
-          modelCore: modelCore.c
+          modelCore: modelCore.c,
         })
 
         return {
@@ -168,7 +168,7 @@ const updateChild =
           eff: Eff.tag('vs-bot', updated.eff),
           msgCmd: AppClientCmd.tag('vs-bot', updated.msgCmd),
           msgCore: updated.msgCore?.map((c) => ({ c, t: 'vs-bot' })),
-          msgEvt: updated.msgEvt
+          msgEvt: updated.msgEvt,
         }
       }
 
@@ -181,7 +181,7 @@ const updateChild =
           msgEvt: msgEvt,
           msgCore: msgCore?.t === 'vs-user' ? { ...msgCore, ...msgCore.c } : null,
           msgServer: msgServer?.t === 'vs-user' ? msgServer.c : null,
-          modelCore: modelCore.c
+          modelCore: modelCore.c,
         })
 
         return {
@@ -189,7 +189,7 @@ const updateChild =
           eff: Eff.tag('vs-user', updated.eff),
           msgCmd: AppClientCmd.tag('vs-user', updated.msgCmd),
           msgCore: updated.msgCore?.map((c) => ({ c, t: 'vs-user' })),
-          msgEvt: updated.msgEvt
+          msgEvt: updated.msgEvt,
         }
       }
     }
@@ -208,7 +208,7 @@ const View: Module['View'] = (input) => {
     input.dispatch({
       t: 'user-changed-mode',
       mode: 'none',
-      userId: input.ctx.currentUserId
+      userId: input.ctx.currentUserId,
     })
   }
 
@@ -228,8 +228,8 @@ const View: Module['View'] = (input) => {
                 input.dispatch({
                   mode: 'vs-user',
                   t: 'user-changed-mode',
-                  userId: input.ctx.currentUserId
-                })
+                  userId: input.ctx.currentUserId,
+                }),
             }),
             GameMainMenu.buttons.playComputer({
               ctx: input.ctx,
@@ -237,9 +237,9 @@ const View: Module['View'] = (input) => {
                 input.dispatch({
                   mode: 'vs-bot',
                   t: 'user-changed-mode',
-                  userId: input.ctx.currentUserId
-                })
-            })
+                  userId: input.ctx.currentUserId,
+                }),
+            }),
           ]}
         />
       )
@@ -252,7 +252,7 @@ const View: Module['View'] = (input) => {
           dispatch={(c) =>
             input.dispatch({
               t: 'vs-bot',
-              c
+              c,
             })
           }
           model={input.model?.t === 'vs-bot' ? input.model.c : VsBot.init}
@@ -266,12 +266,12 @@ const View: Module['View'] = (input) => {
         <VsUser.View
           ctx={{
             ...input.ctx,
-            onQuit
+            onQuit,
           }}
           dispatch={(c) =>
             input.dispatch({
               t: 'vs-user',
-              c
+              c,
             })
           }
           model={input.model?.t === 'vs-user' ? input.model.c : VsUser.init}
@@ -320,7 +320,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
               dispatch={(c) =>
                 input.dispatch({
                   t: 'vs-bot',
-                  c
+                  c,
                 })
               }
             />
@@ -339,14 +339,14 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
             <VsUser.ViewFeedItem
               ctx={{
                 ...ctx,
-                onQuit: () => {}
+                onQuit: () => {},
               }}
               msgCore={msgCore.c}
               modelCore={modelCore.c}
               dispatch={(c) =>
                 input.dispatch({
                   t: 'vs-user',
-                  c
+                  c,
                 })
               }
             />
@@ -383,8 +383,8 @@ const subscriptions: Module['subscriptions'] = (input) => {
           ...input,
           model: model?.t === 'vs-bot' ? model.c : VsBot.init,
           modelCore: modelCore.c,
-          ctx: input.ctx
-        })
+          ctx: input.ctx,
+        }),
       )
     }
 
@@ -397,9 +397,9 @@ const subscriptions: Module['subscriptions'] = (input) => {
           modelCore: modelCore.c,
           ctx: {
             ...input.ctx,
-            onQuit: () => {}
-          }
-        })
+            onQuit: () => {},
+          },
+        }),
       )
     }
   }
@@ -410,5 +410,5 @@ export const ConnectFour: Module = {
   update,
   View,
   ViewFeedItem,
-  subscriptions
+  subscriptions,
 }

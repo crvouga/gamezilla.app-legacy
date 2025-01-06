@@ -17,7 +17,7 @@ export type ModelClient = {
 
 export const initClient: ModelClient = {
   puzzleCreateRequest: NotAsked,
-  puzzleCreateRequestedAt: Posix.now()
+  puzzleCreateRequestedAt: Posix.now(),
 }
 
 export type ModelServer = {}
@@ -49,6 +49,6 @@ export type MsgToClient = {
 export const MsgCore = p.obj({
   t: p.l('create-new-puzzle.user-created-puzzle'),
   created: Result.parser(p.str, Puzzle),
-  userId: UserId
+  userId: UserId,
 })
 export type MsgCore = p.Infer<typeof MsgCore>

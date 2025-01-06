@@ -10,7 +10,7 @@ import { ServerInstanceDb } from './impl-db-conn-kv'
 const Fixture = (config: Config) => {
   const serverInstanceDb = ServerInstanceDb(config)
   return {
-    serverInstanceDb
+    serverInstanceDb,
   }
 }
 
@@ -20,8 +20,8 @@ const Fixtures = async () => {
   const configs: Config[] = [
     {
       t: 'db-conn-kv',
-      dbConnKv: f.dbConnKv
-    }
+      dbConnKv: f.dbConnKv,
+    },
   ]
 
   return configs.map(Fixture)
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
       for (let i = 0; i < 10; i++) {
         const serverInstance = ServerInstance.random({
           startedAt: Posix.past(Posix.now(), TimeSpan.hours(1)),
-          lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.minutes(1))
+          lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.minutes(1)),
         })
         expected.push(serverInstance)
         await f.serverInstanceDb.put(serverInstance)
@@ -76,13 +76,13 @@ describe(import.meta.file, () => {
         await f.serverInstanceDb.put(
           ServerInstance.random({
             startedAt: Posix.past(Posix.now(), TimeSpan.hours(1)),
-            lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.add(MINIMAL_HEART_RATE, TimeSpan.minutes(1)))
-          })
+            lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.add(MINIMAL_HEART_RATE, TimeSpan.minutes(1))),
+          }),
         )
       }
 
       const after = await f.serverInstanceDb.listAlive({
-        minimalHeartRate: MINIMAL_HEART_RATE
+        minimalHeartRate: MINIMAL_HEART_RATE,
       })
       expect(unwrap(before)).not.toContainAllValues(expected)
       expect(unwrap(after)).toContainAllValues(expected)

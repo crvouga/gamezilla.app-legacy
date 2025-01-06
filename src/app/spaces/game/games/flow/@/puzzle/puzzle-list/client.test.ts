@@ -15,7 +15,7 @@ import { PuzzleListClient } from './client'
 import { type ModelClient, initClient } from './types'
 
 const initial = {
-  model: initClient
+  model: initClient,
 }
 
 const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
@@ -25,9 +25,9 @@ const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
     msgCmd: {
       t: 'flow-cmd.puzzle-list',
       c: {
-        t: 'load'
-      }
-    }
+        t: 'load',
+      },
+    },
   })
 }
 
@@ -41,9 +41,9 @@ const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: Puzzle[]) => (model:
         items: puzzles,
         limit: 25,
         offset: 0,
-        total: puzzles.length
-      })
-    }
+        total: puzzles.length,
+      }),
+    },
   })
 }
 
@@ -53,8 +53,8 @@ const serverListedPuzzlesErr = (ctx: FlowClientCtx, error: string) => (model: Mo
     model,
     msgServer: {
       t: 'flow-cmd.puzzle-list.listed-puzzle',
-      listed: Err(error)
-    }
+      listed: Err(error),
+    },
   })
 }
 
@@ -62,12 +62,12 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
   return PuzzleListClient.update({
     ctx: {
       ...ctx,
-      now: Posix.future(ctx.now, timeSpan)
+      now: Posix.future(ctx.now, timeSpan),
     },
     model,
     msg: {
-      t: 'flow-cmd.puzzle-list.time-passed'
-    }
+      t: 'flow-cmd.puzzle-list.time-passed',
+    },
   })
 }
 
@@ -94,10 +94,10 @@ describe(import.meta.file, () => {
         dimensions: VariantDimensions.init({
           t: 'flow-grid',
           height: 5,
-          width: 5
+          width: 5,
         }),
-        terminalsByGroupId: {}
-      })
+        terminalsByGroupId: {},
+      }),
     })
 
     const output = AppClientModule.andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))

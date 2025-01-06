@@ -11,7 +11,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
   keySpace,
   maxEntryCount,
   encodeValue,
-  decodeValue
+  decodeValue,
 }: {
   keySpace: string
   maxEntryCount: number
@@ -50,7 +50,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       _instanceStep: encodedEntry._instanceStep,
       _posixTimestamp: encodedEntry._posixTimestamp,
       key: encodedEntry.key as TKey,
-      value
+      value,
     }
   }
 
@@ -59,12 +59,12 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
   const append = async (
     now: number,
     instance: Store<TKey, TValue>,
-    entries: [TKey, TValue | undefined][]
+    entries: [TKey, TValue | undefined][],
   ): Promise<Store<TKey, TValue>> => {
     const instanceNew: Store<TKey, TValue> = {
       _posixTimestamp: now,
       _instanceStep: instance._instanceStep + 1,
-      _appendStep: runningAppendStep++
+      _appendStep: runningAppendStep++,
     }
 
     const map = getMap()
@@ -73,7 +73,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       const entry: MapEntry<string | number, unknown> = {
         ...instanceNew,
         key,
-        value: value ? encodeValue(value) : undefined
+        value: value ? encodeValue(value) : undefined,
       }
 
       const keyEntries = map.get(entry.key) ?? []
@@ -103,7 +103,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       return {
         _posixTimestamp: now,
         _instanceStep: 0,
-        _appendStep: 0
+        _appendStep: 0,
       }
     },
     async assoc(now, instance, key, value) {
@@ -122,7 +122,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       return append(
         now,
         instance,
-        keys.map((key) => [key, undefined])
+        keys.map((key) => [key, undefined]),
       )
     },
 
@@ -195,6 +195,6 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       }
 
       return runningEntry?.value ?? null
-    }
+    },
   }
 }

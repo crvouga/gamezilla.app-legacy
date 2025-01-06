@@ -21,7 +21,7 @@ const update: ClientModule['update'] = (input) => {
     { model },
     (model) => updateDraftNameInput({ ...input, model }),
     (model) => updateDrawer({ ...input, model }),
-    (model) => updateFormButtons({ ...input, model })
+    (model) => updateFormButtons({ ...input, model }),
   )
 }
 
@@ -54,8 +54,8 @@ const updateFormButtons: ClientModule['update'] = (input) => {
         model: {
           ...input.model,
           puzzleBuilderOpened: 'more',
-          puzzleEditNameValidationError: null
-        }
+          puzzleEditNameValidationError: null,
+        },
       }
     }
 
@@ -66,9 +66,9 @@ const updateFormButtons: ClientModule['update'] = (input) => {
         return {
           model: {
             ...input.model,
-            puzzleEditNameValidationError: 'name-cannot-be-empty'
+            puzzleEditNameValidationError: 'name-cannot-be-empty',
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorSm)]
+          msgCmd: [playSound(APP_SOUND.alertErrorSm)],
         }
       }
 
@@ -76,16 +76,16 @@ const updateFormButtons: ClientModule['update'] = (input) => {
         model: {
           ...input.model,
           puzzleEditNameRequest: Loading,
-          puzzleEditNameValidationError: null
+          puzzleEditNameValidationError: null,
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
             t: 'puzzle.edit-name.user-clicked-save-button',
             newName,
-            flowPuzzleId: puzzleBuilder.puzzle.id
-          })
-        ]
+            flowPuzzleId: puzzleBuilder.puzzle.id,
+          }),
+        ],
       }
     }
   }
@@ -93,14 +93,14 @@ const updateFormButtons: ClientModule['update'] = (input) => {
   switch (input.msgCore?.t) {
     case 'user-edited-puzzle-name': {
       const puzzlesNew = {
-        ...input.ctx.puzzles
+        ...input.ctx.puzzles,
       }
       const puzzle = puzzlesNew[input.msgCore.flowPuzzleId]
 
       if (puzzle && PuzzleName.is(input.msgCore.newName)) {
         puzzlesNew[input.msgCore.flowPuzzleId] = {
           ...puzzle,
-          name: input.msgCore.newName
+          name: input.msgCore.newName,
         }
       }
 
@@ -120,17 +120,17 @@ const updateFormButtons: ClientModule['update'] = (input) => {
         {
           t: 'flow-cmd.add-puzzles',
           puzzles: puzzlesNew,
-          causedBy: input
-        }
+          causedBy: input,
+        },
       ]
 
       return {
         model: {
           ...input.model,
           puzzleEditNameRequest: input.msgCore.edited,
-          puzzleBuilderOpened: null
+          puzzleBuilderOpened: null,
         },
-        msgCmd
+        msgCmd,
       }
     }
   }
@@ -146,7 +146,7 @@ const ViewFormButtons: ClientModule['View'] = (input) => {
         text={input.ctx.t('app.cancel')}
         onClick={() =>
           input.dispatch({
-            t: 'puzzle.edit-name.user-clicked-cancel-button'
+            t: 'puzzle.edit-name.user-clicked-cancel-button',
           })
         }
       />
@@ -162,7 +162,7 @@ const ViewFormButtons: ClientModule['View'] = (input) => {
         }
         onClick={() =>
           input.dispatch({
-            t: 'puzzle.edit-name.user-clicked-save-button'
+            t: 'puzzle.edit-name.user-clicked-save-button',
           })
         }
       />
@@ -185,8 +185,8 @@ const updateDrawer: ClientModule['update'] = (input) => {
         model: {
           ...model,
           puzzleBuilderOpened: 'edit-name',
-          puzzleEditNameDraft: modelCore.screenPuzzleBuilder?.puzzle.name ?? ''
-        }
+          puzzleEditNameDraft: modelCore.screenPuzzleBuilder?.puzzle.name ?? '',
+        },
       }
     }
 
@@ -194,14 +194,14 @@ const updateDrawer: ClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          puzzleBuilderOpened: null
-        }
+          puzzleBuilderOpened: null,
+        },
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -210,7 +210,7 @@ const updateDrawer: ClientModule['update'] = (input) => {
 const ViewDrawer = (
   input: Parameters<ClientModule['View']>[0] & {
     children: VDomChildren
-  }
+  },
 ) => {
   const { children, dispatch, model } = input
   return (
@@ -220,7 +220,7 @@ const ViewDrawer = (
         label={input.ctx.t('puzzle.edit-name')}
         onClick={() =>
           dispatch({
-            t: 'puzzle.edit-name.user-clicked-button'
+            t: 'puzzle.edit-name.user-clicked-button',
           })
         }
       />
@@ -230,7 +230,7 @@ const ViewDrawer = (
         open={model.puzzleBuilderOpened === 'edit-name'}
         onClose={() =>
           dispatch({
-            t: 'puzzle.edit-name.user-closed-drawer'
+            t: 'puzzle.edit-name.user-closed-drawer',
           })
         }
         position='bottom'
@@ -255,13 +255,13 @@ const updateDraftNameInput: ClientModule['update'] = ({ model, msg }) => {
         model: {
           ...model,
           puzzleEditNameDraft: msg.draftName,
-          puzzleEditNameValidationError: null
-        }
+          puzzleEditNameValidationError: null,
+        },
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -277,7 +277,7 @@ const ViewDraftNameInput: ClientModule['View'] = (input) => {
         onChange={(draftName) =>
           input.dispatch({
             t: 'puzzle.edit-name.user-inputted-draft-name',
-            draftName
+            draftName,
           })
         }
         error={Boolean(input.model.puzzleEditNameValidationError)}
@@ -296,5 +296,5 @@ const ViewDraftNameInput: ClientModule['View'] = (input) => {
 
 export const EditPuzzleNameClient = {
   update,
-  View
+  View,
 }

@@ -15,7 +15,7 @@ export const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
           case 'screen-pack-builder.user-clicked-pack-item': {
             return {
               model,
-              msgCmd: [playSound(APP_SOUND.navForwardMin)]
+              msgCmd: [playSound(APP_SOUND.navForwardMin)],
             }
           }
           default: {
@@ -40,12 +40,12 @@ export const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
 
           return {
             model,
-            msgCmd: [PackPuzzlesGridClient.load(pack)]
+            msgCmd: [PackPuzzlesGridClient.load(pack)],
           }
         }
 
         return { model }
-      }
+      },
     )
   },
   View(input) {
@@ -64,8 +64,8 @@ export const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
                 t: 'got-msg-core',
                 c: {
                   t: 'user-clicked-back-button',
-                  userId: input.ctx.currentUserId
-                }
+                  userId: input.ctx.currentUserId,
+                },
               })
             }
             title={input.ctx.t('flow-pack-name', packBuilder.pack.name)}
@@ -78,7 +78,7 @@ export const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
               onSlideIndexChanged={(newSlideIndex) => {
                 input.dispatch({
                   t: 'got-msg-core',
-                  c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId }
+                  c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId },
                 })
               }}
               renderCell={(inputCell) => {
@@ -106,8 +106,8 @@ export const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
                         c: {
                           t: 'screen-pack-builder.user-clicked-pack-item',
                           puzzleResult: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
-                          puzzleIndex: inputCell.index
-                        }
+                          puzzleIndex: inputCell.index,
+                        },
                       })
                     }
                     index={inputCell.index}
@@ -119,7 +119,7 @@ export const ScreenPuzzleGrid: Pick<ClientModule, 'update' | 'View'> = {
         </div>
       </div>
     )
-  }
+  },
 }
 
 const ButtonAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
@@ -128,7 +128,7 @@ const ButtonAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.user-opened-add-puzzle-screen': {
         return {
           model: input.model,
-          msgCmd: [playSound(APP_SOUND.navForwardMin)]
+          msgCmd: [playSound(APP_SOUND.navForwardMin)],
         }
       }
     }
@@ -143,11 +143,11 @@ const ButtonAddPuzzle: Pick<ClientModule, 'update' | 'View'> = {
             t: 'got-msg-core',
             c: {
               t: 'screen-pack-builder.user-opened-add-puzzle-screen',
-              userId: input.ctx.currentUserId
-            }
+              userId: input.ctx.currentUserId,
+            },
           })
         }
       />
     )
-  }
+  },
 }

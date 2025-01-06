@@ -12,13 +12,13 @@ export const SpaceGameCoreFixture = async () => {
       hostId: hostUserId,
       spaceId: currentSpaceId,
       users: {
-        [hostUserId]: hostUserId
+        [hostUserId]: hostUserId,
       },
-      visibility: 'public'
-    }
+      visibility: 'public',
+    },
   }
 
   return {
-    ctx
+    ctx,
   }
 }

@@ -15,7 +15,7 @@ function deepEqual(
   a: unknown,
   b: unknown,
   visitedA: Set<unknown> = new Set(),
-  visitedB: Set<unknown> = new Set()
+  visitedB: Set<unknown> = new Set(),
 ): boolean {
   if (a === b) {
     return true

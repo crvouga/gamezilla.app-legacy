@@ -11,7 +11,7 @@ toDescription_.impl(
   (rule) => {
     const word = pluralize(rule.count, 'time', 'times')
     return `Shoot ${rule.count} ${word} per turn.`
-  }
+  },
 )
 
 export const toDescription = (rule: ShotRule): string => {
@@ -49,5 +49,5 @@ export const toTitle = (rule: ShotRule): string => {
 
 export const ShotRule = {
   toDescription,
-  toTitle
+  toTitle,
 }

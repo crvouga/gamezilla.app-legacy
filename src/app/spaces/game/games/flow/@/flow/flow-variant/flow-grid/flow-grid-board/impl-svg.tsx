@@ -45,7 +45,7 @@ const View = (input: BoardInput<FlowGrid.Model>) => {
         'h-full w-full touch-none select-none',
         input.isDragging && 'cursor-grabbing',
         input.disabled && 'pointer-events-none',
-        input.className
+        input.className,
       )}
       onContextMenu={(e) => {
         e.stopPropagation()
@@ -105,7 +105,7 @@ const ViewPipelines = (input: BoardInput<FlowGrid.Model>) => {
 const ViewPipeline = (
   input: BoardInput<FlowGrid.Model> & {
     terminal: FlowGrid.Terminal
-  }
+  },
 ) => {
   const terminal = input.terminal
   const groupColor = FlowUI.Color.groupIdToHex(terminal.groupId)
@@ -184,7 +184,7 @@ const WithPadding = (input: {
     x: paddedX,
     y: paddedY,
     width: paddedWidth,
-    height: paddedHeight
+    height: paddedHeight,
   })
 }
 
@@ -225,7 +225,7 @@ const ViewCoordinates = (input: BoardInput<FlowGrid.Model>) => {
 const ViewClickable = (
   input: BoardInput<FlowGrid.Model> & {
     draggedOver?: (nodeId: FlowNodeId) => void
-  }
+  },
 ) => {
   return (
     <g key={input.model.nodeHash}>
@@ -248,7 +248,7 @@ const ViewClickableNode = (
   input: Pick<BoardInput<FlowGrid.Model>, 'onPressDown' | 'onPressUp'> & {
     node: FlowGrid.Node
     draggedOver?: (nodeId: FlowNodeId) => void
-  }
+  },
 ) => {
   return (
     <rect
@@ -331,7 +331,7 @@ const touchEventToNodeId = (e: unknown): FlowNodeId | null => {
   const svgPosition = point.matrixTransform(screenCTM.inverse())
   const nodeId = FlowGrid.toNodeId({
     x: Math.floor(svgPosition.x),
-    y: Math.floor(svgPosition.y)
+    y: Math.floor(svgPosition.y),
   })
   return nodeId
 }
@@ -347,5 +347,5 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
 }
 
 export const FlowGridBoardSvg = {
-  View
+  View,
 }

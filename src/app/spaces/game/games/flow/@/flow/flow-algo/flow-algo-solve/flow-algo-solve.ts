@@ -42,7 +42,7 @@ const toPossiblePipelines = function* (
   model: Variant.Model,
   groupId: FlowGroupId,
   startId: FlowNodeId,
-  endId: FlowNodeId
+  endId: FlowNodeId,
 ): Iterable<Flow.Edge[]> {
   type HeapItem = {
     path: Flow.Edge[]
@@ -60,7 +60,7 @@ const toPossiblePipelines = function* (
     currentNode: startId,
     visited: new Set([startId]),
     cost: 0,
-    heuristic: Variant.distance(model, startId, endId)
+    heuristic: Variant.distance(model, startId, endId),
   })
 
   while (!minHeap.isEmpty()) {
@@ -102,7 +102,7 @@ const toPossiblePipelines = function* (
         currentNode: edgeOut.targetId,
         visited: newVisited,
         cost: newCost,
-        heuristic
+        heuristic,
       })
     }
   }
@@ -114,13 +114,13 @@ const drawPipeline = (model: Variant.Model, terminal: FlowTerminal, path: Flow.E
   for (const edge of path) {
     pipesBySourceId[edge.sourceId] = {
       edgeId: Flow.toFlowEdgeId(edge),
-      groupId: terminal.groupId
+      groupId: terminal.groupId,
     }
   }
 
   return {
     ...model,
-    pipesBySourceId
+    pipesBySourceId,
   }
 }
 

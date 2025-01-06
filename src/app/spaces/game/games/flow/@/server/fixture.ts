@@ -21,7 +21,7 @@ export const FixtureFlowServer = async () => {
     ...f.ctx,
 
     flowPackDb: PackDb({ t: 'hash-map' }),
-    flowPuzzleDb: PuzzleDb({ t: 'hash-map' })
+    flowPuzzleDb: PuzzleDb({ t: 'hash-map' }),
   }
 
   const updates = async (outputs: NonEmpty<Output>, inputs: Input[]): Promise<NonEmpty<Output>> => {
@@ -35,15 +35,15 @@ export const FixtureFlowServer = async () => {
     const updated = await FlowServer.update({
       ...f,
       ...input,
-      modelCore: lastModelCore
+      modelCore: lastModelCore,
     })
     const newModelCore = Msg.batch(updated.msgCore).reduce(
       (modelCore, msgCore) => FlowCore.updateCore({ ...f, modelCore, msgCore: withEventMeta(msgCore) }),
-      lastModelCore
+      lastModelCore,
     )
     const newOutput: Output = {
       ...updated,
-      modelCore: newModelCore
+      modelCore: newModelCore,
     }
     return updates([...outputs, newOutput], rest)
   }
@@ -53,7 +53,7 @@ export const FixtureFlowServer = async () => {
   }
 
   const initial = {
-    model: FlowServer.init
+    model: FlowServer.init,
   }
 
   return {
@@ -61,6 +61,6 @@ export const FixtureFlowServer = async () => {
     ctx,
     initial,
     update,
-    updates
+    updates,
   }
 }

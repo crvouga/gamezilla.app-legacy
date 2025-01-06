@@ -18,7 +18,7 @@ export const ViewPlayerOneGradientDef = ({
   gradientId,
   cx,
   cy,
-  r
+  r,
 }: {
   gradientId: string
   cx: number

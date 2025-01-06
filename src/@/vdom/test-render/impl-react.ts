@@ -43,7 +43,7 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
       getByRole(role, name) {
         try {
           const element = within(baseElement).getByRole(role, {
-            name
+            name,
           })
           if (!element) {
             return null
@@ -66,7 +66,7 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
         } catch {
           return null
         }
-      }
+      },
     }
   }
 

@@ -101,5 +101,5 @@ export const Posix = {
   future,
   past,
   fromIsoString,
-  toIsoString
+  toIsoString,
 }

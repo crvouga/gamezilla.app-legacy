@@ -22,14 +22,14 @@ const updateCore = ({ modelCore, msgCore }: { ctx: SpaceCtx; msgCore: MsgCore; m
       }
       const puzzleNew: Puzzle = {
         ...puzzleBuilder.puzzle,
-        name: msgCore.newName
+        name: msgCore.newName,
       }
       return {
         ...modelCore,
         screenPuzzleBuilder: {
           ...puzzleBuilder,
-          puzzle: puzzleNew
-        }
+          puzzle: puzzleNew,
+        },
       }
     }
 
@@ -40,5 +40,5 @@ const updateCore = ({ modelCore, msgCore }: { ctx: SpaceCtx; msgCore: MsgCore; m
 }
 
 export const EditPuzzleNameCore = {
-  updateCore
+  updateCore,
 }

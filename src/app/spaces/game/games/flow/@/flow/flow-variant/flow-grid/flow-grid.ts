@@ -20,8 +20,8 @@ export const Model = p.and(
   FlowGridDimensions.Model,
   p.obj({
     t: p.l('flow-grid'),
-    positions: p.dict(FlowNodeId, Position.parser)
-  })
+    positions: p.dict(FlowNodeId, Position.parser),
+  }),
 )
 export type Model = p.Infer<typeof Model>
 
@@ -73,7 +73,7 @@ export const init = (input: {
     Flow: true,
     nodes: {},
     terminalsByGroupId: {},
-    pipesBySourceId: input.pipesBySourceId ?? {}
+    pipesBySourceId: input.pipesBySourceId ?? {},
   }
   //
   //
@@ -91,17 +91,17 @@ export const init = (input: {
       const nodeId = initNodeId(x, y)
       model.positions[nodeId] = {
         x,
-        y
+        y,
       }
       model.nodes[nodeId] = {
-        nodeId
+        nodeId,
       }
 
       if (y > 0) {
         const north = initNodeId(x, y - 1)
         const edgeNorth: Flow.Edge = {
           sourceId: nodeId,
-          targetId: north
+          targetId: north,
         }
         model.edges[Flow.toFlowEdgeId(edgeNorth)] = edgeNorth
       }
@@ -110,7 +110,7 @@ export const init = (input: {
         const east = initNodeId(x + 1, y)
         const edgeEast: Flow.Edge = {
           sourceId: nodeId,
-          targetId: east
+          targetId: east,
         }
         model.edges[Flow.toFlowEdgeId(edgeEast)] = edgeEast
       }
@@ -119,7 +119,7 @@ export const init = (input: {
         const south = initNodeId(x, y + 1)
         const edgeSouth: Flow.Edge = {
           sourceId: nodeId,
-          targetId: south
+          targetId: south,
         }
         model.edges[Flow.toFlowEdgeId(edgeSouth)] = edgeSouth
       }
@@ -128,7 +128,7 @@ export const init = (input: {
         const west = initNodeId(x - 1, y)
         const edgeWest: Flow.Edge = {
           sourceId: nodeId,
-          targetId: west
+          targetId: west,
         }
         model.edges[Flow.toFlowEdgeId(edgeWest)] = edgeWest
       }
@@ -160,7 +160,7 @@ export const init = (input: {
     const terminalNew: FlowTerminal = {
       groupId: terminal.groupId,
       startId: startNew,
-      endId: endNew
+      endId: endNew,
     }
 
     model.terminalsByGroupId[terminalNew.groupId] = terminalNew
@@ -202,7 +202,7 @@ export const toNode = (model: Model, nodeId: FlowNodeId): Node | null => {
 
   return {
     ...position,
-    ...node
+    ...node,
   }
 }
 
@@ -228,7 +228,7 @@ export const toEdge = (model: Model, edgeId: FlowEdgeId): Edge | null => {
   return {
     ...edge,
     source: source,
-    target: target
+    target: target,
   }
 }
 
@@ -243,8 +243,8 @@ export const addNode = (model: Model, position: Position): Model => {
     ...added,
     positions: {
       ...model.positions,
-      [nodeId]: position
-    }
+      [nodeId]: position,
+    },
   }
 }
 
@@ -327,7 +327,7 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
     yield {
       ...pipe,
       source,
-      target
+      target,
     }
   }
 }
@@ -398,7 +398,7 @@ export const toPipeline = (model: Model, startingNodeId: FlowNodeId): PipeJoined
     pipeline.push({
       ...pipe,
       source,
-      target
+      target,
     })
 
     currentNodeId = pipe.edge.targetId

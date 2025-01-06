@@ -21,5 +21,5 @@ export const ServerInstanceClient = {
   init,
   update,
   subscriptions,
-  View
+  View,
 }

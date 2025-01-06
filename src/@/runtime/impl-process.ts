@@ -29,6 +29,6 @@ export const Runtime = (config: Config): IRuntime => {
   process.on('SIGTERM', handleShutdown)
 
   return {
-    events
+    events,
   }
 }

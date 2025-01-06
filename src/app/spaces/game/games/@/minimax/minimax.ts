@@ -33,7 +33,7 @@ const findBestChildState = <TState>({
   scoreFn,
   childrenFn,
   parentState,
-  maxDepth
+  maxDepth,
 }: {
   scoreFn: ScoreFn<TState>
   childrenFn: ChildrenFn<TState>
@@ -45,7 +45,7 @@ const findBestChildState = <TState>({
     currentDepth: number,
     alpha: number,
     beta: number,
-    isMaximizing: boolean
+    isMaximizing: boolean,
   ): number => {
     if (currentDepth >= maxDepth) {
       return scoreFn(currentState, currentDepth)
@@ -101,5 +101,5 @@ const findBestChildState = <TState>({
 }
 
 export const Minimax = {
-  findBestChildState
+  findBestChildState,
 }

@@ -17,7 +17,7 @@ export const translations: Translations<Text> = {
     ko: 'Korean',
     pt: 'Portuguese',
     ru: 'Russian',
-    zh: 'Chinese'
+    zh: 'Chinese',
   },
   es: {
     en: 'Inglés',
@@ -31,7 +31,7 @@ export const translations: Translations<Text> = {
     ko: 'Coreano',
     pt: 'Portugués',
     ru: 'Ruso',
-    zh: 'Chino'
+    zh: 'Chino',
   },
   ar: {
     en: 'إنجليزي',
@@ -45,7 +45,7 @@ export const translations: Translations<Text> = {
     ko: 'كوري',
     pt: 'برتغالي',
     ru: 'روسي',
-    zh: 'صيني'
+    zh: 'صيني',
   },
   de: {
     en: 'Englisch',
@@ -59,7 +59,7 @@ export const translations: Translations<Text> = {
     ko: 'Koreanisch',
     pt: 'Portugiesisch',
     ru: 'Russisch',
-    zh: 'Chinesisch'
+    zh: 'Chinesisch',
   },
   hi: {
     en: 'अंग्रेज़ी',
@@ -73,7 +73,7 @@ export const translations: Translations<Text> = {
     ko: 'कोरियाई',
     pt: 'पुर्तगाली',
     ru: 'रूसी',
-    zh: 'चीनी'
+    zh: 'चीनी',
   },
   it: {
     en: 'Inglese',
@@ -87,7 +87,7 @@ export const translations: Translations<Text> = {
     ko: 'Coreano',
     pt: 'Portoghese',
     ru: 'Russo',
-    zh: 'Cinese'
+    zh: 'Cinese',
   },
   ja: {
     en: '英語',
@@ -101,7 +101,7 @@ export const translations: Translations<Text> = {
     ko: '韓国語',
     pt: 'ポルトガル語',
     ru: 'ロシア語',
-    zh: '中国語'
+    zh: '中国語',
   },
   ko: {
     en: '영어',
@@ -115,7 +115,7 @@ export const translations: Translations<Text> = {
     ko: '한국어',
     pt: '포르투갈어',
     ru: '러시아어',
-    zh: '중국어'
+    zh: '중국어',
   },
   pt: {
     en: 'Inglês',
@@ -129,7 +129,7 @@ export const translations: Translations<Text> = {
     ko: 'Coreano',
     pt: 'Português',
     ru: 'Russo',
-    zh: 'Chinês'
+    zh: 'Chinês',
   },
   ru: {
     en: 'Английский',
@@ -143,7 +143,7 @@ export const translations: Translations<Text> = {
     ko: 'Корейский',
     pt: 'Португальский',
     ru: 'Русский',
-    zh: 'Китайский'
+    zh: 'Китайский',
   },
   zh: {
     en: '英语',
@@ -157,7 +157,7 @@ export const translations: Translations<Text> = {
     ko: '韩语',
     pt: '葡萄牙语',
     ru: '俄语',
-    zh: '中文'
+    zh: '中文',
   },
   fr: {
     en: 'Anglais',
@@ -171,6 +171,6 @@ export const translations: Translations<Text> = {
     ko: 'Coréen',
     pt: 'Portugais',
     ru: 'Russe',
-    zh: 'Chinois'
-  }
+    zh: 'Chinois',
+  },
 }

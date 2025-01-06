@@ -8,50 +8,50 @@ export type Text = {
 export const translations: Translations<Text> = {
   ar: {
     'flow.create-pack': 'إنشاء حزمة',
-    'flow.pack-created': 'تم إنشاء الحزمة'
+    'flow.pack-created': 'تم إنشاء الحزمة',
   },
   de: {
     'flow.create-pack': 'Packung erstellen',
-    'flow.pack-created': 'Packung erstellt'
+    'flow.pack-created': 'Packung erstellt',
   },
   en: {
     'flow.create-pack': 'Create pack',
-    'flow.pack-created': 'Pack created'
+    'flow.pack-created': 'Pack created',
   },
   es: {
     'flow.create-pack': 'Crear paquete',
-    'flow.pack-created': 'Paquete creado'
+    'flow.pack-created': 'Paquete creado',
   },
   fr: {
     'flow.create-pack': 'Créer un pack',
-    'flow.pack-created': 'Pack créé'
+    'flow.pack-created': 'Pack créé',
   },
   hi: {
     'flow.create-pack': 'पैक बनाएं',
-    'flow.pack-created': 'पैक बनाया गया'
+    'flow.pack-created': 'पैक बनाया गया',
   },
   it: {
     'flow.create-pack': 'Crea pack',
-    'flow.pack-created': 'Pack creato'
+    'flow.pack-created': 'Pack creato',
   },
   ja: {
     'flow.create-pack': 'パックを作成',
-    'flow.pack-created': 'パックが作成されました'
+    'flow.pack-created': 'パックが作成されました',
   },
   ko: {
     'flow.create-pack': '팩 생성',
-    'flow.pack-created': '팩이 생성되었습니다'
+    'flow.pack-created': '팩이 생성되었습니다',
   },
   pt: {
     'flow.create-pack': 'Criar pacote',
-    'flow.pack-created': 'Pack criado'
+    'flow.pack-created': 'Pack criado',
   },
   ru: {
     'flow.create-pack': 'Создать пакет',
-    'flow.pack-created': 'Пакет создан'
+    'flow.pack-created': 'Пакет создан',
   },
   zh: {
     'flow.create-pack': '创建包',
-    'flow.pack-created': '包已创建'
-  }
+    'flow.pack-created': '包已创建',
+  },
 }

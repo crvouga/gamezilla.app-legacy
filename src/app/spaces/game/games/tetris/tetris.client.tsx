@@ -15,7 +15,7 @@ import {
   initShared,
   rowCount,
   toGhostPiece,
-  toPiece
+  toPiece,
 } from './tetris.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
@@ -32,7 +32,7 @@ export type Model = ModelClient
 
 export const init: Model = {
   coreModel: initShared,
-  touched: Option.None
+  touched: Option.None,
 }
 
 //
@@ -55,9 +55,9 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
       return [
         {
           ...model,
-          touched: Option.Some(msg[1])
+          touched: Option.Some(msg[1]),
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -72,7 +72,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 
       const direction = positionsToDirection({
         from,
-        to
+        to,
       })
 
       if (direction === 'none') {
@@ -86,9 +86,9 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
       return [
         {
           ...model,
-          touched: Option.None
+          touched: Option.None,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -126,7 +126,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 
 const positionsToDirection = ({
   from,
-  to
+  to,
 }: {
   from: Position.Position
   to: Position.Position
@@ -185,9 +185,9 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
       return [
         {
           ...model,
-          coreModel: modelNew
+          coreModel: modelNew,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -203,9 +203,9 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
       return [
         {
           ...model,
-          coreModel: modelNew
+          coreModel: modelNew,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -214,9 +214,9 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
       return [
         {
           ...model,
-          coreModel: modelNew
+          coreModel: modelNew,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -232,9 +232,9 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
       return [
         {
           ...model,
-          coreModel: modelNew
+          coreModel: modelNew,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -250,9 +250,9 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
       return [
         {
           ...model,
-          coreModel: modelNew
+          coreModel: modelNew,
         },
-        Eff.None
+        Eff.None,
       ]
     }
   }
@@ -260,14 +260,14 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
 
 export const mergeWithServer = ({
   clientModel,
-  serverModel
+  serverModel,
 }: {
   clientModel: ModelClient
   serverModel: ModelServer
 }): ModelClient => {
   return {
     ...clientModel,
-    coreModel: serverModel
+    coreModel: serverModel,
   }
 }
 
@@ -315,24 +315,24 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
               rescale({
                 value: e.pageX - e.currentTarget.offsetLeft,
                 from: [0, e.currentTarget.width],
-                to: [0, columnCount]
-              })
+                to: [0, columnCount],
+              }),
             )
 
             const y = Math.floor(
               rescale({
                 value: e.pageY - e.currentTarget.offsetTop,
                 from: [0, e.currentTarget.height],
-                to: [0, rowCount]
-              })
+                to: [0, rowCount],
+              }),
             )
 
             dispatch([
               'MouseMove',
               {
                 x,
-                y
-              }
+                y,
+              },
             ])
           }}
           onTouchStart={(e) => {
@@ -393,23 +393,23 @@ const mouseEventToPosition = (msgCore: MouseEvent): Position.Position => {
   if (!(msgCore.currentTarget instanceof HTMLCanvasElement)) {
     return {
       x: 0,
-      y: 0
+      y: 0,
     }
   }
   const x = Math.floor(
     rescale({
       value: msgCore.pageX - msgCore.currentTarget.offsetLeft,
       from: [0, msgCore.currentTarget.width],
-      to: [0, columnCount]
-    })
+      to: [0, columnCount],
+    }),
   )
 
   const y = Math.floor(
     rescale({
       value: msgCore.pageY - msgCore.currentTarget.offsetTop,
       from: [0, msgCore.currentTarget.height],
-      to: [0, rowCount]
-    })
+      to: [0, rowCount],
+    }),
   )
 
   return { x, y }
@@ -456,9 +456,9 @@ export const paint = (context: CanvasRenderingContext2D, model: Model) => {
       const cell = Board.toCell(
         {
           x,
-          y
+          y,
         },
-        model.coreModel.board
+        model.coreModel.board,
       )
 
       if (cell === 'Empty') {
@@ -473,7 +473,7 @@ export const paint = (context: CanvasRenderingContext2D, model: Model) => {
 const theme = {
   lightBlue: '#01DEEC',
   darkBlue: '#003D78',
-  pieceBlue: '#2C2C7E'
+  pieceBlue: '#2C2C7E',
 }
 
 export const CoverArt = () => {
@@ -484,8 +484,8 @@ export const CoverArt = () => {
         .map((position) =>
           Position.add(position, {
             x: 1.5,
-            y: 1
-          })
+            y: 1,
+          }),
         )
         .map((position) => (
           <rect

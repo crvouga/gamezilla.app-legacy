@@ -63,7 +63,7 @@ export type ModelClient = {
 
 export const initClient: ModelClient = {
   request: RemoteResult.NotAsked,
-  packs: {}
+  packs: {},
 }
 
 export const ModelServer = p.l(null)
@@ -83,7 +83,7 @@ export type MsgToServer = {
 
 export const MsgToClient = p.obj({
   t: p.l('listed-packs'),
-  listed: p.custom((x: unknown): x is ListPackOutput => Boolean(x), 'ListPackOutput')
+  listed: p.custom((x: unknown): x is ListPackOutput => Boolean(x), 'ListPackOutput'),
 })
 
 export type MsgToClient = {

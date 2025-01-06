@@ -2,7 +2,7 @@ import { COLUMN_COUNT, type ColumnIndex, MAX_COLUMN_HEIGHT, isColumnIndex } from
 
 export const initColumns = ({
   parentNode,
-  onClick
+  onClick,
 }: {
   onClick: (columnIndex: ColumnIndex) => void
   parentNode: SVGGElement
@@ -29,6 +29,6 @@ export const initColumns = ({
     parentNode.appendChild(column)
   }
   return {
-    cleanUps
+    cleanUps,
   }
 }

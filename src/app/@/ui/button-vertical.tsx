@@ -3,7 +3,7 @@ import type { VDomChildren } from '~/@/vdom/vdom'
 export const ButtonVertical = ({
   children,
   className,
-  onClick
+  onClick,
 }: {
   className?: string
   onClick?: () => void

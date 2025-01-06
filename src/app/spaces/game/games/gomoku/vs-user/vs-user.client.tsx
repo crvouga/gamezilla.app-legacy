@@ -27,7 +27,7 @@ export type Msg = MsgClient
 
 export const update = ({
   msg,
-  model
+  model,
 }: {
   msg: Msg
   model: Model
@@ -39,8 +39,8 @@ export const update = ({
     return {
       model: {
         ...model,
-        confirming: undefined
-      }
+        confirming: undefined,
+      },
     }
   }
 
@@ -48,15 +48,15 @@ export const update = ({
     if (model.confirming === 'resign') {
       return {
         model,
-        eff: Eff.None
+        eff: Eff.None,
       }
     }
 
     return {
       model: {
         ...model,
-        confirming: 'resign'
-      }
+        confirming: 'resign',
+      },
     }
   }
 
@@ -65,7 +65,7 @@ export const update = ({
 
 export const updateFromServer = ({
   msg,
-  model
+  model,
 }: {
   msg: MsgToClient
   model: Model
@@ -76,12 +76,12 @@ export const updateFromServer = ({
   if (msg.t === 'input-move') {
     if (msg.result.t === 'err') {
       return {
-        model
+        model,
       }
     }
     const merged = mergeWithServer({
       serverModel: msg.result.value,
-      clientModel: model
+      clientModel: model,
     })
 
     return { model: merged }
@@ -93,14 +93,14 @@ export const updateFromServer = ({
 
   const merged = mergeWithServer({
     serverModel: msg.result.value,
-    clientModel: model
+    clientModel: model,
   })
 
   return { model: merged }
 }
 
 export const mergeWithServer = ({
-  serverModel
+  serverModel,
 }: {
   clientModel: ModelClient
   serverModel: ModelServer

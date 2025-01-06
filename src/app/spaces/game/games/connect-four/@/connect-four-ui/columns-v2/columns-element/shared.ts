@@ -12,5 +12,5 @@ export const ids = {
   playerTwoGradient: `playerTwoGradient${randomId}`,
   holePattern: `holePattern${randomId}`,
   columnGradient: `columnGradient${randomId}`,
-  holeMask: `holeMask${randomId}`
+  holeMask: `holeMask${randomId}`,
 }

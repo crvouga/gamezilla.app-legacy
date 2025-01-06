@@ -5,7 +5,7 @@ import { FlowNodeId } from './flow-node-id'
 const parser = p.obj({
   groupId: FlowGroupId,
   startId: FlowNodeId,
-  endId: p.maybe(FlowNodeId)
+  endId: p.maybe(FlowNodeId),
 })
 /**
  * A terminal represents the start and end nodes for a group.
@@ -31,12 +31,12 @@ const flip = (terminal: FlowTerminal): FlowTerminal => {
   return {
     groupId: terminal.groupId,
     startId: terminal.endId,
-    endId: terminal.startId
+    endId: terminal.startId,
   }
 }
 
 export const FlowTerminal = {
   ...parser,
   flip,
-  isSame
+  isSame,
 }

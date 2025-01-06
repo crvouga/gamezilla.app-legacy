@@ -13,7 +13,7 @@ import type { IUserSessionDb } from './interface'
 
 export const isRow = p.obj({
   session_id: p.str,
-  user_id: p.str
+  user_id: p.str,
 })
 
 export type Row = p.Infer<typeof isRow>
@@ -33,12 +33,12 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
   const sessionIdsByUserId = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['auth-session', 'session-ids-by-user-id'],
-    parser: p.arr(SessionId)
+    parser: p.arr(SessionId),
   })
   const userIdBySessionId = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['auth-session', 'user-id-by-session-id'],
-    parser: UserId
+    parser: UserId,
   })
 
   return {
@@ -62,6 +62,6 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
 
     async zapBySessionId(_sessionId) {
       return Result.Err('not implemented')
-    }
+    },
   }
 }

@@ -16,12 +16,12 @@ describe(import.meta.file, () => {
     expect(
       styles(
         {
-          'transition-delay': '100ms'
+          'transition-delay': '100ms',
         },
-        'react'
-      )
+        'react',
+      ),
     ).toEqual({
-      transitionDelay: '100ms'
+      transitionDelay: '100ms',
     })
   })
 
@@ -29,12 +29,12 @@ describe(import.meta.file, () => {
     expect(
       styles(
         {
-          'transition-delay': '100ms'
+          'transition-delay': '100ms',
         },
-        'inferno'
-      )
+        'inferno',
+      ),
     ).toEqual({
-      'transition-delay': '100ms'
+      'transition-delay': '100ms',
     })
   })
 })

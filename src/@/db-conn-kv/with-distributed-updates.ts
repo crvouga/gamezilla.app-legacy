@@ -6,7 +6,7 @@ import { IDbConnKv } from './interface'
 const DistributedUpdateType = {
   SET: 0,
   SET_MANY: 1,
-  ZAP: 2
+  ZAP: 2,
 } as const
 
 export type DistributedUpdate =
@@ -63,23 +63,23 @@ export const withDistributedUpdates = (config: Config): IDbConnKv & { unsubscrib
       config.pubSub.pub({
         t: DistributedUpdateType.SET,
         k: key,
-        v: value
+        v: value,
       })
       return config.dbConnKv.set(key, value)
     },
     setMany(entries) {
       config.pubSub.pub({
         t: DistributedUpdateType.SET_MANY,
-        e: entries
+        e: entries,
       })
       return config.dbConnKv.setMany(entries)
     },
     zap(key) {
       config.pubSub.pub({
         t: DistributedUpdateType.ZAP,
-        k: key
+        k: key,
       })
       return config.dbConnKv.zap(key)
-    }
+    },
   }
 }

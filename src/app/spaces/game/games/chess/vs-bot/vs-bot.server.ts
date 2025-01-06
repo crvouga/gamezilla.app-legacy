@@ -12,7 +12,7 @@ import {
   type ModelServer,
   type MsgServer,
   type MsgToClient,
-  type MsgToServer
+  type MsgToServer,
 } from './vs-bot.types'
 
 //
@@ -39,7 +39,7 @@ export type Msg = MsgServer
 
 export const update = ({
   msg,
-  model
+  model,
 }: {
   msg: Msg
   model: Model
@@ -60,10 +60,10 @@ export const update = ({
           t: 'send-to-space',
           msg: {
             t: 'bot-moved',
-            result
-          }
-        }
-      ]
+            result,
+          },
+        },
+      ],
     }
   }
 
@@ -83,7 +83,7 @@ export const updateFromClient = (input: {
 
   return {
     ...updated,
-    eff: Eff.batch([updated.eff, toBotMoveEff(input.model, updated.model)])
+    eff: Eff.batch([updated.eff, toBotMoveEff(input.model, updated.model)]),
   }
 }
 
@@ -102,9 +102,9 @@ const toBotMoveEff = (modelPrev: Model, modelNext: Model): Eff<Msg> => {
     Eff.perform(
       (moved): Msg => ({
         t: 'bot-moved',
-        moved
-      })
-    )
+        moved,
+      }),
+    ),
   )
 
   return eff
@@ -124,7 +124,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   msg: SpaceServerEvt
   model: Model
@@ -139,7 +139,7 @@ export const updateFromEvent = ({
         type: 'setup',
         botLevel: model.botLevel,
         userColor: model.userColor,
-        userId: null
+        userId: null,
       }
       return {
         model: modelNew,
@@ -148,10 +148,10 @@ export const updateFromEvent = ({
             t: 'send-to-space',
             msg: {
               t: 'player-left',
-              model: modelNew
-            }
-          }
-        ]
+              model: modelNew,
+            },
+          },
+        ],
       }
     }
     return { model }

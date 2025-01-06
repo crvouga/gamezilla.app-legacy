@@ -53,6 +53,6 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
         userIdBySessionId.delete(sessionId)
       }
       return Ok(null)
-    }
+    },
   }
 }

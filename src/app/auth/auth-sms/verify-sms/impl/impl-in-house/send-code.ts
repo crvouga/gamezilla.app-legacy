@@ -14,29 +14,29 @@ export const SendCode =
       where: {
         createdAtPosix: {
           '<=': now,
-          '>=': Posix.past(now, TimeSpan.days(1))
+          '>=': Posix.past(now, TimeSpan.days(1)),
         },
         phoneNumber: {
-          '=': input.phoneNumber
-        }
+          '=': input.phoneNumber,
+        },
       },
       limit: 1000,
       offset: 0,
       order: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     })
 
     if (isErr(lastDayVerifications)) {
       return Err({
         t: 'database-error',
-        error: lastDayVerifications.error
+        error: lastDayVerifications.error,
       })
     }
 
     if (lastDayVerifications.value.items.length >= deps.sendCodeDailyLimit) {
       return Err({
-        t: 'daily-limit-reached'
+        t: 'daily-limit-reached',
       })
     }
 
@@ -44,29 +44,29 @@ export const SendCode =
       where: {
         createdAtPosix: {
           '<=': now,
-          '>=': Posix.past(now, TimeSpan.hours(1))
+          '>=': Posix.past(now, TimeSpan.hours(1)),
         },
         phoneNumber: {
-          '=': input.phoneNumber
-        }
+          '=': input.phoneNumber,
+        },
       },
       order: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       limit: 1000,
-      offset: 0
+      offset: 0,
     })
 
     if (isErr(lastHourVerifications)) {
       return Err({
         t: 'database-error',
-        error: lastHourVerifications.error
+        error: lastHourVerifications.error,
       })
     }
 
     if (lastHourVerifications.value.items.length >= deps.sendCodeHourlyLimit) {
       return Err({
-        t: 'hourly-limit-reached'
+        t: 'hourly-limit-reached',
       })
     }
 
@@ -82,10 +82,10 @@ export const SendCode =
       verifiedAtPosix: null,
       codeHash: await deps.hashing.hash({
         algo: {
-          t: 'sha256'
+          t: 'sha256',
         },
-        password: code
-      })
+        password: code,
+      }),
     }
 
     const upserted = await deps.verificationDb.put(verificationNew)
@@ -93,7 +93,7 @@ export const SendCode =
     if (isErr(upserted)) {
       return Err({
         t: 'database-error',
-        error: upserted.error
+        error: upserted.error,
       })
     }
 
@@ -102,19 +102,19 @@ export const SendCode =
     if (isErr(put)) {
       return Err({
         t: 'database-error',
-        error: put.error
+        error: put.error,
       })
     }
 
     const sent = await deps.sms.sendMessage({
       message: deps.Translator(input.preferredLanguage)('verify-sms.code-message', code),
-      phoneNumber: input.phoneNumber
+      phoneNumber: input.phoneNumber,
     })
 
     if (isErr(sent)) {
       return Err({
         t: 'database-error',
-        error: sent.error
+        error: sent.error,
       })
     }
 

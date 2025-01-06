@@ -29,7 +29,7 @@ export type Server<T extends Base> = {
 }
 
 export const initContract = <TEndpoints extends Record<string, Endpoint<any, any> | Contract<any>>>(
-  endpoints: TEndpoints
+  endpoints: TEndpoints,
 ): Contract<TEndpoints> => endpoints
 
 export const initClient = <T extends Base>(webClient: IWebClient, contract: T): Client<T> => {
@@ -51,7 +51,7 @@ export const initClient = <T extends Base>(webClient: IWebClient, contract: T): 
             const request = new Request(`/rpc/${[...path, endpoint].join('/')}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(parsedInput)
+              body: JSON.stringify(parsedInput),
             })
             const response = await webClient.fetch(request)
             if (!response.ok) {
@@ -82,7 +82,7 @@ export const initServer = <T extends Base>(_contract: T, handlers: Server<T>): S
 export const withRPC = <T extends Base>({
   contract,
   handlers,
-  webServer
+  webServer,
 }: {
   webServer: IWebServer
   contract: T
@@ -117,7 +117,7 @@ export const withRPC = <T extends Base>({
 
         return new Response(JSON.stringify(parsedOutput.value), {
           status: 200,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         })
       } catch (error) {
         return new Response(JSON.stringify({ error: String(error) }), { status: 400 })

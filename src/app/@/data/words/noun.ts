@@ -11035,5 +11035,5 @@ export const nouns = [
   'abductor',
   'diffuser',
   'geosector',
-  'camisole'
+  'camisole',
 ]

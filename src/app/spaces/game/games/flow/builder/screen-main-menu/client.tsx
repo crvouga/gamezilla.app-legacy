@@ -13,20 +13,20 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
     case 'flow.builder.screen-main-menu.user-clicked-option': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
 
     case 'screen-main-menu.user-clicked-back-button': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -42,8 +42,8 @@ const View: ClientModule['View'] = (input) => {
           t: 'got-msg-core',
           c: {
             t: 'screen-main-menu.user-clicked-back-button',
-            userId: input.ctx.currentUserId
-          }
+            userId: input.ctx.currentUserId,
+          },
         })
       }
       renderCoverArt={(input) => (
@@ -65,9 +65,9 @@ const View: ClientModule['View'] = (input) => {
               c: {
                 t: 'flow.builder.screen-main-menu.user-clicked-option',
                 option: 'puzzle-builder',
-                userId: input.ctx.currentUserId
-              }
-            })
+                userId: input.ctx.currentUserId,
+              },
+            }),
         },
         {
           renderIcon: (input) => <IconBox {...input} />,
@@ -79,10 +79,10 @@ const View: ClientModule['View'] = (input) => {
               c: {
                 t: 'flow.builder.screen-main-menu.user-clicked-option',
                 option: 'pack-builder',
-                userId: input.ctx.currentUserId
-              }
-            })
-        }
+                userId: input.ctx.currentUserId,
+              },
+            }),
+        },
       ]}
     />
   )
@@ -90,5 +90,5 @@ const View: ClientModule['View'] = (input) => {
 
 export const ScreenMainMenuClient = {
   update,
-  View
+  View,
 }

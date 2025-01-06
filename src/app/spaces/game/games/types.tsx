@@ -25,12 +25,12 @@ export type ModelClient = { t: 'connect-four'; c: ConnectFour.ModelClient } | { 
 export const ModelServer = p.or(
   p.obj({
     t: p.l('connect-four'),
-    c: ConnectFour.ModelServer
+    c: ConnectFour.ModelServer,
   }),
   p.obj({
     t: p.l('flow'),
-    c: Flow.ModelServer
-  })
+    c: Flow.ModelServer,
+  }),
 )
 export type ModelServer = p.Infer<typeof ModelServer>
 
@@ -60,30 +60,30 @@ export type MsgToServer = { t: 'connect-four'; c: ConnectFour.MsgToServer } | { 
 
 export const gameNameList: GameName[] = [
   // "connect-four",
-  'flow'
+  'flow',
 ]
 
 export const ModelCore = p.or(
   p.obj({
     t: p.l('connect-four'),
-    c: ConnectFour.ModelCore
+    c: ConnectFour.ModelCore,
   }),
   p.obj({
     t: p.l('flow'),
-    c: Flow.ModelCore
-  })
+    c: Flow.ModelCore,
+  }),
 )
 export type ModelCore = p.Infer<typeof ModelCore>
 
 export const MsgCore = p.or(
   p.obj({
     t: p.l('connect-four'),
-    c: ConnectFour.MsgCore
+    c: ConnectFour.MsgCore,
   }),
   p.obj({
     t: p.l('flow'),
-    c: Flow.MsgCore
-  })
+    c: Flow.MsgCore,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 

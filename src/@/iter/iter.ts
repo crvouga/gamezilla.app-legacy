@@ -11,7 +11,7 @@ const init = <T>(iterable: Iterable<T>): Iter<T> => {
       for (const element of iterable) {
         yield element
       }
-    }
+    },
   }
 }
 
@@ -26,7 +26,7 @@ const take = <T>(n: NonNegInt, iter: Iter<T>): Iter<T> => {
         yield element
         i++
       }
-    }
+    },
   })
 }
 
@@ -40,12 +40,12 @@ const drop = <T>(n: NonNegInt, iter: Iter<T>): Iter<T> => {
         }
         i++
       }
-    }
+    },
   })
 }
 
 export const Iter = {
   init,
   take,
-  drop
+  drop,
 }

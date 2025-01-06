@@ -8,11 +8,11 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
       return {
         ...modelCore,
         screen: {
-          t: 'screen-pack-builder'
+          t: 'screen-pack-builder',
         },
         screenPackBuilder: ScreenPackBuilderCore.init({
-          pack: msgCore.pack
-        })
+          pack: msgCore.pack,
+        }),
       }
     }
 
@@ -27,12 +27,12 @@ const updateCore: UpdateCore = (input) => {
     (modelCore, updateCore) =>
       updateCore({
         ...input,
-        modelCore
+        modelCore,
       }),
-    input.modelCore
+    input.modelCore,
   )
 }
 
 export const ScreenPackBuilderOpenCore = {
-  update: updateCore
+  update: updateCore,
 }

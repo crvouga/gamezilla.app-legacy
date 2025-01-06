@@ -64,6 +64,6 @@ export const DbConnKv = (config: Config): IDbConnKv => {
       logger?.debug(`zap: key=${key}`)
       hashMap.delete(key)
       return Ok(null)
-    }
+    },
   }
 }

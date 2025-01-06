@@ -20,7 +20,7 @@ import { AppClientCtx } from '~/app/@/client/ctx'
 export type Model = ModelClient
 
 export const init: Model = {
-  t: 'none'
+  t: 'none',
 }
 
 //
@@ -36,7 +36,7 @@ export type Msg = MsgClient
 export const update = ({
   ctx,
   msg,
-  model
+  model,
 }: {
   ctx: SpaceClientCtx
   msg: Msg
@@ -53,28 +53,28 @@ export const update = ({
     const updated = VsBot.update({
       ctx,
       msg: msg.c,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-bot',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-bot', updated.eff)
+      eff: Eff.tag('vs-bot', updated.eff),
     }
   }
 
   if (model.t === 'vs-user' && msg.t === 'vs-user') {
     const updated = VsUser.update({
       msg: msg.c,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-user',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-user', updated.eff)
+      eff: Eff.tag('vs-user', updated.eff),
     }
   }
 
@@ -84,7 +84,7 @@ export const update = ({
 export const updateFromServer = ({
   ctx,
   model,
-  msg
+  msg,
 }: {
   ctx: SpaceClientCtx
   msg: MsgToClient
@@ -96,13 +96,13 @@ export const updateFromServer = ({
   if (msg.t === 'input-mode') {
     if (msg.result.t === 'err') {
       return {
-        model
+        model,
       }
     }
     const merged = mergeWithServer({
       ctx,
       clientModel: model,
-      serverModel: msg.result.value
+      serverModel: msg.result.value,
     })
     return { model: merged }
   }
@@ -111,28 +111,28 @@ export const updateFromServer = ({
     const updated = VsBot.updateFromServer({
       ctx,
       msg: msg.c,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-bot',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-bot', updated.eff)
+      eff: Eff.tag('vs-bot', updated.eff),
     }
   }
 
   if (model.t === 'vs-user' && msg.t === 'vs-user') {
     const updated = VsUser.updateFromServer({
       model: model.c,
-      msg: msg.c
+      msg: msg.c,
     })
     return {
       model: {
         t: 'vs-user',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-user', updated.eff)
+      eff: Eff.tag('vs-user', updated.eff),
     }
   }
 
@@ -142,7 +142,7 @@ export const updateFromServer = ({
 export const mergeWithServer = ({
   ctx,
   clientModel,
-  serverModel
+  serverModel,
 }: {
   ctx: AppClientCtx
   clientModel: ModelClient
@@ -151,7 +151,7 @@ export const mergeWithServer = ({
   switch (serverModel.t) {
     case 'none': {
       return {
-        t: 'none'
+        t: 'none',
       }
     }
 
@@ -162,8 +162,8 @@ export const mergeWithServer = ({
           c: VsBot.mergeWithServer({
             ctx,
             clientModel: clientModel.c,
-            serverModel: serverModel.c
-          })
+            serverModel: serverModel.c,
+          }),
         }
       }
       return {
@@ -171,10 +171,10 @@ export const mergeWithServer = ({
         c: VsBot.mergeWithServer({
           ctx,
           clientModel: VsBot.init({
-            userId: null
+            userId: null,
           }),
-          serverModel: serverModel.c
-        })
+          serverModel: serverModel.c,
+        }),
       }
     }
 
@@ -184,8 +184,8 @@ export const mergeWithServer = ({
           t: 'vs-user',
           c: VsUser.mergeWithServer({
             clientModel: clientModel.c,
-            serverModel: serverModel.c
-          })
+            serverModel: serverModel.c,
+          }),
         }
       }
       return {
@@ -193,10 +193,10 @@ export const mergeWithServer = ({
         c: VsUser.mergeWithServer({
           clientModel: VsUser.init({
             white: null,
-            black: null
+            black: null,
           }),
-          serverModel: serverModel.c
-        })
+          serverModel: serverModel.c,
+        }),
       }
     }
   }
@@ -238,7 +238,7 @@ export const view = ({
   model,
   ctx,
   spaceCtx,
-  dispatch
+  dispatch,
 }: {
   model: Model
   ctx: AppClientCtx
@@ -263,8 +263,8 @@ export const view = ({
                 dispatch({
                   t: 'input-mode',
                   userId: ctx.currentUserId,
-                  mode: 'vs-bot'
-                })
+                  mode: 'vs-bot',
+                }),
             }),
 
             GameMainMenu.buttons.playFriend({
@@ -273,9 +273,9 @@ export const view = ({
                 dispatch({
                   t: 'input-mode',
                   userId: ctx.currentUserId,
-                  mode: 'vs-user'
-                })
-            })
+                  mode: 'vs-user',
+                }),
+            }),
           ]}
         />
       )
@@ -290,13 +290,13 @@ export const view = ({
             dispatch({
               t: 'input-mode',
               mode: 'none',
-              userId: ctx.currentUserId
+              userId: ctx.currentUserId,
             })
           }
           dispatch={(c) =>
             dispatch({
               t: 'vs-bot',
-              c
+              c,
             })
           }
         />
@@ -312,13 +312,13 @@ export const view = ({
             dispatch({
               t: 'input-mode',
               mode: 'none',
-              userId: ctx.currentUserId
+              userId: ctx.currentUserId,
             })
           }
           dispatch={(c) =>
             dispatch({
               t: 'vs-user',
-              c
+              c,
             })
           }
         />

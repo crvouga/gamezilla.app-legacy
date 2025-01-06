@@ -8,6 +8,6 @@ export const createPuzzle = (createdAt: Posix, createdBy: UserId) => {
     count: 1,
     createdAt,
     createdBy,
-    flow: samples['5x5']['1']
+    flow: samples['5x5']['1'],
   })
 }

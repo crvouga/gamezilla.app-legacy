@@ -16,7 +16,7 @@ const state: {
 } = {
   lastLoaded: null,
   translators: {},
-  loading: {}
+  loading: {},
 }
 
 export type TranslatorMsg =
@@ -52,23 +52,23 @@ export function Translator(languageCode: LanguageCodeISO_639_1): Translator {
   state.loading[languageCode] = true
   translatorSubscriptions.pub({
     t: 'translator.loading',
-    lang: languageCode
+    lang: languageCode,
   })
 
   Promise.all([
     loadTranslator(languageCode),
-    state.lastLoaded ? new Promise((r) => setTimeout(r, 0)) : Promise.resolve()
+    state.lastLoaded ? new Promise((r) => setTimeout(r, 0)) : Promise.resolve(),
   ]).then(([loaded]) => {
     state.translators[languageCode] = {
       t: loaded,
-      lang: languageCode
+      lang: languageCode,
     }
 
     state.loading[languageCode] = false
 
     translatorSubscriptions.pub({
       t: 'translator.loaded',
-      lang: languageCode
+      lang: languageCode,
     })
   })
 

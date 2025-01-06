@@ -12,7 +12,7 @@ const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => updateMain({ ...input, model }),
-    (model) => updateLoadPuzzlesForPack({ ...input, model })
+    (model) => updateLoadPuzzlesForPack({ ...input, model }),
   )
 }
 
@@ -34,12 +34,12 @@ const updateLoadPuzzlesForPack: typeof update = (input) => {
 
     return {
       model: input.model,
-      msgCmd: [PackPuzzlesGridClient.load(pack)]
+      msgCmd: [PackPuzzlesGridClient.load(pack)],
     }
   }
 
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
@@ -48,20 +48,20 @@ const updateMain: typeof update = (input) => {
     case 'user-clicked-exit-pack-button': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
 
     case 'user-clicked-open-puzzle-grid-item': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
   }
 
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
@@ -83,7 +83,7 @@ const View: ClientModule['View'] = (input) => {
       <div
         className={cn(
           'flex w-full flex-1 flex-col items-center justify-center',
-          isSpectating && 'pointer-events-none select-none'
+          isSpectating && 'pointer-events-none select-none',
         )}
       >
         <PackPuzzlesGridUI.View
@@ -95,8 +95,8 @@ const View: ClientModule['View'] = (input) => {
               c: {
                 t: 'user-changed-slides',
                 slideIndex,
-                userId: input.ctx.currentUserId
-              }
+                userId: input.ctx.currentUserId,
+              },
             })
           }
           puzzleIds={flowPack.puzzleIds}
@@ -120,8 +120,8 @@ const View: ClientModule['View'] = (input) => {
                     c: {
                       t: 'user-clicked-open-puzzle-grid-item',
                       flowPuzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
-                      puzzleIndex: inputCell.index
-                    }
+                      puzzleIndex: inputCell.index,
+                    },
                   })
                 }
               />
@@ -135,5 +135,5 @@ const View: ClientModule['View'] = (input) => {
 
 export const ScreenSelectPuzzleClient = {
   update,
-  View
+  View,
 }

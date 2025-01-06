@@ -29,7 +29,7 @@ export const ViewProfileScreen = (input: {
           <Button
             onClick={() =>
               input.dispatch({
-                t: 'clicked-edit-profile-button'
+                t: 'clicked-edit-profile-button',
               })
             }
             className='w-full'
@@ -39,7 +39,7 @@ export const ViewProfileScreen = (input: {
           <Button
             onClick={() =>
               input.dispatch({
-                t: 'clicked-logout-button'
+                t: 'clicked-logout-button',
               })
             }
             className='w-full'
@@ -60,8 +60,8 @@ export const ViewProfileScreen = (input: {
             t: 'clicked-back-button',
             from: {
               t: 'profile',
-              userId: profile?.userId
-            }
+              userId: profile?.userId,
+            },
           })
         }
         title={input.ctx.t('username', profile.username)}

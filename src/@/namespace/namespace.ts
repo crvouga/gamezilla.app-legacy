@@ -4,7 +4,7 @@ export type Namespaced<TNamespace extends string, T extends Record<string, unkno
 
 export const namespace = <TNamespace extends string, T extends Record<string, unknown>>(
   namespace: TNamespace,
-  value: T
+  value: T,
 ): Namespaced<TNamespace, T> => {
   const result = {} as Namespaced<TNamespace, T>
   for (const key in value) {
@@ -16,7 +16,7 @@ export const namespace = <TNamespace extends string, T extends Record<string, un
 
 export const unnamespace = <TNamespace extends string, T extends Record<string, unknown>>(
   namespace: TNamespace,
-  value: Namespaced<TNamespace, T>
+  value: Namespaced<TNamespace, T>,
 ): T => {
   const result = {} as T
   for (const key in value) {

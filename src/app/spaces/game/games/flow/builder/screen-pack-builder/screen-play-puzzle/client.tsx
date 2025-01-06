@@ -6,7 +6,7 @@ import {
   IconDeleteForever,
   IconEllipsisVertical,
   ListItemButton,
-  TopBar
+  TopBar,
 } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '../../../../@/architecture/game-client-v2'
@@ -26,7 +26,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           case 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
             return {
               model,
-              msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+              msgCmd: [playSound(APP_SOUND.navBackwardMin)],
             }
           }
 
@@ -53,39 +53,39 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
             const updated = FlowPlay.update({
               ctx: FlowPlay.initCtx({ flowPuzzle }),
               model: flowPlay,
-              msg: input.msgCore.c
+              msg: input.msgCore.c,
             })
 
             return {
               model,
-              msgCmd: FlowPlay.eventsToClientCmd(input.ctx, updated.events)
+              msgCmd: FlowPlay.eventsToClientCmd(input.ctx, updated.events),
             }
           }
 
           case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
             return {
               model,
-              msgCmd: [playSound(APP_SOUND.tap)]
+              msgCmd: [playSound(APP_SOUND.tap)],
             }
           }
 
           case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
             return {
               model: input.model,
-              msgCmd: [playSound(APP_SOUND.tap)]
+              msgCmd: [playSound(APP_SOUND.tap)],
             }
           }
 
           case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
             return {
               model: input.model,
-              msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-removed'))]
+              msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-removed'))],
             }
           }
         }
 
         return { model: input.model }
-      }
+      },
     )
   },
 
@@ -120,7 +120,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           onBack={() =>
             input.dispatch({
               t: 'got-msg-core',
-              c: { t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle', userId: input.ctx.currentUserId }
+              c: { t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle', userId: input.ctx.currentUserId },
             })
           }
         />
@@ -154,8 +154,8 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
                 c: {
                   t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
                   userId: input.ctx.currentUserId,
-                  previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' }
-                }
+                  previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' },
+                },
               })
             }}
           />
@@ -170,8 +170,8 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
                 c: {
                   t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
                   userId: input.ctx.currentUserId,
-                  nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' }
-                }
+                  nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
+                },
               })
             }}
           />
@@ -180,7 +180,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
         </BottomButtons.Root>
       </div>
     )
-  }
+  },
 }
 
 const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
@@ -190,7 +190,7 @@ const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
       case 'screen-pack-builder.puzzle-screen.user-clicked-more-button': {
         return {
           model: input.model,
-          msgCmd: [playSound(APP_SOUND.tap)]
+          msgCmd: [playSound(APP_SOUND.tap)],
         }
       }
     }
@@ -221,8 +221,8 @@ const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
               t: 'got-msg-core',
               c: {
                 t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
-                userId: ctx.currentUserId
-              }
+                userId: ctx.currentUserId,
+              },
             })
           }
         />
@@ -234,8 +234,8 @@ const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
               t: 'got-msg-core',
               c: {
                 t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
-                userId: ctx.currentUserId
-              }
+                userId: ctx.currentUserId,
+              },
             })
           }
           position='bottom'
@@ -250,8 +250,8 @@ const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
                 c: {
                   t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
                   userId: ctx.currentUserId,
-                  puzzleIndex: screen.puzzleIndex
-                }
+                  puzzleIndex: screen.puzzleIndex,
+                },
               })
             }
           />
@@ -259,5 +259,5 @@ const ScreenPuzzleMore: Pick<ClientModule, 'update' | 'View'> = {
         </Drawer>
       </>
     )
-  }
+  },
 }

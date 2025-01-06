@@ -33,13 +33,13 @@ const childrenFn: ChildrenFn<State> = (modelCore) => {
     const copied: Columns = [
       ...modelCore.columns.slice(0, columnIndex),
       [...column, modelCore.turn],
-      ...modelCore.columns.slice(columnIndex + 1)
+      ...modelCore.columns.slice(columnIndex + 1),
     ]
 
     children.push({
       columns: copied,
       turn: turnNew,
-      lastMoveColumnIndex: columnIndex
+      lastMoveColumnIndex: columnIndex,
     })
   }
 
@@ -49,7 +49,7 @@ const childrenFn: ChildrenFn<State> = (modelCore) => {
 export const findBestMove = ({
   maximizingPlayer,
   columns,
-  maxDepth
+  maxDepth,
 }: {
   maxDepth: number
   maximizingPlayer: PlayerType
@@ -78,19 +78,19 @@ export const findBestMove = ({
     parentState: {
       columns,
       turn: maximizingPlayer,
-      lastMoveColumnIndex: null
-    }
+      lastMoveColumnIndex: null,
+    },
   })
 
   const bestMove = bestChildState?.lastMoveColumnIndex ?? null
 
   return {
-    columnIndex: bestMove
+    columnIndex: bestMove,
   }
 }
 
 export const ConnectFourBotWorker = {
-  findBestMove
+  findBestMove,
 }
 
 export type ConnectFourBotWorker = typeof ConnectFourBotWorker

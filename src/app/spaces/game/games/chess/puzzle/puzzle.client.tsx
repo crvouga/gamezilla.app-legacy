@@ -10,7 +10,7 @@ import {
   IconLightbulb,
   IconXMark,
   Spinner,
-  cn
+  cn,
 } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 
@@ -36,7 +36,7 @@ import {
   toCurrentBoard,
   toNextEloRating,
   toPlayerColor,
-  updateCore
+  updateCore,
 } from './puzzle.types'
 
 //
@@ -49,7 +49,7 @@ export const init = (): {
   model: ModelClient
 } => {
   return {
-    model: initCore
+    model: initCore,
   }
 }
 
@@ -76,49 +76,49 @@ export const update = (input: {
     (model) =>
       updateMain({
         ...input,
-        model
+        model,
       }),
     (model) => {
       if (input.msg.t === 'input-move') {
         if (input.msg.didCapture) {
           return {
             model,
-            msgCmd: [playSound(CHESS_SOUND.captureSound)]
+            msgCmd: [playSound(CHESS_SOUND.captureSound)],
           }
         }
         return {
           model,
-          msgCmd: [playSound(CHESS_SOUND.moveSound)]
+          msgCmd: [playSound(CHESS_SOUND.moveSound)],
         }
       }
       return {
-        model
+        model,
       }
     },
     (model) => {
       if (!isIncorrect(input.model) && isIncorrect(model)) {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.alertErrorMd)]
+          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         }
       }
       if (!isSolved(input.model) && isSolved(model)) {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.celebration)]
+          msgCmd: [playSound(APP_SOUND.celebration)],
         }
       }
       return {
-        model
+        model,
       }
-    }
+    },
   )
 }
 
 export const updateMain = ({
   msg,
   model,
-  ctx
+  ctx,
 }: {
   msg: MsgClient
   model: ModelClient
@@ -135,13 +135,13 @@ export const updateMain = ({
 
   const modelNew = mergeWithServer({
     client: model,
-    server: updated.t === 'err' ? model : updated.value
+    server: updated.t === 'err' ? model : updated.value,
   })
 
   return {
     model: modelNew,
     msgCmd: [sendToServer(msg)],
-    eff: Eff.None
+    eff: Eff.None,
   }
 }
 
@@ -162,7 +162,7 @@ export const updateFromServer = (input: {
 
 export const updateFromServerMain: typeof updateFromServer = ({
   msg,
-  model
+  model,
 }: {
   ctx: SpaceClientCtx
   msg: MsgToClient
@@ -179,8 +179,8 @@ export const updateFromServerMain: typeof updateFromServer = ({
       return {
         model: {
           ...model,
-          serverNow: msg.now
-        }
+          serverNow: msg.now,
+        },
       }
     }
 
@@ -189,17 +189,17 @@ export const updateFromServerMain: typeof updateFromServer = ({
 
       if (isErr(result)) {
         return {
-          model
+          model,
         }
       }
 
       const merged = mergeWithServer({
         client: model,
-        server: result.value
+        server: result.value,
       })
 
       return {
-        model: merged
+        model: merged,
       }
     }
   }
@@ -208,7 +208,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
 export const mergeWithServer = ({ client, server }: { client?: ModelClient; server: CoreModel }): ModelClient => {
   return {
     ...client,
-    ...server
+    ...server,
   }
 }
 
@@ -232,7 +232,7 @@ export const View = ({
   model,
   onClose,
   ctx,
-  dispatch
+  dispatch,
 }: {
   ctx: SpaceClientCtx
   model: ModelClient
@@ -297,9 +297,9 @@ export const View = ({
                 {
                   from: input.source,
                   to: input.target,
-                  promotion: 'q'
+                  promotion: 'q',
                 },
-                chessModel
+                chessModel,
               )
 
               if (moved.t === 'ok') {
@@ -309,8 +309,8 @@ export const View = ({
                   moveInput: {
                     from: input.source,
                     to: input.target,
-                    promotion: 'q'
-                  }
+                    promotion: 'q',
+                  },
                 })
               }
               return moved.t === 'ok'
@@ -388,7 +388,7 @@ export const BottomBarActions = ({
   model,
   onClose,
   dispatch,
-  ctx
+  ctx,
 }: {
   model: ModelClient
   onClose: () => void
@@ -412,7 +412,7 @@ export const BottomBarActions = ({
       disabled={isNoMoreHints(model) || model.t === 'loading'}
       onClick={() =>
         dispatch({
-          t: 'show-hint'
+          t: 'show-hint',
         })
       }
     />
@@ -424,7 +424,7 @@ export const BottomBarActions = ({
       label={ctx.t('app.retry')}
       onClick={() =>
         dispatch({
-          t: 'retry'
+          t: 'retry',
         })
       }
       color='danger'
@@ -437,7 +437,7 @@ export const BottomBarActions = ({
       label={ctx.t('app.skip')}
       onClick={() =>
         dispatch({
-          t: 'skip'
+          t: 'skip',
         })
       }
     />
@@ -450,7 +450,7 @@ export const BottomBarActions = ({
       color='success'
       onClick={() =>
         dispatch({
-          t: 'next'
+          t: 'next',
         })
       }
     />
@@ -511,13 +511,13 @@ const ViewStatusBar = (input: { model: ModelClient }) => {
       <div
         className={cn(
           'flex w-full items-center justify-center gap-2 p-2',
-          toPlayerColor(input.model.puzzle) === 'b' ? 'bg-black text-white' : 'bg-white text-black'
+          toPlayerColor(input.model.puzzle) === 'b' ? 'bg-black text-white' : 'bg-white text-black',
         )}
       >
         <div
           className={cn(
             'h-6 w-6 rounded-full border-2',
-            toPlayerColor(input.model.puzzle) === 'b' ? 'border-[#ababab] bg-black' : 'border-black bg-white'
+            toPlayerColor(input.model.puzzle) === 'b' ? 'border-[#ababab] bg-black' : 'border-black bg-white',
           )}
         />
         <p className='text-xl text-inherit'>{Chess.colorToString(toPlayerColor(input.model.puzzle))} to move</p>

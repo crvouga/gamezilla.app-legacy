@@ -14,32 +14,32 @@ type PrebuiltBottomButtonInput = Partial<BottomButtonInput> & {
 const exit = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
   icon: (input) => <IconArrowLeftOnRect {...input} />,
-  label: input.ctx.t('prebuilt-bottom-buttons.exit')
+  label: input.ctx.t('prebuilt-bottom-buttons.exit'),
 })
 
 const next = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
   // icon: (input) => <IconChevronRight {...input} />,
   icon: (input) => <IconArrowCircle {...input} />,
-  label: input.ctx.t('prebuilt-bottom-buttons.next')
+  label: input.ctx.t('prebuilt-bottom-buttons.next'),
 })
 
 const reset = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
   icon: (input) => <IconArrowRotateLeft {...input} />,
-  label: input.ctx.t('prebuilt-bottom-buttons.reset')
+  label: input.ctx.t('prebuilt-bottom-buttons.reset'),
 })
 
 const prev = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
   icon: (input) => <IconChevronLeft {...input} />,
-  label: input.ctx.t('prebuilt-bottom-buttons.prev')
+  label: input.ctx.t('prebuilt-bottom-buttons.prev'),
 })
 
 const hint = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   ...input,
   icon: (input) => <IconLightbulb {...input} />,
-  label: input.ctx.t('prebuilt-bottom-buttons.hint')
+  label: input.ctx.t('prebuilt-bottom-buttons.hint'),
 })
 
 export const PrebuiltBottomButtons = {
@@ -47,5 +47,5 @@ export const PrebuiltBottomButtons = {
   next,
   reset,
   prev,
-  hint
+  hint,
 }

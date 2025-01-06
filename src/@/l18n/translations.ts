@@ -15,7 +15,7 @@ export const createTranslator =
   <TTranslationText extends TranslationText>(text: TTranslationText) =>
   <
     K extends keyof TTranslationText,
-    Args extends TTranslationText[K] extends (...args: any[]) => any ? Parameters<TTranslationText[K]> : []
+    Args extends TTranslationText[K] extends (...args: any[]) => any ? Parameters<TTranslationText[K]> : [],
   >(
     key: K,
     ...args: Args

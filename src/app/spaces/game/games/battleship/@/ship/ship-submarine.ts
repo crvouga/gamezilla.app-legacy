@@ -15,5 +15,5 @@ placeShip.impl(is, (_submarine, model) => {
 })
 
 export const ShipSubmarine = {
-  is
+  is,
 }

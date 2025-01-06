@@ -8,7 +8,7 @@ import { FixtureScreenPlayPuzzleClient } from './@/fixture/client'
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -29,9 +29,9 @@ describe(import.meta.file, () => {
     const updated = f.update(f.init, [
       {
         msgCore: withEventMeta({
-          t: 'user-clicked-exit-puzzle'
-        })
-      }
+          t: 'user-clicked-exit-puzzle',
+        }),
+      },
     ])
     expect(didPlaySound(updated)).toBe(true)
   })
@@ -43,10 +43,10 @@ describe(import.meta.file, () => {
         msg: {
           t: 'got-msg-core',
           c: {
-            t: 'user-clicked-exit-puzzle'
-          }
-        }
-      }
+            t: 'user-clicked-exit-puzzle',
+          },
+        },
+      },
     ])
     expect(updated.modelCore.screen.t).toBe('screen-select-puzzle')
   })
@@ -80,10 +80,10 @@ describe(import.meta.file, () => {
           c: {
             t: 'user-clicked-next-puzzle',
             nextPuzzle: f.nextPuzzle,
-            nextPuzzleIndex: f.nextPuzzleIndex
-          }
-        }
-      }
+            nextPuzzleIndex: f.nextPuzzleIndex,
+          },
+        },
+      },
     ])
     const r = f.render(updated)
     expect(r.getAttribute('data-puzzle-id')).toBe(f.nextPuzzle.c.id)
@@ -96,9 +96,9 @@ describe(import.meta.file, () => {
         msgCore: withEventMeta({
           t: 'user-clicked-next-puzzle',
           nextPuzzle: f.nextPuzzle,
-          nextPuzzleIndex: f.nextPuzzleIndex
-        })
-      }
+          nextPuzzleIndex: f.nextPuzzleIndex,
+        }),
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -112,11 +112,11 @@ describe(import.meta.file, () => {
           c: {
             t: 'user-clicked-next-puzzle',
             nextPuzzle: f.nextPuzzle,
-            nextPuzzleIndex: f.nextPuzzleIndex
-          }
-        }
+            nextPuzzleIndex: f.nextPuzzleIndex,
+          },
+        },
       },
-      ...f.completePuzzleMsgs
+      ...f.completePuzzleMsgs,
     ])
     const nextButton = f.render(output).getByRole('button', f.ctx.t('app.next'))
     expect(nextButton?.disabled).toBe(true)
@@ -164,10 +164,10 @@ describe(import.meta.file, () => {
           userId: UserId.generate(),
           c: {
             t: 'user-pressed-down-node',
-            nodeId: terminal.startId
-          }
-        })
-      }
+            nodeId: terminal.startId,
+          },
+        }),
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -197,9 +197,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
-          t: 'user-clicked-reset-puzzle'
-        })
-      }
+          t: 'user-clicked-reset-puzzle',
+        }),
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -234,9 +234,9 @@ describe(import.meta.file, () => {
       ...f.completePuzzleMsgs,
       {
         msgCore: withEventMeta({
-          t: 'user-closed-puzzle-complete-dialog'
-        })
-      }
+          t: 'user-closed-puzzle-complete-dialog',
+        }),
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -246,9 +246,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
-          t: 'user-toggled-action-buttons-drawer'
-        })
-      }
+          t: 'user-toggled-action-buttons-drawer',
+        }),
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -262,11 +262,11 @@ describe(import.meta.file, () => {
           msgCore: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
-              t: 'not-found'
+              t: 'not-found',
             },
-            nextPuzzleIndex: f.nextPuzzleIndex
-          })
-        }
+            nextPuzzleIndex: f.nextPuzzleIndex,
+          }),
+        },
       ])
       expect(f.render(output).getByRole('button', f.ctx.t('game.hint'))).toBeFalsy()
     })
@@ -278,11 +278,11 @@ describe(import.meta.file, () => {
           msgCore: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
-              t: 'not-found'
+              t: 'not-found',
             },
-            nextPuzzleIndex: f.nextPuzzleIndex
-          })
-        }
+            nextPuzzleIndex: f.nextPuzzleIndex,
+          }),
+        },
       ])
       expect(f.render(output).getByRole('button', f.ctx.t('app.reset'))).toBeFalsy()
     })
@@ -294,14 +294,14 @@ describe(import.meta.file, () => {
           msgCore: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
-              t: 'not-found'
+              t: 'not-found',
             },
-            nextPuzzleIndex: f.nextPuzzleIndex
-          })
-        }
+            nextPuzzleIndex: f.nextPuzzleIndex,
+          }),
+        },
       ])
       expect(
-        f.render(output, { ...f.ctx, currentUserRole: 'super' }).getByRole('button', f.ctx.t('app.copy'))
+        f.render(output, { ...f.ctx, currentUserRole: 'super' }).getByRole('button', f.ctx.t('app.copy')),
       ).toBeFalsy()
     })
 
@@ -312,11 +312,11 @@ describe(import.meta.file, () => {
           msgCore: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
-              t: 'not-found'
+              t: 'not-found',
             },
-            nextPuzzleIndex: f.nextPuzzleIndex
-          })
-        }
+            nextPuzzleIndex: f.nextPuzzleIndex,
+          }),
+        },
       ])
       expect(f.render(output).getByRole('button', f.ctx.t('app.next'))).toBeTruthy()
     })

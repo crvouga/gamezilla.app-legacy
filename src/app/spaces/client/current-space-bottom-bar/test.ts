@@ -6,7 +6,7 @@ import { SpacesCoreClient } from '../../core/client'
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -18,14 +18,14 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
-          t: 'clicked-current-space-bottom-bar'
-        }
-      }
+          t: 'clicked-current-space-bottom-bar',
+        },
+      },
     ])
 
     const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
@@ -36,8 +36,8 @@ describe(import.meta.file, () => {
           msgCmd.t === 'routing' &&
           msgCmd.c.t === 'push' &&
           msgCmd.c.route.t === 'space' &&
-          msgCmd.c.route.spaceId === currentUsersSpaceId
-      )
+          msgCmd.c.route.spaceId === currentUsersSpaceId,
+      ),
     ).toBe(true)
   })
 
@@ -49,14 +49,14 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
-          t: 'clicked-current-space-bottom-bar'
-        }
-      }
+          t: 'clicked-current-space-bottom-bar',
+        },
+      },
     ])
 
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)

@@ -11,8 +11,8 @@ describe(import.meta.file, () => {
     const after = f.update(before, [
       {
         t: 'user-clicked-open-pack-list-item',
-        pack: await Pack.random()
-      }
+        pack: await Pack.random(),
+      },
     ])
 
     expect(before.screen.t).toEqual('screen-select-pack')
@@ -24,13 +24,13 @@ describe(import.meta.file, () => {
     const before = f.update(f.init, [
       {
         t: 'user-clicked-open-pack-list-item',
-        pack: await Pack.random()
-      }
+        pack: await Pack.random(),
+      },
     ])
     const after = f.update(before, [
       {
-        t: 'user-clicked-exit-pack-button'
-      }
+        t: 'user-clicked-exit-pack-button',
+      },
     ])
     expect(before.screen.t).toEqual('screen-select-puzzle')
     expect(after.screen.t).toEqual('screen-select-pack')
@@ -40,14 +40,14 @@ describe(import.meta.file, () => {
     const f = await CoreFixture()
     const puzzle = await Puzzle.random()
     const pack = await Pack.random({
-      puzzleIds: [puzzle.id]
+      puzzleIds: [puzzle.id],
     })
 
     const before = f.update(f.init, [
       {
         t: 'user-clicked-open-pack-list-item',
-        pack
-      }
+        pack,
+      },
     ])
 
     const after = f.update(before, [
@@ -55,10 +55,10 @@ describe(import.meta.file, () => {
         t: 'user-clicked-open-puzzle-grid-item',
         flowPuzzle: {
           t: 'got',
-          c: puzzle
+          c: puzzle,
         },
-        puzzleIndex: 0
-      }
+        puzzleIndex: 0,
+      },
     ])
     expect(before.screen.t).toEqual('screen-select-puzzle')
     expect(after.screen.t).toEqual('screen-play-puzzle')
@@ -71,22 +71,22 @@ describe(import.meta.file, () => {
     const f = await CoreFixture()
     const puzzle = await Puzzle.random()
     const pack = await Pack.random({
-      puzzleIds: [puzzle.id]
+      puzzleIds: [puzzle.id],
     })
 
     const before = f.update(f.init, [
       {
         t: 'user-clicked-open-pack-list-item',
-        pack
-      }
+        pack,
+      },
     ])
 
     const after = f.update(before, [
       {
         t: 'user-changed-slides',
         slideIndex: 1,
-        userId: UserId.generate()
-      }
+        userId: UserId.generate(),
+      },
     ])
     expect(before.screen.t).toEqual('screen-select-puzzle')
     if (before.screen.t === 'screen-select-puzzle') {

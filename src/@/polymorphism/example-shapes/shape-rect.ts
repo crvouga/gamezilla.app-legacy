@@ -16,12 +16,12 @@ perimeter.impl(isRect, (shape) => 2 * (shape.width + shape.height))
 scale.impl(isRect, (shape, scaleBy) =>
   Rect({
     width: shape.width * scaleBy,
-    height: shape.height * scaleBy
-  })
+    height: shape.height * scaleBy,
+  }),
 )
 
 export const Rect = (input: { width: number; height: number }): Rect => ({
   ...input,
   Shape2D: 'rect',
-  Shape: 'rect'
+  Shape: 'rect',
 })

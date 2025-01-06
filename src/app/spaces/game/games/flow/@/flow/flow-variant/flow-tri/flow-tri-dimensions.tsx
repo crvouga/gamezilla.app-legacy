@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 
 export const Model = p.obj({
   t: p.l('flow-tri'),
-  side: p.num
+  side: p.num,
 })
 
 export type Model = p.Infer<typeof Model>
@@ -10,7 +10,7 @@ export type Model = p.Infer<typeof Model>
 export const init = (input: { side: number }): Model => {
   return {
     t: 'flow-tri',
-    side: input.side
+    side: input.side,
   }
 }
 

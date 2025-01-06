@@ -36,7 +36,7 @@ export const initInstance = (target: number, config: Config = {}): Instance => {
   const instanceState = getInitialState(target, config)
   return {
     config: instanceConfig,
-    state: instanceState
+    state: instanceState,
   }
 }
 
@@ -54,7 +54,7 @@ function isMoving_(x: number, v: number, t: number, { decimals, X, k, c, m }: In
     k,
     c,
     m,
-    X
+    X,
   })
   return roundTo(nextX, decimals) !== roundTo(X, decimals)
 }
@@ -75,8 +75,8 @@ export const stepInstance = (instance: Instance, t: number): Instance => {
     state: {
       x0: nextX,
       v0: nextV,
-      t0: t
-    }
+      t0: t,
+    },
   }
 }
 
@@ -90,7 +90,7 @@ export function getInitialState(target: number, { from, initialSpeed }: Config) 
     x0: from ?? target,
     v0: initialSpeed ?? 0,
     t0: currentTime(),
-    raf: null
+    raf: null,
   }
 }
 
@@ -120,7 +120,7 @@ export function springStep({ x0, v0, t0, t, k, c, m, X }: Input): Output {
     const b = (v0 - dx * rn) / (rp - rn)
     return {
       x: X + a * exp(rn * dt) + b * exp(rp * dt),
-      v: a * rn * exp(rn * dt) + b * rp * exp(rp * dt)
+      v: a * rn * exp(rn * dt) + b * rp * exp(rp * dt),
     }
   }
   if (radicand < 0) {
@@ -130,7 +130,7 @@ export function springStep({ x0, v0, t0, t, k, c, m, X }: Input): Output {
     const b = (v0 - r * dx) / s
     return {
       x: X + exp(r * dt) * (a * cos(s * dt) + b * sin(s * dt)),
-      v: exp(r * dt) * ((b * s + a * r) * cos(s * dt) - (a * s - b * r) * sin(s * dt))
+      v: exp(r * dt) * ((b * s + a * r) * cos(s * dt) - (a * s - b * r) * sin(s * dt)),
     }
   }
   const r = -c / (2 * m)
@@ -138,7 +138,7 @@ export function springStep({ x0, v0, t0, t, k, c, m, X }: Input): Output {
   const b = v0 - r * dx
   return {
     x: X + (a + b * dt) * exp(r * dt),
-    v: (b + a * r + b * r * dt) * exp(r * dt)
+    v: (b + a * r + b * r * dt) * exp(r * dt),
   }
 }
 

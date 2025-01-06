@@ -18,17 +18,17 @@ const updateFromClient: ServerModule['update'] = async (input) => {
     case 'puzzle.edit-name.user-clicked-save-button': {
       const edited = await patchName({
         ...input,
-        ...input.msgClient
+        ...input.msgClient,
       })
 
       const msgCore: MsgCore = {
         ...input.msgClient,
         t: 'user-edited-puzzle-name',
-        edited
+        edited,
       }
 
       return {
-        msgCore: [withEventId(msgCore)]
+        msgCore: [withEventId(msgCore)],
       }
     }
 
@@ -66,7 +66,7 @@ const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userI
   const patched: Puzzle = {
     ...puzzle,
     name: newNameFinal,
-    lastUpdatedBy: userId
+    lastUpdatedBy: userId,
   }
 
   const put = await ctx.flowPuzzleDb.put(patched)
@@ -75,5 +75,5 @@ const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userI
 }
 
 export const EditPuzzleNameServer: Pick<ServerModule, 'update'> = {
-  update
+  update,
 }

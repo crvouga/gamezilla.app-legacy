@@ -10,7 +10,7 @@ import type { GameServerCtx, ServerModule } from './types'
 const initCtx = (input: { ctx: SpaceServerCtx }): GameServerCtx => {
   return {
     ...input.ctx,
-    flow: FlowServer.initCtx(input)
+    flow: FlowServer.initCtx(input),
   }
 }
 
@@ -27,21 +27,21 @@ const init = (gameName: GameName): ServerModule['init'] => {
     case 'connect-four': {
       return {
         t: 'connect-four',
-        c: ConnectFourServer.init
+        c: ConnectFourServer.init,
       }
     }
 
     case 'flow': {
       return {
         t: 'flow',
-        c: FlowServer.init
+        c: FlowServer.init,
       }
     }
 
     default: {
       return {
         t: 'connect-four',
-        c: ConnectFourServer.init
+        c: ConnectFourServer.init,
       }
     }
   }
@@ -66,7 +66,7 @@ const update: ServerModule['update'] = async (input) => {
         msgClient: input.msgClient?.t === 'flow' ? { ...input.msgClient, ...input.msgClient.c } : null,
         msgCore: input.msgCore?.t === 'flow' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
-        deps: null
+        deps: null,
       })
 
       return GameServerModule.tagOutput('flow', (msgCmd) => SpaceServerCmd.tag('flow', msgCmd), updated)
@@ -81,7 +81,7 @@ const update: ServerModule['update'] = async (input) => {
         msgClient: input.msgClient?.t === 'connect-four' ? { ...input.msgClient, ...input.msgClient.c } : null,
         msgCore: input.msgCore?.t === 'connect-four' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
-        deps: null
+        deps: null,
       })
 
       return GameServerModule.tagOutput('connect-four', (msgCmd) => SpaceServerCmd.tag('connect-four', msgCmd), updated)
@@ -109,8 +109,8 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
         await FlowServer.subscriptions({
           ...input,
           modelCore: input.modelCore.c,
-          ctx: input.ctx.flow
-        })
+          ctx: input.ctx.flow,
+        }),
       )
     }
   }
@@ -120,5 +120,5 @@ export const GamesServer = {
   init,
   update,
   subscriptions,
-  initCtx
+  initCtx,
 }

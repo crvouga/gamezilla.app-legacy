@@ -18,7 +18,7 @@ const COLOR_TO_HEX = {
   purple: '#9333ea',
   fuchsia: '#c026d3',
   pink: '#ec4899',
-  rose: '#e11d48'
+  rose: '#e11d48',
 } as const
 
 export const GROUP_ID_TO_COLOR: { [groupId in FlowGroupId]: Color } = {
@@ -38,7 +38,7 @@ export const GROUP_ID_TO_COLOR: { [groupId in FlowGroupId]: Color } = {
   N: 'indigo',
   O: 'violet',
   P: 'fuchsia',
-  Q: 'rose'
+  Q: 'rose',
 }
 
 const ALL_COLORS = Object.keys(COLOR_TO_HEX) as Color[]
@@ -62,5 +62,5 @@ export const Color = {
   groupIdToColor: GROUP_ID_TO_COLOR,
   is,
   toHex,
-  groupIdToHex
+  groupIdToHex,
 }

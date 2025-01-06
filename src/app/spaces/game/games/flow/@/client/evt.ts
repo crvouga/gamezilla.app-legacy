@@ -37,5 +37,5 @@ const toSpaceClientEvt = (evt: FlowClientEvtIn[] | null | undefined): SpaceClien
 
 export const FlowClientEvt = {
   toFlowClientEvt,
-  toSpaceClientEvt
+  toSpaceClientEvt,
 }

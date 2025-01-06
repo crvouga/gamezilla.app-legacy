@@ -25,7 +25,7 @@ export const MARIMBA_SOUND = {
   'marimba-e4-80': './marimba/marimba e4 80.m4a',
   'marimba-f3-80': './marimba/marimba f3 80.m4a',
   'marimba-f4-80': './marimba/marimba f4 80.m4a',
-  'marimba-g3-80': './marimba/marimba g3 80.m4a'
+  'marimba-g3-80': './marimba/marimba g3 80.m4a',
 }
 
 export const toSoundSrc = (noteWithOctave: NoteWithOctave): string => {

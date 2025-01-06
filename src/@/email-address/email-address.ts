@@ -18,5 +18,5 @@ export const EmailAddress = {
   ...parser,
 
   toString,
-  is
+  is,
 }

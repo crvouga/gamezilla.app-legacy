@@ -8,7 +8,7 @@ describe(import.meta.file, () => {
   it('should sign up with email and password', async () => {
     await signUpWithEmailAndPassword(AuthProvider, {
       email: '',
-      password: ''
+      password: '',
     })
   })
 })

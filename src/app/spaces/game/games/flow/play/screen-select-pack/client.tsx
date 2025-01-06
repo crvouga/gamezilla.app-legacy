@@ -10,7 +10,7 @@ const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsgCore({ ...input, model }),
-    (model) => updateLoadPacks({ ...input, model })
+    (model) => updateLoadPacks({ ...input, model }),
   )
 }
 
@@ -23,7 +23,7 @@ const updateLoadPacks: ClientModule['update'] = (input) => {
   ) {
     return {
       model: input.model,
-      msgCmd: [PackListClient.load()]
+      msgCmd: [PackListClient.load()],
     }
   }
 
@@ -35,18 +35,18 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
     case 'user-clicked-open-pack-list-item': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
     case 'user-clicked-exit-play-mode-button': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -71,7 +71,7 @@ const View: ClientModule['View'] = (input) => {
             onOpenUserDetails={(userId) =>
               input.dispatch({
                 t: 'game-main-menu.clicked-open-user-details-button',
-                userId
+                userId,
               })
             }
             ctx={input.ctx}
@@ -90,8 +90,8 @@ const View: ClientModule['View'] = (input) => {
             t: 'got-msg-core',
             c: {
               t: 'user-clicked-exit-play-mode-button',
-              userId: input.ctx.currentUserId
-            }
+              userId: input.ctx.currentUserId,
+            },
           })
         }
         title={input.ctx.t('flow.play')}
@@ -103,7 +103,7 @@ const View: ClientModule['View'] = (input) => {
         emits={{
           clickedPackItem(pack) {
             input.dispatch({ t: 'got-msg-core', c: { t: 'user-clicked-open-pack-list-item', pack } })
-          }
+          },
         }}
       />
     </div>
@@ -112,5 +112,5 @@ const View: ClientModule['View'] = (input) => {
 
 export const ScreenSelectPackClient = {
   update,
-  View
+  View,
 }

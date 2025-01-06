@@ -45,8 +45,8 @@ export const initCoreModel: CoreModel = {
   ...Snake.init,
   gameStatus: {
     type: 'GameSetup',
-    player: Option.None
-  }
+    player: Option.None,
+  },
 }
 
 //
@@ -120,8 +120,8 @@ export const startGame = (model: CoreModel): StartGame_Done[1] => {
     ...model,
     gameStatus: {
       type: 'GameStarted',
-      player: ['User', playerUserId]
-    }
+      player: ['User', playerUserId],
+    },
   }
 
   return Result.Ok(modelNew)

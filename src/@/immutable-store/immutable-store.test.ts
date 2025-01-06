@@ -194,11 +194,11 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
     // Simulate concurrent reads by creating multiple promises
     const concurrentReads = Array.from(
       {
-        length: 10
+        length: 10,
       },
       () => {
         return Store.get(store2, key)
-      }
+      },
     )
 
     // Await all concurrent reads to finish

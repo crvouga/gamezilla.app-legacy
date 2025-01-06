@@ -22,7 +22,7 @@ export const Render = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Ren
       const [ReactDOMClient, ReactDOM, React] = await Promise.all([
         import('react-dom/client'),
         import('react-dom'),
-        import('react')
+        import('react'),
       ])
       const reactRoot = ReactDOMClient.createRoot(root)
       createPortal = ReactDOM.createPortal

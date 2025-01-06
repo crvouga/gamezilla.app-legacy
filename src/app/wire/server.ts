@@ -37,8 +37,8 @@ export const initCtx = async <TMsgToClient, TMsgToServer>(input: {
       t: 'cached-db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
       pubSubTopicBased: input.ctx.pubSub,
-      logger
-    })
+      logger,
+    }),
   }
 }
 
@@ -68,7 +68,7 @@ export const update = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
     () => updateFromMsg(input),
     () => updateFromCmd(input),
     () => updateFromEvent(input),
-    () => updateChild(input)
+    () => updateChild(input),
   )
 }
 
@@ -79,12 +79,12 @@ const updateChild: typeof update = async (input) => {
     ctx: input.ctx.serverInstance,
     msg: input.msg?.t === 'got-server-instance-msg' ? input.msg.c : null,
     msgClient: null,
-    deps: {}
+    deps: {},
   })
 
   return {
     msgEvt: [],
-    msgCmd: ServerCmd.tag('got-server-instance-msg', updated.msgCmd)
+    msgCmd: ServerCmd.tag('got-server-instance-msg', updated.msgCmd),
   }
 }
 
@@ -100,7 +100,7 @@ const updateFromMsg: typeof update = async (input) => {
     case 'client-connected': {
       const got = await input.ctx.wireSessionDb.findBySessionIds([input.msg.sessionId])
 
-      const maybeSession: WireSession | null = got.t === 'ok' ? got.value[0] ?? null : null
+      const maybeSession: WireSession | null = got.t === 'ok' ? (got.value[0] ?? null) : null
 
       const session: WireSession = maybeSession ?? WireSession.init(input.msg.sessionId)
 
@@ -113,9 +113,9 @@ const updateFromMsg: typeof update = async (input) => {
           {
             t: 'wire-evt.client-connected',
             clientId: input.msg.clientId,
-            sessionId: input.msg.sessionId
-          }
-        ]
+            sessionId: input.msg.sessionId,
+          },
+        ],
       }
     }
 
@@ -125,9 +125,9 @@ const updateFromMsg: typeof update = async (input) => {
           {
             t: 'wire-evt.client-disconnected',
             clientId: input.msg.clientId,
-            sessionId: input.msg.sessionId
-          }
-        ]
+            sessionId: input.msg.sessionId,
+          },
+        ],
       }
     }
 
@@ -137,7 +137,7 @@ const updateFromMsg: typeof update = async (input) => {
 
     case 'got-bad-msgs': {
       input.ctx.logger.warn(
-        `Got bad msg from client. reason=${input.msg.reason}, client's clientId=${input.msg.clientId}, client's sessionId=${input.msg.sessionId}`
+        `Got bad msg from client. reason=${input.msg.reason}, client's clientId=${input.msg.clientId}, client's sessionId=${input.msg.sessionId}`,
       )
       return {}
     }
@@ -189,7 +189,7 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
       for (const clientId of msgCmdChild.clientIds) {
         toClientPayload[clientId] = {
           clientId,
-          msgs: [msgCmdChild.msg]
+          msgs: [msgCmdChild.msg],
         }
       }
 
@@ -247,6 +247,6 @@ export const subscriptions = <TMsgToServer, TMsgToClient>(input: {
 
 export const rpc = <TMsgToClient, TMsgToServer>(input: { ctx: ServerCtx<TMsgToClient, TMsgToServer> }) => {
   return RPC.initServer(rpcContract, {
-    serverInstance: ServerInstanceServer.rpc({ ctx: input.ctx.serverInstance })
+    serverInstance: ServerInstanceServer.rpc({ ctx: input.ctx.serverInstance }),
   })
 }

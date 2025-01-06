@@ -26,16 +26,16 @@ export const init: ClientModule['init'] = (input) => {
     model: {
       ...ContinueAsGuestClient.initModel,
       currentUser: {
-        t: 'loading'
+        t: 'loading',
       },
       loginWithGoogle: NotAsked,
       logout: NotAsked,
       sms: sms.model,
-      opened: null
+      opened: null,
     },
     eff: Eff.batch(Eff.tag('sms', sms.eff)),
     msgEvt: Msg.batch(sms.msgEvt),
-    msgCmd: Msg.batch(AppClientCmd.tag('sms', sms.msgCmd))
+    msgCmd: Msg.batch(AppClientCmd.tag('sms', sms.msgCmd)),
   }
 }
 
@@ -55,7 +55,7 @@ export const update: ClientModule['update'] = (input) => {
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild({ ...input, model }),
     (model) => ContinueAsGuestClient.update({ ...input, model }),
-    (model) => LogoutClient.update({ ...input, model })
+    (model) => LogoutClient.update({ ...input, model }),
   )
 }
 
@@ -66,17 +66,17 @@ const updateChild: ClientModule['update'] = (input) => {
     msgCmd: null,
     msgEvt: input.msgEvt,
     msgServer: input.msgServer?.t === 'sms' ? input.msgServer.c : null,
-    msg: input.msg?.t === 'sms' ? input.msg.c : null
+    msg: input.msg?.t === 'sms' ? input.msg.c : null,
   })
 
   return {
     model: {
       ...input.model,
-      sms: updated.model
+      sms: updated.model,
     },
     msgCmd: AppClientCmd.tag('sms', updated.msgCmd),
     eff: Eff.tag('sms', updated.eff),
-    msgEvt: updated.msgEvt
+    msgEvt: updated.msgEvt,
   }
 }
 
@@ -88,10 +88,10 @@ const updateFromMsg: ClientModule['update'] = (input) => {
         msgCmd: [
           pushRoute({
             n: 'auth-login',
-            t: 'login-sms-request'
+            t: 'login-sms-request',
           }),
-          playSound(APP_SOUND.navForwardMin)
-        ]
+          playSound(APP_SOUND.navForwardMin),
+        ],
       }
     }
     case 'user-clicked-login-with-email': {
@@ -100,16 +100,16 @@ const updateFromMsg: ClientModule['update'] = (input) => {
         msgCmd: [
           pushRoute({
             n: 'auth-login',
-            t: 'login-email-send-link'
+            t: 'login-email-send-link',
           }),
-          playSound(APP_SOUND.navForwardMin)
-        ]
+          playSound(APP_SOUND.navForwardMin),
+        ],
       }
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -122,14 +122,14 @@ const updateFromServer: ClientModule['update'] = (input) => {
         model: {
           ...input.model,
           currentUser: {
-            t: 'logged-out'
-          }
+            t: 'logged-out',
+          },
         },
         msgEvt: [
           {
-            t: 'auth-evt.unauthenticated'
-          }
-        ]
+            t: 'auth-evt.unauthenticated',
+          },
+        ],
       }
     }
 
@@ -139,22 +139,22 @@ const updateFromServer: ClientModule['update'] = (input) => {
           ...input.model,
           currentUser: {
             t: 'logged-in',
-            account: input.msgServer.account
-          }
+            account: input.msgServer.account,
+          },
         },
         msgEvt: [
           {
             ...input.msgServer,
             account: input.msgServer.account,
-            t: 'auth-evt.authenticated'
-          }
-        ]
+            t: 'auth-evt.authenticated',
+          },
+        ],
       }
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -173,7 +173,7 @@ const updateRedirect: ClientModule['update'] = (input) => {
     case 'auth-evt.authenticated': {
       if (!input.msgEvt.loggedIn) {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -183,15 +183,15 @@ const updateRedirect: ClientModule['update'] = (input) => {
           replaceRoute(
             {
               n: 'spaces',
-              t: 'space-list'
+              t: 'space-list',
             },
-            false
+            false,
           ),
           playSound(APP_SOUND.celebration),
           input.msgEvt.account.role === 'guest'
             ? showToast(input.ctx.t('auth.logged-in-as-guest'))
-            : showToast(input.ctx.t('auth.logged-in'))
-        ]
+            : showToast(input.ctx.t('auth.logged-in')),
+        ],
       }
     }
 
@@ -201,19 +201,19 @@ const updateRedirect: ClientModule['update'] = (input) => {
           model: input.model,
           msgCmd: [
             replaceRoute({ n: 'spaces', t: 'space-list' }),
-            showToast(input.ctx.t('auth.current-user-logged-in'))
-          ]
+            showToast(input.ctx.t('auth.current-user-logged-in')),
+          ],
         }
       }
 
       return {
-        model: input.model
+        model: input.model,
       }
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }

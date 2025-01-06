@@ -13,7 +13,7 @@ export type PlayerType = 'X' | 'O'
 
 export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
   X: 'X',
-  O: 'O'
+  O: 'O',
 }
 
 export const toOpposite = (playerType: PlayerType): PlayerType => {
@@ -53,7 +53,7 @@ export const toChildren = (board: Model): Model[] => {
     const result = move({
       board,
       player: turn,
-      position
+      position,
     })
 
     if (result.t === 'ok') {
@@ -71,7 +71,7 @@ export const allBotLevels: BotLevel[] = ['Easy', 'Medium', 'Impossible']
 export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
   Easy: 'Easy',
   Medium: 'Medium',
-  Impossible: 'Impossible'
+  Impossible: 'Impossible',
 }
 
 export const toDepth = (botLevel: BotLevel): number => {
@@ -115,7 +115,7 @@ type NonEmpty<T> = [T, ...T[]]
 export const emptyBoard: Model = [
   ['_', '_', '_'],
   ['_', '_', '_'],
-  ['_', '_', '_']
+  ['_', '_', '_'],
 ]
 
 export type Position = { row: Row; column: Column }
@@ -124,7 +124,7 @@ export const toSlot = (board: Model, position: Position): Slot => board[position
 
 export const setSlot = (board: Model, position: Position, slotNew: Slot): Model => {
   return board.map((columns, columnIndex) =>
-    columns.map((slot, rowIndex) => (columnIndex === position.column && rowIndex === position.row ? slotNew : slot))
+    columns.map((slot, rowIndex) => (columnIndex === position.column && rowIndex === position.row ? slotNew : slot)),
   ) as Model
 }
 
@@ -137,7 +137,7 @@ export const allPositions: NonEmpty<Position> = [
   { row: 1, column: 2 },
   { row: 2, column: 0 },
   { row: 2, column: 1 },
-  { row: 2, column: 2 }
+  { row: 2, column: 2 },
 ]
 
 export const toSlots = (board: Model): Slot[] => {
@@ -151,45 +151,45 @@ export const allWinningGroups: WinningGroup[] = [
   [
     { row: 0, column: 0 },
     { row: 1, column: 0 },
-    { row: 2, column: 0 }
+    { row: 2, column: 0 },
   ],
   [
     { row: 0, column: 1 },
     { row: 1, column: 1 },
-    { row: 2, column: 1 }
+    { row: 2, column: 1 },
   ],
   [
     { row: 0, column: 2 },
     { row: 1, column: 2 },
-    { row: 2, column: 2 }
+    { row: 2, column: 2 },
   ],
   // horizontal
   [
     { row: 0, column: 0 },
     { row: 0, column: 1 },
-    { row: 0, column: 2 }
+    { row: 0, column: 2 },
   ],
   [
     { row: 1, column: 0 },
     { row: 1, column: 1 },
-    { row: 1, column: 2 }
+    { row: 1, column: 2 },
   ],
   [
     { row: 2, column: 0 },
     { row: 2, column: 1 },
-    { row: 2, column: 2 }
+    { row: 2, column: 2 },
   ],
   // diagonal
   [
     { row: 0, column: 0 },
     { row: 1, column: 1 },
-    { row: 2, column: 2 }
+    { row: 2, column: 2 },
   ],
   [
     { row: 0, column: 2 },
     { row: 1, column: 1 },
-    { row: 2, column: 0 }
-  ]
+    { row: 2, column: 0 },
+  ],
 ]
 
 type Wins = { X: WinningGroup[]; O: WinningGroup[]; None: WinningGroup[] }
@@ -202,7 +202,7 @@ const toWinsNotMemoized = (board: Model): Wins => {
   const wins: Wins = {
     X: [],
     O: [],
-    None: []
+    None: [],
   }
 
   for (let i = 0; i < allWinningGroups.length; i++) {
@@ -230,7 +230,7 @@ const toWinsNotMemoized = (board: Model): Wins => {
 export const toWins = memoize({
   toKey: modelToKey,
   func: toWinsNotMemoized,
-  cacheCapacity: 100
+  cacheCapacity: 100,
 })
 
 export type Status = { type: 'Turn'; turn: PlayerType } | GameOver
@@ -243,14 +243,14 @@ export const toGameOver = (board: Model): GameOver | { type: 'none' } => {
   if (wins.X.length > 0) {
     return {
       type: 'Win',
-      winner: 'X'
+      winner: 'X',
     }
   }
 
   if (wins.O.length > 0) {
     return {
       type: 'Win',
-      winner: 'O'
+      winner: 'O',
     }
   }
 
@@ -267,7 +267,7 @@ export const toStatus = (board: Model): Status => {
   if (gameOver.type === 'none') {
     return {
       type: 'Turn',
-      turn: toTurn(board)
+      turn: toTurn(board),
     }
   }
 
@@ -306,7 +306,7 @@ export type MoveProblem = 'not_players_turn' | 'position_is_taken' | 'game_over'
 export const move = ({
   board,
   player,
-  position
+  position,
 }: {
   board: Model
   player: PlayerType

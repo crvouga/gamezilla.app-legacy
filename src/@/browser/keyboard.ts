@@ -6,7 +6,7 @@ const arrowKeys: { [key in ArrowKey]: ArrowKey } = {
   ArrowDown: 'ArrowDown',
   ArrowUp: 'ArrowUp',
   ArrowLeft: 'ArrowLeft',
-  ArrowRight: 'ArrowRight'
+  ArrowRight: 'ArrowRight',
 }
 
 export const isArrowKey = (key: unknown): key is ArrowKey => {
@@ -44,7 +44,7 @@ const keys: { [key in Key]: Key } = {
   ArrowLeft: 'ArrowLeft',
   ArrowRight: 'ArrowRight',
   //
-  Enter: 'Enter'
+  Enter: 'Enter',
 }
 
 const is = (key: unknown): key is Key => {
@@ -69,7 +69,7 @@ export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
       return () => {
         document.removeEventListener('keydown', handler)
       }
-    }
+    },
   }
 }
 
@@ -92,6 +92,6 @@ export const keyUps = <T>(callback: (key: Key) => T): Sub<T> => {
       return () => {
         document.removeEventListener('keyup', handler)
       }
-    }
+    },
   }
 }

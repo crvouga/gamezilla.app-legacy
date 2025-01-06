@@ -43,6 +43,6 @@ export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
       }
       unlistenByTopic.delete(topic)
       config.logger.debug(`unsub: topic=${topic}`)
-    }
+    },
   }
 }

@@ -11,7 +11,7 @@ const directions: { [direction in Direction]: Direction } = {
   vertical: 'vertical',
   horizontal: 'horizontal',
   left_diagonal: 'left_diagonal',
-  right_diagonal: 'right_diagonal'
+  right_diagonal: 'right_diagonal',
 }
 
 const toVector = (direction: Direction): Position => {
@@ -19,28 +19,28 @@ const toVector = (direction: Direction): Position => {
     case 'horizontal': {
       return {
         x: 1,
-        y: 0
+        y: 0,
       }
     }
 
     case 'vertical': {
       return {
         x: 0,
-        y: 1
+        y: 1,
       }
     }
 
     case 'left_diagonal': {
       return {
         x: 1,
-        y: 1
+        y: 1,
       }
     }
 
     case 'right_diagonal': {
       return {
         x: 1,
-        y: -1
+        y: -1,
       }
     }
   }
@@ -48,14 +48,14 @@ const toVector = (direction: Direction): Position => {
 
 export const Direction = {
   all: Object.values(directions),
-  toVector: toVector
+  toVector: toVector,
 }
 
 // source:https://stackoverflow.com/questions/17410809/how-to-calculate-rotation-in-2d-in-javascript
 const rotate = ({
   theta,
   center: { x: cx, y: cy },
-  position: { x, y }
+  position: { x, y },
 }: {
   theta: number
   center: Position
@@ -63,14 +63,14 @@ const rotate = ({
 }): Position => {
   return {
     x: (x - cx) * Math.cos(theta) - (y - cy) * Math.sin(theta) + cx,
-    y: (y - cy) * Math.cos(theta) + (x - cx) * Math.sin(theta) + cy
+    y: (y - cy) * Math.cos(theta) + (x - cx) * Math.sin(theta) + cy,
   }
 }
 
 const add = (a: Position, b: Position): Position => {
   return {
     x: a.x + b.x,
-    y: a.y + b.y
+    y: a.y + b.y,
   }
 }
 
@@ -80,7 +80,7 @@ export const rangeInclusive = ({ lower, upper }: { lower: Position; upper: Posit
     for (let y = lower.y; y <= upper.y; y++) {
       positions.push({
         x,
-        y
+        y,
       })
     }
   }
@@ -93,7 +93,7 @@ export const rangeExclusive = ({ lower, upper }: { lower: Position; upper: Posit
     for (let y = lower.y; y < upper.y; y++) {
       positions.push({
         x,
-        y
+        y,
       })
     }
   }
@@ -110,13 +110,13 @@ const rescalePosition = ({ value, from, to }: { value: Position; from: Bounds; t
     x: rescale({
       value: value.x,
       from: [from.lower.x, from.upper.x],
-      to: [to.upper.x, to.upper.x]
+      to: [to.upper.x, to.upper.x],
     }),
     y: rescale({
       value: value.y,
       from: [from.lower.y, from.upper.y],
-      to: [to.upper.y, to.upper.y]
-    })
+      to: [to.upper.y, to.upper.y],
+    }),
   }
 }
 
@@ -125,5 +125,5 @@ export const Position = {
   add,
   rangeInclusive,
   rangeExclusive,
-  rescale: rescalePosition
+  rescale: rescalePosition,
 }

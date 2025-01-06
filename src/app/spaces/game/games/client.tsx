@@ -19,14 +19,14 @@ const init = (gameName: GameName): ClientModule['init'] => {
     case 'connect-four': {
       return {
         t: 'connect-four',
-        c: ConnectFour.init
+        c: ConnectFour.init,
       }
     }
 
     case 'flow': {
       return {
         t: 'flow',
-        c: FlowClient.init
+        c: FlowClient.init,
       }
     }
 
@@ -55,7 +55,7 @@ const update: ClientModule['update'] = (input) => {
         msgEvt: input.msgEvt,
         msgServer: input.msgServer?.t === 'connect-four' ? input.msgServer.c : null,
         msgCore: input.msgCore?.t === 'connect-four' ? { ...input.msgCore, ...input.msgCore.c } : null,
-        msg: input.msg?.t === 'connect-four' ? input.msg.c : null
+        msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
       })
 
       return {
@@ -63,7 +63,7 @@ const update: ClientModule['update'] = (input) => {
         eff: Eff.tag('connect-four', updated.eff),
         msgCmd: SpaceClientCmd.tag('connect-four', updated.msgCmd),
         msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'connect-four' })),
-        msgEvt: updated.msgEvt
+        msgEvt: updated.msgEvt,
       }
     }
 
@@ -76,7 +76,7 @@ const update: ClientModule['update'] = (input) => {
         msgEvt: input.msgEvt,
         msgServer: input.msgServer?.t === 'flow' ? input.msgServer.c : null,
         msgCore: input.msgCore?.t === 'flow' ? { ...input.msgCore, ...input.msgCore.c } : null,
-        msg: input.msg?.t === 'flow' ? input.msg.c : null
+        msg: input.msg?.t === 'flow' ? input.msg.c : null,
       })
 
       return {
@@ -84,7 +84,7 @@ const update: ClientModule['update'] = (input) => {
         eff: Eff.tag('flow', updated.eff),
         msgCmd: SpaceClientCmd.tag('flow', updated.msgCmd),
         msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'flow' })),
-        msgEvt: updated.msgEvt
+        msgEvt: updated.msgEvt,
       }
     }
   }
@@ -106,8 +106,8 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
         ConnectFour.subscriptions({
           ctx: input.ctx,
           modelCore: input.modelCore.c,
-          model: input.model.t === 'connect-four' ? input.model.c : ConnectFour.init
-        })
+          model: input.model.t === 'connect-four' ? input.model.c : ConnectFour.init,
+        }),
       )
     }
 
@@ -117,8 +117,8 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
         FlowClient.subscriptions({
           ctx: input.ctx,
           modelCore: input.modelCore.c,
-          model: input.model.t === 'flow' ? input.model.c : FlowClient.init
-        })
+          model: input.model.t === 'flow' ? input.model.c : FlowClient.init,
+        }),
       )
     }
   }
@@ -189,5 +189,5 @@ export const GamesClient = {
   subscriptions,
   update,
   View,
-  ViewFeedItem
+  ViewFeedItem,
 }

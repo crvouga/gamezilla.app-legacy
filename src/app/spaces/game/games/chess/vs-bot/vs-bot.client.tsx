@@ -21,7 +21,7 @@ import {
   type MsgToServer,
   initCore,
   isBotTurn,
-  updateCore
+  updateCore,
 } from './vs-bot.types'
 
 //
@@ -37,7 +37,7 @@ export const init: ModelClient = {
   coreModel: initCore,
   openedMenuId: null,
   openedModal: null,
-  isFlipped: false
+  isFlipped: false,
 }
 
 //
@@ -51,7 +51,7 @@ export const init: ModelClient = {
 export const update = ({
   msg,
   model: modelPrev,
-  ctx
+  ctx,
 }: {
   ctx: SpaceClientCtx
   msg: MsgClient
@@ -66,7 +66,7 @@ export const update = ({
 } => {
   const model: ModelClient = {
     ...modelPrev,
-    openedMenuId: null
+    openedMenuId: null,
   }
 
   switch (msg.t) {
@@ -74,8 +74,8 @@ export const update = ({
       return {
         model: {
           ...model,
-          openedModal: null
-        }
+          openedModal: null,
+        },
       }
     }
 
@@ -83,8 +83,8 @@ export const update = ({
       return {
         model: {
           ...model,
-          isFlipped: !model.isFlipped
-        }
+          isFlipped: !model.isFlipped,
+        },
       }
     }
 
@@ -92,8 +92,8 @@ export const update = ({
       return {
         model: {
           ...model,
-          openedMenuId: msg.menuId
-        }
+          openedMenuId: msg.menuId,
+        },
       }
     }
 
@@ -101,8 +101,8 @@ export const update = ({
       return {
         model: {
           ...model,
-          openedMenuId: null
-        }
+          openedMenuId: null,
+        },
       }
     }
 
@@ -111,8 +111,8 @@ export const update = ({
       return {
         model: {
           ...model,
-          vsBotSetup: updated
-        }
+          vsBotSetup: updated,
+        },
       }
     }
 
@@ -120,13 +120,13 @@ export const update = ({
       const handled = updateCore({
         ctx,
         msg,
-        model: model.coreModel
+        model: model.coreModel,
       })
 
       if (handled.t === 'err') {
         return {
           model,
-          msgCmd: [sendToServer(msg)]
+          msgCmd: [sendToServer(msg)],
         }
       }
 
@@ -134,12 +134,12 @@ export const update = ({
 
       const modelNew = mergeWithServer({
         client: model,
-        server: coreModel
+        server: coreModel,
       })
 
       return {
         model: modelNew,
-        msgCmd: [sendToServer(msg)]
+        msgCmd: [sendToServer(msg)],
       }
     }
   }
@@ -153,7 +153,7 @@ export const updateFromServer = (input: {
   eff?: Eff<MsgClient>
 } => {
   return pipe(
-    updateFromServerMain(input)
+    updateFromServerMain(input),
     // andThen((model) => {
     //   if (input.model.coreModel.type !== 'game-over' && model.coreModel.type === 'game-over') {
     //     return {
@@ -184,7 +184,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 
       if (isErr(result)) {
         return {
-          model
+          model,
         }
       }
 
@@ -193,18 +193,18 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
       return {
         model: {
           ...model,
-          coreModel
-        }
+          coreModel,
+        },
       }
     }
 
     case 'player-left': {
       const merged = mergeWithServer({
         client: model,
-        server: msg.model
+        server: msg.model,
       })
       return {
-        model: merged
+        model: merged,
       }
     }
 
@@ -213,7 +213,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 
       if (isErr(result)) {
         return {
-          model
+          model,
         }
       }
 
@@ -221,11 +221,11 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 
       const modelNew = mergeWithServer({
         client: model,
-        server: coreModelNew
+        server: coreModelNew,
       })
 
       return {
-        model: modelNew
+        model: modelNew,
       }
     }
 
@@ -234,17 +234,17 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 
       if (isErr(result)) {
         return {
-          model
+          model,
         }
       }
 
       const modelNew = mergeWithServer({
         client: model,
-        server: result.value
+        server: result.value,
       })
 
       return {
-        model: modelNew
+        model: modelNew,
       }
     }
   }
@@ -260,7 +260,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 
 export const mergeWithServer = ({
   client = init,
-  server
+  server,
 }: {
   client?: ModelClient
   server: ModelServer
@@ -270,7 +270,7 @@ export const mergeWithServer = ({
     openedMenuId: client.openedMenuId,
     openedModal: client.openedModal,
     coreModel: server,
-    vsBotSetup: client.vsBotSetup
+    vsBotSetup: client.vsBotSetup,
   }
 }
 
@@ -298,7 +298,7 @@ export const View = ({
   ctx,
   model,
   dispatch,
-  onClose
+  onClose,
 }: {
   ctx: SpaceClientCtx
   model: ModelClient
@@ -319,8 +319,8 @@ export const View = ({
           renderIcon: (input) =>
             ChessBotLevel.render({
               level: model.coreModel.botLevel,
-              ...input
-            })
+              ...input,
+            }),
         }}
         botVariants={ChessBotLevel.all.map((botLevel) => {
           return {
@@ -328,31 +328,31 @@ export const View = ({
             renderIcon: (input) =>
               ChessBotLevel.render({
                 level: botLevel,
-                ...input
+                ...input,
               }),
             onSelect: () =>
               dispatch({
                 t: 'input-bot-level',
-                botLevel
-              })
+                botLevel,
+              }),
           }
         })}
         onSwapSides={() =>
           dispatch({
             t: 'start-playing',
-            color: model.coreModel.userColor === 'w' ? 'b' : 'w'
+            color: model.coreModel.userColor === 'w' ? 'b' : 'w',
           })
         }
         canStartGame={model.coreModel.userId !== null}
         ctx={ctx}
         human={{
           player: model.coreModel.userColor === 'b' ? 'player-two' : 'player-one',
-          userId: model.coreModel.userId
+          userId: model.coreModel.userId,
         }}
         onQuit={onClose}
         onStartGame={() =>
           dispatch({
-            t: 'start-game'
+            t: 'start-game',
           })
         }
         playerOne={{
@@ -360,30 +360,30 @@ export const View = ({
           onStartPlaying: () =>
             dispatch({
               t: 'start-playing',
-              color: 'w'
+              color: 'w',
             }),
           onStopPlaying: () =>
             dispatch({
-              t: 'stop-playing'
+              t: 'stop-playing',
             }),
           renderIcon: (input) => {
             return <PlayerIcon {...input} color='w' />
-          }
+          },
         }}
         playerTwo={{
           label: ctx.t('chess.black'),
           onStartPlaying: () =>
             dispatch({
               t: 'start-playing',
-              color: 'b'
+              color: 'b',
             }),
           onStopPlaying: () =>
             dispatch({
-              t: 'stop-playing'
+              t: 'stop-playing',
             }),
           renderIcon: (input) => {
             return <PlayerIcon {...input} color='b' />
-          }
+          },
         }}
       />
     )
@@ -430,8 +430,8 @@ export const View = ({
               move: {
                 from: move.source,
                 to: move.target,
-                promotion: 'q'
-              }
+                promotion: 'q',
+              },
             }
 
             dispatch(msg)

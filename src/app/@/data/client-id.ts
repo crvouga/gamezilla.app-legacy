@@ -54,5 +54,5 @@ export const ClientId = {
   ...parser,
   is,
   decode,
-  generate
+  generate,
 }

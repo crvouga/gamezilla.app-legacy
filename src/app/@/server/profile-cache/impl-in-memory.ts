@@ -9,6 +9,6 @@ export type Config = {
 export const ProfileCache = async (_config: Config): Promise<IProfileCache> => {
   return ImplDbConnKv.ProfileCache({
     t: 'db-conn-kv',
-    dbConnKv: await DbConnKv({ t: 'hash-map' })
+    dbConnKv: await DbConnKv({ t: 'hash-map' }),
   })
 }

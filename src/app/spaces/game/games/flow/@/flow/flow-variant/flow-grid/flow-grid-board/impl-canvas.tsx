@@ -52,7 +52,7 @@ const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
       terminal.start.y * cellHeight + cellHeight / 2,
       radius,
       0,
-      Math.PI * 2
+      Math.PI * 2,
     )
     ctx.fill()
     ctx.closePath()
@@ -64,7 +64,7 @@ const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
         terminal.end.y * cellHeight + cellHeight / 2,
         radius,
         0,
-        Math.PI * 2
+        Math.PI * 2,
       )
       ctx.fill()
       ctx.closePath()
@@ -92,7 +92,7 @@ const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
         pipe.target.y * cellHeight + cellHeight / 2,
         cellWidth / 6,
         0,
-        Math.PI * 2
+        Math.PI * 2,
       )
       ctx.fill()
       ctx.closePath()
@@ -108,7 +108,7 @@ const View = ({
 
   onPressDown,
   onDraggedOver,
-  onPressUp
+  onPressUp,
 }: BoardInput<FlowGrid.Model>) => {
   return (
     <Canvas
@@ -136,7 +136,7 @@ const View = ({
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
           const nodeId = FlowGrid.toNodeId({
             x: xIndex,
-            y: yIndex
+            y: yIndex,
           })
           onPressDown?.(nodeId)
         }
@@ -162,7 +162,7 @@ const View = ({
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
           const nodeId = FlowGrid.toNodeId({
             x: xIndex,
-            y: yIndex
+            y: yIndex,
           })
 
           onPressUp?.(nodeId)
@@ -190,7 +190,7 @@ const View = ({
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
           const nodeId = FlowGrid.toNodeId({
             x: xIndex,
-            y: yIndex
+            y: yIndex,
           })
           if (previousMouseMove === nodeId) {
             return
@@ -220,7 +220,7 @@ const View = ({
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
           const nodeId = FlowGrid.toNodeId({
             x: xIndex,
-            y: yIndex
+            y: yIndex,
           })
           onPressDown?.(nodeId)
         }
@@ -246,7 +246,7 @@ const View = ({
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
           const nodeId = FlowGrid.toNodeId({
             x: xIndex,
-            y: yIndex
+            y: yIndex,
           })
           onPressUp?.(nodeId)
         }
@@ -272,7 +272,7 @@ const View = ({
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
           const nodeId = FlowGrid.toNodeId({
             x: xIndex,
-            y: yIndex
+            y: yIndex,
           })
 
           previousMouseMove = nodeId
@@ -284,5 +284,5 @@ const View = ({
 }
 
 export const FlowGridBoardCanvas = {
-  View
+  View,
 }

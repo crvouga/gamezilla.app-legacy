@@ -71,7 +71,7 @@ export const createFocusTrap = () => {
 
   return {
     activate,
-    deactivate
+    deactivate,
   }
 }
 

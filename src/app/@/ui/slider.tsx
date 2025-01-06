@@ -7,7 +7,7 @@ export const Slider = ({
   min,
   step,
   value,
-  onInput
+  onInput,
 }: {
   value: number
   label: TranslatedText

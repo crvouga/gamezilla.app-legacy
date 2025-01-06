@@ -8,7 +8,7 @@ import {
   IconCheckmarkCircle,
   IconFlag,
   IconSpinner,
-  IconXMark
+  IconXMark,
 } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
@@ -28,7 +28,7 @@ import {
   type MsgToServer,
   type StateGame,
   type StateGameOver,
-  toPlayerType
+  toPlayerType,
 } from './vs-user.types'
 import { AppClientCmd } from '~/app/@/client/cmd'
 import { AppClientCtx } from '~/app/@/client/ctx'
@@ -68,7 +68,7 @@ type Module = GameClientModule<{
 
 const init: Module['init'] = {
   ghostIndex: null,
-  openedModal: null
+  openedModal: null,
 }
 
 //
@@ -90,7 +90,7 @@ const updateFromMsg =
 
     if (!msg) {
       return {
-        model
+        model,
       }
     }
 
@@ -99,8 +99,8 @@ const updateFromMsg =
         return {
           model: {
             ...model,
-            openedModal: 'confirm-resign'
-          }
+            openedModal: 'confirm-resign',
+          },
         }
       }
 
@@ -108,8 +108,8 @@ const updateFromMsg =
         return {
           model: {
             ...model,
-            ghostIndex: msg.columnIndex
-          }
+            ghostIndex: msg.columnIndex,
+          },
         }
       }
 
@@ -117,14 +117,14 @@ const updateFromMsg =
         return {
           model: {
             ...model,
-            openedModal: null
-          }
+            openedModal: null,
+          },
         }
       }
 
       default: {
         return {
-          model
+          model,
         }
       }
     }
@@ -171,7 +171,7 @@ const View: Module['View'] = (input) => {
           onStartGame={() => {
             input.dispatch({
               t: 'user-started-game',
-              userId: input.ctx.currentUserId
+              userId: input.ctx.currentUserId,
             })
           }}
           onQuit={input.ctx.onQuit}
@@ -181,19 +181,19 @@ const View: Module['View'] = (input) => {
               input.dispatch({
                 t: 'user-started-playing',
                 playerType: 'player-one',
-                userId: input.ctx.currentUserId
+                userId: input.ctx.currentUserId,
               })
             },
             onStopPlaying: () => {
               input.dispatch({
                 t: 'user-stopped-playing',
-                userId: input.ctx.currentUserId
+                userId: input.ctx.currentUserId,
               })
             },
             renderIcon: (input) => {
               return <PlayerIcon playerType='player-one' {...input} />
             },
-            userId: input.modelCore.players['player-one'] ?? null
+            userId: input.modelCore.players['player-one'] ?? null,
           }}
           playerTwo={{
             label: input.ctx.t('connect-four.yellow'),
@@ -201,19 +201,19 @@ const View: Module['View'] = (input) => {
               input.dispatch({
                 t: 'user-started-playing',
                 userId: input.ctx.currentUserId,
-                playerType: 'player-two'
+                playerType: 'player-two',
               })
             },
             onStopPlaying: () => {
               input.dispatch({
                 t: 'user-stopped-playing',
-                userId: input.ctx.currentUserId
+                userId: input.ctx.currentUserId,
               })
             },
             renderIcon: (input) => {
               return <PlayerIcon playerType='player-two' {...input} />
             },
-            userId: input.modelCore.players['player-two'] ?? null
+            userId: input.modelCore.players['player-two'] ?? null,
           }}
         />
       )
@@ -241,13 +241,13 @@ const View: Module['View'] = (input) => {
                   input.dispatch({
                     t: 'user-dropped-disc',
                     userId: input.ctx.currentUserId,
-                    columnIndex
+                    columnIndex,
                   })
                 }
                 onHover={(columnIndex) =>
                   input.dispatch({
                     t: 'hovered-over-columns',
-                    columnIndex
+                    columnIndex,
                   })
                 }
                 disabled={
@@ -270,7 +270,7 @@ const View: Module['View'] = (input) => {
                 onClick={() => {
                   input.dispatch({
                     t: 'clicked-resign',
-                    userId: input.ctx.currentUserId
+                    userId: input.ctx.currentUserId,
                   })
                 }}
               />
@@ -284,7 +284,7 @@ const View: Module['View'] = (input) => {
                   onClick={() => {
                     input.dispatch({
                       t: 'user-stopped-game',
-                      userId: input.ctx.currentUserId
+                      userId: input.ctx.currentUserId,
                     })
                   }}
                 />
@@ -295,7 +295,7 @@ const View: Module['View'] = (input) => {
                   onClick={() => {
                     input.dispatch({
                       t: 'user-requested-rematch',
-                      userId: input.ctx.currentUserId
+                      userId: input.ctx.currentUserId,
                     })
                   }}
                 />
@@ -308,19 +308,19 @@ const View: Module['View'] = (input) => {
             title={input.ctx.t('app.resign')}
             onCancel={() =>
               input.dispatch({
-                t: 'close-modal'
+                t: 'close-modal',
               })
             }
             onClose={() =>
               input.dispatch({
-                t: 'close-modal'
+                t: 'close-modal',
               })
             }
             confirmTitle={input.ctx.t('app.resign')}
             onConfirm={() =>
               input.dispatch({
                 t: 'user-resigned',
-                userId: input.ctx.currentUserId
+                userId: input.ctx.currentUserId,
               })
             }
             open={input.model.openedModal === 'confirm-resign'}
@@ -334,7 +334,7 @@ const View: Module['View'] = (input) => {
 const ViewGameOverMessage = ({
   ctx,
   modelCore,
-  dispatch
+  dispatch,
 }: {
   modelCore: StateGameOver
   ctx: AppClientCtx
@@ -352,7 +352,7 @@ const ViewGameOverMessage = ({
           onClick={() =>
             dispatch({
               t: 'user-cancelled-rematch',
-              userId: ctx.currentUserId
+              userId: ctx.currentUserId,
             })
           }
           text={ctx.t('app.cancel')}
@@ -376,7 +376,7 @@ const ViewGameOverMessage = ({
               dispatch({
                 t: 'user-responded-to-rematch-request',
                 userId: ctx.currentUserId,
-                response: 'Decline'
+                response: 'Decline',
               })
             }
             iconStart={(iconInput) => <IconXMark {...iconInput} />}
@@ -389,7 +389,7 @@ const ViewGameOverMessage = ({
               dispatch({
                 t: 'user-responded-to-rematch-request',
                 userId: ctx.currentUserId,
-                response: 'Decline'
+                response: 'Decline',
               })
             }
             iconStart={(iconInput) => <IconCheckmarkCircle {...iconInput} />}
@@ -479,7 +479,7 @@ const Feedback = ({ ctx, modelCore }: { ctx: SpaceClientCtx; modelCore: StateGam
 const PlayerSlot = ({
   modelCore,
   playerType,
-  ctx
+  ctx,
 }: {
   modelCore: StateGame | StateGameOver
   playerType: PlayerType
@@ -503,5 +503,5 @@ export const VsUser: Module = {
   update,
   subscriptions,
   View,
-  ViewFeedItem
+  ViewFeedItem,
 }

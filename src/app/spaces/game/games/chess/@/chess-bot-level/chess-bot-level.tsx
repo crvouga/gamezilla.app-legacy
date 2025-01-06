@@ -4,7 +4,7 @@ import {
   IconBotLevel1,
   IconBotLevel4,
   IconBotScary,
-  IconBotSimple
+  IconBotSimple,
 } from '~/app/spaces/game/games/@/vs-bot'
 import * as ChessBotLevelTypes from './chess-bot-level.types'
 
@@ -60,5 +60,5 @@ const render = ({ level, ...input }: { level: ChessBotLevel; className?: string 
 export const ChessBotLevel = {
   all,
   toString,
-  render
+  render,
 }

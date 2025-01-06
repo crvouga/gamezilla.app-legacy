@@ -15,5 +15,5 @@ surfaceArea.impl(isSphere, (shape) => (4 / 3) * Math.PI * shape.radius ** 3)
 export const Sphere = (input: { radius: number }): Sphere => ({
   ...input,
   Shape3D: 'sphere',
-  Shape: 'sphere'
+  Shape: 'sphere',
 })

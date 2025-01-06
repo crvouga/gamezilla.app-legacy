@@ -25,7 +25,7 @@ export const WebServerNode = (config: Config) => {
           t: 'web-server/started',
           ipAddress: getIpAddress(),
           port,
-          startedAt: Posix.now()
+          startedAt: Posix.now(),
         })
       } catch (error) {
         console.error('error', error)
@@ -47,12 +47,12 @@ export const WebServerNode = (config: Config) => {
 
     registerHandler(handler) {
       handlers.push(handler)
-    }
+    },
   }
   return {
     ...base,
     httpServer,
-    t: 'node'
+    t: 'node',
   } as const
 }
 
@@ -81,13 +81,13 @@ async function incomingMessageToFetchRequest(incomingMessage: http.IncomingMessa
   return new Request(url, {
     method,
     headers,
-    body: method !== 'GET' && method !== 'HEAD' ? body : undefined
+    body: method !== 'GET' && method !== 'HEAD' ? body : undefined,
   })
 }
 
 async function applyFetchResponseToNodeResponse(
   res: http.ServerResponse<http.IncomingMessage> & { req: http.IncomingMessage },
-  fetchResponse: Response
+  fetchResponse: Response,
 ): Promise<void> {
   res.statusCode = fetchResponse.status
   res.statusMessage = fetchResponse.statusText

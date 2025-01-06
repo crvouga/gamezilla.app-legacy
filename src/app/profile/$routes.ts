@@ -6,20 +6,20 @@ const Route = p.or(
   p.obj({
     n: p.l('profile'),
     t: p.l('profile'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     n: p.l('profile'),
-    t: p.l('profile-edit')
+    t: p.l('profile-edit'),
   }),
   p.obj({
     n: p.l('profile'),
-    t: p.l('profile-edit-avatar')
+    t: p.l('profile-edit-avatar'),
   }),
   p.obj({
     n: p.l('profile'),
-    t: p.l('profile-edit-username')
-  })
+    t: p.l('profile-edit-username'),
+  }),
 )
 
 export type Route = p.Infer<typeof Route>

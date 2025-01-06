@@ -21,7 +21,7 @@ export const LayoutGame = ({
       className={cn(
         'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll',
         isSpectating && 'border-8 border-t-0 border-blue-500',
-        className
+        className,
       )}
       {...props}
     >

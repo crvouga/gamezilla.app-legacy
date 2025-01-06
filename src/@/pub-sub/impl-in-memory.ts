@@ -20,6 +20,6 @@ export const PubSub = (_config: Config): IPubSub => {
       return async () => {
         subs.delete(subscriber)
       }
-    }
+    },
   }
 }

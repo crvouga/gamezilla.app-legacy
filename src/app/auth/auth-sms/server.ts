@@ -49,13 +49,13 @@ const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
     verifyCodeMaxAttempts: 3,
     sms,
     Translator,
-    verificationCodeGenerator
+    verificationCodeGenerator,
   })
   const verifySMSTwilio = VerifySMS({ t: 'twilio', logger })
   const verifySMS = ctx.env === 'prod' ? verifySMSTwilio : verifySMSInHouse
   return {
     AccountDb: accountDb,
-    VerifySMS: verifySMS
+    VerifySMS: verifySMS,
   }
 }
 
@@ -71,7 +71,7 @@ const update: ServerModule['update'] = async (input) => {
   return AppServerModule.andThen(
     {},
     () => updateSendCode(input),
-    () => updateVerifyCode(input)
+    () => updateVerifyCode(input),
   )
 }
 
@@ -84,9 +84,9 @@ const updateSendCode: ServerModule['update'] = async ({ msgClient, deps }) => {
           sendToClient([msgClient.clientId], {
             t: 'sent-code',
             phoneNumber: msgClient.phoneNumber,
-            sent
-          })
-        ]
+            sent,
+          }),
+        ],
       }
     }
     default: {
@@ -104,7 +104,7 @@ const handleVerifyCode = async (input: {
 }): Task<VerifyCodeProblem, UserAccount> => {
   const verified = await input.VerifySMS.verifyCode({
     code: input.inputtedCode,
-    phoneNumber: input.phoneNumber
+    phoneNumber: input.phoneNumber,
   })
 
   if (isErr(verified)) {
@@ -112,13 +112,13 @@ const handleVerifyCode = async (input: {
   }
 
   const found = await input.AccountDb.findOneByPhoneNumber({
-    phoneNumber: input.phoneNumber
+    phoneNumber: input.phoneNumber,
   })
 
   if (isErr(found)) {
     return Err({
       t: 'database-error',
-      error: found.error
+      error: found.error,
     })
   }
 
@@ -132,17 +132,17 @@ const handleVerifyCode = async (input: {
     createdAt: input.now,
     phoneNumber: input.phoneNumber,
     role: 'normal',
-    userId: UserId.generate()
+    userId: UserId.generate(),
   }
 
   const inserted = await input.AccountDb.insert({
-    account: accountNew
+    account: accountNew,
   })
 
   if (isErr(inserted)) {
     return Err({
       t: 'database-error',
-      error: inserted.error
+      error: inserted.error,
     })
   }
 
@@ -158,7 +158,7 @@ const updateVerifyCode: ServerModule['update'] = async ({ msgClient, deps, ctx }
         VerifySMS: deps.VerifySMS,
         now: ctx.now,
         phoneNumber: msgClient.phoneNumber,
-        inputtedCode: msgClient.inputtedCode
+        inputtedCode: msgClient.inputtedCode,
       })
       ctx.logger.info(`Verified code for ${PhoneNumber.toString(msgClient.phoneNumber)}`)
 
@@ -166,16 +166,16 @@ const updateVerifyCode: ServerModule['update'] = async ({ msgClient, deps, ctx }
         ctx.logger.error(
           `Failed to verify code. ${verifyCodeProblemToString({
             problem: verified.error,
-            t: Translator('en')
-          })}`
+            t: Translator('en'),
+          })}`,
         )
         return {
           msgCmd: [
             sendToClient(msgClient, {
               t: 'verified-code',
-              verified
-            })
-          ]
+              verified,
+            }),
+          ],
         }
       }
 
@@ -183,17 +183,17 @@ const updateVerifyCode: ServerModule['update'] = async ({ msgClient, deps, ctx }
         msgCmd: [
           sendToClient(msgClient, {
             t: 'verified-code',
-            verified
-          })
+            verified,
+          }),
         ],
         msgEvt: [
           {
             ...msgClient,
             t: 'auth-evt.client-authenticated',
             user: verified.value,
-            loggedIn: true
-          }
-        ]
+            loggedIn: true,
+          },
+        ],
       }
     }
 
@@ -225,5 +225,5 @@ const subscriptions: ServerModule['subscriptions'] = async () => {
 export const AuthSMSServer = {
   initDeps,
   update,
-  subscriptions
+  subscriptions,
 }

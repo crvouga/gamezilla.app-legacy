@@ -30,38 +30,38 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
         logger,
         dbConnKv,
         throttle: TimeSpan.seconds(10),
-        runtime: config.runtime
+        runtime: config.runtime,
       }),
     async (dbConnKv) =>
       DbConnKv({
         t: 'with-cache',
         logger,
         source: await dbConnKv,
-        cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
+        cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) }),
       }),
     async (dbConnKv) =>
       DbConnKv({
         t: 'with-reduced-parsing',
         logger,
         dbConnKv: await dbConnKv,
-        verifiedKeys: new Set()
-      })
+        verifiedKeys: new Set(),
+      }),
   )
 
   const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, SpaceCore.Model>({
     dbConnKv,
     namespace: ['spaces', 'space-by-id'],
-    parser: SpaceCore.Model
+    parser: SpaceCore.Model,
   })
   const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>({
     dbConnKv,
     namespace: ['spaces', 'space-id-by-user-id'],
-    parser: SpaceId
+    parser: SpaceId,
   })
   const indexSpaceIds = DbConnKv.withNamespace<string, SpaceId[]>({
     dbConnKv,
     namespace: ['spaces', 'space-ids'],
-    parser: p.arr(SpaceId)
+    parser: p.arr(SpaceId),
   })
   const INDEX_SPACE_IDS_KEY_ALL = 'all'
 
@@ -94,13 +94,13 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     const results = await Promise.all([
       indexSpaceIds.set(INDEX_SPACE_IDS_KEY_ALL, Array.from(allSpaceIds)),
       spacesBySpaceId.set(spaceId, space),
-      indexSpaceIdByUserId.setMany(entries)
+      indexSpaceIdByUserId.setMany(entries),
     ])
 
     return pipe(
       results,
       (results) => Result.combine(results),
-      (result) => Result.mapOk(result, () => null)
+      (result) => Result.mapOk(result, () => null),
     )
   }
 
@@ -147,7 +147,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
         items: got.value,
         total: allSpaceIds.length,
         limit: input.limit,
-        offset: input.offset
+        offset: input.offset,
       })
     },
 
@@ -173,6 +173,6 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
       const spaceNew = EventSourced.mergeLeft(space, currentSpace)
 
       return upsert(spaceNew)
-    }
+    },
   }
 }

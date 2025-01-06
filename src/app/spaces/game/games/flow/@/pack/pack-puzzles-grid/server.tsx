@@ -7,25 +7,25 @@ const update: ServerModule['update'] = async (input) => {
       const listed = await input.ctx.flowPuzzleDb.list({
         pagination: {
           limit: input.msgClient.puzzleIds.length,
-          offset: 0
+          offset: 0,
         },
         order: {
-          createdAt: 'asc'
+          createdAt: 'asc',
         },
         where: {
           puzzleId: {
-            in: input.msgClient.puzzleIds
-          }
-        }
+            in: input.msgClient.puzzleIds,
+          },
+        },
       })
       return {
         msgCmd: [
           sendToClient(input.msgClient, {
             t: 'listed-puzzles-by-id',
             listed,
-            causedBy: { msgClient: input.msgClient }
-          })
-        ]
+            causedBy: { msgClient: input.msgClient },
+          }),
+        ],
       }
     }
   }
@@ -33,5 +33,5 @@ const update: ServerModule['update'] = async (input) => {
 }
 
 export const PackPuzzlesGridServer = {
-  update
+  update,
 }

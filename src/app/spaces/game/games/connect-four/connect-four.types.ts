@@ -19,15 +19,15 @@ export type ModelClient = { t: 'vs-bot'; c: VsBot.ModelClient } | { t: 'vs-user'
 export const ModelServer = p.or(
   p.obj({
     t: p.l('vs-bot'),
-    c: VsBot.ModelServer
+    c: VsBot.ModelServer,
   }),
   p.obj({
     t: p.l('vs-user'),
-    c: VsUser.ModelServer
+    c: VsUser.ModelServer,
   }),
   p.obj({
-    t: p.l(null)
-  })
+    t: p.l(null),
+  }),
 )
 
 export type ModelServer = p.Infer<typeof ModelServer>
@@ -64,44 +64,44 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('user-changed-mode'),
     mode: p.enumeration(['none', 'vs-user', 'vs-bot'] as const),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('vs-bot'),
-    c: VsBot.MsgCore
+    c: VsBot.MsgCore,
   }),
   p.obj({
     t: p.l('vs-user'),
-    c: VsUser.MsgCore
-  })
+    c: VsUser.MsgCore,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
 export const ModelCore = p.or(
   p.obj({
-    t: p.l('none')
+    t: p.l('none'),
   }),
   p.obj({
     t: p.l('vs-user'),
-    c: VsUser.ModelCore
+    c: VsUser.ModelCore,
   }),
   p.obj({
     t: p.l('vs-bot'),
-    c: VsBot.ModelCore
-  })
+    c: VsBot.ModelCore,
+  }),
 )
 export type ModelCore = p.Infer<typeof ModelCore>
 
 export const initCore = (): ModelCore => {
   return {
-    t: 'none'
+    t: 'none',
   }
 }
 
 export const updateCore = ({
   ctx,
   msgCore,
-  modelCore
+  modelCore,
 }: {
   ctx: SpaceCtx
   modelCore: ModelCore
@@ -112,21 +112,21 @@ export const updateCore = ({
       switch (msgCore.mode) {
         case 'none': {
           return {
-            t: 'none'
+            t: 'none',
           }
         }
 
         case 'vs-bot': {
           return {
             t: 'vs-bot',
-            c: VsBot.initCore(ctx)
+            c: VsBot.initCore(ctx),
           }
         }
 
         case 'vs-user': {
           return {
             t: 'vs-user',
-            c: VsUser.initCore(ctx)
+            c: VsUser.initCore(ctx),
           }
         }
 
@@ -145,9 +145,9 @@ export const updateCore = ({
               modelCore: modelCore.c,
               msgCore: {
                 ...msgCore,
-                ...msgCore.c
-              }
-            })
+                ...msgCore.c,
+              },
+            }),
           }
         }
         default: {
@@ -161,7 +161,7 @@ export const updateCore = ({
         case 'vs-user': {
           return {
             t: 'vs-user',
-            c: VsUser.updateCore(modelCore.c, msgCore.c)
+            c: VsUser.updateCore(modelCore.c, msgCore.c),
           }
         }
 

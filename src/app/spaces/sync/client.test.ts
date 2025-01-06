@@ -18,7 +18,7 @@ const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean 
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -29,13 +29,13 @@ describe(import.meta.file, () => {
     const someProfile: Profile = {
       userId: UserId.generate(),
       avatarUrl: 'some url',
-      username: await Username.generate()
+      username: await Username.generate(),
     }
 
     const someProfiles: {
       [userId: UserId]: Profile
     } = {
-      [someProfile.userId]: someProfile
+      [someProfile.userId]: someProfile,
     }
 
     const output = f.update(f.initial, [
@@ -43,9 +43,9 @@ describe(import.meta.file, () => {
         msgServer: {
           t: 'listed-spaces',
           spaces: [],
-          profiles: someProfiles
-        }
-      }
+          profiles: someProfiles,
+        },
+      },
     ])
     expect(hasExactlyOne(output.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(someProfiles)))).toBe(true)
   })
@@ -55,22 +55,22 @@ describe(import.meta.file, () => {
 
     const someSpace = makeSpace({
       spaceId: SpaceId.generate(),
-      hostId: UserId.generate()
+      hostId: UserId.generate(),
     })
 
     const output = f.update(f.initial, [
       {
         msgServer: {
           t: 'synced',
-          space: someSpace
-        }
-      }
+          space: someSpace,
+        },
+      },
     ])
 
     const listed = SpacesCoreClient.listSpaces({
       model: output.model,
       offset: 0,
-      limit: Number.POSITIVE_INFINITY
+      limit: Number.POSITIVE_INFINITY,
     })
 
     expect(listed.some((space) => SpaceCore.isEqual(space, someSpace))).toBe(true)
@@ -81,7 +81,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const someStartedSpace = makeSpace({
       spaceId,
-      hostId: f.ctx.currentUserId
+      hostId: f.ctx.currentUserId,
     })
 
     const output = f.update(f.initial, [
@@ -89,9 +89,9 @@ describe(import.meta.file, () => {
         msgServer: {
           t: 'current-user-space',
           space: someStartedSpace,
-          currentUser: f.ctx.currentUser
-        }
-      }
+          currentUser: f.ctx.currentUser,
+        },
+      },
     ])
 
     const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
@@ -105,21 +105,21 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId: SpaceId.generate()
-        }
+          spaceId: SpaceId.generate(),
+        },
       },
       {
         msgEvt: {
-          t: 'wire-evt.server-connected'
-        }
-      }
+          t: 'wire-evt.server-connected',
+        },
+      },
     ])
 
     expect(
       hasExactlyOne(
         output.msgCmd ?? [],
-        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-server' && msgCmd.c.toServer?.t === 'sync'
-      )
+        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-server' && msgCmd.c.toServer?.t === 'sync',
+      ),
     ).toBe(true)
   })
 
@@ -133,16 +133,16 @@ describe(import.meta.file, () => {
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
-            userId: UserId.generate()
-          })
-        }
+            userId: UserId.generate(),
+          }),
+        },
       },
       {
         msg: {
           t: 'clicked-join-space-button',
-          spaceId
-        }
-      }
+          spaceId,
+        },
+      },
     ])
 
     expect(
@@ -152,8 +152,8 @@ describe(import.meta.file, () => {
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-server' &&
           msgCmd.c.toServer?.t === 'got-msg-core' &&
-          msgCmd.c.toServer?.c.t === 'user-joined-space'
-      )
+          msgCmd.c.toServer?.c.t === 'user-joined-space',
+      ),
     ).toBe(true)
   })
 
@@ -167,10 +167,10 @@ describe(import.meta.file, () => {
           c: withEventMetaAt(0, {
             t: 'user-ended-space',
             spaceId,
-            userId: UserId.generate()
-          })
-        }
-      }
+            userId: UserId.generate(),
+          }),
+        },
+      },
     ])
 
     expect(
@@ -180,8 +180,8 @@ describe(import.meta.file, () => {
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-server' &&
           msgCmd.c.toServer?.t === 'got-msg-core' &&
-          msgCmd.c.toServer?.c.t === 'user-ended-space'
-      )
+          msgCmd.c.toServer?.c.t === 'user-ended-space',
+      ),
     ).toBe(true)
   })
 })

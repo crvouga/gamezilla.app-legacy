@@ -8,7 +8,7 @@ self.onmessage = (event: MessageEvent<unknown>) => {
   if (parsed.t === 'err') {
     self.postMessage({
       t: 'found-solution',
-      model: null
+      model: null,
     })
     return
   }
@@ -18,7 +18,7 @@ self.onmessage = (event: MessageEvent<unknown>) => {
       const solution = FlowAlgoSolve.solve(model)
       self.postMessage({
         t: 'found-solution',
-        model: solution
+        model: solution,
       })
     }
   }

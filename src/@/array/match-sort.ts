@@ -15,6 +15,6 @@ export const matchSort = <T>(items: T[], toValue: (item: T) => string, value: st
     .sort(
       ascend((item) => {
         return editDistance(toValue(item), value)
-      })
+      }),
     )
 }

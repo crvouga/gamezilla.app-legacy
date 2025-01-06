@@ -12,7 +12,7 @@ const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsgCore({ ...input, model }),
-    (model) => updateFromJoinSpaceButton({ ...input, model })
+    (model) => updateFromJoinSpaceButton({ ...input, model }),
   )
 }
 
@@ -21,24 +21,24 @@ const updateFromJoinSpaceButton: SpaceClientModule['update'] = (input) => {
     case 'clicked-join-space-button': {
       if (!input.ctx.currentUserId) {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
       const spaceEventNew = withEventId<SpaceEvent>({
         t: 'user-joined-space',
         spaceId: input.msg.spaceId,
-        userId: input.ctx.currentUserId
+        userId: input.ctx.currentUserId,
       })
 
       return {
         model: input.model,
-        msgCore: [spaceEventNew]
+        msgCore: [spaceEventNew],
       }
     }
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -54,12 +54,12 @@ const updateFromMsgCore: SpaceClientModule['update'] = (input) => {
           if (error.userId === input.ctx.currentUserId) {
             return {
               model: input.model,
-              msgCmd: showErrSm(input.ctx.t("spaces.you're-already-in-a-space"))
+              msgCmd: showErrSm(input.ctx.t("spaces.you're-already-in-a-space")),
             }
           }
 
           return {
-            model: input.model
+            model: input.model,
           }
         }
       }
@@ -68,7 +68,7 @@ const updateFromMsgCore: SpaceClientModule['update'] = (input) => {
 
       if (input.msgCore.spaceId !== currentUserSpaceId) {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -80,20 +80,20 @@ const updateFromMsgCore: SpaceClientModule['update'] = (input) => {
             playSound(APP_SOUND.navForward),
             username
               ? showToast(input.ctx.t('spaces.other-user-joined-space', username))
-              : showToast(input.ctx.t('spaces.current-user-joined-space'))
-          ]
+              : showToast(input.ctx.t('spaces.current-user-joined-space')),
+          ],
         }
       }
 
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForward), showToast(input.ctx.t('spaces.current-user-joined-space'))]
+        msgCmd: [playSound(APP_SOUND.navForward), showToast(input.ctx.t('spaces.current-user-joined-space'))],
       }
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -124,7 +124,7 @@ const View: SpaceClientModule['View'] = (input) => {
         ctx={input.ctx}
         onBack={() =>
           input.dispatch({
-            t: 'clicked-go-home-button'
+            t: 'clicked-go-home-button',
           })
         }
         title={spaceState.game ? input.ctx.t(spaceState.game.t) : input.ctx.t('spaces.space')}
@@ -142,12 +142,12 @@ const View: SpaceClientModule['View'] = (input) => {
               space: space,
               currentUserId: currentUser.userId,
               currentUserRole: currentUser.role,
-              currentUser
+              currentUser,
             }}
             onOpenUserDetails={(userId) =>
               input.dispatch({
                 t: 'clicked-user',
-                userId
+                userId,
               })
             }
           />
@@ -169,5 +169,5 @@ const View: SpaceClientModule['View'] = (input) => {
 
 export const JoinSpaceClient = {
   View,
-  update
+  update,
 }

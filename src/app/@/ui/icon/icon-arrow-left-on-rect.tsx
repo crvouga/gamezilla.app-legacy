@@ -8,7 +8,7 @@ export const IconArrowLeftOnRect = (input: IconInput) => {
       fill='currentColor'
       style={{
         transform: 'rotate(180deg)',
-        transformOrigin: 'center'
+        transformOrigin: 'center',
       }}
       {...input}
     >

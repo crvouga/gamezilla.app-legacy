@@ -39,5 +39,5 @@ export const SpaceId = {
   ...parser,
   is,
   decode,
-  generate
+  generate,
 }

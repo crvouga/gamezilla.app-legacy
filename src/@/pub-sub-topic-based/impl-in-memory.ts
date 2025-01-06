@@ -32,6 +32,6 @@ export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
     async unsub(topic) {
       config.map.delete(topic)
       await new Promise((resolve) => setTimeout(resolve, 0))
-    }
+    },
   }
 }

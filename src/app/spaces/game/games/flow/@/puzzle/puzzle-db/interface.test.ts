@@ -11,7 +11,7 @@ import { PuzzleDbFixture } from './fixture'
 const Fixture = async () => {
   const f = await PuzzleDbFixture()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -60,17 +60,17 @@ describe(import.meta.file, () => {
 
     const listed = await f.flowPuzzleDb.list({
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       pagination: {
         limit: 10,
-        offset: 0
+        offset: 0,
       },
       where: {
         createdBy: {
-          equals: puzzle.createdBy
-        }
-      }
+          equals: puzzle.createdBy,
+        },
+      },
     })
 
     expect(listed.t).toBe('ok')
@@ -93,17 +93,17 @@ describe(import.meta.file, () => {
 
     const listed = await f.flowPuzzleDb.list({
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       pagination: {
         limit: 10,
-        offset: 0
+        offset: 0,
       },
       where: {
         puzzleId: {
-          in: [puzzleA.id, puzzleB.id]
-        }
-      }
+          in: [puzzleA.id, puzzleB.id],
+        },
+      },
     })
 
     expect(listed.t).toBe('ok')
@@ -121,8 +121,8 @@ describe(import.meta.file, () => {
     for (let i = 0; i < EXPECTED_COUNT; i++) {
       await f.flowPuzzleDb.put(
         await Puzzle.random({
-          createdBy
-        })
+          createdBy,
+        }),
       )
     }
     for (let i = 0; i < 1; i++) {
@@ -132,9 +132,9 @@ describe(import.meta.file, () => {
     const counted = await f.flowPuzzleDb.count({
       where: {
         createdBy: {
-          equals: createdBy
-        }
-      }
+          equals: createdBy,
+        },
+      },
     })
     expect(Result.unwrap(counted)).toBe(EXPECTED_COUNT)
   })
@@ -147,7 +147,7 @@ describe(import.meta.file, () => {
     for (let i = 0; i < 5; i++) {
       const puzzle = await Puzzle.random({
         createdBy,
-        createdAt
+        createdAt,
       })
       createdAt = Posix.future(createdAt, TimeSpan.seconds(1))
       puzzles.push(puzzle)
@@ -158,17 +158,17 @@ describe(import.meta.file, () => {
       for (let offset = 0; offset < puzzles.length; offset++) {
         const listed = await f.flowPuzzleDb.list({
           order: {
-            createdAt: 'asc'
+            createdAt: 'asc',
           },
           pagination: {
             limit,
-            offset
+            offset,
           },
           where: {
             createdBy: {
-              equals: createdBy
-            }
-          }
+              equals: createdBy,
+            },
+          },
         })
         expect(listed.t).toBe('ok')
         if (listed.t === 'ok') {
@@ -186,8 +186,8 @@ describe(import.meta.file, () => {
     const updatedPuzzle = {
       ...puzzle,
       name: await PuzzleName.generate({
-        count: 1
-      })
+        count: 1,
+      }),
     }
     await f.flowPuzzleDb.put(updatedPuzzle)
     const after = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
@@ -201,7 +201,7 @@ describe(import.meta.file, () => {
     const before = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
     await f.flowPuzzleDb.zap({
       id: puzzle.id,
-      deletedByUserId: UserId.generate()
+      deletedByUserId: UserId.generate(),
     })
     const after = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
     expect(before).toEqual(puzzle)
@@ -214,16 +214,16 @@ describe(import.meta.file, () => {
     const listed = await f.flowPuzzleDb.list({
       where: {
         puzzleId: {
-          in: []
-        }
+          in: [],
+        },
       },
       order: {
-        createdAt: 'asc'
+        createdAt: 'asc',
       },
       pagination: {
         limit: 10,
-        offset: 0
-      }
+        offset: 0,
+      },
     })
 
     expect(listed).toEqual(
@@ -231,8 +231,8 @@ describe(import.meta.file, () => {
         items: [],
         limit: 10,
         offset: 0,
-        total: 0
-      })
+        total: 0,
+      }),
     )
   })
 })

@@ -16,13 +16,13 @@ export const SpaceGameFixtureServer = async () => {
       hostId: hostUserId,
       spaceId: currentSpaceId,
       users: {
-        [hostUserId]: hostUserId
+        [hostUserId]: hostUserId,
       },
-      visibility: 'public'
-    }
+      visibility: 'public',
+    },
   }
 
   return {
-    ctx: testSpaceServerCtx
+    ctx: testSpaceServerCtx,
   }
 }

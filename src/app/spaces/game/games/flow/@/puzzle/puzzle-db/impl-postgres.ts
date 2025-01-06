@@ -21,7 +21,7 @@ export const Row = p.obj({
   created_at_posix: p.or(p.num, p.str),
   created_by_user_id: p.str,
   last_updated_at_posix: p.or(p.num, p.str),
-  last_updated_by_user_id: p.str
+  last_updated_by_user_id: p.str,
 })
 
 export type Row = p.Infer<typeof Row>
@@ -54,15 +54,15 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
       createdBy,
       lastUpdatedAt,
       lastUpdatedBy,
-      solutions: flowSolutions
+      solutions: flowSolutions,
     }
   }
   console.error(
     `[flow-puzzle-db] Failed to parse row=${JSON.stringify(row, null, 4)} \nerror=${JSON.stringify(
       parsedFlow,
       null,
-      4
-    )}`
+      4,
+    )}`,
   )
   return null
 }
@@ -77,7 +77,7 @@ const toSqlWhere = (input: { where: WhereClause }) => {
   const variables: Sql.Vars = {}
   const where: string[] = [
     //
-    'deleted_at IS NULL'
+    'deleted_at IS NULL',
   ]
 
   if (input.where.createdBy?.equals) {
@@ -98,7 +98,7 @@ const toSqlWhere = (input: { where: WhereClause }) => {
 
   return {
     str,
-    variables
+    variables,
   }
 }
 
@@ -116,19 +116,19 @@ const toSqlOrder = (input: { order: OrderClause }) => {
   const str = orderBy.length > 0 ? `ORDER BY ${orderBy.join(', ')}` : ''
 
   return {
-    str
+    str,
   }
 }
 
 const toSqlPagination = (input: { pagination: Pagination }) => {
   const variables: Sql.Vars = {
     limit: input.pagination.limit,
-    offset: input.pagination.offset
+    offset: input.pagination.offset,
   }
   const str = 'LIMIT :limit OFFSET :offset'
   return {
     variables,
-    str
+    str,
   }
 }
 
@@ -148,8 +148,8 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
 				LIMIT 1
 				`,
         {
-          flow_puzzle_id: flowPuzzleId
-        }
+          flow_puzzle_id: flowPuzzleId,
+        },
       )
 
       if (isErr(queried)) {
@@ -176,7 +176,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
 
       const queried = await dbConnSql.query(
         p.obj({
-          count: p.str
+          count: p.str,
         }),
         `
 				SELECT
@@ -185,7 +185,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
 					game_flow_puzzle
 					${where.str}
 				`,
-        where.variables
+        where.variables,
       )
       return Result.mapOk(queried, (x) => Number.parseFloat(x[0]?.count ?? '0'))
     },
@@ -197,7 +197,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
 
       const variables: Sql.Vars = {
         ...where.variables,
-        ...pagination.variables
+        ...pagination.variables,
       }
 
       const queried = await dbConnSql.query(
@@ -211,7 +211,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
 				${order.str}
 				${pagination.str}
 				`,
-        variables
+        variables,
       )
 
       if (isErr(queried)) {
@@ -220,7 +220,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
 
       const queriedCount = await dbConnSql.query(
         p.obj({
-          count: p.str
+          count: p.str,
         }),
         `
 				SELECT
@@ -229,7 +229,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
 					game_flow_puzzle
 				${where.str}
 				`,
-        variables
+        variables,
       )
 
       if (isErr(queriedCount)) {
@@ -254,7 +254,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
         items: flowPuzzles,
         total: total,
         limit: input.pagination.limit,
-        offset: input.pagination.offset
+        offset: input.pagination.offset,
       })
     },
 
@@ -297,8 +297,8 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
           created_at_posix: flowPuzzle.createdAt,
           created_by_user_id: flowPuzzle.createdBy,
           last_updated_at_posix: flowPuzzle.lastUpdatedAt,
-          last_updated_by_user_id: flowPuzzle.lastUpdatedBy
-        }
+          last_updated_by_user_id: flowPuzzle.lastUpdatedBy,
+        },
       )
       return Result.mapOk(queried, () => null)
     },
@@ -318,10 +318,10 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
         {
           deleted_at: Posix.now(),
           deleted_by_user_id: input.deletedByUserId,
-          flow_puzzle_id: input.id
-        }
+          flow_puzzle_id: input.id,
+        },
       )
       return Result.mapOk(queried, () => null)
-    }
+    },
   }
 }

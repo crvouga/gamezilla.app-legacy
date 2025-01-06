@@ -69,6 +69,6 @@ export const withCache = (config: Config): IDbConnKv => {
     async zap(key) {
       await config.source.zap(key)
       return config.cache.zap(key)
-    }
+    },
   }
 }

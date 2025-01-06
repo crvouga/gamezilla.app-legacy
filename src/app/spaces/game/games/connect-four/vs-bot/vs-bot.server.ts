@@ -14,7 +14,7 @@ import {
   type MsgServer,
   type MsgToClient,
   type MsgToServer,
-  isBotTurn
+  isBotTurn,
 } from './vs-bot.types'
 import { Sub } from '~/@/sub'
 
@@ -42,7 +42,7 @@ type Module = GameServerModule<{
 }>
 
 export const init: Module['init'] = {
-  botStartedFindingMoveAt: null
+  botStartedFindingMoveAt: null,
 }
 
 export const update: Module['update'] = async (input) => {
@@ -79,11 +79,11 @@ const updateFromMsg: Module['update'] = async (input) => {
 
       const msgCoreNew = withEventId<MsgCore>({
         t: 'bot-dropped-disc',
-        columnIndex
+        columnIndex,
       })
 
       return {
-        msgCore: [msgCoreNew]
+        msgCore: [msgCoreNew],
       }
     }
   }
@@ -92,7 +92,7 @@ const updateFromMsg: Module['update'] = async (input) => {
 export const subscriptions: Module['subscriptions'] = async (input) => {
   if (isBotTurn(input.modelCore)) {
     return Time.interval('vs-bot', TimeSpan.seconds(1 / 2), () => ({
-      t: 'time-passed'
+      t: 'time-passed',
     }))
   }
   return Sub.None

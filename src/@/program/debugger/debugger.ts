@@ -17,7 +17,7 @@ export interface DebugMsg<Msg> {
 
 export const debugMsg = <Msg>(payload: Msg): DebugMsg<Msg> => ({
   type: 'MESSAGE',
-  payload
+  payload,
 })
 
 export type MsgWithDebug<Model, Msg extends {}> =

@@ -28,9 +28,9 @@ const update: SpaceServerModule['update'] = async (input) => {
             t: 'listed-spaces',
             spaces: started,
             causedBy: { msgClient: input.msgClient },
-            profiles
-          })
-        ]
+            profiles,
+          }),
+        ],
       }
     }
   }
@@ -46,5 +46,5 @@ const update: SpaceServerModule['update'] = async (input) => {
 //
 
 export const ListSpacesServer = {
-  update
+  update,
 }

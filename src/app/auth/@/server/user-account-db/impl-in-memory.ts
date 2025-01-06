@@ -42,6 +42,6 @@ export const UserAccountDb = (config: Config): IUserAccountDb => {
       }
       accounts.set(input.account.userId, input.account)
       return Ok(null)
-    }
+    },
   }
 }

@@ -36,7 +36,7 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
 
       if (!input.phoneNumber) {
         return Err({
-          t: 'verification-not-found'
+          t: 'verification-not-found',
         })
       }
 
@@ -46,8 +46,8 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
       }
 
       return Err({
-        t: 'code-incorrect'
+        t: 'code-incorrect',
       })
-    }
+    },
   }
 }

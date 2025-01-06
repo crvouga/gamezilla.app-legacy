@@ -14,21 +14,21 @@ const Fixture = async () => {
     case 'integration': {
       const sms = SMS({
         t: 'fake',
-        logger
+        logger,
       })
       return {
         phoneNumber,
-        sms
+        sms,
       }
     }
     case 'unit': {
       const sms = SMS({
         t: 'fake',
-        logger
+        logger,
       })
       return {
         phoneNumber,
-        sms
+        sms,
       }
     }
   }
@@ -39,7 +39,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const sent = await f.sms.sendMessage({
       message: 'Hello, World!',
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect(isOk(sent)).toBe(true)
   })

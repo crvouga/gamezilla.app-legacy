@@ -21,7 +21,7 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
 
         const body = new URLSearchParams({
           To: to,
-          Channel: 'sms'
+          Channel: 'sms',
         }).toString()
 
         deps.logger.debug(`Sending code to ${to} body=${body}`)
@@ -29,7 +29,7 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
         if (typeof fetch === 'undefined') {
           return Err({
             t: 'database-error',
-            error: 'fetch is not defined'
+            error: 'fetch is not defined',
           })
         }
         const response = await fetch(
@@ -38,10 +38,10 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
             method: 'POST',
             headers: {
               Authorization: AUTHORIZATION,
-              'Content-Type': 'application/x-www-form-urlencoded'
+              'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body
-          }
+            body,
+          },
         )
 
         const json = await response.json()
@@ -50,7 +50,7 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
           deps.logger.error(`Errored while sending code: ${JSON.stringify(json)}`)
           return Err({
             t: 'database-error',
-            error: JSON.stringify(json)
+            error: JSON.stringify(json),
           })
         }
 
@@ -64,12 +64,12 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
         // https://www.twilio.com/docs/api/errors/60203
         if (twilioCode === 60203) {
           return Err({
-            t: 'limit-reached'
+            t: 'limit-reached',
           })
         }
         return Err({
           t: 'database-error',
-          error: String(error)
+          error: String(error),
         })
       }
     },
@@ -86,13 +86,13 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
             method: 'POST',
             headers: {
               Authorization: AUTHORIZATION,
-              'Content-Type': 'application/x-www-form-urlencoded'
+              'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: new URLSearchParams({
               To: to,
-              Code: input.code
-            })
-          }
+              Code: input.code,
+            }),
+          },
         )
 
         const data = await response.json()
@@ -100,19 +100,19 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
         const parsed = p
           .or(
             p.obj({
-              valid: p.bool
+              valid: p.bool,
             }),
             p.obj({
               status: p.l(400),
-              code: p.num
-            })
+              code: p.num,
+            }),
           )
           .parse(data)
 
         if (isErr(parsed)) {
           return Err({
             t: 'database-error',
-            error: String(parsed)
+            error: String(parsed),
           })
         }
 
@@ -121,13 +121,13 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
           // https://www.twilio.com/docs/errors/60200
           if (twilioCode === 60200) {
             return Err({
-              t: 'code-incorrect'
+              t: 'code-incorrect',
             })
           }
 
           return Err({
             t: 'database-error',
-            error: String(parsed)
+            error: String(parsed),
           })
         }
 
@@ -140,15 +140,15 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
         }
 
         return Err({
-          t: 'code-incorrect'
+          t: 'code-incorrect',
         })
       } catch (error) {
         deps.logger.error(`Errored while verifying code: ${error}`)
         return Err({
           t: 'database-error',
-          error: String(error)
+          error: String(error),
         })
       }
-    }
+    },
   }
 }

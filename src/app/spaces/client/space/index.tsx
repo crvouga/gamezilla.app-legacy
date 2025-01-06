@@ -29,7 +29,7 @@ const View = (input: { model: ModelClient; ctx: AppClientCtx; dispatch: (m: MsgC
       const spaceCtx: SpaceClientCtx = {
         ...input.ctx,
         currentUserId: input.ctx.currentUserId,
-        space: spaceState
+        space: spaceState,
       }
 
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
@@ -91,7 +91,7 @@ const ViewSpaceNotFound = (input: { ctx: AppClientCtx; dispatch: (m: MsgClient) 
       <Button
         onClick={() =>
           input.dispatch({
-            t: 'clicked-go-home-button'
+            t: 'clicked-go-home-button',
           })
         }
         size='lg'
@@ -104,5 +104,5 @@ const ViewSpaceNotFound = (input: { ctx: AppClientCtx; dispatch: (m: MsgClient) 
 }
 
 export const SpaceClient = {
-  View
+  View,
 }

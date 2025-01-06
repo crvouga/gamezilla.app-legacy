@@ -17,20 +17,20 @@ export const initCtx = async (config: { logger: ILogger }): Promise<Ctx> => {
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: DATABASE_URL,
-    logger
+    logger,
   })
   const dbConnKv = await DbConnKv({
     t: 'postgres',
     logger,
-    dbConnSql
+    dbConnSql,
   })
   const serverInstanceDb = ServerInstanceDb({
     t: 'db-conn-kv',
-    dbConnKv
+    dbConnKv,
   })
   return {
     logger,
-    serverInstanceDb
+    serverInstanceDb,
   }
 }
 
@@ -43,16 +43,16 @@ export const respond = async (ctx: Ctx, request: Request): Promise<Response> => 
 
   if (!NonEmpty.is(alive)) {
     return new Response('No servers available', {
-      status: 503
+      status: 503,
     })
   }
 
   const response = new Response(JSON.stringify(alive), {
     headers: {
       'content-type': 'application/json',
-      redirect: 'https://www.google.com'
+      redirect: 'https://www.google.com',
     },
-    status: 200
+    status: 200,
   })
 
   return response

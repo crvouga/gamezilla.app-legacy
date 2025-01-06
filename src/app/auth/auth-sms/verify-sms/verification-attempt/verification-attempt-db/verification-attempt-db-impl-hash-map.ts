@@ -18,6 +18,6 @@ export const VerificationAttemptDbHashMap = (): IVerificationAttemptDb => {
         return true
       })
       return Ok(filtered)
-    }
+    },
   }
 }

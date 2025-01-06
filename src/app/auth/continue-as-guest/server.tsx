@@ -13,7 +13,7 @@ const initModel: ModelServer = null
 const continueAsGuest = async ({
   ctx,
   now,
-  sessionId
+  sessionId,
 }: {
   ctx: ServerCtx
   sessionId: SessionId
@@ -27,29 +27,29 @@ const continueAsGuest = async ({
 
   const existingGuestAccount = Result.unwrapOr(
     await ctx.userAccountDb.findOneByUserId({
-      userId: existingGuestUserId.value
+      userId: existingGuestUserId.value,
     }),
-    null
+    null,
   )
 
   const newGuestAccount: UserAccount = {
     role: 'guest',
     userId: UserId.generate(),
     createdAt: now,
-    phoneNumber: null
+    phoneNumber: null,
   }
 
   const guestAccount: UserAccount = existingGuestAccount ?? newGuestAccount
 
   await ctx.guestSessionMappingDb.insert({
     guestUserId: guestAccount.userId,
-    sessionId: sessionId
+    sessionId: sessionId,
   })
 
   const insertedAccount = existingGuestAccount
     ? Ok(null)
     : await ctx.userAccountDb.insert({
-        account: guestAccount
+        account: guestAccount,
       })
 
   if (isErr(insertedAccount)) {
@@ -58,7 +58,7 @@ const continueAsGuest = async ({
 
   const insertedSession = await ctx.userSessionDb.insert({
     userId: guestAccount.userId,
-    sessionId
+    sessionId,
   })
 
   if (isErr(insertedSession)) {
@@ -74,7 +74,7 @@ const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
       const result = await continueAsGuest({
         ctx,
         now: ctx.now,
-        sessionId: msgClient.sessionId
+        sessionId: msgClient.sessionId,
       })
 
       if (isErr(result)) {
@@ -82,9 +82,9 @@ const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
           msgCmd: [
             sendToClient(msgClient, {
               t: 'guest.continue-as-guest-result',
-              result: result
-            })
-          ]
+              result: result,
+            }),
+          ],
         }
       }
 
@@ -92,8 +92,8 @@ const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
         msgCmd: [
           sendToClient(msgClient, {
             t: 'guest.continue-as-guest-result',
-            result: Ok(result.value.userId)
-          })
+            result: Ok(result.value.userId),
+          }),
         ],
         msgEvt: [
           {
@@ -101,9 +101,9 @@ const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
             clientId: msgClient.clientId,
             user: result.value,
             sessionId: msgClient.sessionId,
-            loggedIn: true
-          }
-        ]
+            loggedIn: true,
+          },
+        ],
       }
     }
 
@@ -115,5 +115,5 @@ const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
 
 export const ContinueAsGuestServer = {
   initModel,
-  update
+  update,
 }

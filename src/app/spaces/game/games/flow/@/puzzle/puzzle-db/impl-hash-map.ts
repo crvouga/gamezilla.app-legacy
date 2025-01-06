@@ -9,7 +9,7 @@ const calls = {
   put: 0,
   zap: 0,
   list: 0,
-  count: 0
+  count: 0,
 }
 
 const ERROR_EVERY = Number.POSITIVE_INFINITY
@@ -34,13 +34,13 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
       }
       const listed = await this.list({
         order: {
-          createdAt: 'asc'
+          createdAt: 'asc',
         },
         pagination: {
           limit: 0,
-          offset: 0
+          offset: 0,
         },
-        where: input.where
+        where: input.where,
       })
 
       if (isErr(listed)) {
@@ -96,7 +96,7 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
         items: sliced,
         total: filtered.length,
         limit: input.pagination.limit,
-        offset: input.pagination.offset
+        offset: input.pagination.offset,
       })
     },
 
@@ -117,6 +117,6 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
       }
       db.delete(id)
       return Ok(null)
-    }
+    },
   }
 }

@@ -53,22 +53,22 @@ export type MouseStatus = 'active' | 'inactive'
 const bounds: Model['bounds'] = {
   lower: {
     x: 0,
-    y: 0
+    y: 0,
   },
   upper: {
     x: 12,
-    y: 21
-  }
+    y: 21,
+  },
 }
 
 const head: Model['head'] = {
   x: Math.floor((bounds.upper.x - bounds.lower.x) / 2) - 3,
-  y: Math.floor((bounds.upper.y - bounds.lower.y) / 2)
+  y: Math.floor((bounds.upper.y - bounds.lower.y) / 2),
 }
 
 const tail: Model['tail'] = List.fromArray([
   Position.subtract(head, { x: 1, y: 0 }),
-  Position.subtract(head, { x: 2, y: 0 })
+  Position.subtract(head, { x: 2, y: 0 }),
 ])
 
 const food: Model['food'] = Position.add(head, { x: 3, y: 0 })
@@ -83,7 +83,7 @@ export const init: Model = {
   foodEatenCount: NonNegInt.of(0),
   direction: 'right',
   directionQueue: [],
-  bounds
+  bounds,
 }
 
 //
@@ -101,7 +101,7 @@ const circularIndex = (index: number, length: number): number => {
 const circular = (model: Model, position: Position): Position => {
   return {
     x: circularIndex(position.x, model.bounds.upper.x),
-    y: circularIndex(position.y, model.bounds.upper.y)
+    y: circularIndex(position.y, model.bounds.upper.y),
   }
 }
 
@@ -110,14 +110,14 @@ export const enqueueDirection = (direction: Direction, model: Model): Model => {
 
   return {
     ...model,
-    directionQueue: directionQueueNew
+    directionQueue: directionQueueNew,
   }
 }
 
 export const toEmptyPositions = (model: Model) => {
   const snake = List.concat(List.of(model.head), model.tail)
   return Position.range(model.bounds).filter((position) =>
-    List.every(snake, (snakePosition) => !Position.equals(position, snakePosition))
+    List.every(snake, (snakePosition) => !Position.equals(position, snakePosition)),
   )
 }
 
@@ -126,7 +126,7 @@ export const step = (model: Model): Model => {
     List.of(model.head),
     (x) => List.concat(x, model.tail),
     (x) => List.take(model.tailLength, x),
-    (x) => List.map(x, (x) => circular(model, x))
+    (x) => List.map(x, (x) => circular(model, x)),
   )
 
   const queuedDirection = model.directionQueue[0] ?? model.direction
@@ -138,7 +138,7 @@ export const step = (model: Model): Model => {
   const headNew = circular(model, Position.add(model.head, Direction.toVector(directionNew)))
 
   const isSnakeEatingFood = List.some(List.concat(List.of(model.head), tailNew), (position) =>
-    Position.equals(position, model.food)
+    Position.equals(position, model.food),
   )
 
   const foodNew = isSnakeEatingFood ? (shuffle(toEmptyPositions(model))[0] ?? model.food) : model.food
@@ -155,7 +155,7 @@ export const step = (model: Model): Model => {
     tailLength: tailLengthNew,
     foodEatenCount: foodEatenCountNew,
     directionQueue: directionQueueNew,
-    direction: directionNew
+    direction: directionNew,
   }
 }
 
@@ -183,13 +183,13 @@ export const theme = {
   light: '#AAD751',
   dark: '#A2D149',
   snake: '#4573E8',
-  apple: '#E7471D'
+  apple: '#E7471D',
 }
 
 export const draw = (
   { width, height }: { width: number; height: number },
   model: Model,
-  ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D,
 ): void => {
   const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x)
   const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y)
@@ -243,17 +243,17 @@ export const CoverArt = () => {
   const bounds: Model['bounds'] = {
     lower: {
       x: 0,
-      y: 0
+      y: 0,
     },
     upper: {
       x: 4,
-      y: 4
-    }
+      y: 4,
+    },
   }
 
   const tail: Model['tail'] = List.fromArray([
     { x: 0, y: 1 },
-    { x: 1, y: 1 }
+    { x: 1, y: 1 },
   ])
 
   const food: Model['food'] = { x: 2, y: 2 }
@@ -271,7 +271,7 @@ export const CoverArt = () => {
             theme[
               toTileVariant({
                 x,
-                y
+                y,
               })
             ]
           }

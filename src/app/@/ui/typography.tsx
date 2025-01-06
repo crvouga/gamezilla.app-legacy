@@ -9,7 +9,7 @@ const variantClasses: { [variant in TypographyVariant]: string } = {
   body: 'text-base',
   label: 'text-xs',
   subtitle: 'text-sm',
-  caption: 'text-xs'
+  caption: 'text-xs',
 }
 
 export type TypographyColor = 'inherit' | 'text-primary' | 'text-secondary'
@@ -17,7 +17,7 @@ export type TypographyColor = 'inherit' | 'text-primary' | 'text-secondary'
 const colorClasses: { [color in TypographyColor]: string } = {
   'text-secondary': 'text-secondary',
   'text-primary': 'text-white',
-  inherit: 'text-inherit'
+  inherit: 'text-inherit',
 }
 
 export const Typography = (input: {

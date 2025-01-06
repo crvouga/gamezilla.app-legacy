@@ -22,7 +22,7 @@ export const init = ({ columnCount, rowCount }: { columnCount: number; rowCount:
   return {
     rowCount,
     columnCount,
-    matrix: emptyMatrix
+    matrix: emptyMatrix,
   }
 }
 
@@ -32,9 +32,9 @@ export const flatMap = <T>(board: Board, f: (item: { cell: Cell; x: number; y: n
       f({
         cell,
         x,
-        y
-      })
-    )
+        y,
+      }),
+    ),
   )
 }
 
@@ -44,12 +44,12 @@ export const toCell = (position: Position.Position, board: Board): Cell => {
 
 export const setCell = (position: Position.Position, cellNext: Cell, board: Board): Board => {
   const matrixNew = board.matrix.map((column, x) =>
-    column.map((cell, y) => (position.x === x && position.y === y ? cellNext : cell))
+    column.map((cell, y) => (position.x === x && position.y === y ? cellNext : cell)),
   )
 
   return {
     ...board,
-    matrix: matrixNew
+    matrix: matrixNew,
   }
 }
 
@@ -66,13 +66,13 @@ export const transpose = (board: Board): Board => {
 
   const matrixNew = matrix.reduce<Cell[][]>(
     (prev, next) => next.map((_item, i) => (prev[i] || []).concat(next[i] ?? [])),
-    []
+    [],
   )
 
   return {
     rowCount: columnCount,
     columnCount: rowCount,
-    matrix: matrixNew
+    matrix: matrixNew,
   }
 }
 

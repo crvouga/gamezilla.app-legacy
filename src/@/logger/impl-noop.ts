@@ -6,5 +6,5 @@ export const loggerNoop: ILogger = {
   error() {},
   debug() {},
   trace() {},
-  fatal() {}
+  fatal() {},
 }

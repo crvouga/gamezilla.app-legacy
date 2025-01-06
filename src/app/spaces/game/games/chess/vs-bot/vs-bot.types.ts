@@ -55,7 +55,7 @@ export const initCore: CoreModel = {
   type: 'setup',
   userColor: 'w',
   userId: null,
-  botLevel: 1
+  botLevel: 1,
 }
 
 export const initServer = ({ userId }: { userId: UserId | null }): ModelServer => {
@@ -63,7 +63,7 @@ export const initServer = ({ userId }: { userId: UserId | null }): ModelServer =
     type: 'setup',
     botLevel: initCore.botLevel,
     userColor: initCore.userColor,
-    userId
+    userId,
   }
 }
 
@@ -132,7 +132,7 @@ export type Res = Req & {
 export const updateCore = ({
   msg,
   model,
-  ctx
+  ctx,
 }: {
   ctx: SpaceCtx & { currentUserId: UserId }
   msg: Req
@@ -153,7 +153,7 @@ export const updateCore = ({
             botLevel: model.botLevel,
             userColor: model.userColor,
             userId: model.userId,
-            board: Chess.init()
+            board: Chess.init(),
           })
         }
 
@@ -163,7 +163,7 @@ export const updateCore = ({
           }
           return Ok({
             ...model,
-            botLevel: msg.botLevel
+            botLevel: msg.botLevel,
           })
         }
 
@@ -173,7 +173,7 @@ export const updateCore = ({
           }
           return Ok({
             ...model,
-            userId: null
+            userId: null,
           })
         }
 
@@ -184,7 +184,7 @@ export const updateCore = ({
           return Ok({
             ...model,
             userId: ctx.currentUserId,
-            userColor: msg.color
+            userColor: msg.color,
           })
         }
 
@@ -221,18 +221,18 @@ export const updateCore = ({
               type: 'game-over',
               board: boardNew,
               gameOver: gameOver,
-              didCapture: boardNew.didCapture
+              didCapture: boardNew.didCapture,
             })
           }
 
           const modelNew: CoreModel = {
             ...model,
-            board: boardNew
+            board: boardNew,
           }
 
           return Result.Ok({
             ...modelNew,
-            didCapture: boardNew.didCapture
+            didCapture: boardNew.didCapture,
           })
         }
 
@@ -244,7 +244,7 @@ export const updateCore = ({
             type: 'setup',
             botLevel: model.botLevel,
             userColor: model.userColor,
-            userId: model.userId
+            userId: model.userId,
           })
         }
 
@@ -264,7 +264,7 @@ export const updateCore = ({
             type: 'setup',
             botLevel: model.botLevel,
             userColor: model.userColor,
-            userId: model.userId
+            userId: model.userId,
           })
         }
         default: {
@@ -289,7 +289,7 @@ export const updateCore = ({
 
 export const botMoved = (
   botMoveResult: Chess.BestMoveInputResult,
-  model: CoreModel
+  model: CoreModel,
 ): Result<string, CoreModel & { didCapture: boolean }> => {
   if (model.type !== 'game') {
     return Err('must_be_started')
@@ -322,17 +322,17 @@ export const botMoved = (
       ...model,
       type: 'game-over',
       gameOver: gameOver,
-      board: boardNew
+      board: boardNew,
     }
     return Ok({
       ...modelNew,
-      didCapture
+      didCapture,
     })
   }
 
   return Ok({
     ...model,
     board: boardNew,
-    didCapture
+    didCapture,
   })
 }

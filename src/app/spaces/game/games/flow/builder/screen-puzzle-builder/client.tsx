@@ -31,7 +31,7 @@ const update: BuilderTypes.ClientModule['update'] = (input) => {
     (model) => EditPuzzleNameClient.update({ ...input, model }),
     (model) => updateFromMsgCore({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
-    (model) => updateFromMsg({ ...input, model })
+    (model) => updateFromMsg({ ...input, model }),
   )
 }
 
@@ -43,7 +43,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
     case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
       return {
         model,
-        msgCore: [withEventId(msg)]
+        msgCore: [withEventId(msg)],
       }
     }
 
@@ -53,10 +53,10 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
         msgCore: [
           withEventId({
             t: 'screen-puzzle-builder.user-clicked-edit-mode-button',
-            userId: ctx.currentUserId
-          })
+            userId: ctx.currentUserId,
+          }),
         ],
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
 
@@ -66,10 +66,10 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
         msgCore: [
           withEventId({
             t: 'screen-puzzle-builder.user-clicked-play-mode-button',
-            userId: ctx.currentUserId
-          })
+            userId: ctx.currentUserId,
+          }),
         ],
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
 
@@ -77,9 +77,9 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          puzzleBuilderOpened: 'more'
+          puzzleBuilderOpened: 'more',
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
@@ -87,15 +87,15 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          puzzleBuilderOpened: null
+          puzzleBuilderOpened: null,
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -108,7 +108,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
     case 'screen-puzzle-builder.got-flow-ui-play-msg': {
       if (modelCore.screenPuzzleBuilder?.mode.t !== 'play') {
         return {
-          model
+          model,
         }
       }
       const flow = ScreenPuzzleBuilderCore.toFlow(modelCore.screenPuzzleBuilder)
@@ -118,31 +118,31 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
         ctx: FlowPlay.initCtx({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
-            flow
-          }
-        })
+            flow,
+          },
+        }),
       })
 
       return {
         model,
-        msgCmd: FlowPlay.eventsToClientCmd(input.ctx, updated.events)
+        msgCmd: FlowPlay.eventsToClientCmd(input.ctx, updated.events),
       }
     }
     case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
       if (modelCore.screenPuzzleBuilder?.mode.t !== 'edit') {
         return {
-          model
+          model,
         }
       }
       const updated = FlowEdit.update({
         model: modelCore.screenPuzzleBuilder.edit,
         msg: msgCore.c,
-        flow: modelCore.screenPuzzleBuilder.puzzle.flow
+        flow: modelCore.screenPuzzleBuilder.puzzle.flow,
       })
 
       if (!updated.msgCmd) {
         return {
-          model
+          model,
         }
       }
 
@@ -150,13 +150,13 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
         case 'play-sound': {
           return {
             model,
-            msgCmd: [playSound(updated.msgCmd.sourceSrc)]
+            msgCmd: [playSound(updated.msgCmd.sourceSrc)],
           }
         }
 
         default: {
           return {
-            model
+            model,
           }
         }
       }
@@ -164,7 +164,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -232,7 +232,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
             dispatch={(c) =>
               dispatch({
                 t: 'screen-puzzle-builder.got-flow-ui-edit-msg',
-                c
+                c,
               })
             }
           />
@@ -244,11 +244,11 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
               icon={(input) => <IconPlay {...input} />}
               label={input.ctx.t('flow.play-mode')}
               classNames={{
-                button: 'text-blue-500'
+                button: 'text-blue-500',
               }}
               onClick={() =>
                 dispatch({
-                  t: 'screen-puzzle-builder.user-clicked-play-mode-button'
+                  t: 'screen-puzzle-builder.user-clicked-play-mode-button',
                 })
               }
             />
@@ -286,14 +286,14 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
                     ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } }),
                     dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
                     model: puzzleBuilder.play,
-                    disabled: status === 'solved'
+                    disabled: status === 'solved',
                   }),
                   FlowPlay.viewResetAction({
                     ctx: input.ctx,
                     dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
                     flowPuzzle: { ...puzzleBuilder.puzzle, flow },
-                    model: puzzleBuilder.play
-                  })
+                    model: puzzleBuilder.play,
+                  }),
                 ]}
               />
             }
@@ -354,21 +354,21 @@ const updateMoreDrawer: BuilderTypes.ClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          puzzleBuilderOpened: null
-        }
+          puzzleBuilderOpened: null,
+        },
       }
     }
     case 'screen-puzzle-builder.user-clicked-more-button': {
       return {
         model: {
           ...model,
-          puzzleBuilderOpened: 'more'
-        }
+          puzzleBuilderOpened: 'more',
+        },
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -381,7 +381,7 @@ export const ViewMoreDrawer: BuilderTypes.ClientModule['View'] = (input) => {
       open={input.model.puzzleBuilderOpened === 'more'}
       onClose={() =>
         input.dispatch({
-          t: 'screen-puzzle-builder.user-closed-more-drawer'
+          t: 'screen-puzzle-builder.user-closed-more-drawer',
         })
       }
       position='bottom'
@@ -402,5 +402,5 @@ export const ViewMoreDrawer: BuilderTypes.ClientModule['View'] = (input) => {
 
 export const ScreenPuzzleBuilderClient = {
   update,
-  View
+  View,
 }

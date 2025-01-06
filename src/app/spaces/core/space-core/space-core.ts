@@ -13,7 +13,7 @@ export type Model = p.Infer<typeof Model>
 export const init: Model = EventSourced.init(SpaceCoreState.init)
 
 export const config: EventSourcedConfig<SpaceEvent, SpaceCoreState.State> = {
-  reducer: SpaceCoreState.updateCore
+  reducer: SpaceCoreState.updateCore,
 }
 
 export const isEqual = (left: Model, right: Model) => EventSourced.isSameState(config, left, right)
@@ -27,8 +27,8 @@ export const random = (input?: { hostId?: UserId; spaceId?: SpaceId }) => {
         t: 'user-started-space',
         eventId: EventId.generate(),
         spaceId: input?.spaceId ?? SpaceId.generate(),
-        userId: input?.hostId ?? UserId.generate()
-      })
+        userId: input?.hostId ?? UserId.generate(),
+      }),
   )
 }
 

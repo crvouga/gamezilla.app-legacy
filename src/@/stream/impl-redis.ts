@@ -76,6 +76,6 @@ export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
       } catch (error) {
         return Err(`Failed to check if event exists: ${error}`)
       }
-    }
+    },
   }
 }

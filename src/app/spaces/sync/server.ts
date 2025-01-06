@@ -14,7 +14,7 @@ const update: SpaceServerModule['update'] = async (input) => {
     () => updateCurrentUserSpace(input),
     () => updateProfileCache(input),
     () => sendSpaceEventToClient(input),
-    () => outputSpaceEventsFromServer(input)
+    () => outputSpaceEventsFromServer(input),
   )
 }
 
@@ -50,9 +50,9 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
             t: 'synced',
             causedBy: { msgClient: input.msgClient },
             space: starting,
-            profiles: profiles
-          })
-        ]
+            profiles: profiles,
+          }),
+        ],
       }
     }
     default: {
@@ -100,10 +100,10 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
             profiles,
             currentUser: input.msgEvt.user,
             causedBy: {
-              msgEvt: input.msgEvt
-            }
-          })
-        ]
+              msgEvt: input.msgEvt,
+            },
+          }),
+        ],
       }
     }
 
@@ -132,23 +132,23 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
 
   const profiles = unwrapOr(
     await input.ctx.profileCache.get('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
-    {}
+    {},
   )
 
   const toClient: MsgToClient = {
     t: 'got-msg-core',
     c: eventWithMeta,
-    profiles
+    profiles,
   }
 
   if (spaceState && eventWithMeta.t === 'game') {
     return {
-      msgCmd: [sendToUser<MsgToClient>(SpaceCoreState.toUserIds(spaceState), toClient)]
+      msgCmd: [sendToUser<MsgToClient>(SpaceCoreState.toUserIds(spaceState), toClient)],
     }
   }
 
   return {
-    msgCmd: [broadcast<MsgToClient>(toClient)]
+    msgCmd: [broadcast<MsgToClient>(toClient)],
   }
 }
 
@@ -156,7 +156,7 @@ const outputSpaceEventsFromServer: SpaceServerModule['update'] = (input) => {
   switch (input.msgClient?.t) {
     case 'got-msg-core': {
       return {
-        msgCore: [input.msgClient.c]
+        msgCore: [input.msgClient.c],
       }
     }
   }
@@ -165,5 +165,5 @@ const outputSpaceEventsFromServer: SpaceServerModule['update'] = (input) => {
 }
 
 export const SyncServer = {
-  update
+  update,
 }

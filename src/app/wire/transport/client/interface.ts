@@ -34,6 +34,6 @@ export const initClientTransport = <MsgToServer, MsgToClient>(): IClientTranspor
     toServer: PubSub.create(),
     msgEvt: PubSub.create(),
     msgCmd: PubSub.create(),
-    start: async () => {}
+    start: async () => {},
   }
 }

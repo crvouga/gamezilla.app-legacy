@@ -36,5 +36,5 @@ const stringify = (json: Json): Result<Problem, string> => {
 
 export const Json = {
   parse,
-  stringify
+  stringify,
 }

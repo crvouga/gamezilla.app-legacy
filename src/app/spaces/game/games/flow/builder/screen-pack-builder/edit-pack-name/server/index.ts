@@ -15,7 +15,7 @@ const update: ServerModule['update'] = async (input) => {
     case 'edit-pack-name.user-clicked-save-button': {
       const modelCoreNext = EditPackNameCore.update({
         ...input,
-        msgCore: input.msgCore
+        msgCore: input.msgCore,
       })
 
       const put = await input.ctx.flowPackDb.put(modelCoreNext.pack)
@@ -25,9 +25,9 @@ const update: ServerModule['update'] = async (input) => {
           withEventId({
             t: 'edit-pack-name.server-persisted-pack',
             result: put,
-            userId: input.msgCore.userId
-          })
-        ]
+            userId: input.msgCore.userId,
+          }),
+        ],
       }
     }
     default: {
@@ -37,5 +37,5 @@ const update: ServerModule['update'] = async (input) => {
 }
 
 export const EditPackNameServer = {
-  update
+  update,
 }
