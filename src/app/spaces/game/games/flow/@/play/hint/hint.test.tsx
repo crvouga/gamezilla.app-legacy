@@ -1,9 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
 import { FixtureFlowClient } from '../../client/fixture'
-import { Puzzle } from '../../puzzle/puzzle'
 import { Flow } from '../../flow'
+import { Puzzle } from '../../puzzle/puzzle'
 import { FlowGridShorthand } from '../../variant/grid'
-import * as FlowHint from './flow-hint'
+import * as FlowHint from './hint'
 
 const Fixture = async (input?: { ctxPuzzle?: Puzzle }) => {
   const f = await FixtureFlowClient()
