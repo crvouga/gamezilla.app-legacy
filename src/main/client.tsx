@@ -1,10 +1,9 @@
 import { DebuggerReduxDevTools } from '~/@/program/debugger'
 import { Program } from '~/@/program/program'
 import { Render } from '~/@/vdom/render'
-import { IS_PROD, SERVER_URL, TRANSPORT_IMPL, VDOM_IMPL } from '~/config/shared'
 import { renderRuntimeErrors } from '~/app/@/ui/render-runtime-errors'
 import * as AppClient from '~/app/client'
-import './client.css'
+import { IS_PROD, SERVER_URL, TRANSPORT_IMPL, VDOM_IMPL } from '~/config/shared'
 
 const main = async () => {
   renderRuntimeErrors()
