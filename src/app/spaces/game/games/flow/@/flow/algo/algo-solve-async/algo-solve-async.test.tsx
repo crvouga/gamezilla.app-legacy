@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { Logger } from '~/@/logger'
 import { Flow } from '../../flow'
 import { FlowGridShorthand } from '../../variant/grid'
-import * as FlowAlgoSolveAsync from './algo-solve-async'
+import * as AlgoSolveAsync from './algo-solve-async'
 
 describe(import.meta.file, () => {
   test('solve flow', async () => {
@@ -12,7 +12,7 @@ describe(import.meta.file, () => {
       ['A', 'B', 'C'],
     ])
 
-    const solution = await FlowAlgoSolveAsync.solve(
+    const solution = await AlgoSolveAsync.solve(
       flow,
       Logger({
         t: 'noop',

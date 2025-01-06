@@ -1,4 +1,4 @@
-import { FlowAlgoSolve } from '../algo-solve'
+import { AlgoSolve } from '../algo-solve'
 import { MsgToWorker } from './algo-solve-async.types'
 
 declare let self: Worker
@@ -15,7 +15,7 @@ self.onmessage = (event: MessageEvent<unknown>) => {
   switch (parsed.value.t) {
     case 'find-solution': {
       const model = parsed.value.model
-      const solution = FlowAlgoSolve.solve(model)
+      const solution = AlgoSolve.solve(model)
       self.postMessage({
         t: 'found-solution',
         model: solution,

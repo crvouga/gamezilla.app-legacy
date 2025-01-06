@@ -4,7 +4,7 @@ import { Flow } from '../../flow'
 import { FlowGroupId } from '../../flow/group-id'
 import { FlowNodeId } from '../../flow/node-id'
 import { FlowTerminal } from '../../flow/terminal'
-import { FlowAlgoIsUnsolvable } from '../algo-is-unsolvable'
+import { AlgoIsUnsolvable } from '../algo-is-unsolvable'
 import { Variant } from '../../variant'
 
 const toDirection = (model: Variant.Model, sourceId: FlowNodeId, targetId: FlowNodeId): string => {
@@ -126,7 +126,7 @@ const drawPipeline = (model: Variant.Model, terminal: FlowTerminal, path: Flow.E
 }
 
 const solveStep = function* (model: Variant.Model, disconnectedTerminals: FlowTerminal[]): Iterable<Flow.Model> {
-  if (FlowAlgoIsUnsolvable.isUnsolvable(model)) {
+  if (AlgoIsUnsolvable.isUnsolvable(model)) {
     return
   }
 

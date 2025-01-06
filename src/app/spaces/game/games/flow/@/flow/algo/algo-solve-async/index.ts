@@ -1,1 +1,1 @@
-export * as FlowAlgoSolveAsync from './algo-solve-async'
+export * as AlgoSolveAsync from './algo-solve-async'

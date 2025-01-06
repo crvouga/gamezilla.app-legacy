@@ -8,8 +8,8 @@ import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { PrebuiltBottomButtons } from '../../../../@/ui/prebuilt-bottom-buttons'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { Flow } from '../flow'
-import { FlowAlgoDrawPipes } from '../algo/algo-draw-pipes'
-import { FlowAlgoSolve } from '../algo/algo-solve'
+import { AlgoDrawPipes } from '../algo/algo-draw-pipes'
+import { AlgoSolve } from '../algo/algo-solve'
 import { FlowGroupId } from '../flow/group-id'
 import { FlowNodeId } from '../flow/node-id'
 import { FlowTerminal } from '../flow/terminal'
@@ -167,7 +167,7 @@ export const isShowingHint = (_model: Model): boolean => {
 }
 
 export const toSolutionMsgs = ({ flow }: { flow: Variant.Model }): Msg[] => {
-  const solutions = FlowAlgoSolve.solutions(flow)
+  const solutions = AlgoSolve.solutions(flow)
 
   const solution = first(solutions)
 
@@ -420,7 +420,7 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
         }
       }
 
-      const started = FlowAlgoDrawPipes.startDrawPipes(current, groupId, msg.nodeId)
+      const started = AlgoDrawPipes.startDrawPipes(current, groupId, msg.nodeId)
 
       return {
         model: {
@@ -472,7 +472,7 @@ const updateDragging = ({
         flow: ctx.flowPuzzle.flow,
       })
 
-      const extended = FlowAlgoDrawPipes.drawPipes(current, modelStatus.activeGroupId, nodeId)
+      const extended = AlgoDrawPipes.drawPipes(current, modelStatus.activeGroupId, nodeId)
 
       const modelNew: Model = {
         ...model,

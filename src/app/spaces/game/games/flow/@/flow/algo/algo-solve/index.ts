@@ -1,1 +1,1 @@
-export * as FlowAlgoSolve from './algo-solve'
+export * as AlgoSolve from './algo-solve'

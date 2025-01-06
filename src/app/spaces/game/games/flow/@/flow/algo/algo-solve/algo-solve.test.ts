@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { Flow } from '../../flow'
 import { FlowGridShorthand } from '../../variant/grid'
-import * as FlowAlgoSolve from './algo-solve'
+import * as AlgoSolve from './algo-solve'
 
 const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
   for (const value of iterable) {
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
       ]),
     ]
 
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
       ]),
     ]
 
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
       ]),
     ]
 
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -140,7 +140,7 @@ describe(import.meta.file, () => {
       ]),
     ]
 
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -156,7 +156,7 @@ describe(import.meta.file, () => {
         [' ', ' '],
       ]),
     ]
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
 
@@ -173,7 +173,7 @@ describe(import.meta.file, () => {
         ['Bb', 'B', 'A'],
       ]),
     ]
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
 
@@ -196,7 +196,7 @@ describe(import.meta.file, () => {
       ]),
     ]
 
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -222,7 +222,7 @@ describe(import.meta.file, () => {
       ]),
     ]
 
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -249,7 +249,7 @@ describe(import.meta.file, () => {
         ['c', 'c', 'c', 'c', 'c', 'i', 'I'],
       ]),
     ]
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -277,7 +277,7 @@ describe(import.meta.file, () => {
         ['c', 'c', 'c', 'c', 'c', 'i', 'i', 'I'],
       ]),
     ]
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -307,7 +307,7 @@ describe(import.meta.file, () => {
         ['J', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'j'],
       ]),
     ]
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -341,7 +341,7 @@ describe(import.meta.file, () => {
     ]
 
     expect(
-      some(FlowAlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected))),
+      some(AlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected))),
     ).toBe(true)
   })
 
@@ -376,7 +376,7 @@ describe(import.meta.file, () => {
     ]
 
     expect(
-      some(FlowAlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected))),
+      some(AlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected))),
     ).toBe(true)
   })
 
@@ -411,7 +411,7 @@ describe(import.meta.file, () => {
         ['M', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm'],
       ]),
     ]
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -449,7 +449,7 @@ describe(import.meta.file, () => {
         ['N', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n'],
       ]),
     ]
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -489,7 +489,7 @@ describe(import.meta.file, () => {
         ['O', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o'],
       ]),
     ]
-    const actual = FlowAlgoSolve.solutions(grid)
+    const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
@@ -512,7 +512,7 @@ describe(import.meta.file, () => {
       ['O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
 
-    const solution = first(FlowAlgoSolve.solutions(grid))
+    const solution = first(AlgoSolve.solutions(grid))
     expect(solution && Flow.isSolved(solution)).toBe(true)
   })
 
@@ -522,7 +522,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' '],
       ['C', 'B', 'C'],
     ])
-    const actual = Array.from(FlowAlgoSolve.solutions(grid))
+    const actual = Array.from(AlgoSolve.solutions(grid))
     expect(actual).toEqual([])
   })
 
@@ -533,7 +533,7 @@ describe(import.meta.file, () => {
       [' ', 'B', ' '],
       [' ', ' ', ' '],
     ])
-    const solutions = FlowAlgoSolve.solutions(grid)
+    const solutions = AlgoSolve.solutions(grid)
     expect(isEmpty(solutions)).toBe(false)
   })
 
@@ -547,7 +547,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['A', ' ', ' ', 'D', ' ', ' ', ' ', 'C'],
     ])
-    const actual = first(FlowAlgoSolve.solutions(grid))
+    const actual = first(AlgoSolve.solutions(grid))
     expect(actual).toEqual(null)
   })
 })

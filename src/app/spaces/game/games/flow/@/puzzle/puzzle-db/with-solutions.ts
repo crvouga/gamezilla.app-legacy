@@ -1,5 +1,5 @@
 import { Ok, isErr } from '~/@/result'
-import { FlowAlgoSolveAsync } from '../../flow/algo/algo-solve-async'
+import { AlgoSolveAsync } from '../../flow/algo/algo-solve-async'
 import type { IPuzzleDb } from './interface'
 
 export const SKIP_QUERIES = true
@@ -19,7 +19,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
       const promises = listed.value.items.map(async (puzzle) => {
         if (puzzle.solutions.length > 0) return puzzle
 
-        const solution = await FlowAlgoSolveAsync.solve(puzzle.flow)
+        const solution = await AlgoSolveAsync.solve(puzzle.flow)
 
         if (!solution) return puzzle
 
@@ -51,7 +51,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
 
       if (got.value.solutions.length > 0) return got
 
-      const solution = await FlowAlgoSolveAsync.solve(got.value.flow)
+      const solution = await AlgoSolveAsync.solve(got.value.flow)
 
       if (!solution) return got
 
@@ -63,7 +63,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
       return Ok(withSolution)
     },
     async put(puzzle) {
-      const solution = await FlowAlgoSolveAsync.solve(puzzle.flow)
+      const solution = await AlgoSolveAsync.solve(puzzle.flow)
       const withSolution: typeof puzzle = {
         ...puzzle,
         solutions: solution ? [solution] : [],

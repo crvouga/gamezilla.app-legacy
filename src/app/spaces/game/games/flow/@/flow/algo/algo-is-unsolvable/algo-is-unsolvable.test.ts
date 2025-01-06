@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { FlowGridShorthand } from '../../variant/grid'
-import * as FlowAlgoIsUnsolvable from './flow-algo-is-unsolvable'
+import * as AlgoIsUnsolvable from './algo-is-unsolvable'
 
 describe(import.meta.file, () => {
   test('solvable 3x3 puzzle', () => {
@@ -9,7 +9,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' '],
       ['A', 'B', 'C'],
     ])
-    expect(FlowAlgoIsUnsolvable.isUnsolvable(grid)).toBe(false)
+    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toBe(false)
   })
 
   test.todo('unsolvable 3x3 puzzle', () => {
@@ -18,7 +18,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' '],
       ['C', 'B', 'C'],
     ])
-    expect(FlowAlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)
+    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)
   })
 
   test.todo('unsolvable 8x8', () => {
@@ -31,6 +31,6 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['A', ' ', ' ', 'D', ' ', ' ', ' ', 'C'],
     ])
-    expect(FlowAlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)
+    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)
   })
 })
