@@ -1,18 +1,8 @@
-import { VDomImpl } from '~/@/vdom/vdom-impl'
-
-export const SERVER_PORT = Number(import.meta.env?.PORT)
-
 export const IS_PROD = import.meta.env?.PROD
 
 export const IS_INTEGRATION_TEST = import.meta.env?.IS_INTEGRATION_TEST === 'true'
 
 export const IS_TEST = import.meta.env?.NODE_ENV === 'test'
-
-export const VDOM_IMPL = VDomImpl.from(import.meta.env?.VITE_VDOM_IMPL) || VDomImpl.of('inferno')
-
-export const VDOM_IMPL_TEST = VDomImpl.of('react-with-compiler')
-
-export const VDOM_IMPL_CURRENT = IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL
 
 export type TransportImpl = 'bun-web-sockets' | 'noop'
 
@@ -21,5 +11,3 @@ export const TRANSPORT_IMPL: TransportImpl = 'bun-web-sockets' as string as Tran
 export type ServerImpl = 'bun' | 'node'
 
 export const SERVER_IMPL: ServerImpl = TRANSPORT_IMPL === 'bun-web-sockets' ? 'bun' : 'node'
-
-export const SERVER_URL = import.meta.env?.VITE_SERVER_URL ? String(import.meta.env?.VITE_SERVER_URL) : ''

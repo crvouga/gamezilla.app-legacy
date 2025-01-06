@@ -2,7 +2,7 @@ import { ProgramImpure } from '~/@/program/program-impure'
 import { withRPC } from '~/@/rpc/rpc'
 import { AppTypes } from '~/app'
 import { AppServer } from '~/app/server'
-import { SERVER_PORT } from '~/config/shared'
+import { SERVER_PORT } from '~/config/server'
 import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config/shared'
 
 const main = async () => {

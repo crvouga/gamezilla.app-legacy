@@ -3,7 +3,8 @@ import { Program } from '~/@/program/program'
 import { Render } from '~/@/vdom/render'
 import { renderRuntimeErrors } from '~/app/@/ui/render-runtime-errors'
 import * as AppClient from '~/app/client'
-import { IS_PROD, SERVER_URL, TRANSPORT_IMPL, VDOM_IMPL } from '~/config/shared'
+import { SERVER_URL, VDOM_IMPL } from '~/config/client'
+import { IS_PROD, TRANSPORT_IMPL } from '~/config/shared'
 
 const main = async () => {
   renderRuntimeErrors()

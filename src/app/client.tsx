@@ -8,8 +8,8 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { WebClient } from '~/@/web-client'
-import { SERVER_IMPL, SERVER_URL, type ServerImpl } from '~/config/shared'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
+import { SERVER_IMPL, type ServerImpl } from '~/config/shared'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppClientCmd, preloadSound } from './@/client/cmd'
 import { AnonymousClientCtx, AppClientCtx, BaseClientCtx, isAppClientCtx } from './@/client/ctx'
@@ -32,6 +32,8 @@ import {
 } from './types'
 import * as WireClient from './wire/client'
 import { ClientTransport } from './wire/transport/client'
+import { SERVER_URL } from '~/config/client'
+import './app-client/styles.css'
 
 //
 //

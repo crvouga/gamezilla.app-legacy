@@ -1,5 +1,5 @@
 import { Inferno } from 'inferno'
-import { VDOM_IMPL_CURRENT } from '~/config/shared'
+import { VDOM_IMPL_CURRENT } from '~/config/client'
 import { VDomImpl } from './vdom-impl'
 
 export type StylesObjectKebab = Inferno.HTMLAttributes<HTMLDivElement>['style']

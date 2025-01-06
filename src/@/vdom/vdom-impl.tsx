@@ -1,18 +1,20 @@
 import { minBy } from '../array/min-by'
 import { editDistance } from '../string/edit-distance'
 
-export const ALL_VDOM_IMPLS = ['inferno', 'preact', 'react', 'react-with-compiler'] as const
+export const ALL_VDOM_IMPL = ['inferno', 'preact', 'react', 'react-with-compiler'] as const
 
-export type VDomImpl = (typeof ALL_VDOM_IMPLS)[number]
+export type VDomImpl = (typeof ALL_VDOM_IMPL)[number]
 
-const of = (impl: VDomImpl): VDomImpl => impl
+const of = (impl: VDomImpl): VDomImpl => {
+  return impl
+}
 
 const from = (s: unknown): VDomImpl | null => {
   if (typeof s !== 'string') {
     return null
   }
 
-  const found = minBy(Array.from(ALL_VDOM_IMPLS), (x) => editDistance(x, s)) ?? null
+  const found = minBy(Array.from(ALL_VDOM_IMPL), (x) => editDistance(x, s)) ?? null
 
   return found
 }

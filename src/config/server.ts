@@ -9,3 +9,9 @@ export const REDIS_URL = import.meta.env.REDIS_URL || 'redis://localhost:6379'
 if (!REDIS_URL) {
   throw new Error('REDIS_URL is required')
 }
+
+export const SERVER_PORT = Number(import.meta.env?.PORT)
+
+if (isNaN(SERVER_PORT)) {
+  throw new Error('PORT is required and must be a number')
+}
