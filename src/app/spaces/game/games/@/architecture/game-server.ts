@@ -63,7 +63,7 @@ export type GameServer<T extends GameServerTypes> = {
  */
 const tag = <T extends string, Types extends GameServerTypes>(
   tag: T,
-  server: GameServer<Types>
+  server: GameServer<Types>,
 ): GameServer<{
   ModelServer: { t: T; c: Types['ModelServer'] }
   MsgServer: { t: T; c: Types['MsgServer'] }
@@ -76,15 +76,15 @@ const tag = <T extends string, Types extends GameServerTypes>(
     init: async (input) => {
       const initial = await server.init({
         ctx: input.ctx,
-        state: input.state.c
+        state: input.state.c,
       })
       return {
         model: {
           t: tag,
-          c: initial.model
+          c: initial.model,
         },
         eff: Eff.tag(tag, initial.eff),
-        msgCmd: SpaceServerCmd.tag(tag, initial.msgCmd)
+        msgCmd: SpaceServerCmd.tag(tag, initial.msgCmd),
       }
     },
 
@@ -96,19 +96,19 @@ const tag = <T extends string, Types extends GameServerTypes>(
         msgCore: input.msgCore?.t === tag ? input.msgCore?.c : undefined,
         clientMsg: input.clientMsg?.t === tag ? input.clientMsg?.c : undefined,
         ctx: input.ctx,
-        state: input.state.c
+        state: input.state.c,
       })
       return {
         model: {
           t: tag,
-          c: updated.model
+          c: updated.model,
         },
         eff: Eff.tag(tag, updated.eff),
         msgCmd: SpaceServerCmd.tag(tag, updated.msgCmd),
         msgCore: updated.msgCore
           ? updated.msgCore.map(
               (
-                msgCore
+                msgCore,
               ): EventMeta & {
                 t: T
                 c: Types['MsgCore']
@@ -116,10 +116,10 @@ const tag = <T extends string, Types extends GameServerTypes>(
                 eventId: msgCore.msgEvtId,
                 happenedAt: msgCore.happenedAt,
                 t: tag,
-                c: msgCore
-              })
+                c: msgCore,
+              }),
             )
-          : undefined
+          : undefined,
       }
     },
     subscriptions: async (input) => {
@@ -129,10 +129,10 @@ const tag = <T extends string, Types extends GameServerTypes>(
           ctx: input.ctx,
           intervalId: input.intervalId,
           model: input.model?.c,
-          state: input.state.c
-        })
+          state: input.state.c,
+        }),
       )
-    }
+    },
   }
 }
 
@@ -192,11 +192,11 @@ const chain = async <T extends GameServerTypes>(
     model,
     eff: Eff.batch(eff),
     msgCore: msgCores,
-    msgCmd
+    msgCmd,
   }
 }
 
 export const GameServer = {
   tag,
-  chain
+  chain,
 }

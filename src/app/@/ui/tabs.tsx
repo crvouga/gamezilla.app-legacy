@@ -5,7 +5,7 @@ export const Tabs = <TTab extends string>({
   tabs,
   selected,
   onSelect,
-  labels
+  labels,
 }: {
   tabs: TTab[]
   selected: TTab
@@ -23,7 +23,7 @@ export const Tabs = <TTab extends string>({
               className={cn(
                 'flex h-full w-full items-center justify-center py-3 text-xl font-bold hover:bg-black active:opacity-60',
                 index !== tabs.length - 1 && 'border-r-2',
-                selected === tab ? 'border-b-blue-500 text-blue-500' : 'text-secondary'
+                selected === tab ? 'border-b-blue-500 text-blue-500' : 'text-secondary',
               )}
             >
               {labels[tab]}

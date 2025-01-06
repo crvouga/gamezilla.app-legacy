@@ -12,7 +12,7 @@ const shapes2D = [
   Circle({ radius: 10 }),
   Octagon({ side: 5 }),
   Rect({ width: 5, height: 20 }),
-  Rect({ width: 10, height: 20 })
+  Rect({ width: 10, height: 20 }),
 ]
 
 describe(import.meta.file, () => {

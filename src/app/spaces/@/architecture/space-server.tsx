@@ -53,7 +53,7 @@ const andThen = async (
     acc = {
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore)
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
     }
   }
 
@@ -61,5 +61,5 @@ const andThen = async (
 }
 
 export const SpaceServerModule = {
-  andThen
+  andThen,
 }

@@ -16,5 +16,5 @@ function darkenHex(hex: string, percent: number): string {
 }
 
 export const Hex = {
-  darken: darkenHex
+  darken: darkenHex,
 }

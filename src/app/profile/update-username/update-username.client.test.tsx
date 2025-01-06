@@ -11,7 +11,7 @@ const Fixture = async () => {
     const msgs = PubSub.create<MsgClient>()
     return {
       ...f.render(<View ctx={f.ctx} model={model} dispatch={msgs.pub} />),
-      msgs
+      msgs,
     }
   }
 
@@ -20,7 +20,7 @@ const Fixture = async () => {
   return {
     ...f,
     render,
-    initial
+    initial,
   }
 }
 

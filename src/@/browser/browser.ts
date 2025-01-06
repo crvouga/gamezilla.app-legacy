@@ -32,12 +32,12 @@ export const location = (): Location => {
   if (typeof window === 'undefined') {
     return {
       pathname: '',
-      query: {}
+      query: {},
     }
   }
   return {
     pathname: window.location.pathname,
-    query: Object.fromEntries(new URLSearchParams(window.location.search).entries())
+    query: Object.fromEntries(new URLSearchParams(window.location.search).entries()),
   }
 }
 
@@ -135,7 +135,7 @@ export const onIntersections = <T>(htmlId: string, mapper: (entry: IntersectionO
         unsub()
         observer.disconnect()
       }
-    }
+    },
   }
 }
 
@@ -164,7 +164,7 @@ export const focus =
     }
 
     return Result.Err({
-      type: 'ElementNotFound'
+      type: 'ElementNotFound',
     })
   }
 
@@ -181,14 +181,14 @@ export const scrollIntoView =
       element.scrollIntoView({
         behavior: 'auto',
         // block: 'center',
-        inline: 'center'
+        inline: 'center',
       })
 
       return Result.Ok(null)
     }
 
     return Result.Err({
-      type: 'ElementNotFound'
+      type: 'ElementNotFound',
     })
   }
 
@@ -207,12 +207,12 @@ export const getElementById =
     if (element) {
       return Result.Ok({
         offsetHeight: element.offsetHeight,
-        offsetWidth: element.offsetWidth
+        offsetWidth: element.offsetWidth,
       })
     }
 
     return Result.Err({
-      type: 'ElementNotFound'
+      type: 'ElementNotFound',
     })
   }
 

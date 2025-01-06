@@ -6,39 +6,39 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   en: {
-    'flow.puzzle-builder': 'Puzzle Builder'
+    'flow.puzzle-builder': 'Puzzle Builder',
   },
   ar: {
-    'flow.puzzle-builder': 'منشئ الألغاز'
+    'flow.puzzle-builder': 'منشئ الألغاز',
   },
   de: {
-    'flow.puzzle-builder': 'Puzzle-Builder'
+    'flow.puzzle-builder': 'Puzzle-Builder',
   },
   es: {
-    'flow.puzzle-builder': 'Constructor de rompecabezas'
+    'flow.puzzle-builder': 'Constructor de rompecabezas',
   },
   fr: {
-    'flow.puzzle-builder': 'Constructeur de puzzle'
+    'flow.puzzle-builder': 'Constructeur de puzzle',
   },
   hi: {
-    'flow.puzzle-builder': 'पहेली निर्माता'
+    'flow.puzzle-builder': 'पहेली निर्माता',
   },
   it: {
-    'flow.puzzle-builder': 'Costruttore di puzzle'
+    'flow.puzzle-builder': 'Costruttore di puzzle',
   },
   ja: {
-    'flow.puzzle-builder': 'パズルビルダー'
+    'flow.puzzle-builder': 'パズルビルダー',
   },
   ko: {
-    'flow.puzzle-builder': '퍼즐 빌더'
+    'flow.puzzle-builder': '퍼즐 빌더',
   },
   pt: {
-    'flow.puzzle-builder': 'Construtor de quebra-cabeças'
+    'flow.puzzle-builder': 'Construtor de quebra-cabeças',
   },
   ru: {
-    'flow.puzzle-builder': 'Конструктор пазлов'
+    'flow.puzzle-builder': 'Конструктор пазлов',
   },
   zh: {
-    'flow.puzzle-builder': '拼图构建器'
-  }
+    'flow.puzzle-builder': '拼图构建器',
+  },
 }

@@ -15,8 +15,8 @@ export const ViewUpdateAvatarScreen = (input: {
           input.dispatch({
             t: 'clicked-back-button',
             from: {
-              t: 'profile-avatar'
-            }
+              t: 'profile-avatar',
+            },
           })
         }
         title={input.ctx.t('profile.update-avatar')}
@@ -29,7 +29,7 @@ export const ViewUpdateAvatarScreen = (input: {
             input.model.draft?.avatarSeed && input.model.draft?.avatarStyle
               ? ProfileAvatar.toUrl({
                   seed: input.model.draft?.avatarSeed,
-                  style: input.model.draft?.avatarStyle
+                  style: input.model.draft?.avatarStyle,
                 })
               : undefined
           }
@@ -43,7 +43,7 @@ export const ViewUpdateAvatarScreen = (input: {
             onChange={(val) =>
               input.dispatch({
                 t: 'inputted-avatar-seed',
-                seed: val
+                seed: val,
               })
             }
             id='seed'

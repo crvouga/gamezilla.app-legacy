@@ -20,8 +20,8 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureAppClient({
     currentRoute: input?.currentRoute ?? {
       n: 'auth-login',
-      t: 'login-sms-request'
-    }
+      t: 'login-sms-request',
+    },
   })
 
   const updates = (init: AuthSMSTypes.ModelClient, msgs: Msg[]) => {
@@ -31,7 +31,7 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
       const updated = AuthSMSClient.update({
         ctx: f.ctx,
         model,
-        ...msg
+        ...msg,
       })
       model = updated.model
       updates.push(updated)
@@ -46,7 +46,7 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
 
   const init = AuthSMSClient.init({
     ctx: f.ctx,
-    stored: null
+    stored: null,
   }).model
 
   const render = (model: AuthSMSTypes.ModelClient = init) => {
@@ -59,7 +59,7 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
     ...f,
     init,
     update,
-    render
+    render,
   }
 }
 
@@ -74,16 +74,16 @@ describe(import.meta.file, () => {
         msgServer: {
           t: 'sent-code',
           phoneNumber,
-          sent: Ok(null)
-        }
-      }
+          sent: Ok(null),
+        },
+      },
     ])
 
     expect(
       didPushRoute(
         output,
-        (msg) => msg.n === 'auth-login' && msg.t === 'login-sms-verify' && eq(msg.phoneNumber, phoneNumber)
-      )
+        (msg) => msg.n === 'auth-login' && msg.t === 'login-sms-verify' && eq(msg.phoneNumber, phoneNumber),
+      ),
     ).toBe(true)
   })
 
@@ -95,10 +95,10 @@ describe(import.meta.file, () => {
           t: 'sent-code',
           phoneNumber: PhoneNumber.random(),
           sent: Err({
-            t: 'hourly-limit-reached'
-          })
-        }
-      }
+            t: 'hourly-limit-reached',
+          }),
+        },
+      },
     ])
     const r = f.render(output?.model)
     const alertError = r.getByRole('alert', f.ctx.t('verify-sms-problem.send-code-hourly-limit-reached'))
@@ -112,18 +112,18 @@ describe(import.meta.file, () => {
       currentRoute: {
         n: 'auth-login',
         t: 'login-sms-verify',
-        phoneNumber
-      }
+        phoneNumber,
+      },
     })
     const output = f.update(f.init, [
       {
         msgServer: {
           t: 'verified-code',
           verified: Err({
-            t: 'verification-already-verified'
-          })
-        }
-      }
+            t: 'verification-already-verified',
+          }),
+        },
+      },
     ])
     const r = f.render(output?.model)
     const alertError = r.getByRole('alert', f.ctx.t('verify-sms-problem.verification-already-verified'))
@@ -137,8 +137,8 @@ describe(import.meta.file, () => {
       currentRoute: {
         n: 'auth-login',
         t: 'login-sms-verify',
-        phoneNumber
-      }
+        phoneNumber,
+      },
     })
     const r = f.render(f.init)
     const p = r.getByRole('status', f.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber)))

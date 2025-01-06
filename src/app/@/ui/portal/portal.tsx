@@ -27,5 +27,5 @@ const Exit = (input: { portalId: string }) => {
 export const Portal = {
   getExit,
   Entrance,
-  Exit
+  Exit,
 }

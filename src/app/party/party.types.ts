@@ -82,21 +82,21 @@ export type Res =
         userId: UserId
         partyId: PartyId
       },
-      Result<Problem, CoreModel>
+      Result<Problem, CoreModel>,
     ]
   | [
       'PartyDestroy',
       {
         userId: UserId
       },
-      Result<Problem, CoreModel>
+      Result<Problem, CoreModel>,
     ]
   | [
       'PartyLeave',
       {
         userId: UserId
       },
-      Result<Problem, CoreModel>
+      Result<Problem, CoreModel>,
     ]
   | [
       'PartyJoin',
@@ -104,7 +104,7 @@ export type Res =
         userId: UserId
         partyId: PartyId
       },
-      Result<Problem, CoreModel>
+      Result<Problem, CoreModel>,
     ]
 
 type Problem =
@@ -137,16 +137,16 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
           ...model.users,
           [userId]: {
             partyId,
-            userId
-          }
+            userId,
+          },
         },
         parties: {
           ...model.parties,
           [partyId]: {
             hostId: userId,
-            partyId
-          }
-        }
+            partyId,
+          },
+        },
       }
 
       return Ok(modelNew)
@@ -173,7 +173,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
 
       const modelNew: CoreModel = {
         parties: dissoc(model.parties, user.partyId),
-        users: filterObject(model.users, (entry) => entry[1].partyId !== user.partyId)
+        users: filterObject(model.users, (entry) => entry[1].partyId !== user.partyId),
       }
 
       return Ok(modelNew)
@@ -200,9 +200,9 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
           ...model.users,
           [userId]: {
             userId,
-            partyId
-          }
-        }
+            partyId,
+          },
+        },
       }
 
       return Ok(modelNew)
@@ -229,7 +229,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
 
       const modelNew: CoreModel = {
         parties: model.parties,
-        users: dissoc(model.users, userId)
+        users: dissoc(model.users, userId),
       }
 
       return Ok(modelNew)

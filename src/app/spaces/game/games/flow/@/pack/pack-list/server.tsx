@@ -15,9 +15,9 @@ const updateListPacks: ServerModule['update'] = async (input) => {
         msgCmd: [
           sendToClient(input.msgClient, {
             t: 'listed-packs',
-            listed
-          })
-        ]
+            listed,
+          }),
+        ],
       }
     }
 
@@ -28,5 +28,5 @@ const updateListPacks: ServerModule['update'] = async (input) => {
 }
 
 export const PackListServer = {
-  update
+  update,
 }

@@ -10,7 +10,7 @@ const update: SpaceClientModule['update'] = (input) => {
     { model: input.model },
     (model) => updateEndSpaceButton({ ...input, model }),
     (model) => updateFromSpaceEvent({ ...input, model }),
-    (model) => updateFromAppEvent({ ...input, model })
+    (model) => updateFromAppEvent({ ...input, model }),
   )
 }
 
@@ -23,7 +23,7 @@ const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, currentUserId)
       if (!currentUserId || !currentUserSpaceId) {
         return {
-          model
+          model,
         }
       }
 
@@ -33,15 +33,15 @@ const updateFromAppEvent: SpaceClientModule['update'] = (input) => {
           withEventId({
             t: 'user-ended-space',
             spaceId: currentUserSpaceId,
-            userId: currentUserId
-          })
-        ]
+            userId: currentUserId,
+          }),
+        ],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -54,7 +54,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
     case 'user-ended-space': {
       if (!ctx.currentUserId) {
         return {
-          model
+          model,
         }
       }
 
@@ -62,18 +62,18 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
 
       if (msgCore.spaceId !== currentUserSpaceId) {
         return {
-          model
+          model,
         }
       }
 
       return SpaceClientModule.andThen(
         {
-          model
+          model,
         },
         (model) => {
           return {
             model,
-            msgCmd: [playSound(APP_SOUND.navBackward)]
+            msgCmd: [playSound(APP_SOUND.navBackward)],
           }
         },
         (model) => {
@@ -83,21 +83,21 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
               msgCmd: [
                 pushRoute({
                   n: 'spaces',
-                  t: 'space-list'
-                })
-              ]
+                  t: 'space-list',
+                }),
+              ],
             }
           }
           return {
             model,
-            msgCmd: []
+            msgCmd: [],
           }
         },
         (model) => {
           if (msgCore.userId === ctx.currentUserId) {
             return {
               model,
-              msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))]
+              msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))],
             }
           }
 
@@ -106,21 +106,21 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
           if (!profile) {
             return {
               model,
-              msgCmd: [showToast(input.ctx.t('spaces.ended-space-host'))]
+              msgCmd: [showToast(input.ctx.t('spaces.ended-space-host'))],
             }
           }
 
           return {
             model,
-            msgCmd: [showToast(input.ctx.t('spaces.ended-space-other-user', profile.username))]
+            msgCmd: [showToast(input.ctx.t('spaces.ended-space-other-user', profile.username))],
           }
-        }
+        },
       )
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -131,7 +131,7 @@ const updateEndSpaceButton: SpaceClientModule['update'] = ({ msg, model, ctx }) 
     case 'clicked-end-space-button': {
       if (!ctx.currentUserId) {
         return {
-          model
+          model,
         }
       }
 
@@ -139,24 +139,24 @@ const updateEndSpaceButton: SpaceClientModule['update'] = ({ msg, model, ctx }) 
 
       if (!currentUserSpaceId) {
         return {
-          model
+          model,
         }
       }
 
       const spaceEventNew = withEventId<SpaceEvent>({
         t: 'user-ended-space',
         spaceId: currentUserSpaceId,
-        userId: ctx.currentUserId
+        userId: ctx.currentUserId,
       })
 
       return {
         model,
-        msgCore: [spaceEventNew]
+        msgCore: [spaceEventNew],
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -176,7 +176,7 @@ export const ViewEndSpaceButton: SpaceClientModule['View'] = (input) => {
       onClick={() =>
         input.dispatch({
           t: 'clicked-end-space-button',
-          spaceId: userSpaceId
+          spaceId: userSpaceId,
         })
       }
     />
@@ -190,7 +190,7 @@ const ViewSpaceEnded: SpaceClientModule['View'] = (input) => {
       <Button
         onClick={() =>
           input.dispatch({
-            t: 'clicked-go-home-button'
+            t: 'clicked-go-home-button',
           })
         }
         size='lg'
@@ -205,5 +205,5 @@ const ViewSpaceEnded: SpaceClientModule['View'] = (input) => {
 export const EndSpaceClient = {
   ViewSpaceEnded,
   ViewEndSpaceButton,
-  update
+  update,
 }

@@ -10,7 +10,7 @@ const Fixture = async () => {
   const f = await FixtureSpacesClient()
   return {
     ...f,
-    spaceId: SpaceId.generate()
+    spaceId: SpaceId.generate(),
   }
 }
 
@@ -24,16 +24,16 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
-            userId: f.userA.userId
-          })
-        }
+            userId: f.userA.userId,
+          }),
+        },
       },
       {
         msg: {
           t: 'clicked-join-space-button',
-          spaceId: f.spaceId
-        }
-      }
+          spaceId: f.spaceId,
+        },
+      },
     ])
 
     expect(didShowToast(output, (toast) => toast.message === f.ctx.t('spaces.current-user-joined-space'))).toBe(true)
@@ -49,27 +49,27 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
-            userId: f.currentUser.userId
-          })
-        }
+            userId: f.currentUser.userId,
+          }),
+        },
       },
       {
         msgServer: {
           profiles: {
-            [otherUser.userId]: otherUser
+            [otherUser.userId]: otherUser,
           },
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-joined-space',
             spaceId: f.spaceId,
-            userId: otherUser.userId
-          })
-        }
-      }
+            userId: otherUser.userId,
+          }),
+        },
+      },
     ])
 
     expect(
-      didShowToast(output, (toast) => toast.message === f.ctx.t('spaces.other-user-joined-space', otherUser.username))
+      didShowToast(output, (toast) => toast.message === f.ctx.t('spaces.other-user-joined-space', otherUser.username)),
     ).toBe(true)
   })
 
@@ -83,9 +83,9 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
-            userId: f.ctx.currentUserId
-          })
-        }
+            userId: f.ctx.currentUserId,
+          }),
+        },
       },
       {
         msgServer: {
@@ -93,10 +93,10 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-joined-space',
             spaceId: f.spaceId,
-            userId: f.userA.userId
-          })
-        }
-      }
+            userId: f.userA.userId,
+          }),
+        },
+      },
     ])
 
     expect(didShowToast(output)).toBe(true)
@@ -111,16 +111,16 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
-            userId: f.userA.userId
-          })
-        }
+            userId: f.userA.userId,
+          }),
+        },
       },
       {
         msg: {
           t: 'clicked-join-space-button',
-          spaceId: f.spaceId
-        }
-      }
+          spaceId: f.spaceId,
+        },
+      },
     ])
     expect(SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(f.spaceId)
   })
@@ -134,22 +134,22 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
-            userId: f.userA.userId
-          })
-        }
+            userId: f.userA.userId,
+          }),
+        },
       },
       {
         msg: {
           t: 'clicked-join-space-button',
-          spaceId: f.spaceId
-        }
+          spaceId: f.spaceId,
+        },
       },
       {
         msg: {
           t: 'clicked-leave-space-button',
-          spaceId: f.spaceId
-        }
-      }
+          spaceId: f.spaceId,
+        },
+      },
     ])
     expect(SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(null)
   })
@@ -166,22 +166,22 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: spaceA,
-            userId: f.userA.userId
-          })
-        }
+            userId: f.userA.userId,
+          }),
+        },
       },
       {
         msg: {
           t: 'clicked-join-space-button',
-          spaceId: spaceA
-        }
+          spaceId: spaceA,
+        },
       },
       {
         msg: {
           t: 'clicked-join-space-button',
-          spaceId: spaceB
-        }
-      }
+          spaceId: spaceB,
+        },
+      },
     ])
 
     expect(SpacesCoreClient.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(spaceA)

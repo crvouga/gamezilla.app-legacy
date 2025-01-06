@@ -6,7 +6,7 @@ import { TimeSpan } from '~/@/time/time-span'
 export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
   const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null
   const style = styles({
-    'transition-delay': input.open && delayMs ? `${delayMs}ms` : undefined
+    'transition-delay': input.open && delayMs ? `${delayMs}ms` : undefined,
   })
   return (
     <div
@@ -14,7 +14,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
       style={style}
       className={cn(
         'absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out',
-        input.open ? 'scale-100 opacity-100' : 'pointer-events-none scale-0 opacity-0'
+        input.open ? 'scale-100 opacity-100' : 'pointer-events-none scale-0 opacity-0',
       )}
       onClick={(e) => {
         if (e.target !== e.currentTarget) {

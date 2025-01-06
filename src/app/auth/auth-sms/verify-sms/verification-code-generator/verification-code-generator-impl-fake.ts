@@ -4,6 +4,6 @@ export const CodeGeneratorFake = ({ code }: { code: string }): IVerificationCode
   return {
     generate() {
       return code
-    }
+    },
   }
 }

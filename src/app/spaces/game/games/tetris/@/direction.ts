@@ -7,21 +7,21 @@ export const toPosition = (direction: Direction): Position.Position => {
     case 'Down': {
       return {
         x: 0,
-        y: 1
+        y: 1,
       }
     }
 
     case 'Left': {
       return {
         x: -1,
-        y: 0
+        y: 0,
       }
     }
 
     case 'Right': {
       return {
         x: 1,
-        y: 0
+        y: 0,
       }
     }
   }

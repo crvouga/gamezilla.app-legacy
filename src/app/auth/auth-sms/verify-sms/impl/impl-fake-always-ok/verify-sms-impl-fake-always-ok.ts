@@ -16,6 +16,6 @@ export const VerifySMS = (_config: Config): IVerifySMS => {
     },
     async verifyCode() {
       return Ok(null)
-    }
+    },
   }
 }

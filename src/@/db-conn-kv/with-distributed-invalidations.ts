@@ -5,7 +5,7 @@ import { IDbConnKv } from './interface'
 const DistributedUpdateType = {
   SET: 0,
   SET_MANY: 1,
-  ZAP: 2
+  ZAP: 2,
 } as const
 
 export type DistributedUpdate =
@@ -38,7 +38,7 @@ export type Config = {
 }
 
 export const withDistributedInvalidations = async (
-  config: Config
+  config: Config,
 ): Promise<IDbConnKv & { unsubscribe: () => void }> => {
   const logger = Logger.prefix('with-distributed-invalidations', config.logger)
 
@@ -79,8 +79,8 @@ export const withDistributedInvalidations = async (
       await config.pubSub.pub(
         encode({
           t: DistributedUpdateType.SET,
-          k: key
-        })
+          k: key,
+        }),
       )
       return config.cache.set(key, value)
     },
@@ -88,8 +88,8 @@ export const withDistributedInvalidations = async (
       await config.pubSub.pub(
         encode({
           t: DistributedUpdateType.SET_MANY,
-          k: entries.map((e) => e[0])
-        })
+          k: entries.map((e) => e[0]),
+        }),
       )
       return config.cache.setMany(entries)
     },
@@ -97,10 +97,10 @@ export const withDistributedInvalidations = async (
       await config.pubSub.pub(
         encode({
           t: DistributedUpdateType.ZAP,
-          k: key
-        })
+          k: key,
+        }),
       )
       return config.cache.zap(key)
-    }
+    },
   }
 }

@@ -12,7 +12,7 @@ export const PawnIcon = (input: { stroke?: string }) => {
     <g
       transform='translate(0 -2) scale(1)'
       style={{
-        transformOrigin: 'center'
+        transformOrigin: 'center',
       }}
     >
       <path
@@ -32,7 +32,7 @@ export const PlayerIcon = ({ className, color }: { className?: string; color: 'w
       <g
         transform='translate(0 -2) scale(1.25)'
         style={{
-          transformOrigin: 'center'
+          transformOrigin: 'center',
         }}
       >
         <path

@@ -25,11 +25,11 @@ export const FixtureFlowPlayServer = async () => {
     const msgCore = Msg.batch(input.msgCore, nextOutput.msgCore)
     const nextModelCore = msgCore.reduce(
       (modelCore, msgCore) => PlayCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),
-      lastOutput.modelCore
+      lastOutput.modelCore,
     )
     const output = {
       ...nextOutput,
-      modelCore: nextModelCore
+      modelCore: nextModelCore,
     }
     return updates([...outputs, output], rest)
   }
@@ -39,13 +39,13 @@ export const FixtureFlowPlayServer = async () => {
   }
 
   const initial: Output = {
-    modelCore: initCore
+    modelCore: initCore,
   }
 
   return {
     ...f,
     initial,
     update,
-    updates
+    updates,
   }
 }

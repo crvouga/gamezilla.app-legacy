@@ -41,7 +41,7 @@ export const Button = (input: ButtonInput) => {
         toSizeClass(input),
         input.rounded && 'rounded-3xl',
         input.disabled && 'cursor-not-allowed opacity-60',
-        input.loading && 'cursor-wait opacity-70'
+        input.loading && 'cursor-wait opacity-70',
       )}
       role='button'
       onClick={(e) => input.onClick?.({ stopPropagation: () => e.stopPropagation() })}

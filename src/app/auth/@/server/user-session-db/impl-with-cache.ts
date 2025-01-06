@@ -20,13 +20,13 @@ export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb =
   const userIdBySessionId = DbConnKv.withNamespace<SessionId, UserId>({
     dbConnKv,
     namespace: ['auth-session', 'user-id-by-session-id'],
-    parser: UserId
+    parser: UserId,
   })
 
   const sessionIdsByUserId = DbConnKv.withNamespace<UserId, SessionId[]>({
     dbConnKv,
     namespace: ['auth-session', 'session-ids-by-user-id'],
-    parser: p.arr(SessionId)
+    parser: p.arr(SessionId),
   })
 
   return {
@@ -65,7 +65,7 @@ export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb =
     async insert({ sessionId, userId }) {
       const queried = await userSessionDb.insert({
         sessionId,
-        userId
+        userId,
       })
 
       if (isOk(queried)) {
@@ -108,6 +108,6 @@ export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb =
       }
 
       return queried
-    }
+    },
   }
 }

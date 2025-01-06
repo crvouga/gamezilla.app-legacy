@@ -25,9 +25,9 @@ export const init = (): [Model, Eff<Msg>] => {
       users: {},
       //
       requests: {},
-      volume: 0
+      volume: 0,
     },
-    Eff.None
+    Eff.None,
   ]
 }
 
@@ -51,9 +51,9 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
       return [
         {
           ...model,
-          volume: msg[1].volume
+          volume: msg[1].volume,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -72,10 +72,10 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
           ...model,
           requests: {
             ...model.requests,
-            [msg[0]]: RemoteResult.Loading
-          }
+            [msg[0]]: RemoteResult.Loading,
+          },
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -88,7 +88,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 export const updateFromServer = (
   { currentUserId }: { currentUserId: UserId },
   msg: MsgToClient,
-  model: Model
+  model: Model,
 ): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'party-get':
@@ -98,29 +98,29 @@ export const updateFromServer = (
     case 'PartyLeave': {
       const requestsNew: Model['requests'] = {
         ...model.requests,
-        [msg[0]]: RemoteResult.map(msg[2], () => null)
+        [msg[0]]: RemoteResult.map(msg[2], () => null),
       }
 
       if (isErr(msg[2])) {
         return [
           {
             ...model,
-            requests: requestsNew
+            requests: requestsNew,
           },
-          Eff.None
+          Eff.None,
         ]
       }
 
       const modelNext: Model = {
         ...model,
         requests: requestsNew,
-        ...msg[2].value
+        ...msg[2].value,
       }
 
       const eff = toLifecycleEff({
         currentUserId,
         modelNext: modelNext,
-        modelPrev: model
+        modelPrev: model,
       })
 
       return [modelNext, eff]
@@ -134,7 +134,7 @@ export const updateFromServer = (
 const toLifecycleEff = ({
   currentUserId,
   modelNext,
-  modelPrev
+  modelPrev,
 }: {
   currentUserId: UserId
   modelPrev: Model
@@ -147,7 +147,7 @@ const toLifecycleEff = ({
   if (userPrev && !userNext) {
     return pipe(
       Mic.unload,
-      Eff.perform((result) => ['MicUnload', result])
+      Eff.perform((result) => ['MicUnload', result]),
     )
   }
 
@@ -155,7 +155,7 @@ const toLifecycleEff = ({
   if (!userPrev && userNext) {
     return pipe(
       Mic.load,
-      Eff.perform((result) => ['MicLoad', result])
+      Eff.perform((result) => ['MicLoad', result]),
     )
   }
 
@@ -173,7 +173,7 @@ const toLifecycleEff = ({
 export const ViewPage = ({
   ctx,
   model,
-  dispatch
+  dispatch,
 }: {
   ctx: AppClientCtx
   model: Model
@@ -200,7 +200,7 @@ const ViewNotInParty = (_input: { ctx: AppClientCtx; model: Model; dispatch: (ms
 
 export const ViewBanner = ({
   model,
-  ctx
+  ctx,
 }: {
   ctx: AppClientCtx
 

@@ -31,13 +31,13 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
           pubSub: await PubSub({
             t: 'pub-sub-topic-based',
             pubSubTopicBased: config.pubSubTopicBased,
-            topic: 'user-session-db-cache-invalidation'
+            topic: 'user-session-db-cache-invalidation',
           }),
           cache: await DbConnKv({
             t: 'hash-map',
-            map: LRUCache({ maxCapacity: 2000 })
-          })
-        })
+            map: LRUCache({ maxCapacity: 2000 }),
+          }),
+        }),
       }),
 
     async (dbConnKv) =>
@@ -45,18 +45,18 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
         ...config,
         t: 'with-reduced-parsing',
         dbConnKv: await dbConnKv,
-        verifiedKeys: new Set()
-      })
+        verifiedKeys: new Set(),
+      }),
   )
 
   const userSessionDb = ImplPostgres.UserSessionDb({
     t: 'postgres',
     dbConnSql: config.dbConnSql,
-    logger: config.logger
+    logger: config.logger,
   })
 
   return WithCache({
     dbConnKv,
-    userSessionDb
+    userSessionDb,
   })
 }

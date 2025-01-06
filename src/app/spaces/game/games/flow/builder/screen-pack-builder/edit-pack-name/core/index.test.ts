@@ -18,9 +18,9 @@ const Fixture = async () => {
     ...f,
     pack,
     init: EditPackNameCore.init({
-      pack
+      pack,
     }),
-    update
+    update,
   }
 }
 
@@ -32,8 +32,8 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.hostId,
-        packNameDraft
-      }
+        packNameDraft,
+      },
     ])
     expect(model.draft).toBe(packNameDraft)
   })
@@ -45,8 +45,8 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.guestId,
-        packNameDraft
-      }
+        packNameDraft,
+      },
     ])
     expect(model.draft).toBe('')
   })
@@ -56,8 +56,8 @@ describe(import.meta.file, () => {
     const model = f.update(f.init, [
       {
         t: 'edit-pack-name.user-clicked-save-button',
-        userId: f.hostId
-      }
+        userId: f.hostId,
+      },
     ])
     expect(model.result.t).toBe('loading')
   })
@@ -68,8 +68,8 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.server-persisted-pack',
         userId: f.hostId,
-        result: Ok(null)
-      }
+        result: Ok(null),
+      },
     ])
     expect(model.result.t).toBe('ok')
   })
@@ -80,8 +80,8 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.server-persisted-pack',
         userId: f.hostId,
-        result: Err('some error')
-      }
+        result: Err('some error'),
+      },
     ])
     expect(model.result.t).toBe('err')
   })
@@ -92,8 +92,8 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.hostId,
-        packNameDraft: ''
-      }
+        packNameDraft: '',
+      },
     ])
     expect(model.validationError?.t).toBe('name-cannot-be-empty')
   })
@@ -104,13 +104,13 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.hostId,
-        packNameDraft: ''
+        packNameDraft: '',
       },
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.hostId,
-        packNameDraft: 'pack-name'
-      }
+        packNameDraft: 'pack-name',
+      },
     ])
     expect(model.validationError).toBe(null)
   })
@@ -122,12 +122,12 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.hostId,
-        packNameDraft: newPackName
+        packNameDraft: newPackName,
       },
       {
         t: 'edit-pack-name.user-clicked-save-button',
-        userId: f.hostId
-      }
+        userId: f.hostId,
+      },
     ])
     expect(String(model.pack.name)).toBe(newPackName)
   })
@@ -138,17 +138,17 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.hostId,
-        packNameDraft: `${f.pack.name} edits`
+        packNameDraft: `${f.pack.name} edits`,
       },
       {
         t: 'edit-pack-name.user-clicked-save-button',
-        userId: f.hostId
+        userId: f.hostId,
       },
       {
         t: 'edit-pack-name.server-persisted-pack',
         userId: f.hostId,
-        result: Err('some error')
-      }
+        result: Err('some error'),
+      },
     ])
 
     expect(model.pack.name).toBe(f.pack.name)

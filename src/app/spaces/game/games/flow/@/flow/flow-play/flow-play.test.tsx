@@ -9,10 +9,10 @@ import { toStatus } from './flow-play'
 
 const Fixture = async ({ ctxFlow }: { ctxFlow: Variant.Model }) => {
   const ctxPuzzle = await Puzzle.random({
-    flow: ctxFlow
+    flow: ctxFlow,
   })
   const ctx: FlowPlay.Ctx = FlowPlay.initCtx({
-    flowPuzzle: ctxPuzzle
+    flowPuzzle: ctxPuzzle,
   })
 
   const init = FlowPlay.init({ ctx })
@@ -23,23 +23,23 @@ const Fixture = async ({ ctxFlow }: { ctxFlow: Variant.Model }) => {
         FlowPlay.update({
           ctx,
           model: output.model,
-          msg
+          msg,
         }),
       {
-        model: init
-      }
+        model: init,
+      },
     )
   }
 
   const solutionMsgs = FlowPlay.toSolutionMsgs({
-    flow: ctxFlow
+    flow: ctxFlow,
   })
 
   return {
     flow: ctxFlow,
     init,
     update,
-    solutionMsgs
+    solutionMsgs,
   }
 }
 
@@ -48,25 +48,25 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', 'B', ' '],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
 
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const msgs = FlowPlay.toSolutionMsgs({
-      flow
+      flow,
     })
 
     const before = FlowPlay.toFlow({
       flow,
-      model: f.init
+      model: f.init,
     })
 
     const after = FlowPlay.toFlow({
       flow,
-      model: f.update(f.init, msgs).model
+      model: f.update(f.init, msgs).model,
     })
 
     expect(Flow.isSolved(before)).toBe(false)
@@ -77,10 +77,10 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' ', 'B'],
       ['a', 'B', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const output = f.update(f.init, [
@@ -88,30 +88,30 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 2,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-pressed-up-node',
         nodeId: FlowGrid.toNodeId({
           x: 2,
-          y: 2
-        })
-      }
+          y: 2,
+        }),
+      },
     ])
 
     expect(output.events?.some((e) => e.t === 'connected-terminals')).toBe(true)
@@ -121,10 +121,10 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const output = f.update(f.init, [
@@ -132,9 +132,9 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 2
-        })
-      }
+          y: 2,
+        }),
+      },
     ])
 
     expect(output.events?.some((e) => e.t === 'started-dragging')).toBe(true)
@@ -144,10 +144,10 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const output = f.update(f.init, [
@@ -155,30 +155,30 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 2,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-pressed-up-node',
         nodeId: FlowGrid.toNodeId({
           x: 2,
-          y: 2
-        })
-      }
+          y: 2,
+        }),
+      },
     ])
 
     expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
@@ -188,10 +188,10 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const output = f.update(f.init, [
@@ -199,26 +199,26 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 2,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
-        t: 'user-dragging-left'
-      }
+        t: 'user-dragging-left',
+      },
     ])
     expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
   })
@@ -227,10 +227,10 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const output = f.update(f.init, [
@@ -238,19 +238,19 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
-        t: 'user-dragging-left'
-      }
+        t: 'user-dragging-left',
+      },
     ])
     expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
@@ -259,10 +259,10 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const output = f.update(f.init, [
@@ -270,23 +270,23 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 2,
-          y: 2
-        })
-      }
+          y: 2,
+        }),
+      },
     ])
 
     expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
@@ -296,11 +296,11 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
 
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const output = f.update(f.init, [
@@ -308,23 +308,23 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 1
-        })
+          y: 1,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 0
-        })
+          y: 0,
+        }),
       },
       {
         t: 'user-pressed-up-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 0
-        })
-      }
+          y: 0,
+        }),
+      },
     ])
 
     expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
@@ -333,10 +333,10 @@ describe(import.meta.file, () => {
   test('hint', async () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' '],
-      [' ', 'A']
+      [' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const msgs: FlowPlay.Msg[] = [
@@ -344,23 +344,23 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 1
-        })
+          y: 1,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 0
-        })
+          y: 0,
+        }),
       },
       {
         t: 'user-pressed-up-node',
         nodeId: FlowGrid.toNodeId({
           x: 1,
-          y: 0
-        })
-      }
+          y: 0,
+        }),
+      },
     ]
 
     const output = f.update(f.init, msgs)
@@ -371,21 +371,21 @@ describe(import.meta.file, () => {
   test('derive flow with hints', async () => {
     const flow = FlowGridShorthand.toGrid([
       ['A', ' '],
-      [' ', 'A']
+      [' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const model = f.update(f.init, [
       {
-        t: 'user-clicked-use-hint'
-      }
+        t: 'user-clicked-use-hint',
+      },
     ]).model
 
     const flowNew = FlowPlay.toFlow({
       flow,
-      model
+      model,
     })
 
     expect(Flow.isSolved(flowNew)).toBe(true)
@@ -395,10 +395,10 @@ describe(import.meta.file, () => {
     const flow = FlowGridShorthand.toGrid([
       ['B', ' ', 'A'],
       [' ', ' ', 'a'],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow
+      ctxFlow: flow,
     })
 
     const msgs: FlowPlay.Msg[] = [
@@ -406,26 +406,26 @@ describe(import.meta.file, () => {
         t: 'user-pressed-down-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 0
-        })
+          y: 0,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 1
-        })
+          y: 1,
+        }),
       },
       {
         t: 'user-dragged-over-node',
         nodeId: FlowGrid.toNodeId({
           x: 0,
-          y: 2
-        })
+          y: 2,
+        }),
       },
       {
-        t: 'user-dragging-left'
-      }
+        t: 'user-dragging-left',
+      },
     ]
 
     const output = f.update(f.init, msgs)
@@ -438,23 +438,23 @@ describe(import.meta.file, () => {
       ctxFlow: FlowGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', ' ', ' '],
-        ['a', 'a', 'A']
-      ])
+        ['a', 'a', 'A'],
+      ]),
     })
 
     const output = f.update(f.init, [
       {
-        t: 'user-clicked-reset'
-      }
+        t: 'user-clicked-reset',
+      },
     ])
 
     const before = FlowPlay.toFlow({
       flow: f.flow,
-      model: f.init
+      model: f.init,
     })
     const after = FlowPlay.toFlow({
       flow: f.flow,
-      model: output.model
+      model: output.model,
     })
 
     expect(Flow.isPipesEmpty(before)).toBe(false)
@@ -466,18 +466,18 @@ describe(import.meta.file, () => {
       ctxFlow: FlowGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
-        [' ', ' ', 'A']
-      ])
+        [' ', ' ', 'A'],
+      ]),
     })
     const before = f.update(f.init, [
       {
-        t: 'user-clicked-use-hint'
-      }
+        t: 'user-clicked-use-hint',
+      },
     ])
     const after = f.update(before.model, [
       {
-        t: 'user-clicked-reset'
-      }
+        t: 'user-clicked-reset',
+      },
     ])
     expect(before.model.usedHints).not.toEqual({})
     expect(after.model.usedHints).toEqual({})
@@ -487,13 +487,13 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       ctxFlow: FlowGridShorthand.toGrid([
         ['A', ' '],
-        [' ', 'A']
-      ])
+        [' ', 'A'],
+      ]),
     })
     const output = f.update(f.init, [
       {
-        t: 'user-clicked-reset'
-      }
+        t: 'user-clicked-reset',
+      },
     ])
     expect(output.events?.some((e) => e.t === 'reset')).toBe(true)
   })
@@ -502,13 +502,13 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       ctxFlow: FlowGridShorthand.toGrid([
         ['A', ' '],
-        [' ', 'A']
-      ])
+        [' ', 'A'],
+      ]),
     })
     const output = f.update(f.init, [
       {
-        t: 'user-clicked-use-hint'
-      }
+        t: 'user-clicked-use-hint',
+      },
     ])
     expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)
   })
@@ -517,8 +517,8 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       ctxFlow: FlowGridShorthand.toGrid([
         ['A', ' '],
-        [' ', 'A']
-      ])
+        [' ', 'A'],
+      ]),
     })
     const output = f.update(f.init, [...f.solutionMsgs])
     expect(output.model.showCheckmarkAnimation).toBe(true)
@@ -529,16 +529,16 @@ describe(import.meta.file, () => {
       ctxFlow: FlowGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
-        ['A', ' ', 'B']
-      ])
+        ['A', ' ', 'B'],
+      ]),
     })
 
     const output = f.update(f.init, [
       ...f.solutionMsgs,
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({ x: 2, y: 2 })
-      }
+        nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }),
+      },
     ])
     expect(toStatus({ model: output.model, flow: f.flow })).toBe('solved')
   })

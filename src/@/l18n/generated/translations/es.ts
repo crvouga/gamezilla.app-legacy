@@ -157,11 +157,11 @@ export const translations: Text = {
   'flow.puzzle-deleted': 'Rompecabezas eliminado',
   'flow.delete-puzzle-forever?': '¿Eliminar rompecabezas para siempre?',
   'flow.delete-forever': 'Eliminar para siempre',
-  'flow.edit-pack-name.pack-name': 'Nombre del paquete',
   'flow.add-puzzle': 'Agregar rompecabezas',
   'flow.puzzle-removed': 'Rompecabezas eliminado',
   'flow.puzzle-added': 'Rompecabezas añadido',
   'flow.remove-from-pack': 'Eliminar del paquete',
+  'flow.edit-pack-name.pack-name': 'Nombre del paquete',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'Sin rompecabezas',
   'flow.no-packs': 'Sin paquetes',
@@ -216,6 +216,7 @@ export const translations: Text = {
   'profile.update-username.update-username': 'Actualizar nombre de usuario',
   'username-title': 'Nombre de usuario',
   username: (username) => `@${username}`,
+  'app.screen-not-found': 'Pantalla no encontrada',
   'app.back': 'Atrás',
   'app.gamezilla-app': 'gamezilla.app',
   'app.something-went-wrong': 'Algo salió mal',
@@ -264,5 +265,5 @@ export const translations: Text = {
   ko: 'Coreano',
   pt: 'Portugués',
   ru: 'Ruso',
-  zh: 'Chino'
+  zh: 'Chino',
 }

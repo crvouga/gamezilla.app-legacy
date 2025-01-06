@@ -62,5 +62,5 @@ const shuffle = <T>(seed: string, xs: Iterable<T>): Iter<T> => {
 
 export const Random = {
   generator,
-  shuffle
+  shuffle,
 }

@@ -11,7 +11,7 @@ import { UserId } from '~/app/@/data/user-id'
 export type ModelClient = CreateNewPuzzleTypes.ModelClient
 
 export const initClient: ModelClient = {
-  ...CreateNewPuzzleTypes.initClient
+  ...CreateNewPuzzleTypes.initClient,
 }
 
 export type MsgClient = CreateNewPuzzleTypes.MsgClient
@@ -24,7 +24,7 @@ export type MsgToClient = CreateNewPuzzleTypes.MsgToClient
 
 export const ModelCore = p.obj({
   t: p.l('puzzle-list'),
-  puzzle: Puzzle
+  puzzle: Puzzle,
 })
 
 export type ModelCore = p.Infer<typeof ModelCore>
@@ -34,7 +34,7 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('screen-puzzle-builder-open.clicked-puzzle-list-item'),
     puzzle: Puzzle,
-    userId: UserId
-  })
+    userId: UserId,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>

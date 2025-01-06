@@ -55,7 +55,7 @@ const make = ({ seed, lower, upper }: { seed: string; lower: Position; upper: Po
 
       unvisitedNeighbor = {
         position: neighbor,
-        direction
+        direction,
       }
       break
     }
@@ -73,9 +73,9 @@ const make = ({ seed, lower, upper }: { seed: string; lower: Position; upper: Po
   removeDeadEnds(
     {
       limit: Number.POSITIVE_INFINITY,
-      seed
+      seed,
     },
-    maze
+    maze,
   )
 
   return maze
@@ -88,7 +88,7 @@ const removeDeadEnds = ({ seed, limit }: { seed: string; limit: number }, maze: 
     for (let y = maze.lower.y; y <= maze.upper.y; y++) {
       const position: Position = {
         x,
-        y
+        y,
       }
 
       const connections = toConnections(position, maze)
@@ -126,7 +126,7 @@ const removeDeadEnds = ({ seed, limit }: { seed: string; limit: number }, maze: 
 const makeMemoized = memoize({
   toKey: ({ seed, lower, upper }) => [seed, lower.x, lower.y, upper.x, upper.y].join('-'),
   func: make,
-  cacheCapacity: 100
+  cacheCapacity: 100,
 })
 
 const toConnections = (position: Position, maze: Maze) => {
@@ -161,7 +161,7 @@ export const Maze = {
   make,
   makeMemoized,
   hasEdge,
-  hasVertex
+  hasVertex,
 }
 
 //
@@ -173,14 +173,14 @@ export const Maze = {
 const coverArtMaze = Maze.make({
   seed: 'cover art maze!',
   lower: { x: 0, y: 0 },
-  upper: { x: 8, y: 8 }
+  upper: { x: 8, y: 8 },
 })
 
 const viewBox = [
   coverArtMaze.lower.x,
   coverArtMaze.lower.y,
   coverArtMaze.upper.x - coverArtMaze.lower.x + 1,
-  coverArtMaze.upper.y - coverArtMaze.lower.y + 1
+  coverArtMaze.upper.y - coverArtMaze.lower.y + 1,
 ].join(' ')
 
 export const CoverArt = () => {

@@ -23,12 +23,12 @@ export type MsgClient = GameMainMenu.Msg
 export const MsgCore = p.or(
   p.obj({
     t: p.l('screen-main-menu.user-clicked-back-button'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('flow.builder.screen-main-menu.user-clicked-option'),
     userId: UserId,
-    option: Option
-  })
+    option: Option,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>

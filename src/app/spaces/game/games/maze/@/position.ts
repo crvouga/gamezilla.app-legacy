@@ -6,7 +6,7 @@ export type Position = {
 const add = (a: Position, b: Position): Position => {
   return {
     x: a.x + b.x,
-    y: a.y + b.y
+    y: a.y + b.y,
   }
 }
 
@@ -17,7 +17,7 @@ const range = (exclusiveUpperBounds: { x: number; y: number }): Position[] => {
     for (let y = 0; y < exclusiveUpperBounds.y; y++) {
       positions.push({
         x,
-        y
+        y,
       })
     }
   }
@@ -41,7 +41,7 @@ const inclusiveContains = ({ lower, upper }: Bounds, position: Position): boolea
 const sub = (a: Position, b: Position): Position => {
   return {
     x: a.x - b.x,
-    y: a.y - b.y
+    y: a.y - b.y,
   }
 }
 
@@ -71,7 +71,7 @@ export const random = (gen: () => number, { lower, upper }: Bounds) => {
   const y = Math.floor(gen() * (upper.y - lower.y)) + lower.y
   return {
     x,
-    y
+    y,
   }
 }
 
@@ -87,7 +87,7 @@ export const Position = {
   range,
   toKey,
   toDirection,
-  inclusiveContains
+  inclusiveContains,
 }
 
 export type Direction = 'North' | 'South' | 'East' | 'West'
@@ -99,25 +99,25 @@ const toVector = (direction: Direction): Position => {
     case 'East': {
       return {
         x: 1,
-        y: 0
+        y: 0,
       }
     }
     case 'West': {
       return {
         x: -1,
-        y: 0
+        y: 0,
       }
     }
     case 'North': {
       return {
         x: 0,
-        y: -1
+        y: -1,
       }
     }
     case 'South': {
       return {
         x: 0,
-        y: 1
+        y: 1,
       }
     }
   }
@@ -125,5 +125,5 @@ const toVector = (direction: Direction): Position => {
 
 export const Direction = {
   toVector,
-  all
+  all,
 }

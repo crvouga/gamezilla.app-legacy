@@ -28,7 +28,7 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
   const f = await FixtureAppServer()
   const deps: Awaited<ReturnType<typeof AuthSMSServer.initDeps>> = {
     AccountDb: UserAccountDb({ t: 'in-memory', delay: async () => {} }),
-    VerifySMS: input?.VerifySMS ?? VerifySMS({ t: 'fake-always-ok', logger: Logger({ t: 'noop' }) })
+    VerifySMS: input?.VerifySMS ?? VerifySMS({ t: 'fake-always-ok', logger: Logger({ t: 'noop' }) }),
   }
 
   const updates = function* (msgs: InputMsg[]) {
@@ -36,7 +36,7 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
       yield AuthSMSServer.update({
         ctx: f.ctx,
         deps,
-        ...msg
+        ...msg,
       })
     }
   }
@@ -52,7 +52,7 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
     ...f,
     ...deps,
     client,
-    update
+    update,
   }
 }
 
@@ -65,9 +65,9 @@ describe(import.meta.file, () => {
           ...f.client,
           preferredLanguage: 'en',
           t: 'user-clicked-send-code-button',
-          phoneNumber: PhoneNumber.random()
-        }
-      }
+          phoneNumber: PhoneNumber.random(),
+        },
+      },
     ])
     expect(didSendMsgToClient(updated, (msg) => msg.t === 'sent-code')).toBe(true)
   })
@@ -80,9 +80,9 @@ describe(import.meta.file, () => {
           ...f.client,
           t: 'user-clicked-verify-code-button',
           phoneNumber: PhoneNumber.random(),
-          inputtedCode: '123456'
-        }
-      }
+          inputtedCode: '123456',
+        },
+      },
     ])
     expect(didSendMsgToClient(updated, (msg) => msg.t === 'verified-code')).toBe(true)
   })
@@ -91,8 +91,8 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       VerifySMS: VerifySMS({
         t: 'fake-always-ok',
-        logger: Logger({ t: 'noop' })
-      })
+        logger: Logger({ t: 'noop' }),
+      }),
     })
 
     const updated = await f.update([
@@ -101,9 +101,9 @@ describe(import.meta.file, () => {
           ...f.client,
           t: 'user-clicked-verify-code-button',
           inputtedCode: '123',
-          phoneNumber: PhoneNumber.random()
-        }
-      }
+          phoneNumber: PhoneNumber.random(),
+        },
+      },
     ])
 
     expect(updated.msgEvt?.some((msgEvt) => msgEvt.t === 'auth-evt.client-authenticated')).toBe(true)
@@ -115,14 +115,14 @@ describe(import.meta.file, () => {
       VerifySMS: VerifySMS({
         t: 'fake-always-ok',
         phoneNumber,
-        logger: Logger({ t: 'noop' })
-      })
+        logger: Logger({ t: 'noop' }),
+      }),
     })
 
     const before = Result.unwrap(
       await f.AccountDb.findOneByPhoneNumber({
-        phoneNumber
-      })
+        phoneNumber,
+      }),
     )
 
     await f.update([
@@ -131,15 +131,15 @@ describe(import.meta.file, () => {
           ...f.client,
           t: 'user-clicked-verify-code-button',
           inputtedCode: '123',
-          phoneNumber
-        }
-      }
+          phoneNumber,
+        },
+      },
     ])
 
     const after = Result.unwrap(
       await f.AccountDb.findOneByPhoneNumber({
-        phoneNumber
-      })
+        phoneNumber,
+      }),
     )
 
     expect(before).toBe(null)
@@ -153,12 +153,12 @@ describe(import.meta.file, () => {
       VerifySMS: VerifySMS({
         t: 'fake-always-ok',
         phoneNumber: account.phoneNumber,
-        logger: Logger({ t: 'noop' })
-      })
+        logger: Logger({ t: 'noop' }),
+      }),
     })
 
     await f.AccountDb.insert({
-      account
+      account,
     })
 
     await f.update([
@@ -167,9 +167,9 @@ describe(import.meta.file, () => {
           ...f.client,
           t: 'user-clicked-verify-code-button',
           inputtedCode: '123',
-          phoneNumber: PhoneNumber.random()
-        }
-      }
+          phoneNumber: PhoneNumber.random(),
+        },
+      },
     ])
 
     const after = await f.AccountDb.findOneByPhoneNumber(account)

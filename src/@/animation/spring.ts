@@ -22,7 +22,7 @@ export const init = (inp: { from: number; to: number }): Model => {
     velocity: 0,
     friction: 0.9,
     tension: 0.25,
-    precision: 0.01
+    precision: 0.01,
   }
 }
 
@@ -40,7 +40,7 @@ export const step = (model: Model): Model => {
   const modelNew: Model = {
     ...model,
     current: currentNew,
-    velocity: velocityNew2
+    velocity: velocityNew2,
   }
   return modelNew
 }

@@ -4,7 +4,7 @@ import {
   initClientTransport,
   type ClientTransportCommand,
   type ClientTransportEvent,
-  type IClientTransport
+  type IClientTransport,
 } from './interface'
 
 const RECONNECT_INTERVAL = 2000
@@ -16,7 +16,7 @@ export type Config = {
 }
 
 export const ClientTransport = <MsgToServer, MsgToClient>(
-  config: Config
+  config: Config,
 ): IClientTransport<{
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
@@ -46,7 +46,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
       isConnected = true
       reconnectAttempts = 0
       transport.msgEvt.pub({
-        t: 'server-connected'
+        t: 'server-connected',
       })
       for (const msg of queue) {
         send(msg)
@@ -57,7 +57,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
     ws.onerror = () => {
       isConnected = false
       transport.msgEvt.pub({
-        t: 'server-connect-error'
+        t: 'server-connect-error',
       })
     }
 
@@ -69,7 +69,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
 
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
         transport.msgEvt.pub({
-          t: 'server-disconnected'
+          t: 'server-disconnected',
         })
         return
       }
@@ -130,7 +130,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
 
   return {
     ...transport,
-    start: connect
+    start: connect,
   }
 }
 
@@ -145,7 +145,7 @@ export const init = <MsgToServer>(): Model<MsgToServer> => ({
   reconnectAttempts: 0,
   isConnected: false,
   isDocumentHidden: false,
-  queue: []
+  queue: [],
 })
 
 export const update = <MsgToServer>(input: {
@@ -163,13 +163,13 @@ export const update = <MsgToServer>(input: {
     case 'to-server': {
       return {
         ...input.model,
-        queue: input.model.queue.concat(msg.msgs)
+        queue: input.model.queue.concat(msg.msgs),
       }
     }
     case 'try-reconnect': {
       return {
         ...input.model,
-        reconnectAttempts: 0
+        reconnectAttempts: 0,
       }
     }
 
@@ -185,14 +185,14 @@ export const update = <MsgToServer>(input: {
       return {
         ...input.model,
         isConnected: true,
-        reconnectAttempts: 0
+        reconnectAttempts: 0,
       }
     }
 
     case 'server-disconnected': {
       return {
         ...input.model,
-        isConnected: false
+        isConnected: false,
       }
     }
   }

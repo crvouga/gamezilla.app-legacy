@@ -36,14 +36,14 @@ export const rowCount = 20
 
 const initialOrigin: Position.Position = {
   x: Math.floor(columnCount / 2),
-  y: 0
+  y: 0,
 }
 
 export const initShared: CoreModel = {
   board: Board.init({ rowCount, columnCount }),
   origin: initialOrigin,
   tetrominoName: 'Z',
-  rotations: 0
+  rotations: 0,
 }
 
 export const toPiece = (model: CoreModel): Piece.Piece => {
@@ -70,7 +70,7 @@ export const isOutOfBounds = (model: CoreModel): boolean => {
 export const toDrop = (model: CoreModel): CoreModel => {
   const modelNext: CoreModel = {
     ...model,
-    origin: Position.add(Direction.toPosition('Down'), model.origin)
+    origin: Position.add(Direction.toPosition('Down'), model.origin),
   }
 
   if (inCollision(modelNext)) {
@@ -122,8 +122,8 @@ export const mouseMove = (msg: MouseMove, model: CoreModel): MouseMove_Done => {
     ...model,
     origin: {
       x: msg[1].x,
-      y: model.origin.y
-    }
+      y: model.origin.y,
+    },
   }
 
   if (inCollision(modelNew)) {
@@ -142,7 +142,7 @@ export const inputTranslate = ({ direction }: InputTranslate[1], model: CoreMode
 
   const modelNext: CoreModel = {
     ...model,
-    origin: originNext
+    origin: originNext,
   }
 
   if (inCollision(modelNext)) {
@@ -167,7 +167,7 @@ export type InputRotateProblem = 'collision'
 export const inputRotate = (model: CoreModel): InputRotate_Done[1] => {
   const modelNew: CoreModel = {
     ...model,
-    rotations: toNextRotation(model.rotations)
+    rotations: toNextRotation(model.rotations),
   }
 
   if (inCollision(modelNew)) {
@@ -224,7 +224,7 @@ export const tick = (model: CoreModel): CoreModel => {
 
   const modelNext: CoreModel = {
     ...model,
-    origin: originNext
+    origin: originNext,
   }
 
   if (inCollision(modelNext)) {
@@ -232,7 +232,7 @@ export const tick = (model: CoreModel): CoreModel => {
 
     const boardNew = tetromino.reduce(
       (board, position) => Board.setCell(position, model.tetrominoName, board),
-      model.board
+      model.board,
     )
 
     const tetrominoNameNew = randomElement(Piece.allNames) ?? 'O'
@@ -242,7 +242,7 @@ export const tick = (model: CoreModel): CoreModel => {
       origin: initialOrigin,
       tetrominoName: tetrominoNameNew,
       rotations: 0,
-      board: boardNew
+      board: boardNew,
     }
   }
 

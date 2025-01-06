@@ -10,19 +10,19 @@ const Fixture = async (input?: { currentUserRole: UserRole }) => {
   const f = await FixtureScreenPlayPuzzleClient()
   const ctx: typeof f.ctx = {
     ...f.ctx,
-    currentUserRole: input?.currentUserRole ?? 'super'
+    currentUserRole: input?.currentUserRole ?? 'super',
   }
 
   return {
     ...f,
-    ctx
+    ctx,
   }
 }
 
 describe(import.meta.file, () => {
   test.todo('render button for super users', async () => {
     const f = await Fixture({
-      currentUserRole: 'super'
+      currentUserRole: 'super',
     })
     const r = f.render(f.init, f.ctx)
     const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
   test('does not render button for non-super users', async () => {
     for (const currentUserRole of UserRole.NON_SUPER_USER_ROLES) {
       const f = await Fixture({
-        currentUserRole
+        currentUserRole,
       })
       const r = f.render(f.init, f.ctx)
       const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))
@@ -45,9 +45,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
-          t: 'user-clicked-copy-to-clipboard'
-        })
-      }
+          t: 'user-clicked-copy-to-clipboard',
+        }),
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -57,9 +57,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
-          t: 'user-clicked-copy-to-clipboard'
-        })
-      }
+          t: 'user-clicked-copy-to-clipboard',
+        }),
+      },
     ])
     expect(didCopyToClipboard(output)).toBe(true)
   })
@@ -69,9 +69,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
-          t: 'user-clicked-copy-to-clipboard'
-        })
-      }
+          t: 'user-clicked-copy-to-clipboard',
+        }),
+      },
     ])
     expect(didShowToast(output)).toBe(true)
   })
@@ -81,16 +81,16 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msgCore: withEventMeta({
-          t: 'user-clicked-copy-to-clipboard'
-        })
-      }
+          t: 'user-clicked-copy-to-clipboard',
+        }),
+      },
     ])
     expect(
       didCopyToClipboard(output, (text) => {
         const shorthand = JSON.parse(text)
         const grid = FlowGridShorthand.toGrid(shorthand)
         return Flow.isSame(f.puzzle.flow, grid)
-      })
+      }),
     ).toBe(true)
   })
 })

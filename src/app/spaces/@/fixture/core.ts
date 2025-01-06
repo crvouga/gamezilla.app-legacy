@@ -12,20 +12,20 @@ export const SpaceCoreFixture = async () => {
     makeSpace({
       spaceId,
       hostId,
-      guestId
-    })
+      guestId,
+    }),
   )
   if (!spaceState) {
     throw new Error('SpaceCoreFixture: spaceState is null')
   }
   const ctx: SpaceCtx = {
-    space: spaceState
+    space: spaceState,
   }
   return {
     ctx,
     spaceId,
     hostId,
     guestId,
-    space: spaceState
+    space: spaceState,
   }
 }

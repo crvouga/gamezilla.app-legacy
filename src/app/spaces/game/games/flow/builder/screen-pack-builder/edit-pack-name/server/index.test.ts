@@ -16,7 +16,7 @@ const Fixture = async () => {
     ...f,
     deps: null,
     pack,
-    modelCore
+    modelCore,
   }
 }
 
@@ -28,12 +28,12 @@ describe(import.meta.file, () => {
       ...f,
       modelCore: {
         ...f.modelCore,
-        draft: someNewName
+        draft: someNewName,
       },
       msgCore: withEventMeta({
         t: 'edit-pack-name.user-clicked-save-button',
-        userId: f.pack.createdBy
-      })
+        userId: f.pack.createdBy,
+      }),
     })
     const after = Result.unwrapOr(await f.ctx.flowPackDb.get(f.pack.id), null)
     expect(String(after?.name)).toBe(someNewName)
@@ -46,12 +46,12 @@ describe(import.meta.file, () => {
       ...f,
       modelCore: {
         ...f.modelCore,
-        draft: someNewName
+        draft: someNewName,
       },
       msgCore: withEventId({
         t: 'edit-pack-name.user-clicked-save-button',
-        userId: f.pack.createdBy
-      })
+        userId: f.pack.createdBy,
+      }),
     })
     expect(output.msgCore?.some((m) => m.t === 'edit-pack-name.server-persisted-pack')).toBe(true)
   })

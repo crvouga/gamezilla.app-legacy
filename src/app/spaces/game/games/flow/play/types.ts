@@ -58,48 +58,48 @@ export type MsgToClient = {
 export const MsgCore = p.or(
   p.obj({
     t: p.l('user-clicked-exit-play-mode-button'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-clicked-select-pack-back-button'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-clicked-open-pack-list-item'),
-    pack: Pack
+    pack: Pack,
   }),
   p.obj({
-    t: p.l('user-clicked-exit-pack-button')
+    t: p.l('user-clicked-exit-pack-button'),
   }),
   p.obj({
     t: p.l('user-clicked-open-puzzle-grid-item'),
     flowPuzzle: PuzzleResult,
-    puzzleIndex: p.num
+    puzzleIndex: p.num,
   }),
   p.obj({
     t: p.l('user-changed-slides'),
     slideIndex: p.num,
-    userId: UserId
+    userId: UserId,
   }),
-  ScreenPuzzleTypes.MsgCore
+  ScreenPuzzleTypes.MsgCore,
 )
 
 export type MsgCore = p.Infer<typeof MsgCore>
 
 const Screen = p.or(
   p.obj({
-    t: p.l('screen-select-pack')
+    t: p.l('screen-select-pack'),
   }),
   p.obj({
     t: p.l('screen-select-puzzle'),
     flowPack: Pack,
-    slideIndex: p.num
+    slideIndex: p.num,
   }),
-  ScreenPuzzleTypes.ModelCore
+  ScreenPuzzleTypes.ModelCore,
 )
 
 export const ModelCore = p.obj({
-  screen: Screen
+  screen: Screen,
 })
 export type ModelCore = p.Infer<typeof ModelCore>
 

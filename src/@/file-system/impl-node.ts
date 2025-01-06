@@ -22,9 +22,9 @@ export const FileSystem = (_config: Config): IFileSystem => {
         start(controller) {
           controller.enqueue(fileContent)
           controller.close()
-        }
+        },
       })
       return readableStream
-    }
+    },
   }
 }

@@ -148,7 +148,7 @@ const toTerminalsByGroupId = (model: Model): FlowGrid.Model['terminalsByGroupId'
     for (let x = 0; x < row.length; x++) {
       const position = {
         x,
-        y
+        y,
       }
 
       const elementNodeId = FlowGrid.toNodeId(position)
@@ -175,7 +175,7 @@ const toTerminalsByGroupId = (model: Model): FlowGrid.Model['terminalsByGroupId'
         const draftTerminalNew: DraftTerminal = {
           groupId: elementGroupId,
           startId: elementNodeId,
-          endId: null
+          endId: null,
         }
         terminalsByGroupId[elementGroupId] = draftTerminalNew
         continue
@@ -183,7 +183,7 @@ const toTerminalsByGroupId = (model: Model): FlowGrid.Model['terminalsByGroupId'
 
       terminalsByGroupId[elementGroupId] = {
         ...draftTerminal,
-        endId: elementNodeId
+        endId: elementNodeId,
       }
     }
   }
@@ -194,20 +194,20 @@ const toTerminalsByGroupId = (model: Model): FlowGrid.Model['terminalsByGroupId'
 const DELTAS = [
   {
     x: 0,
-    y: -1
+    y: -1,
   },
   {
     x: 1,
-    y: 0
+    y: 0,
   },
   {
     x: 0,
-    y: 1
+    y: 1,
   },
   {
     x: -1,
-    y: 0
-  }
+    y: 0,
+  },
 ] as const
 
 /**
@@ -255,7 +255,7 @@ const toPipesBySourceIdForTerminalList = (input: {
       for (const delta of DELTAS) {
         const adjacentPosition = {
           x: currentNode.x + delta.x,
-          y: currentNode.y + delta.y
+          y: currentNode.y + delta.y,
         }
         const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition)
         const adjacentNode = FlowGrid.toNode(input.grid, adjacentNodeId)
@@ -287,14 +287,14 @@ const toPipesBySourceIdForTerminalList = (input: {
       if (adjacentTerminalNode) {
         const edgeId = Flow.toFlowEdgeId({
           sourceId: currentNodeId,
-          targetId: adjacentTerminalNode.nodeId
+          targetId: adjacentTerminalNode.nodeId,
         })
         path[currentNodeId] = {
           edgeId,
-          groupId
+          groupId,
         }
         allPaths.push({
-          ...path
+          ...path,
         })
       }
       visitedNodeIds.delete(currentNodeId)
@@ -309,7 +309,7 @@ const toPipesBySourceIdForTerminalList = (input: {
     for (const delta of DELTAS) {
       const adjacentPosition = {
         x: currentNode.x + delta.x,
-        y: currentNode.y + delta.y
+        y: currentNode.y + delta.y,
       }
       const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition)
 
@@ -336,21 +336,21 @@ const toPipesBySourceIdForTerminalList = (input: {
 
       validAdjacent.push({
         adjacentNodeId,
-        adjacentElement
+        adjacentElement,
       })
     }
 
     for (const { adjacentNodeId, adjacentElement } of validAdjacent) {
       const edgeId = Flow.toFlowEdgeId({
         sourceId: currentNodeId,
-        targetId: adjacentNodeId
+        targetId: adjacentNodeId,
       })
       const newPath = {
-        ...path
+        ...path,
       }
       newPath[currentNodeId] = {
         edgeId,
-        groupId
+        groupId,
       }
 
       if (adjacentNodeId === input.terminal.endId) {
@@ -390,12 +390,12 @@ const toPipesBySourceIdList = (model: Model, grid: FlowGrid.Model): NonEmpty<Flo
     const pipesBySourceIdForTerminal = toPipesBySourceIdForTerminalList({
       grid,
       model,
-      terminal
+      terminal,
     })
 
     pipesBySourceIdListByGroupId[terminal.groupId] = [
       ...(pipesBySourceIdListByGroupId[terminal.groupId] ?? []),
-      ...pipesBySourceIdForTerminal
+      ...pipesBySourceIdForTerminal,
     ]
   }
 
@@ -403,10 +403,10 @@ const toPipesBySourceIdList = (model: Model, grid: FlowGrid.Model): NonEmpty<Flo
     combination.reduce(
       (acc, curr) => ({
         ...acc,
-        ...curr
+        ...curr,
       }),
-      {}
-    )
+      {},
+    ),
   )
 
   if (NonEmpty.is(pipeCombinations)) {
@@ -485,7 +485,7 @@ export const toDimensions = (model: Model): FlowGridDimensions.Model => {
 
   return FlowGridDimensions.init({
     width: maxWidth,
-    height: model.length
+    height: model.length,
   })
 }
 
@@ -507,14 +507,14 @@ export const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
   const dimensions = toDimensions(model)
   const grid = FlowGrid.init({
     dimensions,
-    terminalsByGroupId: toTerminalsByGroupId(model)
+    terminalsByGroupId: toTerminalsByGroupId(model),
   })
   const solutions = NonEmpty.map(
     toPipesBySourceIdList(model, grid),
     (pipesBySourceId): FlowGrid.Model => ({
       ...grid,
-      pipesBySourceId
-    })
+      pipesBySourceId,
+    }),
   )
 
   const flippedGrid = Flow.flipAllTerminals(grid)
@@ -522,8 +522,8 @@ export const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
     toPipesBySourceIdList(model, flippedGrid),
     (pipesBySourceId): FlowGrid.Model => ({
       ...flippedGrid,
-      pipesBySourceId
-    })
+      pipesBySourceId,
+    }),
   )
 
   const allGrid = NonEmpty.concat(solutions, flippedSolutions)

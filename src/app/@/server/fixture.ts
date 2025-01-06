@@ -26,7 +26,7 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
       t: 'unit',
       dbConnKv: await DbConnKv({ t: 'hash-map' }),
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', map: new Map() }),
-      dbConnSql: await DbConnSql({ t: 'noop' })
+      dbConnSql: await DbConnSql({ t: 'noop' }),
     }
   }
 
@@ -36,14 +36,14 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
     t: 'postgres',
     databaseUrl: DATABASE_URL,
     logger,
-    simulateLatency: async () => {}
+    simulateLatency: async () => {},
   })
 
   const dbConnKv = await DbConnKv({
     t: 'redis',
     logger,
     redisUrl: REDIS_URL,
-    simulateLatency: async () => {}
+    simulateLatency: async () => {},
   })
 
   const pubSubTopicBased = await PubSubTopicBased({ t: 'redis', logger, redisUrl: REDIS_URL })
@@ -52,14 +52,14 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
     t: 'integration',
     dbConnSql,
     dbConnKv,
-    pubSubTopicBased
+    pubSubTopicBased,
   }
 }
 
 export const randomClient = () => {
   return {
     sessionId: SessionId.generate(),
-    clientId: ClientId.generate()
+    clientId: ClientId.generate(),
   }
 }
 
@@ -77,10 +77,10 @@ export const FixtureAppServer = async () => {
     profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) }),
     runtime: Runtime({ t: 'noop' }),
     webServer: WebServer({ t: 'bun', logger }),
-    serverInstanceId: ServerInstanceId.generate()
+    serverInstanceId: ServerInstanceId.generate(),
   }
   return {
-    ctx
+    ctx,
     //
   }
 }

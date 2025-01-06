@@ -8,7 +8,7 @@ export type ModelClient = {
 }
 
 export const initClient: ModelClient = {
-  puzzleDeleteForeverRequest: NotAsked
+  puzzleDeleteForeverRequest: NotAsked,
 }
 
 export type ModelServer = {}
@@ -39,6 +39,6 @@ export const MsgCore = p.obj({
   t: p.l('user-deleted-puzzle'),
   deleted: Result.parser(p.str, p.l(null)),
   flowPuzzleId: PuzzleId,
-  userId: UserId
+  userId: UserId,
 })
 export type MsgCore = p.Infer<typeof MsgCore>

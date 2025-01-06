@@ -42,5 +42,5 @@ export const EventId = {
   parser,
   init,
   increment,
-  toComparable
+  toComparable,
 }

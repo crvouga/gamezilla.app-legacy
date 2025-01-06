@@ -11,20 +11,20 @@ export const PuzzleDbFixture = async () => {
         t: 'db-conn-sql',
         dbConnSql: testEnv.dbConnSql,
         logger: Logger({
-          t: 'noop'
-        })
+          t: 'noop',
+        }),
       })
 
       return {
-        flowPuzzleDb
+        flowPuzzleDb,
       }
     }
     case 'unit': {
       const flowPuzzleDb = PuzzleDb({
-        t: 'hash-map'
+        t: 'hash-map',
       })
       return {
-        flowPuzzleDb
+        flowPuzzleDb,
       }
     }
   }

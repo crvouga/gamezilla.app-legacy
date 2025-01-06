@@ -13,8 +13,8 @@ export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
     t: 'db-conn-kv',
     dbConnKv: await DbConnKv({
       t: 'hash-map',
-      map: new Map()
+      map: new Map(),
     }),
-    parser: config.parser
+    parser: config.parser,
   })
 }

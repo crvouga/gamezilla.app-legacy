@@ -6,7 +6,7 @@ import { UserId } from '~/app/@/data/user-id'
 export type ModelClient = CreateNewPackTypes.ModelClient & {}
 
 export const initClient: ModelClient = {
-  ...CreateNewPackTypes.initClient
+  ...CreateNewPackTypes.initClient,
 }
 
 export type MsgClient = CreateNewPackTypes.MsgClient
@@ -16,8 +16,8 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('screen-pack-builder-open.user-clicked-pack-item'),
     pack: Pack,
-    userId: UserId
-  })
+    userId: UserId,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 

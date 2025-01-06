@@ -6,16 +6,16 @@ export type Color = p.Infer<typeof Color>
 export const RedBlackTree = <TK, TV>(K: p.Parser<TK>, V: p.Parser<TV>) => {
   return p.or(
     p.obj({
-      t: p.l('empty')
+      t: p.l('empty'),
     }),
     p.obj({
       t: p.l('node'),
       color: Color,
       key: K,
-      value: V
+      value: V,
       //   left: p.recur(() => RedBlackTree(K, V)),
       //   right: p.recur(() => RedBlackTree(K, V)),
-    })
+    }),
   )
 }
 

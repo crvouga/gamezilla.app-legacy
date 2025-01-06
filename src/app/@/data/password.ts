@@ -14,7 +14,7 @@ type Problem = { message: string }
 const decode = (password: string): Result<Problem, Password> => {
   if (password.length < passwordMinLength) {
     return Result.Err({
-      message: `Password must be longer than ${passwordMinLength} characters.`
+      message: `Password must be longer than ${passwordMinLength} characters.`,
     })
   }
 
@@ -23,11 +23,11 @@ const decode = (password: string): Result<Problem, Password> => {
   }
 
   return Result.Err({
-    message: 'Password is invalid for an unknown reason.'
+    message: 'Password is invalid for an unknown reason.',
   })
 }
 
 export const Password = {
   is,
-  decode
+  decode,
 }

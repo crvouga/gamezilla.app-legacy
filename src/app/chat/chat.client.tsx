@@ -17,7 +17,7 @@ import type { ModelClient, MsgClient, MsgToClient } from './chat.core'
 export const init = ({ stored }: { stored: ModelClient | null }): { model: ModelClient } => {
   if (stored) {
     return {
-      model: stored
+      model: stored,
     }
   }
 
@@ -30,8 +30,8 @@ export const init = ({ stored }: { stored: ModelClient | null }): { model: Model
       messages: {},
       requests: {},
       userSearch: '',
-      userSelected: {}
-    }
+      userSelected: {},
+    },
   }
 }
 
@@ -62,8 +62,8 @@ export const update = ({ msg, model }: { msg: Msg; model: ModelClient }): { mode
         model: {
           ...model,
           userSelected: toggleKey(model.userSelected, msg[1].userId),
-          userSearch: ''
-        }
+          userSearch: '',
+        },
       }
     }
 
@@ -71,8 +71,8 @@ export const update = ({ msg, model }: { msg: Msg; model: ModelClient }): { mode
       return {
         model: {
           ...model,
-          userSelected: removeKey(model.userSelected, msg[1].userId)
-        }
+          userSelected: removeKey(model.userSelected, msg[1].userId),
+        },
       }
     }
 
@@ -80,8 +80,8 @@ export const update = ({ msg, model }: { msg: Msg; model: ModelClient }): { mode
       return {
         model: {
           ...model,
-          userSearch: msg[1].userSearch
-        }
+          userSearch: msg[1].userSearch,
+        },
       }
     }
 
@@ -90,19 +90,19 @@ export const update = ({ msg, model }: { msg: Msg; model: ModelClient }): { mode
         model: {
           ...model,
           userSelected: {},
-          userSearch: ''
+          userSearch: '',
         },
         eff: pipe(
           Browser.focus(userSearchInputId),
-          Eff.perform((result) => ['focused', result])
-        )
+          Eff.perform((result) => ['focused', result]),
+        ),
       }
     }
 
     default: {
       return {
         model,
-        eff: Eff.None
+        eff: Eff.None,
       }
     }
   }
@@ -126,7 +126,7 @@ const removeKey = <T extends object>(obj: T, key: keyof T) => {
 }
 
 export const updateFromServer = ({
-  model
+  model,
 }: {
   msg: MsgToClient
   model: ModelClient
@@ -139,7 +139,7 @@ export const updateFromServer = ({
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   msg: ClientEvt
   model: ModelClient
@@ -150,7 +150,7 @@ export const updateFromEvent = ({
   switch (msg.t) {
     default: {
       return {
-        model
+        model,
       }
     }
   }

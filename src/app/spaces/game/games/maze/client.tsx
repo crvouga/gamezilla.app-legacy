@@ -5,14 +5,7 @@ import { Sub } from '~/@/sub'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
-import {
-  type Color,
-  type ModelClient,
-  type ModelServer,
-  type MsgClient,
-  type MsgToClient,
-  initShared
-} from './types'
+import { type Color, type ModelClient, type ModelServer, type MsgClient, type MsgToClient, initShared } from './types'
 
 //
 //
@@ -90,7 +83,7 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
       }
       const merged = mergeWithServer({
         clientModel: model,
-        serverModel: msg[2].value
+        serverModel: msg[2].value,
       })
       return [merged, Eff.None]
     }
@@ -98,7 +91,7 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
     case 'tick': {
       const merged = mergeWithServer({
         clientModel: model,
-        serverModel: msg[1]
+        serverModel: msg[1],
       })
       return [merged, Eff.None]
     }
@@ -106,7 +99,7 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
 }
 
 export const mergeWithServer = ({
-  serverModel
+  serverModel,
 }: {
   clientModel: ModelClient
   serverModel: ModelServer
@@ -167,7 +160,7 @@ const colorMap: { [color in Color]: string } = {
   Purple: '#992197',
   Red: '#FF2601',
   Cyan: '#02FEFF',
-  Pink: '#FF40FF'
+  Pink: '#FF40FF',
 }
 
 export const View = ({ model, ctx, dispatch }: { ctx: SpaceClientCtx; model: Model; dispatch: (msg: Msg) => void }) => {
@@ -179,7 +172,7 @@ export const View = ({ model, ctx, dispatch }: { ctx: SpaceClientCtx; model: Mod
     model.lower.x,
     model.lower.y,
     model.upper.x - model.lower.x + 1,
-    model.upper.y - model.lower.y + 1
+    model.upper.y - model.lower.y + 1,
   ].join(' ')
 
   const maze = Maze.makeMemoized(model)
@@ -216,8 +209,8 @@ export const View = ({ model, ctx, dispatch }: { ctx: SpaceClientCtx; model: Mod
                 'input-direction',
                 {
                   direction,
-                  userId: ctx.currentUserId
-                }
+                  userId: ctx.currentUserId,
+                },
               ])
             }
             onDone={() =>
@@ -225,15 +218,14 @@ export const View = ({ model, ctx, dispatch }: { ctx: SpaceClientCtx; model: Mod
                 'input-direction',
                 {
                   direction: 'none',
-                  userId: ctx.currentUserId
-                }
+                  userId: ctx.currentUserId,
+                },
               ])
             }
             activeFill='#fff'
             fill='#000'
             stroke='#bcbcbc'
           />
-         
         </>
       )}
     </div>
@@ -246,7 +238,7 @@ const ViewJoystick = ({
   onDone,
   stroke,
   fill,
-  activeFill
+  activeFill,
 }: {
   activeDirection?: Direction
   onChange: (direction: Direction) => void
@@ -318,22 +310,22 @@ const directionToVector = (direction: Direction): Position => {
     case 'East':
       return {
         x: 0,
-        y: -1
+        y: -1,
       }
     case 'North':
       return {
         x: -1,
-        y: -1
+        y: -1,
       }
     case 'South':
       return {
         x: 0,
-        y: 0
+        y: 0,
       }
     case 'West':
       return {
         x: -1,
-        y: 0
+        y: 0,
       }
   }
 }

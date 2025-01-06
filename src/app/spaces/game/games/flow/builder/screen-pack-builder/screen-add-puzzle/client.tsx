@@ -8,14 +8,14 @@ const update: ClientModule['update'] = (input) => {
     case 'screen-pack-builder.user-clicked-add-puzzle-item': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-added'))]
+        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-added'))],
       }
     }
 
     case 'screen-pack-builder.user-closed-add-puzzle-screen': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
   }
@@ -32,8 +32,8 @@ const View: ClientModule['View'] = (input) => {
           input.dispatch({
             t: 'got-msg-core',
             c: {
-              t: 'screen-pack-builder.user-closed-add-puzzle-screen'
-            }
+              t: 'screen-pack-builder.user-closed-add-puzzle-screen',
+            },
           })
         }
       />
@@ -49,9 +49,9 @@ const View: ClientModule['View'] = (input) => {
                 c: {
                   t: 'screen-pack-builder.user-clicked-add-puzzle-item',
                   puzzle,
-                  userId: input.ctx.currentUserId
-                }
-              })
+                  userId: input.ctx.currentUserId,
+                },
+              }),
           }}
         />
       </div>
@@ -61,5 +61,5 @@ const View: ClientModule['View'] = (input) => {
 
 export const ScreenAddPuzzle = {
   update,
-  View
+  View,
 }

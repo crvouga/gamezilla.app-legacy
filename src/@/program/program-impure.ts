@@ -19,7 +19,7 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
   async function updateSubscriptions(ctx: TCtx) {
     const sub = await program.subscriptions({
       intervalId,
-      ctx
+      ctx,
     })
     cleanUpSubscriptions()
     cleanUpSubscriptions = sub.sub(dispatch)
@@ -31,13 +31,13 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
     try {
       await program.update({
         ctx: program.updateCtx(ctx),
-        msg
+        msg,
       })
 
       updateSubscriptions(ctx)
     } catch (error) {
       program.crash?.({
-        error
+        error,
       })
     }
   }
@@ -48,5 +48,5 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
 }
 
 export const ProgramImpure = {
-  run
+  run,
 }

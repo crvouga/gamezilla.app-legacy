@@ -5,7 +5,7 @@ import { type IntersectionObserverEmitterinput, sub } from './intersection-obser
 export const IntersectionObserverEmitter = (
   input: IntersectionObserverEmitterinput & {
     children?: VDomChildren
-  }
+  },
 ) => {
   // There is some kind of race condition setTimeout fixes
   setTimeout(() => sub.pub({ type: 'input', input }), 1)

@@ -18,7 +18,7 @@ export const WorkerRPC = <TOperationTypes extends OperationTypes>({ filePath }: 
 
     worker.postMessage({
       t: 'request',
-      request
+      request,
     })
 
     const response = await responsePromise

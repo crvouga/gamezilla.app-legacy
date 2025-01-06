@@ -39,8 +39,8 @@ export const ViewColumnsCanvas = (input: ViewColumnsinput) => {
           rescale({
             value: canvasRelativeX,
             from: [0, elementWidth],
-            to: [0, COLUMN_COUNT]
-          })
+            to: [0, COLUMN_COUNT],
+          }),
         )
 
         if (input.onClick && isColumnIndex(columnIndex)) {

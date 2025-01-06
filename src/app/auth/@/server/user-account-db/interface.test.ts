@@ -16,8 +16,8 @@ const Fixture = async () => {
       return {
         userAccountDb: UserAccountDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnSql
-        })
+          dbConnSql: testEnv.dbConnSql,
+        }),
       }
     }
 
@@ -25,8 +25,8 @@ const Fixture = async () => {
       return {
         userAccountDb: UserAccountDb({
           t: 'in-memory',
-          async delay() {}
-        })
+          async delay() {},
+        }),
       }
     }
   }
@@ -40,10 +40,10 @@ describe(import.meta.file, () => {
         userId: UserId.generate(),
         role: 'guest',
         createdAt: Posix.now({
-          precision: 'seconds'
+          precision: 'seconds',
         }),
-        phoneNumber: null
-      }
+        phoneNumber: null,
+      },
     })
     expect(inserted.t).toBe('ok')
   })
@@ -54,15 +54,15 @@ describe(import.meta.file, () => {
       userId: UserId.generate(),
       role: 'guest',
       createdAt: Posix.now({
-        precision: 'seconds'
+        precision: 'seconds',
       }),
-      phoneNumber: null
+      phoneNumber: null,
     }
     await f.userAccountDb.insert({
-      account
+      account,
     })
     const found = await f.userAccountDb.findOneByUserId({
-      userId: account.userId
+      userId: account.userId,
     })
     const maybeAccount = Result.unwrapOr(found, null)
     expect(maybeAccount).toEqual(account)
@@ -76,15 +76,15 @@ describe(import.meta.file, () => {
       userId: UserId.generate(),
       role: 'normal',
       createdAt: Posix.now({
-        precision: 'seconds'
-      })
+        precision: 'seconds',
+      }),
     }
     const insert = await f.userAccountDb.insert({
-      account
+      account,
     })
     expect(insert.t).toBe('ok')
     const found = await f.userAccountDb.findOneByPhoneNumber({
-      phoneNumber
+      phoneNumber,
     })
     expect(found).toEqual(Ok(account))
   })
@@ -95,15 +95,15 @@ describe(import.meta.file, () => {
       userId: UserId.generate(),
       role: 'guest',
       createdAt: Posix.now({
-        precision: 'seconds'
+        precision: 'seconds',
       }),
-      phoneNumber: null
+      phoneNumber: null,
     }
     await f.userAccountDb.insert({
-      account
+      account,
     })
     const insert = await f.userAccountDb.insert({
-      account
+      account,
     })
     expect(insert.t).toBe('err')
   })
@@ -111,7 +111,7 @@ describe(import.meta.file, () => {
   it('should find null if finding account by user id and null is passed as user id', async () => {
     const f = await Fixture()
     const found = await f.userAccountDb.findOneByUserId({
-      userId: null
+      userId: null,
     })
     expect(found).toEqual(Ok(null))
   })
@@ -119,7 +119,7 @@ describe(import.meta.file, () => {
   it('should find null if user id doesnt exist', async () => {
     const f = await Fixture()
     const found = await f.userAccountDb.findOneByUserId({
-      userId: UserId.generate()
+      userId: UserId.generate(),
     })
     expect(found).toEqual(Ok(null))
   })
@@ -131,15 +131,15 @@ describe(import.meta.file, () => {
       userId,
       role: 'guest',
       createdAt: Posix.now({
-        precision: 'seconds'
+        precision: 'seconds',
       }),
-      phoneNumber: null
+      phoneNumber: null,
     }
     await f.userAccountDb.insert({
-      account
+      account,
     })
     const insert = await f.userAccountDb.insert({
-      account
+      account,
     })
     expect(insert.t).toBe('err')
   })

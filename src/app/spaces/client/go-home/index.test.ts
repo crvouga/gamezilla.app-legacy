@@ -5,7 +5,7 @@ import { FixtureSpacesClient } from '../../@/fixture/client'
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -17,14 +17,14 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
-          t: 'clicked-go-home-button'
-        }
-      }
+          t: 'clicked-go-home-button',
+        },
+      },
     ])
 
     const didPush = output.msgCmd?.some((m) => m.t === 'routing' && m.c.t === 'push' && m.c.route.t === 'space-list')
@@ -38,14 +38,14 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
-          t: 'clicked-go-home-button'
-        }
-      }
+          t: 'clicked-go-home-button',
+        },
+      },
     ])
 
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)

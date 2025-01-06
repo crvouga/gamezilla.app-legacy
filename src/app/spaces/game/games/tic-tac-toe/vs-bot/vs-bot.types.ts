@@ -10,7 +10,7 @@ import {
   type PlayerType,
   type Position,
   toOpposite,
-  toStatus
+  toStatus,
 } from '../@/tic-tic-toe/tic-tac-toe'
 
 //
@@ -49,7 +49,7 @@ export const initCoreModel = ({ userId }: { userId: SetupModel['player'] }): Cor
     type: 'setup',
     botLevel: 'Medium',
     userPlayerType: 'X',
-    player: userId
+    player: userId,
   }
 }
 
@@ -106,7 +106,7 @@ export type Res = Req & {
 export const handle = ({
   ctx,
   msg,
-  model
+  model,
 }: {
   ctx: SpaceCtx & { currentUserId: UserId }
   msg: Req
@@ -124,7 +124,7 @@ export const handle = ({
 
       return Ok({
         ...model,
-        botLevel: msg.botLevel
+        botLevel: msg.botLevel,
       })
     }
 
@@ -140,7 +140,7 @@ export const handle = ({
       return Ok({
         ...model,
         userPlayerType: msg.playerType,
-        player: ctx.currentUserId
+        player: ctx.currentUserId,
       })
     }
 
@@ -155,7 +155,7 @@ export const handle = ({
 
       return Ok({
         ...model,
-        player: null
+        player: null,
       })
     }
 
@@ -177,7 +177,7 @@ export const handle = ({
         board: emptyBoard,
         botLevel: model.botLevel,
         player: model.player,
-        userPlayerType: model.userPlayerType
+        userPlayerType: model.userPlayerType,
       })
     }
 
@@ -194,7 +194,7 @@ export const handle = ({
         type: 'setup',
         botLevel: model.botLevel,
         player: model.player,
-        userPlayerType: model.userPlayerType
+        userPlayerType: model.userPlayerType,
       })
     }
 
@@ -210,7 +210,7 @@ export const handle = ({
       const result = move({
         board: model.board,
         player: model.userPlayerType,
-        position: msg.position
+        position: msg.position,
       })
 
       if (isErr(result)) {
@@ -219,7 +219,7 @@ export const handle = ({
 
       const modelNext: CoreModel = {
         ...model,
-        board: result.value
+        board: result.value,
       }
 
       return Ok(modelNext)
@@ -237,7 +237,7 @@ export const handle = ({
       const modelNext: CoreModel = {
         ...model,
         board: emptyBoard,
-        userPlayerType: toOpposite(model.userPlayerType)
+        userPlayerType: toOpposite(model.userPlayerType),
       }
 
       return Ok(modelNext)
@@ -254,7 +254,7 @@ export const handle = ({
 
       return Ok({
         ...model,
-        board: emptyBoard
+        board: emptyBoard,
       })
     }
   }

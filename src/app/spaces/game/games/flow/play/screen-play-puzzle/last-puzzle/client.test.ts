@@ -6,7 +6,7 @@ import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -38,10 +38,10 @@ describe(import.meta.file, () => {
         msg: {
           t: 'got-msg-core',
           c: {
-            t: 'user-clicked-select-next-pack'
-          }
-        }
-      }
+            t: 'user-clicked-select-next-pack',
+          },
+        },
+      },
     ])
     expect(output.msgCore?.some((m) => m.t === 'user-clicked-select-next-pack')).toBe(true)
   })
@@ -70,9 +70,9 @@ describe(import.meta.file, () => {
     const output = f.update(initial, [
       {
         msgCore: withEventMeta({
-          t: 'user-clicked-select-next-pack'
-        })
-      }
+          t: 'user-clicked-select-next-pack',
+        }),
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })

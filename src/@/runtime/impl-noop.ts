@@ -11,6 +11,6 @@ export const Runtime = (_config: Config): IRuntime => {
   const events = PubSub.create<RuntimeEvent>()
 
   return {
-    events
+    events,
   }
 }

@@ -10,7 +10,7 @@ const of = (number: number): NonNegInt => {
 
   return {
     ...num,
-    NonNegInt: 'NonNegInt'
+    NonNegInt: 'NonNegInt',
   }
 }
 
@@ -40,5 +40,5 @@ export const NonNegInt = {
   of,
   inc,
   mul,
-  str
+  str,
 }

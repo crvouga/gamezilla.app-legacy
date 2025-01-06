@@ -11,7 +11,7 @@ export const signUpWithEmailAndPassword = Polymorphic<
     input: {
       email: string
       password: string
-    }
+    },
   ) => Promise<Result<string, null>>
 >()
 
@@ -27,7 +27,7 @@ export const loginWithEmailAndPassword = Polymorphic<
     input: {
       email: string
       password: string
-    }
+    },
   ) => Promise<Result<string, null>>
 >()
 

@@ -61,7 +61,7 @@ async function runPrettierOnDirectory(directoryPath: string) {
 async function main() {
   const files = await scanFiles({
     dir: DIR_PATH,
-    targetFileSuffix: TARGET_FILE_SUFFIX
+    targetFileSuffix: TARGET_FILE_SUFFIX,
   })
   await makeDirIfNotExists(OUTPUT_DIR)
   await generateRouteTypeFile(files)
@@ -88,7 +88,7 @@ async function makeDirIfNotExists(dirPath: string) {
 
   if (!doesExist) {
     await fs.mkdir(dirPath, {
-      recursive: true
+      recursive: true,
     })
   }
 }
@@ -101,7 +101,7 @@ function enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
         yield [i, item]
         i++
       }
-    }
+    },
   }
 }
 
@@ -109,7 +109,7 @@ async function scanFiles(input: { dir: string; targetFileSuffix: string }): Prom
   const files: string[] = []
 
   const filesAndDirectories = await fs.readdir(input.dir, {
-    withFileTypes: true
+    withFileTypes: true,
   })
 
   for (const file of filesAndDirectories) {
@@ -118,7 +118,7 @@ async function scanFiles(input: { dir: string; targetFileSuffix: string }): Prom
     if (file.isDirectory()) {
       const children = await scanFiles({
         dir: res,
-        targetFileSuffix: input.targetFileSuffix
+        targetFileSuffix: input.targetFileSuffix,
       })
       files.push(...children)
       continue

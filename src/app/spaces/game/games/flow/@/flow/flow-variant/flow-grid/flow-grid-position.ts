@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 
 export const parser = p.obj({
   x: p.num,
-  y: p.num
+  y: p.num,
 })
 
 export type Position = p.Infer<typeof parser>
@@ -18,12 +18,12 @@ const manhattanDistance = (a: Position, b: Position) => {
 export const Position = {
   parser,
   manhattanDistance,
-  distance
+  distance,
 }
 
 export const DELTAS: Position[] = [
   { x: -1, y: 0 },
   { x: 1, y: 0 },
   { x: 0, y: 1 },
-  { x: 0, y: -1 }
+  { x: 0, y: -1 },
 ]

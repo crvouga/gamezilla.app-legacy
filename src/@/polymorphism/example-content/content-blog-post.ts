@@ -19,5 +19,5 @@ renderHTML.impl(isBlogPost, (blogPost) => {
 
 export const BlogPost = (input: { title: string; body: string }): BlogPost => ({
   ...input,
-  Content: 'blog-post'
+  Content: 'blog-post',
 })

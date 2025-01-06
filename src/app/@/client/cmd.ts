@@ -46,8 +46,8 @@ export const logout = <T extends ClientCmdTypes>(): AppClientCmd<T> => {
   return {
     t: 'auth',
     c: {
-      t: 'logout'
-    }
+      t: 'logout',
+    },
   }
 }
 
@@ -67,8 +67,8 @@ export const closeStatusBar = <T extends ClientCmdTypes>(): AppClientCmd<T> => {
   return {
     t: 'status-bar',
     c: {
-      t: 'close'
-    }
+      t: 'close',
+    },
   }
 }
 
@@ -106,11 +106,11 @@ export const openProfile = <T extends ClientCmdTypes>(userId: UserId): AppClient
 
 export const didOpenProfile = <T>(
   {
-    msgCmd
+    msgCmd,
   }: {
     msgCmd?: (ProfileCmd | T)[] | null
   },
-  userId: UserId
+  userId: UserId,
 ): boolean => {
   return (
     msgCmd?.some(
@@ -120,7 +120,7 @@ export const didOpenProfile = <T>(
         't' in cmd &&
         cmd.t === 'profile' &&
         cmd.c.t === 'open-profile' &&
-        cmd.c.userId === userId
+        cmd.c.userId === userId,
     ) ?? false
   )
 }
@@ -161,7 +161,7 @@ export const focusView = <T extends ClientCmdTypes>(viewId: string): AppClientCm
 export const startTimeout = <T extends ClientCmdTypes>(
   timeoutId: string | number,
   duration: TimeSpan,
-  msg: T['MsgClient']
+  msg: T['MsgClient'],
 ): AppClientCmd<T> => {
   return {
     t: 'platform',
@@ -169,8 +169,8 @@ export const startTimeout = <T extends ClientCmdTypes>(
       t: 'start-timeout',
       timeoutId,
       duration,
-      msg
-    }
+      msg,
+    },
   }
 }
 
@@ -179,8 +179,8 @@ export const cancelTimeout = <T extends ClientCmdTypes>(timeoutId: string | numb
     t: 'platform',
     c: {
       t: 'cancel-timeout',
-      timeoutId
-    }
+      timeoutId,
+    },
   }
 }
 
@@ -189,18 +189,18 @@ export const copyToClipboard = <T extends ClientCmdTypes>(text: string): AppClie
     t: 'platform',
     c: {
       t: 'copy-to-clipboard',
-      text
-    }
+      text,
+    },
   }
 }
 
 export const didCopyToClipboard = <T extends ClientCmdTypes, TCmd>(
   {
-    msgCmd
+    msgCmd,
   }: {
     msgCmd?: (PlatformCmd<T['MsgClient']> | TCmd)[] | null
   },
-  isValidText?: (text: string) => boolean
+  isValidText?: (text: string) => boolean,
 ): boolean => {
   return (
     msgCmd?.some(
@@ -210,7 +210,7 @@ export const didCopyToClipboard = <T extends ClientCmdTypes, TCmd>(
         't' in cmd &&
         cmd.t === 'platform' &&
         cmd.c.t === 'copy-to-clipboard' &&
-        (typeof isValidText === 'function' ? isValidText(cmd.c.text) : true)
+        (typeof isValidText === 'function' ? isValidText(cmd.c.text) : true),
     ) ?? false
   )
 }
@@ -237,18 +237,18 @@ export const sendToServer = <T extends ClientCmdTypes>(msg: T['MsgToServer']): A
     t: 'wire',
     c: {
       t: 'send-to-server',
-      toServer: msg
-    }
+      toServer: msg,
+    },
   }
 }
 
 export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
   {
-    msgCmd
+    msgCmd,
   }: {
     msgCmd?: (WireCmd<T> | TCmd)[] | null
   },
-  predicate: (msg: T['MsgToServer']) => boolean
+  predicate: (msg: T['MsgToServer']) => boolean,
 ): boolean => {
   return (
     msgCmd?.some(
@@ -259,7 +259,7 @@ export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
         cmd.t === 'wire' &&
         cmd.c.t === 'send-to-server' &&
         cmd.c.toServer &&
-        predicate(cmd.c.toServer)
+        predicate(cmd.c.toServer),
     ) ?? false
   )
 }
@@ -285,7 +285,7 @@ export type ToastCmd = {
 export const showToast = <T extends ClientCmdTypes>(
   text: TranslatedText,
   variant?: 'error' | 'info',
-  duration?: TimeSpan
+  duration?: TimeSpan,
 ): AppClientCmd<T> => {
   return {
     t: 'toast',
@@ -293,8 +293,8 @@ export const showToast = <T extends ClientCmdTypes>(
       t: 'enqueue',
       text,
       toastVariant: variant,
-      duration
-    }
+      duration,
+    },
   }
 }
 
@@ -302,7 +302,7 @@ export const didShowToast = <T>(
   output?: {
     msgCmd?: (ToastCmd | T)[] | null
   },
-  predicate?: (toast: { message: TranslatedText }) => boolean
+  predicate?: (toast: { message: TranslatedText }) => boolean,
 ): boolean => {
   return (
     output?.msgCmd?.some((cmd) => {
@@ -314,7 +314,7 @@ export const didShowToast = <T>(
         cmd.c.t === 'enqueue' &&
         (predicate
           ? predicate({
-              message: cmd.c.text
+              message: cmd.c.text,
             })
           : true)
       )
@@ -328,23 +328,23 @@ export const showCreatedSm = <T extends ClientCmdTypes>(text: TranslatedText): A
       t: 'toast',
       c: {
         t: 'enqueue',
-        text
-      }
+        text,
+      },
     },
     {
       t: 'sound',
       c: {
         t: 'play',
-        src: APP_SOUND.refreshFeed
-      }
-    }
+        src: APP_SOUND.refreshFeed,
+      },
+    },
   ]
 }
 
 export const showErrSm = <T extends ClientCmdTypes>(
   text: TranslatedText,
   errorMsg?: string,
-  duration?: TimeSpan
+  duration?: TimeSpan,
 ): AppClientCmd<T>[] => {
   return [
     {
@@ -354,26 +354,26 @@ export const showErrSm = <T extends ClientCmdTypes>(
         text,
         toastVariant: 'error',
         errorMsg,
-        duration: duration ?? TimeSpan.seconds(4)
-      }
+        duration: duration ?? TimeSpan.seconds(4),
+      },
     },
     {
       t: 'sound',
       c: {
         t: 'play',
-        src: APP_SOUND.alertErrorSm
-      }
-    }
+        src: APP_SOUND.alertErrorSm,
+      },
+    },
   ]
 }
 
 export const didShowErrorSm = <TCmd>(
   {
-    msgCmd
+    msgCmd,
   }: {
     msgCmd?: (ToastCmd | SoundCmd | TCmd)[] | null
   },
-  errorMessage?: TranslatedText
+  errorMessage?: TranslatedText,
 ): boolean => {
   const isSomeErrorToast =
     msgCmd?.some(
@@ -384,7 +384,7 @@ export const didShowErrorSm = <TCmd>(
         cmd.t === 'toast' &&
         cmd.c.t === 'enqueue' &&
         cmd.c.toastVariant === 'error' &&
-        (errorMessage ? eq(cmd.c.text, errorMessage) : true)
+        (errorMessage ? eq(cmd.c.text, errorMessage) : true),
     ) ?? false
 
   const isSomeErrorSound =
@@ -395,7 +395,7 @@ export const didShowErrorSm = <TCmd>(
         't' in cmd &&
         cmd.t === 'sound' &&
         cmd.c.t === 'play' &&
-        cmd.c.src === APP_SOUND.alertErrorSm
+        cmd.c.src === APP_SOUND.alertErrorSm,
     ) ?? false
   return isSomeErrorToast && isSomeErrorSound
 }
@@ -437,7 +437,7 @@ export const APP_SOUND = {
   navTransitionLeft: './app/nav-transition-left.wav',
   stateChangeUp: './app/state-change-up.wav',
   stateChangeDown: './app/state-change-down.wav',
-  refreshFeed: './app/refresh-feed.wav'
+  refreshFeed: './app/refresh-feed.wav',
 }
 
 export const playSound = (
@@ -445,7 +445,7 @@ export const playSound = (
   config?: {
     volume?: UnitInterval
     delay?: TimeSpan
-  }
+  },
 ): SoundCmd => {
   return {
     t: 'sound',
@@ -453,29 +453,29 @@ export const playSound = (
       t: 'play',
       src,
       volume: config?.volume,
-      delay: config?.delay
-    }
+      delay: config?.delay,
+    },
   }
 }
 
 export const didPlaySound = <T>(
   {
-    msgCmd
+    msgCmd,
   }: {
     msgCmd?: (SoundCmd | T)[] | null | null
   },
-  src?: string
+  src?: string,
 ): boolean => {
   return countPlaySoundCmd({ msgCmd }, src) > 0
 }
 
 export const countPlaySoundCmd = <T>(
   {
-    msgCmd
+    msgCmd,
   }: {
     msgCmd?: (SoundCmd | T)[] | null
   },
-  src?: string
+  src?: string,
 ): number => {
   return (
     msgCmd?.filter(
@@ -485,7 +485,7 @@ export const countPlaySoundCmd = <T>(
         't' in cmd &&
         cmd.t === 'sound' &&
         cmd.c.t === 'play' &&
-        (src ? cmd.c.src === src : true)
+        (src ? cmd.c.src === src : true),
     ).length ?? 0
   )
 }
@@ -495,8 +495,8 @@ export const preloadSound = <T extends ClientCmdTypes>(src: string[]): AppClient
     t: 'sound',
     c: {
       t: 'preload',
-      src
-    }
+      src,
+    },
   }
 }
 
@@ -536,8 +536,8 @@ export const pushRoute = <T extends ClientCmdTypes>(route: Route, playSound?: bo
     c: {
       t: 'push',
       route,
-      playSound
-    }
+      playSound,
+    },
   }
 }
 
@@ -545,7 +545,7 @@ export const didPushRoute = <T>(
   output?: {
     msgCmd?: (RouteCmd | T)[] | null
   },
-  predicate?: (route: Route) => boolean
+  predicate?: (route: Route) => boolean,
 ): boolean => {
   return Boolean(
     output?.msgCmd?.some((cmd) => {
@@ -556,7 +556,7 @@ export const didPushRoute = <T>(
         return true
       }
       return false
-    })
+    }),
   )
 }
 
@@ -566,18 +566,18 @@ export const replaceRoute = <T extends ClientCmdTypes>(route: Route, playSound?:
     c: {
       t: 'replace',
       route,
-      playSound: playSound ?? true
-    }
+      playSound: playSound ?? true,
+    },
   }
 }
 
 export const didReplaceRoute = <T extends ClientCmdTypes>(
   {
-    msgCmd
+    msgCmd,
   }: {
     msgCmd?: AppClientCmd<T>[]
   },
-  route?: Route
+  route?: Route,
 ): boolean => {
   return Boolean(
     msgCmd?.some((cmd) => {
@@ -588,7 +588,7 @@ export const didReplaceRoute = <T extends ClientCmdTypes>(
         return true
       }
       return false
-    })
+    }),
   )
 }
 
@@ -598,8 +598,8 @@ export const back = <T extends ClientCmdTypes>(reason?: string): AppClientCmd<T>
     c: {
       t: 'back',
       reason,
-      playSound: true
-    }
+      playSound: true,
+    },
   }
 }
 
@@ -614,7 +614,7 @@ export const back = <T extends ClientCmdTypes>(reason?: string): AppClientCmd<T>
 
 const tagOne = <Tag extends string, T extends ClientCmdTypes>(
   t: Tag,
-  msgCmd: AppClientCmd<T>
+  msgCmd: AppClientCmd<T>,
 ): AppClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
   MsgToServer: { t: Tag; c: T['MsgToServer'] }
@@ -630,9 +630,9 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
                 ...msgCmd.c,
                 toServer: {
                   t,
-                  c: msgCmd.c.toServer
-                }
-              }
+                  c: msgCmd.c.toServer,
+                },
+              },
             }
           }
           return {
@@ -641,9 +641,9 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
               ...msgCmd.c,
               toServer: {
                 t,
-                c: null
-              }
-            }
+                c: null,
+              },
+            },
           }
         }
         default: {
@@ -670,9 +670,9 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
               ...msgCmd.c,
               msg: {
                 t,
-                c: msgCmd.c.msg
-              }
-            }
+                c: msgCmd.c.msg,
+              },
+            },
           }
         }
 
@@ -699,7 +699,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 
 const tag = <Tag extends string, T extends ClientCmdTypes>(
   tag: Tag,
-  msgCmd?: (AppClientCmd<T> | null | undefined)[] | null | undefined | null
+  msgCmd?: (AppClientCmd<T> | null | undefined)[] | null | undefined | null,
 ): AppClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
   MsgToServer: { t: Tag; c: T['MsgToServer'] }
@@ -710,7 +710,7 @@ const tag = <Tag extends string, T extends ClientCmdTypes>(
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
   msgCmd: AppClientCmd<A>[],
   toServerMap: (a: A['MsgToServer']) => B['MsgToServer'],
-  clientMsgMap: (b: A['MsgClient']) => B['MsgClient']
+  clientMsgMap: (b: A['MsgClient']) => B['MsgClient'],
 ): AppClientCmd<B>[] => {
   return msgCmd.map((msgCmd) => {
     switch (msgCmd.t) {
@@ -722,16 +722,16 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
                 ...msgCmd,
                 c: {
                   ...msgCmd.c,
-                  toServer: toServerMap(msgCmd.c.toServer)
-                }
+                  toServer: toServerMap(msgCmd.c.toServer),
+                },
               }
             }
             return {
               ...msgCmd,
               c: {
                 ...msgCmd.c,
-                toServer: null
-              }
+                toServer: null,
+              },
             }
           }
           default: {
@@ -747,8 +747,8 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
               ...msgCmd,
               c: {
                 ...msgCmd.c,
-                toServer: clientMsgMap(msgCmd.c.msg)
-              }
+                toServer: clientMsgMap(msgCmd.c.msg),
+              },
             }
           }
 
@@ -767,5 +767,5 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
 export const AppClientCmd = {
   tagOne,
   tag,
-  map
+  map,
 }

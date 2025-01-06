@@ -20,7 +20,7 @@ const Fixture = async (config: Config) => {
   return {
     spacesCoreServer,
     spaceId,
-    spaceA
+    spaceA,
   }
 }
 
@@ -29,11 +29,11 @@ const Fixtures = async () => {
     {
       t: 'db-conn-kv',
       dbConnKv: await DbConnKv({
-        t: 'hash-map'
+        t: 'hash-map',
       }),
       logger: Logger({ t: 'noop' }),
-      runtime: Runtime({ t: 'noop' })
-    }
+      runtime: Runtime({ t: 'noop' }),
+    },
   ]
 
   const TEST = false
@@ -42,14 +42,14 @@ const Fixtures = async () => {
     configs.push({
       t: 'stream',
       dbConnKv: await DbConnKv({
-        t: 'hash-map'
+        t: 'hash-map',
       }),
       logger: Logger({ t: 'noop' }),
       stream: await Stream({
         t: 'in-memory',
-        parser: p.and(SpaceEvent, EventMeta)
+        parser: p.and(SpaceEvent, EventMeta),
       }),
-      runtime: Runtime({ t: 'noop' })
+      runtime: Runtime({ t: 'noop' }),
     })
   }
 
@@ -78,8 +78,8 @@ describe(import.meta.file, () => {
       const before = unwrap(
         await f.spacesCoreServer.list({
           limit: 10,
-          offset: 0
-        })
+          offset: 0,
+        }),
       )
 
       const upserted = await f.spacesCoreServer.upsert(f.spaceA)
@@ -87,8 +87,8 @@ describe(import.meta.file, () => {
       const after = unwrap(
         await f.spacesCoreServer.list({
           limit: 10,
-          offset: 0
-        })
+          offset: 0,
+        }),
       )
 
       expect(before.items).toEqual([])
@@ -125,8 +125,8 @@ describe(import.meta.file, () => {
         withEventId({
           t: 'user-started-space',
           spaceId: spaceId,
-          userId: UserId.generate()
-        })
+          userId: UserId.generate(),
+        }),
       )
       const after = unwrap(await f.spacesCoreServer.get(spaceId))
       expect(SpaceCore.toSpaceStarted(before)).toEqual(null)

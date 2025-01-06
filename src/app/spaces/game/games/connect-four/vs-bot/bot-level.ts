@@ -9,5 +9,5 @@ export type BotLevel = p.Infer<typeof BotLevel>
 export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
   Easy: 'Easy',
   Medium: 'Medium',
-  Hard: 'Hard'
+  Hard: 'Hard',
 }

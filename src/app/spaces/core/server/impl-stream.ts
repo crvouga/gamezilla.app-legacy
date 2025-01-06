@@ -26,13 +26,13 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     t: 'db-conn-kv',
     dbConnKv: config.dbConnKv,
     logger: Logger.prefix('db-conn-kv', config.logger),
-    runtime: config.runtime
+    runtime: config.runtime,
   })
 
   const snapshots = DbConnKv.withNamespace<SpaceId, SpaceCoreState.State>({
     dbConnKv: config.dbConnKv,
     namespace: ['spaces', 'snapshots'],
-    parser: SpaceCoreState.State
+    parser: SpaceCoreState.State,
   })
 
   const upsert: ISpacesCoreServer['upsert'] = async (space) => {
@@ -127,6 +127,6 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     getByUserId,
     list,
     merge,
-    update
+    update,
   }
 }

@@ -18,18 +18,18 @@ const updateFromClient: ServerModule['update'] = async (input) => {
 
       const deleted = await input.ctx.flowPuzzleDb.zap({
         id: puzzleBuilder.puzzle.id,
-        deletedByUserId: input.msgClient.userId
+        deletedByUserId: input.msgClient.userId,
       })
 
       const msgCore: MsgCore = {
         t: 'user-deleted-puzzle',
         flowPuzzleId: puzzleBuilder.puzzle.id,
         userId: input.msgClient.userId,
-        deleted
+        deleted,
       }
 
       return {
-        msgCore: [withEventId(msgCore)]
+        msgCore: [withEventId(msgCore)],
       }
     }
 
@@ -40,5 +40,5 @@ const updateFromClient: ServerModule['update'] = async (input) => {
 }
 
 export const DeleteForeverServer: Pick<ServerModule, 'update'> = {
-  update
+  update,
 }

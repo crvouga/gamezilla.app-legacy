@@ -13,7 +13,7 @@ const initCtx = (input: { ctx: SpaceServerCtx }): GamesServerCtx => {
   const gameCtx = GamesServer.initCtx(input)
   return {
     ...input.ctx,
-    ...gameCtx
+    ...gameCtx,
   }
 }
 
@@ -44,16 +44,16 @@ const updateGame: SpaceServerModule['update'] = async (input) => {
         ? {
             ...input.msgClient,
             userId: input.msgClient.userId,
-            ...input.msgClient.c
+            ...input.msgClient.c,
           }
         : null,
     msgEvt: input.msgEvt,
-    msgCore: input.msgCore?.t === 'game' ? { ...input.msgCore, ...input.msgCore.c } : null
+    msgCore: input.msgCore?.t === 'game' ? { ...input.msgCore, ...input.msgCore.c } : null,
   })
 
   return {
     msgCmd: SpaceServerCmd.map(updated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
-    msgCore: updated.msgCore?.map((e) => withEventId({ ...e, spaceId, t: 'game', c: e }))
+    msgCore: updated.msgCore?.map((e) => withEventId({ ...e, spaceId, t: 'game', c: e })),
   }
 }
 
@@ -82,5 +82,5 @@ const subscriptions: SpaceServerModule['subscriptions'] = async (_input) => {
 export const GameServer = {
   initCtx,
   subscriptions,
-  update
+  update,
 }

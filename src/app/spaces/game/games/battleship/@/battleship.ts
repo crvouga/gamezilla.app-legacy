@@ -64,7 +64,7 @@ shoot.implDefault((_input, model) => {
 
 shoot.impl(
   (
-    input
+    input,
   ): input is ShootInput & {
     ammo: Cannonball
     target: Battleship
@@ -72,14 +72,14 @@ shoot.impl(
   (_input, model) => {
     return {
       ...model,
-      message: 'Cannonball hits the battleship with significant damage.'
+      message: 'Cannonball hits the battleship with significant damage.',
     }
-  }
+  },
 )
 
 shoot.impl(
   (
-    input
+    input,
   ): input is ShootInput & {
     ammo: Cannonball
     target: Submarine
@@ -87,14 +87,14 @@ shoot.impl(
   (_input, model) => {
     return {
       ...model,
-      message: 'Cannonball splashes harmlessly into the water.'
+      message: 'Cannonball splashes harmlessly into the water.',
     }
-  }
+  },
 )
 
 shoot.impl(
   (
-    input
+    input,
   ): input is ShootInput & {
     ammo: Torpedo
     target: Submarine
@@ -102,14 +102,14 @@ shoot.impl(
   (_input, model) => {
     return {
       ...model,
-      message: 'Torpedo strikes the submarine with devastating force.'
+      message: 'Torpedo strikes the submarine with devastating force.',
     }
-  }
+  },
 )
 
 shoot.impl(
   (
-    input
+    input,
   ): input is ShootInput & {
     ammo: Torpedo
     target: Battleship
@@ -117,9 +117,9 @@ shoot.impl(
   (_input, model) => {
     return {
       ...model,
-      message: "Torpedo damages the battleship's hull."
+      message: "Torpedo damages the battleship's hull.",
     }
-  }
+  },
 )
 
 //
@@ -139,49 +139,49 @@ const submarine: Submarine = { type: 'Submarine' }
 const model: Model = {
   message: '',
   playerOne: {
-    ships: [battleship]
+    ships: [battleship],
   },
   playerTwo: {
-    ships: [submarine]
-  }
+    ships: [submarine],
+  },
 }
 console.log(
   shoot(
     {
       ammo: cannonball,
       target: battleship,
-      shotCount: 1
+      shotCount: 1,
     },
-    model
-  )
+    model,
+  ),
 )
 console.log(
   shoot(
     {
       ammo: cannonball,
       target: submarine,
-      shotCount: 1
+      shotCount: 1,
     },
-    model
-  )
+    model,
+  ),
 )
 console.log(
   shoot(
     {
       ammo: torpedo,
       target: submarine,
-      shotCount: 1
+      shotCount: 1,
     },
-    model
-  )
+    model,
+  ),
 )
 console.log(
   shoot(
     {
       ammo: torpedo,
       target: battleship,
-      shotCount: 1
+      shotCount: 1,
     },
-    model
-  )
+    model,
+  ),
 )

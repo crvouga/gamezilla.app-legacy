@@ -7,9 +7,9 @@ const grid1 = pipe(
     ['b', 'a', 'c', 'C', 'd'],
     ['b', 'a', 'C', 'd', 'd'],
     ['b', 'A', 'D', 'd', 'E'],
-    ['b', 'B', 'E', 'e', 'e']
+    ['b', 'B', 'E', 'e', 'e'],
   ]),
-  FlowGridShorthand.toGrid
+  FlowGridShorthand.toGrid,
 )
 
 const grid2 = pipe(
@@ -18,9 +18,9 @@ const grid2 = pipe(
     ['d', 'C', 'D', 'B', 'a'],
     ['d', 'c', 'C', 'b', 'a'],
     ['d', 'b', 'b', 'b', 'a'],
-    ['D', 'B', 'A', 'a', 'a']
+    ['D', 'B', 'A', 'a', 'a'],
   ]),
-  FlowGridShorthand.toGrid
+  FlowGridShorthand.toGrid,
 )
 
 const grid = false ? grid2 : grid1

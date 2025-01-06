@@ -20,7 +20,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       super()
 
       this.attachShadow({
-        mode: 'open'
+        mode: 'open',
       })
 
       if (!('IntersectionObserver' in window)) {
@@ -29,7 +29,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
 
       this.intersectionObserver = new IntersectionObserver(this.onIntersection, {
         rootMargin: '0px',
-        threshold: 1.0
+        threshold: 1.0,
       })
     }
 

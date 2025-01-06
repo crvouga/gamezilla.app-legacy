@@ -10,7 +10,7 @@ import {
   PlayerType,
   dropDisc,
   toStatus,
-  toTurn
+  toTurn,
 } from '../@/connect-four/connect-four'
 
 //
@@ -62,94 +62,94 @@ const RematchResponse = p.enumeration(['Accept', 'Decline'])
 export const MsgCore = p.or(
   p.obj({
     t: p.l('user-stopped-playing'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-started-playing'),
     userId: UserId,
-    playerType: PlayerType
+    playerType: PlayerType,
   }),
   p.obj({
     t: p.l('user-inputted-move-time-limit'),
     userId: UserId,
-    moveTimeLimit: MoveTimeLimit
+    moveTimeLimit: MoveTimeLimit,
   }),
   p.obj({
     t: p.l('user-dropped-disc'),
     columnIndex: p.num,
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-started-game'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-stopped-game'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-requested-rematch'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-responded-to-rematch-request'),
     userId: UserId,
-    response: RematchResponse
+    response: RematchResponse,
   }),
   p.obj({
     t: p.l('user-cancelled-rematch'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-resigned'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('time-passed'),
-    currentTime: Posix
+    currentTime: Posix,
   }),
   p.obj({
     t: p.l('user-left'),
-    userId: UserId
-  })
+    userId: UserId,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
 const GameOver = p.or(
   p.obj({
-    type: p.l('Draw')
+    type: p.l('Draw'),
   }),
   p.obj({
     type: p.l('Winner'),
-    winner: PlayerType
+    winner: PlayerType,
   }),
   p.obj({
     type: p.l('resignation'),
-    resigner: PlayerType
-  })
+    resigner: PlayerType,
+  }),
 )
 export type GameOver = p.Infer<typeof GameOver>
 
 const EventError = p.or(
   p.obj({
-    t: p.l('not-playing')
+    t: p.l('not-playing'),
   }),
   p.obj({
     t: p.l('move'),
-    c: MoveProblem
-  })
+    c: MoveProblem,
+  }),
 )
 
 type EventError = p.Infer<typeof EventError>
 
 const Rematch = p.or(
   p.obj({
-    type: p.l('NotAsking')
+    type: p.l('NotAsking'),
   }),
   p.obj({
     type: p.l('Asking'),
-    asker: PlayerType
-  })
+    asker: PlayerType,
+  }),
 )
 export type Rematch = p.Infer<typeof Rematch>
 
@@ -159,10 +159,10 @@ const Errors = p.obj({
     p.and(
       MsgCore,
       p.obj({
-        error: EventError
-      })
-    )
-  )
+        error: EventError,
+      }),
+    ),
+  ),
 })
 
 type Errors = p.Infer<typeof Errors>
@@ -174,9 +174,9 @@ const addError = (modelCore: ModelCore, msgCore: MsgCore, error: EventError): Mo
       ...modelCore.errors,
       [JSON.stringify(msgCore)]: {
         ...msgCore,
-        error
-      }
-    }
+        error,
+      },
+    },
   }
 }
 
@@ -185,8 +185,8 @@ export const StateSetup = p.and(
   p.obj({
     type: p.l('setup'),
     moveTimeLimit: MoveTimeLimit,
-    players: p.partialDict(PlayerType, p.maybe(UserId))
-  })
+    players: p.partialDict(PlayerType, p.maybe(UserId)),
+  }),
 )
 export type StateSetup = p.Infer<typeof StateSetup>
 
@@ -198,8 +198,8 @@ export const StateGame = p.and(
     columns: Columns,
     gameId: p.num,
     lastMoveAt: Posix,
-    players: p.dict(PlayerType, UserId)
-  })
+    players: p.dict(PlayerType, UserId),
+  }),
 )
 export type StateGame = p.Infer<typeof StateGame>
 
@@ -212,8 +212,8 @@ export const StateGameOver = p.and(
     gameId: p.num,
     gameOver: GameOver,
     rematch: Rematch,
-    players: p.dict(PlayerType, UserId)
-  })
+    players: p.dict(PlayerType, UserId),
+  }),
 )
 export type StateGameOver = p.Infer<typeof StateGameOver>
 
@@ -226,9 +226,9 @@ export const initCore = (ctx: SpaceCtx): ModelCore => {
     moveTimeLimit: 5,
     players: {
       'player-one': ctx.space.hostId,
-      'player-two': null
+      'player-two': null,
     },
-    errors: {}
+    errors: {},
   }
 }
 
@@ -246,7 +246,7 @@ export const toGameOver = (modelCore: ModelCore): GameOver | { type: 'none' } =>
   if (status.type === 'Winner') {
     return {
       type: 'Winner',
-      winner: status.winner
+      winner: status.winner,
     }
   }
 
@@ -260,7 +260,7 @@ export const allMoveTimeLimit: {
 } = {
   '5': 5,
   '7': 7,
-  '9': 9
+  '9': 9,
 }
 
 export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
@@ -270,7 +270,7 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
         case 'user-started-playing': {
           if (modelCore.players[msgCore.playerType] !== null) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
@@ -278,8 +278,8 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
             ...modelCore,
             players: {
               ...modelCore.players,
-              [msgCore.playerType]: msgCore.userId
-            }
+              [msgCore.playerType]: msgCore.userId,
+            },
           }
         }
 
@@ -288,7 +288,7 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
 
           if (!playerType) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
@@ -296,15 +296,15 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
             ...modelCore,
             players: {
               ...modelCore.players,
-              [playerType]: null
-            }
+              [playerType]: null,
+            },
           }
         }
 
         case 'user-inputted-move-time-limit': {
           return {
             ...modelCore,
-            moveTimeLimit: msgCore.moveTimeLimit
+            moveTimeLimit: msgCore.moveTimeLimit,
           }
         }
 
@@ -314,7 +314,7 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
 
           if (!playerOne || !playerTwo) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
@@ -327,8 +327,8 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
             gameId: 0,
             players: {
               'player-one': playerOne,
-              'player-two': playerTwo
-            }
+              'player-two': playerTwo,
+            },
           }
         }
 
@@ -348,13 +348,13 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
           if (dropped.t === 'err') {
             return addError(modelCore, msgCore, {
               t: 'move',
-              c: dropped.error
+              c: dropped.error,
             })
           }
 
           return {
             ...modelCore,
-            columns: dropped.value
+            columns: dropped.value,
             // lastMoveAt: msgCore.happenedAt,
           }
         }
@@ -364,7 +364,7 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
 
           if (!resignedPlayer) {
             return addError(modelCore, msgCore, {
-              t: 'not-playing'
+              t: 'not-playing',
             })
           }
 
@@ -373,11 +373,11 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
             type: 'game-over',
             gameOver: {
               type: 'resignation',
-              resigner: resignedPlayer
+              resigner: resignedPlayer,
             },
             rematch: {
-              type: 'NotAsking'
-            }
+              type: 'NotAsking',
+            },
           }
         }
 

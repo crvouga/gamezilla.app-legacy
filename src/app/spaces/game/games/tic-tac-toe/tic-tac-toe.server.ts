@@ -33,7 +33,7 @@ export type Msg = MsgServer
 
 export const update = ({
   msg,
-  model
+  model,
 }: {
   msg: Msg
   model: Model
@@ -47,24 +47,24 @@ export const update = ({
     return {
       model: {
         t: 'vs-user',
-        c: updated.model
+        c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd)
+      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd),
     }
   }
 
   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
     const updated = VsBot.update({
       model: model.c,
-      msg: msg.c
+      msg: msg.c,
     })
 
     return {
       model: {
         t: 'vs-bot',
-        c: updated.model
+        c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd)
+      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd),
     }
   }
 
@@ -74,7 +74,7 @@ export const update = ({
 export const updateFromClient = ({
   msg,
   model,
-  ctx
+  ctx,
 }: {
   ctx: SpaceServerCtx
   msg: MsgToServer
@@ -87,7 +87,7 @@ export const updateFromClient = ({
   if (msg.t === 'input-mode') {
     const modelNew: ModelServer = initMode({
       mode: msg.mode,
-      userId: ctx.space.hostId
+      userId: ctx.space.hostId,
     })
 
     return {
@@ -98,10 +98,10 @@ export const updateFromClient = ({
           msg: {
             t: 'input-mode',
             mode: msg.mode,
-            result: Ok(modelNew)
-          }
-        }
-      ]
+            result: Ok(modelNew),
+          },
+        },
+      ],
     }
   }
 
@@ -111,9 +111,9 @@ export const updateFromClient = ({
     return {
       model: {
         ...model,
-        c: updated.model
+        c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd)
+      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd),
     }
   }
 
@@ -121,16 +121,16 @@ export const updateFromClient = ({
     const updated = VsBot.updateFromClient({
       msg: msg.c,
       model: model.c,
-      ctx
+      ctx,
     })
 
     return {
       model: {
         ...model,
-        c: updated.model
+        c: updated.model,
       },
       eff: Eff.tag('vs-bot', updated.eff),
-      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd)
+      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd),
     }
   }
 
@@ -139,7 +139,7 @@ export const updateFromClient = ({
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   model: Model
   msg: SpaceServerEvt
@@ -154,28 +154,28 @@ export const updateFromEvent = ({
   if (model.t === 'vs-bot') {
     const updated = VsBot.updateFromEvent({
       msg,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-bot',
-        c: updated.model
+        c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd)
+      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd),
     }
   }
 
   if (model.t === 'vs-user') {
     const updated = VsUser.updateFromEvent({
       msg,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-user',
-        c: updated.model
+        c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd)
+      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd),
     }
   }
 
@@ -186,7 +186,7 @@ const initMode = ({ mode, userId }: { mode: ModelServer['t']; userId: UserId }):
   switch (mode) {
     case 'none': {
       return {
-        t: 'none'
+        t: 'none',
       }
     }
 
@@ -195,8 +195,8 @@ const initMode = ({ mode, userId }: { mode: ModelServer['t']; userId: UserId }):
         t: 'vs-user',
         c: VsUser.init({
           X: userId,
-          O: 'none'
-        })
+          O: 'none',
+        }),
       }
     }
 
@@ -204,8 +204,8 @@ const initMode = ({ mode, userId }: { mode: ModelServer['t']; userId: UserId }):
       return {
         t: 'vs-bot',
         c: VsBot.init({
-          userId
-        })
+          userId,
+        }),
       }
     }
   }

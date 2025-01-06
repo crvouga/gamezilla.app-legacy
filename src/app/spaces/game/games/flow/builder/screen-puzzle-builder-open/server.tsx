@@ -7,5 +7,5 @@ const update: ServerModule['update'] = async (input) => {
 }
 
 export const ScreenPuzzleBuilderOpenServer = {
-  update
+  update,
 }

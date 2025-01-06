@@ -15,5 +15,5 @@ const is = (nodeId: unknown): nodeId is FlowNodeId => {
 export const FlowNodeId = {
   init,
   is,
-  ...parser
+  ...parser,
 }

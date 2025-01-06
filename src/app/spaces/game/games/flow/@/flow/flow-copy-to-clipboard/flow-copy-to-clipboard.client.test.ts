@@ -6,12 +6,12 @@ const Fixture = async (input?: { currentUserRole: UserRole }) => {
   const f = await FixtureFlowClient()
   const ctx: typeof f.ctx = {
     ...f.ctx,
-    currentUserRole: input?.currentUserRole ?? 'super'
+    currentUserRole: input?.currentUserRole ?? 'super',
   }
 
   return {
     ...f,
-    ctx
+    ctx,
   }
 }
 
@@ -26,7 +26,7 @@ describe(import.meta.file, () => {
   test.todo('does not render button for non-super users', async () => {
     for (const currentUserRole of UserRole.NON_SUPER_USER_ROLES) {
       const f = await Fixture({
-        currentUserRole
+        currentUserRole,
       })
       const r = f.render(f.initial)
       const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))

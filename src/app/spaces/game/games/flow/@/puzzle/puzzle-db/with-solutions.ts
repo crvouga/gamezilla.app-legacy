@@ -25,7 +25,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
 
         const withSolution: typeof puzzle = {
           ...puzzle,
-          solutions: [solution]
+          solutions: [solution],
         }
 
         return withSolution
@@ -35,7 +35,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
 
       return Ok({
         ...listed.value,
-        items: awaited
+        items: awaited,
       })
     },
     async get(id) {
@@ -57,7 +57,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
 
       const withSolution: typeof got.value = {
         ...got.value,
-        solutions: [solution]
+        solutions: [solution],
       }
 
       return Ok(withSolution)
@@ -66,10 +66,10 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
       const solution = await FlowAlgoSolveAsync.solve(puzzle.flow)
       const withSolution: typeof puzzle = {
         ...puzzle,
-        solutions: solution ? [solution] : []
+        solutions: solution ? [solution] : [],
       }
       const output = await flowPuzzleDb.put(withSolution)
       return output
-    }
+    },
   }
 }

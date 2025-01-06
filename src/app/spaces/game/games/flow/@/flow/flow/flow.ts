@@ -12,7 +12,7 @@ import { FlowTerminal } from './flow-terminal'
  */
 export const Edge = p.obj({
   sourceId: FlowNodeId,
-  targetId: FlowNodeId
+  targetId: FlowNodeId,
 })
 export type Edge = p.Infer<typeof Edge>
 
@@ -22,20 +22,20 @@ export type Edge = p.Infer<typeof Edge>
  */
 export const Pipe = p.obj({
   groupId: FlowGroupId,
-  edgeId: FlowEdgeId
+  edgeId: FlowEdgeId,
 })
 export type Pipe = p.Infer<typeof Pipe>
 
 export const PipeJoined = p.and(
   Pipe,
   p.obj({
-    edge: Edge
-  })
+    edge: Edge,
+  }),
 )
 export type PipeJoined = p.Infer<typeof PipeJoined>
 
 export const Node = p.obj({
-  nodeId: FlowNodeId
+  nodeId: FlowNodeId,
 })
 export type Node = p.Infer<typeof Node>
 
@@ -85,7 +85,7 @@ export const Model = p.obj({
   /**
    * A hash of the nodes in the puzzle. Used for memoization.
    */
-  nodeHash: p.maybe(p.or(p.str, p.num))
+  nodeHash: p.maybe(p.or(p.str, p.num)),
 })
 
 export type Model = p.Infer<typeof Model>
@@ -100,7 +100,7 @@ export const init: Model = {
   terminalsByGroupId: {},
   pipesBySourceId: {},
   edgeHash: 0,
-  nodeHash: 0
+  nodeHash: 0,
 }
 
 /**
@@ -131,13 +131,13 @@ export const addNode = (model: Model, node: Node): Model => {
     ...model,
     nodes: {
       ...model.nodes,
-      [node.nodeId]: node
-    }
+      [node.nodeId]: node,
+    },
   }
   const nodeHash = deriveNodeHash(modelNew)
   return {
     ...modelNew,
-    nodeHash
+    nodeHash,
   }
 }
 
@@ -170,7 +170,7 @@ export const hasFlowEdgeId = (model: Model, edgeId: string): edgeId is FlowEdgeI
 }
 
 export const toReversedPipesBySourceId = (
-  model: Pick<Model, 'pipesBySourceId' | 'edges'>
+  model: Pick<Model, 'pipesBySourceId' | 'edges'>,
 ): Model['pipesBySourceId'] => {
   const reversed: Model['pipesBySourceId'] = {}
   for (const sourceId in model.pipesBySourceId) {
@@ -185,9 +185,9 @@ export const toReversedPipesBySourceId = (
     reversed[edge.targetId] = {
       edgeId: toFlowEdgeId({
         sourceId: edge.targetId,
-        targetId: edge.sourceId
+        targetId: edge.sourceId,
       }),
-      groupId: pipe.groupId
+      groupId: pipe.groupId,
     }
   }
   return reversed
@@ -195,7 +195,7 @@ export const toReversedPipesBySourceId = (
 
 export const isSamePipesBySourceId = (
   left: Pick<Model, 'pipesBySourceId' | 'edges'>,
-  right: Pick<Model, 'pipesBySourceId' | 'edges'>
+  right: Pick<Model, 'pipesBySourceId' | 'edges'>,
 ): boolean => {
   const isEqual = eq(left.pipesBySourceId, right.pipesBySourceId)
   const reversedB = toReversedPipesBySourceId(right)
@@ -232,8 +232,8 @@ export const addEdge = (model: Model, edge: Edge): Model => {
     ...model,
     edges: {
       ...model.edges,
-      [toFlowEdgeId(edge)]: edge
-    }
+      [toFlowEdgeId(edge)]: edge,
+    },
   }
   const edgeHash = deriveEdgeHash(modelNew)
   return { ...modelNew, edgeHash }
@@ -266,19 +266,19 @@ export const addTerminal = (model: Model, terminal: FlowTerminal): Model => {
     ...model,
     terminalsByGroupId: {
       ...model.terminalsByGroupId,
-      [terminal.groupId]: terminal
-    }
+      [terminal.groupId]: terminal,
+    },
   }
 }
 
 export const removeTerminal = (model: Model, groupId: FlowGroupId): Model => {
   const terminalsByGroupIdNew = {
-    ...model.terminalsByGroupId
+    ...model.terminalsByGroupId,
   }
   delete terminalsByGroupIdNew[groupId]
   return {
     ...model,
-    terminalsByGroupId: terminalsByGroupIdNew
+    terminalsByGroupId: terminalsByGroupIdNew,
   }
 }
 
@@ -317,7 +317,7 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
 
     yield {
       ...pipe,
-      edge
+      edge,
     }
   }
 }
@@ -355,7 +355,7 @@ export const toIndexEdgesOut = (model: Model) => {
 export const toIndexEdgesOutMemoized = memoize({
   toKey: (model) => model.edgeHash ?? 0,
   func: toIndexEdgesOut,
-  cacheCapacity: 5000
+  cacheCapacity: 5000,
 })
 
 export const toIndexEdgesIn = (model: Model) => {
@@ -370,8 +370,8 @@ export const toIndexEdgesIn = (model: Model) => {
       ...indexEdgesIn,
       [edge.targetId]: {
         ...indexEdgesIn[edge.targetId],
-        [edge.sourceId]: toFlowEdgeId(edge)
-      }
+        [edge.sourceId]: toFlowEdgeId(edge),
+      },
     }
   }
   return indexEdgesIn
@@ -382,7 +382,7 @@ export const toIndexEdgesIn = (model: Model) => {
  */
 export const yieldEdgesOut = function* (
   model: Model,
-  sourceFlowNodeId: FlowNodeId
+  sourceFlowNodeId: FlowNodeId,
 ): Iterable<Edge & { edgeId: FlowEdgeId }> {
   const indexEdgesOut = toIndexEdgesOutMemoized(model)
 
@@ -562,7 +562,7 @@ export const toPipeBySourceId = (model: Model, sourceId: FlowNodeId): PipeJoined
   }
   return {
     ...pipe,
-    edge
+    edge,
   }
 }
 
@@ -570,7 +570,7 @@ export const hasEdge = (model: Model, sourceId: FlowNodeId, targetId: FlowNodeId
   return (
     toFlowEdgeId({
       sourceId,
-      targetId
+      targetId,
     }) in model.edges
   )
 }
@@ -663,8 +663,8 @@ export const addPipe = (model: Model, pipe: Pipe): Model | null => {
     ...model,
     pipesBySourceId: {
       ...model.pipesBySourceId,
-      [edge.sourceId]: pipe
-    }
+      [edge.sourceId]: pipe,
+    },
   }
 }
 
@@ -696,7 +696,7 @@ export const flipAllTerminals = <TModel extends Model>(model: TModel): TModel =>
 
   return {
     ...model,
-    terminalsByGroupId
+    terminalsByGroupId,
   }
 }
 
@@ -714,8 +714,8 @@ export const flipTerminal = <TModel extends Model>(model: TModel, terminal: Flow
     ...model,
     terminalsByGroupId: {
       ...model.terminalsByGroupId,
-      [terminal.groupId]: flipped
-    }
+      [terminal.groupId]: flipped,
+    },
   }
 }
 
@@ -897,13 +897,13 @@ export const removePipeline = (model: Model, groupId?: FlowGroupId | null): Mode
     }
     pipesBySourceId[pipe.edge.sourceId] = {
       edgeId: pipe.edgeId,
-      groupId: pipe.groupId
+      groupId: pipe.groupId,
     }
   }
 
   return {
     ...model,
-    pipesBySourceId
+    pipesBySourceId,
   }
 }
 
@@ -959,15 +959,15 @@ export const addPipeline = (model: Model, newPipeline: Pipeline): Model => {
   const removedInvalidPipes = pipe(
     model,
     (model) => removePipeline(model, pipelineToGroupId(newPipeline)),
-    (model) => removeOverlappingPipes(model, newPipeline)
+    (model) => removeOverlappingPipes(model, newPipeline),
   )
   const pipesBySourceIdNew = pipelineToPipesBySourceId(model, newPipeline)
   const modelNew: Model = {
     ...removedInvalidPipes,
     pipesBySourceId: {
       ...removedInvalidPipes.pipesBySourceId,
-      ...pipesBySourceIdNew
-    }
+      ...pipesBySourceIdNew,
+    },
   }
   return modelNew
 }
@@ -975,7 +975,7 @@ export const addPipeline = (model: Model, newPipeline: Pipeline): Model => {
 export const removeAllPipelines = <TModel extends Model>(model: TModel): TModel => {
   return {
     ...model,
-    pipesBySourceId: {}
+    pipesBySourceId: {},
   }
 }
 

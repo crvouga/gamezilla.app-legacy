@@ -18,7 +18,7 @@ const update: ClientModule['update'] = (input) => {
         model: {
           ...model,
           puzzleCreateRequest: Loading,
-          puzzleCreateRequestedAt: ctx.now
+          puzzleCreateRequestedAt: ctx.now,
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
@@ -26,9 +26,9 @@ const update: ClientModule['update'] = (input) => {
             MsgClient: MsgClient
             MsgToServer: MsgToServer
           }>({
-            t: 'create-new-puzzle.user-clicked-create-button'
-          })
-        ]
+            t: 'create-new-puzzle.user-clicked-create-button',
+          }),
+        ],
       }
     }
 
@@ -40,16 +40,16 @@ const update: ClientModule['update'] = (input) => {
         return {
           model: {
             ...model,
-            puzzleCreateRequest: Result.Err(ctx.t('app.something-went-wrong'))
+            puzzleCreateRequest: Result.Err(ctx.t('app.something-went-wrong')),
           },
           msgCmd: showErrSm<{
             MsgClient: MsgClient
             MsgToServer: MsgToServer
-          }>(input.ctx.t('app.something-went-wrong'))
+          }>(input.ctx.t('app.something-went-wrong')),
         }
       }
       return {
-        model
+        model,
       }
     }
 
@@ -64,12 +64,12 @@ const update: ClientModule['update'] = (input) => {
         return {
           model: {
             ...model,
-            puzzleCreateRequest: msgCore.created
+            puzzleCreateRequest: msgCore.created,
           },
           msgCmd: showErrSm<{
             MsgClient: MsgClient
             MsgToServer: MsgToServer
-          }>(input.ctx.t('app.something-went-wrong'))
+          }>(input.ctx.t('app.something-went-wrong')),
         }
       }
 
@@ -86,18 +86,18 @@ const update: ClientModule['update'] = (input) => {
         {
           t: 'flow-cmd.add-puzzles',
           puzzles: {
-            [puzzleNew.id]: puzzleNew
+            [puzzleNew.id]: puzzleNew,
           },
-          causedBy: input
-        }
+          causedBy: input,
+        },
       ]
 
       return {
         model: {
           ...model,
-          puzzleCreateRequest: Result.mapOk(msgCore.created, () => null)
+          puzzleCreateRequest: Result.mapOk(msgCore.created, () => null),
         },
-        msgCmd
+        msgCmd,
       }
     }
 
@@ -115,7 +115,7 @@ const subscriptions: ClientModule['subscriptions'] = ({ model }) => {
   switch (model.puzzleCreateRequest.t) {
     case 'loading': {
       return Time.interval(id, TimeSpan.seconds(1), () => ({
-        t: 'time-passed'
+        t: 'time-passed',
       }))
     }
     default: {
@@ -135,7 +135,7 @@ const ViewCreateFab: ClientModule['View'] = (input) => {
       iconStart={(iconInput) => <IconPlus {...iconInput} />}
       onClick={() =>
         input.dispatch({
-          t: 'create-new-puzzle.user-clicked-create-button'
+          t: 'create-new-puzzle.user-clicked-create-button',
         })
       }
     />
@@ -145,5 +145,5 @@ const ViewCreateFab: ClientModule['View'] = (input) => {
 export const CreateNewPuzzleClient = {
   update,
   ViewCreateFab,
-  subscriptions
+  subscriptions,
 }

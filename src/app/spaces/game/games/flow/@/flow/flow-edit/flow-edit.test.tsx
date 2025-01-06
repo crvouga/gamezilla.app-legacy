@@ -8,18 +8,18 @@ const Fixture = async () => {
   const flow = puzzle.flow
 
   const init = FlowEdit.init({
-    flow
+    flow,
   })
   const update = (init: FlowEdit.Model, msgs: FlowEdit.Msg[]) => {
     let updated: ReturnType<typeof FlowEdit.update> = {
-      model: init
+      model: init,
     }
 
     for (const msg of msgs) {
       updated = FlowEdit.update({
         flow,
         model: updated.model,
-        msg
+        msg,
       })
     }
 
@@ -30,7 +30,7 @@ const Fixture = async () => {
     puzzle,
     flow,
     init,
-    update
+    update,
   }
 }
 
@@ -39,28 +39,28 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const msgs: FlowEdit.Msg[] = [
       {
-        t: 'dimensions-form.clicked-save'
+        t: 'dimensions-form.clicked-save',
       },
       {
-        t: 'dimensions-form.clicked-cancel'
+        t: 'dimensions-form.clicked-cancel',
       },
       {
-        t: 'dimensions-form.clicked-open'
+        t: 'dimensions-form.clicked-open',
       },
       {
-        t: 'dimensions-form.clicked-cancel'
+        t: 'dimensions-form.clicked-cancel',
       },
       {
-        t: 'dimensions-form.closed'
+        t: 'dimensions-form.closed',
       },
       {
         t: 'dimensions-form.inputted',
         dimensions: VariantDimensions.init({
           t: 'flow-grid',
           height: 0,
-          width: 0
-        })
-      }
+          width: 0,
+        }),
+      },
     ]
 
     for (const msg of msgs) {

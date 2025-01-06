@@ -135,6 +135,6 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
         logger.error(`zap: ${key} ${String(e)}`)
         return Err(String(e))
       }
-    }
+    },
   }
 }

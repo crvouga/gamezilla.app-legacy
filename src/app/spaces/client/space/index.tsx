@@ -1,8 +1,8 @@
 import { AppClientCtx } from '~/app/@/client/ctx'
 import type { SpaceId } from '~/app/@/data/space-id'
-import { Button, Typography } from '~/app/@/ui'
-import type { SpaceClientModule } from '../../@/architecture/space-client'
+import { ScreenTitleButton } from '~/app/@/ui/screen-title-button'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import type { SpaceClientModule } from '../../@/architecture/space-client'
 import { SpacesCoreClient } from '../../core/client'
 import { EndSpaceClient } from '../../end-space/end-space.client'
 import { GameClient } from '../../game/client'
@@ -29,7 +29,7 @@ const View = (input: { model: ModelClient; ctx: AppClientCtx; dispatch: (m: MsgC
       const spaceCtx: SpaceClientCtx = {
         ...input.ctx,
         currentUserId: input.ctx.currentUserId,
-        space: spaceState
+        space: spaceState,
       }
 
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
@@ -86,23 +86,18 @@ const ViewTopBar: SpaceClientModule['View'] = (input) => {
 
 const ViewSpaceNotFound = (input: { ctx: AppClientCtx; dispatch: (m: MsgClient) => void }) => {
   return (
-    <div className='flex flex-1 flex-col items-center justify-center gap-4'>
-      <Typography variant='title' text={input.ctx.t('spaces.space-not-found')} />
-      <Button
-        onClick={() =>
-          input.dispatch({
-            t: 'clicked-go-home-button'
-          })
-        }
-        size='lg'
-        variant='contained'
-        color='primary'
-        text={input.ctx.t('spaces.go-home')}
-      />
-    </div>
+    <ScreenTitleButton
+      title={input.ctx.t('spaces.space-not-found')}
+      buttonText={input.ctx.t('spaces.go-home')}
+      onClick={() =>
+        input.dispatch({
+          t: 'clicked-go-home-button',
+        })
+      }
+    />
   )
 }
 
 export const SpaceClient = {
-  View
+  View,
 }

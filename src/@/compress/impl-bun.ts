@@ -22,6 +22,6 @@ export const Compress = (_config: Config): ICompress => {
       }
       responseNew.headers.set('Content-Encoding', 'gzip')
       return responseNew
-    }
+    },
   }
 }

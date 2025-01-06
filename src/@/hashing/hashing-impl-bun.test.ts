@@ -4,7 +4,7 @@ import { Hashing } from './hashing-impl'
 const Fixture = () => {
   const hashing = Hashing({ t: 'bun' })
   return {
-    hashing
+    hashing,
   }
 }
 
@@ -16,9 +16,9 @@ describe(import.meta.file, () => {
     const hashed = await f.hashing.hash({
       algo: {
         t: 'bcrypt',
-        cost: 10
+        cost: 10,
       },
-      password
+      password,
     })
     expect(hashed.value).not.toBe(password)
   })
@@ -29,13 +29,13 @@ describe(import.meta.file, () => {
     const hashed = await f.hashing.hash({
       algo: {
         t: 'bcrypt',
-        cost: 10
+        cost: 10,
       },
-      password
+      password,
     })
     const checked = await f.hashing.check({
       hash: hashed,
-      password
+      password,
     })
     expect(checked).toBe(true)
   })

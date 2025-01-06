@@ -9,7 +9,7 @@ const gameTheme = {
   whiteStone: 'white',
   blackStone: 'black',
   background: backgroundColor,
-  line: lineColor
+  line: lineColor,
 }
 
 export const stoneToColor = (stone: Stone): string => {
@@ -38,26 +38,26 @@ export const CoverArt = (input: { className?: string }) => {
       bounds={{
         lower: {
           x: 0,
-          y: 0
+          y: 0,
         },
         upper: {
           x: 6,
-          y: 6
-        }
+          y: 6,
+        },
       }}
       board={{
         2: {
           2: 'black',
-          3: 'white'
+          3: 'white',
         },
         3: {
           2: 'black',
-          3: 'white'
+          3: 'white',
         },
         4: {
           2: 'white',
-          3: 'black'
-        }
+          3: 'black',
+        },
       }}
     />
   )
@@ -68,7 +68,7 @@ export const ViewBoard = ({
   board,
   bounds: bounds_ = bounds,
   viewBoxOffset = 0.8,
-  className
+  className,
 }: {
   className?: string
   board: Board
@@ -79,12 +79,12 @@ export const ViewBoard = ({
   const boundsView = {
     lower: {
       x: bounds_.lower.x - viewBoxOffset,
-      y: bounds_.lower.y - viewBoxOffset
+      y: bounds_.lower.y - viewBoxOffset,
     },
     upper: {
       x: bounds_.upper.x - 1 + viewBoxOffset,
-      y: bounds_.upper.y - 1 + viewBoxOffset
-    }
+      y: bounds_.upper.y - 1 + viewBoxOffset,
+    },
   }
 
   const stars = presetToStars['9x9'].map((pos) => pos)
@@ -109,14 +109,14 @@ export const ViewBoard = ({
           />
           {range({
             lower: 1,
-            upper: bounds_.upper.y
+            upper: bounds_.upper.y,
           }).map((x) => (
             <line key={`x${x}`} x1={x} y1={bounds_.lower.y} x2={x} y2={bounds_.upper.y - 1} />
           ))}
 
           {range({
             lower: 1,
-            upper: bounds.upper.x
+            upper: bounds.upper.x,
           }).map((y) => (
             <line key={`y${y}`} x1={bounds_.lower.x} y1={y} x2={bounds_.upper.x - 1} y2={y} />
           ))}
@@ -148,7 +148,7 @@ export const ViewBoard = ({
               onClick={() =>
                 onPress?.({
                   x,
-                  y
+                  y,
                 })
               }
               className='cursor-pointer'

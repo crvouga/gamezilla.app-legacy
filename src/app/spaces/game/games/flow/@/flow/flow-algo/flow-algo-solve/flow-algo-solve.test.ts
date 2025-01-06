@@ -17,18 +17,18 @@ describe(import.meta.file, () => {
   test('2x2 with A terminals', () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' '],
-      [' ', 'A']
+      [' ', 'A'],
     ])
 
     const expected = [
       FlowGridShorthand.toGrid([
         ['A', ' '],
-        ['a', 'A']
+        ['a', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', 'a'],
-        [' ', 'A']
-      ])
+        [' ', 'A'],
+      ]),
     ]
 
     const actual = FlowAlgoSolve.solutions(grid)
@@ -40,25 +40,25 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'B', ' '],
       [' ', ' ', ' '],
-      ['A', 'B', ' ']
+      ['A', 'B', ' '],
     ])
 
     const expected = [
       FlowGridShorthand.toGrid([
         ['A', 'B', ' '],
         ['a', 'b', ' '],
-        ['A', 'B', ' ']
+        ['A', 'B', ' '],
       ]),
       FlowGridShorthand.toGrid([
         ['A', 'B', 'b'],
         ['a', 'b', 'b'],
-        ['A', 'B', ' ']
+        ['A', 'B', ' '],
       ]),
       FlowGridShorthand.toGrid([
         ['A', 'B', 'b'],
         ['a', ' ', 'b'],
-        ['A', 'B', 'b']
-      ])
+        ['A', 'B', 'b'],
+      ]),
     ]
 
     const actual = FlowAlgoSolve.solutions(grid)
@@ -70,15 +70,15 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'B', 'C'],
       [' ', ' ', ' '],
-      ['A', 'B', 'C']
+      ['A', 'B', 'C'],
     ])
 
     const expected = [
       FlowGridShorthand.toGrid([
         ['A', 'B', 'C'],
         ['a', 'b', 'c'],
-        ['A', 'B', 'C']
-      ])
+        ['A', 'B', 'C'],
+      ]),
     ]
 
     const actual = FlowAlgoSolve.solutions(grid)
@@ -90,55 +90,55 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', ' ', ' '],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
 
     const expected = [
       FlowGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', ' ', ' '],
-        ['a', 'a', 'A']
+        ['a', 'a', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', 'a', 'a'],
         [' ', ' ', 'a'],
-        [' ', ' ', 'A']
+        [' ', ' ', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', 'a', ' '],
         [' ', 'a', 'a'],
-        [' ', ' ', 'A']
+        [' ', ' ', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', 'a', ' '],
         [' ', 'a', ' '],
-        [' ', 'a', 'A']
+        [' ', 'a', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', 'a', ' '],
         [' ', 'a', 'a'],
-        [' ', ' ', 'A']
+        [' ', ' ', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', 'a', 'a'],
-        [' ', ' ', 'A']
+        [' ', ' ', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', 'a', 'a'],
-        [' ', ' ', 'A']
+        [' ', ' ', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', 'a', ' '],
-        [' ', 'a', 'A']
+        [' ', 'a', 'A'],
       ]),
       FlowGridShorthand.toGrid([
         ['A', 'a', 'a'],
         ['a', 'a', 'a'],
-        ['a', 'a', 'A']
-      ])
+        ['a', 'a', 'A'],
+      ]),
     ]
 
     const actual = FlowAlgoSolve.solutions(grid)
@@ -149,13 +149,13 @@ describe(import.meta.file, () => {
   test('adjacent terminals', () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'A'],
-      [' ', ' ']
+      [' ', ' '],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
         ['Aa', 'A'],
-        [' ', ' ']
-      ])
+        [' ', ' '],
+      ]),
     ]
     const actual = FlowAlgoSolve.solutions(grid)
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
@@ -165,14 +165,14 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'C', 'C'],
       [' ', ' ', ' '],
-      ['B', 'B', 'A']
+      ['B', 'B', 'A'],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
         ['A', 'Cc', 'C'],
         ['a', 'a', 'a'],
-        ['Bb', 'B', 'A']
-      ])
+        ['Bb', 'B', 'A'],
+      ]),
     ]
     const actual = FlowAlgoSolve.solutions(grid)
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
@@ -184,7 +184,7 @@ describe(import.meta.file, () => {
       [' ', ' ', 'B', ' ', 'E'],
       [' ', ' ', ' ', ' ', ' '],
       [' ', 'D', ' ', 'C', ' '],
-      [' ', 'A', 'B', 'E', ' ']
+      [' ', 'A', 'B', 'E', ' '],
     ])
 
     const expected = [
@@ -193,8 +193,8 @@ describe(import.meta.file, () => {
         ['a', 'd', 'B', 'c', 'E'],
         ['a', 'd', 'b', 'c', 'e'],
         ['a', 'D', 'b', 'C', 'e'],
-        ['a', 'A', 'B', 'E', 'e']
-      ])
+        ['a', 'A', 'B', 'E', 'e'],
+      ]),
     ]
 
     const actual = FlowAlgoSolve.solutions(grid)
@@ -209,7 +209,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', ' ', ' '],
       [' ', 'D', ' ', 'C', ' ', ' '],
       [' ', 'A', 'B', 'E', ' ', ' '],
-      ['F', ' ', ' ', ' ', ' ', ' ']
+      ['F', ' ', ' ', ' ', ' ', ' '],
     ])
 
     const expected = [
@@ -219,8 +219,8 @@ describe(import.meta.file, () => {
         ['a', 'd', 'b', 'c', 'e', 'f'],
         ['a', 'D', 'b', 'C', 'e', 'f'],
         ['a', 'A', 'B', 'E', 'e', 'f'],
-        ['F', 'f', 'f', 'f', 'f', 'f']
-      ])
+        ['F', 'f', 'f', 'f', 'f', 'f'],
+      ]),
     ]
 
     const actual = FlowAlgoSolve.solutions(grid)
@@ -236,7 +236,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', 'D', ' ', ' '],
       [' ', ' ', ' ', 'C', ' ', ' ', ' '],
       [' ', 'F', ' ', 'G', ' ', ' ', 'H'],
-      [' ', ' ', ' ', ' ', ' ', ' ', 'I']
+      [' ', ' ', ' ', ' ', ' ', ' ', 'I'],
     ])
 
     const expected = [
@@ -247,8 +247,8 @@ describe(import.meta.file, () => {
         ['c', 'f', 'g', 'd', 'D', 'i', 'h'],
         ['c', 'f', 'g', 'C', 'c', 'i', 'h'],
         ['c', 'F', 'g', 'G', 'c', 'i', 'H'],
-        ['c', 'c', 'c', 'c', 'c', 'i', 'I']
-      ])
+        ['c', 'c', 'c', 'c', 'c', 'i', 'I'],
+      ]),
     ]
     const actual = FlowAlgoSolve.solutions(grid)
 
@@ -264,7 +264,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', 'D', ' ', ' ', ' '],
       [' ', ' ', ' ', 'C', ' ', ' ', ' ', ' '],
       [' ', 'F', ' ', 'G', ' ', ' ', 'H', 'B'],
-      [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I']
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I'],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
@@ -275,8 +275,8 @@ describe(import.meta.file, () => {
         ['c', 'f', 'g', 'd', 'D', 'i', 'h', 'b'],
         ['c', 'f', 'g', 'C', 'c', 'i', 'h', 'b'],
         ['c', 'F', 'g', 'G', 'c', 'i', 'H', 'B'],
-        ['c', 'c', 'c', 'c', 'c', 'i', 'i', 'I']
-      ])
+        ['c', 'c', 'c', 'c', 'c', 'i', 'i', 'I'],
+      ]),
     ]
     const actual = FlowAlgoSolve.solutions(grid)
 
@@ -293,7 +293,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', 'C', ' ', ' ', ' ', ' ', ' '],
       [' ', 'F', ' ', 'G', ' ', ' ', 'H', 'B', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I', ' '],
-      ['J', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+      ['J', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
@@ -305,8 +305,8 @@ describe(import.meta.file, () => {
         ['c', 'f', 'g', 'C', 'c', 'i', 'h', 'b', 'j'],
         ['c', 'F', 'g', 'G', 'c', 'i', 'H', 'B', 'j'],
         ['c', 'c', 'c', 'c', 'c', 'i', 'i', 'I', 'j'],
-        ['J', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'j']
-      ])
+        ['J', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'j'],
+      ]),
     ]
     const actual = FlowAlgoSolve.solutions(grid)
 
@@ -324,7 +324,7 @@ describe(import.meta.file, () => {
       [' ', 'F', ' ', 'G', ' ', ' ', 'H', 'B', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I', ' ', ' '],
       ['J', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      ['K', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+      ['K', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
@@ -337,12 +337,12 @@ describe(import.meta.file, () => {
         ['c', 'F', 'g', 'G', 'c', 'i', 'H', 'B', 'j', 'k'],
         ['c', 'c', 'c', 'c', 'c', 'i', 'i', 'I', 'j', 'k'],
         ['J', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'k'],
-        ['K', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k']
-      ])
+        ['K', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'],
+      ]),
     ]
 
     expect(
-      some(FlowAlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected)))
+      some(FlowAlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected))),
     ).toBe(true)
   })
 
@@ -358,7 +358,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I', ' ', ' ', ' '],
       ['J', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['K', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      ['L', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+      ['L', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
@@ -372,12 +372,12 @@ describe(import.meta.file, () => {
         ['c', 'c', 'c', 'c', 'c', 'i', 'i', 'I', 'j', 'k', 'l'],
         ['J', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'k', 'l'],
         ['K', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'l'],
-        ['L', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l']
-      ])
+        ['L', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l'],
+      ]),
     ]
 
     expect(
-      some(FlowAlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected)))
+      some(FlowAlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected))),
     ).toBe(true)
   })
 
@@ -394,7 +394,7 @@ describe(import.meta.file, () => {
       ['J', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['K', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['L', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      ['M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+      ['M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
@@ -409,8 +409,8 @@ describe(import.meta.file, () => {
         ['J', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'j', 'k', 'l', 'm'],
         ['K', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'l', 'm'],
         ['L', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'm'],
-        ['M', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm']
-      ])
+        ['M', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm'],
+      ]),
     ]
     const actual = FlowAlgoSolve.solutions(grid)
 
@@ -431,7 +431,7 @@ describe(import.meta.file, () => {
       ['K', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['L', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      ['N', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+      ['N', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
@@ -447,8 +447,8 @@ describe(import.meta.file, () => {
         ['K', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'l', 'm', 'n'],
         ['L', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'm', 'n'],
         ['M', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'n'],
-        ['N', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n']
-      ])
+        ['N', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n'],
+      ]),
     ]
     const actual = FlowAlgoSolve.solutions(grid)
 
@@ -470,7 +470,7 @@ describe(import.meta.file, () => {
       ['L', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['N', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      ['O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+      ['O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
       FlowGridShorthand.toGrid([
@@ -487,8 +487,8 @@ describe(import.meta.file, () => {
         ['L', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'm', 'n', 'o'],
         ['M', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'n', 'o'],
         ['N', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'o'],
-        ['O', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o']
-      ])
+        ['O', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o'],
+      ]),
     ]
     const actual = FlowAlgoSolve.solutions(grid)
 
@@ -510,7 +510,7 @@ describe(import.meta.file, () => {
       ['L', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['N', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      ['O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+      ['O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
 
     const solution = first(FlowAlgoSolve.solutions(grid))
@@ -521,7 +521,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'B', 'A'],
       [' ', ' ', ' '],
-      ['C', 'B', 'C']
+      ['C', 'B', 'C'],
     ])
     const actual = Array.from(FlowAlgoSolve.solutions(grid))
     expect(actual).toEqual([])
@@ -532,7 +532,7 @@ describe(import.meta.file, () => {
       ['A', ' ', 'B'],
       ['a', 'a', 'A'],
       [' ', 'B', ' '],
-      [' ', ' ', ' ']
+      [' ', ' ', ' '],
     ])
     const solutions = FlowAlgoSolve.solutions(grid)
     expect(isEmpty(solutions)).toBe(false)
@@ -546,7 +546,7 @@ describe(import.meta.file, () => {
       ['B', ' ', ' ', ' ', ' ', ' ', ' ', 'B'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      ['A', ' ', ' ', 'D', ' ', ' ', ' ', 'C']
+      ['A', ' ', ' ', 'D', ' ', ' ', ' ', 'C'],
     ])
     const actual = first(FlowAlgoSolve.solutions(grid))
     expect(actual).toEqual(null)

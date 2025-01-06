@@ -62,7 +62,7 @@ export const rpcContract = RPC.initContract({
   listAlive: {
     input: p.obj({}),
     output: p.obj({
-      serverInstances: p.arr(ServerInstance)
-    })
-  }
+      serverInstances: p.arr(ServerInstance),
+    }),
+  },
 })

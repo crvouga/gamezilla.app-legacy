@@ -6,7 +6,7 @@ import { Avatar, Typography } from '~/app/@/ui'
 export const ProfileListItem = ({
   profile,
   subtitle,
-  ctx
+  ctx,
 }: {
   ctx: {
     t: Translator

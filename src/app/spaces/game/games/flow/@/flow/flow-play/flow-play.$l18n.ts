@@ -6,39 +6,39 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   ar: {
-    'flow-play.no-hints-available': 'لا تتوفر تلميحات'
+    'flow-play.no-hints-available': 'لا تتوفر تلميحات',
   },
   de: {
-    'flow-play.no-hints-available': 'Keine Hinweise verfügbar'
+    'flow-play.no-hints-available': 'Keine Hinweise verfügbar',
   },
   en: {
-    'flow-play.no-hints-available': 'No hints available'
+    'flow-play.no-hints-available': 'No hints available',
   },
   es: {
-    'flow-play.no-hints-available': 'No hay pistas disponibles'
+    'flow-play.no-hints-available': 'No hay pistas disponibles',
   },
   fr: {
-    'flow-play.no-hints-available': 'Aucun indice disponible'
+    'flow-play.no-hints-available': 'Aucun indice disponible',
   },
   hi: {
-    'flow-play.no-hints-available': 'कोई संकेत उपलब्ध नहीं है'
+    'flow-play.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
   },
   it: {
-    'flow-play.no-hints-available': 'Nessun suggerimento disponibile'
+    'flow-play.no-hints-available': 'Nessun suggerimento disponibile',
   },
   ja: {
-    'flow-play.no-hints-available': 'ヒントはありません'
+    'flow-play.no-hints-available': 'ヒントはありません',
   },
   ko: {
-    'flow-play.no-hints-available': '힌트 없음'
+    'flow-play.no-hints-available': '힌트 없음',
   },
   pt: {
-    'flow-play.no-hints-available': 'Nenhumas dicas disponíveis'
+    'flow-play.no-hints-available': 'Nenhumas dicas disponíveis',
   },
   ru: {
-    'flow-play.no-hints-available': 'Подсказки отсутствуют'
+    'flow-play.no-hints-available': 'Подсказки отсутствуют',
   },
   zh: {
-    'flow-play.no-hints-available': '没有提示'
-  }
+    'flow-play.no-hints-available': '没有提示',
+  },
 }

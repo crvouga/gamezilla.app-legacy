@@ -79,7 +79,7 @@ interface DevToolHandlerR<Model, Msg extends object> extends DebuggerDeps<Model,
  * @since 0.5.0
  */
 export const getBrowserExtensionConnection = <Model, Msg extends object>(
-  global: Global
+  global: Global,
 ): ReduxDevToolsConnection<Model, Msg> | null => {
   if (
     '__REDUX_DEVTOOLS_EXTENSION_COMPOSE__' in global &&
@@ -87,7 +87,7 @@ export const getBrowserExtensionConnection = <Model, Msg extends object>(
   ) {
     // https://github.com/reduxjs/redux-devtools/tree/main/packages/redux-devtools-instrument#api
     global.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      maxAge: 1
+      maxAge: 1,
     })
   }
 
@@ -104,7 +104,7 @@ export const getBrowserExtensionConnection = <Model, Msg extends object>(
  * @since 0.5.0
  */
 const hasExtension = (
-  global: Global
+  global: Global,
 ): global is Global & {
   __REDUX_DEVTOOLS_EXTENSION__: ReduxDevToolsBrowserExtension
 } => {
@@ -117,7 +117,7 @@ const hasExtension = (
  * @since 0.5.4
  */
 export const makeDebugger = <Model, Msg extends object>(
-  connection: ReduxDevToolsConnection<Model, Msg>
+  connection: ReduxDevToolsConnection<Model, Msg>,
 ): Debugger<Model, Msg> => {
   return (d) => {
     const deps = { ...d, connection }
@@ -127,7 +127,7 @@ export const makeDebugger = <Model, Msg extends object>(
 
     return {
       debug: handleActions(deps),
-      stop: connection.unsubscribe
+      stop: connection.unsubscribe,
     }
   }
 }
@@ -137,7 +137,7 @@ export const makeDebugger = <Model, Msg extends object>(
  * @since 0.5.0
  */
 const handleSubscription = <Model, Msg extends object>(
-  deps: DevToolHandlerR<Model, Msg>
+  deps: DevToolHandlerR<Model, Msg>,
 ): ((msg: DevToolMsg) => void) => {
   const handler = handleIncomingMsg(deps)
 
@@ -162,7 +162,7 @@ const handleSubscription = <Model, Msg extends object>(
 const handleIncomingMsg = <Model, Msg extends object>({
   connection,
   init,
-  dispatch
+  dispatch,
 }: DevToolHandlerR<Model, Msg>): ((msg: DevToolMsg) => Result<string, IO<void>>) => {
   const dispatchToApp =
     (m: unknown): IO<void> =>
@@ -174,7 +174,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
   const update = (payload: Model): IO<void> =>
     dispatchToApp({
       type: '__DebugUpdateModel__',
-      payload
+      payload,
     })
 
   const restart =
@@ -217,8 +217,8 @@ const handleIncomingMsg = <Model, Msg extends object>({
             return Result.Ok(
               pipe(
                 update(init),
-                IO.chain(() => reInit)
-              )
+                IO.chain(() => reInit),
+              ),
             )
 
           case 'ROLLBACK':
@@ -226,9 +226,9 @@ const handleIncomingMsg = <Model, Msg extends object>({
               Result.mapOk(x, (m) =>
                 pipe(
                   update(m),
-                  IO.chain(() => restart(m))
-                )
-              )
+                  IO.chain(() => restart(m)),
+                ),
+              ),
             )
 
           case 'COMMIT':
@@ -241,16 +241,16 @@ const handleIncomingMsg = <Model, Msg extends object>({
                 pipe(
                   update(
                     // @ts-ignore
-                    liftedState.computedStates[liftedState.computedStates.length - 1].state
+                    liftedState.computedStates[liftedState.computedStates.length - 1].state,
                   ),
-                  IO.chain(() => liftState(liftedState))
-                )
-              )
+                  IO.chain(() => liftState(liftedState)),
+                ),
+              ),
             )
 
           case 'TOGGLE_ACTION':
             return pipe(parseToggleAction<Model>(msg), (x) =>
-              Result.mapOk(x, ([id, liftedState]) => pipe(toggle(id, liftedState), IO.chain(liftState)))
+              Result.mapOk(x, ([id, liftedState]) => pipe(toggle(id, liftedState), IO.chain(liftState))),
             )
 
           default:
@@ -287,8 +287,8 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
         x,
         (value) =>
           // @ts-ignore
-          value as Model
-      )
+          value as Model,
+      ),
   )
 }
 
@@ -306,8 +306,8 @@ const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
         x,
         (u) =>
           // @ts-ignore
-          u as Model
-      )
+          u as Model,
+      ),
   )
 }
 
@@ -329,7 +329,7 @@ const parseImportState = <Model>(msg: Monitor): Result<string, LiftedState<Model
  */
 const parseToggleAction = <Model>(msg: Monitor): Result<string, [number, LiftedState<Model>]> => {
   const getId = pipe(msg.payload['id'], Result.fromNullable('TOGGLE_ACTION message has some bad payload...'), (_) =>
-    Result.mapOk(_, (x) => x as number)
+    Result.mapOk(_, (x) => x as number),
   )
 
   if (getId.t === 'err') {
@@ -342,9 +342,9 @@ const parseToggleAction = <Model>(msg: Monitor): Result<string, [number, LiftedS
       Result.mapOk(
         _,
         // @ts-ignore
-        (u) => u as LiftedState<Model>
+        (u) => u as LiftedState<Model>,
       ),
-    (_) => Result.mapErr(_, (problem) => problem.message)
+    (_) => Result.mapErr(_, (problem) => problem.message),
   )
 
   if (parseState.t === 'err') {
@@ -383,7 +383,7 @@ const toggleAction =
     dispatch({
       type: '__DebugUpdateModel__',
       // @ts-ignore
-      payload: computedStates[actionIndex - 1].state
+      payload: computedStates[actionIndex - 1].state,
     })
 
     const start = skipped ? actionIndex : actionIndex + 1
@@ -400,7 +400,7 @@ const toggleAction =
         dispatch({
           type: '__DebugApplyMsg__',
           // @ts-ignore
-          payload: actionsById[currentActionId].action
+          payload: actionsById[currentActionId].action,
         })
       }
     }
@@ -459,7 +459,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
           return
         }
       }
-    }
+    },
   })
 
   const rateLimits = new Map<
@@ -483,7 +483,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
     if (!rateLimits.has(actionType)) {
       rateLimits.set(actionType, {
         lastReset: Date.now(),
-        count: 1
+        count: 1,
       })
     }
 
@@ -503,7 +503,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
 
     const action = {
       type: actionType,
-      payload: Msg.toPayload(msg, {})
+      payload: Msg.toPayload(msg, {}),
     }
 
     connection.send(action, model)

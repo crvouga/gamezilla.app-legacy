@@ -11,7 +11,7 @@ import {
   IconArrowRotateLeft,
   IconArrowRotateRight,
   IconExpand,
-  IconXMark
+  IconXMark,
 } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { BoardLayout } from '../ui/layout'
@@ -35,7 +35,7 @@ import { VariantBoard } from '../flow-variant'
 const DraftTerminal = p.obj({
   groupId: FlowGroupId,
   startId: FlowNodeId,
-  endId: p.maybe(FlowNodeId)
+  endId: p.maybe(FlowNodeId),
 })
 type DraftTerminal = p.Infer<typeof DraftTerminal>
 
@@ -44,21 +44,21 @@ type DraftTerminals = p.Infer<typeof DraftTerminals>
 
 const Form = p.obj({
   terminalsByGroupId: DraftTerminals,
-  dimensions: FlowVariantDimensions.Model
+  dimensions: FlowVariantDimensions.Model,
 })
 type Form = p.Infer<typeof Form>
 
 const toEmptyForm = ({ flow }: { flow: FlowVariant.Model }): Form => {
   return {
     terminalsByGroupId: {},
-    dimensions: FlowVariantDimensions.init(flow)
+    dimensions: FlowVariantDimensions.init(flow),
   }
 }
 
 export const Model = p.obj({
   form: History.parser(Form),
   opened: p.maybe(p.l('dimensions')),
-  dimensions: FlowVariantDimensions.Model
+  dimensions: FlowVariantDimensions.Model,
 })
 export type Model = p.Infer<typeof Model>
 
@@ -69,12 +69,12 @@ export const canClear = (model: Model): boolean => {
 export const init = ({ flow }: { flow: FlowVariant.Model }): Model => {
   const form: Form = {
     dimensions: FlowVariantDimensions.init(flow),
-    terminalsByGroupId: flow.terminalsByGroupId
+    terminalsByGroupId: flow.terminalsByGroupId,
   }
   return {
     form: History.init(form),
     dimensions: FlowVariantDimensions.init(flow),
-    opened: null
+    opened: null,
   }
 }
 
@@ -83,7 +83,7 @@ export const isUnsavedChanges = (model: Model, flow: FlowVariant.Model): boolean
 
   const actual: Form = {
     terminalsByGroupId: flow.terminalsByGroupId,
-    dimensions: FlowVariantDimensions.init(flow)
+    dimensions: FlowVariantDimensions.init(flow),
   }
 
   const areTerminalsDifferent = !Flow.isSameTerminalsByGroupId(actual.terminalsByGroupId, draft.terminalsByGroupId)
@@ -104,7 +104,7 @@ export const Msg = p.or(
   p.obj({ t: p.l('pressed-up-node'), nodeId: FlowNodeId }),
   p.obj({
     t: p.l('pressed-down-node'),
-    nodeId: FlowNodeId
+    nodeId: FlowNodeId,
   }),
   p.obj({ t: p.l('clicked-clear') }),
   p.obj({ t: p.l('clicked-undo') }),
@@ -115,8 +115,8 @@ export const Msg = p.or(
   p.obj({ t: p.l('dimensions-form.clicked-save') }),
   p.obj({
     t: p.l('dimensions-form.inputted'),
-    dimensions: FlowVariantDimensions.Model
-  })
+    dimensions: FlowVariantDimensions.Model,
+  }),
 )
 export type Msg = p.Infer<typeof Msg>
 
@@ -128,7 +128,7 @@ export type Cmd = {
 export const update = ({
   flow,
   model,
-  msg
+  msg,
 }: {
   flow: FlowVariant.Model
   msg: Msg
@@ -140,13 +140,13 @@ export const update = ({
   switch (msg.t) {
     case 'dragged-over': {
       return {
-        model
+        model,
       }
     }
 
     case 'pressed-up-node': {
       return {
-        model
+        model,
       }
     }
 
@@ -157,14 +157,14 @@ export const update = ({
           form: History.push(
             model.form,
             toEmptyForm({
-              flow
-            })
-          )
+              flow,
+            }),
+          ),
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navTransitionLeft
-        }
+          sourceSrc: APP_SOUND.navTransitionLeft,
+        },
       }
     }
 
@@ -172,12 +172,12 @@ export const update = ({
       return {
         model: {
           ...model,
-          form: History.undo(model.form)
+          form: History.undo(model.form),
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navBackwardMin
-        }
+          sourceSrc: APP_SOUND.navBackwardMin,
+        },
       }
     }
 
@@ -185,12 +185,12 @@ export const update = ({
       return {
         model: {
           ...model,
-          form: History.redo(model.form)
+          form: History.redo(model.form),
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navForwardMin
-        }
+          sourceSrc: APP_SOUND.navForwardMin,
+        },
       }
     }
 
@@ -200,7 +200,7 @@ export const update = ({
       const draftTerminalsNew = updateDraftTerminalsOnPressedDownNode(
         History.present(model.form).terminalsByGroupId,
         currentPlacingGroupId,
-        msg.nodeId
+        msg.nodeId,
       )
 
       return {
@@ -208,13 +208,13 @@ export const update = ({
           ...model,
           form: History.push(model.form, {
             ...History.present(model.form),
-            terminalsByGroupId: draftTerminalsNew
-          })
+            terminalsByGroupId: draftTerminalsNew,
+          }),
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.tap
-        }
+          sourceSrc: APP_SOUND.tap,
+        },
       }
     }
 
@@ -222,12 +222,12 @@ export const update = ({
       return {
         model: {
           ...model,
-          dimensions: msg.dimensions
+          dimensions: msg.dimensions,
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.tap
-        }
+          sourceSrc: APP_SOUND.tap,
+        },
       }
     }
 
@@ -236,27 +236,27 @@ export const update = ({
 
       const flowNew = FlowVariant.init({
         dimensions: model.dimensions,
-        terminalsByGroupId: present.terminalsByGroupId
+        terminalsByGroupId: present.terminalsByGroupId,
       })
 
       const formNew: Form = {
         terminalsByGroupId: flowNew.terminalsByGroupId,
-        dimensions: FlowVariantDimensions.init(flowNew)
+        dimensions: FlowVariantDimensions.init(flowNew),
       }
 
       const modelNew: Model = {
         ...model,
         dimensions: FlowVariantDimensions.init(flowNew),
         form: History.push(model.form, formNew),
-        opened: null
+        opened: null,
       }
 
       return {
         model: modelNew,
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.refreshFeed
-        }
+          sourceSrc: APP_SOUND.refreshFeed,
+        },
       }
     }
 
@@ -264,12 +264,12 @@ export const update = ({
       return {
         model: resetDimensionsForm({
           ...model,
-          opened: 'dimensions'
+          opened: 'dimensions',
         }),
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navForwardMin
-        }
+          sourceSrc: APP_SOUND.navForwardMin,
+        },
       }
     }
 
@@ -277,12 +277,12 @@ export const update = ({
       return {
         model: resetDimensionsForm({
           ...model,
-          opened: null
+          opened: null,
         }),
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navBackwardMin
-        }
+          sourceSrc: APP_SOUND.navBackwardMin,
+        },
       }
     }
 
@@ -290,12 +290,12 @@ export const update = ({
       return {
         model: resetDimensionsForm({
           ...model,
-          opened: null
+          opened: null,
         }),
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navBackwardMin
-        }
+          sourceSrc: APP_SOUND.navBackwardMin,
+        },
       }
     }
   }
@@ -310,14 +310,14 @@ const resetDimensionsForm = (model: Model): Model => {
   const flow = toFlowMemoized({ model })
   return {
     ...model,
-    dimensions: FlowVariantDimensions.init(flow)
+    dimensions: FlowVariantDimensions.init(flow),
   }
 }
 
 export const updateDraftTerminalsOnPressedDownNode = (
   draftTerminals: DraftTerminals,
   currentPlacingGroupId: FlowGroupId,
-  pressedNodeId: FlowNodeId
+  pressedNodeId: FlowNodeId,
 ): DraftTerminals => {
   const pressedTerminal = findDraftTerminalByNodeId(draftTerminals, pressedNodeId)
 
@@ -325,7 +325,7 @@ export const updateDraftTerminalsOnPressedDownNode = (
     if (pressedTerminal.startId === pressedNodeId) {
       if (!pressedTerminal.endId) {
         const draftTerminalsNew = {
-          ...draftTerminals
+          ...draftTerminals,
         }
         delete draftTerminalsNew[pressedTerminal.groupId]
         return draftTerminalsNew
@@ -333,21 +333,21 @@ export const updateDraftTerminalsOnPressedDownNode = (
       const terminalNew: DraftTerminal = {
         groupId: pressedTerminal.groupId,
         startId: pressedTerminal.endId,
-        endId: null
+        endId: null,
       }
       return {
         ...draftTerminals,
-        [pressedTerminal.groupId]: terminalNew
+        [pressedTerminal.groupId]: terminalNew,
       }
     }
     const terminalNew: DraftTerminal = {
       groupId: pressedTerminal.groupId,
       startId: pressedTerminal.startId,
-      endId: null
+      endId: null,
     }
     const draftTerminalsNew = {
       ...draftTerminals,
-      [pressedTerminal.groupId]: terminalNew
+      [pressedTerminal.groupId]: terminalNew,
     }
     return draftTerminalsNew
   }
@@ -358,12 +358,12 @@ export const updateDraftTerminalsOnPressedDownNode = (
     const terminalNew: DraftTerminal = {
       groupId: currentPlacingGroupId,
       startId: pressedNodeId,
-      endId: null
+      endId: null,
     }
 
     return {
       ...draftTerminals,
-      [currentPlacingGroupId]: terminalNew
+      [currentPlacingGroupId]: terminalNew,
     }
   }
 
@@ -378,12 +378,12 @@ export const updateDraftTerminalsOnPressedDownNode = (
   const terminalNew: DraftTerminal = {
     groupId: currentPlacingGroupId,
     startId: currentTerminal.startId,
-    endId: pressedNodeId
+    endId: pressedNodeId,
   }
 
   return {
     ...draftTerminals,
-    [currentPlacingGroupId]: terminalNew
+    [currentPlacingGroupId]: terminalNew,
   }
 }
 
@@ -448,7 +448,7 @@ export const removeIncompleteTerminals = (draftTerminals: DraftTerminals): Flow.
     const terminal: FlowTerminal = {
       startId: draftTerminal.startId,
       endId: draftTerminal.endId,
-      groupId: draftTerminal.groupId
+      groupId: draftTerminal.groupId,
     }
     terminalsByGroupId[draftTerminal.groupId] = terminal
   }
@@ -459,7 +459,7 @@ export const toFlow = ({ model }: { model: Model }): FlowVariant.Model => {
   const form = History.present(model.form)
   return FlowVariant.init({
     dimensions: model.dimensions,
-    terminalsByGroupId: form.terminalsByGroupId
+    terminalsByGroupId: form.terminalsByGroupId,
   })
 }
 
@@ -468,7 +468,7 @@ export const toFlowMemoized = memoize({
   toKey(input) {
     return JSON.stringify(History.present(input.model.form))
   },
-  cacheCapacity: 100
+  cacheCapacity: 100,
 })
 
 //
@@ -510,7 +510,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
               disabled={!History.canRedo(input.model.form)}
               onClick={() =>
                 input.dispatch({
-                  t: 'clicked-redo'
+                  t: 'clicked-redo',
                 })
               }
             />
@@ -520,7 +520,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
               disabled={!canClear(input.model)}
               onClick={() =>
                 input.dispatch({
-                  t: 'clicked-clear'
+                  t: 'clicked-clear',
                 })
               }
             />
@@ -529,7 +529,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
               label={input.ctx.t('app.dimensions')}
               onClick={() =>
                 input.dispatch({
-                  t: 'dimensions-form.clicked-open'
+                  t: 'dimensions-form.clicked-open',
                 })
               }
             />
@@ -538,7 +538,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
             open={input.model.opened === 'dimensions'}
             onClose={() =>
               input.dispatch({
-                t: 'dimensions-form.closed'
+                t: 'dimensions-form.closed',
               })
             }
             id='dimensions'
@@ -547,7 +547,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
             <DrawerHeader
               onClose={() =>
                 input.dispatch({
-                  t: 'dimensions-form.closed'
+                  t: 'dimensions-form.closed',
                 })
               }
             />
@@ -558,7 +558,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
               onInput={(dimensions) =>
                 input.dispatch({
                   t: 'dimensions-form.inputted',
-                  dimensions
+                  dimensions,
                 })
               }
             />
@@ -569,7 +569,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
                 className='flex-1'
                 onClick={() =>
                   input.dispatch({
-                    t: 'dimensions-form.clicked-cancel'
+                    t: 'dimensions-form.clicked-cancel',
                   })
                 }
               />
@@ -581,7 +581,7 @@ export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg
                 disabled={!canSubmitDimensionsForm(input.model)}
                 onClick={() =>
                   input.dispatch({
-                    t: 'dimensions-form.clicked-save'
+                    t: 'dimensions-form.clicked-save',
                   })
                 }
               />

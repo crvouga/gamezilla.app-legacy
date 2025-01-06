@@ -9,13 +9,13 @@ const Fixture = async (config: Config) => {
   const pubSub = await PubSubTopicBased(config)
   return {
     ...config,
-    pubSub
+    pubSub,
   }
 }
 
 const MyEvent = p.obj({
   id: p.str,
-  value: p.str
+  value: p.str,
 })
 
 type MyEvent = p.Infer<typeof MyEvent>
@@ -24,8 +24,8 @@ const randomMyEvent = (): MyEvent => ({
   id: Math.random().toString(),
   value: JSON.stringify({
     x: Math.random(),
-    y: Math.random()
-  })
+    y: Math.random(),
+  }),
 })
 
 const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)

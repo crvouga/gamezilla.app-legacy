@@ -8,50 +8,50 @@ export type Text = {
 export const translations: Translations<Text> = {
   ar: {
     host: 'المضيف',
-    you: 'أنت'
+    you: 'أنت',
   },
   de: {
     host: 'Host',
-    you: 'Du'
+    you: 'Du',
   },
   en: {
     host: 'Host',
-    you: 'You'
+    you: 'You',
   },
   es: {
     host: 'Anfitrión',
-    you: 'Tú'
+    you: 'Tú',
   },
   fr: {
     host: 'Hôte',
-    you: 'Vous'
+    you: 'Vous',
   },
   hi: {
     host: 'मेज़बान',
-    you: 'तुम'
+    you: 'तुम',
   },
   it: {
     host: 'Ospite',
-    you: 'Tu'
+    you: 'Tu',
   },
   ja: {
     host: 'ホスト',
-    you: 'あなた'
+    you: 'あなた',
   },
   ko: {
     host: '호스트',
-    you: '당신'
+    you: '당신',
   },
   pt: {
     host: 'Anfitrião',
-    you: 'Você'
+    you: 'Você',
   },
   ru: {
     host: 'Хост',
-    you: 'Вы'
+    you: 'Вы',
   },
   zh: {
     host: '主持人',
-    you: '你'
-  }
+    you: '你',
+  },
 }

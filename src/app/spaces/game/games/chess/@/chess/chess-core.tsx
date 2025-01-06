@@ -18,7 +18,7 @@ export const toBestMoveInput = (level: ChessBotLevel, model: Model): BestMoveInp
 
   const move: unknown = {
     fen,
-    level
+    level,
   }
 
   if (!isRecord(move)) {
@@ -31,10 +31,10 @@ export const toBestMoveInput = (level: ChessBotLevel, model: Model): BestMoveInp
           {
             from,
             to,
-            promotion: 'q'
-          }
+            promotion: 'q',
+          },
         ]
-      : []
+      : [],
   )[0]
 
   if (bestMoveInput) {
@@ -100,7 +100,7 @@ const files: { [file in File]: File } = {
   E: 'E',
   F: 'F',
   G: 'G',
-  H: 'H'
+  H: 'H',
 }
 
 export const FILE_ORDER: File[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
@@ -123,7 +123,7 @@ const ranks: { [rank in Rank]: Rank } = {
   '5': '5',
   '6': '6',
   '7': '7',
-  '8': '8'
+  '8': '8',
 }
 
 export const RANK_ORDER: Rank[] = ['8', '7', '6', '5', '4', '3', '2', '1']
@@ -389,11 +389,11 @@ export const pieceTypes: { [pieceType in PieceType]: PieceType } = {
   N: 'N',
   R: 'R',
   Q: 'Q',
-  K: 'K'
+  K: 'K',
 }
 export const colors: { [color in Color]: Color } = {
   b: 'b',
-  w: 'w'
+  w: 'w',
 }
 
 export const isColor = (color: unknown): color is Color => {
@@ -421,7 +421,7 @@ const isPieceType = (char: string): char is PieceType => {
 }
 export const fenToPieces = (
   fen: string,
-  orientation: 'w' | 'b'
+  orientation: 'w' | 'b',
 ): {
   x: number
   y: number
@@ -456,7 +456,7 @@ export const fenToPieces = (
           grid.push({
             x: x,
             y: yCoord,
-            piece: `${color}${pieceType}`
+            piece: `${color}${pieceType}`,
           })
         }
       } else {
@@ -475,7 +475,7 @@ const allPieceSymbols: { [pieceSymbol in PieceSymbol]: PieceSymbol } = {
   n: 'n',
   p: 'p',
   q: 'q',
-  r: 'r'
+  r: 'r',
 }
 
 export const isPieceSymbol = (pieceSymbol: unknown): pieceSymbol is PieceSymbol => {
@@ -490,7 +490,7 @@ const allPromotionPieceSymbols: {
   b: 'b',
   n: 'n',
   q: 'q',
-  r: 'r'
+  r: 'r',
 }
 
 export const isPromotionPieceSymbol = (pieceSymbol: unknown): pieceSymbol is PromotionPieceSymbol => {
@@ -550,7 +550,7 @@ export const init = (): Model => {
 
   return {
     fen: chessInstance.fen(),
-    pgn: chessInstance.pgn()
+    pgn: chessInstance.pgn(),
   }
 }
 
@@ -561,7 +561,7 @@ export const initFromFen = ({ fen }: { fen: string }): Model => {
 
   return {
     fen: chessInstance.fen(),
-    pgn: chessInstance.pgn()
+    pgn: chessInstance.pgn(),
   }
 }
 
@@ -652,18 +652,18 @@ export const toGameOver = (model: Model): GameOver | { type: 'none' } => {
   if (inCheckmate(model)) {
     return {
       type: 'Checkmate',
-      winner: toOppositeColor(toTurn(model))
+      winner: toOppositeColor(toTurn(model)),
     }
   }
 
   if (inStalemate(model)) {
     return {
-      type: 'Stalemate'
+      type: 'Stalemate',
     }
   }
 
   return {
-    type: 'none'
+    type: 'none',
   }
 }
 
@@ -689,7 +689,7 @@ export const move = (moveInput: MoveInput, model: Model): Result<MoveProblem, Mo
   const moveInput_ = {
     from: toLowercaseSquare(moveInput.from),
     to: toLowercaseSquare(moveInput.to),
-    promotion: moveInput.promotion
+    promotion: moveInput.promotion,
   }
 
   try {
@@ -705,7 +705,7 @@ export const move = (moveInput: MoveInput, model: Model): Result<MoveProblem, Mo
       pgn: instance.pgn(),
       fen: instance.fen(),
       previousMove: moveInput,
-      didCapture: Boolean(moved.captured)
+      didCapture: Boolean(moved.captured),
     })
   } catch (error) {
     return Err('invalid_move')
@@ -731,7 +731,7 @@ export const moveMany = (moveInputs: MoveInput[], model: Model) => {
       }
       return Ok(moved.value)
     },
-    Ok({ ...model, didCapture: false })
+    Ok({ ...model, didCapture: false }),
   )
 }
 
@@ -748,8 +748,8 @@ export const chessTsMoveToMove = (move: ChessJS.Move): MoveInput[] => {
       {
         from: fromLowercase(move.from),
         to: fromLowercase(move.to),
-        promotion
-      }
+        promotion,
+      },
     ]
   }
 
@@ -782,7 +782,7 @@ export const uciMoveToMoveInput = (uciMove: string): Result<string, MoveInput> =
   return Ok({
     from: upperCaseFrom,
     to: upperCaseTo,
-    promotion: promotionPiece
+    promotion: promotionPiece,
   })
 }
 

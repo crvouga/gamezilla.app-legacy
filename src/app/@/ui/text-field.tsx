@@ -28,7 +28,7 @@ export const TextField = (input: {
         className={cn(
           'bg-paper flex h-fit w-full flex-row overflow-hidden rounded-md border-2',
           input.error && 'border-2 border-red-500 text-red-500',
-          !input.error && 'ring-blue-600 focus-within:ring-2'
+          !input.error && 'ring-blue-600 focus-within:ring-2',
         )}
       >
         <input
@@ -51,7 +51,7 @@ export const TextField = (input: {
           }}
           className='flex flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none'
           style={{
-            background: 'transparent !important'
+            background: 'transparent !important',
           }}
         />
         {input.onClear && input.value && input.value?.toString().length > 0 && (

@@ -14,33 +14,33 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('got-flow-play-msg'),
     c: FlowPlay.Msg,
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
-    t: p.l('user-clicked-exit-puzzle')
+    t: p.l('user-clicked-exit-puzzle'),
   }),
   p.obj({
     t: p.l('user-clicked-next-puzzle'),
     nextPuzzle: PuzzleResult,
-    nextPuzzleIndex: p.num
+    nextPuzzleIndex: p.num,
   }),
   p.obj({
     t: p.l('user-clicked-prev-puzzle'),
     prevPuzzle: PuzzleResult,
-    prevPuzzleIndex: p.num
+    prevPuzzleIndex: p.num,
   }),
   p.obj({
-    t: p.l('user-closed-puzzle-complete-dialog')
+    t: p.l('user-closed-puzzle-complete-dialog'),
   }),
   p.obj({
-    t: p.l('user-clicked-select-next-pack')
+    t: p.l('user-clicked-select-next-pack'),
   }),
   p.obj({
-    t: p.l('user-clicked-reset-puzzle')
+    t: p.l('user-clicked-reset-puzzle'),
   }),
   p.obj({
-    t: p.l('user-toggled-action-buttons-drawer')
-  })
+    t: p.l('user-toggled-action-buttons-drawer'),
+  }),
 )
 
 export type MsgCore = p.Infer<typeof MsgCore>
@@ -50,13 +50,13 @@ export const MsgCoreEvt = p.or(
     t: p.l('user-completed-puzzle'),
     userId: UserId,
     packId: PackId,
-    puzzleIndex: p.num
+    puzzleIndex: p.num,
   }),
   p.obj({
     t: p.l('user-used-hint'),
     userId: UserId,
-    groupId: FlowGroupId
-  })
+    groupId: FlowGroupId,
+  }),
 )
 export type MsgCoreEvt = p.Infer<typeof MsgCoreEvt>
 
@@ -67,7 +67,7 @@ export const ModelCore = p.obj({
   flowPlay: p.or(FlowPlay.Model, p.l(null)),
   puzzleIndex: p.num,
   opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),
-  hints: p.partialDict(FlowGroupId, FlowGroupId)
+  hints: p.partialDict(FlowGroupId, FlowGroupId),
 })
 
 export type ModelCore = p.Infer<typeof ModelCore>

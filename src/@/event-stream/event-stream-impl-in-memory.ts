@@ -49,7 +49,7 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
         _msgEvts: {},
         _hash: 0,
         _indexes: {},
-        _ordering: []
+        _ordering: [],
       }
     },
 
@@ -95,7 +95,7 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
 
       const newEvents = {
         ...stream._msgEvts,
-        [config.toId(msgEvt)]: msgEvt
+        [config.toId(msgEvt)]: msgEvt,
       }
 
       return {
@@ -107,11 +107,11 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
             _ordering: newOrdering,
             _msgEvts: newEvents,
             _indexes: stream._indexes,
-            _hash: stream._hash
+            _hash: stream._hash,
           },
-          msgEvt
+          msgEvt,
         )._indexes,
-        _hash: hash(newOrdering)
+        _hash: hash(newOrdering),
       }
     },
 
@@ -144,7 +144,7 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
 
       const index: EventStreamIndex<TEventId> = instance._indexes[indexName]?.[targetIndexVal] ?? {
         _msgEvts: {},
-        _ordering: []
+        _ordering: [],
       }
 
       for (const msgEvtId of index._ordering) {
@@ -177,9 +177,9 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
             _msgEvts: newEvents,
             _indexes: newIndexes,
             _ordering: newOrdering,
-            _hash: 0
+            _hash: 0,
           },
-          instance._msgEvts[msgEvtId]!
+          instance._msgEvts[msgEvtId]!,
         )
         newIndexes = updated._indexes
       }
@@ -188,7 +188,7 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
         _msgEvts: newEvents,
         _hash: hash(newOrdering),
         _indexes: newIndexes,
-        _ordering: newOrdering
+        _ordering: newOrdering,
       }
     },
 
@@ -212,9 +212,9 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
             _msgEvts: newEvents,
             _indexes: newIndexes,
             _ordering: newOrdering,
-            _hash: 0
+            _hash: 0,
           },
-          instance._msgEvts[msgEvtId]!
+          instance._msgEvts[msgEvtId]!,
         )
         newIndexes = updated._indexes
       }
@@ -223,7 +223,7 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
         _msgEvts: newEvents,
         _hash: hash(newOrdering),
         _indexes: newIndexes,
-        _ordering: newOrdering
+        _ordering: newOrdering,
       }
     },
 
@@ -236,7 +236,7 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
               if (currentIndex >= instance._ordering.length) {
                 return {
                   done: true,
-                  value: undefined
+                  value: undefined,
                 }
               }
 
@@ -248,22 +248,22 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
 
               return {
                 done: false,
-                value: msgEvt
+                value: msgEvt,
               }
             },
 
             return() {
               return Promise.resolve({
                 done: true,
-                value: undefined
+                value: undefined,
               })
             },
 
             throw(error) {
               throw error
-            }
+            },
           }
-        }
+        },
       }
     },
 
@@ -285,14 +285,14 @@ export const EventStreamInMemory = <TEventId extends string, TEvent, TIndexName 
       }
 
       return msgEvts
-    }
+    },
   }
 }
 
 const updateIndexes = <TEventId extends string, TEvent, TIndexName extends string>(
   config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
   stream: Instance<TEventId, TEvent, TIndexName>,
-  msgEvt: TEvent
+  msgEvt: TEvent,
 ): Instance<TEventId, TEvent, TIndexName> => {
   const indexesNew = { ...stream._indexes }
 
@@ -301,7 +301,7 @@ const updateIndexes = <TEventId extends string, TEvent, TIndexName extends strin
     const index = indexesNew[indexName] || {}
     const indexEvents = index[indexKey] || {
       _ordering: [],
-      _msgEvts: {}
+      _msgEvts: {},
     }
 
     let inserted = false
@@ -321,7 +321,7 @@ const updateIndexes = <TEventId extends string, TEvent, TIndexName extends strin
     indexEvents._ordering = newOrdering
     indexEvents._msgEvts = {
       ...indexEvents._msgEvts,
-      [config.toId(msgEvt)]: config.toId(msgEvt)
+      [config.toId(msgEvt)]: config.toId(msgEvt),
     }
     index[indexKey] = indexEvents
     indexesNew[indexName] = index
@@ -329,7 +329,7 @@ const updateIndexes = <TEventId extends string, TEvent, TIndexName extends strin
 
   return {
     ...stream,
-    _indexes: indexesNew
+    _indexes: indexesNew,
   }
 }
 

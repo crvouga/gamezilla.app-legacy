@@ -1,5 +1,5 @@
-import type { Result } from '~/@/result'
 import { RequestResponse } from '~/@/request-response/request-response'
+import type { Result } from '~/@/result'
 import type { UserId } from '~/app/@/data/user-id'
 
 export type ModelClient = {

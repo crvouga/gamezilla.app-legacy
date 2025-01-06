@@ -25,8 +25,8 @@ export const initShared = {
   ships: [],
   shots: [],
   shotRule: {
-    t: 'chain-fire'
-  }
+    t: 'chain-fire',
+  },
 }
 
 export type ModelClient = CoreModel
@@ -52,7 +52,7 @@ export const shipTypeToLength: { [key in ShipType]: number } = {
   Battleship: 4,
   Destroyer: 3,
   Submarine: 3,
-  PatrolBoat: 2
+  PatrolBoat: 2,
 }
 
 type Player =

@@ -8,7 +8,7 @@ describe(import.meta.file, () => {
       created_at_posix: '2021-01-01T00:00:00Z',
       user_id: '123' as UserId,
       user_role: 'guest',
-      phone_number: null
+      phone_number: null,
     }
 
     expect(UserAccountRow.parse(row).t === 'ok').toBe(true)

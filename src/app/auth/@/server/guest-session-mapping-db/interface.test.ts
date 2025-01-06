@@ -12,21 +12,21 @@ const Fixture = async () => {
     case 'integration': {
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnSql
+        dbConnSql: testEnv.dbConnSql,
       })
 
       return {
-        guestSessionMappingDb
+        guestSessionMappingDb,
       }
     }
 
     case 'unit': {
       const guestSessionMappingDb = GuestSessionMappingDb({
-        t: 'hash-map'
+        t: 'hash-map',
       })
 
       return {
-        guestSessionMappingDb
+        guestSessionMappingDb,
       }
     }
   }
@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
 
     await f.guestSessionMappingDb.insert({
       guestUserId,
-      sessionId
+      sessionId,
     })
 
     const after = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(sessionId))
@@ -62,15 +62,15 @@ describe(import.meta.file, () => {
 
     await f.guestSessionMappingDb.insert({
       guestUserId,
-      sessionId: sessionIdA
+      sessionId: sessionIdA,
     })
     await f.guestSessionMappingDb.insert({
       guestUserId,
-      sessionId: sessionIdB
+      sessionId: sessionIdB,
     })
     await f.guestSessionMappingDb.insert({
       guestUserId,
-      sessionId: sessionIdC
+      sessionId: sessionIdC,
     })
 
     const userIdA = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(sessionIdA))

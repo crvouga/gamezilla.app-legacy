@@ -13,21 +13,21 @@ const Fixture = async () => {
   const puzzle = await Puzzle.random()
   const pack = await Pack.random({
     createdBy: puzzle.createdBy,
-    puzzleIds: [puzzle.id]
+    puzzleIds: [puzzle.id],
   })
   await f.ctx.flowPackDb.put(pack)
   await f.ctx.flowPuzzleDb.put(puzzle)
   const modelCore: ModelCore = {
     ...f.modelCore,
     screenPackBuilder: ScreenPackBuilderCore.init({
-      pack
-    })
+      pack,
+    }),
   }
   return {
     ...f,
     pack,
     modelCore,
-    deps: null
+    deps: null,
   }
 }
 
@@ -40,23 +40,23 @@ describe(import.meta.file, () => {
     const msgCore = withEventId<MsgCore>({
       t: 'screen-pack-builder.user-clicked-add-puzzle-item',
       puzzle: puzzle,
-      userId: puzzle.createdBy
+      userId: puzzle.createdBy,
     })
 
     const modelCoreNew = ScreenPackBuilderCore.update({
       ctx: f.ctx,
       modelCore: f.modelCore,
-      msgCore
+      msgCore,
     })
 
     const updated = await ScreenPackBuilderServer.update({
       ...f,
       modelCore: modelCoreNew,
-      msgCore
+      msgCore,
     })
 
     expect(
-      updated.msgCore?.some((msgCore) => msgCore.t === 'screen-pack-builder.saved-pack' && msgCore.saved.t === 'ok')
+      updated.msgCore?.some((msgCore) => msgCore.t === 'screen-pack-builder.saved-pack' && msgCore.saved.t === 'ok'),
     ).toBe(true)
   })
 
@@ -68,8 +68,8 @@ describe(import.meta.file, () => {
       msgCore: withEventMeta({
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
         puzzleIndex: 0,
-        userId: f.pack.createdBy
-      })
+        userId: f.pack.createdBy,
+      }),
     })
 
     const before = f.pack

@@ -27,7 +27,7 @@ const View = ({
   buttons,
   open,
   onToggle,
-  limit = 4
+  limit = 4,
 }: {
   id: string
   ctx: Ctx
@@ -62,7 +62,7 @@ const View = ({
                   onClick={button.onClick}
                   color={button.color}
                 />
-              )
+              ),
             )}
           </Drawer>
         </>
@@ -96,13 +96,13 @@ const Button = (input: BottomButtonInput) => {
         input.color === 'success' && 'font-bold text-green-500',
         input.color === 'selected' && 'font-bold text-blue-500',
         input.hidden ? 'hidden' : '',
-        input.classNames?.button
+        input.classNames?.button,
       )}
     >
       <div
         className={cn(
           'flex h-full w-full flex-col items-center justify-center gap-0.5 truncate',
-          input.loading ? 'opacity-0' : 'opacity-100'
+          input.loading ? 'opacity-0' : 'opacity-100',
         )}
       >
         {input.icon({ className: 'size-7' })}
@@ -121,5 +121,5 @@ const Button = (input: BottomButtonInput) => {
 export const BottomButtons = {
   View,
   Root,
-  Button
+  Button,
 }

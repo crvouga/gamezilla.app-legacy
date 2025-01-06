@@ -6,39 +6,39 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   ar: {
-    'game.you-are-spectating': 'أنت تشاهد'
+    'game.you-are-spectating': 'أنت تشاهد',
   },
   de: {
-    'game.you-are-spectating': 'Du schaust zu'
+    'game.you-are-spectating': 'Du schaust zu',
   },
   en: {
-    'game.you-are-spectating': 'You are spectating'
+    'game.you-are-spectating': 'You are spectating',
   },
   es: {
-    'game.you-are-spectating': 'Estás viendo'
+    'game.you-are-spectating': 'Estás viendo',
   },
   fr: {
-    'game.you-are-spectating': 'Vous regardez'
+    'game.you-are-spectating': 'Vous regardez',
   },
   hi: {
-    'game.you-are-spectating': 'आप दर्शक हैं'
+    'game.you-are-spectating': 'आप दर्शक हैं',
   },
   it: {
-    'game.you-are-spectating': 'Stai guardando'
+    'game.you-are-spectating': 'Stai guardando',
   },
   ja: {
-    'game.you-are-spectating': 'あなたは観戦しています'
+    'game.you-are-spectating': 'あなたは観戦しています',
   },
   ko: {
-    'game.you-are-spectating': '당신은 관전 중입니다'
+    'game.you-are-spectating': '당신은 관전 중입니다',
   },
   pt: {
-    'game.you-are-spectating': 'Você está assistindo'
+    'game.you-are-spectating': 'Você está assistindo',
   },
   ru: {
-    'game.you-are-spectating': 'Вы наблюдаете'
+    'game.you-are-spectating': 'Вы наблюдаете',
   },
   zh: {
-    'game.you-are-spectating': '您正在观看'
-  }
+    'game.you-are-spectating': '您正在观看',
+  },
 }

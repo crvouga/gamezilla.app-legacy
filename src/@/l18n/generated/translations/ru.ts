@@ -159,11 +159,11 @@ export const translations: Text = {
   'flow.puzzle-deleted': 'Головоломка удалена',
   'flow.delete-puzzle-forever?': 'Удалить головоломку навсегда?',
   'flow.delete-forever': 'Удалить навсегда',
-  'flow.edit-pack-name.pack-name': 'Имя пакета',
   'flow.add-puzzle': 'Добавить головоломку',
   'flow.puzzle-removed': 'Головоломка удалена',
   'flow.puzzle-added': 'Головоломка добавлена',
   'flow.remove-from-pack': 'Удалить из пакета',
+  'flow.edit-pack-name.pack-name': 'Имя пакета',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'Нет пазлов',
   'flow.no-packs': 'Нет пакетов',
@@ -226,6 +226,7 @@ export const translations: Text = {
   'profile.update-username.update-username': 'Обновить имя пользователя',
   'username-title': 'Имя пользователя',
   username: (username) => `@${username}`,
+  'app.screen-not-found': 'Экран не найден',
   'app.back': 'Назад',
   'app.gamezilla-app': 'gamezilla.app',
   'app.something-went-wrong': 'Что-то пошло не так',
@@ -274,5 +275,5 @@ export const translations: Text = {
   ko: 'Корейский',
   pt: 'Португальский',
   ru: 'Русский',
-  zh: 'Китайский'
+  zh: 'Китайский',
 }

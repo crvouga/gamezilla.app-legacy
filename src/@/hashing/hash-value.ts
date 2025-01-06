@@ -10,5 +10,5 @@ const fromString = (value: string): HashValue => {
 
 export const HashValue = {
   ...parser,
-  fromString
+  fromString,
 }

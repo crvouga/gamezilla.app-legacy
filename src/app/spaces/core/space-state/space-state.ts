@@ -13,7 +13,7 @@ import { SpaceEvent } from '../space-event'
 //
 
 export const Initial = p.obj({
-  type: p.l('initial')
+  type: p.l('initial'),
 })
 export type Initial = p.Infer<typeof Initial>
 
@@ -22,8 +22,8 @@ export const Started = p.and(
   p.obj({
     type: p.l('started'),
     game: p.maybe(Game.ModelCore),
-    latestEventId: EventId
-  })
+    latestEventId: EventId,
+  }),
 )
 export type Started = p.Infer<typeof Started>
 
@@ -31,13 +31,13 @@ export const Ended = p.and(
   Space,
   p.obj({
     type: p.l('ended'),
-    latestEventId: EventId
-  })
+    latestEventId: EventId,
+  }),
 )
 export type Ended = p.Infer<typeof Ended>
 
 const StateBase = p.obj({
-  latestEventId: p.maybe(EventId)
+  latestEventId: p.maybe(EventId),
 })
 
 export const State = p.and(StateBase, p.or(Initial, Started, Ended))
@@ -45,7 +45,7 @@ export type State = p.Infer<typeof State>
 
 export const init: State = {
   type: 'initial',
-  latestEventId: null
+  latestEventId: null,
 }
 
 //
@@ -90,9 +90,9 @@ export const updateCore = (state: State, msgCore: WithEventMeta<SpaceEvent>): St
             latestEventId: msgCore.eventId,
             spaceId: msgCore.spaceId,
             users: {
-              [msgCore.userId]: msgCore.userId
+              [msgCore.userId]: msgCore.userId,
             },
-            visibility: 'public'
+            visibility: 'public',
           }
         }
         default: {
@@ -109,23 +109,23 @@ export const updateCore = (state: State, msgCore: WithEventMeta<SpaceEvent>): St
             GameGame.initCore({
               gameName: msgCore.c.t,
               ctx: {
-                space: state
-              }
+                space: state,
+              },
             })
           const gameNew = GameGame.updateCore({
             ctx: {
-              space: state
+              space: state,
             },
             modelCore: game,
             msgCore: {
               ...msgCore,
-              ...msgCore.c
-            }
+              ...msgCore.c,
+            },
           })
           return {
             ...state,
             latestEventId: msgCore.eventId,
-            game: gameNew
+            game: gameNew,
           }
         }
         case 'user-ended-space': {
@@ -135,7 +135,7 @@ export const updateCore = (state: State, msgCore: WithEventMeta<SpaceEvent>): St
           return {
             ...state,
             latestEventId: msgCore.eventId,
-            type: 'ended'
+            type: 'ended',
           }
         }
 
@@ -143,7 +143,7 @@ export const updateCore = (state: State, msgCore: WithEventMeta<SpaceEvent>): St
           return {
             ...state,
             latestEventId: msgCore.eventId,
-            game: msgCore.game ? GameGame.initCore({ gameName: msgCore.game, ctx: { space: state } }) : null
+            game: msgCore.game ? GameGame.initCore({ gameName: msgCore.game, ctx: { space: state } }) : null,
           }
         }
 
@@ -153,8 +153,8 @@ export const updateCore = (state: State, msgCore: WithEventMeta<SpaceEvent>): St
             latestEventId: msgCore.eventId,
             users: {
               ...state.users,
-              [msgCore.userId]: msgCore.userId
-            }
+              [msgCore.userId]: msgCore.userId,
+            },
           }
         }
 
@@ -163,20 +163,20 @@ export const updateCore = (state: State, msgCore: WithEventMeta<SpaceEvent>): St
             return state
           }
           const usersNew = {
-            ...state.users
+            ...state.users,
           }
           delete usersNew[msgCore.userId]
           return {
             ...state,
             latestEventId: msgCore.eventId,
-            users: usersNew
+            users: usersNew,
           }
         }
 
         case 'user-started-space': {
           return {
             ...state,
-            latestEventId: msgCore.eventId
+            latestEventId: msgCore.eventId,
           }
         }
       }

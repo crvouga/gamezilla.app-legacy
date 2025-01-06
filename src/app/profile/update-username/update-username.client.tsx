@@ -13,9 +13,9 @@ export const init = <TModel extends ModelClient>(input: {
     model: {
       ...input.model,
       'profile.update-username.username': input.ctx.currentUserId
-        ? input.ctx.profiles[input.ctx.currentUserId]?.username ?? ''
-        : ''
-    }
+        ? (input.ctx.profiles[input.ctx.currentUserId]?.username ?? '')
+        : '',
+    },
   }
 }
 
@@ -40,7 +40,7 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
       case 'profile.update-username.clicked-back': {
         return {
           model: input.model,
-          msgCmd: [pushRoute({ t: 'profile-edit', n: 'profile' })]
+          msgCmd: [pushRoute({ t: 'profile-edit', n: 'profile' })],
         }
       }
 
@@ -48,14 +48,14 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
         return {
           model: {
             ...input.model,
-            'profile-update-username.request': RequestResponse.startedRequest(input.ctx.now)
+            'profile-update-username.request': RequestResponse.startedRequest(input.ctx.now),
           },
           msgCmd: [
             sendToServer({
               t: 'profile.update-username.clicked-save',
-              username: input.model['profile.update-username.username'] ?? ''
-            })
-          ]
+              username: input.model['profile.update-username.username'] ?? '',
+            }),
+          ],
         }
       }
 
@@ -63,8 +63,8 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
         return {
           model: {
             ...input.model,
-            'profile.update-username.username': input.msg.username
-          }
+            'profile.update-username.username': input.msg.username,
+          },
         }
       }
     }

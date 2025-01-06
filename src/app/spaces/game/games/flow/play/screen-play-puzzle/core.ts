@@ -12,7 +12,7 @@ const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
       const screenPuzzle = updateScreen(input.modelCore.screen, input.msgCore)
       return {
         ...input.modelCore,
-        screen: screenPuzzle
+        screen: screenPuzzle,
       }
     }
     default: {
@@ -32,16 +32,16 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
         modelCore.flowPlay ??
         FlowPlay.init({
           ctx: FlowPlay.initCtx({
-            flowPuzzle: modelCore.puzzleResult.c
-          })
+            flowPuzzle: modelCore.puzzleResult.c,
+          }),
         })
 
       const flowPlayNew = FlowPlay.update({
         msg: msgCore.c,
         model: flowPlay,
         ctx: FlowPlay.initCtx({
-          flowPuzzle: modelCore.puzzleResult.c
-        })
+          flowPuzzle: modelCore.puzzleResult.c,
+        }),
       })
 
       const didSolve = flowPlayNew.events?.some((e) => e.t === 'solved')
@@ -56,7 +56,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
               return {
                 t: 'user-used-hint',
                 groupId: event.groupId,
-                userId: msgCore.userId
+                userId: msgCore.userId,
               }
             }
             case 'solved': {
@@ -64,21 +64,21 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
                 t: 'user-completed-puzzle',
                 packId: modelCore.flowPack.id,
                 puzzleIndex: modelCore.puzzleIndex,
-                userId: msgCore.userId
+                userId: msgCore.userId,
               }
             }
             default: {
               return []
             }
           }
-        })
+        }),
       }
     }
     case 'user-closed-puzzle-complete-dialog': {
       if (toStatus(modelCore) === 'solved' && modelCore.opened === 'puzzle-complete') {
         return {
           ...modelCore,
-          opened: null
+          opened: null,
         }
       }
 
@@ -91,7 +91,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
           return {
             ...modelCore,
             puzzleResult: msgCore.nextPuzzle,
-            puzzleIndex: msgCore.nextPuzzleIndex
+            puzzleIndex: msgCore.nextPuzzleIndex,
           }
         }
 
@@ -100,12 +100,12 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
             ...modelCore,
             flowPlay: FlowPlay.init({
               ctx: FlowPlay.initCtx({
-                flowPuzzle: msgCore.nextPuzzle.c
-              })
+                flowPuzzle: msgCore.nextPuzzle.c,
+              }),
             }),
             opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
             puzzleResult: msgCore.nextPuzzle,
-            puzzleIndex: msgCore.nextPuzzleIndex
+            puzzleIndex: msgCore.nextPuzzleIndex,
           }
         }
       }
@@ -118,12 +118,12 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
             ...modelCore,
             flowPlay: FlowPlay.init({
               ctx: FlowPlay.initCtx({
-                flowPuzzle: msgCore.prevPuzzle.c
-              })
+                flowPuzzle: msgCore.prevPuzzle.c,
+              }),
             }),
             opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
             puzzleResult: msgCore.prevPuzzle,
-            puzzleIndex: msgCore.prevPuzzleIndex
+            puzzleIndex: msgCore.prevPuzzleIndex,
           }
         }
 
@@ -131,7 +131,7 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
           return {
             ...modelCore,
             puzzleResult: msgCore.prevPuzzle,
-            puzzleIndex: msgCore.prevPuzzleIndex
+            puzzleIndex: msgCore.prevPuzzleIndex,
           }
         }
       }
@@ -145,16 +145,16 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
         ...modelCore,
         flowPlay: FlowPlay.init({
           ctx: FlowPlay.initCtx({
-            flowPuzzle: modelCore.puzzleResult.c
-          })
-        })
+            flowPuzzle: modelCore.puzzleResult.c,
+          }),
+        }),
       }
     }
 
     case 'user-toggled-action-buttons-drawer': {
       return {
         ...modelCore,
-        opened: modelCore.opened === 'action-drawer' ? null : 'action-drawer'
+        opened: modelCore.opened === 'action-drawer' ? null : 'action-drawer',
       }
     }
 
@@ -174,8 +174,8 @@ const updateCoreMain: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
             screen: {
               t: 'screen-select-puzzle',
               flowPack: modelCore.screen.flowPack,
-              slideIndex: 0
-            }
+              slideIndex: 0,
+            },
           }
         }
         default: {
@@ -196,14 +196,14 @@ const initCore = (input: { flowPack: Pack; flowPuzzle: PuzzleResult; puzzleIndex
       input.flowPuzzle.t === 'got'
         ? FlowPlay.init({
             ctx: FlowPlay.initCtx({
-              flowPuzzle: input.flowPuzzle.c
-            })
+              flowPuzzle: input.flowPuzzle.c,
+            }),
           })
         : null,
     opened: null,
     t: 'screen-play-puzzle',
     hints: {},
-    puzzleResult: input.flowPuzzle
+    puzzleResult: input.flowPuzzle,
   }
 }
 
@@ -211,7 +211,7 @@ const updates = [
   updatePuzzleScreen,
   updateCoreMain,
   LastPuzzleCore.updateCore,
-  CopyPuzzleCore.updateCore
+  CopyPuzzleCore.updateCore,
   //
 ]
 const updateCore: CoreModule['updateCore'] = (input) => {
@@ -219,9 +219,9 @@ const updateCore: CoreModule['updateCore'] = (input) => {
     (acc, update) =>
       update({
         ...input,
-        modelCore: acc
+        modelCore: acc,
       }),
-    input.modelCore
+    input.modelCore,
   )
 }
 
@@ -238,7 +238,7 @@ const toStatus = (modelCore: ModelCore) => {
 
   return FlowPlay.toStatus({
     flow: modelCore.puzzleResult.c.flow,
-    model: flowPlay
+    model: flowPlay,
   })
 }
 
@@ -246,5 +246,5 @@ export const ScreenPlayPuzzleCore = {
   updateCore,
   initCore,
   updateScreen,
-  toStatus
+  toStatus,
 }

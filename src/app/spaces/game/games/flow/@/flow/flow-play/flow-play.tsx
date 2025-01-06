@@ -32,7 +32,7 @@ export const initCtx = <TCtx,>(input: { flowPuzzle: Puzzle } & TCtx): Ctx & TCtx
   return {
     ...input,
     ...FlowHint.initCtx({ flowPuzzle: input.flowPuzzle }),
-    flowPuzzle: input.flowPuzzle
+    flowPuzzle: input.flowPuzzle,
   }
 }
 
@@ -42,7 +42,7 @@ type Idle = p.Infer<typeof Idle>
 const Dragging = p.obj({
   t: p.l('dragging'),
   activeGroupId: FlowGroupId,
-  autocompleteEdge: p.maybe(Flow.Edge)
+  autocompleteEdge: p.maybe(Flow.Edge),
 })
 type Dragging = p.Infer<typeof Dragging>
 
@@ -55,8 +55,8 @@ export const Model = p.and(
     pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
     terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
     status: Status,
-    showCheckmarkAnimation: p.bool
-  })
+    showCheckmarkAnimation: p.bool,
+  }),
 )
 export type Model = p.Infer<typeof Model>
 
@@ -64,13 +64,13 @@ export const init = (input: { ctx: Ctx }): Model => {
   return {
     ...FlowHint.init(input),
     pipesBySourceId: {
-      ...input.ctx.flowPuzzle.flow.pipesBySourceId
+      ...input.ctx.flowPuzzle.flow.pipesBySourceId,
     },
     terminalsByGroupId: {
-      ...input.ctx.flowPuzzle.flow.terminalsByGroupId
+      ...input.ctx.flowPuzzle.flow.terminalsByGroupId,
     },
     status: { t: 'idle' },
-    showCheckmarkAnimation: false
+    showCheckmarkAnimation: false,
   }
 }
 
@@ -116,12 +116,12 @@ export const random = (input: { flowPuzzle: Puzzle }): Model => {
     pipesBySourceId: {
       [terminal.startId]: {
         edgeId: Flow.toFlowEdgeId(edge),
-        groupId: terminal.groupId
-      }
+        groupId: terminal.groupId,
+      },
     },
     terminalsByGroupId: {
-      [terminal?.groupId]: terminal
-    }
+      [terminal?.groupId]: terminal,
+    },
   }
 }
 
@@ -149,14 +149,14 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
   const msgs: Msg[] = [
     {
       t: 'user-pressed-down-node',
-      nodeId: terminal.startId
+      nodeId: terminal.startId,
     },
     ...edges.map(
       (edge): Msg => ({
         t: 'user-dragged-over-node',
-        nodeId: edge.targetId
-      })
-    )
+        nodeId: edge.targetId,
+      }),
+    ),
   ]
 
   return msgs
@@ -184,7 +184,7 @@ export const toSolutionMsgs = ({ flow }: { flow: Variant.Model }): Msg[] => {
 
     msgs.push({
       t: 'user-pressed-down-node',
-      nodeId: terminal.startId
+      nodeId: terminal.startId,
     })
 
     for (const pipe of Flow.toPipeline(solution, terminal.startId)) {
@@ -194,13 +194,13 @@ export const toSolutionMsgs = ({ flow }: { flow: Variant.Model }): Msg[] => {
       }
       msgs.push({
         t: 'user-dragged-over-node',
-        nodeId: edge.targetId
+        nodeId: edge.targetId,
       })
     }
 
     msgs.push({
       t: 'user-pressed-up-node',
-      nodeId: terminal.endId
+      nodeId: terminal.endId,
     })
   }
 
@@ -224,23 +224,23 @@ const first = <T,>(iterable: Iterable<T>): T | null => {
 export const Msg = p.or(
   FlowHint.Msg,
   p.obj({
-    t: p.l('user-clicked-reset')
+    t: p.l('user-clicked-reset'),
   }),
   p.obj({
     t: p.l('user-pressed-down-node'),
-    nodeId: FlowNodeId
+    nodeId: FlowNodeId,
   }),
   p.obj({
     t: p.l('user-pressed-up-node'),
-    nodeId: FlowNodeId
+    nodeId: FlowNodeId,
   }),
   p.obj({
     t: p.l('user-dragged-over-node'),
-    nodeId: FlowNodeId
+    nodeId: FlowNodeId,
   }),
   p.obj({
-    t: p.l('user-dragging-left')
-  })
+    t: p.l('user-dragging-left'),
+  }),
 )
 
 export type Msg = p.Infer<typeof Msg>
@@ -263,7 +263,7 @@ export type Event =
 
 export const eventsToClientCmd = (
   { t }: { t: Translator },
-  events?: Event[] | null
+  events?: Event[] | null,
 ): AppClientCmd<{
   MsgClient: never
   MsgToServer: never
@@ -302,7 +302,7 @@ export const eventsToClientCmd = (
 export const update = ({
   msg,
   model,
-  ctx
+  ctx,
 }: {
   msg: Msg
   model: Model
@@ -314,31 +314,31 @@ export const update = ({
   const updatedMain = updateMain({
     msg,
     model,
-    ctx
+    ctx,
   })
 
   const updatedHint = FlowHint.update({
     model: updatedMain.model,
     msg,
-    ctx
+    ctx,
   })
 
   const updatedReset = updateReset({
     model: updatedHint.model,
     msg,
-    ctx
+    ctx,
   })
 
   const events = [...(updatedMain?.events ?? []), ...(updatedHint?.events ?? []), ...(updatedReset?.events ?? [])]
 
   const updated = updateShowCheckmarkAnimation({
     model: updatedReset.model,
-    events
+    events,
   })
 
   return {
     events,
-    model: updated
+    model: updated,
   }
 }
 
@@ -346,20 +346,20 @@ const updateShowCheckmarkAnimation = (input: { model: Model; events: Event[] }):
   if (input.events?.some((event) => event.t === 'solved')) {
     return {
       ...input.model,
-      showCheckmarkAnimation: true
+      showCheckmarkAnimation: true,
     }
   }
 
   return {
     ...input.model,
-    showCheckmarkAnimation: false
+    showCheckmarkAnimation: false,
   }
 }
 
 const resetPipes = (model: Model): Model => {
   return {
     ...model,
-    pipesBySourceId: {}
+    pipesBySourceId: {},
   }
 }
 
@@ -370,14 +370,14 @@ const updateReset: typeof update = ({ model, msg }) => {
         model: pipe(model, resetPipes, FlowHint.resetUsedHints),
         events: [
           {
-            t: 'reset'
-          }
-        ]
+            t: 'reset',
+          },
+        ],
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -390,7 +390,7 @@ const updateMain: typeof update = ({ model, ctx, msg }) => {
         ctx,
         msg,
         model,
-        modelStatus: model.status
+        modelStatus: model.status,
       })
     }
 
@@ -398,7 +398,7 @@ const updateMain: typeof update = ({ model, ctx, msg }) => {
       return updateIdle({
         ctx,
         msg,
-        model
+        model,
       })
     }
   }
@@ -409,14 +409,14 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
     case 'user-pressed-down-node': {
       const current = toFlow({
         model,
-        flow: ctx.flowPuzzle.flow
+        flow: ctx.flowPuzzle.flow,
       })
 
       const groupId = Flow.toGroupId(current, msg.nodeId)
 
       if (!groupId) {
         return {
-          model
+          model,
         }
       }
 
@@ -430,20 +430,20 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
           status: {
             t: 'dragging',
             activeGroupId: groupId,
-            autocompleteEdge: null
-          }
+            autocompleteEdge: null,
+          },
         },
         events: [
           {
-            t: 'started-dragging'
-          }
-        ]
+            t: 'started-dragging',
+          },
+        ],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -453,7 +453,7 @@ const updateDragging = ({
   msg,
   modelStatus,
   model,
-  ctx
+  ctx,
 }: {
   msg: Msg
   model: Model
@@ -469,7 +469,7 @@ const updateDragging = ({
 
       const current = toFlow({
         model,
-        flow: ctx.flowPuzzle.flow
+        flow: ctx.flowPuzzle.flow,
       })
 
       const extended = FlowAlgoDrawPipes.drawPipes(current, modelStatus.activeGroupId, nodeId)
@@ -478,31 +478,31 @@ const updateDragging = ({
         ...model,
         status: model.status,
         terminalsByGroupId: extended.terminalsByGroupId,
-        pipesBySourceId: extended.pipesBySourceId
+        pipesBySourceId: extended.pipesBySourceId,
       }
 
       return {
-        model: modelNew
+        model: modelNew,
       }
     }
 
     case 'user-pressed-up-node': {
       const current = toFlow({
         model,
-        flow: ctx.flowPuzzle.flow
+        flow: ctx.flowPuzzle.flow,
       })
       const modelNew: Model = {
         ...model,
         status: {
-          t: 'idle'
-        }
+          t: 'idle',
+        },
       }
 
       const activeGroupTerminal = Flow.toTerminalByGroupId(current, modelStatus.activeGroupId)
 
       if (!activeGroupTerminal) {
         return {
-          model: modelNew
+          model: modelNew,
         }
       }
 
@@ -515,9 +515,9 @@ const updateDragging = ({
           model: modelNew,
           events: [
             {
-              t: 'solved'
-            }
-          ]
+              t: 'solved',
+            },
+          ],
         }
       }
 
@@ -527,21 +527,21 @@ const updateDragging = ({
           events: [
             {
               t: 'connected-terminals',
-              connectedTerminalCount: Flow.countConnectedPipes(current)
-            }
-          ]
+              connectedTerminalCount: Flow.countConnectedPipes(current),
+            },
+          ],
         }
       }
 
       return {
-        model: modelNew
+        model: modelNew,
       }
     }
 
     case 'user-dragging-left': {
       const current = toFlow({
         ...ctx.flowPuzzle,
-        model
+        model,
       })
       const isSolved = Flow.isSolved(current)
 
@@ -552,9 +552,9 @@ const updateDragging = ({
           model: {
             ...model,
             status: {
-              t: 'idle'
-            }
-          }
+              t: 'idle',
+            },
+          },
         }
       }
 
@@ -562,22 +562,22 @@ const updateDragging = ({
         model: {
           ...model,
           status: {
-            t: 'idle'
-          }
+            t: 'idle',
+          },
         },
         events: isSolved
           ? [
               {
-                t: 'solved'
-              }
+                t: 'solved',
+              },
             ]
-          : []
+          : [],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -586,11 +586,11 @@ const updateDragging = ({
 export const toFlow = ({ model, flow }: { flow: Variant.Model; model: Model }): Variant.Model => {
   const derived = FlowHint.toFlow({
     flow,
-    model
+    model,
   })
   return {
     ...derived,
-    terminalsByGroupId: model.terminalsByGroupId
+    terminalsByGroupId: model.terminalsByGroupId,
   }
 }
 
@@ -626,7 +626,7 @@ export const View = (input: {
           input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
             ? {
                 ...input.model.status.autocompleteEdge,
-                groupId: input.model.status.activeGroupId
+                groupId: input.model.status.activeGroupId,
               }
             : null
         }
@@ -653,13 +653,13 @@ export const viewResetAction = (input: {
 }): BottomButtonInput => {
   const flow = toFlow({
     model: input.model,
-    flow: input.flowPuzzle.flow
+    flow: input.flowPuzzle.flow,
   })
   const disabled = Flow.isPipesEmpty(flow)
   return PrebuiltBottomButtons.reset({
     ctx: input.ctx,
     onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
-    disabled
+    disabled,
   })
 }
 
@@ -671,7 +671,7 @@ const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null |
     <Transition
       id='checkmark'
       onEnter={animateCheckmark({
-        duration
+        duration,
       })}
       onExit={async () => {}}
       mode='out-in'

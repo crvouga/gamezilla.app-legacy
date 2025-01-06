@@ -16,7 +16,7 @@ export type ModelClient = {
 }
 
 export const initClient: ModelClient = {
-  request: NotAsked
+  request: NotAsked,
 }
 
 export type ModelServer = null

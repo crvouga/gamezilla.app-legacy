@@ -59,5 +59,5 @@ export const Username = {
   is,
   fromString,
   decode,
-  generate
+  generate,
 }

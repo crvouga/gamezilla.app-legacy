@@ -12,7 +12,7 @@ export type Config<TRow> = {
 
 export const init = <TRow>(_rows: TRow[]): Model<TRow> => {
   return {
-    rows: {}
+    rows: {},
   }
 }
 
@@ -71,7 +71,7 @@ export const query = <TRow>(map: Model<TRow>, query: Query<TRow>): QueryResult<T
     limit: query.limit,
     offset: query.offset,
     rows: [],
-    total: filtered.length
+    total: filtered.length,
   }
 }
 

@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 
 export const EventMeta = p.obj({
   happenedAt: LamportTimestamp,
-  eventId: EventId
+  eventId: EventId,
 })
 
 export type EventMeta = p.Infer<typeof EventMeta>
@@ -24,7 +24,7 @@ export const withEventMeta = <T>(event: T): WithEventMeta<T> => {
   return {
     ...event,
     happenedAt: LamportTimestamp.fromNumber(0),
-    eventId: EventId.generate()
+    eventId: EventId.generate(),
   }
 }
 
@@ -32,13 +32,13 @@ export const withEventMetaAt = <T>(happenedAt: number, event: T): WithEventMeta<
   return {
     ...event,
     happenedAt: LamportTimestamp.fromNumber(happenedAt),
-    eventId: EventId.generate()
+    eventId: EventId.generate(),
   }
 }
 
 export const withEventId = <T>(event: T): WithEventId<T> => {
   return {
     ...event,
-    eventId: EventId.generate()
+    eventId: EventId.generate(),
   }
 }

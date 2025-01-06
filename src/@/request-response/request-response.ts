@@ -54,7 +54,7 @@ export const startedRequest = (requestedAt: Posix, lifeSpan: TimeSpan = TimeSpan
     t: 'loading',
     requestedAt,
     lifeSpan,
-    requestId: Uuid.generate()
+    requestId: Uuid.generate(),
   }
 }
 
@@ -63,19 +63,19 @@ export const isRequesting = <TError, TValue>(request: RequestResponse<TError, TV
 }
 
 export const didRequestTimeout = <TError, TValue>(
-  request: RequestResponse<TError, TValue>
+  request: RequestResponse<TError, TValue>,
 ): request is RequestFailed => {
   return request.t === 'request-failed' && request.reason === 'timed-out'
 }
 
 export const isResponseOk = <TError, TValue>(
-  request: RequestResponse<TError, TValue>
+  request: RequestResponse<TError, TValue>,
 ): request is ResponseOk<TValue> => {
   return request.t === 'ok'
 }
 
 export const isResponseErr = <TError, TValue>(
-  request: RequestResponse<TError, TValue>
+  request: RequestResponse<TError, TValue>,
 ): request is ResponseErr<TError> => {
   return request.t === 'err'
 }
@@ -83,7 +83,7 @@ export const isResponseErr = <TError, TValue>(
 export const response = <TError, TValue>(
   request: RequestResponse<TError, TValue>,
   respondedAt: Posix,
-  result: Result<TError, TValue>
+  result: Result<TError, TValue>,
 ): RequestResponse<TError, TValue> => {
   if (request.t === 'not-asked') {
     return request
@@ -93,20 +93,20 @@ export const response = <TError, TValue>(
     requestedAt: respondedAt,
     respondedAt: respondedAt,
     lifeSpan: request.lifeSpan,
-    requestId: request.requestId
+    requestId: request.requestId,
   }
 }
 
 export const timePassed = <TError, TValue>(
   request: RequestResponse<TError, TValue>,
-  now: Posix
+  now: Posix,
 ): RequestResponse<TError, TValue> => {
   if (isRequesting(request) && TimeSpan.gte(Posix.diff(now, request.requestedAt), request.lifeSpan)) {
     return {
       t: 'request-failed',
       reason: 'timed-out',
       lifeSpan: request.lifeSpan,
-      requestId: request.requestId
+      requestId: request.requestId,
     }
   }
   return request
@@ -114,7 +114,7 @@ export const timePassed = <TError, TValue>(
 
 const subscriptions = <TError, TValue, TMsg>(
   request: RequestResponse<TError, TValue>,
-  elapsed: () => TMsg
+  elapsed: () => TMsg,
 ): Sub<TMsg> => {
   if (isRequesting(request)) {
     return Time.interval('', TimeSpan.seconds(1), elapsed)
@@ -145,5 +145,5 @@ export const RequestResponse = {
   ok: Ok,
   timePassed,
   didRequestTimeout,
-  subscriptions
+  subscriptions,
 }

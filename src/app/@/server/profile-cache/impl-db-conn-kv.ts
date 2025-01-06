@@ -12,7 +12,7 @@ export const ProfileCache = (config: Config): IProfileCache => {
   const profilesKv = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['spaces', 'profile-cache'],
-    parser: Profile
+    parser: Profile,
   })
   return {
     async add(profiles) {
@@ -28,6 +28,6 @@ export const ProfileCache = (config: Config): IProfileCache => {
       const profiles = Profile.indexByUserId(got.value)
 
       return Ok(profiles)
-    }
+    },
   }
 }

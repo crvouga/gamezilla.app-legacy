@@ -15,7 +15,7 @@ const empty = <T>(): List<T> => {
       for (const element of this._elements) {
         yield element
       }
-    }
+    },
   }
 }
 
@@ -27,7 +27,7 @@ const of = <T>(element: T): List<T> => {
       for (const element of this._elements) {
         yield element
       }
-    }
+    },
   }
 }
 
@@ -39,7 +39,7 @@ const fromArray = <T>(array: T[]): List<T> => {
       for (const element of this._elements) {
         yield element
       }
-    }
+    },
   }
 }
 
@@ -95,7 +95,7 @@ const product = <A, B, C>(a: List<A>, b: List<B>, f: (a: A, b: B) => C): List<C>
   return fromArray(
     a._elements.flatMap((a) => {
       return b._elements.map((b) => f(a, b))
-    })
+    }),
   )
 }
 
@@ -120,5 +120,5 @@ export const List = {
   some,
   every,
   product,
-  range
+  range,
 }

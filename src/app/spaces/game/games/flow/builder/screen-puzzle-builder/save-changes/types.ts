@@ -55,6 +55,6 @@ export type MsgToClient = { t: 'noop' }
 export const MsgCore = p.obj({
   t: p.l('screen-puzzle-builder.saved-puzzle'),
   saved: Result.parser(p.str, Puzzle),
-  userId: UserId
+  userId: UserId,
 })
 export type MsgCore = p.Infer<typeof MsgCore>

@@ -12,7 +12,7 @@ const update: ServerModule['update'] = async (input) => {
     () => ScreenPuzzleBuilderServer.update(input),
     () => ScreenPuzzleBuilderOpenServer.update(input),
     () => ScreenPackBuilderOpenServer.update(input),
-    () => ScreenPackBuilderServer.update(input)
+    () => ScreenPackBuilderServer.update(input),
   )
 }
 
@@ -23,5 +23,5 @@ const subscriptions: ServerModule['subscriptions'] = async () => {
 export const BuilderServer = {
   init: initServer,
   update,
-  subscriptions
+  subscriptions,
 }

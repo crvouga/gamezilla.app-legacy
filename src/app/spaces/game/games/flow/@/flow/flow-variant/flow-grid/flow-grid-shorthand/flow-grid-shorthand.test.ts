@@ -13,12 +13,12 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: null,
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
     expect(Flow.isSame(actual, expected)).toBe(true)
   })
@@ -26,7 +26,7 @@ describe(import.meta.file, () => {
   test('2x2 with A', async () => {
     const shorthand = FlowGridShorthand.init([
       ['A', ' '],
-      [' ', 'A']
+      [' ', 'A'],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -34,21 +34,21 @@ describe(import.meta.file, () => {
     const expected = FlowGrid.init({
       dimensions: FlowGridDimensions.init({
         height: 2,
-        width: 2
+        width: 2,
       }),
       terminalsByGroupId: {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 1,
-            y: 1
+            y: 1,
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
     expect(Flow.isSame(actual, expected)).toBe(true)
   })
@@ -56,7 +56,7 @@ describe(import.meta.file, () => {
   test('2x2 with A and B', async () => {
     const shorthand = FlowGridShorthand.init([
       ['A', 'B'],
-      ['B', 'A']
+      ['B', 'A'],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -64,32 +64,32 @@ describe(import.meta.file, () => {
     const expected = FlowGrid.init({
       dimensions: FlowGridDimensions.init({
         height: 2,
-        width: 2
+        width: 2,
       }),
       terminalsByGroupId: {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 1,
-            y: 1
+            y: 1,
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         B: {
           startId: FlowGrid.toNodeId({
             x: 1,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 0,
-            y: 1
+            y: 1,
           }),
-          groupId: 'B'
-        }
-      }
+          groupId: 'B',
+        },
+      },
     })
     expect(Flow.isSame(actual, expected)).toBe(true)
   })
@@ -98,7 +98,7 @@ describe(import.meta.file, () => {
     const shorthand = FlowGridShorthand.init([
       ['A', ' ', ' '],
       [' ', ' ', ' '],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
     const actual = FlowGridShorthand.toGrid(shorthand)
     const expected = FlowGrid.init({
@@ -107,15 +107,15 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 2,
-            y: 2
+            y: 2,
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
     expect(Flow.isSame(actual, expected)).toBe(true)
   })
@@ -124,7 +124,7 @@ describe(import.meta.file, () => {
     const shorthand = FlowGridShorthand.init([
       ['A', ' ', 'B'],
       [' ', 'B', ' '],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
     const actual = FlowGridShorthand.toGrid(shorthand)
     const expected = FlowGrid.init({
@@ -133,26 +133,26 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 2,
-            y: 2
+            y: 2,
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         B: {
           startId: FlowGrid.toNodeId({
             x: 2,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 1,
-            y: 1
+            y: 1,
           }),
-          groupId: 'B'
-        }
-      }
+          groupId: 'B',
+        },
+      },
     })
     expect(Flow.isSame(actual, expected)).toBe(true)
   })
@@ -160,7 +160,7 @@ describe(import.meta.file, () => {
   test('2x2 with terminal and pipe', async () => {
     const shorthand = FlowGridShorthand.init([
       ['A', ' '],
-      ['a', 'A']
+      ['a', 'A'],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -171,49 +171,49 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 1,
-            y: 1
+            y: 1,
           }),
-          groupId: 'A'
-        }
+          groupId: 'A',
+        },
       },
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 0,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
 
     expect(Flow.isSame(actual, expected)).toBe(true)
@@ -222,7 +222,7 @@ describe(import.meta.file, () => {
   test('2x2 with adjacent connected terminals', async () => {
     const shorthand = FlowGridShorthand.init([
       ['Aa', ' '],
-      ['A', ' ']
+      ['A', ' '],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -233,33 +233,33 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 0,
-            y: 1
+            y: 1,
           }),
-          groupId: 'A'
-        }
+          groupId: 'A',
+        },
       },
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
 
     expect(Flow.isSame(actual, expected)).toBe(true)
@@ -268,7 +268,7 @@ describe(import.meta.file, () => {
   test('2x2 with adjacent non-connected terminals', async () => {
     const shorthand = FlowGridShorthand.init([
       ['A', ' '],
-      ['A', ' ']
+      ['A', ' '],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -279,15 +279,15 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 0,
-            y: 1
+            y: 1,
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
 
     expect(Flow.isSame(actual, expected)).toBe(true)
@@ -296,7 +296,7 @@ describe(import.meta.file, () => {
   test('2x2 with A terminal with pipe and B terminal with pipe', async () => {
     const shorthand = FlowGridShorthand.init([
       ['Aa', 'B'],
-      ['A', 'Bb']
+      ['A', 'Bb'],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -307,60 +307,60 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 0,
-            y: 1
+            y: 1,
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         B: {
           startId: FlowGrid.toNodeId({
             x: 1,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 1,
-            y: 1
+            y: 1,
           }),
-          groupId: 'B'
-        }
+          groupId: 'B',
+        },
       },
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 1,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'B'
-        }
-      }
+          groupId: 'B',
+        },
+      },
     })
 
     const isSame = Flow.isSame(actual, expected)
@@ -372,7 +372,7 @@ describe(import.meta.file, () => {
     const shorthand = FlowGridShorthand.init([
       ['A', 'B', ' '],
       ['a', 'b', ' '],
-      ['A', 'B', ' ']
+      ['A', 'B', ' '],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -383,92 +383,92 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 0,
-            y: 2
+            y: 2,
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         B: {
           startId: FlowGrid.toNodeId({
             x: 1,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 1,
-            y: 2
+            y: 2,
           }),
-          groupId: 'B'
-        }
+          groupId: 'B',
+        },
       },
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 0,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 1,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'B'
+          groupId: 'B',
         },
         [FlowGrid.toNodeId({
           x: 1,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'B'
-        }
-      }
+          groupId: 'B',
+        },
+      },
     })
 
     const isSame = Flow.isSame(actual, expected)
@@ -480,7 +480,7 @@ describe(import.meta.file, () => {
     const shorthand = FlowGridShorthand.init([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -491,57 +491,57 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 2,
-            y: 2
+            y: 2,
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         B: {
           startId: FlowGrid.toNodeId({
             x: 1,
-            y: 1
+            y: 1,
           }),
           endId: null,
-          groupId: 'B'
-        }
+          groupId: 'B',
+        },
       },
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 0,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
 
     expect(Flow.isSame(actual, expected)).toBe(true)
@@ -551,7 +551,7 @@ describe(import.meta.file, () => {
     const shorthand = FlowGridShorthand.init([
       ['A', 'a', 'a'],
       ['a', 'a', 'a'],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
 
     const grids = FlowGridShorthand.toGrids(shorthand)
@@ -566,7 +566,7 @@ describe(import.meta.file, () => {
     const shorthand = FlowGridShorthand.init([
       ['A', 'a', 'a'],
       ['a', 'a', 'a'],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
 
     const actual = FlowGridShorthand.toGrids(shorthand)
@@ -577,145 +577,145 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 2,
-            y: 2
+            y: 2,
           }),
-          groupId: 'A'
-        }
+          groupId: 'A',
+        },
       },
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 0,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 0,
-          y: 2
+          y: 2,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 2
+              y: 2,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 1,
-          y: 2
+          y: 2,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 2
+              y: 2,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 1,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 0
-            })
+              y: 0,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 1,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 2,
-              y: 0
-            })
+              y: 0,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 2,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 2,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 2,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 2,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 2,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 2,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
 
     expect(actual.some((actual) => Flow.isSame(actual, expected))).toBe(true)
@@ -725,7 +725,7 @@ describe(import.meta.file, () => {
     const shorthand = FlowGridShorthand.init([
       ['A', 'B', 'C'],
       ['a', 'b', 'c'],
-      ['A', 'B', 'C']
+      ['A', 'B', 'C'],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -736,135 +736,135 @@ describe(import.meta.file, () => {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 0,
-            y: 2
+            y: 2,
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         B: {
           startId: FlowGrid.toNodeId({
             x: 1,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 1,
-            y: 2
+            y: 2,
           }),
-          groupId: 'B'
+          groupId: 'B',
         },
         C: {
           startId: FlowGrid.toNodeId({
             x: 2,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 2,
-            y: 2
+            y: 2,
           }),
-          groupId: 'C'
-        }
+          groupId: 'C',
+        },
       },
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 0,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [FlowGrid.toNodeId({
           x: 1,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'B'
+          groupId: 'B',
         },
         [FlowGrid.toNodeId({
           x: 1,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'B'
+          groupId: 'B',
         },
         [FlowGrid.toNodeId({
           x: 2,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 2,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 2,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'C'
+          groupId: 'C',
         },
         [FlowGrid.toNodeId({
           x: 2,
-          y: 1
+          y: 1,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 2,
-              y: 1
+              y: 1,
             }),
             targetId: FlowGrid.toNodeId({
               x: 2,
-              y: 2
-            })
+              y: 2,
+            }),
           }),
-          groupId: 'C'
-        }
-      }
+          groupId: 'C',
+        },
+      },
     })
 
     const isSame = Flow.isSame(actual, expected)
@@ -876,7 +876,7 @@ describe(import.meta.file, () => {
     const expected = FlowGridShorthand.init([
       ['A', ' ', ' '],
       [' ', ' ', ' '],
-      ['A', ' ', ' ']
+      ['A', ' ', ' '],
     ])
 
     const grid = FlowGridShorthand.toGrid(expected)
@@ -890,7 +890,7 @@ describe(import.meta.file, () => {
     const expected = FlowGridShorthand.init([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
-      ['A', ' ', ' ']
+      ['A', ' ', ' '],
     ])
 
     const grid = FlowGridShorthand.toGrid(expected)
@@ -903,7 +903,7 @@ describe(import.meta.file, () => {
   test('from grid 2x2 with pipes and adjacent terminals', () => {
     const expected = FlowGridShorthand.init([
       ['Aa', 'A'],
-      [' ', ' ']
+      [' ', ' '],
     ])
 
     const grid = FlowGridShorthand.toGrid(expected)
@@ -916,7 +916,7 @@ describe(import.meta.file, () => {
   test('from grid 2x2 with pipes and right side adjacent terminals', () => {
     const expected = FlowGridShorthand.init([
       ['A', 'Aa'],
-      [' ', ' ']
+      [' ', ' '],
     ])
 
     const expectedGrid = FlowGridShorthand.toGrid(expected)
@@ -932,7 +932,7 @@ describe(import.meta.file, () => {
     const expected = FlowGridShorthand.init([
       ['A', ' '],
       [' ', ' '],
-      [' ', 'A']
+      [' ', 'A'],
     ])
 
     const grid = FlowGridShorthand.toGrid(expected)
@@ -946,7 +946,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', ' ', ' '],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
 
     const pipeline = Flow.toPipelineFromGroupId(grid, 'A')
@@ -957,7 +957,7 @@ describe(import.meta.file, () => {
     const shorthand = FlowGridShorthand.init([
       ['A', ' '],
       [' ', 'a'],
-      [' ', 'A']
+      [' ', 'A'],
     ])
 
     const actual = FlowGridShorthand.toGrid(shorthand)
@@ -968,21 +968,21 @@ describe(import.meta.file, () => {
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 1,
-          y: 2
+          y: 2,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 1,
-              y: 2
+              y: 2,
             }),
             targetId: FlowGrid.toNodeId({
               x: 1,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
 
     expect(Flow.isSame(actual, expected)).toEqual(true)

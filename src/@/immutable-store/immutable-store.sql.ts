@@ -51,7 +51,7 @@ function toRow(row: unknown): Row | null {
       instance_step: row.instance_step,
       posix_timestamp: row.posix_timestamp,
       key: row.key,
-      value: row.value
+      value: row.value,
     }
   }
 
@@ -62,7 +62,7 @@ export const SqlStore = <TKey extends string | number, TValue>({
   executeSql,
   keySpace,
   encodeValue,
-  decodeValue
+  decodeValue,
 }: {
   keySpace: string
   executeSql: (rawSql: string) => Promise<unknown[]>
@@ -83,14 +83,14 @@ export const SqlStore = <TKey extends string | number, TValue>({
   const append = async (
     now: number,
     instance: Store<TKey, TValue>,
-    entries: [TKey, TValue | null][]
+    entries: [TKey, TValue | null][],
   ): Promise<Store<TKey, TValue>> => {
     await upgrade()
 
     const instanceNew: Store<TKey, TValue> = {
       _posixTimestamp: Math.max(now, 0),
       _instanceStep: instance._instanceStep + 1,
-      _appendStep: runningAppendStep++
+      _appendStep: runningAppendStep++,
     }
 
     const sql_values = entries
@@ -103,7 +103,7 @@ export const SqlStore = <TKey extends string | number, TValue>({
           instanceNew._posixTimestamp,
           instanceNew._appendStep,
           instanceNew._instanceStep,
-          valueSql
+          valueSql,
         ].join(', ')
       })
       .map((values) => `(${values})`)
@@ -131,7 +131,7 @@ export const SqlStore = <TKey extends string | number, TValue>({
       return {
         _posixTimestamp: Math.max(now, 0),
         _instanceStep: 0,
-        _appendStep: 0
+        _appendStep: 0,
       }
     },
     async assoc(now, instance, key, value) {
@@ -154,7 +154,7 @@ export const SqlStore = <TKey extends string | number, TValue>({
       return append(
         now,
         instance,
-        keys.map((key) => [key, null])
+        keys.map((key) => [key, null]),
       )
     },
 
@@ -264,7 +264,7 @@ export const SqlStore = <TKey extends string | number, TValue>({
       const latestValue = values[0] ?? null
 
       return latestValue
-    }
+    },
   }
 }
 

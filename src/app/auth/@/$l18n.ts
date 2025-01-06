@@ -30,7 +30,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'Logged in',
     'auth.logout-of-gamezilla.app': 'Logout of gamezilla.app?',
     'auth.logout-of-gamezilla.app-body': 'This will log you out of the app. Are you sure?',
-    'auth.continue-with-email': 'Continue with email'
+    'auth.continue-with-email': 'Continue with email',
   },
   de: {
     'auth.logout': 'Abmelden',
@@ -45,7 +45,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'Angemeldet',
     'auth.logout-of-gamezilla.app': 'Von gamezilla.app abmelden',
     'auth.logout-of-gamezilla.app-body': 'Möchtest du dich wirklich abmelden?',
-    'auth.continue-with-email': 'Mit E-Mail fortfahren'
+    'auth.continue-with-email': 'Mit E-Mail fortfahren',
   },
   es: {
     'auth.logout': 'Cerrar sesión',
@@ -60,7 +60,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'Conectado',
     'auth.logout-of-gamezilla.app': 'Cerrar sesión en gamezilla.app',
     'auth.logout-of-gamezilla.app-body': '¿Estás seguro de que quieres cerrar sesión?',
-    'auth.continue-with-email': 'Continuar con el correo electrónico'
+    'auth.continue-with-email': 'Continuar con el correo electrónico',
   },
   fr: {
     'auth.logout': 'Déconnexion',
@@ -75,7 +75,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'Connecté',
     'auth.logout-of-gamezilla.app': 'Déconnexion de gamezilla.app',
     'auth.logout-of-gamezilla.app-body': 'Êtes-vous sûr de vouloir vous déconnecter?',
-    'auth.continue-with-email': "Continuer avec l'e-mail"
+    'auth.continue-with-email': "Continuer avec l'e-mail",
   },
   hi: {
     'auth.logout': 'लॉग आउट',
@@ -90,7 +90,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'लॉग इन',
     'auth.logout-of-gamezilla.app': 'gamezilla.app से लॉग आउट करें',
     'auth.logout-of-gamezilla.app-body': 'क्या आप वाकई लॉग आउट करना चाहते हैं?',
-    'auth.continue-with-email': 'ईमेल के साथ जारी रखें'
+    'auth.continue-with-email': 'ईमेल के साथ जारी रखें',
   },
   it: {
     'auth.logout': 'Disconnettersi',
@@ -105,7 +105,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'Connesso',
     'auth.logout-of-gamezilla.app': 'Disconnettersi da gamezilla.app',
     'auth.logout-of-gamezilla.app-body': 'Sei sicuro di voler uscire?',
-    'auth.continue-with-email': "Continua con l'email"
+    'auth.continue-with-email': "Continua con l'email",
   },
   ja: {
     'auth.logout': 'ログアウト',
@@ -120,7 +120,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'ログインしました',
     'auth.logout-of-gamezilla.app': 'gamezilla.appからログアウト',
     'auth.logout-of-gamezilla.app-body': '本当にログアウトしますか？',
-    'auth.continue-with-email': 'メールで続行'
+    'auth.continue-with-email': 'メールで続行',
   },
   ko: {
     'auth.logout': '로그아웃',
@@ -135,7 +135,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': '로그인됨',
     'auth.logout-of-gamezilla.app': 'gamezilla.app에서 로그아웃',
     'auth.logout-of-gamezilla.app-body': '정말 로그아웃 하시겠습니까?',
-    'auth.continue-with-email': '이메일로 계속'
+    'auth.continue-with-email': '이메일로 계속',
   },
   pt: {
     'auth.logout': 'Sair',
@@ -150,7 +150,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'Logado',
     'auth.logout-of-gamezilla.app': 'Sair do gamezilla.app',
     'auth.logout-of-gamezilla.app-body': 'Tem cert sure que deseja sair?',
-    'auth.continue-with-email': 'Continuar com o e-mail'
+    'auth.continue-with-email': 'Continuar com o e-mail',
   },
   ru: {
     'auth.logout': 'Выйти',
@@ -165,7 +165,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'Вошел',
     'auth.logout-of-gamezilla.app': 'Выйти из gamezilla.app',
     'auth.logout-of-gamezilla.app-body': 'Вы уверены, что хотите выйти?',
-    'auth.continue-with-email': 'Продолжить с электронной почтой'
+    'auth.continue-with-email': 'Продолжить с электронной почтой',
   },
   zh: {
     'auth.logout': '登出',
@@ -180,7 +180,7 @@ export const translations: Translations<Text> = {
     'auth.logged-in': '已登录',
     'auth.logout-of-gamezilla.app': '登出gamezilla.app',
     'auth.logout-of-gamezilla.app-body': '您确定要登出吗？',
-    'auth.continue-with-email': '继续使用电子邮件'
+    'auth.continue-with-email': '继续使用电子邮件',
   },
   ar: {
     'auth.logout': 'تسجيل الخروج',
@@ -195,6 +195,6 @@ export const translations: Translations<Text> = {
     'auth.logged-in': 'تم تسجيل الدخول',
     'auth.logout-of-gamezilla.app': 'تسجيل الخروج من gamezilla.app',
     'auth.logout-of-gamezilla.app-body': 'هل أنت متأكد أنك تريد تسجيل الخروج؟',
-    'auth.continue-with-email': 'المتابعة بالبريد الإلكتروني'
-  }
+    'auth.continue-with-email': 'المتابعة بالبريد الإلكتروني',
+  },
 }

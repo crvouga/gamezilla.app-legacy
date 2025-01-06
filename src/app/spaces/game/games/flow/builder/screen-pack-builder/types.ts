@@ -22,8 +22,8 @@ export type ModelClient = {
 
 export const initClient: ModelClient = {
   packBuilder: {
-    flowPackPuzzleGrid: PackPuzzlesGridTypes.initClient
-  }
+    flowPackPuzzleGrid: PackPuzzlesGridTypes.initClient,
+  },
 }
 
 export type ModelServer = null
@@ -63,18 +63,18 @@ export type MsgToClient = {
 
 export const Screen = p.or(
   p.obj({
-    t: p.l('screen-add-puzzle')
+    t: p.l('screen-add-puzzle'),
   }),
   p.obj({
-    t: p.l('screen-puzzle-grid')
+    t: p.l('screen-puzzle-grid'),
   }),
   p.obj({
     t: p.l('screen-puzzle'),
     puzzleIndex: p.num,
     puzzleResult: PuzzleResult,
     play: p.maybe(FlowPlay.Model),
-    opened: p.maybe(p.l('more'))
-  })
+    opened: p.maybe(p.l('more')),
+  }),
 )
 
 type Screen = p.Infer<typeof Screen>
@@ -83,7 +83,7 @@ export const ModelCore = p.obj({
   pack: Pack,
   screen: Screen,
   slideIndex: p.num,
-  editPackName: EditPackNameTypes.ModelCore
+  editPackName: EditPackNameTypes.ModelCore,
 })
 
 export type ModelCore = {
@@ -96,65 +96,65 @@ export type ModelCore = {
 export const MsgCore = p.or(
   p.obj({
     t: p.l('got-edit-pack-name-msg'),
-    c: EditPackNameTypes.MsgCore
+    c: EditPackNameTypes.MsgCore,
   }),
   p.obj({
     t: p.l('screen-pack-builder.saved-pack'),
-    saved: Result.parser(p.str, Pack)
+    saved: Result.parser(p.str, Pack),
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-opened-add-puzzle-screen'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
-    t: p.l('screen-pack-builder.user-closed-add-puzzle-screen')
+    t: p.l('screen-pack-builder.user-closed-add-puzzle-screen'),
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-clicked-add-puzzle-item'),
     puzzle: Puzzle,
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-clicked-pack-item'),
     puzzleResult: PuzzleResult,
-    puzzleIndex: p.num
+    puzzleIndex: p.num,
   }),
   p.obj({
     t: p.l('screen-pack-builder.user-changed-slide'),
     newSlideIndex: p.num,
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('screen-pack-builder.got-flow-play-msg'),
-    c: FlowPlay.Msg
+    c: FlowPlay.Msg,
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle'),
     userId: UserId,
-    nextPuzzleResult: PuzzleResult
+    nextPuzzleResult: PuzzleResult,
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button'),
     userId: UserId,
-    previousPuzzleResult: PuzzleResult
+    previousPuzzleResult: PuzzleResult,
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-more-button'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-closed-more-drawer'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('remove-puzzle-from-pack.user-clicked-remove-from-pack-button'),
     puzzleIndex: p.num,
-    userId: UserId
-  })
+    userId: UserId,
+  }),
 )
 
 export type MsgCore = p.Infer<typeof MsgCore>

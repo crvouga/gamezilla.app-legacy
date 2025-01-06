@@ -19,5 +19,5 @@ renderHTML.impl(isAnnouncement, (announcement) => {
 
 export const Announcement = (input: { title: string; message: string }): Announcement => ({
   ...input,
-  Content: 'announcement'
+  Content: 'announcement',
 })

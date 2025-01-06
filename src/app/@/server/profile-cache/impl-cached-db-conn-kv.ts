@@ -26,22 +26,22 @@ export const ProfileCache = async (config: Config): Promise<IProfileCache> => {
           logger,
           dbConnKv,
           throttle: TimeSpan.seconds(10),
-          runtime: config.runtime
+          runtime: config.runtime,
         }),
       async (dbConnKv) =>
         DbConnKv({
           t: 'with-cache',
           logger,
           source: await dbConnKv,
-          cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 100_000 }) })
+          cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 100_000 }) }),
         }),
       async (dbConnKv) =>
         DbConnKv({
           t: 'with-reduced-parsing',
           dbConnKv: await dbConnKv,
           logger,
-          verifiedKeys: new Set()
-        })
-    )
+          verifiedKeys: new Set(),
+        }),
+    ),
   })
 }

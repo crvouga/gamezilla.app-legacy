@@ -11,12 +11,12 @@ const Fixture = async () => {
     ctx: f.ctx,
     update: ScreenPlayPuzzleServer.update,
     updateCore: ScreenPlayPuzzleCore.updateCore,
-    modelCore: f.initial.modelCore
+    modelCore: f.initial.modelCore,
   })
 
   return {
     ...f,
-    update
+    update,
   }
 }
 

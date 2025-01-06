@@ -17,7 +17,7 @@ export const FixtureFlowClient = async () => {
     puzzles: {},
     puzzleList: PuzzleListTypes.initClient,
     packList: PackListTypes.initClient,
-    packPuzzleGrid: PackPuzzlesGridTypes.initClient
+    packPuzzleGrid: PackPuzzlesGridTypes.initClient,
   }
   type Input = {
     ctx?: FlowClientCtx | null
@@ -47,13 +47,13 @@ export const FixtureFlowClient = async () => {
                 ? FlowCore.updateCore({
                     ctx: input.ctx ?? ctx,
                     modelCore: acc,
-                    msgCore: withEventMeta(msgCore)
+                    msgCore: withEventMeta(msgCore),
                   })
                 : acc,
-            FlowCore.initCore({ ctx: input.ctx ?? ctx })
+            FlowCore.initCore({ ctx: input.ctx ?? ctx }),
           ),
         msgCmd: null,
-        msgEvt: null
+        msgEvt: null,
       })
       outputs.push(output)
     }
@@ -65,7 +65,7 @@ export const FixtureFlowClient = async () => {
   }
 
   const initial = {
-    model: FlowClient.init
+    model: FlowClient.init,
   }
 
   return {
@@ -73,6 +73,6 @@ export const FixtureFlowClient = async () => {
     ctx,
     initial,
     update,
-    updates
+    updates,
   }
 }

@@ -46,16 +46,16 @@ export type ModelClient = {
 
 export const ModelServer = p.or(
   p.obj({
-    t: p.l('none')
+    t: p.l('none'),
   }),
   p.obj({
     t: p.l('builder'),
-    c: BuilderTypes.ModelServer
+    c: BuilderTypes.ModelServer,
   }),
   p.obj({
     t: p.l('play'),
-    c: PlayTypes.ModelServer
-  })
+    c: PlayTypes.ModelServer,
+  }),
 )
 
 export type ModelServer = p.Infer<typeof ModelServer>
@@ -112,23 +112,23 @@ export const MsgCore = p.or(
   p.obj({
     t: p.l('user-changed-mode'),
     mode: p.or(Mode, p.l('none')),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('play'),
-    c: PlayTypes.MsgCore
+    c: PlayTypes.MsgCore,
   }),
   p.obj({
     t: p.l('builder'),
-    c: BuilderTypes.MsgCore
-  })
+    c: BuilderTypes.MsgCore,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
 export const ModelCore = p.obj({
   mode: p.or(Mode, p.l('none')),
   play: PlayTypes.ModelCore,
-  builder: BuilderTypes.ModelCore
+  builder: BuilderTypes.ModelCore,
 })
 export type ModelCore = p.Infer<typeof ModelCore>
 

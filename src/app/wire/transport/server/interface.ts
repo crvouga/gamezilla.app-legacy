@@ -53,6 +53,6 @@ export const initServerTransport = <MsgToServer, MsgToClient>(): IServerTranspor
     toClient: PubSub.create(),
     toClientBroadcast: PubSub.create(),
     fromClient: PubSub.create(),
-    wire: PubSub.create()
+    wire: PubSub.create(),
   }
 }

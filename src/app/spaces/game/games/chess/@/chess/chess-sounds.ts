@@ -7,5 +7,5 @@ export const CHESS_SOUND = {
   moveSound: './space-game-chess/move-1.wav',
   navigationCancelSound: './space-game-chess/navigation-cancel.wav',
   navigationForwardSelectionSound: './space-game-chess/navigation_forward-selection-minimal.wav',
-  uiUnlockSound: './space-game-chess/ui_unlock.wav'
+  uiUnlockSound: './space-game-chess/ui_unlock.wav',
 } as const

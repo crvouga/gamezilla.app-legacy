@@ -15,7 +15,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       const saved = await input.ctx.flowPuzzleDb.put({
         ...input.msgClient.puzzle,
         lastUpdatedBy: input.msgClient.userId,
-        lastUpdatedAt: input.ctx.now
+        lastUpdatedAt: input.ctx.now,
       })
 
       const puzzle = input.msgClient.puzzle
@@ -23,11 +23,11 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       const msgCore: MsgCore = {
         t: 'screen-puzzle-builder.saved-puzzle',
         saved: Result.mapOk(saved, () => puzzle),
-        userId: input.msgClient.puzzle.createdBy
+        userId: input.msgClient.puzzle.createdBy,
       }
 
       return {
-        msgCore: [withEventId(msgCore)]
+        msgCore: [withEventId(msgCore)],
       }
     }
 
@@ -38,5 +38,5 @@ const updateFromClient: ServerModule['update'] = async (input) => {
 }
 
 export const SaveChangesServer = {
-  update
+  update,
 }

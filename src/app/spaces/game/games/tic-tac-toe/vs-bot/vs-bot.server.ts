@@ -10,7 +10,7 @@ import {
   type ModelServer,
   type MsgServer,
   type MsgToClient,
-  type MsgToServer
+  type MsgToServer,
 } from './vs-bot.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
@@ -39,7 +39,7 @@ export type Msg = MsgServer
 
 export const update = ({
   msg,
-  model
+  model,
 }: {
   msg: Msg
   model: Model
@@ -56,20 +56,20 @@ export const update = ({
             t: 'send-to-space',
             msg: {
               t: 'bot-moved',
-              result: Err('The bot moved not during game mode')
-            }
-          }
-        ]
+              result: Err('The bot moved not during game mode'),
+            },
+          },
+        ],
       }
     }
 
     const moved = TicTacToe.move({
       position: {
         column: 0,
-        row: 0
+        row: 0,
       },
       board: model.board,
-      player: TicTacToe.toOpposite(model.userPlayerType)
+      player: TicTacToe.toOpposite(model.userPlayerType),
     })
 
     if (moved.t === 'err') {
@@ -80,16 +80,16 @@ export const update = ({
             t: 'send-to-space',
             msg: {
               t: 'bot-moved',
-              result: moved
-            }
-          }
-        ]
+              result: moved,
+            },
+          },
+        ],
       }
     }
 
     const modelNew: Model = {
       ...model,
-      board: moved.value
+      board: moved.value,
     }
 
     return {
@@ -99,10 +99,10 @@ export const update = ({
           t: 'send-to-space',
           msg: {
             t: 'bot-moved',
-            result: Ok(modelNew)
-          }
-        }
-      ]
+            result: Ok(modelNew),
+          },
+        },
+      ],
     }
   }
   return { model }
@@ -124,7 +124,7 @@ export const updateFromClient = (input: {
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
   return pipe(
-    input
+    input,
     // andThen((model) =>
     //   updateFromClientMain({
     //     ...input,
@@ -142,7 +142,7 @@ export const updateFromClient = (input: {
 
 export const watchBotMove = ({
   model,
-  modelPrev
+  modelPrev,
 }: {
   model: Model
   modelPrev: Model
@@ -152,7 +152,7 @@ export const watchBotMove = ({
 } => {
   if (!isBotTurn(modelPrev) && isBotTurn(model)) {
     return {
-      model
+      model,
     }
   }
   return { model }
@@ -171,7 +171,7 @@ export const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   msg: SpaceServerEvt
   model: Model
@@ -182,7 +182,7 @@ export const updateFromEvent = ({
   if (msg.t === 'space-evt.user-left-space') {
     if (model.player !== msg.userId) {
       return {
-        model
+        model,
       }
     }
 
@@ -190,7 +190,7 @@ export const updateFromEvent = ({
       type: 'setup',
       botLevel: model.botLevel,
       player: null,
-      userPlayerType: model.userPlayerType
+      userPlayerType: model.userPlayerType,
     }
 
     return {
@@ -200,10 +200,10 @@ export const updateFromEvent = ({
           t: 'send-to-space',
           msg: {
             t: 'player-left',
-            result: Ok(modelNew)
-          }
-        }
-      ]
+            result: Ok(modelNew),
+          },
+        },
+      ],
     }
   }
 

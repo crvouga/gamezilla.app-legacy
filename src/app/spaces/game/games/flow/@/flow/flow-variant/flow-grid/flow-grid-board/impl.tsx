@@ -20,5 +20,5 @@ const View = (input: BoardInput<FlowGrid.Model>) => {
 }
 
 export const FlowGridBoard = {
-  View
+  View,
 }

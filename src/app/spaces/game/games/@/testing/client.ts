@@ -17,7 +17,7 @@ export async function testSpaceClientCtx(): Promise<SpaceClientCtx> {
     createdAt: Posix.now(),
     phoneNumber: PhoneNumber.random(),
     role: 'normal',
-    userId: currentUserId
+    userId: currentUserId,
   }
   return {
     currentUser,
@@ -26,7 +26,7 @@ export async function testSpaceClientCtx(): Promise<SpaceClientCtx> {
     currentRoute: {
       n: 'spaces',
       t: 'space',
-      spaceId: currentSpaceId
+      spaceId: currentSpaceId,
     },
     currentUserId,
     currentUserRole: 'normal',
@@ -36,19 +36,19 @@ export async function testSpaceClientCtx(): Promise<SpaceClientCtx> {
       [currentUserId]: {
         avatarUrl: ProfileAvatar.toUrl({
           seed: ProfileAvatar.generateRandomSeed(),
-          style: 'fun-emoji'
+          style: 'fun-emoji',
         }),
         userId: currentUserId,
-        username: await Username.generate()
-      }
+        username: await Username.generate(),
+      },
     },
     space: {
       hostId: currentUserId,
       spaceId: currentSpaceId,
       users: {
-        [currentUserId]: currentUserId
+        [currentUserId]: currentUserId,
       },
-      visibility: 'public'
-    }
+      visibility: 'public',
+    },
   }
 }

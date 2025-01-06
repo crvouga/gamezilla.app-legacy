@@ -9,7 +9,7 @@ import {
   initBoard,
   move,
   toOppositeStone,
-  toStatus
+  toStatus,
 } from '../@/gomoku/gomoku'
 import type { Position } from '../@/gomoku/gomoku-position'
 
@@ -77,7 +77,7 @@ export const initShared = ({ white, black }: { white: UserId | null; black: User
   return {
     type: 'setup',
     white,
-    black
+    black,
   }
 }
 
@@ -88,7 +88,7 @@ const initCoreOver = ({ model, gameOver }: { gameOver: GameOver; model: ModelPla
     white: model.white,
     board: model.board,
     rematch: { type: 'none' },
-    gameOver
+    gameOver,
   }
 }
 
@@ -96,7 +96,7 @@ const initSetup = (model: Model): ModelSetup => {
   return {
     type: 'setup',
     black: model.black,
-    white: model.white
+    white: model.white,
   }
 }
 
@@ -140,7 +140,7 @@ type Problem = 'must-be-setup' | 'player-taken' | 'must-be-player' | 'missing-pl
 export const handle = ({
   ctx,
   msg,
-  model
+  model,
 }: {
   ctx: { currentUserId: UserId }
   msg: Req
@@ -162,7 +162,7 @@ export const handle = ({
         ...model,
         [stone]: ctx.currentUserId,
         [toOppositeStone(stone)]:
-          model[toOppositeStone(stone)] === ctx.currentUserId ? null : model[toOppositeStone(stone)]
+          model[toOppositeStone(stone)] === ctx.currentUserId ? null : model[toOppositeStone(stone)],
       }
 
       return Ok(modelNew)
@@ -181,7 +181,7 @@ export const handle = ({
 
       const modelNew: Model = {
         ...model,
-        [stone]: null
+        [stone]: null,
       }
 
       return Ok(modelNew)
@@ -200,7 +200,7 @@ export const handle = ({
         type: 'playing',
         white: model.white,
         black: model.black,
-        board: initBoard
+        board: initBoard,
       }
 
       return Ok(modelNew)
@@ -218,7 +218,7 @@ export const handle = ({
       const moved = move({
         board: model.board,
         position,
-        stone: currentUserStone
+        stone: currentUserStone,
       })
 
       if (moved.t === 'err') {
@@ -227,7 +227,7 @@ export const handle = ({
 
       const modelNew = {
         ...model,
-        board: moved.value
+        board: moved.value,
       }
 
       const statusNew = toStatus(modelNew.board)
@@ -236,13 +236,13 @@ export const handle = ({
         const gameOver: GameOver = {
           type: 'Winner',
           winner: statusNew.winner,
-          wins: statusNew.wins
+          wins: statusNew.wins,
         }
         return Ok(
           initCoreOver({
             model: modelNew,
-            gameOver
-          })
+            gameOver,
+          }),
         )
       }
 
@@ -251,9 +251,9 @@ export const handle = ({
           initCoreOver({
             model: modelNew,
             gameOver: {
-              type: 'Draw'
-            }
-          })
+              type: 'Draw',
+            },
+          }),
         )
       }
 
@@ -275,8 +275,8 @@ export const handle = ({
         model,
         gameOver: {
           type: 'resigned',
-          resigner: currentUserStone
-        }
+          resigner: currentUserStone,
+        },
       })
 
       return Ok(modelNew)

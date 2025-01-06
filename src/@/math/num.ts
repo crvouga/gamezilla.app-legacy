@@ -6,7 +6,7 @@ export type Num = {
 const wrap = (number: number): Num => {
   return {
     Num: 'Num',
-    _value: number
+    _value: number,
   }
 }
 
@@ -42,5 +42,5 @@ export const Num = {
   gte,
   lte,
   wrap,
-  unwrap
+  unwrap,
 }

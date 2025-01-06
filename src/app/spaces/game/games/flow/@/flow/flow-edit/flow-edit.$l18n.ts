@@ -6,39 +6,39 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   ar: {
-    'space-game-flow-edit.editing': 'تحرير'
+    'space-game-flow-edit.editing': 'تحرير',
   },
   de: {
-    'space-game-flow-edit.editing': 'Bearbeiten'
+    'space-game-flow-edit.editing': 'Bearbeiten',
   },
   en: {
-    'space-game-flow-edit.editing': 'Editing'
+    'space-game-flow-edit.editing': 'Editing',
   },
   es: {
-    'space-game-flow-edit.editing': 'Edición'
+    'space-game-flow-edit.editing': 'Edición',
   },
   fr: {
-    'space-game-flow-edit.editing': 'Édition'
+    'space-game-flow-edit.editing': 'Édition',
   },
   hi: {
-    'space-game-flow-edit.editing': 'संपादन'
+    'space-game-flow-edit.editing': 'संपादन',
   },
   it: {
-    'space-game-flow-edit.editing': 'Modifica'
+    'space-game-flow-edit.editing': 'Modifica',
   },
   ja: {
-    'space-game-flow-edit.editing': '編集'
+    'space-game-flow-edit.editing': '編集',
   },
   ko: {
-    'space-game-flow-edit.editing': '편집'
+    'space-game-flow-edit.editing': '편집',
   },
   pt: {
-    'space-game-flow-edit.editing': 'Edição'
+    'space-game-flow-edit.editing': 'Edição',
   },
   ru: {
-    'space-game-flow-edit.editing': 'редактирование'
+    'space-game-flow-edit.editing': 'редактирование',
   },
   zh: {
-    'space-game-flow-edit.editing': '编辑'
-  }
+    'space-game-flow-edit.editing': '编辑',
+  },
 }

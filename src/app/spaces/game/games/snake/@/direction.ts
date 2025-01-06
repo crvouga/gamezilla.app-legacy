@@ -9,25 +9,25 @@ const toVector = (direction: Direction): Position => {
     case 'down':
       return {
         x: 0,
-        y: 1
+        y: 1,
       }
 
     case 'left':
       return {
         x: -1,
-        y: 0
+        y: 0,
       }
 
     case 'right':
       return {
         x: 1,
-        y: 0
+        y: 0,
       }
 
     case 'up':
       return {
         x: 0,
-        y: -1
+        y: -1,
       }
   }
 }
@@ -36,7 +36,7 @@ const directions: { [direction in Direction]: Direction } = {
   left: 'left',
   right: 'right',
   up: 'up',
-  down: 'down'
+  down: 'down',
 }
 
 const fromKey = (key: Keyboard.Key): Option<Direction> => {
@@ -87,5 +87,5 @@ export const Direction = {
   directions,
   fromKey,
   toOpposite,
-  isOpposite
+  isOpposite,
 }

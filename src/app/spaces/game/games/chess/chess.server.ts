@@ -32,7 +32,7 @@ export const init: Server['init'] = async (input) => {
     return { model: input.model }
   }
   return {
-    model: { t: 'none' }
+    model: { t: 'none' },
   }
 }
 
@@ -47,8 +47,8 @@ export const init: Server['init'] = async (input) => {
 export const update: Server['update'] = async (_input) => {
   return {
     model: {
-      t: 'none'
-    }
+      t: 'none',
+    },
   }
 }
 

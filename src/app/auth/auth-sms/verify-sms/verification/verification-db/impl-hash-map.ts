@@ -57,7 +57,7 @@ export const VerificationDb = (_config: Config): IVerificationDb => {
         items: sliced,
         total: filtered.length,
         limit: limit,
-        offset: offset
+        offset: offset,
       })
     },
     async put(verification) {
@@ -67,6 +67,6 @@ export const VerificationDb = (_config: Config): IVerificationDb => {
     async zap(verificationId) {
       verifications.delete(verificationId)
       return Ok(null)
-    }
+    },
   }
 }

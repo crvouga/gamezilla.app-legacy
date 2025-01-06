@@ -29,5 +29,5 @@ const generate = (): PartyId => {
 export const PartyId = {
   is,
   decode,
-  generate
+  generate,
 }

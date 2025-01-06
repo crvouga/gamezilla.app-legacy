@@ -32,5 +32,5 @@ export const EventId = {
   ...parser,
   is,
   decode,
-  generate
+  generate,
 }

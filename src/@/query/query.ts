@@ -63,5 +63,5 @@ export const example: Query<Row> = {
   limit: 10,
   offset: 0,
   order: [['asc', 'age']],
-  where: ['and', ['>', 'age', 18], ['like', 'name', 'John'], ['like', 'lastName', 'Doe']]
+  where: ['and', ['>', 'age', 18], ['like', 'name', 'John'], ['like', 'lastName', 'Doe']],
 }

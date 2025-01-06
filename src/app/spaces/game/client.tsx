@@ -22,7 +22,7 @@ const update: SpaceClientModule['update'] = (input) => {
     (model) => updateGame({ ...input, model }),
     (model) => updateFromSpaceEvent({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model })
+    (model) => updateFromCmd({ ...input, model }),
   )
 }
 
@@ -35,7 +35,7 @@ const updateFromMsg: SpaceClientModule['update'] = ({ msg, model, ctx }) => {
 
       if (!currentUserId || !currentUserSpaceId) {
         return {
-          model
+          model,
         }
       }
 
@@ -43,18 +43,18 @@ const updateFromMsg: SpaceClientModule['update'] = ({ msg, model, ctx }) => {
         t: 'user-inputted-game',
         game: msg.gameName,
         spaceId: currentUserSpaceId,
-        userId: currentUserId
+        userId: currentUserId,
       })
 
       return {
         model,
-        msgCore: [spaceEventNew]
+        msgCore: [spaceEventNew],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -66,7 +66,7 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model, ctx }) => {
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, currentUserId)
       if (!currentUserSpaceId || !currentUserId) {
         return {
-          model
+          model,
         }
       }
       return {
@@ -76,15 +76,15 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model, ctx }) => {
             t: 'user-inputted-game',
             game: null,
             spaceId: currentUserSpaceId,
-            userId: currentUserId
-          })
-        ]
+            userId: currentUserId,
+          }),
+        ],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -95,7 +95,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
     case 'user-inputted-game': {
       if (!input.ctx.currentUserId) {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -104,17 +104,17 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = (input) => {
       if (input.msgCore.spaceId === currentUserSpaceId) {
         return {
           model: input.model,
-          msgCmd: [playSound(input.msgCore.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)]
+          msgCmd: [playSound(input.msgCore.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)],
         }
       }
       return {
-        model: input.model
+        model: input.model,
       }
     }
 
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -165,7 +165,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
       space: spaceState,
       currentUserId: currentUser.userId,
       currentUserRole: currentUser.role,
-      currentUser: currentUser
+      currentUser: currentUser,
     },
     model: modelGame,
     msgCore: input.msgCore?.t === 'game' ? { ...input.msgCore, ...input.msgCore.c } : null,
@@ -173,7 +173,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
     msgServer: input.msgServer?.t === 'game' ? input.msgServer.c : null,
     msgCmd: null,
     msgEvt: input.msgEvt,
-    msg: input.msg?.t === 'game' ? input.msg.c : null
+    msg: input.msg?.t === 'game' ? input.msg.c : null,
   })
 
   return {
@@ -181,13 +181,13 @@ const updateGame: SpaceClientModule['update'] = (input) => {
       ...input.model,
       games: {
         ...input.model.games,
-        [spaceId]: gameUpdated.model
-      }
+        [spaceId]: gameUpdated.model,
+      },
     },
     msgCmd: SpaceClientCmd.map(
       gameUpdated.msgCmd ?? [],
       (c) => ({ t: 'game', c, spaceId }),
-      (c) => ({ t: 'game', c, spaceId })
+      (c) => ({ t: 'game', c, spaceId }),
     ),
     eff: Eff.map(gameUpdated.eff, (c) => ({ t: 'game', c, spaceId })),
     msgEvt: [],
@@ -196,9 +196,9 @@ const updateGame: SpaceClientModule['update'] = (input) => {
         withEventId({
           spaceId,
           t: 'game',
-          c
-        })
-    )
+          c,
+        }),
+    ),
   }
 }
 
@@ -223,7 +223,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule['subscriptions'] = (input)
     ...input.ctx,
     currentUserId: input.ctx.currentUser.userId,
     currentUserRole: input.ctx.currentUser.role,
-    currentUser: input.ctx.currentUser
+    currentUser: input.ctx.currentUser,
   }
 
   const spaceId = SpacesCoreClient.toSpaceIdByUserId(input.model, clientCtx.currentUserId)
@@ -255,7 +255,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule['subscriptions'] = (input)
   const gameSub = GamesClient.subscriptions({
     ctx: { ...clientCtx, space: spaceState },
     modelCore: modelCore,
-    model: gameModel
+    model: gameModel,
   })
 
   const sub = Sub.map(gameSub, (c): MsgClient => ({ t: 'game', c, spaceId }))
@@ -293,13 +293,13 @@ const View: SpaceClientModule['View'] = (input) => {
           space,
           currentUserId: ctx.currentUser.userId,
           currentUserRole: ctx.currentUser.role,
-          currentUser: ctx.currentUser
+          currentUser: ctx.currentUser,
         }}
         dispatch={(c) =>
           dispatch({
             t: 'game',
             spaceId: space.spaceId,
-            c
+            c,
           })
         }
         model={model.games[ctx.space.spaceId] ?? GamesClient.init(space.game.t)}
@@ -323,7 +323,7 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
             onOpenUserDetails={(userId) =>
               input.dispatch({
                 t: 'clicked-user',
-                userId
+                userId,
               })
             }
             ctx={{
@@ -331,7 +331,7 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
               space: input.ctx.space,
               currentUserId: input.ctx.currentUser.userId,
               currentUserRole: input.ctx.currentUser.role,
-              currentUser: input.ctx.currentUser
+              currentUser: input.ctx.currentUser,
             }}
           />
         </div>
@@ -346,7 +346,7 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
         center
         onBack={() =>
           input.dispatch({
-            t: 'clicked-go-home-button'
+            t: 'clicked-go-home-button',
           })
         }
         title={input.ctx.t('spaces.games')}
@@ -361,7 +361,7 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
               onClick={() =>
                 input.dispatch({
                   t: 'clicked-game-tile',
-                  gameName
+                  gameName,
                 })
               }
               className='flex aspect-square overflow-hidden rounded-lg border'
@@ -392,5 +392,5 @@ const ViewScreenNotInGame: SpaceClientModule['View'] = (input) => {
 export const GameClient = {
   View,
   update,
-  subscriptions
+  subscriptions,
 }

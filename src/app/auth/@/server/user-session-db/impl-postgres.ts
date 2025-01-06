@@ -15,7 +15,7 @@ import { Uuid } from '~/@/uuid/uuid'
 
 export const Row = p.obj({
   session_id: p.custom(SessionId.is, 'Invalid session id'),
-  user_id: p.custom(UserId.is, 'Invalid user id')
+  user_id: p.custom(UserId.is, 'Invalid user id'),
 })
 
 export type Row = p.Infer<typeof Row>
@@ -42,8 +42,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
         Row,
         'SELECT * FROM user_session WHERE ended_at IS NULL AND user_id = :user_id',
         {
-          user_id: userId
-        }
+          user_id: userId,
+        },
       )
 
       return Result.mapOk(queried, (rows) => rows.map((row) => row.session_id))
@@ -55,8 +55,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
         Row,
         'SELECT * FROM user_session WHERE ended_at IS NULL AND session_id = :session_id',
         {
-          session_id: sessionId
-        }
+          session_id: sessionId,
+        },
       )
 
       return Result.mapOk(queried, (rows) => {
@@ -74,8 +74,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
         {
           user_session_id: userSessionId,
           session_id: sessionId,
-          user_id: userId
-        }
+          user_id: userId,
+        },
       )
       return Result.mapOk(queried, () => null)
     },
@@ -87,8 +87,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
         'UPDATE user_session SET ended_at = :ended_at WHERE user_id = :user_id',
         {
           ended_at: new Date().toISOString(),
-          user_id: userId
-        }
+          user_id: userId,
+        },
       )
       return Result.mapOk(queried, () => null)
     },
@@ -100,10 +100,10 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
         'UPDATE user_session SET ended_at = :ended_at WHERE session_id = :session_id',
         {
           ended_at: new Date().toISOString(),
-          session_id: sessionId
-        }
+          session_id: sessionId,
+        },
       )
       return Result.mapOk(queried, () => null)
-    }
+    },
   }
 }

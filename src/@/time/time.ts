@@ -84,12 +84,12 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
       return () => {
         unsub()
       }
-    }
+    },
   }
 }
 
 export const Time = {
   startTimeout,
   cancelTimeout,
-  interval
+  interval,
 }

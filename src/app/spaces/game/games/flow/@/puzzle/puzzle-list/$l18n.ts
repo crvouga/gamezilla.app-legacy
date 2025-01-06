@@ -6,40 +6,40 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   ar: {
-    'flow.no-puzzles': 'لا توجد ألغاز'
+    'flow.no-puzzles': 'لا توجد ألغاز',
   },
   de: {
-    'flow.no-puzzles': 'Keine Puzzles'
+    'flow.no-puzzles': 'Keine Puzzles',
   },
   en: {
-    'flow.no-puzzles': 'No puzzles'
+    'flow.no-puzzles': 'No puzzles',
   },
   es: {
-    'flow.no-puzzles': 'Sin rompecabezas'
+    'flow.no-puzzles': 'Sin rompecabezas',
   },
   fr: {
-    'flow.no-puzzles': 'Aucun puzzle'
+    'flow.no-puzzles': 'Aucun puzzle',
   },
   hi: {
-    'flow.no-puzzles': 'कोई पहेली नहीं'
+    'flow.no-puzzles': 'कोई पहेली नहीं',
   },
   it: {
-    'flow.no-puzzles': 'Nessun puzzle'
+    'flow.no-puzzles': 'Nessun puzzle',
   },
   ja: {
-    'flow.no-puzzles': 'パズルなし'
+    'flow.no-puzzles': 'パズルなし',
   },
 
   ko: {
-    'flow.no-puzzles': '퍼즐이 없습니다'
+    'flow.no-puzzles': '퍼즐이 없습니다',
   },
   pt: {
-    'flow.no-puzzles': 'Sem quebra-cabeças'
+    'flow.no-puzzles': 'Sem quebra-cabeças',
   },
   ru: {
-    'flow.no-puzzles': 'Нет пазлов'
+    'flow.no-puzzles': 'Нет пазлов',
   },
   zh: {
-    'flow.no-puzzles': '没有拼图'
-  }
+    'flow.no-puzzles': '没有拼图',
+  },
 }

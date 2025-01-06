@@ -19,16 +19,16 @@ import { ClientEvt } from '../@/client/evt'
 
 export const init = (input: { ctx: ClientCtx; stored: Record<string, unknown> | null }): { model: ModelClient } => {
   const serverInstance = ServerInstanceClient.init({
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.serverInstance }
+    ctx: { ...input.ctx, rpc: input.ctx.rpc.serverInstance },
   })
   return {
     model: {
       state: {
-        t: 'server-connecting'
+        t: 'server-connecting',
       },
       serverTime: null,
-      serverInstance: serverInstance.model
-    }
+      serverInstance: serverInstance.model,
+    },
   }
 }
 
@@ -52,7 +52,7 @@ export const update = <TMsgToClient extends Record<string, unknown>, TMsgToServe
   msgCmd,
   model,
   ctx,
-  transport
+  transport,
 }: {
   ctx: {
     t: Translator
@@ -73,7 +73,7 @@ export const update = <TMsgToClient extends Record<string, unknown>, TMsgToServe
     { model },
     (model) => updateFromMsg({ ctx, msg, model, transport }),
     (model) => updateFromServer({ ctx, model, msgServer, transport }),
-    (model) => updateFromCmd({ ctx, msgCmd, model, transport })
+    (model) => updateFromCmd({ ctx, msgCmd, model, transport }),
   )
 }
 
@@ -93,9 +93,9 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
           ...model,
           state: {
             t: 'server-connect-error',
-            errorCount: model.state.t === 'server-connect-error' ? model.state.errorCount + 1 : 1
-          }
-        }
+            errorCount: model.state.t === 'server-connect-error' ? model.state.errorCount + 1 : 1,
+          },
+        },
       }
     }
 
@@ -104,14 +104,14 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
         model: {
           ...model,
           state: {
-            t: 'server-connected'
-          }
+            t: 'server-connected',
+          },
         },
         msgEvt: [
           {
-            t: 'wire-evt.server-connected'
-          }
-        ]
+            t: 'wire-evt.server-connected',
+          },
+        ],
       }
     }
 
@@ -120,9 +120,9 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
         model: {
           ...model,
           state: {
-            t: msg.t
-          }
-        }
+            t: msg.t,
+          },
+        },
       }
     }
 
@@ -131,14 +131,14 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
         model: {
           ...model,
           state: {
-            t: 'server-connecting'
-          }
+            t: 'server-connecting',
+          },
         },
         eff: () => {
           transport.msgCmd.pub({
-            t: 'try-reconnect'
+            t: 'try-reconnect',
           })
-        }
+        },
       }
     }
 
@@ -146,7 +146,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
       switch (msg.reason) {
         case 'codebase-version-mismatch': {
           return {
-            model
+            model,
           }
         }
       }
@@ -170,7 +170,7 @@ const updateFromServer: typeof update = ({ ctx, model, msgServer }) => {
     case 'server-restarted': {
       return {
         model,
-        msgCmd: [showToast(ctx.t('wire.server-restarted'))]
+        msgCmd: [showToast(ctx.t('wire.server-restarted'))],
       }
     }
   }
@@ -192,16 +192,16 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
             transport.toServer.pub([wireCmd.toServer])
             dispatch({
               t: 'sent-to-server',
-              toServer: wireCmd.toServer
+              toServer: wireCmd.toServer,
             })
           }
-        }
+        },
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -283,7 +283,7 @@ export const ViewStatusBarDrawer = (input: {
               type='button'
               onClick={() =>
                 input.dispatch({
-                  t: 'clicked-try-reconnect'
+                  t: 'clicked-try-reconnect',
                 })
               }
               className='font-bold text-red-500'
@@ -305,7 +305,7 @@ export const ViewStatusBarDrawer = (input: {
 //
 
 export const subscriptions = <MsgToServer, MsgToClient>({
-  transport
+  transport,
 }: {
   transport: IClientTransport<{
     MsgToServer: MsgToServer

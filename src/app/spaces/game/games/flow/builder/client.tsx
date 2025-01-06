@@ -17,7 +17,7 @@ const update: ClientModule['update'] = (input) => {
     (model) => ScreenPuzzleBuilderOpenClient.update({ ...input, model }),
     (model) => ScreenMainMenuClient.update({ ...input, model }),
     (model) => updateGotMsgCore({ ...input, model }),
-    (model) => updateBackButton({ ...input, model })
+    (model) => updateBackButton({ ...input, model }),
   )
 }
 
@@ -26,12 +26,12 @@ const updateBackButton: ClientModule['update'] = (input) => {
     case 'user-clicked-back-button': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -42,12 +42,12 @@ const updateGotMsgCore: ClientModule['update'] = (input) => {
     case 'got-msg-core': {
       return {
         model: input.model,
-        msgCore: [input.msg.c]
+        msgCore: [input.msg.c],
       }
     }
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -90,5 +90,5 @@ export const BuilderClient: ClientModule = {
   update,
   subscriptions,
   View,
-  ViewFeedItem
+  ViewFeedItem,
 }

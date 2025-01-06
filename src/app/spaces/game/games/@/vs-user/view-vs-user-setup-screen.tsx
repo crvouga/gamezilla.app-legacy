@@ -19,7 +19,7 @@ type PlayerProp = {
 const VersusSection = ({
   playerOne,
   playerTwo,
-  ctx
+  ctx,
 }: {
   playerOne: PlayerProp
   playerTwo: PlayerProp
@@ -61,7 +61,7 @@ const VersusSection = ({
 }
 
 export const VsUserSetup = {
-  VersusSection
+  VersusSection,
 }
 
 const PlayerButtons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
@@ -107,7 +107,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
       )}
 
       {player.renderIcon({
-        className: 'h-14 w-14'
+        className: 'h-14 w-14',
       })}
     </div>
   )
@@ -137,7 +137,7 @@ export const VsUserSetupScreen = ({
   renderCoverArt,
   onStartGame,
   onQuit,
-  canStartGame = Boolean(playerOne.userId && playerTwo.userId)
+  canStartGame = Boolean(playerOne.userId && playerTwo.userId),
 }: {
   ctx: SpaceClientCtx
   title: TranslatedText

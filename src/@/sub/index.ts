@@ -44,7 +44,7 @@ const create = <Msg>(): PubSub<Msg> => {
           unsubscribe()
         })
       })
-    }
+    },
   }
 }
 
@@ -63,7 +63,7 @@ const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
       return sub.sub((a) => {
         subscriber(f(a))
       })
-    }
+    },
   }
 }
 
@@ -83,7 +83,7 @@ function flatMap<A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> {
       return () => {
         unsubscribeFunctions.forEach((unsubscribe) => unsubscribe())
       }
-    }
+    },
   }
 }
 
@@ -101,12 +101,12 @@ const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
           unsubscribe()
         }
       }
-    }
+    },
   }
 }
 
 const None: Sub<never> = {
-  sub: () => () => {}
+  sub: () => () => {},
 }
 
 const flat = <A>(sub: Sub<A[]>): Sub<A> => {
@@ -119,7 +119,7 @@ const flat = <A>(sub: Sub<A[]>): Sub<A> => {
           }
         }
       })
-    }
+    },
   }
 }
 
@@ -131,7 +131,7 @@ const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {
   return {
     sub: (subscriber) => {
       return pubSub.sub(subscriber)
-    }
+    },
   }
 }
 
@@ -145,7 +145,7 @@ const toPub = <Msg>(pubSub: PubSub<Msg>): Pub<Msg> => {
     },
     isSubbed() {
       return pubSub.isSubbed()
-    }
+    },
   }
 }
 
@@ -167,11 +167,11 @@ export const Sub = {
   flat,
   tag,
   next,
-  flatMap
+  flatMap,
 }
 
 export const Pub = {
-  create: createPub
+  create: createPub,
 }
 
 export const PubSub = {
@@ -184,5 +184,5 @@ export const PubSub = {
   flatMap,
   toSub,
   next,
-  toPub
+  toPub,
 }

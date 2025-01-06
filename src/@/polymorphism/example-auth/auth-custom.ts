@@ -12,5 +12,5 @@ signUpWithEmailAndPassword.impl(isCustomAuthProvider, async (_auth, _input) => {
 })
 
 export const CustomAuthProvider = (): CustomAuthProvider => ({
-  Auth: 'custom'
+  Auth: 'custom',
 })

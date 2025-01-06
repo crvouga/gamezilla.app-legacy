@@ -14,7 +14,7 @@ export type ModelClient = SaveChangesTypes.ModelClient &
 export const initClient: ModelClient = {
   ...EditPuzzleNameTypes.initClient,
   ...DeleteForeverTypes.initClient,
-  ...SaveChangesTypes.initClient
+  ...SaveChangesTypes.initClient,
 }
 
 export type ModelServer = null
@@ -68,7 +68,7 @@ export const ModelCore = p.obj({
   puzzle: Puzzle,
   mode: Mode,
   play: FlowPlay.Model,
-  edit: FlowEdit.Model
+  edit: FlowEdit.Model,
 })
 export type ModelCore = p.Infer<typeof ModelCore>
 
@@ -78,24 +78,24 @@ export const MsgCore = p.or(
   EditPuzzleNameTypes.MsgCore,
   p.obj({
     t: p.l('screen-puzzle-builder.got-flow-ui-play-msg'),
-    c: FlowPlay.Msg
+    c: FlowPlay.Msg,
   }),
   p.obj({
     t: p.l('screen-puzzle-builder.got-flow-ui-edit-msg'),
-    c: FlowEdit.Msg
+    c: FlowEdit.Msg,
   }),
   p.obj({
     t: p.l('screen-puzzle-builder.user-clicked-edit-mode-button'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('screen-puzzle-builder.user-clicked-play-mode-button'),
-    userId: UserId
+    userId: UserId,
   }),
   p.obj({
     t: p.l('screen-puzzle-builder.user-clicked-exit-button'),
-    userId: UserId
-  })
+    userId: UserId,
+  }),
 )
 
 export type MsgCore = p.Infer<typeof MsgCore>

@@ -35,7 +35,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
     constructor() {
       super()
       this.attachShadow({
-        mode: 'open'
+        mode: 'open',
       })
     }
 
@@ -48,7 +48,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       this.unsubscribe = drawerSub.sub((drawerEvent) => {
         if (drawerEvent.id === this.getAttribute('id')) {
           this.input = {
-            ...drawerEvent
+            ...drawerEvent,
           }
 
           this.syncUI()

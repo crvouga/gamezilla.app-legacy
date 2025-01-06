@@ -6,7 +6,7 @@ import { FlowNodeId } from '../../flow/flow-node-id'
 export const HexPosition = p.obj({
   x: p.num,
   y: p.num,
-  z: p.num
+  z: p.num,
 })
 export type HexPosition = p.Infer<typeof HexPosition>
 
@@ -16,8 +16,8 @@ export const Model = p.and(
   p.obj({
     t: p.l('flow-hex'),
     FlowHex: p.l(true),
-    positions: p.dict(FlowNodeId, HexPosition)
-  })
+    positions: p.dict(FlowNodeId, HexPosition),
+  }),
 )
 export type Model = p.Infer<typeof Model>
 
@@ -30,7 +30,7 @@ export const init = (input: {
     ...input.dimensions,
     t: 'flow-hex',
     FlowHex: true,
-    positions: {}
+    positions: {},
   }
 }
 

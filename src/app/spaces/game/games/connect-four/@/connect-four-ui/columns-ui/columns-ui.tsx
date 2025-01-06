@@ -21,9 +21,9 @@ const discEnter = async (disc: Disc) => {
       to: y,
       duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
       easing: {
-        type: 'ease-out-quint'
-      }
-    }
+        type: 'ease-out-quint',
+      },
+    },
   })
 }
 
@@ -42,10 +42,10 @@ const discExit = async (disc: Disc) => {
       to: y - MAX_COLUMN_HEIGHT,
       duration: 750,
       easing: {
-        type: 'ease-in-back'
+        type: 'ease-in-back',
       },
-      delay: (x / COLUMN_COUNT) * 500
-    }
+      delay: (x / COLUMN_COUNT) * 500,
+    },
   })
 }
 
@@ -66,17 +66,17 @@ const draw = async (win: Win) => {
   const animation = node.animate(
     [
       {
-        strokeDashoffset: length
+        strokeDashoffset: length,
       },
       {
-        strokeDashoffset: 0
-      }
+        strokeDashoffset: 0,
+      },
     ],
     {
       duration: 500,
       easing: 'ease-in-out',
-      fill: 'both'
-    }
+      fill: 'both',
+    },
   )
 
   await animation.finished
@@ -98,17 +98,17 @@ const undraw = async (win: Win) => {
   const animation = node.animate(
     [
       {
-        strokeDashoffset: 0
+        strokeDashoffset: 0,
       },
       {
-        strokeDashoffset: length
-      }
+        strokeDashoffset: length,
+      },
     ],
     {
       duration: 500,
       easing: 'ease-in-out',
-      fill: 'both'
-    }
+      fill: 'both',
+    },
   )
 
   await animation.finished
@@ -125,13 +125,13 @@ export type Model = SharedModel
 const discsConfig = Transition.config<Disc>({
   toId: (disc) => disc.id,
   enter: discEnter,
-  exit: discExit
+  exit: discExit,
 })
 
 const winsConfig = Transition.config<Win>({
   toId: winToId,
   enter: draw,
-  exit: undraw
+  exit: undraw,
 })
 
 const rootId = 'connect-four-columns-svg'
@@ -146,7 +146,7 @@ const rootId = 'connect-four-columns-svg'
 export const init = (columns?: Columns): Model => {
   return {
     discs: Transition.init(discsConfig.toId, columns ? toDiscs(columns) : []),
-    wins: Transition.init(winsConfig.toId, columns ? findWins(columns) : [])
+    wins: Transition.init(winsConfig.toId, columns ? findWins(columns) : []),
   }
 }
 
@@ -166,9 +166,9 @@ export const watch = (model: Model, columns?: Columns) => {
   return {
     model: {
       discs: discs.model,
-      wins: wins.model
+      wins: wins.model,
     },
-    eff: Eff.batch<Msg>([Eff.tag('discs', discs.eff), Eff.tag('wins', wins.eff)])
+    eff: Eff.batch<Msg>([Eff.tag('discs', discs.eff), Eff.tag('wins', wins.eff)]),
   }
 }
 
@@ -177,7 +177,7 @@ export const update = (model: Model, msg: Msg) => {
   const wins = Transition.update<Win>(model.wins, msg.t === 'wins' ? msg.c : undefined)
   return {
     discs: discs,
-    wins: wins
+    wins: wins,
   }
 }
 

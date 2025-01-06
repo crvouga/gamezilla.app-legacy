@@ -32,24 +32,24 @@ export const WebServerBun = <T>(config: Config) => {
           }
 
           return new Response('Not found', {
-            status: 404
+            status: 404,
           })
         },
-        websocket: webSocketHandler
+        websocket: webSocketHandler,
       })
 
       events.pub({
         t: 'web-server/started',
         ipAddress: getIpAddress(),
         port,
-        startedAt: Posix.now()
+        startedAt: Posix.now(),
       })
 
       logger.info(`Listening on port ${port}`)
     },
     registerHandler(handler) {
       handlers.push(handler)
-    }
+    },
   }
   return {
     ...base,
@@ -60,7 +60,7 @@ export const WebServerBun = <T>(config: Config) => {
     _publish(topic: string, data: string) {
       server.publish(topic, data)
     },
-    t: 'bun'
+    t: 'bun',
   } as const
 }
 

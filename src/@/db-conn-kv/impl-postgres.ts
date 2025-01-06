@@ -9,7 +9,7 @@ import { TimeSpan } from '../time/time-span'
 
 const Row = p.obj({
   key: p.str,
-  value: p.str
+  value: p.str,
 })
 
 export type Config = {
@@ -25,8 +25,8 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
       try {
         const [queried, duration] = await withDuration(() =>
           config.dbConnSql.query(Row, 'SELECT key, value FROM key_value WHERE key = :key', {
-            key: key
-          })
+            key: key,
+          }),
         )
         logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
 
@@ -70,7 +70,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
         const keysStr = keys.map((key) => `'${key}'`).join(', ')
 
         const [queried, duration] = await withDuration(() =>
-          config.dbConnSql.query(Row, `SELECT key, value FROM key_value WHERE key IN (${keysStr})`, {})
+          config.dbConnSql.query(Row, `SELECT key, value FROM key_value WHERE key IN (${keysStr})`, {}),
         )
 
         logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: keys=${keys.join(', ')}`)
@@ -111,8 +111,8 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           'INSERT INTO key_value (key, value) VALUES (:key, :value) ON CONFLICT (key) DO UPDATE SET value = :value',
           {
             key: key,
-            value: JSON.stringify(value)
-          }
+            value: JSON.stringify(value),
+          },
         )
 
         if (isErr(queried)) {
@@ -137,7 +137,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
         const queried = await config.dbConnSql.query(
           Row,
           `INSERT INTO key_value (key, value) VALUES ${valuesStr} ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
-          {}
+          {},
         )
 
         if (isErr(queried)) {
@@ -154,7 +154,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     async zap(key) {
       try {
         const queried = await config.dbConnSql.query(Row, 'DELETE FROM key_value WHERE key = :key', {
-          key: key
+          key: key,
         })
 
         return Result.mapOk(queried, () => null)
@@ -162,6 +162,6 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
         logger.error(`zap: ${key} ${String(e)}`)
         return Err(String(e))
       }
-    }
+    },
   }
 }

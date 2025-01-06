@@ -72,7 +72,7 @@ if (typeof window !== 'undefined') {
         }
       })
       this.attachShadow({
-        mode: 'open'
+        mode: 'open',
       })
     }
 
@@ -87,7 +87,7 @@ if (typeof window !== 'undefined') {
 
     private observeChildChanges() {
       this.observer.observe(this, {
-        childList: true
+        childList: true,
       })
     }
 

@@ -7,7 +7,7 @@ import {
   FixtureFlowBuilderClient,
   initial,
   testFlowClientCtx,
-  userCreatedPack
+  userCreatedPack,
 } from '../../@/testing/client'
 
 export const Fixture = async () => {

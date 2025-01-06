@@ -6,7 +6,7 @@ export type TimeSpan = {
 const milliseconds = (durationMilliseconds: number): TimeSpan => {
   return {
     type: 'TimeSpan',
-    _durationMilliseconds: durationMilliseconds
+    _durationMilliseconds: durationMilliseconds,
   }
 }
 
@@ -93,7 +93,7 @@ const decode = (encoded: string): TimeSpan | null => {
   }
   return {
     type: 'TimeSpan',
-    _durationMilliseconds: parsed
+    _durationMilliseconds: parsed,
   }
 }
 
@@ -202,5 +202,5 @@ export const TimeSpan = {
   //
   //
   encode,
-  decode
+  decode,
 }

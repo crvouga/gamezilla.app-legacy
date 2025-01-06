@@ -16,6 +16,6 @@ export const SMSTwilio = (config: { logger: ILogger }): ISMS => {
         logger.error(`Errored while sending SMS: ${error}`)
         return Err(String(error))
       }
-    }
+    },
   }
 }

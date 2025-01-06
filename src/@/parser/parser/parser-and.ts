@@ -10,7 +10,7 @@ export function and<A, B, C, D, E>(
   b: Parser<B>,
   c: Parser<C>,
   d: Parser<D>,
-  e: Parser<E>
+  e: Parser<E>,
 ): Parser<A & B & C & D & E>
 export function and<A, B, C, D, E, F>(
   a: Parser<A>,
@@ -18,7 +18,7 @@ export function and<A, B, C, D, E, F>(
   c: Parser<C>,
   d: Parser<D>,
   e: Parser<E>,
-  f: Parser<F>
+  f: Parser<F>,
 ): Parser<A & B & C & D & E & F>
 export function and<A, B, C, D, E, F, G>(
   a: Parser<A>,
@@ -27,7 +27,7 @@ export function and<A, B, C, D, E, F, G>(
   d: Parser<D>,
   e: Parser<E>,
   f: Parser<F>,
-  g: Parser<G>
+  g: Parser<G>,
 ): Parser<A & B & C & D & E & F & G>
 export function and<A, B, C, D, E, F, G, H>(
   a: Parser<A>,
@@ -37,7 +37,7 @@ export function and<A, B, C, D, E, F, G, H>(
   e: Parser<E>,
   f: Parser<F>,
   g: Parser<G>,
-  h: Parser<H>
+  h: Parser<H>,
 ): Parser<A & B & C & D & E & F & G & H>
 export function and<A, B, C, D, E, F, G, H, I>(
   a: Parser<A>,
@@ -48,7 +48,7 @@ export function and<A, B, C, D, E, F, G, H, I>(
   f: Parser<F>,
   g: Parser<G>,
   h: Parser<H>,
-  i: Parser<I>
+  i: Parser<I>,
 ): Parser<A & B & C & D & E & F & G & H & I>
 export function and<A, B, C, D, E, F, G, H, I, J>(
   a: Parser<A>,
@@ -60,7 +60,7 @@ export function and<A, B, C, D, E, F, G, H, I, J>(
   g: Parser<G>,
   h: Parser<H>,
   i: Parser<I>,
-  j: Parser<J>
+  j: Parser<J>,
 ): Parser<A & B & C & D & E & F & G & H & I & J>
 export function and<A, B, C, D, E, F, G, H, I, J, K>(
   a: Parser<A>,
@@ -73,7 +73,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K>(
   h: Parser<H>,
   i: Parser<I>,
   j: Parser<J>,
-  k: Parser<K>
+  k: Parser<K>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L>(
   a: Parser<A>,
@@ -87,7 +87,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L>(
   i: Parser<I>,
   j: Parser<J>,
   k: Parser<K>,
-  l: Parser<L>
+  l: Parser<L>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   a: Parser<A>,
@@ -102,7 +102,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   j: Parser<J>,
   k: Parser<K>,
   l: Parser<L>,
-  m: Parser<M>
+  m: Parser<M>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   a: Parser<A>,
@@ -118,7 +118,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   k: Parser<K>,
   l: Parser<L>,
   m: Parser<M>,
-  n: Parser<N>
+  n: Parser<N>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   a: Parser<A>,
@@ -135,7 +135,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   l: Parser<L>,
   m: Parser<M>,
   n: Parser<N>,
-  o: Parser<O>
+  o: Parser<O>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   a: Parser<A>,
@@ -153,7 +153,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   m: Parser<M>,
   n: Parser<N>,
   o: Parser<O>,
-  p: Parser<P>
+  p: Parser<P>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   a: Parser<A>,
@@ -172,7 +172,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   n: Parser<N>,
   o: Parser<O>,
   p: Parser<P>,
-  q: Parser<Q>
+  q: Parser<Q>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   a: Parser<A>,
@@ -192,7 +192,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   o: Parser<O>,
   p: Parser<P>,
   q: Parser<Q>,
-  r: Parser<R>
+  r: Parser<R>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   a: Parser<A>,
@@ -213,7 +213,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   p: Parser<P>,
   q: Parser<Q>,
   r: Parser<R>,
-  s: Parser<S>
+  s: Parser<S>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   a: Parser<A>,
@@ -235,7 +235,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   q: Parser<Q>,
   r: Parser<R>,
   s: Parser<S>,
-  t: Parser<T>
+  t: Parser<T>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U>(
   a: Parser<A>,
@@ -258,7 +258,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, 
   r: Parser<R>,
   s: Parser<S>,
   t: Parser<T>,
-  u: Parser<U>
+  u: Parser<U>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V>(
   a: Parser<A>,
@@ -282,7 +282,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, 
   s: Parser<S>,
   t: Parser<T>,
   u: Parser<U>,
-  v: Parser<V>
+  v: Parser<V>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W>(
   a: Parser<A>,
@@ -307,7 +307,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, 
   t: Parser<T>,
   u: Parser<U>,
   v: Parser<V>,
-  w: Parser<W>
+  w: Parser<W>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X>(
   a: Parser<A>,
@@ -333,7 +333,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, 
   u: Parser<U>,
   v: Parser<V>,
   w: Parser<W>,
-  x: Parser<X>
+  x: Parser<X>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y>(
   a: Parser<A>,
@@ -360,7 +360,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, 
   v: Parser<V>,
   w: Parser<W>,
   x: Parser<X>,
-  y: Parser<Y>
+  y: Parser<Y>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y>
 export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z>(
   a: Parser<A>,
@@ -388,7 +388,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, 
   w: Parser<W>,
   x: Parser<X>,
   y: Parser<Y>,
-  z: Parser<Z>
+  z: Parser<Z>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z>
 export function and(...parsers: Parser<unknown>[]): Parser<unknown> {
   return {
@@ -413,6 +413,6 @@ export function and(...parsers: Parser<unknown>[]): Parser<unknown> {
       }
 
       return Err(errors)
-    }
+    },
   }
 }

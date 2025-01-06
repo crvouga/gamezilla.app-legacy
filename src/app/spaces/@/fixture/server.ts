@@ -31,20 +31,20 @@ export const FixtureSpaceServer = async () => {
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-started-space', spaceId, userId: userA.userId } as const)
+        withEventId({ t: 'user-started-space', spaceId, userId: userA.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)
+        withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         SpaceCore.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)
-      )
+        withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const),
+      ),
   )
 
   const spaceState = SpaceCore.toSpaceStarted(space)
@@ -55,7 +55,7 @@ export const FixtureSpaceServer = async () => {
 
   const ctx: SpaceServerCtx = {
     ...f.ctx,
-    space: spaceState
+    space: spaceState,
   }
 
   const serverCtx: ServerCtx = {
@@ -64,15 +64,15 @@ export const FixtureSpaceServer = async () => {
       t: 'db-conn-kv',
       dbConnKv: f.ctx.dbConnKv,
       logger: f.ctx.logger,
-      runtime: f.ctx.runtime
+      runtime: f.ctx.runtime,
     }),
     games: await GamesServer.initCtx({
       ...f.ctx,
       ctx: {
         ...f.ctx,
-        space: spaceState
-      }
-    })
+        space: spaceState,
+      },
+    }),
   }
 
   type Input = Partial<Parameters<typeof SpacesServer.update>[0]>
@@ -84,7 +84,7 @@ export const FixtureSpaceServer = async () => {
       const output = await SpacesServer.update({
         ...input,
         ctx: input.ctx ?? serverCtx,
-        deps: null
+        deps: null,
       })
       outputs.push(output)
     }
@@ -101,7 +101,7 @@ export const FixtureSpaceServer = async () => {
     serverCtx,
     clientA,
     clientB,
-    update
+    update,
   }
 }
 
@@ -109,7 +109,7 @@ export const randomAuthenticatedClient = (): AuthenticatedClient => {
   return {
     clientId: ClientId.generate(),
     sessionId: SessionId.generate(),
-    userId: UserId.generate()
+    userId: UserId.generate(),
   }
 }
 

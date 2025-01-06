@@ -53,12 +53,12 @@ const andThen = (acc: Output, ...updates: ((model: ModelClient) => Output)[]): O
       eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore)
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
     }
   }
   return acc
 }
 
 export const SpaceClientModule = {
-  andThen
+  andThen,
 }

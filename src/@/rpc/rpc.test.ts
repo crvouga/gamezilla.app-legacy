@@ -7,20 +7,20 @@ import { Logger } from '~/@/logger'
 const childRpcContract = RPC.initContract({
   baz: {
     input: p.obj({
-      name: p.str
+      name: p.str,
     }),
     output: p.obj({
-      message: p.str
-    })
-  }
+      message: p.str,
+    }),
+  },
 })
 
 const childRpcServer = RPC.initServer(childRpcContract, {
   async baz(input) {
     return {
-      message: `Yo, ${input.name}`
+      message: `Yo, ${input.name}`,
     }
-  }
+  },
 })
 
 const rpcContract = RPC.initContract({
@@ -28,34 +28,34 @@ const rpcContract = RPC.initContract({
   foo: {
     input: p.obj({
       name: p.str,
-      age: p.num
+      age: p.num,
     }),
     output: p.obj({
-      message: p.str
-    })
+      message: p.str,
+    }),
   },
   bar: {
     input: p.obj({
-      name: p.str
+      name: p.str,
     }),
     output: p.obj({
-      message: p.str
-    })
-  }
+      message: p.str,
+    }),
+  },
 })
 
 const rpcServer = RPC.initServer(rpcContract, {
   child: childRpcServer,
   async bar(input) {
     return {
-      message: `Hi, ${input.name}`
+      message: `Hi, ${input.name}`,
     }
   },
   async foo(input) {
     return {
-      message: `Hello, ${input.name}`
+      message: `Hello, ${input.name}`,
     }
-  }
+  },
 })
 
 //

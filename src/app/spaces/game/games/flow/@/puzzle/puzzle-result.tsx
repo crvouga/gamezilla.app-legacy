@@ -6,11 +6,11 @@ import { Puzzle } from './puzzle'
 const parser = p.or(
   p.obj({
     t: p.l('got'),
-    c: Puzzle
+    c: Puzzle,
   }),
   p.obj({
-    t: p.l('not-found')
-  })
+    t: p.l('not-found'),
+  }),
 )
 
 export type PuzzleResult = p.Infer<typeof parser>
@@ -28,5 +28,5 @@ const ViewNotFound = (input: { ctx: { t: Translator } }) => {
 
 export const PuzzleResult = {
   ...parser,
-  ViewNotFound
+  ViewNotFound,
 }

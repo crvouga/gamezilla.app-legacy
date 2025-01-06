@@ -21,7 +21,7 @@ const update: ClientModule['update'] = (input) => {
     { model },
     (model) => updateExitBuilder({ ...input, model }),
     (model) => updateSaveChangesRequest({ ...input, model }),
-    (model) => updatePuzzles({ ...input, model })
+    (model) => updatePuzzles({ ...input, model }),
   )
 }
 
@@ -30,7 +30,7 @@ const updatePuzzles: ClientModule['update'] = ({ msgCore, model }) => {
     case 'screen-puzzle-builder.saved-puzzle': {
       if (isErr(msgCore.saved)) {
         return {
-          model
+          model,
         }
       }
       const puzzleNew = msgCore.saved.value
@@ -41,17 +41,17 @@ const updatePuzzles: ClientModule['update'] = ({ msgCore, model }) => {
           {
             t: 'flow-cmd.add-puzzles',
             puzzles: {
-              [puzzleNew.id]: puzzleNew
+              [puzzleNew.id]: puzzleNew,
             },
-            causedBy: { msgCore }
-          }
-        ]
+            causedBy: { msgCore },
+          },
+        ],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -70,9 +70,9 @@ const updateExitBuilder: ClientModule['update'] = (input) => {
         return {
           model: {
             ...model,
-            puzzleBuilderOpened: 'unsaved-changes'
+            puzzleBuilderOpened: 'unsaved-changes',
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorSm)]
+          msgCmd: [playSound(APP_SOUND.alertErrorSm)],
         }
       }
 
@@ -83,9 +83,9 @@ const updateExitBuilder: ClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          puzzleBuilderOpened: null
+          puzzleBuilderOpened: null,
         },
-        msgCmd: [playSound(APP_SOUND.tap)]
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
@@ -98,8 +98,8 @@ const updateExitBuilder: ClientModule['update'] = (input) => {
         ...input,
         model: {
           ...model,
-          puzzleSaveChangesIsExiting: true
-        }
+          puzzleSaveChangesIsExiting: true,
+        },
       })
     }
 
@@ -116,12 +116,12 @@ const updateExitBuilder: ClientModule['update'] = (input) => {
           model: {
             ...model,
             puzzleSaveChangesIsExiting: false,
-            puzzleBuilderOpened: null
-          }
+            puzzleBuilderOpened: null,
+          },
         })
       }
       return {
-        model
+        model,
       }
     }
     default: {
@@ -143,11 +143,11 @@ const updateSaveChangesRequest: ClientModule['update'] = (input) => {
     return {
       model: {
         ...model,
-        puzzleSaveChangesRequest: Result.mapOk(msgCore.saved, () => null)
+        puzzleSaveChangesRequest: Result.mapOk(msgCore.saved, () => null),
       },
       msgCmd: isOk(msgCore.saved)
         ? showCreatedSm(ctx.t('app.saved-changes'))
-        : showErrSm(ctx.t('app.something-went-wrong'))
+        : showErrSm(ctx.t('app.something-went-wrong')),
     }
   }
   return { model }
@@ -157,22 +157,22 @@ const exitBuilderWithSound: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => exitBuilder({ ...input, model }),
-    (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] })
+    (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }),
   )
 }
 
 const exitBuilder: ClientModule['update'] = (input) => {
   const msgCore: MsgCore = {
     t: 'screen-puzzle-builder.user-clicked-exit-button',
-    userId: input.ctx.currentUserId
+    userId: input.ctx.currentUserId,
   }
 
   return {
     model: {
       ...input.model,
-      puzzleBuilderOpened: null
+      puzzleBuilderOpened: null,
     },
-    msgCore: [withEventId(msgCore)]
+    msgCore: [withEventId(msgCore)],
   }
 }
 
@@ -186,22 +186,22 @@ const saveChanges: ClientModule['update'] = ({ model, modelCore }) => {
   const puzzleNew: Puzzle = {
     ...puzzleBuilder.puzzle,
     flow: FlowEdit.toFlowMemoized({
-      model: puzzleBuilder.edit
-    })
+      model: puzzleBuilder.edit,
+    }),
   }
 
   return {
     model: {
       ...model,
-      puzzleSaveChangesRequest: Loading
+      puzzleSaveChangesRequest: Loading,
     },
     msgCmd: [
       playSound(APP_SOUND.tap),
       sendToServer({
         t: 'screen-puzzle-builder.save-changes.user-clicked-save-button',
-        puzzle: puzzleNew
-      })
-    ]
+        puzzle: puzzleNew,
+      }),
+    ],
   }
 }
 
@@ -216,7 +216,7 @@ const saveChanges: ClientModule['update'] = ({ model, modelCore }) => {
 export const ViewBottomButtons = ({
   model,
   dispatch,
-  ctx
+  ctx,
 }: {
   ctx: {
     t: Translator
@@ -231,7 +231,7 @@ export const ViewBottomButtons = ({
         label={ctx.t('app.save')}
         onClick={() =>
           dispatch({
-            t: 'screen-puzzle-builder.save-changes.user-clicked-save-button'
+            t: 'screen-puzzle-builder.save-changes.user-clicked-save-button',
           })
         }
         loading={model.puzzleSaveChangesRequest?.t === 'loading'}
@@ -246,7 +246,7 @@ const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
       id='unsaved-changes-drawer'
       onClose={() =>
         input.dispatch({
-          t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit'
+          t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit',
         })
       }
       open={input.model.puzzleBuilderOpened === 'unsaved-changes'}
@@ -263,7 +263,7 @@ const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
           loading={input.model.puzzleSaveChangesRequest?.t === 'loading'}
           onClick={() =>
             input.dispatch({
-              t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit'
+              t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit',
             })
           }
         />
@@ -272,7 +272,7 @@ const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
           text={input.ctx.t('app.dont-save')}
           onClick={() =>
             input.dispatch({
-              t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit'
+              t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit',
             })
           }
         />
@@ -282,7 +282,7 @@ const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
           text={input.ctx.t('app.cancel')}
           onClick={() =>
             input.dispatch({
-              t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit'
+              t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit',
             })
           }
         />
@@ -294,5 +294,5 @@ const ViewUnsavedChangesDrawer: ClientModule['View'] = (input) => {
 export const SaveChangesClient = {
   ViewBottomButtons,
   update,
-  ViewUnsavedChangesDrawer
+  ViewUnsavedChangesDrawer,
 }

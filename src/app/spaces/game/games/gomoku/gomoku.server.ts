@@ -18,14 +18,14 @@ import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
 export type Model = ModelServer
 
 export const init: Model = {
-  t: 'none'
+  t: 'none',
 }
 
 const initMode = ({ mode, userId }: { mode: Mode; userId: UserId }): Model => {
   switch (mode) {
     case 'none': {
       return {
-        t: 'none'
+        t: 'none',
       }
     }
 
@@ -33,8 +33,8 @@ const initMode = ({ mode, userId }: { mode: Mode; userId: UserId }): Model => {
       return {
         t: 'vs-bot',
         c: VsBot.init({
-          userId
-        })
+          userId,
+        }),
       }
     }
 
@@ -43,8 +43,8 @@ const initMode = ({ mode, userId }: { mode: Mode; userId: UserId }): Model => {
         t: 'vs-user',
         c: VsUser.init({
           white: userId,
-          black: null
-        })
+          black: null,
+        }),
       }
     }
   }
@@ -64,28 +64,28 @@ export const update = ({ msg, model }: { msg: Msg; model: Model }): { model: Mod
   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
     const updated = VsBot.update({
       msg: msg.c,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-bot',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-bot', updated.eff)
+      eff: Eff.tag('vs-bot', updated.eff),
     }
   }
 
   if (msg.t === 'vs-user' && model.t === 'vs-user') {
     const updated = VsUser.update({
       msg: msg.c,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-user',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-user', updated.eff)
+      eff: Eff.tag('vs-user', updated.eff),
     }
   }
 
@@ -95,7 +95,7 @@ export const update = ({ msg, model }: { msg: Msg; model: Model }): { model: Mod
 export const updateFromClient = ({
   ctx,
   msg,
-  model
+  model,
 }: {
   ctx: SpaceServerCtx
   msg: MsgToServer
@@ -108,7 +108,7 @@ export const updateFromClient = ({
     const modelNew = initMode(msg)
     return {
       model: modelNew,
-      eff: Eff.None
+      eff: Eff.None,
     }
   }
 
@@ -116,14 +116,14 @@ export const updateFromClient = ({
     const updated = VsBot.updateFromClient({
       ctx,
       msg: msg.c,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-bot',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-bot', updated.eff)
+      eff: Eff.tag('vs-bot', updated.eff),
     }
   }
 
@@ -131,15 +131,15 @@ export const updateFromClient = ({
     const updated = VsUser.updateFromClient({
       msg: msg.c,
       model: model.c,
-      ctx
+      ctx,
     })
 
     return {
       model: {
         t: 'vs-user',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-user', updated.eff)
+      eff: Eff.tag('vs-user', updated.eff),
     }
   }
 
@@ -148,7 +148,7 @@ export const updateFromClient = ({
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   msg: SpaceServerEvt
   model: Model
@@ -159,33 +159,33 @@ export const updateFromEvent = ({
   if (model.t === 'vs-bot') {
     const updated = VsBot.updateFromEvent({
       msg,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-bot',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-bot', updated.eff)
+      eff: Eff.tag('vs-bot', updated.eff),
     }
   }
 
   if (model.t === 'vs-user') {
     const updated = VsUser.updateFromEvent({
       msg,
-      model: model.c
+      model: model.c,
     })
     return {
       model: {
         t: 'vs-user',
-        c: updated.model
+        c: updated.model,
       },
-      eff: Eff.tag('vs-user', updated.eff)
+      eff: Eff.tag('vs-user', updated.eff),
     }
   }
 
   return {
-    model
+    model,
   }
 }
 

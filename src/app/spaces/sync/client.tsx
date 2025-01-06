@@ -9,7 +9,7 @@ const update: SpaceClientModule['update'] = (input) => {
     (model) => updateProfiles({ ...input, model }),
     (model) => updateCore({ ...input, model }),
     (model) => sendSpaceEventToServer({ ...input, model }),
-    (model) => outputSpaceEventsFromServer({ ...input, model })
+    (model) => outputSpaceEventsFromServer({ ...input, model }),
   )
 }
 
@@ -18,7 +18,7 @@ const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
     case 'got-msg-core': {
       return {
         model: input.model,
-        msgCore: [input.msgServer.c]
+        msgCore: [input.msgServer.c],
       }
     }
   }
@@ -43,7 +43,7 @@ const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgCo
 
   return {
     model,
-    msgCmd: [sendToServer({ t: 'got-msg-core', c: spaceEventWithMeta, profiles })]
+    msgCmd: [sendToServer({ t: 'got-msg-core', c: spaceEventWithMeta, profiles })],
   }
 }
 
@@ -51,7 +51,7 @@ const updateProfiles: SpaceClientModule['update'] = ({ model, msgServer }) => {
   if (msgServer?.profiles) {
     return {
       model,
-      msgCmd: [addProfiles(msgServer.profiles)]
+      msgCmd: [addProfiles(msgServer.profiles)],
     }
   }
 
@@ -67,7 +67,7 @@ const updateCore: SpaceClientModule['update'] = (input) => {
 
       if (!currentUserId) {
         return {
-          model
+          model,
         }
       }
 
@@ -75,12 +75,12 @@ const updateCore: SpaceClientModule['update'] = (input) => {
 
       const currentUserSpace = SpacesCoreClient.toSpaceByUserId({
         model,
-        userId: currentUserId
+        userId: currentUserId,
       })
 
       if (!currentUserSpace) {
         return {
-          model
+          model,
         }
       }
 
@@ -89,7 +89,7 @@ const updateCore: SpaceClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          isSycing: true
+          isSycing: true,
         },
         msgCmd: [
           sendToServer({
@@ -97,12 +97,12 @@ const updateCore: SpaceClientModule['update'] = (input) => {
             space: started,
             profiles: currentUserProfile
               ? {
-                  [currentUserId]: currentUserProfile
+                  [currentUserId]: currentUserProfile,
                 }
               : {},
-            causedBy: { msgEvt }
-          })
-        ]
+            causedBy: { msgEvt },
+          }),
+        ],
       }
     }
   }
@@ -114,14 +114,14 @@ const updateCore: SpaceClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          ...merged
+          ...merged,
         },
         msgEvt: [
           {
             t: 'space-evt.synced',
-            currentUser: 'currentUser' in msgServer ? msgServer.currentUser : null
-          }
-        ]
+            currentUser: 'currentUser' in msgServer ? msgServer.currentUser : null,
+          },
+        ],
       }
     }
   }
@@ -130,5 +130,5 @@ const updateCore: SpaceClientModule['update'] = (input) => {
 }
 
 export const SyncClient = {
-  update
+  update,
 }

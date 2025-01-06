@@ -9,7 +9,7 @@ const parser = p.obj({
   stoppedAt: p.maybe(Posix),
   lastHeartbeatAt: Posix,
   ipAddress: p.maybe(p.str),
-  port: p.maybe(p.num)
+  port: p.maybe(p.num),
 })
 
 export type ServerInstance = p.Infer<typeof parser>
@@ -24,12 +24,12 @@ const random = (overrides?: Partial<ServerInstance>): ServerInstance => {
     lastHeartbeatAt: Posix.now(),
     ipAddress: null,
     port: null,
-    ...overrides
+    ...overrides,
   }
 }
 
 export const ServerInstance = {
   ...parser,
   HEARTBEAT,
-  random
+  random,
 }

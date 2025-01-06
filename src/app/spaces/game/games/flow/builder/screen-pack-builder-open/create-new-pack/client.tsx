@@ -11,14 +11,14 @@ const update: ClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          packCreateNewRequest: Loading
+          packCreateNewRequest: Loading,
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
-            t: 'create-new-pack.clicked-create-button'
-          })
-        ]
+            t: 'create-new-pack.clicked-create-button',
+          }),
+        ],
       }
     }
   }
@@ -31,9 +31,9 @@ const update: ClientModule['update'] = (input) => {
           {
             t: 'user-created-pack',
             created: msgServer.created,
-            userId: input.ctx.currentUserId
-          }
-        ]
+            userId: input.ctx.currentUserId,
+          },
+        ],
       }
     }
   }
@@ -43,9 +43,9 @@ const update: ClientModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          packCreateNewRequest: Ok(null)
+          packCreateNewRequest: Ok(null),
         },
-        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.pack-created'))]
+        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.pack-created'))],
       }
     }
   }
@@ -64,7 +64,7 @@ const ViewCreateFab: ClientModule['View'] = (input) => {
       iconStart={(iconInput) => <IconPlus {...iconInput} />}
       onClick={() =>
         input.dispatch({
-          t: 'create-new-pack.clicked-create-button'
+          t: 'create-new-pack.clicked-create-button',
         })
       }
     />
@@ -73,5 +73,5 @@ const ViewCreateFab: ClientModule['View'] = (input) => {
 
 export const PackCreateNewClient = {
   update,
-  ViewCreateFab
+  ViewCreateFab,
 }

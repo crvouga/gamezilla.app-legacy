@@ -7,12 +7,12 @@ export const Hashing = (): IHashing => {
     async hash({ algo, password }) {
       return {
         algo,
-        value: HashValue.fromString(password)
+        value: HashValue.fromString(password),
       }
     },
 
     async check({ hash, password }) {
       return hash.value === password
-    }
+    },
   }
 }

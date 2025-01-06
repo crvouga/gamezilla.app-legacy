@@ -8,7 +8,7 @@ describe(import.meta.file, () => {
   test('open puzzle builder', async () => {
     const f = await FixtureFlowBuilderClient()
     const puzzle = await Puzzle.random({
-      createdBy: f.ctx.currentUserId
+      createdBy: f.ctx.currentUserId,
     })
 
     const output = f.update(f.init, [
@@ -18,21 +18,21 @@ describe(import.meta.file, () => {
           c: {
             t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
             puzzle,
-            userId: f.ctx.currentUserId
-          }
-        }
-      }
+            userId: f.ctx.currentUserId,
+          },
+        },
+      },
     ])
     expect(
       output.modelCore.screen.t === 'screen-puzzle-builder' &&
-        output.modelCore.screenPuzzleBuilder?.puzzle.id === puzzle.id
+        output.modelCore.screenPuzzleBuilder?.puzzle.id === puzzle.id,
     ).toBe(true)
   })
 
   test('play a sound when opening puzzle builder', async () => {
     const f = await FixtureFlowBuilderClient()
     const puzzle = await Puzzle.random({
-      createdBy: f.ctx.currentUserId
+      createdBy: f.ctx.currentUserId,
     })
 
     const output = f.update(f.init, [
@@ -40,9 +40,9 @@ describe(import.meta.file, () => {
         msgCore: withEventMeta({
           t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
           puzzle,
-          userId: f.ctx.currentUserId
-        })
-      }
+          userId: f.ctx.currentUserId,
+        }),
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })

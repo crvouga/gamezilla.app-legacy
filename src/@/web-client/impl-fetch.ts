@@ -9,6 +9,6 @@ export const WebClient = (config: Config): IWebClient => {
   return {
     async fetch(request) {
       return await config.fetch(request)
-    }
+    },
   }
 }

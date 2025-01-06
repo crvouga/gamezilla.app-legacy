@@ -14,7 +14,7 @@ export const IconButton = (input: {
       aria-label={input.label}
     >
       {input.renderIcon({
-        className: 'w-7 h-7'
+        className: 'w-7 h-7',
       })}
     </button>
   )

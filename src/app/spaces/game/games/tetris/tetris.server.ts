@@ -10,7 +10,7 @@ import {
   inputRotate,
   inputTranslate,
   mouseMove,
-  tick
+  tick,
 } from './tetris.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'

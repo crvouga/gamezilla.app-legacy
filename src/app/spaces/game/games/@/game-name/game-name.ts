@@ -11,7 +11,7 @@ export const gameNames: { [gameName in GameName]: GameName } = {
   flow: 'flow',
   'tic-tac-toe': 'tic-tac-toe',
   gomoku: 'gomoku',
-  chess: 'chess'
+  chess: 'chess',
 }
 
 export const isGameName = (x: unknown): x is GameName => {

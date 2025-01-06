@@ -19,7 +19,7 @@ import { type ProfileCore, type Req, ServerCtx, ServerModule, profileCoreToProfi
 
 export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   return {
-    ...input.ctx
+    ...input.ctx,
   }
 }
 
@@ -28,7 +28,7 @@ export const update: ServerModule['update'] = async (input) => {
     {},
     () => updateFromMsg(input),
     () => updateFromClient(input),
-    () => updateFromEvent(input)
+    () => updateFromEvent(input),
   )
 }
 
@@ -43,7 +43,7 @@ const updateFromMsg: ServerModule['update'] = async ({ msg }) => {
     }
     case 'handled': {
       return {
-        msgCmd: [sendToClient([msg.clientId], msg.msg)]
+        msgCmd: [sendToClient([msg.clientId], msg.msg)],
       }
     }
   }
@@ -65,7 +65,7 @@ const updateFromClient: ServerModule['update'] = async ({ msgClient, ctx }) => {
   }
 
   const ProfileDb = createProfileDb({
-    dbConn: ctx.dbConnSql
+    dbConn: ctx.dbConnSql,
   })
 
   const result = await handler({
@@ -73,17 +73,17 @@ const updateFromClient: ServerModule['update'] = async ({ msgClient, ctx }) => {
     msg: msgClient,
     ctx: {
       ...ctx,
-      currentUserId: userId
-    }
+      currentUserId: userId,
+    },
   })
 
   return {
     msgCmd: [
       sendToClient([msgClient.clientId], {
         ...msgClient,
-        result
-      })
-    ]
+        result,
+      }),
+    ],
   }
 }
 
@@ -97,7 +97,7 @@ const updateFromEvent: ServerModule['update'] = async ({ msgEvt, ctx }) => {
       const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql })
       const result = await findElseInsertNew({
         ProfileDb,
-        userId: msgEvt.user.userId
+        userId: msgEvt.user.userId,
       })
       return {
         msgCmd: [
@@ -105,9 +105,9 @@ const updateFromEvent: ServerModule['update'] = async ({ msgEvt, ctx }) => {
             t: 'current-user-profile',
             result: Result.mapOk(result, profileCoreToProfile),
             causedBy: { msgEvt },
-            loggedIn: msgEvt.loggedIn
-          })
-        ]
+            loggedIn: msgEvt.loggedIn,
+          }),
+        ],
       }
     }
 
@@ -119,7 +119,7 @@ const updateFromEvent: ServerModule['update'] = async ({ msgEvt, ctx }) => {
 
 const handler = async ({
   ProfileDb,
-  msg
+  msg,
 }: {
   ProfileDb: ProfileDb
   msg: Req
@@ -164,7 +164,7 @@ const findElseInsertNew = async ({ ProfileDb, userId }: { ProfileDb: ProfileDb; 
     userId,
     username: randomUsername,
     avatarSeed: randomSeed,
-    avatarStyle: 'thumbs'
+    avatarStyle: 'thumbs',
   }
 
   const inserted = await ProfileDb.insertOne(profileNew)

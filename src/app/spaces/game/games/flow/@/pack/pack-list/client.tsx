@@ -15,8 +15,8 @@ const init = (input: { ctx: SpaceClientCtx; packs: ModelClient['packs'] }): Retu
   return {
     model: {
       request: NotAsked,
-      packs: input.packs
-    }
+      packs: input.packs,
+    },
   }
 }
 
@@ -24,7 +24,7 @@ const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
     //
-    (model) => updateList({ ...input, model })
+    (model) => updateList({ ...input, model }),
     //
   )
 }
@@ -35,25 +35,25 @@ const updateList: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          request: RequestResponse.startedRequest(input.ctx.now)
+          request: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
           sendToServer({
             t: 'list-packs',
             input: {
               order: {
-                lastUpdatedAt: 'asc'
+                lastUpdatedAt: 'asc',
               },
               pagination: {
                 limit: 25,
-                offset: 0
+                offset: 0,
               },
               where: {
                 // createdBy: ctx.currentUserId
-              }
-            }
-          })
-        ]
+              },
+            },
+          }),
+        ],
       }
     }
   }
@@ -63,25 +63,25 @@ const updateList: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          request: RequestResponse.startedRequest(input.ctx.now)
+          request: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
           sendToServer({
             t: 'list-packs',
             input: {
               order: {
-                lastUpdatedAt: 'asc'
+                lastUpdatedAt: 'asc',
               },
               pagination: {
                 limit: 25,
-                offset: 0
+                offset: 0,
               },
               where: {
                 // createdBy: ctx.currentUserId
-              }
-            }
-          })
-        ]
+              },
+            },
+          }),
+        ],
       }
     }
 
@@ -89,8 +89,8 @@ const updateList: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          request: RequestResponse.timePassed(input.model.request, input.ctx.now)
-        }
+          request: RequestResponse.timePassed(input.model.request, input.ctx.now),
+        },
       }
     }
   }
@@ -110,11 +110,11 @@ const updateList: ClientModule['update'] = (input) => {
           request: RequestResponse.response(
             input.model.request,
             input.ctx.now,
-            Result.mapOk(input.msgServer.listed, () => null)
+            Result.mapOk(input.msgServer.listed, () => null),
           ),
-          packs: packsNew
+          packs: packsNew,
         },
-        msgCmd: isErr(input.msgServer.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : []
+        msgCmd: isErr(input.msgServer.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : [],
       }
     }
     default: {
@@ -156,7 +156,7 @@ const View: ClientModule['View'] = (input) => {
 const PackListItem = ({
   pack,
   onClick,
-  ctx
+  ctx,
 }: {
   ctx: {
     now: Posix
@@ -188,7 +188,7 @@ const plural = (arr: unknown[], singular: string, plural: string) =>
 const subscriptions: ClientModule['subscriptions'] = (input) => {
   return RequestResponse.subscriptions(
     input.model.request,
-    () => ({ t: 'elapsed' })
+    () => ({ t: 'elapsed' }),
     //
   )
 }
@@ -197,15 +197,15 @@ const load = (): MsgInCmdClient => {
   return {
     t: 'flow-cmd.pack-list',
     c: {
-      t: 'load'
-    }
+      t: 'load',
+    },
   }
 }
 
 const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean => {
   return (
     output.msgCmd?.some(
-      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-cmd.pack-list' && cmd.c.t === 'load'
+      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'flow-cmd.pack-list' && cmd.c.t === 'load',
     ) ?? false
   )
 }
@@ -217,5 +217,5 @@ export const PackListClient = {
   init,
   update,
   View,
-  subscriptions
+  subscriptions,
 }

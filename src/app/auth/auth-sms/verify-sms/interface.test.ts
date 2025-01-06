@@ -11,7 +11,7 @@ const Fixture = (config: Config) => {
   const phone = PhoneNumber.fromString('+14802098698')
   return {
     verifySMS,
-    phone
+    phone,
   }
 }
 
@@ -34,7 +34,7 @@ describe(import.meta.file, () => {
       const phoneNumber = unwrap(f.phone)
       const result = await f.verifySMS.sendCode({
         phoneNumber,
-        preferredLanguage: 'en'
+        preferredLanguage: 'en',
       })
       expect(result.t).toBe('ok')
     }
@@ -45,11 +45,11 @@ describe(import.meta.file, () => {
       const phoneNumber = unwrap(f.phone)
       await f.verifySMS.sendCode({
         phoneNumber,
-        preferredLanguage: 'en'
+        preferredLanguage: 'en',
       })
       const result = await f.verifySMS.verifyCode({
         phoneNumber,
-        code: '42'
+        code: '42',
       })
       expect(result.t).toBe('err')
       isErr(result) && expect(result.error.t).toBe('code-incorrect')

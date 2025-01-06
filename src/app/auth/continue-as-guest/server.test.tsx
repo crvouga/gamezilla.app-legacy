@@ -32,47 +32,47 @@ const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
     case 'integration': {
       const userAccountDb = UserAccountDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnSql
+        dbConnSql: testEnv.dbConnSql,
       })
       const userSessionDb = await UserSessionDb({
         t: 'postgres-with-cache',
         dbConnSql: testEnv.dbConnSql,
         dbConnKv: testEnv.dbConnKv,
         logger: f.ctx.logger,
-        pubSubTopicBased: f.ctx.pubSub
+        pubSubTopicBased: f.ctx.pubSub,
       })
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnSql
+        dbConnSql: testEnv.dbConnSql,
       })
       return {
         ctx: {
           ...f.ctx,
           userAccountDb,
           userSessionDb,
-          guestSessionMappingDb
-        }
+          guestSessionMappingDb,
+        },
       }
     }
     case 'unit': {
       const userAccountDb = UserAccountDb({
         t: 'in-memory',
-        delay: async () => {}
+        delay: async () => {},
       })
       const userSessionDb = await UserSessionDb({
         t: 'in-memory',
-        simulateLatency: async () => {}
+        simulateLatency: async () => {},
       })
       const guestSessionMappingDb = GuestSessionMappingDb({
-        t: 'hash-map'
+        t: 'hash-map',
       })
       return {
         ctx: {
           ...f.ctx,
           userAccountDb,
           userSessionDb,
-          guestSessionMappingDb
-        }
+          guestSessionMappingDb,
+        },
       }
     }
   }
@@ -87,7 +87,7 @@ const Fixture = async () => {
       const update = await ContinueAsGuestServer.update({
         ...msg,
         deps: null,
-        ctx: f.ctx
+        ctx: f.ctx,
       })
       updates.push(update)
     }
@@ -109,7 +109,7 @@ const Fixture = async () => {
   return {
     ...f,
     updates,
-    update
+    update,
   }
 }
 
@@ -124,9 +124,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId: SessionId.generate()
-        }
-      }
+          sessionId: SessionId.generate(),
+        },
+      },
     ])
     expect(
       output.msgCmd?.some(
@@ -134,8 +134,8 @@ describe(import.meta.file, () => {
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-client' &&
           msgCmd.c.clientIds.includes(clientId) &&
-          msgCmd.c.msg.t === 'guest.continue-as-guest-result'
-      )
+          msgCmd.c.msg.t === 'guest.continue-as-guest-result',
+      ),
     ).toBe(true)
   })
 
@@ -150,9 +150,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     expect(
@@ -161,8 +161,8 @@ describe(import.meta.file, () => {
           msgEvt.t === 'auth-evt.client-authenticated' &&
           msgEvt.clientId === clientId &&
           msgEvt.sessionId === sessionId &&
-          msgEvt.loggedIn
-      )
+          msgEvt.loggedIn,
+      ),
     ).toBe(true)
   })
 
@@ -177,9 +177,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const userId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
@@ -199,9 +199,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const afterFirst = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
@@ -211,9 +211,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const afterSecond = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
@@ -223,9 +223,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const afterThird = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
@@ -245,9 +245,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const secondOutput = await f.update([
@@ -255,16 +255,16 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     expect(
-      didSendMsgToClient(firstOutput, (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result))
+      didSendMsgToClient(firstOutput, (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result)),
     ).toBe(true)
     expect(
-      didSendMsgToClient(secondOutput, (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result))
+      didSendMsgToClient(secondOutput, (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result)),
     ).toBe(true)
   })
 
@@ -278,9 +278,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const secondOutput = await f.update([
@@ -288,9 +288,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const expectedUserId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
@@ -298,14 +298,14 @@ describe(import.meta.file, () => {
     expect(
       didSendMsgToClient(
         firstOutput,
-        (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result) && msg.result.value === expectedUserId
-      )
+        (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result) && msg.result.value === expectedUserId,
+      ),
     ).toBe(true)
     expect(
       didSendMsgToClient(
         secondOutput,
-        (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result) && msg.result.value === expectedUserId
-      )
+        (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result) && msg.result.value === expectedUserId,
+      ),
     ).toBe(true)
   })
 
@@ -319,9 +319,9 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const secondOutput = await f.update([
@@ -329,20 +329,22 @@ describe(import.meta.file, () => {
         msgClient: {
           t: 'guest.clicked-continue-as-guest-button',
           clientId,
-          sessionId
-        }
-      }
+          sessionId,
+        },
+      },
     ])
 
     const expectedUserId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
-      firstOutput.msgEvt?.some((msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId)
+      firstOutput.msgEvt?.some(
+        (msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId,
+      ),
     ).toBe(true)
     expect(
       secondOutput.msgEvt?.some(
-        (msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId
-      )
+        (msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId,
+      ),
     ).toBe(true)
   })
 })

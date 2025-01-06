@@ -24,7 +24,7 @@ const update: ClientModule['update'] = (input) => {
     case 'edit-pack-name.user-inputted-draft-name': {
       return {
         model: input.model,
-        msgCore: [withEventId(input.msg)]
+        msgCore: [withEventId(input.msg)],
       }
     }
   }
@@ -34,11 +34,11 @@ const update: ClientModule['update'] = (input) => {
       if (isErr(input.msgCore.result)) {
         return {
           model: input.model,
-          msgCmd: showErrSm(input.ctx.t('app.something-went-wrong'))
+          msgCmd: showErrSm(input.ctx.t('app.something-went-wrong')),
         }
       }
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -58,7 +58,7 @@ const ViewDrawer: ClientModule['View'] = (input) => {
           input.dispatch({
             t: 'edit-pack-name.user-inputted-draft-name',
             packNameDraft,
-            userId: input.ctx.currentUserId
+            userId: input.ctx.currentUserId,
           })
         }
       />
@@ -69,7 +69,7 @@ const ViewDrawer: ClientModule['View'] = (input) => {
           onClick={() =>
             input.dispatch({
               t: 'edit-pack-name.user-clicked-save-button',
-              userId: input.ctx.currentUserId
+              userId: input.ctx.currentUserId,
             })
           }
         />
@@ -80,5 +80,5 @@ const ViewDrawer: ClientModule['View'] = (input) => {
 
 export const EditPackNameClient = {
   update,
-  ViewDrawer
+  ViewDrawer,
 }

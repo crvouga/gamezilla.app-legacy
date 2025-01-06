@@ -104,11 +104,11 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
       mode='in-out'
       onEnter={fadeIn({
         duration: 300,
-        delay: 0
+        delay: 0,
       })}
       onExit={fadeOut({
         duration: 300,
-        delay: 0
+        delay: 0,
       })}
       className='relative h-8 w-full'
     >
@@ -162,7 +162,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
           return (
             <>
               {input.playerOne.renderIcon({
-                className: 'h-5 w-5'
+                className: 'h-5 w-5',
               })}
               <p>Turn</p>
             </>
@@ -173,7 +173,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
           return (
             <>
               {input.playerTwo.renderIcon({
-                className: 'h-5 w-5'
+                className: 'h-5 w-5',
               })}
               <p>Turn</p>
             </>
@@ -197,11 +197,11 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
       mode='out-in'
       onEnter={fadeIn({
         duration: 200,
-        delay: 500
+        delay: 500,
       })}
       onExit={fadeOut({
         duration: 200,
-        delay: 0
+        delay: 0,
       })}
     >
       {gameOver?.t === 'winner' && (
@@ -254,7 +254,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
   const botSlot = (
     <>
       {bot.renderIcon({
-        className: 'h-16 w-16'
+        className: 'h-16 w-16',
       })}
     </>
   )
@@ -263,7 +263,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
     <div className='flex flex-col items-center justify-center gap-3'>
       <div className='flex items-center justify-center gap-3'>
         {playerOne.renderIcon({
-          className: 'h-16 w-16'
+          className: 'h-16 w-16',
         })}
         {human.player === 'player-one' ? humanSlot : botSlot}
       </div>
@@ -280,7 +280,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
     <div className='flex flex-col items-center justify-center gap-3'>
       <div className='flex items-center justify-center gap-3'>
         {playerTwo.renderIcon({
-          className: 'h-16 w-16'
+          className: 'h-16 w-16',
         })}
 
         {human.player === 'player-two' ? humanSlot : botSlot}
@@ -318,7 +318,7 @@ const Draw = (input: Input) => {
   const playerOneSlot = (
     <>
       {input.playerOne.renderIcon({
-        className: 'h-5 w-5'
+        className: 'h-5 w-5',
       })}
       {input.human.player === 'player-one' ? humanSlot : botSlot}
     </>
@@ -327,7 +327,7 @@ const Draw = (input: Input) => {
   const playerTwoSlot = (
     <>
       {input.playerTwo.renderIcon({
-        className: 'h-5 w-5'
+        className: 'h-5 w-5',
       })}
       {input.human.player === 'player-two' ? humanSlot : botSlot}
     </>
@@ -356,7 +356,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
   const botSlot = (
     <>
       {bot.renderIcon({
-        className: 'h-6 w-6 flex-shrink-0'
+        className: 'h-6 w-6 flex-shrink-0',
       })}
       <Typography className='truncate' variant='body' text={bot.label} />
     </>
@@ -368,7 +368,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
         <Slot active={turn === 'player-one'}>
           <div>
             {playerOne.renderIcon({
-              className: 'h-6 w-6'
+              className: 'h-6 w-6',
             })}
           </div>
           {human.player === 'player-one' ? humanSlot : botSlot}
@@ -378,7 +378,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
       <div className='flex w-1/2 items-center justify-center overflow-hidden'>
         <Slot active={turn === 'player-two'}>
           {playerTwo.renderIcon({
-            className: 'h-6 w-6'
+            className: 'h-6 w-6',
           })}
           {human.player === 'player-two' ? humanSlot : botSlot}
         </Slot>
@@ -392,7 +392,7 @@ const Slot = ({ active, children }: { active: boolean; children: VDomChildren })
     <div
       className={cn(
         'flex max-w-full flex-1 items-center gap-2 rounded-md border bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
-        active && 'border-b-blue-500'
+        active && 'border-b-blue-500',
       )}
     >
       {children}
@@ -415,18 +415,18 @@ const fadeIn =
     await node.animate(
       [
         {
-          opacity: 0
+          opacity: 0,
         },
         {
-          opacity: 1
-        }
+          opacity: 1,
+        },
       ],
       {
         duration: duration,
         delay: delay,
         easing: 'ease-in-out',
-        fill: 'both'
-      }
+        fill: 'both',
+      },
     ).finished
   }
 
@@ -436,17 +436,17 @@ const fadeOut =
     await node.animate(
       [
         {
-          opacity: 1
+          opacity: 1,
         },
         {
-          opacity: 0
-        }
+          opacity: 0,
+        },
       ],
       {
         duration: duration,
         delay: delay,
         easing: 'ease-in-out',
-        fill: 'both'
-      }
+        fill: 'both',
+      },
     ).finished
   }

@@ -13,7 +13,7 @@ import {
   type MsgToClient,
   type MsgToServer,
   handle,
-  initCoreModel
+  initCoreModel,
 } from './vs-bot.types'
 import { AppClientCmd, sendToServer } from '~/app/@/client/cmd'
 import { AppClientCtx } from '~/app/@/client/ctx'
@@ -31,7 +31,7 @@ export type Model = ModelClient
 export const init = (...input: Parameters<typeof initCoreModel>): Model => {
   return {
     ...initCoreModel(...input),
-    vsBotSetup: VsBotSetup.init
+    vsBotSetup: VsBotSetup.init,
   }
 }
 
@@ -48,7 +48,7 @@ export type Msg = MsgClient
 export const update = ({
   msg,
   model,
-  ctx
+  ctx,
 }: {
   ctx: SpaceClientCtx
   msg: Msg
@@ -67,8 +67,8 @@ export const update = ({
     return {
       model: {
         ...model,
-        vsBotSetup: updated
-      }
+        vsBotSetup: updated,
+      },
     }
   }
 
@@ -76,13 +76,13 @@ export const update = ({
   if (handled.t === 'err') {
     return {
       model,
-      msgCmd: [sendToServer(msg)]
+      msgCmd: [sendToServer(msg)],
     }
   }
   const merged = mergeWithServer({
     ...ctx,
     client: model,
-    server: handled.value
+    server: handled.value,
   })
   return { model: merged, msgCmd: [sendToServer(msg)] }
 }
@@ -90,7 +90,7 @@ export const update = ({
 export const updateFromServer = ({
   msg,
   model,
-  ctx
+  ctx,
 }: {
   ctx: AppClientCtx
   msg: MsgToClient
@@ -100,24 +100,24 @@ export const updateFromServer = ({
 } => {
   if (msg.result.t === 'err') {
     return {
-      model
+      model,
     }
   }
 
   const modelNew = mergeWithServer({
     ...ctx,
     client: model,
-    server: msg.result.value
+    server: msg.result.value,
   })
 
   return {
-    model: modelNew
+    model: modelNew,
   }
 }
 
 export const mergeWithServer = ({
   server,
-  client = init({ userId: null })
+  client = init({ userId: null }),
 }: {
   now: Posix
   client?: ModelClient
@@ -125,7 +125,7 @@ export const mergeWithServer = ({
 }): ModelClient => {
   return {
     ...client,
-    ...server
+    ...server,
   }
 }
 
@@ -149,23 +149,23 @@ export const View = (input: {
       renderIcon: (iconinput) =>
         renderBotLevel({
           level: input.model.botLevel,
-          ...iconinput
-        })
+          ...iconinput,
+        }),
     },
     onSwapSides: () =>
       input.dispatch({
-        t: 'swap-sides'
+        t: 'swap-sides',
       }),
     canStartGame: Boolean(input.model.player),
     ctx: input.ctx,
     human: {
       player: input.model.userPlayerType === 'X' ? 'player-one' : 'player-two',
-      userId: input.model.player ?? null
+      userId: input.model.player ?? null,
     },
     onQuit: input.goBack,
     onStartGame: () =>
       input.dispatch({
-        t: 'start-game'
+        t: 'start-game',
       }),
     botVariants: allBotLevels.map((botLevel) => {
       return {
@@ -173,13 +173,13 @@ export const View = (input: {
         renderIcon: (input) =>
           renderBotLevel({
             level: botLevel,
-            ...input
+            ...input,
           }),
         onSelect: () =>
           input.dispatch({
             t: 'input-bot-level',
-            botLevel
-          })
+            botLevel,
+          }),
       }
     }),
     playerOne: {
@@ -187,29 +187,29 @@ export const View = (input: {
       onStartPlaying: () =>
         input.dispatch({
           t: 'start-playing',
-          playerType: 'X'
+          playerType: 'X',
         }),
       onStopPlaying: () =>
         input.dispatch({
-          t: 'stop-playing'
+          t: 'stop-playing',
         }),
-      renderIcon: (input) => <PlayerTypeIcon {...input} playerType='X' />
+      renderIcon: (input) => <PlayerTypeIcon {...input} playerType='X' />,
     },
     playerTwo: {
       label: input.ctx.t('tic-tac-toe.naught'),
       onStartPlaying: () =>
         input.dispatch({
           t: 'start-playing',
-          playerType: 'O'
+          playerType: 'O',
         }),
       onStopPlaying: () =>
         input.dispatch({
-          t: 'stop-playing'
+          t: 'stop-playing',
         }),
-      renderIcon: (input) => <PlayerTypeIcon {...input} playerType='O' />
+      renderIcon: (input) => <PlayerTypeIcon {...input} playerType='O' />,
     },
     renderCoverArt: (input) => <CoverArt {...input} />,
-    title: input.ctx.t('tic-tac-toe')
+    title: input.ctx.t('tic-tac-toe'),
   }
 
   if (input.model.type === 'setup') {
@@ -219,7 +219,7 @@ export const View = (input: {
         dispatch={(c) =>
           input.dispatch({
             t: 'vs-bot-setup',
-            c
+            c,
           })
         }
         {...vsBotinput}
@@ -231,10 +231,10 @@ export const View = (input: {
     ...vsBotinput,
     human: {
       ...vsBotinput.human,
-      userId: input.model.player
+      userId: input.model.player,
     },
     turn: null,
-    isSpectating: false
+    isSpectating: false,
   }
 
   const turn = toTurn(input.model.board)
@@ -256,7 +256,7 @@ export const View = (input: {
           onClick={(position) =>
             input.dispatch({
               t: 'input-move',
-              position
+              position,
             })
           }
         />
@@ -268,7 +268,7 @@ export const View = (input: {
           label={input.ctx.t('app.exit')}
           onClick={() =>
             input.dispatch({
-              t: 'stop-game'
+              t: 'stop-game',
             })
           }
         />
@@ -277,7 +277,7 @@ export const View = (input: {
           label={input.ctx.t('game.swap-sides')}
           onClick={() =>
             input.dispatch({
-              t: 'swap-sides'
+              t: 'swap-sides',
             })
           }
         />
@@ -286,7 +286,7 @@ export const View = (input: {
           label={input.ctx.t('app.restart')}
           onClick={() =>
             input.dispatch({
-              t: 'restart'
+              t: 'restart',
             })
           }
         />

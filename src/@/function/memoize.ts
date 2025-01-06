@@ -7,14 +7,14 @@ import { LRUCache } from '~/@/least-recently-used-cache'
 export const memoize = <TInput, TOutput extends {}>({
   toKey,
   func,
-  cacheCapacity
+  cacheCapacity,
 }: {
   toKey: (x: TInput) => string | number
   func: (x: TInput) => TOutput
   cacheCapacity: number
 }) => {
   const cache = LRUCache<string | number, TOutput>({
-    maxCapacity: cacheCapacity
+    maxCapacity: cacheCapacity,
   })
 
   return (x: TInput): TOutput => {
@@ -37,14 +37,14 @@ export const memoize = <TInput, TOutput extends {}>({
 export const memoizeAsync = <TInput, TOutput extends {}>({
   toKey,
   func,
-  cacheCapacity
+  cacheCapacity,
 }: {
   toKey: (x: TInput) => string | number
   func: (x: TInput) => Promise<TOutput>
   cacheCapacity: number
 }) => {
   const cache = LRUCache<string | number, TOutput>({
-    maxCapacity: cacheCapacity
+    maxCapacity: cacheCapacity,
   })
 
   return async (x: TInput): Promise<TOutput> => {

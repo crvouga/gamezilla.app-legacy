@@ -22,5 +22,5 @@ const init = (number: number): UnitInterval => {
 
 export const UnitInterval = {
   init,
-  is
+  is,
 }

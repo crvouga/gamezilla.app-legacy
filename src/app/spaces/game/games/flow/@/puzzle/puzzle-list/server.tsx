@@ -15,9 +15,9 @@ const updateListPuzzles: ServerModule['update'] = async (input) => {
         msgCmd: [
           sendToClient(input.msgClient, {
             t: 'listed-puzzle',
-            listed
-          })
-        ]
+            listed,
+          }),
+        ],
       }
     }
 
@@ -28,5 +28,5 @@ const updateListPuzzles: ServerModule['update'] = async (input) => {
 }
 
 export const PuzzleListServer = {
-  update
+  update,
 }

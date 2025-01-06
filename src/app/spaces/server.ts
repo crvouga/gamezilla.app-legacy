@@ -27,7 +27,7 @@ const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
       t: 'db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
       logger: input.ctx.logger,
-      runtime: input.ctx.runtime
+      runtime: input.ctx.runtime,
     }),
     // spacesCoreServer: await SpacesCoreServer({
     //   t: 'stream',
@@ -35,7 +35,7 @@ const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
     //   dbConnKv: ctx.dbConnKv,
     //   logger: ctx.logger
     // }),
-    games: GameServer.initCtx({ ctx: { ...input.ctx, space: Space.random() } })
+    games: GameServer.initCtx({ ctx: { ...input.ctx, space: Space.random() } }),
   }
 }
 
@@ -51,7 +51,7 @@ const update: ServerModule['update'] = async (input) => {
   const updated = await updateLoop(input)
 
   return {
-    msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd)
+    msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd),
   }
 }
 
@@ -63,13 +63,13 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
   if (coreEvt) {
     const updated = await updateChild({
       ctx: input.ctx,
-      msgCore: coreEvt
+      msgCore: coreEvt,
     })
 
     return updateLoop(input, {
       msgCore: Msg.batch(coreEvtRest, updated.msgCore),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: updated.msgEvt
+      msgEvt: updated.msgEvt,
     })
   }
 
@@ -78,13 +78,13 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
   if (cmd) {
     const updated = await updateChild({
       ctx: input.ctx,
-      msgCmd: cmd
+      msgCmd: cmd,
     })
 
     return updateLoop(input, {
       msgCore: Msg.batch(acc.msgCore, updated.msgCore),
       msgCmd: Msg.batch(cmdRest, updated.msgCmd),
-      msgEvt: updated.msgEvt
+      msgEvt: updated.msgEvt,
     })
   }
 
@@ -99,7 +99,7 @@ const updateChild: SpaceServerModule['update'] = async (input) => {
     () => SyncServer.update(input),
     () => StartSpaceServer.update(input),
     () => JoinSpaceServer.update(input),
-    () => GameServer.update(input)
+    () => GameServer.update(input),
   )
 }
 
@@ -128,5 +128,5 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
 export const SpacesServer = {
   initCtx,
   update,
-  subscriptions
+  subscriptions,
 }

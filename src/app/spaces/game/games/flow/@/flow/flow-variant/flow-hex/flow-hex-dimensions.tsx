@@ -4,7 +4,7 @@ export const Model = p.obj({
   t: p.l('flow-hex'),
   width: p.num,
   height: p.num,
-  side: p.num
+  side: p.num,
 })
 
 export type Model = {
@@ -19,7 +19,7 @@ export const init = (input: { width: number; height: number; side: number }): Mo
     t: 'flow-hex',
     width: input.width,
     height: input.height,
-    side: input.side
+    side: input.side,
   }
 }
 

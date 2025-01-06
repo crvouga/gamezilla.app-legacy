@@ -8,5 +8,5 @@ const is = (ship: Crusier): ship is Crusier => {
 }
 
 export const Crusier = {
-  is
+  is,
 }

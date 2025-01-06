@@ -10,7 +10,7 @@ export type Position = {
 const init = (x: NonNegInt, y: NonNegInt): Position => {
   return {
     x,
-    y
+    y,
   }
 }
 
@@ -21,14 +21,14 @@ const range = (maxX: NonNegInt, maxY: NonNegInt): List<Position> => {
 const add = (a: Position, b: Position): Position => {
   return {
     x: NonNegInt.add(a.x, b.x),
-    y: NonNegInt.add(a.y, b.y)
+    y: NonNegInt.add(a.y, b.y),
   }
 }
 
 const sub = (a: Position, b: Position): Position => {
   return {
     x: NonNegInt.sub(a.x, b.x),
-    y: NonNegInt.sub(a.y, b.y)
+    y: NonNegInt.sub(a.y, b.y),
   }
 }
 
@@ -56,5 +56,5 @@ export const Position = {
   range,
   add,
   sub,
-  toAdjacent
+  toAdjacent,
 }

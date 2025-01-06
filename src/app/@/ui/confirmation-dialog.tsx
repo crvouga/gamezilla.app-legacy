@@ -11,7 +11,7 @@ export const ConfirmationDialog = ({
   onConfirm,
   title,
   confirmTitle,
-  cancelTitle
+  cancelTitle,
 }: {
   open: boolean
   onCancel: () => void

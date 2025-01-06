@@ -13,28 +13,28 @@ const Fixture = async (config: Config) => {
   const sessions = [
     {
       sessionId: SessionId.generate(),
-      userId
+      userId,
     },
     {
       sessionId: SessionId.generate(),
-      userId
+      userId,
     },
     {
       sessionId: SessionId.generate(),
-      userId
+      userId,
     },
     {
       sessionId: SessionId.generate(),
-      userId: UserId.generate()
+      userId: UserId.generate(),
     },
     {
       sessionId: SessionId.generate(),
-      userId: UserId.generate()
+      userId: UserId.generate(),
     },
     {
       sessionId: SessionId.generate(),
-      userId: UserId.generate()
-    }
+      userId: UserId.generate(),
+    },
   ] as const
   for (const session of sessions) {
     await userSessionDb.insert(session)
@@ -42,7 +42,7 @@ const Fixture = async (config: Config) => {
   return {
     userSessionDb,
     userId,
-    sessions
+    sessions,
   }
 }
 
@@ -51,15 +51,15 @@ const Fixtures = async () => {
   const configs: Config[] = [
     {
       t: 'in-memory',
-      simulateLatency: async () => {}
-    }
+      simulateLatency: async () => {},
+    },
   ]
 
   if (testEnv.t === 'integration') {
     configs.push({
       t: 'postgres',
       dbConnSql: testEnv.dbConnSql,
-      logger: Logger({ t: 'noop' })
+      logger: Logger({ t: 'noop' }),
     })
 
     configs.push({
@@ -67,7 +67,7 @@ const Fixtures = async () => {
       dbConnKv: testEnv.dbConnKv,
       dbConnSql: testEnv.dbConnSql,
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', map: new Map() }),
-      logger: Logger({ t: 'noop' })
+      logger: Logger({ t: 'noop' }),
     })
   }
   return Promise.all(configs.map(Fixture))
@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
     for (const f of await Fixtures()) {
       const session = {
         sessionId: SessionId.generate(),
-        userId: UserId.generate()
+        userId: UserId.generate(),
       }
       const before = await f.userSessionDb.findUserIdBySessionId(session.sessionId)
       const inserted = await f.userSessionDb.insert(session)

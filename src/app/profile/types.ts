@@ -32,10 +32,10 @@ export const profileCoreToProfile = (profile: ProfileCore): Profile => {
   return {
     avatarUrl: ProfileAvatar.toUrl({
       seed: profile.avatarSeed ?? profile.username,
-      style: profile.avatarStyle ?? ProfileAvatar.STYLES['big-ears-neutral']
+      style: profile.avatarStyle ?? ProfileAvatar.STYLES['big-ears-neutral'],
     }),
     userId: profile.userId,
-    username: profile.username
+    username: profile.username,
   }
 }
 

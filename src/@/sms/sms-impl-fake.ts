@@ -4,7 +4,7 @@ import type { ILogger } from '../logger'
 import { PhoneNumber } from '../phone-number'
 
 export const SMSFake = ({
-  logger
+  logger,
 }: {
   logger: ILogger
 }): ISMS & {
@@ -19,11 +19,11 @@ export const SMSFake = ({
     async sendMessage(input) {
       sent.push({
         phoneNumber: input.phoneNumber,
-        message: input.message
+        message: input.message,
       })
       const phoneNumber = PhoneNumber.toString(input.phoneNumber)
       logger.info(`Sent SMS phoneNumber="${phoneNumber}" message="${input.message}"`)
       return Ok(null)
-    }
+    },
   }
 }

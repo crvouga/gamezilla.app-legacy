@@ -7,7 +7,7 @@ import {
   type PlayerType,
   type Win,
   findWins,
-  isColumnIndex
+  isColumnIndex,
 } from '../../connect-four'
 import { gameTheme } from '../shared'
 import { easeAttrs } from '~/@/animation'
@@ -31,7 +31,7 @@ type Position = {
 
 export const create = ({
   initialColumns,
-  onClick
+  onClick,
 }: {
   initialColumns: Columns
   onClick?: (columnIndex: ColumnIndex) => void
@@ -48,7 +48,7 @@ export const create = ({
     playerTwoGradient: 'player-two-gradient',
     holePattern: 'hole-pattern',
     columnGradient: 'column-gradient',
-    holeMask: 'hole-mask'
+    holeMask: 'hole-mask',
   }
 
   const setColumns = (columnsNew: Columns) => {
@@ -71,7 +71,7 @@ export const create = ({
             x,
             y,
             player: cellNew,
-            svgDefIds
+            svgDefIds,
           })
         }
 
@@ -79,7 +79,7 @@ export const create = ({
           removeDisc({
             parent: discsGroup,
             x,
-            y
+            y,
           })
         }
       }
@@ -128,13 +128,13 @@ export const create = ({
       'stroke-dasharray': {
         from: length,
         to: length,
-        duration: 500
+        duration: 500,
       },
       'stroke-dashoffset': {
         from: length,
         to: 0,
-        duration: 500
-      }
+        duration: 500,
+      },
     })
   }
 
@@ -232,7 +232,7 @@ export const create = ({
           x,
           y,
           player,
-          svgDefIds
+          svgDefIds,
         })
         discsGroup.appendChild(disc)
       }
@@ -255,7 +255,7 @@ export const create = ({
   return {
     setColumns,
     setRoot,
-    cleanUp
+    cleanUp,
   }
 }
 
@@ -278,7 +278,7 @@ const makeDisc = ({ x, y, player, svgDefIds }: { x: number; y: number; player: P
 const addDisc = (input: { svgDefIds: SvgDefIds; parent: SVGElement; x: number; y: number; player: PlayerType }) => {
   const disc = makeDisc({
     ...input,
-    y: MAX_COLUMN_HEIGHT + 1
+    y: MAX_COLUMN_HEIGHT + 1,
   })
 
   input.parent.appendChild(disc)
@@ -289,9 +289,9 @@ const addDisc = (input: { svgDefIds: SvgDefIds; parent: SVGElement; x: number; y
       to: input.y,
       duration: 200 + 300 * (1 - input.y / MAX_COLUMN_HEIGHT),
       easing: {
-        type: 'ease-out-quint'
-      }
-    }
+        type: 'ease-out-quint',
+      },
+    },
   })
 }
 
@@ -307,10 +307,10 @@ const removeDisc = async ({ parent, x, y }: { parent: SVGElement; x: number; y: 
       to: y - MAX_COLUMN_HEIGHT,
       duration: 750,
       easing: {
-        type: 'ease-in-back'
+        type: 'ease-in-back',
       },
-      delay: (x / COLUMN_COUNT) * 500
-    }
+      delay: (x / COLUMN_COUNT) * 500,
+    },
   })
 
   disc.remove()

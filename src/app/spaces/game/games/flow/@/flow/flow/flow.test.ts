@@ -7,7 +7,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
     expect(Flow.isSolved(grid)).toBe(true)
   })
@@ -16,7 +16,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
     expect(Flow.isSolved(grid)).toBe(false)
   })
@@ -25,7 +25,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'B', ' '],
       ['a', ' ', 'B'],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
     expect(Flow.isSolved(grid)).toBe(false)
   })
@@ -34,7 +34,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'B', 'b'],
       ['a', ' ', 'B'],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
     expect(Flow.isSolved(grid)).toBe(true)
   })
@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'a', 'a'],
       ['a', 'a', 'a'],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
     expect(Flow.isSolved(grid)).toBe(true)
   })
@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
   test('isSolved with adjacent connected A terminals', () => {
     const grid = FlowGridShorthand.toGrid([
       ['Aa', 'A'],
-      [' ', ' ']
+      [' ', ' '],
     ])
     expect(Flow.isSolved(grid)).toBe(true)
   })
@@ -59,7 +59,7 @@ describe(import.meta.file, () => {
   test('not isSolved with adjacent disconnected A terminals', () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' '],
-      ['A', ' ']
+      ['A', ' '],
     ])
     expect(Flow.isSolved(grid)).toBe(false)
   })
@@ -67,20 +67,20 @@ describe(import.meta.file, () => {
   test('isConnectedWithPipes with connected terminals', () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' '],
-      ['a', 'A']
+      ['a', 'A'],
     ])
     expect(
       Flow.isConnectedWithPipes(
         grid,
         FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         }),
         FlowGrid.toNodeId({
           x: 1,
-          y: 1
-        })
-      )
+          y: 1,
+        }),
+      ),
     ).toBe(true)
   })
 
@@ -88,20 +88,20 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', 'a', 'a'],
       ['a', 'a', 'a'],
-      ['a', 'a', 'A']
+      ['a', 'a', 'A'],
     ])
     expect(
       Flow.isConnectedWithPipes(
         grid,
         FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         }),
         FlowGrid.toNodeId({
           x: 2,
-          y: 2
-        })
-      )
+          y: 2,
+        }),
+      ),
     ).toBe(true)
   })
 
@@ -110,15 +110,15 @@ describe(import.meta.file, () => {
 
     const node1 = FlowGrid.toNodeId({
       x: 0,
-      y: 0
+      y: 0,
     })
     const node2 = FlowGrid.toNodeId({
       x: 1,
-      y: 0
+      y: 0,
     })
     const node3 = FlowGrid.toNodeId({
       x: 2,
-      y: 0
+      y: 0,
     })
 
     const gridWithCycles: Flow.Model = {
@@ -128,18 +128,18 @@ describe(import.meta.file, () => {
         [node3]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: node3,
-            targetId: node2
+            targetId: node2,
           }),
-          groupId: 'A'
+          groupId: 'A',
         },
         [node2]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: node2,
-            targetId: node1
+            targetId: node1,
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     }
 
     const isConnected = Flow.isConnectedWithPipes(gridWithCycles, node1, node3)
@@ -151,20 +151,20 @@ describe(import.meta.file, () => {
     const gridA = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
     const gridB = FlowGridShorthand.toGrid([
       [' ', ' ', ' '],
       [' ', ' ', 'a'],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
 
     const grid: FlowGrid.Model = {
       ...gridA,
       pipesBySourceId: {
         ...gridA.pipesBySourceId,
-        ...gridB.pipesBySourceId
-      }
+        ...gridB.pipesBySourceId,
+      },
     }
 
     const actual = Flow.hasBranchingPipelines(grid)
@@ -175,7 +175,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
-      [' ', ' ', 'A']
+      [' ', ' ', 'A'],
     ])
     expect(Flow.hasBranchingPipelines(grid)).toBe(false)
   })
@@ -185,20 +185,20 @@ describe(import.meta.file, () => {
       ['A', 'a', 'a', ' '],
       [' ', ' ', 'a', ' '],
       ['a', 'a', 'a', ' '],
-      [' ', ' ', ' ', 'A']
+      [' ', ' ', ' ', 'A'],
     ])
     const solution = FlowGridShorthand.toGrid([
       ['A', ' ', ' ', ' '],
       ['a', ' ', ' ', ' '],
       ['a', ' ', ' ', ' '],
-      ['a', 'a', 'a', 'A']
+      ['a', 'a', 'a', 'A'],
     ])
     const multipleDeadEnds: FlowGrid.Model = {
       ...grid,
       pipesBySourceId: {
         ...grid.pipesBySourceId,
-        ...solution.pipesBySourceId
-      }
+        ...solution.pipesBySourceId,
+      },
     }
     expect(Flow.hasMultipleDeadEndPipelines(multipleDeadEnds)).toBe(true)
   })
@@ -207,7 +207,7 @@ describe(import.meta.file, () => {
     const grid = FlowGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
-      ['a', ' ', 'A']
+      ['a', ' ', 'A'],
     ])
     expect(Flow.hasMultipleDeadEndPipelines(grid)).toBe(false)
   })

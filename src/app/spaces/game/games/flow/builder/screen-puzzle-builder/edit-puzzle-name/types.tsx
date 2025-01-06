@@ -19,14 +19,14 @@ export type ModelClient = {
 export const initClient: ModelClient = {
   puzzleEditNameDraft: '',
   puzzleEditNameRequest: NotAsked,
-  puzzleEditNameValidationError: null
+  puzzleEditNameValidationError: null,
 }
 
 export type EditNameValidationError = 'name-cannot-be-empty' | null
 
 export const editNameValidationErrorToString = (
   t: Translator,
-  error?: EditNameValidationError
+  error?: EditNameValidationError,
 ): TranslatedText | null => {
   switch (error) {
     case 'name-cannot-be-empty': {
@@ -78,6 +78,6 @@ export const MsgCore = p.obj({
   edited: Result.parser(p.str, p.l(null)),
   flowPuzzleId: PuzzleId,
   newName: p.str,
-  userId: UserId
+  userId: UserId,
 })
 export type MsgCore = p.Infer<typeof MsgCore>

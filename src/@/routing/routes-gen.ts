@@ -31,7 +31,7 @@ async function generateRouteTypeFile(files: string[]) {
   for (const [index, file] of enumerate(files)) {
     const importPath = path.relative(path.dirname(__dirname), file).replace(/\\/g, '/')
     imports.push(
-      `import { Route as Route${index}, toRoute as toRoute${index} } from "../../${importPath.replace('.ts', '')}";`
+      `import { Route as Route${index}, toRoute as toRoute${index} } from "../../${importPath.replace('.ts', '')}";`,
     )
     typeRefs.push(`Route${index}`)
     parsers.push(`toRoute${index}`)
@@ -75,7 +75,7 @@ async function runPrettierOnDirectory(directoryPath: string) {
 async function main() {
   const files = await scanFiles({
     dir: DIR_PATH,
-    targetFileSuffix: TARGET_FILE_SUFFIX
+    targetFileSuffix: TARGET_FILE_SUFFIX,
   })
   await makeDirIfNotExists(OUTPUT_DIR)
   await generateRouteTypeFile(files)
@@ -102,7 +102,7 @@ async function makeDirIfNotExists(dirPath: string) {
 
   if (!doesExist) {
     await fs.mkdir(dirPath, {
-      recursive: true
+      recursive: true,
     })
   }
 }
@@ -115,7 +115,7 @@ function enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
         yield [i, item]
         i++
       }
-    }
+    },
   }
 }
 
@@ -123,7 +123,7 @@ async function scanFiles(input: { dir: string; targetFileSuffix: string }): Prom
   const files: string[] = []
 
   const filesAndDirectories = await fs.readdir(input.dir, {
-    withFileTypes: true
+    withFileTypes: true,
   })
 
   for (const file of filesAndDirectories) {
@@ -132,7 +132,7 @@ async function scanFiles(input: { dir: string; targetFileSuffix: string }): Prom
     if (file.isDirectory()) {
       const children = await scanFiles({
         dir: res,
-        targetFileSuffix: input.targetFileSuffix
+        targetFileSuffix: input.targetFileSuffix,
       })
       files.push(...children)
       continue

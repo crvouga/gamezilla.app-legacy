@@ -4,7 +4,7 @@ import { CappedOrderedDict } from './capped-ordered-dict'
 describe(import.meta.file, () => {
   it('adding stuff', async () => {
     const initial = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     const added = CappedOrderedDict.add(initial, '1', '1')
@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
 
   it('adding stuff then removing stuff', async () => {
     const initial = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     const added = CappedOrderedDict.add(initial, '1', '1')
@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
 
   it('remove oldest on max capacity', async () => {
     const initial = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
     const dict1 = CappedOrderedDict.add(initial, '1', '1')
     const dict2 = CappedOrderedDict.add(dict1, '2', '2')
@@ -52,7 +52,7 @@ describe(import.meta.file, () => {
 
   it('should never mutate the input "model"', async () => {
     const initial = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     const added = CappedOrderedDict.add(initial, '1', '1')
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
 
   it('should not remove non-existing key', async () => {
     const initial = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     const removed = CappedOrderedDict.remove(initial, '1')
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
 
   it('should not add the same key twice', async () => {
     const initial = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     const added = CappedOrderedDict.add(initial, '1', '1')
@@ -85,7 +85,7 @@ describe(import.meta.file, () => {
 
   it('should not remove the same key twice', async () => {
     const initial = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     const added = CappedOrderedDict.add(initial, '1', '1')
@@ -99,10 +99,10 @@ describe(import.meta.file, () => {
 
   it('merges two dictionaries prioritizing left dictionary values', async () => {
     let left = CappedOrderedDict.init<string, string>({
-      maxSize: 5
+      maxSize: 5,
     })
     let right = CappedOrderedDict.init<string, string>({
-      maxSize: 5
+      maxSize: 5,
     })
 
     left = CappedOrderedDict.add(left, '1', 'One')
@@ -119,10 +119,10 @@ describe(import.meta.file, () => {
 
   it('preserves order from left dictionary and manages new keys from right', async () => {
     let left = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
     let right = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     left = CappedOrderedDict.add(left, '1', 'Left1')
@@ -138,10 +138,10 @@ describe(import.meta.file, () => {
 
   it('handles maximum size limit correctly', async () => {
     let left = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
     let right = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     left = CappedOrderedDict.add(left, '1', 'Left1')
@@ -158,10 +158,10 @@ describe(import.meta.file, () => {
 
   it('handles empty dictionaries', async () => {
     const left = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
     const right = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     const merged = CappedOrderedDict.mergeLeft(left, right)
@@ -171,10 +171,10 @@ describe(import.meta.file, () => {
 
   it('manages non-overlapping keys', async () => {
     let left = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
     let right = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     left = CappedOrderedDict.add(left, '1', 'Left1')
@@ -188,10 +188,10 @@ describe(import.meta.file, () => {
 
   it('should be immutable when merging dictionaries', async () => {
     let left = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
     let right = CappedOrderedDict.init<string, string>({
-      maxSize: 3
+      maxSize: 3,
     })
 
     left = CappedOrderedDict.add(left, '1', 'Left1')

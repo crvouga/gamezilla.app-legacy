@@ -10,7 +10,7 @@ const init = (input: { pack: Pack }): ModelCore => {
     rollback: input.pack.name,
     draft: '',
     result: NotAsked,
-    validationError: null
+    validationError: null,
   }
 }
 
@@ -31,9 +31,9 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
         ...input.modelCore,
         pack: {
           ...input.modelCore.pack,
-          name: parsed.value
+          name: parsed.value,
         },
-        result: Loading
+        result: Loading,
       }
     }
 
@@ -46,15 +46,15 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
         return {
           ...input.modelCore,
           validationError: {
-            t: 'name-cannot-be-empty'
-          }
+            t: 'name-cannot-be-empty',
+          },
         }
       }
 
       return {
         ...input.modelCore,
         draft: input.msgCore.packNameDraft,
-        validationError: null
+        validationError: null,
       }
     }
 
@@ -65,13 +65,13 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
           result: input.msgCore.result,
           pack: {
             ...input.modelCore.pack,
-            name: input.modelCore.rollback
-          }
+            name: input.modelCore.rollback,
+          },
         }
       }
       return {
         ...input.modelCore,
-        result: input.msgCore.result
+        result: input.msgCore.result,
       }
     }
 
@@ -83,5 +83,5 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 
 export const EditPackNameCore = {
   update,
-  init
+  init,
 }

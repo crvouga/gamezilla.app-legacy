@@ -15,5 +15,5 @@ const generate = (): VerificationAttemptId => {
 
 export const VerificationAttemptId = {
   ...parser,
-  generate
+  generate,
 }

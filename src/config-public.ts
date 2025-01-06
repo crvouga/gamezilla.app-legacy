@@ -6,7 +6,7 @@ export const IS_INTEGRATION_TEST = import.meta.env?.IS_INTEGRATION_TEST === 'tru
 
 export const IS_TEST = import.meta.env?.NODE_ENV === 'test'
 
-export const VDOM_IMPL = VDomImpl.of('inferno')
+export const VDOM_IMPL = VDomImpl.from(import.meta.env?.VITE_VDOM_IMPL) || VDomImpl.of('inferno')
 
 export const VDOM_IMPL_TEST = VDomImpl.of('react-with-compiler')
 

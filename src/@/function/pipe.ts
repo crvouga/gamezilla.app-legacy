@@ -11,7 +11,7 @@ export function pipe<A, B, C, D, E, F>(
   bc: (b: B) => C,
   cd: (c: C) => D,
   de: (d: D) => E,
-  ef: (e: E) => F
+  ef: (e: E) => F,
 ): F
 export function pipe<A, B, C, D, E, F, G>(
   a: A,
@@ -20,7 +20,7 @@ export function pipe<A, B, C, D, E, F, G>(
   cd: (c: C) => D,
   de: (d: D) => E,
   ef: (e: E) => F,
-  fg: (f: F) => G
+  fg: (f: F) => G,
 ): G
 export function pipe<A, B, C, D, E, F, G, H>(
   a: A,
@@ -30,7 +30,7 @@ export function pipe<A, B, C, D, E, F, G, H>(
   de: (d: D) => E,
   ef: (e: E) => F,
   fg: (f: F) => G,
-  gh: (g: G) => H
+  gh: (g: G) => H,
 ): H
 export function pipe<A, B, C, D, E, F, G, H, I>(
   a: A,
@@ -41,7 +41,7 @@ export function pipe<A, B, C, D, E, F, G, H, I>(
   ef: (e: E) => F,
   fg: (f: F) => G,
   gh: (g: G) => H,
-  hi: (h: H) => I
+  hi: (h: H) => I,
 ): I
 export function pipe<A, B, C, D, E, F, G, H, I, J>(
   a: A,
@@ -53,7 +53,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J>(
   fg: (f: F) => G,
   gh: (g: G) => H,
   hi: (h: H) => I,
-  ij: (i: I) => J
+  ij: (i: I) => J,
 ): J
 export function pipe<A, B, C, D, E, F, G, H, I, J, K>(
   a: A,
@@ -66,7 +66,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K>(
   gh: (g: G) => H,
   hi: (h: H) => I,
   ij: (i: I) => J,
-  jk: (j: J) => K
+  jk: (j: J) => K,
 ): K
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L>(
   a: A,
@@ -80,7 +80,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L>(
   hi: (h: H) => I,
   ij: (i: I) => J,
   jk: (j: J) => K,
-  kl: (k: K) => L
+  kl: (k: K) => L,
 ): L
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   a: A,
@@ -95,7 +95,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   ij: (i: I) => J,
   jk: (j: J) => K,
   kl: (k: K) => L,
-  lm: (l: L) => M
+  lm: (l: L) => M,
 ): M
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   a: A,
@@ -111,7 +111,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   jk: (j: J) => K,
   kl: (k: K) => L,
   lm: (l: L) => M,
-  mn: (m: M) => N
+  mn: (m: M) => N,
 ): N
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   a: A,
@@ -128,7 +128,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   kl: (k: K) => L,
   lm: (l: L) => M,
   mn: (m: M) => N,
-  no: (n: N) => O
+  no: (n: N) => O,
 ): O
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
@@ -147,7 +147,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   lm: (l: L) => M,
   mn: (m: M) => N,
   no: (n: N) => O,
-  op: (o: O) => P
+  op: (o: O) => P,
 ): P
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
@@ -167,7 +167,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   mn: (m: M) => N,
   no: (n: N) => O,
   op: (o: O) => P,
-  pq: (p: P) => Q
+  pq: (p: P) => Q,
 ): Q
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
@@ -188,7 +188,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   no: (n: N) => O,
   op: (o: O) => P,
   pq: (p: P) => Q,
-  qr: (q: Q) => R
+  qr: (q: Q) => R,
 ): R
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
@@ -210,7 +210,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   op: (o: O) => P,
   pq: (p: P) => Q,
   qr: (q: Q) => R,
-  rs: (r: R) => S
+  rs: (r: R) => S,
 ): S
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
@@ -233,7 +233,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>
   pq: (p: P) => Q,
   qr: (q: Q) => R,
   rs: (r: R) => S,
-  st: (s: S) => T
+  st: (s: S) => T,
 ): T
 export function pipe(
   a: unknown,
@@ -244,7 +244,7 @@ export function pipe(
   ef?: Function,
   fg?: Function,
   gh?: Function,
-  hi?: Function
+  hi?: Function,
 ): unknown {
   switch (arguments.length) {
     case 1:

@@ -30,7 +30,7 @@ export const translations: Translations<Text> = {
     'game.loser': 'Loser',
     'game.play-again': 'Play Again',
     'game.winner': 'Winner',
-    'game.vs': 'vs'
+    'game.vs': 'vs',
   },
   ar: {
     'game.player': 'اللاعب',
@@ -45,7 +45,7 @@ export const translations: Translations<Text> = {
     'game.loser': 'الخاسر',
     'game.play-again': 'العب مرة أخرى',
     'game.winner': 'الفائز',
-    'game.vs': 'ضد'
+    'game.vs': 'ضد',
   },
   de: {
     'game.player': 'Spieler',
@@ -60,7 +60,7 @@ export const translations: Translations<Text> = {
     'game.loser': 'Verlierer',
     'game.play-again': 'Erneut spielen',
     'game.winner': 'Gewinner',
-    'game.vs': 'vs'
+    'game.vs': 'vs',
   },
   es: {
     'game.player': 'Jugador',
@@ -75,7 +75,7 @@ export const translations: Translations<Text> = {
     'game.loser': 'Perdedor',
     'game.play-again': 'Jugar de nuevo',
     'game.winner': 'Ganador',
-    'game.vs': 'vs'
+    'game.vs': 'vs',
   },
   fr: {
     'game.player': 'Joueur',
@@ -90,7 +90,7 @@ export const translations: Translations<Text> = {
     'game.loser': 'Perdant',
     'game.play-again': 'Rejouer',
     'game.winner': 'Gagnant',
-    'game.vs': 'vs'
+    'game.vs': 'vs',
   },
   it: {
     'game.player': 'Giocatore',
@@ -105,7 +105,7 @@ export const translations: Translations<Text> = {
     'game.loser': 'Perdente',
     'game.play-again': 'Gioca di nuovo',
     'game.winner': 'Vincitore',
-    'game.vs': 'vs'
+    'game.vs': 'vs',
   },
   ja: {
     'game.player': 'プレイヤー',
@@ -120,7 +120,7 @@ export const translations: Translations<Text> = {
     'game.loser': '敗者',
     'game.play-again': 'もう一度プレイ',
     'game.winner': '勝者',
-    'game.vs': '対'
+    'game.vs': '対',
   },
   ko: {
     'game.player': '플레이어',
@@ -135,7 +135,7 @@ export const translations: Translations<Text> = {
     'game.loser': '패자',
     'game.play-again': '다시 플레이',
     'game.winner': '승자',
-    'game.vs': '대'
+    'game.vs': '대',
   },
   pt: {
     'game.player': 'Jogador',
@@ -150,7 +150,7 @@ export const translations: Translations<Text> = {
     'game.loser': 'Perdedor',
     'game.play-again': 'Jogar novamente',
     'game.winner': 'Vencedor',
-    'game.vs': 'vs'
+    'game.vs': 'vs',
   },
   ru: {
     'game.player': 'Игрок',
@@ -165,7 +165,7 @@ export const translations: Translations<Text> = {
     'game.loser': 'Проигравший',
     'game.play-again': 'Играть снова',
     'game.winner': 'Победитель',
-    'game.vs': 'против'
+    'game.vs': 'против',
   },
   zh: {
     'game.player': '玩家',
@@ -180,7 +180,7 @@ export const translations: Translations<Text> = {
     'game.loser': '失败者',
     'game.play-again': '再玩一次',
     'game.winner': '获胜者',
-    'game.vs': '对'
+    'game.vs': '对',
   },
   hi: {
     'game.player': 'खिलाड़ी',
@@ -195,6 +195,6 @@ export const translations: Translations<Text> = {
     'game.loser': 'हारने वाला',
     'game.play-again': 'फिर से खेलें',
     'game.winner': 'विजेता',
-    'game.vs': 'बनाम'
-  }
+    'game.vs': 'बनाम',
+  },
 }

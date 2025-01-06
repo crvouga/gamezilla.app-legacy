@@ -34,7 +34,7 @@ const main = async () => {
 
     crash: (input) => console.error('Crash!', input.error),
 
-    debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined
+    debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined,
   })
 
   await ctx.transport.start()
@@ -43,7 +43,7 @@ const main = async () => {
     IS_PROD,
     TRANSPORT_IMPL,
     VDOM_IMPL,
-    SERVER_URL
+    SERVER_URL,
   })
 }
 

@@ -361,9 +361,9 @@ export default [
       '855',
       '866',
       '877',
-      '279'
+      '279',
     ],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'AW',
@@ -371,7 +371,7 @@ export default [
     country_code: '297',
     country_name: 'Aruba',
     mobile_begin_with: ['5', '6', '7', '9'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'AF',
@@ -379,7 +379,7 @@ export default [
     country_code: '93',
     country_name: 'Afghanistan',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'AO',
@@ -387,7 +387,7 @@ export default [
     country_code: '244',
     country_name: 'Angola',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'AI',
@@ -395,7 +395,7 @@ export default [
     country_code: '1',
     country_name: 'Anguilla',
     mobile_begin_with: ['2645', '2647'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'AX',
@@ -403,7 +403,7 @@ export default [
     country_code: '358',
     country_name: 'Åland Islands',
     mobile_begin_with: ['18'],
-    phone_number_lengths: [6, 7, 8]
+    phone_number_lengths: [6, 7, 8],
   },
   {
     alpha2: 'AL',
@@ -411,7 +411,7 @@ export default [
     country_code: '355',
     country_name: 'Albania',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'AD',
@@ -419,7 +419,7 @@ export default [
     country_code: '376',
     country_name: 'Andorra',
     mobile_begin_with: ['3', '4', '6'],
-    phone_number_lengths: [6]
+    phone_number_lengths: [6],
   },
   // {alpha2: "AN", alpha3: "ANT", country_code: "599", country_name: "Netherlands Antilles", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -428,7 +428,7 @@ export default [
     country_code: '971',
     country_name: 'United Arab Emirates',
     mobile_begin_with: ['5'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'AR',
@@ -436,7 +436,7 @@ export default [
     country_code: '54',
     country_name: 'Argentina',
     mobile_begin_with: ['1', '2', '3'], // Same for mobile and landlines
-    phone_number_lengths: [8, 9, 10, 11, 12]
+    phone_number_lengths: [8, 9, 10, 11, 12],
   },
   {
     alpha2: 'AM',
@@ -444,7 +444,7 @@ export default [
     country_code: '374',
     country_name: 'Armenia',
     mobile_begin_with: ['3', '4', '5', '7', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   // http://www.howtocallabroad.com/results.php?callfrom=united_states&callto=american_samoa
   {
@@ -453,7 +453,7 @@ export default [
     country_code: '1',
     country_name: 'American Samoa',
     mobile_begin_with: ['684733', '684258'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   // {alpha2: "AQ", alpha3: "ATA", country_code: "672", country_name: "Antarctica", mobile_begin_with: [], phone_number_lengths: []},
   // {alpha2: "TF", alpha3: "ATF", country_code: "", country_name: "French Southern Territories", mobile_begin_with: [], phone_number_lengths: []},
@@ -464,7 +464,7 @@ export default [
     country_code: '1',
     country_name: 'Antigua and Barbuda',
     mobile_begin_with: ['2687'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'AU',
@@ -472,7 +472,7 @@ export default [
     country_code: '61',
     country_name: 'Australia',
     mobile_begin_with: ['4'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'AT',
@@ -480,7 +480,7 @@ export default [
     country_code: '43',
     country_name: 'Austria',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [10, 11, 12, 13, 14]
+    phone_number_lengths: [10, 11, 12, 13, 14],
   },
   {
     alpha2: 'AZ',
@@ -488,7 +488,7 @@ export default [
     country_code: '994',
     country_name: 'Azerbaijan',
     mobile_begin_with: ['4', '5', '6', '7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'BI',
@@ -496,7 +496,7 @@ export default [
     country_code: '257',
     country_name: 'Burundi',
     mobile_begin_with: ['7', '29'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'BE',
@@ -504,7 +504,7 @@ export default [
     country_code: '32',
     country_name: 'Belgium',
     mobile_begin_with: ['4', '3'],
-    phone_number_lengths: [9, 8]
+    phone_number_lengths: [9, 8],
   },
   {
     alpha2: 'BJ',
@@ -512,7 +512,7 @@ export default [
     country_code: '229',
     country_name: 'Benin',
     mobile_begin_with: ['4', '6', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'BF',
@@ -520,7 +520,7 @@ export default [
     country_code: '226',
     country_name: 'Burkina Faso',
     mobile_begin_with: ['6', '7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'BD',
@@ -528,7 +528,7 @@ export default [
     country_code: '880',
     country_name: 'Bangladesh',
     mobile_begin_with: ['1'],
-    phone_number_lengths: [8, 9, 10]
+    phone_number_lengths: [8, 9, 10],
   },
   {
     alpha2: 'BG',
@@ -536,7 +536,7 @@ export default [
     country_code: '359',
     country_name: 'Bulgaria',
     mobile_begin_with: ['87', '88', '89', '98', '99', '43'],
-    phone_number_lengths: [8, 9]
+    phone_number_lengths: [8, 9],
   },
   {
     alpha2: 'BH',
@@ -544,7 +544,7 @@ export default [
     country_code: '973',
     country_name: 'Bahrain',
     mobile_begin_with: ['3'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'BS',
@@ -552,7 +552,7 @@ export default [
     country_code: '1',
     country_name: 'Bahamas',
     mobile_begin_with: ['242'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'BA',
@@ -560,7 +560,7 @@ export default [
     country_code: '387',
     country_name: 'Bosnia and Herzegovina',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   // {alpha2: "BL", alpha3: "BLM", country_code: "590", country_name: "Saint Barthélemy", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -569,7 +569,7 @@ export default [
     country_code: '375',
     country_name: 'Belarus',
     mobile_begin_with: ['25', '29', '33', '44'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'BZ',
@@ -577,7 +577,7 @@ export default [
     country_code: '501',
     country_name: 'Belize',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   // http://www.howtocallabroad.com/results.php?callfrom=united_states&callto=bermuda
   {
@@ -586,7 +586,7 @@ export default [
     country_code: '1',
     country_name: 'Bermuda',
     mobile_begin_with: ['4413', '4415', '4417'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'BO',
@@ -594,7 +594,7 @@ export default [
     country_code: '591',
     country_name: 'Bolivia',
     mobile_begin_with: ['6', '7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'BR',
@@ -668,9 +668,9 @@ export default [
       '969',
       '979',
       '989',
-      '999'
+      '999',
     ],
-    phone_number_lengths: [10, 11]
+    phone_number_lengths: [10, 11],
   },
   {
     alpha2: 'BB',
@@ -678,7 +678,7 @@ export default [
     country_code: '1',
     country_name: 'Barbados',
     mobile_begin_with: ['246'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'BN',
@@ -686,7 +686,7 @@ export default [
     country_code: '673',
     country_name: 'Brunei Darussalam',
     mobile_begin_with: ['7', '8'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'BT',
@@ -694,7 +694,7 @@ export default [
     country_code: '975',
     country_name: 'Bhutan',
     mobile_begin_with: ['17'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   // {alpha2: "BV", alpha3: "BVT", country_code: "", country_name: "Bouvet Island", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -703,7 +703,7 @@ export default [
     country_code: '267',
     country_name: 'Botswana',
     mobile_begin_with: ['71', '72', '73', '74', '75', '76'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'CF',
@@ -711,7 +711,7 @@ export default [
     country_code: '236',
     country_name: 'Central African Republic',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
 
   // http://www.howtocallabroad.com/canada/
@@ -773,9 +773,9 @@ export default [
       '867',
       '873',
       '902',
-      '905'
+      '905',
     ],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   // {alpha2: "CC", alpha3: "CCK", country_code: "61", country_name: "Cocos (Keeling) Islands", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -784,7 +784,7 @@ export default [
     country_code: '41',
     country_name: 'Switzerland',
     mobile_begin_with: ['74', '75', '76', '77', '78', '79'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'CL',
@@ -792,7 +792,7 @@ export default [
     country_code: '56',
     country_name: 'Chile',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'CN',
@@ -800,7 +800,7 @@ export default [
     country_code: '86',
     country_name: 'China',
     mobile_begin_with: ['13', '14', '15', '17', '18', '19', '16'],
-    phone_number_lengths: [11]
+    phone_number_lengths: [11],
   },
   {
     alpha2: 'CI',
@@ -808,7 +808,7 @@ export default [
     country_code: '225',
     country_name: "Côte D'Ivoire",
     mobile_begin_with: ['0', '4', '5', '6', '7', '8'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'CM',
@@ -816,7 +816,7 @@ export default [
     country_code: '237',
     country_name: 'Cameroon',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'CD',
@@ -824,7 +824,7 @@ export default [
     country_code: '243',
     country_name: 'Congo, The Democratic Republic Of The',
     mobile_begin_with: ['8', '9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'CG',
@@ -832,7 +832,7 @@ export default [
     country_code: '242',
     country_name: 'Congo',
     mobile_begin_with: ['0'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'CK',
@@ -840,7 +840,7 @@ export default [
     country_code: '682',
     country_name: 'Cook Islands',
     mobile_begin_with: ['5', '7'],
-    phone_number_lengths: [5]
+    phone_number_lengths: [5],
   },
   {
     alpha2: 'CO',
@@ -848,7 +848,7 @@ export default [
     country_code: '57',
     country_name: 'Colombia',
     mobile_begin_with: ['3'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'CW',
@@ -856,7 +856,7 @@ export default [
     country_code: '5999',
     country_name: 'Curaçao',
     mobile_begin_with: ['5', '6'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'KM',
@@ -864,7 +864,7 @@ export default [
     country_code: '269',
     country_name: 'Comoros',
     mobile_begin_with: ['3', '76'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'CV',
@@ -872,7 +872,7 @@ export default [
     country_code: '238',
     country_name: 'Cape Verde',
     mobile_begin_with: ['5', '9'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'CR',
@@ -880,7 +880,7 @@ export default [
     country_code: '506',
     country_name: 'Costa Rica',
     mobile_begin_with: ['5', '6', '7', '8'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'CU',
@@ -888,7 +888,7 @@ export default [
     country_code: '53',
     country_name: 'Cuba',
     mobile_begin_with: ['5'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   // {alpha2: "CX", alpha3: "CXR", country_code: "61", country_name: "Christmas Island", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -897,7 +897,7 @@ export default [
     country_code: '1',
     country_name: 'Cayman Islands',
     mobile_begin_with: ['345'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'CY',
@@ -905,7 +905,7 @@ export default [
     country_code: '357',
     country_name: 'Cyprus',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'CZ',
@@ -913,7 +913,7 @@ export default [
     country_code: '420',
     country_name: 'Czech Republic',
     mobile_begin_with: ['6', '7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'DE',
@@ -921,7 +921,7 @@ export default [
     country_code: '49',
     country_name: 'Germany',
     mobile_begin_with: ['15', '16', '17'],
-    phone_number_lengths: [10, 11]
+    phone_number_lengths: [10, 11],
   },
   {
     alpha2: 'DJ',
@@ -929,7 +929,7 @@ export default [
     country_code: '253',
     country_name: 'Djibouti',
     mobile_begin_with: ['77'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'DM',
@@ -937,7 +937,7 @@ export default [
     country_code: '1',
     country_name: 'Dominica',
     mobile_begin_with: ['767'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'DK',
@@ -961,9 +961,9 @@ export default [
       '81',
       '91',
       '92',
-      '93'
+      '93',
     ],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'DO',
@@ -971,7 +971,7 @@ export default [
     country_code: '1',
     country_name: 'Dominican Republic',
     mobile_begin_with: ['809', '829', '849'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'DZ',
@@ -979,7 +979,7 @@ export default [
     country_code: '213',
     country_name: 'Algeria',
     mobile_begin_with: ['5', '6', '7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'EC',
@@ -987,7 +987,7 @@ export default [
     country_code: '593',
     country_name: 'Ecuador',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'EG',
@@ -995,7 +995,7 @@ export default [
     country_code: '20',
     country_name: 'Egypt',
     mobile_begin_with: ['1'],
-    phone_number_lengths: [10, 8]
+    phone_number_lengths: [10, 8],
   },
   {
     alpha2: 'ER',
@@ -1003,7 +1003,7 @@ export default [
     country_code: '291',
     country_name: 'Eritrea',
     mobile_begin_with: ['1', '7', '8'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   // {alpha2: "EH", alpha3: "ESH", country_code: "212", country_name: "Western Sahara", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1012,7 +1012,7 @@ export default [
     country_code: '34',
     country_name: 'Spain',
     mobile_begin_with: ['6', '7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'EE',
@@ -1020,7 +1020,7 @@ export default [
     country_code: '372',
     country_name: 'Estonia',
     mobile_begin_with: ['5', '81', '82', '83'],
-    phone_number_lengths: [7, 8]
+    phone_number_lengths: [7, 8],
   },
   {
     alpha2: 'ET',
@@ -1028,7 +1028,7 @@ export default [
     country_code: '251',
     country_name: 'Ethiopia',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'FI',
@@ -1036,7 +1036,7 @@ export default [
     country_code: '358',
     country_name: 'Finland',
     mobile_begin_with: ['4', '5'],
-    phone_number_lengths: [9, 10]
+    phone_number_lengths: [9, 10],
   },
   {
     alpha2: 'FJ',
@@ -1044,7 +1044,7 @@ export default [
     country_code: '679',
     country_name: 'Fiji',
     mobile_begin_with: ['2', '7', '8', '9'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'FK',
@@ -1052,7 +1052,7 @@ export default [
     country_code: '500',
     country_name: 'Falkland Islands (Malvinas)',
     mobile_begin_with: ['5', '6'],
-    phone_number_lengths: [5]
+    phone_number_lengths: [5],
   },
   {
     alpha2: 'FR',
@@ -1060,7 +1060,7 @@ export default [
     country_code: '33',
     country_name: 'France',
     mobile_begin_with: ['6', '7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'FO',
@@ -1068,7 +1068,7 @@ export default [
     country_code: '298',
     country_name: 'Faroe Islands',
     mobile_begin_with: [],
-    phone_number_lengths: [6]
+    phone_number_lengths: [6],
   },
   {
     alpha2: 'FM',
@@ -1076,7 +1076,7 @@ export default [
     country_code: '691',
     country_name: 'Micronesia, Federated States Of',
     mobile_begin_with: [],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'GA',
@@ -1084,7 +1084,7 @@ export default [
     country_code: '241',
     country_name: 'Gabon',
     mobile_begin_with: ['2', '3', '4', '5', '6', '7'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'GB',
@@ -1092,7 +1092,7 @@ export default [
     country_code: '44',
     country_name: 'United Kingdom',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'GE',
@@ -1100,7 +1100,7 @@ export default [
     country_code: '995',
     country_name: 'Georgia',
     mobile_begin_with: ['5', '7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   // {alpha2: "GG", alpha3: "GGY", country_code: "44", country_name: "Guernsey", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1109,7 +1109,7 @@ export default [
     country_code: '233',
     country_name: 'Ghana',
     mobile_begin_with: ['2', '5'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'GI',
@@ -1117,7 +1117,7 @@ export default [
     country_code: '350',
     country_name: 'Gibraltar',
     mobile_begin_with: ['5'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'GN',
@@ -1125,7 +1125,7 @@ export default [
     country_code: '224',
     country_name: 'Guinea',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'GP',
@@ -1133,7 +1133,7 @@ export default [
     country_code: '590',
     country_name: 'Guadeloupe',
     mobile_begin_with: ['690'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'GM',
@@ -1141,7 +1141,7 @@ export default [
     country_code: '220',
     country_name: 'Gambia',
     mobile_begin_with: ['7', '9'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'GW',
@@ -1149,7 +1149,7 @@ export default [
     country_code: '245',
     country_name: 'Guinea-Bissau',
     mobile_begin_with: ['5', '6', '7'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'GQ',
@@ -1157,7 +1157,7 @@ export default [
     country_code: '240',
     country_name: 'Equatorial Guinea',
     mobile_begin_with: ['222', '551'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'GR',
@@ -1165,7 +1165,7 @@ export default [
     country_code: '30',
     country_name: 'Greece',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'GD',
@@ -1173,7 +1173,7 @@ export default [
     country_code: '1',
     country_name: 'Grenada',
     mobile_begin_with: ['473'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'GL',
@@ -1181,7 +1181,7 @@ export default [
     country_code: '299',
     country_name: 'Greenland',
     mobile_begin_with: ['2', '4', '5'],
-    phone_number_lengths: [6]
+    phone_number_lengths: [6],
   },
   {
     alpha2: 'GT',
@@ -1189,7 +1189,7 @@ export default [
     country_code: '502',
     country_name: 'Guatemala',
     mobile_begin_with: ['3', '4', '5'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'GF',
@@ -1197,7 +1197,7 @@ export default [
     country_code: '594',
     country_name: 'French Guiana',
     mobile_begin_with: ['694'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'GU',
@@ -1205,7 +1205,7 @@ export default [
     country_code: '1',
     country_name: 'Guam',
     mobile_begin_with: ['671'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'GY',
@@ -1213,7 +1213,7 @@ export default [
     country_code: '592',
     country_name: 'Guyana',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'HK',
@@ -1237,9 +1237,9 @@ export default [
       '87',
       '88',
       '89',
-      '9'
+      '9',
     ],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   // {alpha2: "HM", alpha3: "HMD", country_code: "", country_name: "Heard and McDonald Islands", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1248,7 +1248,7 @@ export default [
     country_code: '504',
     country_name: 'Honduras',
     mobile_begin_with: ['3', '7', '8', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'HR',
@@ -1256,7 +1256,7 @@ export default [
     country_code: '385',
     country_name: 'Croatia',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [8, 9]
+    phone_number_lengths: [8, 9],
   },
   {
     alpha2: 'HT',
@@ -1264,7 +1264,7 @@ export default [
     country_code: '509',
     country_name: 'Haiti',
     mobile_begin_with: ['3', '4'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'HU',
@@ -1272,7 +1272,7 @@ export default [
     country_code: '36',
     country_name: 'Hungary',
     mobile_begin_with: ['20', '30', '31', '50', '70'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'ID',
@@ -1280,7 +1280,7 @@ export default [
     country_code: '62',
     country_name: 'Indonesia',
     mobile_begin_with: ['8'],
-    phone_number_lengths: [9, 10, 11, 12]
+    phone_number_lengths: [9, 10, 11, 12],
   },
   // {alpha2: "IM", alpha3: "IMN", country_code: "44", country_name: "Isle of Man", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1289,7 +1289,7 @@ export default [
     country_code: '91',
     country_name: 'India',
     mobile_begin_with: ['6', '7', '8', '9'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   // {alpha2: "IO", alpha3: "IOT", country_code: "246", country_name: "British Indian Ocean Territory", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1298,7 +1298,7 @@ export default [
     country_code: '353',
     country_name: 'Ireland',
     mobile_begin_with: ['82', '83', '84', '85', '86', '87', '88', '89'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'IR',
@@ -1306,7 +1306,7 @@ export default [
     country_code: '98',
     country_name: 'Iran, Islamic Republic Of',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'IQ',
@@ -1314,7 +1314,7 @@ export default [
     country_code: '964',
     country_name: 'Iraq',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'IS',
@@ -1322,7 +1322,7 @@ export default [
     country_code: '354',
     country_name: 'Iceland',
     mobile_begin_with: ['6', '7', '8'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'IL',
@@ -1330,7 +1330,7 @@ export default [
     country_code: '972',
     country_name: 'Israel',
     mobile_begin_with: ['5'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'IT',
@@ -1338,7 +1338,7 @@ export default [
     country_code: '39',
     country_name: 'Italy',
     mobile_begin_with: ['3'],
-    phone_number_lengths: [9, 10]
+    phone_number_lengths: [9, 10],
   },
   {
     alpha2: 'JM',
@@ -1346,7 +1346,7 @@ export default [
     country_code: '1',
     country_name: 'Jamaica',
     mobile_begin_with: ['876'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   // {alpha2: "JE", alpha3: "JEY", country_code: "44", country_name: "Jersey", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1355,7 +1355,7 @@ export default [
     country_code: '962',
     country_name: 'Jordan',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'JP',
@@ -1363,7 +1363,7 @@ export default [
     country_code: '81',
     country_name: 'Japan',
     mobile_begin_with: ['70', '80', '90'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'KZ',
@@ -1371,7 +1371,7 @@ export default [
     country_code: '7',
     country_name: 'Kazakhstan',
     mobile_begin_with: ['70', '74', '77'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'KE',
@@ -1379,7 +1379,7 @@ export default [
     country_code: '254',
     country_name: 'Kenya',
     mobile_begin_with: ['7', '1'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'KG',
@@ -1387,7 +1387,7 @@ export default [
     country_code: '996',
     country_name: 'Kyrgyzstan',
     mobile_begin_with: ['5', '7', '8', '9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'KH',
@@ -1395,7 +1395,7 @@ export default [
     country_code: '855',
     country_name: 'Cambodia',
     mobile_begin_with: ['1', '6', '7', '8', '9'],
-    phone_number_lengths: [8, 9]
+    phone_number_lengths: [8, 9],
   },
   {
     alpha2: 'KI',
@@ -1403,7 +1403,7 @@ export default [
     country_code: '686',
     country_name: 'Kiribati',
     mobile_begin_with: ['9', '30'],
-    phone_number_lengths: [5]
+    phone_number_lengths: [5],
   },
   {
     alpha2: 'KN',
@@ -1411,7 +1411,7 @@ export default [
     country_code: '1',
     country_name: 'Saint Kitts And Nevis',
     mobile_begin_with: ['869'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'KR',
@@ -1419,7 +1419,7 @@ export default [
     country_code: '82',
     country_name: 'Korea, Republic of',
     mobile_begin_with: ['1'],
-    phone_number_lengths: [9, 10]
+    phone_number_lengths: [9, 10],
   },
   {
     alpha2: 'KW',
@@ -1427,7 +1427,7 @@ export default [
     country_code: '965',
     country_name: 'Kuwait',
     mobile_begin_with: ['5', '6', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'LA',
@@ -1435,7 +1435,7 @@ export default [
     country_code: '856',
     country_name: "Lao People's Democratic Republic",
     mobile_begin_with: ['20'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'LB',
@@ -1443,7 +1443,7 @@ export default [
     country_code: '961',
     country_name: 'Lebanon',
     mobile_begin_with: ['3', '7', '8'],
-    phone_number_lengths: [7, 8]
+    phone_number_lengths: [7, 8],
   },
   {
     alpha2: 'LR',
@@ -1451,7 +1451,7 @@ export default [
     country_code: '231',
     country_name: 'Liberia',
     mobile_begin_with: ['4', '5', '6', '7'],
-    phone_number_lengths: [7, 8]
+    phone_number_lengths: [7, 8],
   },
   {
     alpha2: 'LY',
@@ -1459,7 +1459,7 @@ export default [
     country_code: '218',
     country_name: 'Libyan Arab Jamahiriya',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'LC',
@@ -1467,7 +1467,7 @@ export default [
     country_code: '1',
     country_name: 'Saint Lucia',
     mobile_begin_with: ['758'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'LI',
@@ -1475,7 +1475,7 @@ export default [
     country_code: '423',
     country_name: 'Liechtenstein',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'LK',
@@ -1483,7 +1483,7 @@ export default [
     country_code: '94',
     country_name: 'Sri Lanka',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'LS',
@@ -1491,7 +1491,7 @@ export default [
     country_code: '266',
     country_name: 'Lesotho',
     mobile_begin_with: ['5', '6'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'LT',
@@ -1499,7 +1499,7 @@ export default [
     country_code: '370',
     country_name: 'Lithuania',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'LU',
@@ -1507,7 +1507,7 @@ export default [
     country_code: '352',
     country_name: 'Luxembourg',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'LV',
@@ -1515,7 +1515,7 @@ export default [
     country_code: '371',
     country_name: 'Latvia',
     mobile_begin_with: ['2'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'MO',
@@ -1523,7 +1523,7 @@ export default [
     country_code: '853',
     country_name: 'Macao',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   // {alpha2: "MF", alpha3: "MAF", country_code: "590", country_name: "Saint Martin", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1532,7 +1532,7 @@ export default [
     country_code: '212',
     country_name: 'Morocco',
     mobile_begin_with: ['6', '7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'MC',
@@ -1540,7 +1540,7 @@ export default [
     country_code: '377',
     country_name: 'Monaco',
     mobile_begin_with: ['4', '6'],
-    phone_number_lengths: [8, 9]
+    phone_number_lengths: [8, 9],
   },
   {
     alpha2: 'MD',
@@ -1548,7 +1548,7 @@ export default [
     country_code: '373',
     country_name: 'Moldova, Republic of',
     mobile_begin_with: ['6', '7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'MG',
@@ -1556,7 +1556,7 @@ export default [
     country_code: '261',
     country_name: 'Madagascar',
     mobile_begin_with: ['3'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'MV',
@@ -1564,7 +1564,7 @@ export default [
     country_code: '960',
     country_name: 'Maldives',
     mobile_begin_with: ['7', '9'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'MX',
@@ -1572,7 +1572,7 @@ export default [
     country_code: '52',
     country_name: 'Mexico',
     mobile_begin_with: [''],
-    phone_number_lengths: [10, 11]
+    phone_number_lengths: [10, 11],
   },
   {
     alpha2: 'MH',
@@ -1580,7 +1580,7 @@ export default [
     country_code: '692',
     country_name: 'Marshall Islands',
     mobile_begin_with: [],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'MK',
@@ -1588,7 +1588,7 @@ export default [
     country_code: '389',
     country_name: 'Macedonia, the Former Yugoslav Republic Of',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'ML',
@@ -1596,7 +1596,7 @@ export default [
     country_code: '223',
     country_name: 'Mali',
     mobile_begin_with: ['6', '7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'MT',
@@ -1604,7 +1604,7 @@ export default [
     country_code: '356',
     country_name: 'Malta',
     mobile_begin_with: ['7', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'MM',
@@ -1612,7 +1612,7 @@ export default [
     country_code: '95',
     country_name: 'Myanmar',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [8, 9, 10]
+    phone_number_lengths: [8, 9, 10],
   },
   {
     alpha2: 'ME',
@@ -1620,7 +1620,7 @@ export default [
     country_code: '382',
     country_name: 'Montenegro',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'MN',
@@ -1628,7 +1628,7 @@ export default [
     country_code: '976',
     country_name: 'Mongolia',
     mobile_begin_with: ['5', '8', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'MP',
@@ -1636,7 +1636,7 @@ export default [
     country_code: '1',
     country_name: 'Northern Mariana Islands',
     mobile_begin_with: ['670'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'MZ',
@@ -1644,7 +1644,7 @@ export default [
     country_code: '258',
     country_name: 'Mozambique',
     mobile_begin_with: ['8'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'MR',
@@ -1652,7 +1652,7 @@ export default [
     country_code: '222',
     country_name: 'Mauritania',
     mobile_begin_with: [],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'MS',
@@ -1660,7 +1660,7 @@ export default [
     country_code: '1',
     country_name: 'Montserrat',
     mobile_begin_with: ['664'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'MQ',
@@ -1668,7 +1668,7 @@ export default [
     country_code: '596',
     country_name: 'Martinique',
     mobile_begin_with: ['696'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'MU',
@@ -1676,7 +1676,7 @@ export default [
     country_code: '230',
     country_name: 'Mauritius',
     mobile_begin_with: ['5'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'MW',
@@ -1684,7 +1684,7 @@ export default [
     country_code: '265',
     country_name: 'Malawi',
     mobile_begin_with: ['77', '88', '99'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'MY',
@@ -1692,7 +1692,7 @@ export default [
     country_code: '60',
     country_name: 'Malaysia',
     mobile_begin_with: ['1', '6'],
-    phone_number_lengths: [9, 10, 8]
+    phone_number_lengths: [9, 10, 8],
   },
   {
     alpha2: 'YT',
@@ -1700,7 +1700,7 @@ export default [
     country_code: '262',
     country_name: 'Mayotte',
     mobile_begin_with: ['639'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'NA',
@@ -1708,7 +1708,7 @@ export default [
     country_code: '264',
     country_name: 'Namibia',
     mobile_begin_with: ['60', '81', '82', '85'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'NC',
@@ -1716,7 +1716,7 @@ export default [
     country_code: '687',
     country_name: 'New Caledonia',
     mobile_begin_with: ['7', '8', '9'],
-    phone_number_lengths: [6]
+    phone_number_lengths: [6],
   },
   {
     alpha2: 'NE',
@@ -1724,7 +1724,7 @@ export default [
     country_code: '227',
     country_name: 'Niger',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'NF',
@@ -1732,7 +1732,7 @@ export default [
     country_code: '672',
     country_name: 'Norfolk Island',
     mobile_begin_with: ['5', '8'],
-    phone_number_lengths: [5]
+    phone_number_lengths: [5],
   },
   {
     alpha2: 'NG',
@@ -1740,7 +1740,7 @@ export default [
     country_code: '234',
     country_name: 'Nigeria',
     mobile_begin_with: ['70', '80', '81', '90', '91'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'NI',
@@ -1748,7 +1748,7 @@ export default [
     country_code: '505',
     country_name: 'Nicaragua',
     mobile_begin_with: ['8'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'NU',
@@ -1756,7 +1756,7 @@ export default [
     country_code: '683',
     country_name: 'Niue',
     mobile_begin_with: [],
-    phone_number_lengths: [4]
+    phone_number_lengths: [4],
   },
   {
     alpha2: 'NL',
@@ -1764,7 +1764,7 @@ export default [
     country_code: '31',
     country_name: 'Netherlands',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'NO',
@@ -1772,7 +1772,7 @@ export default [
     country_code: '47',
     country_name: 'Norway',
     mobile_begin_with: ['4', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'NP',
@@ -1780,7 +1780,7 @@ export default [
     country_code: '977',
     country_name: 'Nepal',
     mobile_begin_with: ['97', '98'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'NR',
@@ -1788,7 +1788,7 @@ export default [
     country_code: '674',
     country_name: 'Nauru',
     mobile_begin_with: ['555'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'NZ',
@@ -1796,7 +1796,7 @@ export default [
     country_code: '64',
     country_name: 'New Zealand',
     mobile_begin_with: ['2'],
-    phone_number_lengths: [8, 9, 10]
+    phone_number_lengths: [8, 9, 10],
   },
   {
     alpha2: 'OM',
@@ -1804,7 +1804,7 @@ export default [
     country_code: '968',
     country_name: 'Oman',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'PK',
@@ -1812,7 +1812,7 @@ export default [
     country_code: '92',
     country_name: 'Pakistan',
     mobile_begin_with: ['3'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'PA',
@@ -1820,7 +1820,7 @@ export default [
     country_code: '507',
     country_name: 'Panama',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   // {alpha2: "PN", alpha3: "PCN", country_code: "", country_name: "Pitcairn", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1829,7 +1829,7 @@ export default [
     country_code: '51',
     country_name: 'Peru',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'PH',
@@ -1837,7 +1837,7 @@ export default [
     country_code: '63',
     country_name: 'Philippines',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'PW',
@@ -1845,7 +1845,7 @@ export default [
     country_code: '680',
     country_name: 'Palau',
     mobile_begin_with: [],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'PG',
@@ -1853,7 +1853,7 @@ export default [
     country_code: '675',
     country_name: 'Papua New Guinea',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'PL',
@@ -1861,7 +1861,7 @@ export default [
     country_code: '48',
     country_name: 'Poland',
     mobile_begin_with: ['4', '5', '6', '7', '8'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'PR',
@@ -1869,7 +1869,7 @@ export default [
     country_code: '1',
     country_name: 'Puerto Rico',
     mobile_begin_with: ['787', '939'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   // {alpha2: "KP", alpha3: "PRK", country_code: "850", country_name: "Korea, Democratic People's Republic Of", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1878,7 +1878,7 @@ export default [
     country_code: '351',
     country_name: 'Portugal',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'PY',
@@ -1886,7 +1886,7 @@ export default [
     country_code: '595',
     country_name: 'Paraguay',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'PS',
@@ -1894,7 +1894,7 @@ export default [
     country_code: '970',
     country_name: 'Palestinian Territory, Occupied',
     mobile_begin_with: ['5'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'PF',
@@ -1902,7 +1902,7 @@ export default [
     country_code: '689',
     country_name: 'French Polynesia',
     mobile_begin_with: ['8'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'QA',
@@ -1910,7 +1910,7 @@ export default [
     country_code: '974',
     country_name: 'Qatar',
     mobile_begin_with: ['3', '5', '6', '7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'RE',
@@ -1918,7 +1918,7 @@ export default [
     country_code: '262',
     country_name: 'Réunion',
     mobile_begin_with: ['692', '693'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'RO',
@@ -1926,7 +1926,7 @@ export default [
     country_code: '40',
     country_name: 'Romania',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'RU',
@@ -1934,7 +1934,7 @@ export default [
     country_code: '7',
     country_name: 'Russian Federation',
     mobile_begin_with: ['9', '495', '498', '499', '835'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'RW',
@@ -1942,7 +1942,7 @@ export default [
     country_code: '250',
     country_name: 'Rwanda',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'SA',
@@ -1950,7 +1950,7 @@ export default [
     country_code: '966',
     country_name: 'Saudi Arabia',
     mobile_begin_with: ['5'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'SD',
@@ -1958,7 +1958,7 @@ export default [
     country_code: '249',
     country_name: 'Sudan',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'SS',
@@ -1966,7 +1966,7 @@ export default [
     country_code: '211',
     country_name: 'South Sudan',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'SN',
@@ -1974,7 +1974,7 @@ export default [
     country_code: '221',
     country_name: 'Senegal',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'SG',
@@ -1982,7 +1982,7 @@ export default [
     country_code: '65',
     country_name: 'Singapore',
     mobile_begin_with: ['8', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   // {alpha2: "GS", alpha3: "SGS", country_code: "500", country_name: "South Georgia and the South Sandwich Islands", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -1991,7 +1991,7 @@ export default [
     country_code: '290',
     country_name: 'Saint Helena',
     mobile_begin_with: [],
-    phone_number_lengths: [4]
+    phone_number_lengths: [4],
   },
   {
     alpha2: 'SJ',
@@ -1999,7 +1999,7 @@ export default [
     country_code: '47',
     country_name: 'Svalbard And Jan Mayen',
     mobile_begin_with: ['79'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'SB',
@@ -2007,7 +2007,7 @@ export default [
     country_code: '677',
     country_name: 'Solomon Islands',
     mobile_begin_with: ['7', '8'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'SL',
@@ -2015,7 +2015,7 @@ export default [
     country_code: '232',
     country_name: 'Sierra Leone',
     mobile_begin_with: ['21', '25', '30', '33', '34', '40', '44', '50', '55', '76', '77', '78', '79', '88'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'SV',
@@ -2023,7 +2023,7 @@ export default [
     country_code: '503',
     country_name: 'El Salvador',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'SM',
@@ -2031,7 +2031,7 @@ export default [
     country_code: '378',
     country_name: 'San Marino',
     mobile_begin_with: ['3', '6'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'SO',
@@ -2039,7 +2039,7 @@ export default [
     country_code: '252',
     country_name: 'Somalia',
     mobile_begin_with: ['61', '62', '63', '65', '66', '68', '69', '71', '90'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'SX',
@@ -2047,7 +2047,7 @@ export default [
     country_code: '1',
     country_name: 'Sint Maarten',
     mobile_begin_with: ['721'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'PM',
@@ -2055,7 +2055,7 @@ export default [
     country_code: '508',
     country_name: 'Saint Pierre And Miquelon',
     mobile_begin_with: ['55', '41'],
-    phone_number_lengths: [6]
+    phone_number_lengths: [6],
   },
   {
     alpha2: 'RS',
@@ -2063,7 +2063,7 @@ export default [
     country_code: '381',
     country_name: 'Serbia',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [8, 9]
+    phone_number_lengths: [8, 9],
   },
   {
     alpha2: 'ST',
@@ -2071,7 +2071,7 @@ export default [
     country_code: '239',
     country_name: 'Sao Tome and Principe',
     mobile_begin_with: ['98', '99'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'SR',
@@ -2079,7 +2079,7 @@ export default [
     country_code: '597',
     country_name: 'Suriname',
     mobile_begin_with: ['6', '7', '8'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'SK',
@@ -2087,7 +2087,7 @@ export default [
     country_code: '421',
     country_name: 'Slovakia',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'SI',
@@ -2095,7 +2095,7 @@ export default [
     country_code: '386',
     country_name: 'Slovenia',
     mobile_begin_with: ['3', '4', '5', '6', '7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'SE',
@@ -2103,7 +2103,7 @@ export default [
     country_code: '46',
     country_name: 'Sweden',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   // {alpha2: "SZ", alpha3: "SWZ", country_code: "268", country_name: "Swaziland", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -2112,7 +2112,7 @@ export default [
     country_code: '248',
     country_name: 'Seychelles',
     mobile_begin_with: ['2'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'SY',
@@ -2120,7 +2120,7 @@ export default [
     country_code: '963',
     country_name: 'Syrian Arab Republic',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   // http://www.howtocallabroad.com/turks-caicos/
   {
@@ -2129,7 +2129,7 @@ export default [
     country_code: '1',
     country_name: 'Turks and Caicos Islands',
     mobile_begin_with: ['6492', '6493', '6494'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'TD',
@@ -2137,7 +2137,7 @@ export default [
     country_code: '235',
     country_name: 'Chad',
     mobile_begin_with: ['6', '7', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'TG',
@@ -2145,7 +2145,7 @@ export default [
     country_code: '228',
     country_name: 'Togo',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'TH',
@@ -2153,7 +2153,7 @@ export default [
     country_code: '66',
     country_name: 'Thailand',
     mobile_begin_with: ['6', '8', '9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'TJ',
@@ -2161,7 +2161,7 @@ export default [
     country_code: '992',
     country_name: 'Tajikistan',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'TK',
@@ -2169,7 +2169,7 @@ export default [
     country_code: '690',
     country_name: 'Tokelau',
     mobile_begin_with: [],
-    phone_number_lengths: [4]
+    phone_number_lengths: [4],
   },
   {
     alpha2: 'TM',
@@ -2177,7 +2177,7 @@ export default [
     country_code: '993',
     country_name: 'Turkmenistan',
     mobile_begin_with: ['6'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'TL',
@@ -2185,7 +2185,7 @@ export default [
     country_code: '670',
     country_name: 'Timor-Leste',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'TO',
@@ -2193,7 +2193,7 @@ export default [
     country_code: '676',
     country_name: 'Tonga',
     mobile_begin_with: [],
-    phone_number_lengths: [5]
+    phone_number_lengths: [5],
   },
   {
     alpha2: 'TT',
@@ -2201,7 +2201,7 @@ export default [
     country_code: '1',
     country_name: 'Trinidad and Tobago',
     mobile_begin_with: ['868'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'TN',
@@ -2209,7 +2209,7 @@ export default [
     country_code: '216',
     country_name: 'Tunisia',
     mobile_begin_with: ['2', '4', '5', '9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'TR',
@@ -2217,7 +2217,7 @@ export default [
     country_code: '90',
     country_name: 'Turkey',
     mobile_begin_with: ['5'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'TV',
@@ -2225,7 +2225,7 @@ export default [
     country_code: '688',
     country_name: 'Tuvalu',
     mobile_begin_with: [],
-    phone_number_lengths: [5]
+    phone_number_lengths: [5],
   },
   {
     alpha2: 'TW',
@@ -2233,7 +2233,7 @@ export default [
     country_code: '886',
     country_name: 'Taiwan',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'TZ',
@@ -2241,7 +2241,7 @@ export default [
     country_code: '255',
     country_name: 'Tanzania, United Republic of',
     mobile_begin_with: ['7', '6'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'UG',
@@ -2249,7 +2249,7 @@ export default [
     country_code: '256',
     country_name: 'Uganda',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'UA',
@@ -2257,7 +2257,7 @@ export default [
     country_code: '380',
     country_name: 'Ukraine',
     mobile_begin_with: ['39', '50', '63', '66', '67', '68', '73', '9'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   // {alpha2: "UM", alpha3: "UMI", country_code: "", country_name: "United States Minor Outlying Islands", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -2266,7 +2266,7 @@ export default [
     country_code: '598',
     country_name: 'Uruguay',
     mobile_begin_with: ['9'],
-    phone_number_lengths: [8]
+    phone_number_lengths: [8],
   },
   {
     alpha2: 'UZ',
@@ -2274,7 +2274,7 @@ export default [
     country_code: '998',
     country_name: 'Uzbekistan',
     mobile_begin_with: ['9', '88', '33'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   // {alpha2: "VA", alpha3: "VAT", country_code: "39", country_name: "Holy See (Vatican City State)", mobile_begin_with: [], phone_number_lengths: []},
   {
@@ -2283,7 +2283,7 @@ export default [
     country_code: '1',
     country_name: 'Saint Vincent And The Grenedines',
     mobile_begin_with: ['784'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'VE',
@@ -2291,7 +2291,7 @@ export default [
     country_code: '58',
     country_name: 'Venezuela, Bolivarian Republic of',
     mobile_begin_with: ['4'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'VG',
@@ -2299,7 +2299,7 @@ export default [
     country_code: '1',
     country_name: 'Virgin Islands, British',
     mobile_begin_with: ['284'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'VI',
@@ -2307,7 +2307,7 @@ export default [
     country_code: '1',
     country_name: 'Virgin Islands, U.S.',
     mobile_begin_with: ['340'],
-    phone_number_lengths: [10]
+    phone_number_lengths: [10],
   },
   {
     alpha2: 'VN',
@@ -2315,7 +2315,7 @@ export default [
     country_code: '84',
     country_name: 'Viet Nam',
     mobile_begin_with: ['8', '9', '3', '7', '5'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'VU',
@@ -2323,7 +2323,7 @@ export default [
     country_code: '678',
     country_name: 'Vanuatu',
     mobile_begin_with: ['5', '7'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'WF',
@@ -2331,7 +2331,7 @@ export default [
     country_code: '681',
     country_name: 'Wallis and Futuna',
     mobile_begin_with: [],
-    phone_number_lengths: [6]
+    phone_number_lengths: [6],
   },
   {
     alpha2: 'WS',
@@ -2339,7 +2339,7 @@ export default [
     country_code: '685',
     country_name: 'Samoa',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [7]
+    phone_number_lengths: [7],
   },
   {
     alpha2: 'YE',
@@ -2347,7 +2347,7 @@ export default [
     country_code: '967',
     country_name: 'Yemen',
     mobile_begin_with: ['7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'ZA',
@@ -2355,7 +2355,7 @@ export default [
     country_code: '27',
     country_name: 'South Africa',
     mobile_begin_with: ['1', '2', '3', '4', '5', '6', '7', '8'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'ZM',
@@ -2363,7 +2363,7 @@ export default [
     country_code: '260',
     country_name: 'Zambia',
     mobile_begin_with: ['9', '7'],
-    phone_number_lengths: [9]
+    phone_number_lengths: [9],
   },
   {
     alpha2: 'ZW',
@@ -2371,6 +2371,6 @@ export default [
     country_code: '263',
     country_name: 'Zimbabwe',
     mobile_begin_with: ['71', '73', '77'],
-    phone_number_lengths: [9]
-  }
+    phone_number_lengths: [9],
+  },
 ]

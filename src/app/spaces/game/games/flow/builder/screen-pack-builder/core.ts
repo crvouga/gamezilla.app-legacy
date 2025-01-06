@@ -12,8 +12,8 @@ const init = ({ pack }: { pack: Pack }): ModelCore => {
     pack,
     slideIndex: 0,
     screen: {
-      t: 'screen-puzzle-grid'
-    }
+      t: 'screen-puzzle-grid',
+    },
   }
 }
 
@@ -22,7 +22,7 @@ const updates: UpdateCore[] = []
 const update: UpdateCore = (input) => {
   return updates.reduce(
     (modelCore, updateCore) => updateCore({ ctx: input.ctx, msgCore: input.msgCore, modelCore }),
-    input.modelCore
+    input.modelCore,
   )
 }
 
@@ -36,11 +36,11 @@ updates.push(({ modelCore, msgCore }) => {
       return {
         ...modelCore,
         screen: {
-          t: 'screen-pack-builder'
+          t: 'screen-pack-builder',
         },
         screenPackBuilder: init({
-          pack: msgCore.created.value
-        })
+          pack: msgCore.created.value,
+        }),
       }
     }
     default: {
@@ -62,12 +62,12 @@ updates.push(({ modelCore, msgCore }) => {
           pack: Pack.add(modelCore.screenPackBuilder.pack, msgCore.puzzle.id),
           screen: {
             t: 'screen-puzzle-grid',
-            slideIndex: 0
+            slideIndex: 0,
           },
           opened: {
-            t: null
-          }
-        }
+            t: null,
+          },
+        },
       }
     }
     default: {
@@ -87,9 +87,9 @@ updates.push(({ modelCore, msgCore }) => {
         screenPackBuilder: {
           ...modelCore.screenPackBuilder,
           screen: {
-            t: 'screen-add-puzzle'
-          }
-        }
+            t: 'screen-add-puzzle',
+          },
+        },
       }
     }
     default: {
@@ -109,12 +109,12 @@ updates.push(({ modelCore, msgCore }) => {
         screenPackBuilder: {
           ...modelCore.screenPackBuilder,
           opened: {
-            t: null
+            t: null,
           },
           screen: {
-            t: 'screen-puzzle-grid'
-          }
-        }
+            t: 'screen-puzzle-grid',
+          },
+        },
       }
     }
     default: {
@@ -149,12 +149,12 @@ updates.push(({ modelCore, msgCore }) => {
               msgCore.puzzleResult.t === 'got'
                 ? FlowPlay.init({
                     ctx: FlowPlay.initCtx({
-                      flowPuzzle: msgCore.puzzleResult.c
-                    })
+                      flowPuzzle: msgCore.puzzleResult.c,
+                    }),
                   })
-                : null
-          }
-        }
+                : null,
+          },
+        },
       }
     }
 
@@ -186,9 +186,9 @@ updates.push(({ modelCore, msgCore }) => {
           ...modelCore.screenPackBuilder,
           slideIndex: slideIndex,
           screen: {
-            t: 'screen-puzzle-grid'
-          }
-        }
+            t: 'screen-puzzle-grid',
+          },
+        },
       }
     }
 
@@ -208,8 +208,8 @@ updates.push((input) => {
         ...input.modelCore,
         screenPackBuilder: {
           ...input.modelCore.screenPackBuilder,
-          slideIndex: input.msgCore.newSlideIndex
-        }
+          slideIndex: input.msgCore.newSlideIndex,
+        },
       }
     }
     default: {
@@ -239,10 +239,10 @@ updates.push(({ modelCore, msgCore }) => {
         screen.puzzleResult.t === 'got'
           ? FlowPlay.update({
               ctx: FlowPlay.initCtx({
-                flowPuzzle: screen.puzzleResult.c
+                flowPuzzle: screen.puzzleResult.c,
               }),
               model: screen.play,
-              msg: msgCore.c
+              msg: msgCore.c,
             })
           : { model: screen.play }
 
@@ -255,9 +255,9 @@ updates.push(({ modelCore, msgCore }) => {
             t: 'screen-puzzle',
             puzzleIndex: modelCore.screenPackBuilder.screen.puzzleIndex,
             puzzleResult: modelCore.screenPackBuilder.screen.puzzleResult,
-            play: updatedPlay.model
-          }
-        }
+            play: updatedPlay.model,
+          },
+        },
       }
     }
     default: {
@@ -292,19 +292,19 @@ updates.push(({ modelCore, msgCore }) => {
             puzzleIndex: clamp(
               modelCore.screenPackBuilder.screen.puzzleIndex + 1,
               0,
-              modelCore.screenPackBuilder.pack.puzzleIds.length - 1
+              modelCore.screenPackBuilder.pack.puzzleIds.length - 1,
             ),
             play:
               msgCore.nextPuzzleResult.t === 'got'
                 ? FlowPlay.init({
                     ctx: FlowPlay.initCtx({
-                      flowPuzzle: msgCore.nextPuzzleResult.c
-                    })
+                      flowPuzzle: msgCore.nextPuzzleResult.c,
+                    }),
                   })
                 : modelCore.screenPackBuilder.screen.play,
-            puzzleResult: msgCore.nextPuzzleResult
-          }
-        }
+            puzzleResult: msgCore.nextPuzzleResult,
+          },
+        },
       }
     }
 
@@ -338,19 +338,19 @@ updates.push(({ modelCore, msgCore }) => {
             puzzleIndex: clamp(
               modelCore.screenPackBuilder.screen.puzzleIndex - 1,
               0,
-              modelCore.screenPackBuilder.pack.puzzleIds.length - 1
+              modelCore.screenPackBuilder.pack.puzzleIds.length - 1,
             ),
             play:
               msgCore.previousPuzzleResult.t === 'got'
                 ? FlowPlay.init({
                     ctx: FlowPlay.initCtx({
-                      flowPuzzle: msgCore.previousPuzzleResult.c
-                    })
+                      flowPuzzle: msgCore.previousPuzzleResult.c,
+                    }),
                   })
                 : modelCore.screenPackBuilder.screen.play,
-            puzzleResult: msgCore.previousPuzzleResult
-          }
-        }
+            puzzleResult: msgCore.previousPuzzleResult,
+          },
+        },
       }
     }
     default: {
@@ -371,9 +371,9 @@ updates.push(({ modelCore, msgCore }) => {
           ...modelCore.screenPackBuilder,
           screen: {
             ...modelCore.screenPackBuilder.screen,
-            opened: 'more'
-          }
-        }
+            opened: 'more',
+          },
+        },
       }
     }
     case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer': {
@@ -386,9 +386,9 @@ updates.push(({ modelCore, msgCore }) => {
           ...modelCore.screenPackBuilder,
           screen: {
             ...modelCore.screenPackBuilder.screen,
-            opened: null
-          }
-        }
+            opened: null,
+          },
+        },
       }
     }
     default: {
@@ -418,9 +418,9 @@ updates.push(({ modelCore, msgCore }) => {
           ...modelCore.screenPackBuilder,
           pack: packNew,
           screen: {
-            t: 'screen-puzzle-grid'
-          }
-        }
+            t: 'screen-puzzle-grid',
+          },
+        },
       }
     }
     default: {
@@ -440,9 +440,9 @@ updates.push((input) => {
       ...input.modelCore.screenPackBuilder,
       slideIndex: PackPuzzlesGridUI.clampSlideIndex(
         input.modelCore.screenPackBuilder.slideIndex,
-        input.modelCore.screenPackBuilder.pack.puzzleIds.length
-      )
-    }
+        input.modelCore.screenPackBuilder.pack.puzzleIds.length,
+      ),
+    },
   }
 })
 
@@ -453,5 +453,5 @@ const toSlideIndex = (modelCore?: ModelCore | null | undefined): number => {
 export const ScreenPackBuilderCore = {
   toSlideIndex,
   init,
-  update
+  update,
 }

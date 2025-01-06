@@ -6,7 +6,7 @@ import { FixtureSpacesClient } from '../@/fixture/client'
 const Fixture = async () => {
   const f = await FixtureSpacesClient()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -18,23 +18,23 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
           t: 'clicked-end-space-button',
-          spaceId
+          spaceId,
         },
         ctx: {
           ...f.ctx,
           currentRoute: {
             n: 'spaces',
             t: 'space',
-            spaceId
-          }
-        }
-      }
+            spaceId,
+          },
+        },
+      },
     ])
 
     expect(didPushRoute(output)).toBe(true)
@@ -47,22 +47,22 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
           t: 'clicked-end-space-button',
-          spaceId
+          spaceId,
         },
         ctx: {
           ...f.ctx,
           currentRoute: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
-      }
+            t: 'space-list',
+          },
+        },
+      },
     ])
 
     expect(didPushRoute(output)).toBe(false)
@@ -75,22 +75,22 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
           t: 'clicked-end-space-button',
-          spaceId
+          spaceId,
         },
         ctx: {
           ...f.ctx,
           currentRoute: {
             n: 'spaces',
-            t: 'space-list'
-          }
-        }
-      }
+            t: 'space-list',
+          },
+        },
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })

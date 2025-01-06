@@ -8,7 +8,7 @@ import {
   IconLanguage,
   ListItemButton,
   Spinner,
-  TopBar
+  TopBar,
 } from '../../@/ui'
 import type { ClientModule, TranslationLoading } from '../types'
 
@@ -30,8 +30,8 @@ export const init: ClientModule['init'] = ({ stored, ctx }) => {
   return {
     model: {
       lang: initialLang,
-      loading: {}
-    }
+      loading: {},
+    },
   }
 }
 
@@ -48,16 +48,16 @@ export const update: ClientModule['update'] = ({ model, ctx, msg }) => {
     case 'translator.loaded': {
       const loadingNew: TranslationLoading = {
         startedAt: model.loading?.[msg.lang]?.startedAt ?? ctx.now,
-        endedAt: ctx.now
+        endedAt: ctx.now,
       }
       return {
         model: {
           ...model,
           loading: {
             ...model.loading,
-            [msg.lang]: loadingNew
-          }
-        }
+            [msg.lang]: loadingNew,
+          },
+        },
       }
     }
 
@@ -69,10 +69,10 @@ export const update: ClientModule['update'] = ({ model, ctx, msg }) => {
             ...model.loading,
             [msg.lang]: {
               startedAt: ctx.now,
-              endedAt: null
-            }
-          }
-        }
+              endedAt: null,
+            },
+          },
+        },
       }
     }
 
@@ -80,7 +80,7 @@ export const update: ClientModule['update'] = ({ model, ctx, msg }) => {
       if (ctx.currentRoute.n === 'lang' && ctx.currentRoute.t === 'choose-lang') {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.navForwardMin), closeStatusBar()]
+          msgCmd: [playSound(APP_SOUND.navForwardMin), closeStatusBar()],
         }
       }
 
@@ -90,17 +90,17 @@ export const update: ClientModule['update'] = ({ model, ctx, msg }) => {
           playSound(APP_SOUND.navForwardMin),
           pushRoute({
             t: 'choose-lang',
-            n: 'lang'
+            n: 'lang',
           }),
-          closeStatusBar()
-        ]
+          closeStatusBar(),
+        ],
       }
     }
 
     case 'choose-lang.clicked-done': {
       return {
         model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin), back()]
+        msgCmd: [playSound(APP_SOUND.navBackwardMin), back()],
       }
     }
 
@@ -108,16 +108,16 @@ export const update: ClientModule['update'] = ({ model, ctx, msg }) => {
       return {
         model: {
           ...model,
-          lang: msg.lang
+          lang: msg.lang,
         },
         msgCmd: [playSound(APP_SOUND.tap)],
-        eff: LocalStorage.put(LANG_STORAGE_KEY, msg.lang)
+        eff: LocalStorage.put(LANG_STORAGE_KEY, msg.lang),
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -151,7 +151,7 @@ export const ViewStatusBarDrawer: ClientModule['View'] = ({ model, ctx, dispatch
       end={() => ctx.t(model.lang)}
       onClick={() =>
         dispatch({
-          t: 'clicked-change-lang'
+          t: 'clicked-change-lang',
         })
       }
     />
@@ -183,7 +183,7 @@ const ViewChooseLang: ClientModule['View'] = (input) => {
         ctx={input.ctx}
         onBack={() =>
           input.dispatch({
-            t: 'choose-lang.clicked-done'
+            t: 'choose-lang.clicked-done',
           })
         }
         title={input.ctx.t('lang.choose-language')}
@@ -208,7 +208,7 @@ const ViewChooseLang: ClientModule['View'] = (input) => {
             onClick={() =>
               input.dispatch({
                 t: 'choose-lang.clicked-lang',
-                lang: code
+                lang: code,
               })
             }
           />

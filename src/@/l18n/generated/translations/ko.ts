@@ -155,11 +155,11 @@ export const translations: Text = {
   'flow.puzzle-deleted': '퍼즐이 삭제되었습니다',
   'flow.delete-puzzle-forever?': '퍼즐을 영구적으로 삭제하시겠습니까?',
   'flow.delete-forever': '영구적으로 삭제',
-  'flow.edit-pack-name.pack-name': '팩 이름',
   'flow.add-puzzle': '퍼즐 추가',
   'flow.puzzle-removed': '퍼즐이 제거되었습니다',
   'flow.puzzle-added': '퍼즐이 추가되었습니다',
   'flow.remove-from-pack': '팩에서 제거',
+  'flow.edit-pack-name.pack-name': '팩 이름',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': '퍼즐이 없습니다',
   'flow.no-packs': '팩 없음',
@@ -220,6 +220,7 @@ export const translations: Text = {
   'profile.update-username.update-username': '사용자 이름 업데이트',
   'username-title': '사용자 이름',
   username: (username) => `@${username}`,
+  'app.screen-not-found': '화면을 찾을 수 없습니다',
   'app.back': '뒤로',
   'app.gamezilla-app': 'gamezilla.app',
   'app.something-went-wrong': '문제가 발생했습니다',
@@ -268,5 +269,5 @@ export const translations: Text = {
   ko: '한국어',
   pt: '포르투갈어',
   ru: '러시아어',
-  zh: '중국어'
+  zh: '중국어',
 }

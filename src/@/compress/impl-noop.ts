@@ -21,6 +21,6 @@ export const Compress = (_config: Config): ICompress => {
     },
     async gzipResponse(response) {
       return response
-    }
+    },
   }
 }

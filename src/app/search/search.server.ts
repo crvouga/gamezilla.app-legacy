@@ -4,13 +4,13 @@ import type { ModelServer, MsgServer, MsgToServer } from './search.types'
 type Model = ModelServer
 
 export const init: { model: Model } = {
-  model: null
+  model: null,
 }
 
 type Msg = MsgServer
 
 export const update = ({
-  model
+  model,
 }: {
   msg: Msg
   model: Model
@@ -23,7 +23,7 @@ export const update = ({
 
 export const updateFromClient = ({
   model,
-  msg
+  msg,
 }: {
   msg: MsgToServer
   model: Model

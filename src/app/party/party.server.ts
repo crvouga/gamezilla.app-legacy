@@ -15,7 +15,7 @@ export type Model = ModelServer
 
 export const init: Model = {
   parties: {},
-  users: {}
+  users: {},
 }
 
 //

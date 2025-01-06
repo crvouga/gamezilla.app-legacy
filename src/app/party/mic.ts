@@ -6,7 +6,7 @@ export type MicLoadResult = Result<string, null>
 const load: IO<MicLoadResult> = async () => {
   try {
     await navigator.mediaDevices.getUserMedia({
-      audio: true
+      audio: true,
     })
 
     return Ok(null)
@@ -23,5 +23,5 @@ const unload: IO<MicUnloadResult> = async () => {
 
 export const Mic = {
   load,
-  unload
+  unload,
 }

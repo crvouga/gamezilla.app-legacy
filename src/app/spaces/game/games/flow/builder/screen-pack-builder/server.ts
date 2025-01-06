@@ -21,9 +21,9 @@ const SavePack: Pick<ServerModule, 'update'> = {
           msgCore: [
             {
               t: 'screen-pack-builder.saved-pack',
-              saved
-            }
-          ]
+              saved,
+            },
+          ],
         }
       }
 
@@ -31,7 +31,7 @@ const SavePack: Pick<ServerModule, 'update'> = {
         return {}
       }
     }
-  }
+  },
 }
 
 const PuzzleGrid: Pick<ServerModule, 'update'> = {
@@ -44,7 +44,7 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
 
     const ctx = {
       ...input.ctx,
-      pack
+      pack,
     }
 
     const updated = await PackPuzzlesGridServer.update({
@@ -55,19 +55,19 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
         input.msgClient?.t === 'screen-pack-builder.flow-pack-grid'
           ? {
               ...input.msgClient,
-              ...input.msgClient.c
+              ...input.msgClient.c,
             }
           : null,
       deps: input.deps,
-      msgEvt: input.msgEvt
+      msgEvt: input.msgEvt,
     })
 
     return {
       msgCmd: SpaceServerCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
       msgEvt: updated.msgEvt,
-      msgCore: []
+      msgCore: [],
     }
-  }
+  },
 }
 
 const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
@@ -77,7 +77,7 @@ const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
         const modelCoreNew = ScreenPackBuilderCore.update({
           ctx: input.ctx,
           modelCore: input.modelCore,
-          msgCore: input.msgCore
+          msgCore: input.msgCore,
         })
         const packNew = modelCoreNew.screenPackBuilder?.pack
         if (!packNew) {
@@ -91,7 +91,7 @@ const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
       }
     }
     return {}
-  }
+  },
 }
 
 const EditPackName: Pick<ServerModule, 'update'> = {
@@ -106,14 +106,14 @@ const EditPackName: Pick<ServerModule, 'update'> = {
         input.msgCore?.t === 'got-edit-pack-name-msg'
           ? {
               ...input.msgCore,
-              ...input.msgCore.c
+              ...input.msgCore.c,
             }
-          : null
+          : null,
     })
     return {
-      msgCore: (updated.msgCore ?? []).map((c) => ({ c, t: 'got-edit-pack-name-msg' }))
+      msgCore: (updated.msgCore ?? []).map((c) => ({ c, t: 'got-edit-pack-name-msg' })),
     }
-  }
+  },
 }
 
 export const ScreenPackBuilderServer: Pick<ServerModule, 'update'> = {
@@ -123,7 +123,7 @@ export const ScreenPackBuilderServer: Pick<ServerModule, 'update'> = {
       () => SavePack.update(input),
       () => RemovedPuzzleFromPack.update(input),
       () => PuzzleGrid.update(input),
-      () => EditPackName.update(input)
+      () => EditPackName.update(input),
     )
-  }
+  },
 }

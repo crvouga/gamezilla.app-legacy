@@ -16,14 +16,14 @@ export type BotLevel = 'Easy' | 'Medium' | 'Hard'
 export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
   Easy: 'Easy',
   Medium: 'Medium',
-  Hard: 'Hard'
+  Hard: 'Hard',
 }
 
 export type Stone = 'white' | 'black'
 
 export const stones: { [stone in Stone]: Stone } = {
   white: 'white',
-  black: 'black'
+  black: 'black',
 }
 
 export const toOppositeStone = (stone: Stone): Stone => {
@@ -48,22 +48,22 @@ export type Preset = '9x9' | '13x13' | '19x19'
 export const presetToBound = {
   '9x9': {
     lower: { x: 0, y: 0 },
-    upper: { x: 8, y: 8 }
+    upper: { x: 8, y: 8 },
   },
   '13x13': {
     lower: { x: 0, y: 0 },
-    upper: { x: 12, y: 12 }
+    upper: { x: 12, y: 12 },
   },
   '19x19': {
     lower: { x: 0, y: 0 },
-    upper: { x: 18, y: 18 }
-  }
+    upper: { x: 18, y: 18 },
+  },
 }
 
 export const presetToAllPositions = {
   '9x9': Position.rangeExclusive(presetToBound['9x9']),
   '13x13': Position.rangeExclusive(presetToBound['13x13']),
-  '19x19': Position.rangeExclusive(presetToBound['19x19'])
+  '19x19': Position.rangeExclusive(presetToBound['19x19']),
 }
 
 export const presetToStars = {
@@ -72,14 +72,14 @@ export const presetToStars = {
     { x: 6, y: 2 },
     { x: 4, y: 4 },
     { x: 2, y: 6 },
-    { x: 6, y: 6 }
+    { x: 6, y: 6 },
   ],
   '13x13': [
     { x: 3, y: 3 },
     { x: 9, y: 3 },
     { x: 6, y: 6 },
     { x: 3, y: 9 },
-    { x: 9, y: 9 }
+    { x: 9, y: 9 },
   ],
   '19x19': [
     { x: 3, y: 3 },
@@ -90,19 +90,19 @@ export const presetToStars = {
     { x: 15, y: 9 },
     { x: 3, y: 15 },
     { x: 9, y: 15 },
-    { x: 15, y: 15 }
-  ]
+    { x: 15, y: 15 },
+  ],
 }
 
 export const bounds: Bounds = {
   lower: {
     x: 0,
-    y: 0
+    y: 0,
   },
   upper: {
     x: 9,
-    y: 9
-  }
+    y: 9,
+  },
 }
 
 export const allPositions = Position.rangeExclusive(bounds)
@@ -121,7 +121,7 @@ const inBounds = (position: Position): boolean => {
 export const move = ({
   position,
   stone,
-  board
+  board,
 }: {
   position: Position
   stone: Stone
@@ -159,7 +159,7 @@ export const toBestMove = ({ stone, board }: { stone: Stone; board: Board }) => 
     const moved = move({
       position,
       stone,
-      board
+      board,
     })
     if (moved.t === 'ok') {
       return position
@@ -173,8 +173,8 @@ export const setStone = (position: Position, stone: Stone, board: Board): Board 
     ...board,
     [position.x]: {
       ...board[position.x],
-      [position.y]: stone
-    }
+      [position.y]: stone,
+    },
   }
 }
 
@@ -192,9 +192,9 @@ export const toTurn = (board: Board): Stone => {
       const stone = toStone(
         {
           x,
-          y
+          y,
         },
-        board
+        board,
       )
       if (!stone) {
         continue
@@ -217,13 +217,13 @@ export const toStatus = (board: Board) => {
     return {
       type: 'win',
       wins,
-      winner: wins[0].stone
+      winner: wins[0].stone,
     } as const
   }
 
   if (isDraw(board)) {
     return {
-      type: 'draw'
+      type: 'draw',
     } as const
   }
 
@@ -231,7 +231,7 @@ export const toStatus = (board: Board) => {
 
   return {
     type: 'game',
-    turn
+    turn,
   } as const
 }
 
@@ -258,15 +258,15 @@ export const toWins = (board: Board): Win[] => {
     for (const direction of Direction.all) {
       let current: Position = {
         x,
-        y
+        y,
       }
 
       if (
         visited.has(
           toKey({
             position: current,
-            direction
-          })
+            direction,
+          }),
         )
       ) {
         continue
@@ -293,9 +293,9 @@ export const toWins = (board: Board): Win[] => {
         theta: 180,
         center: {
           x: 0,
-          y: 0
+          y: 0,
         },
-        position: vector
+        position: vector,
       })
 
       while (true) {
@@ -315,15 +315,15 @@ export const toWins = (board: Board): Win[] => {
         visited.add(
           toKey({
             position,
-            direction
-          })
+            direction,
+          }),
         )
       }
 
       if (win.length >= minWinLength) {
         wins.push({
           stone,
-          positions: win
+          positions: win,
         })
       }
     }
@@ -340,9 +340,9 @@ const yieldPositions = function* (board: Board): Generator<Position & { stone: S
       const stone = toStone(
         {
           x,
-          y
+          y,
         },
-        board
+        board,
       )
 
       if (!stone) {
@@ -352,7 +352,7 @@ const yieldPositions = function* (board: Board): Generator<Position & { stone: S
       yield {
         x,
         y,
-        stone
+        stone,
       }
     }
   }

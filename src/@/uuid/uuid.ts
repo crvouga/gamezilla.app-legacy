@@ -18,5 +18,5 @@ const generate = (): Uuid => {
 
 export const Uuid = {
   generate,
-  is
+  is,
 }

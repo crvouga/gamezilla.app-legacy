@@ -23,7 +23,7 @@ const Fixture = async () => {
     for (const input of inputs) {
       const output = await WireServer.update({
         ...input,
-        ctx: input.ctx ?? ctx
+        ctx: input.ctx ?? ctx,
       })
       outputs.push(output)
     }
@@ -39,7 +39,7 @@ const Fixture = async () => {
     ...f,
     ctx,
     update,
-    updates
+    updates,
   }
 }
 
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
 
     await f.update({}, [
       { msg: { t: 'client-connected', clientId, sessionId } },
-      { msgEvt: { t: 'auth-evt.client-authenticated', user, clientId, sessionId } }
+      { msgEvt: { t: 'auth-evt.client-authenticated', user, clientId, sessionId } },
     ])
 
     const after = await f.ctx.wireSessionDb.findByUserIds([user.userId])
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
     const expected: WireSession = pipe(
       WireSession.init(sessionId),
       (x) => WireSession.addClientId(x, clientId),
-      (x) => WireSession.addUserId(x, user.userId)
+      (x) => WireSession.addUserId(x, user.userId),
     )
 
     expect(before).toEqual(Ok([]))
@@ -92,7 +92,7 @@ describe(import.meta.file, () => {
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
     const msg = {
-      t: 'ping'
+      t: 'ping',
     }
 
     const actual: ToClientPayload<unknown>[] = []
@@ -102,7 +102,7 @@ describe(import.meta.file, () => {
 
     await f.update({}, [
       { msg: { t: 'client-connected', clientId, sessionId } },
-      { msgCmd: { t: 'wire', c: { t: 'send-to-client', clientIds: [clientId], msg } } }
+      { msgCmd: { t: 'wire', c: { t: 'send-to-client', clientIds: [clientId], msg } } },
     ])
 
     const expected: ToClientPayload<unknown>[] = [{ [clientId]: { clientId, msgs: [msg] } }]
@@ -116,7 +116,7 @@ describe(import.meta.file, () => {
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
     const msg = {
-      t: 'ping'
+      t: 'ping',
     }
 
     const actual: ToClientPayload<unknown>[] = []
@@ -127,7 +127,7 @@ describe(import.meta.file, () => {
     await f.update({}, [
       { msg: { t: 'client-connected', clientId, sessionId } },
       { msgEvt: { t: 'auth-evt.client-authenticated', clientId, sessionId, user } },
-      { msgCmd: { t: 'wire', c: { t: 'send-to-user', userIds: [user.userId], msg } } }
+      { msgCmd: { t: 'wire', c: { t: 'send-to-user', userIds: [user.userId], msg } } },
     ])
 
     const expected: ToClientPayload<unknown>[] = [{ [clientId]: { clientId, msgs: [msg] } }]

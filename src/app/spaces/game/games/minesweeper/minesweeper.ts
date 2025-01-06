@@ -21,7 +21,7 @@ export const initMines = ({
   rowCount,
   columnCount,
   mineCount,
-  seed
+  seed,
 }: {
   rowCount: NonNegInt
   columnCount: NonNegInt
@@ -32,7 +32,7 @@ export const initMines = ({
     Position.range(columnCount, rowCount),
     (x) => Random.shuffle(seed, x),
     (x) => Iter.take(mineCount, x),
-    (x) => Set.from(Position.toKey, x)
+    (x) => Set.from(Position.toKey, x),
   )
 }
 
@@ -55,14 +55,14 @@ export const plantFlag = (model: Model, position: Position): Model => {
 
   return {
     ...model,
-    flags: Set.add(Position.toKey, position, model.flags)
+    flags: Set.add(Position.toKey, position, model.flags),
   }
 }
 
 export const removeFlag = (model: Model, position: Position): Model => {
   return {
     ...model,
-    flags: Set.remove(Position.toKey, position, model.flags)
+    flags: Set.remove(Position.toKey, position, model.flags),
   }
 }
 
@@ -73,6 +73,6 @@ export const digHole = (model: Model, position: Position): Model => {
 
   return {
     ...model,
-    holes: Set.add(Position.toKey, position, model.holes)
+    holes: Set.add(Position.toKey, position, model.holes),
   }
 }

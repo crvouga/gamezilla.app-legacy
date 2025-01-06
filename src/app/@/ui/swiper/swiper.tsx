@@ -60,7 +60,7 @@ const onContainer = async (input: { id: string; onSlideIndexChanged: (index: num
   })
   observer.observe(document.body, {
     childList: true,
-    subtree: true
+    subtree: true,
   })
 }
 
@@ -96,5 +96,5 @@ const Slide = (input: { children?: VDomChildren; className?: string }) => {
 
 export const Swiper = {
   Container,
-  Slide
+  Slide,
 }

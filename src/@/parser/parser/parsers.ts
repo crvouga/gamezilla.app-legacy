@@ -24,7 +24,7 @@ export const noop = <T>(): Parser<T> => {
   return {
     parse(input) {
       return Ok(input as T)
-    }
+    },
   }
 }
 //
@@ -47,8 +47,8 @@ export const obj = <T>(parsers: {
         return Err([
           {
             message: toErrorMessage('object', typeof input, JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
 
@@ -56,8 +56,8 @@ export const obj = <T>(parsers: {
         return Err([
           {
             message: toErrorMessage('object', 'null', JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
 
@@ -65,8 +65,8 @@ export const obj = <T>(parsers: {
         return Err([
           {
             message: toErrorMessage('object', 'non-indexable', JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
 
@@ -88,9 +88,9 @@ export const obj = <T>(parsers: {
           ...parsed.error.map((err): ParserError => {
             return {
               message: err.message,
-              path: [key, ...err.path]
+              path: [key, ...err.path],
             }
-          })
+          }),
         )
       }
 
@@ -99,7 +99,7 @@ export const obj = <T>(parsers: {
       }
 
       return Ok(result as T)
-    }
+    },
   }
 }
 
@@ -109,12 +109,12 @@ export const str: Parser<string> = {
       return Err([
         {
           message: toErrorMessage('string', typeof input, `${input instanceof Date}, ${JSON.stringify(input)}`),
-          path: []
-        }
+          path: [],
+        },
       ])
     }
     return Ok(input)
-  }
+  },
 }
 
 export const num: Parser<number> = {
@@ -123,12 +123,12 @@ export const num: Parser<number> = {
       return Err([
         {
           message: toErrorMessage('number', typeof input, JSON.stringify(input)),
-          path: []
-        }
+          path: [],
+        },
       ])
     }
     return Ok(input)
-  }
+  },
 }
 
 export const l = <T extends string | number | boolean | null | undefined>(value: T): Parser<T> => {
@@ -138,12 +138,12 @@ export const l = <T extends string | number | boolean | null | undefined>(value:
         return Err([
           {
             message: toErrorMessage(String(value), String(input), JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
       return Ok(value)
-    }
+    },
   }
 }
 
@@ -154,8 +154,8 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
         return Err([
           {
             message: toErrorMessage('array', typeof input, JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
 
@@ -172,9 +172,9 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
           ...parsed.error.map((err): ParserError => {
             return {
               message: err.message,
-              path: [String(i), ...err.path]
+              path: [String(i), ...err.path],
             }
-          })
+          }),
         )
       }
 
@@ -183,7 +183,7 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
       }
 
       return Ok(result)
-    }
+    },
   }
 }
 
@@ -194,13 +194,13 @@ export const maybe = <T>(parser: Parser<T>): Parser<T | null | undefined> => {
         return Ok(null)
       }
       return parser.parse(input)
-    }
+    },
   }
 }
 
 export const dict = <TKey extends string | number, TValue>(
   key: Parser<TKey>,
-  value: Parser<TValue>
+  value: Parser<TValue>,
 ): Parser<{ [key in TKey]: TValue }> => {
   return {
     parse(input) {
@@ -208,8 +208,8 @@ export const dict = <TKey extends string | number, TValue>(
         return Err([
           {
             message: toErrorMessage('object', typeof input, JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
 
@@ -222,9 +222,9 @@ export const dict = <TKey extends string | number, TValue>(
             ...keyParsed.error.map((err): ParserError => {
               return {
                 message: err.message,
-                path: [k, ...err.path]
+                path: [k, ...err.path],
               }
-            })
+            }),
           )
           continue
         }
@@ -235,9 +235,9 @@ export const dict = <TKey extends string | number, TValue>(
             ...valueParsed.error.map((err): ParserError => {
               return {
                 message: err.message,
-                path: [k, ...err.path]
+                path: [k, ...err.path],
               }
-            })
+            }),
           )
           continue
         }
@@ -250,13 +250,13 @@ export const dict = <TKey extends string | number, TValue>(
       }
 
       return Ok(result)
-    }
+    },
   }
 }
 
 export const partialDict = <TKey extends string | number, TValue>(
   key: Parser<TKey>,
-  value: Parser<TValue>
+  value: Parser<TValue>,
 ): Parser<Partial<{ [key in TKey]: TValue }>> => {
   return {
     parse(input) {
@@ -264,8 +264,8 @@ export const partialDict = <TKey extends string | number, TValue>(
         return Err([
           {
             message: toErrorMessage('object', typeof input, JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
 
@@ -278,9 +278,9 @@ export const partialDict = <TKey extends string | number, TValue>(
             ...keyParsed.error.map((err): ParserError => {
               return {
                 message: err.message,
-                path: [k, ...err.path]
+                path: [k, ...err.path],
               }
-            })
+            }),
           )
           continue
         }
@@ -291,9 +291,9 @@ export const partialDict = <TKey extends string | number, TValue>(
             ...valueParsed.error.map((err): ParserError => {
               return {
                 message: err.message,
-                path: [k, ...err.path]
+                path: [k, ...err.path],
               }
-            })
+            }),
           )
           continue
         }
@@ -306,7 +306,7 @@ export const partialDict = <TKey extends string | number, TValue>(
       }
 
       return Ok(result)
-    }
+    },
   }
 }
 
@@ -319,27 +319,27 @@ export const custom = <T>(predicate: (input: unknown) => input is T, errorMessag
       return Err([
         {
           message: `Custom validation failed. ${errorMessage}`,
-          path: []
-        }
+          path: [],
+        },
       ])
-    }
+    },
   }
 }
 
 export const unknown: Parser<unknown> = {
   parse(input) {
     return Ok(input)
-  }
+  },
 }
 
 export const any: Parser<any> = {
   parse(input) {
     return Ok(input)
-  }
+  },
 }
 
 export const enumeration = <T extends string | number | boolean | null | undefined>(
-  values: T[] | readonly T[]
+  values: T[] | readonly T[],
 ): Parser<T> => {
   return {
     parse(input) {
@@ -347,18 +347,18 @@ export const enumeration = <T extends string | number | boolean | null | undefin
         return Err([
           {
             message: toErrorMessage(`one of ${values.join(', ')}`, String(input), JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
       return Ok(input as T)
-    }
+    },
   }
 }
 
 export const brand = <T, TBrand extends string | number | boolean | null | undefined>(
   parser: Parser<T>,
-  _brand: TBrand
+  _brand: TBrand,
 ): Parser<Brand<T, TBrand>> => {
   return {
     parse(input) {
@@ -369,7 +369,7 @@ export const brand = <T, TBrand extends string | number | boolean | null | undef
         case 'ok':
           return Ok(parsed.value as Brand<T, TBrand>)
       }
-    }
+    },
   }
 }
 
@@ -380,8 +380,8 @@ export const regex = (regex: RegExp): Parser<string> => {
         return Err([
           {
             message: toErrorMessage('string', typeof input, JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
 
@@ -389,13 +389,13 @@ export const regex = (regex: RegExp): Parser<string> => {
         return Err([
           {
             message: `Expected string to match regex: ${regex.source}`,
-            path: []
-          }
+            path: [],
+          },
         ])
       }
 
       return Ok(input)
-    }
+    },
   }
 }
 
@@ -409,8 +409,8 @@ export const json: Parser<Json> = {
         return Err([
           {
             message: toErrorMessage('string', typeof input, JSON.stringify(input)),
-            path: []
-          }
+            path: [],
+          },
         ])
       }
       return Ok(input as Json)
@@ -418,11 +418,11 @@ export const json: Parser<Json> = {
       return Err([
         {
           message: `Expected valid JSON. ${error}`,
-          path: []
-        }
+          path: [],
+        },
       ])
     }
-  }
+  },
 }
 
 export const bool: Parser<boolean> = {
@@ -431,10 +431,10 @@ export const bool: Parser<boolean> = {
       return Err([
         {
           message: toErrorMessage('boolean', typeof input, JSON.stringify(input)),
-          path: []
-        }
+          path: [],
+        },
       ])
     }
     return Ok(input)
-  }
+  },
 }

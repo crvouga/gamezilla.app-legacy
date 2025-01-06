@@ -12,7 +12,7 @@ const init = (_input: { ctx: SpaceCtx }): ModelCore => {
     screenPackBuilder: null,
     screenPuzzleBuilderOpen: null,
     screenPuzzleBuilder: null,
-    screenPackBuilderOpen: null
+    screenPackBuilderOpen: null,
   }
 }
 
@@ -20,27 +20,27 @@ const toPreviousScreen = (screen: Screen): Screen => {
   switch (screen.t) {
     case 'screen-main-menu': {
       return {
-        t: 'screen-main-menu'
+        t: 'screen-main-menu',
       }
     }
     case 'screen-pack-builder': {
       return {
-        t: 'screen-pack-builder-open'
+        t: 'screen-pack-builder-open',
       }
     }
     case 'screen-pack-builder-open': {
       return {
-        t: 'screen-main-menu'
+        t: 'screen-main-menu',
       }
     }
     case 'screen-puzzle-builder': {
       return {
-        t: 'screen-puzzle-builder-open'
+        t: 'screen-puzzle-builder-open',
       }
     }
     case 'screen-puzzle-builder-open': {
       return {
-        t: 'screen-main-menu'
+        t: 'screen-main-menu',
       }
     }
   }
@@ -51,7 +51,7 @@ const updateBackButton: UpdateCore = (input) => {
     case 'user-clicked-back-button': {
       return {
         ...input.modelCore,
-        screen: toPreviousScreen(input.modelCore.screen)
+        screen: toPreviousScreen(input.modelCore.screen),
       }
     }
     default: {
@@ -66,7 +66,7 @@ const updates: UpdateCore[] = [
   ScreenPackBuilderCore.update,
   ScreenPackBuilderOpenCore.update,
   ScreenMainMenuCore.update,
-  updateBackButton
+  updateBackButton,
 ]
 
 const update: UpdateCore = (input) => {
@@ -75,5 +75,5 @@ const update: UpdateCore = (input) => {
 
 export const BuilderCore = {
   init,
-  update
+  update,
 }

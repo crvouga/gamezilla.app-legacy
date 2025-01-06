@@ -19,7 +19,7 @@ const random = (input?: {
     userId: input?.userId ?? UserId.generate(),
     createdAt: input?.createdAt ?? Posix.now(),
     phoneNumber: input?.phoneNumber ?? null,
-    role: input?.role ?? 'guest'
+    role: input?.role ?? 'guest',
   }
 }
 
@@ -28,11 +28,11 @@ const randomNormal = (input?: { userId?: UserId; createdAt?: Posix; phoneNumber?
     userId: input?.userId ?? UserId.generate(),
     createdAt: input?.createdAt ?? Posix.now(),
     phoneNumber: PhoneNumber.random(),
-    role: 'normal'
+    role: 'normal',
   } satisfies UserAccount
 }
 
 export const UserAccount = {
   random,
-  randomNormal
+  randomNormal,
 }

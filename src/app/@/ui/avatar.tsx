@@ -4,7 +4,7 @@ export const Avatar = ({
   className,
   src,
   alt,
-  onClick
+  onClick,
 }: {
   src?: string | null
   alt?: string
@@ -20,7 +20,7 @@ export const Avatar = ({
           alt={alt ?? 'user avatar'}
           className={cn(
             'inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40',
-            className
+            className,
           )}
         />
       )
@@ -32,7 +32,7 @@ export const Avatar = ({
           onClick={onClick}
           className={cn(
             'inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40',
-            className
+            className,
           )}
         >
           <svg className='text-secondary h-full w-full' fill='currentColor' viewBox='0 0 24 24'>

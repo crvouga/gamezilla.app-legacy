@@ -18,8 +18,8 @@ const updateCore: UpdateCore = (input) => {
         screenPackBuilder: input.modelCore.screenPackBuilder,
         screenPuzzleBuilder: {
           ...input.modelCore.screenPuzzleBuilder,
-          puzzle: input.msgCore.saved.value
-        }
+          puzzle: input.msgCore.saved.value,
+        },
       }
     }
 
@@ -30,5 +30,5 @@ const updateCore: UpdateCore = (input) => {
 }
 
 export const SaveChangesCore = {
-  updateCore
+  updateCore,
 }

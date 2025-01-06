@@ -9,26 +9,26 @@ export type CappedOrderedDict<TKey extends string | number, TValue> = {
 }
 
 const init = <TKey extends string | number, TValue>({
-  maxSize
+  maxSize,
 }: {
   maxSize: number
 }): CappedOrderedDict<TKey, TValue> => {
   return {
     _valuesByKey: {},
     _maxSize: maxSize,
-    _orderNewestFirst: []
+    _orderNewestFirst: [],
   }
 }
 
 const add = <TKey extends string | number, TValue>(
   model: CappedOrderedDict<TKey, TValue>,
   key: TKey,
-  item: TValue
+  item: TValue,
 ): CappedOrderedDict<TKey, TValue> => {
   const orderNewestFirstNew = [key, ...model._orderNewestFirst]
   const valuesByKeyNew = {
     ...model._valuesByKey,
-    [key]: item
+    [key]: item,
   }
 
   if (orderNewestFirstNew.length > model._maxSize) {
@@ -38,13 +38,13 @@ const add = <TKey extends string | number, TValue>(
   return {
     _valuesByKey: valuesByKeyNew,
     _maxSize: model._maxSize,
-    _orderNewestFirst: orderNewestFirstNew
+    _orderNewestFirst: orderNewestFirstNew,
   }
 }
 
 const remove = <TKey extends string | number, TValue>(
   model: CappedOrderedDict<TKey, TValue>,
-  key: TKey
+  key: TKey,
 ): CappedOrderedDict<TKey, TValue> => {
   if (!(key in model._valuesByKey)) {
     return model
@@ -56,26 +56,26 @@ const remove = <TKey extends string | number, TValue>(
   }
   const orderNewestFirstNew = [
     ...model._orderNewestFirst.slice(0, orderIndex),
-    ...model._orderNewestFirst.slice(orderIndex + 1)
+    ...model._orderNewestFirst.slice(orderIndex + 1),
   ]
   delete valuesByKeyNew[key]
   return {
     _maxSize: model._maxSize,
     _orderNewestFirst: orderNewestFirstNew,
-    _valuesByKey: valuesByKeyNew
+    _valuesByKey: valuesByKeyNew,
   }
 }
 
 const get = <TKey extends string | number, TValue>(
   model: CappedOrderedDict<TKey, TValue>,
-  key: TKey
+  key: TKey,
 ): TValue | null => {
   return model._valuesByKey[key] ?? null
 }
 
 const mergeLeft = <TKey extends string | number, TValue>(
   left: CappedOrderedDict<TKey, TValue>,
-  right: CappedOrderedDict<TKey, TValue>
+  right: CappedOrderedDict<TKey, TValue>,
 ): CappedOrderedDict<TKey, TValue> => {
   const valuesByKeyNew = { ...left._valuesByKey }
   const orderNewestFirstNew = [...left._orderNewestFirst]
@@ -91,7 +91,7 @@ const mergeLeft = <TKey extends string | number, TValue>(
   return {
     _maxSize: left._maxSize,
     _orderNewestFirst: orderNewestFirstNew,
-    _valuesByKey: valuesByKeyNew
+    _valuesByKey: valuesByKeyNew,
   }
 }
 const valuesNewestFirst = <TKey extends string | number, TValue>(model: CappedOrderedDict<TKey, TValue>): TValue[] => {
@@ -104,12 +104,12 @@ const valuesNewestFirst = <TKey extends string | number, TValue>(model: CappedOr
 
 const parser = <TKey extends string | number, TValue>(
   key: p.Parser<TKey>,
-  val: p.Parser<TValue>
+  val: p.Parser<TValue>,
 ): p.Parser<CappedOrderedDict<TKey, TValue>> => {
   return p.obj({
     _valuesByKey: p.dict(key, val),
     _orderNewestFirst: p.arr(key),
-    _maxSize: p.num
+    _maxSize: p.num,
   })
 }
 
@@ -120,5 +120,5 @@ export const CappedOrderedDict = {
   get,
   mergeLeft,
   valuesNewestFirst,
-  parser
+  parser,
 }

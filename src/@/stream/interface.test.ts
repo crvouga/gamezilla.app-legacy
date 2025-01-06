@@ -12,13 +12,13 @@ import { Config, Stream } from './impl'
 const Fixture = async <T>(config: Config<T>) => {
   const stream = await Stream(config)
   return {
-    stream
+    stream,
   }
 }
 
 const MyEvent = p.obj({
   id: EventId.parser,
-  value: p.str
+  value: p.str,
 })
 
 type MyEvent = p.Infer<typeof MyEvent>
@@ -27,8 +27,8 @@ const randomMyEvent = (prevEvent: MyEvent | null): MyEvent => ({
   id: prevEvent ? EventId.increment(prevEvent.id) : EventId.init(),
   value: JSON.stringify({
     x: Math.floor(Math.random() * 1_000_000),
-    y: Math.floor(Math.random() * 1_000_000)
-  })
+    y: Math.floor(Math.random() * 1_000_000),
+  }),
 })
 
 const Fixtures = async () => {
@@ -37,14 +37,14 @@ const Fixtures = async () => {
       t: 'db-conn-kv',
       dbConnKv: await DbConnKv({
         t: 'hash-map',
-        map: new Map()
+        map: new Map(),
       }),
-      parser: MyEvent
+      parser: MyEvent,
     },
     {
       t: 'in-memory',
-      parser: MyEvent
-    }
+      parser: MyEvent,
+    },
   ]
 
   const testEnv = await AppServerTestEnv()
@@ -55,7 +55,7 @@ const Fixtures = async () => {
       decode: (encoded) => Ok(JSON.parse(encoded)),
       encode: (value) => Ok(JSON.stringify(value)),
       logger: Logger({ t: 'noop' }),
-      redisUrl: REDIS_URL
+      redisUrl: REDIS_URL,
     })
   }
 

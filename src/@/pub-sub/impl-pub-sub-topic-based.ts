@@ -15,6 +15,6 @@ export const PubSub = (config: Config): IPubSub => {
 
     async sub(subscriber) {
       return config.pubSubTopicBased.sub(config.topic, subscriber)
-    }
+    },
   }
 }

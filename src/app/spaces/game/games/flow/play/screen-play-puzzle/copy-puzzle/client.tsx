@@ -11,13 +11,13 @@ export const update: ClientModule['update'] = (input) => {
     case 'user-clicked-copy-to-clipboard': {
       if (input.modelCore.screen.t !== 'screen-play-puzzle') {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
       if (input.modelCore.screen.puzzleResult.t === 'not-found') {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -25,18 +25,18 @@ export const update: ClientModule['update'] = (input) => {
         input.modelCore.screen.flowPlay ??
         FlowPlay.init({
           ctx: FlowPlay.initCtx({
-            flowPuzzle: input.modelCore.screen.puzzleResult.c
-          })
+            flowPuzzle: input.modelCore.screen.puzzleResult.c,
+          }),
         })
 
       const flow = FlowPlay.toFlow({
         flow: input.modelCore.screen.puzzleResult.c.flow,
-        model: flowPlay
+        model: flowPlay,
       })
 
       if (flow.t !== 'flow-grid') {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
@@ -49,19 +49,19 @@ export const update: ClientModule['update'] = (input) => {
         msgCmd: [
           playSound(APP_SOUND.refreshFeed),
           showToast(input.ctx.t('app.copied-to-clipboard')),
-          copyToClipboard(encoded)
-        ]
+          copyToClipboard(encoded),
+        ],
       }
     }
   }
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
 export const viewButtonAction = ({
   ctx,
-  dispatch
+  dispatch,
 }: {
   ctx: AppClientCtx
   dispatch: (m: MsgClient) => void
@@ -76,8 +76,8 @@ export const viewButtonAction = ({
       dispatch({
         t: 'got-msg-core',
         c: {
-          t: 'user-clicked-copy-to-clipboard'
-        }
-      })
+          t: 'user-clicked-copy-to-clipboard',
+        },
+      }),
   }
 }

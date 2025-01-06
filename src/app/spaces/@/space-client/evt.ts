@@ -56,5 +56,5 @@ const toClientEvt = (evt?: SpaceClientEvt[] | null): ClientEvt[] => {
 
 export const SpaceClientEvt = {
   toSpaceClientEvt,
-  toClientEvt
+  toClientEvt,
 }

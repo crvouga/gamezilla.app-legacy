@@ -19,7 +19,7 @@ describe(import.meta.file, () => {
 
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: f.CODE
+      code: f.CODE,
     })
 
     expect(isOk(sent)).toBe(true)
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect(f.sms.sent[0]?.message.includes(f.CODE)).toBe(true)
   })
@@ -39,7 +39,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect(f.sms.sent.every((smsMessage) => eq(smsMessage.phoneNumber, f.phoneNumber))).toBe(true)
   })
@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect(f.sms.sent[0]?.message === Translator(f.preferredLanguage)('verify-sms.code-message', f.CODE)).toBe(true)
   })
@@ -57,7 +57,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect((f.sms.sent[0]?.message.length ?? 0) > 0).toBe(true)
   })
@@ -69,7 +69,7 @@ describe(import.meta.file, () => {
 
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: f.WRONG_CODE
+      code: f.WRONG_CODE,
     })
 
     expect(isErr(verified) && verified.error.t === 'code-incorrect').toBe(true)
@@ -77,18 +77,18 @@ describe(import.meta.file, () => {
 
   it('should eventually error after enough failed attempts', async () => {
     const f = await Fixture({
-      verifyCodeMaxAttempts: 1
+      verifyCodeMaxAttempts: 1,
     })
 
     await f.verifySMS.sendCode(f)
 
     await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: f.WRONG_CODE
+      code: f.WRONG_CODE,
     })
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: f.WRONG_CODE
+      code: f.WRONG_CODE,
     })
     expect(isErr(verified) && verified.error.t === 'verification-expired-too-many-failed-attempts').toBe(true)
   })
@@ -100,7 +100,7 @@ describe(import.meta.file, () => {
 
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: PhoneNumber.random(),
-      code: f.CODE
+      code: f.CODE,
     })
 
     expect(isErr(verified) && verified.error.t === 'verification-not-found').toBe(true)
@@ -113,7 +113,7 @@ describe(import.meta.file, () => {
 
     const f = await Fixture({
       verifyCodeExpiresIn,
-      now: () => now
+      now: () => now,
     })
 
     await f.verifySMS.sendCode(f)
@@ -122,7 +122,7 @@ describe(import.meta.file, () => {
 
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: f.CODE
+      code: f.CODE,
     })
 
     expect(isErr(verified) && verified.error.t === 'verification-expired').toBe(true)
@@ -134,12 +134,12 @@ describe(import.meta.file, () => {
     let now = Posix.now()
     const f = await Fixture({
       verifyCodeExpiresIn,
-      now: () => now
+      now: () => now,
     })
 
     await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
 
     now = Posix.future(now, verifyCodeExpiresIn)
@@ -147,7 +147,7 @@ describe(import.meta.file, () => {
 
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: f.CODE
+      code: f.CODE,
     })
 
     expect(isErr(verified)).toBe(true)
@@ -164,8 +164,8 @@ describe(import.meta.file, () => {
       codeGenerator: {
         generate() {
           return code
-        }
-      }
+        },
+      },
     })
 
     await f.verifySMS.sendCode(f)
@@ -180,14 +180,14 @@ describe(import.meta.file, () => {
 
     const verifiedA = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: CODE_A
+      code: CODE_A,
     })
 
     now = Posix.future(now, TimeSpan.seconds(1))
 
     const verifiedB = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: CODE_B
+      code: CODE_B,
     })
 
     expect(isErr(verifiedA)).toBe(true)
@@ -198,17 +198,17 @@ describe(import.meta.file, () => {
   it('should error sending code if hourly limit is reached', async () => {
     const sendCodeHourlyLimit = 3
     const f = await Fixture({
-      sendCodeHourlyLimit
+      sendCodeHourlyLimit,
     })
     for (let i = 0; i < sendCodeHourlyLimit; i++) {
       await f.verifySMS.sendCode({
         ...f,
-        phoneNumber: f.phoneNumber
+        phoneNumber: f.phoneNumber,
       })
     }
     const sent = await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect(sent.t).toBe('err')
     if (isErr(sent)) expect(sent.error.t).toBe('hourly-limit-reached')
@@ -219,18 +219,18 @@ describe(import.meta.file, () => {
     let now = Posix.now()
     const f = await Fixture({
       sendCodeHourlyLimit,
-      now: () => now
+      now: () => now,
     })
     for (let i = 0; i < sendCodeHourlyLimit; i++) {
       await f.verifySMS.sendCode({
         ...f,
-        phoneNumber: f.phoneNumber
+        phoneNumber: f.phoneNumber,
       })
     }
     now = Posix.future(now, TimeSpan.add(TimeSpan.hours(1), TimeSpan.milliseconds(1)))
     const sent = await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect(isOk(sent)).toBe(true)
   })
@@ -239,7 +239,7 @@ describe(import.meta.file, () => {
     const sendCodeHourlyLimit = 3
 
     const f = await Fixture({
-      sendCodeHourlyLimit
+      sendCodeHourlyLimit,
     })
 
     const phoneNumberA = unwrap(PhoneNumber.fromString('+1 480-209-8698'))
@@ -248,12 +248,12 @@ describe(import.meta.file, () => {
     for (let i = 0; i < sendCodeHourlyLimit + 1; i++) {
       await f.verifySMS.sendCode({
         ...f,
-        phoneNumber: phoneNumberA
+        phoneNumber: phoneNumberA,
       })
     }
     const sent = await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: phoneNumberB
+      phoneNumber: phoneNumberB,
     })
     expect(isOk(sent)).toBe(true)
   })
@@ -261,17 +261,17 @@ describe(import.meta.file, () => {
   it('should error sending code if daily limit is reached', async () => {
     const sendCodeDailyLimit = 3
     const f = await Fixture({
-      sendCodeDailyLimit
+      sendCodeDailyLimit,
     })
     for (let i = 0; i < sendCodeDailyLimit; i++) {
       await f.verifySMS.sendCode({
         ...f,
-        phoneNumber: f.phoneNumber
+        phoneNumber: f.phoneNumber,
       })
     }
     const sent = await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect(sent.t).toBe('err')
     if (isErr(sent)) expect(sent.error.t).toBe('daily-limit-reached')
@@ -282,18 +282,18 @@ describe(import.meta.file, () => {
     let now = Posix.now()
     const f = await Fixture({
       sendCodeDailyLimit,
-      now: () => now
+      now: () => now,
     })
     for (let i = 0; i < sendCodeDailyLimit; i++) {
       await f.verifySMS.sendCode({
         ...f,
-        phoneNumber: f.phoneNumber
+        phoneNumber: f.phoneNumber,
       })
     }
     now = Posix.future(now, TimeSpan.add(TimeSpan.days(1), TimeSpan.milliseconds(1)))
     const sent = await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     expect(isOk(sent)).toBe(true)
   })
@@ -302,7 +302,7 @@ describe(import.meta.file, () => {
     const sendCodeDailyLimit = 3
 
     const f = await Fixture({
-      sendCodeDailyLimit
+      sendCodeDailyLimit,
     })
 
     const phoneNumberA = unwrap(PhoneNumber.fromString('+1 480-209-8698'))
@@ -310,12 +310,12 @@ describe(import.meta.file, () => {
     for (let i = 0; i < sendCodeDailyLimit + 1; i++) {
       await f.verifySMS.sendCode({
         ...f,
-        phoneNumber: phoneNumberA
+        phoneNumber: phoneNumberA,
       })
     }
     const sent = await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: phoneNumberB
+      phoneNumber: phoneNumberB,
     })
     expect(isOk(sent)).toBe(true)
   })
@@ -324,15 +324,15 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     const firstVerification = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: f.CODE
+      code: f.CODE,
     })
     const secondVerification = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: f.CODE
+      code: f.CODE,
     })
     expect(firstVerification.t).toBe('ok')
     expect(secondVerification.t).toBe('err')
@@ -342,30 +342,30 @@ describe(import.meta.file, () => {
   it('should hash sent codes stored in the database', async () => {
     const f = await Fixture({
       hashing: Hashing({
-        t: 'bun'
-      })
+        t: 'bun',
+      }),
     })
     await f.verifySMS.sendCode({
       ...f,
-      phoneNumber: f.phoneNumber
+      phoneNumber: f.phoneNumber,
     })
     const code = f.CODE
     const verification = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code
+      code,
     })
 
     const found = await f.verificationDb.find({
       where: {
         phoneNumber: {
-          '=': f.phoneNumber
-        }
+          '=': f.phoneNumber,
+        },
       },
       order: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       limit: 1,
-      offset: 0
+      offset: 0,
     })
 
     const codeHash = unwrap(found).items[0]?.codeHash?.value
@@ -378,12 +378,12 @@ describe(import.meta.file, () => {
     const f = await Fixture({
       verificationDb: VerificationDb({
         t: 'always-err',
-        error: 'some error'
-      })
+        error: 'some error',
+      }),
     })
     const verification = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
-      code: '123'
+      code: '123',
     })
 
     expect(verification.t).toBe('err')

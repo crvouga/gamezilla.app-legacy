@@ -18,7 +18,7 @@ import {
   type MsgToServer,
   type PuzzleInteraction,
   initCore,
-  transitionLoadingToStarted
+  transitionLoadingToStarted,
 } from './puzzle.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
@@ -32,7 +32,7 @@ import { Sub } from '~/@/sub'
 //
 
 export const init = ({
-  ctx
+  ctx,
 }: {
   ctx: SpaceServerCtx
 }): {
@@ -42,18 +42,18 @@ export const init = ({
   return {
     model: {
       ...initCore,
-      requests: {}
+      requests: {},
     },
     eff: async (dispatch) => {
       const result = await initialLoad({
         dbConn: ctx.dbConnSql,
-        userId: ctx.space.hostId
+        userId: ctx.space.hostId,
       })
       dispatch({
         t: 'db-got-initial-load',
-        result
+        result,
       })
-    }
+    },
   }
 }
 
@@ -62,8 +62,8 @@ const initialLoad = async ({ dbConn, userId }: { dbConn: IDbConnSql; userId: Use
     userId,
     eloRating: EloRating.initialRating,
     puzzleQuery: {
-      ratingRange: [1200, 1500]
-    }
+      ratingRange: [1200, 1500],
+    },
   })
 
   if (found.t === 'err') {
@@ -77,7 +77,7 @@ const initialLoad = async ({ dbConn, userId }: { dbConn: IDbConnSql; userId: Use
   }
 
   const foundPuzzles = await PuzzleDb.puzzles.findForProfile(dbConn, {
-    profile
+    profile,
   })
 
   if (foundPuzzles.t === 'err') {
@@ -118,10 +118,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
             t: 'send-to-space',
             msg: {
               t: 'clock-tick',
-              now: ctx.now
-            }
-          }
-        ]
+              now: ctx.now,
+            },
+          },
+        ],
       }
     }
 
@@ -132,18 +132,18 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
             ...model,
             requests: {
               ...model.requests,
-              getPuzzles: msg.result
-            }
+              getPuzzles: msg.result,
+            },
           },
           msgCmd: [
             {
               t: 'send-to-space',
               msg: {
                 t: 'db-got-puzzles',
-                result: msg.result
-              }
-            }
-          ]
+                result: msg.result,
+              },
+            },
+          ],
         }
       }
 
@@ -151,8 +151,8 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
         ctx,
         model: {
           ...model,
-          queue: msg.result.value
-        }
+          queue: msg.result.value,
+        },
       })
 
       return {
@@ -160,18 +160,18 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
           ...modelNew,
           requests: {
             ...model.requests,
-            getPuzzles: Ok(null)
-          }
+            getPuzzles: Ok(null),
+          },
         },
         msgCmd: [
           {
             t: 'send-to-space',
             msg: {
               t: 'db-got-puzzles',
-              result: Ok(modelNew)
-            }
-          }
-        ]
+              result: Ok(modelNew),
+            },
+          },
+        ],
       }
     }
 
@@ -184,10 +184,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
               t: 'send-to-space',
               msg: {
                 t: 'db-got-initial-load',
-                result: msg.result
-              }
-            }
-          ]
+                result: msg.result,
+              },
+            },
+          ],
         }
       }
 
@@ -203,10 +203,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
               t: 'send-to-space',
               msg: {
                 t: 'db-got-initial-load',
-                result: Err('No puzzles found.')
-              }
-            }
-          ]
+                result: Err('No puzzles found.'),
+              },
+            },
+          ],
         }
       }
 
@@ -217,7 +217,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
         profile,
         puzzle,
         queue: puzzles.slice(1),
-        startedAt: ctx.now
+        startedAt: ctx.now,
       }
 
       return {
@@ -227,10 +227,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
             t: 'send-to-space',
             msg: {
               t: 'db-got-initial-load',
-              result: Ok(modelNew)
-            }
-          }
-        ]
+              result: Ok(modelNew),
+            },
+          },
+        ],
       }
     }
 
@@ -242,10 +242,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
             t: 'send-to-space',
             msg: {
               t: 'db-put-interaction',
-              result: Result.mapOk(msg.result, () => model)
-            }
-          }
-        ]
+              result: Result.mapOk(msg.result, () => model),
+            },
+          },
+        ],
       }
     }
 
@@ -257,16 +257,16 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
             t: 'send-to-space',
             msg: {
               t: 'db-put-profile',
-              result: Result.mapOk(msg.result, () => model)
-            }
-          }
-        ]
+              result: Result.mapOk(msg.result, () => model),
+            },
+          },
+        ],
       }
     }
 
     case 'db-got-profile': {
       return {
-        model
+        model,
       }
     }
   }
@@ -296,7 +296,7 @@ export const updateFromClient = (input: {
 export const watchPutInteraction = ({
   modelPrev,
   model,
-  ctx
+  ctx,
 }: {
   modelPrev: ModelServer
   model: ModelServer
@@ -313,7 +313,7 @@ export const watchPutInteraction = ({
     const interaction: PuzzleInteraction = {
       puzzleId: model.puzzle.puzzleId,
       userId: ctx.space.hostId,
-      type: model.t
+      type: model.t,
     }
     return {
       model,
@@ -321,9 +321,9 @@ export const watchPutInteraction = ({
         const result = await PuzzleDb.interactions.insert(ctx.dbConnSql, [interaction])
         dispatch({
           t: 'db-put-interaction',
-          result
+          result,
         })
-      }
+      },
     }
   }
 
@@ -332,7 +332,7 @@ export const watchPutInteraction = ({
 
 export const watchGetPuzzles = ({
   model,
-  ctx
+  ctx,
 }: {
   model: ModelServer
   modelPrev: ModelServer
@@ -348,20 +348,20 @@ export const watchGetPuzzles = ({
         requests: {
           ...model.requests,
           getPuzzles: {
-            t: 'loading'
-          }
-        }
+            t: 'loading',
+          },
+        },
       },
       eff: async (dispatch) => {
         const result = await PuzzleDb.puzzles.findForProfile(ctx.dbConnSql, {
           profile: model.profile,
-          omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)]
+          omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)],
         })
         dispatch({
           t: 'db-got-puzzles',
-          result
+          result,
         })
-      }
+      },
     }
   }
 
@@ -371,7 +371,7 @@ export const watchGetPuzzles = ({
 export const watchPutProfile = ({
   model,
   modelPrev,
-  ctx
+  ctx,
 }: {
   model: ModelServer
   modelPrev: ModelServer
@@ -388,9 +388,9 @@ export const watchPutProfile = ({
         const result = await PuzzleDb.profiles.update(ctx.dbConnSql, profile)
         dispatch({
           t: 'db-put-profile',
-          result
+          result,
         })
-      }
+      },
     }
   }
   return { model }
@@ -407,7 +407,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 }
 
 export const updateFromGame = ({
-  model
+  model,
 }: {
   msg: ChessMsgCore
   model: ModelServer
@@ -419,7 +419,7 @@ export const updateFromGame = ({
 }
 
 export const updateFromEvent = ({
-  model
+  model,
 }: {
   msg: SpaceServerEvt
   model: ModelServer
@@ -443,7 +443,7 @@ export const subscriptions = (intervalId: string, model: ModelServer): Sub<MsgSe
   switch (model.t) {
     case 'started': {
       return Time.interval(intervalId, TICK_RATE, () => ({
-        t: 'clock-tick'
+        t: 'clock-tick',
       }))
     }
     default: {

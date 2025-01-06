@@ -11,7 +11,7 @@ const Fixture = async () => {
   const f = await FixtureSpacesClient()
 
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -23,15 +23,15 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
           t: 'clicked-game-tile',
-          gameName: 'flow'
-        }
-      }
+          gameName: 'flow',
+        },
+      },
     ])
     expect(didPlaySound(output)).toBe(true)
   })
@@ -44,15 +44,15 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
           t: 'clicked-game-tile',
-          gameName: gameNameExpected
-        }
-      }
+          gameName: gameNameExpected,
+        },
+      },
     ])
     const gameName = SpacesCoreClient.toSpaceStarted(output.model, spaceId)?.game?.t
     expect(gameName).toBe(gameNameExpected)
@@ -65,18 +65,18 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'clicked-start-space-button',
-          spaceId
-        }
+          spaceId,
+        },
       },
       {
         msg: {
           t: 'clicked-game-tile',
-          gameName: 'flow'
-        }
+          gameName: 'flow',
+        },
       },
       {
-        msgCmd: exitGame()
-      }
+        msgCmd: exitGame(),
+      },
     ])
 
     const gameName = SpacesCoreClient.toSpaceStarted(NonEmpty.last(outputs).model, spaceId)?.game?.t ?? null

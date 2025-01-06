@@ -5,7 +5,7 @@ import { initServerTransport, type IServerTransport } from './interface'
 export type Config = ImplBunWebSockets.Config | { t: 'noop'; logger: ILogger }
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
-  config: Config
+  config: Config,
 ): Promise<
   IServerTransport<{
     MsgToServer: MsgToServer

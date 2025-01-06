@@ -9,10 +9,10 @@ const update: ServerModule['update'] = async (input) => {
     {},
     () => DeleteForeverServer.update(input),
     () => EditPuzzleNameServer.update(input),
-    () => SaveChangesServer.update(input)
+    () => SaveChangesServer.update(input),
   )
 }
 
 export const ScreenPuzzleBuilderServer: Pick<ServerModule, 'update'> = {
-  update
+  update,
 }

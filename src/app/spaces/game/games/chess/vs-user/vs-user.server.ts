@@ -31,7 +31,7 @@ export const update = (_msg: MsgServer, model: ModelServer): { model: ModelServe
 
 export const updateFromClient = (
   _msg: MsgToServer,
-  model: ModelServer
+  model: ModelServer,
 ): {
   model: ModelServer
   eff?: Eff<MsgServer>
@@ -42,7 +42,7 @@ export const updateFromClient = (
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   msg: SpaceServerEvt
   model: ModelServer
@@ -59,13 +59,13 @@ export const updateFromEvent = ({
 
         if (color === 'none') {
           return {
-            model
+            model,
           }
         }
 
         const modelNew: ModelServer = {
           ...model,
-          [color]: 'none'
+          [color]: 'none',
         }
 
         return {
@@ -73,9 +73,9 @@ export const updateFromEvent = ({
           msgCmd: [
             {
               t: 'send-to-space',
-              msg: ['player-left', modelNew]
-            }
-          ]
+              msg: ['player-left', modelNew],
+            },
+          ],
         }
       }
 
@@ -87,7 +87,7 @@ export const updateFromEvent = ({
 
         if (color === 'none') {
           return {
-            model
+            model,
           }
         }
 
@@ -98,7 +98,7 @@ export const updateFromEvent = ({
           type: 'setup',
           clockPreset: model.clock.preset,
           [otherColor]: model[otherColor],
-          [color]: 'none'
+          [color]: 'none',
         }
 
         return {
@@ -106,9 +106,9 @@ export const updateFromEvent = ({
           msgCmd: [
             {
               t: 'send-to-space',
-              msg: ['player-left', modelNew]
-            }
-          ]
+              msg: ['player-left', modelNew],
+            },
+          ],
         }
       }
     }

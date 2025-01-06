@@ -3,5 +3,5 @@ const Info = (input: { text: string }) => {
 }
 
 export const FeedItem = {
-  Info
+  Info,
 }

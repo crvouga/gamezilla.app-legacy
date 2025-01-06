@@ -28,7 +28,7 @@ export type Msg = MsgServer
 
 export const update = ({
   msg,
-  model
+  model,
 }: {
   msg: Msg
   model: Model
@@ -39,7 +39,7 @@ export const update = ({
   switch (msg.t) {
     case 'none': {
       return {
-        model
+        model,
       }
     }
   }
@@ -60,20 +60,20 @@ const updateBotMove: UpdateFromClient = ({ model }) => {
   if (handled.t === 'err') {
     return {
       model,
-      eff: Eff.None
+      eff: Eff.None,
     }
   }
 
   const modelNew = handled.value
 
   return {
-    model: modelNew
+    model: modelNew,
   }
 }
 
 export const updateFromEvent = ({
   msg,
-  model
+  model,
 }: {
   msg: SpaceServerEvt
   model: Model
@@ -84,8 +84,8 @@ export const updateFromEvent = ({
   if (msg.t === 'space-evt.user-joined-space') {
     return {
       model: init({
-        userId: model.userId
-      })
+        userId: model.userId,
+      }),
     }
   }
 

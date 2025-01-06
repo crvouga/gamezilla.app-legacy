@@ -165,16 +165,16 @@ const andThen = <T extends AppClientModuleTypes>(
     acc = {
       model: {
         ...acc.model,
-        ...updated.model
+        ...updated.model,
       },
       eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
     }
   }
   return acc
 }
 
 export const AppClientModule = {
-  andThen
+  andThen,
 }

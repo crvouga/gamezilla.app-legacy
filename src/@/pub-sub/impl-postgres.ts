@@ -36,7 +36,7 @@ export const PubSub = (config: Config): IPubSub => {
     }
 
     config.logger.info(
-      `received notification channel=${config.channel} instanceId=${instanceId} payload=${payload?.slice(0, 100)}`
+      `received notification channel=${config.channel} instanceId=${instanceId} payload=${payload?.slice(0, 100)}`,
     )
 
     for (const subscriber of subscribers.values()) {
@@ -57,6 +57,6 @@ export const PubSub = (config: Config): IPubSub => {
       return async () => {
         subscribers.delete(subscriberId)
       }
-    }
+    },
   }
 }

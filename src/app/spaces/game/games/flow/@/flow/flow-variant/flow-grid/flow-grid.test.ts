@@ -8,8 +8,8 @@ describe(import.meta.file, () => {
     const initial = FlowGrid.init({
       dimensions: FlowGridDimensions.init({
         height: 3,
-        width: 3
-      })
+        width: 3,
+      }),
     })
     expect(FlowGrid.Model.parse(initial).t).toBe('ok')
   })
@@ -20,8 +20,8 @@ describe(import.meta.file, () => {
     FlowGrid.init({
       dimensions: FlowGridDimensions.init({
         height: 20,
-        width: 20
-      })
+        width: 20,
+      }),
     })
 
     const end = process.hrtime(start)
@@ -37,57 +37,57 @@ describe(import.meta.file, () => {
     const grid = FlowGrid.init({
       dimensions: FlowGridDimensions.init({
         height: 2,
-        width: 1
+        width: 1,
       }),
       terminalsByGroupId: {
         A: {
           startId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           endId: FlowGrid.toNodeId({
             x: 0,
-            y: 1
+            y: 1,
           }),
-          groupId: 'A'
-        }
+          groupId: 'A',
+        },
       },
       pipesBySourceId: {
         [FlowGrid.toNodeId({
           x: 0,
-          y: 0
+          y: 0,
         })]: {
           edgeId: Flow.toFlowEdgeId({
             sourceId: FlowGrid.toNodeId({
               x: 0,
-              y: 0
+              y: 0,
             }),
             targetId: FlowGrid.toNodeId({
               x: 0,
-              y: 1
-            })
+              y: 1,
+            }),
           }),
-          groupId: 'A'
-        }
-      }
+          groupId: 'A',
+        },
+      },
     })
     const expected: FlowGrid.Model['pipesBySourceId'] = {
       [FlowGrid.toNodeId({
         x: 0,
-        y: 1
+        y: 1,
       })]: {
         edgeId: Flow.toFlowEdgeId({
           targetId: FlowGrid.toNodeId({
             x: 0,
-            y: 0
+            y: 0,
           }),
           sourceId: FlowGrid.toNodeId({
             x: 0,
-            y: 1
-          })
+            y: 1,
+          }),
         }),
-        groupId: 'A'
-      }
+        groupId: 'A',
+      },
     }
     const actual = Flow.toReversedPipesBySourceId(grid)
     expect(eq(actual, expected)).toBe(true)

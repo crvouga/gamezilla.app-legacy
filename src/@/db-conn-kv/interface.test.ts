@@ -21,7 +21,7 @@ const Fixture = async () => {
 
       return {
         logger,
-        dbConnKv
+        dbConnKv,
       }
     }
 
@@ -30,7 +30,7 @@ const Fixture = async () => {
 
       return {
         logger,
-        dbConnKv
+        dbConnKv,
       }
     }
   }
@@ -44,7 +44,7 @@ type Implementation = {
 const implementations: Implementation[] = [
   {
     name: 'base',
-    Fixture
+    Fixture,
   },
   {
     name: 'with-cache',
@@ -55,13 +55,13 @@ const implementations: Implementation[] = [
         dbConnKv: await DbConnKv({
           t: 'with-cache',
           cache: await DbConnKv({
-            t: 'hash-map'
+            t: 'hash-map',
           }),
           source: f.dbConnKv,
-          logger: f.logger
-        })
+          logger: f.logger,
+        }),
       }
-    }
+    },
   },
   {
     name: 'with-reduced-parsing',
@@ -73,10 +73,10 @@ const implementations: Implementation[] = [
           t: 'with-reduced-parsing',
           dbConnKv: f.dbConnKv,
           verifiedKeys: new Set(),
-          logger: f.logger
-        })
+          logger: f.logger,
+        }),
       }
-    }
+    },
   },
   {
     name: 'with-throttled-writes-to-source',
@@ -87,19 +87,19 @@ const implementations: Implementation[] = [
         dbConnKv: await DbConnKv({
           t: 'with-cache',
           cache: await DbConnKv({
-            t: 'hash-map'
+            t: 'hash-map',
           }),
           source: await DbConnKv({
             t: 'with-throttled-writes',
             dbConnKv: f.dbConnKv,
             logger: f.logger,
             throttle: TimeSpan.seconds(10),
-            runtime: Runtime({ t: 'noop' })
+            runtime: Runtime({ t: 'noop' }),
           }),
-          logger: f.logger
-        })
+          logger: f.logger,
+        }),
       }
-    }
+    },
   },
 
   {
@@ -116,11 +116,11 @@ const implementations: Implementation[] = [
             t: 'with-distributed-invalidations',
             cache: await DbConnKv({ t: 'hash-map' }),
             logger: f.logger,
-            pubSub: await PubSub({ t: 'in-memory' })
-          })
-        })
+            pubSub: await PubSub({ t: 'in-memory' }),
+          }),
+        }),
       }
-    }
+    },
   },
 
   {
@@ -133,11 +133,11 @@ const implementations: Implementation[] = [
           t: 'redis',
           simulateLatency: async () => {},
           redisUrl: REDIS_URL,
-          logger: f.logger
-        })
+          logger: f.logger,
+        }),
       }
-    }
-  }
+    },
+  },
 ]
 
 const Item = p.obj({ id: p.str })
@@ -146,7 +146,7 @@ type Item = p.Infer<typeof Item>
 
 const randomItem = (): Item => {
   return {
-    id: Uuid.generate()
+    id: Uuid.generate(),
   }
 }
 
@@ -192,14 +192,14 @@ describe(`${import.meta.file} ${name}`, () => {
 
       const before = await f.dbConnKv.getMany(
         items.map((item) => item.id),
-        Item
+        Item,
       )
 
       await f.dbConnKv.setMany(items.map((item) => [item.id, item]))
 
       const after = await f.dbConnKv.getMany(
         items.map((item) => item.id),
-        Item
+        Item,
       )
 
       expect(before).toEqual(Ok([]))
@@ -231,7 +231,7 @@ describe(`${import.meta.file} ${name}`, () => {
 
       const got = await f.dbConnKv.getMany(
         items.map((item) => item.id),
-        Item
+        Item,
       )
 
       expect(got).toEqual(Ok(items))

@@ -1,6 +1,7 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
+  'app.screen-not-found': string
   'app.gamezilla-app': string
   'app.something-went-wrong': string
   'app.exit': string
@@ -42,6 +43,7 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   en: {
+    'app.screen-not-found': 'Screen not found',
     'app.back': 'Back',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Something went wrong',
@@ -78,9 +80,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes?': 'Save changes?',
-    'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`
+    'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`,
   },
   ar: {
+    'app.screen-not-found': 'الشاشة غير موجودة',
     'app.back': 'عودة',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'حدث خطأ ما',
@@ -117,9 +120,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '؟',
     'app.save-changes-warning': `سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.`,
-    'app.save-changes?': 'حفظ التغييرات؟'
+    'app.save-changes?': 'حفظ التغييرات؟',
   },
   de: {
+    'app.screen-not-found': 'Bildschirm nicht gefunden',
     'app.back': 'Zurück',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Etwas ist schief gelaufen',
@@ -156,9 +160,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Ihre Änderungen gehen verloren, wenn Sie sie nicht vor dem Verlassen speichern.`,
-    'app.save-changes?': 'Änderungen speichern?'
+    'app.save-changes?': 'Änderungen speichern?',
   },
   es: {
+    'app.screen-not-found': 'Pantalla no encontrada',
     'app.back': 'Atrás',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Algo salió mal',
@@ -195,9 +200,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Se perderán los cambios si no los guarda antes de salir.`,
-    'app.save-changes?': '¿Guardar cambios?'
+    'app.save-changes?': '¿Guardar cambios?',
   },
   fr: {
+    'app.screen-not-found': 'Écran non trouvé',
     'app.back': 'Retour',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': "Quelque chose s'est mal passé",
@@ -234,9 +240,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Vos modifications seront perdues si vous ne les enregistrez pas avant de quitter.`,
-    'app.save-changes?': 'Enregistrer les modifications?'
+    'app.save-changes?': 'Enregistrer les modifications?',
   },
   it: {
+    'app.screen-not-found': 'Schermo non trovato',
     'app.back': 'Indietro',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Qualcosa è andato storto',
@@ -273,9 +280,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Le tue modifiche andranno perse se non le salvi prima di uscire.`,
-    'app.save-changes?': 'Salvare le modifiche?'
+    'app.save-changes?': 'Salvare le modifiche?',
   },
   ja: {
+    'app.screen-not-found': '画面が見つかりません',
     'app.back': '戻る',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '何かがうまくいかなかった',
@@ -312,9 +320,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '？',
     'app.save-changes-warning': `終了する前に保存しないと、変更が失われます。`,
-    'app.save-changes?': '変更を保存しますか？'
+    'app.save-changes?': '変更を保存しますか？',
   },
   ko: {
+    'app.screen-not-found': '화면을 찾을 수 없습니다',
     'app.back': '뒤로',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '문제가 발생했습니다',
@@ -351,9 +360,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `저장하지 않으면 종료하기 전에 변경 사항이 손실됩니다.`,
-    'app.save-changes?': '변경 사항 저장?'
+    'app.save-changes?': '변경 사항 저장?',
   },
   pt: {
+    'app.screen-not-found': 'Tela não encontrada',
     'app.back': 'Voltar',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Algo deu errado',
@@ -390,9 +400,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Suas alterações serão perdidas se você não salvá-las antes de sair.`,
-    'app.save-changes?': 'Salvar alterações?'
+    'app.save-changes?': 'Salvar alterações?',
   },
   ru: {
+    'app.screen-not-found': 'Экран не найден',
     'app.back': 'Назад',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': 'Что-то пошло не так',
@@ -429,9 +440,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `Ваши изменения будут потеряны, если вы не сохраните их перед выходом.`,
-    'app.save-changes?': 'Сохранить изменения?'
+    'app.save-changes?': 'Сохранить изменения?',
   },
   zh: {
+    'app.screen-not-found': '找不到屏幕',
     'app.back': '返回',
     'app.gamezilla-app': 'gamezilla.app',
     'app.something-went-wrong': '出了点问题',
@@ -468,9 +480,10 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '？',
     'app.save-changes-warning': `如果在退出之前不保存更改，您的更改将丢失。`,
-    'app.save-changes?': '保存更改？'
+    'app.save-changes?': '保存更改？',
   },
   hi: {
+    'app.screen-not-found': 'स्क्रीन नहीं मिली',
     'app.back': 'वापस',
     'app.gamezilla-app': 'गेमजिला.एप',
     'app.something-went-wrong': 'कुछ गलत हो गया',
@@ -507,6 +520,6 @@ export const translations: Translations<Text> = {
     'app.+number': (number) => `+${number.toLocaleString()}`,
     '?': '?',
     'app.save-changes-warning': `आपके परिवर्तन खो जाएंगे अगर आप उन्हें बाहर निकलने से पहले सहेजते नहीं हैं।`,
-    'app.save-changes?': 'परिवर्तन सहेजें?'
-  }
+    'app.save-changes?': 'परिवर्तन सहेजें?',
+  },
 }

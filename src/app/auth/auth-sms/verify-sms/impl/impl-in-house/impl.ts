@@ -6,6 +6,6 @@ import { VerifyCode } from './verify-code'
 export const VerifySMS = (deps: Config): IVerifySMS => {
   return {
     sendCode: SendCode(deps),
-    verifyCode: VerifyCode(deps)
+    verifyCode: VerifyCode(deps),
   }
 }

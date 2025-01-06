@@ -15,17 +15,17 @@ const random = async (): Promise<VerificationAttempt> => {
     verificationAttemptId: VerificationAttemptId.generate(),
     verificationId: VerificationId.generate(),
     codeHash: await Hashing({
-      t: 'noop'
+      t: 'noop',
     }).hash({
       algo: {
-        t: 'sha256'
+        t: 'sha256',
       },
-      password: '123'
+      password: '123',
     }),
-    createdAt: Posix.now()
+    createdAt: Posix.now(),
   }
 }
 
 export const VerificationAttempt = {
-  random
+  random,
 }

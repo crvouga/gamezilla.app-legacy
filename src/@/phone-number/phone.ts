@@ -3,7 +3,7 @@ import {
   findCountryPhoneDataByCountry,
   findCountryPhoneDataByPhoneNumber,
   validatePhoneISO3166,
-  type CountryPhoneDataItem
+  type CountryPhoneDataItem,
 } from './lib/utility'
 
 export interface PhoneInvalidResult {
@@ -39,19 +39,19 @@ export default function phone(
   {
     country = '',
     validateMobilePrefix = true,
-    strictDetection = false
+    strictDetection = false,
   }: {
     country?: string
     validateMobilePrefix?: boolean
     strictDetection?: boolean
-  } = {}
+  } = {},
 ): PhoneResult {
   const invalidResult = {
     isValid: false as const,
     phoneNumber: null,
     countryIso2: null,
     countryIso3: null,
-    countryCode: null
+    countryCode: null,
   }
 
   let processedPhoneNumber = typeof phoneNumber !== 'string' ? '' : phoneNumber.trim()
@@ -95,7 +95,7 @@ export default function phone(
     // try to find the country phone data by the phone number
     const { exactCountryPhoneData, possibleCountryPhoneData } = findCountryPhoneDataByPhoneNumber(
       processedPhoneNumber,
-      validateMobilePrefix
+      validateMobilePrefix,
     )
 
     if (exactCountryPhoneData) {
@@ -130,7 +130,7 @@ export default function phone(
     processedPhoneNumber,
     foundCountryPhoneData,
     validateMobilePrefix,
-    hasPlusSign
+    hasPlusSign,
   )
 
   if (validateResult) {
@@ -139,7 +139,7 @@ export default function phone(
       phoneNumber: `+${processedPhoneNumber}`,
       countryIso2: foundCountryPhoneData.alpha2,
       countryIso3: foundCountryPhoneData.alpha3,
-      countryCode: `+${foundCountryPhoneData.country_code}`
+      countryCode: `+${foundCountryPhoneData.country_code}`,
     }
   }
 
@@ -150,7 +150,7 @@ export default function phone(
       processedPhoneNumber,
       foundCountryPhoneData,
       validateMobilePrefix,
-      hasPlusSign
+      hasPlusSign,
     )
     if (validateResult) {
       return {
@@ -158,7 +158,7 @@ export default function phone(
         phoneNumber: `+${processedPhoneNumber}`,
         countryIso2: foundCountryPhoneData.alpha2,
         countryIso3: foundCountryPhoneData.alpha3,
-        countryCode: `+${foundCountryPhoneData.country_code}`
+        countryCode: `+${foundCountryPhoneData.country_code}`,
       }
     }
   }

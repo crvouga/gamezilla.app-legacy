@@ -20,10 +20,10 @@ const toBoard = (matrix: Matrix): Board => {
         board = setStone(
           {
             x,
-            y
+            y,
           },
           stone,
-          board
+          board,
         )
       }
     }
@@ -38,7 +38,7 @@ describe(import.meta.file, () => {
       [b, b, b, b, _],
       [_, _, _, _, _],
       [_, _, _, _, _],
-      [_, _, _, _, _]
+      [_, _, _, _, _],
     ])
     const wins = toWins(board)
     expect(wins.length).toBe(1)
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
       [w, b, _, _, _],
       [w, b, _, _, _],
       [w, b, _, _, _],
-      [w, _, _, _, _]
+      [w, _, _, _, _],
     ])
     const wins = toWins(board)
     expect(wins.length).toBe(1)
@@ -62,7 +62,7 @@ describe(import.meta.file, () => {
       [b, w, _, _, _],
       [_, b, w, _, _],
       [_, _, b, w, _],
-      [_, _, _, b, w]
+      [_, _, _, b, w],
     ])
     const wins = toWins(board)
     expect(wins.length).toBe(1)
@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
       [_, _, _, w, b],
       [_, _, w, b, _],
       [_, w, b, _, _],
-      [w, b, _, _, _]
+      [w, b, _, _, _],
     ])
     const wins = toWins(board)
     expect(wins.length).toBe(1)
@@ -86,7 +86,7 @@ describe(import.meta.file, () => {
       [b, b, b, b, b],
       [_, _, _, _, _],
       [_, _, _, _, _],
-      [_, _, _, _, _]
+      [_, _, _, _, _],
     ])
     const wins = toWins(board)
     expect(wins.length).toBe(2)
@@ -98,7 +98,7 @@ describe(import.meta.file, () => {
       [b, b, b, b, w],
       [_, _, _, _, _],
       [_, _, _, _, _],
-      [_, _, _, _, _]
+      [_, _, _, _, _],
     ])
     const wins = toWins(board)
     expect(wins.length).toBe(0)

@@ -7,7 +7,7 @@ export const UserStartedPuzzle = p.obj({
   t: p.l('user-started-puzzle'),
   userId: UserId,
   puzzleId: PuzzleId,
-  happenedAt: Posix
+  happenedAt: Posix,
 })
 export type UserStartedPuzzle = p.Infer<typeof UserStartedPuzzle>
 
@@ -15,7 +15,7 @@ export const UserSolvedPuzzle = p.obj({
   t: p.l('user-solved-puzzle'),
   userId: UserId,
   puzzleId: PuzzleId,
-  happenedAt: Posix
+  happenedAt: Posix,
 })
 export type UserSolvedPuzzle = p.Infer<typeof UserSolvedPuzzle>
 
@@ -23,7 +23,7 @@ export const UserUsedHint = p.obj({
   t: p.l('user-used-hint'),
   userId: UserId,
   puzzleId: PuzzleId,
-  happenedAt: Posix
+  happenedAt: Posix,
 })
 export type UserUsedHint = p.Infer<typeof UserUsedHint>
 

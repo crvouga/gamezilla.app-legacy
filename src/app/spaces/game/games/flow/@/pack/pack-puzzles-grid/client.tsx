@@ -12,7 +12,7 @@ const update: ClientModule['update'] = (input) => {
     (model) => updateServerListedPuzzles({ ...input, model }),
     (model) => updateFetchMissingPuzzles({ ...input, model }),
     (model) => updateRequest({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model })
+    (model) => updateFromCmd({ ...input, model }),
   )
 }
 
@@ -42,15 +42,15 @@ const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
   return {
     model: {
       ...input.model,
-      request: RequestResponse.startedRequest(input.ctx.now)
+      request: RequestResponse.startedRequest(input.ctx.now),
     },
     msgCmd: [
       sendToServer({
         t: 'list-puzzles-by-id',
         puzzleIds: input.ctx.pack.puzzleIds,
-        causedBy: { ...input, model: undefined }
-      })
-    ]
+        causedBy: { ...input, model: undefined },
+      }),
+    ],
   }
 }
 
@@ -64,7 +64,7 @@ const updateServerListedPuzzles: ClientModule['update'] = (input) => {
           if (isErr(msgServer.listed)) {
             return {
               model,
-              msgCmd: showErrSm(input.ctx.t('app.something-went-wrong'))
+              msgCmd: showErrSm(input.ctx.t('app.something-went-wrong')),
             }
           }
 
@@ -76,8 +76,8 @@ const updateServerListedPuzzles: ClientModule['update'] = (input) => {
           return {
             model: {
               ...input.model,
-              puzzles: puzzlesNew
-            }
+              puzzles: puzzlesNew,
+            },
           }
         },
         (model) => {
@@ -87,11 +87,11 @@ const updateServerListedPuzzles: ClientModule['update'] = (input) => {
               request: RequestResponse.response(
                 model.request,
                 input.ctx.now,
-                Result.mapOk(msgServer.listed, () => null)
-              )
-            }
+                Result.mapOk(msgServer.listed, () => null),
+              ),
+            },
           }
-        }
+        },
       )
     }
   }
@@ -102,8 +102,8 @@ const updateRequest: ClientModule['update'] = (input) => {
   return {
     model: {
       ...input.model,
-      request: RequestResponse.timePassed(input.model.request, input.ctx.now)
-    }
+      request: RequestResponse.timePassed(input.model.request, input.ctx.now),
+    },
   }
 }
 
@@ -113,20 +113,20 @@ const updateFromCmd: ClientModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          request: RequestResponse.startedRequest(input.ctx.now)
+          request: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
           sendToServer({
             t: 'list-puzzles-by-id',
             puzzleIds: input.msgCmd.c.pack.puzzleIds,
-            causedBy: { msgCmd: input.msgCmd }
-          })
-        ]
+            causedBy: { msgCmd: input.msgCmd },
+          }),
+        ],
       }
     }
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -134,7 +134,7 @@ const updateFromCmd: ClientModule['update'] = (input) => {
 
 const subscriptionsRequest: ClientModule['subscriptions'] = (input) => {
   return RequestResponse.subscriptions(input.model.request, () => ({
-    t: 'elapsed'
+    t: 'elapsed',
   }))
 }
 
@@ -147,8 +147,8 @@ const load = (pack: Pack): MsgInCmdClient => {
     t: 'flow-cmd.pack-puzzles-grid',
     c: {
       t: 'load',
-      pack
-    }
+      pack,
+    },
   }
 }
 
@@ -165,5 +165,5 @@ export const PackPuzzlesGridClient = {
   update,
 
   subscriptions,
-  shouldShowLoading
+  shouldShowLoading,
 }

@@ -11,7 +11,7 @@ const init = (number: number): PosNum => {
 
   return {
     _type: 'PosNum',
-    _value: value
+    _value: value,
   }
 }
 
@@ -31,5 +31,5 @@ export const PosNum = {
   sub,
   add,
   init,
-  inc
+  inc,
 }

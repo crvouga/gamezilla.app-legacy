@@ -22,7 +22,7 @@ export function editDistance(s1: string, s2: string): number {
         // @ts-ignore
         dp[i][j - 1] + 1,
         // @ts-ignore
-        dp[i - 1][j - 1] + cost
+        dp[i - 1][j - 1] + cost,
       )
     }
   }

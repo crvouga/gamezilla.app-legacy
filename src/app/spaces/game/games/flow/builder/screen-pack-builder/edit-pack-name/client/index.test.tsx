@@ -19,11 +19,11 @@ const Fixture = async () => {
     ...f,
     ctx: {
       ...f.ctx,
-      open: false
+      open: false,
     },
     model,
     modelCore,
-    pack
+    pack,
   }
 }
 
@@ -34,17 +34,17 @@ describe(import.meta.file, () => {
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.ctx.space.hostId,
-        packNameDraft: 'pack-name'
+        packNameDraft: 'pack-name',
       },
       {
         t: 'edit-pack-name.user-clicked-save-button',
-        userId: f.ctx.space.hostId
-      }
+        userId: f.ctx.space.hostId,
+      },
     ]
     for (const msgCore of msgCores) {
       const output = EditPackNameClient.update({
         ...f,
-        msg: msgCore
+        msg: msgCore,
       })
       expect(output.msgCore?.some((msg) => msg.t === msgCore.t)).toBe(true)
     }
@@ -57,8 +57,8 @@ describe(import.meta.file, () => {
       msgCore: withEventId({
         t: 'edit-pack-name.server-persisted-pack',
         result: Err('something errored'),
-        userId: f.ctx.space.hostId
-      })
+        userId: f.ctx.space.hostId,
+      }),
     })
     expect(didShowErrorSm(output)).toBe(true)
   })

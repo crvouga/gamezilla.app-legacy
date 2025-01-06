@@ -7,7 +7,7 @@ export const Canvas = <T,>({
   onTouchStart,
   onTouchMove,
   onMouseMove,
-  onTouchEnd
+  onTouchEnd,
 }: {
   className?: string
   watch: T

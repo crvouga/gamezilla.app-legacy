@@ -5,7 +5,7 @@ import { initClientTransport, type IClientTransport } from './interface'
 export type Config = ImplWebSockets.Config | { t: 'noop'; logger: ILogger }
 
 export const ClientTransport = async <MsgToServer, MsgToClient>(
-  config: Config
+  config: Config,
 ): Promise<
   IClientTransport<{
     MsgToServer: MsgToServer

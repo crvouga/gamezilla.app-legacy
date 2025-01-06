@@ -10,21 +10,21 @@ export const initCore = (input: { gameName: GameName; ctx: SpaceCtx }): ModelCor
     case 'connect-four': {
       return {
         t: 'connect-four',
-        c: ConnectFour.initCore()
+        c: ConnectFour.initCore(),
       }
     }
 
     case 'flow': {
       return {
         t: 'flow',
-        c: FlowCore.initCore(input)
+        c: FlowCore.initCore(input),
       }
     }
 
     default: {
       return {
         t: 'flow',
-        c: FlowCore.initCore(input)
+        c: FlowCore.initCore(input),
       }
     }
   }
@@ -33,7 +33,7 @@ export const initCore = (input: { gameName: GameName; ctx: SpaceCtx }): ModelCor
 export const updateCore = ({
   ctx,
   modelCore,
-  msgCore
+  msgCore,
 }: {
   ctx: SpaceCtx
   modelCore: ModelCore
@@ -49,10 +49,10 @@ export const updateCore = ({
               ctx,
               msgCore: {
                 ...msgCore,
-                ...msgCore.c
+                ...msgCore.c,
               },
-              modelCore: modelCore.c
-            })
+              modelCore: modelCore.c,
+            }),
           }
         }
         default: {
@@ -70,10 +70,10 @@ export const updateCore = ({
               ctx,
               msgCore: {
                 ...msgCore,
-                ...msgCore.c
+                ...msgCore.c,
               },
-              modelCore: modelCore.c
-            })
+              modelCore: modelCore.c,
+            }),
           }
         }
 

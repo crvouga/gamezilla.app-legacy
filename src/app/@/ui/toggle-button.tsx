@@ -1,7 +1,7 @@
 export const ToggleButton = ({
   onToggle,
   checked,
-  label
+  label,
 }: {
   label: string
   id: string

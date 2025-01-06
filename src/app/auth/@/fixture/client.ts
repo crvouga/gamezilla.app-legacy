@@ -6,6 +6,6 @@ export const FixtureAuthClient = async () => {
   const initial = AuthClient.init({ ctx: f.ctx })
   return {
     ...f,
-    initial
+    initial,
   }
 }

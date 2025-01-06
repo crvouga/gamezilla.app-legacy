@@ -22,7 +22,7 @@ const ids: SvgIds = {
   playerTwoGradient: `playerTwoGradient${randomId}`,
   holePattern: `holePattern${randomId}`,
   columnGradient: `columnGradient${randomId}`,
-  holeMask: `holeMask${randomId}`
+  holeMask: `holeMask${randomId}`,
 }
 
 /* Have to increase the viewBox so that the draw animation is smooth >:-{ */
@@ -39,7 +39,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       constructor() {
         super()
         this.attachShadow({
-          mode: 'open'
+          mode: 'open',
         })
       }
 
@@ -64,7 +64,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         const initialColumns = this.getAttribute('initial-columns-json')
         if (initialColumns) {
           this.input = {
-            columns: JSON.parse(initialColumns)
+            columns: JSON.parse(initialColumns),
           }
         }
 
@@ -124,7 +124,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
             onClick: (columnIndex) => {
               this.onColumnClick(columnIndex)
             },
-            parentNode: columns
+            parentNode: columns,
           })
         }
 
@@ -132,14 +132,14 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
           initDiscs({
             columns: this.input.columns,
             ids,
-            parentNode: discs
+            parentNode: discs,
           })
         }
 
         if (this.input && wins) {
           initWins({
             columns: this.input.columns,
-            parentNode: wins
+            parentNode: wins,
           })
         }
       }
@@ -178,7 +178,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
           syncDiscs({
             columns,
             ids,
-            parentNode: discs
+            parentNode: discs,
           })
         }
         const wins = this.getWinsParentNode()
@@ -186,7 +186,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
           syncWins({
             columns,
             parentNode: wins,
-            prevColumns: this.previnput?.columns ?? null
+            prevColumns: this.previnput?.columns ?? null,
           })
         }
 
@@ -200,7 +200,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
           }
         }
       }
-    }
+    },
   )
 }
 

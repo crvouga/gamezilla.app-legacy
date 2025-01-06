@@ -137,12 +137,12 @@ const andThen = async <T extends AppServerModuleTypes>(
     const updated = await update()
     acc = {
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt)
+      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
     }
   }
   return acc
 }
 
 export const AppServerModule = {
-  andThen
+  andThen,
 }

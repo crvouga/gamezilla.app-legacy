@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       borderColor: {
-        DEFAULT: '#525252'
-      }
-    }
+        DEFAULT: '#525252',
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 }

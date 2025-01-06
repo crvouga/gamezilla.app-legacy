@@ -23,8 +23,8 @@ const userObversedGrid = (ctx: FlowServerCtx, client: AuthenticatedClient, puzzl
       ...client,
       puzzleIds,
       t: 'list-puzzles-by-id',
-      causedBy: null
-    }
+      causedBy: null,
+    },
   })
 }
 
@@ -33,18 +33,18 @@ const Fixture = async () => {
   const ctx: FlowServerCtx = {
     ...f.ctx,
     flowPackDb: PackDb({
-      t: 'hash-map'
+      t: 'hash-map',
     }),
     flowPuzzleDb: PuzzleDb({
-      t: 'hash-map'
-    })
+      t: 'hash-map',
+    }),
   }
   const client = randomAuthenticatedClient()
   const puzzle = await Puzzle.random()
   const somePack = await Pack.create({
     createdBy: client.userId,
     now: f.ctx.now,
-    puzzleIds: [puzzle.id]
+    puzzleIds: [puzzle.id],
   })
 
   await ctx.flowPuzzleDb.put(puzzle)

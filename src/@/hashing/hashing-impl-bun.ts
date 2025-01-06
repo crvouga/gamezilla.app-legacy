@@ -9,14 +9,14 @@ export const Hashing = (): IHashing => {
         case 'bcrypt': {
           const hashedInput = await Bun.password.hash(password, {
             algorithm: algo.t,
-            cost: algo.cost
+            cost: algo.cost,
           })
 
           const value = HashValue.fromString(hashedInput)
 
           return {
             algo,
-            value
+            value,
           }
         }
         case 'argon2d':
@@ -25,13 +25,13 @@ export const Hashing = (): IHashing => {
           const hashedInput = await Bun.password.hash(password, {
             algorithm: algo.t,
             memoryCost: algo.memoryCost,
-            timeCost: algo.timeCost
+            timeCost: algo.timeCost,
           })
           const value = HashValue.fromString(hashedInput)
 
           return {
             algo,
-            value
+            value,
           }
         }
 
@@ -46,7 +46,7 @@ export const Hashing = (): IHashing => {
 
           return {
             algo,
-            value
+            value,
           }
         }
       }
@@ -70,6 +70,6 @@ export const Hashing = (): IHashing => {
           return hashedInput === hash.value.toString()
         }
       }
-    }
+    },
   }
 }

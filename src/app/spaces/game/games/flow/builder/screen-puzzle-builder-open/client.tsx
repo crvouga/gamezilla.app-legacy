@@ -11,7 +11,7 @@ const update: ClientModule['update'] = (input) => {
     { model: input.model },
     (model) => CreateNewPuzzleClient.update({ ...input, model }),
     (model) => updateMain({ ...input, model }),
-    (model) => updateLoadPuzzles({ ...input, model })
+    (model) => updateLoadPuzzles({ ...input, model }),
   )
 }
 
@@ -23,11 +23,11 @@ const updateLoadPuzzles: ClientModule['update'] = (input) => {
   ) {
     return {
       model: input.model,
-      msgCmd: [PuzzleListClient.load()]
+      msgCmd: [PuzzleListClient.load()],
     }
   }
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
@@ -36,13 +36,13 @@ const updateMain: ClientModule['update'] = (input) => {
     case 'screen-puzzle-builder-open.clicked-puzzle-list-item': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
   }
 
   return {
-    model: input.model
+    model: input.model,
   }
 }
 
@@ -55,8 +55,8 @@ const View: ClientModule['View'] = (input) => {
             t: 'got-msg-core',
             c: {
               t: 'user-clicked-back-button',
-              userId: input.ctx.currentUserId
-            }
+              userId: input.ctx.currentUserId,
+            },
           })
         }
         ctx={input.ctx}
@@ -67,7 +67,7 @@ const View: ClientModule['View'] = (input) => {
         dispatch={(_c) => {}}
         model={{
           ...input.ctx.puzzleList,
-          puzzles: input.ctx.puzzles
+          puzzles: input.ctx.puzzles,
         }}
         emits={{
           clickedPuzzleItem: (puzzle) =>
@@ -76,12 +76,12 @@ const View: ClientModule['View'] = (input) => {
               c: {
                 t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
                 puzzle,
-                userId: input.ctx.currentUserId
-              }
-            })
+                userId: input.ctx.currentUserId,
+              },
+            }),
         }}
         slots={{
-          fab: () => <CreateNewPuzzleClient.ViewCreateFab {...input} />
+          fab: () => <CreateNewPuzzleClient.ViewCreateFab {...input} />,
         }}
       />
     </div>
@@ -95,5 +95,5 @@ const subscriptions: ClientModule['subscriptions'] = (input) => {
 export const ScreenPuzzleBuilderOpenClient = {
   update,
   View,
-  subscriptions
+  subscriptions,
 }

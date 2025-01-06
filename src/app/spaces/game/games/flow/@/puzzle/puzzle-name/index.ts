@@ -19,5 +19,5 @@ const parser = p.custom(is, 'Invalid flow puzzle name')
 export const PuzzleName = {
   ...parser,
   generate,
-  is
+  is,
 }

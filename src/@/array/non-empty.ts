@@ -38,5 +38,5 @@ export const NonEmpty = {
   last,
   map,
   append,
-  prepend
+  prepend,
 }

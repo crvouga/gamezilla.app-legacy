@@ -87,7 +87,7 @@ const andThen = async <T extends GameServerModuleTypes>(
     acc = {
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore)
+      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
     }
   }
   return acc
@@ -96,11 +96,11 @@ const andThen = async <T extends GameServerModuleTypes>(
 const tagOutput = <
   TTag extends string,
   T extends GameServerModuleTypes,
-  TTaggedCmd extends GameServerModuleTypes['MsgCmdOut']
+  TTaggedCmd extends GameServerModuleTypes['MsgCmdOut'],
 >(
   tag: TTag,
   tagCmd: (msgCmd: T['MsgCmdOut'][]) => TTaggedCmd[] | null | undefined,
-  output: Output<T>
+  output: Output<T>,
 ): {
   msgCmd?: TTaggedCmd[]
   msgEvt?: T['MsgEvtOut'][]
@@ -112,8 +112,8 @@ const tagOutput = <
     msgCore: output.msgCore?.map((c) => ({
       eventId: c.eventId,
       c: c,
-      t: tag
-    }))
+      t: tag,
+    })),
   }
 }
 
@@ -128,7 +128,7 @@ const fixtureUpdates =
   <T extends GameServerModuleTypes>(config: FixtureUpdateConfig<T>) =>
   async (
     outputs: NonEmpty<Output<T> & { modelCore: T['ModelCore'] }>,
-    inputs: Partial<Input<T>>[]
+    inputs: Partial<Input<T>>[],
   ): Promise<NonEmpty<Output<T> & { modelCore: T['ModelCore'] }>> => {
     const [input, ...rest] = inputs
     if (!input) {
@@ -139,16 +139,16 @@ const fixtureUpdates =
       ctx: config.ctx,
       deps: null,
       modelCore: lastOutput.modelCore,
-      ...input
+      ...input,
     })
     const msgCore = Msg.batch(input.msgCore, nextOutput.msgCore)
     const nextModelCore = msgCore.reduce(
       (modelCore, msgCore) => config.updateCore({ ctx: config.ctx, modelCore, msgCore }),
-      lastOutput.modelCore
+      lastOutput.modelCore,
     )
     const output = {
       ...nextOutput,
-      modelCore: nextModelCore
+      modelCore: nextModelCore,
     }
     return fixtureUpdates(config)([...outputs, output], rest)
   }
@@ -165,5 +165,5 @@ export const GameServerModule = {
   andThen,
   tagOutput,
   fixtureUpdate,
-  fixtureUpdates
+  fixtureUpdates,
 }

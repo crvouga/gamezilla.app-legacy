@@ -9,7 +9,7 @@ const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
     { model: input.model },
     (model) => updateMain({ ...input, model }),
-    (model) => PackCreateNewClient.update({ ...input, model })
+    (model) => PackCreateNewClient.update({ ...input, model }),
   )
 }
 
@@ -18,12 +18,12 @@ export const updateMain: ClientModule['update'] = (input) => {
     case 'screen-pack-builder-open.user-clicked-pack-item': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)]
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -38,8 +38,8 @@ const View: ClientModule['View'] = (input) => {
             t: 'got-msg-core',
             c: {
               t: 'user-clicked-back-button',
-              userId: input.ctx.currentUserId
-            }
+              userId: input.ctx.currentUserId,
+            },
           })
         }
         ctx={input.ctx}
@@ -50,7 +50,7 @@ const View: ClientModule['View'] = (input) => {
         dispatch={(_c) => {}}
         model={input.ctx.packList}
         slots={{
-          fab: () => <PackCreateNewClient.ViewCreateFab {...input} />
+          fab: () => <PackCreateNewClient.ViewCreateFab {...input} />,
         }}
         emits={{
           clickedPackItem: (pack) =>
@@ -59,9 +59,9 @@ const View: ClientModule['View'] = (input) => {
               c: {
                 t: 'screen-pack-builder-open.user-clicked-pack-item',
                 pack,
-                userId: input.ctx.currentUserId
-              }
-            })
+                userId: input.ctx.currentUserId,
+              },
+            }),
         }}
       />
     </div>
@@ -70,5 +70,5 @@ const View: ClientModule['View'] = (input) => {
 
 export const ScreenPackBuilderOpenClient = {
   View,
-  update
+  update,
 }

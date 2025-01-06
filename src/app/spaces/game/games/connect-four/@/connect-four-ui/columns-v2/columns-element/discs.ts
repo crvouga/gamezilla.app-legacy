@@ -10,7 +10,7 @@ const createDiscNode = ({
   x,
   y,
   player,
-  ids
+  ids,
 }: {
   ids: SvgIds
   x: number
@@ -25,7 +25,7 @@ const createDiscNode = ({
   circle.setAttribute('r', '0.425')
   circle.setAttribute(
     'fill',
-    player === 'player-one' ? `url(#${ids.playerOneGradient})` : `url(#${ids.playerTwoGradient})`
+    player === 'player-one' ? `url(#${ids.playerOneGradient})` : `url(#${ids.playerTwoGradient})`,
   )
   return circle
 }
@@ -43,10 +43,10 @@ export const exitDisc = async ({ node, x, y }: { node: SVGCircleElement; x: numb
       to: y - MAX_COLUMN_HEIGHT,
       duration: 750,
       easing: {
-        type: 'ease-in-back'
+        type: 'ease-in-back',
       },
-      delay: (x / COLUMN_COUNT) * 500
-    }
+      delay: (x / COLUMN_COUNT) * 500,
+    },
   })
 
   node.remove()
@@ -57,7 +57,7 @@ export const enterDisc = async ({
   x,
   y,
   parentNode,
-  ids
+  ids,
 }: {
   ids: SvgIds
   parentNode: SVGGElement
@@ -74,9 +74,9 @@ export const enterDisc = async ({
       to: y,
       duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
       easing: {
-        type: 'ease-out-quint'
-      }
-    }
+        type: 'ease-out-quint',
+      },
+    },
   })
 }
 
@@ -95,7 +95,7 @@ export const initDiscs = ({ columns, parentNode, ids }: { columns: Columns; pare
         x,
         ids,
         y,
-        player
+        player,
       })
       parentNode?.appendChild(discNode)
     }
@@ -110,8 +110,8 @@ export function syncDiscs({ parentNode, columns, ids }: { parentNode: SVGGElemen
       const node = parentNode.querySelector(
         `#${toDiscId({
           x,
-          y
-        })}`
+          y,
+        })}`,
       )
 
       if (!disc && node) {
@@ -119,7 +119,7 @@ export function syncDiscs({ parentNode, columns, ids }: { parentNode: SVGGElemen
           exitDisc({
             node: node,
             x,
-            y
+            y,
           })
         }
         continue
@@ -131,7 +131,7 @@ export function syncDiscs({ parentNode, columns, ids }: { parentNode: SVGGElemen
           parentNode,
           player: disc,
           x,
-          y
+          y,
         })
       }
     }

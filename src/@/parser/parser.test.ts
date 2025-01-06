@@ -12,17 +12,17 @@ describe(import.meta.file, () => {
       {},
       [],
       {
-        key: 'value'
+        key: 'value',
       },
       ['value'],
       {
-        key: ['value']
+        key: ['value'],
       },
       [
         {
-          key: 'value'
-        }
-      ]
+          key: 'value',
+        },
+      ],
     ]
 
     for (const json of validJson) {

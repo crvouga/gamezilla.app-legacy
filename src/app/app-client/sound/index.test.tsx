@@ -23,12 +23,12 @@ const Fixture = async () => {
   const f = await FixtureAppClient()
 
   const init = Sound.init({
-    ctx: f.ctx
+    ctx: f.ctx,
   }).model
 
   const update = (init: Sound.Model, inputs: Input[]) => {
     let output: ReturnType<typeof Sound.update> = {
-      model: init
+      model: init,
     }
     for (const input of inputs) {
       output = Sound.update({ ctx: input.ctx ?? f.ctx, model: output.model, ...input })
@@ -40,7 +40,7 @@ const Fixture = async () => {
   return {
     ...f,
     init,
-    update
+    update,
   }
 }
 
@@ -51,8 +51,8 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const after = f.update(f.init, [
       {
-        msgCmd: playSound(APP_SOUND.tap)
-      }
+        msgCmd: playSound(APP_SOUND.tap),
+      },
     ])
     expect(after.eff).toBeTruthy()
   })

@@ -8,14 +8,14 @@ const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
   return {
     mode: 'none',
     builder: BuilderCore.init(input),
-    play: PlayCore.initCore(input)
+    play: PlayCore.initCore(input),
   }
 }
 
 const updateCore = ({
   ctx,
   msgCore,
-  modelCore
+  modelCore,
 }: {
   ctx: SpaceCtx
   msgCore: WithEventMeta<MsgCore>
@@ -26,21 +26,21 @@ const updateCore = ({
       const updated = PlayCore.updateCore({
         ctx,
         msgCore: msgCore.c,
-        modelCore: modelCore.play
+        modelCore: modelCore.play,
       })
 
       switch (updated.event?.t) {
         case 'user-clicked-exit-mode-button': {
           return {
             ...modelCore,
-            mode: 'none'
+            mode: 'none',
           }
         }
       }
 
       return {
         ...modelCore,
-        play: updated
+        play: updated,
       }
     }
 
@@ -48,21 +48,21 @@ const updateCore = ({
       const updated = BuilderCore.update({
         ctx,
         msgCore: msgCore.c,
-        modelCore: modelCore.builder
+        modelCore: modelCore.builder,
       })
 
       switch (updated.event?.t) {
         case 'user-clicked-exit-mode-button': {
           return {
             ...modelCore,
-            mode: 'none'
+            mode: 'none',
           }
         }
       }
 
       return {
         ...modelCore,
-        builder: updated
+        builder: updated,
       }
     }
 
@@ -75,7 +75,7 @@ const updateCore = ({
         ...modelCore,
         mode: msgCore.mode,
         play: PlayCore.initCore({ ctx }),
-        builder: BuilderCore.init({ ctx })
+        builder: BuilderCore.init({ ctx }),
       }
     }
   }
@@ -83,5 +83,5 @@ const updateCore = ({
 
 export const FlowCore = {
   initCore,
-  updateCore
+  updateCore,
 }

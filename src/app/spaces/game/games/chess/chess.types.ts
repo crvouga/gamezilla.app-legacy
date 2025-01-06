@@ -93,7 +93,7 @@ export type ModelCore =
 
 export const initCore = (): ModelCore => {
   return {
-    t: 'none'
+    t: 'none',
   }
 }
 
@@ -103,22 +103,22 @@ export const updateCore = ({ msgCore }: { ctx: SpaceCtx; modelCore: ModelCore; m
       switch (msgCore.mode) {
         case 'none': {
           return {
-            t: 'none'
+            t: 'none',
           }
         }
         case 'puzzle': {
           return {
-            t: 'none'
+            t: 'none',
           }
         }
         case 'vs-bot': {
           return {
-            t: 'none'
+            t: 'none',
           }
         }
         case 'vs-user': {
           return {
-            t: 'none'
+            t: 'none',
           }
         }
       }

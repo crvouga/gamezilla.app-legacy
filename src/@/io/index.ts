@@ -35,5 +35,5 @@ export const IO = {
   map,
   chain,
   timeout,
-  of
+  of,
 }

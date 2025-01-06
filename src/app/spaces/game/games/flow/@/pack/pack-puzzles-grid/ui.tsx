@@ -33,7 +33,7 @@ const ViewPackPuzzleGridSlide = (input: {
       const index =
         toIndex({
           x,
-          y
+          y,
         }) + indexOffset
       const puzzleId = input.puzzleIds[index] ?? null
       const empty = index >= input.puzzleIds.length
@@ -49,16 +49,16 @@ const ViewPackPuzzleGridSlide = (input: {
             y,
             puzzleId,
             empty,
-            index
+            index,
           })}
-        </div>
+        </div>,
       )
     }
 
     columns.push(
       <div key={y} className='flex w-full items-center justify-center'>
         {row}
-      </div>
+      </div>,
     )
   }
 
@@ -89,7 +89,7 @@ const View = (input: {
           puzzleIds={input.puzzleIds}
           renderCell={input.renderCell}
         />
-      </Swiper.Slide>
+      </Swiper.Slide>,
     )
   }
 
@@ -160,5 +160,5 @@ export const PackPuzzlesGridUI = {
   ViewPuzzleCell,
   ViewEmptyCell,
   ViewLoadingCell,
-  ViewErrorCell
+  ViewErrorCell,
 }

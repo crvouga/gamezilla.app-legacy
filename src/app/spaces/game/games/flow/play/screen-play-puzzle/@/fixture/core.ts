@@ -21,19 +21,19 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: Variant.Model
   const nextPuzzleResult: PuzzleResult = { t: 'got', c: nextPuzzle }
   const nextPuzzleIndex = 2
   const pack = await Pack.random({
-    puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id]
+    puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
   })
 
   const init = f.update(f.init, [
     {
       t: 'user-clicked-open-pack-list-item',
-      pack
+      pack,
     },
     {
       t: 'user-clicked-open-puzzle-grid-item',
       flowPuzzle: { t: 'got', c: puzzle },
-      puzzleIndex
-    }
+      puzzleIndex,
+    },
   ])
 
   const userId = UserId.generate()
@@ -42,9 +42,9 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: Variant.Model
       (c): MsgCore => ({
         userId,
         t: 'got-flow-play-msg',
-        c
-      })
-    )
+        c,
+      }),
+    ),
   )
 
   return {
@@ -57,7 +57,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: Variant.Model
     prevPuzzle: prevPuzzleResult,
     prevPuzzleIndex,
     pack,
-    init
+    init,
   }
 }
 
@@ -66,7 +66,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: Variant.
 
   const updates = (
     init: ModelCore,
-    msgs: MsgCore[]
+    msgs: MsgCore[],
   ): NonEmpty<ReturnType<typeof ScreenPlayPuzzleCore.updateScreen>> => {
     const models: NonEmpty<ModelCore> = [init]
     for (const msg of msgs) {
@@ -85,7 +85,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: Variant.
   const init: ModelCore = ScreenPlayPuzzleCore.initCore({
     flowPack: f.pack,
     flowPuzzle: { t: 'got', c: f.puzzle },
-    puzzleIndex: f.puzzleIndex
+    puzzleIndex: f.puzzleIndex,
   })
 
   return {
@@ -94,6 +94,6 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: Variant.
     initParent: f.init,
     updateParent: f.update,
     update,
-    init
+    init,
   }
 }

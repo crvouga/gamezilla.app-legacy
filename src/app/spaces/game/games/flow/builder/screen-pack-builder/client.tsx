@@ -15,7 +15,7 @@ export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View'> = {
       (model) => ScreenPuzzleGrid.update({ ...input, model }),
       (model) => ScreenPuzzlePlay.update({ ...input, model }),
       (model) => EditPackName.update({ ...input, model }),
-      (model) => updateRecordPack({ ...input, model })
+      (model) => updateRecordPack({ ...input, model }),
     )
   },
 
@@ -37,7 +37,7 @@ export const ScreenPackBuilderClient: Pick<ClientModule, 'update' | 'View'> = {
         return null
       }
     }
-  }
+  },
 }
 
 const ButtonExitBuilder: Pick<ClientModule, 'update' | 'View'> = {
@@ -56,34 +56,34 @@ const ButtonExitBuilder: Pick<ClientModule, 'update' | 'View'> = {
             t: 'got-msg-core',
             c: {
               t: 'user-clicked-back-button',
-              userId: input.ctx.currentUserId
-            }
+              userId: input.ctx.currentUserId,
+            },
           })
         }
       />
     )
-  }
+  },
 }
 
 const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
   update(input) {
     if (!input.modelCore.screenPackBuilder) {
       return {
-        model: input.model
+        model: input.model,
       }
     }
     const updated = EditPackNameClient.update({
       ...input,
       modelCore: input.modelCore.screenPackBuilder.editPackName,
       msg: input.msgCore?.t === 'got-edit-pack-name-msg' ? input.msgCore.c : null,
-      msgCore: input.msgCore?.t === 'got-edit-pack-name-msg' ? { ...input.msgCore, ...input.msgCore.c } : null
+      msgCore: input.msgCore?.t === 'got-edit-pack-name-msg' ? { ...input.msgCore, ...input.msgCore.c } : null,
     })
     return {
       model: input.model,
       msgCore: (updated.msgCore ?? []).map((c) => ({
         c,
-        t: 'got-edit-pack-name-msg'
-      }))
+        t: 'got-edit-pack-name-msg',
+      })),
     }
   },
   View(input) {
@@ -101,14 +101,14 @@ const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
               t: 'got-msg-core',
               c: {
                 t: 'got-edit-pack-name-msg',
-                c
-              }
+                c,
+              },
             })
           }
         />
       </>
     )
-  }
+  },
 }
 
 const updateRecordPack: ClientModule['update'] = (input) => {
@@ -120,11 +120,11 @@ const updateRecordPack: ClientModule['update'] = (input) => {
         {
           t: 'flow-cmd.new-packs',
           packs: {
-            [input.modelCore.screenPackBuilder.pack.id]: input.modelCore.screenPackBuilder.pack
+            [input.modelCore.screenPackBuilder.pack.id]: input.modelCore.screenPackBuilder.pack,
           },
-          causedBy: input
-        }
-      ]
+          causedBy: input,
+        },
+      ],
     }
   }
   return { model: input.model }

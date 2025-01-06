@@ -15,12 +15,12 @@ export const Stream = <T>(config: Config<T>): IStream<T> => {
   const eventIdsByStreamId = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['stream', 'event-ids-by-stream-id'],
-    parser: p.arr(EventId.parser)
+    parser: p.arr(EventId.parser),
   })
   const eventsById = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['stream', 'events-by-id'],
-    parser: p.arr(config.parser)
+    parser: p.arr(config.parser),
   })
   return {
     async append(streamId, eventId, event) {
@@ -47,6 +47,6 @@ export const Stream = <T>(config: Config<T>): IStream<T> => {
     async has(streamId, eventId) {
       const eventIds = unwrapOr(await eventIdsByStreamId.get(streamId), null) ?? []
       return Ok(eventIds.includes(eventId))
-    }
+    },
   }
 }

@@ -20,5 +20,5 @@ renderHTML.impl(isVideo, (video) => {
 
 export const Video = (input: { title: string; message: string; videoSrc: string }): Video => ({
   ...input,
-  Content: 'video'
+  Content: 'video',
 })

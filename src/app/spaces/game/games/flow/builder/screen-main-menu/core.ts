@@ -8,8 +8,8 @@ const update: UpdateCore = (input) => {
           return {
             ...input.modelCore,
             screen: {
-              t: 'screen-pack-builder-open'
-            }
+              t: 'screen-pack-builder-open',
+            },
           }
         }
 
@@ -17,8 +17,8 @@ const update: UpdateCore = (input) => {
           return {
             ...input.modelCore,
             screen: {
-              t: 'screen-puzzle-builder-open'
-            }
+              t: 'screen-puzzle-builder-open',
+            },
           }
         }
       }
@@ -29,8 +29,8 @@ const update: UpdateCore = (input) => {
         ...input.modelCore,
         event: {
           t: 'user-clicked-exit-mode-button',
-          userId: input.msgCore.userId
-        }
+          userId: input.msgCore.userId,
+        },
       }
     }
 
@@ -41,5 +41,5 @@ const update: UpdateCore = (input) => {
 }
 
 export const ScreenMainMenuCore = {
-  update
+  update,
 }

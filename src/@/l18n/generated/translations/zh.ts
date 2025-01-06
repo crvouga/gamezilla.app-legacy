@@ -154,11 +154,11 @@ export const translations: Text = {
   'flow.puzzle-deleted': '拼图已删除',
   'flow.delete-puzzle-forever?': '永久删除拼图？',
   'flow.delete-forever': '永久删除',
-  'flow.edit-pack-name.pack-name': '包名',
   'flow.add-puzzle': '添加拼图',
   'flow.puzzle-removed': '拼图已删除',
   'flow.puzzle-added': '拼图已添加',
   'flow.remove-from-pack': '从包中删除',
+  'flow.edit-pack-name.pack-name': '包名',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': '没有拼图',
   'flow.no-packs': '没有包',
@@ -214,6 +214,7 @@ export const translations: Text = {
   'profile.update-username.update-username': '更新用户名',
   'username-title': '用户名',
   username: (username) => `@${username}`,
+  'app.screen-not-found': '找不到屏幕',
   'app.back': '返回',
   'app.gamezilla-app': 'gamezilla.app',
   'app.something-went-wrong': '出了点问题',
@@ -262,5 +263,5 @@ export const translations: Text = {
   ko: '韩语',
   pt: '葡萄牙语',
   ru: '俄语',
-  zh: '中文'
+  zh: '中文',
 }

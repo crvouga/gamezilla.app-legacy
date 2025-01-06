@@ -7,7 +7,7 @@ export type VarTypeJson = {
 
 export const json = <T>(value: T): VarTypeJson => ({
   t: 'json',
-  json: JSON.stringify(value)
+  json: JSON.stringify(value),
 })
 
 export type VarTypeCommas = {
@@ -17,7 +17,7 @@ export type VarTypeCommas = {
 
 export const commas = (values: (string | number)[]): VarTypeCommas => ({
   t: 'commas',
-  values
+  values,
 })
 
 export type VarType = VarTypePrimitive | VarTypeJson | VarTypeCommas
@@ -40,8 +40,8 @@ export const pagination = (input: { limit?: number; offset?: number }) => {
     str,
     vars: {
       limit: input.limit,
-      offset: input.offset
-    }
+      offset: input.offset,
+    },
   }
 }
 

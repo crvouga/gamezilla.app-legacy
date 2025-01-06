@@ -29,10 +29,10 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId,
-            userId: UserId.generate()
-          })
-        }
-      }
+            userId: UserId.generate(),
+          }),
+        },
+      },
     ])
 
     const after = SpaceCore.toSpaceStarted(unwrap(await f.serverCtx.spacesCoreServer.get(spaceId)))
@@ -54,17 +54,17 @@ describe(import.meta.file, () => {
           c: withEventMeta({
             t: 'user-started-space',
             spaceId,
-            userId: UserId.generate()
-          })
-        }
-      }
+            userId: UserId.generate(),
+          }),
+        },
+      },
     ])
 
     expect(
       didSendMsgToClient(
         output,
-        (m) => m.t === 'got-msg-core' && m.c.t === 'user-started-space' && m.c.spaceId === spaceId
-      )
+        (m) => m.t === 'got-msg-core' && m.c.t === 'user-started-space' && m.c.spaceId === spaceId,
+      ),
     ).toBeTrue()
   })
 })

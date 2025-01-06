@@ -9,7 +9,7 @@ const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
     (model) => updateFromSpaceEvent({ ...input, model }),
-    (model) => updateStartSpaceButton({ ...input, model })
+    (model) => updateStartSpaceButton({ ...input, model }),
   )
 }
 
@@ -22,18 +22,18 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCore: msg
           msgCmd: [
             playSound(APP_SOUND.navForward),
             pushRoute({ n: 'spaces', t: 'space', spaceId: msgCore.spaceId }),
-            showToast(ctx.t('spaces.space-started'))
-          ]
+            showToast(ctx.t('spaces.space-started')),
+          ],
         }
       }
 
       return {
-        model
+        model,
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -44,24 +44,24 @@ const updateStartSpaceButton: SpaceClientModule['update'] = (input) => {
     case 'clicked-start-space-button': {
       if (!input.ctx.currentUserId) {
         return {
-          model: input.model
+          model: input.model,
         }
       }
 
       const spaceEventNew = withEventId<SpaceEvent>({
         t: 'user-started-space',
         spaceId: input.msg.spaceId,
-        userId: input.ctx.currentUserId
+        userId: input.ctx.currentUserId,
       })
 
       return {
         model: input.model,
-        msgCore: [spaceEventNew]
+        msgCore: [spaceEventNew],
       }
     }
     default: {
       return {
-        model: input.model
+        model: input.model,
       }
     }
   }
@@ -83,5 +83,5 @@ const ViewStartSpaceButton: SpaceClientModule['View'] = (input) => {
 
 export const StartSpaceClient = {
   ViewStartSpaceButton,
-  update
+  update,
 }

@@ -5,21 +5,21 @@ import { PhoneNumber } from '~/@/phone-number'
 const Route = p.or(
   p.obj({
     n: p.l('auth-login'),
-    t: p.l('login')
+    t: p.l('login'),
   }),
   p.obj({
     n: p.l('auth-login'),
-    t: p.l('login-sms-request')
+    t: p.l('login-sms-request'),
   }),
   p.obj({
     n: p.l('auth-login'),
     t: p.l('login-sms-verify'),
-    phoneNumber: PhoneNumber
+    phoneNumber: PhoneNumber,
   }),
   p.obj({
     n: p.l('auth-login'),
-    t: p.l('login-email-send-link')
-  })
+    t: p.l('login-email-send-link'),
+  }),
 )
 
 export type Route = p.Infer<typeof Route>

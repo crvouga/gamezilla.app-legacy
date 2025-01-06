@@ -24,19 +24,19 @@ export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> 
     ...input.ctx,
     userAccountDb: UserAccountDb({
       t: 'postgres',
-      dbConnSql: input.ctx.dbConnSql
+      dbConnSql: input.ctx.dbConnSql,
     }),
     userSessionDb: await UserSessionDb({
       t: 'postgres-with-cache',
       dbConnSql: input.ctx.dbConnSql,
       dbConnKv: input.ctx.dbConnKv,
       logger: input.ctx.logger,
-      pubSubTopicBased: input.ctx.pubSub
+      pubSubTopicBased: input.ctx.pubSub,
     }),
     guestSessionMappingDb: GuestSessionMappingDb({
       t: 'postgres',
-      dbConnSql: input.ctx.dbConnSql
-    })
+      dbConnSql: input.ctx.dbConnSql,
+    }),
   }
 }
 
@@ -54,7 +54,7 @@ export const update: ServerModule['update'] = async (input) => {
     () => updateFromEvent(input),
     () => updateChild(input),
     () => LogoutServer.update(input),
-    () => ContinueAsGuestServer.update(input)
+    () => ContinueAsGuestServer.update(input),
   )
 }
 
@@ -82,15 +82,15 @@ const updateChild: ServerModule['update'] = async (input) => {
       input.msgClient?.t === 'sms'
         ? {
             ...input.msgClient,
-            ...input.msgClient.c
+            ...input.msgClient.c,
           }
         : null,
-    msg: input.msg?.t === 'sms' ? input.msg.c : null
+    msg: input.msg?.t === 'sms' ? input.msg.c : null,
   })
 
   return {
     msgCmd: ServerCmd.tag('sms', sms.msgCmd),
-    msgEvt: sms.msgEvt
+    msgEvt: sms.msgEvt,
   }
 }
 
@@ -102,7 +102,7 @@ const updateFromEvent: typeof update = async (input) => {
       const userId = isOk(foundUserId) ? foundUserId.value : null
 
       const foundAccount = await input.ctx.userAccountDb.findOneByUserId({
-        userId
+        userId,
       })
 
       const account = isOk(foundAccount) ? foundAccount.value : null
@@ -113,9 +113,9 @@ const updateFromEvent: typeof update = async (input) => {
             {
               t: 'auth-evt.client-unauthenticated',
               clientId: input.msgEvt.clientId,
-              sessionId: input.msgEvt.sessionId
-            }
-          ]
+              sessionId: input.msgEvt.sessionId,
+            },
+          ],
         }
       }
 
@@ -125,9 +125,9 @@ const updateFromEvent: typeof update = async (input) => {
             clientId: input.msgEvt.clientId,
             sessionId: input.msgEvt.sessionId,
             user: account,
-            t: 'auth-evt.client-authenticated'
-          }
-        ]
+            t: 'auth-evt.client-authenticated',
+          },
+        ],
       }
     }
 
@@ -135,9 +135,9 @@ const updateFromEvent: typeof update = async (input) => {
       return {
         msgCmd: [
           sendToClient([input.msgEvt.clientId], {
-            t: 'client-unauthenticated'
-          })
-        ]
+            t: 'client-unauthenticated',
+          }),
+        ],
       }
     }
 
@@ -145,18 +145,18 @@ const updateFromEvent: typeof update = async (input) => {
       const msgCmd = sendToClient<MsgToClient>([input.msgEvt.clientId], {
         t: 'client-authenticated',
         account: input.msgEvt.user,
-        loggedIn: input.msgEvt.loggedIn ?? false
+        loggedIn: input.msgEvt.loggedIn ?? false,
       })
 
       if (!input.msgEvt.loggedIn) {
         return {
-          msgCmd: [msgCmd]
+          msgCmd: [msgCmd],
         }
       }
 
       const inserted = await input.ctx.userSessionDb.insert({
         sessionId: input.msgEvt.sessionId,
-        userId: input.msgEvt.user.userId
+        userId: input.msgEvt.user.userId,
       })
 
       if (isErr(inserted)) {
@@ -164,7 +164,7 @@ const updateFromEvent: typeof update = async (input) => {
       }
 
       return {
-        msgCmd: [msgCmd]
+        msgCmd: [msgCmd],
       }
     }
 
@@ -189,8 +189,8 @@ export const subscriptions: ServerModule['subscriptions'] = async (input) => {
       'sms',
       await AuthSMSServer.subscriptions({
         ...input,
-        deps: await AuthSMSServer.initDeps(input)
-      })
-    )
+        deps: await AuthSMSServer.initDeps(input),
+      }),
+    ),
   ])
 }

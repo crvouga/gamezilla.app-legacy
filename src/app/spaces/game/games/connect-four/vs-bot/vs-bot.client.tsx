@@ -21,7 +21,7 @@ import {
   type MsgCore,
   type MsgToClient,
   type MsgToServer,
-  updateCore
+  updateCore,
 } from './vs-bot.types'
 
 //
@@ -56,7 +56,7 @@ type Module = GameClientModule<{
 
 const init: Module['init'] = {
   vsBotSetup: VsBotSetup.init,
-  vsBotGame: VsBotGame.init()
+  vsBotGame: VsBotGame.init(),
 }
 
 //
@@ -70,7 +70,7 @@ const update: Module['update'] = (input) => {
     { model: input.model },
     (model) => updateFromMsg(model)(input),
     (model) => updateFromMsgCore(model)(input),
-    (model) => watchGameOver(model)(input)
+    (model) => watchGameOver(model)(input),
   )
 }
 
@@ -81,18 +81,18 @@ const watchGameOver =
 
     if (!msgCore) {
       return {
-        model
+        model,
       }
     }
 
     const modelCoreNext = updateCore({
       msgCore: msgCore,
-      modelCore: modelCore
+      modelCore: modelCore,
     })
 
     if (modelCore.type !== 'game' || modelCoreNext.type !== 'game') {
       return {
-        model
+        model,
       }
     }
 
@@ -102,21 +102,21 @@ const watchGameOver =
 
     if (statusBefore.type === status.type) {
       return {
-        model
+        model,
       }
     }
 
     switch (status.type) {
       case 'Playing': {
         return {
-          model
+          model,
         }
       }
 
       case 'Tie': {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.alertErrorSm)]
+          msgCmd: [playSound(APP_SOUND.alertErrorSm)],
         }
       }
 
@@ -126,18 +126,18 @@ const watchGameOver =
             model,
             msgCmd: [
               playSound(APP_SOUND.celebration, {
-                delay: TimeSpan.seconds(1 / 2)
-              })
-            ]
+                delay: TimeSpan.seconds(1 / 2),
+              }),
+            ],
           }
         }
         return {
           model,
           msgCmd: [
             playSound(APP_SOUND.alertErrorLg, {
-              delay: TimeSpan.seconds(1 / 2)
-            })
-          ]
+              delay: TimeSpan.seconds(1 / 2),
+            }),
+          ],
         }
       }
     }
@@ -150,13 +150,13 @@ const updateFromMsgCore =
 
     if (!msgCore) {
       return {
-        model
+        model,
       }
     }
 
     return {
       model,
-      msgCmd: updateSound(ctx.currentUserId, modelCore, msgCore)
+      msgCmd: updateSound(ctx.currentUserId, modelCore, msgCore),
     }
   }
 
@@ -167,7 +167,7 @@ const updateFromMsg =
 
     if (!msg) {
       return {
-        model
+        model,
       }
     }
 
@@ -176,8 +176,8 @@ const updateFromMsg =
         return {
           model: {
             ...model,
-            vsBotGame: VsBotGame.update(model.vsBotGame, msg.c)
-          }
+            vsBotGame: VsBotGame.update(model.vsBotGame, msg.c),
+          },
         }
       }
 
@@ -185,8 +185,8 @@ const updateFromMsg =
         return {
           model: {
             ...model,
-            vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c)
-          }
+            vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c),
+          },
         }
       }
 
@@ -194,7 +194,7 @@ const updateFromMsg =
         const msgCore = withEventId(msg)
         return {
           model,
-          msgCore: [msgCore]
+          msgCore: [msgCore],
         }
       }
     }
@@ -203,7 +203,7 @@ const updateFromMsg =
 const updateSound = (
   currentUserId: UserId,
   modelCore: ModelCore,
-  msgCore: WithEventId<MsgCore>
+  msgCore: WithEventId<MsgCore>,
 ): AppClientCmd<{
   MsgToServer: MsgToServer
   MsgClient: MsgClient
@@ -292,18 +292,18 @@ export const toGameOver = (columns: ConnectFour.Columns): VsBotGame.GameOver => 
   switch (status.type) {
     case 'Playing': {
       return {
-        t: null
+        t: null,
       }
     }
     case 'Tie': {
       return {
-        t: 'draw'
+        t: 'draw',
       }
     }
     case 'Winner': {
       return {
         t: 'winner',
-        winner: status.winner === 'player-one' ? 'player-one' : 'player-two'
+        winner: status.winner === 'player-one' ? 'player-one' : 'player-two',
       }
     }
   }
@@ -319,12 +319,12 @@ const View: Module['View'] = (input) => {
     onSwapSides: () =>
       input.dispatch({
         t: 'user-swapped-sides',
-        userId: input.ctx.currentUserId
+        userId: input.ctx.currentUserId,
       }),
     onStartGame: () =>
       input.dispatch({
         t: 'user-started-game',
-        userId: input.ctx.currentUserId
+        userId: input.ctx.currentUserId,
       }),
     botVariants: ALL_BOT_LEVELS.map((botLevel) => {
       return {
@@ -334,17 +334,17 @@ const View: Module['View'] = (input) => {
           input.dispatch({
             t: 'user-changed-bot-level',
             botLevel,
-            userId: input.ctx.currentUserId
-          })
+            userId: input.ctx.currentUserId,
+          }),
       }
     }),
     human: {
       player: input.modelCore.userPlayerType === 'player-one' ? 'player-one' : 'player-two',
-      userId: input.modelCore.playingUserId ?? null
+      userId: input.modelCore.playingUserId ?? null,
     },
     bot: {
       label: input.ctx.t('connect-four.bot-level', input.modelCore.botLevel),
-      renderIcon: (iconinput) => <ViewBotLevel {...iconinput} level={input.modelCore.botLevel} />
+      renderIcon: (iconinput) => <ViewBotLevel {...iconinput} level={input.modelCore.botLevel} />,
     },
     playerOne: {
       label: input.ctx.t('connect-four.red'),
@@ -353,13 +353,13 @@ const View: Module['View'] = (input) => {
         input.dispatch({
           t: 'user-started-playing',
           playerType: 'player-one',
-          userId: input.ctx.currentUserId
+          userId: input.ctx.currentUserId,
         }),
       onStopPlaying: () =>
         input.dispatch({
           t: 'user-stopped-playing',
-          userId: input.ctx.currentUserId
-        })
+          userId: input.ctx.currentUserId,
+        }),
     },
     playerTwo: {
       label: input.ctx.t('connect-four.yellow'),
@@ -368,14 +368,14 @@ const View: Module['View'] = (input) => {
         input.dispatch({
           t: 'user-started-playing',
           playerType: 'player-two',
-          userId: input.ctx.currentUserId
+          userId: input.ctx.currentUserId,
         }),
       onStopPlaying: () =>
         input.dispatch({
           t: 'user-stopped-playing',
-          userId: input.ctx.currentUserId
-        })
-    }
+          userId: input.ctx.currentUserId,
+        }),
+    },
   }
 
   if (!input.model) {
@@ -389,7 +389,7 @@ const View: Module['View'] = (input) => {
         dispatch={(c) =>
           input.dispatch({
             t: 'vs-bot-setup',
-            c
+            c,
           })
         }
         {...vsBotSetupInput}
@@ -403,10 +403,10 @@ const View: Module['View'] = (input) => {
     ...vsBotSetupInput,
     human: {
       ...vsBotSetupInput.human,
-      userId: input.modelCore.playingUserId
+      userId: input.modelCore.playingUserId,
     },
     isSpectating: input.ctx.currentUserId !== input.modelCore.playingUserId,
-    turn: status.type !== 'Playing' ? null : status.turn === 'player-one' ? 'player-one' : 'player-two'
+    turn: status.type !== 'Playing' ? null : status.turn === 'player-one' ? 'player-one' : 'player-two',
   }
 
   const isSpectating = input.ctx.currentUserId !== input.modelCore.playingUserId
@@ -427,7 +427,7 @@ const View: Module['View'] = (input) => {
               input.dispatch({
                 t: 'user-dropped-disc',
                 columnIndex,
-                userId: input.ctx.currentUserId
+                userId: input.ctx.currentUserId,
               })
             }}
           />
@@ -438,7 +438,7 @@ const View: Module['View'] = (input) => {
               onPlayAgain={() =>
                 input.dispatch({
                   t: 'user-restarted-game',
-                  userId: input.ctx.currentUserId
+                  userId: input.ctx.currentUserId,
                 })
               }
               gameOver={toGameOver(input.modelCore.columns)}
@@ -477,18 +477,18 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
     case 'Playing': {
       return {
         t: 'playing',
-        turn: status.turn
+        turn: status.turn,
       }
     }
     case 'Tie': {
       return {
-        t: 'draw'
+        t: 'draw',
       }
     }
     case 'Winner': {
       return {
         t: 'winner',
-        winner: status.winner
+        winner: status.winner,
       }
     }
   }
@@ -562,5 +562,5 @@ export const VsBot: Module = {
   update,
   subscriptions,
   View,
-  ViewFeedItem
+  ViewFeedItem,
 }

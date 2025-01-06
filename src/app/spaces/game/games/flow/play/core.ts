@@ -4,8 +4,8 @@ import { ScreenPlayPuzzleCore } from './screen-play-puzzle/core'
 const initCore: CoreModule['initCore'] = () => {
   return {
     screen: {
-      t: 'screen-select-pack'
-    }
+      t: 'screen-select-pack',
+    },
   }
 }
 
@@ -16,8 +16,8 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
         ...modelCore,
         event: {
           t: 'user-clicked-exit-mode-button',
-          userId: msgCore.userId
-        }
+          userId: msgCore.userId,
+        },
       }
     }
 
@@ -27,16 +27,16 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
         screen: {
           t: 'screen-select-puzzle',
           flowPack: msgCore.pack,
-          slideIndex: 0
-        }
+          slideIndex: 0,
+        },
       }
     }
     case 'user-clicked-exit-pack-button': {
       return {
         ...modelCore,
         screen: {
-          t: 'screen-select-pack'
-        }
+          t: 'screen-select-pack',
+        },
       }
     }
     case 'user-clicked-open-puzzle-grid-item': {
@@ -47,8 +47,8 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
             screen: ScreenPlayPuzzleCore.initCore({
               flowPack: modelCore.screen.flowPack,
               puzzleIndex: msgCore.puzzleIndex,
-              flowPuzzle: msgCore.flowPuzzle
-            })
+              flowPuzzle: msgCore.flowPuzzle,
+            }),
           }
         }
         default: {
@@ -64,8 +64,8 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
             ...modelCore,
             screen: {
               ...modelCore.screen,
-              slideIndex: msgCore.slideIndex
-            }
+              slideIndex: msgCore.slideIndex,
+            },
           }
         }
         default: {
@@ -87,5 +87,5 @@ const updateCore: CoreModule['updateCore'] = (input) => {
 
 export const PlayCore = {
   initCore,
-  updateCore
+  updateCore,
 }

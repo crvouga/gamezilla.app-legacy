@@ -5,16 +5,16 @@ import { SERVER_PORT } from './config-private'
 
 const main = async () => {
   const logger = Logger({
-    t: 'console'
+    t: 'console',
   })
 
   const server = WebServer({
     t: 'bun',
-    logger
+    logger,
   })
 
   const ctx = await LoadBalancer.initCtx({
-    logger
+    logger,
   })
 
   server.registerHandler((request) => {

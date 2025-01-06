@@ -7,7 +7,7 @@ const update: SpaceServerModule['update'] = (input) => {
   return SpaceServerModule.andThen(
     {},
     //
-    () => updateFromSpaceEvent({ ...input })
+    () => updateFromSpaceEvent({ ...input }),
   )
 }
 
@@ -27,9 +27,9 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
           sendToUser([input.msgCore.userId], {
             t: 'synced',
             space: started,
-            causedBy: { msgCore: input.msgCore }
-          })
-        ]
+            causedBy: { msgCore: input.msgCore },
+          }),
+        ],
       }
     }
 
@@ -40,5 +40,5 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
 }
 
 export const JoinSpaceServer = {
-  update
+  update,
 }

@@ -8,8 +8,8 @@ export const Model = p.and(
   FlowTriDimensions.Model,
   p.obj({
     t: p.l('flow-tri'),
-    FlowTri: p.l(true)
-  })
+    FlowTri: p.l(true),
+  }),
 )
 export type Model = p.Infer<typeof Model>
 
@@ -21,7 +21,7 @@ export const init = (input: {
     ...Flow.init,
     ...input.dimensions,
     t: 'flow-tri',
-    FlowTri: true
+    FlowTri: true,
   }
 }
 

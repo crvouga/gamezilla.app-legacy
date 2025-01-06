@@ -16,15 +16,15 @@ export const init = (_input: {
   if (typeof window === 'undefined') {
     return {
       model: {
-        documentVisibilityState: 'visible'
-      }
+        documentVisibilityState: 'visible',
+      },
     }
   }
 
   return {
     model: {
-      documentVisibilityState: document.visibilityState
-    }
+      documentVisibilityState: document.visibilityState,
+    },
   }
 }
 
@@ -37,7 +37,7 @@ export type Msg =
 export const update = <TMsgClient>({
   msg,
   model,
-  msgCmd
+  msgCmd,
 }: {
   msgCmd?: PlatformCmd<TMsgClient> | null
   msg?: Msg | null
@@ -67,8 +67,8 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
       return {
         model: {
           ...model,
-          documentVisibilityState: 'hidden'
-        }
+          documentVisibilityState: 'hidden',
+        },
       }
     }
 
@@ -76,20 +76,20 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
       return {
         model: {
           ...model,
-          documentVisibilityState: 'visible'
-        }
+          documentVisibilityState: 'visible',
+        },
       }
     }
 
     case 'element-focused': {
       return {
-        model
+        model,
       }
     }
 
     case 'copied-to-clipboard': {
       return {
-        model
+        model,
       }
     }
   }
@@ -120,7 +120,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
               element.removeEventListener('focus', handler)
               dispatch({
                 t: 'element-focused',
-                id: platformCmd.viewId
+                id: platformCmd.viewId,
               })
             }
             element.addEventListener('focus', handler)
@@ -137,21 +137,21 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 
             resolve(null)
           })
-        }
+        },
       }
     }
 
     case 'start-timeout': {
       return {
         model,
-        parentEff: Time.startTimeout(platformCmd.timeoutId, platformCmd.duration, platformCmd.msg)
+        parentEff: Time.startTimeout(platformCmd.timeoutId, platformCmd.duration, platformCmd.msg),
       }
     }
 
     case 'cancel-timeout': {
       return {
         model,
-        parentEff: Time.cancelTimeout(platformCmd.timeoutId)
+        parentEff: Time.cancelTimeout(platformCmd.timeoutId),
       }
     }
 
@@ -162,14 +162,14 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
           await navigator.clipboard.writeText(platformCmd.text)
           dispatch({
             t: 'copied-to-clipboard',
-            text: platformCmd.text
+            text: platformCmd.text,
           })
-        }
+        },
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -179,13 +179,13 @@ export const subscriptions: Sub<Msg> = Browser.onDocumentVisibilityState<Msg>((s
   switch (state) {
     case 'hidden': {
       return {
-        t: 'document-became-hidden'
+        t: 'document-became-hidden',
       }
     }
 
     case 'visible': {
       return {
-        t: 'document-became-visible'
+        t: 'document-became-visible',
       }
     }
   }

@@ -11,15 +11,15 @@ const Fixture = async () => {
   const puzzleWithEmptySolutions = await Puzzle.random({
     flow: FlowGridShorthand.toGrid([
       ['A', ' '],
-      [' ', 'A']
-    ])
+      [' ', 'A'],
+    ]),
   })
   puzzleWithEmptySolutions.solutions = []
 
   return {
     ...f,
     puzzleWithEmptySolutions,
-    withSolutions: WithSolutions(f.flowPuzzleDb)
+    withSolutions: WithSolutions(f.flowPuzzleDb),
   }
 }
 
@@ -49,34 +49,34 @@ describe(import.meta.file, () => {
       await f.flowPuzzleDb.list({
         where: {
           puzzleId: {
-            in: [f.puzzleWithEmptySolutions.id]
-          }
+            in: [f.puzzleWithEmptySolutions.id],
+          },
         },
         order: {
-          createdAt: 'asc'
+          createdAt: 'asc',
         },
         pagination: {
           limit: 10,
-          offset: 0
-        }
-      })
+          offset: 0,
+        },
+      }),
     )
     await f.flowPuzzleDb.put(f.puzzleWithEmptySolutions)
     const after = Result.unwrap(
       await f.withSolutions.list({
         where: {
           puzzleId: {
-            in: [f.puzzleWithEmptySolutions.id]
-          }
+            in: [f.puzzleWithEmptySolutions.id],
+          },
         },
         order: {
-          createdAt: 'asc'
+          createdAt: 'asc',
         },
         pagination: {
           limit: 10,
-          offset: 0
-        }
-      })
+          offset: 0,
+        },
+      }),
     )
     expect(before?.items.length === 0).toBe(true)
     expect(after?.items.length === 1).toBe(true)

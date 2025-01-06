@@ -77,13 +77,13 @@ export const drawPipes = (model: Variant.Model, groupId: FlowGroupId, nodeIdNew:
         (nodeId) => 1 - 1 / Variant.distance(model, nodeId, nodeIdNew),
         model,
         startNodeId,
-        nodeIdNew
+        nodeIdNew,
       )
 
       const pipelineNew = [...pipeline, ...shortest.slice(1)]
 
       return pipelineNew
-    }
+    },
   )
 
   const added = addPipeline(Flow.removePipeline(model, groupId), terminal, pipelineNew)
@@ -193,7 +193,7 @@ const addPipeline = (model: Flow.Model, terminal: FlowTerminal, pipeline: Pipeli
 
     const edge: Flow.Edge = {
       sourceId: first,
-      targetId: second
+      targetId: second,
     }
 
     if (!Flow.hasEdge(modelNew, first, second)) {
@@ -202,7 +202,7 @@ const addPipeline = (model: Flow.Model, terminal: FlowTerminal, pipeline: Pipeli
 
     const pipeNew: Flow.Pipe = {
       edgeId: Flow.toFlowEdgeId(edge),
-      groupId: terminal.groupId
+      groupId: terminal.groupId,
     }
 
     modelNew.pipesBySourceId[edge.sourceId] = pipeNew
@@ -217,7 +217,7 @@ const addPipeline = (model: Flow.Model, terminal: FlowTerminal, pipeline: Pipeli
 export const _findShortestEmptyPipelineBFS = (
   model: Flow.Model,
   sourceId: FlowNodeId,
-  targetId: FlowNodeId
+  targetId: FlowNodeId,
 ): FlowNodeId[] => {
   const sourceGroupId = Flow.findGroupIdByFlowNodeId(model, sourceId)
 
@@ -278,7 +278,7 @@ export const _findShortestEmptyPipelineBFS = (
 
       queue.push(adjacentId)
       tree[adjacentId] = {
-        parent: currentId
+        parent: currentId,
       }
     }
   }
@@ -317,8 +317,8 @@ export const _findShortestEmptyPipelineBFS = (
     path.push(
       Flow.toFlowEdgeId({
         sourceId: from,
-        targetId: to
-      })
+        targetId: to,
+      }),
     )
   }
 
@@ -344,7 +344,7 @@ const findShortestEmptyPipelineAStar = (
   heuristicScore: (node: FlowNodeId) => number,
   model: Flow.Model,
   sourceId: FlowNodeId,
-  targetId: FlowNodeId
+  targetId: FlowNodeId,
 ): FlowNodeId[] => {
   gScore.clear()
   fScore.clear()

@@ -31,16 +31,16 @@ export type FixureUpdateOutput = ReturnType<typeof BuilderClient.update> & {
 const toModelCore = (
   ctx: FlowClientCtx,
   initial: BuilderTypes.ModelCore,
-  msgCores: BuilderTypes.MsgCore[]
+  msgCores: BuilderTypes.MsgCore[],
 ): BuilderTypes.ModelCore => {
   return msgCores.reduce(
     (modelCore, msgCore) =>
       BuilderCore.update({
         ctx,
         modelCore,
-        msgCore
+        msgCore,
       }),
-    initial
+    initial,
   )
 }
 
@@ -51,12 +51,12 @@ const updatesReducer =
       ...input,
       model: NonEmpty.last(outputs).model,
       modelCore: NonEmpty.last(outputs).modelCore,
-      ctx
+      ctx,
     })
     const modelCoreOutput = toModelCore(ctx, NonEmpty.last(outputs).modelCore, output.msgCore ?? [])
     outputs.push({
       ...output,
-      modelCore: modelCoreOutput
+      modelCore: modelCoreOutput,
     })
     return outputs
   }
@@ -67,13 +67,13 @@ const updates = (
     ctx: FlowClientCtx
     modelCore: BuilderTypes.ModelCore
   },
-  inputs: FixureUpdateInput[]
+  inputs: FixureUpdateInput[],
 ): NonEmpty<FixureUpdateOutput> => {
   return inputs.reduce(updatesReducer(init.ctx), [
     {
       model: init.model,
-      modelCore: init.modelCore
-    }
+      modelCore: init.modelCore,
+    },
   ])
 }
 const update = (
@@ -82,7 +82,7 @@ const update = (
     ctx: FlowClientCtx
     modelCore: BuilderTypes.ModelCore
   },
-  inputs: FixureUpdateInput[]
+  inputs: FixureUpdateInput[],
 ): FixureUpdateOutput => {
   const outputs = updates(init, inputs)
   return NonEmpty.last(outputs)
@@ -98,12 +98,12 @@ export const FixtureFlowBuilderClient = async () => {
     packs: {},
     puzzleList: PuzzleListTypes.initClient,
     packList: PackListTypes.initClient,
-    packPuzzleGrid: PackPuzzlesGridTypes.initClient
+    packPuzzleGrid: PackPuzzlesGridTypes.initClient,
   }
   const init = {
     ctx,
     model,
-    modelCore
+    modelCore,
   }
 
   return {
@@ -113,12 +113,12 @@ export const FixtureFlowBuilderClient = async () => {
     model,
     modelCore,
     update,
-    updates
+    updates,
   }
 }
 
 export const initial = {
-  model: BuilderTypes.initClient
+  model: BuilderTypes.initClient,
 }
 
 export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
@@ -128,7 +128,7 @@ export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
     puzzles: {},
     puzzleList: PuzzleListTypes.initClient,
     packList: PackListTypes.initClient,
-    packPuzzleGrid: PackPuzzlesGridTypes.initClient
+    packPuzzleGrid: PackPuzzlesGridTypes.initClient,
   }
 }
 
@@ -138,8 +138,8 @@ export const clickedPackCreateNewButton = (ctx: FlowClientCtx) => (model: Builde
     ctx,
     modelCore: BuilderCore.init({ ctx }),
     msg: {
-      t: 'create-new-pack.clicked-create-button'
-    }
+      t: 'create-new-pack.clicked-create-button',
+    },
   })
 }
 
@@ -148,15 +148,15 @@ export const userCreatedPack = (ctx: FlowClientCtx, pack: Pack) => (model: Build
     model,
     ctx: ctx,
     modelCore: BuilderCore.init({
-      ctx
+      ctx,
     }),
     msgCore: {
       t: 'user-created-pack',
       created: Ok(pack),
       eventId: EventId.generate(),
       happenedAt: LamportTimestamp.fromNumber(0),
-      userId: ctx.currentUserId
-    }
+      userId: ctx.currentUserId,
+    },
   })
 }
 
@@ -165,16 +165,16 @@ export const clickedPackItem = (ctx: FlowClientCtx, pack: Pack) => (model: Build
     model,
     ctx: ctx,
     modelCore: BuilderCore.init({
-      ctx
+      ctx,
     }),
     msg: {
       t: 'got-msg-core',
       c: {
         t: 'screen-pack-builder-open.user-clicked-pack-item',
         pack,
-        userId: ctx.currentUserId
-      }
-    }
+        userId: ctx.currentUserId,
+      },
+    },
   })
 }
 
@@ -187,11 +187,11 @@ export const clickedOpenPuzzlePickerButton =
         t: 'got-msg-core',
         c: {
           t: 'screen-pack-builder.user-opened-add-puzzle-screen',
-          userId: ctx.currentUserId
-        }
+          userId: ctx.currentUserId,
+        },
       },
       ctx,
-      modelCore
+      modelCore,
     })
   }
 
@@ -201,13 +201,13 @@ export const closedPuzzlePickerDrawer = (ctx: FlowClientCtx) => (model: BuilderT
     msg: {
       t: 'got-msg-core',
       c: {
-        t: 'screen-pack-builder.user-closed-add-puzzle-screen'
-      }
+        t: 'screen-pack-builder.user-closed-add-puzzle-screen',
+      },
     },
     ctx,
     modelCore: BuilderCore.init({
-      ctx
-    })
+      ctx,
+    }),
   })
 }
 
@@ -219,11 +219,11 @@ export const clickedPuzzleListItem = (ctx: FlowClientCtx, puzzle: Puzzle) => (mo
       c: {
         t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
         puzzle,
-        userId: ctx.currentUserId
-      }
+        userId: ctx.currentUserId,
+      },
     },
     ctx,
-    modelCore: BuilderCore.init({ ctx })
+    modelCore: BuilderCore.init({ ctx }),
   })
 }
 
@@ -233,10 +233,10 @@ export const clickedExitPuzzleBuilderButton =
     return BuilderClient.update({
       model,
       msg: {
-        t: 'screen-puzzle-builder.user-clicked-exit-button'
+        t: 'screen-puzzle-builder.user-clicked-exit-button',
       },
       ctx,
-      modelCore: modelCore
+      modelCore: modelCore,
     })
   }
 
@@ -246,7 +246,7 @@ export const puzzleBuilderPressDownRandomNode =
 
     if (!puzzleBuilder) {
       return {
-        model
+        model,
       }
     }
 
@@ -256,7 +256,7 @@ export const puzzleBuilderPressDownRandomNode =
 
     if (!randomNode) {
       return {
-        model
+        model,
       }
     }
 
@@ -266,13 +266,13 @@ export const puzzleBuilderPressDownRandomNode =
         t: 'screen-puzzle-builder.got-flow-ui-edit-msg',
         c: {
           t: 'pressed-down-node',
-          nodeId: randomNode.nodeId
-        }
+          nodeId: randomNode.nodeId,
+        },
       },
       ctx,
       modelCore: BuilderCore.init({
-        ctx
-      })
+        ctx,
+      }),
     })
   }
 
@@ -285,12 +285,12 @@ export const puzzleBuilderUserSavedChanges =
         eventId: EventId.generate(),
         happenedAt: LamportTimestamp.fromNumber(0),
         saved: Ok(puzzle),
-        userId: ctx.currentUserId
+        userId: ctx.currentUserId,
       },
       ctx,
       modelCore: BuilderCore.init({
-        ctx
-      })
+        ctx,
+      }),
     })
   }
 
@@ -302,13 +302,13 @@ export const clickedPuzzlePickerItem = (ctx: FlowClientCtx, puzzle: Puzzle) => (
       c: {
         t: 'screen-pack-builder.user-clicked-add-puzzle-item',
         puzzle,
-        userId: ctx.currentUserId
-      }
+        userId: ctx.currentUserId,
+      },
     },
     ctx,
     modelCore: BuilderCore.init({
-      ctx
-    })
+      ctx,
+    }),
   })
 }
 
@@ -319,13 +319,13 @@ export const clickedExitPuzzleButton = (ctx: FlowClientCtx) => (model: BuilderTy
       t: 'got-msg-core',
       c: {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
-        userId: ctx.currentUserId
-      }
+        userId: ctx.currentUserId,
+      },
     },
     ctx,
     modelCore: BuilderCore.init({
-      ctx
-    })
+      ctx,
+    }),
   })
 }
 
@@ -338,13 +338,13 @@ export const clickedPuzzleGridItem =
         c: {
           t: 'screen-pack-builder.user-clicked-pack-item',
           puzzleResult: { t: 'got', c: puzzle },
-          puzzleIndex
-        }
+          puzzleIndex,
+        },
       },
       ctx,
       modelCore: BuilderCore.init({
-        ctx
-      })
+        ctx,
+      }),
     })
   }
 
@@ -353,12 +353,12 @@ export const serverCreatedPack = (ctx: FlowClientCtx, pack: Pack) => (model: Bui
     model,
     ctx: ctx,
     modelCore: BuilderCore.init({
-      ctx
+      ctx,
     }),
     msgServer: {
       t: 'create-new-pack.created-pack',
-      created: Ok(pack)
-    }
+      created: Ok(pack),
+    },
   })
 }
 
@@ -367,7 +367,7 @@ export function createPuzzle(ctx: SpaceClientCtx) {
     count: 1,
     createdAt: ctx.now,
     createdBy: ctx.currentUserId,
-    flow: samples['5x5']['1']
+    flow: samples['5x5']['1'],
   })
 }
 
@@ -376,6 +376,6 @@ export function createPack(ctx: SpaceClientCtx, puzzleIds: PuzzleId[] = []) {
     now: ctx.now,
     puzzleIds,
     count: 1,
-    createdBy: ctx.currentUserId
+    createdBy: ctx.currentUserId,
   })
 }

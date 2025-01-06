@@ -58,7 +58,7 @@ async function generateLanguageFiles(files: string[]) {
     ko: {},
     pt: {},
     ru: {},
-    zh: {}
+    zh: {},
   }
 
   for (const file of files) {
@@ -83,7 +83,7 @@ async function generateLanguageFiles(files: string[]) {
         if (translations[code]) {
           translationsAll[code] = {
             ...translationsAll[code],
-            ...translations[code]
+            ...translations[code],
           }
         }
       }
@@ -127,7 +127,7 @@ export const translations: Text = ${translationsForLanguageString}
       } catch (error) {
         console.error(`Error writing translation file "${outputPath}":`, error)
       }
-    })
+    }),
   )
 
   console.log(`\nGenerated language-specific translation files in: ${OUTPUT_TRANSLATIONS_DIR}`)
@@ -175,7 +175,7 @@ async function runPrettierOnDirectory(directoryPath: string) {
 async function main() {
   const files = await scanFiles({
     dir: DIR_PATH,
-    targetFileSuffix: TARGET_FILE_SUFFIX
+    targetFileSuffix: TARGET_FILE_SUFFIX,
   })
   await generateLanguageFiles(files)
   await generateTextTypeFile(files)
@@ -203,7 +203,7 @@ function enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
         yield [i, item]
         i++
       }
-    }
+    },
   }
 }
 
@@ -224,7 +224,7 @@ async function scanFiles(input: { dir: string; targetFileSuffix: string }): Prom
   const files: string[] = []
 
   const filesAndDirectories = await fs.readdir(input.dir, {
-    withFileTypes: true
+    withFileTypes: true,
   })
 
   for (const file of filesAndDirectories) {
@@ -233,7 +233,7 @@ async function scanFiles(input: { dir: string; targetFileSuffix: string }): Prom
     if (file.isDirectory()) {
       const children = await scanFiles({
         dir: res,
-        targetFileSuffix: input.targetFileSuffix
+        targetFileSuffix: input.targetFileSuffix,
       })
       files.push(...children)
       continue

@@ -17,7 +17,7 @@ const ids = {
   playerTwoGradient: `playerTwoGradient${randomId}`,
   holePattern: `holePattern${randomId}`,
   columnGradient: `columnGradient${randomId}`,
-  holeMask: `holeMask${randomId}`
+  holeMask: `holeMask${randomId}`,
 }
 
 export const ViewColumnsSvg = ({
@@ -26,7 +26,7 @@ export const ViewColumnsSvg = ({
   onClick,
   onHover,
   disabled,
-  model
+  model,
 }: ViewColumnsinput & { id: string }) => {
   const playerOneFill = `url(#${ids.playerOneGradient})`
   const playerTwoFill = `url(#${ids.playerTwoGradient})`
@@ -71,7 +71,7 @@ export const ViewColumnsSvg = ({
                 ? undefined
                 : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
                   ? 'cursor-not-allowed'
-                  : 'cursor-pointer'
+                  : 'cursor-pointer',
             )}
             onMouseOver={() => {
               if (!disabled && isColumnIndex(columnIndex) && onHover) {
@@ -137,7 +137,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
             fill='transparent'
             strokeWidth={n / 8}
             className='pointer-events-none'
-          />
+          />,
         ]
       })}
     </svg>

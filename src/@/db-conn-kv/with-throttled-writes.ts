@@ -28,7 +28,7 @@ export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: 
           dbConnKv.set(key, valueToSet)
           timeouts.delete(key)
           lastValues.delete(key)
-        }, throttleMs)
+        }, throttleMs),
       )
     }
     lastValues.set(key, value)
@@ -44,7 +44,7 @@ export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: 
           dbConnKv.setMany(entriesToSet as [string, unknown][])
           timeouts.delete(key)
           lastValues.delete(key)
-        }, throttleMs)
+        }, throttleMs),
       )
     }
 
@@ -85,6 +85,6 @@ export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: 
     async setMany(entries) {
       scheduleSetMany(entries)
       return Ok(null)
-    }
+    },
   }
 }

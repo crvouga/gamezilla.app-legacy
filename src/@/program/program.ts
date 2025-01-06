@@ -36,7 +36,7 @@ function generateProgramId() {
 
 export type ProgramDebugger = (
   initialModel: unknown,
-  setModel: (model: unknown, msg?: unknown) => MaybePromise<void>
+  setModel: (model: unknown, msg?: unknown) => MaybePromise<void>,
 ) => MaybePromise<(model: unknown, msg?: unknown) => void>
 
 export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCtx> & {}) {
@@ -53,7 +53,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
     program.render?.({
       model,
       ctx,
-      dispatch
+      dispatch,
     })
   }
 
@@ -71,7 +71,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
     const sub = await program.subscriptions({
       intervalId,
       ctx,
-      model
+      model,
     })
     cleanUpSubscriptions()
     cleanUpSubscriptions = sub.sub(dispatch)
@@ -99,7 +99,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
       const updated = await program.update({
         ctx: ctxNew,
         msg,
-        model
+        model,
       })
       isUpdating = false
 
@@ -118,7 +118,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
       }
     } catch (error) {
       program.crash({
-        error
+        error,
       })
     }
   }
@@ -143,7 +143,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
     program.render?.({
       model,
       ctx: ctxNew,
-      dispatch
+      dispatch,
     })
   })
   updateDebugger?.(model, '@INIT')
@@ -151,10 +151,10 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
   return {
     getModel() {
       return model
-    }
+    },
   }
 }
 
 export const Program = {
-  run
+  run,
 }

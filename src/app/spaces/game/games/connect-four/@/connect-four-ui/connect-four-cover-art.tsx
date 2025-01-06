@@ -10,7 +10,7 @@ export const CoverArt = (input: { className?: string }) => {
     playerTwoGradient: `playerTwoGradient${coverArtId}`,
     holePattern: `holePattern${coverArtId}`,
     columnGradient: `columnGradient${coverArtId}`,
-    holeMask: `holeMask${coverArtId}`
+    holeMask: `holeMask${coverArtId}`,
   }
 
   const playerOneFill = `url(#${ids.playerOneGradient})`

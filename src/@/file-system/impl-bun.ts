@@ -14,6 +14,6 @@ export const FileSystem = (_config: Config): IFileSystem => {
     async read(path) {
       const file = Bun.file(path)
       return file.stream()
-    }
+    },
   }
 }

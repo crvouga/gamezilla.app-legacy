@@ -9,15 +9,15 @@ import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/clien
 const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
   const userId = UserId.generate()
   return FlowPlay.toSolutionMsgs({
-    flow: puzzle.flow
+    flow: puzzle.flow,
   }).map(
     (c): FixtureUpdateInput => ({
       msgCore: withEventMeta({
         t: 'got-flow-play-msg',
         userId,
-        c
-      })
-    })
+        c,
+      }),
+    }),
   )
 }
 
@@ -31,7 +31,7 @@ export const FixtureScreenPlayPuzzleClient = async () => {
   const prevPuzzleResult: PuzzleResult = { t: 'got', c: prevPuzzle }
 
   const pack = await Pack.random({
-    puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id]
+    puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
   })
   const puzzleIndex = 1
   const prevPuzzleIndex = 0
@@ -43,9 +43,9 @@ export const FixtureScreenPlayPuzzleClient = async () => {
         t: 'got-msg-core',
         c: {
           t: 'user-clicked-open-pack-list-item',
-          pack
-        }
-      }
+          pack,
+        },
+      },
     },
     {
       msg: {
@@ -53,10 +53,10 @@ export const FixtureScreenPlayPuzzleClient = async () => {
         c: {
           t: 'user-clicked-open-puzzle-grid-item',
           flowPuzzle: { t: 'got', c: puzzle },
-          puzzleIndex
-        }
-      }
-    }
+          puzzleIndex,
+        },
+      },
+    },
   ])
 
   const firstPuzzle = prevPuzzle
@@ -72,11 +72,11 @@ export const FixtureScreenPlayPuzzleClient = async () => {
         nextPuzzleIndex: lastPuzzleIndex,
         nextPuzzle: {
           t: 'got',
-          c: lastPuzzle
-        }
-      })
+          c: lastPuzzle,
+        },
+      }),
     },
-    ...toCompletePuzzleMsgs(lastPuzzle)
+    ...toCompletePuzzleMsgs(lastPuzzle),
   ]
 
   return {
@@ -95,6 +95,6 @@ export const FixtureScreenPlayPuzzleClient = async () => {
     nextPuzzle: nextPuzzleResult,
     nextPuzzleIndex,
     prevPuzzle: prevPuzzleResult,
-    prevPuzzleIndex
+    prevPuzzleIndex,
   }
 }

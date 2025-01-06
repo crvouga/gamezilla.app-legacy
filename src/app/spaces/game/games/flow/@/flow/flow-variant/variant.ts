@@ -45,21 +45,21 @@ export const init = (input: {
     case 'flow-grid': {
       return FlowGrid.init({
         ...input,
-        dimensions: input.dimensions
+        dimensions: input.dimensions,
       })
     }
 
     case 'flow-hex': {
       return FlowHex.init({
         ...input,
-        dimensions: input.dimensions
+        dimensions: input.dimensions,
       })
     }
 
     case 'flow-tri': {
       return FlowTri.init({
         ...input,
-        dimensions: input.dimensions
+        dimensions: input.dimensions,
       })
     }
   }

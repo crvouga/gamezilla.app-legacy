@@ -23,7 +23,7 @@ export const FixtureFlowPlayClient = async () => {
   const render = (output: Output, ctx: typeof f.ctx = f.ctx) => {
     const msgs = PubSub.create<MsgClient>()
     const rendered = f.render(
-      <PlayClient.View ctx={ctx} dispatch={msgs.pub} model={output.model} modelCore={output.modelCore} />
+      <PlayClient.View ctx={ctx} dispatch={msgs.pub} model={output.model} modelCore={output.modelCore} />,
     )
     return { ...rendered, msgs }
   }
@@ -36,7 +36,7 @@ export const FixtureFlowPlayClient = async () => {
         ctx: f.ctx,
         model: lastOutput.model,
         modelCore: lastOutput.modelCore,
-        ...input
+        ...input,
       })
       const msgCore = [...(input.msgCore ? [input.msgCore] : []), ...(nextOutput.msgCore ?? [])].flat(2)
       const nextModelCore = msgCore.reduce(
@@ -44,13 +44,13 @@ export const FixtureFlowPlayClient = async () => {
           PlayCore.updateCore({
             ctx: f.ctx,
             modelCore,
-            msgCore
+            msgCore,
           }),
-        lastOutput.modelCore
+        lastOutput.modelCore,
       )
       outputs.push({
         ...nextOutput,
-        modelCore: nextModelCore
+        modelCore: nextModelCore,
       })
     }
     return outputs
@@ -62,7 +62,7 @@ export const FixtureFlowPlayClient = async () => {
 
   const initial: Output = {
     model: PlayClient.init,
-    modelCore: initCore
+    modelCore: initCore,
   }
 
   return {
@@ -70,6 +70,6 @@ export const FixtureFlowPlayClient = async () => {
     initial,
     render,
     update,
-    updates
+    updates,
   }
 }

@@ -51,6 +51,6 @@ export const withReducedParsing = ({ dbConnKv, verifiedKeys, ...config }: Config
       verifiedKeys.add(key)
 
       return got
-    }
+    },
   }
 }

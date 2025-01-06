@@ -29,7 +29,7 @@ export const PuzzleRow = p.obj({
   popularity: Int,
   number_of_plays: Int,
   themes: p.str,
-  game_url: p.str
+  game_url: p.str,
 })
 
 export type PuzzleRow = p.Infer<typeof PuzzleRow>
@@ -38,7 +38,7 @@ export const PuzzleInteractionRow = p.obj({
   id: p.str,
   puzzle_id: p.str,
   user_id: p.str,
-  type: p.enumeration(['started', 'solved', 'incorrect', 'solved-with-hint'] as const)
+  type: p.enumeration(['started', 'solved', 'incorrect', 'solved-with-hint'] as const),
 })
 
 export type PuzzleInteractionRow = p.Infer<typeof PuzzleInteractionRow>
@@ -46,8 +46,8 @@ export type PuzzleInteractionRow = p.Infer<typeof PuzzleInteractionRow>
 const PuzzleQueryJSON = p.obj({
   ratingRange: p.obj({
     lower: p.num,
-    upper: p.num
-  })
+    upper: p.num,
+  }),
 })
 type PuzzleQueryJSON = p.Infer<typeof PuzzleQueryJSON>
 
@@ -55,7 +55,7 @@ export const PuzzleProfileRow = p.obj({
   id: p.str,
   user_id: p.str,
   elo_rating: Int,
-  puzzle_query: PuzzleQueryJSON
+  puzzle_query: PuzzleQueryJSON,
 })
 
 export type PuzzleProfileRow = p.Infer<typeof PuzzleProfileRow>
@@ -84,8 +84,8 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
     return [
       {
         opponentMove,
-        correctMove
-      }
+        correctMove,
+      },
     ]
   })
 
@@ -108,7 +108,7 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
     numberOfPlays: typeof row.number_of_plays === 'string' ? Number.parseInt(row.number_of_plays) : row.number_of_plays,
     themes: row.themes.split(' '),
     gameUrl: row.game_url,
-    openingTags: row.opening_tags.split(' ')
+    openingTags: row.opening_tags.split(' '),
   }
 
   return Ok(puzzle)
@@ -141,7 +141,7 @@ export const uciMovesToPuzzleMoves = (moves: string[]): Result<string, [MoveInpu
 
 const puzzlesFindForProfile = async (
   dbConn: IDbConnSql,
-  input: { profile: PuzzleProfile; omit?: string[] }
+  input: { profile: PuzzleProfile; omit?: string[] },
 ): Promise<Result<string, Puzzle[]>> => {
   const delta = 100
   const minRating = input.profile.eloRating - delta
@@ -197,7 +197,7 @@ const puzzlesReplace = async ({ dbConn, rows }: { dbConn: IDbConnSql; rows: Puzz
     VALUES
       ${rows.map(
         (row) =>
-          `("${row.puzzle_id}", ${row.rating}, ${row.rating_deviation}, "${row.opening_tags}", "${row.fen}", "${row.moves}", ${row.popularity}, ${row.number_of_plays}, "${row.themes}", "${row.game_url}")`
+          `("${row.puzzle_id}", ${row.rating}, ${row.rating_deviation}, "${row.opening_tags}", "${row.fen}", "${row.moves}", ${row.popularity}, ${row.number_of_plays}, "${row.themes}", "${row.game_url}")`,
       )}
   `
 
@@ -208,7 +208,7 @@ const puzzlesReplace = async ({ dbConn, rows }: { dbConn: IDbConnSql; rows: Puzz
 
 const interactionsInsert = async (
   dbConn: IDbConnSql,
-  interactions: PuzzleInteraction[]
+  interactions: PuzzleInteraction[],
 ): Promise<Result<string, null>> => {
   const result = await dbConn.query(
     PuzzleInteractionRow,
@@ -219,7 +219,7 @@ const interactionsInsert = async (
           type
         ) VALUES ${interactions.map((x) => `('${x.puzzleId}', '${x.userId}', '${x.type}')`).join(', ')}
       `,
-    {}
+    {},
   )
   return Result.mapOk(result, () => null)
 }
@@ -251,8 +251,8 @@ const profilesFind = async (dbConn: IDbConnSql, userId: UserId): Promise<Result<
         user_id = :user_id
     `,
     {
-      user_id: userId
-    }
+      user_id: userId,
+    },
   )
 
   if (found.t === 'err') {
@@ -283,9 +283,9 @@ const profilesFind = async (dbConn: IDbConnSql, userId: UserId): Promise<Result<
     puzzleQuery: {
       ratingRange: [
         puzzleQuery?.ratingRange.lower ?? initQuery.ratingRange[0],
-        puzzleQuery?.ratingRange.upper ?? initQuery.ratingRange[1]
-      ]
-    }
+        puzzleQuery?.ratingRange.upper ?? initQuery.ratingRange[1],
+      ],
+    },
   }
 
   return Ok(profile)
@@ -313,8 +313,8 @@ export const profilesInsert = async (dbConn: IDbConnSql, profile: PuzzleProfile)
       puzzle_profile_id: puzzleProfileId,
       user_id: profile.userId,
       elo_rating: profile.eloRating,
-      puzzle_query: JSON.stringify(profile.puzzleQuery)
-    }
+      puzzle_query: JSON.stringify(profile.puzzleQuery),
+    },
   )
 
   if (mutated.t === 'err') {
@@ -325,7 +325,7 @@ export const profilesInsert = async (dbConn: IDbConnSql, profile: PuzzleProfile)
 
 export const profilesFindElseInsert = async (
   dbConn: IDbConnSql,
-  profile: PuzzleProfile
+  profile: PuzzleProfile,
 ): Promise<Result<string, PuzzleProfile>> => {
   const found = await profilesFind(dbConn, profile.userId)
 
@@ -361,8 +361,8 @@ const profilesUpdate = async (dbConn: IDbConnSql, profile: PuzzleProfile): Promi
     {
       user_id: profile.userId,
       elo_rating: profile.eloRating,
-      puzzle_query: JSON.stringify(profile.puzzleQuery)
-    }
+      puzzle_query: JSON.stringify(profile.puzzleQuery),
+    },
   )
 
   if (mutated.t === 'err') {
@@ -373,16 +373,16 @@ const profilesUpdate = async (dbConn: IDbConnSql, profile: PuzzleProfile): Promi
 
 export const PuzzleDb = {
   interactions: {
-    insert: interactionsInsert
+    insert: interactionsInsert,
   },
   puzzles: {
     replace: puzzlesReplace,
-    findForProfile: puzzlesFindForProfile
+    findForProfile: puzzlesFindForProfile,
   },
   profiles: {
     find: profilesFind,
     insert: profilesInsert,
     findElseInsert: profilesFindElseInsert,
-    update: profilesUpdate
-  }
+    update: profilesUpdate,
+  },
 }

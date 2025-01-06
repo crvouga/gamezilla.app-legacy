@@ -35,5 +35,5 @@ const isCurrentUserGuest = (ctx: SpaceClientCtx) => {
 export const SpaceClientCtx = {
   toProfiles,
   toHostTitle,
-  isCurrentUserGuest
+  isCurrentUserGuest,
 }

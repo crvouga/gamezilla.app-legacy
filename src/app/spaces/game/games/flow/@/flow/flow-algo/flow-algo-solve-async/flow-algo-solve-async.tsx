@@ -34,7 +34,7 @@ export const solve = async (model: Variant.Model, logger: ILogger = loggerNoop):
 
   const toWorker: MsgToWorker = {
     t: 'find-solution',
-    model
+    model,
   }
 
   logger.info('Sending solve request to worker')
@@ -50,9 +50,9 @@ export const solve = async (model: Variant.Model, logger: ILogger = loggerNoop):
         () => {
           resolve(null)
         },
-        1000 * 60 * 2
+        1000 * 60 * 2,
       )
-    })
+    }),
   ])
 
   logger.info(`Solution: ${solution ? 'found' : 'not found'}`)

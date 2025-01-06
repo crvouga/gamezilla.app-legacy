@@ -16,9 +16,9 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       const counted = await input.ctx.flowPuzzleDb.count({
         where: {
           createdBy: {
-            equals: input.msgClient.userId
-          }
-        }
+            equals: input.msgClient.userId,
+          },
+        },
       })
 
       if (isErr(counted)) {
@@ -36,9 +36,9 @@ const updateFromClient: ServerModule['update'] = async (input) => {
           dimensions: VariantDimensions.init({
             t: 'flow-grid',
             height: 8,
-            width: 8
-          })
-        })
+            width: 8,
+          }),
+        }),
       })
 
       const created = await input.ctx.flowPuzzleDb.put(puzzleNew)
@@ -46,11 +46,11 @@ const updateFromClient: ServerModule['update'] = async (input) => {
       const msgCore: MsgCore = {
         t: 'create-new-puzzle.user-created-puzzle',
         created: Result.mapOk(created, () => puzzleNew),
-        userId: input.msgClient.userId
+        userId: input.msgClient.userId,
       }
 
       return {
-        msgCore: [withEventId(msgCore)]
+        msgCore: [withEventId(msgCore)],
       }
     }
 
@@ -61,5 +61,5 @@ const updateFromClient: ServerModule['update'] = async (input) => {
 }
 
 export const CreateNewPuzzleServer = {
-  update
+  update,
 }

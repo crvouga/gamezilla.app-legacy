@@ -14,8 +14,8 @@ const updateFromClient: ServerModule['update'] = async (input) => {
     case 'create-new-pack.clicked-create-button': {
       const counted = await input.ctx.flowPackDb.count({
         where: {
-          createdBy: input.msgClient.userId
-        }
+          createdBy: input.msgClient.userId,
+        },
       })
 
       if (counted.t === 'err') {
@@ -29,9 +29,9 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         lastUpdatedAt: input.ctx.now,
         lastUpdatedBy: input.msgClient.userId,
         name: await PackName.generate({
-          count: counted.value
+          count: counted.value,
         }),
-        puzzleIds: []
+        puzzleIds: [],
       }
 
       const put = await input.ctx.flowPackDb.put(packNew)
@@ -40,9 +40,9 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         msgCmd: [
           sendToClient(input.msgClient, {
             t: 'create-new-pack.created-pack',
-            created: put
-          })
-        ]
+            created: put,
+          }),
+        ],
       }
     }
 
@@ -53,5 +53,5 @@ const updateFromClient: ServerModule['update'] = async (input) => {
 }
 
 export const PackCreateNewServer = {
-  update
+  update,
 }

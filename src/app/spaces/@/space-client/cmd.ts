@@ -21,7 +21,7 @@ export const openUserDetails = <T extends SpaceClientCmdTypes>(userId: UserId): 
 
 const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
   t: Tag,
-  cmds?: SpaceClientCmd<T>[]
+  cmds?: SpaceClientCmd<T>[],
 ): SpaceClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
   MsgToServer: { t: Tag; c: T['MsgToServer'] }
@@ -44,7 +44,7 @@ const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
 const map = <A extends SpaceClientCmdTypes, B extends SpaceClientCmdTypes>(
   msgCmd: SpaceClientCmd<A>[] | undefined | null,
   msgToServer: (a: A['MsgToServer']) => B['MsgToServer'],
-  msgClient: (b: A['MsgClient']) => B['MsgClient']
+  msgClient: (b: A['MsgClient']) => B['MsgClient'],
 ): SpaceClientCmd<B>[] => {
   return (
     msgCmd?.flatMap((msgCmd): SpaceClientCmd<B>[] => {
@@ -62,7 +62,7 @@ const map = <A extends SpaceClientCmdTypes, B extends SpaceClientCmdTypes>(
 }
 
 const toClientCmd = <T extends SpaceClientCmdTypes>(
-  msgCmd: SpaceClientCmd<T>[] | undefined | null
+  msgCmd: SpaceClientCmd<T>[] | undefined | null,
 ): AppClientCmd<T>[] => {
   return (
     msgCmd?.flatMap((msgCmd) => {
@@ -80,7 +80,7 @@ const toClientCmd = <T extends SpaceClientCmdTypes>(
 }
 
 const toSpaceClientCmd = <T extends SpaceClientCmdTypes>(
-  msgCmd: SpaceClientCmd<T>[] | undefined | null
+  msgCmd: SpaceClientCmd<T>[] | undefined | null,
 ): SpaceClientCmd<T>[] => {
   return (
     msgCmd?.flatMap((msgCmd) => {
@@ -101,5 +101,5 @@ export const SpaceClientCmd = {
   toSpaceClientCmd,
   toClientCmd,
   tag,
-  map
+  map,
 }

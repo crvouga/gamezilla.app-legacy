@@ -4,6 +4,6 @@ import { HashingAlgo } from './hashing-algo'
 
 export const Hash = p.obj({
   value: HashValue,
-  algo: HashingAlgo
+  algo: HashingAlgo,
 })
 export type Hash = p.Infer<typeof Hash>

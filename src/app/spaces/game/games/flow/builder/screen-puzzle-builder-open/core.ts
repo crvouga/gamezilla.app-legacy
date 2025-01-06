@@ -11,23 +11,23 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
         option: 'puzzles',
         screenPackBuilder: modelCore.screenPackBuilder,
         screen: {
-          t: 'screen-puzzle-builder'
+          t: 'screen-puzzle-builder',
         },
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
           edit: FlowEdit.init({
-            flow: msgCore.puzzle.flow
+            flow: msgCore.puzzle.flow,
           }),
           play: FlowPlay.init({
             ctx: FlowPlay.initCtx({
-              flowPuzzle: msgCore.puzzle
-            })
+              flowPuzzle: msgCore.puzzle,
+            }),
           }),
           mode: {
-            t: 'edit'
+            t: 'edit',
           },
-          puzzle: msgCore.puzzle
-        }
+          puzzle: msgCore.puzzle,
+        },
       }
     }
 
@@ -40,7 +40,7 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
 const updateCore: UpdateCore = (input) => {
   return [CreateNewPuzzleCore.updateCore, updateCoreMain].reduce(
     (acc, updateCore) => updateCore({ ...input, modelCore: acc }),
-    input.modelCore
+    input.modelCore,
   )
 }
 

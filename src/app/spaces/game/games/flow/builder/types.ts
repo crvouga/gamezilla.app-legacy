@@ -78,16 +78,16 @@ export const initClient: ClientModule['init'] = {
   ...ScreenPuzzleBuilderOpenTypes.initClient,
   ...ScreenPuzzleBuilderTypes.initClient,
   ...ScreenPackBuilderTypes.initClient,
-  ...ScreenPackBuilderOpenTypes.initClient
+  ...ScreenPackBuilderOpenTypes.initClient,
 }
 
 export const ModelServer = p.obj({
-  flowPackList: PackListTypes.ModelServer
+  flowPackList: PackListTypes.ModelServer,
 })
 export type ModelServer = p.Infer<typeof ModelServer>
 
 export const initServer: ServerModule['init'] = {
-  flowPackList: PackListTypes.initServer
+  flowPackList: PackListTypes.initServer,
 }
 
 //
@@ -145,27 +145,27 @@ export const MsgCore = p.or(
   ScreenPackBuilderOpenTypes.MsgCore,
   p.obj({
     t: p.l('user-clicked-back-button'),
-    userId: UserId
-  })
+    userId: UserId,
+  }),
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
 export const Screen = p.or(
   p.obj({
-    t: p.l('screen-main-menu')
+    t: p.l('screen-main-menu'),
   }),
   p.obj({
-    t: p.l('screen-puzzle-builder-open')
+    t: p.l('screen-puzzle-builder-open'),
   }),
   p.obj({
-    t: p.l('screen-pack-builder-open')
+    t: p.l('screen-pack-builder-open'),
   }),
   p.obj({
-    t: p.l('screen-puzzle-builder')
+    t: p.l('screen-puzzle-builder'),
   }),
   p.obj({
-    t: p.l('screen-pack-builder')
-  })
+    t: p.l('screen-pack-builder'),
+  }),
 )
 export type Screen = p.Infer<typeof Screen>
 
@@ -174,7 +174,7 @@ export const ModelCore = p.obj({
   screenPuzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
   screenPuzzleBuilderOpen: p.maybe(ScreenPuzzleBuilderOpenTypes.ModelCore),
   screenPackBuilder: p.maybe(ScreenPackBuilderTypes.ModelCore),
-  screenPackBuilderOpen: p.maybe(ScreenPackBuilderOpenTypes.ModelCore)
+  screenPackBuilderOpen: p.maybe(ScreenPackBuilderOpenTypes.ModelCore),
 })
 
 export type ModelCore = p.Infer<typeof ModelCore>

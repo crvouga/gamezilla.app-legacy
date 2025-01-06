@@ -14,7 +14,7 @@ import {
   type ToggleStatus,
   type ToggleStatusResult,
   initCoreModel,
-  startGame
+  startGame,
 } from './snake.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
@@ -46,7 +46,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
     case 'tick': {
       const modelNew: Model = {
         ...Snake.step(model),
-        gameStatus: model.gameStatus
+        gameStatus: model.gameStatus,
       }
 
       return [modelNew, Eff.None]
@@ -121,8 +121,8 @@ export const inputPlayer = (player: InputPlayer[1], model: CoreModel): InputPlay
     ...model,
     gameStatus: {
       type: 'GameSetup',
-      player: player
-    }
+      player: player,
+    },
   }
 
   return Result.Ok(modelNew)
@@ -142,7 +142,7 @@ export const inputDirection = ({ direction, userId }: InputDirection[1], model: 
   const modelNew: CoreModel = {
     ...model,
     ...Snake.enqueueDirection(direction, model),
-    status: 'Playing'
+    status: 'Playing',
   }
 
   return Result.Ok(modelNew)
@@ -159,7 +159,7 @@ export const toggleStatus = ({ userId }: ToggleStatus[1], model: CoreModel): Tog
 
   const modelNew: CoreModel = {
     ...model,
-    status: model.status === 'Paused' ? 'Playing' : 'Paused'
+    status: model.status === 'Paused' ? 'Playing' : 'Paused',
   }
 
   return Result.Ok(modelNew)

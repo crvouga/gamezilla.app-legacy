@@ -13,14 +13,14 @@ import type { ModelClient } from '../types'
 const ctx: AnonymousClientCtx = {
   currentRoute: {
     n: 'auth-login',
-    t: 'login'
+    t: 'login',
   },
   navigatorLanguage: 'en',
   t: Translator('en'),
   documentVisibilityState: 'visible',
   now: Posix.now(),
   profiles: {},
-  currentUserId: null
+  currentUserId: null,
 }
 
 const clickedContinueAsGuestButton = (model: ModelClient) =>
@@ -28,8 +28,8 @@ const clickedContinueAsGuestButton = (model: ModelClient) =>
     model,
     ctx,
     msg: {
-      t: 'guest.clicked-continue-as-guest-button'
-    }
+      t: 'guest.clicked-continue-as-guest-button',
+    },
   })
 
 const continueAsGuestResultedOk = (userId: UserId) => (model: ModelClient) =>
@@ -38,8 +38,8 @@ const continueAsGuestResultedOk = (userId: UserId) => (model: ModelClient) =>
     ctx,
     msgServer: {
       t: 'guest.continue-as-guest-result',
-      result: Ok(userId)
-    }
+      result: Ok(userId),
+    },
   })
 
 const continueAsGuestResultedErr = () => (model: ModelClient) =>
@@ -48,8 +48,8 @@ const continueAsGuestResultedErr = () => (model: ModelClient) =>
     ctx,
     msgServer: {
       t: 'guest.continue-as-guest-result',
-      result: Err('some error happened')
-    }
+      result: Err('some error happened'),
+    },
   })
 
 describe(import.meta.file, () => {
@@ -57,9 +57,9 @@ describe(import.meta.file, () => {
     const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
-        stored: {}
+        stored: {},
       }),
-      clickedContinueAsGuestButton
+      clickedContinueAsGuestButton,
     )
 
     expect(isRequesting(output.model.guestRequest) && output.model.guestRequest.requestedAt === ctx.now).toBe(true)
@@ -69,9 +69,9 @@ describe(import.meta.file, () => {
     const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
-        stored: {}
+        stored: {},
       }),
-      clickedContinueAsGuestButton
+      clickedContinueAsGuestButton,
     )
 
     expect(didSendToServer(output, (msg) => msg.t === 'guest.clicked-continue-as-guest-button')).toBe(true)
@@ -81,10 +81,10 @@ describe(import.meta.file, () => {
     const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
-        stored: {}
+        stored: {},
       }),
       clickedContinueAsGuestButton,
-      continueAsGuestResultedOk(UserId.generate())
+      continueAsGuestResultedOk(UserId.generate()),
     )
     expect(isResponseOk(output.model.guestRequest)).toBe(true)
   })
@@ -93,10 +93,10 @@ describe(import.meta.file, () => {
     const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
-        stored: {}
+        stored: {},
       }),
       clickedContinueAsGuestButton,
-      continueAsGuestResultedErr()
+      continueAsGuestResultedErr(),
     )
     expect(isResponseErr(output.model.guestRequest)).toBe(true)
   })
@@ -105,9 +105,9 @@ describe(import.meta.file, () => {
     const output = AppClientModule.andThen(
       AuthClient.init({
         ctx,
-        stored: {}
+        stored: {},
       }),
-      clickedContinueAsGuestButton
+      clickedContinueAsGuestButton,
     )
     expect(didPlaySound(output)).toBe(true)
   })

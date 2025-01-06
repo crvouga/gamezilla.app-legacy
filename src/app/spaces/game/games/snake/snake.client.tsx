@@ -10,7 +10,7 @@ import {
   type ModelServer,
   type MsgClient,
   type MsgToClient,
-  initCoreModel
+  initCoreModel,
 } from './snake.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
@@ -28,7 +28,7 @@ export type Model = ModelClient
 
 export const init: Model = {
   ...initCoreModel,
-  openedMenuId: Option.None
+  openedMenuId: Option.None,
 }
 
 //
@@ -43,16 +43,16 @@ export type Msg = MsgClient
 
 export const update = (
   {
-    ctx
+    ctx,
   }: {
     ctx: SpaceClientCtx
   },
   msg: Msg,
-  _model: Model
+  _model: Model,
 ): [Model, Eff<Msg>] => {
   const model: Model = {
     ..._model,
-    openedMenuId: Option.None
+    openedMenuId: Option.None,
   }
 
   switch (msg[0]) {
@@ -94,9 +94,9 @@ export const update = (
       return [
         {
           ...model,
-          openedMenuId: Option.Some(msg[1])
+          openedMenuId: Option.Some(msg[1]),
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -104,9 +104,9 @@ export const update = (
       return [
         {
           ...model,
-          openedMenuId: Option.None
+          openedMenuId: Option.None,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -123,9 +123,9 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
       return [
         {
           ...coreModel,
-          openedMenuId: model.openedMenuId
+          openedMenuId: model.openedMenuId,
         },
-        Eff.None
+        Eff.None,
       ]
     }
 
@@ -153,7 +153,7 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
 
 const updateResponse = <TProblem extends string, TResult extends Result<TProblem, CoreModel>>(
   result: TResult,
-  model: Model
+  model: Model,
 ): [Model, Eff<Msg>] => {
   if (isErr(result)) {
     return [model, Eff.None]
@@ -200,13 +200,13 @@ export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }
 
 export const mergeWithServer = ({
   clientModel,
-  serverModel
+  serverModel,
 }: {
   clientModel: ModelClient
   serverModel: ModelServer
 }): ModelClient => {
   return {
     ...serverModel,
-    openedMenuId: clientModel.openedMenuId
+    openedMenuId: clientModel.openedMenuId,
   }
 }

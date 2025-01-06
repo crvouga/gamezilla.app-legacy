@@ -4925,5 +4925,5 @@ export const adjectives = [
   'ill-fitting',
   'scaly',
   'unpainted',
-  'eroding'
+  'eroding',
 ]

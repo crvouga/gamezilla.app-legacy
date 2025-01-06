@@ -19,9 +19,9 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         msgEvt: [
           {
             ...input.msgClient,
-            t: 'auth-evt.client-unauthenticated'
-          }
-        ]
+            t: 'auth-evt.client-unauthenticated',
+          },
+        ],
       }
     }
 
@@ -32,5 +32,5 @@ const updateFromClient: ServerModule['update'] = async (input) => {
 }
 
 export const LogoutServer = {
-  update
+  update,
 }

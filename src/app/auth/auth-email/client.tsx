@@ -34,7 +34,7 @@ export type Model = {
 
 export const init: Model = {
   emailAddress: '',
-  submission: { type: 'idle' }
+  submission: { type: 'idle' },
 }
 
 //
@@ -53,7 +53,7 @@ export type Msg =
 
 export const update = ({
   msg,
-  model
+  model,
 }: {
   msg: Msg
   model: Model
@@ -67,8 +67,8 @@ export const update = ({
       model: {
         ...model,
         validation: null,
-        emailAddress: msg.emailAddress
-      }
+        emailAddress: msg.emailAddress,
+      },
     }
   }
 
@@ -79,9 +79,9 @@ export const update = ({
           ...model,
           submission: {
             type: 'problem',
-            message: msg.result.error
-          }
-        }
+            message: msg.result.error,
+          },
+        },
       }
     }
 
@@ -93,9 +93,9 @@ export const update = ({
         emailAddress: '',
         submission: {
           type: 'ok',
-          sentToEmailAddress: emailAddress
-        }
-      }
+          sentToEmailAddress: emailAddress,
+        },
+      },
     }
   }
 
@@ -104,8 +104,8 @@ export const update = ({
       return {
         model: {
           ...model,
-          validation: 'invalid-email'
-        }
+          validation: 'invalid-email',
+        },
       }
     }
 
@@ -114,9 +114,9 @@ export const update = ({
         ...model,
         submission: {
           type: 'loading',
-          sentToEmailAddress: model.emailAddress
-        }
-      }
+          sentToEmailAddress: model.emailAddress,
+        },
+      },
     }
   }
 
@@ -127,10 +127,10 @@ export const update = ({
         {
           t: 'routing',
           c: {
-            t: 'back'
-          }
-        }
-      ]
+            t: 'back',
+          },
+        },
+      ],
     }
   }
 
@@ -157,7 +157,7 @@ export const View = (input: {
       <TopBar
         onBack={() =>
           input.dispatch({
-            t: 'clicked-back'
+            t: 'clicked-back',
           })
         }
         ctx={input.ctx}
@@ -169,7 +169,7 @@ export const View = (input: {
         onSubmit={(e) => {
           e.preventDefault()
           input.dispatch({
-            t: 'clicked-send-login-link'
+            t: 'clicked-send-login-link',
           })
         }}
       >
@@ -182,13 +182,13 @@ export const View = (input: {
           onChange={(emailAddress) => {
             input.dispatch({
               t: 'inputted-email-address',
-              emailAddress
+              emailAddress,
             })
           }}
           onClear={() =>
             input.dispatch({
               t: 'inputted-email-address',
-              emailAddress: ''
+              emailAddress: '',
             })
           }
           error={input.model.validation === 'invalid-email'}

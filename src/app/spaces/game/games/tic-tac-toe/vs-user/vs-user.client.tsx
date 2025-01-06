@@ -11,7 +11,7 @@ import {
   type MsgToClient,
   type MsgToServer,
   type Res,
-  initCoreModel
+  initCoreModel,
 } from './vs-user.types'
 
 //
@@ -24,7 +24,7 @@ import {
 
 export const init: ModelClient = {
   ...initCoreModel({ X: 'none', O: 'none' }),
-  openedModal: 'none'
+  openedModal: 'none',
 }
 
 //
@@ -36,7 +36,7 @@ export const init: ModelClient = {
 
 export const update = (
   msg: MsgClient,
-  model: ModelClient
+  model: ModelClient,
 ): {
   model: ModelClient
   msgCmd?: AppClientCmd<{
@@ -55,8 +55,8 @@ export const update = (
       return {
         model: {
           ...model,
-          openedModal: 'none'
-        }
+          openedModal: 'none',
+        },
       }
     }
 
@@ -64,8 +64,8 @@ export const update = (
       return {
         model: {
           ...model,
-          openedModal: msg[1]
-        }
+          openedModal: msg[1],
+        },
       }
     }
 
@@ -90,13 +90,13 @@ export const update = (
     case 'NewGame': {
       return {
         model,
-        msgCmd: [sendToServer(msg)]
+        msgCmd: [sendToServer(msg)],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -131,8 +131,8 @@ export const updateFromServer = (_: { ctx: SpaceClientCtx }, msg: MsgToClient, m
       return [
         {
           ...modelNew,
-          openedModal: 'none'
-        }
+          openedModal: 'none',
+        },
       ]
     }
 
@@ -156,7 +156,7 @@ export const updateFromServer = (_: { ctx: SpaceClientCtx }, msg: MsgToClient, m
 export const mergeWithServer = (clientModel: ModelClient, serverModel: ModelServer): ModelClient => {
   return {
     ...serverModel,
-    openedModal: clientModel.openedModal
+    openedModal: clientModel.openedModal,
   }
 }
 
@@ -172,7 +172,7 @@ export const View = ({
   ctx,
   model,
   dispatch,
-  onCloseGame
+  onCloseGame,
 }: {
   ctx: SpaceClientCtx
   model: ModelClient
@@ -188,8 +188,8 @@ export const View = ({
           dispatch([
             'start-game',
             {
-              userId: ctx.currentUserId
-            }
+              userId: ctx.currentUserId,
+            },
           ])
         }
         renderCoverArt={(input) => {
@@ -212,8 +212,8 @@ export const View = ({
               'InputPlayer',
               {
                 playerType: 'X',
-                userId: ctx.currentUserId
-              }
+                userId: ctx.currentUserId,
+              },
             ])
           },
           onStopPlaying: () => {
@@ -221,10 +221,10 @@ export const View = ({
               'InputPlayer',
               {
                 playerType: 'X',
-                userId: ctx.currentUserId
-              }
+                userId: ctx.currentUserId,
+              },
             ])
-          }
+          },
         }}
         playerTwo={{
           label: ctx.t('tic-tac-toe.naught'),
@@ -237,8 +237,8 @@ export const View = ({
               'InputPlayer',
               {
                 playerType: 'O',
-                userId: ctx.currentUserId
-              }
+                userId: ctx.currentUserId,
+              },
             ])
           },
           onStopPlaying: () => {
@@ -246,10 +246,10 @@ export const View = ({
               'InputPlayer',
               {
                 playerType: 'O',
-                userId: ctx.currentUserId
-              }
+                userId: ctx.currentUserId,
+              },
             ])
-          }
+          },
         }}
       />
     )

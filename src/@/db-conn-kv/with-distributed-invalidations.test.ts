@@ -10,7 +10,7 @@ import { PubSubTopicBasedMap } from '../pub-sub-topic-based/impl-in-memory'
 
 const MyEvent = p.obj({
   id: p.str,
-  value: p.str
+  value: p.str,
 })
 
 type MyEvent = p.Infer<typeof MyEvent>
@@ -20,8 +20,8 @@ const randomMyEvent = (): MyEvent => ({
   id: `event:${String(runningEventId++)}`,
   value: JSON.stringify({
     x: Math.random(),
-    y: Math.random()
-  })
+    y: Math.random(),
+  }),
 })
 
 const Fixture = async () => {
@@ -40,7 +40,7 @@ const Fixture = async () => {
         source: await DbConnKv({
           t: 'hash-map',
           logger: Logger.prefix('source', logger),
-          map: sourceMap
+          map: sourceMap,
         }),
         logger: loggerChild,
         cache: await DbConnKv({
@@ -49,18 +49,18 @@ const Fixture = async () => {
             t: 'pub-sub-topic-based',
             pubSubTopicBased: await PubSubTopicBased({
               t: 'in-memory',
-              map: pubSubMap
+              map: pubSubMap,
             }),
-            topic: 'my-event-cache-invalidation'
+            topic: 'my-event-cache-invalidation',
           }),
           logger: loggerChild,
           cache: await DbConnKv({
             t: 'hash-map',
             map: new Map(),
-            logger: loggerChild
-          })
-        })
-      })
+            logger: loggerChild,
+          }),
+        }),
+      }),
     })
   }
 
@@ -72,7 +72,7 @@ const Fixture = async () => {
     logger: Logger.prefix('test', logger),
     instanceA,
     instanceB,
-    instanceC
+    instanceC,
   }
 }
 
@@ -160,7 +160,7 @@ describe(import.meta.file, () => {
 
     await f.instanceA.setMany([
       [myEvent1.id, myEvent1New],
-      [myEvent2.id, myEvent2New]
+      [myEvent2.id, myEvent2New],
     ])
 
     const afterA1 = await f.instanceA.get(myEvent1.id)

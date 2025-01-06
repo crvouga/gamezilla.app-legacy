@@ -56,6 +56,6 @@ export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBase
         subscribers.delete(id)
       }
       config.logger.debug(`unsub: topic=${topic}`)
-    }
+    },
   }
 }

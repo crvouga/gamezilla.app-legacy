@@ -9,7 +9,7 @@ const update: SpaceClientModule['update'] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
     (model) => updateFromSpaceEvent({ ...input, model }),
-    (model) => updateLeaveSpaceButton({ ...input, model })
+    (model) => updateLeaveSpaceButton({ ...input, model }),
   )
 }
 
@@ -18,7 +18,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCore: msg
     case 'user-left-space': {
       if (!ctx.currentUserId) {
         return {
-          model
+          model,
         }
       }
 
@@ -26,7 +26,7 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCore: msg
 
       if (msgCore.spaceId !== currentUserSpaceId) {
         return {
-          model
+          model,
         }
       }
 
@@ -38,8 +38,8 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCore: msg
             playSound(APP_SOUND.navBackward),
             username
               ? showToast(ctx.t('spaces.other-user-left', username))
-              : showToast(ctx.t('spaces.current-user-left'))
-          ]
+              : showToast(ctx.t('spaces.current-user-left')),
+          ],
         }
       }
 
@@ -50,14 +50,14 @@ const updateFromSpaceEvent: SpaceClientModule['update'] = ({ model, msgCore: msg
           showToast(ctx.t('spaces.current-user-left')),
           pushRoute({
             n: 'spaces',
-            t: 'space-list'
-          })
-        ]
+            t: 'space-list',
+          }),
+        ],
       }
     }
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -68,7 +68,7 @@ const updateLeaveSpaceButton: SpaceClientModule['update'] = ({ ctx, model, msg }
     case 'clicked-leave-space-button': {
       if (!ctx.currentUserId) {
         return {
-          model
+          model,
         }
       }
 
@@ -76,25 +76,25 @@ const updateLeaveSpaceButton: SpaceClientModule['update'] = ({ ctx, model, msg }
 
       if (!currentUserSpaceId) {
         return {
-          model
+          model,
         }
       }
 
       const spaceEventNew = withEventId<SpaceEvent>({
         t: 'user-left-space',
         spaceId: currentUserSpaceId,
-        userId: ctx.currentUserId
+        userId: ctx.currentUserId,
       })
 
       return {
         model,
-        msgCore: [spaceEventNew]
+        msgCore: [spaceEventNew],
       }
     }
 
     default: {
       return {
-        model
+        model,
       }
     }
   }
@@ -116,7 +116,7 @@ const ViewLeaveSpaceButton: SpaceClientModule['View'] = (input) => {
       onClick={() =>
         input.dispatch({
           t: 'clicked-leave-space-button',
-          spaceId: userSpaceId
+          spaceId: userSpaceId,
         })
       }
     />
@@ -125,5 +125,5 @@ const ViewLeaveSpaceButton: SpaceClientModule['View'] = (input) => {
 
 export const LeaveSpaceClient = {
   update,
-  ViewLeaveSpaceButton
+  ViewLeaveSpaceButton,
 }

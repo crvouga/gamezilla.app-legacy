@@ -11,12 +11,12 @@ import { rpcContract, type MsgServer, type ServerCtx, type ServerModule } from '
 const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   const serverInstanceDb = ServerInstanceDb({
     t: 'db-conn-kv',
-    dbConnKv: input.ctx.dbConnKv
+    dbConnKv: input.ctx.dbConnKv,
   })
 
   return {
     ...input.ctx,
-    serverInstanceDb
+    serverInstanceDb,
   }
 }
 
@@ -31,7 +31,7 @@ const update: ServerModule['update'] = async (input) => {
             port: input.msg.c.port,
             serverInstanceId: input.ctx.serverInstanceId,
             startedAt: input.msg.c.startedAt,
-            stoppedAt: null
+            stoppedAt: null,
           }
 
           await input.ctx.serverInstanceDb.put(serverInstanceNew)
@@ -64,7 +64,7 @@ const update: ServerModule['update'] = async (input) => {
 
       const serverInstanceNew: ServerInstance = {
         ...got,
-        lastHeartbeatAt: input.msg.at
+        lastHeartbeatAt: input.msg.at,
       }
 
       await input.ctx.serverInstanceDb.put(serverInstanceNew)
@@ -84,7 +84,7 @@ const updateServerStopped = async (input: { stoppedAt: Posix; ctx: ServerCtx }) 
 
   const serverInstanceNew: ServerInstance = {
     ...got,
-    stoppedAt: input.stoppedAt
+    stoppedAt: input.stoppedAt,
   }
 
   await input.ctx.serverInstanceDb.put(serverInstanceNew)
@@ -98,7 +98,7 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
   return Sub.batch<MsgServer>([
     Sub.tag('got-web-server-event', input.ctx.webServer.events),
     Sub.tag('got-runtime-event', input.ctx.runtime.events),
-    Time.interval(INTERVAL_ID, ServerInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at }))
+    Time.interval(INTERVAL_ID, ServerInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at })),
   ])
 }
 
@@ -108,13 +108,13 @@ const rpc = (input: { ctx: ServerCtx }) => {
   return RPC.initServer(rpcContract, {
     async listAlive() {
       const listed = await input.ctx.serverInstanceDb.listAlive({
-        minimalHeartRate: ServerInstance.HEARTBEAT
+        minimalHeartRate: ServerInstance.HEARTBEAT,
       })
       const serverInstances = unwrapOr(listed, [])
       return {
-        serverInstances
+        serverInstances,
       }
-    }
+    },
   })
 }
 
@@ -122,5 +122,5 @@ export const ServerInstanceServer = {
   initCtx,
   update,
   subscriptions,
-  rpc
+  rpc,
 }

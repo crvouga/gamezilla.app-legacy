@@ -31,19 +31,19 @@ export type PlayerType = p.Infer<typeof PlayerType>
 
 export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
   'player-one': 'player-one',
-  'player-two': 'player-two'
+  'player-two': 'player-two',
 }
 
 export const opposite: { [playerType in PlayerType]: PlayerType } = {
   'player-one': 'player-two',
-  'player-two': 'player-one'
+  'player-two': 'player-one',
 }
 
 type Color = 'Red' | 'Yellow'
 
 export const playerTypeToColor: { [key in PlayerType]: Color } = {
   'player-one': 'Red',
-  'player-two': 'Yellow'
+  'player-two': 'Yellow',
 }
 
 export const Column = p.arr(PlayerType)
@@ -67,7 +67,7 @@ for (let x = 0; x < COLUMN_COUNT; x++) {
   for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
     ALL_POSITIONS.push({
       x: x,
-      y: y
+      y: y,
     })
   }
 }
@@ -86,7 +86,7 @@ export const ALL_MOVE_PROBLEMS = [
   'game-over-tie',
   'not-turn',
   'column-is-full',
-  'out-of-bounds'
+  'out-of-bounds',
 ] as const
 export const MoveProblem = p.enumeration(ALL_MOVE_PROBLEMS)
 export type MoveProblem = p.Infer<typeof MoveProblem>
@@ -191,7 +191,7 @@ export const toStatus = (columns: Columns): Status => {
     if (!position) {
       return {
         type: 'Playing',
-        turn
+        turn,
       }
     }
 
@@ -200,25 +200,25 @@ export const toStatus = (columns: Columns): Status => {
     if (winner === 'Empty') {
       return {
         type: 'Playing',
-        turn
+        turn,
       }
     }
 
     return {
       type: 'Winner',
-      winner
+      winner,
     }
   }
 
   if (isFull(columns)) {
     return {
-      type: 'Tie'
+      type: 'Tie',
     }
   }
 
   return {
     type: 'Playing',
-    turn
+    turn,
   }
 }
 
@@ -244,7 +244,7 @@ const directions: [number, number][] = [
   // right diagonal
   [1, 1],
   // left diagonal
-  [1, -1]
+  [1, -1],
 ]
 
 export type Win = [Pos2d, Pos2d, Pos2d, Pos2d, ...Pos2d[]]
@@ -278,8 +278,8 @@ const findAllConsecutives = (columns: Columns): Pos2d[][] => {
               x,
               y,
               dx,
-              dy
-            })
+              dy,
+            }),
           )
         ) {
           continue
@@ -295,7 +295,7 @@ const findAllConsecutives = (columns: Columns): Pos2d[][] => {
 
         let position = {
           x,
-          y
+          y,
         }
 
         while (true) {
@@ -310,15 +310,15 @@ const findAllConsecutives = (columns: Columns): Pos2d[][] => {
               x: position.x,
               y: position.y,
               dx,
-              dy
-            })
+              dy,
+            }),
           )
 
           consecutive.push(position)
 
           position = {
             x: position.x + dx,
-            y: position.y + dy
+            y: position.y + dy,
           }
         }
         consecutives.push(consecutive)

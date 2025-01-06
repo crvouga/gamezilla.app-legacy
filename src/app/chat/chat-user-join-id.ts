@@ -14,5 +14,5 @@ const is = (id: unknown): id is ChatUserJoinId => {
 
 export const ChatUserJoinId = {
   generate,
-  is
+  is,
 }

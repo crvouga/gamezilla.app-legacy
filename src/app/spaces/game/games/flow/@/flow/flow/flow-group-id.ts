@@ -13,5 +13,5 @@ const is = (groupId: unknown): groupId is FlowGroupId => {
 export const FlowGroupId = {
   ...parser,
   ORDER,
-  is
+  is,
 }
