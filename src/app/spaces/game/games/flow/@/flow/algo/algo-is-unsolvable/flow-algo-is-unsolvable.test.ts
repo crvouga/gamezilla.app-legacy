@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { FlowGridShorthand } from '../../../variant/grid'
+import { FlowGridShorthand } from '../../variant/grid'
 import * as FlowAlgoIsUnsolvable from './flow-algo-is-unsolvable'
 
 describe(import.meta.file, () => {

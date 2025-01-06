@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { Flow } from '../..'
-import { FlowGridShorthand } from '../../../variant/grid'
+import { Flow } from '../../flow'
+import { FlowGridShorthand } from '../../variant/grid'
 import * as FlowAlgoSolve from './algo-solve'
 
 const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {

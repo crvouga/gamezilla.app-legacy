@@ -1,6 +1,6 @@
 import type { ILogger } from '~/@/logger'
 import { loggerNoop } from '~/@/logger/impl-noop'
-import type { Variant } from '../../../variant'
+import type { Variant } from '../../variant'
 import { MsgToMaster, type MsgToWorker } from './algo-solve-async.types'
 
 export const solve = async (model: Variant.Model, logger: ILogger = loggerNoop): Promise<Variant.Model | null> => {

@@ -1,7 +1,7 @@
-import { Flow } from '../..'
-import { Variant } from '../../../variant'
-import { FlowNodeId } from '../../node-id'
-import { FlowTerminal } from '../../terminal'
+import { Flow } from '../../flow'
+import { Variant } from '../../variant'
+import { FlowNodeId } from '../../flow/node-id'
+import { FlowTerminal } from '../../flow/terminal'
 
 const isSplittingTerminal = (model: Variant.Model, terminal: FlowTerminal): boolean => {
   if (!terminal.endId) {

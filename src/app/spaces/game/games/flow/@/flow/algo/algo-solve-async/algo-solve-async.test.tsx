@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { Logger } from '~/@/logger'
-import { Flow } from '../..'
-import { FlowGridShorthand } from '../../../variant/grid'
+import { Flow } from '../../flow'
+import { FlowGridShorthand } from '../../variant/grid'
 import * as FlowAlgoSolveAsync from './algo-solve-async'
 
 describe(import.meta.file, () => {

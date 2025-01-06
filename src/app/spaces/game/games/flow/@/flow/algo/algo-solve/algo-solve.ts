@@ -1,11 +1,11 @@
 import { ascend } from '~/@/array/sorting'
 import { MinHeap } from '~/@/min-heap/min-heap'
-import { Flow } from '../..'
-import { FlowGroupId } from '../../group-id'
-import { FlowNodeId } from '../../node-id'
-import { FlowTerminal } from '../../terminal'
+import { Flow } from '../../flow'
+import { FlowGroupId } from '../../flow/group-id'
+import { FlowNodeId } from '../../flow/node-id'
+import { FlowTerminal } from '../../flow/terminal'
 import { FlowAlgoIsUnsolvable } from '../algo-is-unsolvable'
-import { Variant } from '../../../variant'
+import { Variant } from '../../variant'
 
 const toDirection = (model: Variant.Model, sourceId: FlowNodeId, targetId: FlowNodeId): string => {
   const distance = Variant.distance(model, sourceId, targetId)
