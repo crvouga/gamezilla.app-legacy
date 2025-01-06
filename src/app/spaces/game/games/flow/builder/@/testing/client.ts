@@ -18,13 +18,13 @@ import { BuilderClient } from '../../client'
 import { BuilderCore } from '../../core'
 import * as BuilderTypes from '../../types'
 
-export type FixureUpdateInput = {
+export type FixtureUpdateInput = {
   ctx?: FlowClientCtx
   msg?: BuilderTypes.MsgClient
   msgCore?: WithEventMeta<BuilderTypes.MsgCore>
   msgServer?: BuilderTypes.MsgToClient
 }
-export type FixureUpdateOutput = ReturnType<typeof BuilderClient.update> & {
+export type FixtureUpdateOutput = ReturnType<typeof BuilderClient.update> & {
   modelCore: BuilderTypes.ModelCore
 }
 
@@ -45,7 +45,7 @@ const toModelCore = (
 }
 
 const updatesReducer =
-  (initCtx: FlowClientCtx) => (outputs: NonEmpty<FixureUpdateOutput>, input: FixureUpdateInput) => {
+  (initCtx: FlowClientCtx) => (outputs: NonEmpty<FixtureUpdateOutput>, input: FixtureUpdateInput) => {
     const ctx = input.ctx ?? initCtx
     const output = BuilderClient.update({
       ...input,
@@ -67,8 +67,8 @@ const updates = (
     ctx: FlowClientCtx
     modelCore: BuilderTypes.ModelCore
   },
-  inputs: FixureUpdateInput[],
-): NonEmpty<FixureUpdateOutput> => {
+  inputs: FixtureUpdateInput[],
+): NonEmpty<FixtureUpdateOutput> => {
   return inputs.reduce(updatesReducer(init.ctx), [
     {
       model: init.model,
@@ -82,8 +82,8 @@ const update = (
     ctx: FlowClientCtx
     modelCore: BuilderTypes.ModelCore
   },
-  inputs: FixureUpdateInput[],
-): FixureUpdateOutput => {
+  inputs: FixtureUpdateInput[],
+): FixtureUpdateOutput => {
   const outputs = updates(init, inputs)
   return NonEmpty.last(outputs)
 }

@@ -6,7 +6,7 @@ import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import {
   FixtureFlowBuilderClient,
-  FixureUpdateInput,
+  FixtureUpdateInput,
   clickedExitPuzzleButton,
   clickedOpenPuzzlePickerButton,
   clickedPuzzleGridItem,
@@ -84,7 +84,7 @@ export const Fixture = async () => {
     }),
   }
 
-  const inputsOpenPackBuilder: FixureUpdateInput[] = [
+  const inputsOpenPackBuilder: FixtureUpdateInput[] = [
     {
       msgServer: {
         t: 'create-new-pack.created-pack',
