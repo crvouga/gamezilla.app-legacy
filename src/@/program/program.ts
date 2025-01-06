@@ -87,8 +87,6 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
       return
     }
     try {
-      const ctxNew = await program.updateCtx(ctx)
-
       // This is so we don't overwrite ongoing updates
       if (isUpdating) {
         queue.push(msg)
@@ -96,6 +94,9 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
       }
 
       isUpdating = true
+
+      const ctxNew = await program.updateCtx(ctx)
+
       const updated = await program.update({
         ctx: ctxNew,
         msg,
