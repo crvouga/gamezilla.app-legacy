@@ -1,18 +1,35 @@
-import { Err, Ok, isErr } from '~/@/result'
-import { p } from '~/@/parser'
 import type { ILogger } from '~/@/logger'
-import { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } from '~/config-private'
-import type { IVerifySMS } from '../../interface'
+import { p } from '~/@/parser'
 import { PhoneNumber } from '~/@/phone-number'
+import { Err, Ok, isErr } from '~/@/result'
+import type { IVerifySMS } from '../../interface'
 
 export type Config = {
   t: 'twilio'
   logger: ILogger
 }
 
-const AUTHORIZATION = `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`
-
 export const VerifySMS = (deps: Config): IVerifySMS => {
+  const TWILIO_ACCOUNT_SID = import.meta.env.TWILIO_ACCOUNT_SID
+
+  if (!TWILIO_ACCOUNT_SID) {
+    throw new Error('TWILIO_ACCOUNT_SID is not set')
+  }
+
+  const TWILIO_AUTH_TOKEN = import.meta.env.TWILIO_AUTH_TOKEN
+
+  if (!TWILIO_AUTH_TOKEN) {
+    throw new Error('TWILIO_AUTH_TOKEN is not set')
+  }
+
+  const TWILIO_MESSAGING_SERVICE_SID = import.meta.env.TWILIO_MESSAGING_SERVICE_SID
+
+  if (!TWILIO_MESSAGING_SERVICE_SID) {
+    throw new Error('TWILIO_MESSAGING_SERVICE_SID is not set')
+  }
+
+  const AUTHORIZATION = `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`
+
   return {
     async sendCode(input) {
       try {

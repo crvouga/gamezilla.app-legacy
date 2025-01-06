@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import { VDOM_IMPL } from './src/config-public'
+import { VDOM_IMPL } from './src/config/shared'
 
 const vDomPlugin = () => {
   switch (VDOM_IMPL) {

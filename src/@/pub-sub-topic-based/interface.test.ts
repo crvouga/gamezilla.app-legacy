@@ -1,6 +1,6 @@
 import { describe, expect, mock, test } from 'bun:test'
 import { p } from '~/@/parser'
-import { REDIS_URL } from '~/config-private'
+import { REDIS_URL } from '~/config/server'
 import { Logger } from '../logger'
 import { AppServerTestEnv } from '../../app/@/server/fixture'
 import { Config, PubSubTopicBased } from './impl'

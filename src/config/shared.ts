@@ -1,4 +1,6 @@
-import { VDomImpl } from './@/vdom/vdom-impl'
+import { VDomImpl } from '~/@/vdom/vdom-impl'
+
+export const SERVER_PORT = Number(import.meta.env?.PORT)
 
 export const IS_PROD = import.meta.env?.PROD
 

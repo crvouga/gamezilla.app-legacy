@@ -33,6 +33,7 @@ input[type='number'] {
   appearance: textfield;
   margin: 0;
 }
+
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -54,6 +55,7 @@ input:-webkit-autofill:active {
     background-color 600000s 0s,
     color 600000s 0s;
 }
+
 input[data-autocompleted] {
   background-color: transparent !important;
 }
@@ -68,12 +70,15 @@ Scrollbar
   width: 0px;
   background: #000;
 }
+
 ::-webkit-scrollbar-track {
   background: #000;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #000;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
