@@ -69,19 +69,9 @@ describe(import.meta.file, () => {
       ['A', ' '],
       ['a', 'A'],
     ])
-    expect(
-      Flow.isConnectedWithPipes(
-        grid,
-        FlowGrid.toNodeId({
-          x: 0,
-          y: 0,
-        }),
-        FlowGrid.toNodeId({
-          x: 1,
-          y: 1,
-        }),
-      ),
-    ).toBe(true)
+    expect(Flow.isConnectedWithPipes(grid, FlowGrid.toNodeId({ x: 0, y: 0 }), FlowGrid.toNodeId({ x: 1, y: 1 }))).toBe(
+      true,
+    )
   })
 
   test('isConnectedWithPipes should not fail in case of branching', () => {
