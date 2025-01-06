@@ -13,10 +13,15 @@ import type { Puzzle } from '../puzzle'
 import type { ClientModule, ModelClient, MsgInCmdClient } from './types'
 
 const update: ClientModule['update'] = (input) => {
-  return AppClientModule.andThen({ model: input.model }, (model) => updatePuzzleList({ ...input, model }))
+  return AppClientModule.andThen(
+    { model: input.model },
+    (model) => updateFromCmd({ ...input, model }),
+    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model }),
+  )
 }
 
-const updatePuzzleList: ClientModule['update'] = (input) => {
+const updateFromCmd: ClientModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
     case 'load': {
       return {
@@ -45,8 +50,13 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
         ],
       }
     }
+    default: {
+      return { model: input.model }
+    }
   }
+}
 
+const updateFromMsg: ClientModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'time-passed': {
       return {
@@ -56,8 +66,13 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
         },
       }
     }
+    default: {
+      return { model: input.model }
+    }
   }
+}
 
+const updateFromServer: ClientModule['update'] = (input) => {
   switch (input.msgServer?.t) {
     case 'listed-puzzle': {
       const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
@@ -83,11 +98,9 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
       }
     }
     default: {
-      break
+      return { model: input.model }
     }
   }
-
-  return { model: input.model }
 }
 
 const load = (): MsgInCmdClient => {
@@ -108,22 +121,20 @@ const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean
 }
 
 const View: ClientModule['View'] = (input) => {
-  const { model, dispatch, ctx } = input
-
-  const puzzles = Object.values(model.puzzles)
-  const shouldShowLoadingState = model.request.t === 'not-asked' || model.request.t === 'loading'
+  const puzzles = Object.values(input.model.puzzles)
+  const shouldShowLoadingState = input.model.request.t === 'not-asked' || input.model.request.t === 'loading'
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0
 
   return (
     <div className='relative flex h-full w-full flex-col gap-2 overflow-hidden'>
       <div className='border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
         {shouldShowEmptyState && (
-          <EmptyState label={ctx.t('flow.no-puzzles')} renderIcon={(input) => <IconPuzzlePiece {...input} />} />
+          <EmptyState label={input.ctx.t('flow.no-puzzles')} renderIcon={(input) => <IconPuzzlePiece {...input} />} />
         )}
 
         {puzzles.sort(descend((puzzle) => Posix.toNumber(puzzle.lastUpdatedAt))).map((puzzle) => (
           <PuzzleListItem
-            now={ctx.now}
+            now={input.ctx.now}
             key={puzzle.id}
             puzzle={puzzle}
             onClick={() => input.emits?.clickedPuzzleItem(puzzle)}
@@ -138,7 +149,7 @@ const View: ClientModule['View'] = (input) => {
 
         <IntersectionObserverEmitter
           id='puzzle-builder-list'
-          onVisible={() => dispatch({ t: 'user-observed-end-of-list' })}
+          onVisible={() => input.dispatch({ t: 'user-observed-end-of-list' })}
         />
       </div>
 
