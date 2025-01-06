@@ -1,7 +1,7 @@
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { Variant } from '../../@/variant'
-import { FlowEdit } from '../../@/edit'
-import { FlowPlay } from '../../@/play'
+import { Edit } from '../../@/edit'
+import { Play } from '../../@/play'
 import * as BuilderTypes from '../types'
 import { DeleteForeverCore } from './delete-forever/core'
 import { EditPuzzleNameCore } from './edit-puzzle-name/core'
@@ -9,7 +9,7 @@ import { SaveChangesCore } from './save-changes/core'
 import { ModelCore } from './types'
 
 const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
-  return FlowPlay.toStatus({
+  return Play.toStatus({
     model: modelCore.play,
     flow: toFlow(modelCore),
   })
@@ -18,14 +18,14 @@ const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
 const toFlow = (modelCore: ModelCore): Variant.Model => {
   switch (modelCore.mode.t) {
     case 'edit': {
-      return FlowEdit.toFlow({
+      return Edit.toFlow({
         model: modelCore.edit,
       })
     }
 
     case 'play': {
-      return FlowPlay.toFlow({
-        flow: FlowEdit.toFlow({
+      return Play.toFlow({
+        flow: Edit.toFlow({
           model: modelCore.edit,
         }),
         model: modelCore.play,
@@ -49,14 +49,14 @@ const updateCoreMain = ({
         return modelCore
       }
 
-      const flow = FlowEdit.toFlowMemoized({
+      const flow = Edit.toFlowMemoized({
         model: modelCore.screenPuzzleBuilder.edit,
       })
 
-      const updated = FlowPlay.update({
+      const updated = Play.update({
         model: modelCore.screenPuzzleBuilder.play,
         msg: msgCore.c,
-        ctx: FlowPlay.initCtx({
+        ctx: Play.initCtx({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
             flow: flow,
@@ -78,7 +78,7 @@ const updateCoreMain = ({
         return modelCore
       }
 
-      const updated = FlowEdit.update({
+      const updated = Edit.update({
         model: modelCore.screenPuzzleBuilder.edit,
         msg: msgCore.c,
         flow: modelCore.screenPuzzleBuilder.puzzle.flow,
@@ -117,11 +117,11 @@ const updateCoreMain = ({
       if (!modelCore.screenPuzzleBuilder) {
         return modelCore
       }
-      const initial = FlowPlay.init({
-        ctx: FlowPlay.initCtx({
+      const initial = Play.init({
+        ctx: Play.initCtx({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
-            flow: FlowEdit.toFlowMemoized({
+            flow: Edit.toFlowMemoized({
               model: modelCore.screenPuzzleBuilder.edit,
             }),
           },

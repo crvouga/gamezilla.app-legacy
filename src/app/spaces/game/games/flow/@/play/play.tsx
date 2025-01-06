@@ -10,8 +10,8 @@ import type { Puzzle } from '../puzzle/puzzle'
 import { Flow } from '../flow'
 import { AlgoDrawPipes } from '../algo/algo-draw-pipes'
 import { AlgoSolve } from '../algo/algo-solve'
-import { FlowGroupId } from '../flow/group-id'
-import { FlowNodeId } from '../flow/node-id'
+import { GroupId } from '../flow/group-id'
+import { NodeId } from '../flow/node-id'
 import { FlowTerminal } from '../flow/terminal'
 import { VariantBoard, type Variant } from '../variant'
 import { FlowHint } from './hint'
@@ -41,7 +41,7 @@ type Idle = p.Infer<typeof Idle>
 
 const Dragging = p.obj({
   t: p.l('dragging'),
-  activeGroupId: FlowGroupId,
+  activeGroupId: GroupId,
   autocompleteEdge: p.maybe(Flow.Edge),
 })
 type Dragging = p.Infer<typeof Dragging>
@@ -52,8 +52,8 @@ type Status = p.Infer<typeof Status>
 export const Model = p.and(
   FlowHint.Model,
   p.obj({
-    pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
-    terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
+    pipesBySourceId: p.dict(NodeId, Flow.Pipe),
+    terminalsByGroupId: p.partialDict(GroupId, FlowTerminal),
     status: Status,
     showCheckmarkAnimation: p.bool,
   }),
@@ -115,7 +115,7 @@ export const random = (input: { flowPuzzle: Puzzle }): Model => {
     ...initial,
     pipesBySourceId: {
       [terminal.startId]: {
-        edgeId: Flow.toFlowEdgeId(edge),
+        edgeId: Flow.toEdgeId(edge),
         groupId: terminal.groupId,
       },
     },
@@ -134,7 +134,7 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 
   const edges: Flow.Edge[] = []
 
-  const currentNodeId: FlowNodeId = terminal.startId
+  const currentNodeId: NodeId = terminal.startId
 
   for (let i = 0; i < Math.random() * 10; i++) {
     const edge = Flow.randomOutEdge(flow, currentNodeId)
@@ -228,15 +228,15 @@ export const Msg = p.or(
   }),
   p.obj({
     t: p.l('user-pressed-down-node'),
-    nodeId: FlowNodeId,
+    nodeId: NodeId,
   }),
   p.obj({
     t: p.l('user-pressed-up-node'),
-    nodeId: FlowNodeId,
+    nodeId: NodeId,
   }),
   p.obj({
     t: p.l('user-dragged-over-node'),
-    nodeId: FlowNodeId,
+    nodeId: NodeId,
   }),
   p.obj({
     t: p.l('user-dragging-left'),

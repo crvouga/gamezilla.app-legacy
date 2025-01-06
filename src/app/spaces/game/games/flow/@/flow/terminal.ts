@@ -1,11 +1,11 @@
 import { p } from '~/@/parser'
-import { FlowGroupId } from './group-id'
-import { FlowNodeId } from './node-id'
+import { GroupId } from './group-id'
+import { NodeId } from './node-id'
 
 const parser = p.obj({
-  groupId: FlowGroupId,
-  startId: FlowNodeId,
-  endId: p.maybe(FlowNodeId),
+  groupId: GroupId,
+  startId: NodeId,
+  endId: p.maybe(NodeId),
 })
 /**
  * A terminal represents the start and end nodes for a group.

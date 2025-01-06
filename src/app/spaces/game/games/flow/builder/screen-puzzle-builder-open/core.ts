@@ -1,5 +1,5 @@
-import { FlowEdit } from '../../@/edit'
-import { FlowPlay } from '../../@/play'
+import { Edit } from '../../@/edit'
+import { Play } from '../../@/play'
 import type { UpdateCore } from '../types'
 import { CreateNewPuzzleCore } from './create-new-puzzle/core'
 
@@ -15,11 +15,11 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
         },
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
-          edit: FlowEdit.init({
+          edit: Edit.init({
             flow: msgCore.puzzle.flow,
           }),
-          play: FlowPlay.init({
-            ctx: FlowPlay.initCtx({
+          play: Play.init({
+            ctx: Play.initCtx({
               flowPuzzle: msgCore.puzzle,
             }),
           }),

@@ -2,17 +2,17 @@ import { p } from '~/@/parser'
 
 const parser = p.brand(p.str, 'NodeId')
 
-export type FlowNodeId = p.Infer<typeof parser>
+export type NodeId = p.Infer<typeof parser>
 
-const init = (nodeId: string): FlowNodeId => {
-  return nodeId as FlowNodeId
+const init = (nodeId: string): NodeId => {
+  return nodeId as NodeId
 }
 
-const is = (nodeId: unknown): nodeId is FlowNodeId => {
+const is = (nodeId: unknown): nodeId is NodeId => {
   return parser.parse(nodeId).t === 'ok'
 }
 
-export const FlowNodeId = {
+export const NodeId = {
   init,
   is,
   ...parser,

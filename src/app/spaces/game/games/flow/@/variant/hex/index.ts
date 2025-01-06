@@ -1,3 +1,3 @@
-export * as FlowHex from './hex'
-export * as FlowHexBoard from './hex-board'
-export * as FlowHexDimensions from './hex-dimensions'
+export * as VariantHex from './hex'
+export * as VariantHexBoard from './hex-board'
+export * as VariantHexDimensions from './hex-dimensions'

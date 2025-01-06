@@ -1,11 +1,11 @@
 import { describe, test } from 'bun:test'
 import { GameServerModule } from '../../../@/architecture/game-server-v2'
-import { FixtureFlowPlayServer } from '../@/server/fixture'
+import { FixturePlayServer } from '../@/server/fixture'
 import { ScreenPlayPuzzleCore } from './core'
 import { ScreenPlayPuzzleServer } from './server'
 
 const Fixture = async () => {
-  const f = await FixtureFlowPlayServer()
+  const f = await FixturePlayServer()
 
   const update = GameServerModule.fixtureUpdate({
     ctx: f.ctx,

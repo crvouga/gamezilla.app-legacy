@@ -4,13 +4,13 @@ const ORDER = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
 
 const parser = p.enumeration(ORDER)
 
-export type FlowGroupId = p.Infer<typeof parser>
+export type GroupId = p.Infer<typeof parser>
 
-const is = (groupId: unknown): groupId is FlowGroupId => {
+const is = (groupId: unknown): groupId is GroupId => {
   return parser.parse(groupId).t === 'ok'
 }
 
-export const FlowGroupId = {
+export const GroupId = {
   ...parser,
   ORDER,
   is,

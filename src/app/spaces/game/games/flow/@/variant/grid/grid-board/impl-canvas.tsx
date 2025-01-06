@@ -1,11 +1,11 @@
 import { cn } from '~/app/@/ui'
 import { Canvas } from '~/app/@/ui/canvas'
-import { FlowNodeId } from '../../../flow/node-id'
+import { NodeId } from '../../../flow/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
-import * as FlowGrid from '../grid'
+import * as VariantGrid from '../grid'
 
-const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
+const paint = (model: VariantGrid.Model, ctx: CanvasRenderingContext2D) => {
   const canvasWidth = ctx.canvas.width
   ctx.canvas.height = (canvasWidth * model.height) / model.width
   const canvasHeight = ctx.canvas.height
@@ -43,7 +43,7 @@ const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
   //
   //
 
-  for (const terminal of FlowGrid.yieldTerminals(model)) {
+  for (const terminal of VariantGrid.yieldTerminals(model)) {
     ctx.fillStyle = Color.groupIdToHex(terminal.groupId)
     const radius = cellWidth / 2.5
     ctx.beginPath()
@@ -77,7 +77,7 @@ const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
     //
 
     ctx.lineWidth = cellWidth / 3
-    for (const pipe of FlowGrid.yieldPipes(model)) {
+    for (const pipe of VariantGrid.yieldPipes(model)) {
       ctx.strokeStyle = Color.groupIdToHex(pipe.groupId)
       ctx.fillStyle = Color.groupIdToHex(pipe.groupId)
       ctx.beginPath()
@@ -100,7 +100,7 @@ const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
   }
 }
 
-let previousMouseMove: FlowNodeId | null = null
+let previousMouseMove: NodeId | null = null
 
 const View = ({
   model,
@@ -109,7 +109,7 @@ const View = ({
   onPressDown,
   onDraggedOver,
   onPressUp,
-}: BoardInput<FlowGrid.Model>) => {
+}: BoardInput<VariantGrid.Model>) => {
   return (
     <Canvas
       className={cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab')}
@@ -134,7 +134,7 @@ const View = ({
         const cellY = yIndex * cellHeight
 
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-          const nodeId = FlowGrid.toNodeId({
+          const nodeId = VariantGrid.toNodeId({
             x: xIndex,
             y: yIndex,
           })
@@ -160,7 +160,7 @@ const View = ({
         const cellY = yIndex * cellHeight
 
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-          const nodeId = FlowGrid.toNodeId({
+          const nodeId = VariantGrid.toNodeId({
             x: xIndex,
             y: yIndex,
           })
@@ -188,7 +188,7 @@ const View = ({
         const cellY = yIndex * cellHeight
 
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-          const nodeId = FlowGrid.toNodeId({
+          const nodeId = VariantGrid.toNodeId({
             x: xIndex,
             y: yIndex,
           })
@@ -218,7 +218,7 @@ const View = ({
         const cellY = yIndex * cellHeight
 
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-          const nodeId = FlowGrid.toNodeId({
+          const nodeId = VariantGrid.toNodeId({
             x: xIndex,
             y: yIndex,
           })
@@ -244,7 +244,7 @@ const View = ({
         const cellY = yIndex * cellHeight
 
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-          const nodeId = FlowGrid.toNodeId({
+          const nodeId = VariantGrid.toNodeId({
             x: xIndex,
             y: yIndex,
           })
@@ -270,7 +270,7 @@ const View = ({
         const cellY = yIndex * cellHeight
 
         if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-          const nodeId = FlowGrid.toNodeId({
+          const nodeId = VariantGrid.toNodeId({
             x: xIndex,
             y: yIndex,
           })
@@ -283,6 +283,6 @@ const View = ({
   )
 }
 
-export const FlowGridBoardCanvas = {
+export const VariantGridBoardCanvas = {
   View,
 }

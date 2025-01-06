@@ -6,7 +6,7 @@ import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-cl
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
-import { FlowPlay } from '../../@/play'
+import { Play } from '../../@/play'
 import { BoardLayout } from '../../@/ui/layout'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { ClientModule } from '../types'
@@ -87,17 +87,17 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
       }
       const flowPlay =
         input.modelCore.screen.flowPlay ??
-        FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: input.modelCore.screen.puzzleResult.c }) })
+        Play.init({ ctx: Play.initCtx({ flowPuzzle: input.modelCore.screen.puzzleResult.c }) })
 
-      const output = FlowPlay.update({
+      const output = Play.update({
         msg: input.msgCore.c,
         model: flowPlay,
-        ctx: FlowPlay.initCtx({ flowPuzzle: input.modelCore.screen.puzzleResult.c }),
+        ctx: Play.initCtx({ flowPuzzle: input.modelCore.screen.puzzleResult.c }),
       })
 
       return {
         model: input.model,
-        msgCmd: FlowPlay.eventsToClientCmd(input.ctx, output.events),
+        msgCmd: Play.eventsToClientCmd(input.ctx, output.events),
       }
     }
   }
@@ -138,11 +138,11 @@ const View: ClientModule['View'] = (input) => {
               />
             }
             board={
-              <FlowPlay.View
+              <Play.View
                 disabled
                 key={flowPuzzle.c.id}
                 flow={flowPuzzle.c.flow}
-                model={flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: flowPuzzle.c }) })}
+                model={flowPlay ?? Play.init({ ctx: Play.initCtx({ flowPuzzle: flowPuzzle.c }) })}
                 dispatch={() => {}}
                 showSolvedAnimation
               />
@@ -170,10 +170,10 @@ const View: ClientModule['View'] = (input) => {
         top={null}
         board={
           flowPuzzle.t === 'got' ? (
-            <FlowPlay.View
+            <Play.View
               key={flowPuzzle.c.id}
               flow={flowPuzzle.c.flow}
-              model={flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: flowPuzzle.c }) })}
+              model={flowPlay ?? Play.init({ ctx: Play.initCtx({ flowPuzzle: flowPuzzle.c }) })}
               dispatch={(c) =>
                 input.dispatch({ t: 'got-msg-core', c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId } })
               }
@@ -216,9 +216,9 @@ const View: ClientModule['View'] = (input) => {
           }),
 
           flowPuzzle.t === 'got' && !isSolved
-            ? FlowPlay.viewHintAction({
-                model: flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: flowPuzzle.c }) }),
-                ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: flowPuzzle.c }),
+            ? Play.viewHintAction({
+                model: flowPlay ?? Play.init({ ctx: Play.initCtx({ flowPuzzle: flowPuzzle.c }) }),
+                ctx: Play.initCtx({ ...input.ctx, flowPuzzle: flowPuzzle.c }),
                 disabled: false,
                 dispatch: (c) =>
                   input.dispatch({

@@ -3,7 +3,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { didCopyToClipboard, didPlaySound, didShowToast } from '~/app/@/client/cmd'
 import { UserRole } from '~/app/@/data/user-role'
 import { Flow } from '../../../@/flow'
-import { FlowGridShorthand } from '../../../@/variant/grid'
+import { VariantGridShorthand } from '../../../@/variant/grid'
 import { FixtureScreenPlayPuzzleClient } from '../@/fixture/client'
 
 const Fixture = async (input?: { currentUserRole: UserRole }) => {
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
     expect(
       didCopyToClipboard(output, (text) => {
         const shorthand = JSON.parse(text)
-        const grid = FlowGridShorthand.toGrid(shorthand)
+        const grid = VariantGridShorthand.toGrid(shorthand)
         return Flow.isSame(f.puzzle.flow, grid)
       }),
     ).toBe(true)

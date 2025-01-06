@@ -1,2 +1,2 @@
-export * as FlowGridShorthand from './grid-shorthand'
-export * as FlowGridShorthandString from './grid-shorthand-string'
+export * as VariantGridShorthand from './grid-shorthand'
+export * as VariantGridShorthandString from './grid-shorthand-string'

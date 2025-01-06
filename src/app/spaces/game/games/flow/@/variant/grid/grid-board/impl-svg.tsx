@@ -1,20 +1,20 @@
 import type { VDom } from '~/@/vdom/vdom'
 import { IconCheckmark, cn } from '~/app/@/ui'
 import { Flow } from '../../../flow'
-import { FlowNodeId } from '../../../flow/node-id'
+import { NodeId } from '../../../flow/node-id'
 import { BoardInput } from '../../../ui/board'
-import * as FlowGrid from '../grid'
+import * as VariantGrid from '../grid'
 import { Color } from '../../../ui/color'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3
 
-let lastDraggedOver: FlowNodeId | null = null
+let lastDraggedOver: NodeId | null = null
 let isCurrentDeviceTouch = false
 
-const View = (input: BoardInput<FlowGrid.Model>) => {
-  const draggedOver = (nodeId: FlowNodeId) => {
+const View = (input: BoardInput<VariantGrid.Model>) => {
+  const draggedOver = (nodeId: NodeId) => {
     if (!input.isDragging || lastDraggedOver === nodeId) {
       return
     }
@@ -71,7 +71,7 @@ const View = (input: BoardInput<FlowGrid.Model>) => {
   )
 }
 
-const ViewGrid = (input: BoardInput<FlowGrid.Model>) => {
+const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
   return (
     <>
       <defs>
@@ -93,10 +93,10 @@ const ViewGrid = (input: BoardInput<FlowGrid.Model>) => {
   )
 }
 
-const ViewPipelines = (input: BoardInput<FlowGrid.Model>) => {
+const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
   return (
     <g transform='translate(0.5, 0.5)'>
-      {map(FlowGrid.yieldTerminals(input.model), (terminal) => {
+      {map(VariantGrid.yieldTerminals(input.model), (terminal) => {
         return <ViewPipeline key={terminal.groupId} {...input} terminal={terminal} />
       })}
     </g>
@@ -104,13 +104,13 @@ const ViewPipelines = (input: BoardInput<FlowGrid.Model>) => {
 }
 
 const ViewPipeline = (
-  input: BoardInput<FlowGrid.Model> & {
-    terminal: FlowGrid.Terminal
+  input: BoardInput<VariantGrid.Model> & {
+    terminal: VariantGrid.Terminal
   },
 ) => {
   const terminal = input.terminal
   const groupColor = Color.groupIdToHex(terminal.groupId)
-  const pipeline = FlowGrid.toPipeline(input.model, terminal.startId)
+  const pipeline = VariantGrid.toPipeline(input.model, terminal.startId)
   const pipelinePathData = pipelineToSvgPathData(pipeline)
   const didUseHint = Boolean(input.usedHints?.[terminal.groupId])
   const isConnectedWithPipes = Flow.isTerminalConnectedWithPipes(input.model, terminal.groupId)
@@ -189,7 +189,7 @@ const WithPadding = (input: {
   })
 }
 
-const ViewAutocompleteEdge = (input: BoardInput<FlowGrid.Model>) => {
+const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
   return (
     input.autocompleteEdge && (
       <g transform='translate(0.5, 0.5)'>
@@ -207,11 +207,11 @@ const ViewAutocompleteEdge = (input: BoardInput<FlowGrid.Model>) => {
   )
 }
 
-const ViewCoordinates = (input: BoardInput<FlowGrid.Model>) => {
+const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
   return (
     input.showCoordinates && (
       <g transform='translate(0, 1)'>
-        {map(FlowGrid.yieldNodes(input.model), (node) => {
+        {map(VariantGrid.yieldNodes(input.model), (node) => {
           return (
             <text className='pointer-events-none' key={node.nodeId} x={node.x} y={node.y} fontSize='0.2' fill='#fff'>
               {`${node.x},${node.y}`}
@@ -224,13 +224,13 @@ const ViewCoordinates = (input: BoardInput<FlowGrid.Model>) => {
 }
 
 const ViewClickable = (
-  input: BoardInput<FlowGrid.Model> & {
-    draggedOver?: (nodeId: FlowNodeId) => void
+  input: BoardInput<VariantGrid.Model> & {
+    draggedOver?: (nodeId: NodeId) => void
   },
 ) => {
   return (
     <g key={input.model.nodeHash}>
-      {map(FlowGrid.yieldNodes(input.model), (node) => {
+      {map(VariantGrid.yieldNodes(input.model), (node) => {
         return (
           <ViewClickableNode
             key={node.nodeId}
@@ -246,9 +246,9 @@ const ViewClickable = (
 }
 
 const ViewClickableNode = (
-  input: Pick<BoardInput<FlowGrid.Model>, 'onPressDown' | 'onPressUp'> & {
-    node: FlowGrid.Node
-    draggedOver?: (nodeId: FlowNodeId) => void
+  input: Pick<BoardInput<VariantGrid.Model>, 'onPressDown' | 'onPressUp'> & {
+    node: VariantGrid.Node
+    draggedOver?: (nodeId: NodeId) => void
   },
 ) => {
   return (
@@ -288,7 +288,7 @@ const ViewClickableNode = (
   )
 }
 
-const pipelineToSvgPathData = (pipeline: Iterable<FlowGrid.PipeJoined>): string => {
+const pipelineToSvgPathData = (pipeline: Iterable<VariantGrid.PipeJoined>): string => {
   let path = ''
   for (const pipe of pipeline) {
     path += `M ${pipe.source.x} ${pipe.source.y} L ${pipe.target.x} ${pipe.target.y} `
@@ -296,7 +296,7 @@ const pipelineToSvgPathData = (pipeline: Iterable<FlowGrid.PipeJoined>): string 
   return path
 }
 
-const touchEventToNodeId = (e: unknown): FlowNodeId | null => {
+const touchEventToNodeId = (e: unknown): NodeId | null => {
   if (typeof e !== 'object') {
     return null
   }
@@ -330,7 +330,7 @@ const touchEventToNodeId = (e: unknown): FlowNodeId | null => {
     return null
   }
   const svgPosition = point.matrixTransform(screenCTM.inverse())
-  const nodeId = FlowGrid.toNodeId({
+  const nodeId = VariantGrid.toNodeId({
     x: Math.floor(svgPosition.x),
     y: Math.floor(svgPosition.y),
   })
@@ -347,6 +347,6 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
   return result
 }
 
-export const FlowGridBoardSvg = {
+export const VariantGridBoardSvg = {
   View,
 }

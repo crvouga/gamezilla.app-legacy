@@ -1,6 +1,6 @@
 import { Flow } from '../../flow'
 import { Variant } from '../../variant'
-import { FlowNodeId } from '../../flow/node-id'
+import { NodeId } from '../../flow/node-id'
 import { FlowTerminal } from '../../flow/terminal'
 
 const isSplittingTerminal = (model: Variant.Model, terminal: FlowTerminal): boolean => {
@@ -12,7 +12,7 @@ const isSplittingTerminal = (model: Variant.Model, terminal: FlowTerminal): bool
   nodeIds.delete(terminal.startId)
   nodeIds.delete(terminal.endId)
 
-  const connected = new Set<FlowNodeId>()
+  const connected = new Set<NodeId>()
   const stack = [terminal.startId]
 
   while (stack.length > 0) {
@@ -30,8 +30,8 @@ const isSplittingTerminal = (model: Variant.Model, terminal: FlowTerminal): bool
     for (const [sourceId, sourcePipe] of Object.entries(model.pipesBySourceId)) {
       if (sourcePipe.groupId === terminal.groupId) {
         const targetId = Flow.toTargetId(model, sourcePipe.edgeId)
-        if (targetId === nodeId && !connected.has(sourceId as FlowNodeId)) {
-          stack.push(sourceId as FlowNodeId)
+        if (targetId === nodeId && !connected.has(sourceId as NodeId)) {
+          stack.push(sourceId as NodeId)
         }
       }
     }

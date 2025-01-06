@@ -10,7 +10,7 @@ import {
 } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '../../../../@/architecture/game-client-v2'
-import { FlowPlay } from '../../../@/play'
+import { Play } from '../../../@/play'
 import { BoardLayout } from '../../../@/ui/layout'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
@@ -50,15 +50,15 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
               return { model }
             }
 
-            const updated = FlowPlay.update({
-              ctx: FlowPlay.initCtx({ flowPuzzle }),
+            const updated = Play.update({
+              ctx: Play.initCtx({ flowPuzzle }),
               model: flowPlay,
               msg: input.msgCore.c,
             })
 
             return {
               model,
-              msgCmd: FlowPlay.eventsToClientCmd(input.ctx, updated.events),
+              msgCmd: Play.eventsToClientCmd(input.ctx, updated.events),
             }
           }
 
@@ -129,7 +129,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           top={null}
           board={
             screen.puzzleResult.t === 'got' && screen.play ? (
-              <FlowPlay.View
+              <Play.View
                 dispatch={(c) =>
                   input.dispatch({ t: 'got-msg-core', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
                 }

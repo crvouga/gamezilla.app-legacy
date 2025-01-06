@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
   // 	expect(
   // 		didCopyToClipboard(output, (text) => {
   // 			const shorthand = JSON.parse(text);
-  // 			const grid = FlowGridShorthand.toGrid(shorthand);
+  // 			const grid = VariantGridShorthand.toGrid(shorthand);
   // 			return Flow.isSame(f.puzzle.flow, grid);
   // 		}),
   // 	).toBe(true);

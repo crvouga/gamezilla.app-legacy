@@ -1,1 +1,1 @@
-export * as FlowEdit from './edit'
+export * as Edit from './edit'

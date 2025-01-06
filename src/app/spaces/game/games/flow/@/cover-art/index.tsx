@@ -1,32 +1,32 @@
 import { pipe } from '~/@/function/pipe'
-import { FlowGridShorthand, FlowGridBoard } from '../variant/grid'
+import { VariantGridShorthand, VariantGridBoard } from '../variant/grid'
 
 const grid1 = pipe(
-  FlowGridShorthand.init([
+  VariantGridShorthand.init([
     ['B', 'a', 'a', 'A', 'D'],
     ['b', 'a', 'c', 'C', 'd'],
     ['b', 'a', 'C', 'd', 'd'],
     ['b', 'A', 'D', 'd', 'E'],
     ['b', 'B', 'E', 'e', 'e'],
   ]),
-  FlowGridShorthand.toGrid,
+  VariantGridShorthand.toGrid,
 )
 
 const grid2 = pipe(
-  FlowGridShorthand.init([
+  VariantGridShorthand.init([
     ['d', 'd', 'd', 'A', 'a'],
     ['d', 'C', 'D', 'B', 'a'],
     ['d', 'c', 'C', 'b', 'a'],
     ['d', 'b', 'b', 'b', 'a'],
     ['D', 'B', 'A', 'a', 'a'],
   ]),
-  FlowGridShorthand.toGrid,
+  VariantGridShorthand.toGrid,
 )
 
 const grid = false ? grid2 : grid1
 
 const gridView = (
-  <FlowGridBoard.View model={grid} disabled borderless disableHighlight className='aspect-square bg-black' />
+  <VariantGridBoard.View model={grid} disabled borderless disableHighlight className='aspect-square bg-black' />
 )
 
 export const CoverArt = (input: { className?: string }) => {

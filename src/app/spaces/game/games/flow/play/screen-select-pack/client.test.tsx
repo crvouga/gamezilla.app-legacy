@@ -4,10 +4,10 @@ import { LamportTimestamp } from '~/@/lamport-clock'
 import { didPlaySound } from '~/app/@/client/cmd'
 import { Pack } from '../../@/pack/pack'
 import { PackListClient } from '../../@/pack/pack-list'
-import { FixtureFlowPlayClient } from '../@/client/fixture'
+import { FixturePlayClient } from '../@/client/fixture'
 
 const Fixture = async () => {
-  const f = await FixtureFlowPlayClient()
+  const f = await FixturePlayClient()
   return {
     ...f,
   }

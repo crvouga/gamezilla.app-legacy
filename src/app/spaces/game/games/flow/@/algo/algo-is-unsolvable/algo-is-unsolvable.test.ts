@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test'
-import { FlowGridShorthand } from '../../variant/grid'
+import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoIsUnsolvable from './algo-is-unsolvable'
 
 describe(import.meta.file, () => {
   test('solvable 3x3 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],
       [' ', ' ', ' '],
       ['A', 'B', 'C'],
@@ -13,7 +13,7 @@ describe(import.meta.file, () => {
   })
 
   test.todo('unsolvable 3x3 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'B', 'A'],
       [' ', ' ', ' '],
       ['C', 'B', 'C'],
@@ -22,7 +22,7 @@ describe(import.meta.file, () => {
   })
 
   test.todo('unsolvable 8x8', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['C', ' ', ' ', 'D', ' ', ' ', ' ', 'A'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],

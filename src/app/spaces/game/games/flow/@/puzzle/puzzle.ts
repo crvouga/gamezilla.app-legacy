@@ -4,7 +4,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../flow'
 import { AlgoSolve } from '../algo/algo-solve'
 import { AlgoSolveAsync } from '../algo/algo-solve-async'
-import { FlowGridShorthand } from '../variant/grid/grid-shorthand'
+import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 import * as FlowVariant from '../variant/variant'
 import { PuzzleId } from './puzzle-id'
 import { PuzzleName } from './puzzle-name'
@@ -48,7 +48,7 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
   const createdAt = input?.createdAt ?? Posix.now()
   const flow =
     input?.flow ??
-    FlowGridShorthand.toGrid([
+    VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
     ])

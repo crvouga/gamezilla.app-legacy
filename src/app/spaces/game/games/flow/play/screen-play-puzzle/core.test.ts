@@ -2,8 +2,8 @@ import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
 import { type Variant } from '../../@/variant'
 import { Flow } from '../../@/flow'
-import { FlowPlay } from '../../@/play'
-import { FlowGrid, FlowGridShorthand } from '../../@/variant/grid'
+import { Play } from '../../@/play'
+import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
 import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture/core'
 import { ScreenPlayPuzzleCore } from './core'
 import type { MsgCore } from './types'
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const after = f.update(
       f.init,
-      FlowPlay.randomMsgs(f.puzzle).map(
+      Play.randomMsgs(f.puzzle).map(
         (c): MsgCore => ({
           userId: UserId.generate(),
           t: 'got-flow-play-msg',
@@ -81,7 +81,7 @@ describe(import.meta.file, () => {
   it('should start with empty puzzle after going to next puzzle', async () => {
     const f = await Fixture()
 
-    const msgs = FlowPlay.randomMsgs({
+    const msgs = Play.randomMsgs({
       flow: f.puzzle.flow,
     }).map(
       (c): MsgCore => ({
@@ -102,8 +102,8 @@ describe(import.meta.file, () => {
 
     expect(before.flowPlay).not.toEqual(after.flowPlay)
     expect(after.flowPlay).toEqual(
-      FlowPlay.init({
-        ctx: FlowPlay.initCtx({
+      Play.init({
+        ctx: Play.initCtx({
           flowPuzzle: f.nextPuzzle.c,
         }),
       }),
@@ -114,9 +114,9 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const before = f.init
     const after = f.update(before, f.solvePuzzleMsgs)
-    const afterFlow = FlowPlay.toFlow({
+    const afterFlow = Play.toFlow({
       flow: f.puzzle.flow,
-      model: after.flowPlay ?? FlowPlay.init({ ctx: FlowPlay.initCtx({ flowPuzzle: f.puzzle }) }),
+      model: after.flowPlay ?? Play.init({ ctx: Play.initCtx({ flowPuzzle: f.puzzle }) }),
     })
 
     expect(ScreenPlayPuzzleCore.toStatus(before)).toBe('solving')
@@ -134,14 +134,14 @@ describe(import.meta.file, () => {
 
   test('still in solved state after pressing solved board', async () => {
     const f = await Fixture({
-      flow: FlowGridShorthand.toGrid([
+      flow: VariantGridShorthand.toGrid([
         [' ', ' ', 'A'],
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
       ]),
     })
     const before = f.update(f.init, f.solvePuzzleMsgs)
-    const nodeId = FlowGrid.toNodeId({
+    const nodeId = VariantGrid.toNodeId({
       x: 0,
       y: 0,
     })
@@ -232,8 +232,8 @@ describe(import.meta.file, () => {
       },
     ])
     expect(before.flowPlay).toEqual(
-      FlowPlay.init({
-        ctx: FlowPlay.initCtx({
+      Play.init({
+        ctx: Play.initCtx({
           flowPuzzle: f.puzzle,
         }),
       }),

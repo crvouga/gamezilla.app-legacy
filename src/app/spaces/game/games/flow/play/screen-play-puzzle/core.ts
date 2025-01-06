@@ -1,4 +1,4 @@
-import { FlowPlay } from '../../@/play'
+import { Play } from '../../@/play'
 import { Pack } from '../../@/pack/pack'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { CoreModule, MsgCore } from '../types'
@@ -30,16 +30,16 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
 
       const flowPlay =
         modelCore.flowPlay ??
-        FlowPlay.init({
-          ctx: FlowPlay.initCtx({
+        Play.init({
+          ctx: Play.initCtx({
             flowPuzzle: modelCore.puzzleResult.c,
           }),
         })
 
-      const flowPlayNew = FlowPlay.update({
+      const flowPlayNew = Play.update({
         msg: msgCore.c,
         model: flowPlay,
-        ctx: FlowPlay.initCtx({
+        ctx: Play.initCtx({
           flowPuzzle: modelCore.puzzleResult.c,
         }),
       })
@@ -98,8 +98,8 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
         case 'got': {
           return {
             ...modelCore,
-            flowPlay: FlowPlay.init({
-              ctx: FlowPlay.initCtx({
+            flowPlay: Play.init({
+              ctx: Play.initCtx({
                 flowPuzzle: msgCore.nextPuzzle.c,
               }),
             }),
@@ -116,8 +116,8 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
         case 'got': {
           return {
             ...modelCore,
-            flowPlay: FlowPlay.init({
-              ctx: FlowPlay.initCtx({
+            flowPlay: Play.init({
+              ctx: Play.initCtx({
                 flowPuzzle: msgCore.prevPuzzle.c,
               }),
             }),
@@ -143,8 +143,8 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
       }
       return {
         ...modelCore,
-        flowPlay: FlowPlay.init({
-          ctx: FlowPlay.initCtx({
+        flowPlay: Play.init({
+          ctx: Play.initCtx({
             flowPuzzle: modelCore.puzzleResult.c,
           }),
         }),
@@ -194,8 +194,8 @@ const initCore = (input: { flowPack: Pack; flowPuzzle: PuzzleResult; puzzleIndex
     ...input,
     flowPlay:
       input.flowPuzzle.t === 'got'
-        ? FlowPlay.init({
-            ctx: FlowPlay.initCtx({
+        ? Play.init({
+            ctx: Play.initCtx({
               flowPuzzle: input.flowPuzzle.c,
             }),
           })
@@ -236,7 +236,7 @@ const toStatus = (modelCore: ModelCore) => {
     return 'solving'
   }
 
-  return FlowPlay.toStatus({
+  return Play.toStatus({
     flow: modelCore.puzzleResult.c.flow,
     model: flowPlay,
   })

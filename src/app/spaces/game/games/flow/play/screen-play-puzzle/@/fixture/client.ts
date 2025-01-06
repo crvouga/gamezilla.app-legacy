@@ -1,14 +1,14 @@
 import { withEventMeta } from '~/@/event-sourced/event'
 import { UserId } from '~/app/@/data/user-id'
-import { FlowPlay } from '../../../../@/play'
+import { Play } from '../../../../@/play'
 import { Pack } from '../../../../@/pack/pack'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
-import { FixtureFlowPlayClient, type FixtureUpdateInput } from '../../../@/client/fixture'
+import { FixturePlayClient, type FixtureUpdateInput } from '../../../@/client/fixture'
 
 const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
   const userId = UserId.generate()
-  return FlowPlay.toSolutionMsgs({
+  return Play.toSolutionMsgs({
     flow: puzzle.flow,
   }).map(
     (c): FixtureUpdateInput => ({
@@ -22,7 +22,7 @@ const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
 }
 
 export const FixtureScreenPlayPuzzleClient = async () => {
-  const f = await FixtureFlowPlayClient()
+  const f = await FixturePlayClient()
   const puzzle = await Puzzle.random()
   const nextPuzzle = await Puzzle.random()
   const prevPuzzle = await Puzzle.random()

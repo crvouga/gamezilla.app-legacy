@@ -1,24 +1,24 @@
 import { describe, expect, it, test } from 'bun:test'
 import { eq } from '~/@/equals/equals'
-import { FlowGrid, FlowGridDimensions } from '.'
+import { VariantGrid, VariantGridDimensions } from '.'
 import { Flow } from '../../flow'
 
 describe(import.meta.file, () => {
   it('should initialize the model', () => {
-    const initial = FlowGrid.init({
-      dimensions: FlowGridDimensions.init({
+    const initial = VariantGrid.init({
+      dimensions: VariantGridDimensions.init({
         height: 3,
         width: 3,
       }),
     })
-    expect(FlowGrid.Model.parse(initial).t).toBe('ok')
+    expect(VariantGrid.Model.parse(initial).t).toBe('ok')
   })
 
   it('should initialize the model quickly', () => {
     const start = process.hrtime()
 
-    FlowGrid.init({
-      dimensions: FlowGridDimensions.init({
+    VariantGrid.init({
+      dimensions: VariantGridDimensions.init({
         height: 20,
         width: 20,
       }),
@@ -34,18 +34,18 @@ describe(import.meta.file, () => {
   })
 
   test('reverse pipes by source id', () => {
-    const grid = FlowGrid.init({
-      dimensions: FlowGridDimensions.init({
+    const grid = VariantGrid.init({
+      dimensions: VariantGridDimensions.init({
         height: 2,
         width: 1,
       }),
       terminalsByGroupId: {
         A: {
-          startId: FlowGrid.toNodeId({
+          startId: VariantGrid.toNodeId({
             x: 0,
             y: 0,
           }),
-          endId: FlowGrid.toNodeId({
+          endId: VariantGrid.toNodeId({
             x: 0,
             y: 1,
           }),
@@ -53,16 +53,16 @@ describe(import.meta.file, () => {
         },
       },
       pipesBySourceId: {
-        [FlowGrid.toNodeId({
+        [VariantGrid.toNodeId({
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toFlowEdgeId({
-            sourceId: FlowGrid.toNodeId({
+          edgeId: Flow.toEdgeId({
+            sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
             }),
-            targetId: FlowGrid.toNodeId({
+            targetId: VariantGrid.toNodeId({
               x: 0,
               y: 1,
             }),
@@ -71,17 +71,17 @@ describe(import.meta.file, () => {
         },
       },
     })
-    const expected: FlowGrid.Model['pipesBySourceId'] = {
-      [FlowGrid.toNodeId({
+    const expected: VariantGrid.Model['pipesBySourceId'] = {
+      [VariantGrid.toNodeId({
         x: 0,
         y: 1,
       })]: {
-        edgeId: Flow.toFlowEdgeId({
-          targetId: FlowGrid.toNodeId({
+        edgeId: Flow.toEdgeId({
+          targetId: VariantGrid.toNodeId({
             x: 0,
             y: 0,
           }),
-          sourceId: FlowGrid.toNodeId({
+          sourceId: VariantGrid.toNodeId({
             x: 0,
             y: 1,
           }),

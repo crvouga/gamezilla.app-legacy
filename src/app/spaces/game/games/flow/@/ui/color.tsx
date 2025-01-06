@@ -1,4 +1,4 @@
-import { FlowGroupId } from '../flow/group-id'
+import { GroupId } from '../flow/group-id'
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const COLOR_TO_HEX = {
@@ -21,7 +21,7 @@ const COLOR_TO_HEX = {
   rose: '#e11d48',
 } as const
 
-export const GROUP_ID_TO_COLOR: { [groupId in FlowGroupId]: Color } = {
+export const GROUP_ID_TO_COLOR: { [groupId in GroupId]: Color } = {
   A: 'red',
   B: 'blue',
   C: 'yellow',
@@ -53,7 +53,7 @@ const is = (value: string): value is Color => {
   return value in COLOR_TO_HEX
 }
 
-const groupIdToHex = (groupId: FlowGroupId): string => {
+const groupIdToHex = (groupId: GroupId): string => {
   return toHex(GROUP_ID_TO_COLOR[groupId])
 }
 

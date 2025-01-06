@@ -1,7 +1,7 @@
 import { isErr } from '~/@/result'
 import type { UpdateCore } from '../../types'
-import { FlowEdit } from '../../../@/edit'
-import { FlowPlay } from '../../../@/play'
+import { Edit } from '../../../@/edit'
+import { Play } from '../../../@/play'
 
 const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
   switch (msgCore.t) {
@@ -21,11 +21,11 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
           mode: {
             t: 'edit',
           },
-          edit: FlowEdit.init({
+          edit: Edit.init({
             flow: flowPuzzleNew.flow,
           }),
-          play: FlowPlay.init({
-            ctx: FlowPlay.initCtx({
+          play: Play.init({
+            ctx: Play.initCtx({
               flowPuzzle: flowPuzzleNew,
             }),
           }),

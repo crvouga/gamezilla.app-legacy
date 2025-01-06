@@ -1,26 +1,26 @@
 import { describe, expect, it, test } from 'bun:test'
-import { FlowPlay } from '.'
+import { Play } from '.'
 import { Puzzle } from '../puzzle/puzzle'
 import { Flow } from '../flow'
 import type { Variant } from '../variant'
-import { FlowGrid } from '../variant/grid'
-import { FlowGridShorthand } from '../variant/grid/grid-shorthand'
+import { VariantGrid } from '../variant/grid'
+import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 import { toStatus } from './play'
 
 const Fixture = async ({ ctxFlow }: { ctxFlow: Variant.Model }) => {
   const ctxPuzzle = await Puzzle.random({
     flow: ctxFlow,
   })
-  const ctx: FlowPlay.Ctx = FlowPlay.initCtx({
+  const ctx: Play.Ctx = Play.initCtx({
     flowPuzzle: ctxPuzzle,
   })
 
-  const init = FlowPlay.init({ ctx })
+  const init = Play.init({ ctx })
 
-  const update = (init: FlowPlay.Model, msgs: FlowPlay.Msg[]) => {
-    return msgs.reduce<ReturnType<typeof FlowPlay.update>>(
+  const update = (init: Play.Model, msgs: Play.Msg[]) => {
+    return msgs.reduce<ReturnType<typeof Play.update>>(
       (output, msg) =>
-        FlowPlay.update({
+        Play.update({
           ctx,
           model: output.model,
           msg,
@@ -31,7 +31,7 @@ const Fixture = async ({ ctxFlow }: { ctxFlow: Variant.Model }) => {
     )
   }
 
-  const solutionMsgs = FlowPlay.toSolutionMsgs({
+  const solutionMsgs = Play.toSolutionMsgs({
     flow: ctxFlow,
   })
 
@@ -45,7 +45,7 @@ const Fixture = async ({ ctxFlow }: { ctxFlow: Variant.Model }) => {
 
 describe(import.meta.file, () => {
   test('to solution msgs', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', 'B', ' '],
       [' ', ' ', 'A'],
@@ -55,16 +55,16 @@ describe(import.meta.file, () => {
       ctxFlow: flow,
     })
 
-    const msgs = FlowPlay.toSolutionMsgs({
+    const msgs = Play.toSolutionMsgs({
       flow,
     })
 
-    const before = FlowPlay.toFlow({
+    const before = Play.toFlow({
       flow,
       model: f.init,
     })
 
-    const after = FlowPlay.toFlow({
+    const after = Play.toFlow({
       flow,
       model: f.update(f.init, msgs).model,
     })
@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
   })
 
   it('should output connected terminals event', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' ', 'B'],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
@@ -86,28 +86,28 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 2,
           y: 2,
         }),
       },
       {
         t: 'user-pressed-up-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 2,
           y: 2,
         }),
@@ -118,7 +118,7 @@ describe(import.meta.file, () => {
   })
 
   it('should output started dragging event', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
@@ -130,7 +130,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 2,
         }),
@@ -141,7 +141,7 @@ describe(import.meta.file, () => {
   })
 
   it('should output solved event', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
@@ -153,28 +153,28 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 2,
           y: 2,
         }),
       },
       {
         t: 'user-pressed-up-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 2,
           y: 2,
         }),
@@ -185,7 +185,7 @@ describe(import.meta.file, () => {
   })
 
   it('should output solved event even after dragging left the board', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
@@ -197,21 +197,21 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 2,
           y: 2,
         }),
@@ -224,7 +224,7 @@ describe(import.meta.file, () => {
   })
 
   it('should not output solved event after dragging left the board if not connected', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
@@ -236,14 +236,14 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 2,
         }),
@@ -256,7 +256,7 @@ describe(import.meta.file, () => {
   })
 
   it('should not output solved if not pressed up on terminal', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
@@ -268,21 +268,21 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 2,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 2,
           y: 2,
         }),
@@ -293,7 +293,7 @@ describe(import.meta.file, () => {
   })
 
   it('should not output solved event if terminals are not connected', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', 'a', 'A'],
@@ -306,21 +306,21 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 1,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 0,
         }),
       },
       {
         t: 'user-pressed-up-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 0,
         }),
@@ -331,7 +331,7 @@ describe(import.meta.file, () => {
   })
 
   test('hint', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
     ])
@@ -339,24 +339,24 @@ describe(import.meta.file, () => {
       ctxFlow: flow,
     })
 
-    const msgs: FlowPlay.Msg[] = [
+    const msgs: Play.Msg[] = [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 1,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 0,
         }),
       },
       {
         t: 'user-pressed-up-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 1,
           y: 0,
         }),
@@ -369,7 +369,7 @@ describe(import.meta.file, () => {
   })
 
   test('derive flow with hints', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
     ])
@@ -383,7 +383,7 @@ describe(import.meta.file, () => {
       },
     ]).model
 
-    const flowNew = FlowPlay.toFlow({
+    const flowNew = Play.toFlow({
       flow,
       model,
     })
@@ -392,7 +392,7 @@ describe(import.meta.file, () => {
   })
 
   it('should not output solved event when drawing from incomplete terminal and then leave drawing', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['B', ' ', 'A'],
       [' ', ' ', 'a'],
       [' ', ' ', 'A'],
@@ -401,24 +401,24 @@ describe(import.meta.file, () => {
       ctxFlow: flow,
     })
 
-    const msgs: FlowPlay.Msg[] = [
+    const msgs: Play.Msg[] = [
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 0,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 1,
         }),
       },
       {
         t: 'user-dragged-over-node',
-        nodeId: FlowGrid.toNodeId({
+        nodeId: VariantGrid.toNodeId({
           x: 0,
           y: 2,
         }),
@@ -435,7 +435,7 @@ describe(import.meta.file, () => {
 
   test('reset pipes', async () => {
     const f = await Fixture({
-      ctxFlow: FlowGridShorthand.toGrid([
+      ctxFlow: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', ' ', ' '],
         ['a', 'a', 'A'],
@@ -448,11 +448,11 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const before = FlowPlay.toFlow({
+    const before = Play.toFlow({
       flow: f.flow,
       model: f.init,
     })
-    const after = FlowPlay.toFlow({
+    const after = Play.toFlow({
       flow: f.flow,
       model: output.model,
     })
@@ -463,7 +463,7 @@ describe(import.meta.file, () => {
 
   test('reset hints used', async () => {
     const f = await Fixture({
-      ctxFlow: FlowGridShorthand.toGrid([
+      ctxFlow: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
@@ -485,7 +485,7 @@ describe(import.meta.file, () => {
 
   test('output reset event', async () => {
     const f = await Fixture({
-      ctxFlow: FlowGridShorthand.toGrid([
+      ctxFlow: VariantGridShorthand.toGrid([
         ['A', ' '],
         [' ', 'A'],
       ]),
@@ -500,7 +500,7 @@ describe(import.meta.file, () => {
 
   test('not output solved is no', async () => {
     const f = await Fixture({
-      ctxFlow: FlowGridShorthand.toGrid([
+      ctxFlow: VariantGridShorthand.toGrid([
         ['A', ' '],
         [' ', 'A'],
       ]),
@@ -515,7 +515,7 @@ describe(import.meta.file, () => {
 
   test('show checkmark animation on solve', async () => {
     const f = await Fixture({
-      ctxFlow: FlowGridShorthand.toGrid([
+      ctxFlow: VariantGridShorthand.toGrid([
         ['A', ' '],
         [' ', 'A'],
       ]),
@@ -526,7 +526,7 @@ describe(import.meta.file, () => {
 
   test('status should be solved if solved but is dragging lonely terminal', async () => {
     const f = await Fixture({
-      ctxFlow: FlowGridShorthand.toGrid([
+      ctxFlow: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         ['A', ' ', 'B'],
@@ -537,7 +537,7 @@ describe(import.meta.file, () => {
       ...f.solutionMsgs,
       {
         t: 'user-pressed-down-node',
-        nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }),
+        nodeId: VariantGrid.toNodeId({ x: 2, y: 2 }),
       },
     ])
     expect(toStatus({ model: output.model, flow: f.flow })).toBe('solved')

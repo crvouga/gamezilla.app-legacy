@@ -3,11 +3,11 @@ import { LamportTimestamp } from '~/@/lamport-clock'
 import { EventId, withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
-import { FixtureFlowPlayClient } from '../@/client/fixture'
+import { FixturePlayClient } from '../@/client/fixture'
 import { didPlaySound } from '~/app/@/client/cmd'
 
 const Fixture = async () => {
-  const f = await FixtureFlowPlayClient()
+  const f = await FixturePlayClient()
   const puzzle = await Puzzle.random()
   const pack = await Pack.random({
     puzzleIds: [puzzle.id],

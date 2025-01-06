@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Flow } from '../../flow'
-import { FlowGridShorthand } from '../../variant/grid'
+import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolve from './algo-solve'
 
 const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
@@ -14,17 +14,17 @@ const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
 
 describe(import.meta.file, () => {
   test('2x2 with A terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
     ])
 
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', ' '],
         ['a', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a'],
         [' ', 'A'],
       ]),
@@ -36,24 +36,24 @@ describe(import.meta.file, () => {
   })
 
   test('3x3 with A terminals and B terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'B', ' '],
       [' ', ' ', ' '],
       ['A', 'B', ' '],
     ])
 
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'B', ' '],
         ['a', 'b', ' '],
         ['A', 'B', ' '],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'B', 'b'],
         ['a', 'b', 'b'],
         ['A', 'B', ' '],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'B', 'b'],
         ['a', ' ', 'b'],
         ['A', 'B', 'b'],
@@ -66,14 +66,14 @@ describe(import.meta.file, () => {
   })
 
   test('3x3 with A terminals and B terminals and C terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],
       [' ', ' ', ' '],
       ['A', 'B', 'C'],
     ])
 
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'B', 'C'],
         ['a', 'b', 'c'],
         ['A', 'B', 'C'],
@@ -86,54 +86,54 @@ describe(import.meta.file, () => {
   })
 
   test('3x3 with far A terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', ' ', ' '],
       [' ', ' ', 'A'],
     ])
 
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', ' ', ' '],
         ['a', 'a', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a'],
         [' ', ' ', 'a'],
         [' ', ' ', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', ' '],
         [' ', 'a', 'a'],
         [' ', ' ', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', ' '],
         [' ', 'a', ' '],
         [' ', 'a', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', ' '],
         [' ', 'a', 'a'],
         [' ', ' ', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', 'a', 'a'],
         [' ', ' ', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', 'a', 'a'],
         [' ', ' ', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', 'a', ' '],
         [' ', 'a', 'A'],
       ]),
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a'],
         ['a', 'a', 'a'],
         ['a', 'a', 'A'],
@@ -146,12 +146,12 @@ describe(import.meta.file, () => {
   })
 
   test('adjacent terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'A'],
       [' ', ' '],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['Aa', 'A'],
         [' ', ' '],
       ]),
@@ -161,13 +161,13 @@ describe(import.meta.file, () => {
   })
 
   test('3x3 with far A terminals and B terminals and C terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'C', 'C'],
       [' ', ' ', ' '],
       ['B', 'B', 'A'],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'Cc', 'C'],
         ['a', 'a', 'a'],
         ['Bb', 'B', 'A'],
@@ -178,7 +178,7 @@ describe(import.meta.file, () => {
   })
 
   test('5x5 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', 'D', ' ', 'C'],
       [' ', ' ', 'B', ' ', 'E'],
       [' ', ' ', ' ', ' ', ' '],
@@ -187,7 +187,7 @@ describe(import.meta.file, () => {
     ])
 
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'd', 'D', 'c', 'C'],
         ['a', 'd', 'B', 'c', 'E'],
         ['a', 'd', 'b', 'c', 'e'],
@@ -202,7 +202,7 @@ describe(import.meta.file, () => {
   })
 
   test('6x6 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', 'D', ' ', 'C', 'F'],
       [' ', ' ', 'B', ' ', 'E', ' '],
       [' ', ' ', ' ', ' ', ' ', ' '],
@@ -212,7 +212,7 @@ describe(import.meta.file, () => {
     ])
 
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'd', 'D', 'c', 'C', 'F'],
         ['a', 'd', 'B', 'c', 'E', 'f'],
         ['a', 'd', 'b', 'c', 'e', 'f'],
@@ -228,7 +228,7 @@ describe(import.meta.file, () => {
   })
 
   test('7x7 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       [' ', ' ', 'C', 'D', 'E', ' ', 'E'],
       [' ', ' ', 'F', ' ', ' ', ' ', ' '],
       [' ', ' ', 'G', ' ', 'H', 'I', ' '],
@@ -239,7 +239,7 @@ describe(import.meta.file, () => {
     ])
 
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['c', 'c', 'C', 'D', 'E', 'e', 'E'],
         ['c', 'f', 'F', 'd', 'h', 'h', 'h'],
         ['c', 'f', 'G', 'd', 'H', 'I', 'h'],
@@ -255,7 +255,7 @@ describe(import.meta.file, () => {
   })
 
   test('8x8 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' '],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' '],
@@ -266,7 +266,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I'],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a', 'A', 'B', 'b', 'b', 'b'],
         ['c', 'c', 'C', 'D', 'E', 'e', 'E', 'b'],
         ['c', 'f', 'F', 'd', 'h', 'h', 'h', 'b'],
@@ -283,7 +283,7 @@ describe(import.meta.file, () => {
   })
 
   test('9x9 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -295,7 +295,7 @@ describe(import.meta.file, () => {
       ['J', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a', 'A', 'B', 'b', 'b', 'b', 'J'],
         ['c', 'c', 'C', 'D', 'E', 'e', 'E', 'b', 'j'],
         ['c', 'f', 'F', 'd', 'h', 'h', 'h', 'b', 'j'],
@@ -313,7 +313,7 @@ describe(import.meta.file, () => {
   })
 
   test('10x10 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -326,7 +326,7 @@ describe(import.meta.file, () => {
       ['K', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a', 'A', 'B', 'b', 'b', 'b', 'J', 'K'],
         ['c', 'c', 'C', 'D', 'E', 'e', 'E', 'b', 'j', 'k'],
         ['c', 'f', 'F', 'd', 'h', 'h', 'h', 'b', 'j', 'k'],
@@ -346,7 +346,7 @@ describe(import.meta.file, () => {
   })
 
   test('11x11 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -360,7 +360,7 @@ describe(import.meta.file, () => {
       ['L', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a', 'A', 'B', 'b', 'b', 'b', 'J', 'K', 'L'],
         ['c', 'c', 'C', 'D', 'E', 'e', 'E', 'b', 'j', 'k', 'l'],
         ['c', 'f', 'F', 'd', 'h', 'h', 'h', 'b', 'j', 'k', 'l'],
@@ -381,7 +381,7 @@ describe(import.meta.file, () => {
   })
 
   test('12x12 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -396,7 +396,7 @@ describe(import.meta.file, () => {
       ['M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a', 'A', 'B', 'b', 'b', 'b', 'J', 'K', 'L', 'M'],
         ['c', 'c', 'C', 'D', 'E', 'e', 'E', 'b', 'j', 'k', 'l', 'm'],
         ['c', 'f', 'F', 'd', 'h', 'h', 'h', 'b', 'j', 'k', 'l', 'm'],
@@ -417,7 +417,7 @@ describe(import.meta.file, () => {
   })
 
   test('13x13 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -433,7 +433,7 @@ describe(import.meta.file, () => {
       ['N', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a', 'A', 'B', 'b', 'b', 'b', 'J', 'K', 'L', 'M', 'N'],
         ['c', 'c', 'C', 'D', 'E', 'e', 'E', 'b', 'j', 'k', 'l', 'm', 'n'],
         ['c', 'f', 'F', 'd', 'h', 'h', 'h', 'b', 'j', 'k', 'l', 'm', 'n'],
@@ -455,7 +455,7 @@ describe(import.meta.file, () => {
   })
 
   test('14x14 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N', 'O'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -472,7 +472,7 @@ describe(import.meta.file, () => {
       ['O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
     const expected = [
-      FlowGridShorthand.toGrid([
+      VariantGridShorthand.toGrid([
         ['A', 'a', 'a', 'A', 'B', 'b', 'b', 'b', 'J', 'K', 'L', 'M', 'N', 'O'],
         ['c', 'c', 'C', 'D', 'E', 'e', 'E', 'b', 'j', 'k', 'l', 'm', 'n', 'o'],
         ['c', 'f', 'F', 'd', 'h', 'h', 'h', 'b', 'j', 'k', 'l', 'm', 'n', 'o'],
@@ -495,7 +495,7 @@ describe(import.meta.file, () => {
   })
 
   test('14x14 puzzle', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N', 'O'],
       [' ', ' ', ' ', ' ', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -517,7 +517,7 @@ describe(import.meta.file, () => {
   })
 
   test('3x3 no solutions', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'B', 'A'],
       [' ', ' ', ' '],
       ['C', 'B', 'C'],
@@ -527,7 +527,7 @@ describe(import.meta.file, () => {
   })
 
   test('disregard existing pipes', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', 'B'],
       ['a', 'a', 'A'],
       [' ', 'B', ' '],
@@ -538,7 +538,7 @@ describe(import.meta.file, () => {
   })
 
   test.todo('8x8 no solutions', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['C', ' ', ' ', 'D', ' ', ' ', ' ', 'A'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],

@@ -1,3 +1,3 @@
-export * as FlowTri from './tri'
-export * as FlowTriBoard from './tri-board'
-export * as FlowTriDimensions from './tri-dimensions'
+export * as VariantTri from './tri'
+export * as VariantTriBoard from './tri-board'
+export * as VariantTriDimensions from './tri-dimensions'

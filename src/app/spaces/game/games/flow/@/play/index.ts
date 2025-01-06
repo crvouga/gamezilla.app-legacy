@@ -1,1 +1,1 @@
-export * as FlowPlay from './play'
+export * as Play from './play'

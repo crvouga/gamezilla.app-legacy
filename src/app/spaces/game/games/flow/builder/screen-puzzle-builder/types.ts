@@ -1,8 +1,8 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
-import { FlowEdit } from '../../@/edit'
-import { FlowPlay } from '../../@/play'
+import { Edit } from '../../@/edit'
+import { Play } from '../../@/play'
 import { DeleteForeverTypes } from './delete-forever'
 import { EditPuzzleNameTypes } from './edit-puzzle-name'
 import { SaveChangesTypes } from './save-changes'
@@ -27,11 +27,11 @@ export type MsgClient =
   | SaveChangesTypes.MsgClient
   | {
       t: 'screen-puzzle-builder.got-flow-ui-edit-msg'
-      c: FlowEdit.Msg
+      c: Edit.Msg
     }
   | {
       t: 'screen-puzzle-builder.got-flow-ui-play-msg'
-      c: FlowPlay.Msg
+      c: Play.Msg
     }
   | { t: 'screen-puzzle-builder.user-clicked-more-button' }
   | { t: 'screen-puzzle-builder.user-closed-more-drawer' }
@@ -67,8 +67,8 @@ export const ModelCore = p.obj({
   t: p.l('puzzle-builder'),
   puzzle: Puzzle,
   mode: Mode,
-  play: FlowPlay.Model,
-  edit: FlowEdit.Model,
+  play: Play.Model,
+  edit: Edit.Model,
 })
 export type ModelCore = p.Infer<typeof ModelCore>
 
@@ -78,11 +78,11 @@ export const MsgCore = p.or(
   EditPuzzleNameTypes.MsgCore,
   p.obj({
     t: p.l('screen-puzzle-builder.got-flow-ui-play-msg'),
-    c: FlowPlay.Msg,
+    c: Play.Msg,
   }),
   p.obj({
     t: p.l('screen-puzzle-builder.got-flow-ui-edit-msg'),
-    c: FlowEdit.Msg,
+    c: Edit.Msg,
   }),
   p.obj({
     t: p.l('screen-puzzle-builder.user-clicked-edit-mode-button'),

@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'bun:test'
 import { Logger } from '~/@/logger'
 import { Flow } from '../../flow'
-import { FlowGridShorthand } from '../../variant/grid'
+import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolveAsync from './algo-solve-async'
 
 describe(import.meta.file, () => {
   test('solve flow', async () => {
-    const flow = FlowGridShorthand.toGrid([
+    const flow = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],
       [' ', ' ', ' '],
       ['A', 'B', 'C'],
@@ -19,7 +19,7 @@ describe(import.meta.file, () => {
       }),
     )
 
-    const expected = FlowGridShorthand.toGrid([
+    const expected = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],
       ['a', 'b', 'c'],
       ['A', 'B', 'C'],

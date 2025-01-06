@@ -1,17 +1,17 @@
-import { FlowGridShorthand } from './grid-shorthand'
+import { VariantGridShorthand } from './grid-shorthand'
 
 export type Size = '5x5' | '6x6' | '7x7' | '8x8' | '15x15'
 
 export const samples = {
   '5x5': {
-    '1': FlowGridShorthand.toGrid([
+    '1': VariantGridShorthand.toGrid([
       [' ', 'C', 'B', ' ', ' '],
       [' ', 'D', ' ', ' ', ' '],
       [' ', 'C', 'A', ' ', ' '],
       ['D', 'A', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', 'B'],
     ]),
-    '2': FlowGridShorthand.toGrid([
+    '2': VariantGridShorthand.toGrid([
       ['A', ' ', 'D', ' ', 'C'],
       [' ', ' ', 'B', ' ', 'E'],
       [' ', ' ', ' ', ' ', ' '],
@@ -20,7 +20,7 @@ export const samples = {
     ]),
   },
   '6x6': {
-    '1': FlowGridShorthand.toGrid([
+    '1': VariantGridShorthand.toGrid([
       [' ', ' ', ' ', ' ', ' ', 'E'],
       [' ', 'D', ' ', 'B', 'C', ' '],
       [' ', ' ', ' ', ' ', ' ', ' '],
@@ -31,7 +31,7 @@ export const samples = {
   },
   '7x7': {},
   '8x8': {
-    0: FlowGridShorthand.toGrid([
+    0: VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' '],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' '],
@@ -41,7 +41,7 @@ export const samples = {
       [' ', 'F', ' ', 'G', ' ', ' ', 'H', 'B'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ]),
-    1: FlowGridShorthand.toGrid([
+    1: VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' '],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' '],
@@ -53,7 +53,7 @@ export const samples = {
     ]),
   },
   '15x15': {
-    1: FlowGridShorthand.toGrid([
+    1: VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'A', ' ', ' ', 'A', 'B', ' ', ' ', ' '],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', 'C', 'D', 'E', ' ', 'E', ' '],
       [' ', ' ', 'F', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'F', ' ', ' ', ' ', ' ', ' '],

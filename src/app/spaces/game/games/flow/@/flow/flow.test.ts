@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { Flow } from '.'
-import { FlowGrid, FlowGridShorthand } from '../variant/grid'
+import { VariantGrid, VariantGridShorthand } from '../variant/grid'
 
 describe(import.meta.file, () => {
   test('isSolved 3x3 with A terminals and A pipes', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
       ['a', 'a', 'A'],
@@ -13,7 +13,7 @@ describe(import.meta.file, () => {
   })
 
   test('isSolved 3x3 with A terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
       ['a', ' ', 'A'],
@@ -22,7 +22,7 @@ describe(import.meta.file, () => {
   })
 
   test('not isSolved 3x3 with A terminals and A pipes and B terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'B', ' '],
       ['a', ' ', 'B'],
       ['a', 'a', 'A'],
@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
   })
 
   test('not isSolved 3x3 with A terminals and A pipes and B terminals and B pipes', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'B', 'b'],
       ['a', ' ', 'B'],
       ['a', 'a', 'A'],
@@ -40,7 +40,7 @@ describe(import.meta.file, () => {
   })
 
   test('isSolved with A terminals and A pipes long', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'a', 'a'],
       ['a', 'a', 'a'],
       ['a', 'a', 'A'],
@@ -49,7 +49,7 @@ describe(import.meta.file, () => {
   })
 
   test('isSolved with adjacent connected A terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['Aa', 'A'],
       [' ', ' '],
     ])
@@ -57,7 +57,7 @@ describe(import.meta.file, () => {
   })
 
   test('not isSolved with adjacent disconnected A terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' '],
       ['A', ' '],
     ])
@@ -65,17 +65,17 @@ describe(import.meta.file, () => {
   })
 
   test('isConnectedWithPipes with connected terminals', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' '],
       ['a', 'A'],
     ])
-    expect(Flow.isConnectedWithPipes(grid, FlowGrid.toNodeId({ x: 0, y: 0 }), FlowGrid.toNodeId({ x: 1, y: 1 }))).toBe(
-      true,
-    )
+    expect(
+      Flow.isConnectedWithPipes(grid, VariantGrid.toNodeId({ x: 0, y: 0 }), VariantGrid.toNodeId({ x: 1, y: 1 })),
+    ).toBe(true)
   })
 
   test('isConnectedWithPipes should not fail in case of branching', () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'a', 'a'],
       ['a', 'a', 'a'],
       ['a', 'a', 'A'],
@@ -83,11 +83,11 @@ describe(import.meta.file, () => {
     expect(
       Flow.isConnectedWithPipes(
         grid,
-        FlowGrid.toNodeId({
+        VariantGrid.toNodeId({
           x: 0,
           y: 0,
         }),
-        FlowGrid.toNodeId({
+        VariantGrid.toNodeId({
           x: 2,
           y: 2,
         }),
@@ -96,17 +96,17 @@ describe(import.meta.file, () => {
   })
 
   test('isConnectedWithPipes should not fail in case of cycles', () => {
-    const grid = FlowGridShorthand.toGrid([['A', 'a', 'A']])
+    const grid = VariantGridShorthand.toGrid([['A', 'a', 'A']])
 
-    const node1 = FlowGrid.toNodeId({
+    const node1 = VariantGrid.toNodeId({
       x: 0,
       y: 0,
     })
-    const node2 = FlowGrid.toNodeId({
+    const node2 = VariantGrid.toNodeId({
       x: 1,
       y: 0,
     })
-    const node3 = FlowGrid.toNodeId({
+    const node3 = VariantGrid.toNodeId({
       x: 2,
       y: 0,
     })
@@ -116,14 +116,14 @@ describe(import.meta.file, () => {
       pipesBySourceId: {
         ...grid.pipesBySourceId,
         [node3]: {
-          edgeId: Flow.toFlowEdgeId({
+          edgeId: Flow.toEdgeId({
             sourceId: node3,
             targetId: node2,
           }),
           groupId: 'A',
         },
         [node2]: {
-          edgeId: Flow.toFlowEdgeId({
+          edgeId: Flow.toEdgeId({
             sourceId: node2,
             targetId: node1,
           }),
@@ -138,18 +138,18 @@ describe(import.meta.file, () => {
   })
 
   test('branching pipelines dectection', async () => {
-    const gridA = FlowGridShorthand.toGrid([
+    const gridA = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
       [' ', ' ', 'A'],
     ])
-    const gridB = FlowGridShorthand.toGrid([
+    const gridB = VariantGridShorthand.toGrid([
       [' ', ' ', ' '],
       [' ', ' ', 'a'],
       [' ', ' ', 'A'],
     ])
 
-    const grid: FlowGrid.Model = {
+    const grid: VariantGrid.Model = {
       ...gridA,
       pipesBySourceId: {
         ...gridA.pipesBySourceId,
@@ -162,7 +162,7 @@ describe(import.meta.file, () => {
   })
 
   test('branching pipelines false postives', async () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
       [' ', ' ', 'A'],
@@ -171,19 +171,19 @@ describe(import.meta.file, () => {
   })
 
   test('multiple dead ends detection', async () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', 'a', 'a', ' '],
       [' ', ' ', 'a', ' '],
       ['a', 'a', 'a', ' '],
       [' ', ' ', ' ', 'A'],
     ])
-    const solution = FlowGridShorthand.toGrid([
+    const solution = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', ' '],
       ['a', ' ', ' ', ' '],
       ['a', ' ', ' ', ' '],
       ['a', 'a', 'a', 'A'],
     ])
-    const multipleDeadEnds: FlowGrid.Model = {
+    const multipleDeadEnds: VariantGrid.Model = {
       ...grid,
       pipesBySourceId: {
         ...grid.pipesBySourceId,
@@ -194,7 +194,7 @@ describe(import.meta.file, () => {
   })
 
   test('multiple dead ends false positive', async () => {
-    const grid = FlowGridShorthand.toGrid([
+    const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
       ['a', ' ', 'A'],

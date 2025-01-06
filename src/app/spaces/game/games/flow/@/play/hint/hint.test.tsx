@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { FixtureFlowClient } from '../../client/fixture'
 import { Flow } from '../../flow'
 import { Puzzle } from '../../puzzle/puzzle'
-import { FlowGridShorthand } from '../../variant/grid'
+import { VariantGridShorthand } from '../../variant/grid'
 import * as FlowHint from './hint'
 
 const Fixture = async (input?: { ctxPuzzle?: Puzzle }) => {
@@ -11,7 +11,7 @@ const Fixture = async (input?: { ctxPuzzle?: Puzzle }) => {
   const ctxPuzzle =
     input?.ctxPuzzle ??
     (await Puzzle.random({
-      flow: FlowGridShorthand.toGrid([
+      flow: VariantGridShorthand.toGrid([
         ['A', ' '],
         [' ', 'A'],
       ]),
@@ -77,7 +77,7 @@ describe(import.meta.file, () => {
   test('hint multiple terminals', async () => {
     const f = await Fixture({
       ctxPuzzle: await Puzzle.random({
-        flow: FlowGridShorthand.toGrid([
+        flow: VariantGridShorthand.toGrid([
           ['A', 'B'],
           [' ', ' '],
           ['A', 'B'],
@@ -107,7 +107,7 @@ describe(import.meta.file, () => {
   test('output use hint event', async () => {
     const f = await Fixture({
       ctxPuzzle: await Puzzle.random({
-        flow: FlowGridShorthand.toGrid([
+        flow: VariantGridShorthand.toGrid([
           ['A', 'B'],
           [' ', ' '],
           ['A', 'B'],
@@ -128,7 +128,7 @@ describe(import.meta.file, () => {
   test('output solved event', async () => {
     const f = await Fixture({
       ctxPuzzle: await Puzzle.random({
-        flow: FlowGridShorthand.toGrid([
+        flow: VariantGridShorthand.toGrid([
           ['A', 'B', 'C'],
           [' ', ' ', ' '],
           ['A', 'B', 'C'],
@@ -160,7 +160,7 @@ describe(import.meta.file, () => {
   it('should not create branching in pipes after using a hint', async () => {
     const f = await Fixture({
       ctxPuzzle: await Puzzle.random({
-        flow: FlowGridShorthand.toGrid([
+        flow: VariantGridShorthand.toGrid([
           ['A', 'a', 'a', ' '],
           [' ', ' ', 'a', ' '],
           ['a', 'a', 'a', ' '],
@@ -188,7 +188,7 @@ describe(import.meta.file, () => {
   it.todo('should work even with flipped terminal', async () => {
     const f = await Fixture({
       ctxPuzzle: await Puzzle.random({
-        flow: FlowGridShorthand.toGrid([
+        flow: VariantGridShorthand.toGrid([
           ['A', ' ', ' '],
           [' ', ' ', ' '],
           ['A', ' ', ' '],
@@ -238,7 +238,7 @@ describe(import.meta.file, () => {
   })
 
   test.todo('cut pipes after using a hint', async () => {
-    const before = FlowGridShorthand.toGrid([
+    const before = VariantGridShorthand.toGrid([
       ['A', ' ', 'B'],
       ['a', 'a', 'A'],
       [' ', 'B', ' '],
@@ -269,7 +269,7 @@ describe(import.meta.file, () => {
   it('should NOT branch pipelines after using hint', async () => {
     const f = await Fixture({
       ctxPuzzle: await Puzzle.random({
-        flow: FlowGridShorthand.toGrid([
+        flow: VariantGridShorthand.toGrid([
           ['A', ' ', ' '],
           [' ', ' ', ' '],
           [' ', ' ', 'A'],
@@ -277,7 +277,7 @@ describe(import.meta.file, () => {
       }),
     })
 
-    const initialPipesBySourceId = FlowGridShorthand.toGrid([
+    const initialPipesBySourceId = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', ' ', ' '],
       ['a', 'a', 'A'],
@@ -305,7 +305,7 @@ describe(import.meta.file, () => {
   it.todo('should disable hint button if puzzle is solved', async () => {
     const f = await Fixture({
       ctxPuzzle: await Puzzle.random({
-        flow: FlowGridShorthand.toGrid([
+        flow: VariantGridShorthand.toGrid([
           ['A', 'B'],
           ['a', 'b'],
           ['A', 'B'],
@@ -324,7 +324,7 @@ describe(import.meta.file, () => {
   it('should never change the positions of the terminals when using a hint', async () => {
     const f = await Fixture({
       ctxPuzzle: await Puzzle.random({
-        flow: FlowGridShorthand.toGrid([
+        flow: VariantGridShorthand.toGrid([
           ['A', ' ', ' '],
           [' ', ' ', ' '],
           [' ', ' ', 'A'],
@@ -335,7 +335,7 @@ describe(import.meta.file, () => {
     const init = FlowHint.init({
       ctx: FlowHint.initCtx({
         flowPuzzle: await Puzzle.random({
-          flow: FlowGridShorthand.toGrid([
+          flow: VariantGridShorthand.toGrid([
             [' ', ' ', 'A'],
             [' ', ' ', ' '],
             ['A', ' ', ' '],

@@ -1,10 +1,10 @@
 import { p } from '~/@/parser'
 import { Flow } from '../../flow'
-import { FlowGroupId } from '../../flow/group-id'
-import * as FlowGridDimensions from './grid-dimensions'
+import { GroupId } from '../../flow/group-id'
+import * as VariantGridDimensions from './grid-dimensions'
 import { Position } from './grid-position'
-import { FlowNodeId } from '../../flow/node-id'
-import { FlowEdgeId } from '../../flow/edge-id'
+import { NodeId } from '../../flow/node-id'
+import { EdgeId } from '../../flow/edge-id'
 import { FlowTerminal } from '../../flow/terminal'
 
 //
@@ -17,23 +17,23 @@ import { FlowTerminal } from '../../flow/terminal'
 
 export const Model = p.and(
   Flow.Model,
-  FlowGridDimensions.Model,
+  VariantGridDimensions.Model,
   p.obj({
     t: p.l('flow-grid'),
-    positions: p.dict(FlowNodeId, Position.parser),
+    positions: p.dict(NodeId, Position.parser),
   }),
 )
 export type Model = p.Infer<typeof Model>
 
-const initNodeId = (x: number, y: number): FlowNodeId => {
-  return FlowNodeId.init(`${x},${y}`)
+const initNodeId = (x: number, y: number): NodeId => {
+  return NodeId.init(`${x},${y}`)
 }
 
-export const toNodeId = (position: Position): FlowNodeId => {
+export const toNodeId = (position: Position): NodeId => {
   return initNodeId(position.x, position.y)
 }
 
-export const distance = (model: Model, a: FlowNodeId, b: FlowNodeId): number => {
+export const distance = (model: Model, a: NodeId, b: NodeId): number => {
   const positionA = model.positions[a]
 
   if (!positionA) {
@@ -58,7 +58,7 @@ export const distance = (model: Model, a: FlowNodeId, b: FlowNodeId): number => 
 //
 
 export const init = (input: {
-  dimensions: FlowGridDimensions.Model
+  dimensions: VariantGridDimensions.Model
   terminalsByGroupId?: Flow.Model['terminalsByGroupId']
   pipesBySourceId?: Flow.Model['pipesBySourceId']
 }): Model => {
@@ -103,7 +103,7 @@ export const init = (input: {
           sourceId: nodeId,
           targetId: north,
         }
-        model.edges[Flow.toFlowEdgeId(edgeNorth)] = edgeNorth
+        model.edges[Flow.toEdgeId(edgeNorth)] = edgeNorth
       }
 
       if (x < maxX) {
@@ -112,7 +112,7 @@ export const init = (input: {
           sourceId: nodeId,
           targetId: east,
         }
-        model.edges[Flow.toFlowEdgeId(edgeEast)] = edgeEast
+        model.edges[Flow.toEdgeId(edgeEast)] = edgeEast
       }
 
       if (y < maxY) {
@@ -121,7 +121,7 @@ export const init = (input: {
           sourceId: nodeId,
           targetId: south,
         }
-        model.edges[Flow.toFlowEdgeId(edgeSouth)] = edgeSouth
+        model.edges[Flow.toEdgeId(edgeSouth)] = edgeSouth
       }
 
       if (x > 0) {
@@ -130,7 +130,7 @@ export const init = (input: {
           sourceId: nodeId,
           targetId: west,
         }
-        model.edges[Flow.toFlowEdgeId(edgeWest)] = edgeWest
+        model.edges[Flow.toEdgeId(edgeWest)] = edgeWest
       }
     }
   }
@@ -139,7 +139,7 @@ export const init = (input: {
   //
 
   for (const groupId in input.terminalsByGroupId) {
-    const terminal = input.terminalsByGroupId[groupId as FlowGroupId]
+    const terminal = input.terminalsByGroupId[groupId as GroupId]
 
     if (!terminal) {
       continue
@@ -187,7 +187,7 @@ export type Edge = Flow.Edge & {
   target: Node
 }
 
-export const toNode = (model: Model, nodeId: FlowNodeId): Node | null => {
+export const toNode = (model: Model, nodeId: NodeId): Node | null => {
   const node = Flow.toNode(model, nodeId)
 
   if (!node) {
@@ -206,7 +206,7 @@ export const toNode = (model: Model, nodeId: FlowNodeId): Node | null => {
   }
 }
 
-export const toEdge = (model: Model, edgeId: FlowEdgeId): Edge | null => {
+export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
   const edge = Flow.toEdge(model, edgeId)
 
   if (!edge) {
@@ -360,7 +360,7 @@ const pipeToPipeJoined = (model: Model, pipe: Flow.Pipe): PipeJoined[] => {
   return [{ ...pipe, source, target, edge }]
 }
 
-export const toPipeline = (model: Model, startingNodeId: FlowNodeId): PipeJoined[] => {
+export const toPipeline = (model: Model, startingNodeId: NodeId): PipeJoined[] => {
   const USE_V2 = true
   if (USE_V2) {
     const pipeline = Flow.toPipeline(model, startingNodeId)
@@ -370,7 +370,7 @@ export const toPipeline = (model: Model, startingNodeId: FlowNodeId): PipeJoined
   const pipeline: PipeJoined[] = []
 
   let currentNodeId = startingNodeId
-  const visited = new Set<FlowNodeId>()
+  const visited = new Set<NodeId>()
 
   while (true) {
     if (visited.has(currentNodeId)) {

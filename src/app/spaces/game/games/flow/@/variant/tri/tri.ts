@@ -1,30 +1,30 @@
 import { p } from '~/@/parser'
 import { Flow } from '../../flow'
-import * as FlowTriDimensions from './tri-dimensions'
-import { FlowNodeId } from '../../flow/node-id'
+import * as VariantTriDimensions from './tri-dimensions'
+import { NodeId } from '../../flow/node-id'
 
 export const Model = p.and(
   Flow.Model,
-  FlowTriDimensions.Model,
+  VariantTriDimensions.Model,
   p.obj({
     t: p.l('flow-tri'),
-    FlowTri: p.l(true),
+    VariantTri: p.l(true),
   }),
 )
 export type Model = p.Infer<typeof Model>
 
 export const init = (input: {
-  dimensions: FlowTriDimensions.Model
+  dimensions: VariantTriDimensions.Model
   terminalsByGroupId: Flow.Model['terminalsByGroupId']
 }): Model => {
   return {
     ...Flow.init,
     ...input.dimensions,
     t: 'flow-tri',
-    FlowTri: true,
+    VariantTri: true,
   }
 }
 
-export const distance = (_model: Model, _a: FlowNodeId, _b: FlowNodeId): number => {
+export const distance = (_model: Model, _a: NodeId, _b: NodeId): number => {
   return 0
 }

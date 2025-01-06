@@ -4,7 +4,7 @@ import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconCopy } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { Variant } from '../variant'
-import { FlowGridShorthand } from '../variant/grid'
+import { VariantGridShorthand } from '../variant/grid'
 
 export const MsgClient = p.or(
   p.obj({
@@ -33,7 +33,7 @@ const update = <TModel,>(input: {
         }
       }
 
-      const shorthand = FlowGridShorthand.fromGrid(input.flow)
+      const shorthand = VariantGridShorthand.fromGrid(input.flow)
 
       const encoded = JSON.stringify(shorthand)
 
@@ -71,7 +71,7 @@ const viewAction = ({
   ]
 }
 
-export const FlowCopyToClipboardClient = {
+export const CopyToClipboardClient = {
   update,
   viewAction,
 }

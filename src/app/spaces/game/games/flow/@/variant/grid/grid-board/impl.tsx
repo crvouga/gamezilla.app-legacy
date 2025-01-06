@@ -1,24 +1,24 @@
 import { BoardInput } from '../../../ui/board'
-import type * as FlowGrid from '../grid'
-import { FlowGridBoardCanvas } from './impl-canvas'
-import { FlowGridBoardSvg } from './impl-svg'
+import type * as VariantGrid from '../grid'
+import { VariantGridBoardCanvas } from './impl-canvas'
+import { VariantGridBoardSvg } from './impl-svg'
 
-type FlowGridUIImpl = 'svg' | 'canvas'
+type VariantGridUIImpl = 'svg' | 'canvas'
 
-const IMPL = 'svg' as FlowGridUIImpl
+const IMPL = 'svg' as VariantGridUIImpl
 
-const View = (input: BoardInput<FlowGrid.Model>) => {
+const View = (input: BoardInput<VariantGrid.Model>) => {
   switch (IMPL) {
     case 'svg': {
-      return <FlowGridBoardSvg.View {...input} />
+      return <VariantGridBoardSvg.View {...input} />
     }
 
     case 'canvas': {
-      return <FlowGridBoardCanvas.View {...input} />
+      return <VariantGridBoardCanvas.View {...input} />
     }
   }
 }
 
-export const FlowGridBoard = {
+export const VariantGridBoard = {
   View,
 }

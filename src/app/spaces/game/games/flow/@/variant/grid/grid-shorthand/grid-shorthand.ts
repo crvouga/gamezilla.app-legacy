@@ -1,10 +1,10 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Flow } from '../../../flow'
-import { FlowGroupId } from '../../../flow/group-id'
-import { FlowNodeId } from '../../../flow/node-id'
+import { GroupId } from '../../../flow/group-id'
+import { NodeId } from '../../../flow/node-id'
 import { FlowTerminal } from '../../../flow/terminal'
-import * as FlowGrid from '../grid'
-import * as FlowGridDimensions from '../grid-dimensions'
+import * as VariantGrid from '../grid'
+import * as VariantGridDimensions from '../grid-dimensions'
 
 //
 //
@@ -14,13 +14,13 @@ import * as FlowGridDimensions from '../grid-dimensions'
 //
 //
 
-type Terminal = FlowGroupId
+type Terminal = GroupId
 
-type Pipe = Lowercase<FlowGroupId>
+type Pipe = Lowercase<GroupId>
 
 type AppendLowercase<T extends string> = T extends `${infer U}${infer _L}` ? `${U}${Lowercase<U>}` : never
 
-type TerminalWithPipe = AppendLowercase<FlowGroupId>
+type TerminalWithPipe = AppendLowercase<GroupId>
 
 type Empty = ' '
 
@@ -53,23 +53,23 @@ export const isModel = (maybeModel: Element[][]): maybeModel is Model =>
 
 const isLowercase = (string: string): boolean => string === string.toLowerCase()
 
-const isTerminal = (element: string): element is Terminal => FlowGroupId.is(element)
+const isTerminal = (element: string): element is Terminal => GroupId.is(element)
 
-const isPipe = (element: string): element is Pipe => isLowercase(element) && FlowGroupId.is(element.toUpperCase())
+const isPipe = (element: string): element is Pipe => isLowercase(element) && GroupId.is(element.toUpperCase())
 
 const isTerminalWithPipe = (element: string): element is TerminalWithPipe =>
   Boolean(element[0] && isTerminal(element[0]) && element[1] && isPipe(element[1]))
 
 export const isEmpty = (element: string): element is Empty => element === ' '
 
-const pipeToGroupId = (pipe: Pipe): FlowGroupId => {
+const pipeToGroupId = (pipe: Pipe): GroupId => {
   const uppercase = pipe.toUpperCase()
-  if (FlowGroupId.is(uppercase)) {
+  if (GroupId.is(uppercase)) {
     return uppercase
   }
   return 'A'
 }
-const groupIdToPipe = (groupId: FlowGroupId): Pipe => {
+const groupIdToPipe = (groupId: GroupId): Pipe => {
   const lowercase = groupId.toLowerCase()
   if (isPipe(lowercase)) {
     return lowercase
@@ -77,7 +77,7 @@ const groupIdToPipe = (groupId: FlowGroupId): Pipe => {
   return 'a'
 }
 
-const groupIdToTerminalWithPipe = (groupId: FlowGroupId): TerminalWithPipe => {
+const groupIdToTerminalWithPipe = (groupId: GroupId): TerminalWithPipe => {
   const terminalWithPipe = `${groupId.toUpperCase()}${groupId.toLowerCase()}`
   if (isTerminalWithPipe(terminalWithPipe)) {
     return terminalWithPipe
@@ -85,15 +85,15 @@ const groupIdToTerminalWithPipe = (groupId: FlowGroupId): TerminalWithPipe => {
   return 'Aa'
 }
 
-const terminalWithPipeToGroupId = (terminalWithPipe: TerminalWithPipe): FlowGroupId => {
+const terminalWithPipeToGroupId = (terminalWithPipe: TerminalWithPipe): GroupId => {
   const groupId = terminalWithPipe[0]
-  if (FlowGroupId.is(groupId)) {
+  if (GroupId.is(groupId)) {
     return groupId
   }
   return 'A'
 }
 
-const elementToGroupId = (element: Element): FlowGroupId | null => {
+const elementToGroupId = (element: Element): GroupId | null => {
   if (isPipe(element)) {
     return pipeToGroupId(element)
   }
@@ -130,13 +130,13 @@ export const init = (model: Model): Model => {
 //
 
 type DraftTerminal = {
-  groupId: FlowGroupId
-  startId: FlowNodeId
-  endId: FlowNodeId | null
+  groupId: GroupId
+  startId: NodeId
+  endId: NodeId | null
 }
 
-const toTerminalsByGroupId = (model: Model): FlowGrid.Model['terminalsByGroupId'] => {
-  const terminalsByGroupId: FlowGrid.Model['terminalsByGroupId'] = {}
+const toTerminalsByGroupId = (model: Model): VariantGrid.Model['terminalsByGroupId'] => {
+  const terminalsByGroupId: VariantGrid.Model['terminalsByGroupId'] = {}
 
   for (let y = 0; y < model.length; y++) {
     const row = model[y]
@@ -151,7 +151,7 @@ const toTerminalsByGroupId = (model: Model): FlowGrid.Model['terminalsByGroupId'
         y,
       }
 
-      const elementNodeId = FlowGrid.toNodeId(position)
+      const elementNodeId = VariantGrid.toNodeId(position)
 
       const element = row[x]
 
@@ -214,7 +214,7 @@ const DELTAS = [
  * Returns a list of all possible pipes for a terminal.
  * @exmaple ```ts
  *  // See how this can have multiple different paths for terminal A.
- *	const shorthand = FlowGridShorthand.init([
+ *	const shorthand = VariantGridShorthand.init([
  * 		["A", "a", "a"],
  * 		["a", "a", "a"],
  * 		["a", "a", "A"],
@@ -222,22 +222,22 @@ const DELTAS = [
  */
 const toPipesBySourceIdForTerminalList = (input: {
   model: Model
-  grid: FlowGrid.Model
+  grid: VariantGrid.Model
   terminal: FlowTerminal
-}): FlowGrid.Model['pipesBySourceId'][] => {
-  const allPaths: FlowGrid.Model['pipesBySourceId'][] = []
-  const visitedNodeIds = new Set<FlowNodeId>()
+}): VariantGrid.Model['pipesBySourceId'][] => {
+  const allPaths: VariantGrid.Model['pipesBySourceId'][] = []
+  const visitedNodeIds = new Set<NodeId>()
 
   const groupId = input.terminal.groupId
 
-  const findPaths = (currentNodeId: FlowNodeId, path: FlowGrid.Model['pipesBySourceId']) => {
+  const findPaths = (currentNodeId: NodeId, path: VariantGrid.Model['pipesBySourceId']) => {
     if (visitedNodeIds.has(currentNodeId)) {
       return
     }
 
     visitedNodeIds.add(currentNodeId)
 
-    const currentNode = FlowGrid.toNode(input.grid, currentNodeId)
+    const currentNode = VariantGrid.toNode(input.grid, currentNodeId)
     if (!currentNode) {
       visitedNodeIds.delete(currentNodeId)
       return
@@ -257,8 +257,8 @@ const toPipesBySourceIdForTerminalList = (input: {
           x: currentNode.x + delta.x,
           y: currentNode.y + delta.y,
         }
-        const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition)
-        const adjacentNode = FlowGrid.toNode(input.grid, adjacentNodeId)
+        const adjacentNodeId = VariantGrid.toNodeId(adjacentPosition)
+        const adjacentNode = VariantGrid.toNode(input.grid, adjacentNodeId)
 
         if (!adjacentNode) {
           continue
@@ -285,7 +285,7 @@ const toPipesBySourceIdForTerminalList = (input: {
       }
 
       if (adjacentTerminalNode) {
-        const edgeId = Flow.toFlowEdgeId({
+        const edgeId = Flow.toEdgeId({
           sourceId: currentNodeId,
           targetId: adjacentTerminalNode.nodeId,
         })
@@ -302,7 +302,7 @@ const toPipesBySourceIdForTerminalList = (input: {
     }
 
     const validAdjacent: {
-      adjacentNodeId: FlowNodeId
+      adjacentNodeId: NodeId
       adjacentElement: Element
     }[] = []
 
@@ -311,13 +311,13 @@ const toPipesBySourceIdForTerminalList = (input: {
         x: currentNode.x + delta.x,
         y: currentNode.y + delta.y,
       }
-      const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition)
+      const adjacentNodeId = VariantGrid.toNodeId(adjacentPosition)
 
       if (visitedNodeIds.has(adjacentNodeId)) {
         continue
       }
 
-      const adjacentNode = FlowGrid.toNode(input.grid, adjacentNodeId)
+      const adjacentNode = VariantGrid.toNode(input.grid, adjacentNodeId)
 
       if (!adjacentNode) {
         continue
@@ -341,7 +341,7 @@ const toPipesBySourceIdForTerminalList = (input: {
     }
 
     for (const { adjacentNodeId, adjacentElement } of validAdjacent) {
-      const edgeId = Flow.toFlowEdgeId({
+      const edgeId = Flow.toEdgeId({
         sourceId: currentNodeId,
         targetId: adjacentNodeId,
       })
@@ -376,12 +376,15 @@ const toPipesBySourceIdForTerminalList = (input: {
  * Returns a list of all possible pipes for a grid.
  * It will return solutions with the longest pipelines.
  */
-const toPipesBySourceIdList = (model: Model, grid: FlowGrid.Model): NonEmpty<FlowGrid.Model['pipesBySourceId']> => {
+const toPipesBySourceIdList = (
+  model: Model,
+  grid: VariantGrid.Model,
+): NonEmpty<VariantGrid.Model['pipesBySourceId']> => {
   const pipesBySourceIdListByGroupId: {
-    [groupId in FlowGroupId]?: FlowGrid.Model['pipesBySourceId'][]
+    [groupId in GroupId]?: VariantGrid.Model['pipesBySourceId'][]
   } = {}
   for (const groupId in grid.terminalsByGroupId) {
-    const terminal = grid.terminalsByGroupId[groupId as FlowGroupId]
+    const terminal = grid.terminalsByGroupId[groupId as GroupId]
 
     if (!terminal) {
       continue
@@ -472,7 +475,7 @@ const maxAllBy = <T>(arr: T[], fn: (item: T) => number): T[] => {
   return arr.filter((item) => fn(item) === max)
 }
 
-export const toDimensions = (model: Model): FlowGridDimensions.Model => {
+export const toDimensions = (model: Model): VariantGridDimensions.Model => {
   let maxWidth = 0
 
   for (let y = 0; y < model.length; y++) {
@@ -483,13 +486,13 @@ export const toDimensions = (model: Model): FlowGridDimensions.Model => {
     maxWidth = Math.max(maxWidth, row.length)
   }
 
-  return FlowGridDimensions.init({
+  return VariantGridDimensions.init({
     width: maxWidth,
     height: model.length,
   })
 }
 
-export const toGrid = (model: Model): FlowGrid.Model => {
+export const toGrid = (model: Model): VariantGrid.Model => {
   return toGrids(model)[0]
 }
 
@@ -497,21 +500,21 @@ export const toGrid = (model: Model): FlowGrid.Model => {
  * Returns a list of all possible grids for inputted shorthand grid.
  * @exmaple ```ts
  *  // See how this can have multiple different paths for terminal A.
- *	const shorthand = FlowGridShorthand.init([
+ *	const shorthand = VariantGridShorthand.init([
  * 		["A", "a", "a"],
  * 		["a", "a", "a"],
  * 		["a", "a", "A"],
  * 	]);
  */
-export const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
+export const toGrids = (model: Model): NonEmpty<VariantGrid.Model> => {
   const dimensions = toDimensions(model)
-  const grid = FlowGrid.init({
+  const grid = VariantGrid.init({
     dimensions,
     terminalsByGroupId: toTerminalsByGroupId(model),
   })
   const solutions = NonEmpty.map(
     toPipesBySourceIdList(model, grid),
-    (pipesBySourceId): FlowGrid.Model => ({
+    (pipesBySourceId): VariantGrid.Model => ({
       ...grid,
       pipesBySourceId,
     }),
@@ -520,7 +523,7 @@ export const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
   const flippedGrid = Flow.flipAllTerminals(grid)
   const flippedSolutions = NonEmpty.map(
     toPipesBySourceIdList(model, flippedGrid),
-    (pipesBySourceId): FlowGrid.Model => ({
+    (pipesBySourceId): VariantGrid.Model => ({
       ...flippedGrid,
       pipesBySourceId,
     }),
@@ -541,7 +544,7 @@ const isValid = (maybeModel: Element[][]): maybeModel is Model => {
   return NonEmpty.is(maybeModel) && maybeModel.every((row) => NonEmpty.is(row))
 }
 
-export const fromGrid = (grid: FlowGrid.Model): Model => {
+export const fromGrid = (grid: VariantGrid.Model): Model => {
   const shorthand: Element[][] = []
 
   for (let y = 0; y < grid.height; y++) {

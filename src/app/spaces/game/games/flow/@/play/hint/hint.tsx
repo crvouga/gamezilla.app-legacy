@@ -8,8 +8,8 @@ import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { Flow } from '../../flow'
 import type { Variant } from '../../variant'
-import { FlowGroupId } from '../../flow/group-id'
-import { FlowNodeId } from '../../flow/node-id'
+import { GroupId } from '../../flow/group-id'
+import { NodeId } from '../../flow/node-id'
 import { FlowTerminal } from '../../flow/terminal'
 
 export type FindSolutions = (input: { flow: Variant.Model }) => Promise<Result<string, Flow.Model[]>>
@@ -27,9 +27,9 @@ export const initCtx = (input: { flowPuzzle: Puzzle; findSolutions?: FindSolutio
 }
 
 export const Model = p.obj({
-  pipesBySourceId: p.dict(FlowNodeId, Flow.Pipe),
-  terminalsByGroupId: p.partialDict(FlowGroupId, FlowTerminal),
-  usedHints: p.partialDict(FlowGroupId, FlowGroupId),
+  pipesBySourceId: p.dict(NodeId, Flow.Pipe),
+  terminalsByGroupId: p.partialDict(GroupId, FlowTerminal),
+  usedHints: p.partialDict(GroupId, GroupId),
 })
 export type Model = p.Infer<typeof Model>
 
@@ -58,7 +58,7 @@ export type Event =
     }
   | {
       t: 'used-hint'
-      groupId: FlowGroupId
+      groupId: GroupId
     }
   | {
       t: 'no-hints'
@@ -174,8 +174,8 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
   }
 }
 
-export const toNextHintGroupId = (model: Flow.Model): FlowGroupId | null => {
-  for (const groupId of FlowGroupId.ORDER) {
+export const toNextHintGroupId = (model: Flow.Model): GroupId | null => {
+  for (const groupId of GroupId.ORDER) {
     if (!Flow.isTerminalConnectedWithPipes(model, groupId)) {
       return groupId
     }
@@ -183,8 +183,8 @@ export const toNextHintGroupId = (model: Flow.Model): FlowGroupId | null => {
   return null
 }
 
-export const toShowingHintGroupIds = (model: Model): FlowGroupId[] => {
-  return Object.keys(model.usedHints).map((k) => k as FlowGroupId)
+export const toShowingHintGroupIds = (model: Model): GroupId[] => {
+  return Object.keys(model.usedHints).map((k) => k as GroupId)
 }
 
 export const isAnyShowingHint = (model: Model): boolean => {
@@ -201,7 +201,7 @@ export const resetUsedHints = <TModel extends Model>(model: TModel): TModel => {
 export const toUsedHints = (
   model: Model,
 ): {
-  [flowGroupId in FlowGroupId]?: FlowGroupId
+  [flowGroupId in GroupId]?: GroupId
 } => {
   return model.usedHints
 }

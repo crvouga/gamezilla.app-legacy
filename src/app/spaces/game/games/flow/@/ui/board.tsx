@@ -1,6 +1,6 @@
 import type { Edge } from '../flow/flow'
-import { FlowGroupId } from '../flow/group-id'
-import { FlowNodeId } from '../flow/node-id'
+import { GroupId } from '../flow/group-id'
+import { NodeId } from '../flow/node-id'
 
 export type BoardInput<TModel> = {
   disabled?: boolean
@@ -11,16 +11,16 @@ export type BoardInput<TModel> = {
   disableHighlight?: boolean
   autocompleteEdge?:
     | (Edge & {
-        groupId: FlowGroupId
+        groupId: GroupId
       })
     | null
   showCoordinates?: boolean
-  onPressDown?: (nodeId: FlowNodeId) => void
-  onPressUp?: (nodeId: FlowNodeId) => void
+  onPressDown?: (nodeId: NodeId) => void
+  onPressUp?: (nodeId: NodeId) => void
   onLeave?: () => void
-  onDraggedOver?: (nodeId: FlowNodeId) => void
-  isGroupActive?: (groupId: FlowGroupId) => boolean
+  onDraggedOver?: (nodeId: NodeId) => void
+  isGroupActive?: (groupId: GroupId) => boolean
   usedHints?: {
-    [groupId in FlowGroupId]?: FlowGroupId
+    [groupId in GroupId]?: GroupId
   }
 }

@@ -4,7 +4,7 @@ import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { UpdateCore } from '../types'
 import { EditPackNameCore } from './edit-pack-name/core'
 import type { ModelCore } from './types'
-import { FlowPlay } from '../../@/play'
+import { Play } from '../../@/play'
 
 const init = ({ pack }: { pack: Pack }): ModelCore => {
   return {
@@ -147,8 +147,8 @@ updates.push(({ modelCore, msgCore }) => {
             puzzleResult: msgCore.puzzleResult,
             play:
               msgCore.puzzleResult.t === 'got'
-                ? FlowPlay.init({
-                    ctx: FlowPlay.initCtx({
+                ? Play.init({
+                    ctx: Play.initCtx({
                       flowPuzzle: msgCore.puzzleResult.c,
                     }),
                   })
@@ -237,8 +237,8 @@ updates.push(({ modelCore, msgCore }) => {
 
       const updatedPlay =
         screen.puzzleResult.t === 'got'
-          ? FlowPlay.update({
-              ctx: FlowPlay.initCtx({
+          ? Play.update({
+              ctx: Play.initCtx({
                 flowPuzzle: screen.puzzleResult.c,
               }),
               model: screen.play,
@@ -296,8 +296,8 @@ updates.push(({ modelCore, msgCore }) => {
             ),
             play:
               msgCore.nextPuzzleResult.t === 'got'
-                ? FlowPlay.init({
-                    ctx: FlowPlay.initCtx({
+                ? Play.init({
+                    ctx: Play.initCtx({
                       flowPuzzle: msgCore.nextPuzzleResult.c,
                     }),
                   })
@@ -342,8 +342,8 @@ updates.push(({ modelCore, msgCore }) => {
             ),
             play:
               msgCore.previousPuzzleResult.t === 'got'
-                ? FlowPlay.init({
-                    ctx: FlowPlay.initCtx({
+                ? Play.init({
+                    ctx: Play.initCtx({
                       flowPuzzle: msgCore.previousPuzzleResult.c,
                     }),
                   })

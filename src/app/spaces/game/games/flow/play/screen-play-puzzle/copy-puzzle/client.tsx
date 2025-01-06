@@ -2,8 +2,8 @@ import { APP_SOUND, copyToClipboard, playSound, showToast } from '~/app/@/client
 import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconCopy } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
-import { FlowPlay } from '../../../@/play'
-import { FlowGridShorthand } from '../../../@/variant/grid'
+import { Play } from '../../../@/play'
+import { VariantGridShorthand } from '../../../@/variant/grid'
 import type { ClientModule, MsgClient } from '../../types'
 
 export const update: ClientModule['update'] = (input) => {
@@ -23,13 +23,13 @@ export const update: ClientModule['update'] = (input) => {
 
       const flowPlay =
         input.modelCore.screen.flowPlay ??
-        FlowPlay.init({
-          ctx: FlowPlay.initCtx({
+        Play.init({
+          ctx: Play.initCtx({
             flowPuzzle: input.modelCore.screen.puzzleResult.c,
           }),
         })
 
-      const flow = FlowPlay.toFlow({
+      const flow = Play.toFlow({
         flow: input.modelCore.screen.puzzleResult.c.flow,
         model: flowPlay,
       })
@@ -40,7 +40,7 @@ export const update: ClientModule['update'] = (input) => {
         }
       }
 
-      const shorthand = FlowGridShorthand.fromGrid(flow)
+      const shorthand = VariantGridShorthand.fromGrid(flow)
 
       const encoded = JSON.stringify(shorthand)
 

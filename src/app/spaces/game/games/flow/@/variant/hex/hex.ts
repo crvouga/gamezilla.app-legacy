@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import { Flow } from '../../flow'
-import * as FlowHexDimensions from './hex-dimensions'
-import { FlowNodeId } from '../../flow/node-id'
+import * as VariantHexDimensions from './hex-dimensions'
+import { NodeId } from '../../flow/node-id'
 
 export const HexPosition = p.obj({
   x: p.num,
@@ -12,29 +12,29 @@ export type HexPosition = p.Infer<typeof HexPosition>
 
 export const Model = p.and(
   Flow.Model,
-  FlowHexDimensions.Model,
+  VariantHexDimensions.Model,
   p.obj({
     t: p.l('flow-hex'),
-    FlowHex: p.l(true),
-    positions: p.dict(FlowNodeId, HexPosition),
+    VariantHex: p.l(true),
+    positions: p.dict(NodeId, HexPosition),
   }),
 )
 export type Model = p.Infer<typeof Model>
 
 export const init = (input: {
-  dimensions: FlowHexDimensions.Model
+  dimensions: VariantHexDimensions.Model
   terminalsByGroupId: Flow.Model['terminalsByGroupId']
 }): Model => {
   return {
     ...Flow.init,
     ...input.dimensions,
     t: 'flow-hex',
-    FlowHex: true,
+    VariantHex: true,
     positions: {},
   }
 }
 
-export const distance = (model: Model, a: FlowNodeId, b: FlowNodeId): number => {
+export const distance = (model: Model, a: NodeId, b: NodeId): number => {
   const positionA = model.positions[a]
 
   if (!positionA) {

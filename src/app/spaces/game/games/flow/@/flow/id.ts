@@ -13,7 +13,7 @@ const derive = (flow: Flow.Model): FlowId => {
     .sort()
     .join(DIVIDER)
 
-  const edgeHash = Object.values(flow.edges).map(Flow.toFlowEdgeId).sort().join(DIVIDER)
+  const edgeHash = Object.values(flow.edges).map(Flow.toEdgeId).sort().join(DIVIDER)
 
   const terminalHash = Object.values(flow.terminalsByGroupId)
     .map((terminal) => [terminal.groupId, terminal.startId, terminal.endId].join(DIVIDER))

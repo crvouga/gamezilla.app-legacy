@@ -19,8 +19,8 @@ import * as FlowUI from '../ui/color'
 import * as FlowVariant from '../variant/variant'
 import * as FlowVariantDimensions from '../variant/variant-dimensions'
 import * as Flow from '../flow/flow'
-import { FlowGroupId } from '../flow/group-id'
-import { FlowNodeId } from '../flow/node-id'
+import { GroupId } from '../flow/group-id'
+import { NodeId } from '../flow/node-id'
 import { FlowTerminal } from '../flow/terminal'
 import { VariantBoard } from '../variant'
 
@@ -33,13 +33,13 @@ import { VariantBoard } from '../variant'
 //
 
 const DraftTerminal = p.obj({
-  groupId: FlowGroupId,
-  startId: FlowNodeId,
-  endId: p.maybe(FlowNodeId),
+  groupId: GroupId,
+  startId: NodeId,
+  endId: p.maybe(NodeId),
 })
 type DraftTerminal = p.Infer<typeof DraftTerminal>
 
-const DraftTerminals = p.partialDict(FlowGroupId, DraftTerminal)
+const DraftTerminals = p.partialDict(GroupId, DraftTerminal)
 type DraftTerminals = p.Infer<typeof DraftTerminals>
 
 const Form = p.obj({
@@ -100,11 +100,11 @@ export const isUnsavedChanges = (model: Model, flow: FlowVariant.Model): boolean
 //
 //
 export const Msg = p.or(
-  p.obj({ t: p.l('dragged-over'), nodeId: FlowNodeId }),
-  p.obj({ t: p.l('pressed-up-node'), nodeId: FlowNodeId }),
+  p.obj({ t: p.l('dragged-over'), nodeId: NodeId }),
+  p.obj({ t: p.l('pressed-up-node'), nodeId: NodeId }),
   p.obj({
     t: p.l('pressed-down-node'),
-    nodeId: FlowNodeId,
+    nodeId: NodeId,
   }),
   p.obj({ t: p.l('clicked-clear') }),
   p.obj({ t: p.l('clicked-undo') }),
@@ -316,8 +316,8 @@ const resetDimensionsForm = (model: Model): Model => {
 
 export const updateDraftTerminalsOnPressedDownNode = (
   draftTerminals: DraftTerminals,
-  currentPlacingGroupId: FlowGroupId,
-  pressedNodeId: FlowNodeId,
+  currentPlacingGroupId: GroupId,
+  pressedNodeId: NodeId,
 ): DraftTerminals => {
   const pressedTerminal = findDraftTerminalByNodeId(draftTerminals, pressedNodeId)
 
@@ -387,9 +387,9 @@ export const updateDraftTerminalsOnPressedDownNode = (
   }
 }
 
-const findDraftTerminalByNodeId = (draftTerminals: DraftTerminals, nodeId: FlowNodeId): DraftTerminal | null => {
+const findDraftTerminalByNodeId = (draftTerminals: DraftTerminals, nodeId: NodeId): DraftTerminal | null => {
   for (const groupId in draftTerminals) {
-    const draftTerminal = draftTerminals[groupId as FlowGroupId]
+    const draftTerminal = draftTerminals[groupId as GroupId]
 
     if (draftTerminal?.startId === nodeId) {
       return draftTerminal
@@ -402,8 +402,8 @@ const findDraftTerminalByNodeId = (draftTerminals: DraftTerminals, nodeId: FlowN
   return null
 }
 
-export const toCurrentPlacingGroupId = (model: Model): FlowGroupId => {
-  for (const groupId of FlowGroupId.ORDER) {
+export const toCurrentPlacingGroupId = (model: Model): GroupId => {
+  for (const groupId of GroupId.ORDER) {
     const draftTerminal = History.present(model.form).terminalsByGroupId[groupId]
 
     if (!draftTerminal) {
@@ -415,11 +415,11 @@ export const toCurrentPlacingGroupId = (model: Model): FlowGroupId => {
     }
   }
 
-  return FlowGroupId.ORDER[FlowGroupId.ORDER.length - 1]!
+  return GroupId.ORDER[GroupId.ORDER.length - 1]!
 }
 
 export const toCurrentPlacingTerminalPosition = (model: Model): 'start' | 'end' => {
-  for (const groupId of FlowGroupId.ORDER) {
+  for (const groupId of GroupId.ORDER) {
     const draftTerminal = History.present(model.form).terminalsByGroupId[groupId]
 
     if (!draftTerminal) {
@@ -438,7 +438,7 @@ export const removeIncompleteTerminals = (draftTerminals: DraftTerminals): Flow.
   const terminalsByGroupId: Flow.Model['terminalsByGroupId'] = {}
 
   for (const groupId in draftTerminals) {
-    const draftTerminal = draftTerminals[groupId as FlowGroupId]
+    const draftTerminal = draftTerminals[groupId as GroupId]
     if (!draftTerminal) {
       continue
     }
@@ -603,7 +603,7 @@ const ViewStatus: typeof View = (input) => {
   )
 }
 
-const ViewTerminal = ({ groupId, className }: { className: string; groupId: FlowGroupId }) => {
+const ViewTerminal = ({ groupId, className }: { className: string; groupId: GroupId }) => {
   const color = FlowUI.Color.groupIdToHex(groupId)
   return (
     <svg className={className} viewBox='-1 -1 2 2'>

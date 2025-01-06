@@ -1,8 +1,8 @@
-import * as FlowGridShorthand from './grid-shorthand'
+import * as VariantGridShorthand from './grid-shorthand'
 
 const LETTER_MAP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' as const
 
-export const numberStringToShorthand = (input: string): FlowGridShorthand.Model => {
+export const numberStringToShorthand = (input: string): VariantGridShorthand.Model => {
   const lines = input
     .trim()
     .split('\n')
@@ -10,7 +10,7 @@ export const numberStringToShorthand = (input: string): FlowGridShorthand.Model 
   const rows = lines.length
   const cols = lines[0]?.length ?? 0
 
-  const shorthand: FlowGridShorthand.Element[][] = Array.from({ length: rows }, () => Array(cols).fill(' '))
+  const shorthand: VariantGridShorthand.Element[][] = Array.from({ length: rows }, () => Array(cols).fill(' '))
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
@@ -36,7 +36,7 @@ export const numberStringToShorthand = (input: string): FlowGridShorthand.Model 
     }
   }
 
-  if (FlowGridShorthand.isModel(shorthand)) {
+  if (VariantGridShorthand.isModel(shorthand)) {
     return shorthand
   }
   return [[' ']]

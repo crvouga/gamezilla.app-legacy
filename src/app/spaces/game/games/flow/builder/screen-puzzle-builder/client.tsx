@@ -5,8 +5,8 @@ import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
-import { FlowEdit } from '../../@/edit'
-import { FlowPlay } from '../../@/play'
+import { Edit } from '../../@/edit'
+import { Play } from '../../@/play'
 import { BoardLayout } from '../../@/ui/layout'
 import { VariantBoard } from '../../@/variant'
 import * as BuilderTypes from '../types'
@@ -112,10 +112,10 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
         }
       }
       const flow = ScreenPuzzleBuilderCore.toFlow(modelCore.screenPuzzleBuilder)
-      const updated = FlowPlay.update({
+      const updated = Play.update({
         msg: msgCore.c,
         model: modelCore.screenPuzzleBuilder.play,
-        ctx: FlowPlay.initCtx({
+        ctx: Play.initCtx({
           flowPuzzle: {
             ...modelCore.screenPuzzleBuilder.puzzle,
             flow,
@@ -125,7 +125,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
 
       return {
         model,
-        msgCmd: FlowPlay.eventsToClientCmd(input.ctx, updated.events),
+        msgCmd: Play.eventsToClientCmd(input.ctx, updated.events),
       }
     }
     case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
@@ -134,7 +134,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
           model,
         }
       }
-      const updated = FlowEdit.update({
+      const updated = Edit.update({
         model: modelCore.screenPuzzleBuilder.edit,
         msg: msgCore.c,
         flow: modelCore.screenPuzzleBuilder.puzzle.flow,
@@ -226,7 +226,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
     case 'edit': {
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
-          <FlowEdit.View
+          <Edit.View
             model={puzzleBuilder.edit}
             ctx={input.ctx}
             dispatch={(c) =>
@@ -268,7 +268,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
           <BoardLayout
             top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
             board={
-              <FlowPlay.View
+              <Play.View
                 model={puzzleBuilder.play}
                 flow={flow}
                 dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
@@ -282,13 +282,13 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
                 open={false}
                 onToggle={() => {}}
                 buttons={[
-                  FlowPlay.viewHintAction({
-                    ctx: FlowPlay.initCtx({ ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } }),
+                  Play.viewHintAction({
+                    ctx: Play.initCtx({ ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } }),
                     dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
                     model: puzzleBuilder.play,
                     disabled: status === 'solved',
                   }),
-                  FlowPlay.viewResetAction({
+                  Play.viewResetAction({
                     ctx: input.ctx,
                     dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
                     flowPuzzle: { ...puzzleBuilder.puzzle, flow },

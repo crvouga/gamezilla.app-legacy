@@ -11,7 +11,7 @@ type Output = Awaited<ReturnType<typeof PlayServer.update>> & {
   modelCore: ModelCore
 }
 
-export const FixtureFlowPlayServer = async () => {
+export const FixturePlayServer = async () => {
   const f = await FixtureFlowServer()
   const initCore = PlayCore.initCore(f)
 

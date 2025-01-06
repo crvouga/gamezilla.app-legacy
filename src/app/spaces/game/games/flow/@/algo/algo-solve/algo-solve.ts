@@ -1,13 +1,13 @@
 import { ascend } from '~/@/array/sorting'
 import { MinHeap } from '~/@/min-heap/min-heap'
 import { Flow } from '../../flow'
-import { FlowGroupId } from '../../flow/group-id'
-import { FlowNodeId } from '../../flow/node-id'
+import { GroupId } from '../../flow/group-id'
+import { NodeId } from '../../flow/node-id'
 import { FlowTerminal } from '../../flow/terminal'
 import { AlgoIsUnsolvable } from '../algo-is-unsolvable'
 import { Variant } from '../../variant'
 
-const toDirection = (model: Variant.Model, sourceId: FlowNodeId, targetId: FlowNodeId): string => {
+const toDirection = (model: Variant.Model, sourceId: NodeId, targetId: NodeId): string => {
   const distance = Variant.distance(model, sourceId, targetId)
   return `${sourceId}${targetId}${distance}`
 }
@@ -27,7 +27,7 @@ const countTurns = (model: Variant.Model, path: Flow.Edge[]): number => {
   return turns
 }
 
-const toHeuristic = (model: Variant.Model, currentNode: FlowNodeId, endNode: FlowNodeId, path: Flow.Edge[]): number => {
+const toHeuristic = (model: Variant.Model, currentNode: NodeId, endNode: NodeId, path: Flow.Edge[]): number => {
   const distanceHeuristic = Variant.distance(model, currentNode, endNode)
   const turnsHeuristic = countTurns(model, path)
   return distanceHeuristic + turnsHeuristic * 1.5
@@ -41,14 +41,14 @@ const normalizePath = (path: Flow.Edge[]): string => {
 
 const toPossiblePipelines = function* (
   model: Variant.Model,
-  groupId: FlowGroupId,
-  startId: FlowNodeId,
-  endId: FlowNodeId,
+  groupId: GroupId,
+  startId: NodeId,
+  endId: NodeId,
 ): Iterable<Flow.Edge[]> {
   type HeapItem = {
     path: Flow.Edge[]
-    currentNode: FlowNodeId
-    visited: Set<FlowNodeId>
+    currentNode: NodeId
+    visited: Set<NodeId>
     cost: number
     heuristic: number
   }
@@ -114,7 +114,7 @@ const drawPipeline = (model: Variant.Model, terminal: FlowTerminal, path: Flow.E
 
   for (const edge of path) {
     pipesBySourceId[edge.sourceId] = {
-      edgeId: Flow.toFlowEdgeId(edge),
+      edgeId: Flow.toEdgeId(edge),
       groupId: terminal.groupId,
     }
   }

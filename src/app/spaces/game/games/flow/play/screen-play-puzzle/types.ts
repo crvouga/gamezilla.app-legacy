@@ -2,8 +2,8 @@ import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import type { GameCoreModule } from '~/app/spaces/game/games/@/architecture/game-core'
-import { FlowPlay } from '../../@/play'
-import { FlowGroupId } from '../../@/flow/group-id'
+import { Play } from '../../@/play'
+import { GroupId } from '../../@/flow/group-id'
 import { Pack } from '../../@/pack/pack'
 import { PackId } from '../../@/pack/pack-id'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
@@ -13,7 +13,7 @@ export const MsgCore = p.or(
   CopyPuzzleTypes.MsgCore,
   p.obj({
     t: p.l('got-flow-play-msg'),
-    c: FlowPlay.Msg,
+    c: Play.Msg,
     userId: UserId,
   }),
   p.obj({
@@ -55,7 +55,7 @@ export const MsgCoreEvt = p.or(
   p.obj({
     t: p.l('user-used-hint'),
     userId: UserId,
-    groupId: FlowGroupId,
+    groupId: GroupId,
   }),
 )
 export type MsgCoreEvt = p.Infer<typeof MsgCoreEvt>
@@ -64,10 +64,10 @@ export const ModelCore = p.obj({
   t: p.l('screen-play-puzzle'),
   flowPack: Pack,
   puzzleResult: PuzzleResult,
-  flowPlay: p.or(FlowPlay.Model, p.l(null)),
+  flowPlay: p.or(Play.Model, p.l(null)),
   puzzleIndex: p.num,
   opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),
-  hints: p.partialDict(FlowGroupId, FlowGroupId),
+  hints: p.partialDict(GroupId, GroupId),
 })
 
 export type ModelCore = p.Infer<typeof ModelCore>

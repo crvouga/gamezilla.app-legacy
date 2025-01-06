@@ -1,25 +1,25 @@
 import { p } from '~/@/parser'
-import { FlowGridDimensions } from './grid'
-import { FlowHexDimensions } from './hex'
-import { FlowTriDimensions } from './tri'
+import { VariantGridDimensions } from './grid'
+import { VariantHexDimensions } from './hex'
+import { VariantTriDimensions } from './tri'
 import { Translator } from '~/@/l18n/generated'
 
-export const Model = p.or(FlowGridDimensions.Model, FlowHexDimensions.Model, FlowTriDimensions.Model)
+export const Model = p.or(VariantGridDimensions.Model, VariantHexDimensions.Model, VariantTriDimensions.Model)
 
 export type Model = p.Infer<typeof Model>
 
 export const init = (model: Model): Model => {
   switch (model.t) {
     case 'flow-grid': {
-      return FlowGridDimensions.init(model)
+      return VariantGridDimensions.init(model)
     }
 
     case 'flow-hex': {
-      return FlowHexDimensions.init(model)
+      return VariantHexDimensions.init(model)
     }
 
     case 'flow-tri': {
-      return FlowTriDimensions.init(model)
+      return VariantTriDimensions.init(model)
     }
   }
 }
@@ -33,15 +33,15 @@ export const ViewForm = (input: {
 }) => {
   switch (input.form.t) {
     case 'flow-grid': {
-      return <FlowGridDimensions.ViewForm ctx={input.ctx} form={input.form} onInput={input.onInput} />
+      return <VariantGridDimensions.ViewForm ctx={input.ctx} form={input.form} onInput={input.onInput} />
     }
 
     case 'flow-hex': {
-      return <FlowHexDimensions.ViewForm form={input.form} onInput={input.onInput} />
+      return <VariantHexDimensions.ViewForm form={input.form} onInput={input.onInput} />
     }
 
     case 'flow-tri': {
-      return <FlowTriDimensions.ViewForm form={input.form} onInput={input.onInput} />
+      return <VariantTriDimensions.ViewForm form={input.form} onInput={input.onInput} />
     }
   }
 }

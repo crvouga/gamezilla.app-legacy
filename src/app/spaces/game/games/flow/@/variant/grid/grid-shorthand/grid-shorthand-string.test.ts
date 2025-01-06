@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import * as FlowGridShorthandString from './grid-shorthand-string'
-import * as FlowGridShorthand from './grid-shorthand'
+import * as VariantGridShorthandString from './grid-shorthand-string'
+import * as VariantGridShorthand from './grid-shorthand'
 
 describe(import.meta.file, () => {
   test('3x3', () => {
@@ -9,12 +9,12 @@ describe(import.meta.file, () => {
             .23
             ..1
         `
-    const expected = FlowGridShorthand.init([
+    const expected = VariantGridShorthand.init([
       ['A', 'B', 'C'],
       [' ', 'B', 'C'],
       [' ', ' ', 'A'],
     ])
-    const actual = FlowGridShorthandString.numberStringToShorthand(stringShorthand)
+    const actual = VariantGridShorthandString.numberStringToShorthand(stringShorthand)
 
     expect(actual).toEqual(expected)
   })
@@ -27,14 +27,14 @@ describe(import.meta.file, () => {
             6.7.8
             6.7.8
         `
-    const expected = FlowGridShorthand.init([
+    const expected = VariantGridShorthand.init([
       ['A', 'B', ' ', ' ', 'D'],
       [' ', 'C', ' ', 'C', 'D'],
       [' ', 'E', ' ', 'E', 'E'],
       ['F', ' ', 'G', ' ', 'H'],
       ['F', ' ', 'G', ' ', 'H'],
     ])
-    const actual = FlowGridShorthandString.numberStringToShorthand(stringShorthand)
+    const actual = VariantGridShorthandString.numberStringToShorthand(stringShorthand)
 
     expect(actual).toEqual(expected)
   })
@@ -52,7 +52,7 @@ describe(import.meta.file, () => {
             ....5.....
             .........
         `
-    const expected = FlowGridShorthand.init([
+    const expected = VariantGridShorthand.init([
       ['A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', 'B', ' ', ' ', ' ', ' ', ' '],
@@ -64,7 +64,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' ', ' ', 'E', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
-    const actual = FlowGridShorthandString.numberStringToShorthand(stringShorthand)
+    const actual = VariantGridShorthandString.numberStringToShorthand(stringShorthand)
 
     expect(actual).toEqual(expected)
   })
