@@ -26,10 +26,7 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: Variant.Model
     puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
   })
 
-  let solutions = Solutions.init
-  for (const p of [prevPuzzle, puzzle, nextPuzzle]) {
-    solutions = Solutions.merge(solutions, await Solutions.find(p.flow))
-  }
+  const solutions = await Solutions.find([prevPuzzle, puzzle, nextPuzzle].map((p) => p.flow))
 
   const ctx: FlowCoreCtx = {
     ...f.ctx,

@@ -9,7 +9,7 @@ import { toStatus } from './play'
 
 const Fixture = async (input: { ctxFlow: Variant.Model }) => {
   const ctx: Play.Ctx = Play.initCtx({
-    solutions: await Solutions.find(input.ctxFlow),
+    solutions: await Solutions.find([input.ctxFlow]),
     flow: input.ctxFlow,
   })
 

@@ -16,7 +16,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
 
       if (isErr(listed)) return listed
 
-      const promises = listed.value.items.map(async (puzzle) => {
+      const promises = listed.value.puzzles.items.map(async (puzzle) => {
         if (puzzle.solutions.length > 0) return puzzle
 
         const solution = await AlgoSolveAsync.solve(puzzle.flow)

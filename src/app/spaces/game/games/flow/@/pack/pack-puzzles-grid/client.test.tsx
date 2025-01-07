@@ -8,6 +8,7 @@ import { Puzzle } from '../../puzzle/puzzle'
 import { Pack } from '../pack'
 import { PackPuzzlesGridClient } from './client'
 import type { ModelClient, MsgClient, MsgToClient, PackGridClientCtx } from './types'
+import { Solutions } from '../../solutions/solutions'
 
 type Input = {
   ctx?: PackGridClientCtx
@@ -69,16 +70,19 @@ const Fixture = async () => {
   }
 }
 
-const msgServerListedByPuzzlesByIdOk = (puzzles: Puzzle[]): Input => ({
+const msgServerListedByPuzzlesByIdOk = async (puzzles: Puzzle[]): Promise<Input> => ({
   msgServer: {
     t: 'listed-puzzles-by-id',
     listed: {
       t: 'ok',
       value: {
-        items: puzzles,
-        limit: puzzles.length,
-        offset: 0,
-        total: puzzles.length,
+        puzzles: {
+          items: puzzles,
+          limit: puzzles.length,
+          offset: 0,
+          total: puzzles.length,
+        },
+        solutions: await Solutions.find(puzzles.map((p) => p.flow)),
       },
     },
     causedBy: null,
@@ -109,7 +113,7 @@ describe(import.meta.file, () => {
   it('should not fetch puzzles when all are not missing', async () => {
     const f = await Fixture()
     const output = f.update(f.init.model, [
-      msgServerListedByPuzzlesByIdOk([f.puzzle]),
+      await msgServerListedByPuzzlesByIdOk([f.puzzle]),
       {
         msg: {
           t: 'user-observed-grid',
@@ -147,7 +151,7 @@ describe(import.meta.file, () => {
 
   it('should record puzzles listed by server', async () => {
     const f = await Fixture()
-    const output = f.update(f.init.model, [msgServerListedByPuzzlesByIdOk([f.puzzle])])
+    const output = f.update(f.init.model, [await msgServerListedByPuzzlesByIdOk([f.puzzle])])
     expect(output.model.puzzles[f.puzzle.id]).toEqual(f.puzzle)
   })
 
@@ -189,7 +193,7 @@ describe(import.meta.file, () => {
           t: 'user-observed-grid',
         },
       },
-      msgServerListedByPuzzlesByIdOk([f.puzzle]),
+      await msgServerListedByPuzzlesByIdOk([f.puzzle]),
     ])
     expect(RequestResponse.isOk(output.model.request)).toBe(true)
   })

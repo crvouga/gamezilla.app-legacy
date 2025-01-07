@@ -1,13 +1,13 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
-import { type Variant } from '../../@/variant'
 import { Flow } from '../../@/flow'
 import { Play } from '../../@/play'
+import { Solutions } from '../../@/solutions/solutions'
+import { type Variant } from '../../@/variant'
 import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
 import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture/core'
 import { ScreenPlayPuzzleCore } from './core'
 import type { MsgCore } from './types'
-import { Solutions } from '../../@/solutions/solutions'
 
 const Fixture = async (input?: { flow?: Variant.Model }) => {
   const f = await ScreenPuzzlePlayCoreChildFixture(input)
@@ -107,7 +107,7 @@ describe(import.meta.file, () => {
         ? Play.init({
             ctx: Play.initCtx({
               flow: f.nextPuzzle.c.flow,
-              solutions: await Solutions.find(f.nextPuzzle.c.flow),
+              solutions: await Solutions.find([f.nextPuzzle.c.flow]),
             }),
           })
         : null,
@@ -123,7 +123,7 @@ describe(import.meta.file, () => {
       model:
         after.flowPlay ??
         Play.init({
-          ctx: Play.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find(f.puzzle.flow) }),
+          ctx: Play.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find([f.puzzle.flow]) }),
         }),
     })
 
@@ -243,7 +243,7 @@ describe(import.meta.file, () => {
       Play.init({
         ctx: Play.initCtx({
           flow: f.puzzle.flow,
-          solutions: await Solutions.find(f.puzzle.flow),
+          solutions: await Solutions.find([f.puzzle.flow]),
         }),
       }),
     )

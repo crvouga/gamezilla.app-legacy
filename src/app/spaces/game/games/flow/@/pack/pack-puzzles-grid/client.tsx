@@ -68,7 +68,7 @@ const updateServerListedPuzzles: ClientModule['update'] = (input) => {
             }
           }
 
-          const puzzlesNew = msgServer.listed.value.items.reduce((acc, puzzle) => {
+          const puzzlesNew = msgServer.listed.value.puzzles.items.reduce((acc, puzzle) => {
             acc[puzzle.id] = puzzle
             return acc
           }, model.puzzles)

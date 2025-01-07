@@ -23,7 +23,7 @@ const Fixture = async (input?: { ctxFlow?: Variant.Model }) => {
 
   const ctx = UseHint.initCtx({
     flow: ctxFlow,
-    solutions: await Solutions.find(ctxFlow),
+    solutions: await Solutions.find([ctxFlow]),
   })
 
   const update = (init: UseHint.Model, inputs: Input[]): ReturnType<typeof UseHint.update> => {
@@ -319,7 +319,7 @@ describe(import.meta.file, () => {
     ])
     const init = UseHint.init({
       ctx: UseHint.initCtx({
-        solutions: await Solutions.find(flow),
+        solutions: await Solutions.find([flow]),
         flow,
       }),
     })

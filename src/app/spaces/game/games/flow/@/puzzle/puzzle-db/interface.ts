@@ -2,6 +2,7 @@ import type { Task } from '~/@/promise/task'
 import { Pagination } from '~/@/query/query'
 import { Paginated } from '~/app/@/data/pagination'
 import { UserId } from '~/app/@/data/user-id'
+import { Solutions } from '../../solutions/solutions'
 import type { Puzzle } from '../puzzle'
 import type { PuzzleId } from '../puzzle-id'
 
@@ -29,7 +30,7 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IPuzzleDb['list']>>
 
 export type IPuzzleDb = {
   count: (input: Omit<ListPuzzlesInput, 'pagination' | 'order'>) => Task<string, number>
-  list: (input: ListPuzzlesInput) => Task<string, Paginated<Puzzle>>
+  list: (input: ListPuzzlesInput) => Task<string, { puzzles: Paginated<Puzzle>; solutions: Solutions}>
   get: (id: PuzzleId) => Task<string, Puzzle | null>
   put: (input: Puzzle) => Task<string, null>
   zap: (input: { id: PuzzleId; deletedByUserId: UserId }) => Task<string, null>

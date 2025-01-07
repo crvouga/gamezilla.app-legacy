@@ -78,9 +78,9 @@ describe(import.meta.file, () => {
         },
       }),
     )
-    expect(before?.items.length === 0).toBe(true)
-    expect(after?.items.length === 1).toBe(true)
-    for (const item of after?.items ?? []) {
+    expect(before?.puzzles.items.length === 0).toBe(true)
+    expect(after?.puzzles.items.length === 1).toBe(true)
+    for (const item of after?.puzzles.items ?? []) {
       expect(item?.solutions.length > 0).toBe(true)
     }
   })

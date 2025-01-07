@@ -12,6 +12,7 @@ import { PuzzleName } from '../puzzle-name'
 import type { IPuzzleDb, OrderClause, WhereClause } from './interface'
 import { UserId } from '~/app/@/data/user-id'
 import { Pagination } from '~/@/query/query'
+import { Solutions } from '../../solutions/solutions'
 
 export const Row = p.obj({
   flow_puzzle_id: p.str,
@@ -251,10 +252,13 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
       const total = Number.parseFloat(queriedCount.value[0]?.count ?? '0') ?? 0
 
       return Ok({
-        items: flowPuzzles,
-        total: total,
-        limit: input.pagination.limit,
-        offset: input.pagination.offset,
+        puzzles: {
+          items: flowPuzzles,
+          total: total,
+          limit: input.pagination.limit,
+          offset: input.pagination.offset,
+        },
+        solutions: await Solutions.find(flowPuzzles.map((p) => p.flow)),
       })
     },
 

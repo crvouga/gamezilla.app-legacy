@@ -1,4 +1,5 @@
 import { Err, isErr, Ok } from '~/@/result'
+import { Solutions } from '../../solutions/solutions'
 import type { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
 
@@ -47,7 +48,7 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
         return listed
       }
 
-      return Ok(listed.value.total)
+      return Ok(listed.value.puzzles.total)
     },
 
     async list(input) {
@@ -93,10 +94,13 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
       const sliced = ordered.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)
 
       return Ok({
-        items: sliced,
-        total: filtered.length,
-        limit: input.pagination.limit,
-        offset: input.pagination.offset,
+        puzzles: {
+          items: sliced,
+          total: filtered.length,
+          limit: input.pagination.limit,
+          offset: input.pagination.offset,
+        },
+        solutions: await Solutions.find(sliced.map((p) => p.flow)),
       })
     },
 

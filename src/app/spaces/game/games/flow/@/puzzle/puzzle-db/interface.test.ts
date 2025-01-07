@@ -7,6 +7,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../puzzle'
 import { PuzzleName } from '../puzzle-name'
 import { PuzzleDbFixture } from './fixture'
+import { Solutions } from '../../solutions/solutions'
 
 const Fixture = async () => {
   const f = await PuzzleDbFixture()
@@ -75,7 +76,7 @@ describe(import.meta.file, () => {
 
     expect(listed.t).toBe('ok')
     if (listed.t === 'ok') {
-      expect(listed.value.items).toEqual([puzzle])
+      expect(listed.value.puzzles.items).toEqual([puzzle])
     }
   })
 
@@ -108,7 +109,7 @@ describe(import.meta.file, () => {
 
     expect(listed.t).toBe('ok')
     if (listed.t === 'ok') {
-      expect(listed.value.items).toEqual([puzzleA, puzzleB])
+      expect(listed.value.puzzles.items).toEqual([puzzleA, puzzleB])
     }
   })
 
@@ -173,7 +174,7 @@ describe(import.meta.file, () => {
         expect(listed.t).toBe('ok')
         if (listed.t === 'ok') {
           const expected = puzzles.slice(offset, offset + limit)
-          expect(listed.value.items).toEqual(expected)
+          expect(listed.value.puzzles.items).toEqual(expected)
         }
       }
     }
@@ -228,10 +229,8 @@ describe(import.meta.file, () => {
 
     expect(listed).toEqual(
       Ok({
-        items: [],
-        limit: 10,
-        offset: 0,
-        total: 0,
+        solutions: Solutions.init,
+        puzzles: { items: [], limit: 10, offset: 0, total: 0 },
       }),
     )
   })

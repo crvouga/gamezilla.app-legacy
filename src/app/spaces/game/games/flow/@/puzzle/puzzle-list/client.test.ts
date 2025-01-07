@@ -9,6 +9,7 @@ import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import type { FlowClientCtx } from '../../client/ctx'
+import { Solutions } from '../../solutions/solutions'
 import { Variant, VariantDimensions } from '../../variant'
 import { Puzzle } from '../puzzle'
 import { PuzzleListClient } from './client'
@@ -38,10 +39,13 @@ const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: Puzzle[]) => (model:
     msgServer: {
       t: 'listed-puzzle',
       listed: Ok({
-        items: puzzles,
-        limit: 25,
-        offset: 0,
-        total: puzzles.length,
+        solutions: Solutions.init,
+        puzzles: {
+          items: puzzles,
+          limit: 25,
+          offset: 0,
+          total: puzzles.length,
+        },
       }),
     },
   })

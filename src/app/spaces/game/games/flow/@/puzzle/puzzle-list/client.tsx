@@ -75,7 +75,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
 const updateFromServer: ClientModule['update'] = (input) => {
   switch (input.msgServer?.t) {
     case 'listed-puzzle': {
-      const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
+      const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.puzzles.items : []
 
       const puzzlesNew = {
         ...input.model.puzzles,
