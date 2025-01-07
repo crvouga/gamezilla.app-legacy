@@ -10,8 +10,13 @@ const is = (groupId: unknown): groupId is GroupId => {
   return parser.parse(groupId).t === 'ok'
 }
 
+const toOrder = (groupId: GroupId): number => {
+  return ORDER.indexOf(groupId)
+}
+
 export const GroupId = {
   ...parser,
   ORDER,
+  toOrder,
   is,
 }

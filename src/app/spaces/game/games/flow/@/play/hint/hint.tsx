@@ -1,34 +1,30 @@
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { p } from '~/@/parser'
-import { Err, Result } from '~/@/result'
+import { Result } from '~/@/result'
 import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconLightbulb } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
-import type { Puzzle } from '../../puzzle/puzzle'
 import { Flow } from '../../flow'
-import type { Variant } from '../../variant'
 import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
-import { FlowTerminal } from '../../flow/terminal'
-
-export type FindSolutions = (input: { flow: Variant.Model }) => Promise<Result<string, Flow.Model[]>>
+import { Terminal } from '../../flow/terminal'
+import type { Puzzle } from '../../puzzle/puzzle'
+import type { Variant } from '../../variant'
 
 export type Ctx = {
   flowPuzzle: Puzzle
-  findSolutions: FindSolutions
 }
 
-export const initCtx = (input: { flowPuzzle: Puzzle; findSolutions?: FindSolutions }): Ctx => {
+export const initCtx = (input: { flowPuzzle: Puzzle }): Ctx => {
   return {
-    findSolutions: input.findSolutions ?? (async (_input) => Err('not implemented')),
     flowPuzzle: input.flowPuzzle,
   }
 }
 
 export const Model = p.obj({
   pipesBySourceId: p.dict(NodeId, Flow.Pipe),
-  terminalsByGroupId: p.partialDict(GroupId, FlowTerminal),
+  terminalsByGroupId: p.partialDict(GroupId, Terminal),
   usedHints: p.partialDict(GroupId, GroupId),
 })
 export type Model = p.Infer<typeof Model>
@@ -104,10 +100,6 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
       if (!solution) {
         return {
           model: input.model,
-          async eff(dispatch) {
-            const found = await input.ctx.findSolutions({ flow: input.ctx.flowPuzzle.flow })
-            dispatch({ t: 'found-solutions', found })
-          },
           events: [
             {
               t: 'no-hints',

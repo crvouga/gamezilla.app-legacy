@@ -1,4 +1,4 @@
-export function descend<T>(keyFn: (value: T) => number) {
+export const descend = <T>(keyFn: (value: T) => number | string) => {
   return (a: T, b: T): number => {
     const aValue = keyFn(a)
     const bValue = keyFn(b)
@@ -15,7 +15,7 @@ export function descend<T>(keyFn: (value: T) => number) {
   }
 }
 
-export function ascend<T>(keyFn: (value: T) => number | string) {
+export const ascend = <T>(keyFn: (value: T) => number | string) => {
   return (a: T, b: T): number => {
     const aValue = keyFn(a)
     const bValue = keyFn(b)

@@ -2,7 +2,7 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { Flow } from '../../../flow'
 import { GroupId } from '../../../flow/group-id'
 import { NodeId } from '../../../flow/node-id'
-import { FlowTerminal } from '../../../flow/terminal'
+import { Terminal as FlowTerminal } from '../../../flow/terminal'
 import * as VariantGrid from '../grid'
 import * as VariantGridDimensions from '../grid-dimensions'
 

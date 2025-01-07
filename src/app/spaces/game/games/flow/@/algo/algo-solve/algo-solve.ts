@@ -3,7 +3,7 @@ import { MinHeap } from '~/@/min-heap/min-heap'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
-import { FlowTerminal } from '../../flow/terminal'
+import { Terminal } from '../../flow/terminal'
 import { AlgoIsUnsolvable } from '../algo-is-unsolvable'
 import { Variant } from '../../variant'
 
@@ -109,7 +109,7 @@ const toPossiblePipelines = function* (
   }
 }
 
-const drawPipeline = (model: Variant.Model, terminal: FlowTerminal, path: Flow.Edge[]): Variant.Model => {
+const drawPipeline = (model: Variant.Model, terminal: Terminal, path: Flow.Edge[]): Variant.Model => {
   const pipesBySourceId = { ...model.pipesBySourceId }
 
   for (const edge of path) {
@@ -125,7 +125,7 @@ const drawPipeline = (model: Variant.Model, terminal: FlowTerminal, path: Flow.E
   }
 }
 
-const solveStep = function* (model: Variant.Model, disconnectedTerminals: FlowTerminal[]): Iterable<Flow.Model> {
+const solveStep = function* (model: Variant.Model, disconnectedTerminals: Terminal[]): Iterable<Flow.Model> {
   if (AlgoIsUnsolvable.isUnsolvable(model)) {
     return
   }
@@ -151,7 +151,7 @@ const solveStep = function* (model: Variant.Model, disconnectedTerminals: FlowTe
   }
 }
 
-const toTerminalDistance = (model: Variant.Model, terminal: FlowTerminal): number => {
+const toTerminalDistance = (model: Variant.Model, terminal: Terminal): number => {
   if (!terminal.endId) {
     return Number.POSITIVE_INFINITY
   }

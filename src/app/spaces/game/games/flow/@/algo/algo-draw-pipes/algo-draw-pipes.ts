@@ -5,7 +5,7 @@ import { Variant } from '../../variant'
 import { EdgeId } from '../../flow/edge-id'
 import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
-import { FlowTerminal } from '../../flow/terminal'
+import { Terminal } from '../../flow/terminal'
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -124,7 +124,7 @@ const takeWhileConnected = (model: Flow.Model, pipeline: Pipeline): Pipeline => 
 /**
  *
  */
-const isTerminalConnected = (model: Flow.Model, terminal: FlowTerminal): boolean => {
+const isTerminalConnected = (model: Flow.Model, terminal: Terminal): boolean => {
   let currentId = terminal.startId
 
   while (true) {
@@ -175,7 +175,7 @@ const findPipeline = (model: Flow.Model, groupId: GroupId, initial: NodeId): Pip
 /**
  * Adds all pipes that are part of the pipeline with the inputted group id
  */
-const addPipeline = (model: Flow.Model, terminal: FlowTerminal, pipeline: Pipeline): Flow.Model => {
+const addPipeline = (model: Flow.Model, terminal: Terminal, pipeline: Pipeline): Flow.Model => {
   const modelNew: Flow.Model = { ...model }
 
   for (let i = 0; i < pipeline.length - 1; i++) {

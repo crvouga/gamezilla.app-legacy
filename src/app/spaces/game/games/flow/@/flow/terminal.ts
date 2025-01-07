@@ -11,9 +11,9 @@ const parser = p.obj({
  * A terminal represents the start and end nodes for a group.
  * These are the two circles the user is trying to connect
  */
-export type FlowTerminal = p.Infer<typeof parser>
+export type Terminal = p.Infer<typeof parser>
 
-const isSame = (a: FlowTerminal, b: FlowTerminal): boolean => {
+const isSame = (a: Terminal, b: Terminal): boolean => {
   const startA = a.startId ?? null
   const startB = b.startId ?? null
   const endA = a.endId ?? null
@@ -24,7 +24,7 @@ const isSame = (a: FlowTerminal, b: FlowTerminal): boolean => {
   return isSame
 }
 
-const flip = (terminal: FlowTerminal): FlowTerminal => {
+const flip = (terminal: Terminal): Terminal => {
   if (!terminal.endId) {
     return terminal
   }
@@ -35,8 +35,13 @@ const flip = (terminal: FlowTerminal): FlowTerminal => {
   }
 }
 
-export const FlowTerminal = {
+const deriveHash = (terminal: Terminal): string => {
+  return `${terminal.groupId}-${[terminal.startId, terminal.endId].sort().join('-')}`
+}
+
+export const Terminal = {
   ...parser,
   flip,
   isSame,
+  deriveHash,
 }

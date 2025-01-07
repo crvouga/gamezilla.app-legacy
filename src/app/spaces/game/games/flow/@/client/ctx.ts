@@ -1,4 +1,6 @@
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { Flow } from '../flow'
+import { FlowHash } from '../flow/hash'
 import { Pack } from '../pack/pack'
 import { PackId } from '../pack/pack-id'
 import { PackListTypes } from '../pack/pack-list'
@@ -13,6 +15,9 @@ export type FlowClientCtx = SpaceClientCtx & {
   }
   puzzles: {
     [id: PuzzleId]: Puzzle
+  }
+  solutions: {
+    [hash: FlowHash]: Flow.Model
   }
   puzzleList: PuzzleListTypes.ModelClient
   packList: PackListTypes.ModelClient

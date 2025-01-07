@@ -12,7 +12,7 @@ import { AlgoDrawPipes } from '../algo/algo-draw-pipes'
 import { AlgoSolve } from '../algo/algo-solve'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
-import { FlowTerminal } from '../flow/terminal'
+import { Terminal } from '../flow/terminal'
 import { VariantBoard, type Variant } from '../variant'
 import { FlowHint } from './hint'
 
@@ -53,7 +53,7 @@ export const Model = p.and(
   FlowHint.Model,
   p.obj({
     pipesBySourceId: p.dict(NodeId, Flow.Pipe),
-    terminalsByGroupId: p.partialDict(GroupId, FlowTerminal),
+    terminalsByGroupId: p.partialDict(GroupId, Terminal),
     status: Status,
     showCheckmarkAnimation: p.bool,
   }),

@@ -21,7 +21,7 @@ import * as FlowVariantDimensions from '../variant/variant-dimensions'
 import * as Flow from '../flow/flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
-import { FlowTerminal } from '../flow/terminal'
+import { Terminal } from '../flow/terminal'
 import { VariantBoard } from '../variant'
 
 //
@@ -445,7 +445,7 @@ export const removeIncompleteTerminals = (draftTerminals: DraftTerminals): Flow.
     if (!draftTerminal.endId) {
       continue
     }
-    const terminal: FlowTerminal = {
+    const terminal: Terminal = {
       startId: draftTerminal.startId,
       endId: draftTerminal.endId,
       groupId: draftTerminal.groupId,

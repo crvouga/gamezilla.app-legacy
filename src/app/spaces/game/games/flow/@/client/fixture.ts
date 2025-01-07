@@ -15,6 +15,7 @@ export const FixtureFlowClient = async () => {
     ...f.ctx,
     packs: {},
     puzzles: {},
+    solutions: {},
     puzzleList: PuzzleListTypes.initClient,
     packList: PackListTypes.initClient,
     packPuzzleGrid: PackPuzzlesGridTypes.initClient,

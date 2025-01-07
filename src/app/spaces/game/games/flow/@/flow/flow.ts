@@ -1,11 +1,13 @@
+import { descend } from '~/@/array/sorting'
 import { eq } from '~/@/equals/equals'
-import { p } from '~/@/parser'
 import { memoize } from '~/@/function/memoize'
 import { pipe } from '~/@/function/pipe'
+import { djb2Hash } from '~/@/hash/djb2'
+import { p } from '~/@/parser'
 import { EdgeId } from './edge-id'
 import { GroupId } from './group-id'
 import { NodeId } from './node-id'
-import { FlowTerminal } from './terminal'
+import { Terminal } from './terminal'
 
 /**
  * Represents a connection between two nodes.
@@ -68,7 +70,7 @@ export const Model = p.obj({
   /**
    * Represents the start and end nodes for each pipeline.
    */
-  terminalsByGroupId: p.partialDict(GroupId, FlowTerminal),
+  terminalsByGroupId: p.partialDict(GroupId, Terminal),
 
   /**
    * Represents the pipes that are connected to each node.
@@ -154,7 +156,7 @@ export const isSameTerminalsByGroupId = (a: Model['terminalsByGroupId'], b: Mode
     if (!terminalB) {
       return false
     }
-    if (!FlowTerminal.isSame(terminalA, terminalB)) {
+    if (!Terminal.isSame(terminalA, terminalB)) {
       return false
     }
   }
@@ -224,6 +226,14 @@ export const deriveNodeHash = (nodes: Model['nodes']): string | number => {
   return djb2Hash(Object.values(nodes).sort().join(','))
 }
 
+export const deriveTerminalHash = (terminals: Model['terminalsByGroupId']): string | number => {
+  const values = Object.values(terminals)
+  const sorted = values.sort(descend((t) => GroupId.toOrder(t.groupId)))
+  const hashes = sorted.map((terminal) => Terminal.deriveHash(terminal))
+  const hash = hashes.join(',')
+  return hash
+}
+
 /**
  * Adds an edge to the puzzle.
  */
@@ -249,7 +259,7 @@ const hasNode = (model: Model, nodeId: NodeId): boolean => {
 /**
  * @param model
  */
-export const addTerminal = (model: Model, terminal: FlowTerminal): Model => {
+export const addTerminal = (model: Model, terminal: Terminal): Model => {
   if (terminal.endId === terminal.startId) {
     return model
   }
@@ -429,7 +439,7 @@ export const yieldEdgesIn = function* (model: Model, targetNodeId: NodeId): Iter
 /**
  *
  */
-export const yieldTerminals = function* (model: Model): Iterable<FlowTerminal> {
+export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
   for (const groupId in model.terminalsByGroupId) {
     const terminal = model.terminalsByGroupId[groupId as GroupId]
 
@@ -441,7 +451,7 @@ export const yieldTerminals = function* (model: Model): Iterable<FlowTerminal> {
   }
 }
 
-export const yieldFullTerminals = function* (model: Model): Iterable<FlowTerminal> {
+export const yieldFullTerminals = function* (model: Model): Iterable<Terminal> {
   for (const terminal of yieldTerminals(model)) {
     if (terminal.endId) {
       yield terminal
@@ -449,11 +459,11 @@ export const yieldFullTerminals = function* (model: Model): Iterable<FlowTermina
   }
 }
 
-export const toFullTerminals = (model: Model): FlowTerminal[] => {
+export const toFullTerminals = (model: Model): Terminal[] => {
   return Array.from(yieldFullTerminals(model))
 }
 
-export const toTerminals = (model: Model): FlowTerminal[] => {
+export const toTerminals = (model: Model): Terminal[] => {
   return Array.from(yieldTerminals(model))
 }
 
@@ -575,7 +585,7 @@ export const hasEdge = (model: Model, sourceId: NodeId, targetId: NodeId): boole
 /**
  * Finds the terminal associated with the inputted group.
  */
-export const toTerminalByGroupId = (model: Model, groupId: GroupId): FlowTerminal | null => {
+export const toTerminalByGroupId = (model: Model, groupId: GroupId): Terminal | null => {
   return model.terminalsByGroupId[groupId] ?? null
 }
 
@@ -604,7 +614,7 @@ export const randomEmptyNode = (model: Model): Node | null => {
   return null
 }
 
-export const randomTerminal = (model: Model): FlowTerminal | null => {
+export const randomTerminal = (model: Model): Terminal | null => {
   const terminals = Object.values(model.terminalsByGroupId)
 
   if (terminals.length === 0) {
@@ -623,7 +633,7 @@ export const randomOutEdge = (model: Model, nodeId: NodeId): Edge | null => {
 /**
  * Find the terminal where the inputted node id is either the start or end node.
  */
-export const findTerminalByNodeId = (model: Model, nodeId: NodeId): FlowTerminal | null => {
+export const findTerminalByNodeId = (model: Model, nodeId: NodeId): Terminal | null => {
   for (const terminal of yieldTerminals(model)) {
     if (terminal.startId === nodeId) {
       return terminal
@@ -688,7 +698,7 @@ export const flipAllTerminals = <TModel extends Model>(model: TModel): TModel =>
   const terminalsByGroupId: TModel['terminalsByGroupId'] = {}
 
   for (const terminal of yieldTerminals(model)) {
-    terminalsByGroupId[terminal.groupId] = FlowTerminal.flip(terminal)
+    terminalsByGroupId[terminal.groupId] = Terminal.flip(terminal)
   }
 
   return {
@@ -700,12 +710,12 @@ export const flipAllTerminals = <TModel extends Model>(model: TModel): TModel =>
 /**
  * Flips the start and end nodes of the inputted terminal.
  */
-export const flipTerminal = <TModel extends Model>(model: TModel, terminal: FlowTerminal | null): TModel => {
+export const flipTerminal = <TModel extends Model>(model: TModel, terminal: Terminal | null): TModel => {
   if (!terminal) {
     return model
   }
 
-  const flipped = FlowTerminal.flip(terminal)
+  const flipped = Terminal.flip(terminal)
 
   return {
     ...model,
@@ -714,15 +724,6 @@ export const flipTerminal = <TModel extends Model>(model: TModel, terminal: Flow
       [terminal.groupId]: flipped,
     },
   }
-}
-
-function djb2Hash(str: string) {
-  let hash = 5381
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = (hash << 5) + hash + char /* hash * 33 + c */
-  }
-  return hash
 }
 
 const isConnectedWithPipeOneWay = (model: Model, sourceId: NodeId, targetId: NodeId): boolean => {
