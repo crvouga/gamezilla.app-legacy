@@ -7,7 +7,7 @@ import type { ModelCore, MsgCore } from './types'
 import { FlowCoreCtx } from './@/core/ctx'
 
 const initCore = (input: { ctx: SpaceCtx }): ModelCore => {
-  const solutions: Solutions = {}
+  const solutions = Solutions.init
   const ctx: FlowCoreCtx = {
     ...input.ctx,
     solutions,

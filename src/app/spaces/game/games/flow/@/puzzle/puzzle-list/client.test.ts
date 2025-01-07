@@ -101,7 +101,7 @@ describe(import.meta.file, () => {
     expect(Object.values(output.model.puzzles)).not.toEqual([])
   })
 
-  it('should show error when recieving list error fro server', async () => {
+  it('should show error when receiving list error fro server', async () => {
     const ctx = await testFlowClientCtx()
     const error = 'Something went wrong'
     const output = AppClientModule.andThen(initial, serverListedPuzzlesErr(ctx, error))
