@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .bg-surface {
-  @apply bg-neutral-950;
+  @apply bg-black;
 }
 
 .border-surface {
