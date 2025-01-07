@@ -1,4 +1,4 @@
-import type { ILogger } from '~/@/logger'
+import { Logger, type ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, isErr } from '~/@/result'
@@ -9,7 +9,9 @@ export type Config = {
   logger: ILogger
 }
 
-export const VerifySMS = (deps: Config): IVerifySMS => {
+export const VerifySMS = (config: Config): IVerifySMS => {
+  const logger = Logger.prefix('verify-sms-twilio', config.logger)
+
   const TWILIO_ACCOUNT_SID = import.meta.env.TWILIO_ACCOUNT_SID
 
   if (!TWILIO_ACCOUNT_SID) {
@@ -34,14 +36,14 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
     async sendCode(input) {
       try {
         const to = PhoneNumber.toString(input.phoneNumber)
-        deps.logger.info(`Sending code to ${to}`)
+        logger.info(`Sending code to ${to}`)
 
         const body = new URLSearchParams({
           To: to,
           Channel: 'sms',
         }).toString()
 
-        deps.logger.debug(`Sending code to ${to} body=${body}`)
+        logger.debug(`Sending code to ${to} body=${body}`)
 
         if (typeof fetch === 'undefined') {
           return Err({
@@ -64,17 +66,17 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
         const json = await response.json()
 
         if (!response.ok) {
-          deps.logger.error(`Errored while sending code: ${JSON.stringify(json)}`)
+          logger.error(`Errored while sending code: ${JSON.stringify(json)}`)
           return Err({
             t: 'database-error',
             error: JSON.stringify(json),
           })
         }
 
-        deps.logger.info(`Sent code to ${to} successfully: ${JSON.stringify(json)}`)
+        logger.info(`Sent code to ${to} successfully: ${JSON.stringify(json)}`)
         return Ok(null)
       } catch (error) {
-        deps.logger.error(`Errored while sending code: ${error}`)
+        logger.error(`Errored while sending code: ${error}`)
 
         const twilioCode = typeof error === 'object' && error && 'code' in error ? Number(error.code) : null
 
@@ -95,7 +97,7 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
       try {
         const to = PhoneNumber.toString(input.phoneNumber)
 
-        deps.logger.info(`Verifying code for ${to}`)
+        logger.info(`Verifying code for ${to}`)
 
         const response = await fetch(
           `https://verify.twilio.com/v2/Services/${TWILIO_MESSAGING_SERVICE_SID}/VerificationCheck`,
@@ -150,7 +152,7 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
 
         const valid = 'valid' in parsed.value ? parsed.value.valid : false
 
-        deps.logger.info(`Verified code for ${to} successfully: ${valid}`)
+        logger.info(`Verified code for ${to} successfully: ${valid}`)
 
         if (valid) {
           return Ok(null)
@@ -160,7 +162,7 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
           t: 'code-incorrect',
         })
       } catch (error) {
-        deps.logger.error(`Errored while verifying code: ${error}`)
+        logger.error(`Errored while verifying code: ${error}`)
         return Err({
           t: 'database-error',
           error: String(error),
