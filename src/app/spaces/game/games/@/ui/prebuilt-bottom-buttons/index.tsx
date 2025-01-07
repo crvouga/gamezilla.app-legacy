@@ -1,5 +1,5 @@
 import type { Translator } from '~/@/l18n/generated'
-import { IconArrowCircle, IconArrowLeftOnRect, IconArrowRotateLeft, IconChevronLeft, IconLightbulb } from '~/app/@/ui'
+import { IconArrowCircle, IconArrowLeftOnRect, IconArrowRotateLeft, IconChevronLeft } from '~/app/@/ui'
 import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 
 type PrebuiltBottomButtonInput = Partial<BottomButtonInput> & {
@@ -36,16 +36,9 @@ const prev = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
   label: input.ctx.t('prebuilt-bottom-buttons.prev'),
 })
 
-const hint = (input: PrebuiltBottomButtonInput): BottomButtonInput => ({
-  ...input,
-  icon: (input) => <IconLightbulb {...input} />,
-  label: input.ctx.t('prebuilt-bottom-buttons.hint'),
-})
-
 export const PrebuiltBottomButtons = {
   exit,
   next,
   reset,
   prev,
-  hint,
 }
