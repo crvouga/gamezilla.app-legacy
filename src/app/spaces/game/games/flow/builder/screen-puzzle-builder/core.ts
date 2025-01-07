@@ -9,27 +9,17 @@ import { SaveChangesCore } from './save-changes/core'
 import { ModelCore } from './types'
 
 const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
-  return Play.toStatus({
-    model: modelCore.play,
-    flow: toFlow(modelCore),
-  })
+  return Play.toStatus({ model: modelCore.play, flow: toFlow(modelCore) })
 }
 
 const toFlow = (modelCore: ModelCore): Variant.Model => {
   switch (modelCore.mode.t) {
     case 'edit': {
-      return Edit.toFlow({
-        model: modelCore.edit,
-      })
+      return Edit.toFlow({ model: modelCore.edit })
     }
 
     case 'play': {
-      return Play.toFlow({
-        flow: Edit.toFlow({
-          model: modelCore.edit,
-        }),
-        model: modelCore.play,
-      })
+      return Play.toFlow({ flow: Edit.toFlow({ model: modelCore.edit }), model: modelCore.play })
     }
   }
 }
@@ -56,10 +46,7 @@ const updateCoreMain = ({
       const updated = Play.update({
         model: modelCore.screenPuzzleBuilder.play,
         msg: msgCore.c,
-        ctx: Play.initCtx({
-          flow,
-          solutions: ctx.solutions,
-        }),
+        ctx: Play.initCtx({ flow, solutions: ctx.solutions }),
       })
 
       return {

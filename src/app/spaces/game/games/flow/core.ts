@@ -27,46 +27,28 @@ const updateCore = (input: { ctx: SpaceCtx; msgCore: WithEventMeta<MsgCore>; mod
   }
   switch (input.msgCore.t) {
     case 'play': {
-      const updated = PlayCore.updateCore({
-        ctx,
-        msgCore: input.msgCore.c,
-        modelCore: input.modelCore.play,
-      })
+      const updated = PlayCore.updateCore({ ctx, msgCore: input.msgCore.c, modelCore: input.modelCore.play })
 
       switch (updated.event?.t) {
         case 'user-clicked-exit-mode-button': {
-          return {
-            ...input.modelCore,
-            mode: 'none',
-          }
+          return { ...input.modelCore, play: updated, mode: 'none' }
         }
-      }
-
-      return {
-        ...input.modelCore,
-        play: updated,
+        default: {
+          return { ...input.modelCore, play: updated }
+        }
       }
     }
 
     case 'builder': {
-      const updated = BuilderCore.updateCore({
-        ctx,
-        msgCore: input.msgCore.c,
-        modelCore: input.modelCore.builder,
-      })
+      const updated = BuilderCore.updateCore({ ctx, msgCore: input.msgCore.c, modelCore: input.modelCore.builder })
 
       switch (updated.event?.t) {
         case 'user-clicked-exit-mode-button': {
-          return {
-            ...input.modelCore,
-            mode: 'none',
-          }
+          return { ...input.modelCore, builder: updated, mode: 'none' }
         }
-      }
-
-      return {
-        ...input.modelCore,
-        builder: updated,
+        default: {
+          return { ...input.modelCore, builder: updated }
+        }
       }
     }
 
