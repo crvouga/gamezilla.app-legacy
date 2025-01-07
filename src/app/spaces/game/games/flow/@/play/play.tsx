@@ -583,14 +583,11 @@ const updateDragging = ({
   }
 }
 
-export const toFlow = ({ model, flow }: { flow: Variant.Model; model: Model }): Variant.Model => {
-  const derived = UseHint.toFlow({
-    flow,
-    model,
-  })
+export const toFlow = (input: { flow: Variant.Model; model: Model }): Variant.Model => {
+  const derived = UseHint.toFlow(input)
   return {
     ...derived,
-    terminalsByGroupId: model.terminalsByGroupId,
+    terminalsByGroupId: input.model.terminalsByGroupId,
   }
 }
 

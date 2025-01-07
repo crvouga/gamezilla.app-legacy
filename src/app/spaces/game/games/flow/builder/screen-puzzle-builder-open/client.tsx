@@ -65,10 +65,7 @@ const View: ClientModule['View'] = (input) => {
       <PuzzleListClient.View
         ctx={input.ctx}
         dispatch={(_c) => {}}
-        model={{
-          ...input.ctx.puzzleList,
-          puzzles: input.ctx.puzzles,
-        }}
+        model={input.ctx.puzzleList}
         emits={{
           clickedPuzzleItem: (puzzle) =>
             input.dispatch({

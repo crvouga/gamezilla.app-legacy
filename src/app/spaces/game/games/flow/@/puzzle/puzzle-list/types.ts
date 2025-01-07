@@ -2,16 +2,15 @@ import { RequestResponse } from '~/@/request-response/request-response'
 import { NotAsked } from '~/@/result'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'
-import type { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import { FlowClientCmd } from '../../client/cmd'
+import { FlowClientCtx } from '../../client/ctx'
 import { FlowClientEvtIn } from '../../client/evt'
 import { FlowServerCtx } from '../../server/ctx'
 import type { Puzzle } from '../puzzle'
 import type { ListPuzzlesInput, ListPuzzlesOutput } from '../puzzle-db'
-import type { PuzzleId } from '../puzzle-id'
 
 //
 //
@@ -20,12 +19,10 @@ import type { PuzzleId } from '../puzzle-id'
 
 export type ModelClient = {
   request: RequestResponse<string, null>
-  puzzles: { [id: PuzzleId]: Puzzle }
 }
 
 export const initClient: ModelClient = {
   request: NotAsked,
-  puzzles: {},
 }
 
 export type ModelServer = null
@@ -62,9 +59,9 @@ export type ClientModule = AppClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Ctx: SpaceClientCtx
+  Ctx: FlowClientCtx
   MsgEvtIn: FlowClientEvtIn
-  MsgCmdOut: SpaceClientCmd<{
+  MsgCmdOut: FlowClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>

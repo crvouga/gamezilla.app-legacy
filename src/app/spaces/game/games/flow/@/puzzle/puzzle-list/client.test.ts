@@ -5,10 +5,8 @@ import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { didSendToServer, didShowErrorSm } from '~/app/@/client/cmd'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { testSpaceClientCtx } from '../../../../@/testing/client'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
-import type { FlowClientCtx } from '../../client/ctx'
+import { FlowClientCtx } from '../../client/ctx'
 import { Solutions } from '../../solutions/solutions'
 import { Variant, VariantDimensions } from '../../variant'
 import { Puzzle } from '../puzzle'
@@ -19,7 +17,7 @@ const initial = {
   model: initClient,
 }
 
-const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
+const loadCmd = (ctx: FlowClientCtx) => (model: ModelClient) => {
   return PuzzleListClient.update({
     ctx,
     model,
@@ -77,13 +75,13 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
 
 describe(import.meta.file, () => {
   it('should it be requesting when the load cmd inputs', async () => {
-    const ctx = await testSpaceClientCtx()
+    const ctx = await testFlowClientCtx()
     const output = AppClientModule.andThen(initial, loadCmd(ctx))
     expect(isRequesting(output.model.request)).toBe(true)
   })
 
   it('should send a list puzzles message to server when the user observes the end of the list', async () => {
-    const ctx = await testSpaceClientCtx()
+    const ctx = await testFlowClientCtx()
     const output = AppClientModule.andThen(initial, loadCmd(ctx))
     expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles')).toBe(true)
   })
@@ -102,7 +100,7 @@ describe(import.meta.file, () => {
 
     const output = AppClientModule.andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))
 
-    expect(Object.values(output.model.puzzles)).not.toEqual([])
+    expect(output.msgCmd?.some((c) => c.t === 'flow-cmd.add-puzzles')).toBe(true)
   })
 
   it('should show error when receiving list error fro server', async () => {

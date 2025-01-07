@@ -1,10 +1,12 @@
 import { VDomImpl } from '../@/vdom/vdom-impl'
 import { IS_TEST } from './shared'
 
-export const VDOM_IMPL = VDomImpl.from(import.meta.env?.VITE_VDOM_IMPL) || VDomImpl.of('inferno')
+const env: Record<string, unknown> = typeof process !== 'undefined' ? process.env : import.meta.env
+
+export const VDOM_IMPL = VDomImpl.from(env.VITE_VDOM_IMPL) || VDomImpl.of('inferno')
 
 export const VDOM_IMPL_TEST = VDomImpl.of('react-with-compiler')
 
 export const VDOM_IMPL_CURRENT = IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL
 
-export const SERVER_URL = import.meta.env?.VITE_SERVER_URL ? String(import.meta.env?.VITE_SERVER_URL) : ''
+export const SERVER_URL = env.VITE_SERVER_URL ? String(env.VITE_SERVER_URL) : ''

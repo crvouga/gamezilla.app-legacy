@@ -1,6 +1,6 @@
 import { descend } from '~/@/array/sorting'
 import { RequestResponse } from '~/@/request-response/request-response'
-import { Result, isErr } from '~/@/result'
+import { Result, isErr, isOk } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
@@ -8,9 +8,12 @@ import { sendToServer, showErrSm } from '~/app/@/client/cmd'
 import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
+import { FlowClientCmd } from '../../client/cmd'
+import { Solutions } from '../../solutions/solutions'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
-import type { ClientModule, ModelClient, MsgInCmdClient } from './types'
+import { PuzzleId } from '../puzzle-id'
+import type { ClientModule, ModelClient, MsgClient, MsgInCmdClient, MsgToServer } from './types'
 
 const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(
@@ -75,14 +78,9 @@ const updateFromMsg: ClientModule['update'] = (input) => {
 const updateFromServer: ClientModule['update'] = (input) => {
   switch (input.msgServer?.t) {
     case 'listed-puzzle': {
-      const puzzles = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.puzzles.items : []
-
-      const puzzlesNew = {
-        ...input.model.puzzles,
-      }
-      for (const puzzle of puzzles) {
-        puzzlesNew[puzzle.id] = puzzle
-      }
+      const puzzles = isOk(input.msgServer.listed) ? input.msgServer.listed.value.puzzles.items : []
+      const byId = puzzles.reduce<{ [k: PuzzleId]: Puzzle }>((acc, p) => ({ ...acc, [p.id]: p }), {})
+      const solutions = isOk(input.msgServer.listed) ? input.msgServer.listed.value.solutions : Solutions.init
 
       return {
         model: {
@@ -92,9 +90,14 @@ const updateFromServer: ClientModule['update'] = (input) => {
             input.ctx.now,
             Result.mapOk(input.msgServer.listed, () => null),
           ),
-          puzzles: puzzlesNew,
         },
-        msgCmd: isErr(input.msgServer.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : [],
+        msgCmd: [
+          FlowClientCmd.addPuzzles(byId, input.msgServer),
+          FlowClientCmd.addSolutions(solutions, input.msgServer),
+          ...(isErr(input.msgServer.listed)
+            ? showErrSm<{ MsgClient: MsgClient; MsgToServer: MsgToServer }>(input.ctx.t('app.something-went-wrong'))
+            : []),
+        ],
       }
     }
     default: {
@@ -121,7 +124,7 @@ const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdClient | TCmd)[] }): boolean
 }
 
 const View: ClientModule['View'] = (input) => {
-  const puzzles = Object.values(input.model.puzzles)
+  const puzzles = Object.values(input.ctx.puzzles)
   const shouldShowLoadingState = input.model.request.t === 'not-asked' || input.model.request.t === 'loading'
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0
 

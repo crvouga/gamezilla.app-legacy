@@ -1,7 +1,5 @@
 import type { ClientCmdTypes } from '~/app/@/client/cmd'
 import { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
-import { Flow } from '../flow'
-import { FlowId } from '../flow/id'
 import { Pack } from '../pack/pack'
 import { PackId } from '../pack/pack-id'
 import { PackListTypes } from '../pack/pack-list'
@@ -9,6 +7,7 @@ import { PackPuzzlesGridTypes } from '../pack/pack-puzzles-grid'
 import { Puzzle } from '../puzzle/puzzle'
 import { PuzzleId } from '../puzzle/puzzle-id'
 import { PuzzleListTypes } from '../puzzle/puzzle-list'
+import { Solutions } from '../solutions/solutions'
 
 type FlowClientCmdInternal =
   | PackListTypes.MsgInCmdClient
@@ -37,13 +36,30 @@ type FlowClientCmdInternal =
     }
   | {
       t: 'flow-cmd.add-solutions'
-      solutions: {
-        [flowId: FlowId]: Flow.Model[]
-      }
+      solutions: Solutions
       causedBy: unknown
     }
 
 export type FlowClientCmd<T extends ClientCmdTypes> = SpaceClientCmd<T> | FlowClientCmdInternal
+
+const addPuzzles = <T extends ClientCmdTypes>(
+  puzzles: { [puzzleId: PuzzleId]: Puzzle },
+  causedBy: unknown,
+): FlowClientCmd<T> => {
+  return {
+    t: 'flow-cmd.add-puzzles',
+    puzzles,
+    causedBy,
+  }
+}
+
+const addSolutions = <T extends ClientCmdTypes>(solutions: Solutions, causedBy: unknown): FlowClientCmd<T> => {
+  return {
+    t: 'flow-cmd.add-solutions',
+    solutions,
+    causedBy,
+  }
+}
 
 const isFlowClientCmdInternal = <T extends ClientCmdTypes>(cmd: FlowClientCmd<T>): cmd is FlowClientCmdInternal => {
   switch (cmd.t) {
@@ -110,4 +126,6 @@ export const FlowClientCmd = {
   toSpaceClientCmd,
   toFlowClientCmd,
   tag,
+  addPuzzles,
+  addSolutions,
 }
