@@ -9,7 +9,7 @@ const initCore: CoreModule['initCore'] = () => {
   }
 }
 
-const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
+const update: CoreModule['updateCore'] = ({ modelCore, msgCore, ctx }) => {
   switch (msgCore.t) {
     case 'user-clicked-exit-play-mode-button': {
       return {
@@ -48,6 +48,7 @@ const update: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
               flowPack: modelCore.screen.flowPack,
               puzzleIndex: msgCore.puzzleIndex,
               flowPuzzle: msgCore.flowPuzzle,
+              ctx,
             }),
           }
         }

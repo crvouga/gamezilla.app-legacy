@@ -1,6 +1,5 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
 import type { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
@@ -8,6 +7,7 @@ import type { GameServerModule } from '~/app/spaces/game/games/@/architecture/ga
 import { FlowClientCmd } from '../@/client/cmd'
 import type { FlowClientCtx } from '../@/client/ctx'
 import { FlowClientEvtIn } from '../@/client/evt'
+import { FlowCoreCtx } from '../@/core/ctx'
 import { FlowCoreEvent } from '../@/core/event'
 import { PackListTypes } from '../@/pack/pack-list'
 import { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
@@ -180,7 +180,7 @@ export const ModelCore = p.obj({
 export type ModelCore = p.Infer<typeof ModelCore>
 
 export type UpdateCore = (input: {
-  ctx: SpaceCtx
+  ctx: FlowCoreCtx
   msgCore: MsgCore
   modelCore: ModelCore
 }) => ModelCore & { event?: FlowCoreEvent }

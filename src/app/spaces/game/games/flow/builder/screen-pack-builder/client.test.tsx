@@ -28,7 +28,7 @@ const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
   return ScreenPackBuilderClient.update({
     ctx,
     model,
-    modelCore: BuilderCore.init({ ctx }),
+    modelCore: BuilderCore.initCore({ ctx }),
     msg: {
       t: 'got-msg-core',
       c: {
@@ -43,7 +43,7 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
   return ScreenPackBuilderClient.update({
     ctx,
     model,
-    modelCore: BuilderCore.init({ ctx }),
+    modelCore: BuilderCore.initCore({ ctx }),
     msg: {
       t: 'got-msg-core',
       c: {

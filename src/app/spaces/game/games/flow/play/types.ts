@@ -1,6 +1,5 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
 import type { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
@@ -10,11 +9,12 @@ import { GameMainMenu } from '../../@/ui/game-main-menu'
 import { FlowClientCmd } from '../@/client/cmd'
 import type { FlowClientCtx } from '../@/client/ctx'
 import { FlowClientEvtIn } from '../@/client/evt'
+import { FlowCoreCtx } from '../@/core/ctx'
 import { FlowCoreEvent } from '../@/core/event'
-import { FlowServerCtx } from '../@/server/ctx'
 import { Pack } from '../@/pack/pack'
 import type { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { PuzzleResult } from '../@/puzzle/puzzle-result'
+import { FlowServerCtx } from '../@/server/ctx'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
 
 //
@@ -139,7 +139,7 @@ export type ServerModule = GameServerModule<{
 }>
 
 export type CoreModule = GameCoreModule<{
-  Ctx: SpaceCtx
+  Ctx: FlowCoreCtx
   ModelCore: ModelCore
   MsgCore: MsgCore
   EventCore: FlowCoreEvent

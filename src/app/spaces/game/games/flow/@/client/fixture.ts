@@ -4,10 +4,11 @@ import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
 import { FlowClient } from '../../client'
 import { FlowCore } from '../../core'
 import { ModelCore, MsgClient, MsgCore, MsgToClient } from '../../types'
-import type { FlowClientCtx } from './ctx'
 import { PackListTypes } from '../pack/pack-list'
 import { PackPuzzlesGridTypes } from '../pack/pack-puzzles-grid'
 import { PuzzleListTypes } from '../puzzle/puzzle-list'
+import { Solutions } from '../solutions/solutions'
+import type { FlowClientCtx } from './ctx'
 
 export const FixtureFlowClient = async () => {
   const f = await FixtureSpacesClient()
@@ -15,7 +16,7 @@ export const FixtureFlowClient = async () => {
     ...f.ctx,
     packs: {},
     puzzles: {},
-    solutions: {},
+    solutions: Solutions.init,
     puzzleList: PuzzleListTypes.initClient,
     packList: PackListTypes.initClient,
     packPuzzleGrid: PackPuzzlesGridTypes.initClient,

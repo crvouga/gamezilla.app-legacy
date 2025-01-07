@@ -1,8 +1,10 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import { SpaceCoreFixture } from '~/app/spaces/@/fixture/core'
+import { FlowCoreCtx } from '../../../@/core/ctx'
 import { PlayCore } from '../../core'
 import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../../types'
+import { Solutions } from '../../../@/solutions/solutions'
 
 export type FixtureUpdateInput = {
   msg?: MsgClient
@@ -13,6 +15,11 @@ export type FixtureUpdateInput = {
 export const CoreFixture = async () => {
   const f = await SpaceCoreFixture()
 
+  const ctx: FlowCoreCtx = {
+    ...f.ctx,
+    solutions: Solutions.init,
+  }
+
   const updates = (modelCore: ModelCore, msgs: MsgCore[]): NonEmpty<ModelCore> => {
     const [msgCore, ...rest] = msgs
 
@@ -21,7 +28,7 @@ export const CoreFixture = async () => {
     }
 
     const updated = PlayCore.updateCore({
-      ctx: f.ctx,
+      ctx,
       modelCore,
       msgCore,
     })
@@ -34,12 +41,13 @@ export const CoreFixture = async () => {
   }
 
   const init = PlayCore.initCore({
-    ctx: f.ctx,
+    ctx,
   })
 
   return {
+    ...f,
     init,
-    f,
+    ctx,
     updates,
     update,
   }

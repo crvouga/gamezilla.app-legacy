@@ -15,7 +15,7 @@ const SavePack: Pick<ServerModule, 'update'> = {
           return {}
         }
 
-        const saved = await input.ctx.flowPackDb.put(input.modelCore.screenPackBuilder.pack)
+        const saved = await input.ctx.packDb.put(input.modelCore.screenPackBuilder.pack)
 
         return {
           msgCore: [
@@ -83,7 +83,7 @@ const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
         if (!packNew) {
           return {}
         }
-        const put = await input.ctx.flowPackDb.put(packNew)
+        const put = await input.ctx.packDb.put(packNew)
         if (isErr(put)) {
           return {}
         }

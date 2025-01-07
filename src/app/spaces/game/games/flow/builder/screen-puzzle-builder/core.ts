@@ -1,7 +1,7 @@
-import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
-import { Variant } from '../../@/variant'
+import { FlowCoreCtx } from '../../@/core/ctx'
 import { Edit } from '../../@/edit'
 import { Play } from '../../@/play'
+import { Variant } from '../../@/variant'
 import * as BuilderTypes from '../types'
 import { DeleteForeverCore } from './delete-forever/core'
 import { EditPuzzleNameCore } from './edit-puzzle-name/core'
@@ -39,7 +39,7 @@ const updateCoreMain = ({
   msgCore,
   ctx,
 }: {
-  ctx: SpaceCtx
+  ctx: FlowCoreCtx
   msgCore: BuilderTypes.MsgCore
   modelCore: BuilderTypes.ModelCore
 }): BuilderTypes.ModelCore => {
@@ -57,10 +57,8 @@ const updateCoreMain = ({
         model: modelCore.screenPuzzleBuilder.play,
         msg: msgCore.c,
         ctx: Play.initCtx({
-          flowPuzzle: {
-            ...modelCore.screenPuzzleBuilder.puzzle,
-            flow: flow,
-          },
+          flow,
+          solutions: ctx.solutions,
         }),
       })
 
@@ -119,12 +117,10 @@ const updateCoreMain = ({
       }
       const initial = Play.init({
         ctx: Play.initCtx({
-          flowPuzzle: {
-            ...modelCore.screenPuzzleBuilder.puzzle,
-            flow: Edit.toFlowMemoized({
-              model: modelCore.screenPuzzleBuilder.edit,
-            }),
-          },
+          flow: Edit.toFlowMemoized({
+            model: modelCore.screenPuzzleBuilder.edit,
+          }),
+          solutions: ctx.solutions,
         }),
       })
       return {

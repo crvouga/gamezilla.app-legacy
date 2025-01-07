@@ -43,7 +43,11 @@ export const msgCoreToUserActivity = (
 
 const recordUserActivity: ServerModule['update'] = async (input) => {
   if (input.msgCore && input.modelCore.screen.t === 'screen-play-puzzle') {
-    const updated = ScreenPlayPuzzleCore.updateScreen(input.modelCore.screen, input.msgCore)
+    const updated = ScreenPlayPuzzleCore.updateScreen({
+      modelCore: input.modelCore.screen,
+      msgCore: input.msgCore,
+      ctx: input.ctx,
+    })
 
     for (const event of updated.events ?? []) {
       switch (event.t) {

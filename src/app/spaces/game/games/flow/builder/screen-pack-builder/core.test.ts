@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceGameCoreFixture } from '~/app/spaces/game/games/@/testing/sync'
+import { FlowCoreCtx } from '../../@/core/ctx'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import { Puzzle } from '../../@/puzzle/puzzle'
+import { Solutions } from '../../@/solutions/solutions'
 import { BuilderCore } from '../core'
 import type { ModelCore } from '../types'
 import { ScreenPackBuilderCore } from './core'
@@ -11,6 +13,10 @@ import type { MsgCore } from './types'
 
 const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzzle }) => {
   const f = await SpaceGameCoreFixture()
+  const ctx: FlowCoreCtx = {
+    ...f.ctx,
+    solutions: Solutions.init,
+  }
   const createdBy = UserId.generate()
 
   const puzzlesPromises = [Puzzle.random({ createdBy }), Puzzle.random({ createdBy }), Puzzle.random({ createdBy })]
@@ -35,24 +41,14 @@ const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzz
     createdBy,
     puzzleIds: puzzles.map((puzzle) => puzzle.id),
   })
-  const init = BuilderCore.init({ ctx: f.ctx })
+  const init = BuilderCore.initCore({ ctx })
   const modelCore: ModelCore = {
     ...init,
     screenPackBuilder: ScreenPackBuilderCore.init({ pack }),
   }
 
   const updateModelCore = (msgs: MsgCore[]): ModelCore => {
-    return msgs.reduce(
-      (modelCore, msgCore) =>
-        ScreenPackBuilderCore.update({
-          ctx: f.ctx,
-          modelCore,
-          msgCore,
-        }),
-      {
-        ...modelCore,
-      },
-    )
+    return msgs.reduce((modelCore, msgCore) => ScreenPackBuilderCore.update({ ctx, modelCore, msgCore }), modelCore)
   }
 
   return {

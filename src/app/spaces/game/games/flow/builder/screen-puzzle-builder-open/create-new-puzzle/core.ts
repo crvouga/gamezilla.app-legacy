@@ -3,7 +3,7 @@ import type { UpdateCore } from '../../types'
 import { Edit } from '../../../@/edit'
 import { Play } from '../../../@/play'
 
-const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+const updateCore: UpdateCore = ({ modelCore, msgCore, ctx }) => {
   switch (msgCore.t) {
     case 'create-new-puzzle.user-created-puzzle': {
       if (isErr(msgCore.created)) {
@@ -26,7 +26,8 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
           }),
           play: Play.init({
             ctx: Play.initCtx({
-              flowPuzzle: flowPuzzleNew,
+              flow: flowPuzzleNew.flow,
+              solutions: ctx.solutions,
             }),
           }),
           puzzle: flowPuzzleNew,

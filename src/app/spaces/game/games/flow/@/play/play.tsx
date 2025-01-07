@@ -6,15 +6,15 @@ import { APP_SOUND, AppClientCmd, playSound, showToast } from '~/app/@/client/cm
 import { IconCheckmark, Portal, Transition } from '~/app/@/ui'
 import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
-import type { Puzzle } from '../puzzle/puzzle'
-import { Flow } from '../flow'
 import { AlgoDrawPipes } from '../algo/algo-draw-pipes'
 import { AlgoSolve } from '../algo/algo-solve'
+import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
 import { Terminal } from '../flow/terminal'
+import { Solutions } from '../solutions/solutions'
 import { VariantBoard, type Variant } from '../variant'
-import { FlowHint } from './hint'
+import { UseHint } from './use-hint'
 
 //
 //
@@ -24,15 +24,15 @@ import { FlowHint } from './hint'
 //
 //
 
-export type Ctx = FlowHint.Ctx & {
-  flowPuzzle: Puzzle
+export type Ctx = UseHint.Ctx & {
+  flow: Variant.Model
+  solutions: Solutions
 }
 
-export const initCtx = <TCtx,>(input: { flowPuzzle: Puzzle } & TCtx): Ctx & TCtx => {
+export const initCtx = <TCtx,>(input: { flow: Variant.Model; solutions: Solutions } & TCtx): Ctx & TCtx => {
   return {
+    ...UseHint.initCtx(input),
     ...input,
-    ...FlowHint.initCtx({ flowPuzzle: input.flowPuzzle }),
-    flowPuzzle: input.flowPuzzle,
   }
 }
 
@@ -50,7 +50,7 @@ const Status = p.or(Idle, Dragging)
 type Status = p.Infer<typeof Status>
 
 export const Model = p.and(
-  FlowHint.Model,
+  UseHint.Model,
   p.obj({
     pipesBySourceId: p.dict(NodeId, Flow.Pipe),
     terminalsByGroupId: p.partialDict(GroupId, Terminal),
@@ -62,12 +62,12 @@ export type Model = p.Infer<typeof Model>
 
 export const init = (input: { ctx: Ctx }): Model => {
   return {
-    ...FlowHint.init(input),
+    ...UseHint.init(input),
     pipesBySourceId: {
-      ...input.ctx.flowPuzzle.flow.pipesBySourceId,
+      ...input.ctx.flow.pipesBySourceId,
     },
     terminalsByGroupId: {
-      ...input.ctx.flowPuzzle.flow.terminalsByGroupId,
+      ...input.ctx.flow.terminalsByGroupId,
     },
     status: { t: 'idle' },
     showCheckmarkAnimation: false,
@@ -96,16 +96,16 @@ export const toStatus = (input: { flow: Variant.Model; model: Model }) => {
   return 'solving'
 }
 
-export const random = (input: { flowPuzzle: Puzzle }): Model => {
-  const initial = init({ ctx: initCtx({ ...input }) })
+export const random = (input: { flow: Variant.Model; solutions: Solutions }): Model => {
+  const initial = init({ ctx: initCtx(input) })
 
-  const terminal = Flow.randomTerminal(input.flowPuzzle.flow)
+  const terminal = Flow.randomTerminal(input.flow)
 
   if (!terminal) {
     return initial
   }
 
-  const edge = Flow.randomOutEdge(input.flowPuzzle.flow, terminal.startId)
+  const edge = Flow.randomOutEdge(input.flow, terminal.startId)
 
   if (!edge) {
     return initial
@@ -222,7 +222,7 @@ const first = <T,>(iterable: Iterable<T>): T | null => {
 //
 
 export const Msg = p.or(
-  FlowHint.Msg,
+  UseHint.Msg,
   p.obj({
     t: p.l('user-clicked-reset'),
   }),
@@ -246,7 +246,7 @@ export const Msg = p.or(
 export type Msg = p.Infer<typeof Msg>
 
 export type Event =
-  | FlowHint.Event
+  | UseHint.Event
   | {
       t: 'started-dragging'
     }
@@ -317,7 +317,7 @@ export const update = ({
     ctx,
   })
 
-  const updatedHint = FlowHint.update({
+  const updatedHint = UseHint.update({
     model: updatedMain.model,
     msg,
     ctx,
@@ -367,7 +367,7 @@ const updateReset: typeof update = ({ model, msg }) => {
   switch (msg.t) {
     case 'user-clicked-reset': {
       return {
-        model: pipe(model, resetPipes, FlowHint.resetUsedHints),
+        model: pipe(model, resetPipes, UseHint.resetUsedHints),
         events: [
           {
             t: 'reset',
@@ -409,7 +409,7 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
     case 'user-pressed-down-node': {
       const current = toFlow({
         model,
-        flow: ctx.flowPuzzle.flow,
+        flow: ctx.flow,
       })
 
       const groupId = Flow.toGroupId(current, msg.nodeId)
@@ -469,7 +469,7 @@ const updateDragging = ({
 
       const current = toFlow({
         model,
-        flow: ctx.flowPuzzle.flow,
+        flow: ctx.flow,
       })
 
       const extended = AlgoDrawPipes.drawPipes(current, modelStatus.activeGroupId, nodeId)
@@ -489,7 +489,7 @@ const updateDragging = ({
     case 'user-pressed-up-node': {
       const current = toFlow({
         model,
-        flow: ctx.flowPuzzle.flow,
+        flow: ctx.flow,
       })
       const modelNew: Model = {
         ...model,
@@ -540,7 +540,7 @@ const updateDragging = ({
 
     case 'user-dragging-left': {
       const current = toFlow({
-        ...ctx.flowPuzzle,
+        flow: ctx.flow,
         model,
       })
       const isSolved = Flow.isSolved(current)
@@ -584,7 +584,7 @@ const updateDragging = ({
 }
 
 export const toFlow = ({ model, flow }: { flow: Variant.Model; model: Model }): Variant.Model => {
-  const derived = FlowHint.toFlow({
+  const derived = UseHint.toFlow({
     flow,
     model,
   })
@@ -631,7 +631,7 @@ export const View = (input: {
             : null
         }
         isGroupActive={(groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId}
-        usedHints={FlowHint.toUsedHints(input.model)}
+        usedHints={UseHint.toUsedHints(input.model)}
       />
 
       <Portal.Entrance portalId='app-root'>
@@ -641,10 +641,10 @@ export const View = (input: {
   )
 }
 
-export const viewHintAction = FlowHint.viewUseHintAction
+export const viewHintAction = UseHint.viewUseHintAction
 
 export const viewResetAction = (input: {
-  flowPuzzle: Puzzle
+  flow: Variant.Model
   model: Model
   dispatch: (m: Msg) => void
   ctx: {
@@ -653,7 +653,7 @@ export const viewResetAction = (input: {
 }): BottomButtonInput => {
   const flow = toFlow({
     model: input.model,
-    flow: input.flowPuzzle.flow,
+    flow: input.flow,
   })
   const disabled = Flow.isPipesEmpty(flow)
   return PrebuiltBottomButtons.reset({

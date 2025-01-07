@@ -51,7 +51,10 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
             }
 
             const updated = Play.update({
-              ctx: Play.initCtx({ flowPuzzle }),
+              ctx: Play.initCtx({
+                flow: flowPuzzle.flow,
+                solutions: input.ctx.solutions,
+              }),
               model: flowPlay,
               msg: input.msgCore.c,
             })

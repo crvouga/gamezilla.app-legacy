@@ -7,6 +7,7 @@ import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
 import { ScreenPuzzlePlayCoreChildFixture } from './@/fixture/core'
 import { ScreenPlayPuzzleCore } from './core'
 import type { MsgCore } from './types'
+import { Solutions } from '../../@/solutions/solutions'
 
 const Fixture = async (input?: { flow?: Variant.Model }) => {
   const f = await ScreenPuzzlePlayCoreChildFixture(input)
@@ -102,11 +103,14 @@ describe(import.meta.file, () => {
 
     expect(before.flowPlay).not.toEqual(after.flowPlay)
     expect(after.flowPlay).toEqual(
-      Play.init({
-        ctx: Play.initCtx({
-          flowPuzzle: f.nextPuzzle.c,
-        }),
-      }),
+      f.nextPuzzle.t === 'got'
+        ? Play.init({
+            ctx: Play.initCtx({
+              flow: f.nextPuzzle.c.flow,
+              solutions: await Solutions.find(f.nextPuzzle.c.flow),
+            }),
+          })
+        : null,
     )
   })
 
@@ -116,7 +120,11 @@ describe(import.meta.file, () => {
     const after = f.update(before, f.solvePuzzleMsgs)
     const afterFlow = Play.toFlow({
       flow: f.puzzle.flow,
-      model: after.flowPlay ?? Play.init({ ctx: Play.initCtx({ flowPuzzle: f.puzzle }) }),
+      model:
+        after.flowPlay ??
+        Play.init({
+          ctx: Play.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find(f.puzzle.flow) }),
+        }),
     })
 
     expect(ScreenPlayPuzzleCore.toStatus(before)).toBe('solving')
@@ -234,7 +242,8 @@ describe(import.meta.file, () => {
     expect(before.flowPlay).toEqual(
       Play.init({
         ctx: Play.initCtx({
-          flowPuzzle: f.puzzle,
+          flow: f.puzzle.flow,
+          solutions: await Solutions.find(f.puzzle.flow),
         }),
       }),
     )

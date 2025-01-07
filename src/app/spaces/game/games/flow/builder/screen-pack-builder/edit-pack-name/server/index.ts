@@ -18,7 +18,7 @@ const update: ServerModule['update'] = async (input) => {
         msgCore: input.msgCore,
       })
 
-      const put = await input.ctx.flowPackDb.put(modelCoreNext.pack)
+      const put = await input.ctx.packDb.put(modelCoreNext.pack)
 
       return {
         msgCore: [

@@ -1,25 +1,23 @@
 import { Eff } from '~/@/eff'
-import { eq } from '~/@/equals/equals'
 import { p } from '~/@/parser'
-import { Result } from '~/@/result'
 import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconLightbulb } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
+import { FlowHash } from '../../flow/hash'
 import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
-import type { Puzzle } from '../../puzzle/puzzle'
+import { Solutions } from '../../solutions/solutions'
 import type { Variant } from '../../variant'
 
 export type Ctx = {
-  flowPuzzle: Puzzle
+  flow: Variant.Model
+  solutions: Solutions
 }
 
-export const initCtx = (input: { flowPuzzle: Puzzle }): Ctx => {
-  return {
-    flowPuzzle: input.flowPuzzle,
-  }
+export const initCtx = (input: Ctx): Ctx => {
+  return input
 }
 
 export const Model = p.obj({
@@ -33,10 +31,6 @@ export const Msg = p.or(
   p.obj({
     t: p.l('user-clicked-use-hint'),
   }),
-  p.obj({
-    t: p.l('found-solutions'),
-    found: Result.parser(p.str, p.arr(Flow.Model)),
-  }),
 )
 export type Msg = p.Infer<typeof Msg>
 
@@ -44,7 +38,7 @@ export const init = (input: { ctx: Ctx }): Model => {
   return {
     pipesBySourceId: {},
     usedHints: {},
-    terminalsByGroupId: input.ctx.flowPuzzle.flow.terminalsByGroupId,
+    terminalsByGroupId: input.ctx.flow.terminalsByGroupId,
   }
 }
 
@@ -70,14 +64,9 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
   eff?: Eff<Msg>
 } => {
   switch (input.msg.t) {
-    case 'found-solutions': {
-      return {
-        model: input.model,
-      }
-    }
     case 'user-clicked-use-hint': {
       const flow = toFlow({
-        flow: input.ctx.flowPuzzle.flow,
+        flow: input.ctx.flow,
         model: input.model,
       })
 
@@ -89,13 +78,9 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
         }
       }
 
-      const terminalPuzzle = Flow.toTerminalByGroupId(input.ctx.flowPuzzle.flow, nextHintGroupId)
-      const terminalFlowModel = Flow.toTerminalByGroupId(flow, nextHintGroupId)
+      const hash = FlowHash.init(flow)
 
-      const solution =
-        input.ctx.flowPuzzle.solutions.length > 0 && eq(terminalPuzzle, terminalFlowModel)
-          ? input.ctx.flowPuzzle.solutions[0]
-          : null
+      const solution = input.ctx.solutions[hash]?.[0]
 
       if (!solution) {
         return {

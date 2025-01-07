@@ -9,7 +9,7 @@ const update: ServerModule['update'] = async (input) => {
 const updateListPuzzles: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-puzzles': {
-      const listed = await input.ctx.flowPuzzleDb.list(input.msgClient.input)
+      const listed = await input.ctx.puzzleDb.list(input.msgClient.input)
 
       return {
         msgCmd: [

@@ -3,7 +3,7 @@ import { Play } from '../../@/play'
 import type { UpdateCore } from '../types'
 import { CreateNewPuzzleCore } from './create-new-puzzle/core'
 
-const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
+const updateCoreMain: UpdateCore = ({ modelCore, msgCore, ctx }) => {
   switch (msgCore.t) {
     case 'screen-puzzle-builder-open.clicked-puzzle-list-item': {
       return {
@@ -20,7 +20,8 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore }) => {
           }),
           play: Play.init({
             ctx: Play.initCtx({
-              flowPuzzle: msgCore.puzzle,
+              flow: msgCore.puzzle.flow,
+              solutions: ctx.solutions,
             }),
           }),
           mode: {

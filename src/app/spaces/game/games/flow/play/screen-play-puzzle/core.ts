@@ -1,5 +1,6 @@
-import { Play } from '../../@/play'
+import { FlowCoreCtx } from '../../@/core/ctx'
 import { Pack } from '../../@/pack/pack'
+import { Play } from '../../@/play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { CoreModule, MsgCore } from '../types'
 import * as CopyPuzzleCore from './copy-puzzle/core'
@@ -9,7 +10,7 @@ import type { ModelCore, MsgCoreEvt } from './types'
 const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
   switch (input.modelCore.screen.t) {
     case 'screen-play-puzzle': {
-      const screenPuzzle = updateScreen(input.modelCore.screen, input.msgCore)
+      const screenPuzzle = updateScreen({ modelCore: input.modelCore.screen, msgCore: input.msgCore, ctx: input.ctx })
       return {
         ...input.modelCore,
         screen: screenPuzzle,
@@ -21,50 +22,57 @@ const updatePuzzleScreen: CoreModule['updateCore'] = (input) => {
   }
 }
 
-const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { events?: MsgCoreEvt[] } => {
-  switch (msgCore.t) {
+const updateScreen = (input: {
+  modelCore: ModelCore
+  msgCore: MsgCore
+  ctx: FlowCoreCtx
+}): ModelCore & { events?: MsgCoreEvt[] } => {
+  switch (input.msgCore.t) {
     case 'got-flow-play-msg': {
-      if (modelCore.puzzleResult.t === 'not-found') {
-        return modelCore
+      if (input.modelCore.puzzleResult.t === 'not-found') {
+        return input.modelCore
       }
 
       const flowPlay =
-        modelCore.flowPlay ??
+        input.modelCore.flowPlay ??
         Play.init({
           ctx: Play.initCtx({
-            flowPuzzle: modelCore.puzzleResult.c,
+            flow: input.modelCore.puzzleResult.c.flow,
+            solutions: input.ctx.solutions,
           }),
         })
 
       const flowPlayNew = Play.update({
-        msg: msgCore.c,
+        msg: input.msgCore.c,
         model: flowPlay,
         ctx: Play.initCtx({
-          flowPuzzle: modelCore.puzzleResult.c,
+          flow: input.modelCore.puzzleResult.c.flow,
+          solutions: input.ctx.solutions,
         }),
       })
 
       const didSolve = flowPlayNew.events?.some((e) => e.t === 'solved')
+      const userId = input.msgCore.userId
 
       return {
-        ...modelCore,
+        ...input.modelCore,
         flowPlay: flowPlayNew.model,
-        opened: didSolve ? 'puzzle-complete' : modelCore.opened,
+        opened: didSolve ? 'puzzle-complete' : input.modelCore.opened,
         events: flowPlayNew.events?.flatMap((event) => {
           switch (event.t) {
             case 'used-hint': {
               return {
                 t: 'user-used-hint',
                 groupId: event.groupId,
-                userId: msgCore.userId,
+                userId,
               }
             }
             case 'solved': {
               return {
                 t: 'user-completed-puzzle',
-                packId: modelCore.flowPack.id,
-                puzzleIndex: modelCore.puzzleIndex,
-                userId: msgCore.userId,
+                packId: input.modelCore.flowPack.id,
+                puzzleIndex: input.modelCore.puzzleIndex,
+                userId,
               }
             }
             default: {
@@ -75,77 +83,80 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
       }
     }
     case 'user-closed-puzzle-complete-dialog': {
-      if (toStatus(modelCore) === 'solved' && modelCore.opened === 'puzzle-complete') {
+      if (toStatus(input.modelCore) === 'solved' && input.modelCore.opened === 'puzzle-complete') {
         return {
-          ...modelCore,
+          ...input.modelCore,
           opened: null,
         }
       }
 
-      return modelCore
+      return input.modelCore
     }
 
     case 'user-clicked-next-puzzle': {
-      switch (msgCore.nextPuzzle.t) {
+      switch (input.msgCore.nextPuzzle.t) {
         case 'not-found': {
           return {
-            ...modelCore,
-            puzzleResult: msgCore.nextPuzzle,
-            puzzleIndex: msgCore.nextPuzzleIndex,
+            ...input.modelCore,
+            puzzleResult: input.msgCore.nextPuzzle,
+            puzzleIndex: input.msgCore.nextPuzzleIndex,
           }
         }
 
         case 'got': {
           return {
-            ...modelCore,
+            ...input.modelCore,
             flowPlay: Play.init({
               ctx: Play.initCtx({
-                flowPuzzle: msgCore.nextPuzzle.c,
+                flow: input.msgCore.nextPuzzle.c.flow,
+                solutions: input.ctx.solutions,
               }),
             }),
-            opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
-            puzzleResult: msgCore.nextPuzzle,
-            puzzleIndex: msgCore.nextPuzzleIndex,
+            opened: input.modelCore.opened === 'puzzle-complete' ? null : input.modelCore.opened,
+            puzzleResult: input.msgCore.nextPuzzle,
+            puzzleIndex: input.msgCore.nextPuzzleIndex,
           }
         }
       }
     }
 
     case 'user-clicked-prev-puzzle': {
-      switch (msgCore.prevPuzzle.t) {
+      switch (input.msgCore.prevPuzzle.t) {
         case 'got': {
           return {
-            ...modelCore,
+            ...input.modelCore,
             flowPlay: Play.init({
               ctx: Play.initCtx({
-                flowPuzzle: msgCore.prevPuzzle.c,
+                flow: input.msgCore.prevPuzzle.c.flow,
+                solutions: input.ctx.solutions,
               }),
             }),
-            opened: modelCore.opened === 'puzzle-complete' ? null : modelCore.opened,
-            puzzleResult: msgCore.prevPuzzle,
-            puzzleIndex: msgCore.prevPuzzleIndex,
+            opened: input.modelCore.opened === 'puzzle-complete' ? null : input.modelCore.opened,
+            puzzleResult: input.msgCore.prevPuzzle,
+            puzzleIndex: input.msgCore.prevPuzzleIndex,
           }
         }
 
         case 'not-found': {
           return {
-            ...modelCore,
-            puzzleResult: msgCore.prevPuzzle,
-            puzzleIndex: msgCore.prevPuzzleIndex,
+            ...input.modelCore,
+            puzzleResult: input.msgCore.prevPuzzle,
+            puzzleIndex: input.msgCore.prevPuzzleIndex,
           }
         }
       }
     }
 
     case 'user-clicked-reset-puzzle': {
-      if (modelCore.puzzleResult.t === 'not-found') {
-        return modelCore
+      if (input.modelCore.puzzleResult.t === 'not-found') {
+        return input.modelCore
       }
       return {
-        ...modelCore,
+        ...input.modelCore,
         flowPlay: Play.init({
           ctx: Play.initCtx({
-            flowPuzzle: modelCore.puzzleResult.c,
+            flow: input.modelCore.puzzleResult.c.flow,
+            solutions: input.ctx.solutions,
           }),
         }),
       }
@@ -153,13 +164,13 @@ const updateScreen = (modelCore: ModelCore, msgCore: MsgCore): ModelCore & { eve
 
     case 'user-toggled-action-buttons-drawer': {
       return {
-        ...modelCore,
-        opened: modelCore.opened === 'action-drawer' ? null : 'action-drawer',
+        ...input.modelCore,
+        opened: input.modelCore.opened === 'action-drawer' ? null : 'action-drawer',
       }
     }
 
     default: {
-      return modelCore
+      return input.modelCore
     }
   }
 }
@@ -189,14 +200,20 @@ const updateCoreMain: CoreModule['updateCore'] = ({ modelCore, msgCore }) => {
   }
 }
 
-const initCore = (input: { flowPack: Pack; flowPuzzle: PuzzleResult; puzzleIndex: number }): ModelCore => {
+const initCore = (input: {
+  flowPack: Pack
+  flowPuzzle: PuzzleResult
+  puzzleIndex: number
+  ctx: FlowCoreCtx
+}): ModelCore => {
   return {
     ...input,
     flowPlay:
       input.flowPuzzle.t === 'got'
         ? Play.init({
             ctx: Play.initCtx({
-              flowPuzzle: input.flowPuzzle.c,
+              flow: input.flowPuzzle.c.flow,
+              solutions: input.ctx.solutions,
             }),
           })
         : null,

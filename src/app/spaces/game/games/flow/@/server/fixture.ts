@@ -1,13 +1,14 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { Msg } from '~/@/msg/msg'
 import { withEventMeta } from '~/@/event-sourced/event'
+import { Msg } from '~/@/msg/msg'
 import { FixtureSpaceServer } from '~/app/spaces/@/fixture/server'
 import { FlowCore } from '../../core'
 import { FlowServer } from '../../server'
 import { ModelCore } from '../../types'
-import type { FlowServerCtx } from './ctx'
 import { PackDb } from '../pack/pack-db'
 import { PuzzleDb } from '../puzzle/puzzle-db'
+import { Solutions } from '../solutions/solutions'
+import type { FlowServerCtx } from './ctx'
 
 type Input = Parameters<typeof FlowServer.update>[0]
 
@@ -19,9 +20,9 @@ export const FixtureFlowServer = async () => {
   const f = await FixtureSpaceServer()
   const ctx: FlowServerCtx = {
     ...f.ctx,
-
-    flowPackDb: PackDb({ t: 'hash-map' }),
-    flowPuzzleDb: PuzzleDb({ t: 'hash-map' }),
+    solutions: Solutions.init,
+    packDb: PackDb({ t: 'hash-map' }),
+    puzzleDb: PuzzleDb({ t: 'hash-map' }),
   }
 
   const updates = async (outputs: NonEmpty<Output>, inputs: Input[]): Promise<NonEmpty<Output>> => {

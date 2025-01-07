@@ -102,61 +102,57 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
 }
 
 const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
-  const { model, modelCore, msgCore } = input
-
-  switch (msgCore?.t) {
+  switch (input.msgCore?.t) {
     case 'screen-puzzle-builder.got-flow-ui-play-msg': {
-      if (modelCore.screenPuzzleBuilder?.mode.t !== 'play') {
+      if (input.modelCore.screenPuzzleBuilder?.mode.t !== 'play') {
         return {
-          model,
+          model: input.model,
         }
       }
-      const flow = ScreenPuzzleBuilderCore.toFlow(modelCore.screenPuzzleBuilder)
+      const flow = ScreenPuzzleBuilderCore.toFlow(input.modelCore.screenPuzzleBuilder)
       const updated = Play.update({
-        msg: msgCore.c,
-        model: modelCore.screenPuzzleBuilder.play,
+        msg: input.msgCore.c,
+        model: input.modelCore.screenPuzzleBuilder.play,
         ctx: Play.initCtx({
-          flowPuzzle: {
-            ...modelCore.screenPuzzleBuilder.puzzle,
-            flow,
-          },
+          flow,
+          solutions: input.ctx.solutions,
         }),
       })
 
       return {
-        model,
+        model: input.model,
         msgCmd: Play.eventsToClientCmd(input.ctx, updated.events),
       }
     }
     case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
-      if (modelCore.screenPuzzleBuilder?.mode.t !== 'edit') {
+      if (input.modelCore.screenPuzzleBuilder?.mode.t !== 'edit') {
         return {
-          model,
+          model: input.model,
         }
       }
       const updated = Edit.update({
-        model: modelCore.screenPuzzleBuilder.edit,
-        msg: msgCore.c,
-        flow: modelCore.screenPuzzleBuilder.puzzle.flow,
+        model: input.modelCore.screenPuzzleBuilder.edit,
+        msg: input.msgCore.c,
+        flow: input.modelCore.screenPuzzleBuilder.puzzle.flow,
       })
 
       if (!updated.msgCmd) {
         return {
-          model,
+          model: input.model,
         }
       }
 
       switch (updated.msgCmd.t) {
         case 'play-sound': {
           return {
-            model,
+            model: input.model,
             msgCmd: [playSound(updated.msgCmd.sourceSrc)],
           }
         }
 
         default: {
           return {
-            model,
+            model: input.model,
           }
         }
       }
@@ -164,7 +160,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
 
     default: {
       return {
-        model,
+        model: input.model,
       }
     }
   }
@@ -283,7 +279,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
                 onToggle={() => {}}
                 buttons={[
                   Play.viewHintAction({
-                    ctx: Play.initCtx({ ...input.ctx, flowPuzzle: { ...puzzleBuilder.puzzle, flow } }),
+                    ctx: Play.initCtx({ ...input.ctx, flow }),
                     dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
                     model: puzzleBuilder.play,
                     disabled: status === 'solved',
@@ -291,7 +287,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
                   Play.viewResetAction({
                     ctx: input.ctx,
                     dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
-                    flowPuzzle: { ...puzzleBuilder.puzzle, flow },
+                    flow,
                     model: puzzleBuilder.play,
                   }),
                 ]}

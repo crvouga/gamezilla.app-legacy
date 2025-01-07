@@ -1,14 +1,16 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { pipe } from '~/@/function/pipe'
 import { UserId } from '~/app/@/data/user-id'
-import type { Variant } from '../../../../@/variant'
-import { Play } from '../../../../@/play'
 import { Pack } from '../../../../@/pack/pack'
+import { Play } from '../../../../@/play'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
+import type { Variant } from '../../../../@/variant'
 import { CoreFixture } from '../../../@/core/fixture'
 import { ScreenPlayPuzzleCore } from '../../core'
 import type { ModelCore, MsgCore } from '../../types'
+import { Solutions } from '../../../../@/solutions/solutions'
+import { FlowCoreCtx } from '../../../../@/core/ctx'
 
 export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: Variant.Model }) => {
   const f = await CoreFixture()
@@ -24,6 +26,16 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: Variant.Model
     puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
   })
 
+  let solutions = Solutions.init
+  for (const p of [prevPuzzle, puzzle, nextPuzzle]) {
+    solutions = Solutions.merge(solutions, await Solutions.find(p.flow))
+  }
+
+  const ctx: FlowCoreCtx = {
+    ...f.ctx,
+    solutions,
+  }
+
   const init = f.update(f.init, [
     {
       t: 'user-clicked-open-pack-list-item',
@@ -38,17 +50,12 @@ export const ScreenPuzzlePlayCoreFixture = async (input?: { flow?: Variant.Model
 
   const userId = UserId.generate()
   const solvePuzzleMsgs = pipe(Play.toSolutionMsgs(puzzle), (msgs) =>
-    msgs.map(
-      (c): MsgCore => ({
-        userId,
-        t: 'got-flow-play-msg',
-        c,
-      }),
-    ),
+    msgs.map((c): MsgCore => ({ userId, t: 'got-flow-play-msg', c })),
   )
 
   return {
     ...f,
+    ctx,
     solvePuzzleMsgs,
     puzzle,
     puzzleIndex,
@@ -71,7 +78,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: Variant.
     const models: NonEmpty<ModelCore> = [init]
     for (const msg of msgs) {
       const last = NonEmpty.last(models)
-      const latest = ScreenPlayPuzzleCore.updateScreen(last, msg)
+      const latest = ScreenPlayPuzzleCore.updateScreen({ ctx: f.ctx, modelCore: last, msgCore: msg })
       models.push(latest)
     }
     return models
@@ -83,6 +90,7 @@ export const ScreenPuzzlePlayCoreChildFixture = async (input?: { flow?: Variant.
   }
 
   const init: ModelCore = ScreenPlayPuzzleCore.initCore({
+    ctx: f.ctx,
     flowPack: f.pack,
     flowPuzzle: { t: 'got', c: f.puzzle },
     puzzleIndex: f.puzzleIndex,

@@ -1,42 +1,33 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Play } from '.'
-import { Puzzle } from '../puzzle/puzzle'
 import { Flow } from '../flow'
+import { Solutions } from '../solutions/solutions'
 import type { Variant } from '../variant'
 import { VariantGrid } from '../variant/grid'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 import { toStatus } from './play'
 
-const Fixture = async ({ ctxFlow }: { ctxFlow: Variant.Model }) => {
-  const ctxPuzzle = await Puzzle.random({
-    flow: ctxFlow,
-  })
+const Fixture = async (input: { ctxFlow: Variant.Model }) => {
   const ctx: Play.Ctx = Play.initCtx({
-    flowPuzzle: ctxPuzzle,
+    solutions: await Solutions.find(input.ctxFlow),
+    flow: input.ctxFlow,
   })
 
   const init = Play.init({ ctx })
 
   const update = (init: Play.Model, msgs: Play.Msg[]) => {
     return msgs.reduce<ReturnType<typeof Play.update>>(
-      (output, msg) =>
-        Play.update({
-          ctx,
-          model: output.model,
-          msg,
-        }),
-      {
-        model: init,
-      },
+      (output, msg) => Play.update({ ctx, model: output.model, msg }),
+      { model: init },
     )
   }
 
   const solutionMsgs = Play.toSolutionMsgs({
-    flow: ctxFlow,
+    flow: input.ctxFlow,
   })
 
   return {
-    flow: ctxFlow,
+    flow: input.ctxFlow,
     init,
     update,
     solutionMsgs,

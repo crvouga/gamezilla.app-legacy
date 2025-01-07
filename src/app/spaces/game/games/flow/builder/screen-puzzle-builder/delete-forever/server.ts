@@ -16,7 +16,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         return {}
       }
 
-      const deleted = await input.ctx.flowPuzzleDb.zap({
+      const deleted = await input.ctx.puzzleDb.zap({
         id: puzzleBuilder.puzzle.id,
         deletedByUserId: input.msgClient.userId,
       })

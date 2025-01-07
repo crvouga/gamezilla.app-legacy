@@ -123,7 +123,7 @@ updates.push(({ modelCore, msgCore }) => {
   }
 })
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore, ctx }) => {
   switch (msgCore.t) {
     case 'screen-pack-builder.user-clicked-pack-item': {
       if (!modelCore.screenPackBuilder) {
@@ -149,7 +149,8 @@ updates.push(({ modelCore, msgCore }) => {
               msgCore.puzzleResult.t === 'got'
                 ? Play.init({
                     ctx: Play.initCtx({
-                      flowPuzzle: msgCore.puzzleResult.c,
+                      flow: msgCore.puzzleResult.c.flow,
+                      solutions: ctx.solutions,
                     }),
                   })
                 : null,
@@ -218,7 +219,7 @@ updates.push((input) => {
   }
 })
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore, ctx }) => {
   switch (msgCore.t) {
     case 'screen-pack-builder.got-flow-play-msg': {
       if (!modelCore.screenPackBuilder) {
@@ -239,7 +240,8 @@ updates.push(({ modelCore, msgCore }) => {
         screen.puzzleResult.t === 'got'
           ? Play.update({
               ctx: Play.initCtx({
-                flowPuzzle: screen.puzzleResult.c,
+                flow: screen.puzzleResult.c.flow,
+                solutions: ctx.solutions,
               }),
               model: screen.play,
               msg: msgCore.c,
@@ -266,7 +268,7 @@ updates.push(({ modelCore, msgCore }) => {
   }
 })
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore, ctx }) => {
   if (modelCore.screenPackBuilder?.screen.t !== 'screen-puzzle') {
     return modelCore
   }
@@ -298,7 +300,8 @@ updates.push(({ modelCore, msgCore }) => {
               msgCore.nextPuzzleResult.t === 'got'
                 ? Play.init({
                     ctx: Play.initCtx({
-                      flowPuzzle: msgCore.nextPuzzleResult.c,
+                      flow: msgCore.nextPuzzleResult.c.flow,
+                      solutions: ctx.solutions,
                     }),
                   })
                 : modelCore.screenPackBuilder.screen.play,
@@ -314,7 +317,7 @@ updates.push(({ modelCore, msgCore }) => {
   }
 })
 
-updates.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore, ctx }) => {
   if (modelCore.screenPackBuilder?.screen.t !== 'screen-puzzle') {
     return modelCore
   }
@@ -344,7 +347,8 @@ updates.push(({ modelCore, msgCore }) => {
               msgCore.previousPuzzleResult.t === 'got'
                 ? Play.init({
                     ctx: Play.initCtx({
-                      flowPuzzle: msgCore.previousPuzzleResult.c,
+                      flow: msgCore.previousPuzzleResult.c.flow,
+                      solutions: ctx.solutions,
                     }),
                   })
                 : modelCore.screenPackBuilder.screen.play,

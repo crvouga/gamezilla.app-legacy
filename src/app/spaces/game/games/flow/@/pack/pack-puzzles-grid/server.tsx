@@ -4,7 +4,7 @@ import type { ServerModule } from './types'
 const update: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-puzzles-by-id': {
-      const listed = await input.ctx.flowPuzzleDb.list({
+      const listed = await input.ctx.puzzleDb.list({
         pagination: {
           limit: input.msgClient.puzzleIds.length,
           offset: 0,

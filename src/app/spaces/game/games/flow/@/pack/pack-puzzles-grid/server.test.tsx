@@ -10,6 +10,7 @@ import { FlowServerCtx } from '../../server/ctx'
 import { Pack } from '../pack'
 import { PackDb } from '../pack-db'
 import { PackPuzzlesGridServer } from './server'
+import { Solutions } from '../../solutions/solutions'
 
 const initial = () => {
   return {}
@@ -32,12 +33,9 @@ const Fixture = async () => {
   const f = await SpaceGameFixtureServer()
   const ctx: FlowServerCtx = {
     ...f.ctx,
-    flowPackDb: PackDb({
-      t: 'hash-map',
-    }),
-    flowPuzzleDb: PuzzleDb({
-      t: 'hash-map',
-    }),
+    packDb: PackDb({ t: 'hash-map' }),
+    puzzleDb: PuzzleDb({ t: 'hash-map' }),
+    solutions: Solutions.init,
   }
   const client = randomAuthenticatedClient()
   const puzzle = await Puzzle.random()
@@ -47,8 +45,8 @@ const Fixture = async () => {
     puzzleIds: [puzzle.id],
   })
 
-  await ctx.flowPuzzleDb.put(puzzle)
-  await ctx.flowPackDb.put(somePack)
+  await ctx.puzzleDb.put(puzzle)
+  await ctx.packDb.put(somePack)
 
   return { ...f, client, ctx }
 }

@@ -8,8 +8,6 @@ import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-se
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { FlowClientCmd, FlowClientCmdLocal } from './@/client/cmd'
 import { FlowClientEvtIn } from './@/client/evt'
-import { Flow } from './@/flow'
-import { FlowHash } from './@/flow/hash'
 import { Pack } from './@/pack/pack'
 import type { PackId } from './@/pack/pack-id'
 import { PackListTypes } from './@/pack/pack-list'
@@ -18,6 +16,7 @@ import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { FlowServerCtx } from './@/server/ctx'
+import { Solutions } from './@/solutions/solutions'
 import { BuilderTypes } from './builder'
 import { PlayTypes } from './play'
 
@@ -34,9 +33,7 @@ export type ModelClient = {
   packs: {
     [packId: PackId]: Pack
   }
-  solutions: {
-    [hash: FlowHash]: Flow.Model
-  }
+  solutions: Solutions
   puzzleList: PuzzleListTypes.ModelClient
   packList: PackListTypes.ModelClient
   packPuzzleGrid: PackPuzzlesGridTypes.ModelClient
@@ -129,6 +126,7 @@ export const ModelCore = p.obj({
   mode: p.or(Mode, p.l('none')),
   play: PlayTypes.ModelCore,
   builder: BuilderTypes.ModelCore,
+  solutions: Solutions,
 })
 export type ModelCore = p.Infer<typeof ModelCore>
 

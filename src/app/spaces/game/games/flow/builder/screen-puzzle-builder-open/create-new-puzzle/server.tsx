@@ -13,7 +13,7 @@ const update: ServerModule['update'] = async (input) => {
 const updateFromClient: ServerModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'create-new-puzzle.user-clicked-create-button': {
-      const counted = await input.ctx.flowPuzzleDb.count({
+      const counted = await input.ctx.puzzleDb.count({
         where: {
           createdBy: {
             equals: input.msgClient.userId,
@@ -41,7 +41,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
         }),
       })
 
-      const created = await input.ctx.flowPuzzleDb.put(puzzleNew)
+      const created = await input.ctx.puzzleDb.put(puzzleNew)
 
       const msgCore: MsgCore = {
         t: 'create-new-puzzle.user-created-puzzle',

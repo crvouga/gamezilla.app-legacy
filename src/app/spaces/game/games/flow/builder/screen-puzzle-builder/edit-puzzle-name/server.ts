@@ -41,7 +41,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
 const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userId: UserId; ctx: FlowServerCtx }) => {
   const { flowPuzzleId, newName, userId, ctx } = input
 
-  const result = await ctx.flowPuzzleDb.get(flowPuzzleId)
+  const result = await ctx.puzzleDb.get(flowPuzzleId)
 
   if (isErr(result)) {
     return result
@@ -69,7 +69,7 @@ const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userI
     lastUpdatedBy: userId,
   }
 
-  const put = await ctx.flowPuzzleDb.put(patched)
+  const put = await ctx.puzzleDb.put(patched)
 
   return put
 }

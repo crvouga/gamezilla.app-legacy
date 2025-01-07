@@ -1,12 +1,12 @@
-import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
+import { FlowCoreCtx } from '../@/core/ctx'
 import { ScreenMainMenuCore } from './screen-main-menu/core'
 import { ScreenPackBuilderOpenCore } from './screen-pack-builder-open/core'
-import { ScreenPuzzleBuilderOpenCore } from './screen-puzzle-builder-open/core'
 import { ScreenPackBuilderCore } from './screen-pack-builder/core'
+import { ScreenPuzzleBuilderOpenCore } from './screen-puzzle-builder-open/core'
 import { ScreenPuzzleBuilderCore } from './screen-puzzle-builder/core'
 import type { ModelCore, Screen, UpdateCore } from './types'
 
-const init = (_input: { ctx: SpaceCtx }): ModelCore => {
+const initCore = (_input: { ctx: FlowCoreCtx }): ModelCore => {
   return {
     screen: { t: 'screen-main-menu' },
     screenPackBuilder: null,
@@ -69,11 +69,11 @@ const updates: UpdateCore[] = [
   updateBackButton,
 ]
 
-const update: UpdateCore = (input) => {
+const updateCore: UpdateCore = (input) => {
   return updates.reduce((acc, update) => update({ ...input, modelCore: acc }), input.modelCore)
 }
 
 export const BuilderCore = {
-  init,
-  update,
+  initCore,
+  updateCore,
 }

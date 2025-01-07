@@ -6,8 +6,8 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { IconGamepad, IconScrewdriverWrench } from '~/app/@/ui'
-import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
+import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { FlowClientCmd } from './@/client/cmd'
 import type { FlowClientCtx } from './@/client/ctx'
@@ -20,6 +20,7 @@ import { PackName } from './@/pack/pack-name'
 import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import { PackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/client'
 import { PuzzleListClient, PuzzleListTypes } from './@/puzzle/puzzle-list'
+import { Solutions } from './@/solutions/solutions'
 import { BuilderClient } from './builder/client'
 import { PlayClient } from './play/client'
 import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
@@ -29,7 +30,7 @@ const init: ClientModule['init'] = {
   play: PlayClient.init,
   puzzles: {},
   packs: {},
-  solutions: {},
+  solutions: Solutions.init,
   packPuzzleGrid: PackPuzzlesGridTypes.initClient,
   puzzleList: PuzzleListTypes.initClient,
   packList: PackListTypes.initClient,
@@ -38,10 +39,7 @@ const init: ClientModule['init'] = {
 const update = (
   input: Parameters<ClientModule['update']>[0],
 ): ReturnType<ClientModule['update']> & {
-  msgCmd?: SpaceClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>[]
+  msgCmd?: SpaceClientCmd<{ MsgClient: MsgClient; MsgToServer: MsgToServer }>[]
 } => {
   const acc = updateChild(input)
   const updated = updateLoop(input, acc)

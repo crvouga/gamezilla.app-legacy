@@ -25,7 +25,8 @@ export const update: ClientModule['update'] = (input) => {
         input.modelCore.screen.flowPlay ??
         Play.init({
           ctx: Play.initCtx({
-            flowPuzzle: input.modelCore.screen.puzzleResult.c,
+            flow: input.modelCore.screen.puzzleResult.c.flow,
+            solutions: input.ctx.solutions,
           }),
         })
 
