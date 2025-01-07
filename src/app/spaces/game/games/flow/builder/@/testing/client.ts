@@ -266,7 +266,7 @@ export const puzzleBuilderPressDownRandomNode =
     return BuilderClient.update({
       model,
       msg: {
-        t: 'screen-puzzle-builder.got-flow-ui-edit-msg',
+        t: 'screen-puzzle-builder.got-edit-msg',
         c: {
           t: 'pressed-down-node',
           nodeId: randomNode.nodeId,

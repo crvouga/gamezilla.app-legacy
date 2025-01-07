@@ -39,8 +39,8 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
   const { model, msg, ctx } = input
 
   switch (msg?.t) {
-    case 'screen-puzzle-builder.got-flow-ui-play-msg':
-    case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
+    case 'screen-puzzle-builder.got-play-msg':
+    case 'screen-puzzle-builder.got-edit-msg': {
       return {
         model,
         msgCore: [withEventId(msg)],
@@ -103,7 +103,7 @@ const updateFromMsg: BuilderTypes.ClientModule['update'] = (input) => {
 
 const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
   switch (input.msgCore?.t) {
-    case 'screen-puzzle-builder.got-flow-ui-play-msg': {
+    case 'screen-puzzle-builder.got-play-msg': {
       if (input.modelCore.screenPuzzleBuilder?.mode.t !== 'play') {
         return {
           model: input.model,
@@ -124,7 +124,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
         msgCmd: Play.eventsToClientCmd(input.ctx, updated.events),
       }
     }
-    case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
+    case 'screen-puzzle-builder.got-edit-msg': {
       if (input.modelCore.screenPuzzleBuilder?.mode.t !== 'edit') {
         return {
           model: input.model,
@@ -202,9 +202,7 @@ const View: BuilderTypes.ClientModule['View'] = (input) => {
 }
 
 const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
-  const { model, modelCore, dispatch } = input
-
-  const puzzleBuilder = modelCore.screenPuzzleBuilder
+  const puzzleBuilder = input.modelCore.screenPuzzleBuilder
 
   if (!puzzleBuilder) {
     return null
@@ -214,7 +212,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
     <BottomButtons.Button
       icon={(input) => <IconEllipsisVertical {...input} />}
       label={input.ctx.t('app.more')}
-      onClick={() => dispatch({ t: 'screen-puzzle-builder.user-clicked-more-button' })}
+      onClick={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-more-button' })}
     />
   )
 
@@ -225,16 +223,11 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
           <Edit.View
             model={puzzleBuilder.edit}
             ctx={input.ctx}
-            dispatch={(c) =>
-              dispatch({
-                t: 'screen-puzzle-builder.got-flow-ui-edit-msg',
-                c,
-              })
-            }
+            dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
           />
 
           <BottomButtons.Root>
-            <SaveChangesClient.ViewBottomButtons {...input} model={model} />
+            <SaveChangesClient.ViewBottomButtons {...input} model={input.model} />
 
             <BottomButtons.Button
               icon={(input) => <IconPlay {...input} />}
@@ -243,7 +236,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
                 button: 'text-blue-500',
               }}
               onClick={() =>
-                dispatch({
+                input.dispatch({
                   t: 'screen-puzzle-builder.user-clicked-play-mode-button',
                 })
               }
@@ -256,8 +249,8 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
 
     case 'play': {
       const flow = ScreenPuzzleBuilderCore.toFlow(puzzleBuilder)
-      const status = modelCore.screenPuzzleBuilder
-        ? ScreenPuzzleBuilderCore.toStatus(modelCore.screenPuzzleBuilder)
+      const status = input.modelCore.screenPuzzleBuilder
+        ? ScreenPuzzleBuilderCore.toStatus(input.modelCore.screenPuzzleBuilder)
         : 'solving'
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
@@ -267,7 +260,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
               <Play.View
                 model={puzzleBuilder.play}
                 flow={flow}
-                dispatch={(c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c })}
+                dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c })}
                 showSolvedAnimation
               />
             }
@@ -280,13 +273,13 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
                 buttons={[
                   Play.viewHintAction({
                     ctx: Play.initCtx({ ...input.ctx, flow }),
-                    dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
+                    dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
                     model: puzzleBuilder.play,
                     disabled: status === 'solved',
                   }),
                   Play.viewResetAction({
                     ctx: input.ctx,
-                    dispatch: (c) => dispatch({ t: 'screen-puzzle-builder.got-flow-ui-play-msg', c }),
+                    dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
                     flow,
                     model: puzzleBuilder.play,
                   }),
@@ -296,13 +289,13 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
           />
 
           <BottomButtons.Root>
-            <SaveChangesClient.ViewBottomButtons {...input} model={model} />
+            <SaveChangesClient.ViewBottomButtons {...input} model={input.model} />
 
             <BottomButtons.Button
               icon={(input) => <IconPen {...input} />}
               label={input.ctx.t('flow.edit-mode')}
               classNames={{ button: 'text-amber-500' }}
-              onClick={() => dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' })}
+              onClick={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' })}
             />
             {more}
           </BottomButtons.Root>

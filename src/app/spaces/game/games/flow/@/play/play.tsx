@@ -299,11 +299,7 @@ export const eventsToClientCmd = (
   )
 }
 
-export const update = ({
-  msg,
-  model,
-  ctx,
-}: {
+export const update = (input: {
   msg: Msg
   model: Model
   ctx: Ctx
@@ -311,28 +307,20 @@ export const update = ({
   model: Model
   events?: Event[]
 } => {
-  const updatedMain = updateMain({
-    msg,
-    model,
-    ctx,
-  })
+  const updatedMain = updateMain(input)
 
-  const updatedHint = UseHint.update({
-    model: updatedMain.model,
-    msg,
-    ctx,
-  })
+  const updatedHint = UseHint.update({ ...input, model: updatedMain.model })
 
-  const updatedReset = updateReset({
-    model: updatedHint.model,
-    msg,
-    ctx,
-  })
+  const updatedReset = updateReset({ ...input, model: updatedHint.model })
 
   const events = [...(updatedMain?.events ?? []), ...(updatedHint?.events ?? []), ...(updatedReset?.events ?? [])]
 
-  const updated = updateShowCheckmarkAnimation({
-    model: updatedReset.model,
+  const updated = updateShowCheckmarkAnimation({ model: updatedReset.model, events })
+
+  console.log({
+    msg: input.msg,
+    before: input.model,
+    after: updated,
     events,
   })
 
@@ -427,17 +415,9 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
           ...model,
           terminalsByGroupId: started.terminalsByGroupId,
           pipesBySourceId: started.pipesBySourceId,
-          status: {
-            t: 'dragging',
-            activeGroupId: groupId,
-            autocompleteEdge: null,
-          },
+          status: { t: 'dragging', activeGroupId: groupId, autocompleteEdge: null },
         },
-        events: [
-          {
-            t: 'started-dragging',
-          },
-        ],
+        events: [{ t: 'started-dragging' }],
       }
     }
 
@@ -465,20 +445,18 @@ const updateDragging = ({
 } => {
   switch (msg.t) {
     case 'user-dragged-over-node': {
-      const { nodeId } = msg
-
       const current = toFlow({
         model,
         flow: ctx.flow,
       })
 
-      const extended = AlgoDrawPipes.drawPipes(current, modelStatus.activeGroupId, nodeId)
+      const drew = AlgoDrawPipes.drawPipes(current, modelStatus.activeGroupId, msg.nodeId)
 
       const modelNew: Model = {
         ...model,
         status: model.status,
-        terminalsByGroupId: extended.terminalsByGroupId,
-        pipesBySourceId: extended.pipesBySourceId,
+        terminalsByGroupId: drew.terminalsByGroupId,
+        pipesBySourceId: drew.pipesBySourceId,
       }
 
       return {
@@ -524,12 +502,7 @@ const updateDragging = ({
       if (isConnected) {
         return {
           model: modelNew,
-          events: [
-            {
-              t: 'connected-terminals',
-              connectedTerminalCount: Flow.countConnectedPipes(current),
-            },
-          ],
+          events: [{ t: 'connected-terminals', connectedTerminalCount: Flow.countConnectedPipes(current) }],
         }
       }
 
@@ -549,29 +522,13 @@ const updateDragging = ({
 
       if (!terminal?.endId) {
         return {
-          model: {
-            ...model,
-            status: {
-              t: 'idle',
-            },
-          },
+          model: { ...model, status: { t: 'idle' } },
         }
       }
 
       return {
-        model: {
-          ...model,
-          status: {
-            t: 'idle',
-          },
-        },
-        events: isSolved
-          ? [
-              {
-                t: 'solved',
-              },
-            ]
-          : [],
+        model: { ...model, status: { t: 'idle' } },
+        events: isSolved ? [{ t: 'solved' }] : [],
       }
     }
 
@@ -621,10 +578,7 @@ export const View = (input: {
         onLeave={() => input.dispatch({ t: 'user-dragging-left' })}
         autocompleteEdge={
           input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
-            ? {
-                ...input.model.status.autocompleteEdge,
-                groupId: input.model.status.activeGroupId,
-              }
+            ? { ...input.model.status.autocompleteEdge, groupId: input.model.status.activeGroupId }
             : null
         }
         isGroupActive={(groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId}

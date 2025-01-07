@@ -44,7 +44,7 @@ const updateCoreMain = ({
   modelCore: BuilderTypes.ModelCore
 }): BuilderTypes.ModelCore => {
   switch (msgCore.t) {
-    case 'screen-puzzle-builder.got-flow-ui-play-msg': {
+    case 'screen-puzzle-builder.got-play-msg': {
       if (!modelCore.screenPuzzleBuilder) {
         return modelCore
       }
@@ -71,7 +71,7 @@ const updateCoreMain = ({
       }
     }
 
-    case 'screen-puzzle-builder.got-flow-ui-edit-msg': {
+    case 'screen-puzzle-builder.got-edit-msg': {
       if (!modelCore.screenPuzzleBuilder) {
         return modelCore
       }
