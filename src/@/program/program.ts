@@ -105,10 +105,10 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
       isUpdating = false
 
       model = updated.model
+      updateDebugger?.(model, msg)
       updateUI(model, ctxNew)
       updateEff(updated.eff)
       updateSubscriptions(model, ctxNew)
-      updateDebugger?.(model, msg)
 
       if (queue.length > 0) {
         const msg = queue.shift()
@@ -127,27 +127,23 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
   const init = await program.init({ ctx })
 
   model = init.model
-  updateUI(model, ctx)
-  updateEff(init.eff)
-  updateSubscriptions(model, ctx)
 
   const updateDebugger = await program.debugger?.(model, async function debuggerSetModel(modelNew) {
     const ctxNew = await program.updateCtx(ctx)
 
-    // @ts-expect-error
-    model = modelNew
+    model = modelNew as TModel
 
     if (!model) {
       return
     }
 
-    program.render?.({
-      model,
-      ctx: ctxNew,
-      dispatch,
-    })
+    program.render?.({ model, ctx: ctxNew, dispatch })
   })
+
   updateDebugger?.(model, '@INIT')
+  updateUI(model, ctx)
+  updateEff(init.eff)
+  updateSubscriptions(model, ctx)
 
   return {
     getModel() {

@@ -473,6 +473,42 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
   const TIME_LIMIT = 1000
   const COUNT_LIMIT = 10
 
+  // Buffer and processing variables
+  const buffer: { model: any; action: any }[] = []
+  let isProcessing = false
+
+  /**
+   * Adds data to the buffer and starts processing if not already running.
+   * @param data An object containing the model and action to send.
+   */
+  const send = (data: { model: any; action: any }) => {
+    buffer.push(data)
+    if (!isProcessing) {
+      processBuffer()
+    }
+  }
+
+  /**
+   * Asynchronously processes the buffer, sending one item every 500ms.
+   * Pauses when the buffer is empty.
+   */
+  const processBuffer = async () => {
+    isProcessing = true
+    while (buffer.length > 0) {
+      const data = buffer.shift()
+      if (data) {
+        try {
+          connection.send(data.action, data.model)
+        } catch (error) {
+          console.error('Error sending data:', error)
+        }
+        // Wait for 500ms before sending the next item
+        await new Promise((resolve) => setTimeout(resolve, 10))
+      }
+    }
+    isProcessing = false
+  }
+
   return function updateDebugger(model: any, msg: any) {
     const actionType = Msg.toType(msg)
 
@@ -506,6 +542,6 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
       payload: Msg.toPayload(msg, {}),
     }
 
-    connection.send(action, model)
+    send({ model, action })
   }
 }
