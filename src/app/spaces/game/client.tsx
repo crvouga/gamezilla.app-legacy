@@ -64,11 +64,13 @@ const updateFromCmd: SpaceClientModule['update'] = ({ msgCmd, model, ctx }) => {
     case 'space-cmd.exit-game': {
       const currentUserId = ctx.currentUserId
       const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(model, currentUserId)
+
       if (!currentUserSpaceId || !currentUserId) {
         return {
           model,
         }
       }
+
       return {
         model,
         msgCore: [
