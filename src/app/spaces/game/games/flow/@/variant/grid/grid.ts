@@ -1,10 +1,11 @@
 import { p } from '~/@/parser'
 import { Flow } from '../../flow'
+import { EdgeId } from '../../flow/edge-id'
 import { GroupId } from '../../flow/group-id'
+import { NodeId } from '../../flow/node-id'
+import { Terminal } from '../../flow/terminal'
 import * as VariantGridDimensions from './grid-dimensions'
 import { Position } from './grid-position'
-import { NodeId } from '../../flow/node-id'
-import { EdgeId } from '../../flow/edge-id'
 
 //
 //
@@ -285,12 +286,12 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
   }
 }
 
-export type Terminal = Terminal & {
+export type GridTerminal = Terminal & {
   start: Node
   end?: Node | null
 }
 
-export const yieldTerminals = function* (model: Model): Generator<Terminal> {
+export const yieldTerminals = function* (model: Model): Generator<GridTerminal> {
   for (const terminal of Flow.yieldTerminals(model)) {
     const start = toNode(model, terminal.startId)
 

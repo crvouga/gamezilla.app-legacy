@@ -23,7 +23,7 @@ const loadCmd = (ctx: SpaceClientCtx) => (model: ModelClient) => {
     ctx,
     model,
     msgCmd: {
-      t: 'flow-cmd.puzzle-list',
+      t: 'puzzle-list',
       c: {
         t: 'load',
       },

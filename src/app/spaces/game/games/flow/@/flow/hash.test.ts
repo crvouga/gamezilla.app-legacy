@@ -3,7 +3,7 @@ import { VariantGridShorthand } from '../variant/grid'
 import { FlowHash } from './hash'
 import { Flow } from '.'
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   test('deterministic', () => {
     const model = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],

@@ -45,7 +45,7 @@ export type MsgToClient = {
 }
 
 export type MsgInCmdClient = {
-  t: 'flow-cmd.puzzle-list'
+  t: 'puzzle-list'
   c: {
     t: 'load'
   }

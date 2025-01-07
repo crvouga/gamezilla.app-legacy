@@ -105,7 +105,7 @@ const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
 
 const ViewPipeline = (
   input: BoardInput<VariantGrid.Model> & {
-    terminal: VariantGrid.Terminal
+    terminal: VariantGrid.GridTerminal
   },
 ) => {
   const terminal = input.terminal

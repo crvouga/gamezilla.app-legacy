@@ -50,9 +50,9 @@ const isFlowClientCmdInternal = <T extends ClientCmdTypes>(cmd: FlowClientCmd<T>
     case 'flow-cmd.new-packs':
     case 'flow-cmd.remove-puzzles':
     case 'flow-cmd.add-puzzles':
-    case 'flow-cmd.pack-puzzles-grid':
-    case 'flow-cmd.puzzle-list':
-    case 'flow-cmd.pack-list':
+    case 'pack-puzzles-grid':
+    case 'puzzle-list':
+    case 'pack-list':
     case 'flow-cmd.add-solutions': {
       return true
     }

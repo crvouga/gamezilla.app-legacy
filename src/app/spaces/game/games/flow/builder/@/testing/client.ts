@@ -99,6 +99,7 @@ export const FixtureFlowBuilderClient = async () => {
     puzzleList: PuzzleListTypes.initClient,
     packList: PackListTypes.initClient,
     packPuzzleGrid: PackPuzzlesGridTypes.initClient,
+    solutions: {},
   }
   const init = {
     ctx,
@@ -129,6 +130,7 @@ export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
     puzzleList: PuzzleListTypes.initClient,
     packList: PackListTypes.initClient,
     packPuzzleGrid: PackPuzzlesGridTypes.initClient,
+    solutions: {},
   }
 }
 

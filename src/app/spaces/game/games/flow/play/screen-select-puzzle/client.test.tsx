@@ -132,6 +132,6 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(output.msgCmd?.some((m) => m.t === 'flow-cmd.pack-puzzles-grid' && m.c.t === 'load')).toBe(true)
+    expect(output.msgCmd?.some((m) => m.t === 'pack-puzzles-grid' && m.c.t === 'load')).toBe(true)
   })
 })
