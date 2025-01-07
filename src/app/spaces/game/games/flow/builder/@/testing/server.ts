@@ -9,11 +9,7 @@ import { Solutions } from '../../../@/solutions/solutions'
 import { BuilderCore } from '../../core'
 import { initServer } from '../../types'
 
-export const initial = {
-  model: initServer,
-}
-
-export const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
+const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
   const testEnv = await AppServerTestEnv()
   switch (testEnv.t) {
     case 'all':
