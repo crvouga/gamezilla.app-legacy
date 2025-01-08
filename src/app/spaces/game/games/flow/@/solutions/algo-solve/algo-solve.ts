@@ -4,37 +4,44 @@ import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
-import { AlgoIsUnsolvable } from '../algo-is-unsolvable'
 import { Variant } from '../../variant'
 
-const toDirection = (model: Variant.Model, sourceId: NodeId, targetId: NodeId): string => {
-  const distance = Variant.distance(model, sourceId, targetId)
-  return `${sourceId}${targetId}${distance}`
-}
-
-const countTurns = (model: Variant.Model, path: Flow.Edge[]): number => {
-  let turns = 0
-  let prevDirection = ''
-  for (let i = 0; i < path.length; i++) {
-    const curr = path[i]
-    if (!curr) continue
-    const currDirection = toDirection(model, curr.sourceId, curr.targetId)
-    if (prevDirection && prevDirection !== currDirection) {
-      turns++
-    }
-    prevDirection = currDirection
+export const solve = (model: Variant.Model): Flow.Model | null => {
+  for (const solution of solutions(model)) {
+    return solution
   }
-  return turns
+  return null
 }
 
-const toHeuristic = (model: Variant.Model, currentNode: NodeId, endNode: NodeId, path: Flow.Edge[]): number => {
-  const distanceHeuristic = Variant.distance(model, currentNode, endNode)
-  const turnsHeuristic = countTurns(model, path)
-  return distanceHeuristic + turnsHeuristic * 1.5
+export const solutions = function* (model: Variant.Model): Iterable<Flow.Model> {
+  const cleared = Flow.removeAllPipelines(model)
+  const disconnectedTerminals = Flow.toTerminals(cleared)
+
+  disconnectedTerminals.sort(ascend((terminal) => toTerminalDistance(cleared, terminal)))
+
+  yield* solveStep(cleared, disconnectedTerminals)
 }
 
-const normalizePath = (path: Flow.Edge[]): string => {
-  return path.map((edge) => `${edge.sourceId}-${edge.targetId}`).join(',')
+const solveStep = function* (model: Variant.Model, disconnectedTerminals: Terminal[]): Iterable<Flow.Model> {
+  if (Flow.isSolved(model)) {
+    yield model
+    return
+  }
+
+  const terminal = disconnectedTerminals[0]
+
+  if (!terminal || !terminal.endId) {
+    return
+  }
+
+  const possiblePipelines = toPossiblePipelines(model, terminal.groupId, terminal.startId, terminal.endId)
+
+  const disconnectedTerminalsRest = disconnectedTerminals.slice(1)
+
+  for (const possiblePipeline of possiblePipelines) {
+    const drew = drawPipeline(model, terminal, possiblePipeline)
+    yield* solveStep(drew, disconnectedTerminalsRest)
+  }
 }
 
 // const MAX_ITERATIONS = 5000;
@@ -125,32 +132,6 @@ const drawPipeline = (model: Variant.Model, terminal: Terminal, path: Flow.Edge[
   }
 }
 
-const solveStep = function* (model: Variant.Model, disconnectedTerminals: Terminal[]): Iterable<Flow.Model> {
-  if (AlgoIsUnsolvable.isUnsolvable(model)) {
-    return
-  }
-
-  if (Flow.isSolved(model)) {
-    yield model
-    return
-  }
-
-  const terminal = disconnectedTerminals[0]
-
-  if (!terminal || !terminal.endId) {
-    return
-  }
-
-  const possiblePipelines = toPossiblePipelines(model, terminal.groupId, terminal.startId, terminal.endId)
-
-  const disconnectedTerminalsRest = disconnectedTerminals.slice(1)
-
-  for (const possiblePipeline of possiblePipelines) {
-    const drew = drawPipeline(model, terminal, possiblePipeline)
-    yield* solveStep(drew, disconnectedTerminalsRest)
-  }
-}
-
 const toTerminalDistance = (model: Variant.Model, terminal: Terminal): number => {
   if (!terminal.endId) {
     return Number.POSITIVE_INFINITY
@@ -158,18 +139,32 @@ const toTerminalDistance = (model: Variant.Model, terminal: Terminal): number =>
   return Variant.distance(model, terminal.startId, terminal.endId)
 }
 
-export const solutions = function* (model: Variant.Model): Iterable<Flow.Model> {
-  const cleared = Flow.removeAllPipelines(model)
-  const disconnectedTerminals = Flow.toTerminals(cleared)
-
-  disconnectedTerminals.sort(ascend((terminal) => toTerminalDistance(cleared, terminal)))
-
-  yield* solveStep(cleared, disconnectedTerminals)
+const toDirection = (model: Variant.Model, sourceId: NodeId, targetId: NodeId): string => {
+  const distance = Variant.distance(model, sourceId, targetId)
+  return `${sourceId}${targetId}${distance}`
 }
 
-export const solve = (model: Variant.Model): Flow.Model | null => {
-  for (const solution of solutions(model)) {
-    return solution
+const countTurns = (model: Variant.Model, path: Flow.Edge[]): number => {
+  let turns = 0
+  let prevDirection = ''
+  for (let i = 0; i < path.length; i++) {
+    const curr = path[i]
+    if (!curr) continue
+    const currDirection = toDirection(model, curr.sourceId, curr.targetId)
+    if (prevDirection && prevDirection !== currDirection) {
+      turns++
+    }
+    prevDirection = currDirection
   }
-  return null
+  return turns
+}
+
+const toHeuristic = (model: Variant.Model, currentNode: NodeId, endNode: NodeId, path: Flow.Edge[]): number => {
+  const distanceHeuristic = Variant.distance(model, currentNode, endNode)
+  const turnsHeuristic = countTurns(model, path)
+  return distanceHeuristic + turnsHeuristic * 1.5
+}
+
+const normalizePath = (path: Flow.Edge[]): string => {
+  return path.map((edge) => `${edge.sourceId}-${edge.targetId}`).join(',')
 }
