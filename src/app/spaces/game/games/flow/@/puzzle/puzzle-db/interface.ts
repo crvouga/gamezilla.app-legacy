@@ -30,7 +30,7 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IPuzzleDb['list']>>
 
 export type IPuzzleDb = {
   count: (input: Omit<ListPuzzlesInput, 'pagination' | 'order'>) => Task<string, number>
-  list: (input: ListPuzzlesInput) => Task<string, { puzzles: Paginated<Puzzle>; solutions: Solutions}>
+  list: (input: ListPuzzlesInput) => Task<string, { puzzles: Paginated<Puzzle>; solutions: Solutions }>
   get: (id: PuzzleId) => Task<string, Puzzle | null>
   put: (input: Puzzle) => Task<string, null>
   zap: (input: { id: PuzzleId; deletedByUserId: UserId }) => Task<string, null>
