@@ -1,5 +1,5 @@
 import { p } from '~/@/parser'
-import { AlgoSolveAsync } from '../algo/algo-solve-async'
+import { AlgoSolveAsync } from './algo-solve-async'
 import { FlowHash } from '../flow/hash'
 import { Variant } from '../variant'
 import { Solution } from './solution'
