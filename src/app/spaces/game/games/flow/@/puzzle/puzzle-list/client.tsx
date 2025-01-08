@@ -8,7 +8,7 @@ import { sendToServer, showErrSm } from '~/app/@/client/cmd'
 import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
-import { FlowClientCmd } from '../../client/cmd'
+import { FlowClientCmdRoot } from '../../client/cmd-root'
 import { Solutions } from '../../solutions/solutions'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
@@ -92,8 +92,8 @@ const updateFromServer: ClientModule['update'] = (input) => {
           ),
         },
         msgCmd: [
-          FlowClientCmd.addPuzzles(byId, input.msgServer),
-          FlowClientCmd.addSolutions(solutions, input.msgServer),
+          FlowClientCmdRoot.addPuzzles(byId, input.msgServer),
+          FlowClientCmdRoot.addSolutions(solutions, input.msgServer),
           ...(isErr(input.msgServer.listed)
             ? showErrSm<{ MsgClient: MsgClient; MsgToServer: MsgToServer }>(input.ctx.t('app.something-went-wrong'))
             : []),

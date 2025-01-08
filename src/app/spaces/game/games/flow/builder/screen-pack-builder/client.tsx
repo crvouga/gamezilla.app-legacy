@@ -118,7 +118,7 @@ const updateRecordPack: ClientModule['update'] = (input) => {
       model: input.model,
       msgCmd: [
         {
-          t: 'flow-cmd.new-packs',
+          t: 'flow-cmd.add-packs',
           packs: {
             [input.modelCore.screenPackBuilder.pack.id]: input.modelCore.screenPackBuilder.pack,
           },

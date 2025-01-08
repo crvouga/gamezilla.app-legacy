@@ -2,7 +2,7 @@ import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/client/cmd'
 import { TopBar } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
-import { PuzzleListClient } from '../../@/puzzle/puzzle-list'
+import { PuzzleListClient } from '../../@/puzzle/puzzle-list/client'
 import type { ClientModule } from '../types'
 import { CreateNewPuzzleClient } from './create-new-puzzle/client'
 

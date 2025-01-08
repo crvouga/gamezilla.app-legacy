@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/client/cmd'
 import { TopBar } from '~/app/@/ui'
-import { PuzzleListClient } from '../../../@/puzzle/puzzle-list'
+import { PuzzleListClient } from '../../../@/puzzle/puzzle-list/client'
 import type { ClientModule } from '../../types'
 
 const update: ClientModule['update'] = (input) => {

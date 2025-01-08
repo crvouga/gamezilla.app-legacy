@@ -2,11 +2,12 @@ import { RequestResponse } from '~/@/request-response/request-response'
 import { NotAsked } from '~/@/result'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
 import type { AppServerModule } from '~/app/@/architecture/app-server'
+import { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
 import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { FlowClientCmd } from '../../client/cmd'
-import { FlowClientCtx } from '../../client/ctx'
+import { FlowClientCmdRoot } from '../../client/cmd-root'
+import { FlowClientCtxRoot } from '../../client/ctx-root'
 import { FlowClientEvtIn } from '../../client/evt'
 import { FlowServerCtx } from '../../server/ctx'
 import type { Puzzle } from '../puzzle'
@@ -59,20 +60,13 @@ export type ClientModule = AppClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Ctx: FlowClientCtx
+  Ctx: FlowClientCtxRoot
   MsgEvtIn: FlowClientEvtIn
-  MsgCmdOut: FlowClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>
+  MsgCmdOut: FlowClientCmdRoot | SpaceClientCmd<{ MsgClient: MsgClient; MsgToServer: MsgToServer }>
   MsgCmdIn: MsgInCmdClient
   MsgEvtOut: SpaceClientEvt
-  ViewSlot: {
-    fab: null
-  }
-  ViewEmit: {
-    clickedPuzzleItem: Puzzle
-  }
+  ViewSlot: { fab: null }
+  ViewEmit: { clickedPuzzleItem: Puzzle }
 }>
 
 export type ServerModule = AppServerModule<{

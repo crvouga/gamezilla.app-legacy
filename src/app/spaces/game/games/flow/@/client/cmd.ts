@@ -1,69 +1,21 @@
 import type { ClientCmdTypes } from '~/app/@/client/cmd'
 import { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
-import { Pack } from '../pack/pack'
-import { PackId } from '../pack/pack-id'
 import { PackListTypes } from '../pack/pack-list'
 import { PackPuzzlesGridTypes } from '../pack/pack-puzzles-grid'
-import { Puzzle } from '../puzzle/puzzle'
-import { PuzzleId } from '../puzzle/puzzle-id'
 import { PuzzleListTypes } from '../puzzle/puzzle-list'
-import { Solutions } from '../solutions/solutions'
+import { FlowClientCmdRoot } from './cmd-root'
 
 type FlowClientCmdInternal =
   | PackListTypes.MsgInCmdClient
   | PackPuzzlesGridTypes.MsgInCmdClient
   | PuzzleListTypes.MsgInCmdClient
-  | {
-      t: 'flow-cmd.add-puzzles'
-      puzzles: {
-        [puzzleId: PuzzleId]: Puzzle
-      }
-      causedBy: unknown
-    }
-  | {
-      t: 'flow-cmd.remove-puzzles'
-      puzzles: {
-        [puzzleId: PuzzleId]: PuzzleId
-      }
-      causedBy: unknown
-    }
-  | {
-      t: 'flow-cmd.new-packs'
-      packs: {
-        [packId: PackId]: Pack
-      }
-      causedBy: unknown
-    }
-  | {
-      t: 'flow-cmd.add-solutions'
-      solutions: Solutions
-      causedBy: unknown
-    }
+  | FlowClientCmdRoot
 
 export type FlowClientCmd<T extends ClientCmdTypes> = SpaceClientCmd<T> | FlowClientCmdInternal
 
-const addPuzzles = <T extends ClientCmdTypes>(
-  puzzles: { [puzzleId: PuzzleId]: Puzzle },
-  causedBy: unknown,
-): FlowClientCmd<T> => {
-  return {
-    t: 'flow-cmd.add-puzzles',
-    puzzles,
-    causedBy,
-  }
-}
-
-const addSolutions = <T extends ClientCmdTypes>(solutions: Solutions, causedBy: unknown): FlowClientCmd<T> => {
-  return {
-    t: 'flow-cmd.add-solutions',
-    solutions,
-    causedBy,
-  }
-}
-
 const isFlowClientCmdInternal = <T extends ClientCmdTypes>(cmd: FlowClientCmd<T>): cmd is FlowClientCmdInternal => {
   switch (cmd.t) {
-    case 'flow-cmd.new-packs':
+    case 'flow-cmd.add-packs':
     case 'flow-cmd.remove-puzzles':
     case 'flow-cmd.add-puzzles':
     case 'pack-puzzles-grid':
@@ -126,6 +78,4 @@ export const FlowClientCmd = {
   toSpaceClientCmd,
   toFlowClientCmd,
   tag,
-  addPuzzles,
-  addSolutions,
 }

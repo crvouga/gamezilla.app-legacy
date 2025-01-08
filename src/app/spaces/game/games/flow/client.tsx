@@ -15,7 +15,8 @@ import { Pack } from './@/pack/pack'
 import { PackListClient, PackListTypes } from './@/pack/pack-list'
 import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import { PackPuzzlesGridClient } from './@/pack/pack-puzzles-grid/client'
-import { PuzzleListClient, PuzzleListTypes } from './@/puzzle/puzzle-list'
+import { PuzzleListTypes } from './@/puzzle/puzzle-list'
+import { PuzzleListClient } from './@/puzzle/puzzle-list/client'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderClient } from './builder/client'
 import { PlayClient } from './play/client'
@@ -264,7 +265,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
 
 const updateFromCmd: ClientModule['update'] = (input) => {
   switch (input.msgCmd?.t) {
-    case 'flow-cmd.new-packs': {
+    case 'flow-cmd.add-packs': {
       return {
         model: {
           ...input.model,
