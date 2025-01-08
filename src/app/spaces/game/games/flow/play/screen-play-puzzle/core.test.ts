@@ -348,6 +348,7 @@ describe(import.meta.file, () => {
         t: 'got-flow-play-msg',
         c: {
           t: 'user-clicked-use-hint',
+          solutions: f.ctx.solutions,
         },
         userId: UserId.generate(),
       },

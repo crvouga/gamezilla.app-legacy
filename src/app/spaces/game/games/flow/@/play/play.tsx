@@ -317,13 +317,6 @@ export const update = (input: {
 
   const updated = updateShowCheckmarkAnimation({ model: updatedReset.model, events })
 
-  console.log({
-    msg: input.msg,
-    before: input.model,
-    after: updated,
-    events,
-  })
-
   return {
     events,
     model: updated,

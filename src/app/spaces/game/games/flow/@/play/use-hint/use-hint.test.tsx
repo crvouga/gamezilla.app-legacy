@@ -60,6 +60,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
     ])
@@ -85,11 +86,13 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
     ])
@@ -113,6 +116,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
     ])
@@ -132,16 +136,19 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
     ])
@@ -163,6 +170,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
     ])
@@ -198,6 +206,7 @@ describe(import.meta.file, () => {
         {
           msg: {
             t: 'user-clicked-use-hint',
+            solutions: await Solutions.find([f.ctx.flow]),
           },
         },
       ],
@@ -219,6 +228,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
     ])
@@ -239,6 +249,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([before]),
         },
       },
     ])
@@ -276,6 +287,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([f.ctx.flow]),
         },
       },
     ])
@@ -328,6 +340,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
+          solutions: await Solutions.find([flow]),
         },
       },
     ])

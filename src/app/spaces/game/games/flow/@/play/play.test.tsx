@@ -371,6 +371,7 @@ describe(import.meta.file, () => {
     const model = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
+        solutions: await Solutions.find([flow]),
       },
     ]).model
 
@@ -463,6 +464,7 @@ describe(import.meta.file, () => {
     const before = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
+        solutions: await Solutions.find([f.flow]),
       },
     ])
     const after = f.update(before.model, [
@@ -499,6 +501,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
+        solutions: await Solutions.find([f.flow]),
       },
     ])
     expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)

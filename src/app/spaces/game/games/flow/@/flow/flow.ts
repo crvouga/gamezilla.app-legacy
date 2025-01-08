@@ -954,19 +954,42 @@ const removeOverlappingPipes = (model: Model, newPipeline: Pipeline): Model => {
  * Adds all pipes that are part of the pipeline with the inputted group id
  */
 export const addPipeline = (model: Model, newPipeline: Pipeline): Model => {
+  const pipelineStart = newPipeline[0]
+
+  if (!pipelineStart) {
+    return model
+  }
+
+  const terminal = toTerminalByGroupId(model, pipelineStart.groupId)
+
+  if (!terminal) {
+    return model
+  }
+
+  const pipelineStartEdge = toEdge(model, pipelineStart.edgeId)
+
+  const terminalFinal = terminal.startId === pipelineStartEdge?.sourceId ? terminal : Terminal.flip(terminal)
+
   const removedInvalidPipes = pipe(
     model,
     (model) => removePipeline(model, pipelineToGroupId(newPipeline)),
     (model) => removeOverlappingPipes(model, newPipeline),
   )
+
   const pipesBySourceIdNew = pipelineToPipesBySourceId(model, newPipeline)
+
   const modelNew: Model = {
     ...removedInvalidPipes,
+    terminalsByGroupId: {
+      ...removedInvalidPipes.terminalsByGroupId,
+      [terminalFinal.groupId]: terminalFinal,
+    },
     pipesBySourceId: {
       ...removedInvalidPipes.pipesBySourceId,
       ...pipesBySourceIdNew,
     },
   }
+
   return modelNew
 }
 

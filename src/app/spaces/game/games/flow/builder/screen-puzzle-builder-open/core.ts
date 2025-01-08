@@ -18,15 +18,8 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore, ctx }) => {
           edit: Edit.init({
             flow: msgCore.puzzle.flow,
           }),
-          play: Play.init({
-            ctx: Play.initCtx({
-              flow: msgCore.puzzle.flow,
-              solutions: ctx.solutions,
-            }),
-          }),
-          mode: {
-            t: 'edit',
-          },
+          play: Play.init({ ctx: Play.initCtx({ flow: msgCore.puzzle.flow, solutions: ctx.solutions }) }),
+          mode: { t: 'edit' },
           puzzle: msgCore.puzzle,
         },
       }

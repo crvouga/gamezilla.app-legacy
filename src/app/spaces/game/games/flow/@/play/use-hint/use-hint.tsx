@@ -8,6 +8,7 @@ import { GroupId } from '../../flow/group-id'
 import { FlowHash } from '../../flow/hash'
 import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
+import { Solution } from '../../solutions/solution'
 import { Solutions } from '../../solutions/solutions'
 import type { Variant } from '../../variant'
 
@@ -30,6 +31,7 @@ export type Model = p.Infer<typeof Model>
 export const Msg = p.or(
   p.obj({
     t: p.l('user-clicked-use-hint'),
+    solutions: Solutions,
   }),
 )
 export type Msg = p.Infer<typeof Msg>
@@ -65,10 +67,9 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
 } => {
   switch (input.msg.t) {
     case 'user-clicked-use-hint': {
-      const flow = toFlow({
-        flow: input.ctx.flow,
-        model: input.model,
-      })
+      const msg = input.msg as Msg
+
+      const flow = toFlow({ flow: input.ctx.flow, model: input.model })
 
       const nextHintGroupId = toNextHintGroupId(flow)
 
@@ -80,7 +81,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
 
       const hash = FlowHash.init(flow)
 
-      const solution = input.ctx.solutions[hash]?.[0]
+      const solution = msg.solutions[hash]?.[0]
 
       if (!solution) {
         return {
@@ -93,9 +94,9 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
         }
       }
 
-      const solutionPipeline = Flow.toPipelineFromGroupId(solution, nextHintGroupId)
+      const solutionPipeline = Solution.toPipelineByGroupId(solution, nextHintGroupId)
 
-      const solutionTerminal = Flow.toTerminalByGroupId(solution, nextHintGroupId)
+      const solutionTerminal = Flow.toTerminalByGroupId(flow, nextHintGroupId)
 
       const addedSolution = Flow.addPipeline(flow, solutionPipeline)
 
@@ -200,7 +201,12 @@ export const viewUseHintAction = (input: {
   return {
     icon: (input) => <IconLightbulb {...input} />,
     label: input.ctx.t('game.hint'),
-    onClick: () => input.dispatch({ t: 'user-clicked-use-hint' }),
+    onClick: () => {
+      const flow = toFlow({ flow: input.ctx.flow, model: input.model })
+      const hash = FlowHash.init(flow)
+      const solutions = Solutions.limit(input.ctx.solutions, hash)
+      input.dispatch({ t: 'user-clicked-use-hint', solutions })
+    },
     disabled: input.disabled,
   }
 }

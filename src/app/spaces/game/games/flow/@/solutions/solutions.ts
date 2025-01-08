@@ -1,10 +1,10 @@
 import { p } from '~/@/parser'
 import { AlgoSolveAsync } from '../algo/algo-solve-async'
-import { Flow } from '../flow'
 import { FlowHash } from '../flow/hash'
 import { Variant } from '../variant'
+import { Solution } from './solution'
 
-const parser = p.dict(FlowHash, p.arr(Flow.Model))
+const parser = p.dict(FlowHash, p.arr(Solution))
 
 export type Solutions = p.Infer<typeof parser>
 
@@ -34,7 +34,7 @@ const merge = (a: Solutions, b: Solutions): Solutions => {
     if (!FlowHash.is(key)) {
       continue
     }
-    
+
     if (result[key]) {
       result[key] = [...result[key], ...value]
       continue
@@ -46,9 +46,21 @@ const merge = (a: Solutions, b: Solutions): Solutions => {
   return result
 }
 
+const limit = (solutions: Solutions, hash: FlowHash): Solutions => {
+  return {
+    [hash]: (solutions[hash]?.slice(0, 1) ?? []).map(
+      (s): Solution => ({
+        pipesBySourceId: s.pipesBySourceId,
+        terminalsByGroupId: s.terminalsByGroupId,
+      }),
+    ),
+  }
+}
+
 export const Solutions = {
   ...parser,
   find,
   merge,
+  limit,
   init,
 }
