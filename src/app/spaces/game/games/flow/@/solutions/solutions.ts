@@ -3,6 +3,7 @@ import { AlgoSolveAsync } from '../algo/algo-solve-async'
 import { FlowHash } from '../flow/hash'
 import { Variant } from '../variant'
 import { Solution } from './solution'
+import { Flow } from '../flow'
 
 const parser = p.dict(FlowHash, p.arr(Solution))
 
@@ -19,6 +20,13 @@ const findOne = async (model: Variant.Model): Promise<Solutions> => {
   return {
     [hash]: [found],
   }
+}
+
+const of = (model: Variant.Model): Solutions => {
+  if (Flow.isSolved(model)) {
+    return { [FlowHash.init(model)]: [model] }
+  }
+  return {}
 }
 
 const find = async (models: Variant.Model[]): Promise<Solutions> => {
@@ -62,5 +70,6 @@ export const Solutions = {
   find,
   merge,
   limit,
+  of,
   init,
 }

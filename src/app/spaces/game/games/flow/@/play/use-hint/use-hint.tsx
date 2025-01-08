@@ -96,16 +96,14 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
 
       const solutionPipeline = Solution.toPipelineByGroupId(solution, nextHintGroupId)
 
-      const solutionTerminal = Flow.toTerminalByGroupId(flow, nextHintGroupId)
-
       const addedSolution = Flow.addPipeline(flow, solutionPipeline)
 
       const modelNew: TModel = {
         ...input.model,
         pipesBySourceId: addedSolution.pipesBySourceId,
         terminalsByGroupId: {
-          ...input.model.terminalsByGroupId,
-          [nextHintGroupId]: solutionTerminal ?? input.model.terminalsByGroupId[nextHintGroupId],
+          ...addedSolution.terminalsByGroupId,
+          [nextHintGroupId]: addedSolution.terminalsByGroupId[nextHintGroupId],
         },
         usedHints: {
           ...input.model.usedHints,

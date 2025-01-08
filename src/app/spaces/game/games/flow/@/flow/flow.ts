@@ -195,13 +195,34 @@ export const toReversedPipesBySourceId = (
   return reversed
 }
 
+const cleanPipesBySourceId = (pipesBySourceId: Model['pipesBySourceId']): Model['pipesBySourceId'] => {
+  const output: Model['pipesBySourceId'] = {}
+  for (const sourceId in pipesBySourceId) {
+    if (!NodeId.is(sourceId)) {
+      continue
+    }
+    const pipe = pipesBySourceId[sourceId]
+    if (!pipe) {
+      continue
+    }
+    const cleaned: Pipe = {
+      edgeId: pipe.edgeId,
+      groupId: pipe.groupId,
+    }
+    output[sourceId] = cleaned
+  }
+  return output
+}
+
 export const isSamePipesBySourceId = (
   left: Pick<Model, 'pipesBySourceId' | 'edges'>,
   right: Pick<Model, 'pipesBySourceId' | 'edges'>,
 ): boolean => {
-  const isEqual = eq(left.pipesBySourceId, right.pipesBySourceId)
+  const leftPipesBySourceId = cleanPipesBySourceId(left.pipesBySourceId)
+  const rightPipesBySourceId = cleanPipesBySourceId(right.pipesBySourceId)
+  const isEqual = eq(leftPipesBySourceId, rightPipesBySourceId)
   const reversedB = toReversedPipesBySourceId(right)
-  const isEqualReversed = eq(left.pipesBySourceId, reversedB)
+  const isEqualReversed = eq(leftPipesBySourceId, reversedB)
   const isSame = isEqual || isEqualReversed
   return isSame
 }

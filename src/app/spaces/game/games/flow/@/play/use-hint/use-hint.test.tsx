@@ -1,4 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
+import { pipe } from '~/@/function/pipe'
 import { UseHint } from '.'
 import { FixtureFlowClient } from '../../client/fixture'
 import { Flow } from '../../flow'
@@ -356,5 +357,36 @@ describe(import.meta.file, () => {
     })
 
     expect(Flow.toTerminals(before)).toEqual(Flow.toTerminals(after))
+  })
+
+  it('should update terminal orientation if needed', async () => {
+    const solution = VariantGridShorthand.toGrid([
+      ['A', ' ', ' '],
+      ['a', ' ', ' '],
+      ['a', 'a', 'A'],
+    ])
+
+    const ctxFlow = pipe(solution, Flow.removeAllPipelines, Flow.flipAllTerminals)
+
+    const f = await Fixture({ ctxFlow: ctxFlow })
+
+    const output = f.update(f.init, [
+      {
+        msg: {
+          t: 'user-clicked-use-hint',
+          solutions: Solutions.of(solution),
+        },
+      },
+    ])
+
+    const flowNew = UseHint.toFlow({
+      flow: ctxFlow,
+      model: output.model,
+    })
+
+    const expected = Flow.toPipelineFromGroupId(solution, 'A')
+    const actual = Flow.toPipelineFromGroupId(flowNew, 'A')
+
+    expect(expected).toEqual(actual)
   })
 })

@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { Flow } from '.'
 import { VariantGrid, VariantGridShorthand } from '../variant/grid'
+import { pipe } from '~/@/function/pipe'
 
 describe(import.meta.file, () => {
   test('isSolved 3x3 with A terminals and A pipes', () => {
@@ -200,5 +201,47 @@ describe(import.meta.file, () => {
       ['a', ' ', 'A'],
     ])
     expect(Flow.hasMultipleDeadEndPipelines(grid)).toBe(false)
+  })
+
+  test('add pipeline', async () => {
+    const emptyGrid = VariantGridShorthand.toGrid([
+      ['A', ' ', ' '],
+      [' ', ' ', ' '],
+      [' ', ' ', 'A'],
+    ])
+    const expected = VariantGridShorthand.toGrid([
+      ['A', ' ', ' '],
+      ['a', ' ', ' '],
+      ['a', 'a', 'A'],
+    ])
+    const pipeline = Flow.toPipelineFromGroupId(expected, 'A')
+    const actual = Flow.addPipeline(emptyGrid, pipeline)
+    const isSame = Flow.isSame(actual, expected)
+
+    expect(isSame).toBe(true)
+  })
+
+  test('add pipeline when terminal orentation does not match pipeline being added', async () => {
+    const expected = pipe(
+      VariantGridShorthand.toGrid([
+        ['A', ' ', ' '],
+        ['a', ' ', ' '],
+        ['a', 'a', 'A'],
+      ]),
+      (x) => Flow.toPipelineFromGroupId(x, 'A'),
+    )
+
+    const actual = pipe(
+      VariantGridShorthand.toGrid([
+        ['A', ' ', ' '],
+        [' ', ' ', ' '],
+        [' ', ' ', 'A'],
+      ]),
+      Flow.flipAllTerminals,
+      (x) => Flow.addPipeline(x, expected),
+      (x) => Flow.toPipelineFromGroupId(x, 'A'),
+    )
+
+    expect(expected).toEqual(actual)
   })
 })
