@@ -139,15 +139,18 @@ const updateSaveChangesRequest: ClientModule['update'] = (input) => {
     return saveChanges(input)
   }
 
-  if (msgCore?.t === 'screen-puzzle-builder.saved-puzzle' && msgCore.userId === ctx.currentUserId) {
+  if (msgCore?.t === 'screen-puzzle-builder.saved-puzzle') {
     return {
       model: {
         ...model,
         puzzleSaveChangesRequest: Result.mapOk(msgCore.saved, () => null),
       },
-      msgCmd: isOk(msgCore.saved)
-        ? showCreatedSm(ctx.t('app.saved-changes'))
-        : showErrSm(ctx.t('app.something-went-wrong')),
+      msgCmd:
+        msgCore.userId === ctx.currentUserId
+          ? isOk(msgCore.saved)
+            ? showCreatedSm(ctx.t('app.saved-changes'))
+            : showErrSm(ctx.t('app.something-went-wrong'))
+          : [],
     }
   }
   return { model }
