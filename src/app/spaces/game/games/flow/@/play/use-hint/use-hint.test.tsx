@@ -184,7 +184,7 @@ describe(import.meta.file, () => {
     expect(Flow.hasMultipleDeadEndPipelines(derived)).toBe(false)
   })
 
-  it.todo('should work even with flipped terminal', async () => {
+  it('should work even with flipped terminal', async () => {
     const f = await Fixture({
       ctxFlow: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
@@ -236,12 +236,13 @@ describe(import.meta.file, () => {
     expect(Object.keys(after.model.usedHints)).toEqual(['A'])
   })
 
-  test.todo('cut pipes after using a hint', async () => {
+  test('cut pipes after using a hint', async () => {
     const before = VariantGridShorthand.toGrid([
-      ['A', ' ', 'B'],
-      ['a', 'a', 'A'],
-      [' ', 'B', ' '],
-      [' ', ' ', ' '],
+      ['A', 'B'],
+      ['b', 'b'],
+      ['b', ' '],
+      ['b', 'b'],
+      ['A', 'B'],
     ])
     const f = await Fixture({
       ctxFlow: before,
@@ -258,10 +259,10 @@ describe(import.meta.file, () => {
       flow: f.ctx.flow,
       model: updated.model,
     })
-    const pipelineBefore = Flow.toPipelineFromGroupId(before, 'A')
-    const pipelineAfter = Flow.toPipelineFromGroupId(after, 'A')
-    expect(pipelineBefore.length).toEqual(3)
-    expect(pipelineAfter.length).toEqual(1)
+    expect(Flow.toPipelineFromGroupId(before, 'A').length).toEqual(0)
+    expect(Flow.toPipelineFromGroupId(before, 'B').length).toEqual(6)
+    expect(Flow.toPipelineFromGroupId(after, 'A').length).toEqual(4)
+    expect(Flow.toPipelineFromGroupId(after, 'B').length).toEqual(0)
   })
 
   it('should NOT branch pipelines after using hint', async () => {
@@ -299,7 +300,7 @@ describe(import.meta.file, () => {
     expect(Flow.hasBranchingPipelines(after)).toBe(false)
   })
 
-  it.todo('should disable hint button if puzzle is solved', async () => {
+  it('should disable hint button if puzzle is solved', async () => {
     const f = await Fixture({
       ctxFlow: VariantGridShorthand.toGrid([
         ['A', 'B'],
