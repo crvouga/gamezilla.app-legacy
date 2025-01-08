@@ -100,7 +100,7 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
           limit: input.pagination.limit,
           offset: input.pagination.offset,
         },
-        solutions: await Solutions.find(sliced.map((p) => p.flow)),
+        solutions: Solutions.init,
       })
     },
 

@@ -1,18 +1,18 @@
-import { Ok, Result, isErr } from '~/@/result'
-import { p } from '~/@/parser'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { ILogger } from '~/@/logger'
+import { p } from '~/@/parser'
+import { Pagination } from '~/@/query/query'
+import { Ok, Result, isErr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Posix } from '~/@/time/posix'
+import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../../flow'
+import { Solutions } from '../../solutions/solutions'
 import { Variant } from '../../variant'
 import type { Puzzle } from '../puzzle'
 import { PuzzleId } from '../puzzle-id'
 import { PuzzleName } from '../puzzle-name'
 import type { IPuzzleDb, OrderClause, WhereClause } from './interface'
-import { UserId } from '~/app/@/data/user-id'
-import { Pagination } from '~/@/query/query'
-import { Solutions } from '../../solutions/solutions'
 
 export const Row = p.obj({
   flow_puzzle_id: p.str,
@@ -55,7 +55,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
       createdBy,
       lastUpdatedAt,
       lastUpdatedBy,
-      solutions: flowSolutions,
+      solutions: Solutions.init,
     }
   }
   console.error(
@@ -258,7 +258,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
           limit: input.pagination.limit,
           offset: input.pagination.offset,
         },
-        solutions: await Solutions.find(flowPuzzles.map((p) => p.flow)),
+        solutions: Solutions.init,
       })
     },
 
@@ -297,7 +297,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
           flow_puzzle_id: flowPuzzle.id,
           flow_puzzle_name: flowPuzzle.name,
           flow: Sql.json(flowPuzzle.flow),
-          flow_solutions: Sql.json(flowPuzzle.solutions),
+          flow_solutions: Solutions.init,
           created_at_posix: flowPuzzle.createdAt,
           created_by_user_id: flowPuzzle.createdBy,
           last_updated_at_posix: flowPuzzle.lastUpdatedAt,
