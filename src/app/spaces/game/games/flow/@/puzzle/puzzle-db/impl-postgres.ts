@@ -44,7 +44,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   const lastUpdatedBy = UserId.is(row.last_updated_by_user_id) ? row.last_updated_by_user_id : null
 
   const parsedFlowSolutions = p.arr(p.or(Variant.Model, Flow.Model)).parse(row.flow_solutions)
-  const flowSolutions = Result.unwrapOr(parsedFlowSolutions, [])
+  const solutions = Result.unwrapOr(parsedFlowSolutions, [])
 
   if (flowPuzzleId && puzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
     return {
@@ -55,7 +55,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
       createdBy,
       lastUpdatedAt,
       lastUpdatedBy,
-      solutions: Solutions.init,
+      solutions,
     }
   }
   console.error(
@@ -297,7 +297,7 @@ export const PuzzleDbPostgres = ({ dbConnSql }: { logger: ILogger; dbConnSql: ID
           flow_puzzle_id: flowPuzzle.id,
           flow_puzzle_name: flowPuzzle.name,
           flow: Sql.json(flowPuzzle.flow),
-          flow_solutions: Solutions.init,
+          flow_solutions: Sql.json(flowPuzzle.solutions),
           created_at_posix: flowPuzzle.createdAt,
           created_by_user_id: flowPuzzle.createdBy,
           last_updated_at_posix: flowPuzzle.lastUpdatedAt,
