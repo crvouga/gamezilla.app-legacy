@@ -1,6 +1,6 @@
 import { DebuggerReduxDevTools } from '~/@/program/debugger'
 import { Program } from '~/@/program/program'
-import { Render } from '~/@/vdom/render'
+import { Renderer } from '~/@/vdom/render'
 import { renderRuntimeErrors } from '~/app/@/ui/render-runtime-errors'
 import * as AppClient from '~/app/client'
 import { SERVER_URL, VDOM_IMPL } from '~/config/client'
@@ -17,7 +17,7 @@ const main = async () => {
     throw new Error('Root element not found')
   }
 
-  const render = await Render(VDOM_IMPL, root)
+  const render = await Renderer<Parameters<typeof AppClient.View>[0]>(VDOM_IMPL, root, AppClient.View)
 
   await Program.run({
     initCtx: () => ctx,
@@ -30,7 +30,7 @@ const main = async () => {
 
     subscriptions: (input) => AppClient.subscriptions(input),
 
-    render: (input) => render(<AppClient.View {...input} />),
+    render: (input) => render(input),
 
     crash: (input) => console.error('Crash!', input.error),
 

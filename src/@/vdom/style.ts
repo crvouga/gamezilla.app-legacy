@@ -1,7 +1,7 @@
 import { VDOM_IMPL_CURRENT } from '~/config/client'
 import { VDomImpl } from './vdom-impl'
 
-export type StylesObjectKebab = { [key: string]: string | number }
+export type StylesObjectKebab = { [key: string]: string | number | undefined | null | false }
 export type StylesObjectCamel = React.CSSProperties
 export type StylesObject = StylesObjectKebab | StylesObjectCamel
 
@@ -37,13 +37,12 @@ export const styles = (
   vdomImpl: VDomImpl = VDOM_IMPL_CURRENT,
 ): Record<string, unknown> => {
   switch (vdomImpl) {
-    case 'inferno':
-    case 'preact': {
-      return stylesObject as Record<string, unknown>
-    }
     case 'react-with-compiler':
     case 'react': {
       return kebabObjectToCamelObject(stylesObject) as Record<string, unknown>
+    }
+    default: {
+      return stylesObject as Record<string, unknown>
     }
   }
 }

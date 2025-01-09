@@ -10,8 +10,7 @@ export const TestRender = async (vDomImpl: VDomImpl): Promise<ITestRender> => {
       return TestRenderReact
     }
 
-    case 'inferno':
-    case 'preact': {
+    default: {
       throw new Error(`TestRender not implemented for ${vDomImpl}`)
     }
   }

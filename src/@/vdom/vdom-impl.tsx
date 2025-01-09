@@ -1,7 +1,7 @@
 import { minBy } from '../array/min-by'
 import { editDistance } from '../string/edit-distance'
 
-export const ALL_VDOM_IMPL = ['inferno', 'preact', 'react', 'react-with-compiler'] as const
+export const ALL_VDOM_IMPL = ['inferno', 'preact', 'react', 'react-with-compiler', 'vue'] as const
 
 export type VDomImpl = (typeof ALL_VDOM_IMPL)[number]
 
