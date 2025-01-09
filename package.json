@@ -9,12 +9,11 @@
     "check": "bun cir-deps && bun x tsc && bun test",
     "check-imports": "bun scripts/check-imports.ts",
     "cir-deps": "bun server:cir-deps && bun client:cir-deps",
-    "client": "bunx --bun vite",
+    "client": "bun x --bun vite",
     "client:build": "vite build",
     "client:cir-deps": "dpdm --progress --no-warning --no-tree ./src/main/client.tsx",
     "client:serve": "bun x serve -s dist -p 3001",
     "cloc": "bun x cloc src",
-    "env": "export $(grep -v '^#' .env | xargs)",
     "db": "bun env && psql \"$DATABASE_URL\"",
     "db:down": "bun x dbmate -e DATABASE_URL down",
     "db:dump": "bun x dbmate dump",
@@ -22,13 +21,14 @@
     "db:start": "docker-compose -f db/docker-compose.local.yml up -d",
     "db:stop": "docker-compose -f db/docker-compose.local.yml down",
     "db:up": "bun x dbmate -e DATABASE_URL up",
+    "env": "export $(grep -v '^#' .env | xargs)",
     "format": "bun x prettier --write gamezilla-app",
     "gen:events": "bun src/@/events/events-gen.ts",
     "gen:guard": "bun src/@/guards/guards-gen.ts",
     "gen:l18n": "bun src/@/l18n/l18n-gen.ts",
     "gen:routes": "bun src/@/routing/routes-gen.ts",
     "load-balancer": "bun src/main/load-balancer.ts",
-    "pretty": "bun x prettier --write .",
+    "pretty": "bun x sort-package-json && bun x prettier --write .",
     "preview": "bun client:build && bun client:serve",
     "server": "bun src/main/server.ts",
     "server:build": "bun db:up",
@@ -40,14 +40,14 @@
   },
   "prettier": {
     "jsxSingleQuote": true,
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ],
     "printWidth": 120,
     "semi": false,
     "singleQuote": true,
     "tabWidth": 2,
-    "trailingComma": "all",
-    "plugins": [
-      "prettier-plugin-tailwindcss"
-    ]
+    "trailingComma": "all"
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.8",
