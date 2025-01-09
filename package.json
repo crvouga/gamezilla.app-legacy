@@ -9,7 +9,7 @@
     "check": "bun cir-deps && bun x tsc && bun test",
     "check-imports": "bun scripts/check-imports.ts",
     "cir-deps": "bun server:cir-deps && bun client:cir-deps",
-    "client": "vite",
+    "client": "bunx --bun vite",
     "client:build": "vite build",
     "client:cir-deps": "dpdm --progress --no-warning --no-tree ./src/main/client.tsx",
     "client:serve": "bun x serve -s dist -p 3001",

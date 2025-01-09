@@ -1,7 +1,12 @@
 import { VDomImpl } from '../@/vdom/vdom-impl'
 import { IS_TEST } from './shared'
 
-const env: Record<string, unknown> = typeof process !== 'undefined' ? process.env : import.meta.env
+const env: Record<string, unknown> = {
+  ...(typeof process.env === 'undefined' ? {} : process.env),
+  ...(typeof import.meta.env === 'undefined' ? {} : import.meta.env),
+}
+
+console.log({ env })
 
 export const VDOM_IMPL = VDomImpl.from(env.VITE_VDOM_IMPL) || VDomImpl.of('inferno')
 

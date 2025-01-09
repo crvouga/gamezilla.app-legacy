@@ -251,7 +251,7 @@ export const deriveTerminalHash = (terminals: Model['terminalsByGroupId']): stri
   const values = Object.values(terminals)
   const sorted = values.sort(descend((t) => GroupId.toOrder(t.groupId)))
   const hashes = sorted.map((terminal) => Terminal.deriveHash(terminal))
-  const hash = hashes.join(',')
+  const hash = hashes.join('_')
   return hash
 }
 
