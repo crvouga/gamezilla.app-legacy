@@ -1,6 +1,6 @@
 import type { TranslatedText } from '~/@/l18n'
+import { AriaRole } from '~/@/vdom/aria-role'
 import { cn } from './cn'
-import type { AriaRole } from 'react'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 

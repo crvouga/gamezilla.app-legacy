@@ -1,8 +1,7 @@
-import { Inferno } from 'inferno'
 import { VDOM_IMPL_CURRENT } from '~/config/client'
 import { VDomImpl } from './vdom-impl'
 
-export type StylesObjectKebab = Inferno.HTMLAttributes<HTMLDivElement>['style']
+export type StylesObjectKebab = { [key: string]: string | number }
 export type StylesObjectCamel = React.CSSProperties
 export type StylesObject = StylesObjectKebab | StylesObjectCamel
 
