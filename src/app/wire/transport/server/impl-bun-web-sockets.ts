@@ -26,12 +26,7 @@ export type Config = {
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
   config: Config,
-): Promise<
-  IServerTransport<{
-    MsgToClient: MsgToClient
-    MsgToServer: MsgToServer
-  }>
-> => {
+): Promise<IServerTransport<{ MsgToClient: MsgToClient; MsgToServer: MsgToServer }>> => {
   const logger = Logger.prefix('bun-web-sockets', config.logger)
   //
   //

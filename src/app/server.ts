@@ -76,7 +76,9 @@ const initCtx = async (): Promise<ServerCtx> => {
     t: SERVER_IMPL,
   })
 
-  const pubSub = await PubSubTopicBased({ t: 'noop' })
+  const pubSub = await PubSubTopicBased({
+    t: 'noop',
+  })
 
   const transport = await ServerTransport<MsgToServer, MsgToClient>(
     webServer.t === 'bun'
