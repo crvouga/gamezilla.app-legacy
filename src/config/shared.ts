@@ -1,8 +1,10 @@
-export const IS_PROD = Boolean(process.env?.PROD)
+import { env } from './env'
 
-export const IS_INTEGRATION_TEST = process.env?.IS_INTEGRATION_TEST === 'true'
+export const IS_PROD = Boolean(env.PROD)
 
-export const IS_TEST = process.env?.NODE_ENV === 'test'
+export const IS_INTEGRATION_TEST = env.IS_INTEGRATION_TEST === 'true'
+
+export const IS_TEST = env.NODE_ENV === 'test'
 
 export type TransportImpl = 'bun-web-sockets' | 'noop'
 
