@@ -4,8 +4,6 @@ import { defineConfig, PluginOption } from 'vite'
 import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { VDOM_IMPL } from './src/config/client'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 
 const vDomPlugin = (): PluginOption[] => {
   switch (VDOM_IMPL) {
@@ -23,11 +21,6 @@ const vDomPlugin = (): PluginOption[] => {
 
     case 'react-with-compiler': {
       return [react({ babel: { plugins: [['babel-plugin-react-compiler', {}]] } })]
-    }
-
-    case 'vue': {
-      const isCustomElement = (tag: string): boolean => tag.includes('-')
-      return [vue({ template: { compilerOptions: { isCustomElement } } }), vueJsx({ isCustomElement })]
     }
   }
 }

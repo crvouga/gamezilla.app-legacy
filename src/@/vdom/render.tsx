@@ -46,28 +46,5 @@ export const Renderer = async <Input,>(
         Preact.render(<Component {...input} />, root)
       }
     }
-
-    case 'vue': {
-      const { createApp, ref, h } = await import('vue')
-
-      const inputRef = ref<Input | null>(null)
-
-      const app = createApp({
-        render: () => {
-          if (inputRef.value) {
-            return h(Component, inputRef.value)
-          }
-          return null
-        },
-      })
-
-      app.config.compilerOptions.isCustomElement = (tag) => tag.includes('-')
-
-      app.mount(root)
-
-      return (input) => {
-        inputRef.value = input
-      }
-    }
   }
 }
