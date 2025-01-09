@@ -1,6 +1,6 @@
 import { FlowCoreCtx } from '../../@/core/ctx'
-import { Edit } from '../../@/edit'
-import { Play } from '../../@/play'
+import { EditMode } from '../../@/edit-mode'
+import { PlayMode } from '../../@/play-mode'
 import { Variant } from '../../@/variant'
 import * as BuilderTypes from '../types'
 import { DeleteForeverCore } from './delete-forever/core'
@@ -9,17 +9,17 @@ import { SaveChangesCore } from './save-changes/core'
 import { ModelCore } from './types'
 
 const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
-  return Play.toStatus({ model: modelCore.playMode, flow: toFlow(modelCore) })
+  return PlayMode.toStatus({ model: modelCore.playMode, flow: toFlow(modelCore) })
 }
 
 const toFlow = (modelCore: ModelCore): Variant.Model => {
   switch (modelCore.mode.t) {
     case 'edit': {
-      return Edit.toFlow({ model: modelCore.editMode })
+      return EditMode.toFlow({ model: modelCore.editMode })
     }
 
     case 'play': {
-      return Play.toFlow({ flow: Edit.toFlow({ model: modelCore.editMode }), model: modelCore.playMode })
+      return PlayMode.toFlow({ flow: EditMode.toFlow({ model: modelCore.editMode }), model: modelCore.playMode })
     }
   }
 }
@@ -39,14 +39,14 @@ const updateCoreMain = ({
         return modelCore
       }
 
-      const flow = Edit.toFlowMemoized({
+      const flow = EditMode.toFlowMemoized({
         model: modelCore.screenPuzzleBuilder.editMode,
       })
 
-      const updated = Play.update({
+      const updated = PlayMode.update({
         model: modelCore.screenPuzzleBuilder.playMode,
         msg: msgCore.c,
-        ctx: Play.initCtx({ flow, solutions: ctx.solutions }),
+        ctx: PlayMode.initCtx({ flow, solutions: ctx.solutions }),
       })
 
       return {
@@ -63,7 +63,7 @@ const updateCoreMain = ({
         return modelCore
       }
 
-      const updated = Edit.update({
+      const updated = EditMode.update({
         model: modelCore.screenPuzzleBuilder.editMode,
         msg: msgCore.c,
         flow: modelCore.screenPuzzleBuilder.puzzle.flow,
@@ -102,9 +102,9 @@ const updateCoreMain = ({
       if (!modelCore.screenPuzzleBuilder) {
         return modelCore
       }
-      const initial = Play.init({
-        ctx: Play.initCtx({
-          flow: Edit.toFlowMemoized({
+      const initial = PlayMode.init({
+        ctx: PlayMode.initCtx({
+          flow: EditMode.toFlowMemoized({
             model: modelCore.screenPuzzleBuilder.editMode,
           }),
           solutions: ctx.solutions,

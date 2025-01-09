@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../../@/flow'
-import { Play } from '../../@/play'
+import { PlayMode } from '../../@/play-mode'
 import { Solutions } from '../../@/solutions/solutions'
 import { type Variant } from '../../@/variant'
 import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
@@ -33,7 +33,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const after = f.update(
       f.init,
-      Play.randomMsgs(f.puzzle).map(
+      PlayMode.randomMsgs(f.puzzle).map(
         (c): MsgCore => ({
           userId: UserId.generate(),
           t: 'got-flow-play-msg',
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
   it('should start with empty puzzle after going to next puzzle', async () => {
     const f = await Fixture()
 
-    const msgs = Play.randomMsgs({
+    const msgs = PlayMode.randomMsgs({
       flow: f.puzzle.flow,
     }).map(
       (c): MsgCore => ({
@@ -104,8 +104,8 @@ describe(import.meta.file, () => {
     expect(before.playMode).not.toEqual(after.playMode)
     expect(after.playMode).toEqual(
       f.nextPuzzle.t === 'got'
-        ? Play.init({
-            ctx: Play.initCtx({
+        ? PlayMode.init({
+            ctx: PlayMode.initCtx({
               flow: f.nextPuzzle.c.flow,
               solutions: await Solutions.find([f.nextPuzzle.c.flow]),
             }),
@@ -118,12 +118,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const before = f.init
     const after = f.update(before, f.solvePuzzleMsgs)
-    const afterFlow = Play.toFlow({
+    const afterFlow = PlayMode.toFlow({
       flow: f.puzzle.flow,
       model:
         after.playMode ??
-        Play.init({
-          ctx: Play.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find([f.puzzle.flow]) }),
+        PlayMode.init({
+          ctx: PlayMode.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find([f.puzzle.flow]) }),
         }),
     })
 
@@ -240,8 +240,8 @@ describe(import.meta.file, () => {
       },
     ])
     expect(before.playMode).toEqual(
-      Play.init({
-        ctx: Play.initCtx({
+      PlayMode.init({
+        ctx: PlayMode.initCtx({
           flow: f.puzzle.flow,
           solutions: await Solutions.find([f.puzzle.flow]),
         }),

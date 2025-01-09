@@ -2,7 +2,7 @@ import { APP_SOUND, copyToClipboard, playSound, showToast } from '~/app/@/client
 import { AppClientCtx } from '~/app/@/client/ctx'
 import { IconCopy } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
-import { Play } from '../../../@/play'
+import { PlayMode } from '../../../@/play-mode'
 import { VariantGridShorthand } from '../../../@/variant/grid'
 import type { ClientModule, MsgClient } from '../../types'
 
@@ -23,14 +23,14 @@ export const update: ClientModule['update'] = (input) => {
 
       const playMode =
         input.modelCore.screen.playMode ??
-        Play.init({
-          ctx: Play.initCtx({
+        PlayMode.init({
+          ctx: PlayMode.initCtx({
             flow: input.modelCore.screen.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
           }),
         })
 
-      const flow = Play.toFlow({
+      const flow = PlayMode.toFlow({
         flow: input.modelCore.screen.puzzleResult.c.flow,
         model: playMode,
       })

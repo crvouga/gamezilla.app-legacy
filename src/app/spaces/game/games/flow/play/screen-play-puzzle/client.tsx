@@ -6,9 +6,9 @@ import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-cl
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
-import { Play } from '../../@/play'
-import { BoardLayout } from '../../@/ui/layout'
+import { PlayMode } from '../../@/play-mode'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
+import { BoardLayout } from '../../@/ui/layout'
 import type { ClientModule } from '../types'
 import * as CopyPuzzleClient from './copy-puzzle/client'
 import { ScreenPlayPuzzleCore } from './core'
@@ -87,17 +87,17 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
       }
       const playMode =
         input.modelCore.screen.playMode ??
-        Play.init({
-          ctx: Play.initCtx({
+        PlayMode.init({
+          ctx: PlayMode.initCtx({
             flow: input.modelCore.screen.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
           }),
         })
 
-      const output = Play.update({
+      const output = PlayMode.update({
         msg: input.msgCore.c,
         model: playMode,
-        ctx: Play.initCtx({
+        ctx: PlayMode.initCtx({
           flow: input.modelCore.screen.puzzleResult.c.flow,
           solutions: input.ctx.solutions,
         }),
@@ -105,7 +105,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCmd: Play.eventsToClientCmd(input.ctx, output.events),
+        msgCmd: PlayMode.eventsToClientCmd(input.ctx, output.events),
       }
     }
   }
@@ -146,13 +146,13 @@ const View: ClientModule['View'] = (input) => {
               />
             }
             board={
-              <Play.View
+              <PlayMode.View
                 disabled
                 key={flowPuzzle.c.id}
                 flow={flowPuzzle.c.flow}
                 model={
                   playMode ??
-                  Play.init({ ctx: Play.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
+                  PlayMode.init({ ctx: PlayMode.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
                 }
                 dispatch={() => {}}
                 showSolvedAnimation
@@ -181,12 +181,12 @@ const View: ClientModule['View'] = (input) => {
         top={null}
         board={
           flowPuzzle.t === 'got' ? (
-            <Play.View
+            <PlayMode.View
               key={flowPuzzle.c.id}
               flow={flowPuzzle.c.flow}
               model={
                 playMode ??
-                Play.init({ ctx: Play.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
+                PlayMode.init({ ctx: PlayMode.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
               }
               dispatch={(c) =>
                 input.dispatch({ t: 'got-msg-core', c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId } })
@@ -230,16 +230,16 @@ const View: ClientModule['View'] = (input) => {
           }),
 
           flowPuzzle.t === 'got' && !isSolved
-            ? Play.viewHintAction({
+            ? PlayMode.viewHintAction({
                 model:
                   playMode ??
-                  Play.init({
-                    ctx: Play.initCtx({
+                  PlayMode.init({
+                    ctx: PlayMode.initCtx({
                       flow: flowPuzzle.c.flow,
                       solutions: input.ctx.solutions,
                     }),
                   }),
-                ctx: Play.initCtx({
+                ctx: PlayMode.initCtx({
                   ...input.ctx,
                   flow: flowPuzzle.c.flow,
                   solutions: input.ctx.solutions,

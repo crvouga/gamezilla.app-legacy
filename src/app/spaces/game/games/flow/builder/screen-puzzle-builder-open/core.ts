@@ -1,5 +1,5 @@
-import { Edit } from '../../@/edit'
-import { Play } from '../../@/play'
+import { EditMode } from '../../@/edit-mode'
+import { PlayMode } from '../../@/play-mode'
 import type { UpdateCore } from '../types'
 import { CreateNewPuzzleCore } from './create-new-puzzle/core'
 
@@ -15,10 +15,10 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore, ctx }) => {
         },
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
-          editMode: Edit.init({
+          editMode: EditMode.init({
             flow: msgCore.puzzle.flow,
           }),
-          playMode: Play.init({ ctx: Play.initCtx({ flow: msgCore.puzzle.flow, solutions: ctx.solutions }) }),
+          playMode: PlayMode.init({ ctx: PlayMode.initCtx({ flow: msgCore.puzzle.flow, solutions: ctx.solutions }) }),
           mode: { t: 'edit' },
           puzzle: msgCore.puzzle,
         },

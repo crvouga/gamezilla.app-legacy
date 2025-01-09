@@ -5,7 +5,7 @@ import type { GameCoreModule } from '~/app/spaces/game/games/@/architecture/game
 import { GroupId } from '../../@/flow/group-id'
 import { Pack } from '../../@/pack/pack'
 import { PackId } from '../../@/pack/pack-id'
-import { Play } from '../../@/play'
+import { PlayMode } from '../../@/play-mode'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { CopyPuzzleTypes } from './copy-puzzle'
 
@@ -13,7 +13,7 @@ export const MsgCore = p.or(
   CopyPuzzleTypes.MsgCore,
   p.obj({
     t: p.l('got-flow-play-msg'),
-    c: Play.Msg,
+    c: PlayMode.Msg,
     userId: UserId,
   }),
   p.obj({
@@ -64,7 +64,7 @@ export const ModelCore = p.obj({
   t: p.l('screen-play-puzzle'),
   flowPack: Pack,
   puzzleResult: PuzzleResult,
-  playMode: p.or(Play.Model, p.l(null)),
+  playMode: p.or(PlayMode.Model, p.l(null)),
   puzzleIndex: p.num,
   opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),
   hints: p.partialDict(GroupId, GroupId),

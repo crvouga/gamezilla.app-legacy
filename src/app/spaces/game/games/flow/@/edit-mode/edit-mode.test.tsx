@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Edit } from '.'
+import { EditMode } from '.'
 import { Puzzle } from '../puzzle/puzzle'
 import { VariantDimensions } from '../variant'
 
@@ -7,16 +7,16 @@ const Fixture = async () => {
   const puzzle = await Puzzle.random()
   const flow = puzzle.flow
 
-  const init = Edit.init({
+  const init = EditMode.init({
     flow,
   })
-  const update = (init: Edit.Model, msgs: Edit.Msg[]) => {
-    let updated: ReturnType<typeof Edit.update> = {
+  const update = (init: EditMode.Model, msgs: EditMode.Msg[]) => {
+    let updated: ReturnType<typeof EditMode.update> = {
       model: init,
     }
 
     for (const msg of msgs) {
-      updated = Edit.update({
+      updated = EditMode.update({
         flow,
         model: updated.model,
         msg,
@@ -37,7 +37,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
   it('should make sounds interacting with dimensions form', async () => {
     const f = await Fixture()
-    const msgs: Edit.Msg[] = [
+    const msgs: EditMode.Msg[] = [
       {
         t: 'dimensions-form.clicked-save',
       },

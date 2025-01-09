@@ -1,6 +1,6 @@
 import { FlowCoreCtx } from '../../@/core/ctx'
 import { Pack } from '../../@/pack/pack'
-import { Play } from '../../@/play'
+import { PlayMode } from '../../@/play-mode'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { CoreModule, MsgCore } from '../types'
 import * as CopyPuzzleCore from './copy-puzzle/core'
@@ -35,17 +35,17 @@ const updateScreen = (input: {
 
       const playMode =
         input.modelCore.playMode ??
-        Play.init({
-          ctx: Play.initCtx({
+        PlayMode.init({
+          ctx: PlayMode.initCtx({
             flow: input.modelCore.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
           }),
         })
 
-      const playModeNew = Play.update({
+      const playModeNew = PlayMode.update({
         msg: input.msgCore.c,
         model: playMode,
-        ctx: Play.initCtx({
+        ctx: PlayMode.initCtx({
           flow: input.modelCore.puzzleResult.c.flow,
           solutions: input.ctx.solutions,
         }),
@@ -106,8 +106,8 @@ const updateScreen = (input: {
         case 'got': {
           return {
             ...input.modelCore,
-            playMode: Play.init({
-              ctx: Play.initCtx({
+            playMode: PlayMode.init({
+              ctx: PlayMode.initCtx({
                 flow: input.msgCore.nextPuzzle.c.flow,
                 solutions: input.ctx.solutions,
               }),
@@ -125,8 +125,8 @@ const updateScreen = (input: {
         case 'got': {
           return {
             ...input.modelCore,
-            playMode: Play.init({
-              ctx: Play.initCtx({
+            playMode: PlayMode.init({
+              ctx: PlayMode.initCtx({
                 flow: input.msgCore.prevPuzzle.c.flow,
                 solutions: input.ctx.solutions,
               }),
@@ -153,8 +153,8 @@ const updateScreen = (input: {
       }
       return {
         ...input.modelCore,
-        playMode: Play.init({
-          ctx: Play.initCtx({
+        playMode: PlayMode.init({
+          ctx: PlayMode.initCtx({
             flow: input.modelCore.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
           }),
@@ -210,8 +210,8 @@ const initCore = (input: {
     ...input,
     playMode:
       input.flowPuzzle.t === 'got'
-        ? Play.init({
-            ctx: Play.initCtx({
+        ? PlayMode.init({
+            ctx: PlayMode.initCtx({
               flow: input.flowPuzzle.c.flow,
               solutions: input.ctx.solutions,
             }),
@@ -253,7 +253,7 @@ const toStatus = (modelCore: ModelCore) => {
     return 'solving'
   }
 
-  return Play.toStatus({
+  return PlayMode.toStatus({
     flow: modelCore.puzzleResult.c.flow,
     model: playMode,
   })

@@ -4,7 +4,7 @@ import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { UpdateCore } from '../types'
 import { EditPackNameCore } from './edit-pack-name/core'
 import type { ModelCore } from './types'
-import { Play } from '../../@/play'
+import { PlayMode } from '../../@/play-mode'
 
 const init = ({ pack }: { pack: Pack }): ModelCore => {
   return {
@@ -147,8 +147,8 @@ updates.push(({ modelCore, msgCore, ctx }) => {
             puzzleResult: msgCore.puzzleResult,
             play:
               msgCore.puzzleResult.t === 'got'
-                ? Play.init({
-                    ctx: Play.initCtx({
+                ? PlayMode.init({
+                    ctx: PlayMode.initCtx({
                       flow: msgCore.puzzleResult.c.flow,
                       solutions: ctx.solutions,
                     }),
@@ -238,8 +238,8 @@ updates.push(({ modelCore, msgCore, ctx }) => {
 
       const updatedPlay =
         screen.puzzleResult.t === 'got'
-          ? Play.update({
-              ctx: Play.initCtx({
+          ? PlayMode.update({
+              ctx: PlayMode.initCtx({
                 flow: screen.puzzleResult.c.flow,
                 solutions: ctx.solutions,
               }),
@@ -298,8 +298,8 @@ updates.push(({ modelCore, msgCore, ctx }) => {
             ),
             play:
               msgCore.nextPuzzleResult.t === 'got'
-                ? Play.init({
-                    ctx: Play.initCtx({
+                ? PlayMode.init({
+                    ctx: PlayMode.initCtx({
                       flow: msgCore.nextPuzzleResult.c.flow,
                       solutions: ctx.solutions,
                     }),
@@ -345,8 +345,8 @@ updates.push(({ modelCore, msgCore, ctx }) => {
             ),
             play:
               msgCore.previousPuzzleResult.t === 'got'
-                ? Play.init({
-                    ctx: Play.initCtx({
+                ? PlayMode.init({
+                    ctx: PlayMode.initCtx({
                       flow: msgCore.previousPuzzleResult.c.flow,
                       solutions: ctx.solutions,
                     }),

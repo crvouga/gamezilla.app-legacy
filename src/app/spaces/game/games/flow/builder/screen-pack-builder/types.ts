@@ -1,7 +1,7 @@
 import { Result } from '~/@/result'
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
-import { Play } from '../../@/play'
+import { PlayMode } from '../../@/play-mode'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
@@ -72,7 +72,7 @@ export const Screen = p.or(
     t: p.l('screen-puzzle'),
     puzzleIndex: p.num,
     puzzleResult: PuzzleResult,
-    play: p.maybe(Play.Model),
+    play: p.maybe(PlayMode.Model),
     opened: p.maybe(p.l('more')),
   }),
 )
@@ -126,7 +126,7 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('screen-pack-builder.got-flow-play-msg'),
-    c: Play.Msg,
+    c: PlayMode.Msg,
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle'),

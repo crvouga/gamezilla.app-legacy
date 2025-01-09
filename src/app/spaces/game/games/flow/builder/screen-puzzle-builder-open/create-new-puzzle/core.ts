@@ -1,7 +1,7 @@
 import { isErr } from '~/@/result'
 import type { UpdateCore } from '../../types'
-import { Edit } from '../../../@/edit'
-import { Play } from '../../../@/play'
+import { EditMode } from '../../../@/edit-mode'
+import { PlayMode } from '../../../@/play-mode'
 
 const updateCore: UpdateCore = ({ modelCore, msgCore, ctx }) => {
   switch (msgCore.t) {
@@ -21,11 +21,11 @@ const updateCore: UpdateCore = ({ modelCore, msgCore, ctx }) => {
           mode: {
             t: 'edit',
           },
-          editMode: Edit.init({
+          editMode: EditMode.init({
             flow: flowPuzzleNew.flow,
           }),
-          playMode: Play.init({
-            ctx: Play.initCtx({
+          playMode: PlayMode.init({
+            ctx: PlayMode.initCtx({
               flow: flowPuzzleNew.flow,
               solutions: ctx.solutions,
             }),

@@ -5,7 +5,7 @@ import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/
 import { Button, Drawer, IconFloppyDisk, Typography } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
-import { Edit } from '../../../@/edit'
+import { EditMode } from '../../../@/edit-mode'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
 import type { ClientModule, ModelClient, MsgClient, MsgCore } from '../../types'
 
@@ -66,7 +66,9 @@ const updateExitBuilder: ClientModule['update'] = (input) => {
         return exitBuilderWithSound(input)
       }
 
-      if (Edit.isUnsavedChanges(modelCore.screenPuzzleBuilder.editMode, modelCore.screenPuzzleBuilder.puzzle.flow)) {
+      if (
+        EditMode.isUnsavedChanges(modelCore.screenPuzzleBuilder.editMode, modelCore.screenPuzzleBuilder.puzzle.flow)
+      ) {
         return {
           model: {
             ...model,
@@ -188,7 +190,7 @@ const saveChanges: ClientModule['update'] = ({ model, modelCore }) => {
 
   const puzzleNew: Puzzle = {
     ...puzzleBuilder.puzzle,
-    flow: Edit.toFlowMemoized({
+    flow: EditMode.toFlowMemoized({
       model: puzzleBuilder.editMode,
     }),
   }
