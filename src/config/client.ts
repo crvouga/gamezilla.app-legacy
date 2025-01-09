@@ -6,8 +6,6 @@ const env: Record<string, unknown> = {
   ...(typeof import.meta.env === 'undefined' ? {} : import.meta.env),
 }
 
-console.log({ env })
-
 export const VDOM_IMPL = VDomImpl.from(env.VITE_VDOM_IMPL) || VDomImpl.of('inferno')
 
 export const VDOM_IMPL_TEST = VDomImpl.of('react-with-compiler')
