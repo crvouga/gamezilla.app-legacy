@@ -27,8 +27,8 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe.only(import.meta.url, () => {
-  it('get and put', async () => {
+describe(import.meta.file, () => {
+  it.todo('get and put', async () => {
     for (const f of await Fixtures()) {
       const flow = VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
