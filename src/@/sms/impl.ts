@@ -1,8 +1,8 @@
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
-import type { ISMS } from './sms'
-import { SMSFake } from './sms-impl-fake'
-import { SMSTwilio } from './sms-impl-twilio'
+import type { ISMS } from './interface'
+import { SMSFake } from './impl-fake'
+import { SMSTwilio } from './impl-twilio'
 
 export type SMSImpl =
   | {

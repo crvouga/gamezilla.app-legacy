@@ -1,6 +1,6 @@
 import { Err } from '~/@/result'
 import type { ILogger } from '../logger/interface'
-import type { ISMS } from './sms'
+import type { ISMS } from './interface'
 import { Logger } from '../logger'
 import { PhoneNumber } from '../phone-number'
 
