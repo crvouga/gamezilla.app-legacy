@@ -24,16 +24,23 @@ export const WebServerBun = <T>(config: Config) => {
       server = Bun.serve({
         port: port,
         async fetch(req) {
-          for (const handler of handlers) {
-            const response = await handler(req, server)
-            if (response) {
-              return response
+          try {
+            for (const handler of handlers) {
+              const response = await handler(req, server)
+              if (response) {
+                return response
+              }
             }
-          }
 
-          return new Response('Not found', {
-            status: 404,
-          })
+            return new Response('Not found', {
+              status: 404,
+            })
+          } catch (error) {
+            logger.error(error)
+            return new Response('Internal server error', {
+              status: 500,
+            })
+          }
         },
         websocket: webSocketHandler,
       })

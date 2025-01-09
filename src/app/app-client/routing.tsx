@@ -40,20 +40,21 @@ const locationToRoute = (location: Browser.Location): Route => {
   return decodeRoute(location.query['route'])
 }
 
-export const init = ({
-  location,
-}: {
+export const init = (input: {
   location: Browser.Location
 }): {
   model: Model
   eff?: Eff
 } => {
-  const currentRoute = locationToRoute(location)
+  const currentRoute = locationToRoute(input.location)
   return {
     model: {
       currentRoute,
     },
-    eff: Eff.batch([Browser.replace('/'), Browser.pushQueryParam('route', encodeRoute(currentRoute))]),
+    eff: Eff.batch([
+      input.location.pathname === '/' ? null : Browser.replace('/'),
+      Browser.replaceQueryParam('route', encodeRoute(currentRoute)),
+    ]),
   }
 }
 
