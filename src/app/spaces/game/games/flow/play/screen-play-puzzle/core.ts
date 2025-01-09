@@ -33,8 +33,8 @@ const updateScreen = (input: {
         return input.modelCore
       }
 
-      const flowPlay =
-        input.modelCore.flowPlay ??
+      const playMode =
+        input.modelCore.playMode ??
         Play.init({
           ctx: Play.initCtx({
             flow: input.modelCore.puzzleResult.c.flow,
@@ -42,23 +42,23 @@ const updateScreen = (input: {
           }),
         })
 
-      const flowPlayNew = Play.update({
+      const playModeNew = Play.update({
         msg: input.msgCore.c,
-        model: flowPlay,
+        model: playMode,
         ctx: Play.initCtx({
           flow: input.modelCore.puzzleResult.c.flow,
           solutions: input.ctx.solutions,
         }),
       })
 
-      const didSolve = flowPlayNew.events?.some((e) => e.t === 'solved')
+      const didSolve = playModeNew.events?.some((e) => e.t === 'solved')
       const userId = input.msgCore.userId
 
       return {
         ...input.modelCore,
-        flowPlay: flowPlayNew.model,
+        playMode: playModeNew.model,
         opened: didSolve ? 'puzzle-complete' : input.modelCore.opened,
-        events: flowPlayNew.events?.flatMap((event) => {
+        events: playModeNew.events?.flatMap((event) => {
           switch (event.t) {
             case 'used-hint': {
               return {
@@ -106,7 +106,7 @@ const updateScreen = (input: {
         case 'got': {
           return {
             ...input.modelCore,
-            flowPlay: Play.init({
+            playMode: Play.init({
               ctx: Play.initCtx({
                 flow: input.msgCore.nextPuzzle.c.flow,
                 solutions: input.ctx.solutions,
@@ -125,7 +125,7 @@ const updateScreen = (input: {
         case 'got': {
           return {
             ...input.modelCore,
-            flowPlay: Play.init({
+            playMode: Play.init({
               ctx: Play.initCtx({
                 flow: input.msgCore.prevPuzzle.c.flow,
                 solutions: input.ctx.solutions,
@@ -153,7 +153,7 @@ const updateScreen = (input: {
       }
       return {
         ...input.modelCore,
-        flowPlay: Play.init({
+        playMode: Play.init({
           ctx: Play.initCtx({
             flow: input.modelCore.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
@@ -208,7 +208,7 @@ const initCore = (input: {
 }): ModelCore => {
   return {
     ...input,
-    flowPlay:
+    playMode:
       input.flowPuzzle.t === 'got'
         ? Play.init({
             ctx: Play.initCtx({
@@ -247,15 +247,15 @@ const toStatus = (modelCore: ModelCore) => {
     return 'not-playing'
   }
 
-  const flowPlay = modelCore.flowPlay
+  const playMode = modelCore.playMode
 
-  if (!flowPlay) {
+  if (!playMode) {
     return 'solving'
   }
 
   return Play.toStatus({
     flow: modelCore.puzzleResult.c.flow,
-    model: flowPlay,
+    model: playMode,
   })
 }
 

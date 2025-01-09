@@ -21,8 +21,8 @@ export const update: ClientModule['update'] = (input) => {
         }
       }
 
-      const flowPlay =
-        input.modelCore.screen.flowPlay ??
+      const playMode =
+        input.modelCore.screen.playMode ??
         Play.init({
           ctx: Play.initCtx({
             flow: input.modelCore.screen.puzzleResult.c.flow,
@@ -32,7 +32,7 @@ export const update: ClientModule['update'] = (input) => {
 
       const flow = Play.toFlow({
         flow: input.modelCore.screen.puzzleResult.c.flow,
-        model: flowPlay,
+        model: playMode,
       })
 
       if (flow.t !== 'flow-grid') {

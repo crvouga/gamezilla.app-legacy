@@ -31,12 +31,12 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
           }
 
           case 'screen-pack-builder.got-flow-play-msg': {
-            const flowPlay =
+            const playMode =
               input.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle'
                 ? input.modelCore.screenPackBuilder.screen.play
                 : null
 
-            if (!flowPlay) {
+            if (!playMode) {
               return { model }
             }
 
@@ -55,7 +55,7 @@ export const ScreenPuzzlePlay: Pick<ClientModule, 'update' | 'View'> = {
                 flow: flowPuzzle.flow,
                 solutions: input.ctx.solutions,
               }),
-              model: flowPlay,
+              model: playMode,
               msg: input.msgCore.c,
             })
 

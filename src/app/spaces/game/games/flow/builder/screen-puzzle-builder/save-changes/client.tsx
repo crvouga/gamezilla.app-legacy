@@ -66,7 +66,7 @@ const updateExitBuilder: ClientModule['update'] = (input) => {
         return exitBuilderWithSound(input)
       }
 
-      if (Edit.isUnsavedChanges(modelCore.screenPuzzleBuilder.edit, modelCore.screenPuzzleBuilder.puzzle.flow)) {
+      if (Edit.isUnsavedChanges(modelCore.screenPuzzleBuilder.editMode, modelCore.screenPuzzleBuilder.puzzle.flow)) {
         return {
           model: {
             ...model,
@@ -189,7 +189,7 @@ const saveChanges: ClientModule['update'] = ({ model, modelCore }) => {
   const puzzleNew: Puzzle = {
     ...puzzleBuilder.puzzle,
     flow: Edit.toFlowMemoized({
-      model: puzzleBuilder.edit,
+      model: puzzleBuilder.editMode,
     }),
   }
 

@@ -67,8 +67,8 @@ export const ModelCore = p.obj({
   t: p.l('puzzle-builder'),
   puzzle: Puzzle,
   mode: Mode,
-  play: Play.Model,
-  edit: Edit.Model,
+  playMode: Play.Model,
+  editMode: Edit.Model,
 })
 export type ModelCore = p.Infer<typeof ModelCore>
 

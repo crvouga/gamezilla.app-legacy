@@ -9,17 +9,17 @@ import { SaveChangesCore } from './save-changes/core'
 import { ModelCore } from './types'
 
 const toStatus = (modelCore: ModelCore): 'solving' | 'solved' => {
-  return Play.toStatus({ model: modelCore.play, flow: toFlow(modelCore) })
+  return Play.toStatus({ model: modelCore.playMode, flow: toFlow(modelCore) })
 }
 
 const toFlow = (modelCore: ModelCore): Variant.Model => {
   switch (modelCore.mode.t) {
     case 'edit': {
-      return Edit.toFlow({ model: modelCore.edit })
+      return Edit.toFlow({ model: modelCore.editMode })
     }
 
     case 'play': {
-      return Play.toFlow({ flow: Edit.toFlow({ model: modelCore.edit }), model: modelCore.play })
+      return Play.toFlow({ flow: Edit.toFlow({ model: modelCore.editMode }), model: modelCore.playMode })
     }
   }
 }
@@ -40,11 +40,11 @@ const updateCoreMain = ({
       }
 
       const flow = Edit.toFlowMemoized({
-        model: modelCore.screenPuzzleBuilder.edit,
+        model: modelCore.screenPuzzleBuilder.editMode,
       })
 
       const updated = Play.update({
-        model: modelCore.screenPuzzleBuilder.play,
+        model: modelCore.screenPuzzleBuilder.playMode,
         msg: msgCore.c,
         ctx: Play.initCtx({ flow, solutions: ctx.solutions }),
       })
@@ -53,7 +53,7 @@ const updateCoreMain = ({
         ...modelCore,
         screenPuzzleBuilder: {
           ...modelCore.screenPuzzleBuilder,
-          play: updated.model,
+          playMode: updated.model,
         },
       }
     }
@@ -64,7 +64,7 @@ const updateCoreMain = ({
       }
 
       const updated = Edit.update({
-        model: modelCore.screenPuzzleBuilder.edit,
+        model: modelCore.screenPuzzleBuilder.editMode,
         msg: msgCore.c,
         flow: modelCore.screenPuzzleBuilder.puzzle.flow,
       })
@@ -73,7 +73,7 @@ const updateCoreMain = ({
         ...modelCore,
         screenPuzzleBuilder: {
           ...modelCore.screenPuzzleBuilder,
-          edit: updated.model,
+          editMode: updated.model,
         },
       }
     }
@@ -105,7 +105,7 @@ const updateCoreMain = ({
       const initial = Play.init({
         ctx: Play.initCtx({
           flow: Edit.toFlowMemoized({
-            model: modelCore.screenPuzzleBuilder.edit,
+            model: modelCore.screenPuzzleBuilder.editMode,
           }),
           solutions: ctx.solutions,
         }),
@@ -117,7 +117,7 @@ const updateCoreMain = ({
           mode: {
             t: 'play',
           },
-          play: initial,
+          playMode: initial,
         },
       }
     }

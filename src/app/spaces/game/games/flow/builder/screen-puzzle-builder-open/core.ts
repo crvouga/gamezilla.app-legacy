@@ -15,10 +15,10 @@ const updateCoreMain: UpdateCore = ({ modelCore, msgCore, ctx }) => {
         },
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
-          edit: Edit.init({
+          editMode: Edit.init({
             flow: msgCore.puzzle.flow,
           }),
-          play: Play.init({ ctx: Play.initCtx({ flow: msgCore.puzzle.flow, solutions: ctx.solutions }) }),
+          playMode: Play.init({ ctx: Play.initCtx({ flow: msgCore.puzzle.flow, solutions: ctx.solutions }) }),
           mode: { t: 'edit' },
           puzzle: msgCore.puzzle,
         },

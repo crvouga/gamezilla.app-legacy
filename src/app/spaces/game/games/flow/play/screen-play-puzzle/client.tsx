@@ -85,8 +85,8 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
           model: input.model,
         }
       }
-      const flowPlay =
-        input.modelCore.screen.flowPlay ??
+      const playMode =
+        input.modelCore.screen.playMode ??
         Play.init({
           ctx: Play.initCtx({
             flow: input.modelCore.screen.puzzleResult.c.flow,
@@ -96,7 +96,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
 
       const output = Play.update({
         msg: input.msgCore.c,
-        model: flowPlay,
+        model: playMode,
         ctx: Play.initCtx({
           flow: input.modelCore.screen.puzzleResult.c.flow,
           solutions: input.ctx.solutions,
@@ -121,7 +121,7 @@ const View: ClientModule['View'] = (input) => {
     return null
   }
   const flowPuzzle = input.modelCore.screen.puzzleResult
-  const flowPlay = input.modelCore.screen.flowPlay
+  const playMode = input.modelCore.screen.playMode
   const isSolved = ScreenPlayPuzzleCore.toStatus(input.modelCore.screen) === 'solved'
   const puzzleIndex = input.modelCore.screen.puzzleIndex
 
@@ -151,7 +151,7 @@ const View: ClientModule['View'] = (input) => {
                 key={flowPuzzle.c.id}
                 flow={flowPuzzle.c.flow}
                 model={
-                  flowPlay ??
+                  playMode ??
                   Play.init({ ctx: Play.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
                 }
                 dispatch={() => {}}
@@ -185,7 +185,7 @@ const View: ClientModule['View'] = (input) => {
               key={flowPuzzle.c.id}
               flow={flowPuzzle.c.flow}
               model={
-                flowPlay ??
+                playMode ??
                 Play.init({ ctx: Play.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
               }
               dispatch={(c) =>
@@ -232,7 +232,7 @@ const View: ClientModule['View'] = (input) => {
           flowPuzzle.t === 'got' && !isSolved
             ? Play.viewHintAction({
                 model:
-                  flowPlay ??
+                  playMode ??
                   Play.init({
                     ctx: Play.initCtx({
                       flow: flowPuzzle.c.flow,

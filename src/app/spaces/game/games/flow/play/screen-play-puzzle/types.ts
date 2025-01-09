@@ -64,7 +64,7 @@ export const ModelCore = p.obj({
   t: p.l('screen-play-puzzle'),
   flowPack: Pack,
   puzzleResult: PuzzleResult,
-  flowPlay: p.or(Play.Model, p.l(null)),
+  playMode: p.or(Play.Model, p.l(null)),
   puzzleIndex: p.num,
   opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),
   hints: p.partialDict(GroupId, GroupId),

@@ -21,10 +21,10 @@ const updateCore: UpdateCore = ({ modelCore, msgCore, ctx }) => {
           mode: {
             t: 'edit',
           },
-          edit: Edit.init({
+          editMode: Edit.init({
             flow: flowPuzzleNew.flow,
           }),
-          play: Play.init({
+          playMode: Play.init({
             ctx: Play.initCtx({
               flow: flowPuzzleNew.flow,
               solutions: ctx.solutions,

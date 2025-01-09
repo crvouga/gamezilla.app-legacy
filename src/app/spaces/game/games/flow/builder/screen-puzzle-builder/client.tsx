@@ -112,7 +112,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
       const flow = ScreenPuzzleBuilderCore.toFlow(input.modelCore.screenPuzzleBuilder)
       const updated = Play.update({
         msg: input.msgCore.c,
-        model: input.modelCore.screenPuzzleBuilder.play,
+        model: input.modelCore.screenPuzzleBuilder.playMode,
         ctx: Play.initCtx({
           flow,
           solutions: input.ctx.solutions,
@@ -131,7 +131,7 @@ const updateFromMsgCore: BuilderTypes.ClientModule['update'] = (input) => {
         }
       }
       const updated = Edit.update({
-        model: input.modelCore.screenPuzzleBuilder.edit,
+        model: input.modelCore.screenPuzzleBuilder.editMode,
         msg: input.msgCore.c,
         flow: input.modelCore.screenPuzzleBuilder.puzzle.flow,
       })
@@ -221,7 +221,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
           <Edit.View
-            model={puzzleBuilder.edit}
+            model={puzzleBuilder.editMode}
             ctx={input.ctx}
             dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
           />
@@ -258,7 +258,7 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
             top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
             board={
               <Play.View
-                model={puzzleBuilder.play}
+                model={puzzleBuilder.playMode}
                 flow={flow}
                 dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c })}
                 showSolvedAnimation
@@ -274,14 +274,14 @@ const ViewMode: BuilderTypes.ClientModule['View'] = (input) => {
                   Play.viewHintAction({
                     ctx: Play.initCtx({ ...input.ctx, flow }),
                     dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
-                    model: puzzleBuilder.play,
+                    model: puzzleBuilder.playMode,
                     disabled: status === 'solved',
                   }),
                   Play.viewResetAction({
                     ctx: input.ctx,
                     dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
                     flow,
-                    model: puzzleBuilder.play,
+                    model: puzzleBuilder.playMode,
                   }),
                 ]}
               />
