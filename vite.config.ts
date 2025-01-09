@@ -5,28 +5,23 @@ import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { VDOM_IMPL } from './src/config/client'
 
-const vDomPlugin = (): PluginOption[] => {
+const vDomPlugin = (): PluginOption => {
   switch (VDOM_IMPL) {
-    case 'inferno': {
-      return [inferno()]
-    }
+    case 'inferno':
+      return inferno()
 
-    case 'preact': {
-      return [preact()]
-    }
+    case 'preact':
+      return preact()
 
-    case 'react': {
-      return [react()]
-    }
+    case 'react':
+      return react()
 
-    case 'react-with-compiler': {
-      return [react({ babel: { plugins: [['babel-plugin-react-compiler', {}]] } })]
-    }
+    case 'react-with-compiler':
+      return react({ babel: { plugins: [['babel-plugin-react-compiler', {}]] } })
   }
 }
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), ...vDomPlugin()],
-  define: { 'process.env': process.env },
+  plugins: [tsconfigPaths(), vDomPlugin()],
 })

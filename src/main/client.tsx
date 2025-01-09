@@ -17,20 +17,17 @@ const main = async () => {
     throw new Error('Root element not found')
   }
 
-  const render = await Renderer<Parameters<typeof AppClient.View>[0]>(VDOM_IMPL, root, AppClient.View)
+  const render = await Renderer(VDOM_IMPL, root)
 
   await Program.run({
     initCtx: () => ctx,
-
-    updateCtx: (ctx) => AppClient.updateCtx(ctx),
-
-    init: (input) => AppClient.init(input),
-
-    update: (input) => AppClient.update(input),
-
-    subscriptions: (input) => AppClient.subscriptions(input),
-
-    render: (input) => render(input),
+    updateCtx: AppClient.updateCtx,
+    init: AppClient.init,
+    update: AppClient.update,
+    subscriptions: AppClient.subscriptions,
+    render(input) {
+      render(<AppClient.View {...input} />)
+    },
 
     crash: (input) => console.error('Crash!', input.error),
 
