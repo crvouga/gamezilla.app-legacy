@@ -3,6 +3,6 @@ import { FlowHash } from '../../flow/hash'
 import { Solutions } from '../solutions'
 
 export type ISolutionsDb = {
-  find: (hash: FlowHash) => Promise<Result<string, Solutions>>
+  get: (hash: FlowHash) => Promise<Result<string, Solutions | null>>
   put: (solutions: Solutions) => Promise<Result<string, null>>
 }
