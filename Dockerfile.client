@@ -1,22 +1,26 @@
-# Use the official Bun image
-FROM oven/bun:latest
+# =========================
+# Stage 1: Build with Bun
+# =========================
+FROM oven/bun:latest AS builder
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files first for better caching
 COPY package.json bun.lockb ./
 
 # Install dependencies
 RUN bun install
 
-# Copy application code
+# Copy the rest of the application code
 COPY . .
 
 # Build the client
 RUN bun client:build
 
-# Use the official Nginx image
+# =========================
+# Stage 2: Serve with Nginx
+# =========================
 FROM nginx:alpine
 
 # Remove default Nginx static files
