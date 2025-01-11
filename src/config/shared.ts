@@ -8,3 +8,5 @@ export const IS_TEST = import.meta.env?.NODE_ENV === 'test'
 export const TRANSPORT_IMPL = TransportImpl.of('bun-web-sockets')
 
 export const SERVER_IMPL = ServerImpl.of(TRANSPORT_IMPL === 'bun-web-sockets' ? 'bun' : 'node')
+
+export const IS_PROD = Boolean(import.meta.env?.PROD)
