@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { SMS } from './sms-impl'
+import { SMS } from './impl'
 import { AppServerTestEnv } from '../../app/@/server/fixture'
 import { Logger } from '../logger'
 import { isOk, unwrap } from '~/@/result'

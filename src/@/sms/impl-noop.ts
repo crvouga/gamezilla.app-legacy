@@ -1,5 +1,5 @@
 import { Ok } from '~/@/result'
-import type { ISMS } from './sms'
+import type { ISMS } from './interface'
 
 export const smsNoop: ISMS = {
   async sendMessage(_input) {

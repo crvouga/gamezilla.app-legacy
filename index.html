@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <meta
       name="description"
-      content="gamezilla.app is a multiplayer gaming app. Play games online with your friends. No download required. Just play. Play games like Flow, Chess, Battleship, and more."
+      content="gamezilla.app is a multiplayer gaming app. Play games online with your friends. There is no need for any downloads. Just play. Play games like Flow, Chess, Battleship, and more."
     />
     <link rel="icon" href="./favicon.ico" />
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" sizes="180x180" />
@@ -15,7 +15,10 @@
     <meta name="theme-color" content="#000000" />
   </head>
 
-  <body class="bg-black">
+  <body class="bg-black text-white">
+    <noscript class="flex h-screen w-screen items-center justify-center p-6 text-center">
+      You need JavaScript enabled to run this app
+    </noscript>
     <div id="root"></div>
     <script type="module" src="./src/main/client.tsx"></script>
   </body>

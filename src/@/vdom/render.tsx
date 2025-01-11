@@ -7,35 +7,35 @@ export type CreatePortal = (vDom: VDom, container: Element) => VDom
 
 export let createPortal: CreatePortal | null = null
 
-export const Render = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Render> => {
+export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Render> => {
   switch (vDomImpl) {
     case 'inferno': {
       const Inferno = await import('inferno')
       createPortal = Inferno.createPortal
-      return (vDom) => {
+      return function render(vDom) {
         Inferno.render(vDom, root)
-      }
-    }
-
-    case 'react-with-compiler':
-    case 'react': {
-      const [ReactDOMClient, ReactDOM, React] = await Promise.all([
-        import('react-dom/client'),
-        import('react-dom'),
-        import('react'),
-      ])
-      const reactRoot = ReactDOMClient.createRoot(root)
-      createPortal = ReactDOM.createPortal
-      return (vDom) => {
-        reactRoot.render(<React.StrictMode>{vDom}</React.StrictMode>)
       }
     }
 
     case 'preact': {
       const [Preact, PreactCompat] = await Promise.all([import('preact'), import('preact/compat')])
       createPortal = PreactCompat.createPortal
-      return (vDom) => {
+      return function render(vDom) {
         Preact.render(vDom, root)
+      }
+    }
+
+    case 'react':
+    case 'react-with-compiler': {
+      const [ReactDOMClient, ReactDOM, _React] = await Promise.all([
+        import('react-dom/client'),
+        import('react-dom'),
+        import('react'),
+      ])
+      const reactRoot = ReactDOMClient.createRoot(root)
+      createPortal = ReactDOM.createPortal
+      return function render(vDom) {
+        reactRoot.render(vDom)
       }
     }
   }

@@ -1,27 +1,23 @@
 import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, PluginOption } from 'vite'
 import inferno from 'vite-plugin-inferno'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { VDOM_IMPL } from './src/config/client'
 
-const vDomPlugin = () => {
+const vDomPlugin = (): PluginOption => {
   switch (VDOM_IMPL) {
-    case 'inferno': {
+    case 'inferno':
       return inferno()
-    }
 
-    case 'preact': {
+    case 'preact':
       return preact()
-    }
 
-    case 'react': {
+    case 'react':
       return react()
-    }
 
-    case 'react-with-compiler': {
+    case 'react-with-compiler':
       return react({ babel: { plugins: [['babel-plugin-react-compiler', {}]] } })
-    }
   }
 }
 

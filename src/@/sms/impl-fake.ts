@@ -1,5 +1,5 @@
 import { Ok } from '~/@/result'
-import type { ISMS } from './sms'
+import type { ISMS } from './interface'
 import type { ILogger } from '../logger'
 import { PhoneNumber } from '../phone-number'
 

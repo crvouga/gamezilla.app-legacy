@@ -26,12 +26,7 @@ export type Config = {
 
 export const ServerTransport = async <MsgToServer, MsgToClient>(
   config: Config,
-): Promise<
-  IServerTransport<{
-    MsgToClient: MsgToClient
-    MsgToServer: MsgToServer
-  }>
-> => {
+): Promise<IServerTransport<{ MsgToClient: MsgToClient; MsgToServer: MsgToServer }>> => {
   const logger = Logger.prefix('bun-web-sockets', config.logger)
   //
   //
@@ -116,52 +111,48 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   })
 
   config.webServer.registerHandler((request, maybeServer) => {
-    try {
-      const server = maybeServer as Server
-      const url = new URL(request.url)
+    const server = maybeServer as Server
+    const url = new URL(request.url)
 
-      switch (url.pathname) {
-        case WEB_SOCKET_ENDPOINT: {
-          const cookies = request.headers?.get('cookie')?.split(';')
+    switch (url.pathname) {
+      case WEB_SOCKET_ENDPOINT: {
+        const cookies = request.headers?.get('cookie')?.split(';')
 
-          const maybeSessionId = SessionIdCookie.fromCookies({
-            cookies: cookies?.join(';') ?? '',
-          })
+        const maybeSessionId = SessionIdCookie.fromCookies({
+          cookies: cookies?.join(';') ?? '',
+        })
 
-          const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
+        const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
 
-          const clientId = ClientId.generate()
+        const clientId = ClientId.generate()
 
-          const data: ServerWebSocketData = {
-            clientId,
-            sessionId,
-          }
+        const data: ServerWebSocketData = {
+          clientId,
+          sessionId,
+        }
 
-          const headers = new Headers()
+        const headers = new Headers()
 
-          if (!maybeSessionId) {
-            headers.append(
-              'Set-Cookie',
-              SessionIdCookie.toSetCookieHeaderValue({
-                sessionId,
-                isProd: config.isProd,
-              }),
-            )
-          }
-
-          logger.debug(
-            `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${headers.toJSON()}`,
+        if (!maybeSessionId) {
+          headers.append(
+            'Set-Cookie',
+            SessionIdCookie.toSetCookieHeaderValue({
+              sessionId,
+              isProd: config.isProd,
+            }),
           )
-          server.upgrade(request, { headers, data })
-          return
         }
 
-        default: {
-          return null
-        }
+        logger.debug(
+          `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${headers.toJSON()}`,
+        )
+        server.upgrade(request, { headers, data })
+        return
       }
-    } catch (error) {
-      return new Response(`Server Error: ${String(error)}`, { status: 500 })
+
+      default: {
+        return null
+      }
     }
   })
 
