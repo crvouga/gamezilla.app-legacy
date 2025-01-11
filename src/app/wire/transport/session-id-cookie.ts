@@ -21,7 +21,7 @@ const fromCookies = (input: { cookies: string }): SessionId | null => {
 
 const toSetCookieHeaderValue = (input: { sessionId: SessionId; isProd: boolean }) => {
   if (input.isProd) {
-    return `${SESSION_ID_COOKIE_NAME}=${input.sessionId}; Max-Age=${MAX_AGE}; SameSite=Strict; HttpOnly; Secure; Path=/; Domain=.gamezilla.app;`
+    return `${SESSION_ID_COOKIE_NAME}=${input.sessionId}; Max-Age=${MAX_AGE}; SameSite=Strict; HttpOnly; Secure; Path=/;`
   }
 
   return `${SESSION_ID_COOKIE_NAME}=${input.sessionId}; Max-Age=${MAX_AGE}; SameSite=Lax; HttpOnly;`

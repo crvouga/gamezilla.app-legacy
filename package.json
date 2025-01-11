@@ -33,6 +33,7 @@
     "server": "bun src/main/server.ts",
     "server:build": "bun client:build && bun db:up",
     "server:cir-deps": "dpdm --progress --no-warning --no-tree ./src/main/server.ts",
+    "server:ngrok": "ngrok http 5002 --subdomain=gamezilla",
     "tc": "bun x tsc --noEmit --watch",
     "test:int": "IS_INTEGRATION_TEST=true bun test",
     "test:unit": "IS_INTEGRATION_TEST=false bun test",
