@@ -16,9 +16,7 @@ COPY . .
 # Build the client
 RUN bun client:build
 
-# =========================
-# Stage 2: Serve with Nginx
-# =========================
+# Use the official Nginx image
 FROM nginx:alpine
 
 # Remove default Nginx static files
