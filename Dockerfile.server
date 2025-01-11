@@ -13,8 +13,11 @@ RUN bun install
 # Copy application code
 COPY . .
 
+# Set the DATABASE_URL environment variable
+ARG DATABASE_URL
+
 # Build the server
-RUN bun server:build
+RUN DATABASE_URL=$DATABASE_URL bun server:build
 
 # Expose the port
 EXPOSE 3000
