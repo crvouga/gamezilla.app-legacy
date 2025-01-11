@@ -79,10 +79,13 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
     }
 
     ws.onmessage = (msgEvt) => {
-      isConnected = true
-      const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>
-
-      transport.fromServer.pub(msg)
+      try {
+        isConnected = true
+        const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>
+        transport.fromServer.pub(msg)
+      } catch (e) {
+        console.log('got bad msg', e)
+      }
     }
   }
 
