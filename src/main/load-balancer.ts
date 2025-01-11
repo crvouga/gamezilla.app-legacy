@@ -22,6 +22,10 @@ const main = async () => {
     return LoadBalancer.respond(ctx, request)
   })
 
+  if (!SERVER_PORT) {
+    throw new Error('SERVER_PORT is not set')
+  }
+
   await server.start(SERVER_PORT)
 
   logger.info('Load balancer started')

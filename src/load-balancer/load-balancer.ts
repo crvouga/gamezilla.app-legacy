@@ -14,6 +14,10 @@ export type Ctx = {
 
 export const initCtx = async (config: { logger: ILogger }): Promise<Ctx> => {
   const logger = Logger.prefix('load-balancer', config.logger)
+  if (!DATABASE_URL) {
+    throw new Error('DATABASE_URL is not set')
+  }
+
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: DATABASE_URL,

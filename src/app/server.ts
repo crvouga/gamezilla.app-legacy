@@ -53,6 +53,10 @@ const initCtx = async (): Promise<ServerCtx> => {
 
   const simulateLatency = IS_PROD ? async () => {} : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
 
+  if (!DATABASE_URL) {
+    throw new Error('DATABASE_URL is not set')
+  }
+
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: DATABASE_URL,

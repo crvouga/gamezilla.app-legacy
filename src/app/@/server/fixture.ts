@@ -12,6 +12,7 @@ import { SessionId } from '../data/session-id'
 import type { AppServerCtx } from './ctx'
 import { ProfileCache } from './profile-cache'
 import { ServerInstanceId } from './server-instance/server-instance-id'
+import { IS_INTEGRATION_TEST } from '~/config/shared'
 
 export type ITestEnv = {
   t: 'unit' | 'integration' | 'all'
@@ -21,7 +22,7 @@ export type ITestEnv = {
 }
 
 export const AppServerTestEnv = async (): Promise<ITestEnv> => {
-  if (import.meta.env.IS_INTEGRATION_TEST !== 'true') {
+  if (!IS_INTEGRATION_TEST) {
     return {
       t: 'unit',
       dbConnKv: await DbConnKv({ t: 'hash-map' }),
@@ -31,6 +32,10 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
   }
 
   const logger = Logger({ t: 'noop' })
+
+  if (!DATABASE_URL) {
+    throw new Error('DATABASE_URL is not set')
+  }
 
   const dbConnSql = await DbConnSql({
     t: 'postgres',

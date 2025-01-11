@@ -1,5 +1,7 @@
+import { FileSystem } from '~/@/file-system'
 import { ProgramImpure } from '~/@/program/program-impure'
 import { withRPC } from '~/@/rpc/rpc'
+import { withSinglePageApp } from '~/@/web-server/with-single-page-app'
 import { AppTypes } from '~/app'
 import { AppServer } from '~/app/server'
 import { SERVER_PORT } from '~/config/server'
@@ -16,19 +18,24 @@ const main = async () => {
     subscriptions: AppServer.subscriptions,
   })
 
-  ctx.webServer.registerHandler((_req) => {
-    return new Response('Hello from gamezilla.app server', { status: 200, headers: { 'content-type': 'text/plain' } })
-  })
-
-  await ctx.webServer.start(SERVER_PORT)
-
-  const rpc = AppServer.rpc({ ctx })
-
   withRPC({
     webServer: ctx.webServer,
     contract: AppTypes.rpcContract,
-    handlers: rpc,
+    handlers: AppServer.rpc({ ctx }),
   })
+
+  withSinglePageApp({
+    directory: 'dist',
+    fileSystem: FileSystem({ t: 'bun' }),
+    indexFile: 'index.html',
+    webServer: ctx.webServer,
+  })
+
+  if (!SERVER_PORT) {
+    throw new Error('SERVER_PORT is not set')
+  }
+
+  await ctx.webServer.start(SERVER_PORT)
 
   ctx.logger.info({
     IS_PROD,
