@@ -24,12 +24,20 @@ const main = async () => {
     handlers: AppServer.rpc({ ctx }),
   })
 
-  withSinglePageApp({
-    directory: 'dist',
-    fileSystem: FileSystem({ t: 'bun' }),
-    indexFile: 'index.html',
-    webServer: ctx.webServer,
-  })
+  const SERVE_SINGLE_PAGE_APP = false
+
+  if (SERVE_SINGLE_PAGE_APP) {
+    withSinglePageApp({
+      directory: 'dist',
+      fileSystem: FileSystem({ t: 'bun' }),
+      indexFile: 'index.html',
+      webServer: ctx.webServer,
+    })
+  } else {
+    ctx.webServer.registerHandler((_request) => {
+      return new Response('Hello from gamezilla.app server', { status: 200 })
+    })
+  }
 
   if (!SERVER_PORT) {
     throw new Error('SERVER_PORT is not set')
