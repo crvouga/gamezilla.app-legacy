@@ -26,10 +26,10 @@ const encodeRoute = (route: Route): string => {
 }
 
 const decodeRoute = (route: unknown): Route => {
-  if (typeof route !== 'string') {
-    return FALLBACK
-  }
   try {
+    if (typeof route !== 'string') {
+      return FALLBACK
+    }
     return JSON.parse(atob(route))
   } catch {
     return FALLBACK
@@ -68,11 +68,7 @@ export const init = (input: {
 
 export type Msg = { t: 'route-changed'; route: Route } | { t: 'clicked-link'; route: Route } | { t: 'clicked-back' }
 
-export const update = ({
-  msg,
-  model,
-  msgCmd,
-}: {
+export const update = (input: {
   msgCmd?: RouteCmd | null
   msg?: Msg | null
   model: Model
@@ -82,13 +78,13 @@ export const update = ({
   msgEvt?: ClientEvt[]
   msgCmd?: SoundCmd[]
 } => {
-  if (msg) {
-    return updateFromMsg({ msg, model })
+  if (input.msg) {
+    return updateFromMsg(input)
   }
-  if (msgCmd) {
-    return updateFromCmd({ msgCmd, model })
+  if (input.msgCmd) {
+    return updateFromCmd(input)
   }
-  return { model }
+  return { model: input.model }
 }
 
 const updateFromMsg: typeof update = ({ msg, model }) => {
@@ -175,9 +171,4 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 //
 //
 
-export const subscriptions = Browser.onLocation(
-  (location): Msg => ({
-    t: 'route-changed',
-    route: locationToRoute(location),
-  }),
-)
+export const subscriptions = Browser.onLocation((l): Msg => ({ t: 'route-changed', route: locationToRoute(l) }))
