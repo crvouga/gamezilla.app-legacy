@@ -1,0 +1,46 @@
+# =========================
+# Stage 1: Build with Bun
+# =========================
+FROM alpine:latest AS builder
+
+# Install necessary dependencies
+RUN apk add --no-cache curl bash
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# Set environment variables for Bun
+ENV BUN_INSTALL="/root/.bun"
+ENV PATH="$BUN_INSTALL/bin:$PATH"
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY package.json bun.lockb* ./
+
+# Install dependencies
+RUN bun install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the client
+RUN bun client:build
+
+# =========================
+# Stage 2: Serve with Nginx
+# =========================
+FROM nginx:alpine
+
+# Remove default Nginx static files
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy the built files from the builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]
