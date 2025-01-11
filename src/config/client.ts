@@ -1,7 +1,7 @@
 import { VDomImpl } from '../@/vdom/vdom-impl'
 import { IS_TEST } from './shared'
 
-export const VDOM_IMPL = VDomImpl.of('inferno')
+export const VDOM_IMPL = VDomImpl.of('react-with-compiler')
 
 export const VDOM_IMPL_TEST = VDomImpl.of('react-with-compiler')
 
