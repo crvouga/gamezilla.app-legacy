@@ -43,7 +43,7 @@ const updateFromMsg: BackendModule['update'] = async ({ msg }) => {
     }
     case 'handled': {
       return {
-        msgCmd: [sendToFrontend([msg.frontendId], msg.msg)],
+        msgCmd: [sendToFrontend([msg.clientId], msg.msg)],
       }
     }
   }
@@ -79,7 +79,7 @@ const updateFromFrontend: BackendModule['update'] = async ({ msgFrontend, ctx })
 
   return {
     msgCmd: [
-      sendToFrontend([msgFrontend.frontendId], {
+      sendToFrontend([msgFrontend.clientId], {
         ...msgFrontend,
         result,
       }),
@@ -101,7 +101,7 @@ const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
       })
       return {
         msgCmd: [
-          sendToFrontend([msgEvt.frontendId], {
+          sendToFrontend([msgEvt.clientId], {
             t: 'current-user-profile',
             result: Result.mapOk(result, profileCoreToProfile),
             causedBy: { msgEvt },

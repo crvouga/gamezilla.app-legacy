@@ -46,7 +46,7 @@ const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
 
       return {
         msgCmd: [
-          sendToFrontend<MsgToFrontend>([input.msgFrontend.frontendId], {
+          sendToFrontend<MsgToFrontend>([input.msgFrontend.clientId], {
             t: 'synced',
             causedBy: { msgFrontend: input.msgFrontend },
             space: starting,
@@ -94,7 +94,7 @@ const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
 
       return {
         msgCmd: [
-          sendToFrontend<MsgToFrontend>([input.msgEvt.frontendId], {
+          sendToFrontend<MsgToFrontend>([input.msgEvt.clientId], {
             t: 'current-user-space',
             space: started,
             profiles,

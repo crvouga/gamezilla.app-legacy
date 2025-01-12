@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { pipe } from '~/@/function/pipe'
 import { Ok } from '~/@/result'
 import { UserAccount } from '../@/data/account'
-import { FrontendId } from '../@/data/frontend-id'
+import { ClientId } from '../@/data/client-id'
 import { SessionId } from '../@/data/session-id'
 import { FixtureAppBackend } from '../@/backend/fixture'
 import * as WireBackend from './backend'
@@ -47,16 +47,16 @@ describe(import.meta.file, () => {
   test('recording connected frontends', async () => {
     const f = await Fixture()
 
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
 
     const before = await f.ctx.wireSessionDb.findBySessionIds([sessionId])
 
-    await f.update({}, [{ msg: { t: 'frontend-connected', frontendId, sessionId } }])
+    await f.update({}, [{ msg: { t: 'frontend-connected', clientId, sessionId } }])
 
     const after = await f.ctx.wireSessionDb.findBySessionIds([sessionId])
 
-    const expected: WireSession = pipe(WireSession.init(sessionId), (x) => WireSession.addFrontendId(x, frontendId))
+    const expected: WireSession = pipe(WireSession.init(sessionId), (x) => WireSession.addClientId(x, clientId))
 
     expect(before).toEqual(Ok([]))
     expect(after).toEqual(Ok([expected]))
@@ -65,21 +65,21 @@ describe(import.meta.file, () => {
   test('indexing frontends by user id', async () => {
     const f = await Fixture()
     const user = UserAccount.random()
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
 
     const before = await f.ctx.wireSessionDb.findByUserIds([user.userId])
 
     await f.update({}, [
-      { msg: { t: 'frontend-connected', frontendId, sessionId } },
-      { msgEvt: { t: 'auth-evt.frontend-authenticated', user, frontendId, sessionId } },
+      { msg: { t: 'frontend-connected', clientId, sessionId } },
+      { msgEvt: { t: 'auth-evt.frontend-authenticated', user, clientId, sessionId } },
     ])
 
     const after = await f.ctx.wireSessionDb.findByUserIds([user.userId])
 
     const expected: WireSession = pipe(
       WireSession.init(sessionId),
-      (x) => WireSession.addFrontendId(x, frontendId),
+      (x) => WireSession.addClientId(x, clientId),
       (x) => WireSession.addUserId(x, user.userId),
     )
 
@@ -89,7 +89,7 @@ describe(import.meta.file, () => {
 
   test('send to frontend', async () => {
     const f = await Fixture()
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
     const msg = {
       t: 'ping',
@@ -101,11 +101,11 @@ describe(import.meta.file, () => {
     })
 
     await f.update({}, [
-      { msg: { t: 'frontend-connected', frontendId, sessionId } },
-      { msgCmd: { t: 'wire', c: { t: 'send-to-frontend', frontendIds: [frontendId], msg } } },
+      { msg: { t: 'frontend-connected', clientId, sessionId } },
+      { msgCmd: { t: 'wire', c: { t: 'send-to-frontend', clientIds: [clientId], msg } } },
     ])
 
-    const expected: ToFrontendPayload<unknown>[] = [{ [frontendId]: { frontendId, msgs: [msg] } }]
+    const expected: ToFrontendPayload<unknown>[] = [{ [clientId]: { clientId, msgs: [msg] } }]
 
     expect(actual).toEqual(expected)
   })
@@ -113,7 +113,7 @@ describe(import.meta.file, () => {
   test('send to user', async () => {
     const f = await Fixture()
     const user = UserAccount.random()
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
     const msg = {
       t: 'ping',
@@ -125,12 +125,12 @@ describe(import.meta.file, () => {
     })
 
     await f.update({}, [
-      { msg: { t: 'frontend-connected', frontendId, sessionId } },
-      { msgEvt: { t: 'auth-evt.frontend-authenticated', frontendId, sessionId, user } },
+      { msg: { t: 'frontend-connected', clientId, sessionId } },
+      { msgEvt: { t: 'auth-evt.frontend-authenticated', clientId, sessionId, user } },
       { msgCmd: { t: 'wire', c: { t: 'send-to-user', userIds: [user.userId], msg } } },
     ])
 
-    const expected: ToFrontendPayload<unknown>[] = [{ [frontendId]: { frontendId, msgs: [msg] } }]
+    const expected: ToFrontendPayload<unknown>[] = [{ [clientId]: { clientId, msgs: [msg] } }]
 
     expect(actual).toEqual(expected)
   })

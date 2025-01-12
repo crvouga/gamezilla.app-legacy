@@ -37,7 +37,7 @@ const update: BackendModule['update'] = async ({ msgFrontend, ctx }) => {
         msgEvt: [
           {
             t: 'auth-evt.frontend-authenticated',
-            frontendId: msgFrontend.frontendId,
+            clientId: msgFrontend.clientId,
             user: result.value,
             sessionId: msgFrontend.sessionId,
             loggedIn: true,

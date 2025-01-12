@@ -3,7 +3,7 @@ import { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
 import type { HttpServerBun } from '~/@/http-server/impl-bun'
-import { FrontendId } from '~/app/@/data/frontend-id'
+import { ClientId } from '~/app/@/data/client-id'
 import { SessionId } from '~/app/@/data/session-id'
 import { SessionIdCookie } from '../session-id-cookie'
 import { WEB_SOCKET_ENDPOINT } from '../shared'
@@ -11,7 +11,7 @@ import { type MsgFrontendToMsgBackend, type MsgBackendToMsgFrontend } from '../t
 import { initBackendTransport, type IBackendTransport } from './interface'
 
 type BackendWebSocketData = {
-  frontendId: FrontendId
+  clientId: ClientId
   sessionId: SessionId
 }
 
@@ -46,28 +46,28 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   //
   //
 
-  const frontends = new Map<FrontendId, ServerWebSocket<BackendWebSocketData>>()
-  const unlistens = new Map<FrontendId, () => void>()
-  const frontendsBySessionId = new Map<SessionId, Set<FrontendId>>()
+  const frontends = new Map<ClientId, ServerWebSocket<BackendWebSocketData>>()
+  const unlistens = new Map<ClientId, () => void>()
+  const frontendsBySessionId = new Map<SessionId, Set<ClientId>>()
 
   const addFrontend = async (ws: ServerWebSocket<BackendWebSocketData>) => {
-    frontends.set(ws.data.frontendId, ws)
-    const frontendIds = frontendsBySessionId.get(ws.data.sessionId) ?? new Set<FrontendId>()
-    frontendIds.add(ws.data.frontendId)
-    frontendsBySessionId.set(ws.data.sessionId, frontendIds)
+    frontends.set(ws.data.clientId, ws)
+    const clientIds = frontendsBySessionId.get(ws.data.sessionId) ?? new Set<ClientId>()
+    clientIds.add(ws.data.clientId)
+    frontendsBySessionId.set(ws.data.sessionId, clientIds)
     unlistens.set(
-      ws.data.frontendId,
-      await config.pubSubTopicBased.sub(ws.data.frontendId, (msg) => {
-        logger.debug(`received msg for frontendId=${ws.data.frontendId} from other backend instance`)
+      ws.data.clientId,
+      await config.pubSubTopicBased.sub(ws.data.clientId, (msg) => {
+        logger.debug(`received msg for clientId=${ws.data.clientId} from other backend instance`)
         send(ws, JSON.parse(msg))
       }),
     )
   }
 
   const removeFrontend = async (ws: ServerWebSocket<BackendWebSocketData>) => {
-    frontends.delete(ws.data.frontendId)
-    frontendsBySessionId.get(ws.data.sessionId)?.delete(ws.data.frontendId)
-    unlistens.get(ws.data.frontendId)?.()
+    frontends.delete(ws.data.clientId)
+    frontendsBySessionId.get(ws.data.sessionId)?.delete(ws.data.clientId)
+    unlistens.get(ws.data.clientId)?.()
   }
 
   //
@@ -80,30 +80,30 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
 
   config.httpServer._setWebSocketHandler({
     async open(ws: ServerWebSocket<BackendWebSocketData>) {
-      logger.debug(`websocket connection opened frontendId=${ws.data.frontendId} sessionId=${ws.data.sessionId}`)
+      logger.debug(`websocket connection opened clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
       await addFrontend(ws)
       transport.wire.pub({
         t: 'frontend-connected',
-        frontendId: ws.data.frontendId,
+        clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
       })
     },
     async close(ws: ServerWebSocket<BackendWebSocketData>, _code, _message) {
-      logger.debug(`websocket connection closed frontendId=${ws.data.frontendId} sessionId=${ws.data.sessionId}`)
+      logger.debug(`websocket connection closed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
       await removeFrontend(ws)
       transport.wire.pub({
         t: 'frontend-disconnected',
-        frontendId: ws.data.frontendId,
+        clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
       })
     },
     message(ws: ServerWebSocket<BackendWebSocketData>, message) {
-      logger.debug(`websocket message received frontendId=${ws.data.frontendId} sessionId=${ws.data.sessionId}`)
+      logger.debug(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
 
       const msg = JSON.parse(message.toString()) as MsgFrontendToMsgBackend<MsgToBackend> // leap of faith
 
       transport.fromFrontend.pub({
-        frontendId: ws.data.frontendId,
+        clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
         msgs: msg,
       })
@@ -124,10 +124,10 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
 
         const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
 
-        const frontendId = FrontendId.generate()
+        const clientId = ClientId.generate()
 
         const data: BackendWebSocketData = {
-          frontendId,
+          clientId,
           sessionId,
         }
 
@@ -144,7 +144,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
         }
 
         logger.debug(
-          `${WEB_SOCKET_ENDPOINT} request received frontendId=${frontendId} sessionId=${sessionId} headers=${headers.toJSON()}`,
+          `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${headers.toJSON()}`,
         )
         backend.upgrade(request, { headers, data })
         return
@@ -181,8 +181,8 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
     msg: MsgBackendToMsgFrontend<MsgToFrontend>,
   ) => {
     send(ws, msg)
-    config.pubSubTopicBased.pub(ws.data.frontendId, JSON.stringify(msg))
-    logger.debug(`sent msg for frontendId=${ws.data.frontendId} to other backend instances`)
+    config.pubSubTopicBased.pub(ws.data.clientId, JSON.stringify(msg))
+    logger.debug(`sent msg for clientId=${ws.data.clientId} to other backend instances`)
   }
 
   transport.toFrontendBroadcast.sub((msgs) => {
@@ -192,9 +192,9 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   })
 
   transport.toFrontend.sub((toFrontend) => {
-    for (const frontendId in toFrontend) {
-      const toFrontendSingle = toFrontend[frontendId as FrontendId]!
-      const frontend = frontends.get(frontendId as FrontendId)
+    for (const clientId in toFrontend) {
+      const toFrontendSingle = toFrontend[clientId as ClientId]!
+      const frontend = frontends.get(clientId as ClientId)
 
       if (!frontend) {
         continue

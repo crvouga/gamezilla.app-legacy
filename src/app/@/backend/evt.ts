@@ -1,4 +1,4 @@
-import type { FrontendId } from '~/app/@/data/frontend-id'
+import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import type { UserAccount } from '../data/account'
@@ -7,30 +7,30 @@ import { PhoneNumber } from '~/@/phone-number'
 export type BackendEvt =
   | {
       t: 'wire-evt.frontend-connected'
-      frontendId: FrontendId
+      clientId: ClientId
       sessionId: SessionId
       userId?: UserId
     }
   | {
       t: 'wire-evt.frontend-disconnected'
-      frontendId: FrontendId
+      clientId: ClientId
       sessionId: SessionId
     }
   | {
       t: 'auth-evt.frontend-authenticated'
       user: UserAccount
       sessionId: SessionId
-      frontendId: FrontendId
+      clientId: ClientId
       loggedIn?: boolean
     }
   | {
       t: 'auth-evt.frontend-unauthenticated'
       sessionId: SessionId
-      frontendId: FrontendId
+      clientId: ClientId
     }
   | {
       t: 'auth-evt.frontend-authenticated-with-sms'
       sessionId: SessionId
-      frontendId: FrontendId
+      clientId: ClientId
       phoneNumber: PhoneNumber
     }

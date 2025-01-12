@@ -2,7 +2,7 @@ import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import type { Sub } from '~/@/sub'
-import type { FrontendId } from '~/app/@/data/frontend-id'
+import type { ClientId } from '~/app/@/data/client-id'
 import { Logger } from '../../@/logger'
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { BackendCmd, WireCmd } from '../@/backend/cmd'
@@ -106,7 +106,7 @@ const updateFromMsg: typeof update = async (input) => {
 
       const session: WireSession = maybeSession ?? WireSession.init(input.msg.sessionId)
 
-      const sessionNew = WireSession.addFrontendId(session, input.msg.frontendId)
+      const sessionNew = WireSession.addClientId(session, input.msg.clientId)
 
       await input.ctx.wireSessionDb.put([sessionNew])
 
@@ -114,7 +114,7 @@ const updateFromMsg: typeof update = async (input) => {
         msgEvt: [
           {
             t: 'wire-evt.frontend-connected',
-            frontendId: input.msg.frontendId,
+            clientId: input.msg.clientId,
             sessionId: input.msg.sessionId,
           },
         ],
@@ -126,7 +126,7 @@ const updateFromMsg: typeof update = async (input) => {
         msgEvt: [
           {
             t: 'wire-evt.frontend-disconnected',
-            frontendId: input.msg.frontendId,
+            clientId: input.msg.clientId,
             sessionId: input.msg.sessionId,
           },
         ],
@@ -139,7 +139,7 @@ const updateFromMsg: typeof update = async (input) => {
 
     case 'got-bad-msgs': {
       input.ctx.logger.warn(
-        `Got bad msg from frontend. reason=${input.msg.reason}, frontend's frontendId=${input.msg.frontendId}, frontend's sessionId=${input.msg.sessionId}`,
+        `Got bad msg from frontend. reason=${input.msg.reason}, frontend's clientId=${input.msg.clientId}, frontend's sessionId=${input.msg.sessionId}`,
       )
       return {}
     }
@@ -179,20 +179,20 @@ const updateFromCmd = async <TMsgToFrontend, TMsgToBackend>(
 
     case 'send-to-frontend': {
       const toFrontendPayload: {
-        [frontendId: FrontendId]: {
-          frontendId: FrontendId
+        [clientId: ClientId]: {
+          clientId: ClientId
           msgs: TMsgToFrontend[]
         }
       } = {}
 
-      if (msgCmdChild.frontendIds.length === 0) {
+      if (msgCmdChild.clientIds.length === 0) {
         input.ctx.logger.warn(`${msgCmdChild.t} failed. No frontend ids provided`)
         return {}
       }
 
-      for (const frontendId of msgCmdChild.frontendIds) {
-        toFrontendPayload[frontendId] = {
-          frontendId,
+      for (const clientId of msgCmdChild.clientIds) {
+        toFrontendPayload[clientId] = {
+          clientId,
           msgs: [msgCmdChild.msg],
         }
       }
@@ -210,23 +210,23 @@ const updateFromCmd = async <TMsgToFrontend, TMsgToBackend>(
       }
 
       const toFrontendPayload: {
-        [frontendId: FrontendId]: {
-          frontendId: FrontendId
+        [clientId: ClientId]: {
+          clientId: ClientId
           msgs: TMsgToFrontend[]
         }
       } = {}
 
       for (const wireSession of wireSessions) {
-        const frontendIds = CappedOrderedDict.valuesNewestFirst(wireSession.frontendIds)
+        const clientIds = CappedOrderedDict.valuesNewestFirst(wireSession.clientIds)
 
-        if (frontendIds.length === 0) {
+        if (clientIds.length === 0) {
           input.ctx.logger.warn(`send to user error. no frontend ids for sessionId=${wireSession.sessionId}`)
           continue
         }
 
-        for (const frontendId of frontendIds) {
-          toFrontendPayload[frontendId] = toFrontendPayload[frontendId] ?? { frontendId, msgs: [] }
-          toFrontendPayload[frontendId].msgs.push(msgCmdChild.msg)
+        for (const clientId of clientIds) {
+          toFrontendPayload[clientId] = toFrontendPayload[clientId] ?? { clientId, msgs: [] }
+          toFrontendPayload[clientId].msgs.push(msgCmdChild.msg)
         }
       }
       input.ctx.transport.toFrontend.pub(toFrontendPayload)

@@ -3,7 +3,7 @@ import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { Ok, Result } from '~/@/result'
 import { UserAccount } from '~/app/@/data/account'
-import type { FrontendId } from '~/app/@/data/frontend-id'
+import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureAppBackend, randomFrontend } from '~/app/@/backend/fixture'
@@ -19,7 +19,7 @@ type InputMsg =
     }
   | {
       msgFrontend: AuthSMSTypes.MsgToBackend & {
-        frontendId: FrontendId
+        clientId: ClientId
         sessionId: SessionId
       }
     }

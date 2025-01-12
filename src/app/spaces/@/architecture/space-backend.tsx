@@ -1,7 +1,7 @@
 import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { type Sub } from '~/@/sub'
-import type { FrontendId } from '~/app/@/data/frontend-id'
+import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import type { BackendEvt } from '~/app/@/backend/evt'
@@ -19,7 +19,7 @@ export type Input = {
   msg?: MsgBackend | null
   msgFrontend?:
     | (MsgToBackend & {
-        frontendId: FrontendId
+        clientId: ClientId
         sessionId: SessionId
         userId?: UserId | null
       })

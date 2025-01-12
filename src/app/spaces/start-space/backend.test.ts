@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { unwrap } from '~/@/result'
-import { FrontendId } from '~/app/@/data/frontend-id'
+import { ClientId } from '~/app/@/data/client-id'
 import { SessionId } from '~/app/@/data/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           t: 'got-msg-space',
-          frontendId: FrontendId.generate(),
+          clientId: ClientId.generate(),
           sessionId: SessionId.generate(),
           c: withEventMeta({
             t: 'user-started-space',
@@ -49,7 +49,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           t: 'got-msg-space',
-          frontendId: FrontendId.generate(),
+          clientId: ClientId.generate(),
           sessionId: SessionId.generate(),
           c: withEventMeta({
             t: 'user-started-space',

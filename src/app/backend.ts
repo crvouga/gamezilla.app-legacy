@@ -339,8 +339,8 @@ const subscriptions = async (input: { ctx: BackendCtx }): Promise<Sub<MsgBackend
     Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space, deps: null })),
     Sub.tag('wire', WireBackend.subscriptions({ ctx: input.ctx.wire })),
     Sub.flat(
-      Sub.map(input.ctx.transport.fromFrontend, ({ sessionId, frontendId, msgs }) =>
-        msgs.map((c): MsgBackend => ({ t: '→', sessionId, frontendId, c })),
+      Sub.map(input.ctx.transport.fromFrontend, ({ sessionId, clientId, msgs }) =>
+        msgs.map((c): MsgBackend => ({ t: '→', sessionId, clientId, c })),
       ),
     ),
   ])

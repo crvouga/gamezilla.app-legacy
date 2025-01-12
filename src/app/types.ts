@@ -4,11 +4,11 @@ import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
 import { AppBackendCtx } from './@/backend/ctx'
-import { FrontendId } from './@/data/frontend-id'
+import { ClientId } from './@/data/client-id'
 import { SessionId } from './@/data/session-id'
 import { UserId } from './@/data/user-id'
 import { AuthTypes } from './auth'
-import type { Platform, CurrentScreen, Sound, StatusBar, Toast } from './frontend/index'
+import type { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
 import { SpacesTypes } from './spaces'
@@ -86,7 +86,7 @@ export type MsgToFrontend =
 
 export type MsgToBackendMeta = {
   sessionId: SessionId
-  frontendId: FrontendId
+  clientId: ClientId
   userId?: UserId | null
 }
 

@@ -81,7 +81,7 @@ const updateSendCode: BackendModule['update'] = async ({ msgFrontend, deps }) =>
       const sent = await deps.VerifySMS.sendCode(msgFrontend)
       return {
         msgCmd: [
-          sendToFrontend([msgFrontend.frontendId], {
+          sendToFrontend([msgFrontend.clientId], {
             t: 'sent-code',
             phoneNumber: msgFrontend.phoneNumber,
             sent,

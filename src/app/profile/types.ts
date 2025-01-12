@@ -4,7 +4,7 @@ import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { FrontendEvt } from '../@/frontend/evt'
-import { FrontendId } from '../@/data/frontend-id'
+import { ClientId } from '../@/data/client-id'
 import { Profile } from '../@/data/profile'
 import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
@@ -94,7 +94,7 @@ export type MsgFrontend =
   | { t: 'clicked-avatar' }
   | { t: 'clicked-update-username-button' }
 
-export type MsgBackend = UpdateUsernameTypes.MsgBackend | { t: 'handled'; frontendId: FrontendId; msg: MsgToFrontend }
+export type MsgBackend = UpdateUsernameTypes.MsgBackend | { t: 'handled'; clientId: ClientId; msg: MsgToFrontend }
 
 export type MsgToFrontend =
   | UpdateUsernameTypes.MsgToFrontend

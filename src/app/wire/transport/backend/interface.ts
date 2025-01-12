@@ -1,16 +1,16 @@
 import { PubSub } from '~/@/sub'
-import type { FrontendId } from '~/app/@/data/frontend-id'
+import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 
 export type BackendTransportMsg =
   | {
       t: 'frontend-connected'
-      frontendId: FrontendId
+      clientId: ClientId
       sessionId: SessionId
     }
   | {
       t: 'frontend-disconnected'
-      frontendId: FrontendId
+      clientId: ClientId
       sessionId: SessionId
     }
   | {
@@ -20,21 +20,21 @@ export type BackendTransportMsg =
   | {
       t: 'got-bad-msgs'
       reason: 'unknown-msg-type' | 'codebase-version-id-mismatch'
-      frontendId: FrontendId
+      clientId: ClientId
       sessionId: SessionId
       msgs: unknown[]
     }
 
 export type ToFrontendPayload<TMsgToFrontend> = {
-  [frontendId: FrontendId]: {
-    frontendId: FrontendId
+  [clientId: ClientId]: {
+    clientId: ClientId
     msgs: TMsgToFrontend[]
   }
 }
 
 export type ToBackendPayload<TMsgToBackend> = {
   msgs: TMsgToBackend[]
-  frontendId: FrontendId
+  clientId: ClientId
   sessionId: SessionId
 }
 

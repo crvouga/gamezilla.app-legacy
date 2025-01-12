@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { isOk } from '~/@/result'
 import { SessionId } from '~/app/@/data/session-id'
-import { FrontendId } from '~/app/@/data/frontend-id'
+import { ClientId } from '~/app/@/data/client-id'
 import { AppBackendTestEnv, FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserAccountDb } from '../@/backend/user-account-db'
 import { UserSessionDb } from '../@/backend/user-session-db'
@@ -15,7 +15,7 @@ import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 type Input =
   | {
       msgFrontend: ContinueAsGuestTypes.MsgToBackend & {
-        frontendId: FrontendId
+        clientId: ClientId
         sessionId: SessionId
       }
     }
@@ -117,13 +117,13 @@ describe(import.meta.file, () => {
   it('should be able to handle request', async () => {
     const f = await Fixture()
 
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
 
     const output = await f.update([
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId: SessionId.generate(),
         },
       },
@@ -133,7 +133,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-frontend' &&
-          msgCmd.c.frontendIds.includes(frontendId) &&
+          msgCmd.c.clientIds.includes(clientId) &&
           msgCmd.c.msg.t === 'guest.continue-as-guest-result',
       ),
     ).toBe(true)
@@ -142,14 +142,14 @@ describe(import.meta.file, () => {
   it('should output a frontend authenticated event', async () => {
     const f = await Fixture()
 
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
 
     const output = await f.update([
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -159,7 +159,7 @@ describe(import.meta.file, () => {
       output.msgEvt?.some(
         (msgEvt) =>
           msgEvt.t === 'auth-evt.frontend-authenticated' &&
-          msgEvt.frontendId === frontendId &&
+          msgEvt.clientId === clientId &&
           msgEvt.sessionId === sessionId &&
           msgEvt.loggedIn,
       ),
@@ -169,14 +169,14 @@ describe(import.meta.file, () => {
   it('should be able to find user id from session id after continuing as guest', async () => {
     const f = await Fixture()
 
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
 
     await f.update([
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -190,7 +190,7 @@ describe(import.meta.file, () => {
   it('should always use the same guest account for the same session id', async () => {
     const f = await Fixture()
     const sessionId = SessionId.generate()
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
 
     const before = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
@@ -198,7 +198,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -210,7 +210,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -222,7 +222,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -238,13 +238,13 @@ describe(import.meta.file, () => {
   it('should send back ok result after continuing as a guest multiple times', async () => {
     const f = await Fixture()
     const sessionId = SessionId.generate()
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
 
     const firstOutput = await f.update([
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -254,7 +254,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -271,13 +271,13 @@ describe(import.meta.file, () => {
   it('should output the same account everytime', async () => {
     const f = await Fixture()
     const sessionId = SessionId.generate()
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
 
     const firstOutput = await f.update([
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -287,7 +287,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -312,13 +312,13 @@ describe(import.meta.file, () => {
   it('should output the same account everytime', async () => {
     const f = await Fixture()
     const sessionId = SessionId.generate()
-    const frontendId = FrontendId.generate()
+    const clientId = ClientId.generate()
 
     const firstOutput = await f.update([
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },
@@ -328,7 +328,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          frontendId,
+          clientId,
           sessionId,
         },
       },

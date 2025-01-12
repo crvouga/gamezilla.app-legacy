@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
-import { FrontendId } from '~/app/@/data/frontend-id'
+import { ClientId } from '~/app/@/data/client-id'
 import { Profile } from '~/app/@/data/profile'
 import { SessionId } from '~/app/@/data/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -107,14 +107,14 @@ export const FixtureSpaceBackend = async () => {
 
 export const randomAuthenticatedFrontend = (): AuthenticatedFrontend => {
   return {
-    frontendId: FrontendId.generate(),
+    clientId: ClientId.generate(),
     sessionId: SessionId.generate(),
     userId: UserId.generate(),
   }
 }
 
 export type AuthenticatedFrontend = {
-  frontendId: FrontendId
+  clientId: ClientId
   sessionId: SessionId
   userId: UserId
 }

@@ -1,17 +1,17 @@
 import { Result } from '~/@/result'
 import { p } from '~/@/parser'
 
-const parser = p.brand(p.str, 'FrontendId')
+const parser = p.brand(p.str, 'ClientId')
 
-export type FrontendId = p.Infer<typeof parser>
+export type ClientId = p.Infer<typeof parser>
 
-const is = (id: unknown): id is FrontendId => {
+const is = (id: unknown): id is ClientId => {
   return typeof id === 'string'
 }
 
 type Problem = 'invalid_frontend_id'
 
-const decode = (id: string): Result<Problem, FrontendId> => {
+const decode = (id: string): Result<Problem, ClientId> => {
   if (is(id)) {
     return Result.Ok(id)
   }
@@ -38,19 +38,19 @@ const generateId = (length: number): string => {
 const namespace = 'frontend'
 const separator = ':'
 
-const generate = (): FrontendId => {
+const generate = (): ClientId => {
   const id = `${generateId(5)}`
 
-  const frontendId = `${namespace}${separator}${id}`
+  const clientId = `${namespace}${separator}${id}`
 
-  if (is(frontendId)) {
-    return frontendId
+  if (is(clientId)) {
+    return clientId
   }
 
   throw new Error('generated invalid frontend id')
 }
 
-export const FrontendId = {
+export const ClientId = {
   ...parser,
   is,
   decode,

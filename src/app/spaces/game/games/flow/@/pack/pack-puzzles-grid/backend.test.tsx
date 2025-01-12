@@ -56,6 +56,6 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = await AppBackendModule.andThen(initial(), userObversedGrid(f.ctx, f.frontend, []))
 
-    expect(didSendToFrontend(output, f.frontend.frontendId, (msg) => msg.t === 'listed-puzzles-by-id')).toBe(true)
+    expect(didSendToFrontend(output, f.frontend.clientId, (msg) => msg.t === 'listed-puzzles-by-id')).toBe(true)
   })
 })
