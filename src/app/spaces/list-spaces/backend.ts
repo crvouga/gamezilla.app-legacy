@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { Paginated } from '~/app/@/data/pagination'
-import { sendToClient } from '~/app/@/backend/cmd'
+import { sendToFrontend } from '~/app/@/backend/cmd'
 import type { SpaceBackendModule } from '../@/architecture/space-backend'
 import { SpaceCore } from '../core/space-core'
 
@@ -14,9 +14,9 @@ import { SpaceCore } from '../core/space-core'
 //
 
 const update: SpaceBackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+  switch (input.msgFrontend?.t) {
     case 'list-spaces': {
-      const listed = await input.ctx.spacesCoreBackend.list(input.msgClient)
+      const listed = await input.ctx.spacesCoreBackend.list(input.msgFrontend)
       const spaces = unwrapOr(listed, Paginated.init())
       const started = spaces.items.map(EventSourced.startFromLatestSnapshot)
       const userIds = spaces.items.flatMap(SpaceCore.toUserIds)
@@ -24,10 +24,10 @@ const update: SpaceBackendModule['update'] = async (input) => {
 
       return {
         msgCmd: [
-          sendToClient(input.msgClient, {
+          sendToFrontend(input.msgFrontend, {
             t: 'listed-spaces',
             spaces: started,
-            causedBy: { msgClient: input.msgClient },
+            causedBy: { msgFrontend: input.msgFrontend },
             profiles,
           }),
         ],

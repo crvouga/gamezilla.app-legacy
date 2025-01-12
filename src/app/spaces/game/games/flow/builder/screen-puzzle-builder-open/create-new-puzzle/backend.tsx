@@ -7,16 +7,16 @@ import type { BackendModule } from '../../types'
 import type { MsgCore } from './types'
 
 const update: BackendModule['update'] = async (input) => {
-  return GameBackendModule.andThen({}, () => updateFromClient(input))
+  return GameBackendModule.andThen({}, () => updateFromFrontend(input))
 }
 
-const updateFromClient: BackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+const updateFromFrontend: BackendModule['update'] = async (input) => {
+  switch (input.msgFrontend?.t) {
     case 'create-new-puzzle.user-clicked-create-button': {
       const counted = await input.ctx.puzzleDb.count({
         where: {
           createdBy: {
-            equals: input.msgClient.userId,
+            equals: input.msgFrontend.userId,
           },
         },
       })
@@ -30,7 +30,7 @@ const updateFromClient: BackendModule['update'] = async (input) => {
       const puzzleNew = await Puzzle.create({
         count: count,
         createdAt: input.ctx.now,
-        createdBy: input.msgClient.userId,
+        createdBy: input.msgFrontend.userId,
         flow: Variant.init({
           terminalsByGroupId: {},
           dimensions: VariantDimensions.init({
@@ -46,7 +46,7 @@ const updateFromClient: BackendModule['update'] = async (input) => {
       const msgCore: MsgCore = {
         t: 'create-new-puzzle.user-created-puzzle',
         created: Result.mapOk(created, () => puzzleNew),
-        userId: input.msgClient.userId,
+        userId: input.msgFrontend.userId,
       }
 
       return {

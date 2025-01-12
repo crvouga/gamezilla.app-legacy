@@ -7,12 +7,12 @@ import { Puzzle } from '../../../@/puzzle/puzzle'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   puzzleSaveChangesRequest?: RemoteResult<string, null>
   puzzleSaveChangesIsExiting?: boolean
 }
 
-export const initClient: ModelClient = {}
+export const initFrontend: ModelFrontend = {}
 
 export type ModelBackend = {}
 
@@ -20,7 +20,7 @@ export type ModelBackend = {}
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | {
       t: 'screen-puzzle-builder.save-changes.user-clicked-save-button'
     }
@@ -46,7 +46,7 @@ export type MsgToBackend =
       puzzle: Puzzle
     }
 
-export type MsgToClient = { t: 'noop' }
+export type MsgToFrontend = { t: 'noop' }
 
 //
 //

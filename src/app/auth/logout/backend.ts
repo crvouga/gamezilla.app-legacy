@@ -3,13 +3,13 @@ import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { BackendModule } from '../types'
 
 const update: BackendModule['update'] = async (input) => {
-  return AppBackendModule.andThen({}, () => updateFromClient(input))
+  return AppBackendModule.andThen({}, () => updateFromFrontend(input))
 }
 
-const updateFromClient: BackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+const updateFromFrontend: BackendModule['update'] = async (input) => {
+  switch (input.msgFrontend?.t) {
     case 'user-clicked-confirm-logout-button': {
-      const zapped = await input.ctx.userSessionDb.zapBySessionId(input.msgClient.sessionId)
+      const zapped = await input.ctx.userSessionDb.zapBySessionId(input.msgFrontend.sessionId)
 
       if (isErr(zapped)) {
         return {}
@@ -18,8 +18,8 @@ const updateFromClient: BackendModule['update'] = async (input) => {
       return {
         msgEvt: [
           {
-            ...input.msgClient,
-            t: 'auth-evt.client-unauthenticated',
+            ...input.msgFrontend,
+            t: 'auth-evt.frontend-unauthenticated',
           },
         ],
       }

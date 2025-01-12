@@ -14,7 +14,10 @@ import { GameMainMenu } from '../@/ui/game-main-menu'
 //
 //
 
-export type ModelClient = { t: 'vs-bot'; c: VsBot.ModelClient } | { t: 'vs-user'; c: VsUser.ModelClient } | { t: null }
+export type ModelFrontend =
+  | { t: 'vs-bot'; c: VsBot.ModelFrontend }
+  | { t: 'vs-user'; c: VsUser.ModelFrontend }
+  | { t: null }
 
 export const ModelBackend = p.or(
   p.obj({
@@ -42,15 +45,15 @@ export type Mode = 'none' | 'vs-user' | 'vs-bot'
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | GameMainMenu.Msg
   | MsgCore
-  | { t: 'vs-user'; c: VsUser.MsgClient }
-  | { t: 'vs-bot'; c: VsBot.MsgClient }
+  | { t: 'vs-user'; c: VsUser.MsgFrontend }
+  | { t: 'vs-bot'; c: VsBot.MsgFrontend }
 
 export type MsgBackend = { t: 'vs-user'; c: VsUser.MsgBackend } | { t: 'vs-bot'; c: VsBot.MsgBackend }
 
-export type MsgToClient = { t: 'vs-user'; c: VsUser.MsgToClient } | { t: 'vs-bot'; c: VsBot.MsgToClient }
+export type MsgToFrontend = { t: 'vs-user'; c: VsUser.MsgToFrontend } | { t: 'vs-bot'; c: VsBot.MsgToFrontend }
 
 export type MsgToBackend = { t: 'vs-user'; c: VsUser.MsgToBackend } | { t: 'vs-bot'; c: VsBot.MsgToBackend }
 

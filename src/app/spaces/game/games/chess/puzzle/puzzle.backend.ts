@@ -14,7 +14,7 @@ import { PuzzleDb } from './puzzle-db'
 import {
   type ModelBackend,
   type MsgBackend,
-  type MsgToClient,
+  type MsgToFrontend,
   type MsgToBackend,
   type PuzzleInteraction,
   initCore,
@@ -104,7 +104,7 @@ export const update = (input: {
 }): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   return pipe(updateMain(input))
 }
@@ -272,16 +272,16 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
   }
 }
 
-export const updateFromClient = (input: {
+export const updateFromFrontend = (input: {
   ctx: SpaceBackendCtx
   msg: MsgToBackend
   model: ModelBackend
 }): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
-  return updateFromClientMain({ ...input })
+  return updateFromFrontendMain({ ...input })
   // andThen((model) =>
   //   watchPutInteraction({ ...input, modelPrev: input.model, model })
   // ),
@@ -396,7 +396,7 @@ export const watchPutProfile = ({
   return { model }
 }
 
-const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+const updateFromFrontendMain: typeof updateFromFrontend = ({ model }) => {
   // const handled = updateCore({ ctx, msg, model });
 
   // return {

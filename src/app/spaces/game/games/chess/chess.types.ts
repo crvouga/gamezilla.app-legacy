@@ -6,20 +6,20 @@ import type * as VsBot from './vs-bot/vs-bot.types'
 import type * as VsUser from './vs-user/vs-user.types'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 
-export type ModelClient = {
+export type ModelFrontend = {
   mode:
     | { t: 'none' }
     | {
         t: 'vs-user'
-        c: VsUser.ModelClient
+        c: VsUser.ModelFrontend
       }
     | {
         t: 'vs-bot'
-        c: VsBot.ModelClient
+        c: VsBot.ModelFrontend
       }
     | {
         t: 'puzzle'
-        c: Puzzle.ModelClient
+        c: Puzzle.ModelFrontend
       }
 
   requests?: {
@@ -35,23 +35,23 @@ export type ModelBackend =
 
 type Mode = ModelBackend['t']
 
-export type MsgClient =
+export type MsgFrontend =
   | GameMainMenu.Msg
   | Req
-  | { t: 'vs-user'; c: VsUser.MsgClient }
-  | { t: 'vs-bot'; c: VsBot.MsgClient }
-  | { t: 'puzzle'; c: Puzzle.MsgClient }
+  | { t: 'vs-user'; c: VsUser.MsgFrontend }
+  | { t: 'vs-bot'; c: VsBot.MsgFrontend }
+  | { t: 'puzzle'; c: Puzzle.MsgFrontend }
 
 export type MsgBackend =
   | { t: 'vs-user'; c: VsUser.MsgBackend }
   | { t: 'vs-bot'; c: VsBot.MsgBackend }
   | { t: 'puzzle'; c: Puzzle.MsgBackend }
 
-export type MsgToClient =
+export type MsgToFrontend =
   | Res
-  | { t: 'vs-user'; c: VsUser.MsgToClient }
-  | { t: 'vs-bot'; c: VsBot.MsgToClient }
-  | { t: 'puzzle'; c: Puzzle.MsgToClient }
+  | { t: 'vs-user'; c: VsUser.MsgToFrontend }
+  | { t: 'vs-bot'; c: VsBot.MsgToFrontend }
+  | { t: 'puzzle'; c: Puzzle.MsgToFrontend }
 
 export type MsgToBackend =
   | Req

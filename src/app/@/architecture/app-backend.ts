@@ -1,6 +1,6 @@
 import { Msg } from '~/@/msg/msg'
 import { type Sub } from '~/@/sub'
-import type { ClientId } from '~/app/@/data/client-id'
+import type { FrontendId } from '~/app/@/data/frontend-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 
@@ -24,11 +24,11 @@ export type AppBackendModuleTypes = {
    */
   Msg?: any
   /**
-   * `MsgToClient` is a message to send to the client component of the module
+   * `MsgToFrontend` is a message to send to the frontend component of the module
    */
-  MsgToClient?: any
+  MsgToFrontend?: any
   /**
-   * `MsgToBackend` is a message to send to the client component of the module
+   * `MsgToBackend` is a message to send to the frontend component of the module
    */
   MsgToBackend?: any
   /**
@@ -71,9 +71,9 @@ export type Input<T extends AppBackendModuleTypes> = {
   /**
    *
    */
-  msgClient?:
+  msgFrontend?:
     | (T['MsgToBackend'] & {
-        clientId: ClientId
+        frontendId: FrontendId
         sessionId: SessionId
         userId?: UserId | null
       })

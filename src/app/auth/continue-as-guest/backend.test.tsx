@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { isOk } from '~/@/result'
 import { SessionId } from '~/app/@/data/session-id'
-import { ClientId } from '~/app/@/data/client-id'
+import { FrontendId } from '~/app/@/data/frontend-id'
 import { AppBackendTestEnv, FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserAccountDb } from '../@/backend/user-account-db'
 import { UserSessionDb } from '../@/backend/user-session-db'
@@ -10,12 +10,12 @@ import type { BackendCtx } from '../types'
 import { ContinueAsGuestBackend } from './backend'
 import type * as ContinueAsGuestTypes from './types'
 import { GuestSessionMappingDb } from '../@/backend/guest-session-mapping-db'
-import { didSendMsgToClient } from '~/app/@/backend/cmd'
+import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 
 type Input =
   | {
-      msgClient: ContinueAsGuestTypes.MsgToBackend & {
-        clientId: ClientId
+      msgFrontend: ContinueAsGuestTypes.MsgToBackend & {
+        frontendId: FrontendId
         sessionId: SessionId
       }
     }
@@ -117,13 +117,13 @@ describe(import.meta.file, () => {
   it('should be able to handle request', async () => {
     const f = await Fixture()
 
-    const clientId = ClientId.generate()
+    const frontendId = FrontendId.generate()
 
     const output = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId: SessionId.generate(),
         },
       },
@@ -132,24 +132,24 @@ describe(import.meta.file, () => {
       output.msgCmd?.some(
         (msgCmd) =>
           msgCmd.t === 'wire' &&
-          msgCmd.c.t === 'send-to-client' &&
-          msgCmd.c.clientIds.includes(clientId) &&
+          msgCmd.c.t === 'send-to-frontend' &&
+          msgCmd.c.frontendIds.includes(frontendId) &&
           msgCmd.c.msg.t === 'guest.continue-as-guest-result',
       ),
     ).toBe(true)
   })
 
-  it('should output a client authenticated event', async () => {
+  it('should output a frontend authenticated event', async () => {
     const f = await Fixture()
 
-    const clientId = ClientId.generate()
+    const frontendId = FrontendId.generate()
     const sessionId = SessionId.generate()
 
     const output = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -158,8 +158,8 @@ describe(import.meta.file, () => {
     expect(
       output.msgEvt?.some(
         (msgEvt) =>
-          msgEvt.t === 'auth-evt.client-authenticated' &&
-          msgEvt.clientId === clientId &&
+          msgEvt.t === 'auth-evt.frontend-authenticated' &&
+          msgEvt.frontendId === frontendId &&
           msgEvt.sessionId === sessionId &&
           msgEvt.loggedIn,
       ),
@@ -169,14 +169,14 @@ describe(import.meta.file, () => {
   it('should be able to find user id from session id after continuing as guest', async () => {
     const f = await Fixture()
 
-    const clientId = ClientId.generate()
+    const frontendId = FrontendId.generate()
     const sessionId = SessionId.generate()
 
     await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -190,15 +190,15 @@ describe(import.meta.file, () => {
   it('should always use the same guest account for the same session id', async () => {
     const f = await Fixture()
     const sessionId = SessionId.generate()
-    const clientId = ClientId.generate()
+    const frontendId = FrontendId.generate()
 
     const before = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -208,9 +208,9 @@ describe(import.meta.file, () => {
 
     await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -220,9 +220,9 @@ describe(import.meta.file, () => {
 
     await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -238,13 +238,13 @@ describe(import.meta.file, () => {
   it('should send back ok result after continuing as a guest multiple times', async () => {
     const f = await Fixture()
     const sessionId = SessionId.generate()
-    const clientId = ClientId.generate()
+    const frontendId = FrontendId.generate()
 
     const firstOutput = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -252,32 +252,32 @@ describe(import.meta.file, () => {
 
     const secondOutput = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
     ])
 
     expect(
-      didSendMsgToClient(firstOutput, (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result)),
+      didSendMsgToFrontend(firstOutput, (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result)),
     ).toBe(true)
     expect(
-      didSendMsgToClient(secondOutput, (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result)),
+      didSendMsgToFrontend(secondOutput, (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result)),
     ).toBe(true)
   })
 
   it('should output the same account everytime', async () => {
     const f = await Fixture()
     const sessionId = SessionId.generate()
-    const clientId = ClientId.generate()
+    const frontendId = FrontendId.generate()
 
     const firstOutput = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -285,9 +285,9 @@ describe(import.meta.file, () => {
 
     const secondOutput = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -296,13 +296,13 @@ describe(import.meta.file, () => {
     const expectedUserId = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
-      didSendMsgToClient(
+      didSendMsgToFrontend(
         firstOutput,
         (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result) && msg.result.value === expectedUserId,
       ),
     ).toBe(true)
     expect(
-      didSendMsgToClient(
+      didSendMsgToFrontend(
         secondOutput,
         (msg) => msg.t === 'guest.continue-as-guest-result' && isOk(msg.result) && msg.result.value === expectedUserId,
       ),
@@ -312,13 +312,13 @@ describe(import.meta.file, () => {
   it('should output the same account everytime', async () => {
     const f = await Fixture()
     const sessionId = SessionId.generate()
-    const clientId = ClientId.generate()
+    const frontendId = FrontendId.generate()
 
     const firstOutput = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -326,9 +326,9 @@ describe(import.meta.file, () => {
 
     const secondOutput = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'guest.clicked-continue-as-guest-button',
-          clientId,
+          frontendId,
           sessionId,
         },
       },
@@ -338,12 +338,12 @@ describe(import.meta.file, () => {
 
     expect(
       firstOutput.msgEvt?.some(
-        (msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId,
+        (msg) => msg.t === 'auth-evt.frontend-authenticated' && msg.user.userId === expectedUserId,
       ),
     ).toBe(true)
     expect(
       secondOutput.msgEvt?.some(
-        (msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId,
+        (msg) => msg.t === 'auth-evt.frontend-authenticated' && msg.user.userId === expectedUserId,
       ),
     ).toBe(true)
   })

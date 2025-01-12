@@ -1,7 +1,7 @@
 import { isErr } from '~/@/result'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import { sendToClient } from '~/app/@/backend/cmd'
+import { sendToFrontend } from '~/app/@/backend/cmd'
 import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
@@ -24,7 +24,7 @@ import {
   stopPlaying,
   type ModelBackend,
   type MsgBackend,
-  type MsgToClient,
+  type MsgToFrontend,
   type MsgToBackend,
   type Res,
 } from './vs-user.types'
@@ -57,7 +57,7 @@ export const update = (
   model: Model,
 ): {
   model: Model
-  msgCmd: SpaceBackendCmd<MsgToClient>[]
+  msgCmd: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   switch (msg[0]) {
     case 'RoundCountDown': {
@@ -94,13 +94,13 @@ export const update = (
   }
 }
 
-export const updateFromClient = (
+export const updateFromFrontend = (
   _ctx: SpaceBackendCtx,
   msg: MsgToBackend,
   model: Model,
 ): {
   model: Model
-  msgCmd: SpaceBackendCmd<MsgToClient>[]
+  msgCmd: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   switch (msg[0]) {
     case 'InputPlayer': {
@@ -109,7 +109,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['InputPlayer_Done', result])],
+          msgCmd: [sendToFrontend([], ['InputPlayer_Done', result])],
         }
       }
 
@@ -132,7 +132,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['StopPlaying_Done', result])],
+          msgCmd: [sendToFrontend([], ['StopPlaying_Done', result])],
         }
       }
 
@@ -154,7 +154,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['StartGame_Done', result])],
+          msgCmd: [sendToFrontend([], ['StartGame_Done', result])],
         }
       }
 
@@ -176,7 +176,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['resign_Done', result])],
+          msgCmd: [sendToFrontend([], ['resign_Done', result])],
         }
       }
 
@@ -198,7 +198,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['input-move-done', result])],
+          msgCmd: [sendToFrontend([], ['input-move-done', result])],
         }
       }
 
@@ -220,7 +220,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['NewGame_Done', result])],
+          msgCmd: [sendToFrontend([], ['NewGame_Done', result])],
         }
       }
 
@@ -243,7 +243,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], ['InputBestOutOf_Done', result])],
+          msgCmd: [sendToFrontend([], ['InputBestOutOf_Done', result])],
         }
       }
 
@@ -266,7 +266,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], res)],
+          msgCmd: [sendToFrontend([], res)],
         }
       }
 
@@ -288,7 +288,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], res)],
+          msgCmd: [sendToFrontend([], res)],
         }
       }
 
@@ -310,7 +310,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], res)],
+          msgCmd: [sendToFrontend([], res)],
         }
       }
 
@@ -332,7 +332,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToClient([], res)],
+          msgCmd: [sendToFrontend([], res)],
         }
       }
 
@@ -357,7 +357,7 @@ export const updateFromEvent = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     const { userId } = msg

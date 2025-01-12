@@ -1,20 +1,20 @@
 import { NotAsked } from '~/@/result'
 import type { RequestResponse } from '~/@/request-response/request-response'
-import { AppClientModule } from '~/app/@/architecture/app-client'
+import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
+import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
 import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
-import { FlowClientEvtIn } from '../../client/evt'
+import { FlowFrontendEvtIn } from '../../frontend/evt'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { ListPuzzlesOutput } from '../../puzzle/puzzle-db'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
 import { FlowBackendCtx } from '../../backend/ctx'
 import type { Pack } from '../pack'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import { PackId } from '../pack-id'
 
-export type ModelClient = {
+export type ModelFrontend = {
   request: RequestResponse<string, null>
   requests: {
     [packId: PackId]: RequestResponse<string, null>
@@ -24,7 +24,7 @@ export type ModelClient = {
   }
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   request: NotAsked,
   requests: {},
   puzzles: {},
@@ -32,7 +32,7 @@ export const initClient: ModelClient = {
 
 export type ModelBackend = Record<string, unknown>
 
-export type MsgClient =
+export type MsgFrontend =
   | {
       t: 'user-observed-grid'
     }
@@ -44,7 +44,7 @@ export type MsgBackend = {
   t: 'noop'
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'listed-puzzles-by-id'
   listed: ListPuzzlesOutput
   causedBy: unknown
@@ -56,7 +56,7 @@ export type MsgToBackend = {
   causedBy: unknown
 }
 
-export type MsgInCmdClient = {
+export type MsgInCmdFrontend = {
   t: 'pack-puzzles-grid'
   c: {
     t: 'load'
@@ -64,27 +64,27 @@ export type MsgInCmdClient = {
   }
 }
 
-export type PackGridClientCtx = SpaceClientCtx & {
+export type PackGridFrontendCtx = SpaceFrontendCtx & {
   pack: Pack
 }
 
-export type ClientModule = AppClientModule<{
-  Ctx: PackGridClientCtx
-  Model: ModelClient
-  Msg: MsgClient
-  MsgEvtIn: FlowClientEvtIn
-  MsgCmdOut: SpaceClientCmd<{
-    MsgClient: MsgClient
+export type FrontendModule = AppFrontendModule<{
+  Ctx: PackGridFrontendCtx
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgCmdOut: SpaceFrontendCmd<{
+    MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }>
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   ViewSlot: {
     grid: {
       request: RequestResponse<string, null>
     }
   }
-  MsgCmdIn: MsgInCmdClient | null
+  MsgCmdIn: MsgInCmdFrontend | null
 }>
 
 export type BackendModule = AppBackendModule<{
@@ -92,8 +92,8 @@ export type BackendModule = AppBackendModule<{
   Model: ModelBackend
   Msg: MsgBackend
   MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: SpaceBackendCmd<MsgToClient>
-  MsgToClient: MsgToClient
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Deps: null
 }>

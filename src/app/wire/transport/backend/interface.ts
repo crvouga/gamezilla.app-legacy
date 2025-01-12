@@ -1,16 +1,16 @@
 import { PubSub } from '~/@/sub'
-import type { ClientId } from '~/app/@/data/client-id'
+import type { FrontendId } from '~/app/@/data/frontend-id'
 import type { SessionId } from '~/app/@/data/session-id'
 
 export type BackendTransportMsg =
   | {
-      t: 'client-connected'
-      clientId: ClientId
+      t: 'frontend-connected'
+      frontendId: FrontendId
       sessionId: SessionId
     }
   | {
-      t: 'client-disconnected'
-      clientId: ClientId
+      t: 'frontend-disconnected'
+      frontendId: FrontendId
       sessionId: SessionId
     }
   | {
@@ -20,39 +20,39 @@ export type BackendTransportMsg =
   | {
       t: 'got-bad-msgs'
       reason: 'unknown-msg-type' | 'codebase-version-id-mismatch'
-      clientId: ClientId
+      frontendId: FrontendId
       sessionId: SessionId
       msgs: unknown[]
     }
 
-export type ToClientPayload<TMsgToClient> = {
-  [clientId: ClientId]: {
-    clientId: ClientId
-    msgs: TMsgToClient[]
+export type ToFrontendPayload<TMsgToFrontend> = {
+  [frontendId: FrontendId]: {
+    frontendId: FrontendId
+    msgs: TMsgToFrontend[]
   }
 }
 
 export type ToBackendPayload<TMsgToBackend> = {
   msgs: TMsgToBackend[]
-  clientId: ClientId
+  frontendId: FrontendId
   sessionId: SessionId
 }
 
-export type IBackendTransport<T extends { MsgToClient: any; MsgToBackend: any }> = {
-  toClient: PubSub<ToClientPayload<T['MsgToClient']>>
-  toClientBroadcast: PubSub<T['MsgToClient'][]>
-  fromClient: PubSub<ToBackendPayload<T['MsgToBackend']>>
+export type IBackendTransport<T extends { MsgToFrontend: any; MsgToBackend: any }> = {
+  toFrontend: PubSub<ToFrontendPayload<T['MsgToFrontend']>>
+  toFrontendBroadcast: PubSub<T['MsgToFrontend'][]>
+  fromFrontend: PubSub<ToBackendPayload<T['MsgToBackend']>>
   wire: PubSub<BackendTransportMsg>
 }
 
-export const initBackendTransport = <MsgToBackend, MsgToClient>(): IBackendTransport<{
-  MsgToClient: MsgToClient
+export const initBackendTransport = <MsgToBackend, MsgToFrontend>(): IBackendTransport<{
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
 }> => {
   return {
-    toClient: PubSub.create(),
-    toClientBroadcast: PubSub.create(),
-    fromClient: PubSub.create(),
+    toFrontend: PubSub.create(),
+    toFrontendBroadcast: PubSub.create(),
+    fromFrontend: PubSub.create(),
     wire: PubSub.create(),
   }
 }

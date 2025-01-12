@@ -39,12 +39,12 @@ const updateGame: SpaceBackendModule['update'] = async (input) => {
     ctx: { ...input.ctx.games, space: spaceState },
     msg: input.msg?.t === 'game' ? input.msg.c : null,
     modelCore: spaceState.game,
-    msgClient:
-      input.msgClient?.t === 'game' && input.msgClient.userId
+    msgFrontend:
+      input.msgFrontend?.t === 'game' && input.msgFrontend.userId
         ? {
-            ...input.msgClient,
-            userId: input.msgClient.userId,
-            ...input.msgClient.c,
+            ...input.msgFrontend,
+            userId: input.msgFrontend.userId,
+            ...input.msgFrontend.c,
           }
         : null,
     msgEvt: input.msgEvt,
@@ -62,8 +62,8 @@ const inputToSpaceId = (input: Parameters<SpaceBackendModule['update']>[0]) => {
     return input.msg.spaceId
   }
 
-  if (input.msgClient && 'spaceId' in input.msgClient) {
-    return input.msgClient.spaceId
+  if (input.msgFrontend && 'spaceId' in input.msgFrontend) {
+    return input.msgFrontend.spaceId
   }
 
   if (input.msgCore && 'spaceId' in input.msgCore) {

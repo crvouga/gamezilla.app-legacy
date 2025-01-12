@@ -113,7 +113,7 @@ export const initCoreModel = ({ X, O }: { X: SetupModel['X']; O: SetupModel['O']
   }
 }
 
-export type ModelClient = CoreModel & {
+export type ModelFrontend = CoreModel & {
   openedModal: 'none' | ModalName
 }
 
@@ -133,13 +133,13 @@ export const parseModel = (): Result<string, CoreModel> => {
 
 type ModalName = 'resignation'
 
-export type MsgClient = Req | ['OpenModal', ModalName] | ['close-modal']
+export type MsgFrontend = Req | ['OpenModal', ModalName] | ['close-modal']
 
 export type MsgBackend = RoundCountDown | MoveCountDown
 
 export type MsgToBackend = Req
 
-export type MsgToClient = Res | RoundCountDown_Done | MoveCountDown_Done | ['player-left', CoreModel]
+export type MsgToFrontend = Res | RoundCountDown_Done | MoveCountDown_Done | ['player-left', CoreModel]
 
 export type MsgCore = ['ClickedBoard', TicTacToe.Position]
 

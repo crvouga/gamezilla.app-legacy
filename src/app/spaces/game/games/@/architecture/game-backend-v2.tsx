@@ -2,7 +2,7 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { type Sub } from '~/@/sub'
 import { Msg } from '~/@/msg/msg'
 import type { WithEventId } from '~/@/event-sourced/event'
-import type { ClientId } from '~/app/@/data/client-id'
+import type { FrontendId } from '~/app/@/data/frontend-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 
@@ -17,7 +17,7 @@ export type GameBackendModuleTypes = {
   Ctx?: any
   Model?: any
   Msg?: any
-  MsgToClient?: any
+  MsgToFrontend?: any
   MsgToBackend?: any
   MsgCmdIn?: any
   MsgEvtIn?: any
@@ -39,9 +39,9 @@ export type Input<T extends GameBackendModuleTypes> = {
   modelCore: T['ModelCore']
   msgCore?: WithEventId<T['MsgCore']> | null
   msg?: T['Msg'] | null
-  msgClient?:
+  msgFrontend?:
     | (T['MsgToBackend'] & {
-        clientId: ClientId
+        frontendId: FrontendId
         sessionId: SessionId
         userId: UserId
       })

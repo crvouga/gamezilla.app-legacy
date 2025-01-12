@@ -3,15 +3,15 @@ import { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
 import type { WebBackendBun } from '~/@/web-backend/impl-bun'
-import { ClientId } from '~/app/@/data/client-id'
+import { FrontendId } from '~/app/@/data/frontend-id'
 import { SessionId } from '~/app/@/data/session-id'
 import { SessionIdCookie } from '../session-id-cookie'
 import { WEB_SOCKET_ENDPOINT } from '../shared'
-import { type MsgClientToMsgBackend, type MsgBackendToMsgClient } from '../types'
+import { type MsgFrontendToMsgBackend, type MsgBackendToMsgFrontend } from '../types'
 import { initBackendTransport, type IBackendTransport } from './interface'
 
 type BackendWebSocketData = {
-  clientId: ClientId
+  frontendId: FrontendId
   sessionId: SessionId
 }
 
@@ -24,9 +24,9 @@ export type Config = {
   isProd: boolean
 }
 
-export const BackendTransport = async <MsgToBackend, MsgToClient>(
+export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   config: Config,
-): Promise<IBackendTransport<{ MsgToClient: MsgToClient; MsgToBackend: MsgToBackend }>> => {
+): Promise<IBackendTransport<{ MsgToFrontend: MsgToFrontend; MsgToBackend: MsgToBackend }>> => {
   const logger = Logger.prefix('bun-web-sockets', config.logger)
   //
   //
@@ -36,7 +36,7 @@ export const BackendTransport = async <MsgToBackend, MsgToClient>(
   //
   //
 
-  const transport = initBackendTransport<MsgToBackend, MsgToClient>()
+  const transport = initBackendTransport<MsgToBackend, MsgToFrontend>()
 
   //
   //
@@ -46,28 +46,28 @@ export const BackendTransport = async <MsgToBackend, MsgToClient>(
   //
   //
 
-  const clients = new Map<ClientId, ServerWebSocket<BackendWebSocketData>>()
-  const unlistens = new Map<ClientId, () => void>()
-  const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
+  const frontends = new Map<FrontendId, ServerWebSocket<BackendWebSocketData>>()
+  const unlistens = new Map<FrontendId, () => void>()
+  const frontendsBySessionId = new Map<SessionId, Set<FrontendId>>()
 
-  const addClient = async (ws: ServerWebSocket<BackendWebSocketData>) => {
-    clients.set(ws.data.clientId, ws)
-    const clientIds = clientsBySessionId.get(ws.data.sessionId) ?? new Set<ClientId>()
-    clientIds.add(ws.data.clientId)
-    clientsBySessionId.set(ws.data.sessionId, clientIds)
+  const addFrontend = async (ws: ServerWebSocket<BackendWebSocketData>) => {
+    frontends.set(ws.data.frontendId, ws)
+    const frontendIds = frontendsBySessionId.get(ws.data.sessionId) ?? new Set<FrontendId>()
+    frontendIds.add(ws.data.frontendId)
+    frontendsBySessionId.set(ws.data.sessionId, frontendIds)
     unlistens.set(
-      ws.data.clientId,
-      await config.pubSubTopicBased.sub(ws.data.clientId, (msg) => {
-        logger.debug(`received msg for clientId=${ws.data.clientId} from other backend instance`)
+      ws.data.frontendId,
+      await config.pubSubTopicBased.sub(ws.data.frontendId, (msg) => {
+        logger.debug(`received msg for frontendId=${ws.data.frontendId} from other backend instance`)
         send(ws, JSON.parse(msg))
       }),
     )
   }
 
-  const removeClient = async (ws: ServerWebSocket<BackendWebSocketData>) => {
-    clients.delete(ws.data.clientId)
-    clientsBySessionId.get(ws.data.sessionId)?.delete(ws.data.clientId)
-    unlistens.get(ws.data.clientId)?.()
+  const removeFrontend = async (ws: ServerWebSocket<BackendWebSocketData>) => {
+    frontends.delete(ws.data.frontendId)
+    frontendsBySessionId.get(ws.data.sessionId)?.delete(ws.data.frontendId)
+    unlistens.get(ws.data.frontendId)?.()
   }
 
   //
@@ -80,30 +80,30 @@ export const BackendTransport = async <MsgToBackend, MsgToClient>(
 
   config.webBackend._setWebSocketHandler({
     async open(ws: ServerWebSocket<BackendWebSocketData>) {
-      logger.debug(`websocket connection opened clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-      await addClient(ws)
+      logger.debug(`websocket connection opened frontendId=${ws.data.frontendId} sessionId=${ws.data.sessionId}`)
+      await addFrontend(ws)
       transport.wire.pub({
-        t: 'client-connected',
-        clientId: ws.data.clientId,
+        t: 'frontend-connected',
+        frontendId: ws.data.frontendId,
         sessionId: ws.data.sessionId,
       })
     },
     async close(ws: ServerWebSocket<BackendWebSocketData>, _code, _message) {
-      logger.debug(`websocket connection closed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-      await removeClient(ws)
+      logger.debug(`websocket connection closed frontendId=${ws.data.frontendId} sessionId=${ws.data.sessionId}`)
+      await removeFrontend(ws)
       transport.wire.pub({
-        t: 'client-disconnected',
-        clientId: ws.data.clientId,
+        t: 'frontend-disconnected',
+        frontendId: ws.data.frontendId,
         sessionId: ws.data.sessionId,
       })
     },
     message(ws: ServerWebSocket<BackendWebSocketData>, message) {
-      logger.debug(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+      logger.debug(`websocket message received frontendId=${ws.data.frontendId} sessionId=${ws.data.sessionId}`)
 
-      const msg = JSON.parse(message.toString()) as MsgClientToMsgBackend<MsgToBackend> // leap of faith
+      const msg = JSON.parse(message.toString()) as MsgFrontendToMsgBackend<MsgToBackend> // leap of faith
 
-      transport.fromClient.pub({
-        clientId: ws.data.clientId,
+      transport.fromFrontend.pub({
+        frontendId: ws.data.frontendId,
         sessionId: ws.data.sessionId,
         msgs: msg,
       })
@@ -124,10 +124,10 @@ export const BackendTransport = async <MsgToBackend, MsgToClient>(
 
         const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
 
-        const clientId = ClientId.generate()
+        const frontendId = FrontendId.generate()
 
         const data: BackendWebSocketData = {
-          clientId,
+          frontendId,
           sessionId,
         }
 
@@ -144,7 +144,7 @@ export const BackendTransport = async <MsgToBackend, MsgToClient>(
         }
 
         logger.debug(
-          `${WEB_SOCKET_ENDPOINT} request received clientId=${clientId} sessionId=${sessionId} headers=${headers.toJSON()}`,
+          `${WEB_SOCKET_ENDPOINT} request received frontendId=${frontendId} sessionId=${sessionId} headers=${headers.toJSON()}`,
         )
         backend.upgrade(request, { headers, data })
         return
@@ -159,12 +159,12 @@ export const BackendTransport = async <MsgToBackend, MsgToClient>(
   //
   //
   //
-  // Hook up toClient
+  // Hook up toFrontend
   //
   //
   //
 
-  const send = async (ws: ServerWebSocket<BackendWebSocketData>, msg: MsgBackendToMsgClient<MsgToClient>) => {
+  const send = async (ws: ServerWebSocket<BackendWebSocketData>, msg: MsgBackendToMsgFrontend<MsgToFrontend>) => {
     switch (ws.readyState) {
       case 1: {
         ws.send(JSON.stringify(msg))
@@ -176,28 +176,31 @@ export const BackendTransport = async <MsgToBackend, MsgToClient>(
     }
   }
 
-  const sendWithPub = async (ws: ServerWebSocket<BackendWebSocketData>, msg: MsgBackendToMsgClient<MsgToClient>) => {
+  const sendWithPub = async (
+    ws: ServerWebSocket<BackendWebSocketData>,
+    msg: MsgBackendToMsgFrontend<MsgToFrontend>,
+  ) => {
     send(ws, msg)
-    config.pubSubTopicBased.pub(ws.data.clientId, JSON.stringify(msg))
-    logger.debug(`sent msg for clientId=${ws.data.clientId} to other backend instances`)
+    config.pubSubTopicBased.pub(ws.data.frontendId, JSON.stringify(msg))
+    logger.debug(`sent msg for frontendId=${ws.data.frontendId} to other backend instances`)
   }
 
-  transport.toClientBroadcast.sub((msgs) => {
-    for (const client of clients.values()) {
-      sendWithPub(client, msgs)
+  transport.toFrontendBroadcast.sub((msgs) => {
+    for (const frontend of frontends.values()) {
+      sendWithPub(frontend, msgs)
     }
   })
 
-  transport.toClient.sub((toClient) => {
-    for (const clientId in toClient) {
-      const toClientSingle = toClient[clientId as ClientId]!
-      const client = clients.get(clientId as ClientId)
+  transport.toFrontend.sub((toFrontend) => {
+    for (const frontendId in toFrontend) {
+      const toFrontendSingle = toFrontend[frontendId as FrontendId]!
+      const frontend = frontends.get(frontendId as FrontendId)
 
-      if (!client) {
+      if (!frontend) {
         continue
       }
 
-      sendWithPub(client, toClientSingle.msgs)
+      sendWithPub(frontend, toFrontendSingle.msgs)
     }
   })
 

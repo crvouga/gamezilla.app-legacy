@@ -1,10 +1,10 @@
 import { Profile } from '~/app/@/data/profile'
 
-export type ModelClient = {}
+export type ModelFrontend = {}
 
 export type ModelBackend = {}
 
-export type MsgClient =
+export type MsgFrontend =
   | {
       t: 'profile.profile-screen.clicked-edit'
     }
@@ -23,7 +23,7 @@ export type MsgToBackend = {
   t: 'profile.profile-screen.viewed-screen'
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'profile.profile-screen.profile'
   profile: Profile
 }

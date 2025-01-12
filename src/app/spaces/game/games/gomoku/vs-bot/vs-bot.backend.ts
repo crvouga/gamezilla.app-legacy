@@ -45,16 +45,16 @@ export const update = ({
   }
 }
 
-type UpdateFromClient = (input: { ctx: SpaceBackendCtx; msg: MsgToBackend; model: Model }) => {
+type UpdateFromFrontend = (input: { ctx: SpaceBackendCtx; msg: MsgToBackend; model: Model }) => {
   model: Model
   eff?: Eff<Msg>
 }
 
-export const updateFromClient: UpdateFromClient = (input) => {
+export const updateFromFrontend: UpdateFromFrontend = (input) => {
   return updateBotMove(input)
 }
 
-const updateBotMove: UpdateFromClient = ({ model }) => {
+const updateBotMove: UpdateFromFrontend = ({ model }) => {
   const handled = handleBotMove(model)
 
   if (handled.t === 'err') {

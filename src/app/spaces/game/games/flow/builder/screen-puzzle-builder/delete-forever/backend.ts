@@ -4,11 +4,11 @@ import type { BackendModule } from '../../types'
 import type { MsgCore } from './types'
 
 const update: BackendModule['update'] = async (input) => {
-  return GameBackendModule.andThen({}, () => updateFromClient(input))
+  return GameBackendModule.andThen({}, () => updateFromFrontend(input))
 }
 
-const updateFromClient: BackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+const updateFromFrontend: BackendModule['update'] = async (input) => {
+  switch (input.msgFrontend?.t) {
     case 'delete-forever.user-confirmed': {
       const puzzleBuilder = input.modelCore.screenPuzzleBuilder
 
@@ -18,13 +18,13 @@ const updateFromClient: BackendModule['update'] = async (input) => {
 
       const deleted = await input.ctx.puzzleDb.zap({
         id: puzzleBuilder.puzzle.id,
-        deletedByUserId: input.msgClient.userId,
+        deletedByUserId: input.msgFrontend.userId,
       })
 
       const msgCore: MsgCore = {
         t: 'user-deleted-puzzle',
         flowPuzzleId: puzzleBuilder.puzzle.id,
-        userId: input.msgClient.userId,
+        userId: input.msgFrontend.userId,
         deleted,
       }
 

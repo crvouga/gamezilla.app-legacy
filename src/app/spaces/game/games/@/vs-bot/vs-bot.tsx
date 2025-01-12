@@ -1,11 +1,11 @@
 import type { VDom } from '~/@/vdom/vdom'
 import { TranslatedText } from '~/@/l18n'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 
 export type PlayerType = 'player-one' | 'player-two'
 
 export type VsBotInput = {
-  ctx: SpaceClientCtx
+  ctx: SpaceFrontendCtx
   title: TranslatedText
   renderCoverArt: (input: { className: string }) => VDom
   onQuit: () => void

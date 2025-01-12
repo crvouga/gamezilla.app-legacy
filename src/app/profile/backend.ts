@@ -4,7 +4,7 @@ import { Profile } from '../@/data/profile'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
-import { sendToClient } from '../@/backend/cmd'
+import { sendToFrontend } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import type { ProfileDb } from './profile-db/profile-db'
 import { createProfileDb } from './profile-db/profile-db-impl.postgres'
@@ -27,7 +27,7 @@ export const update: BackendModule['update'] = async (input) => {
   return AppBackendModule.andThen(
     {},
     () => updateFromMsg(input),
-    () => updateFromClient(input),
+    () => updateFromFrontend(input),
     () => updateFromEvent(input),
   )
 }
@@ -43,22 +43,22 @@ const updateFromMsg: BackendModule['update'] = async ({ msg }) => {
     }
     case 'handled': {
       return {
-        msgCmd: [sendToClient([msg.clientId], msg.msg)],
+        msgCmd: [sendToFrontend([msg.frontendId], msg.msg)],
       }
     }
   }
 }
 
-const updateFromClient: BackendModule['update'] = async ({ msgClient, ctx }) => {
-  if (!msgClient) {
+const updateFromFrontend: BackendModule['update'] = async ({ msgFrontend, ctx }) => {
+  if (!msgFrontend) {
     return {}
   }
 
-  if (msgClient.t === 'profile.update-username.clicked-save') {
+  if (msgFrontend.t === 'profile.update-username.clicked-save') {
     return {}
   }
 
-  const userId = msgClient.userId
+  const userId = msgFrontend.userId
 
   if (!userId) {
     return {}
@@ -70,7 +70,7 @@ const updateFromClient: BackendModule['update'] = async ({ msgClient, ctx }) => 
 
   const result = await handler({
     ProfileDb,
-    msg: msgClient,
+    msg: msgFrontend,
     ctx: {
       ...ctx,
       currentUserId: userId,
@@ -79,8 +79,8 @@ const updateFromClient: BackendModule['update'] = async ({ msgClient, ctx }) => 
 
   return {
     msgCmd: [
-      sendToClient([msgClient.clientId], {
-        ...msgClient,
+      sendToFrontend([msgFrontend.frontendId], {
+        ...msgFrontend,
         result,
       }),
     ],
@@ -93,7 +93,7 @@ const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
   }
 
   switch (msgEvt.t) {
-    case 'auth-evt.client-authenticated': {
+    case 'auth-evt.frontend-authenticated': {
       const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql })
       const result = await findElseInsertNew({
         ProfileDb,
@@ -101,7 +101,7 @@ const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
       })
       return {
         msgCmd: [
-          sendToClient([msgEvt.clientId], {
+          sendToFrontend([msgEvt.frontendId], {
             t: 'current-user-profile',
             result: Result.mapOk(result, profileCoreToProfile),
             causedBy: { msgEvt },

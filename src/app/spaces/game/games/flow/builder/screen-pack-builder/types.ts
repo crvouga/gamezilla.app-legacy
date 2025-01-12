@@ -14,15 +14,15 @@ import { EditPackNameTypes } from './edit-pack-name'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   packBuilder: {
-    flowPackPuzzleGrid: PackPuzzlesGridTypes.ModelClient
+    flowPackPuzzleGrid: PackPuzzlesGridTypes.ModelFrontend
   }
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   packBuilder: {
-    flowPackPuzzleGrid: PackPuzzlesGridTypes.initClient,
+    flowPackPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
   },
 }
 
@@ -35,9 +35,9 @@ export const initBackend: ModelBackend = null
 //
 //
 
-export type MsgClient = {
+export type MsgFrontend = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgClient
+  c: PackPuzzlesGridTypes.MsgFrontend
 }
 
 export type MsgBackend = {
@@ -50,9 +50,9 @@ export type MsgToBackend = {
   c: PackPuzzlesGridTypes.MsgToBackend
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgToClient
+  c: PackPuzzlesGridTypes.MsgToFrontend
 }
 
 //

@@ -38,7 +38,7 @@ export type ModelCore = {
   board: Board
 }
 
-export type ModelClient = Model
+export type ModelFrontend = Model
 
 export type ModelBackend = Model
 
@@ -59,13 +59,13 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
 //
 //
 
-export type MsgClient = Req
+export type MsgFrontend = Req
 
 export type MsgBackend = { t: 'none' }
 
 export type MsgToBackend = Req
 
-export type MsgToClient = Res | { t: 'bot-moved'; result: Result<string, Model> }
+export type MsgToFrontend = Res | { t: 'bot-moved'; result: Result<string, Model> }
 
 //
 //

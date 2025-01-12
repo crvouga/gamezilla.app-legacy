@@ -27,12 +27,12 @@ export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<R
 
     case 'react':
     case 'react-with-compiler': {
-      const [ReactDOMClient, ReactDOM, _React] = await Promise.all([
+      const [ReactDOMFrontend, ReactDOM, _React] = await Promise.all([
         import('react-dom/client'),
         import('react-dom'),
         import('react'),
       ])
-      const reactRoot = ReactDOMClient.createRoot(root)
+      const reactRoot = ReactDOMFrontend.createRoot(root)
       createPortal = ReactDOM.createPortal
       return function render(vDom) {
         reactRoot.render(vDom)

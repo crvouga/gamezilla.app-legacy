@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
-import { didSendMsgToClient } from '~/app/@/backend/cmd'
+import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
 import { SpaceCore } from '../core/space-core'
 
@@ -17,34 +17,34 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = await f.update([
       {
-        msgClient: {
-          ...f.clientA,
+        msgFrontend: {
+          ...f.frontendA,
           t: 'list-spaces',
           limit: 10,
           offset: 0,
         },
       },
     ])
-    expect(didSendMsgToClient(output, (msg) => msg.t === 'listed-spaces')).toBe(true)
+    expect(didSendMsgToFrontend(output, (msg) => msg.t === 'listed-spaces')).toBe(true)
   })
   it('should include the started space in the response', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = await f.update([
       {
-        msgClient: {
-          ...f.clientA,
+        msgFrontend: {
+          ...f.frontendA,
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId,
-            userId: f.clientA.userId,
+            userId: f.frontendA.userId,
           }),
         },
       },
       {
-        msgClient: {
-          ...f.clientB,
+        msgFrontend: {
+          ...f.frontendB,
           t: 'list-spaces',
           limit: 10,
           offset: 0,
@@ -52,7 +52,7 @@ describe(import.meta.file, () => {
       },
     ])
     expect(
-      didSendMsgToClient(
+      didSendMsgToFrontend(
         output,
         (msg) =>
           msg.t === 'listed-spaces' && msg.spaces.map(SpaceCore.toSpaceStarted).some((s) => s?.spaceId === spaceId),

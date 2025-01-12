@@ -1,10 +1,10 @@
 import type { RemoteResult, Result } from '~/@/result'
-import { AppClientModule } from '../@/architecture/app-client'
+import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AppBackendModule } from '../@/architecture/app-backend'
-import { AppClientCmd, ProfileCmd } from '../@/client/cmd'
-import { AnonymousClientCtx, AppClientCtx } from '../@/client/ctx'
-import { ClientEvt } from '../@/client/evt'
-import { ClientId } from '../@/data/client-id'
+import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
+import { FrontendEvt } from '../@/frontend/evt'
+import { FrontendId } from '../@/data/frontend-id'
 import { Profile } from '../@/data/profile'
 import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
@@ -39,7 +39,7 @@ export const profileCoreToProfile = (profile: ProfileCore): Profile => {
   }
 }
 
-export type ModelClient = UpdateUsernameTypes.ModelClient & {
+export type ModelFrontend = UpdateUsernameTypes.ModelFrontend & {
   profiles: {
     [userId: UserId]: Profile
   }
@@ -61,9 +61,9 @@ export type ModelClient = UpdateUsernameTypes.ModelClient & {
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | Req
-  | UpdateUsernameTypes.MsgClient
+  | UpdateUsernameTypes.MsgFrontend
   | {
       t: 'clicked-back-button'
       from:
@@ -94,10 +94,10 @@ export type MsgClient =
   | { t: 'clicked-avatar' }
   | { t: 'clicked-update-username-button' }
 
-export type MsgBackend = UpdateUsernameTypes.MsgBackend | { t: 'handled'; clientId: ClientId; msg: MsgToClient }
+export type MsgBackend = UpdateUsernameTypes.MsgBackend | { t: 'handled'; frontendId: FrontendId; msg: MsgToFrontend }
 
-export type MsgToClient =
-  | UpdateUsernameTypes.MsgToClient
+export type MsgToFrontend =
+  | UpdateUsernameTypes.MsgToFrontend
   | {
       t: 'current-user-profile'
       result: Result<string, Profile>
@@ -124,28 +124,28 @@ export type BackendModule = AppBackendModule<{
   MsgEvtIn: BackendEvt
   Model: null
   Msg: MsgBackend
-  MsgCmdOut: BackendCmd<MsgToClient>
+  MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: null
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Deps: null
 }>
 
-export type ClientCtx = AppClientCtx | AnonymousClientCtx
+export type FrontendCtx = AppFrontendCtx | AnonymousFrontendCtx
 
-export type ClientModule = AppClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
+export type FrontendModule = AppFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: ClientCtx
+  Ctx: FrontendCtx
   MsgCmdIn: ProfileCmd
-  MsgEvtIn: ClientEvt
-  MsgCmdOut: AppClientCmd<{
-    MsgClient: MsgClient
+  MsgEvtIn: FrontendEvt
+  MsgCmdOut: AppFrontendCmd<{
+    MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }>
-  MsgEvtOut: ClientEvt
+  MsgEvtOut: FrontendEvt
   ViewSlot: {
     bottomBar: null
   }

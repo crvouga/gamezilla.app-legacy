@@ -13,7 +13,7 @@ import { ChessBotLevel } from '../@/chess-bot-level/chess-bot-level'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   coreModel: CoreModel
   openedMenuId: string | null
   openedModal: null | 'game-over'
@@ -79,7 +79,7 @@ export const isBotTurn = (model: CoreModel) => {
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | Req
   | { t: 'opened-menu'; menuId: string }
   | { t: 'closed-menu' }
@@ -94,7 +94,7 @@ export type MsgBackend = {
 
 export type MsgToBackend = Req
 
-export type MsgToClient =
+export type MsgToFrontend =
   | Res
   | {
       t: 'bot-moved'

@@ -67,8 +67,8 @@ type GameOver =
       type: 'Draw'
     }
 
-export type ModelClient = Model & {
-  confirming?: MsgClient['t']
+export type ModelFrontend = Model & {
+  confirming?: MsgFrontend['t']
 }
 
 export type ModelBackend = Model
@@ -108,11 +108,11 @@ const initSetup = (model: Model): ModelSetup => {
 //
 //
 
-export type MsgClient = Req | { t: 'clicked-cancel' }
+export type MsgFrontend = Req | { t: 'clicked-cancel' }
 
 export type MsgBackend = { t: 'none' }
 
-export type MsgToClient = Res
+export type MsgToFrontend = Res
 
 export type MsgToBackend = Req
 

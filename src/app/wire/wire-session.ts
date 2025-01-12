@@ -1,12 +1,12 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { pipe } from '~/@/function/pipe'
 import { p } from '~/@/parser'
-import { ClientId } from '../@/data/client-id'
+import { FrontendId } from '../@/data/frontend-id'
 import { SessionId } from '../@/data/session-id'
 import { UserId } from '../@/data/user-id'
 
 const parser = p.obj({
-  clientIds: CappedOrderedDict.parser(ClientId, ClientId),
+  frontendIds: CappedOrderedDict.parser(FrontendId, FrontendId),
   sessionId: SessionId,
   userId: p.maybe(UserId),
 })
@@ -15,7 +15,7 @@ export type WireSession = p.Infer<typeof parser>
 
 const init = (sessionId: SessionId): WireSession => {
   return {
-    clientIds: CappedOrderedDict.init({
+    frontendIds: CappedOrderedDict.init({
       maxSize: 10,
     }),
     sessionId,
@@ -23,10 +23,10 @@ const init = (sessionId: SessionId): WireSession => {
   }
 }
 
-const addClientId = (wireSession: WireSession, clientId: ClientId): WireSession => {
+const addFrontendId = (wireSession: WireSession, frontendId: FrontendId): WireSession => {
   return {
     sessionId: wireSession.sessionId,
-    clientIds: CappedOrderedDict.add(wireSession.clientIds, clientId, clientId),
+    frontendIds: CappedOrderedDict.add(wireSession.frontendIds, frontendId, frontendId),
     userId: wireSession.userId,
   }
 }
@@ -34,7 +34,7 @@ const addClientId = (wireSession: WireSession, clientId: ClientId): WireSession 
 const addUserId = (wireSession: WireSession, userId: UserId): WireSession => {
   return {
     sessionId: wireSession.sessionId,
-    clientIds: wireSession.clientIds,
+    frontendIds: wireSession.frontendIds,
     userId,
   }
 }
@@ -42,8 +42,8 @@ const addUserId = (wireSession: WireSession, userId: UserId): WireSession => {
 const random = (): WireSession => {
   return pipe(
     init(SessionId.generate()),
-    (wireSession) => addClientId(wireSession, ClientId.generate()),
-    (wireSession) => addClientId(wireSession, ClientId.generate()),
+    (wireSession) => addFrontendId(wireSession, FrontendId.generate()),
+    (wireSession) => addFrontendId(wireSession, FrontendId.generate()),
     (wireSession) => addUserId(wireSession, UserId.generate()),
   )
 }
@@ -51,7 +51,7 @@ const random = (): WireSession => {
 export const WireSession = {
   ...parser,
   init,
-  addClientId,
+  addFrontendId,
   addUserId,
   random,
 }

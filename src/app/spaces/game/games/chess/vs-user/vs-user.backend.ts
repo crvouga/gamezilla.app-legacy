@@ -3,7 +3,7 @@ import { Time } from '~/@/time/time'
 import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import * as Board from '../@/chess/chess-core'
-import { initCore, type ModelBackend, type MsgBackend, type MsgToClient, type MsgToBackend } from './vs-user.types'
+import { initCore, type ModelBackend, type MsgBackend, type MsgToFrontend, type MsgToBackend } from './vs-user.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
@@ -29,13 +29,13 @@ export const update = (_msg: MsgBackend, model: ModelBackend): { model: ModelBac
   return { model }
 }
 
-export const updateFromClient = (
+export const updateFromFrontend = (
   _msg: MsgToBackend,
   model: ModelBackend,
 ): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   return { model }
 }
@@ -49,7 +49,7 @@ export const updateFromEvent = ({
 }): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     switch (model.type) {

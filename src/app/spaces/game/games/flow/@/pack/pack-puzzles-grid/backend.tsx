@@ -1,12 +1,12 @@
-import { sendToClient } from '~/app/@/backend/cmd'
+import { sendToFrontend } from '~/app/@/backend/cmd'
 import type { BackendModule } from './types'
 
 const update: BackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+  switch (input.msgFrontend?.t) {
     case 'list-puzzles-by-id': {
       const listed = await input.ctx.puzzleDb.list({
         pagination: {
-          limit: input.msgClient.puzzleIds.length,
+          limit: input.msgFrontend.puzzleIds.length,
           offset: 0,
         },
         order: {
@@ -14,16 +14,16 @@ const update: BackendModule['update'] = async (input) => {
         },
         where: {
           puzzleId: {
-            in: input.msgClient.puzzleIds,
+            in: input.msgFrontend.puzzleIds,
           },
         },
       })
       return {
         msgCmd: [
-          sendToClient(input.msgClient, {
+          sendToFrontend(input.msgFrontend, {
             t: 'listed-puzzles-by-id',
             listed,
-            causedBy: { msgClient: input.msgClient },
+            causedBy: { msgFrontend: input.msgFrontend },
           }),
         ],
       }

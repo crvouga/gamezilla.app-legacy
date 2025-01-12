@@ -3,12 +3,12 @@ import type { WithEventMeta } from '~/@/event-sourced/event'
 import { SpaceCoreFixture } from '~/app/spaces/@/fixture/core'
 import { FlowCoreCtx } from '../../../@/core/ctx'
 import { PlayCore } from '../../core'
-import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../../types'
+import type { ModelCore, MsgFrontend, MsgCore, MsgToFrontend } from '../../types'
 import { Solutions } from '../../../@/solutions/solutions'
 
 export type FixtureUpdateInput = {
-  msg?: MsgClient
-  msgBackend?: MsgToClient
+  msg?: MsgFrontend
+  msgBackend?: MsgToFrontend
   msgCore?: WithEventMeta<MsgCore>
 }
 

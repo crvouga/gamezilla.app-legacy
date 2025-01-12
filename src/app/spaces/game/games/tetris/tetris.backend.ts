@@ -47,16 +47,16 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   }
 }
 
-export const updateFromClient = (msg: MsgToBackend, model: Model): [Model, Eff<Msg>] => {
+export const updateFromFrontend = (msg: MsgToBackend, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'MouseMove': {
-      const toClient = mouseMove(msg, model)
+      const toFrontend = mouseMove(msg, model)
 
-      if (toClient[1].t === 'err') {
+      if (toFrontend[1].t === 'err') {
         return [model, Eff.None]
       }
 
-      const modelNew = toClient[1].value
+      const modelNew = toFrontend[1].value
 
       return [modelNew, Eff.None]
     }

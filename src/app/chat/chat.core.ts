@@ -14,7 +14,7 @@ import { Eff } from '~/@/eff'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   chats: {
     [chatId: ChatId]: {
       chatId: ChatId
@@ -64,7 +64,7 @@ export type ModelBackend = null
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | ['inputted-user-search', { userSearch: string }]
   | ['clicked-user-search-result', { userId: UserId }]
   | [
@@ -88,9 +88,9 @@ export type Req =
 
 type Problem = ['database-error', string]
 
-export type Res = [...Req, Result<Problem, Partial<ModelClient>>]
+export type Res = [...Req, Result<Problem, Partial<ModelFrontend>>]
 
-export const update = (input: { msg: MsgClient; model: ModelClient }) => {
+export const update = (input: { msg: MsgFrontend; model: ModelFrontend }) => {
   switch (input.msg[0]) {
     default: {
       return null
@@ -102,9 +102,9 @@ export type MsgToBackend = Req
 
 export type MsgBackend = Res
 
-export type MsgToClient = Res
+export type MsgToFrontend = Res
 
-export const updateFromClient = ({
+export const updateFromFrontend = ({
   msg,
 }: {
   msg: MsgToBackend

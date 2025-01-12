@@ -3,17 +3,17 @@ import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
 import { IWebBackend } from '~/@/web-backend'
-import { ClientId } from './@/data/client-id'
+import { FrontendId } from './@/data/frontend-id'
 import { SessionId } from './@/data/session-id'
 import { UserId } from './@/data/user-id'
 import { AppBackendCtx } from './@/backend/ctx'
-import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
+import type { Platform, Routing, Sound, StatusBar, Toast } from './app-frontend'
 import { AuthTypes } from './auth'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
-import { IClientTransport } from './wire/transport/client'
+import { IFrontendTransport } from './wire/transport/frontend'
 import { IBackendTransport } from './wire/transport/backend'
 
 //
@@ -24,12 +24,12 @@ import { IBackendTransport } from './wire/transport/backend'
 //
 //
 
-export type ModelClient = {
-  auth: AuthTypes.ModelClient
-  spaces: SpacesTypes.ModelClient
-  profile: ProfileTypes.ModelClient
-  wire: WireTypes.ModelClient
-  lang: LangTypes.ModelClient
+export type ModelFrontend = {
+  auth: AuthTypes.ModelFrontend
+  spaces: SpacesTypes.ModelFrontend
+  profile: ProfileTypes.ModelFrontend
+  wire: WireTypes.ModelFrontend
+  lang: LangTypes.ModelFrontend
   routing: Routing.Model
   toast: Toast.Model
   sound: Sound.Model
@@ -53,18 +53,18 @@ export type MsgBackend =
   | { t: 'auth'; c: AuthTypes.MsgBackend }
   | { t: 'lang'; c: LangTypes.MsgBackend }
 
-export type MsgClient =
-  | { t: '→'; c: MsgToClient }
+export type MsgFrontend =
+  | { t: '→'; c: MsgToFrontend }
   | { t: 'routing'; c: Routing.Msg }
   | { t: 'toast'; c: Toast.Msg }
   | { t: 'sound'; c: Sound.Msg }
   | { t: 'platform'; c: Platform.Msg }
   | { t: 'status-bar'; c: StatusBar.Msg }
-  | { t: 'wire'; c: WireTypes.MsgClient }
-  | { t: 'spaces'; c: SpacesTypes.MsgClient }
-  | { t: 'auth'; c: AuthTypes.MsgClient }
-  | { t: 'profile'; c: ProfileTypes.MsgClient }
-  | { t: 'lang'; c: LangTypes.MsgClient }
+  | { t: 'wire'; c: WireTypes.MsgFrontend }
+  | { t: 'spaces'; c: SpacesTypes.MsgFrontend }
+  | { t: 'auth'; c: AuthTypes.MsgFrontend }
+  | { t: 'profile'; c: ProfileTypes.MsgFrontend }
+  | { t: 'lang'; c: LangTypes.MsgFrontend }
 
 export type MsgToBackend =
   | { t: 'spaces'; c: SpacesTypes.MsgToBackend }
@@ -73,12 +73,12 @@ export type MsgToBackend =
   | { t: 'wire'; c: WireTypes.MsgToBackend }
   | { t: 'lang'; c: LangTypes.MsgToBackend }
 
-export type MsgToClient =
-  | { t: 'spaces'; c: SpacesTypes.MsgToClient }
-  | { t: 'auth'; c: AuthTypes.MsgToClient }
-  | { t: 'profile'; c: ProfileTypes.MsgToClient }
-  | { t: 'wire'; c: WireTypes.MsgToClient }
-  | { t: 'lang'; c: LangTypes.MsgToClient }
+export type MsgToFrontend =
+  | { t: 'spaces'; c: SpacesTypes.MsgToFrontend }
+  | { t: 'auth'; c: AuthTypes.MsgToFrontend }
+  | { t: 'profile'; c: ProfileTypes.MsgToFrontend }
+  | { t: 'wire'; c: WireTypes.MsgToFrontend }
+  | { t: 'lang'; c: LangTypes.MsgToFrontend }
 
 //
 //
@@ -86,7 +86,7 @@ export type MsgToClient =
 
 export type MsgToBackendMeta = {
   sessionId: SessionId
-  clientId: ClientId
+  frontendId: FrontendId
   userId?: UserId | null
 }
 
@@ -107,24 +107,24 @@ export const rpcContract = RPC.initContract({
 
 export type BackendCtx = AppBackendCtx & {
   transport: IBackendTransport<{
-    MsgToClient: MsgToClient
+    MsgToFrontend: MsgToFrontend
     MsgToBackend: MsgToBackend
   }>
-  wire: WireTypes.BackendCtx<MsgToClient, MsgToBackend>
+  wire: WireTypes.BackendCtx<MsgToFrontend, MsgToBackend>
   profile: ProfileTypes.BackendCtx
   space: SpacesTypes.BackendCtx
   auth: AuthTypes.BackendCtx
   webBackend: IWebBackend
 }
 
-export type ClientCtx = {
+export type FrontendCtx = {
   now: Posix
-  rpc: RPC.Client<typeof rpcContract>
+  rpc: RPC.Frontend<typeof rpcContract>
   location: Browser.Location
   navigatorLanguage: LanguageCodeISO_639_1
-  transport: IClientTransport<{
+  transport: IFrontendTransport<{
     MsgToBackend: MsgToBackend
-    MsgToClient: MsgToClient
+    MsgToFrontend: MsgToFrontend
   }>
   stored: Record<string, unknown>
 }

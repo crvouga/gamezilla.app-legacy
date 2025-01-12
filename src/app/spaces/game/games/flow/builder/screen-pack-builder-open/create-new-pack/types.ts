@@ -9,11 +9,11 @@ import { Pack } from '../../../@/pack/pack'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   packCreateNewRequest: RemoteResult<string, null>
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   packCreateNewRequest: NotAsked,
 }
 
@@ -24,7 +24,7 @@ export type ModelBackend = Record<string, unknown>
 //
 //
 
-export type MsgClient = {
+export type MsgFrontend = {
   t: 'create-new-pack.clicked-create-button'
 }
 
@@ -34,7 +34,7 @@ export type MsgBackend = {
   t: 'noop'
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'create-new-pack.created-pack'
   created: Result<string, Pack>
 }

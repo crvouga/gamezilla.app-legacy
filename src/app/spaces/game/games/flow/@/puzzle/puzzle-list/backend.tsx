@@ -1,5 +1,5 @@
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { sendToClient } from '~/app/@/backend/cmd'
+import { sendToFrontend } from '~/app/@/backend/cmd'
 import type { BackendModule } from './types'
 
 const update: BackendModule['update'] = async (input) => {
@@ -7,13 +7,13 @@ const update: BackendModule['update'] = async (input) => {
 }
 
 const updateListPuzzles: BackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+  switch (input.msgFrontend?.t) {
     case 'list-puzzles': {
-      const listed = await input.ctx.puzzleDb.list(input.msgClient.input)
+      const listed = await input.ctx.puzzleDb.list(input.msgFrontend.input)
 
       return {
         msgCmd: [
-          sendToClient(input.msgClient, {
+          sendToFrontend(input.msgFrontend, {
             t: 'listed-puzzle',
             listed,
           }),

@@ -11,7 +11,7 @@ import { BackendEvt } from '~/app/@/backend/evt'
 import { IUserAccountDb } from '../@/backend/user-account-db'
 import type { IVerifySMS, SendCodeOutput, VerifyCodeProblem } from './verify-sms'
 
-export type ModelClient = {
+export type ModelFrontend = {
   //
   inputtedPhoneNumber: string
   phoneNumberError: TranslatedText | null
@@ -29,7 +29,7 @@ export type ModelClient = {
 
 type VerifyCodeOutput = Result<VerifyCodeProblem, UserAccount>
 
-export type MsgClient =
+export type MsgFrontend =
   | { t: 'clicked-back-button' }
   | { t: 'inputted-phone-number'; phoneNumber: string }
   | {
@@ -61,7 +61,7 @@ export type MsgToBackend =
       inputtedCode: string
     }
 
-export type MsgToClient =
+export type MsgToFrontend =
   | {
       t: 'sent-code'
       phoneNumber: PhoneNumber
@@ -76,9 +76,9 @@ export type BackendModule = AppBackendModule<{
   Ctx: AppBackendCtx
   MsgEvtIn: BackendEvt
   Msg: MsgBackend
-  MsgCmdOut: BackendCmd<MsgToClient>
+  MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: BackendEvt
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Deps: {
     AccountDb: IUserAccountDb

@@ -50,7 +50,7 @@ export type Color = 'Red' | 'Blue' | 'Green' | 'Purple' | 'Cyan' | 'Pink'
 
 const colorSeq: NonEmpty<Color> = ['Red', 'Blue', 'Green', 'Purple']
 
-export type ModelClient = CoreModel
+export type ModelFrontend = CoreModel
 
 export type ModelBackend = CoreModel
 
@@ -62,13 +62,13 @@ export type ModelBackend = CoreModel
 //
 //
 
-export type MsgClient = Req | ['key-down', Keyboard.Key] | ['key-up', Keyboard.Key]
+export type MsgFrontend = Req | ['key-down', Keyboard.Key] | ['key-up', Keyboard.Key]
 
 export type MsgBackend = ['tick']
 
 export type MsgToBackend = Req
 
-export type MsgToClient = Res | ['tick', CoreModel]
+export type MsgToFrontend = Res | ['tick', CoreModel]
 
 //
 //

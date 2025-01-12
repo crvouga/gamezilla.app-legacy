@@ -3,7 +3,7 @@ import type { ModelBackend, MsgBackend, MsgToBackend } from './chat.core'
 
 export const init: { model: ModelBackend } = { model: null }
 
-export const updateFromClient = ({
+export const updateFromFrontend = ({
   model,
 }: {
   msg: MsgToBackend

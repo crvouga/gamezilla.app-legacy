@@ -7,7 +7,7 @@ import { SMS } from '~/@/sms'
 import { Posix } from '~/@/time/posix'
 import { WebBackend } from '~/@/web-backend'
 import { DATABASE_URL, REDIS_URL } from '~/config/backend'
-import { ClientId } from '../data/client-id'
+import { FrontendId } from '../data/frontend-id'
 import { SessionId } from '../data/session-id'
 import type { AppBackendCtx } from './ctx'
 import { ProfileCache } from './profile-cache'
@@ -61,10 +61,10 @@ export const AppBackendTestEnv = async (): Promise<ITestEnv> => {
   }
 }
 
-export const randomClient = () => {
+export const randomFrontend = () => {
   return {
     sessionId: SessionId.generate(),
-    clientId: ClientId.generate(),
+    frontendId: FrontendId.generate(),
   }
 }
 

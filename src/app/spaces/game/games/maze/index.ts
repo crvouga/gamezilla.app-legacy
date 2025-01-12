@@ -1,4 +1,4 @@
 export * as MazeBackend from './backend'
-export * as MazeClient from './client'
+export * as MazeFrontend from './frontend'
 export * from './types'
 export { CoverArt } from './@/maze'

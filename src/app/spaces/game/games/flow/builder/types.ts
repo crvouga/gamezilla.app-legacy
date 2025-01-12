@@ -2,11 +2,11 @@ import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
-import type { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
+import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
-import { FlowClientCmd } from '../@/client/cmd'
-import type { FlowClientCtx } from '../@/client/ctx'
-import { FlowClientEvtIn } from '../@/client/evt'
+import { FlowFrontendCmd } from '../@/frontend/cmd'
+import type { FlowFrontendCtx } from '../@/frontend/ctx'
+import { FlowFrontendEvtIn } from '../@/frontend/evt'
 import { FlowCoreCtx } from '../@/core/ctx'
 import { FlowCoreEvent } from '../@/core/event'
 import { PackListTypes } from '../@/pack/pack-list'
@@ -27,24 +27,24 @@ import { ScreenPuzzleBuilderOpenTypes } from './screen-puzzle-builder-open'
 //
 //
 
-export type ClientModule = GameClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
+export type FrontendModule = GameFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   MsgCore: MsgCore
   ModelCore: ModelCore
-  Ctx: FlowClientCtx
-  MsgCmdOut: FlowClientCmd<{
+  Ctx: FlowFrontendCtx
+  MsgCmdOut: FlowFrontendCmd<{
     MsgToBackend: MsgToBackend
-    MsgClient: MsgClient
+    MsgFrontend: MsgFrontend
   }>
-  MsgEvtIn: FlowClientEvtIn
-  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdClient
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdFrontend
 }>
 
 export type BackendModule = GameBackendModule<{
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   MsgCore: MsgCore
   ModelCore: ModelCore
@@ -52,7 +52,7 @@ export type BackendModule = GameBackendModule<{
   MsgEvtIn: SpaceBackendEvt
   Model: ModelBackend
   Msg: MsgBackend
-  MsgCmdOut: SpaceBackendCmd<MsgToClient>
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
   Deps: null
 }>
 
@@ -64,21 +64,21 @@ export type BackendModule = GameBackendModule<{
 //
 //
 
-type BaseModelClient = {
+type BaseModelFrontend = {
   puzzleBuilderOpened?: 'more' | 'edit-name' | 'delete-forever' | 'unsaved-changes' | null
 }
 
-export type ModelClient = BaseModelClient &
-  ScreenPuzzleBuilderOpenTypes.ModelClient &
-  ScreenPuzzleBuilderTypes.ModelClient &
-  ScreenPackBuilderTypes.ModelClient &
-  ScreenPackBuilderOpenTypes.ModelClient
+export type ModelFrontend = BaseModelFrontend &
+  ScreenPuzzleBuilderOpenTypes.ModelFrontend &
+  ScreenPuzzleBuilderTypes.ModelFrontend &
+  ScreenPackBuilderTypes.ModelFrontend &
+  ScreenPackBuilderOpenTypes.ModelFrontend
 
-export const initClient: ClientModule['init'] = {
-  ...ScreenPuzzleBuilderOpenTypes.initClient,
-  ...ScreenPuzzleBuilderTypes.initClient,
-  ...ScreenPackBuilderTypes.initClient,
-  ...ScreenPackBuilderOpenTypes.initClient,
+export const initFrontend: FrontendModule['init'] = {
+  ...ScreenPuzzleBuilderOpenTypes.initFrontend,
+  ...ScreenPuzzleBuilderTypes.initFrontend,
+  ...ScreenPackBuilderTypes.initFrontend,
+  ...ScreenPackBuilderOpenTypes.initFrontend,
 }
 
 export const ModelBackend = p.obj({
@@ -98,17 +98,17 @@ export const initBackend: BackendModule['init'] = {
 //
 //
 
-type BaseMsgClient = { t: 'time-passed' }
+type BaseMsgFrontend = { t: 'time-passed' }
 
 //
 
-export type MsgClient =
-  | BaseMsgClient
-  | ScreenPuzzleBuilderOpenTypes.MsgClient
-  | ScreenPuzzleBuilderTypes.MsgClient
-  | ScreenMainMenu.MsgClient
-  | ScreenPackBuilderTypes.MsgClient
-  | ScreenPackBuilderOpenTypes.MsgClient
+export type MsgFrontend =
+  | BaseMsgFrontend
+  | ScreenPuzzleBuilderOpenTypes.MsgFrontend
+  | ScreenPuzzleBuilderTypes.MsgFrontend
+  | ScreenMainMenu.MsgFrontend
+  | ScreenPackBuilderTypes.MsgFrontend
+  | ScreenPackBuilderOpenTypes.MsgFrontend
   | { t: 'got-msg-core'; c: MsgCore }
 
 export type MsgBackend =
@@ -123,11 +123,11 @@ export type MsgToBackend =
   | ScreenPackBuilderTypes.MsgToBackend
   | ScreenPackBuilderOpenTypes.MsgToBackend
 
-export type MsgToClient =
-  | ScreenPuzzleBuilderTypes.MsgToClient
-  | ScreenPuzzleBuilderOpenTypes.MsgToClient
-  | ScreenPackBuilderTypes.MsgToClient
-  | ScreenPackBuilderOpenTypes.MsgToClient
+export type MsgToFrontend =
+  | ScreenPuzzleBuilderTypes.MsgToFrontend
+  | ScreenPuzzleBuilderOpenTypes.MsgToFrontend
+  | ScreenPackBuilderTypes.MsgToFrontend
+  | ScreenPackBuilderOpenTypes.MsgToFrontend
 
 //
 //

@@ -1,12 +1,12 @@
 import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { type Sub } from '~/@/sub'
-import type { ClientId } from '~/app/@/data/client-id'
+import type { FrontendId } from '~/app/@/data/frontend-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import type { BackendEvt } from '~/app/@/backend/evt'
 import { SpaceEvent } from '../../core/space-event'
-import type { MsgBackend, MsgToClient, MsgToBackend, BackendCtx } from '../../types'
+import type { MsgBackend, MsgToFrontend, MsgToBackend, BackendCtx } from '../../types'
 import type { Space } from '../space/space'
 import type { SpaceBackendCmd } from '../space-backend/cmd'
 
@@ -17,22 +17,22 @@ type Ctx = BackendCtx & {
 export type Input = {
   ctx: Ctx
   msg?: MsgBackend | null
-  msgClient?:
+  msgFrontend?:
     | (MsgToBackend & {
-        clientId: ClientId
+        frontendId: FrontendId
         sessionId: SessionId
         userId?: UserId | null
       })
     | null
   msgEvt?: BackendEvt | null
-  msgCmd?: SpaceBackendCmd<MsgToClient> | null
+  msgCmd?: SpaceBackendCmd<MsgToFrontend> | null
   msgCore?: WithEventId<SpaceEvent> | null
 }
 
 export type MaybePromise<T> = T | Promise<T>
 
 export type Output = {
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
   msgEvt?: unknown[]
   msgCore?: WithEventId<SpaceEvent>[]
 }

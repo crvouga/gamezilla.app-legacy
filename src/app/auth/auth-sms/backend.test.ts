@@ -3,10 +3,10 @@ import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { Ok, Result } from '~/@/result'
 import { UserAccount } from '~/app/@/data/account'
-import type { ClientId } from '~/app/@/data/client-id'
+import type { FrontendId } from '~/app/@/data/frontend-id'
 import type { SessionId } from '~/app/@/data/session-id'
-import { didSendMsgToClient } from '~/app/@/backend/cmd'
-import { FixtureAppBackend, randomClient } from '~/app/@/backend/fixture'
+import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
+import { FixtureAppBackend, randomFrontend } from '~/app/@/backend/fixture'
 import type { AuthSMSTypes } from '.'
 import { UserAccountDb } from '../@/backend/user-account-db'
 import { AuthSMSBackend } from './backend'
@@ -18,8 +18,8 @@ type InputMsg =
       msg: AuthSMSTypes.MsgBackend
     }
   | {
-      msgClient: AuthSMSTypes.MsgToBackend & {
-        clientId: ClientId
+      msgFrontend: AuthSMSTypes.MsgToBackend & {
+        frontendId: FrontendId
         sessionId: SessionId
       }
     }
@@ -46,12 +46,12 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
     return updates_[updates_.length - 1] as (typeof updates_)[number]
   }
 
-  const client = randomClient()
+  const frontend = randomFrontend()
 
   return {
     ...f,
     ...deps,
-    client,
+    frontend,
     update,
   }
 }
@@ -61,30 +61,30 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const updated = await f.update([
       {
-        msgClient: {
-          ...f.client,
+        msgFrontend: {
+          ...f.frontend,
           preferredLanguage: 'en',
           t: 'user-clicked-send-code-button',
           phoneNumber: PhoneNumber.random(),
         },
       },
     ])
-    expect(didSendMsgToClient(updated, (msg) => msg.t === 'sent-code')).toBe(true)
+    expect(didSendMsgToFrontend(updated, (msg) => msg.t === 'sent-code')).toBe(true)
   })
 
   it('should verify code when user clicks verify code', async () => {
     const f = await Fixture()
     const updated = await f.update([
       {
-        msgClient: {
-          ...f.client,
+        msgFrontend: {
+          ...f.frontend,
           t: 'user-clicked-verify-code-button',
           phoneNumber: PhoneNumber.random(),
           inputtedCode: '123456',
         },
       },
     ])
-    expect(didSendMsgToClient(updated, (msg) => msg.t === 'verified-code')).toBe(true)
+    expect(didSendMsgToFrontend(updated, (msg) => msg.t === 'verified-code')).toBe(true)
   })
 
   it('should output event after successful verification', async () => {
@@ -97,8 +97,8 @@ describe(import.meta.file, () => {
 
     const updated = await f.update([
       {
-        msgClient: {
-          ...f.client,
+        msgFrontend: {
+          ...f.frontend,
           t: 'user-clicked-verify-code-button',
           inputtedCode: '123',
           phoneNumber: PhoneNumber.random(),
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(updated.msgEvt?.some((msgEvt) => msgEvt.t === 'auth-evt.client-authenticated')).toBe(true)
+    expect(updated.msgEvt?.some((msgEvt) => msgEvt.t === 'auth-evt.frontend-authenticated')).toBe(true)
   })
 
   it('should create a new account if no account exists', async () => {
@@ -127,8 +127,8 @@ describe(import.meta.file, () => {
 
     await f.update([
       {
-        msgClient: {
-          ...f.client,
+        msgFrontend: {
+          ...f.frontend,
           t: 'user-clicked-verify-code-button',
           inputtedCode: '123',
           phoneNumber,
@@ -163,8 +163,8 @@ describe(import.meta.file, () => {
 
     await f.update([
       {
-        msgClient: {
-          ...f.client,
+        msgFrontend: {
+          ...f.frontend,
           t: 'user-clicked-verify-code-button',
           inputtedCode: '123',
           phoneNumber: PhoneNumber.random(),

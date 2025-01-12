@@ -29,7 +29,7 @@ export const initShared = {
   },
 }
 
-export type ModelClient = CoreModel
+export type ModelFrontend = CoreModel
 
 export type ModelBackend = CoreModel
 
@@ -73,7 +73,7 @@ type BotLevel = 'Easy' | 'Medium' | 'Hard'
 //
 //
 
-export type MsgClient = Req
+export type MsgFrontend = Req
 
 export type MsgBackend = { t: null }
 

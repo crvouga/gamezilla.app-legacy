@@ -51,11 +51,11 @@ const PuzzleGrid: Pick<BackendModule, 'update'> = {
       ctx,
       msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
       msgCmd: input.msgCmd,
-      msgClient:
-        input.msgClient?.t === 'screen-pack-builder.flow-pack-grid'
+      msgFrontend:
+        input.msgFrontend?.t === 'screen-pack-builder.flow-pack-grid'
           ? {
-              ...input.msgClient,
-              ...input.msgClient.c,
+              ...input.msgFrontend,
+              ...input.msgFrontend.c,
             }
           : null,
       deps: input.deps,

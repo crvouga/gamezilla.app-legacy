@@ -1,6 +1,6 @@
 import { BackendCmd } from '~/app/@/backend/cmd'
 
-export type SpaceBackendCmd<MsgToClient> = BackendCmd<MsgToClient> | { t: 'send-to-space'; msg: MsgToClient }
+export type SpaceBackendCmd<MsgToFrontend> = BackendCmd<MsgToFrontend> | { t: 'send-to-space'; msg: MsgToFrontend }
 
 //
 //
@@ -11,7 +11,7 @@ export type SpaceBackendCmd<MsgToClient> = BackendCmd<MsgToClient> | { t: 'send-
 //
 //
 
-export const sendToSpace = <MsgToClient>(msg: MsgToClient): SpaceBackendCmd<MsgToClient> => {
+export const sendToSpace = <MsgToFrontend>(msg: MsgToFrontend): SpaceBackendCmd<MsgToFrontend> => {
   return { t: 'send-to-space', msg }
 }
 
@@ -51,9 +51,9 @@ const tag = <T extends string, A>(
   return map(msgCmd ?? [], (c) => ({ t: tag, c }))
 }
 
-const toSpaceBackendCmd = <TMsgToClient>(
-  msgCmd: SpaceBackendCmd<TMsgToClient>[] | undefined | null,
-): SpaceBackendCmd<TMsgToClient>[] => {
+const toSpaceBackendCmd = <TMsgToFrontend>(
+  msgCmd: SpaceBackendCmd<TMsgToFrontend>[] | undefined | null,
+): SpaceBackendCmd<TMsgToFrontend>[] => {
   return (msgCmd ?? []).flatMap((msgCmd) => {
     switch (msgCmd.t) {
       case 'send-to-space': {
@@ -66,9 +66,9 @@ const toSpaceBackendCmd = <TMsgToClient>(
   })
 }
 
-const toBackendCmd = <TMsgToClient>(
-  msgCmd: SpaceBackendCmd<TMsgToClient>[] | undefined | null,
-): BackendCmd<TMsgToClient>[] => {
+const toBackendCmd = <TMsgToFrontend>(
+  msgCmd: SpaceBackendCmd<TMsgToFrontend>[] | undefined | null,
+): BackendCmd<TMsgToFrontend>[] => {
   return (msgCmd ?? []).flatMap((msgCmd) => {
     switch (msgCmd.t) {
       case 'send-to-space': {

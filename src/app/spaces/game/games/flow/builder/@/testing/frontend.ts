@@ -1,0 +1,385 @@
+import { NonEmpty } from '~/@/array/non-empty'
+import { EventId, WithEventMeta } from '~/@/event-sourced/event'
+import { LamportTimestamp } from '~/@/lamport-clock'
+import { Ok } from '~/@/result'
+import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { testSpaceFrontendCtx } from '~/app/spaces/game/games/@/testing/frontend'
+import type { FlowFrontendCtx } from '../../../@/frontend/ctx'
+import { Flow } from '../../../@/flow'
+import { Pack } from '../../../@/pack/pack'
+import { PackListTypes } from '../../../@/pack/pack-list'
+import { PackPuzzlesGridTypes } from '../../../@/pack/pack-puzzles-grid'
+import { Puzzle } from '../../../@/puzzle/puzzle'
+import type { PuzzleId } from '../../../@/puzzle/puzzle-id'
+import { PuzzleListTypes } from '../../../@/puzzle/puzzle-list'
+import { Solutions } from '../../../@/solutions/solutions'
+import { samples } from '../../../@/variant/grid/grid-samples'
+import { BuilderFrontend } from '../../frontend'
+import { BuilderCore } from '../../core'
+import * as BuilderTypes from '../../types'
+
+export type FixtureUpdateInput = {
+  ctx?: FlowFrontendCtx
+  msg?: BuilderTypes.MsgFrontend
+  msgCore?: WithEventMeta<BuilderTypes.MsgCore>
+  msgBackend?: BuilderTypes.MsgToFrontend
+}
+export type FixtureUpdateOutput = ReturnType<typeof BuilderFrontend.update> & {
+  modelCore: BuilderTypes.ModelCore
+}
+
+const toModelCore = (
+  ctx: FlowFrontendCtx,
+  initial: BuilderTypes.ModelCore,
+  msgCores: BuilderTypes.MsgCore[],
+): BuilderTypes.ModelCore => {
+  return msgCores.reduce(
+    (modelCore, msgCore) =>
+      BuilderCore.updateCore({
+        ctx,
+        modelCore,
+        msgCore,
+      }),
+    initial,
+  )
+}
+
+const updatesReducer =
+  (initCtx: FlowFrontendCtx) => (outputs: NonEmpty<FixtureUpdateOutput>, input: FixtureUpdateInput) => {
+    const ctx = input.ctx ?? initCtx
+    const output = BuilderFrontend.update({
+      ...input,
+      model: NonEmpty.last(outputs).model,
+      modelCore: NonEmpty.last(outputs).modelCore,
+      ctx,
+    })
+    const modelCoreOutput = toModelCore(ctx, NonEmpty.last(outputs).modelCore, output.msgCore ?? [])
+    outputs.push({
+      ...output,
+      modelCore: modelCoreOutput,
+    })
+    return outputs
+  }
+
+const updates = (
+  init: {
+    model: BuilderTypes.ModelFrontend
+    ctx: FlowFrontendCtx
+    modelCore: BuilderTypes.ModelCore
+  },
+  inputs: FixtureUpdateInput[],
+): NonEmpty<FixtureUpdateOutput> => {
+  return inputs.reduce(updatesReducer(init.ctx), [
+    {
+      model: init.model,
+      modelCore: init.modelCore,
+    },
+  ])
+}
+const update = (
+  init: {
+    model: BuilderTypes.ModelFrontend
+    ctx: FlowFrontendCtx
+    modelCore: BuilderTypes.ModelCore
+  },
+  inputs: FixtureUpdateInput[],
+): FixtureUpdateOutput => {
+  const outputs = updates(init, inputs)
+  return NonEmpty.last(outputs)
+}
+
+export const FixtureFlowBuilderFrontend = async () => {
+  const f = await FixtureSpacesFrontend()
+  const ctx: FlowFrontendCtx = {
+    ...f.ctx,
+    puzzles: {},
+    packs: {},
+    puzzleList: PuzzleListTypes.initFrontend,
+    packList: PackListTypes.initFrontend,
+    packPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
+    solutions: Solutions.init,
+  }
+  const model = BuilderTypes.initFrontend
+  const modelCore = BuilderCore.initCore({ ctx })
+  const init = {
+    ctx,
+    model,
+    modelCore,
+  }
+
+  return {
+    ...f,
+    init,
+    ctx,
+    model,
+    modelCore,
+    update,
+    updates,
+  }
+}
+
+export const initial = {
+  model: BuilderTypes.initFrontend,
+}
+
+export const testFlowFrontendCtx = async (): Promise<FlowFrontendCtx> => {
+  return {
+    ...(await testSpaceFrontendCtx()),
+    packs: {},
+    puzzles: {},
+    puzzleList: PuzzleListTypes.initFrontend,
+    packList: PackListTypes.initFrontend,
+    packPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
+    solutions: Solutions.init,
+  }
+}
+
+export const clickedPackCreateNewButton = (ctx: FlowFrontendCtx) => (model: BuilderTypes.ModelFrontend) => {
+  return BuilderFrontend.update({
+    model,
+    ctx,
+    modelCore: BuilderCore.initCore({ ctx }),
+    msg: {
+      t: 'create-new-pack.clicked-create-button',
+    },
+  })
+}
+
+export const userCreatedPack = (ctx: FlowFrontendCtx, pack: Pack) => (model: BuilderTypes.ModelFrontend) => {
+  return BuilderFrontend.update({
+    model,
+    ctx: ctx,
+    modelCore: BuilderCore.initCore({
+      ctx,
+    }),
+    msgCore: {
+      t: 'user-created-pack',
+      created: Ok(pack),
+      eventId: EventId.generate(),
+      happenedAt: LamportTimestamp.fromNumber(0),
+      userId: ctx.currentUserId,
+    },
+  })
+}
+
+export const clickedPackItem = (ctx: FlowFrontendCtx, pack: Pack) => (model: BuilderTypes.ModelFrontend) => {
+  return BuilderFrontend.update({
+    model,
+    ctx: ctx,
+    modelCore: BuilderCore.initCore({
+      ctx,
+    }),
+    msg: {
+      t: 'got-msg-core',
+      c: {
+        t: 'screen-pack-builder-open.user-clicked-pack-item',
+        pack,
+        userId: ctx.currentUserId,
+      },
+    },
+  })
+}
+
+export const clickedOpenPuzzlePickerButton =
+  (ctx: FlowFrontendCtx, modelCore: BuilderTypes.ModelCore = BuilderCore.initCore({ ctx })) =>
+  (model: BuilderTypes.ModelFrontend) => {
+    return BuilderFrontend.update({
+      model,
+      msg: {
+        t: 'got-msg-core',
+        c: {
+          t: 'screen-pack-builder.user-opened-add-puzzle-screen',
+          userId: ctx.currentUserId,
+        },
+      },
+      ctx,
+      modelCore,
+    })
+  }
+
+export const closedPuzzlePickerDrawer = (ctx: FlowFrontendCtx) => (model: BuilderTypes.ModelFrontend) => {
+  return BuilderFrontend.update({
+    model,
+    msg: {
+      t: 'got-msg-core',
+      c: {
+        t: 'screen-pack-builder.user-closed-add-puzzle-screen',
+      },
+    },
+    ctx,
+    modelCore: BuilderCore.initCore({
+      ctx,
+    }),
+  })
+}
+
+export const clickedPuzzleListItem = (ctx: FlowFrontendCtx, puzzle: Puzzle) => (model: BuilderTypes.ModelFrontend) => {
+  return BuilderFrontend.update({
+    model,
+    msg: {
+      t: 'got-msg-core',
+      c: {
+        t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
+        puzzle,
+        userId: ctx.currentUserId,
+      },
+    },
+    ctx,
+    modelCore: BuilderCore.initCore({ ctx }),
+  })
+}
+
+export const clickedExitPuzzleBuilderButton =
+  (ctx: FlowFrontendCtx, modelCore: BuilderTypes.ModelCore = BuilderCore.initCore({ ctx })) =>
+  (model: BuilderTypes.ModelFrontend) => {
+    return BuilderFrontend.update({
+      model,
+      msg: {
+        t: 'screen-puzzle-builder.user-clicked-exit-button',
+      },
+      ctx,
+      modelCore: modelCore,
+    })
+  }
+
+export const puzzleBuilderPressDownRandomNode =
+  (ctx: FlowFrontendCtx, modelCore: BuilderTypes.ModelCore) => (model: BuilderTypes.ModelFrontend) => {
+    const puzzleBuilder = modelCore.screenPuzzleBuilder
+
+    if (!puzzleBuilder) {
+      return {
+        model,
+      }
+    }
+
+    const nodes = Object.values(Flow.toNodes(puzzleBuilder.puzzle.flow))
+
+    const randomNode = nodes[Math.floor(Math.random() * nodes.length)]
+
+    if (!randomNode) {
+      return {
+        model,
+      }
+    }
+
+    return BuilderFrontend.update({
+      model,
+      msg: {
+        t: 'screen-puzzle-builder.got-edit-msg',
+        c: {
+          t: 'pressed-down-node',
+          nodeId: randomNode.nodeId,
+        },
+      },
+      ctx,
+      modelCore: BuilderCore.initCore({
+        ctx,
+      }),
+    })
+  }
+
+export const puzzleBuilderUserSavedChanges =
+  (ctx: FlowFrontendCtx, puzzle: Puzzle) => (model: BuilderTypes.ModelFrontend) => {
+    return BuilderFrontend.update({
+      model,
+      msgCore: {
+        t: 'screen-puzzle-builder.saved-puzzle',
+        eventId: EventId.generate(),
+        happenedAt: LamportTimestamp.fromNumber(0),
+        saved: Ok(puzzle),
+        userId: ctx.currentUserId,
+      },
+      ctx,
+      modelCore: BuilderCore.initCore({
+        ctx,
+      }),
+    })
+  }
+
+export const clickedPuzzlePickerItem =
+  (ctx: FlowFrontendCtx, puzzle: Puzzle) => (model: BuilderTypes.ModelFrontend) => {
+    return BuilderFrontend.update({
+      model,
+      msg: {
+        t: 'got-msg-core',
+        c: {
+          t: 'screen-pack-builder.user-clicked-add-puzzle-item',
+          puzzle,
+          userId: ctx.currentUserId,
+        },
+      },
+      ctx,
+      modelCore: BuilderCore.initCore({
+        ctx,
+      }),
+    })
+  }
+
+export const clickedExitPuzzleButton = (ctx: FlowFrontendCtx) => (model: BuilderTypes.ModelFrontend) => {
+  return BuilderFrontend.update({
+    model,
+    msg: {
+      t: 'got-msg-core',
+      c: {
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        userId: ctx.currentUserId,
+      },
+    },
+    ctx,
+    modelCore: BuilderCore.initCore({
+      ctx,
+    }),
+  })
+}
+
+export const clickedPuzzleGridItem =
+  (ctx: FlowFrontendCtx, puzzle: Puzzle, puzzleIndex: number) => (model: BuilderTypes.ModelFrontend) => {
+    return BuilderFrontend.update({
+      model,
+      msg: {
+        t: 'got-msg-core',
+        c: {
+          t: 'screen-pack-builder.user-clicked-pack-item',
+          puzzleResult: { t: 'got', c: puzzle },
+          puzzleIndex,
+        },
+      },
+      ctx,
+      modelCore: BuilderCore.initCore({
+        ctx,
+      }),
+    })
+  }
+
+export const backendCreatedPack = (ctx: FlowFrontendCtx, pack: Pack) => (model: BuilderTypes.ModelFrontend) => {
+  return BuilderFrontend.update({
+    model,
+    ctx: ctx,
+    modelCore: BuilderCore.initCore({
+      ctx,
+    }),
+    msgBackend: {
+      t: 'create-new-pack.created-pack',
+      created: Ok(pack),
+    },
+  })
+}
+
+export function createPuzzle(ctx: SpaceFrontendCtx) {
+  return Puzzle.create({
+    count: 1,
+    createdAt: ctx.now,
+    createdBy: ctx.currentUserId,
+    flow: samples['5x5']['1'],
+  })
+}
+
+export function createPack(ctx: SpaceFrontendCtx, puzzleIds: PuzzleId[] = []) {
+  return Pack.create({
+    now: ctx.now,
+    puzzleIds,
+    count: 1,
+    createdBy: ctx.currentUserId,
+  })
+}

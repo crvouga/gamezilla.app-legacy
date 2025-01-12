@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
-import { ClientId } from '~/app/@/data/client-id'
+import { FrontendId } from '~/app/@/data/frontend-id'
 import { Profile } from '~/app/@/data/profile'
 import { SessionId } from '~/app/@/data/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -17,8 +17,8 @@ import { SpaceBackendCtx } from '../space-backend/ctx'
 export const FixtureSpaceBackend = async () => {
   const f = await FixtureAppBackend()
 
-  const clientA = randomAuthenticatedClient()
-  const clientB = randomAuthenticatedClient()
+  const frontendA = randomAuthenticatedFrontend()
+  const frontendB = randomAuthenticatedFrontend()
   const userA = await Profile.random()
   const userB = await Profile.random()
   const userC = await Profile.random()
@@ -99,22 +99,22 @@ export const FixtureSpaceBackend = async () => {
     ...f,
     ctx,
     backendCtx,
-    clientA,
-    clientB,
+    frontendA,
+    frontendB,
     update,
   }
 }
 
-export const randomAuthenticatedClient = (): AuthenticatedClient => {
+export const randomAuthenticatedFrontend = (): AuthenticatedFrontend => {
   return {
-    clientId: ClientId.generate(),
+    frontendId: FrontendId.generate(),
     sessionId: SessionId.generate(),
     userId: UserId.generate(),
   }
 }
 
-export type AuthenticatedClient = {
-  clientId: ClientId
+export type AuthenticatedFrontend = {
+  frontendId: FrontendId
   sessionId: SessionId
   userId: UserId
 }

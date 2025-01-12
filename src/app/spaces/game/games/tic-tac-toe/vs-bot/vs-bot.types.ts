@@ -38,7 +38,7 @@ export type ModelCore = {
   board: Model
 }
 
-export type ModelClient = CoreModel & {
+export type ModelFrontend = CoreModel & {
   vsBotSetup: VsBotSetup.Model
 }
 
@@ -71,13 +71,13 @@ export const isBotTurn = (model: CoreModel): model is ModelCore => {
 //
 //
 
-export type MsgClient = Req | { t: 'vs-bot-setup'; c: VsBotSetup.Msg }
+export type MsgFrontend = Req | { t: 'vs-bot-setup'; c: VsBotSetup.Msg }
 
 export type MsgBackend = { t: 'bot-moved' }
 
 export type MsgToBackend = Req
 
-export type MsgToClient =
+export type MsgToFrontend =
   | Res
   | { t: 'bot-moved'; result: Result<string, CoreModel> }
   | { t: 'player-left'; result: Result<string, CoreModel> }

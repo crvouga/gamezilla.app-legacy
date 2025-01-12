@@ -11,17 +11,17 @@ import type * as VsUser from './vs-user/vs-user.types'
 //
 //
 
-export type ModelClient =
+export type ModelFrontend =
   | {
       t: 'none'
     }
   | {
       t: 'vs-user'
-      c: VsUser.ModelClient
+      c: VsUser.ModelFrontend
     }
   | {
       t: 'vs-bot'
-      c: VsBot.ModelClient
+      c: VsBot.ModelFrontend
     }
 
 export type ModelBackend =
@@ -47,11 +47,11 @@ export type Mode = ModelBackend['t']
 //
 //
 
-export type MsgClient = Req | { t: 'vs-user'; c: VsUser.MsgClient } | { t: 'vs-bot'; c: VsBot.MsgClient }
+export type MsgFrontend = Req | { t: 'vs-user'; c: VsUser.MsgFrontend } | { t: 'vs-bot'; c: VsBot.MsgFrontend }
 
 export type MsgBackend = { t: 'vs-user'; c: VsUser.MsgBackend } | { t: 'vs-bot'; c: VsBot.MsgBackend }
 
-export type MsgToClient = Res | { t: 'vs-user'; c: VsUser.MsgToClient } | { t: 'vs-bot'; c: VsBot.MsgToClient }
+export type MsgToFrontend = Res | { t: 'vs-user'; c: VsUser.MsgToFrontend } | { t: 'vs-bot'; c: VsBot.MsgToFrontend }
 
 export type MsgToBackend = Req | { t: 'vs-user'; c: VsUser.MsgToBackend } | { t: 'vs-bot'; c: VsBot.MsgToBackend }
 

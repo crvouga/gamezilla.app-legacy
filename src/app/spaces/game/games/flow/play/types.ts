@@ -2,13 +2,13 @@ import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
-import type { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
+import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import type { GameCoreModule } from '~/app/spaces/game/games/@/architecture/game-core'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { GameMainMenu } from '../../@/ui/game-main-menu'
-import { FlowClientCmd } from '../@/client/cmd'
-import type { FlowClientCtx } from '../@/client/ctx'
-import { FlowClientEvtIn } from '../@/client/evt'
+import { FlowFrontendCmd } from '../@/frontend/cmd'
+import type { FlowFrontendCtx } from '../@/frontend/ctx'
+import { FlowFrontendEvtIn } from '../@/frontend/evt'
 import { FlowCoreCtx } from '../@/core/ctx'
 import { FlowCoreEvent } from '../@/core/event'
 import { Pack } from '../@/pack/pack'
@@ -24,7 +24,7 @@ import { ScreenPuzzleTypes } from './screen-play-puzzle'
 //
 //
 
-export type ModelClient = null
+export type ModelFrontend = null
 
 export const ModelBackend = p.obj({})
 export type ModelBackend = p.Infer<typeof ModelBackend>
@@ -36,7 +36,7 @@ export type ModelBackend = p.Infer<typeof ModelBackend>
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | GameMainMenu.Msg
   | {
       t: 'got-msg-core'
@@ -51,7 +51,7 @@ export type MsgToBackend = {
   t: 'noop'
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'noop'
 }
 
@@ -110,32 +110,32 @@ export type ModelCore = p.Infer<typeof ModelCore>
 //
 //
 
-export type ClientModule = GameClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
+export type FrontendModule = GameFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   MsgCore: MsgCore
   ModelCore: ModelCore
-  Ctx: FlowClientCtx
-  MsgEvtIn: FlowClientEvtIn
-  MsgCmdOut: FlowClientCmd<{
+  Ctx: FlowFrontendCtx
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgCmdOut: FlowFrontendCmd<{
     MsgToBackend: MsgToBackend
-    MsgClient: MsgClient
+    MsgFrontend: MsgFrontend
   }>
-  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdClient
+  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdFrontend
 }>
 
 export type BackendModule = GameBackendModule<{
   Model: ModelBackend
   Msg: MsgBackend
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   MsgCore: MsgCore
   ModelCore: ModelCore
   Ctx: FlowBackendCtx
   MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: SpaceBackendCmd<MsgToClient>
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
 }>
 
 export type CoreModule = GameCoreModule<{

@@ -3,11 +3,11 @@ import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 
-export type ModelClient = {
+export type ModelFrontend = {
   puzzleDeleteForeverRequest: RemoteResult<string, null>
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   puzzleDeleteForeverRequest: NotAsked,
 }
 
@@ -18,7 +18,7 @@ export type ModelBackend = {}
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | { t: 'delete-forever.user-clicked-delete-button' }
   | { t: 'delete-forever.user-closed-drawer' }
   | { t: 'delete-forever.user-clicked-confirm-button' }
@@ -26,7 +26,7 @@ export type MsgClient =
 
 export type MsgToBackend = { t: 'delete-forever.user-confirmed' }
 
-export type MsgToClient = { t: 'noop' }
+export type MsgToFrontend = { t: 'noop' }
 
 export type MsgBackend = { t: 'noop' }
 

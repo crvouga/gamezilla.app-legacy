@@ -3,32 +3,32 @@ import { RPC } from '~/@/rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'
 import { WebBackendEvent } from '~/@/web-backend'
-import { AppClientModule } from '~/app/@/architecture/app-client'
+import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { AppClientCmd } from '~/app/@/client/cmd'
-import { AnonymousClientCtx, AppClientCtx } from '~/app/@/client/ctx'
-import { ClientEvt } from '~/app/@/client/evt'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { FrontendEvt } from '~/app/@/frontend/evt'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
 import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
 import { IBackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
 
-export type ModelClient = { t: 'noop' }
+export type ModelFrontend = { t: 'noop' }
 
 export type MsgToBackend = { t: 'noop' }
 
-export type MsgToClient = { t: 'noop' }
+export type MsgToFrontend = { t: 'noop' }
 
 export type MsgBackend =
   | { t: 'got-web-backend-event'; c: WebBackendEvent }
   | { t: 'got-runtime-event'; c: RuntimeEvent }
   | { t: 'heartbeat'; at: Posix }
 
-export type MsgClient = { t: 'noop' }
+export type MsgFrontend = { t: 'noop' }
 
-export type ClientCtx = (AnonymousClientCtx | AppClientCtx) & {
-  rpc: RPC.Client<typeof rpcContract>
+export type FrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
+  rpc: RPC.Frontend<typeof rpcContract>
 }
 
 export type BackendCtx = AppBackendCtx & {
@@ -38,23 +38,23 @@ export type BackendCtx = AppBackendCtx & {
 export type BackendModule = AppBackendModule<{
   Ctx: BackendCtx
   MsgToBackend: MsgToBackend
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   Msg: MsgBackend
   MsgEvtIn: BackendEvt
-  MsgCmdOut: BackendCmd<MsgToClient>
+  MsgCmdOut: BackendCmd<MsgToFrontend>
 }>
 
-export type ClientModule = AppClientModule<{
-  Ctx: ClientCtx
-  Model: ModelClient
+export type FrontendModule = AppFrontendModule<{
+  Ctx: FrontendCtx
+  Model: ModelFrontend
   MsgToBackend: MsgToBackend
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   Msg: MsgBackend
-  MsgEvtIn: ClientEvt
+  MsgEvtIn: FrontendEvt
   MsgEvtOut: null
-  MsgCmdOut: AppClientCmd<{
+  MsgCmdOut: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
-    MsgClient: MsgClient
+    MsgFrontend: MsgFrontend
   }>
 }>
 

@@ -12,7 +12,7 @@ import {
   type ModelBackend,
   type MsgCore,
   type MsgBackend,
-  type MsgToClient,
+  type MsgToFrontend,
   type MsgToBackend,
   isBotTurn,
 } from './vs-bot.types'
@@ -29,7 +29,7 @@ import { Sub } from '~/@/sub'
 type Module = GameBackendModule<{
   Model: ModelBackend
   Msg: MsgBackend
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   ModelCore: ModelCore
   MsgCore: MsgCore
@@ -37,7 +37,7 @@ type Module = GameBackendModule<{
   Deps: null
   MsgCmdIn: null
   MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: SpaceBackendCmd<MsgToClient>
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
   MsgEvtOut: null
 }>
 

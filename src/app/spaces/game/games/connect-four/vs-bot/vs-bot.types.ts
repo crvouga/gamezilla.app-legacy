@@ -26,7 +26,7 @@ export const isBotMoving = (now: Posix, model: ModelBackend) => {
   return TimeSpan.lte(Posix.diff(now, model.botStartedFindingMoveAt), TimeSpan.seconds(5))
 }
 
-export type ModelClient = {
+export type ModelFrontend = {
   vsBotSetup: VsBotSetup.Model
   vsBotGame: VsBotGame.Model
 }
@@ -37,7 +37,7 @@ export type ModelClient = {
 //
 //
 
-export type MsgClient = MsgCore | { t: 'vs-bot-setup'; c: VsBotSetup.Msg } | { t: 'vs-bot-game'; c: VsBotGame.Msg }
+export type MsgFrontend = MsgCore | { t: 'vs-bot-setup'; c: VsBotSetup.Msg } | { t: 'vs-bot-game'; c: VsBotGame.Msg }
 
 export type MsgBackend =
   | {
@@ -49,7 +49,7 @@ export type MsgBackend =
       t: 'time-passed'
     }
 
-export type MsgToClient = { t: null }
+export type MsgToFrontend = { t: null }
 
 export type MsgToBackend = { t: null }
 

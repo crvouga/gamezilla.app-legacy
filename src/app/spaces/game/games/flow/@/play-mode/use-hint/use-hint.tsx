@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { p } from '~/@/parser'
-import { AppClientCtx } from '~/app/@/client/ctx'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconLightbulb } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { Flow } from '../../flow'
@@ -193,7 +193,7 @@ export const toFlow = (input: { model: Model; flow: Variant.Model }): Variant.Mo
 export const viewUseHintAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
-  ctx: AppClientCtx & Ctx
+  ctx: AppFrontendCtx & Ctx
   disabled: boolean
 }): BottomButtonInput => {
   return {

@@ -16,7 +16,7 @@ const { Err, Ok } = Result
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   touched: Option<Position.Position>
   coreModel: CoreModel
 }
@@ -92,7 +92,7 @@ export const toGhostPiece = (model: CoreModel): Piece.Piece => {
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | ['PressedKey', Keyboard.Key]
   | ['TouchStart', Position.Position]
   | ['TouchMove', Position.Position]
@@ -104,7 +104,7 @@ export type MsgBackend = Tick
 
 export type MsgToBackend = InputTranslate | InputRotate | InputDrop | MouseMove
 
-export type MsgToClient = Tick_Done | InputTranslate_Done | InputRotate_Done | InputDrop_Done | MouseMove_Done
+export type MsgToFrontend = Tick_Done | InputTranslate_Done | InputRotate_Done | InputDrop_Done | MouseMove_Done
 
 //
 //

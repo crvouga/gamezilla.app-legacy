@@ -1,4 +1,4 @@
-import { sendToClient } from '~/app/@/backend/cmd'
+import { sendToFrontend } from '~/app/@/backend/cmd'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import type { Pack } from '../../../@/pack/pack'
 import { PackId } from '../../../@/pack/pack-id'
@@ -6,15 +6,15 @@ import { PackName } from '../../../@/pack/pack-name'
 import type { BackendModule } from '../../types'
 
 const update: BackendModule['update'] = async (input) => {
-  return GameBackendModule.andThen({}, () => updateFromClient(input))
+  return GameBackendModule.andThen({}, () => updateFromFrontend(input))
 }
 
-const updateFromClient: BackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+const updateFromFrontend: BackendModule['update'] = async (input) => {
+  switch (input.msgFrontend?.t) {
     case 'create-new-pack.clicked-create-button': {
       const counted = await input.ctx.packDb.count({
         where: {
-          createdBy: input.msgClient.userId,
+          createdBy: input.msgFrontend.userId,
         },
       })
 
@@ -24,10 +24,10 @@ const updateFromClient: BackendModule['update'] = async (input) => {
 
       const packNew: Pack = {
         createdAt: input.ctx.now,
-        createdBy: input.msgClient.userId,
+        createdBy: input.msgFrontend.userId,
         id: PackId.generate(),
         lastUpdatedAt: input.ctx.now,
-        lastUpdatedBy: input.msgClient.userId,
+        lastUpdatedBy: input.msgFrontend.userId,
         name: await PackName.generate({
           count: counted.value,
         }),
@@ -38,7 +38,7 @@ const updateFromClient: BackendModule['update'] = async (input) => {
 
       return {
         msgCmd: [
-          sendToClient(input.msgClient, {
+          sendToFrontend(input.msgFrontend, {
             t: 'create-new-pack.created-pack',
             created: put,
           }),

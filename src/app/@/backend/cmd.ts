@@ -1,4 +1,4 @@
-import type { ClientId } from '~/app/@/data/client-id'
+import type { FrontendId } from '~/app/@/data/frontend-id'
 import type { UserId } from '~/app/@/data/user-id'
 
 //
@@ -9,38 +9,38 @@ import type { UserId } from '~/app/@/data/user-id'
 //
 //
 
-export type WireCmd<MsgToClient> = {
+export type WireCmd<MsgToFrontend> = {
   t: 'wire'
   c:
     | {
         t: 'send-to-user'
         userIds: UserId[]
-        msg: MsgToClient
+        msg: MsgToFrontend
       }
     | {
         t: 'broadcast'
-        msg: MsgToClient
+        msg: MsgToFrontend
       }
     | {
-        t: 'send-to-client'
-        clientIds: ClientId[]
-        msg: MsgToClient
+        t: 'send-to-frontend'
+        frontendIds: FrontendId[]
+        msg: MsgToFrontend
       }
     | {
         t: 'topic-publish'
         topics: string[]
-        msg: MsgToClient
+        msg: MsgToFrontend
       }
     | {
         t: 'topic-subscribe'
         topics: string[]
-        clientIds: ClientId[]
+        frontendIds: FrontendId[]
       }
 }
 
-export type BackendCmd<TMsgToClient> = WireCmd<TMsgToClient>
+export type BackendCmd<TMsgToFrontend> = WireCmd<TMsgToFrontend>
 
-export const topicPublish = <MsgToClient>(topics: string[], msg: MsgToClient): BackendCmd<MsgToClient> => {
+export const topicPublish = <MsgToFrontend>(topics: string[], msg: MsgToFrontend): BackendCmd<MsgToFrontend> => {
   return {
     t: 'wire',
     c: {
@@ -51,18 +51,21 @@ export const topicPublish = <MsgToClient>(topics: string[], msg: MsgToClient): B
   }
 }
 
-export const topicSubscribe = <MsgToClient>(topics: string[], clientIds: ClientId[]): BackendCmd<MsgToClient> => {
+export const topicSubscribe = <MsgToFrontend>(
+  topics: string[],
+  frontendIds: FrontendId[],
+): BackendCmd<MsgToFrontend> => {
   return {
     t: 'wire',
     c: {
       t: 'topic-subscribe',
       topics,
-      clientIds,
+      frontendIds,
     },
   }
 }
 
-export const broadcast = <MsgToClient>(msg: MsgToClient): BackendCmd<MsgToClient> => {
+export const broadcast = <MsgToFrontend>(msg: MsgToFrontend): BackendCmd<MsgToFrontend> => {
   return {
     t: 'wire',
     c: {
@@ -72,11 +75,11 @@ export const broadcast = <MsgToClient>(msg: MsgToClient): BackendCmd<MsgToClient
   }
 }
 
-export const didBroadcast = <MsgToClient, TCmd>(
+export const didBroadcast = <MsgToFrontend, TCmd>(
   output: {
-    msgCmd?: (WireCmd<MsgToClient> | TCmd)[] | null
+    msgCmd?: (WireCmd<MsgToFrontend> | TCmd)[] | null
   },
-  predicate: (msg: MsgToClient) => boolean,
+  predicate: (msg: MsgToFrontend) => boolean,
 ): boolean => {
   return (
     ((output.msgCmd?.length ?? 0) > 0 &&
@@ -93,38 +96,38 @@ export const didBroadcast = <MsgToClient, TCmd>(
   )
 }
 
-export const sendToClient = <MsgToClient>(
-  clientIdInput: ClientId | ClientId[] | { clientId: ClientId } | { clientIds: ClientId[] },
-  msg: MsgToClient,
-): BackendCmd<MsgToClient> => {
-  const clientIds: ClientId[] = []
+export const sendToFrontend = <MsgToFrontend>(
+  frontendIdInput: FrontendId | FrontendId[] | { frontendId: FrontendId } | { frontendIds: FrontendId[] },
+  msg: MsgToFrontend,
+): BackendCmd<MsgToFrontend> => {
+  const frontendIds: FrontendId[] = []
 
-  if (Array.isArray(clientIdInput)) {
-    clientIds.push(...clientIdInput)
-  } else if ('clientId' in clientIdInput) {
-    clientIds.push(clientIdInput.clientId)
-  } else if ('clientIds' in clientIdInput) {
-    clientIds.push(...clientIdInput.clientIds)
+  if (Array.isArray(frontendIdInput)) {
+    frontendIds.push(...frontendIdInput)
+  } else if ('frontendId' in frontendIdInput) {
+    frontendIds.push(frontendIdInput.frontendId)
+  } else if ('frontendIds' in frontendIdInput) {
+    frontendIds.push(...frontendIdInput.frontendIds)
   } else {
-    clientIds.push(clientIdInput)
+    frontendIds.push(frontendIdInput)
   }
 
   return {
     t: 'wire',
     c: {
-      t: 'send-to-client',
-      clientIds,
+      t: 'send-to-frontend',
+      frontendIds,
       msg,
     },
   }
 }
 
-export const didSendToClient = <MsgToClient, TCmd>(
+export const didSendToFrontend = <MsgToFrontend, TCmd>(
   output: {
-    msgCmd?: (WireCmd<MsgToClient> | TCmd)[] | null
+    msgCmd?: (WireCmd<MsgToFrontend> | TCmd)[] | null
   },
-  clientId: ClientId,
-  predicate: (msg: MsgToClient) => boolean,
+  frontendId: FrontendId,
+  predicate: (msg: MsgToFrontend) => boolean,
 ): boolean => {
   return (
     ((output.msgCmd?.length ?? 0) > 0 &&
@@ -134,22 +137,22 @@ export const didSendToClient = <MsgToClient, TCmd>(
           cmd &&
           't' in cmd &&
           cmd.t === 'wire' &&
-          cmd.c.t === 'send-to-client' &&
-          cmd.c.clientIds.includes(clientId) &&
+          cmd.c.t === 'send-to-frontend' &&
+          cmd.c.frontendIds.includes(frontendId) &&
           predicate(cmd.c.msg),
       )) ??
     false
   )
 }
 
-export const didSendMsgToClient = <MsgToClient>(
-  output: { msgCmd?: BackendCmd<MsgToClient>[] | null },
-  predicate: (msg: MsgToClient) => boolean,
+export const didSendMsgToFrontend = <MsgToFrontend>(
+  output: { msgCmd?: BackendCmd<MsgToFrontend>[] | null },
+  predicate: (msg: MsgToFrontend) => boolean,
 ): boolean => {
   return output.msgCmd?.some((cmd) => cmd.t === 'wire' && 'msg' in cmd.c && predicate(cmd.c.msg)) ?? false
 }
 
-export const sendToUser = <MsgToClient>(userIds: UserId[], msg: MsgToClient): BackendCmd<MsgToClient> => {
+export const sendToUser = <MsgToFrontend>(userIds: UserId[], msg: MsgToFrontend): BackendCmd<MsgToFrontend> => {
   return {
     t: 'wire',
     c: {
@@ -174,7 +177,7 @@ const mapOne = <A, B>(fn: (a: A) => B, msgCmd: BackendCmd<A>): BackendCmd<B> => 
     case 'wire': {
       switch (msgCmd.c.t) {
         case 'send-to-user':
-        case 'send-to-client':
+        case 'send-to-frontend':
         case 'topic-publish':
         case 'broadcast': {
           return {
@@ -190,7 +193,7 @@ const mapOne = <A, B>(fn: (a: A) => B, msgCmd: BackendCmd<A>): BackendCmd<B> => 
             t: 'wire',
             c: {
               t: 'topic-subscribe',
-              clientIds: msgCmd.c.clientIds,
+              frontendIds: msgCmd.c.frontendIds,
               topics: msgCmd.c.topics,
             },
           }

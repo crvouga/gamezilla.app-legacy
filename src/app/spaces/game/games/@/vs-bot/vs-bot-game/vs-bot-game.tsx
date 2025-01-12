@@ -2,7 +2,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { IconRobot, Avatar, Transition, cn, Typography } from '~/app/@/ui'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import type { VDom, VDomChildren } from '~/@/vdom/vdom'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 
 //
 //
@@ -55,7 +55,7 @@ export type GameOver =
     }
 
 type Input = {
-  ctx: SpaceClientCtx
+  ctx: SpaceFrontendCtx
   model?: Model
   gameOver: GameOver | null
   human: {

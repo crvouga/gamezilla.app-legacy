@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import * as RPC from './rpc'
 import { WebBackend } from '~/@/web-backend'
-import { WebClient } from '~/@/web-client'
+import { WebFrontend } from '~/@/web-frontend'
 import { Logger } from '~/@/logger'
 
 const childRpcContract = RPC.initContract({
@@ -65,14 +65,14 @@ const rpcBackend = RPC.initBackend(rpcContract, {
 //
 
 const webBackend = WebBackend({ t: 'bun', logger: Logger({ t: 'noop' }) })
-const webClient = WebClient({ t: 'fetch', fetch: fetch as Fetch })
+const webFrontend = WebFrontend({ t: 'fetch', fetch: fetch as Fetch })
 
 RPC.withRPC({ webBackend, contract: rpcContract, handlers: rpcBackend })
 
-const rpcClient = RPC.initClient(webClient, rpcContract)
+const rpcFrontend = RPC.initFrontend(webFrontend, rpcContract)
 
 ;async () => {
-  await rpcClient.foo({ name: 'Alice', age: 30 })
+  await rpcFrontend.foo({ name: 'Alice', age: 30 })
 
-  await rpcClient.bar({ name: 'Bob' })
+  await rpcFrontend.bar({ name: 'Bob' })
 }

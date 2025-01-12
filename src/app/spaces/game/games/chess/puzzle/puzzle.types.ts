@@ -64,7 +64,7 @@ export type ModelBackend = CoreModel & {
   requests: { getPuzzles?: RemoteResult<string, null> }
 }
 
-export type ModelClient = CoreModel & {
+export type ModelFrontend = CoreModel & {
   initializedAt?: number
   backendNow?: Posix
 }
@@ -179,11 +179,11 @@ type DbMsg =
       >
     }
 
-export type MsgClient = Req
+export type MsgFrontend = Req
 
 export type MsgToBackend = Req
 
-export type MsgToClient =
+export type MsgToFrontend =
   | Res
   | { t: 'clock-tick'; now: Posix }
   | (Omit<DbMsg, 'result'> & {

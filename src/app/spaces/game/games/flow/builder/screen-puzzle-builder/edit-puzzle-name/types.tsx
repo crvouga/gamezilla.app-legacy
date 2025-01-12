@@ -10,13 +10,13 @@ import { Translator } from '~/@/l18n/generated'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   puzzleEditNameRequest: RemoteResult<string, null>
   puzzleEditNameDraft: string
   puzzleEditNameValidationError: EditNameValidationError
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   puzzleEditNameDraft: '',
   puzzleEditNameRequest: NotAsked,
   puzzleEditNameValidationError: null,
@@ -45,7 +45,7 @@ export type ModelBackend = {}
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | {
       t: 'puzzle.edit-name.user-inputted-draft-name'
       draftName: string
@@ -63,7 +63,7 @@ export type MsgToBackend = {
   flowPuzzleId: PuzzleId
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'noop'
 }
 

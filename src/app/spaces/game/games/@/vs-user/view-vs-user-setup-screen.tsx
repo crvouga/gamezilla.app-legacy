@@ -4,7 +4,7 @@ import { Avatar, Button, IconQuestionMark, Typography } from '~/app/@/ui'
 
 import { LayoutGameCoverArtHeader } from '../ui/layout-game-cover-art-header'
 import { TranslatedText } from '~/@/l18n'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 
 type IconProps = { className: string }
 
@@ -23,7 +23,7 @@ const VersusSection = ({
 }: {
   playerOne: PlayerProp
   playerTwo: PlayerProp
-  ctx: SpaceClientCtx
+  ctx: SpaceFrontendCtx
 }) => {
   return (
     <div className='flex w-full flex-col gap-2 p-4'>
@@ -64,7 +64,7 @@ export const VsUserSetup = {
   VersusSection,
 }
 
-const PlayerButtons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
+const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   return (
     <div className='col-span-3 w-full'>
       {player.userId && player.userId === ctx.currentUserId && (
@@ -92,7 +92,7 @@ const PlayerButtons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerPro
   )
 }
 
-const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
+const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   return (
     <div
       className='col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center'
@@ -113,7 +113,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
   )
 }
 
-const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
+const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   return (
     <div className='text-secondary col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm'>
       <p className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'>
@@ -139,7 +139,7 @@ export const VsUserSetupScreen = ({
   onQuit,
   canStartGame = Boolean(playerOne.userId && playerTwo.userId),
 }: {
-  ctx: SpaceClientCtx
+  ctx: SpaceFrontendCtx
   title: TranslatedText
   renderCoverArt: (props: { className: string }) => VDom
   playerOne: PlayerProp

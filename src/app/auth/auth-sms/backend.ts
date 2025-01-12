@@ -8,10 +8,10 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { Translator } from '~/app/@/client/translator'
+import { Translator } from '~/app/@/frontend/translator'
 import type { UserAccount } from '~/app/@/data/account'
 import { UserId } from '~/app/@/data/user-id'
-import { sendToClient } from '~/app/@/backend/cmd'
+import { sendToFrontend } from '~/app/@/backend/cmd'
 import type { IUserAccountDb } from '../@/backend/user-account-db'
 import { UserAccountDb } from '../@/backend/user-account-db/impl'
 import type { BackendModule } from './types'
@@ -75,15 +75,15 @@ const update: BackendModule['update'] = async (input) => {
   )
 }
 
-const updateSendCode: BackendModule['update'] = async ({ msgClient, deps }) => {
-  switch (msgClient?.t) {
+const updateSendCode: BackendModule['update'] = async ({ msgFrontend, deps }) => {
+  switch (msgFrontend?.t) {
     case 'user-clicked-send-code-button': {
-      const sent = await deps.VerifySMS.sendCode(msgClient)
+      const sent = await deps.VerifySMS.sendCode(msgFrontend)
       return {
         msgCmd: [
-          sendToClient([msgClient.clientId], {
+          sendToFrontend([msgFrontend.frontendId], {
             t: 'sent-code',
-            phoneNumber: msgClient.phoneNumber,
+            phoneNumber: msgFrontend.phoneNumber,
             sent,
           }),
         ],
@@ -149,18 +149,18 @@ const handleVerifyCode = async (input: {
   return Ok(accountNew)
 }
 
-const updateVerifyCode: BackendModule['update'] = async ({ msgClient, deps, ctx }) => {
-  switch (msgClient?.t) {
+const updateVerifyCode: BackendModule['update'] = async ({ msgFrontend, deps, ctx }) => {
+  switch (msgFrontend?.t) {
     case 'user-clicked-verify-code-button': {
-      ctx.logger.info(`Verifying code for ${PhoneNumber.toString(msgClient.phoneNumber)}`)
+      ctx.logger.info(`Verifying code for ${PhoneNumber.toString(msgFrontend.phoneNumber)}`)
       const verified = await handleVerifyCode({
         AccountDb: deps.AccountDb,
         VerifySMS: deps.VerifySMS,
         now: ctx.now,
-        phoneNumber: msgClient.phoneNumber,
-        inputtedCode: msgClient.inputtedCode,
+        phoneNumber: msgFrontend.phoneNumber,
+        inputtedCode: msgFrontend.inputtedCode,
       })
-      ctx.logger.info(`Verified code for ${PhoneNumber.toString(msgClient.phoneNumber)}`)
+      ctx.logger.info(`Verified code for ${PhoneNumber.toString(msgFrontend.phoneNumber)}`)
 
       if (isErr(verified)) {
         ctx.logger.error(
@@ -171,7 +171,7 @@ const updateVerifyCode: BackendModule['update'] = async ({ msgClient, deps, ctx 
         )
         return {
           msgCmd: [
-            sendToClient(msgClient, {
+            sendToFrontend(msgFrontend, {
               t: 'verified-code',
               verified,
             }),
@@ -181,15 +181,15 @@ const updateVerifyCode: BackendModule['update'] = async ({ msgClient, deps, ctx 
 
       return {
         msgCmd: [
-          sendToClient(msgClient, {
+          sendToFrontend(msgFrontend, {
             t: 'verified-code',
             verified,
           }),
         ],
         msgEvt: [
           {
-            ...msgClient,
-            t: 'auth-evt.client-authenticated',
+            ...msgFrontend,
+            t: 'auth-evt.frontend-authenticated',
             user: verified.value,
             loggedIn: true,
           },

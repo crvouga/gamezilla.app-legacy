@@ -5,13 +5,13 @@ import type { UserId } from '~/app/@/data/user-id'
 import { UserAccountDb } from './@/backend/user-account-db'
 import { UserSessionDb } from './@/backend/user-session-db'
 import { AuthSMSBackend } from './auth-sms/backend'
-import type { BackendCtx, MsgToClient, BackendModule } from './types'
+import type { BackendCtx, MsgToFrontend, BackendModule } from './types'
 import { ContinueAsGuestBackend } from './continue-as-guest/backend'
 import { GuestSessionMappingDb } from './@/backend/guest-session-mapping-db'
 import { LogoutBackend } from './logout/backend'
 import { Sub } from '~/@/sub'
 import { AppBackendCtx } from '../@/backend/ctx'
-import { sendToClient, BackendCmd } from '../@/backend/cmd'
+import { sendToFrontend, BackendCmd } from '../@/backend/cmd'
 
 //
 //
@@ -78,11 +78,11 @@ const updateChild: BackendModule['update'] = async (input) => {
   const sms = await AuthSMSBackend.update({
     ...input,
     deps: await AuthSMSBackend.initDeps(input),
-    msgClient:
-      input.msgClient?.t === 'sms'
+    msgFrontend:
+      input.msgFrontend?.t === 'sms'
         ? {
-            ...input.msgClient,
-            ...input.msgClient.c,
+            ...input.msgFrontend,
+            ...input.msgFrontend.c,
           }
         : null,
     msg: input.msg?.t === 'sms' ? input.msg.c : null,
@@ -96,7 +96,7 @@ const updateChild: BackendModule['update'] = async (input) => {
 
 const updateFromEvent: typeof update = async (input) => {
   switch (input.msgEvt?.t) {
-    case 'wire-evt.client-connected': {
+    case 'wire-evt.frontend-connected': {
       const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(input.msgEvt.sessionId)
 
       const userId = isOk(foundUserId) ? foundUserId.value : null
@@ -111,8 +111,8 @@ const updateFromEvent: typeof update = async (input) => {
         return {
           msgEvt: [
             {
-              t: 'auth-evt.client-unauthenticated',
-              clientId: input.msgEvt.clientId,
+              t: 'auth-evt.frontend-unauthenticated',
+              frontendId: input.msgEvt.frontendId,
               sessionId: input.msgEvt.sessionId,
             },
           ],
@@ -122,28 +122,28 @@ const updateFromEvent: typeof update = async (input) => {
       return {
         msgEvt: [
           {
-            clientId: input.msgEvt.clientId,
+            frontendId: input.msgEvt.frontendId,
             sessionId: input.msgEvt.sessionId,
             user: account,
-            t: 'auth-evt.client-authenticated',
+            t: 'auth-evt.frontend-authenticated',
           },
         ],
       }
     }
 
-    case 'auth-evt.client-unauthenticated': {
+    case 'auth-evt.frontend-unauthenticated': {
       return {
         msgCmd: [
-          sendToClient([input.msgEvt.clientId], {
-            t: 'client-unauthenticated',
+          sendToFrontend([input.msgEvt.frontendId], {
+            t: 'frontend-unauthenticated',
           }),
         ],
       }
     }
 
-    case 'auth-evt.client-authenticated': {
-      const msgCmd = sendToClient<MsgToClient>([input.msgEvt.clientId], {
-        t: 'client-authenticated',
+    case 'auth-evt.frontend-authenticated': {
+      const msgCmd = sendToFrontend<MsgToFrontend>([input.msgEvt.frontendId], {
+        t: 'frontend-authenticated',
         account: input.msgEvt.user,
         loggedIn: input.msgEvt.loggedIn ?? false,
       })

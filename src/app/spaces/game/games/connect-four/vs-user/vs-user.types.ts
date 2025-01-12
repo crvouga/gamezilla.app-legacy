@@ -21,7 +21,7 @@ import {
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   openedModal: 'confirm-resign' | null
   ghostIndex: ColumnIndex | null
 }
@@ -39,7 +39,7 @@ export type ModelBackend = p.Infer<typeof ModelBackend>
 
 export type MsgBackend = { t: null }
 
-export type MsgClient =
+export type MsgFrontend =
   | MsgCore
   | { t: 'hovered-over-columns'; columnIndex: ColumnIndex }
   | { t: 'clicked-resign'; userId: UserId }
@@ -47,7 +47,7 @@ export type MsgClient =
 
 export type MsgToBackend = { t: null }
 
-export type MsgToClient = { t: null }
+export type MsgToFrontend = { t: null }
 
 //
 //

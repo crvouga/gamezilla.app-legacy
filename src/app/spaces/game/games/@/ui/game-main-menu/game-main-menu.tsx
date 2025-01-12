@@ -4,12 +4,12 @@ import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { IconRobot, IconUsers, Typography } from '~/app/@/ui'
 import {
-  type SpaceClientCmd,
-  type SpaceClientCmdTypes,
+  type SpaceFrontendCmd,
+  type SpaceFrontendCmdTypes,
   exitGame,
   openUserDetails,
-} from '~/app/spaces/@/space-client/cmd'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+} from '~/app/spaces/@/space-frontend/cmd'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { LayoutGameCoverArtHeader } from '../layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../users-in-space-list'
 
@@ -29,7 +29,7 @@ export type Msg =
       t: 'game-main-menu.clicked-exit-game-button'
     }
 
-export const update = <TModel, TMsg, T extends SpaceClientCmdTypes>({
+export const update = <TModel, TMsg, T extends SpaceFrontendCmdTypes>({
   msg,
   model,
 }: {
@@ -37,7 +37,7 @@ export const update = <TModel, TMsg, T extends SpaceClientCmdTypes>({
   msg?: Msg | TMsg | null
 }): {
   model: TModel
-  msgCmd: SpaceClientCmd<T>[]
+  msgCmd: SpaceFrontendCmd<T>[]
 } => {
   if (typeof msg !== 'object' || !msg || !('t' in msg)) {
     return { model, msgCmd: [] }
@@ -90,7 +90,7 @@ export const View = ({
   onBack,
 }: {
   onBack: () => void
-  ctx: SpaceClientCtx
+  ctx: SpaceFrontendCtx
   title: TranslatedText
   dispatch: (msg: Msg) => void
   renderCoverArt: (input: { className: string; key: string }) => VDom

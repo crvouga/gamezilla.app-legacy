@@ -5,25 +5,25 @@ import type { BackendModule } from '../../types'
 import type { MsgCore } from './types'
 
 const update: BackendModule['update'] = async (input) => {
-  return GameBackendModule.andThen({}, () => updateFromClient({ ...input }))
+  return GameBackendModule.andThen({}, () => updateFromFrontend({ ...input }))
 }
 
-const updateFromClient: BackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+const updateFromFrontend: BackendModule['update'] = async (input) => {
+  switch (input.msgFrontend?.t) {
     case 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit':
     case 'screen-puzzle-builder.save-changes.user-clicked-save-button': {
       const saved = await input.ctx.puzzleDb.put({
-        ...input.msgClient.puzzle,
-        lastUpdatedBy: input.msgClient.userId,
+        ...input.msgFrontend.puzzle,
+        lastUpdatedBy: input.msgFrontend.userId,
         lastUpdatedAt: input.ctx.now,
       })
 
-      const puzzle = input.msgClient.puzzle
+      const puzzle = input.msgFrontend.puzzle
 
       const msgCore: MsgCore = {
         t: 'screen-puzzle-builder.saved-puzzle',
         saved: Result.mapOk(saved, () => puzzle),
-        userId: input.msgClient.puzzle.createdBy,
+        userId: input.msgFrontend.puzzle.createdBy,
       }
 
       return {

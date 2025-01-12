@@ -1,11 +1,11 @@
 import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
 import { Posix } from '~/@/time/posix'
-import { AppClientModule } from '../@/architecture/app-client'
+import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AppBackendModule } from '../@/architecture/app-backend'
-import { AppClientCmd } from '../@/client/cmd'
-import { AnonymousClientCtx } from '../@/client/ctx'
-import { ClientEvt } from '../@/client/evt'
-import type { TranslatorMsg } from '../@/client/translator'
+import { AppFrontendCmd } from '../@/frontend/cmd'
+import { AnonymousFrontendCtx } from '../@/frontend/ctx'
+import { FrontendEvt } from '../@/frontend/evt'
+import type { TranslatorMsg } from '../@/frontend/translator'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
@@ -15,7 +15,7 @@ export type TranslationLoading = {
   endedAt?: Posix | null
 }
 
-export type ModelClient = {
+export type ModelFrontend = {
   lang: LanguageCodeISO_639_1
   loading: {
     [lang in LanguageCodeISO_639_1]?: TranslationLoading
@@ -24,14 +24,14 @@ export type ModelClient = {
 
 export type MsgToBackend = { t: 'noop' }
 
-export type MsgToClient = { t: 'noop' }
+export type MsgToFrontend = { t: 'noop' }
 
 export type MsgBackend = {
   t: 'user-changed-language'
   lang: LanguageCodeISO_639_1
 }
 
-export type MsgClient =
+export type MsgFrontend =
   | TranslatorMsg
   | { t: 'clicked-change-lang' }
   | { t: 'choose-lang.clicked-done' }
@@ -43,24 +43,24 @@ export type MsgClient =
 export type BackendModule = AppBackendModule<{
   Ctx: AppBackendCtx
   MsgToBackend: MsgToBackend
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   Msg: MsgBackend
   MsgEvtIn: BackendEvt
-  MsgCmdOut: BackendCmd<MsgToClient>
+  MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: null
 }>
 
-export type ClientModule = AppClientModule<{
-  Ctx: AnonymousClientCtx
-  Model: ModelClient
+export type FrontendModule = AppFrontendModule<{
+  Ctx: AnonymousFrontendCtx
+  Model: ModelFrontend
   MsgToBackend: MsgToBackend
-  MsgToClient: MsgToClient
-  Msg: MsgClient
+  MsgToFrontend: MsgToFrontend
+  Msg: MsgFrontend
   MsgCmdIn: null
-  MsgEvtIn: ClientEvt
-  MsgCmdOut: AppClientCmd<{
+  MsgEvtIn: FrontendEvt
+  MsgCmdOut: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
-    MsgClient: MsgClient
+    MsgFrontend: MsgFrontend
   }>
   MsgEvtOut: null
 }>

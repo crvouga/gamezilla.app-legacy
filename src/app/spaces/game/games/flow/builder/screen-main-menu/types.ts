@@ -18,7 +18,7 @@ export type Option = p.Infer<typeof Option>
 //
 //
 
-export type MsgClient = GameMainMenu.Msg
+export type MsgFrontend = GameMainMenu.Msg
 
 export const MsgCore = p.or(
   p.obj({

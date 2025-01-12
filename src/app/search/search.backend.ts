@@ -21,7 +21,7 @@ export const update = ({
   return { model }
 }
 
-export const updateFromClient = ({
+export const updateFromFrontend = ({
   model,
   msg,
 }: {

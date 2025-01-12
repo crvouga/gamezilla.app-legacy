@@ -2,7 +2,7 @@ import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import type { Sub } from '~/@/sub'
-import type { ClientId } from '~/app/@/data/client-id'
+import type { FrontendId } from '~/app/@/data/frontend-id'
 import { Logger } from '../../@/logger'
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { BackendCmd, WireCmd } from '../@/backend/cmd'
@@ -10,7 +10,7 @@ import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
 import { BackendInstanceBackend } from './backend-instance/backend'
 import type { IBackendTransport } from './transport/backend'
-import { rpcContract, type MsgBackend, type MsgToClient, type MsgToBackend, type BackendCtx } from './types'
+import { rpcContract, type MsgBackend, type MsgToFrontend, type MsgToBackend, type BackendCtx } from './types'
 import { WireSession } from './wire-session'
 import { WireSessionDb } from './wire-session-db'
 
@@ -21,13 +21,13 @@ import { WireSessionDb } from './wire-session-db'
 //
 //
 
-export const initCtx = async <TMsgToClient, TMsgToBackend>(input: {
+export const initCtx = async <TMsgToFrontend, TMsgToBackend>(input: {
   ctx: AppBackendCtx
   transport: IBackendTransport<{
-    MsgToClient: TMsgToClient
+    MsgToFrontend: TMsgToFrontend
     MsgToBackend: TMsgToBackend
   }>
-}): Promise<BackendCtx<TMsgToClient, TMsgToBackend>> => {
+}): Promise<BackendCtx<TMsgToFrontend, TMsgToBackend>> => {
   const logger = Logger.prefix('wire', input.ctx.logger)
   return {
     ...input.ctx,
@@ -49,21 +49,21 @@ export const initCtx = async <TMsgToClient, TMsgToBackend>(input: {
 //
 //
 
-type Input<TMsgToClient, TMsgToBackend> = {
-  ctx: BackendCtx<TMsgToClient, TMsgToBackend>
+type Input<TMsgToFrontend, TMsgToBackend> = {
+  ctx: BackendCtx<TMsgToFrontend, TMsgToBackend>
   msg?: MsgBackend | null
-  msgClient?: MsgToBackend | null
+  msgFrontend?: MsgToBackend | null
   msgEvt?: BackendEvt | null
-  msgCmd?: WireCmd<TMsgToClient> | null
+  msgCmd?: WireCmd<TMsgToFrontend> | null
 }
 
 type Output = {
   msgEvt?: BackendEvt[]
-  msgCmd?: BackendCmd<MsgToClient>[]
+  msgCmd?: BackendCmd<MsgToFrontend>[]
 }
 
-export const update = async <TMsgToClient, TMsgToBackend>(
-  input: Input<TMsgToClient, TMsgToBackend>,
+export const update = async <TMsgToFrontend, TMsgToBackend>(
+  input: Input<TMsgToFrontend, TMsgToBackend>,
 ): Promise<Output> => {
   return AppBackendModule.andThen(
     {},
@@ -80,7 +80,7 @@ const updateChild: typeof update = async (input) => {
     msgEvt: input.msgEvt,
     ctx: input.ctx.backendInstance,
     msg: input.msg?.t === 'got-backend-instance-msg' ? input.msg.c : null,
-    msgClient: null,
+    msgFrontend: null,
     deps: {},
   })
 
@@ -99,34 +99,34 @@ const updateFromMsg: typeof update = async (input) => {
     case 'got-backend-instance-msg': {
       return {}
     }
-    case 'client-connected': {
+    case 'frontend-connected': {
       const got = await input.ctx.wireSessionDb.findBySessionIds([input.msg.sessionId])
 
       const maybeSession: WireSession | null = got.t === 'ok' ? (got.value[0] ?? null) : null
 
       const session: WireSession = maybeSession ?? WireSession.init(input.msg.sessionId)
 
-      const sessionNew = WireSession.addClientId(session, input.msg.clientId)
+      const sessionNew = WireSession.addFrontendId(session, input.msg.frontendId)
 
       await input.ctx.wireSessionDb.put([sessionNew])
 
       return {
         msgEvt: [
           {
-            t: 'wire-evt.client-connected',
-            clientId: input.msg.clientId,
+            t: 'wire-evt.frontend-connected',
+            frontendId: input.msg.frontendId,
             sessionId: input.msg.sessionId,
           },
         ],
       }
     }
 
-    case 'client-disconnected': {
+    case 'frontend-disconnected': {
       return {
         msgEvt: [
           {
-            t: 'wire-evt.client-disconnected',
-            clientId: input.msg.clientId,
+            t: 'wire-evt.frontend-disconnected',
+            frontendId: input.msg.frontendId,
             sessionId: input.msg.sessionId,
           },
         ],
@@ -139,7 +139,7 @@ const updateFromMsg: typeof update = async (input) => {
 
     case 'got-bad-msgs': {
       input.ctx.logger.warn(
-        `Got bad msg from client. reason=${input.msg.reason}, client's clientId=${input.msg.clientId}, client's sessionId=${input.msg.sessionId}`,
+        `Got bad msg from frontend. reason=${input.msg.reason}, frontend's frontendId=${input.msg.frontendId}, frontend's sessionId=${input.msg.sessionId}`,
       )
       return {}
     }
@@ -148,7 +148,7 @@ const updateFromMsg: typeof update = async (input) => {
 
 const updateFromEvent: typeof update = async (input) => {
   switch (input.msgEvt?.t) {
-    case 'auth-evt.client-authenticated': {
+    case 'auth-evt.frontend-authenticated': {
       const wireSessions = unwrapOr(await input.ctx.wireSessionDb.findBySessionIds([input.msgEvt.sessionId]), [])
       const userId = input.msgEvt.user.userId
       const wireSessionsNew = wireSessions.map((wireSession) => WireSession.addUserId(wireSession, userId))
@@ -162,8 +162,8 @@ const updateFromEvent: typeof update = async (input) => {
   }
 }
 
-const updateFromCmd = async <TMsgToClient, TMsgToBackend>(
-  input: Input<TMsgToClient, TMsgToBackend>,
+const updateFromCmd = async <TMsgToFrontend, TMsgToBackend>(
+  input: Input<TMsgToFrontend, TMsgToBackend>,
 ): Promise<Output> => {
   if (!input.msgCmd) {
     return {}
@@ -173,31 +173,31 @@ const updateFromCmd = async <TMsgToClient, TMsgToBackend>(
 
   switch (msgCmdChild.t) {
     case 'broadcast': {
-      input.ctx.transport.toClientBroadcast.pub([msgCmdChild.msg])
+      input.ctx.transport.toFrontendBroadcast.pub([msgCmdChild.msg])
       return {}
     }
 
-    case 'send-to-client': {
-      const toClientPayload: {
-        [clientId: ClientId]: {
-          clientId: ClientId
-          msgs: TMsgToClient[]
+    case 'send-to-frontend': {
+      const toFrontendPayload: {
+        [frontendId: FrontendId]: {
+          frontendId: FrontendId
+          msgs: TMsgToFrontend[]
         }
       } = {}
 
-      if (msgCmdChild.clientIds.length === 0) {
-        input.ctx.logger.warn(`${msgCmdChild.t} failed. No client ids provided`)
+      if (msgCmdChild.frontendIds.length === 0) {
+        input.ctx.logger.warn(`${msgCmdChild.t} failed. No frontend ids provided`)
         return {}
       }
 
-      for (const clientId of msgCmdChild.clientIds) {
-        toClientPayload[clientId] = {
-          clientId,
+      for (const frontendId of msgCmdChild.frontendIds) {
+        toFrontendPayload[frontendId] = {
+          frontendId,
           msgs: [msgCmdChild.msg],
         }
       }
 
-      input.ctx.transport.toClient.pub(toClientPayload)
+      input.ctx.transport.toFrontend.pub(toFrontendPayload)
       return {}
     }
 
@@ -209,27 +209,27 @@ const updateFromCmd = async <TMsgToClient, TMsgToBackend>(
         return {}
       }
 
-      const toClientPayload: {
-        [clientId: ClientId]: {
-          clientId: ClientId
-          msgs: TMsgToClient[]
+      const toFrontendPayload: {
+        [frontendId: FrontendId]: {
+          frontendId: FrontendId
+          msgs: TMsgToFrontend[]
         }
       } = {}
 
       for (const wireSession of wireSessions) {
-        const clientIds = CappedOrderedDict.valuesNewestFirst(wireSession.clientIds)
+        const frontendIds = CappedOrderedDict.valuesNewestFirst(wireSession.frontendIds)
 
-        if (clientIds.length === 0) {
-          input.ctx.logger.warn(`send to user error. no client ids for sessionId=${wireSession.sessionId}`)
+        if (frontendIds.length === 0) {
+          input.ctx.logger.warn(`send to user error. no frontend ids for sessionId=${wireSession.sessionId}`)
           continue
         }
 
-        for (const clientId of clientIds) {
-          toClientPayload[clientId] = toClientPayload[clientId] ?? { clientId, msgs: [] }
-          toClientPayload[clientId].msgs.push(msgCmdChild.msg)
+        for (const frontendId of frontendIds) {
+          toFrontendPayload[frontendId] = toFrontendPayload[frontendId] ?? { frontendId, msgs: [] }
+          toFrontendPayload[frontendId].msgs.push(msgCmdChild.msg)
         }
       }
-      input.ctx.transport.toClient.pub(toClientPayload)
+      input.ctx.transport.toFrontend.pub(toFrontendPayload)
       return {}
     }
 
@@ -243,13 +243,13 @@ const updateFromCmd = async <TMsgToClient, TMsgToBackend>(
   }
 }
 
-export const subscriptions = <TMsgToBackend, TMsgToClient>(input: {
-  ctx: BackendCtx<TMsgToClient, TMsgToBackend>
+export const subscriptions = <TMsgToBackend, TMsgToFrontend>(input: {
+  ctx: BackendCtx<TMsgToFrontend, TMsgToBackend>
 }): Sub<MsgBackend> => {
   return input.ctx.transport.wire
 }
 
-export const rpc = <TMsgToClient, TMsgToBackend>(input: { ctx: BackendCtx<TMsgToClient, TMsgToBackend> }) => {
+export const rpc = <TMsgToFrontend, TMsgToBackend>(input: { ctx: BackendCtx<TMsgToFrontend, TMsgToBackend> }) => {
   return RPC.initBackend(rpcContract, {
     backendInstance: BackendInstanceBackend.rpc({ ctx: input.ctx.backendInstance }),
   })

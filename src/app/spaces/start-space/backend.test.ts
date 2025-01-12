@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { unwrap } from '~/@/result'
-import { ClientId } from '~/app/@/data/client-id'
+import { FrontendId } from '~/app/@/data/frontend-id'
 import { SessionId } from '~/app/@/data/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { didSendMsgToClient } from '~/app/@/backend/cmd'
+import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
 import { SpaceCore } from '../core/space-core'
 
@@ -22,9 +22,9 @@ describe(import.meta.file, () => {
 
     await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'got-msg-core',
-          clientId: ClientId.generate(),
+          frontendId: FrontendId.generate(),
           sessionId: SessionId.generate(),
           c: withEventMeta({
             t: 'user-started-space',
@@ -41,15 +41,15 @@ describe(import.meta.file, () => {
     expect(after?.spaceId).toEqual(spaceId)
   })
 
-  it('should propagate the user started space event to the clients', async () => {
+  it('should propagate the user started space event to the frontends', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
 
     const output = await f.update([
       {
-        msgClient: {
+        msgFrontend: {
           t: 'got-msg-core',
-          clientId: ClientId.generate(),
+          frontendId: FrontendId.generate(),
           sessionId: SessionId.generate(),
           c: withEventMeta({
             t: 'user-started-space',
@@ -61,7 +61,7 @@ describe(import.meta.file, () => {
     ])
 
     expect(
-      didSendMsgToClient(
+      didSendMsgToFrontend(
         output,
         (m) => m.t === 'got-msg-core' && m.c.t === 'user-started-space' && m.c.spaceId === spaceId,
       ),

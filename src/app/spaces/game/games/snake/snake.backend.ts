@@ -54,7 +54,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   }
 }
 
-export const updateFromClient = (msg: MsgToBackend, model: Model): [Model, Eff<Msg>] => {
+export const updateFromFrontend = (msg: MsgToBackend, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'start-game': {
       return updateRequest(['StartGame_Done', startGame(model)], model)

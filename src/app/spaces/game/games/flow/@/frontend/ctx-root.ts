@@ -1,0 +1,16 @@
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { Pack } from '../pack/pack'
+import { PackId } from '../pack/pack-id'
+import type { Puzzle } from '../puzzle/puzzle'
+import type { PuzzleId } from '../puzzle/puzzle-id'
+import { Solutions } from '../solutions/solutions'
+
+export type FlowFrontendCtxRoot = SpaceFrontendCtx & {
+  packs: {
+    [id: PackId]: Pack
+  }
+  puzzles: {
+    [id: PuzzleId]: Puzzle
+  }
+  solutions: Solutions
+}

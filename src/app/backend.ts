@@ -27,7 +27,7 @@ import {
   rpcContract,
   BackendCtx,
   type MsgBackend,
-  type MsgToClient,
+  type MsgToFrontend,
   type MsgToBackend,
   type MsgToBackendMeta,
 } from './types'
@@ -84,7 +84,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     t: 'noop',
   })
 
-  const transport = await BackendTransport<MsgToBackend, MsgToClient>(
+  const transport = await BackendTransport<MsgToBackend, MsgToFrontend>(
     webBackend.t === 'bun'
       ? {
           t: 'bun-web-sockets',
@@ -173,7 +173,7 @@ const update = async (input: { msg: MsgBackend; ctx: BackendCtx }): Promise<{}> 
   const updated = await updateChild({
     ctx: input.ctx,
     msg: input.msg,
-    msgClient: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null,
+    msgFrontend: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null,
   })
 
   await updateLoop(input.ctx, updated)
@@ -190,14 +190,14 @@ const logMsg = ({
   logger: ILogger
   msg?: MsgBackend | null
   msgEvt?: BackendEvt | null
-  msgCmd?: BackendCmd<MsgToClient> | null
+  msgCmd?: BackendCmd<MsgToFrontend> | null
 }) => {
   const prefix = msg ? '[msg]' : msgEvt ? '[evt]' : '[cmd]'
 
   const obj = { ...msg, ...msgEvt, ...msgCmd }
 
   const sentMsgType =
-    msgCmd?.c.t === 'send-to-client' || msgCmd?.c.t === 'send-to-user' || msgCmd?.c.t === 'broadcast'
+    msgCmd?.c.t === 'send-to-frontend' || msgCmd?.c.t === 'send-to-user' || msgCmd?.c.t === 'broadcast'
       ? Msg.toType(msgCmd.c.msg)
       : null
 
@@ -214,11 +214,11 @@ const updateLoop = async (
   ctx: BackendCtx,
   acc: {
     msgEvt: BackendEvt[]
-    msgCmd: BackendCmd<MsgToClient>[]
+    msgCmd: BackendCmd<MsgToFrontend>[]
   },
 ): Promise<{
   msgEvt: BackendEvt[]
-  msgCmd: BackendCmd<MsgToClient>[]
+  msgCmd: BackendCmd<MsgToFrontend>[]
 }> => {
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
@@ -252,14 +252,14 @@ const updateLoop = async (
 const updateChild = async (input: {
   ctx: BackendCtx
   msg?: MsgBackend | null
-  msgClient?: (MsgToBackend & MsgToBackendMeta) | null
+  msgFrontend?: (MsgToBackend & MsgToBackendMeta) | null
   msgEvt?: BackendEvt | null
-  msgCmd?: BackendCmd<MsgToClient> | null
+  msgCmd?: BackendCmd<MsgToFrontend> | null
 }): Promise<{
   msgEvt: BackendEvt[]
-  msgCmd: BackendCmd<MsgToClient>[]
+  msgCmd: BackendCmd<MsgToFrontend>[]
 }> => {
-  const userId = await AuthBackend.getUserIdFromSessionId(input.ctx.auth, input.msgClient?.sessionId)
+  const userId = await AuthBackend.getUserIdFromSessionId(input.ctx.auth, input.msgFrontend?.sessionId)
 
   const [space, auth, wire, profile, lang] = await Promise.all([
     SpacesBackend.update({
@@ -267,7 +267,7 @@ const updateChild = async (input: {
       ctx: input.ctx.space,
       msgCmd: null,
       msgEvt: input.msgEvt,
-      msgClient: input.msgClient?.t === 'spaces' ? { ...input.msgClient, ...input.msgClient.c, userId } : null,
+      msgFrontend: input.msgFrontend?.t === 'spaces' ? { ...input.msgFrontend, ...input.msgFrontend.c, userId } : null,
       msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     }),
 
@@ -276,7 +276,7 @@ const updateChild = async (input: {
       ctx: input.ctx.auth,
       msgCmd: null,
       msgEvt: input.msgEvt,
-      msgClient: input.msgClient?.t === 'auth' ? { ...input.msgClient, ...input.msgClient.c, userId } : null,
+      msgFrontend: input.msgFrontend?.t === 'auth' ? { ...input.msgFrontend, ...input.msgFrontend.c, userId } : null,
       msg: input.msg?.t === 'auth' ? input.msg.c : null,
     }),
 
@@ -284,7 +284,7 @@ const updateChild = async (input: {
       ctx: input.ctx.wire,
       msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
       msgEvt: input.msgEvt,
-      msgClient: input.msgClient?.t === 'wire' ? { ...input.msgClient, ...input.msgClient.c } : null,
+      msgFrontend: input.msgFrontend?.t === 'wire' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
       msg: input.msg?.t === 'wire' ? input.msg.c : null,
     }),
 
@@ -293,7 +293,7 @@ const updateChild = async (input: {
       ctx: input.ctx.profile,
       msgCmd: null,
       msgEvt: input.msgEvt,
-      msgClient: input.msgClient?.t === 'profile' ? { ...input.msgClient, ...input.msgClient.c } : null,
+      msgFrontend: input.msgFrontend?.t === 'profile' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
       msg: input.msg?.t === 'profile' ? input.msg.c : null,
     }),
 
@@ -302,13 +302,13 @@ const updateChild = async (input: {
       ctx: input.ctx,
       msgCmd: null,
       msgEvt: input.msgEvt,
-      msgClient: input.msgClient?.t === 'lang' ? { ...input.msgClient, ...input.msgClient.c } : null,
+      msgFrontend: input.msgFrontend?.t === 'lang' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
       msg: input.msg?.t === 'lang' ? input.msg.c : null,
     }),
   ])
 
   return {
-    msgCmd: Msg.batch<BackendCmd<MsgToClient>>(
+    msgCmd: Msg.batch<BackendCmd<MsgToFrontend>>(
       BackendCmd.tag('spaces', space.msgCmd),
       BackendCmd.tag('auth', auth.msgCmd),
       BackendCmd.tag('wire', wire.msgCmd),
@@ -339,8 +339,8 @@ const subscriptions = async (input: { ctx: BackendCtx }): Promise<Sub<MsgBackend
     Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space, deps: null })),
     Sub.tag('wire', WireBackend.subscriptions({ ctx: input.ctx.wire })),
     Sub.flat(
-      Sub.map(input.ctx.transport.fromClient, ({ sessionId, clientId, msgs }) =>
-        msgs.map((c): MsgBackend => ({ t: '→', sessionId, clientId, c })),
+      Sub.map(input.ctx.transport.fromFrontend, ({ sessionId, frontendId, msgs }) =>
+        msgs.map((c): MsgBackend => ({ t: '→', sessionId, frontendId, c })),
       ),
     ),
   ])

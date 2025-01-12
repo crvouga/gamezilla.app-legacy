@@ -3,7 +3,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
-import type { ModelBackend, MsgBackend, MsgToClient, MsgToBackend } from './tic-tac-toe.types'
+import type { ModelBackend, MsgBackend, MsgToFrontend, MsgToBackend } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.backend'
 import * as VsUser from './vs-user/vs-user.backend'
 import { Eff } from '~/@/eff'
@@ -40,7 +40,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'vs-user' && model.t === 'vs-user') {
     const updated = VsUser.update(msg.c, model.c)
@@ -71,7 +71,7 @@ export const update = ({
   return { model }
 }
 
-export const updateFromClient = ({
+export const updateFromFrontend = ({
   msg,
   model,
   ctx,
@@ -82,7 +82,7 @@ export const updateFromClient = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'input-mode') {
     const modelNew: ModelBackend = initMode({
@@ -106,7 +106,7 @@ export const updateFromClient = ({
   }
 
   if (msg.t === 'vs-user' && model.t === 'vs-user') {
-    const updated = VsUser.updateFromClient(ctx, msg.c, model.c)
+    const updated = VsUser.updateFromFrontend(ctx, msg.c, model.c)
 
     return {
       model: {
@@ -118,7 +118,7 @@ export const updateFromClient = ({
   }
 
   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
-    const updated = VsBot.updateFromClient({
+    const updated = VsBot.updateFromFrontend({
       msg: msg.c,
       model: model.c,
       ctx,
@@ -145,7 +145,7 @@ export const updateFromEvent = ({
   msg: SpaceBackendEvt
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (model.t === 'none') {
     return { model }

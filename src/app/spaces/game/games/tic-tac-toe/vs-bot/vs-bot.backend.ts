@@ -9,7 +9,7 @@ import {
   isBotTurn,
   type ModelBackend,
   type MsgBackend,
-  type MsgToClient,
+  type MsgToFrontend,
   type MsgToBackend,
 } from './vs-bot.types'
 import { Eff } from '~/@/eff'
@@ -45,7 +45,7 @@ export const update = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'bot-moved') {
     if (model.type !== 'game') {
@@ -114,19 +114,19 @@ export const update = ({
 //
 //
 
-export const updateFromClient = (input: {
+export const updateFromFrontend = (input: {
   msg: MsgToBackend
   model: Model
   ctx: SpaceBackendCtx
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   return pipe(
     input,
     // andThen((model) =>
-    //   updateFromClientMain({
+    //   updateFromFrontendMain({
     //     ...input,
     //     model
     //   })
@@ -158,7 +158,7 @@ export const watchBotMove = ({
   return { model }
 }
 
-export const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+export const updateFromFrontendMain: typeof updateFromFrontend = ({ model }) => {
   // const handled = handle({ ctx, model, msg });
   return { model }
   // const res: Res = { ...msg, result: handled };
@@ -177,7 +177,7 @@ export const updateFromEvent = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     if (model.player !== msg.userId) {

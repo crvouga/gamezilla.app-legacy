@@ -1,16 +1,16 @@
 import { RemoteResult } from '~/@/result'
 import { p } from '~/@/parser'
-import type { AppClientModule } from '~/app/@/architecture/app-client'
+import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
-import type { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
+import type { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
 import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
-import { FlowClientEvtIn } from '../../client/evt'
+import { FlowFrontendEvtIn } from '../../frontend/evt'
 import { FlowBackendCtx } from '../../backend/ctx'
 import type { Pack } from '../pack'
 import type { IPackDb } from '../pack-db'
 import type { PackId } from '../pack-id'
-import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import { RequestResponse } from '~/@/request-response/request-response'
 
@@ -20,19 +20,19 @@ import { RequestResponse } from '~/@/request-response/request-response'
 //
 //
 
-export type ClientModule = AppClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
+export type FrontendModule = AppFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: SpaceClientCtx
-  MsgEvtIn: FlowClientEvtIn
-  MsgCmdOut: SpaceClientCmd<{
-    MsgClient: MsgClient
+  Ctx: SpaceFrontendCtx
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgCmdOut: SpaceFrontendCmd<{
+    MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }>
-  MsgCmdIn: MsgInCmdClient
-  MsgEvtOut: SpaceClientEvt
+  MsgCmdIn: MsgInCmdFrontend
+  MsgEvtOut: SpaceFrontendEvt
   ViewSlot: {
     fab: null
   }
@@ -44,8 +44,8 @@ export type ClientModule = AppClientModule<{
 export type BackendModule = AppBackendModule<{
   Model: ModelBackend
   Msg: MsgBackend
-  MsgCmdOut: SpaceBackendCmd<MsgToClient>
-  MsgToClient: MsgToClient
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Ctx: FlowBackendCtx
   MsgEvtIn: SpaceBackendEvt
@@ -56,12 +56,12 @@ export type BackendModule = AppBackendModule<{
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   request: RequestResponse<string, null>
   packs: { [id: PackId]: Pack }
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   request: RemoteResult.NotAsked,
   packs: {},
 }
@@ -71,8 +71,8 @@ export type ModelBackend = p.Infer<typeof ModelBackend>
 
 export const initBackend: ModelBackend = null
 
-export const MsgClient = p.or(p.obj({ t: p.l('user-observed-end-of-list') }), p.obj({ t: p.l('elapsed') }))
-export type MsgClient = p.Infer<typeof MsgClient>
+export const MsgFrontend = p.or(p.obj({ t: p.l('user-observed-end-of-list') }), p.obj({ t: p.l('elapsed') }))
+export type MsgFrontend = p.Infer<typeof MsgFrontend>
 
 export type MsgBackend = { t: 'noop' }
 
@@ -81,12 +81,12 @@ export type MsgToBackend = {
   input: ListPackInput
 }
 
-export const MsgToClient = p.obj({
+export const MsgToFrontend = p.obj({
   t: p.l('listed-packs'),
   listed: p.custom((x: unknown): x is ListPackOutput => Boolean(x), 'ListPackOutput'),
 })
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'listed-packs'
   listed: ListPackOutput
 }
@@ -95,7 +95,7 @@ export type ListPackInput = Parameters<IPackDb['list']>[0]
 
 export type ListPackOutput = Awaited<ReturnType<IPackDb['list']>>
 
-export type MsgInCmdClient = {
+export type MsgInCmdFrontend = {
   t: 'pack-list'
   c: {
     t: 'load'

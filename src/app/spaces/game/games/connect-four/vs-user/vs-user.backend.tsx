@@ -1,7 +1,7 @@
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { Sub } from '~/@/sub'
-import type { MsgCore, ModelCore, ModelBackend, MsgBackend, MsgToClient, MsgToBackend } from './vs-user.types'
+import type { MsgCore, ModelCore, ModelBackend, MsgBackend, MsgToFrontend, MsgToBackend } from './vs-user.types'
 import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 
@@ -14,7 +14,7 @@ import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 type Module = GameBackendModule<{
   Model: ModelBackend
   Msg: MsgBackend
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   ModelCore: ModelCore
   MsgCore: MsgCore
@@ -22,7 +22,7 @@ type Module = GameBackendModule<{
   Deps: null
   MsgCmdIn: null
   MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: SpaceBackendCmd<MsgToClient>
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
   MsgEvtOut: null
 }>
 

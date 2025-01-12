@@ -4,7 +4,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../../@/pack/pack'
 import { PackName } from '../../../@/pack/pack-name'
 
-export type MsgClient = MsgCore
+export type MsgFrontend = MsgCore
 
 type EditPackNameValidationError = { t: 'name-cannot-be-empty' }
 

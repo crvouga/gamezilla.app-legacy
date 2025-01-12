@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 import type { GameBackend } from '~/app/spaces/game/games/@/architecture/game-backend'
-import type { ModelBackend, ModelCore, MsgBackend, MsgCore, MsgToClient, MsgToBackend } from './chess.types'
+import type { ModelBackend, ModelCore, MsgBackend, MsgCore, MsgToFrontend, MsgToBackend } from './chess.types'
 
 //
 //
@@ -15,7 +15,7 @@ type Backend = GameBackend<{
   ModelCore: ModelCore
   ModelBackend: ModelBackend
   MsgBackend: MsgBackend
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
 }>
 

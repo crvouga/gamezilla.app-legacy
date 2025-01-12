@@ -3,13 +3,13 @@ import { Pack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
 import { UserId } from '~/app/@/data/user-id'
 
-export type ModelClient = CreateNewPackTypes.ModelClient & {}
+export type ModelFrontend = CreateNewPackTypes.ModelFrontend & {}
 
-export const initClient: ModelClient = {
-  ...CreateNewPackTypes.initClient,
+export const initFrontend: ModelFrontend = {
+  ...CreateNewPackTypes.initFrontend,
 }
 
-export type MsgClient = CreateNewPackTypes.MsgClient
+export type MsgFrontend = CreateNewPackTypes.MsgFrontend
 
 export const MsgCore = p.or(
   CreateNewPackTypes.MsgCore,
@@ -25,7 +25,7 @@ export type MsgBackend = CreateNewPackTypes.MsgBackend
 
 export type MsgToBackend = CreateNewPackTypes.MsgToBackend
 
-export type MsgToClient = CreateNewPackTypes.MsgToClient
+export type MsgToFrontend = CreateNewPackTypes.MsgToFrontend
 
 export const ModelCore = p.and(p.obj({}), CreateNewPackTypes.ModelCore)
 export type ModelCore = p.Infer<typeof ModelCore>

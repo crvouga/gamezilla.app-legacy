@@ -41,7 +41,7 @@ const update: BackendModule['update'] = async (input) => {
 const updatePackList: BackendModule['update'] = async (input) => {
   const updated = await PackListBackend.update({
     ...input,
-    msgClient: input.msgClient?.t === 'pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msgFrontend: input.msgFrontend?.t === 'pack-list' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
     msg: input.msg?.t === 'pack-list' ? input.msg.c : null,
   })
 
@@ -54,7 +54,7 @@ const updatePackList: BackendModule['update'] = async (input) => {
 const updatePuzzleList: BackendModule['update'] = async (input) => {
   const updated = await PuzzleListBackend.update({
     ...input,
-    msgClient: input.msgClient?.t === 'puzzle-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msgFrontend: input.msgFrontend?.t === 'puzzle-list' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
     msg: input.msg?.t === 'puzzle-list' ? input.msg.c : null,
   })
 
@@ -68,7 +68,7 @@ const updatePackPuzzlesGrid: BackendModule['update'] = async (input) => {
   const updated = await PackPuzzlesGridBackend.update({
     ...input,
     msg: input.msg?.t === 'pack-puzzles-grid' ? input.msg.c : null,
-    msgClient: input.msgClient?.t === 'pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msgFrontend: input.msgFrontend?.t === 'pack-puzzles-grid' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
     deps: null,
   })
 
@@ -82,7 +82,7 @@ const updateBuilder: BackendModule['update'] = async (input) => {
   const updated = await BuilderBackend.update({
     ...input,
     modelCore: input.modelCore.builder,
-    msgClient: input.msgClient?.t === 'builder' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msgFrontend: input.msgFrontend?.t === 'builder' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
     msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'builder' ? input.msg.c : null,
     deps: null,
@@ -101,7 +101,7 @@ const updatePlay: BackendModule['update'] = async (input) => {
     modelCore: input.modelCore.play,
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
-    msgClient: input.msgClient?.t === 'play' ? { ...input.msgClient, ...input.msgClient.c } : null,
+    msgFrontend: input.msgFrontend?.t === 'play' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
     msgCore: input.msgCore?.t === 'play' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'play' ? input.msg.c : null,
     deps: null,

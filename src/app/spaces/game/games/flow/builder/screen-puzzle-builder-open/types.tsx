@@ -8,19 +8,19 @@ import { UserId } from '~/app/@/data/user-id'
 //
 //
 
-export type ModelClient = CreateNewPuzzleTypes.ModelClient
+export type ModelFrontend = CreateNewPuzzleTypes.ModelFrontend
 
-export const initClient: ModelClient = {
-  ...CreateNewPuzzleTypes.initClient,
+export const initFrontend: ModelFrontend = {
+  ...CreateNewPuzzleTypes.initFrontend,
 }
 
-export type MsgClient = CreateNewPuzzleTypes.MsgClient
+export type MsgFrontend = CreateNewPuzzleTypes.MsgFrontend
 
 export type MsgBackend = CreateNewPuzzleTypes.MsgBackend
 
 export type MsgToBackend = CreateNewPuzzleTypes.MsgToBackend
 
-export type MsgToClient = CreateNewPuzzleTypes.MsgToClient
+export type MsgToFrontend = CreateNewPuzzleTypes.MsgToFrontend
 
 export const ModelCore = p.obj({
   t: p.l('puzzle-list'),

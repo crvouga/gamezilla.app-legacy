@@ -1,10 +1,10 @@
 import type { RemoteResult } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
-import type { AppClientModule } from '../@/architecture/app-client'
+import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import type { AppBackendModule } from '../@/architecture/app-backend'
-import type { AppClientCmd, AuthCmd } from '../@/client/cmd'
-import { AnonymousClientCtx, AppClientCtx } from '../@/client/ctx'
-import { ClientEvt } from '../@/client/evt'
+import type { AppFrontendCmd, AuthCmd } from '../@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
+import { FrontendEvt } from '../@/frontend/evt'
 import type { UserAccount } from '../@/data/account'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
@@ -23,7 +23,7 @@ import type { Logout } from './logout'
 //
 //
 
-type BaseModelClient = {
+type BaseModelFrontend = {
   loginWithGoogle: RemoteResult<string, null>
   logout: RemoteResult<string, null>
   opened: 'logged-out' | null
@@ -34,10 +34,10 @@ type BaseModelClient = {
         t: 'logged-in'
         account: UserAccount
       }
-  sms: AuthSMS.ModelClient
+  sms: AuthSMS.ModelFrontend
 }
 
-export type ModelClient = BaseModelClient & ContinueAsGuest.ModelClient & Logout.ModelClient
+export type ModelFrontend = BaseModelFrontend & ContinueAsGuest.ModelFrontend & Logout.ModelFrontend
 
 export type BackendCtx = AppBackendCtx & {
   userAccountDb: IUserAccountDb
@@ -52,16 +52,16 @@ export type BackendCtx = AppBackendCtx & {
 //
 //
 
-export type MsgClient =
-  | ContinueAsGuest.MsgClient
-  | Logout.MsgClient
+export type MsgFrontend =
+  | ContinueAsGuest.MsgFrontend
+  | Logout.MsgFrontend
   | { t: 'user-clicked-login-with-phone' }
   | { t: 'user-clicked-login-with-email' }
-  | { t: 'sms'; c: AuthSMS.MsgClient }
+  | { t: 'sms'; c: AuthSMS.MsgFrontend }
 
 export type MsgBackend =
   | ContinueAsGuest.MsgBackend
-  | Logout.MsgClient
+  | Logout.MsgFrontend
   | {
       t: 'sms'
       c: AuthSMS.MsgBackend
@@ -70,33 +70,33 @@ export type MsgBackend =
 export type MsgToBackend =
   | ContinueAsGuest.MsgToBackend
   | Logout.MsgToBackend
-  | { t: 'client-checked-auth' }
+  | { t: 'frontend-checked-auth' }
   | { t: 'sms'; c: AuthSMS.MsgToBackend }
 
-export type MsgToClient =
-  | ContinueAsGuest.MsgToClient
-  | Logout.MsgToClient
+export type MsgToFrontend =
+  | ContinueAsGuest.MsgToFrontend
+  | Logout.MsgToFrontend
   | {
-      t: 'client-authenticated'
+      t: 'frontend-authenticated'
       account: UserAccount
       loggedIn: boolean
     }
-  | { t: 'client-unauthenticated'; sessionId?: never }
-  | { t: 'sms'; c: AuthSMS.MsgToClient }
+  | { t: 'frontend-unauthenticated'; sessionId?: never }
+  | { t: 'sms'; c: AuthSMS.MsgToFrontend }
 
-export type ClientModule = AppClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
+export type FrontendModule = AppFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: AnonymousClientCtx | AppClientCtx
+  Ctx: AnonymousFrontendCtx | AppFrontendCtx
   MsgCmdIn: AuthCmd
-  MsgEvtIn: ClientEvt
-  MsgCmdOut: AppClientCmd<{
-    MsgClient: MsgClient
+  MsgEvtIn: FrontendEvt
+  MsgCmdOut: AppFrontendCmd<{
+    MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }>
-  MsgEvtOut: ClientEvt
+  MsgEvtOut: FrontendEvt
 }>
 
 export type BackendModule = AppBackendModule<{
@@ -105,9 +105,9 @@ export type BackendModule = AppBackendModule<{
   MsgEvtIn: BackendEvt
   Model: null
   Msg: MsgBackend
-  MsgCmdOut: BackendCmd<MsgToClient>
+  MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: BackendEvt
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Deps: null
 }>

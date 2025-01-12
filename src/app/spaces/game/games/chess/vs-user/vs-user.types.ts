@@ -15,7 +15,7 @@ const { Ok, Err } = Result
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   coreModel: CoreModel
   openedMenuId: Option<string>
   openedModal: Modal | 'none'
@@ -90,7 +90,7 @@ export const initCore = ({ userId }: { userId: UserId | 'none' }): CoreModel => 
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | ['OpenedMenu', string]
   | ['ClosedMenu']
   | ['OpenedModal', Modal]
@@ -100,7 +100,7 @@ export type MsgClient =
 
 export type MsgBackend = ClockTicked
 
-export type MsgToClient = ['game-over'] | ['GameStarted'] | ['player-left', CoreModel] | ClockTicked_Done | Res
+export type MsgToFrontend = ['game-over'] | ['GameStarted'] | ['player-left', CoreModel] | ClockTicked_Done | Res
 
 export type MsgToBackend = Req
 

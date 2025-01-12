@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, Drawer, IconQuestionMark, Typography } from '~/app/@/ui'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { LayoutGameCoverArtHeader } from '../../ui/layout-game-cover-art-header'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 
@@ -239,7 +239,7 @@ export const View = ({
   )
 }
 
-const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
+const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   return (
     <div className='col-span-3 grid grid-cols-2 place-items-center'>
       {player.t === 'bot' ? (
@@ -260,7 +260,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp 
   )
 }
 
-const PlayerLabels = ({ player, ctx }: { ctx: SpaceClientCtx; player: PlayerProp }) => {
+const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   const profile =
     player.t === 'user' && player.userId && ctx.profiles[player.userId] ? ctx.profiles[player.userId] : null
   return (
@@ -284,7 +284,7 @@ const PlayerButtons = ({
 }: {
   onSwapSides: () => void
   human: { userId: UserId | null }
-  ctx: SpaceClientCtx
+  ctx: SpaceFrontendCtx
   player: PlayerProp
   dispatch: (m: Msg) => void
 }) => {

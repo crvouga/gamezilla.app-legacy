@@ -4,22 +4,22 @@ import { Posix } from '~/@/time/posix'
 import type { UserAccount } from '~/app/@/data/account'
 import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
-import { sendToClient } from '~/app/@/backend/cmd'
+import { sendToFrontend } from '~/app/@/backend/cmd'
 import type { BackendCtx, BackendModule } from '../types'
 
-const update: BackendModule['update'] = async ({ msgClient, ctx }) => {
-  switch (msgClient?.t) {
+const update: BackendModule['update'] = async ({ msgFrontend, ctx }) => {
+  switch (msgFrontend?.t) {
     case 'guest.clicked-continue-as-guest-button': {
       const result = await continueAsGuest({
         ctx,
         now: ctx.now,
-        sessionId: msgClient.sessionId,
+        sessionId: msgFrontend.sessionId,
       })
 
       if (isErr(result)) {
         return {
           msgCmd: [
-            sendToClient(msgClient, {
+            sendToFrontend(msgFrontend, {
               t: 'guest.continue-as-guest-result',
               result: result,
             }),
@@ -29,17 +29,17 @@ const update: BackendModule['update'] = async ({ msgClient, ctx }) => {
 
       return {
         msgCmd: [
-          sendToClient(msgClient, {
+          sendToFrontend(msgFrontend, {
             t: 'guest.continue-as-guest-result',
             result: Ok(result.value.userId),
           }),
         ],
         msgEvt: [
           {
-            t: 'auth-evt.client-authenticated',
-            clientId: msgClient.clientId,
+            t: 'auth-evt.frontend-authenticated',
+            frontendId: msgFrontend.frontendId,
             user: result.value,
-            sessionId: msgClient.sessionId,
+            sessionId: msgFrontend.sessionId,
             loggedIn: true,
           },
         ],

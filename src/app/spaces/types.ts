@@ -1,10 +1,10 @@
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import { RequestResponse } from '~/@/request-response/request-response'
-import type { AppClientModule } from '~/app/@/architecture/app-client'
+import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { AppClientCmd } from '~/app/@/client/cmd'
-import { AnonymousClientCtx, AppClientCtx } from '~/app/@/client/ctx'
-import { ClientEvt } from '~/app/@/client/evt'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { FrontendEvt } from '~/app/@/frontend/evt'
 import { UserAccount } from '~/app/@/data/account'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -12,13 +12,13 @@ import { UserId } from '~/app/@/data/user-id'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
-import { SpacesCoreClient } from './core/client'
+import { SpacesCoreFrontend } from './core/frontend'
 import { ISpacesCoreBackend } from './core/backend/interface'
 import { SpaceCore } from './core/space-core'
 import { SpaceEvent } from './core/space-event'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
-import { SpaceClientCmd } from './@/space-client/cmd'
+import { SpaceFrontendCmd } from './@/space-frontend/cmd'
 
 //
 //
@@ -35,9 +35,9 @@ export type BackendCtx = AppBackendCtx & {
 
 export type ModelBackend = null
 
-export type ModelClient = SpacesCoreClient.Model & {
+export type ModelFrontend = SpacesCoreFrontend.Model & {
   games: {
-    [spaceId: SpaceId]: GamesTypes.ModelClient
+    [spaceId: SpaceId]: GamesTypes.ModelFrontend
   }
   modalPreviewUserId: UserId | null
   modal: null | 'user-preview' | 'users'
@@ -56,8 +56,8 @@ export type MsgBackend =
   | { t: 'got-msg-core'; c: WithEventId<SpaceEvent> }
   | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgBackend }
 
-export type MsgClient =
-  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgClient }
+export type MsgFrontend =
+  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgFrontend }
   | { t: 'time-passed' }
   | { t: 'clicked-go-home-button' }
   | { t: 'clicked-game-tile'; gameName: GameName }
@@ -72,7 +72,7 @@ export type MsgClient =
   | { t: 'clicked-preview-user-link' }
   | { t: 'clicked-current-space-bottom-bar' }
 
-export type MsgToClient = MsgToClientExtra &
+export type MsgToFrontend = MsgToFrontendExtra &
   (
     | {
         t: 'got-msg-core'
@@ -94,7 +94,7 @@ export type MsgToClient = MsgToClientExtra &
     | {
         t: 'game'
         spaceId: SpaceId
-        c: GamesTypes.MsgToClient
+        c: GamesTypes.MsgToFrontend
       }
   )
 
@@ -123,7 +123,7 @@ export type MsgToBackend = MsgToBackendExtra &
       }
   )
 
-export type MsgToClientExtra = {
+export type MsgToFrontendExtra = {
   profiles?: { [userId: UserId]: Profile }
   causedBy?: unknown
   meta?: Record<string, unknown>
@@ -144,21 +144,21 @@ export type MsgToBackendExtra = {
 //
 //
 
-export type ClientModule = AppClientModule<{
-  Ctx: AnonymousClientCtx | AppClientCtx
-  MsgCmdIn: SpaceClientCmd<{
+export type FrontendModule = AppFrontendModule<{
+  Ctx: AnonymousFrontendCtx | AppFrontendCtx
+  MsgCmdIn: SpaceFrontendCmd<{
     MsgToBackend: MsgToBackend
-    MsgClient: MsgClient
+    MsgFrontend: MsgFrontend
   }>
-  MsgEvtIn: ClientEvt
-  Model: ModelClient
-  Msg: MsgClient
-  MsgCmdOut: AppClientCmd<{
+  MsgEvtIn: FrontendEvt
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgCmdOut: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
-    MsgClient: MsgClient
+    MsgFrontend: MsgFrontend
   }>
-  MsgEvtOut: ClientEvt
-  MsgToClient: MsgToClient
+  MsgEvtOut: FrontendEvt
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   ViewSlot: {
     bottomBar: null
@@ -171,9 +171,9 @@ export type BackendModule = AppBackendModule<{
   MsgEvtIn: BackendEvt
   Model: ModelBackend
   Msg: MsgBackend
-  MsgCmdOut: BackendCmd<MsgToClient>
+  MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: null
-  MsgToClient: MsgToClient
+  MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Deps: null
 }>

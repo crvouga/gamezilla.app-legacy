@@ -11,7 +11,7 @@ import {
   isBotTurn,
   type ModelBackend,
   type MsgBackend,
-  type MsgToClient,
+  type MsgToFrontend,
   type MsgToBackend,
 } from './vs-bot.types'
 
@@ -46,7 +46,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'bot-moved') {
     const result = botMoved(msg.moved, model)
@@ -70,16 +70,16 @@ export const update = ({
   return { model }
 }
 
-export const updateFromClient = (input: {
+export const updateFromFrontend = (input: {
   msg: MsgToBackend
   model: Model
   ctx: SpaceBackendCtx
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
-  const updated = updateFromClientMain(input)
+  const updated = updateFromFrontendMain(input)
 
   return {
     ...updated,
@@ -110,7 +110,7 @@ const toBotMoveEff = (modelPrev: Model, modelNext: Model): Eff<Msg> => {
   return eff
 }
 
-const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+const updateFromFrontendMain: typeof updateFromFrontend = ({ model }) => {
   // const handled = updateCore({ msg, model });
 
   // const modelNew: Model = handled.t === "err" ? model : handled.value;
@@ -130,7 +130,7 @@ export const updateFromEvent = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
   eff?: Eff
 } => {
   if (msg.t === 'space-evt.user-left-space') {

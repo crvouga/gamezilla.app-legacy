@@ -10,19 +10,19 @@ import type { BackendModule } from '../../types'
 import type { MsgCore } from './types'
 
 const update: BackendModule['update'] = async (input) => {
-  return GameBackendModule.andThen({}, () => updateFromClient({ ...input }))
+  return GameBackendModule.andThen({}, () => updateFromFrontend({ ...input }))
 }
 
-const updateFromClient: BackendModule['update'] = async (input) => {
-  switch (input.msgClient?.t) {
+const updateFromFrontend: BackendModule['update'] = async (input) => {
+  switch (input.msgFrontend?.t) {
     case 'puzzle.edit-name.user-clicked-save-button': {
       const edited = await patchName({
         ...input,
-        ...input.msgClient,
+        ...input.msgFrontend,
       })
 
       const msgCore: MsgCore = {
-        ...input.msgClient,
+        ...input.msgFrontend,
         t: 'user-edited-puzzle-name',
         edited,
       }
