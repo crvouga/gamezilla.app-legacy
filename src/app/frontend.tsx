@@ -1,14 +1,14 @@
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
+import { HttpClient } from '~/@/http-client'
+import { HttpServerImpl } from '~/@/http-server/http-server-impl'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
 import type { Route } from '~/@/routing/generated/routes'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { HttpClient } from '~/@/http-client'
-import { HttpServerImpl } from '~/@/http-server/http-server-impl'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
 import { BACKEND_URL } from '~/config/frontend'
 import { HTTP_SERVER_IMPL } from '~/config/shared'
@@ -19,9 +19,9 @@ import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { BottomButtons } from './@/ui/bottom-buttons'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
-import { Platform, Routing, Sound, StatusBar, Toast } from './app-frontend'
 import './app-frontend/styles.css'
 import * as AuthFrontend from './auth/frontend'
+import { Platform, Routing, Sound, StatusBar, Toast } from './frontend/index'
 import * as LangFrontend from './lang/frontend'
 import * as ProfileFrontend from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
@@ -30,8 +30,8 @@ import {
   type FrontendCtx,
   type ModelFrontend,
   type MsgFrontend,
-  type MsgToFrontend,
   type MsgToBackend,
+  type MsgToFrontend,
 } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
