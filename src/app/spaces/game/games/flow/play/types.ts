@@ -10,7 +10,7 @@ import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../@/frontend/evt'
 import { FlowSpaceCtx } from '../@/space/ctx'
-import { FlowSpaceEvent } from '../@/space/event'
+import { FlowSpaceEvt } from '../@/space/event'
 import { Pack } from '../@/pack/pack'
 import type { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { PuzzleResult } from '../@/puzzle/puzzle-result'
@@ -142,5 +142,5 @@ export type SpaceModule = GameSpaceModule<{
   Ctx: FlowSpaceCtx
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
-  EventSpace: FlowSpaceEvent
+  EvtSpace: FlowSpaceEvt
 }>

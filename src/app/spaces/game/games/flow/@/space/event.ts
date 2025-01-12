@@ -1,6 +1,6 @@
 import { UserId } from '~/app/@/data/user-id'
 
-export type FlowSpaceEvent = {
+export type FlowSpaceEvt = {
   t: 'user-clicked-exit-mode-button'
   userId: UserId
 }

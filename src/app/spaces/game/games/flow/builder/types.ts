@@ -8,7 +8,7 @@ import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../@/frontend/evt'
 import { FlowSpaceCtx } from '../@/space/ctx'
-import { FlowSpaceEvent } from '../@/space/event'
+import { FlowSpaceEvt } from '../@/space/event'
 import { PackListTypes } from '../@/pack/pack-list'
 import { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { FlowBackendCtx } from '../@/backend/ctx'
@@ -183,4 +183,4 @@ export type UpdateSpace = (input: {
   ctx: FlowSpaceCtx
   msgSpace: MsgSpace
   modelSpace: ModelSpace
-}) => ModelSpace & { event?: FlowSpaceEvent }
+}) => ModelSpace & { event?: FlowSpaceEvt }
