@@ -17,7 +17,7 @@ export const initClient: ModelClient = {
   packCreateNewRequest: NotAsked,
 }
 
-export type ModelServer = Record<string, unknown>
+export type ModelBackend = Record<string, unknown>
 
 //
 //
@@ -28,9 +28,9 @@ export type MsgClient = {
   t: 'create-new-pack.clicked-create-button'
 }
 
-export type MsgToServer = { t: 'create-new-pack.clicked-create-button' }
+export type MsgToBackend = { t: 'create-new-pack.clicked-create-button' }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'noop'
 }
 

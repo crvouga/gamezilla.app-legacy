@@ -1,7 +1,7 @@
 import { sendToClient } from '~/app/@/server/cmd'
-import type { ServerModule } from './types'
+import type { BackendModule } from './types'
 
-const update: ServerModule['update'] = async (input) => {
+const update: BackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-puzzles-by-id': {
       const listed = await input.ctx.puzzleDb.list({
@@ -32,6 +32,6 @@ const update: ServerModule['update'] = async (input) => {
   return {}
 }
 
-export const PackPuzzlesGridServer = {
+export const PackPuzzlesGridBackend = {
   update,
 }

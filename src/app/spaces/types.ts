@@ -1,7 +1,7 @@
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import { RequestResponse } from '~/@/request-response/request-response'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
-import type { AppServerModule } from '~/app/@/architecture/app-server'
+import type { AppBackendModule } from '~/app/@/architecture/app-server'
 import { AppClientCmd } from '~/app/@/client/cmd'
 import { AnonymousClientCtx, AppClientCtx } from '~/app/@/client/ctx'
 import { ClientEvt } from '~/app/@/client/evt'
@@ -9,11 +9,11 @@ import { UserAccount } from '~/app/@/data/account'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { ServerCmd } from '~/app/@/server/cmd'
-import { AppServerCtx } from '~/app/@/server/ctx'
-import { ServerEvt } from '~/app/@/server/evt'
+import { BackendCmd } from '~/app/@/server/cmd'
+import { AppBackendCtx } from '~/app/@/server/ctx'
+import { BackendEvt } from '~/app/@/server/evt'
 import { SpacesCoreClient } from './core/client'
-import { ISpacesCoreServer } from './core/server/interface'
+import { ISpacesCoreBackend } from './core/server/interface'
 import { SpaceCore } from './core/space-core'
 import { SpaceEvent } from './core/space-event'
 import { GamesTypes } from './game/games'
@@ -28,12 +28,12 @@ import { SpaceClientCmd } from './@/space-client/cmd'
 //
 //
 
-export type ServerCtx = AppServerCtx & {
-  spacesCoreServer: ISpacesCoreServer
-  games: GamesTypes.GameServerCtx
+export type BackendCtx = AppBackendCtx & {
+  spacesCoreBackend: ISpacesCoreBackend
+  games: GamesTypes.GameBackendCtx
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
 export type ModelClient = SpacesCoreClient.Model & {
   games: {
@@ -52,9 +52,9 @@ export type ModelClient = SpacesCoreClient.Model & {
 //
 //
 
-export type MsgServer =
+export type MsgBackend =
   | { t: 'got-msg-core'; c: WithEventId<SpaceEvent> }
-  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgServer }
+  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgBackend }
 
 export type MsgClient =
   | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgClient }
@@ -98,7 +98,7 @@ export type MsgToClient = MsgToClientExtra &
       }
   )
 
-export type MsgToServer = MsgToServerExtra &
+export type MsgToBackend = MsgToBackendExtra &
   (
     | {
         t: 'got-msg-core'
@@ -119,7 +119,7 @@ export type MsgToServer = MsgToServerExtra &
     | {
         t: 'game'
         spaceId: SpaceId
-        c: GamesTypes.MsgToServer
+        c: GamesTypes.MsgToBackend
       }
   )
 
@@ -129,7 +129,7 @@ export type MsgToClientExtra = {
   meta?: Record<string, unknown>
 }
 
-export type MsgToServerExtra = {
+export type MsgToBackendExtra = {
   profiles?: { [userId: UserId]: Profile }
   meta?: Record<string, unknown>
   causedBy?: unknown
@@ -147,33 +147,33 @@ export type MsgToServerExtra = {
 export type ClientModule = AppClientModule<{
   Ctx: AnonymousClientCtx | AppClientCtx
   MsgCmdIn: SpaceClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
   MsgEvtIn: ClientEvt
   Model: ModelClient
   Msg: MsgClient
   MsgCmdOut: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
   MsgEvtOut: ClientEvt
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   ViewSlot: {
     bottomBar: null
   }
 }>
 
-export type ServerModule = AppServerModule<{
-  Ctx: ServerCtx
+export type BackendModule = AppBackendModule<{
+  Ctx: BackendCtx
   MsgCmdIn: null
-  MsgEvtIn: ServerEvt
-  Model: ModelServer
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
+  MsgEvtIn: BackendEvt
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgCmdOut: BackendCmd<MsgToClient>
   MsgEvtOut: null
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Deps: null
 }>

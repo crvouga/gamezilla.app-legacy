@@ -16,9 +16,9 @@ export const initClient: ModelClient = {
 
 export type MsgClient = CreateNewPuzzleTypes.MsgClient
 
-export type MsgServer = CreateNewPuzzleTypes.MsgServer
+export type MsgBackend = CreateNewPuzzleTypes.MsgBackend
 
-export type MsgToServer = CreateNewPuzzleTypes.MsgToServer
+export type MsgToBackend = CreateNewPuzzleTypes.MsgToBackend
 
 export type MsgToClient = CreateNewPuzzleTypes.MsgToClient
 

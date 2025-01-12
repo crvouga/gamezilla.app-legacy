@@ -1,23 +1,23 @@
 import { Sub } from '~/@/sub'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
-import { ServerModule } from './types'
-import { ScreenPlayPuzzleServer } from './screen-play-puzzle/server'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { BackendModule } from './types'
+import { ScreenPlayPuzzleBackend } from './screen-play-puzzle/server'
 
-const init: ServerModule['init'] = async () => {
+const init: BackendModule['init'] = async () => {
   return {
     model: {},
   }
 }
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen({}, () => ScreenPlayPuzzleServer.update(input))
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen({}, () => ScreenPlayPuzzleBackend.update(input))
 }
 
-const subscriptions: ServerModule['subscriptions'] = async () => {
+const subscriptions: BackendModule['subscriptions'] = async () => {
   return Sub.None
 }
 
-export const PlayServer = {
+export const PlayBackend = {
   init,
   update,
   subscriptions,

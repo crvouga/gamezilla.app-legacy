@@ -1,14 +1,14 @@
 import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
 import { Posix } from '~/@/time/posix'
 import { AppClientModule } from '../@/architecture/app-client'
-import { AppServerModule } from '../@/architecture/app-server'
+import { AppBackendModule } from '../@/architecture/app-server'
 import { AppClientCmd } from '../@/client/cmd'
 import { AnonymousClientCtx } from '../@/client/ctx'
 import { ClientEvt } from '../@/client/evt'
 import type { TranslatorMsg } from '../@/client/translator'
-import { ServerCmd } from '../@/server/cmd'
-import { AppServerCtx } from '../@/server/ctx'
-import { ServerEvt } from '../@/server/evt'
+import { BackendCmd } from '../@/server/cmd'
+import { AppBackendCtx } from '../@/server/ctx'
+import { BackendEvt } from '../@/server/evt'
 
 export type TranslationLoading = {
   startedAt: Posix
@@ -22,11 +22,11 @@ export type ModelClient = {
   }
 }
 
-export type MsgToServer = { t: 'noop' }
+export type MsgToBackend = { t: 'noop' }
 
 export type MsgToClient = { t: 'noop' }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'user-changed-language'
   lang: LanguageCodeISO_639_1
 }
@@ -40,26 +40,26 @@ export type MsgClient =
       lang: LanguageCodeISO_639_1
     }
 
-export type ServerModule = AppServerModule<{
-  Ctx: AppServerCtx
-  MsgToServer: MsgToServer
+export type BackendModule = AppBackendModule<{
+  Ctx: AppBackendCtx
+  MsgToBackend: MsgToBackend
   MsgToClient: MsgToClient
-  Msg: MsgServer
-  MsgEvtIn: ServerEvt
-  MsgCmdOut: ServerCmd<MsgToClient>
+  Msg: MsgBackend
+  MsgEvtIn: BackendEvt
+  MsgCmdOut: BackendCmd<MsgToClient>
   MsgEvtOut: null
 }>
 
 export type ClientModule = AppClientModule<{
   Ctx: AnonymousClientCtx
   Model: ModelClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgToClient: MsgToClient
   Msg: MsgClient
   MsgCmdIn: null
   MsgEvtIn: ClientEvt
   MsgCmdOut: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
   MsgEvtOut: null

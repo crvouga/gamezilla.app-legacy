@@ -4,7 +4,7 @@ import { Result, isErr, isOk } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { sendToServer, showErrSm } from '~/app/@/client/cmd'
+import { sendToBackend, showErrSm } from '~/app/@/client/cmd'
 import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
@@ -13,13 +13,13 @@ import { Solutions } from '../../solutions/solutions'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
 import { PuzzleId } from '../puzzle-id'
-import type { ClientModule, ModelClient, MsgClient, MsgInCmdClient, MsgToServer } from './types'
+import type { ClientModule, ModelClient, MsgClient, MsgInCmdClient, MsgToBackend } from './types'
 
 const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
     (model) => updateFromCmd({ ...input, model }),
-    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromBackend({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
   )
 }
@@ -33,7 +33,7 @@ const updateFromCmd: ClientModule['update'] = (input) => {
           request: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
-          sendToServer({
+          sendToBackend({
             t: 'list-puzzles',
             input: {
               order: {
@@ -75,12 +75,12 @@ const updateFromMsg: ClientModule['update'] = (input) => {
   }
 }
 
-const updateFromServer: ClientModule['update'] = (input) => {
-  switch (input.msgServer?.t) {
+const updateFromBackend: ClientModule['update'] = (input) => {
+  switch (input.msgBackend?.t) {
     case 'listed-puzzle': {
-      const puzzles = isOk(input.msgServer.listed) ? input.msgServer.listed.value.puzzles.items : []
+      const puzzles = isOk(input.msgBackend.listed) ? input.msgBackend.listed.value.puzzles.items : []
       const byId = puzzles.reduce<{ [k: PuzzleId]: Puzzle }>((acc, p) => ({ ...acc, [p.id]: p }), {})
-      const solutions = isOk(input.msgServer.listed) ? input.msgServer.listed.value.solutions : Solutions.init
+      const solutions = isOk(input.msgBackend.listed) ? input.msgBackend.listed.value.solutions : Solutions.init
 
       return {
         model: {
@@ -88,14 +88,14 @@ const updateFromServer: ClientModule['update'] = (input) => {
           request: RequestResponse.response(
             input.model.request,
             input.ctx.now,
-            Result.mapOk(input.msgServer.listed, () => null),
+            Result.mapOk(input.msgBackend.listed, () => null),
           ),
         },
         msgCmd: [
-          FlowClientCmdRoot.addPuzzles(byId, input.msgServer),
-          FlowClientCmdRoot.addSolutions(solutions, input.msgServer),
-          ...(isErr(input.msgServer.listed)
-            ? showErrSm<{ MsgClient: MsgClient; MsgToServer: MsgToServer }>(input.ctx.t('app.something-went-wrong'))
+          FlowClientCmdRoot.addPuzzles(byId, input.msgBackend),
+          FlowClientCmdRoot.addSolutions(solutions, input.msgBackend),
+          ...(isErr(input.msgBackend.listed)
+            ? showErrSm<{ MsgClient: MsgClient; MsgToBackend: MsgToBackend }>(input.ctx.t('app.something-went-wrong'))
             : []),
         ],
       }

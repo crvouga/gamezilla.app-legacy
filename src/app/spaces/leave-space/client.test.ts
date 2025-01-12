@@ -40,7 +40,7 @@ describe(import.meta.file, () => {
       userStartedSpace(0, f.ctx.currentUserId, spaceId),
       userJoinedSpace(1, userId, spaceId),
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMetaAt(2, {
             t: 'user-left-space',

@@ -4,43 +4,43 @@ import { type Sub } from '~/@/sub'
 import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
-import type { ServerEvt } from '~/app/@/server/evt'
+import type { BackendEvt } from '~/app/@/server/evt'
 import { SpaceEvent } from '../../core/space-event'
-import type { MsgServer, MsgToClient, MsgToServer, ServerCtx } from '../../types'
+import type { MsgBackend, MsgToClient, MsgToBackend, BackendCtx } from '../../types'
 import type { Space } from '../space/space'
-import type { SpaceServerCmd } from '../space-server/cmd'
+import type { SpaceBackendCmd } from '../space-server/cmd'
 
-type Ctx = ServerCtx & {
+type Ctx = BackendCtx & {
   space?: Space
 }
 
 export type Input = {
   ctx: Ctx
-  msg?: MsgServer | null
+  msg?: MsgBackend | null
   msgClient?:
-    | (MsgToServer & {
+    | (MsgToBackend & {
         clientId: ClientId
         sessionId: SessionId
         userId?: UserId | null
       })
     | null
-  msgEvt?: ServerEvt | null
-  msgCmd?: SpaceServerCmd<MsgToClient> | null
+  msgEvt?: BackendEvt | null
+  msgCmd?: SpaceBackendCmd<MsgToClient> | null
   msgCore?: WithEventId<SpaceEvent> | null
 }
 
 export type MaybePromise<T> = T | Promise<T>
 
 export type Output = {
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
   msgEvt?: unknown[]
   msgCore?: WithEventId<SpaceEvent>[]
 }
 
-export type SpaceServerModule = {
+export type SpaceBackendModule = {
   init: (input: { ctx: Ctx }) => MaybePromise<Output>
   update: (input: Input) => MaybePromise<Output>
-  subscriptions: (input: { ctx: Ctx }) => MaybePromise<Sub<MsgServer>>
+  subscriptions: (input: { ctx: Ctx }) => MaybePromise<Sub<MsgBackend>>
 }
 
 const andThen = async (
@@ -60,6 +60,6 @@ const andThen = async (
   return acc
 }
 
-export const SpaceServerModule = {
+export const SpaceBackendModule = {
   andThen,
 }

@@ -11,7 +11,7 @@ export const initClient: ModelClient = {
   puzzleDeleteForeverRequest: NotAsked,
 }
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 //
 //
@@ -24,11 +24,11 @@ export type MsgClient =
   | { t: 'delete-forever.user-clicked-confirm-button' }
   | { t: 'delete-forever.user-clicked-cancel-button' }
 
-export type MsgToServer = { t: 'delete-forever.user-confirmed' }
+export type MsgToBackend = { t: 'delete-forever.user-confirmed' }
 
 export type MsgToClient = { t: 'noop' }
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
 //
 //

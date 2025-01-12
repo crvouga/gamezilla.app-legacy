@@ -1,7 +1,7 @@
-export type ServerImpl = 'bun' | 'node'
+export type BackendImpl = 'bun' | 'node'
 
-const of = (impl: ServerImpl) => impl
+const of = (impl: BackendImpl) => impl
 
-export const ServerImpl = {
+export const BackendImpl = {
   of,
 }

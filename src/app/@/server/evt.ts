@@ -4,7 +4,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import type { UserAccount } from '../data/account'
 import { PhoneNumber } from '~/@/phone-number'
 
-export type ServerEvt =
+export type BackendEvt =
   | {
       t: 'wire-evt.client-connected'
       clientId: ClientId

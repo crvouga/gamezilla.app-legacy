@@ -6,16 +6,16 @@ import { UserId } from '~/app/@/data/user-id'
 import { SpaceCore } from '../space-core'
 import { SpaceEvent } from '../space-event'
 
-export type SpacesCoreServerWhereAnd = {
+export type SpacesCoreBackendWhereAnd = {
   equalsSpaceId?: SpaceId
   equalsUserId?: UserId
 }
 
-export type ISpacesCoreServer = {
+export type ISpacesCoreBackend = {
   list: (input: {
     limit: number
     offset: number
-    whereAnd?: SpacesCoreServerWhereAnd
+    whereAnd?: SpacesCoreBackendWhereAnd
   }) => Promise<Result<string, Paginated<SpaceCore.Model>>>
 
   get: (spaceId: SpaceId | null) => Promise<Result<string, SpaceCore.Model | null>>

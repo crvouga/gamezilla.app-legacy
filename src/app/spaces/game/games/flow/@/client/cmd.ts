@@ -57,14 +57,14 @@ const tag = <T extends ClientCmdTypes, Tag extends string>(
   cmds?: FlowClientCmd<T>[],
 ): FlowClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
-  MsgToServer: { t: Tag; c: T['MsgToServer'] }
+  MsgToBackend: { t: Tag; c: T['MsgToBackend'] }
 }>[] => {
   return (cmds ?? []).flatMap(
     (
       msgCmd,
     ): FlowClientCmd<{
       MsgClient: { t: Tag; c: T['MsgClient'] }
-      MsgToServer: { t: Tag; c: T['MsgToServer'] }
+      MsgToBackend: { t: Tag; c: T['MsgToBackend'] }
     }>[] => {
       if (isFlowClientCmdInternal(msgCmd)) {
         return [msgCmd]

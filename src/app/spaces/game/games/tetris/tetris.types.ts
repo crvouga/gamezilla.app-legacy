@@ -21,7 +21,7 @@ export type ModelClient = {
   coreModel: CoreModel
 }
 
-export type ModelServer = CoreModel
+export type ModelBackend = CoreModel
 
 export type CoreModel = {
   board: Board.Board
@@ -100,9 +100,9 @@ export type MsgClient =
   | ['ClickedBoard', Position.Position]
   | MouseMove
 
-export type MsgServer = Tick
+export type MsgBackend = Tick
 
-export type MsgToServer = InputTranslate | InputRotate | InputDrop | MouseMove
+export type MsgToBackend = InputTranslate | InputRotate | InputDrop | MouseMove
 
 export type MsgToClient = Tick_Done | InputTranslate_Done | InputRotate_Done | InputDrop_Done | MouseMove_Done
 

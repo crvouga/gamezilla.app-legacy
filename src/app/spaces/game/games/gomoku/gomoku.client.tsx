@@ -3,7 +3,7 @@ import { Sub } from '~/@/sub'
 
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/gomoku/gomoku-ui'
-import type { ModelClient, ModelServer, MsgClient, MsgToClient } from './gomoku.types'
+import type { ModelClient, ModelBackend, MsgClient, MsgToClient } from './gomoku.types'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
@@ -81,7 +81,7 @@ export const update = ({
   return { model }
 }
 
-export const updateFromServer = ({
+export const updateFromBackend = ({
   ctx,
   model,
   msg,
@@ -99,7 +99,7 @@ export const updateFromServer = ({
         model,
       }
     }
-    const merged = mergeWithServer({
+    const merged = mergeWithBackend({
       ctx,
       clientModel: model,
       serverModel: msg.result.value,
@@ -108,7 +108,7 @@ export const updateFromServer = ({
   }
 
   if (model.t === 'vs-bot' && msg.t === 'vs-bot') {
-    const updated = VsBot.updateFromServer({
+    const updated = VsBot.updateFromBackend({
       ctx,
       msg: msg.c,
       model: model.c,
@@ -123,7 +123,7 @@ export const updateFromServer = ({
   }
 
   if (model.t === 'vs-user' && msg.t === 'vs-user') {
-    const updated = VsUser.updateFromServer({
+    const updated = VsUser.updateFromBackend({
       model: model.c,
       msg: msg.c,
     })
@@ -139,14 +139,14 @@ export const updateFromServer = ({
   return { model }
 }
 
-export const mergeWithServer = ({
+export const mergeWithBackend = ({
   ctx,
   clientModel,
   serverModel,
 }: {
   ctx: AppClientCtx
   clientModel: ModelClient
-  serverModel: ModelServer
+  serverModel: ModelBackend
 }): ModelClient => {
   switch (serverModel.t) {
     case 'none': {
@@ -159,7 +159,7 @@ export const mergeWithServer = ({
       if (clientModel.t === 'vs-bot') {
         return {
           t: 'vs-bot',
-          c: VsBot.mergeWithServer({
+          c: VsBot.mergeWithBackend({
             ctx,
             clientModel: clientModel.c,
             serverModel: serverModel.c,
@@ -168,7 +168,7 @@ export const mergeWithServer = ({
       }
       return {
         t: 'vs-bot',
-        c: VsBot.mergeWithServer({
+        c: VsBot.mergeWithBackend({
           ctx,
           clientModel: VsBot.init({
             userId: null,
@@ -182,7 +182,7 @@ export const mergeWithServer = ({
       if (clientModel.t === 'vs-user') {
         return {
           t: 'vs-user',
-          c: VsUser.mergeWithServer({
+          c: VsUser.mergeWithBackend({
             clientModel: clientModel.c,
             serverModel: serverModel.c,
           }),
@@ -190,7 +190,7 @@ export const mergeWithServer = ({
       }
       return {
         t: 'vs-user',
-        c: VsUser.mergeWithServer({
+        c: VsUser.mergeWithBackend({
           clientModel: VsUser.init({
             white: null,
             black: null,

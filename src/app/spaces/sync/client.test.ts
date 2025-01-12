@@ -40,7 +40,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'listed-spaces',
           spaces: [],
           profiles: someProfiles,
@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'synced',
           space: someSpace,
         },
@@ -86,7 +86,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'current-user-space',
           space: someStartedSpace,
           currentUser: f.ctx.currentUser,
@@ -118,7 +118,7 @@ describe(import.meta.file, () => {
     expect(
       hasExactlyOne(
         output.msgCmd ?? [],
-        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-server' && msgCmd.c.toServer?.t === 'sync',
+        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-server' && msgCmd.c.toBackend?.t === 'sync',
       ),
     ).toBe(true)
   })
@@ -128,7 +128,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
@@ -151,8 +151,8 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-server' &&
-          msgCmd.c.toServer?.t === 'got-msg-core' &&
-          msgCmd.c.toServer?.c.t === 'user-joined-space',
+          msgCmd.c.toBackend?.t === 'got-msg-core' &&
+          msgCmd.c.toBackend?.c.t === 'user-joined-space',
       ),
     ).toBe(true)
   })
@@ -162,7 +162,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMetaAt(0, {
             t: 'user-ended-space',
@@ -179,8 +179,8 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-server' &&
-          msgCmd.c.toServer?.t === 'got-msg-core' &&
-          msgCmd.c.toServer?.c.t === 'user-ended-space',
+          msgCmd.c.toBackend?.t === 'got-msg-core' &&
+          msgCmd.c.toBackend?.c.t === 'user-ended-space',
       ),
     ).toBe(true)
   })

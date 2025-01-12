@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { AppClientCtx } from '~/app/@/client/ctx'
-import { type ModelClient, type ModelServer, type MsgClient, type MsgToClient, initShared } from './vs-user.types'
+import { type ModelClient, type ModelBackend, type MsgClient, type MsgToClient, initShared } from './vs-user.types'
 
 //
 //
@@ -63,7 +63,7 @@ export const update = ({
   return { model, eff: Eff.None }
 }
 
-export const updateFromServer = ({
+export const updateFromBackend = ({
   msg,
   model,
 }: {
@@ -79,7 +79,7 @@ export const updateFromServer = ({
         model,
       }
     }
-    const merged = mergeWithServer({
+    const merged = mergeWithBackend({
       serverModel: msg.result.value,
       clientModel: model,
     })
@@ -91,7 +91,7 @@ export const updateFromServer = ({
     return { model }
   }
 
-  const merged = mergeWithServer({
+  const merged = mergeWithBackend({
     serverModel: msg.result.value,
     clientModel: model,
   })
@@ -99,11 +99,11 @@ export const updateFromServer = ({
   return { model: merged }
 }
 
-export const mergeWithServer = ({
+export const mergeWithBackend = ({
   serverModel,
 }: {
   clientModel: ModelClient
-  serverModel: ModelServer
+  serverModel: ModelBackend
 }): ModelClient => {
   return serverModel
 }

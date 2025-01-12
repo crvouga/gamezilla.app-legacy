@@ -19,7 +19,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
@@ -44,7 +44,7 @@ describe(import.meta.file, () => {
     const otherUser = await Profile.random()
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgServer: {
+        msgBackend: {
           profiles: {
             [otherUser.userId]: otherUser,
           },
@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-joined-space',
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
@@ -129,7 +129,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',
@@ -161,7 +161,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'got-msg-core',
           c: withEventMeta({
             t: 'user-started-space',

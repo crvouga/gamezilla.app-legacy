@@ -4,21 +4,21 @@ import { initClientTransport, type IClientTransport } from './interface'
 
 export type Config = ImplWebSockets.Config | { t: 'noop'; logger: ILogger }
 
-export const ClientTransport = async <MsgToServer, MsgToClient>(
+export const ClientTransport = async <MsgToBackend, MsgToClient>(
   config: Config,
 ): Promise<
   IClientTransport<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgToClient: MsgToClient
   }>
 > => {
   switch (config.t) {
     case 'standard-web-sockets': {
-      return ImplWebSockets.ClientTransport<MsgToServer, MsgToClient>(config)
+      return ImplWebSockets.ClientTransport<MsgToBackend, MsgToClient>(config)
     }
     case 'noop': {
       config.logger.warn('ClientTransport noop not implemented')
-      return initClientTransport<MsgToServer, MsgToClient>()
+      return initClientTransport<MsgToBackend, MsgToClient>()
     }
   }
 }

@@ -1,4 +1,4 @@
-import { type AppClientCmd, sendToServer } from '~/app/@/client/cmd'
+import { type AppClientCmd, sendToBackend } from '~/app/@/client/cmd'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'
@@ -6,10 +6,10 @@ import { CoverArt, PlayerTypeIcon } from '../@/tic-tic-toe/tic-tac-toe-ui'
 import * as Round from './vs-user-round'
 import {
   type ModelClient,
-  type ModelServer,
+  type ModelBackend,
   type MsgClient,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   type Res,
   initCoreModel,
 } from './vs-user.types'
@@ -40,7 +40,7 @@ export const update = (
 ): {
   model: ModelClient
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 } => {
@@ -90,7 +90,7 @@ export const update = (
     case 'NewGame': {
       return {
         model,
-        msgCmd: [sendToServer(msg)],
+        msgCmd: [sendToBackend(msg)],
       }
     }
 
@@ -102,10 +102,10 @@ export const update = (
   }
 }
 
-export const updateFromServer = (_: { ctx: SpaceClientCtx }, msg: MsgToClient, model: ModelClient): [ModelClient] => {
+export const updateFromBackend = (_: { ctx: SpaceClientCtx }, msg: MsgToClient, model: ModelClient): [ModelClient] => {
   switch (msg[0]) {
     case 'player-left': {
-      const modelNew = mergeWithServer(model, msg[1])
+      const modelNew = mergeWithBackend(model, msg[1])
       return [modelNew]
     }
 
@@ -126,7 +126,7 @@ export const updateFromServer = (_: { ctx: SpaceClientCtx }, msg: MsgToClient, m
         return [model]
       }
 
-      const modelNew = mergeWithServer(model, res[1].value)
+      const modelNew = mergeWithBackend(model, res[1].value)
 
       return [
         {
@@ -142,7 +142,7 @@ export const updateFromServer = (_: { ctx: SpaceClientCtx }, msg: MsgToClient, m
         return [model]
       }
 
-      const modelNew = mergeWithServer(model, msg[1].value)
+      const modelNew = mergeWithBackend(model, msg[1].value)
 
       return [modelNew]
     }
@@ -153,7 +153,7 @@ export const updateFromServer = (_: { ctx: SpaceClientCtx }, msg: MsgToClient, m
   }
 }
 
-export const mergeWithServer = (clientModel: ModelClient, serverModel: ModelServer): ModelClient => {
+export const mergeWithBackend = (clientModel: ModelClient, serverModel: ModelBackend): ModelClient => {
   return {
     ...serverModel,
     openedModal: clientModel.openedModal,

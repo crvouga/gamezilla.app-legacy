@@ -1,4 +1,4 @@
-import { AppServerCtx } from '~/app/@/server/ctx'
+import { AppBackendCtx } from '~/app/@/server/ctx'
 import { SpaceCtx } from '../space/ctx'
 
-export type SpaceServerCtx = AppServerCtx & SpaceCtx
+export type SpaceBackendCtx = AppBackendCtx & SpaceCtx

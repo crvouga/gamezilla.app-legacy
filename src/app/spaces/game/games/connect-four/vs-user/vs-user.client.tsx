@@ -25,7 +25,7 @@ import {
   type MsgClient,
   type MsgCore,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   type StateGame,
   type StateGameOver,
   toPlayerType,
@@ -45,7 +45,7 @@ type Module = GameClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   ModelCore: ModelCore
   MsgCore: MsgCore
   Ctx: SpaceClientCtx & { onQuit: () => void }
@@ -53,7 +53,7 @@ type Module = GameClientModule<{
   MsgEvtIn: SpaceClientEvt
   MsgCmdOut: AppClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>
   MsgEvtOut: null
 }>

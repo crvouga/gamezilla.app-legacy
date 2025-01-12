@@ -2,13 +2,13 @@ import { describe, expect, it } from 'bun:test'
 import { Ok, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import type { UserAccount } from '~/app/@/data/account'
-import { AppServerTestEnv } from '~/app/@/server/fixture'
+import { AppBackendTestEnv } from '~/app/@/server/fixture'
 import { UserAccountDb } from './impl'
 import { Posix } from '~/@/time/posix'
 import { PhoneNumber } from '~/@/phone-number'
 
 const Fixture = async () => {
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
 
   switch (testEnv.t) {
     case 'all':

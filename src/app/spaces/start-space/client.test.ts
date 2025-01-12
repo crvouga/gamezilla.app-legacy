@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { didPlaySound, didPushRoute, didSendToServer, didShowToast } from '~/app/@/client/cmd'
+import { didPlaySound, didPushRoute, didSendToBackend, didShowToast } from '~/app/@/client/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesClient } from '../@/fixture/client'
 import { SpacesCoreClient } from '../core/client'
@@ -81,7 +81,7 @@ describe(import.meta.file, () => {
       },
     ])
     expect(
-      didSendToServer(
+      didSendToBackend(
         started,
         (msg) => msg.t === 'got-msg-core' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId,
       ),

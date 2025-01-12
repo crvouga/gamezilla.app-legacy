@@ -15,7 +15,7 @@ import type { UserId } from '../data/user-id'
 
 export type ClientCmdTypes = {
   MsgClient: unknown
-  MsgToServer: unknown
+  MsgToBackend: unknown
 }
 
 export type AppClientCmd<T extends ClientCmdTypes> =
@@ -225,30 +225,30 @@ export type WireCmd<T extends ClientCmdTypes> = {
   t: 'wire'
   c: {
     t: 'send-to-server'
-    toServer: T['MsgToServer'] | null
+    toBackend: T['MsgToBackend'] | null
   }
 }
 
 /**
  * A msgCmd creator for sending a messages to the server.
  */
-export const sendToServer = <T extends ClientCmdTypes>(msg: T['MsgToServer']): AppClientCmd<T> => {
+export const sendToBackend = <T extends ClientCmdTypes>(msg: T['MsgToBackend']): AppClientCmd<T> => {
   return {
     t: 'wire',
     c: {
       t: 'send-to-server',
-      toServer: msg,
+      toBackend: msg,
     },
   }
 }
 
-export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
+export const didSendToBackend = <T extends ClientCmdTypes, TCmd>(
   {
     msgCmd,
   }: {
     msgCmd?: (WireCmd<T> | TCmd)[] | null
   },
-  predicate: (msg: T['MsgToServer']) => boolean,
+  predicate: (msg: T['MsgToBackend']) => boolean,
 ): boolean => {
   return (
     msgCmd?.some(
@@ -258,8 +258,8 @@ export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
         't' in cmd &&
         cmd.t === 'wire' &&
         cmd.c.t === 'send-to-server' &&
-        cmd.c.toServer &&
-        predicate(cmd.c.toServer),
+        cmd.c.toBackend &&
+        predicate(cmd.c.toBackend),
     ) ?? false
   )
 }
@@ -617,20 +617,20 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
   msgCmd: AppClientCmd<T>,
 ): AppClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
-  MsgToServer: { t: Tag; c: T['MsgToServer'] }
+  MsgToBackend: { t: Tag; c: T['MsgToBackend'] }
 }> => {
   switch (msgCmd.t) {
     case 'wire': {
       switch (msgCmd.c.t) {
         case 'send-to-server': {
-          if (msgCmd.c.toServer) {
+          if (msgCmd.c.toBackend) {
             return {
               ...msgCmd,
               c: {
                 ...msgCmd.c,
-                toServer: {
+                toBackend: {
                   t,
-                  c: msgCmd.c.toServer,
+                  c: msgCmd.c.toBackend,
                 },
               },
             }
@@ -639,7 +639,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
             ...msgCmd,
             c: {
               ...msgCmd.c,
-              toServer: {
+              toBackend: {
                 t,
                 c: null,
               },
@@ -652,9 +652,9 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
               t: Tag
               c: T['MsgClient']
             }
-            MsgToServer: {
+            MsgToBackend: {
               t: Tag
-              c: T['MsgToServer']
+              c: T['MsgToBackend']
             }
           }>
         }
@@ -682,9 +682,9 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
               t: Tag
               c: T['MsgClient']
             }
-            MsgToServer: {
+            MsgToBackend: {
               t: Tag
-              c: T['MsgToServer']
+              c: T['MsgToBackend']
             }
           }>
         }
@@ -702,14 +702,14 @@ const tag = <Tag extends string, T extends ClientCmdTypes>(
   msgCmd?: (AppClientCmd<T> | null | undefined)[] | null | undefined | null,
 ): AppClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
-  MsgToServer: { t: Tag; c: T['MsgToServer'] }
+  MsgToBackend: { t: Tag; c: T['MsgToBackend'] }
 }>[] => {
   return msgCmd?.flatMap((c) => (c ? [tagOne(tag, c)] : [])) ?? []
 }
 
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
   msgCmd: AppClientCmd<A>[],
-  toServerMap: (a: A['MsgToServer']) => B['MsgToServer'],
+  toBackendMap: (a: A['MsgToBackend']) => B['MsgToBackend'],
   clientMsgMap: (b: A['MsgClient']) => B['MsgClient'],
 ): AppClientCmd<B>[] => {
   return msgCmd.map((msgCmd) => {
@@ -717,12 +717,12 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
       case 'wire': {
         switch (msgCmd.c.t) {
           case 'send-to-server': {
-            if (msgCmd.c.toServer) {
+            if (msgCmd.c.toBackend) {
               return {
                 ...msgCmd,
                 c: {
                   ...msgCmd.c,
-                  toServer: toServerMap(msgCmd.c.toServer),
+                  toBackend: toBackendMap(msgCmd.c.toBackend),
                 },
               }
             }
@@ -730,7 +730,7 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
               ...msgCmd,
               c: {
                 ...msgCmd.c,
-                toServer: null,
+                toBackend: null,
               },
             }
           }
@@ -747,7 +747,7 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
               ...msgCmd,
               c: {
                 ...msgCmd.c,
-                toServer: clientMsgMap(msgCmd.c.msg),
+                toBackend: clientMsgMap(msgCmd.c.msg),
               },
             }
           }

@@ -2,7 +2,7 @@ import { PubSub } from '~/@/sub'
 import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 
-export type ServerTransportMsg =
+export type BackendTransportMsg =
   | {
       t: 'client-connected'
       clientId: ClientId
@@ -32,22 +32,22 @@ export type ToClientPayload<TMsgToClient> = {
   }
 }
 
-export type ToServerPayload<TMsgToServer> = {
-  msgs: TMsgToServer[]
+export type ToBackendPayload<TMsgToBackend> = {
+  msgs: TMsgToBackend[]
   clientId: ClientId
   sessionId: SessionId
 }
 
-export type IServerTransport<T extends { MsgToClient: any; MsgToServer: any }> = {
+export type IBackendTransport<T extends { MsgToClient: any; MsgToBackend: any }> = {
   toClient: PubSub<ToClientPayload<T['MsgToClient']>>
   toClientBroadcast: PubSub<T['MsgToClient'][]>
-  fromClient: PubSub<ToServerPayload<T['MsgToServer']>>
-  wire: PubSub<ServerTransportMsg>
+  fromClient: PubSub<ToBackendPayload<T['MsgToBackend']>>
+  wire: PubSub<BackendTransportMsg>
 }
 
-export const initServerTransport = <MsgToServer, MsgToClient>(): IServerTransport<{
+export const initBackendTransport = <MsgToBackend, MsgToClient>(): IBackendTransport<{
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
 }> => {
   return {
     toClient: PubSub.create(),

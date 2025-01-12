@@ -38,7 +38,7 @@ export const editNameValidationErrorToString = (
   }
 }
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 //
 //
@@ -55,9 +55,9 @@ export type MsgClient =
   | { t: 'puzzle.edit-name.user-clicked-save-button' }
   | { t: 'puzzle.edit-name.user-clicked-cancel-button' }
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'puzzle.edit-name.user-clicked-save-button'
   newName: string
   flowPuzzleId: PuzzleId

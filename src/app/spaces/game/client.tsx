@@ -127,8 +127,8 @@ const inputToSpaceId = (currentUser: UserAccount, input: Parameters<SpaceClientM
     return input.msg.spaceId
   }
 
-  if (input.msgServer && 'spaceId' in input.msgServer) {
-    return input.msgServer.spaceId
+  if (input.msgBackend && 'spaceId' in input.msgBackend) {
+    return input.msgBackend.spaceId
   }
 
   if (input.msgCore && 'spaceId' in input.msgCore) {
@@ -172,7 +172,7 @@ const updateGame: SpaceClientModule['update'] = (input) => {
     model: modelGame,
     msgCore: input.msgCore?.t === 'game' ? { ...input.msgCore, ...input.msgCore.c } : null,
     modelCore: spaceState.game,
-    msgServer: input.msgServer?.t === 'game' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'game' ? input.msgBackend.c : null,
     msgCmd: null,
     msgEvt: input.msgEvt,
     msg: input.msg?.t === 'game' ? input.msg.c : null,

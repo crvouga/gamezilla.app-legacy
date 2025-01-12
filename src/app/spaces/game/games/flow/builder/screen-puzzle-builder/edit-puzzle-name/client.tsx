@@ -1,12 +1,12 @@
 import { isLoading, isOk, Loading } from '~/@/result'
 import type { VDomChildren } from '~/@/vdom/vdom'
-import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/app/@/client/cmd'
+import { APP_SOUND, playSound, sendToBackend, showCreatedSm, showErrSm } from '~/app/@/client/cmd'
 import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import { FlowClientCmd } from '../../../@/client/cmd'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { ClientModule } from '../../types'
-import { editNameValidationErrorToString, MsgClient, MsgToServer } from './types'
+import { editNameValidationErrorToString, MsgClient, MsgToBackend } from './types'
 
 //
 //
@@ -80,7 +80,7 @@ const updateFormButtons: ClientModule['update'] = (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendToServer({
+          sendToBackend({
             t: 'puzzle.edit-name.user-clicked-save-button',
             newName,
             flowPuzzleId: puzzleBuilder.puzzle.id,
@@ -106,16 +106,16 @@ const updateFormButtons: ClientModule['update'] = (input) => {
 
       const msgCmd: FlowClientCmd<{
         MsgClient: MsgClient
-        MsgToServer: MsgToServer
+        MsgToBackend: MsgToBackend
       }>[] = [
         ...(isOk(input.msgCore.edited)
           ? showCreatedSm<{
               MsgClient: MsgClient
-              MsgToServer: MsgToServer
+              MsgToBackend: MsgToBackend
             }>(input.ctx.t('flow.saved-name'))
           : showErrSm<{
               MsgClient: MsgClient
-              MsgToServer: MsgToServer
+              MsgToBackend: MsgToBackend
             }>(input.ctx.t('app.something-went-wrong'))),
         {
           t: 'flow-cmd.add-puzzles',

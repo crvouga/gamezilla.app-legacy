@@ -16,21 +16,21 @@ import { GameMainMenu } from '../@/ui/game-main-menu'
 
 export type ModelClient = { t: 'vs-bot'; c: VsBot.ModelClient } | { t: 'vs-user'; c: VsUser.ModelClient } | { t: null }
 
-export const ModelServer = p.or(
+export const ModelBackend = p.or(
   p.obj({
     t: p.l('vs-bot'),
-    c: VsBot.ModelServer,
+    c: VsBot.ModelBackend,
   }),
   p.obj({
     t: p.l('vs-user'),
-    c: VsUser.ModelServer,
+    c: VsUser.ModelBackend,
   }),
   p.obj({
     t: p.l(null),
   }),
 )
 
-export type ModelServer = p.Infer<typeof ModelServer>
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
 export type Mode = 'none' | 'vs-user' | 'vs-bot'
 
@@ -48,11 +48,11 @@ export type MsgClient =
   | { t: 'vs-user'; c: VsUser.MsgClient }
   | { t: 'vs-bot'; c: VsBot.MsgClient }
 
-export type MsgServer = { t: 'vs-user'; c: VsUser.MsgServer } | { t: 'vs-bot'; c: VsBot.MsgServer }
+export type MsgBackend = { t: 'vs-user'; c: VsUser.MsgBackend } | { t: 'vs-bot'; c: VsBot.MsgBackend }
 
 export type MsgToClient = { t: 'vs-user'; c: VsUser.MsgToClient } | { t: 'vs-bot'; c: VsBot.MsgToClient }
 
-export type MsgToServer = { t: 'vs-user'; c: VsUser.MsgToServer } | { t: 'vs-bot'; c: VsBot.MsgToServer }
+export type MsgToBackend = { t: 'vs-user'; c: VsUser.MsgToBackend } | { t: 'vs-bot'; c: VsBot.MsgToBackend }
 
 //
 //

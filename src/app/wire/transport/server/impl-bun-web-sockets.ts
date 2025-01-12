@@ -2,31 +2,31 @@ import type { Server, ServerWebSocket } from 'bun'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
-import type { WebServerBun } from '~/@/web-server/impl-bun'
+import type { WebBackendBun } from '~/@/web-server/impl-bun'
 import { ClientId } from '~/app/@/data/client-id'
 import { SessionId } from '~/app/@/data/session-id'
 import { SessionIdCookie } from '../session-id-cookie'
 import { WEB_SOCKET_ENDPOINT } from '../shared'
-import { type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
-import { initServerTransport, type IServerTransport } from './interface'
+import { type MsgClientToMsgBackend, type MsgBackendToMsgClient } from '../types'
+import { initBackendTransport, type IBackendTransport } from './interface'
 
-type ServerWebSocketData = {
+type BackendWebSocketData = {
   clientId: ClientId
   sessionId: SessionId
 }
 
 export type Config = {
   t: 'bun-web-sockets'
-  webServer: WebServerBun
+  webBackend: WebBackendBun
   dbConnSql: IDbConnSql
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
   isProd: boolean
 }
 
-export const ServerTransport = async <MsgToServer, MsgToClient>(
+export const BackendTransport = async <MsgToBackend, MsgToClient>(
   config: Config,
-): Promise<IServerTransport<{ MsgToClient: MsgToClient; MsgToServer: MsgToServer }>> => {
+): Promise<IBackendTransport<{ MsgToClient: MsgToClient; MsgToBackend: MsgToBackend }>> => {
   const logger = Logger.prefix('bun-web-sockets', config.logger)
   //
   //
@@ -36,7 +36,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   //
   //
 
-  const transport = initServerTransport<MsgToServer, MsgToClient>()
+  const transport = initBackendTransport<MsgToBackend, MsgToClient>()
 
   //
   //
@@ -46,11 +46,11 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   //
   //
 
-  const clients = new Map<ClientId, ServerWebSocket<ServerWebSocketData>>()
+  const clients = new Map<ClientId, ServerWebSocket<BackendWebSocketData>>()
   const unlistens = new Map<ClientId, () => void>()
   const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
 
-  const addClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {
+  const addClient = async (ws: ServerWebSocket<BackendWebSocketData>) => {
     clients.set(ws.data.clientId, ws)
     const clientIds = clientsBySessionId.get(ws.data.sessionId) ?? new Set<ClientId>()
     clientIds.add(ws.data.clientId)
@@ -64,7 +64,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     )
   }
 
-  const removeClient = async (ws: ServerWebSocket<ServerWebSocketData>) => {
+  const removeClient = async (ws: ServerWebSocket<BackendWebSocketData>) => {
     clients.delete(ws.data.clientId)
     clientsBySessionId.get(ws.data.sessionId)?.delete(ws.data.clientId)
     unlistens.get(ws.data.clientId)?.()
@@ -73,13 +73,13 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   //
   //
   //
-  // Web Server
+  // Web Backend
   //
   //
   //
 
-  config.webServer._setWebSocketHandler({
-    async open(ws: ServerWebSocket<ServerWebSocketData>) {
+  config.webBackend._setWebSocketHandler({
+    async open(ws: ServerWebSocket<BackendWebSocketData>) {
       logger.debug(`websocket connection opened clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
       await addClient(ws)
       transport.wire.pub({
@@ -88,7 +88,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
         sessionId: ws.data.sessionId,
       })
     },
-    async close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
+    async close(ws: ServerWebSocket<BackendWebSocketData>, _code, _message) {
       logger.debug(`websocket connection closed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
       await removeClient(ws)
       transport.wire.pub({
@@ -97,10 +97,10 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
         sessionId: ws.data.sessionId,
       })
     },
-    message(ws: ServerWebSocket<ServerWebSocketData>, message) {
+    message(ws: ServerWebSocket<BackendWebSocketData>, message) {
       logger.debug(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
 
-      const msg = JSON.parse(message.toString()) as MsgClientToMsgServer<MsgToServer> // leap of faith
+      const msg = JSON.parse(message.toString()) as MsgClientToMsgBackend<MsgToBackend> // leap of faith
 
       transport.fromClient.pub({
         clientId: ws.data.clientId,
@@ -110,8 +110,8 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     },
   })
 
-  config.webServer.registerHandler((request, maybeServer) => {
-    const server = maybeServer as Server
+  config.webBackend.registerHandler((request, maybeBackend) => {
+    const server = maybeBackend as Server
     const url = new URL(request.url)
 
     switch (url.pathname) {
@@ -126,7 +126,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
 
         const clientId = ClientId.generate()
 
-        const data: ServerWebSocketData = {
+        const data: BackendWebSocketData = {
           clientId,
           sessionId,
         }
@@ -164,7 +164,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
   //
   //
 
-  const send = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
+  const send = async (ws: ServerWebSocket<BackendWebSocketData>, msg: MsgBackendToMsgClient<MsgToClient>) => {
     switch (ws.readyState) {
       case 1: {
         ws.send(JSON.stringify(msg))
@@ -176,7 +176,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>(
     }
   }
 
-  const sendWithPub = async (ws: ServerWebSocket<ServerWebSocketData>, msg: MsgServerToMsgClient<MsgToClient>) => {
+  const sendWithPub = async (ws: ServerWebSocket<BackendWebSocketData>, msg: MsgBackendToMsgClient<MsgToClient>) => {
     send(ws, msg)
     config.pubSubTopicBased.pub(ws.data.clientId, JSON.stringify(msg))
     logger.debug(`sent msg for clientId=${ws.data.clientId} to other server instances`)

@@ -117,7 +117,7 @@ export type ModelClient = CoreModel & {
   openedModal: 'none' | ModalName
 }
 
-export type ModelServer = CoreModel
+export type ModelBackend = CoreModel
 
 export const parseModel = (): Result<string, CoreModel> => {
   return Err('unimplemented')
@@ -135,9 +135,9 @@ type ModalName = 'resignation'
 
 export type MsgClient = Req | ['OpenModal', ModalName] | ['close-modal']
 
-export type MsgServer = RoundCountDown | MoveCountDown
+export type MsgBackend = RoundCountDown | MoveCountDown
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
 export type MsgToClient = Res | RoundCountDown_Done | MoveCountDown_Done | ['player-left', CoreModel]
 

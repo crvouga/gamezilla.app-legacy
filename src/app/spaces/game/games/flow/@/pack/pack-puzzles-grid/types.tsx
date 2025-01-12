@@ -1,17 +1,17 @@
 import { NotAsked } from '~/@/result'
 import type { RequestResponse } from '~/@/request-response/request-response'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { AppServerModule } from '~/app/@/architecture/app-server'
+import { AppBackendModule } from '~/app/@/architecture/app-server'
 import { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
 import { FlowClientEvtIn } from '../../client/evt'
 import type { Puzzle } from '../../puzzle/puzzle'
 import { ListPuzzlesOutput } from '../../puzzle/puzzle-db'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
-import { FlowServerCtx } from '../../server/ctx'
+import { FlowBackendCtx } from '../../server/ctx'
 import type { Pack } from '../pack'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import { PackId } from '../pack-id'
 
 export type ModelClient = {
@@ -30,7 +30,7 @@ export const initClient: ModelClient = {
   puzzles: {},
 }
 
-export type ModelServer = Record<string, unknown>
+export type ModelBackend = Record<string, unknown>
 
 export type MsgClient =
   | {
@@ -40,7 +40,7 @@ export type MsgClient =
       t: 'elapsed'
     }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'noop'
 }
 
@@ -50,7 +50,7 @@ export type MsgToClient = {
   causedBy: unknown
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'list-puzzles-by-id'
   puzzleIds: PuzzleId[]
   causedBy: unknown
@@ -75,10 +75,10 @@ export type ClientModule = AppClientModule<{
   MsgEvtIn: FlowClientEvtIn
   MsgCmdOut: SpaceClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   ViewSlot: {
     grid: {
       request: RequestResponse<string, null>
@@ -87,13 +87,13 @@ export type ClientModule = AppClientModule<{
   MsgCmdIn: MsgInCmdClient | null
 }>
 
-export type ServerModule = AppServerModule<{
-  Ctx: FlowServerCtx
-  Model: ModelServer
-  Msg: MsgServer
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+export type BackendModule = AppBackendModule<{
+  Ctx: FlowBackendCtx
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgEvtIn: SpaceBackendEvt
+  MsgCmdOut: SpaceBackendCmd<MsgToClient>
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Deps: null
 }>

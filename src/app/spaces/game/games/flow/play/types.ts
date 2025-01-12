@@ -1,10 +1,10 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import type { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import type { GameCoreModule } from '~/app/spaces/game/games/@/architecture/game-core'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { GameMainMenu } from '../../@/ui/game-main-menu'
 import { FlowClientCmd } from '../@/client/cmd'
 import type { FlowClientCtx } from '../@/client/ctx'
@@ -14,7 +14,7 @@ import { FlowCoreEvent } from '../@/core/event'
 import { Pack } from '../@/pack/pack'
 import type { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { PuzzleResult } from '../@/puzzle/puzzle-result'
-import { FlowServerCtx } from '../@/server/ctx'
+import { FlowBackendCtx } from '../@/server/ctx'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
 
 //
@@ -26,8 +26,8 @@ import { ScreenPuzzleTypes } from './screen-play-puzzle'
 
 export type ModelClient = null
 
-export const ModelServer = p.obj({})
-export type ModelServer = p.Infer<typeof ModelServer>
+export const ModelBackend = p.obj({})
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
 //
 //
@@ -43,11 +43,11 @@ export type MsgClient =
       c: MsgCore
     }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'noop'
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'noop'
 }
 
@@ -114,28 +114,28 @@ export type ClientModule = GameClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgCore: MsgCore
   ModelCore: ModelCore
   Ctx: FlowClientCtx
   MsgEvtIn: FlowClientEvtIn
   MsgCmdOut: FlowClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
   MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdClient
 }>
 
-export type ServerModule = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
+export type BackendModule = GameBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgCore: MsgCore
   ModelCore: ModelCore
-  Ctx: FlowServerCtx
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  Ctx: FlowBackendCtx
+  MsgEvtIn: SpaceBackendEvt
+  MsgCmdOut: SpaceBackendCmd<MsgToClient>
 }>
 
 export type CoreModule = GameCoreModule<{

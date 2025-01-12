@@ -4,13 +4,13 @@ import { RPC } from '~/@/rpc'
 import type { Sub } from '~/@/sub'
 import type { ClientId } from '~/app/@/data/client-id'
 import { Logger } from '../../@/logger'
-import { AppServerModule } from '../@/architecture/app-server'
-import { ServerCmd, WireCmd } from '../@/server/cmd'
-import { AppServerCtx } from '../@/server/ctx'
-import { ServerEvt } from '../@/server/evt'
-import { ServerInstanceServer } from './server-instance/server'
-import type { IServerTransport } from './transport/server'
-import { rpcContract, type MsgServer, type MsgToClient, type MsgToServer, type ServerCtx } from './types'
+import { AppBackendModule } from '../@/architecture/app-server'
+import { BackendCmd, WireCmd } from '../@/server/cmd'
+import { AppBackendCtx } from '../@/server/ctx'
+import { BackendEvt } from '../@/server/evt'
+import { BackendInstanceBackend } from './server-instance/server'
+import type { IBackendTransport } from './transport/server'
+import { rpcContract, type MsgBackend, type MsgToClient, type MsgToBackend, type BackendCtx } from './types'
 import { WireSession } from './wire-session'
 import { WireSessionDb } from './wire-session-db'
 
@@ -21,18 +21,18 @@ import { WireSessionDb } from './wire-session-db'
 //
 //
 
-export const initCtx = async <TMsgToClient, TMsgToServer>(input: {
-  ctx: AppServerCtx
-  transport: IServerTransport<{
+export const initCtx = async <TMsgToClient, TMsgToBackend>(input: {
+  ctx: AppBackendCtx
+  transport: IBackendTransport<{
     MsgToClient: TMsgToClient
-    MsgToServer: TMsgToServer
+    MsgToBackend: TMsgToBackend
   }>
-}): Promise<ServerCtx<TMsgToClient, TMsgToServer>> => {
+}): Promise<BackendCtx<TMsgToClient, TMsgToBackend>> => {
   const logger = Logger.prefix('wire', input.ctx.logger)
   return {
     ...input.ctx,
     transport: input.transport,
-    serverInstance: await ServerInstanceServer.initCtx({ ctx: input.ctx }),
+    serverInstance: await BackendInstanceBackend.initCtx({ ctx: input.ctx }),
     wireSessionDb: await WireSessionDb({
       t: 'cached-db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
@@ -49,21 +49,23 @@ export const initCtx = async <TMsgToClient, TMsgToServer>(input: {
 //
 //
 
-type Input<TMsgToClient, TMsgToServer> = {
-  ctx: ServerCtx<TMsgToClient, TMsgToServer>
-  msg?: MsgServer | null
-  msgClient?: MsgToServer | null
-  msgEvt?: ServerEvt | null
+type Input<TMsgToClient, TMsgToBackend> = {
+  ctx: BackendCtx<TMsgToClient, TMsgToBackend>
+  msg?: MsgBackend | null
+  msgClient?: MsgToBackend | null
+  msgEvt?: BackendEvt | null
   msgCmd?: WireCmd<TMsgToClient> | null
 }
 
 type Output = {
-  msgEvt?: ServerEvt[]
-  msgCmd?: ServerCmd<MsgToClient>[]
+  msgEvt?: BackendEvt[]
+  msgCmd?: BackendCmd<MsgToClient>[]
 }
 
-export const update = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClient, TMsgToServer>): Promise<Output> => {
-  return AppServerModule.andThen(
+export const update = async <TMsgToClient, TMsgToBackend>(
+  input: Input<TMsgToClient, TMsgToBackend>,
+): Promise<Output> => {
+  return AppBackendModule.andThen(
     {},
     () => updateFromMsg(input),
     () => updateFromCmd(input),
@@ -73,7 +75,7 @@ export const update = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
 }
 
 const updateChild: typeof update = async (input) => {
-  const updated = await ServerInstanceServer.update({
+  const updated = await BackendInstanceBackend.update({
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
     ctx: input.ctx.serverInstance,
@@ -84,7 +86,7 @@ const updateChild: typeof update = async (input) => {
 
   return {
     msgEvt: [],
-    msgCmd: ServerCmd.tag('got-server-instance-msg', updated.msgCmd),
+    msgCmd: BackendCmd.tag('got-server-instance-msg', updated.msgCmd),
   }
 }
 
@@ -160,7 +162,9 @@ const updateFromEvent: typeof update = async (input) => {
   }
 }
 
-const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClient, TMsgToServer>): Promise<Output> => {
+const updateFromCmd = async <TMsgToClient, TMsgToBackend>(
+  input: Input<TMsgToClient, TMsgToBackend>,
+): Promise<Output> => {
   if (!input.msgCmd) {
     return {}
   }
@@ -239,14 +243,14 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>(input: Input<TMsgToClie
   }
 }
 
-export const subscriptions = <TMsgToServer, TMsgToClient>(input: {
-  ctx: ServerCtx<TMsgToClient, TMsgToServer>
-}): Sub<MsgServer> => {
+export const subscriptions = <TMsgToBackend, TMsgToClient>(input: {
+  ctx: BackendCtx<TMsgToClient, TMsgToBackend>
+}): Sub<MsgBackend> => {
   return input.ctx.transport.wire
 }
 
-export const rpc = <TMsgToClient, TMsgToServer>(input: { ctx: ServerCtx<TMsgToClient, TMsgToServer> }) => {
-  return RPC.initServer(rpcContract, {
-    serverInstance: ServerInstanceServer.rpc({ ctx: input.ctx.serverInstance }),
+export const rpc = <TMsgToClient, TMsgToBackend>(input: { ctx: BackendCtx<TMsgToClient, TMsgToBackend> }) => {
+  return RPC.initBackend(rpcContract, {
+    serverInstance: BackendInstanceBackend.rpc({ ctx: input.ctx.serverInstance }),
   })
 }

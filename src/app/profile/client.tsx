@@ -3,7 +3,7 @@ import { Loading, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppClientModule } from '~/app/@/architecture/app-client'
 import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
-import { back, logout, pushRoute, replaceRoute, sendToServer } from '../@/client/cmd'
+import { back, logout, pushRoute, replaceRoute, sendToBackend } from '../@/client/cmd'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { ViewProfileScreen } from './profile-client/profile-client-view-profile-screen'
@@ -54,7 +54,7 @@ export const update: ClientModule['update'] = (input) => {
         msgEvt: input.msgEvt,
       }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromBackend({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
   )
@@ -119,22 +119,22 @@ const updateFromEvent: ClientModule['update'] = (input) => {
   }
 }
 
-const updateFromServer: ClientModule['update'] = (input) => {
-  const { model, msgServer } = input
+const updateFromBackend: ClientModule['update'] = (input) => {
+  const { model, msgBackend } = input
 
-  if (!msgServer) {
+  if (!msgBackend) {
     return { model }
   }
 
-  switch (msgServer.t) {
+  switch (msgBackend.t) {
     case 'current-user-profile': {
-      if (isErr(msgServer.result)) {
+      if (isErr(msgBackend.result)) {
         return {
           model,
         }
       }
 
-      const profile = msgServer.result.value
+      const profile = msgBackend.result.value
 
       const modelNew: ModelClient = {
         ...model,
@@ -160,19 +160,19 @@ const updateFromServer: ClientModule['update'] = (input) => {
     }
 
     default: {
-      if (isErr(msgServer.result)) {
+      if (isErr(msgBackend.result)) {
         return {
           model: {
             ...model,
             requests: {
               ...model.requests,
-              [msgServer.t]: msgServer.result,
+              [msgBackend.t]: msgBackend.result,
             },
           },
         }
       }
 
-      const profilesNew = msgServer.result.value.reduce<ModelClient['profiles']>((acc, profile) => {
+      const profilesNew = msgBackend.result.value.reduce<ModelClient['profiles']>((acc, profile) => {
         return {
           ...acc,
           [profile.userId]: profile,
@@ -362,7 +362,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
             },
           },
         },
-        toServer: [msg],
+        toBackend: [msg],
       }
     }
   }
@@ -378,7 +378,7 @@ const loadProfile = (userId: UserId, model: ModelClient): ReturnType<ClientModul
       },
     },
     msgCmd: [
-      sendToServer({
+      sendToBackend({
         t: 'find-one',
         userId,
       }),

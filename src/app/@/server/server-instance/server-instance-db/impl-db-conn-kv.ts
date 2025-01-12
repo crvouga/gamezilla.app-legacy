@@ -1,9 +1,9 @@
 import { isErr, Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
 import { DbConnKv, IDbConnKv } from '../../../../../@/db-conn-kv'
-import { ServerInstance } from '../server-instance'
-import { ServerInstanceId } from '../server-instance-id'
-import { IServerInstanceDb } from './interface'
+import { BackendInstance } from '../server-instance'
+import { BackendInstanceId } from '../server-instance-id'
+import { IBackendInstanceDb } from './interface'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 
@@ -12,19 +12,19 @@ export type Config = {
   dbConnKv: IDbConnKv
 }
 
-export const ServerInstanceDb = (config: Config): IServerInstanceDb => {
+export const BackendInstanceDb = (config: Config): IBackendInstanceDb => {
   const byId = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['server-instance-by-id'],
-    parser: ServerInstance,
+    parser: BackendInstance,
   })
   const ALL_IDS_KEY = 'all'
   const indexAllIds = DbConnKv.withNamespace({
     dbConnKv: config.dbConnKv,
     namespace: ['server-instance-ids'],
-    parser: p.arr(ServerInstanceId),
+    parser: p.arr(BackendInstanceId),
   })
-  const list: IServerInstanceDb['list'] = async () => {
+  const list: IBackendInstanceDb['list'] = async () => {
     const got = await indexAllIds.get(ALL_IDS_KEY)
     if (isErr(got)) {
       return got
@@ -36,10 +36,10 @@ export const ServerInstanceDb = (config: Config): IServerInstanceDb => {
     }
     return Ok(gotAll.value)
   }
-  const get: IServerInstanceDb['get'] = async (serverId) => {
+  const get: IBackendInstanceDb['get'] = async (serverId) => {
     return byId.get(serverId)
   }
-  const put: IServerInstanceDb['put'] = async (serverInstance) => {
+  const put: IBackendInstanceDb['put'] = async (serverInstance) => {
     const gotIds = await indexAllIds.get(ALL_IDS_KEY)
     const ids = unwrapOr(gotIds, null) ?? []
     const idsNew = Array.from(new Set([...ids, serverInstance.serverInstanceId]))
@@ -49,7 +49,7 @@ export const ServerInstanceDb = (config: Config): IServerInstanceDb => {
     }
     return byId.set(serverInstance.serverInstanceId, serverInstance)
   }
-  const listAlive: IServerInstanceDb['listAlive'] = async (input) => {
+  const listAlive: IBackendInstanceDb['listAlive'] = async (input) => {
     const listed = unwrapOr(await list(), [])
     const alive = listed
       .filter((serverInstance) => {

@@ -54,7 +54,7 @@ export type ModelClient = {
   }
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
 //
 //
@@ -98,19 +98,19 @@ export const update = (input: { msg: MsgClient; model: ModelClient }) => {
   }
 }
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
-export type MsgServer = Res
+export type MsgBackend = Res
 
 export type MsgToClient = Res
 
 export const updateFromClient = ({
   msg,
 }: {
-  msg: MsgToServer
-  model: ModelServer
+  msg: MsgToBackend
+  model: ModelBackend
 }): {
-  eff: Eff<MsgServer>
+  eff: Eff<MsgBackend>
 } => {
   switch (msg[0]) {
     default: {

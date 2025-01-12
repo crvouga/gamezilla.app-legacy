@@ -2,18 +2,18 @@ import { isErr } from '~/@/result'
 import { withEventId } from '~/@/event-sourced/event'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import * as ConnectFour from '../@/connect-four/connect-four'
 import {
   type ModelCore,
-  type ModelServer,
+  type ModelBackend,
   type MsgCore,
-  type MsgServer,
+  type MsgBackend,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   isBotTurn,
 } from './vs-bot.types'
 import { Sub } from '~/@/sub'
@@ -26,18 +26,18 @@ import { Sub } from '~/@/sub'
 //
 //
 
-type Module = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
+type Module = GameBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   ModelCore: ModelCore
   MsgCore: MsgCore
-  Ctx: SpaceServerCtx
+  Ctx: SpaceBackendCtx
   Deps: null
   MsgCmdIn: null
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  MsgEvtIn: SpaceBackendEvt
+  MsgCmdOut: SpaceBackendCmd<MsgToClient>
   MsgEvtOut: null
 }>
 
@@ -46,7 +46,7 @@ export const init: Module['init'] = {
 }
 
 export const update: Module['update'] = async (input) => {
-  return GameServerModule.andThen({}, () => updateFromMsg(input))
+  return GameBackendModule.andThen({}, () => updateFromMsg(input))
 }
 
 const updateFromMsg: Module['update'] = async (input) => {

@@ -17,21 +17,21 @@ export type ClientTransportEvent =
 
 export type ClientTransportCommand = { t: 'try-reconnect' }
 
-export type IClientTransport<T extends { MsgToClient: any; MsgToServer: any }> = {
-  toServer: PubSub<T['MsgToServer'][]>
-  fromServer: PubSub<T['MsgToClient'][]>
+export type IClientTransport<T extends { MsgToClient: any; MsgToBackend: any }> = {
+  toBackend: PubSub<T['MsgToBackend'][]>
+  fromBackend: PubSub<T['MsgToClient'][]>
   msgEvt: PubSub<ClientTransportEvent>
   msgCmd: PubSub<ClientTransportCommand>
   start: () => Promise<void>
 }
 
-export const initClientTransport = <MsgToServer, MsgToClient>(): IClientTransport<{
+export const initClientTransport = <MsgToBackend, MsgToClient>(): IClientTransport<{
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
 }> => {
   return {
-    fromServer: PubSub.create(),
-    toServer: PubSub.create(),
+    fromBackend: PubSub.create(),
+    toBackend: PubSub.create(),
     msgEvt: PubSub.create(),
     msgCmd: PubSub.create(),
     start: async () => {},

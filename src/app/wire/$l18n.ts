@@ -10,7 +10,7 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   en: {
-    'wire.server-restarted': 'Server restarted',
+    'wire.server-restarted': 'Backend restarted',
     'wire.connecting...': 'Connecting...',
     'wire.offline': 'Offline',
     'wire.online': 'Online',
@@ -24,7 +24,7 @@ export const translations: Translations<Text> = {
     'wire.try-reconnect': 'حاول إعادة الاتصال',
   },
   de: {
-    'wire.server-restarted': 'Server neu gestartet',
+    'wire.server-restarted': 'Backend neu gestartet',
     'wire.connecting...': 'Verbindung wird hergestellt...',
     'wire.offline': 'Offline',
     'wire.online': 'Online',
@@ -52,7 +52,7 @@ export const translations: Translations<Text> = {
     'wire.try-reconnect': 'पुनः कनेक्ट करने का प्रयास करें',
   },
   it: {
-    'wire.server-restarted': 'Server riavviato',
+    'wire.server-restarted': 'Backend riavviato',
     'wire.connecting...': 'Connessione in corso...',
     'wire.offline': 'Non in linea',
     'wire.online': 'Online',

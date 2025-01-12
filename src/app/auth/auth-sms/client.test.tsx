@@ -13,7 +13,7 @@ type Msg =
       msg: AuthSMSTypes.MsgClient
     }
   | {
-      msgServer: AuthSMSTypes.MsgToClient
+      msgBackend: AuthSMSTypes.MsgToClient
     }
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
@@ -71,7 +71,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.init, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'sent-code',
           phoneNumber,
           sent: Ok(null),
@@ -91,7 +91,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'sent-code',
           phoneNumber: PhoneNumber.random(),
           sent: Err({
@@ -117,7 +117,7 @@ describe(import.meta.file, () => {
     })
     const output = f.update(f.init, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'verified-code',
           verified: Err({
             t: 'verification-already-verified',

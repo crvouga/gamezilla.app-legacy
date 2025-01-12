@@ -1,7 +1,7 @@
 import { andThen } from '~/@/update/and-then'
 import { Translator } from '~/@/l18n/generated'
 import { ListItemButton, Typography, cn } from '../@/ui'
-import { ServerInstanceClient } from './server-instance/client'
+import { BackendInstanceClient } from './server-instance/client'
 import type { IClientTransport } from './transport/client'
 import type { ClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
 import { Eff } from '~/@/eff'
@@ -18,7 +18,7 @@ import { ClientEvt } from '../@/client/evt'
 //
 
 export const init = (input: { ctx: ClientCtx; stored: Record<string, unknown> | null }): { model: ModelClient } => {
-  const serverInstance = ServerInstanceClient.init({
+  const serverInstance = BackendInstanceClient.init({
     ctx: { ...input.ctx, rpc: input.ctx.rpc.serverInstance },
   })
   return {
@@ -46,9 +46,9 @@ type Output = {
   eff?: Eff<MsgClient>
 }
 
-export const update = <TMsgToClient extends Record<string, unknown>, TMsgToServer extends Record<string, unknown>>({
+export const update = <TMsgToClient extends Record<string, unknown>, TMsgToBackend extends Record<string, unknown>>({
   msg,
-  msgServer,
+  msgBackend,
   msgCmd,
   model,
   ctx,
@@ -58,21 +58,21 @@ export const update = <TMsgToClient extends Record<string, unknown>, TMsgToServe
     t: Translator
   }
   msg?: MsgClient | null
-  msgServer?: MsgToClient | null
+  msgBackend?: MsgToClient | null
   msgCmd?: AppClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: TMsgToServer
+    MsgToBackend: TMsgToBackend
   }> | null
   model: ModelClient
   transport: IClientTransport<{
-    MsgToServer: TMsgToServer
+    MsgToBackend: TMsgToBackend
     MsgToClient: TMsgToClient
   }>
 }): Output => {
   return andThen<ModelClient, Output>(
     { model },
     (model) => updateFromMsg({ ctx, msg, model, transport }),
-    (model) => updateFromServer({ ctx, model, msgServer, transport }),
+    (model) => updateFromBackend({ ctx, model, msgBackend, transport }),
     (model) => updateFromCmd({ ctx, msgCmd, model, transport }),
   )
 }
@@ -158,12 +158,12 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
   }
 }
 
-const updateFromServer: typeof update = ({ ctx, model, msgServer }) => {
-  if (!msgServer) {
+const updateFromBackend: typeof update = ({ ctx, model, msgBackend }) => {
+  if (!msgBackend) {
     return { model }
   }
 
-  switch (msgServer.t) {
+  switch (msgBackend.t) {
     case 'got-server-instance-msg': {
       return { model }
     }
@@ -188,11 +188,11 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
       return {
         model,
         eff(dispatch) {
-          if (wireCmd.toServer) {
-            transport.toServer.pub([wireCmd.toServer])
+          if (wireCmd.toBackend) {
+            transport.toBackend.pub([wireCmd.toBackend])
             dispatch({
               t: 'sent-to-server',
-              toServer: wireCmd.toServer,
+              toBackend: wireCmd.toBackend,
             })
           }
         },
@@ -304,11 +304,11 @@ export const ViewStatusBarDrawer = (input: {
 //
 //
 
-export const subscriptions = <MsgToServer, MsgToClient>({
+export const subscriptions = <MsgToBackend, MsgToClient>({
   transport,
 }: {
   transport: IClientTransport<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgToClient: MsgToClient
   }>
 }): Sub<MsgClient> => {

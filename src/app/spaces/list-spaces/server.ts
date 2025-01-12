@@ -2,7 +2,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { Paginated } from '~/app/@/data/pagination'
 import { sendToClient } from '~/app/@/server/cmd'
-import type { SpaceServerModule } from '../@/architecture/space-server'
+import type { SpaceBackendModule } from '../@/architecture/space-server'
 import { SpaceCore } from '../core/space-core'
 
 //
@@ -13,10 +13,10 @@ import { SpaceCore } from '../core/space-core'
 //
 //
 
-const update: SpaceServerModule['update'] = async (input) => {
+const update: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-spaces': {
-      const listed = await input.ctx.spacesCoreServer.list(input.msgClient)
+      const listed = await input.ctx.spacesCoreBackend.list(input.msgClient)
       const spaces = unwrapOr(listed, Paginated.init())
       const started = spaces.items.map(EventSourced.startFromLatestSnapshot)
       const userIds = spaces.items.flatMap(SpaceCore.toUserIds)
@@ -45,6 +45,6 @@ const update: SpaceServerModule['update'] = async (input) => {
 //
 //
 
-export const ListSpacesServer = {
+export const ListSpacesBackend = {
   update,
 }

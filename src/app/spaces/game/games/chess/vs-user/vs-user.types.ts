@@ -24,7 +24,7 @@ export type ModelClient = {
 
 export type Modal = 'RequestToDraw' | 'AskedToDraw' | 'resign' | 'game-over'
 
-export type ModelServer = CoreModel
+export type ModelBackend = CoreModel
 
 export type CoreModel =
   | {
@@ -98,11 +98,11 @@ export type MsgClient =
   | ['ClickedFlip']
   | Req
 
-export type MsgServer = ClockTicked
+export type MsgBackend = ClockTicked
 
 export type MsgToClient = ['game-over'] | ['GameStarted'] | ['player-left', CoreModel] | ClockTicked_Done | Res
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
 export type Req =
   | InputPlayer

@@ -1,9 +1,9 @@
-import { AppServerTestEnv } from '~/app/@/server/fixture'
+import { AppBackendTestEnv } from '~/app/@/server/fixture'
 import { Logger } from '~/@/logger'
 import { PuzzleDb } from './impl'
 
 export const PuzzleDbFixture = async () => {
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
   switch (testEnv.t) {
     case 'all':
     case 'integration': {

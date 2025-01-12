@@ -1,12 +1,12 @@
-import { AppServerModule } from '~/app/@/architecture/app-server'
+import { AppBackendModule } from '~/app/@/architecture/app-server'
 import { sendToClient } from '~/app/@/server/cmd'
-import type { ServerModule } from './types'
+import type { BackendModule } from './types'
 
-const update: ServerModule['update'] = async (input) => {
-  return AppServerModule.andThen({}, () => updateListPacks(input))
+const update: BackendModule['update'] = async (input) => {
+  return AppBackendModule.andThen({}, () => updateListPacks(input))
 }
 
-const updateListPacks: ServerModule['update'] = async (input) => {
+const updateListPacks: BackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-packs': {
       const listed = await input.ctx.packDb.list(input.msgClient.input)
@@ -27,6 +27,6 @@ const updateListPacks: ServerModule['update'] = async (input) => {
   }
 }
 
-export const PackListServer = {
+export const PackListBackend = {
   update,
 }

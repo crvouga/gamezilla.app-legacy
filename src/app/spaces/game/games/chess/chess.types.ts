@@ -27,13 +27,13 @@ export type ModelClient = {
   }
 }
 
-export type ModelServer =
+export type ModelBackend =
   | { t: 'none' }
-  | { t: 'vs-user'; c: VsUser.ModelServer }
-  | { t: 'vs-bot'; c: VsBot.ModelServer }
-  | { t: 'puzzle'; c: Puzzle.ModelServer }
+  | { t: 'vs-user'; c: VsUser.ModelBackend }
+  | { t: 'vs-bot'; c: VsBot.ModelBackend }
+  | { t: 'puzzle'; c: Puzzle.ModelBackend }
 
-type Mode = ModelServer['t']
+type Mode = ModelBackend['t']
 
 export type MsgClient =
   | GameMainMenu.Msg
@@ -42,10 +42,10 @@ export type MsgClient =
   | { t: 'vs-bot'; c: VsBot.MsgClient }
   | { t: 'puzzle'; c: Puzzle.MsgClient }
 
-export type MsgServer =
-  | { t: 'vs-user'; c: VsUser.MsgServer }
-  | { t: 'vs-bot'; c: VsBot.MsgServer }
-  | { t: 'puzzle'; c: Puzzle.MsgServer }
+export type MsgBackend =
+  | { t: 'vs-user'; c: VsUser.MsgBackend }
+  | { t: 'vs-bot'; c: VsBot.MsgBackend }
+  | { t: 'puzzle'; c: Puzzle.MsgBackend }
 
 export type MsgToClient =
   | Res
@@ -53,15 +53,15 @@ export type MsgToClient =
   | { t: 'vs-bot'; c: VsBot.MsgToClient }
   | { t: 'puzzle'; c: Puzzle.MsgToClient }
 
-export type MsgToServer =
+export type MsgToBackend =
   | Req
-  | { t: 'vs-user'; c: VsUser.MsgToServer }
-  | { t: 'vs-bot'; c: VsBot.MsgToServer }
-  | { t: 'puzzle'; c: Puzzle.MsgToServer }
+  | { t: 'vs-user'; c: VsUser.MsgToBackend }
+  | { t: 'vs-bot'; c: VsBot.MsgToBackend }
+  | { t: 'puzzle'; c: Puzzle.MsgToBackend }
 
 export type Req = { t: 'input-mode'; mode: Mode; userId: UserId }
 export type Res = Req & {
-  result: Result<Problem, ModelServer>
+  result: Result<Problem, ModelBackend>
 }
 export type Problem = 'must_be_the_host'
 

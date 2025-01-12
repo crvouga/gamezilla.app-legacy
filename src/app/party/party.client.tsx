@@ -85,7 +85,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   }
 }
 
-export const updateFromServer = (
+export const updateFromBackend = (
   { currentUserId }: { currentUserId: UserId },
   msg: MsgToClient,
   model: Model,

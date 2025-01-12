@@ -4,7 +4,7 @@ import { NotAsked, Result, isErr } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { sendToServer, showErrSm } from '~/app/@/client/cmd'
+import { sendToBackend, showErrSm } from '~/app/@/client/cmd'
 import { IconBox, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
@@ -38,7 +38,7 @@ const updateList: ClientModule['update'] = (input) => {
           request: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
-          sendToServer({
+          sendToBackend({
             t: 'list-packs',
             input: {
               order: {
@@ -66,7 +66,7 @@ const updateList: ClientModule['update'] = (input) => {
           request: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
-          sendToServer({
+          sendToBackend({
             t: 'list-packs',
             input: {
               order: {
@@ -95,9 +95,9 @@ const updateList: ClientModule['update'] = (input) => {
     }
   }
 
-  switch (input.msgServer?.t) {
+  switch (input.msgBackend?.t) {
     case 'listed-packs': {
-      const packs: Pack[] = input.msgServer.listed.t === 'ok' ? input.msgServer.listed.value.items : []
+      const packs: Pack[] = input.msgBackend.listed.t === 'ok' ? input.msgBackend.listed.value.items : []
 
       const packsNew = packs.reduce((acc, puzzle) => {
         acc[puzzle.id] = puzzle
@@ -110,11 +110,11 @@ const updateList: ClientModule['update'] = (input) => {
           request: RequestResponse.response(
             input.model.request,
             input.ctx.now,
-            Result.mapOk(input.msgServer.listed, () => null),
+            Result.mapOk(input.msgBackend.listed, () => null),
           ),
           packs: packsNew,
         },
-        msgCmd: isErr(input.msgServer.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : [],
+        msgCmd: isErr(input.msgBackend.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : [],
       }
     }
     default: {

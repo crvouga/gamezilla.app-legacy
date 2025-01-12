@@ -2,7 +2,7 @@ import * as http from 'node:http'
 import { Logger, type ILogger } from '~/@/logger'
 import { PubSub } from '../sub'
 import { Posix } from '../time/posix'
-import { WebServerEvent, type Handler, type IWebServer } from './interface'
+import { WebBackendEvent, type Handler, type IWebBackend } from './interface'
 import { getIpAddress } from './ip-address'
 
 export type Config = {
@@ -10,13 +10,13 @@ export type Config = {
   logger: ILogger
 }
 
-export const WebServerNode = (config: Config) => {
+export const WebBackendNode = (config: Config) => {
   const logger = Logger.prefix('node', config.logger)
   const httpServer = new http.Server()
   const handlers: Handler[] = []
-  const events: PubSub<WebServerEvent> = PubSub.create()
+  const events: PubSub<WebBackendEvent> = PubSub.create()
 
-  const base: IWebServer = {
+  const base: IWebBackend = {
     events,
     async start(port) {
       try {
@@ -56,7 +56,7 @@ export const WebServerNode = (config: Config) => {
   } as const
 }
 
-export type WebServerNode = ReturnType<typeof WebServerNode>
+export type WebBackendNode = ReturnType<typeof WebBackendNode>
 
 async function incomingMessageToFetchRequest(incomingMessage: http.IncomingMessage): Promise<Request> {
   const url = `${incomingMessage.headers['host']}${incomingMessage.url}`

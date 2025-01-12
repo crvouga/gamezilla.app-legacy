@@ -7,14 +7,14 @@ import { SMS } from '~/@/sms'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { AppServerModule } from '~/app/@/architecture/app-server'
+import { AppBackendModule } from '~/app/@/architecture/app-server'
 import { Translator } from '~/app/@/client/translator'
 import type { UserAccount } from '~/app/@/data/account'
 import { UserId } from '~/app/@/data/user-id'
 import { sendToClient } from '~/app/@/server/cmd'
 import type { IUserAccountDb } from '../@/server/user-account-db'
 import { UserAccountDb } from '../@/server/user-account-db/impl'
-import type { ServerModule } from './types'
+import type { BackendModule } from './types'
 import { VerifySMS } from './verify-sms/impl/impl'
 import { verifyCodeProblemToString, type IVerifySMS, type VerifyCodeProblem } from './verify-sms/interface'
 import { VerificationAttemptDb } from './verify-sms/verification-attempt'
@@ -28,7 +28,7 @@ import { VerificationDb } from './verify-sms/verification/verification-db'
 //
 //
 
-const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
+const initDeps: BackendModule['initDeps'] = async ({ ctx }) => {
   const logger = Logger.prefix('auth-sms', ctx.logger)
   const accountDb = UserAccountDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
   const verificationDb = VerificationDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
@@ -67,15 +67,15 @@ const initDeps: ServerModule['initDeps'] = async ({ ctx }) => {
 //
 //
 
-const update: ServerModule['update'] = async (input) => {
-  return AppServerModule.andThen(
+const update: BackendModule['update'] = async (input) => {
+  return AppBackendModule.andThen(
     {},
     () => updateSendCode(input),
     () => updateVerifyCode(input),
   )
 }
 
-const updateSendCode: ServerModule['update'] = async ({ msgClient, deps }) => {
+const updateSendCode: BackendModule['update'] = async ({ msgClient, deps }) => {
   switch (msgClient?.t) {
     case 'user-clicked-send-code-button': {
       const sent = await deps.VerifySMS.sendCode(msgClient)
@@ -149,7 +149,7 @@ const handleVerifyCode = async (input: {
   return Ok(accountNew)
 }
 
-const updateVerifyCode: ServerModule['update'] = async ({ msgClient, deps, ctx }) => {
+const updateVerifyCode: BackendModule['update'] = async ({ msgClient, deps, ctx }) => {
   switch (msgClient?.t) {
     case 'user-clicked-verify-code-button': {
       ctx.logger.info(`Verifying code for ${PhoneNumber.toString(msgClient.phoneNumber)}`)
@@ -210,7 +210,7 @@ const updateVerifyCode: ServerModule['update'] = async ({ msgClient, deps, ctx }
 //
 //
 
-const subscriptions: ServerModule['subscriptions'] = async () => {
+const subscriptions: BackendModule['subscriptions'] = async () => {
   return Sub.None
 }
 
@@ -222,7 +222,7 @@ const subscriptions: ServerModule['subscriptions'] = async () => {
 //
 //
 
-export const AuthSMSServer = {
+export const AuthSMSBackend = {
   initDeps,
   update,
   subscriptions,

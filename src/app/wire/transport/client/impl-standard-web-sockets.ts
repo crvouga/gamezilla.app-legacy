@@ -1,5 +1,5 @@
 import { WEB_SOCKET_ENDPOINT } from '../shared'
-import { type MsgClientToMsgServer, type MsgServerToMsgClient } from '../types'
+import { type MsgClientToMsgBackend, type MsgBackendToMsgClient } from '../types'
 import {
   initClientTransport,
   type ClientTransportCommand,
@@ -15,15 +15,15 @@ export type Config = {
   serverUrl: string
 }
 
-export const ClientTransport = <MsgToServer, MsgToClient>(
+export const ClientTransport = <MsgToBackend, MsgToClient>(
   config: Config,
 ): IClientTransport<{
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgToClient: MsgToClient
 }> => {
-  const serverUrl = toWebsocketServerUrl(config.serverUrl.toString())
+  const serverUrl = toWebsocketBackendUrl(config.serverUrl.toString())
 
-  const transport = initClientTransport<MsgToServer, MsgToClient>()
+  const transport = initClientTransport<MsgToBackend, MsgToClient>()
 
   if (typeof window === 'undefined') {
     return transport
@@ -33,7 +33,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
   let ws: WebSocket
   let isConnected = false
   let isDocumentHidden = false
-  let queue: MsgClientToMsgServer<MsgToServer>[] = []
+  let queue: MsgClientToMsgBackend<MsgToBackend>[] = []
 
   const connect = async () => {
     if (isConnected) {
@@ -81,8 +81,8 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
     ws.onmessage = (msgEvt) => {
       try {
         isConnected = true
-        const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>
-        transport.fromServer.pub(msg)
+        const msg = JSON.parse(msgEvt.data) as MsgBackendToMsgClient<MsgToClient>
+        transport.fromBackend.pub(msg)
       } catch (e) {
         console.log('got bad msg', e)
       }
@@ -106,7 +106,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
     }
   })
 
-  const send = (msg: MsgClientToMsgServer<MsgToServer>) => {
+  const send = (msg: MsgClientToMsgBackend<MsgToBackend>) => {
     if (!isConnected) {
       queue.push(msg)
       return
@@ -117,7 +117,7 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
     }
   }
 
-  transport.toServer.sub((msgs) => {
+  transport.toBackend.sub((msgs) => {
     send(msgs)
   })
 
@@ -137,27 +137,27 @@ export const ClientTransport = <MsgToServer, MsgToClient>(
   }
 }
 
-type Model<MsgToServer> = {
+type Model<MsgToBackend> = {
   reconnectAttempts: number
   isConnected: boolean
   isDocumentHidden: boolean
-  queue: MsgClientToMsgServer<MsgToServer>[]
+  queue: MsgClientToMsgBackend<MsgToBackend>[]
 }
 
-export const init = <MsgToServer>(): Model<MsgToServer> => ({
+export const init = <MsgToBackend>(): Model<MsgToBackend> => ({
   reconnectAttempts: 0,
   isConnected: false,
   isDocumentHidden: false,
   queue: [],
 })
 
-export const update = <MsgToServer>(input: {
+export const update = <MsgToBackend>(input: {
   codebaseVersionId: string
-  model: Model<MsgToServer>
+  model: Model<MsgToBackend>
   evt?: ClientTransportEvent
   cmd?: ClientTransportCommand
-  msg?: { t: 'to-server'; msgs: MsgToServer[] }
-}): Model<MsgToServer> => {
+  msg?: { t: 'to-server'; msgs: MsgToBackend[] }
+}): Model<MsgToBackend> => {
   const msg = input.evt ?? input.cmd ?? input.msg
   if (!msg) {
     return input.model
@@ -201,25 +201,25 @@ export const update = <MsgToServer>(input: {
   }
 }
 
-const toWebsocketServerUrl = (baseServerUrl: string) => {
+const toWebsocketBackendUrl = (baseBackendUrl: string) => {
   try {
-    const baseServerUrlObj = new URL(baseServerUrl)
+    const baseBackendUrlObj = new URL(baseBackendUrl)
 
     if (typeof window === 'undefined') {
-      return baseServerUrlObj.toString()
+      return baseBackendUrlObj.toString()
     }
 
-    if (baseServerUrlObj.protocol === 'https:') {
-      baseServerUrlObj.protocol = 'wss'
+    if (baseBackendUrlObj.protocol === 'https:') {
+      baseBackendUrlObj.protocol = 'wss'
     }
 
-    if (baseServerUrlObj.protocol === 'http:') {
-      baseServerUrlObj.protocol = 'ws'
+    if (baseBackendUrlObj.protocol === 'http:') {
+      baseBackendUrlObj.protocol = 'ws'
     }
 
-    baseServerUrlObj.pathname = WEB_SOCKET_ENDPOINT
+    baseBackendUrlObj.pathname = WEB_SOCKET_ENDPOINT
 
-    return baseServerUrlObj.toString()
+    return baseBackendUrlObj.toString()
   } catch (e) {
     return WEB_SOCKET_ENDPOINT
   }

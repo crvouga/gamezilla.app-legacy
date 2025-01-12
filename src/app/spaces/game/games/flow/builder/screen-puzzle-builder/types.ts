@@ -17,9 +17,9 @@ export const initClient: ModelClient = {
   ...SaveChangesTypes.initClient,
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
-export type MsgServer = SaveChangesTypes.MsgServer | DeleteForeverTypes.MsgServer | EditPuzzleNameTypes.MsgServer
+export type MsgBackend = SaveChangesTypes.MsgBackend | DeleteForeverTypes.MsgBackend | EditPuzzleNameTypes.MsgBackend
 
 export type MsgClient =
   | EditPuzzleNameTypes.MsgClient
@@ -48,10 +48,10 @@ export type MsgToClient =
   | DeleteForeverTypes.MsgToClient
   | EditPuzzleNameTypes.MsgToClient
 
-export type MsgToServer =
-  | SaveChangesTypes.MsgToServer
-  | DeleteForeverTypes.MsgToServer
-  | EditPuzzleNameTypes.MsgToServer
+export type MsgToBackend =
+  | SaveChangesTypes.MsgToBackend
+  | DeleteForeverTypes.MsgToBackend
+  | EditPuzzleNameTypes.MsgToBackend
 
 //
 //

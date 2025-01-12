@@ -2,9 +2,9 @@ import { isErr } from '~/@/result'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { sendToClient } from '~/app/@/server/cmd'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import { toOpposite, toTurn, type PlayerType } from '../@/tic-tic-toe/tic-tac-toe'
 import * as Round from './vs-user-round'
 import {
@@ -22,10 +22,10 @@ import {
   roundCountDown,
   startGame,
   stopPlaying,
-  type ModelServer,
-  type MsgServer,
+  type ModelBackend,
+  type MsgBackend,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   type Res,
 } from './vs-user.types'
 import { Sub } from '~/@/sub'
@@ -38,7 +38,7 @@ import { Sub } from '~/@/sub'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init = initCoreModel
 
@@ -50,14 +50,14 @@ export const init = initCoreModel
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = (
   msg: Msg,
   model: Model,
 ): {
   model: Model
-  msgCmd: SpaceServerCmd<MsgToClient>[]
+  msgCmd: SpaceBackendCmd<MsgToClient>[]
 } => {
   switch (msg[0]) {
     case 'RoundCountDown': {
@@ -95,12 +95,12 @@ export const update = (
 }
 
 export const updateFromClient = (
-  _ctx: SpaceServerCtx,
-  msg: MsgToServer,
+  _ctx: SpaceBackendCtx,
+  msg: MsgToBackend,
   model: Model,
 ): {
   model: Model
-  msgCmd: SpaceServerCmd<MsgToClient>[]
+  msgCmd: SpaceBackendCmd<MsgToClient>[]
 } => {
   switch (msg[0]) {
     case 'InputPlayer': {
@@ -353,11 +353,11 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt
+  msg: SpaceBackendEvt
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     const { userId } = msg

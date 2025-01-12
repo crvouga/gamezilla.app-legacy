@@ -2,12 +2,12 @@ import { describe, expect, it } from 'bun:test'
 import { Result } from '~/@/result'
 import { withEventId, withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../../../@/pack/pack'
-import { FlowCreateFixtureServer } from '../../../@/testing/server'
+import { FlowCreateFixtureBackend } from '../../../@/testing/server'
 import { EditPackNameCore } from '../core'
-import { EditPackNameServer } from '../server'
+import { EditPackNameBackend } from '../server'
 
 const Fixture = async () => {
-  const f = await FlowCreateFixtureServer()
+  const f = await FlowCreateFixtureBackend()
   const pack = await Pack.random()
   await f.ctx.packDb.put(pack)
   const modelCore = EditPackNameCore.init({ pack })
@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
   it('should persist pack name after user clicks save button', async () => {
     const f = await Fixture()
     const someNewName = 'some new name'
-    await EditPackNameServer.update({
+    await EditPackNameBackend.update({
       ...f,
       modelCore: {
         ...f.modelCore,
@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
   it('should output persist pack msg core after user clicks save button', async () => {
     const f = await Fixture()
     const someNewName = 'some new name'
-    const output = await EditPackNameServer.update({
+    const output = await EditPackNameBackend.update({
       ...f,
       modelCore: {
         ...f.modelCore,

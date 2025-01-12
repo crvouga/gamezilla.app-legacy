@@ -26,8 +26,8 @@ export type ModelClient = {
   ghostIndex: ColumnIndex | null
 }
 
-export const ModelServer = p.l(null)
-export type ModelServer = p.Infer<typeof ModelServer>
+export const ModelBackend = p.l(null)
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
 //
 //
@@ -37,7 +37,7 @@ export type ModelServer = p.Infer<typeof ModelServer>
 //
 //
 
-export type MsgServer = { t: null }
+export type MsgBackend = { t: null }
 
 export type MsgClient =
   | MsgCore
@@ -45,7 +45,7 @@ export type MsgClient =
   | { t: 'clicked-resign'; userId: UserId }
   | { t: 'close-modal' }
 
-export type MsgToServer = { t: null }
+export type MsgToBackend = { t: null }
 
 export type MsgToClient = { t: null }
 

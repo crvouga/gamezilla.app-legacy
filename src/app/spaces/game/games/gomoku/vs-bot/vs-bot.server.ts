@@ -1,8 +1,8 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { handleBotMove, initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-bot.types'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
+import { handleBotMove, initShared, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-bot.types'
 
 //
 //
@@ -12,7 +12,7 @@ import { handleBotMove, initShared, type ModelServer, type MsgServer, type MsgTo
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init = initShared
 
@@ -24,7 +24,7 @@ export const init = initShared
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = ({
   msg,
@@ -45,7 +45,7 @@ export const update = ({
   }
 }
 
-type UpdateFromClient = (input: { ctx: SpaceServerCtx; msg: MsgToServer; model: Model }) => {
+type UpdateFromClient = (input: { ctx: SpaceBackendCtx; msg: MsgToBackend; model: Model }) => {
   model: Model
   eff?: Eff<Msg>
 }
@@ -75,7 +75,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt
+  msg: SpaceBackendEvt
   model: Model
 }): {
   model: Model

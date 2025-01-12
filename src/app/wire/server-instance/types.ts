@@ -2,26 +2,26 @@ import { p } from '~/@/parser'
 import { RPC } from '~/@/rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'
-import { WebServerEvent } from '~/@/web-server'
+import { WebBackendEvent } from '~/@/web-server'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { AppServerModule } from '~/app/@/architecture/app-server'
+import { AppBackendModule } from '~/app/@/architecture/app-server'
 import { AppClientCmd } from '~/app/@/client/cmd'
 import { AnonymousClientCtx, AppClientCtx } from '~/app/@/client/ctx'
 import { ClientEvt } from '~/app/@/client/evt'
-import { ServerCmd } from '~/app/@/server/cmd'
-import { AppServerCtx } from '~/app/@/server/ctx'
-import { ServerEvt } from '~/app/@/server/evt'
-import { ServerInstance } from '~/app/@/server/server-instance/server-instance'
-import { IServerInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
+import { BackendCmd } from '~/app/@/server/cmd'
+import { AppBackendCtx } from '~/app/@/server/ctx'
+import { BackendEvt } from '~/app/@/server/evt'
+import { BackendInstance } from '~/app/@/server/server-instance/server-instance'
+import { IBackendInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
 
 export type ModelClient = { t: 'noop' }
 
-export type MsgToServer = { t: 'noop' }
+export type MsgToBackend = { t: 'noop' }
 
 export type MsgToClient = { t: 'noop' }
 
-export type MsgServer =
-  | { t: 'got-web-server-event'; c: WebServerEvent }
+export type MsgBackend =
+  | { t: 'got-web-server-event'; c: WebBackendEvent }
   | { t: 'got-runtime-event'; c: RuntimeEvent }
   | { t: 'heartbeat'; at: Posix }
 
@@ -31,29 +31,29 @@ export type ClientCtx = (AnonymousClientCtx | AppClientCtx) & {
   rpc: RPC.Client<typeof rpcContract>
 }
 
-export type ServerCtx = AppServerCtx & {
-  serverInstanceDb: IServerInstanceDb
+export type BackendCtx = AppBackendCtx & {
+  serverInstanceDb: IBackendInstanceDb
 }
 
-export type ServerModule = AppServerModule<{
-  Ctx: ServerCtx
-  MsgToServer: MsgToServer
+export type BackendModule = AppBackendModule<{
+  Ctx: BackendCtx
+  MsgToBackend: MsgToBackend
   MsgToClient: MsgToClient
-  Msg: MsgServer
-  MsgEvtIn: ServerEvt
-  MsgCmdOut: ServerCmd<MsgToClient>
+  Msg: MsgBackend
+  MsgEvtIn: BackendEvt
+  MsgCmdOut: BackendCmd<MsgToClient>
 }>
 
 export type ClientModule = AppClientModule<{
   Ctx: ClientCtx
   Model: ModelClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgToClient: MsgToClient
-  Msg: MsgServer
+  Msg: MsgBackend
   MsgEvtIn: ClientEvt
   MsgEvtOut: null
   MsgCmdOut: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
 }>
@@ -62,7 +62,7 @@ export const rpcContract = RPC.initContract({
   listAlive: {
     input: p.obj({}),
     output: p.obj({
-      serverInstances: p.arr(ServerInstance),
+      serverInstances: p.arr(BackendInstance),
     }),
   },
 })

@@ -66,7 +66,7 @@ export const SpaceClientFixture = async () => {
           const output = SpacesClient.update({
             ctx,
             model: initial,
-            msgServer: msg.c,
+            msgBackend: msg.c,
           })
           outputs.push(output)
           break
@@ -195,7 +195,7 @@ export const FixtureSpacesClient = async (input?: { currentRoute?: Route }) => {
 
 export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
-    msgServer: {
+    msgBackend: {
       t: 'got-msg-core',
       c: withEventMetaAt(happenedAt, {
         t: 'user-started-space',
@@ -208,7 +208,7 @@ export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: Sp
 
 export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
-    msgServer: {
+    msgBackend: {
       t: 'got-msg-core',
       c: withEventMetaAt(happenedAt, {
         t: 'user-left-space',
@@ -221,7 +221,7 @@ export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: Space
 
 export const userJoinedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
-    msgServer: {
+    msgBackend: {
       t: 'got-msg-core',
       c: withEventMetaAt(happenedAt, {
         t: 'user-joined-space',

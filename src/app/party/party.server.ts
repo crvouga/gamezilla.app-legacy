@@ -1,5 +1,5 @@
 import { isErr } from '~/@/result'
-import { type Res, type ModelServer, type MsgServer, type MsgToServer, handle } from './party.types'
+import { type Res, type ModelBackend, type MsgBackend, type MsgToBackend, handle } from './party.types'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Eff } from '~/@/eff'
 
@@ -11,7 +11,7 @@ import { Eff } from '~/@/eff'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init: Model = {
   parties: {},
@@ -26,7 +26,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
@@ -40,7 +40,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   }
 }
 
-export const updateFromClient = (msg: MsgToServer, model: Model): [Model, Eff<Msg>] => {
+export const updateFromClient = (msg: MsgToBackend, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'PartyCreate':
     case 'PartyDestroy':

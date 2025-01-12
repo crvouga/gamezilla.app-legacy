@@ -3,13 +3,13 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
-import { AppServerCtx } from '~/app/@/server/ctx'
-import { ServerInstance } from '~/app/@/server/server-instance/server-instance'
-import { ServerInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
-import { rpcContract, type MsgServer, type ServerCtx, type ServerModule } from './types'
+import { AppBackendCtx } from '~/app/@/server/ctx'
+import { BackendInstance } from '~/app/@/server/server-instance/server-instance'
+import { BackendInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
+import { rpcContract, type MsgBackend, type BackendCtx, type BackendModule } from './types'
 
-const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
-  const serverInstanceDb = ServerInstanceDb({
+const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
+  const serverInstanceDb = BackendInstanceDb({
     t: 'db-conn-kv',
     dbConnKv: input.ctx.dbConnKv,
   })
@@ -20,12 +20,12 @@ const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
   }
 }
 
-const update: ServerModule['update'] = async (input) => {
+const update: BackendModule['update'] = async (input) => {
   switch (input.msg?.t) {
     case 'got-web-server-event': {
       switch (input.msg.c.t) {
         case 'web-server/started': {
-          const serverInstanceNew: ServerInstance = {
+          const serverInstanceNew: BackendInstance = {
             ipAddress: input.msg.c.ipAddress,
             lastHeartbeatAt: input.msg.c.startedAt,
             port: input.msg.c.port,
@@ -42,7 +42,7 @@ const update: ServerModule['update'] = async (input) => {
         }
 
         case 'web-server/stopping': {
-          return updateServerStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
+          return updateBackendStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
         }
       }
     }
@@ -50,7 +50,7 @@ const update: ServerModule['update'] = async (input) => {
     case 'got-runtime-event': {
       switch (input.msg.c.t) {
         case 'stopping': {
-          return updateServerStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
+          return updateBackendStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
         }
       }
     }
@@ -62,7 +62,7 @@ const update: ServerModule['update'] = async (input) => {
         return {}
       }
 
-      const serverInstanceNew: ServerInstance = {
+      const serverInstanceNew: BackendInstance = {
         ...got,
         lastHeartbeatAt: input.msg.at,
       }
@@ -75,14 +75,14 @@ const update: ServerModule['update'] = async (input) => {
   return {}
 }
 
-const updateServerStopped = async (input: { stoppedAt: Posix; ctx: ServerCtx }) => {
+const updateBackendStopped = async (input: { stoppedAt: Posix; ctx: BackendCtx }) => {
   const got = unwrapOr(await input.ctx.serverInstanceDb.get(input.ctx.serverInstanceId), null)
 
   if (!got) {
     return {}
   }
 
-  const serverInstanceNew: ServerInstance = {
+  const serverInstanceNew: BackendInstance = {
     ...got,
     stoppedAt: input.stoppedAt,
   }
@@ -94,21 +94,21 @@ const updateServerStopped = async (input: { stoppedAt: Posix; ctx: ServerCtx }) 
   return {}
 }
 
-const subscriptions: ServerModule['subscriptions'] = async (input) => {
-  return Sub.batch<MsgServer>([
-    Sub.tag('got-web-server-event', input.ctx.webServer.events),
+const subscriptions: BackendModule['subscriptions'] = async (input) => {
+  return Sub.batch<MsgBackend>([
+    Sub.tag('got-web-server-event', input.ctx.webBackend.events),
     Sub.tag('got-runtime-event', input.ctx.runtime.events),
-    Time.interval(INTERVAL_ID, ServerInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at })),
+    Time.interval(INTERVAL_ID, BackendInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at })),
   ])
 }
 
 const INTERVAL_ID = 'server-instance-heartbeat'
 
-const rpc = (input: { ctx: ServerCtx }) => {
-  return RPC.initServer(rpcContract, {
+const rpc = (input: { ctx: BackendCtx }) => {
+  return RPC.initBackend(rpcContract, {
     async listAlive() {
       const listed = await input.ctx.serverInstanceDb.listAlive({
-        minimalHeartRate: ServerInstance.HEARTBEAT,
+        minimalHeartRate: BackendInstance.HEARTBEAT,
       })
       const serverInstances = unwrapOr(listed, [])
       return {
@@ -118,7 +118,7 @@ const rpc = (input: { ctx: ServerCtx }) => {
   })
 }
 
-export const ServerInstanceServer = {
+export const BackendInstanceBackend = {
   initCtx,
   update,
   subscriptions,

@@ -4,7 +4,7 @@ import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Logger } from '~/@/logger'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
-import { AppServerTestEnv } from '~/app/@/server/fixture'
+import { AppBackendTestEnv } from '~/app/@/server/fixture'
 import { Config, UserSessionDb } from './impl'
 
 const Fixture = async (config: Config) => {
@@ -47,7 +47,7 @@ const Fixture = async (config: Config) => {
 }
 
 const Fixtures = async () => {
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
   const configs: Config[] = [
     {
       t: 'in-memory',

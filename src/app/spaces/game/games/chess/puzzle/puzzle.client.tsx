@@ -16,7 +16,7 @@ import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-cl
 
 import { Eff } from '~/@/eff'
 import { Translator } from '~/@/l18n/generated'
-import { APP_SOUND, AppClientCmd, playSound, sendToServer } from '~/app/@/client/cmd'
+import { APP_SOUND, AppClientCmd, playSound, sendToBackend } from '~/app/@/client/cmd'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { LayoutGame } from '../../@/ui/layout-game'
@@ -28,7 +28,7 @@ import {
   type ModelClient,
   type MsgClient,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   initCore,
   isIncorrect,
   isNoMoreHints,
@@ -67,7 +67,7 @@ export const update = (input: {
   model: ModelClient
   eff?: Eff<MsgClient>
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 } => {
@@ -127,25 +127,25 @@ export const updateMain = ({
   model: ModelClient
   eff?: Eff<MsgClient>
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 } => {
   const updated = updateCore({ msg, model, ctx })
 
-  const modelNew = mergeWithServer({
+  const modelNew = mergeWithBackend({
     client: model,
     server: updated.t === 'err' ? model : updated.value,
   })
 
   return {
     model: modelNew,
-    msgCmd: [sendToServer(msg)],
+    msgCmd: [sendToBackend(msg)],
     eff: Eff.None,
   }
 }
 
-export const updateFromServer = (input: {
+export const updateFromBackend = (input: {
   ctx: SpaceClientCtx
   msg: MsgToClient
   model: ModelClient
@@ -153,14 +153,14 @@ export const updateFromServer = (input: {
   model: ModelClient
   eff?: Eff<MsgClient>
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 } => {
-  return updateFromServerMain(input)
+  return updateFromBackendMain(input)
 }
 
-export const updateFromServerMain: typeof updateFromServer = ({
+export const updateFromBackendMain: typeof updateFromBackend = ({
   msg,
   model,
 }: {
@@ -170,7 +170,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
 }): {
   model: ModelClient
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 } => {
@@ -193,7 +193,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
         }
       }
 
-      const merged = mergeWithServer({
+      const merged = mergeWithBackend({
         client: model,
         server: result.value,
       })
@@ -205,7 +205,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
   }
 }
 
-export const mergeWithServer = ({ client, server }: { client?: ModelClient; server: CoreModel }): ModelClient => {
+export const mergeWithBackend = ({ client, server }: { client?: ModelClient; server: CoreModel }): ModelClient => {
   return {
     ...client,
     ...server,

@@ -2,30 +2,30 @@ import { describe, expect, it } from 'bun:test'
 import { isOk } from '~/@/result'
 import { SessionId } from '~/app/@/data/session-id'
 import { ClientId } from '~/app/@/data/client-id'
-import { AppServerTestEnv, FixtureAppServer } from '~/app/@/server/fixture'
+import { AppBackendTestEnv, FixtureAppBackend } from '~/app/@/server/fixture'
 import { UserAccountDb } from '../@/server/user-account-db'
 import { UserSessionDb } from '../@/server/user-session-db'
-import * as AuthServer from '../server'
-import type { ServerCtx } from '../types'
-import { ContinueAsGuestServer } from './server'
+import * as AuthBackend from '../server'
+import type { BackendCtx } from '../types'
+import { ContinueAsGuestBackend } from './server'
 import type * as ContinueAsGuestTypes from './types'
 import { GuestSessionMappingDb } from '../@/server/guest-session-mapping-db'
 import { didSendMsgToClient } from '~/app/@/server/cmd'
 
 type Input =
   | {
-      msgClient: ContinueAsGuestTypes.MsgToServer & {
+      msgClient: ContinueAsGuestTypes.MsgToBackend & {
         clientId: ClientId
         sessionId: SessionId
       }
     }
   | {
-      msg: ContinueAsGuestTypes.MsgServer
+      msg: ContinueAsGuestTypes.MsgBackend
     }
 
-const BaseFixture = async (): Promise<{ ctx: ServerCtx }> => {
-  const testEnv = await AppServerTestEnv()
-  const f = await FixtureAppServer()
+const BaseFixture = async (): Promise<{ ctx: BackendCtx }> => {
+  const testEnv = await AppBackendTestEnv()
+  const f = await FixtureAppBackend()
 
   switch (testEnv.t) {
     case 'all':
@@ -82,9 +82,9 @@ const Fixture = async () => {
   const f = await BaseFixture()
 
   const updates = async (msgs: Input[]) => {
-    const updates: Awaited<ReturnType<typeof ContinueAsGuestServer.update>>[] = []
+    const updates: Awaited<ReturnType<typeof ContinueAsGuestBackend.update>>[] = []
     for (const msg of msgs) {
-      const update = await ContinueAsGuestServer.update({
+      const update = await ContinueAsGuestBackend.update({
         ...msg,
         deps: null,
         ctx: f.ctx,
@@ -182,7 +182,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const userId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
+    const userId = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(userId !== null).toBe(true)
   })
@@ -192,7 +192,7 @@ describe(import.meta.file, () => {
     const sessionId = SessionId.generate()
     const clientId = ClientId.generate()
 
-    const before = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
+    const before = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -204,7 +204,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const afterFirst = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
+    const afterFirst = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -216,7 +216,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const afterSecond = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
+    const afterSecond = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     await f.update([
       {
@@ -228,7 +228,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const afterThird = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
+    const afterThird = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(before).toEqual(null)
     expect(afterFirst).toEqual(afterSecond)
@@ -293,7 +293,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const expectedUserId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
+    const expectedUserId = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
       didSendMsgToClient(
@@ -334,7 +334,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const expectedUserId = await AuthServer.getUserIdFromSessionId(f.ctx, sessionId)
+    const expectedUserId = await AuthBackend.getUserIdFromSessionId(f.ctx, sessionId)
 
     expect(
       firstOutput.msgEvt?.some(

@@ -1,17 +1,17 @@
 import { isErr, isOk } from '~/@/result'
-import { AppServerModule } from '~/app/@/architecture/app-server'
+import { AppBackendModule } from '~/app/@/architecture/app-server'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserAccountDb } from './@/server/user-account-db'
 import { UserSessionDb } from './@/server/user-session-db'
-import { AuthSMSServer } from './auth-sms/server'
-import type { ServerCtx, MsgToClient, ServerModule } from './types'
-import { ContinueAsGuestServer } from './continue-as-guest/server'
+import { AuthSMSBackend } from './auth-sms/server'
+import type { BackendCtx, MsgToClient, BackendModule } from './types'
+import { ContinueAsGuestBackend } from './continue-as-guest/server'
 import { GuestSessionMappingDb } from './@/server/guest-session-mapping-db'
-import { LogoutServer } from './logout/server'
+import { LogoutBackend } from './logout/server'
 import { Sub } from '~/@/sub'
-import { AppServerCtx } from '../@/server/ctx'
-import { sendToClient, ServerCmd } from '../@/server/cmd'
+import { AppBackendCtx } from '../@/server/ctx'
+import { sendToClient, BackendCmd } from '../@/server/cmd'
 
 //
 //
@@ -19,7 +19,7 @@ import { sendToClient, ServerCmd } from '../@/server/cmd'
 //
 //
 
-export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
+export const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   return {
     ...input.ctx,
     userAccountDb: UserAccountDb({
@@ -48,17 +48,17 @@ export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> 
 //
 //
 
-export const update: ServerModule['update'] = async (input) => {
-  return AppServerModule.andThen(
+export const update: BackendModule['update'] = async (input) => {
+  return AppBackendModule.andThen(
     {},
     () => updateFromEvent(input),
     () => updateChild(input),
-    () => LogoutServer.update(input),
-    () => ContinueAsGuestServer.update(input),
+    () => LogoutBackend.update(input),
+    () => ContinueAsGuestBackend.update(input),
   )
 }
 
-export const getUserIdFromSessionId = async (ctx: ServerCtx, sessionId?: SessionId | null): Promise<UserId | null> => {
+export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: SessionId | null): Promise<UserId | null> => {
   if (!sessionId) {
     return null
   }
@@ -74,10 +74,10 @@ export const getUserIdFromSessionId = async (ctx: ServerCtx, sessionId?: Session
   return userId
 }
 
-const updateChild: ServerModule['update'] = async (input) => {
-  const sms = await AuthSMSServer.update({
+const updateChild: BackendModule['update'] = async (input) => {
+  const sms = await AuthSMSBackend.update({
     ...input,
-    deps: await AuthSMSServer.initDeps(input),
+    deps: await AuthSMSBackend.initDeps(input),
     msgClient:
       input.msgClient?.t === 'sms'
         ? {
@@ -89,7 +89,7 @@ const updateChild: ServerModule['update'] = async (input) => {
   })
 
   return {
-    msgCmd: ServerCmd.tag('sms', sms.msgCmd),
+    msgCmd: BackendCmd.tag('sms', sms.msgCmd),
     msgEvt: sms.msgEvt,
   }
 }
@@ -183,13 +183,13 @@ const updateFromEvent: typeof update = async (input) => {
 //
 //
 
-export const subscriptions: ServerModule['subscriptions'] = async (input) => {
+export const subscriptions: BackendModule['subscriptions'] = async (input) => {
   return Sub.batch([
     Sub.tag(
       'sms',
-      await AuthSMSServer.subscriptions({
+      await AuthSMSBackend.subscriptions({
         ...input,
-        deps: await AuthSMSServer.initDeps(input),
+        deps: await AuthSMSBackend.initDeps(input),
       }),
     ),
   ])

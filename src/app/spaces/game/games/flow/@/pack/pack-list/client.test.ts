@@ -4,7 +4,7 @@ import { Err, Ok } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { didSendToServer, didShowErrorSm } from '~/app/@/client/cmd'
+import { didSendToBackend, didShowErrorSm } from '~/app/@/client/cmd'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import type { FlowClientCtx } from '../../client/ctx'
 import { Pack } from '../pack'
@@ -44,7 +44,7 @@ const serverListedPacksOk =
     return PackListClient.update({
       ctx: ctx,
       model,
-      msgServer: {
+      msgBackend: {
         t: 'listed-packs',
         listed: Ok({
           items: packs,
@@ -60,7 +60,7 @@ const serverListedPacksErr = (ctx: FlowClientCtx, errorMessage: string) => (mode
   return PackListClient.update({
     ctx,
     model,
-    msgServer: {
+    msgBackend: {
       t: 'listed-packs',
       listed: Err(errorMessage),
     },
@@ -77,7 +77,7 @@ describe(import.meta.file, () => {
   it('should send request to server when user observes end of list', async () => {
     const ctx = await testFlowClientCtx()
     const output = AppClientModule.andThen(initial, observedEndOfList(ctx))
-    expect(didSendToServer(output, (msg) => msg.t === 'list-packs')).toBe(true)
+    expect(didSendToBackend(output, (msg) => msg.t === 'list-packs')).toBe(true)
   })
 
   it('should timeout request', async () => {

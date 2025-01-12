@@ -13,14 +13,14 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendToServer,
+  sendToBackend,
   showToast,
   type AppClientCmd,
 } from '~/app/@/client/cmd'
 import { BaseClientCtx } from '~/app/@/client/ctx'
 import { ClientEvt } from '~/app/@/client/evt'
 import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from '~/app/@/ui'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './types'
+import type { ModelClient, MsgClient, MsgToClient, MsgToBackend } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
 
 //
@@ -35,13 +35,13 @@ type Module = AppClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Ctx: BaseClientCtx
   MsgCmdIn: null
   MsgEvtIn: ClientEvt
   MsgCmdOut: AppClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>
   MsgEvtOut: ClientEvt
 }>
@@ -98,7 +98,7 @@ const update: Module['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromBackend({ ...input, model }),
     (model) => updateAutoFocus({ ...input, model }),
   )
 }
@@ -211,7 +211,7 @@ const updateFromMsg: Module['update'] = (input) => {
           sentCodeAt: input.ctx.now,
         },
         msgCmd: [
-          sendToServer({
+          sendToBackend({
             t: 'user-clicked-send-code-button',
             phoneNumber: phoneNumber.value,
             preferredLanguage: input.ctx.navigatorLanguage,
@@ -259,7 +259,7 @@ const updateFromMsg: Module['update'] = (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendToServer({
+          sendToBackend({
             t: 'user-clicked-verify-code-button',
             inputtedCode: input.model.inputtedCode,
             phoneNumber: input.msg.phoneNumber,
@@ -305,7 +305,7 @@ const updateFromMsg: Module['update'] = (input) => {
                 ...model,
                 verifyCode: RemoteResult.Err({
                   t: 'database-error',
-                  error: 'Timed out. Server took too long to response',
+                  error: 'Timed out. Backend took too long to response',
                 }),
               },
               msgCmd: [playSound(APP_SOUND.alertErrorMd)],
@@ -327,27 +327,27 @@ const updateFromMsg: Module['update'] = (input) => {
   }
 }
 
-const updateFromServer: Module['update'] = (input) => {
-  const { model, msgServer } = input
+const updateFromBackend: Module['update'] = (input) => {
+  const { model, msgBackend } = input
 
-  switch (msgServer?.t) {
+  switch (msgBackend?.t) {
     case 'sent-code': {
-      if (isErr(msgServer.sent)) {
+      if (isErr(msgBackend.sent)) {
         return {
           model: {
             ...model,
-            sendCode: msgServer.sent,
+            sendCode: msgBackend.sent,
           },
           msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         }
       }
 
-      input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(msgServer.phoneNumber))
+      input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(msgBackend.phoneNumber))
 
       return {
         model: {
           ...model,
-          sendCode: msgServer.sent,
+          sendCode: msgBackend.sent,
           verifyCode: RemoteResult.NotAsked,
           inputtedCode: '',
         },
@@ -355,10 +355,10 @@ const updateFromServer: Module['update'] = (input) => {
           pushRoute({
             n: 'auth-login',
             t: 'login-sms-verify',
-            phoneNumber: msgServer.phoneNumber,
+            phoneNumber: msgBackend.phoneNumber,
           }),
           showToast(
-            input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(msgServer.phoneNumber)),
+            input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(msgBackend.phoneNumber)),
             'info',
             TimeSpan.seconds(4),
           ),
@@ -369,11 +369,11 @@ const updateFromServer: Module['update'] = (input) => {
     }
 
     case 'verified-code': {
-      if (isErr(msgServer.verified)) {
+      if (isErr(msgBackend.verified)) {
         return {
           model: {
             ...model,
-            verifyCode: msgServer.verified,
+            verifyCode: msgBackend.verified,
           },
           msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         }
@@ -381,7 +381,7 @@ const updateFromServer: Module['update'] = (input) => {
       return {
         model: {
           ...model,
-          verifyCode: msgServer.verified,
+          verifyCode: msgBackend.verified,
         },
       }
     }

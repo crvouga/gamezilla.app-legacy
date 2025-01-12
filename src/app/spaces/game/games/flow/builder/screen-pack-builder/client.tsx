@@ -112,7 +112,7 @@ const EditPackName: Pick<ClientModule, 'update' | 'View'> = {
 }
 
 const updateRecordPack: ClientModule['update'] = (input) => {
-  const hasMsg = input.msgCore || input.msgCmd || input.msgEvt || input.msgServer || input.msg
+  const hasMsg = input.msgCore || input.msgCmd || input.msgEvt || input.msgBackend || input.msg
   if (hasMsg && input.modelCore.screenPackBuilder?.pack) {
     return {
       model: input.model,

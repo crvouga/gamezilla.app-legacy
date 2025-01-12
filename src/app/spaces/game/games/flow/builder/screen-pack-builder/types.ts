@@ -26,9 +26,9 @@ export const initClient: ModelClient = {
   },
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
-export const initServer: ModelServer = null
+export const initBackend: ModelBackend = null
 
 //
 //
@@ -40,14 +40,14 @@ export type MsgClient = {
   c: PackPuzzlesGridTypes.MsgClient
 }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgServer
+  c: PackPuzzlesGridTypes.MsgBackend
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgToServer
+  c: PackPuzzlesGridTypes.MsgToBackend
 }
 
 export type MsgToClient = {

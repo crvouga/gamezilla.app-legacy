@@ -2,7 +2,7 @@ import { Profile } from '~/app/@/data/profile'
 
 export type ModelClient = {}
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 export type MsgClient =
   | {
@@ -15,11 +15,11 @@ export type MsgClient =
       t: 'profile.profile-screen.clicked-logout-button'
     }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'profile.profile-screen.noop'
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'profile.profile-screen.viewed-screen'
 }
 

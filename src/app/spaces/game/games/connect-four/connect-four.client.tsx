@@ -9,7 +9,7 @@ import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/connect-four-ui/connect-four-cover-art'
-import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './connect-four.types'
+import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToBackend } from './connect-four.types'
 import { VsBot } from './vs-bot/vs-bot.client'
 import { VsUser } from './vs-user/vs-user.client'
 
@@ -25,14 +25,14 @@ type Module = GameClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   ModelCore: ModelCore
   MsgCore: MsgCore
   Ctx: SpaceClientCtx
   MsgEvtIn: SpaceClientEvt
   MsgCmdOut: SpaceClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>
 }>
 
@@ -142,7 +142,7 @@ const updateFromMsgCore =
 const updateChild =
   (model: ModelClient): Module['update'] =>
   (input) => {
-    const { msg, msgEvt, msgCore, msgServer, modelCore } = input
+    const { msg, msgEvt, msgCore, msgBackend, modelCore } = input
 
     switch (modelCore.t) {
       case 'none': {
@@ -158,7 +158,7 @@ const updateChild =
           msgEvt: msgEvt,
           msgCmd: null,
           msgCore: msgCore?.t === 'vs-bot' ? { ...msgCore, ...msgCore.c } : null,
-          msgServer: msgServer?.t === 'vs-bot' ? msgServer.c : null,
+          msgBackend: msgBackend?.t === 'vs-bot' ? msgBackend.c : null,
           model: model.t === 'vs-bot' ? model.c : VsBot.init,
           modelCore: modelCore.c,
         })
@@ -180,7 +180,7 @@ const updateChild =
           msgCmd: null,
           msgEvt: msgEvt,
           msgCore: msgCore?.t === 'vs-user' ? { ...msgCore, ...msgCore.c } : null,
-          msgServer: msgServer?.t === 'vs-user' ? msgServer.c : null,
+          msgBackend: msgBackend?.t === 'vs-user' ? msgBackend.c : null,
           modelCore: modelCore.c,
         })
 

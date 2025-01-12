@@ -1,4 +1,4 @@
-import type { ServerEvt } from '~/app/@/server/evt'
+import type { BackendEvt } from '~/app/@/server/evt'
 import { SpaceEvt } from '../space/evt'
 
-export type SpaceServerEvt = ServerEvt | SpaceEvt
+export type SpaceBackendEvt = BackendEvt | SpaceEvt

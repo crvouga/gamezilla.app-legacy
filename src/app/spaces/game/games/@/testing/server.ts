@@ -1,15 +1,15 @@
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { FixtureAppServer } from '~/app/@/server/fixture'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
+import { FixtureAppBackend } from '~/app/@/server/fixture'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
 
-export const SpaceGameFixtureServer = async () => {
-  const f = await FixtureAppServer()
+export const SpaceGameFixtureBackend = async () => {
+  const f = await FixtureAppBackend()
 
   const hostUserId = 'test-user-id' as UserId
   const currentSpaceId = 'test-space-id' as SpaceId
 
-  const testSpaceServerCtx: SpaceServerCtx = {
+  const testSpaceBackendCtx: SpaceBackendCtx = {
     ...f.ctx,
 
     space: {
@@ -23,6 +23,6 @@ export const SpaceGameFixtureServer = async () => {
   }
 
   return {
-    ctx: testSpaceServerCtx,
+    ctx: testSpaceBackendCtx,
   }
 }

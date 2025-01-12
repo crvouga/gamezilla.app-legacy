@@ -1,16 +1,16 @@
 import { Sub } from '~/@/sub'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
 import { GameName } from './@/game-name'
-import { ConnectFourServer } from './connect-four/connect-four.server'
-import { FlowServer } from './flow/server'
-import type { GameServerCtx, ServerModule } from './types'
+import { ConnectFourBackend } from './connect-four/connect-four.server'
+import { FlowBackend } from './flow/server'
+import type { GameBackendCtx, BackendModule } from './types'
 
-const initCtx = (input: { ctx: SpaceServerCtx }): GameServerCtx => {
+const initCtx = (input: { ctx: SpaceBackendCtx }): GameBackendCtx => {
   return {
     ...input.ctx,
-    flow: FlowServer.initCtx(input),
+    flow: FlowBackend.initCtx(input),
   }
 }
 
@@ -22,26 +22,26 @@ const initCtx = (input: { ctx: SpaceServerCtx }): GameServerCtx => {
 //
 //
 
-const init = (gameName: GameName): ServerModule['init'] => {
+const init = (gameName: GameName): BackendModule['init'] => {
   switch (gameName) {
     case 'connect-four': {
       return {
         t: 'connect-four',
-        c: ConnectFourServer.init,
+        c: ConnectFourBackend.init,
       }
     }
 
     case 'flow': {
       return {
         t: 'flow',
-        c: FlowServer.init,
+        c: FlowBackend.init,
       }
     }
 
     default: {
       return {
         t: 'connect-four',
-        c: ConnectFourServer.init,
+        c: ConnectFourBackend.init,
       }
     }
   }
@@ -55,10 +55,10 @@ const init = (gameName: GameName): ServerModule['init'] => {
 //
 //
 
-const update: ServerModule['update'] = async (input) => {
+const update: BackendModule['update'] = async (input) => {
   switch (input.modelCore.t) {
     case 'flow': {
-      const updated = await FlowServer.update({
+      const updated = await FlowBackend.update({
         ctx: input.ctx.flow,
         modelCore: input.modelCore.c,
         msgCmd: input.msgCmd,
@@ -69,11 +69,11 @@ const update: ServerModule['update'] = async (input) => {
         deps: null,
       })
 
-      return GameServerModule.tagOutput('flow', (msgCmd) => SpaceServerCmd.tag('flow', msgCmd), updated)
+      return GameBackendModule.tagOutput('flow', (msgCmd) => SpaceBackendCmd.tag('flow', msgCmd), updated)
     }
 
     case 'connect-four': {
-      const updated = await ConnectFourServer.update({
+      const updated = await ConnectFourBackend.update({
         ctx: input.ctx,
         modelCore: input.modelCore.c,
         msgCmd: input.msgCmd,
@@ -84,7 +84,11 @@ const update: ServerModule['update'] = async (input) => {
         deps: null,
       })
 
-      return GameServerModule.tagOutput('connect-four', (msgCmd) => SpaceServerCmd.tag('connect-four', msgCmd), updated)
+      return GameBackendModule.tagOutput(
+        'connect-four',
+        (msgCmd) => SpaceBackendCmd.tag('connect-four', msgCmd),
+        updated,
+      )
     }
   }
 }
@@ -97,16 +101,16 @@ const update: ServerModule['update'] = async (input) => {
 //
 //
 
-const subscriptions: ServerModule['subscriptions'] = async (input) => {
+const subscriptions: BackendModule['subscriptions'] = async (input) => {
   switch (input.modelCore.t) {
     case 'connect-four': {
-      return Sub.tag('connect-four', await ConnectFourServer.subscriptions({ ...input, modelCore: input.modelCore.c }))
+      return Sub.tag('connect-four', await ConnectFourBackend.subscriptions({ ...input, modelCore: input.modelCore.c }))
     }
 
     case 'flow': {
       return Sub.tag(
         'flow',
-        await FlowServer.subscriptions({
+        await FlowBackend.subscriptions({
           ...input,
           modelCore: input.modelCore.c,
           ctx: input.ctx.flow,
@@ -116,7 +120,7 @@ const subscriptions: ServerModule['subscriptions'] = async (input) => {
   }
 }
 
-export const GamesServer = {
+export const GamesBackend = {
   init,
   update,
   subscriptions,

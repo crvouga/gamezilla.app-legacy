@@ -1,7 +1,7 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { Button, TextField, TopBar } from '~/app/@/ui'
-import { ModelClient, MsgClient, MsgToServer } from './update-username.types'
-import { AppClientCmd, pushRoute, sendToServer } from '~/app/@/client/cmd'
+import { ModelClient, MsgClient, MsgToBackend } from './update-username.types'
+import { AppClientCmd, pushRoute, sendToBackend } from '~/app/@/client/cmd'
 import { AppClientCtx, AnonymousClientCtx } from '~/app/@/client/ctx'
 import { ClientEvt } from '~/app/@/client/evt'
 
@@ -32,7 +32,7 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
   model: TModel
   msgCmd?: AppClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>[]
 } => {
   if (isMsgClient(input.msg)) {
@@ -51,7 +51,7 @@ export const update = <TModel extends ModelClient, TMsg extends { t: string }>(i
             'profile-update-username.request': RequestResponse.startedRequest(input.ctx.now),
           },
           msgCmd: [
-            sendToServer({
+            sendToBackend({
               t: 'profile.update-username.clicked-save',
               username: input.model['profile.update-username.username'] ?? '',
             }),

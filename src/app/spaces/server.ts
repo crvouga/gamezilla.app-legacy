@@ -1,15 +1,15 @@
 import { Msg } from '~/@/msg/msg'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { AppServerCtx } from '../@/server/ctx'
-import { type Input, type Output, SpaceServerModule } from './@/architecture/space-server'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { AppBackendCtx } from '../@/server/ctx'
+import { type Input, type Output, SpaceBackendModule } from './@/architecture/space-server'
 import { Space } from './@/space/space'
-import { SpacesCoreServer } from './core/server'
-import { GameServer } from './game/server'
-import { JoinSpaceServer } from './join-space/server'
-import { ListSpacesServer } from './list-spaces/server'
-import { StartSpaceServer } from './start-space/server'
-import { SyncServer } from './sync/server'
-import type { ServerCtx, ServerModule } from './types'
+import { SpacesCoreBackend } from './core/server'
+import { GameBackend } from './game/server'
+import { JoinSpaceBackend } from './join-space/server'
+import { ListSpacesBackend } from './list-spaces/server'
+import { StartSpaceBackend } from './start-space/server'
+import { SyncBackend } from './sync/server'
+import type { BackendCtx, BackendModule } from './types'
 
 //
 //
@@ -19,23 +19,23 @@ import type { ServerCtx, ServerModule } from './types'
 //
 //
 
-const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
+const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   return {
     ...input.ctx,
 
-    spacesCoreServer: await SpacesCoreServer({
+    spacesCoreBackend: await SpacesCoreBackend({
       t: 'db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
       logger: input.ctx.logger,
       runtime: input.ctx.runtime,
     }),
-    // spacesCoreServer: await SpacesCoreServer({
+    // spacesCoreBackend: await SpacesCoreBackend({
     //   t: 'stream',
     //   stream: await Stream({ t: 'in-memory', parser: WithEventMeta(MsgCore) }),
     //   dbConnKv: ctx.dbConnKv,
     //   logger: ctx.logger
     // }),
-    games: GameServer.initCtx({ ctx: { ...input.ctx, space: Space.random() } }),
+    games: GameBackend.initCtx({ ctx: { ...input.ctx, space: Space.random() } }),
   }
 }
 
@@ -47,11 +47,11 @@ const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
 //
 //
 
-const update: ServerModule['update'] = async (input) => {
+const update: BackendModule['update'] = async (input) => {
   const updated = await updateLoop(input)
 
   return {
-    msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd),
+    msgCmd: SpaceBackendCmd.toBackendCmd(updated.msgCmd),
   }
 }
 
@@ -73,7 +73,7 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
     })
   }
 
-  const [cmd, ...cmdRest] = SpaceServerCmd.toSpaceServerCmd(acc.msgCmd)
+  const [cmd, ...cmdRest] = SpaceBackendCmd.toSpaceBackendCmd(acc.msgCmd)
 
   if (cmd) {
     const updated = await updateChild({
@@ -91,24 +91,24 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
   return acc
 }
 
-const updateChild: SpaceServerModule['update'] = async (input) => {
-  return SpaceServerModule.andThen(
+const updateChild: SpaceBackendModule['update'] = async (input) => {
+  return SpaceBackendModule.andThen(
     {},
     () => updateSpacesFromSpaceEvent(input),
-    () => ListSpacesServer.update(input),
-    () => SyncServer.update(input),
-    () => StartSpaceServer.update(input),
-    () => JoinSpaceServer.update(input),
-    () => GameServer.update(input),
+    () => ListSpacesBackend.update(input),
+    () => SyncBackend.update(input),
+    () => StartSpaceBackend.update(input),
+    () => JoinSpaceBackend.update(input),
+    () => GameBackend.update(input),
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
+const updateSpacesFromSpaceEvent: SpaceBackendModule['update'] = async (input) => {
   if (!input.msgCore) {
     return {}
   }
 
-  await input.ctx.spacesCoreServer.update(input.msgCore)
+  await input.ctx.spacesCoreBackend.update(input.msgCore)
 
   return {}
 }
@@ -121,11 +121,11 @@ const updateSpacesFromSpaceEvent: SpaceServerModule['update'] = async (input) =>
 //
 //
 
-const subscriptions: ServerModule['subscriptions'] = async (input) => {
-  return GameServer.subscriptions(input)
+const subscriptions: BackendModule['subscriptions'] = async (input) => {
+  return GameBackend.subscriptions(input)
 }
 
-export const SpacesServer = {
+export const SpacesBackend = {
   initCtx,
   update,
   subscriptions,

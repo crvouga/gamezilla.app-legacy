@@ -3,7 +3,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import type { Space } from '../space/space'
 import type { SpaceClientCmd } from '../space-client/cmd'
 import { SpaceClientEvt } from '../space-client/evt'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from '../../types'
+import type { ModelClient, MsgClient, MsgToClient, MsgToBackend } from '../../types'
 import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceEvent } from '../../core/space-event'
 import { Eff } from '~/@/eff'
@@ -18,11 +18,11 @@ export type Input = {
   ctx: Ctx
   model: ModelClient
   msg?: MsgClient | null
-  msgServer?: MsgToClient | null
+  msgBackend?: MsgToClient | null
   msgEvt?: SpaceClientEvt | null
   msgCmd?: SpaceClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }> | null
   msgCore?: WithEventId<SpaceEvent> | null
 }
@@ -32,7 +32,7 @@ export type Output = {
   eff?: Eff<MsgClient>
   msgCmd?: SpaceClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>[]
   msgEvt?: SpaceClientEvt[]
   msgCore?: WithEventId<SpaceEvent>[]

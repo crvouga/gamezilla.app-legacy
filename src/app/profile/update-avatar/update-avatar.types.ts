@@ -7,7 +7,7 @@ export type ModelClient = {
   'profile.update-avatar.request'?: RequestResponse<string, null>
 }
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 export type MsgClient =
   | {
@@ -25,11 +25,11 @@ export type MsgClient =
       t: 'profile.update-avatar.clicked-save'
     }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'profile.update-avatar.noop'
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'profile.update-avatar.clicked-save'
   avatarSeed: ProfileAvatarSeed
   avatarStyle: ProfileAvatarStyle

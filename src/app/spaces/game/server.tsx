@@ -1,40 +1,40 @@
 import { Result } from '~/@/result'
 import { withEventId } from '~/@/event-sourced/event'
-import { SpaceServerModule } from '../@/architecture/space-server'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendModule } from '../@/architecture/space-server'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
 import { SpaceCore } from '../core/space-core'
-import { GamesServer } from '../game/games/server'
-import type { MsgServer } from '../types'
-import { GamesServerCtx } from './types'
+import { GamesBackend } from '../game/games/server'
+import type { MsgBackend } from '../types'
+import { GamesBackendCtx } from './types'
 import { Sub } from '~/@/sub'
 
-const initCtx = (input: { ctx: SpaceServerCtx }): GamesServerCtx => {
-  const gameCtx = GamesServer.initCtx(input)
+const initCtx = (input: { ctx: SpaceBackendCtx }): GamesBackendCtx => {
+  const gameCtx = GamesBackend.initCtx(input)
   return {
     ...input.ctx,
     ...gameCtx,
   }
 }
 
-const update: SpaceServerModule['update'] = async (input) => {
-  return SpaceServerModule.andThen({}, () => updateGame(input))
+const update: SpaceBackendModule['update'] = async (input) => {
+  return SpaceBackendModule.andThen({}, () => updateGame(input))
 }
 
-const updateGame: SpaceServerModule['update'] = async (input) => {
+const updateGame: SpaceBackendModule['update'] = async (input) => {
   const spaceId = inputToSpaceId(input)
 
   if (!spaceId) {
     return {}
   }
 
-  const spaceState = SpaceCore.toSpaceStarted(Result.unwrapOr(await input.ctx.spacesCoreServer.get(spaceId), null))
+  const spaceState = SpaceCore.toSpaceStarted(Result.unwrapOr(await input.ctx.spacesCoreBackend.get(spaceId), null))
 
   if (!spaceState?.game) {
     return {}
   }
 
-  const updated = await GamesServer.update({
+  const updated = await GamesBackend.update({
     deps: null,
     ctx: { ...input.ctx.games, space: spaceState },
     msg: input.msg?.t === 'game' ? input.msg.c : null,
@@ -52,12 +52,12 @@ const updateGame: SpaceServerModule['update'] = async (input) => {
   })
 
   return {
-    msgCmd: SpaceServerCmd.map(updated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
+    msgCmd: SpaceBackendCmd.map(updated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
     msgCore: updated.msgCore?.map((e) => withEventId({ ...e, spaceId, t: 'game', c: e })),
   }
 }
 
-const inputToSpaceId = (input: Parameters<SpaceServerModule['update']>[0]) => {
+const inputToSpaceId = (input: Parameters<SpaceBackendModule['update']>[0]) => {
   if (input.msg && 'spaceId' in input.msg) {
     return input.msg.spaceId
   }
@@ -73,13 +73,13 @@ const inputToSpaceId = (input: Parameters<SpaceServerModule['update']>[0]) => {
   return null
 }
 
-const subscriptions: SpaceServerModule['subscriptions'] = async (_input) => {
-  const batch: Sub<MsgServer>[] = []
+const subscriptions: SpaceBackendModule['subscriptions'] = async (_input) => {
+  const batch: Sub<MsgBackend>[] = []
 
   return Sub.batch(batch)
 }
 
-export const GameServer = {
+export const GameBackend = {
   initCtx,
   subscriptions,
   update,

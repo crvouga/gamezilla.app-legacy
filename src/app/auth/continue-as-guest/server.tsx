@@ -5,9 +5,9 @@ import type { UserAccount } from '~/app/@/data/account'
 import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { sendToClient } from '~/app/@/server/cmd'
-import type { ServerCtx, ServerModule } from '../types'
+import type { BackendCtx, BackendModule } from '../types'
 
-const update: ServerModule['update'] = async ({ msgClient, ctx }) => {
+const update: BackendModule['update'] = async ({ msgClient, ctx }) => {
   switch (msgClient?.t) {
     case 'guest.clicked-continue-as-guest-button': {
       const result = await continueAsGuest({
@@ -57,7 +57,7 @@ const continueAsGuest = async ({
   now,
   sessionId,
 }: {
-  ctx: ServerCtx
+  ctx: BackendCtx
   sessionId: SessionId
   now: Posix
 }): Task<string, UserAccount> => {
@@ -110,6 +110,6 @@ const continueAsGuest = async ({
   return Ok(guestAccount)
 }
 
-export const ContinueAsGuestServer = {
+export const ContinueAsGuestBackend = {
   update,
 }

@@ -1,7 +1,7 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { isErr, Result } from '~/@/result'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { sendToServer, showErrSm } from '~/app/@/client/cmd'
+import { sendToBackend, showErrSm } from '~/app/@/client/cmd'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import { Pack } from '../pack'
 import { ClientModule, initClient, type ModelClient, type MsgInCmdClient } from './types'
@@ -9,7 +9,7 @@ import { ClientModule, initClient, type ModelClient, type MsgInCmdClient } from 
 const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
-    (model) => updateServerListedPuzzles({ ...input, model }),
+    (model) => updateBackendListedPuzzles({ ...input, model }),
     (model) => updateFetchMissingPuzzles({ ...input, model }),
     (model) => updateRequest({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
@@ -31,11 +31,11 @@ const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
     return { model: input.model }
   }
 
-  if (!input.msgCmd && !input.msgServer && !input.msgEvt && !input.msg) {
+  if (!input.msgCmd && !input.msgBackend && !input.msgEvt && !input.msg) {
     return { model: input.model }
   }
 
-  if (input.msgServer?.t === 'listed-puzzles-by-id') {
+  if (input.msgBackend?.t === 'listed-puzzles-by-id') {
     return { model: input.model }
   }
 
@@ -45,7 +45,7 @@ const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
       request: RequestResponse.startedRequest(input.ctx.now),
     },
     msgCmd: [
-      sendToServer({
+      sendToBackend({
         t: 'list-puzzles-by-id',
         puzzleIds: input.ctx.pack.puzzleIds,
         causedBy: { ...input, model: undefined },
@@ -54,21 +54,21 @@ const updateFetchMissingPuzzles: ClientModule['update'] = (input) => {
   }
 }
 
-const updateServerListedPuzzles: ClientModule['update'] = (input) => {
-  const { msgServer } = input
-  switch (msgServer?.t) {
+const updateBackendListedPuzzles: ClientModule['update'] = (input) => {
+  const { msgBackend } = input
+  switch (msgBackend?.t) {
     case 'listed-puzzles-by-id': {
       return AppClientModule.andThen(
         { model: input.model },
         (model) => {
-          if (isErr(msgServer.listed)) {
+          if (isErr(msgBackend.listed)) {
             return {
               model,
               msgCmd: showErrSm(input.ctx.t('app.something-went-wrong')),
             }
           }
 
-          const puzzlesNew = msgServer.listed.value.puzzles.items.reduce((acc, puzzle) => {
+          const puzzlesNew = msgBackend.listed.value.puzzles.items.reduce((acc, puzzle) => {
             acc[puzzle.id] = puzzle
             return acc
           }, model.puzzles)
@@ -87,7 +87,7 @@ const updateServerListedPuzzles: ClientModule['update'] = (input) => {
               request: RequestResponse.response(
                 model.request,
                 input.ctx.now,
-                Result.mapOk(msgServer.listed, () => null),
+                Result.mapOk(msgBackend.listed, () => null),
               ),
             },
           }
@@ -116,7 +116,7 @@ const updateFromCmd: ClientModule['update'] = (input) => {
           request: RequestResponse.startedRequest(input.ctx.now),
         },
         msgCmd: [
-          sendToServer({
+          sendToBackend({
             t: 'list-puzzles-by-id',
             puzzleIds: input.msgCmd.c.pack.puzzleIds,
             causedBy: { msgCmd: input.msgCmd },

@@ -1,11 +1,11 @@
 import { Uuid } from '~/@/uuid/uuid'
 import { p } from '~/@/parser'
 
-const parser = p.brand(p.str, 'ServerInstanceId')
+const parser = p.brand(p.str, 'BackendInstanceId')
 
-export type ServerInstanceId = p.Infer<typeof parser>
+export type BackendInstanceId = p.Infer<typeof parser>
 
-const is = (serverInstanceId: unknown): serverInstanceId is ServerInstanceId => {
+const is = (serverInstanceId: unknown): serverInstanceId is BackendInstanceId => {
   return typeof serverInstanceId === 'string'
 }
 
@@ -16,10 +16,10 @@ const generate = () => {
   const id = Uuid.generate()
   const randomIntegers = Math.floor(Math.random() * 1_000_000_000)
   const serverInstanceId = `${namespace}${separator}${id}${randomIntegers}`
-  return serverInstanceId as ServerInstanceId
+  return serverInstanceId as BackendInstanceId
 }
 
-export const ServerInstanceId = {
+export const BackendInstanceId = {
   ...parser,
   generate,
   is,

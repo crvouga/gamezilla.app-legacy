@@ -4,9 +4,9 @@ import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom/vdom'
 import { IconMagnifyingGlass, IconXMark } from '~/app/@/ui'
-import { AppClientCmd, sendToServer } from '../@/client/cmd'
+import { AppClientCmd, sendToBackend } from '../@/client/cmd'
 import { ClientEvt } from '../@/client/evt'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './search.types'
+import type { ModelClient, MsgClient, MsgToClient, MsgToBackend } from './search.types'
 
 //
 //
@@ -60,7 +60,7 @@ export const update = ({
   eff?: Eff<Msg>
   msgEvt?: ClientEvt[]
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 } => {
@@ -97,10 +97,10 @@ export const update = ({
     return { model }
   }
 
-  return { model, msgCmd: [sendToServer(msg)] }
+  return { model, msgCmd: [sendToBackend(msg)] }
 }
 
-export const updateFromServer = ({
+export const updateFromBackend = ({
   model,
 }: {
   msg: MsgToClient

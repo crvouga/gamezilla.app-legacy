@@ -1,1 +1,1 @@
-export * as ServerInstanceTypes from './types'
+export * as BackendInstanceTypes from './types'

@@ -13,7 +13,7 @@ import * as Snake from './@/snake'
 //
 //
 
-export type ModelServer = CoreModel
+export type ModelBackend = CoreModel
 
 export type ModelClient = CoreModel & {
   openedMenuId: Option<string>
@@ -59,9 +59,9 @@ export const initCoreModel: CoreModel = {
 
 export type MsgClient = ['PressedKeyDown', Keyboard.Key] | ['OpenedMenu', string] | ['ClosedMenu'] | Request
 
-export type MsgServer = ['tick']
+export type MsgBackend = ['tick']
 
-export type MsgToServer = Request
+export type MsgToBackend = Request
 
 export type MsgToClient = ['tick', CoreModel] | Response
 

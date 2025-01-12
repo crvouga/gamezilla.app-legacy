@@ -2,9 +2,9 @@ import { isErr } from '~/@/result'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import {
-  type ModelServer,
-  type MsgServer,
-  type MsgToServer,
+  type ModelBackend,
+  type MsgBackend,
+  type MsgToBackend,
   initShared,
   inputDrop,
   inputRotate,
@@ -23,7 +23,7 @@ import { Sub } from '~/@/sub'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init: Model = initShared
 
@@ -35,7 +35,7 @@ export const init: Model = initShared
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
@@ -47,7 +47,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   }
 }
 
-export const updateFromClient = (msg: MsgToServer, model: Model): [Model, Eff<Msg>] => {
+export const updateFromClient = (msg: MsgToBackend, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'MouseMove': {
       const toClient = mouseMove(msg, model)

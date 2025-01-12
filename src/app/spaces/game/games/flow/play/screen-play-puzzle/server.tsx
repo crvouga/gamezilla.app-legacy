@@ -1,13 +1,13 @@
 import { Posix } from '~/@/time/posix'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { PuzzleId } from '../../@/puzzle/puzzle-id'
 import { UserActivity } from '../@/user-activity/user-activity'
-import { ServerModule } from '../types'
+import { BackendModule } from '../types'
 import { ScreenPlayPuzzleCore } from './core'
 import { MsgCoreEvt } from './types'
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen(
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen(
     {},
     //
     () => recordUserActivity(input),
@@ -41,7 +41,7 @@ export const msgCoreToUserActivity = (
   }
 }
 
-const recordUserActivity: ServerModule['update'] = async (input) => {
+const recordUserActivity: BackendModule['update'] = async (input) => {
   if (input.msgCore && input.modelCore.screen.t === 'screen-play-puzzle') {
     const updated = ScreenPlayPuzzleCore.updateScreen({
       modelCore: input.modelCore.screen,
@@ -67,6 +67,6 @@ const recordUserActivity: ServerModule['update'] = async (input) => {
   return {}
 }
 
-export const ScreenPlayPuzzleServer = {
+export const ScreenPlayPuzzleBackend = {
   update,
 }

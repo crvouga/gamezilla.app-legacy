@@ -1,19 +1,19 @@
 import { Err, isErr } from '~/@/result'
 import type { UserId } from '~/app/@/data/user-id'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
 import type { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
-import { FlowServerCtx } from '../../../@/server/ctx'
-import type { ServerModule } from '../../types'
+import { FlowBackendCtx } from '../../../@/server/ctx'
+import type { BackendModule } from '../../types'
 import type { MsgCore } from './types'
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen({}, () => updateFromClient({ ...input }))
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen({}, () => updateFromClient({ ...input }))
 }
 
-const updateFromClient: ServerModule['update'] = async (input) => {
+const updateFromClient: BackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'puzzle.edit-name.user-clicked-save-button': {
       const edited = await patchName({
@@ -38,7 +38,7 @@ const updateFromClient: ServerModule['update'] = async (input) => {
   }
 }
 
-const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userId: UserId; ctx: FlowServerCtx }) => {
+const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userId: UserId; ctx: FlowBackendCtx }) => {
   const { flowPuzzleId, newName, userId, ctx } = input
 
   const result = await ctx.puzzleDb.get(flowPuzzleId)
@@ -74,6 +74,6 @@ const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userI
   return put
 }
 
-export const EditPuzzleNameServer: Pick<ServerModule, 'update'> = {
+export const EditPuzzleNameBackend: Pick<BackendModule, 'update'> = {
   update,
 }

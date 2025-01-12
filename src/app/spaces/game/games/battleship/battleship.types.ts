@@ -31,7 +31,7 @@ export const initShared = {
 
 export type ModelClient = CoreModel
 
-export type ModelServer = CoreModel
+export type ModelBackend = CoreModel
 
 type Shot = {
   from: PlayerType
@@ -75,7 +75,7 @@ type BotLevel = 'Easy' | 'Medium' | 'Hard'
 
 export type MsgClient = Req
 
-export type MsgServer = { t: null }
+export type MsgBackend = { t: null }
 
 export type Req =
   | { t: 'start-playing'; team: PlayerType }

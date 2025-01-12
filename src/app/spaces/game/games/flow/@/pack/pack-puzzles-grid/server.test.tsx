@@ -1,23 +1,23 @@
 import { describe, expect, it } from 'bun:test'
-import { AppServerModule } from '~/app/@/architecture/app-server'
+import { AppBackendModule } from '~/app/@/architecture/app-server'
 import { didSendToClient } from '~/app/@/server/cmd'
 import { randomAuthenticatedClient, type AuthenticatedClient } from '~/app/spaces/@/fixture/server'
-import { SpaceGameFixtureServer } from '~/app/spaces/game/games/@/testing/server'
+import { SpaceGameFixtureBackend } from '~/app/spaces/game/games/@/testing/server'
 import { Puzzle } from '../../puzzle/puzzle'
 import { PuzzleDb } from '../../puzzle/puzzle-db'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
-import { FlowServerCtx } from '../../server/ctx'
+import { FlowBackendCtx } from '../../server/ctx'
 import { Pack } from '../pack'
 import { PackDb } from '../pack-db'
-import { PackPuzzlesGridServer } from './server'
+import { PackPuzzlesGridBackend } from './server'
 import { Solutions } from '../../solutions/solutions'
 
 const initial = () => {
   return {}
 }
 
-const userObversedGrid = (ctx: FlowServerCtx, client: AuthenticatedClient, puzzleIds: PuzzleId[]) => () => {
-  return PackPuzzlesGridServer.update({
+const userObversedGrid = (ctx: FlowBackendCtx, client: AuthenticatedClient, puzzleIds: PuzzleId[]) => () => {
+  return PackPuzzlesGridBackend.update({
     ctx,
     deps: null,
     msgClient: {
@@ -30,8 +30,8 @@ const userObversedGrid = (ctx: FlowServerCtx, client: AuthenticatedClient, puzzl
 }
 
 const Fixture = async () => {
-  const f = await SpaceGameFixtureServer()
-  const ctx: FlowServerCtx = {
+  const f = await SpaceGameFixtureBackend()
+  const ctx: FlowBackendCtx = {
     ...f.ctx,
     packDb: PackDb({ t: 'hash-map' }),
     puzzleDb: PuzzleDb({ t: 'hash-map' }),
@@ -54,7 +54,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
   it('should send back listed puzzles', async () => {
     const f = await Fixture()
-    const output = await AppServerModule.andThen(initial(), userObversedGrid(f.ctx, f.client, []))
+    const output = await AppBackendModule.andThen(initial(), userObversedGrid(f.ctx, f.client, []))
 
     expect(didSendToClient(output, f.client.clientId, (msg) => msg.t === 'listed-puzzles-by-id')).toBe(true)
   })

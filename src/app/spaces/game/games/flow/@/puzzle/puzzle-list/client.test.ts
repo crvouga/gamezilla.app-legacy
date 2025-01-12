@@ -4,7 +4,7 @@ import { Err, Ok } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { didSendToServer, didShowErrorSm } from '~/app/@/client/cmd'
+import { didSendToBackend, didShowErrorSm } from '~/app/@/client/cmd'
 import { testFlowClientCtx } from '../../../builder/@/testing/client'
 import { FlowClientCtx } from '../../client/ctx'
 import { Solutions } from '../../solutions/solutions'
@@ -34,7 +34,7 @@ const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: Puzzle[]) => (model:
   return PuzzleListClient.update({
     ctx,
     model,
-    msgServer: {
+    msgBackend: {
       t: 'listed-puzzle',
       listed: Ok({
         solutions: Solutions.init,
@@ -53,7 +53,7 @@ const serverListedPuzzlesErr = (ctx: FlowClientCtx, error: string) => (model: Mo
   return PuzzleListClient.update({
     ctx,
     model,
-    msgServer: {
+    msgBackend: {
       t: 'listed-puzzle',
       listed: Err(error),
     },
@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
   it('should send a list puzzles message to server when the user observes the end of the list', async () => {
     const ctx = await testFlowClientCtx()
     const output = AppClientModule.andThen(initial, loadCmd(ctx))
-    expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles')).toBe(true)
+    expect(didSendToBackend(output, (msg) => msg.t === 'list-puzzles')).toBe(true)
   })
 
   it('should record puzzles received from server', async () => {

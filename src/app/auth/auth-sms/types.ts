@@ -3,11 +3,11 @@ import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Remote, Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
-import { AppServerModule } from '~/app/@/architecture/app-server'
+import { AppBackendModule } from '~/app/@/architecture/app-server'
 import type { UserAccount } from '~/app/@/data/account'
-import { ServerCmd } from '~/app/@/server/cmd'
-import { AppServerCtx } from '~/app/@/server/ctx'
-import { ServerEvt } from '~/app/@/server/evt'
+import { BackendCmd } from '~/app/@/server/cmd'
+import { AppBackendCtx } from '~/app/@/server/ctx'
+import { BackendEvt } from '~/app/@/server/evt'
 import { IUserAccountDb } from '../@/server/user-account-db'
 import type { IVerifySMS, SendCodeOutput, VerifyCodeProblem } from './verify-sms'
 
@@ -47,9 +47,9 @@ export type MsgClient =
     }
   | { t: 'time-passed'; now: Posix }
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToServer =
+export type MsgToBackend =
   | {
       t: 'user-clicked-send-code-button'
       phoneNumber: PhoneNumber
@@ -72,14 +72,14 @@ export type MsgToClient =
       verified: VerifyCodeOutput
     }
 
-export type ServerModule = AppServerModule<{
-  Ctx: AppServerCtx
-  MsgEvtIn: ServerEvt
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
-  MsgEvtOut: ServerEvt
+export type BackendModule = AppBackendModule<{
+  Ctx: AppBackendCtx
+  MsgEvtIn: BackendEvt
+  Msg: MsgBackend
+  MsgCmdOut: BackendCmd<MsgToClient>
+  MsgEvtOut: BackendEvt
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Deps: {
     AccountDb: IUserAccountDb
     VerifySMS: IVerifySMS

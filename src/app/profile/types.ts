@@ -1,6 +1,6 @@
 import type { RemoteResult, Result } from '~/@/result'
 import { AppClientModule } from '../@/architecture/app-client'
-import { AppServerModule } from '../@/architecture/app-server'
+import { AppBackendModule } from '../@/architecture/app-server'
 import { AppClientCmd, ProfileCmd } from '../@/client/cmd'
 import { AnonymousClientCtx, AppClientCtx } from '../@/client/ctx'
 import { ClientEvt } from '../@/client/evt'
@@ -9,9 +9,9 @@ import { Profile } from '../@/data/profile'
 import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
-import { ServerCmd } from '../@/server/cmd'
-import { AppServerCtx } from '../@/server/ctx'
-import { ServerEvt } from '../@/server/evt'
+import { BackendCmd } from '../@/server/cmd'
+import { AppBackendCtx } from '../@/server/ctx'
+import { BackendEvt } from '../@/server/evt'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
 //
 //
@@ -94,7 +94,7 @@ export type MsgClient =
   | { t: 'clicked-avatar' }
   | { t: 'clicked-update-username-button' }
 
-export type MsgServer = UpdateUsernameTypes.MsgServer | { t: 'handled'; clientId: ClientId; msg: MsgToClient }
+export type MsgBackend = UpdateUsernameTypes.MsgBackend | { t: 'handled'; clientId: ClientId; msg: MsgToClient }
 
 export type MsgToClient =
   | UpdateUsernameTypes.MsgToClient
@@ -106,7 +106,7 @@ export type MsgToClient =
     }
   | Res
 
-export type MsgToServer = Req | UpdateUsernameTypes.MsgToServer
+export type MsgToBackend = Req | UpdateUsernameTypes.MsgToBackend
 
 export type Req =
   | { t: 'find-one'; userId: UserId }
@@ -116,18 +116,18 @@ export type Req =
 
 export type Res = Req & { result: Result<string, Profile[]> }
 
-export type ServerCtx = AppServerCtx
+export type BackendCtx = AppBackendCtx
 
-export type ServerModule = AppServerModule<{
-  Ctx: ServerCtx
+export type BackendModule = AppBackendModule<{
+  Ctx: BackendCtx
   MsgCmdIn: null
-  MsgEvtIn: ServerEvt
+  MsgEvtIn: BackendEvt
   Model: null
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
+  Msg: MsgBackend
+  MsgCmdOut: BackendCmd<MsgToClient>
   MsgEvtOut: null
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Deps: null
 }>
 
@@ -137,13 +137,13 @@ export type ClientModule = AppClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Ctx: ClientCtx
   MsgCmdIn: ProfileCmd
   MsgEvtIn: ClientEvt
   MsgCmdOut: AppClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>
   MsgEvtOut: ClientEvt
   ViewSlot: {

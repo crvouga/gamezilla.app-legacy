@@ -1,15 +1,15 @@
 import { sendToClient } from '~/app/@/server/cmd'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import type { Pack } from '../../../@/pack/pack'
 import { PackId } from '../../../@/pack/pack-id'
 import { PackName } from '../../../@/pack/pack-name'
-import type { ServerModule } from '../../types'
+import type { BackendModule } from '../../types'
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen({}, () => updateFromClient(input))
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen({}, () => updateFromClient(input))
 }
 
-const updateFromClient: ServerModule['update'] = async (input) => {
+const updateFromClient: BackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'create-new-pack.clicked-create-button': {
       const counted = await input.ctx.packDb.count({
@@ -52,6 +52,6 @@ const updateFromClient: ServerModule['update'] = async (input) => {
   }
 }
 
-export const PackCreateNewServer = {
+export const PackCreateNewBackend = {
   update,
 }

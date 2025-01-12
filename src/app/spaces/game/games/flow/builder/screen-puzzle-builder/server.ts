@@ -1,18 +1,18 @@
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
-import type { ServerModule } from '../types'
-import { DeleteForeverServer } from './delete-forever/server'
-import { EditPuzzleNameServer } from './edit-puzzle-name/server'
-import { SaveChangesServer } from './save-changes/server'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import type { BackendModule } from '../types'
+import { DeleteForeverBackend } from './delete-forever/server'
+import { EditPuzzleNameBackend } from './edit-puzzle-name/server'
+import { SaveChangesBackend } from './save-changes/server'
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen(
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen(
     {},
-    () => DeleteForeverServer.update(input),
-    () => EditPuzzleNameServer.update(input),
-    () => SaveChangesServer.update(input),
+    () => DeleteForeverBackend.update(input),
+    () => EditPuzzleNameBackend.update(input),
+    () => SaveChangesBackend.update(input),
   )
 }
 
-export const ScreenPuzzleBuilderServer: Pick<ServerModule, 'update'> = {
+export const ScreenPuzzleBuilderBackend: Pick<BackendModule, 'update'> = {
   update,
 }

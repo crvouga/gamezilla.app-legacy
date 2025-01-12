@@ -1,11 +1,11 @@
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
-import type { ServerModule } from '../types'
-import { CreateNewPuzzleServer } from './create-new-puzzle/server'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import type { BackendModule } from '../types'
+import { CreateNewPuzzleBackend } from './create-new-puzzle/server'
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen({}, () => CreateNewPuzzleServer.update(input))
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen({}, () => CreateNewPuzzleBackend.update(input))
 }
 
-export const ScreenPuzzleBuilderOpenServer = {
+export const ScreenPuzzleBuilderOpenBackend = {
   update,
 }

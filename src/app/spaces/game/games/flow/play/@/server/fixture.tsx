@@ -1,18 +1,18 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Msg } from '~/@/msg/msg'
-import { FixtureFlowServer } from '../../../@/server/fixture'
+import { FixtureFlowBackend } from '../../../@/server/fixture'
 import { PlayCore } from '../../core'
-import { PlayServer } from '../../server'
+import { PlayBackend } from '../../server'
 import type { ModelCore } from '../../types'
 
-type Input = Partial<Parameters<typeof PlayServer.update>[0]>
+type Input = Partial<Parameters<typeof PlayBackend.update>[0]>
 
-type Output = Awaited<ReturnType<typeof PlayServer.update>> & {
+type Output = Awaited<ReturnType<typeof PlayBackend.update>> & {
   modelCore: ModelCore
 }
 
-export const FixturePlayServer = async () => {
-  const f = await FixtureFlowServer()
+export const FixturePlayBackend = async () => {
+  const f = await FixtureFlowBackend()
   const initCore = PlayCore.initCore(f)
 
   const updates = async (outputs: NonEmpty<Output>, inputs: Input[]): Promise<NonEmpty<Output>> => {
@@ -21,7 +21,7 @@ export const FixturePlayServer = async () => {
       return outputs
     }
     const lastOutput = NonEmpty.last(outputs)
-    const nextOutput = await PlayServer.update({ modelCore: lastOutput.modelCore, deps: null, ...f, ...input })
+    const nextOutput = await PlayBackend.update({ modelCore: lastOutput.modelCore, deps: null, ...f, ...input })
     const msgCore = Msg.batch(input.msgCore, nextOutput.msgCore)
     const nextModelCore = msgCore.reduce(
       (modelCore, msgCore) => PlayCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),

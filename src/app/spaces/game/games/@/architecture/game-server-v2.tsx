@@ -12,13 +12,13 @@ import type { UserId } from '~/app/@/data/user-id'
 //
 //
 
-export type GameServerModuleTypes = {
+export type GameBackendModuleTypes = {
   Deps?: any
   Ctx?: any
   Model?: any
   Msg?: any
   MsgToClient?: any
-  MsgToServer?: any
+  MsgToBackend?: any
   MsgCmdIn?: any
   MsgEvtIn?: any
   MsgCmdOut?: any
@@ -33,14 +33,14 @@ export type GameServerModuleTypes = {
 //
 //
 
-export type Input<T extends GameServerModuleTypes> = {
+export type Input<T extends GameBackendModuleTypes> = {
   deps: T['Deps']
   ctx: T['Ctx']
   modelCore: T['ModelCore']
   msgCore?: WithEventId<T['MsgCore']> | null
   msg?: T['Msg'] | null
   msgClient?:
-    | (T['MsgToServer'] & {
+    | (T['MsgToBackend'] & {
         clientId: ClientId
         sessionId: SessionId
         userId: UserId
@@ -56,13 +56,13 @@ export type Input<T extends GameServerModuleTypes> = {
 //
 //
 
-export type Output<T extends GameServerModuleTypes> = {
+export type Output<T extends GameBackendModuleTypes> = {
   msgCmd?: T['MsgCmdOut'][]
   msgEvt?: T['MsgEvtOut'][]
   msgCore?: T['MsgCore'][]
 }
 
-export type GameServerModule<T extends GameServerModuleTypes> = {
+export type GameBackendModule<T extends GameBackendModuleTypes> = {
   initDeps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
   init: T['Model']
   update: (input: Input<T>) => Promise<Output<T>>
@@ -78,7 +78,7 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
 //
 //
 
-const andThen = async <T extends GameServerModuleTypes>(
+const andThen = async <T extends GameBackendModuleTypes>(
   acc: Output<T>,
   ...updates: (() => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
@@ -95,8 +95,8 @@ const andThen = async <T extends GameServerModuleTypes>(
 
 const tagOutput = <
   TTag extends string,
-  T extends GameServerModuleTypes,
-  TTaggedCmd extends GameServerModuleTypes['MsgCmdOut'],
+  T extends GameBackendModuleTypes,
+  TTaggedCmd extends GameBackendModuleTypes['MsgCmdOut'],
 >(
   tag: TTag,
   tagCmd: (msgCmd: T['MsgCmdOut'][]) => TTaggedCmd[] | null | undefined,
@@ -117,7 +117,7 @@ const tagOutput = <
   }
 }
 
-type FixtureUpdateConfig<T extends GameServerModuleTypes> = {
+type FixtureUpdateConfig<T extends GameBackendModuleTypes> = {
   update: (input: Input<T>) => Promise<Output<T>>
   updateCore: (input: { ctx: T['Ctx']; modelCore: T['ModelCore']; msgCore: T['MsgCore'] }) => T['ModelCore']
   modelCore: T['ModelCore']
@@ -125,7 +125,7 @@ type FixtureUpdateConfig<T extends GameServerModuleTypes> = {
 }
 
 const fixtureUpdates =
-  <T extends GameServerModuleTypes>(config: FixtureUpdateConfig<T>) =>
+  <T extends GameBackendModuleTypes>(config: FixtureUpdateConfig<T>) =>
   async (
     outputs: NonEmpty<Output<T> & { modelCore: T['ModelCore'] }>,
     inputs: Partial<Input<T>>[],
@@ -154,14 +154,14 @@ const fixtureUpdates =
   }
 
 const fixtureUpdate =
-  <T extends GameServerModuleTypes>(config: FixtureUpdateConfig<T>) =>
+  <T extends GameBackendModuleTypes>(config: FixtureUpdateConfig<T>) =>
   async (output: Output<T>, inputs: Partial<Input<T>>[]): Promise<Output<T> & { modelCore: T['ModelCore'] }> => {
     const updates = fixtureUpdates(config)
     const outputs = await updates([{ ...output, modelCore: config.modelCore }], inputs)
     return NonEmpty.last(outputs)
   }
 
-export const GameServerModule = {
+export const GameBackendModule = {
   andThen,
   tagOutput,
   fixtureUpdate,

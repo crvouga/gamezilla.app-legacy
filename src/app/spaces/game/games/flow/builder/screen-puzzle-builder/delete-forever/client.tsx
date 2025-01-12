@@ -1,9 +1,9 @@
 import { RemoteResult, isLoading } from '~/@/result'
-import { APP_SOUND, playSound, sendToServer, showCreatedSm } from '~/app/@/client/cmd'
+import { APP_SOUND, playSound, sendToBackend, showCreatedSm } from '~/app/@/client/cmd'
 import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from '~/app/@/ui'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
 import type { ClientModule } from '../../types'
-import { MsgClient, MsgToServer } from './types'
+import { MsgClient, MsgToBackend } from './types'
 
 const update: ClientModule['update'] = (input) => {
   return GameClientModule.andThen(
@@ -60,7 +60,7 @@ const updateFromMsg: ClientModule['update'] = (input) => {
           puzzleDeleteForeverRequest: RemoteResult.Loading,
         },
         msgCmd: [
-          sendToServer({
+          sendToBackend({
             t: 'delete-forever.user-confirmed',
           }),
           playSound(APP_SOUND.tap),
@@ -90,7 +90,7 @@ const updateFromMsgCore: ClientModule['update'] = (input) => {
         msgCmd: [
           ...showCreatedSm<{
             MsgClient: MsgClient
-            MsgToServer: MsgToServer
+            MsgToBackend: MsgToBackend
           }>(input.ctx.t('flow.puzzle-deleted')),
           {
             t: 'flow-cmd.remove-puzzles',

@@ -71,7 +71,7 @@ export type ModelClient = Model & {
   confirming?: MsgClient['t']
 }
 
-export type ModelServer = Model
+export type ModelBackend = Model
 
 export const initShared = ({ white, black }: { white: UserId | null; black: UserId | null }): Model => {
   return {
@@ -110,11 +110,11 @@ const initSetup = (model: Model): ModelSetup => {
 
 export type MsgClient = Req | { t: 'clicked-cancel' }
 
-export type MsgServer = { t: 'none' }
+export type MsgBackend = { t: 'none' }
 
 export type MsgToClient = Res
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
 //
 //

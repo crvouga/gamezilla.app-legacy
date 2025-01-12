@@ -1,6 +1,6 @@
-import { ServerCmd } from '~/app/@/server/cmd'
+import { BackendCmd } from '~/app/@/server/cmd'
 
-export type SpaceServerCmd<MsgToClient> = ServerCmd<MsgToClient> | { t: 'send-to-space'; msg: MsgToClient }
+export type SpaceBackendCmd<MsgToClient> = BackendCmd<MsgToClient> | { t: 'send-to-space'; msg: MsgToClient }
 
 //
 //
@@ -11,7 +11,7 @@ export type SpaceServerCmd<MsgToClient> = ServerCmd<MsgToClient> | { t: 'send-to
 //
 //
 
-export const sendToSpace = <MsgToClient>(msg: MsgToClient): SpaceServerCmd<MsgToClient> => {
+export const sendToSpace = <MsgToClient>(msg: MsgToClient): SpaceBackendCmd<MsgToClient> => {
   return { t: 'send-to-space', msg }
 }
 
@@ -23,7 +23,7 @@ export const sendToSpace = <MsgToClient>(msg: MsgToClient): SpaceServerCmd<MsgTo
 //
 //
 
-const mapOne = <A, B>(fn: (a: A) => B, msgCmd: SpaceServerCmd<A>): SpaceServerCmd<B> => {
+const mapOne = <A, B>(fn: (a: A) => B, msgCmd: SpaceBackendCmd<A>): SpaceBackendCmd<B> => {
   switch (msgCmd.t) {
     case 'send-to-space': {
       return {
@@ -32,28 +32,28 @@ const mapOne = <A, B>(fn: (a: A) => B, msgCmd: SpaceServerCmd<A>): SpaceServerCm
       }
     }
     default: {
-      return ServerCmd.mapOne(fn, msgCmd)
+      return BackendCmd.mapOne(fn, msgCmd)
     }
   }
 }
 
 const map = <A, B>(
-  msgCmd: SpaceServerCmd<A>[] | undefined | null,
+  msgCmd: SpaceBackendCmd<A>[] | undefined | null,
   fn: (a: A) => B,
-): SpaceServerCmd<B>[] | undefined => {
+): SpaceBackendCmd<B>[] | undefined => {
   return msgCmd?.map((m) => mapOne(fn, m))
 }
 
 const tag = <T extends string, A>(
   tag: T,
-  msgCmd?: SpaceServerCmd<A>[],
-): SpaceServerCmd<{ t: T; c: A }>[] | undefined => {
+  msgCmd?: SpaceBackendCmd<A>[],
+): SpaceBackendCmd<{ t: T; c: A }>[] | undefined => {
   return map(msgCmd ?? [], (c) => ({ t: tag, c }))
 }
 
-const toSpaceServerCmd = <TMsgToClient>(
-  msgCmd: SpaceServerCmd<TMsgToClient>[] | undefined | null,
-): SpaceServerCmd<TMsgToClient>[] => {
+const toSpaceBackendCmd = <TMsgToClient>(
+  msgCmd: SpaceBackendCmd<TMsgToClient>[] | undefined | null,
+): SpaceBackendCmd<TMsgToClient>[] => {
   return (msgCmd ?? []).flatMap((msgCmd) => {
     switch (msgCmd.t) {
       case 'send-to-space': {
@@ -66,9 +66,9 @@ const toSpaceServerCmd = <TMsgToClient>(
   })
 }
 
-const toServerCmd = <TMsgToClient>(
-  msgCmd: SpaceServerCmd<TMsgToClient>[] | undefined | null,
-): ServerCmd<TMsgToClient>[] => {
+const toBackendCmd = <TMsgToClient>(
+  msgCmd: SpaceBackendCmd<TMsgToClient>[] | undefined | null,
+): BackendCmd<TMsgToClient>[] => {
   return (msgCmd ?? []).flatMap((msgCmd) => {
     switch (msgCmd.t) {
       case 'send-to-space': {
@@ -81,9 +81,9 @@ const toServerCmd = <TMsgToClient>(
   })
 }
 
-export const SpaceServerCmd = {
-  toServerCmd,
-  toSpaceServerCmd,
+export const SpaceBackendCmd = {
+  toBackendCmd,
+  toSpaceBackendCmd,
   map,
   mapOne,
   tag,

@@ -1,14 +1,14 @@
 import { Err, Ok, Result, isErr } from '~/@/result'
-import { AppServerModule } from '../@/architecture/app-server'
+import { AppBackendModule } from '../@/architecture/app-server'
 import { Profile } from '../@/data/profile'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
 import { sendToClient } from '../@/server/cmd'
-import { AppServerCtx } from '../@/server/ctx'
+import { AppBackendCtx } from '../@/server/ctx'
 import type { ProfileDb } from './profile-db/profile-db'
 import { createProfileDb } from './profile-db/profile-db-impl.postgres'
-import { type ProfileCore, type Req, ServerCtx, ServerModule, profileCoreToProfile } from './types'
+import { type ProfileCore, type Req, BackendCtx, BackendModule, profileCoreToProfile } from './types'
 
 //
 //
@@ -17,14 +17,14 @@ import { type ProfileCore, type Req, ServerCtx, ServerModule, profileCoreToProfi
 //
 //
 
-export const initCtx = async (input: { ctx: AppServerCtx }): Promise<ServerCtx> => {
+export const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   return {
     ...input.ctx,
   }
 }
 
-export const update: ServerModule['update'] = async (input) => {
-  return AppServerModule.andThen(
+export const update: BackendModule['update'] = async (input) => {
+  return AppBackendModule.andThen(
     {},
     () => updateFromMsg(input),
     () => updateFromClient(input),
@@ -32,7 +32,7 @@ export const update: ServerModule['update'] = async (input) => {
   )
 }
 
-const updateFromMsg: ServerModule['update'] = async ({ msg }) => {
+const updateFromMsg: BackendModule['update'] = async ({ msg }) => {
   if (!msg) {
     return {}
   }
@@ -49,7 +49,7 @@ const updateFromMsg: ServerModule['update'] = async ({ msg }) => {
   }
 }
 
-const updateFromClient: ServerModule['update'] = async ({ msgClient, ctx }) => {
+const updateFromClient: BackendModule['update'] = async ({ msgClient, ctx }) => {
   if (!msgClient) {
     return {}
   }
@@ -87,7 +87,7 @@ const updateFromClient: ServerModule['update'] = async ({ msgClient, ctx }) => {
   }
 }
 
-const updateFromEvent: ServerModule['update'] = async ({ msgEvt, ctx }) => {
+const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
   if (!msgEvt) {
     return {}
   }

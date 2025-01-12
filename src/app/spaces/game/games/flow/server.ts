@@ -1,20 +1,20 @@
 import { Logger } from '~/@/logger'
 import { Sub } from '~/@/sub'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { PackDb } from './@/pack/pack-db'
-import { PackListServer } from './@/pack/pack-list'
-import { PackPuzzlesGridServer } from './@/pack/pack-puzzles-grid/server'
+import { PackListBackend } from './@/pack/pack-list'
+import { PackPuzzlesGridBackend } from './@/pack/pack-puzzles-grid/server'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
-import { PuzzleListServer } from './@/puzzle/puzzle-list/server'
-import { FlowServerCtx } from './@/server/ctx'
+import { PuzzleListBackend } from './@/puzzle/puzzle-list/server'
+import { FlowBackendCtx } from './@/server/ctx'
 import { Solutions } from './@/solutions/solutions'
-import { BuilderServer } from './builder/server'
-import { PlayServer } from './play/server'
-import type { ServerModule } from './types'
+import { BuilderBackend } from './builder/server'
+import { PlayBackend } from './play/server'
+import type { BackendModule } from './types'
 
-export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
+export const initCtx = (input: { ctx: SpaceBackendCtx }): FlowBackendCtx => {
   return {
     ...input.ctx,
     puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: Logger({ t: 'noop' }) }),
@@ -23,12 +23,12 @@ export const initCtx = (input: { ctx: SpaceServerCtx }): FlowServerCtx => {
   }
 }
 
-const init: ServerModule['init'] = {
+const init: BackendModule['init'] = {
   t: 'none',
 }
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen(
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen(
     {},
     () => updatePlay(input),
     () => updateBuilder(input),
@@ -38,34 +38,34 @@ const update: ServerModule['update'] = async (input) => {
   )
 }
 
-const updatePackList: ServerModule['update'] = async (input) => {
-  const updated = await PackListServer.update({
+const updatePackList: BackendModule['update'] = async (input) => {
+  const updated = await PackListBackend.update({
     ...input,
     msgClient: input.msgClient?.t === 'pack-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msg: input.msg?.t === 'pack-list' ? input.msg.c : null,
   })
 
   return {
-    msgCmd: SpaceServerCmd.tag('pack-list', updated.msgCmd),
+    msgCmd: SpaceBackendCmd.tag('pack-list', updated.msgCmd),
     msgEvt: updated.msgEvt,
   }
 }
 
-const updatePuzzleList: ServerModule['update'] = async (input) => {
-  const updated = await PuzzleListServer.update({
+const updatePuzzleList: BackendModule['update'] = async (input) => {
+  const updated = await PuzzleListBackend.update({
     ...input,
     msgClient: input.msgClient?.t === 'puzzle-list' ? { ...input.msgClient, ...input.msgClient.c } : null,
     msg: input.msg?.t === 'puzzle-list' ? input.msg.c : null,
   })
 
   return {
-    msgCmd: SpaceServerCmd.tag('puzzle-list', updated.msgCmd),
+    msgCmd: SpaceBackendCmd.tag('puzzle-list', updated.msgCmd),
     msgEvt: updated.msgEvt,
   }
 }
 
-const updatePackPuzzlesGrid: ServerModule['update'] = async (input) => {
-  const updated = await PackPuzzlesGridServer.update({
+const updatePackPuzzlesGrid: BackendModule['update'] = async (input) => {
+  const updated = await PackPuzzlesGridBackend.update({
     ...input,
     msg: input.msg?.t === 'pack-puzzles-grid' ? input.msg.c : null,
     msgClient: input.msgClient?.t === 'pack-puzzles-grid' ? { ...input.msgClient, ...input.msgClient.c } : null,
@@ -73,13 +73,13 @@ const updatePackPuzzlesGrid: ServerModule['update'] = async (input) => {
   })
 
   return {
-    msgCmd: SpaceServerCmd.tag('pack-puzzles-grid', updated.msgCmd),
+    msgCmd: SpaceBackendCmd.tag('pack-puzzles-grid', updated.msgCmd),
     msgEvt: updated.msgEvt,
   }
 }
 
-const updateBuilder: ServerModule['update'] = async (input) => {
-  const updated = await BuilderServer.update({
+const updateBuilder: BackendModule['update'] = async (input) => {
+  const updated = await BuilderBackend.update({
     ...input,
     modelCore: input.modelCore.builder,
     msgClient: input.msgClient?.t === 'builder' ? { ...input.msgClient, ...input.msgClient.c } : null,
@@ -89,14 +89,14 @@ const updateBuilder: ServerModule['update'] = async (input) => {
   })
 
   return {
-    msgCmd: SpaceServerCmd.tag('builder', updated.msgCmd),
+    msgCmd: SpaceBackendCmd.tag('builder', updated.msgCmd),
     msgCore: updated.msgCore?.map((c) => ({ ...c, t: 'builder', c })),
     msgEvt: updated.msgEvt,
   }
 }
 
-const updatePlay: ServerModule['update'] = async (input) => {
-  const updated = await PlayServer.update({
+const updatePlay: BackendModule['update'] = async (input) => {
+  const updated = await PlayBackend.update({
     ctx: input.ctx,
     modelCore: input.modelCore.play,
     msgCmd: input.msgCmd,
@@ -108,17 +108,17 @@ const updatePlay: ServerModule['update'] = async (input) => {
   })
 
   return {
-    msgCmd: SpaceServerCmd.tag('play', updated.msgCmd),
+    msgCmd: SpaceBackendCmd.tag('play', updated.msgCmd),
     msgCore: updated.msgCore?.map((c) => ({ ...c, t: 'play', c })),
     msgEvt: updated.msgEvt,
   }
 }
 
-const subscriptions: ServerModule['subscriptions'] = async (_input) => {
+const subscriptions: BackendModule['subscriptions'] = async (_input) => {
   return Sub.None
 }
 
-export const FlowServer = {
+export const FlowBackend = {
   init,
   subscriptions,
   update,

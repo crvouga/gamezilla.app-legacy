@@ -2,17 +2,17 @@ import { ProfileCore } from '../types'
 
 export type ModelClient = {}
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 export type MsgClient = {
   t: 'profile.current-user-profile.noop'
 }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'profile.current-user-profile.noop'
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'profile.current-user-profile.noop'
 }
 

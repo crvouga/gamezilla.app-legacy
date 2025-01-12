@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
     const output = SpacesClient.init({
       ctx: f.ctx,
     })
-    expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toServer?.t === 'list-spaces')).toBe(true)
+    expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toBackend?.t === 'list-spaces')).toBe(true)
   })
 
   it('should request spaces on space list route change', async () => {
@@ -104,7 +104,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgServer: {
+        msgBackend: {
           t: 'listed-spaces',
           spaces: [SpaceCore.random(), SpaceCore.random(), SpaceCore.random()],
           causedBy: null,
@@ -136,7 +136,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgServer: {
+        msgBackend: {
           t: 'listed-spaces',
           spaces: [SpaceCore.random(), SpaceCore.random(), SpaceCore.random()],
           causedBy: null,
@@ -165,7 +165,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgServer: {
+        msgBackend: {
           t: 'listed-spaces',
           spaces: [space],
           causedBy: null,
@@ -200,7 +200,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgServer: {
+        msgBackend: {
           t: 'listed-spaces',
           spaces: [space],
           causedBy: null,
@@ -235,7 +235,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgServer: {
+        msgBackend: {
           t: 'listed-spaces',
           spaces: [space],
           causedBy: null,
@@ -272,10 +272,10 @@ describe(import.meta.file, () => {
 
     const listedSpace = EventSourced.startFromLatestSnapshot(space)
     const updated = f.update(f.initial, [
-      { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
+      { msgBackend: { t: 'listed-spaces', spaces: [listedSpace] } },
       { msg: { t: 'game', c: { t: 'flow', c: { t: 'game-main-menu.clicked-exit-game-button' } }, spaceId } },
-      { msgServer: { t: 'listed-spaces', spaces: [listedSpace] } },
-      { msgServer: { t: 'current-user-space', currentUser: f.currentUser, space: listedSpace } },
+      { msgBackend: { t: 'listed-spaces', spaces: [listedSpace] } },
+      { msgBackend: { t: 'current-user-space', currentUser: f.currentUser, space: listedSpace } },
     ])
 
     const before = SpaceCore.toSpaceStarted(space)
@@ -288,7 +288,7 @@ describe(import.meta.file, () => {
   test('render spinner when listing spaces', async () => {
     const f = await Fixture()
 
-    const initial = f.update(f.initial, [{ msgServer: { t: 'listed-spaces', spaces: [] } }])
+    const initial = f.update(f.initial, [{ msgBackend: { t: 'listed-spaces', spaces: [] } }])
 
     const updated = f.update(initial, [
       { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } },
@@ -299,7 +299,7 @@ describe(import.meta.file, () => {
 
   test('render empty state', async () => {
     const f = await Fixture()
-    const initial = f.update(f.initial, [{ msgServer: { t: 'listed-spaces', spaces: [] } }])
+    const initial = f.update(f.initial, [{ msgBackend: { t: 'listed-spaces', spaces: [] } }])
     const updated = f.update(initial, [
       { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } },
     ])

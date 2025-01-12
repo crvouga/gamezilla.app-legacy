@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
-import type { GameServer } from '~/app/spaces/game/games/@/architecture/game-server'
-import type { ModelServer, ModelCore, MsgServer, MsgCore, MsgToClient, MsgToServer } from './chess.types'
+import type { GameBackend } from '~/app/spaces/game/games/@/architecture/game-server'
+import type { ModelBackend, ModelCore, MsgBackend, MsgCore, MsgToClient, MsgToBackend } from './chess.types'
 
 //
 //
@@ -10,13 +10,13 @@ import type { ModelServer, ModelCore, MsgServer, MsgCore, MsgToClient, MsgToServ
 //
 //
 
-type Server = GameServer<{
+type Backend = GameBackend<{
   MsgCore: MsgCore
   ModelCore: ModelCore
-  ModelServer: ModelServer
-  MsgServer: MsgServer
+  ModelBackend: ModelBackend
+  MsgBackend: MsgBackend
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
 }>
 
 //
@@ -27,7 +27,7 @@ type Server = GameServer<{
 //
 //
 
-export const init: Server['init'] = async (input) => {
+export const init: Backend['init'] = async (input) => {
   if (input.model) {
     return { model: input.model }
   }
@@ -44,7 +44,7 @@ export const init: Server['init'] = async (input) => {
 //
 //
 
-export const update: Server['update'] = async (_input) => {
+export const update: Backend['update'] = async (_input) => {
   return {
     model: {
       t: 'none',
@@ -60,6 +60,6 @@ export const update: Server['update'] = async (_input) => {
 //
 //
 
-export const subscriptions: Server['subscriptions'] = async (_input) => {
+export const subscriptions: Backend['subscriptions'] = async (_input) => {
   return Sub.None
 }

@@ -3,7 +3,7 @@ import type { UserId } from '~/app/@/data/user-id'
 
 export type SpaceClientCmdTypes = {
   MsgClient: any
-  MsgToServer: any
+  MsgToBackend: any
 }
 
 export type SpaceClientCmd<T extends SpaceClientCmdTypes> =
@@ -24,7 +24,7 @@ const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
   cmds?: SpaceClientCmd<T>[],
 ): SpaceClientCmd<{
   MsgClient: { t: Tag; c: T['MsgClient'] }
-  MsgToServer: { t: Tag; c: T['MsgToServer'] }
+  MsgToBackend: { t: Tag; c: T['MsgToBackend'] }
 }>[] => {
   return (
     cmds?.map((msgCmd) => {
@@ -43,7 +43,7 @@ const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
 
 const map = <A extends SpaceClientCmdTypes, B extends SpaceClientCmdTypes>(
   msgCmd: SpaceClientCmd<A>[] | undefined | null,
-  msgToServer: (a: A['MsgToServer']) => B['MsgToServer'],
+  msgToBackend: (a: A['MsgToBackend']) => B['MsgToBackend'],
   msgClient: (b: A['MsgClient']) => B['MsgClient'],
 ): SpaceClientCmd<B>[] => {
   return (
@@ -54,7 +54,7 @@ const map = <A extends SpaceClientCmdTypes, B extends SpaceClientCmdTypes>(
           return [msgCmd]
         }
         default: {
-          return AppClientCmd.map([msgCmd], msgToServer, msgClient)
+          return AppClientCmd.map([msgCmd], msgToBackend, msgClient)
         }
       }
     }) ?? []

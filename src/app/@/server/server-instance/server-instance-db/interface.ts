@@ -1,11 +1,11 @@
 import { Result } from '~/@/result'
-import { ServerInstance } from '../server-instance'
-import { ServerInstanceId } from '../server-instance-id'
+import { BackendInstance } from '../server-instance'
+import { BackendInstanceId } from '../server-instance-id'
 import { TimeSpan } from '~/@/time/time-span'
 
-export type IServerInstanceDb = {
-  get: (serverId: ServerInstanceId) => Promise<Result<string, ServerInstance | null>>
-  put: (serverInstance: ServerInstance) => Promise<Result<string, null>>
-  list: () => Promise<Result<string, ServerInstance[]>>
-  listAlive: (input: { minimalHeartRate: TimeSpan }) => Promise<Result<string, ServerInstance[]>>
+export type IBackendInstanceDb = {
+  get: (serverId: BackendInstanceId) => Promise<Result<string, BackendInstance | null>>
+  put: (serverInstance: BackendInstance) => Promise<Result<string, null>>
+  list: () => Promise<Result<string, BackendInstance[]>>
+  listAlive: (input: { minimalHeartRate: TimeSpan }) => Promise<Result<string, BackendInstance[]>>
 }

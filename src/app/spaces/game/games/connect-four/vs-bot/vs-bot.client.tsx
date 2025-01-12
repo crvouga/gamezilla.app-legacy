@@ -20,7 +20,7 @@ import {
   type MsgClient,
   type MsgCore,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   updateCore,
 } from './vs-bot.types'
 
@@ -36,12 +36,12 @@ type Module = GameClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   ModelCore: ModelCore
   MsgCore: MsgCore
   Ctx: SpaceClientCtx
   MsgCmdOut: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
   MsgEvtIn: SpaceClientEvt
@@ -205,7 +205,7 @@ const updateSound = (
   modelCore: ModelCore,
   msgCore: WithEventId<MsgCore>,
 ): AppClientCmd<{
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgClient: MsgClient
 }>[] => {
   switch (modelCore.type) {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok } from '~/@/result'
-import { FixtureAppServer } from '~/app/@/server/fixture'
+import { FixtureAppBackend } from '~/app/@/server/fixture'
 import { FlowHash } from '../../flow/hash'
 import { VariantGridShorthand } from '../../variant/grid'
 import { Solutions } from '../solutions'
@@ -15,7 +15,7 @@ const Fixture = async (config: Config) => {
 }
 
 const Fixtures = async () => {
-  const f = await FixtureAppServer()
+  const f = await FixtureAppBackend()
 
   const configs: Config[] = [
     {

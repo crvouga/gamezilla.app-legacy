@@ -4,12 +4,12 @@ import { DbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
 import { unwrapOr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
-import { IServerInstanceDb, ServerInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
+import { IBackendInstanceDb, BackendInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
 import { DATABASE_URL } from '~/config/server'
 
 export type Ctx = {
   logger: ILogger
-  serverInstanceDb: IServerInstanceDb
+  serverInstanceDb: IBackendInstanceDb
 }
 
 export const initCtx = async (config: { logger: ILogger }): Promise<Ctx> => {
@@ -28,7 +28,7 @@ export const initCtx = async (config: { logger: ILogger }): Promise<Ctx> => {
     logger,
     dbConnSql,
   })
-  const serverInstanceDb = ServerInstanceDb({
+  const serverInstanceDb = BackendInstanceDb({
     t: 'db-conn-kv',
     dbConnKv,
   })

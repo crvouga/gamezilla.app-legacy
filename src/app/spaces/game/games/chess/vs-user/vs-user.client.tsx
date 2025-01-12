@@ -11,7 +11,7 @@ import { Chess } from '../@/chess'
 import {
   type CoreModel,
   type ModelClient,
-  type ModelServer,
+  type ModelBackend,
   type MsgClient,
   type MsgToClient,
   initCore,
@@ -112,7 +112,7 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
     //
     //
     //
-    // MsgToServer
+    // MsgToBackend
     //
     //
     //
@@ -125,7 +125,7 @@ export const update = (msg: Msg, model: Model): { model: Model; eff?: Eff<Msg> }
   }
 }
 
-export const updateFromServer = (
+export const updateFromBackend = (
   { ctx }: { ctx: SpaceClientCtx },
   msg: MsgToClient,
   _model: Model,
@@ -551,7 +551,7 @@ const toGameText = (model: CoreModel): string => {
 //
 //
 
-export const mergeWithServer = ({ client, server }: { client?: ModelClient; server: ModelServer }): ModelClient => {
+export const mergeWithBackend = ({ client, server }: { client?: ModelClient; server: ModelBackend }): ModelClient => {
   const initial = init({ userId: null })
   const clientModel = client ?? initial.model
   return {

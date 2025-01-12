@@ -28,7 +28,7 @@ type Module = AppClientModule<{
   Ctx: Ctx
   //
   MsgToClient: null
-  MsgToServer: null
+  MsgToBackend: null
   //
   MsgCmdOut: SoundCmd
   //

@@ -7,7 +7,7 @@ import { Direction } from './@/direction'
 import {
   type CoreModel,
   type ModelClient,
-  type ModelServer,
+  type ModelBackend,
   type MsgClient,
   type MsgToClient,
   initCoreModel,
@@ -116,7 +116,7 @@ export const update = (
   }
 }
 
-export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Msg>] => {
+export const updateFromBackend = (msg: MsgToClient, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'tick': {
       const coreModel = msg[1]
@@ -198,12 +198,12 @@ export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }
   return <canvas className='pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none' />
 }
 
-export const mergeWithServer = ({
+export const mergeWithBackend = ({
   clientModel,
   serverModel,
 }: {
   clientModel: ModelClient
-  serverModel: ModelServer
+  serverModel: ModelBackend
 }): ModelClient => {
   return {
     ...serverModel,

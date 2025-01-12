@@ -1,18 +1,18 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { pipe } from '~/@/function/pipe'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import { Chess } from '../@/chess'
 import {
   botMoved,
-  initServer,
+  initBackend,
   isBotTurn,
-  type ModelServer,
-  type MsgServer,
+  type ModelBackend,
+  type MsgBackend,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
 } from './vs-bot.types'
 
 //
@@ -23,9 +23,9 @@ import {
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
-export const init = initServer
+export const init = initBackend
 
 //
 //
@@ -35,7 +35,7 @@ export const init = initServer
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = ({
   msg,
@@ -46,7 +46,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   if (msg.t === 'bot-moved') {
     const result = botMoved(msg.moved, model)
@@ -71,13 +71,13 @@ export const update = ({
 }
 
 export const updateFromClient = (input: {
-  msg: MsgToServer
+  msg: MsgToBackend
   model: Model
-  ctx: SpaceServerCtx
+  ctx: SpaceBackendCtx
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   const updated = updateFromClientMain(input)
 
@@ -126,11 +126,11 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt
+  msg: SpaceBackendEvt
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
   eff?: Eff
 } => {
   if (msg.t === 'space-evt.user-left-space') {

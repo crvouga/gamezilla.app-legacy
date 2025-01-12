@@ -21,13 +21,13 @@ export type ModelClient = {
   }
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
 export type MsgToClient = Res
 
-export type MsgServer = { t: 'none' }
+export type MsgBackend = { t: 'none' }
 
 export type MsgClient =
   | Req

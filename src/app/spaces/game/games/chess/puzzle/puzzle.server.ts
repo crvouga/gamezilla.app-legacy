@@ -5,17 +5,17 @@ import { pipe } from '~/@/function/pipe'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import type { UserId } from '~/app/@/data/user-id'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import type { ChessMsgCore } from '../@/chess/chess-shared'
 import { EloRating } from './elo-rating'
 import { PuzzleDb } from './puzzle-db'
 import {
-  type ModelServer,
-  type MsgServer,
+  type ModelBackend,
+  type MsgBackend,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   type PuzzleInteraction,
   initCore,
   transitionLoadingToStarted,
@@ -34,10 +34,10 @@ import { Sub } from '~/@/sub'
 export const init = ({
   ctx,
 }: {
-  ctx: SpaceServerCtx
+  ctx: SpaceBackendCtx
 }): {
-  model: ModelServer
-  eff: Eff<MsgServer>
+  model: ModelBackend
+  eff: Eff<MsgBackend>
 } => {
   return {
     model: {
@@ -98,13 +98,13 @@ const initialLoad = async ({ dbConn, userId }: { dbConn: IDbConnSql; userId: Use
 //
 
 export const update = (input: {
-  msg: MsgServer
-  model: ModelServer
-  ctx: SpaceServerCtx
+  msg: MsgBackend
+  model: ModelBackend
+  ctx: SpaceBackendCtx
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   return pipe(updateMain(input))
 }
@@ -210,7 +210,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
         }
       }
 
-      const modelNew: ModelServer = {
+      const modelNew: ModelBackend = {
         ...model,
         t: 'started',
         moves: [],
@@ -273,13 +273,13 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
 }
 
 export const updateFromClient = (input: {
-  ctx: SpaceServerCtx
-  msg: MsgToServer
-  model: ModelServer
+  ctx: SpaceBackendCtx
+  msg: MsgToBackend
+  model: ModelBackend
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   return updateFromClientMain({ ...input })
   // andThen((model) =>
@@ -298,12 +298,12 @@ export const watchPutInteraction = ({
   model,
   ctx,
 }: {
-  modelPrev: ModelServer
-  model: ModelServer
-  ctx: SpaceServerCtx
+  modelPrev: ModelBackend
+  model: ModelBackend
+  ctx: SpaceBackendCtx
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
 } => {
   if (model.t === modelPrev.t) {
     return { model }
@@ -334,12 +334,12 @@ export const watchGetPuzzles = ({
   model,
   ctx,
 }: {
-  model: ModelServer
-  modelPrev: ModelServer
-  ctx: SpaceServerCtx
+  model: ModelBackend
+  modelPrev: ModelBackend
+  ctx: SpaceBackendCtx
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
 } => {
   if (model.t !== 'loading' && model.requests.getPuzzles?.t !== 'loading' && model.queue.length === 0) {
     return {
@@ -373,12 +373,12 @@ export const watchPutProfile = ({
   modelPrev,
   ctx,
 }: {
-  model: ModelServer
-  modelPrev: ModelServer
-  ctx: SpaceServerCtx
+  model: ModelBackend
+  modelPrev: ModelBackend
+  ctx: SpaceBackendCtx
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
 } => {
   if (model.profile && !eq(model.profile, modelPrev.profile)) {
     const profile = model.profile
@@ -410,9 +410,9 @@ export const updateFromGame = ({
   model,
 }: {
   msg: ChessMsgCore
-  model: ModelServer
+  model: ModelBackend
 }): {
-  model: ModelServer
+  model: ModelBackend
   eff?: Eff
 } => {
   return { model }
@@ -421,10 +421,10 @@ export const updateFromGame = ({
 export const updateFromEvent = ({
   model,
 }: {
-  msg: SpaceServerEvt
-  model: ModelServer
+  msg: SpaceBackendEvt
+  model: ModelBackend
 }): {
-  model: ModelServer
+  model: ModelBackend
   eff?: Eff
 } => {
   return { model }
@@ -439,7 +439,7 @@ export const updateFromEvent = ({
 
 const TICK_RATE = TimeSpan.milliseconds(500)
 
-export const subscriptions = (intervalId: string, model: ModelServer): Sub<MsgServer> => {
+export const subscriptions = (intervalId: string, model: ModelBackend): Sub<MsgBackend> => {
   switch (model.t) {
     case 'started': {
       return Time.interval(intervalId, TICK_RATE, () => ({

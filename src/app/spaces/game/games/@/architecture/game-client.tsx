@@ -11,7 +11,7 @@ export type GameClientTypes = {
   MsgClient: any
   //
   MsgToClient: any
-  MsgToServer: any
+  MsgToBackend: any
   //
   ModelCore: any
   MsgCore: any
@@ -24,7 +24,7 @@ type Output<T extends GameClientTypes> = {
   eff?: Eff<T['MsgClient']>
   msgCmd?: AppClientCmd<{
     MsgClient: T['MsgClient']
-    MsgToServer: T['MsgToServer']
+    MsgToBackend: T['MsgToBackend']
   }>[]
   msgCore?: WithEventId<T['MsgCore']>[]
 }
@@ -48,7 +48,7 @@ export type GameClient<T extends GameClientTypes> = {
     model?: T['ModelClient'] | null
     //
     msg?: T['MsgClient'] | null
-    msgServer?: T['MsgToClient'] | null
+    msgBackend?: T['MsgToClient'] | null
     msgEvt?: ClientEvt | null
     msgCore?: WithEventMeta<T['MsgCore']> | null
   }) => Output<T>
@@ -80,7 +80,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
   ModelClient: { t: T; c: Types['ModelClient'] }
   MsgClient: { t: T; c: Types['MsgClient'] }
   MsgToClient: { t: T; c: Types['MsgToClient'] }
-  MsgToServer: { t: T; c: Types['MsgToServer'] }
+  MsgToBackend: { t: T; c: Types['MsgToBackend'] }
   ModelCore: { t: T; c: Types['ModelCore'] }
   MsgCore: { t: T; c: Types['MsgCore'] }
   ClientCtx: Types['ClientCtx']
@@ -108,7 +108,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
         msgCore: input.msgCore?.t === tag ? input.msgCore?.c : undefined,
-        msgServer: input.msgServer?.t === tag ? input.msgServer?.c : undefined,
+        msgBackend: input.msgBackend?.t === tag ? input.msgBackend?.c : undefined,
         ctx: input.ctx,
         modelCore: input.modelCore.c,
         modelCoreBefore: input.modelCoreBefore.c,
@@ -205,7 +205,7 @@ const chain = <T extends GameClientTypes>(
 ): Output<T> => {
   const msgCmd: AppClientCmd<{
     MsgClient: T['MsgClient']
-    MsgToServer: T['MsgToServer']
+    MsgToBackend: T['MsgToBackend']
   }>[] = initial.msgCmd ?? []
   const msgCores: T['MsgCore'][] = initial?.msgCore ?? []
   const eff: Eff<T['MsgClient']>[] = initial.eff ? [initial.eff] : []
@@ -253,7 +253,7 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
   ModelClient: { t: TTag; c: TTypes['ModelClient'] }
   MsgClient: { t: TTag; c: TTypes['MsgClient'] }
   MsgToClient: { t: TTag; c: TTypes['MsgToClient'] }
-  MsgToServer: { t: TTag; c: TTypes['MsgToServer'] }
+  MsgToBackend: { t: TTag; c: TTypes['MsgToBackend'] }
   ModelCore: { t: TTag; c: TTypes['ModelCore'] }
   MsgCore: { t: TTag; c: TTypes['MsgCore'] }
   ClientCtx: TTypes['ClientCtx']

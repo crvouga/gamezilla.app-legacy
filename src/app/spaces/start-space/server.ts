@@ -1,10 +1,10 @@
-import { SpaceServerModule } from '../@/architecture/space-server'
+import { SpaceBackendModule } from '../@/architecture/space-server'
 
-const update: SpaceServerModule['update'] = (input) => {
-  return SpaceServerModule.andThen({}, () => updateFromSpaceEvent(input))
+const update: SpaceBackendModule['update'] = (input) => {
+  return SpaceBackendModule.andThen({}, () => updateFromSpaceEvent(input))
 }
 
-const updateFromSpaceEvent: SpaceServerModule['update'] = ({ msgCore }) => {
+const updateFromSpaceEvent: SpaceBackendModule['update'] = ({ msgCore }) => {
   switch (msgCore?.t) {
     case 'user-started-space': {
       return {}
@@ -15,6 +15,6 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = ({ msgCore }) => {
   }
 }
 
-export const StartSpaceServer = {
+export const StartSpaceBackend = {
   update,
 }

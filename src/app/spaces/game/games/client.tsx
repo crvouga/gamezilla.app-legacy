@@ -53,7 +53,7 @@ const update: ClientModule['update'] = (input) => {
         model: input.model?.t === 'connect-four' ? input.model.c : ConnectFour.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
-        msgServer: input.msgServer?.t === 'connect-four' ? input.msgServer.c : null,
+        msgBackend: input.msgBackend?.t === 'connect-four' ? input.msgBackend.c : null,
         msgCore: input.msgCore?.t === 'connect-four' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
       })
@@ -74,7 +74,7 @@ const update: ClientModule['update'] = (input) => {
         model: input.model?.t === 'flow' ? input.model.c : FlowClient.init,
         msgCmd: null,
         msgEvt: input.msgEvt,
-        msgServer: input.msgServer?.t === 'flow' ? input.msgServer.c : null,
+        msgBackend: input.msgBackend?.t === 'flow' ? input.msgBackend.c : null,
         msgCore: input.msgCore?.t === 'flow' ? { ...input.msgCore, ...input.msgCore.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
       })

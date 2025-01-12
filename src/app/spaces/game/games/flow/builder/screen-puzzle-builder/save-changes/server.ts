@@ -1,14 +1,14 @@
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
 import { Result } from '~/@/result'
-import type { ServerModule } from '../../types'
+import type { BackendModule } from '../../types'
 import type { MsgCore } from './types'
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen({}, () => updateFromClient({ ...input }))
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen({}, () => updateFromClient({ ...input }))
 }
 
-const updateFromClient: ServerModule['update'] = async (input) => {
+const updateFromClient: BackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit':
     case 'screen-puzzle-builder.save-changes.user-clicked-save-button': {
@@ -37,6 +37,6 @@ const updateFromClient: ServerModule['update'] = async (input) => {
   }
 }
 
-export const SaveChangesServer = {
+export const SaveChangesBackend = {
   update,
 }

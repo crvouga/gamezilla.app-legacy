@@ -266,7 +266,7 @@ export const eventsToClientCmd = (
   events?: Event[] | null,
 ): AppClientCmd<{
   MsgClient: never
-  MsgToServer: never
+  MsgToBackend: never
 }>[] => {
   return (
     events?.map((event) => {

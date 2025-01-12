@@ -2,12 +2,12 @@ import { describe, expect, it } from 'bun:test'
 import { withEventMetaAt } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { didBroadcast, didSendMsgToClient } from '~/app/@/server/cmd'
-import { FixtureSpaceServer } from '../@/fixture/server'
+import { FixtureSpaceBackend } from '../@/fixture/server'
 import { UserAccount } from '~/app/@/data/account'
 import { makeSpace } from '../@/fixture/shared'
 
 const Fixture = async () => {
-  const f = await FixtureSpaceServer()
+  const f = await FixtureSpaceBackend()
   return {
     ...f,
   }

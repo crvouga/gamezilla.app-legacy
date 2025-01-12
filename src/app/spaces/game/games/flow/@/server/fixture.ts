@@ -1,24 +1,24 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
-import { FixtureSpaceServer } from '~/app/spaces/@/fixture/server'
+import { FixtureSpaceBackend } from '~/app/spaces/@/fixture/server'
 import { FlowCore } from '../../core'
-import { FlowServer } from '../../server'
+import { FlowBackend } from '../../server'
 import { ModelCore } from '../../types'
 import { PackDb } from '../pack/pack-db'
 import { PuzzleDb } from '../puzzle/puzzle-db'
 import { Solutions } from '../solutions/solutions'
-import type { FlowServerCtx } from './ctx'
+import type { FlowBackendCtx } from './ctx'
 
-type Input = Parameters<typeof FlowServer.update>[0]
+type Input = Parameters<typeof FlowBackend.update>[0]
 
-type Output = Awaited<ReturnType<typeof FlowServer.update>> & {
+type Output = Awaited<ReturnType<typeof FlowBackend.update>> & {
   modelCore: ModelCore
 }
 
-export const FixtureFlowServer = async () => {
-  const f = await FixtureSpaceServer()
-  const ctx: FlowServerCtx = {
+export const FixtureFlowBackend = async () => {
+  const f = await FixtureSpaceBackend()
+  const ctx: FlowBackendCtx = {
     ...f.ctx,
     solutions: Solutions.init,
     packDb: PackDb({ t: 'hash-map' }),
@@ -33,7 +33,7 @@ export const FixtureFlowServer = async () => {
 
     const lastOutput = NonEmpty.last(outputs)
     const lastModelCore = lastOutput.modelCore
-    const updated = await FlowServer.update({
+    const updated = await FlowBackend.update({
       ...f,
       ...input,
       modelCore: lastModelCore,
@@ -54,7 +54,7 @@ export const FixtureFlowServer = async () => {
   }
 
   const initial = {
-    model: FlowServer.init,
+    model: FlowBackend.init,
   }
 
   return {

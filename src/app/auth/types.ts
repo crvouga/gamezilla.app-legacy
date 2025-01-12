@@ -1,14 +1,14 @@
 import type { RemoteResult } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import type { AppClientModule } from '../@/architecture/app-client'
-import type { AppServerModule } from '../@/architecture/app-server'
+import type { AppBackendModule } from '../@/architecture/app-server'
 import type { AppClientCmd, AuthCmd } from '../@/client/cmd'
 import { AnonymousClientCtx, AppClientCtx } from '../@/client/ctx'
 import { ClientEvt } from '../@/client/evt'
 import type { UserAccount } from '../@/data/account'
-import { ServerCmd } from '../@/server/cmd'
-import { AppServerCtx } from '../@/server/ctx'
-import { ServerEvt } from '../@/server/evt'
+import { BackendCmd } from '../@/server/cmd'
+import { AppBackendCtx } from '../@/server/ctx'
+import { BackendEvt } from '../@/server/evt'
 import { IGuestSessionMappingDb } from './@/server/guest-session-mapping-db'
 import type { IUserAccountDb } from './@/server/user-account-db'
 import type { IUserSessionDb } from './@/server/user-session-db'
@@ -39,7 +39,7 @@ type BaseModelClient = {
 
 export type ModelClient = BaseModelClient & ContinueAsGuest.ModelClient & Logout.ModelClient
 
-export type ServerCtx = AppServerCtx & {
+export type BackendCtx = AppBackendCtx & {
   userAccountDb: IUserAccountDb
   userSessionDb: IUserSessionDb
   guestSessionMappingDb: IGuestSessionMappingDb
@@ -59,19 +59,19 @@ export type MsgClient =
   | { t: 'user-clicked-login-with-email' }
   | { t: 'sms'; c: AuthSMS.MsgClient }
 
-export type MsgServer =
-  | ContinueAsGuest.MsgServer
+export type MsgBackend =
+  | ContinueAsGuest.MsgBackend
   | Logout.MsgClient
   | {
       t: 'sms'
-      c: AuthSMS.MsgServer
+      c: AuthSMS.MsgBackend
     }
 
-export type MsgToServer =
-  | ContinueAsGuest.MsgToServer
-  | Logout.MsgToServer
+export type MsgToBackend =
+  | ContinueAsGuest.MsgToBackend
+  | Logout.MsgToBackend
   | { t: 'client-checked-auth' }
-  | { t: 'sms'; c: AuthSMS.MsgToServer }
+  | { t: 'sms'; c: AuthSMS.MsgToBackend }
 
 export type MsgToClient =
   | ContinueAsGuest.MsgToClient
@@ -88,26 +88,26 @@ export type ClientModule = AppClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Ctx: AnonymousClientCtx | AppClientCtx
   MsgCmdIn: AuthCmd
   MsgEvtIn: ClientEvt
   MsgCmdOut: AppClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>
   MsgEvtOut: ClientEvt
 }>
 
-export type ServerModule = AppServerModule<{
-  Ctx: ServerCtx
+export type BackendModule = AppBackendModule<{
+  Ctx: BackendCtx
   MsgCmdIn: null
-  MsgEvtIn: ServerEvt
+  MsgEvtIn: BackendEvt
   Model: null
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
-  MsgEvtOut: ServerEvt
+  Msg: MsgBackend
+  MsgCmdOut: BackendCmd<MsgToClient>
+  MsgEvtOut: BackendEvt
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Deps: null
 }>

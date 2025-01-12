@@ -1,6 +1,6 @@
 import { Err, isErr, Ok, Result } from '~/@/result'
 import { IWebClient } from '~/@/web-client'
-import { IWebServer } from '~/@/web-server'
+import { IWebBackend } from '~/@/web-server'
 import { p } from '~/@/parser'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
@@ -20,11 +20,11 @@ export type Client<T extends Base> = {
       : never
 }
 
-export type Server<T extends Base> = {
+export type Backend<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
     ? (input: p.Infer<T[K]['input']>) => Promise<p.Infer<T[K]['output']>>
     : T[K] extends Contract<any>
-      ? Server<T[K]>
+      ? Backend<T[K]>
       : never
 }
 
@@ -75,20 +75,20 @@ export const initClient = <T extends Base>(webClient: IWebClient, contract: T): 
   return createClient(contract)
 }
 
-export const initServer = <T extends Base>(_contract: T, handlers: Server<T>): Server<T> => {
+export const initBackend = <T extends Base>(_contract: T, handlers: Backend<T>): Backend<T> => {
   return handlers
 }
 
 export const withRPC = <T extends Base>({
   contract,
   handlers,
-  webServer,
+  webBackend,
 }: {
-  webServer: IWebServer
+  webBackend: IWebBackend
   contract: T
-  handlers: Server<T>
+  handlers: Backend<T>
 }) => {
-  const handleRequest = async (contract: Contract<any>, handlers: Server<any>, path: string[], request: Request) => {
+  const handleRequest = async (contract: Contract<any>, handlers: Backend<any>, path: string[], request: Request) => {
     const endpointName = path[0]
     if (!endpointName) {
       return null
@@ -124,11 +124,11 @@ export const withRPC = <T extends Base>({
       }
     } else {
       // Nested contract
-      return handleRequest(endpointConfig as Contract<any>, handler as Server<any>, path.slice(1), request)
+      return handleRequest(endpointConfig as Contract<any>, handler as Backend<any>, path.slice(1), request)
     }
   }
 
-  webServer.registerHandler(async (request) => {
+  webBackend.registerHandler(async (request) => {
     try {
       const url = new URL(request.url)
       const path = url.pathname.replace('/rpc/', '').split('/')

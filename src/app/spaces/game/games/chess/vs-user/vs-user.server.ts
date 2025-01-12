@@ -1,9 +1,9 @@
 import { TimeSpan } from '~/@/time/time-span'
 import { Time } from '~/@/time/time'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import * as Board from '../@/chess/chess-core'
-import { initCore, type ModelServer, type MsgServer, type MsgToClient, type MsgToServer } from './vs-user.types'
+import { initCore, type ModelBackend, type MsgBackend, type MsgToClient, type MsgToBackend } from './vs-user.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
@@ -25,17 +25,17 @@ export const init = initCore
 //
 //
 
-export const update = (_msg: MsgServer, model: ModelServer): { model: ModelServer } => {
+export const update = (_msg: MsgBackend, model: ModelBackend): { model: ModelBackend } => {
   return { model }
 }
 
 export const updateFromClient = (
-  _msg: MsgToServer,
-  model: ModelServer,
+  _msg: MsgToBackend,
+  model: ModelBackend,
 ): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   return { model }
 }
@@ -44,12 +44,12 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt
-  model: ModelServer
+  msg: SpaceBackendEvt
+  model: ModelBackend
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     switch (model.type) {
@@ -63,7 +63,7 @@ export const updateFromEvent = ({
           }
         }
 
-        const modelNew: ModelServer = {
+        const modelNew: ModelBackend = {
           ...model,
           [color]: 'none',
         }
@@ -93,7 +93,7 @@ export const updateFromEvent = ({
 
         const otherColor = Board.toOppositeColor(color)
 
-        const modelNew: ModelServer = {
+        const modelNew: ModelBackend = {
           ...model,
           type: 'setup',
           clockPreset: model.clock.preset,
@@ -124,7 +124,7 @@ export const updateFromEvent = ({
 //
 //
 
-export const subscriptions = (intervalId: string, model: ModelServer): Sub<MsgServer> => {
+export const subscriptions = (intervalId: string, model: ModelBackend): Sub<MsgBackend> => {
   switch (model.type) {
     case 'setup': {
       return Sub.None

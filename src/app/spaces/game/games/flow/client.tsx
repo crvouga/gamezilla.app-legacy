@@ -20,7 +20,7 @@ import { PuzzleListClient } from './@/puzzle/puzzle-list/client'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderClient } from './builder/client'
 import { PlayClient } from './play/client'
-import type { ClientModule, ModelClient, MsgClient, MsgToServer } from './types'
+import type { ClientModule, ModelClient, MsgClient, MsgToBackend } from './types'
 
 const init: ClientModule['init'] = {
   builder: BuilderClient.init,
@@ -48,7 +48,7 @@ const toFlowClientCtx = (input: Parameters<ClientModule['update']>[0]): FlowClie
 const update = (
   input: Parameters<ClientModule['update']>[0],
 ): ReturnType<ClientModule['update']> & {
-  msgCmd?: SpaceClientCmd<{ MsgClient: MsgClient; MsgToServer: MsgToServer }>[]
+  msgCmd?: SpaceClientCmd<{ MsgClient: MsgClient; MsgToBackend: MsgToBackend }>[]
 } => {
   const acc = updateChild(input)
   const updated = updateLoop(input, acc)
@@ -127,7 +127,7 @@ const updatePuzzleList: ClientModule['update'] = (input) => {
     msg: input.msg?.t === 'puzzle-list' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'puzzle-list' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgServer: input.msgServer?.t === 'puzzle-list' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'puzzle-list' ? input.msgBackend.c : null,
   })
 
   return {
@@ -145,7 +145,7 @@ const updatePackList: ClientModule['update'] = (input) => {
     msg: input.msg?.t === 'pack-list' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'pack-list' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgServer: input.msgServer?.t === 'pack-list' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'pack-list' ? input.msgBackend.c : null,
   })
 
   return {
@@ -161,7 +161,7 @@ const updatePackPuzzlesGrid: ClientModule['update'] = (input) => {
     ctx: { ...input.ctx, pack: Pack.randomSync() },
     model: { ...input.model.packPuzzleGrid, puzzles: input.model.puzzles },
     msg: input.msg?.t === 'pack-puzzles-grid' ? input.msg.c : null,
-    msgServer: input.msgServer?.t === 'pack-puzzles-grid' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'pack-puzzles-grid' ? input.msgBackend.c : null,
     msgEvt: input.msgEvt,
     msgCmd: input.msgCmd?.t === 'pack-puzzles-grid' ? input.msgCmd : null,
   })
@@ -183,7 +183,7 @@ const updateModePlay: ClientModule['update'] = (input) => {
     model: input.model.play,
     msgCmd: null,
     msgEvt: input.msgEvt,
-    msgServer: input.msgServer?.t === 'play' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'play' ? input.msgBackend.c : null,
     msgCore: input.msgCore?.t === 'play' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'play' ? input.msg.c : null,
   })
@@ -206,7 +206,7 @@ const updateModeBuilder: ClientModule['update'] = (input) => {
     model: input.model.builder,
     msgCmd: null,
     msgEvt: input.msgEvt,
-    msgServer: input.msgServer?.t === 'builder' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'builder' ? input.msgBackend.c : null,
     msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
     msg: input.msg?.t === 'builder' ? input.msg.c : null,
   })

@@ -1,16 +1,16 @@
 import { Err, Ok } from '~/@/result'
 import { pipe } from '~/@/function/pipe'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import { TicTacToe } from '../@/tic-tic-toe'
 import {
   initCoreModel,
   isBotTurn,
-  type ModelServer,
-  type MsgServer,
+  type ModelBackend,
+  type MsgBackend,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
 } from './vs-bot.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
@@ -23,7 +23,7 @@ import { Sub } from '~/@/sub'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init = initCoreModel
 
@@ -35,7 +35,7 @@ export const init = initCoreModel
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = ({
   msg,
@@ -45,7 +45,7 @@ export const update = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   if (msg.t === 'bot-moved') {
     if (model.type !== 'game') {
@@ -115,13 +115,13 @@ export const update = ({
 //
 
 export const updateFromClient = (input: {
-  msg: MsgToServer
+  msg: MsgToBackend
   model: Model
-  ctx: SpaceServerCtx
+  ctx: SpaceBackendCtx
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   return pipe(
     input,
@@ -173,11 +173,11 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt
+  msg: SpaceBackendEvt
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     if (model.player !== msg.userId) {

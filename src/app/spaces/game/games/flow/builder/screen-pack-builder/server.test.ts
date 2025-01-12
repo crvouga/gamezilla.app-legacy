@@ -3,13 +3,13 @@ import { Result } from '~/@/result'
 import { withEventId, withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
-import { FlowCreateFixtureServer } from '../@/testing/server'
+import { FlowCreateFixtureBackend } from '../@/testing/server'
 import type { ModelCore, MsgCore } from '../types'
 import { ScreenPackBuilderCore } from './core'
-import { ScreenPackBuilderServer } from './server'
+import { ScreenPackBuilderBackend } from './server'
 
 const Fixture = async () => {
-  const f = await FlowCreateFixtureServer()
+  const f = await FlowCreateFixtureBackend()
   const puzzle = await Puzzle.random()
   const pack = await Pack.random({
     createdBy: puzzle.createdBy,
@@ -49,7 +49,7 @@ describe(import.meta.file, () => {
       msgCore,
     })
 
-    const updated = await ScreenPackBuilderServer.update({
+    const updated = await ScreenPackBuilderBackend.update({
       ...f,
       modelCore: modelCoreNew,
       msgCore,
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
   it('should save pack after user removes puzzle from it', async () => {
     const f = await Fixture()
 
-    await ScreenPackBuilderServer.update({
+    await ScreenPackBuilderBackend.update({
       ...f,
       msgCore: withEventMeta({
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',

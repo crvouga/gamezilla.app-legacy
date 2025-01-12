@@ -19,11 +19,11 @@ export type MsgClient =
       t: 'profile.update-username.clicked-save'
     }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'profile.update-username.noop'
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'profile.update-username.clicked-save'
   username: string
 }

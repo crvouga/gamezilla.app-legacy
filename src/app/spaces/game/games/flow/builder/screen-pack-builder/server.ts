@@ -1,13 +1,13 @@
 import { isErr } from '~/@/result'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
 
-import { PackPuzzlesGridServer } from '../../@/pack/pack-puzzles-grid/server'
-import type { ServerModule } from '../types'
-import { EditPackNameServer } from './edit-pack-name/server'
+import { PackPuzzlesGridBackend } from '../../@/pack/pack-puzzles-grid/server'
+import type { BackendModule } from '../types'
+import { EditPackNameBackend } from './edit-pack-name/server'
 import { ScreenPackBuilderCore } from './core'
 
-const SavePack: Pick<ServerModule, 'update'> = {
+const SavePack: Pick<BackendModule, 'update'> = {
   async update(input) {
     switch (input.msgCore?.t) {
       case 'screen-pack-builder.user-clicked-add-puzzle-item': {
@@ -34,7 +34,7 @@ const SavePack: Pick<ServerModule, 'update'> = {
   },
 }
 
-const PuzzleGrid: Pick<ServerModule, 'update'> = {
+const PuzzleGrid: Pick<BackendModule, 'update'> = {
   async update(input) {
     const pack = input.modelCore.screenPackBuilder?.pack
 
@@ -47,7 +47,7 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
       pack,
     }
 
-    const updated = await PackPuzzlesGridServer.update({
+    const updated = await PackPuzzlesGridBackend.update({
       ctx,
       msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
       msgCmd: input.msgCmd,
@@ -63,14 +63,14 @@ const PuzzleGrid: Pick<ServerModule, 'update'> = {
     })
 
     return {
-      msgCmd: SpaceServerCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
+      msgCmd: SpaceBackendCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
       msgEvt: updated.msgEvt,
       msgCore: [],
     }
   },
 }
 
-const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
+const RemovedPuzzleFromPack: Pick<BackendModule, 'update'> = {
   async update(input) {
     switch (input.msgCore?.t) {
       case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
@@ -94,12 +94,12 @@ const RemovedPuzzleFromPack: Pick<ServerModule, 'update'> = {
   },
 }
 
-const EditPackName: Pick<ServerModule, 'update'> = {
+const EditPackName: Pick<BackendModule, 'update'> = {
   async update(input) {
     if (!input.modelCore.screenPackBuilder) {
       return {}
     }
-    const updated = await EditPackNameServer.update({
+    const updated = await EditPackNameBackend.update({
       ...input,
       modelCore: input.modelCore.screenPackBuilder.editPackName,
       msgCore:
@@ -116,9 +116,9 @@ const EditPackName: Pick<ServerModule, 'update'> = {
   },
 }
 
-export const ScreenPackBuilderServer: Pick<ServerModule, 'update'> = {
+export const ScreenPackBuilderBackend: Pick<BackendModule, 'update'> = {
   async update(input) {
-    return GameServerModule.andThen(
+    return GameBackendModule.andThen(
       {},
       () => SavePack.update(input),
       () => RemovedPuzzleFromPack.update(input),

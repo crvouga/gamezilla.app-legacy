@@ -1,9 +1,9 @@
-import type { ServerModule } from './types'
+import type { BackendModule } from './types'
 
-export const update: ServerModule['update'] = async () => {
+export const update: BackendModule['update'] = async () => {
   return {}
 }
 
-export const initDeps: ServerModule['initDeps'] = async () => {
+export const initDeps: BackendModule['initDeps'] = async () => {
   return null
 }

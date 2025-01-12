@@ -1,6 +1,6 @@
 import { Logger, type ILogger } from '~/@/logger'
-import { WebServerBun } from './impl-bun'
-import { WebServerNode } from './impl-node'
+import { WebBackendBun } from './impl-bun'
+import { WebBackendNode } from './impl-node'
 
 type Config =
   | {
@@ -12,17 +12,17 @@ type Config =
       logger: ILogger
     }
 
-export const WebServer = (config: Config) => {
+export const WebBackend = (config: Config) => {
   const logger = Logger.prefix('server', config.logger)
   switch (config.t) {
     case 'bun': {
-      return WebServerBun<unknown>({ ...config, logger })
+      return WebBackendBun<unknown>({ ...config, logger })
     }
 
     case 'node': {
-      return WebServerNode({ ...config, logger })
+      return WebBackendNode({ ...config, logger })
     }
   }
 }
 
-export type WebServer = ReturnType<typeof WebServer>
+export type WebBackend = ReturnType<typeof WebBackend>

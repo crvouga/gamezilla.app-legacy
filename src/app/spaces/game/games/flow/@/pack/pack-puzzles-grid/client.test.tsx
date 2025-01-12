@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { RequestResponse } from '~/@/request-response/request-response'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { didSendToServer, didShowErrorSm } from '~/app/@/client/cmd'
+import { didSendToBackend, didShowErrorSm } from '~/app/@/client/cmd'
 import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
 import { Puzzle } from '../../puzzle/puzzle'
 import { Pack } from '../pack'
@@ -13,7 +13,7 @@ import { Solutions } from '../../solutions/solutions'
 type Input = {
   ctx?: PackGridClientCtx
   msg?: MsgClient
-  msgServer?: MsgToClient
+  msgBackend?: MsgToClient
 }
 
 const Fixture = async () => {
@@ -70,8 +70,8 @@ const Fixture = async () => {
   }
 }
 
-const msgServerListedByPuzzlesByIdOk = async (puzzles: Puzzle[]): Promise<Input> => ({
-  msgServer: {
+const msgBackendListedByPuzzlesByIdOk = async (puzzles: Puzzle[]): Promise<Input> => ({
+  msgBackend: {
     t: 'listed-puzzles-by-id',
     listed: {
       t: 'ok',
@@ -107,20 +107,20 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(true)
+    expect(didSendToBackend(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(true)
   })
 
   it('should not fetch puzzles when all are not missing', async () => {
     const f = await Fixture()
     const output = f.update(f.init.model, [
-      await msgServerListedByPuzzlesByIdOk([f.puzzle]),
+      await msgBackendListedByPuzzlesByIdOk([f.puzzle]),
       {
         msg: {
           t: 'user-observed-grid',
         },
       },
     ])
-    expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(false)
+    expect(didSendToBackend(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(false)
   })
 
   it('should fetch puzzles when some are missing', async () => {
@@ -132,7 +132,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(true)
+    expect(didSendToBackend(output, (msg) => msg.t === 'list-puzzles-by-id')).toBe(true)
   })
 
   it('should have missing puzzle ids in list request', async () => {
@@ -145,13 +145,16 @@ describe(import.meta.file, () => {
       },
     ])
     expect(
-      didSendToServer(output, (msg) => msg.t === 'list-puzzles-by-id' && areEqualSets(msg.puzzleIds, f.pack.puzzleIds)),
+      didSendToBackend(
+        output,
+        (msg) => msg.t === 'list-puzzles-by-id' && areEqualSets(msg.puzzleIds, f.pack.puzzleIds),
+      ),
     ).toBe(true)
   })
 
   it('should record puzzles listed by server', async () => {
     const f = await Fixture()
-    const output = f.update(f.init.model, [await msgServerListedByPuzzlesByIdOk([f.puzzle])])
+    const output = f.update(f.init.model, [await msgBackendListedByPuzzlesByIdOk([f.puzzle])])
     expect(output.model.puzzles[f.puzzle.id]).toEqual(f.puzzle)
   })
 
@@ -159,7 +162,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init.model, [
       {
-        msgServer: {
+        msgBackend: {
           t: 'listed-puzzles-by-id',
           listed: {
             t: 'err',
@@ -193,7 +196,7 @@ describe(import.meta.file, () => {
           t: 'user-observed-grid',
         },
       },
-      await msgServerListedByPuzzlesByIdOk([f.puzzle]),
+      await msgBackendListedByPuzzlesByIdOk([f.puzzle]),
     ])
     expect(RequestResponse.isOk(output.model.request)).toBe(true)
   })

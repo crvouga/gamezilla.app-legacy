@@ -1,5 +1,5 @@
 import { EventSourced } from '~/@/event-sourced'
-import { addProfiles, sendToServer } from '~/app/@/client/cmd'
+import { addProfiles, sendToBackend } from '~/app/@/client/cmd'
 import { SpaceClientModule } from '../@/architecture/space-client'
 import { SpacesCoreClient } from '../core/client'
 
@@ -8,17 +8,17 @@ const update: SpaceClientModule['update'] = (input) => {
     { model: input.model },
     (model) => updateProfiles({ ...input, model }),
     (model) => updateCore({ ...input, model }),
-    (model) => sendSpaceEventToServer({ ...input, model }),
-    (model) => outputSpaceEventsFromServer({ ...input, model }),
+    (model) => sendSpaceEventToBackend({ ...input, model }),
+    (model) => outputSpaceEventsFromBackend({ ...input, model }),
   )
 }
 
-const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
-  switch (input.msgServer?.t) {
+const outputSpaceEventsFromBackend: SpaceClientModule['update'] = (input) => {
+  switch (input.msgBackend?.t) {
     case 'got-msg-core': {
       return {
         model: input.model,
-        msgCore: [input.msgServer.c],
+        msgCore: [input.msgBackend.c],
       }
     }
   }
@@ -26,7 +26,7 @@ const outputSpaceEventsFromServer: SpaceClientModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgCore: msgCore }) => {
+const sendSpaceEventToBackend: SpaceClientModule['update'] = ({ ctx, model, msgCore: msgCore }) => {
   if (!msgCore) {
     return { model }
   }
@@ -43,15 +43,15 @@ const sendSpaceEventToServer: SpaceClientModule['update'] = ({ ctx, model, msgCo
 
   return {
     model,
-    msgCmd: [sendToServer({ t: 'got-msg-core', c: spaceEventWithMeta, profiles })],
+    msgCmd: [sendToBackend({ t: 'got-msg-core', c: spaceEventWithMeta, profiles })],
   }
 }
 
-const updateProfiles: SpaceClientModule['update'] = ({ model, msgServer }) => {
-  if (msgServer?.profiles) {
+const updateProfiles: SpaceClientModule['update'] = ({ model, msgBackend }) => {
+  if (msgBackend?.profiles) {
     return {
       model,
-      msgCmd: [addProfiles(msgServer.profiles)],
+      msgCmd: [addProfiles(msgBackend.profiles)],
     }
   }
 
@@ -59,7 +59,7 @@ const updateProfiles: SpaceClientModule['update'] = ({ model, msgServer }) => {
 }
 
 const updateCore: SpaceClientModule['update'] = (input) => {
-  const { model, msgEvt, msgServer } = input
+  const { model, msgEvt, msgBackend } = input
 
   switch (msgEvt?.t) {
     case 'wire-evt.server-connected': {
@@ -92,7 +92,7 @@ const updateCore: SpaceClientModule['update'] = (input) => {
           isSycing: true,
         },
         msgCmd: [
-          sendToServer({
+          sendToBackend({
             t: 'sync',
             space: started,
             profiles: currentUserProfile
@@ -107,10 +107,10 @@ const updateCore: SpaceClientModule['update'] = (input) => {
     }
   }
 
-  switch (msgServer?.t) {
+  switch (msgBackend?.t) {
     case 'synced':
     case 'current-user-space': {
-      const merged = SpacesCoreClient.merge(model, msgServer.space)
+      const merged = SpacesCoreClient.merge(model, msgBackend.space)
       return {
         model: {
           ...model,
@@ -119,7 +119,7 @@ const updateCore: SpaceClientModule['update'] = (input) => {
         msgEvt: [
           {
             t: 'space-evt.synced',
-            currentUser: 'currentUser' in msgServer ? msgServer.currentUser : null,
+            currentUser: 'currentUser' in msgBackend ? msgBackend.currentUser : null,
           },
         ],
       }

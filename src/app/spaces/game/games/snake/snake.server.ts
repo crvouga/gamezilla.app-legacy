@@ -7,9 +7,9 @@ import {
   type InputDirection_Done,
   type InputPlayer,
   type InputPlayer_Done,
-  type ModelServer,
-  type MsgServer,
-  type MsgToServer,
+  type ModelBackend,
+  type MsgBackend,
+  type MsgToBackend,
   type Response,
   type ToggleStatus,
   type ToggleStatusResult,
@@ -27,7 +27,7 @@ import { Sub } from '~/@/sub'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init = initCoreModel
 
@@ -39,7 +39,7 @@ export const init = initCoreModel
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
@@ -54,7 +54,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   }
 }
 
-export const updateFromClient = (msg: MsgToServer, model: Model): [Model, Eff<Msg>] => {
+export const updateFromClient = (msg: MsgToBackend, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'start-game': {
       return updateRequest(['StartGame_Done', startGame(model)], model)

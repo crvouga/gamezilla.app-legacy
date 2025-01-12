@@ -1,32 +1,32 @@
 import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { broadcast, sendToClient, sendToUser } from '~/app/@/server/cmd'
-import { AppServerCtx } from '~/app/@/server/ctx'
-import { SpaceServerModule } from '../@/architecture/space-server'
+import { AppBackendCtx } from '~/app/@/server/ctx'
+import { SpaceBackendModule } from '../@/architecture/space-server'
 import { SpaceCore } from '../core/space-core'
 import { SpaceCoreState } from '../core/space-state'
 import type { MsgToClient } from '../types'
 
-const update: SpaceServerModule['update'] = async (input) => {
-  return SpaceServerModule.andThen(
+const update: SpaceBackendModule['update'] = async (input) => {
+  return SpaceBackendModule.andThen(
     {},
     () => updateFromClient(input),
     () => updateCurrentUserSpace(input),
     () => updateProfileCache(input),
     () => sendSpaceEventToClient(input),
-    () => outputSpaceEventsFromServer(input),
+    () => outputSpaceEventsFromBackend(input),
   )
 }
 
-const updateProfileCache: SpaceServerModule['update'] = async (input) => {
+const updateProfileCache: SpaceBackendModule['update'] = async (input) => {
   await input.ctx.profileCache.add(input.msgClient?.profiles ?? {})
   return {}
 }
 
-const updateFromClient: SpaceServerModule['update'] = async (input) => {
+const updateFromClient: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'sync': {
-      await input.ctx.spacesCoreServer.merge(input.msgClient.space)
+      await input.ctx.spacesCoreBackend.merge(input.msgClient.space)
 
       const spaceId = SpaceCore.toSpaceId(input.msgClient.space)
 
@@ -34,7 +34,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
         return {}
       }
 
-      const spaceNew = unwrapOr(await input.ctx.spacesCoreServer.get(spaceId), null)
+      const spaceNew = unwrapOr(await input.ctx.spacesCoreBackend.get(spaceId), null)
 
       if (!spaceNew) {
         return {}
@@ -61,7 +61,7 @@ const updateFromClient: SpaceServerModule['update'] = async (input) => {
   }
 }
 
-const getAssociatedProfiles = async (ctx: AppServerCtx, spaces: SpaceCore.Model[]) => {
+const getAssociatedProfiles = async (ctx: AppBackendCtx, spaces: SpaceCore.Model[]) => {
   const userIds = spaces.flatMap((space) => {
     const state = EventSourced.toState(SpaceCore.config, space)
     switch (state.type) {
@@ -79,10 +79,10 @@ const getAssociatedProfiles = async (ctx: AppServerCtx, spaces: SpaceCore.Model[
   return profiles
 }
 
-const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
+const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
     case 'auth-evt.client-authenticated': {
-      const space = unwrapOr(await input.ctx.spacesCoreServer.getByUserId(input.msgEvt.user.userId), null)
+      const space = unwrapOr(await input.ctx.spacesCoreBackend.getByUserId(input.msgEvt.user.userId), null)
 
       if (!space) {
         return {}
@@ -113,12 +113,12 @@ const updateCurrentUserSpace: SpaceServerModule['update'] = async (input) => {
   }
 }
 
-const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
+const sendSpaceEventToClient: SpaceBackendModule['update'] = async (input) => {
   if (!input.msgCore) {
     return {}
   }
 
-  const got = await input.ctx.spacesCoreServer.get(input.msgCore.spaceId)
+  const got = await input.ctx.spacesCoreBackend.get(input.msgCore.spaceId)
 
   const space = unwrapOr(got, null) ?? SpaceCore.init
 
@@ -152,7 +152,7 @@ const sendSpaceEventToClient: SpaceServerModule['update'] = async (input) => {
   }
 }
 
-const outputSpaceEventsFromServer: SpaceServerModule['update'] = (input) => {
+const outputSpaceEventsFromBackend: SpaceBackendModule['update'] = (input) => {
   switch (input.msgClient?.t) {
     case 'got-msg-core': {
       return {
@@ -164,6 +164,6 @@ const outputSpaceEventsFromServer: SpaceServerModule['update'] = (input) => {
   return {}
 }
 
-export const SyncServer = {
+export const SyncBackend = {
   update,
 }

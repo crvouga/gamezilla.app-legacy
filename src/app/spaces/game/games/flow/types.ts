@@ -1,10 +1,10 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { FlowClientCmd, FlowClientCmdLocal } from './@/client/cmd'
 import { FlowClientEvtIn } from './@/client/evt'
@@ -15,7 +15,7 @@ import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleListTypes } from './@/puzzle/puzzle-list'
-import { FlowServerCtx } from './@/server/ctx'
+import { FlowBackendCtx } from './@/server/ctx'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderTypes } from './builder'
 import { PlayTypes } from './play'
@@ -41,21 +41,21 @@ export type ModelClient = {
   play: PlayTypes.ModelClient
 }
 
-export const ModelServer = p.or(
+export const ModelBackend = p.or(
   p.obj({
     t: p.l('none'),
   }),
   p.obj({
     t: p.l('builder'),
-    c: BuilderTypes.ModelServer,
+    c: BuilderTypes.ModelBackend,
   }),
   p.obj({
     t: p.l('play'),
-    c: PlayTypes.ModelServer,
+    c: PlayTypes.ModelBackend,
   }),
 )
 
-export type ModelServer = p.Infer<typeof ModelServer>
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
 //
 //
@@ -72,19 +72,19 @@ export type MsgClient =
   | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgClient }
   | { t: 'puzzle-list'; c: PuzzleListTypes.MsgClient }
 
-export type MsgServer =
-  | { t: 'builder'; c: BuilderTypes.MsgServer }
-  | { t: 'play'; c: PlayTypes.MsgServer }
-  | { t: 'pack-list'; c: PackListTypes.MsgServer }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgServer }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgServer }
+export type MsgBackend =
+  | { t: 'builder'; c: BuilderTypes.MsgBackend }
+  | { t: 'play'; c: PlayTypes.MsgBackend }
+  | { t: 'pack-list'; c: PackListTypes.MsgBackend }
+  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgBackend }
+  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgBackend }
 
-export type MsgToServer =
-  | { t: 'builder'; c: BuilderTypes.MsgToServer }
-  | { t: 'play'; c: PlayTypes.MsgToServer }
-  | { t: 'pack-list'; c: PackListTypes.MsgToServer }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToServer }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgToServer }
+export type MsgToBackend =
+  | { t: 'builder'; c: BuilderTypes.MsgToBackend }
+  | { t: 'play'; c: PlayTypes.MsgToBackend }
+  | { t: 'pack-list'; c: PackListTypes.MsgToBackend }
+  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToBackend }
+  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgToBackend }
 
 export type MsgToClient =
   | { t: 'builder'; c: BuilderTypes.MsgToClient }
@@ -142,12 +142,12 @@ export type ClientModule = GameClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgCore: MsgCore
   ModelCore: ModelCore
   Ctx: SpaceClientCtx
   MsgCmdOut: FlowClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
   MsgCmdIn: FlowClientCmdLocal
@@ -155,14 +155,14 @@ export type ClientModule = GameClientModule<{
   MsgEvtOut: FlowClientEvtIn
 }>
 
-export type ServerModule = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
+export type BackendModule = GameBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgCore: MsgCore
   ModelCore: ModelCore
-  Ctx: FlowServerCtx
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  Ctx: FlowBackendCtx
+  MsgEvtIn: SpaceBackendEvt
+  MsgCmdOut: SpaceBackendCmd<MsgToClient>
 }>

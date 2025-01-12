@@ -5,13 +5,13 @@ import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
 import { Posix } from '~/@/time/posix'
-import { WebServer } from '~/@/web-server'
+import { WebBackend } from '~/@/web-server'
 import { DATABASE_URL, REDIS_URL } from '~/config/server'
 import { ClientId } from '../data/client-id'
 import { SessionId } from '../data/session-id'
-import type { AppServerCtx } from './ctx'
+import type { AppBackendCtx } from './ctx'
 import { ProfileCache } from './profile-cache'
-import { ServerInstanceId } from './server-instance/server-instance-id'
+import { BackendInstanceId } from './server-instance/server-instance-id'
 import { IS_INTEGRATION_TEST } from '~/config/shared'
 
 export type ITestEnv = {
@@ -21,7 +21,7 @@ export type ITestEnv = {
   dbConnSql: IDbConnSql
 }
 
-export const AppServerTestEnv = async (): Promise<ITestEnv> => {
+export const AppBackendTestEnv = async (): Promise<ITestEnv> => {
   if (!IS_INTEGRATION_TEST) {
     return {
       t: 'unit',
@@ -68,9 +68,9 @@ export const randomClient = () => {
   }
 }
 
-export const FixtureAppServer = async () => {
+export const FixtureAppBackend = async () => {
   const logger = Logger({ t: 'noop' })
-  const ctx: AppServerCtx = {
+  const ctx: AppBackendCtx = {
     env: 'test',
     dbConnKv: await DbConnKv({ t: 'hash-map' }),
     dbConnSql: await DbConnSql({ t: 'noop' }),
@@ -81,8 +81,8 @@ export const FixtureAppServer = async () => {
     pubSub: await PubSubTopicBased({ t: 'noop' }),
     profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) }),
     runtime: Runtime({ t: 'noop' }),
-    webServer: WebServer({ t: 'bun', logger }),
-    serverInstanceId: ServerInstanceId.generate(),
+    webBackend: WebBackend({ t: 'bun', logger }),
+    serverInstanceId: BackendInstanceId.generate(),
   }
   return {
     ctx,

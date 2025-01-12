@@ -1,20 +1,20 @@
 import { EventSourced } from '~/@/event-sourced'
 import { Result } from '~/@/result'
 import { sendToUser } from '~/app/@/server/cmd'
-import { SpaceServerModule } from '../@/architecture/space-server'
+import { SpaceBackendModule } from '../@/architecture/space-server'
 
-const update: SpaceServerModule['update'] = (input) => {
-  return SpaceServerModule.andThen(
+const update: SpaceBackendModule['update'] = (input) => {
+  return SpaceBackendModule.andThen(
     {},
     //
     () => updateFromSpaceEvent({ ...input }),
   )
 }
 
-const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
+const updateFromSpaceEvent: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgCore?.t) {
     case 'user-joined-space': {
-      const space = Result.unwrapOr(await input.ctx.spacesCoreServer.get(input.msgCore.spaceId), null)
+      const space = Result.unwrapOr(await input.ctx.spacesCoreBackend.get(input.msgCore.spaceId), null)
 
       if (!space) {
         return {}
@@ -39,6 +39,6 @@ const updateFromSpaceEvent: SpaceServerModule['update'] = async (input) => {
   }
 }
 
-export const JoinSpaceServer = {
+export const JoinSpaceBackend = {
   update,
 }

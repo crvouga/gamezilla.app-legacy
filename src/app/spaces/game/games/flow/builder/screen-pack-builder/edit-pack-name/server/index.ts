@@ -1,16 +1,16 @@
 import { withEventId } from '~/@/event-sourced/event'
-import type { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
-import { FlowServerCtx } from '../../../../@/server/ctx'
+import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { FlowBackendCtx } from '../../../../@/server/ctx'
 import { EditPackNameCore } from '../core'
 import type { ModelCore, MsgCore } from '../types'
 
-type ServerModule = GameServerModule<{
+type BackendModule = GameBackendModule<{
   MsgCore: MsgCore
   ModelCore: ModelCore
-  Ctx: FlowServerCtx
+  Ctx: FlowBackendCtx
 }>
 
-const update: ServerModule['update'] = async (input) => {
+const update: BackendModule['update'] = async (input) => {
   switch (input.msgCore?.t) {
     case 'edit-pack-name.user-clicked-save-button': {
       const modelCoreNext = EditPackNameCore.update({
@@ -36,6 +36,6 @@ const update: ServerModule['update'] = async (input) => {
   }
 }
 
-export const EditPackNameServer = {
+export const EditPackNameBackend = {
   update,
 }

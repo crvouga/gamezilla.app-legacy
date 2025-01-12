@@ -1,6 +1,6 @@
 import { isRequesting, isResponseOk, RequestResponse } from '~/@/request-response/request-response'
 import { isErr, NotAsked } from '~/@/result'
-import { APP_SOUND, playSound, sendToServer, showErrSm } from '~/app/@/client/cmd'
+import { APP_SOUND, playSound, sendToBackend, showErrSm } from '~/app/@/client/cmd'
 import { Button, IconUserCircle } from '~/app/@/ui'
 import type { ClientModule } from '../types'
 import type { ModelClient } from './types'
@@ -19,7 +19,7 @@ const update: ClientModule['update'] = (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendToServer({
+          sendToBackend({
             t: 'guest.clicked-continue-as-guest-button',
           }),
         ],
@@ -40,14 +40,14 @@ const update: ClientModule['update'] = (input) => {
     }
   }
 
-  switch (input.msgServer?.t) {
+  switch (input.msgBackend?.t) {
     case 'guest.continue-as-guest-result': {
       return {
         model: {
           ...input.model,
-          guestRequest: RequestResponse.response(input.model.guestRequest, input.ctx.now, input.msgServer.result),
+          guestRequest: RequestResponse.response(input.model.guestRequest, input.ctx.now, input.msgBackend.result),
         },
-        msgCmd: isErr(input.msgServer.result) ? showErrSm(input.ctx.t('auth.continue-as-guest.errored')) : [],
+        msgCmd: isErr(input.msgBackend.result) ? showErrSm(input.ctx.t('auth.continue-as-guest.errored')) : [],
       }
     }
   }

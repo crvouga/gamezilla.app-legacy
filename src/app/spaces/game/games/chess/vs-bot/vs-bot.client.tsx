@@ -3,7 +3,7 @@ import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { AppClientCmd, sendToServer } from '~/app/@/client/cmd'
+import { AppClientCmd, sendToBackend } from '~/app/@/client/cmd'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
@@ -15,10 +15,10 @@ import { Chessboard, CoverArt, PlayerIcon } from '../@/chess-ui'
 import {
   type CoreModel,
   type ModelClient,
-  type ModelServer,
+  type ModelBackend,
   type MsgClient,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   initCore,
   isBotTurn,
   updateCore,
@@ -60,7 +60,7 @@ export const update = ({
   model: ModelClient
   eff?: Eff<MsgClient>
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 } => {
@@ -126,26 +126,26 @@ export const update = ({
       if (handled.t === 'err') {
         return {
           model,
-          msgCmd: [sendToServer(msg)],
+          msgCmd: [sendToBackend(msg)],
         }
       }
 
       const coreModel = handled.value
 
-      const modelNew = mergeWithServer({
+      const modelNew = mergeWithBackend({
         client: model,
         server: coreModel,
       })
 
       return {
         model: modelNew,
-        msgCmd: [sendToServer(msg)],
+        msgCmd: [sendToBackend(msg)],
       }
     }
   }
 }
 
-export const updateFromServer = (input: {
+export const updateFromBackend = (input: {
   msg: MsgToClient
   model: ModelClient
 }): {
@@ -153,7 +153,7 @@ export const updateFromServer = (input: {
   eff?: Eff<MsgClient>
 } => {
   return pipe(
-    updateFromServerMain(input),
+    updateFromBackendMain(input),
     // andThen((model) => {
     //   if (input.model.coreModel.type !== 'game-over' && model.coreModel.type === 'game-over') {
     //     return {
@@ -177,7 +177,7 @@ export const updateFromServer = (input: {
   )
 }
 
-const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
+const updateFromBackendMain: typeof updateFromBackend = ({ msg, model }) => {
   switch (msg.t) {
     case 'bot-moved': {
       const { result } = msg
@@ -199,7 +199,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
     }
 
     case 'player-left': {
-      const merged = mergeWithServer({
+      const merged = mergeWithBackend({
         client: model,
         server: msg.model,
       })
@@ -219,7 +219,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 
       const coreModelNew = result.value
 
-      const modelNew = mergeWithServer({
+      const modelNew = mergeWithBackend({
         client: model,
         server: coreModelNew,
       })
@@ -238,7 +238,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
         }
       }
 
-      const modelNew = mergeWithServer({
+      const modelNew = mergeWithBackend({
         client: model,
         server: result.value,
       })
@@ -258,12 +258,12 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 //
 //
 
-export const mergeWithServer = ({
+export const mergeWithBackend = ({
   client = init,
   server,
 }: {
   client?: ModelClient
-  server: ModelServer
+  server: ModelBackend
 }): ModelClient => {
   return {
     isFlipped: client.isFlipped,

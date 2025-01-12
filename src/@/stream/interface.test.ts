@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
 import { REDIS_URL } from '~/config/server'
-import { AppServerTestEnv } from '../../app/@/server/fixture'
+import { AppBackendTestEnv } from '../../app/@/server/fixture'
 import { NonEmpty } from '../array/non-empty'
 import { DbConnKv } from '../db-conn-kv'
 import { Logger } from '../logger'
@@ -47,7 +47,7 @@ const Fixtures = async () => {
     },
   ]
 
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
 
   if (testEnv.t === 'integration') {
     configs.push({

@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import { SMS } from './impl'
-import { AppServerTestEnv } from '../../app/@/server/fixture'
+import { AppBackendTestEnv } from '../../app/@/server/fixture'
 import { Logger } from '../logger'
 import { isOk, unwrap } from '~/@/result'
 import { PhoneNumber } from '../phone-number'
 
 const Fixture = async () => {
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
   const logger = Logger({ t: 'noop' })
   const phoneNumber = unwrap(PhoneNumber.fromString('+14802098698'))
   switch (testEnv.t) {

@@ -86,7 +86,7 @@ export const Fixture = async () => {
 
   const inputsOpenPackBuilder: FixtureUpdateInput[] = [
     {
-      msgServer: {
+      msgBackend: {
         t: 'create-new-pack.created-pack',
         created: Ok(pack),
       },

@@ -61,7 +61,7 @@ const update: ClientModule['update'] = (input) => {
       ...input.ctx,
       profiles: {
         ...input.ctx.profiles,
-        ...input.msgServer?.profiles,
+        ...input.msgBackend?.profiles,
       },
     },
   })

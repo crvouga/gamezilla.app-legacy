@@ -1,12 +1,12 @@
 import * as ImplDbConnKv from './impl-db-conn-kv'
-import { IServerInstanceDb } from './interface'
+import { IBackendInstanceDb } from './interface'
 
 export type Config = ImplDbConnKv.Config
 
-export const ServerInstanceDb = (config: Config): IServerInstanceDb => {
+export const BackendInstanceDb = (config: Config): IBackendInstanceDb => {
   switch (config.t) {
     case 'db-conn-kv': {
-      return ImplDbConnKv.ServerInstanceDb(config)
+      return ImplDbConnKv.BackendInstanceDb(config)
     }
   }
 }

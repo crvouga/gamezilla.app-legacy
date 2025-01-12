@@ -1,12 +1,12 @@
-import { AppServerModule } from '~/app/@/architecture/app-server'
+import { AppBackendModule } from '~/app/@/architecture/app-server'
 import { sendToClient } from '~/app/@/server/cmd'
-import type { ServerModule } from './types'
+import type { BackendModule } from './types'
 
-const update: ServerModule['update'] = async (input) => {
-  return AppServerModule.andThen({}, () => updateListPuzzles(input))
+const update: BackendModule['update'] = async (input) => {
+  return AppBackendModule.andThen({}, () => updateListPuzzles(input))
 }
 
-const updateListPuzzles: ServerModule['update'] = async (input) => {
+const updateListPuzzles: BackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'list-puzzles': {
       const listed = await input.ctx.puzzleDb.list(input.msgClient.input)
@@ -27,6 +27,6 @@ const updateListPuzzles: ServerModule['update'] = async (input) => {
   }
 }
 
-export const PuzzleListServer = {
+export const PuzzleListBackend = {
   update,
 }

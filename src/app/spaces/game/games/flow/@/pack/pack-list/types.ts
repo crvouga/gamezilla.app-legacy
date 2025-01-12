@@ -1,17 +1,17 @@
 import { RemoteResult } from '~/@/result'
 import { p } from '~/@/parser'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
-import type { AppServerModule } from '~/app/@/architecture/app-server'
+import type { AppBackendModule } from '~/app/@/architecture/app-server'
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
 import { FlowClientEvtIn } from '../../client/evt'
-import { FlowServerCtx } from '../../server/ctx'
+import { FlowBackendCtx } from '../../server/ctx'
 import type { Pack } from '../pack'
 import type { IPackDb } from '../pack-db'
 import type { PackId } from '../pack-id'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 import { RequestResponse } from '~/@/request-response/request-response'
 
 //
@@ -24,12 +24,12 @@ export type ClientModule = AppClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   Ctx: SpaceClientCtx
   MsgEvtIn: FlowClientEvtIn
   MsgCmdOut: SpaceClientCmd<{
     MsgClient: MsgClient
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
   }>
   MsgCmdIn: MsgInCmdClient
   MsgEvtOut: SpaceClientEvt
@@ -41,14 +41,14 @@ export type ClientModule = AppClientModule<{
   }
 }>
 
-export type ServerModule = AppServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+export type BackendModule = AppBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgCmdOut: SpaceBackendCmd<MsgToClient>
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Ctx: FlowServerCtx
-  MsgEvtIn: SpaceServerEvt
+  MsgToBackend: MsgToBackend
+  Ctx: FlowBackendCtx
+  MsgEvtIn: SpaceBackendEvt
 }>
 
 //
@@ -66,17 +66,17 @@ export const initClient: ModelClient = {
   packs: {},
 }
 
-export const ModelServer = p.l(null)
-export type ModelServer = p.Infer<typeof ModelServer>
+export const ModelBackend = p.l(null)
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
-export const initServer: ModelServer = null
+export const initBackend: ModelBackend = null
 
 export const MsgClient = p.or(p.obj({ t: p.l('user-observed-end-of-list') }), p.obj({ t: p.l('elapsed') }))
 export type MsgClient = p.Infer<typeof MsgClient>
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'list-packs'
   input: ListPackInput
 }

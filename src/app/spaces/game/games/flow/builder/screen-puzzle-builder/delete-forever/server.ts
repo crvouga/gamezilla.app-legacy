@@ -1,13 +1,13 @@
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
 import { withEventId } from '~/@/event-sourced/event'
-import type { ServerModule } from '../../types'
+import type { BackendModule } from '../../types'
 import type { MsgCore } from './types'
 
-const update: ServerModule['update'] = async (input) => {
-  return GameServerModule.andThen({}, () => updateFromClient(input))
+const update: BackendModule['update'] = async (input) => {
+  return GameBackendModule.andThen({}, () => updateFromClient(input))
 }
 
-const updateFromClient: ServerModule['update'] = async (input) => {
+const updateFromClient: BackendModule['update'] = async (input) => {
   switch (input.msgClient?.t) {
     case 'delete-forever.user-confirmed': {
       const puzzleBuilder = input.modelCore.screenPuzzleBuilder
@@ -39,6 +39,6 @@ const updateFromClient: ServerModule['update'] = async (input) => {
   }
 }
 
-export const DeleteForeverServer: Pick<ServerModule, 'update'> = {
+export const DeleteForeverBackend: Pick<BackendModule, 'update'> = {
   update,
 }

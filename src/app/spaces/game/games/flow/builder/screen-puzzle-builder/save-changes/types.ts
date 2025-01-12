@@ -14,7 +14,7 @@ export type ModelClient = {
 
 export const initClient: ModelClient = {}
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 //
 //
@@ -34,9 +34,9 @@ export type MsgClient =
       t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit'
     }
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToServer =
+export type MsgToBackend =
   | {
       t: 'screen-puzzle-builder.save-changes.user-clicked-save-button'
       puzzle: Puzzle

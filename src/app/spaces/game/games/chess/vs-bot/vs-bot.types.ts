@@ -21,7 +21,7 @@ export type ModelClient = {
   vsBotSetup: VsBotSetup.Model
 }
 
-export type ModelServer = CoreModel
+export type ModelBackend = CoreModel
 
 export type CoreModel = SetupModel | ModelCore | GameOverModel
 
@@ -58,7 +58,7 @@ export const initCore: CoreModel = {
   botLevel: 1,
 }
 
-export const initServer = ({ userId }: { userId: UserId | null }): ModelServer => {
+export const initBackend = ({ userId }: { userId: UserId | null }): ModelBackend => {
   return {
     type: 'setup',
     botLevel: initCore.botLevel,
@@ -87,12 +87,12 @@ export type MsgClient =
   | { t: 'closed-modal' }
   | { t: 'vs-bot-setup'; c: VsBotSetup.Msg }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'bot-moved'
   moved: Chess.BestMoveInputResult
 }
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
 export type MsgToClient =
   | Res

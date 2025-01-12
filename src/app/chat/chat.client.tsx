@@ -125,7 +125,7 @@ const removeKey = <T extends object>(obj: T, key: keyof T) => {
   return newObj
 }
 
-export const updateFromServer = ({
+export const updateFromBackend = ({
   model,
 }: {
   msg: MsgToClient

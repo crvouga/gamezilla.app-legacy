@@ -8,7 +8,7 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { WebClient } from '~/@/web-client'
-import { ServerImpl } from '~/@/web-server/server-impl'
+import { BackendImpl } from '~/@/web-server/server-impl'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
 import { SERVER_URL } from '~/config/client'
 import { SERVER_IMPL } from '~/config/shared'
@@ -31,7 +31,7 @@ import {
   type ModelClient,
   type MsgClient,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
 } from './types'
 import * as WireClient from './wire/client'
 import { ClientTransport } from './wire/transport/client'
@@ -49,7 +49,7 @@ import { ClientTransport } from './wire/transport/client'
 export const initCtx = async (): Promise<ClientCtx> => {
   const logger = Logger({ t: 'console' })
 
-  const transport = await ClientTransport<MsgToServer, MsgToClient>(
+  const transport = await ClientTransport<MsgToBackend, MsgToClient>(
     toClientTransportConfig({
       serverImpl: SERVER_IMPL,
       serverUrl: SERVER_URL,
@@ -103,7 +103,7 @@ const toClientCtx = (input: { model: ModelClient; ctx: ClientCtx }): Ctx => {
 }
 
 const toClientTransportConfig = (input: {
-  serverImpl: ServerImpl
+  serverImpl: BackendImpl
   serverUrl: string
   logger: ILogger
 }): Parameters<typeof ClientTransport>[0] => {
@@ -168,7 +168,7 @@ export const init = (input: { ctx: ClientCtx }): { model: ModelClient; eff?: Eff
 
   const initialEff = Eff.batch<MsgClient>([routing.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
 
-  const initialCmd = Msg.batch<AppClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>>(
+  const initialCmd = Msg.batch<AppClientCmd<{ MsgToBackend: MsgToBackend; MsgClient: MsgClient }>>(
     AppClientCmd.tag('spaces', space.msgCmd),
     AppClientCmd.tag('profile', profile.msgCmd),
     AppClientCmd.tag('auth', auth.msgCmd),
@@ -194,13 +194,13 @@ export const update = (input: {
   msg: MsgClient
   model: ModelClient
 }): { model: ModelClient; eff?: Eff<MsgClient> } => {
-  const msgServer = input.msg.t === '→' ? input.msg.c : undefined
+  const msgBackend = input.msg.t === '→' ? input.msg.c : undefined
 
   const updatedChild = updateChild({
     ctx: input.ctx,
     model: input.model,
     msg: input.msg,
-    msgServer: msgServer,
+    msgBackend: msgBackend,
   })
 
   const updated = updateLoop(input.ctx, updatedChild)
@@ -213,7 +213,7 @@ type Output = {
   eff: Eff<MsgClient>
   msgEvt: ClientEvt[]
   msgCmd: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 }
@@ -258,10 +258,10 @@ const updateChild = (input: {
   ctx: ClientCtx
   model: ModelClient
   msg?: MsgClient
-  msgServer?: MsgToClient
+  msgBackend?: MsgToClient
   msgEvt?: ClientEvt
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
 }): Output => {
@@ -271,7 +271,7 @@ const updateChild = (input: {
     ctx: clientCtx,
     model: input.model.spaces,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
-    msgServer: input.msgServer?.t === 'spaces' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'spaces' ? input.msgBackend.c : null,
     msgEvt: input.msgEvt,
     msgCmd: null,
   })
@@ -280,7 +280,7 @@ const updateChild = (input: {
     ctx: clientCtx,
     model: input.model.profile,
     msg: input.msg?.t === 'profile' ? input.msg.c : null,
-    msgServer: input.msgServer?.t === 'profile' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'profile' ? input.msgBackend.c : null,
     msgEvt: input.msgEvt,
     msgCmd: input.msgCmd?.t === 'profile' ? input.msgCmd : null,
   })
@@ -289,7 +289,7 @@ const updateChild = (input: {
     ctx: clientCtx,
     model: input.model.auth,
     msg: input.msg?.t === 'auth' ? input.msg.c : null,
-    msgServer: input.msgServer?.t === 'auth' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'auth' ? input.msgBackend.c : null,
     msgEvt: input.msgEvt,
     msgCmd: input.msgCmd?.t === 'auth' ? input.msgCmd : null,
   })
@@ -304,7 +304,7 @@ const updateChild = (input: {
     ctx: clientCtx,
     model: input.model.wire,
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
-    msgServer: input.msgServer?.t === 'wire' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'wire' ? input.msgBackend.c : null,
     msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
     transport: input.ctx.transport,
   })
@@ -339,7 +339,7 @@ const updateChild = (input: {
     model: input.model.lang,
     msg: input.msg?.t === 'lang' ? input.msg.c : null,
     msgCmd: null,
-    msgServer: input.msgServer?.t === 'lang' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'lang' ? input.msgBackend.c : null,
     msgEvt: input.msgEvt,
     ctx: clientCtx,
   })
@@ -381,7 +381,7 @@ const updateChild = (input: {
       lang.msgEvt,
     ),
 
-    msgCmd: Msg.batch<AppClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>>(
+    msgCmd: Msg.batch<AppClientCmd<{ MsgToBackend: MsgToBackend; MsgClient: MsgClient }>>(
       AppClientCmd.tag('auth', auth.msgCmd),
       AppClientCmd.tag('profile', profile.msgCmd),
       AppClientCmd.tag('spaces', space.msgCmd),
@@ -409,7 +409,7 @@ export const subscriptions = (input: { ctx: ClientCtx; model: ModelClient }): Su
   const ctx = toClientCtx(input)
 
   return Sub.batch<MsgClient>([
-    Sub.tag('→', Sub.flat(input.ctx.transport.fromServer)),
+    Sub.tag('→', Sub.flat(input.ctx.transport.fromBackend)),
     Sub.tag('platform', Platform.subscriptions),
     Sub.tag('routing', Routing.subscriptions),
     Sub.tag('wire', WireClient.subscriptions({ transport: input.ctx.transport })),

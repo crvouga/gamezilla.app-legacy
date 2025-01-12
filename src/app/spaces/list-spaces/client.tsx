@@ -1,6 +1,6 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { APP_SOUND, playSound, pushRoute, sendToServer } from '~/app/@/client/cmd'
+import { APP_SOUND, playSound, pushRoute, sendToBackend } from '~/app/@/client/cmd'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
@@ -26,7 +26,7 @@ const sendListSpacesRequest: SpaceClientModule['update'] = ({ model, ctx }) => {
       ...model,
       listSpacesRequest: startedRequest(ctx.now),
     },
-    msgCmd: [sendToServer({ t: 'list-spaces', limit: 100, offset: 0 })],
+    msgCmd: [sendToBackend({ t: 'list-spaces', limit: 100, offset: 0 })],
   }
 }
 
@@ -86,9 +86,9 @@ const update: SpaceClientModule['update'] = (input) => {
     }
   }
 
-  switch (input.msgServer?.t) {
+  switch (input.msgBackend?.t) {
     case 'listed-spaces': {
-      const merged = input.msgServer.spaces.reduce(SpacesCoreClient.merge, input.model)
+      const merged = input.msgBackend.spaces.reduce(SpacesCoreClient.merge, input.model)
       return {
         model: {
           ...input.model,

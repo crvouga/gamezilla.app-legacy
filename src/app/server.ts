@@ -11,28 +11,28 @@ import { SMS } from '~/@/sms'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { WebServer } from '~/@/web-server'
+import { WebBackend } from '~/@/web-server'
 import { DATABASE_URL } from '~/config/server'
 import { IS_PROD, SERVER_IMPL } from '~/config/shared'
-import { ServerCmd } from './@/server/cmd'
-import { AppServerCtx } from './@/server/ctx'
-import { ServerEvt } from './@/server/evt'
+import { BackendCmd } from './@/server/cmd'
+import { AppBackendCtx } from './@/server/ctx'
+import { BackendEvt } from './@/server/evt'
 import { ProfileCache } from './@/server/profile-cache'
-import { ServerInstanceId } from './@/server/server-instance/server-instance-id'
-import * as AuthServer from './auth/server'
-import * as LangServer from './lang/server'
-import * as ProfileServer from './profile/server'
-import { SpacesServer } from './spaces/server'
+import { BackendInstanceId } from './@/server/server-instance/server-instance-id'
+import * as AuthBackend from './auth/server'
+import * as LangBackend from './lang/server'
+import * as ProfileBackend from './profile/server'
+import { SpacesBackend } from './spaces/server'
 import {
   rpcContract,
-  ServerCtx,
-  type MsgServer,
+  BackendCtx,
+  type MsgBackend,
   type MsgToClient,
-  type MsgToServer,
-  type MsgToServerMeta,
+  type MsgToBackend,
+  type MsgToBackendMeta,
 } from './types'
-import * as WireServer from './wire/server'
-import { ServerTransport } from './wire/transport/server'
+import * as WireBackend from './wire/server'
+import { BackendTransport } from './wire/transport/server'
 
 //
 //
@@ -42,7 +42,7 @@ import { ServerTransport } from './wire/transport/server'
 //
 //
 
-const initCtx = async (): Promise<ServerCtx> => {
+const initCtx = async (): Promise<BackendCtx> => {
   const logger = Logger({ t: 'console' })
 
   const runtime = Runtime({
@@ -75,7 +75,7 @@ const initCtx = async (): Promise<ServerCtx> => {
     logger,
   })
 
-  const webServer = WebServer({
+  const webBackend = WebBackend({
     logger,
     t: SERVER_IMPL,
   })
@@ -84,12 +84,12 @@ const initCtx = async (): Promise<ServerCtx> => {
     t: 'noop',
   })
 
-  const transport = await ServerTransport<MsgToServer, MsgToClient>(
-    webServer.t === 'bun'
+  const transport = await BackendTransport<MsgToBackend, MsgToClient>(
+    webBackend.t === 'bun'
       ? {
           t: 'bun-web-sockets',
           dbConnSql,
-          webServer,
+          webBackend,
           logger,
           pubSubTopicBased: pubSub,
           isProd: IS_PROD,
@@ -109,7 +109,7 @@ const initCtx = async (): Promise<ServerCtx> => {
 
   const env = IS_PROD ? 'prod' : 'dev'
 
-  const ctx: AppServerCtx = {
+  const ctx: AppBackendCtx = {
     env,
     sms,
     dbConnSql,
@@ -119,19 +119,19 @@ const initCtx = async (): Promise<ServerCtx> => {
     sleep,
     pubSub,
     profileCache,
-    webServer,
+    webBackend,
     runtime,
-    serverInstanceId: ServerInstanceId.generate(),
+    serverInstanceId: BackendInstanceId.generate(),
   }
 
-  const wire = await WireServer.initCtx({ ctx, transport })
-  const profile = await ProfileServer.initCtx({ ctx })
-  const space = await SpacesServer.initCtx({ ctx })
-  const auth = await AuthServer.initCtx({ ctx })
+  const wire = await WireBackend.initCtx({ ctx, transport })
+  const profile = await ProfileBackend.initCtx({ ctx })
+  const space = await SpacesBackend.initCtx({ ctx })
+  const auth = await AuthBackend.initCtx({ ctx })
 
   return {
     ...ctx,
-    webServer: webServer,
+    webBackend: webBackend,
     auth,
     space,
     profile,
@@ -140,7 +140,7 @@ const initCtx = async (): Promise<ServerCtx> => {
   }
 }
 
-const updateCtx = (ctx: ServerCtx): ServerCtx => {
+const updateCtx = (ctx: BackendCtx): BackendCtx => {
   return {
     ...ctx,
     now: Posix.now(),
@@ -155,7 +155,7 @@ const updateCtx = (ctx: ServerCtx): ServerCtx => {
 //
 //
 
-const init = async (_input: { ctx: ServerCtx }): Promise<{}> => {
+const init = async (_input: { ctx: BackendCtx }): Promise<{}> => {
   return {}
 }
 
@@ -167,7 +167,7 @@ const init = async (_input: { ctx: ServerCtx }): Promise<{}> => {
 //
 //
 
-const update = async (input: { msg: MsgServer; ctx: ServerCtx }): Promise<{}> => {
+const update = async (input: { msg: MsgBackend; ctx: BackendCtx }): Promise<{}> => {
   logMsg({ msg: input.msg, logger: input.ctx.logger })
 
   const updated = await updateChild({
@@ -188,9 +188,9 @@ const logMsg = ({
   logger,
 }: {
   logger: ILogger
-  msg?: MsgServer | null
-  msgEvt?: ServerEvt | null
-  msgCmd?: ServerCmd<MsgToClient> | null
+  msg?: MsgBackend | null
+  msgEvt?: BackendEvt | null
+  msgCmd?: BackendCmd<MsgToClient> | null
 }) => {
   const prefix = msg ? '[msg]' : msgEvt ? '[evt]' : '[cmd]'
 
@@ -211,14 +211,14 @@ const logMsg = ({
 }
 
 const updateLoop = async (
-  ctx: ServerCtx,
+  ctx: BackendCtx,
   acc: {
-    msgEvt: ServerEvt[]
-    msgCmd: ServerCmd<MsgToClient>[]
+    msgEvt: BackendEvt[]
+    msgCmd: BackendCmd<MsgToClient>[]
   },
 ): Promise<{
-  msgEvt: ServerEvt[]
-  msgCmd: ServerCmd<MsgToClient>[]
+  msgEvt: BackendEvt[]
+  msgCmd: BackendCmd<MsgToClient>[]
 }> => {
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
@@ -250,19 +250,19 @@ const updateLoop = async (
 }
 
 const updateChild = async (input: {
-  ctx: ServerCtx
-  msg?: MsgServer | null
-  msgClient?: (MsgToServer & MsgToServerMeta) | null
-  msgEvt?: ServerEvt | null
-  msgCmd?: ServerCmd<MsgToClient> | null
+  ctx: BackendCtx
+  msg?: MsgBackend | null
+  msgClient?: (MsgToBackend & MsgToBackendMeta) | null
+  msgEvt?: BackendEvt | null
+  msgCmd?: BackendCmd<MsgToClient> | null
 }): Promise<{
-  msgEvt: ServerEvt[]
-  msgCmd: ServerCmd<MsgToClient>[]
+  msgEvt: BackendEvt[]
+  msgCmd: BackendCmd<MsgToClient>[]
 }> => {
-  const userId = await AuthServer.getUserIdFromSessionId(input.ctx.auth, input.msgClient?.sessionId)
+  const userId = await AuthBackend.getUserIdFromSessionId(input.ctx.auth, input.msgClient?.sessionId)
 
   const [space, auth, wire, profile, lang] = await Promise.all([
-    SpacesServer.update({
+    SpacesBackend.update({
       deps: null,
       ctx: input.ctx.space,
       msgCmd: null,
@@ -271,7 +271,7 @@ const updateChild = async (input: {
       msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     }),
 
-    AuthServer.update({
+    AuthBackend.update({
       deps: null,
       ctx: input.ctx.auth,
       msgCmd: null,
@@ -280,7 +280,7 @@ const updateChild = async (input: {
       msg: input.msg?.t === 'auth' ? input.msg.c : null,
     }),
 
-    WireServer.update({
+    WireBackend.update({
       ctx: input.ctx.wire,
       msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
       msgEvt: input.msgEvt,
@@ -288,7 +288,7 @@ const updateChild = async (input: {
       msg: input.msg?.t === 'wire' ? input.msg.c : null,
     }),
 
-    ProfileServer.update({
+    ProfileBackend.update({
       deps: null,
       ctx: input.ctx.profile,
       msgCmd: null,
@@ -297,7 +297,7 @@ const updateChild = async (input: {
       msg: input.msg?.t === 'profile' ? input.msg.c : null,
     }),
 
-    LangServer.update({
+    LangBackend.update({
       deps: null,
       ctx: input.ctx,
       msgCmd: null,
@@ -308,14 +308,14 @@ const updateChild = async (input: {
   ])
 
   return {
-    msgCmd: Msg.batch<ServerCmd<MsgToClient>>(
-      ServerCmd.tag('spaces', space.msgCmd),
-      ServerCmd.tag('auth', auth.msgCmd),
-      ServerCmd.tag('wire', wire.msgCmd),
-      ServerCmd.tag('profile', profile.msgCmd),
-      ServerCmd.tag('lang', lang.msgCmd),
+    msgCmd: Msg.batch<BackendCmd<MsgToClient>>(
+      BackendCmd.tag('spaces', space.msgCmd),
+      BackendCmd.tag('auth', auth.msgCmd),
+      BackendCmd.tag('wire', wire.msgCmd),
+      BackendCmd.tag('profile', profile.msgCmd),
+      BackendCmd.tag('lang', lang.msgCmd),
     ),
-    msgEvt: Msg.batch<ServerEvt>(
+    msgEvt: Msg.batch<BackendEvt>(
       //
       auth.msgEvt,
       space.msgEvt,
@@ -334,25 +334,25 @@ const updateChild = async (input: {
 //
 //
 
-const subscriptions = async (input: { ctx: ServerCtx }): Promise<Sub<MsgServer>> => {
+const subscriptions = async (input: { ctx: BackendCtx }): Promise<Sub<MsgBackend>> => {
   return Sub.batch([
-    Sub.tag('spaces', await SpacesServer.subscriptions({ ctx: input.ctx.space, deps: null })),
-    Sub.tag('wire', WireServer.subscriptions({ ctx: input.ctx.wire })),
+    Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space, deps: null })),
+    Sub.tag('wire', WireBackend.subscriptions({ ctx: input.ctx.wire })),
     Sub.flat(
       Sub.map(input.ctx.transport.fromClient, ({ sessionId, clientId, msgs }) =>
-        msgs.map((c): MsgServer => ({ t: '→', sessionId, clientId, c })),
+        msgs.map((c): MsgBackend => ({ t: '→', sessionId, clientId, c })),
       ),
     ),
   ])
 }
 
-const rpc = (input: { ctx: ServerCtx }) => {
-  return RPC.initServer(rpcContract, {
-    wire: WireServer.rpc({ ctx: input.ctx.wire }),
+const rpc = (input: { ctx: BackendCtx }) => {
+  return RPC.initBackend(rpcContract, {
+    wire: WireBackend.rpc({ ctx: input.ctx.wire }),
   })
 }
 
-export const AppServer = {
+export const AppBackend = {
   initCtx,
   updateCtx,
   init,

@@ -17,7 +17,7 @@ export type GameClientModuleTypes = {
   Model?: Any
   Msg?: Any
   MsgToClient?: Any
-  MsgToServer?: Any
+  MsgToBackend?: Any
   MsgCmdIn?: Any
   MsgCmdOut?: Any
   MsgEvtIn?: Any
@@ -54,7 +54,7 @@ export type Input<T extends GameClientModuleTypes> = {
   ctx: T['Ctx']
   model: T['Model']
   msg?: T['Msg'] | null
-  msgServer?: T['MsgToClient'] | null
+  msgBackend?: T['MsgToClient'] | null
   msgEvt?: T['MsgEvtIn'] | null
   msgCmd?: T['MsgCmdIn'] | null
   modelCore: T['ModelCore']

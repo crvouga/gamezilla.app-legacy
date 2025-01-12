@@ -3,9 +3,9 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'
-import type { Mode, ModelServer, MsgServer, MsgToServer } from './gomoku.types'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
+import type { Mode, ModelBackend, MsgBackend, MsgToBackend } from './gomoku.types'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
 
 //
 //
@@ -15,7 +15,7 @@ import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init: Model = {
   t: 'none',
@@ -58,7 +58,7 @@ const initMode = ({ mode, userId }: { mode: Mode; userId: UserId }): Model => {
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = ({ msg, model }: { msg: Msg; model: Model }): { model: Model; eff?: Eff<Msg> } => {
   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
@@ -97,8 +97,8 @@ export const updateFromClient = ({
   msg,
   model,
 }: {
-  ctx: SpaceServerCtx
-  msg: MsgToServer
+  ctx: SpaceBackendCtx
+  msg: MsgToBackend
   model: Model
 }): {
   model: Model
@@ -150,7 +150,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt
+  msg: SpaceBackendEvt
   model: Model
 }): {
   model: Model

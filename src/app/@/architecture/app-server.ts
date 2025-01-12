@@ -10,7 +10,7 @@ import type { UserId } from '~/app/@/data/user-id'
 //
 //
 
-export type AppServerModuleTypes = {
+export type AppBackendModuleTypes = {
   /**
    * `Deps` is the dependencies of the module
    */
@@ -28,9 +28,9 @@ export type AppServerModuleTypes = {
    */
   MsgToClient?: any
   /**
-   * `MsgToServer` is a message to send to the client component of the module
+   * `MsgToBackend` is a message to send to the client component of the module
    */
-  MsgToServer?: any
+  MsgToBackend?: any
   /**
    * `MsgCmdIn` is a message from other modules. Usually verbs
    */
@@ -55,7 +55,7 @@ export type AppServerModuleTypes = {
 //
 //
 
-export type Input<T extends AppServerModuleTypes> = {
+export type Input<T extends AppBackendModuleTypes> = {
   /**
    * `deps` are the dependencies of the module
    */
@@ -72,7 +72,7 @@ export type Input<T extends AppServerModuleTypes> = {
    *
    */
   msgClient?:
-    | (T['MsgToServer'] & {
+    | (T['MsgToBackend'] & {
         clientId: ClientId
         sessionId: SessionId
         userId?: UserId | null
@@ -94,7 +94,7 @@ export type Input<T extends AppServerModuleTypes> = {
 //
 //
 
-export type Output<T extends AppServerModuleTypes> = {
+export type Output<T extends AppBackendModuleTypes> = {
   /**
    *
    */
@@ -106,9 +106,9 @@ export type Output<T extends AppServerModuleTypes> = {
 }
 
 /**
- * `AppServerModule` represents a server side app module
+ * `AppBackendModule` represents a server side app module
  */
-export type AppServerModule<T extends AppServerModuleTypes> = {
+export type AppBackendModule<T extends AppBackendModuleTypes> = {
   initDeps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
   /**
    * `init` is the initial state of the module
@@ -128,7 +128,7 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
 
 type MaybePromise<T> = T | Promise<T>
 
-const andThen = async <T extends AppServerModuleTypes>(
+const andThen = async <T extends AppBackendModuleTypes>(
   accPromise: MaybePromise<Output<T>>,
   ...updates: (() => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
@@ -143,6 +143,6 @@ const andThen = async <T extends AppServerModuleTypes>(
   return acc
 }
 
-export const AppServerModule = {
+export const AppBackendModule = {
   andThen,
 }

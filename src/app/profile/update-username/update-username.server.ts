@@ -1,16 +1,16 @@
-import { ServerCmd } from '~/app/@/server/cmd'
+import { BackendCmd } from '~/app/@/server/cmd'
 import { ProfileDb } from '../profile-db/profile-db'
-import { MsgServer, MsgToClient, MsgToServer } from './update-username.types'
+import { MsgBackend, MsgToClient, MsgToBackend } from './update-username.types'
 
 export const update = async (input: {
   deps: {
     profileDb: ProfileDb
   }
 
-  msg: MsgServer | null
-  msgClient: MsgToServer | null
+  msg: MsgBackend | null
+  msgClient: MsgToBackend | null
 }): Promise<{
-  msgCmd?: ServerCmd<MsgToClient>[]
+  msgCmd?: BackendCmd<MsgToClient>[]
 }> => {
   switch (input.msgClient?.t) {
     case 'profile.update-username.clicked-save': {

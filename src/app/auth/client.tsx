@@ -51,7 +51,7 @@ export const update: ClientModule['update'] = (input) => {
   return AppClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromBackend({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild({ ...input, model }),
     (model) => ContinueAsGuestClient.update({ ...input, model }),
@@ -65,7 +65,7 @@ const updateChild: ClientModule['update'] = (input) => {
     model: input.model.sms,
     msgCmd: null,
     msgEvt: input.msgEvt,
-    msgServer: input.msgServer?.t === 'sms' ? input.msgServer.c : null,
+    msgBackend: input.msgBackend?.t === 'sms' ? input.msgBackend.c : null,
     msg: input.msg?.t === 'sms' ? input.msg.c : null,
   })
 
@@ -115,8 +115,8 @@ const updateFromMsg: ClientModule['update'] = (input) => {
   }
 }
 
-const updateFromServer: ClientModule['update'] = (input) => {
-  switch (input.msgServer?.t) {
+const updateFromBackend: ClientModule['update'] = (input) => {
+  switch (input.msgBackend?.t) {
     case 'client-unauthenticated': {
       return {
         model: {
@@ -139,13 +139,13 @@ const updateFromServer: ClientModule['update'] = (input) => {
           ...input.model,
           currentUser: {
             t: 'logged-in',
-            account: input.msgServer.account,
+            account: input.msgBackend.account,
           },
         },
         msgEvt: [
           {
-            ...input.msgServer,
-            account: input.msgServer.account,
+            ...input.msgBackend,
+            account: input.msgBackend.account,
             t: 'auth-evt.authenticated',
           },
         ],

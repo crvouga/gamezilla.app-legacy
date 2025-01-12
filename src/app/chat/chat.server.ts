@@ -1,16 +1,16 @@
 import { Eff } from '~/@/eff'
-import type { ModelServer, MsgServer, MsgToServer } from './chat.core'
+import type { ModelBackend, MsgBackend, MsgToBackend } from './chat.core'
 
-export const init: { model: ModelServer } = { model: null }
+export const init: { model: ModelBackend } = { model: null }
 
 export const updateFromClient = ({
   model,
 }: {
-  msg: MsgToServer
-  model: ModelServer
+  msg: MsgToBackend
+  model: ModelBackend
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
 } => {
   return { model }
 }
@@ -18,11 +18,11 @@ export const updateFromClient = ({
 export const update = ({
   model,
 }: {
-  msg: MsgServer
-  model: ModelServer
+  msg: MsgBackend
+  model: ModelBackend
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
+  model: ModelBackend
+  eff?: Eff<MsgBackend>
 } => {
   return { model }
 }

@@ -4,24 +4,24 @@ import { Ok } from '~/@/result'
 import { UserAccount } from '../@/data/account'
 import { ClientId } from '../@/data/client-id'
 import { SessionId } from '../@/data/session-id'
-import { FixtureAppServer } from '../@/server/fixture'
-import * as WireServer from './server'
-import { initServerTransport, ToClientPayload } from './transport/server'
+import { FixtureAppBackend } from '../@/server/fixture'
+import * as WireBackend from './server'
+import { initBackendTransport, ToClientPayload } from './transport/server'
 import { WireSession } from './wire-session'
 
-export type Input = Partial<Parameters<typeof WireServer.update>[0]>
+export type Input = Partial<Parameters<typeof WireBackend.update>[0]>
 
-export type Output = Awaited<ReturnType<typeof WireServer.update>>
+export type Output = Awaited<ReturnType<typeof WireBackend.update>>
 
 const Fixture = async () => {
-  const f = await FixtureAppServer()
+  const f = await FixtureAppBackend()
 
-  const ctx = await WireServer.initCtx({ ctx: f.ctx, transport: initServerTransport() })
+  const ctx = await WireBackend.initCtx({ ctx: f.ctx, transport: initBackendTransport() })
 
   const updates = async (initial: Output, inputs: Input[]): Promise<Output[]> => {
     const outputs: Output[] = [initial]
     for (const input of inputs) {
-      const output = await WireServer.update({
+      const output = await WireBackend.update({
         ...input,
         ctx: input.ctx ?? ctx,
       })

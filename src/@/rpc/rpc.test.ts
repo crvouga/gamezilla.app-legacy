@@ -1,6 +1,6 @@
 import { p } from '~/@/parser'
 import * as RPC from './rpc'
-import { WebServer } from '~/@/web-server'
+import { WebBackend } from '~/@/web-server'
 import { WebClient } from '~/@/web-client'
 import { Logger } from '~/@/logger'
 
@@ -15,7 +15,7 @@ const childRpcContract = RPC.initContract({
   },
 })
 
-const childRpcServer = RPC.initServer(childRpcContract, {
+const childRpcBackend = RPC.initBackend(childRpcContract, {
   async baz(input) {
     return {
       message: `Yo, ${input.name}`,
@@ -44,8 +44,8 @@ const rpcContract = RPC.initContract({
   },
 })
 
-const rpcServer = RPC.initServer(rpcContract, {
-  child: childRpcServer,
+const rpcBackend = RPC.initBackend(rpcContract, {
+  child: childRpcBackend,
   async bar(input) {
     return {
       message: `Hi, ${input.name}`,
@@ -64,10 +64,10 @@ const rpcServer = RPC.initServer(rpcContract, {
 //
 //
 
-const webServer = WebServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
+const webBackend = WebBackend({ t: 'bun', logger: Logger({ t: 'noop' }) })
 const webClient = WebClient({ t: 'fetch', fetch: fetch as Fetch })
 
-RPC.withRPC({ webServer, contract: rpcContract, handlers: rpcServer })
+RPC.withRPC({ webBackend, contract: rpcContract, handlers: rpcBackend })
 
 const rpcClient = RPC.initClient(webClient, rpcContract)
 

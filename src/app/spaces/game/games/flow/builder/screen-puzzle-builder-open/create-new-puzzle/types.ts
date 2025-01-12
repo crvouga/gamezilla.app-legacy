@@ -20,7 +20,7 @@ export const initClient: ModelClient = {
   puzzleCreateRequestedAt: Posix.now(),
 }
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 //
 //
@@ -31,9 +31,9 @@ export type MsgClient = {
   t: 'create-new-puzzle.user-clicked-create-button'
 }
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToServer = { t: 'create-new-puzzle.user-clicked-create-button' }
+export type MsgToBackend = { t: 'create-new-puzzle.user-clicked-create-button' }
 
 export type MsgToClient = {
   t: 'created-puzzle'

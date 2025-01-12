@@ -8,7 +8,7 @@ import type { ModelCore, MsgClient, MsgCore, MsgToClient } from '../../types'
 
 export type FixtureUpdateInput = {
   msg?: MsgClient
-  msgServer?: MsgToClient
+  msgBackend?: MsgToClient
   msgCore?: WithEventMeta<MsgCore>
 }
 

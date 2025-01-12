@@ -8,14 +8,14 @@ import { type BotLevel, allBotLevels, toStatus, toTurn } from '../@/tic-tic-toe/
 import { CoverArt, PlayerTypeIcon, ViewBoard, gameTheme } from '../@/tic-tic-toe/tic-tac-toe-ui'
 import {
   type ModelClient,
-  type ModelServer,
+  type ModelBackend,
   type MsgClient,
   type MsgToClient,
-  type MsgToServer,
+  type MsgToBackend,
   handle,
   initCoreModel,
 } from './vs-bot.types'
-import { AppClientCmd, sendToServer } from '~/app/@/client/cmd'
+import { AppClientCmd, sendToBackend } from '~/app/@/client/cmd'
 import { AppClientCtx } from '~/app/@/client/ctx'
 
 //
@@ -58,7 +58,7 @@ export const update = ({
 
   eff?: Eff<Msg>
   msgCmd?: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>[]
 } => {
@@ -76,18 +76,18 @@ export const update = ({
   if (handled.t === 'err') {
     return {
       model,
-      msgCmd: [sendToServer(msg)],
+      msgCmd: [sendToBackend(msg)],
     }
   }
-  const merged = mergeWithServer({
+  const merged = mergeWithBackend({
     ...ctx,
     client: model,
     server: handled.value,
   })
-  return { model: merged, msgCmd: [sendToServer(msg)] }
+  return { model: merged, msgCmd: [sendToBackend(msg)] }
 }
 
-export const updateFromServer = ({
+export const updateFromBackend = ({
   msg,
   model,
   ctx,
@@ -104,7 +104,7 @@ export const updateFromServer = ({
     }
   }
 
-  const modelNew = mergeWithServer({
+  const modelNew = mergeWithBackend({
     ...ctx,
     client: model,
     server: msg.result.value,
@@ -115,13 +115,13 @@ export const updateFromServer = ({
   }
 }
 
-export const mergeWithServer = ({
+export const mergeWithBackend = ({
   server,
   client = init({ userId: null }),
 }: {
   now: Posix
   client?: ModelClient
-  server: ModelServer
+  server: ModelBackend
 }): ModelClient => {
   return {
     ...client,

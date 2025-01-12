@@ -1,10 +1,10 @@
 import { Posix } from '~/@/time/posix'
-import { ServerInstanceId } from './server-instance-id'
+import { BackendInstanceId } from './server-instance-id'
 import { p } from '~/@/parser'
 import { TimeSpan } from '~/@/time/time-span'
 
 const parser = p.obj({
-  serverInstanceId: ServerInstanceId,
+  serverInstanceId: BackendInstanceId,
   startedAt: Posix,
   stoppedAt: p.maybe(Posix),
   lastHeartbeatAt: Posix,
@@ -12,13 +12,13 @@ const parser = p.obj({
   port: p.maybe(p.num),
 })
 
-export type ServerInstance = p.Infer<typeof parser>
+export type BackendInstance = p.Infer<typeof parser>
 
 const HEARTBEAT = TimeSpan.minutes(1)
 
-const random = (overrides?: Partial<ServerInstance>): ServerInstance => {
+const random = (overrides?: Partial<BackendInstance>): BackendInstance => {
   return {
-    serverInstanceId: ServerInstanceId.generate(),
+    serverInstanceId: BackendInstanceId.generate(),
     startedAt: Posix.now(),
     stoppedAt: null,
     lastHeartbeatAt: Posix.now(),
@@ -28,7 +28,7 @@ const random = (overrides?: Partial<ServerInstance>): ServerInstance => {
   }
 }
 
-export const ServerInstance = {
+export const BackendInstance = {
   ...parser,
   HEARTBEAT,
   random,

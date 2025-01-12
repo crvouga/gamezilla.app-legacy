@@ -17,7 +17,7 @@ const View: ClientModule['View'] = (_input) => {
   return null
 }
 
-export const ServerInstanceClient = {
+export const BackendInstanceClient = {
   init,
   update,
   subscriptions,

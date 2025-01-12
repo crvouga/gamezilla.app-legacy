@@ -5,7 +5,7 @@ import { Sub } from '~/@/sub'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
-import { type Color, type ModelClient, type ModelServer, type MsgClient, type MsgToClient, initShared } from './types'
+import { type Color, type ModelClient, type ModelBackend, type MsgClient, type MsgToClient, initShared } from './types'
 
 //
 //
@@ -70,7 +70,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   }
 }
 
-export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Msg>] => {
+export const updateFromBackend = (msg: MsgToClient, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'stop-game':
     case 'input-seed':
@@ -81,7 +81,7 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
       if (msg[2].t === 'err') {
         return [model, Eff.None]
       }
-      const merged = mergeWithServer({
+      const merged = mergeWithBackend({
         clientModel: model,
         serverModel: msg[2].value,
       })
@@ -89,7 +89,7 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
     }
 
     case 'tick': {
-      const merged = mergeWithServer({
+      const merged = mergeWithBackend({
         clientModel: model,
         serverModel: msg[1],
       })
@@ -98,11 +98,11 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
   }
 }
 
-export const mergeWithServer = ({
+export const mergeWithBackend = ({
   serverModel,
 }: {
   clientModel: ModelClient
-  serverModel: ModelServer
+  serverModel: ModelBackend
 }): ModelClient => {
   return serverModel
 }

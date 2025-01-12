@@ -6,16 +6,16 @@ import { Profile } from '~/app/@/data/profile'
 import { SessionId } from '~/app/@/data/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { FixtureAppServer } from '~/app/@/server/fixture'
-import { SpacesCoreServer } from '../../core/server'
+import { FixtureAppBackend } from '~/app/@/server/fixture'
+import { SpacesCoreBackend } from '../../core/server'
 import { SpaceCore } from '../../core/space-core'
-import { GamesServer } from '../../game/games/server'
-import { SpacesServer } from '../../server'
-import { ServerCtx } from '../../types'
-import { SpaceServerCtx } from '../space-server/ctx'
+import { GamesBackend } from '../../game/games/server'
+import { SpacesBackend } from '../../server'
+import { BackendCtx } from '../../types'
+import { SpaceBackendCtx } from '../space-server/ctx'
 
-export const FixtureSpaceServer = async () => {
-  const f = await FixtureAppServer()
+export const FixtureSpaceBackend = async () => {
+  const f = await FixtureAppBackend()
 
   const clientA = randomAuthenticatedClient()
   const clientB = randomAuthenticatedClient()
@@ -53,20 +53,20 @@ export const FixtureSpaceServer = async () => {
     throw new Error('Invalid fixture. Space is not started.')
   }
 
-  const ctx: SpaceServerCtx = {
+  const ctx: SpaceBackendCtx = {
     ...f.ctx,
     space: spaceState,
   }
 
-  const serverCtx: ServerCtx = {
+  const serverCtx: BackendCtx = {
     ...f.ctx,
-    spacesCoreServer: await SpacesCoreServer({
+    spacesCoreBackend: await SpacesCoreBackend({
       t: 'db-conn-kv',
       dbConnKv: f.ctx.dbConnKv,
       logger: f.ctx.logger,
       runtime: f.ctx.runtime,
     }),
-    games: await GamesServer.initCtx({
+    games: await GamesBackend.initCtx({
       ...f.ctx,
       ctx: {
         ...f.ctx,
@@ -75,13 +75,13 @@ export const FixtureSpaceServer = async () => {
     }),
   }
 
-  type Input = Partial<Parameters<typeof SpacesServer.update>[0]>
-  type Output = Awaited<ReturnType<typeof SpacesServer.update>>
+  type Input = Partial<Parameters<typeof SpacesBackend.update>[0]>
+  type Output = Awaited<ReturnType<typeof SpacesBackend.update>>
 
   const updates = async (inputs: Input[]) => {
     const outputs: Output[] = []
     for (const input of inputs) {
-      const output = await SpacesServer.update({
+      const output = await SpacesBackend.update({
         ...input,
         ctx: input.ctx ?? serverCtx,
         deps: null,

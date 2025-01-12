@@ -29,7 +29,7 @@ export type CoreModel = {
   }
 }
 
-export type ModelServer = CoreModel
+export type ModelBackend = CoreModel
 
 export type ModelClient = CoreModel & {
   volume: number
@@ -46,7 +46,7 @@ export type ModelClient = CoreModel & {
 //
 //
 
-export type MsgServer = ['none']
+export type MsgBackend = ['none']
 
 export type MsgClient =
   | Req
@@ -55,7 +55,7 @@ export type MsgClient =
   | ['MicLoad', MicLoadResult]
   | ['MicUnload', MicUnloadResult]
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
 export type MsgToClient = Res
 

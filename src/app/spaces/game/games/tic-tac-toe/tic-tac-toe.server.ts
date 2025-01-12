@@ -1,9 +1,9 @@
 import { Ok } from '~/@/result'
 import type { UserId } from '~/app/@/data/user-id'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import type { ModelServer, MsgServer, MsgToClient, MsgToServer } from './tic-tac-toe.types'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
+import type { ModelBackend, MsgBackend, MsgToClient, MsgToBackend } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.server'
 import * as VsUser from './vs-user/vs-user.server'
 import { Eff } from '~/@/eff'
@@ -17,7 +17,7 @@ import { Sub } from '~/@/sub'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init: Model = { t: 'none' }
 
@@ -29,7 +29,7 @@ export const init: Model = { t: 'none' }
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = ({
   msg,
@@ -40,7 +40,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   if (msg.t === 'vs-user' && model.t === 'vs-user') {
     const updated = VsUser.update(msg.c, model.c)
@@ -49,7 +49,7 @@ export const update = ({
         t: 'vs-user',
         c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd),
+      msgCmd: SpaceBackendCmd.tag('vs-user', updated.msgCmd),
     }
   }
 
@@ -64,7 +64,7 @@ export const update = ({
         t: 'vs-bot',
         c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd),
+      msgCmd: SpaceBackendCmd.tag('vs-bot', updated.msgCmd),
     }
   }
 
@@ -76,16 +76,16 @@ export const updateFromClient = ({
   model,
   ctx,
 }: {
-  ctx: SpaceServerCtx
-  msg: MsgToServer
+  ctx: SpaceBackendCtx
+  msg: MsgToBackend
   model: Model
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   if (msg.t === 'input-mode') {
-    const modelNew: ModelServer = initMode({
+    const modelNew: ModelBackend = initMode({
       mode: msg.mode,
       userId: ctx.space.hostId,
     })
@@ -113,7 +113,7 @@ export const updateFromClient = ({
         ...model,
         c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd),
+      msgCmd: SpaceBackendCmd.tag('vs-user', updated.msgCmd),
     }
   }
 
@@ -130,7 +130,7 @@ export const updateFromClient = ({
         c: updated.model,
       },
       eff: Eff.tag('vs-bot', updated.eff),
-      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd),
+      msgCmd: SpaceBackendCmd.tag('vs-bot', updated.msgCmd),
     }
   }
 
@@ -142,10 +142,10 @@ export const updateFromEvent = ({
   model,
 }: {
   model: Model
-  msg: SpaceServerEvt
+  msg: SpaceBackendEvt
 }): {
   model: Model
-  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  msgCmd?: SpaceBackendCmd<MsgToClient>[]
 } => {
   if (model.t === 'none') {
     return { model }
@@ -161,7 +161,7 @@ export const updateFromEvent = ({
         t: 'vs-bot',
         c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-bot', updated.msgCmd),
+      msgCmd: SpaceBackendCmd.tag('vs-bot', updated.msgCmd),
     }
   }
 
@@ -175,14 +175,14 @@ export const updateFromEvent = ({
         t: 'vs-user',
         c: updated.model,
       },
-      msgCmd: SpaceServerCmd.tag('vs-user', updated.msgCmd),
+      msgCmd: SpaceBackendCmd.tag('vs-user', updated.msgCmd),
     }
   }
 
   return { model }
 }
 
-const initMode = ({ mode, userId }: { mode: ModelServer['t']; userId: UserId }): ModelServer => {
+const initMode = ({ mode, userId }: { mode: ModelBackend['t']; userId: UserId }): ModelBackend => {
   switch (mode) {
     case 'none': {
       return {

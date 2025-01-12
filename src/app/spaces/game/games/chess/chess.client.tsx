@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToServer } from '~/app/@/client/cmd'
+import { APP_SOUND, AppClientCmd, playSound, preloadSound, sendToBackend } from '~/app/@/client/cmd'
 import { IconPuzzlePiece } from '~/app/@/ui'
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
 import type { GameClient } from '~/app/spaces/game/games/@/architecture/game-client'
@@ -11,7 +11,7 @@ import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/chess-ui'
 import { CHESS_SOUND } from './@/chess/chess-sounds'
-import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToServer } from './chess.types'
+import type { ModelClient, ModelCore, MsgClient, MsgCore, MsgToClient, MsgToBackend } from './chess.types'
 import * as Puzzle from './puzzle/puzzle.client'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
@@ -27,12 +27,12 @@ type Client = GameClient<{
   ModelClient: ModelClient
   MsgClient: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   ClientCtx: SpaceClientCtx
   MsgCore: MsgCore
   ModelCore: ModelCore
   ClientCmd: SpaceClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
   ClientEvent: SpaceClientEvt
@@ -92,7 +92,7 @@ export const update: Client['update'] = (input) => {
                 [msg.t]: RemoteResult.Loading,
               },
             },
-            msgCmd: [sendToServer(msg)],
+            msgCmd: [sendToBackend(msg)],
           }
         }
 
@@ -175,28 +175,28 @@ export const update: Client['update'] = (input) => {
       }
     },
     (model) => {
-      const { msgServer, ctx } = input
+      const { msgBackend, ctx } = input
 
-      if (!msgServer) {
+      if (!msgBackend) {
         return {
           model,
         }
       }
 
-      switch (msgServer.t) {
+      switch (msgBackend.t) {
         case 'input-mode': {
           return GameClientModule.andThen(
             {
               model,
             },
             (model) => {
-              const { result } = msgServer
+              const { result } = msgBackend
 
               const modelNew: ModelClient = {
                 ...model,
                 requests: {
                   ...model.requests,
-                  [msgServer.t]: RemoteResult.map(result, () => null),
+                  [msgBackend.t]: RemoteResult.map(result, () => null),
                 },
               }
 
@@ -228,11 +228,11 @@ export const update: Client['update'] = (input) => {
 
         case 'vs-user': {
           if (model?.mode?.t === 'vs-user') {
-            const [child, eff] = VsUser.updateFromServer(
+            const [child, eff] = VsUser.updateFromBackend(
               {
                 ctx,
               },
-              msgServer.c,
+              msgBackend.c,
               model.mode.c,
             )
 
@@ -255,8 +255,8 @@ export const update: Client['update'] = (input) => {
 
         case 'vs-bot': {
           if (model?.mode?.t === 'vs-bot') {
-            const updated = VsBot.updateFromServer({
-              msg: msgServer.c,
+            const updated = VsBot.updateFromBackend({
+              msg: msgBackend.c,
               model: model.mode.c,
             })
 
@@ -284,10 +284,10 @@ export const update: Client['update'] = (input) => {
             }
           }
 
-          const updated = Puzzle.updateFromServer({
+          const updated = Puzzle.updateFromBackend({
             ctx,
             model: model.mode.c,
-            msg: msgServer.c,
+            msg: msgBackend.c,
           })
 
           return {

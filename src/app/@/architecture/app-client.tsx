@@ -27,9 +27,9 @@ export type AppClientModuleTypes = {
    */
   MsgToClient?: unknown
   /**
-   * `MsgToServer` is a message to send to the client component of the module
+   * `MsgToBackend` is a message to send to the client component of the module
    */
-  MsgToServer?: unknown
+  MsgToBackend?: unknown
   /**
    * `MsgCmdIn` is a message from other modules. Usually verbs
    */
@@ -87,9 +87,9 @@ export type Input<T extends AppClientModuleTypes> = {
    */
   msg?: T['Msg'] | null
   /**
-   * `msgServer` is a message from the server
+   * `msgBackend` is a message from the server
    */
-  msgServer?: T['MsgToClient'] | null
+  msgBackend?: T['MsgToClient'] | null
   /**
    * `msgEvt` is an event that happen in another module. Like `user-logged-out`, `route-changed`
    */

@@ -24,20 +24,20 @@ export type ModelClient =
       c: VsBot.ModelClient
     }
 
-export type ModelServer =
+export type ModelBackend =
   | {
       t: 'none'
     }
   | {
       t: 'vs-user'
-      c: VsUser.ModelServer
+      c: VsUser.ModelBackend
     }
   | {
       t: 'vs-bot'
-      c: VsBot.ModelServer
+      c: VsBot.ModelBackend
     }
 
-export type Mode = ModelServer['t']
+export type Mode = ModelBackend['t']
 
 //
 //
@@ -49,16 +49,16 @@ export type Mode = ModelServer['t']
 
 export type MsgClient = Req | { t: 'vs-user'; c: VsUser.MsgClient } | { t: 'vs-bot'; c: VsBot.MsgClient }
 
-export type MsgServer = { t: 'vs-user'; c: VsUser.MsgServer } | { t: 'vs-bot'; c: VsBot.MsgServer }
+export type MsgBackend = { t: 'vs-user'; c: VsUser.MsgBackend } | { t: 'vs-bot'; c: VsBot.MsgBackend }
 
 export type MsgToClient = Res | { t: 'vs-user'; c: VsUser.MsgToClient } | { t: 'vs-bot'; c: VsBot.MsgToClient }
 
-export type MsgToServer = Req | { t: 'vs-user'; c: VsUser.MsgToServer } | { t: 'vs-bot'; c: VsBot.MsgToServer }
+export type MsgToBackend = Req | { t: 'vs-user'; c: VsUser.MsgToBackend } | { t: 'vs-bot'; c: VsBot.MsgToBackend }
 
 export type Req = { t: 'input-mode'; userId: UserId; mode: Mode }
 
 export type Res = Req & {
-  result: Result<Problem, ModelServer>
+  result: Result<Problem, ModelBackend>
 }
 
 export type Problem = 'must-be-host'

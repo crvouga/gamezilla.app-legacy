@@ -8,7 +8,7 @@ import * as Piece from './@/piece'
 import * as Position from './@/position'
 import {
   type ModelClient,
-  type ModelServer,
+  type ModelBackend,
   type MsgClient,
   type MsgToClient,
   columnCount,
@@ -171,7 +171,7 @@ const keyToDirection = (key: Keyboard.Key): Direction.Direction | 'none' => {
   }
 }
 
-export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Msg>] => {
+export const updateFromBackend = (msg: MsgToClient, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'MouseMove_Done': {
       const result = msg[1]
@@ -258,12 +258,12 @@ export const updateFromServer = (msg: MsgToClient, model: Model): [Model, Eff<Ms
   }
 }
 
-export const mergeWithServer = ({
+export const mergeWithBackend = ({
   clientModel,
   serverModel,
 }: {
   clientModel: ModelClient
-  serverModel: ModelServer
+  serverModel: ModelBackend
 }): ModelClient => {
   return {
     ...clientModel,

@@ -24,7 +24,7 @@ export const FixtureFlowClient = async () => {
   type Input = {
     ctx?: FlowClientCtx | null
     msg?: MsgClient | null
-    msgServer?: MsgToClient | null
+    msgBackend?: MsgToClient | null
     msgCore?: WithEventMeta<MsgCore> | null
   }
 
@@ -39,7 +39,7 @@ export const FixtureFlowClient = async () => {
         ctx: input.ctx ?? ctx,
         model: lastOutput.model,
         msg: input.msg,
-        msgServer: input.msgServer,
+        msgBackend: input.msgBackend,
         msgCore: input.msgCore,
         modelCore: outputs
           .flatMap((o) => o.msgCore ?? [])

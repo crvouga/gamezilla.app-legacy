@@ -1,5 +1,5 @@
 import { NotAsked, Ok } from '~/@/result'
-import { APP_SOUND, playSound, sendToServer, showToast } from '~/app/@/client/cmd'
+import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/client/cmd'
 import { BaseClientCtx } from '~/app/@/client/ctx'
 import { ConfirmationDrawer } from '~/app/@/ui'
 import type { ClientModule, ModelClient, MsgClient } from '../types'
@@ -23,7 +23,7 @@ const update: ClientModule['update'] = (input) => {
           },
         },
         msgCmd: [
-          sendToServer({ t: 'user-clicked-confirm-logout-button' }),
+          sendToBackend({ t: 'user-clicked-confirm-logout-button' }),
           showToast(input.ctx.t('auth.current-user-logged-out')),
           playSound(APP_SOUND.navBackwardMin),
         ],

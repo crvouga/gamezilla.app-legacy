@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
-import { AppServerTestEnv } from '~/app/@/server/fixture'
+import { AppBackendTestEnv } from '~/app/@/server/fixture'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import { Pack } from '../pack'
 import { PackName } from '../pack-name'
 import { PackDb } from './impl'
 
 const Fixture = async () => {
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
   switch (testEnv.t) {
     case 'all':
     case 'integration': {

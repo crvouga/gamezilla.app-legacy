@@ -3,10 +3,10 @@ import { GuestSessionMappingDb } from './impl'
 import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { unwrap } from '~/@/result'
-import { AppServerTestEnv } from '~/app/@/server/fixture'
+import { AppBackendTestEnv } from '~/app/@/server/fixture'
 
 const Fixture = async () => {
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
   switch (testEnv.t) {
     case 'all':
     case 'integration': {

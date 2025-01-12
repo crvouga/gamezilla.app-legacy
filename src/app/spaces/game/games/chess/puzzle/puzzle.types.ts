@@ -60,7 +60,7 @@ export type CoreModel =
     }
   | (BaseModel & MainModel)
 
-export type ModelServer = CoreModel & {
+export type ModelBackend = CoreModel & {
   requests: { getPuzzles?: RemoteResult<string, null> }
 }
 
@@ -152,7 +152,7 @@ export type Req =
 
 export type Res = Req & { result: Result<string, CoreModel> }
 
-export type MsgServer = { t: 'clock-tick' } | DbMsg
+export type MsgBackend = { t: 'clock-tick' } | DbMsg
 
 type DbMsg =
   | {
@@ -181,7 +181,7 @@ type DbMsg =
 
 export type MsgClient = Req
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
 export type MsgToClient =
   | Res

@@ -4,7 +4,7 @@ import { Sub } from '~/@/sub'
 import { AppClientCtx } from '~/app/@/client/ctx'
 import {
   type ModelClient,
-  type ModelServer,
+  type ModelBackend,
   type MsgClient,
   type MsgToClient,
   handle,
@@ -60,7 +60,7 @@ export const update = ({
         }
       }
 
-      const merged = mergeWithServer({
+      const merged = mergeWithBackend({
         ctx,
         serverModel: result.value,
         clientModel: model,
@@ -74,7 +74,7 @@ export const update = ({
   }
 }
 
-export const updateFromServer = ({
+export const updateFromBackend = ({
   msg,
   model,
   ctx,
@@ -90,7 +90,7 @@ export const updateFromServer = ({
     return { model }
   }
 
-  const merged = mergeWithServer({
+  const merged = mergeWithBackend({
     ctx,
     clientModel: model,
     serverModel: msg.result.value,
@@ -99,13 +99,13 @@ export const updateFromServer = ({
   return { model: merged }
 }
 
-export const mergeWithServer = ({
+export const mergeWithBackend = ({
   serverModel,
   clientModel,
 }: {
   ctx: AppClientCtx
   clientModel: ModelClient
-  serverModel: ModelServer
+  serverModel: ModelBackend
 }): ModelClient => {
   return { ...clientModel, ...serverModel }
 }

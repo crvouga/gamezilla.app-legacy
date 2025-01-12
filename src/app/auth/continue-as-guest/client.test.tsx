@@ -3,7 +3,7 @@ import { isRequesting, isResponseErr, isResponseOk } from '~/@/request-response/
 import { Err, Ok } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { AppClientModule } from '~/app/@/architecture/app-client'
-import { didPlaySound, didSendToServer } from '~/app/@/client/cmd'
+import { didPlaySound, didSendToBackend } from '~/app/@/client/cmd'
 import { AnonymousClientCtx } from '~/app/@/client/ctx'
 import { Translator } from '~/app/@/client/translator'
 import { UserId } from '~/app/@/data/user-id'
@@ -36,7 +36,7 @@ const continueAsGuestResultedOk = (userId: UserId) => (model: ModelClient) =>
   AuthClient.update({
     model,
     ctx,
-    msgServer: {
+    msgBackend: {
       t: 'guest.continue-as-guest-result',
       result: Ok(userId),
     },
@@ -46,7 +46,7 @@ const continueAsGuestResultedErr = () => (model: ModelClient) =>
   AuthClient.update({
     model,
     ctx,
-    msgServer: {
+    msgBackend: {
       t: 'guest.continue-as-guest-result',
       result: Err('some error happened'),
     },
@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
       clickedContinueAsGuestButton,
     )
 
-    expect(didSendToServer(output, (msg) => msg.t === 'guest.clicked-continue-as-guest-button')).toBe(true)
+    expect(didSendToBackend(output, (msg) => msg.t === 'guest.clicked-continue-as-guest-button')).toBe(true)
   })
 
   it('should resolve request as ok when resulted in ok', () => {

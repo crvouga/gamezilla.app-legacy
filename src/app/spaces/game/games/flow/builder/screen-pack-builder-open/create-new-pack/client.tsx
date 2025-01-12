@@ -1,10 +1,10 @@
 import { Loading, Ok } from '~/@/result'
-import { APP_SOUND, playSound, sendToServer, showToast } from '~/app/@/client/cmd'
+import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/client/cmd'
 import { Button, IconPlus } from '~/app/@/ui'
 import type { ClientModule } from '../../types'
 
 const update: ClientModule['update'] = (input) => {
-  const { model, msg, msgCore, msgServer } = input
+  const { model, msg, msgCore, msgBackend } = input
 
   switch (msg?.t) {
     case 'create-new-pack.clicked-create-button': {
@@ -15,7 +15,7 @@ const update: ClientModule['update'] = (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendToServer({
+          sendToBackend({
             t: 'create-new-pack.clicked-create-button',
           }),
         ],
@@ -23,14 +23,14 @@ const update: ClientModule['update'] = (input) => {
     }
   }
 
-  switch (msgServer?.t) {
+  switch (msgBackend?.t) {
     case 'create-new-pack.created-pack': {
       return {
         model,
         msgCore: [
           {
             t: 'user-created-pack',
-            created: msgServer.created,
+            created: msgBackend.created,
             userId: input.ctx.currentUserId,
           },
         ],

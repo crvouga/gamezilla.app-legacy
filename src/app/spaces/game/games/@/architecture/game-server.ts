@@ -1,9 +1,9 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import type { EventMeta, WithEventId, WithEventMeta } from '~/@/event-sourced/event'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 
 //
 //
@@ -13,62 +13,62 @@ import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
 //
 //
 
-export type GameServerTypes = {
+export type GameBackendTypes = {
   //
-  ModelServer: any
-  MsgServer: any
+  ModelBackend: any
+  MsgBackend: any
   MsgToClient: any
-  MsgToServer: any
+  MsgToBackend: any
   //
   ModelCore: any
   MsgCore: any
   //
 }
 
-type Output<T extends GameServerTypes> = {
-  model: T['ModelServer']
+type Output<T extends GameBackendTypes> = {
+  model: T['ModelBackend']
   msgCore?: WithEventId<T['MsgCore']>[]
-  eff?: Eff<T['MsgServer']>
-  msgCmd?: SpaceServerCmd<T['MsgToClient']>[]
+  eff?: Eff<T['MsgBackend']>
+  msgCmd?: SpaceBackendCmd<T['MsgToClient']>[]
 }
 
-export type GameServer<T extends GameServerTypes> = {
-  init: (input: { ctx: SpaceServerCtx; state: T['ModelCore']; model?: T['ModelServer'] | null }) => Promise<{
-    model: T['ModelServer']
-    eff?: Eff<T['MsgServer']>
-    msgCmd?: SpaceServerCmd<T['MsgToClient']>[]
+export type GameBackend<T extends GameBackendTypes> = {
+  init: (input: { ctx: SpaceBackendCtx; state: T['ModelCore']; model?: T['ModelBackend'] | null }) => Promise<{
+    model: T['ModelBackend']
+    eff?: Eff<T['MsgBackend']>
+    msgCmd?: SpaceBackendCmd<T['MsgToClient']>[]
   }>
 
   update: (input: {
-    ctx: SpaceServerCtx
+    ctx: SpaceBackendCtx
     state: T['ModelCore']
-    model?: T['ModelServer'] | null
+    model?: T['ModelBackend'] | null
     //
-    msg?: T['MsgServer'] | null
-    clientMsg?: T['MsgToServer'] | null
+    msg?: T['MsgBackend'] | null
+    clientMsg?: T['MsgToBackend'] | null
     msgCore?: WithEventMeta<T['MsgCore']> | null
-    msgEvt?: SpaceServerEvt | null
+    msgEvt?: SpaceBackendEvt | null
   }) => Promise<Output<T>>
 
   subscriptions: (input: {
-    model?: T['ModelServer'] | null
+    model?: T['ModelBackend'] | null
     intervalId: string
-    ctx: SpaceServerCtx
+    ctx: SpaceBackendCtx
     state: T['ModelCore']
-  }) => Promise<Sub<T['MsgServer']>>
+  }) => Promise<Sub<T['MsgBackend']>>
 }
 
 /**
  * Tags all the messages and models that are inputted and outputted from this module.
  */
-const tag = <T extends string, Types extends GameServerTypes>(
+const tag = <T extends string, Types extends GameBackendTypes>(
   tag: T,
-  server: GameServer<Types>,
-): GameServer<{
-  ModelServer: { t: T; c: Types['ModelServer'] }
-  MsgServer: { t: T; c: Types['MsgServer'] }
+  server: GameBackend<Types>,
+): GameBackend<{
+  ModelBackend: { t: T; c: Types['ModelBackend'] }
+  MsgBackend: { t: T; c: Types['MsgBackend'] }
   MsgToClient: { t: T; c: Types['MsgToClient'] }
-  MsgToServer: { t: T; c: Types['MsgToServer'] }
+  MsgToBackend: { t: T; c: Types['MsgToBackend'] }
   ModelCore: { t: T; c: Types['ModelCore'] }
   MsgCore: { t: T; c: Types['MsgCore'] & EventMeta }
 }> => {
@@ -84,7 +84,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
           c: initial.model,
         },
         eff: Eff.tag(tag, initial.eff),
-        msgCmd: SpaceServerCmd.tag(tag, initial.msgCmd),
+        msgCmd: SpaceBackendCmd.tag(tag, initial.msgCmd),
       }
     },
 
@@ -104,7 +104,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
           c: updated.model,
         },
         eff: Eff.tag(tag, updated.eff),
-        msgCmd: SpaceServerCmd.tag(tag, updated.msgCmd),
+        msgCmd: SpaceBackendCmd.tag(tag, updated.msgCmd),
         msgCore: updated.msgCore
           ? updated.msgCore.map(
               (
@@ -152,13 +152,13 @@ const tag = <T extends string, Types extends GameServerTypes>(
  * @param updaters - a list of update functions to apply to the model
  * @returns Accumulated output from all the update functions
  */
-const chain = async <T extends GameServerTypes>(
+const chain = async <T extends GameBackendTypes>(
   initial: Output<T> | Promise<Output<T>>,
-  ...updaters: ((input: T['ModelServer']) => Promise<Output<T>>)[]
+  ...updaters: ((input: T['ModelBackend']) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
-  const msgCmd: SpaceServerCmd<T['MsgToClient']>[] = (await initial).msgCmd ?? []
+  const msgCmd: SpaceBackendCmd<T['MsgToClient']>[] = (await initial).msgCmd ?? []
   const msgCores: (T['MsgCore'] & EventMeta)[] = (await initial)?.msgCore ?? []
-  const eff: Eff<T['MsgServer']>[] = (await initial).eff ? [(await initial).eff!] : []
+  const eff: Eff<T['MsgBackend']>[] = (await initial).eff ? [(await initial).eff!] : []
 
   let model = (await initial).model
   let i = 0
@@ -196,7 +196,7 @@ const chain = async <T extends GameServerTypes>(
   }
 }
 
-export const GameServer = {
+export const GameBackend = {
   tag,
   chain,
 }

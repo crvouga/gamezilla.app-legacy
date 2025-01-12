@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
-import { type ModelServer, type MsgServer, type MsgToServer, type Res, handle, initShared, tick } from './types'
+import { type ModelBackend, type MsgBackend, type MsgToBackend, type Res, handle, initShared, tick } from './types'
 import { Time } from '~/@/time/time'
 
 //
@@ -12,7 +12,7 @@ import { Time } from '~/@/time/time'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init = initShared
 
@@ -24,7 +24,7 @@ export const init = initShared
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
@@ -35,7 +35,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   }
 }
 
-export const updateFromClient = (msg: MsgToServer, model: Model): [Model, Eff<Msg>] => {
+export const updateFromClient = (msg: MsgToBackend, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'stop-game':
     case 'input-direction':
@@ -58,7 +58,7 @@ export const updateFromClient = (msg: MsgToServer, model: Model): [Model, Eff<Ms
 //
 //
 
-export const subscriptions = (intervalId: string, model: ModelServer): Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: ModelBackend): Sub<Msg> => {
   if (model.type === 'game') {
     return Time.interval(intervalId, TimeSpan.seconds(1 / 2), () => ['tick'])
     // return Sub.None

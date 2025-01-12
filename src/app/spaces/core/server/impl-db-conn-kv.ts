@@ -10,7 +10,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { type UserId } from '~/app/@/data/user-id'
 import { SpaceCore } from '../space-core'
-import type { ISpacesCoreServer } from './interface'
+import type { ISpacesCoreBackend } from './interface'
 
 export type Config = {
   t: 'db-conn-kv'
@@ -19,7 +19,7 @@ export type Config = {
   runtime: IRuntime
 }
 
-export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServer> => {
+export const SpacesCoreBackend = async (config: Config): Promise<ISpacesCoreBackend> => {
   const logger = Logger.prefix('db-conn-kv', config.logger)
 
   const dbConnKv = await pipe(
@@ -65,7 +65,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
   })
   const INDEX_SPACE_IDS_KEY_ALL = 'all'
 
-  const get: ISpacesCoreServer['get'] = async (spaceId) => {
+  const get: ISpacesCoreBackend['get'] = async (spaceId) => {
     if (!spaceId) {
       return Ok(null)
     }
@@ -79,7 +79,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     return Ok(got.value)
   }
 
-  const upsert: ISpacesCoreServer['upsert'] = async (space) => {
+  const upsert: ISpacesCoreBackend['upsert'] = async (space) => {
     const spaceId = SpaceCore.toSpaceId(space)
 
     if (!spaceId) {
@@ -104,7 +104,7 @@ export const SpacesCoreServer = async (config: Config): Promise<ISpacesCoreServe
     )
   }
 
-  const hasEvent: ISpacesCoreServer['hasEvent'] = async (spaceId, eventId) => {
+  const hasEvent: ISpacesCoreBackend['hasEvent'] = async (spaceId, eventId) => {
     const got = await spacesBySpaceId.get(spaceId)
 
     if (isErr(got)) {

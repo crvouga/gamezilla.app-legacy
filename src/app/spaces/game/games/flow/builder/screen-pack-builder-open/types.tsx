@@ -21,9 +21,9 @@ export const MsgCore = p.or(
 )
 export type MsgCore = p.Infer<typeof MsgCore>
 
-export type MsgServer = CreateNewPackTypes.MsgServer
+export type MsgBackend = CreateNewPackTypes.MsgBackend
 
-export type MsgToServer = CreateNewPackTypes.MsgToServer
+export type MsgToBackend = CreateNewPackTypes.MsgToBackend
 
 export type MsgToClient = CreateNewPackTypes.MsgToClient
 

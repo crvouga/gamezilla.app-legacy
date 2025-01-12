@@ -23,7 +23,7 @@ export type FixtureUpdateInput = {
   ctx?: FlowClientCtx
   msg?: BuilderTypes.MsgClient
   msgCore?: WithEventMeta<BuilderTypes.MsgCore>
-  msgServer?: BuilderTypes.MsgToClient
+  msgBackend?: BuilderTypes.MsgToClient
 }
 export type FixtureUpdateOutput = ReturnType<typeof BuilderClient.update> & {
   modelCore: BuilderTypes.ModelCore
@@ -358,7 +358,7 @@ export const serverCreatedPack = (ctx: FlowClientCtx, pack: Pack) => (model: Bui
     modelCore: BuilderCore.initCore({
       ctx,
     }),
-    msgServer: {
+    msgBackend: {
       t: 'create-new-pack.created-pack',
       created: Ok(pack),
     },

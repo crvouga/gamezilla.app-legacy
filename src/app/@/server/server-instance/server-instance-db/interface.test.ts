@@ -2,20 +2,20 @@ import { describe, expect, test } from 'bun:test'
 import { Ok, unwrap } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { AppServerTestEnv } from '../../fixture'
-import { ServerInstance } from '../server-instance'
+import { AppBackendTestEnv } from '../../fixture'
+import { BackendInstance } from '../server-instance'
 import { Config } from './impl'
-import { ServerInstanceDb } from './impl-db-conn-kv'
+import { BackendInstanceDb } from './impl-db-conn-kv'
 
 const Fixture = (config: Config) => {
-  const serverInstanceDb = ServerInstanceDb(config)
+  const serverInstanceDb = BackendInstanceDb(config)
   return {
     serverInstanceDb,
   }
 }
 
 const Fixtures = async () => {
-  const f = await AppServerTestEnv()
+  const f = await AppBackendTestEnv()
 
   const configs: Config[] = [
     {
@@ -30,7 +30,7 @@ const Fixtures = async () => {
 describe(import.meta.file, () => {
   test('put and get', async () => {
     for (const f of await Fixtures()) {
-      const serverInstance = ServerInstance.random()
+      const serverInstance = BackendInstance.random()
       const before = await f.serverInstanceDb.get(serverInstance.serverInstanceId)
       const put = await f.serverInstanceDb.put(serverInstance)
       const after = await f.serverInstanceDb.get(serverInstance.serverInstanceId)
@@ -43,9 +43,9 @@ describe(import.meta.file, () => {
   test.todo('list', async () => {
     for (const f of await Fixtures()) {
       const before = await f.serverInstanceDb.list()
-      const expected: ServerInstance[] = []
+      const expected: BackendInstance[] = []
       for (let i = 0; i < 10; i++) {
-        const serverInstance = ServerInstance.random()
+        const serverInstance = BackendInstance.random()
         expected.push(serverInstance)
         await f.serverInstanceDb.put(serverInstance)
       }
@@ -61,9 +61,9 @@ describe(import.meta.file, () => {
       const before = await f.serverInstanceDb.list()
 
       // Alive
-      const expected: ServerInstance[] = []
+      const expected: BackendInstance[] = []
       for (let i = 0; i < 10; i++) {
-        const serverInstance = ServerInstance.random({
+        const serverInstance = BackendInstance.random({
           startedAt: Posix.past(Posix.now(), TimeSpan.hours(1)),
           lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.minutes(1)),
         })
@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
       // Dead
       for (let i = 0; i < 10; i++) {
         await f.serverInstanceDb.put(
-          ServerInstance.random({
+          BackendInstance.random({
             startedAt: Posix.past(Posix.now(), TimeSpan.hours(1)),
             lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.add(MINIMAL_HEART_RATE, TimeSpan.minutes(1))),
           }),

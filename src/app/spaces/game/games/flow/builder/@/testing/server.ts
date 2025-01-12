@@ -1,16 +1,16 @@
 import { Logger } from '~/@/logger'
-import { AppServerTestEnv } from '~/app/@/server/fixture'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceGameFixtureServer } from '../../../../@/testing/server'
+import { AppBackendTestEnv } from '~/app/@/server/fixture'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceGameFixtureBackend } from '../../../../@/testing/server'
 import { PackDb } from '../../../@/pack/pack-db'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
-import { FlowServerCtx } from '../../../@/server/ctx'
+import { FlowBackendCtx } from '../../../@/server/ctx'
 import { Solutions } from '../../../@/solutions/solutions'
 import { BuilderCore } from '../../core'
-import { initServer } from '../../types'
+import { initBackend } from '../../types'
 
-const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
-  const testEnv = await AppServerTestEnv()
+const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
+  const testEnv = await AppBackendTestEnv()
   switch (testEnv.t) {
     case 'all':
     case 'integration': {
@@ -32,10 +32,10 @@ const initCtx = async (ctx: SpaceServerCtx): Promise<FlowServerCtx> => {
   }
 }
 
-export const FlowCreateFixtureServer = async () => {
-  const f = await SpaceGameFixtureServer()
+export const FlowCreateFixtureBackend = async () => {
+  const f = await SpaceGameFixtureBackend()
   const ctx = await initCtx(f.ctx)
-  const model = initServer
+  const model = initBackend
   const modelCore = BuilderCore.initCore({ ctx })
   return {
     ...f,

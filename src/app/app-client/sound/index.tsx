@@ -25,7 +25,7 @@ type Module = AppClientModule<{
   MsgCmdOut: SoundCmd
   MsgEvtOut: never
   MsgToClient: never
-  MsgToServer: never
+  MsgToBackend: never
 }>
 
 //

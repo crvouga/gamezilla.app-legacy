@@ -1,9 +1,9 @@
-import type { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
+import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
 import { Sub } from '~/@/sub'
-import type { MsgCore, ModelCore, ModelServer, MsgServer, MsgToClient, MsgToServer } from './vs-user.types'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
+import type { MsgCore, ModelCore, ModelBackend, MsgBackend, MsgToClient, MsgToBackend } from './vs-user.types'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
 
 //
 //
@@ -11,18 +11,18 @@ import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
 //
 //
 
-type Module = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
+type Module = GameBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   ModelCore: ModelCore
   MsgCore: MsgCore
-  Ctx: SpaceServerCtx
+  Ctx: SpaceBackendCtx
   Deps: null
   MsgCmdIn: null
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+  MsgEvtIn: SpaceBackendEvt
+  MsgCmdOut: SpaceBackendCmd<MsgToClient>
   MsgEvtOut: null
 }>
 

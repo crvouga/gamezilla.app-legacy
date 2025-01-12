@@ -2,7 +2,7 @@ import type { Server, WebSocketHandler } from 'bun'
 import { Logger, type ILogger } from '~/@/logger'
 import { PubSub } from '../sub'
 import { Posix } from '../time/posix'
-import { WebServerEvent, type Handler, type IWebServer } from './interface'
+import { WebBackendEvent, type Handler, type IWebBackend } from './interface'
 import { getIpAddress } from './ip-address'
 
 export type Config = {
@@ -10,15 +10,15 @@ export type Config = {
   logger: ILogger
 }
 
-export const WebServerBun = <T>(config: Config) => {
+export const WebBackendBun = <T>(config: Config) => {
   const logger = Logger.prefix('bun', config.logger)
   const handlers: Handler[] = []
   let webSocketHandler: WebSocketHandler<T>
   let server: Server
 
-  const events: PubSub<WebServerEvent> = PubSub.create()
+  const events: PubSub<WebBackendEvent> = PubSub.create()
 
-  const base: IWebServer = {
+  const base: IWebBackend = {
     events,
     async start(port) {
       server = Bun.serve({
@@ -71,4 +71,4 @@ export const WebServerBun = <T>(config: Config) => {
   } as const
 }
 
-export type WebServerBun = ReturnType<typeof WebServerBun>
+export type WebBackendBun = ReturnType<typeof WebBackendBun>

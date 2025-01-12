@@ -5,7 +5,7 @@ import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/tic-tic-toe/tic-tac-toe-ui'
-import type { ModelClient, MsgClient, MsgToClient, MsgToServer } from './tic-tac-toe.types'
+import type { ModelClient, MsgClient, MsgToClient, MsgToBackend } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.client'
 import * as VsUser from './vs-user/vs-user.client'
 
@@ -13,12 +13,12 @@ type Client = GameClient<{
   ModelClient: ModelClient
   MsgClient: MsgClient
   MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToBackend: MsgToBackend
   MsgCore: null
   ModelCore: null
   ClientCtx: SpaceClientCtx
   ClientCmd: AppClientCmd<{
-    MsgToServer: MsgToServer
+    MsgToBackend: MsgToBackend
     MsgClient: MsgClient
   }>
   ClientEvent: SpaceClientEvt

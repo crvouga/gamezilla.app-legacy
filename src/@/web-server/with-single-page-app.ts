@@ -1,10 +1,10 @@
 import path from 'node:path'
 import { IFileSystem } from '../file-system'
 import { fileExtensionToContentType } from './content-type'
-import { IWebServer } from './interface'
+import { IWebBackend } from './interface'
 
 export type Config = {
-  webServer: IWebServer
+  webBackend: IWebBackend
   fileSystem: IFileSystem
   directory: string
   indexFile: string
@@ -17,7 +17,7 @@ export const withSinglePageApp = (config: Config) => {
   const toFilePath = config.toFilePath ?? ((pathname) => pathname)
   const toHeaders: (filePath: string) => Record<string, string> = config.toHeaders ?? (() => ({}))
 
-  config.webServer.registerHandler(async (req) => {
+  config.webBackend.registerHandler(async (req) => {
     try {
       const url = new URL(req.url)
       const pathname = decodeURIComponent(url.pathname)
@@ -40,7 +40,7 @@ export const withSinglePageApp = (config: Config) => {
         status: 200,
       })
     } catch (e) {
-      return new Response(`Server Error: ${String(e)}`, { status: 500 })
+      return new Response(`Backend Error: ${String(e)}`, { status: 500 })
     }
   })
 }

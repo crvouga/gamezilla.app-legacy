@@ -1,13 +1,13 @@
 import type { Eff } from '~/@/eff'
-import type { ModelServer, MsgServer, MsgToServer } from './search.types'
+import type { ModelBackend, MsgBackend, MsgToBackend } from './search.types'
 
-type Model = ModelServer
+type Model = ModelBackend
 
 export const init: { model: Model } = {
   model: null,
 }
 
-type Msg = MsgServer
+type Msg = MsgBackend
 
 export const update = ({
   model,
@@ -25,7 +25,7 @@ export const updateFromClient = ({
   model,
   msg,
 }: {
-  msg: MsgToServer
+  msg: MsgToBackend
   model: Model
 }): {
   model: Model

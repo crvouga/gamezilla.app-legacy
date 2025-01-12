@@ -14,12 +14,12 @@ import { BotLevel } from './bot-level'
 //
 //
 
-export const ModelServer = p.obj({
+export const ModelBackend = p.obj({
   botStartedFindingMoveAt: p.maybe(Posix),
 })
-export type ModelServer = p.Infer<typeof ModelServer>
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
-export const isBotMoving = (now: Posix, model: ModelServer) => {
+export const isBotMoving = (now: Posix, model: ModelBackend) => {
   if (!model.botStartedFindingMoveAt) {
     return false
   }
@@ -39,7 +39,7 @@ export type ModelClient = {
 
 export type MsgClient = MsgCore | { t: 'vs-bot-setup'; c: VsBotSetup.Msg } | { t: 'vs-bot-game'; c: VsBotGame.Msg }
 
-export type MsgServer =
+export type MsgBackend =
   | {
       t: 'bot-found-best-move'
       found: ConnectFour.BestMoveResult
@@ -51,7 +51,7 @@ export type MsgServer =
 
 export type MsgToClient = { t: null }
 
-export type MsgToServer = { t: null }
+export type MsgToBackend = { t: null }
 
 export const MsgCore = p.or(
   p.obj({

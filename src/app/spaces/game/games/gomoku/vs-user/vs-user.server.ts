@@ -1,6 +1,6 @@
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { initShared, type ModelServer, type MsgServer, type MsgToServer } from './vs-user.types'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-server/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
+import { initShared, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-user.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
@@ -12,7 +12,7 @@ import { Sub } from '~/@/sub'
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelBackend
 
 export const init = initShared
 
@@ -24,7 +24,7 @@ export const init = initShared
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgBackend
 
 export const update = ({
   model,
@@ -41,8 +41,8 @@ export const update = ({
 export const updateFromClient = ({
   model,
 }: {
-  ctx: SpaceServerCtx
-  msg: MsgToServer
+  ctx: SpaceBackendCtx
+  msg: MsgToBackend
   model: Model
 }): {
   model: Model
@@ -55,7 +55,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt
+  msg: SpaceBackendEvt
   model: Model
 }): {
   model: Model

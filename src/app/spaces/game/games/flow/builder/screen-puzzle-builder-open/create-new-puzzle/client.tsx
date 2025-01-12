@@ -3,11 +3,11 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, playSound, sendToServer, showCreatedSm, showErrSm } from '~/app/@/client/cmd'
+import { APP_SOUND, playSound, sendToBackend, showCreatedSm, showErrSm } from '~/app/@/client/cmd'
 import { Button, IconPlus } from '~/app/@/ui'
 import { FlowClientCmd } from '../../../@/client/cmd'
 import { ClientModule } from '../../types'
-import { MsgClient, MsgToServer } from './types'
+import { MsgClient, MsgToBackend } from './types'
 
 const update: ClientModule['update'] = (input) => {
   const { msgCore, model, msg, ctx } = input
@@ -22,9 +22,9 @@ const update: ClientModule['update'] = (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendToServer<{
+          sendToBackend<{
             MsgClient: MsgClient
-            MsgToServer: MsgToServer
+            MsgToBackend: MsgToBackend
           }>({
             t: 'create-new-puzzle.user-clicked-create-button',
           }),
@@ -44,7 +44,7 @@ const update: ClientModule['update'] = (input) => {
           },
           msgCmd: showErrSm<{
             MsgClient: MsgClient
-            MsgToServer: MsgToServer
+            MsgToBackend: MsgToBackend
           }>(input.ctx.t('app.something-went-wrong')),
         }
       }
@@ -68,7 +68,7 @@ const update: ClientModule['update'] = (input) => {
           },
           msgCmd: showErrSm<{
             MsgClient: MsgClient
-            MsgToServer: MsgToServer
+            MsgToBackend: MsgToBackend
           }>(input.ctx.t('app.something-went-wrong')),
         }
       }
@@ -77,11 +77,11 @@ const update: ClientModule['update'] = (input) => {
 
       const msgCmd: FlowClientCmd<{
         MsgClient: MsgClient
-        MsgToServer: MsgToServer
+        MsgToBackend: MsgToBackend
       }>[] = [
         ...showCreatedSm<{
           MsgClient: MsgClient
-          MsgToServer: MsgToServer
+          MsgToBackend: MsgToBackend
         }>(input.ctx.t('flow.puzzle-created')),
         {
           t: 'flow-cmd.add-puzzles',
