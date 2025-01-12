@@ -117,7 +117,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 
 const updateFromBackend: FrontendModule['update'] = (input) => {
   switch (input.msgBackend?.t) {
-    case 'frontend-unauthenticated': {
+    case 'client-unauthenticated': {
       return {
         model: {
           ...input.model,
@@ -133,7 +133,7 @@ const updateFromBackend: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'frontend-authenticated': {
+    case 'client-authenticated': {
       return {
         model: {
           ...input.model,

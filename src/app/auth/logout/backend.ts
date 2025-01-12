@@ -19,7 +19,7 @@ const updateFromFrontend: BackendModule['update'] = async (input) => {
         msgEvt: [
           {
             ...input.msgFrontend,
-            t: 'auth-evt.frontend-unauthenticated',
+            t: 'auth-evt.client-unauthenticated',
           },
         ],
       }

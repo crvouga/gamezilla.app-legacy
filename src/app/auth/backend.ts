@@ -111,7 +111,7 @@ const updateFromEvent: typeof update = async (input) => {
         return {
           msgEvt: [
             {
-              t: 'auth-evt.frontend-unauthenticated',
+              t: 'auth-evt.client-unauthenticated',
               clientId: input.msgEvt.clientId,
               sessionId: input.msgEvt.sessionId,
             },
@@ -125,25 +125,25 @@ const updateFromEvent: typeof update = async (input) => {
             clientId: input.msgEvt.clientId,
             sessionId: input.msgEvt.sessionId,
             user: account,
-            t: 'auth-evt.frontend-authenticated',
+            t: 'auth-evt.client-authenticated',
           },
         ],
       }
     }
 
-    case 'auth-evt.frontend-unauthenticated': {
+    case 'auth-evt.client-unauthenticated': {
       return {
         msgCmd: [
           sendToFrontend([input.msgEvt.clientId], {
-            t: 'frontend-unauthenticated',
+            t: 'client-unauthenticated',
           }),
         ],
       }
     }
 
-    case 'auth-evt.frontend-authenticated': {
+    case 'auth-evt.client-authenticated': {
       const msgCmd = sendToFrontend<MsgToFrontend>([input.msgEvt.clientId], {
-        t: 'frontend-authenticated',
+        t: 'client-authenticated',
         account: input.msgEvt.user,
         loggedIn: input.msgEvt.loggedIn ?? false,
       })

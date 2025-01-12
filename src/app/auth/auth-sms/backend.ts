@@ -189,7 +189,7 @@ const updateVerifyCode: BackendModule['update'] = async ({ msgFrontend, deps, ct
         msgEvt: [
           {
             ...msgFrontend,
-            t: 'auth-evt.frontend-authenticated',
+            t: 'auth-evt.client-authenticated',
             user: verified.value,
             loggedIn: true,
           },

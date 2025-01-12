@@ -81,7 +81,7 @@ const getAssociatedProfiles = async (ctx: AppBackendCtx, spaces: SpaceSpace.Mode
 
 const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
-    case 'auth-evt.frontend-authenticated': {
+    case 'auth-evt.client-authenticated': {
       const space = unwrapOr(await input.ctx.spaceBackend.getByUserId(input.msgEvt.user.userId), null)
 
       if (!space) {

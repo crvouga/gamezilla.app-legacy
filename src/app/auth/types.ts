@@ -77,11 +77,11 @@ export type MsgToFrontend =
   | ContinueAsGuest.MsgToFrontend
   | Logout.MsgToFrontend
   | {
-      t: 'frontend-authenticated'
+      t: 'client-authenticated'
       account: UserAccount
       loggedIn: boolean
     }
-  | { t: 'frontend-unauthenticated'; sessionId?: never }
+  | { t: 'client-unauthenticated'; sessionId?: never }
   | { t: 'sms'; c: AuthSMS.MsgToFrontend }
 
 export type FrontendModule = AppFrontendModule<{

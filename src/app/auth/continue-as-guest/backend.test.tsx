@@ -158,7 +158,7 @@ describe(import.meta.file, () => {
     expect(
       output.msgEvt?.some(
         (msgEvt) =>
-          msgEvt.t === 'auth-evt.frontend-authenticated' &&
+          msgEvt.t === 'auth-evt.client-authenticated' &&
           msgEvt.clientId === clientId &&
           msgEvt.sessionId === sessionId &&
           msgEvt.loggedIn,
@@ -338,12 +338,12 @@ describe(import.meta.file, () => {
 
     expect(
       firstOutput.msgEvt?.some(
-        (msg) => msg.t === 'auth-evt.frontend-authenticated' && msg.user.userId === expectedUserId,
+        (msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId,
       ),
     ).toBe(true)
     expect(
       secondOutput.msgEvt?.some(
-        (msg) => msg.t === 'auth-evt.frontend-authenticated' && msg.user.userId === expectedUserId,
+        (msg) => msg.t === 'auth-evt.client-authenticated' && msg.user.userId === expectedUserId,
       ),
     ).toBe(true)
   })

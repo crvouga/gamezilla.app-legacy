@@ -148,7 +148,7 @@ const updateFromMsg: typeof update = async (input) => {
 
 const updateFromEvent: typeof update = async (input) => {
   switch (input.msgEvt?.t) {
-    case 'auth-evt.frontend-authenticated': {
+    case 'auth-evt.client-authenticated': {
       const wireSessions = unwrapOr(await input.ctx.wireSessionDb.findBySessionIds([input.msgEvt.sessionId]), [])
       const userId = input.msgEvt.user.userId
       const wireSessionsNew = wireSessions.map((wireSession) => WireSession.addUserId(wireSession, userId))

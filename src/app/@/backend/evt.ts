@@ -17,19 +17,19 @@ export type BackendEvt =
       sessionId: SessionId
     }
   | {
-      t: 'auth-evt.frontend-authenticated'
+      t: 'auth-evt.client-authenticated'
       user: UserAccount
       sessionId: SessionId
       clientId: ClientId
       loggedIn?: boolean
     }
   | {
-      t: 'auth-evt.frontend-unauthenticated'
+      t: 'auth-evt.client-unauthenticated'
       sessionId: SessionId
       clientId: ClientId
     }
   | {
-      t: 'auth-evt.frontend-authenticated-with-sms'
+      t: 'auth-evt.client-authenticated-with-sms'
       sessionId: SessionId
       clientId: ClientId
       phoneNumber: PhoneNumber

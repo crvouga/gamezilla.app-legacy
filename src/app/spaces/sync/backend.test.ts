@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
       {
         msgEvt: {
           ...f.frontendA,
-          t: 'auth-evt.frontend-authenticated',
+          t: 'auth-evt.client-authenticated',
           user: UserAccount.random({ userId: f.frontendA.userId }),
         },
       },
