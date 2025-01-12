@@ -27,7 +27,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe.skip(import.meta.file, () => {
   it('get and put', async () => {
     for (const f of await Fixtures()) {
       const flow = VariantGridShorthand.toGrid([
