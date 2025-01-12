@@ -1,7 +1,7 @@
 import { describe, test } from 'bun:test'
 import { GameBackendModule } from '../../../@/architecture/game-backend-v2'
 import { FixturePlayBackend } from '../@/backend/fixture'
-import { ScreenPlayPuzzleCore } from './core'
+import { ScreenPlayPuzzleSpace } from './space'
 import { ScreenPlayPuzzleBackend } from './backend'
 
 const Fixture = async () => {
@@ -10,8 +10,8 @@ const Fixture = async () => {
   const update = GameBackendModule.fixtureUpdate({
     ctx: f.ctx,
     update: ScreenPlayPuzzleBackend.update,
-    updateCore: ScreenPlayPuzzleCore.updateCore,
-    modelCore: f.initial.modelCore,
+    updateSpace: ScreenPlayPuzzleSpace.updateSpace,
+    modelSpace: f.initial.modelSpace,
   })
 
   return {

@@ -5,7 +5,7 @@ import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridFrontend } from '../../@/pack/pack-puzzles-grid/frontend'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import type { FrontendModule } from '../types'
-import { PlayCore } from '../core'
+import { PlaySpace } from '../space'
 import { playSound, APP_SOUND } from '~/app/@/frontend/cmd'
 
 const update: FrontendModule['update'] = (input) => {
@@ -19,14 +19,14 @@ const update: FrontendModule['update'] = (input) => {
 const updateLoadPuzzlesForPack: typeof update = (input) => {
   if (
     input.msgEvt?.t === 'space-evt.synced' ||
-    input.msgCore?.t === 'user-clicked-open-pack-list-item' ||
-    input.msgCore?.t === 'user-clicked-exit-puzzle'
+    input.msgSpace?.t === 'user-clicked-open-pack-list-item' ||
+    input.msgSpace?.t === 'user-clicked-exit-puzzle'
   ) {
-    const modelCore = input.msgCore
-      ? PlayCore.updateCore({ ctx: input.ctx, modelCore: input.modelCore, msgCore: input.msgCore })
-      : input.modelCore
+    const modelSpace = input.msgSpace
+      ? PlaySpace.updateSpace({ ctx: input.ctx, modelSpace: input.modelSpace, msgSpace: input.msgSpace })
+      : input.modelSpace
 
-    const pack: Pack | null = 'flowPack' in modelCore.screen ? modelCore.screen.flowPack : null
+    const pack: Pack | null = 'flowPack' in modelSpace.screen ? modelSpace.screen.flowPack : null
 
     if (!pack) {
       return { model: input.model }
@@ -44,7 +44,7 @@ const updateLoadPuzzlesForPack: typeof update = (input) => {
 }
 
 const updateMain: typeof update = (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'user-clicked-exit-pack-button': {
       return {
         model: input.model,
@@ -66,17 +66,17 @@ const updateMain: typeof update = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  if (input.modelCore.screen.t !== 'screen-select-puzzle') {
+  if (input.modelSpace.screen.t !== 'screen-select-puzzle') {
     return null
   }
-  const flowPack = input.modelCore.screen.flowPack
+  const flowPack = input.modelSpace.screen.flowPack
   const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
   return (
     <LayoutGame ctx={input.ctx} isSpectating={isSpectating} className='flex h-full w-full flex-1 flex-col'>
       <TopBar
         ctx={input.ctx}
         onBack={
-          isSpectating ? false : () => input.dispatch({ t: 'got-msg-core', c: { t: 'user-clicked-exit-pack-button' } })
+          isSpectating ? false : () => input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-exit-pack-button' } })
         }
         title={input.ctx.t('flow-pack-name', flowPack.name)}
       />
@@ -88,10 +88,10 @@ const View: FrontendModule['View'] = (input) => {
       >
         <PackPuzzlesGridUI.View
           id='pack-puzzle-grid'
-          slideIndex={input.modelCore.screen.slideIndex}
+          slideIndex={input.modelSpace.screen.slideIndex}
           onSlideIndexChanged={(slideIndex) =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'user-changed-slides',
                 slideIndex,
@@ -116,7 +116,7 @@ const View: FrontendModule['View'] = (input) => {
                 index={inputCell.index}
                 onClick={() =>
                   input.dispatch({
-                    t: 'got-msg-core',
+                    t: 'got-msg-space',
                     c: {
                       t: 'user-clicked-open-puzzle-grid-item',
                       flowPuzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },

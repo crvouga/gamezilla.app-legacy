@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-created-pack'),
     userId: UserId,
@@ -14,4 +14,4 @@ export const MsgCore = p.or(
   }),
 )
 
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

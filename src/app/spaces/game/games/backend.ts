@@ -56,15 +56,15 @@ const init = (gameName: GameName): BackendModule['init'] => {
 //
 
 const update: BackendModule['update'] = async (input) => {
-  switch (input.modelCore.t) {
+  switch (input.modelSpace.t) {
     case 'flow': {
       const updated = await FlowBackend.update({
         ctx: input.ctx.flow,
-        modelCore: input.modelCore.c,
+        modelSpace: input.modelSpace.c,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgFrontend: input.msgFrontend?.t === 'flow' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
-        msgCore: input.msgCore?.t === 'flow' ? { ...input.msgCore, ...input.msgCore.c } : null,
+        msgSpace: input.msgSpace?.t === 'flow' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
         deps: null,
       })
@@ -75,11 +75,11 @@ const update: BackendModule['update'] = async (input) => {
     case 'connect-four': {
       const updated = await ConnectFourBackend.update({
         ctx: input.ctx,
-        modelCore: input.modelCore.c,
+        modelSpace: input.modelSpace.c,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgFrontend: input.msgFrontend?.t === 'connect-four' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
-        msgCore: input.msgCore?.t === 'connect-four' ? { ...input.msgCore, ...input.msgCore.c } : null,
+        msgSpace: input.msgSpace?.t === 'connect-four' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
         deps: null,
       })
@@ -102,9 +102,12 @@ const update: BackendModule['update'] = async (input) => {
 //
 
 const subscriptions: BackendModule['subscriptions'] = async (input) => {
-  switch (input.modelCore.t) {
+  switch (input.modelSpace.t) {
     case 'connect-four': {
-      return Sub.tag('connect-four', await ConnectFourBackend.subscriptions({ ...input, modelCore: input.modelCore.c }))
+      return Sub.tag(
+        'connect-four',
+        await ConnectFourBackend.subscriptions({ ...input, modelSpace: input.modelSpace.c }),
+      )
     }
 
     case 'flow': {
@@ -112,7 +115,7 @@ const subscriptions: BackendModule['subscriptions'] = async (input) => {
         'flow',
         await FlowBackend.subscriptions({
           ...input,
-          modelCore: input.modelCore.c,
+          modelSpace: input.modelSpace.c,
           ctx: input.ctx.flow,
         }),
       )

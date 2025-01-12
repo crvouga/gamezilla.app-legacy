@@ -5,7 +5,7 @@ import type { SpaceFrontendCmd } from '../space-frontend/cmd'
 import { SpaceFrontendEvt } from '../space-frontend/evt'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend, MsgToBackend } from '../../types'
 import { WithEventId } from '~/@/event-sourced/event'
-import { SpaceEvent } from '../../core/space-event'
+import { SpaceEvent } from '../../space/space-event'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
@@ -24,7 +24,7 @@ export type Input = {
     MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }> | null
-  msgCore?: WithEventId<SpaceEvent> | null
+  msgSpace?: WithEventId<SpaceEvent> | null
 }
 
 export type Output = {
@@ -35,7 +35,7 @@ export type Output = {
     MsgToBackend: MsgToBackend
   }>[]
   msgEvt?: SpaceFrontendEvt[]
-  msgCore?: WithEventId<SpaceEvent>[]
+  msgSpace?: WithEventId<SpaceEvent>[]
 }
 
 export type SpaceFrontendModule = {
@@ -53,7 +53,7 @@ const andThen = (acc: Output, ...updates: ((model: ModelFrontend) => Output)[]):
       eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
     }
   }
   return acc

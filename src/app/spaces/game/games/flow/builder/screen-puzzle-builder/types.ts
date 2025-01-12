@@ -63,19 +63,19 @@ export type MsgToBackend =
 const Mode = p.or(p.obj({ t: p.l('play') }), p.obj({ t: p.l('edit') }))
 type Mode = p.Infer<typeof Mode>
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   t: p.l('puzzle-builder'),
   puzzle: Puzzle,
   mode: Mode,
   playMode: PlayMode.Model,
   editMode: EditMode.Model,
 })
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const MsgCore = p.or(
-  SaveChangesTypes.MsgCore,
-  DeleteForeverTypes.MsgCore,
-  EditPuzzleNameTypes.MsgCore,
+export const MsgSpace = p.or(
+  SaveChangesTypes.MsgSpace,
+  DeleteForeverTypes.MsgSpace,
+  EditPuzzleNameTypes.MsgSpace,
   p.obj({
     t: p.l('screen-puzzle-builder.got-play-msg'),
     c: PlayMode.Msg,
@@ -98,4 +98,4 @@ export const MsgCore = p.or(
   }),
 )
 
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

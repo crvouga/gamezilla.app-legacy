@@ -5,7 +5,7 @@ import { Button, Dialog, DialogHeader, DialogSurface } from '~/app/@/ui'
 import type { FrontendModule, MsgFrontend } from '../../types'
 
 const update: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'user-closed-puzzle-complete-dialog': {
       return {
         model: input.model,
@@ -30,7 +30,7 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgFrontend
       open={input.open}
       onClose={() =>
         input.dispatch({
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'user-closed-puzzle-complete-dialog',
           },
@@ -44,7 +44,7 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgFrontend
           text={input.ctx.t('flow.select-next-pack')}
           onClick={() =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'user-clicked-select-next-pack',
               },

@@ -6,7 +6,7 @@ const hostUserId = 'test-user-id' as UserId
 
 const currentSpaceId = 'test-space-id' as SpaceId
 
-export const SpaceGameCoreFixture = async () => {
+export const SpaceGameSpaceFixture = async () => {
   const ctx: SpaceCtx = {
     space: {
       hostId: hostUserId,

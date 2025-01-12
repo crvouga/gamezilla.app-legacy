@@ -8,9 +8,9 @@ import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import * as ConnectFour from '../@/connect-four/connect-four'
 import {
-  type ModelCore,
+  type ModelSpace,
   type ModelBackend,
-  type MsgCore,
+  type MsgSpace,
   type MsgBackend,
   type MsgToFrontend,
   type MsgToBackend,
@@ -31,8 +31,8 @@ type Module = GameBackendModule<{
   Msg: MsgBackend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
   Ctx: SpaceBackendCtx
   Deps: null
   MsgCmdIn: null
@@ -50,7 +50,7 @@ export const update: Module['update'] = async (input) => {
 }
 
 const updateFromMsg: Module['update'] = async (input) => {
-  const { msg, modelCore } = input
+  const { msg, modelSpace } = input
 
   if (!msg) {
     return {}
@@ -58,8 +58,8 @@ const updateFromMsg: Module['update'] = async (input) => {
 
   switch (msg.t) {
     case 'time-passed': {
-      const shouldBotMove = isBotTurn(modelCore)
-      if (modelCore.type === 'game' && shouldBotMove && msg.t === 'time-passed') {
+      const shouldBotMove = isBotTurn(modelSpace)
+      if (modelSpace.type === 'game' && shouldBotMove && msg.t === 'time-passed') {
         return {}
       }
 
@@ -77,20 +77,20 @@ const updateFromMsg: Module['update'] = async (input) => {
         return {}
       }
 
-      const msgCoreNew = withEventId<MsgCore>({
+      const msgSpaceNew = withEventId<MsgSpace>({
         t: 'bot-dropped-disc',
         columnIndex,
       })
 
       return {
-        msgCore: [msgCoreNew],
+        msgSpace: [msgSpaceNew],
       }
     }
   }
 }
 
 export const subscriptions: Module['subscriptions'] = async (input) => {
-  if (isBotTurn(input.modelCore)) {
+  if (isBotTurn(input.modelSpace)) {
     return Time.interval('vs-bot', TimeSpan.seconds(1 / 2), () => ({
       t: 'time-passed',
     }))

@@ -9,7 +9,14 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/connect-four-ui/connect-four-cover-art'
-import type { ModelFrontend, ModelCore, MsgFrontend, MsgCore, MsgToFrontend, MsgToBackend } from './connect-four.types'
+import type {
+  ModelFrontend,
+  ModelSpace,
+  MsgFrontend,
+  MsgSpace,
+  MsgToFrontend,
+  MsgToBackend,
+} from './connect-four.types'
 import { VsBot } from './vs-bot/vs-bot.frontend'
 import { VsUser } from './vs-user/vs-user.frontend'
 
@@ -26,8 +33,8 @@ type Module = GameFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx
   MsgEvtIn: SpaceFrontendEvt
   MsgCmdOut: SpaceFrontendCmd<{
@@ -60,7 +67,7 @@ const update: Module['update'] = (input) => {
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateChild(model)(input),
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromMsgCore(model)(input),
+    (model) => updateFromMsgSpace(model)(input),
   )
 }
 
@@ -73,7 +80,7 @@ const updateFromMsg =
       case 'user-changed-mode': {
         return {
           model,
-          msgCore: [withEventId(msg)],
+          msgSpace: [withEventId(msg)],
         }
       }
 
@@ -85,20 +92,20 @@ const updateFromMsg =
     }
   }
 
-const updateFromMsgCore =
+const updateFromMsgSpace =
   (model: ModelFrontend): Module['update'] =>
   (input) => {
-    const { msgCore } = input
+    const { msgSpace } = input
 
-    if (!msgCore) {
+    if (!msgSpace) {
       return {
         model,
       }
     }
 
-    switch (msgCore.t) {
+    switch (msgSpace.t) {
       case 'user-changed-mode': {
-        switch (msgCore.mode) {
+        switch (msgSpace.mode) {
           case 'none': {
             return {
               model: {
@@ -142,9 +149,9 @@ const updateFromMsgCore =
 const updateChild =
   (model: ModelFrontend): Module['update'] =>
   (input) => {
-    const { msg, msgEvt, msgCore, msgBackend, modelCore } = input
+    const { msg, msgEvt, msgSpace, msgBackend, modelSpace } = input
 
-    switch (modelCore.t) {
+    switch (modelSpace.t) {
       case 'none': {
         return {
           model,
@@ -157,17 +164,17 @@ const updateChild =
           msg: msg?.t === 'vs-bot' ? msg.c : null,
           msgEvt: msgEvt,
           msgCmd: null,
-          msgCore: msgCore?.t === 'vs-bot' ? { ...msgCore, ...msgCore.c } : null,
+          msgSpace: msgSpace?.t === 'vs-bot' ? { ...msgSpace, ...msgSpace.c } : null,
           msgBackend: msgBackend?.t === 'vs-bot' ? msgBackend.c : null,
           model: model.t === 'vs-bot' ? model.c : VsBot.init,
-          modelCore: modelCore.c,
+          modelSpace: modelSpace.c,
         })
 
         return {
           model: { t: 'vs-bot', c: updated.model },
           eff: Eff.tag('vs-bot', updated.eff),
           msgCmd: AppFrontendCmd.tag('vs-bot', updated.msgCmd),
-          msgCore: updated.msgCore?.map((c) => ({ c, t: 'vs-bot' })),
+          msgSpace: updated.msgSpace?.map((c) => ({ c, t: 'vs-bot' })),
           msgEvt: updated.msgEvt,
         }
       }
@@ -179,16 +186,16 @@ const updateChild =
           msg: msg?.t === 'vs-user' ? msg.c : null,
           msgCmd: null,
           msgEvt: msgEvt,
-          msgCore: msgCore?.t === 'vs-user' ? { ...msgCore, ...msgCore.c } : null,
+          msgSpace: msgSpace?.t === 'vs-user' ? { ...msgSpace, ...msgSpace.c } : null,
           msgBackend: msgBackend?.t === 'vs-user' ? msgBackend.c : null,
-          modelCore: modelCore.c,
+          modelSpace: modelSpace.c,
         })
 
         return {
           model: { t: 'vs-user', c: updated.model },
           eff: Eff.tag('vs-user', updated.eff),
           msgCmd: AppFrontendCmd.tag('vs-user', updated.msgCmd),
-          msgCore: updated.msgCore?.map((c) => ({ c, t: 'vs-user' })),
+          msgSpace: updated.msgSpace?.map((c) => ({ c, t: 'vs-user' })),
           msgEvt: updated.msgEvt,
         }
       }
@@ -212,7 +219,7 @@ const View: Module['View'] = (input) => {
     })
   }
 
-  switch (input.modelCore.t) {
+  switch (input.modelSpace.t) {
     case 'none': {
       return (
         <GameMainMenu.View
@@ -256,7 +263,7 @@ const View: Module['View'] = (input) => {
             })
           }
           model={input.model?.t === 'vs-bot' ? input.model.c : VsBot.init}
-          modelCore={input.modelCore.c}
+          modelSpace={input.modelSpace.c}
         />
       )
     }
@@ -275,7 +282,7 @@ const View: Module['View'] = (input) => {
             })
           }
           model={input.model?.t === 'vs-user' ? input.model.c : VsUser.init}
-          modelCore={input.modelCore.c}
+          modelSpace={input.modelSpace.c}
         />
       )
     }
@@ -283,10 +290,10 @@ const View: Module['View'] = (input) => {
 }
 
 const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
-  const { modelCore, ctx, msgCore } = input
-  switch (msgCore.t) {
+  const { modelSpace, ctx, msgSpace } = input
+  switch (msgSpace.t) {
     case 'user-changed-mode': {
-      switch (msgCore.mode) {
+      switch (msgSpace.mode) {
         case 'none': {
           const profile = ctx.profiles[ctx.currentUserId]
 
@@ -310,13 +317,13 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
     }
 
     case 'vs-bot': {
-      switch (modelCore.t) {
+      switch (modelSpace.t) {
         case 'vs-bot': {
           return (
             <VsBot.ViewFeedItem
               ctx={ctx}
-              msgCore={msgCore.c}
-              modelCore={modelCore.c}
+              msgSpace={msgSpace.c}
+              modelSpace={modelSpace.c}
               dispatch={(c) =>
                 input.dispatch({
                   t: 'vs-bot',
@@ -333,7 +340,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
     }
 
     case 'vs-user': {
-      switch (modelCore.t) {
+      switch (modelSpace.t) {
         case 'vs-user': {
           return (
             <VsUser.ViewFeedItem
@@ -341,8 +348,8 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
                 ...ctx,
                 onQuit: () => {},
               }}
-              msgCore={msgCore.c}
-              modelCore={modelCore.c}
+              msgSpace={msgSpace.c}
+              modelSpace={modelSpace.c}
               dispatch={(c) =>
                 input.dispatch({
                   t: 'vs-user',
@@ -369,9 +376,9 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
 //
 
 const subscriptions: Module['subscriptions'] = (input) => {
-  const { model, modelCore } = input
+  const { model, modelSpace } = input
 
-  switch (modelCore.t) {
+  switch (modelSpace.t) {
     case 'none': {
       return Sub.None
     }
@@ -382,7 +389,7 @@ const subscriptions: Module['subscriptions'] = (input) => {
         VsBot.subscriptions({
           ...input,
           model: model?.t === 'vs-bot' ? model.c : VsBot.init,
-          modelCore: modelCore.c,
+          modelSpace: modelSpace.c,
           ctx: input.ctx,
         }),
       )
@@ -394,7 +401,7 @@ const subscriptions: Module['subscriptions'] = (input) => {
         VsUser.subscriptions({
           ...input,
           model: model?.t === 'vs-user' ? model.c : VsUser.init,
-          modelCore: modelCore.c,
+          modelSpace: modelSpace.c,
           ctx: {
             ...input.ctx,
             onQuit: () => {},

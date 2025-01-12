@@ -88,7 +88,7 @@ export const toDepth = (botLevel: BotLevel): number => {
   }
 }
 
-export const toScore = ({ board, maximizingPlayer }: { board: Model; maximizingPlayer: PlayerType }): number => {
+export const toSspace = ({ board, maximizingPlayer }: { board: Model; maximizingPlayer: PlayerType }): number => {
   const gameOver = toGameOver(board)
 
   switch (gameOver.type) {

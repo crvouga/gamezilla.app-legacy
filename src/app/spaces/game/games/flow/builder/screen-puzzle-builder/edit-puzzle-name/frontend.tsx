@@ -42,7 +42,7 @@ const View: FrontendModule['View'] = (input) => {
 //
 
 const updateFormButtons: FrontendModule['update'] = (input) => {
-  const puzzleBuilder = input.modelCore.screenPuzzleBuilder
+  const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
 
   if (!puzzleBuilder) {
     return { model: input.model }
@@ -90,17 +90,17 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'user-edited-puzzle-name': {
       const puzzlesNew = {
         ...input.ctx.puzzles,
       }
-      const puzzle = puzzlesNew[input.msgCore.flowPuzzleId]
+      const puzzle = puzzlesNew[input.msgSpace.flowPuzzleId]
 
-      if (puzzle && PuzzleName.is(input.msgCore.newName)) {
-        puzzlesNew[input.msgCore.flowPuzzleId] = {
+      if (puzzle && PuzzleName.is(input.msgSpace.newName)) {
+        puzzlesNew[input.msgSpace.flowPuzzleId] = {
           ...puzzle,
-          name: input.msgCore.newName,
+          name: input.msgSpace.newName,
         }
       }
 
@@ -108,7 +108,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
         MsgFrontend: MsgFrontend
         MsgToBackend: MsgToBackend
       }>[] = [
-        ...(isOk(input.msgCore.edited)
+        ...(isOk(input.msgSpace.edited)
           ? showCreatedSm<{
               MsgFrontend: MsgFrontend
               MsgToBackend: MsgToBackend
@@ -127,7 +127,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          puzzleEditNameRequest: input.msgCore.edited,
+          puzzleEditNameRequest: input.msgSpace.edited,
           puzzleBuilderOpened: null,
         },
         msgCmd,
@@ -157,8 +157,8 @@ const ViewFormButtons: FrontendModule['View'] = (input) => {
         text={input.ctx.t('app.save')}
         loading={isLoading(input.model.puzzleEditNameRequest)}
         disabled={
-          input.modelCore.screen.t !== 'screen-puzzle-builder' ||
-          input.model.puzzleEditNameDraft === input.modelCore.screenPuzzleBuilder?.puzzle.name
+          input.modelSpace.screen.t !== 'screen-puzzle-builder' ||
+          input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name
         }
         onClick={() =>
           input.dispatch({
@@ -177,7 +177,7 @@ const ViewFormButtons: FrontendModule['View'] = (input) => {
 //
 
 const updateDrawer: FrontendModule['update'] = (input) => {
-  const { msg, model, modelCore } = input
+  const { msg, model, modelSpace } = input
 
   switch (msg?.t) {
     case 'puzzle.edit-name.user-clicked-button': {
@@ -185,7 +185,7 @@ const updateDrawer: FrontendModule['update'] = (input) => {
         model: {
           ...model,
           puzzleBuilderOpened: 'edit-name',
-          puzzleEditNameDraft: modelCore.screenPuzzleBuilder?.puzzle.name ?? '',
+          puzzleEditNameDraft: modelSpace.screenPuzzleBuilder?.puzzle.name ?? '',
         },
       }
     }

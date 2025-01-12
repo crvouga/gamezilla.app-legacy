@@ -75,9 +75,9 @@ export type Problem = 'must_be_the_host'
 //
 //
 
-export type MsgCore = { t: 'user-changed-mode'; mode: Mode; userId: UserId }
+export type MsgSpace = { t: 'user-changed-mode'; mode: Mode; userId: UserId }
 
-export type ModelCore =
+export type ModelSpace =
   | {
       t: 'none'
     }
@@ -91,16 +91,22 @@ export type ModelCore =
       t: 'puzzle'
     }
 
-export const initCore = (): ModelCore => {
+export const initSpace = (): ModelSpace => {
   return {
     t: 'none',
   }
 }
 
-export const updateCore = ({ msgCore }: { ctx: SpaceCtx; modelCore: ModelCore; msgCore: MsgCore }): ModelCore => {
-  switch (msgCore.t) {
+export const updateSpace = ({
+  msgSpace,
+}: {
+  ctx: SpaceCtx
+  modelSpace: ModelSpace
+  msgSpace: MsgSpace
+}): ModelSpace => {
+  switch (msgSpace.t) {
     case 'user-changed-mode': {
-      switch (msgCore.mode) {
+      switch (msgSpace.mode) {
         case 'none': {
           return {
             t: 'none',

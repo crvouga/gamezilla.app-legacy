@@ -67,7 +67,7 @@ const updateLoop = (
   if (evt) {
     const updated = updateChild({
       ctx: input.ctx,
-      modelCore: input.modelCore,
+      modelSpace: input.modelSpace,
       model: acc.model,
       msgEvt: evt,
     })
@@ -76,7 +76,7 @@ const updateLoop = (
       model: updated.model,
       msgEvt: Msg.batch(restEvt, updated.msgEvt, FlowFrontendEvt.toSpaceFrontendEvt(acc.msgEvt)),
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
     })
   }
@@ -86,7 +86,7 @@ const updateLoop = (
   if (cmd) {
     const updated = updateChild({
       ctx: input.ctx,
-      modelCore: input.modelCore,
+      modelSpace: input.modelSpace,
       model: acc.model,
       msgCmd: cmd,
     })
@@ -95,7 +95,7 @@ const updateLoop = (
       model: updated.model,
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
       msgCmd: Msg.batch(restCmd, updated.msgCmd, FlowFrontendCmd.toSpaceFrontendCmd(acc.msgCmd)),
     })
   }
@@ -108,7 +108,7 @@ const updateChild: FrontendModule['update'] = (input) => {
     { model: input.model },
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
     (model) => updateModePlay({ ...input, model }),
     (model) => updateModeBuilder({ ...input, model }),
@@ -170,7 +170,7 @@ const updatePackPuzzlesGrid: FrontendModule['update'] = (input) => {
     eff: Eff.tag('pack-puzzles-grid', updated.eff),
     msgEvt: [],
     msgCmd: SpaceFrontendCmd.tag('pack-puzzles-grid', updated.msgCmd),
-    msgCore: [],
+    msgSpace: [],
   }
 }
 
@@ -179,12 +179,12 @@ const updateModePlay: FrontendModule['update'] = (input) => {
 
   const updated = PlayFrontend.update({
     ctx,
-    modelCore: input.modelCore.play,
+    modelSpace: input.modelSpace.play,
     model: input.model.play,
     msgCmd: null,
     msgEvt: input.msgEvt,
     msgBackend: input.msgBackend?.t === 'play' ? input.msgBackend.c : null,
-    msgCore: input.msgCore?.t === 'play' ? { ...input.msgCore, ...input.msgCore.c } : null,
+    msgSpace: input.msgSpace?.t === 'play' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msg: input.msg?.t === 'play' ? input.msg.c : null,
   })
 
@@ -193,7 +193,7 @@ const updateModePlay: FrontendModule['update'] = (input) => {
     eff: Eff.tag('play', updated.eff),
     msgEvt: [],
     msgCmd: FlowFrontendCmd.tag('play', updated.msgCmd),
-    msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'play' })),
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'play' })),
   }
 }
 
@@ -202,12 +202,12 @@ const updateModeBuilder: FrontendModule['update'] = (input) => {
 
   const updated = BuilderFrontend.update({
     ctx,
-    modelCore: input.modelCore.builder,
+    modelSpace: input.modelSpace.builder,
     model: input.model.builder,
     msgCmd: null,
     msgEvt: input.msgEvt,
     msgBackend: input.msgBackend?.t === 'builder' ? input.msgBackend.c : null,
-    msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
+    msgSpace: input.msgSpace?.t === 'builder' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msg: input.msg?.t === 'builder' ? input.msg.c : null,
   })
 
@@ -215,13 +215,13 @@ const updateModeBuilder: FrontendModule['update'] = (input) => {
     model: { ...input.model, builder: updated.model },
     eff: Eff.tag('builder', updated.eff),
     msgCmd: FlowFrontendCmd.tag('builder', updated.msgCmd),
-    msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'builder' })),
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'builder' })),
     msgEvt: [],
   }
 }
 
-const updateFromMsgCore: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+const updateFromMsgSpace: FrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
     case 'user-changed-mode': {
       return {
         model: {
@@ -233,8 +233,8 @@ const updateFromMsgCore: FrontendModule['update'] = (input) => {
         msgEvt: [
           {
             t: 'flow-evt.user-changed-mode',
-            mode: input.msgCore.mode,
-            userId: input.msgCore.userId,
+            mode: input.msgSpace.mode,
+            userId: input.msgSpace.userId,
           },
         ],
       }
@@ -250,9 +250,9 @@ const updateFromMsgCore: FrontendModule['update'] = (input) => {
 
 const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'got-msg-core': {
-      const msgCore = withEventId(input.msg.c)
-      return { model: input.model, msgCore: [msgCore] }
+    case 'got-msg-space': {
+      const msgSpace = withEventId(input.msg.c)
+      return { model: input.model, msgSpace: [msgSpace] }
     }
 
     default: {
@@ -346,10 +346,10 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     solutions: input.model.solutions,
   }
   return Sub.batch<MsgFrontend>([
-    Sub.tag('play', PlayFrontend.subscriptions({ ctx, modelCore: input.modelCore.play, model: input.model.play })),
+    Sub.tag('play', PlayFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.play, model: input.model.play })),
     Sub.tag(
       'builder',
-      BuilderFrontend.subscriptions({ ctx, modelCore: input.modelCore.builder, model: input.model.builder }),
+      BuilderFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.builder, model: input.model.builder }),
     ),
     Sub.tag(
       'pack-puzzles-grid',
@@ -378,7 +378,7 @@ const View: FrontendModule['View'] = (input) => {
     solutions: input.model.solutions,
   }
 
-  switch (input.modelCore.mode) {
+  switch (input.modelSpace.mode) {
     case 'none': {
       return (
         <GameMainMenu.View
@@ -394,7 +394,7 @@ const View: FrontendModule['View'] = (input) => {
               description: ctx.t('flow.play-description'),
               onClick: () => {
                 input.dispatch({
-                  t: 'got-msg-core',
+                  t: 'got-msg-space',
                   c: {
                     t: 'user-changed-mode',
                     mode: 'play',
@@ -409,7 +409,7 @@ const View: FrontendModule['View'] = (input) => {
               description: ctx.t('flow.builder-description'),
               onClick: () => {
                 input.dispatch({
-                  t: 'got-msg-core',
+                  t: 'got-msg-space',
                   c: {
                     t: 'user-changed-mode',
                     mode: 'builder',
@@ -428,7 +428,7 @@ const View: FrontendModule['View'] = (input) => {
         <BuilderFrontend.View
           ctx={ctx}
           dispatch={(c) => input.dispatch({ t: 'builder', c })}
-          modelCore={input.modelCore.builder}
+          modelSpace={input.modelSpace.builder}
           model={input.model.builder}
         />
       )
@@ -439,7 +439,7 @@ const View: FrontendModule['View'] = (input) => {
         <PlayFrontend.View
           ctx={ctx}
           dispatch={(c) => input.dispatch({ t: 'play', c })}
-          modelCore={input.modelCore.play}
+          modelSpace={input.modelSpace.play}
           model={input.model.play}
         />
       )

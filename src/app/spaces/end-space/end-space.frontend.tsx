@@ -2,8 +2,8 @@ import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/frontend/cmd'
 import { Button, Typography } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesCoreFrontend } from '../core/frontend'
-import type { SpaceEvent } from '../core/space-event'
+import { SpacesSpaceFrontend } from '../space/frontend'
+import type { SpaceEvent } from '../space/space-event'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -20,7 +20,7 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
   switch (msgEvt?.t) {
     case 'auth-evt.unauthenticated': {
       const { currentUserId } = ctx
-      const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(model, currentUserId)
+      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, currentUserId)
       if (!currentUserId || !currentUserSpaceId) {
         return {
           model,
@@ -29,7 +29,7 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
 
       return {
         model,
-        msgCore: [
+        msgSpace: [
           withEventId({
             t: 'user-ended-space',
             spaceId: currentUserSpaceId,
@@ -48,9 +48,9 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
 }
 
 const updateFromSpaceEvent: SpaceFrontendModule['update'] = (input) => {
-  const { ctx, model, msgCore: msgCore } = input
+  const { ctx, model, msgSpace: msgSpace } = input
 
-  switch (msgCore?.t) {
+  switch (msgSpace?.t) {
     case 'user-ended-space': {
       if (!ctx.currentUserId) {
         return {
@@ -58,9 +58,9 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
 
-      if (msgCore.spaceId !== currentUserSpaceId) {
+      if (msgSpace.spaceId !== currentUserSpaceId) {
         return {
           model,
         }
@@ -77,7 +77,7 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = (input) => {
           }
         },
         (model) => {
-          if (ctx.currentRoute.t === 'space' && ctx.currentRoute.spaceId === msgCore.spaceId) {
+          if (ctx.currentRoute.t === 'space' && ctx.currentRoute.spaceId === msgSpace.spaceId) {
             return {
               model,
               msgCmd: [
@@ -94,14 +94,14 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = (input) => {
           }
         },
         (model) => {
-          if (msgCore.userId === ctx.currentUserId) {
+          if (msgSpace.userId === ctx.currentUserId) {
             return {
               model,
               msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))],
             }
           }
 
-          const profile = ctx.profiles[msgCore.userId]
+          const profile = ctx.profiles[msgSpace.userId]
 
           if (!profile) {
             return {
@@ -135,7 +135,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = ({ msg, model, ctx }
         }
       }
 
-      const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
 
       if (!currentUserSpaceId) {
         return {
@@ -151,7 +151,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = ({ msg, model, ctx }
 
       return {
         model,
-        msgCore: [spaceEventNew],
+        msgSpace: [spaceEventNew],
       }
     }
     default: {
@@ -163,7 +163,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = ({ msg, model, ctx }
 }
 
 export const ViewEndSpaceButton: SpaceFrontendModule['View'] = (input) => {
-  const userSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+  const userSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
   if (!userSpaceId) {
     return null
   }

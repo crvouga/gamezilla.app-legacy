@@ -16,13 +16,13 @@ const update: FrontendModule['update'] = (input) => {
     (model) => ScreenPuzzleBuilderFrontend.update({ ...input, model }),
     (model) => ScreenPuzzleBuilderOpenFrontend.update({ ...input, model }),
     (model) => ScreenMainMenuFrontend.update({ ...input, model }),
-    (model) => updateGotMsgCore({ ...input, model }),
+    (model) => updateGotMsgSpace({ ...input, model }),
     (model) => updateBackButton({ ...input, model }),
   )
 }
 
 const updateBackButton: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'user-clicked-back-button': {
       return {
         model: input.model,
@@ -37,12 +37,12 @@ const updateBackButton: FrontendModule['update'] = (input) => {
   }
 }
 
-const updateGotMsgCore: FrontendModule['update'] = (input) => {
+const updateGotMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'got-msg-core': {
+    case 'got-msg-space': {
       return {
         model: input.model,
-        msgCore: [input.msg.c],
+        msgSpace: [input.msg.c],
       }
     }
     default: {
@@ -54,7 +54,7 @@ const updateGotMsgCore: FrontendModule['update'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  switch (input.modelCore.screen.t) {
+  switch (input.modelSpace.screen.t) {
     case 'screen-main-menu': {
       return <ScreenMainMenuFrontend.View {...input} />
     }

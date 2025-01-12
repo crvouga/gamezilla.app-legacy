@@ -1,19 +1,19 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Msg } from '~/@/msg/msg'
 import { FixtureFlowBackend } from '../../../@/backend/fixture'
-import { PlayCore } from '../../core'
+import { PlaySpace } from '../../space'
 import { PlayBackend } from '../../backend'
-import type { ModelCore } from '../../types'
+import type { ModelSpace } from '../../types'
 
 type Input = Partial<Parameters<typeof PlayBackend.update>[0]>
 
 type Output = Awaited<ReturnType<typeof PlayBackend.update>> & {
-  modelCore: ModelCore
+  modelSpace: ModelSpace
 }
 
 export const FixturePlayBackend = async () => {
   const f = await FixtureFlowBackend()
-  const initCore = PlayCore.initCore(f)
+  const initSpace = PlaySpace.initSpace(f)
 
   const updates = async (outputs: NonEmpty<Output>, inputs: Input[]): Promise<NonEmpty<Output>> => {
     const [input, ...rest] = inputs
@@ -21,15 +21,15 @@ export const FixturePlayBackend = async () => {
       return outputs
     }
     const lastOutput = NonEmpty.last(outputs)
-    const nextOutput = await PlayBackend.update({ modelCore: lastOutput.modelCore, deps: null, ...f, ...input })
-    const msgCore = Msg.batch(input.msgCore, nextOutput.msgCore)
-    const nextModelCore = msgCore.reduce(
-      (modelCore, msgCore) => PlayCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),
-      lastOutput.modelCore,
+    const nextOutput = await PlayBackend.update({ modelSpace: lastOutput.modelSpace, deps: null, ...f, ...input })
+    const msgSpace = Msg.batch(input.msgSpace, nextOutput.msgSpace)
+    const nextModelSpace = msgSpace.reduce(
+      (modelSpace, msgSpace) => PlaySpace.updateSpace({ ctx: f.ctx, modelSpace, msgSpace }),
+      lastOutput.modelSpace,
     )
     const output = {
       ...nextOutput,
-      modelCore: nextModelCore,
+      modelSpace: nextModelSpace,
     }
     return updates([...outputs, output], rest)
   }
@@ -39,7 +39,7 @@ export const FixturePlayBackend = async () => {
   }
 
   const initial: Output = {
-    modelCore: initCore,
+    modelSpace: initSpace,
   }
 
   return {

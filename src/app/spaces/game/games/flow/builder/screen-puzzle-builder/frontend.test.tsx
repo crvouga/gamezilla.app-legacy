@@ -11,7 +11,7 @@ import {
   puzzleBuilderPressDownRandomNode,
   testFlowFrontendCtx,
 } from '../@/testing/frontend'
-import { deriveModelCore } from '../@/testing/core'
+import { deriveModelSpace } from '../@/testing/space'
 import type { MsgFrontend } from '../types'
 import { ScreenPuzzleBuilderFrontend } from './frontend'
 
@@ -23,7 +23,7 @@ const Fixture = async () => {
   const init = f.update(f.init, [
     {
       msg: {
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
           puzzle: flowPuzzle,
@@ -34,13 +34,13 @@ const Fixture = async () => {
   ])
 
   const renderMsg = PubSub.create<MsgFrontend>()
-  const render = (input: { model: typeof f.model; modelCore: typeof f.modelCore }) => {
+  const render = (input: { model: typeof f.model; modelSpace: typeof f.modelSpace }) => {
     return f.render(
       <ScreenPuzzleBuilderFrontend.View
         ctx={f.ctx}
         dispatch={renderMsg.pub}
         model={input.model}
-        modelCore={input.modelCore}
+        modelSpace={input.modelSpace}
       />,
     )
   }
@@ -51,7 +51,7 @@ const Fixture = async () => {
       ...init,
       ctx: f.ctx,
       model: init.model,
-      modelCore: init.modelCore,
+      modelSpace: init.modelSpace,
     },
     flowPuzzle,
     renderMsg,
@@ -64,9 +64,9 @@ describe(import.meta.file, () => {
     const ctx = await testFlowFrontendCtx()
     const puzzle = await createPuzzle(ctx)
     const output = GameFrontendModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
-    const modelCore = deriveModelCore(ctx, output)
+    const modelSpace = deriveModelSpace(ctx, output)
     expect(
-      modelCore.screen.t === 'screen-puzzle-builder' && modelCore.screenPuzzleBuilder?.puzzle.id === puzzle.id,
+      modelSpace.screen.t === 'screen-puzzle-builder' && modelSpace.screenPuzzleBuilder?.puzzle.id === puzzle.id,
     ).toBe(true)
   })
 
@@ -77,12 +77,12 @@ describe(import.meta.file, () => {
 
     const output = GameFrontendModule.andThen(
       openedBuilder,
-      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx, openedBuilder)),
+      clickedExitPuzzleBuilderButton(ctx, deriveModelSpace(ctx, openedBuilder)),
     )
 
-    const modelCore = deriveModelCore(ctx, output)
+    const modelSpace = deriveModelSpace(ctx, output)
 
-    expect(modelCore.screen.t === 'screen-puzzle-builder-open').toBe(true)
+    expect(modelSpace.screen.t === 'screen-puzzle-builder-open').toBe(true)
   })
 
   it('should open save prompt when exiting with unsaved changes', async () => {
@@ -94,18 +94,18 @@ describe(import.meta.file, () => {
 
     const madeEdit = GameFrontendModule.andThen(
       openedBuilder,
-      puzzleBuilderPressDownRandomNode(ctx, deriveModelCore(ctx, openedBuilder)),
+      puzzleBuilderPressDownRandomNode(ctx, deriveModelSpace(ctx, openedBuilder)),
     )
 
     const output = GameFrontendModule.andThen(
       madeEdit,
-      clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx, madeEdit)),
+      clickedExitPuzzleBuilderButton(ctx, deriveModelSpace(ctx, madeEdit)),
     )
 
-    const modelCore = deriveModelCore(ctx, output)
+    const modelSpace = deriveModelSpace(ctx, output)
 
     expect(
-      modelCore.screen.t === 'screen-puzzle-builder' && output.model.puzzleBuilderOpened === 'unsaved-changes',
+      modelSpace.screen.t === 'screen-puzzle-builder' && output.model.puzzleBuilderOpened === 'unsaved-changes',
     ).toBe(true)
   })
 

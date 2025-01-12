@@ -14,17 +14,17 @@ const update: FrontendModule['update'] = (input) => {
     (model) => ScreenPuzzleFrontend.update({ ...input, model }),
     (model) => ScreenSelectPackFrontend.update({ ...input, model }),
     (model) => ScreenSelectPuzzleFrontend.update({ ...input, model }),
-    (model) => updateGotMsgCore({ ...input, model }),
+    (model) => updateGotMsgSpace({ ...input, model }),
     (model) => GameMainMenu.update({ ...input, model }),
   )
 }
 
-const updateGotMsgCore: FrontendModule['update'] = (input) => {
+const updateGotMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'got-msg-core': {
+    case 'got-msg-space': {
       return {
         model: input.model,
-        msgCore: [input.msg.c],
+        msgSpace: [input.msg.c],
       }
     }
   }
@@ -45,7 +45,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewScreen: typeof View = (input) => {
-  switch (input.modelCore.screen.t) {
+  switch (input.modelSpace.screen.t) {
     case 'screen-select-puzzle': {
       return <ScreenSelectPuzzleFrontend.View {...input} />
     }

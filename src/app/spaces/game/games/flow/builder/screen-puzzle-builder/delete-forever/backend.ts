@@ -1,7 +1,7 @@
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { withEventId } from '~/@/event-sourced/event'
 import type { BackendModule } from '../../types'
-import type { MsgCore } from './types'
+import type { MsgSpace } from './types'
 
 const update: BackendModule['update'] = async (input) => {
   return GameBackendModule.andThen({}, () => updateFromFrontend(input))
@@ -10,7 +10,7 @@ const update: BackendModule['update'] = async (input) => {
 const updateFromFrontend: BackendModule['update'] = async (input) => {
   switch (input.msgFrontend?.t) {
     case 'delete-forever.user-confirmed': {
-      const puzzleBuilder = input.modelCore.screenPuzzleBuilder
+      const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
 
       if (!puzzleBuilder) {
         return {}
@@ -21,7 +21,7 @@ const updateFromFrontend: BackendModule['update'] = async (input) => {
         deletedByUserId: input.msgFrontend.userId,
       })
 
-      const msgCore: MsgCore = {
+      const msgSpace: MsgSpace = {
         t: 'user-deleted-puzzle',
         flowPuzzleId: puzzleBuilder.puzzle.id,
         userId: input.msgFrontend.userId,
@@ -29,7 +29,7 @@ const updateFromFrontend: BackendModule['update'] = async (input) => {
       }
 
       return {
-        msgCore: [withEventId(msgCore)],
+        msgSpace: [withEventId(msgSpace)],
       }
     }
 

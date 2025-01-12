@@ -14,7 +14,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpacesFrontend } from '../../frontend'
-import { SpaceCore } from '../../core/space-core'
+import { SpaceSpace } from '../../space/space'
 import type * as SpacesTypes from '../../types'
 
 export const SpaceFrontendFixture = async () => {
@@ -101,32 +101,32 @@ export const FixtureSpacesFrontend = async (input?: { currentRoute?: Route }) =>
   const spaceId = SpaceId.generate()
 
   const space = pipe(
-    SpaceCore.init,
+    SpaceSpace.init,
     (model) =>
       EventSourced.appendEvent(
-        SpaceCore.config,
+        SpaceSpace.config,
         model,
         withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceCore.config,
+        SpaceSpace.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceCore.config,
+        SpaceSpace.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceCore.config,
+        SpaceSpace.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const),
       ),
-    (model) => SpaceCore.toSpaceStarted(model),
+    (model) => SpaceSpace.toSpaceStarted(model),
     (space) => {
       if (!space) {
         throw new Error('Invalid fixture. Space is not started.')
@@ -196,7 +196,7 @@ export const FixtureSpacesFrontend = async (input?: { currentRoute?: Route }) =>
 export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-started-space',
         spaceId,
@@ -209,7 +209,7 @@ export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: Sp
 export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-left-space',
         spaceId,
@@ -222,7 +222,7 @@ export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: Space
 export const userJoinedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-joined-space',
         spaceId,

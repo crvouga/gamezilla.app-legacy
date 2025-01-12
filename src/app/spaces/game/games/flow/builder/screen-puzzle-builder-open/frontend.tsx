@@ -17,8 +17,8 @@ const update: FrontendModule['update'] = (input) => {
 
 const updateLoadPuzzles: FrontendModule['update'] = (input) => {
   if (
-    (input.msgCore?.t === 'flow.builder.screen-main-menu.user-clicked-option' &&
-      input.msgCore.option === 'puzzle-builder') ||
+    (input.msgSpace?.t === 'flow.builder.screen-main-menu.user-clicked-option' &&
+      input.msgSpace.option === 'puzzle-builder') ||
     input.msgEvt?.t === 'space-evt.synced'
   ) {
     return {
@@ -32,7 +32,7 @@ const updateLoadPuzzles: FrontendModule['update'] = (input) => {
 }
 
 const updateMain: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'screen-puzzle-builder-open.clicked-puzzle-list-item': {
       return {
         model: input.model,
@@ -52,7 +52,7 @@ const View: FrontendModule['View'] = (input) => {
       <TopBar
         onBack={() =>
           input.dispatch({
-            t: 'got-msg-core',
+            t: 'got-msg-space',
             c: {
               t: 'user-clicked-back-button',
               userId: input.ctx.currentUserId,
@@ -69,7 +69,7 @@ const View: FrontendModule['View'] = (input) => {
         emits={{
           clickedPuzzleItem: (puzzle) =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
                 puzzle,

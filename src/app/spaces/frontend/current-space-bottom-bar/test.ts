@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
-import { SpacesCoreFrontend } from '../../core/frontend'
+import { SpacesSpaceFrontend } from '../../space/frontend'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const currentUsersSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
+    const currentUsersSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
 
     expect(
       output.msgCmd?.some(

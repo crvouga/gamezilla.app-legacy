@@ -9,7 +9,7 @@ import { toOpposite, toTurn, type PlayerType } from '../@/tic-tic-toe/tic-tac-to
 import * as Round from './vs-user-round'
 import {
   NewGame,
-  initCoreModel,
+  initSpaceModel,
   inputBestOutOf,
   inputMove,
   inputPlayer,
@@ -40,7 +40,7 @@ import { Sub } from '~/@/sub'
 
 export type Model = ModelBackend
 
-export const init = initCoreModel
+export const init = initSpaceModel
 
 //
 //

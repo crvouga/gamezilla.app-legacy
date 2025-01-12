@@ -15,7 +15,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-changed-mode',
           userId: f.ctx.currentUserId,
           mode: 'play',
@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-changed-mode',
           userId: f.ctx.currentUserId,
           mode: 'builder',
@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-changed-mode',
           userId: f.ctx.currentUserId,
           mode: 'none',

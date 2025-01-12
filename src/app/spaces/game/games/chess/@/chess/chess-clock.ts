@@ -1,5 +1,5 @@
 import type { Brand } from '~/@/brand/brand'
-import type * as Board from './chess-core'
+import type * as Board from './chess-space'
 
 export type Clock = {
   preset: Preset

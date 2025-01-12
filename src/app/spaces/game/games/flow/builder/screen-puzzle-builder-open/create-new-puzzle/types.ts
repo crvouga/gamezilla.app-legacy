@@ -46,9 +46,9 @@ export type MsgToFrontend = {
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('create-new-puzzle.user-created-puzzle'),
   created: Result.parser(p.str, Puzzle),
   userId: UserId,
 })
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

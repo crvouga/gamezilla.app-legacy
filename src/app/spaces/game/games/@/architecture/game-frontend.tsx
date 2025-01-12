@@ -13,8 +13,8 @@ export type GameFrontendTypes = {
   MsgToFrontend: any
   MsgToBackend: any
   //
-  ModelCore: any
-  MsgCore: any
+  ModelSpace: any
+  MsgSpace: any
   //
   FrontendCtx: any
 }
@@ -26,7 +26,7 @@ type Output<T extends GameFrontendTypes> = {
     MsgFrontend: T['MsgFrontend']
     MsgToBackend: T['MsgToBackend']
   }>[]
-  msgCore?: WithEventId<T['MsgCore']>[]
+  msgSpace?: WithEventId<T['MsgSpace']>[]
 }
 
 export type InMsg<T extends GameFrontendTypes> =
@@ -36,38 +36,38 @@ export type InMsg<T extends GameFrontendTypes> =
 
 export type OutMsg<T extends GameFrontendTypes> =
   | ({ variant: 'msgCmd' } & AppFrontendCmd<T>)
-  | ({ variant: 'game-event' } & WithEventId<T['MsgCore']>)
+  | ({ variant: 'game-event' } & WithEventId<T['MsgSpace']>)
 
 export type GameFrontend<T extends GameFrontendTypes> = {
-  init: (input: { ctx: T['FrontendCtx']; modelCore: T['ModelCore']; model?: T['ModelFrontend'] | null }) => Output<T>
+  init: (input: { ctx: T['FrontendCtx']; modelSpace: T['ModelSpace']; model?: T['ModelFrontend'] | null }) => Output<T>
 
   update: (input: {
     ctx: T['FrontendCtx']
-    modelCore: T['ModelCore']
-    modelCoreBefore: T['ModelCore']
+    modelSpace: T['ModelSpace']
+    modelSpaceBefore: T['ModelSpace']
     model?: T['ModelFrontend'] | null
     //
     msg?: T['MsgFrontend'] | null
     msgBackend?: T['MsgToFrontend'] | null
     msgEvt?: FrontendEvt | null
-    msgCore?: WithEventMeta<T['MsgCore']> | null
+    msgSpace?: WithEventMeta<T['MsgSpace']> | null
   }) => Output<T>
 
   subscriptions: (input: {
     intervalId: string
     ctx: T['FrontendCtx']
     model?: T['ModelFrontend'] | null
-    modelCore: T['ModelCore']
+    modelSpace: T['ModelSpace']
   }) => Sub<T['MsgFrontend']>
 
   View: (input: {
     ctx: T['FrontendCtx']
     dispatch: (msg: T['MsgFrontend']) => void
-    modelCore: T['ModelCore']
+    modelSpace: T['ModelSpace']
     model?: T['ModelFrontend'] | null
   }) => VDom
 
-  ViewFeedItem: (input: { ctx: T['FrontendCtx']; modelCore: T['ModelCore']; msgEvt: T['MsgCore'] }) => VDom
+  ViewFeedItem: (input: { ctx: T['FrontendCtx']; modelSpace: T['ModelSpace']; msgEvt: T['MsgSpace'] }) => VDom
 }
 
 /**
@@ -81,15 +81,15 @@ export const tag = <T extends string, Types extends GameFrontendTypes>(
   MsgFrontend: { t: T; c: Types['MsgFrontend'] }
   MsgToFrontend: { t: T; c: Types['MsgToFrontend'] }
   MsgToBackend: { t: T; c: Types['MsgToBackend'] }
-  ModelCore: { t: T; c: Types['ModelCore'] }
-  MsgCore: { t: T; c: Types['MsgCore'] }
+  ModelSpace: { t: T; c: Types['ModelSpace'] }
+  MsgSpace: { t: T; c: Types['MsgSpace'] }
   FrontendCtx: Types['FrontendCtx']
 }> => {
   return {
     init: (input) => {
       const initial = frontend.init({
         ctx: input.ctx,
-        modelCore: input.modelCore.c,
+        modelSpace: input.modelSpace.c,
         model: input.model?.c,
       })
       return {
@@ -107,11 +107,11 @@ export const tag = <T extends string, Types extends GameFrontendTypes>(
         msgEvt: input.msgEvt,
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
-        msgCore: input.msgCore?.t === tag ? input.msgCore?.c : undefined,
+        msgSpace: input.msgSpace?.t === tag ? input.msgSpace?.c : undefined,
         msgBackend: input.msgBackend?.t === tag ? input.msgBackend?.c : undefined,
         ctx: input.ctx,
-        modelCore: input.modelCore.c,
-        modelCoreBefore: input.modelCoreBefore.c,
+        modelSpace: input.modelSpace.c,
+        modelSpaceBefore: input.modelSpaceBefore.c,
       })
       return {
         model: {
@@ -120,21 +120,21 @@ export const tag = <T extends string, Types extends GameFrontendTypes>(
         },
         eff: Eff.tag(tag, updated.eff),
         msgCmd: AppFrontendCmd.tag(tag, updated.msgCmd),
-        msgCore: updated.msgCore
-          ? updated.msgCore.map(
+        msgSpace: updated.msgSpace
+          ? updated.msgSpace.map(
               (
-                msgCore,
+                msgSpace,
               ): WithEventMeta<{
                 t: T
-                c: WithEventMeta<Types['MsgCore']>
+                c: WithEventMeta<Types['MsgSpace']>
               }> => ({
-                eventId: msgCore.msgEvtId,
-                happenedAt: msgCore.happenedAt,
+                eventId: msgSpace.msgEvtId,
+                happenedAt: msgSpace.happenedAt,
                 t: tag,
                 c: {
-                  ...msgCore,
-                  msgEvtId: msgCore.msgEvtId,
-                  happenedAt: msgCore.happenedAt,
+                  ...msgSpace,
+                  msgEvtId: msgSpace.msgEvtId,
+                  happenedAt: msgSpace.happenedAt,
                 },
               }),
             )
@@ -148,7 +148,7 @@ export const tag = <T extends string, Types extends GameFrontendTypes>(
         frontend.subscriptions({
           ctx: input.ctx,
           intervalId: input.intervalId,
-          modelCore: input.modelCore.c,
+          modelSpace: input.modelSpace.c,
           model: input.model?.c,
         }),
       )
@@ -158,7 +158,7 @@ export const tag = <T extends string, Types extends GameFrontendTypes>(
       return (
         <frontend.View
           ctx={input.ctx}
-          modelCore={input.modelCore.c}
+          modelSpace={input.modelSpace.c}
           dispatch={(m) =>
             input.dispatch({
               t: tag,
@@ -175,7 +175,7 @@ export const tag = <T extends string, Types extends GameFrontendTypes>(
         return frontend.ViewFeedItem({
           ctx: input.ctx,
           msgEvt: input.msgEvt.c,
-          modelCore: input.modelCore.c,
+          modelSpace: input.modelSpace.c,
         })
       }
       return null
@@ -207,7 +207,7 @@ const chain = <T extends GameFrontendTypes>(
     MsgFrontend: T['MsgFrontend']
     MsgToBackend: T['MsgToBackend']
   }>[] = initial.msgCmd ?? []
-  const msgCores: T['MsgCore'][] = initial?.msgCore ?? []
+  const msgSpaces: T['MsgSpace'][] = initial?.msgSpace ?? []
   const eff: Eff<T['MsgFrontend']>[] = initial.eff ? [initial.eff] : []
 
   let model = initial.model
@@ -222,11 +222,11 @@ const chain = <T extends GameFrontendTypes>(
     if (updated.eff) {
       eff.push(updated.eff)
     }
-    if (updated.msgCore) {
+    if (updated.msgSpace) {
       let j = 0
-      const len = updated.msgCore.length
+      const len = updated.msgSpace.length
       for (j = 0; j < len; ++j) {
-        msgCores.push(updated.msgCore[j]!)
+        msgSpaces.push(updated.msgSpace[j]!)
       }
     }
     if (updated.msgCmd) {
@@ -241,7 +241,7 @@ const chain = <T extends GameFrontendTypes>(
   return {
     model,
     eff: Eff.batch(eff),
-    msgCore: msgCores,
+    msgSpace: msgSpaces,
     msgCmd,
   }
 }
@@ -254,8 +254,8 @@ const tagOutput = <TTag extends string, TTypes extends GameFrontendTypes>(
   MsgFrontend: { t: TTag; c: TTypes['MsgFrontend'] }
   MsgToFrontend: { t: TTag; c: TTypes['MsgToFrontend'] }
   MsgToBackend: { t: TTag; c: TTypes['MsgToBackend'] }
-  ModelCore: { t: TTag; c: TTypes['ModelCore'] }
-  MsgCore: { t: TTag; c: TTypes['MsgCore'] }
+  ModelSpace: { t: TTag; c: TTypes['ModelSpace'] }
+  MsgSpace: { t: TTag; c: TTypes['MsgSpace'] }
   FrontendCtx: TTypes['FrontendCtx']
 }> => {
   return {
@@ -265,12 +265,12 @@ const tagOutput = <TTag extends string, TTypes extends GameFrontendTypes>(
     },
     eff: output.eff ? Eff.tag(tag, output.eff) : undefined,
     msgCmd: output.msgCmd ? output.msgCmd.map((msgCmd) => AppFrontendCmd.tagOne(tag, msgCmd)) : undefined,
-    msgCore: output.msgCore
-      ? output.msgCore.map((msgCore) => ({
-          eventId: msgCore.eventId,
-          happenedAt: msgCore.happenedAt,
+    msgSpace: output.msgSpace
+      ? output.msgSpace.map((msgSpace) => ({
+          eventId: msgSpace.eventId,
+          happenedAt: msgSpace.happenedAt,
           t: tag,
-          c: msgCore,
+          c: msgSpace,
         }))
       : undefined,
   }

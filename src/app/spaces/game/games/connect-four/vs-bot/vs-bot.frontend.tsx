@@ -16,12 +16,12 @@ import { CoverArt, PlayerOneIcon, PlayerTwoIcon, ViewColumns } from '../@/connec
 import { ALL_BOT_LEVELS, type BotLevel } from './bot-level'
 import {
   type ModelFrontend,
-  type ModelCore,
+  type ModelSpace,
   type MsgFrontend,
-  type MsgCore,
+  type MsgSpace,
   type MsgToFrontend,
   type MsgToBackend,
-  updateCore,
+  updateSpace,
 } from './vs-bot.types'
 
 //
@@ -37,8 +37,8 @@ type Module = GameFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx
   MsgCmdOut: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
@@ -69,7 +69,7 @@ const update: Module['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromMsgCore(model)(input),
+    (model) => updateFromMsgSpace(model)(input),
     (model) => watchGameOver(model)(input),
   )
 }
@@ -77,28 +77,28 @@ const update: Module['update'] = (input) => {
 const watchGameOver =
   (model: ModelFrontend): Module['update'] =>
   (input) => {
-    const { msgCore, modelCore } = input
+    const { msgSpace, modelSpace } = input
 
-    if (!msgCore) {
+    if (!msgSpace) {
       return {
         model,
       }
     }
 
-    const modelCoreNext = updateCore({
-      msgCore: msgCore,
-      modelCore: modelCore,
+    const modelSpaceNext = updateSpace({
+      msgSpace: msgSpace,
+      modelSpace: modelSpace,
     })
 
-    if (modelCore.type !== 'game' || modelCoreNext.type !== 'game') {
+    if (modelSpace.type !== 'game' || modelSpaceNext.type !== 'game') {
       return {
         model,
       }
     }
 
-    const statusBefore = ConnectFour.toStatus(modelCore.columns)
+    const statusBefore = ConnectFour.toStatus(modelSpace.columns)
 
-    const status = ConnectFour.toStatus(modelCoreNext.columns)
+    const status = ConnectFour.toStatus(modelSpaceNext.columns)
 
     if (statusBefore.type === status.type) {
       return {
@@ -121,7 +121,7 @@ const watchGameOver =
       }
 
       case 'Winner': {
-        if (status.winner === modelCoreNext.userPlayerType) {
+        if (status.winner === modelSpaceNext.userPlayerType) {
           return {
             model,
             msgCmd: [
@@ -143,12 +143,12 @@ const watchGameOver =
     }
   }
 
-const updateFromMsgCore =
+const updateFromMsgSpace =
   (model: ModelFrontend): Module['update'] =>
   (input) => {
-    const { msgCore, modelCore, ctx } = input
+    const { msgSpace, modelSpace, ctx } = input
 
-    if (!msgCore) {
+    if (!msgSpace) {
       return {
         model,
       }
@@ -156,7 +156,7 @@ const updateFromMsgCore =
 
     return {
       model,
-      msgCmd: updateSound(ctx.currentUserId, modelCore, msgCore),
+      msgCmd: updateSound(ctx.currentUserId, modelSpace, msgSpace),
     }
   }
 
@@ -191,10 +191,10 @@ const updateFromMsg =
       }
 
       default: {
-        const msgCore = withEventId(msg)
+        const msgSpace = withEventId(msg)
         return {
           model,
-          msgCore: [msgCore],
+          msgSpace: [msgSpace],
         }
       }
     }
@@ -202,19 +202,19 @@ const updateFromMsg =
 
 const updateSound = (
   currentUserId: UserId,
-  modelCore: ModelCore,
-  msgCore: WithEventId<MsgCore>,
+  modelSpace: ModelSpace,
+  msgSpace: WithEventId<MsgSpace>,
 ): AppFrontendCmd<{
   MsgToBackend: MsgToBackend
   MsgFrontend: MsgFrontend
 }>[] => {
-  switch (modelCore.type) {
+  switch (modelSpace.type) {
     case 'game': {
-      switch (msgCore.t) {
+      switch (msgSpace.t) {
         case 'user-dropped-disc': {
-          const error = modelCore.errors[msgCore.eventId]
+          const error = modelSpace.errors[msgSpace.eventId]
 
-          if (error && msgCore.userId === currentUserId) {
+          if (error && msgSpace.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)]
           }
 
@@ -242,7 +242,7 @@ const updateSound = (
     }
 
     case 'setup': {
-      switch (msgCore.t) {
+      switch (msgSpace.t) {
         case 'user-started-playing':
         case 'user-stopped-playing':
         case 'user-swapped-sides':
@@ -315,7 +315,7 @@ const View: Module['View'] = (input) => {
     onQuit: () => {},
     title: input.ctx.t('chess'),
     renderCoverArt: (input) => <CoverArt {...input} />,
-    canStartGame: input.modelCore.playingUserId !== null,
+    canStartGame: input.modelSpace.playingUserId !== null,
     onSwapSides: () =>
       input.dispatch({
         t: 'user-swapped-sides',
@@ -339,12 +339,12 @@ const View: Module['View'] = (input) => {
       }
     }),
     human: {
-      player: input.modelCore.userPlayerType === 'player-one' ? 'player-one' : 'player-two',
-      userId: input.modelCore.playingUserId ?? null,
+      player: input.modelSpace.userPlayerType === 'player-one' ? 'player-one' : 'player-two',
+      userId: input.modelSpace.playingUserId ?? null,
     },
     bot: {
-      label: input.ctx.t('connect-four.bot-level', input.modelCore.botLevel),
-      renderIcon: (iconinput) => <ViewBotLevel {...iconinput} level={input.modelCore.botLevel} />,
+      label: input.ctx.t('connect-four.bot-level', input.modelSpace.botLevel),
+      renderIcon: (iconinput) => <ViewBotLevel {...iconinput} level={input.modelSpace.botLevel} />,
     },
     playerOne: {
       label: input.ctx.t('connect-four.red'),
@@ -382,7 +382,7 @@ const View: Module['View'] = (input) => {
     return null
   }
 
-  if (input.modelCore.type === 'setup') {
+  if (input.modelSpace.type === 'setup') {
     return (
       <VsBotSetup.View
         model={input.model.vsBotSetup}
@@ -397,19 +397,19 @@ const View: Module['View'] = (input) => {
     )
   }
 
-  const status = ConnectFour.toStatus(input.modelCore.columns)
+  const status = ConnectFour.toStatus(input.modelSpace.columns)
 
   const vsBotGameInput: VsBotGame.VsBotGameInput = {
     ...vsBotSetupInput,
     human: {
       ...vsBotSetupInput.human,
-      userId: input.modelCore.playingUserId,
+      userId: input.modelSpace.playingUserId,
     },
-    isSpectating: input.ctx.currentUserId !== input.modelCore.playingUserId,
+    isSpectating: input.ctx.currentUserId !== input.modelSpace.playingUserId,
     turn: status.type !== 'Playing' ? null : status.turn === 'player-one' ? 'player-one' : 'player-two',
   }
 
-  const isSpectating = input.ctx.currentUserId !== input.modelCore.playingUserId
+  const isSpectating = input.ctx.currentUserId !== input.modelSpace.playingUserId
 
   return (
     <LayoutGame ctx={input.ctx} isSpectating={isSpectating}>
@@ -421,7 +421,7 @@ const View: Module['View'] = (input) => {
         <div className='relative flex w-full flex-col items-center justify-center overflow-hidden'>
           <ViewColumns
             gameId={0}
-            columns={input.modelCore.columns}
+            columns={input.modelSpace.columns}
             disabled={isSpectating || status.type !== 'Playing'}
             onDropDisc={(columnIndex) => {
               input.dispatch({
@@ -441,13 +441,13 @@ const View: Module['View'] = (input) => {
                   userId: input.ctx.currentUserId,
                 })
               }
-              gameOver={toGameOver(input.modelCore.columns)}
+              gameOver={toGameOver(input.modelSpace.columns)}
             />
           )}
         </div>
       </div>
 
-      {input.ctx.currentUserId === input.modelCore.playingUserId && (
+      {input.ctx.currentUserId === input.modelSpace.playingUserId && (
         <BottomButtons.Root>
           <BottomButtons.Button
             icon={(input) => <IconArrowLeftOnRect {...input} />}
@@ -495,19 +495,19 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
 }
 
 const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
-  const username = 'userId' in input.msgCore ? (input.ctx.profiles[input.msgCore.userId]?.username ?? null) : null
+  const username = 'userId' in input.msgSpace ? (input.ctx.profiles[input.msgSpace.userId]?.username ?? null) : null
 
-  switch (input.msgCore.t) {
+  switch (input.msgSpace.t) {
     case 'bot-dropped-disc': {
       return <FeedItem.Info text='Bot dropped disc' />
     }
 
     case 'user-changed-bot-level': {
-      return <FeedItem.Info text={`${username} changed bot level to ${input.msgCore.botLevel}`} />
+      return <FeedItem.Info text={`${username} changed bot level to ${input.msgSpace.botLevel}`} />
     }
 
     case 'user-dropped-disc': {
-      if (input.msgCore.userId === input.ctx.currentUserId) {
+      if (input.msgSpace.userId === input.ctx.currentUserId) {
         return <FeedItem.Info text={`${username} dropped disc`} />
       }
 

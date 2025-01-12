@@ -6,7 +6,7 @@ import { PackDb } from '../../../@/pack/pack-db'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { FlowBackendCtx } from '../../../@/backend/ctx'
 import { Solutions } from '../../../@/solutions/solutions'
-import { BuilderCore } from '../../core'
+import { BuilderSpace } from '../../space'
 import { initBackend } from '../../types'
 
 const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
@@ -36,11 +36,11 @@ export const FlowCreateFixtureBackend = async () => {
   const f = await SpaceGameFixtureBackend()
   const ctx = await initCtx(f.ctx)
   const model = initBackend
-  const modelCore = BuilderCore.initCore({ ctx })
+  const modelSpace = BuilderSpace.initSpace({ ctx })
   return {
     ...f,
     ctx,
     model,
-    modelCore,
+    modelSpace,
   }
 }

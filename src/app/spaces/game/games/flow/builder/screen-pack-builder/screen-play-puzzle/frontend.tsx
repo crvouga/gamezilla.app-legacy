@@ -22,7 +22,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
       { model: input.model },
       (model) => ScreenPuzzleMore.update({ ...input, model }),
       (model) => {
-        switch (input.msgCore?.t) {
+        switch (input.msgSpace?.t) {
           case 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
             return {
               model,
@@ -32,8 +32,8 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
 
           case 'screen-pack-builder.got-flow-play-msg': {
             const playMode =
-              input.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle'
-                ? input.modelCore.screenPackBuilder.screen.play
+              input.modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle'
+                ? input.modelSpace.screenPackBuilder.screen.play
                 : null
 
             if (!playMode) {
@@ -41,9 +41,9 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
             }
 
             const flowPuzzle: Puzzle | null =
-              input.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
-              input.modelCore.screenPackBuilder.screen.puzzleResult.t === 'got'
-                ? input.modelCore.screenPackBuilder.screen.puzzleResult.c
+              input.modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle' &&
+              input.modelSpace.screenPackBuilder.screen.puzzleResult.t === 'got'
+                ? input.modelSpace.screenPackBuilder.screen.puzzleResult.c
                 : null
 
             if (!flowPuzzle) {
@@ -56,7 +56,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
                 solutions: input.ctx.solutions,
               }),
               model: playMode,
-              msg: input.msgCore.c,
+              msg: input.msgSpace.c,
             })
 
             return {
@@ -93,16 +93,16 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
   },
 
   View(input) {
-    if (!input.modelCore.screenPackBuilder) {
+    if (!input.modelSpace.screenPackBuilder) {
       return null
     }
 
-    if (input.modelCore.screenPackBuilder.screen.t !== 'screen-puzzle') {
+    if (input.modelSpace.screenPackBuilder.screen.t !== 'screen-puzzle') {
       return null
     }
 
-    const pack = input.modelCore.screenPackBuilder.pack
-    const screen = input.modelCore.screenPackBuilder.screen
+    const pack = input.modelSpace.screenPackBuilder.pack
+    const screen = input.modelSpace.screenPackBuilder.screen
 
     const previousPuzzleId = pack.puzzleIds[screen.puzzleIndex - 1]
     const previousPuzzle = previousPuzzleId ? input.ctx.puzzles[previousPuzzleId] : null
@@ -122,7 +122,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
           }
           onBack={() =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: { t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle', userId: input.ctx.currentUserId },
             })
           }
@@ -134,7 +134,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
             screen.puzzleResult.t === 'got' && screen.play ? (
               <PlayMode.View
                 dispatch={(c) =>
-                  input.dispatch({ t: 'got-msg-core', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
+                  input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
                 }
                 flow={screen.puzzleResult.c.flow}
                 model={screen.play}
@@ -153,7 +153,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
             disabled={!canGoPrevious}
             onClick={() => {
               input.dispatch({
-                t: 'got-msg-core',
+                t: 'got-msg-space',
                 c: {
                   t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
                   userId: input.ctx.currentUserId,
@@ -169,7 +169,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
             disabled={!canGoNext}
             onClick={() => {
               input.dispatch({
-                t: 'got-msg-core',
+                t: 'got-msg-space',
                 c: {
                   t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
                   userId: input.ctx.currentUserId,
@@ -188,7 +188,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
 
 const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
-    switch (input.msgCore?.t) {
+    switch (input.msgSpace?.t) {
       case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer':
       case 'screen-pack-builder.puzzle-screen.user-clicked-more-button': {
         return {
@@ -202,13 +202,13 @@ const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
   },
 
   View(input) {
-    const { dispatch, ctx, modelCore } = input
+    const { dispatch, ctx, modelSpace } = input
 
-    if (!modelCore.screenPackBuilder) {
+    if (!modelSpace.screenPackBuilder) {
       return null
     }
 
-    const screen = modelCore.screenPackBuilder.screen
+    const screen = modelSpace.screenPackBuilder.screen
 
     if (screen.t !== 'screen-puzzle') {
       return null
@@ -221,7 +221,7 @@ const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
           label={ctx.t('app.more')}
           onClick={() =>
             dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
                 userId: ctx.currentUserId,
@@ -234,7 +234,7 @@ const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
           open={screen.opened === 'more'}
           onClose={() =>
             dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
                 userId: ctx.currentUserId,
@@ -249,7 +249,7 @@ const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
             color='danger'
             onClick={() =>
               dispatch({
-                t: 'got-msg-core',
+                t: 'got-msg-space',
                 c: {
                   t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
                   userId: ctx.currentUserId,

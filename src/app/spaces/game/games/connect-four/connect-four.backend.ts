@@ -3,7 +3,7 @@ import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
-import type { ModelCore, ModelBackend, MsgCore, MsgBackend, MsgToFrontend, MsgToBackend } from './connect-four.types'
+import type { ModelSpace, ModelBackend, MsgSpace, MsgBackend, MsgToFrontend, MsgToBackend } from './connect-four.types'
 
 //
 //
@@ -18,8 +18,8 @@ type BackendModule = GameBackendModule<{
   Msg: MsgBackend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
   Ctx: SpaceBackendCtx
   MsgEvtIn: SpaceBackendEvt
   MsgCmdOut: SpaceBackendCmd<MsgToFrontend>

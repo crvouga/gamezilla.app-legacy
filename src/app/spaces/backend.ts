@@ -3,7 +3,7 @@ import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { type Input, type Output, SpaceBackendModule } from './@/architecture/space-backend'
 import { Space } from './@/space/space'
-import { SpacesCoreBackend } from './core/backend'
+import { SpaceBackend } from './space/backend'
 import { GameBackend } from './game/backend'
 import { JoinSpaceBackend } from './join-space/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
@@ -23,15 +23,15 @@ const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   return {
     ...input.ctx,
 
-    spacesCoreBackend: await SpacesCoreBackend({
+    spaceBackend: await SpaceBackend({
       t: 'db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
       logger: input.ctx.logger,
       runtime: input.ctx.runtime,
     }),
-    // spacesCoreBackend: await SpacesCoreBackend({
+    // spaceBackend: await SpaceBackend({
     //   t: 'stream',
-    //   stream: await Stream({ t: 'in-memory', parser: WithEventMeta(MsgCore) }),
+    //   stream: await Stream({ t: 'in-memory', parser: WithEventMeta(MsgSpace) }),
     //   dbConnKv: ctx.dbConnKv,
     //   logger: ctx.logger
     // }),
@@ -58,16 +58,16 @@ const update: BackendModule['update'] = async (input) => {
 const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> => {
   const acc = initialAcc ?? (await updateChild(input))
 
-  const [coreEvt, ...coreEvtRest] = acc.msgCore ?? []
+  const [spaceEvt, ...spaceEvtRest] = acc.msgSpace ?? []
 
-  if (coreEvt) {
+  if (spaceEvt) {
     const updated = await updateChild({
       ctx: input.ctx,
-      msgCore: coreEvt,
+      msgSpace: spaceEvt,
     })
 
     return updateLoop(input, {
-      msgCore: Msg.batch(coreEvtRest, updated.msgCore),
+      msgSpace: Msg.batch(spaceEvtRest, updated.msgSpace),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: updated.msgEvt,
     })
@@ -82,7 +82,7 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
     })
 
     return updateLoop(input, {
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
       msgCmd: Msg.batch(cmdRest, updated.msgCmd),
       msgEvt: updated.msgEvt,
     })
@@ -104,11 +104,11 @@ const updateChild: SpaceBackendModule['update'] = async (input) => {
 }
 
 const updateSpacesFromSpaceEvent: SpaceBackendModule['update'] = async (input) => {
-  if (!input.msgCore) {
+  if (!input.msgSpace) {
     return {}
   }
 
-  await input.ctx.spacesCoreBackend.update(input.msgCore)
+  await input.ctx.spaceBackend.update(input.msgSpace)
 
   return {}
 }

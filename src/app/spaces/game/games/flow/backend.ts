@@ -81,16 +81,16 @@ const updatePackPuzzlesGrid: BackendModule['update'] = async (input) => {
 const updateBuilder: BackendModule['update'] = async (input) => {
   const updated = await BuilderBackend.update({
     ...input,
-    modelCore: input.modelCore.builder,
+    modelSpace: input.modelSpace.builder,
     msgFrontend: input.msgFrontend?.t === 'builder' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
-    msgCore: input.msgCore?.t === 'builder' ? { ...input.msgCore, ...input.msgCore.c } : null,
+    msgSpace: input.msgSpace?.t === 'builder' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msg: input.msg?.t === 'builder' ? input.msg.c : null,
     deps: null,
   })
 
   return {
     msgCmd: SpaceBackendCmd.tag('builder', updated.msgCmd),
-    msgCore: updated.msgCore?.map((c) => ({ ...c, t: 'builder', c })),
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, t: 'builder', c })),
     msgEvt: updated.msgEvt,
   }
 }
@@ -98,18 +98,18 @@ const updateBuilder: BackendModule['update'] = async (input) => {
 const updatePlay: BackendModule['update'] = async (input) => {
   const updated = await PlayBackend.update({
     ctx: input.ctx,
-    modelCore: input.modelCore.play,
+    modelSpace: input.modelSpace.play,
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
     msgFrontend: input.msgFrontend?.t === 'play' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
-    msgCore: input.msgCore?.t === 'play' ? { ...input.msgCore, ...input.msgCore.c } : null,
+    msgSpace: input.msgSpace?.t === 'play' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msg: input.msg?.t === 'play' ? input.msg.c : null,
     deps: null,
   })
 
   return {
     msgCmd: SpaceBackendCmd.tag('play', updated.msgCmd),
-    msgCore: updated.msgCore?.map((c) => ({ ...c, t: 'play', c })),
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, t: 'play', c })),
     msgEvt: updated.msgEvt,
   }
 }

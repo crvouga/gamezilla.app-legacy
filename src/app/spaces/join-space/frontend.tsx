@@ -2,8 +2,8 @@ import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { Button } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesCoreFrontend } from '../core/frontend'
-import { SpaceEvent } from '../core/space-event'
+import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceEvent } from '../space/space-event'
 import { LayoutGameCoverArtHeader } from '../game/games/@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../game/games/@/ui/users-in-space-list'
 import { GameCoverArt } from '../game/games/cover-art'
@@ -11,7 +11,7 @@ import { GameCoverArt } from '../game/games/cover-art'
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
     { model: input.model },
-    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateFromJoinSpaceButton({ ...input, model }),
   )
 }
@@ -33,7 +33,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCore: [spaceEventNew],
+        msgSpace: [spaceEventNew],
       }
     }
     default: {
@@ -44,10 +44,10 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
   }
 }
 
-const updateFromMsgCore: SpaceFrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
     case 'user-joined-space': {
-      const error = SpacesCoreFrontend.toErrorByEvenId(input.model, input.msgCore.eventId)
+      const error = SpacesSpaceFrontend.toErrorByEvenId(input.model, input.msgSpace.eventId)
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
@@ -64,16 +64,16 @@ const updateFromMsgCore: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
-      if (input.msgCore.spaceId !== currentUserSpaceId) {
+      if (input.msgSpace.spaceId !== currentUserSpaceId) {
         return {
           model: input.model,
         }
       }
 
-      if (input.msgCore.userId !== input.ctx.currentUserId) {
-        const username = input.ctx.profiles[input.msgCore.userId]?.username ?? null
+      if (input.msgSpace.userId !== input.ctx.currentUserId) {
+        const username = input.ctx.profiles[input.msgSpace.userId]?.username ?? null
         return {
           model: input.model,
           msgCmd: [
@@ -112,7 +112,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     return null
   }
 
-  const spaceState = SpacesCoreFrontend.toSpaceStarted(input.model, space?.spaceId)
+  const spaceState = SpacesSpaceFrontend.toSpaceStarted(input.model, space?.spaceId)
 
   if (!spaceState) {
     return null

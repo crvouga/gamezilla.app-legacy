@@ -4,7 +4,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Variant, VariantDimensions } from '../../../@/variant'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import type { BackendModule } from '../../types'
-import type { MsgCore } from './types'
+import type { MsgSpace } from './types'
 
 const update: BackendModule['update'] = async (input) => {
   return GameBackendModule.andThen({}, () => updateFromFrontend(input))
@@ -43,14 +43,14 @@ const updateFromFrontend: BackendModule['update'] = async (input) => {
 
       const created = await input.ctx.puzzleDb.put(puzzleNew)
 
-      const msgCore: MsgCore = {
+      const msgSpace: MsgSpace = {
         t: 'create-new-puzzle.user-created-puzzle',
         created: Result.mapOk(created, () => puzzleNew),
         userId: input.msgFrontend.userId,
       }
 
       return {
-        msgCore: [withEventId(msgCore)],
+        msgSpace: [withEventId(msgSpace)],
       }
     }
 

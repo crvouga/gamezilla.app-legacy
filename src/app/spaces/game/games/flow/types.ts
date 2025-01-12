@@ -65,7 +65,7 @@ export type ModelBackend = p.Infer<typeof ModelBackend>
 
 export type MsgFrontend =
   | GameMainMenu.Msg
-  | { t: 'got-msg-core'; c: MsgCore }
+  | { t: 'got-msg-space'; c: MsgSpace }
   | { t: 'builder'; c: BuilderTypes.MsgFrontend }
   | { t: 'play'; c: PlayTypes.MsgFrontend }
   | { t: 'pack-list'; c: PackListTypes.MsgFrontend }
@@ -105,7 +105,7 @@ export type Mode = p.Infer<typeof Mode>
 //
 //
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-changed-mode'),
     mode: p.or(Mode, p.l('none')),
@@ -113,22 +113,22 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('play'),
-    c: PlayTypes.MsgCore,
+    c: PlayTypes.MsgSpace,
   }),
   p.obj({
     t: p.l('builder'),
-    c: BuilderTypes.MsgCore,
+    c: BuilderTypes.MsgSpace,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   mode: p.or(Mode, p.l('none')),
-  play: PlayTypes.ModelCore,
-  builder: BuilderTypes.ModelCore,
+  play: PlayTypes.ModelSpace,
+  builder: BuilderTypes.ModelSpace,
   solutions: Solutions,
 })
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
 //
 //
@@ -143,8 +143,8 @@ export type FrontendModule = GameFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  MsgCore: MsgCore
-  ModelCore: ModelCore
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
   Ctx: SpaceFrontendCtx
   MsgCmdOut: FlowFrontendCmd<{
     MsgToBackend: MsgToBackend
@@ -160,8 +160,8 @@ export type BackendModule = GameBackendModule<{
   Msg: MsgBackend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  MsgCore: MsgCore
-  ModelCore: ModelCore
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
   Ctx: FlowBackendCtx
   MsgEvtIn: SpaceBackendEvt
   MsgCmdOut: SpaceBackendCmd<MsgToFrontend>

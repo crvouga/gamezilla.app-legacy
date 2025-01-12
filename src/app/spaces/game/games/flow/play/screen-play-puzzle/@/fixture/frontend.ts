@@ -12,7 +12,7 @@ const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
     flow: puzzle.flow,
   }).map(
     (c): FixtureUpdateInput => ({
-      msgCore: withEventMeta({
+      msgSpace: withEventMeta({
         t: 'got-flow-play-msg',
         userId,
         c,
@@ -40,7 +40,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
   const init = f.update(f.initial, [
     {
       msg: {
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'user-clicked-open-pack-list-item',
           pack,
@@ -49,7 +49,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
     },
     {
       msg: {
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'user-clicked-open-puzzle-grid-item',
           flowPuzzle: { t: 'got', c: puzzle },
@@ -67,7 +67,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
   const completePuzzleMsgs = toCompletePuzzleMsgs(puzzle)
   const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
     {
-      msgCore: withEventMeta({
+      msgSpace: withEventMeta({
         t: 'user-clicked-next-puzzle',
         nextPuzzleIndex: lastPuzzleIndex,
         nextPuzzle: {

@@ -14,7 +14,7 @@ const update: FrontendModule['update'] = (input) => {
         model,
       }),
     (model) =>
-      updateFromMsgCore({
+      updateFromMsgSpace({
         ...input,
         model,
       }),
@@ -76,15 +76,15 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
   }
 }
 
-const updateFromMsgCore: FrontendModule['update'] = (input) => {
-  const { msgCore, model } = input
+const updateFromMsgSpace: FrontendModule['update'] = (input) => {
+  const { msgSpace, model } = input
 
-  switch (msgCore?.t) {
+  switch (msgSpace?.t) {
     case 'user-deleted-puzzle': {
       return {
         model: {
           ...model,
-          puzzleDeleteForeverRequest: msgCore.deleted,
+          puzzleDeleteForeverRequest: msgSpace.deleted,
           puzzleBuilderOpened: null,
         },
         msgCmd: [
@@ -95,7 +95,7 @@ const updateFromMsgCore: FrontendModule['update'] = (input) => {
           {
             t: 'flow-cmd.remove-puzzles',
             puzzles: {
-              [msgCore.flowPuzzleId]: msgCore.flowPuzzleId,
+              [msgSpace.flowPuzzleId]: msgSpace.flowPuzzleId,
             },
             causedBy: input,
           },

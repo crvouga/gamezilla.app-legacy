@@ -44,7 +44,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-copy-to-clipboard',
         }),
       },
@@ -56,7 +56,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-copy-to-clipboard',
         }),
       },
@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-copy-to-clipboard',
         }),
       },
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-copy-to-clipboard',
         }),
       },

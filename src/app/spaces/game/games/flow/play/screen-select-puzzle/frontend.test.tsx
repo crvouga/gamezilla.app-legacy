@@ -15,7 +15,7 @@ const Fixture = async () => {
   const initial = f.update(f.initial, [
     {
       msg: {
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'user-clicked-open-pack-list-item',
           pack,
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
     const exitButton = r.getByRole('button', f.ctx.t('app.exit'))
     exitButton?.click()
     const msg = await r.msgs.once()
-    expect(msg).toEqual({ t: 'got-msg-core', c: { t: 'user-clicked-exit-pack-button' } })
+    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-exit-pack-button' } })
   })
 
   it('should exit to pack list on exit button pack click', async () => {
@@ -58,21 +58,21 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'user-clicked-exit-pack-button',
           },
         },
       },
     ])
-    expect(output.modelCore.screen.t).toBe('screen-select-pack')
+    expect(output.modelSpace.screen.t).toBe('screen-select-pack')
   })
 
   it('should play nav back sound on exit', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgCore: {
+        msgSpace: {
           t: 'user-clicked-exit-pack-button',
           eventId: EventId.generate(),
           happenedAt: LamportTimestamp.fromNumber(1),
@@ -87,7 +87,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'user-clicked-open-puzzle-grid-item',
             flowPuzzle: { t: 'got', c: f.puzzle },
@@ -96,12 +96,12 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(output.modelCore.screen.t).toBe('screen-play-puzzle')
-    expect(output.modelCore.screen.t === 'screen-play-puzzle' && output.modelCore.screen.puzzleResult.t === 'got').toBe(
-      true,
-    )
-    if (output.modelCore.screen.t === 'screen-play-puzzle' && output.modelCore.screen.puzzleResult.t === 'got') {
-      expect(output.modelCore.screen.puzzleResult.c).toEqual(f.puzzle)
+    expect(output.modelSpace.screen.t).toBe('screen-play-puzzle')
+    expect(
+      output.modelSpace.screen.t === 'screen-play-puzzle' && output.modelSpace.screen.puzzleResult.t === 'got',
+    ).toBe(true)
+    if (output.modelSpace.screen.t === 'screen-play-puzzle' && output.modelSpace.screen.puzzleResult.t === 'got') {
+      expect(output.modelSpace.screen.puzzleResult.c).toEqual(f.puzzle)
     }
   })
 
@@ -109,7 +109,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgCore: {
+        msgSpace: {
           t: 'user-clicked-open-puzzle-grid-item',
           flowPuzzle: { t: 'got', c: f.puzzle },
           eventId: EventId.generate(),
@@ -125,7 +125,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-open-pack-list-item',
           pack: f.pack,
         }),

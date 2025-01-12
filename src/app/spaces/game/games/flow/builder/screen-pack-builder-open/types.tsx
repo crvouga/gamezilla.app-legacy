@@ -11,15 +11,15 @@ export const initFrontend: ModelFrontend = {
 
 export type MsgFrontend = CreateNewPackTypes.MsgFrontend
 
-export const MsgCore = p.or(
-  CreateNewPackTypes.MsgCore,
+export const MsgSpace = p.or(
+  CreateNewPackTypes.MsgSpace,
   p.obj({
     t: p.l('screen-pack-builder-open.user-clicked-pack-item'),
     pack: Pack,
     userId: UserId,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
 export type MsgBackend = CreateNewPackTypes.MsgBackend
 
@@ -27,5 +27,5 @@ export type MsgToBackend = CreateNewPackTypes.MsgToBackend
 
 export type MsgToFrontend = CreateNewPackTypes.MsgToFrontend
 
-export const ModelCore = p.and(p.obj({}), CreateNewPackTypes.ModelCore)
-export type ModelCore = p.Infer<typeof ModelCore>
+export const ModelSpace = p.and(p.obj({}), CreateNewPackTypes.ModelSpace)
+export type ModelSpace = p.Infer<typeof ModelSpace>

@@ -20,20 +20,20 @@ export type GameBackendTypes = {
   MsgToFrontend: any
   MsgToBackend: any
   //
-  ModelCore: any
-  MsgCore: any
+  ModelSpace: any
+  MsgSpace: any
   //
 }
 
 type Output<T extends GameBackendTypes> = {
   model: T['ModelBackend']
-  msgCore?: WithEventId<T['MsgCore']>[]
+  msgSpace?: WithEventId<T['MsgSpace']>[]
   eff?: Eff<T['MsgBackend']>
   msgCmd?: SpaceBackendCmd<T['MsgToFrontend']>[]
 }
 
 export type GameBackend<T extends GameBackendTypes> = {
-  init: (input: { ctx: SpaceBackendCtx; state: T['ModelCore']; model?: T['ModelBackend'] | null }) => Promise<{
+  init: (input: { ctx: SpaceBackendCtx; state: T['ModelSpace']; model?: T['ModelBackend'] | null }) => Promise<{
     model: T['ModelBackend']
     eff?: Eff<T['MsgBackend']>
     msgCmd?: SpaceBackendCmd<T['MsgToFrontend']>[]
@@ -41,12 +41,12 @@ export type GameBackend<T extends GameBackendTypes> = {
 
   update: (input: {
     ctx: SpaceBackendCtx
-    state: T['ModelCore']
+    state: T['ModelSpace']
     model?: T['ModelBackend'] | null
     //
     msg?: T['MsgBackend'] | null
     frontendMsg?: T['MsgToBackend'] | null
-    msgCore?: WithEventMeta<T['MsgCore']> | null
+    msgSpace?: WithEventMeta<T['MsgSpace']> | null
     msgEvt?: SpaceBackendEvt | null
   }) => Promise<Output<T>>
 
@@ -54,7 +54,7 @@ export type GameBackend<T extends GameBackendTypes> = {
     model?: T['ModelBackend'] | null
     intervalId: string
     ctx: SpaceBackendCtx
-    state: T['ModelCore']
+    state: T['ModelSpace']
   }) => Promise<Sub<T['MsgBackend']>>
 }
 
@@ -69,8 +69,8 @@ const tag = <T extends string, Types extends GameBackendTypes>(
   MsgBackend: { t: T; c: Types['MsgBackend'] }
   MsgToFrontend: { t: T; c: Types['MsgToFrontend'] }
   MsgToBackend: { t: T; c: Types['MsgToBackend'] }
-  ModelCore: { t: T; c: Types['ModelCore'] }
-  MsgCore: { t: T; c: Types['MsgCore'] & EventMeta }
+  ModelSpace: { t: T; c: Types['ModelSpace'] }
+  MsgSpace: { t: T; c: Types['MsgSpace'] & EventMeta }
 }> => {
   return {
     init: async (input) => {
@@ -93,7 +93,7 @@ const tag = <T extends string, Types extends GameBackendTypes>(
         msgEvt: input.msgEvt,
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
-        msgCore: input.msgCore?.t === tag ? input.msgCore?.c : undefined,
+        msgSpace: input.msgSpace?.t === tag ? input.msgSpace?.c : undefined,
         frontendMsg: input.frontendMsg?.t === tag ? input.frontendMsg?.c : undefined,
         ctx: input.ctx,
         state: input.state.c,
@@ -105,18 +105,18 @@ const tag = <T extends string, Types extends GameBackendTypes>(
         },
         eff: Eff.tag(tag, updated.eff),
         msgCmd: SpaceBackendCmd.tag(tag, updated.msgCmd),
-        msgCore: updated.msgCore
-          ? updated.msgCore.map(
+        msgSpace: updated.msgSpace
+          ? updated.msgSpace.map(
               (
-                msgCore,
+                msgSpace,
               ): EventMeta & {
                 t: T
-                c: Types['MsgCore']
+                c: Types['MsgSpace']
               } => ({
-                eventId: msgCore.msgEvtId,
-                happenedAt: msgCore.happenedAt,
+                eventId: msgSpace.msgEvtId,
+                happenedAt: msgSpace.happenedAt,
                 t: tag,
-                c: msgCore,
+                c: msgSpace,
               }),
             )
           : undefined,
@@ -157,7 +157,7 @@ const chain = async <T extends GameBackendTypes>(
   ...updaters: ((input: T['ModelBackend']) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
   const msgCmd: SpaceBackendCmd<T['MsgToFrontend']>[] = (await initial).msgCmd ?? []
-  const msgCores: (T['MsgCore'] & EventMeta)[] = (await initial)?.msgCore ?? []
+  const msgSpaces: (T['MsgSpace'] & EventMeta)[] = (await initial)?.msgSpace ?? []
   const eff: Eff<T['MsgBackend']>[] = (await initial).eff ? [(await initial).eff!] : []
 
   let model = (await initial).model
@@ -172,11 +172,11 @@ const chain = async <T extends GameBackendTypes>(
     if (updated.eff) {
       eff.push(updated.eff)
     }
-    if (updated.msgCore) {
+    if (updated.msgSpace) {
       let j = 0
-      const len = updated.msgCore.length
+      const len = updated.msgSpace.length
       for (j = 0; j < len; ++j) {
-        msgCores.push(updated.msgCore[j]!)
+        msgSpaces.push(updated.msgSpace[j]!)
       }
     }
     if (updated.msgCmd) {
@@ -191,7 +191,7 @@ const chain = async <T extends GameBackendTypes>(
   return {
     model,
     eff: Eff.batch(eff),
-    msgCore: msgCores,
+    msgSpace: msgSpaces,
     msgCmd,
   }
 }

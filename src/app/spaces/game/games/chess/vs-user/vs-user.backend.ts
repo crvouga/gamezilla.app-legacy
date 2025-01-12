@@ -2,8 +2,8 @@ import { TimeSpan } from '~/@/time/time-span'
 import { Time } from '~/@/time/time'
 import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
-import * as Board from '../@/chess/chess-core'
-import { initCore, type ModelBackend, type MsgBackend, type MsgToFrontend, type MsgToBackend } from './vs-user.types'
+import * as Board from '../@/chess/chess-space'
+import { initSpace, type ModelBackend, type MsgBackend, type MsgToFrontend, type MsgToBackend } from './vs-user.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
@@ -15,7 +15,7 @@ import { Sub } from '~/@/sub'
 //
 //
 
-export const init = initCore
+export const init = initSpace
 
 //
 //

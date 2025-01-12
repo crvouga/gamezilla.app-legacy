@@ -1,31 +1,31 @@
 import { withEventId } from '~/@/event-sourced/event'
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { FlowBackendCtx } from '../../../../@/backend/ctx'
-import { EditPackNameCore } from '../core'
-import type { ModelCore, MsgCore } from '../types'
+import { EditPackNameSpace } from '../space'
+import type { ModelSpace, MsgSpace } from '../types'
 
 type BackendModule = GameBackendModule<{
-  MsgCore: MsgCore
-  ModelCore: ModelCore
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
   Ctx: FlowBackendCtx
 }>
 
 const update: BackendModule['update'] = async (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'edit-pack-name.user-clicked-save-button': {
-      const modelCoreNext = EditPackNameCore.update({
+      const modelSpaceNext = EditPackNameSpace.update({
         ...input,
-        msgCore: input.msgCore,
+        msgSpace: input.msgSpace,
       })
 
-      const put = await input.ctx.packDb.put(modelCoreNext.pack)
+      const put = await input.ctx.packDb.put(modelSpaceNext.pack)
 
       return {
-        msgCore: [
+        msgSpace: [
           withEventId({
             t: 'edit-pack-name.backend-persisted-pack',
             result: put,
-            userId: input.msgCore.userId,
+            userId: input.msgSpace.userId,
           }),
         ],
       }

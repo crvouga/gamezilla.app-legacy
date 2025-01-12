@@ -130,30 +130,30 @@ export const mapCurrent = (round: Round, updater: (current: Round) => Round): Ro
   }
 }
 
-export type Score = { X: number; O: number; Tie: number }
+export type Sspace = { X: number; O: number; Tie: number }
 
-export const toScore = (round: Round): Score => {
+export const toSspace = (round: Round): Sspace => {
   switch (round.type) {
     case 'RoundOver': {
-      const nextScore = toScore(round.next)
+      const nextSspace = toSspace(round.next)
 
       switch (round.roundOver.type) {
         case 'Tie': {
           return {
-            ...nextScore,
-            Tie: nextScore.Tie + 1,
+            ...nextSspace,
+            Tie: nextSspace.Tie + 1,
           }
         }
 
         case 'Win': {
           return {
-            ...nextScore,
-            [round.roundOver.winner]: nextScore[round.roundOver.winner] + 1,
+            ...nextSspace,
+            [round.roundOver.winner]: nextSspace[round.roundOver.winner] + 1,
           }
         }
 
         default: {
-          return nextScore
+          return nextSspace
         }
       }
     }
@@ -192,24 +192,24 @@ export const toGameOver = ({
   maxRoundCount: number
   round: Round
 }): GameOver | { type: 'none' } => {
-  const score = toScore(round)
+  const sspace = toSspace(round)
   const winCount = Math.floor((maxRoundCount + 1) / 2)
 
-  if (score.X >= winCount) {
+  if (sspace.X >= winCount) {
     return {
       type: 'Winner',
       winner: 'X',
     }
   }
 
-  if (score.O >= winCount) {
+  if (sspace.O >= winCount) {
     return {
       type: 'Winner',
       winner: 'O',
     }
   }
 
-  if (score.Tie >= maxRoundCount) {
+  if (sspace.Tie >= maxRoundCount) {
     return { type: 'Tie' }
   }
 

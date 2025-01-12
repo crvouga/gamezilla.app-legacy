@@ -5,11 +5,11 @@ import type { FrontendModule } from '../types'
 import { playSound, APP_SOUND } from '~/app/@/frontend/cmd'
 
 const update: FrontendModule['update'] = (input) => {
-  return GameFrontendModule.andThen({ model: input.model }, (model) => updateFromMsgCore({ ...input, model }))
+  return GameFrontendModule.andThen({ model: input.model }, (model) => updateFromMsgSpace({ ...input, model }))
 }
 
-const updateFromMsgCore: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+const updateFromMsgSpace: FrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
     case 'flow.builder.screen-main-menu.user-clicked-option': {
       return {
         model: input.model,
@@ -39,7 +39,7 @@ const View: FrontendModule['View'] = (input) => {
       dispatch={(c) => input.dispatch(c)}
       onBack={() =>
         input.dispatch({
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'screen-main-menu.user-clicked-back-button',
             userId: input.ctx.currentUserId,
@@ -61,7 +61,7 @@ const View: FrontendModule['View'] = (input) => {
           description: input.ctx.t('flow.open-puzzle-builder-description'),
           onClick: () =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'flow.builder.screen-main-menu.user-clicked-option',
                 option: 'puzzle-builder',
@@ -75,7 +75,7 @@ const View: FrontendModule['View'] = (input) => {
           description: input.ctx.t('flow.open-pack-builder-description'),
           onClick: () =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'flow.builder.screen-main-menu.user-clicked-option',
                 option: 'pack-builder',

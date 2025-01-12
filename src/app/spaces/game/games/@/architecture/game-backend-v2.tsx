@@ -23,8 +23,8 @@ export type GameBackendModuleTypes = {
   MsgEvtIn?: any
   MsgCmdOut?: any
   MsgEvtOut?: any
-  MsgCore?: any
-  ModelCore?: any
+  MsgSpace?: any
+  ModelSpace?: any
 }
 
 //
@@ -36,8 +36,8 @@ export type GameBackendModuleTypes = {
 export type Input<T extends GameBackendModuleTypes> = {
   deps: T['Deps']
   ctx: T['Ctx']
-  modelCore: T['ModelCore']
-  msgCore?: WithEventId<T['MsgCore']> | null
+  modelSpace: T['ModelSpace']
+  msgSpace?: WithEventId<T['MsgSpace']> | null
   msg?: T['Msg'] | null
   msgFrontend?:
     | (T['MsgToBackend'] & {
@@ -59,14 +59,14 @@ export type Input<T extends GameBackendModuleTypes> = {
 export type Output<T extends GameBackendModuleTypes> = {
   msgCmd?: T['MsgCmdOut'][]
   msgEvt?: T['MsgEvtOut'][]
-  msgCore?: T['MsgCore'][]
+  msgSpace?: T['MsgSpace'][]
 }
 
 export type GameBackendModule<T extends GameBackendModuleTypes> = {
   initDeps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
   init: T['Model']
   update: (input: Input<T>) => Promise<Output<T>>
-  subscriptions: (input: { ctx: T['Ctx']; modelCore: T['ModelCore'] }) => Promise<Sub<T['Msg']>>
+  subscriptions: (input: { ctx: T['Ctx']; modelSpace: T['ModelSpace'] }) => Promise<Sub<T['Msg']>>
 }
 
 //
@@ -87,7 +87,7 @@ const andThen = async <T extends GameBackendModuleTypes>(
     acc = {
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
     }
   }
   return acc
@@ -104,12 +104,12 @@ const tagOutput = <
 ): {
   msgCmd?: TTaggedCmd[]
   msgEvt?: T['MsgEvtOut'][]
-  msgCore?: WithEventId<{ t: TTag; c: T['MsgCore'] }>[]
+  msgSpace?: WithEventId<{ t: TTag; c: T['MsgSpace'] }>[]
 } => {
   return {
     msgCmd: output.msgCmd ? (tagCmd(output.msgCmd) ?? []) : [],
     msgEvt: output.msgEvt,
-    msgCore: output.msgCore?.map((c) => ({
+    msgSpace: output.msgSpace?.map((c) => ({
       eventId: c.eventId,
       c: c,
       t: tag,
@@ -119,17 +119,17 @@ const tagOutput = <
 
 type FixtureUpdateConfig<T extends GameBackendModuleTypes> = {
   update: (input: Input<T>) => Promise<Output<T>>
-  updateCore: (input: { ctx: T['Ctx']; modelCore: T['ModelCore']; msgCore: T['MsgCore'] }) => T['ModelCore']
-  modelCore: T['ModelCore']
+  updateSpace: (input: { ctx: T['Ctx']; modelSpace: T['ModelSpace']; msgSpace: T['MsgSpace'] }) => T['ModelSpace']
+  modelSpace: T['ModelSpace']
   ctx: T['Ctx']
 }
 
 const fixtureUpdates =
   <T extends GameBackendModuleTypes>(config: FixtureUpdateConfig<T>) =>
   async (
-    outputs: NonEmpty<Output<T> & { modelCore: T['ModelCore'] }>,
+    outputs: NonEmpty<Output<T> & { modelSpace: T['ModelSpace'] }>,
     inputs: Partial<Input<T>>[],
-  ): Promise<NonEmpty<Output<T> & { modelCore: T['ModelCore'] }>> => {
+  ): Promise<NonEmpty<Output<T> & { modelSpace: T['ModelSpace'] }>> => {
     const [input, ...rest] = inputs
     if (!input) {
       return outputs
@@ -138,26 +138,26 @@ const fixtureUpdates =
     const nextOutput = await config.update({
       ctx: config.ctx,
       deps: null,
-      modelCore: lastOutput.modelCore,
+      modelSpace: lastOutput.modelSpace,
       ...input,
     })
-    const msgCore = Msg.batch(input.msgCore, nextOutput.msgCore)
-    const nextModelCore = msgCore.reduce(
-      (modelCore, msgCore) => config.updateCore({ ctx: config.ctx, modelCore, msgCore }),
-      lastOutput.modelCore,
+    const msgSpace = Msg.batch(input.msgSpace, nextOutput.msgSpace)
+    const nextModelSpace = msgSpace.reduce(
+      (modelSpace, msgSpace) => config.updateSpace({ ctx: config.ctx, modelSpace, msgSpace }),
+      lastOutput.modelSpace,
     )
     const output = {
       ...nextOutput,
-      modelCore: nextModelCore,
+      modelSpace: nextModelSpace,
     }
     return fixtureUpdates(config)([...outputs, output], rest)
   }
 
 const fixtureUpdate =
   <T extends GameBackendModuleTypes>(config: FixtureUpdateConfig<T>) =>
-  async (output: Output<T>, inputs: Partial<Input<T>>[]): Promise<Output<T> & { modelCore: T['ModelCore'] }> => {
+  async (output: Output<T>, inputs: Partial<Input<T>>[]): Promise<Output<T> & { modelSpace: T['ModelSpace'] }> => {
     const updates = fixtureUpdates(config)
-    const outputs = await updates([{ ...output, modelCore: config.modelCore }], inputs)
+    const outputs = await updates([{ ...output, modelSpace: config.modelSpace }], inputs)
     return NonEmpty.last(outputs)
   }
 

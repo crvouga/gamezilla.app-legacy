@@ -12,9 +12,9 @@ const update: SpaceBackendModule['update'] = (input) => {
 }
 
 const updateFromSpaceEvent: SpaceBackendModule['update'] = async (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'user-joined-space': {
-      const space = Result.unwrapOr(await input.ctx.spacesCoreBackend.get(input.msgCore.spaceId), null)
+      const space = Result.unwrapOr(await input.ctx.spaceBackend.get(input.msgSpace.spaceId), null)
 
       if (!space) {
         return {}
@@ -24,10 +24,10 @@ const updateFromSpaceEvent: SpaceBackendModule['update'] = async (input) => {
 
       return {
         msgCmd: [
-          sendToUser([input.msgCore.userId], {
+          sendToUser([input.msgSpace.userId], {
             t: 'synced',
             space: started,
-            causedBy: { msgCore: input.msgCore },
+            causedBy: { msgSpace: input.msgSpace },
           }),
         ],
       }

@@ -9,12 +9,12 @@ import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { Chess } from '../@/chess'
 import {
-  type CoreModel,
+  type SpaceModel,
   type ModelFrontend,
   type ModelBackend,
   type MsgFrontend,
   type MsgToFrontend,
-  initCore,
+  initSpace,
 } from './vs-user.types'
 
 //
@@ -36,7 +36,7 @@ export const init = ({
 } => {
   return {
     model: {
-      coreModel: initCore({
+      spaceModel: initSpace({
         userId: userId ?? 'none',
       }),
       openedMenuId: Option.None,
@@ -143,7 +143,7 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          coreModel: msg[1].value,
+          spaceModel: msg[1].value,
         },
         Eff.None,
       ]
@@ -154,16 +154,16 @@ export const updateFromBackend = (
         return [model, Eff.None]
       }
 
-      const coreModelNew = msg[1].value
+      const spaceModelNew = msg[1].value
 
-      if (coreModelNew.type !== 'game') {
+      if (spaceModelNew.type !== 'game') {
         return [model, Eff.None]
       }
 
       return [
         {
           ...model,
-          coreModel: coreModelNew,
+          spaceModel: spaceModelNew,
         },
         Eff.None,
       ]
@@ -174,12 +174,12 @@ export const updateFromBackend = (
         return [model, Eff.None]
       }
 
-      const coreModel = msg[1].value
+      const spaceModel = msg[1].value
 
       return [
         {
           ...model,
-          coreModel,
+          spaceModel,
         },
         Eff.None,
       ]
@@ -190,12 +190,12 @@ export const updateFromBackend = (
         return [model, Eff.None]
       }
 
-      const coreModel = msg[1].value
+      const spaceModel = msg[1].value
 
       return [
         {
           ...model,
-          coreModel,
+          spaceModel,
         },
         Eff.None,
       ]
@@ -234,26 +234,26 @@ export const updateFromBackend = (
         return [model, Eff.None]
       }
 
-      const coreModel = msg[1].value
+      const spaceModel = msg[1].value
 
-      if (coreModel.type === 'game-over') {
+      if (spaceModel.type === 'game-over') {
         return [
           {
             ...model,
-            coreModel,
+            spaceModel,
           },
           Eff.None,
         ]
       }
 
       const isNotPlaying =
-        coreModel.type === 'game' && coreModel.w !== ctx.currentUserId && coreModel.b !== ctx.currentUserId
+        spaceModel.type === 'game' && spaceModel.w !== ctx.currentUserId && spaceModel.b !== ctx.currentUserId
 
       if (isNotPlaying) {
         return [
           {
             ...model,
-            coreModel,
+            spaceModel,
           },
           Eff.None,
         ]
@@ -262,7 +262,7 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          coreModel,
+          spaceModel,
         },
         Eff.None,
       ]
@@ -275,16 +275,16 @@ export const updateFromBackend = (
         return [model, Eff.None]
       }
 
-      const coreModel = result.value
+      const spaceModel = result.value
 
       const isNotPlaying =
-        coreModel.type === 'game' && coreModel.w !== ctx.currentUserId && coreModel.b !== ctx.currentUserId
+        spaceModel.type === 'game' && spaceModel.w !== ctx.currentUserId && spaceModel.b !== ctx.currentUserId
 
       if (isNotPlaying) {
         return [
           {
             ...model,
-            coreModel,
+            spaceModel,
           },
           Eff.None,
         ]
@@ -293,7 +293,7 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          coreModel,
+          spaceModel,
         },
         Eff.None,
       ]
@@ -310,16 +310,16 @@ export const updateFromBackend = (
         return [model, Eff.None]
       }
 
-      const coreModelNew = msg[1].value
+      const spaceModelNew = msg[1].value
 
-      if (coreModelNew.type === 'setup') {
+      if (spaceModelNew.type === 'setup') {
         return [model, Eff.None]
       }
 
       return [
         {
           ...model,
-          coreModel: coreModelNew,
+          spaceModel: spaceModelNew,
         },
         Eff.None,
       ]
@@ -330,12 +330,12 @@ export const updateFromBackend = (
         return [model, Eff.None]
       }
 
-      const coreModelNew = msg[1].value
+      const spaceModelNew = msg[1].value
 
       return [
         {
           ...model,
-          coreModel: coreModelNew,
+          spaceModel: spaceModelNew,
         },
         Eff.None,
       ]
@@ -356,12 +356,12 @@ export const updateFromBackend = (
     }
 
     case 'ClockTicked': {
-      const coreModel = msg[1]
+      const spaceModel = msg[1]
 
       return [
         {
           ...model,
-          coreModel,
+          spaceModel,
         },
         Eff.None,
       ]
@@ -371,7 +371,7 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          coreModel: msg[1],
+          spaceModel: msg[1],
         },
         Eff.None,
       ]
@@ -414,7 +414,7 @@ export const View = ({
   dispatch: (msg: Msg) => void
   onQuit: () => void
 }) => {
-  if (model.coreModel.type === 'setup') {
+  if (model.spaceModel.type === 'setup') {
     return (
       <div>
         <div className='flex-1' />
@@ -431,7 +431,7 @@ export const View = ({
     )
   }
 
-  // const { w, b } = model.coreModel;
+  // const { w, b } = model.spaceModel;
 
   // const currentUserColor: Chess.Color | "none" | "Both" =
   //   ctx.currentUserId === w && ctx.currentUserId === b
@@ -471,7 +471,7 @@ export const View = ({
 
           dispatch(msg);
 
-          const inputted = inputMove(msg[1], model.coreModel);
+          const inputted = inputMove(msg[1], model.spaceModel);
 
           return inputted.t === "ok";
         }}
@@ -485,18 +485,18 @@ export const View = ({
 }
 
 const ViewGameOverDialog = ({ model }: { model: Model; dispatch: (msg: Msg) => void }) => {
-  if (model.coreModel.type === 'setup') {
-    return <span>{toGameText(model.coreModel)}</span>
+  if (model.spaceModel.type === 'setup') {
+    return <span>{toGameText(model.spaceModel)}</span>
   }
 
-  if (model.coreModel.type === 'game') {
+  if (model.spaceModel.type === 'game') {
     return <span />
   }
 
   return <span />
 }
 
-const toGameText = (model: CoreModel): string => {
+const toGameText = (model: SpaceModel): string => {
   switch (model.type) {
     case 'game-over': {
       switch (model.gameOver.type) {
@@ -564,6 +564,6 @@ export const mergeWithBackend = ({
     isFlipped: frontendModel.isFlipped,
     openedMenuId: frontendModel.openedMenuId,
     openedModal: frontendModel.openedModal,
-    coreModel: backend,
+    spaceModel: backend,
   }
 }

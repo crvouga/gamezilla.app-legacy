@@ -13,15 +13,15 @@ import { Chess } from '../@/chess'
 import { ChessBotLevel } from '../@/chess-bot-level/chess-bot-level'
 import { Chessboard, CoverArt, PlayerIcon } from '../@/chess-ui'
 import {
-  type CoreModel,
+  type SpaceModel,
   type ModelFrontend,
   type ModelBackend,
   type MsgFrontend,
   type MsgToFrontend,
   type MsgToBackend,
-  initCore,
+  initSpace,
   isBotTurn,
-  updateCore,
+  updateSpace,
 } from './vs-bot.types'
 
 //
@@ -34,7 +34,7 @@ import {
 
 export const init: ModelFrontend = {
   vsBotSetup: VsBotSetup.init,
-  coreModel: initCore,
+  spaceModel: initSpace,
   openedMenuId: null,
   openedModal: null,
   isFlipped: false,
@@ -117,10 +117,10 @@ export const update = ({
     }
 
     default: {
-      const handled = updateCore({
+      const handled = updateSpace({
         ctx,
         msg,
-        model: model.coreModel,
+        model: model.spaceModel,
       })
 
       if (handled.t === 'err') {
@@ -130,11 +130,11 @@ export const update = ({
         }
       }
 
-      const coreModel = handled.value
+      const spaceModel = handled.value
 
       const modelNew = mergeWithBackend({
         frontend: model,
-        backend: coreModel,
+        backend: spaceModel,
       })
 
       return {
@@ -155,7 +155,7 @@ export const updateFromBackend = (input: {
   return pipe(
     updateFromBackendMain(input),
     // andThen((model) => {
-    //   if (input.model.coreModel.type !== 'game-over' && model.coreModel.type === 'game-over') {
+    //   if (input.model.spaceModel.type !== 'game-over' && model.spaceModel.type === 'game-over') {
     //     return {
     //       model: {
     //         ...model,
@@ -164,7 +164,7 @@ export const updateFromBackend = (input: {
     //     }
     //   }
 
-    //   if (input.model.coreModel.type !== 'game' && model.coreModel.type === 'game') {
+    //   if (input.model.spaceModel.type !== 'game' && model.spaceModel.type === 'game') {
     //     return {
     //       model
     //     }
@@ -188,12 +188,12 @@ const updateFromBackendMain: typeof updateFromBackend = ({ msg, model }) => {
         }
       }
 
-      const { didCapture, ...coreModel } = result.value
+      const { didCapture, ...spaceModel } = result.value
 
       return {
         model: {
           ...model,
-          coreModel,
+          spaceModel,
         },
       }
     }
@@ -217,11 +217,11 @@ const updateFromBackendMain: typeof updateFromBackend = ({ msg, model }) => {
         }
       }
 
-      const coreModelNew = result.value
+      const spaceModelNew = result.value
 
       const modelNew = mergeWithBackend({
         frontend: model,
-        backend: coreModelNew,
+        backend: spaceModelNew,
       })
 
       return {
@@ -269,7 +269,7 @@ export const mergeWithBackend = ({
     isFlipped: frontend.isFlipped,
     openedMenuId: frontend.openedMenuId,
     openedModal: frontend.openedModal,
-    coreModel: backend,
+    spaceModel: backend,
     vsBotSetup: frontend.vsBotSetup,
   }
 }
@@ -305,7 +305,7 @@ export const View = ({
   dispatch: (msg: MsgFrontend) => void
   onClose: () => void
 }) => {
-  if (model.coreModel.type === 'setup') {
+  if (model.spaceModel.type === 'setup') {
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
@@ -315,10 +315,10 @@ export const View = ({
           return <CoverArt {...input} />
         }}
         bot={{
-          label: ctx.t('chess.bot-level', model.coreModel.botLevel),
+          label: ctx.t('chess.bot-level', model.spaceModel.botLevel),
           renderIcon: (input) =>
             ChessBotLevel.render({
-              level: model.coreModel.botLevel,
+              level: model.spaceModel.botLevel,
               ...input,
             }),
         }}
@@ -340,14 +340,14 @@ export const View = ({
         onSwapSides={() =>
           dispatch({
             t: 'start-playing',
-            color: model.coreModel.userColor === 'w' ? 'b' : 'w',
+            color: model.spaceModel.userColor === 'w' ? 'b' : 'w',
           })
         }
-        canStartGame={model.coreModel.userId !== null}
+        canStartGame={model.spaceModel.userId !== null}
         ctx={ctx}
         human={{
-          player: model.coreModel.userColor === 'b' ? 'player-two' : 'player-one',
-          userId: model.coreModel.userId,
+          player: model.spaceModel.userColor === 'b' ? 'player-two' : 'player-one',
+          userId: model.spaceModel.userId,
         }}
         onQuit={onClose}
         onStartGame={() =>
@@ -393,27 +393,27 @@ export const View = ({
     <div className='flex w-full items-center gap-3 p-3'>
       <IconRobot className='h-10 w-10' />
 
-      <p className='flex-1 text-lg'>{ChessBotLevel.toString(model.coreModel.botLevel)}</p>
+      <p className='flex-1 text-lg'>{ChessBotLevel.toString(model.spaceModel.botLevel)}</p>
 
-      {isBotTurn(model.coreModel) && <Spinner className='h-10 w-10' />}
+      {isBotTurn(model.spaceModel) && <Spinner className='h-10 w-10' />}
     </div>
   )
 
   const userSlot = (
     <div className='flex w-full items-center gap-3 p-3'>
-      <Avatar className='h-10 w-10' src={ctx.profiles[model.coreModel.userId]?.avatarUrl} />
+      <Avatar className='h-10 w-10' src={ctx.profiles[model.spaceModel.userId]?.avatarUrl} />
 
-      <p className='flex-1 text-lg'>{ctx.profiles[model.coreModel.userId]?.username}</p>
+      <p className='flex-1 text-lg'>{ctx.profiles[model.spaceModel.userId]?.username}</p>
     </div>
   )
 
   const boardOrientation = model.isFlipped
-    ? Chess.toOppositeColor(model.coreModel.userColor)
-    : model.coreModel.userColor
+    ? Chess.toOppositeColor(model.spaceModel.userColor)
+    : model.spaceModel.userColor
 
-  const topSlot = boardOrientation === model.coreModel.userColor ? botSlot : userSlot
+  const topSlot = boardOrientation === model.spaceModel.userColor ? botSlot : userSlot
 
-  const bottomSlot = boardOrientation === model.coreModel.userColor ? userSlot : botSlot
+  const bottomSlot = boardOrientation === model.spaceModel.userColor ? userSlot : botSlot
 
   return (
     <LayoutGame ctx={ctx}>
@@ -422,7 +422,7 @@ export const View = ({
 
         <Chessboard
           id='chessboard'
-          model={model.coreModel.board}
+          model={model.spaceModel.board}
           orientation={boardOrientation}
           onPieceDrop={(move) => {
             const msg: MsgFrontend = {
@@ -453,7 +453,7 @@ export const View = ({
   )
 }
 
-export const toGameText = (model: CoreModel): string => {
+export const toGameText = (model: SpaceModel): string => {
   switch (model.type) {
     case 'game-over': {
       switch (model.gameOver.type) {

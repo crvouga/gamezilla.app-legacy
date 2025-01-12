@@ -14,7 +14,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
             puzzle,
@@ -24,8 +24,8 @@ describe(import.meta.file, () => {
       },
     ])
     expect(
-      output.modelCore.screen.t === 'screen-puzzle-builder' &&
-        output.modelCore.screenPuzzleBuilder?.puzzle.id === puzzle.id,
+      output.modelSpace.screen.t === 'screen-puzzle-builder' &&
+        output.modelSpace.screenPuzzleBuilder?.puzzle.id === puzzle.id,
     ).toBe(true)
   })
 
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
           puzzle,
           userId: f.ctx.currentUserId,

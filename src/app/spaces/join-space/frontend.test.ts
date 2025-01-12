@@ -1,7 +1,7 @@
 import { withEventMeta } from '~/@/event-sourced/event'
 import { describe, expect, it, test } from 'bun:test'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { SpacesCoreFrontend } from '../core/frontend'
+import { SpacesSpaceFrontend } from '../space/frontend'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Profile } from '~/app/@/data/profile'
 import { didShowToast, didShowErrorSm } from '~/app/@/frontend/cmd'
@@ -20,7 +20,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -45,7 +45,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -58,7 +58,7 @@ describe(import.meta.file, () => {
           profiles: {
             [otherUser.userId]: otherUser,
           },
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-joined-space',
             spaceId: f.spaceId,
@@ -79,7 +79,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -89,7 +89,7 @@ describe(import.meta.file, () => {
       },
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-joined-space',
             spaceId: f.spaceId,
@@ -107,7 +107,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -122,7 +122,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(SpacesCoreFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(f.spaceId)
+    expect(SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(f.spaceId)
   })
 
   it('current user leaving joined space', async () => {
@@ -130,7 +130,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -151,7 +151,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(SpacesCoreFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(null)
+    expect(SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(null)
   })
 
   it('preventing joining a space if already in a space', async () => {
@@ -162,7 +162,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: spaceA,
@@ -184,7 +184,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(SpacesCoreFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(spaceA)
+    expect(SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(spaceA)
     expect(didShowErrorSm(output)).toBe(true)
   })
 })

@@ -21,7 +21,7 @@ import {
 //
 //
 
-export type CoreModel = SetupModel | ModelCore
+export type SpaceModel = SetupModel | ModelSpace
 
 export type SetupModel = {
   type: 'setup'
@@ -30,7 +30,7 @@ export type SetupModel = {
   botLevel: BotLevel
 }
 
-export type ModelCore = {
+export type ModelSpace = {
   type: 'game'
   player: UserId
   userPlayerType: PlayerType
@@ -38,13 +38,13 @@ export type ModelCore = {
   board: Model
 }
 
-export type ModelFrontend = CoreModel & {
+export type ModelFrontend = SpaceModel & {
   vsBotSetup: VsBotSetup.Model
 }
 
-export type ModelBackend = CoreModel
+export type ModelBackend = SpaceModel
 
-export const initCoreModel = ({ userId }: { userId: SetupModel['player'] }): CoreModel => {
+export const initSpaceModel = ({ userId }: { userId: SetupModel['player'] }): SpaceModel => {
   return {
     type: 'setup',
     botLevel: 'Medium',
@@ -53,7 +53,7 @@ export const initCoreModel = ({ userId }: { userId: SetupModel['player'] }): Cor
   }
 }
 
-export const isBotTurn = (model: CoreModel): model is ModelCore => {
+export const isBotTurn = (model: SpaceModel): model is ModelSpace => {
   if (model.type !== 'game') {
     return false
   }
@@ -79,8 +79,8 @@ export type MsgToBackend = Req
 
 export type MsgToFrontend =
   | Res
-  | { t: 'bot-moved'; result: Result<string, CoreModel> }
-  | { t: 'player-left'; result: Result<string, CoreModel> }
+  | { t: 'bot-moved'; result: Result<string, SpaceModel> }
+  | { t: 'player-left'; result: Result<string, SpaceModel> }
 
 export type Req =
   | { t: 'input-bot-level'; botLevel: BotLevel }
@@ -93,7 +93,7 @@ export type Req =
   | { t: 'restart' }
 
 export type Res = Req & {
-  result: Result<string, CoreModel>
+  result: Result<string, SpaceModel>
 }
 
 //
@@ -110,8 +110,8 @@ export const handle = ({
 }: {
   ctx: SpaceCtx & { currentUserId: UserId }
   msg: Req
-  model: CoreModel
-}): Result<string, CoreModel> => {
+  model: SpaceModel
+}): Result<string, SpaceModel> => {
   switch (msg.t) {
     case 'input-bot-level': {
       if (model.type !== 'setup') {
@@ -217,7 +217,7 @@ export const handle = ({
         return result
       }
 
-      const modelNext: CoreModel = {
+      const modelNext: SpaceModel = {
         ...model,
         board: result.value,
       }
@@ -234,7 +234,7 @@ export const handle = ({
         return Err('must-be-player')
       }
 
-      const modelNext: CoreModel = {
+      const modelNext: SpaceModel = {
         ...model,
         board: emptyBoard,
         userPlayerType: toOpposite(model.userPlayerType),

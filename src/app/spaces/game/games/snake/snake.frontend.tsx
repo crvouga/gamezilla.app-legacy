@@ -5,12 +5,12 @@ import { Option } from '~/@/option/option'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { Direction } from './@/direction'
 import {
-  type CoreModel,
+  type SpaceModel,
   type ModelFrontend,
   type ModelBackend,
   type MsgFrontend,
   type MsgToFrontend,
-  initCoreModel,
+  initSpaceModel,
 } from './snake.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
@@ -27,7 +27,7 @@ import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 export type Model = ModelFrontend
 
 export const init: Model = {
-  ...initCoreModel,
+  ...initSpaceModel,
   openedMenuId: Option.None,
 }
 
@@ -119,10 +119,10 @@ export const update = (
 export const updateFromBackend = (msg: MsgToFrontend, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case 'tick': {
-      const coreModel = msg[1]
+      const spaceModel = msg[1]
       return [
         {
-          ...coreModel,
+          ...spaceModel,
           openedMenuId: model.openedMenuId,
         },
         Eff.None,
@@ -151,15 +151,15 @@ export const updateFromBackend = (msg: MsgToFrontend, model: Model): [Model, Eff
   }
 }
 
-const updateResponse = <TProblem extends string, TResult extends Result<TProblem, CoreModel>>(
+const updateResponse = <TProblem extends string, TResult extends Result<TProblem, SpaceModel>>(
   result: TResult,
   model: Model,
 ): [Model, Eff<Msg>] => {
   if (isErr(result)) {
     return [model, Eff.None]
   }
-  const coreModel = result.value
-  return [{ ...model, ...coreModel }, Eff.None]
+  const spaceModel = result.value
+  return [{ ...model, ...spaceModel }, Eff.None]
 }
 
 //

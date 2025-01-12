@@ -5,16 +5,16 @@ import { isAppFrontendCtx } from '../@/frontend/ctx'
 import { type Input, type Output, SpaceFrontendModule } from './@/architecture/space-frontend'
 import { SpaceFrontendCmd } from './@/space-frontend/cmd'
 import { SpaceFrontendEvt } from './@/space-frontend/evt'
+import { EndSpaceFrontend } from './end-space/end-space.frontend'
 import { CurrentSpaceBottomBar } from './frontend/current-space-bottom-bar'
 import { GoHome } from './frontend/go-home'
 import { People } from './frontend/people'
 import { SpaceFrontend } from './frontend/space'
-import { SpacesCoreFrontend } from './core/frontend'
-import { EndSpaceFrontend } from './end-space/end-space.frontend'
 import { GameFrontend } from './game/frontend'
 import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
+import { SpacesSpaceFrontend } from './space/frontend'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendModule, ModelFrontend } from './types'
@@ -29,7 +29,7 @@ import type { FrontendModule, ModelFrontend } from './types'
 
 const init: FrontendModule['init'] = ({ ctx }) => {
   const model: ModelFrontend = {
-    ...SpacesCoreFrontend.init,
+    ...SpacesSpaceFrontend.init,
     games: {},
     modal: null,
     modalPreviewUserId: null,
@@ -77,19 +77,19 @@ const update: FrontendModule['update'] = (input) => {
 const updateLoop = (input: Input, initial?: Output): Output => {
   const acc = initial ?? updateChild(input)
 
-  const [coreEvt, ...coreEvtRest] = acc.msgCore ?? []
+  const [spaceEvt, ...spaceEvtRest] = acc.msgSpace ?? []
 
-  if (coreEvt) {
+  if (spaceEvt) {
     const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
-      msgCore: coreEvt,
+      msgSpace: spaceEvt,
     })
 
     return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCore: Msg.batch(coreEvtRest, updated.msgCore),
+      msgSpace: Msg.batch(spaceEvtRest, updated.msgSpace),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
     })
@@ -107,7 +107,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
     return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(evtRest, updated.msgEvt),
     })
@@ -125,7 +125,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
     return updateLoop(input, {
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
       msgCmd: Msg.batch(cmdRest, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
     })
@@ -135,7 +135,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
 }
 
 const updateChild: SpaceFrontendModule['update'] = (input) => {
-  if (input.msgCore && SpacesCoreFrontend.hasEvent(input.model, input.msgCore.spaceId, input.msgCore.eventId)) {
+  if (input.msgSpace && SpacesSpaceFrontend.hasEvent(input.model, input.msgSpace.spaceId, input.msgSpace.eventId)) {
     return { model: input.model }
   }
 
@@ -155,14 +155,14 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceFrontendModule['update'] = ({ msgCore, model }) => {
-  if (!msgCore) {
+const updateSpacesFromSpaceEvent: SpaceFrontendModule['update'] = ({ msgSpace, model }) => {
+  if (!msgSpace) {
     return { model }
   }
 
-  const updated = SpacesCoreFrontend.update({
+  const updated = SpacesSpaceFrontend.update({
     model,
-    msgCore: msgCore,
+    msgSpace: msgSpace,
   })
 
   return { model: { ...model, ...updated.model } }

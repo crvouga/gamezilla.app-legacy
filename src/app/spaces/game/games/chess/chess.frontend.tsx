@@ -11,7 +11,7 @@ import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/chess-ui'
 import { CHESS_SOUND } from './@/chess/chess-sounds'
-import type { ModelFrontend, ModelCore, MsgFrontend, MsgCore, MsgToFrontend, MsgToBackend } from './chess.types'
+import type { ModelFrontend, ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend, MsgToBackend } from './chess.types'
 import * as Puzzle from './puzzle/puzzle.frontend'
 import * as VsBot from './vs-bot/vs-bot.frontend'
 import * as VsUser from './vs-user/vs-user.frontend'
@@ -29,8 +29,8 @@ type Frontend = GameFrontend<{
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   FrontendCtx: SpaceFrontendCtx
-  MsgCore: MsgCore
-  ModelCore: ModelCore
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
   FrontendCmd: SpaceFrontendCmd<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
@@ -328,7 +328,7 @@ export const subscriptions: Frontend['subscriptions'] = (_input) => {
 //
 
 export const View: Frontend['View'] = (input) => {
-  switch (input.modelCore.t) {
+  switch (input.modelSpace.t) {
     case 'none': {
       return (
         <GameMainMenu.View

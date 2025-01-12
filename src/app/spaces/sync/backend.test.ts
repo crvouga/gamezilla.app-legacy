@@ -21,7 +21,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -88,6 +88,6 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didBroadcast(output, (m) => m.t === 'got-msg-core' && m.c.t === 'user-started-space')).toBe(true)
+    expect(didBroadcast(output, (m) => m.t === 'got-msg-space' && m.c.t === 'user-started-space')).toBe(true)
   })
 })

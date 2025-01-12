@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'user-clicked-open-pack-list-item',
             pack,
@@ -49,7 +49,7 @@ describe(import.meta.file, () => {
     const pack = await Pack.random()
     const updated = f.update(f.initial, [
       {
-        msgCore: {
+        msgSpace: {
           t: 'user-clicked-open-pack-list-item',
           pack,
           eventId: EventId.generate(),
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-exit-play-mode-button',
           userId: f.ctx.currentUserId,
         }),
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-exit-pack-button',
           userId: f.ctx.currentUserId,
         }),
@@ -97,7 +97,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-select-next-pack',
           userId: f.ctx.currentUserId,
         }),

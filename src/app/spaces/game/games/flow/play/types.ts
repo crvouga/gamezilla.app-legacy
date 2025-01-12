@@ -3,14 +3,14 @@ import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import type { GameCoreModule } from '~/app/spaces/game/games/@/architecture/game-core'
+import type { GameSpaceModule } from '~/app/spaces/game/games/@/architecture/game-space'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { GameMainMenu } from '../../@/ui/game-main-menu'
 import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../@/frontend/evt'
-import { FlowCoreCtx } from '../@/core/ctx'
-import { FlowCoreEvent } from '../@/core/event'
+import { FlowSpaceCtx } from '../@/space/ctx'
+import { FlowSpaceEvent } from '../@/space/event'
 import { Pack } from '../@/pack/pack'
 import type { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { PuzzleResult } from '../@/puzzle/puzzle-result'
@@ -39,8 +39,8 @@ export type ModelBackend = p.Infer<typeof ModelBackend>
 export type MsgFrontend =
   | GameMainMenu.Msg
   | {
-      t: 'got-msg-core'
-      c: MsgCore
+      t: 'got-msg-space'
+      c: MsgSpace
     }
 
 export type MsgBackend = {
@@ -55,7 +55,7 @@ export type MsgToFrontend = {
   t: 'noop'
 }
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-clicked-exit-play-mode-button'),
     userId: UserId,
@@ -81,10 +81,10 @@ export const MsgCore = p.or(
     slideIndex: p.num,
     userId: UserId,
   }),
-  ScreenPuzzleTypes.MsgCore,
+  ScreenPuzzleTypes.MsgSpace,
 )
 
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
 const Screen = p.or(
   p.obj({
@@ -95,13 +95,13 @@ const Screen = p.or(
     flowPack: Pack,
     slideIndex: p.num,
   }),
-  ScreenPuzzleTypes.ModelCore,
+  ScreenPuzzleTypes.ModelSpace,
 )
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   screen: Screen,
 })
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
 //
 //
@@ -115,8 +115,8 @@ export type FrontendModule = GameFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  MsgCore: MsgCore
-  ModelCore: ModelCore
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
   Ctx: FlowFrontendCtx
   MsgEvtIn: FlowFrontendEvtIn
   MsgCmdOut: FlowFrontendCmd<{
@@ -131,16 +131,16 @@ export type BackendModule = GameBackendModule<{
   Msg: MsgBackend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  MsgCore: MsgCore
-  ModelCore: ModelCore
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
   Ctx: FlowBackendCtx
   MsgEvtIn: SpaceBackendEvt
   MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
 }>
 
-export type CoreModule = GameCoreModule<{
-  Ctx: FlowCoreCtx
-  ModelCore: ModelCore
-  MsgCore: MsgCore
-  EventCore: FlowCoreEvent
+export type SpaceModule = GameSpaceModule<{
+  Ctx: FlowSpaceCtx
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
+  EventSpace: FlowSpaceEvent
 }>

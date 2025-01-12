@@ -2,7 +2,7 @@ import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-b
 import { withEventId } from '~/@/event-sourced/event'
 import { Result } from '~/@/result'
 import type { BackendModule } from '../../types'
-import type { MsgCore } from './types'
+import type { MsgSpace } from './types'
 
 const update: BackendModule['update'] = async (input) => {
   return GameBackendModule.andThen({}, () => updateFromFrontend({ ...input }))
@@ -20,14 +20,14 @@ const updateFromFrontend: BackendModule['update'] = async (input) => {
 
       const puzzle = input.msgFrontend.puzzle
 
-      const msgCore: MsgCore = {
+      const msgSpace: MsgSpace = {
         t: 'screen-puzzle-builder.saved-puzzle',
         saved: Result.mapOk(saved, () => puzzle),
         userId: input.msgFrontend.puzzle.createdBy,
       }
 
       return {
-        msgCore: [withEventId(msgCore)],
+        msgSpace: [withEventId(msgSpace)],
       }
     }
 

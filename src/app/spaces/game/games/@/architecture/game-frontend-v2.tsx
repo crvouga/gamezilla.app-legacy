@@ -22,8 +22,8 @@ export type GameFrontendModuleTypes = {
   MsgCmdOut?: Any
   MsgEvtIn?: Any
   MsgEvtOut?: Any
-  MsgCore?: Any
-  ModelCore?: Any
+  MsgSpace?: Any
+  ModelSpace?: Any
   ViewSlot?: SlotInputTypes
   ViewEmit?: EmitInputTypes
 }
@@ -57,8 +57,8 @@ export type Input<T extends GameFrontendModuleTypes> = {
   msgBackend?: T['MsgToFrontend'] | null
   msgEvt?: T['MsgEvtIn'] | null
   msgCmd?: T['MsgCmdIn'] | null
-  modelCore: T['ModelCore']
-  msgCore?: WithEventId<T['MsgCore']> | null
+  modelSpace: T['ModelSpace']
+  msgSpace?: WithEventId<T['MsgSpace']> | null
 }
 
 //
@@ -72,7 +72,7 @@ export type Output<T extends GameFrontendModuleTypes> = {
   eff?: Eff<T['Msg']>
   msgCmd?: T['MsgCmdOut'][]
   msgEvt?: T['MsgEvtOut'][]
-  msgCore?: T['MsgCore'][]
+  msgSpace?: T['MsgSpace'][]
 }
 
 export type GameFrontendModule<T extends GameFrontendModuleTypes> = {
@@ -80,11 +80,11 @@ export type GameFrontendModule<T extends GameFrontendModuleTypes> = {
 
   update: (input: Input<T>) => Output<T>
 
-  subscriptions: (input: { ctx: T['Ctx']; modelCore: T['ModelCore']; model: T['Model'] }) => Sub<T['Msg']>
+  subscriptions: (input: { ctx: T['Ctx']; modelSpace: T['ModelSpace']; model: T['Model'] }) => Sub<T['Msg']>
 
   View: (input: {
     ctx: T['Ctx']
-    modelCore: T['ModelCore']
+    modelSpace: T['ModelSpace']
     model: T['Model']
     dispatch: (msg: T['Msg']) => void
     slots?: SlotRenderFunctions<T['ViewSlot']>
@@ -93,8 +93,8 @@ export type GameFrontendModule<T extends GameFrontendModuleTypes> = {
 
   ViewFeedItem: (input: {
     ctx: T['Ctx']
-    msgCore: T['MsgCore']
-    modelCore: T['ModelCore']
+    msgSpace: T['MsgSpace']
+    modelSpace: T['ModelSpace']
     dispatch: (msg: T['Msg']) => void
   }) => VDom
 }
@@ -122,7 +122,7 @@ const andThen = <T extends GameFrontendModuleTypes>(
       eff: Eff.batch(acc.eff, updated.eff),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
     }
   }
 
@@ -142,7 +142,7 @@ const tagOutput = <
   eff?: Eff<{ t: TTag; c: T['Msg'] }>
   msgCmd?: TTaggedCmd[]
   msgEvt?: T['MsgEvtOut'][]
-  msgCore?: { t: TTag; c: T['MsgCore'] }[]
+  msgSpace?: { t: TTag; c: T['MsgSpace'] }[]
 } => {
   return {
     model: {
@@ -152,7 +152,7 @@ const tagOutput = <
     msgCmd: output.msgCmd ? tagCmd(output.msgCmd) : [],
     eff: Eff.tag(tag, output.eff),
     msgEvt: output.msgEvt,
-    msgCore: output.msgCore?.map((c) => ({
+    msgSpace: output.msgSpace?.map((c) => ({
       c,
       t: tag,
     })),

@@ -2,9 +2,9 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { FixtureSpaceBackend } from '~/app/spaces/@/fixture/backend'
-import { FlowCore } from '../../core'
+import { FlowSpace } from '../../space'
 import { FlowBackend } from '../../backend'
-import { ModelCore } from '../../types'
+import { ModelSpace } from '../../types'
 import { PackDb } from '../pack/pack-db'
 import { PuzzleDb } from '../puzzle/puzzle-db'
 import { Solutions } from '../solutions/solutions'
@@ -13,7 +13,7 @@ import type { FlowBackendCtx } from './ctx'
 type Input = Parameters<typeof FlowBackend.update>[0]
 
 type Output = Awaited<ReturnType<typeof FlowBackend.update>> & {
-  modelCore: ModelCore
+  modelSpace: ModelSpace
 }
 
 export const FixtureFlowBackend = async () => {
@@ -32,19 +32,19 @@ export const FixtureFlowBackend = async () => {
     }
 
     const lastOutput = NonEmpty.last(outputs)
-    const lastModelCore = lastOutput.modelCore
+    const lastModelSpace = lastOutput.modelSpace
     const updated = await FlowBackend.update({
       ...f,
       ...input,
-      modelCore: lastModelCore,
+      modelSpace: lastModelSpace,
     })
-    const newModelCore = Msg.batch(updated.msgCore).reduce(
-      (modelCore, msgCore) => FlowCore.updateCore({ ...f, modelCore, msgCore: withEventMeta(msgCore) }),
-      lastModelCore,
+    const newModelSpace = Msg.batch(updated.msgSpace).reduce(
+      (modelSpace, msgSpace) => FlowSpace.updateSpace({ ...f, modelSpace, msgSpace: withEventMeta(msgSpace) }),
+      lastModelSpace,
     )
     const newOutput: Output = {
       ...updated,
-      modelCore: newModelCore,
+      modelSpace: newModelSpace,
     }
     return updates([...outputs, newOutput], rest)
   }

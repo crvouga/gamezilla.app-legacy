@@ -9,7 +9,7 @@ import type { FrontendModule } from '../types'
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
-    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateLoadPacks({ ...input, model }),
   )
 }
@@ -18,8 +18,8 @@ const updateLoadPacks: FrontendModule['update'] = (input) => {
   if (
     input.msgEvt?.t === 'flow-evt.user-changed-mode' ||
     input.msgEvt?.t === 'space-evt.synced' ||
-    input.msgCore?.t === 'user-clicked-exit-pack-button' ||
-    input.msgCore?.t === 'user-clicked-select-next-pack'
+    input.msgSpace?.t === 'user-clicked-exit-pack-button' ||
+    input.msgSpace?.t === 'user-clicked-select-next-pack'
   ) {
     return {
       model: input.model,
@@ -30,8 +30,8 @@ const updateLoadPacks: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const updateFromMsgCore: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+const updateFromMsgSpace: FrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
     case 'user-clicked-open-pack-list-item': {
       return {
         model: input.model,
@@ -87,7 +87,7 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         onBack={() =>
           input.dispatch({
-            t: 'got-msg-core',
+            t: 'got-msg-space',
             c: {
               t: 'user-clicked-exit-play-mode-button',
               userId: input.ctx.currentUserId,
@@ -102,7 +102,7 @@ const View: FrontendModule['View'] = (input) => {
         model={input.ctx.packList}
         emits={{
           clickedPackItem(pack) {
-            input.dispatch({ t: 'got-msg-core', c: { t: 'user-clicked-open-pack-list-item', pack } })
+            input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-open-pack-list-item', pack } })
           },
         }}
       />

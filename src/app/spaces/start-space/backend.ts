@@ -4,8 +4,8 @@ const update: SpaceBackendModule['update'] = (input) => {
   return SpaceBackendModule.andThen({}, () => updateFromSpaceEvent(input))
 }
 
-const updateFromSpaceEvent: SpaceBackendModule['update'] = ({ msgCore }) => {
-  switch (msgCore?.t) {
+const updateFromSpaceEvent: SpaceBackendModule['update'] = ({ msgSpace }) => {
+  switch (msgSpace?.t) {
     case 'user-started-space': {
       return {}
     }

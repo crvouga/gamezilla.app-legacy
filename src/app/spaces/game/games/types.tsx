@@ -63,29 +63,29 @@ export const gameNameList: GameName[] = [
   'flow',
 ]
 
-export const ModelCore = p.or(
+export const ModelSpace = p.or(
   p.obj({
     t: p.l('connect-four'),
-    c: ConnectFour.ModelCore,
+    c: ConnectFour.ModelSpace,
   }),
   p.obj({
     t: p.l('flow'),
-    c: Flow.ModelCore,
+    c: Flow.ModelSpace,
   }),
 )
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('connect-four'),
-    c: ConnectFour.MsgCore,
+    c: ConnectFour.MsgSpace,
   }),
   p.obj({
     t: p.l('flow'),
-    c: Flow.MsgCore,
+    c: Flow.MsgSpace,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
 //
 //
@@ -99,8 +99,8 @@ export type FrontendModule = GameFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx
   MsgEvtIn: SpaceFrontendEvt
   MsgCmdOut: SpaceFrontendCmd<{
@@ -118,8 +118,8 @@ export type BackendModule = GameBackendModule<{
   Msg: MsgBackend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
   Ctx: GameBackendCtx
   MsgEvtIn: SpaceBackendEvt
   MsgCmdOut: SpaceBackendCmd<MsgToFrontend>

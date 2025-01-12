@@ -20,7 +20,7 @@ export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View'> 
   },
 
   View(input) {
-    switch (input.modelCore.screenPackBuilder?.screen.t) {
+    switch (input.modelSpace.screenPackBuilder?.screen.t) {
       case 'screen-add-puzzle': {
         return <ScreenAddPuzzle.View {...input} />
       }
@@ -53,7 +53,7 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
         text={input.ctx.t('app.exit')}
         onClick={() =>
           input.dispatch({
-            t: 'got-msg-core',
+            t: 'got-msg-space',
             c: {
               t: 'user-clicked-back-button',
               userId: input.ctx.currentUserId,
@@ -67,38 +67,38 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
 
 const EditPackName: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
-    if (!input.modelCore.screenPackBuilder) {
+    if (!input.modelSpace.screenPackBuilder) {
       return {
         model: input.model,
       }
     }
     const updated = EditPackNameFrontend.update({
       ...input,
-      modelCore: input.modelCore.screenPackBuilder.editPackName,
-      msg: input.msgCore?.t === 'got-edit-pack-name-msg' ? input.msgCore.c : null,
-      msgCore: input.msgCore?.t === 'got-edit-pack-name-msg' ? { ...input.msgCore, ...input.msgCore.c } : null,
+      modelSpace: input.modelSpace.screenPackBuilder.editPackName,
+      msg: input.msgSpace?.t === 'got-edit-pack-name-msg' ? input.msgSpace.c : null,
+      msgSpace: input.msgSpace?.t === 'got-edit-pack-name-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     })
     return {
       model: input.model,
-      msgCore: (updated.msgCore ?? []).map((c) => ({
+      msgSpace: (updated.msgSpace ?? []).map((c) => ({
         c,
         t: 'got-edit-pack-name-msg',
       })),
     }
   },
   View(input) {
-    if (!input.modelCore.screenPackBuilder) {
+    if (!input.modelSpace.screenPackBuilder) {
       return null
     }
     return (
       <>
         <EditPackNameFrontend.ViewDrawer
           ctx={input.ctx}
-          model={input.modelCore.screenPackBuilder.editPackName}
-          modelCore={input.modelCore.screenPackBuilder.editPackName}
+          model={input.modelSpace.screenPackBuilder.editPackName}
+          modelSpace={input.modelSpace.screenPackBuilder.editPackName}
           dispatch={(c) =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'got-edit-pack-name-msg',
                 c,
@@ -112,15 +112,15 @@ const EditPackName: Pick<FrontendModule, 'update' | 'View'> = {
 }
 
 const updateRecordPack: FrontendModule['update'] = (input) => {
-  const hasMsg = input.msgCore || input.msgCmd || input.msgEvt || input.msgBackend || input.msg
-  if (hasMsg && input.modelCore.screenPackBuilder?.pack) {
+  const hasMsg = input.msgSpace || input.msgCmd || input.msgEvt || input.msgBackend || input.msg
+  if (hasMsg && input.modelSpace.screenPackBuilder?.pack) {
     return {
       model: input.model,
       msgCmd: [
         {
           t: 'flow-cmd.add-packs',
           packs: {
-            [input.modelCore.screenPackBuilder.pack.id]: input.modelCore.screenPackBuilder.pack,
+            [input.modelSpace.screenPackBuilder.pack.id]: input.modelSpace.screenPackBuilder.pack,
           },
           causedBy: input,
         },

@@ -4,14 +4,14 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { PackPuzzlesGridFrontend } from '../../../@/pack/pack-puzzles-grid/frontend'
 import { PackPuzzlesGridUI } from '../../../@/pack/pack-puzzles-grid/ui'
 import type { FrontendModule } from '../../types'
-import { ScreenPackBuilderCore } from '../core'
+import { ScreenPackBuilderSpace } from '../space'
 
 export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
     return GameFrontendModule.andThen(
       { model: input.model },
       (model) => {
-        switch (input.msgCore?.t) {
+        switch (input.msgSpace?.t) {
           case 'screen-pack-builder.user-clicked-pack-item': {
             return {
               model,
@@ -26,13 +26,13 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
       (model) => {
         if (
           input.msgEvt?.t === 'space-evt.synced' ||
-          input.msgCore?.t === 'screen-pack-builder-open.user-clicked-pack-item'
+          input.msgSpace?.t === 'screen-pack-builder-open.user-clicked-pack-item'
         ) {
-          const modelCore = input.msgCore
-            ? ScreenPackBuilderCore.update({ ctx: input.ctx, modelCore: input.modelCore, msgCore: input.msgCore })
-            : input.modelCore
+          const modelSpace = input.msgSpace
+            ? ScreenPackBuilderSpace.update({ ctx: input.ctx, modelSpace: input.modelSpace, msgSpace: input.msgSpace })
+            : input.modelSpace
 
-          const pack = modelCore.screenPackBuilder?.pack ?? null
+          const pack = modelSpace.screenPackBuilder?.pack ?? null
 
           if (!pack) {
             return { model }
@@ -49,7 +49,7 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
     )
   },
   View(input) {
-    const packBuilder = input.modelCore.screenPackBuilder
+    const packBuilder = input.modelSpace.screenPackBuilder
 
     if (!packBuilder) {
       return null
@@ -61,7 +61,7 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
             ctx={input.ctx}
             onBack={() =>
               input.dispatch({
-                t: 'got-msg-core',
+                t: 'got-msg-space',
                 c: {
                   t: 'user-clicked-back-button',
                   userId: input.ctx.currentUserId,
@@ -73,11 +73,11 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
           <div className='flex w-full flex-1 flex-col items-center justify-center'>
             <PackPuzzlesGridUI.View
               id={packBuilder.pack.id}
-              slideIndex={ScreenPackBuilderCore.toSlideIndex(packBuilder)}
+              slideIndex={ScreenPackBuilderSpace.toSlideIndex(packBuilder)}
               puzzleIds={packBuilder.pack.puzzleIds}
               onSlideIndexChanged={(newSlideIndex) => {
                 input.dispatch({
-                  t: 'got-msg-core',
+                  t: 'got-msg-space',
                   c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId },
                 })
               }}
@@ -102,7 +102,7 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
                   <PackPuzzlesGridUI.ViewPuzzleCell
                     onClick={() =>
                       input.dispatch({
-                        t: 'got-msg-core',
+                        t: 'got-msg-space',
                         c: {
                           t: 'screen-pack-builder.user-clicked-pack-item',
                           puzzleResult: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
@@ -124,7 +124,7 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
 
 const ButtonAddPuzzle: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
-    switch (input.msgCore?.t) {
+    switch (input.msgSpace?.t) {
       case 'screen-pack-builder.user-opened-add-puzzle-screen': {
         return {
           model: input.model,
@@ -140,7 +140,7 @@ const ButtonAddPuzzle: Pick<FrontendModule, 'update' | 'View'> = {
       <PackPuzzlesGridUI.ViewAddCell
         onClick={() =>
           input.dispatch({
-            t: 'got-msg-core',
+            t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.user-opened-add-puzzle-screen',
               userId: input.ctx.currentUserId,

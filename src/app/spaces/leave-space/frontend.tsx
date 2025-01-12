@@ -2,8 +2,8 @@ import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/frontend/cmd'
 import { Button } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesCoreFrontend } from '../core/frontend'
-import type { SpaceEvent } from '../core/space-event'
+import { SpacesSpaceFrontend } from '../space/frontend'
+import type { SpaceEvent } from '../space/space-event'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -13,8 +13,8 @@ const update: SpaceFrontendModule['update'] = (input) => {
   )
 }
 
-const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgCore: msgCore, ctx }) => {
-  switch (msgCore?.t) {
+const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgSpace: msgSpace, ctx }) => {
+  switch (msgSpace?.t) {
     case 'user-left-space': {
       if (!ctx.currentUserId) {
         return {
@@ -22,16 +22,16 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgCore: m
         }
       }
 
-      const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
 
-      if (msgCore.spaceId !== currentUserSpaceId) {
+      if (msgSpace.spaceId !== currentUserSpaceId) {
         return {
           model,
         }
       }
 
-      if (msgCore.userId !== ctx.currentUserId) {
-        const username = ctx.profiles[msgCore.userId]?.username
+      if (msgSpace.userId !== ctx.currentUserId) {
+        const username = ctx.profiles[msgSpace.userId]?.username
         return {
           model,
           msgCmd: [
@@ -72,7 +72,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
         }
       }
 
-      const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
 
       if (!currentUserSpaceId) {
         return {
@@ -88,7 +88,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
 
       return {
         model,
-        msgCore: [spaceEventNew],
+        msgSpace: [spaceEventNew],
       }
     }
 

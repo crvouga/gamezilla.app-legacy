@@ -11,7 +11,7 @@ import {
   type MsgToFrontend,
   type MsgToBackend,
   type Res,
-  initCoreModel,
+  initSpaceModel,
 } from './vs-user.types'
 
 //
@@ -23,7 +23,7 @@ import {
 //
 
 export const init: ModelFrontend = {
-  ...initCoreModel({ X: 'none', O: 'none' }),
+  ...initSpaceModel({ X: 'none', O: 'none' }),
   openedModal: 'none',
 }
 

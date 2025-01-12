@@ -4,8 +4,8 @@ import { withEventId, withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FlowCreateFixtureBackend } from '../@/testing/backend'
-import type { ModelCore, MsgCore } from '../types'
-import { ScreenPackBuilderCore } from './core'
+import type { ModelSpace, MsgSpace } from '../types'
+import { ScreenPackBuilderSpace } from './space'
 import { ScreenPackBuilderBackend } from './backend'
 
 const Fixture = async () => {
@@ -17,16 +17,16 @@ const Fixture = async () => {
   })
   await f.ctx.packDb.put(pack)
   await f.ctx.puzzleDb.put(puzzle)
-  const modelCore: ModelCore = {
-    ...f.modelCore,
-    screenPackBuilder: ScreenPackBuilderCore.init({
+  const modelSpace: ModelSpace = {
+    ...f.modelSpace,
+    screenPackBuilder: ScreenPackBuilderSpace.init({
       pack,
     }),
   }
   return {
     ...f,
     pack,
-    modelCore,
+    modelSpace,
     deps: null,
   }
 }
@@ -37,26 +37,28 @@ describe(import.meta.file, () => {
 
     const puzzle = await Puzzle.random()
 
-    const msgCore = withEventId<MsgCore>({
+    const msgSpace = withEventId<MsgSpace>({
       t: 'screen-pack-builder.user-clicked-add-puzzle-item',
       puzzle: puzzle,
       userId: puzzle.createdBy,
     })
 
-    const modelCoreNew = ScreenPackBuilderCore.update({
+    const modelSpaceNew = ScreenPackBuilderSpace.update({
       ctx: f.ctx,
-      modelCore: f.modelCore,
-      msgCore,
+      modelSpace: f.modelSpace,
+      msgSpace,
     })
 
     const updated = await ScreenPackBuilderBackend.update({
       ...f,
-      modelCore: modelCoreNew,
-      msgCore,
+      modelSpace: modelSpaceNew,
+      msgSpace,
     })
 
     expect(
-      updated.msgCore?.some((msgCore) => msgCore.t === 'screen-pack-builder.saved-pack' && msgCore.saved.t === 'ok'),
+      updated.msgSpace?.some(
+        (msgSpace) => msgSpace.t === 'screen-pack-builder.saved-pack' && msgSpace.saved.t === 'ok',
+      ),
     ).toBe(true)
   })
 
@@ -65,7 +67,7 @@ describe(import.meta.file, () => {
 
     await ScreenPackBuilderBackend.update({
       ...f,
-      msgCore: withEventMeta({
+      msgSpace: withEventMeta({
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
         puzzleIndex: 0,
         userId: f.pack.createdBy,

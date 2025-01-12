@@ -5,7 +5,7 @@ import type { FrontendId } from '~/app/@/data/frontend-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import type { BackendEvt } from '~/app/@/backend/evt'
-import { SpaceEvent } from '../../core/space-event'
+import { SpaceEvent } from '../../space/space-event'
 import type { MsgBackend, MsgToFrontend, MsgToBackend, BackendCtx } from '../../types'
 import type { Space } from '../space/space'
 import type { SpaceBackendCmd } from '../space-backend/cmd'
@@ -26,7 +26,7 @@ export type Input = {
     | null
   msgEvt?: BackendEvt | null
   msgCmd?: SpaceBackendCmd<MsgToFrontend> | null
-  msgCore?: WithEventId<SpaceEvent> | null
+  msgSpace?: WithEventId<SpaceEvent> | null
 }
 
 export type MaybePromise<T> = T | Promise<T>
@@ -34,7 +34,7 @@ export type MaybePromise<T> = T | Promise<T>
 export type Output = {
   msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
   msgEvt?: unknown[]
-  msgCore?: WithEventId<SpaceEvent>[]
+  msgSpace?: WithEventId<SpaceEvent>[]
 }
 
 export type SpaceBackendModule = {
@@ -53,7 +53,7 @@ const andThen = async (
     acc = {
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCore: Msg.batch(acc.msgCore, updated.msgCore),
+      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
     }
   }
 

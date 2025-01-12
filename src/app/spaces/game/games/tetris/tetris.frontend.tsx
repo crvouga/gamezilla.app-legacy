@@ -31,7 +31,7 @@ import { Sub } from '~/@/sub'
 export type Model = ModelFrontend
 
 export const init: Model = {
-  coreModel: initShared,
+  spaceModel: initShared,
   touched: Option.None,
 }
 
@@ -185,7 +185,7 @@ export const updateFromBackend = (msg: MsgToFrontend, model: Model): [Model, Eff
       return [
         {
           ...model,
-          coreModel: modelNew,
+          spaceModel: modelNew,
         },
         Eff.None,
       ]
@@ -203,7 +203,7 @@ export const updateFromBackend = (msg: MsgToFrontend, model: Model): [Model, Eff
       return [
         {
           ...model,
-          coreModel: modelNew,
+          spaceModel: modelNew,
         },
         Eff.None,
       ]
@@ -214,7 +214,7 @@ export const updateFromBackend = (msg: MsgToFrontend, model: Model): [Model, Eff
       return [
         {
           ...model,
-          coreModel: modelNew,
+          spaceModel: modelNew,
         },
         Eff.None,
       ]
@@ -232,7 +232,7 @@ export const updateFromBackend = (msg: MsgToFrontend, model: Model): [Model, Eff
       return [
         {
           ...model,
-          coreModel: modelNew,
+          spaceModel: modelNew,
         },
         Eff.None,
       ]
@@ -250,7 +250,7 @@ export const updateFromBackend = (msg: MsgToFrontend, model: Model): [Model, Eff
       return [
         {
           ...model,
-          coreModel: modelNew,
+          spaceModel: modelNew,
         },
         Eff.None,
       ]
@@ -267,7 +267,7 @@ export const mergeWithBackend = ({
 }): ModelFrontend => {
   return {
     ...frontendModel,
-    coreModel: backendModel,
+    spaceModel: backendModel,
   }
 }
 
@@ -350,27 +350,27 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       </div>
 
       {/* <svg width="100%" viewBox={[0, 0, columnCount, rowCount,].join(", ")}>
-            {range(1, Board.toColumnCount(model.coreModel.board)).map(x => (
+            {range(1, Board.toColumnCount(model.spaceModel.board)).map(x => (
                 <line key={x} x1={x} y1={0} x2={x} y2={rowCount} stroke={gridStroke} strokeWidth={gridStrokeWidth} />
             ))}
 
-            {range(1, Board.toRowCount(model.coreModel.board)).map(y => (
+            {range(1, Board.toRowCount(model.spaceModel.board)).map(y => (
                 <line key={y} x1={0} y1={y} x2={columnCount} y2={y} stroke={gridStroke} strokeWidth={gridStrokeWidth} />
             ))}
 
-            {Board.flatMap(model.coreModel.board, ({ cell, x, y }) => (
+            {Board.flatMap(model.spaceModel.board, ({ cell, x, y }) => (
                 <rect key={`${x}-${y}-${cell}`} width={1} height={1} x={x} y={y} fill={cell === 'Empty' ? 'transparent' : Piece.colors[cell]} />
             ))}
 
-            {toGhostPiece(model.coreModel).map(position => (
+            {toGhostPiece(model.spaceModel).map(position => (
                 <rect key={`${position.x}-${position.y}`} width={1} height={1} x={position.x} y={position.y} fill={"rgba(0, 0, 0, 0.4)"} />
             ))}
 
-            {toPiece(model.coreModel).map(position => (
-                <rect key={`${position.x}-${position.y}`} width={1} height={1} x={position.x} y={position.y} fill={Piece.colors[model.coreModel.tetrominoName]} />
+            {toPiece(model.spaceModel).map(position => (
+                <rect key={`${position.x}-${position.y}`} width={1} height={1} x={position.x} y={position.y} fill={Piece.colors[model.spaceModel.tetrominoName]} />
             ))}
 
-            {Board.flatMap(model.coreModel.board, ({ x, y }) => (
+            {Board.flatMap(model.spaceModel.board, ({ x, y }) => (
                 <rect
                     key={`${x}-${y}`}
                     width={1}
@@ -389,8 +389,8 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
   )
 }
 
-const mouseEventToPosition = (msgCore: MouseEvent): Position.Position => {
-  if (!(msgCore.currentTarget instanceof HTMLCanvasElement)) {
+const mouseEventToPosition = (msgSpace: MouseEvent): Position.Position => {
+  if (!(msgSpace.currentTarget instanceof HTMLCanvasElement)) {
     return {
       x: 0,
       y: 0,
@@ -398,16 +398,16 @@ const mouseEventToPosition = (msgCore: MouseEvent): Position.Position => {
   }
   const x = Math.floor(
     rescale({
-      value: msgCore.pageX - msgCore.currentTarget.offsetLeft,
-      from: [0, msgCore.currentTarget.width],
+      value: msgSpace.pageX - msgSpace.currentTarget.offsetLeft,
+      from: [0, msgSpace.currentTarget.width],
       to: [0, columnCount],
     }),
   )
 
   const y = Math.floor(
     rescale({
-      value: msgCore.pageY - msgCore.currentTarget.offsetTop,
-      from: [0, msgCore.currentTarget.height],
+      value: msgSpace.pageY - msgSpace.currentTarget.offsetTop,
+      from: [0, msgSpace.currentTarget.height],
       to: [0, rowCount],
     }),
   )
@@ -416,8 +416,8 @@ const mouseEventToPosition = (msgCore: MouseEvent): Position.Position => {
 }
 
 export const paint = (context: CanvasRenderingContext2D, model: Model) => {
-  const columnCount = Board.toColumnCount(model.coreModel.board)
-  const rowCount = Board.toRowCount(model.coreModel.board)
+  const columnCount = Board.toColumnCount(model.spaceModel.board)
+  const rowCount = Board.toRowCount(model.spaceModel.board)
   const canvasWidth = context.canvas.width
   const canvasHeight = context.canvas.height
   const cellWidth = canvasWidth / columnCount
@@ -441,13 +441,13 @@ export const paint = (context: CanvasRenderingContext2D, model: Model) => {
     context.stroke()
   }
 
-  for (const { x, y } of toGhostPiece(model.coreModel)) {
+  for (const { x, y } of toGhostPiece(model.spaceModel)) {
     context.fillStyle = '#555'
     context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
   }
 
-  for (const { x, y } of toPiece(model.coreModel)) {
-    context.fillStyle = Piece.colors[model.coreModel.tetrominoName]
+  for (const { x, y } of toPiece(model.spaceModel)) {
+    context.fillStyle = Piece.colors[model.spaceModel.tetrominoName]
     context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
   }
 
@@ -458,7 +458,7 @@ export const paint = (context: CanvasRenderingContext2D, model: Model) => {
           x,
           y,
         },
-        model.coreModel.board,
+        model.spaceModel.board,
       )
 
       if (cell === 'Empty') {

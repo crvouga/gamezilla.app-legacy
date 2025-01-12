@@ -11,20 +11,20 @@ import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { BoardLayout } from '../../@/ui/layout'
 import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './copy-puzzle/frontend'
-import { ScreenPlayPuzzleCore } from './core'
+import { ScreenPlayPuzzleSpace } from './space'
 import { LastPuzzleFrontend } from './last-puzzle/frontend'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
-    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateFromMsgSpace({ ...input, model }),
     (model) => CopyPuzzleFrontend.update({ ...input, model }),
     (model) => LastPuzzleFrontend.update({ ...input, model }),
   )
 }
 
-const updateFromMsgCore: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+const updateFromMsgSpace: FrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
     case 'user-clicked-open-pack-list-item': {
       return {
         model: input.model,
@@ -74,31 +74,31 @@ const updateFromMsgCore: FrontendModule['update'] = (input) => {
     }
 
     case 'got-flow-play-msg': {
-      if (input.modelCore.screen.t !== 'screen-play-puzzle') {
+      if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
         return {
           model: input.model,
         }
       }
 
-      if (input.modelCore.screen.puzzleResult.t === 'not-found') {
+      if (input.modelSpace.screen.puzzleResult.t === 'not-found') {
         return {
           model: input.model,
         }
       }
       const playMode =
-        input.modelCore.screen.playMode ??
+        input.modelSpace.screen.playMode ??
         PlayMode.init({
           ctx: PlayMode.initCtx({
-            flow: input.modelCore.screen.puzzleResult.c.flow,
+            flow: input.modelSpace.screen.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
           }),
         })
 
       const output = PlayMode.update({
-        msg: input.msgCore.c,
+        msg: input.msgSpace.c,
         model: playMode,
         ctx: PlayMode.initCtx({
-          flow: input.modelCore.screen.puzzleResult.c.flow,
+          flow: input.modelSpace.screen.puzzleResult.c.flow,
           solutions: input.ctx.solutions,
         }),
       })
@@ -117,17 +117,17 @@ const updateFromMsgCore: FrontendModule['update'] = (input) => {
 const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)
 
 const View: FrontendModule['View'] = (input) => {
-  if (input.modelCore.screen.t !== 'screen-play-puzzle') {
+  if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
     return null
   }
-  const flowPuzzle = input.modelCore.screen.puzzleResult
-  const playMode = input.modelCore.screen.playMode
-  const isSolved = ScreenPlayPuzzleCore.toStatus(input.modelCore.screen) === 'solved'
-  const puzzleIndex = input.modelCore.screen.puzzleIndex
+  const flowPuzzle = input.modelSpace.screen.puzzleResult
+  const playMode = input.modelSpace.screen.playMode
+  const isSolved = ScreenPlayPuzzleSpace.toStatus(input.modelSpace.screen) === 'solved'
+  const puzzleIndex = input.modelSpace.screen.puzzleIndex
 
   //
   const nextPuzzleIndex = puzzleIndex + 1
-  const nextPuzzleId = input.modelCore.screen.flowPack.puzzleIds[nextPuzzleIndex]
+  const nextPuzzleId = input.modelSpace.screen.flowPack.puzzleIds[nextPuzzleIndex]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
 
   const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
@@ -173,7 +173,7 @@ const View: FrontendModule['View'] = (input) => {
     >
       <TopBar
         ctx={input.ctx}
-        onBack={() => input.dispatch({ t: 'got-msg-core', c: { t: 'user-clicked-exit-puzzle' } })}
+        onBack={() => input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-exit-puzzle' } })}
         title={input.ctx.t('flow.level', puzzleIndex + 1)}
       />
 
@@ -189,7 +189,10 @@ const View: FrontendModule['View'] = (input) => {
                 PlayMode.init({ ctx: PlayMode.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
               }
               dispatch={(c) =>
-                input.dispatch({ t: 'got-msg-core', c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId } })
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId },
+                })
               }
               showSolvedAnimation
             />
@@ -203,17 +206,17 @@ const View: FrontendModule['View'] = (input) => {
       <BottomButtons.View
         id='screen-play-puzzle-bottom-bar'
         ctx={input.ctx}
-        onToggle={() => input.dispatch({ t: 'got-msg-core', c: { t: 'user-toggled-action-buttons-drawer' } })}
-        open={input.modelCore.screen.opened === 'action-drawer'}
+        onToggle={() => input.dispatch({ t: 'got-msg-space', c: { t: 'user-toggled-action-buttons-drawer' } })}
+        open={input.modelSpace.screen.opened === 'action-drawer'}
         buttons={[
           PrebuiltBottomButtons.next({
             ...input,
-            disabled: puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1,
+            disabled: puzzleIndex >= input.modelSpace.screen.flowPack.puzzleIds.length - 1,
             hidden: !isSolved && flowPuzzle.t !== 'not-found',
             color: 'success',
             onClick: () =>
               input.dispatch({
-                t: 'got-msg-core',
+                t: 'got-msg-space',
                 c: {
                   t: 'user-clicked-next-puzzle',
                   nextPuzzle: nextPuzzle
@@ -247,7 +250,7 @@ const View: FrontendModule['View'] = (input) => {
                 disabled: false,
                 dispatch: (c) =>
                   input.dispatch({
-                    t: 'got-msg-core',
+                    t: 'got-msg-space',
                     c: {
                       t: 'got-flow-play-msg',
                       c,
@@ -262,7 +265,7 @@ const View: FrontendModule['View'] = (input) => {
             hidden: flowPuzzle.t === 'not-found',
             onClick: () =>
               input.dispatch({
-                t: 'got-msg-core',
+                t: 'got-msg-space',
                 c: {
                   t: 'user-clicked-reset-puzzle',
                 },
@@ -279,20 +282,20 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewSolvedModal: FrontendModule['View'] = (input) => {
-  if (input.modelCore.screen.t !== 'screen-play-puzzle') {
+  if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
     return null
   }
-  const isSolved = ScreenPlayPuzzleCore.toStatus(input.modelCore.screen) === 'solved'
-  const puzzleIndex = input.modelCore.screen.puzzleIndex
+  const isSolved = ScreenPlayPuzzleSpace.toStatus(input.modelSpace.screen) === 'solved'
+  const puzzleIndex = input.modelSpace.screen.puzzleIndex
 
   //
   const nextPuzzleIndex = puzzleIndex + 1
-  const nextPuzzleId = input.modelCore.screen.flowPack.puzzleIds[nextPuzzleIndex]
+  const nextPuzzleId = input.modelSpace.screen.flowPack.puzzleIds[nextPuzzleIndex]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
 
-  const isLastPuzzle = input.modelCore.screen.puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1
+  const isLastPuzzle = input.modelSpace.screen.puzzleIndex >= input.modelSpace.screen.flowPack.puzzleIds.length - 1
 
-  const isSolvedPuzzleDialogOpen = isSolved && input.modelCore.screen.opened === 'puzzle-complete'
+  const isSolvedPuzzleDialogOpen = isSolved && input.modelSpace.screen.opened === 'puzzle-complete'
 
   return isLastPuzzle ? (
     <LastPuzzleFrontend.View
@@ -307,7 +310,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
       open={isSolvedPuzzleDialogOpen}
       onClose={() =>
         input.dispatch({
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'user-closed-puzzle-complete-dialog',
           },
@@ -321,7 +324,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
           text={input.ctx.t('flow.next-puzzle')}
           onClick={() =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'user-clicked-next-puzzle',
                 nextPuzzle: nextPuzzle

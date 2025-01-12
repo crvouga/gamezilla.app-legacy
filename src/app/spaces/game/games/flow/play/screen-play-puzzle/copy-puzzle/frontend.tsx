@@ -7,31 +7,31 @@ import { VariantGridShorthand } from '../../../@/variant/grid'
 import type { FrontendModule, MsgFrontend } from '../../types'
 
 export const update: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'user-clicked-copy-to-clipboard': {
-      if (input.modelCore.screen.t !== 'screen-play-puzzle') {
+      if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
         return {
           model: input.model,
         }
       }
 
-      if (input.modelCore.screen.puzzleResult.t === 'not-found') {
+      if (input.modelSpace.screen.puzzleResult.t === 'not-found') {
         return {
           model: input.model,
         }
       }
 
       const playMode =
-        input.modelCore.screen.playMode ??
+        input.modelSpace.screen.playMode ??
         PlayMode.init({
           ctx: PlayMode.initCtx({
-            flow: input.modelCore.screen.puzzleResult.c.flow,
+            flow: input.modelSpace.screen.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
           }),
         })
 
       const flow = PlayMode.toFlow({
-        flow: input.modelCore.screen.puzzleResult.c.flow,
+        flow: input.modelSpace.screen.puzzleResult.c.flow,
         model: playMode,
       })
 
@@ -75,7 +75,7 @@ export const viewButtonAction = ({
     label: ctx.t('app.copy'),
     onClick: () =>
       dispatch({
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'user-clicked-copy-to-clipboard',
         },

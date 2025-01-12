@@ -45,12 +45,12 @@ export type MsgToFrontend = {
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('user-created-pack'),
   created: Result.parser(p.str, Pack),
   userId: UserId,
 })
 
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
-export const ModelCore = p.obj({})
+export const ModelSpace = p.obj({})

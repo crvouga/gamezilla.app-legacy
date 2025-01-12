@@ -3,7 +3,7 @@ import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/frontend/cmd
 import { SpaceId } from '~/app/@/data/space-id'
 import { Button, IconPlus } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import type { SpaceEvent } from '../core/space-event'
+import type { SpaceEvent } from '../space/space-event'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -13,15 +13,15 @@ const update: SpaceFrontendModule['update'] = (input) => {
   )
 }
 
-const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgCore: msgCore, ctx }) => {
-  switch (msgCore?.t) {
+const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgSpace: msgSpace, ctx }) => {
+  switch (msgSpace?.t) {
     case 'user-started-space': {
-      if (msgCore.userId === ctx.currentUserId) {
+      if (msgSpace.userId === ctx.currentUserId) {
         return {
           model,
           msgCmd: [
             playSound(APP_SOUND.navForward),
-            pushRoute({ n: 'spaces', t: 'space', spaceId: msgCore.spaceId }),
+            pushRoute({ n: 'spaces', t: 'space', spaceId: msgSpace.spaceId }),
             showToast(ctx.t('spaces.space-started')),
           ],
         }
@@ -56,7 +56,7 @@ const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCore: [spaceEventNew],
+        msgSpace: [spaceEventNew],
       }
     }
     default: {

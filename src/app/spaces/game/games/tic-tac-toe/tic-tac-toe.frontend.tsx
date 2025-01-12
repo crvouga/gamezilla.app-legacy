@@ -14,8 +14,8 @@ type Frontend = GameFrontend<{
   MsgFrontend: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  MsgCore: null
-  ModelCore: null
+  MsgSpace: null
+  ModelSpace: null
   FrontendCtx: SpaceFrontendCtx
   FrontendCmd: AppFrontendCmd<{
     MsgToBackend: MsgToBackend

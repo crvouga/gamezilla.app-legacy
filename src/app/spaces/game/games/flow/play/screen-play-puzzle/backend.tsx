@@ -3,8 +3,8 @@ import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-b
 import { PuzzleId } from '../../@/puzzle/puzzle-id'
 import { UserActivity } from '../@/user-activity/user-activity'
 import { BackendModule } from '../types'
-import { ScreenPlayPuzzleCore } from './core'
-import { MsgCoreEvt } from './types'
+import { ScreenPlayPuzzleSpace } from './space'
+import { MsgSpaceEvt } from './types'
 
 const update: BackendModule['update'] = async (input) => {
   return GameBackendModule.andThen(
@@ -14,8 +14,8 @@ const update: BackendModule['update'] = async (input) => {
   )
 }
 
-export const msgCoreToUserActivity = (
-  input: MsgCoreEvt & { puzzleId: PuzzleId; happenedAt: Posix },
+export const msgSpaceToUserActivity = (
+  input: MsgSpaceEvt & { puzzleId: PuzzleId; happenedAt: Posix },
 ): UserActivity[] => {
   switch (input.t) {
     case 'user-completed-puzzle': {
@@ -42,10 +42,10 @@ export const msgCoreToUserActivity = (
 }
 
 const recordUserActivity: BackendModule['update'] = async (input) => {
-  if (input.msgCore && input.modelCore.screen.t === 'screen-play-puzzle') {
-    const updated = ScreenPlayPuzzleCore.updateScreen({
-      modelCore: input.modelCore.screen,
-      msgCore: input.msgCore,
+  if (input.msgSpace && input.modelSpace.screen.t === 'screen-play-puzzle') {
+    const updated = ScreenPlayPuzzleSpace.updateScreen({
+      modelSpace: input.modelSpace.screen,
+      msgSpace: input.msgSpace,
       ctx: input.ctx,
     })
 

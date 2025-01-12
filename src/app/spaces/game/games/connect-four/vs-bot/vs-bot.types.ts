@@ -37,7 +37,7 @@ export type ModelFrontend = {
 //
 //
 
-export type MsgFrontend = MsgCore | { t: 'vs-bot-setup'; c: VsBotSetup.Msg } | { t: 'vs-bot-game'; c: VsBotGame.Msg }
+export type MsgFrontend = MsgSpace | { t: 'vs-bot-setup'; c: VsBotSetup.Msg } | { t: 'vs-bot-game'; c: VsBotGame.Msg }
 
 export type MsgBackend =
   | {
@@ -53,7 +53,7 @@ export type MsgToFrontend = { t: null }
 
 export type MsgToBackend = { t: null }
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-dropped-disc'),
     columnIndex: ConnectFour.ColumnIndex,
@@ -102,7 +102,7 @@ export const MsgCore = p.or(
     userId: UserId,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
 const EventErr = p.or(
   p.obj({
@@ -115,7 +115,7 @@ const EventErr = p.or(
 )
 type EventErr = p.Infer<typeof EventErr>
 
-export const msgCoreErrorToString = ({ error }: { error: EventErr }): string => {
+export const msgSpaceErrorToString = ({ error }: { error: EventErr }): string => {
   switch (error.t) {
     case 'not-playing': {
       return "You're not playing"
@@ -144,11 +144,11 @@ export const StateGame = p.obj({
 })
 export type StateGame = p.Infer<typeof StateGame>
 
-const BaseModelCore = p.obj({
+const BaseModelSpace = p.obj({
   errors: p.dict(
     EventId,
     p.and(
-      MsgCore,
+      MsgSpace,
       p.obj({
         error: EventErr,
       }),
@@ -156,10 +156,10 @@ const BaseModelCore = p.obj({
   ),
 })
 
-export const ModelCore = p.and(BaseModelCore, p.or(StateSetup, StateGame))
-export type ModelCore = p.Infer<typeof ModelCore>
+export const ModelSpace = p.and(BaseModelSpace, p.or(StateSetup, StateGame))
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const initCore = (input: SpaceCtx): ModelCore => {
+export const initSpace = (input: SpaceCtx): ModelSpace => {
   return {
     type: 'setup',
     botLevel: 'Medium',
@@ -169,221 +169,221 @@ export const initCore = (input: SpaceCtx): ModelCore => {
   }
 }
 
-export const updateCore = ({
-  modelCore,
-  msgCore,
+export const updateSpace = ({
+  modelSpace,
+  msgSpace,
 }: {
-  modelCore: ModelCore
-  msgCore: WithEventId<MsgCore>
-}): ModelCore => {
-  switch (modelCore.type) {
+  modelSpace: ModelSpace
+  msgSpace: WithEventId<MsgSpace>
+}): ModelSpace => {
+  switch (modelSpace.type) {
     case 'setup': {
-      switch (msgCore.t) {
+      switch (msgSpace.t) {
         case 'user-started-playing': {
           return {
-            ...modelCore,
-            playingUserId: msgCore.userId,
-            userPlayerType: msgCore.playerType,
+            ...modelSpace,
+            playingUserId: msgSpace.userId,
+            userPlayerType: msgSpace.playerType,
           }
         }
 
         case 'user-stopped-playing': {
-          if (modelCore.playingUserId !== msgCore.userId) {
-            return addError(modelCore, msgCore, {
+          if (modelSpace.playingUserId !== msgSpace.userId) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             playingUserId: null,
           }
         }
 
         case 'user-swapped-sides': {
-          if (modelCore.playingUserId !== msgCore.userId) {
-            return addError(modelCore, msgCore, {
+          if (modelSpace.playingUserId !== msgSpace.userId) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
-            userPlayerType: ConnectFour.opposite[modelCore.userPlayerType],
+            ...modelSpace,
+            userPlayerType: ConnectFour.opposite[modelSpace.userPlayerType],
           }
         }
 
         case 'user-started-game': {
-          if (modelCore.playingUserId !== msgCore.userId) {
-            return addError(modelCore, msgCore, {
+          if (modelSpace.playingUserId !== msgSpace.userId) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             type: 'game',
-            playingUserId: modelCore.playingUserId,
+            playingUserId: modelSpace.playingUserId,
             columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
         case 'user-changed-bot-level': {
-          if (modelCore.playingUserId !== msgCore.userId) {
-            return addError(modelCore, msgCore, {
+          if (modelSpace.playingUserId !== msgSpace.userId) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
           return {
-            ...modelCore,
-            botLevel: msgCore.botLevel,
+            ...modelSpace,
+            botLevel: msgSpace.botLevel,
           }
         }
 
         case 'bot-dropped-disc': {
-          return addError(modelCore, msgCore, {
+          return addError(modelSpace, msgSpace, {
             t: 'not-playing',
           })
         }
 
         default: {
-          return modelCore
+          return modelSpace
         }
       }
     }
 
     case 'game': {
-      switch (msgCore.t) {
+      switch (msgSpace.t) {
         case 'bot-dropped-disc': {
-          const moved = ConnectFour.dropDisc(modelCore.columns, msgCore.columnIndex, toBotPlayer(modelCore))
+          const moved = ConnectFour.dropDisc(modelSpace.columns, msgSpace.columnIndex, toBotPlayer(modelSpace))
 
           if (moved.t === 'err') {
-            return addError(modelCore, msgCore, {
+            return addError(modelSpace, msgSpace, {
               t: 'move',
               c: moved.error,
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             columns: moved.value,
           }
         }
 
         case 'user-dropped-disc': {
-          if (modelCore.playingUserId !== msgCore.userId) {
-            return addError(modelCore, msgCore, {
+          if (modelSpace.playingUserId !== msgSpace.userId) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
-          const moved = ConnectFour.dropDisc(modelCore.columns, msgCore.columnIndex, modelCore.userPlayerType)
+          const moved = ConnectFour.dropDisc(modelSpace.columns, msgSpace.columnIndex, modelSpace.userPlayerType)
 
           if (moved.t === 'err') {
-            return addError(modelCore, msgCore, {
+            return addError(modelSpace, msgSpace, {
               t: 'move',
               c: moved.error,
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             columns: moved.value,
           }
         }
 
         case 'user-left': {
-          if (msgCore.userId === modelCore.playingUserId) {
+          if (msgSpace.userId === modelSpace.playingUserId) {
             return {
-              ...modelCore,
+              ...modelSpace,
               type: 'setup',
-              botLevel: modelCore.botLevel,
-              userPlayerType: modelCore.userPlayerType,
+              botLevel: modelSpace.botLevel,
+              userPlayerType: modelSpace.userPlayerType,
               playingUserId: null,
             }
           }
-          return modelCore
+          return modelSpace
         }
 
         case 'user-stopped-game': {
-          if (msgCore.userId !== modelCore.playingUserId) {
-            return addError(modelCore, msgCore, {
+          if (msgSpace.userId !== modelSpace.playingUserId) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             type: 'setup',
-            botLevel: modelCore.botLevel,
-            userPlayerType: modelCore.userPlayerType,
-            playingUserId: modelCore.playingUserId,
+            botLevel: modelSpace.botLevel,
+            userPlayerType: modelSpace.userPlayerType,
+            playingUserId: modelSpace.playingUserId,
           }
         }
 
         case 'user-swapped-sides': {
-          if (msgCore.userId !== modelCore.playingUserId) {
-            return addError(modelCore, msgCore, {
+          if (msgSpace.userId !== modelSpace.playingUserId) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
-            userPlayerType: ConnectFour.opposite[modelCore.userPlayerType],
+            ...modelSpace,
+            userPlayerType: ConnectFour.opposite[modelSpace.userPlayerType],
             columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
         case 'user-restarted-game': {
-          if (msgCore.userId !== modelCore.playingUserId) {
-            return addError(modelCore, msgCore, {
+          if (msgSpace.userId !== modelSpace.playingUserId) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
         default: {
-          return modelCore
+          return modelSpace
         }
       }
     }
   }
 }
 
-const addError = (modelCore: ModelCore, msgCore: WithEventId<MsgCore>, error: EventErr): ModelCore => {
+const addError = (modelSpace: ModelSpace, msgSpace: WithEventId<MsgSpace>, error: EventErr): ModelSpace => {
   return {
-    ...modelCore,
+    ...modelSpace,
     errors: {
-      ...modelCore.errors,
-      [msgCore.eventId]: {
-        ...msgCore,
+      ...modelSpace.errors,
+      [msgSpace.eventId]: {
+        ...msgSpace,
         error,
       },
     },
   }
 }
 
-export const isBotTurn = (modelCore: ModelCore): boolean => {
-  if (modelCore.type !== 'game') {
+export const isBotTurn = (modelSpace: ModelSpace): boolean => {
+  if (modelSpace.type !== 'game') {
     return false
   }
-  const status = ConnectFour.toStatus(modelCore.columns)
-  return status.type === 'Playing' && status.turn === ConnectFour.opposite[modelCore.userPlayerType]
+  const status = ConnectFour.toStatus(modelSpace.columns)
+  return status.type === 'Playing' && status.turn === ConnectFour.opposite[modelSpace.userPlayerType]
 }
 
-export const toBotPlayer = (modelCore: ModelCore): ConnectFour.PlayerType => {
-  return ConnectFour.opposite[modelCore.userPlayerType]
+export const toBotPlayer = (modelSpace: ModelSpace): ConnectFour.PlayerType => {
+  return ConnectFour.opposite[modelSpace.userPlayerType]
 }
 
 export type GameOver = { type: 'Tie' } | { type: 'Winner'; winner: ConnectFour.PlayerType }
 
-export const toGameOver = (model: ModelCore): GameOver | { type: null } => {
+export const toGameOver = (model: ModelSpace): GameOver | { type: null } => {
   switch (model.type) {
     case 'game': {
       const status = ConnectFour.toStatus(model.columns)

@@ -5,7 +5,7 @@ import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import { TicTacToe } from '../@/tic-tic-toe'
 import {
-  initCoreModel,
+  initSpaceModel,
   isBotTurn,
   type ModelBackend,
   type MsgBackend,
@@ -25,7 +25,7 @@ import { Sub } from '~/@/sub'
 
 export type Model = ModelBackend
 
-export const init = initCoreModel
+export const init = initSpaceModel
 
 //
 //

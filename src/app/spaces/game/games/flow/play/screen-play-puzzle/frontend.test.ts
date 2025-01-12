@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const updated = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-exit-puzzle',
         }),
       },
@@ -41,14 +41,14 @@ describe(import.meta.file, () => {
     const updated = f.update(f.init, [
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'user-clicked-exit-puzzle',
           },
         },
       },
     ])
-    expect(updated.modelCore.screen.t).toBe('screen-select-puzzle')
+    expect(updated.modelSpace.screen.t).toBe('screen-select-puzzle')
   })
 
   it('should render next puzzle button only when puzzle is completed', async () => {
@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
     const nextButton = r.getByRole('button', f.ctx.t('app.next'))
     nextButton?.click()
     const msg = await r.msgs.once()
-    expect(msg.t === 'got-msg-core' && msg.c.t === 'user-clicked-next-puzzle').toBe(true)
+    expect(msg.t === 'got-msg-space' && msg.c.t === 'user-clicked-next-puzzle').toBe(true)
   })
 
   it('should render next puzzle after clicking next puzzle button', async () => {
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
     const updated = f.update(f.init, [
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'user-clicked-next-puzzle',
             nextPuzzle: f.nextPuzzle,
@@ -93,7 +93,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-next-puzzle',
           nextPuzzle: f.nextPuzzle,
           nextPuzzleIndex: f.nextPuzzleIndex,
@@ -108,7 +108,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'user-clicked-next-puzzle',
             nextPuzzle: f.nextPuzzle,
@@ -159,7 +159,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'got-flow-play-msg',
           userId: UserId.generate(),
           c: {
@@ -189,14 +189,14 @@ describe(import.meta.file, () => {
     const btn = r.getByRole('button', f.ctx.t('app.reset'))
     btn?.click()
     const msg = await r.msgs.once()
-    expect(msg).toEqual({ t: 'got-msg-core', c: { t: 'user-clicked-reset-puzzle' } })
+    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-reset-puzzle' } })
   })
 
   test('reset button sound', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-clicked-reset-puzzle',
         }),
       },
@@ -215,8 +215,8 @@ describe(import.meta.file, () => {
     const btn = r.getByRole('button', f.ctx.t('game.hint'))
     btn?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toBe('got-msg-core')
-    if (msg.t !== 'got-msg-core') return
+    expect(msg.t).toBe('got-msg-space')
+    if (msg.t !== 'got-msg-space') return
     expect(msg.c.t).toBe('got-flow-play-msg')
   })
 
@@ -233,7 +233,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       ...f.completePuzzleMsgs,
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-closed-puzzle-complete-dialog',
         }),
       },
@@ -245,7 +245,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'user-toggled-action-buttons-drawer',
         }),
       },
@@ -259,7 +259,7 @@ describe(import.meta.file, () => {
       const output = f.update(f.init, [
         ...f.completePuzzleMsgs,
         {
-          msgCore: withEventMeta({
+          msgSpace: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
               t: 'not-found',
@@ -275,7 +275,7 @@ describe(import.meta.file, () => {
       const f = await Fixture()
       const output = f.update(f.init, [
         {
-          msgCore: withEventMeta({
+          msgSpace: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
               t: 'not-found',
@@ -291,7 +291,7 @@ describe(import.meta.file, () => {
       const f = await Fixture()
       const output = f.update(f.init, [
         {
-          msgCore: withEventMeta({
+          msgSpace: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
               t: 'not-found',
@@ -309,7 +309,7 @@ describe(import.meta.file, () => {
       const f = await Fixture()
       const output = f.update(f.init, [
         {
-          msgCore: withEventMeta({
+          msgSpace: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
               t: 'not-found',

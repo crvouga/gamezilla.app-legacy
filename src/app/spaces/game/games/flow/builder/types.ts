@@ -7,8 +7,8 @@ import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/g
 import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../@/frontend/evt'
-import { FlowCoreCtx } from '../@/core/ctx'
-import { FlowCoreEvent } from '../@/core/event'
+import { FlowSpaceCtx } from '../@/space/ctx'
+import { FlowSpaceEvent } from '../@/space/event'
 import { PackListTypes } from '../@/pack/pack-list'
 import { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { FlowBackendCtx } from '../@/backend/ctx'
@@ -32,8 +32,8 @@ export type FrontendModule = GameFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  MsgCore: MsgCore
-  ModelCore: ModelCore
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
   Ctx: FlowFrontendCtx
   MsgCmdOut: FlowFrontendCmd<{
     MsgToBackend: MsgToBackend
@@ -46,8 +46,8 @@ export type FrontendModule = GameFrontendModule<{
 export type BackendModule = GameBackendModule<{
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  MsgCore: MsgCore
-  ModelCore: ModelCore
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
   Ctx: FlowBackendCtx
   MsgEvtIn: SpaceBackendEvt
   Model: ModelBackend
@@ -109,7 +109,7 @@ export type MsgFrontend =
   | ScreenMainMenu.MsgFrontend
   | ScreenPackBuilderTypes.MsgFrontend
   | ScreenPackBuilderOpenTypes.MsgFrontend
-  | { t: 'got-msg-core'; c: MsgCore }
+  | { t: 'got-msg-space'; c: MsgSpace }
 
 export type MsgBackend =
   | ScreenPuzzleBuilderOpenTypes.MsgBackend
@@ -137,18 +137,18 @@ export type MsgToFrontend =
 //
 //
 
-export const MsgCore = p.or(
-  ScreenMainMenu.MsgCore,
-  ScreenPuzzleBuilderTypes.MsgCore,
-  ScreenPuzzleBuilderOpenTypes.MsgCore,
-  ScreenPackBuilderTypes.MsgCore,
-  ScreenPackBuilderOpenTypes.MsgCore,
+export const MsgSpace = p.or(
+  ScreenMainMenu.MsgSpace,
+  ScreenPuzzleBuilderTypes.MsgSpace,
+  ScreenPuzzleBuilderOpenTypes.MsgSpace,
+  ScreenPackBuilderTypes.MsgSpace,
+  ScreenPackBuilderOpenTypes.MsgSpace,
   p.obj({
     t: p.l('user-clicked-back-button'),
     userId: UserId,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
 export const Screen = p.or(
   p.obj({
@@ -169,18 +169,18 @@ export const Screen = p.or(
 )
 export type Screen = p.Infer<typeof Screen>
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   screen: Screen,
-  screenPuzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
-  screenPuzzleBuilderOpen: p.maybe(ScreenPuzzleBuilderOpenTypes.ModelCore),
-  screenPackBuilder: p.maybe(ScreenPackBuilderTypes.ModelCore),
-  screenPackBuilderOpen: p.maybe(ScreenPackBuilderOpenTypes.ModelCore),
+  screenPuzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelSpace),
+  screenPuzzleBuilderOpen: p.maybe(ScreenPuzzleBuilderOpenTypes.ModelSpace),
+  screenPackBuilder: p.maybe(ScreenPackBuilderTypes.ModelSpace),
+  screenPackBuilderOpen: p.maybe(ScreenPackBuilderOpenTypes.ModelSpace),
 })
 
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export type UpdateCore = (input: {
-  ctx: FlowCoreCtx
-  msgCore: MsgCore
-  modelCore: ModelCore
-}) => ModelCore & { event?: FlowCoreEvent }
+export type UpdateSpace = (input: {
+  ctx: FlowSpaceCtx
+  msgSpace: MsgSpace
+  modelSpace: ModelSpace
+}) => ModelSpace & { event?: FlowSpaceEvent }

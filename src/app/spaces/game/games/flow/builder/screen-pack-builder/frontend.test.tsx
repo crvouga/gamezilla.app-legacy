@@ -18,19 +18,19 @@ import {
   backendCreatedPack,
   testFlowFrontendCtx,
 } from '../@/testing/frontend'
-import { deriveModelCore } from '../@/testing/core'
-import { BuilderCore } from '../core'
-import type { ModelFrontend, ModelCore } from '../types'
+import { deriveModelSpace } from '../@/testing/space'
+import { BuilderSpace } from '../space'
+import type { ModelFrontend, ModelSpace } from '../types'
 import { ScreenPackBuilderFrontend } from './frontend'
-import { ScreenPackBuilderCore } from './core'
+import { ScreenPackBuilderSpace } from './space'
 
 const clickedMoreButton = (ctx: FlowFrontendCtx) => (model: ModelFrontend) => {
   return ScreenPackBuilderFrontend.update({
     ctx,
     model,
-    modelCore: BuilderCore.initCore({ ctx }),
+    modelSpace: BuilderSpace.initSpace({ ctx }),
     msg: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
         userId: ctx.currentUserId,
@@ -43,9 +43,9 @@ const closedMoreDrawer = (ctx: FlowFrontendCtx) => (model: ModelFrontend) => {
   return ScreenPackBuilderFrontend.update({
     ctx,
     model,
-    modelCore: BuilderCore.initCore({ ctx }),
+    modelSpace: BuilderSpace.initSpace({ ctx }),
     msg: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: {
         t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
         userId: ctx.currentUserId,
@@ -77,9 +77,9 @@ export const Fixture = async () => {
   const model: ModelFrontend = {
     ...f.model,
   }
-  const modelCore: ModelCore = {
-    ...f.modelCore,
-    screenPackBuilder: ScreenPackBuilderCore.init({
+  const modelSpace: ModelSpace = {
+    ...f.modelSpace,
+    screenPackBuilder: ScreenPackBuilderSpace.init({
       pack,
     }),
   }
@@ -93,7 +93,7 @@ export const Fixture = async () => {
     },
     {
       msg: {
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'screen-pack-builder.user-opened-add-puzzle-screen',
           userId: f.ctx.currentUserId,
@@ -109,7 +109,7 @@ export const Fixture = async () => {
     pack,
     puzzle,
     model,
-    modelCore,
+    modelSpace,
   }
 }
 
@@ -125,9 +125,10 @@ describe(import.meta.file, () => {
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0),
     )
-    const modelCore = deriveModelCore(ctx, output)
+    const modelSpace = deriveModelSpace(ctx, output)
     expect(
-      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' && modelCore.screenPackBuilder.screen.puzzleIndex === 0,
+      modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle' &&
+        modelSpace.screenPackBuilder.screen.puzzleIndex === 0,
     ).toBe(true)
   })
 
@@ -138,8 +139,8 @@ describe(import.meta.file, () => {
       backendCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
     )
-    const modelCore = deriveModelCore(ctx, output)
-    expect(modelCore.screenPackBuilder?.screen.t === 'screen-add-puzzle').toBe(true)
+    const modelSpace = deriveModelSpace(ctx, output)
+    expect(modelSpace.screenPackBuilder?.screen.t === 'screen-add-puzzle').toBe(true)
   })
 
   it('should close puzzle picker when user clicks closes', async () => {
@@ -150,8 +151,8 @@ describe(import.meta.file, () => {
       clickedOpenPuzzlePickerButton(ctx),
       closedPuzzlePickerDrawer(ctx),
     )
-    const modelCore = deriveModelCore(ctx, output)
-    expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+    const modelSpace = deriveModelSpace(ctx, output)
+    expect(modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
 
   it('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
@@ -162,8 +163,8 @@ describe(import.meta.file, () => {
       backendCreatedPack(ctx, await createPack(ctx)),
       clickedPuzzlePickerItem(ctx, puzzle),
     )
-    const modelCore = deriveModelCore(ctx, output)
-    expect(modelCore.screenPackBuilder && Pack.includes(modelCore.screenPackBuilder.pack, puzzle.id)).toBe(true)
+    const modelSpace = deriveModelSpace(ctx, output)
+    expect(modelSpace.screenPackBuilder && Pack.includes(modelSpace.screenPackBuilder.pack, puzzle.id)).toBe(true)
   })
 
   it('should close puzzle picker after adding a puzzle to the pack', async () => {
@@ -175,8 +176,8 @@ describe(import.meta.file, () => {
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
     )
-    const modelCore = deriveModelCore(ctx, output)
-    expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+    const modelSpace = deriveModelSpace(ctx, output)
+    expect(modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
 
   it('should go back to grid after exiting puzzle', async () => {
@@ -190,8 +191,8 @@ describe(import.meta.file, () => {
       clickedPuzzleGridItem(ctx, puzzle, 0),
       clickedExitPuzzleButton(ctx),
     )
-    const modelCore = deriveModelCore(ctx, output)
-    expect(modelCore.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+    const modelSpace = deriveModelSpace(ctx, output)
+    expect(modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
 
   it('should open the more drawer after clicking "more" button', async () => {
@@ -200,7 +201,7 @@ describe(import.meta.file, () => {
       ...f.inputsOpenPackBuilder,
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'screen-pack-builder.user-clicked-add-puzzle-item',
             puzzle: f.puzzle,
@@ -210,7 +211,7 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'screen-pack-builder.user-clicked-pack-item',
             puzzleResult: { t: 'got', c: f.puzzle },
@@ -220,7 +221,7 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
             userId: f.ctx.currentUserId,
@@ -230,8 +231,8 @@ describe(import.meta.file, () => {
     ])
 
     expect(
-      output.modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' &&
-        output.modelCore.screenPackBuilder?.screen.opened === 'more',
+      output.modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle' &&
+        output.modelSpace.screenPackBuilder?.screen.opened === 'more',
     ).toBe(true)
   })
 
@@ -247,9 +248,10 @@ describe(import.meta.file, () => {
       clickedMoreButton(ctx),
       closedMoreDrawer(ctx),
     )
-    const modelCore = deriveModelCore(ctx, output)
+    const modelSpace = deriveModelSpace(ctx, output)
     expect(
-      modelCore.screenPackBuilder?.screen.t === 'screen-puzzle' && modelCore.screenPackBuilder?.screen.opened === null,
+      modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle' &&
+        modelSpace.screenPackBuilder?.screen.opened === null,
     ).toBe(true)
   })
 
@@ -261,7 +263,7 @@ describe(import.meta.file, () => {
 
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
             userId: f.ctx.currentUserId,
@@ -271,8 +273,8 @@ describe(import.meta.file, () => {
       },
     ])
     expect(puzzleIndex).toBe(0)
-    expect(output.modelCore.screenPackBuilder).toBeTruthy()
-    expect(output.modelCore.screenPackBuilder?.pack.puzzleIds.includes(f.puzzle.id)).toBe(false)
+    expect(output.modelSpace.screenPackBuilder).toBeTruthy()
+    expect(output.modelSpace.screenPackBuilder?.pack.puzzleIds.includes(f.puzzle.id)).toBe(false)
   })
 
   it.todo('should update pack when pack changes in model sync', async () => {
@@ -286,9 +288,9 @@ describe(import.meta.file, () => {
     }
     ScreenPackBuilderFrontend.update({
       ...f,
-      modelCore: {
-        ...f.modelCore,
-        screenPackBuilder: ScreenPackBuilderCore.init({
+      modelSpace: {
+        ...f.modelSpace,
+        screenPackBuilder: ScreenPackBuilderSpace.init({
           pack: updatedPack,
         }),
       },

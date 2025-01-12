@@ -13,7 +13,7 @@ import {
   type MsgToFrontend,
   type MsgToBackend,
   handle,
-  initCoreModel,
+  initSpaceModel,
 } from './vs-bot.types'
 import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -28,9 +28,9 @@ import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 
 export type Model = ModelFrontend
 
-export const init = (...input: Parameters<typeof initCoreModel>): Model => {
+export const init = (...input: Parameters<typeof initSpaceModel>): Model => {
   return {
-    ...initCoreModel(...input),
+    ...initSpaceModel(...input),
     vsBotSetup: VsBotSetup.init,
   }
 }

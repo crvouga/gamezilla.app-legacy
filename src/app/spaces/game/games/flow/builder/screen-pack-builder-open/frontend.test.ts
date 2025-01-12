@@ -13,7 +13,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msg: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: {
             t: 'screen-pack-builder-open.user-clicked-pack-item',
             pack,
@@ -23,7 +23,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(output.modelCore.screenPackBuilder?.pack.id === pack.id).toBe(true)
+    expect(output.modelSpace.screenPackBuilder?.pack.id === pack.id).toBe(true)
   })
 
   test('play sound', async () => {
@@ -33,7 +33,7 @@ describe(import.meta.file, () => {
     })
     const output = f.update(f.init, [
       {
-        msgCore: withEventMeta({
+        msgSpace: withEventMeta({
           t: 'screen-pack-builder-open.user-clicked-pack-item',
           pack,
           userId: f.ctx.currentUserId,

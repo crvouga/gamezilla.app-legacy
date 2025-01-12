@@ -21,9 +21,9 @@ import { PlayerIcon, ViewColumns } from '../@/connect-four-ui'
 import { CoverArt } from '../@/connect-four-ui/connect-four-cover-art'
 import {
   type ModelFrontend,
-  type ModelCore,
+  type ModelSpace,
   type MsgFrontend,
-  type MsgCore,
+  type MsgSpace,
   type MsgToFrontend,
   type MsgToBackend,
   type StateGame,
@@ -46,8 +46,8 @@ type Module = GameFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx & { onQuit: () => void }
   MsgCmdIn: null
   MsgEvtIn: SpaceFrontendEvt
@@ -155,7 +155,7 @@ const View: Module['View'] = (input) => {
     return null
   }
 
-  switch (input.modelCore.type) {
+  switch (input.modelSpace.type) {
     case 'setup': {
       return (
         <VsUserSetupScreen
@@ -193,7 +193,7 @@ const View: Module['View'] = (input) => {
             renderIcon: (input) => {
               return <PlayerIcon playerType='player-one' {...input} />
             },
-            userId: input.modelCore.players['player-one'] ?? null,
+            userId: input.modelSpace.players['player-one'] ?? null,
           }}
           playerTwo={{
             label: input.ctx.t('connect-four.yellow'),
@@ -213,7 +213,7 @@ const View: Module['View'] = (input) => {
             renderIcon: (input) => {
               return <PlayerIcon playerType='player-two' {...input} />
             },
-            userId: input.modelCore.players['player-two'] ?? null,
+            userId: input.modelSpace.players['player-two'] ?? null,
           }}
         />
       )
@@ -221,22 +221,22 @@ const View: Module['View'] = (input) => {
 
     case 'game':
     case 'game-over': {
-      const currentUserPlayerType = toPlayerType(input.ctx.currentUserId, input.modelCore)
+      const currentUserPlayerType = toPlayerType(input.ctx.currentUserId, input.modelSpace)
 
       return (
         <LayoutGame ctx={input.ctx} isSpectating={currentUserPlayerType === null}>
           <div className='flex w-full flex-1 flex-col items-center justify-center gap-2'>
             <div className='flex w-full items-center gap-2 px-2'>
-              <PlayerSlot playerType='player-one' modelCore={input.modelCore} ctx={input.ctx} />
-              <PlayerSlot playerType='player-two' modelCore={input.modelCore} ctx={input.ctx} />
+              <PlayerSlot playerType='player-one' modelSpace={input.modelSpace} ctx={input.ctx} />
+              <PlayerSlot playerType='player-two' modelSpace={input.modelSpace} ctx={input.ctx} />
             </div>
 
-            <Feedback ctx={input.ctx} modelCore={input.modelCore} />
+            <Feedback ctx={input.ctx} modelSpace={input.modelSpace} />
 
             <div className='relative w-full'>
               <ViewColumns
-                columns={input.modelCore.columns}
-                gameId={input.modelCore.gameId}
+                columns={input.modelSpace.columns}
+                gameId={input.modelSpace.gameId}
                 onDropDisc={(columnIndex) =>
                   input.dispatch({
                     t: 'user-dropped-disc',
@@ -251,19 +251,19 @@ const View: Module['View'] = (input) => {
                   })
                 }
                 disabled={
-                  toTurn(input.modelCore.columns) !== currentUserPlayerType || input.modelCore.type === 'game-over'
+                  toTurn(input.modelSpace.columns) !== currentUserPlayerType || input.modelSpace.type === 'game-over'
                 }
               />
-              {input.modelCore.type === 'game-over' && (
+              {input.modelSpace.type === 'game-over' && (
                 <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50'>
-                  <ViewGameOverMessage dispatch={input.dispatch} ctx={input.ctx} modelCore={input.modelCore} />
+                  <ViewGameOverMessage dispatch={input.dispatch} ctx={input.ctx} modelSpace={input.modelSpace} />
                 </div>
               )}
             </div>
           </div>
 
           <BottomButtons.Root>
-            {input.modelCore.type === 'game' && (
+            {input.modelSpace.type === 'game' && (
               <BottomButtons.Button
                 icon={(input) => <IconFlag {...input} />}
                 label={input.ctx.t('app.resign')}
@@ -276,7 +276,7 @@ const View: Module['View'] = (input) => {
               />
             )}
 
-            {input.modelCore.type === 'game-over' && input.ctx.currentUserId === input.ctx.space.hostId && (
+            {input.modelSpace.type === 'game-over' && input.ctx.currentUserId === input.ctx.space.hostId && (
               <>
                 <BottomButtons.Button
                   icon={(input) => <IconArrowLeftOnRect {...input} />}
@@ -333,16 +333,16 @@ const View: Module['View'] = (input) => {
 
 const ViewGameOverMessage = ({
   ctx,
-  modelCore,
+  modelSpace,
   dispatch,
 }: {
-  modelCore: StateGameOver
+  modelSpace: StateGameOver
   ctx: AppFrontendCtx
-  dispatch: (msg: MsgCore) => void
+  dispatch: (msg: MsgSpace) => void
 }) => {
-  const currentPlayerType = toPlayerType(ctx.currentUserId, modelCore)
+  const currentPlayerType = toPlayerType(ctx.currentUserId, modelSpace)
 
-  if (modelCore.rematch.type === 'Asking' && modelCore.rematch.asker === currentPlayerType) {
+  if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return (
       <>
         <p className='mb-4 text-center text-xl'>Waiting for response</p>
@@ -362,8 +362,8 @@ const ViewGameOverMessage = ({
   }
 
   if (
-    modelCore.rematch.type === 'Asking' &&
-    modelCore.rematch.asker !== currentPlayerType &&
+    modelSpace.rematch.type === 'Asking' &&
+    modelSpace.rematch.asker !== currentPlayerType &&
     currentPlayerType !== null
   ) {
     return (
@@ -400,12 +400,12 @@ const ViewGameOverMessage = ({
     )
   }
 
-  if (modelCore.gameOver.type === 'Draw') {
+  if (modelSpace.gameOver.type === 'Draw') {
     return <p className='text-xl'>Tie</p>
   }
 
-  if (modelCore.gameOver.type === 'resignation') {
-    const { resigner } = modelCore.gameOver
+  if (modelSpace.gameOver.type === 'resignation') {
+    const { resigner } = modelSpace.gameOver
 
     const winner: PlayerType = resigner === 'player-one' ? 'player-two' : 'player-one'
 
@@ -414,7 +414,7 @@ const ViewGameOverMessage = ({
         <>
           <div className='flex w-full items-center justify-center'>
             <PlayerIcon playerType={winner} />
-            <Avatar alt='' src={ctx.profiles[modelCore.players[winner]]?.avatarUrl} />
+            <Avatar alt='' src={ctx.profiles[modelSpace.players[winner]]?.avatarUrl} />
           </div>
           <p>Winner</p>
         </>
@@ -429,15 +429,15 @@ const ViewGameOverMessage = ({
     )
   }
 
-  if (modelCore.gameOver.type === 'Winner') {
-    const { winner } = modelCore.gameOver
+  if (modelSpace.gameOver.type === 'Winner') {
+    const { winner } = modelSpace.gameOver
 
     if (currentPlayerType === null) {
       return (
         <div className='flex w-full flex-col items-center justify-center gap-2'>
           <div className='flex w-full items-center justify-center gap-2'>
             <PlayerIcon playerType={winner} className='h-20 w-20' />
-            <Avatar className='h-20 w-20' src={ctx.profiles[modelCore.players[winner]]?.avatarUrl} />
+            <Avatar className='h-20 w-20' src={ctx.profiles[modelSpace.players[winner]]?.avatarUrl} />
           </div>
           <p>Winner</p>
         </div>
@@ -450,14 +450,14 @@ const ViewGameOverMessage = ({
   return null
 }
 
-const Feedback = ({ ctx, modelCore }: { ctx: SpaceFrontendCtx; modelCore: StateGame | StateGameOver }) => {
-  if (modelCore.type === 'game-over') {
+const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: StateGame | StateGameOver }) => {
+  if (modelSpace.type === 'game-over') {
     return <p className='text-secondary flex items-center justify-center'>Game Over</p>
   }
 
-  const turn = toTurn(modelCore.columns)
+  const turn = toTurn(modelSpace.columns)
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelCore)
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelSpace)
 
   if (currentUserPlayerType !== turn) {
     return (
@@ -477,19 +477,19 @@ const Feedback = ({ ctx, modelCore }: { ctx: SpaceFrontendCtx; modelCore: StateG
 }
 
 const PlayerSlot = ({
-  modelCore,
+  modelSpace,
   playerType,
   ctx,
 }: {
-  modelCore: StateGame | StateGameOver
+  modelSpace: StateGame | StateGameOver
   playerType: PlayerType
   ctx: SpaceFrontendCtx
 }) => {
   return (
     <div className='flex flex-1 items-center gap-2 overflow-hidden rounded border p-2'>
       <PlayerIcon className='h-8 w-8' playerType={playerType} />
-      <Avatar className='h-8 w-8' alt='' src={ctx.profiles[modelCore.players[playerType]]?.avatarUrl} />
-      <p className='text-secondary'>{ctx.profiles[modelCore.players[playerType]]?.username ?? '...'}</p>
+      <Avatar className='h-8 w-8' alt='' src={ctx.profiles[modelSpace.players[playerType]]?.avatarUrl} />
+      <p className='text-secondary'>{ctx.profiles[modelSpace.players[playerType]]?.username ?? '...'}</p>
     </div>
   )
 }

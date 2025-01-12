@@ -7,7 +7,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
-import { SpaceCore } from '../core/space-core'
+import { SpaceSpace } from '../space/space'
 
 const Fixture = async () => {
   const f = await FixtureSpaceBackend()
@@ -18,12 +18,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
 
-    const before = SpaceCore.toSpaceStarted(unwrap(await f.backendCtx.spacesCoreBackend.get(spaceId)))
+    const before = SpaceSpace.toSpaceStarted(unwrap(await f.backendCtx.spaceBackend.get(spaceId)))
 
     await f.update([
       {
         msgFrontend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           frontendId: FrontendId.generate(),
           sessionId: SessionId.generate(),
           c: withEventMeta({
@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const after = SpaceCore.toSpaceStarted(unwrap(await f.backendCtx.spacesCoreBackend.get(spaceId)))
+    const after = SpaceSpace.toSpaceStarted(unwrap(await f.backendCtx.spaceBackend.get(spaceId)))
 
     expect(before).toBeFalsy()
     expect(after?.spaceId).toEqual(spaceId)
@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
     const output = await f.update([
       {
         msgFrontend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           frontendId: FrontendId.generate(),
           sessionId: SessionId.generate(),
           c: withEventMeta({
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
     expect(
       didSendMsgToFrontend(
         output,
-        (m) => m.t === 'got-msg-core' && m.c.t === 'user-started-space' && m.c.spaceId === spaceId,
+        (m) => m.t === 'got-msg-space' && m.c.t === 'user-started-space' && m.c.spaceId === spaceId,
       ),
     ).toBeTrue()
   })

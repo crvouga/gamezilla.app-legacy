@@ -12,13 +12,14 @@ import { UserId } from '~/app/@/data/user-id'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
-import { SpacesCoreFrontend } from './core/frontend'
-import { ISpacesCoreBackend } from './core/backend/interface'
-import { SpaceCore } from './core/space-core'
-import { SpaceEvent } from './core/space-event'
+import { SpacesSpaceFrontend } from './space/frontend'
+import { ISpaceBackend } from './space/backend/interface'
+import { SpaceSpace } from './space/space'
+import { SpaceEvent } from './space/space-event'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
 import { SpaceFrontendCmd } from './@/space-frontend/cmd'
+import { Pagination } from '~/@/query/query'
 
 //
 //
@@ -29,13 +30,13 @@ import { SpaceFrontendCmd } from './@/space-frontend/cmd'
 //
 
 export type BackendCtx = AppBackendCtx & {
-  spacesCoreBackend: ISpacesCoreBackend
+  spaceBackend: ISpaceBackend
   games: GamesTypes.GameBackendCtx
 }
 
 export type ModelBackend = null
 
-export type ModelFrontend = SpacesCoreFrontend.Model & {
+export type ModelFrontend = SpacesSpaceFrontend.Model & {
   games: {
     [spaceId: SpaceId]: GamesTypes.ModelFrontend
   }
@@ -53,7 +54,7 @@ export type ModelFrontend = SpacesCoreFrontend.Model & {
 //
 
 export type MsgBackend =
-  | { t: 'got-msg-core'; c: WithEventId<SpaceEvent> }
+  | { t: 'got-msg-space'; c: WithEventId<SpaceEvent> }
   | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgBackend }
 
 export type MsgFrontend =
@@ -75,20 +76,20 @@ export type MsgFrontend =
 export type MsgToFrontend = MsgToFrontendExtra &
   (
     | {
-        t: 'got-msg-core'
+        t: 'got-msg-space'
         c: WithEventMeta<SpaceEvent>
       }
     | {
         t: 'listed-spaces'
-        spaces: SpaceCore.Model[]
+        spaces: SpaceSpace.Model[]
       }
     | {
         t: 'synced'
-        space: SpaceCore.Model
+        space: SpaceSpace.Model
       }
     | {
         t: 'current-user-space'
-        space: SpaceCore.Model
+        space: SpaceSpace.Model
         currentUser: UserAccount
       }
     | {
@@ -101,17 +102,16 @@ export type MsgToFrontend = MsgToFrontendExtra &
 export type MsgToBackend = MsgToBackendExtra &
   (
     | {
-        t: 'got-msg-core'
+        t: 'got-msg-space'
         c: WithEventMeta<SpaceEvent>
       }
     | {
         t: 'sync'
-        space: SpaceCore.Model
+        space: SpaceSpace.Model
       }
     | {
         t: 'list-spaces'
-        limit: number
-        offset: number
+        pagination: Pagination
         where?: {
           spaceId?: SpaceId
         }

@@ -8,7 +8,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
-import type { ChessMsgCore } from '../@/chess/chess-shared'
+import type { ChessMsgSpace } from '../@/chess/chess-shared'
 import { EloRating } from './elo-rating'
 import { PuzzleDb } from './puzzle-db'
 import {
@@ -17,7 +17,7 @@ import {
   type MsgToFrontend,
   type MsgToBackend,
   type PuzzleInteraction,
-  initCore,
+  initSpace,
   transitionLoadingToStarted,
 } from './puzzle.types'
 import { Eff } from '~/@/eff'
@@ -41,7 +41,7 @@ export const init = ({
 } => {
   return {
     model: {
-      ...initCore,
+      ...initSpace,
       requests: {},
     },
     eff: async (dispatch) => {
@@ -397,7 +397,7 @@ export const watchPutProfile = ({
 }
 
 const updateFromFrontendMain: typeof updateFromFrontend = ({ model }) => {
-  // const handled = updateCore({ ctx, msg, model });
+  // const handled = updateSpace({ ctx, msg, model });
 
   // return {
   //   model: handled.t === "ok" ? { ...model, ...handled.value } : model,
@@ -409,7 +409,7 @@ const updateFromFrontendMain: typeof updateFromFrontend = ({ model }) => {
 export const updateFromGame = ({
   model,
 }: {
-  msg: ChessMsgCore
+  msg: ChessMsgSpace
   model: ModelBackend
 }): {
   model: ModelBackend

@@ -14,7 +14,7 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 export const updateMain: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'screen-pack-builder-open.user-clicked-pack-item': {
       return {
         model: input.model,
@@ -35,7 +35,7 @@ const View: FrontendModule['View'] = (input) => {
       <TopBar
         onBack={() =>
           input.dispatch({
-            t: 'got-msg-core',
+            t: 'got-msg-space',
             c: {
               t: 'user-clicked-back-button',
               userId: input.ctx.currentUserId,
@@ -55,7 +55,7 @@ const View: FrontendModule['View'] = (input) => {
         emits={{
           clickedPackItem: (pack) =>
             input.dispatch({
-              t: 'got-msg-core',
+              t: 'got-msg-space',
               c: {
                 t: 'screen-pack-builder-open.user-clicked-pack-item',
                 pack,

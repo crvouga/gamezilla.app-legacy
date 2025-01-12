@@ -45,16 +45,16 @@ const init = (gameName: GameName): FrontendModule['init'] => {
 //
 
 const update: FrontendModule['update'] = (input) => {
-  switch (input.modelCore.t) {
+  switch (input.modelSpace.t) {
     case 'connect-four': {
       const updated = ConnectFour.update({
         ctx: input.ctx,
-        modelCore: input.modelCore.c,
+        modelSpace: input.modelSpace.c,
         model: input.model?.t === 'connect-four' ? input.model.c : ConnectFour.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgBackend: input.msgBackend?.t === 'connect-four' ? input.msgBackend.c : null,
-        msgCore: input.msgCore?.t === 'connect-four' ? { ...input.msgCore, ...input.msgCore.c } : null,
+        msgSpace: input.msgSpace?.t === 'connect-four' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
       })
 
@@ -62,7 +62,7 @@ const update: FrontendModule['update'] = (input) => {
         model: { t: 'connect-four', c: updated.model },
         eff: Eff.tag('connect-four', updated.eff),
         msgCmd: SpaceFrontendCmd.tag('connect-four', updated.msgCmd),
-        msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'connect-four' })),
+        msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'connect-four' })),
         msgEvt: updated.msgEvt,
       }
     }
@@ -70,12 +70,12 @@ const update: FrontendModule['update'] = (input) => {
     case 'flow': {
       const updated = FlowFrontend.update({
         ctx: input.ctx,
-        modelCore: input.modelCore.c,
+        modelSpace: input.modelSpace.c,
         model: input.model?.t === 'flow' ? input.model.c : FlowFrontend.init,
         msgCmd: null,
         msgEvt: input.msgEvt,
         msgBackend: input.msgBackend?.t === 'flow' ? input.msgBackend.c : null,
-        msgCore: input.msgCore?.t === 'flow' ? { ...input.msgCore, ...input.msgCore.c } : null,
+        msgSpace: input.msgSpace?.t === 'flow' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
       })
 
@@ -83,7 +83,7 @@ const update: FrontendModule['update'] = (input) => {
         model: { t: 'flow', c: updated.model },
         eff: Eff.tag('flow', updated.eff),
         msgCmd: SpaceFrontendCmd.tag('flow', updated.msgCmd),
-        msgCore: updated.msgCore?.map((c) => ({ ...c, c, t: 'flow' })),
+        msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'flow' })),
         msgEvt: updated.msgEvt,
       }
     }
@@ -99,13 +99,13 @@ const update: FrontendModule['update'] = (input) => {
 //
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  switch (input.modelCore.t) {
+  switch (input.modelSpace.t) {
     case 'connect-four': {
       return Sub.tag(
         'connect-four',
         ConnectFour.subscriptions({
           ctx: input.ctx,
-          modelCore: input.modelCore.c,
+          modelSpace: input.modelSpace.c,
           model: input.model.t === 'connect-four' ? input.model.c : ConnectFour.init,
         }),
       )
@@ -116,7 +116,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
         'flow',
         FlowFrontend.subscriptions({
           ctx: input.ctx,
-          modelCore: input.modelCore.c,
+          modelSpace: input.modelSpace.c,
           model: input.model.t === 'flow' ? input.model.c : FlowFrontend.init,
         }),
       )
@@ -133,13 +133,13 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 //
 
 const View: FrontendModule['View'] = (input) => {
-  switch (input.modelCore.t) {
+  switch (input.modelSpace.t) {
     case 'connect-four': {
       return (
         <ConnectFour.View
           ctx={input.ctx}
           dispatch={(c) => input.dispatch({ t: 'connect-four', c })}
-          modelCore={input.modelCore.c}
+          modelSpace={input.modelSpace.c}
           model={input.model?.t === 'connect-four' ? input.model.c : ConnectFour.init}
         />
       )
@@ -150,7 +150,7 @@ const View: FrontendModule['View'] = (input) => {
         <FlowFrontend.View
           ctx={input.ctx}
           dispatch={(c) => input.dispatch({ t: 'flow', c })}
-          modelCore={input.modelCore.c}
+          modelSpace={input.modelSpace.c}
           model={input.model.t === 'flow' ? input.model.c : FlowFrontend.init}
         />
       )
@@ -159,15 +159,15 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewFeedItem: FrontendModule['ViewFeedItem'] = (input) => {
-  switch (input.modelCore.t) {
+  switch (input.modelSpace.t) {
     case 'connect-four': {
-      switch (input.msgCore.t) {
+      switch (input.msgSpace.t) {
         case 'connect-four': {
           return (
             <ConnectFour.ViewFeedItem
               ctx={input.ctx}
-              msgCore={input.msgCore.c}
-              modelCore={input.modelCore.c}
+              msgSpace={input.msgSpace.c}
+              modelSpace={input.modelSpace.c}
               dispatch={(c) => input.dispatch({ t: 'connect-four', c })}
             />
           )

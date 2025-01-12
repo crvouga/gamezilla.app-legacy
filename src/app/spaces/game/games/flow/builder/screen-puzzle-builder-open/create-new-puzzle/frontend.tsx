@@ -10,7 +10,7 @@ import { FrontendModule } from '../../types'
 import { MsgFrontend, MsgToBackend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
-  const { msgCore, model, msg, ctx } = input
+  const { msgSpace, model, msg, ctx } = input
 
   switch (msg?.t) {
     case 'create-new-puzzle.user-clicked-create-button': {
@@ -58,13 +58,13 @@ const update: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (msgCore?.t) {
+  switch (msgSpace?.t) {
     case 'create-new-puzzle.user-created-puzzle': {
-      if (isErr(msgCore.created)) {
+      if (isErr(msgSpace.created)) {
         return {
           model: {
             ...model,
-            puzzleCreateRequest: msgCore.created,
+            puzzleCreateRequest: msgSpace.created,
           },
           msgCmd: showErrSm<{
             MsgFrontend: MsgFrontend
@@ -73,7 +73,7 @@ const update: FrontendModule['update'] = (input) => {
         }
       }
 
-      const puzzleNew = msgCore.created.value
+      const puzzleNew = msgSpace.created.value
 
       const msgCmd: FlowFrontendCmd<{
         MsgFrontend: MsgFrontend
@@ -95,7 +95,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          puzzleCreateRequest: Result.mapOk(msgCore.created, () => null),
+          puzzleCreateRequest: Result.mapOk(msgSpace.created, () => null),
         },
         msgCmd,
       }

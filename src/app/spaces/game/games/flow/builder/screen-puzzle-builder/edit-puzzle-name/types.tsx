@@ -73,11 +73,11 @@ export type MsgToFrontend = {
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('user-edited-puzzle-name'),
   edited: Result.parser(p.str, p.l(null)),
   flowPuzzleId: PuzzleId,
   newName: p.str,
   userId: UserId,
 })
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

@@ -5,8 +5,8 @@ import type { SpaceId } from '~/app/@/data/space-id'
 import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import type { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesCoreFrontend } from '../core/frontend'
-import { SpaceCoreState } from '../core/space-state'
+import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceState } from '../space/space-state'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card'
 
@@ -26,7 +26,7 @@ const sendListSpacesRequest: SpaceFrontendModule['update'] = ({ model, ctx }) =>
       ...model,
       listSpacesRequest: startedRequest(ctx.now),
     },
-    msgCmd: [sendToBackend({ t: 'list-spaces', limit: 100, offset: 0 })],
+    msgCmd: [sendToBackend({ t: 'list-spaces', pagination: { limit: 100, offset: 0 } })],
   }
 }
 
@@ -88,7 +88,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
   switch (input.msgBackend?.t) {
     case 'listed-spaces': {
-      const merged = input.msgBackend.spaces.reduce(SpacesCoreFrontend.merge, input.model)
+      const merged = input.msgBackend.spaces.reduce(SpacesSpaceFrontend.merge, input.model)
       return {
         model: {
           ...input.model,
@@ -111,10 +111,10 @@ const update: SpaceFrontendModule['update'] = (input) => {
 //
 //
 
-const toSpaces = (model: SpacesCoreFrontend.Model) => {
-  const spaces: SpaceCoreState.Started[] = []
+const toSpaces = (model: SpacesSpaceFrontend.Model) => {
+  const spaces: SpaceState.Started[] = []
   for (const spaceId in model.spaces) {
-    const started = SpacesCoreFrontend.toSpaceStarted(model, spaceId as SpaceId)
+    const started = SpacesSpaceFrontend.toSpaceStarted(model, spaceId as SpaceId)
     if (started) {
       spaces.push(started)
     }

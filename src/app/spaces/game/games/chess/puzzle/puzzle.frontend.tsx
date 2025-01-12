@@ -24,19 +24,19 @@ import { Chess } from '../@/chess'
 import { Chessboard } from '../@/chess-ui/chessboard'
 import { CHESS_SOUND } from '../@/chess/chess-sounds'
 import {
-  type CoreModel,
+  type SpaceModel,
   type ModelFrontend,
   type MsgFrontend,
   type MsgToFrontend,
   type MsgToBackend,
-  initCore,
+  initSpace,
   isIncorrect,
   isNoMoreHints,
   isSolved,
   toCurrentBoard,
   toNextEloRating,
   toPlayerColor,
-  updateCore,
+  updateSpace,
 } from './puzzle.types'
 
 //
@@ -49,7 +49,7 @@ export const init = (): {
   model: ModelFrontend
 } => {
   return {
-    model: initCore,
+    model: initSpace,
   }
 }
 
@@ -131,7 +131,7 @@ export const updateMain = ({
     MsgFrontend: MsgFrontend
   }>[]
 } => {
-  const updated = updateCore({ msg, model, ctx })
+  const updated = updateSpace({ msg, model, ctx })
 
   const modelNew = mergeWithBackend({
     frontend: model,
@@ -210,7 +210,7 @@ export const mergeWithBackend = ({
   backend,
 }: {
   frontend?: ModelFrontend
-  backend: CoreModel
+  backend: SpaceModel
 }): ModelFrontend => {
   return {
     ...frontend,

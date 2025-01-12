@@ -327,23 +327,23 @@ export const _findShortestEmptyPipelineBFS = (model: Flow.Model, sourceId: NodeI
 // This might cause bugs but it's worth a try for perf
 //
 
-const gScore = new Map<NodeId, number>()
-const fScore = new Map<NodeId, number>()
+const gSspace = new Map<NodeId, number>()
+const fSspace = new Map<NodeId, number>()
 const cameFrom = new Map<NodeId, NodeId>()
 const openSet = new MinHeap<NodeId>((a, b) => {
-  const fScoreA = fScore.get(a) ?? Number.POSITIVE_INFINITY
-  const fScoreB = fScore.get(b) ?? Number.POSITIVE_INFINITY
-  return fScoreA - fScoreB
+  const fSspaceA = fSspace.get(a) ?? Number.POSITIVE_INFINITY
+  const fSspaceB = fSspace.get(b) ?? Number.POSITIVE_INFINITY
+  return fSspaceA - fSspaceB
 })
 
 const findShortestEmptyPipelineAStar = (
-  heuristicScore: (node: NodeId) => number,
+  heuristicSspace: (node: NodeId) => number,
   model: Flow.Model,
   sourceId: NodeId,
   targetId: NodeId,
 ): NodeId[] => {
-  gScore.clear()
-  fScore.clear()
+  gSspace.clear()
+  fSspace.clear()
   cameFrom.clear()
   openSet.clear()
 
@@ -353,8 +353,8 @@ const findShortestEmptyPipelineAStar = (
     return []
   }
 
-  gScore.set(sourceId, 0)
-  fScore.set(sourceId, heuristicScore(sourceId))
+  gSspace.set(sourceId, 0)
+  fSspace.set(sourceId, heuristicSspace(sourceId))
   openSet.insert(sourceId)
 
   let iterations = 0
@@ -393,12 +393,12 @@ const findShortestEmptyPipelineAStar = (
 
       const edgeWeight = 0
 
-      const tentativeGScore = (gScore.get(current) ?? Number.POSITIVE_INFINITY) + edgeWeight
+      const tentativeGSspace = (gSspace.get(current) ?? Number.POSITIVE_INFINITY) + edgeWeight
 
-      if (tentativeGScore < (gScore.get(adjacent) ?? Number.POSITIVE_INFINITY)) {
+      if (tentativeGSspace < (gSspace.get(adjacent) ?? Number.POSITIVE_INFINITY)) {
         cameFrom.set(adjacent, current)
-        gScore.set(adjacent, tentativeGScore)
-        fScore.set(adjacent, tentativeGScore + heuristicScore(adjacent))
+        gSspace.set(adjacent, tentativeGSspace)
+        fSspace.set(adjacent, tentativeGSspace + heuristicSspace(adjacent))
 
         if (!openSet.has(adjacent)) {
           openSet.insert(adjacent)

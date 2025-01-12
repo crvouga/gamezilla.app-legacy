@@ -2,7 +2,7 @@ import { Result } from '~/@/result'
 import { Time } from '~/@/time/time'
 import * as Snake from './@/snake'
 import {
-  type CoreModel,
+  type SpaceModel,
   type InputDirection,
   type InputDirection_Done,
   type InputPlayer,
@@ -13,7 +13,7 @@ import {
   type Response,
   type ToggleStatus,
   type ToggleStatusResult,
-  initCoreModel,
+  initSpaceModel,
   startGame,
 } from './snake.types'
 import { Eff } from '~/@/eff'
@@ -29,7 +29,7 @@ import { Sub } from '~/@/sub'
 
 export type Model = ModelBackend
 
-export const init = initCoreModel
+export const init = initSpaceModel
 
 //
 //
@@ -112,12 +112,12 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
 //
 //
 
-export const inputPlayer = (player: InputPlayer[1], model: CoreModel): InputPlayer_Done[1] => {
+export const inputPlayer = (player: InputPlayer[1], model: SpaceModel): InputPlayer_Done[1] => {
   if (model.gameStatus.type !== 'GameSetup') {
     return Result.Err('must_be_in_game_setup')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     gameStatus: {
       type: 'GameSetup',
@@ -128,7 +128,7 @@ export const inputPlayer = (player: InputPlayer[1], model: CoreModel): InputPlay
   return Result.Ok(modelNew)
 }
 
-export const inputDirection = ({ direction, userId }: InputDirection[1], model: CoreModel): InputDirection_Done[1] => {
+export const inputDirection = ({ direction, userId }: InputDirection[1], model: SpaceModel): InputDirection_Done[1] => {
   if (model.gameStatus.type !== 'GameStarted') {
     return Result.Err('must_be_in_game_started')
   }
@@ -139,7 +139,7 @@ export const inputDirection = ({ direction, userId }: InputDirection[1], model: 
     return Result.Err('user_must_be_the_current_player')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     ...Snake.enqueueDirection(direction, model),
     status: 'Playing',
@@ -148,7 +148,7 @@ export const inputDirection = ({ direction, userId }: InputDirection[1], model: 
   return Result.Ok(modelNew)
 }
 
-export const toggleStatus = ({ userId }: ToggleStatus[1], model: CoreModel): ToggleStatusResult => {
+export const toggleStatus = ({ userId }: ToggleStatus[1], model: SpaceModel): ToggleStatusResult => {
   if (model.gameStatus.type !== 'GameStarted') {
     return Result.Err('must_be_in_game_started')
   }
@@ -157,7 +157,7 @@ export const toggleStatus = ({ userId }: ToggleStatus[1], model: CoreModel): Tog
     return Result.Err('user_must_be_the_current_player')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     status: model.status === 'Paused' ? 'Playing' : 'Paused',
   }

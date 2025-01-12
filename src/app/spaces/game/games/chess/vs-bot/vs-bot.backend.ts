@@ -111,7 +111,7 @@ const toBotMoveEff = (modelPrev: Model, modelNext: Model): Eff<Msg> => {
 }
 
 const updateFromFrontendMain: typeof updateFromFrontend = ({ model }) => {
-  // const handled = updateCore({ msg, model });
+  // const handled = updateSpace({ msg, model });
 
   // const modelNew: Model = handled.t === "err" ? model : handled.value;
 

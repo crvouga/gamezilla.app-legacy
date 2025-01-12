@@ -11,7 +11,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from '~/app/@/ui'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesFrontend } from '../frontend'
-import { SpaceCore } from '../core/space-core'
+import { SpaceSpace } from '../space/space'
 
 const Fixture = async (input?: { currentRoute?: Route }) => {
   const f = await FixtureSpacesFrontend(input)
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'listed-spaces',
-          spaces: [SpaceCore.random(), SpaceCore.random(), SpaceCore.random()],
+          spaces: [SpaceSpace.random(), SpaceSpace.random(), SpaceSpace.random()],
           causedBy: null,
         },
       },
@@ -138,7 +138,7 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'listed-spaces',
-          spaces: [SpaceCore.random(), SpaceCore.random(), SpaceCore.random()],
+          spaces: [SpaceSpace.random(), SpaceSpace.random(), SpaceSpace.random()],
           causedBy: null,
         },
       },
@@ -150,8 +150,8 @@ describe(import.meta.file, () => {
   it('should navigate to space screen after clicking a space card', async () => {
     const f = await Fixture()
 
-    const space = SpaceCore.random()
-    const spaceId = SpaceCore.toSpaceId(space)
+    const space = SpaceSpace.random()
+    const spaceId = SpaceSpace.toSpaceId(space)
     if (!spaceId) throw new Error('SpaceId is null')
 
     const updated = f.update(f.initial, [
@@ -185,8 +185,8 @@ describe(import.meta.file, () => {
   it('should make a nav forward sound when opening a space screen', async () => {
     const f = await Fixture()
 
-    const space = SpaceCore.random()
-    const spaceId = SpaceCore.toSpaceId(space)
+    const space = SpaceSpace.random()
+    const spaceId = SpaceSpace.toSpaceId(space)
     if (!spaceId) throw new Error('SpaceId is null')
 
     const updated = f.update(f.initial, [
@@ -220,8 +220,8 @@ describe(import.meta.file, () => {
   it('should make a sound when closing room screen', async () => {
     const f = await Fixture()
 
-    const space = SpaceCore.random()
-    const spaceId = SpaceCore.toSpaceId(space)
+    const space = SpaceSpace.random()
+    const spaceId = SpaceSpace.toSpaceId(space)
     if (!spaceId) throw new Error('SpaceId is null')
 
     const updated = f.update(f.initial, [
@@ -262,9 +262,9 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const hostId = f.currentUser.userId
 
-    const space = pipe(SpaceCore.random({ spaceId, hostId }), (model) =>
+    const space = pipe(SpaceSpace.random({ spaceId, hostId }), (model) =>
       EventSourced.appendEvent(
-        SpaceCore.config,
+        SpaceSpace.config,
         model,
         withEventId({ t: 'user-inputted-game', game: 'flow', spaceId, userId: hostId } as const),
       ),
@@ -278,8 +278,8 @@ describe(import.meta.file, () => {
       { msgBackend: { t: 'current-user-space', currentUser: f.currentUser, space: listedSpace } },
     ])
 
-    const before = SpaceCore.toSpaceStarted(space)
-    const after = SpaceCore.toSpaceStarted(updated.model.spaces[spaceId])
+    const before = SpaceSpace.toSpaceStarted(space)
+    const after = SpaceSpace.toSpaceStarted(updated.model.spaces[spaceId])
 
     expect(before?.game?.t ?? null).toEqual('flow')
     expect(after?.game?.t ?? null).toEqual(null)

@@ -5,20 +5,20 @@ import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { PackPuzzlesGridBackend } from '../../@/pack/pack-puzzles-grid/backend'
 import type { BackendModule } from '../types'
 import { EditPackNameBackend } from './edit-pack-name/backend'
-import { ScreenPackBuilderCore } from './core'
+import { ScreenPackBuilderSpace } from './space'
 
 const SavePack: Pick<BackendModule, 'update'> = {
   async update(input) {
-    switch (input.msgCore?.t) {
+    switch (input.msgSpace?.t) {
       case 'screen-pack-builder.user-clicked-add-puzzle-item': {
-        if (!input.modelCore.screenPackBuilder) {
+        if (!input.modelSpace.screenPackBuilder) {
           return {}
         }
 
-        const saved = await input.ctx.packDb.put(input.modelCore.screenPackBuilder.pack)
+        const saved = await input.ctx.packDb.put(input.modelSpace.screenPackBuilder.pack)
 
         return {
-          msgCore: [
+          msgSpace: [
             {
               t: 'screen-pack-builder.saved-pack',
               saved,
@@ -36,7 +36,7 @@ const SavePack: Pick<BackendModule, 'update'> = {
 
 const PuzzleGrid: Pick<BackendModule, 'update'> = {
   async update(input) {
-    const pack = input.modelCore.screenPackBuilder?.pack
+    const pack = input.modelSpace.screenPackBuilder?.pack
 
     if (!pack) {
       return {}
@@ -65,21 +65,21 @@ const PuzzleGrid: Pick<BackendModule, 'update'> = {
     return {
       msgCmd: SpaceBackendCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
       msgEvt: updated.msgEvt,
-      msgCore: [],
+      msgSpace: [],
     }
   },
 }
 
 const RemovedPuzzleFromPack: Pick<BackendModule, 'update'> = {
   async update(input) {
-    switch (input.msgCore?.t) {
+    switch (input.msgSpace?.t) {
       case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
-        const modelCoreNew = ScreenPackBuilderCore.update({
+        const modelSpaceNew = ScreenPackBuilderSpace.update({
           ctx: input.ctx,
-          modelCore: input.modelCore,
-          msgCore: input.msgCore,
+          modelSpace: input.modelSpace,
+          msgSpace: input.msgSpace,
         })
-        const packNew = modelCoreNew.screenPackBuilder?.pack
+        const packNew = modelSpaceNew.screenPackBuilder?.pack
         if (!packNew) {
           return {}
         }
@@ -96,22 +96,22 @@ const RemovedPuzzleFromPack: Pick<BackendModule, 'update'> = {
 
 const EditPackName: Pick<BackendModule, 'update'> = {
   async update(input) {
-    if (!input.modelCore.screenPackBuilder) {
+    if (!input.modelSpace.screenPackBuilder) {
       return {}
     }
     const updated = await EditPackNameBackend.update({
       ...input,
-      modelCore: input.modelCore.screenPackBuilder.editPackName,
-      msgCore:
-        input.msgCore?.t === 'got-edit-pack-name-msg'
+      modelSpace: input.modelSpace.screenPackBuilder.editPackName,
+      msgSpace:
+        input.msgSpace?.t === 'got-edit-pack-name-msg'
           ? {
-              ...input.msgCore,
-              ...input.msgCore.c,
+              ...input.msgSpace,
+              ...input.msgSpace.c,
             }
           : null,
     })
     return {
-      msgCore: (updated.msgCore ?? []).map((c) => ({ c, t: 'got-edit-pack-name-msg' })),
+      msgSpace: (updated.msgSpace ?? []).map((c) => ({ c, t: 'got-edit-pack-name-msg' })),
     }
   },
 }

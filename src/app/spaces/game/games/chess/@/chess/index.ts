@@ -1,3 +1,3 @@
-export * from './chess-core'
-export * as Chess from './chess-core'
+export * from './chess-space'
+export * as Chess from './chess-space'
 export * from './chess-shared'

@@ -7,7 +7,7 @@ import type { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import { FlowBackendCtx } from '../../../@/backend/ctx'
 import type { BackendModule } from '../../types'
-import type { MsgCore } from './types'
+import type { MsgSpace } from './types'
 
 const update: BackendModule['update'] = async (input) => {
   return GameBackendModule.andThen({}, () => updateFromFrontend({ ...input }))
@@ -21,14 +21,14 @@ const updateFromFrontend: BackendModule['update'] = async (input) => {
         ...input.msgFrontend,
       })
 
-      const msgCore: MsgCore = {
+      const msgSpace: MsgSpace = {
         ...input.msgFrontend,
         t: 'user-edited-puzzle-name',
         edited,
       }
 
       return {
-        msgCore: [withEventId(msgCore)],
+        msgSpace: [withEventId(msgSpace)],
       }
     }
 

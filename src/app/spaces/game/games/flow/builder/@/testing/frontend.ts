@@ -16,30 +16,30 @@ import { PuzzleListTypes } from '../../../@/puzzle/puzzle-list'
 import { Solutions } from '../../../@/solutions/solutions'
 import { samples } from '../../../@/variant/grid/grid-samples'
 import { BuilderFrontend } from '../../frontend'
-import { BuilderCore } from '../../core'
+import { BuilderSpace } from '../../space'
 import * as BuilderTypes from '../../types'
 
 export type FixtureUpdateInput = {
   ctx?: FlowFrontendCtx
   msg?: BuilderTypes.MsgFrontend
-  msgCore?: WithEventMeta<BuilderTypes.MsgCore>
+  msgSpace?: WithEventMeta<BuilderTypes.MsgSpace>
   msgBackend?: BuilderTypes.MsgToFrontend
 }
 export type FixtureUpdateOutput = ReturnType<typeof BuilderFrontend.update> & {
-  modelCore: BuilderTypes.ModelCore
+  modelSpace: BuilderTypes.ModelSpace
 }
 
-const toModelCore = (
+const toModelSpace = (
   ctx: FlowFrontendCtx,
-  initial: BuilderTypes.ModelCore,
-  msgCores: BuilderTypes.MsgCore[],
-): BuilderTypes.ModelCore => {
-  return msgCores.reduce(
-    (modelCore, msgCore) =>
-      BuilderCore.updateCore({
+  initial: BuilderTypes.ModelSpace,
+  msgSpaces: BuilderTypes.MsgSpace[],
+): BuilderTypes.ModelSpace => {
+  return msgSpaces.reduce(
+    (modelSpace, msgSpace) =>
+      BuilderSpace.updateSpace({
         ctx,
-        modelCore,
-        msgCore,
+        modelSpace,
+        msgSpace,
       }),
     initial,
   )
@@ -51,13 +51,13 @@ const updatesReducer =
     const output = BuilderFrontend.update({
       ...input,
       model: NonEmpty.last(outputs).model,
-      modelCore: NonEmpty.last(outputs).modelCore,
+      modelSpace: NonEmpty.last(outputs).modelSpace,
       ctx,
     })
-    const modelCoreOutput = toModelCore(ctx, NonEmpty.last(outputs).modelCore, output.msgCore ?? [])
+    const modelSpaceOutput = toModelSpace(ctx, NonEmpty.last(outputs).modelSpace, output.msgSpace ?? [])
     outputs.push({
       ...output,
-      modelCore: modelCoreOutput,
+      modelSpace: modelSpaceOutput,
     })
     return outputs
   }
@@ -66,14 +66,14 @@ const updates = (
   init: {
     model: BuilderTypes.ModelFrontend
     ctx: FlowFrontendCtx
-    modelCore: BuilderTypes.ModelCore
+    modelSpace: BuilderTypes.ModelSpace
   },
   inputs: FixtureUpdateInput[],
 ): NonEmpty<FixtureUpdateOutput> => {
   return inputs.reduce(updatesReducer(init.ctx), [
     {
       model: init.model,
-      modelCore: init.modelCore,
+      modelSpace: init.modelSpace,
     },
   ])
 }
@@ -81,7 +81,7 @@ const update = (
   init: {
     model: BuilderTypes.ModelFrontend
     ctx: FlowFrontendCtx
-    modelCore: BuilderTypes.ModelCore
+    modelSpace: BuilderTypes.ModelSpace
   },
   inputs: FixtureUpdateInput[],
 ): FixtureUpdateOutput => {
@@ -101,11 +101,11 @@ export const FixtureFlowBuilderFrontend = async () => {
     solutions: Solutions.init,
   }
   const model = BuilderTypes.initFrontend
-  const modelCore = BuilderCore.initCore({ ctx })
+  const modelSpace = BuilderSpace.initSpace({ ctx })
   const init = {
     ctx,
     model,
-    modelCore,
+    modelSpace,
   }
 
   return {
@@ -113,7 +113,7 @@ export const FixtureFlowBuilderFrontend = async () => {
     init,
     ctx,
     model,
-    modelCore,
+    modelSpace,
     update,
     updates,
   }
@@ -139,7 +139,7 @@ export const clickedPackCreateNewButton = (ctx: FlowFrontendCtx) => (model: Buil
   return BuilderFrontend.update({
     model,
     ctx,
-    modelCore: BuilderCore.initCore({ ctx }),
+    modelSpace: BuilderSpace.initSpace({ ctx }),
     msg: {
       t: 'create-new-pack.clicked-create-button',
     },
@@ -150,10 +150,10 @@ export const userCreatedPack = (ctx: FlowFrontendCtx, pack: Pack) => (model: Bui
   return BuilderFrontend.update({
     model,
     ctx: ctx,
-    modelCore: BuilderCore.initCore({
+    modelSpace: BuilderSpace.initSpace({
       ctx,
     }),
-    msgCore: {
+    msgSpace: {
       t: 'user-created-pack',
       created: Ok(pack),
       eventId: EventId.generate(),
@@ -167,11 +167,11 @@ export const clickedPackItem = (ctx: FlowFrontendCtx, pack: Pack) => (model: Bui
   return BuilderFrontend.update({
     model,
     ctx: ctx,
-    modelCore: BuilderCore.initCore({
+    modelSpace: BuilderSpace.initSpace({
       ctx,
     }),
     msg: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: {
         t: 'screen-pack-builder-open.user-clicked-pack-item',
         pack,
@@ -182,19 +182,19 @@ export const clickedPackItem = (ctx: FlowFrontendCtx, pack: Pack) => (model: Bui
 }
 
 export const clickedOpenPuzzlePickerButton =
-  (ctx: FlowFrontendCtx, modelCore: BuilderTypes.ModelCore = BuilderCore.initCore({ ctx })) =>
+  (ctx: FlowFrontendCtx, modelSpace: BuilderTypes.ModelSpace = BuilderSpace.initSpace({ ctx })) =>
   (model: BuilderTypes.ModelFrontend) => {
     return BuilderFrontend.update({
       model,
       msg: {
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'screen-pack-builder.user-opened-add-puzzle-screen',
           userId: ctx.currentUserId,
         },
       },
       ctx,
-      modelCore,
+      modelSpace,
     })
   }
 
@@ -202,13 +202,13 @@ export const closedPuzzlePickerDrawer = (ctx: FlowFrontendCtx) => (model: Builde
   return BuilderFrontend.update({
     model,
     msg: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: {
         t: 'screen-pack-builder.user-closed-add-puzzle-screen',
       },
     },
     ctx,
-    modelCore: BuilderCore.initCore({
+    modelSpace: BuilderSpace.initSpace({
       ctx,
     }),
   })
@@ -218,7 +218,7 @@ export const clickedPuzzleListItem = (ctx: FlowFrontendCtx, puzzle: Puzzle) => (
   return BuilderFrontend.update({
     model,
     msg: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: {
         t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
         puzzle,
@@ -226,12 +226,12 @@ export const clickedPuzzleListItem = (ctx: FlowFrontendCtx, puzzle: Puzzle) => (
       },
     },
     ctx,
-    modelCore: BuilderCore.initCore({ ctx }),
+    modelSpace: BuilderSpace.initSpace({ ctx }),
   })
 }
 
 export const clickedExitPuzzleBuilderButton =
-  (ctx: FlowFrontendCtx, modelCore: BuilderTypes.ModelCore = BuilderCore.initCore({ ctx })) =>
+  (ctx: FlowFrontendCtx, modelSpace: BuilderTypes.ModelSpace = BuilderSpace.initSpace({ ctx })) =>
   (model: BuilderTypes.ModelFrontend) => {
     return BuilderFrontend.update({
       model,
@@ -239,13 +239,13 @@ export const clickedExitPuzzleBuilderButton =
         t: 'screen-puzzle-builder.user-clicked-exit-button',
       },
       ctx,
-      modelCore: modelCore,
+      modelSpace: modelSpace,
     })
   }
 
 export const puzzleBuilderPressDownRandomNode =
-  (ctx: FlowFrontendCtx, modelCore: BuilderTypes.ModelCore) => (model: BuilderTypes.ModelFrontend) => {
-    const puzzleBuilder = modelCore.screenPuzzleBuilder
+  (ctx: FlowFrontendCtx, modelSpace: BuilderTypes.ModelSpace) => (model: BuilderTypes.ModelFrontend) => {
+    const puzzleBuilder = modelSpace.screenPuzzleBuilder
 
     if (!puzzleBuilder) {
       return {
@@ -273,7 +273,7 @@ export const puzzleBuilderPressDownRandomNode =
         },
       },
       ctx,
-      modelCore: BuilderCore.initCore({
+      modelSpace: BuilderSpace.initSpace({
         ctx,
       }),
     })
@@ -283,7 +283,7 @@ export const puzzleBuilderUserSavedChanges =
   (ctx: FlowFrontendCtx, puzzle: Puzzle) => (model: BuilderTypes.ModelFrontend) => {
     return BuilderFrontend.update({
       model,
-      msgCore: {
+      msgSpace: {
         t: 'screen-puzzle-builder.saved-puzzle',
         eventId: EventId.generate(),
         happenedAt: LamportTimestamp.fromNumber(0),
@@ -291,7 +291,7 @@ export const puzzleBuilderUserSavedChanges =
         userId: ctx.currentUserId,
       },
       ctx,
-      modelCore: BuilderCore.initCore({
+      modelSpace: BuilderSpace.initSpace({
         ctx,
       }),
     })
@@ -302,7 +302,7 @@ export const clickedPuzzlePickerItem =
     return BuilderFrontend.update({
       model,
       msg: {
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'screen-pack-builder.user-clicked-add-puzzle-item',
           puzzle,
@@ -310,7 +310,7 @@ export const clickedPuzzlePickerItem =
         },
       },
       ctx,
-      modelCore: BuilderCore.initCore({
+      modelSpace: BuilderSpace.initSpace({
         ctx,
       }),
     })
@@ -320,14 +320,14 @@ export const clickedExitPuzzleButton = (ctx: FlowFrontendCtx) => (model: Builder
   return BuilderFrontend.update({
     model,
     msg: {
-      t: 'got-msg-core',
+      t: 'got-msg-space',
       c: {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
         userId: ctx.currentUserId,
       },
     },
     ctx,
-    modelCore: BuilderCore.initCore({
+    modelSpace: BuilderSpace.initSpace({
       ctx,
     }),
   })
@@ -338,7 +338,7 @@ export const clickedPuzzleGridItem =
     return BuilderFrontend.update({
       model,
       msg: {
-        t: 'got-msg-core',
+        t: 'got-msg-space',
         c: {
           t: 'screen-pack-builder.user-clicked-pack-item',
           puzzleResult: { t: 'got', c: puzzle },
@@ -346,7 +346,7 @@ export const clickedPuzzleGridItem =
         },
       },
       ctx,
-      modelCore: BuilderCore.initCore({
+      modelSpace: BuilderSpace.initSpace({
         ctx,
       }),
     })
@@ -356,7 +356,7 @@ export const backendCreatedPack = (ctx: FlowFrontendCtx, pack: Pack) => (model: 
   return BuilderFrontend.update({
     model,
     ctx: ctx,
-    modelCore: BuilderCore.initCore({
+    modelSpace: BuilderSpace.initSpace({
       ctx,
     }),
     msgBackend: {

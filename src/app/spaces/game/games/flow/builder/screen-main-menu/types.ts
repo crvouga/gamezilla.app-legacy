@@ -20,7 +20,7 @@ export type Option = p.Infer<typeof Option>
 
 export type MsgFrontend = GameMainMenu.Msg
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('screen-main-menu.user-clicked-back-button'),
     userId: UserId,
@@ -31,4 +31,4 @@ export const MsgCore = p.or(
     option: Option,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

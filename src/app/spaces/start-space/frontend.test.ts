@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { didPlaySound, didPushRoute, didSendToBackend, didShowToast } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { SpacesCoreFrontend } from '../core/frontend'
+import { SpacesSpaceFrontend } from '../space/frontend'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -36,8 +36,8 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const before = SpacesCoreFrontend.toSpaceIdByUserId(f.initial.model, f.ctx.currentUserId)
-    const after = SpacesCoreFrontend.toSpaceIdByUserId(started.model, f.ctx.currentUserId)
+    const before = SpacesSpaceFrontend.toSpaceIdByUserId(f.initial.model, f.ctx.currentUserId)
+    const after = SpacesSpaceFrontend.toSpaceIdByUserId(started.model, f.ctx.currentUserId)
     expect(before).toEqual(null)
     expect(after).toEqual(spaceId)
   })
@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
     expect(
       didSendToBackend(
         started,
-        (msg) => msg.t === 'got-msg-core' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId,
+        (msg) => msg.t === 'got-msg-space' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId,
       ),
     ).toBe(true)
   })

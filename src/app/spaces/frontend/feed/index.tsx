@@ -1,9 +1,9 @@
 import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
-import { SpacesCoreFrontend } from '../../core/frontend'
-import type { SpaceEvent } from '../../core/space-event'
-import { SpaceCoreState } from '../../core/space-state'
+import { SpacesSpaceFrontend } from '../../space/frontend'
+import type { SpaceEvent } from '../../space/space-event'
+import { SpaceState } from '../../space/space-state'
 import { GamesFrontend } from '../../game/games/frontend'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 
@@ -12,14 +12,14 @@ const View = ({
   ctx,
   model,
 }: {
-  spaceState: SpaceCoreState.State
+  spaceState: SpaceState.State
   dispatch: (m: MsgFrontend) => void
   model: ModelFrontend
   ctx: SpaceFrontendCtx
 }) => {
   const msgEvt =
     spaceState.type === 'started'
-      ? SpacesCoreFrontend.toEventWithMeta(model, spaceState.spaceId, spaceState.latestEventId)
+      ? SpacesSpaceFrontend.toEventWithMeta(model, spaceState.spaceId, spaceState.latestEventId)
       : null
 
   return (
@@ -36,7 +36,7 @@ const ViewFeedItem = ({
 }: {
   ctx: SpaceFrontendCtx
   msgEvt: WithEventId<SpaceEvent>
-  state: SpaceCoreState.Started
+  state: SpaceState.Started
 }) => {
   switch (msgEvt.t) {
     case 'game': {
@@ -46,11 +46,11 @@ const ViewFeedItem = ({
       return (
         <GamesFrontend.ViewFeedItem
           ctx={ctx}
-          msgCore={{
+          msgSpace={{
             ...msgEvt,
             ...msgEvt.c,
           }}
-          modelCore={state.game}
+          modelSpace={state.game}
           dispatch={(_msg) => {
             //
           }}

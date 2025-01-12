@@ -7,7 +7,7 @@ import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { EditMode } from '../../../@/edit-mode'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
-import type { FrontendModule, ModelFrontend, MsgFrontend, MsgCore } from '../../types'
+import type { FrontendModule, ModelFrontend, MsgFrontend, MsgSpace } from '../../types'
 
 //
 //
@@ -25,15 +25,15 @@ const update: FrontendModule['update'] = (input) => {
   )
 }
 
-const updatePuzzles: FrontendModule['update'] = ({ msgCore, model }) => {
-  switch (msgCore?.t) {
+const updatePuzzles: FrontendModule['update'] = ({ msgSpace, model }) => {
+  switch (msgSpace?.t) {
     case 'screen-puzzle-builder.saved-puzzle': {
-      if (isErr(msgCore.saved)) {
+      if (isErr(msgSpace.saved)) {
         return {
           model,
         }
       }
-      const puzzleNew = msgCore.saved.value
+      const puzzleNew = msgSpace.saved.value
 
       return {
         model,
@@ -43,7 +43,7 @@ const updatePuzzles: FrontendModule['update'] = ({ msgCore, model }) => {
             puzzles: {
               [puzzleNew.id]: puzzleNew,
             },
-            causedBy: { msgCore },
+            causedBy: { msgSpace },
           },
         ],
       }
@@ -58,16 +58,16 @@ const updatePuzzles: FrontendModule['update'] = ({ msgCore, model }) => {
 }
 
 const updateExitBuilder: FrontendModule['update'] = (input) => {
-  const { msg, model, modelCore, msgCore } = input
+  const { msg, model, modelSpace, msgSpace } = input
 
   switch (msg?.t) {
     case 'screen-puzzle-builder.user-clicked-exit-button': {
-      if (!modelCore.screenPuzzleBuilder) {
+      if (!modelSpace.screenPuzzleBuilder) {
         return exitBuilderWithSound(input)
       }
 
       if (
-        EditMode.isUnsavedChanges(modelCore.screenPuzzleBuilder.editMode, modelCore.screenPuzzleBuilder.puzzle.flow)
+        EditMode.isUnsavedChanges(modelSpace.screenPuzzleBuilder.editMode, modelSpace.screenPuzzleBuilder.puzzle.flow)
       ) {
         return {
           model: {
@@ -110,9 +110,9 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (msgCore?.t) {
+  switch (msgSpace?.t) {
     case 'screen-puzzle-builder.saved-puzzle': {
-      if (model.puzzleSaveChangesRequest?.t === 'loading' && model.puzzleSaveChangesIsExiting && isOk(msgCore.saved)) {
+      if (model.puzzleSaveChangesRequest?.t === 'loading' && model.puzzleSaveChangesIsExiting && isOk(msgSpace.saved)) {
         return exitBuilder({
           ...input,
           model: {
@@ -135,21 +135,21 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
 }
 
 const updateSaveChangesRequest: FrontendModule['update'] = (input) => {
-  const { model, msg, ctx, msgCore } = input
+  const { model, msg, ctx, msgSpace } = input
 
   if (msg?.t === 'screen-puzzle-builder.save-changes.user-clicked-save-button') {
     return saveChanges(input)
   }
 
-  if (msgCore?.t === 'screen-puzzle-builder.saved-puzzle') {
+  if (msgSpace?.t === 'screen-puzzle-builder.saved-puzzle') {
     return {
       model: {
         ...model,
-        puzzleSaveChangesRequest: Result.mapOk(msgCore.saved, () => null),
+        puzzleSaveChangesRequest: Result.mapOk(msgSpace.saved, () => null),
       },
       msgCmd:
-        msgCore.userId === ctx.currentUserId
-          ? isOk(msgCore.saved)
+        msgSpace.userId === ctx.currentUserId
+          ? isOk(msgSpace.saved)
             ? showCreatedSm(ctx.t('app.saved-changes'))
             : showErrSm(ctx.t('app.something-went-wrong'))
           : [],
@@ -167,7 +167,7 @@ const exitBuilderWithSound: FrontendModule['update'] = (input) => {
 }
 
 const exitBuilder: FrontendModule['update'] = (input) => {
-  const msgCore: MsgCore = {
+  const msgSpace: MsgSpace = {
     t: 'screen-puzzle-builder.user-clicked-exit-button',
     userId: input.ctx.currentUserId,
   }
@@ -177,12 +177,12 @@ const exitBuilder: FrontendModule['update'] = (input) => {
       ...input.model,
       puzzleBuilderOpened: null,
     },
-    msgCore: [withEventId(msgCore)],
+    msgSpace: [withEventId(msgSpace)],
   }
 }
 
-const saveChanges: FrontendModule['update'] = ({ model, modelCore }) => {
-  const puzzleBuilder = modelCore.screenPuzzleBuilder
+const saveChanges: FrontendModule['update'] = ({ model, modelSpace }) => {
+  const puzzleBuilder = modelSpace.screenPuzzleBuilder
 
   if (!puzzleBuilder) {
     return { model }

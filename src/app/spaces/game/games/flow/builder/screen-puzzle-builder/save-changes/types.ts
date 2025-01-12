@@ -52,9 +52,9 @@ export type MsgToFrontend = { t: 'noop' }
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('screen-puzzle-builder.saved-puzzle'),
   saved: Result.parser(p.str, Puzzle),
   userId: UserId,
 })
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

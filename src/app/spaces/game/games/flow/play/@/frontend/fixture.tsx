@@ -3,27 +3,27 @@ import { PubSub } from '~/@/sub'
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureFlowFrontend } from '../../../@/frontend/fixture'
 import { PlayFrontend } from '../../frontend'
-import { PlayCore } from '../../core'
-import type { ModelCore, MsgFrontend, MsgCore, MsgToFrontend } from '../../types'
+import { PlaySpace } from '../../space'
+import type { ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend } from '../../types'
 
 export type FixtureUpdateInput = {
   msg?: MsgFrontend
   msgBackend?: MsgToFrontend
-  msgCore?: WithEventMeta<MsgCore>
+  msgSpace?: WithEventMeta<MsgSpace>
 }
 
 export const FixturePlayFrontend = async () => {
   const f = await FixtureFlowFrontend()
-  const initCore = PlayCore.initCore(f)
+  const initSpace = PlaySpace.initSpace(f)
 
   type Output = ReturnType<typeof PlayFrontend.update> & {
-    modelCore: ModelCore
+    modelSpace: ModelSpace
   }
 
   const render = (output: Output, ctx: typeof f.ctx = f.ctx) => {
     const msgs = PubSub.create<MsgFrontend>()
     const rendered = f.render(
-      <PlayFrontend.View ctx={ctx} dispatch={msgs.pub} model={output.model} modelCore={output.modelCore} />,
+      <PlayFrontend.View ctx={ctx} dispatch={msgs.pub} model={output.model} modelSpace={output.modelSpace} />,
     )
     return { ...rendered, msgs }
   }
@@ -35,22 +35,22 @@ export const FixturePlayFrontend = async () => {
       const nextOutput = PlayFrontend.update({
         ctx: f.ctx,
         model: lastOutput.model,
-        modelCore: lastOutput.modelCore,
+        modelSpace: lastOutput.modelSpace,
         ...input,
       })
-      const msgCore = [...(input.msgCore ? [input.msgCore] : []), ...(nextOutput.msgCore ?? [])].flat(2)
-      const nextModelCore = msgCore.reduce(
-        (modelCore, msgCore) =>
-          PlayCore.updateCore({
+      const msgSpace = [...(input.msgSpace ? [input.msgSpace] : []), ...(nextOutput.msgSpace ?? [])].flat(2)
+      const nextModelSpace = msgSpace.reduce(
+        (modelSpace, msgSpace) =>
+          PlaySpace.updateSpace({
             ctx: f.ctx,
-            modelCore,
-            msgCore,
+            modelSpace,
+            msgSpace,
           }),
-        lastOutput.modelCore,
+        lastOutput.modelSpace,
       )
       outputs.push({
         ...nextOutput,
-        modelCore: nextModelCore,
+        modelSpace: nextModelSpace,
       })
     }
     return outputs
@@ -62,7 +62,7 @@ export const FixturePlayFrontend = async () => {
 
   const initial: Output = {
     model: PlayFrontend.init,
-    modelCore: initCore,
+    modelSpace: initSpace,
   }
 
   return {

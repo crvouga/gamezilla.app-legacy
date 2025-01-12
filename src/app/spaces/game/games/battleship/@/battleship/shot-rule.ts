@@ -21,7 +21,7 @@ export const toDescription = (rule: ShotRule): string => {
       return `Shoot ${rule.count} ${word} per turn.`
     }
     case 'hitting-streak': {
-      return 'Continue shooting as long as you score hits.'
+      return 'Continue shooting as long as you sspace hits.'
     }
     case 'chain-fire': {
       return 'Shoot as often as you have ships left.'

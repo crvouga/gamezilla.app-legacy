@@ -1,10 +1,10 @@
-import { ModelCore } from './battleship-play.types'
+import { ModelSpace } from './battleship-play.types'
 
-const View = (input: { modelCore: ModelCore }) => {
+const View = (input: { modelSpace: ModelSpace }) => {
   return (
     <div>
       <h1>Play</h1>
-      {input.modelCore.players.map((player) => String(player))}
+      {input.modelSpace.players.map((player) => String(player))}
     </div>
   )
 }

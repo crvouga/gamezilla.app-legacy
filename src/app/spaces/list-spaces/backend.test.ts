@@ -3,7 +3,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
-import { SpaceCore } from '../core/space-core'
+import { SpaceSpace } from '../space/space'
 
 const Fixture = async () => {
   const f = await FixtureSpaceBackend()
@@ -20,8 +20,10 @@ describe(import.meta.file, () => {
         msgFrontend: {
           ...f.frontendA,
           t: 'list-spaces',
-          limit: 10,
-          offset: 0,
+          pagination: {
+            offset: 0,
+            limit: 10,
+          },
         },
       },
     ])
@@ -34,7 +36,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId,
@@ -46,8 +48,10 @@ describe(import.meta.file, () => {
         msgFrontend: {
           ...f.frontendB,
           t: 'list-spaces',
-          limit: 10,
-          offset: 0,
+          pagination: {
+            limit: 10,
+            offset: 0,
+          },
         },
       },
     ])
@@ -55,7 +59,7 @@ describe(import.meta.file, () => {
       didSendMsgToFrontend(
         output,
         (msg) =>
-          msg.t === 'listed-spaces' && msg.spaces.map(SpaceCore.toSpaceStarted).some((s) => s?.spaceId === spaceId),
+          msg.t === 'listed-spaces' && msg.spaces.map(SpaceSpace.toSpaceStarted).some((s) => s?.spaceId === spaceId),
       ),
     ).toBe(true)
   })

@@ -4,7 +4,7 @@ import { didPlaySound, didPushRoute, didShowToast } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { FixtureSpacesFrontend, userJoinedSpace, userLeftSpace, userStartedSpace } from '../@/fixture/frontend'
-import { SpacesCoreFrontend } from '../core/frontend'
+import { SpacesSpaceFrontend } from '../space/frontend'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -41,7 +41,7 @@ describe(import.meta.file, () => {
       userJoinedSpace(1, userId, spaceId),
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMetaAt(2, {
             t: 'user-left-space',
             spaceId,
@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
+    const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
     expect(currentUserSpaceId).toEqual(null)
   })
 

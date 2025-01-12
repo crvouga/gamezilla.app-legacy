@@ -2,8 +2,8 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { withEventMeta, WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { FlowFrontend } from '../../frontend'
-import { FlowCore } from '../../core'
-import { ModelCore, MsgFrontend, MsgCore, MsgToFrontend } from '../../types'
+import { FlowSpace } from '../../space'
+import { ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend } from '../../types'
 import { PackListTypes } from '../pack/pack-list'
 import { PackPuzzlesGridTypes } from '../pack/pack-puzzles-grid'
 import { PuzzleListTypes } from '../puzzle/puzzle-list'
@@ -25,7 +25,7 @@ export const FixtureFlowFrontend = async () => {
     ctx?: FlowFrontendCtx | null
     msg?: MsgFrontend | null
     msgBackend?: MsgToFrontend | null
-    msgCore?: WithEventMeta<MsgCore> | null
+    msgSpace?: WithEventMeta<MsgSpace> | null
   }
 
   type Output = ReturnType<typeof FlowFrontend.update>
@@ -40,19 +40,19 @@ export const FixtureFlowFrontend = async () => {
         model: lastOutput.model,
         msg: input.msg,
         msgBackend: input.msgBackend,
-        msgCore: input.msgCore,
-        modelCore: outputs
-          .flatMap((o) => o.msgCore ?? [])
+        msgSpace: input.msgSpace,
+        modelSpace: outputs
+          .flatMap((o) => o.msgSpace ?? [])
           .reduce(
-            (acc, msgCore): ModelCore =>
-              msgCore
-                ? FlowCore.updateCore({
+            (acc, msgSpace): ModelSpace =>
+              msgSpace
+                ? FlowSpace.updateSpace({
                     ctx: input.ctx ?? ctx,
-                    modelCore: acc,
-                    msgCore: withEventMeta(msgCore),
+                    modelSpace: acc,
+                    msgSpace: withEventMeta(msgSpace),
                   })
                 : acc,
-            FlowCore.initCore({ ctx: input.ctx ?? ctx }),
+            FlowSpace.initSpace({ ctx: input.ctx ?? ctx }),
           ),
         msgCmd: null,
         msgEvt: null,

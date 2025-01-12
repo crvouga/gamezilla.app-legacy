@@ -4,12 +4,12 @@ import { showErrSm } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Button, Drawer, DrawerHeader, TextField } from '~/app/@/ui'
 import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import type { ModelCore, MsgFrontend, MsgCore } from '../types'
+import type { ModelSpace, MsgFrontend, MsgSpace } from '../types'
 
 type FrontendModule = GameFrontendModule<{
   Ctx: AppFrontendCtx
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
   Msg: MsgFrontend
   ViewEmit: {
     close: null
@@ -24,14 +24,14 @@ const update: FrontendModule['update'] = (input) => {
     case 'edit-pack-name.user-inputted-draft-name': {
       return {
         model: input.model,
-        msgCore: [withEventId(input.msg)],
+        msgSpace: [withEventId(input.msg)],
       }
     }
   }
 
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'edit-pack-name.backend-persisted-pack': {
-      if (isErr(input.msgCore.result)) {
+      if (isErr(input.msgSpace.result)) {
         return {
           model: input.model,
           msgCmd: showErrSm(input.ctx.t('app.something-went-wrong')),
@@ -53,7 +53,7 @@ const ViewDrawer: FrontendModule['View'] = (input) => {
       <TextField
         id='pack-name'
         label={input.ctx.t('flow.edit-pack-name.pack-name')}
-        value={input.modelCore.draft}
+        value={input.modelSpace.draft}
         onChange={(packNameDraft) =>
           input.dispatch({
             t: 'edit-pack-name.user-inputted-draft-name',

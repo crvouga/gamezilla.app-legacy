@@ -3,7 +3,7 @@ import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
-import { SpacesCoreFrontend } from '../../core/frontend'
+import { SpacesSpaceFrontend } from '../../space/frontend'
 import { EndSpaceFrontend } from '../../end-space/end-space.frontend'
 import { GameFrontend } from '../../game/frontend'
 import { JoinSpaceFrontend } from '../../join-space/frontend'
@@ -19,7 +19,7 @@ const View = (input: {
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
-  const spaceState = SpacesCoreFrontend.toSpaceState(input.model, input.spaceId)
+  const spaceState = SpacesSpaceFrontend.toSpaceState(input.model, input.spaceId)
 
   switch (spaceState.type) {
     case 'initial': {
@@ -37,7 +37,7 @@ const View = (input: {
         space: spaceState,
       }
 
-      const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
         return (

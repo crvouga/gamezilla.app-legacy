@@ -1,13 +1,13 @@
 import { EventSourced } from '~/@/event-sourced'
 import { addProfiles, sendToBackend } from '~/app/@/frontend/cmd'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesCoreFrontend } from '../core/frontend'
+import { SpacesSpaceFrontend } from '../space/frontend'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
     { model: input.model },
     (model) => updateProfiles({ ...input, model }),
-    (model) => updateCore({ ...input, model }),
+    (model) => updateSpace({ ...input, model }),
     (model) => sendSpaceEventToBackend({ ...input, model }),
     (model) => outputSpaceEventsFromBackend({ ...input, model }),
   )
@@ -15,10 +15,10 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const outputSpaceEventsFromBackend: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgBackend?.t) {
-    case 'got-msg-core': {
+    case 'got-msg-space': {
       return {
         model: input.model,
-        msgCore: [input.msgBackend.c],
+        msgSpace: [input.msgBackend.c],
       }
     }
   }
@@ -26,12 +26,12 @@ const outputSpaceEventsFromBackend: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const sendSpaceEventToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgCore: msgCore }) => {
-  if (!msgCore) {
+const sendSpaceEventToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgSpace: msgSpace }) => {
+  if (!msgSpace) {
     return { model }
   }
 
-  const spaceEventWithMeta = SpacesCoreFrontend.toEventWithMeta(model, msgCore.spaceId, msgCore.eventId)
+  const spaceEventWithMeta = SpacesSpaceFrontend.toEventWithMeta(model, msgSpace.spaceId, msgSpace.eventId)
 
   if (!spaceEventWithMeta) {
     return { model }
@@ -43,7 +43,7 @@ const sendSpaceEventToBackend: SpaceFrontendModule['update'] = ({ ctx, model, ms
 
   return {
     model,
-    msgCmd: [sendToBackend({ t: 'got-msg-core', c: spaceEventWithMeta, profiles })],
+    msgCmd: [sendToBackend({ t: 'got-msg-space', c: spaceEventWithMeta, profiles })],
   }
 }
 
@@ -58,7 +58,7 @@ const updateProfiles: SpaceFrontendModule['update'] = ({ model, msgBackend }) =>
   return { model }
 }
 
-const updateCore: SpaceFrontendModule['update'] = (input) => {
+const updateSpace: SpaceFrontendModule['update'] = (input) => {
   const { model, msgEvt, msgBackend } = input
 
   switch (msgEvt?.t) {
@@ -73,7 +73,7 @@ const updateCore: SpaceFrontendModule['update'] = (input) => {
 
       const currentUserProfile = currentUserId ? input.ctx.profiles[currentUserId] : null
 
-      const currentUserSpace = SpacesCoreFrontend.toSpaceByUserId({
+      const currentUserSpace = SpacesSpaceFrontend.toSpaceByUserId({
         model,
         userId: currentUserId,
       })
@@ -110,7 +110,7 @@ const updateCore: SpaceFrontendModule['update'] = (input) => {
   switch (msgBackend?.t) {
     case 'synced':
     case 'current-user-space': {
-      const merged = SpacesCoreFrontend.merge(model, msgBackend.space)
+      const merged = SpacesSpaceFrontend.merge(model, msgBackend.space)
       return {
         model: {
           ...model,

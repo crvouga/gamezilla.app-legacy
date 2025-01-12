@@ -35,10 +35,10 @@ export type MsgBackend = { t: 'noop' }
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('user-deleted-puzzle'),
   deleted: Result.parser(p.str, p.l(null)),
   flowPuzzleId: PuzzleId,
   userId: UserId,
 })
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

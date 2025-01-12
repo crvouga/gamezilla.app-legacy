@@ -10,7 +10,7 @@ import { PlayMode } from '../../@/play-mode'
 import { BoardLayout } from '../../@/ui/layout'
 import { VariantBoard } from '../../@/variant'
 import * as BuilderTypes from '../types'
-import { ScreenPuzzleBuilderCore } from './core'
+import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './save-changes/frontend'
@@ -29,7 +29,7 @@ const update: BuilderTypes.FrontendModule['update'] = (input) => {
     (model) => DeleteForeverFrontend.update({ ...input, model }),
     (model) => SaveChangesFrontend.update({ ...input, model }),
     (model) => EditPuzzleNameFrontend.update({ ...input, model }),
-    (model) => updateFromMsgCore({ ...input, model }),
+    (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
   )
@@ -43,14 +43,14 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.got-edit-msg': {
       return {
         model,
-        msgCore: [withEventId(msg)],
+        msgSpace: [withEventId(msg)],
       }
     }
 
     case 'screen-puzzle-builder.user-clicked-edit-mode-button': {
       return {
         model,
-        msgCore: [
+        msgSpace: [
           withEventId({
             t: 'screen-puzzle-builder.user-clicked-edit-mode-button',
             userId: ctx.currentUserId,
@@ -63,7 +63,7 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.user-clicked-play-mode-button': {
       return {
         model,
-        msgCore: [
+        msgSpace: [
           withEventId({
             t: 'screen-puzzle-builder.user-clicked-play-mode-button',
             userId: ctx.currentUserId,
@@ -101,18 +101,18 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
   }
 }
 
-const updateFromMsgCore: BuilderTypes.FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
     case 'screen-puzzle-builder.got-play-msg': {
-      if (input.modelCore.screenPuzzleBuilder?.mode.t !== 'play') {
+      if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'play') {
         return {
           model: input.model,
         }
       }
-      const flow = ScreenPuzzleBuilderCore.toFlow(input.modelCore.screenPuzzleBuilder)
+      const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
       const updated = PlayMode.update({
-        msg: input.msgCore.c,
-        model: input.modelCore.screenPuzzleBuilder.playMode,
+        msg: input.msgSpace.c,
+        model: input.modelSpace.screenPuzzleBuilder.playMode,
         ctx: PlayMode.initCtx({
           flow,
           solutions: input.ctx.solutions,
@@ -125,15 +125,15 @@ const updateFromMsgCore: BuilderTypes.FrontendModule['update'] = (input) => {
       }
     }
     case 'screen-puzzle-builder.got-edit-msg': {
-      if (input.modelCore.screenPuzzleBuilder?.mode.t !== 'edit') {
+      if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'edit') {
         return {
           model: input.model,
         }
       }
       const updated = EditMode.update({
-        model: input.modelCore.screenPuzzleBuilder.editMode,
-        msg: input.msgCore.c,
-        flow: input.modelCore.screenPuzzleBuilder.puzzle.flow,
+        model: input.modelSpace.screenPuzzleBuilder.editMode,
+        msg: input.msgSpace.c,
+        flow: input.modelSpace.screenPuzzleBuilder.puzzle.flow,
       })
 
       if (!updated.msgCmd) {
@@ -177,7 +177,7 @@ const updateFromMsgCore: BuilderTypes.FrontendModule['update'] = (input) => {
 const View: BuilderTypes.FrontendModule['View'] = (input) => {
   const { ctx } = input
 
-  if (!input.modelCore.screenPuzzleBuilder) {
+  if (!input.modelSpace.screenPuzzleBuilder) {
     return null
   }
 
@@ -192,7 +192,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
       <TopBar
         ctx={input.ctx}
         onBack={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' })}
-        title={input.ctx.t('flow-puzzle-name', input.modelCore.screenPuzzleBuilder.puzzle.name)}
+        title={input.ctx.t('flow-puzzle-name', input.modelSpace.screenPuzzleBuilder.puzzle.name)}
       />
       <ViewMode {...input} />
       <ViewMoreDrawer {...input} />
@@ -202,7 +202,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
 }
 
 const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
-  const puzzleBuilder = input.modelCore.screenPuzzleBuilder
+  const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
 
   if (!puzzleBuilder) {
     return null
@@ -248,9 +248,9 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
     }
 
     case 'play': {
-      const flow = ScreenPuzzleBuilderCore.toFlow(puzzleBuilder)
-      const status = input.modelCore.screenPuzzleBuilder
-        ? ScreenPuzzleBuilderCore.toStatus(input.modelCore.screenPuzzleBuilder)
+      const flow = ScreenPuzzleBuilderSpace.toFlow(puzzleBuilder)
+      const status = input.modelSpace.screenPuzzleBuilder
+        ? ScreenPuzzleBuilderSpace.toStatus(input.modelSpace.screenPuzzleBuilder)
         : 'solving'
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
@@ -306,7 +306,7 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
 }
 
 const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
-  if (!input.modelCore.screenPuzzleBuilder) {
+  if (!input.modelSpace.screenPuzzleBuilder) {
     return null
   }
 
@@ -318,7 +318,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
           profile={input.ctx.profiles[input.ctx.space.hostId]}
           subtitle={input.ctx.t('app.editor')}
         />
-        <VariantBoard.View disabled model={ScreenPuzzleBuilderCore.toFlow(input.modelCore.screenPuzzleBuilder)} />
+        <VariantBoard.View disabled model={ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)} />
       </div>
     </LayoutGame>
   )

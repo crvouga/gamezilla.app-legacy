@@ -4,7 +4,7 @@ import { PuzzleListFrontend } from '../../../@/puzzle/puzzle-list/frontend'
 import type { FrontendModule } from '../../types'
 
 const update: FrontendModule['update'] = (input) => {
-  switch (input.msgCore?.t) {
+  switch (input.msgSpace?.t) {
     case 'screen-pack-builder.user-clicked-add-puzzle-item': {
       return {
         model: input.model,
@@ -30,7 +30,7 @@ const View: FrontendModule['View'] = (input) => {
         title={input.ctx.t('flow.add-puzzle')}
         onBack={() =>
           input.dispatch({
-            t: 'got-msg-core',
+            t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.user-closed-add-puzzle-screen',
             },
@@ -45,7 +45,7 @@ const View: FrontendModule['View'] = (input) => {
           emits={{
             clickedPuzzleItem: (puzzle) =>
               input.dispatch({
-                t: 'got-msg-core',
+                t: 'got-msg-space',
                 c: {
                   t: 'screen-pack-builder.user-clicked-add-puzzle-item',
                   puzzle,

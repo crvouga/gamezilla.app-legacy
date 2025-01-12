@@ -14,16 +14,16 @@ import { ChessBotLevel } from '../@/chess-bot-level/chess-bot-level'
 //
 
 export type ModelFrontend = {
-  coreModel: CoreModel
+  spaceModel: SpaceModel
   openedMenuId: string | null
   openedModal: null | 'game-over'
   isFlipped: boolean
   vsBotSetup: VsBotSetup.Model
 }
 
-export type ModelBackend = CoreModel
+export type ModelBackend = SpaceModel
 
-export type CoreModel = SetupModel | ModelCore | GameOverModel
+export type SpaceModel = SetupModel | ModelSpace | GameOverModel
 
 export type SetupModel = {
   type: 'setup'
@@ -32,7 +32,7 @@ export type SetupModel = {
   botLevel: ChessBotLevel
 }
 
-export type ModelCore = {
+export type ModelSpace = {
   type: 'game'
   userColor: Chess.Color
   userId: UserId
@@ -51,7 +51,7 @@ export type GameOverModel = {
 
 export type GameOver = Chess.GameOver
 
-export const initCore: CoreModel = {
+export const initSpace: SpaceModel = {
   type: 'setup',
   userColor: 'w',
   userId: null,
@@ -61,13 +61,13 @@ export const initCore: CoreModel = {
 export const initBackend = ({ userId }: { userId: UserId | null }): ModelBackend => {
   return {
     type: 'setup',
-    botLevel: initCore.botLevel,
-    userColor: initCore.userColor,
+    botLevel: initSpace.botLevel,
+    userColor: initSpace.userColor,
     userId,
   }
 }
 
-export const isBotTurn = (model: CoreModel) => {
+export const isBotTurn = (model: SpaceModel) => {
   return model.type === 'game' && Chess.toTurn(model.board) !== model.userColor
 }
 
@@ -100,12 +100,12 @@ export type MsgToFrontend =
       t: 'bot-moved'
       result: Result<
         string,
-        CoreModel & {
+        SpaceModel & {
           didCapture: boolean
         }
       >
     }
-  | { t: 'player-left'; model: CoreModel }
+  | { t: 'player-left'; model: SpaceModel }
 
 export type Req =
   | { t: 'input-bot-level'; botLevel: ChessBotLevel }
@@ -118,7 +118,7 @@ export type Req =
 export type Res = Req & {
   result: Result<
     string,
-    CoreModel & {
+    SpaceModel & {
       didCapture?: boolean
     }
   >
@@ -129,15 +129,15 @@ export type Res = Req & {
 //
 //
 
-export const updateCore = ({
+export const updateSpace = ({
   msg,
   model,
   ctx,
 }: {
   ctx: SpaceCtx & { currentUserId: UserId }
   msg: Req
-  model: CoreModel
-}): Result<string, CoreModel & { didCapture?: boolean }> => {
+  model: SpaceModel
+}): Result<string, SpaceModel & { didCapture?: boolean }> => {
   switch (model.type) {
     case 'setup': {
       switch (msg.t) {
@@ -225,7 +225,7 @@ export const updateCore = ({
             })
           }
 
-          const modelNew: CoreModel = {
+          const modelNew: SpaceModel = {
             ...model,
             board: boardNew,
           }
@@ -289,8 +289,8 @@ export const updateCore = ({
 
 export const botMoved = (
   botMoveResult: Chess.BestMoveInputResult,
-  model: CoreModel,
-): Result<string, CoreModel & { didCapture: boolean }> => {
+  model: SpaceModel,
+): Result<string, SpaceModel & { didCapture: boolean }> => {
   if (model.type !== 'game') {
     return Err('must_be_started')
   }
@@ -318,7 +318,7 @@ export const botMoved = (
   const gameOver = Chess.toGameOver(boardNew)
 
   if (gameOver.type !== 'none') {
-    const modelNew: CoreModel = {
+    const modelNew: SpaceModel = {
       ...model,
       type: 'game-over',
       gameOver: gameOver,

@@ -8,8 +8,8 @@ import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { makeSpace } from '../@/fixture/shared'
-import { SpacesCoreFrontend } from '../core/frontend'
-import { SpaceCore } from '../core/space-core'
+import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceSpace } from '../space/space'
 
 const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
@@ -67,13 +67,13 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const listed = SpacesCoreFrontend.listSpaces({
+    const listed = SpacesSpaceFrontend.listSpaces({
       model: output.model,
       offset: 0,
       limit: Number.POSITIVE_INFINITY,
     })
 
-    expect(listed.some((space) => SpaceCore.isEqual(space, someSpace))).toBe(true)
+    expect(listed.some((space) => SpaceSpace.isEqual(space, someSpace))).toBe(true)
   })
 
   it("should merge current user's space when received from backend", async () => {
@@ -94,7 +94,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const currentUserSpaceId = SpacesCoreFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
+    const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
 
     expect(currentUserSpaceId).toEqual(spaceId)
   })
@@ -129,7 +129,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -151,7 +151,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-backend' &&
-          msgCmd.c.toBackend?.t === 'got-msg-core' &&
+          msgCmd.c.toBackend?.t === 'got-msg-space' &&
           msgCmd.c.toBackend?.c.t === 'user-joined-space',
       ),
     ).toBe(true)
@@ -163,7 +163,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-core',
+          t: 'got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-ended-space',
             spaceId,
@@ -179,7 +179,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-backend' &&
-          msgCmd.c.toBackend?.t === 'got-msg-core' &&
+          msgCmd.c.toBackend?.t === 'got-msg-space' &&
           msgCmd.c.toBackend?.c.t === 'user-ended-space',
       ),
     ).toBe(true)

@@ -14,7 +14,7 @@ import { Direction, Position } from './@/position'
 //
 //
 
-export type CoreModel = SetupModel
+export type SpaceModel = SetupModel
 
 export type SetupModel =
   | {
@@ -50,9 +50,9 @@ export type Color = 'Red' | 'Blue' | 'Green' | 'Purple' | 'Cyan' | 'Pink'
 
 const colorSeq: NonEmpty<Color> = ['Red', 'Blue', 'Green', 'Purple']
 
-export type ModelFrontend = CoreModel
+export type ModelFrontend = SpaceModel
 
-export type ModelBackend = CoreModel
+export type ModelBackend = SpaceModel
 
 //
 //
@@ -68,7 +68,7 @@ export type MsgBackend = ['tick']
 
 export type MsgToBackend = Req
 
-export type MsgToFrontend = Res | ['tick', CoreModel]
+export type MsgToFrontend = Res | ['tick', SpaceModel]
 
 //
 //
@@ -89,7 +89,7 @@ export type Req =
     ]
   | ['input-seed', { userId: UserId; seed: string }]
 
-export type Res = [...Req, Result<Problem, CoreModel>]
+export type Res = [...Req, Result<Problem, SpaceModel>]
 
 type Problem =
   | 'must_be_setup'
@@ -101,7 +101,7 @@ type Problem =
   | 'hit_wall'
   | 'no_next_color'
 
-const toNextColor = (model: CoreModel): Color | null => {
+const toNextColor = (model: SpaceModel): Color | null => {
   for (const color of colorSeq) {
     if (Object.values(model.players).every((p) => p.color !== color)) {
       return color
@@ -110,7 +110,7 @@ const toNextColor = (model: CoreModel): Color | null => {
   return null
 }
 
-export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> => {
+export const handle = (msg: Req, model: SpaceModel): Result<Problem, SpaceModel> => {
   switch (msg[0]) {
     case 'input-seed': {
       if (model.type !== 'setup') {
@@ -123,7 +123,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
         return Err('must_be_playing')
       }
 
-      const modelNew: CoreModel = {
+      const modelNew: SpaceModel = {
         ...model,
         seed: msg[1].seed,
       }
@@ -142,7 +142,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
         return Err('must_be_playing')
       }
 
-      const modelNew: CoreModel = {
+      const modelNew: SpaceModel = {
         type: 'setup',
         lower: model.lower,
         players: mapValues(
@@ -176,7 +176,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
         return Err('no_next_color')
       }
 
-      const modelNew: CoreModel = {
+      const modelNew: SpaceModel = {
         ...model,
         players: {
           ...model.players,
@@ -194,7 +194,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
         return Err('must_be_setup')
       }
 
-      const modelNew: CoreModel = {
+      const modelNew: SpaceModel = {
         ...model,
         players: dissoc(model.players, msg[1].userId),
       }
@@ -229,7 +229,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
         }
       }, {})
 
-      const modelNew: CoreModel = {
+      const modelNew: SpaceModel = {
         type: 'game',
         seed: model.seed,
         lower: model.lower,
@@ -251,7 +251,7 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
         return Err('must_be_playing')
       }
 
-      const modelNew: CoreModel = {
+      const modelNew: SpaceModel = {
         type: 'game',
         seed: model.seed,
         upper: model.upper,
@@ -270,14 +270,14 @@ export const handle = (msg: Req, model: CoreModel): Result<Problem, CoreModel> =
   }
 }
 
-export const tick = (model: CoreModel): CoreModel => {
+export const tick = (model: SpaceModel): SpaceModel => {
   if (model.type !== 'game') {
     return model
   }
 
   const maze = Maze.makeMemoized(model)
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     players: mapValues((player) => mapPlayer(maze, player), model.players),
   }
@@ -326,7 +326,7 @@ const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
 //
 //
 
-export const initShared = ({ userId }: { userId?: UserId }): CoreModel => {
+export const initShared = ({ userId }: { userId?: UserId }): SpaceModel => {
   return {
     type: 'setup',
     players: userId

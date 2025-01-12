@@ -16,7 +16,7 @@ const { Ok, Err } = Result
 //
 
 export type ModelFrontend = {
-  coreModel: CoreModel
+  spaceModel: SpaceModel
   openedMenuId: Option<string>
   openedModal: Modal | 'none'
   isFlipped: boolean
@@ -24,9 +24,9 @@ export type ModelFrontend = {
 
 export type Modal = 'RequestToDraw' | 'AskedToDraw' | 'resign' | 'game-over'
 
-export type ModelBackend = CoreModel
+export type ModelBackend = SpaceModel
 
-export type CoreModel =
+export type SpaceModel =
   | {
       type: 'setup'
       clockPreset: Clock.Preset
@@ -73,7 +73,7 @@ export type GameOver =
       winner: Chess.Color
     }
 
-export const initCore = ({ userId }: { userId: UserId | 'none' }): CoreModel => {
+export const initSpace = ({ userId }: { userId: UserId | 'none' }): SpaceModel => {
   return {
     type: 'setup',
     w: userId,
@@ -100,7 +100,7 @@ export type MsgFrontend =
 
 export type MsgBackend = ClockTicked
 
-export type MsgToFrontend = ['game-over'] | ['GameStarted'] | ['player-left', CoreModel] | ClockTicked_Done | Res
+export type MsgToFrontend = ['game-over'] | ['GameStarted'] | ['player-left', SpaceModel] | ClockTicked_Done | Res
 
 export type MsgToBackend = Req
 
@@ -135,11 +135,11 @@ export type Res =
 
 export type InputMove = ['input-move', Chess.MoveInput & { userId: UserId }]
 
-export type InputMove_Done = ['input-move-done', Result<MoveProblem, CoreModel & { didCapture: boolean }>]
+export type InputMove_Done = ['input-move-done', Result<MoveProblem, SpaceModel & { didCapture: boolean }>]
 
 export type MoveProblem = Chess.MoveProblem | 'game_must_be_started' | 'user_must_be_a_player'
 
-export const inputMove = ({ userId, ...moveInput }: InputMove[1], model: CoreModel): InputMove_Done[1] => {
+export const inputMove = ({ userId, ...moveInput }: InputMove[1], model: SpaceModel): InputMove_Done[1] => {
   if (model.type !== 'game') {
     return Err('game_must_be_started')
   }
@@ -159,7 +159,7 @@ export const inputMove = ({ userId, ...moveInput }: InputMove[1], model: CoreMod
   const gameOver = Chess.toGameOver(boardNew)
 
   if (gameOver.type !== 'none') {
-    const modelNew: CoreModel = {
+    const modelNew: SpaceModel = {
       type: 'game-over',
       b: model.b,
       w: model.w,
@@ -174,7 +174,7 @@ export const inputMove = ({ userId, ...moveInput }: InputMove[1], model: CoreMod
     })
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     board: boardNew,
   }
@@ -197,11 +197,11 @@ export type InputPlayer = [
   },
 ]
 
-export type InputPlayer_Done = ['InputPlayer_Done', Result<InputPlayerProblem, CoreModel>]
+export type InputPlayer_Done = ['InputPlayer_Done', Result<InputPlayerProblem, SpaceModel>]
 
 export type InputPlayerProblem = 'game_must_be_in_setup_mode' | 'player_is_taken' | 'must_be_playing'
 
-export const inputPlayer = ({ userId, color }: InputPlayer[1], model: CoreModel): InputPlayer_Done[1] => {
+export const inputPlayer = ({ userId, color }: InputPlayer[1], model: SpaceModel): InputPlayer_Done[1] => {
   if (model.type !== 'setup') {
     return Err('game_must_be_in_setup_mode')
   }
@@ -235,7 +235,7 @@ export const inputPlayer = ({ userId, color }: InputPlayer[1], model: CoreModel)
 
 export type InputClock = ['InputClock', { clockPreset: Clock.Preset; userId: UserId }]
 
-export type InputClock_Done = ['InputClock_Done', Result<InputClockProblem, CoreModel>]
+export type InputClock_Done = ['InputClock_Done', Result<InputClockProblem, SpaceModel>]
 
 export type InputClockProblem = 'must_be_in_setup_mode' | 'must_be_playing'
 
@@ -251,7 +251,7 @@ export const inputClockProblemToString = (problem: InputClockProblem): string =>
   }
 }
 
-export const inputClock = ({ clockPreset, userId }: InputClock[1], model: CoreModel): InputClock_Done[1] => {
+export const inputClock = ({ clockPreset, userId }: InputClock[1], model: SpaceModel): InputClock_Done[1] => {
   if (model.type !== 'setup') {
     return Err('must_be_in_setup_mode')
   }
@@ -274,7 +274,7 @@ export const inputClock = ({ clockPreset, userId }: InputClock[1], model: CoreMo
 //
 
 export type StartGame = ['start-game', { userId: UserId }]
-export type StartGame_Done = ['StartGame_Done', Result<StartGameProblem, CoreModel>]
+export type StartGame_Done = ['StartGame_Done', Result<StartGameProblem, SpaceModel>]
 export type StartGameProblem =
   | 'missing_white_player'
   | 'missing_black_player'
@@ -306,7 +306,7 @@ export const startGameProblemToString = (problem: StartGameProblem): string => {
   }
 }
 
-export const startGame = ({ userId }: StartGame[1], model: CoreModel): StartGame_Done[1] => {
+export const startGame = ({ userId }: StartGame[1], model: SpaceModel): StartGame_Done[1] => {
   if (model.type !== 'setup') {
     return Err('game_not_in_setup_mode')
   }
@@ -348,14 +348,14 @@ export const startGame = ({ userId }: StartGame[1], model: CoreModel): StartGame
 //
 
 export type RequestToDraw = ['RequestToDraw', Chess.Color]
-export type RequestToDraw_Done = ['RequestToDraw_Done', Result<'game_must_be_started', CoreModel>]
+export type RequestToDraw_Done = ['RequestToDraw_Done', Result<'game_must_be_started', SpaceModel>]
 
-export const requestToDraw = (color: Chess.Color, model: CoreModel): RequestToDraw_Done[1] => {
+export const requestToDraw = (color: Chess.Color, model: SpaceModel): RequestToDraw_Done[1] => {
   if (model.type !== 'game') {
     return Err('game_must_be_started')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     drawAgreement: {
       type: 'Asking',
@@ -366,9 +366,9 @@ export const requestToDraw = (color: Chess.Color, model: CoreModel): RequestToDr
 }
 
 export type RespondToDraw = ['RespondToDraw', 'Accepted' | 'Declined']
-export type RespondToDraw_Done = ['RespondToDraw_Done', Result<'failed_to_respond_to_draw', CoreModel>]
+export type RespondToDraw_Done = ['RespondToDraw_Done', Result<'failed_to_respond_to_draw', SpaceModel>]
 
-export const respondToDraw = (drawResponse: RespondToDraw[1], model: CoreModel): RespondToDraw_Done[1] => {
+export const respondToDraw = (drawResponse: RespondToDraw[1], model: SpaceModel): RespondToDraw_Done[1] => {
   if (model.type !== 'game') {
     return Err('failed_to_respond_to_draw')
   }
@@ -378,7 +378,7 @@ export const respondToDraw = (drawResponse: RespondToDraw[1], model: CoreModel):
   }
 
   if (drawResponse === 'Declined') {
-    const modelNew: CoreModel = {
+    const modelNew: SpaceModel = {
       ...model,
       drawAgreement: {
         type: 'NotAsking',
@@ -387,7 +387,7 @@ export const respondToDraw = (drawResponse: RespondToDraw[1], model: CoreModel):
     return Ok(modelNew)
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     type: 'game-over',
     b: model.b,
     w: model.w,
@@ -402,14 +402,14 @@ export const respondToDraw = (drawResponse: RespondToDraw[1], model: CoreModel):
 }
 
 export type CancelDraw = ['CancelDraw', { userId: UserId }]
-export type CancelDraw_Done = ['CancelDraw_Done', Result<CancelDrawProblem, CoreModel>]
+export type CancelDraw_Done = ['CancelDraw_Done', Result<CancelDrawProblem, SpaceModel>]
 export type CancelDrawProblem =
   | 'must_be_in_game_mode'
   | 'must_be_asking_for_a_draw'
   | 'must_be_the_one_asking'
   | 'must_be_playing'
 
-export const cancelDraw = ({ userId }: CancelDraw[1], model: CoreModel): CancelDraw_Done[1] => {
+export const cancelDraw = ({ userId }: CancelDraw[1], model: SpaceModel): CancelDraw_Done[1] => {
   if (model.type !== 'game') {
     return Err('must_be_in_game_mode')
   }
@@ -428,7 +428,7 @@ export const cancelDraw = ({ userId }: CancelDraw[1], model: CoreModel): CancelD
     return Err('must_be_the_one_asking')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     drawAgreement: {
       type: 'NotAsking',
@@ -447,14 +447,14 @@ export const cancelDraw = ({ userId }: CancelDraw[1], model: CoreModel): CancelD
 //
 
 export type Resign = ['resign', Chess.Color]
-export type Resign_Done = ['resign_Done', Result<'can_not_resign', CoreModel>]
+export type Resign_Done = ['resign_Done', Result<'can_not_resign', SpaceModel>]
 
-export const resign = (color: Resign[1], model: CoreModel): Resign_Done[1] => {
+export const resign = (color: Resign[1], model: SpaceModel): Resign_Done[1] => {
   if (model.type !== 'game') {
     return Err('can_not_resign')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     type: 'game-over',
     b: model.b,
     w: model.w,
@@ -475,13 +475,13 @@ export const resign = (color: Resign[1], model: CoreModel): Resign_Done[1] => {
 //
 
 export type NewGame = ['NewGame']
-export type NewGame_Done = ['NewGame_Done', Result<'game_must_be_over', CoreModel>]
-export const NewGame = (model: CoreModel): NewGame_Done[1] => {
+export type NewGame_Done = ['NewGame_Done', Result<'game_must_be_over', SpaceModel>]
+export const NewGame = (model: SpaceModel): NewGame_Done[1] => {
   if (model.type !== 'game-over') {
     return Err('game_must_be_over')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     type: 'setup',
     b: model.b,
     w: model.w,
@@ -498,9 +498,9 @@ export const NewGame = (model: CoreModel): NewGame_Done[1] => {
 //
 
 export type ClockTicked = ['ClockTicked']
-export type ClockTicked_Done = ['ClockTicked', CoreModel]
+export type ClockTicked_Done = ['ClockTicked', SpaceModel]
 
-export const clockTicked = (model: CoreModel): CoreModel => {
+export const clockTicked = (model: SpaceModel): SpaceModel => {
   if (model.type !== 'game') {
     return model
   }

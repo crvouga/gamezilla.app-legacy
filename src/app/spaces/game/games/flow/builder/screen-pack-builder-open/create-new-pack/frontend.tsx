@@ -4,7 +4,7 @@ import { Button, IconPlus } from '~/app/@/ui'
 import type { FrontendModule } from '../../types'
 
 const update: FrontendModule['update'] = (input) => {
-  const { model, msg, msgCore, msgBackend } = input
+  const { model, msg, msgSpace, msgBackend } = input
 
   switch (msg?.t) {
     case 'create-new-pack.clicked-create-button': {
@@ -27,7 +27,7 @@ const update: FrontendModule['update'] = (input) => {
     case 'create-new-pack.created-pack': {
       return {
         model,
-        msgCore: [
+        msgSpace: [
           {
             t: 'user-created-pack',
             created: msgBackend.created,
@@ -38,7 +38,7 @@ const update: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (msgCore?.t) {
+  switch (msgSpace?.t) {
     case 'user-created-pack': {
       return {
         model: {

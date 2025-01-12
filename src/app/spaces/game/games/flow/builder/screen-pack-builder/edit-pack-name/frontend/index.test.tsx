@@ -5,15 +5,15 @@ import { didShowErrorSm } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { Pack } from '../../../../@/pack/pack'
 import { EditPackNameFrontend } from '../frontend'
-import { EditPackNameCore } from '../core'
-import type { MsgCore } from '../types'
+import { EditPackNameSpace } from '../space'
+import type { MsgSpace } from '../types'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
 
   const pack = await Pack.random()
 
-  const modelCore = EditPackNameCore.init({ pack })
+  const modelSpace = EditPackNameSpace.init({ pack })
   const model = null
   return {
     ...f,
@@ -22,7 +22,7 @@ const Fixture = async () => {
       open: false,
     },
     model,
-    modelCore,
+    modelSpace,
     pack,
   }
 }
@@ -30,7 +30,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
   it('should propagate space event', async () => {
     const f = await Fixture()
-    const msgCores: MsgCore[] = [
+    const msgSpaces: MsgSpace[] = [
       {
         t: 'edit-pack-name.user-inputted-draft-name',
         userId: f.ctx.space.hostId,
@@ -41,12 +41,12 @@ describe(import.meta.file, () => {
         userId: f.ctx.space.hostId,
       },
     ]
-    for (const msgCore of msgCores) {
+    for (const msgSpace of msgSpaces) {
       const output = EditPackNameFrontend.update({
         ...f,
-        msg: msgCore,
+        msg: msgSpace,
       })
-      expect(output.msgCore?.some((msg) => msg.t === msgCore.t)).toBe(true)
+      expect(output.msgSpace?.some((msg) => msg.t === msgSpace.t)).toBe(true)
     }
   })
 
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = EditPackNameFrontend.update({
       ...f,
-      msgCore: withEventId({
+      msgSpace: withEventId({
         t: 'edit-pack-name.backend-persisted-pack',
         result: Err('something errored'),
         userId: f.ctx.space.hostId,
