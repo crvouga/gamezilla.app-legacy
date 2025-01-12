@@ -8,7 +8,7 @@ const main = async () => {
     t: 'console',
   })
 
-  const backend = HttpServer({
+  const httpServer = HttpServer({
     t: 'bun',
     logger,
   })
@@ -17,7 +17,7 @@ const main = async () => {
     logger,
   })
 
-  backend.registerHandler((request) => {
+  httpServer.registerHandler((request) => {
     logger.info(`${request.method} ${request.url}`)
     return LoadBalancer.respond(ctx, request)
   })
@@ -26,7 +26,7 @@ const main = async () => {
     throw new Error('SERVER_PORT is not set')
   }
 
-  await backend.start(SERVER_PORT)
+  await httpServer.start(SERVER_PORT)
 
   logger.info('Load balancer started')
 }
