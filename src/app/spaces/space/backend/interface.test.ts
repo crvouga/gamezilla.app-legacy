@@ -8,7 +8,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { DbConnKv } from '~/@/db-conn-kv'
 import { Logger } from '~/@/logger'
 import { Stream } from '~/@/stream/impl'
-import { SpaceSpace } from '../space'
+import { Space } from '../space'
 import { SpaceEvent } from '../space-event'
 import { Config, SpaceBackend } from './impl'
 import { Runtime } from '~/@/runtime'
@@ -16,7 +16,7 @@ import { Runtime } from '~/@/runtime'
 const Fixture = async (config: Config) => {
   const spaceBackend = await SpaceBackend(config)
   const spaceId = SpaceId.generate()
-  const spaceA = SpaceSpace.random({ spaceId })
+  const spaceA = Space.random({ spaceId })
   return {
     spaceBackend,
     spaceId,
@@ -59,7 +59,7 @@ const Fixtures = async () => {
 describe(import.meta.file, () => {
   it('should work', async () => {
     for (const f of await Fixtures()) {
-      const spaceId = SpaceSpace.toSpaceStarted(f.spaceA)?.spaceId ?? null
+      const spaceId = Space.toSpaceStarted(f.spaceA)?.spaceId ?? null
 
       const before = await f.spaceBackend.get(spaceId)
 
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
       const eventId = Object.values(f.spaceA.eventIds)[0]
       if (!eventId) throw new Error('eventId not found')
 
-      const spaceId = SpaceSpace.toSpaceStarted(f.spaceA)?.spaceId
+      const spaceId = Space.toSpaceStarted(f.spaceA)?.spaceId
       if (!spaceId) throw new Error('spaceId not found')
 
       const before = await f.spaceBackend.hasEvent(spaceId, eventId)
@@ -133,18 +133,18 @@ describe(import.meta.file, () => {
         }),
       )
       const after = unwrap(await f.spaceBackend.get(spaceId))
-      expect(SpaceSpace.toSpaceStarted(before)).toEqual(null)
-      expect(SpaceSpace.toSpaceStarted(after)?.type).toEqual('started')
+      expect(Space.toSpaceStarted(before)).toEqual(null)
+      expect(Space.toSpaceStarted(after)?.type).toEqual('started')
     }
   })
 
   test('get with fallback', async () => {
     for (const f of await Fixtures()) {
-      const before = unwrap(await f.spaceBackend.get(f.spaceId)) ?? SpaceSpace.init
+      const before = unwrap(await f.spaceBackend.get(f.spaceId)) ?? Space.init
       await f.spaceBackend.upsert(f.spaceA)
-      const after = unwrap(await f.spaceBackend.get(f.spaceId)) ?? SpaceSpace.init
-      expect(EventSourced.toState(SpaceSpace.config, before).type).toEqual('initial')
-      expect(EventSourced.toState(SpaceSpace.config, after).type).toEqual('started')
+      const after = unwrap(await f.spaceBackend.get(f.spaceId)) ?? Space.init
+      expect(EventSourced.toState(Space.config, before).type).toEqual('initial')
+      expect(EventSourced.toState(Space.config, after).type).toEqual('started')
     }
   })
 

@@ -5,15 +5,15 @@ import { Pack } from '../../../../@/pack/pack'
 import { PlayMode } from '../../../../@/play-mode'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
-import type { Variant } from '../../../../@/variant'
-import { SpaceFixture } from '../../../@/space/fixture'
-import { ScreenPlayPuzzleSpace } from '../../space'
-import type { ModelSpace, MsgSpace } from '../../types'
 import { Solutions } from '../../../../@/solutions/solutions'
 import { FlowSpaceCtx } from '../../../../@/space/ctx'
+import type { Variant } from '../../../../@/variant'
+import { FlowPlaySpaceFixture } from '../../../@/space/fixture'
+import { ScreenPlayPuzzleSpace } from '../../space'
+import type { ModelSpace, MsgSpace } from '../../types'
 
 export const ScreenPuzzlePlaySpaceFixture = async (input?: { flow?: Variant.Model }) => {
-  const f = await SpaceFixture()
+  const f = await FlowPlaySpaceFixture()
   const puzzle = await Puzzle.random(input)
   const puzzleIndex = 1
   const prevPuzzle = await Puzzle.random()

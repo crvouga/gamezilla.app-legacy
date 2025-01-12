@@ -2,11 +2,11 @@ import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../@/pack/pack'
 import { Puzzle } from '../@/puzzle/puzzle'
-import { SpaceFixture } from './@/space/fixture'
+import { FlowPlaySpaceFixture } from './@/space/fixture'
 
 describe(import.meta.file, () => {
   it('should be able to open pack from list', async () => {
-    const f = await SpaceFixture()
+    const f = await FlowPlaySpaceFixture()
     const before = f.init
     const after = f.update(before, [
       {
@@ -20,7 +20,7 @@ describe(import.meta.file, () => {
   })
 
   it('should exit to select pack screen after clicking exit button', async () => {
-    const f = await SpaceFixture()
+    const f = await FlowPlaySpaceFixture()
     const before = f.update(f.init, [
       {
         t: 'user-clicked-open-pack-list-item',
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
   })
 
   it('should open puzzle from pack', async () => {
-    const f = await SpaceFixture()
+    const f = await FlowPlaySpaceFixture()
     const puzzle = await Puzzle.random()
     const pack = await Pack.random({
       puzzleIds: [puzzle.id],
@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
   })
 
   test('user changed slides', async () => {
-    const f = await SpaceFixture()
+    const f = await FlowPlaySpaceFixture()
     const puzzle = await Puzzle.random()
     const pack = await Pack.random({
       puzzleIds: [puzzle.id],

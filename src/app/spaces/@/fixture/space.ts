@@ -1,14 +1,14 @@
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceSpace } from '../../space/space'
+import { Space } from '../../space/space'
 import { SpaceCtx } from '../space/ctx'
 import { makeSpace } from './shared'
 
-export const SpaceSpaceFixture = async () => {
+export const SpaceFixture = async () => {
   const spaceId = SpaceId.generate()
   const hostId = UserId.generate()
   const guestId = UserId.generate()
-  const spaceState = SpaceSpace.toSpaceStarted(
+  const spaceState = Space.toSpaceStarted(
     makeSpace({
       spaceId,
       hostId,
@@ -16,7 +16,7 @@ export const SpaceSpaceFixture = async () => {
     }),
   )
   if (!spaceState) {
-    throw new Error('SpaceSpaceFixture: spaceState is null')
+    throw new Error('SpaceFixture: spaceState is null')
   }
   const ctx: SpaceCtx = {
     space: spaceState,

@@ -3,7 +3,7 @@ import { EventId, WithEventId } from '~/@/event-sourced/event'
 import { p } from '~/@/parser'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceSpace } from '../space'
+import { Space } from '../space'
 import type { SpaceEvent } from '../space-event'
 import { SpaceState } from '../space-state'
 
@@ -21,7 +21,7 @@ export const SpaceError = p.obj({
 export type SpaceError = p.Infer<typeof SpaceError>
 
 export const Model = p.obj({
-  spaces: p.dict(SpaceId, SpaceSpace.Model),
+  spaces: p.dict(SpaceId, Space.Model),
   indexSpaceIdByUserId: p.dict(UserId, SpaceId),
   errors: p.dict(EventId, SpaceError),
 })
@@ -53,7 +53,7 @@ export const listSpaces = ({
     spaceId?: SpaceId
   }
   sort?: 'newest' | 'oldest'
-}): SpaceSpace.Model[] => {
+}): Space.Model[] => {
   if (whereAnd?.spaceId) {
     const space = model.spaces[whereAnd.spaceId]
 
@@ -64,7 +64,7 @@ export const listSpaces = ({
     return [space]
   }
 
-  const spaces: SpaceSpace.Model[] = []
+  const spaces: Space.Model[] = []
 
   let i = -1
   for (const spaceId in model.spaces) {
@@ -80,7 +80,7 @@ export const listSpaces = ({
       continue
     }
 
-    const spaceState = EventSourced.toState(SpaceSpace.config, spaceModel)
+    const spaceState = EventSourced.toState(Space.config, spaceModel)
 
     switch (spaceState.type) {
       case 'ended': {
@@ -108,7 +108,7 @@ export const toSpaceIdByUserId = (model: Model, userId: UserId | null | undefine
   return userId ? (model.indexSpaceIdByUserId[userId] ?? null) : null
 }
 
-export const toSpace = (model: Model, spaceId: SpaceId): SpaceSpace.Model | null => {
+export const toSpace = (model: Model, spaceId: SpaceId): Space.Model | null => {
   return model.spaces[spaceId] ?? null
 }
 
@@ -121,7 +121,7 @@ export const hasEvent = (model: Model, spaceId: SpaceId, eventId: EventId): bool
   return Boolean(space && EventSourced.hasEvent(space, eventId))
 }
 
-export const toSpaceByUserId = ({ model, userId }: { model: Model; userId: UserId }): SpaceSpace.Model | null => {
+export const toSpaceByUserId = ({ model, userId }: { model: Model; userId: UserId }): Space.Model | null => {
   const spaceId = model.indexSpaceIdByUserId[userId]
 
   if (!spaceId) {
@@ -162,7 +162,7 @@ export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined)
     return SpaceState.init
   }
 
-  const spaceState = EventSourced.toState(SpaceSpace.config, spaceModel)
+  const spaceState = EventSourced.toState(Space.config, spaceModel)
 
   return spaceState
 }
@@ -178,7 +178,7 @@ export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceSta
     return null
   }
 
-  const spaceState = SpaceSpace.toSpaceStarted(spaceModel)
+  const spaceState = Space.toSpaceStarted(spaceModel)
 
   return spaceState
 }
@@ -209,7 +209,7 @@ export const update = ({
     }
 
     case 'user-ended-space': {
-      const userIds = SpaceSpace.toUserIds(model.spaces[msgSpace.spaceId] ?? SpaceSpace.init)
+      const userIds = Space.toUserIds(model.spaces[msgSpace.spaceId] ?? Space.init)
 
       const spaceIdByUserIdNew = {
         ...model.indexSpaceIdByUserId,
@@ -306,9 +306,9 @@ const append = (
 } => {
   const spaceId = msgSpace.spaceId
 
-  const space = model.spaces[spaceId] ?? SpaceSpace.init
+  const space = model.spaces[spaceId] ?? Space.init
 
-  const spaceNew = EventSourced.appendEvent(SpaceSpace.config, space, msgSpace)
+  const spaceNew = EventSourced.appendEvent(Space.config, space, msgSpace)
 
   return {
     model: {
@@ -321,12 +321,12 @@ const append = (
   }
 }
 
-export const merge = (model: Model, space: SpaceSpace.Model): Model => {
-  const spaceId = SpaceSpace.toSpaceId(space)
+export const merge = (model: Model, space: Space.Model): Model => {
+  const spaceId = Space.toSpaceId(space)
 
   const maybeCurrentSpace = spaceId ? model.spaces[spaceId] : null
 
-  const currentSpace = maybeCurrentSpace ?? SpaceSpace.init
+  const currentSpace = maybeCurrentSpace ?? Space.init
 
   const spaceNew = EventSourced.mergeLeft(currentSpace, space)
 
@@ -348,9 +348,9 @@ export const merge = (model: Model, space: SpaceSpace.Model): Model => {
 
 const updateIndexSpaceIdByUserId = (
   spaceIdByUserId: Model['indexSpaceIdByUserId'],
-  space: SpaceSpace.Model,
+  space: Space.Model,
 ): Model['indexSpaceIdByUserId'] => {
-  const spaceState = SpaceSpace.toSpaceStarted(space)
+  const spaceState = Space.toSpaceStarted(space)
 
   if (!spaceState) {
     return spaceIdByUserId

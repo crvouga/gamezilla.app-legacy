@@ -1,1 +1,1 @@
-export * as SpaceSpace from './space-space'
+export * as Space from './space-space'

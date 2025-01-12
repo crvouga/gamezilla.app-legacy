@@ -14,7 +14,7 @@ import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
 import { SpacesSpaceFrontend } from './space/frontend'
 import { ISpaceBackend } from './space/backend/interface'
-import { SpaceSpace } from './space/space'
+import { Space } from './space/space'
 import { SpaceEvent } from './space/space-event'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
@@ -81,15 +81,15 @@ export type MsgToFrontend = MsgToFrontendExtra &
       }
     | {
         t: 'listed-spaces'
-        spaces: SpaceSpace.Model[]
+        spaces: Space.Model[]
       }
     | {
         t: 'synced'
-        space: SpaceSpace.Model
+        space: Space.Model
       }
     | {
         t: 'current-user-space'
-        space: SpaceSpace.Model
+        space: Space.Model
         currentUser: UserAccount
       }
     | {
@@ -107,7 +107,7 @@ export type MsgToBackend = MsgToBackendExtra &
       }
     | {
         t: 'sync'
-        space: SpaceSpace.Model
+        space: Space.Model
       }
     | {
         t: 'list-spaces'

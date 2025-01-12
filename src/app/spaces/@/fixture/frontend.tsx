@@ -14,7 +14,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpacesFrontend } from '../../frontend'
-import { SpaceSpace } from '../../space/space'
+import { Space } from '../../space/space'
 import type * as SpacesTypes from '../../types'
 
 export const SpaceFrontendFixture = async () => {
@@ -101,32 +101,32 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
   const spaceId = SpaceId.generate()
 
   const space = pipe(
-    SpaceSpace.init,
+    Space.init,
     (model) =>
       EventSourced.appendEvent(
-        SpaceSpace.config,
+        Space.config,
         model,
         withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceSpace.config,
+        Space.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceSpace.config,
+        Space.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceSpace.config,
+        Space.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const),
       ),
-    (model) => SpaceSpace.toSpaceStarted(model),
+    (model) => Space.toSpaceStarted(model),
     (space) => {
       if (!space) {
         throw new Error('Invalid fixture. Space is not started.')

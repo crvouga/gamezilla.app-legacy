@@ -8,7 +8,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceBackend } from '../../space/backend'
-import { SpaceSpace } from '../../space/space'
+import { Space } from '../../space/space'
 import { GamesBackend } from '../../game/games/backend'
 import { SpacesBackend } from '../../backend'
 import { BackendCtx } from '../../types'
@@ -26,28 +26,28 @@ export const FixtureSpaceBackend = async () => {
   const spaceId = SpaceId.generate()
 
   const space = pipe(
-    SpaceSpace.init,
+    Space.init,
     (model) =>
       EventSourced.appendEvent(
-        SpaceSpace.config,
+        Space.config,
         model,
         withEventId({ t: 'user-started-space', spaceId, userId: userA.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceSpace.config,
+        Space.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceSpace.config,
+        Space.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const),
       ),
   )
 
-  const spaceState = SpaceSpace.toSpaceStarted(space)
+  const spaceState = Space.toSpaceStarted(space)
 
   if (!spaceState) {
     throw new Error('Invalid fixture. Space is not started.')

@@ -7,7 +7,7 @@ import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import { ILogger, Logger } from '~/@/logger'
 import { EventId } from '~/@/stream/event-id'
 import { IStream } from '~/@/stream/interface'
-import { SpaceSpace } from '../space'
+import { Space } from '../space'
 import { SpaceEvent } from '../space-event'
 import { SpaceState } from '../space-state'
 import * as ImplDbConnKv from './impl-db-conn-kv'
@@ -38,7 +38,7 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
   const upsert: ISpaceBackend['upsert'] = async (space) => {
     implDbConnKb.upsert(space)
 
-    const snapshot = EventSourced.toState(SpaceSpace.config, space)
+    const snapshot = EventSourced.toState(Space.config, space)
 
     const spaceId = 'spaceId' in snapshot ? snapshot.spaceId : null
 
@@ -61,9 +61,9 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
 
     const maybeSpace = unwrapOr(await get(event.spaceId), null)
 
-    const space = maybeSpace ?? SpaceSpace.init
+    const space = maybeSpace ?? Space.init
 
-    const spaceNew = EventSourced.appendEvent(SpaceSpace.config, space, event)
+    const spaceNew = EventSourced.appendEvent(Space.config, space, event)
 
     return upsert(spaceNew)
   }
@@ -111,9 +111,9 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
   }
 
   const merge: ISpaceBackend['merge'] = async (space) => {
-    const spaceId = SpaceSpace.toSpaceId(space)
+    const spaceId = Space.toSpaceId(space)
 
-    const currentSpace = unwrapOr(await get(spaceId), null) ?? SpaceSpace.init
+    const currentSpace = unwrapOr(await get(spaceId), null) ?? Space.init
 
     const spaceNew = EventSourced.mergeLeft(space, currentSpace)
 

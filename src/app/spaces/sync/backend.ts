@@ -3,7 +3,7 @@ import { unwrapOr } from '~/@/result'
 import { broadcast, sendToFrontend, sendToUser } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { SpaceBackendModule } from '../@/architecture/space-backend'
-import { SpaceSpace } from '../space/space'
+import { Space } from '../space/space'
 import { SpaceState } from '../space/space-state'
 import type { MsgToFrontend } from '../types'
 
@@ -28,7 +28,7 @@ const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
     case 'sync': {
       await input.ctx.spaceBackend.merge(input.msgFrontend.space)
 
-      const spaceId = SpaceSpace.toSpaceId(input.msgFrontend.space)
+      const spaceId = Space.toSpaceId(input.msgFrontend.space)
 
       if (!spaceId) {
         return {}
@@ -61,9 +61,9 @@ const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
   }
 }
 
-const getAssociatedProfiles = async (ctx: AppBackendCtx, spaces: SpaceSpace.Model[]) => {
+const getAssociatedProfiles = async (ctx: AppBackendCtx, spaces: Space.Model[]) => {
   const userIds = spaces.flatMap((space) => {
-    const state = EventSourced.toState(SpaceSpace.config, space)
+    const state = EventSourced.toState(Space.config, space)
     switch (state.type) {
       case 'started':
         return SpaceState.toUserIds(state)
@@ -120,7 +120,7 @@ const sendSpaceEventToFrontend: SpaceBackendModule['update'] = async (input) => 
 
   const got = await input.ctx.spaceBackend.get(input.msgSpace.spaceId)
 
-  const space = unwrapOr(got, null) ?? SpaceSpace.init
+  const space = unwrapOr(got, null) ?? Space.init
 
   const eventWithMeta = EventSourced.toEvent(space, input.msgSpace.eventId)
 
@@ -128,7 +128,7 @@ const sendSpaceEventToFrontend: SpaceBackendModule['update'] = async (input) => 
     return {}
   }
 
-  const spaceState = SpaceSpace.toSpaceStarted(space)
+  const spaceState = Space.toSpaceStarted(space)
 
   const profiles = unwrapOr(
     await input.ctx.profileCache.get('userId' in eventWithMeta ? [eventWithMeta.userId] : []),

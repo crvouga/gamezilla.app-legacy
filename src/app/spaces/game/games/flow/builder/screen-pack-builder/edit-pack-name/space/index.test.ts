@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import { Err, Ok } from '~/@/result'
-import { SpaceSpaceFixture } from '~/app/spaces/@/fixture/space'
+import { SpaceFixture } from '~/app/spaces/@/fixture/space'
 import { Pack } from '../../../../@/pack/pack'
 import { EditPackNameSpace } from '../space'
 import type { ModelSpace, MsgSpace } from '../types'
 
 const Fixture = async () => {
-  const f = await SpaceSpaceFixture()
+  const f = await SpaceFixture()
 
   const update = (init: ModelSpace, msgs: MsgSpace[]) => {
     return msgs.reduce((model, msg) => EditPackNameSpace.update({ ctx: f.ctx, modelSpace: model, msgSpace: msg }), init)

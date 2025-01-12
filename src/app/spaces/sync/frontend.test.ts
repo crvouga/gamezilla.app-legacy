@@ -9,7 +9,7 @@ import { Username } from '~/app/@/data/username'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { makeSpace } from '../@/fixture/shared'
 import { SpacesSpaceFrontend } from '../space/frontend'
-import { SpaceSpace } from '../space/space'
+import { Space } from '../space/space'
 
 const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
       limit: Number.POSITIVE_INFINITY,
     })
 
-    expect(listed.some((space) => SpaceSpace.isEqual(space, someSpace))).toBe(true)
+    expect(listed.some((space) => Space.isEqual(space, someSpace))).toBe(true)
   })
 
   it("should merge current user's space when received from backend", async () => {

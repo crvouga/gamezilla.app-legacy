@@ -8,7 +8,7 @@ import { TopBar, Typography } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
 import { SpacesSpaceFrontend } from '../space/frontend'
-import { SpaceSpace } from '../space/space'
+import { Space } from '../space/space'
 import { SpaceEvent } from '../space/space-event'
 import type { MsgFrontend } from '../types'
 import { ViewUsersInSpaceList } from './games/@/ui/users-in-space-list'
@@ -240,7 +240,7 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
     return Sub.None
   }
 
-  const spaceState = SpaceSpace.toSpaceStarted(spaceModel)
+  const spaceState = Space.toSpaceStarted(spaceModel)
 
   if (!spaceState) {
     return Sub.None

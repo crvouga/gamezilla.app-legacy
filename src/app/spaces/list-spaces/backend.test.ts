@@ -3,7 +3,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
-import { SpaceSpace } from '../space/space'
+import { Space } from '../space/space'
 
 const Fixture = async () => {
   const f = await FixtureSpaceBackend()
@@ -58,8 +58,7 @@ describe(import.meta.file, () => {
     expect(
       didSendMsgToFrontend(
         output,
-        (msg) =>
-          msg.t === 'listed-spaces' && msg.spaces.map(SpaceSpace.toSpaceStarted).some((s) => s?.spaceId === spaceId),
+        (msg) => msg.t === 'listed-spaces' && msg.spaces.map(Space.toSpaceStarted).some((s) => s?.spaceId === spaceId),
       ),
     ).toBe(true)
   })

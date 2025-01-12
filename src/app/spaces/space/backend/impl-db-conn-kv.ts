@@ -9,7 +9,7 @@ import { IRuntime } from '~/@/runtime'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { type UserId } from '~/app/@/data/user-id'
-import { SpaceSpace } from '../space'
+import { Space } from '../space'
 import type { ISpaceBackend } from './interface'
 
 export type Config = {
@@ -48,10 +48,10 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
       }),
   )
 
-  const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, SpaceSpace.Model>({
+  const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, Space.Model>({
     dbConnKv,
     namespace: ['spaces', 'space-by-id'],
-    parser: SpaceSpace.Model,
+    parser: Space.Model,
   })
   const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>({
     dbConnKv,
@@ -80,13 +80,13 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
   }
 
   const upsert: ISpaceBackend['upsert'] = async (space) => {
-    const spaceId = SpaceSpace.toSpaceId(space)
+    const spaceId = Space.toSpaceId(space)
 
     if (!spaceId) {
       return Err('Invalid space. Failed to derive spaceId')
     }
 
-    const entries = SpaceSpace.toUserIds(space).map((userId): [UserId, SpaceId] => [userId, spaceId])
+    const entries = Space.toUserIds(space).map((userId): [UserId, SpaceId] => [userId, spaceId])
 
     const allSpaceIds = new Set(Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? [])
     allSpaceIds.add(spaceId)
@@ -158,17 +158,17 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
 
       const maybeSpace = unwrapOr(await spacesBySpaceId.get(spaceEvent.spaceId), null)
 
-      const space = maybeSpace ?? SpaceSpace.init
+      const space = maybeSpace ?? Space.init
 
-      const spaceNew = EventSourced.appendEvent(SpaceSpace.config, space, spaceEvent)
+      const spaceNew = EventSourced.appendEvent(Space.config, space, spaceEvent)
 
       return upsert(spaceNew)
     },
 
     async merge(space) {
-      const spaceId = SpaceSpace.toSpaceId(space)
+      const spaceId = Space.toSpaceId(space)
 
-      const currentSpace = Result.unwrapOr(await get(spaceId), null) ?? SpaceSpace.init
+      const currentSpace = Result.unwrapOr(await get(spaceId), null) ?? Space.init
 
       const spaceNew = EventSourced.mergeLeft(space, currentSpace)
 
