@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { RPC } from '~/@/rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'
-import { WebBackendEvent } from '~/@/web-backend'
+import { HttpServerEvent } from '~/@/http-server'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
@@ -21,7 +21,7 @@ export type MsgToBackend = { t: 'noop' }
 export type MsgToFrontend = { t: 'noop' }
 
 export type MsgBackend =
-  | { t: 'got-web-backend-event'; c: WebBackendEvent }
+  | { t: 'got-web-backend-event'; c: HttpServerEvent }
   | { t: 'got-runtime-event'; c: RuntimeEvent }
   | { t: 'heartbeat'; at: Posix }
 

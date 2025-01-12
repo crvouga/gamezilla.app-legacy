@@ -11,9 +11,9 @@ import { SMS } from '~/@/sms'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { WebBackend } from '~/@/web-backend'
+import { HttpServer } from '~/@/http-server'
 import { DATABASE_URL } from '~/config/backend'
-import { IS_PROD, SERVER_IMPL } from '~/config/shared'
+import { IS_PROD, HTTP_SERVER_IMPL } from '~/config/shared'
 import { BackendCmd } from './@/backend/cmd'
 import { AppBackendCtx } from './@/backend/ctx'
 import { BackendEvt } from './@/backend/evt'
@@ -75,9 +75,9 @@ const initCtx = async (): Promise<BackendCtx> => {
     logger,
   })
 
-  const webBackend = WebBackend({
+  const httpServer = HttpServer({
     logger,
-    t: SERVER_IMPL,
+    t: HTTP_SERVER_IMPL,
   })
 
   const pubSub = await PubSubTopicBased({
@@ -85,11 +85,11 @@ const initCtx = async (): Promise<BackendCtx> => {
   })
 
   const transport = await BackendTransport<MsgToBackend, MsgToFrontend>(
-    webBackend.t === 'bun'
+    httpServer.t === 'bun'
       ? {
           t: 'bun-web-sockets',
           dbConnSql,
-          webBackend,
+          httpServer: httpServer,
           logger,
           pubSubTopicBased: pubSub,
           isProd: IS_PROD,
@@ -119,7 +119,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     sleep,
     pubSub,
     profileCache,
-    webBackend,
+    httpServer,
     runtime,
     backendInstanceId: BackendInstanceId.generate(),
   }
@@ -131,7 +131,7 @@ const initCtx = async (): Promise<BackendCtx> => {
 
   return {
     ...ctx,
-    webBackend: webBackend,
+    httpServer,
     auth,
     space,
     profile,

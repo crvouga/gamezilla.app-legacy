@@ -2,7 +2,7 @@ import { Browser } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
-import { IWebBackend } from '~/@/web-backend'
+import { IHttpServer } from '~/@/http-server'
 import { FrontendId } from './@/data/frontend-id'
 import { SessionId } from './@/data/session-id'
 import { UserId } from './@/data/user-id'
@@ -114,7 +114,7 @@ export type BackendCtx = AppBackendCtx & {
   profile: ProfileTypes.BackendCtx
   space: SpacesTypes.BackendCtx
   auth: AuthTypes.BackendCtx
-  webBackend: IWebBackend
+  httpServer: IHttpServer
 }
 
 export type FrontendCtx = {

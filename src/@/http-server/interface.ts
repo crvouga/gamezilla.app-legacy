@@ -5,7 +5,7 @@ type MaybePromise<T> = Promise<T> | T
 
 export type Handler = (request: Request, backend: unknown) => MaybePromise<Response | null | undefined>
 
-export type WebBackendEvent =
+export type HttpServerEvent =
   | {
       t: 'web-backend/started'
       ipAddress: string
@@ -17,8 +17,8 @@ export type WebBackendEvent =
       stoppedAt: Posix
     }
 
-export type IWebBackend = {
+export type IHttpServer = {
   start: (port: number) => Promise<void>
   registerHandler: (handler: Handler) => void
-  events: Sub<WebBackendEvent>
+  events: Sub<HttpServerEvent>
 }

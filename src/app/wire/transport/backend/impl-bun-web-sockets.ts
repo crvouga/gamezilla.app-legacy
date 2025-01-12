@@ -2,7 +2,7 @@ import type { Server, ServerWebSocket } from 'bun'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
-import type { WebBackendBun } from '~/@/web-backend/impl-bun'
+import type { HttpServerBun } from '~/@/http-server/impl-bun'
 import { FrontendId } from '~/app/@/data/frontend-id'
 import { SessionId } from '~/app/@/data/session-id'
 import { SessionIdCookie } from '../session-id-cookie'
@@ -17,7 +17,7 @@ type BackendWebSocketData = {
 
 export type Config = {
   t: 'bun-web-sockets'
-  webBackend: WebBackendBun
+  httpServer: HttpServerBun
   dbConnSql: IDbConnSql
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
@@ -78,7 +78,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   //
   //
 
-  config.webBackend._setWebSocketHandler({
+  config.httpServer._setWebSocketHandler({
     async open(ws: ServerWebSocket<BackendWebSocketData>) {
       logger.debug(`websocket connection opened frontendId=${ws.data.frontendId} sessionId=${ws.data.sessionId}`)
       await addFrontend(ws)
@@ -110,7 +110,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
     },
   })
 
-  config.webBackend.registerHandler((request, maybeBackend) => {
+  config.httpServer.registerHandler((request, maybeBackend) => {
     const backend = maybeBackend as Server
     const url = new URL(request.url)
 

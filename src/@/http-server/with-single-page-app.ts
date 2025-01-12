@@ -1,10 +1,10 @@
 import path from 'node:path'
 import { IFileSystem } from '../file-system'
 import { fileExtensionToContentType } from './content-type'
-import { IWebBackend } from './interface'
+import { IHttpServer } from './interface'
 
 export type Config = {
-  webBackend: IWebBackend
+  httpServer: IHttpServer
   fileSystem: IFileSystem
   directory: string
   indexFile: string
@@ -17,7 +17,7 @@ export const withSinglePageApp = (config: Config) => {
   const toFilePath = config.toFilePath ?? ((pathname) => pathname)
   const toHeaders: (filePath: string) => Record<string, string> = config.toHeaders ?? (() => ({}))
 
-  config.webBackend.registerHandler(async (req) => {
+  config.httpServer.registerHandler(async (req) => {
     try {
       const url = new URL(req.url)
       const pathname = decodeURIComponent(url.pathname)

@@ -1,6 +1,6 @@
 import { Err, isErr, Ok, Result } from '~/@/result'
-import { IWebFrontend } from '~/@/web-frontend'
-import { IWebBackend } from '~/@/web-backend'
+import { IHttpClient } from '~/@/http-client'
+import { IHttpServer } from '~/@/http-server'
 import { p } from '~/@/parser'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
@@ -32,7 +32,7 @@ export const initContract = <TEndpoints extends Record<string, Endpoint<any, any
   endpoints: TEndpoints,
 ): Contract<TEndpoints> => endpoints
 
-export const initFrontend = <T extends Base>(webFrontend: IWebFrontend, contract: T): Frontend<T> => {
+export const initFrontend = <T extends Base>(webFrontend: IHttpClient, contract: T): Frontend<T> => {
   const createFrontend = (contract: Base, path: string[] = []): any => {
     const frontend: any = {}
 
@@ -82,9 +82,9 @@ export const initBackend = <T extends Base>(_contract: T, handlers: Backend<T>):
 export const withRPC = <T extends Base>({
   contract,
   handlers,
-  webBackend,
+  httpServer,
 }: {
-  webBackend: IWebBackend
+  httpServer: IHttpServer
   contract: T
   handlers: Backend<T>
 }) => {
@@ -128,7 +128,7 @@ export const withRPC = <T extends Base>({
     }
   }
 
-  webBackend.registerHandler(async (request) => {
+  httpServer.registerHandler(async (request) => {
     try {
       const url = new URL(request.url)
       const path = url.pathname.replace('/rpc/', '').split('/')

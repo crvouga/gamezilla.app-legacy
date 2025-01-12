@@ -5,7 +5,7 @@ import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
 import { Posix } from '~/@/time/posix'
-import { WebBackend } from '~/@/web-backend'
+import { HttpServer } from '~/@/http-server'
 import { DATABASE_URL, REDIS_URL } from '~/config/backend'
 import { FrontendId } from '../data/frontend-id'
 import { SessionId } from '../data/session-id'
@@ -81,7 +81,7 @@ export const FixtureAppBackend = async () => {
     pubSub: await PubSubTopicBased({ t: 'noop' }),
     profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) }),
     runtime: Runtime({ t: 'noop' }),
-    webBackend: WebBackend({ t: 'bun', logger }),
+    httpServer: HttpServer({ t: 'bun', logger }),
     backendInstanceId: BackendInstanceId.generate(),
   }
   return {

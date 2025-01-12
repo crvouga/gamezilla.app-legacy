@@ -1,5 +1,5 @@
 import { Logger } from '~/@/logger'
-import { WebBackend } from '~/@/web-backend'
+import { HttpServer } from '~/@/http-server'
 import { SERVER_PORT } from '~/config/backend'
 import { LoadBalancer } from '~/load-balancer'
 
@@ -8,7 +8,7 @@ const main = async () => {
     t: 'console',
   })
 
-  const backend = WebBackend({
+  const backend = HttpServer({
     t: 'bun',
     logger,
   })

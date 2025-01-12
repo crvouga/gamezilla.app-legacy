@@ -1,11 +1,11 @@
 import { FileSystem } from '~/@/file-system'
 import { ProgramImpure } from '~/@/program/program-impure'
 import { withRPC } from '~/@/rpc/rpc'
-import { withSinglePageApp } from '~/@/web-backend/with-single-page-app'
+import { withSinglePageApp } from '~/@/http-server/with-single-page-app'
 import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { SERVER_PORT } from '~/config/backend'
-import { IS_PROD, SERVER_IMPL, TRANSPORT_IMPL } from '~/config/shared'
+import { IS_PROD, HTTP_SERVER_IMPL, TRANSPORT_IMPL } from '~/config/shared'
 
 const main = async () => {
   const ctx = await AppBackend.initCtx()
@@ -19,7 +19,7 @@ const main = async () => {
   })
 
   withRPC({
-    webBackend: ctx.webBackend,
+    httpServer: ctx.httpServer,
     contract: AppTypes.rpcContract,
     handlers: AppBackend.rpc({ ctx }),
   })
@@ -31,10 +31,10 @@ const main = async () => {
       directory: 'dist',
       fileSystem: FileSystem({ t: 'bun' }),
       indexFile: 'index.html',
-      webBackend: ctx.webBackend,
+      httpServer: ctx.httpServer,
     })
   } else {
-    ctx.webBackend.registerHandler((_request) => {
+    ctx.httpServer.registerHandler((_request) => {
       return new Response('Hello from gamezilla.app backend', { status: 200 })
     })
   }
@@ -43,11 +43,11 @@ const main = async () => {
     throw new Error('SERVER_PORT is not set')
   }
 
-  await ctx.webBackend.start(SERVER_PORT)
+  await ctx.httpServer.start(SERVER_PORT)
 
   ctx.logger.info({
     IS_PROD,
-    SERVER_IMPL,
+    HTTP_SERVER_IMPL,
     TRANSPORT_IMPL,
     SERVER_PORT,
   })

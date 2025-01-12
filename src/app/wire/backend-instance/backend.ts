@@ -96,7 +96,7 @@ const updateBackendStopped = async (input: { stoppedAt: Posix; ctx: BackendCtx }
 
 const subscriptions: BackendModule['subscriptions'] = async (input) => {
   return Sub.batch<MsgBackend>([
-    Sub.tag('got-web-backend-event', input.ctx.webBackend.events),
+    Sub.tag('got-web-backend-event', input.ctx.httpServer.events),
     Sub.tag('got-runtime-event', input.ctx.runtime.events),
     Time.interval(INTERVAL_ID, BackendInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at })),
   ])

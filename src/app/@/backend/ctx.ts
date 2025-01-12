@@ -1,7 +1,7 @@
 import { IRuntime } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { IWebBackend } from '~/@/web-backend'
+import { IHttpServer } from '~/@/http-server'
 import type { IDbConnKv } from '../../../@/db-conn-kv'
 import type { IDbConnSql } from '../../../@/db-conn-sql/interface'
 import type { ILogger } from '../../../@/logger/interface'
@@ -21,6 +21,6 @@ export type AppBackendCtx = {
   pubSub: IPubSubTopicBased
   profileCache: IProfileCache
   backendInstanceId: BackendInstanceId
-  webBackend: IWebBackend
+  httpServer: IHttpServer
   runtime: IRuntime
 }

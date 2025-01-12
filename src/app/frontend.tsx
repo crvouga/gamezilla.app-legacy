@@ -7,11 +7,11 @@ import type { Route } from '~/@/routing/generated/routes'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { WebFrontend } from '~/@/web-frontend'
-import { BackendImpl } from '~/@/web-backend/backend-impl'
+import { HttpClient } from '~/@/http-client'
+import { HttpServerImpl } from '~/@/http-server/http-server-impl'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
-import { SERVER_URL } from '~/config/frontend'
-import { SERVER_IMPL } from '~/config/shared'
+import { BACKEND_URL } from '~/config/frontend'
+import { HTTP_SERVER_IMPL } from '~/config/shared'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
@@ -51,13 +51,13 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
     toFrontendTransportConfig({
-      backendImpl: SERVER_IMPL,
-      backendUrl: SERVER_URL,
+      httpServerImpl: HTTP_SERVER_IMPL,
+      backendUrl: BACKEND_URL,
       logger,
     }),
   )
 
-  const webFrontend = WebFrontend({
+  const webFrontend = HttpClient({
     t: 'fetch',
     fetch: fetch as Fetch,
   })
@@ -103,11 +103,11 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
 }
 
 const toFrontendTransportConfig = (input: {
-  backendImpl: BackendImpl
+  httpServerImpl: HttpServerImpl
   backendUrl: string
   logger: ILogger
 }): Parameters<typeof FrontendTransport>[0] => {
-  switch (input.backendImpl) {
+  switch (input.httpServerImpl) {
     case 'bun': {
       return {
         ...input,
