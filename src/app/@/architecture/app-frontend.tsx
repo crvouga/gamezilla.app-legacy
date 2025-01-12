@@ -75,19 +75,19 @@ type EmitFunctions<Emits> = Emits extends EmitInputTypes ? { [K in keyof Emits]:
 
 export type Input<T extends AppFrontendModuleTypes> = {
   /**
-   * `ctx` is data passed down from parent modules
+   * `ctx` is data passed down from parent modules like `currentUser`, `currentRoute`, etc
    */
   ctx: T['Ctx']
   /**
-   * `model` is the current state of the module
+   * `model` is the current state of the module.
    */
   model: T['Model']
   /**
-   * `msg` is an event that happens frontend side within this module. Like `user-clicked-a-button`
+   * `msg` is an event that happens in the frontend within this module. Like `user-clicked-a-button`
    */
   msg?: T['Msg'] | null
   /**
-   * `msgBackend` is a message from the backend
+   * `msgBackend` is a message sent from the backend
    */
   msgBackend?: T['MsgToFrontend'] | null
   /**

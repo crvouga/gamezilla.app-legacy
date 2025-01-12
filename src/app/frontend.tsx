@@ -10,7 +10,7 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
-import { BACKEND_URL } from '~/config/frontend'
+import { SERVER_URL } from '~/config/frontend'
 import { HTTP_SERVER_IMPL } from '~/config/shared'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
@@ -19,9 +19,9 @@ import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { BottomButtons } from './@/ui/bottom-buttons'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
-import './app-frontend/styles.css'
 import * as AuthFrontend from './auth/frontend'
 import { Platform, Routing, Sound, StatusBar, Toast } from './frontend/index'
+import './frontend/styles.css'
 import * as LangFrontend from './lang/frontend'
 import * as ProfileFrontend from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
@@ -52,7 +52,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
     toFrontendTransportConfig({
       httpServerImpl: HTTP_SERVER_IMPL,
-      backendUrl: BACKEND_URL,
+      backendUrl: SERVER_URL,
       logger,
     }),
   )
