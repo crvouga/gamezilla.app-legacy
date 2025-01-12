@@ -30,7 +30,7 @@ const loadCmd = (ctx: FlowClientCtx) => (model: ModelClient) => {
   })
 }
 
-const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: Puzzle[]) => (model: ModelClient) => {
+const backendListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: Puzzle[]) => (model: ModelClient) => {
   return PuzzleListClient.update({
     ctx,
     model,
@@ -49,7 +49,7 @@ const serverListedPuzzlesOk = (ctx: FlowClientCtx, puzzles: Puzzle[]) => (model:
   })
 }
 
-const serverListedPuzzlesErr = (ctx: FlowClientCtx, error: string) => (model: ModelClient) => {
+const backendListedPuzzlesErr = (ctx: FlowClientCtx, error: string) => (model: ModelClient) => {
   return PuzzleListClient.update({
     ctx,
     model,
@@ -80,13 +80,13 @@ describe(import.meta.file, () => {
     expect(isRequesting(output.model.request)).toBe(true)
   })
 
-  it('should send a list puzzles message to server when the user observes the end of the list', async () => {
+  it('should send a list puzzles message to backend when the user observes the end of the list', async () => {
     const ctx = await testFlowClientCtx()
     const output = AppClientModule.andThen(initial, loadCmd(ctx))
     expect(didSendToBackend(output, (msg) => msg.t === 'list-puzzles')).toBe(true)
   })
 
-  it('should record puzzles received from server', async () => {
+  it('should record puzzles received from backend', async () => {
     const ctx = await testFlowClientCtx()
     const puzzle = await Puzzle.create({
       count: 1,
@@ -98,19 +98,19 @@ describe(import.meta.file, () => {
       }),
     })
 
-    const output = AppClientModule.andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))
+    const output = AppClientModule.andThen(initial, backendListedPuzzlesOk(ctx, [puzzle]))
 
     expect(output.msgCmd?.some((c) => c.t === 'flow-cmd.add-puzzles')).toBe(true)
   })
 
-  it('should show error when receiving list error fro server', async () => {
+  it('should show error when receiving list error fro backend', async () => {
     const ctx = await testFlowClientCtx()
     const error = 'Something went wrong'
-    const output = AppClientModule.andThen(initial, serverListedPuzzlesErr(ctx, error))
+    const output = AppClientModule.andThen(initial, backendListedPuzzlesErr(ctx, error))
     expect(didShowErrorSm(output)).toBe(true)
   })
 
-  it('should show error after no server response', async () => {
+  it('should show error after no backend response', async () => {
     const ctx = await testFlowClientCtx()
     const output = AppClientModule.andThen(initial, loadCmd(ctx), elapsed(ctx, TimeSpan.minutes(5)))
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true)

@@ -8,7 +8,7 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { WebClient } from '~/@/web-client'
-import { BackendImpl } from '~/@/web-server/server-impl'
+import { BackendImpl } from '~/@/web-backend/backend-impl'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
 import { SERVER_URL } from '~/config/client'
 import { SERVER_IMPL } from '~/config/shared'
@@ -51,8 +51,8 @@ export const initCtx = async (): Promise<ClientCtx> => {
 
   const transport = await ClientTransport<MsgToBackend, MsgToClient>(
     toClientTransportConfig({
-      serverImpl: SERVER_IMPL,
-      serverUrl: SERVER_URL,
+      backendImpl: SERVER_IMPL,
+      backendUrl: SERVER_URL,
       logger,
     }),
   )
@@ -103,11 +103,11 @@ const toClientCtx = (input: { model: ModelClient; ctx: ClientCtx }): Ctx => {
 }
 
 const toClientTransportConfig = (input: {
-  serverImpl: BackendImpl
-  serverUrl: string
+  backendImpl: BackendImpl
+  backendUrl: string
   logger: ILogger
 }): Parameters<typeof ClientTransport>[0] => {
-  switch (input.serverImpl) {
+  switch (input.backendImpl) {
     case 'bun': {
       return {
         ...input,

@@ -12,7 +12,7 @@ const MAX_RECONNECT_ATTEMPTS = 6
 
 export type Config = {
   t: 'standard-web-sockets'
-  serverUrl: string
+  backendUrl: string
 }
 
 export const ClientTransport = <MsgToBackend, MsgToClient>(
@@ -21,7 +21,7 @@ export const ClientTransport = <MsgToBackend, MsgToClient>(
   MsgToBackend: MsgToBackend
   MsgToClient: MsgToClient
 }> => {
-  const serverUrl = toWebsocketBackendUrl(config.serverUrl.toString())
+  const backendUrl = toWebsocketBackendUrl(config.backendUrl.toString())
 
   const transport = initClientTransport<MsgToBackend, MsgToClient>()
 
@@ -40,13 +40,13 @@ export const ClientTransport = <MsgToBackend, MsgToClient>(
       return
     }
 
-    ws = new WebSocket(serverUrl)
+    ws = new WebSocket(backendUrl)
 
     ws.onopen = () => {
       isConnected = true
       reconnectAttempts = 0
       transport.msgEvt.pub({
-        t: 'server-connected',
+        t: 'backend-connected',
       })
       for (const msg of queue) {
         send(msg)
@@ -57,7 +57,7 @@ export const ClientTransport = <MsgToBackend, MsgToClient>(
     ws.onerror = () => {
       isConnected = false
       transport.msgEvt.pub({
-        t: 'server-connect-error',
+        t: 'backend-connect-error',
       })
     }
 
@@ -69,7 +69,7 @@ export const ClientTransport = <MsgToBackend, MsgToClient>(
 
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
         transport.msgEvt.pub({
-          t: 'server-disconnected',
+          t: 'backend-disconnected',
         })
         return
       }
@@ -156,14 +156,14 @@ export const update = <MsgToBackend>(input: {
   model: Model<MsgToBackend>
   evt?: ClientTransportEvent
   cmd?: ClientTransportCommand
-  msg?: { t: 'to-server'; msgs: MsgToBackend[] }
+  msg?: { t: 'to-backend'; msgs: MsgToBackend[] }
 }): Model<MsgToBackend> => {
   const msg = input.evt ?? input.cmd ?? input.msg
   if (!msg) {
     return input.model
   }
   switch (msg.t) {
-    case 'to-server': {
+    case 'to-backend': {
       return {
         ...input.model,
         queue: input.model.queue.concat(msg.msgs),
@@ -180,11 +180,11 @@ export const update = <MsgToBackend>(input: {
       return input.model
     }
 
-    case 'server-connect-error': {
+    case 'backend-connect-error': {
       return input.model
     }
 
-    case 'server-connected': {
+    case 'backend-connected': {
       return {
         ...input.model,
         isConnected: true,
@@ -192,7 +192,7 @@ export const update = <MsgToBackend>(input: {
       }
     }
 
-    case 'server-disconnected': {
+    case 'backend-disconnected': {
       return {
         ...input.model,
         isConnected: false,

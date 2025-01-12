@@ -38,7 +38,7 @@ const elapsed = (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient)
   })
 }
 
-const serverListedPacksOk =
+const backendListedPacksOk =
   (ctx: FlowClientCtx, ...packs: Pack[]) =>
   (model: ModelClient) => {
     return PackListClient.update({
@@ -56,7 +56,7 @@ const serverListedPacksOk =
     })
   }
 
-const serverListedPacksErr = (ctx: FlowClientCtx, errorMessage: string) => (model: ModelClient) => {
+const backendListedPacksErr = (ctx: FlowClientCtx, errorMessage: string) => (model: ModelClient) => {
   return PackListClient.update({
     ctx,
     model,
@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
     expect(RequestResponse.isRequesting(output.model.request)).toBe(true)
   })
 
-  it('should send request to server when user observes end of list', async () => {
+  it('should send request to backend when user observes end of list', async () => {
     const ctx = await testFlowClientCtx()
     const output = AppClientModule.andThen(initial, observedEndOfList(ctx))
     expect(didSendToBackend(output, (msg) => msg.t === 'list-packs')).toBe(true)
@@ -86,20 +86,20 @@ describe(import.meta.file, () => {
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true)
   })
 
-  it('should add packs listed from server', async () => {
+  it('should add packs listed from backend', async () => {
     const ctx = await testFlowClientCtx()
     const pack = await Pack.create({
       createdBy: ctx.currentUserId,
       now: ctx.now,
       puzzleIds: [],
     })
-    const output = AppClientModule.andThen(initial, serverListedPacksOk(ctx, pack))
+    const output = AppClientModule.andThen(initial, backendListedPacksOk(ctx, pack))
     expect(Object.values(output.model.packs)).toEqual([pack])
   })
 
-  it('should show error when packs listed from server errors', async () => {
+  it('should show error when packs listed from backend errors', async () => {
     const ctx = await testFlowClientCtx()
-    const output = AppClientModule.andThen(initial, serverListedPacksErr(ctx, 'Something went wrong'))
+    const output = AppClientModule.andThen(initial, backendListedPacksErr(ctx, 'Something went wrong'))
     expect(didShowErrorSm(output)).toBe(true)
   })
 })

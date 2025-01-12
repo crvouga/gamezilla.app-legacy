@@ -15,7 +15,7 @@ import {
   createPack,
   createPuzzle,
   initial,
-  serverCreatedPack,
+  backendCreatedPack,
   testFlowClientCtx,
 } from '../@/testing/client'
 import { deriveModelCore } from '../@/testing/core'
@@ -120,7 +120,7 @@ describe(import.meta.file, () => {
 
     const output = GameClientModule.andThen(
       initial,
-      serverCreatedPack(ctx, await createPack(ctx)),
+      backendCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0),
@@ -135,7 +135,7 @@ describe(import.meta.file, () => {
     const ctx = await testFlowClientCtx()
     const output = GameClientModule.andThen(
       initial,
-      serverCreatedPack(ctx, await createPack(ctx)),
+      backendCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
     )
     const modelCore = deriveModelCore(ctx, output)
@@ -146,7 +146,7 @@ describe(import.meta.file, () => {
     const ctx = await testFlowClientCtx()
     const output = GameClientModule.andThen(
       initial,
-      serverCreatedPack(ctx, await createPack(ctx)),
+      backendCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       closedPuzzlePickerDrawer(ctx),
     )
@@ -159,7 +159,7 @@ describe(import.meta.file, () => {
     const puzzle = await createPuzzle(ctx)
     const output = GameClientModule.andThen(
       initial,
-      serverCreatedPack(ctx, await createPack(ctx)),
+      backendCreatedPack(ctx, await createPack(ctx)),
       clickedPuzzlePickerItem(ctx, puzzle),
     )
     const modelCore = deriveModelCore(ctx, output)
@@ -171,7 +171,7 @@ describe(import.meta.file, () => {
     const puzzle = await createPuzzle(ctx)
     const output = GameClientModule.andThen(
       initial,
-      serverCreatedPack(ctx, await createPack(ctx)),
+      backendCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
     )
@@ -184,7 +184,7 @@ describe(import.meta.file, () => {
     const puzzle = await createPuzzle(ctx)
     const output = GameClientModule.andThen(
       initial,
-      serverCreatedPack(ctx, await createPack(ctx)),
+      backendCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0),
@@ -240,7 +240,7 @@ describe(import.meta.file, () => {
     const puzzle = await createPuzzle(ctx)
     const output = GameClientModule.andThen(
       initial,
-      serverCreatedPack(ctx, await createPack(ctx)),
+      backendCreatedPack(ctx, await createPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0),

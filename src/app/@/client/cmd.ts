@@ -224,19 +224,19 @@ export const didCopyToClipboard = <T extends ClientCmdTypes, TCmd>(
 export type WireCmd<T extends ClientCmdTypes> = {
   t: 'wire'
   c: {
-    t: 'send-to-server'
+    t: 'send-to-backend'
     toBackend: T['MsgToBackend'] | null
   }
 }
 
 /**
- * A msgCmd creator for sending a messages to the server.
+ * A msgCmd creator for sending a messages to the backend.
  */
 export const sendToBackend = <T extends ClientCmdTypes>(msg: T['MsgToBackend']): AppClientCmd<T> => {
   return {
     t: 'wire',
     c: {
-      t: 'send-to-server',
+      t: 'send-to-backend',
       toBackend: msg,
     },
   }
@@ -257,7 +257,7 @@ export const didSendToBackend = <T extends ClientCmdTypes, TCmd>(
         cmd &&
         't' in cmd &&
         cmd.t === 'wire' &&
-        cmd.c.t === 'send-to-server' &&
+        cmd.c.t === 'send-to-backend' &&
         cmd.c.toBackend &&
         predicate(cmd.c.toBackend),
     ) ?? false
@@ -622,7 +622,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
   switch (msgCmd.t) {
     case 'wire': {
       switch (msgCmd.c.t) {
-        case 'send-to-server': {
+        case 'send-to-backend': {
           if (msgCmd.c.toBackend) {
             return {
               ...msgCmd,
@@ -716,7 +716,7 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
     switch (msgCmd.t) {
       case 'wire': {
         switch (msgCmd.c.t) {
-          case 'send-to-server': {
+          case 'send-to-backend': {
             if (msgCmd.c.toBackend) {
               return {
                 ...msgCmd,

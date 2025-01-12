@@ -45,7 +45,7 @@ export const SpaceClientFixture = async () => {
         c: SpacesTypes.MsgClient
       }
     | {
-        t: 'msg-server'
+        t: 'msg-backend'
         c: SpacesTypes.MsgToClient
       }
 
@@ -62,7 +62,7 @@ export const SpaceClientFixture = async () => {
           outputs.push(output)
           break
         }
-        case 'msg-server': {
+        case 'msg-backend': {
           const output = SpacesClient.update({
             ctx,
             model: initial,

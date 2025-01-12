@@ -23,7 +23,7 @@ const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
-  it('should record profiles when received from server', async () => {
+  it('should record profiles when received from backend', async () => {
     const f = await Fixture()
 
     const someProfile: Profile = {
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
     expect(hasExactlyOne(output.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(someProfiles)))).toBe(true)
   })
 
-  it('should merge space received from server', async () => {
+  it('should merge space received from backend', async () => {
     const f = await Fixture()
 
     const someSpace = makeSpace({
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
     expect(listed.some((space) => SpaceCore.isEqual(space, someSpace))).toBe(true)
   })
 
-  it("should merge current user's space when received from server", async () => {
+  it("should merge current user's space when received from backend", async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const someStartedSpace = makeSpace({
@@ -99,7 +99,7 @@ describe(import.meta.file, () => {
     expect(currentUserSpaceId).toEqual(spaceId)
   })
 
-  it("should sync current user's space when server connects if in space", async () => {
+  it("should sync current user's space when backend connects if in space", async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
@@ -110,7 +110,7 @@ describe(import.meta.file, () => {
       },
       {
         msgEvt: {
-          t: 'wire-evt.server-connected',
+          t: 'wire-evt.backend-connected',
         },
       },
     ])
@@ -118,12 +118,12 @@ describe(import.meta.file, () => {
     expect(
       hasExactlyOne(
         output.msgCmd ?? [],
-        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-server' && msgCmd.c.toBackend?.t === 'sync',
+        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-backend' && msgCmd.c.toBackend?.t === 'sync',
       ),
     ).toBe(true)
   })
 
-  it('should send events to the server like user joined space', async () => {
+  it('should send events to the backend like user joined space', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
@@ -150,14 +150,14 @@ describe(import.meta.file, () => {
         output?.msgCmd ?? [],
         (msgCmd) =>
           msgCmd.t === 'wire' &&
-          msgCmd.c.t === 'send-to-server' &&
+          msgCmd.c.t === 'send-to-backend' &&
           msgCmd.c.toBackend?.t === 'got-msg-core' &&
           msgCmd.c.toBackend?.c.t === 'user-joined-space',
       ),
     ).toBe(true)
   })
 
-  it('should send events to the server like user ended space', async () => {
+  it('should send events to the backend like user ended space', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
@@ -178,7 +178,7 @@ describe(import.meta.file, () => {
         output.msgCmd ?? [],
         (msgCmd) =>
           msgCmd.t === 'wire' &&
-          msgCmd.c.t === 'send-to-server' &&
+          msgCmd.c.t === 'send-to-backend' &&
           msgCmd.c.toBackend?.t === 'got-msg-core' &&
           msgCmd.c.toBackend?.c.t === 'user-ended-space',
       ),

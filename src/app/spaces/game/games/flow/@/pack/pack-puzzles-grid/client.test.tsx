@@ -152,13 +152,13 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it('should record puzzles listed by server', async () => {
+  it('should record puzzles listed by backend', async () => {
     const f = await Fixture()
     const output = f.update(f.init.model, [await msgBackendListedByPuzzlesByIdOk([f.puzzle])])
     expect(output.model.puzzles[f.puzzle.id]).toEqual(f.puzzle)
   })
 
-  it('should show an error when server sends an error while listing puzzles', async () => {
+  it('should show an error when backend sends an error while listing puzzles', async () => {
     const f = await Fixture()
     const output = f.update(f.init.model, [
       {
@@ -188,7 +188,7 @@ describe(import.meta.file, () => {
     expect(RequestResponse.isRequesting(output.model.request)).toBe(true)
   })
 
-  it('should in an ok state after server listed puzzles', async () => {
+  it('should in an ok state after backend listed puzzles', async () => {
     const f = await Fixture()
     const output = f.update(f.init.model, [
       {

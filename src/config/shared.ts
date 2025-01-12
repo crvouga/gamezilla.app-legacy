@@ -1,4 +1,4 @@
-import { BackendImpl } from '../@/web-server/server-impl'
+import { BackendImpl } from '../@/web-backend/backend-impl'
 import { TransportImpl } from '../app/wire/transport/transport-impl'
 
 export const IS_INTEGRATION_TEST = import.meta.env?.IS_INTEGRATION_TEST === 'true'

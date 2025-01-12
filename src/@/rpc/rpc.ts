@@ -1,6 +1,6 @@
 import { Err, isErr, Ok, Result } from '~/@/result'
 import { IWebClient } from '~/@/web-client'
-import { IWebBackend } from '~/@/web-server'
+import { IWebBackend } from '~/@/web-backend'
 import { p } from '~/@/parser'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>

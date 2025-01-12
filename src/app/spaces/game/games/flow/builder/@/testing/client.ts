@@ -351,7 +351,7 @@ export const clickedPuzzleGridItem =
     })
   }
 
-export const serverCreatedPack = (ctx: FlowClientCtx, pack: Pack) => (model: BuilderTypes.ModelClient) => {
+export const backendCreatedPack = (ctx: FlowClientCtx, pack: Pack) => (model: BuilderTypes.ModelClient) => {
   return BuilderClient.update({
     model,
     ctx: ctx,

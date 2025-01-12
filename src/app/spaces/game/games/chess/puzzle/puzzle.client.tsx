@@ -135,7 +135,7 @@ export const updateMain = ({
 
   const modelNew = mergeWithBackend({
     client: model,
-    server: updated.t === 'err' ? model : updated.value,
+    backend: updated.t === 'err' ? model : updated.value,
   })
 
   return {
@@ -179,7 +179,7 @@ export const updateFromBackendMain: typeof updateFromBackend = ({
       return {
         model: {
           ...model,
-          serverNow: msg.now,
+          backendNow: msg.now,
         },
       }
     }
@@ -195,7 +195,7 @@ export const updateFromBackendMain: typeof updateFromBackend = ({
 
       const merged = mergeWithBackend({
         client: model,
-        server: result.value,
+        backend: result.value,
       })
 
       return {
@@ -205,10 +205,10 @@ export const updateFromBackendMain: typeof updateFromBackend = ({
   }
 }
 
-export const mergeWithBackend = ({ client, server }: { client?: ModelClient; server: CoreModel }): ModelClient => {
+export const mergeWithBackend = ({ client, backend }: { client?: ModelClient; backend: CoreModel }): ModelClient => {
   return {
     ...client,
-    ...server,
+    ...backend,
   }
 }
 
@@ -223,7 +223,7 @@ const toDurationMs = (ctx: SpaceClientCtx, model: ModelClient) => {
     return null
   }
   if (model.t === 'started') {
-    return Math.max(0, (model.serverNow ?? ctx.now) - model.startedAt)
+    return Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt)
   }
   return model.endedAt - model.startedAt
 }

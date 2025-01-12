@@ -153,9 +153,9 @@ export const updateFromBackend = (_: { ctx: SpaceClientCtx }, msg: MsgToClient, 
   }
 }
 
-export const mergeWithBackend = (clientModel: ModelClient, serverModel: ModelBackend): ModelClient => {
+export const mergeWithBackend = (clientModel: ModelClient, backendModel: ModelBackend): ModelClient => {
   return {
-    ...serverModel,
+    ...backendModel,
     openedModal: clientModel.openedModal,
   }
 }

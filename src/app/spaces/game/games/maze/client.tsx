@@ -83,7 +83,7 @@ export const updateFromBackend = (msg: MsgToClient, model: Model): [Model, Eff<M
       }
       const merged = mergeWithBackend({
         clientModel: model,
-        serverModel: msg[2].value,
+        backendModel: msg[2].value,
       })
       return [merged, Eff.None]
     }
@@ -91,7 +91,7 @@ export const updateFromBackend = (msg: MsgToClient, model: Model): [Model, Eff<M
     case 'tick': {
       const merged = mergeWithBackend({
         clientModel: model,
-        serverModel: msg[1],
+        backendModel: msg[1],
       })
       return [merged, Eff.None]
     }
@@ -99,12 +99,12 @@ export const updateFromBackend = (msg: MsgToClient, model: Model): [Model, Eff<M
 }
 
 export const mergeWithBackend = ({
-  serverModel,
+  backendModel,
 }: {
   clientModel: ModelClient
-  serverModel: ModelBackend
+  backendModel: ModelBackend
 }): ModelClient => {
-  return serverModel
+  return backendModel
 }
 
 const keyToDirection = (key: Keyboard.Key): Direction | null => {

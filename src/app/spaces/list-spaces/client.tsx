@@ -60,7 +60,7 @@ const update: SpaceClientModule['update'] = (input) => {
       }
     }
 
-    case 'wire-evt.server-connected': {
+    case 'wire-evt.backend-connected': {
       return sendListSpacesRequest(input)
     }
   }

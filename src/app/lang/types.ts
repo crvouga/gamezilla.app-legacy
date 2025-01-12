@@ -1,14 +1,14 @@
 import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
 import { Posix } from '~/@/time/posix'
 import { AppClientModule } from '../@/architecture/app-client'
-import { AppBackendModule } from '../@/architecture/app-server'
+import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppClientCmd } from '../@/client/cmd'
 import { AnonymousClientCtx } from '../@/client/ctx'
 import { ClientEvt } from '../@/client/evt'
 import type { TranslatorMsg } from '../@/client/translator'
-import { BackendCmd } from '../@/server/cmd'
-import { AppBackendCtx } from '../@/server/ctx'
-import { BackendEvt } from '../@/server/evt'
+import { BackendCmd } from '../@/backend/cmd'
+import { AppBackendCtx } from '../@/backend/ctx'
+import { BackendEvt } from '../@/backend/evt'
 
 export type TranslationLoading = {
   startedAt: Posix

@@ -62,7 +62,7 @@ const updateCore: SpaceClientModule['update'] = (input) => {
   const { model, msgEvt, msgBackend } = input
 
   switch (msgEvt?.t) {
-    case 'wire-evt.server-connected': {
+    case 'wire-evt.backend-connected': {
       const currentUserId = input.ctx.currentUserId
 
       if (!currentUserId) {

@@ -1,8 +1,8 @@
 import { describe, expect, mock, test } from 'bun:test'
 import { p } from '~/@/parser'
-import { REDIS_URL } from '~/config/server'
+import { REDIS_URL } from '~/config/backend'
 import { Logger } from '../logger'
-import { AppBackendTestEnv } from '../../app/@/server/fixture'
+import { AppBackendTestEnv } from '../../app/@/backend/fixture'
 import { Config, PubSubTopicBased } from './impl'
 
 const Fixture = async (config: Config) => {

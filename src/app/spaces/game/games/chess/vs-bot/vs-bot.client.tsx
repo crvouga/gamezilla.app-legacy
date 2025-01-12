@@ -134,7 +134,7 @@ export const update = ({
 
       const modelNew = mergeWithBackend({
         client: model,
-        server: coreModel,
+        backend: coreModel,
       })
 
       return {
@@ -201,7 +201,7 @@ const updateFromBackendMain: typeof updateFromBackend = ({ msg, model }) => {
     case 'player-left': {
       const merged = mergeWithBackend({
         client: model,
-        server: msg.model,
+        backend: msg.model,
       })
       return {
         model: merged,
@@ -221,7 +221,7 @@ const updateFromBackendMain: typeof updateFromBackend = ({ msg, model }) => {
 
       const modelNew = mergeWithBackend({
         client: model,
-        server: coreModelNew,
+        backend: coreModelNew,
       })
 
       return {
@@ -240,7 +240,7 @@ const updateFromBackendMain: typeof updateFromBackend = ({ msg, model }) => {
 
       const modelNew = mergeWithBackend({
         client: model,
-        server: result.value,
+        backend: result.value,
       })
 
       return {
@@ -260,16 +260,16 @@ const updateFromBackendMain: typeof updateFromBackend = ({ msg, model }) => {
 
 export const mergeWithBackend = ({
   client = init,
-  server,
+  backend,
 }: {
   client?: ModelClient
-  server: ModelBackend
+  backend: ModelBackend
 }): ModelClient => {
   return {
     isFlipped: client.isFlipped,
     openedMenuId: client.openedMenuId,
     openedModal: client.openedModal,
-    coreModel: server,
+    coreModel: backend,
     vsBotSetup: client.vsBotSetup,
   }
 }

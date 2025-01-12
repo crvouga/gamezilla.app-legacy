@@ -1,10 +1,10 @@
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
 import { AnonymousClientCtx, AppClientCtx } from '../@/client/ctx'
-import { AppBackendCtx } from '../@/server/ctx'
-import { BackendInstanceTypes } from './server-instance'
+import { AppBackendCtx } from '../@/backend/ctx'
+import { BackendInstanceTypes } from './backend-instance'
 import type { ClientTransportEvent } from './transport/client'
-import type { IBackendTransport, BackendTransportMsg } from './transport/server'
+import type { IBackendTransport, BackendTransportMsg } from './transport/backend'
 import { IWireSessionDb } from './wire-session-db'
 
 //
@@ -20,43 +20,43 @@ export type BackendCtx<TMsgToClient, TMsgToBackend> = AppBackendCtx & {
     MsgToClient: TMsgToClient
     MsgToBackend: TMsgToBackend
   }>
-  serverInstance: BackendInstanceTypes.BackendCtx
+  backendInstance: BackendInstanceTypes.BackendCtx
 }
 
 type State =
   | {
-      t: 'server-connecting'
+      t: 'backend-connecting'
     }
   | {
-      t: 'server-connect-error'
+      t: 'backend-connect-error'
       errorCount: number
     }
   | {
-      t: 'server-disconnected'
+      t: 'backend-disconnected'
     }
   | {
-      t: 'server-connected'
+      t: 'backend-connected'
     }
 
 type BackendTime = {
-  serverNow: Posix
+  backendNow: Posix
   recordedAt: Posix
 }
 
 export type ModelClient = {
   state: State
-  serverTime: BackendTime | null
-  serverInstance: BackendInstanceTypes.ModelClient
+  backendTime: BackendTime | null
+  backendInstance: BackendInstanceTypes.ModelClient
 }
 
 export type MsgClient =
   | ClientTransportEvent
-  | { t: 'got-server-instance-msg'; c: BackendInstanceTypes.MsgBackend }
+  | { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgBackend }
   //
   | { t: 'clicked-try-reconnect' }
-  | { t: 'sent-to-server'; toBackend: unknown }
+  | { t: 'sent-to-backend'; toBackend: unknown }
 
-export type MsgBackend = BackendTransportMsg | { t: 'got-server-instance-msg'; c: BackendInstanceTypes.MsgBackend }
+export type MsgBackend = BackendTransportMsg | { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgBackend }
 
 //
 //
@@ -65,11 +65,11 @@ export type MsgBackend = BackendTransportMsg | { t: 'got-server-instance-msg'; c
 //
 //
 
-export type MsgToBackend = { t: null } | { t: 'got-server-instance-msg'; c: BackendInstanceTypes.MsgToBackend }
+export type MsgToBackend = { t: null } | { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgToBackend }
 
 export type MsgToClient =
-  | { t: 'server-restarted' }
-  | { t: 'got-server-instance-msg'; c: BackendInstanceTypes.MsgClient }
+  | { t: 'backend-restarted' }
+  | { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgClient }
 
 //
 //
@@ -78,7 +78,7 @@ export type MsgToClient =
 //
 
 export const rpcContract = RPC.initContract({
-  serverInstance: BackendInstanceTypes.rpcContract,
+  backendInstance: BackendInstanceTypes.rpcContract,
 })
 
 export type ClientCtx = (AppClientCtx | AnonymousClientCtx) & {

@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
     const output = EditPackNameClient.update({
       ...f,
       msgCore: withEventId({
-        t: 'edit-pack-name.server-persisted-pack',
+        t: 'edit-pack-name.backend-persisted-pack',
         result: Err('something errored'),
         userId: f.ctx.space.hostId,
       }),

@@ -3,7 +3,7 @@ import type { VDom } from './vdom'
 export type RenderToString = (vDom: VDom) => string
 
 export const RenderToString = async (): Promise<RenderToString> => {
-  const ReactDOMBackend = await import('react-dom/server')
+  const ReactDOMBackend = await import('react-dom/backend')
   return (vDom) => {
     const html = ReactDOMBackend.renderToString(vDom)
     return html

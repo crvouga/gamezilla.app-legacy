@@ -260,14 +260,14 @@ export const updateFromBackend = (msg: MsgToClient, model: Model): [Model, Eff<M
 
 export const mergeWithBackend = ({
   clientModel,
-  serverModel,
+  backendModel,
 }: {
   clientModel: ModelClient
-  serverModel: ModelBackend
+  backendModel: ModelBackend
 }): ModelClient => {
   return {
     ...clientModel,
-    coreModel: serverModel,
+    coreModel: backendModel,
   }
 }
 

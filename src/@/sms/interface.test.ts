@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { SMS } from './impl'
-import { AppBackendTestEnv } from '../../app/@/server/fixture'
+import { AppBackendTestEnv } from '../../app/@/backend/fixture'
 import { Logger } from '../logger'
 import { isOk, unwrap } from '~/@/result'
 import { PhoneNumber } from '../phone-number'

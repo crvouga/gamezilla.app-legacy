@@ -69,7 +69,7 @@ describe(import.meta.file, () => {
     expect(didPushRoute(started)).toBe(true)
   })
 
-  test('send to server', async () => {
+  test('send to backend', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const started = f.update(f.initial, [

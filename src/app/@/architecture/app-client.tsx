@@ -87,7 +87,7 @@ export type Input<T extends AppClientModuleTypes> = {
    */
   msg?: T['Msg'] | null
   /**
-   * `msgBackend` is a message from the server
+   * `msgBackend` is a message from the backend
    */
   msgBackend?: T['MsgToClient'] | null
   /**

@@ -102,7 +102,7 @@ export const updateFromBackend = ({
     const merged = mergeWithBackend({
       ctx,
       clientModel: model,
-      serverModel: msg.result.value,
+      backendModel: msg.result.value,
     })
     return { model: merged }
   }
@@ -142,13 +142,13 @@ export const updateFromBackend = ({
 export const mergeWithBackend = ({
   ctx,
   clientModel,
-  serverModel,
+  backendModel,
 }: {
   ctx: AppClientCtx
   clientModel: ModelClient
-  serverModel: ModelBackend
+  backendModel: ModelBackend
 }): ModelClient => {
-  switch (serverModel.t) {
+  switch (backendModel.t) {
     case 'none': {
       return {
         t: 'none',
@@ -162,7 +162,7 @@ export const mergeWithBackend = ({
           c: VsBot.mergeWithBackend({
             ctx,
             clientModel: clientModel.c,
-            serverModel: serverModel.c,
+            backendModel: backendModel.c,
           }),
         }
       }
@@ -173,7 +173,7 @@ export const mergeWithBackend = ({
           clientModel: VsBot.init({
             userId: null,
           }),
-          serverModel: serverModel.c,
+          backendModel: backendModel.c,
         }),
       }
     }
@@ -184,7 +184,7 @@ export const mergeWithBackend = ({
           t: 'vs-user',
           c: VsUser.mergeWithBackend({
             clientModel: clientModel.c,
-            serverModel: serverModel.c,
+            backendModel: backendModel.c,
           }),
         }
       }
@@ -195,7 +195,7 @@ export const mergeWithBackend = ({
             white: null,
             black: null,
           }),
-          serverModel: serverModel.c,
+          backendModel: backendModel.c,
         }),
       }
     }

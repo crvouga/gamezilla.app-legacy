@@ -58,7 +58,7 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
       }
     }
 
-    case 'edit-pack-name.server-persisted-pack': {
+    case 'edit-pack-name.backend-persisted-pack': {
       if (isErr(input.msgCore.result)) {
         return {
           ...input.modelCore,

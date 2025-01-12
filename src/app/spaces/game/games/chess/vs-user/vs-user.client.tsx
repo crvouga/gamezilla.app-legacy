@@ -551,13 +551,13 @@ const toGameText = (model: CoreModel): string => {
 //
 //
 
-export const mergeWithBackend = ({ client, server }: { client?: ModelClient; server: ModelBackend }): ModelClient => {
+export const mergeWithBackend = ({ client, backend }: { client?: ModelClient; backend: ModelBackend }): ModelClient => {
   const initial = init({ userId: null })
   const clientModel = client ?? initial.model
   return {
     isFlipped: clientModel.isFlipped,
     openedMenuId: clientModel.openedMenuId,
     openedModal: clientModel.openedModal,
-    coreModel: server,
+    coreModel: backend,
   }
 }

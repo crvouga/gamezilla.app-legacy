@@ -4,12 +4,12 @@ import { DbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
 import { unwrapOr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
-import { IBackendInstanceDb, BackendInstanceDb } from '~/app/@/server/server-instance/server-instance-db'
-import { DATABASE_URL } from '~/config/server'
+import { IBackendInstanceDb, BackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
+import { DATABASE_URL } from '~/config/backend'
 
 export type Ctx = {
   logger: ILogger
-  serverInstanceDb: IBackendInstanceDb
+  backendInstanceDb: IBackendInstanceDb
 }
 
 export const initCtx = async (config: { logger: ILogger }): Promise<Ctx> => {
@@ -28,13 +28,13 @@ export const initCtx = async (config: { logger: ILogger }): Promise<Ctx> => {
     logger,
     dbConnSql,
   })
-  const serverInstanceDb = BackendInstanceDb({
+  const backendInstanceDb = BackendInstanceDb({
     t: 'db-conn-kv',
     dbConnKv,
   })
   return {
     logger,
-    serverInstanceDb,
+    backendInstanceDb,
   }
 }
 
@@ -43,10 +43,10 @@ const MINIMAL_HEART_RATE = TimeSpan.minutes(1.5)
 export const respond = async (ctx: Ctx, request: Request): Promise<Response> => {
   ctx.logger.info(`${request.method} ${request.url}`)
 
-  const alive = unwrapOr(await ctx.serverInstanceDb.listAlive({ minimalHeartRate: MINIMAL_HEART_RATE }), [])
+  const alive = unwrapOr(await ctx.backendInstanceDb.listAlive({ minimalHeartRate: MINIMAL_HEART_RATE }), [])
 
   if (!NonEmpty.is(alive)) {
-    return new Response('No servers available', {
+    return new Response('No backends available', {
       status: 503,
     })
   }

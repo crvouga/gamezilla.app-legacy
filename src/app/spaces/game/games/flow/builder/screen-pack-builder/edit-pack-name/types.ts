@@ -32,7 +32,7 @@ export const MsgCore = p.or(
     userId: UserId,
   }),
   p.obj({
-    t: p.l('edit-pack-name.server-persisted-pack'),
+    t: p.l('edit-pack-name.backend-persisted-pack'),
     userId: UserId,
     result: Result.parser(p.str, p.unknown),
   }),

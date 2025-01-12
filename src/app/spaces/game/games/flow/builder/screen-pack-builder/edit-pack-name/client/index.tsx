@@ -30,7 +30,7 @@ const update: ClientModule['update'] = (input) => {
   }
 
   switch (input.msgCore?.t) {
-    case 'edit-pack-name.server-persisted-pack': {
+    case 'edit-pack-name.backend-persisted-pack': {
       if (isErr(input.msgCore.result)) {
         return {
           model: input.model,

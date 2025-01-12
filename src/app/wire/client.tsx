@@ -1,7 +1,7 @@
 import { andThen } from '~/@/update/and-then'
 import { Translator } from '~/@/l18n/generated'
 import { ListItemButton, Typography, cn } from '../@/ui'
-import { BackendInstanceClient } from './server-instance/client'
+import { BackendInstanceClient } from './backend-instance/client'
 import type { IClientTransport } from './transport/client'
 import type { ClientCtx, ModelClient, MsgClient, MsgToClient } from './types'
 import { Eff } from '~/@/eff'
@@ -18,16 +18,16 @@ import { ClientEvt } from '../@/client/evt'
 //
 
 export const init = (input: { ctx: ClientCtx; stored: Record<string, unknown> | null }): { model: ModelClient } => {
-  const serverInstance = BackendInstanceClient.init({
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.serverInstance },
+  const backendInstance = BackendInstanceClient.init({
+    ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
   })
   return {
     model: {
       state: {
-        t: 'server-connecting',
+        t: 'backend-connecting',
       },
-      serverTime: null,
-      serverInstance: serverInstance.model,
+      backendTime: null,
+      backendInstance: backendInstance.model,
     },
   }
 }
@@ -83,39 +83,39 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
   }
 
   switch (msg.t) {
-    case 'got-server-instance-msg': {
+    case 'got-backend-instance-msg': {
       return { model }
     }
 
-    case 'server-connect-error': {
+    case 'backend-connect-error': {
       return {
         model: {
           ...model,
           state: {
-            t: 'server-connect-error',
-            errorCount: model.state.t === 'server-connect-error' ? model.state.errorCount + 1 : 1,
+            t: 'backend-connect-error',
+            errorCount: model.state.t === 'backend-connect-error' ? model.state.errorCount + 1 : 1,
           },
         },
       }
     }
 
-    case 'server-connected': {
+    case 'backend-connected': {
       return {
         model: {
           ...model,
           state: {
-            t: 'server-connected',
+            t: 'backend-connected',
           },
         },
         msgEvt: [
           {
-            t: 'wire-evt.server-connected',
+            t: 'wire-evt.backend-connected',
           },
         ],
       }
     }
 
-    case 'server-disconnected': {
+    case 'backend-disconnected': {
       return {
         model: {
           ...model,
@@ -131,7 +131,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
         model: {
           ...model,
           state: {
-            t: 'server-connecting',
+            t: 'backend-connecting',
           },
         },
         eff: () => {
@@ -152,7 +152,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
       }
     }
 
-    case 'sent-to-server': {
+    case 'sent-to-backend': {
       return { model }
     }
   }
@@ -164,13 +164,13 @@ const updateFromBackend: typeof update = ({ ctx, model, msgBackend }) => {
   }
 
   switch (msgBackend.t) {
-    case 'got-server-instance-msg': {
+    case 'got-backend-instance-msg': {
       return { model }
     }
-    case 'server-restarted': {
+    case 'backend-restarted': {
       return {
         model,
-        msgCmd: [showToast(ctx.t('wire.server-restarted'))],
+        msgCmd: [showToast(ctx.t('wire.backend-restarted'))],
       }
     }
   }
@@ -184,14 +184,14 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
   const wireCmd = msgCmd.c
 
   switch (wireCmd.t) {
-    case 'send-to-server': {
+    case 'send-to-backend': {
       return {
         model,
         eff(dispatch) {
           if (wireCmd.toBackend) {
             transport.toBackend.pub([wireCmd.toBackend])
             dispatch({
-              t: 'sent-to-server',
+              t: 'sent-to-backend',
               toBackend: wireCmd.toBackend,
             })
           }
@@ -217,12 +217,12 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 
 export const ViewStatusBar = (input: { model: ModelClient; ctx: { t: Translator } }) => {
   switch (input.model.state.t) {
-    case 'server-connected': {
+    case 'backend-connected': {
       return <span className='h-2 w-2 rounded-full bg-green-500' />
     }
 
-    case 'server-connecting':
-    case 'server-connect-error': {
+    case 'backend-connecting':
+    case 'backend-connect-error': {
       return (
         <div className='flex animate-pulse items-center gap-1'>
           <span className='h-2 w-2 rounded-full bg-orange-500' />
@@ -231,7 +231,7 @@ export const ViewStatusBar = (input: { model: ModelClient; ctx: { t: Translator 
       )
     }
 
-    case 'server-disconnected': {
+    case 'backend-disconnected': {
       return (
         <div className='flex items-center gap-1'>
           <span className='h-2 w-2 rounded-full bg-red-500' />
@@ -251,7 +251,7 @@ export const ViewStatusBarDrawer = (input: {
   }
 }) => {
   switch (input.model.state.t) {
-    case 'server-connected': {
+    case 'backend-connected': {
       return (
         <ListItemButton
           icon={(inputIcon) => <span className={cn(inputIcon.className, 'rounded-full bg-green-500')} />}
@@ -261,8 +261,8 @@ export const ViewStatusBarDrawer = (input: {
       )
     }
 
-    case 'server-connect-error':
-    case 'server-connecting': {
+    case 'backend-connect-error':
+    case 'backend-connecting': {
       return (
         <ListItemButton
           icon={(input) => <span className={cn(input.className, 'rounded-full bg-orange-500')} />}
@@ -272,7 +272,7 @@ export const ViewStatusBarDrawer = (input: {
       )
     }
 
-    case 'server-disconnected': {
+    case 'backend-disconnected': {
       return (
         <ListItemButton
           icon={(input) => <span className={cn(input.className, 'rounded-full bg-red-500')} />}

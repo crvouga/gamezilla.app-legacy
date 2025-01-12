@@ -4,7 +4,7 @@ import type { Text } from '../text'
 export const translations: Text = {
   'sound.sound-off': 'الصوت معطل',
   'sound.sound-on': 'الصوت مفعل',
-  'wire.server-restarted': 'تم إعادة تشغيل الخادم',
+  'wire.backend-restarted': 'تم إعادة تشغيل الخادم',
   'wire.connecting...': 'جاري الاتصال...',
   'wire.offline': 'غير متصل',
   'wire.online': 'متصل',

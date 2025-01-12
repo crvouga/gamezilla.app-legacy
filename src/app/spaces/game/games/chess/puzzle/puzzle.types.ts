@@ -66,7 +66,7 @@ export type ModelBackend = CoreModel & {
 
 export type ModelClient = CoreModel & {
   initializedAt?: number
-  serverNow?: Posix
+  backendNow?: Posix
 }
 
 type Hint = 'from' | 'from-and-to'

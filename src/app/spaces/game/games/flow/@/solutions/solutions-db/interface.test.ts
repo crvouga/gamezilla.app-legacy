@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok } from '~/@/result'
-import { FixtureAppBackend } from '~/app/@/server/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { FlowHash } from '../../flow/hash'
 import { VariantGridShorthand } from '../../variant/grid'
 import { Solutions } from '../solutions'

@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it('should send list space request to server initially', async () => {
+  it('should send list space request to backend initially', async () => {
     const f = await Fixture({
       currentRoute: {
         n: 'spaces',
@@ -91,7 +91,7 @@ describe(import.meta.file, () => {
     expect(RequestResponse.didRequestTimeout(output.model.listSpacesRequest)).toBe(true)
   })
 
-  it('should be ok when server responds with a list of spaces', async () => {
+  it('should be ok when backend responds with a list of spaces', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
@@ -114,7 +114,7 @@ describe(import.meta.file, () => {
     expect(isResponseOk(output.model.listSpacesRequest)).toBe(true)
   })
 
-  it('should be ok when server responds with a list of spaces even when it timed out', async () => {
+  it('should be ok when backend responds with a list of spaces even when it timed out', async () => {
     const f = await Fixture()
     const updated = f.update(f.initial, [
       {

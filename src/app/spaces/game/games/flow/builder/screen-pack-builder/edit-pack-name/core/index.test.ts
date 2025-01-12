@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const model = f.update(f.init, [
       {
-        t: 'edit-pack-name.server-persisted-pack',
+        t: 'edit-pack-name.backend-persisted-pack',
         userId: f.hostId,
         result: Ok(null),
       },
@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const model = f.update(f.init, [
       {
-        t: 'edit-pack-name.server-persisted-pack',
+        t: 'edit-pack-name.backend-persisted-pack',
         userId: f.hostId,
         result: Err('some error'),
       },
@@ -145,7 +145,7 @@ describe(import.meta.file, () => {
         userId: f.hostId,
       },
       {
-        t: 'edit-pack-name.server-persisted-pack',
+        t: 'edit-pack-name.backend-persisted-pack',
         userId: f.hostId,
         result: Err('some error'),
       },

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { ascend, descend } from '~/@/array/sorting'
 import { Ok, unwrap } from '~/@/result'
-import { AppBackendTestEnv } from '~/app/@/server/fixture'
+import { AppBackendTestEnv } from '~/app/@/backend/fixture'
 import { Verification } from '../verification'
 import { VerificationDb } from './impl'
 import { Posix } from '~/@/time/posix'

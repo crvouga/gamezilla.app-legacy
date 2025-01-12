@@ -2,13 +2,13 @@ import { PubSub } from '~/@/sub'
 
 export type ClientTransportEvent =
   | {
-      t: 'server-connected'
+      t: 'backend-connected'
     }
   | {
-      t: 'server-disconnected'
+      t: 'backend-disconnected'
     }
   | {
-      t: 'server-connect-error'
+      t: 'backend-connect-error'
     }
   | {
       t: 'got-bad-msgs'

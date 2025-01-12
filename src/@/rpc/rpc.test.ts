@@ -1,6 +1,6 @@
 import { p } from '~/@/parser'
 import * as RPC from './rpc'
-import { WebBackend } from '~/@/web-server'
+import { WebBackend } from '~/@/web-backend'
 import { WebClient } from '~/@/web-client'
 import { Logger } from '~/@/logger'
 

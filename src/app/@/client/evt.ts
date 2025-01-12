@@ -12,7 +12,7 @@ export type ClientEvt =
       t: 'auth-evt.unauthenticated'
     }
   | {
-      t: 'wire-evt.server-connected'
+      t: 'wire-evt.backend-connected'
     }
   | {
       t: 'routing-evt.route-changed'
@@ -31,6 +31,6 @@ export const routeChanged = (route: Route): ClientEvt => {
   return { t: 'routing-evt.route-changed', route }
 }
 
-export const serverConnected = (): ClientEvt => {
-  return { t: 'wire-evt.server-connected' }
+export const backendConnected = (): ClientEvt => {
+  return { t: 'wire-evt.backend-connected' }
 }

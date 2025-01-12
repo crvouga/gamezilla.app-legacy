@@ -1,15 +1,15 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { NotAsked, Result } from '~/@/result'
 import type { AppClientModule } from '~/app/@/architecture/app-client'
-import type { AppBackendModule } from '~/app/@/architecture/app-server'
+import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
 import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
 import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
-import type { SpaceBackendCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-server/evt'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import { FlowClientEvtIn } from '../client/evt'
 import { Variant } from '../variant'
-import { FlowBackendCtx } from '../server/ctx'
+import { FlowBackendCtx } from '../backend/ctx'
 
 export type ModelClient = {
   request: RequestResponse<string, null>

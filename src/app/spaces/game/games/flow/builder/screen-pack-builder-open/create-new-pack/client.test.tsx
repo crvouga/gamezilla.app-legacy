@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
     expect(didPlaySound(output)).toBe(true)
   })
 
-  it('should show toast after server created current users pack', async () => {
+  it('should show toast after backend created current users pack', async () => {
     const ctx = await testFlowClientCtx()
     const pack = await createPack(ctx)
     const output = GameClientModule.andThen(initial, userCreatedPack(ctx, pack))

@@ -200,13 +200,13 @@ export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }
 
 export const mergeWithBackend = ({
   clientModel,
-  serverModel,
+  backendModel,
 }: {
   clientModel: ModelClient
-  serverModel: ModelBackend
+  backendModel: ModelBackend
 }): ModelClient => {
   return {
-    ...serverModel,
+    ...backendModel,
     openedMenuId: clientModel.openedMenuId,
   }
 }

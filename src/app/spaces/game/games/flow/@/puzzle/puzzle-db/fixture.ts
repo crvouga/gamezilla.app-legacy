@@ -1,4 +1,4 @@
-import { AppBackendTestEnv } from '~/app/@/server/fixture'
+import { AppBackendTestEnv } from '~/app/@/backend/fixture'
 import { Logger } from '~/@/logger'
 import { PuzzleDb } from './impl'
 

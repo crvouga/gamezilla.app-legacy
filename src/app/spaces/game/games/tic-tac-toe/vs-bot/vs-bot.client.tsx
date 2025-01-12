@@ -82,7 +82,7 @@ export const update = ({
   const merged = mergeWithBackend({
     ...ctx,
     client: model,
-    server: handled.value,
+    backend: handled.value,
   })
   return { model: merged, msgCmd: [sendToBackend(msg)] }
 }
@@ -107,7 +107,7 @@ export const updateFromBackend = ({
   const modelNew = mergeWithBackend({
     ...ctx,
     client: model,
-    server: msg.result.value,
+    backend: msg.result.value,
   })
 
   return {
@@ -116,16 +116,16 @@ export const updateFromBackend = ({
 }
 
 export const mergeWithBackend = ({
-  server,
+  backend,
   client = init({ userId: null }),
 }: {
   now: Posix
   client?: ModelClient
-  server: ModelBackend
+  backend: ModelBackend
 }): ModelClient => {
   return {
     ...client,
-    ...server,
+    ...backend,
   }
 }
 
