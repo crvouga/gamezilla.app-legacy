@@ -1,6 +1,6 @@
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
-import type { Route } from '~/@/routing/generated/routes'
+import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { UserAccount } from '../data/account'
 import { UserId } from '../data/user-id'
@@ -16,7 +16,7 @@ type Profile = {
 export type BaseFrontendCtx = {
   navigatorLanguage: LanguageCodeISO_639_1
   t: Translator
-  currentRoute: Route
+  currentScreen: Screen
   now: Posix
   profiles: { [userId: UserId]: Profile }
   documentVisibilityState: DocumentVisibilityState

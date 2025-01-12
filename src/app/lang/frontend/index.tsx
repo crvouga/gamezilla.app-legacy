@@ -1,6 +1,6 @@
 import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
-import { APP_SOUND, back, closeStatusBar, playSound, pushRoute } from '../../@/frontend/cmd'
+import { APP_SOUND, back, closeStatusBar, playSound, pushScreen } from '../../@/frontend/cmd'
 import { translatorSubscriptions } from '../../@/frontend/translator'
 import {
   IconCheckmarkCircle,
@@ -77,7 +77,7 @@ export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
     }
 
     case 'clicked-change-lang': {
-      if (ctx.currentRoute.n === 'lang' && ctx.currentRoute.t === 'choose-lang') {
+      if (ctx.currentScreen.n === 'lang' && ctx.currentScreen.t === 'choose-lang') {
         return {
           model,
           msgCmd: [playSound(APP_SOUND.navForwardMin), closeStatusBar()],
@@ -88,7 +88,7 @@ export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
         model,
         msgCmd: [
           playSound(APP_SOUND.navForwardMin),
-          pushRoute({
+          pushScreen({
             t: 'choose-lang',
             n: 'lang',
           }),
@@ -159,9 +159,9 @@ export const ViewStatusBarDrawer: FrontendModule['View'] = ({ model, ctx, dispat
 }
 
 export const View: FrontendModule['View'] = (input) => {
-  switch (input.ctx.currentRoute.n) {
+  switch (input.ctx.currentScreen.n) {
     case 'lang': {
-      switch (input.ctx.currentRoute.t) {
+      switch (input.ctx.currentScreen.t) {
         case 'choose-lang': {
           return <ViewChooseLang ctx={input.ctx} dispatch={input.dispatch} model={input.model} />
         }

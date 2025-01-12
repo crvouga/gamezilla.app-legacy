@@ -1,7 +1,7 @@
 import { eq } from '~/@/equals/equals'
 import { TranslatedText } from '~/@/l18n'
 import { UnitInterval } from '~/@/range/unit-interval'
-import type { Route } from '~/@/routing/generated/routes'
+import type { Screen } from '~/@/screen/generated/screens'
 import { TimeSpan } from '~/@/time/time-span'
 import type { Profile } from '../data/profile'
 import type { UserId } from '../data/user-id'
@@ -21,7 +21,7 @@ export type FrontendCmdTypes = {
 export type AppFrontendCmd<T extends FrontendCmdTypes> =
   | WireCmd<T>
   | ToastCmd
-  | RouteCmd
+  | ScreenCmd
   | SoundCmd
   | PlatformCmd<T['MsgFrontend']>
   | ProfileCmd
@@ -509,17 +509,17 @@ export const preloadSound = <T extends FrontendCmdTypes>(src: string[]): AppFron
 //
 //
 
-export type RouteCmd = {
-  t: 'routing'
+export type ScreenCmd = {
+  t: 'current-screen'
   c:
     | {
         t: 'push'
-        route: Route
+        screen: Screen
         playSound?: boolean
       }
     | {
         t: 'replace'
-        route: Route
+        screen: Screen
         reason?: string
         playSound?: boolean
       }
@@ -530,28 +530,28 @@ export type RouteCmd = {
       }
 }
 
-export const pushRoute = <T extends FrontendCmdTypes>(route: Route, playSound?: boolean): AppFrontendCmd<T> => {
+export const pushScreen = <T extends FrontendCmdTypes>(screen: Screen, playSound?: boolean): AppFrontendCmd<T> => {
   return {
-    t: 'routing',
+    t: 'current-screen',
     c: {
       t: 'push',
-      route,
+      screen,
       playSound,
     },
   }
 }
 
-export const didPushRoute = <T>(
+export const didPushScreen = <T>(
   output?: {
-    msgCmd?: (RouteCmd | T)[] | null
+    msgCmd?: (ScreenCmd | T)[] | null
   },
-  predicate?: (route: Route) => boolean,
+  predicate?: (screen: Screen) => boolean,
 ): boolean => {
   return Boolean(
     output?.msgCmd?.some((cmd) => {
-      if (typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'routing' && cmd.c.t === 'push') {
+      if (typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'current-screen' && cmd.c.t === 'push') {
         if (predicate) {
-          return predicate(cmd.c.route)
+          return predicate(cmd.c.screen)
         }
         return true
       }
@@ -560,30 +560,30 @@ export const didPushRoute = <T>(
   )
 }
 
-export const replaceRoute = <T extends FrontendCmdTypes>(route: Route, playSound?: boolean): AppFrontendCmd<T> => {
+export const replaceScreen = <T extends FrontendCmdTypes>(screen: Screen, playSound?: boolean): AppFrontendCmd<T> => {
   return {
-    t: 'routing',
+    t: 'current-screen',
     c: {
       t: 'replace',
-      route,
+      screen,
       playSound: playSound ?? true,
     },
   }
 }
 
-export const didReplaceRoute = <T extends FrontendCmdTypes>(
+export const didReplaceScreen = <T extends FrontendCmdTypes>(
   {
     msgCmd,
   }: {
     msgCmd?: AppFrontendCmd<T>[]
   },
-  route?: Route,
+  screen?: Screen,
 ): boolean => {
   return Boolean(
     msgCmd?.some((cmd) => {
-      if (cmd.t === 'routing' && cmd.c.t === 'replace') {
-        if (route) {
-          return eq(cmd.c.route, route)
+      if (cmd.t === 'current-screen' && cmd.c.t === 'replace') {
+        if (screen) {
+          return eq(cmd.c.screen, screen)
         }
         return true
       }
@@ -594,7 +594,7 @@ export const didReplaceRoute = <T extends FrontendCmdTypes>(
 
 export const back = <T extends FrontendCmdTypes>(reason?: string): AppFrontendCmd<T> => {
   return {
-    t: 'routing',
+    t: 'current-screen',
     c: {
       t: 'back',
       reason,

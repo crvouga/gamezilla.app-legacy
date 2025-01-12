@@ -27,7 +27,9 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const didPush = output.msgCmd?.some((m) => m.t === 'routing' && m.c.t === 'push' && m.c.route.t === 'space-list')
+    const didPush = output.msgCmd?.some(
+      (m) => m.t === 'current-screen' && m.c.t === 'push' && m.c.screen.t === 'space-list',
+    )
     expect(didPush).toBe(true)
   })
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { didPlaySound, didPushRoute, didSendToBackend, didShowToast } from '~/app/@/frontend/cmd'
+import { didPlaySound, didPushScreen, didSendToBackend, didShowToast } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesSpaceFrontend } from '../space/frontend'
@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
     expect(didPlaySound(started)).toBe(true)
   })
 
-  test('push route', async () => {
+  test('push screen', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const started = f.update(f.initial, [
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPushRoute(started)).toBe(true)
+    expect(didPushScreen(started)).toBe(true)
   })
 
   test('send to backend', async () => {

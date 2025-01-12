@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { Result } from '~/@/result'
 import { SpaceId } from '~/app/@/data/space-id'
 
-export const Route = p.or(
+export const Screen = p.or(
   p.obj({
     n: p.l('spaces'),
     t: p.l('space-list'),
@@ -14,6 +14,6 @@ export const Route = p.or(
   }),
 )
 
-export type Route = p.Infer<typeof Route>
+export type Screen = p.Infer<typeof Screen>
 
-export const toRoute = (route: unknown): Route | null => Result.unwrapOr(Route.parse(route), null)
+export const toScreen = (screen: unknown): Screen | null => Result.unwrapOr(Screen.parse(screen), null)

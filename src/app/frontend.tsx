@@ -5,8 +5,8 @@ import { HttpClient } from '~/@/http-client'
 import { HttpServerImpl } from '~/@/http-server/http-server-impl'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
-import type { Route } from '~/@/routing/generated/routes'
 import { RPC } from '~/@/rpc'
+import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
@@ -20,7 +20,7 @@ import { Translator } from './@/frontend/translator'
 import { BottomButtons } from './@/ui/bottom-buttons'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import * as AuthFrontend from './auth/frontend'
-import { Platform, Routing, Sound, StatusBar, Toast } from './frontend/index'
+import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
 import './frontend/styles.css'
 import * as LangFrontend from './lang/frontend'
 import * as ProfileFrontend from './profile/frontend'
@@ -88,7 +88,7 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
-    currentRoute: input.model.routing.currentRoute,
+    currentScreen: input.model.currentScreen.currentScreen,
     currentUserId: null,
   }
   if (input.model.auth.currentUser.t === 'logged-in') {
@@ -132,11 +132,11 @@ const toFrontendTransportConfig = (input: {
 //
 
 export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
-  const routing = Routing.init({ location: input.ctx.location })
+  const screen = CurrentScreen.init({ location: input.ctx.location })
 
   const ctx: AnonymousFrontendCtx = {
     ...input.ctx,
-    currentRoute: routing.model.currentRoute,
+    currentScreen: screen.model.currentScreen,
     t: Translator(input.ctx.navigatorLanguage),
     currentUserId: null,
     documentVisibilityState: 'visible',
@@ -155,7 +155,7 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
 
   const initialModel: ModelFrontend = {
     statusBar: statusBar.model,
-    routing: routing.model,
+    currentScreen: screen.model,
     toast: toast.model,
     wire: wire.model,
     sound: sound.model,
@@ -166,7 +166,7 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
     lang: lang.model,
   }
 
-  const initialEff = Eff.batch<MsgFrontend>([routing.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
+  const initialEff = Eff.batch<MsgFrontend>([screen.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
 
   const initialCmd = Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
     AppFrontendCmd.tag('spaces', space.msgCmd),
@@ -294,10 +294,10 @@ const updateChild = (input: {
     msgCmd: input.msgCmd?.t === 'auth' ? input.msgCmd : null,
   })
 
-  const routing = Routing.update({
-    model: input.model.routing,
-    msg: input.msg?.t === 'routing' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'routing' ? input.msgCmd : null,
+  const screen = CurrentScreen.update({
+    model: input.model.currentScreen,
+    msg: input.msg?.t === 'current-screen' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'current-screen' ? input.msgCmd : null,
   })
 
   const wire = WireFrontend.update({
@@ -349,7 +349,7 @@ const updateChild = (input: {
       auth: auth.model,
       platform: platform.model,
       profile: profile.model,
-      routing: routing.model,
+      currentScreen: screen.model,
       sound: sound.model,
       spaces: space.model,
       statusBar: statusBar.model,
@@ -362,7 +362,7 @@ const updateChild = (input: {
       Eff.tag('auth', auth.eff),
       Eff.tag('platform', platform.eff),
       Eff.tag('profile', profile.eff),
-      Eff.tag('routing', routing.eff),
+      Eff.tag('current-screen', screen.eff),
       Eff.tag('sound', sound.eff),
       Eff.tag('spaces', space.eff),
       Eff.tag('toast', toast.eff),
@@ -373,7 +373,7 @@ const updateChild = (input: {
     msgEvt: Msg.batch<FrontendEvt>(
       auth.msgEvt,
       profile.msgEvt,
-      routing.msgEvt,
+      screen.msgEvt,
       sound.msgEvt,
       space.msgEvt,
       toast.msgEvt,
@@ -388,7 +388,7 @@ const updateChild = (input: {
       AppFrontendCmd.tag('lang', lang.msgCmd),
 
       statusBar.msgCmd,
-      routing.msgCmd,
+      screen.msgCmd,
       sound.msgCmd,
       toast.msgCmd,
     ),
@@ -411,7 +411,7 @@ export const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend })
   return Sub.batch<MsgFrontend>([
     Sub.tag('→', Sub.flat(input.ctx.transport.fromBackend)),
     Sub.tag('platform', Platform.subscriptions),
-    Sub.tag('routing', Routing.subscriptions),
+    Sub.tag('current-screen', CurrentScreen.subscriptions),
     Sub.tag('wire', WireFrontend.subscriptions({ transport: input.ctx.transport })),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('toast', Toast.subscriptions({ ctx, model: input.model.toast })),
@@ -437,7 +437,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
         <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
 
         <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
-          <ViewRoute model={input.model} dispatch={input.dispatch} ctx={frontendCtx} />
+          <ViewScreen model={input.model} dispatch={input.dispatch} ctx={frontendCtx} />
         </div>
 
         <AuthFrontend.ViewModals
@@ -454,12 +454,12 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   )
 }
 
-const ViewRoute = (input: {
+const ViewScreen = (input: {
   ctx: AppFrontendCtx | AnonymousFrontendCtx
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
 }) => {
-  switch (input.model.routing.currentRoute.n) {
+  switch (input.model.currentScreen.currentScreen.n) {
     case 'lang': {
       return (
         <LangFrontend.View
@@ -477,19 +477,19 @@ const ViewRoute = (input: {
         }
 
         case 'logged-in': {
-          return <ViewRouteLoggedIn model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
+          return <ViewScreenLoggedIn model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
         }
 
         case 'logged-out': {
-          return <ViewRouteLoggedOut model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
+          return <ViewScreenLoggedOut model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
         }
       }
     }
   }
 }
 
-const ViewRouteLoggedOut: typeof ViewRoute = (input) => {
-  switch (input.ctx.currentRoute.n) {
+const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
+  switch (input.ctx.currentScreen.n) {
     case 'auth-login': {
       return (
         <AuthFrontend.View
@@ -506,7 +506,7 @@ const ViewRouteLoggedOut: typeof ViewRoute = (input) => {
         <IntersectionObserverEmitter
           id='app-intersection-observer'
           onVisible={() =>
-            input.dispatch({ t: 'routing', c: { t: 'clicked-link', route: { t: 'login', n: 'auth-login' } } })
+            input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth-login' } } })
           }
         />
       )
@@ -514,8 +514,8 @@ const ViewRouteLoggedOut: typeof ViewRoute = (input) => {
   }
 }
 
-const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
-  switch (input.ctx.currentRoute.n) {
+const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
+  switch (input.ctx.currentScreen.n) {
     case 'profile': {
       return (
         <ProfileFrontend.View
@@ -548,7 +548,7 @@ const ViewRouteLoggedIn: typeof ViewRoute = (input) => {
         <IntersectionObserverEmitter
           id='app-intersection-observer'
           onVisible={() =>
-            input.dispatch({ t: 'routing', c: { t: 'clicked-link', route: { n: 'spaces', t: 'space-list' } } })
+            input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: { n: 'spaces', t: 'space-list' } } })
           }
         />
       )
@@ -606,12 +606,12 @@ const ViewBottomNavBar = (input: {
     return null
   }
 
-  const routeSpace: Route = {
+  const screenSpace: Screen = {
     n: 'spaces',
     t: 'space-list',
   }
 
-  const routeProfile: Route = {
+  const screenProfile: Screen = {
     n: 'profile',
     t: 'profile',
     userId: input.ctx.currentUserId,
@@ -635,17 +635,17 @@ const ViewBottomNavBar = (input: {
           {
             label: input.ctx.t('spaces.spaces'),
             icon: (input) => <IconGamepad {...input} />,
-            color: eq(input.model.routing.currentRoute, routeSpace) ? 'selected' : 'inherit',
+            color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
             onClick() {
-              input.dispatch({ t: 'routing', c: { t: 'clicked-link', route: routeSpace } })
+              input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
             },
           },
           {
             label: input.ctx.t('profile.profile'),
             icon: (input) => <IconUserCircle {...input} />,
-            color: eq(input.model.routing.currentRoute, routeProfile) ? 'selected' : 'inherit',
+            color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
             onClick() {
-              input.dispatch({ t: 'routing', c: { t: 'clicked-link', route: routeProfile } })
+              input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
             },
           },
         ]}

@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Button, IconPlus } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
@@ -21,7 +21,7 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgSpace: 
           model,
           msgCmd: [
             playSound(APP_SOUND.navForward),
-            pushRoute({ n: 'spaces', t: 'space', spaceId: msgSpace.spaceId }),
+            pushScreen({ n: 'spaces', t: 'space', spaceId: msgSpace.spaceId }),
             showToast(ctx.t('spaces.space-started')),
           ],
         }

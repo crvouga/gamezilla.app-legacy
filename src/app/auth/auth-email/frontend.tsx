@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Translator } from '~/@/l18n/generated'
 import { type Result, isErr } from '~/@/result'
-import { RouteCmd } from '~/app/@/frontend/cmd'
+import { ScreenCmd } from '~/app/@/frontend/cmd'
 import { AlertError, AlertSuccess, Button, TextField, TopBar } from '~/app/@/ui'
 
 //
@@ -60,7 +60,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: RouteCmd[]
+  msgCmd?: ScreenCmd[]
 } => {
   if (msg.t === 'inputted-email-address') {
     return {
@@ -125,7 +125,7 @@ export const update = ({
       model: model,
       msgCmd: [
         {
-          t: 'routing',
+          t: 'current-screen',
           c: {
             t: 'back',
           },

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'bun:test'
 import { eq } from '~/@/equals/equals'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok } from '~/@/result'
-import type { Route } from '~/@/routing/generated/routes'
-import { didPushRoute } from '~/app/@/frontend/cmd'
+import type { Screen } from '~/@/screen/generated/screens'
+import { didPushScreen } from '~/app/@/frontend/cmd'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import type { AuthSMSTypes } from '.'
 import { AuthSMSFrontend } from './frontend'
@@ -16,9 +16,9 @@ type Msg =
       msgBackend: AuthSMSTypes.MsgToFrontend
     }
 
-const Fixture = async (input?: { currentRoute?: Route }) => {
+const Fixture = async (input?: { currentScreen?: Screen }) => {
   const f = await FixtureAppFrontend({
-    currentRoute: input?.currentRoute ?? {
+    currentScreen: input?.currentScreen ?? {
       n: 'auth-login',
       t: 'login-sms-request',
     },
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
     ])
 
     expect(
-      didPushRoute(
+      didPushScreen(
         output,
         (msg) => msg.n === 'auth-login' && msg.t === 'login-sms-verify' && eq(msg.phoneNumber, phoneNumber),
       ),
@@ -109,7 +109,7 @@ describe(import.meta.file, () => {
     const phoneNumber = PhoneNumber.random()
 
     const f = await Fixture({
-      currentRoute: {
+      currentScreen: {
         n: 'auth-login',
         t: 'login-sms-verify',
         phoneNumber,
@@ -134,7 +134,7 @@ describe(import.meta.file, () => {
     const phoneNumber = PhoneNumber.random()
 
     const f = await Fixture({
-      currentRoute: {
+      currentScreen: {
         n: 'auth-login',
         t: 'login-sms-verify',
         phoneNumber,

@@ -1,7 +1,7 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { Button, TextField, TopBar } from '~/app/@/ui'
 import { ModelFrontend, MsgFrontend, MsgToBackend } from './update-username.types'
-import { AppFrontendCmd, pushRoute, sendToBackend } from '~/app/@/frontend/cmd'
+import { AppFrontendCmd, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx, AnonymousFrontendCtx } from '~/app/@/frontend/ctx'
 import { FrontendEvt } from '~/app/@/frontend/evt'
 
@@ -40,7 +40,7 @@ export const update = <TModel extends ModelFrontend, TMsg extends { t: string }>
       case 'profile.update-username.clicked-back': {
         return {
           model: input.model,
-          msgCmd: [pushRoute({ t: 'profile-edit', n: 'profile' })],
+          msgCmd: [pushScreen({ t: 'profile-edit', n: 'profile' })],
         }
       }
 
@@ -75,8 +75,8 @@ export const update = <TModel extends ModelFrontend, TMsg extends { t: string }>
       return init({ ctx: input.ctx, model: input.model })
     }
 
-    case 'routing-evt.route-changed': {
-      if (input.msgEvt.route.t === 'profile-edit-username') {
+    case 'routing-evt.screen-changed': {
+      if (input.msgEvt.screen.t === 'profile-edit-username') {
         return init({ ctx: input.ctx, model: input.model })
       }
       return { model: input.model }

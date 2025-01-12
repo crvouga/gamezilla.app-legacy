@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { didPlaySound, didPushRoute } from '~/app/@/frontend/cmd'
+import { didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 
@@ -11,7 +11,7 @@ const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
-  it('should redirect to space list after ending space if on space route', async () => {
+  it('should redirect to space list after ending space if on space screen', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
         },
         ctx: {
           ...f.ctx,
-          currentRoute: {
+          currentScreen: {
             n: 'spaces',
             t: 'space',
             spaceId,
@@ -37,10 +37,10 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPushRoute(output)).toBe(true)
+    expect(didPushScreen(output)).toBe(true)
   })
 
-  it('should not redirect to space list after ending space if not on space route', async () => {
+  it('should not redirect to space list after ending space if not on space screen', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
@@ -57,7 +57,7 @@ describe(import.meta.file, () => {
         },
         ctx: {
           ...f.ctx,
-          currentRoute: {
+          currentScreen: {
             n: 'spaces',
             t: 'space-list',
           },
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPushRoute(output)).toBe(false)
+    expect(didPushScreen(output)).toBe(false)
   })
 
   it('should play sound after ending space', async () => {
@@ -85,7 +85,7 @@ describe(import.meta.file, () => {
         },
         ctx: {
           ...f.ctx,
-          currentRoute: {
+          currentScreen: {
             n: 'spaces',
             t: 'space-list',
           },

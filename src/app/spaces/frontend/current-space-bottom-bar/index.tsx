@@ -1,4 +1,4 @@
-import { APP_SOUND, playSound, pushRoute } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Avatar, Button, Typography } from '~/app/@/ui'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
@@ -21,7 +21,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
         model: input.model,
         msgCmd: [
           playSound(APP_SOUND.navForwardMin),
-          pushRoute({
+          pushScreen({
             n: 'spaces',
             t: 'space',
             spaceId: currentUsersSpaceId,

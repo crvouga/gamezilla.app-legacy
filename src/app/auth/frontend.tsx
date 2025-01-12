@@ -3,7 +3,7 @@ import { Msg } from '~/@/msg/msg'
 import { NotAsked } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, AppFrontendCmd, playSound, pushRoute, replaceRoute, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, AppFrontendCmd, playSound, pushScreen, replaceScreen, showToast } from '~/app/@/frontend/cmd'
 import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/app/@/ui'
 import { BaseFrontendCtx } from '../@/frontend/ctx'
 import { AuthSMSFrontend } from './auth-sms/frontend'
@@ -86,7 +86,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: input.model,
         msgCmd: [
-          pushRoute({
+          pushScreen({
             n: 'auth-login',
             t: 'login-sms-request',
           }),
@@ -98,7 +98,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: input.model,
         msgCmd: [
-          pushRoute({
+          pushScreen({
             n: 'auth-login',
             t: 'login-email-send-link',
           }),
@@ -180,7 +180,7 @@ const updateRedirect: FrontendModule['update'] = (input) => {
       return {
         model: input.model,
         msgCmd: [
-          replaceRoute({ n: 'spaces', t: 'space-list' }, false),
+          replaceScreen({ n: 'spaces', t: 'space-list' }, false),
           playSound(APP_SOUND.celebration),
           input.msgEvt.account.role === 'guest'
             ? showToast(input.ctx.t('auth.logged-in-as-guest'))
@@ -189,12 +189,12 @@ const updateRedirect: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'routing-evt.route-changed': {
-      if (input.model.currentUser.t === 'logged-in' && input.ctx.currentRoute.n === 'auth-login') {
+    case 'routing-evt.screen-changed': {
+      if (input.model.currentUser.t === 'logged-in' && input.ctx.currentScreen.n === 'auth-login') {
         return {
           model: input.model,
           msgCmd: [
-            replaceRoute({ n: 'spaces', t: 'space-list' }),
+            replaceScreen({ n: 'spaces', t: 'space-list' }),
             showToast(input.ctx.t('auth.current-user-logged-in')),
           ],
         }
@@ -232,9 +232,9 @@ export const subscriptions: FrontendModule['subscriptions'] = ({ model, ctx }) =
 //
 
 export const View: FrontendModule['View'] = (input) => {
-  switch (input.ctx.currentRoute.n) {
+  switch (input.ctx.currentScreen.n) {
     case 'auth-login': {
-      switch (input.ctx.currentRoute.t) {
+      switch (input.ctx.currentScreen.t) {
         case 'login': {
           return <ViewLoginScreen {...input} />
         }

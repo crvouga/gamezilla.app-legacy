@@ -3,7 +3,7 @@ import { Loading, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
-import { back, logout, pushRoute, replaceRoute, sendToBackend } from '../@/frontend/cmd'
+import { back, logout, pushScreen, replaceScreen, sendToBackend } from '../@/frontend/cmd'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { ViewProfileScreen } from './profile-frontend/profile-frontend-view-profile-screen'
@@ -28,8 +28,8 @@ export const init: FrontendModule['init'] = ({ ctx }) => {
 
   const model = initialModel
 
-  if (ctx.currentRoute.n === 'profile' && ctx.currentRoute.t === 'profile') {
-    return loadProfile(ctx.currentRoute.userId, model)
+  if (ctx.currentScreen.n === 'profile' && ctx.currentScreen.t === 'profile') {
+    return loadProfile(ctx.currentScreen.userId, model)
   }
 
   return { model }
@@ -83,7 +83,7 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
       return {
         model,
         msgCmd: [
-          pushRoute({
+          pushScreen({
             t: 'profile',
             n: 'profile',
             userId: msgCmd.c.userId,
@@ -102,9 +102,9 @@ const updateFromEvent: FrontendModule['update'] = (input) => {
   }
 
   switch (msgEvt.t) {
-    case 'routing-evt.route-changed': {
-      if (msgEvt.route.n === 'profile' && msgEvt.route.t === 'profile') {
-        return loadProfile(msgEvt.route.userId, model)
+    case 'routing-evt.screen-changed': {
+      if (msgEvt.screen.n === 'profile' && msgEvt.screen.t === 'profile') {
+        return loadProfile(msgEvt.screen.userId, model)
       }
       return {
         model,
@@ -263,7 +263,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           return {
             model,
             msgCmd: [
-              replaceRoute({
+              replaceScreen({
                 n: 'profile',
                 t: 'profile',
                 userId: ctx.currentUserId,
@@ -276,7 +276,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           return {
             model,
             msgCmd: [
-              replaceRoute({
+              replaceScreen({
                 n: 'profile',
                 t: 'profile-edit',
               }),
@@ -288,7 +288,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           return {
             model,
             msgCmd: [
-              replaceRoute({
+              replaceScreen({
                 n: 'profile',
                 t: 'profile-edit',
               }),
@@ -309,7 +309,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model,
         msgCmd: [
-          pushRoute(
+          pushScreen(
             {
               n: 'profile',
               t: 'profile-edit-username',
@@ -324,7 +324,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model,
         msgCmd: [
-          pushRoute(
+          pushScreen(
             {
               n: 'profile',
               t: 'profile-edit',
@@ -340,7 +340,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model,
         msgCmd: [
-          pushRoute(
+          pushScreen(
             {
               n: 'profile',
               t: 'profile-edit-avatar',
@@ -407,9 +407,9 @@ export const subscriptions: FrontendModule['subscriptions'] = (_input) => {
 //
 
 export const View: FrontendModule['View'] = (input) => {
-  switch (input.ctx.currentRoute.n) {
+  switch (input.ctx.currentScreen.n) {
     case 'profile': {
-      switch (input.ctx.currentRoute.t) {
+      switch (input.ctx.currentScreen.t) {
         case 'profile': {
           return (
             <div className='relative flex h-full w-full flex-col'>
@@ -417,7 +417,7 @@ export const View: FrontendModule['View'] = (input) => {
                 model={input.model}
                 ctx={input.ctx}
                 dispatch={input.dispatch}
-                userId={input.ctx.currentRoute.userId}
+                userId={input.ctx.currentScreen.userId}
               />
 
               {input.slots?.bottomBar(null)}

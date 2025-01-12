@@ -1,4 +1,4 @@
-import { pushRoute, playSound, APP_SOUND } from '~/app/@/frontend/cmd'
+import { pushScreen, playSound, APP_SOUND } from '~/app/@/frontend/cmd'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 import { IconButton, IconHome } from '~/app/@/ui'
 
@@ -8,7 +8,7 @@ const update: SpaceFrontendModule['update'] = ({ msg, model }) => {
       return {
         model,
         msgCmd: [
-          pushRoute({
+          pushScreen({
             n: 'spaces',
             t: 'space-list',
           }),

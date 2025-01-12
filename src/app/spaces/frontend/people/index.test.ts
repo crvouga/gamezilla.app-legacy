@@ -45,7 +45,7 @@ describe(import.meta.file, () => {
     expect(output.model.modal === 'user-preview' && output.model.modalPreviewUserId === someUserId).toBe(true)
   })
 
-  it('should close modal when the current route changes', async () => {
+  it('should close modal when the current screen changes', async () => {
     const f = await Fixture()
     const someUserId = UserId.generate()
     const output = f.update(f.initial, [
@@ -57,8 +57,8 @@ describe(import.meta.file, () => {
       },
       {
         msgEvt: {
-          t: 'routing-evt.route-changed',
-          route: {
+          t: 'routing-evt.screen-changed',
+          screen: {
             n: 'spaces',
             t: 'space-list',
           },

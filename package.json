@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "cg": "bun gen:l18n && bun gen:routes && bun gen:events",
+    "cg": "bun gen:l18n && bun gen:screens && bun gen:events",
     "cg:watch": "bun --watch cg",
     "check": "bun cir-deps && bun x tsc && bun test",
     "check-imports": "bun scripts/check-imports.ts",
@@ -26,7 +26,7 @@
     "gen:events": "bun src/@/events/events-gen.ts",
     "gen:guard": "bun src/@/guards/guards-gen.ts",
     "gen:l18n": "bun src/@/l18n/l18n-gen.ts",
-    "gen:routes": "bun src/@/routing/routes-gen.ts",
+    "gen:screens": "bun src/@/routing/screens-gen.ts",
     "load-balancer": "bun src/main/load-balancer.ts",
     "pretty": "bun x sort-package-json && bun x prettier --write .",
     "preview": "bun frontend:build && bun frontend:serve",

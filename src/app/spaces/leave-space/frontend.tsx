@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { APP_SOUND, playSound, pushRoute, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { Button } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesSpaceFrontend } from '../space/frontend'
@@ -48,7 +48,7 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgSpace: 
         msgCmd: [
           playSound(APP_SOUND.navBackward),
           showToast(ctx.t('spaces.current-user-left')),
-          pushRoute({
+          pushScreen({
             n: 'spaces',
             t: 'space-list',
           }),

@@ -2,7 +2,7 @@ import { Result } from '~/@/result'
 import { p } from '~/@/parser'
 import { PhoneNumber } from '~/@/phone-number'
 
-const Route = p.or(
+const Screen = p.or(
   p.obj({
     n: p.l('auth-login'),
     t: p.l('login'),
@@ -22,6 +22,6 @@ const Route = p.or(
   }),
 )
 
-export type Route = p.Infer<typeof Route>
+export type Screen = p.Infer<typeof Screen>
 
-export const toRoute = (x: unknown): Route | null => Result.unwrapOr(Route.parse(x), null)
+export const toScreen = (x: unknown): Screen | null => Result.unwrapOr(Screen.parse(x), null)

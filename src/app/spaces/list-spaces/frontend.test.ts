@@ -3,17 +3,17 @@ import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { RequestResponse, isRequesting, isResponseOk } from '~/@/request-response/request-response'
-import type { Route } from '~/@/routing/generated/routes'
+import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, didPlaySound, didPushRoute } from '~/app/@/frontend/cmd'
+import { APP_SOUND, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from '~/app/@/ui'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesFrontend } from '../frontend'
 import { SpaceSpace } from '../space/space'
 
-const Fixture = async (input?: { currentRoute?: Route }) => {
+const Fixture = async (input?: { currentScreen?: Screen }) => {
   const f = await FixtureSpacesFrontend(input)
 
   return {
@@ -22,9 +22,9 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
 }
 
 describe(import.meta.file, () => {
-  it('should request spaces on init if on space list route', async () => {
+  it('should request spaces on init if on space list screen', async () => {
     const f = await Fixture({
-      currentRoute: {
+      currentScreen: {
         n: 'spaces',
         t: 'space-list',
       },
@@ -39,7 +39,7 @@ describe(import.meta.file, () => {
 
   it('should send list space request to backend initially', async () => {
     const f = await Fixture({
-      currentRoute: {
+      currentScreen: {
         n: 'spaces',
         t: 'space-list',
       },
@@ -50,13 +50,13 @@ describe(import.meta.file, () => {
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toBackend?.t === 'list-spaces')).toBe(true)
   })
 
-  it('should request spaces on space list route change', async () => {
+  it('should request spaces on space list screen change', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing-evt.route-changed',
-          route: {
+          t: 'routing-evt.screen-changed',
+          screen: {
             n: 'spaces',
             t: 'space-list',
           },
@@ -71,8 +71,8 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing-evt.route-changed',
-          route: {
+          t: 'routing-evt.screen-changed',
+          screen: {
             n: 'spaces',
             t: 'space-list',
           },
@@ -96,8 +96,8 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing-evt.route-changed',
-          route: {
+          t: 'routing-evt.screen-changed',
+          screen: {
             n: 'spaces',
             t: 'space-list',
           },
@@ -119,8 +119,8 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing-evt.route-changed',
-          route: {
+          t: 'routing-evt.screen-changed',
+          screen: {
             n: 'spaces',
             t: 'space-list',
           },
@@ -157,8 +157,8 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing-evt.route-changed',
-          route: {
+          t: 'routing-evt.screen-changed',
+          screen: {
             n: 'spaces',
             t: 'space-list',
           },
@@ -179,7 +179,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPushRoute(updated)).toBe(true)
+    expect(didPushScreen(updated)).toBe(true)
   })
 
   it('should make a nav forward sound when opening a space screen', async () => {
@@ -192,8 +192,8 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing-evt.route-changed',
-          route: {
+          t: 'routing-evt.screen-changed',
+          screen: {
             n: 'spaces',
             t: 'space-list',
           },
@@ -227,8 +227,8 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgEvt: {
-          t: 'routing-evt.route-changed',
-          route: {
+          t: 'routing-evt.screen-changed',
+          screen: {
             n: 'spaces',
             t: 'space-list',
           },
@@ -291,7 +291,7 @@ describe(import.meta.file, () => {
     const initial = f.update(f.initial, [{ msgBackend: { t: 'listed-spaces', spaces: [] } }])
 
     const updated = f.update(initial, [
-      { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } },
+      { msgEvt: { t: 'routing-evt.screen-changed', screen: { n: 'spaces', t: 'space-list' } } },
     ])
     expect(f.view(initial).getByTestId(SPINNER_TEST_ID)).toBeFalsy()
     expect(f.view(updated).getByTestId(SPINNER_TEST_ID)).toBeTruthy()
@@ -301,7 +301,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const initial = f.update(f.initial, [{ msgBackend: { t: 'listed-spaces', spaces: [] } }])
     const updated = f.update(initial, [
-      { msgEvt: { t: 'routing-evt.route-changed', route: { n: 'spaces', t: 'space-list' } } },
+      { msgEvt: { t: 'routing-evt.screen-changed', screen: { n: 'spaces', t: 'space-list' } } },
     ])
     expect(f.view(initial).getByTestId(EMPTY_STATE_TEST_ID)).toBeTruthy()
     expect(f.view(updated).getByTestId(EMPTY_STATE_TEST_ID)).toBeFalsy()

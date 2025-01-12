@@ -193,9 +193,9 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 //
 
 const View: FrontendModule['View'] = (input) => {
-  switch (input.ctx.currentRoute.n) {
+  switch (input.ctx.currentScreen.n) {
     case 'spaces': {
-      switch (input.ctx.currentRoute.t) {
+      switch (input.ctx.currentScreen.t) {
         case 'space-list': {
           return (
             <>
@@ -209,7 +209,7 @@ const View: FrontendModule['View'] = (input) => {
           if (isAppFrontendCtx(input.ctx)) {
             return (
               <SpaceFrontend.View
-                spaceId={input.ctx.currentRoute.spaceId}
+                spaceId={input.ctx.currentScreen.spaceId}
                 ctx={input.ctx}
                 dispatch={input.dispatch}
                 model={input.model}

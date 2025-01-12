@@ -23,7 +23,7 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
     currentUser,
     navigatorLanguage: 'en',
     t: Translator('en'),
-    currentRoute: {
+    currentScreen: {
       n: 'spaces',
       t: 'space',
       spaceId: currentSpaceId,

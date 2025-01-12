@@ -33,10 +33,10 @@ describe(import.meta.file, () => {
     expect(
       output.msgCmd?.some(
         (msgCmd) =>
-          msgCmd.t === 'routing' &&
+          msgCmd.t === 'current-screen' &&
           msgCmd.c.t === 'push' &&
-          msgCmd.c.route.t === 'space' &&
-          msgCmd.c.route.spaceId === currentUsersSpaceId,
+          msgCmd.c.screen.t === 'space' &&
+          msgCmd.c.screen.spaceId === currentUsersSpaceId,
       ),
     ).toBe(true)
   })

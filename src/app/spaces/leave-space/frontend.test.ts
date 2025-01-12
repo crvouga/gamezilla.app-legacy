@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMetaAt } from '~/@/event-sourced/event'
-import { didPlaySound, didPushRoute, didShowToast } from '~/app/@/frontend/cmd'
+import { didPlaySound, didPushScreen, didShowToast } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { FixtureSpacesFrontend, userJoinedSpace, userLeftSpace, userStartedSpace } from '../@/fixture/frontend'
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPushRoute(output, (x) => x.t === 'space-list')).toBe(true)
+    expect(didPushScreen(output, (x) => x.t === 'space-list')).toBe(true)
   })
 
   it('should only redirect to list screen for the user leaving the space', async () => {
@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPushRoute(output)).toBe(false)
+    expect(didPushScreen(output)).toBe(false)
   })
 
   it('should show some toast after leaving a space', async () => {

@@ -11,7 +11,7 @@ import * as AuthFrontend from '../frontend'
 import type { ModelFrontend } from '../types'
 
 const ctx: AnonymousFrontendCtx = {
-  currentRoute: {
+  currentScreen: {
     n: 'auth-login',
     t: 'login',
   },

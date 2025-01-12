@@ -1,4 +1,4 @@
-import type { Route } from '~/@/routing/generated/routes'
+import type { Screen } from '~/@/screen/generated/screens'
 import type { UserAccount } from '../data/account'
 import { Profile } from '../data/profile'
 
@@ -15,8 +15,8 @@ export type FrontendEvt =
       t: 'wire-evt.backend-connected'
     }
   | {
-      t: 'routing-evt.route-changed'
-      route: Route
+      t: 'routing-evt.screen-changed'
+      screen: Screen
     }
   | {
       t: 'platform-evt.document-visibility-changed'
@@ -27,8 +27,8 @@ export type FrontendEvt =
       profile: Profile
     }
 
-export const routeChanged = (route: Route): FrontendEvt => {
-  return { t: 'routing-evt.route-changed', route }
+export const screenChanged = (screen: Screen): FrontendEvt => {
+  return { t: 'routing-evt.screen-changed', screen }
 }
 
 export const backendConnected = (): FrontendEvt => {

@@ -1,6 +1,6 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { APP_SOUND, playSound, pushRoute, sendToBackend } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
@@ -51,8 +51,8 @@ const init: SpaceFrontendModule['init'] = ({ model, ctx }) => {
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgEvt?.t) {
-    case 'routing-evt.route-changed': {
-      if (input.msgEvt.route.t === 'space-list') {
+    case 'routing-evt.screen-changed': {
+      if (input.msgEvt.screen.t === 'space-list') {
         return sendListSpacesRequest(input)
       }
       return {
@@ -79,7 +79,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
       return {
         model: input.model,
         msgCmd: [
-          pushRoute({ n: 'spaces', t: 'space', spaceId: input.msg.spaceId }),
+          pushScreen({ n: 'spaces', t: 'space', spaceId: input.msg.spaceId }),
           playSound(APP_SOUND.navForwardMin),
         ],
       }

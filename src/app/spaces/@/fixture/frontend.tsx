@@ -3,7 +3,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { PhoneNumber } from '~/@/phone-number'
-import type { Route } from '~/@/routing/generated/routes'
+import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
@@ -22,7 +22,7 @@ export const SpaceFrontendFixture = async () => {
   const ctx: AppFrontendCtx = {
     navigatorLanguage: 'en',
     t: Translator('en'),
-    currentRoute: {
+    currentScreen: {
       n: 'spaces',
       t: 'space-list',
     },
@@ -86,7 +86,7 @@ export type FixtureInput = Partial<Parameters<typeof SpacesFrontend.update>[0]>
 
 export type Output = ReturnType<typeof SpacesFrontend.update>
 
-export const FixtureSpacesFrontend = async (input?: { currentRoute?: Route }) => {
+export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) => {
   const f = await FixtureAppFrontend(input)
   const currentUser: UserAccount = {
     userId: f.ctx.currentUserId,
@@ -137,7 +137,7 @@ export const FixtureSpacesFrontend = async (input?: { currentRoute?: Route }) =>
 
   const ctx: SpaceFrontendCtx = {
     ...f.ctx,
-    currentRoute: {
+    currentScreen: {
       n: 'spaces',
       t: 'space-list',
     },

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { didPlaySound, didPushRoute } from '../@/frontend/cmd'
+import { didPlaySound, didPushScreen } from '../@/frontend/cmd'
 import { FixtureAuthFrontend } from './@/fixture/frontend'
 import * as AuthFrontend from './frontend'
 
@@ -20,7 +20,7 @@ describe(import.meta.file, () => {
       msg: { t: 'user-clicked-login-with-phone' },
     })
     expect(didPlaySound(output)).toBe(true)
-    expect(didPushRoute(output, (route) => route.n === 'auth-login' && route.t === 'login-sms-request')).toBe(true)
+    expect(didPushScreen(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-sms-request')).toBe(true)
   })
 
   test('continue with email', async () => {
@@ -31,6 +31,8 @@ describe(import.meta.file, () => {
       msg: { t: 'user-clicked-login-with-email' },
     })
     expect(didPlaySound(output)).toBe(true)
-    expect(didPushRoute(output, (route) => route.n === 'auth-login' && route.t === 'login-email-send-link')).toBe(true)
+    expect(didPushScreen(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-email-send-link')).toBe(
+      true,
+    )
   })
 })

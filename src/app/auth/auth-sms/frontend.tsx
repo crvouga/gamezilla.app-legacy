@@ -11,8 +11,8 @@ import {
   APP_SOUND,
   focusView,
   playSound,
-  pushRoute,
-  replaceRoute,
+  pushScreen,
+  replaceScreen,
   sendToBackend,
   showToast,
   type AppFrontendCmd,
@@ -105,8 +105,8 @@ const update: Module['update'] = (input) => {
 
 const updateAutoFocus: Module['update'] = (input) => {
   switch (input.msgEvt?.t) {
-    case 'routing-evt.route-changed': {
-      switch (input.msgEvt.route.t) {
+    case 'routing-evt.screen-changed': {
+      switch (input.msgEvt.screen.t) {
         case 'login-sms-request': {
           return {
             model: input.model,
@@ -139,11 +139,11 @@ const updateAutoFocus: Module['update'] = (input) => {
 const updateFromMsg: Module['update'] = (input) => {
   switch (input.msg?.t) {
     case 'clicked-back-button': {
-      if (input.ctx.currentRoute.t === 'login-sms-verify') {
+      if (input.ctx.currentScreen.t === 'login-sms-verify') {
         return {
           model: input.model,
           msgCmd: [
-            replaceRoute({
+            replaceScreen({
               n: 'auth-login',
               t: 'login-sms-request',
             }),
@@ -154,7 +154,7 @@ const updateFromMsg: Module['update'] = (input) => {
       return {
         model: input.model,
         msgCmd: [
-          replaceRoute({
+          replaceScreen({
             n: 'auth-login',
             t: 'login',
           }),
@@ -352,7 +352,7 @@ const updateFromBackend: Module['update'] = (input) => {
           inputtedCode: '',
         },
         msgCmd: [
-          pushRoute({
+          pushScreen({
             n: 'auth-login',
             t: 'login-sms-verify',
             phoneNumber: msgBackend.phoneNumber,
@@ -426,9 +426,9 @@ const subscriptions: Module['subscriptions'] = (input) => {
 //
 
 const View: Module['View'] = (input) => {
-  switch (input.ctx.currentRoute.n) {
+  switch (input.ctx.currentScreen.n) {
     case 'auth-login': {
-      switch (input.ctx.currentRoute.t) {
+      switch (input.ctx.currentScreen.t) {
         case 'login-sms-request': {
           return <ViewSendCode {...input} />
         }
@@ -532,11 +532,11 @@ const ViewSendCode: Module['View'] = (input) => {
 }
 
 const ViewVerifyCode: Module['View'] = (input) => {
-  if (input.ctx.currentRoute.t !== 'login-sms-verify') {
+  if (input.ctx.currentScreen.t !== 'login-sms-verify') {
     return null
   }
 
-  const phoneNumber = input.ctx.currentRoute.phoneNumber
+  const phoneNumber = input.ctx.currentScreen.phoneNumber
 
   return (
     <div className='w-full flex-1'>

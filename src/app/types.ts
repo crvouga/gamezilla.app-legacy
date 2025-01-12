@@ -8,7 +8,7 @@ import { FrontendId } from './@/data/frontend-id'
 import { SessionId } from './@/data/session-id'
 import { UserId } from './@/data/user-id'
 import { AuthTypes } from './auth'
-import type { Platform, Routing, Sound, StatusBar, Toast } from './frontend/index'
+import type { Platform, CurrentScreen, Sound, StatusBar, Toast } from './frontend/index'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
 import { SpacesTypes } from './spaces'
@@ -30,7 +30,7 @@ export type ModelFrontend = {
   profile: ProfileTypes.ModelFrontend
   wire: WireTypes.ModelFrontend
   lang: LangTypes.ModelFrontend
-  routing: Routing.Model
+  currentScreen: CurrentScreen.Model
   toast: Toast.Model
   sound: Sound.Model
   platform: Platform.Model
@@ -55,7 +55,7 @@ export type MsgBackend =
 
 export type MsgFrontend =
   | { t: '→'; c: MsgToFrontend }
-  | { t: 'routing'; c: Routing.Msg }
+  | { t: 'current-screen'; c: CurrentScreen.Msg }
   | { t: 'toast'; c: Toast.Msg }
   | { t: 'sound'; c: Sound.Msg }
   | { t: 'platform'; c: Platform.Msg }

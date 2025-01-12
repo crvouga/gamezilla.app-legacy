@@ -75,7 +75,7 @@ type EmitFunctions<Emits> = Emits extends EmitInputTypes ? { [K in keyof Emits]:
 
 export type Input<T extends AppFrontendModuleTypes> = {
   /**
-   * `ctx` is data passed down from parent modules like `currentUser`, `currentRoute`, etc
+   * `ctx` is data passed down from parent modules like `currentUser`, `currentScreen`, etc
    */
   ctx: T['Ctx']
   /**
@@ -91,7 +91,7 @@ export type Input<T extends AppFrontendModuleTypes> = {
    */
   msgBackend?: T['MsgToFrontend'] | null
   /**
-   * `msgEvt` is an event that happen in another module. Like `user-logged-out`, `route-changed`
+   * `msgEvt` is an event that happen in another module. Like `user-logged-out`, `screen-changed`
    */
   msgEvt?: T['MsgEvtIn'] | null
   /**
