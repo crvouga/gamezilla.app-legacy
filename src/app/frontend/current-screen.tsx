@@ -36,8 +36,10 @@ const decodeScreen = (screen: unknown): Screen => {
   }
 }
 
+const SCREEN_QUERY_PARAM_NAME = 'screen'
+
 const locationToScreen = (location: Browser.Location): Screen => {
-  return decodeScreen(location.query['current-screen'])
+  return decodeScreen(location.query[SCREEN_QUERY_PARAM_NAME])
 }
 
 export const init = (input: {
@@ -53,7 +55,7 @@ export const init = (input: {
     },
     eff: Eff.batch([
       input.location.pathname === '/' ? null : Browser.replace('/'),
-      Browser.replaceQueryParam('current-screen', encodeScreen(currentScreen)),
+      Browser.replaceQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(currentScreen)),
     ]),
   }
 }
@@ -107,7 +109,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
         model: {
           currentScreen: msg.screen,
         },
-        eff: Browser.pushQueryParam('current-screen', encodeScreen(msg.screen)),
+        eff: Browser.pushQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(msg.screen)),
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
@@ -141,7 +143,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
         model: {
           currentScreen: screenCmd.screen,
         },
-        eff: Browser.pushQueryParam('current-screen', encodeScreen(screenCmd.screen)),
+        eff: Browser.pushQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(screenCmd.screen)),
         msgCmd: screenCmd.playSound ? [playSound(APP_SOUND.navForwardMin)] : [],
       }
     }
@@ -159,7 +161,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
         model: {
           currentScreen: screenCmd.screen,
         },
-        eff: Browser.replaceQueryParam('current-screen', encodeScreen(screenCmd.screen)),
+        eff: Browser.replaceQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(screenCmd.screen)),
         msgCmd: screenCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
       }
     }
@@ -174,4 +176,9 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 //
 //
 
-export const subscriptions = Browser.onLocation((l): Msg => ({ t: 'screen-changed', screen: locationToScreen(l) }))
+export const subscriptions = Browser.onLocation(
+  (l): Msg => ({
+    t: 'screen-changed',
+    screen: locationToScreen(l),
+  }),
+)
