@@ -1,5 +1,5 @@
 {
-  "buildCommand": "bun client:build",
+  "buildCommand": "bun frontend:build",
   "outputDirectory": "dist",
   "rewrites": [
     {
