@@ -129,6 +129,18 @@ CREATE TABLE public.game_flow_puzzle (
 
 
 --
+-- Name: game_flow_solutions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.game_flow_solutions (
+    flow_hash text NOT NULL,
+    solutions jsonb DEFAULT '[]'::jsonb NOT NULL,
+    created_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
+    last_updated_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL
+);
+
+
+--
 -- Name: key_value; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -145,6 +157,36 @@ CREATE UNLOGGED TABLE public.key_value (
 CREATE TABLE public.schema_migrations (
     version character varying(128) NOT NULL
 );
+
+
+--
+-- Name: socket_io_attachments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.socket_io_attachments (
+    id bigint NOT NULL,
+    created_at timestamp with time zone DEFAULT now(),
+    payload bytea
+);
+
+
+--
+-- Name: socket_io_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.socket_io_attachments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: socket_io_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.socket_io_attachments_id_seq OWNED BY public.socket_io_attachments.id;
 
 
 --
@@ -193,6 +235,13 @@ CREATE TABLE public.user_session (
     ended_at timestamp with time zone,
     session_id text
 );
+
+
+--
+-- Name: socket_io_attachments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.socket_io_attachments ALTER COLUMN id SET DEFAULT nextval('public.socket_io_attachments_id_seq'::regclass);
 
 
 --
@@ -252,6 +301,14 @@ ALTER TABLE ONLY public.game_flow_puzzle
 
 
 --
+-- Name: game_flow_solutions game_flow_solutions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.game_flow_solutions
+    ADD CONSTRAINT game_flow_solutions_pkey PRIMARY KEY (flow_hash);
+
+
+--
 -- Name: key_value key_value_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -265,6 +322,14 @@ ALTER TABLE ONLY public.key_value
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: socket_io_attachments socket_io_attachments_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.socket_io_attachments
+    ADD CONSTRAINT socket_io_attachments_id_key UNIQUE (id);
 
 
 --
@@ -411,4 +476,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240519212003'),
     ('20240519212517'),
     ('20240530071956'),
-    ('20240630071855');
+    ('20240630071855'),
+    ('20250110223606');

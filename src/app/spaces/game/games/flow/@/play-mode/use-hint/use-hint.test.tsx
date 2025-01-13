@@ -375,7 +375,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: Solutions.of(solution),
+          solutions: Solutions.of([solution]),
         },
       },
     ])

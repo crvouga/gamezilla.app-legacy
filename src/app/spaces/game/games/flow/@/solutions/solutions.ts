@@ -1,9 +1,10 @@
+import { NonEmpty } from '~/@/array/non-empty'
 import { p } from '~/@/parser'
-import { AlgoSolveAsync } from './algo-solve-async'
+import { Flow } from '../flow'
 import { FlowHash } from '../flow/hash'
 import { Variant } from '../variant'
+import { AlgoSolveAsync } from './algo-solve-async'
 import { Solution } from './solution'
-import { Flow } from '../flow'
 
 const parser = p.dict(FlowHash, p.arr(Solution))
 
@@ -18,13 +19,16 @@ const findOne = async (model: Variant.Model): Promise<Solutions> => {
   }
   const hash = FlowHash.init(found)
   return {
-    [hash]: [found],
+    [hash]: [Solution.fromFlow(found)],
   }
 }
 
-const of = (model: Variant.Model): Solutions => {
-  if (Flow.isSolved(model)) {
-    return { [FlowHash.init(model)]: [model] }
+const of = (model: Variant.Model[]): Solutions => {
+  const solved = model.filter((m) => Flow.isSolved(m))
+  if (NonEmpty.is(solved)) {
+    const first = solved[0]
+    const hash = FlowHash.init(first)
+    return { [hash]: solved }
   }
   return {}
 }
@@ -65,11 +69,22 @@ const limit = (solutions: Solutions, hash: FlowHash): Solutions => {
   }
 }
 
+const iter = function* (solutions: Solutions): Iterable<[FlowHash, Solution[]]> {
+  for (const [hash, sols] of Object.entries(solutions)) {
+    if (!FlowHash.is(hash)) {
+      continue
+    }
+
+    yield [hash, sols]
+  }
+}
+
 export const Solutions = {
   ...parser,
   find,
   merge,
   limit,
   of,
+  iter,
   init,
 }

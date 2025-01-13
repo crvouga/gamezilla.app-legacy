@@ -3,6 +3,7 @@ import { Pipe } from '../flow/flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
 import { Terminal } from '../flow/terminal'
+import { Flow } from '../flow'
 
 const parser = p.obj({
   pipesBySourceId: p.dict(NodeId, Pipe),
@@ -15,7 +16,15 @@ const toPipelineByGroupId = (solution: Solution, groupId: GroupId): Pipe[] => {
   return Object.values(solution.pipesBySourceId).filter((pipe) => pipe.groupId === groupId)
 }
 
+const fromFlow = (model: Flow.Model): Solution => {
+  return {
+    pipesBySourceId: model.pipesBySourceId,
+    terminalsByGroupId: model.terminalsByGroupId,
+  }
+}
+
 export const Solution = {
   ...parser,
   toPipelineByGroupId,
+  fromFlow,
 }

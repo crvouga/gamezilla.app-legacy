@@ -460,7 +460,7 @@ export const yieldEdgesIn = function* (model: Model, targetNodeId: NodeId): Iter
 /**
  *
  */
-export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
+export const yieldTerminals = function* (model: Pick<Model, 'terminalsByGroupId'>): Iterable<Terminal> {
   for (const groupId in model.terminalsByGroupId) {
     const terminal = model.terminalsByGroupId[groupId as GroupId]
 
@@ -579,7 +579,10 @@ export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
   return null
 }
 
-export const toPipeBySourceId = (model: Model, sourceId: NodeId): PipeJoined | null => {
+export const toPipeBySourceId = (
+  model: Pick<Model, 'pipesBySourceId' | 'edges'>,
+  sourceId: NodeId,
+): PipeJoined | null => {
   const pipe = model.pipesBySourceId[sourceId]
   if (!pipe) {
     return null
@@ -747,7 +750,11 @@ export const flipTerminal = <TModel extends Model>(model: TModel, terminal: Term
   }
 }
 
-const isConnectedWithPipeOneWay = (model: Model, sourceId: NodeId, targetId: NodeId): boolean => {
+const isConnectedWithPipeOneWay = (
+  model: Pick<Model, 'pipesBySourceId' | 'edges'>,
+  sourceId: NodeId,
+  targetId: NodeId,
+): boolean => {
   const visited = new Set<NodeId>()
 
   let currentId = sourceId
