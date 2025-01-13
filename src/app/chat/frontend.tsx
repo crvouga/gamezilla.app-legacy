@@ -4,7 +4,7 @@ import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '../@/frontend/ctx'
 import { FrontendEvt } from '../@/frontend/evt'
-import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './chat.core'
+import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './types'
 
 //
 //

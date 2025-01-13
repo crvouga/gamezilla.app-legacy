@@ -18,9 +18,9 @@ const Row = p.obj({
 
 export type Row = p.Infer<typeof Row>
 
-export const SolutionsDb = (config: Config): ISolutionsDb => {
+export const SolutionsDb = (_config: Config): ISolutionsDb => {
   return {
-    async get(hash) {
+    async get(_hash) {
       // const queried = awia config.dbConnSql.query(Row, `SELECT flow_hash, solutions FROM game_flow_solutions WHERE flow_hash = :flow_hash`, {
       //   flow_hash: hash,
       // })

@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import type { ModelBackend, MsgBackend, MsgToBackend } from './chat.core'
+import type { ModelBackend, MsgBackend, MsgToBackend } from './types'
 
 export const init: { model: ModelBackend } = { model: null }
 
