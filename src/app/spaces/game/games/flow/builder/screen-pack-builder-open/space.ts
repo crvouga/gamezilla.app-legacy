@@ -21,16 +21,10 @@ const updateSpaceMain: UpdateSpace = ({ modelSpace, msgSpace }) => {
     }
   }
 }
+const updates = [PackCreateNewSpace.update, updateSpaceMain]
 
 const updateSpace: UpdateSpace = (input) => {
-  return [PackCreateNewSpace.update, updateSpaceMain].reduce(
-    (modelSpace, updateSpace) =>
-      updateSpace({
-        ...input,
-        modelSpace,
-      }),
-    input.modelSpace,
-  )
+  return updates.reduce((modelSpace, updateSpace) => updateSpace({ ...input, modelSpace }), input.modelSpace)
 }
 
 export const ScreenPackBuilderOpenSpace = {
