@@ -7,24 +7,24 @@ import { DeleteForeverTypes } from './delete-forever'
 import { EditPuzzleNameTypes } from './edit-puzzle-name'
 import { SaveChangesTypes } from './save-changes'
 
-export type ModelClient = SaveChangesTypes.ModelClient &
-  EditPuzzleNameTypes.ModelClient &
-  DeleteForeverTypes.ModelClient
+export type ModelFrontend = SaveChangesTypes.ModelFrontend &
+  EditPuzzleNameTypes.ModelFrontend &
+  DeleteForeverTypes.ModelFrontend
 
-export const initClient: ModelClient = {
-  ...EditPuzzleNameTypes.initClient,
-  ...DeleteForeverTypes.initClient,
-  ...SaveChangesTypes.initClient,
+export const initFrontend: ModelFrontend = {
+  ...EditPuzzleNameTypes.initFrontend,
+  ...DeleteForeverTypes.initFrontend,
+  ...SaveChangesTypes.initFrontend,
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
-export type MsgServer = SaveChangesTypes.MsgServer | DeleteForeverTypes.MsgServer | EditPuzzleNameTypes.MsgServer
+export type MsgBackend = SaveChangesTypes.MsgBackend | DeleteForeverTypes.MsgBackend | EditPuzzleNameTypes.MsgBackend
 
-export type MsgClient =
-  | EditPuzzleNameTypes.MsgClient
-  | DeleteForeverTypes.MsgClient
-  | SaveChangesTypes.MsgClient
+export type MsgFrontend =
+  | EditPuzzleNameTypes.MsgFrontend
+  | DeleteForeverTypes.MsgFrontend
+  | SaveChangesTypes.MsgFrontend
   | {
       t: 'screen-puzzle-builder.got-edit-msg'
       c: EditMode.Msg
@@ -43,15 +43,15 @@ export type MsgClient =
       t: 'screen-puzzle-builder.user-clicked-play-mode-button'
     }
 
-export type MsgToClient =
-  | SaveChangesTypes.MsgToClient
-  | DeleteForeverTypes.MsgToClient
-  | EditPuzzleNameTypes.MsgToClient
+export type MsgToFrontend =
+  | SaveChangesTypes.MsgToFrontend
+  | DeleteForeverTypes.MsgToFrontend
+  | EditPuzzleNameTypes.MsgToFrontend
 
-export type MsgToServer =
-  | SaveChangesTypes.MsgToServer
-  | DeleteForeverTypes.MsgToServer
-  | EditPuzzleNameTypes.MsgToServer
+export type MsgToBackend =
+  | SaveChangesTypes.MsgToBackend
+  | DeleteForeverTypes.MsgToBackend
+  | EditPuzzleNameTypes.MsgToBackend
 
 //
 //
@@ -63,19 +63,19 @@ export type MsgToServer =
 const Mode = p.or(p.obj({ t: p.l('play') }), p.obj({ t: p.l('edit') }))
 type Mode = p.Infer<typeof Mode>
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   t: p.l('puzzle-builder'),
   puzzle: Puzzle,
   mode: Mode,
   playMode: PlayMode.Model,
   editMode: EditMode.Model,
 })
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const MsgCore = p.or(
-  SaveChangesTypes.MsgCore,
-  DeleteForeverTypes.MsgCore,
-  EditPuzzleNameTypes.MsgCore,
+export const MsgSpace = p.or(
+  SaveChangesTypes.MsgSpace,
+  DeleteForeverTypes.MsgSpace,
+  EditPuzzleNameTypes.MsgSpace,
   p.obj({
     t: p.l('screen-puzzle-builder.got-play-msg'),
     c: PlayMode.Msg,
@@ -98,4 +98,4 @@ export const MsgCore = p.or(
   }),
 )
 
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

@@ -1,17 +1,17 @@
 import type { RemoteResult, Result } from '~/@/result'
-import { AppClientModule } from '../@/architecture/app-client'
-import { AppServerModule } from '../@/architecture/app-server'
-import { AppClientCmd, ProfileCmd } from '../@/client/cmd'
-import { AnonymousClientCtx, AppClientCtx } from '../@/client/ctx'
-import { ClientEvt } from '../@/client/evt'
+import { AppFrontendModule } from '../@/architecture/app-frontend'
+import { AppBackendModule } from '../@/architecture/app-backend'
+import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
+import { FrontendEvt } from '../@/frontend/evt'
 import { ClientId } from '../@/data/client-id'
 import { Profile } from '../@/data/profile'
 import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
-import { ServerCmd } from '../@/server/cmd'
-import { AppServerCtx } from '../@/server/ctx'
-import { ServerEvt } from '../@/server/evt'
+import { BackendCmd } from '../@/backend/cmd'
+import { AppBackendCtx } from '../@/backend/ctx'
+import { BackendEvt } from '../@/backend/evt'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
 //
 //
@@ -39,7 +39,7 @@ export const profileCoreToProfile = (profile: ProfileCore): Profile => {
   }
 }
 
-export type ModelClient = UpdateUsernameTypes.ModelClient & {
+export type ModelFrontend = UpdateUsernameTypes.ModelFrontend & {
   profiles: {
     [userId: UserId]: Profile
   }
@@ -61,9 +61,9 @@ export type ModelClient = UpdateUsernameTypes.ModelClient & {
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | Req
-  | UpdateUsernameTypes.MsgClient
+  | UpdateUsernameTypes.MsgFrontend
   | {
       t: 'clicked-back-button'
       from:
@@ -94,10 +94,10 @@ export type MsgClient =
   | { t: 'clicked-avatar' }
   | { t: 'clicked-update-username-button' }
 
-export type MsgServer = UpdateUsernameTypes.MsgServer | { t: 'handled'; clientId: ClientId; msg: MsgToClient }
+export type MsgBackend = UpdateUsernameTypes.MsgBackend | { t: 'handled'; clientId: ClientId; msg: MsgToFrontend }
 
-export type MsgToClient =
-  | UpdateUsernameTypes.MsgToClient
+export type MsgToFrontend =
+  | UpdateUsernameTypes.MsgToFrontend
   | {
       t: 'current-user-profile'
       result: Result<string, Profile>
@@ -106,7 +106,7 @@ export type MsgToClient =
     }
   | Res
 
-export type MsgToServer = Req | UpdateUsernameTypes.MsgToServer
+export type MsgToBackend = Req | UpdateUsernameTypes.MsgToBackend
 
 export type Req =
   | { t: 'find-one'; userId: UserId }
@@ -116,36 +116,36 @@ export type Req =
 
 export type Res = Req & { result: Result<string, Profile[]> }
 
-export type ServerCtx = AppServerCtx
+export type BackendCtx = AppBackendCtx
 
-export type ServerModule = AppServerModule<{
-  Ctx: ServerCtx
+export type BackendModule = AppBackendModule<{
+  Ctx: BackendCtx
   MsgCmdIn: null
-  MsgEvtIn: ServerEvt
+  MsgEvtIn: BackendEvt
   Model: null
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
+  Msg: MsgBackend
+  MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: null
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
   Deps: null
 }>
 
-export type ClientCtx = AppClientCtx | AnonymousClientCtx
+export type FrontendCtx = AppFrontendCtx | AnonymousFrontendCtx
 
-export type ClientModule = AppClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Ctx: ClientCtx
+export type FrontendModule = AppFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  Ctx: FrontendCtx
   MsgCmdIn: ProfileCmd
-  MsgEvtIn: ClientEvt
-  MsgCmdOut: AppClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
+  MsgEvtIn: FrontendEvt
+  MsgCmdOut: AppFrontendCmd<{
+    MsgFrontend: MsgFrontend
+    MsgToBackend: MsgToBackend
   }>
-  MsgEvtOut: ClientEvt
+  MsgEvtOut: FrontendEvt
   ViewSlot: {
     bottomBar: null
   }

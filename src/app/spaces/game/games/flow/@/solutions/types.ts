@@ -1,41 +1,41 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { NotAsked, Result } from '~/@/result'
-import type { AppClientModule } from '~/app/@/architecture/app-client'
-import type { AppServerModule } from '~/app/@/architecture/app-server'
-import type { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { FlowClientEvtIn } from '../client/evt'
+import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import type { AppBackendModule } from '~/app/@/architecture/app-backend'
+import type { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import { FlowFrontendEvtIn } from '../frontend/evt'
 import { Variant } from '../variant'
-import { FlowServerCtx } from '../server/ctx'
+import { FlowBackendCtx } from '../backend/ctx'
 
-export type ModelClient = {
+export type ModelFrontend = {
   request: RequestResponse<string, null>
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   request: NotAsked,
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
-export type MsgClient = { t: 'solutions.noop' }
+export type MsgFrontend = { t: 'solutions.noop' }
 
-export type MsgServer = { t: 'solutions.noop' }
+export type MsgBackend = { t: 'solutions.noop' }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'solutions.find-solutions'
   flow: Variant.Model
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'solutions.found-solutions'
   found: Result<string, Variant.Model[]>
 }
 
-export type MsgInCmdClient = {
+export type MsgInCmdFrontend = {
   t: 'solutions'
   c: {
     t: 'find'
@@ -43,24 +43,24 @@ export type MsgInCmdClient = {
   }
 }
 
-export type ClientModule = AppClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Ctx: SpaceClientCtx
-  MsgEvtIn: FlowClientEvtIn
-  MsgCmdOut: SpaceClientCmd<{ MsgClient: MsgClient; MsgToServer: MsgToServer }>
-  MsgCmdIn: MsgInCmdClient
-  MsgEvtOut: SpaceClientEvt
+export type FrontendModule = AppFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  Ctx: SpaceFrontendCtx
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgCmdOut: SpaceFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>
+  MsgCmdIn: MsgInCmdFrontend
+  MsgEvtOut: SpaceFrontendEvt
 }>
 
-export type ServerModule = AppServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Ctx: FlowServerCtx
-  MsgEvtIn: SpaceServerEvt
+export type BackendModule = AppBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  Ctx: FlowBackendCtx
+  MsgEvtIn: SpaceBackendEvt
 }>

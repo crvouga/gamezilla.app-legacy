@@ -8,33 +8,33 @@ import { UserId } from '~/app/@/data/user-id'
 //
 //
 
-export type ModelClient = CreateNewPuzzleTypes.ModelClient
+export type ModelFrontend = CreateNewPuzzleTypes.ModelFrontend
 
-export const initClient: ModelClient = {
-  ...CreateNewPuzzleTypes.initClient,
+export const initFrontend: ModelFrontend = {
+  ...CreateNewPuzzleTypes.initFrontend,
 }
 
-export type MsgClient = CreateNewPuzzleTypes.MsgClient
+export type MsgFrontend = CreateNewPuzzleTypes.MsgFrontend
 
-export type MsgServer = CreateNewPuzzleTypes.MsgServer
+export type MsgBackend = CreateNewPuzzleTypes.MsgBackend
 
-export type MsgToServer = CreateNewPuzzleTypes.MsgToServer
+export type MsgToBackend = CreateNewPuzzleTypes.MsgToBackend
 
-export type MsgToClient = CreateNewPuzzleTypes.MsgToClient
+export type MsgToFrontend = CreateNewPuzzleTypes.MsgToFrontend
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   t: p.l('puzzle-list'),
   puzzle: Puzzle,
 })
 
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const MsgCore = p.or(
-  CreateNewPuzzleTypes.MsgCore,
+export const MsgSpace = p.or(
+  CreateNewPuzzleTypes.MsgSpace,
   p.obj({
     t: p.l('screen-puzzle-builder-open.clicked-puzzle-list-item'),
     puzzle: Puzzle,
     userId: UserId,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

@@ -14,23 +14,26 @@ import { GameMainMenu } from '../@/ui/game-main-menu'
 //
 //
 
-export type ModelClient = { t: 'vs-bot'; c: VsBot.ModelClient } | { t: 'vs-user'; c: VsUser.ModelClient } | { t: null }
+export type ModelFrontend =
+  | { t: 'vs-bot'; c: VsBot.ModelFrontend }
+  | { t: 'vs-user'; c: VsUser.ModelFrontend }
+  | { t: null }
 
-export const ModelServer = p.or(
+export const ModelBackend = p.or(
   p.obj({
     t: p.l('vs-bot'),
-    c: VsBot.ModelServer,
+    c: VsBot.ModelBackend,
   }),
   p.obj({
     t: p.l('vs-user'),
-    c: VsUser.ModelServer,
+    c: VsUser.ModelBackend,
   }),
   p.obj({
     t: p.l(null),
   }),
 )
 
-export type ModelServer = p.Infer<typeof ModelServer>
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
 export type Mode = 'none' | 'vs-user' | 'vs-bot'
 
@@ -42,17 +45,17 @@ export type Mode = 'none' | 'vs-user' | 'vs-bot'
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | GameMainMenu.Msg
-  | MsgCore
-  | { t: 'vs-user'; c: VsUser.MsgClient }
-  | { t: 'vs-bot'; c: VsBot.MsgClient }
+  | MsgSpace
+  | { t: 'vs-user'; c: VsUser.MsgFrontend }
+  | { t: 'vs-bot'; c: VsBot.MsgFrontend }
 
-export type MsgServer = { t: 'vs-user'; c: VsUser.MsgServer } | { t: 'vs-bot'; c: VsBot.MsgServer }
+export type MsgBackend = { t: 'vs-user'; c: VsUser.MsgBackend } | { t: 'vs-bot'; c: VsBot.MsgBackend }
 
-export type MsgToClient = { t: 'vs-user'; c: VsUser.MsgToClient } | { t: 'vs-bot'; c: VsBot.MsgToClient }
+export type MsgToFrontend = { t: 'vs-user'; c: VsUser.MsgToFrontend } | { t: 'vs-bot'; c: VsBot.MsgToFrontend }
 
-export type MsgToServer = { t: 'vs-user'; c: VsUser.MsgToServer } | { t: 'vs-bot'; c: VsBot.MsgToServer }
+export type MsgToBackend = { t: 'vs-user'; c: VsUser.MsgToBackend } | { t: 'vs-bot'; c: VsBot.MsgToBackend }
 
 //
 //
@@ -60,7 +63,7 @@ export type MsgToServer = { t: 'vs-user'; c: VsUser.MsgToServer } | { t: 'vs-bot
 //
 //
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-changed-mode'),
     mode: p.enumeration(['none', 'vs-user', 'vs-bot'] as const),
@@ -68,48 +71,48 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('vs-bot'),
-    c: VsBot.MsgCore,
+    c: VsBot.MsgSpace,
   }),
   p.obj({
     t: p.l('vs-user'),
-    c: VsUser.MsgCore,
+    c: VsUser.MsgSpace,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
-export const ModelCore = p.or(
+export const ModelSpace = p.or(
   p.obj({
     t: p.l('none'),
   }),
   p.obj({
     t: p.l('vs-user'),
-    c: VsUser.ModelCore,
+    c: VsUser.ModelSpace,
   }),
   p.obj({
     t: p.l('vs-bot'),
-    c: VsBot.ModelCore,
+    c: VsBot.ModelSpace,
   }),
 )
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const initCore = (): ModelCore => {
+export const initSpace = (): ModelSpace => {
   return {
     t: 'none',
   }
 }
 
-export const updateCore = ({
+export const updateSpace = ({
   ctx,
-  msgCore,
-  modelCore,
+  msgSpace,
+  modelSpace,
 }: {
   ctx: SpaceCtx
-  modelCore: ModelCore
-  msgCore: WithEventMeta<MsgCore>
-}): ModelCore => {
-  switch (msgCore.t) {
+  modelSpace: ModelSpace
+  msgSpace: WithEventMeta<MsgSpace>
+}): ModelSpace => {
+  switch (msgSpace.t) {
     case 'user-changed-mode': {
-      switch (msgCore.mode) {
+      switch (msgSpace.mode) {
         case 'none': {
           return {
             t: 'none',
@@ -119,54 +122,54 @@ export const updateCore = ({
         case 'vs-bot': {
           return {
             t: 'vs-bot',
-            c: VsBot.initCore(ctx),
+            c: VsBot.initSpace(ctx),
           }
         }
 
         case 'vs-user': {
           return {
             t: 'vs-user',
-            c: VsUser.initCore(ctx),
+            c: VsUser.initSpace(ctx),
           }
         }
 
         default: {
-          return modelCore
+          return modelSpace
         }
       }
     }
 
     case 'vs-bot': {
-      switch (modelCore.t) {
+      switch (modelSpace.t) {
         case 'vs-bot': {
           return {
             t: 'vs-bot',
-            c: VsBot.updateCore({
-              modelCore: modelCore.c,
-              msgCore: {
-                ...msgCore,
-                ...msgCore.c,
+            c: VsBot.updateSpace({
+              modelSpace: modelSpace.c,
+              msgSpace: {
+                ...msgSpace,
+                ...msgSpace.c,
               },
             }),
           }
         }
         default: {
-          return modelCore
+          return modelSpace
         }
       }
     }
 
     case 'vs-user': {
-      switch (modelCore.t) {
+      switch (modelSpace.t) {
         case 'vs-user': {
           return {
             t: 'vs-user',
-            c: VsUser.updateCore(modelCore.c, msgCore.c),
+            c: VsUser.updateSpace(modelSpace.c, msgSpace.c),
           }
         }
 
         default: {
-          return modelCore
+          return modelSpace
         }
       }
     }

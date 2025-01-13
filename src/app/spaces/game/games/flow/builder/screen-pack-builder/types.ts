@@ -14,45 +14,45 @@ import { EditPackNameTypes } from './edit-pack-name'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   packBuilder: {
-    flowPackPuzzleGrid: PackPuzzlesGridTypes.ModelClient
+    flowPackPuzzleGrid: PackPuzzlesGridTypes.ModelFrontend
   }
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   packBuilder: {
-    flowPackPuzzleGrid: PackPuzzlesGridTypes.initClient,
+    flowPackPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
   },
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
-export const initServer: ModelServer = null
+export const initBackend: ModelBackend = null
 
 //
 //
 //
 //
 
-export type MsgClient = {
+export type MsgFrontend = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgClient
+  c: PackPuzzlesGridTypes.MsgFrontend
 }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgServer
+  c: PackPuzzlesGridTypes.MsgBackend
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgToServer
+  c: PackPuzzlesGridTypes.MsgToBackend
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgToClient
+  c: PackPuzzlesGridTypes.MsgToFrontend
 }
 
 //
@@ -79,24 +79,24 @@ export const Screen = p.or(
 
 type Screen = p.Infer<typeof Screen>
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   pack: Pack,
   screen: Screen,
   slideIndex: p.num,
-  editPackName: EditPackNameTypes.ModelCore,
+  editPackName: EditPackNameTypes.ModelSpace,
 })
 
-export type ModelCore = {
+export type ModelSpace = {
   pack: Pack
   screen: Screen
   slideIndex: number
-  editPackName: EditPackNameTypes.ModelCore
+  editPackName: EditPackNameTypes.ModelSpace
 }
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('got-edit-pack-name-msg'),
-    c: EditPackNameTypes.MsgCore,
+    c: EditPackNameTypes.MsgSpace,
   }),
   p.obj({
     t: p.l('screen-pack-builder.saved-pack'),
@@ -157,4 +157,4 @@ export const MsgCore = p.or(
   }),
 )
 
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

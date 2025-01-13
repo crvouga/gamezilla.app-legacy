@@ -10,32 +10,32 @@ import { Puzzle } from '../../../@/puzzle/puzzle'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   puzzleCreateRequest: RemoteResult<string, null>
   puzzleCreateRequestedAt: Posix
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   puzzleCreateRequest: NotAsked,
   puzzleCreateRequestedAt: Posix.now(),
 }
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 //
 //
 //
 //
 
-export type MsgClient = {
+export type MsgFrontend = {
   t: 'create-new-puzzle.user-clicked-create-button'
 }
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToServer = { t: 'create-new-puzzle.user-clicked-create-button' }
+export type MsgToBackend = { t: 'create-new-puzzle.user-clicked-create-button' }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'created-puzzle'
   created: Result<string, Puzzle>
 }
@@ -46,9 +46,9 @@ export type MsgToClient = {
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('create-new-puzzle.user-created-puzzle'),
   created: Result.parser(p.str, Puzzle),
   userId: UserId,
 })
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

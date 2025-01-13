@@ -1,20 +1,20 @@
 import { Browser } from '~/@/browser'
+import { IHttpServer } from '~/@/http-server'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
-import { IWebServer } from '~/@/web-server'
+import { AppBackendCtx } from './@/backend/ctx'
 import { ClientId } from './@/data/client-id'
 import { SessionId } from './@/data/session-id'
 import { UserId } from './@/data/user-id'
-import { AppServerCtx } from './@/server/ctx'
-import type { Platform, Routing, Sound, StatusBar, Toast } from './app-client'
 import { AuthTypes } from './auth'
+import type { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
-import { IClientTransport } from './wire/transport/client'
-import { IServerTransport } from './wire/transport/server'
+import { IBackendTransport } from './wire/transport/backend'
+import { IFrontendTransport } from './wire/transport/frontend'
 
 //
 //
@@ -24,13 +24,13 @@ import { IServerTransport } from './wire/transport/server'
 //
 //
 
-export type ModelClient = {
-  auth: AuthTypes.ModelClient
-  spaces: SpacesTypes.ModelClient
-  profile: ProfileTypes.ModelClient
-  wire: WireTypes.ModelClient
-  lang: LangTypes.ModelClient
-  routing: Routing.Model
+export type ModelFrontend = {
+  auth: AuthTypes.ModelFrontend
+  spaces: SpacesTypes.ModelFrontend
+  profile: ProfileTypes.ModelFrontend
+  wire: WireTypes.ModelFrontend
+  lang: LangTypes.ModelFrontend
+  currentScreen: CurrentScreen.Model
   toast: Toast.Model
   sound: Sound.Model
   platform: Platform.Model
@@ -45,46 +45,46 @@ export type ModelClient = {
 //
 //
 
-export type MsgServer =
-  | ({ t: '→'; c: MsgToServer } & MsgToServerMeta)
-  | { t: 'wire'; c: WireTypes.MsgServer }
-  | { t: 'spaces'; c: SpacesTypes.MsgServer }
-  | { t: 'profile'; c: ProfileTypes.MsgServer }
-  | { t: 'auth'; c: AuthTypes.MsgServer }
-  | { t: 'lang'; c: LangTypes.MsgServer }
+export type MsgBackend =
+  | ({ t: '→'; c: MsgToBackend } & MsgToBackendMeta)
+  | { t: 'wire'; c: WireTypes.MsgBackend }
+  | { t: 'spaces'; c: SpacesTypes.MsgBackend }
+  | { t: 'profile'; c: ProfileTypes.MsgBackend }
+  | { t: 'auth'; c: AuthTypes.MsgBackend }
+  | { t: 'lang'; c: LangTypes.MsgBackend }
 
-export type MsgClient =
-  | { t: '→'; c: MsgToClient }
-  | { t: 'routing'; c: Routing.Msg }
+export type MsgFrontend =
+  | { t: '→'; c: MsgToFrontend }
+  | { t: 'current-screen'; c: CurrentScreen.Msg }
   | { t: 'toast'; c: Toast.Msg }
   | { t: 'sound'; c: Sound.Msg }
   | { t: 'platform'; c: Platform.Msg }
   | { t: 'status-bar'; c: StatusBar.Msg }
-  | { t: 'wire'; c: WireTypes.MsgClient }
-  | { t: 'spaces'; c: SpacesTypes.MsgClient }
-  | { t: 'auth'; c: AuthTypes.MsgClient }
-  | { t: 'profile'; c: ProfileTypes.MsgClient }
-  | { t: 'lang'; c: LangTypes.MsgClient }
+  | { t: 'wire'; c: WireTypes.MsgFrontend }
+  | { t: 'spaces'; c: SpacesTypes.MsgFrontend }
+  | { t: 'auth'; c: AuthTypes.MsgFrontend }
+  | { t: 'profile'; c: ProfileTypes.MsgFrontend }
+  | { t: 'lang'; c: LangTypes.MsgFrontend }
 
-export type MsgToServer =
-  | { t: 'spaces'; c: SpacesTypes.MsgToServer }
-  | { t: 'auth'; c: AuthTypes.MsgToServer }
-  | { t: 'profile'; c: ProfileTypes.MsgToServer }
-  | { t: 'wire'; c: WireTypes.MsgToServer }
-  | { t: 'lang'; c: LangTypes.MsgToServer }
+export type MsgToBackend =
+  | { t: 'spaces'; c: SpacesTypes.MsgToBackend }
+  | { t: 'auth'; c: AuthTypes.MsgToBackend }
+  | { t: 'profile'; c: ProfileTypes.MsgToBackend }
+  | { t: 'wire'; c: WireTypes.MsgToBackend }
+  | { t: 'lang'; c: LangTypes.MsgToBackend }
 
-export type MsgToClient =
-  | { t: 'spaces'; c: SpacesTypes.MsgToClient }
-  | { t: 'auth'; c: AuthTypes.MsgToClient }
-  | { t: 'profile'; c: ProfileTypes.MsgToClient }
-  | { t: 'wire'; c: WireTypes.MsgToClient }
-  | { t: 'lang'; c: LangTypes.MsgToClient }
+export type MsgToFrontend =
+  | { t: 'spaces'; c: SpacesTypes.MsgToFrontend }
+  | { t: 'auth'; c: AuthTypes.MsgToFrontend }
+  | { t: 'profile'; c: ProfileTypes.MsgToFrontend }
+  | { t: 'wire'; c: WireTypes.MsgToFrontend }
+  | { t: 'lang'; c: LangTypes.MsgToFrontend }
 
 //
 //
 //
 
-export type MsgToServerMeta = {
+export type MsgToBackendMeta = {
   sessionId: SessionId
   clientId: ClientId
   userId?: UserId | null
@@ -105,26 +105,26 @@ export const rpcContract = RPC.initContract({
 //
 //
 
-export type ServerCtx = AppServerCtx & {
-  transport: IServerTransport<{
-    MsgToClient: MsgToClient
-    MsgToServer: MsgToServer
+export type BackendCtx = AppBackendCtx & {
+  transport: IBackendTransport<{
+    MsgToFrontend: MsgToFrontend
+    MsgToBackend: MsgToBackend
   }>
-  wire: WireTypes.ServerCtx<MsgToClient, MsgToServer>
-  profile: ProfileTypes.ServerCtx
-  space: SpacesTypes.ServerCtx
-  auth: AuthTypes.ServerCtx
-  webServer: IWebServer
+  wire: WireTypes.BackendCtx<MsgToFrontend, MsgToBackend>
+  profile: ProfileTypes.BackendCtx
+  space: SpacesTypes.BackendCtx
+  auth: AuthTypes.BackendCtx
+  httpServer: IHttpServer
 }
 
-export type ClientCtx = {
+export type FrontendCtx = {
   now: Posix
-  rpc: RPC.Client<typeof rpcContract>
+  rpc: RPC.Frontend<typeof rpcContract>
   location: Browser.Location
   navigatorLanguage: LanguageCodeISO_639_1
-  transport: IClientTransport<{
-    MsgToServer: MsgToServer
-    MsgToClient: MsgToClient
+  transport: IFrontendTransport<{
+    MsgToBackend: MsgToBackend
+    MsgToFrontend: MsgToFrontend
   }>
   stored: Record<string, unknown>
 }

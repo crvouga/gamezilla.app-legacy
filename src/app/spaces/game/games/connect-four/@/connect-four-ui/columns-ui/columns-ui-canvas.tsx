@@ -104,7 +104,7 @@ const paint = ({ context, columns }: { context: CanvasRenderingContext2D; column
     }
   }
 
-  // this is a hack that prmsgCores a bug when creating the holes in board using the evenodd fill method
+  // this is a hack that prmsgSpaces a bug when creating the holes in board using the evenodd fill method
   context.beginPath()
   context.arc(width + cellWidth, height + cellHeight, cellWidth / 2, 0, Math.PI * 2)
   context.fillStyle = 'purple'

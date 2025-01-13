@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { pipe } from '~/@/function/pipe'
 import { UseHint } from '.'
-import { FixtureFlowClient } from '../../client/fixture'
+import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { Flow } from '../../flow'
 import { Solutions } from '../../solutions/solutions'
 import { Variant } from '../../variant'
@@ -13,7 +13,7 @@ type Input = {
 }
 
 const Fixture = async (input?: { ctxFlow?: Variant.Model }) => {
-  const f = await FixtureFlowClient()
+  const f = await FixtureFlowFrontend()
 
   const ctxFlow =
     input?.ctxFlow ??

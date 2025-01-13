@@ -9,32 +9,32 @@ import { Pack } from '../../../@/pack/pack'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   packCreateNewRequest: RemoteResult<string, null>
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   packCreateNewRequest: NotAsked,
 }
 
-export type ModelServer = Record<string, unknown>
+export type ModelBackend = Record<string, unknown>
 
 //
 //
 //
 //
 
-export type MsgClient = {
+export type MsgFrontend = {
   t: 'create-new-pack.clicked-create-button'
 }
 
-export type MsgToServer = { t: 'create-new-pack.clicked-create-button' }
+export type MsgToBackend = { t: 'create-new-pack.clicked-create-button' }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'noop'
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'create-new-pack.created-pack'
   created: Result<string, Pack>
 }
@@ -45,12 +45,12 @@ export type MsgToClient = {
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('user-created-pack'),
   created: Result.parser(p.str, Pack),
   userId: UserId,
 })
 
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
-export const ModelCore = p.obj({})
+export const ModelSpace = p.obj({})

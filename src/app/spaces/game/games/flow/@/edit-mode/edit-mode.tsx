@@ -2,8 +2,8 @@ import { eq } from '~/@/equals/equals'
 import { memoize } from '~/@/function/memoize'
 import { History } from '~/@/history'
 import { p } from '~/@/parser'
-import { APP_SOUND } from '~/app/@/client/cmd'
-import { AppClientCtx } from '~/app/@/client/ctx'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import {
   Button,
   Drawer,
@@ -479,7 +479,7 @@ export const toFlowMemoized = memoize({
 //
 //
 
-export const View = (input: { ctx: AppClientCtx; model: Model; dispatch: (m: Msg) => void }) => {
+export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: Msg) => void }) => {
   return (
     <BoardLayout
       top={

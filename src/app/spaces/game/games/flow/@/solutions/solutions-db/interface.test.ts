@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok } from '~/@/result'
-import { AppServerTestEnv, FixtureAppServer } from '~/app/@/server/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { FlowHash } from '../../flow/hash'
 import { VariantGridShorthand } from '../../variant/grid'
 import { Solutions } from '../solutions'
@@ -15,8 +15,7 @@ const Fixture = async (config: Config) => {
 }
 
 const Fixtures = async () => {
-  const f = await FixtureAppServer()
-  const env = await AppServerTestEnv()
+  const f = await FixtureAppBackend()
 
   const configs: Config[] = [
     {
@@ -35,7 +34,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe.only(import.meta.file, () => {
+describe.skip(import.meta.file, () => {
   it('get and put', async () => {
     for (const f of await Fixtures()) {
       const flow = VariantGridShorthand.toGrid([

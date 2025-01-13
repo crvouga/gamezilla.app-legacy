@@ -29,9 +29,9 @@ export type CoreModel = {
   }
 }
 
-export type ModelServer = CoreModel
+export type ModelBackend = CoreModel
 
-export type ModelClient = CoreModel & {
+export type ModelFrontend = CoreModel & {
   volume: number
   requests: {
     [key in Req[0]]?: RemoteResult<Problem, null>
@@ -46,18 +46,18 @@ export type ModelClient = CoreModel & {
 //
 //
 
-export type MsgServer = ['none']
+export type MsgBackend = ['none']
 
-export type MsgClient =
+export type MsgFrontend =
   | Req
   | ['clicked-banner']
   | ['MicSound', { volume: number }]
   | ['MicLoad', MicLoadResult]
   | ['MicUnload', MicUnloadResult]
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
-export type MsgToClient = Res
+export type MsgToFrontend = Res
 
 //
 //

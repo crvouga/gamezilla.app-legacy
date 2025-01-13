@@ -1,3 +1,3 @@
-export * as VsBotClient from './vs-bot.client'
+export * as VsBotFrontend from './vs-bot.frontend'
 export * as VsBot from './vs-bot.types'
-export * as VsBotServer from './vs-bot.server'
+export * as VsBotBackend from './vs-bot.backend'

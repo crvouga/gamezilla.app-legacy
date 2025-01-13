@@ -13,7 +13,7 @@ const { Err, Ok } = Result
 //
 //
 
-export type CoreModel = SetupModel | ModelCore | GameOverModel
+export type SpaceModel = SetupModel | ModelSpace | GameOverModel
 
 export type SetupModel = {
   type: 'setup'
@@ -23,7 +23,7 @@ export type SetupModel = {
   moveTimeLimit: MoveTimeLimit
 }
 
-export type ModelCore = {
+export type ModelSpace = {
   type: 'game'
   X: UserId
   O: UserId
@@ -84,7 +84,7 @@ export const bestOutOfToString = (bestOutOf: BestOutOf): string => {
   }
 }
 
-export const toWinCount = ({ maxRoundCount }: Pick<ModelCore, 'maxRoundCount'>): number => {
+export const toWinCount = ({ maxRoundCount }: Pick<ModelSpace, 'maxRoundCount'>): number => {
   return Math.floor(maxRoundCount / 2) + 1
 }
 
@@ -103,7 +103,7 @@ export const moveTimeLimitToString = (moveTimeLimit: MoveTimeLimit): string => {
   }
 }
 
-export const initCoreModel = ({ X, O }: { X: SetupModel['X']; O: SetupModel['O'] }): CoreModel => {
+export const initSpaceModel = ({ X, O }: { X: SetupModel['X']; O: SetupModel['O'] }): SpaceModel => {
   return {
     type: 'setup',
     O,
@@ -113,13 +113,13 @@ export const initCoreModel = ({ X, O }: { X: SetupModel['X']; O: SetupModel['O']
   }
 }
 
-export type ModelClient = CoreModel & {
+export type ModelFrontend = SpaceModel & {
   openedModal: 'none' | ModalName
 }
 
-export type ModelServer = CoreModel
+export type ModelBackend = SpaceModel
 
-export const parseModel = (): Result<string, CoreModel> => {
+export const parseModel = (): Result<string, SpaceModel> => {
   return Err('unimplemented')
 }
 
@@ -133,15 +133,15 @@ export const parseModel = (): Result<string, CoreModel> => {
 
 type ModalName = 'resignation'
 
-export type MsgClient = Req | ['OpenModal', ModalName] | ['close-modal']
+export type MsgFrontend = Req | ['OpenModal', ModalName] | ['close-modal']
 
-export type MsgServer = RoundCountDown | MoveCountDown
+export type MsgBackend = RoundCountDown | MoveCountDown
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
-export type MsgToClient = Res | RoundCountDown_Done | MoveCountDown_Done | ['player-left', CoreModel]
+export type MsgToFrontend = Res | RoundCountDown_Done | MoveCountDown_Done | ['player-left', SpaceModel]
 
-export type MsgCore = ['ClickedBoard', TicTacToe.Position]
+export type MsgSpace = ['ClickedBoard', TicTacToe.Position]
 
 export type Req =
   | InputPlayer
@@ -178,10 +178,10 @@ export type Res =
 //
 
 type InputPlayer = ['InputPlayer', { userId: UserId; playerType: TicTacToe.PlayerType }]
-type InputPlayer_Done = ['InputPlayer_Done', Result<InputPlayerProblem, CoreModel>]
+type InputPlayer_Done = ['InputPlayer_Done', Result<InputPlayerProblem, SpaceModel>]
 type InputPlayerProblem = 'player_is_taken' | 'must_be_in_setup_mode'
 
-export const inputPlayer = ({ userId, playerType }: InputPlayer[1], model: CoreModel): InputPlayer_Done[1] => {
+export const inputPlayer = ({ userId, playerType }: InputPlayer[1], model: SpaceModel): InputPlayer_Done[1] => {
   if (model.type !== 'setup') {
     return Err('must_be_in_setup_mode')
   }
@@ -196,7 +196,7 @@ export const inputPlayer = ({ userId, playerType }: InputPlayer[1], model: CoreM
 
   const otherPlayerNew = otherPlayer !== 'none' && otherPlayer === userId ? 'none' : otherPlayer
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     [playerType]: userId,
     [TicTacToe.toOpposite(playerType)]: otherPlayerNew,
@@ -206,10 +206,10 @@ export const inputPlayer = ({ userId, playerType }: InputPlayer[1], model: CoreM
 }
 
 type StopPlaying = ['stop-playing', { userId: UserId }]
-type StopPlaying_Done = ['StopPlaying_Done', Result<StopPlayingProblem, CoreModel>]
+type StopPlaying_Done = ['StopPlaying_Done', Result<StopPlayingProblem, SpaceModel>]
 type StopPlayingProblem = 'must_be_in_setup_mode' | 'not_playing'
 
-export const stopPlaying = ({ userId }: StopPlaying[1], model: CoreModel): StopPlaying_Done[1] => {
+export const stopPlaying = ({ userId }: StopPlaying[1], model: SpaceModel): StopPlaying_Done[1] => {
   if (model.type !== 'setup') {
     return Err('must_be_in_setup_mode')
   }
@@ -221,7 +221,7 @@ export const stopPlaying = ({ userId }: StopPlaying[1], model: CoreModel): StopP
     return Err('not_playing')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     X: isPlayingX ? 'none' : model.X,
     O: isPlayingO ? 'none' : model.O,
@@ -237,10 +237,10 @@ export const stopPlaying = ({ userId }: StopPlaying[1], model: CoreModel): StopP
 //
 
 type StartGame = ['start-game', { userId: UserId }]
-type StartGame_Done = ['StartGame_Done', Result<StartGameProblem, CoreModel>]
+type StartGame_Done = ['StartGame_Done', Result<StartGameProblem, SpaceModel>]
 type StartGameProblem = 'not_in_setup_mode' | 'missing_x' | 'missing_o' | 'missing_both' | 'not_playing'
 
-export const startGame = ({ userId }: StartGame[1], model: CoreModel): StartGame_Done[1] => {
+export const startGame = ({ userId }: StartGame[1], model: SpaceModel): StartGame_Done[1] => {
   if (model.type !== 'setup') {
     return Err('not_in_setup_mode')
   }
@@ -261,7 +261,7 @@ export const startGame = ({ userId }: StartGame[1], model: CoreModel): StartGame
     return Err('missing_o')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     type: 'game',
     X: model.X,
     O: model.O,
@@ -283,10 +283,10 @@ export const startGame = ({ userId }: StartGame[1], model: CoreModel): StartGame
 //
 
 type Resign = ['resign', { userId: UserId }]
-type Resign_Done = ['resign_Done', Result<ResignProblem, CoreModel>]
+type Resign_Done = ['resign_Done', Result<ResignProblem, SpaceModel>]
 type ResignProblem = 'not_in_game_mode' | 'not_playing'
 
-export const resign = ({ userId }: Resign[1], model: CoreModel): Resign_Done[1] => {
+export const resign = ({ userId }: Resign[1], model: SpaceModel): Resign_Done[1] => {
   if (model.type !== 'game') {
     return Err('not_in_game_mode')
   }
@@ -297,7 +297,7 @@ export const resign = ({ userId }: Resign[1], model: CoreModel): Resign_Done[1] 
     return Err('not_playing')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     type: 'game-over',
     gameOver: {
@@ -319,10 +319,10 @@ export const resign = ({ userId }: Resign[1], model: CoreModel): Resign_Done[1] 
 //
 
 type InputMove = ['input-move', { userId: UserId; position: TicTacToe.Position }]
-type InputMove_Done = ['input-move-done', Result<InputMoveProblem, CoreModel>]
+type InputMove_Done = ['input-move-done', Result<InputMoveProblem, SpaceModel>]
 type InputMoveProblem = TicTacToe.MoveProblem | 'not_playing' | 'not_game_mode' | 'round_not_started'
 
-export const inputMove = ({ userId, position }: InputMove[1], model: CoreModel): InputMove_Done[1] => {
+export const inputMove = ({ userId, position }: InputMove[1], model: SpaceModel): InputMove_Done[1] => {
   if (model.type !== 'game') {
     return Err('not_game_mode')
   }
@@ -356,7 +356,7 @@ export const inputMove = ({ userId, position }: InputMove[1], model: CoreModel):
   const roundOver = TicTacToe.toGameOver(boardNew)
 
   if (roundOver.type === 'none') {
-    const modelNew: CoreModel = {
+    const modelNew: SpaceModel = {
       ...model,
       round: Round.mapCurrent(model.round, () => ({
         type: 'RoundStarted',
@@ -368,7 +368,7 @@ export const inputMove = ({ userId, position }: InputMove[1], model: CoreModel):
     return Ok(modelNew)
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     round: Round.mapCurrent(model.round, () => ({
       type: 'RoundOver',
@@ -402,10 +402,10 @@ export const inputMove = ({ userId, position }: InputMove[1], model: CoreModel):
 }
 
 type MoveCountDown = ['MoveCountDown']
-type MoveCountDown_Done = ['MoveCountDown_Done', Result<MoveCountDownProblem, CoreModel>]
+type MoveCountDown_Done = ['MoveCountDown_Done', Result<MoveCountDownProblem, SpaceModel>]
 type MoveCountDownProblem = 'not_in_game_mode' | 'round_not_started' | 'no_empty_positions' | InputMoveProblem
 
-export const moveCountDown = (model: CoreModel): MoveCountDown_Done[1] => {
+export const moveCountDown = (model: SpaceModel): MoveCountDown_Done[1] => {
   if (model.type !== 'game') {
     return Err('not_in_game_mode')
   }
@@ -421,7 +421,7 @@ export const moveCountDown = (model: CoreModel): MoveCountDown_Done[1] => {
   const moveCountDownNew = Math.max(moveCountDown - 1, 0)
 
   if (moveCountDownNew > 0) {
-    const modelNew: CoreModel = {
+    const modelNew: SpaceModel = {
       ...model,
       round: Round.mapCurrent(model.round, () => ({
         type: 'RoundStarted',
@@ -466,10 +466,10 @@ export const moveCountDown = (model: CoreModel): MoveCountDown_Done[1] => {
 //
 
 type NewGame = ['NewGame', { userId: UserId }]
-type NewGame_Done = ['NewGame_Done', Result<NewGameProblem, CoreModel>]
+type NewGame_Done = ['NewGame_Done', Result<NewGameProblem, SpaceModel>]
 type NewGameProblem = 'not_playing' | 'not_game_over'
 
-export const NewGame = ({ userId }: NewGame[1], model: CoreModel): NewGame_Done[1] => {
+export const NewGame = ({ userId }: NewGame[1], model: SpaceModel): NewGame_Done[1] => {
   if (model.type !== 'game-over') {
     return Err('not_game_over')
   }
@@ -478,7 +478,7 @@ export const NewGame = ({ userId }: NewGame[1], model: CoreModel): NewGame_Done[
     return Err('not_playing')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     type: 'setup',
     moveTimeLimit: model.moveTimeLimit,
     O: model.O,
@@ -513,10 +513,10 @@ export const NewGameToString = (result: NewGame_Done[1]): string => {
 //
 
 type InputBestOutOf = ['InputBestOutOf', { userId: UserId; bestOutOf: BestOutOf }]
-type InputBestOutOf_Done = ['InputBestOutOf_Done', Result<InputBestOutOfProblem, CoreModel>]
+type InputBestOutOf_Done = ['InputBestOutOf_Done', Result<InputBestOutOfProblem, SpaceModel>]
 type InputBestOutOfProblem = 'not_in_setup_mode' | 'not_playing'
 
-export const inputBestOutOf = ({ userId, bestOutOf }: InputBestOutOf[1], model: CoreModel): InputBestOutOf_Done[1] => {
+export const inputBestOutOf = ({ userId, bestOutOf }: InputBestOutOf[1], model: SpaceModel): InputBestOutOf_Done[1] => {
   if (model.type !== 'setup') {
     return Err('not_in_setup_mode')
   }
@@ -525,7 +525,7 @@ export const inputBestOutOf = ({ userId, bestOutOf }: InputBestOutOf[1], model: 
     return Err('not_playing')
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     maxRoundCount: bestOutOf,
   }
@@ -565,10 +565,10 @@ export const inputBestOutOfToString = (result: InputBestOutOf_Done[1]): string =
 //
 
 type RoundCountDown = ['RoundCountDown']
-type RoundCountDown_Done = ['RoundCountDown_Done', Result<RoundCountDownProblem, CoreModel>]
+type RoundCountDown_Done = ['RoundCountDown_Done', Result<RoundCountDownProblem, SpaceModel>]
 type RoundCountDownProblem = 'not_in_game_mode' | 'round_not_starting'
 
-export const roundCountDown = (model: CoreModel): RoundCountDown_Done[1] => {
+export const roundCountDown = (model: SpaceModel): RoundCountDown_Done[1] => {
   if (model.type !== 'game') {
     return Err('not_in_game_mode')
   }
@@ -582,7 +582,7 @@ export const roundCountDown = (model: CoreModel): RoundCountDown_Done[1] => {
   const countDownNew = Math.max(round.countDown - 1, 0)
 
   if (countDownNew === 0) {
-    const modelNew: CoreModel = {
+    const modelNew: SpaceModel = {
       ...model,
       round: Round.mapCurrent(model.round, () => ({
         type: 'RoundStarted',
@@ -594,7 +594,7 @@ export const roundCountDown = (model: CoreModel): RoundCountDown_Done[1] => {
     return Ok(modelNew)
   }
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     round: Round.mapCurrent(model.round, () => ({
       type: 'RoundStarting',
@@ -614,10 +614,10 @@ export const roundCountDown = (model: CoreModel): RoundCountDown_Done[1] => {
 //
 
 type RematchAsk = ['RematchAsk', { userId: UserId }]
-type RematchAsk_Done = ['RematchAsk_Done', Result<RematchAskProblem, CoreModel>]
+type RematchAsk_Done = ['RematchAsk_Done', Result<RematchAskProblem, SpaceModel>]
 type RematchAskProblem = 'not_game_over' | 'already_asking' | 'not_player'
 
-export const rematchAsk = ({ userId }: RematchAsk[1], model: CoreModel): RematchAsk_Done[1] => {
+export const rematchAsk = ({ userId }: RematchAsk[1], model: SpaceModel): RematchAsk_Done[1] => {
   if (model.type !== 'game-over') {
     return Err('not_game_over')
   }
@@ -670,10 +670,10 @@ export const rematchAskToString = (result: RematchAsk_Done[1]): string => {
 }
 
 type Rematch_Cancel = ['Rematch_Cancel', { userId: UserId }]
-type Rematch_Cancel_Done = ['Rematch_Cancel_Done', Result<Rematch_CancelProblem, CoreModel>]
+type Rematch_Cancel_Done = ['Rematch_Cancel_Done', Result<Rematch_CancelProblem, SpaceModel>]
 type Rematch_CancelProblem = 'not_game_over' | 'not_asking' | 'not_asker' | 'not_player'
 
-export const rematchCancel = ({ userId }: Rematch_Cancel[1], model: CoreModel): Rematch_Cancel_Done[1] => {
+export const rematchCancel = ({ userId }: Rematch_Cancel[1], model: SpaceModel): Rematch_Cancel_Done[1] => {
   if (model.type !== 'game-over') {
     return Err('not_game_over')
   }
@@ -696,10 +696,10 @@ export const rematchCancel = ({ userId }: Rematch_Cancel[1], model: CoreModel): 
 }
 
 type RematchDecline = ['RematchDecline', { userId: UserId }]
-type RematchDecline_Done = ['RematchDecline_Done', Result<RematchDeclineProblem, CoreModel>]
+type RematchDecline_Done = ['RematchDecline_Done', Result<RematchDeclineProblem, SpaceModel>]
 type RematchDeclineProblem = 'not_game_over' | 'not_player' | 'is_asker' | 'not_asking'
 
-export const rematchDecline = ({ userId }: RematchDecline[1], model: CoreModel): RematchDecline_Done[1] => {
+export const rematchDecline = ({ userId }: RematchDecline[1], model: SpaceModel): RematchDecline_Done[1] => {
   if (model.type !== 'game-over') {
     return Err('not_game_over')
   }
@@ -720,10 +720,10 @@ export const rematchDecline = ({ userId }: RematchDecline[1], model: CoreModel):
 }
 
 type RematchAccept = ['RematchAccept', { userId: UserId }]
-type RematchAccept_Done = ['RematchAccept_Done', Result<RematchAcceptProblem, CoreModel>]
+type RematchAccept_Done = ['RematchAccept_Done', Result<RematchAcceptProblem, SpaceModel>]
 type RematchAcceptProblem = 'not_game_over' | 'not_player' | 'is_asker' | 'not_asking'
 
-export const rematchAccept = ({ userId }: RematchAccept[1], model: CoreModel): RematchAccept_Done[1] => {
+export const rematchAccept = ({ userId }: RematchAccept[1], model: SpaceModel): RematchAccept_Done[1] => {
   if (model.type !== 'game-over') {
     return Err('not_game_over')
   }

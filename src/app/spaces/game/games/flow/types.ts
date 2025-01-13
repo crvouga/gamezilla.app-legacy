@@ -1,13 +1,13 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
-import { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
-import { FlowClientCmd, FlowClientCmdLocal } from './@/client/cmd'
-import { FlowClientEvtIn } from './@/client/evt'
+import { FlowFrontendCmd, FlowFrontendCmdLocal } from './@/frontend/cmd'
+import { FlowFrontendEvtIn } from './@/frontend/evt'
 import { Pack } from './@/pack/pack'
 import type { PackId } from './@/pack/pack-id'
 import { PackListTypes } from './@/pack/pack-list'
@@ -15,7 +15,7 @@ import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleListTypes } from './@/puzzle/puzzle-list'
-import { FlowServerCtx } from './@/server/ctx'
+import { FlowBackendCtx } from './@/backend/ctx'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderTypes } from './builder'
 import { PlayTypes } from './play'
@@ -26,7 +26,7 @@ import { PlayTypes } from './play'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   puzzles: {
     [puzzleId: PuzzleId]: Puzzle
   }
@@ -34,28 +34,28 @@ export type ModelClient = {
     [packId: PackId]: Pack
   }
   solutions: Solutions
-  puzzleList: PuzzleListTypes.ModelClient
-  packList: PackListTypes.ModelClient
-  packPuzzleGrid: PackPuzzlesGridTypes.ModelClient
-  builder: BuilderTypes.ModelClient
-  play: PlayTypes.ModelClient
+  puzzleList: PuzzleListTypes.ModelFrontend
+  packList: PackListTypes.ModelFrontend
+  packPuzzleGrid: PackPuzzlesGridTypes.ModelFrontend
+  builder: BuilderTypes.ModelFrontend
+  play: PlayTypes.ModelFrontend
 }
 
-export const ModelServer = p.or(
+export const ModelBackend = p.or(
   p.obj({
     t: p.l('none'),
   }),
   p.obj({
     t: p.l('builder'),
-    c: BuilderTypes.ModelServer,
+    c: BuilderTypes.ModelBackend,
   }),
   p.obj({
     t: p.l('play'),
-    c: PlayTypes.ModelServer,
+    c: PlayTypes.ModelBackend,
   }),
 )
 
-export type ModelServer = p.Infer<typeof ModelServer>
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
 //
 //
@@ -63,35 +63,35 @@ export type ModelServer = p.Infer<typeof ModelServer>
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | GameMainMenu.Msg
-  | { t: 'got-msg-core'; c: MsgCore }
-  | { t: 'builder'; c: BuilderTypes.MsgClient }
-  | { t: 'play'; c: PlayTypes.MsgClient }
-  | { t: 'pack-list'; c: PackListTypes.MsgClient }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgClient }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgClient }
+  | { t: 'got-msg-space'; c: MsgSpace }
+  | { t: 'builder'; c: BuilderTypes.MsgFrontend }
+  | { t: 'play'; c: PlayTypes.MsgFrontend }
+  | { t: 'pack-list'; c: PackListTypes.MsgFrontend }
+  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgFrontend }
+  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgFrontend }
 
-export type MsgServer =
-  | { t: 'builder'; c: BuilderTypes.MsgServer }
-  | { t: 'play'; c: PlayTypes.MsgServer }
-  | { t: 'pack-list'; c: PackListTypes.MsgServer }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgServer }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgServer }
+export type MsgBackend =
+  | { t: 'builder'; c: BuilderTypes.MsgBackend }
+  | { t: 'play'; c: PlayTypes.MsgBackend }
+  | { t: 'pack-list'; c: PackListTypes.MsgBackend }
+  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgBackend }
+  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgBackend }
 
-export type MsgToServer =
-  | { t: 'builder'; c: BuilderTypes.MsgToServer }
-  | { t: 'play'; c: PlayTypes.MsgToServer }
-  | { t: 'pack-list'; c: PackListTypes.MsgToServer }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToServer }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgToServer }
+export type MsgToBackend =
+  | { t: 'builder'; c: BuilderTypes.MsgToBackend }
+  | { t: 'play'; c: PlayTypes.MsgToBackend }
+  | { t: 'pack-list'; c: PackListTypes.MsgToBackend }
+  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToBackend }
+  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgToBackend }
 
-export type MsgToClient =
-  | { t: 'builder'; c: BuilderTypes.MsgToClient }
-  | { t: 'play'; c: PlayTypes.MsgToClient }
-  | { t: 'pack-list'; c: PackListTypes.MsgToClient }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToClient }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgToClient }
+export type MsgToFrontend =
+  | { t: 'builder'; c: BuilderTypes.MsgToFrontend }
+  | { t: 'play'; c: PlayTypes.MsgToFrontend }
+  | { t: 'pack-list'; c: PackListTypes.MsgToFrontend }
+  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToFrontend }
+  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgToFrontend }
 
 const MODE = ['builder', 'play'] as const
 export const Mode = p.enumeration(MODE)
@@ -105,7 +105,7 @@ export type Mode = p.Infer<typeof Mode>
 //
 //
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-changed-mode'),
     mode: p.or(Mode, p.l('none')),
@@ -113,22 +113,22 @@ export const MsgCore = p.or(
   }),
   p.obj({
     t: p.l('play'),
-    c: PlayTypes.MsgCore,
+    c: PlayTypes.MsgSpace,
   }),
   p.obj({
     t: p.l('builder'),
-    c: BuilderTypes.MsgCore,
+    c: BuilderTypes.MsgSpace,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   mode: p.or(Mode, p.l('none')),
-  play: PlayTypes.ModelCore,
-  builder: BuilderTypes.ModelCore,
+  play: PlayTypes.ModelSpace,
+  builder: BuilderTypes.ModelSpace,
   solutions: Solutions,
 })
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
 //
 //
@@ -138,31 +138,31 @@ export type ModelCore = p.Infer<typeof ModelCore>
 //
 //
 
-export type ClientModule = GameClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  MsgCore: MsgCore
-  ModelCore: ModelCore
-  Ctx: SpaceClientCtx
-  MsgCmdOut: FlowClientCmd<{
-    MsgToServer: MsgToServer
-    MsgClient: MsgClient
+export type FrontendModule = GameFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
+  Ctx: SpaceFrontendCtx
+  MsgCmdOut: FlowFrontendCmd<{
+    MsgToBackend: MsgToBackend
+    MsgFrontend: MsgFrontend
   }>
-  MsgCmdIn: FlowClientCmdLocal
-  MsgEvtIn: FlowClientEvtIn
-  MsgEvtOut: FlowClientEvtIn
+  MsgCmdIn: FlowFrontendCmdLocal
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgEvtOut: FlowFrontendEvtIn
 }>
 
-export type ServerModule = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  MsgCore: MsgCore
-  ModelCore: ModelCore
-  Ctx: FlowServerCtx
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+export type BackendModule = GameBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
+  Ctx: FlowBackendCtx
+  MsgEvtIn: SpaceBackendEvt
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
 }>

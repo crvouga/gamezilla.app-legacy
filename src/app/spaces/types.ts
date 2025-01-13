@@ -1,24 +1,25 @@
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import { RequestResponse } from '~/@/request-response/request-response'
-import type { AppClientModule } from '~/app/@/architecture/app-client'
-import type { AppServerModule } from '~/app/@/architecture/app-server'
-import { AppClientCmd } from '~/app/@/client/cmd'
-import { AnonymousClientCtx, AppClientCtx } from '~/app/@/client/ctx'
-import { ClientEvt } from '~/app/@/client/evt'
+import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import type { AppBackendModule } from '~/app/@/architecture/app-backend'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { FrontendEvt } from '~/app/@/frontend/evt'
 import { UserAccount } from '~/app/@/data/account'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { ServerCmd } from '~/app/@/server/cmd'
-import { AppServerCtx } from '~/app/@/server/ctx'
-import { ServerEvt } from '~/app/@/server/evt'
-import { SpacesCoreClient } from './core/client'
-import { ISpacesCoreServer } from './core/server/interface'
-import { SpaceCore } from './core/space-core'
-import { SpaceEvent } from './core/space-event'
+import { BackendCmd } from '~/app/@/backend/cmd'
+import { AppBackendCtx } from '~/app/@/backend/ctx'
+import { BackendEvt } from '~/app/@/backend/evt'
+import { SpacesSpaceFrontend } from './space/frontend'
+import { ISpaceBackend } from './space/backend/interface'
+import { Space } from './space/space'
+import { SpaceEvent } from './space/space-event'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
-import { SpaceClientCmd } from './@/space-client/cmd'
+import { SpaceFrontendCmd } from './@/space-frontend/cmd'
+import { Pagination } from '~/@/query/query'
 
 //
 //
@@ -28,16 +29,16 @@ import { SpaceClientCmd } from './@/space-client/cmd'
 //
 //
 
-export type ServerCtx = AppServerCtx & {
-  spacesCoreServer: ISpacesCoreServer
-  games: GamesTypes.GameServerCtx
+export type BackendCtx = AppBackendCtx & {
+  spaceBackend: ISpaceBackend
+  games: GamesTypes.GameBackendCtx
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
-export type ModelClient = SpacesCoreClient.Model & {
+export type ModelFrontend = SpacesSpaceFrontend.Model & {
   games: {
-    [spaceId: SpaceId]: GamesTypes.ModelClient
+    [spaceId: SpaceId]: GamesTypes.ModelFrontend
   }
   modalPreviewUserId: UserId | null
   modal: null | 'user-preview' | 'users'
@@ -52,12 +53,12 @@ export type ModelClient = SpacesCoreClient.Model & {
 //
 //
 
-export type MsgServer =
-  | { t: 'got-msg-core'; c: WithEventId<SpaceEvent> }
-  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgServer }
+export type MsgBackend =
+  | { t: 'got-msg-space'; c: WithEventId<SpaceEvent> }
+  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgBackend }
 
-export type MsgClient =
-  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgClient }
+export type MsgFrontend =
+  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgFrontend }
   | { t: 'time-passed' }
   | { t: 'clicked-go-home-button' }
   | { t: 'clicked-game-tile'; gameName: GameName }
@@ -72,46 +73,45 @@ export type MsgClient =
   | { t: 'clicked-preview-user-link' }
   | { t: 'clicked-current-space-bottom-bar' }
 
-export type MsgToClient = MsgToClientExtra &
+export type MsgToFrontend = MsgToFrontendExtra &
   (
     | {
-        t: 'got-msg-core'
+        t: 'got-msg-space'
         c: WithEventMeta<SpaceEvent>
       }
     | {
         t: 'listed-spaces'
-        spaces: SpaceCore.Model[]
+        spaces: Space.Model[]
       }
     | {
         t: 'synced'
-        space: SpaceCore.Model
+        space: Space.Model
       }
     | {
         t: 'current-user-space'
-        space: SpaceCore.Model
+        space: Space.Model
         currentUser: UserAccount
       }
     | {
         t: 'game'
         spaceId: SpaceId
-        c: GamesTypes.MsgToClient
+        c: GamesTypes.MsgToFrontend
       }
   )
 
-export type MsgToServer = MsgToServerExtra &
+export type MsgToBackend = MsgToBackendExtra &
   (
     | {
-        t: 'got-msg-core'
+        t: 'got-msg-space'
         c: WithEventMeta<SpaceEvent>
       }
     | {
         t: 'sync'
-        space: SpaceCore.Model
+        space: Space.Model
       }
     | {
         t: 'list-spaces'
-        limit: number
-        offset: number
+        pagination: Pagination
         where?: {
           spaceId?: SpaceId
         }
@@ -119,17 +119,17 @@ export type MsgToServer = MsgToServerExtra &
     | {
         t: 'game'
         spaceId: SpaceId
-        c: GamesTypes.MsgToServer
+        c: GamesTypes.MsgToBackend
       }
   )
 
-export type MsgToClientExtra = {
+export type MsgToFrontendExtra = {
   profiles?: { [userId: UserId]: Profile }
   causedBy?: unknown
   meta?: Record<string, unknown>
 }
 
-export type MsgToServerExtra = {
+export type MsgToBackendExtra = {
   profiles?: { [userId: UserId]: Profile }
   meta?: Record<string, unknown>
   causedBy?: unknown
@@ -144,36 +144,36 @@ export type MsgToServerExtra = {
 //
 //
 
-export type ClientModule = AppClientModule<{
-  Ctx: AnonymousClientCtx | AppClientCtx
-  MsgCmdIn: SpaceClientCmd<{
-    MsgToServer: MsgToServer
-    MsgClient: MsgClient
+export type FrontendModule = AppFrontendModule<{
+  Ctx: AnonymousFrontendCtx | AppFrontendCtx
+  MsgCmdIn: SpaceFrontendCmd<{
+    MsgToBackend: MsgToBackend
+    MsgFrontend: MsgFrontend
   }>
-  MsgEvtIn: ClientEvt
-  Model: ModelClient
-  Msg: MsgClient
-  MsgCmdOut: AppClientCmd<{
-    MsgToServer: MsgToServer
-    MsgClient: MsgClient
+  MsgEvtIn: FrontendEvt
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgCmdOut: AppFrontendCmd<{
+    MsgToBackend: MsgToBackend
+    MsgFrontend: MsgFrontend
   }>
-  MsgEvtOut: ClientEvt
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgEvtOut: FrontendEvt
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
   ViewSlot: {
     bottomBar: null
   }
 }>
 
-export type ServerModule = AppServerModule<{
-  Ctx: ServerCtx
+export type BackendModule = AppBackendModule<{
+  Ctx: BackendCtx
   MsgCmdIn: null
-  MsgEvtIn: ServerEvt
-  Model: ModelServer
-  Msg: MsgServer
-  MsgCmdOut: ServerCmd<MsgToClient>
+  MsgEvtIn: BackendEvt
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: null
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
   Deps: null
 }>

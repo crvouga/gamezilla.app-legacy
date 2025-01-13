@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import * as RPC from './rpc'
-import { WebServer } from '~/@/web-server'
-import { WebClient } from '~/@/web-client'
+import { HttpServer } from '~/@/http-server'
+import { HttpClient } from '~/@/http-client'
 import { Logger } from '~/@/logger'
 
 const childRpcContract = RPC.initContract({
@@ -15,7 +15,7 @@ const childRpcContract = RPC.initContract({
   },
 })
 
-const childRpcServer = RPC.initServer(childRpcContract, {
+const childRpcBackend = RPC.initBackend(childRpcContract, {
   async baz(input) {
     return {
       message: `Yo, ${input.name}`,
@@ -44,8 +44,8 @@ const rpcContract = RPC.initContract({
   },
 })
 
-const rpcServer = RPC.initServer(rpcContract, {
-  child: childRpcServer,
+const rpcBackend = RPC.initBackend(rpcContract, {
+  child: childRpcBackend,
   async bar(input) {
     return {
       message: `Hi, ${input.name}`,
@@ -64,15 +64,15 @@ const rpcServer = RPC.initServer(rpcContract, {
 //
 //
 
-const webServer = WebServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
-const webClient = WebClient({ t: 'fetch', fetch: fetch as Fetch })
+const httpServer = HttpServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
+const webFrontend = HttpClient({ t: 'fetch', fetch: fetch as Fetch })
 
-RPC.withRPC({ webServer, contract: rpcContract, handlers: rpcServer })
+RPC.withRPC({ httpServer, contract: rpcContract, handlers: rpcBackend })
 
-const rpcClient = RPC.initClient(webClient, rpcContract)
+const rpcFrontend = RPC.initFrontend(webFrontend, rpcContract)
 
 ;async () => {
-  await rpcClient.foo({ name: 'Alice', age: 30 })
+  await rpcFrontend.foo({ name: 'Alice', age: 30 })
 
-  await rpcClient.bar({ name: 'Bob' })
+  await rpcFrontend.bar({ name: 'Bob' })
 }

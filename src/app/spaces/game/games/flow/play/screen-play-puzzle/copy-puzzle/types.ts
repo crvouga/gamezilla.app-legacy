@@ -1,6 +1,6 @@
 import { p } from '~/@/parser'
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-clicked-copy-to-clipboard'),
   }),

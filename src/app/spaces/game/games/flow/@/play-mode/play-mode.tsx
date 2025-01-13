@@ -2,7 +2,7 @@ import { pipe } from '~/@/function/pipe'
 import { Translator } from '~/@/l18n/generated'
 import { p } from '~/@/parser'
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, AppClientCmd, playSound, showToast } from '~/app/@/client/cmd'
+import { APP_SOUND, AppFrontendCmd, playSound, showToast } from '~/app/@/frontend/cmd'
 import { IconCheckmark, Portal, Transition } from '~/app/@/ui'
 import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
@@ -261,12 +261,12 @@ export type Event =
       t: 'reset'
     }
 
-export const eventsToClientCmd = (
+export const eventsToFrontendCmd = (
   { t }: { t: Translator },
   events?: Event[] | null,
-): AppClientCmd<{
-  MsgClient: never
-  MsgToServer: never
+): AppFrontendCmd<{
+  MsgFrontend: never
+  MsgToBackend: never
 }>[] => {
   return (
     events?.map((event) => {

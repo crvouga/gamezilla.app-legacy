@@ -21,7 +21,7 @@ import type { Position } from '../@/gomoku/gomoku-position'
 //
 //
 
-export type Model = SetupModel | ModelCore
+export type Model = SetupModel | ModelSpace
 
 export type SetupModel = {
   type: 'setup'
@@ -30,7 +30,7 @@ export type SetupModel = {
   botLevel: BotLevel
 }
 
-export type ModelCore = {
+export type ModelSpace = {
   type: 'game'
   userId: UserId
   userStone: Stone
@@ -38,9 +38,9 @@ export type ModelCore = {
   board: Board
 }
 
-export type ModelClient = Model
+export type ModelFrontend = Model
 
-export type ModelServer = Model
+export type ModelBackend = Model
 
 export const initShared = ({ userId }: { userId: UserId | null }): Model => {
   return {
@@ -59,13 +59,13 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
 //
 //
 
-export type MsgClient = Req
+export type MsgFrontend = Req
 
-export type MsgServer = { t: 'none' }
+export type MsgBackend = { t: 'none' }
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
-export type MsgToClient = Res | { t: 'bot-moved'; result: Result<string, Model> }
+export type MsgToFrontend = Res | { t: 'bot-moved'; result: Result<string, Model> }
 
 //
 //

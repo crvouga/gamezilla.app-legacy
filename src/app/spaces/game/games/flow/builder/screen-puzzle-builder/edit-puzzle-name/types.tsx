@@ -10,13 +10,13 @@ import { Translator } from '~/@/l18n/generated'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   puzzleEditNameRequest: RemoteResult<string, null>
   puzzleEditNameDraft: string
   puzzleEditNameValidationError: EditNameValidationError
 }
 
-export const initClient: ModelClient = {
+export const initFrontend: ModelFrontend = {
   puzzleEditNameDraft: '',
   puzzleEditNameRequest: NotAsked,
   puzzleEditNameValidationError: null,
@@ -38,14 +38,14 @@ export const editNameValidationErrorToString = (
   }
 }
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 //
 //
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | {
       t: 'puzzle.edit-name.user-inputted-draft-name'
       draftName: string
@@ -55,15 +55,15 @@ export type MsgClient =
   | { t: 'puzzle.edit-name.user-clicked-save-button' }
   | { t: 'puzzle.edit-name.user-clicked-cancel-button' }
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'puzzle.edit-name.user-clicked-save-button'
   newName: string
   flowPuzzleId: PuzzleId
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'noop'
 }
 
@@ -73,11 +73,11 @@ export type MsgToClient = {
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('user-edited-puzzle-name'),
   edited: Result.parser(p.str, p.l(null)),
   flowPuzzleId: PuzzleId,
   newName: p.str,
   userId: UserId,
 })
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

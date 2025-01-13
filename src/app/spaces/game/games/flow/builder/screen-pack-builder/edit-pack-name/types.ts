@@ -4,7 +4,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../../@/pack/pack'
 import { PackName } from '../../../@/pack/pack-name'
 
-export type MsgClient = MsgCore
+export type MsgFrontend = MsgSpace
 
 type EditPackNameValidationError = { t: 'name-cannot-be-empty' }
 
@@ -12,16 +12,16 @@ export const EditPackNameValidationError = p.obj({
   t: p.l('name-cannot-be-empty'),
 })
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   pack: Pack,
   draft: p.str,
   result: RemoteResult.parser(p.str, p.unknown),
   rollback: PackName,
   validationError: p.or(EditPackNameValidationError, p.l(null)),
 })
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('edit-pack-name.user-inputted-draft-name'),
     userId: UserId,
@@ -32,7 +32,7 @@ export const MsgCore = p.or(
     userId: UserId,
   }),
   p.obj({
-    t: p.l('edit-pack-name.server-persisted-pack'),
+    t: p.l('edit-pack-name.backend-persisted-pack'),
     userId: UserId,
     result: Result.parser(p.str, p.unknown),
   }),
@@ -41,4 +41,4 @@ export const MsgCore = p.or(
     userId: UserId,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

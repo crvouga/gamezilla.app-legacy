@@ -1,6 +1,6 @@
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Typography } from '~/app/@/ui'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { ViewHostChip } from './host-chip'
 import { ViewYouChip } from './you-chip'
 
@@ -8,10 +8,10 @@ export const ViewUsersInSpaceList = ({
   ctx,
   onOpenUserDetails,
 }: {
-  ctx: SpaceClientCtx
+  ctx: SpaceFrontendCtx
   onOpenUserDetails: (userId: UserId) => void
 }) => {
-  const profiles = SpaceClientCtx.toProfiles(ctx)
+  const profiles = SpaceFrontendCtx.toProfiles(ctx)
   return (
     <section className='flex w-full flex-col gap-3 py-4'>
       <Typography variant='title' className='px-4' text={ctx.t('app.people')} />

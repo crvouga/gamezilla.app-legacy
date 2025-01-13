@@ -3,7 +3,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceCore } from '../../core/space-core'
+import { Space } from '../../space/space'
 
 export const makeSpace = ({
   spaceId,
@@ -13,24 +13,24 @@ export const makeSpace = ({
   spaceId: SpaceId
   hostId: UserId
   guestId?: UserId
-}): SpaceCore.Model => {
+}): Space.Model => {
   return pipe(
-    SpaceCore.init,
+    Space.init,
     (model) =>
       EventSourced.appendEvent(
-        SpaceCore.config,
+        Space.config,
         model,
         withEventId({ t: 'user-started-space', spaceId: spaceId, userId: hostId } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceCore.config,
+        Space.config,
         model,
         withEventId({ t: 'user-inputted-game', spaceId: spaceId, userId: hostId, game: 'connect-four' } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
-        SpaceCore.config,
+        Space.config,
         model,
         withEventId({ t: 'user-joined-space', spaceId: spaceId, userId: guestId } as const),
       ),

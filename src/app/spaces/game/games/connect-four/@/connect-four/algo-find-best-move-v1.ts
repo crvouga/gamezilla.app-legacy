@@ -1,4 +1,4 @@
-import { type ChildrenFn, Minimax, type ScoreFn } from '~/app/spaces/game/games/@/minimax'
+import { type ChildrenFn, Minimax, type SspaceFn } from '~/app/spaces/game/games/@/minimax'
 import type { Result } from '~/@/result'
 import { type Columns, MAX_COLUMN_HEIGHT, type PlayerType, opposite, toStatus } from './connect-four'
 
@@ -14,13 +14,13 @@ type State = {
 
 const COLUMN_INDEX_ORDER = [3, 4, 2, 5, 1, 6, 0]
 
-const childrenFn: ChildrenFn<State> = (modelCore) => {
+const childrenFn: ChildrenFn<State> = (modelSpace) => {
   const children: State[] = []
 
-  const turnNew = opposite[modelCore.turn]
+  const turnNew = opposite[modelSpace.turn]
 
   for (const columnIndex of COLUMN_INDEX_ORDER) {
-    const column = modelCore.columns[columnIndex]
+    const column = modelSpace.columns[columnIndex]
 
     if (!column) {
       continue
@@ -31,9 +31,9 @@ const childrenFn: ChildrenFn<State> = (modelCore) => {
     }
 
     const copied: Columns = [
-      ...modelCore.columns.slice(0, columnIndex),
-      [...column, modelCore.turn],
-      ...modelCore.columns.slice(columnIndex + 1),
+      ...modelSpace.columns.slice(0, columnIndex),
+      [...column, modelSpace.turn],
+      ...modelSpace.columns.slice(columnIndex + 1),
     ]
 
     children.push({
@@ -57,8 +57,8 @@ export const findBestMove = ({
 }): {
   columnIndex: number | null
 } => {
-  const scoreFn: ScoreFn<State> = (modelCore) => {
-    const status = toStatus(modelCore.columns)
+  const sspaceFn: SspaceFn<State> = (modelSpace) => {
+    const status = toStatus(modelSpace.columns)
 
     if (status.type !== 'Winner') {
       return 0
@@ -72,7 +72,7 @@ export const findBestMove = ({
   }
 
   const bestChildState = Minimax.findBestChildState({
-    scoreFn,
+    sspaceFn,
     childrenFn,
     maxDepth,
     parentState: {

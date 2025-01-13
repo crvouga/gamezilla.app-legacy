@@ -3,29 +3,29 @@ import { Pack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
 import { UserId } from '~/app/@/data/user-id'
 
-export type ModelClient = CreateNewPackTypes.ModelClient & {}
+export type ModelFrontend = CreateNewPackTypes.ModelFrontend & {}
 
-export const initClient: ModelClient = {
-  ...CreateNewPackTypes.initClient,
+export const initFrontend: ModelFrontend = {
+  ...CreateNewPackTypes.initFrontend,
 }
 
-export type MsgClient = CreateNewPackTypes.MsgClient
+export type MsgFrontend = CreateNewPackTypes.MsgFrontend
 
-export const MsgCore = p.or(
-  CreateNewPackTypes.MsgCore,
+export const MsgSpace = p.or(
+  CreateNewPackTypes.MsgSpace,
   p.obj({
     t: p.l('screen-pack-builder-open.user-clicked-pack-item'),
     pack: Pack,
     userId: UserId,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
-export type MsgServer = CreateNewPackTypes.MsgServer
+export type MsgBackend = CreateNewPackTypes.MsgBackend
 
-export type MsgToServer = CreateNewPackTypes.MsgToServer
+export type MsgToBackend = CreateNewPackTypes.MsgToBackend
 
-export type MsgToClient = CreateNewPackTypes.MsgToClient
+export type MsgToFrontend = CreateNewPackTypes.MsgToFrontend
 
-export const ModelCore = p.and(p.obj({}), CreateNewPackTypes.ModelCore)
-export type ModelCore = p.Infer<typeof ModelCore>
+export const ModelSpace = p.and(p.obj({}), CreateNewPackTypes.ModelSpace)
+export type ModelSpace = p.Infer<typeof ModelSpace>

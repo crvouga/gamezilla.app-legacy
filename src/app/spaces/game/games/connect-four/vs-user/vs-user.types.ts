@@ -21,13 +21,13 @@ import {
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   openedModal: 'confirm-resign' | null
   ghostIndex: ColumnIndex | null
 }
 
-export const ModelServer = p.l(null)
-export type ModelServer = p.Infer<typeof ModelServer>
+export const ModelBackend = p.l(null)
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
 //
 //
@@ -37,17 +37,17 @@ export type ModelServer = p.Infer<typeof ModelServer>
 //
 //
 
-export type MsgServer = { t: null }
+export type MsgBackend = { t: null }
 
-export type MsgClient =
-  | MsgCore
+export type MsgFrontend =
+  | MsgSpace
   | { t: 'hovered-over-columns'; columnIndex: ColumnIndex }
   | { t: 'clicked-resign'; userId: UserId }
   | { t: 'close-modal' }
 
-export type MsgToServer = { t: null }
+export type MsgToBackend = { t: null }
 
-export type MsgToClient = { t: null }
+export type MsgToFrontend = { t: null }
 
 //
 //
@@ -59,7 +59,7 @@ const MoveTimeLimit = p.enumeration([5, 7, 9])
 
 const RematchResponse = p.enumeration(['Accept', 'Decline'])
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-stopped-playing'),
     userId: UserId,
@@ -113,7 +113,7 @@ export const MsgCore = p.or(
     userId: UserId,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
 const GameOver = p.or(
   p.obj({
@@ -157,7 +157,7 @@ const Errors = p.obj({
   errors: p.dict(
     p.str,
     p.and(
-      MsgCore,
+      MsgSpace,
       p.obj({
         error: EventError,
       }),
@@ -167,13 +167,13 @@ const Errors = p.obj({
 
 type Errors = p.Infer<typeof Errors>
 
-const addError = (modelCore: ModelCore, msgCore: MsgCore, error: EventError): ModelCore => {
+const addError = (modelSpace: ModelSpace, msgSpace: MsgSpace, error: EventError): ModelSpace => {
   return {
-    ...modelCore,
+    ...modelSpace,
     errors: {
-      ...modelCore.errors,
-      [JSON.stringify(msgCore)]: {
-        ...msgCore,
+      ...modelSpace.errors,
+      [JSON.stringify(msgSpace)]: {
+        ...msgSpace,
         error,
       },
     },
@@ -217,10 +217,10 @@ export const StateGameOver = p.and(
 )
 export type StateGameOver = p.Infer<typeof StateGameOver>
 
-export const ModelCore = p.or(StateSetup, StateGame, StateGameOver)
-export type ModelCore = p.Infer<typeof ModelCore>
+export const ModelSpace = p.or(StateSetup, StateGame, StateGameOver)
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const initCore = (ctx: SpaceCtx): ModelCore => {
+export const initSpace = (ctx: SpaceCtx): ModelSpace => {
   return {
     type: 'setup',
     moveTimeLimit: 5,
@@ -232,12 +232,12 @@ export const initCore = (ctx: SpaceCtx): ModelCore => {
   }
 }
 
-export const toGameOver = (modelCore: ModelCore): GameOver | { type: 'none' } => {
-  if (modelCore.type === 'setup') {
+export const toGameOver = (modelSpace: ModelSpace): GameOver | { type: 'none' } => {
+  if (modelSpace.type === 'setup') {
     return { type: 'none' }
   }
 
-  const status = toStatus(modelCore.columns)
+  const status = toStatus(modelSpace.columns)
 
   if (status.type === 'Tie') {
     return { type: 'Draw' }
@@ -263,39 +263,39 @@ export const allMoveTimeLimit: {
   '9': 9,
 }
 
-export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
-  switch (modelCore.type) {
+export const updateSpace = (modelSpace: ModelSpace, msgSpace: MsgSpace): ModelSpace => {
+  switch (modelSpace.type) {
     case 'setup': {
-      switch (msgCore.t) {
+      switch (msgSpace.t) {
         case 'user-started-playing': {
-          if (modelCore.players[msgCore.playerType] !== null) {
-            return addError(modelCore, msgCore, {
+          if (modelSpace.players[msgSpace.playerType] !== null) {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             players: {
-              ...modelCore.players,
-              [msgCore.playerType]: msgCore.userId,
+              ...modelSpace.players,
+              [msgSpace.playerType]: msgSpace.userId,
             },
           }
         }
 
         case 'user-stopped-playing': {
-          const playerType = toPlayerType(msgCore.userId, modelCore)
+          const playerType = toPlayerType(msgSpace.userId, modelSpace)
 
           if (!playerType) {
-            return addError(modelCore, msgCore, {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             players: {
-              ...modelCore.players,
+              ...modelSpace.players,
               [playerType]: null,
             },
           }
@@ -303,26 +303,26 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
 
         case 'user-inputted-move-time-limit': {
           return {
-            ...modelCore,
-            moveTimeLimit: msgCore.moveTimeLimit,
+            ...modelSpace,
+            moveTimeLimit: msgSpace.moveTimeLimit,
           }
         }
 
         case 'user-started-game': {
-          const playerOne = modelCore.players['player-one']
-          const playerTwo = modelCore.players['player-two']
+          const playerOne = modelSpace.players['player-one']
+          const playerTwo = modelSpace.players['player-two']
 
           if (!playerOne || !playerTwo) {
-            return addError(modelCore, msgCore, {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            errors: modelCore.errors,
+            errors: modelSpace.errors,
             type: 'game',
             columns: EMPTY_COLUMNS,
-            moveTimeLimit: modelCore.moveTimeLimit,
+            moveTimeLimit: modelSpace.moveTimeLimit,
             lastMoveAt: Posix.now(),
             gameId: 0,
             players: {
@@ -333,43 +333,43 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
         }
 
         default: {
-          return modelCore
+          return modelSpace
         }
       }
     }
 
     case 'game': {
-      switch (msgCore.t) {
+      switch (msgSpace.t) {
         case 'user-dropped-disc': {
-          const turn = toTurn(modelCore.columns)
+          const turn = toTurn(modelSpace.columns)
 
-          const dropped = dropDisc(modelCore.columns, msgCore.columnIndex, turn)
+          const dropped = dropDisc(modelSpace.columns, msgSpace.columnIndex, turn)
 
           if (dropped.t === 'err') {
-            return addError(modelCore, msgCore, {
+            return addError(modelSpace, msgSpace, {
               t: 'move',
               c: dropped.error,
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             columns: dropped.value,
-            // lastMoveAt: msgCore.happenedAt,
+            // lastMoveAt: msgSpace.happenedAt,
           }
         }
 
         case 'user-resigned': {
-          const resignedPlayer = toPlayerType(msgCore.userId, modelCore)
+          const resignedPlayer = toPlayerType(msgSpace.userId, modelSpace)
 
           if (!resignedPlayer) {
-            return addError(modelCore, msgCore, {
+            return addError(modelSpace, msgSpace, {
               t: 'not-playing',
             })
           }
 
           return {
-            ...modelCore,
+            ...modelSpace,
             type: 'game-over',
             gameOver: {
               type: 'resignation',
@@ -382,24 +382,24 @@ export const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore =>
         }
 
         case 'time-passed': {
-          return modelCore
+          return modelSpace
         }
       }
-      return modelCore
+      return modelSpace
     }
 
     case 'game-over': {
-      return modelCore
+      return modelSpace
     }
   }
 }
 
-export const toPlayerType = (userId: UserId, modelCore: ModelCore): PlayerType | null => {
-  if (modelCore.players['player-one'] === userId) {
+export const toPlayerType = (userId: UserId, modelSpace: ModelSpace): PlayerType | null => {
+  if (modelSpace.players['player-one'] === userId) {
     return 'player-one'
   }
 
-  if (modelCore.players['player-two'] === userId) {
+  if (modelSpace.players['player-two'] === userId) {
     return 'player-two'
   }
 

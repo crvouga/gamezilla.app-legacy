@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { isErr, unwrap } from '~/@/result'
 import { Logger } from '~/@/logger'
-import { AppServerTestEnv } from '~/app/@/server/fixture'
+import { AppBackendTestEnv } from '~/app/@/backend/fixture'
 import { Config, VerifySMS } from './impl'
 import { VerifySMSInHouseFixture } from './impl/impl-in-house/@/fixture'
 import { PhoneNumber } from '~/@/phone-number'
@@ -17,7 +17,7 @@ const Fixture = (config: Config) => {
 
 const Fixtures = async () => {
   const inHouseFixture = await VerifySMSInHouseFixture()
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
 
   const configs: Config[] = [inHouseFixture]
 

@@ -9,14 +9,14 @@ const is = (id: unknown): id is ClientId => {
   return typeof id === 'string'
 }
 
-type Problem = 'invalid_client_id'
+type Problem = 'invalid_frontend_id'
 
 const decode = (id: string): Result<Problem, ClientId> => {
   if (is(id)) {
     return Result.Ok(id)
   }
 
-  return Result.Err('invalid_client_id')
+  return Result.Err('invalid_frontend_id')
 }
 
 const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
@@ -35,7 +35,7 @@ const generateId = (length: number): string => {
   return runningId
 }
 
-const namespace = 'client'
+const namespace = 'frontend'
 const separator = ':'
 
 const generate = (): ClientId => {
@@ -47,7 +47,7 @@ const generate = (): ClientId => {
     return clientId
   }
 
-  throw new Error('generated invalid client id')
+  throw new Error('generated invalid frontend id')
 }
 
 export const ClientId = {

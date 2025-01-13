@@ -21,7 +21,7 @@ import type { Position } from '../@/gomoku/gomoku-position'
 //
 //
 
-export type Model = ModelSetup | ModelPlaying | ModelCoreOver
+export type Model = ModelSetup | ModelPlaying | ModelSpaceOver
 
 export type ModelSetup = {
   type: 'setup'
@@ -36,7 +36,7 @@ export type ModelPlaying = {
   board: Board
 }
 
-export type ModelCoreOver = {
+export type ModelSpaceOver = {
   type: 'game-over'
   white: UserId
   black: UserId
@@ -67,11 +67,11 @@ type GameOver =
       type: 'Draw'
     }
 
-export type ModelClient = Model & {
-  confirming?: MsgClient['t']
+export type ModelFrontend = Model & {
+  confirming?: MsgFrontend['t']
 }
 
-export type ModelServer = Model
+export type ModelBackend = Model
 
 export const initShared = ({ white, black }: { white: UserId | null; black: UserId | null }): Model => {
   return {
@@ -81,7 +81,7 @@ export const initShared = ({ white, black }: { white: UserId | null; black: User
   }
 }
 
-const initCoreOver = ({ model, gameOver }: { gameOver: GameOver; model: ModelPlaying }): ModelCoreOver => {
+const initSpaceOver = ({ model, gameOver }: { gameOver: GameOver; model: ModelPlaying }): ModelSpaceOver => {
   return {
     type: 'game-over',
     black: model.black,
@@ -108,13 +108,13 @@ const initSetup = (model: Model): ModelSetup => {
 //
 //
 
-export type MsgClient = Req | { t: 'clicked-cancel' }
+export type MsgFrontend = Req | { t: 'clicked-cancel' }
 
-export type MsgServer = { t: 'none' }
+export type MsgBackend = { t: 'none' }
 
-export type MsgToClient = Res
+export type MsgToFrontend = Res
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
 //
 //
@@ -239,7 +239,7 @@ export const handle = ({
           wins: statusNew.wins,
         }
         return Ok(
-          initCoreOver({
+          initSpaceOver({
             model: modelNew,
             gameOver,
           }),
@@ -248,7 +248,7 @@ export const handle = ({
 
       if (statusNew.type === 'draw') {
         return Ok(
-          initCoreOver({
+          initSpaceOver({
             model: modelNew,
             gameOver: {
               type: 'Draw',
@@ -271,7 +271,7 @@ export const handle = ({
 
       const currentUserStone = model.white === ctx.currentUserId ? 'white' : 'black'
 
-      const modelNew = initCoreOver({
+      const modelNew = initSpaceOver({
         model,
         gameOver: {
           type: 'resigned',

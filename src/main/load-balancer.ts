@@ -1,6 +1,6 @@
 import { Logger } from '~/@/logger'
-import { WebServer } from '~/@/web-server'
-import { SERVER_PORT } from '~/config/server'
+import { HttpServer } from '~/@/http-server'
+import { SERVER_PORT } from '~/config/backend'
 import { LoadBalancer } from '~/load-balancer'
 
 const main = async () => {
@@ -8,7 +8,7 @@ const main = async () => {
     t: 'console',
   })
 
-  const server = WebServer({
+  const httpServer = HttpServer({
     t: 'bun',
     logger,
   })
@@ -17,12 +17,16 @@ const main = async () => {
     logger,
   })
 
-  server.registerHandler((request) => {
+  httpServer.registerHandler((request) => {
     logger.info(`${request.method} ${request.url}`)
     return LoadBalancer.respond(ctx, request)
   })
 
-  await server.start(SERVER_PORT)
+  if (!SERVER_PORT) {
+    throw new Error('SERVER_PORT is not set')
+  }
+
+  await httpServer.start(SERVER_PORT)
 
   logger.info('Load balancer started')
 }

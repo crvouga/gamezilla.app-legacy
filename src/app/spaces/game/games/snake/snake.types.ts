@@ -13,13 +13,13 @@ import * as Snake from './@/snake'
 //
 //
 
-export type ModelServer = CoreModel
+export type ModelBackend = SpaceModel
 
-export type ModelClient = CoreModel & {
+export type ModelFrontend = SpaceModel & {
   openedMenuId: Option<string>
 }
 
-export type CoreModel = Snake.Model & {
+export type SpaceModel = Snake.Model & {
   gameStatus:
     | {
         type: 'GameSetup'
@@ -41,7 +41,7 @@ export type MouseStatus = 'Active' | 'Inactive'
 //
 //
 
-export const initCoreModel: CoreModel = {
+export const initSpaceModel: SpaceModel = {
   ...Snake.init,
   gameStatus: {
     type: 'GameSetup',
@@ -57,13 +57,13 @@ export const initCoreModel: CoreModel = {
 //
 //
 
-export type MsgClient = ['PressedKeyDown', Keyboard.Key] | ['OpenedMenu', string] | ['ClosedMenu'] | Request
+export type MsgFrontend = ['PressedKeyDown', Keyboard.Key] | ['OpenedMenu', string] | ['ClosedMenu'] | Request
 
-export type MsgServer = ['tick']
+export type MsgBackend = ['tick']
 
-export type MsgToServer = Request
+export type MsgToBackend = Request
 
-export type MsgToClient = ['tick', CoreModel] | Response
+export type MsgToFrontend = ['tick', SpaceModel] | Response
 
 export type Request = ToggleStatus | InputPlayer | InputDirection | StartGame
 
@@ -75,7 +75,7 @@ export type Response = InputDirection_Done | ToggleStatus_Done | InputPlayer_Don
 
 export type InputDirection = ['input-direction', { direction: Direction.Direction; userId: UserId }]
 
-export type InputDirection_Done = ['InputDirection_Done', Result<InputDirectionProblem, CoreModel>]
+export type InputDirection_Done = ['InputDirection_Done', Result<InputDirectionProblem, SpaceModel>]
 
 export type InputDirectionProblem = 'user_must_be_the_current_player' | 'must_be_in_game_started'
 
@@ -87,7 +87,7 @@ export type ToggleStatus = ['ToggleStatus', { userId: UserId }]
 
 export type ToggleStatus_Done = ['ToggleStatus_Done', ToggleStatusResult]
 
-export type ToggleStatusResult = Result<'user_must_be_the_current_player' | 'must_be_in_game_started', CoreModel>
+export type ToggleStatusResult = Result<'user_must_be_the_current_player' | 'must_be_in_game_started', SpaceModel>
 
 //
 //
@@ -96,16 +96,16 @@ export type ToggleStatusResult = Result<'user_must_be_the_current_player' | 'mus
 
 export type InputPlayer = ['InputPlayer', Option<Player>]
 
-export type InputPlayer_Done = ['InputPlayer_Done', Result<'must_be_in_game_setup', CoreModel>]
+export type InputPlayer_Done = ['InputPlayer_Done', Result<'must_be_in_game_setup', SpaceModel>]
 
 export type StartGame = ['start-game']
-export type StartGame_Done = ['StartGame_Done', Result<'must_be_in_game_setup' | 'missing_player', CoreModel>]
+export type StartGame_Done = ['StartGame_Done', Result<'must_be_in_game_setup' | 'missing_player', SpaceModel>]
 
-export const canStartGame = (model: CoreModel): boolean => {
+export const canStartGame = (model: SpaceModel): boolean => {
   return model.gameStatus.type === 'GameSetup' && model.gameStatus.player.type === 'Some'
 }
 
-export const startGame = (model: CoreModel): StartGame_Done[1] => {
+export const startGame = (model: SpaceModel): StartGame_Done[1] => {
   if (model.gameStatus.type !== 'GameSetup') {
     return Result.Err('must_be_in_game_setup')
   }
@@ -116,7 +116,7 @@ export const startGame = (model: CoreModel): StartGame_Done[1] => {
 
   const playerUserId = model.gameStatus.player.value[1]
 
-  const modelNew: CoreModel = {
+  const modelNew: SpaceModel = {
     ...model,
     gameStatus: {
       type: 'GameStarted',

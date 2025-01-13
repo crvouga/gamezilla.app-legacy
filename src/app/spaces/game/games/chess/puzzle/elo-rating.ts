@@ -41,7 +41,7 @@ const fromNumber = (n: number): EloRating => {
 
 export type EndGame = 'win' | 'lost' | 'draw'
 
-const endGameToScore = (endGame: EndGame): number => {
+const endGameToSspace = (endGame: EndGame): number => {
   switch (endGame) {
     case 'win':
       return 1
@@ -60,7 +60,7 @@ const endGameToScore = (endGame: EndGame): number => {
 //
 //
 
-const toExpectedScore = ({
+const toExpectedSspace = ({
   playerRating,
   opponentRating,
 }: {
@@ -72,16 +72,16 @@ const toExpectedScore = ({
 
 const toNewRating = ({
   rating,
-  actualScore,
-  expectedScore,
+  actualSspace,
+  expectedSspace,
   kFactor,
 }: {
   rating: EloRating
-  actualScore: number
-  expectedScore: number
+  actualSspace: number
+  expectedSspace: number
   kFactor: KFactor
 }): EloRating => {
-  return fromNumber(rating + kFactor * (actualScore - expectedScore))
+  return fromNumber(rating + kFactor * (actualSspace - expectedSspace))
 }
 
 const toNextRating = ({
@@ -95,17 +95,17 @@ const toNextRating = ({
   kFactor?: KFactor
   endGame: EndGame
 }): EloRating => {
-  const expectedScore = toExpectedScore({
+  const expectedSspace = toExpectedSspace({
     playerRating,
     opponentRating,
   })
 
-  const actualScore = endGameToScore(endGame)
+  const actualSspace = endGameToSspace(endGame)
 
   return toNewRating({
     rating: playerRating,
-    actualScore,
-    expectedScore,
+    actualSspace,
+    expectedSspace,
     kFactor,
   })
 }

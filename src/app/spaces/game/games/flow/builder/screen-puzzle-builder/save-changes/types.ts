@@ -7,20 +7,20 @@ import { Puzzle } from '../../../@/puzzle/puzzle'
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   puzzleSaveChangesRequest?: RemoteResult<string, null>
   puzzleSaveChangesIsExiting?: boolean
 }
 
-export const initClient: ModelClient = {}
+export const initFrontend: ModelFrontend = {}
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
 //
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | {
       t: 'screen-puzzle-builder.save-changes.user-clicked-save-button'
     }
@@ -34,9 +34,9 @@ export type MsgClient =
       t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit'
     }
 
-export type MsgServer = { t: 'noop' }
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToServer =
+export type MsgToBackend =
   | {
       t: 'screen-puzzle-builder.save-changes.user-clicked-save-button'
       puzzle: Puzzle
@@ -46,15 +46,15 @@ export type MsgToServer =
       puzzle: Puzzle
     }
 
-export type MsgToClient = { t: 'noop' }
+export type MsgToFrontend = { t: 'noop' }
 
 //
 //
 //
 
-export const MsgCore = p.obj({
+export const MsgSpace = p.obj({
   t: p.l('screen-puzzle-builder.saved-puzzle'),
   saved: Result.parser(p.str, Puzzle),
   userId: UserId,
 })
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>

@@ -16,14 +16,14 @@ const { Err, Ok } = Result
 //
 //
 
-export type ModelClient = {
+export type ModelFrontend = {
   touched: Option<Position.Position>
-  coreModel: CoreModel
+  spaceModel: SpaceModel
 }
 
-export type ModelServer = CoreModel
+export type ModelBackend = SpaceModel
 
-export type CoreModel = {
+export type SpaceModel = {
   board: Board.Board
   origin: Position.Position
   tetrominoName: Piece.Name
@@ -39,14 +39,14 @@ const initialOrigin: Position.Position = {
   y: 0,
 }
 
-export const initShared: CoreModel = {
+export const initShared: SpaceModel = {
   board: Board.init({ rowCount, columnCount }),
   origin: initialOrigin,
   tetrominoName: 'Z',
   rotations: 0,
 }
 
-export const toPiece = (model: CoreModel): Piece.Piece => {
+export const toPiece = (model: SpaceModel): Piece.Piece => {
   return Piece.toUnit(model.tetrominoName)
     .map((position) => times(model.rotations, Position.rotate, position))
     .map((position) => Position.add(position, model.origin))
@@ -59,16 +59,16 @@ const times = <X>(count: number, f: (x: X) => X, x: X): X => {
   return times(count - 1, f, f(x))
 }
 
-export const inCollision = (model: CoreModel): boolean => {
+export const inCollision = (model: SpaceModel): boolean => {
   return toPiece(model).some((position) => Board.toCell(position, model.board) !== 'Empty') || isOutOfBounds(model)
 }
 
-export const isOutOfBounds = (model: CoreModel): boolean => {
+export const isOutOfBounds = (model: SpaceModel): boolean => {
   return toPiece(model).some((position) => position.x >= columnCount || position.x < 0 || position.y >= rowCount)
 }
 
-export const toDrop = (model: CoreModel): CoreModel => {
-  const modelNext: CoreModel = {
+export const toDrop = (model: SpaceModel): SpaceModel => {
+  const modelNext: SpaceModel = {
     ...model,
     origin: Position.add(Direction.toPosition('Down'), model.origin),
   }
@@ -80,7 +80,7 @@ export const toDrop = (model: CoreModel): CoreModel => {
   return toDrop(modelNext)
 }
 
-export const toGhostPiece = (model: CoreModel): Piece.Piece => {
+export const toGhostPiece = (model: SpaceModel): Piece.Piece => {
   return toPiece(toDrop(model))
 }
 
@@ -92,7 +92,7 @@ export const toGhostPiece = (model: CoreModel): Piece.Piece => {
 //
 //
 
-export type MsgClient =
+export type MsgFrontend =
   | ['PressedKey', Keyboard.Key]
   | ['TouchStart', Position.Position]
   | ['TouchMove', Position.Position]
@@ -100,11 +100,11 @@ export type MsgClient =
   | ['ClickedBoard', Position.Position]
   | MouseMove
 
-export type MsgServer = Tick
+export type MsgBackend = Tick
 
-export type MsgToServer = InputTranslate | InputRotate | InputDrop | MouseMove
+export type MsgToBackend = InputTranslate | InputRotate | InputDrop | MouseMove
 
-export type MsgToClient = Tick_Done | InputTranslate_Done | InputRotate_Done | InputDrop_Done | MouseMove_Done
+export type MsgToFrontend = Tick_Done | InputTranslate_Done | InputRotate_Done | InputDrop_Done | MouseMove_Done
 
 //
 //
@@ -115,10 +115,10 @@ export type MsgToClient = Tick_Done | InputTranslate_Done | InputRotate_Done | I
 //
 
 export type MouseMove = ['MouseMove', Position.Position]
-export type MouseMove_Done = ['MouseMove_Done', Result<'collision', CoreModel>]
+export type MouseMove_Done = ['MouseMove_Done', Result<'collision', SpaceModel>]
 
-export const mouseMove = (msg: MouseMove, model: CoreModel): MouseMove_Done => {
-  const modelNew: CoreModel = {
+export const mouseMove = (msg: MouseMove, model: SpaceModel): MouseMove_Done => {
+  const modelNew: SpaceModel = {
     ...model,
     origin: {
       x: msg[1].x,
@@ -134,13 +134,13 @@ export const mouseMove = (msg: MouseMove, model: CoreModel): MouseMove_Done => {
 }
 
 export type InputTranslate = ['InputTranslate', { direction: Direction.Direction }]
-export type InputTranslate_Done = ['InputTranslate_Done', Result<InputTranslateProblem, CoreModel>]
+export type InputTranslate_Done = ['InputTranslate_Done', Result<InputTranslateProblem, SpaceModel>]
 export type InputTranslateProblem = 'collision'
 
-export const inputTranslate = ({ direction }: InputTranslate[1], model: CoreModel): InputTranslate_Done[1] => {
+export const inputTranslate = ({ direction }: InputTranslate[1], model: SpaceModel): InputTranslate_Done[1] => {
   const originNext = Position.add(Direction.toPosition(direction), model.origin)
 
-  const modelNext: CoreModel = {
+  const modelNext: SpaceModel = {
     ...model,
     origin: originNext,
   }
@@ -161,11 +161,11 @@ export const inputTranslate = ({ direction }: InputTranslate[1], model: CoreMode
 //
 
 export type InputRotate = ['InputRotate']
-export type InputRotate_Done = ['InputRotate_Done', Result<InputRotateProblem, CoreModel>]
+export type InputRotate_Done = ['InputRotate_Done', Result<InputRotateProblem, SpaceModel>]
 export type InputRotateProblem = 'collision'
 
-export const inputRotate = (model: CoreModel): InputRotate_Done[1] => {
-  const modelNew: CoreModel = {
+export const inputRotate = (model: SpaceModel): InputRotate_Done[1] => {
+  const modelNew: SpaceModel = {
     ...model,
     rotations: toNextRotation(model.rotations),
   }
@@ -199,10 +199,10 @@ const toNextRotation = (rotation: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
 //
 
 export type InputDrop = ['InputDrop']
-export type InputDrop_Done = ['InputDrop_Done', Result<InputDropProblem, CoreModel>]
+export type InputDrop_Done = ['InputDrop_Done', Result<InputDropProblem, SpaceModel>]
 export type InputDropProblem = ''
 
-export const inputDrop = (model: CoreModel): InputDrop_Done[1] => {
+export const inputDrop = (model: SpaceModel): InputDrop_Done[1] => {
   const modelNext = tick(toDrop(model))
 
   return Result.Ok(modelNext)
@@ -217,12 +217,12 @@ export const inputDrop = (model: CoreModel): InputDrop_Done[1] => {
 //
 
 export type Tick = ['tick']
-export type Tick_Done = ['Tick_Done', CoreModel]
+export type Tick_Done = ['Tick_Done', SpaceModel]
 
-export const tick = (model: CoreModel): CoreModel => {
+export const tick = (model: SpaceModel): SpaceModel => {
   const originNext = Position.add(Direction.toPosition('Down'), model.origin)
 
-  const modelNext: CoreModel = {
+  const modelNext: SpaceModel = {
     ...model,
     origin: originNext,
   }

@@ -1,6 +1,6 @@
 import { Err, isErr, Ok, Result } from '~/@/result'
-import { IWebClient } from '~/@/web-client'
-import { IWebServer } from '~/@/web-server'
+import { IHttpClient } from '~/@/http-client'
+import { IHttpServer } from '~/@/http-server'
 import { p } from '~/@/parser'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
@@ -12,19 +12,19 @@ export type Endpoint<TInput, TOutput> = {
 
 export type Contract<TEndpoints extends Record<string, Endpoint<any, any> | Contract<any>>> = TEndpoints
 
-export type Client<T extends Base> = {
+export type Frontend<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
     ? (input: p.Infer<T[K]['input']>) => Promise<Result<string, p.Infer<T[K]['output']>>>
     : T[K] extends Contract<any>
-      ? Client<T[K]>
+      ? Frontend<T[K]>
       : never
 }
 
-export type Server<T extends Base> = {
+export type Backend<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
     ? (input: p.Infer<T[K]['input']>) => Promise<p.Infer<T[K]['output']>>
     : T[K] extends Contract<any>
-      ? Server<T[K]>
+      ? Backend<T[K]>
       : never
 }
 
@@ -32,9 +32,9 @@ export const initContract = <TEndpoints extends Record<string, Endpoint<any, any
   endpoints: TEndpoints,
 ): Contract<TEndpoints> => endpoints
 
-export const initClient = <T extends Base>(webClient: IWebClient, contract: T): Client<T> => {
-  const createClient = (contract: Base, path: string[] = []): any => {
-    const client: any = {}
+export const initFrontend = <T extends Base>(webFrontend: IHttpClient, contract: T): Frontend<T> => {
+  const createFrontend = (contract: Base, path: string[] = []): any => {
+    const frontend: any = {}
 
     for (const endpoint in contract) {
       const endpointConfig = contract[endpoint]
@@ -42,7 +42,7 @@ export const initClient = <T extends Base>(webClient: IWebClient, contract: T): 
 
       if ('input' in endpointConfig && 'output' in endpointConfig) {
         // Leaf endpoint
-        client[endpoint] = async (input: any) => {
+        frontend[endpoint] = async (input: any) => {
           try {
             const parsedInput = endpointConfig.input.parse(input)
             if (isErr(parsedInput)) {
@@ -53,7 +53,7 @@ export const initClient = <T extends Base>(webClient: IWebClient, contract: T): 
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(parsedInput),
             })
-            const response = await webClient.fetch(request)
+            const response = await webFrontend.fetch(request)
             if (!response.ok) {
               return Err(`Request failed with status ${response.status}`)
             }
@@ -66,29 +66,29 @@ export const initClient = <T extends Base>(webClient: IWebClient, contract: T): 
         }
       } else {
         // Nested contract
-        client[endpoint] = createClient(endpointConfig as Contract<any>, [...path, endpoint])
+        frontend[endpoint] = createFrontend(endpointConfig as Contract<any>, [...path, endpoint])
       }
     }
-    return client
+    return frontend
   }
 
-  return createClient(contract)
+  return createFrontend(contract)
 }
 
-export const initServer = <T extends Base>(_contract: T, handlers: Server<T>): Server<T> => {
+export const initBackend = <T extends Base>(_contract: T, handlers: Backend<T>): Backend<T> => {
   return handlers
 }
 
 export const withRPC = <T extends Base>({
   contract,
   handlers,
-  webServer,
+  httpServer,
 }: {
-  webServer: IWebServer
+  httpServer: IHttpServer
   contract: T
-  handlers: Server<T>
+  handlers: Backend<T>
 }) => {
-  const handleRequest = async (contract: Contract<any>, handlers: Server<any>, path: string[], request: Request) => {
+  const handleRequest = async (contract: Contract<any>, handlers: Backend<any>, path: string[], request: Request) => {
     const endpointName = path[0]
     if (!endpointName) {
       return null
@@ -124,11 +124,11 @@ export const withRPC = <T extends Base>({
       }
     } else {
       // Nested contract
-      return handleRequest(endpointConfig as Contract<any>, handler as Server<any>, path.slice(1), request)
+      return handleRequest(endpointConfig as Contract<any>, handler as Backend<any>, path.slice(1), request)
     }
   }
 
-  webServer.registerHandler(async (request) => {
+  httpServer.registerHandler(async (request) => {
     try {
       const url = new URL(request.url)
       const path = url.pathname.replace('/rpc/', '').split('/')

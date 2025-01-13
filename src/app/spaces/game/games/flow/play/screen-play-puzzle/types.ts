@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
-import type { GameCoreModule } from '~/app/spaces/game/games/@/architecture/game-core'
+import type { GameSpaceModule } from '~/app/spaces/game/games/@/architecture/game-space'
 import { GroupId } from '../../@/flow/group-id'
 import { Pack } from '../../@/pack/pack'
 import { PackId } from '../../@/pack/pack-id'
@@ -9,8 +9,8 @@ import { PlayMode } from '../../@/play-mode'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { CopyPuzzleTypes } from './copy-puzzle'
 
-export const MsgCore = p.or(
-  CopyPuzzleTypes.MsgCore,
+export const MsgSpace = p.or(
+  CopyPuzzleTypes.MsgSpace,
   p.obj({
     t: p.l('got-flow-play-msg'),
     c: PlayMode.Msg,
@@ -43,9 +43,9 @@ export const MsgCore = p.or(
   }),
 )
 
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
-export const MsgCoreEvt = p.or(
+export const MsgSpaceEvt = p.or(
   p.obj({
     t: p.l('user-completed-puzzle'),
     userId: UserId,
@@ -58,9 +58,9 @@ export const MsgCoreEvt = p.or(
     groupId: GroupId,
   }),
 )
-export type MsgCoreEvt = p.Infer<typeof MsgCoreEvt>
+export type MsgSpaceEvt = p.Infer<typeof MsgSpaceEvt>
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   t: p.l('screen-play-puzzle'),
   flowPack: Pack,
   puzzleResult: PuzzleResult,
@@ -70,10 +70,10 @@ export const ModelCore = p.obj({
   hints: p.partialDict(GroupId, GroupId),
 })
 
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export type CoreModule = GameCoreModule<{
+export type SpaceModule = GameSpaceModule<{
   Ctx: SpaceCtx
-  ModelCore: ModelCore
-  MsgCore: MsgCore
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
 }>

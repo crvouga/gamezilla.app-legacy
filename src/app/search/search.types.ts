@@ -11,7 +11,7 @@ type SearchResult = {
   avatarUrl: string
 }
 
-export type ModelClient = {
+export type ModelFrontend = {
   searchText: string
   searchResults: {
     [id: string]: SearchResult
@@ -21,15 +21,15 @@ export type ModelClient = {
   }
 }
 
-export type ModelServer = null
+export type ModelBackend = null
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
-export type MsgToClient = Res
+export type MsgToFrontend = Res
 
-export type MsgServer = { t: 'none' }
+export type MsgBackend = { t: 'none' }
 
-export type MsgClient =
+export type MsgFrontend =
   | Req
   | { t: 'clicked-clear' }
   | { t: 'focus-done'; result: Browser.FocusResult }

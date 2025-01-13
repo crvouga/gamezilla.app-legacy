@@ -1,4 +1,4 @@
-import { VDOM_IMPL_CURRENT } from '~/config/client'
+import { VDOM_IMPL_CURRENT } from '~/config/frontend'
 import { VDomImpl } from './vdom-impl'
 
 export type StylesObjectKebab = { [key: string]: string | number | undefined | null | false }

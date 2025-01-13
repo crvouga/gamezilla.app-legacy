@@ -1,15 +1,15 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { ProfileAvatarSeed, ProfileAvatarStyle } from '~/app/@/data/profile-avatar'
 
-export type ModelClient = {
+export type ModelFrontend = {
   'profile.update-avatar.avatar-seed'?: ProfileAvatarSeed
   'profile.update-avatar.avatar-style'?: ProfileAvatarStyle
   'profile.update-avatar.request'?: RequestResponse<string, null>
 }
 
-export type ModelServer = {}
+export type ModelBackend = {}
 
-export type MsgClient =
+export type MsgFrontend =
   | {
       t: 'profile.update-avatar.inputted-avatar-seed'
       avatarSeed: ProfileAvatarSeed
@@ -25,17 +25,17 @@ export type MsgClient =
       t: 'profile.update-avatar.clicked-save'
     }
 
-export type MsgServer = {
+export type MsgBackend = {
   t: 'profile.update-avatar.noop'
 }
 
-export type MsgToServer = {
+export type MsgToBackend = {
   t: 'profile.update-avatar.clicked-save'
   avatarSeed: ProfileAvatarSeed
   avatarStyle: ProfileAvatarStyle
 }
 
-export type MsgToClient = {
+export type MsgToFrontend = {
   t: 'profile.update-avatar.updated-avatar'
   avatarSeed: ProfileAvatarSeed
   avatarStyle: ProfileAvatarStyle

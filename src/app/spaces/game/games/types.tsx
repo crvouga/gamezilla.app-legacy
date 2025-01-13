@@ -1,15 +1,15 @@
 import { p } from '~/@/parser'
-import { SpaceClientCmd } from '~/app/spaces/@/space-client/cmd'
-import { SpaceClientCtx } from '~/app/spaces/@/space-client/ctx'
-import { SpaceClientEvt } from '~/app/spaces/@/space-client/evt'
-import { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerCtx } from '~/app/spaces/@/space-server/ctx'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import { GameClientModule } from './@/architecture/game-client-v2'
-import { GameServerModule } from './@/architecture/game-server-v2'
+import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
+import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import { GameFrontendModule } from './@/architecture/game-frontend-v2'
+import { GameBackendModule } from './@/architecture/game-backend-v2'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
-import { FlowServerCtx } from './flow/@/server/ctx'
+import { FlowBackendCtx } from './flow/@/backend/ctx'
 import * as Flow from './flow/types'
 
 //
@@ -20,19 +20,19 @@ import * as Flow from './flow/types'
 //
 //
 
-export type ModelClient = { t: 'connect-four'; c: ConnectFour.ModelClient } | { t: 'flow'; c: Flow.ModelClient }
+export type ModelFrontend = { t: 'connect-four'; c: ConnectFour.ModelFrontend } | { t: 'flow'; c: Flow.ModelFrontend }
 
-export const ModelServer = p.or(
+export const ModelBackend = p.or(
   p.obj({
     t: p.l('connect-four'),
-    c: ConnectFour.ModelServer,
+    c: ConnectFour.ModelBackend,
   }),
   p.obj({
     t: p.l('flow'),
-    c: Flow.ModelServer,
+    c: Flow.ModelBackend,
   }),
 )
-export type ModelServer = p.Infer<typeof ModelServer>
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
 //
 //
@@ -42,13 +42,13 @@ export type ModelServer = p.Infer<typeof ModelServer>
 //
 //
 
-export type MsgServer = { t: 'connect-four'; c: ConnectFour.MsgServer } | { t: 'flow'; c: Flow.MsgServer }
+export type MsgBackend = { t: 'connect-four'; c: ConnectFour.MsgBackend } | { t: 'flow'; c: Flow.MsgBackend }
 
-export type MsgClient = { t: 'connect-four'; c: ConnectFour.MsgClient } | { t: 'flow'; c: Flow.MsgClient }
+export type MsgFrontend = { t: 'connect-four'; c: ConnectFour.MsgFrontend } | { t: 'flow'; c: Flow.MsgFrontend }
 
-export type MsgToClient = { t: 'connect-four'; c: ConnectFour.MsgToClient } | { t: 'flow'; c: Flow.MsgToClient }
+export type MsgToFrontend = { t: 'connect-four'; c: ConnectFour.MsgToFrontend } | { t: 'flow'; c: Flow.MsgToFrontend }
 
-export type MsgToServer = { t: 'connect-four'; c: ConnectFour.MsgToServer } | { t: 'flow'; c: Flow.MsgToServer }
+export type MsgToBackend = { t: 'connect-four'; c: ConnectFour.MsgToBackend } | { t: 'flow'; c: Flow.MsgToBackend }
 
 //
 //
@@ -63,29 +63,29 @@ export const gameNameList: GameName[] = [
   'flow',
 ]
 
-export const ModelCore = p.or(
+export const ModelSpace = p.or(
   p.obj({
     t: p.l('connect-four'),
-    c: ConnectFour.ModelCore,
+    c: ConnectFour.ModelSpace,
   }),
   p.obj({
     t: p.l('flow'),
-    c: Flow.ModelCore,
+    c: Flow.ModelSpace,
   }),
 )
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('connect-four'),
-    c: ConnectFour.MsgCore,
+    c: ConnectFour.MsgSpace,
   }),
   p.obj({
     t: p.l('flow'),
-    c: Flow.MsgCore,
+    c: Flow.MsgSpace,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
 //
 //
@@ -94,34 +94,34 @@ export type MsgCore = p.Infer<typeof MsgCore>
 //
 //
 
-export type ClientModule = GameClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  ModelCore: ModelCore
-  MsgCore: MsgCore
-  Ctx: SpaceClientCtx
-  MsgEvtIn: SpaceClientEvt
-  MsgCmdOut: SpaceClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
+export type FrontendModule = GameFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
+  Ctx: SpaceFrontendCtx
+  MsgEvtIn: SpaceFrontendEvt
+  MsgCmdOut: SpaceFrontendCmd<{
+    MsgFrontend: MsgFrontend
+    MsgToBackend: MsgToBackend
   }>
 }>
 
-export type GameServerCtx = SpaceServerCtx & {
-  flow: FlowServerCtx
+export type GameBackendCtx = SpaceBackendCtx & {
+  flow: FlowBackendCtx
 }
 
-export type ServerModule = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  ModelCore: ModelCore
-  MsgCore: MsgCore
-  Ctx: GameServerCtx
-  MsgEvtIn: SpaceServerEvt
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+export type BackendModule = GameBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  ModelSpace: ModelSpace
+  MsgSpace: MsgSpace
+  Ctx: GameBackendCtx
+  MsgEvtIn: SpaceBackendEvt
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
   Deps: null
 }>

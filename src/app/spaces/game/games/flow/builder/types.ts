@@ -1,17 +1,17 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
-import type { SpaceServerCmd } from '~/app/spaces/@/space-server/cmd'
-import { SpaceServerEvt } from '~/app/spaces/@/space-server/evt'
-import type { GameClientModule } from '~/app/spaces/game/games/@/architecture/game-client-v2'
-import type { GameServerModule } from '~/app/spaces/game/games/@/architecture/game-server-v2'
-import { FlowClientCmd } from '../@/client/cmd'
-import type { FlowClientCtx } from '../@/client/ctx'
-import { FlowClientEvtIn } from '../@/client/evt'
-import { FlowCoreCtx } from '../@/core/ctx'
-import { FlowCoreEvent } from '../@/core/event'
+import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
+import { FlowFrontendCmd } from '../@/frontend/cmd'
+import type { FlowFrontendCtx } from '../@/frontend/ctx'
+import { FlowFrontendEvtIn } from '../@/frontend/evt'
+import { FlowSpaceCtx } from '../@/space/ctx'
+import { FlowSpaceEvt } from '../@/space/event'
 import { PackListTypes } from '../@/pack/pack-list'
 import { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
-import { FlowServerCtx } from '../@/server/ctx'
+import { FlowBackendCtx } from '../@/backend/ctx'
 import { ScreenMainMenu } from './screen-main-menu'
 import { ScreenPackBuilderTypes } from './screen-pack-builder'
 import { ScreenPackBuilderOpenTypes } from './screen-pack-builder-open'
@@ -27,32 +27,32 @@ import { ScreenPuzzleBuilderOpenTypes } from './screen-puzzle-builder-open'
 //
 //
 
-export type ClientModule = GameClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  MsgCore: MsgCore
-  ModelCore: ModelCore
-  Ctx: FlowClientCtx
-  MsgCmdOut: FlowClientCmd<{
-    MsgToServer: MsgToServer
-    MsgClient: MsgClient
+export type FrontendModule = GameFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
+  Ctx: FlowFrontendCtx
+  MsgCmdOut: FlowFrontendCmd<{
+    MsgToBackend: MsgToBackend
+    MsgFrontend: MsgFrontend
   }>
-  MsgEvtIn: FlowClientEvtIn
-  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdClient
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdFrontend
 }>
 
-export type ServerModule = GameServerModule<{
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  MsgCore: MsgCore
-  ModelCore: ModelCore
-  Ctx: FlowServerCtx
-  MsgEvtIn: SpaceServerEvt
-  Model: ModelServer
-  Msg: MsgServer
-  MsgCmdOut: SpaceServerCmd<MsgToClient>
+export type BackendModule = GameBackendModule<{
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
+  Ctx: FlowBackendCtx
+  MsgEvtIn: SpaceBackendEvt
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
   Deps: null
 }>
 
@@ -64,30 +64,30 @@ export type ServerModule = GameServerModule<{
 //
 //
 
-type BaseModelClient = {
+type BaseModelFrontend = {
   puzzleBuilderOpened?: 'more' | 'edit-name' | 'delete-forever' | 'unsaved-changes' | null
 }
 
-export type ModelClient = BaseModelClient &
-  ScreenPuzzleBuilderOpenTypes.ModelClient &
-  ScreenPuzzleBuilderTypes.ModelClient &
-  ScreenPackBuilderTypes.ModelClient &
-  ScreenPackBuilderOpenTypes.ModelClient
+export type ModelFrontend = BaseModelFrontend &
+  ScreenPuzzleBuilderOpenTypes.ModelFrontend &
+  ScreenPuzzleBuilderTypes.ModelFrontend &
+  ScreenPackBuilderTypes.ModelFrontend &
+  ScreenPackBuilderOpenTypes.ModelFrontend
 
-export const initClient: ClientModule['init'] = {
-  ...ScreenPuzzleBuilderOpenTypes.initClient,
-  ...ScreenPuzzleBuilderTypes.initClient,
-  ...ScreenPackBuilderTypes.initClient,
-  ...ScreenPackBuilderOpenTypes.initClient,
+export const initFrontend: FrontendModule['init'] = {
+  ...ScreenPuzzleBuilderOpenTypes.initFrontend,
+  ...ScreenPuzzleBuilderTypes.initFrontend,
+  ...ScreenPackBuilderTypes.initFrontend,
+  ...ScreenPackBuilderOpenTypes.initFrontend,
 }
 
-export const ModelServer = p.obj({
-  flowPackList: PackListTypes.ModelServer,
+export const ModelBackend = p.obj({
+  flowPackList: PackListTypes.ModelBackend,
 })
-export type ModelServer = p.Infer<typeof ModelServer>
+export type ModelBackend = p.Infer<typeof ModelBackend>
 
-export const initServer: ServerModule['init'] = {
-  flowPackList: PackListTypes.initServer,
+export const initBackend: BackendModule['init'] = {
+  flowPackList: PackListTypes.initBackend,
 }
 
 //
@@ -98,36 +98,36 @@ export const initServer: ServerModule['init'] = {
 //
 //
 
-type BaseMsgClient = { t: 'time-passed' }
+type BaseMsgFrontend = { t: 'time-passed' }
 
 //
 
-export type MsgClient =
-  | BaseMsgClient
-  | ScreenPuzzleBuilderOpenTypes.MsgClient
-  | ScreenPuzzleBuilderTypes.MsgClient
-  | ScreenMainMenu.MsgClient
-  | ScreenPackBuilderTypes.MsgClient
-  | ScreenPackBuilderOpenTypes.MsgClient
-  | { t: 'got-msg-core'; c: MsgCore }
+export type MsgFrontend =
+  | BaseMsgFrontend
+  | ScreenPuzzleBuilderOpenTypes.MsgFrontend
+  | ScreenPuzzleBuilderTypes.MsgFrontend
+  | ScreenMainMenu.MsgFrontend
+  | ScreenPackBuilderTypes.MsgFrontend
+  | ScreenPackBuilderOpenTypes.MsgFrontend
+  | { t: 'got-msg-space'; c: MsgSpace }
 
-export type MsgServer =
-  | ScreenPuzzleBuilderOpenTypes.MsgServer
-  | ScreenPuzzleBuilderTypes.MsgServer
-  | ScreenPackBuilderTypes.MsgServer
-  | ScreenPackBuilderOpenTypes.MsgServer
+export type MsgBackend =
+  | ScreenPuzzleBuilderOpenTypes.MsgBackend
+  | ScreenPuzzleBuilderTypes.MsgBackend
+  | ScreenPackBuilderTypes.MsgBackend
+  | ScreenPackBuilderOpenTypes.MsgBackend
 
-export type MsgToServer =
-  | ScreenPuzzleBuilderTypes.MsgToServer
-  | ScreenPuzzleBuilderOpenTypes.MsgToServer
-  | ScreenPackBuilderTypes.MsgToServer
-  | ScreenPackBuilderOpenTypes.MsgToServer
+export type MsgToBackend =
+  | ScreenPuzzleBuilderTypes.MsgToBackend
+  | ScreenPuzzleBuilderOpenTypes.MsgToBackend
+  | ScreenPackBuilderTypes.MsgToBackend
+  | ScreenPackBuilderOpenTypes.MsgToBackend
 
-export type MsgToClient =
-  | ScreenPuzzleBuilderTypes.MsgToClient
-  | ScreenPuzzleBuilderOpenTypes.MsgToClient
-  | ScreenPackBuilderTypes.MsgToClient
-  | ScreenPackBuilderOpenTypes.MsgToClient
+export type MsgToFrontend =
+  | ScreenPuzzleBuilderTypes.MsgToFrontend
+  | ScreenPuzzleBuilderOpenTypes.MsgToFrontend
+  | ScreenPackBuilderTypes.MsgToFrontend
+  | ScreenPackBuilderOpenTypes.MsgToFrontend
 
 //
 //
@@ -137,18 +137,18 @@ export type MsgToClient =
 //
 //
 
-export const MsgCore = p.or(
-  ScreenMainMenu.MsgCore,
-  ScreenPuzzleBuilderTypes.MsgCore,
-  ScreenPuzzleBuilderOpenTypes.MsgCore,
-  ScreenPackBuilderTypes.MsgCore,
-  ScreenPackBuilderOpenTypes.MsgCore,
+export const MsgSpace = p.or(
+  ScreenMainMenu.MsgSpace,
+  ScreenPuzzleBuilderTypes.MsgSpace,
+  ScreenPuzzleBuilderOpenTypes.MsgSpace,
+  ScreenPackBuilderTypes.MsgSpace,
+  ScreenPackBuilderOpenTypes.MsgSpace,
   p.obj({
     t: p.l('user-clicked-back-button'),
     userId: UserId,
   }),
 )
-export type MsgCore = p.Infer<typeof MsgCore>
+export type MsgSpace = p.Infer<typeof MsgSpace>
 
 export const Screen = p.or(
   p.obj({
@@ -169,18 +169,18 @@ export const Screen = p.or(
 )
 export type Screen = p.Infer<typeof Screen>
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   screen: Screen,
-  screenPuzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelCore),
-  screenPuzzleBuilderOpen: p.maybe(ScreenPuzzleBuilderOpenTypes.ModelCore),
-  screenPackBuilder: p.maybe(ScreenPackBuilderTypes.ModelCore),
-  screenPackBuilderOpen: p.maybe(ScreenPackBuilderOpenTypes.ModelCore),
+  screenPuzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelSpace),
+  screenPuzzleBuilderOpen: p.maybe(ScreenPuzzleBuilderOpenTypes.ModelSpace),
+  screenPackBuilder: p.maybe(ScreenPackBuilderTypes.ModelSpace),
+  screenPackBuilderOpen: p.maybe(ScreenPackBuilderOpenTypes.ModelSpace),
 })
 
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
-export type UpdateCore = (input: {
-  ctx: FlowCoreCtx
-  msgCore: MsgCore
-  modelCore: ModelCore
-}) => ModelCore & { event?: FlowCoreEvent }
+export type UpdateSpace = (input: {
+  ctx: FlowSpaceCtx
+  msgSpace: MsgSpace
+  modelSpace: ModelSpace
+}) => ModelSpace & { event?: FlowSpaceEvt }

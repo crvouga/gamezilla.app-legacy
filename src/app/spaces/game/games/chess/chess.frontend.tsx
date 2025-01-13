@@ -1,0 +1,433 @@
+import { Eff } from '~/@/eff'
+import { RemoteResult, isErr } from '~/@/result'
+import { Sub } from '~/@/sub'
+import { APP_SOUND, AppFrontendCmd, playSound, preloadSound, sendToBackend } from '~/app/@/frontend/cmd'
+import { IconPuzzlePiece } from '~/app/@/ui'
+import type { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
+import type { GameFrontend } from '~/app/spaces/game/games/@/architecture/game-frontend'
+import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
+import { GameMainMenu } from '../@/ui/game-main-menu'
+import { CoverArt } from './@/chess-ui'
+import { CHESS_SOUND } from './@/chess/chess-sounds'
+import type { ModelFrontend, ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend, MsgToBackend } from './chess.types'
+import * as Puzzle from './puzzle/puzzle.frontend'
+import * as VsBot from './vs-bot/vs-bot.frontend'
+import * as VsUser from './vs-user/vs-user.frontend'
+
+//
+//
+//
+//
+//
+//
+
+type Frontend = GameFrontend<{
+  ModelFrontend: ModelFrontend
+  MsgFrontend: MsgFrontend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  FrontendCtx: SpaceFrontendCtx
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
+  FrontendCmd: SpaceFrontendCmd<{
+    MsgToBackend: MsgToBackend
+    MsgFrontend: MsgFrontend
+  }>
+  FrontendEvent: SpaceFrontendEvt
+}>
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export const init: Frontend['init'] = ({ model }) => {
+  if (model) {
+    return { model }
+  }
+
+  return {
+    model: {
+      mode: {
+        t: 'none',
+      },
+      requests: {},
+    },
+    msgCmd: [preloadSound(Object.values(CHESS_SOUND))],
+  }
+}
+
+//
+//
+//
+// Update
+//
+//
+//
+
+// @ts-ignore
+export const update: Frontend['update'] = (input) => {
+  return GameFrontendModule.andThen(
+    init(input),
+    (model) =>
+      GameMainMenu.update({
+        msg: input.msg,
+        model,
+      }),
+    (model) => {
+      const { msg, ctx } = input
+
+      switch (msg?.t) {
+        case 'input-mode': {
+          return {
+            model: {
+              ...model,
+              requests: {
+                ...model.requests,
+                [msg.t]: RemoteResult.Loading,
+              },
+            },
+            msgCmd: [sendToBackend(msg)],
+          }
+        }
+
+        case 'vs-user': {
+          if (model.mode?.t === 'vs-user') {
+            const updated = VsUser.update(msg.c, model.mode.c)
+
+            return {
+              model: {
+                ...model,
+                mode: {
+                  t: 'vs-user',
+                  c: updated.model,
+                },
+              },
+              eff: Eff.tag('vs-user', updated.eff),
+            }
+          }
+
+          return {
+            model,
+          }
+        }
+
+        case 'vs-bot': {
+          if (model.mode?.t === 'vs-bot') {
+            const updated = VsBot.update({
+              msg: msg.c,
+              model: model.mode.c,
+              ctx,
+            })
+
+            return {
+              model: {
+                ...model,
+                mode: {
+                  t: 'vs-bot',
+                  c: updated.model,
+                },
+              },
+              eff: Eff.tag('vs-bot', updated.eff),
+            }
+          }
+
+          return {
+            model,
+          }
+        }
+
+        case 'puzzle': {
+          if (model.mode?.t === 'puzzle') {
+            const updated = Puzzle.update({
+              ctx,
+              model: model.mode.c,
+              msg: msg.c,
+            })
+
+            return {
+              model: {
+                ...model,
+                mode: {
+                  t: 'puzzle',
+                  c: updated.model,
+                },
+              },
+              eff: Eff.tag('puzzle', updated?.eff ?? Eff.None),
+              msgCmd: AppFrontendCmd.tag('puzzle', updated.msgCmd),
+            }
+          }
+          return {
+            model,
+          }
+        }
+
+        default: {
+          return {
+            model,
+          }
+        }
+      }
+    },
+    (model) => {
+      const { msgBackend, ctx } = input
+
+      if (!msgBackend) {
+        return {
+          model,
+        }
+      }
+
+      switch (msgBackend.t) {
+        case 'input-mode': {
+          return GameFrontendModule.andThen(
+            {
+              model,
+            },
+            (model) => {
+              const { result } = msgBackend
+
+              const modelNew: ModelFrontend = {
+                ...model,
+                requests: {
+                  ...model.requests,
+                  [msgBackend.t]: RemoteResult.map(result, () => null),
+                },
+              }
+
+              if (isErr(result)) {
+                return {
+                  model: modelNew,
+                }
+              }
+
+              return {
+                model: modelNew,
+              }
+            },
+
+            (model) => {
+              if (model.mode.t === 'none') {
+                return {
+                  model,
+                  msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+                }
+              }
+              return {
+                model,
+                msgCmd: [playSound(APP_SOUND.navForwardMin)],
+              }
+            },
+          )
+        }
+
+        case 'vs-user': {
+          if (model?.mode?.t === 'vs-user') {
+            const [child, eff] = VsUser.updateFromBackend(
+              {
+                ctx,
+              },
+              msgBackend.c,
+              model.mode.c,
+            )
+
+            return {
+              model: {
+                ...model,
+                mode: {
+                  t: 'vs-user',
+                  c: child,
+                },
+              },
+              eff: Eff.tag('vs-user', eff),
+            }
+          }
+
+          return {
+            model,
+          }
+        }
+
+        case 'vs-bot': {
+          if (model?.mode?.t === 'vs-bot') {
+            const updated = VsBot.updateFromBackend({
+              msg: msgBackend.c,
+              model: model.mode.c,
+            })
+
+            return {
+              model: {
+                ...model,
+                mode: {
+                  t: 'vs-bot',
+                  c: updated.model,
+                },
+              },
+              eff: Eff.tag('vs-bot', updated.eff),
+            }
+          }
+
+          return {
+            model,
+          }
+        }
+
+        case 'puzzle': {
+          if (model?.mode?.t !== 'puzzle') {
+            return {
+              model,
+            }
+          }
+
+          const updated = Puzzle.updateFromBackend({
+            ctx,
+            model: model.mode.c,
+            msg: msgBackend.c,
+          })
+
+          return {
+            model: {
+              ...model,
+              mode: {
+                t: 'puzzle',
+                c: updated.model,
+              },
+            },
+            eff: Eff.tag('puzzle', updated?.eff ?? Eff.None),
+            msgCmd: AppFrontendCmd.tag('puzzle', updated.msgCmd),
+          }
+        }
+      }
+    },
+  )
+}
+
+//
+//
+//
+// Subscriptions
+//
+//
+//
+
+export const subscriptions: Frontend['subscriptions'] = (_input) => {
+  return Sub.None
+}
+
+//
+//
+//
+// View
+//
+//
+//
+
+export const View: Frontend['View'] = (input) => {
+  switch (input.modelSpace.t) {
+    case 'none': {
+      return (
+        <GameMainMenu.View
+          title={input.ctx.t('chess')}
+          ctx={input.ctx}
+          renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
+          onBack={() => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' })}
+          dispatch={input.dispatch}
+          buttons={[
+            GameMainMenu.buttons.playComputer({
+              ctx: input.ctx,
+              onClick: () =>
+                input.dispatch({
+                  t: 'input-mode',
+                  mode: 'vs-bot',
+                  userId: input.ctx.currentUserId,
+                }),
+            }),
+            GameMainMenu.buttons.playFriend({
+              ctx: input.ctx,
+              onClick: () =>
+                input.dispatch({
+                  t: 'input-mode',
+                  mode: 'vs-user',
+                  userId: input.ctx.currentUserId,
+                }),
+            }),
+            {
+              title: input.ctx.t('chess.puzzle-title'),
+              description: input.ctx.t('chess.puzzle-description'),
+              renderIcon: (input) => <IconPuzzlePiece {...input} />,
+              onClick: () =>
+                input.dispatch({
+                  t: 'input-mode',
+                  mode: 'puzzle',
+                  userId: input.ctx.currentUserId,
+                }),
+            },
+          ]}
+        />
+      )
+    }
+
+    case 'vs-bot': {
+      return null
+      // return (
+      //   <VsBot.View
+      //     ctx={ctx}
+      //     dispatch={(c) => dispatch({ t: "vs-bot", c })}
+      //     model={model?.mode.c}
+      //     onClose={() => {
+      //       dispatch({
+      //         t: "input-mode",
+      //         mode: "none",
+      //         userId: ctx.currentUserId,
+      //       });
+      //     }}
+      //   />
+      // );
+    }
+
+    case 'vs-user': {
+      return null
+      // return (
+      //   <VsUser.View
+      //     ctx={ctx}
+      //     model={model.mode.c}
+      //     dispatch={(c) => dispatch({ t: "vs-user", c })}
+      //     onQuit={() => {
+      //       dispatch({
+      //         t: "input-mode",
+      //         mode: "none",
+      //         userId: ctx.currentUserId,
+      //       });
+      //     }}
+      //   />
+      // );
+    }
+
+    case 'puzzle': {
+      return null
+      // return (
+      //   <Puzzle.View
+      //     ctx={ctx}
+      //     model={model.mode.c}
+      //     dispatch={(c) => dispatch({ t: "puzzle", c })}
+      //     onClose={() => {
+      //       dispatch({
+      //         t: "input-mode",
+      //         mode: "none",
+      //         userId: ctx.currentUserId,
+      //       });
+      //     }}
+      //   />
+      // );
+    }
+  }
+}
+
+export const ViewFeedItem: Frontend['ViewFeedItem'] = () => {
+  return null
+}

@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'bun:test'
-import { FixtureSpacesClient } from '~/app/spaces/@/fixture/client'
+import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { VariantBoard } from '.'
 import { BoardInput } from '../ui/board'
 import { VariantGridShorthand } from './grid'
 import type * as FlowVariant from './variant'
 
 const Fixture = async () => {
-  const f = await FixtureSpacesClient()
+  const f = await FixtureSpacesFrontend()
   const flow = VariantGridShorthand.toGrid([
     ['A', ' '],
     [' ', 'A'],

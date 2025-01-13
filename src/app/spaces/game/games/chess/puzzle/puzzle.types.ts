@@ -1,11 +1,11 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, type RemoteResult, type Result } from '~/@/result'
+import { Posix } from '~/@/time/posix'
 import type { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { Chess } from '../@/chess'
 import { EloRating } from './elo-rating'
 import { zip } from './utils'
-import { Posix } from '~/@/time/posix'
 
 export const maxRating = 3212
 export const minRating = 545
@@ -51,7 +51,7 @@ type MainModel =
       endedAt: Posix
     }
 
-export type CoreModel =
+export type SpaceModel =
   | {
       t: 'loading'
       profile?: PuzzleProfile | null
@@ -60,13 +60,13 @@ export type CoreModel =
     }
   | (BaseModel & MainModel)
 
-export type ModelServer = CoreModel & {
+export type ModelBackend = SpaceModel & {
   requests: { getPuzzles?: RemoteResult<string, null> }
 }
 
-export type ModelClient = CoreModel & {
+export type ModelFrontend = SpaceModel & {
   initializedAt?: number
-  serverNow?: Posix
+  backendNow?: Posix
 }
 
 type Hint = 'from' | 'from-and-to'
@@ -76,15 +76,15 @@ const hintToNextHint: { [key in Hint]: Hint } = {
   'from-and-to': 'from-and-to',
 }
 
-export const isNoMoreHints = (model: CoreModel): boolean => {
+export const isNoMoreHints = (model: SpaceModel): boolean => {
   return model.t === 'started' && model.hint === 'from-and-to'
 }
 
-export const isSolved = (model: CoreModel): boolean => {
+export const isSolved = (model: SpaceModel): boolean => {
   return model.t === 'solved' || model.t === 'solved-with-hint'
 }
 
-export const isIncorrect = (model: CoreModel): boolean => {
+export const isIncorrect = (model: SpaceModel): boolean => {
   return model.t === 'incorrect'
 }
 
@@ -92,7 +92,7 @@ export const initQuery: PuzzleQuery = {
   ratingRange: [1000, 1500],
 }
 
-export const initCore: CoreModel = {
+export const initSpace: SpaceModel = {
   t: 'loading',
 }
 
@@ -150,9 +150,9 @@ export type Req =
   | { t: 'skip' }
   | { t: 'show-hint' }
 
-export type Res = Req & { result: Result<string, CoreModel> }
+export type Res = Req & { result: Result<string, SpaceModel> }
 
-export type MsgServer = { t: 'clock-tick' } | DbMsg
+export type MsgBackend = { t: 'clock-tick' } | DbMsg
 
 type DbMsg =
   | {
@@ -179,15 +179,15 @@ type DbMsg =
       >
     }
 
-export type MsgClient = Req
+export type MsgFrontend = Req
 
-export type MsgToServer = Req
+export type MsgToBackend = Req
 
-export type MsgToClient =
+export type MsgToFrontend =
   | Res
   | { t: 'clock-tick'; now: Posix }
   | (Omit<DbMsg, 'result'> & {
-      result: Result<string, CoreModel>
+      result: Result<string, SpaceModel>
     })
 
 export const toOpponentColor = (puzzle: Puzzle): Chess.Color => {
@@ -202,7 +202,7 @@ export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
   return Chess.toOppositeColor(toOpponentColor(puzzle))
 }
 
-export const toCorrectMove = (model: CoreModel): Chess.MoveInput | null => {
+export const toCorrectMove = (model: SpaceModel): Chess.MoveInput | null => {
   if (model.t === 'started') {
     return model.puzzle.moves[model.moves.length]?.correctMove ?? null
   }
@@ -219,7 +219,7 @@ export const toCorrectMove = (model: CoreModel): Chess.MoveInput | null => {
 //
 //
 
-export const toCurrentBoard = (model: CoreModel): Chess.Model => {
+export const toCurrentBoard = (model: SpaceModel): Chess.Model => {
   if (model.t === 'loading') {
     return Chess.init()
   }
@@ -281,29 +281,18 @@ const didFailPuzzle = (puzzle: Puzzle, playerMoves: Chess.MoveInput[]): boolean 
   )
 }
 
-type CoreCtx = SpaceCtx & {
-  now: Posix
-  currentUserId: UserId
-}
-
-export const updateCore = ({
+export const updateSpace = ({
   ctx,
   msg,
   model,
 }: {
-  ctx: CoreCtx
-  msg: Req
-  model: CoreModel
-}): Result<string, CoreModel> => {
-  //
-  //
-  //
-  //
-
-  if (ctx.currentUserId !== ctx.space.hostId) {
-    return Err('must-be-host')
+  ctx: SpaceCtx & {
+    now: Posix
+    currentUserId: UserId
   }
-
+  msg: Req
+  model: SpaceModel
+}): Result<string, SpaceModel> => {
   //
   //
   //
@@ -319,7 +308,7 @@ export const updateCore = ({
         return moved
       }
 
-      const modelNew: CoreModel = {
+      const modelNew: SpaceModel = {
         ...model,
         moves: [...model.moves, msg.moveInput],
         hint: null,
@@ -418,7 +407,7 @@ export const updateCore = ({
   return Err('unhandled')
 }
 
-const transitionNextPuzzle = ({ model, ctx }: { ctx: CoreCtx; model: CoreModel }): CoreModel => {
+const transitionNextPuzzle = ({ model }: { ctx: SpaceCtx; model: SpaceModel }): SpaceModel => {
   if (model.t === 'loading') {
     return model
   }
@@ -443,7 +432,7 @@ const transitionNextPuzzle = ({ model, ctx }: { ctx: CoreCtx; model: CoreModel }
     hasLost: false,
     hasUsedHint: false,
     hint: null,
-    startedAt: ctx.now,
+    startedAt: Posix.now(),
     moves: [],
     profile: profileNew,
     puzzle: puzzleNew,
@@ -451,7 +440,7 @@ const transitionNextPuzzle = ({ model, ctx }: { ctx: CoreCtx; model: CoreModel }
   }
 }
 
-export const toNextEloRating = (model: CoreModel): EloRating | null => {
+export const toNextEloRating = (model: SpaceModel): EloRating | null => {
   if (model.t === 'loading') {
     return null
   }
@@ -487,7 +476,7 @@ export const toNextEloRating = (model: CoreModel): EloRating | null => {
   return null
 }
 
-export const transitionLoadingToStarted = ({ model, ctx }: { ctx: { now: Posix }; model: CoreModel }): CoreModel => {
+export const transitionLoadingToStarted = ({ model, ctx }: { ctx: { now: Posix }; model: SpaceModel }): SpaceModel => {
   if (model.t === 'loading') {
     const profile = model.profile
 

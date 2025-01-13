@@ -11,33 +11,33 @@ import type * as VsUser from './vs-user/vs-user.types'
 //
 //
 
-export type ModelClient =
+export type ModelFrontend =
   | {
       t: 'none'
     }
   | {
       t: 'vs-user'
-      c: VsUser.ModelClient
+      c: VsUser.ModelFrontend
     }
   | {
       t: 'vs-bot'
-      c: VsBot.ModelClient
+      c: VsBot.ModelFrontend
     }
 
-export type ModelServer =
+export type ModelBackend =
   | {
       t: 'none'
     }
   | {
       t: 'vs-user'
-      c: VsUser.ModelServer
+      c: VsUser.ModelBackend
     }
   | {
       t: 'vs-bot'
-      c: VsBot.ModelServer
+      c: VsBot.ModelBackend
     }
 
-export type Mode = ModelServer['t']
+export type Mode = ModelBackend['t']
 
 //
 //
@@ -47,18 +47,18 @@ export type Mode = ModelServer['t']
 //
 //
 
-export type MsgClient = Req | { t: 'vs-user'; c: VsUser.MsgClient } | { t: 'vs-bot'; c: VsBot.MsgClient }
+export type MsgFrontend = Req | { t: 'vs-user'; c: VsUser.MsgFrontend } | { t: 'vs-bot'; c: VsBot.MsgFrontend }
 
-export type MsgServer = { t: 'vs-user'; c: VsUser.MsgServer } | { t: 'vs-bot'; c: VsBot.MsgServer }
+export type MsgBackend = { t: 'vs-user'; c: VsUser.MsgBackend } | { t: 'vs-bot'; c: VsBot.MsgBackend }
 
-export type MsgToClient = Res | { t: 'vs-user'; c: VsUser.MsgToClient } | { t: 'vs-bot'; c: VsBot.MsgToClient }
+export type MsgToFrontend = Res | { t: 'vs-user'; c: VsUser.MsgToFrontend } | { t: 'vs-bot'; c: VsBot.MsgToFrontend }
 
-export type MsgToServer = Req | { t: 'vs-user'; c: VsUser.MsgToServer } | { t: 'vs-bot'; c: VsBot.MsgToServer }
+export type MsgToBackend = Req | { t: 'vs-user'; c: VsUser.MsgToBackend } | { t: 'vs-bot'; c: VsBot.MsgToBackend }
 
 export type Req = { t: 'input-mode'; userId: UserId; mode: Mode }
 
 export type Res = Req & {
-  result: Result<Problem, ModelServer>
+  result: Result<Problem, ModelBackend>
 }
 
 export type Problem = 'must-be-host'

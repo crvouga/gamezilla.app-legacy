@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 
-export const MsgCore = p.or(
+export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-clicked-start-game'),
     userId: UserId,
@@ -38,8 +38,8 @@ const Player = p.or(
   }),
 )
 
-export const ModelCore = p.obj({
+export const ModelSpace = p.obj({
   players: p.arr(Player),
 })
 
-export type ModelCore = p.Infer<typeof ModelCore>
+export type ModelSpace = p.Infer<typeof ModelSpace>

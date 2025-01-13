@@ -1,8 +1,8 @@
 import { describe, expect, mock, test } from 'bun:test'
 import { p } from '~/@/parser'
-import { REDIS_URL } from '~/config/server'
+import { REDIS_URL } from '~/config/backend'
 import { Logger } from '../logger'
-import { AppServerTestEnv } from '../../app/@/server/fixture'
+import { AppBackendTestEnv } from '../../app/@/backend/fixture'
 import { Config, PubSubTopicBased } from './impl'
 
 const Fixture = async (config: Config) => {
@@ -31,7 +31,7 @@ const randomMyEvent = (): MyEvent => ({
 const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
 
 const Fixtures = async () => {
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
   const configs: Config[] = [{ t: 'in-memory', map: new Map() }]
 
   if (testEnv.t === 'integration') {

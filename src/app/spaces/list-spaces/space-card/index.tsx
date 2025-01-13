@@ -1,13 +1,13 @@
-import { BaseClientCtx } from '~/app/@/client/ctx'
+import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { Avatar, cn, Typography } from '~/app/@/ui'
 import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
 import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
-import { SpaceCoreState } from '../../core/space-state'
+import { SpaceState } from '../../space/space-state'
 
 const MAX_AVATAR_COUNT = 3
 
-export const ViewSpaceCard = (input: { ctx: BaseClientCtx; state: SpaceCoreState.Started; onClick?: () => void }) => {
+export const ViewSpaceCard = (input: { ctx: BaseFrontendCtx; state: SpaceState.Started; onClick?: () => void }) => {
   const host = input.ctx.profiles[input.state.hostId]
   const users = Object.values(input.state.users).flatMap((userId) => {
     const profile = input.ctx.profiles[userId]

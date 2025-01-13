@@ -1,3 +1,3 @@
-export type MsgServerToMsgClient<MsgToClient> = MsgToClient[]
+export type MsgBackendToMsgFrontend<MsgToFrontend> = MsgToFrontend[]
 
-export type MsgClientToMsgServer<MsgToServer> = MsgToServer[]
+export type MsgFrontendToMsgBackend<MsgToBackend> = MsgToBackend[]

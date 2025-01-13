@@ -2,8 +2,8 @@ import { describe, expect, it, test } from 'bun:test'
 import { p } from '~/@/parser'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
-import { REDIS_URL } from '~/config/server'
-import { AppServerTestEnv } from '../../app/@/server/fixture'
+import { REDIS_URL } from '~/config/backend'
+import { AppBackendTestEnv } from '../../app/@/backend/fixture'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { TimeSpan } from '../time/time-span'
@@ -11,7 +11,7 @@ import { Uuid } from '../uuid/uuid'
 import { DbConnKv } from './impl'
 
 const Fixture = async () => {
-  const testEnv = await AppServerTestEnv()
+  const testEnv = await AppBackendTestEnv()
   const logger = Logger({ t: 'noop' })
 
   switch (testEnv.t) {

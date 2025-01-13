@@ -25,22 +25,22 @@ function alphabeta(node, depth, α, β, maximizingPlayer) is
 
 */
 
-export type ScoreFn<TState> = (currentState: TState, currentDepth: number) => number
+export type SspaceFn<TState> = (currentState: TState, currentDepth: number) => number
 
 export type ChildrenFn<TState> = (currentState: TState) => Iterable<TState>
 
 const findBestChildState = <TState>({
-  scoreFn,
+  sspaceFn,
   childrenFn,
   parentState,
   maxDepth,
 }: {
-  scoreFn: ScoreFn<TState>
+  sspaceFn: SspaceFn<TState>
   childrenFn: ChildrenFn<TState>
   parentState: TState
   maxDepth: number
 }) => {
-  const calculateScore = (
+  const calculateSspace = (
     currentState: TState,
     currentDepth: number,
     alpha: number,
@@ -48,18 +48,18 @@ const findBestChildState = <TState>({
     isMaximizing: boolean,
   ): number => {
     if (currentDepth >= maxDepth) {
-      return scoreFn(currentState, currentDepth)
+      return sspaceFn(currentState, currentDepth)
     }
 
     if (Array.from(childrenFn(currentState)).length === 0) {
-      return scoreFn(currentState, currentDepth)
+      return sspaceFn(currentState, currentDepth)
     }
 
     if (isMaximizing) {
       let value = Number.NEGATIVE_INFINITY
 
       for (const child of childrenFn(currentState)) {
-        value = Math.max(value, calculateScore(child, currentDepth + 1, alpha, beta, false))
+        value = Math.max(value, calculateSspace(child, currentDepth + 1, alpha, beta, false))
 
         if (value >= beta) {
           break
@@ -74,7 +74,7 @@ const findBestChildState = <TState>({
     let value = Number.POSITIVE_INFINITY
 
     for (const child of childrenFn(currentState)) {
-      value = Math.min(value, calculateScore(child, currentDepth + 1, alpha, beta, true))
+      value = Math.min(value, calculateSspace(child, currentDepth + 1, alpha, beta, true))
 
       if (value <= alpha) {
         break
@@ -87,13 +87,13 @@ const findBestChildState = <TState>({
   }
 
   let bestChildState: TState | null = null
-  let bestChildScore = Number.NEGATIVE_INFINITY
+  let bestChildSspace = Number.NEGATIVE_INFINITY
   for (const child of childrenFn(parentState)) {
-    const childScore = calculateScore(child, 0, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, true)
+    const childSspace = calculateSspace(child, 0, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, true)
 
-    if (childScore > bestChildScore) {
+    if (childSspace > bestChildSspace) {
       bestChildState = child
-      bestChildScore = childScore
+      bestChildSspace = childSspace
     }
   }
 

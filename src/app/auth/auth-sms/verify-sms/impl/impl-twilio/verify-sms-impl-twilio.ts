@@ -12,19 +12,19 @@ export type Config = {
 export const VerifySMS = (config: Config): IVerifySMS => {
   const logger = Logger.prefix('verify-sms-twilio', config.logger)
 
-  const TWILIO_ACCOUNT_SID = import.meta.env.TWILIO_ACCOUNT_SID
+  const TWILIO_ACCOUNT_SID = import.meta.env?.TWILIO_ACCOUNT_SID
 
   if (!TWILIO_ACCOUNT_SID) {
     throw new Error('TWILIO_ACCOUNT_SID is not set')
   }
 
-  const TWILIO_AUTH_TOKEN = import.meta.env.TWILIO_AUTH_TOKEN
+  const TWILIO_AUTH_TOKEN = import.meta.env?.TWILIO_AUTH_TOKEN
 
   if (!TWILIO_AUTH_TOKEN) {
     throw new Error('TWILIO_AUTH_TOKEN is not set')
   }
 
-  const TWILIO_MESSAGING_SERVICE_SID = import.meta.env.TWILIO_MESSAGING_SERVICE_SID
+  const TWILIO_MESSAGING_SERVICE_SID = import.meta.env?.TWILIO_MESSAGING_SERVICE_SID
 
   if (!TWILIO_MESSAGING_SERVICE_SID) {
     throw new Error('TWILIO_MESSAGING_SERVICE_SID is not set')

@@ -6,20 +6,20 @@ import type * as VsBot from './vs-bot/vs-bot.types'
 import type * as VsUser from './vs-user/vs-user.types'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 
-export type ModelClient = {
+export type ModelFrontend = {
   mode:
     | { t: 'none' }
     | {
         t: 'vs-user'
-        c: VsUser.ModelClient
+        c: VsUser.ModelFrontend
       }
     | {
         t: 'vs-bot'
-        c: VsBot.ModelClient
+        c: VsBot.ModelFrontend
       }
     | {
         t: 'puzzle'
-        c: Puzzle.ModelClient
+        c: Puzzle.ModelFrontend
       }
 
   requests?: {
@@ -27,41 +27,41 @@ export type ModelClient = {
   }
 }
 
-export type ModelServer =
+export type ModelBackend =
   | { t: 'none' }
-  | { t: 'vs-user'; c: VsUser.ModelServer }
-  | { t: 'vs-bot'; c: VsBot.ModelServer }
-  | { t: 'puzzle'; c: Puzzle.ModelServer }
+  | { t: 'vs-user'; c: VsUser.ModelBackend }
+  | { t: 'vs-bot'; c: VsBot.ModelBackend }
+  | { t: 'puzzle'; c: Puzzle.ModelBackend }
 
-type Mode = ModelServer['t']
+type Mode = ModelBackend['t']
 
-export type MsgClient =
+export type MsgFrontend =
   | GameMainMenu.Msg
   | Req
-  | { t: 'vs-user'; c: VsUser.MsgClient }
-  | { t: 'vs-bot'; c: VsBot.MsgClient }
-  | { t: 'puzzle'; c: Puzzle.MsgClient }
+  | { t: 'vs-user'; c: VsUser.MsgFrontend }
+  | { t: 'vs-bot'; c: VsBot.MsgFrontend }
+  | { t: 'puzzle'; c: Puzzle.MsgFrontend }
 
-export type MsgServer =
-  | { t: 'vs-user'; c: VsUser.MsgServer }
-  | { t: 'vs-bot'; c: VsBot.MsgServer }
-  | { t: 'puzzle'; c: Puzzle.MsgServer }
+export type MsgBackend =
+  | { t: 'vs-user'; c: VsUser.MsgBackend }
+  | { t: 'vs-bot'; c: VsBot.MsgBackend }
+  | { t: 'puzzle'; c: Puzzle.MsgBackend }
 
-export type MsgToClient =
+export type MsgToFrontend =
   | Res
-  | { t: 'vs-user'; c: VsUser.MsgToClient }
-  | { t: 'vs-bot'; c: VsBot.MsgToClient }
-  | { t: 'puzzle'; c: Puzzle.MsgToClient }
+  | { t: 'vs-user'; c: VsUser.MsgToFrontend }
+  | { t: 'vs-bot'; c: VsBot.MsgToFrontend }
+  | { t: 'puzzle'; c: Puzzle.MsgToFrontend }
 
-export type MsgToServer =
+export type MsgToBackend =
   | Req
-  | { t: 'vs-user'; c: VsUser.MsgToServer }
-  | { t: 'vs-bot'; c: VsBot.MsgToServer }
-  | { t: 'puzzle'; c: Puzzle.MsgToServer }
+  | { t: 'vs-user'; c: VsUser.MsgToBackend }
+  | { t: 'vs-bot'; c: VsBot.MsgToBackend }
+  | { t: 'puzzle'; c: Puzzle.MsgToBackend }
 
 export type Req = { t: 'input-mode'; mode: Mode; userId: UserId }
 export type Res = Req & {
-  result: Result<Problem, ModelServer>
+  result: Result<Problem, ModelBackend>
 }
 export type Problem = 'must_be_the_host'
 
@@ -75,9 +75,9 @@ export type Problem = 'must_be_the_host'
 //
 //
 
-export type MsgCore = { t: 'user-changed-mode'; mode: Mode; userId: UserId }
+export type MsgSpace = { t: 'user-changed-mode'; mode: Mode; userId: UserId }
 
-export type ModelCore =
+export type ModelSpace =
   | {
       t: 'none'
     }
@@ -91,16 +91,22 @@ export type ModelCore =
       t: 'puzzle'
     }
 
-export const initCore = (): ModelCore => {
+export const initSpace = (): ModelSpace => {
   return {
     t: 'none',
   }
 }
 
-export const updateCore = ({ msgCore }: { ctx: SpaceCtx; modelCore: ModelCore; msgCore: MsgCore }): ModelCore => {
-  switch (msgCore.t) {
+export const updateSpace = ({
+  msgSpace,
+}: {
+  ctx: SpaceCtx
+  modelSpace: ModelSpace
+  msgSpace: MsgSpace
+}): ModelSpace => {
+  switch (msgSpace.t) {
     case 'user-changed-mode': {
-      switch (msgCore.mode) {
+      switch (msgSpace.mode) {
         case 'none': {
           return {
             t: 'none',
