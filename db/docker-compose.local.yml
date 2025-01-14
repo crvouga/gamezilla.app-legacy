@@ -13,6 +13,23 @@ services:
       - '5433:5432'
     volumes:
       - gamezilla-app-postgres-data:/var/lib/postgresql/data
+    tmpfs:
+      - /var/lib/postgresql/data
+      - /tmp
+    command:
+      - -c
+      - listen_addresses=*
+      - -c
+      - wal_level=logical
+
+  electric:
+    image: electricsql/electric
+    environment:
+      DATABASE_URL: postgresql://gamezilla-app:gamezilla-app@localhost:5433/gamezilla-app?sslmode=disable
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
 
   redis:
     container_name: gamezilla-app-redis

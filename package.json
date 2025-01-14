@@ -14,7 +14,7 @@
     "frontend:cir-deps": "dpdm --progress --no-warning --no-tree ./src/main/frontend.tsx",
     "frontend:serve": "bun x serve -s dist -p 3001",
     "cloc": "bun x cloc src",
-    "db": "bubun env && psql \"$DATABASE_URL\"",
+    "db": "bun env && psql \"$DATABASE_URL\"",
     "db:down": "bun x dbmate -e DATABASE_URL down",
     "db:dump": "bun x dbmate dump",
     "db:new": "bun x dbmate new",
@@ -51,7 +51,6 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.2.15",
     "chess.js": "^1.0.0-beta.8",
     "inferno": "^8.2.3",
     "ioredis": "^5.4.1",

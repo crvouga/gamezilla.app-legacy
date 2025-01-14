@@ -58,21 +58,12 @@ const initCtx = async (): Promise<BackendCtx> => {
     throw new Error('DATABASE_URL is not set')
   }
 
-  const USE_PGLITE = false
-
-  const dbConnSql = USE_PGLITE
-    ? await DbConnSql({
-        t: 'pglite',
-        filePath: './db/postgres-data',
-        logger,
-        simulateLatency,
-      })
-    : await DbConnSql({
-        t: 'postgres',
-        databaseUrl: DATABASE_URL,
-        logger,
-        simulateLatency,
-      })
+  const dbConnSql = await DbConnSql({
+    t: 'postgres',
+    databaseUrl: DATABASE_URL,
+    logger,
+    simulateLatency,
+  })
 
   const dbConnKv = await DbConnKv({
     t: 'postgres',
