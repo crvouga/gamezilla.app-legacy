@@ -27,7 +27,6 @@
     "gen:guard": "bun src/@/guards/guards-gen.ts",
     "gen:l18n": "bun src/@/l18n/l18n-gen.ts",
     "gen:screens": "bun src/@/routing/screens-gen.ts",
-    "load-balancer": "bun src/main/load-balancer.ts",
     "pretty": "bun x sort-package-json && bun x prettier --write .",
     "preview": "bun frontend:build && bun frontend:serve",
     "backend": "bun src/main/backend.ts",
