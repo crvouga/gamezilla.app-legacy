@@ -1,5 +1,5 @@
-import { Shape, ShapeStream } from '@electric-sql/client'
 import { descend } from '~/@/array/sorting'
+import { Logger } from '~/@/logger'
 import { RequestResponse } from '~/@/request-response/request-response'
 import { Result, isErr, isOk } from '~/@/result'
 import { Posix } from '~/@/time/posix'
@@ -9,45 +9,17 @@ import { sendToBackend, showErrSm } from '~/app/@/frontend/cmd'
 import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
-import { ELECTRIC_URL } from '~/config/shared'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { Solutions } from '../../solutions/solutions'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
+import { PuzzleDbElectric } from '../puzzle-db/impl-electric'
 import { PuzzleId } from '../puzzle-id'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend, MsgToBackend } from './types'
 
-const puzzles = () => {
-  const stream = new ShapeStream({
-    url: `${ELECTRIC_URL}/v1/shape`,
-    params: {
-      table: 'game_flow_puzzle',
-    },
-  })
-  const shape = new Shape(stream)
-
-  // The callback runs every time the Shape data changes.
-  shape.subscribe((data) => {
-    console.log('puzzles', data)
-  })
-}
-
-const packs = () => {
-  const stream = new ShapeStream({
-    url: `${ELECTRIC_URL}/v1/shape`,
-    params: {
-      table: 'game_flow_pack',
-    },
-  })
-  const shape = new Shape(stream)
-
-  // The callback runs every time the Shape data changes.
-  shape.subscribe((data) => {
-    console.log('packs', data)
-  })
-}
-// packs()
-// puzzles()
+PuzzleDbElectric({
+  logger: Logger({ t: 'noop' }),
+})
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(

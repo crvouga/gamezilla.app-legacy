@@ -1,9 +1,46 @@
-import type { IDbConnSql } from '~/@/db-conn-sql'
+import { Shape, ShapeStream } from '@electric-sql/client'
 import type { ILogger } from '~/@/logger'
 import { Err } from '~/@/result'
+import { ELECTRIC_URL } from '~/config/shared'
 import type { IPuzzleDb } from './interface'
 
-export const PuzzleDbElectric = (_config: { logger: ILogger; dbConnSql: IDbConnSql }): IPuzzleDb => {
+const puzzles = () => {
+  const stream = new ShapeStream({
+    url: `${ELECTRIC_URL}/v1/shape`,
+    params: {
+      table: 'game_flow_puzzle',
+    },
+  })
+  const shape = new Shape(stream)
+
+  // The callback runs every time the Shape data changes.
+  shape.subscribe((data) => {
+    console.log('puzzles', data)
+  })
+}
+
+const packs = () => {
+  const stream = new ShapeStream({
+    url: `${ELECTRIC_URL}/v1/shape`,
+    params: {
+      table: 'game_flow_pack',
+    },
+  })
+  const shape = new Shape(stream)
+
+  // The callback runs every time the Shape data changes.
+  shape.subscribe((data) => {
+    console.log('packs', data)
+  })
+}
+if (typeof window !== 'undefined') {
+  packs()
+  puzzles()
+}
+
+const migrateUp = () => {}
+
+export const PuzzleDbElectric = (_config: { logger: ILogger }): IPuzzleDb => {
   return {
     async get(_flowPuzzleId) {
       return Err('not implemented')
