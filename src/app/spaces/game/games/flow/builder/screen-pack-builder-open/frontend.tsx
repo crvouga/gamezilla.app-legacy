@@ -50,8 +50,6 @@ const subscriptions: FrontendModule['subscriptions'] = (_input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  const packs = PackListFrontend.readQuery(toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 }))
-  console.log(packs)
   return (
     <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
       <TopBar

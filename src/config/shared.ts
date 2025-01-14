@@ -12,3 +12,5 @@ export const HTTP_SERVER_IMPL = HttpServerImpl.of(TRANSPORT_IMPL === 'bun-web-so
 export const IS_PROD = Boolean(import.meta.env?.PROD)
 
 export const IS_DEV = !IS_PROD
+
+export const ELECTRIC_URL = import.meta.env?.VITE_ELECTRIC_URL
