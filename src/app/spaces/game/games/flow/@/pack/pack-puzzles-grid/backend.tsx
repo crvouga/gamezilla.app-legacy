@@ -4,7 +4,7 @@ import type { BackendModule } from './types'
 const update: BackendModule['update'] = async (input) => {
   switch (input.msgFrontend?.t) {
     case 'list-puzzles-by-id': {
-      const listed = await input.ctx.puzzleDb.list({
+      const listed = await input.ctx.puzzleDb.query({
         pagination: {
           limit: input.msgFrontend.puzzleIds.length,
           offset: 0,

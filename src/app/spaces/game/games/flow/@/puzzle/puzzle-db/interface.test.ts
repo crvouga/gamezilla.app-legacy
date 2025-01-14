@@ -59,7 +59,7 @@ describe(import.meta.file, () => {
       await f.flowPuzzleDb.put(await Puzzle.random())
     }
 
-    const listed = await f.flowPuzzleDb.list({
+    const listed = await f.flowPuzzleDb.query({
       order: {
         createdAt: 'asc',
       },
@@ -92,7 +92,7 @@ describe(import.meta.file, () => {
       await f.flowPuzzleDb.put(await Puzzle.random())
     }
 
-    const listed = await f.flowPuzzleDb.list({
+    const listed = await f.flowPuzzleDb.query({
       order: {
         createdAt: 'asc',
       },
@@ -157,7 +157,7 @@ describe(import.meta.file, () => {
     puzzles.sort(ascend((p) => p.createdAt))
     for (let limit = 0; limit < puzzles.length; limit++) {
       for (let offset = 0; offset < puzzles.length; offset++) {
-        const listed = await f.flowPuzzleDb.list({
+        const listed = await f.flowPuzzleDb.query({
           order: {
             createdAt: 'asc',
           },
@@ -212,7 +212,7 @@ describe(import.meta.file, () => {
   test('list by id with empty id list', async () => {
     const f = await Fixture()
 
-    const listed = await f.flowPuzzleDb.list({
+    const listed = await f.flowPuzzleDb.query({
       where: {
         puzzleId: {
           in: [],

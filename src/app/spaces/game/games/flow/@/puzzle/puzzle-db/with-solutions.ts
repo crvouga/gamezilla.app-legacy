@@ -7,8 +7,8 @@ export const SKIP_QUERIES = true
 export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
   return {
     ...flowPuzzleDb,
-    async list(input) {
-      const listed = await flowPuzzleDb.list(input)
+    async query(input) {
+      const listed = await flowPuzzleDb.query(input)
 
       if (SKIP_QUERIES) {
         return listed

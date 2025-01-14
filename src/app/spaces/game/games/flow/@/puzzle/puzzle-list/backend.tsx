@@ -9,7 +9,7 @@ const update: BackendModule['update'] = async (input) => {
 const updateListPuzzles: BackendModule['update'] = async (input) => {
   switch (input.msgFrontend?.t) {
     case 'list-puzzles': {
-      const listed = await input.ctx.puzzleDb.list(input.msgFrontend.input)
+      const listed = await input.ctx.puzzleDb.query(input.msgFrontend.input)
 
       return {
         msgCmd: [

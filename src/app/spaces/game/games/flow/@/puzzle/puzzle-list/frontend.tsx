@@ -46,8 +46,8 @@ const packs = () => {
     console.log('packs', data)
   })
 }
-packs()
-puzzles()
+// packs()
+// puzzles()
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(

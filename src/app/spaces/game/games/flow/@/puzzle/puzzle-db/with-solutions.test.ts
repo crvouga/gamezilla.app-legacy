@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
 
     const before = Result.unwrap(
-      await f.flowPuzzleDb.list({
+      await f.flowPuzzleDb.query({
         where: {
           puzzleId: {
             in: [f.puzzleWithEmptySolutions.id],
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
     )
     await f.flowPuzzleDb.put(f.puzzleWithEmptySolutions)
     const after = Result.unwrap(
-      await f.withSolutions.list({
+      await f.withSolutions.query({
         where: {
           puzzleId: {
             in: [f.puzzleWithEmptySolutions.id],

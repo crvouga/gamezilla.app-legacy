@@ -33,7 +33,7 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
       if (calls.count % ERROR_EVERY === 0) {
         return Err('count demo error')
       }
-      const listed = await this.list({
+      const listed = await this.query({
         order: {
           createdAt: 'asc',
         },
@@ -51,7 +51,7 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
       return Ok(listed.value.puzzles.total)
     },
 
-    async list(input) {
+    async query(input) {
       calls.list++
       if (calls.list % ERROR_EVERY === 0) {
         return Err('list demo error')
@@ -121,6 +121,10 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
       }
       db.delete(id)
       return Ok(null)
+    },
+
+    async subscribe(_input) {
+      return Err('not implemented')
     },
   }
 }

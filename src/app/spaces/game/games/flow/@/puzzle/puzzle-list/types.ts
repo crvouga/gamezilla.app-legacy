@@ -11,7 +11,7 @@ import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { FlowFrontendEvtIn } from '../../frontend/evt'
 import { FlowBackendCtx } from '../../backend/ctx'
 import type { Puzzle } from '../puzzle'
-import type { ListPuzzlesInput, ListPuzzlesOutput } from '../puzzle-db'
+import type { QueryPuzzlesInput, ListPuzzlesOutput } from '../puzzle-db'
 
 //
 //
@@ -34,7 +34,7 @@ export type MsgBackend = { t: 'noop' }
 
 export type MsgToBackend = {
   t: 'list-puzzles'
-  input: ListPuzzlesInput
+  input: QueryPuzzlesInput
 }
 
 export type MsgToFrontend = {
