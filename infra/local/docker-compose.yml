@@ -27,7 +27,7 @@ services:
     image: electricsql/electric
     restart: always
     environment:
-      DATABASE_URL: postgresql://gamezilla-app:gamezilla-app@localhost:5433/gamezilla-app?sslmode=disable
+      DATABASE_URL: postgresql://gamezilla-app:gamezilla-app@postgres:5432/gamezilla-app?sslmode=disable
     ports:
       - '3000:3000'
     depends_on:

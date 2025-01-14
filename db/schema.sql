@@ -390,6 +390,13 @@ CREATE INDEX idx_username ON public.user_profile USING btree (username);
 
 
 --
+-- Name: electric_publication_default; Type: PUBLICATION; Schema: -; Owner: -
+--
+
+CREATE PUBLICATION electric_publication_default WITH (publish = 'insert, update, delete, truncate');
+
+
+--
 -- PostgreSQL database dump complete
 --
 
