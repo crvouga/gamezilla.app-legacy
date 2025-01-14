@@ -57,9 +57,9 @@ const initCtx = async (): Promise<BackendCtx> => {
     throw new Error('DATABASE_URL is not set')
   }
 
-  const USE_PGLIGHT = true
+  const USE_PGLITE = !IS_PROD
 
-  const dbConnSql = USE_PGLIGHT
+  const dbConnSql = USE_PGLITE
     ? await DbConnSql({
         t: 'pglite',
         filePath: './db/postgres-data',
