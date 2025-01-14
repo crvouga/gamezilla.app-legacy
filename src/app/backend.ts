@@ -1,5 +1,6 @@
 import { DbConnKv } from '~/@/db-conn-kv'
 import { DbConnSql } from '~/@/db-conn-sql'
+import { HttpServer } from '~/@/http-server'
 import { Logger } from '~/@/logger'
 import { ILogger } from '~/@/logger/interface'
 import { Msg } from '~/@/msg/msg'
@@ -11,28 +12,28 @@ import { SMS } from '~/@/sms'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { HttpServer } from '~/@/http-server'
 import { DATABASE_URL } from '~/config/backend'
-import { IS_PROD, HTTP_SERVER_IMPL } from '~/config/shared'
+import { HTTP_SERVER_IMPL, IS_DEV, IS_PROD } from '~/config/shared'
+import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
 import { BackendCmd } from './@/backend/cmd'
 import { AppBackendCtx } from './@/backend/ctx'
 import { BackendEvt } from './@/backend/evt'
 import { ProfileCache } from './@/backend/profile-cache'
-import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
 import * as AuthBackend from './auth/backend'
 import * as LangBackend from './lang/backend'
 import * as ProfileBackend from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
 import {
-  rpcContract,
   BackendCtx,
+  rpcContract,
   type MsgBackend,
-  type MsgToFrontend,
   type MsgToBackend,
   type MsgToBackendMeta,
+  type MsgToFrontend,
 } from './types'
 import * as WireBackend from './wire/backend'
 import { BackendTransport } from './wire/transport/backend'
+import { p } from '~/@/parser'
 
 //
 //
@@ -57,7 +58,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     throw new Error('DATABASE_URL is not set')
   }
 
-  const USE_PGLITE = !IS_PROD
+  const USE_PGLITE = false
 
   const dbConnSql = USE_PGLITE
     ? await DbConnSql({
@@ -88,6 +89,18 @@ const initCtx = async (): Promise<BackendCtx> => {
     logger,
     t: HTTP_SERVER_IMPL,
   })
+
+  if (IS_DEV) {
+    httpServer.registerHandler(async (req) => {
+      if (req.url === '/sql') {
+        const body = req.body
+        const bodyText = await new Response(body).text()
+        const result = await dbConnSql.query(p.unknown, bodyText, {})
+        return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } })
+      }
+      return null
+    })
+  }
 
   const pubSub = await PubSubTopicBased({
     t: 'noop',

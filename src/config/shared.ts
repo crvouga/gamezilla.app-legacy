@@ -10,3 +10,5 @@ export const TRANSPORT_IMPL = TransportImpl.of('bun-web-sockets')
 export const HTTP_SERVER_IMPL = HttpServerImpl.of(TRANSPORT_IMPL === 'bun-web-sockets' ? 'bun' : 'node')
 
 export const IS_PROD = Boolean(import.meta.env?.PROD)
+
+export const IS_DEV = !IS_PROD
