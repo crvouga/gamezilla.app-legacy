@@ -1,55 +1,18 @@
-import { RemoteResult } from '~/@/result'
 import { p } from '~/@/parser'
-import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { RequestResponse } from '~/@/request-response/request-response'
+import { RemoteResult } from '~/@/result'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
-import type { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
+import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
-import { FlowFrontendEvtIn } from '../../frontend/evt'
+import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
+import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
 import { FlowBackendCtx } from '../../backend/ctx'
+import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
+import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
+import { FlowFrontendEvtIn } from '../../frontend/evt'
 import type { Pack } from '../pack'
 import type { IPackDb } from '../pack-db'
-import type { PackId } from '../pack-id'
-import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
-import { RequestResponse } from '~/@/request-response/request-response'
-
-//
-//
-//
-//
-//
-
-export type FrontendModule = AppFrontendModule<{
-  Model: ModelFrontend
-  Msg: MsgFrontend
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
-  Ctx: SpaceFrontendCtx
-  MsgEvtIn: FlowFrontendEvtIn
-  MsgCmdOut: SpaceFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
-  MsgCmdIn: MsgInCmdFrontend
-  MsgEvtOut: SpaceFrontendEvt
-  ViewSlot: {
-    fab: null
-  }
-  ViewEmit: {
-    clickedPackItem: Pack
-  }
-}>
-
-export type BackendModule = AppBackendModule<{
-  Model: ModelBackend
-  Msg: MsgBackend
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
-  Ctx: FlowBackendCtx
-  MsgEvtIn: SpaceBackendEvt
-}>
 
 //
 //
@@ -58,12 +21,10 @@ export type BackendModule = AppBackendModule<{
 
 export type ModelFrontend = {
   request: RequestResponse<string, null>
-  packs: { [id: PackId]: Pack }
 }
 
 export const initFrontend: ModelFrontend = {
   request: RemoteResult.NotAsked,
-  packs: {},
 }
 
 export const ModelBackend = p.l(null)
@@ -101,3 +62,44 @@ export type MsgInCmdFrontend = {
     t: 'load'
   }
 }
+
+//
+//
+//
+//
+//
+
+export type MsgOutCmdFrontend =
+  | SpaceFrontendCmd<{
+      MsgFrontend: MsgFrontend
+      MsgToBackend: MsgToBackend
+    }>
+  | FlowFrontendCmdRoot
+
+export type FrontendModule = AppFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  Ctx: FlowFrontendCtxRoot
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgCmdOut: MsgOutCmdFrontend
+  MsgCmdIn: MsgInCmdFrontend
+  MsgEvtOut: SpaceFrontendEvt
+  ViewSlot: {
+    fab: null
+  }
+  ViewEmit: {
+    clickedPackItem: Pack
+  }
+}>
+
+export type BackendModule = AppBackendModule<{
+  Model: ModelBackend
+  Msg: MsgBackend
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  Ctx: FlowBackendCtx
+  MsgEvtIn: SpaceBackendEvt
+}>

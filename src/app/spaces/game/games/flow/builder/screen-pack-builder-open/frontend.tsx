@@ -4,6 +4,7 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { PackListFrontend } from '../../@/pack/pack-list'
 import type { FrontendModule } from '../types'
 import { PackCreateNewFrontend } from './create-new-pack/frontend'
+import { UserId } from '~/app/@/data/user-id'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -29,7 +30,28 @@ export const updateMain: FrontendModule['update'] = (input) => {
   }
 }
 
+const toQuery = (input: { currentUserId: UserId; offset: number }) => {
+  return {
+    pagination: {
+      offset: input.offset,
+      limit: input.offset + 25,
+    },
+    order: {
+      lastUpdatedAt: 'asc',
+    },
+    where: {
+      createdBy: input.currentUserId,
+    },
+  } as const
+}
+
+const subscriptions: FrontendModule['subscriptions'] = (_input) => {
+  return PackListFrontend.subscribeQuery(toQuery({ currentUserId: _input.ctx.currentUserId, offset: 0 }))
+}
+
 const View: FrontendModule['View'] = (input) => {
+  const packs = PackListFrontend.readQuery(toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 }))
+  console.log(packs)
   return (
     <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
       <TopBar
@@ -49,6 +71,7 @@ const View: FrontendModule['View'] = (input) => {
         {...input}
         dispatch={(_c) => {}}
         model={input.ctx.packList}
+        // query={input.model.packBuilderOpen.query}
         slots={{
           fab: () => <PackCreateNewFrontend.ViewCreateFab {...input} />,
         }}
@@ -71,4 +94,5 @@ const View: FrontendModule['View'] = (input) => {
 export const ScreenPackBuilderOpenFrontend = {
   View,
   update,
+  subscriptions,
 }

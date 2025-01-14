@@ -40,6 +40,14 @@ const addPuzzles = (puzzles: { [puzzleId: PuzzleId]: Puzzle }, causedBy: unknown
   }
 }
 
+const addPacks = (packs: { [packId: PackId]: Pack }, causedBy: unknown): FlowFrontendCmdRoot => {
+  return {
+    t: 'flow-cmd.add-packs',
+    packs,
+    causedBy,
+  }
+}
+
 const addSolutions = (solutions: Solutions, causedBy: unknown): FlowFrontendCmdRoot => {
   return {
     t: 'flow-cmd.add-solutions',
@@ -51,4 +59,5 @@ const addSolutions = (solutions: Solutions, causedBy: unknown): FlowFrontendCmdR
 export const FlowFrontendCmdRoot = {
   addPuzzles,
   addSolutions,
+  addPacks,
 }

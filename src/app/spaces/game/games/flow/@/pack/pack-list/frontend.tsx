@@ -1,24 +1,30 @@
 import { descend } from '~/@/array/sorting'
 import { RequestResponse } from '~/@/request-response/request-response'
 import { NotAsked, Result, isErr } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { sendToBackend, showErrSm } from '~/app/@/frontend/cmd'
 import { IconBox, Spinner, cn } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import type { Pack } from '../pack'
-import { MsgInCmdFrontend, initFrontend, type FrontendModule, type ModelFrontend } from './types'
+import { IPackDb } from '../pack-db'
+import { PackId } from '../pack-id'
+import {
+  MsgFrontend,
+  MsgInCmdFrontend,
+  MsgOutCmdFrontend,
+  MsgToBackend,
+  initFrontend,
+  type FrontendModule,
+} from './types'
+import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 
-const init = (input: {
-  ctx: SpaceFrontendCtx
-  packs: ModelFrontend['packs']
-}): ReturnType<FrontendModule['update']> => {
+const init = (): ReturnType<FrontendModule['update']> => {
   return {
     model: {
       request: NotAsked,
-      packs: input.packs,
     },
   }
 }
@@ -102,10 +108,20 @@ const updateList: FrontendModule['update'] = (input) => {
     case 'listed-packs': {
       const packs: Pack[] = input.msgBackend.listed.t === 'ok' ? input.msgBackend.listed.value.items : []
 
-      const packsNew = packs.reduce((acc, puzzle) => {
-        acc[puzzle.id] = puzzle
+      const packsNew = packs.reduce<{ [id: PackId]: Pack }>((acc, p) => {
+        acc[p.id] = p
         return acc
-      }, input.model.packs)
+      }, {})
+
+      const msgCmd: MsgOutCmdFrontend[] = [
+        FlowFrontendCmdRoot.addPacks(packsNew, input.msgBackend),
+        ...(isErr(input.msgBackend.listed)
+          ? showErrSm<{
+              MsgFrontend: MsgFrontend
+              MsgToBackend: MsgToBackend
+            }>(input.ctx.t('app.something-went-wrong'))
+          : []),
+      ]
 
       return {
         model: {
@@ -115,9 +131,8 @@ const updateList: FrontendModule['update'] = (input) => {
             input.ctx.now,
             Result.mapOk(input.msgBackend.listed, () => null),
           ),
-          packs: packsNew,
         },
-        msgCmd: isErr(input.msgBackend.listed) ? showErrSm(input.ctx.t('app.something-went-wrong')) : [],
+        msgCmd,
       }
     }
     default: {
@@ -129,7 +144,7 @@ const updateList: FrontendModule['update'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  const packs = Object.values(input.model.packs)
+  const packs = Object.values(input.ctx.packs)
   const shouldShowLoadingState = RequestResponse.isRequesting(input.model.request)
   const shouldShowEmptyState = !shouldShowLoadingState && packs.length === 0
 
@@ -213,7 +228,17 @@ const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdFrontend | TCmd)[] }): boole
   )
 }
 
+const subscribeQuery = <T,>(_query: Parameters<IPackDb['list']>[0]): Sub<T> => {
+  return Sub.None
+}
+
+const readQuery = (_query: Parameters<IPackDb['list']>[0]) => {
+  return []
+}
+
 export const PackListFrontend = {
+  subscribeQuery,
+  readQuery,
   load,
   didLoad,
   initFrontend,

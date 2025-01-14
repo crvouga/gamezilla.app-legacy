@@ -139,9 +139,11 @@ const updatePuzzleList: FrontendModule['update'] = (input) => {
 }
 
 const updatePackList: FrontendModule['update'] = (input) => {
+  const ctx = toFlowFrontendCtx(input)
+
   const updated = PackListFrontend.update({
-    ctx: input.ctx,
-    model: { ...input.model.packList, packs: input.model.packs },
+    ctx,
+    model: input.model.packList,
     msg: input.msg?.t === 'pack-list' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'pack-list' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
@@ -149,7 +151,7 @@ const updatePackList: FrontendModule['update'] = (input) => {
   })
 
   return {
-    model: { ...input.model, packList: updated.model, packs: updated.model.packs },
+    model: { ...input.model, packList: updated.model },
     eff: Eff.tag('pack-list', updated.eff),
     msgCmd: FlowFrontendCmd.tag('pack-list', updated.msgCmd),
     msgEvt: [],
