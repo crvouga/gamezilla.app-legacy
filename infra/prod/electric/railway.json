@@ -2,6 +2,6 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "dockerfilePath": "./infra/electric/Dockerfile"
+    "dockerfilePath": "./infra/prod/electric/Dockerfile"
   }
 }
