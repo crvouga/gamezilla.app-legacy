@@ -23,7 +23,9 @@ services:
       - wal_level=logical
 
   electric:
+    container_name: gamezilla-app-electric
     image: electricsql/electric
+    restart: always
     environment:
       DATABASE_URL: postgresql://gamezilla-app:gamezilla-app@localhost:5433/gamezilla-app?sslmode=disable
     ports:
