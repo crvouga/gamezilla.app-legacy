@@ -11,7 +11,8 @@ import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { FlowFrontendEvtIn } from '../../frontend/evt'
 import { FlowBackendCtx } from '../../backend/ctx'
 import type { Puzzle } from '../puzzle'
-import type { QueryPuzzlesInput, ListPuzzlesOutput } from '../puzzle-db'
+import type { ListPuzzlesOutput } from '../puzzle-db'
+import { QueryPuzzlesInput } from '../puzzle-db/query'
 
 //
 //
@@ -28,7 +29,14 @@ export const initFrontend: ModelFrontend = {
 
 export type ModelBackend = null
 
-export type MsgFrontend = { t: 'user-observed-end-of-list' } | { t: 'time-passed' }
+export type MsgFrontend =
+  | { t: 'user-observed-end-of-list' }
+  | { t: 'time-passed' }
+  | {
+      t: 'got-puzzle-db-puzzles'
+      input: QueryPuzzlesInput
+      puzzles: Puzzle[]
+    }
 
 export type MsgBackend = { t: 'noop' }
 

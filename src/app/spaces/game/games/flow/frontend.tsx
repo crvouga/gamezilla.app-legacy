@@ -352,6 +352,13 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
       BuilderFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.builder, model: input.model.builder }),
     ),
     Sub.tag(
+      'puzzle-list',
+      PuzzleListFrontend.subscriptions({
+        ctx,
+        model: input.model.puzzleList,
+      }),
+    ),
+    Sub.tag(
       'pack-puzzles-grid',
       PackPuzzlesGridFrontend.subscriptions({
         ctx: { ...ctx, pack: Pack.randomSync() },

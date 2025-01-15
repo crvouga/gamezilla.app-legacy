@@ -6,6 +6,7 @@ import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import type { IDbConnSql } from './interface'
 import { Sleep } from '../promise/sleep'
+import { Sub } from '../sub'
 
 export type Config = {
   t: 'postgres'
@@ -21,8 +22,11 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   postgresClient ??= postgres(config.databaseUrl)
 
   return {
-    async subscribe(_parser, _rawSql, _variables, _onChange) {
+    async subscribe() {
       throw new Error('not implemented')
+    },
+    sub() {
+      return Sub.None
     },
     async query(rowParser, rawSql, params) {
       const sql = Sql.to(rawSql, params)

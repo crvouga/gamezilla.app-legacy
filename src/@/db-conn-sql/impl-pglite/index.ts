@@ -3,6 +3,7 @@ import { live, LiveNamespace } from '@electric-sql/pglite/live'
 import { p } from '~/@/parser'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
+import { PubSub, Sub } from '~/@/sub'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
@@ -14,6 +15,7 @@ export type Config = {
   fileSystem: PGLiteFileSystem
   logger: ILogger
   simulateLatency?: Sleep
+  electricUrl?: string
 }
 
 let pg: import('@electric-sql/pglite').PGlite & {
@@ -25,7 +27,7 @@ let pg: import('@electric-sql/pglite').PGlite & {
 }
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
-  const logger = Logger.prefix('postgres', config.logger)
+  const logger = Logger.prefix('pglite', config.logger)
   const electric = electricSync()
 
   const dataDir = PGLiteFileSystem.toDataDir(config.fileSystem)
@@ -41,34 +43,122 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     },
   })
 
-  return {
-    async subscribe(parser, rawSql, params, onChange) {
-      const sql = Sql.to(rawSql, params)
+  const subscribe: IDbConnSql['subscribe'] = async (parser, rawSql, params, onChange) => {
+    const sql = Sql.to(rawSql, params)
 
-      const query = await pg.live.query(sql, [], (res: unknown) => {
-        const parsed = p.obj({ rows: p.arr(parser) }).parse(res)
-        switch (parsed.t) {
-          case 'err': {
-            logger.error(`Failed to parse row\nerror=${JSON.stringify(parsed.error, null, 4)}`)
-            break
-          }
-          case 'ok': {
-            onChange(parsed.value.rows)
-            break
-          }
+    logger.debug(`subscribing to sql=${sql}`)
+
+    const query = await pg.live.query(sql, [], (res: unknown) => {
+      const parsed = p.obj({ rows: p.arr(parser) }).parse(res)
+      switch (parsed.t) {
+        case 'err': {
+          logger.error(`Failed to parse row\nerror=${JSON.stringify(parsed.error, null, 4)}`)
+          break
         }
+        case 'ok': {
+          onChange(parsed.value.rows)
+          break
+        }
+      }
+    })
+
+    return {
+      initialRows: query?.initialResults?.rows?.flatMap((row: unknown) => {
+        const parsed = parser.parse(row)
+        return isOk(parsed) ? [parsed.value] : []
+      }),
+      async refresh() {
+        await query.refresh()
+      },
+      async unsubscribe() {
+        await query.unsubscribe()
+      },
+    }
+  }
+
+  const activeSubscriptions = new Map<
+    string,
+    {
+      unsubscribe: () => void
+      pubSub: PubSub<unknown[]>
+      tableName: string
+      primaryKey: string[]
+    }
+  >()
+
+  return {
+    subscribe,
+
+    sub<TRow>(input: {
+      parser: p.Parser<TRow>
+      rawSql: string
+      variables: Sql.Vars
+      tableName: string
+      primaryKey: string[]
+    }): Sub<TRow[]> {
+      const sql = Sql.to(input.rawSql, input.variables)
+      const subscriptionKey = sql
+      logger.debug(`subscriptionKey=${subscriptionKey}`)
+
+      if (activeSubscriptions.has(subscriptionKey)) {
+        logger.debug('returning active sub')
+        return activeSubscriptions.get(subscriptionKey)!.pubSub as Sub<TRow[]>
+      }
+
+      const pubSub = PubSub.create<TRow[]>()
+      let lastPublished: TRow[] | null = null
+
+      const subscribed = subscribe(input.parser, input.rawSql, input.variables, (rows) => {
+        if (
+          lastPublished &&
+          rows.length === lastPublished.length &&
+          rows.every((row, idx) => lastPublished && JSON.stringify(row) === JSON.stringify(lastPublished[idx]))
+        ) {
+          return
+        }
+
+        lastPublished = rows
+        pubSub.pub(rows)
+      })
+
+      let syncShape: Promise<SyncShapeToTableResult>
+
+      if (config.electricUrl) {
+        const electricUrl = new URL(config.electricUrl)
+        electricUrl.pathname = `/v1/shape/`
+        electricUrl.searchParams.set('table', input.tableName)
+        syncShape = pg.electric.syncShapeToTable({
+          table: input.tableName,
+          primaryKey: input.primaryKey,
+          shape: {
+            url: electricUrl.toString(),
+          },
+        })
+      }
+
+      activeSubscriptions.set(subscriptionKey, {
+        // @ts-ignore
+        pubSub: pubSub,
+        unsubscribe: async () => {
+          const sub = await subscribed
+          sub.unsubscribe()
+          activeSubscriptions.delete(subscriptionKey)
+          syncShape.then((result) => {
+            result.unsubscribe()
+          })
+        },
+        primaryKey: input.primaryKey,
+        tableName: input.tableName,
       })
 
       return {
-        initialRows: query?.initialResults?.rows?.flatMap((row: unknown) => {
-          const parsed = parser.parse(row)
-          return isOk(parsed) ? [parsed.value] : []
-        }),
-        async refresh() {
-          await query.refresh()
-        },
-        async unsubscribe() {
-          await query.unsubscribe()
+        sub(subscriber) {
+          const unsub = pubSub.sub(subscriber)
+
+          return () => {
+            unsub()
+            activeSubscriptions.get(subscriptionKey)?.unsubscribe()
+          }
         },
       }
     },

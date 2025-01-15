@@ -4,12 +4,13 @@ import { p } from '~/@/parser'
 import { Pagination } from '~/@/query/query'
 import { Ok, Result, isErr } from '~/@/result'
 import { Sql } from '~/@/sql'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Solutions } from '../../solutions/solutions'
 import { Puzzle } from '../puzzle'
-import type { IPuzzleDb, OrderClause, WhereClause } from './interface'
+import type { IPuzzleDb } from './interface'
 import { PostgresRow } from './postgres/row'
+import { QueryPuzzlesInput, OrderClause, WhereClause } from './query'
 
 export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSql }): IPuzzleDb => {
   return {
@@ -193,27 +194,22 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
       return Result.mapOk(queried, () => null)
     },
 
-    subscribe(input) {
-      const pubSub = PubSub.create<Puzzle[]>()
+    sub(input: QueryPuzzlesInput) {
       const sql = toQuerySql(input)
-      const unsubscribe = config.dbConnSql.subscribe(PostgresRow, sql.str, sql.variables, (rows) => {
-        const puzzles = rows.flatMap((row) => {
-          const puzzle = PostgresRow.rowToPuzzle(row)
-          return puzzle ? puzzle : []
-        })
-        pubSub.pub(puzzles)
-      })
-      return {
-        sub(subscriber) {
-          const unsub = pubSub.sub(subscriber)
-          return () => {
-            unsub()
-            unsubscribe.then((unsub) => {
-              unsub.unsubscribe()
-            })
-          }
-        },
-      }
+      return Sub.map(
+        config.dbConnSql.sub({
+          parser: PostgresRow,
+          rawSql: sql.str,
+          variables: sql.variables,
+          primaryKey: ['flow_puzzle_id'],
+          tableName: 'game_flow_puzzle',
+        }),
+        (rows) =>
+          rows.flatMap((row) => {
+            const puzzle = PostgresRow.rowToPuzzle(row)
+            return puzzle ? [puzzle] : []
+          }),
+      )
     },
   }
 }

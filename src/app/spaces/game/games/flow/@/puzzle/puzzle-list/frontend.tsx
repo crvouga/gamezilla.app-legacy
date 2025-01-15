@@ -1,5 +1,4 @@
 import { descend } from '~/@/array/sorting'
-import { Logger } from '~/@/logger'
 import { RequestResponse } from '~/@/request-response/request-response'
 import { Result, isErr, isOk } from '~/@/result'
 import { Sub } from '~/@/sub'
@@ -7,31 +6,27 @@ import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { sendToBackend, showErrSm } from '~/app/@/frontend/cmd'
-import { IconPuzzlePiece, Spinner, cn } from '~/app/@/ui'
+import { IconPuzzlePiece } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { Solutions } from '../../solutions/solutions'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
-import { PuzzleDbElectric } from '../puzzle-db/impl-electric'
+import { QueryPuzzlesInput } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend, MsgToBackend } from './types'
-
-PuzzleDbElectric({
-  logger: Logger({ t: 'noop' }),
-})
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
     { model: input.model },
-    (model) => updateFromCmd({ ...input, model }),
+    // (model) => updateFromCmd({ ...input, model }),
     (model) => updateFromBackend({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
   )
 }
 
-const updateFromCmd: FrontendModule['update'] = (input) => {
+export const updateFromCmd: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
     case 'load': {
       return {
@@ -74,6 +69,17 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           ...input.model,
           request: RequestResponse.timePassed(input.model.request, input.ctx.now),
         },
+      }
+    }
+    case 'got-puzzle-db-puzzles': {
+      return {
+        model: input.model,
+        msgCmd: [
+          FlowFrontendCmdRoot.addPuzzles(
+            input.msg.puzzles.reduce<{ [k: PuzzleId]: Puzzle }>((acc, p) => ({ ...acc, [p.id]: p }), {}),
+            input.msg,
+          ),
+        ],
       }
     }
     default: {
@@ -132,8 +138,27 @@ const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdFrontend | TCmd)[] }): boole
   )
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (_input) => {
-  return Sub.None
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  const queryInput: QueryPuzzlesInput = {
+    where: {
+      createdBy: {
+        equals: input.ctx.space.hostId,
+      },
+    },
+    order: {
+      createdAt: 'desc',
+    },
+    pagination: {
+      limit: 25,
+      offset: 0,
+    },
+  }
+
+  return Sub.map(input.ctx.puzzleDb.sub(queryInput), (puzzles) => ({
+    t: 'got-puzzle-db-puzzles',
+    input: queryInput,
+    puzzles,
+  }))
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -156,12 +181,6 @@ const View: FrontendModule['View'] = (input) => {
             onClick={() => input.emits?.clickedPuzzleItem(puzzle)}
           />
         ))}
-
-        <div
-          className={cn('flex h-32 w-full items-center justify-center py-6', !shouldShowLoadingState && 'opacity-0')}
-        >
-          <Spinner />
-        </div>
 
         <IntersectionObserverEmitter
           id='puzzle-builder-list'

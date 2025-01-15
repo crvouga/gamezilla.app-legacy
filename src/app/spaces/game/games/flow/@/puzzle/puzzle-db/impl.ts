@@ -7,7 +7,9 @@ import { PuzzleDbPostgres } from './impl-postgres'
 import { WithSolutions } from './with-solutions'
 
 export type PuzzleDbImpl =
-  | { t: 'hash-map' }
+  | {
+      t: 'hash-map'
+    }
   | {
       t: 'db-conn-sql'
       dbConnSql: IDbConnSql

@@ -1,6 +1,7 @@
 import type { Result } from '~/@/result'
 import type { p } from '~/@/parser'
 import type { Sql } from '~/@/sql'
+import { Sub } from '../sub'
 
 export type DbConnSqlNotification = {
   channel: string
@@ -21,4 +22,11 @@ export type IDbConnSql = {
     unsubscribe: () => Promise<void>
     refresh: () => Promise<void>
   }>
+  sub: <TRow>(input: {
+    parser: p.Parser<TRow>
+    rawSql: string
+    variables: Sql.Vars
+    tableName: string
+    primaryKey: string[]
+  }) => Sub<TRow[]>
 }

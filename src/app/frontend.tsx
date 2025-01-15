@@ -77,6 +77,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
       t: 'indexed-db',
       dbName: CONFIG_FRONTEND.INDEXED_DB_NAME,
     },
+    electricUrl: CONFIG_SHARED.ELECTRIC_URL,
     logger,
   })
 

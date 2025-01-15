@@ -124,7 +124,7 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
       return Ok(null)
     },
 
-    subscribe(_input) {
+    sub(_input) {
       return Sub.create()
     },
   }

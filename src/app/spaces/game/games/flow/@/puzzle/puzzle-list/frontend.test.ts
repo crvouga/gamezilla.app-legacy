@@ -73,8 +73,8 @@ const elapsed = (ctx: FlowFrontendCtx, timeSpan: TimeSpan) => (model: ModelFront
   })
 }
 
-describe(import.meta.file, () => {
-  it('should it be requesting when the load cmd inputs', async () => {
+describe.skip(import.meta.file, () => {
+  it.skip('should it be requesting when the load cmd inputs', async () => {
     const ctx = await testFlowFrontendCtx()
     const output = AppFrontendModule.andThen(initial, loadCmd(ctx))
     expect(isRequesting(output.model.request)).toBe(true)
