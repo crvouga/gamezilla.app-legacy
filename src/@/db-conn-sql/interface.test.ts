@@ -20,13 +20,18 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'pglite',
-    dataDir: '', // in memory,
+    fileSystem: {
+      t: 'in-memory',
+    },
     logger: Logger({ t: 'noop' }),
   })
 
   configs.push({
     t: 'pglite',
-    dataDir: 'idb://test-gamezilla-app',
+    fileSystem: {
+      t: 'indexed-db',
+      dbName: 'test-gamezilla-app',
+    },
     logger: Logger({ t: 'noop' }),
   })
 
@@ -34,7 +39,10 @@ const Fixtures = async () => {
   if (SHOULD_TEST_LOCAL_PG) {
     configs.push({
       t: 'pglite',
-      dataDir: './postgres-data',
+      fileSystem: {
+        t: 'file-system',
+        dataDir: './postgres-data',
+      },
       logger: Logger({ t: 'noop' }),
     })
   }

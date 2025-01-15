@@ -19,6 +19,7 @@
     "happydom",
     "healthcheck",
     "heapify",
+    "indexeddb",
     "Lamport",
     "Lichess",
     "nixpacks",

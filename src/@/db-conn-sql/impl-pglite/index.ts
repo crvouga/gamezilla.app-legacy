@@ -4,14 +4,15 @@ import { live, LiveNamespace } from '@electric-sql/pglite/live'
 import { p } from '~/@/parser'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
-import { Logger } from '../logger'
-import type { ILogger } from '../logger/interface'
-import { Sleep } from '../promise/sleep'
-import type { IDbConnSql } from './interface'
+import { Logger } from '../../logger'
+import type { ILogger } from '../../logger/interface'
+import { Sleep } from '../../promise/sleep'
+import type { IDbConnSql } from '../interface'
+import { PGLiteFileSystem } from './pglite-file-system'
 
 export type Config = {
   t: 'pglite'
-  dataDir: string
+  fileSystem: PGLiteFileSystem
   logger: ILogger
   simulateLatency?: Sleep
 }
@@ -28,8 +29,10 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
   const electric = electricSync()
 
+  const dataDir = PGLiteFileSystem.toDataDir(config.fileSystem)
+
   pg ??= await PGlite.create({
-    dataDir: config.dataDir,
+    dataDir,
     relaxedDurability: true,
     extensions: {
       electric,

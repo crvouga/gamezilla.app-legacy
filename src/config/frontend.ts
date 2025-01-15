@@ -9,7 +9,7 @@ const VDOM_IMPL_CURRENT = CONFIG_SHARED.IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL
 
 const BACKEND_URL: unknown = import.meta.env?.VITE_BACKEND_URL
 
-const INDEXED_DB_NAME = 'idb://gamezilla-app'
+const INDEXED_DB_NAME = 'gamezilla-app'
 
 export const CONFIG_FRONTEND = {
   VDOM_IMPL,

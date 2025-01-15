@@ -74,7 +74,10 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const dbConnSql = await DbConnSql({
     t: 'pglite',
-    dataDir: CONFIG_FRONTEND.INDEXED_DB_NAME,
+    fileSystem: {
+      t: 'indexed-db',
+      dbName: CONFIG_FRONTEND.INDEXED_DB_NAME,
+    },
     logger,
   })
 
