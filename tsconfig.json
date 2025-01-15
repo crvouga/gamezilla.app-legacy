@@ -43,7 +43,7 @@
     "suppressImplicitAnyIndexErrors": false,
     "noStrictGenericChecks": false,
     // if TS 5.x+
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
@@ -53,6 +53,7 @@
     "allowJs": false,
     //
     "paths": {
+      "vite-plugin-inferno": ["./node_modules/vite-plugin-inferno/types/index.d.ts"],
       "~/*": ["./src/*"]
     },
     "skipLibCheck": true

@@ -25,6 +25,7 @@ const vDomPlugin = (): PluginOption => {
 export default defineConfig({
   plugins: [tsconfigPaths(), vDomPlugin()],
   optimizeDeps: {
+    // https://pglite.dev/docs/bundler-support
     exclude: ['@electric-sql/pglite'],
   },
 })

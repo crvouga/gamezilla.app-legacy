@@ -1,5 +1,6 @@
 import { PGlite } from '@electric-sql/pglite'
 import { electricSync } from '@electric-sql/pglite-sync'
+import { live } from '@electric-sql/pglite/live'
 import type { p } from '~/@/parser'
 import { Err, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
@@ -7,12 +8,10 @@ import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import { Sleep } from '../promise/sleep'
 import type { IDbConnSql } from './interface'
-// @ts-expect-error Typescript doesn't like this type of import
-import { live } from '@electric-sql/pglite/live'
 
 export type Config = {
-  t: 'postgres'
-  databaseUrl: string
+  t: 'pglite'
+  dataDir: string
   logger: ILogger
   simulateLatency?: Sleep
 }
@@ -31,7 +30,7 @@ const cleanSql = (str: string) =>
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
   client ??= await PGlite.create({
-    dataDir: 'idb://gamezilla-app',
+    dataDir: config.dataDir,
     relaxedDurability: true,
     extensions: {
       electric: electricSync(),

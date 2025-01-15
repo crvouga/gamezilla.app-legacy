@@ -4,7 +4,7 @@ import { ELECTRIC_URL } from '~/config/shared'
 // @ts-ignore
 import { live } from '@electric-sql/pglite/live'
 
-const m1 = `
+export const m1 = `
 CREATE TABLE game_flow_pack (
     flow_pack_id text NOT NULL,
     flow_pack_name text NOT NULL,
@@ -48,33 +48,6 @@ CREATE TABLE game_flow_solutions (
 ALTER TABLE ONLY game_flow_solutions
     ADD CONSTRAINT game_flow_solutions_pkey PRIMARY KEY (flow_hash);
 `
-const dbName = 'gamezilla-app'
-
-const deleteDatabase = async () => {
-  return new Promise((resolve, reject) => {
-    try {
-      const deleteRequest = indexedDB.deleteDatabase(dbName)
-
-      deleteRequest.onsuccess = () => {
-        console.log(`Database '${dbName}' deleted successfully.`)
-        resolve(null)
-      }
-
-      deleteRequest.onerror = (event) => {
-        console.error(`Failed to delete database '${dbName}':`, event)
-        reject(event)
-      }
-
-      deleteRequest.onblocked = () => {
-        console.warn(`Deletion of database '${dbName}' is blocked. Close all connections and try again.`)
-        resolve(null)
-      }
-    } catch (error) {
-      console.error(`Error while deleting database '${dbName}':`, error)
-      reject(error)
-    }
-  })
-}
 
 // await deleteDatabase()
 
