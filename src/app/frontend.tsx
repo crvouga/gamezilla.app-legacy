@@ -82,6 +82,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   return {
     dbConnSql,
+    logger,
     rpc,
     stored: {},
     transport,

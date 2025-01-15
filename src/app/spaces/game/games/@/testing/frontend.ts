@@ -1,12 +1,9 @@
-import { DbConnSqlNoop } from '~/@/db-conn-sql/impl'
-import { PhoneNumber } from '~/@/phone-number'
 import { Posix } from '~/@/time/posix'
-import { UserAccount } from '~/app/@/data/account'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
-import { Translator } from '~/app/@/frontend/translator'
+import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 
 const currentUserId = 'test-user-id' as UserId
@@ -14,17 +11,9 @@ const currentUserId = 'test-user-id' as UserId
 const currentSpaceId = 'test-space-id' as SpaceId
 
 export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
-  const currentUser: UserAccount = {
-    createdAt: Posix.now(),
-    phoneNumber: PhoneNumber.random(),
-    role: 'normal',
-    userId: currentUserId,
-  }
+  const f = await FixtureAppFrontend()
   return {
-    dbConnSql: DbConnSqlNoop,
-    currentUser,
-    navigatorLanguage: 'en',
-    t: Translator('en'),
+    ...f.ctx,
     currentScreen: {
       n: 'spaces',
       t: 'space',

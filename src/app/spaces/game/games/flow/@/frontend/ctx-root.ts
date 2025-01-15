@@ -2,6 +2,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { Pack } from '../pack/pack'
 import { PackId } from '../pack/pack-id'
 import type { Puzzle } from '../puzzle/puzzle'
+import { IPuzzleDb } from '../puzzle/puzzle-db'
 import type { PuzzleId } from '../puzzle/puzzle-id'
 import { Solutions } from '../solutions/solutions'
 
@@ -13,4 +14,5 @@ export type FlowFrontendCtxRoot = SpaceFrontendCtx & {
     [id: PuzzleId]: Puzzle
   }
   solutions: Solutions
+  puzzleDb: IPuzzleDb
 }

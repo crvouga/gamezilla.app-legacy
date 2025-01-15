@@ -21,6 +21,7 @@ import { Solutions } from './@/solutions/solutions'
 import { BuilderFrontend } from './builder/frontend'
 import { PlayFrontend } from './play/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
+import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 
 const init: FrontendModule['init'] = {
   builder: BuilderFrontend.init,
@@ -33,9 +34,14 @@ const init: FrontendModule['init'] = {
   packList: PackListTypes.initFrontend,
 }
 
+let puzzleDb: IPuzzleDb
 const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFrontendCtx => {
+  if (!puzzleDb) {
+    puzzleDb = PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger })
+  }
   return {
     ...input.ctx,
+    puzzleDb,
     packs: input.model.packs,
     puzzles: input.model.puzzles,
     puzzleList: input.model.puzzleList,
@@ -338,15 +344,7 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
 //
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const ctx: FlowFrontendCtx = {
-    ...input.ctx,
-    packs: input.model.packs,
-    puzzles: input.model.puzzles,
-    puzzleList: input.model.puzzleList,
-    packList: input.model.packList,
-    packPuzzleGrid: input.model.packPuzzleGrid,
-    solutions: input.model.solutions,
-  }
+  const ctx = toFlowFrontendCtx(input)
   return Sub.batch<MsgFrontend>([
     Sub.tag('play', PlayFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.play, model: input.model.play })),
     Sub.tag(
@@ -370,15 +368,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 //
 
 const View: FrontendModule['View'] = (input) => {
-  const ctx: FlowFrontendCtx = {
-    ...input.ctx,
-    packs: input.model.packs,
-    puzzles: input.model.puzzles,
-    puzzleList: input.model.puzzleList,
-    packList: input.model.packList,
-    packPuzzleGrid: input.model.packPuzzleGrid,
-    solutions: input.model.solutions,
-  }
+  const ctx = toFlowFrontendCtx(input)
 
   switch (input.modelSpace.mode) {
     case 'none': {

@@ -199,7 +199,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
       const unsubscribe = config.dbConnSql.subscribe(PostgresRow, sql.str, sql.variables, (rows) => {
         const puzzles = rows.flatMap((row) => {
           const puzzle = PostgresRow.rowToPuzzle(row)
-          return puzzle ? [puzzle] : []
+          return puzzle ? puzzle : []
         })
         pubSub.pub(puzzles)
       })

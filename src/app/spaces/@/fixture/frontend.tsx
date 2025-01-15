@@ -1,5 +1,4 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { DbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
@@ -10,36 +9,14 @@ import { UserAccount } from '~/app/@/data/account'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { Translator } from '~/app/@/frontend/translator'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpacesFrontend } from '../../frontend'
 import { Space } from '../../space/space'
 import type * as SpacesTypes from '../../types'
 
 export const SpaceFrontendFixture = async () => {
-  const currentUserId = UserId.generate()
-  const ctx: AppFrontendCtx = {
-    dbConnSql: DbConnSqlNoop,
-    navigatorLanguage: 'en',
-    t: Translator('en'),
-    currentScreen: {
-      n: 'spaces',
-      t: 'space-list',
-    },
-    documentVisibilityState: 'visible',
-    now: Posix.now(),
-    profiles: {},
-    currentUserId,
-    currentUserRole: 'normal',
-    currentUser: {
-      createdAt: Posix.now(),
-      phoneNumber: PhoneNumber.random(),
-      role: 'normal',
-      userId: currentUserId,
-    },
-  }
+  const f = await FixtureAppFrontend()
 
   type Msg =
     | {
@@ -57,7 +34,7 @@ export const SpaceFrontendFixture = async () => {
       switch (msg.t) {
         case 'msg': {
           const output = SpacesFrontend.update({
-            ctx,
+            ctx: f.ctx,
             model: initial,
             msg: msg.c,
           })
@@ -66,7 +43,7 @@ export const SpaceFrontendFixture = async () => {
         }
         case 'msg-backend': {
           const output = SpacesFrontend.update({
-            ctx,
+            ctx: f.ctx,
             model: initial,
             msgBackend: msg.c,
           })
@@ -79,7 +56,7 @@ export const SpaceFrontendFixture = async () => {
   }
 
   return {
-    ctx,
+    ...f,
     updates,
   }
 }

@@ -18,6 +18,7 @@ import { samples } from '../../../@/variant/grid/grid-samples'
 import { BuilderFrontend } from '../../frontend'
 import { BuilderSpace } from '../../space'
 import * as BuilderTypes from '../../types'
+import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 
 export type FixtureUpdateInput = {
   ctx?: FlowFrontendCtx
@@ -99,6 +100,7 @@ export const FixtureFlowBuilderFrontend = async () => {
     packList: PackListTypes.initFrontend,
     packPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
     solutions: Solutions.init,
+    puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
   }
   const model = BuilderTypes.initFrontend
   const modelSpace = BuilderSpace.initSpace({ ctx })
@@ -126,6 +128,7 @@ export const initial = {
 export const testFlowFrontendCtx = async (): Promise<FlowFrontendCtx> => {
   return {
     ...(await testSpaceFrontendCtx()),
+    puzzleDb: PuzzleDb({ t: 'hash-map' }),
     packs: {},
     puzzles: {},
     puzzleList: PuzzleListTypes.initFrontend,

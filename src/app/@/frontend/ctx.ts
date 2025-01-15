@@ -1,6 +1,7 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
+import { ILogger } from '~/@/logger'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { UserAccount } from '../data/account'
@@ -16,6 +17,7 @@ type Profile = {
 
 export type BaseFrontendCtx = {
   dbConnSql: IDbConnSql
+  logger: ILogger
   t: Translator
   navigatorLanguage: LanguageCodeISO_639_1
   currentScreen: Screen

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { DbConnSqlNoop } from '~/@/db-conn-sql/impl'
+import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
+import { loggerNoop } from '~/@/logger/impl-noop'
 import { isRequesting, isResponseErr, isResponseOk } from '~/@/request-response/request-response'
 import { Err, Ok } from '~/@/result'
 import { Posix } from '~/@/time/posix'
@@ -12,7 +13,8 @@ import * as AuthFrontend from '../frontend'
 import type { ModelFrontend } from '../types'
 
 const ctx: AnonymousFrontendCtx = {
-  dbConnSql: DbConnSqlNoop,
+  dbConnSql: dbConnSqlNoop,
+  logger: loggerNoop,
   currentScreen: {
     n: 'auth-login',
     t: 'login',
