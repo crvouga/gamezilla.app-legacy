@@ -1,4 +1,6 @@
 import { PGlite } from '@electric-sql/pglite'
+// import { electricSync } from '@electric-sql/pglite-sync'
+// import { live } from '@electric-sql/pglite/live'
 import { electricSync } from '@electric-sql/pglite-sync'
 import { live } from '@electric-sql/pglite/live'
 import { p } from '~/@/parser'

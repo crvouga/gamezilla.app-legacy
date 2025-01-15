@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { DbConnSql } from '~/@/db-conn-sql/frontend-impl'
-import { Logger } from '~/@/logger'
+import { DbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { isRequesting, isResponseErr, isResponseOk } from '~/@/request-response/request-response'
 import { Err, Ok } from '~/@/result'
 import { Posix } from '~/@/time/posix'
@@ -13,7 +12,7 @@ import * as AuthFrontend from '../frontend'
 import type { ModelFrontend } from '../types'
 
 const ctx: AnonymousFrontendCtx = {
-  dbConnSql: await DbConnSql({ t: 'pglite', dataDir: '', logger: Logger({ t: 'noop' }) }),
+  dbConnSql: DbConnSqlNoop,
   currentScreen: {
     n: 'auth-login',
     t: 'login',

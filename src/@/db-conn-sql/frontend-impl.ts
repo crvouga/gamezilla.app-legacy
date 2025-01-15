@@ -14,5 +14,3 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     }
   }
 }
-
-export const DbConnSqlNoop = ImplNoop.DbConnSql({ t: 'noop' })

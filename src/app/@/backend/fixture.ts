@@ -1,6 +1,7 @@
 import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import { type IDbConnSql } from '~/@/db-conn-sql'
 import { DbConnSql } from '~/@/db-conn-sql/backend-impl'
+import { DbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { HttpServer } from '~/@/http-server'
 import { Logger } from '~/@/logger'
 import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
@@ -28,7 +29,7 @@ export const AppBackendTestEnv = async (): Promise<ITestEnv> => {
       t: 'unit',
       dbConnKv: await DbConnKv({ t: 'hash-map' }),
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', map: new Map() }),
-      dbConnSql: await DbConnSql({ t: 'noop' }),
+      dbConnSql: DbConnSqlNoop,
     }
   }
 
@@ -74,7 +75,7 @@ export const FixtureAppBackend = async () => {
   const ctx: AppBackendCtx = {
     env: 'test',
     dbConnKv: await DbConnKv({ t: 'hash-map' }),
-    dbConnSql: await DbConnSql({ t: 'noop' }),
+    dbConnSql: DbConnSqlNoop,
     logger,
     now: Posix.now(),
     sms: SMS({ t: 'fake', logger }),

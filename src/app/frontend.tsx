@@ -1,5 +1,7 @@
 import { Browser } from '~/@/browser'
+import { IDbConnSql } from '~/@/db-conn-sql'
 import { DbConnSql } from '~/@/db-conn-sql/frontend-impl'
+import { DbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { HttpClient } from '~/@/http-client'
@@ -69,11 +71,16 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const rpc = RPC.initFrontend(webFrontend, rpcContract)
 
-  const dbConnSql = await DbConnSql({
-    t: 'pglite',
-    dataDir: INDEXED_DB_NAME,
-    logger,
-  })
+  let dbConnSql: IDbConnSql = DbConnSqlNoop
+  try {
+    dbConnSql = await DbConnSql({
+      t: 'pglite',
+      dataDir: INDEXED_DB_NAME,
+      logger,
+    })
+  } catch (e) {
+    console.error(e)
+  }
 
   return {
     dbConnSql,

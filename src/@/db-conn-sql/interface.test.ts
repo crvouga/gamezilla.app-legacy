@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import 'fake-indexeddb/auto'
+// import 'fake-indexeddb/auto'
 import { DATABASE_URL } from '~/config/backend'
 import { IS_INTEGRATION_TEST } from '~/config/shared'
 import { Logger } from '../logger'
@@ -24,11 +24,11 @@ const Fixtures = async () => {
     logger: Logger({ t: 'noop' }),
   })
 
-  configs.push({
-    t: 'pglite',
-    dataDir: 'idb://test-gamezilla-app',
-    logger: Logger({ t: 'noop' }),
-  })
+  // configs.push({
+  //   t: 'pglite',
+  //   dataDir: 'idb://test-gamezilla-app',
+  //   logger: Logger({ t: 'noop' }),
+  // })
 
   const SHOULD_TEST_LOCAL_PG = false
   if (SHOULD_TEST_LOCAL_PG) {

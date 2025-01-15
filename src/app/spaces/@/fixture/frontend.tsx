@@ -1,28 +1,27 @@
 import { NonEmpty } from '~/@/array/non-empty'
+import { DbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { Translator } from '~/app/@/frontend/translator'
 import { UserAccount } from '~/app/@/data/account'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
+import { Translator } from '~/app/@/frontend/translator'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpacesFrontend } from '../../frontend'
 import { Space } from '../../space/space'
 import type * as SpacesTypes from '../../types'
-import { DbConnSql } from '~/@/db-conn-sql/frontend-impl'
-import { Logger } from '~/@/logger'
 
 export const SpaceFrontendFixture = async () => {
   const currentUserId = UserId.generate()
   const ctx: AppFrontendCtx = {
-    dbConnSql: await DbConnSql({ t: 'pglite', dataDir: '', logger: Logger({ t: 'noop' }) }),
+    dbConnSql: DbConnSqlNoop,
     navigatorLanguage: 'en',
     t: Translator('en'),
     currentScreen: {
