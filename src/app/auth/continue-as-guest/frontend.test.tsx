@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { DbConnSql } from '~/@/db-conn-sql'
+import { DbConnSql } from '~/@/db-conn-sql/frontend-impl'
 import { Logger } from '~/@/logger'
 import { isRequesting, isResponseErr, isResponseOk } from '~/@/request-response/request-response'
 import { Err, Ok } from '~/@/result'

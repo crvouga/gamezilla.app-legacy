@@ -5,7 +5,7 @@ import { IS_INTEGRATION_TEST } from '~/config/shared'
 import { Logger } from '../logger'
 import { p } from '../parser'
 import { isErr, isOk } from '../result'
-import { Config, DbConnSql } from './impl'
+import { Config, DbConnSql } from './backend-impl'
 import { DbConnSqlNotification } from './interface'
 
 const Fixture = async (config: Config) => {
