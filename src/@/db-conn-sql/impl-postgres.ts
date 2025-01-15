@@ -14,20 +14,11 @@ export type Config = {
   simulateLatency?: Sleep
 }
 
-let client: postgres.Sql<{}>
-
-const cleanSql = (str: string) =>
-  str
-    // remove tabs
-    .replace(/\t/g, ' ')
-    // remove newlines
-    .replace(/\n/g, ' ')
-    // remove multiple spaces
-    .replace(/ +/g, ' ')
+let postgresClient: postgres.Sql<{}>
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
-  client ??= postgres(config.databaseUrl)
+  postgresClient ??= postgres(config.databaseUrl)
 
   return {
     async query(rowParser, rawSql, params) {
@@ -38,7 +29,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         await config.simulateLatency?.()
 
-        const rows = await client.unsafe(sql)
+        const rows = await postgresClient.unsafe(sql)
 
         const end = process.hrtime.bigint()
 
@@ -80,7 +71,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
     async notify(channel, payload) {
       try {
-        await client.notify(channel, payload)
+        await postgresClient.notify(channel, payload)
         return Ok(null)
       } catch (error) {
         logger.error(`${error} channel=${channel} payload=${payload}`)
@@ -89,7 +80,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     },
 
     async listen(channel, callback) {
-      const listening = await client.listen(channel, (payload) => {
+      const listening = await postgresClient.listen(channel, (payload) => {
         callback({
           channel: channel,
           payload: payload,
@@ -102,3 +93,12 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     },
   }
 }
+
+const cleanSql = (str: string) =>
+  str
+    // remove tabs
+    .replace(/\t/g, ' ')
+    // remove newlines
+    .replace(/\n/g, ' ')
+    // remove multiple spaces
+    .replace(/ +/g, ' ')

@@ -6,6 +6,7 @@ import { Logger } from '../logger'
 import { p } from '../parser'
 import { isErr, isOk } from '../result'
 import { Config, DbConnSql } from './impl'
+import { DbConnSqlNotification } from './interface'
 
 const Fixture = async (config: Config) => {
   const dbConnSql = await DbConnSql(config)
@@ -77,6 +78,20 @@ describe.only('db-conn-sql', () => {
       }
       const dropped = await f.dbConnSql.query(p.unknown, `DROP TABLE foo`, {})
       expect(isOk(dropped)).toBe(true)
+    }
+  })
+
+  test('listen, notify', async () => {
+    for (const f of await Fixtures()) {
+      const channel = 'foo'
+      const notifications: DbConnSqlNotification[] = []
+      const unlisten = await f.dbConnSql.listen(channel, (n) => {
+        notifications.push(n)
+      })
+      await f.dbConnSql.notify(channel, 'bar')
+      await new Promise((r) => setTimeout(r, 1))
+      expect(notifications).toEqual([{ channel, payload: 'bar' }])
+      await unlisten()
     }
   })
 })

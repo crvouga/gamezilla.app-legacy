@@ -16,20 +16,12 @@ export type Config = {
   simulateLatency?: Sleep
 }
 
-let client: PGlite
-
-const cleanSql = (str: string) =>
-  str
-    // remove tabs
-    .replace(/\t/g, ' ')
-    // remove newlines
-    .replace(/\n/g, ' ')
-    // remove multiple spaces
-    .replace(/ +/g, ' ')
+let postgresClient: PGlite
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
-  client ??= await PGlite.create({
+
+  postgresClient ??= await PGlite.create({
     dataDir: config.dataDir,
     relaxedDurability: true,
     extensions: {
@@ -47,7 +39,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         await config.simulateLatency?.()
 
-        const results = await client.query(sql)
+        const results = await postgresClient.query(sql)
 
         const end = process.hrtime.bigint()
 
@@ -87,14 +79,36 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       }
     },
 
-    async notify(_channel, _payload) {
-      return Err('not implemented')
+    async notify(channel, payload) {
+      try {
+        const query = `NOTIFY ${channel}, '${payload}'`
+        await postgresClient.query(query)
+        return Ok(null)
+      } catch (e) {
+        logger.error(`${e} channel=${channel} payload=${payload}`)
+        return Err(String(e))
+      }
     },
 
-    async listen(_channel, _callback) {
+    async listen(channel, callback) {
+      const unlisten = await postgresClient.listen(channel, (data) => {
+        callback({
+          channel,
+          payload: data,
+        })
+      })
       return async () => {
-        //
+        await unlisten()
       }
     },
   }
 }
+
+const cleanSql = (str: string) =>
+  str
+    // remove tabs
+    .replace(/\t/g, ' ')
+    // remove newlines
+    .replace(/\n/g, ' ')
+    // remove multiple spaces
+    .replace(/ +/g, ' ')
