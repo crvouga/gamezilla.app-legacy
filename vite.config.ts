@@ -24,4 +24,7 @@ const vDomPlugin = (): PluginOption => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [tsconfigPaths(), vDomPlugin()],
+  optimizeDeps: {
+    exclude: ['@electric-sql/pglite'],
+  },
 })

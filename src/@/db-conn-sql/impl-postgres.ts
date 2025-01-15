@@ -14,7 +14,7 @@ export type Config = {
   simulateLatency?: Sleep
 }
 
-let frontend: postgres.Sql<{}>
+let client: postgres.Sql<{}>
 
 const cleanSql = (str: string) =>
   str
@@ -27,7 +27,7 @@ const cleanSql = (str: string) =>
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
-  frontend ??= postgres(config.databaseUrl)
+  client ??= postgres(config.databaseUrl)
 
   return {
     async query(rowParser, rawSql, params) {
@@ -38,7 +38,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         await config.simulateLatency?.()
 
-        const rows = await frontend.unsafe(sql)
+        const rows = await client.unsafe(sql)
 
         const end = process.hrtime.bigint()
 
@@ -80,7 +80,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
     async notify(channel, payload) {
       try {
-        await frontend.notify(channel, payload)
+        await client.notify(channel, payload)
         return Ok(null)
       } catch (error) {
         logger.error(`${error} channel=${channel} payload=${payload}`)
@@ -89,7 +89,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     },
 
     async listen(channel, callback) {
-      const listening = await frontend.listen(channel, (payload) => {
+      const listening = await client.listen(channel, (payload) => {
         callback({
           channel: channel,
           payload: payload,

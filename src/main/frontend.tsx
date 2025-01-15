@@ -1,13 +1,12 @@
 import { DebuggerReduxDevTools } from '~/@/program/debugger'
 import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
-import { renderRuntimeErrors } from '~/app/@/ui/render-runtime-errors'
 import * as AppFrontend from '~/app/frontend'
 import { SERVER_URL, VDOM_IMPL } from '~/config/frontend'
 import { IS_PROD, TRANSPORT_IMPL } from '~/config/shared'
 
 const main = async () => {
-  renderRuntimeErrors()
+  // renderRuntimeErrors()
 
   const ctx = await AppFrontend.initCtx()
 

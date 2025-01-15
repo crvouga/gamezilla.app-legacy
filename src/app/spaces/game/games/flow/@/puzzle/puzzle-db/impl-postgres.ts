@@ -16,15 +16,22 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
       const queried = await config.dbConnSql.query(
         PostgresRow,
         `
-				SELECT
-					*
-				FROM
-					game_flow_puzzle
-				WHERE
-						flow_puzzle_id = :flow_puzzle_id
-					AND deleted_at IS NULL
-				LIMIT 1
-				`,
+        SELECT
+          flow_puzzle_id,
+          flow_puzzle_name,
+          flow,
+          flow_solutions,
+          created_at_posix,
+          created_by_user_id,
+          last_updated_at_posix,
+          last_updated_by_user_id
+        FROM
+          game_flow_puzzle
+        WHERE
+            flow_puzzle_id = :flow_puzzle_id
+        AND deleted_at IS NULL
+        LIMIT 1
+        `,
         {
           flow_puzzle_id: flowPuzzleId,
         },
@@ -57,12 +64,12 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
           count: p.str,
         }),
         `
-				SELECT
-					COUNT(*) AS count
-				FROM
-					game_flow_puzzle
-					${where.str}
-				`,
+        SELECT
+          COUNT(flow_puzzle_id) AS count
+        FROM
+          game_flow_puzzle
+        ${where.str}
+        `,
         where.variables,
       )
       return Result.mapOk(queried, (x) => Number.parseFloat(x[0]?.count ?? '0'))
@@ -82,7 +89,14 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
         PostgresRow,
         `
 				SELECT
-					*
+					flow_puzzle_id,
+          flow_puzzle_name,
+          flow,
+          flow_solutions,
+          created_at_posix,
+          created_by_user_id,
+          last_updated_at_posix,
+          last_updated_by_user_id
 				FROM
 					game_flow_puzzle
 				${where.str}
@@ -102,9 +116,9 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
         }),
         `
 				SELECT
-					COUNT(*) AS count
+					COUNT(flow_puzzle_id) AS count
 				FROM
-					game_flow_puzzle
+          game_flow_puzzle
 				${where.str}
 				`,
         variables,
