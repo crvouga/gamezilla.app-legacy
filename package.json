@@ -54,7 +54,13 @@
     "@electric-sql/pglite": "^0.2.15",
     "@electric-sql/pglite-sync": "^0.2.17",
     "chess.js": "^1.0.0-beta.8",
-    "inferno": "^8.2.3"
+    "inferno": "^8.2.3",
+    "ioredis": "^5.4.1",
+    "postgres": "^3.4.4",
+    "preact": "^10.19.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "swiper": "^11.2.0"
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^15.11.7",

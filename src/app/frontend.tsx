@@ -49,7 +49,9 @@ import { FrontendTransport } from './wire/transport/frontend'
 //
 
 export const initCtx = async (): Promise<FrontendCtx> => {
-  const logger = Logger({ t: 'console' })
+  const logger = Logger({
+    t: 'console',
+  })
 
   if (typeof CONFIG_FRONTEND.BACKEND_URL !== 'string') {
     throw new Error('BACKEND_URL is undefined')
