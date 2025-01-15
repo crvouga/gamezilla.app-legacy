@@ -6,10 +6,13 @@ import { VDOM_IMPL_TEST } from '~/config/frontend'
 import { UserId } from '../data/user-id'
 import type { AppFrontendCtx } from './ctx'
 import { Translator } from './translator'
+import { DbConnSql } from '~/@/db-conn-sql'
+import { Logger } from '~/@/logger'
 
 export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => {
   const currentUserId = UserId.generate()
   const ctx: AppFrontendCtx = {
+    dbConnSql: await DbConnSql({ t: 'pglite', dataDir: '', logger: Logger({ t: 'noop' }) }),
     currentScreen: input?.currentScreen ?? {
       n: 'auth-login',
       t: 'login',

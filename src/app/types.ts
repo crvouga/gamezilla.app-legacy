@@ -1,4 +1,5 @@
 import { Browser } from '~/@/browser'
+import { IDbConnSql } from '~/@/db-conn-sql'
 import { IHttpServer } from '~/@/http-server'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
@@ -118,6 +119,7 @@ export type BackendCtx = AppBackendCtx & {
 }
 
 export type FrontendCtx = {
+  dbConnSql: IDbConnSql
   now: Posix
   rpc: RPC.Frontend<typeof rpcContract>
   location: Browser.Location

@@ -1,11 +1,12 @@
+import { IDbConnSql } from '~/@/db-conn-sql'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { UserAccount } from '../data/account'
 import { UserId } from '../data/user-id'
-import { Username } from '../data/username'
 import { UserRole } from '../data/user-role'
+import { Username } from '../data/username'
 
 type Profile = {
   userId: UserId
@@ -14,8 +15,9 @@ type Profile = {
 }
 
 export type BaseFrontendCtx = {
-  navigatorLanguage: LanguageCodeISO_639_1
+  dbConnSql: IDbConnSql
   t: Translator
+  navigatorLanguage: LanguageCodeISO_639_1
   currentScreen: Screen
   now: Posix
   profiles: { [userId: UserId]: Profile }

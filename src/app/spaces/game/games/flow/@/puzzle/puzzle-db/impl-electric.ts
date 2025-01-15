@@ -1,6 +1,7 @@
 import type { ILogger } from '~/@/logger'
 import { Err } from '~/@/result'
 // import { pgLite } from '~/app/@/pglite/pglite'
+import { Sub } from '~/@/sub'
 import type { IPuzzleDb } from './interface'
 
 // pgLite.live.query('SELECT * FROM game_flow_puzzle OFFSET 1', null, (x: unknown) => {
@@ -29,8 +30,8 @@ export const PuzzleDbElectric = (_config: { logger: ILogger }): IPuzzleDb => {
       return Err('not implemented')
     },
 
-    async subscribe(_input) {
-      return Err('not implemented')
+    subscribe(_input) {
+      return Sub.create()
     },
   }
 }

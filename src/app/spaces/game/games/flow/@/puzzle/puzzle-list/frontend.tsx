@@ -2,6 +2,7 @@ import { descend } from '~/@/array/sorting'
 import { Logger } from '~/@/logger'
 import { RequestResponse } from '~/@/request-response/request-response'
 import { Result, isErr, isOk } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
@@ -131,6 +132,10 @@ const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdFrontend | TCmd)[] }): boole
   )
 }
 
+const subscriptions: FrontendModule['subscriptions'] = (_input) => {
+  return Sub.None
+}
+
 const View: FrontendModule['View'] = (input) => {
   const puzzles = Object.values(input.ctx.puzzles)
   const shouldShowLoadingState = input.model.request.t === 'not-asked' || input.model.request.t === 'loading'
@@ -202,4 +207,5 @@ export const PuzzleListFrontend = {
   didLoad,
   load,
   isLoading,
+  subscriptions,
 }

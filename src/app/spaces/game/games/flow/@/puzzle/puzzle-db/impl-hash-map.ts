@@ -2,6 +2,7 @@ import { Err, isErr, Ok } from '~/@/result'
 import { Solutions } from '../../solutions/solutions'
 import type { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
+import { Sub } from '~/@/sub'
 
 const db = new Map<string, Puzzle>()
 
@@ -123,8 +124,8 @@ export const PuzzleDbHashMap = (): IPuzzleDb => {
       return Ok(null)
     },
 
-    async subscribe(_input) {
-      return Err('not implemented')
+    subscribe(_input) {
+      return Sub.create()
     },
   }
 }

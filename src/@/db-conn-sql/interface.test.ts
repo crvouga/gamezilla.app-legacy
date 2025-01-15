@@ -50,7 +50,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe.only('db-conn-sql', () => {
+describe('db-conn-sql', () => {
   test('querying ok', async () => {
     for (const f of await Fixtures()) {
       const result = await f.dbConnSql.query(p.unknown, `SELECT 1`, {})

@@ -16,10 +16,13 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpacesFrontend } from '../../frontend'
 import { Space } from '../../space/space'
 import type * as SpacesTypes from '../../types'
+import { DbConnSql } from '~/@/db-conn-sql'
+import { Logger } from '~/@/logger'
 
 export const SpaceFrontendFixture = async () => {
   const currentUserId = UserId.generate()
   const ctx: AppFrontendCtx = {
+    dbConnSql: await DbConnSql({ t: 'pglite', dataDir: '', logger: Logger({ t: 'noop' }) }),
     navigatorLanguage: 'en',
     t: Translator('en'),
     currentScreen: {

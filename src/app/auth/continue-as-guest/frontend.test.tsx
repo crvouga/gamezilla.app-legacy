@@ -1,16 +1,19 @@
 import { describe, expect, it } from 'bun:test'
+import { DbConnSql } from '~/@/db-conn-sql'
+import { Logger } from '~/@/logger'
 import { isRequesting, isResponseErr, isResponseOk } from '~/@/request-response/request-response'
 import { Err, Ok } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { UserId } from '~/app/@/data/user-id'
 import { didPlaySound, didSendToBackend } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx } from '~/app/@/frontend/ctx'
 import { Translator } from '~/app/@/frontend/translator'
-import { UserId } from '~/app/@/data/user-id'
 import * as AuthFrontend from '../frontend'
 import type { ModelFrontend } from '../types'
 
 const ctx: AnonymousFrontendCtx = {
+  dbConnSql: await DbConnSql({ t: 'pglite', dataDir: '', logger: Logger({ t: 'noop' }) }),
   currentScreen: {
     n: 'auth-login',
     t: 'login',

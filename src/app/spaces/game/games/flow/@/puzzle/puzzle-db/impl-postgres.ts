@@ -2,11 +2,12 @@ import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { Pagination } from '~/@/query/query'
-import { Err, Ok, Result, isErr } from '~/@/result'
+import { Ok, Result, isErr } from '~/@/result'
 import { Sql } from '~/@/sql'
+import { PubSub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Solutions } from '../../solutions/solutions'
-import type { Puzzle } from '../puzzle'
+import { Puzzle } from '../puzzle'
 import type { IPuzzleDb, OrderClause, WhereClause } from './interface'
 import { PostgresRow } from './postgres/row'
 
@@ -76,35 +77,8 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
     },
 
     async query(input) {
-      const where = toSqlWhere(input)
-      const order = toSqlOrder(input)
-      const pagination = toSqlPagination(input)
-
-      const variables: Sql.Vars = {
-        ...where.variables,
-        ...pagination.variables,
-      }
-
-      const queried = await config.dbConnSql.query(
-        PostgresRow,
-        `
-				SELECT
-					flow_puzzle_id,
-          flow_puzzle_name,
-          flow,
-          flow_solutions,
-          created_at_posix,
-          created_by_user_id,
-          last_updated_at_posix,
-          last_updated_by_user_id
-				FROM
-					game_flow_puzzle
-				${where.str}
-				${order.str}
-				${pagination.str}
-				`,
-        variables,
-      )
+      const sql = toQuerySql(input)
+      const queried = await config.dbConnSql.query(PostgresRow, sql.str, sql.variables)
 
       if (isErr(queried)) {
         return queried
@@ -119,9 +93,9 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
 					COUNT(flow_puzzle_id) AS count
 				FROM
           game_flow_puzzle
-				${where.str}
+				${sql.where.str}
 				`,
-        variables,
+        sql.variables,
       )
 
       if (isErr(queriedCount)) {
@@ -219,9 +193,63 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
       return Result.mapOk(queried, () => null)
     },
 
-    async subscribe(_input) {
-      return Err('not implemented')
+    subscribe(input) {
+      const pubSub = PubSub.create<Puzzle[]>()
+      const sql = toQuerySql(input)
+      const unsubscribe = config.dbConnSql.subscribe(PostgresRow, sql.str, sql.variables, (rows) => {
+        const puzzles = rows.flatMap((row) => {
+          const puzzle = PostgresRow.rowToPuzzle(row)
+          return puzzle ? [puzzle] : []
+        })
+        pubSub.pub(puzzles)
+      })
+      return {
+        sub(subscriber) {
+          const unsub = pubSub.sub(subscriber)
+          return () => {
+            unsub()
+            unsubscribe.then((unsub) => {
+              unsub.unsubscribe()
+            })
+          }
+        },
+      }
     },
+  }
+}
+
+const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination?: Pagination }) => {
+  const where = toSqlWhere(input)
+  const order = input.order ? toSqlOrder({ order: input.order }) : { str: '' }
+  const pagination = input.pagination ? toSqlPagination({ pagination: input.pagination }) : { str: '', variables: {} }
+
+  const variables: Sql.Vars = {
+    ...where.variables,
+    ...pagination.variables,
+  }
+  const str = `
+    SELECT
+      flow_puzzle_id,
+      flow_puzzle_name,
+      flow,
+      flow_solutions,
+      created_at_posix,
+      created_by_user_id,
+      last_updated_at_posix,
+      last_updated_by_user_id
+    FROM
+      game_flow_puzzle
+    ${where.str}
+    ${order.str}
+    ${pagination.str}
+  `
+
+  return {
+    str,
+    variables,
+    where,
+    order,
+    pagination,
   }
 }
 

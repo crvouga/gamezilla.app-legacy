@@ -1,11 +1,12 @@
+import { DbConnSqlNoop } from '~/@/db-conn-sql'
 import { PhoneNumber } from '~/@/phone-number'
 import { Posix } from '~/@/time/posix'
-import { Translator } from '~/app/@/frontend/translator'
 import { UserAccount } from '~/app/@/data/account'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
+import { Translator } from '~/app/@/frontend/translator'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 
 const currentUserId = 'test-user-id' as UserId
@@ -20,6 +21,7 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
     userId: currentUserId,
   }
   return {
+    dbConnSql: DbConnSqlNoop,
     currentUser,
     navigatorLanguage: 'en',
     t: Translator('en'),

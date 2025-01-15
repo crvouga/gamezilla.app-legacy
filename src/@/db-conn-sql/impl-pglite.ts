@@ -1,8 +1,8 @@
 import { PGlite } from '@electric-sql/pglite'
 import { electricSync } from '@electric-sql/pglite-sync'
 import { live } from '@electric-sql/pglite/live'
-import type { p } from '~/@/parser'
-import { Err, Ok } from '~/@/result'
+import { p } from '~/@/parser'
+import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
@@ -16,12 +16,12 @@ export type Config = {
   simulateLatency?: Sleep
 }
 
-let postgresClient: PGlite
+let pg: PGlite
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
 
-  postgresClient ??= await PGlite.create({
+  pg ??= await PGlite.create({
     dataDir: config.dataDir,
     relaxedDurability: true,
     extensions: {
@@ -31,6 +31,57 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   })
 
   return {
+    async subscribe(parser, rawSql, params, onChange) {
+      const sql = Sql.to(rawSql, params)
+
+      if (!('live' in pg)) {
+        throw new Error('live not implemented')
+      }
+      if (typeof pg.live !== 'object' || pg.live === null) {
+        throw new Error('live not implemented')
+      }
+      if (!('query' in pg.live)) {
+        throw new Error('live query not implemented')
+      }
+      if (typeof pg.live.query !== 'function') {
+        throw new Error('live query not implemented')
+      }
+      const query = await pg.live.query(sql, [], (res: unknown) => {
+        const parsed = p.obj({ rows: p.arr(parser) }).parse(res)
+        switch (parsed.t) {
+          case 'err': {
+            logger.error(`Failed to parse row\nerror=${JSON.stringify(parsed.error, null, 4)}`)
+            break
+          }
+          case 'ok': {
+            onChange(parsed.value.rows)
+            break
+          }
+        }
+      })
+
+      return {
+        initialRows: query?.initialResults?.rows?.flatMap((row: unknown) => {
+          const parsed = parser.parse(row)
+          return isOk(parsed) ? [parsed.value] : []
+        }),
+        async refresh() {
+          if (typeof query.refresh === 'function') {
+            await query.refresh()
+          } else {
+            throw new Error('refresh not implemented')
+          }
+        },
+        async unsubscribe() {
+          if (typeof query.unsubscribe === 'function') {
+            await query.unsubscribe()
+          } else {
+            throw new Error('unsubscribe not implemented')
+          }
+        },
+      }
+    },
+
     async query(rowParser, rawSql, params) {
       const sql = Sql.to(rawSql, params)
 
@@ -39,7 +90,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         await config.simulateLatency?.()
 
-        const results = await postgresClient.query(sql)
+        const results = await pg.query(sql)
 
         const end = process.hrtime.bigint()
 
@@ -82,7 +133,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     async notify(channel, payload) {
       try {
         const query = `NOTIFY ${channel}, '${payload}'`
-        await postgresClient.query(query)
+        await pg.query(query)
         return Ok(null)
       } catch (e) {
         logger.error(`${e} channel=${channel} payload=${payload}`)
@@ -91,7 +142,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     },
 
     async listen(channel, callback) {
-      const unlisten = await postgresClient.listen(channel, (data) => {
+      const unlisten = await pg.listen(channel, (data) => {
         callback({
           channel,
           payload: data,
