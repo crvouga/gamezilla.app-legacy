@@ -9,4 +9,4 @@ export const VDOM_IMPL_CURRENT = IS_TEST ? VDOM_IMPL_TEST : VDOM_IMPL
 
 export const BACKEND_URL: unknown = import.meta.env?.VITE_BACKEND_URL
 
-export const INDEXED_DB_NAME = 'gamezilla-app'
+export const INDEXED_DB_NAME = 'idb://gamezilla-app'

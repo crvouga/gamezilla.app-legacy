@@ -24,6 +24,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
 
   pg ??= await PGlite.create({
+    // dataDir: '',
     dataDir: config.dataDir,
     relaxedDurability: true,
     extensions: {
