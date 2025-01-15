@@ -1,4 +1,3 @@
-import { PGlite } from '@electric-sql/pglite'
 import { electricSync, SyncShapeToTableOptions, SyncShapeToTableResult } from '@electric-sql/pglite-sync'
 import { live, LiveNamespace } from '@electric-sql/pglite/live'
 import { p } from '~/@/parser'
@@ -17,7 +16,7 @@ export type Config = {
   simulateLatency?: Sleep
 }
 
-let pg: PGlite & {
+let pg: import('@electric-sql/pglite').PGlite & {
   electric: {
     initMetadataTables: () => Promise<void>
     syncShapeToTable: (options: SyncShapeToTableOptions) => Promise<SyncShapeToTableResult>
@@ -30,6 +29,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const electric = electricSync()
 
   const dataDir = PGLiteFileSystem.toDataDir(config.fileSystem)
+
+  const { PGlite } = await import('@electric-sql/pglite')
 
   pg ??= await PGlite.create({
     dataDir,
