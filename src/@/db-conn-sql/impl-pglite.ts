@@ -1,8 +1,6 @@
 import { PGlite } from '@electric-sql/pglite'
-// import { electricSync } from '@electric-sql/pglite-sync'
-// import { live } from '@electric-sql/pglite/live'
-import { electricSync } from '@electric-sql/pglite-sync'
-import { live } from '@electric-sql/pglite/live'
+import { electricSync, SyncShapeToTableOptions, SyncShapeToTableResult } from '@electric-sql/pglite-sync'
+import { live, LiveNamespace } from '@electric-sql/pglite/live'
 import { p } from '~/@/parser'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
@@ -18,18 +16,24 @@ export type Config = {
   simulateLatency?: Sleep
 }
 
-let pg: PGlite
+let pg: PGlite & {
+  electric: {
+    initMetadataTables: () => Promise<void>
+    syncShapeToTable: (options: SyncShapeToTableOptions) => Promise<SyncShapeToTableResult>
+  }
+  live: LiveNamespace
+}
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
+  const electric = electricSync()
 
   pg ??= await PGlite.create({
-    // dataDir: '',
     dataDir: config.dataDir,
     relaxedDurability: true,
     extensions: {
-      electric: electricSync(),
-      live: live,
+      electric,
+      live,
     },
   })
 
@@ -37,18 +41,6 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     async subscribe(parser, rawSql, params, onChange) {
       const sql = Sql.to(rawSql, params)
 
-      if (!('live' in pg)) {
-        throw new Error('live not implemented')
-      }
-      if (typeof pg.live !== 'object' || pg.live === null) {
-        throw new Error('live not implemented')
-      }
-      if (!('query' in pg.live)) {
-        throw new Error('live query not implemented')
-      }
-      if (typeof pg.live.query !== 'function') {
-        throw new Error('live query not implemented')
-      }
       const query = await pg.live.query(sql, [], (res: unknown) => {
         const parsed = p.obj({ rows: p.arr(parser) }).parse(res)
         switch (parsed.t) {
@@ -69,18 +61,10 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
           return isOk(parsed) ? [parsed.value] : []
         }),
         async refresh() {
-          if (typeof query.refresh === 'function') {
-            await query.refresh()
-          } else {
-            throw new Error('refresh not implemented')
-          }
+          await query.refresh()
         },
         async unsubscribe() {
-          if (typeof query.unsubscribe === 'function') {
-            await query.unsubscribe()
-          } else {
-            throw new Error('unsubscribe not implemented')
-          }
+          await query.unsubscribe()
         },
       }
     },

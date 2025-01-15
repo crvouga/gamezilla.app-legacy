@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-// import 'fake-indexeddb/auto'
+import 'fake-indexeddb/auto'
 import { Logger } from '../logger'
 import { p } from '../parser'
 import { Config, DbConnSql } from './backend-impl'
@@ -21,11 +21,11 @@ const Fixtures = async () => {
       logger: Logger({ t: 'noop' }),
     })
   } else {
-    // configs.push({
-    //   t: 'pglite',
-    //   dataDir: 'idb://test-gamezilla-app',
-    //   logger: Logger({ t: 'noop' }),
-    // })
+    configs.push({
+      t: 'pglite',
+      dataDir: 'idb://test-gamezilla-app',
+      logger: Logger({ t: 'noop' }),
+    })
   }
 
   const SHOULD_TEST_LOCAL_PG = false
@@ -47,6 +47,7 @@ type Row = p.Infer<typeof Row>
 describe('db-conn-sql subscribe', () => {
   test('subscribe', async () => {
     for (const f of await Fixtures()) {
+      await f.dbConnSql.query(p.unknown, `DROP TABLE foo`, {}).catch(() => {})
       await f.dbConnSql.query(p.unknown, `CREATE TABLE foo (id SERIAL PRIMARY KEY)`, {})
       let got: Row[] = []
       const subscribed = await f.dbConnSql.subscribe(Row, `SELECT id FROM foo`, {}, (rows) => {
@@ -56,7 +57,6 @@ describe('db-conn-sql subscribe', () => {
       await new Promise((r) => setTimeout(r, 1))
       expect(got).toEqual([{ id: 1 }])
       await subscribed.unsubscribe()
-      await f.dbConnSql.query(p.unknown, `DROP TABLE foo`, {})
     }
   })
 })

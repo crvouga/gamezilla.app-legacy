@@ -1,12 +1,10 @@
 import { FileSystem } from '~/@/file-system'
+import { withSinglePageApp } from '~/@/http-server/with-single-page-app'
 import { ProgramImpure } from '~/@/program/program-impure'
 import { withRPC } from '~/@/rpc/rpc'
-import { withSinglePageApp } from '~/@/http-server/with-single-page-app'
 import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
-import { SERVER_PORT } from '~/config/backend'
-import { IS_PROD, HTTP_SERVER_IMPL, TRANSPORT_IMPL } from '~/config/shared'
-import { BACKEND_URL } from '~/config/frontend'
+import { CONFIG_BACKEND } from '~/config/backend'
 
 const main = async () => {
   const ctx = await AppBackend.initCtx()
@@ -40,19 +38,13 @@ const main = async () => {
     })
   }
 
-  if (!SERVER_PORT) {
+  if (!CONFIG_BACKEND.SERVER_PORT) {
     throw new Error('SERVER_PORT is not set')
   }
 
-  await ctx.httpServer.start(SERVER_PORT)
+  await ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT)
 
-  ctx.logger.info({
-    IS_PROD,
-    HTTP_SERVER_IMPL,
-    TRANSPORT_IMPL,
-    SERVER_PORT,
-    BACKEND_URL,
-  })
+  ctx.logger.info(CONFIG_BACKEND)
 }
 
 main()

@@ -1,6 +1,6 @@
 import { PGlite } from '@electric-sql/pglite'
 import { electricSync } from '@electric-sql/pglite-sync'
-import { ELECTRIC_URL } from '~/config/shared'
+import { CONFIG_SHARED } from '~/config/shared'
 // @ts-ignore
 import { live } from '@electric-sql/pglite/live'
 
@@ -62,7 +62,7 @@ export const pgLite = await PGlite.create({
 
 // await pgLite.exec(m1)
 
-const electricUrl = new URL(ELECTRIC_URL)
+const electricUrl = new URL(CONFIG_SHARED.ELECTRIC_URL)
 electricUrl.pathname = '/v1/shape'
 
 const urlPuzzle = new URL(electricUrl)

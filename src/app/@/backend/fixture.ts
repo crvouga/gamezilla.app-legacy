@@ -8,8 +8,8 @@ import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
 import { Posix } from '~/@/time/posix'
-import { DATABASE_URL, REDIS_URL } from '~/config/backend'
-import { IS_INTEGRATION_TEST } from '~/config/shared'
+import { CONFIG_BACKEND } from '~/config/backend'
+import { CONFIG_SHARED } from '~/config/shared'
 import { ClientId } from '../data/client-id'
 import { SessionId } from '../data/session-id'
 import { BackendInstanceId } from './backend-instance/backend-instance-id'
@@ -24,7 +24,7 @@ export type ITestEnv = {
 }
 
 export const AppBackendTestEnv = async (): Promise<ITestEnv> => {
-  if (!IS_INTEGRATION_TEST) {
+  if (!CONFIG_SHARED.IS_INTEGRATION_TEST) {
     return {
       t: 'unit',
       dbConnKv: await DbConnKv({ t: 'hash-map' }),
@@ -35,13 +35,13 @@ export const AppBackendTestEnv = async (): Promise<ITestEnv> => {
 
   const logger = Logger({ t: 'noop' })
 
-  if (!DATABASE_URL) {
+  if (!CONFIG_BACKEND.DATABASE_URL) {
     throw new Error('DATABASE_URL is not set')
   }
 
   const dbConnSql = await DbConnSql({
     t: 'postgres',
-    databaseUrl: DATABASE_URL,
+    databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,
     simulateLatency: async () => {},
   })
@@ -49,11 +49,15 @@ export const AppBackendTestEnv = async (): Promise<ITestEnv> => {
   const dbConnKv = await DbConnKv({
     t: 'redis',
     logger,
-    redisUrl: REDIS_URL,
+    redisUrl: CONFIG_BACKEND.REDIS_URL,
     simulateLatency: async () => {},
   })
 
-  const pubSubTopicBased = await PubSubTopicBased({ t: 'redis', logger, redisUrl: REDIS_URL })
+  const pubSubTopicBased = await PubSubTopicBased({
+    t: 'redis',
+    logger,
+    redisUrl: CONFIG_BACKEND.REDIS_URL,
+  })
 
   return {
     t: 'integration',

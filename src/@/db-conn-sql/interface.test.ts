@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-// import 'fake-indexeddb/auto'
-import { DATABASE_URL } from '~/config/backend'
-import { IS_INTEGRATION_TEST } from '~/config/shared'
+import 'fake-indexeddb/auto'
+import { CONFIG_BACKEND } from '~/config/backend'
+import { CONFIG_SHARED } from '~/config/shared'
 import { Logger } from '../logger'
 import { p } from '../parser'
 import { isErr, isOk } from '../result'
@@ -24,11 +24,11 @@ const Fixtures = async () => {
     logger: Logger({ t: 'noop' }),
   })
 
-  // configs.push({
-  //   t: 'pglite',
-  //   dataDir: 'idb://test-gamezilla-app',
-  //   logger: Logger({ t: 'noop' }),
-  // })
+  configs.push({
+    t: 'pglite',
+    dataDir: 'idb://test-gamezilla-app',
+    logger: Logger({ t: 'noop' }),
+  })
 
   const SHOULD_TEST_LOCAL_PG = false
   if (SHOULD_TEST_LOCAL_PG) {
@@ -39,10 +39,10 @@ const Fixtures = async () => {
     })
   }
 
-  if (IS_INTEGRATION_TEST) {
+  if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     configs.push({
       t: 'postgres',
-      databaseUrl: DATABASE_URL,
+      databaseUrl: CONFIG_BACKEND.DATABASE_URL,
       logger: Logger({ t: 'noop' }),
     })
   }

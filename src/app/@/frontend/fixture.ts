@@ -3,7 +3,7 @@ import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { TestRender } from '~/@/vdom/test-render'
-import { VDOM_IMPL_TEST } from '~/config/frontend'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 import { UserId } from '../data/user-id'
 import type { AppFrontendCtx } from './ctx'
 import { Translator } from './translator'
@@ -31,7 +31,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     },
   }
 
-  const render = await TestRender(VDOM_IMPL_TEST)
+  const render = await TestRender(CONFIG_FRONTEND.VDOM_IMPL_TEST)
 
   return {
     ctx,

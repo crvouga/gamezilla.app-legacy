@@ -11,8 +11,9 @@ import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
-import { BACKEND_URL, INDEXED_DB_NAME } from '~/config/frontend'
-import { HTTP_SERVER_IMPL } from '~/config/shared'
+
+import { CONFIG_FRONTEND } from '~/config/frontend'
+import { CONFIG_SHARED } from '~/config/shared'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
@@ -50,28 +51,28 @@ import { FrontendTransport } from './wire/transport/frontend'
 export const initCtx = async (): Promise<FrontendCtx> => {
   const logger = Logger({ t: 'console' })
 
-  if (typeof BACKEND_URL !== 'string') {
+  if (typeof CONFIG_FRONTEND.BACKEND_URL !== 'string') {
     throw new Error('BACKEND_URL is undefined')
   }
 
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
     toFrontendTransportConfig({
-      httpServerImpl: HTTP_SERVER_IMPL,
-      backendUrl: BACKEND_URL,
+      httpServerImpl: CONFIG_SHARED.HTTP_SERVER_IMPL,
+      backendUrl: CONFIG_FRONTEND.BACKEND_URL,
       logger,
     }),
   )
 
-  const webFrontend = HttpClient({
+  const httpClient = HttpClient({
     t: 'fetch',
     fetch: fetch as Fetch,
   })
 
-  const rpc = RPC.initFrontend(webFrontend, rpcContract)
+  const rpc = RPC.initFrontend(httpClient, rpcContract)
 
   const dbConnSql = await DbConnSql({
     t: 'pglite',
-    dataDir: INDEXED_DB_NAME,
+    dataDir: CONFIG_FRONTEND.INDEXED_DB_NAME,
     logger,
   })
 

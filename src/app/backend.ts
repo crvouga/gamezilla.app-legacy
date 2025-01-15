@@ -12,8 +12,8 @@ import { SMS } from '~/@/sms'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { DATABASE_URL } from '~/config/backend'
-import { HTTP_SERVER_IMPL, IS_DEV, IS_PROD } from '~/config/shared'
+import { CONFIG_BACKEND } from '~/config/backend'
+import { CONFIG_SHARED } from '~/config/shared'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
 import { BackendCmd } from './@/backend/cmd'
 import { AppBackendCtx } from './@/backend/ctx'
@@ -33,7 +33,6 @@ import {
 } from './types'
 import * as WireBackend from './wire/backend'
 import { BackendTransport } from './wire/transport/backend'
-import { p } from '~/@/parser'
 
 //
 //
@@ -52,15 +51,17 @@ const initCtx = async (): Promise<BackendCtx> => {
     logger,
   })
 
-  const simulateLatency = IS_PROD ? async () => {} : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
+  const simulateLatency = CONFIG_SHARED.IS_PROD
+    ? async () => {}
+    : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
 
-  if (!DATABASE_URL) {
+  if (!CONFIG_BACKEND.DATABASE_URL) {
     throw new Error('DATABASE_URL is not set')
   }
 
   const dbConnSql = await DbConnSql({
     t: 'postgres',
-    databaseUrl: DATABASE_URL,
+    databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,
     simulateLatency,
   })
@@ -78,20 +79,8 @@ const initCtx = async (): Promise<BackendCtx> => {
 
   const httpServer = HttpServer({
     logger,
-    t: HTTP_SERVER_IMPL,
+    t: CONFIG_SHARED.HTTP_SERVER_IMPL,
   })
-
-  if (IS_DEV) {
-    httpServer.registerHandler(async (req) => {
-      if (req.url === '/sql') {
-        const body = req.body
-        const bodyText = await new Response(body).text()
-        const result = await dbConnSql.query(p.unknown, bodyText, {})
-        return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } })
-      }
-      return null
-    })
-  }
 
   const pubSub = await PubSubTopicBased({
     t: 'noop',
@@ -105,7 +94,7 @@ const initCtx = async (): Promise<BackendCtx> => {
           httpServer: httpServer,
           logger,
           pubSubTopicBased: pubSub,
-          isProd: IS_PROD,
+          isProd: CONFIG_SHARED.IS_PROD,
         }
       : {
           t: 'noop',
@@ -120,7 +109,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     runtime,
   })
 
-  const env = IS_PROD ? 'prod' : 'dev'
+  const env = CONFIG_SHARED.IS_PROD ? 'prod' : 'dev'
 
   const ctx: AppBackendCtx = {
     env,

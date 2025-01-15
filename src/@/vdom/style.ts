@@ -1,4 +1,4 @@
-import { VDOM_IMPL_CURRENT } from '~/config/frontend'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 import { VDomImpl } from './vdom-impl'
 
 export type StylesObjectKebab = { [key: string]: string | number | undefined | null | false }
@@ -34,7 +34,7 @@ const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectC
 
 export const styles = (
   stylesObject: StylesObjectKebab,
-  vdomImpl: VDomImpl = VDOM_IMPL_CURRENT,
+  vdomImpl: VDomImpl = CONFIG_FRONTEND.VDOM_IMPL_CURRENT,
 ): Record<string, unknown> => {
   switch (vdomImpl) {
     case 'react-with-compiler':

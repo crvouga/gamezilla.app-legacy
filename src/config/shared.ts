@@ -1,16 +1,26 @@
 import { HttpServerImpl } from '../@/http-server/http-server-impl'
 import { TransportImpl } from '../app/wire/transport/transport-impl'
 
-export const IS_INTEGRATION_TEST = import.meta.env?.IS_INTEGRATION_TEST === 'true'
+const IS_INTEGRATION_TEST = import.meta.env?.IS_INTEGRATION_TEST === 'true'
 
-export const IS_TEST = import.meta.env?.NODE_ENV === 'test'
+const IS_TEST = import.meta.env?.NODE_ENV === 'test'
 
-export const TRANSPORT_IMPL = TransportImpl.of('bun-web-sockets')
+const TRANSPORT_IMPL = TransportImpl.of('bun-web-sockets')
 
-export const HTTP_SERVER_IMPL = HttpServerImpl.of(TRANSPORT_IMPL === 'bun-web-sockets' ? 'bun' : 'node')
+const HTTP_SERVER_IMPL = HttpServerImpl.of(TRANSPORT_IMPL === 'bun-web-sockets' ? 'bun' : 'node')
 
-export const IS_PROD = Boolean(import.meta.env?.PROD)
+const IS_PROD = Boolean(import.meta.env?.PROD)
 
-export const IS_DEV = !IS_PROD
+const IS_DEV = !IS_PROD
 
-export const ELECTRIC_URL = import.meta.env?.VITE_ELECTRIC_URL
+const ELECTRIC_URL = import.meta.env?.VITE_ELECTRIC_URL
+
+export const CONFIG_SHARED = {
+  IS_INTEGRATION_TEST,
+  IS_TEST,
+  TRANSPORT_IMPL,
+  HTTP_SERVER_IMPL,
+  IS_PROD,
+  IS_DEV,
+  ELECTRIC_URL,
+}

@@ -1,8 +1,8 @@
 import { describe, expect, mock, test } from 'bun:test'
 import { p } from '~/@/parser'
-import { REDIS_URL } from '~/config/backend'
-import { Logger } from '../logger'
+import { CONFIG_BACKEND } from '~/config/backend'
 import { AppBackendTestEnv } from '../../app/@/backend/fixture'
+import { Logger } from '../logger'
 import { Config, PubSubTopicBased } from './impl'
 
 const Fixture = async (config: Config) => {
@@ -36,7 +36,7 @@ const Fixtures = async () => {
 
   if (testEnv.t === 'integration') {
     configs.push({ t: 'postgres', dbConnSql: testEnv.dbConnSql, logger: Logger({ t: 'noop' }) })
-    configs.push({ t: 'redis', redisUrl: REDIS_URL, logger: Logger({ t: 'noop' }) })
+    configs.push({ t: 'redis', redisUrl: CONFIG_BACKEND.REDIS_URL, logger: Logger({ t: 'noop' }) })
   }
 
   return Promise.all(configs.map(Fixture))

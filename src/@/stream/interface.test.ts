@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
-import { REDIS_URL } from '~/config/backend'
+import { CONFIG_BACKEND } from '~/config/backend'
 import { AppBackendTestEnv } from '../../app/@/backend/fixture'
 import { NonEmpty } from '../array/non-empty'
 import { DbConnKv } from '../db-conn-kv'
@@ -55,7 +55,7 @@ const Fixtures = async () => {
       decode: (encoded) => Ok(JSON.parse(encoded)),
       encode: (value) => Ok(JSON.stringify(value)),
       logger: Logger({ t: 'noop' }),
-      redisUrl: REDIS_URL,
+      redisUrl: CONFIG_BACKEND.REDIS_URL,
     })
   }
 

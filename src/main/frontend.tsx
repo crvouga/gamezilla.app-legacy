@@ -2,8 +2,7 @@ import { DebuggerReduxDevTools } from '~/@/program/debugger'
 import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
-import { BACKEND_URL, VDOM_IMPL } from '~/config/frontend'
-import { IS_PROD, TRANSPORT_IMPL } from '~/config/shared'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 
 const main = async () => {
   // renderRuntimeErrors()
@@ -16,7 +15,7 @@ const main = async () => {
     throw new Error('Root element not found')
   }
 
-  const render = await Renderer(VDOM_IMPL, root)
+  const render = await Renderer(CONFIG_FRONTEND.VDOM_IMPL, root)
 
   await Program.run({
     initCtx: () => ctx,
@@ -35,12 +34,7 @@ const main = async () => {
 
   await ctx.transport.start()
 
-  console.log({
-    IS_PROD,
-    TRANSPORT_IMPL,
-    VDOM_IMPL,
-    BACKEND_URL,
-  })
+  console.log(CONFIG_FRONTEND)
 }
 
 declare global {

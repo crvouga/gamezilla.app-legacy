@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { p } from '~/@/parser'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
-import { REDIS_URL } from '~/config/backend'
+import { CONFIG_BACKEND } from '~/config/backend'
 import { AppBackendTestEnv } from '../../app/@/backend/fixture'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
@@ -132,7 +132,7 @@ const implementations: Implementation[] = [
         dbConnKv: await DbConnKv({
           t: 'redis',
           simulateLatency: async () => {},
-          redisUrl: REDIS_URL,
+          redisUrl: CONFIG_BACKEND.REDIS_URL,
           logger: f.logger,
         }),
       }
