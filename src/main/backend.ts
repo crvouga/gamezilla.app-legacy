@@ -6,6 +6,7 @@ import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { SERVER_PORT } from '~/config/backend'
 import { IS_PROD, HTTP_SERVER_IMPL, TRANSPORT_IMPL } from '~/config/shared'
+import { BACKEND_URL } from '~/config/frontend'
 
 const main = async () => {
   const ctx = await AppBackend.initCtx()
@@ -50,6 +51,7 @@ const main = async () => {
     HTTP_SERVER_IMPL,
     TRANSPORT_IMPL,
     SERVER_PORT,
+    BACKEND_URL,
   })
 }
 

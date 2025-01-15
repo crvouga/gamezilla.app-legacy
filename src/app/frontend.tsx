@@ -10,7 +10,7 @@ import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
-import { SERVER_URL } from '~/config/frontend'
+import { BACKEND_URL } from '~/config/frontend'
 import { HTTP_SERVER_IMPL } from '~/config/shared'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
@@ -52,7 +52,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
     toFrontendTransportConfig({
       httpServerImpl: HTTP_SERVER_IMPL,
-      backendUrl: SERVER_URL,
+      backendUrl: BACKEND_URL,
       logger,
     }),
   )
