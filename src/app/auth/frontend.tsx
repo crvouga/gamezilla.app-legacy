@@ -189,7 +189,7 @@ const updateRedirect: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'routing-evt.screen-changed': {
+    case 'screen-evt.screen-changed': {
       if (input.model.currentUser.t === 'logged-in' && input.ctx.currentScreen.n === 'auth-login') {
         return {
           model: input.model,

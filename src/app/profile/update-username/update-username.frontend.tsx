@@ -75,7 +75,7 @@ export const update = <TModel extends ModelFrontend, TMsg extends { t: string }>
       return init({ ctx: input.ctx, model: input.model })
     }
 
-    case 'routing-evt.screen-changed': {
+    case 'screen-evt.screen-changed': {
       if (input.msgEvt.screen.t === 'profile-edit-username') {
         return init({ ctx: input.ctx, model: input.model })
       }

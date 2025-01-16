@@ -137,6 +137,7 @@ export const translations: Text = {
   'game.winner': '勝者',
   'game.vs': '対',
   'flow.copy-puzzle-to-clipboard': 'パズルをクリップボードにコピー',
+  'flow.select-a-pack': 'パックを選択',
   'flow.create-pack': 'パックを作成',
   'flow.pack-created': 'パックが作成されました',
   'flow.pack-builder': 'パックビルダー',

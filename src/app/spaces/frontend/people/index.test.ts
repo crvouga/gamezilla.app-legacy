@@ -57,7 +57,7 @@ describe(import.meta.file, () => {
       },
       {
         msgEvt: {
-          t: 'routing-evt.screen-changed',
+          t: 'screen-evt.screen-changed',
           screen: {
             n: 'spaces',
             t: 'space-list',

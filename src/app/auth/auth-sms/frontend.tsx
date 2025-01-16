@@ -105,7 +105,7 @@ const update: Module['update'] = (input) => {
 
 const updateAutoFocus: Module['update'] = (input) => {
   switch (input.msgEvt?.t) {
-    case 'routing-evt.screen-changed': {
+    case 'screen-evt.screen-changed': {
       switch (input.msgEvt.screen.t) {
         case 'login-sms-request': {
           return {

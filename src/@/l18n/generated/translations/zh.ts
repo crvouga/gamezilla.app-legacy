@@ -134,6 +134,7 @@ export const translations: Text = {
   'game.winner': '获胜者',
   'game.vs': '对',
   'flow.copy-puzzle-to-clipboard': '将拼图复制到剪贴板',
+  'flow.select-a-pack': '选择一个包',
   'flow.create-pack': '创建包',
   'flow.pack-created': '包已创建',
   'flow.pack-builder': '包生成器',

@@ -135,6 +135,7 @@ export const translations: Text = {
   'game.winner': '승자',
   'game.vs': '대',
   'flow.copy-puzzle-to-clipboard': '퍼즐을 클립 보드로 복사',
+  'flow.select-a-pack': '팩 선택',
   'flow.create-pack': '팩 생성',
   'flow.pack-created': '팩이 생성되었습니다',
   'flow.pack-builder': '팩 빌더',

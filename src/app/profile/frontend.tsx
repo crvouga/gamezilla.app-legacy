@@ -102,7 +102,7 @@ const updateFromEvent: FrontendModule['update'] = (input) => {
   }
 
   switch (msgEvt.t) {
-    case 'routing-evt.screen-changed': {
+    case 'screen-evt.screen-changed': {
       if (msgEvt.screen.n === 'profile' && msgEvt.screen.t === 'profile') {
         return loadProfile(msgEvt.screen.userId, model)
       }

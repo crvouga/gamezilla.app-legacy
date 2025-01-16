@@ -88,13 +88,10 @@ const View: FrontendModule['View'] = (input) => {
         onBack={() =>
           input.dispatch({
             t: 'got-msg-space',
-            c: {
-              t: 'user-clicked-exit-play-mode-button',
-              userId: input.ctx.currentUserId,
-            },
+            c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUserId },
           })
         }
-        title={input.ctx.t('flow.play')}
+        title={input.ctx.t('flow.select-a-pack')}
       />
       <PackListFrontend.View
         ctx={input.ctx}

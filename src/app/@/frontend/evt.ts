@@ -15,7 +15,7 @@ export type FrontendEvt =
       t: 'wire-evt.backend-connected'
     }
   | {
-      t: 'routing-evt.screen-changed'
+      t: 'screen-evt.screen-changed'
       screen: Screen
     }
   | {
@@ -28,7 +28,7 @@ export type FrontendEvt =
     }
 
 export const screenChanged = (screen: Screen): FrontendEvt => {
-  return { t: 'routing-evt.screen-changed', screen }
+  return { t: 'screen-evt.screen-changed', screen }
 }
 
 export const backendConnected = (): FrontendEvt => {

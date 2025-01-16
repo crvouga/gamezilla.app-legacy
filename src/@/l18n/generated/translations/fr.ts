@@ -135,6 +135,7 @@ export const translations: Text = {
   'game.winner': 'Gagnant',
   'game.vs': 'vs',
   'flow.copy-puzzle-to-clipboard': 'Copier le puzzle dans le presse-papiers',
+  'flow.select-a-pack': 'Sélectionner un pack',
   'flow.create-pack': 'Créer un pack',
   'flow.pack-created': 'Pack créé',
   'flow.pack-builder': 'Constructeur de packs',

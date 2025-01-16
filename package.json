@@ -28,7 +28,7 @@
     "gen:events": "bun src/@/events/events-gen.ts",
     "gen:guard": "bun src/@/guards/guards-gen.ts",
     "gen:l18n": "bun src/@/l18n/l18n-gen.ts",
-    "gen:screens": "bun src/@/routing/screens-gen.ts",
+    "gen:screens": "bun src/@/screen/screens-gen.ts",
     "infra:down": "docker-compose -f ./infra/local/docker-compose.yml down",
     "infra:up": "docker-compose -f ./infra/local/docker-compose.yml up -d",
     "powersync:test-client:get": "bun x degit powersync-ja/powersync-service/test-client powersync/test-client",

@@ -137,6 +137,7 @@ export const translations: Text = {
   'game.winner': 'الفائز',
   'game.vs': 'ضد',
   'flow.copy-puzzle-to-clipboard': 'نسخ اللغز إلى الحافظة',
+  'flow.select-a-pack': 'اختر حزمة',
   'flow.create-pack': 'إنشاء حزمة',
   'flow.pack-created': 'تم إنشاء الحزمة',
   'flow.pack-builder': 'منشئ الحزم',

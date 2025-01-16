@@ -98,7 +98,7 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model }) => {
 
 const updateFromEvent: SpaceFrontendModule['update'] = ({ msgEvt, model }) => {
   switch (msgEvt?.t) {
-    case 'routing-evt.screen-changed': {
+    case 'screen-evt.screen-changed': {
       return {
         model: {
           ...model,

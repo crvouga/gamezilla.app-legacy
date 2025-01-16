@@ -121,7 +121,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
         },
         msgEvt: [
           {
-            t: 'routing-evt.screen-changed',
+            t: 'screen-evt.screen-changed',
             screen: msg.screen,
           },
         ],

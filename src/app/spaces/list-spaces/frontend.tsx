@@ -51,7 +51,7 @@ const init: SpaceFrontendModule['init'] = ({ model, ctx }) => {
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgEvt?.t) {
-    case 'routing-evt.screen-changed': {
+    case 'screen-evt.screen-changed': {
       if (input.msgEvt.screen.t === 'space-list') {
         return sendListSpacesRequest(input)
       }
