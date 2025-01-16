@@ -1,6 +1,9 @@
 import { VDomImpl } from '../@/vdom/vdom-impl'
 
-const ensureSecureProtocol = (url: string): string => {
+const ensureSecureProtocol = (url: unknown): string | null => {
+  if (typeof url !== 'string') {
+    return null
+  }
   if (url.startsWith('https://')) {
     return url
   }
@@ -14,9 +17,9 @@ const VDOM_IMPL = VDomImpl.of('inferno')
 
 const VDOM_IMPL_TEST = VDomImpl.of('react-with-compiler')
 
-const VITE_BACKEND_URL: string = ensureSecureProtocol(import.meta.env?.VITE_BACKEND_URL)
+const VITE_BACKEND_URL = ensureSecureProtocol(import.meta.env?.VITE_BACKEND_URL)
 
-const VITE_POWERSYNC_URL: string = ensureSecureProtocol(String(import.meta.env?.VITE_POWERSYNC_URL))
+const VITE_POWERSYNC_URL = ensureSecureProtocol(String(import.meta.env?.VITE_POWERSYNC_URL))
 
 export const CONFIG_FRONTEND = {
   VDOM_IMPL,
