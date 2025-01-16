@@ -16,7 +16,7 @@ export class Connector extends BaseObserver<{}> implements PowerSyncBackendConne
 
       return {
         token,
-        endpoint: String(CONFIG_FRONTEND.VITE_POWERSYNC_URL),
+        endpoint: ensureSecureProtocol(String(CONFIG_FRONTEND.VITE_POWERSYNC_URL)),
       }
     } catch (error) {
       console.error('Failed to fetchCredentials:', error)
@@ -27,4 +27,14 @@ export class Connector extends BaseObserver<{}> implements PowerSyncBackendConne
   async uploadData(database: AbstractPowerSyncDatabase): Promise<void> {
     console.log('uploadData not implemented yet', database)
   }
+}
+
+const ensureSecureProtocol = (url: string) => {
+  if (url.startsWith('https://')) {
+    return url
+  }
+  if (url.startsWith('http://')) {
+    return url.replace('http://', 'https://')
+  }
+  return `https://${url}`
 }
