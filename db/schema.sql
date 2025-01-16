@@ -217,7 +217,7 @@ CREATE TABLE powersync.write_checkpoints (
 --
 
 CREATE TABLE public.auth_sms_verification (
-    verification_id text NOT NULL,
+    id text NOT NULL,
     code_hash json,
     phone_number text NOT NULL,
     created_at_posix bigint NOT NULL,
@@ -231,7 +231,7 @@ CREATE TABLE public.auth_sms_verification (
 --
 
 CREATE TABLE public.auth_sms_verification_attempt (
-    verification_attempt_id text NOT NULL,
+    id text NOT NULL,
     verification_id text NOT NULL,
     inputted_code_hash json NOT NULL,
     created_at_posix bigint NOT NULL
@@ -243,7 +243,7 @@ CREATE TABLE public.auth_sms_verification_attempt (
 --
 
 CREATE TABLE public.game_chess_puzzle (
-    puzzle_id text NOT NULL,
+    id text NOT NULL,
     rating integer,
     rating_deviation integer,
     opening_tags text NOT NULL,
@@ -286,7 +286,7 @@ CREATE TABLE public.game_chess_puzzle_profile (
 --
 
 CREATE TABLE public.game_flow_pack (
-    flow_pack_id text NOT NULL,
+    id text NOT NULL,
     flow_pack_name text NOT NULL,
     flow_puzzle_ids text[] NOT NULL,
     created_at_posix bigint NOT NULL,
@@ -303,7 +303,7 @@ CREATE TABLE public.game_flow_pack (
 --
 
 CREATE TABLE public.game_flow_puzzle (
-    flow_puzzle_id text NOT NULL,
+    id text NOT NULL,
     flow_puzzle_name text NOT NULL,
     flow json NOT NULL,
     created_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
@@ -321,7 +321,7 @@ CREATE TABLE public.game_flow_puzzle (
 --
 
 CREATE TABLE public.game_flow_solutions (
-    flow_hash text NOT NULL,
+    id text NOT NULL,
     solutions jsonb DEFAULT '[]'::jsonb NOT NULL,
     created_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
     last_updated_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL
@@ -333,7 +333,7 @@ CREATE TABLE public.game_flow_solutions (
 --
 
 CREATE UNLOGGED TABLE public.key_value (
-    key text NOT NULL,
+    id text NOT NULL,
     value text
 );
 
@@ -352,7 +352,7 @@ CREATE TABLE public.schema_migrations (
 --
 
 CREATE TABLE public.user_account (
-    user_id text NOT NULL,
+    id text NOT NULL,
     created_at_posix bigint NOT NULL,
     user_role public.user_role NOT NULL,
     phone_number text
@@ -364,7 +364,7 @@ CREATE TABLE public.user_account (
 --
 
 CREATE TABLE public.user_guest_session_mapping (
-    user_id text NOT NULL,
+    id text NOT NULL,
     session_id text NOT NULL,
     created_at_posix bigint NOT NULL
 );
@@ -375,7 +375,7 @@ CREATE TABLE public.user_guest_session_mapping (
 --
 
 CREATE TABLE public.user_profile (
-    user_id text NOT NULL,
+    id text NOT NULL,
     username text NOT NULL,
     avatar_seed text,
     avatar_style text
@@ -387,7 +387,7 @@ CREATE TABLE public.user_profile (
 --
 
 CREATE TABLE public.user_session (
-    user_session_id text NOT NULL,
+    id text NOT NULL,
     user_id text NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     ended_at timestamp with time zone,
@@ -487,7 +487,7 @@ ALTER TABLE ONLY powersync.write_checkpoints
 --
 
 ALTER TABLE ONLY public.auth_sms_verification_attempt
-    ADD CONSTRAINT auth_sms_verification_attempt_pkey PRIMARY KEY (verification_attempt_id);
+    ADD CONSTRAINT auth_sms_verification_attempt_pkey PRIMARY KEY (id);
 
 
 --
@@ -495,7 +495,7 @@ ALTER TABLE ONLY public.auth_sms_verification_attempt
 --
 
 ALTER TABLE ONLY public.auth_sms_verification
-    ADD CONSTRAINT auth_sms_verification_pkey PRIMARY KEY (verification_id);
+    ADD CONSTRAINT auth_sms_verification_pkey PRIMARY KEY (id);
 
 
 --
@@ -511,7 +511,7 @@ ALTER TABLE ONLY public.game_chess_puzzle_interaction
 --
 
 ALTER TABLE ONLY public.game_chess_puzzle
-    ADD CONSTRAINT game_chess_puzzle_pkey PRIMARY KEY (puzzle_id);
+    ADD CONSTRAINT game_chess_puzzle_pkey PRIMARY KEY (id);
 
 
 --
@@ -527,7 +527,7 @@ ALTER TABLE ONLY public.game_chess_puzzle_profile
 --
 
 ALTER TABLE ONLY public.game_flow_pack
-    ADD CONSTRAINT game_flow_pack_pkey PRIMARY KEY (flow_pack_id);
+    ADD CONSTRAINT game_flow_pack_pkey PRIMARY KEY (id);
 
 
 --
@@ -535,7 +535,7 @@ ALTER TABLE ONLY public.game_flow_pack
 --
 
 ALTER TABLE ONLY public.game_flow_puzzle
-    ADD CONSTRAINT game_flow_puzzle_pkey PRIMARY KEY (flow_puzzle_id);
+    ADD CONSTRAINT game_flow_puzzle_pkey PRIMARY KEY (id);
 
 
 --
@@ -543,7 +543,7 @@ ALTER TABLE ONLY public.game_flow_puzzle
 --
 
 ALTER TABLE ONLY public.game_flow_solutions
-    ADD CONSTRAINT game_flow_solutions_pkey PRIMARY KEY (flow_hash);
+    ADD CONSTRAINT game_flow_solutions_pkey PRIMARY KEY (id);
 
 
 --
@@ -551,7 +551,7 @@ ALTER TABLE ONLY public.game_flow_solutions
 --
 
 ALTER TABLE ONLY public.key_value
-    ADD CONSTRAINT key_value_pkey PRIMARY KEY (key);
+    ADD CONSTRAINT key_value_pkey PRIMARY KEY (id);
 
 
 --
@@ -567,7 +567,7 @@ ALTER TABLE ONLY public.schema_migrations
 --
 
 ALTER TABLE ONLY public.user_account
-    ADD CONSTRAINT user_account_pkey PRIMARY KEY (user_id);
+    ADD CONSTRAINT user_account_pkey PRIMARY KEY (id);
 
 
 --
@@ -575,7 +575,7 @@ ALTER TABLE ONLY public.user_account
 --
 
 ALTER TABLE ONLY public.user_profile
-    ADD CONSTRAINT user_profile_pkey PRIMARY KEY (user_id);
+    ADD CONSTRAINT user_profile_pkey PRIMARY KEY (id);
 
 
 --
@@ -591,7 +591,7 @@ ALTER TABLE ONLY public.user_profile
 --
 
 ALTER TABLE ONLY public.user_session
-    ADD CONSTRAINT user_session_pkey PRIMARY KEY (user_session_id);
+    ADD CONSTRAINT user_session_pkey PRIMARY KEY (id);
 
 
 --
@@ -661,7 +661,7 @@ CREATE INDEX idx_user_guest_session_mapping_session_id ON public.user_guest_sess
 -- Name: idx_user_guest_session_mapping_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_user_guest_session_mapping_user_id ON public.user_guest_session_mapping USING btree (user_id);
+CREATE INDEX idx_user_guest_session_mapping_user_id ON public.user_guest_session_mapping USING btree (id);
 
 
 --
@@ -675,7 +675,7 @@ CREATE INDEX idx_user_session_created_at ON public.user_session USING btree (cre
 -- Name: idx_user_session_session_id_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_user_session_session_id_created_at ON public.user_session USING btree (user_session_id, created_at);
+CREATE INDEX idx_user_session_session_id_created_at ON public.user_session USING btree (id, created_at);
 
 
 --
@@ -742,4 +742,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240519212517'),
     ('20240530071956'),
     ('20240630071855'),
-    ('20250110223606');
+    ('20250110223606'),
+    ('20250116191615');

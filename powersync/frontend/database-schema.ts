@@ -1,13 +1,13 @@
 import { column, Schema, Table } from '@powersync/web'
 
 const game_flow_pack = new Table({
-  flow_pack_id: column.text,
+  id: column.text,
   flow_pack_name: column.text,
 })
 export type GameFlowPack = AppSchema['game_flow_pack']
 
 const game_flow_puzzle = new Table({
-  flow_puzzle_id: column.text,
+  id: column.text,
   flow_puzzle_name: column.text,
   flow: column.text,
   created_at_posix: column.integer,

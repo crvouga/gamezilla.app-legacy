@@ -70,9 +70,9 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
 
       const queried = await dbConnSql.query(
         Row,
-        'INSERT INTO user_session (user_session_id, session_id, user_id) VALUES (:user_session_id, :session_id, :user_id)',
+        'INSERT INTO user_session (id, session_id, user_id) VALUES (:id, :session_id, :user_id)',
         {
-          user_session_id: userSessionId,
+          id: userSessionId,
           session_id: sessionId,
           user_id: userId,
         },

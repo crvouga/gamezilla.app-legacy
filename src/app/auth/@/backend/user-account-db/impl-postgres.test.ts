@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import type { UserId } from '~/app/@/data/user-id'
+import { UserId } from '~/app/@/data/user-id'
 import { UserAccountRow } from './impl-postgres'
 
 describe(import.meta.file, () => {
   it('should parse correctly', async () => {
     const row: UserAccountRow = {
       created_at_posix: '2021-01-01T00:00:00Z',
-      user_id: '123' as UserId,
+      id: UserId.generate(),
       user_role: 'guest',
       phone_number: null,
     }

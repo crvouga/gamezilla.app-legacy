@@ -7,7 +7,7 @@ import { IDbConnSql } from '~/@/db-conn-sql'
 import { Posix } from '~/@/time/posix'
 
 export const Row = p.obj({
-  user_id: UserId,
+  id: UserId,
   session_id: SessionId,
   created_at_posix: p.or(p.str, p.num),
 })
@@ -21,7 +21,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
   return {
     async findUserIdBySessionId(sessionId) {
       const query = `
-				SELECT user_id
+				SELECT id
 				FROM user_guest_session_mapping
 				WHERE session_id = :session_id
 				ORDER BY created_at_posix DESC
@@ -31,7 +31,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
       }
       const queried = await config.dbConnSql.query(
         p.obj({
-          user_id: UserId,
+          id: UserId,
         }),
         query,
         vars,
@@ -41,17 +41,17 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         return queried
       }
 
-      const userId = queried.value[0]?.user_id ?? null
+      const userId = queried.value[0]?.id ?? null
 
       return Ok(userId)
     },
     async insert(input) {
       const query = `
-				INSERT INTO user_guest_session_mapping (user_id, session_id, created_at_posix)
-				VALUES (:user_id, :session_id, :created_at_posix)
+				INSERT INTO user_guest_session_mapping (id, session_id, created_at_posix)
+				VALUES (:id, :session_id, :created_at_posix)
 			`
       const vars = {
-        user_id: input.guestUserId,
+        id: input.guestUserId,
         session_id: input.sessionId,
         created_at_posix: Posix.now(),
       }

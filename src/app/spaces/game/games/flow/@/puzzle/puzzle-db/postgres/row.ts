@@ -9,7 +9,7 @@ import { PuzzleId } from '../../puzzle-id'
 import { PuzzleName } from '../../puzzle-name'
 
 const parser = p.obj({
-  flow_puzzle_id: p.str,
+  id: p.str,
   flow_puzzle_name: p.str,
   flow: p.json,
   flow_solutions: p.json,
@@ -26,7 +26,7 @@ const ensureNumber = (x: string | number): number => {
 }
 
 const rowToPuzzle = (row: PostgresRow): Puzzle | null => {
-  const flowPuzzleId = PuzzleId.is(row.flow_puzzle_id) ? row.flow_puzzle_id : null
+  const flowPuzzleId = PuzzleId.is(row.id) ? row.id : null
   const puzzleName = PuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
 
   const parsedFlow = Variant.Model.parse(row.flow)

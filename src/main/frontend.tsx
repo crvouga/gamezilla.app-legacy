@@ -3,20 +3,10 @@ import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { powerSyncDatabase } from '../../powersync/frontend/database'
+import { powerSync } from '../../powersync/frontend/database'
 
 const main = async () => {
-  try {
-    console.log('powersync', 'start')
-    powerSyncDatabase.getOptional('SELECT * FROM game_flow_puzzle').then((data) => {
-      console.log('powersync', data)
-    })
-    // @ts-ignore
-    window.powerSyncDatabase = powerSyncDatabase
-  } catch (e) {
-    console.error('powersync', e)
-  }
-  // renderRuntimeErrors()
+  powerSync
 
   const ctx = await AppFrontend.initCtx()
 
@@ -57,13 +47,12 @@ declare global {
 const DEBUG_KEY = 'debug'
 
 window.toggleDebugger = () => {
-  if (localStorage.getItem(DEBUG_KEY)) {
-    localStorage.removeItem(DEBUG_KEY)
-  } else {
-    localStorage.setItem(DEBUG_KEY, 'true')
-  }
-
+  storageToggle(localStorage, DEBUG_KEY, 'true')
   window.location.reload()
+}
+
+const storageToggle = (storage: Storage, key: string, value: string) => {
+  storage.getItem(key) === value ? storage.removeItem(key) : storage.setItem(key, value)
 }
 
 main()

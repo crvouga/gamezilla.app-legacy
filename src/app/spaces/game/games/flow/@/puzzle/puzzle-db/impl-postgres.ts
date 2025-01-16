@@ -19,7 +19,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
         PostgresRow,
         `
         SELECT
-          flow_puzzle_id,
+          id,
           flow_puzzle_name,
           flow,
           flow_solutions,
@@ -30,12 +30,12 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
         FROM
           game_flow_puzzle
         WHERE
-            flow_puzzle_id = :flow_puzzle_id
+            id = :id
         AND deleted_at IS NULL
         LIMIT 1
         `,
         {
-          flow_puzzle_id: flowPuzzleId,
+          id: flowPuzzleId,
         },
       )
 
@@ -67,7 +67,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
         }),
         `
         SELECT
-          COUNT(flow_puzzle_id) AS count
+          COUNT(id) AS count
         FROM
           game_flow_puzzle
         ${where.str}
@@ -91,7 +91,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
         }),
         `
 				SELECT
-					COUNT(flow_puzzle_id) AS count
+					COUNT(id) AS count
 				FROM
           game_flow_puzzle
 				${sql.where.str}
@@ -133,7 +133,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
         p.unknown,
         `
 				INSERT INTO game_flow_puzzle (
-					flow_puzzle_id,
+					id,
 					flow_puzzle_name,
 					flow,
 					created_at_posix,
@@ -143,7 +143,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
 					flow_solutions
 				)
 				VALUES (
-					:flow_puzzle_id,
+					:id,
 					:flow_puzzle_name,
 					:flow,
 					:created_at_posix,
@@ -151,7 +151,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
 					:last_updated_at_posix,
 					:last_updated_by_user_id,
 					:flow_solutions
-				) ON CONFLICT (flow_puzzle_id) DO
+				) ON CONFLICT (id) DO
 				UPDATE SET
 					flow_puzzle_name = :flow_puzzle_name,
 					flow = :flow,
@@ -160,7 +160,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
 					flow_solutions = :flow_solutions
 				`,
         {
-          flow_puzzle_id: flowPuzzle.id,
+          id: flowPuzzle.id,
           flow_puzzle_name: flowPuzzle.name,
           flow: Sql.json(flowPuzzle.flow),
           flow_solutions: Sql.json(flowPuzzle.solutions),
@@ -183,12 +183,12 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
 					deleted_at = :deleted_at,
 					deleted_by_user_id = :deleted_by_user_id
 				WHERE
-					flow_puzzle_id = :flow_puzzle_id
+					id = :id
 				`,
         {
           deleted_at: Posix.now(),
           deleted_by_user_id: input.deletedByUserId,
-          flow_puzzle_id: input.id,
+          id: input.id,
         },
       )
       return Result.mapOk(queried, () => null)
@@ -201,7 +201,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
           parser: PostgresRow,
           rawSql: sql.str,
           variables: sql.variables,
-          primaryKey: ['flow_puzzle_id'],
+          primaryKey: ['id'],
           tableName: 'game_flow_puzzle',
         }),
         (rows) =>
@@ -225,7 +225,7 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
   }
   const str = `
     SELECT
-      flow_puzzle_id,
+      id,
       flow_puzzle_name,
       flow,
       flow_solutions,
@@ -264,7 +264,7 @@ const toSqlWhere = (input: { where: WhereClause }) => {
   if (input.where.puzzleId?.in) {
     if (input.where.puzzleId?.in.length > 0) {
       const puzzleIds = input.where.puzzleId?.in.map((puzzleId) => `'${puzzleId}'`).join(', ')
-      where.push(`flow_puzzle_id IN (${puzzleIds})`)
+      where.push(`id IN (${puzzleIds})`)
     } else {
       where.push('FALSE')
     }

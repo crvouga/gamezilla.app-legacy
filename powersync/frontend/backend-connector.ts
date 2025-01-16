@@ -9,13 +9,18 @@ export class Connector extends BaseObserver<{}> implements PowerSyncBackendConne
   }
 
   async fetchCredentials() {
-    const got = await BackendAppRpc.getPowersyncCredentials()
+    try {
+      const got = await BackendAppRpc.getPowersyncCredentials()
 
-    const { token } = unwrap(got)
+      const { token } = unwrap(got)
 
-    return {
-      token,
-      endpoint: String(CONFIG_FRONTEND.VITE_POWERSYNC_URL),
+      return {
+        token,
+        endpoint: String(CONFIG_FRONTEND.VITE_POWERSYNC_URL),
+      }
+    } catch (error) {
+      console.error('Failed to fetchCredentials:', error)
+      throw error
     }
   }
 

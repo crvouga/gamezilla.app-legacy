@@ -11,7 +11,7 @@ import { PackName } from '../pack-name'
 import type { IPackDb, OrderClause, WhereClause } from './interface'
 
 const Row = p.obj({
-  flow_pack_id: PackId,
+  id: PackId,
   flow_pack_name: PackName,
   flow_puzzle_ids: p.arr(PuzzleId),
   created_at_posix: p.or(p.num, p.str),
@@ -28,7 +28,7 @@ const rowToPack = (row: Row): Pack | null => {
   return {
     createdAt: Posix.init(row.created_at_posix),
     createdBy: row.created_by_user_id,
-    id: row.flow_pack_id,
+    id: row.id,
     lastUpdatedAt: Posix.init(row.last_updated_at_posix),
     lastUpdatedBy: row.last_updated_by_user_id,
     name: row.flow_pack_name,
@@ -77,8 +77,8 @@ const ensureNumber = (maybeNumber: unknown): number => {
 export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackDb => {
   return {
     async get(id) {
-      const queried = await dbConnSql.query(Row, 'SELECT * FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id', {
-        flow_pack_id: id,
+      const queried = await dbConnSql.query(Row, 'SELECT * FROM game_flow_pack WHERE id = :id', {
+        id: id,
       })
       return Result.mapOk(queried, (row) => (row[0] ? rowToPack(row[0]) : null))
     },
@@ -145,7 +145,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
         p.unknown,
         `
 				INSERT INTO game_flow_pack (
-					flow_pack_id,
+					id,
 					flow_pack_name,
 					flow_puzzle_ids,
 					created_at_posix,
@@ -155,7 +155,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
 					deleted_at_posix,
 					deleted_by_user_id
 				) VALUES (
-					:flow_pack_id,
+					:id,
 					:flow_pack_name,
 					ARRAY[:flow_puzzle_ids]::TEXT[],
 					:created_at_posix,
@@ -164,14 +164,14 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
 					:last_updated_by_user_id,
 					:deleted_at_posix,
 					:deleted_by_user_id
-				) ON CONFLICT (flow_pack_id) DO UPDATE SET
+				) ON CONFLICT (id) DO UPDATE SET
 					flow_pack_name = :flow_pack_name,
 					flow_puzzle_ids = ARRAY[:flow_puzzle_ids]::TEXT[],
 					last_updated_at_posix = :last_updated_at_posix,
 					last_updated_by_user_id = :last_updated_by_user_id
 				`,
         {
-          flow_pack_id: input.id,
+          id: input.id,
           flow_pack_name: input.name,
           flow_puzzle_ids: Sql.commas(input.puzzleIds),
           created_at_posix: input.createdAt,
@@ -186,13 +186,9 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
     },
 
     async zap(input) {
-      const queried = await dbConnSql.query(
-        p.unknown,
-        'DELETE FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id',
-        {
-          flow_pack_id: input.id,
-        },
-      )
+      const queried = await dbConnSql.query(p.unknown, 'DELETE FROM game_flow_pack WHERE id = :id', {
+        id: input.id,
+      })
       return Result.mapOk(queried, () => null)
     },
   }

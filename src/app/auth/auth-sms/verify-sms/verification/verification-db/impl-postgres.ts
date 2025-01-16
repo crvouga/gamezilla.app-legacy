@@ -10,7 +10,7 @@ import { Posix } from '~/@/time/posix'
 import { PhoneNumber } from '~/@/phone-number'
 
 export const Row = p.obj({
-  verification_id: VerificationId,
+  id: VerificationId,
   code_hash: p.maybe(p.json),
   phone_number: p.str,
   created_at_posix: p.str,
@@ -77,20 +77,20 @@ export const VerificationDb = (config: Config): IVerificationDb => {
     async put(verification) {
       const query = `
 				INSERT INTO auth_sms_verification (
-					verification_id,
+					id,
 					phone_number,
 					created_at_posix,
 					expires_at_posix,
 					code_hash,
 					verified_at_posix
 				) VALUES (
-					:verification_id,
+					:id,
 					:phone_number,
 					:created_at_posix,
 					:expires_at_posix,
 					:code_hash,
 					:verified_at_posix
-				) ON CONFLICT (verification_id) DO UPDATE SET
+				) ON CONFLICT (id) DO UPDATE SET
 					phone_number = :phone_number,
 					created_at_posix = :created_at_posix,
 					expires_at_posix = :expires_at_posix,
@@ -99,7 +99,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
 			`
 
       const vars = {
-        verification_id: verification.verificationId,
+        id: verification.verificationId,
         phone_number: PhoneNumber.toString(verification.phoneNumber),
         created_at_posix: verification.createdAtPosix,
         expires_at_posix: verification.expiresAtPosix,
@@ -111,9 +111,9 @@ export const VerificationDb = (config: Config): IVerificationDb => {
       return Result.mapOk(queried, () => null)
     },
     async zap(verificationId) {
-      const query = `DELETE FROM auth_sms_verification WHERE verification_id = :verification_id`
+      const query = `DELETE FROM auth_sms_verification WHERE id = :id`
       const vars = {
-        verification_id: verificationId,
+        id: verificationId,
       }
       const queried = await config.dbConnSql.query(p.unknown, query, vars)
 
@@ -130,7 +130,7 @@ const rowToVerification = (row: Row): Verification[] => {
   const codeHash = Result.unwrapOr(Hash.parse(row.code_hash), null)
   return [
     {
-      verificationId: row.verification_id,
+      verificationId: row.id,
       codeHash,
       phoneNumber,
       createdAtPosix: Posix.init(row.created_at_posix),
@@ -162,8 +162,8 @@ const toSqlWhere = (where?: WhereClause) => {
   const clauses: string[] = []
 
   if (where?.verificationId?.['=']) {
-    clauses.push(`verification_id = :verification_id`)
-    vars['verification_id'] = where?.verificationId['=']
+    clauses.push(`id = :id`)
+    vars['id'] = where?.verificationId['=']
   }
 
   if (where?.phoneNumber?.['=']) {

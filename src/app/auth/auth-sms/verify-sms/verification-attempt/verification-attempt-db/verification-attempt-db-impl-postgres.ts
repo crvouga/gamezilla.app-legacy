@@ -10,7 +10,7 @@ import { Hash } from '~/@/hashing'
 import { Posix } from '~/@/time/posix'
 
 export const Row = p.obj({
-  verification_attempt_id: VerificationAttemptId,
+  id: VerificationAttemptId,
   verification_id: VerificationId,
   inputted_code_hash: p.json,
   created_at_posix: p.or(p.str, p.num),
@@ -23,19 +23,19 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
     async insert(input) {
       const query = `
 				INSERT INTO auth_sms_verification_attempt (
-					verification_attempt_id,
+					id,
 					verification_id,
 					inputted_code_hash,
 					created_at_posix
 				) VALUES (
-					:verification_attempt_id,
+					:id,
 					:verification_id,
 					:inputted_code_hash,
 					:created_at_posix
 				)		
 			`
       const vars: Sql.Vars = {
-        verification_attempt_id: input.verificationAttemptId,
+        id: input.verificationAttemptId,
         verification_id: input.verificationId,
         inputted_code_hash: Sql.json(input.codeHash),
         created_at_posix: input.createdAt,
@@ -48,7 +48,7 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
 
       const query = `
 				SELECT
-					verification_attempt_id,
+					id,
 					verification_id,
 					inputted_code_hash,
 					created_at_posix
@@ -71,7 +71,7 @@ const rowToVerificationAttempt = (row: Row): VerificationAttempt[] => {
   }
   return [
     {
-      verificationAttemptId: row.verification_attempt_id,
+      verificationAttemptId: row.id,
       verificationId: row.verification_id,
       codeHash: codeHash.value,
       createdAt: Posix.init(row.created_at_posix),

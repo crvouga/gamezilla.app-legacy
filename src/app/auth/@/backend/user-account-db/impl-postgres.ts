@@ -9,7 +9,7 @@ import { UserRole } from '~/app/@/data/user-role'
 import type { IUserAccountDb } from './interface'
 
 export const UserAccountRow = p.obj({
-  user_id: p.str,
+  id: p.str,
   created_at_posix: p.or(p.str, p.num),
   user_role: UserRole,
   phone_number: p.maybe(p.str),
@@ -17,7 +17,7 @@ export const UserAccountRow = p.obj({
 export type UserAccountRow = p.Infer<typeof UserAccountRow>
 
 const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<string, UserAccount> => {
-  const userId = Result.unwrapOr(UserId.parse(userAccount.user_id), null)
+  const userId = Result.unwrapOr(UserId.parse(userAccount.id), null)
 
   if (!userId) {
     return Err('Invalid account. Missing userId.')
@@ -49,17 +49,17 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         UserAccountRow,
         `
         SELECT
-					user_id,
+					id,
 					created_at_posix,
 					user_role,
 					phone_number
 				FROM
 					user_account
 				WHERE
-					user_id = :user_id
+					id = :id
 				`,
         {
-          user_id: input.userId,
+          id: input.userId,
         },
       )
 
@@ -85,7 +85,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         UserAccountRow,
         `
 				SELECT
-					user_id,
+					id,
 					created_at_posix,
 					user_role,
 					phone_number
@@ -118,7 +118,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
     async insert(input) {
       const row = {
         created_at_posix: input.account.createdAt,
-        user_id: input.account.userId,
+        id: input.account.userId,
         user_role: input.account.role,
         phone_number: input.account.phoneNumber ? PhoneNumber.toString(input.account.phoneNumber) : null,
       }
@@ -128,13 +128,13 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         INSERT INTO user_account (
 					phone_number,
 					user_role,
-					user_id,         
+					id,         
 					created_at_posix
 				)
 				VALUES (
 					:phone_number,
 					:user_role,
-					:user_id,
+					:id,
 					:created_at_posix
 				)`,
         row,
