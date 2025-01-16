@@ -23,6 +23,8 @@ export const FrontendTransport = <MsgToBackend, MsgToFrontend>(
 }> => {
   const backendUrl = toWebsocketBackendUrl(config.backendUrl.toString())
 
+  console.log('Connecting to backend at', backendUrl)
+
   const transport = initFrontendTransport<MsgToBackend, MsgToFrontend>()
 
   if (typeof window === 'undefined') {

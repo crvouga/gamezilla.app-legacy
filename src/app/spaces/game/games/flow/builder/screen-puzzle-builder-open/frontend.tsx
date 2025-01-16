@@ -35,7 +35,7 @@ const updateMain: FrontendModule['update'] = (input) => {
 const toPuzzleQuery = (input: { ctx: FlowFrontendCtx }): QueryPuzzlesInput => {
   return {
     order: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
     pagination: {
       offset: 0,

@@ -36,27 +36,5 @@ export const setup = async () => {
 
   console.log('powersync', 'connected')
 
-  const testQuery = async () => {
-    try {
-      const data = await powersync.database.getAll('select * from game_flow_puzzle LIMIT 100')
-      console.log('Synced data:', data)
-    } catch (error) {
-      console.error('Failed to testQuery data:', error)
-    }
-  }
-  // @ts-ignore
-  window.testQuery = testQuery
-
-  const abortController = new AbortController()
-
-  const watch = async () => {
-    for await (const update of powersync.watch('select * from game_flow_puzzle', [], {
-      signal: abortController.signal,
-    })) {
-      console.log('WATCH select * from game_flow_puzzle', update)
-    }
-  }
-  watch()
-
   return powersync
 }
