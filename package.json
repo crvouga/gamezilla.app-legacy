@@ -57,6 +57,7 @@
     "@electric-sql/client": "^1.0.0-beta.2",
     "@electric-sql/pglite": "^0.2.15",
     "@electric-sql/pglite-sync": "^0.2.17",
+    "@journeyapps/wa-sqlite": "^1.2.0",
     "@powersync/web": "^1.12.3",
     "chess.js": "^1.0.0-beta.8",
     "inferno": "^8.2.3",

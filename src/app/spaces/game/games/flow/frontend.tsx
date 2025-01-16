@@ -129,7 +129,7 @@ const updatePuzzleList: FrontendModule['update'] = (input) => {
 
   const updated = PuzzleListFrontend.update({
     ctx,
-    model: input.model.packList,
+    model: input.model.puzzleList,
     msg: input.msg?.t === 'puzzle-list' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'puzzle-list' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
@@ -350,13 +350,6 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     Sub.tag(
       'builder',
       BuilderFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.builder, model: input.model.builder }),
-    ),
-    Sub.tag(
-      'puzzle-list',
-      PuzzleListFrontend.subscriptions({
-        ctx,
-        model: input.model.puzzleList,
-      }),
     ),
     Sub.tag(
       'pack-puzzles-grid',

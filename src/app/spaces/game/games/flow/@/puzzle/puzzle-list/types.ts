@@ -1,18 +1,16 @@
-import { RequestResponse } from '~/@/request-response/request-response'
-import { NotAsked } from '~/@/result'
-import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
-import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
+import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
+import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
+import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { FlowFrontendEvtIn } from '../../frontend/evt'
-import { FlowBackendCtx } from '../../backend/ctx'
 import type { Puzzle } from '../puzzle'
-import type { ListPuzzlesOutput } from '../puzzle-db'
 import { QueryPuzzlesInput } from '../puzzle-db/query'
+import { PuzzleId } from '../puzzle-id'
 
 //
 //
@@ -20,48 +18,38 @@ import { QueryPuzzlesInput } from '../puzzle-db/query'
 //
 
 export type ModelFrontend = {
-  request: RequestResponse<string, null>
+  queries: {
+    [queryKey: string]: PuzzleId[]
+  }
 }
 
 export const initFrontend: ModelFrontend = {
-  request: NotAsked,
+  queries: {},
 }
 
 export type ModelBackend = null
 
-export type MsgFrontend =
-  | { t: 'user-observed-end-of-list' }
-  | { t: 'time-passed' }
-  | {
-      t: 'got-puzzle-db-puzzles'
-      input: QueryPuzzlesInput
-      puzzles: Puzzle[]
-    }
+export type MsgFrontend = {
+  t: 'got-puzzle-db-puzzles'
+  query: QueryPuzzlesInput
+  puzzles: Puzzle[]
+}
 
 export type MsgBackend = { t: 'noop' }
 
-export type MsgToBackend = {
-  t: 'list-puzzles'
-  input: QueryPuzzlesInput
-}
+export type MsgToBackend = { t: 'noop' }
 
 export type MsgToFrontend = {
-  t: 'listed-puzzle'
-  listed: ListPuzzlesOutput
+  t: 'noop'
 }
 
 export type MsgInCmdFrontend = {
   t: 'puzzle-list'
   c: {
-    t: 'load'
+    t: 'got-msg'
+    msg: MsgFrontend
   }
 }
-
-//
-//
-//
-//
-//
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend

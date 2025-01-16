@@ -1,11 +1,24 @@
 import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
+import '../vdom/test-render/happydom'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { Logger } from '../logger'
 import { p } from '../parser'
 import { isErr, isOk } from '../result'
 import { Config, DbConnSql } from './backend-impl'
+import { newPowersyncDatabase } from '../../../powersync/frontend/database'
+
+// @ts-ignore
+if (!globalThis.readAsync) {
+  // @ts-ignore
+  globalThis.readAsync = async (file) => {
+    const fs = require('fs/promises') // Use Node.js's fs.promises
+    const path = require('path')
+    const resolvedPath = path.resolve(file)
+    return fs.readFile(resolvedPath)
+  }
+}
 
 const Fixture = async (config: Config) => {
   const dbConnSql = await DbConnSql(config)
@@ -23,14 +36,23 @@ const Fixtures = async () => {
     logger: Logger({ t: 'noop' }),
   })
 
-  configs.push({
-    t: 'pglite',
-    fileSystem: { t: 'indexed-db', dbName: 'test-gamezilla-app' },
-    logger: Logger({ t: 'noop' }),
-  })
-
+  const SHOULD_TEST_POWERSYNC = false
+  if (SHOULD_TEST_POWERSYNC) {
+    configs.push({
+      t: 'powersync',
+      powersync: newPowersyncDatabase({
+        dbFilename: ':memory:',
+      }),
+      logger: Logger({ t: 'noop' }),
+    })
+  }
   const SHOULD_TEST_LOCAL_PG = false
   if (SHOULD_TEST_LOCAL_PG) {
+    configs.push({
+      t: 'pglite',
+      fileSystem: { t: 'indexed-db', dbName: 'test-gamezilla-app' },
+      logger: Logger({ t: 'noop' }),
+    })
     configs.push({
       t: 'pglite',
       fileSystem: { t: 'file-system', dataDir: './postgres-data' },
@@ -49,7 +71,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe.skip('db-conn-sql', () => {
+describe('db-conn-sql', () => {
   test('querying ok', async () => {
     for (const f of await Fixtures()) {
       const result = await f.dbConnSql.query(p.unknown, `SELECT 1`, {})

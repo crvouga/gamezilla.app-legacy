@@ -1,5 +1,5 @@
 import { Browser } from '~/@/browser'
-import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
+import { DbConnSql } from '~/@/db-conn-sql/frontend-impl'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { HttpClient } from '~/@/http-client'
@@ -13,6 +13,7 @@ import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
+import { newPowersyncDatabase } from '../../powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
@@ -71,16 +72,12 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const rpc = RPC.initFrontend(httpClient, rpcContract)
 
-  const dbConnSql = dbConnSqlNoop
-  // const dbConnSql = await DbConnSql({
-  //   t: 'pglite',
-  //   fileSystem: {
-  //     t: 'indexed-db',
-  //     dbName: CONFIG_FRONTEND.INDEXED_DB_NAME,
-  //   },
-  //   electricUrl: CONFIG_SHARED.ELECTRIC_URL,
-  //   logger,
-  // })
+  // const dbConnSql = dbConnSqlNoop
+  const dbConnSql = await DbConnSql({
+    t: 'powersync',
+    powersync: newPowersyncDatabase(),
+    logger,
+  })
 
   return {
     dbConnSql,

@@ -1,80 +1,45 @@
-import { descend } from '~/@/array/sorting'
-import { RequestResponse } from '~/@/request-response/request-response'
-import { Result, isErr, isOk } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
+import { VDom } from '~/@/vdom/vdom'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { sendToBackend, showErrSm } from '~/app/@/frontend/cmd'
-import { IconPuzzlePiece } from '~/app/@/ui'
-import { EmptyState } from '~/app/@/ui/empty-state'
-import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
-import { Solutions } from '../../solutions/solutions'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
 import { QueryPuzzlesInput } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
-import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend, MsgToBackend } from './types'
+import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
     { model: input.model },
-    (model) => updateFromCmd({ ...input, model }),
-    (model) => updateFromBackend({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
   )
 }
 
 const updateFromCmd: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
-    case 'load': {
-      return {
-        model: {
-          ...input.model,
-          request: RequestResponse.startedRequest(input.ctx.now),
-        },
-        msgCmd: [
-          sendToBackend({
-            t: 'list-puzzles',
-            input: {
-              order: {
-                lastUpdatedAt: 'desc',
-              },
-              pagination: {
-                limit: 25,
-                offset: 0,
-              },
-              where: {
-                createdBy: {
-                  equals: input.ctx.space.hostId,
-                },
-              },
-            },
-          }),
-        ],
-      }
+    case 'got-msg': {
+      return updateFromMsg({ ...input, msg: input.msgCmd.c.msg })
     }
     default: {
       return { model: input.model }
     }
   }
 }
-
 const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'time-passed': {
+    case 'got-puzzle-db-puzzles': {
       return {
         model: {
           ...input.model,
-          request: RequestResponse.timePassed(input.model.request, input.ctx.now),
+          queries: {
+            ...input.model.queries,
+            [QueryPuzzlesInput.toKey(input.msg.query)]: input.msg.puzzles.map((p) => p.id),
+          },
         },
-      }
-    }
-    case 'got-puzzle-db-puzzles': {
-      return {
-        model: input.model,
         msgCmd: [
           FlowFrontendCmdRoot.addPuzzles(
             input.msg.puzzles.reduce<{ [k: PuzzleId]: Puzzle }>((acc, p) => ({ ...acc, [p.id]: p }), {}),
@@ -89,115 +54,43 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
   }
 }
 
-const updateFromBackend: FrontendModule['update'] = (input) => {
-  switch (input.msgBackend?.t) {
-    case 'listed-puzzle': {
-      const puzzles = isOk(input.msgBackend.listed) ? input.msgBackend.listed.value.puzzles.items : []
-      const byId = puzzles.reduce<{ [k: PuzzleId]: Puzzle }>((acc, p) => ({ ...acc, [p.id]: p }), {})
-      const solutions = isOk(input.msgBackend.listed) ? input.msgBackend.listed.value.solutions : Solutions.init
-
-      return {
-        model: {
-          ...input.model,
-          request: RequestResponse.response(
-            input.model.request,
-            input.ctx.now,
-            Result.mapOk(input.msgBackend.listed, () => null),
-          ),
-        },
-        msgCmd: [
-          FlowFrontendCmdRoot.addPuzzles(byId, input.msgBackend),
-          FlowFrontendCmdRoot.addSolutions(solutions, input.msgBackend),
-          ...(isErr(input.msgBackend.listed)
-            ? showErrSm<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>(
-                input.ctx.t('app.something-went-wrong'),
-              )
-            : []),
-        ],
-      }
-    }
-    default: {
-      return { model: input.model }
-    }
-  }
-}
-
-const load = (): MsgInCmdFrontend => {
+const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
     t: 'puzzle-list',
     c: {
-      t: 'load',
+      t: 'got-msg',
+      msg,
     },
   }
 }
 
-const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdFrontend | TCmd)[] }): boolean => {
-  return (
-    output.msgCmd?.some(
-      (cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'puzzle-list' && cmd.c.t === 'load',
-    ) ?? false
-  )
+const watch = <TMsg,>(ctx: FlowFrontendCtxRoot, query: QueryPuzzlesInput, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
+  return Sub.map(ctx.puzzleDb.sub(query), (puzzles) => map({ t: 'got-puzzle-db-puzzles', query, puzzles }))
 }
 
-const toQueryPuzzlesInput = (input: { model: ModelFrontend; ctx: FlowFrontendCtxRoot }): QueryPuzzlesInput => {
-  return {
-    where: {
-      createdBy: {
-        equals: input.ctx.space.hostId,
-      },
-    },
-    order: {
-      createdAt: 'desc',
-    },
-    pagination: {
-      limit: 25,
-      offset: 0,
-    },
-  }
-}
-
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const queryInput = toQueryPuzzlesInput(input)
-  return Sub.map(input.ctx.puzzleDb.sub(queryInput), (puzzles) => ({
-    t: 'got-puzzle-db-puzzles',
-    input: queryInput,
-    puzzles,
-  }))
-}
-
-const View: FrontendModule['View'] = (input) => {
-  const puzzles = Object.values(input.ctx.puzzles)
-  const shouldShowLoadingState = input.model.request.t === 'not-asked' || input.model.request.t === 'loading'
-  const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0
-
+const ViewList = (input: {
+  ctx: FlowFrontendCtxRoot
+  query: QueryPuzzlesInput
+  model: ModelFrontend
+  onClick: (puzzle: Puzzle) => void
+  fab?: VDom
+}) => {
+  const puzzleIds = input.model.queries[QueryPuzzlesInput.toKey(input.query)] ?? []
+  const puzzles = puzzleIds.flatMap((id) => (input.ctx.puzzles[id] ? [input.ctx.puzzles[id]] : []))
   return (
     <div className='relative flex h-full w-full flex-col gap-2 overflow-hidden'>
       <div className='border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
-        {shouldShowEmptyState && (
-          <EmptyState label={input.ctx.t('flow.no-puzzles')} renderIcon={(input) => <IconPuzzlePiece {...input} />} />
-        )}
-
-        {puzzles.sort(descend((puzzle) => Posix.toNumber(puzzle.lastUpdatedAt))).map((puzzle) => (
-          <PuzzleListItem
-            now={input.ctx.now}
-            key={puzzle.id}
-            puzzle={puzzle}
-            onClick={() => input.emits?.clickedPuzzleItem(puzzle)}
-          />
+        {puzzles.map((puzzle) => (
+          <ViewListItem key={puzzle.id} now={input.ctx.now} puzzle={puzzle} onClick={() => input.onClick(puzzle)} />
         ))}
-
-        <IntersectionObserverEmitter
-          id='puzzle-builder-list'
-          onVisible={() => input.dispatch({ t: 'user-observed-end-of-list' })}
-        />
       </div>
 
-      <div className='absolute bottom-6 right-4 bg-black'>{input.slots?.fab(null)}</div>
+      {input.fab && <div className='absolute bottom-6 right-4 bg-black'>{input.fab}</div>}
     </div>
   )
 }
 
-const PuzzleListItem = (input: { now: Posix; puzzle: Puzzle; onClick: () => void }) => {
+const ViewListItem = (input: { now: Posix; puzzle: Puzzle; onClick: () => void }) => {
   return (
     <button
       key={input.puzzle.id}
@@ -220,15 +113,9 @@ const PuzzleListItem = (input: { now: Posix; puzzle: Puzzle; onClick: () => void
   )
 }
 
-const isLoading = (model: ModelFrontend): boolean => {
-  return model.request.t === 'loading'
-}
-
 export const PuzzleListFrontend = {
   update,
-  View,
-  didLoad,
-  load,
-  isLoading,
-  subscriptions,
+  watch,
+  gotMsg,
+  ViewList,
 }

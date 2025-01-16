@@ -7,7 +7,6 @@ import { PackDb } from './@/pack/pack-db'
 import { PackListBackend } from './@/pack/pack-list'
 import { PackPuzzlesGridBackend } from './@/pack/pack-puzzles-grid/backend'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
-import { PuzzleListBackend } from './@/puzzle/puzzle-list/backend'
 import { FlowBackendCtx } from './@/backend/ctx'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderBackend } from './builder/backend'
@@ -34,7 +33,6 @@ const update: BackendModule['update'] = async (input) => {
     () => updateBuilder(input),
     () => updatePackList(input),
     () => updatePackPuzzlesGrid(input),
-    () => updatePuzzleList(input),
   )
 }
 
@@ -47,19 +45,6 @@ const updatePackList: BackendModule['update'] = async (input) => {
 
   return {
     msgCmd: SpaceBackendCmd.tag('pack-list', updated.msgCmd),
-    msgEvt: updated.msgEvt,
-  }
-}
-
-const updatePuzzleList: BackendModule['update'] = async (input) => {
-  const updated = await PuzzleListBackend.update({
-    ...input,
-    msgFrontend: input.msgFrontend?.t === 'puzzle-list' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
-    msg: input.msg?.t === 'puzzle-list' ? input.msg.c : null,
-  })
-
-  return {
-    msgCmd: SpaceBackendCmd.tag('puzzle-list', updated.msgCmd),
     msgEvt: updated.msgEvt,
   }
 }

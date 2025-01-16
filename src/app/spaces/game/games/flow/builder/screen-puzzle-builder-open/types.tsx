@@ -2,6 +2,7 @@ import { p } from '~/@/parser'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { CreateNewPuzzleTypes } from './create-new-puzzle'
 import { UserId } from '~/app/@/data/user-id'
+import { PuzzleListTypes } from '../../@/puzzle/puzzle-list'
 
 //
 //
@@ -14,7 +15,12 @@ export const initFrontend: ModelFrontend = {
   ...CreateNewPuzzleTypes.initFrontend,
 }
 
-export type MsgFrontend = CreateNewPuzzleTypes.MsgFrontend
+export type MsgFrontend =
+  | CreateNewPuzzleTypes.MsgFrontend
+  | {
+      t: 'got-puzzle-list-msg'
+      c: PuzzleListTypes.MsgFrontend
+    }
 
 export type MsgBackend = CreateNewPuzzleTypes.MsgBackend
 

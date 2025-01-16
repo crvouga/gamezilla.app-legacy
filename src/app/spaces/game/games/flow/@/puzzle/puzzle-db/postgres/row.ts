@@ -11,8 +11,8 @@ import { PuzzleName } from '../../puzzle-name'
 const parser = p.obj({
   id: p.str,
   flow_puzzle_name: p.str,
-  flow: p.json,
-  flow_solutions: p.json,
+  flow: p.or(p.str, p.json),
+  flow_solutions: p.or(p.str, p.json),
   created_at_posix: p.or(p.num, p.str),
   created_by_user_id: p.str,
   last_updated_at_posix: p.or(p.num, p.str),
@@ -29,7 +29,8 @@ const rowToPuzzle = (row: PostgresRow): Puzzle | null => {
   const flowPuzzleId = PuzzleId.is(row.id) ? row.id : null
   const puzzleName = PuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
 
-  const parsedFlow = Variant.Model.parse(row.flow)
+  const rowFlow = typeof row.flow === 'string' ? JSON.parse(row.flow) : row.flow
+  const parsedFlow = Variant.Model.parse(rowFlow)
   const flow = Result.unwrapOr(parsedFlow, null)
 
   const createdAt = Posix.init(ensureNumber(row.created_at_posix))

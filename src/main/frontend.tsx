@@ -3,10 +3,10 @@ import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { powerSync } from '../../powersync/frontend/database'
+import { setup } from '../../powersync/frontend/database'
 
 const main = async () => {
-  powerSync
+  setup()
 
   const ctx = await AppFrontend.initCtx()
 

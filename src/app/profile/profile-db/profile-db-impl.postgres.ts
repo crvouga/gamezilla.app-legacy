@@ -8,7 +8,7 @@ import { Username } from '~/app/@/data/username'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 
 const ProfileRow = p.obj({
-  user_id: p.str,
+  id: p.str,
   username: p.str,
   avatar_seed: p.maybe(p.str),
   avatar_style: p.maybe(p.str),
@@ -17,7 +17,7 @@ const ProfileRow = p.obj({
 type ProfileRow = p.Infer<typeof ProfileRow>
 
 const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
-  if (!UserId.is(row.user_id)) {
+  if (!UserId.is(row.id)) {
     return Err('invalid user_id')
   }
 
@@ -37,7 +37,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
   })
 
   return Ok({
-    userId: row.user_id,
+    userId: row.id,
     avatarUrl: avatarUrl,
     username: row.username,
     avatarSeed: avatarSeed,
@@ -50,18 +50,18 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
     findOneByUserId: async (userId) => {
       const sql = `
         SELECT
-          user_id,
+          id,
           username,
           avatar_seed,
           avatar_style
         FROM
           user_profile
         WHERE
-          user_id = :user_id
+          id = :id
       `
 
       const queried = await dbConn.query(ProfileRow, sql, {
-        user_id: userId,
+        id: userId,
       })
 
       if (isErr(queried)) {
@@ -78,7 +78,7 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
     },
     insertOne: async (profile) => {
       const rowNew: ProfileRow = {
-        user_id: profile.userId,
+        id: profile.userId,
         username: profile.username,
         avatar_seed: profile.avatarSeed,
         avatar_style: profile.avatarStyle,
@@ -88,13 +88,13 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
         ProfileRow,
         `
         INSERT INTO user_profile (
-          user_id,
+          id,
           username,
           avatar_seed,
           avatar_style
         )
         VALUES (
-          :user_id,
+          :id,
           :username,
           :avatar_seed,
           :avatar_style

@@ -1,5 +1,7 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
+import { FlowFrontendCtx } from '../../../@/frontend/ctx'
+import { QueryPuzzlesInput } from '../../../@/puzzle/puzzle-db/query'
 import { PuzzleListFrontend } from '../../../@/puzzle/puzzle-list/frontend'
 import type { FrontendModule } from '../../types'
 
@@ -22,6 +24,28 @@ const update: FrontendModule['update'] = (input) => {
 
   return { model: input.model }
 }
+
+const toQuery = (input: { ctx: FlowFrontendCtx }): QueryPuzzlesInput => {
+  return {
+    order: {
+      createdAt: 'asc',
+    },
+    pagination: {
+      offset: 0,
+      limit: 1000,
+    },
+    where: {
+      createdBy: {
+        equals: input.ctx.currentUserId,
+      },
+    },
+  }
+}
+
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return PuzzleListFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-puzzle-list-msg', c }))
+}
+
 const View: FrontendModule['View'] = (input) => {
   return (
     <div className='flex h-full max-h-full w-full flex-col overflow-hidden'>
@@ -38,21 +62,20 @@ const View: FrontendModule['View'] = (input) => {
         }
       />
       <div className='h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll'>
-        <PuzzleListFrontend.View
+        <PuzzleListFrontend.ViewList
           ctx={input.ctx}
-          dispatch={(_c) => {}}
           model={input.ctx.puzzleList}
-          emits={{
-            clickedPuzzleItem: (puzzle) =>
-              input.dispatch({
-                t: 'got-msg-space',
-                c: {
-                  t: 'screen-pack-builder.user-clicked-add-puzzle-item',
-                  puzzle,
-                  userId: input.ctx.currentUserId,
-                },
-              }),
-          }}
+          query={toQuery(input)}
+          onClick={(puzzle) =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-pack-builder.user-clicked-add-puzzle-item',
+                puzzle,
+                userId: input.ctx.currentUserId,
+              },
+            })
+          }
         />
       </div>
     </div>
@@ -61,5 +84,6 @@ const View: FrontendModule['View'] = (input) => {
 
 export const ScreenAddPuzzle = {
   update,
+  subscriptions,
   View,
 }

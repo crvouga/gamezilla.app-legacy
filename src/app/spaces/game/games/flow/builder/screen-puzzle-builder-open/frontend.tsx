@@ -2,6 +2,8 @@ import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import { FlowFrontendCtx } from '../../@/frontend/ctx'
+import { QueryPuzzlesInput } from '../../@/puzzle/puzzle-db/query'
 import { PuzzleListFrontend } from '../../@/puzzle/puzzle-list/frontend'
 import type { FrontendModule } from '../types'
 import { CreateNewPuzzleFrontend } from './create-new-puzzle/frontend'
@@ -11,39 +13,47 @@ const update: FrontendModule['update'] = (input) => {
     { model: input.model },
     (model) => CreateNewPuzzleFrontend.update({ ...input, model }),
     (model) => updateMain({ ...input, model }),
-    (model) => updateLoadPuzzles({ ...input, model }),
   )
-}
-
-const updateLoadPuzzles: FrontendModule['update'] = (input) => {
-  if (
-    (input.msgSpace?.t === 'flow.builder.screen-main-menu.user-clicked-option' &&
-      input.msgSpace.option === 'puzzle-builder') ||
-    input.msgEvt?.t === 'space-evt.synced'
-  ) {
-    return {
-      model: input.model,
-      msgCmd: [PuzzleListFrontend.load()],
-    }
-  }
-  return {
-    model: input.model,
-  }
 }
 
 const updateMain: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'screen-puzzle-builder-open.clicked-puzzle-list-item': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
     }
   }
 
-  return {
-    model: input.model,
+  switch (input.msg?.t) {
+    case 'got-puzzle-list-msg': {
+      return { model: input.model, msgCmd: [PuzzleListFrontend.gotMsg(input.msg.c)] }
+    }
   }
+
+  return { model: input.model }
+}
+
+const toPuzzleQuery = (input: { ctx: FlowFrontendCtx }): QueryPuzzlesInput => {
+  return {
+    order: {
+      createdAt: 'asc',
+    },
+    pagination: {
+      offset: 0,
+      limit: 100,
+    },
+    where: {
+      createdBy: {
+        equals: input.ctx.currentUserId,
+      },
+    },
+  }
+}
+
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return Sub.batch([
+    CreateNewPuzzleFrontend.subscriptions(input),
+    PuzzleListFrontend.watch(input.ctx, toPuzzleQuery(input), (c) => ({ t: 'got-puzzle-list-msg', c })),
+  ])
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -62,31 +72,24 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         title={input.ctx.t('flow.puzzle-builder')}
       />
-      <PuzzleListFrontend.View
+      <PuzzleListFrontend.ViewList
         ctx={input.ctx}
-        dispatch={(_c) => {}}
         model={input.ctx.puzzleList}
-        emits={{
-          clickedPuzzleItem: (puzzle) =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: {
-                t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
-                puzzle,
-                userId: input.ctx.currentUserId,
-              },
-            }),
-        }}
-        slots={{
-          fab: () => <CreateNewPuzzleFrontend.ViewCreateFab {...input} />,
-        }}
+        query={toPuzzleQuery(input)}
+        onClick={(puzzle) =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
+              puzzle,
+              userId: input.ctx.currentUserId,
+            },
+          })
+        }
+        fab={<CreateNewPuzzleFrontend.ViewCreateFab {...input} />}
       />
     </div>
   )
-}
-
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch([CreateNewPuzzleFrontend.subscriptions(input)])
 }
 
 export const ScreenPuzzleBuilderOpenFrontend = {

@@ -1,40 +1,44 @@
 import { PowerSyncDatabase } from '@powersync/web'
 import { Connector } from './backend-connector'
 import { AppSchema } from './database-schema'
-import Logger from 'js-logger'
+// import Logger from 'js-logger'
 
-// Log messages will be written to the window's console.
-Logger.useDefaults()
+// // Log messages will be written to the window's console.
+// Logger.useDefaults()
 
-Logger.setLevel(Logger.DEBUG)
+// Logger.setLevel(Logger.DEBUG)
 
-export const powerSync = new PowerSyncDatabase({
-  // The schema you defined in the previous step
-  schema: AppSchema,
+export const newPowersyncDatabase = (input?: { dbFilename?: string }) => {
+  return new PowerSyncDatabase({
+    // The schema you defined in the previous step
+    schema: AppSchema,
 
-  database: {
-    // Filename for the SQLite database — it's important to only instantiate one instance per file.
-    dbFilename: 'powersync.db',
-    // Optional. Directory where the database file is located.'
-    // dbLocation: 'path/to/directory'
-  },
-})
+    database: {
+      // Filename for the SQLite database — it's important to only instantiate one instance per file.
+      dbFilename: input?.dbFilename ?? 'powersync.db',
+      // Optional. Directory where the database file is located.'
+      // dbLocation: 'path/to/directory',
+    },
+  })
+}
 
-// @ts-expect-error
-window.powerSync = powerSync
+export const setup = async () => {
+  const powersync = newPowersyncDatabase()
 
-const setup = async () => {
+  // @ts-expect-error
+  window.powersync = powersync
+
   console.log('powersync', 'connecting')
 
   const connector = new Connector()
 
-  await powerSync.connect(connector)
+  await powersync.connect(connector)
 
   console.log('powersync', 'connected')
 
   const testQuery = async () => {
     try {
-      const data = await powerSync.database.getAll('select * from game_flow_puzzle LIMIT 100')
+      const data = await powersync.database.getAll('select * from game_flow_puzzle LIMIT 100')
       console.log('Synced data:', data)
     } catch (error) {
       console.error('Failed to testQuery data:', error)
@@ -45,11 +49,14 @@ const setup = async () => {
 
   const abortController = new AbortController()
 
-  for await (const update of powerSync.watch('select * from game_flow_puzzle', [], {
-    signal: abortController.signal,
-  })) {
-    console.log('WATCH select * from game_flow_puzzle', update)
+  const watch = async () => {
+    for await (const update of powersync.watch('select * from game_flow_puzzle', [], {
+      signal: abortController.signal,
+    })) {
+      console.log('WATCH select * from game_flow_puzzle', update)
+    }
   }
-}
+  watch()
 
-setup()
+  return powersync
+}
