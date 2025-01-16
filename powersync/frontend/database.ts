@@ -31,15 +31,22 @@ const setup = async () => {
 
   const testQuery = async () => {
     try {
-      const data = await powerSyncDatabase.getAll('select * from game_flow_puzzle limit 10')
+      const data = await powerSyncDatabase.getAll('select * from game_flow_puzzle')
       console.log('Synced data:', data)
     } catch (error) {
       console.error('Failed to testQuery data:', error)
     }
   }
-
   // @ts-ignore
   window.testQuery = testQuery
+
+  const abortController = new AbortController()
+
+  for await (const update of powerSyncDatabase.watch('select * from game_flow_puzzle', [], {
+    signal: abortController.signal,
+  })) {
+    console.log('WATCH select * from game_flow_puzzle', update)
+  }
 }
 
 setup()
