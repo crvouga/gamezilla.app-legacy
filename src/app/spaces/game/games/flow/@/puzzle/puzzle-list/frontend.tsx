@@ -10,6 +10,7 @@ import { IconPuzzlePiece } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { IntersectionObserverEmitter } from '~/app/@/ui/intersection-observer'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
+import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { Solutions } from '../../solutions/solutions'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
@@ -138,8 +139,8 @@ const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdFrontend | TCmd)[] }): boole
   )
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const queryInput: QueryPuzzlesInput = {
+const toQueryPuzzlesInput = (input: { model: ModelFrontend; ctx: FlowFrontendCtxRoot }): QueryPuzzlesInput => {
+  return {
     where: {
       createdBy: {
         equals: input.ctx.space.hostId,
@@ -153,7 +154,10 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
       offset: 0,
     },
   }
+}
 
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  const queryInput = toQueryPuzzlesInput(input)
   return Sub.map(input.ctx.puzzleDb.sub(queryInput), (puzzles) => ({
     t: 'got-puzzle-db-puzzles',
     input: queryInput,
@@ -193,23 +197,23 @@ const View: FrontendModule['View'] = (input) => {
   )
 }
 
-const PuzzleListItem = ({ now, puzzle, onClick }: { now: Posix; puzzle: Puzzle; onClick: () => void }) => {
+const PuzzleListItem = (input: { now: Posix; puzzle: Puzzle; onClick: () => void }) => {
   return (
     <button
-      key={puzzle.id}
+      key={input.puzzle.id}
       type='button'
       className='box-border flex w-full items-center text-left hover:bg-neutral-900 active:opacity-50'
-      onClick={onClick}
+      onClick={input.onClick}
     >
       <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>
-        <VariantBoard.View disabled model={puzzle.flow} />
+        <VariantBoard.View disabled model={input.puzzle.flow} />
       </div>
       <div className='overflow-hidden truncate px-4'>
         <p className='flex-nowrap overflow-hidden truncate text-ellipsis whitespace-nowrap text-base font-bold'>
-          {puzzle.name}
+          {input.puzzle.name}
         </p>
         <p className='text-secondary truncate text-xs'>
-          {TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}
+          {TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.createdAt, input.now))}
         </p>
       </div>
     </button>
