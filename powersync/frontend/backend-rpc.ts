@@ -6,10 +6,17 @@ const getPowersyncCredentials = async (input: {
 }): Promise<Result<string, { token: string; endpoint: string }>> => {
   try {
     console.log('getPowersyncCredentials', input)
-    const credentialsUrl = new URL(input.backendUrl)
-    credentialsUrl.pathname = '/powersync/credentials'
+    const PATH = '/powersync/credentials'
+    let urlString = PATH
+    try {
+      const url = new URL(input.backendUrl)
+      url.pathname = PATH
+      urlString = url.toString()
+    } catch (e) {
+      urlString = PATH
+    }
 
-    const response = await fetch(credentialsUrl.toString(), { credentials: 'include' })
+    const response = await fetch(urlString, { credentials: 'include' })
 
     const responseJson: unknown = await response.json()
 
