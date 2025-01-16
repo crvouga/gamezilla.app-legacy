@@ -29,25 +29,29 @@ const connector = new Connector({
 })
 
 const setup = async () => {
-  await connector.init()
-
-  if (!connector.ready) {
-    console.error('Connector failed to initialize.')
-    return
-  }
-
-  await powerSyncDatabase.connect(connector)
+  console.log('powersync', 'init')
 
   await powerSyncDatabase.init()
 
+  console.log('powersync', 'initialized')
+
+  console.log('powersync', 'connecting')
+
+  await powerSyncDatabase.connect(connector)
+
   console.log('powersync', 'connected')
 
-  try {
-    const data = await powerSyncDatabase.getAll('select * from game_flow_puzzle limit 10')
-    console.log('Synced data:', data)
-  } catch (error) {
-    console.error('Failed to query data:', error)
+  const testQuery = async () => {
+    try {
+      const data = await powerSyncDatabase.getAll('select * from game_flow_puzzle limit 10')
+      console.log('Synced data:', data)
+    } catch (error) {
+      console.error('Failed to testQuery data:', error)
+    }
   }
+
+  // @ts-ignore
+  window.testQuery = testQuery
 }
 
 setup()

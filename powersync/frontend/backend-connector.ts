@@ -1,6 +1,6 @@
 import { AbstractPowerSyncDatabase, BaseObserver, PowerSyncBackendConnector } from '@powersync/web'
 import { unwrap } from '~/@/result'
-import { BackendAppRpc } from './backend-app-rpc'
+import { BackendAppRpc } from './backend-rpc'
 
 export type PowerSyncConfig = {
   powersyncUrl: string
@@ -14,20 +14,9 @@ export type PowerSyncConnectorListener = {
 export class Connector extends BaseObserver<PowerSyncConnectorListener> implements PowerSyncBackendConnector {
   readonly config: PowerSyncConfig
 
-  ready: boolean
-
   constructor(config: PowerSyncConfig) {
     super()
     this.config = config
-    this.ready = false
-  }
-
-  async init() {
-    if (this.ready) {
-      return
-    }
-    this.ready = true
-    this.iterateListeners((cb) => cb.initialized?.())
   }
 
   async fetchCredentials() {
