@@ -1,3 +1,3 @@
-CREATE USER 'powersync-storage-user' WITH PASSWORD 'powersync-storage-user';
-GRANT CREATE ON DATABASE postgres TO 'powersync-storage-user';
-GRANT CREATE ON DATABASE "gamezilla-app" TO 'powersync-storage-user';
+CREATE USER powersync_storage_user WITH PASSWORD 'powersync_storage_user';
+GRANT CREATE ON DATABASE postgres TO powersync_storage_user;
+GRANT CREATE ON DATABASE postgres TO powersync_storage_user;
