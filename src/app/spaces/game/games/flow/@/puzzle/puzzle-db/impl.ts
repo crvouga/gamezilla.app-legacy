@@ -3,7 +3,7 @@ import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { ILogger } from '~/@/logger'
 import type { IPuzzleDb } from './interface'
 import { PuzzleDbHashMap } from './impl-hash-map'
-import { PuzzleDbPostgres } from './impl-postgres'
+import { PuzzleDbSql } from './impl-sql'
 import { WithSolutions } from './with-solutions'
 
 export type PuzzleDbImpl =
@@ -22,7 +22,7 @@ const PuzzleDbBase = (impl: PuzzleDbImpl): IPuzzleDb => {
       return PuzzleDbHashMap()
     }
     case 'db-conn-sql': {
-      return PuzzleDbPostgres(impl)
+      return PuzzleDbSql(impl)
     }
   }
 }

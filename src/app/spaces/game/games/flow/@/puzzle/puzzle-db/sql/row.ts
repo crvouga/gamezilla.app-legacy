@@ -19,13 +19,13 @@ const parser = p.obj({
   last_updated_by_user_id: p.str,
 })
 
-export type PostgresRow = p.Infer<typeof parser>
+export type Row = p.Infer<typeof parser>
 
 const ensureNumber = (x: string | number): number => {
   return typeof x === 'string' ? Number.parseFloat(x) : x
 }
 
-const rowToPuzzle = (row: PostgresRow): Puzzle | null => {
+const rowToPuzzle = (row: Row): Puzzle | null => {
   const flowPuzzleId = PuzzleId.is(row.id) ? row.id : null
   const puzzleName = PuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
 
@@ -63,7 +63,7 @@ const rowToPuzzle = (row: PostgresRow): Puzzle | null => {
   return null
 }
 
-export const PostgresRow = {
+export const Row = {
   ...parser,
   rowToPuzzle,
 }

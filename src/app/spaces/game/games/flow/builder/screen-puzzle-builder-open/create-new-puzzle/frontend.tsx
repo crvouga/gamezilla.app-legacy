@@ -133,11 +133,7 @@ const ViewCreateFab: FrontendModule['View'] = (input) => {
       rounded
       loading={input.model.puzzleCreateRequest.t === 'loading'}
       iconStart={(iconInput) => <IconPlus {...iconInput} />}
-      onClick={() =>
-        input.dispatch({
-          t: 'create-new-puzzle.user-clicked-create-button',
-        })
-      }
+      onClick={() => input.dispatch({ t: 'create-new-puzzle.user-clicked-create-button' })}
     />
   )
 }

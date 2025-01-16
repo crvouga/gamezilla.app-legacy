@@ -9,14 +9,14 @@ import { Posix } from '~/@/time/posix'
 import { Solutions } from '../../solutions/solutions'
 import { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
-import { PostgresRow } from './postgres/row'
-import { QueryPuzzlesInput, OrderClause, WhereClause } from './query'
+import { OrderClause, QueryPuzzlesInput, WhereClause } from './query'
+import { Row } from './sql/row'
 
-export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSql }): IPuzzleDb => {
+export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }): IPuzzleDb => {
   return {
     async get(flowPuzzleId) {
       const queried = await config.dbConnSql.query(
-        PostgresRow,
+        Row,
         `
         SELECT
           id,
@@ -44,7 +44,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
       }
 
       const queriedPuzzle = queried.value.map(async (row): Promise<Puzzle[]> => {
-        const flowPuzzle = PostgresRow.rowToPuzzle(row)
+        const flowPuzzle = Row.rowToPuzzle(row)
         if (!flowPuzzle) {
           return []
         }
@@ -79,7 +79,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
 
     async query(input) {
       const sql = toQuerySql(input)
-      const queried = await config.dbConnSql.query(PostgresRow, sql.str, sql.variables)
+      const queried = await config.dbConnSql.query(Row, sql.str, sql.variables)
 
       if (isErr(queried)) {
         return queried
@@ -104,7 +104,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
       }
 
       const queriedPuzzle = queried.value.map(async (row): Promise<Puzzle[]> => {
-        const flowPuzzle = PostgresRow.rowToPuzzle(row)
+        const flowPuzzle = Row.rowToPuzzle(row)
         if (!flowPuzzle) {
           return []
         }
@@ -198,7 +198,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
       const sql = toQuerySql(input)
       return Sub.map(
         config.dbConnSql.sub({
-          parser: PostgresRow,
+          parser: Row,
           rawSql: sql.str,
           variables: sql.variables,
           primaryKey: ['id'],
@@ -206,7 +206,7 @@ export const PuzzleDbPostgres = (config: { logger: ILogger; dbConnSql: IDbConnSq
         }),
         (rows) =>
           rows.flatMap((row) => {
-            const puzzle = PostgresRow.rowToPuzzle(row)
+            const puzzle = Row.rowToPuzzle(row)
             return puzzle ? [puzzle] : []
           }),
       )

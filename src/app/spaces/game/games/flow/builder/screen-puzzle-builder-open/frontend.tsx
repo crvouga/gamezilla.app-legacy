@@ -61,13 +61,7 @@ const View: FrontendModule['View'] = (input) => {
     <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
       <TopBar
         onBack={() =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'user-clicked-back-button',
-              userId: input.ctx.currentUserId,
-            },
-          })
+          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } })
         }
         ctx={input.ctx}
         title={input.ctx.t('flow.puzzle-builder')}
