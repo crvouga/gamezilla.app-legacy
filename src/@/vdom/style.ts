@@ -1,4 +1,5 @@
 import { CONFIG_FRONTEND } from '~/config/frontend'
+import { CONFIG_SHARED } from '~/config/shared'
 import { VDomImpl } from './vdom-impl'
 
 export type StylesObjectKebab = { [key: string]: string | number | undefined | null | false }
@@ -32,9 +33,11 @@ const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectC
   return camelObject
 }
 
+const VDOM_IMPL_DEFAULT = CONFIG_SHARED.IS_TEST ? CONFIG_FRONTEND.VDOM_IMPL_TEST : CONFIG_FRONTEND.VDOM_IMPL
+
 export const styles = (
   stylesObject: StylesObjectKebab,
-  vdomImpl: VDomImpl = CONFIG_FRONTEND.VDOM_IMPL_CURRENT,
+  vdomImpl: VDomImpl = VDOM_IMPL_DEFAULT,
 ): Record<string, unknown> => {
   switch (vdomImpl) {
     case 'react-with-compiler':

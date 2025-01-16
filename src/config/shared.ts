@@ -13,7 +13,7 @@ const IS_PROD = Boolean(import.meta.env?.PROD)
 
 const IS_DEV = !IS_PROD
 
-const ELECTRIC_URL = import.meta.env?.VITE_ELECTRIC_URL
+const VITE_ELECTRIC_URL = import.meta.env?.VITE_ELECTRIC_URL
 
 export const CONFIG_SHARED = {
   IS_INTEGRATION_TEST,
@@ -22,5 +22,5 @@ export const CONFIG_SHARED = {
   HTTP_SERVER_IMPL,
   IS_PROD,
   IS_DEV,
-  ELECTRIC_URL,
+  VITE_ELECTRIC_URL,
 }
