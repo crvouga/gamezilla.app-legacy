@@ -11,7 +11,7 @@ replication:
       # In this case the hostname is pg-db
 
       # The connection URI or individual parameters can be specified.
-      uri: postgresql://gamezilla-app:gamezilla-app@postgres:5432/gamezilla-app
+      uri: !env PS_POSTGRES_REPLICATION_DATABASE_URL
 
       # SSL settings
       sslmode: disable # 'verify-full' (default) or 'verify-ca' or 'disable'
@@ -29,7 +29,7 @@ storage:
   # Option 2: Postgres Storage
   type: postgresql
   # This accepts the same parameters as a Postgres replication source connection
-  uri: postgresql://powersync_storage_user:powersync_storage_user@postgres:5432/gamezilla-app
+  uri: !env PS_POSTGRES_STORAGE_DATABASE_URL
   #
   sslmode: disable
 
@@ -54,7 +54,7 @@ client_auth:
 
   # JWKS URIs can be specified here.
   # jwks_uri: http://localhost:5002/powersync/jwks
-  jwks_uri: http://host.docker.internal:5002/powersync/jwks
+  jwks_uri: !env PS_JWKS_URI
 
   # JWKS audience
   audience: ['powersync-dev', 'powersync']

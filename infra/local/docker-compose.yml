@@ -32,6 +32,9 @@ services:
       - ../../powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
+      PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage_user:powersync_storage_user@postgres:5432/gamezilla-app
+      PS_POSTGRES_REPLICATION_DATABASE_URL: postgresql://gamezilla-app:gamezilla-app@postgres:5432/gamezilla-app
+      PS_JWKS_URI: http://host.docker.internal:5002/powersync/jwks
     ports:
       - 8080:8080
 
