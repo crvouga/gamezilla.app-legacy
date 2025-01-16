@@ -201,16 +201,16 @@ export const update = <MsgToBackend>(input: {
   }
 }
 
-const ensureProtocol = (url: string) => {
+const ensureSecureProtocol = (url: string) => {
   if (url.startsWith('http')) {
     return url
   }
-  return `http://${url}`
+  return `https://${url}`
 }
 
 const toWebsocketBackendUrl = (baseBackendUrl: string) => {
   try {
-    const baseBackendUrlObj = new URL(ensureProtocol(baseBackendUrl))
+    const baseBackendUrlObj = new URL(ensureSecureProtocol(baseBackendUrl))
 
     if (typeof window === 'undefined') {
       return baseBackendUrlObj.toString()
