@@ -1,6 +1,13 @@
 import { p } from '~/@/parser'
 import { Err, isErr, Ok, Result } from '~/@/result'
 
+const ensureProtocol = (url: string) => {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url
+  }
+  return 'https://' + url
+}
+
 const getPowersyncCredentials = async (input: {
   backendUrl: string
 }): Promise<Result<string, { token: string; endpoint: string }>> => {
@@ -9,7 +16,7 @@ const getPowersyncCredentials = async (input: {
     const PATH = '/powersync/credentials'
     let urlString = PATH
     try {
-      const url = new URL(input.backendUrl)
+      const url = new URL(ensureProtocol(input.backendUrl))
       url.pathname = PATH
       urlString = url.toString()
     } catch (e) {
