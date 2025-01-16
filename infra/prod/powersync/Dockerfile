@@ -1,6 +1,6 @@
 FROM journeyapps/powersync-service:latest
 
-WORKDIR /powersync
+# WORKDIR /powersync
 
 COPY ../../powersync /powersync
 
