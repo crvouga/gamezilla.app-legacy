@@ -26,7 +26,7 @@ const sendListSpacesRequest: SpaceFrontendModule['update'] = ({ model, ctx }) =>
       ...model,
       listSpacesRequest: startedRequest(ctx.now),
     },
-    msgCmd: [sendToBackend({ t: 'list-spaces', pagination: { limit: 100, offset: 0 } })],
+    msgCmd: [sendToBackend({ t: 'list-spaces', pagination: { limit: 1000, offset: 0 } })],
   }
 }
 
