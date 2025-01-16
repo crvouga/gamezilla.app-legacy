@@ -29,7 +29,7 @@ services:
     image: journeyapps/powersync-service:latest
     command: ['start', '-r', 'unified']
     volumes:
-      - ./powersync:/powersync
+      - ../../powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
     ports:
