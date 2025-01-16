@@ -21,9 +21,7 @@ export const FrontendTransport = <MsgToBackend, MsgToFrontend>(
   MsgToBackend: MsgToBackend
   MsgToFrontend: MsgToFrontend
 }> => {
-  const backendUrl = toWebsocketBackendUrl(config.backendUrl.toString())
-
-  console.log('Connecting to backend at', backendUrl)
+  const backendUrl = changeToWebsocketProtocol(config.backendUrl.toString())
 
   const transport = initFrontendTransport<MsgToBackend, MsgToFrontend>()
 
@@ -203,7 +201,7 @@ export const update = <MsgToBackend>(input: {
   }
 }
 
-const toWebsocketBackendUrl = (baseBackendUrl: string) => {
+const changeToWebsocketProtocol = (baseBackendUrl: string) => {
   try {
     const baseBackendUrlObj = new URL(baseBackendUrl)
 
