@@ -29,8 +29,8 @@
     "gen:guard": "bun src/@/guards/guards-gen.ts",
     "gen:l18n": "bun src/@/l18n/l18n-gen.ts",
     "gen:screens": "bun src/@/routing/screens-gen.ts",
-    "infra:up": "docker-compose -f ./infra/local/docker-compose.yml up -d",
-    "infra:down": "docker-compose -f ./infra/local/docker-compose.yml down",
+    "infra:up": "docker-compose -f ./docker-compose.yml up -d",
+    "infra:down": "docker-compose -f ./docker-compose.yml down",
     "pretty": "bun x sort-package-json && bun x prettier --write .",
     "preview": "bun frontend:build && bun frontend:serve",
     "tc": "bun x tsc --noEmit --watch",
@@ -53,6 +53,7 @@
     "@electric-sql/client": "^1.0.0-beta.2",
     "@electric-sql/pglite": "^0.2.15",
     "@electric-sql/pglite-sync": "^0.2.17",
+    "@powersync/web": "^1.12.3",
     "chess.js": "^1.0.0-beta.8",
     "inferno": "^8.2.3",
     "ioredis": "^5.4.1",
@@ -82,6 +83,8 @@
     "typescript": "^5.7.2",
     "vite": "6.0.7",
     "vite-plugin-inferno": "^0.0.1",
+    "vite-plugin-top-level-await": "^1.4.4",
+    "vite-plugin-wasm": "^3.4.1",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "engines": {

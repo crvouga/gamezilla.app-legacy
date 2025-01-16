@@ -3,7 +3,7 @@ version: '3.1'
 services:
   postgres:
     container_name: gamezilla-app-postgres
-    image: postgres:16.1
+    image: postgres:latest
     restart: always
     environment:
       POSTGRES_USER: gamezilla-app
@@ -13,14 +13,27 @@ services:
       - '5433:5432'
     volumes:
       - gamezilla-app-postgres-data:/var/lib/postgresql/data
-    tmpfs:
-      - /var/lib/postgresql/data
-      - /tmp
-    command:
-      - -c
-      - listen_addresses=*
-      - -c
-      - wal_level=logical
+    command: ['-c', 'listen_addresses=*', '-c', 'port=5432', '-c', 'ssl=off', '-c', 'wal_level=logical']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gamezilla-app']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  powersync:
+    container_name: gamezilla-app-powersync
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: journeyapps/powersync-service:latest
+    command: ['start', '-r', 'unified']
+    volumes:
+      - ./powersync:/powersync
+    environment:
+      POWERSYNC_CONFIG_PATH: /powersync/powersync.yaml
+    ports:
+      - 8080:8080
 
   electric:
     container_name: gamezilla-app-electric
@@ -39,9 +52,6 @@ services:
     restart: always
     ports:
       - '6379:6379'
-    volumes:
-      - gamezilla-app-redis-data:/data
 
 volumes:
   gamezilla-app-postgres-data:
-  gamezilla-app-redis-data:

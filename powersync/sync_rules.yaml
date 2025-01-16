@@ -1,0 +1,8 @@
+# See Documentation for more information:
+# https://docs.powersync.com/usage/sync-rules
+bucket_definitions:
+  global:
+    data:
+      - SELECT * FROM game_flow_puzzle
+      - SELECT * FROM game_flow_pack
+      - SELECT * FROM game_flow_solutions

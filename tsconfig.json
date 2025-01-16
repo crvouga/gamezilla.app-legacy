@@ -60,5 +60,11 @@
     // "resolveJsonModule": true
   },
   "exclude": ["node_modules"],
-  "include": ["vite.config.ts", "tailwind.config.ts", "node_modules/inferno/dist/index.d.ts", "src/**/*"]
+  "include": [
+    "vite.config.ts",
+    "tailwind.config.ts",
+    "node_modules/inferno/dist/index.d.ts",
+    "src/**/*",
+    "powersync/**/*"
+  ]
 }

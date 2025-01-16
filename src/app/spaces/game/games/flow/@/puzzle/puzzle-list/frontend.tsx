@@ -20,13 +20,13 @@ import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend, MsgT
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
     { model: input.model },
-    // (model) => updateFromCmd({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
     (model) => updateFromBackend({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
   )
 }
 
-export const updateFromCmd: FrontendModule['update'] = (input) => {
+const updateFromCmd: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
     case 'load': {
       return {

@@ -44,7 +44,9 @@ const main = async () => {
 
   await ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT)
 
-  ctx.logger.info(CONFIG_BACKEND)
+  ctx.logger.info({
+    SERVER_PORT: CONFIG_BACKEND.SERVER_PORT,
+  })
 }
 
 main()

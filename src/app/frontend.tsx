@@ -1,5 +1,5 @@
 import { Browser } from '~/@/browser'
-import { DbConnSql } from '~/@/db-conn-sql/frontend-impl'
+import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { HttpClient } from '~/@/http-client'
@@ -71,15 +71,16 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const rpc = RPC.initFrontend(httpClient, rpcContract)
 
-  const dbConnSql = await DbConnSql({
-    t: 'pglite',
-    fileSystem: {
-      t: 'indexed-db',
-      dbName: CONFIG_FRONTEND.INDEXED_DB_NAME,
-    },
-    electricUrl: CONFIG_SHARED.ELECTRIC_URL,
-    logger,
-  })
+  const dbConnSql = dbConnSqlNoop
+  // const dbConnSql = await DbConnSql({
+  //   t: 'pglite',
+  //   fileSystem: {
+  //     t: 'indexed-db',
+  //     dbName: CONFIG_FRONTEND.INDEXED_DB_NAME,
+  //   },
+  //   electricUrl: CONFIG_SHARED.ELECTRIC_URL,
+  //   logger,
+  // })
 
   return {
     dbConnSql,

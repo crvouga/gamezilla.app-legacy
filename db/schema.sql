@@ -109,8 +109,6 @@ CREATE TABLE public.game_flow_pack (
     deleted_by_user_id text
 );
 
-ALTER TABLE ONLY public.game_flow_pack REPLICA IDENTITY FULL;
-
 
 --
 -- Name: game_flow_puzzle; Type: TABLE; Schema: public; Owner: -
@@ -129,8 +127,6 @@ CREATE TABLE public.game_flow_puzzle (
     flow_solutions jsonb DEFAULT '[]'::jsonb NOT NULL
 );
 
-ALTER TABLE ONLY public.game_flow_puzzle REPLICA IDENTITY FULL;
-
 
 --
 -- Name: game_flow_solutions; Type: TABLE; Schema: public; Owner: -
@@ -142,8 +138,6 @@ CREATE TABLE public.game_flow_solutions (
     created_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
     last_updated_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL
 );
-
-ALTER TABLE ONLY public.game_flow_solutions REPLICA IDENTITY FULL;
 
 
 --
@@ -400,27 +394,6 @@ CREATE INDEX idx_username ON public.user_profile USING btree (username);
 --
 
 CREATE PUBLICATION electric_publication_default WITH (publish = 'insert, update, delete, truncate');
-
-
---
--- Name: electric_publication_default game_flow_pack; Type: PUBLICATION TABLE; Schema: public; Owner: -
---
-
-ALTER PUBLICATION electric_publication_default ADD TABLE ONLY public.game_flow_pack;
-
-
---
--- Name: electric_publication_default game_flow_puzzle; Type: PUBLICATION TABLE; Schema: public; Owner: -
---
-
-ALTER PUBLICATION electric_publication_default ADD TABLE ONLY public.game_flow_puzzle;
-
-
---
--- Name: electric_publication_default game_flow_solutions; Type: PUBLICATION TABLE; Schema: public; Owner: -
---
-
-ALTER PUBLICATION electric_publication_default ADD TABLE ONLY public.game_flow_solutions;
 
 
 --

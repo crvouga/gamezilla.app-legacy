@@ -3,8 +3,19 @@ import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
+import { powerSyncDatabase } from '../../powersync/powersync-database'
 
 const main = async () => {
+  try {
+    console.log('powersync', 'start')
+    powerSyncDatabase.getOptional('SELECT * FROM game_flow_puzzle').then((data) => {
+      console.log('powersync', data)
+    })
+    // @ts-ignore
+    window.powerSyncDatabase = powerSyncDatabase
+  } catch (e) {
+    console.error('powersync', e)
+  }
   // renderRuntimeErrors()
 
   const ctx = await AppFrontend.initCtx()
