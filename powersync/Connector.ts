@@ -17,7 +17,7 @@ export class Connector extends BaseObserver<PowerSyncConnectorListener> implemen
     super()
     const powersyncUrl = import.meta.env.VITE_POWERSYNC_URL
     if (!powersyncUrl) {
-      throw new Error('Missing VITE_POWERSYNC_URL')
+      console.error('Missing VITE_POWERSYNC_URL')
     }
     this.config = {
       powersyncUrl,

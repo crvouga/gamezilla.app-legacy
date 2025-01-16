@@ -29,3 +29,7 @@ tsconfig.tsbuildinfo
 .clj-kondo
 .lsp
 .env
+
+./powersync/test-client/*
+
+powersync/test-client/**/*w
