@@ -1,6 +1,7 @@
 import { PowerSyncDatabase } from '@powersync/web'
 import { Connector } from './backend-connector'
 import { AppSchema } from './database-schema'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 
 export const powerSyncDatabase = new PowerSyncDatabase({
   // The schema you defined in the previous step
@@ -14,7 +15,18 @@ export const powerSyncDatabase = new PowerSyncDatabase({
   },
 })
 
-const connector = new Connector()
+if (typeof CONFIG_FRONTEND.VITE_BACKEND_URL !== 'string') {
+  throw new Error('VITE_BACKEND_URL is not a string')
+}
+
+if (typeof CONFIG_FRONTEND.VITE_POWERSYNC_URL !== 'string') {
+  throw new Error('VITE_POWERSYNC_URL is not a string')
+}
+
+const connector = new Connector({
+  backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
+  powersyncUrl: CONFIG_FRONTEND.VITE_POWERSYNC_URL,
+})
 
 const setup = async () => {
   await connector.init()

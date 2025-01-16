@@ -1,7 +1,10 @@
 import { AbstractPowerSyncDatabase, BaseObserver, PowerSyncBackendConnector } from '@powersync/web'
+import { unwrap } from '~/@/result'
+import { BackendAppRpc } from './backend-app-rpc'
 
 export type PowerSyncConfig = {
   powersyncUrl: string
+  backendUrl: string
 }
 
 export type PowerSyncConnectorListener = {
@@ -13,16 +16,9 @@ export class Connector extends BaseObserver<PowerSyncConnectorListener> implemen
 
   ready: boolean
 
-  constructor() {
+  constructor(config: PowerSyncConfig) {
     super()
-    const powersyncUrl = import.meta.env.VITE_POWERSYNC_URL
-    if (!powersyncUrl) {
-      console.error('Missing VITE_POWERSYNC_URL')
-    }
-    this.config = {
-      powersyncUrl,
-    }
-
+    this.config = config
     this.ready = false
   }
 
@@ -35,11 +31,13 @@ export class Connector extends BaseObserver<PowerSyncConnectorListener> implemen
   }
 
   async fetchCredentials() {
-    console.log('fetchCredentials', this.config.powersyncUrl)
-    return {
-      endpoint: this.config.powersyncUrl,
-      token: '', // No authentication required
-    }
+    const got = await BackendAppRpc.getPowersyncCredentials({
+      backendUrl: this.config.backendUrl,
+    })
+
+    const credentials = unwrap(got)
+
+    return credentials
   }
 
   async uploadData(database: AbstractPowerSyncDatabase): Promise<void> {
