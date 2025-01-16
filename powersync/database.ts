@@ -1,6 +1,6 @@
 import { PowerSyncDatabase } from '@powersync/web'
-import { Connector } from './Connector'
-import { AppSchema } from './Schema'
+import { Connector } from './backend-connector'
+import { AppSchema } from './database-schema'
 
 export const powerSyncDatabase = new PowerSyncDatabase({
   // The schema you defined in the previous step
@@ -25,11 +25,11 @@ const setup = async () => {
   }
 
   await powerSyncDatabase.connect(connector)
+
   await powerSyncDatabase.init()
 
   console.log('powersync', 'connected')
 
-  // Test query to verify synchronization
   try {
     const data = await powerSyncDatabase.getAll('select * from game_flow_puzzle limit 10')
     console.log('Synced data:', data)

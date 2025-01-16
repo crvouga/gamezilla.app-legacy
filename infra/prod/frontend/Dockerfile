@@ -7,6 +7,10 @@ COPY ./ ./
 
 RUN bun install
 
+ARG BACKEND_URL
+
+ENV BACKEND_URL=${BACKEND_URL}
+
 RUN bun frontend:build
 
 FROM nginx:latest AS serve

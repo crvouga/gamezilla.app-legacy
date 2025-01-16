@@ -27,7 +27,18 @@ const toSetCookieHeaderValue = (input: { sessionId: SessionId; isProd: boolean }
   return `${SESSION_ID_COOKIE_NAME}=${input.sessionId}; Max-Age=${MAX_AGE}; SameSite=Lax; HttpOnly;`
 }
 
+const fromRequest = (request: Request): SessionId | null => {
+  const cookie = request.headers?.get('cookie')?.split(';')
+
+  const cookies = cookie?.join(';') ?? ''
+
+  const maybeSessionId = SessionIdCookie.fromCookies({ cookies })
+
+  return maybeSessionId
+}
+
 export const SessionIdCookie = {
   fromCookies,
   toSetCookieHeaderValue,
+  fromRequest,
 }

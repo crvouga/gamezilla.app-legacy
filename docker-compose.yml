@@ -31,7 +31,7 @@ services:
     volumes:
       - ./powersync:/powersync
     environment:
-      POWERSYNC_CONFIG_PATH: /powersync/powersync.yaml
+      POWERSYNC_CONFIG_PATH: /powersync/config.yaml
     ports:
       - 8080:8080
 

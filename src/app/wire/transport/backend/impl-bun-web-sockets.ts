@@ -116,11 +116,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
 
     switch (url.pathname) {
       case WEB_SOCKET_ENDPOINT: {
-        const cookies = request.headers?.get('cookie')?.split(';')
-
-        const maybeSessionId = SessionIdCookie.fromCookies({
-          cookies: cookies?.join(';') ?? '',
-        })
+        const maybeSessionId = SessionIdCookie.fromRequest(request)
 
         const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
 
