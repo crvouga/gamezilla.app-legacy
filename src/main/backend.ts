@@ -5,6 +5,7 @@ import { withRPC } from '~/@/rpc/rpc'
 import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
+import { PowerSyncAppBackend } from '../../powersync/app_backend'
 
 const main = async () => {
   const ctx = await AppBackend.initCtx()
@@ -24,6 +25,10 @@ const main = async () => {
   })
 
   const SERVE_SINGLE_PAGE_APP = false
+
+  ctx.httpServer.registerHandler((request) => {
+    return PowerSyncAppBackend.respond({ request })
+  })
 
   if (SERVE_SINGLE_PAGE_APP) {
     withSinglePageApp({
