@@ -1,11 +1,13 @@
-import { isErr, isLoading, Loading, Result } from '~/@/result'
+import { isErr, isLoading, Result } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, playSound, sendToBackend, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
+import { showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { Button, IconPlus } from '~/app/@/ui'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
+import { Puzzle } from '../../../@/puzzle/puzzle'
+import { Variant, VariantDimensions } from '../../../@/variant'
 import { FrontendModule } from '../../types'
 import { MsgFrontend, MsgToBackend } from './types'
 
@@ -15,20 +17,32 @@ const update: FrontendModule['update'] = (input) => {
   switch (msg?.t) {
     case 'create-new-puzzle.user-clicked-create-button': {
       return {
-        model: {
-          ...model,
-          puzzleCreateRequest: Loading,
-          puzzleCreateRequestedAt: ctx.now,
+        model,
+        eff: async (_dispatch) => {
+          const puzzleNew = await Puzzle.create({
+            count: 0,
+            createdAt: input.ctx.now,
+            createdBy: input.ctx.currentUserId,
+            flow: Variant.init({
+              terminalsByGroupId: {},
+              dimensions: VariantDimensions.init({ t: 'flow-grid', height: 8, width: 8 }),
+            }),
+          })
+
+          const put = await ctx.puzzleDb.put(puzzleNew)
+
+          console.log(put)
         },
-        msgCmd: [
-          playSound(APP_SOUND.tap),
-          sendToBackend<{
-            MsgFrontend: MsgFrontend
-            MsgToBackend: MsgToBackend
-          }>({
-            t: 'create-new-puzzle.user-clicked-create-button',
-          }),
-        ],
+
+        // msgCmd: [
+        //   playSound(APP_SOUND.tap),
+        //   sendToBackend<{
+        //     MsgFrontend: MsgFrontend
+        //     MsgToBackend: MsgToBackend
+        //   }>({
+        //     t: 'create-new-puzzle.user-clicked-create-button',
+        //   }),
+        // ],
       }
     }
 

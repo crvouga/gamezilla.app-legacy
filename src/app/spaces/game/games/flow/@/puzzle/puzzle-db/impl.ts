@@ -1,10 +1,8 @@
-import { pipe } from '~/@/function/pipe'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { ILogger } from '~/@/logger'
-import type { IPuzzleDb } from './interface'
 import { PuzzleDbHashMap } from './impl-hash-map'
 import { PuzzleDbSql } from './impl-sql'
-import { WithSolutions } from './with-solutions'
+import type { IPuzzleDb } from './interface'
 
 export type PuzzleDbImpl =
   | {
@@ -28,5 +26,5 @@ const PuzzleDbBase = (impl: PuzzleDbImpl): IPuzzleDb => {
 }
 
 export const PuzzleDb = (impl: PuzzleDbImpl): IPuzzleDb => {
-  return pipe(PuzzleDbBase(impl), WithSolutions)
+  return PuzzleDbBase(impl)
 }

@@ -3,7 +3,6 @@ import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../flow'
 import { AlgoSolve } from '../solutions/algo-solve'
-import { AlgoSolveAsync } from '../solutions/algo-solve-async'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 import * as FlowVariant from '../variant/variant'
 import { PuzzleId } from './puzzle-id'
@@ -28,7 +27,6 @@ const create = async (input: {
   createdAt: Posix
   createdBy: UserId
 }): Promise<Puzzle> => {
-  const solution = await AlgoSolveAsync.solve(input.flow)
   return {
     flow: input.flow,
     name: await PuzzleName.generate({
@@ -39,7 +37,7 @@ const create = async (input: {
     createdBy: input.createdBy,
     lastUpdatedAt: input.createdAt,
     lastUpdatedBy: input.createdBy,
-    solutions: solution ? [solution] : [],
+    solutions: [],
   }
 }
 
