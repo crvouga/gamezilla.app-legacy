@@ -38,7 +38,14 @@ port: 8080
 
 # Specify sync rules
 sync_rules:
-  path: config_sync_rules.yaml
+  content: |
+    bucket_definitions:
+      global:
+        data:
+          - SELECT * FROM game_flow_puzzle
+          - SELECT * FROM game_flow_pack
+          - SELECT * FROM game_flow_solutions
+          - SELECT * FROM user_session
 
 # Settings for client authentication
 client_auth:
