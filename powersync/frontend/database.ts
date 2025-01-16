@@ -1,5 +1,4 @@
 import { PowerSyncDatabase } from '@powersync/web'
-import { CONFIG_FRONTEND } from '~/config/frontend'
 import { Connector } from './backend-connector'
 import { AppSchema } from './database-schema'
 
@@ -15,10 +14,7 @@ export const powerSyncDatabase = new PowerSyncDatabase({
   },
 })
 
-const connector = new Connector({
-  backendUrl: String(CONFIG_FRONTEND.VITE_BACKEND_URL),
-  powersyncUrl: String(CONFIG_FRONTEND.VITE_POWERSYNC_URL),
-})
+const connector = new Connector()
 
 const setup = async () => {
   console.log('powersync', 'init')

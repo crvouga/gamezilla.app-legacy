@@ -1,32 +1,22 @@
 import { AbstractPowerSyncDatabase, BaseObserver, PowerSyncBackendConnector } from '@powersync/web'
 import { unwrap } from '~/@/result'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 import { BackendAppRpc } from './backend-rpc'
 
-export type PowerSyncConfig = {
-  powersyncUrl: string
-  backendUrl: string
-}
-
-export type PowerSyncConnectorListener = {
-  initialized: () => void
-}
-
-export class Connector extends BaseObserver<PowerSyncConnectorListener> implements PowerSyncBackendConnector {
-  readonly config: PowerSyncConfig
-
-  constructor(config: PowerSyncConfig) {
+export class Connector extends BaseObserver<{}> implements PowerSyncBackendConnector {
+  constructor() {
     super()
-    this.config = config
   }
 
   async fetchCredentials() {
-    const got = await BackendAppRpc.getPowersyncCredentials({
-      backendUrl: this.config.backendUrl,
-    })
+    const got = await BackendAppRpc.getPowersyncCredentials()
 
-    const credentials = unwrap(got)
+    const { token } = unwrap(got)
 
-    return credentials
+    return {
+      token,
+      endpoint: String(CONFIG_FRONTEND.VITE_POWERSYNC_URL),
+    }
   }
 
   async uploadData(database: AbstractPowerSyncDatabase): Promise<void> {

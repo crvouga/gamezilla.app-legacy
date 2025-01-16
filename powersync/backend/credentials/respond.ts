@@ -51,7 +51,6 @@ const respondMain = async (input: { request: Request; ctx: Ctx }) => {
   const response = new Response(
     JSON.stringify({
       token: token,
-      endpoint: config.powersync.url,
     }),
     {
       status: 200,
