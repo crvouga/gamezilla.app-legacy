@@ -39,7 +39,8 @@
     "tc": "bun x tsc --noEmit --watch",
     "test:int": "IS_INTEGRATION_TEST=true bun test",
     "test:unit": "IS_INTEGRATION_TEST=false bun test",
-    "viz-bundle": "bun x vite-bundle-visualizer"
+    "viz-bundle": "bun x vite-bundle-visualizer",
+    "clean-install": "rm -rf node_modules && rm -rf dist && rm bun.lockb && bun install"
   },
   "prettier": {
     "jsxSingleQuote": true,
