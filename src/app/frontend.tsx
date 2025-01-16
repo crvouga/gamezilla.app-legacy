@@ -52,14 +52,14 @@ export const initCtx = async (): Promise<FrontendCtx> => {
     t: 'console',
   })
 
-  if (typeof CONFIG_FRONTEND.BACKEND_URL !== 'string') {
+  if (typeof CONFIG_FRONTEND.VITE_BACKEND_URL !== 'string') {
     throw new Error('BACKEND_URL is undefined')
   }
 
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
     toFrontendTransportConfig({
       httpServerImpl: CONFIG_SHARED.HTTP_SERVER_IMPL,
-      backendUrl: CONFIG_FRONTEND.BACKEND_URL,
+      backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
       logger,
     }),
   )
