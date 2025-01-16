@@ -8,17 +8,20 @@ const getPowersyncCredentials = async (input: {
     console.log('getPowersyncCredentials', input)
     const credentialsUrl = new URL(input.backendUrl)
     credentialsUrl.pathname = '/powersync/credentials'
-    const response = await fetch(credentialsUrl.toString(), {
-      credentials: 'include',
-    })
+
+    const response = await fetch(credentialsUrl.toString(), { credentials: 'include' })
+
     const responseJson: unknown = await response.json()
+
     const parsed = p
       .obj({
         token: p.str,
         endpoint: p.str,
       })
       .parse(responseJson)
+
     if (isErr(parsed)) {
+      console.error('Failed to parse response', responseJson, parsed.error)
       return Err('Failed to parse response')
     }
     return Ok(parsed.value)

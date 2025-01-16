@@ -41,14 +41,17 @@ const respondMain = async (input: { request: Request; ctx: Ctx }) => {
     .setSubject(userId.value)
     .setIssuedAt()
     .setIssuer(config?.powersync?.jwtIssuer ?? '')
-    .setAudience(config?.powersync?.url ?? '')
+    .setAudience(
+      'powersync',
+      // config?.powersync?.url ?? ''
+    )
     .setExpirationTime('5m')
     .sign(powerSyncKey?.key)
 
   const response = new Response(
     JSON.stringify({
-      token,
-      powersync_url: config.powersync.url,
+      token: token,
+      endpoint: config.powersync.url,
     }),
     {
       status: 200,
@@ -67,26 +70,27 @@ const respond = async (input: { request: Request; ctx: Ctx }) => {
 const allowCORS = (input: { request: Request; response: Response }) => {
   const origin = input.request.headers.get('Origin')
 
-  if (origin) {
-    input.response.headers.set('Access-Control-Allow-Origin', origin)
-    input.response.headers.set('Access-Control-Allow-Credentials', 'true')
-    input.response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-    input.response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-
-    if (input.request.method === 'OPTIONS') {
-      input.response.headers.set('Access-Control-Max-Age', '3600')
-      return new Response(null, {
-        status: 204,
-        headers: input.response.headers,
-        statusText: 'No Content',
-      })
-    }
-  } else {
-    return new Response('CORS Error: No Origin header provided', { status: 403 })
+  if (!origin) {
+    return input.response
   }
 
-  return input.response
+  input.response.headers.set('Access-Control-Allow-Origin', origin)
+  input.response.headers.set('Access-Control-Allow-Credentials', 'true')
+  input.response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  input.response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+
+  if (input.request.method !== 'OPTIONS') {
+    return input.response
+  }
+
+  input.response.headers.set('Access-Control-Max-Age', '3600')
+  return new Response(input.response.body, {
+    status: 204,
+    headers: input.response.headers,
+    statusText: 'No Content',
+  })
 }
+
 export const PowerSyncCredentials = {
   respond,
 }

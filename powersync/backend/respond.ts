@@ -10,7 +10,7 @@ const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response 
       return PowerSyncCredentials.respond(input)
     }
 
-    case '/powersync/keys': {
+    case '/powersync/jwks': {
       return PowerSyncKeys.respond(input)
     }
 
