@@ -3,7 +3,7 @@ import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { powerSyncDatabase } from '../../powersync/database'
+import { powerSyncDatabase } from '../../powersync/frontend/database'
 
 const main = async () => {
   try {
