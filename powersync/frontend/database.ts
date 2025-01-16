@@ -1,7 +1,7 @@
 import { PowerSyncDatabase } from '@powersync/web'
+import Logger from 'js-logger'
 import { Connector } from './backend-connector'
 import { AppSchema } from './database-schema'
-import Logger from 'js-logger'
 
 Logger.useDefaults()
 
@@ -17,6 +17,9 @@ export const newPowersyncDatabase = (input?: { dbFilename?: string }) => {
       dbFilename: input?.dbFilename ?? 'powersync.db',
       // Optional. Directory where the database file is located.'
       // dbLocation: 'path/to/directory',
+    },
+    flags: {
+      broadcastLogs: true,
     },
   })
 }
