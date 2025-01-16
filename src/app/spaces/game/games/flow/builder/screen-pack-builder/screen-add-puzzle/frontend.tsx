@@ -62,7 +62,7 @@ const View: FrontendModule['View'] = (input) => {
         }
       />
       <div className='h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll'>
-        <PuzzleListFrontend.ViewList
+        <PuzzleListFrontend.View
           ctx={input.ctx}
           model={input.ctx.puzzleList}
           query={toQuery(input)}

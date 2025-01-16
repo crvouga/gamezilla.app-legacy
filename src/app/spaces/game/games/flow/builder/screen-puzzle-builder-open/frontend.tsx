@@ -66,7 +66,7 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         title={input.ctx.t('flow.puzzle-builder')}
       />
-      <PuzzleListFrontend.ViewList
+      <PuzzleListFrontend.View
         ctx={input.ctx}
         model={input.ctx.puzzleList}
         query={toPuzzleQuery(input)}

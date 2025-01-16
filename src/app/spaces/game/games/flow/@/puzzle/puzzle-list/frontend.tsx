@@ -10,6 +10,7 @@ import type { Puzzle } from '../puzzle'
 import { QueryPuzzlesInput } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
+import { Spinner } from '~/app/@/ui'
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
@@ -68,21 +69,29 @@ const watch = <TMsg,>(ctx: FlowFrontendCtxRoot, query: QueryPuzzlesInput, map: (
   return Sub.map(ctx.puzzleDb.sub(query), (puzzles) => map({ t: 'got-puzzle-db-puzzles', query, puzzles }))
 }
 
-const ViewList = (input: {
+const View = (input: {
   ctx: FlowFrontendCtxRoot
   query: QueryPuzzlesInput
   model: ModelFrontend
   onClick: (puzzle: Puzzle) => void
   fab?: VDom
 }) => {
-  const puzzleIds = input.model.queries[QueryPuzzlesInput.toKey(input.query)] ?? []
+  const queryKey = QueryPuzzlesInput.toKey(input.query)
+  const puzzleIds = input.model.queries[queryKey] ?? []
+  const isLoading = !(queryKey in input.model.queries)
   const puzzles = puzzleIds.flatMap((id) => (input.ctx.puzzles[id] ? [input.ctx.puzzles[id]] : []))
   return (
     <div className='relative flex h-full w-full flex-col gap-2 overflow-hidden'>
-      <div className='border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
+      <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
         {puzzles.map((puzzle) => (
           <ViewListItem key={puzzle.id} now={input.ctx.now} puzzle={puzzle} onClick={() => input.onClick(puzzle)} />
         ))}
+
+        {isLoading && (
+          <div className='flex h-full w-full flex-col items-center'>
+            <Spinner />
+          </div>
+        )}
       </div>
 
       {input.fab && <div className='absolute bottom-6 right-4 bg-black'>{input.fab}</div>}
@@ -117,5 +126,5 @@ export const PuzzleListFrontend = {
   update,
   watch,
   gotMsg,
-  ViewList,
+  View,
 }
