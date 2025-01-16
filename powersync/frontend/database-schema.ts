@@ -1,4 +1,3 @@
-// AppSchema.ts
 import { column, Schema, Table } from '@powersync/web'
 
 const game_flow_puzzle = new Table({
@@ -13,10 +12,9 @@ const game_flow_puzzle = new Table({
   deleted_by_user_id: column.text,
   flow_solutions: column.text,
 })
+export type GameFlowPuzzle = AppSchema['game_flow_puzzle']
 
 export const AppSchema = new Schema({
   game_flow_puzzle,
 })
-
-export type Database = (typeof AppSchema)['types']
-export type GameFlowPuzzle = Database['game_flow_puzzle']
+export type AppSchema = (typeof AppSchema)['types']
