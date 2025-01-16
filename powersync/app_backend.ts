@@ -1,6 +1,9 @@
 export const respond = async (input: { request: Request }): Promise<Response | null> => {
   const requestUrl = new URL(input.request.url)
   switch (requestUrl.pathname) {
+    case '/powersync/update': {
+      return new Response('update', { status: 200 })
+    }
     case '/powersync/jwks': {
       return new Response(
         JSON.stringify({
@@ -22,7 +25,6 @@ export const respond = async (input: { request: Request }): Promise<Response | n
         },
       )
     }
-
     default: {
       return null
     }
