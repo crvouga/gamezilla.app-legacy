@@ -228,6 +228,7 @@ const toWebsocketBackendUrl = (baseBackendUrl: string) => {
 
     return baseBackendUrlObj.toString()
   } catch (e) {
+    console.error('Failed to parse baseBackendUrl', baseBackendUrl, 'falling back to', WEB_SOCKET_ENDPOINT)
     return WEB_SOCKET_ENDPOINT
   }
 }
