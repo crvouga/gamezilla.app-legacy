@@ -39,7 +39,7 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx }): QueryPuzzlesInput => {
     },
     pagination: {
       offset: 0,
-      limit: 100,
+      limit: 10,
     },
     where: {
       createdBy: {
