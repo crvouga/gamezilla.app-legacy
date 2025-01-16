@@ -1,12 +1,11 @@
 import { PowerSyncDatabase } from '@powersync/web'
 import { Connector } from './backend-connector'
 import { AppSchema } from './database-schema'
-// import Logger from 'js-logger'
+import Logger from 'js-logger'
 
-// // Log messages will be written to the window's console.
-// Logger.useDefaults()
+Logger.useDefaults()
 
-// Logger.setLevel(Logger.DEBUG)
+Logger.setLevel(Logger.DEBUG)
 
 export const newPowersyncDatabase = (input?: { dbFilename?: string }) => {
   return new PowerSyncDatabase({
