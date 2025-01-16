@@ -1,7 +1,7 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
 import { PowerSyncCredentials } from './credentials/respond.js'
 import { Ctx } from './ctx.js'
-import { PowerSyncKeys } from './keys/respond.js'
+import { PowerSyncJwks } from './jwks/respond.js'
 
 const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response | null> => {
   const pathname = new URL(input.request.url).pathname
@@ -11,7 +11,7 @@ const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response 
     }
 
     case '/powersync/jwks': {
-      return PowerSyncKeys.respond(input)
+      return PowerSyncJwks.respond(input)
     }
 
     default: {

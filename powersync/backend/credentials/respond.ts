@@ -1,7 +1,6 @@
 import { SignJWT } from 'jose'
 import { isErr } from '~/@/result/result'
 import { SessionIdCookie } from '~/app/wire/transport/session-id-cookie'
-import { config } from '../config'
 import { Ctx } from '../ctx'
 import { getKeys } from '../keys/keys'
 
@@ -40,7 +39,10 @@ const respondMain = async (input: { request: Request; ctx: Ctx }) => {
     })
     .setSubject(userId.value)
     .setIssuedAt()
-    .setIssuer(config?.powersync?.jwtIssuer ?? '')
+    .setIssuer(
+      '',
+      // config?.powersync?.jwtIssuer ?? ''
+    )
     .setAudience(
       'powersync',
       // config?.powersync?.url ?? ''

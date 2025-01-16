@@ -1,5 +1,5 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
-import { getKeys } from './keys.js'
+import { getKeys } from '../keys/keys.js'
 
 const respond = async (_input: {}): Promise<Response | null> => {
   const keys = await getKeys()
@@ -10,6 +10,6 @@ const respond = async (_input: {}): Promise<Response | null> => {
   })
 }
 
-export const PowerSyncKeys = {
+export const PowerSyncJwks = {
   respond,
 }

@@ -1,6 +1,5 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
 import { KeyLike, importJWK } from 'jose'
-import { config } from '../config.js'
 import { generateKeyPair } from './keys-generate.js'
 
 type Key = {
@@ -22,16 +21,14 @@ const ensureKeys = async () => {
     return
   }
 
-  const { powersync } = config
-
   const base64Keys = {
-    private: powersync.privateKey,
-    public: powersync.publicKey,
+    private: import.meta.env?.POWERSYNC_PRIVATE_KEY,
+    public: import.meta.env?.POWERSYNC_PUBLIC_KEY,
   }
 
   if (!base64Keys.private) {
     console.warn(
-      'Private key has not been supplied in process.env.POWERSYNC_PRIVATE_KEY. A temporary key pair will be generated.',
+      'Private key has not been supplied in import.meta.env?.POWERSYNC_PRIVATE_KEY. A temporary key pair will be generated.',
     )
     const generated = await generateKeyPair()
     base64Keys.private = generated.privateBase64
@@ -47,7 +44,7 @@ const ensureKeys = async () => {
   }
 
   if (!base64Keys.public) {
-    throw new Error('Public key has not been supplied in process.env.POWERSYNC_PUBLIC_KEY')
+    throw new Error('Public key has not been supplied in import.meta.env?.POWERSYNC_PUBLIC_KEY')
   }
 
   const decodedPublicKey = Buffer.from(base64Keys.public, 'base64')
