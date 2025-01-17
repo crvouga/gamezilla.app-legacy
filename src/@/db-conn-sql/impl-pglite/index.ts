@@ -7,7 +7,7 @@ import { PubSub, Sub } from '~/@/sub'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
-import type { IDbConnSql } from '../interface'
+import type { DbConnQueryInput, IDbConnSql } from '../interface'
 import { PGLiteFileSystem } from './pglite-file-system'
 
 export type Config = {
@@ -43,20 +43,24 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     },
   })
 
-  const subscribe: IDbConnSql['subscribe'] = async ({ parser, rawSql, variables, onChange }) => {
-    const sql = Sql.to(rawSql, variables)
+  const subscribe = async <TRow>(
+    input: DbConnQueryInput<TRow> & {
+      onChange: (rows: TRow[]) => void
+    },
+  ) => {
+    const sql = Sql.to(input.sql, input.vars)
 
     logger.debug(`subscribing to sql=${sql}`)
 
     const query = await pg.live.query(sql, [], (res: unknown) => {
-      const parsed = p.obj({ rows: p.arr(parser) }).parse(res)
+      const parsed = p.obj({ rows: p.arr(input.parser) }).parse(res)
       switch (parsed.t) {
         case 'err': {
           logger.error(`Failed to parse row\nerror=${JSON.stringify(parsed.error, null, 4)}`)
           break
         }
         case 'ok': {
-          onChange(parsed.value.rows)
+          input.onChange(parsed.value.rows)
           break
         }
       }
@@ -64,7 +68,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
     return {
       initialRows: query?.initialResults?.rows?.flatMap((row: unknown) => {
-        const parsed = parser.parse(row)
+        const parsed = input.parser.parse(row)
         return isOk(parsed) ? [parsed.value] : []
       }),
       async refresh() {
@@ -87,16 +91,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   >()
 
   return {
-    subscribe,
-
-    sub<TRow>(input: {
-      parser: p.Parser<TRow>
-      rawSql: string
-      variables: Sql.Vars
-      tableName: string
-      primaryKey: string[]
-    }): Sub<TRow[]> {
-      const sql = Sql.to(input.rawSql, input.variables)
+    sub<TRow>(input: DbConnQueryInput<TRow>) {
+      const sql = Sql.to(input.sql, input.vars)
       const subscriptionKey = sql
       logger.debug(`subscriptionKey=${subscriptionKey}`)
 
@@ -110,8 +106,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
       const subscribed = subscribe({
         parser: input.parser,
-        rawSql: input.rawSql,
-        variables: input.variables,
+        sql: input.sql,
+        vars: input.vars,
         onChange: (rows) => {
           if (
             lastPublished &&
@@ -126,19 +122,19 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         },
       })
 
-      let syncShape: Promise<SyncShapeToTableResult>
+      // let syncShape: Promise<SyncShapeToTableResult>
 
       if (config.electricUrl) {
         const electricUrl = new URL(config.electricUrl)
         electricUrl.pathname = `/v1/shape/`
-        electricUrl.searchParams.set('table', input.tableName)
-        syncShape = pg.electric.syncShapeToTable({
-          table: input.tableName,
-          primaryKey: input.primaryKey,
-          shape: {
-            url: electricUrl.toString(),
-          },
-        })
+        // electricUrl.searchParams.set('table', input.tableName)
+        // syncShape = pg.electric.syncShapeToTable({
+        //   table: input.tableName,
+        //   primaryKey: input.primaryKey,
+        //   shape: {
+        //     url: electricUrl.toString(),
+        //   },
+        // })
       }
 
       activeSubscriptions.set(subscriptionKey, {
@@ -148,16 +144,14 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
           const sub = await subscribed
           sub.unsubscribe()
           activeSubscriptions.delete(subscriptionKey)
-          syncShape.then((result) => {
-            result.unsubscribe()
-          })
+          // syncShape.then((result) => {
+          //   result.unsubscribe()
+          // })
         },
-        primaryKey: input.primaryKey,
-        tableName: input.tableName,
       })
 
       return {
-        sub(subscriber) {
+        sub(subscriber: (rows: TRow[]) => void) {
           const unsub = pubSub.sub(subscriber)
 
           return () => {
@@ -168,8 +162,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       }
     },
 
-    async query({ parser, rawSql, variables }) {
-      const sql = Sql.to(rawSql, variables)
+    async query(input) {
+      const sql = Sql.to(input.sql, input.vars)
 
       try {
         const start = process.hrtime.bigint()
@@ -183,17 +177,17 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         const durationMs = Number(end - start) / 1e6
         const durationFormatted = `${durationMs.toFixed(2)}ms`
         logger.debug(
-          `duration=${durationFormatted}\nsql=\n${cleanSql(rawSql)}\nvariables=${JSON.stringify(
-            variables,
+          `duration=${durationFormatted}\nsql=\n${cleanSql(input.sql)}\ninput.vars=${JSON.stringify(
+            input.vars,
             null,
             4,
           ).slice(0, 500)}`,
         )
 
-        const output: p.Infer<typeof parser>[] = []
+        const output: p.Infer<typeof input.parser>[] = []
 
         for (const row of results.rows) {
-          const parsed = parser.parse(row)
+          const parsed = input.parser.parse(row)
 
           switch (parsed.t) {
             case 'err': {

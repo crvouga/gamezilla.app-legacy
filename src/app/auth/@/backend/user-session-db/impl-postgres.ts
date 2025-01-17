@@ -40,8 +40,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
       logger.debug(`findSessionIdsByUserId: userId=${userId}`)
       const queried = await dbConnSql.query({
         parser: Row,
-        rawSql: 'SELECT * FROM user_session WHERE ended_at IS NULL AND user_id = :user_id',
-        variables: {
+        sql: 'SELECT * FROM user_session WHERE ended_at IS NULL AND user_id = :user_id',
+        vars: {
           user_id: userId,
         },
       })
@@ -53,8 +53,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
       logger.debug(`findUserIdBySessionId: sessionId=${sessionId}`)
       const queried = await dbConnSql.query({
         parser: Row,
-        rawSql: 'SELECT * FROM user_session WHERE ended_at IS NULL AND session_id = :session_id',
-        variables: {
+        sql: 'SELECT * FROM user_session WHERE ended_at IS NULL AND session_id = :session_id',
+        vars: {
           session_id: sessionId,
         },
       })
@@ -70,8 +70,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
 
       const queried = await dbConnSql.query({
         parser: Row,
-        rawSql: 'INSERT INTO user_session (id, session_id, user_id) VALUES (:id, :session_id, :user_id)',
-        variables: {
+        sql: 'INSERT INTO user_session (id, session_id, user_id) VALUES (:id, :session_id, :user_id)',
+        vars: {
           id: userSessionId,
           session_id: sessionId,
           user_id: userId,
@@ -84,8 +84,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
       logger.debug(`zapByUserId: userId=${userId}`)
       const queried = await dbConnSql.query({
         parser: Row,
-        rawSql: 'UPDATE user_session SET ended_at = :ended_at WHERE user_id = :user_id',
-        variables: {
+        sql: 'UPDATE user_session SET ended_at = :ended_at WHERE user_id = :user_id',
+        vars: {
           ended_at: new Date().toISOString(),
           user_id: userId,
         },
@@ -97,8 +97,8 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
       logger.debug(`zapBySessionId: sessionId=${sessionId}`)
       const queried = await dbConnSql.query({
         parser: Row,
-        rawSql: 'UPDATE user_session SET ended_at = :ended_at WHERE session_id = :session_id',
-        variables: {
+        sql: 'UPDATE user_session SET ended_at = :ended_at WHERE session_id = :session_id',
+        vars: {
           ended_at: new Date().toISOString(),
           session_id: sessionId,
         },

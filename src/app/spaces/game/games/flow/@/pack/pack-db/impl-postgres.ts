@@ -79,8 +79,8 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
     async get(id) {
       const queried = await dbConnSql.query({
         parser: Row,
-        rawSql: 'SELECT * FROM game_flow_pack WHERE id = :id',
-        variables: {
+        sql: 'SELECT * FROM game_flow_pack WHERE id = :id',
+        vars: {
           id: id,
         },
       })
@@ -102,8 +102,8 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
         parser: p.obj({
           count: p.or(p.num, p.str),
         }),
-        rawSql: str,
-        variables: vars,
+        sql: str,
+        vars: vars,
       })
 
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
@@ -126,7 +126,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
 				${sqlPagination.str}
 			`
 
-      const queried = await dbConnSql.query({ parser: Row, rawSql: str, variables: vars })
+      const queried = await dbConnSql.query({ parser: Row, sql: str, vars: vars })
 
       const total = Result.unwrapOr(await this.count(input), 0)
 
@@ -147,7 +147,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
     async put(input) {
       const queried = await dbConnSql.query({
         parser: p.unknown,
-        rawSql: `
+        sql: `
 				INSERT INTO game_flow_pack (
 					id,
 					flow_pack_name,
@@ -174,7 +174,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
 					last_updated_at_posix = :last_updated_at_posix,
 					last_updated_by_user_id = :last_updated_by_user_id
 				`,
-        variables: {
+        vars: {
           id: input.id,
           flow_pack_name: input.name,
           flow_puzzle_ids: Sql.commas(input.puzzleIds),
@@ -192,8 +192,8 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
     async zap(input) {
       const queried = await dbConnSql.query({
         parser: p.unknown,
-        rawSql: 'DELETE FROM game_flow_pack WHERE id = :id',
-        variables: {
+        sql: 'DELETE FROM game_flow_pack WHERE id = :id',
+        vars: {
           id: input.id,
         },
       })

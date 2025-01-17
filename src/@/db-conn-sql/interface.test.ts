@@ -76,8 +76,8 @@ describe('db-conn-sql', () => {
     for (const f of await Fixtures()) {
       const result = await f.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `SELECT 1`,
-        variables: {},
+        sql: `SELECT 1`,
+        vars: {},
       })
       expect(isOk(result)).toBe(true)
     }
@@ -87,8 +87,8 @@ describe('db-conn-sql', () => {
     for (const f of await Fixtures()) {
       const result = await f.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `SELECT foo`,
-        variables: {},
+        sql: `SELECT foo`,
+        vars: {},
       })
       expect(isErr(result)).toBe(true)
     }
@@ -98,20 +98,20 @@ describe('db-conn-sql', () => {
     for (const f of await Fixtures()) {
       const created = await f.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
-        variables: {},
+        sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
+        vars: {},
       })
       expect(isOk(created)).toBe(true)
       const inserted = await f.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `INSERT INTO foo DEFAULT VALUES`,
-        variables: {},
+        sql: `INSERT INTO foo DEFAULT VALUES`,
+        vars: {},
       })
       expect(isOk(inserted)).toBe(true)
       const queried = await f.dbConnSql.query({
         parser: p.obj({ id: p.num }),
-        rawSql: `SELECT id FROM foo`,
-        variables: {},
+        sql: `SELECT id FROM foo`,
+        vars: {},
       })
       expect(isOk(queried)).toBe(true)
       if (isOk(queried)) {
@@ -119,8 +119,8 @@ describe('db-conn-sql', () => {
       }
       const dropped = await f.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `DROP TABLE foo`,
-        variables: {},
+        sql: `DROP TABLE foo`,
+        vars: {},
       })
       expect(isOk(dropped)).toBe(true)
     }

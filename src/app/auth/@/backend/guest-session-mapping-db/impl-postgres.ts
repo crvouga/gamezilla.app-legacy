@@ -33,8 +33,8 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         parser: p.obj({
           id: UserId,
         }),
-        rawSql: query,
-        variables: vars,
+        sql: query,
+        vars: vars,
       })
 
       if (isErr(queried)) {
@@ -57,8 +57,8 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
       }
       const inserted = await config.dbConnSql.query({
         parser: p.unknown,
-        rawSql: query,
-        variables: vars,
+        sql: query,
+        vars: vars,
       })
       if (isErr(inserted)) {
         return inserted

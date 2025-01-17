@@ -47,7 +47,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 
       const queried = await dbConnSql.query({
         parser: UserAccountRow,
-        rawSql: `
+        sql: `
         SELECT
 					id,
 					created_at_posix,
@@ -58,7 +58,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 				WHERE
 					id = :id
 				`,
-        variables: {
+        vars: {
           id: input.userId,
         },
       })
@@ -83,7 +83,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
     async findOneByPhoneNumber(input) {
       const queried = await dbConnSql.query({
         parser: UserAccountRow,
-        rawSql: `
+        sql: `
 				SELECT
 					id,
 					created_at_posix,
@@ -94,7 +94,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 				WHERE
 					phone_number = :phone_number
 				`,
-        variables: {
+        vars: {
           phone_number: PhoneNumber.toString(input.phoneNumber),
         },
       })
@@ -124,7 +124,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
       }
       const inserted = await dbConnSql.query({
         parser: p.unknown,
-        rawSql: `
+        sql: `
         INSERT INTO user_account (
 					phone_number,
 					user_role,
@@ -137,7 +137,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 					:id,
 					:created_at_posix
 				)`,
-        variables: row,
+        vars: row,
       })
       return Result.mapOk(inserted, () => null)
     },

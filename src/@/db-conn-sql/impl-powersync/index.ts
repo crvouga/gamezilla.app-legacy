@@ -1,10 +1,9 @@
 import { PowerSyncDatabase } from '@powersync/web'
-import { p } from '~/@/parser'
+import { ILogger, Logger } from '~/@/logger'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
-import { IDbConnSql } from '../interface'
-import { ILogger, Logger } from '~/@/logger'
+import { DbConnQueryInput, IDbConnSql } from '../interface'
 
 export type Config = {
   t: 'powersync'
@@ -14,62 +13,40 @@ export type Config = {
 
 export const DbConnSql = (config: Config): IDbConnSql => {
   const logger = Logger.prefix('powersync', config.logger)
-  const query: IDbConnSql['query'] = async <TRow>({
-    rawSql,
-    parser,
-    variables,
-  }: {
-    parser: p.Parser<TRow>
-    rawSql: string
-    variables: Sql.Vars
-  }) => {
+  const query: IDbConnSql['query'] = async (input) => {
     try {
-      const sql = Sql.to(rawSql, variables)
+      const sql = Sql.to(input.sql, input.vars)
       const rows = await config.powersync.getAll?.(sql)
       if (!rows) return Err('No results')
-      const parsedRows: TRow[] = rows.map(parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
+      const parsedRows = rows.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
       return Ok(parsedRows)
     } catch (error) {
       return Err(String(error))
     }
   }
 
-  const subscribe: IDbConnSql['subscribe'] = async <TRow>({
-    onChange,
-    parser,
-    rawSql,
-    variables,
-  }: {
-    parser: p.Parser<TRow>
-    rawSql: string
-    variables: Sql.Vars
-    onChange: (rows: TRow[]) => void
-  }) => {
-    const sql = Sql.to(rawSql, variables)
+  const subscribe = async <TRow>(
+    input: DbConnQueryInput<TRow> & {
+      onChange: (rows: TRow[]) => void
+    },
+  ) => {
+    const sql = Sql.to(input.sql, input.vars)
 
     config.powersync.getAll?.(sql).then((rows) => {
-      const parsedRows: TRow[] = rows?.map(parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : [])) ?? []
-      onChange(parsedRows)
+      const parsedRows = rows?.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : [])) ?? []
+      input.onChange(parsedRows)
     })
     let abortController = new AbortController()
     const watch = async () => {
       for await (const result of config.powersync.watch(sql, [], { signal: abortController.signal })) {
-        const parsedRows: TRow[] =
-          result.rows?._array.map(parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : [])) ?? []
-        onChange(parsedRows)
+        const parsedRows =
+          result.rows?._array.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : [])) ?? []
+        input.onChange(parsedRows)
       }
     }
     watch()
-    return {
-      initialRows: [],
-      refresh: async () => {
-        abortController.abort()
-        abortController = new AbortController()
-        watch()
-      },
-      unsubscribe: async () => {
-        abortController.abort()
-      },
+    return async () => {
+      abortController.abort()
     }
   }
 
@@ -78,19 +55,11 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     {
       unsubscribe: () => void
       pubSub: PubSub<unknown[]>
-      tableName: string
-      primaryKey: string[]
     }
   >()
 
-  const sub: IDbConnSql['sub'] = <TRow>(input: {
-    parser: p.Parser<TRow>
-    rawSql: string
-    variables: Sql.Vars
-    tableName: string
-    primaryKey: string[]
-  }) => {
-    const sql = Sql.to(input.rawSql, input.variables)
+  const sub: IDbConnSql['sub'] = <TRow>(input: DbConnQueryInput<TRow>) => {
+    const sql = Sql.to(input.sql, input.vars)
     const subscriptionKey = sql
     logger.debug(`subscriptionKey=${subscriptionKey}`)
 
@@ -102,10 +71,10 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     const pubSub = PubSub.create<TRow[]>()
     let lastPublished: TRow[] | null = null
 
-    const subscribed = subscribe({
+    const unsubscribe = subscribe({
       parser: input.parser,
-      rawSql: input.rawSql,
-      variables: input.variables,
+      sql: input.sql,
+      vars: input.vars,
       onChange: (rows) => {
         if (
           lastPublished &&
@@ -121,15 +90,11 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     })
 
     activeSubscriptions.set(subscriptionKey, {
-      // @ts-ignore
-      pubSub: pubSub,
+      pubSub: pubSub as PubSub<unknown[]>,
       unsubscribe: async () => {
-        const sub = await subscribed
-        sub.unsubscribe()
+        unsubscribe.then((unsub) => unsub())
         activeSubscriptions.delete(subscriptionKey)
       },
-      primaryKey: input.primaryKey,
-      tableName: input.tableName,
     })
 
     return {
@@ -172,7 +137,6 @@ export const DbConnSql = (config: Config): IDbConnSql => {
 
   return {
     query,
-    subscribe,
     sub,
     notify,
     listen,

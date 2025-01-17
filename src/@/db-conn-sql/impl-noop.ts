@@ -8,13 +8,6 @@ export type Config = {
 
 export const DbConnSql = (_config: Config): IDbConnSql => {
   return {
-    async subscribe() {
-      return {
-        initialRows: [],
-        unsubscribe: async () => {},
-        refresh: async () => {},
-      }
-    },
     sub() {
       return Sub.None
     },

@@ -22,13 +22,10 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   postgresClient ??= postgres(config.databaseUrl)
 
   return {
-    async subscribe() {
-      throw new Error('not implemented')
-    },
     sub() {
       return Sub.None
     },
-    async query({ parser, rawSql, variables }) {
+    async query({ parser, sql: rawSql, vars: variables }) {
       const sql = Sql.to(rawSql, variables)
 
       try {

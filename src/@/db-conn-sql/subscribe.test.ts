@@ -55,29 +55,29 @@ type Row = p.Infer<typeof Row>
 describe('db-conn-sql subscribe', () => {
   test('subscribe', async () => {
     for (const f of await Fixtures()) {
-      await f.dbConnSql.query({ parser: p.unknown, rawSql: `DROP TABLE foo`, variables: {} }).catch(() => {})
+      await f.dbConnSql.query({ parser: p.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})
       await f.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
-        variables: {},
+        sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
+        vars: {},
       })
       let got: Row[] = []
-      const subscribed = await f.dbConnSql.subscribe({
+      const sub = f.dbConnSql.sub({
         parser: Row,
-        rawSql: `SELECT id FROM foo`,
-        variables: {},
-        onChange: (rows) => {
-          got = rows
-        },
+        sql: `SELECT id FROM foo`,
+        vars: {},
+      })
+      const unsub = sub.sub((rows) => {
+        got = rows
       })
       await f.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `INSERT INTO foo DEFAULT VALUES`,
-        variables: {},
+        sql: `INSERT INTO foo DEFAULT VALUES`,
+        vars: {},
       })
-      await new Promise((r) => setTimeout(r, 1))
+      await new Promise((r) => setTimeout(r, 10))
       expect(got).toEqual([{ id: 1 }])
-      await subscribed.unsubscribe()
+      unsub()
     }
   })
 })

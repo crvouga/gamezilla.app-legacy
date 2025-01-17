@@ -62,8 +62,8 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
 
       const queried = await dbConn.query({
         parser: ProfileRow,
-        rawSql: sql,
-        variables: {
+        sql: sql,
+        vars: {
           id: userId,
         },
       })
@@ -90,7 +90,7 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
 
       const inserted = await dbConn.query({
         parser: ProfileRow,
-        rawSql: `
+        sql: `
         INSERT INTO user_profile (
           id,
           username,
@@ -104,7 +104,7 @@ export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb =
           :avatar_style
         )
         `,
-        variables: rowNew,
+        vars: rowNew,
       })
 
       if (isErr(inserted)) {

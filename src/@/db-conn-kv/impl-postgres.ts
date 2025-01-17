@@ -26,8 +26,8 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
         const [queried, duration] = await withDuration(() =>
           config.dbConnSql.query({
             parser: Row,
-            rawSql: 'SELECT id, value FROM key_value WHERE id = :id',
-            variables: {
+            sql: 'SELECT id, value FROM key_value WHERE id = :id',
+            vars: {
               id: key,
             },
           }),
@@ -76,8 +76,8 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
         const [queried, duration] = await withDuration(() =>
           config.dbConnSql.query({
             parser: Row,
-            rawSql: `SELECT id, value FROM key_value WHERE id IN (${keysStr})`,
-            variables: {},
+            sql: `SELECT id, value FROM key_value WHERE id IN (${keysStr})`,
+            vars: {},
           }),
         )
 
@@ -116,9 +116,8 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
       try {
         const queried = await config.dbConnSql.query({
           parser: Row,
-          rawSql:
-            'INSERT INTO key_value (id, value) VALUES (:id, :value) ON CONFLICT (id) DO UPDATE SET value = :value',
-          variables: {
+          sql: 'INSERT INTO key_value (id, value) VALUES (:id, :value) ON CONFLICT (id) DO UPDATE SET value = :value',
+          vars: {
             id: key,
             value: JSON.stringify(value),
           },
@@ -145,8 +144,8 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         const queried = await config.dbConnSql.query({
           parser: Row,
-          rawSql: `INSERT INTO key_value (id, value) VALUES ${valuesStr} ON CONFLICT (id) DO UPDATE SET value = EXCLUDED.value`,
-          variables: {},
+          sql: `INSERT INTO key_value (id, value) VALUES ${valuesStr} ON CONFLICT (id) DO UPDATE SET value = EXCLUDED.value`,
+          vars: {},
         })
 
         if (isErr(queried)) {
@@ -164,8 +163,8 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
       try {
         const queried = await config.dbConnSql.query({
           parser: Row,
-          rawSql: 'DELETE FROM key_value WHERE id = :id',
-          variables: {
+          sql: 'DELETE FROM key_value WHERE id = :id',
+          vars: {
             id: key,
           },
         })

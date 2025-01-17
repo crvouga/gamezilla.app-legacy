@@ -169,8 +169,8 @@ const puzzlesFindForProfile = async (
 
   const found = await dbConn.query({
     parser: PuzzleRow,
-    rawSql: sql,
-    variables: {},
+    sql: sql,
+    vars: {},
   })
 
   if (found.t === 'err') {
@@ -207,8 +207,8 @@ const puzzlesReplace = async ({ dbConn, rows }: { dbConn: IDbConnSql; rows: Puzz
 
   const inserted = await dbConn.query({
     parser: PuzzleRow,
-    rawSql: queryString,
-    variables: {},
+    sql: queryString,
+    vars: {},
   })
 
   return inserted
@@ -220,14 +220,14 @@ const interactionsInsert = async (
 ): Promise<Result<string, null>> => {
   const result = await dbConn.query({
     parser: PuzzleInteractionRow,
-    rawSql: `
+    sql: `
         INSERT INTO game_chess_puzzle_interaction (
           puzzle_id,
           user_id,
           type
         ) VALUES ${interactions.map((x) => `('${x.puzzleId}', '${x.userId}', '${x.type}')`).join(', ')}
       `,
-    variables: {},
+    vars: {},
   })
   return Result.mapOk(result, () => null)
 }
@@ -250,7 +250,7 @@ const toPuzzleQueryJSON = (query: unknown): PuzzleQueryJSON | null => {
 const profilesFind = async (dbConn: IDbConnSql, userId: UserId): Promise<Result<string, PuzzleProfile | null>> => {
   const found = await dbConn.query({
     parser: PuzzleProfileRow,
-    rawSql: `
+    sql: `
       SELECT
         *
       FROM
@@ -258,7 +258,7 @@ const profilesFind = async (dbConn: IDbConnSql, userId: UserId): Promise<Result<
       WHERE
         user_id = :user_id
     `,
-    variables: {
+    vars: {
       user_id: userId,
     },
   })
@@ -304,7 +304,7 @@ export const profilesInsert = async (dbConn: IDbConnSql, profile: PuzzleProfile)
 
   const mutated = await dbConn.query({
     parser: p.unknown,
-    rawSql: `
+    sql: `
         INSERT INTO game_chess_puzzle_profile (
           id,
           user_id,
@@ -317,7 +317,7 @@ export const profilesInsert = async (dbConn: IDbConnSql, profile: PuzzleProfile)
           :puzzle_query
         )
       `,
-    variables: {
+    vars: {
       puzzle_profile_id: puzzleProfileId,
       user_id: profile.userId,
       elo_rating: profile.eloRating,
@@ -357,7 +357,7 @@ export const profilesFindElseInsert = async (
 const profilesUpdate = async (dbConn: IDbConnSql, profile: PuzzleProfile): Promise<Result<string, null>> => {
   const mutated = await dbConn.query({
     parser: p.unknown,
-    rawSql: `
+    sql: `
       UPDATE game_chess_puzzle_profile
       SET
         user_id = :user_id,
@@ -366,7 +366,7 @@ const profilesUpdate = async (dbConn: IDbConnSql, profile: PuzzleProfile): Promi
       WHERE
         user_id = :user_id
     `,
-    variables: {
+    vars: {
       user_id: profile.userId,
       elo_rating: profile.eloRating,
       puzzle_query: JSON.stringify(profile.puzzleQuery),

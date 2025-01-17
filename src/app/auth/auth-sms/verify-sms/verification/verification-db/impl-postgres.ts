@@ -43,8 +43,8 @@ export const VerificationDb = (config: Config): IVerificationDb => {
       }
       const queried = await config.dbConnSql.query({
         parser: Row,
-        rawSql: query,
-        variables: vars,
+        sql: query,
+        vars: vars,
       })
 
       if (isErr(queried)) {
@@ -59,8 +59,8 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         parser: p.obj({
           count: p.str,
         }),
-        rawSql: queryCount,
-        variables: vars,
+        sql: queryCount,
+        vars: vars,
       })
 
       if (isErr(queriedCount)) {
@@ -112,8 +112,8 @@ export const VerificationDb = (config: Config): IVerificationDb => {
       }
       const queried = await config.dbConnSql.query({
         parser: p.unknown,
-        rawSql: query,
-        variables: vars,
+        sql: query,
+        vars: vars,
       })
 
       return Result.mapOk(queried, () => null)
@@ -125,8 +125,8 @@ export const VerificationDb = (config: Config): IVerificationDb => {
       }
       const queried = await config.dbConnSql.query({
         parser: p.unknown,
-        rawSql: query,
-        variables: vars,
+        sql: query,
+        vars: vars,
       })
 
       return Result.mapOk(queried, () => null)

@@ -42,8 +42,8 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
       }
       const queried = await deps.dbConnSql.query({
         parser: p.unknown,
-        rawSql: query,
-        variables: vars,
+        sql: query,
+        vars: vars,
       })
       return Result.mapOk(queried, () => null)
     },
@@ -63,8 +63,8 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
 
       const queried = await deps.dbConnSql.query({
         parser: Row,
-        rawSql: query,
-        variables: where.vars,
+        sql: query,
+        vars: where.vars,
       })
 
       return Result.mapOk(queried, (rows) => rows.flatMap(rowToVerificationAttempt))

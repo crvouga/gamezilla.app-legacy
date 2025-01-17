@@ -17,7 +17,7 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
     async get(flowPuzzleId) {
       const queried = await config.dbConnSql.query({
         parser: Row,
-        rawSql: `
+        sql: `
         SELECT
           id,
           flow_puzzle_name,
@@ -34,7 +34,7 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
         AND deleted_at IS NULL
         LIMIT 1
         `,
-        variables: {
+        vars: {
           id: flowPuzzleId,
         },
       })
@@ -65,14 +65,14 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
         parser: p.obj({
           count: p.str,
         }),
-        rawSql: `
+        sql: `
         SELECT
           COUNT(id) AS count
         FROM
           game_flow_puzzle
         ${where.str}
         `,
-        variables: where.variables,
+        vars: where.variables,
       })
 
       return Result.mapOk(queried, (x) => Number.parseFloat(x[0]?.count ?? '0'))
@@ -82,8 +82,8 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
       const sql = toQuerySql(input)
       const queried = await config.dbConnSql.query({
         parser: Row,
-        rawSql: sql.str,
-        variables: sql.variables,
+        sql: sql.str,
+        vars: sql.variables,
       })
 
       if (isErr(queried)) {
@@ -94,14 +94,14 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
         parser: p.obj({
           count: p.str,
         }),
-        rawSql: `
+        sql: `
 				SELECT
 					COUNT(id) AS count
 				FROM
           game_flow_puzzle
 				${sql.where.str}
 				`,
-        variables: sql.variables,
+        vars: sql.variables,
       })
 
       if (isErr(queriedCount)) {
@@ -136,7 +136,7 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
     async put(flowPuzzle) {
       const queried = await config.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `
+        sql: `
 				INSERT INTO game_flow_puzzle (
 					id,
 					flow_puzzle_name,
@@ -164,7 +164,7 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
 					last_updated_by_user_id = :last_updated_by_user_id,
 					flow_solutions = :flow_solutions
 				`,
-        variables: {
+        vars: {
           id: flowPuzzle.id,
           flow_puzzle_name: flowPuzzle.name,
           flow: Sql.json(flowPuzzle.flow),
@@ -181,7 +181,7 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
     async zap(input) {
       const queried = await config.dbConnSql.query({
         parser: p.num,
-        rawSql: `
+        sql: `
 				UPDATE
 					game_flow_puzzle
 				SET
@@ -190,7 +190,7 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
 				WHERE
 					id = :id
 				`,
-        variables: {
+        vars: {
           deleted_at: Posix.now(),
           deleted_by_user_id: input.deletedByUserId,
           id: input.id,
@@ -204,10 +204,8 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
       return Sub.map(
         config.dbConnSql.sub({
           parser: Row,
-          rawSql: sql.str,
-          variables: sql.variables,
-          primaryKey: ['id'],
-          tableName: 'game_flow_puzzle',
+          sql: sql.str,
+          vars: sql.variables,
         }),
         (rows) =>
           rows.flatMap((row) => {

@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS game_flow_puzzle (
 export const WithEnureTables = async (config: Config): Promise<IPuzzleDb> => {
   await config.dbConnSql.query({
     parser: p.unknown,
-    rawSql: query,
-    variables: {},
+    sql: query,
+    vars: {},
   })
   return config.puzzleDb
 }

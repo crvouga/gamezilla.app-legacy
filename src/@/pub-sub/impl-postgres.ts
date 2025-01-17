@@ -20,8 +20,8 @@ export const PubSub = (config: Config): IPubSub => {
 
   config.dbConnSql.query({
     parser: p.unknown,
-    rawSql: `LISTEN ${config.channel}`,
-    variables: {},
+    sql: `LISTEN ${config.channel}`,
+    vars: {},
   })
 
   config.dbConnSql.listen(config.channel, (notification) => {
@@ -52,8 +52,8 @@ export const PubSub = (config: Config): IPubSub => {
     async pub(msg) {
       config.dbConnSql.query({
         parser: p.unknown,
-        rawSql: `NOTIFY ${config.channel}, '${instanceId}${SEPARATOR}${msg}'`,
-        variables: {},
+        sql: `NOTIFY ${config.channel}, '${instanceId}${SEPARATOR}${msg}'`,
+        vars: {},
       })
     },
 
