@@ -3,39 +3,31 @@ Logger.useDefaults()
 Logger.setLevel(Logger.DEBUG)
 
 export const newPowerSyncDatabase = async (input?: { dbFilename?: string }) => {
-  const { PowerSyncDatabase } = await import('@powersync/web')
-  const { AppSchema } = await import('./database-schema')
+  const [{ PowerSyncDatabase }, { AppSchema }] = await Promise.all([
+    import('@powersync/web'),
+    import('./database-schema'),
+  ])
   return new PowerSyncDatabase({
-    // The schema you defined in the previous step
     schema: AppSchema,
-
     database: {
-      // Filename for the SQLite database — it's important to only instantiate one instance per file.
       dbFilename: input?.dbFilename ?? 'powersync.db',
-      // Optional. Directory where the database file is located.'
-      // dbLocation: 'path/to/directory',
     },
     flags: {
       broadcastLogs: true,
+      enableMultiTabs: false,
     },
   })
 }
 
-export const setup = async () => {
-  const powersync = await newPowerSyncDatabase()
+export const setupNewPowerSyncDatabase = async () => {
+  const [powersync, { Connector }] = await Promise.all([newPowerSyncDatabase(), import('./backend-connector')])
 
   // @ts-expect-error
   window.powersync = powersync
 
-  console.log('powersync', 'connecting')
-
-  const { Connector } = await import('./backend-connector')
-
   const connector = new Connector()
 
   await powersync.connect(connector)
-
-  console.log('powersync', 'connected')
 
   return powersync
 }

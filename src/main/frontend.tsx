@@ -3,10 +3,10 @@ import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { setup } from '../../powersync/frontend/database'
+import { setupNewPowerSyncDatabase } from '../../powersync/frontend/database'
 
 const main = async () => {
-  setup()
+  setupNewPowerSyncDatabase()
 
   const root = document.getElementById('root')
 

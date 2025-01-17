@@ -226,7 +226,9 @@ export const ViewStatusBar = (input: { model: ModelFrontend; ctx: { t: Translato
       return (
         <div className='flex animate-pulse items-center gap-1'>
           <span className='h-2 w-2 rounded-full bg-orange-500' />
-          <Typography className='text-orange-500' variant='caption' text={input.ctx.t('wire.connecting...')} />
+          {false && (
+            <Typography className='text-orange-500' variant='caption' text={input.ctx.t('wire.connecting...')} />
+          )}
         </div>
       )
     }

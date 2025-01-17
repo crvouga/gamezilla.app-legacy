@@ -42,6 +42,11 @@ export default defineConfig({
     target: 'esnext',
     emptyOutDir: true,
   },
+  resolve: {
+    alias: {
+      inferno: 'inferno/dist/index.dev.esm.js',
+    },
+  },
   worker: {
     format: 'es',
     // plugins: () => [wasm(), topLevelAwait()],
