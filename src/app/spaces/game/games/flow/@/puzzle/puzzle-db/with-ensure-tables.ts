@@ -23,14 +23,14 @@ CREATE TABLE IF NOT EXISTS game_flow_puzzle (
 );
 `
 export const PuzzleDb = (config: Config): IPuzzleDb => {
-  // config.dbConnSql
-  //   .query({
-  //     parser: p.unknown,
-  //     sql: query,
-  //     vars: {},
-  //   })
-  //   .then(() => {
-  //     //
-  //   })
+  config.dbConnSql
+    .query({
+      parser: p.unknown,
+      sql: query,
+      vars: {},
+    })
+    .then(() => {
+      //
+    })
   return config.puzzleDb
 }

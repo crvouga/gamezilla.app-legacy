@@ -1,6 +1,6 @@
 import { Ok } from '~/@/result'
-import type { IDbConnSql } from './interface'
-import { Sub } from '../sub'
+import type { IDbConnSql } from '../interface'
+import { Sub } from '../../sub'
 
 export type Config = {
   t: 'noop'
