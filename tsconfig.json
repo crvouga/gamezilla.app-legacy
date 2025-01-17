@@ -65,6 +65,6 @@
     "tailwind.config.ts",
     "node_modules/inferno/dist/index.d.ts",
     "src/**/*",
-    "powersync/**/*"
+    "src/powersync/**/*"
   ]
 }

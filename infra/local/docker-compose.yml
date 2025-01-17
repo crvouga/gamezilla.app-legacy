@@ -31,7 +31,7 @@ services:
     image: journeyapps/powersync-service:latest
     command: ['start', '-r', 'unified']
     volumes:
-      - ../../powersync:/powersync
+      - ../../src/powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
       PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage:powersync_storage@postgres:5432/powersync_storage

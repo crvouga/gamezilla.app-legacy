@@ -1,6 +1,6 @@
 FROM journeyapps/powersync-service:latest
 
-COPY ../../powersync /powersync
+COPY ../../src/powersync /powersync
 
 ENV POWERSYNC_CONFIG_PATH=/powersync/config.yaml
 
