@@ -8,8 +8,6 @@ import { setup } from '../../powersync/frontend/database'
 const main = async () => {
   setup()
 
-  const ctx = await AppFrontend.initCtx()
-
   const root = document.getElementById('root')
 
   if (!root) {
@@ -17,6 +15,8 @@ const main = async () => {
   }
 
   const render = await Renderer(CONFIG_FRONTEND.VDOM_IMPL, root)
+
+  const ctx = await AppFrontend.initCtx()
 
   await Program.run({
     initCtx: () => ctx,

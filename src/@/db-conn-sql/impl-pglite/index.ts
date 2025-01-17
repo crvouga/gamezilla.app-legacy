@@ -1,5 +1,5 @@
-import { electricSync, SyncShapeToTableOptions, SyncShapeToTableResult } from '@electric-sql/pglite-sync'
-import { live, LiveNamespace } from '@electric-sql/pglite/live'
+import type { SyncShapeToTableOptions, SyncShapeToTableResult } from '@electric-sql/pglite-sync'
+import type { LiveNamespace } from '@electric-sql/pglite/live'
 import { p } from '~/@/parser'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
@@ -27,6 +27,9 @@ let pg: import('@electric-sql/pglite').PGlite & {
 }
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
+  const { electricSync } = await import('@electric-sql/pglite-sync')
+  const { live } = await import('@electric-sql/pglite/live')
+
   const logger = Logger.prefix('pglite', config.logger)
   const electric = electricSync()
 

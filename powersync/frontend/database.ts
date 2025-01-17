@@ -1,13 +1,10 @@
-import { PowerSyncDatabase } from '@powersync/web'
 import Logger from 'js-logger'
-import { Connector } from './backend-connector'
-import { AppSchema } from './database-schema'
-
 Logger.useDefaults()
-
 Logger.setLevel(Logger.DEBUG)
 
-export const newPowerSyncDatabase = (input?: { dbFilename?: string }) => {
+export const newPowerSyncDatabase = async (input?: { dbFilename?: string }) => {
+  const { PowerSyncDatabase } = await import('@powersync/web')
+  const { AppSchema } = await import('./database-schema')
   return new PowerSyncDatabase({
     // The schema you defined in the previous step
     schema: AppSchema,
@@ -25,12 +22,14 @@ export const newPowerSyncDatabase = (input?: { dbFilename?: string }) => {
 }
 
 export const setup = async () => {
-  const powersync = newPowerSyncDatabase()
+  const powersync = await newPowerSyncDatabase()
 
   // @ts-expect-error
   window.powersync = powersync
 
   console.log('powersync', 'connecting')
+
+  const { Connector } = await import('./backend-connector')
 
   const connector = new Connector()
 
