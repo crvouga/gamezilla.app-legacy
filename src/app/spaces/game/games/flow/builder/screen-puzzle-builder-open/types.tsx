@@ -1,8 +1,8 @@
 import { p } from '~/@/parser'
-import { Puzzle } from '../../@/puzzle/puzzle'
-import { CreateNewPuzzleTypes } from './create-new-puzzle'
 import { UserId } from '~/app/@/data/user-id'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import { PuzzleListTypes } from '../../@/puzzle/puzzle-list'
+import { CreateNewPuzzleTypes } from './create-new-puzzle'
 
 //
 //

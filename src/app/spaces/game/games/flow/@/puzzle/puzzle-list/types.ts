@@ -18,12 +18,16 @@ import { PuzzleId } from '../puzzle-id'
 //
 
 export type ModelFrontend = {
-  queries: {
+  results: {
     [queryKey: string]: PuzzleId[]
+  }
+  queries: {
+    [name: string]: QueryPuzzlesInput
   }
 }
 
 export const initFrontend: ModelFrontend = {
+  results: {},
   queries: {},
 }
 

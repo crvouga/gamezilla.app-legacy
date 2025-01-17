@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { VDom } from '~/@/vdom/vdom'
+import { VDom, VDomChildren } from '~/@/vdom/vdom'
 import { cn } from '../cn'
 
 export type ChipSize = 'sm' | 'lg'
@@ -8,6 +8,7 @@ export type ChipProps = {
   renderStartIcon?: (input: { className: string }) => VDom
   label: TranslatedText
   size: ChipSize
+  onClick?: () => void
 }
 
 const toSizeClass = (input: ChipProps): string => {
@@ -30,11 +31,31 @@ const toIconSizeClass = (input: ChipProps): string => {
 
 export const Chip = (input: ChipProps) => {
   return (
-    <div className={cn('bg-paper flex items-center gap-1 font-semibold', toSizeClass(input))}>
-      {input.renderStartIcon?.({
-        className: toIconSizeClass(input),
-      })}
+    <Tag
+      tagName={typeof input.onClick === 'function' ? 'button' : 'div'}
+      className={cn('bg-paper flex items-center gap-1 font-semibold active:opacity-50', toSizeClass(input))}
+      onClick={input.onClick}
+    >
+      {input.renderStartIcon?.({ className: toIconSizeClass(input) })}
       {input.label}
-    </div>
+    </Tag>
   )
+}
+
+const Tag = ({
+  children,
+  tagName,
+  ...input
+}: {
+  children: VDomChildren
+  tagName: string
+  onClick?: () => void
+  className?: string
+}) => {
+  switch (tagName) {
+    case 'button':
+      return <button {...input}>{children}</button>
+    default:
+      return <div {...input}>{children}</div>
+  }
 }

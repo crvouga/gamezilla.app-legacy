@@ -70,6 +70,9 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         model={input.ctx.puzzleList}
         query={query}
+        onQueryChanged={(query) => {
+          console.log('onQueryChanged', query)
+        }}
         onClick={(puzzle) =>
           input.dispatch({
             t: 'got-msg-space',

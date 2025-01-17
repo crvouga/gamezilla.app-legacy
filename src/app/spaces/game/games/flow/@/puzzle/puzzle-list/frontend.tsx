@@ -38,8 +38,8 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          queries: {
-            ...input.model.queries,
+          results: {
+            ...input.model.results,
             [QueryPuzzlesInput.toKey(input.msg.query)]: input.msg.puzzles.map((p) => p.id),
           },
         },
@@ -75,20 +75,20 @@ const View = (input: {
   ctx: FlowFrontendCtxRoot
   query: QueryPuzzlesInput
   model: ModelFrontend
-  onQueryChanged?: (query: QueryPuzzlesInput) => void
+  onQueryChanged: (query: QueryPuzzlesInput) => void
   onClick: (puzzle: Puzzle) => void
   fab?: VDom
 }) => {
   const queryKey = QueryPuzzlesInput.toKey(input.query)
-  const puzzleIds = input.model.queries[queryKey] ?? []
+  const puzzleIds = input.model.results[queryKey] ?? []
   const puzzles = puzzleIds.flatMap((id) => (input.ctx.puzzles[id] ? [input.ctx.puzzles[id]] : []))
 
-  const isLoading = !(queryKey in input.model.queries)
+  const isLoading = !(queryKey in input.model.results)
   const isEmpty = !isLoading && puzzles.length === 0
 
   return (
     <div className='relative flex h-full w-full flex-col gap-2 overflow-hidden'>
-      <QueryForm.View ctx={input.ctx} query={input.query} />
+      <QueryForm.View ctx={input.ctx} query={input.query} onChange={input.onQueryChanged} />
 
       <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
         {puzzles.map((puzzle) => (

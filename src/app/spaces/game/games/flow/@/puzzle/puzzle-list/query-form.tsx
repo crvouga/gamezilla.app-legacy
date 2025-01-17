@@ -13,7 +13,8 @@ const update = (input: { model: Model; msg: Msg }): Model => {
       return {
         ...input.model,
         order: {
-          lastUpdatedAt: input.model.order.lastUpdatedAt ? undefined : 'desc',
+          lastUpdatedAt: undefined,
+          createdAt: 'desc',
         },
       }
     }
@@ -21,36 +22,39 @@ const update = (input: { model: Model; msg: Msg }): Model => {
       return {
         ...input.model,
         order: {
-          createdAt: input.model.order.createdAt ? undefined : 'desc',
+          lastUpdatedAt: 'desc',
+          createdAt: undefined,
         },
       }
     }
   }
 }
 
-const View = (input: { query: Model; ctx: FlowFrontendCtxRoot }) => {
+const View = (input: { query: Model; ctx: FlowFrontendCtxRoot; onChange: (query: Model) => void }) => {
+  const dispatch = (msg: Msg) => {
+    const queryNew = update({ model: input.query, msg })
+    input.onChange(queryNew)
+  }
   return (
     <div className='flex w-full gap-2 px-4 py-4 pt-2'>
       <div className='flex-1'></div>
 
       {input.query.order.lastUpdatedAt && (
-        <button>
-          <Chip
-            size='sm'
-            renderStartIcon={(input) => <IconArrowDownShortWide {...input} />}
-            label={input.ctx.t('app.last-updated')}
-          />
-        </button>
+        <Chip
+          size='sm'
+          renderStartIcon={(input) => <IconArrowDownShortWide {...input} />}
+          label={input.ctx.t('app.last-updated')}
+          onClick={() => dispatch({ t: 'toggled-last-updated-chip' })}
+        />
       )}
 
       {input.query.order.createdAt && (
-        <button>
-          <Chip
-            size='sm'
-            renderStartIcon={(input) => <IconArrowDownShortWide {...input} />}
-            label={input.ctx.t('app.last-updated')}
-          />
-        </button>
+        <Chip
+          size='sm'
+          renderStartIcon={(input) => <IconArrowDownShortWide {...input} />}
+          label={input.ctx.t('app.last-updated')}
+          onClick={() => dispatch({ t: 'toggled-last-updated-chip' })}
+        />
       )}
     </div>
   )
