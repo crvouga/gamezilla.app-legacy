@@ -11,29 +11,11 @@ export type ChipProps = {
   onClick?: () => void
 }
 
-const toSizeClass = (input: ChipProps): string => {
-  switch (input.size) {
-    case 'sm':
-      return 'text-xs px-2 py-1 rounded-xl'
-    case 'lg':
-      return 'text-base px-2.5 py-1.5 rounded-2xl'
-  }
-}
-
-const toIconSizeClass = (input: ChipProps): string => {
-  switch (input.size) {
-    case 'sm':
-      return 'size-4'
-    case 'lg':
-      return 'size-5'
-  }
-}
-
 export const Chip = (input: ChipProps) => {
   return (
     <Tag
       tagName={typeof input.onClick === 'function' ? 'button' : 'div'}
-      className={cn('bg-paper flex items-center gap-1 font-semibold active:opacity-50', toSizeClass(input))}
+      className={cn('bg-paper flex items-center gap-1 font-semibold', toSizeClass(input), toButtonClass(input))}
       onClick={input.onClick}
     >
       {input.renderStartIcon?.({ className: toIconSizeClass(input) })}
@@ -58,4 +40,29 @@ const Tag = ({
     default:
       return <div {...input}>{children}</div>
   }
+}
+
+const toSizeClass = (input: ChipProps): string => {
+  switch (input.size) {
+    case 'sm':
+      return 'text-xs px-2 py-1 rounded-xl'
+    case 'lg':
+      return 'text-base px-2.5 py-1.5 rounded-2xl'
+  }
+}
+
+const toIconSizeClass = (input: ChipProps): string => {
+  switch (input.size) {
+    case 'sm':
+      return 'size-4'
+    case 'lg':
+      return 'size-5'
+  }
+}
+
+const toButtonClass = (input: ChipProps): string | null => {
+  if (typeof input.onClick === 'function') {
+    return 'cursor-pointer active:opacity-50'
+  }
+  return null
 }

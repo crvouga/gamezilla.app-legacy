@@ -1,3 +1,6 @@
+import { TranslatedText } from '../l18n'
+import { Translator } from '../l18n/generated'
+
 export type TimeSpan = {
   type: 'TimeSpan'
   _durationMilliseconds: number
@@ -123,35 +126,35 @@ const lte = (left: TimeSpan, right: TimeSpan): boolean => {
  *
  *
  */
-const humanFriendlyString = (timeSpan: TimeSpan): string => {
+const humanFriendlyString = (timeSpan: TimeSpan, t: Translator): TranslatedText => {
   const seconds = toSeconds(timeSpan)
   const days = seconds / 86400 // Convert seconds to days
 
   if (days >= 365) {
     const years = days / 365
-    return years >= 2 ? `${Math.floor(years)} years ago` : '1 year ago'
+    return years >= 2 ? t('time-span.year-plural', years) : t('time-span.year-singular')
   }
 
   if (days >= 30) {
     const months = days / 30
-    return months >= 2 ? `${Math.floor(months)} months ago` : '1 month ago'
+    return months >= 2 ? t('time-span.month-plural', months) : t('time-span.month-singular')
   }
 
   if (days >= 1) {
-    return days >= 2 ? `${Math.floor(days)} days ago` : '1 day ago'
+    return days >= 2 ? t('time-span.day-plural', days) : t('time-span.day-singular')
   }
 
   const hours = seconds / 3600
   if (hours >= 1) {
-    return hours >= 2 ? `${Math.floor(hours)} hours ago` : '1 hour ago'
+    return hours >= 2 ? t('time-span.hour-plural', hours) : t('time-span.hour-singular')
   }
 
   const minutes = seconds / 60
   if (minutes >= 1) {
-    return minutes >= 2 ? `${Math.floor(minutes)} minutes ago` : '1 minute ago'
+    return minutes >= 2 ? t('time-span.minute-plural', minutes) : t('time-span.minute-singular')
   }
 
-  return 'A moment ago'
+  return t('time-span.moment-ago')
 }
 
 const negate = (timeSpan: TimeSpan): TimeSpan => {

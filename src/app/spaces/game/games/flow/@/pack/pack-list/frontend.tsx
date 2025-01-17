@@ -20,6 +20,7 @@ import {
   type FrontendModule,
 } from './types'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
+import { Translator } from '~/@/l18n/generated'
 
 const init = (): ReturnType<FrontendModule['update']> => {
   return {
@@ -178,6 +179,7 @@ const PackListItem = ({
 }: {
   ctx: {
     now: Posix
+    t: Translator
   }
   pack: Pack
   onClick: () => void
@@ -192,7 +194,7 @@ const PackListItem = ({
       <div className='flex flex-1 flex-col overflow-hidden'>
         <p className='overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold'>{pack.name}</p>
         <p className='text-secondary text-sm'>
-          {TimeSpan.humanFriendlyString(Posix.diff(pack.lastUpdatedAt, ctx.now))}
+          {TimeSpan.humanFriendlyString(Posix.diff(pack.lastUpdatedAt, ctx.now), ctx.t)}
         </p>
       </div>
       <p className='text-secondary flex shrink-0 text-sm'>{plural(pack.puzzleIds, 'puzzle', 'puzzles')}</p>

@@ -3,6 +3,7 @@ import type { Translations } from '~/@/l18n'
 export type Text = {
   'app.last-updated-desc': string
   'app.created-at-desc': string
+  'app.created-by-you': string
   'app.last-updated': string
   'app.created-at': string
   'app.screen-not-found': string
@@ -47,8 +48,9 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   en: {
-    'app.created-at-desc': 'Most recent first',
-    'app.last-updated-desc': 'Most recently updated',
+    'app.created-by-you': 'Created by you',
+    'app.created-at-desc': 'Recently created',
+    'app.last-updated-desc': 'Recently updated',
     'app.created-at': 'Created at',
     'app.last-updated': 'Last updated',
     'app.screen-not-found': 'Screen not found',
@@ -91,6 +93,7 @@ export const translations: Translations<Text> = {
     'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`,
   },
   ar: {
+    'app.created-by-you': 'تم إنشاؤه بواسطتك',
     'app.created-at-desc': 'الأحدث أولاً',
     'app.last-updated-desc': 'الأحدث تحديثًا',
     'app.created-at': 'تم الإنشاء في',
@@ -135,6 +138,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'حفظ التغييرات؟',
   },
   de: {
+    'app.created-by-you': 'Von Ihnen erstellt',
     'app.created-at-desc': 'Neueste zuerst',
     'app.last-updated-desc': 'Zuletzt aktualisiert',
     'app.created-at': 'Erstellt am',
@@ -179,6 +183,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Änderungen speichern?',
   },
   es: {
+    'app.created-by-you': 'Creado por ti',
     'app.created-at-desc': 'Más reciente primero',
     'app.last-updated-desc': 'Más recientemente actualizado',
     'app.created-at': 'Creado en',
@@ -223,6 +228,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '¿Guardar cambios?',
   },
   fr: {
+    'app.created-by-you': 'Créé par vous',
     'app.created-at-desc': 'Le plus récent en premier',
     'app.last-updated-desc': 'Le plus récemment mis à jour',
     'app.created-at': 'Créé à',
@@ -267,6 +273,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Enregistrer les modifications?',
   },
   it: {
+    'app.created-by-you': 'Creato da te',
     'app.created-at-desc': 'Più recenti prima',
     'app.last-updated-desc': 'Più recentemente aggiornato',
     'app.created-at': 'Creato a',
@@ -311,6 +318,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvare le modifiche?',
   },
   ja: {
+    'app.created-by-you': 'あなたが作成',
     'app.created-at-desc': '最新のものが最初',
     'app.last-updated-desc': '最新のもの',
     'app.created-at': '作成日',
@@ -355,6 +363,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '変更を保存しますか？',
   },
   ko: {
+    'app.created-by-you': '당신이 만든',
     'app.created-at-desc': '최신 순',
     'app.last-updated-desc': '최근 업데이트',
     'app.created-at': '생성 날짜',
@@ -399,6 +408,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '변경 사항 저장?',
   },
   pt: {
+    'app.created-by-you': 'Criado por você',
     'app.created-at-desc': 'Mais recente primeiro',
     'app.last-updated-desc': 'Mais recentemente atualizado',
     'app.created-at': 'Criado em',
@@ -443,6 +453,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvar alterações?',
   },
   ru: {
+    'app.created-by-you': 'Создано вами',
     'app.created-at-desc': 'Сначала самые новые',
     'app.last-updated-desc': 'Последнее обновление',
     'app.created-at': 'Создано в',
@@ -487,6 +498,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Сохранить изменения?',
   },
   zh: {
+    'app.created-by-you': '由您创建',
     'app.created-at-desc': '最新的在前',
     'app.last-updated-desc': '最近更新',
     'app.created-at': '创建于',
@@ -531,6 +543,7 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '保存更改？',
   },
   hi: {
+    'app.created-by-you': 'आपके द्वारा बनाया गया',
     'app.created-at-desc': 'सबसे हाल का पहले',
     'app.last-updated-desc': 'सबसे हाल में अपडेट',
     'app.created-at': 'पर बनाया गया',

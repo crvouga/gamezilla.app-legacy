@@ -3,7 +3,7 @@ import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { VDom } from '~/@/vdom/vdom'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { EmptyState, IconPuzzlePiece, Spinner } from '~/app/@/ui'
+import { EmptyState, IconPuzzlePiece, Spinner, Typography } from '~/app/@/ui'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { VariantBoard } from '../../variant'
@@ -12,6 +12,7 @@ import { QueryPuzzlesInput } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
+import { Translator } from '~/@/l18n/generated'
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
@@ -92,7 +93,7 @@ const View = (input: {
 
       <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
         {puzzles.map((puzzle) => (
-          <ViewListItem key={puzzle.id} now={input.ctx.now} puzzle={puzzle} onClick={() => input.onClick(puzzle)} />
+          <ViewListItem key={puzzle.id} ctx={input.ctx} puzzle={puzzle} onClick={() => input.onClick(puzzle)} />
         ))}
 
         {isEmpty && (
@@ -104,6 +105,8 @@ const View = (input: {
             <Spinner />
           </div>
         )}
+
+        <div className='w-full py-24'></div>
       </div>
 
       {input.fab && <div className='absolute bottom-6 right-4 bg-black'>{input.fab}</div>}
@@ -111,7 +114,7 @@ const View = (input: {
   )
 }
 
-const ViewListItem = (input: { now: Posix; puzzle: Puzzle; onClick: () => void }) => {
+const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzle; onClick: () => void }) => {
   return (
     <button
       key={input.puzzle.id}
@@ -126,9 +129,11 @@ const ViewListItem = (input: { now: Posix; puzzle: Puzzle; onClick: () => void }
         <p className='flex-nowrap overflow-hidden truncate text-ellipsis whitespace-nowrap text-base font-bold'>
           {input.puzzle.name}
         </p>
-        <p className='text-secondary truncate text-xs'>
-          {TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.createdAt, input.now))}
-        </p>
+        <Typography
+          variant='subtitle'
+          text={TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.createdAt, input.ctx.now), input.ctx.t)}
+          className='text-secondary truncate text-xs'
+        />
       </div>
     </button>
   )
