@@ -9,13 +9,11 @@ import { FrontendModule } from '../../types'
 import { MsgFrontend, MsgToBackend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
-  const { msgSpace, model, msg, ctx } = input
-
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'create-new-puzzle.user-clicked-create-button': {
       return {
         model: {
-          ...model,
+          ...input.model,
           puzzleCreateRequest: RemoteResult.Loading,
         },
         msgCmd: [playSound(APP_SOUND.tap)],
@@ -29,7 +27,7 @@ const update: FrontendModule['update'] = (input) => {
             }),
           })
 
-          const result = await ctx.puzzleDb.put(puzzleNew)
+          const result = await input.ctx.puzzleDb.put(puzzleNew)
 
           dispatch({
             t: 'create-new-puzzle.db-inserted-puzzle',
@@ -42,14 +40,14 @@ const update: FrontendModule['update'] = (input) => {
     case 'create-new-puzzle.db-inserted-puzzle': {
       return {
         model: {
-          ...model,
-          puzzleCreateRequest: msg.result,
+          ...input.model,
+          puzzleCreateRequest: input.msg.result,
         },
         msgSpace: [
           withEventId({
             t: 'create-new-puzzle.user-created-puzzle',
-            created: msg.result,
-            userId: ctx.currentUserId,
+            created: input.msg.result,
+            userId: input.ctx.currentUserId,
           }),
         ],
       }
@@ -60,11 +58,11 @@ const update: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (msgSpace?.t) {
+  switch (input.msgSpace?.t) {
     case 'create-new-puzzle.user-created-puzzle': {
-      if (isErr(msgSpace.created)) {
+      if (isErr(input.msgSpace.created)) {
         return {
-          model,
+          model: input.model,
           msgCmd: showErrSm<{
             MsgFrontend: MsgFrontend
             MsgToBackend: MsgToBackend
@@ -72,7 +70,7 @@ const update: FrontendModule['update'] = (input) => {
         }
       }
 
-      const puzzleNew = msgSpace.created.value
+      const puzzleNew = input.msgSpace.created.value
 
       const msgCmd: FlowFrontendCmd<{
         MsgFrontend: MsgFrontend
@@ -92,7 +90,7 @@ const update: FrontendModule['update'] = (input) => {
       ]
 
       return {
-        model,
+        model: input.model,
         msgCmd,
       }
     }
@@ -102,7 +100,7 @@ const update: FrontendModule['update'] = (input) => {
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 const ViewCreateFab: FrontendModule['View'] = (input) => {
