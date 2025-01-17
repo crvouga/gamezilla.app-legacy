@@ -1,8 +1,8 @@
-import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import type { UserId } from '~/app/@/data/user-id'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Avatar, Button, IconArrowLeftOnRect, IconSpinner, IconUserPen, TopBar, Typography } from '~/app/@/ui'
-import type { ModelFrontend, MsgFrontend } from '../types'
 import { Gutter } from '~/app/@/ui/gutter'
+import type { ModelFrontend, MsgFrontend } from '../types'
 
 export const ViewProfileScreen = (input: {
   ctx: AppFrontendCtx | AnonymousFrontendCtx

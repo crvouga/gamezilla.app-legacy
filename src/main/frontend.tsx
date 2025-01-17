@@ -3,16 +3,11 @@ import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { setupNewPowerSyncDatabase } from '../../powersync/frontend/database'
 
 const main = async () => {
-  setupNewPowerSyncDatabase()
-
   const root = document.getElementById('root')
 
-  if (!root) {
-    throw new Error('Root element not found')
-  }
+  if (!root) throw new Error('Root element not found')
 
   const render = await Renderer(CONFIG_FRONTEND.VDOM_IMPL, root)
 
@@ -29,9 +24,7 @@ const main = async () => {
     render(input) {
       render(<AppFrontend.View {...input} />)
     },
-
     crash: (input) => console.error('Crash!', input.error),
-
     debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined,
   })
 

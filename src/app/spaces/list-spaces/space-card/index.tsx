@@ -33,7 +33,7 @@ export const ViewSpaceCard = (input: { ctx: BaseFrontendCtx; state: SpaceState.S
       disabled={!input.onClick}
       className={cn(
         'flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-500 p-4',
-        input.onClick && 'transition-opacity hover:opacity-90 active:opacity-70',
+        input.onClick && 'clickable',
       )}
     >
       <div className='flex w-full items-center justify-start'>

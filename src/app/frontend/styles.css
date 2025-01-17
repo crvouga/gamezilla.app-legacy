@@ -22,6 +22,10 @@
   @apply text-neutral-300;
 }
 
+.clickable {
+  @apply enabled:cursor-pointer enabled:active:opacity-50 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
 /*
 
 Remove arrows from number input

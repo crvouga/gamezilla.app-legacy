@@ -109,7 +109,7 @@ const ViewAddCell = (input: { onClick: () => void }) => {
   return (
     <button
       onClick={input.onClick}
-      className='bg-paper flex h-full w-full items-center justify-center overflow-hidden rounded border-2 hover:opacity-90 active:opacity-80'
+      className='bg-paper clickable flex h-full w-full items-center justify-center overflow-hidden rounded border-2'
     >
       <IconPlus className='h-8 w-8' />
     </button>
@@ -120,7 +120,7 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
   return (
     <button
       onClick={onClick}
-      className='bg-paper flex h-full w-full items-center justify-center overflow-hidden rounded text-xl font-bold hover:opacity-90 active:opacity-80'
+      className='bg-paper clickable flex h-full w-full items-center justify-center overflow-hidden rounded text-xl font-bold'
     >
       {index + 1}
     </button>
@@ -141,7 +141,7 @@ const ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number 
   return (
     <button
       onClick={onClick}
-      className='flex h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold hover:opacity-90 active:opacity-80'
+      className='clickable flex h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold'
     >
       {index + 1}
     </button>

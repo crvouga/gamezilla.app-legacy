@@ -187,7 +187,7 @@ const PackListItem = ({
   return (
     <button
       type='button'
-      className='flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50'
+      className='clickable flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left'
       onClick={onClick}
     >
       {false && <IconBox className='h-9 w-9 shrink-0' />}

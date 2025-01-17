@@ -1,9 +1,11 @@
+import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { VDom } from '~/@/vdom/vdom'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { EmptyState, IconPuzzlePiece, Spinner, Typography } from '~/app/@/ui'
+import { Gutter } from '~/app/@/ui/gutter'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { VariantBoard } from '../../variant'
@@ -12,8 +14,6 @@ import { QueryPuzzlesInput } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
-import { Translator } from '~/@/l18n/generated'
-import { Gutter } from '~/app/@/ui/gutter'
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
@@ -120,7 +120,7 @@ const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzl
     <button
       key={input.puzzle.id}
       type='button'
-      className='box-border flex w-full items-center text-left hover:bg-neutral-900 active:opacity-50'
+      className='clickable box-border flex w-full items-center text-left hover:bg-neutral-900'
       onClick={input.onClick}
     >
       <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>

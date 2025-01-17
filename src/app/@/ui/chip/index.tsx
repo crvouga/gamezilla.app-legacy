@@ -62,7 +62,7 @@ const toIconSizeClass = (input: ChipProps): string => {
 
 const toButtonClass = (input: ChipProps): string | null => {
   if (typeof input.onClick === 'function') {
-    return 'cursor-pointer active:opacity-50'
+    return 'clickable'
   }
   return null
 }

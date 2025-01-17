@@ -22,7 +22,7 @@ export const ViewUsersInSpaceList = ({
             <button
               key={profile.userId}
               onClick={() => onOpenUserDetails(profile.userId)}
-              className='flex w-full items-center gap-2 p-2 px-4 active:opacity-60'
+              className='clickable flex w-full items-center gap-2 p-2 px-4'
             >
               <Avatar src={profile.avatarUrl} />
               <p>{profile.username}</p>

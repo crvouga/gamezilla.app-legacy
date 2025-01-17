@@ -1,10 +1,9 @@
+import { register } from 'swiper/element/bundle'
 import { waitForElementById } from '~/@/dom/dom'
 import type { VDomChildren } from '~/@/vdom/vdom'
 
 if (typeof window !== 'undefined') {
-  import('swiper/element/bundle').then(({ register }) => {
-    register()
-  })
+  register()
 }
 
 declare global {
