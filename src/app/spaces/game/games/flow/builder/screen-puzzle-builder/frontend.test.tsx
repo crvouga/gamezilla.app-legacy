@@ -10,8 +10,8 @@ import {
   initial,
   puzzleBuilderPressDownRandomNode,
   testFlowFrontendCtx,
-} from '../@/testing/frontend'
-import { deriveModelSpace } from '../@/testing/space'
+} from '../@/fixture/frontend'
+import { deriveModelSpace } from '../@/fixture/space'
 import type { MsgFrontend } from '../types'
 import { ScreenPuzzleBuilderFrontend } from './frontend'
 

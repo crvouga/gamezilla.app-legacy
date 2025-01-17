@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { Result } from '~/@/result'
 import { withEventId, withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../../../@/pack/pack'
-import { FlowCreateFixtureBackend } from '../../../@/testing/backend'
+import { FlowCreateFixtureBackend } from '../../../@/fixture/backend'
 import { EditPackNameSpace } from '../space'
 import { EditPackNameBackend } from '../backend'
 

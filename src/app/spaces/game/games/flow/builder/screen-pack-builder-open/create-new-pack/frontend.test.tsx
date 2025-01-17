@@ -8,7 +8,7 @@ import {
   initial,
   testFlowFrontendCtx,
   userCreatedPack,
-} from '../../@/testing/frontend'
+} from '../../@/fixture/frontend'
 
 export const Fixture = async () => {
   const f = await FixtureFlowBuilderFrontend()

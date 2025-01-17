@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { Puzzle } from '../../@/puzzle/puzzle'
-import { FixtureFlowBuilderFrontend } from '../@/testing/frontend'
+import { FixtureFlowBuilderFrontend } from '../@/fixture/frontend'
 
 describe(import.meta.file, () => {
   test('open puzzle builder', async () => {

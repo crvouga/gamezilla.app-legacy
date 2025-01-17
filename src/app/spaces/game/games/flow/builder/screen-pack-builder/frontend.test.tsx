@@ -17,8 +17,8 @@ import {
   initial,
   backendCreatedPack,
   testFlowFrontendCtx,
-} from '../@/testing/frontend'
-import { deriveModelSpace } from '../@/testing/space'
+} from '../@/fixture/frontend'
+import { deriveModelSpace } from '../@/fixture/space'
 import { BuilderSpace } from '../space'
 import type { ModelFrontend, ModelSpace } from '../types'
 import { ScreenPackBuilderFrontend } from './frontend'
