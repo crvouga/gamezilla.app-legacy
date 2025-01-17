@@ -55,7 +55,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     ? async () => {}
     : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
 
-  if (!CONFIG_BACKEND.DATABASE_URL) {
+  if (typeof CONFIG_BACKEND.DATABASE_URL !== 'string') {
     throw new Error('DATABASE_URL is not set')
   }
 

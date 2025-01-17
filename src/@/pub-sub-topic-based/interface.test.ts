@@ -36,7 +36,13 @@ const Fixtures = async () => {
 
   if (testEnv.t === 'integration') {
     configs.push({ t: 'postgres', dbConnSql: testEnv.dbConnPostgres, logger: Logger({ t: 'noop' }) })
-    configs.push({ t: 'redis', redisUrl: CONFIG_BACKEND.REDIS_URL, logger: Logger({ t: 'noop' }) })
+    if (typeof CONFIG_BACKEND.REDIS_URL === 'string') {
+      configs.push({
+        t: 'redis',
+        redisUrl: CONFIG_BACKEND.REDIS_URL,
+        logger: Logger({ t: 'noop' }),
+      })
+    }
   }
 
   return Promise.all(configs.map(Fixture))

@@ -126,6 +126,10 @@ const implementations: Implementation[] = [
     name: 'redis',
     async Fixture() {
       const f = await Fixture()
+      if (typeof CONFIG_BACKEND.REDIS_URL !== 'string') {
+        throw new Error('REDIS_URL is not set')
+      }
+
       return {
         ...f,
         dbConnKv: await DbConnKv({

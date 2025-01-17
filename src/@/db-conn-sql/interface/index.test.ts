@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
-import '../../vdom/test-render/happydom'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
+import { newPowerSyncDatabase } from '../../../../powersync/frontend/database'
 import { Logger } from '../../logger'
 import { p } from '../../parser'
 import { isErr, isOk } from '../../result'
+import '../../vdom/test-render/happydom'
 import { Config, DbConnSql } from '../backend/impl'
-import { newPowerSyncDatabase } from '../../../../powersync/frontend/database'
 
 // @ts-ignore
 if (!globalThis.readAsync) {
@@ -60,7 +60,7 @@ const Fixtures = async () => {
     })
   }
 
-  if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
+  if (CONFIG_SHARED.IS_INTEGRATION_TEST && typeof CONFIG_BACKEND.DATABASE_URL === 'string') {
     configs.push({
       t: 'postgres',
       databaseUrl: CONFIG_BACKEND.DATABASE_URL,

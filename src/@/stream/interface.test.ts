@@ -49,7 +49,7 @@ const Fixtures = async () => {
 
   const testEnv = await FixtureAppBackend()
 
-  if (testEnv.t === 'integration') {
+  if (testEnv.t === 'integration' && typeof CONFIG_BACKEND.REDIS_URL === 'string') {
     configs.push({
       t: 'redis',
       decode: (encoded) => Ok(JSON.parse(encoded)),

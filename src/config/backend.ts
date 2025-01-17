@@ -1,8 +1,8 @@
-const DATABASE_URL = import.meta.env?.DATABASE_URL
+const DATABASE_URL: unknown = import.meta.env?.DATABASE_URL
 
-const REDIS_URL = import.meta.env?.REDIS_URL || 'redis://localhost:6379'
+const REDIS_URL: unknown = import.meta.env?.REDIS_URL
 
-const PORT = import.meta.env?.PORT
+const PORT: number = Number(import.meta.env?.PORT)
 
 const SERVER_PORT = isNaN(PORT) ? null : PORT
 
