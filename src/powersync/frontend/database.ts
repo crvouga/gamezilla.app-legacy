@@ -26,7 +26,9 @@ export const setupNewPowerSyncDatabase = async () => {
 
   const connector = new Connector()
 
-  await powerSync.connect(connector)
+  powerSync.connect(connector).then(() => {
+    Logger.info('Connected to PowerSync')
+  })
 
   return powerSync
 }
